@@ -1,11 +1,7 @@
-struct Parallel_tag_bis {};
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <CGAL/Timer.h>
-#include <CGAL/Real_timer.h>
 
 #include <fstream>
 
@@ -26,23 +22,17 @@ int main(int argc, char* argv[])
     std::cerr << "Not a valid input file." << std::endl;
     return 1;
   }
-  /*
-  bool intersecting = PMP::does_self_intersect(mesh,
+  
+  bool intersecting = PMP::does_self_intersect<CGAL::Parallel_tag>(mesh,
       PMP::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
 
   std::cout
     << (intersecting ? "There are self-intersections." : "There is no self-intersection.")
     << std::endl;
-  */
-  CGAL::Real_timer rtimer;
-    CGAL::Timer timer;
-  rtimer.start();
-  timer.start();
-
   
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  PMP::self_intersections<CGAL::Sequential_tag>(mesh, std::back_inserter(intersected_tris));
-  std::cout   << std::endl << "Total: " << rtimer.time() << "  " << timer.time() << " sec." << std::endl;
+  PMP::self_intersections<CGAL::Parallel_tag>(faces(mesh),mesh, std::back_inserter(intersected_tris));
+
   std::cout << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
  
   return 0;

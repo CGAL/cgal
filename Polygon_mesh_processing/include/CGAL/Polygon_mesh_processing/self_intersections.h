@@ -212,19 +212,19 @@ struct AllPairs
 // data members
   const TM& m_tmesh;
   const VertexPointMap m_vpmap;
-  const std::vector<std::pair<face_descriptor,face_descriptor> >& seq_faces;
+  const std::vector<std::pair<face_descriptor,face_descriptor> >& face_pairs;
   std::vector<int>& dointersect;
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
 
-  AllPairs(const std::vector<std::pair<face_descriptor,face_descriptor> >& seq_faces,
+  AllPairs(const std::vector<std::pair<face_descriptor,face_descriptor> >& face_pairs,
            std::vector<int>& dointersect,
            const TM& tmesh, VertexPointMap vpmap, const Kernel& kernel)
     : m_tmesh(tmesh)
     , m_vpmap(vpmap)
-    , seq_faces(seq_faces)
+    , face_pairs(face_pairs)
     , dointersect(dointersect)
     , triangle_functor(kernel.construct_triangle_3_object())
     , do_intersect_3_functor(kernel.do_intersect_3_object())
@@ -240,7 +240,7 @@ struct AllPairs
 
   void operator()(std::size_t ri) const
   {
-    const std::pair<face_descriptor,face_descriptor>& ff = seq_faces[ri];
+    const std::pair<face_descriptor,face_descriptor>& ff = face_pairs[ri];
     halfedge_descriptor h = halfedge(ff.first, m_tmesh), g = halfedge(ff.second, m_tmesh);
 
     vertex_descriptor hv[3], gv[3];
@@ -296,9 +296,9 @@ struct AllPairs
           break;
         }
       }
-	  if (shared) {
-		  break;
-	  }
+      if (shared) {
+        break;
+      }
     }
     if(shared){
       // found shared vertex:
@@ -316,11 +316,7 @@ struct AllPairs
       Segment s2 = segment_functor( get(m_vpmap, gv[(j+1)%3]),
                                     get(m_vpmap, gv[(j+2)%3]));
 
-      if(do_intersect_3_functor(t1,s2)){
-        dointersect[ri] = true;
-      } else if(do_intersect_3_functor(t2,s1)){
-        dointersect[ri] = true;
-      }
+	  dointersect[ri] = (do_intersect_3_functor(t1, s2)) || do_intersect_3_functor(t2, s1);
       return;
     }
 
@@ -331,9 +327,7 @@ struct AllPairs
     Triangle t2 = triangle_functor( get(m_vpmap, gv[0]),
                                     get(m_vpmap, gv[1]),
                                     get(m_vpmap, gv[2]));
-    if(do_intersect_3_functor(t1, t2)){
-      dointersect[ri] = true;
-    }
+	dointersect[ri] = do_intersect_3_functor(t1, t2);
   }
 };
 
@@ -425,8 +419,7 @@ self_intersections( const FaceRange& face_range,
 
   // make one box per face
   std::vector<Box> boxes;
-  boxes.reserve(
-    std::distance( boost::begin(face_range), boost::end(face_range) )
+  boxes.reserve( std::distance( boost::begin(face_range), boost::end(face_range) )
   );
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
@@ -511,9 +504,8 @@ self_intersections(const FaceRange& face_range,
                    const TriangleMesh& tmesh,
                          OutputIterator out)
 {
-  return self_intersections(face_range, tmesh, out,
-                            CGAL::Polygon_mesh_processing::parameters::all_default(),
-                            ConcurrencyTag());
+  return self_intersections<ConcurrencyTag>(face_range, tmesh, out,
+                                            CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 /// \endcond
 
