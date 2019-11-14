@@ -751,7 +751,7 @@ self_intersections(const FaceRange& face_range,
  *
  * @return `out`
  */
-template < class ConcurrencyTag = Sequential_tag
+template <class ConcurrencyTag = Sequential_tag
         , class TriangleMesh
         , class OutputIterator
         , class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
@@ -760,7 +760,7 @@ self_intersections(const TriangleMesh& tmesh,
                           OutputIterator out,
                    const CGAL_PMP_NP_CLASS& np)
 {
-  return self_intersections(faces(tmesh), tmesh, out, np, ConcurrencyTag());
+  return self_intersections(faces(tmesh), tmesh, out, np);
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -899,6 +899,8 @@ self_intersections( const FaceRange& face_range,
  * This function depends on the package \ref PkgBoxIntersectionD
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag` and `Parallel_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
@@ -914,7 +916,8 @@ self_intersections( const FaceRange& face_range,
  *
  * @return `true` if `tmesh` self-intersects
  */
-template <class TriangleMesh
+template <class ConcurrencyTag = Sequential_tag,
+          class TriangleMesh
         , class CGAL_PMP_NP_TEMPLATE_PARAMETERS
           >
 bool does_self_intersect(const TriangleMesh& tmesh
@@ -925,7 +928,7 @@ bool does_self_intersect(const TriangleMesh& tmesh
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
-    self_intersections(tmesh, OutputIterator(), np);
+    self_intersections<ConcurrencyTag>(tmesh, OutputIterator(), np);
   }
   catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
   { return true; }
@@ -956,7 +959,8 @@ bool does_self_intersect(const TriangleMesh& tmesh
  *
  * @return `true` if the faces in `face_range` self-intersect
  */
-template <class FaceRange,
+template <class ConcurrencyTag = Sequential_tag,
+          class FaceRange,
           class TriangleMesh,
           class NamedParameters
           >
@@ -969,7 +973,7 @@ bool does_self_intersect(const FaceRange& face_range,
   try
   {
     typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
-    self_intersections(face_range, tmesh, OutputIterator(), np);
+    self_intersections<ConcurrencyTag>(face_range, tmesh, OutputIterator(), np);
   }
   catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
   { return true; }
@@ -978,18 +982,18 @@ bool does_self_intersect(const FaceRange& face_range,
 }
 
 /// \cond SKIP_IN_MANUAL
-template <class TriangleMesh>
+template <class ConcurrencyTag = Sequential_tag, class TriangleMesh>
 bool does_self_intersect(const TriangleMesh& tmesh)
 {
-  return does_self_intersect(tmesh,
+  return does_self_intersect<ConcurrencyTag>(tmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
-template <class FaceRange, class TriangleMesh>
+template <class ConcurrencyTag = Sequential_tag, class FaceRange, class TriangleMesh>
 bool does_self_intersect(const FaceRange& face_range,
                          const TriangleMesh& tmesh)
 {
-  return does_self_intersect(face_range, tmesh,
+  return does_self_intersect<ConcurrencyTag>(face_range, tmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
