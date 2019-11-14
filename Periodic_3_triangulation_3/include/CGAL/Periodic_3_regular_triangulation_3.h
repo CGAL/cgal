@@ -94,6 +94,7 @@ public:
 
   typedef typename Tr_Base::Vertex_iterator        Vertex_iterator;
   typedef typename Tr_Base::Edge_iterator          Edge_iterator;
+  typedef typename Tr_Base::Marking_edge_iterator  Marking_edge_iterator;
   typedef typename Tr_Base::Facet_iterator         Facet_iterator;
   typedef typename Tr_Base::Facet_circulator       Facet_circulator;
   typedef typename Tr_Base::Cell_iterator          Cell_iterator;
