@@ -98,8 +98,8 @@ class Static_filters : public K_base
 {
   typedef Static_filters<K_base>                    Self;
 
-  typedef Static_filters_predicates::Coplanar_3<K_base,Self>                     Coplanar_3;
 public:
+  typedef Static_filters_predicates::Coplanar_3<K_base,Self>                Coplanar_3;
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
   typedef Static_filters_predicates::Equal_2<K_base>                        Equal_2;
   typedef Static_filters_predicates::Equal_3<K_base>                        Equal_3;
