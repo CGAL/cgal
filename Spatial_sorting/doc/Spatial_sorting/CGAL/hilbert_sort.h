@@ -24,11 +24,6 @@ The default traits class `Default_traits` is the kernel in which the type
 \tparam PolicyTag The default policy is `Hilbert_sort_median_policy()` and the 
 other option is `Hilbert_sort_middle_policy()`. 
 
-\cgalHeading{Requirements}
-
-<OL> 
-
-</OL> 
 
 \cgalHeading{Implementation}
 
