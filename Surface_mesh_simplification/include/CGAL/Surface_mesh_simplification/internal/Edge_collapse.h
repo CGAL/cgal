@@ -175,18 +175,40 @@ public:
 
 private:
   template <bool Tag = internal::Oracles_require_updates<Get_cost>::value>
-  void initialize_oracles() const { };
+  struct Oracles_initializer
+  {
+    Oracles_initializer(const Self& e) : e(e) { }
+    void operator()() const { }
+    const Self& e;
+  };
+
   template <>
-  void initialize_oracles<true>() const { m_get_cost.initialize(m_tm, m_vpm, m_traits); }
+  struct Oracles_initializer<true>
+  {
+    Oracles_initializer(const Self& e) : e(e) { }
+    void operator()() const { e.m_get_cost.initialize(e.m_tm, e.m_vpm, e.m_traits); }
+    const Self& e;
+  };
 
   template <bool Tag = internal::Oracles_require_updates<Get_cost>::value>
-  void update_oracles_after_collapse(const Profile& /*profile*/, const vertex_descriptor /*v_kept*/) const { };
-  template <>
-  void update_oracles_after_collapse<true>(const Profile& profile, const vertex_descriptor v_kept) const
+  struct After_collapse_oracles_updater
   {
-    m_get_cost.update_after_collapse(profile, v_kept);
-  }
+    After_collapse_oracles_updater(const Self& e) : e(e) { }
+    void operator()(const Profile& /*profile*/, const vertex_descriptor /*v_kept*/) const { };
+    const Self& e;
+  };
 
+  template <>
+  struct After_collapse_oracles_updater<true>
+  {
+    After_collapse_oracles_updater(const Self& e) : e(e) { }
+    void operator()(const Profile& profile, const vertex_descriptor v_kept) const {
+      e.m_get_cost.update_after_collapse(profile, v_kept);
+    }
+    const Self& e;
+  };
+
+private:
   void collect();
   void loop();
 
@@ -414,7 +436,7 @@ run()
   m_visitor.OnStarted(m_tm);
 
   // this is similar to the visitor, but for the cost/stop/placement oracles
-  initialize_oracles();
+  Self::Oracles_initializer<>(*this)();
 
   // First collect all candidate edges in a PQ
   collect();
@@ -534,7 +556,7 @@ collect()
     put(m_vpm, v, *placement);
 
     m_visitor.OnCollapsed(profile, v);
-    update_oracles_after_collapse(profile, v);
+    Self::After_collapse_oracles_updater<>(*this)(profile, v);
   }
 
   CGAL_SMS_TRACE(0, "Initial edge count: " << m_initial_edge_count);
@@ -1161,7 +1183,7 @@ collapse(const Profile& profile,
   }
 
   m_visitor.OnCollapsed(profile, v_res);
-  update_oracles_after_collapse(profile, v_res);
+  Self::After_collapse_oracles_updater<>(*this)(profile, v_res);
 
   update_neighbors(v_res);
 
