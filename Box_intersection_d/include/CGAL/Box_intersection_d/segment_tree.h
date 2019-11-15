@@ -16,7 +16,6 @@
 
 #include <CGAL/license/Box_intersection_d.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
@@ -24,9 +23,6 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
 
-#ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/parallel_sort.h>
-#endif
 #include <algorithm>
 #include <iterator>
 #include <functional>
@@ -96,13 +92,9 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
 {
     typedef typename Traits::Compare Compare;
 
-#ifdef CGAL_LINKED_WITH_TBB
-    tbb::parallel_sort( p_begin, p_end, Compare( 0 ) );
-    tbb::parallel_sort( i_begin, i_end, Compare( 0 ) );
-#else
+    // Putting a parallel sort here slows down the overall parallel algorithm
     std::sort( p_begin, p_end, Compare( 0 ) );
     std::sort( i_begin, i_end, Compare( 0 ) );
-#endif
 
     // for each box viewed as interval i
     for( RandomAccessIter2 i = i_begin; i != i_end; ++i ) {
@@ -141,13 +133,8 @@ void modified_two_way_scan(
 {
     typedef typename Traits::Compare Compare;
 
-#ifdef CGAL_LINKED_WITH_TBB
-    tbb::parallel_sort( p_begin, p_end, Compare( 0 ) );
-    tbb::parallel_sort( i_begin, i_end, Compare( 0 ) );
-#else
     std::sort( p_begin, p_end, Compare( 0 ) );
     std::sort( i_begin, i_end, Compare( 0 ) );
-#endif
 
     // for each box viewed as interval
     while( i_begin != i_end && p_begin != p_end ) {

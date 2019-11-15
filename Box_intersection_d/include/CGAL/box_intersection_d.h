@@ -25,6 +25,7 @@
 #include <CGAL/Box_intersection_d/Box_traits_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
+#include "tbb/parallel_invoke.h"
 
 #include <vector>
 
@@ -178,14 +179,69 @@ void box_self_intersection_d(
     std::ptrdiff_t cutoff,
     Box_intersection_d::Topology topology)
 {
-    // Copying rather than calling 'box_intersection_d(begin, end, begin, end, ...'
-    // is necessary because the 'std::partition' and range splits on the first range
-    // would be messed up by sorts on the second range otherwise.
-    typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
-    std::vector< val_t> i( begin, end);
-    box_intersection_d( begin, end, i.begin(), i.end(),
-                        callback, box_traits, cutoff, topology,
-                        Box_intersection_d::COMPLETE);
+  // Copying rather than calling 'box_intersection_d(begin, end, begin, end, ...'
+  // is necessary because the 'std::partition' and range splits on the first range
+  // would be messed up by sorts on the second range otherwise.
+  typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+  std::vector< val_t> i( begin, end);
+#ifndef CGAL_LINKED_WITH_TBB 
+  box_intersection_d( begin, end, i.begin(), i.end(),
+                                                callback, box_traits, cutoff, topology,
+                                                Box_intersection_d::COMPLETE);
+#else
+
+  // TODO: Check which of the two following approaches is better
+  // The first one makes three copies of the vector and performs
+  // four parallel tasks
+  // The second one makes one copy and performs two times two parallel tasks
+#ifdef CGAL_BI_FOR_SPEED
+
+
+  std::vector< val_t> j( begin, end);
+  std::vector< val_t> k( begin, end);
+      
+  RandomAccessIter mid = begin;
+  std::advance(mid, std::distance(begin,end)/2);
+  typename std::vector< val_t>::iterator midi = i.begin();
+  std::advance(midi, std::distance(begin,end)/2);
+  typename std::vector< val_t>::iterator midj = j.begin();
+  std::advance(midj, std::distance(begin,end)/2);
+  typename std::vector< val_t>::iterator midk = k.begin();
+  std::advance(midk, std::distance(begin,end)/2);
+
+  tbb::parallel_invoke([&]{ box_intersection_d( begin, mid, i.begin(), midi,
+                                                callback, box_traits, cutoff, topology,
+                                                Box_intersection_d::COMPLETE); },
+                       [&]{ box_intersection_d( mid, end, midi, i.end(),
+                                                callback, box_traits, cutoff, topology,
+                                                Box_intersection_d::COMPLETE); },
+                       [&]{ box_intersection_d( j.begin(), midj, midk, k.end(),
+                                               callback, box_traits, cutoff, topology,
+                                               Box_intersection_d::COMPLETE); },
+                       [&]{ box_intersection_d( midj, j.end(), k.begin(), midk,
+                                                callback, box_traits, cutoff, topology,
+                                                Box_intersection_d::COMPLETE); } ); 
+#else  
+  RandomAccessIter mid = begin;
+  std::advance(mid, std::distance(begin,end)/2);
+  typename std::vector< val_t>::iterator midi = i.begin();
+  std::advance(midi, std::distance(begin,end)/2);
+
+  tbb::parallel_invoke([&]{ box_intersection_d( begin, mid, i.begin(), midi,
+                                                callback, box_traits, cutoff, topology,
+                                                Box_intersection_d::COMPLETE); },
+                       [&]{ box_intersection_d( mid, end, midi, i.end(),
+                                                callback, box_traits, cutoff, topology,
+                                                Box_intersection_d::COMPLETE); } );
+  tbb::parallel_invoke([&]{box_intersection_d( begin, mid, midi, i.end(),
+                                               callback, box_traits, cutoff, topology,
+                                               Box_intersection_d::COMPLETE); },
+                       [&]{ box_intersection_d( mid, end, i.begin(), midi,
+                                                callback, box_traits, cutoff, topology,
+                                                Box_intersection_d::COMPLETE); } ); 
+#endif    
+
+#endif  
 }
 
 template< class RandomAccessIter, class Callback, class BoxTraits >

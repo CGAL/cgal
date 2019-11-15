@@ -48,6 +48,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+#include <tbb/concurrent_vector.h>
 #endif
 
 #ifdef DOXYGEN_RUNNING
@@ -197,6 +198,7 @@ struct Intersect_facets
 //TODO: use the same code for the linear pass?
 // The functor for doing all geometric tests in parallel
 template <class TM,//TriangleMesh
+          class FacePairs,
           class Kernel,
           class VertexPointMap>
 struct AllPairs
@@ -211,14 +213,14 @@ struct AllPairs
 // data members
   const TM& m_tmesh;
   const VertexPointMap m_vpmap;
-  const std::vector<std::pair<face_descriptor,face_descriptor> >& face_pairs;
+  const FacePairs& face_pairs;
   std::vector<int>& dointersect;
   typename Kernel::Construct_segment_3  segment_functor;
   typename Kernel::Construct_triangle_3 triangle_functor;
   typename Kernel::Do_intersect_3       do_intersect_3_functor;
 
 
-  AllPairs(const std::vector<std::pair<face_descriptor,face_descriptor> >& face_pairs,
+  AllPairs(const FacePairs& face_pairs,
            std::vector<int>& dointersect,
            const TM& tmesh, VertexPointMap vpmap, const Kernel& kernel)
     : m_tmesh(tmesh)
@@ -345,7 +347,7 @@ struct All_faces_filter
   template <class Box>
   void operator()(const Box* b, const Box* c) const
   {
-    *m_iterator ++ = std::make_pair(b->info(), c->info());
+     *m_iterator ++ = std::make_pair(b->info(), c->info());
 
   } // end operator ()
 };
@@ -378,7 +380,7 @@ namespace Polygon_mesh_processing {
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                        Possible values are `Sequential_tag` and `Parallel_tag`.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
  *  model of `Range`.
  * Its iterator type is `RandomAccessIterator`.
@@ -453,10 +455,14 @@ self_intersections( const FaceRange& face_range,
   // (Parallel version of the code)
     // (A) Sequentially write all pairs of faces with intersecting bbox into a std::vector
     std::ptrdiff_t cutoff = 2000;
-    typedef std::vector<std::pair<face_descriptor,face_descriptor> >SeqV;
-    typedef std::back_insert_iterator<SeqV> SeqVI;
-    SeqV face_pairs;
-    CGAL::internal::All_faces_filter<SeqVI> all_faces_filter(std::back_inserter(face_pairs));
+#if 0
+    typedef std::vector<std::pair<face_descriptor,face_descriptor> >FacePairs;
+#else    
+    typedef tbb::concurrent_vector<std::pair<face_descriptor,face_descriptor> >FacePairs;
+#endif    
+    typedef std::back_insert_iterator<FacePairs> FacePairsI;
+    FacePairs face_pairs;
+    CGAL::internal::All_faces_filter<FacePairsI> all_faces_filter(std::back_inserter(face_pairs));
     CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),all_faces_filter,cutoff);
 
     // (B) Parallel: perform the geometric tests
@@ -464,7 +470,7 @@ self_intersections( const FaceRange& face_range,
 
     std::vector<int> dointersect(face_pairs.size(),0);
 
-    CGAL::internal::AllPairs<TM,GeomTraits,VertexPointMap>
+    CGAL::internal::AllPairs<TM,FacePairs,GeomTraits,VertexPointMap>
       all_pairs(face_pairs,
                 dointersect,
                 tmesh,
@@ -520,7 +526,7 @@ self_intersections(const FaceRange& face_range,
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                         Possible values are `Sequential_tag` and `Parallel_tag`.
+ *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
@@ -572,7 +578,7 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                        Possible values are `Sequential_tag` and `Parallel_tag`.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
@@ -614,6 +620,8 @@ bool does_self_intersect(const TriangleMesh& tmesh
  * This function depends on the package \ref PkgBoxIntersectionD
  * @pre `CGAL::is_triangle_mesh(tmesh)`
  *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam FaceRange a range of `face_descriptor`
  * @tparam TriangleMesh a model of `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
