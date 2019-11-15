@@ -1656,7 +1656,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
     //todo : add a test about cache validity
     if(is_triangle_mesh(*d->smesh_))
-      d->self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*(d->smesh_));
+      d->self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Parallel_if_available_tag>(*(d->smesh_));
     if (d->self_intersect)
       return QString("Yes");
     else if(is_triangle_mesh(*d->smesh_))
