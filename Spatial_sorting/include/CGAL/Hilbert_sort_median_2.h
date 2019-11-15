@@ -145,7 +145,9 @@ public:
   template <int x, bool upx, bool upy, class RandomAccessIterator>
   void sort (RandomAccessIterator begin, RandomAccessIterator end, Parallel_tag) const
   {
-#ifndef CGAL_LINKED_WITH_TBB 
+#ifndef CGAL_LINKED_WITH_TBB
+    CGAL::use(begin);
+    CGAL::use(end);
     CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else  

@@ -15,6 +15,7 @@
 #include <CGAL/config.h>
 #include <algorithm>
 #include <CGAL/algorithm.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 

@@ -170,9 +170,12 @@ public:
   template <int x, bool upx, bool upy, bool upz, class RandomAccessIterator>
   void sort (RandomAccessIterator begin, RandomAccessIterator end, Parallel_tag) const
   {
-#ifndef CGAL_LINKED_WITH_TBB 
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
+#ifndef CGAL_LINKED_WITH_TBB
+    
+    CGAL::use(begin);
+    CGAL::use(end);
+    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                               "Parallel_tag is enabled but TBB is unavailable.");
 #else  
     const int y = (x + 1) % 3, z = (x + 2) % 3;
     if ((end - begin) <= _limit) return;
