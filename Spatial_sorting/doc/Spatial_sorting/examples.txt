@@ -1,5 +1,5 @@
 /*!
-\example Spatial_sorting/parallel.cpp
+\example Spatial_sorting/parallel_spatial_sort_2.cpp
 \example Spatial_sorting/hilbert.cpp
 \example Spatial_sorting/hilbert_policies.cpp
 \example Spatial_sorting/small_example_delaunay_2.cpp

@@ -24,11 +24,13 @@ int main()
   for (int i = 0; i < 2000; ++i){
     points.push_back (*gen++);
   }
-#ifdef CGAL_LINKED_WITH_TBB
-  CGAL::spatial_sort<CGAL::Parallel_tag>(points.begin(),points.end());
-#else
+
+  // By default sequential
   CGAL::spatial_sort(points.begin(),points.end());
-#endif
+
+  // Add the template argument to switch on parallelism
+  // You will get a compile time warning in case TBB is not enabled
+  CGAL::spatial_sort<CGAL::Parallel_tag>(points.begin(),points.end());
 
   return 0;
 }

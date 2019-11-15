@@ -213,6 +213,12 @@ using the indices of the points in a vector of pairs of points and integers.
 The Hilbert sort and spatial sort functions when using the median policy and with TBB
 enabled, are parallized and use up to four/eight threads for 2D/3D. 
 
+By default the sequential version is used. The parallel version is used
+by adding the template parameter `CGAL::Parallel_tag`.
+
+\cgalExample{Spatial_sorting/parallel_spatial_sort_2.cpp}
+
+
 \section Spatial_sortingDesign Design and Implementation History
 
 The first implementation of Hilbert and spatial sorting (2D and 3D) in CGAL was done by Cristophe Delage. Then, Olivier Devillers improved its design,
