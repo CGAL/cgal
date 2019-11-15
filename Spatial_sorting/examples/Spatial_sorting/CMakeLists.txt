@@ -18,7 +18,7 @@ if ( CGAL_FOUND )
   find_package( TBB QUIET )
   if( TBB_FOUND )
     include( CGAL_target_use_TBB )
-    CGAL_target_use_TBB( parallel )
+    CGAL_target_use_TBB( parallel_spatial_sort_2 )
  endif()   
 else()
   
