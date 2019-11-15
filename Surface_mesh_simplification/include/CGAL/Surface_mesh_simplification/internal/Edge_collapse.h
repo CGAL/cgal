@@ -271,7 +271,7 @@ private:
   {
     vertex_descriptor p, q;
     boost::tie(p,q) = get_vertices(h);
-    return boost::str(boost::format("{E%1% %2%->%3%}%4%") % get_edge_id(h) % vertex_to_string(p) % vertex_to_string(q) % (is_border(h) ? " (BORDER)" : (is_border(opposite(h, m_tm)) ? " (~BORDER)": "")));
+    return boost::str(boost::format("{E%1% %2%->%3%}%4%") % get_edge_id(h) % vertex_to_string(p) % vertex_to_string(q) % (is_border(h, m_tm) ? " (BORDER)" : (is_border(opposite(h, m_tm), m_tm) ? " (~BORDER)": "")));
   }
 
   Cost_type get_cost(const Profile& profile) const {
@@ -631,12 +631,12 @@ loop()
 
         m_visitor.OnNonCollapsable(profile);
 
-        CGAL_SMS_TRACE(1, edge_to_string(*h) << " NOT Collapsable" );
+        CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " NOT Collapsable" );
       }
     }
     else
     {
-      CGAL_SMS_TRACE(1, edge_to_string(*h) << " uncomputable cost." );
+      CGAL_SMS_TRACE(1, edge_to_string(*opt_h) << " uncomputable cost." );
     }
   }
 }
@@ -1048,7 +1048,7 @@ is_collapse_geometrically_valid(const Profile& profile, Placement_type k0)
         // There is indeed a triangle shared along e12
         if(handle_assigned(k4))
         {
-          CGAL_SMS_TRACE(4, "    Found exterior link triangle shared along E" << get(Edge_index_map, e12)
+          CGAL_SMS_TRACE(4, "    Found exterior link triangle shared along E" << get_edge_id(e12)
                               << " with third vertex: V" << get(m_vim, k4));
 
           if(!are_shared_triangles_valid(get_point(k1), get_point(k4), get_point(k2), *k0))
