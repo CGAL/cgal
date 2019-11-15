@@ -8,9 +8,9 @@ along a Hilbert curve.
 
 It sorts the range `[begin, end)` in place. 
 
-
-\tparam ConcurrencyTag With `ConcurrencyTag = Parallel_tag` and with TBB found, the sorting will be 
-done in 4 threads in 2D, and in 8 threads in 3D with the default policy.
+\tparam ConcurrencyTag must be `Sequential_tag` or `Parallel_tag`. 
+With `Parallel_tag` and TBB enabled, the sorting will be 
+done using up to four threads in 2D, and up to eight threads in 3D with the median policy.
 
 \tparam RandomAccessIterator 
 `std::iterator_traits<RandomAccessIterator>::%value_type` must be convertible to 
