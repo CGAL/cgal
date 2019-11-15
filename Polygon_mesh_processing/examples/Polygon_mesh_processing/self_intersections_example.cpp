@@ -2,7 +2,6 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <CGAL/Real_timer.h>
 
 #include <fstream>
 
@@ -24,20 +23,16 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  CGAL::Real_timer rt;
-  rt.start();
-  /*
-  bool intersecting = PMP::does_self_intersect<CGAL::Parallel_tag>(mesh,
+  bool intersecting = PMP::does_self_intersect<CGAL::Parallel_if_available_tag>(mesh,
       PMP::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)));
 
   std::cout
     << (intersecting ? "There are self-intersections." : "There is no self-intersection.")
     << std::endl;
-  */
+ 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  PMP::self_intersections<CGAL::Parallel_tag>(faces(mesh),mesh, std::back_inserter(intersected_tris));
+  PMP::self_intersections<CGAL::Parallel_if_available_tag>(faces(mesh),mesh, std::back_inserter(intersected_tris));
 
-  std::cout << rt.time() << " sec." << std::endl;
   std::cout << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
  
   return 0;

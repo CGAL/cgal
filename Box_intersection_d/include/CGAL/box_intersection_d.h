@@ -25,7 +25,9 @@
 #include <CGAL/Box_intersection_d/Box_traits_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
-#include "tbb/parallel_invoke.h"
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_invoke.h>
+#endif
 
 #include <vector>
 
@@ -177,26 +179,46 @@ void box_self_intersection_d(
     Callback callback,
     BoxTraits box_traits,
     std::ptrdiff_t cutoff,
-    Box_intersection_d::Topology topology)
+    Box_intersection_d::Topology topology,
+    Sequential_tag)
 {
   // Copying rather than calling 'box_intersection_d(begin, end, begin, end, ...'
   // is necessary because the 'std::partition' and range splits on the first range
   // would be messed up by sorts on the second range otherwise.
   typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
   std::vector< val_t> i( begin, end);
-#ifndef CGAL_LINKED_WITH_TBB 
+
   box_intersection_d( begin, end, i.begin(), i.end(),
-                                                callback, box_traits, cutoff, topology,
-                                                Box_intersection_d::COMPLETE);
+                      callback, box_traits, cutoff, topology,
+                      Box_intersection_d::COMPLETE);
+}
+
+
+template< class RandomAccessIter, class Callback, class BoxTraits >
+void box_self_intersection_d(
+    RandomAccessIter begin, RandomAccessIter end,
+    Callback callback,
+    BoxTraits box_traits,
+    std::ptrdiff_t cutoff,
+    Box_intersection_d::Topology topology,
+    Parallel_tag)
+{
+#if !defined(CGAL_LINKED_WITH_TBB)
+  use(begin); use(end); use(callback); use(box_traits); use(cutoff); use(topology);
+  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
 #else
+  // Copying rather than calling 'box_intersection_d(begin, end, begin, end, ...'
+  // is necessary because the 'std::partition' and range splits on the first range
+  // would be messed up by sorts on the second range otherwise.
+  typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
+  std::vector< val_t> i( begin, end);
 
   // TODO: Check which of the two following approaches is better
   // The first one makes three copies of the vector and performs
   // four parallel tasks
   // The second one makes one copy and performs two times two parallel tasks
 #ifdef CGAL_BI_FOR_SPEED
-
-
   std::vector< val_t> j( begin, end);
   std::vector< val_t> k( begin, end);
       
@@ -221,7 +243,7 @@ void box_self_intersection_d(
                        [&]{ box_intersection_d( midj, j.end(), k.begin(), midk,
                                                 callback, box_traits, cutoff, topology,
                                                 Box_intersection_d::COMPLETE); } ); 
-#else  
+#else
   RandomAccessIter mid = begin;
   std::advance(mid, std::distance(begin,end)/2);
   typename std::vector< val_t>::iterator midi = i.begin();
@@ -239,44 +261,58 @@ void box_self_intersection_d(
                        [&]{ box_intersection_d( mid, end, i.begin(), midi,
                                                 callback, box_traits, cutoff, topology,
                                                 Box_intersection_d::COMPLETE); } ); 
-#endif    
+#endif
 
-#endif  
+#endif
+}
+  
+// Generic call with box traits parameter, specialized for self-intersection.
+// - make all default parameters explicit overloads (workaround)
+template< class ConcurrencyTag = Sequential_tag, class RandomAccessIter, class Callback, class BoxTraits >
+void box_self_intersection_d(
+    RandomAccessIter begin, RandomAccessIter end,
+    Callback callback,
+    BoxTraits box_traits,
+    std::ptrdiff_t cutoff,
+    Box_intersection_d::Topology topology)
+{
+  box_self_intersection_d(begin,end, callback, box_traits, cutoff, topology, ConcurrencyTag());
 }
 
-template< class RandomAccessIter, class Callback, class BoxTraits >
+  
+template< class ConcurrencyTag = Sequential_tag, class RandomAccessIter, class Callback, class BoxTraits >
 void box_self_intersection_d(
     RandomAccessIter begin, RandomAccessIter end,
     Callback callback,
     BoxTraits box_traits,
     std::ptrdiff_t cutoff)
 {
-    return box_self_intersection_d(begin, end, callback, box_traits, cutoff,
+    return box_self_intersection_d<ConcurrencyTag>(begin, end, callback, box_traits, cutoff,
                                    Box_intersection_d::CLOSED);
 }
 
-template< class RandomAccessIter, class Callback, class BoxTraits >
+template< class ConcurrencyTag = Sequential_tag, class RandomAccessIter, class Callback, class BoxTraits >
 void box_self_intersection_d(
     RandomAccessIter begin, RandomAccessIter end,
     Callback callback,
     BoxTraits box_traits)
 {
-    return box_self_intersection_d(begin, end, callback, box_traits, 10);
+  return box_self_intersection_d<ConcurrencyTag>(begin, end, callback, box_traits, 10);
 }
 
 // Specialized call with default box traits, specialized for self-intersection.
 // - make all default parameters explicit overloads (workaround)
-template< class RandomAccessIter, class Callback >
+template< class ConcurrencyTag = Sequential_tag, class RandomAccessIter, class Callback >
 void box_self_intersection_d(
     RandomAccessIter begin, RandomAccessIter end,
     Callback callback)
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_self_intersection_d(begin, end, callback, Box_traits());
+    box_self_intersection_d<ConcurrencyTag>(begin, end, callback, Box_traits());
 }
 
-template< class RandomAccessIter, class Callback >
+template< class ConcurrencyTag = Sequential_tag, class RandomAccessIter, class Callback >
 void box_self_intersection_d(
     RandomAccessIter begin, RandomAccessIter end,
     Callback callback,
@@ -284,10 +320,10 @@ void box_self_intersection_d(
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_self_intersection_d(begin, end, callback, Box_traits(), cutoff);
+    box_self_intersection_d<ConcurrencyTag>(begin, end, callback, Box_traits(), cutoff);
 }
 
-template< class RandomAccessIter, class Callback >
+  template< class ConcurrencyTag = Sequential_tag, class RandomAccessIter, class Callback >
 void box_self_intersection_d(
     RandomAccessIter begin, RandomAccessIter end,
     Callback callback,
@@ -296,7 +332,7 @@ void box_self_intersection_d(
 {
     typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_self_intersection_d(begin, end, callback,
+    box_self_intersection_d<ConcurrencyTag>(begin, end, callback,
                             Box_traits(), cutoff, topology );
 }
 

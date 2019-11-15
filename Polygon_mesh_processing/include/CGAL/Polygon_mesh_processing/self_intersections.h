@@ -450,20 +450,19 @@ self_intersections( const FaceRange& face_range,
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
+
   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
   {
-  // (Parallel version of the code)
+    // (Parallel version of the code)
     // (A) Sequentially write all pairs of faces with intersecting bbox into a std::vector
     std::ptrdiff_t cutoff = 2000;
-#if 0
-    typedef std::vector<std::pair<face_descriptor,face_descriptor> >FacePairs;
-#else    
+   
     typedef tbb::concurrent_vector<std::pair<face_descriptor,face_descriptor> >FacePairs;
-#endif    
+
     typedef std::back_insert_iterator<FacePairs> FacePairsI;
     FacePairs face_pairs;
     CGAL::internal::All_faces_filter<FacePairsI> all_faces_filter(std::back_inserter(face_pairs));
-    CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),all_faces_filter,cutoff);
+    CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(),all_faces_filter,cutoff);
 
     // (B) Parallel: perform the geometric tests
     typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
@@ -557,7 +556,7 @@ self_intersections(const TriangleMesh& tmesh,
                           OutputIterator out,
                    const CGAL_PMP_NP_CLASS& np)
 {
-  return self_intersections(faces(tmesh), tmesh, out, np);
+  return self_intersections<ConcurrencyTag>(faces(tmesh), tmesh, out, np);
 }
 
 /// \cond SKIP_IN_MANUAL
