@@ -666,7 +666,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *                         the return type of `compute_vertex_normal()` as value type.
 *
 * @param pmesh the polygon mesh
-* @param vnm the property map in which the normals are written
+* @param vertex_normals the property map in which the normals are written
 * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
