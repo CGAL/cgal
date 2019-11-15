@@ -60,7 +60,7 @@ public:
              const vertex_descriptor v2_)
       : v0(v0_), v1(v1_), v2(v2_)
     {
-      CGAL_assertion(handle_assigned(v0) && handle_assigned(v1) && handle_assigned(v2));
+      CGAL_expensive_assertion(handle_assigned(v0) && handle_assigned(v1) && handle_assigned(v2));
       CGAL_assertion(v0 != v1 && v1 != v2 && v2 != v0);
     }
 

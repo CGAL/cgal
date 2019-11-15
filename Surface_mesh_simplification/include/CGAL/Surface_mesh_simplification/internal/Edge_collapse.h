@@ -285,19 +285,19 @@ private:
   void insert_in_PQ(const halfedge_descriptor h, Edge_data& data)
   {
     CGAL_assertion(is_primary_edge(h));
-    CGAL_assertion(!data.is_in_PQ());
+    CGAL_expensive_assertion(!data.is_in_PQ());
     CGAL_expensive_assertion(!mPQ->contains(h));
 
     data.set_PQ_handle(mPQ->push(h));
 
-    CGAL_assertion(data.is_in_PQ());
+    CGAL_expensive_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
   }
 
   void update_in_PQ(const halfedge_descriptor h, Edge_data& data)
   {
     CGAL_assertion(is_primary_edge(h));
-    CGAL_assertion(data.is_in_PQ());
+    CGAL_expensive_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
 
     data.set_PQ_handle(mPQ->update(h, data.queue_handle()));
@@ -309,12 +309,12 @@ private:
   void remove_from_PQ(const halfedge_descriptor h, Edge_data& data)
   {
     CGAL_assertion(is_primary_edge(h));
-    CGAL_assertion(data.is_in_PQ());
+    CGAL_expensive_assertion(data.is_in_PQ());
     CGAL_expensive_assertion(mPQ->contains(h));
 
     data.set_PQ_handle(mPQ->erase(h, data.queue_handle()));
 
-    CGAL_assertion(!data.is_in_PQ());
+    CGAL_expensive_assertion(!data.is_in_PQ());
     CGAL_expensive_assertion(!mPQ->contains(h));
   }
 
@@ -324,11 +324,11 @@ private:
     if(opt_h)
     {
       CGAL_assertion(is_primary_edge(*opt_h));
-      CGAL_assertion(get_data(*opt_h).is_in_PQ());
+      CGAL_expensive_assertion(get_data(*opt_h).is_in_PQ());
 
       get_data(*opt_h).reset_queue_handle();
 
-      CGAL_assertion(!get_data(*opt_h).is_in_PQ());
+      CGAL_expensive_assertion(!get_data(*opt_h).is_in_PQ());
       CGAL_expensive_assertion(!mPQ->contains(*opt_h));
     }
     return opt_h;
