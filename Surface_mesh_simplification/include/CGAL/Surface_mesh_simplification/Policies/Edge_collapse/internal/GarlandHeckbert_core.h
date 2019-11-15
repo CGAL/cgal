@@ -229,7 +229,7 @@ struct GarlandHeckbert_core
         disc_mtr_r << disc_den * disc_plane_n.x(),
                       disc_den * disc_plane_n.y(),
                       disc_den * disc_plane_n.z(),
-                      disc_den * d;
+                      disc_den * disc_d;
 
         const Matrix4x4 disc_mtr = discontinuity_multiplier * disc_mtr_r.transpose() * disc_mtr_r;
 
