@@ -27,7 +27,7 @@ void test(const Mesh& mesh,
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor           vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_descriptor             face_descriptor;
 
-  typedef typename PMP::GetVertexPointMap<Mesh>::const_type               VPMap;
+  typedef typename CGAL::GetVertexPointMap<Mesh>::const_type              VPMap;
   VPMap vpmap = get_const_property_map(CGAL::vertex_point, mesh);
 
   const vertex_descriptor first_vertex = *(vertices(mesh).begin());
