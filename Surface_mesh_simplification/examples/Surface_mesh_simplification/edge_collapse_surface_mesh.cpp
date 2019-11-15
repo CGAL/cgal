@@ -35,7 +35,8 @@ int main(int argc, char** argv)
 
   // In this example, the simplification stops when the number of undirected edges
   // drops below 10% of the initial count
-  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.05);
+  double stop_ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
+  SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
 
   int r = SMS::edge_collapse(surface_mesh, stop);
 
@@ -44,7 +45,7 @@ int main(int argc, char** argv)
   std::cout << "\nFinished!\n" << r << " edges removed.\n" << surface_mesh.number_of_edges() << " final edges.\n";
   std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << "ms" << std::endl;
 
-  std::ofstream os(argc > 2 ? argv[2] : "out.off");
+  std::ofstream os(argc > 3 ? argv[3] : "out.off");
   os.precision(17);
   os << surface_mesh;
 
