@@ -463,7 +463,7 @@ collect()
   // loop over all the _undirected_ edges in the surface putting them in the PQ
 
   const size_type ne = num_edges(m_tm); // if the mesh has garbage, you might have "ne > edges(tm).size()"
-  m_initial_edge_count = m_current_edge_count = edges(m_tm).size();
+  m_initial_edge_count = m_current_edge_count = size_type(edges(m_tm).size());
 
   m_edge_data.reset(new Edge_data[ne]);
   mPQ.reset(new PQ(ne, Compare_cost(this), edge_id(this)));
@@ -1102,8 +1102,8 @@ collapse(const Profile& profile,
   --m_current_edge_count;
 
   CGAL_assertion_code(
-    size_type resulting_vertex_count = vertices(m_tm).size();
-    size_type result_edge_count = edges(m_tm).size();
+    size_type resulting_vertex_count = size_type(vertices(m_tm).size());
+    size_type result_edge_count = size_type(edges(m_tm).size());
   );
 
   // If the top/bottom facets exists, they are removed and the edges v0vt and Q-B along with them.
