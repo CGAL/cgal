@@ -75,7 +75,7 @@ public:
   // Associate each dart of the original map, not removed, a pair of darts in the
   // reduced map.
   typedef boost::unordered_map<typename Map::Dart_const_handle,
-                               std::pair<Dart_const_handle, Dart_const_handle> > TPaths;
+                               std::pair<Dart_handle, Dart_handle> > TPaths;
 
 #ifdef CGAL_PWRLE_TURN_V2
   typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
@@ -120,7 +120,6 @@ public:
     // reprensenting a hole)
     m_mark_T=m_original_map.get_new_mark();
     m_mark_L=m_original_map.get_new_mark();
-    m_mark_contracted=m_original_map.get_new_mark();
     m_mark_hole=get_map().get_new_mark();
 
     /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
@@ -184,7 +183,7 @@ public:
       t2.reset(); t2.start();
     }
 
-    // #ifdef CGAL_TRACE_CMAP_TOOLS
+#ifdef CGAL_TRACE_CMAP_TOOLS
     std::cout<<"All faces merges: ";
     get_map().display_characteristics(std::cout) << ", valid=" 
                                              << get_map().is_valid() << std::endl;
@@ -193,7 +192,7 @@ public:
             <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
             <<"; number of darts in copy_to_origin: "<<copy_to_origin.size()
             <<std::endl; */
-    // #endif
+#endif
 
     if (!get_map().is_empty()) // m_map is_empty if the surface is a sphere
     {
@@ -202,17 +201,18 @@ public:
       {
         surface_quadrangulate();
 
-        std::cout<<"All faces quadrangulate: ";
+        /* std::cout<<"All faces quadrangulate: ";
         get_map().display_characteristics(std::cout) << ", valid=" 
                                                      << get_map().is_valid() << std::endl;
-        get_map().display_darts(std::cout);
+        get_map().display_darts(std::cout); */
         
-        remove_spurs_from_quadrangulation();
+        // TODO READD remove spurs in case of perforated faces
+        // remove_spurs_from_quadrangulation();
 
-        std::cout<<"remove spurs: ";
+        /* std::cout<<"remove spurs: ";
         get_map().display_characteristics(std::cout) << ", valid=" 
                                                      << get_map().is_valid() << std::endl;
-        get_map().display_darts(std::cout);
+        get_map().display_darts(std::cout); */
 
         if (display_time)
         {
@@ -282,7 +282,6 @@ public:
   {
     m_original_map.free_mark(m_mark_T);
     m_original_map.free_mark(m_mark_L);
-    m_original_map.free_mark(m_mark_contracted);
     get_map().free_mark(m_mark_hole);
   }
 
@@ -537,9 +536,7 @@ protected:
   /// @returns true iff the dart dh is contracted, i.e. if it belongs to T
   /// or if it was contracted during the spur removal after the quadrangulation
   bool is_contracted(typename Map::Dart_const_handle dh) const
-  { return m_original_map.is_marked(dh, m_mark_T) ||
-           m_original_map.is_marked(dh, m_mark_contracted); }
-
+  { return m_original_map.is_marked(dh, m_mark_T); }
 
   void count_edges_of_path_on_torus
   (const Path_on_surface<CMap_for_minimal_quadrangulation>& path,
@@ -614,8 +611,8 @@ protected:
     {
       if (!is_contracted(path[i]))
       {
-        res.push_back(get_first_dart_of_the_path(path[i], path.get_ith_flip(i)), false);
-        res.push_back(get_second_dart_of_the_path(path[i], path.get_ith_flip(i)), false);
+        res.push_back(get_first_dart_of_the_path(path[i], path.get_ith_flip(i)), true);
+        res.push_back(get_second_dart_of_the_path(path[i], path.get_ith_flip(i)), true);
       }
     }
     res.update_is_closed();
@@ -634,9 +631,10 @@ protected:
     { amap.mark(amap.template beta<2>(adart), amark); }
   }
 
-  /// Erase the edge given by adart (which belongs to the map m_map) from the
-  /// associative array copy_to_origin, and erase the corresponding edge
-  /// (which belongs to the map m_original_map) from the array origin_to_copy
+  /// Erase the edge given by adart (which belongs to the map m_map, i.e. the
+  /// copy) from the associative array copy_to_origin, and erase the
+  /// corresponding edge (which belongs to the map m_original_map) from the
+  /// array origin_to_copy
   void erase_edge_from_associative_arrays
   (Dart_handle adart,
    boost::unordered_map<typename Map::Dart_const_handle, Dart_handle>&
@@ -644,11 +642,14 @@ protected:
    boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>&
    copy_to_origin)
   {
-    origin_to_copy.erase(m_original_map.template beta<2>
-                         (copy_to_origin[adart]));
-    origin_to_copy.erase(copy_to_origin[adart]);
+    if (!m_original_map.template is_free<2>(copy_to_origin[adart]))
+    {
+      origin_to_copy.erase(m_original_map.template beta<2>
+                           (copy_to_origin[adart]));
+      copy_to_origin.erase(get_map().template beta<2>(adart));
+    }
 
-    copy_to_origin.erase(get_map().template beta<2>(adart));
+    origin_to_copy.erase(copy_to_origin[adart]);
     copy_to_origin.erase(adart);
   }
 
@@ -681,10 +682,12 @@ protected:
              itend=m_original_map.template darts_of_cell<0>(dh).end();
                it!=itend; ++it)
       {
-        if (!m_original_map.is_marked(m_original_map.template beta<1>(it), grey))
+        if (!m_original_map.is_marked(m_original_map.template beta<1>(it),
+                                      grey))
         {
           mark_edge(m_original_map, it, m_mark_T);
-          m_original_map.template mark_cell<0>(m_original_map.template beta<1>(it), grey);
+          m_original_map.template mark_cell<0>
+              (m_original_map.template beta<1>(it), grey);
           queue.push(m_original_map.template beta<1>(it));
         }
       }
@@ -717,7 +720,8 @@ protected:
           copy_to_origin[d1]=it;
           get_map().mark(d2, m_mark_hole);
         }
-        else if (typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it))
+        else if (typename Map::Dart_const_handle(it)<
+                 m_original_map.template beta<2>(it))
         {
           d1=get_map().create_dart();
           d2=get_map().create_dart();
@@ -783,7 +787,8 @@ protected:
               (origin_to_copy.at(it),
                get_map().template beta<2>(origin_to_copy.at(it)));
           CGAL_assertion(m_paths[it].first!=m_paths[it].second);
-          CGAL_assertion(m_paths[it].first==get_map().template beta<2>(m_paths[it].second));
+          CGAL_assertion(m_paths[it].first==
+                         get_map().template beta<2>(m_paths[it].second));
         }
       }
     }
@@ -801,15 +806,16 @@ protected:
 
   /// Marks all darts belonging to L using a BFS
   void compute_L(typename CMap_for_minimal_quadrangulation::size_type toremove,
-                 boost::unordered_map<Dart_handle, typename Map::Dart_const_handle>&
-                 copy_to_origin)
+                 boost::unordered_map<Dart_handle,
+                 typename Map::Dart_const_handle>& copy_to_origin)
   {
     Dart_handle dh;
     Dart_handle ddh;
     auto grey=get_map().get_new_mark();
     std::queue<Dart_handle> queue;
 
-    for (auto it=get_map().darts().begin(), itend=get_map().darts().end(); it!=itend; ++it)
+    for (auto it=get_map().darts().begin(), itend=get_map().darts().end();
+         it!=itend; ++it)
     {
       if (!get_map().is_marked(it, grey) && !get_map().is_marked(it, m_mark_hole))
       {
@@ -829,7 +835,8 @@ protected:
               get_map().mark(ddh, toremove);
               get_map().mark(get_map().template beta<2>(ddh), toremove);
               mark_edge(m_original_map, copy_to_origin[ddh], m_mark_L);
-              get_map().template mark_cell<2>(get_map().template beta<2>(ddh), grey);
+              get_map().template mark_cell<2>(get_map().template beta<2>(ddh),
+                                              grey);
               queue.push(get_map().template beta<2>(ddh));
             }
             ddh=get_map().template beta<1>(ddh);
@@ -849,8 +856,59 @@ protected:
    copy_to_origin)
   {
     get_map().set_automatic_attributes_management(false);
-    typename CMap_for_minimal_quadrangulation::size_type toremove=get_map().get_new_mark();
+    typename CMap_for_minimal_quadrangulation::size_type
+        toremove=get_map().get_new_mark();
     compute_L(toremove, copy_to_origin);
+
+    // And now we remove loops (special case of an hole)
+    // * BUG !!
+    /* typename Map::Dart_const_handle origin_dart;
+    Dart_handle it2;
+    bool modified=false;
+    do
+    {
+    modified=false;
+    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+           it=get_map().darts().begin(), itend=get_map().darts().end();
+         it!=itend; ++it)
+    {
+      if (get_map().is_dart_used(it) &&
+          !get_map().is_marked(it, toremove) &&
+          !get_map().is_marked(it, m_mark_hole))
+      {
+        it2=get_map().template beta<1>(it);
+        while(get_map().is_marked(it2, toremove))
+        { it2=get_map().template beta<2,1>(it2); }
+
+        if (it2==it)
+        {
+          CGAL_assertion(!get_map().is_marked(it, m_mark_hole));
+          CGAL_assertion(get_map().is_marked
+                         (get_map().template beta<2>(it), m_mark_hole));
+          get_map().template mark_cell<2>(it, m_mark_hole);
+
+          origin_dart=copy_to_origin[it];
+          if (!m_original_map.template is_free<2>(origin_dart) &&
+              origin_dart>m_original_map.template beta<2>(origin_dart))
+          { origin_dart=m_original_map.template beta<2>(origin_dart); }
+
+          mark_edge(m_original_map, origin_dart, m_mark_T);
+          CGAL_assertion(m_paths.find(origin_dart)!=m_paths.end());
+          std::size_t nberase=m_paths.erase(origin_dart);
+
+          CGAL_assertion(nberase==1);
+          CGAL_assertion(m_paths.find(origin_dart)==m_paths.end());
+          if (!m_original_map.template is_free<2>(origin_dart))
+          { CGAL_assertion(m_paths.find(m_original_map.template beta<2>(origin_dart))==m_paths.end()); }
+
+          erase_edge_from_associative_arrays(it, origin_to_copy, copy_to_origin);
+          get_map().template remove_cell<1>(it);
+          modified=true;
+        }
+      }
+    } // * /
+    }
+    while(modified); */
 
     if (get_map().number_of_marked_darts(toremove)==get_map().number_of_darts())
     { // Case of sphere; all darts are removed.
@@ -859,7 +917,9 @@ protected:
     }
     else
     {
+      // TPaths m_paths_copy=m_paths;
       update_length_two_paths_before_edge_removals(toremove, copy_to_origin);
+      // update_length_two_paths_before_edge_removals_OLD(m_paths_copy, toremove, copy_to_origin);
 
       // We remove all the edges to remove.
       for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
@@ -876,8 +936,65 @@ protected:
       }
     }
 
+    /*Dart_handle it2, ittoremove;
+    typename Map::Dart_const_handle origin_dart;
+    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+           it=get_map().darts().begin(), itend=get_map().darts().end();
+         it!=itend; ++it)
+    {
+      it2=it;
+      while (get_map().is_dart_used(it2) &&
+             !get_map().is_marked(it2, m_mark_hole) &&
+             get_map().template beta<1>(it2)==it2)
+      {
+        ittoremove=it2;
+        it2=get_map().template beta<2,1>(it2);
+
+        CGAL_assertion(!get_map().is_marked(ittoremove, m_mark_hole));
+        CGAL_assertion(get_map().is_marked
+                       (get_map().template beta<2>(ittoremove), m_mark_hole));
+        get_map().template mark_cell<2>(ittoremove, m_mark_hole);
+
+        origin_dart=copy_to_origin[ittoremove];
+        if (!m_original_map.template is_free<2>(origin_dart) &&
+            origin_dart>m_original_map.template beta<2>(origin_dart))
+        { origin_dart=m_original_map.template beta<2>(origin_dart); }
+
+
+
+        CGAL_assertion(m_paths.find(origin_dart)!=m_paths.end());
+        m_paths.erase(origin_dart);
+        CGAL_assertion(m_paths.find(origin_dart)==m_paths.end());
+        if (!m_original_map.template is_free<2>(origin_dart))
+        { CGAL_assertion(m_paths.find(m_original_map.template beta<2>(origin_dart))==m_paths.end()); }
+
+        erase_edge_from_associative_arrays(ittoremove, origin_to_copy, copy_to_origin);
+        // get_map().template remove_cell<1>(ittoremove);
+        get_map().mark(ittoremove, toremove);
+        get_map().mark(get_map().template beta<2>(ittoremove), toremove);
+
+        update_length_two_paths_before_removal_of_loops(toremove);
+        get_map().template remove_cell<1>(ittoremove);
+      }
+    }*/
+
     get_map().set_automatic_attributes_management(true);
     get_map().free_mark(toremove);
+
+    /*for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+           it=get_map().darts().begin(), itend=get_map().darts().end();
+         it!=itend; ++it)
+    {
+      CGAL_assertion(get_map().is_marked(it, m_mark_hole) ||
+                     get_map().template beta<1>(it)!=it);
+    }*/
+
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      CGAL_assertion(!m_original_map.is_marked(it->first, m_mark_T));
+      CGAL_assertion(get_map().is_dart_used(it->second.first));
+      CGAL_assertion(get_map().is_dart_used(it->second.second));
+    }
   }
 
   /// Step 4) quadrangulate the surface.
@@ -911,7 +1028,7 @@ protected:
     for (typename TPaths::iterator itp=m_paths.begin(), itpend=m_paths.end();
          itp!=itpend; ++itp)
     {
-      std::pair<Dart_const_handle, Dart_const_handle>& p=itp->second;
+      std::pair<Dart_handle, Dart_handle>& p=itp->second;
       //std::cout<<"Pair: "<<get_map().darts().index(p.first)<<", "
       //         <<get_map().darts().index(p.second)<<std::flush;
       p.first=get_map().template beta<0, 2>(p.first);
@@ -981,6 +1098,30 @@ protected:
       }
     }
     //mark the edges of the original map that are sent to a spur in the quadrangulation
+    for (typename TPaths::iterator it=m_paths.begin(), itend=m_paths.end(); it!=itend; )
+    {
+      if (get_map().is_dart_used(it->second.first) &&
+          get_map().is_marked(it->second.first, toremove))
+      {
+        CGAL_assertion(get_map().is_marked(it->second.second, toremove));
+        CGAL_assertion(get_map().template beta<1>(it->second.first)==it->second.second);
+        CGAL_assertion(get_map().template beta<2>(it->second.first)==it->second.second);
+
+        mark_edge(m_original_map, it->first, m_mark_T);
+        get_map().template remove_cell<1>((it->second.first));
+        m_paths.erase(it++);
+
+        // The following is not necessary since associate arrays will not be used after this step
+        // erase_edge_from_associative_arrays(ittoremove, origin_to_copy, copy_to_origin);
+      }
+      else
+      {
+        CGAL_assertion(!get_map().is_marked(it->second.second, toremove));
+        ++it;
+      }
+    }
+
+  /*  //mark the edges of the original map that are sent to a spur in the quadrangulation
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       if (get_map().is_marked(it->second.first, toremove) || 
@@ -990,7 +1131,7 @@ protected:
                        get_map().is_marked(it->second.second, toremove));
         CGAL_assertion(get_map().template beta<1>(it->second.first)==it->second.second);
         CGAL_assertion(get_map().template beta<2>(it->second.first)==it->second.second);
-        mark_edge(m_original_map, it->first, m_mark_contracted);
+        mark_edge(m_original_map, it->first, m_mark_T);
       }
     }
     //erase those spurs from m_paths
@@ -1015,6 +1156,14 @@ protected:
       }
     }
     get_map().free_mark(toremove);
+*/
+
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      CGAL_assertion(!m_original_map.is_marked(it->first, m_mark_T));
+      CGAL_assertion(get_map().is_dart_used(it->second.first));
+      CGAL_assertion(get_map().is_dart_used(it->second.second));
+    }
   }
 
   /// Update all length two paths, before edge removal. Edges that will be
@@ -1025,68 +1174,62 @@ protected:
    typename Map::Dart_const_handle>& copy_to_origin)
   {
     // std::cout<<"************************************************"<<std::endl;
-    for (auto it=m_original_map.darts().begin();
-         it!=m_original_map.darts().end(); ++it)
+    Dart_handle initdart, curdart;
+    typename Map::Dart_const_handle d1, d2;
+    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+         it=get_map().darts().begin(); it!=get_map().darts().end();
+         ++it)
     {
-      if (!m_original_map.is_marked(it, m_mark_T) &&
-          !m_original_map.is_marked(it, m_mark_L) &&
-          (m_original_map.template is_free<2>(it) ||
-          typename Map::Dart_const_handle(it)<m_original_map.template beta<2>(it)))
-      { // Surviving dart => belongs to the border of the face
-        std::pair<Dart_const_handle, Dart_const_handle>& p=m_paths[it];
-
-        Dart_handle initdart=get_map().darts().iterator_to
-          (const_cast<typename CMap_for_minimal_quadrangulation::Dart &>
-           (*(p.first)));
-        Dart_handle initdart2=get_map().template beta<2>(initdart);
-        CGAL_assertion(initdart2==p.second);
-        CGAL_assertion(!get_map().is_marked(initdart, toremove));
-        CGAL_assertion(!get_map().is_marked(initdart2, toremove));
-
-        // 1) We update the dart associated with p.second
-        p.second=get_map().template beta<1>(initdart);
-        while (get_map().is_marked(p.second, toremove))
-        { p.second=get_map().template beta<2, 1>(p.second); }
-
-        // 2) We do the same loop, linking all the inner darts with p.second
-        initdart=get_map().template beta<1>(initdart);
-        while (get_map().is_marked(initdart, toremove))
+      initdart=it;
+      if (!get_map().is_marked(initdart, toremove))
+      { // Here we are on a border edge
+        curdart=get_map().template beta<0, 2>(initdart);
+        while(get_map().is_marked(curdart, toremove))
         {
-          CGAL_assertion(copy_to_origin.count(initdart)==1);
-          typename Map::Dart_const_handle
-            d1=copy_to_origin.find(initdart)->second;
-          typename Map::Dart_const_handle
-            d2=m_original_map.template beta<2>(d1);
-          if (d1<d2) { m_paths[d1].first=p.second; }
-          else       { m_paths[d2].second=p.second; }
-          initdart=get_map().template beta<2, 1>(initdart);
+          CGAL_assertion(copy_to_origin.count(curdart)==1);
+          d1=copy_to_origin.find(curdart)->second;
+          d2=m_original_map.template beta<2>(d1);
+          if (d1<d2) { m_paths[d1].first=initdart; }
+          else       { m_paths[d2].second=initdart; }
+          curdart=get_map().template beta<0, 2>(curdart);
         }
 
-        // 3) We do the same loop but starting from initdart2
-        initdart2=get_map().template beta<1>(initdart2);
-        Dart_handle enddart2=initdart2;
-        while (get_map().is_marked(enddart2, toremove))
-        { enddart2=get_map().template beta<2, 1>(enddart2); }
-
-        while (get_map().is_marked(initdart2, toremove))
-        {
-          CGAL_assertion(copy_to_origin.count(initdart2)==1);
-          typename Map::Dart_const_handle
-            d1=copy_to_origin.find(initdart2)->second;
-          typename Map::Dart_const_handle
-            d2=m_original_map.template beta<2>(d1);
-          if (d1<d2) {
-            CGAL_assertion(m_paths.count(d1)==1);
-            m_paths[d1].first=enddart2;
-          }
-          else
-          {
-            CGAL_assertion(m_paths.count(d2)==1);
-            m_paths[d2].second=enddart2;
-          }
-          initdart2=get_map().template beta<2, 1>(initdart2);
-        }
+        d1=copy_to_origin.find(get_map().template beta<2>(curdart))->second;
+        d2=m_original_map.template beta<2>(d1);
+        if (d1<d2) { m_paths[d1].second=initdart; }
       }
+    }
+
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      CGAL_assertion(!get_map().is_marked(it->second.first, toremove));
+      CGAL_assertion(!get_map().is_marked(it->second.second, toremove));
+    }
+  }
+
+  void update_length_two_paths_before_removal_of_loops
+  (typename Map::size_type toremove)
+  {
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      std::pair<Dart_handle, Dart_handle>& p=it->second;
+
+      Dart_handle initdart=get_map().darts().iterator_to
+        (const_cast<typename CMap_for_minimal_quadrangulation::Dart &>
+         (*(p.first)));
+      while (get_map().is_marked(initdart, toremove))
+      {
+        initdart=get_map().template beta<0, 2>(initdart);
+      }
+      p.first=initdart;
+      initdart=get_map().darts().iterator_to
+              (const_cast<typename CMap_for_minimal_quadrangulation::Dart &>
+               (*(p.second)));
+      while (get_map().is_marked(initdart, toremove))
+      {
+        initdart=get_map().template beta<0, 2>(initdart);
+      }
+      p.second=initdart;
     }
   }
 
@@ -1145,7 +1288,8 @@ protected:
     Dart_handle dh, ddh;
     auto treated=get_map().get_new_mark();
 
-    for (auto it=get_map().darts().begin(), itend=get_map().darts().end(); it!=itend; ++it)
+    for (auto it=get_map().darts().begin(), itend=get_map().darts().end();
+         it!=itend; ++it)
     {
       if (!get_map().is_marked(it, treated))
       {
@@ -1215,7 +1359,8 @@ protected:
   }
 
   /// @return the positive turn given two darts using their ids (unsed for CGAL_PWRLE_TURN_V2 and V3)
-  std::size_t compute_positive_turn_given_ids(Dart_const_handle dh1, Dart_const_handle dh2) const
+  std::size_t compute_positive_turn_given_ids(Dart_const_handle dh1,
+                                              Dart_const_handle dh2) const
   {
     if (get_map().template info<0>(dh1)<0)
     {// there is no hole around dh1 and dh2
@@ -1236,7 +1381,8 @@ protected:
   }
 
   /// @return the negative turn given two darts using their ids (unsed for CGAL_PWRLE_TURN_V2 and V3)
-  std::size_t compute_negative_turn_given_ids(Dart_const_handle dh1, Dart_const_handle dh2) const
+  std::size_t compute_negative_turn_given_ids(Dart_const_handle dh1,
+                                              Dart_const_handle dh2) const
   {
     if (get_map().template info<0>(dh1)<0)
     {// there is no hole around dh1 and dh2
@@ -1255,7 +1401,6 @@ protected:
     }
     return get_dart_id(dh1)-get_dart_id(dh2);
   }
-
 #endif // defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
 
   /// @return true iff the edge containing adart is associated with a path.
@@ -1279,7 +1424,7 @@ protected:
   /// @return the pair of darts associated with the edge containing adart
   ///         in m_original_map.
   /// @pre the edge containing adart must not belong to T.
-  std::pair<Dart_const_handle, Dart_const_handle>& get_pair_of_darts
+  std::pair<Dart_handle, Dart_handle>& get_pair_of_darts
   (typename Map::Dart_const_handle adart)
   {
     CGAL_assertion(!is_contracted(adart));
@@ -1294,76 +1439,74 @@ protected:
   }
 
   Dart_const_handle get_first_dart_of_the_path
-  (typename Map::Dart_const_handle adart, bool flip=false, bool withopposite=true) const
+  (typename Map::Dart_const_handle adart, bool flip=false,
+   bool isquadrangulation=true) const
   {
     CGAL_assertion(!is_contracted(adart));
     CGAL_assertion(is_edge_has_path(adart));
 
     if (m_original_map.template is_free<2>(adart))
-    {// adapting for boundaries
-      const std::pair<Dart_const_handle, Dart_const_handle>&
+    {
+      const std::pair<Dart_handle, Dart_handle>&
         p=m_paths.find(adart)->second;
-      return flip?get_map().template beta<2>(p.second):p.first;
+      return flip?
+            (isquadrangulation?get_map().template beta<2>(p.second):p.second):
+            p.first;
     }
 
     typename Map::Dart_const_handle
       opposite=m_original_map.template beta<2>(adart);
     if (adart<opposite)
     {
-      const std::pair<Dart_const_handle, Dart_const_handle>&
-        p=m_paths.find(adart)->second;
-      return flip?get_map().template beta<2>(p.second):p.first;
+      const std::pair<Dart_handle, Dart_handle>& p=m_paths.find(adart)->second;
+      return flip?
+            (isquadrangulation?get_map().template beta<2>(p.second):p.second):
+            p.first;
     }
 
-    const std::pair<Dart_const_handle, Dart_const_handle>&
-      p=m_paths.find(opposite)->second;
-    if (flip)
-    { return p.first; }
-    return (withopposite?get_map().template beta<2>(p.second):p.second);
+    const std::pair<Dart_handle, Dart_handle>& p=m_paths.find(opposite)->second;
+    return flip?
+          p.first:
+          (isquadrangulation?get_map().template beta<2>(p.second):p.second);
   }
 
   Dart_const_handle get_second_dart_of_the_path
-  (typename Map::Dart_const_handle adart, bool flip=false, bool withopposite=true) const
+  (typename Map::Dart_const_handle adart, bool flip=false,
+   bool isquadrangulation=true) const
   {
     CGAL_assertion(!is_contracted(adart));
     CGAL_assertion(is_edge_has_path(adart));
 
     if (m_original_map.template is_free<2>(adart))
-    {// adapting for boundaries
-      const std::pair<Dart_const_handle, Dart_const_handle>&
+    {
+      const std::pair<Dart_handle, Dart_handle>&
           p=m_paths.find(adart)->second;
-      return flip?get_map().template beta<2>(p.first):p.second;
+      return flip?
+            (isquadrangulation?get_map().template beta<2>(p.first):p.first):
+            p.second;
     }
 
     typename Map::Dart_const_handle
-      opposite=m_original_map.template beta<2>(adart);
+        opposite=m_original_map.template beta<2>(adart);
     if (adart<opposite)
     {
-      const std::pair<Dart_const_handle, Dart_const_handle>&
-        p=m_paths.find(adart)->second;
-      return flip?get_map().template beta<2>(p.first):p.second;
+      const std::pair<Dart_handle, Dart_handle>& p=m_paths.find(adart)->second;
+      return flip?
+            (isquadrangulation?get_map().template beta<2>(p.first):p.first):
+            p.second;
     }
 
-    const std::pair<Dart_const_handle, Dart_const_handle>&
-      p=m_paths.find(opposite)->second;
-    if (flip)
-    { return p.second; }
-    return (withopposite?get_map().template beta<2>(p.first):p.first);
+    const std::pair<Dart_handle, Dart_handle>& p=m_paths.find(opposite)->second;
+    return flip?
+          p.second:
+          (isquadrangulation?get_map().template beta<2>(p.first):p.first);
   }
 
   bool m_map_is_a_torus_quadrangulation() const
   {
     if (get_map().number_of_darts()!=4)
     { return false; }
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::const_iterator
-         it=get_map().darts().begin(), itend=get_map().darts().end(); it!=itend; ++it)
-    {
-      if (get_map().is_marked(it, m_mark_hole))
-      {
-        return false;
-      }
-    }
-    return true;
+    return (get_map().number_of_marked_darts(m_mark_hole)==0);
   }
 
   /// Test if m_paths are valid, i.e.:
@@ -1382,20 +1525,15 @@ protected:
     for (auto it=m_original_map.darts().begin(),
            itend=m_original_map.darts().end(); it!=itend; ++it)
     {
-      if (m_original_map.is_marked(it, m_mark_T) && 
-          m_original_map.is_marked(it, m_mark_contracted))
-      {
-        std::cout<<"ERROR: an edge that is marked T "
-                 <<"is also marked contracted."<<std::endl;
-        res=false;
-      }
+
       if (!is_contracted(it))
       {
         if (!is_edge_has_path(it))
         {
           std::cout<<"ERROR: an edge that is not contracted "
                    <<"has no associated path."
-                   <<"BTW is_marked(it)="<<m_original_map.is_marked(it, m_mark_T)<<std::endl;
+                   <<"BTW is_marked(it)="
+                   <<m_original_map.is_marked(it, m_mark_T)<<std::endl;
           res=false;
         }
       }
@@ -1405,7 +1543,8 @@ protected:
         {
           std::cout<<"ERROR: an edge that is contracted"
                    <<" has an associated path."
-                   <<"BTW is_marked(it)="<<m_original_map.is_marked(it, m_mark_T)<<std::endl;
+                   <<"BTW is_marked(it)="
+                   <<m_original_map.is_marked(it, m_mark_T)<<std::endl;
           res=false;
         }
       }
@@ -1496,11 +1635,9 @@ protected:
   const typename Get_map<Mesh, Mesh>::storage_type m_original_map; // The original map
   CMap_for_minimal_quadrangulation m_map; /// the transformed map
   TPaths m_paths; /// Pair of edges associated with each edge of m_original_map
-  /// (except the edges that belong to the spanning tree T).
-  std::size_t m_mark_T; /// mark each edge of m_original_map that belong to the spanning tree T
-  std::size_t m_mark_L; /// mark each edge of m_original_map that belong to the dual spanning tree L
-  std::size_t m_mark_contracted; /// mark each edge of m_original_map that is contracted in the quadrangulation
-                                 /// during the spurs removal after the quadrangulation
+                  /// (except the edges that belong to the spanning tree T).
+  std::size_t m_mark_T;    /// mark each edge of m_original_map that belong to the spanning tree T
+  std::size_t m_mark_L;    /// mark each edge of m_original_map that belong to the dual spanning tree L
   std::size_t m_mark_hole; /// mark each edge of m_map that bounds a hole
 
 #ifdef CGAL_PWRLE_TURN_V2
