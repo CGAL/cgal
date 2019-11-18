@@ -172,8 +172,8 @@ public:
   {
 #ifndef CGAL_LINKED_WITH_TBB
     
-    CGAL::use(begin);
-    CGAL::use(end);
+    CGAL::USE(begin);
+    CGAL::USE(end);
     CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else  
