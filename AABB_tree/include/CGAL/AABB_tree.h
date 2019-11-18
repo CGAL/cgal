@@ -705,7 +705,7 @@ public:
 		// In case the users has switched on the accelerated distance query
 		// data structure with the default arguments, then it has to be
 		// /built/rebuilt.
-		if(m_default_search_tree_constructed){
+		if(m_default_search_tree_constructed && !empty()){
 			build_kd_tree();
 		}
 		m_need_build = false;
