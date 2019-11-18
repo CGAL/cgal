@@ -204,7 +204,7 @@ void box_self_intersection_d(
     Parallel_tag)
 {
 #if !defined(CGAL_LINKED_WITH_TBB)
-  use(begin); use(end); use(callback); use(box_traits); use(cutoff); use(topology);
+  USE(begin); USE(end); USE(callback); USE(box_traits); USE(cutoff); USE(topology);
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
