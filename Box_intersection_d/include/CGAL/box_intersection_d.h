@@ -25,6 +25,8 @@
 #include <CGAL/Box_intersection_d/Box_traits_d.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
+#include <CGAL/use.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_invoke.h>
 #endif
@@ -204,7 +206,7 @@ void box_self_intersection_d(
     Parallel_tag)
 {
 #if !defined(CGAL_LINKED_WITH_TBB)
-  USE(begin); USE(end); USE(callback); USE(box_traits); USE(cutoff); USE(topology);
+  CGAL_USE(begin); CGAL_USE(end); CGAL_USE(callback); CGAL_USE(box_traits); CGAL_USE(cutoff); CGAL_USE(topology);
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
