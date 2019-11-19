@@ -38,6 +38,44 @@ struct Oracles_require_updates :
 template <typename Cost_oracle>
 struct Oracles_require_updates<Cost_oracle, false> : public CGAL::Tag_false { };
 
+template <typename EdgeCollapse,
+          bool Tag = internal::Oracles_require_updates<typename EdgeCollapse::Get_cost>::value>
+struct Oracles_initializer
+{
+  Oracles_initializer(const EdgeCollapse& e) : e(e) { }
+  void operator()() const { }
+  const EdgeCollapse& e;
+};
+
+template <typename EdgeCollapse>
+struct Oracles_initializer<EdgeCollapse, true>
+{
+  Oracles_initializer(const EdgeCollapse& e) : e(e) { }
+  void operator()() const { e.get_cost().initialize(e.mesh(), e.vpm(), e.geom_traits()); }
+  const EdgeCollapse& e;
+};
+
+template <typename EdgeCollapse,
+          bool Tag = internal::Oracles_require_updates<typename EdgeCollapse::Get_cost>::value>
+struct After_collapse_oracles_updater
+{
+  After_collapse_oracles_updater(const EdgeCollapse& e) : e(e) { }
+  void operator()(const typename EdgeCollapse::Profile& /*profile*/,
+                  const typename boost::graph_traits<typename EdgeCollapse::Triangle_mesh>::vertex_descriptor /*v_kept*/) const { };
+  const EdgeCollapse& e;
+};
+
+template <typename EdgeCollapse>
+struct After_collapse_oracles_updater<EdgeCollapse, true>
+{
+  After_collapse_oracles_updater(const EdgeCollapse& e) : e(e) { }
+  void operator()(const typename EdgeCollapse::Profile& profile,
+                  const typename boost::graph_traits<typename EdgeCollapse::Triangle_mesh>::vertex_descriptor v_kept) const {
+    e.get_cost().update_after_collapse(profile, v_kept);
+  }
+  const EdgeCollapse& e;
+};
+
 } // namespace internal
 
 // Implementation of the vertex-pair collapse triangulated surface mesh simplification algorithm
@@ -173,40 +211,11 @@ public:
 
   int run();
 
-private:
-  template <bool Tag = internal::Oracles_require_updates<Get_cost>::value>
-  struct Oracles_initializer
-  {
-    Oracles_initializer(const Self& e) : e(e) { }
-    void operator()() const { }
-    const Self& e;
-  };
-
-  template <>
-  struct Oracles_initializer<true>
-  {
-    Oracles_initializer(const Self& e) : e(e) { }
-    void operator()() const { e.m_get_cost.initialize(e.m_tm, e.m_vpm, e.m_traits); }
-    const Self& e;
-  };
-
-  template <bool Tag = internal::Oracles_require_updates<Get_cost>::value>
-  struct After_collapse_oracles_updater
-  {
-    After_collapse_oracles_updater(const Self& e) : e(e) { }
-    void operator()(const Profile& /*profile*/, const vertex_descriptor /*v_kept*/) const { };
-    const Self& e;
-  };
-
-  template <>
-  struct After_collapse_oracles_updater<true>
-  {
-    After_collapse_oracles_updater(const Self& e) : e(e) { }
-    void operator()(const Profile& profile, const vertex_descriptor v_kept) const {
-      e.m_get_cost.update_after_collapse(profile, v_kept);
-    }
-    const Self& e;
-  };
+public:
+  const Triangle_mesh& mesh() const { return m_tm; }
+  const Geom_traits& geom_traits() const { return m_traits; }
+  const Get_cost& get_cost() const { return m_get_cost; }
+  const Vertex_point_map& vpm() const { return m_vpm; }
 
 private:
   void collect();
@@ -274,7 +283,7 @@ private:
     return boost::str(boost::format("{E%1% %2%->%3%}%4%") % get_edge_id(h) % vertex_to_string(p) % vertex_to_string(q) % (is_border(h, m_tm) ? " (BORDER)" : (is_border(opposite(h, m_tm), m_tm) ? " (~BORDER)": "")));
   }
 
-  Cost_type get_cost(const Profile& profile) const {
+  Cost_type cost(const Profile& profile) const {
     return m_get_cost(profile, get_placement(profile));
   }
 
@@ -436,7 +445,7 @@ run()
   m_visitor.OnStarted(m_tm);
 
   // this is similar to the visitor, but for the cost/stop/placement oracles
-  Self::Oracles_initializer<>(*this)();
+  internal::Oracles_initializer<Self>(*this)();
 
   // First collect all candidate edges in a PQ
   collect();
@@ -488,7 +497,7 @@ collect()
     {
       Edge_data& data = get_data(h);
 
-      data.cost() = get_cost(profile);
+      data.cost() = cost(profile);
       insert_in_PQ(h, data);
 
       m_visitor.OnCollected(profile, data.cost());
@@ -556,7 +565,7 @@ collect()
     put(m_vpm, v, *placement);
 
     m_visitor.OnCollapsed(profile, v);
-    Self::After_collapse_oracles_updater<>(*this)(profile, v);
+    internal::After_collapse_oracles_updater<Self>(*this)(profile, v);
   }
 
   CGAL_SMS_TRACE(0, "Initial edge count: " << m_initial_edge_count);
@@ -1183,7 +1192,7 @@ collapse(const Profile& profile,
   }
 
   m_visitor.OnCollapsed(profile, v_res);
-  Self::After_collapse_oracles_updater<>(*this)(profile, v_res);
+  internal::After_collapse_oracles_updater<Self>(*this)(profile, v_res);
 
   update_neighbors(v_res);
 
@@ -1229,7 +1238,7 @@ update_neighbors(const vertex_descriptor v_kept)
   {
     Edge_data& data = get_data(h);
     const Profile& profile = create_profile(h);
-    data.cost() = get_cost(profile);
+    data.cost() = cost(profile);
 
     CGAL_SMS_TRACE(3, edge_to_string(h) << " updated in the PQ");
 
@@ -1248,7 +1257,7 @@ update_neighbors(const vertex_descriptor v_kept)
 
     Edge_data& data = get_data(h);
     const Profile& profile = create_profile(h);
-    data.cost() = get_cost(profile);
+    data.cost() = cost(profile);
 
     CGAL_SMS_TRACE(3, edge_to_string(h) << " re-inserted in the PQ");
     insert_in_PQ(h, data);
