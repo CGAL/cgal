@@ -457,7 +457,7 @@ public:
 
   /// adds `kp` coordinates to `buffer`
   template<typename KPoint>
-  void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
+  static void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
   {
     Local_point p=get_local_point(kp);
     buffer.push_back(p.x());
@@ -467,16 +467,17 @@ public:
 
   /// adds `kv` coordinates to `buffer`
   template<typename KVector>
-  void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer)
+  static void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer,
+                                   bool inverse_normal=false)
   {
-    Local_vector n=(m_inverse_normal?-get_local_vector(kv):get_local_vector(kv));
+    Local_vector n=(inverse_normal?-get_local_vector(kv):get_local_vector(kv));
     buffer.push_back(n.x());
     buffer.push_back(n.y());
     buffer.push_back(n.z());
   }
 
   ///adds `acolor` RGB components to `buffer`
-  void add_color_in_buffer(const CGAL::Color& acolor, std::vector<float>& buffer)
+  static void add_color_in_buffer(const CGAL::Color& acolor, std::vector<float>& buffer)
   {
     buffer.push_back((float)acolor.red()/(float)255);
     buffer.push_back((float)acolor.green()/(float)255);
@@ -835,14 +836,14 @@ public:
   void add_flat_normal(const KVector& kv)
   {
     if(m_flat_normal_buffer != nullptr)
-    { add_normal_in_buffer(kv, *m_flat_normal_buffer); }
+    { add_normal_in_buffer(kv, *m_flat_normal_buffer, m_inverse_normal); }
   }
 
   template<typename KVector>
   void add_gouraud_normal(const KVector& kv)
   {
     if(m_gouraud_normal_buffer != nullptr)
-    { add_normal_in_buffer(kv, *m_gouraud_normal_buffer); }
+    { add_normal_in_buffer(kv, *m_gouraud_normal_buffer, m_inverse_normal); }
   }
 
 protected:
