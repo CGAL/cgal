@@ -285,8 +285,7 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   unsigned int counter = 0;
   Intersect_facets<TriangleMesh, VertexUVMap> intersect_facets(mesh, uvmap, counter);
   std::ptrdiff_t cutoff = 2000;
-  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(),
-                                intersect_facets, cutoff);
+  CGAL::box_self_intersection_d(boxes_ptr.begin(), boxes_ptr.end(), intersect_facets, cutoff);
   return (counter == 0);
 }
 

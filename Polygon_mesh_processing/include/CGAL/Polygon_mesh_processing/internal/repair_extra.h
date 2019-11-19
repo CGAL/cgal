@@ -142,7 +142,6 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   for(Box& b : boxes)
     box_ptrs.push_back(&b);
 
-
   Halfedge_multiplicity multiplicity;
   Halfedge_pairs matching_hedges;
 

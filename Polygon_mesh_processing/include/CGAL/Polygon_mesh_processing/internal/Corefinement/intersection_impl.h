@@ -250,10 +250,11 @@ class Intersection_of_triangle_meshes
         if (callback_si.self_intersections_found())
          throw Self_intersection_exception();
     }
-    else
-        CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
-                              edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
-                              callback, cutoff );
+    else {
+      CGAL::box_intersection_d( face_boxes_ptr.begin(), face_boxes_ptr.end(),
+                                edge_boxes_ptr.begin(), edge_boxes_ptr.end(),
+                                callback, cutoff );
+    }
   }
 
   // for autorefinement

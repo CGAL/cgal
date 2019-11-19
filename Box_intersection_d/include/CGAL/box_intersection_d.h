@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -339,24 +339,23 @@ void box_self_intersection_d(
                                             Box_traits(), cutoff, topology );
 }
 
-
 // Generic call for trivial all-pairs algorithm with box traits parameter.
 // - make all default parameters explicit overloads (workaround)
 template< class ForwardIter1, class ForwardIter2,
           class Callback, class BoxTraits >
-void box_intersection_all_pairs_d( 
+void box_intersection_all_pairs_d(
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback, BoxTraits)
 {
     typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
-    Box_intersection_d::all_pairs( begin1, end1, begin2, end2, 
+    Box_intersection_d::all_pairs( begin1, end1, begin2, end2,
                                    callback, Traits());
 }
 
 template< class ForwardIter1, class ForwardIter2,
           class Callback, class BoxTraits >
-void box_intersection_all_pairs_d( 
+void box_intersection_all_pairs_d(
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback, BoxTraits,
@@ -366,18 +365,18 @@ void box_intersection_all_pairs_d(
     bool complete_case = (setting != Box_intersection_d::BIPARTITE);
     if (topology == Box_intersection_d::CLOSED) {
         typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
-        Box_intersection_d::all_pairs( begin1, end1, begin2, end2, 
+        Box_intersection_d::all_pairs( begin1, end1, begin2, end2,
                                        callback, Traits(), complete_case);
     } else {
         typedef Box_intersection_d::Predicate_traits_d<BoxTraits,false> Traits;
-        Box_intersection_d::all_pairs( begin1, end1, begin2, end2, 
+        Box_intersection_d::all_pairs( begin1, end1, begin2, end2,
                                        callback, Traits(), complete_case);
     }
 }
 
 template< class ForwardIter1, class ForwardIter2,
           class Callback, class BoxTraits >
-void box_intersection_all_pairs_d( 
+void box_intersection_all_pairs_d(
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback, BoxTraits traits,
@@ -390,20 +389,20 @@ void box_intersection_all_pairs_d(
 // Specialized call for trivial all-pairs algorithm with default box traits.
 // - make all default parameters explicit overloads (workaround)
 template< class ForwardIter1, class ForwardIter2, class Callback >
-void box_intersection_all_pairs_d( 
+void box_intersection_all_pairs_d(
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback)
 {
     typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
-                                  callback, Box_traits(), 
-                                  Box_intersection_d::CLOSED );   
+    box_intersection_all_pairs_d( begin1, end1, begin2, end2,
+                                  callback, Box_traits(),
+                                  Box_intersection_d::CLOSED );
 }
 
 template< class ForwardIter1, class ForwardIter2, class Callback >
-void box_intersection_all_pairs_d( 
+void box_intersection_all_pairs_d(
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback,
@@ -411,12 +410,12 @@ void box_intersection_all_pairs_d(
 {
     typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
+    box_intersection_all_pairs_d( begin1, end1, begin2, end2,
                                   callback, Box_traits(), topology);
 }
 
 template< class ForwardIter1, class ForwardIter2, class Callback >
-void box_intersection_all_pairs_d( 
+void box_intersection_all_pairs_d(
     ForwardIter1 begin1, ForwardIter1 end1,
     ForwardIter2 begin2, ForwardIter2 end2,
     Callback callback,
@@ -425,7 +424,7 @@ void box_intersection_all_pairs_d(
 {
     typedef typename std::iterator_traits<ForwardIter1>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_intersection_all_pairs_d( begin1, end1, begin2, end2, 
+    box_intersection_all_pairs_d( begin1, end1, begin2, end2,
                                   callback, Box_traits(), topology, setting);
 }
 
@@ -433,7 +432,7 @@ void box_intersection_all_pairs_d(
 // specialized for self-intersection test.
 // - make all default parameters explicit overloads (workaround)
 template< class ForwardIter, class Callback, class BoxTraits >
-void box_self_intersection_all_pairs_d( 
+void box_self_intersection_all_pairs_d(
   ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits /* traits */)
 {
     typedef Box_intersection_d::Predicate_traits_d<BoxTraits,true> Traits;
@@ -441,7 +440,7 @@ void box_self_intersection_all_pairs_d(
 }
 
 template< class ForwardIter, class Callback, class BoxTraits >
-void box_self_intersection_all_pairs_d( 
+void box_self_intersection_all_pairs_d(
     ForwardIter begin1, ForwardIter end1, Callback callback, BoxTraits,
     Box_intersection_d::Topology topology)
 {
@@ -458,17 +457,17 @@ void box_self_intersection_all_pairs_d(
 // specialized for self-intersection test.
 // - make all default parameters explicit overloads (workaround)
 template< class ForwardIter, class Callback >
-void box_self_intersection_all_pairs_d( 
+void box_self_intersection_all_pairs_d(
     ForwardIter begin1, ForwardIter end1, Callback callback)
 {
     typedef typename std::iterator_traits<ForwardIter>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
-    box_self_intersection_all_pairs_d( begin1, end1, callback, Box_traits(), 
-                                       Box_intersection_d::CLOSED );   
+    box_self_intersection_all_pairs_d( begin1, end1, callback, Box_traits(),
+                                       Box_intersection_d::CLOSED );
 }
 
 template< class ForwardIter, class Callback >
-void box_self_intersection_all_pairs_d( 
+void box_self_intersection_all_pairs_d(
     ForwardIter begin1, ForwardIter end1, Callback callback,
     Box_intersection_d::Topology topology)
 {
