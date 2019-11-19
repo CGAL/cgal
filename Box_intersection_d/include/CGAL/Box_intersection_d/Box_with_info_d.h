@@ -29,7 +29,7 @@ class Box_with_info_d
 protected:
     Info_ m_info;
 public:
-    typedef Box_d< NT_, N, ID_EXPLICIT> Base;
+    typedef Box_d< NT_, N, IdPolicy>    Base;
     typedef NT_                         NT;
     typedef Info_                       Info;
 
