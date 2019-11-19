@@ -207,8 +207,7 @@ void box_self_intersection_d(
 {
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_USE(begin); CGAL_USE(end); CGAL_USE(callback); CGAL_USE(box_traits); CGAL_USE(cutoff); CGAL_USE(topology);
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
+  CGAL_static_assertion_msg(false, "Parallel_tag is enabled but TBB is unavailable.");
 #else
   // Copying rather than calling 'box_intersection_d(begin, end, begin, end, ...'
   // is necessary because the 'std::partition' and range splits on the first range
