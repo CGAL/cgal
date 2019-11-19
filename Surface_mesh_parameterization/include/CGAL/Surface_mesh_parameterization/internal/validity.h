@@ -113,7 +113,8 @@ class Intersect_facets
   typename Kernel::Construct_triangle_2 triangle_functor;
   typename Kernel::Do_intersect_2 do_intersect_2_functor;
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor, Box_policy> Box;
 
   const TriangleMesh& mesh;
   const VertexUVMap uvmap;
@@ -250,7 +251,8 @@ bool is_one_to_one_mapping(const TriangleMesh& mesh,
   typedef typename Kernel::FT                                         NT;
   typedef typename Kernel::Point_2                                    Point_2;
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<NT, 2, face_descriptor, Box_policy> Box;
 
   // Create the corresponding vector of bounding boxes
   std::vector<Box> boxes;

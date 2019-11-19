@@ -412,7 +412,9 @@ self_intersections( const FaceRange& face_range,
 
   typedef TriangleMesh                                                                   TM;
   typedef typename boost::graph_traits<TM>::face_descriptor                              face_descriptor;
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
+
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS                                  Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type                              GeomTraits;
   GeomTraits gt = parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());

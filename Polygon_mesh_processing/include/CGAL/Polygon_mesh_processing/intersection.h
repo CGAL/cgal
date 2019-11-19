@@ -401,8 +401,10 @@ compute_face_face_intersection(const FaceRange& face_range1,
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor> Box;
-  
+
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
+
   CGAL::Bbox_3 b1 = CGAL::Polygon_mesh_processing::bbox(tm1, np1),
                b2 = CGAL::Polygon_mesh_processing::bbox(tm2, np2);
   
@@ -543,7 +545,8 @@ compute_face_polyline_intersection( const FaceRange& face_range,
   std::vector<face_descriptor> faces;
   faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
 
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
 
   // make one box per facet
   std::vector<Box> boxes1;
@@ -679,7 +682,8 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   std::vector<face_descriptor> faces;
   faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
 
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t> > Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
 
   // make one box per facet
   std::vector<Box> boxes1;
@@ -773,7 +777,9 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
                                        OutputIterator out,
                                        const Kernel& K)
 {
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
+
   typedef typename Kernel::Point_3 Point;
   // make one box per facet
   std::vector<Box> boxes1;
@@ -856,7 +862,9 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
                                          const Kernel& K)
 {
   //info.first is the index of the polyline in the range, info.second is the index of the point in the polyline
-  typedef typename CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t> > Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
+
   typedef typename Kernel::Point_3 Point;
   typedef typename boost::range_value<PolylineRange>::type Polyline;
 
@@ -1595,7 +1603,9 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 
   bool report_overlap =  choose_parameter(get_parameter(np, internal_np::overlap_test),false);
 
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, TriangleMeshIterator> Mesh_box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, TriangleMeshIterator, Box_policy> Mesh_box;
+
   std::vector<Mesh_box> boxes;
   boxes.reserve(std::distance(range.begin(), range.end()));
 
