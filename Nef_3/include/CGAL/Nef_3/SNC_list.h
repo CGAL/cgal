@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
@@ -39,6 +30,7 @@ public:
     //    typedef typename Vertex::Vertex_handle       Vertex_handle;
     //    typedef typename Vertex::Vertex_const_handle Vertex_const_handle;
     SNC_in_place_list_sm() {}
+    SNC_in_place_list_sm(const Self&)=default;
     SNC_in_place_list_sm(const Sphere_map& sm)   // down cast
         : Sphere_map(sm) {}
     Self& operator=( const Self& sm) {
@@ -60,6 +52,7 @@ public:
     SNC_in_place_list_halffacet() {}
     SNC_in_place_list_halffacet(const Halffacet& v)   // down cast
         : Halffacet(v) {}
+    SNC_in_place_list_halffacet(const Self&)=default;
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -79,6 +72,7 @@ public:
     SNC_in_place_list_volume() {}
     SNC_in_place_list_volume(const Volume& v)   // down cast
         : Volume(v) {}
+    SNC_in_place_list_volume(const Self&)=default;
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -98,6 +92,7 @@ public:
     SNC_in_place_list_shalfloop() {}
     SNC_in_place_list_shalfloop(const SHalfloop& v)   // down cast
         : SHalfloop(v) {}
+    SNC_in_place_list_shalfloop(const Self&)=default;
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.

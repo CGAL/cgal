@@ -2,9 +2,8 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Circular_kernel_3_Tests )
-
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -13,14 +12,13 @@ if ( CGAL_FOUND )
 include(${CGAL_USE_FILE})
 
 include_directories (BEFORE include)
+
+# The following `include_directories` is used in the git layout
 include_directories (BEFORE ../../../Kernel_23/test/Kernel_23/include)
+
+# The following `include_directories` is used in the layout of the
+# internal releases tarballs
 include_directories (BEFORE ../Kernel_23/include)
-include_directories (BEFORE ../Cartesian_kernel/include)
-include_directories (BEFORE ../Homogeneous_kernel/include)
-include_directories (BEFORE ../../../Intersections_3/include)
-include_directories (BEFORE ../../../Algebraic_kernel_for_spheres/include)
-include_directories (BEFORE ../../../Kernel_23/include)
-include_directories (BEFORE ../../../Cartesian_kernel/include)
 
 create_single_source_cgal_program( "test_Spherical_kernel.cpp" )
 create_single_source_cgal_program( "test_Spherical_kernel_basics.cpp" )

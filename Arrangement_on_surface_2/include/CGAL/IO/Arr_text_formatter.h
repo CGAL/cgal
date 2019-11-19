@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
@@ -76,19 +67,19 @@ public:
 
   /*! Default constructor.*/
   Arr_text_formatter():
-    m_out(NULL),
-    m_in(NULL)
+    m_out(nullptr),
+    m_in(nullptr)
   {}
 
   /*! Construct an output formatter. */
   Arr_text_formatter(std::ostream& os) :
     m_out(&os),
-    m_in(NULL)
+    m_in(nullptr)
   {}
 
   /*! Construct an input formatter. */
   Arr_text_formatter(std::istream& is) :
-    m_out(NULL),
+    m_out(nullptr),
     m_in(&is)
   {}
 
@@ -111,14 +102,14 @@ public:
   /*! Get the output stream. */
   inline std::ostream& out()
   {
-    CGAL_assertion(m_out != NULL);
+    CGAL_assertion(m_out != nullptr);
     return (*m_out);
   }
 
   /*! Get the input stream. */
   inline std::istream& in()
   {
-    CGAL_assertion(m_in != NULL);
+    CGAL_assertion(m_in != nullptr);
     return (*m_in);
   }
 
@@ -128,7 +119,7 @@ public:
   /*! Write a begin-arrangement comment. */
   void write_arrangement_begin()
   {
-    CGAL_assertion(m_out != NULL);
+    CGAL_assertion(m_out != nullptr);
     m_old_out_mode = get_mode(*m_out);
     set_ascii_mode(*m_out);
     _write_comment("BEGIN ARRANGEMENT");
@@ -285,7 +276,7 @@ public:
   /*! Start reading an arrangement. */
   void read_arrangement_begin()
   {
-    CGAL_assertion(m_in != NULL);
+    CGAL_assertion(m_in != nullptr);
     m_old_in_mode = get_mode(*m_in);
     set_ascii_mode(*m_in);
     _skip_comments();
@@ -299,7 +290,7 @@ public:
   }
 
   /*! Read a size value (with a label comment line before it). */
-  Size read_size(const char* /* title */ = NULL)
+  Size read_size(const char* /* title */ = nullptr)
   {
     std::size_t   val;
 
@@ -386,6 +377,7 @@ public:
   virtual void read_halfedge_data(Halfedge_handle)
   {}
 
+  //@}
   /// \name Reading a face.
   //@{
   void read_face_begin()
@@ -448,7 +440,7 @@ protected:
   /*! Skip until end of line. */
   void _skip_until_EOL()
   {
-    CGAL_assertion(m_in != NULL);
+    CGAL_assertion(m_in != nullptr);
 
     int c;
     while ((c = m_in->get()) != EOF && c != '\n') {};
@@ -457,7 +449,7 @@ protected:
   /*! Skip comment lines. */
   void _skip_comments()
   {
-    CGAL_assertion(m_in != NULL);
+    CGAL_assertion(m_in != nullptr);
 
     // Skip blanks until EOL.
     int c;

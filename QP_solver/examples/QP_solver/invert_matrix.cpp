@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <CGAL/basic.h>
+
 #include <CGAL/Random.h>
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>

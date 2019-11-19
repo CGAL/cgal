@@ -21,17 +21,17 @@
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `EdgeProfile`
 - `StopPredicate`
 - `GetCost`
 - `GetPlacement`
 - `EdgeCollapseSimplificationVisitor`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::Surface_mesh_simplification::edge_collapse()`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::Edge_profile<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::Count_stop_predicate<TriangleMesh>`

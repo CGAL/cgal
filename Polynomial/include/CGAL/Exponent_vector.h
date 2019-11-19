@@ -1,20 +1,11 @@
 // Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Hemmer
@@ -62,7 +53,6 @@ public:
   };
     
   Exponent_vector(const std::vector<int>& v_): v(v_){};
-  Exponent_vector(const Exponent_vector& ev): v(ev.v){};
 
   template <class InputIterator>
   Exponent_vector(InputIterator begin , InputIterator end)
@@ -170,7 +160,10 @@ inline std::ostream& operator << (std::ostream& os, const Exponent_vector& ev) {
 
 namespace std{
 template <> inline 
-void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2){
+void swap(CGAL::Exponent_vector& ev1, CGAL::Exponent_vector& ev2)
+  CGAL_NOEXCEPT(std::is_nothrow_move_constructible<CGAL::Exponent_vector>::value
+                && std::is_nothrow_move_assignable<CGAL::Exponent_vector>::value)
+{
   ev1.swap(ev2);
 }
 

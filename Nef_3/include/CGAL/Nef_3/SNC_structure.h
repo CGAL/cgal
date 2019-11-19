@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -316,8 +307,7 @@ public:
   public:
     Halffacet_cycle_iterator() : Ibase() {}
     Halffacet_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    Halffacet_cycle_iterator(const Halffacet_cycle_iterator& i) 
-      : Ibase(i) {}
+   
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
@@ -341,8 +331,7 @@ public:
   public:
     Halffacet_cycle_const_iterator() : Ibase() {}
     Halffacet_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-    Halffacet_cycle_const_iterator(const Halffacet_cycle_const_iterator& i) 
-      : Ibase(i) {}  
+   
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
@@ -368,7 +357,7 @@ public:
   public:
     SFace_cycle_iterator() : Ibase() {}
     SFace_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_iterator(const SFace_cycle_iterator& i) : Ibase(i) {}  
+    
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -395,8 +384,7 @@ public:
   public:
     SFace_cycle_const_iterator() : Ibase() {}
     SFace_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-    SFace_cycle_const_iterator(const SFace_cycle_const_iterator& i) 
-      : Ibase(i) {}  
+ 
     bool is_svertex() const 
     { SVertex_handle v; return CGAL::assign(v,Ibase::operator*()); }
     bool is_shalfedge() const
@@ -427,8 +415,7 @@ public:
   public:
     Shell_entry_iterator() : Ibase() {}
     Shell_entry_iterator(const Ibase& b) : Ibase(b) {}
-    Shell_entry_iterator(const Shell_entry_iterator& i) : Ibase(i) {}  
-
+   
     operator SFace_handle() const 
     { SFace_handle f; 
       CGAL_assertion( CGAL::assign(f,Ibase::operator*()) );
@@ -445,9 +432,7 @@ public:
   public:
     Shell_entry_const_iterator() : Ibase() {}
     Shell_entry_const_iterator(const Ibase& b) : Ibase(b) {}
-    Shell_entry_const_iterator(const Shell_entry_const_iterator& i) :
-      Ibase(i) {}  
-
+   
     operator SFace_const_handle() const 
     { SFace_handle f; 
       CGAL_assertion( CGAL::assign(f,Ibase::operator*()) );
@@ -1051,133 +1036,77 @@ public:
   Vertex_alloc vertex_allocator;
   Vertex* get_vertex_node( const Vertex& ) {
     Vertex* p = vertex_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_alloc>::construct(vertex_allocator, p);
-#else
-    vertex_allocator.construct( p, Vertex());
-#endif
     return p;
   }
   void put_vertex_node( Vertex* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Vertex_alloc>::destroy(vertex_allocator,p);
-#else
-    vertex_allocator.destroy(p);
-#endif
     vertex_allocator.deallocate( p, 1);
   }
 
   Halfedge_alloc halfedge_allocator;
   Halfedge* get_halfedge_node( const Halfedge&) {
     Halfedge* p = halfedge_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Halfedge_alloc>::construct(halfedge_allocator, p);
-#else
-    halfedge_allocator.construct( p, Halfedge());
-#endif
     return p;
   }
   void put_halfedge_node( Halfedge* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Halfedge_alloc>::destroy(halfedge_allocator,p);
-#else
-    halfedge_allocator.destroy(p);
-#endif
     halfedge_allocator.deallocate( p, 1);
   }
 
   Halffacet_alloc halffacet_allocator;
   Halffacet* get_halffacet_node( const Halffacet& ) {
     Halffacet* p = halffacet_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Halffacet_alloc>::construct(halffacet_allocator, p);
-#else
-    halffacet_allocator.construct( p, Halffacet());
-#endif
     return p;
   }
   void put_halffacet_node( Halffacet* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Halffacet_alloc>::destroy(halffacet_allocator,p);
-#else
-    halffacet_allocator.destroy(p);
-#endif
     halffacet_allocator.deallocate( p, 1);
   }
 
   Volume_alloc volume_allocator;
   Volume* get_volume_node( const Volume& ) {
     Volume* p = volume_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<Volume_alloc>::construct(volume_allocator, p);
-#else
-    volume_allocator.construct( p, Volume());
-#endif
     return p;
   }
   void put_volume_node( Volume* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<Volume_alloc>::destroy(volume_allocator,p);
-#else
-    volume_allocator.destroy(p);
-#endif
     volume_allocator.deallocate( p, 1);
   }
 
   SHalfedge_alloc shalfedge_allocator;
   SHalfedge* get_shalfedge_node( const SHalfedge& ) {
     SHalfedge* p = shalfedge_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfedge_alloc>::construct(shalfedge_allocator, p);
-#else
-    shalfedge_allocator.construct( p, SHalfedge());
-#endif
     return p;
   }
   void put_shalfedge_node( SHalfedge* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfedge_alloc>::destroy(shalfedge_allocator,p);
-#else
-    shalfedge_allocator.destroy(p);
-#endif
     shalfedge_allocator.deallocate( p, 1);
   }
 
   SHalfloop_alloc shalfloop_allocator;
   SHalfloop* get_shalfloop_node( const SHalfloop& ) {
     SHalfloop* p = shalfloop_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfloop_alloc>::construct(shalfloop_allocator, p);
-#else
-    shalfloop_allocator.construct( p, SHalfloop());
-#endif
     return p;
   }
   void put_shalfloop_node( SHalfloop* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SHalfloop_alloc>::destroy(shalfloop_allocator,p);
-#else
-    shalfloop_allocator.destroy(p);
-#endif
     shalfloop_allocator.deallocate( p, 1);
   }
 
   SFace_alloc sface_allocator;
   SFace* get_sface_node( const SFace& ) {
     SFace* p = sface_allocator.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<SFace_alloc>::construct(sface_allocator, p);
-#else
-    sface_allocator.construct( p, SFace());
- #endif
     return p;
   }
   void put_sface_node( SFace* p) {
-#ifdef CGAL_CXX11
     std::allocator_traits<SFace_alloc>::destroy(sface_allocator,p);
-#else
-    sface_allocator.destroy(p);
-#endif
     sface_allocator.deallocate( p, 1);
   }
 

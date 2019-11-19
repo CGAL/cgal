@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -31,9 +22,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#endif
 #include <boost/utility/result_of.hpp>
 
 namespace CGAL {
@@ -75,10 +63,17 @@ public:
 
   typedef          R_                       R;
 
-#ifdef CGAL_CXX11
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)  
+#  pragma warning(push)
+#  pragma warning(disable: 4309)
+#endif
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>::type> explicit Vector_d(U&&...u)
 	  : Rep(CVBase()(std::forward<U>(u)...)){}
 
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
+#  pragma warning(pop)
+#endif
+  
 //  // called from Construct_vector_d
 //  template<class...U> explicit Vector_d(Eval_functor&&,U&&...u)
 //	  : Rep(Eval_functor(), std::forward<U>(u)...){}
@@ -105,48 +100,20 @@ public:
   Vector_d(Null_vector&& v)
     : Rep(CVBase()(std::move(v))) {}
 
-#else
 
-  Vector_d() : Rep(CVBase()()) {}
-
-  Vector_d(Rep const& v) : Rep(v) {} // try not to use it
-
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  explicit Vector_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(CVBase()( \
-	BOOST_PP_ENUM_PARAMS(N,t))) {} \
-  \
-  template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Vector_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(f(BOOST_PP_ENUM_PARAMS(N,t))) {}
-  /*
-  template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Vector_d(Eval_functor,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(Eval_functor(), BOOST_PP_ENUM_PARAMS(N,t)) {}
-  */
-
-  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-
-  // this one should be implicit
-  Vector_d(Null_vector const& v)
-    : Rep(CVBase()(v)) {}
-
-#endif
-
-  typename boost::result_of<CCBase(Rep,int)>::type cartesian(int i)const{
+  decltype(auto) cartesian(int i)const{
 	  return CCBase()(rep(),i);
   }
 
-  typename boost::result_of<CCBase(Rep,int)>::type operator[](int i)const{
+  decltype(auto) operator[](int i)const{
 	  return CCBase()(rep(),i);
   }
 
-  typename boost::result_of<CVI(Rep,Begin_tag)>::type cartesian_begin()const{
+  decltype(auto) cartesian_begin()const{
 	  return CVI()(rep(),Begin_tag());
   }
 
-  typename boost::result_of<CVI(Rep,End_tag)>::type cartesian_end()const{
+  decltype(auto) cartesian_end()const{
 	  return CVI()(rep(),End_tag());
   }
 
@@ -155,180 +122,80 @@ public:
     return typename Get_functor<R, Opposite_vector_tag>::type()(*this);
   }
 
-  /*
-  Direction_d direction() const
-  {
-    return R().construct_direction_d_object()(*this);
-  }
-
-  Vector_d transform(const Aff_transformation_d &t) const
-  {
-    return t.transform(*this);
-  }
-
-  Vector_d operator/(const RT& c) const
-  {
-   return R().construct_divided_vector_d_object()(*this,c);
-  }
-
-  Vector_d operator/(const typename First_if_different<FT_,RT>::Type & c) const
-  {
-   return R().construct_divided_vector_d_object()(*this,c);
-  }
-
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  x() const
-  {
-    return R().compute_x_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_y_3, Vector_3>::type
-  y() const
-  {
-    return R().compute_y_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_z_3, Vector_3>::type
-  z() const
-  {
-    return R().compute_z_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hx_3, Vector_3>::type
-  hx() const
-  {
-    return R().compute_hx_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hy_3, Vector_3>::type
-  hy() const
-  {
-    return R().compute_hy_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hz_3, Vector_3>::type
-  hz() const
-  {
-    return R().compute_hz_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
-  hw() const
-  {
-    return R().compute_hw_3_object()(*this);
-  }
-
-  typename Qualified_result_of<typename R::Compute_x_3, Vector_3>::type
-  cartesian(int i) const
-  {
-    CGAL_kernel_precondition( (i == 0) || (i == 1) || (i == 2) );
-    if (i==0) return x();
-    if (i==1) return y();
-    return z();
-  }
-
-  typename Qualified_result_of<typename R::Compute_hw_3, Vector_3>::type
-  homogeneous(int i) const
-  {
-    CGAL_kernel_precondition( (i >= 0) || (i <= 3) );
-    if (i==0) return hx();
-    if (i==1) return hy();
-    if (i==2) return hz();
-    return hw();
-  }
-
-  int dimension() const // bad idea?
-  {
-      return rep.dimension();
-  }
-*/
   int dimension() const {
     typedef typename Get_functor<Kbase, Vector_dimension_tag>::type VDBase;
     return VDBase()(rep());
   }
 
-  typename boost::result_of<SLBase(Rep)>::type squared_length()const{
+  decltype(auto) squared_length()const{
 	  return SLBase()(rep());
+  }
+
+  friend std::ostream& operator <<(std::ostream& os, const Vector_d& v)
+  {
+    auto b = v.cartesian_begin();
+    auto e = v.cartesian_end();
+    if(is_ascii(os))
+    {
+      os << v.dimension();
+      for(; b != e; ++b){
+	os << " " << *b;
+      }
+    }
+    else
+    {
+      write(os, v.dimension());
+      for(; b != e; ++b){
+	write(os, *b);
+      }
+    }
+
+    return os;
+  }
+
+  friend std::istream & operator>>(std::istream &is, Vector_d & v)
+  {
+    int dim;
+    if( is_ascii(is) )
+      is >> dim;
+    else
+    {
+      read(is, dim);
+    }
+    if(!is) return is;
+
+    std::vector<FT_> coords(dim);
+    if(is_ascii(is))
+    {
+      for(int i=0;i<dim;++i)
+	is >> iformat(coords[i]);
+    }
+    else
+    {
+      for(int i=0;i<dim;++i)
+	read(is, coords[i]);
+    }
+
+    if(is)
+      v = Vector_d(coords.begin(), coords.end());
+    return is;
+  }
+
+
+  friend Vector_d operator+(const Vector_d& v,const Vector_d& w)
+  {
+    return typename Get_functor<R, Sum_of_vectors_tag>::type()(v,w);
+  }
+
+  friend Vector_d operator-(const Vector_d& v,const Vector_d& w)
+  {
+    return typename Get_functor<R, Difference_of_vectors_tag>::type()(v,w);
   }
 };
 #if 0
 template <class R_> Vector_d<R_>::Vector_d(Vector_d &)=default;
 #endif
 
-template <class R_>
-std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
-{
-  typedef typename R_::Kernel_base Kbase;
-  typedef typename Get_functor<Kbase, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
-  // Should just be "auto"...
-  typename CGAL::decay<typename boost::result_of<
-        CVI(typename Vector_d<R_>::Rep,Begin_tag)
-      >::type>::type
-    b = v.cartesian_begin(),
-    e = v.cartesian_end();
-  if(is_ascii(os))
-  {
-    os << v.dimension();
-    for(; b != e; ++b){
-      os << " " << *b;
-    }
-  }
-  else
-  {
-    write(os, v.dimension());
-    for(; b != e; ++b){
-      write(os, *b);
-    }
-  }
-  
-  return os;
-}
-
-
-template<typename K>
-std::istream &
-operator>>(std::istream &is, Vector_d<K> & v)
-{
-  typedef typename Get_type<K, Vector_tag>::type V;
-  typedef typename Get_type<K, FT_tag>::type   FT;
-  int dim;
-  if( is_ascii(is) )
-    is >> dim;
-  else
-  {
-    read(is, dim);
-  }
-  if(!is) return is;
-
-  std::vector<FT> coords(dim);
-  if(is_ascii(is))
-  {
-    for(int i=0;i<dim;++i)
-      is >> iformat(coords[i]);
-  }
-  else
-  {
-    for(int i=0;i<dim;++i)
-      read(is, coords[i]);
-  }
-
-  if(is)
-    v = V(coords.begin(), coords.end());
-  return is;
-}
-
-
-template <class R_>
-Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w)
-{
-	return typename Get_functor<R_, Sum_of_vectors_tag>::type()(v,w);
-}
-
-template <class R_>
-Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w)
-{
-	return typename Get_functor<R_, Difference_of_vectors_tag>::type()(v,w);
-}
 
 } //namespace Wrap
 } //namespace CGAL

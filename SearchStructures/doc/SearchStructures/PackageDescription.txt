@@ -35,23 +35,23 @@ and segment trees in the same data structure.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `RangeSegmentTreeTraits_k`
 - `Sublayer`
 
-## Traits Classes ##
+\cgalCRPSection{Traits Classes}
 
-- `CGAL::Range_segment_tree_traits_set_2<R>`
-- `CGAL::Range_segment_tree_traits_set_3<R>`
-- `CGAL::Range_tree_traits_map_2<R,T>`
-- `CGAL::Range_tree_traits_map_3<R,T>`
-- `CGAL::Segment_tree_traits_map_2<R,T>`
-- `CGAL::Segment_tree_traits_map_3<R,T>`
+- `CGAL::Range_segment_tree_set_traits_2<R>`
+- `CGAL::Range_segment_tree_set_traits_3<R>`
+- `CGAL::Range_tree_map_traits_2<R,T>`
+- `CGAL::Range_tree_map_traits_3<R,T>`
+- `CGAL::Segment_tree_map_traits_2<R,T>`
+- `CGAL::Segment_tree_map_traits_3<R,T>`
 - `CGAL::tree_interval_traits`
 - `CGAL::tree_point_traits`
 
-## Search Structure Classes ##
+\cgalCRPSection{Search Structure Classes}
 
 - `CGAL::Range_tree_d<Data, Window, Traits>`
 - `CGAL::Range_tree_k<Traits>`

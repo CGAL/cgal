@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -23,6 +17,8 @@
 
 #ifndef CGAL__TEST_CLS_PLANE_3_H
 #define CGAL__TEST_CLS_PLANE_3_H
+
+#include <CGAL/use.h>
 
 template <class R>
 bool
@@ -34,7 +30,7 @@ _test_cls_plane_3(const R& )
  typedef typename  R::FT    FT;
 
  typename R::Plane_3  ip;
- CGAL::Plane_3<R> pl0(ip);
+ CGAL::Plane_3<R> pl0(ip); CGAL_USE(pl0);
 
  RT  x1 = -1;
  RT  x2 =  4;
@@ -45,7 +41,7 @@ _test_cls_plane_3(const R& )
                  py(RT(0),RT(1),RT(0)),
                  pz(RT(0),RT(0),RT(1));
 
- CGAL::Point_3<R> p3(p1);
+ CGAL::Point_3<R> p3(p1); CGAL_USE(p3);
  CGAL::Direction_3<R> d1( RT(5), RT(-5), RT(10) );
  CGAL::Vector_3<R>    v1 = d1.vector();
 
@@ -121,8 +117,8 @@ _test_cls_plane_3(const R& )
  assert( xy_pl.has_on( gnup ) );
 
  CGAL::Vector_3<R> nov = pl1.orthogonal_vector();
- CGAL::Vector_3<R> vb1 = pl1.base1();
- CGAL::Vector_3<R> vb2 = pl1.base2();
+ CGAL::Vector_3<R> vb1 = pl1.base1(); CGAL_USE(vb1);
+ CGAL::Vector_3<R> vb2 = pl1.base2(); CGAL_USE(vb2);
  assert( (nov*pl1.base1()) == FT(0)&&(nov*pl1.base2()) == FT(0) );
  assert( (pl1.base2()*pl1.base1()) == FT(0) );
  assert( pl1.has_on(pl1.point() + pl1.base1()) );

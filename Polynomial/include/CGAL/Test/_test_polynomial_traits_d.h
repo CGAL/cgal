@@ -1,20 +1,11 @@
 // Copyright (c) 2008 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 
 #ifndef CGAL_TEST_POLYNOMIAL
 #define CGAL_TEST_POLYNOMIAL
@@ -24,7 +15,6 @@
 #include <iostream>
 #include <cassert>
 
-#include <CGAL/basic.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/use.h>
 #include <CGAL/Arithmetic_kernel.h>
@@ -1858,9 +1848,11 @@ void test_rebind(const PT& /*traits*/){
   typedef CGAL::LEDA_arithmetic_kernel AT;
   typedef typename AT::Integer Integer; 
   typedef typename AT::Rational Rational;
-  const int dimension = 4;
+  const int dimension = 4; CGAL_USE(dimension);
   typedef typename PT:: template Rebind<Integer,4>::Other PT_Integer_4;
+  CGAL_USE_TYPE(PT_Integer_4);
   typedef typename PT:: template Rebind<Rational,4>::Other PT_Rational_4;
+  CGAL_USE_TYPE(PT_Rational_4);
   CGAL_static_assertion((boost::is_same< typename PT_Integer_4::Innermost_coefficient_type, 
           Integer>::value));
   CGAL_static_assertion((boost::is_same< typename PT_Rational_4::Innermost_coefficient_type, 

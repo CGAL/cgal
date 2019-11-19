@@ -2,26 +2,15 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
 #define VDA_TEST_SDG
-
-#include <CGAL/basic.h>
 
 #include <CGAL/Voronoi_diagram_2.h>
 #include "vda_test.h"
@@ -40,7 +29,7 @@ typedef CGAL::Integral_domain_without_division_tag  MTag;
 typedef CGAL::Simple_cartesian<NT>      K;
 typedef CGAL::Simple_cartesian<double>  DK;
 
-struct Gt : public CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<DK> {};
+typedef CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<DK> Gt;
 
 //CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>  Gt;
 

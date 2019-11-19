@@ -9,6 +9,7 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include "Messages_interface.h"
 #include "ui_Smoother_dialog.h"
@@ -562,7 +563,7 @@ optimization_done(Optimizer_thread* thread)
     str.append(QString("( %1 )<br>").arg(param));
   }
   
-  msg->information(qPrintable(str));
+  CGAL::Three::Three::information(qPrintable(str));
   
   // Treat new c3t3 item
   Scene_c3t3_item* result_item = thread->item();

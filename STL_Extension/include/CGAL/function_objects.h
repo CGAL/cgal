@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -451,6 +442,19 @@ public:
   Binary_compose_2(const Op1& x, const Op2& y, const Op3& z)
   : op1(x), op2(y), op3(z) {}
 
+  // Added as workaround for VC2017 with /arch:AVX to fix
+  // https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-4.14-I-95/Polytope_distance_d/TestReport_afabri_x64_Cygwin-Windows10_MSVC2017-Release-64bits.gz
+  Binary_compose_2(const Binary_compose_2& other)
+    : op1(other.op1), op2(other.op2), op3(other.op3) {}
+
+  Binary_compose_2& operator=(const Binary_compose_2& other)
+  {
+    op1 = other.op1;
+    op2 = other.op2;
+    op3 = other.op3;
+    return *this;
+  }
+    
   result_type
   operator()(const first_argument_type& x,
              const second_argument_type& y) const

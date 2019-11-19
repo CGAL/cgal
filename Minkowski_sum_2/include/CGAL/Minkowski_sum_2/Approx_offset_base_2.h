@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein       <wein_r@yahoo.com>
 //                 Andreas Fabri  <Andreas.Fabri@geometryfactory.com>
@@ -252,8 +243,8 @@ protected:
       }
       else
       {
-        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : -delta_x;
-        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : -delta_y;
+        abs_delta_x = (sign_delta_x == POSITIVE) ? delta_x : NT(-delta_x);
+        abs_delta_y = (sign_delta_y == POSITIVE) ? delta_y : NT(-delta_y);
 
         // In this general case, the length d of the current edge is usually
         // an irrational number.

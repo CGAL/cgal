@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -29,7 +20,7 @@
 #include <boost/logic/tribool.hpp>
 #include <CGAL/tags.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Triangle_3_Ray_3_do_intersect.h>
+#include <CGAL/Intersections_3/Ray_3_Triangle_3.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 #include <CGAL/internal/AABB_tree/AABB_node.h>
 
@@ -60,16 +51,16 @@ public:
   template<class Query>
   void intersection(const Query& query, const Primitive& primitive)
   {
-    internal::r3t3_do_intersect_endpoint_position_visitor visitor;
-    std::pair<bool,internal::R3T3_intersection::type> res=
-      internal::do_intersect(m_helper.get_primitive_datum(primitive, m_aabb_traits), query,Kernel(),visitor);
+    Intersections::internal::r3t3_do_intersect_endpoint_position_visitor visitor;
+    std::pair<bool,Intersections::internal::R3T3_intersection::type> res=
+      Intersections::internal::do_intersect(m_helper.get_primitive_datum(primitive, m_aabb_traits), query,Kernel(),visitor);
 
     if (res.first){
       switch (res.second){
-        case internal::R3T3_intersection::CROSS_FACET:
+        case Intersections::internal::R3T3_intersection::CROSS_FACET:
           ++m_status.second;
         break;
-        case internal::R3T3_intersection::ENDPOINT_IN_TRIANGLE:
+        case Intersections::internal::R3T3_intersection::ENDPOINT_IN_TRIANGLE:
           m_status.first=false;
           m_stop=true;
         break;

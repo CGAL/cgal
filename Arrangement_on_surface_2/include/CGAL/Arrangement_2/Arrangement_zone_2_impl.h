@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
@@ -113,7 +104,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
   const Halfedge_const_handle* hh;
   const Face_const_handle* fh;
 
-  if ((vh = object_cast<Vertex_const_handle>(&m_obj)) != NULL) {
+  if ((vh = object_cast<Vertex_const_handle>(&m_obj)) != nullptr) {
     CGAL_assertion(m_has_left_pt);
 
     // The left endpoint coincides with an existing vertex:
@@ -135,7 +126,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
 #endif
 
   }
-  else if ((hh = object_cast<Halfedge_const_handle>(&m_obj)) != NULL) {
+  else if ((hh = object_cast<Halfedge_const_handle>(&m_obj)) != nullptr) {
     if (m_has_left_pt) {
       // Obtain the right halfedge from the halfedge-pair containing m_left_pt
       // in their interior.
@@ -178,7 +169,7 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
     // The left endpoint lies inside a face.
     fh = object_cast<Face_const_handle>(&m_obj);
 
-    CGAL_assertion_msg(fh != NULL,
+    CGAL_assertion_msg(fh != nullptr,
                        "Invalid object returned by the point-location query.");
 
     // Compute the zone of the curve at the interior of the face.
@@ -872,7 +863,7 @@ _compute_next_intersection(Halfedge_handle he,
         // valid, as they lie to its right.
         valid_intersection = true;
       }
-      else if (ip != NULL) {
+      else if (ip != nullptr) {
         if (m_has_right_pt && m_right_on_boundary &&
             m_geom_traits->equal_2_object()(ip->first, m_right_pt))
         {
@@ -890,7 +881,7 @@ _compute_next_intersection(Halfedge_handle he,
       else {
         // We have an overlapping subcurve.
         icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
-        CGAL_assertion(icv != NULL);
+        CGAL_assertion(icv != nullptr);
 
         if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
           // The curve has a valid left point - make sure it lies to the
@@ -934,7 +925,7 @@ _compute_next_intersection(Halfedge_handle he,
     // Compare that current object with m_left_pt (if exists).
     ip = object_cast<Intersect_point_2>(&(inter_list.front()));
 
-    if (ip != NULL) {
+    if (ip != nullptr) {
       // We have a simple intersection point - if we don't have to skip it,
       // make sure it lies to the right of m_left_pt (if m_left_pt is on the
       // left boundary, all points lie to it right).
@@ -959,7 +950,7 @@ _compute_next_intersection(Halfedge_handle he,
     else {
       // We have an overlapping subcurve.
       icv = object_cast<X_monotone_curve_2>(&(inter_list.front()));
-      CGAL_assertion(icv != NULL);
+      CGAL_assertion(icv != nullptr);
 
       if (m_geom_traits->is_closed_2_object()(*icv, ARR_MIN_END)) {
         // The curve has a valid left point - make sure it lies to the
@@ -1155,7 +1146,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
     // We have found an intersection (either a simple point or an
     // overlapping x-monotone curve).
     const Intersect_point_2* int_p = object_cast<Intersect_point_2>(&iobj);
-    if (int_p != NULL) {
+    if (int_p != nullptr) {
       Point_2 ip = int_p->first;
 
       // Found a simple intersection point. Check if it is the leftmost
@@ -1177,7 +1168,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
       // We have located an overlapping curve. Assign ip as its left
       // endpoint.
       const X_monotone_curve_2* icv = object_cast<X_monotone_curve_2>(&iobj);
-      CGAL_assertion(icv != NULL);
+      CGAL_assertion(icv != nullptr);
       Point_2 ip = min_vertex(*icv);
 
       // Check if this endpoint it is the leftmost intersection point so far.
@@ -1338,7 +1329,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
     m_cv = m_sub_cv2;
   }
 
-  const X_monotone_curve_2*p_orig_curve = NULL;
+  const X_monotone_curve_2*p_orig_curve = nullptr;
 
   if (! m_found_iso_vert) {
     // Check whether m_intersect_p coincides with one of the end-vertices of the
@@ -1401,8 +1392,8 @@ _zone_in_face(Face_handle face, bool on_boundary)
       // subcurves that result from splitting m_intersect_he->curve() at the
       // intersection point we have just detected, one extends to the left
       // and one to the right of this split point.
-      const X_monotone_curve_2* p_left_subcurve = NULL;
-      const X_monotone_curve_2* p_right_subcurve = NULL;
+      const X_monotone_curve_2* p_left_subcurve = nullptr;
+      const X_monotone_curve_2* p_right_subcurve = nullptr;
 
       if (inserted_he->next()->direction() == ARR_LEFT_TO_RIGHT) {
         // The next halfedge extends to the right of the split point:

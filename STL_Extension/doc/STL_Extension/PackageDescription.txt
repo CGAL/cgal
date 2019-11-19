@@ -28,28 +28,28 @@
 
 \cgalClassifedRefPages
 
-## Doubly-Connected List Managing Items in Place ##
+\cgalCRPSection{Doubly-Connected List Managing Items in Place}
 - `CGAL::In_place_list<T,bool>`
 - `CGAL::In_place_list_base<T>`
 
-## Compact Container ##
+\cgalCRPSection{Compact Container}
 - `CGAL::Compact_container<T, Allocator>`
 - `CGAL::Compact_container_traits<T>`
 - `CGAL::Compact_container_base`
 
-## Multiset with Extended Functionality ##
+\cgalCRPSection{Multiset with Extended Functionality}
 - `CGAL::Multiset<Type,Compare,Allocator>`
 
-## Generic Algorithms ##
-- `CGAL::cpp11::copy_n`
+\cgalCRPSection{Generic Algorithms}
+- `std::copy_n`
 - `CGAL::copy_n`
 - `CGAL::min_max_element`
-- `CGAL::cpp11::next`
-- `CGAL::cpp11::prev`
+- `std::next`
+- `std::prev`
 - `CGAL::predecessor`
 - `CGAL::successor`
 
-## Iterators and Iterator/Circulator Adaptors ##
+\cgalCRPSection{Iterators and Iterator/Circulator Adaptors}
 - `CGAL::Dispatch_output_iterator<V,O>`
 - `CGAL::Dispatch_or_drop_output_iterator<V,O>`
 - `CGAL::Emptyset_iterator`
@@ -63,10 +63,10 @@
 - `CGAL::Random_access_adaptor<IC>`
 - `CGAL::Random_access_value_adaptor<IC,T>`
 
-## Ranges ##
+\cgalCRPSection{Ranges}
 - `CGAL::Iterator_range`
 
-## Projection Function Objects ##
+\cgalCRPSection{Projection Function Objects}
 - `CGAL::Identity<Value>`
 - `CGAL::Dereference<Value>`
 - `CGAL::Get_address<Value>`
@@ -81,7 +81,7 @@
 - `CGAL::Project_next_opposite<Node>`
 - `CGAL::Project_opposite_prev<Node>`
 
-## Creator Function Objects ##
+\cgalCRPSection{Creator Function Objects}
 - `CGAL::Creator_1<Arg, Result>`
 - `CGAL::Creator_2<Arg1, Arg2, Result>`
 - `CGAL::Creator_3<Arg1, Arg2, Arg3, Result>`
@@ -97,7 +97,7 @@
 - `CGAL::Creator_uniform_9<Arg, Result>`
 - `CGAL::Creator_uniform_d<Arg, Result>`
 
-## Utilities ##
+\cgalCRPSection{Utilities}
 - `CGAL::Twotuple<T>`
 - `CGAL::Threetuple<T>`
 - `CGAL::Fourtuple<T>`

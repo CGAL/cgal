@@ -1,19 +1,10 @@
 // Copyright (c) 2017  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -26,6 +17,9 @@
 #include <CGAL/property_map.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -125,10 +119,42 @@ struct Dynamic {
    
   boost::shared_ptr<PM> map_;
 };
-  
+
+template <typename Key, typename Value>
+struct Dynamic_with_index
+{
+  typedef Key key_type;
+  typedef Value value_type;
+  typedef typename boost::mpl::if_<  boost::is_same<bool, Value>,
+                                     value_type,
+                                     value_type&>::type  reference;
+  typedef typename boost::mpl::if_<  boost::is_same<bool, Value>,
+                                     boost::read_write_property_map_tag,
+                                     boost::lvalue_property_map_tag>::type  category;
+
+  Dynamic_with_index()
+    : m_values()
+  {}
+
+  Dynamic_with_index(std::size_t num_features)
+    : m_values( new std::vector<value_type>(num_features) )
+  {}
+
+  friend reference get(const Dynamic_with_index& m, const key_type& k)
+  {
+    return (*m.m_values)[k.idx()];
+  }
+
+  friend void put(const Dynamic_with_index& m, const key_type& k, const value_type& v)
+  {
+    (*m.m_values)[k.idx()]=v;
+  }
+
+  boost::shared_ptr<std::vector<value_type> > m_values;
+};
+
 } // namespace internal
 
-  
 template <typename T>
 struct dynamic_vertex_property_t
 {

@@ -3,14 +3,14 @@
 \cgalConcept
 
 Requirements of a traits class that is used 
-by `partition_is_valid_2`, `convex_partition_is_valid_2`, 
-and `y_monotone_partition_is_valid_2` for testing if a given set of 
+by `CGAL::partition_is_valid_2()`, `CGAL::convex_partition_is_valid_2()`, 
+and `CGAL::y_monotone_partition_is_valid_2()` for testing if a given set of 
 polygons are nonoverlapping and if their union is a polygon that is the 
 same as a polygon represented by a given sequence of points. Note that the 
-traits class for `partition_is_valid_2` may have to satisfy additional 
+traits class for `CGAL::partition_is_valid_2()` may have to satisfy additional 
 requirements if each partition polygon is to be tested for having a 
 particular property; see, for example, the descriptions of the 
-function `is_convex_2()` 
+function `CGAL::is_convex_2()` 
 and the concept `YMonotonePartitionTraits_2` for the additional requirements 
 for testing for convexity and \f$ y\f$-monotonicity, respectively. 
 

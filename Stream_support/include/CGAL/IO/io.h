@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -393,39 +384,45 @@ std::ostream& operator<<( std::ostream& out, const Color& col)
     switch(get_mode(out)) {
     case IO::ASCII :
         return out << static_cast<int>(col.red())   << ' '
-		   << static_cast<int>(col.green()) << ' '
-		   << static_cast<int>(col.blue());
+                  << static_cast<int>(col.green()) << ' '
+                  << static_cast<int>(col.blue()) << ' '
+                  << static_cast<int>(col.alpha());
     case IO::BINARY :
-        write(out, static_cast<int>(col.red()));
-        write(out, static_cast<int>(col.green()));
-        write(out, static_cast<int>(col.blue()));
+        out.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
         return out;
     default:
         return out << "Color(" << static_cast<int>(col.red()) << ", "
-		   << static_cast<int>(col.green()) << ", "
-                   << static_cast<int>(col.blue()) << ')';
+                  << static_cast<int>(col.green()) << ", "
+                  << static_cast<int>(col.blue()) << ", "
+                  << static_cast<int>(col.alpha()) << ")";
     }
 }
 
 inline
 std::istream &operator>>(std::istream &is, Color& col)
 {
-    int r = 0, g = 0, b = 0;
+    unsigned char r = 0, g = 0, b = 0, a = 0;
+    int ir = 0, ig = 0, ib = 0, ia = 0;
     switch(get_mode(is)) {
     case IO::ASCII :
-        is >> r >> g >> b;
+        is >> ir >> ig >> ib >> ia;
+        r = (unsigned char)ir;
+        g = (unsigned char)ig;
+        b = (unsigned char)ib;
+        a = (unsigned char)ia;
         break;
     case IO::BINARY :
         read(is, r);
         read(is, g);
         read(is, b);
+        read(is, a);
         break;
     default:
         std::cerr << "" << std::endl;
         std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
     }
-    col = Color((unsigned char)r,(unsigned char)g,(unsigned char)b);
+    col = Color(r,g,b,a);
     return is;
 }
 

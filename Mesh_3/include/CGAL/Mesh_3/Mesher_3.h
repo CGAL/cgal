@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb, Clement Jamin
@@ -38,12 +29,13 @@
 
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
-#include<CGAL/Mesh_3/Refine_facets_3.h>
-#include<CGAL/Mesh_3/Refine_facets_manifold_base.h>
-#include<CGAL/Mesh_3/Refine_cells_3.h>
+#include <CGAL/Mesh_3/Refine_facets_3.h>
+#include <CGAL/Mesh_3/Refine_facets_manifold_base.h>
+#include <CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
 #include <CGAL/Mesher_level_visitors.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/atomic.h>
 
 #ifdef CGAL_MESH_3_USE_OLD_SURFACE_RESTRICTED_DELAUNAY_UPDATE
@@ -229,7 +221,7 @@ public:
   ~Mesher_3() 
   {
     // The lock data structure is going to be destroyed
-    r_c3t3_.triangulation().set_lock_data_structure(NULL);
+    r_c3t3_.triangulation().set_lock_data_structure(nullptr);
   }
 
   /// Launch mesh refinement
@@ -678,9 +670,17 @@ initialize()
   else
 #endif // CGAL_LINKED_WITH_TBB
   {
+    if (r_c3t3_.number_of_far_points() == 0 &&
+        r_c3t3_.number_of_facets() == 0 &&
+        (r_c3t3_.triangulation().dimension() < 3
 #ifdef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-    if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
-    {
+         || true // in sequential mode, one wants the far points only
+                 // if the macro
+                 // `CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE`
+                 // is defined, or if the dimension of the
+                 // triangulation is 2.
+#endif
+         )) {
       const Bbox_3 &bbox = r_oracle_.bbox();
 
       // Compute radius for far sphere
@@ -706,7 +706,6 @@ initialize()
       std::cerr << "done." << std::endl;
 # endif
     }
-#endif // CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
 
 #ifdef CGAL_MESH_3_PROFILING
     double init_time = t.elapsed();

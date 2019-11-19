@@ -94,7 +94,6 @@ private Q_SLOTS:
         delete col_det;
       col_det = nullptr;
       group_item = nullptr;});
-    group_item->setScene(scene);
     
     scene->addItem(group_item);
     Q_FOREACH(Scene::Item_id i, scene->selectionIndices())
@@ -140,7 +139,7 @@ private Q_SLOTS:
     static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first())->installEventFilter(this);
     QApplication::restoreOverrideCursor();
-    messageInterface->information("Press `W` to switch between Wireframe and Transparency mode.");
+    CGAL::Three::Three::information("Press `W` to switch between Wireframe and Transparency mode.");
   }
   
 public Q_SLOTS:

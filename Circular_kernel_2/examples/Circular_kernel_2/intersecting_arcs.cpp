@@ -1,5 +1,6 @@
 #include <CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/point_generators_2.h>
+#include <iostream>
 
 typedef CGAL::Exact_circular_kernel_2             Circular_k;
 

@@ -1,0 +1,6 @@
+/*!
+\example Heat_method_3/heat_method.cpp
+\example Heat_method_3/heat_method_polyhedron.cpp
+\example Heat_method_3/heat_method_surface_mesh.cpp
+\example Heat_method_3/heat_method_surface_mesh_direct.cpp
+*/

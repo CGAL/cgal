@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Poly.tcc
  * Purpose: 
@@ -46,6 +35,7 @@
  *
  * $URL$
  * $Id$
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 
@@ -131,21 +121,21 @@ Polynomial<NT>::Polynomial(int n, const char * s[]) {
 //  want to generalize this to BigFloat, etc.
 //
 template <class NT>
-Polynomial<NT>::Polynomial(const string & s, char myX) {
-   string ss(s);
+Polynomial<NT>::Polynomial(const std::string & s, char myX) {
+   std::string ss(s);
    constructFromString(ss, myX);
 }
 template <class NT>
 Polynomial<NT>::Polynomial(const char * s, char myX) {
-   string ss(s);
+   std::string ss(s);
    constructFromString(ss, myX);
 }
 template <class NT>
-void Polynomial<NT>::constructFromString(string & s, char myX) {
+void Polynomial<NT>::constructFromString(std::string & s, char myX) {
   if(myX != 'x' || myX != 'X'){
     //Replace myX with 'x'.
-    string::size_type loc = s.find(myX, 0);
-    while(loc != string::npos){
+    std::string::size_type loc = s.find(myX, 0);
+    while(loc != std::string::npos){
       s.replace(loc,1,1,'x');
       loc = s.find(myX, loc+1);
     }
@@ -241,7 +231,7 @@ int Polynomial<NT>::matchparen(const char* cstr, int start){
 
 
 template <class NT>
-int Polynomial<NT>::getbasicterm(string & s, Polynomial<NT> & P){
+int Polynomial<NT>::getbasicterm(std::string & s, Polynomial<NT> & P){
   const char * cstr = s.c_str();
   unsigned int len = s.length();
   int i=0;
@@ -254,7 +244,7 @@ int Polynomial<NT>::getbasicterm(string & s, Polynomial<NT> & P){
   }else if(cstr[i] =='('){
     int oldi = i;
     i = matchparen(cstr, i);
-    string t = s.substr(oldi+1, i -oldi -1);
+    std::string t = s.substr(oldi+1, i -oldi -1);
     P = getpoly(t);
   }else{
 #ifdef CGAL_CORE_TRACE
@@ -272,7 +262,7 @@ int Polynomial<NT>::getbasicterm(string & s, Polynomial<NT> & P){
 
 
 template <class NT>
-int Polynomial<NT>::getterm(string & s, Polynomial<NT> & P){
+int Polynomial<NT>::getterm(std::string & s, Polynomial<NT> & P){
   unsigned int len = s.length();
   if(len == 0){// Zero Polynomial
     P=Polynomial<NT>();
@@ -280,7 +270,7 @@ int Polynomial<NT>::getterm(string & s, Polynomial<NT> & P){
   }
   unsigned int ind, oind;
   const char* cstr =s.c_str();
-  string t;
+  std::string t;
   //P will be used to accumulate the product of basic terms.
   ind = getbasicterm(s, P);
   while(ind != len-1 && cstr[ind + 1]!='+' && cstr[ind + 1]!='-' ){
@@ -304,11 +294,11 @@ int Polynomial<NT>::getterm(string & s, Polynomial<NT> & P){
 }
 
 template <class NT>
-Polynomial<NT> Polynomial<NT>::getpoly(string & s){
+Polynomial<NT> Polynomial<NT>::getpoly(std::string & s){
 
     //Remove white spaces from the string
-    string::size_type cnt=s.find(' ',0);
-    while(cnt != string::npos){
+    std::string::size_type cnt=s.find(' ',0);
+    while(cnt != std::string::npos){
       s.erase(cnt, 1);
       cnt = s.find(' ', cnt);
     }
@@ -321,10 +311,10 @@ Polynomial<NT> Polynomial<NT>::getpoly(string & s){
     //To handle the case when there is one '=' sign
     //Suppose s is of the form s1 = s2. Then we assign s to
     //s1 + (-1)(s2) and reset len
-    string::size_type loc;
-    if((loc=s.find('=',0)) != string::npos){
+    std::string::size_type loc;
+    if((loc=s.find('=',0)) != std::string::npos){
       s.replace(loc,1,1,'+');
-      string s3 = "(-1)(";
+      std::string s3 = "(-1)(";
       s.insert(loc+1, s3);
       len = s.length();
       s.insert(len, 1, ')');
@@ -332,7 +322,7 @@ Polynomial<NT> Polynomial<NT>::getpoly(string & s){
     len = s.length();
 
     const char *cstr = s.c_str();
-    string t;
+    std::string t;
     Polynomial<NT> P;
     // P will be the polynomial in which we accumulate the
     //sum and difference of the different terms.
@@ -966,7 +956,7 @@ BigInt Polynomial<NT>::UpperBound() const {
     lhsNeg.makeCeilExact();
 
     /* compute B^{deg} */
-    if (rhs <= max(lhsPos,lhsNeg)) {
+    if (rhs <= (std::max)(lhsPos,lhsNeg)) {
       B <<= 1;
       rhs *= (BigInt(1)<<deg);
     } else

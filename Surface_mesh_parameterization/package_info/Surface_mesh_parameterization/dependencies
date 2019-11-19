@@ -3,6 +3,7 @@ BGL
 Box_intersection_d
 Circulator
 Distance_2
+Distance_3
 Filtered_kernel
 Hash_map
 Installation
@@ -17,6 +18,7 @@ Polygon
 Polygon_mesh_processing
 Profiling_tools
 Property_map
+Random_numbers
 STL_Extension
 Solver_interface
 Spatial_sorting

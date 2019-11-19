@@ -25,15 +25,15 @@ under positional constraints of some of its vertices, without requiring any addi
 \cgalClassifedRefPages
 
 
-## Main Class ##
+\cgalCRPSection{Main Class}
 - `#CGAL::Surface_mesh_deformation`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `DeformationClosestRotationTraits_3`
 - `RawPoint_3`
 - `SurfaceMeshDeformationWeights`
 
-## Algebraic Traits ##
+\cgalCRPSection{Algebraic Traits}
 - `#CGAL::Deformation_Eigen_closest_rotation_traits_3`
 - `#CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
 

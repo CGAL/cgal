@@ -14,7 +14,6 @@ int main()
 
 #else
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <cstddef>
 #include <list>
@@ -22,7 +21,7 @@ int main()
 #include <CGAL/Compact_container.h>
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 # include <tbb/task_scheduler_init.h>
 # include <tbb/parallel_for.h>
@@ -242,7 +241,7 @@ void test(const Cont &)
   assert(check_empty(c0));
   assert(check_empty(c1));
 
-  typename Cont::allocator_type  t20 = c0.get_allocator();
+  c0.get_allocator();
 
   std::cout << "Now filling some containers" << std::endl;
 

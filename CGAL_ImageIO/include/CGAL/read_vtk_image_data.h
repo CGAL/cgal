@@ -2,20 +2,11 @@
 //               2008 GeometryFactory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Pierre Alliez
@@ -55,7 +46,7 @@ static const VTK_to_ImageIO_type_mapper VTK_to_ImageIO_type[VTK_ID_TYPE] =
 
 inline 
 Image_3
-read_vtk_image_data(vtkImageData* vtk_image)
+read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_THE_DATA)
 {
   if(!vtk_image)
     return Image_3();
@@ -69,12 +60,12 @@ read_vtk_image_data(vtkImageData* vtk_image)
   image->ydim = dims[1];
   image->zdim = dims[2];
   image->vdim = 1;
-  image->vx = spacing[0];
-  image->vy = spacing[1];
-  image->vz = spacing[2];
-  image->tx = offset[0];
-  image->ty = offset[1];
-  image->tz = offset[2];
+  image->vx = (spacing[0] == 0) ? 1 : spacing[0];
+  image->vy = (spacing[1] == 0) ? 1 : spacing[1];
+  image->vz = (spacing[2] == 0) ? 1 : spacing[2];
+  image->tx = static_cast<float>(offset[0]);
+  image->ty = static_cast<float>(offset[1]);
+  image->tz = static_cast<float>(offset[2]);
   image->endianness = ::_getEndianness();
   int vtk_type = vtk_image->GetScalarType();
   if(vtk_type == VTK_SIGNED_CHAR) vtk_type = VTK_CHAR;
@@ -85,16 +76,21 @@ read_vtk_image_data(vtkImageData* vtk_image)
   image->wdim = imageio_type.wdim;
   image->wordKind = imageio_type.wordKind;
   image->sign = imageio_type.sign;
-  image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
-  std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
-            << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
-            << "\nwdim=" << image->wdim << '\n';
   CGAL_assertion(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == dims[0]*dims[1]*dims[2]);
-  vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
+  if(owning == Image_3::OWN_THE_DATA) {
+    image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
+    // std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
+    //           << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
+    //           << "\nwdim=" << image->wdim << '\n';
+    vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
+  } else {
+    image->data = vtk_image->GetPointData()->GetScalars()->GetVoidPointer(0);
+  }
 
-  return Image_3(image);
+  return Image_3(image, owning);
 }
 
 } // namespace CGAL
+
 
 #endif // CGAL_READ_VTK_IMAGE_DATA_H

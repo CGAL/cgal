@@ -1,14 +1,20 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Periodic_3_mesh_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
+
+if(POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif()
 
 # CGAL and its components
-find_package( CGAL QUIET )
+find_package( CGAL QUIET  COMPONENTS ImageIO )
 
-if ( NOT CGAL_FOUND )
+if ( CGAL_FOUND )
+  include( ${CGAL_USE_FILE} )
+else()  
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()
 endif()

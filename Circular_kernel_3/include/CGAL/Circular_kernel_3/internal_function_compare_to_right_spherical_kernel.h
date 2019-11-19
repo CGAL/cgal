@@ -2,15 +2,6 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
 // RTD (FET Open) Project under Contract No  IST-2000-26473 
@@ -20,7 +11,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Sebastien Loriot
 
@@ -70,7 +61,7 @@ struct Trait_for_cmp_tgt_theta_0{
   typename SK::FT 
   unsigned_tkz_coeff_normal( const typename SK::Point_3& C,const typename SK::FT& gamma_k) const
   {
-    return - CGAL_NTS sign(gamma_k)*C.y();
+    return - (int)CGAL_NTS sign(gamma_k)*C.y();
   }
 
   Tk_type

@@ -8,8 +8,7 @@ of mesh, `TriangleMesh`, which must be a model of the `FaceGraph` concept.
 Border parameterizers are also models of this concept but they only parameterize
 the border of a given mesh.
 
-Creation
---------------
+\cgalHeading{Creation}
 
 Construction and destruction are undefined.
 

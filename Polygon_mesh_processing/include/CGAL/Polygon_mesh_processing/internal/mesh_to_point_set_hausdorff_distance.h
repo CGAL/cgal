@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Simon Giraudot and Maxime Gimeno
@@ -51,11 +42,7 @@ public:
     m_point = p;
     m_hausdorff = h;
   }
-  CPointH (const CPointH& p)
-  {
-    m_point = p ();
-    m_hausdorff = p.hausdorff ();
-  }
+
 
   const Point& operator() () const { return m_point; }
   Point& operator() () { return m_point; }
@@ -130,16 +117,6 @@ public:
     }
   }
 
-  CRefTriangle (const CRefTriangle& t)
-  {
-    m_point[0] = t.points ()[0];
-    m_point[1] = t.points ()[1];
-    m_point[2] = t.points ()[2];
-    m_edge = t.edge ();
-    m_lower_bound = t.lower_bound ();
-    m_upper_bound = t.upper_bound ();
-    m_bisector = t.bisector ();
-  }
 
   FT lower_bound () const
   {
@@ -271,7 +248,7 @@ public:
     }
 
     m_queue = std::priority_queue<RefTriangle> ();
-    BOOST_FOREACH(RefTriangle& r, to_keep)
+    for(RefTriangle& r : to_keep)
       m_queue.push (r);
 
     return (m_queue.size () < before);

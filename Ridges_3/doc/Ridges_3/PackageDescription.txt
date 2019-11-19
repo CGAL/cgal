@@ -23,18 +23,18 @@
 
 \cgalClassifedRefPages
 
-## Enums ##
+\cgalCRPSection{Enums}
 - `CGAL::Ridge_type`
 - `CGAL::Ridge_order`
 - `CGAL::Umbilic_type`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Ridge_line<TriangleMesh>`
 - `CGAL::Umbilic<TriangleMesh>`
 - `CGAL::Ridge_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
 - `CGAL::Umbilic_approximation<TriangleMesh,VertexFTMap,VertexVectorMap>`
 
-## Global Functions ##
+\cgalCRPSection{Global Functions}
 - `CGAL::compute_max_ridges()`
 - `CGAL::compute_min_ridges()`
 - `CGAL::compute_crest_ridges()`

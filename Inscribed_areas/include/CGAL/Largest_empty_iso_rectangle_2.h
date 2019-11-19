@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Eli Packer (algorithm), Andreas Fabri (cgal conformance)
@@ -254,16 +245,6 @@ public:
     Point_2 y_part;// the y coordinate of the point
     Point_2 original;
 
-    Internal_point &
-     operator=(const Internal_point &other)
-    {
-      x_part = other.x_part;
-      y_part = other.y_part;
-      original = other.original;
-
-      return(*this);
-    }
-
     Internal_point() // no real value - just to allow construction of LER
       : x_part(Point_2(0,0)), y_part(Point_2(0,0)), original(Point_2(0,0)) {}
 
@@ -317,10 +298,10 @@ public:
     {}
 
     ~Point_data() {
-      if(right_tent != NULL){
+      if(right_tent != nullptr){
         delete right_tent;
       }
-      if (left_tent != NULL){
+      if (left_tent != nullptr){
         delete left_tent;
       }
     }

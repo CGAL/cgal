@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot, Maxime Gimeno
@@ -28,11 +19,16 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <vector>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -66,7 +62,7 @@ void create_strip(const BorderHalfedgesRange& input_halfedges,
     halfedge_descriptor h = input_halfedges[i];
     face_descriptor nf = add_face(mesh);
 
-    CGAL::cpp11::array<halfedge_descriptor, 4> hedges;
+    std::array<halfedge_descriptor, 4> hedges;
     for (int k=0; k<4; ++k)
     {
       hedges[k]=h;
@@ -137,19 +133,21 @@ struct Identity_functor
  * @param np_in an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map that contains the points associated to the vertices of `input`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `input` \cgalParamEnd
+ * \cgalParamBegin{vertex_point_map}
+ *   the property map that contains the points associated to the vertices of `input`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `input`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map that will contain the points associated to the vertices of `output`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `output` \cgalParamEnd
+ * \cgalParamBegin{vertex_point_map}
+ *   the property map that will contain the points associated to the vertices of `output`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `output`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,
@@ -176,9 +174,12 @@ void extrude_mesh(const InputMesh& input,
   typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
   typedef typename GetVertexPointMap < InputMesh, NamedParameters1>::const_type IVPMap;
 
-  VPMap output_vpm = choose_param(get_param(np_out, internal_np::vertex_point),
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  VPMap output_vpm = choose_parameter(get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, output));
-  IVPMap input_vpm = choose_param(get_param(np_in, internal_np::vertex_point),
+  IVPMap input_vpm = choose_parameter(get_parameter(np_in, internal_np::vertex_point),
                                   get_const_property_map(vertex_point, input));
 
   std::vector<std::pair<input_vertex_descriptor, output_vertex_descriptor> > bottom_v2v;
@@ -240,18 +241,20 @@ void extrude_mesh(const InputMesh& input,
  *
  * \cgalNamedParamsBegin
  * \cgalParamBegin{vertex_point_map}
- * the property map that contains the points associated to the vertices of `input`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `input` \cgalParamEnd
+ *   the property map that contains the points associated to the vertices of `input`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `input`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ * @param np_out an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  * \cgalParamBegin{vertex_point_map}
- * the property map that will contain the points associated to the vertices of `output`.
- * If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- * should be available for the vertices of `output` \cgalParamEnd
+ *   the property map that will contain the points associated to the vertices of `output`.
+ *   If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *   should be available for the vertices of `output`
+ * \cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template <class InputMesh,
@@ -269,7 +272,7 @@ void extrude_mesh(const InputMesh& input,
                   const NamedParameters2& np_out)
 {
   typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
-  VPMap output_vpm = choose_param(get_param(np_out, internal_np::vertex_point),
+  VPMap output_vpm = parameters::choose_parameter(parameters::get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, output));
 
   extrude_impl::Const_dist_translation<

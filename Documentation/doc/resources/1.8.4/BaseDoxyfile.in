@@ -201,6 +201,9 @@ ALIASES = "sc{1}=<span style=\"font-variant: small-caps;\">\1</span>"
 ALIASES += "cgal=\sc{%CGAL}"
 ALIASES += "protocgal=\sc{C++gal}"
 ALIASES += "plageo=\sc{Plageo}"
+ALIASES += "gmp=\sc{GMP}"
+ALIASES += "mpir=\sc{MPIR}"
+ALIASES += "mpfr=\sc{MPFR}"
 ALIASES += "stl=\sc{STL}"
 ALIASES += "leda=\sc{LEDA}"
 ALIASES += "gcc=\sc{GCC}"
@@ -251,6 +254,8 @@ ALIASES += "cgalAdvancedBegin=\htmlonly <div class=\"CGALAdvanced\"> <div>Advanc
 ALIASES += "cgalAdvancedEnd=\htmlonly </div> \endhtmlonly"
 ALIASES += "cgalAdvancedFunction=This is an advanced function."
 ALIASES += "cgalAdvancedClass=This is an advanced class."
+ALIASES += "cgalAdvancedType=This is an advanced type."
+ALIASES += "cgalAdvancedConcept=This is an advanced concept."
 
 ALIASES += "cgalRequiresCPP11=\warning This function requires a C++11 compiler."
 
@@ -293,7 +298,12 @@ ALIASES+= "cgalHeading{1}= <B>\1</B><BR>"
 
 ALIASES+= "cgalClassifedRefPages=\htmlonly  <h2 class=\"groupheader\">Classified Reference Pages</h2> \endhtmlonly"
 
+ALIASES+= "cgalCRPSection{1}=<h2>\1</h2>"
+ALIASES+= "cgalCRPSubsection{1}=<h3>\1</h3>"
+
 ALIASES+= "cgalCite{1}=<!-- -->\cite \1"
+
+ALIASES+= "cgalPackageSection{2}=\htmlonly <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 \n \htmlonly </div>\endhtmlonly"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding

@@ -42,7 +42,7 @@ flexibility that is offered in the \ref PkgMesh3 package.}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-### Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages ###
+\cgalHeading{Relation to the 3D Mesh Generation and 3D Periodic Triangulations Packages}
 
 A periodic mesh extends, by definition, infinitely in space. To avoid storing and
 manipulating duplicate points, well-chosen "dummy" points are inserted
@@ -61,7 +61,7 @@ This package offers these interfaces.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 This package relies entirely on the \ref PkgMesh3Concepts
 and the \ref PkgMesh3SecondaryConcepts described in the \ref PkgMesh3 package.
@@ -71,7 +71,7 @@ and `MeshDomainWithFeatures_3` in the package \ref PkgMesh3 :
 - `Periodic_3MeshDomain_3`
 - `Periodic_3MeshDomainWithFeatures_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 The following class provides the interface between %CGAL's periodic triangulation
 and %CGAL's three-dimensional mesh generator:
@@ -84,7 +84,7 @@ The following class allows to split the canonical cube in two subdomains,
 separated by the zero-level of an implicit function:
 - `CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function,BGT>`
 
-## Function Templates ##
+\cgalCRPSection{Function Templates}
 
 The following functions handle the generation of a periodic mesh:
 - `CGAL::make_periodic_3_mesh_3()`
@@ -94,13 +94,13 @@ The following functions handle the generation of a periodic mesh:
 - `CGAL::lloyd_optimize_periodic_3_mesh_3()`
 - `CGAL::odt_optimize_periodic_3_mesh_3()`
 
-## Classes and Functions of `Mesh_3` ##
+\cgalCRPSection{Classes and Functions of `Mesh_3`}
 
 Many classes and functions used by this package are defined within the package
 \ref PkgMesh3, see \ref PkgMesh3MeshClasses, \ref PkgMesh3Domains,
 and \ref PkgMesh3Parameters.
 
-## Input/Output Functions ##
+\cgalCRPSection{Input/Output Functions}
 - \link PkgPeriodic3Mesh3IOFunctions `CGAL::output_periodic_mesh_to_medit()` \endlink
 
 */

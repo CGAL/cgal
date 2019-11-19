@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -62,10 +53,6 @@ public:
 
   friend bool operator != ( Vertex_info const& a, Vertex_info const& b ) { return !(a==b); }
 
-  friend bool operator < ( Vertex_info const& a, Vertex_info const& b )
-  {
-    return Traits().less_xy_2_object()(*a.vertex_it(), *b.vertex_it());
-  }
 
 private:
 
@@ -73,6 +60,24 @@ private:
   Polygon_2 const* m_poly_ptr ;
 } ;
 
+
+template<class Traits_>
+class Vertex_info_less
+{
+public:
+  Vertex_info_less(const Traits_& traits)
+    : traits(traits)
+  {}
+
+  bool operator()(Vertex_info<Traits_> const& a, Vertex_info<Traits_> const& b ) const
+  {
+    return traits.less_xy_2_object()(*a.vertex_it(), *b.vertex_it());
+  }
+  
+private:
+  const Traits_& traits;
+};
+  
 template <class Traits_>
 class Edge_info
 {
@@ -117,9 +122,9 @@ public:
    typedef typename Traits::Less_xy_2   Less_xy_2;
    typedef typename Traits::Point_2     Point_2;
 
-   CW_indirect_edge_info_compare (Vertex_const_iterator v_info) : vertex_it(v_info),
-      left_turn(Traits().left_turn_2_object()),
-      less_xy(Traits().less_xy_2_object())
+  CW_indirect_edge_info_compare (Vertex_const_iterator v_info, const Traits& traits) : vertex_it(v_info),
+      left_turn(traits.left_turn_2_object()),
+      less_xy(traits.less_xy_2_object())
    {}
 
    bool operator()(Edge_info e1, Edge_info e2)
@@ -185,6 +190,12 @@ public:
   Edge_info const& back() const { return m_list.back() ; }
   Edge_info      & back()       { return m_list.back() ; }
 
+
+  Edge_list(const Traits& traits)
+    : traits(traits)
+  {}
+  
+  
   template<class Compare> void sort ( Compare c ) { m_list.sort(c); }
 
   void insert_next(Vertex_info endpoint_ref, int num)
@@ -242,7 +253,7 @@ public:
     // polygon.
     if (m_list.size() > 2)
     {
-      m_list.sort(CW_indirect_edge_info_compare<Traits>(vertex_it));
+      m_list.sort(CW_indirect_edge_info_compare<Traits>(vertex_it,traits));
     }
 
 #ifdef CGAL_PARTITION_CHECK_DEBUG
@@ -301,7 +312,7 @@ public:
   }
 
 private :
-
+  const Traits& traits;
   List m_list ;
 };
 
@@ -335,7 +346,8 @@ public:
 
    typedef Partition_vertex_map<Traits> Self;
 
-   typedef std::map<Vertex_info, Edge_list> Map ;
+    typedef Vertex_info_less<Traits> Less;
+    typedef std::map<Vertex_info, Edge_list,Less> Map ;
 
    typedef typename Map::const_iterator Self_const_iterator;
    typedef typename Map::iterator       Self_iterator;
@@ -348,7 +360,9 @@ public:
    Partition_vertex_map() {}
 
    template <class InputIterator>
-   Partition_vertex_map(InputIterator first_poly, InputIterator last_poly)
+   Partition_vertex_map(InputIterator first_poly, InputIterator last_poly, const Traits& traits)
+     : traits(traits)
+     , m_map(traits)
    {  _build(first_poly, last_poly); }
   
    Self_const_iterator begin() const { return m_map.begin() ; }
@@ -419,7 +433,7 @@ public:
           if ((*m_it).second.size() > 2)
           {
             (*m_it).second.sort(
-              CW_indirect_edge_info_compare<Traits>((*m_it).first.vertex_it()));
+                                CW_indirect_edge_info_compare<Traits>((*m_it).first.vertex_it(),traits));
        	  }
 
           // find the previous vertex in this vertex's list
@@ -474,7 +488,7 @@ private :
 
         vtx_begin = (*poly_first).vertices_begin();
         vtx_end   = (*poly_first).vertices_end();
-        begin_v_loc_pair = m_map.insert(P_Vertex( Vertex_info(vtx_begin,poly_ptr), Edge_list()));
+        begin_v_loc_pair = m_map.insert(P_Vertex( Vertex_info(vtx_begin,poly_ptr), Edge_list(traits)));
   
         prev_v_loc_pair = begin_v_loc_pair;
         v_it = vtx_begin;
@@ -482,7 +496,7 @@ private :
         for (v_it++; v_it != vtx_end; v_it++)
         {
 
-           v_loc_pair = m_map.insert(P_Vertex( Vertex_info(v_it,poly_ptr), Edge_list()));
+           v_loc_pair = m_map.insert(P_Vertex( Vertex_info(v_it,poly_ptr), Edge_list(traits)));
 
            insert_next_edge(prev_v_loc_pair.first,  v_loc_pair.first, poly_num);
 
@@ -509,7 +523,7 @@ private :
    }
 
 private :
-
+  const Traits& traits;
   Map m_map ;
 };
 

@@ -30,9 +30,10 @@ is met, such as reaching the desired number of edges.
 
 The algorithm implemented here is generic in the sense that it does not require the surface mesh 
 to be of a particular type but to be a model of the `MutableFaceGraph` and `HalfedgeListGraph` concepts.
+We give examples for `Surface_mesh`, `Polyhedron_3`, and OpenMesh.
 
-The design is <A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
-(<A HREF="http://en.wikipedia.org/wiki/Policy-based_design"><TT>http://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
+The design is <A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><I>policy-based</I></A>
+(<A HREF="https://en.wikipedia.org/wiki/Policy-based_design"><TT>https://en.wikipedia.org/wiki/Policy-based_design</TT></A>),
 meaning that you can customize some aspects of the process by passing a set of
 <I>policy objects</I>. Each policy object specifies a particular aspect of the algorithm,
 such as how edges are selected and where the replacement vertex is placed. All policies have 
@@ -214,7 +215,7 @@ returns `true` the algorithm terminates.
 
 \subsection Surface_mesh_simplificationOptionalNamed Optional Named Parameters
 
-The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="http://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>http://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
+The notion of <I>named parameters</I> was also introduced in the <span class="textsc">Bgl</span>. You can read about it in \cgalCite{cgal:sll-bgl-02} or the following site: <A HREF="https://www.boost.org/libs/graph/doc/bgl_named_params.html"><TT>https://www.boost.org/libs/graph/doc/bgl_named_params.html</TT></A>. Named parameters allow the user to specify only those parameters which are really needed, by name, making the parameter ordering unimportant.
 
 Say there is a function `f()` that takes 3 parameters called `name`, `age` and `gender`, and you have variables `n,a and g` to pass as parameters to that function. Without named parameters, you would call it like this: `f(n,a,g)`, but with named parameters, you call it like this: `f(name(n).age(a).gender(g))`.
 
@@ -252,22 +253,29 @@ int r = edge_collapse(surface_mesh
 
 \endcode
 
-\subsection Surface_mesh_simplificationExamples Examples
+\section Surface_mesh_simplificationExamples Examples
+
+\subsection Surface_mesh_simplificationExampleUsingSurfaceMesh Example Using a Surface_mesh
+
+The following example illustrates the simplification of a `Surface_mesh`.
+The unspecified cost strategy defaults to Lindstrom-Turk.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_surface_mesh.cpp}
+
 
 \subsection Surface_mesh_simplificationExampleUsinga Example Using a Default Polyhedron
 
-The following example illustrates the simplest of the cases. It uses
-an ordinary polyhedron and only one of the optional parameters.
+The following example illustrates the simplification of a `Polyhedron_3` with default
+vertices, halfedges, and faces. 
 The unspecified cost strategy defaults to Lindstrom-Turk.
+
 \cgalExample{Surface_mesh_simplification/edge_collapse_polyhedron.cpp}
 
 \subsection Surface_mesh_simplificationExampleUsingan Example Using an Enriched Polyhedron
 
 The following example is equivalent to the previous example but using an
 enriched polyhedron whose halfedges support an `id` field to
-store the edge index needed by the algorithm. It also shows how to
-explicitly specify a cost strategy (other than the default)
-and how to use a visitor object to track the simplification process.
+store the edge index needed by the algorithm.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_enriched_polyhedron.cpp}
 
@@ -289,7 +297,7 @@ edges from being removed. Edges marked as constrained are guaranteed to be in th
 the vertices of the constrained edges may change and the placement may change the points.
 The wrapper `CGAL::Surface_mesh_simplification::Constrained_placement` guarantees that these points are not changed.
 
-\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_polyhedron.cpp}
+\cgalExample{Surface_mesh_simplification/edge_collapse_constrained_border_surface_mesh.cpp}
 
 
 \subsection Surface_mesh_simplificationExamplewithBoundedNormal Example with Bounded Change of Face Normals
@@ -310,6 +318,12 @@ rejects this placement by returning `boost::none`.
 
 \cgalExample{Surface_mesh_simplification/edge_collapse_bounded_normal_change.cpp}
 
+\subsection Surface_mesh_simplificationExamplewithVisitor Example with Visitor
+
+The last example shows how to use a visitor with callbacks that are called at the different
+steps of the simplification algorithm.
+
+\cgalExample{Surface_mesh_simplification/edge_collapse_visitor_surface_mesh.cpp}
 
 */ 
 } /* namespace CGAL */

@@ -39,10 +39,10 @@ the interval skip list class is parameterized.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `Interval`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Interval_skip_list<Interval>`
 - `CGAL::Interval_skip_list_interval<Value>`
 - `CGAL::Level_interval<FaceHandle>`

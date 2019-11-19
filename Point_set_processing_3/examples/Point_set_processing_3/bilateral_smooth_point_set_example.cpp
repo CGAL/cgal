@@ -61,7 +61,8 @@ int main(int argc, char*argv[])
   }
   
   //// Save point set.
-  std::ofstream out(output_filename);   
+  std::ofstream out(output_filename);
+  out.precision(17);
   if (!out ||
       !CGAL::write_xyz_points(
       out, points,

@@ -38,6 +38,7 @@ public:
   Scene_c3t3_item(const C3t3& c3t3, bool is_surface = false);
   ~Scene_c3t3_item();
 
+  void common_constructor(bool is_surface);
   bool has_stats()const  Q_DECL_OVERRIDE {return true;}
   QString computeStats(int type)  Q_DECL_OVERRIDE;
   CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE;
@@ -127,6 +128,7 @@ public:
     void copyProperties(Scene_item *) Q_DECL_OVERRIDE;
     float getShrinkFactor() const;
     bool keyPressEvent(QKeyEvent *) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *, QEvent *) Q_DECL_OVERRIDE;
   public Q_SLOTS:
 
   void on_spheres_color_changed();
@@ -156,9 +158,24 @@ public:
 
   void itemAboutToBeDestroyed(Scene_item *) Q_DECL_OVERRIDE;
 
+  void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
+  void computeElements() const Q_DECL_OVERRIDE;
+  void newViewer(Viewer_interface *viewer) Q_DECL_OVERRIDE;
+  
   protected:
     friend struct Scene_c3t3_item_priv;
     Scene_c3t3_item_priv* d;
+    enum Face_Containers{
+      C3t3_faces = 0
+    };
+    enum Edge_Containers{
+      C3t3_edges = 0,
+      Grid_edges,
+      CNC
+    };
+    enum Point_Container{
+      C3t3_points = 0
+    };
 
 };
 

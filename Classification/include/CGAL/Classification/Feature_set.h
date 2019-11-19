@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -76,7 +67,7 @@ public:
   */
   Feature_set()
 #ifdef CGAL_LINKED_WITH_TBB
-    : m_tasks(NULL)
+    : m_tasks(nullptr)
 #endif
   { }
 
@@ -86,7 +77,7 @@ public:
   virtual ~Feature_set()
   {
 #ifdef CGAL_LINKED_WITH_TBB
-    if (m_tasks != NULL)
+    if (m_tasks != nullptr)
       delete m_tasks;
     for (std::size_t i = 0; i < m_adders.size(); ++ i)
       delete m_adders[i];
@@ -122,7 +113,7 @@ public:
   Feature_handle add (T&& ... t)
   {
 #ifdef CGAL_LINKED_WITH_TBB
-    if (m_tasks != NULL)
+    if (m_tasks != nullptr)
     {
       m_features.push_back (Feature_handle());
     
@@ -145,7 +136,7 @@ public:
   Feature_handle add_with_scale_id (std::size_t i, T&& ... t)
   {
 #ifdef CGAL_LINKED_WITH_TBB
-    if (m_tasks != NULL)
+    if (m_tasks != nullptr)
     {
       m_features.push_back (Feature_handle());
     
@@ -241,7 +232,7 @@ public:
   {
     m_tasks->wait();
     delete m_tasks;
-    m_tasks = NULL;
+    m_tasks = nullptr;
     
     for (std::size_t i = 0; i < m_adders.size(); ++ i)
       delete m_adders[i];

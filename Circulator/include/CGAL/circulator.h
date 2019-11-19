@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
@@ -30,6 +21,7 @@
 #include <CGAL/circulator_bases.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
+#include <CGAL/tags.h>
 
 #include <cstddef>
 #include <functional>
@@ -311,7 +303,7 @@ void Assert_is_at_least_random_access_category( const IC& /*ic*/) {
 
 template< class C> inline
 bool I_is_empty_range( const C& c1, const C&, Circulator_tag){
-    return c1 == NULL;
+    return c1 == nullptr;
 }
 
 template< class I> inline
@@ -368,7 +360,7 @@ I_min_circulator_size( const C& c) {
     Assert_random_access_category(c);
     typedef typename C::size_type  size_type;
     size_type n = 0;
-    if ( c != NULL) {
+    if ( c != nullptr) {
         n = (c-1) - c + 1;
         CGAL_assertion(n > 0);
     }
@@ -379,7 +371,7 @@ template <class C>
 typename C::size_type
 I_circulator_size( const C& c, Forward_circulator_tag) {
     // Simply count.
-    if ( c == NULL)
+    if ( c == nullptr)
         return 0;
     typedef typename C::size_type  size_type;
     size_type n = 0;
@@ -412,7 +404,7 @@ template <class C>
 typename C::difference_type
 I_circulator_distance( C c, const C& d, Forward_circulator_tag) {
     // Simply count.
-    if ( c == NULL)
+    if ( c == nullptr)
         return 0;
     typedef typename C::difference_type  difference_type;
     difference_type n = 0;
@@ -551,18 +543,18 @@ public:
         return !(*this == i);
     }
     Ref  operator*() const {
-        CGAL_assertion( m_anchor != NULL);
-        CGAL_assertion( current  != NULL);
+        CGAL_assertion( m_anchor != nullptr);
+        CGAL_assertion( current  != nullptr);
         return Ref(*current);
     }
     Ptr  operator->() const {
-        CGAL_assertion( m_anchor != NULL);
-        CGAL_assertion( current  != NULL);
+        CGAL_assertion( m_anchor != nullptr);
+        CGAL_assertion( current  != nullptr);
         return Ptr(current.operator->());
     }
     Self& operator++() {
-        CGAL_assertion( m_anchor != NULL);
-        CGAL_assertion( current  != NULL);
+        CGAL_assertion( m_anchor != nullptr);
+        CGAL_assertion( current  != nullptr);
         ++current;
         if ( current == *m_anchor)
             ++m_winding;
@@ -574,8 +566,8 @@ public:
         return tmp;
     }
     Self& operator--() {
-        CGAL_assertion( m_anchor != NULL);
-        CGAL_assertion( current != NULL);
+        CGAL_assertion( m_anchor != nullptr);
+        CGAL_assertion( current != nullptr);
         if ( current == *m_anchor)
             --m_winding;
         --current;
@@ -587,8 +579,8 @@ public:
         return tmp;
     }
     Self& operator+=( difference_type n) {
-        CGAL_assertion( m_anchor != NULL);
-        CGAL_assertion( current != NULL);
+        CGAL_assertion( m_anchor != nullptr);
+        CGAL_assertion( current != nullptr);
         if ( n < 0 && current == *m_anchor)  // We are leaving the anchor.
             --m_winding;
         current += n;
@@ -608,8 +600,8 @@ public:
         return tmp += -n;
     }
     difference_type  operator-( const Self& i) const {
-        CGAL_assertion( m_anchor  != NULL);
-        CGAL_assertion( current   != NULL);
+        CGAL_assertion( m_anchor  != nullptr);
+        CGAL_assertion( current   != nullptr);
         CGAL_assertion( m_anchor  == i.m_anchor);
         if ( m_winding != i.m_winding) {
             difference_type s = I_min_circulator_size( *m_anchor);
@@ -625,8 +617,8 @@ public:
         return tmp.operator*();
     }
     bool operator<( const Self& i) const {
-        CGAL_assertion( m_anchor  != NULL);
-        CGAL_assertion( current != NULL);
+        CGAL_assertion( m_anchor  != nullptr);
+        CGAL_assertion( current != nullptr);
         CGAL_assertion( m_anchor  == i.m_anchor);
         return (     (m_winding < i.m_winding)
                  || (    (m_winding == i.m_winding)
@@ -697,12 +689,12 @@ typedef Iterator_from_circulator< C, const_reference, const_pointer>
     }
     iterator end() {
         // the past-the-end iterator.
-        return anchor == NULL ?  iterator( &anchor, 0)
+        return anchor == nullptr ?  iterator( &anchor, 0)
                                         :  iterator( &anchor, 1);
     }
     const_iterator end() const {
         // the past-the-end const iterator.
-        return anchor == NULL ?  const_iterator( &anchor, 0)
+        return anchor == nullptr ?  const_iterator( &anchor, 0)
                                         :  const_iterator( &anchor, 1);
     }
 };
@@ -729,39 +721,32 @@ private:
 public:
 // CREATION
 
-    Circulator_from_container() : ctnr(NULL) {}
+    Circulator_from_container() : ctnr(nullptr) {}
     Circulator_from_container( Container* c) : ctnr(c), i(c->begin()) {}
     Circulator_from_container( Container* c, iterator j)  : ctnr(c), i(j) {}
 
-// Gnu-bug workaround: define operator= explicitly.
-    Self& operator=( const Self& c) {
-        ctnr = c.ctnr;
-        i    = c.i;
-        return *this;
-    }
-
 // OPERATIONS
 
-    bool operator==( Nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
-        CGAL_assertion( p == NULL);
-        return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
+        CGAL_assertion( p == nullptr);
+        return (ctnr == nullptr) || (ctnr->begin() == ctnr->end());
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         return *i;
     }
     pointer  operator->() const {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         return i.operator->();
     }
     Self& operator++() {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         ++i;
         if ( i == ctnr->end())
@@ -774,7 +759,7 @@ public:
         return tmp;
     }
     Self& operator--() {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         if ( i == ctnr->begin())
             i = ctnr->end();
@@ -787,7 +772,7 @@ public:
         return tmp;
     }
     Self& operator+=( difference_type n) {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         typename Container::difference_type j    = i - ctnr->begin();
         typename Container::difference_type size = ctnr->size();
@@ -809,8 +794,8 @@ public:
         return tmp += -n;
     }
     difference_type operator-( const Self& c) const {
-        CGAL_assertion( ctnr != NULL);
-        CGAL_assertion( c.ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
+        CGAL_assertion( c.ctnr != nullptr);
         return i - c.i;
     }
     reference  operator[]( difference_type n) const {
@@ -859,7 +844,7 @@ private:
 public:
 // CREATION
 
-    Const_circulator_from_container() : ctnr(NULL) {}
+    Const_circulator_from_container() : ctnr(nullptr) {}
     Const_circulator_from_container( const Ctnr* c)
         : ctnr(c), i(c->begin()) {}
     Const_circulator_from_container( const Ctnr* c, const_iterator j)
@@ -867,35 +852,28 @@ public:
     Const_circulator_from_container( const Mutable& c)
         : ctnr( c.container()), i( c.current_iterator()) {}
 
-// Gnu-bug workaround: define operator= explicitly.
-    Self& operator=( const Self& c) {
-        ctnr = c.ctnr;
-        i    = c.i;
-        return *this;
-    }
-
 // OPERATIONS
 
-    bool operator==( Nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
-        CGAL_assertion( p == NULL);
-        return (ctnr == NULL) || (ctnr->begin() == ctnr->end());
+        CGAL_assertion( p == nullptr);
+        return (ctnr == nullptr) || (ctnr->begin() == ctnr->end());
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return i == c.i; }
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         return *i;
     }
     pointer  operator->() const {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         return i.operator->();
     }
     Self& operator++() {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         ++i;
         if ( i == ctnr->end())
@@ -908,7 +886,7 @@ public:
         return tmp;
     }
     Self& operator--() {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         if ( i == ctnr->begin())
             i = ctnr->end();
@@ -921,7 +899,7 @@ public:
         return tmp;
     }
     Self& operator+=( difference_type n) {
-        CGAL_assertion( ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
         CGAL_assertion( i != ctnr->end());
         typename Ctnr::difference_type j    = i - ctnr->begin();
         typename Ctnr::difference_type size = ctnr->size();
@@ -943,8 +921,8 @@ public:
         return tmp += -n;
     }
     difference_type operator-( const Self& c) const {
-        CGAL_assertion( ctnr != NULL);
-        CGAL_assertion( c.ctnr != NULL);
+        CGAL_assertion( ctnr != nullptr);
+        CGAL_assertion( c.ctnr != nullptr);
         return i - c.i;
     }
     reference  operator[]( difference_type n) const {
@@ -1029,12 +1007,12 @@ public:
 //
 // OPERATIONS
 
-    bool operator==( Nullptr_t p) const {
+    bool operator==( std::nullptr_t p) const {
         CGAL_USE(p);
-        CGAL_assertion( p == NULL);
+        CGAL_assertion( p == nullptr);
         return empty;
     }
-    bool operator!=( Nullptr_t p) const { return !(*this == p); }
+    bool operator!=( std::nullptr_t p) const { return !(*this == p); }
     bool operator==( const Self& c) const { return  current == c.current;}
     bool operator!=( const Self& c) const { return !(*this == c); }
     reference  operator*() const {

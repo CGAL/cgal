@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
@@ -52,8 +43,8 @@ cmp(const DirectionCd<FT,LA>& h1,
   int c2 = CGAL_NTS sign(h2.delta(i));
   if (c1 != c2) return CGAL_NTS compare(c1,c2);
  
-  FT s1 = (FT) CGAL_NTS sign(h2.delta(i)) * h2.delta(i); 
-  FT s2 = (FT) CGAL_NTS sign(h1.delta(i)) * h1.delta(i); 
+  FT s1 = (FT) (int) CGAL_NTS sign(h2.delta(i)) * h2.delta(i);
+  FT s2 = (FT) (int) CGAL_NTS sign(h1.delta(i)) * h1.delta(i);
 
   i++;
   Comparison_result c; 

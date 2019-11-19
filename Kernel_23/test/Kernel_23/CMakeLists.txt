@@ -2,13 +2,13 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Kernel_23_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET COMPONENTS Core)
 
-if ( CGAL_FOUND AND CGAL_Core_FOUND)
+if ( CGAL_FOUND )
 
   include(${CGAL_USE_FILE})
   include_directories (BEFORE "include")

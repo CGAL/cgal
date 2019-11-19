@@ -411,9 +411,9 @@ range of points will be performed in parallel, and the individual
 insert/remove operations will be optionally thread-safe.
 
 Parallel algorithms require the program to be linked against 
-the <a href="http://www.threadingbuildingblocks.org">Intel TBB library</a>.
+the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="http://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
 for more details.
 
 \section Triangulation3secexamples Examples 
@@ -474,17 +474,36 @@ with a range of such pairs.
 \subsubsection Triangulation_3UsingtheBoostZipIterator Using the Boost Zip Iterator
 
 Information and points are in separate containers. We use
-<A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
+<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::zip_iterator`</A> to provide an iterator gathering them.
 
 \cgalExample{Triangulation_3/info_insert_with_zip_iterator.cpp}
 
 \subsubsection Triangulation_3UsingtheBoostTransformIterator Using the Boost Transform Iterator
 
 We define a functor `Auto_count` used together with
-<A HREF="http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
+<A HREF="https://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors">`boost::transform_iterator`</A> to set the order of each point
 in the range. Note that this is correct because the iterator
 is dereferenced only once per point during the insertion.
 \cgalExample{Triangulation_3/info_insert_with_transform_iterator.cpp}
+
+\subsection Triangulation3secRanges Iterators and Ranges
+
+The triangulation defines iterator types such as `Triangulation_3::All_vertices_iterator`. They behave like
+a `Triangulation_3::Vertex_handle`, in the sense that there is no need to dereference the iterator to obtain a handle.
+Wherever the API expects a handle the iterator can be passed as well.
+
+In order to write a \cpp 11 `for`-loop the triangulation calls also offers the range type
+`Triangulation_3::All_vertex_handles`, which has a nested type `Triangulation_3::All_vertex_handles::iterator`.
+The value type of this iterator is `Triangulation_3::Vertex_handle`.
+It is similar for the various iterators for vertices and cells.
+
+For the range `Triangulation_3::All_facets` it holds that `Triangulation_3::All_facets::iterator` `==`
+`Triangulation_3::All_facets_iterator`. It is similar for the iterators for facets, edges and points.
+
+
+Note that you only need the iterator type if you combine the pre \cpp 11 `for`-loop with the range class.
+
+\cgalExample{Triangulation_3/for_loop.cpp}
 
 \subsection Triangulation3secsimplex The Simplex Class 
 
@@ -538,7 +557,7 @@ removal of the first 100,000 vertices.
 \subsection Triangulation3Draw Draw a 3D Triangulation
 \anchor ssecDrawT3
 
-A 3D triangulation can be visualized by calling the `CGAL::draw()` function as shown in the following example. This function opens a new window showing the given 3D triangulation. The function is blocking, that is the program continues as soon as the user closes the window.
+A 3D triangulation can be visualized by calling the \link PkgDrawTriangulation3 CGAL::draw<T3>() \endlink function as shown in the following example. This function opens a new window showing the given 3D triangulation. A call to this function is blocking, that is the program continues as soon as the user closes the window.
 
 \cgalExample{Triangulation_3/draw_triangulation_3.cpp}
 

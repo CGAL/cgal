@@ -113,7 +113,7 @@ public :
     {
       menu->addAction(action);
     }
-    dock_widget = new GeneratorWidget("Basic Objets", mw);
+    dock_widget = new GeneratorWidget("Basic Objects", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     addDockWidget(dock_widget);
     connect(dock_widget->generateButton, &QAbstractButton::clicked,
@@ -553,7 +553,7 @@ void Basic_generator_plugin::generateSphere()
                                                   params::number_of_iterations(precision));
   VPMap vpmap = get(CGAL::vertex_point, sphere);
   //emplace the points back on the sphere
-  BOOST_FOREACH(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd, vertices(sphere))
+  for(typename boost::graph_traits<typename Facegraph_item::Face_graph>::vertex_descriptor vd : vertices(sphere))
   {
     Kernel::Vector_3 vec(center, get(vpmap, vd));
     vec = radius*vec/CGAL::sqrt(vec.squared_length());
@@ -687,10 +687,17 @@ void Basic_generator_plugin::generateLines()
   double coord[3];
   bool ok = true;
   if (list.isEmpty()) return;
-  if (list.size()%3!=0){
+  if(!dock_widget->polygon_checkBox->isChecked() && list.size()%3!=0){
     QMessageBox *msgBox = new QMessageBox;
     msgBox->setWindowTitle("Error");
     msgBox->setText("ERROR : Input should consists of triplets.");
+    msgBox->exec();
+    return;
+  }
+  else if(dock_widget->polygon_checkBox->isChecked()&& list.size()%2!=0){
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setWindowTitle("Error");
+    msgBox->setText("ERROR : Input should consists of pairs.");
     msgBox->exec();
     return;
   }
@@ -713,18 +720,29 @@ void Basic_generator_plugin::generateLines()
             counter++;
           }
       }
-      if(counter == 3)
+      if(!dock_widget->polygon_checkBox->isChecked() && counter == 3)
       {
           Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
           polyline.push_back(p);
           counter =0;
       }
+      else if(dock_widget->polygon_checkBox->isChecked() && counter == 2)
+      {
+          Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
+          polyline.push_back(p);
+          counter = 0;
+      }
+  }
+  if(dock_widget->polygon_checkBox->isChecked())
+  {
+    polyline.push_back(polyline.front()); //polygon_2 are not closed.
   }
     if(ok)
     {
         dock_widget->line_textEdit->clear();
-        Scene_polylines_item* item = new Scene_polylines_item;
+        Scene_polylines_item* item = new Scene_polylines_item();
         item->polylines = polylines;
+        item->invalidateOpenGLBuffers();
         item->setName(dock_widget->name_lineEdit->text());
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);

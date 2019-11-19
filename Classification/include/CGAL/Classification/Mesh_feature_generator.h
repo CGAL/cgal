@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -36,13 +27,15 @@
 #include <CGAL/Classification/Feature/Verticality.h>
 #include <CGAL/Classification/Feature/Eigenvalue.h>
 #include <CGAL/Classification/Feature/Color_channel.h>
+#include <CGAL/Classification/Feature/Height_below.h>
+#include <CGAL/Classification/Feature/Height_above.h>
+#include <CGAL/Classification/Feature/Vertical_range.h>
 #include <CGAL/Classification/internal/verbosity.h>
 
 #include <CGAL/bounding_box.h>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -65,14 +58,19 @@ namespace Classification {
   \brief Generates a set of generic features for surface mesh
   classification.
 
-  This class takes care of computing all necessary data structures and
-  of generating a set of generic features at multiple scales to
-  increase the reliability of the classification.
+  This class takes care of computing and storing all necessary data
+  structures and of generating a set of generic features at multiple
+  scales to increase the reliability of the classification.
 
   A `PointMap` is required: this map should associate each face of the
   mesh to a representative point (for example, the center of mass of
   the face). It is used to generate point set features by considering
   the mesh as a point set.
+
+  \warning The generated features use data structures that are stored
+  inside the generator. For this reason, the generator should be
+  instantiated _within the same scope_ as the feature set and should
+  not be deleted before the feature set.
 
   \tparam GeomTraits model of \cgal Kernel.
   \tparam FaceListGraph model of `FaceListGraph`. 
@@ -134,13 +132,17 @@ public:
   <Face_range, PointMap>                                 Distance_to_plane;
   typedef Classification::Feature::Elevation
   <GeomTraits, Face_range, PointMap>                    Elevation;
+  typedef Classification::Feature::Height_below
+  <GeomTraits, Face_range, PointMap>                    Height_below;
+  typedef Classification::Feature::Height_above
+  <GeomTraits, Face_range, PointMap>                    Height_above;
+  typedef Classification::Feature::Vertical_range
+  <GeomTraits, Face_range, PointMap>                    Vertical_range;
   typedef Classification::Feature::Vertical_dispersion
   <GeomTraits, Face_range, PointMap>                    Dispersion;
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
   typedef Classification::Feature::Eigenvalue           Eigenvalue;
-
-  typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
     
 private:
@@ -157,7 +159,7 @@ private:
            PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
            std::size_t nb_scale,
-           Planimetric_grid* lower_grid = NULL)
+           Planimetric_grid* lower_grid = nullptr)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
@@ -183,7 +185,7 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         grid = new Planimetric_grid (range, point_map, bbox, this->voxel_size);
       else
         grid = new Planimetric_grid(lower_grid);
@@ -193,9 +195,9 @@ private:
     }
     ~Scale()
     {
-      if (neighborhood != NULL)
+      if (neighborhood != nullptr)
         delete neighborhood;
-      if (grid != NULL)
+      if (grid != nullptr)
         delete grid;
       delete eigen;
     }
@@ -203,17 +205,17 @@ private:
     void reduce_memory_footprint(bool delete_neighborhood)
     {
       delete grid;
-      grid = NULL;
+      grid = nullptr;
       if (delete_neighborhood)
       {
         delete neighborhood;
-        neighborhood = NULL;
+        neighborhood = nullptr;
       }
     }
 
     float grid_resolution() const { return voxel_size; }
-    float radius_neighbors() const { return voxel_size * 5; }
-    float radius_dtm() const { return voxel_size * 100; }
+    float radius_neighbors() const { return voxel_size * 3; }
+    float radius_dtm() const { return voxel_size * 10; }
     
   };
 
@@ -327,7 +329,10 @@ public:
 
     - `CGAL::Classification::Feature::Distance_to_plane`
     - `CGAL::Classification::Feature::Elevation`
+    - `CGAL::Classification::Feature::Height_above`
+    - `CGAL::Classification::Feature::Height_below`
     - `CGAL::Classification::Feature::Vertical_dispersion`
+    - `CGAL::Classification::Feature::Vertical_range`
 
     \param features the feature set where the features are instantiated.
    */
@@ -339,6 +344,12 @@ public:
       features.add_with_scale_id<Dispersion> (i, m_range, m_point_map, grid(i), radius_neighbors(i));
     for (std::size_t i = 0; i < m_scales.size(); ++ i)
       features.add_with_scale_id<Elevation> (i, m_range, m_point_map, grid(i), radius_dtm(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Height_below> (i, m_range, m_point_map, grid(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Height_above> (i, m_range, m_point_map, grid(i));
+    for (std::size_t i = 0; i < m_scales.size(); ++ i)
+      features.add_with_scale_id<Vertical_range> (i, m_range, m_point_map, grid(i));
   }
 
   /// @}

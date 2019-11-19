@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -189,7 +180,7 @@ before_handle_event(Event* event)
   if (ps_x == ARR_LEFT_BOUNDARY) {
     // The event lies on the left fictitious halfedge.
     this->m_lh = this->m_lh->twin()->next()->twin();
-    this->m_prev_minus_inf_x_event = NULL;
+    this->m_prev_minus_inf_x_event = nullptr;
   }
   else if (ps_x == ARR_RIGHT_BOUNDARY) {
     // The event lies on the right fictitious halfedge.
@@ -206,7 +197,7 @@ before_handle_event(Event* event)
       // The event lies on the top fictitious halfedge.
       CGAL_assertion (ps_y == ARR_TOP_BOUNDARY);
       this->m_th = this->m_th->twin()->next()->twin();
-      this->m_prev_plus_inf_y_event = NULL;
+      this->m_prev_plus_inf_y_event = nullptr;
     }
   }
 }

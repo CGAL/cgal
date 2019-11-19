@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(CGAL_EXAMPLES)
 
-cmake_minimum_required(VERSION 3.1)
 
 if (CGAL_BRANCH_BUILD) 
 

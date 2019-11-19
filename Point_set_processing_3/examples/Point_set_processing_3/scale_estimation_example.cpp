@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <fstream>
-#include <boost/tuple/tuple.hpp>
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB

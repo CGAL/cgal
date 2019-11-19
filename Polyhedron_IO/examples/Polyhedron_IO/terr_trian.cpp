@@ -1,8 +1,7 @@
 // Delaunay Triangulation of a set of 3D points in the xy-plane.
 // (Terrain triangulation)
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Filtered_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/File_writer_OFF.h>
@@ -30,8 +29,7 @@ public:
         : Point_3(x,y,z), index(i)               {}
 };
 
-typedef CGAL::Simple_cartesian<double> SC;
-typedef CGAL::Filtered_kernel<SC> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Indexed_point<Kernel>                              IPoint;
 typedef CGAL::Projection_traits_xy_3<Kernel>               Gtraits;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
@@ -248,7 +239,7 @@ public:
   
     Curve_end v_ce(left()->curve_end());
     ptr()->e2 = (boost::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv()));
-    //CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != NULL);
+    //CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != nullptr);
   
     ptr()->e1 = (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END;
   
@@ -452,7 +443,7 @@ public:
   CGAL_TD_INLINE Vertex_const_handle left_unsafe() const
     {
     CGAL_precondition(is_active()); 
-    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e0)) != NULL);
+    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e0)) != nullptr);
     return boost::get<Vertex_const_handle>(ptr()->e0);
     }
 
@@ -475,7 +466,7 @@ public:
   CGAL_TD_INLINE Vertex_const_handle right_unsafe() const
     {
     CGAL_precondition(is_active()); 
-    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e1)) != NULL);
+    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e1)) != nullptr);
     return boost::get<Vertex_const_handle>(ptr()->e1);
     }
 
@@ -498,7 +489,7 @@ public:
   CGAL_TD_INLINE Halfedge_const_handle bottom_unsafe () const
   {
     CGAL_precondition(is_active()); 
-    CGAL_assertion(boost::get<Halfedge_const_handle>(&(ptr()->e2)) != NULL);
+    CGAL_assertion(boost::get<Halfedge_const_handle>(&(ptr()->e2)) != nullptr);
     return boost::get<Halfedge_const_handle>(ptr()->e2);
     }
   
@@ -535,7 +526,7 @@ public:
     CGAL_precondition(type() == TD_VERTEX);
     CGAL_precondition(!is_on_boundaries());
 
-    CGAL_assertion(boost::get<Point>( &(ptr()->e0)) != NULL);
+    CGAL_assertion(boost::get<Point>( &(ptr()->e0)) != nullptr);
     return boost::get<Point>( ptr()->e0 );
     }
   
@@ -545,10 +536,10 @@ public:
     CGAL_precondition(type() == TD_VERTEX);
     CGAL_precondition(is_on_boundaries());
 
-    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != NULL);
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
     X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
-    CGAL_assertion(cv_ptr != NULL);
+    CGAL_assertion(cv_ptr != nullptr);
    
     Arr_curve_end ce = 
       (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
@@ -563,10 +554,10 @@ public:
     CGAL_precondition(type() == TD_VERTEX);
     CGAL_precondition(is_on_boundaries());
 
-    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != NULL);
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
     X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
-    CGAL_assertion(cv_ptr != NULL);
+    CGAL_assertion(cv_ptr != nullptr);
    
     Arr_curve_end ce = 
       (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
@@ -580,10 +571,10 @@ public:
     CGAL_precondition(!is_active()); 
     CGAL_precondition(type() == TD_VERTEX);
 
-    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != NULL);
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
     X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
-    CGAL_assertion(cv_ptr != NULL);
+    CGAL_assertion(cv_ptr != nullptr);
     
     Arr_curve_end ce = 
       (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
@@ -596,9 +587,9 @@ public:
   {
     CGAL_precondition(!is_active() && type() == TD_EDGE); 
     
-    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != NULL);
+    CGAL_assertion(boost::get<boost::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
     X_monotone_curve_2* cv_ptr = (boost::get<boost::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
-    CGAL_assertion(cv_ptr != NULL);
+    CGAL_assertion(cv_ptr != nullptr);
     return *cv_ptr;
   }
 

@@ -391,7 +391,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool
           CGAL::is_triangle_mesh(*poly_item->face_graph()))
       {
         bool is_valid = true;
-        BOOST_FOREACH(boost::graph_traits<Face_graph>::face_descriptor fd, faces(*poly_item->face_graph()))
+        for(boost::graph_traits<Face_graph>::face_descriptor fd : faces(*poly_item->face_graph()))
         {
           if (CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(fd, *poly_item->face_graph()))
           {
@@ -565,8 +565,13 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
     edit_item->insert_roi_vertex(vh);
   }
   edit_item->invalidateOpenGLBuffers();
+  if(selection_item->property("is_highlighting").toBool()){
+    selection_item->setProperty("need_hl_restore", true);
+    selection_item->set_highlighting(false);
+  }
   selection_item->setVisible(false);
-  (*CGAL::QGLViewer::QGLViewerPool().begin())->update();
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    v->update();
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegraph_item* target)
@@ -578,14 +583,19 @@ void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegrap
        && sel_item->polyhedron() == target->polyhedron())
     {
       sel_item->invalidateOpenGLBuffers();
-      if(!ui_widget.RemeshingCheckBox->isChecked())
+      if(!ui_widget.RemeshingCheckBox->isChecked()){
         sel_item->setVisible(true);
+        if(sel_item->property("need_hl_restore").toBool()){
+          sel_item->set_highlighting(true);
+          sel_item->setProperty("need_hl_restore", false);
+        }
+      }
       else
         scene->erase(scene->item_id(sel_item));
     }
-
   }
 }
+
 void Polyhedron_demo_edit_polyhedron_plugin::dispatchAction()
 {
  if(applicable(actionDeformation))

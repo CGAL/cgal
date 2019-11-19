@@ -1,6 +1,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Three.h>
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polyhedron_shortest_path_item.h"
@@ -192,14 +193,14 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
     if(!polyhedronItem)
     {
       CGAL_assertion(item->polyhedron_item() == NULL); // which means it is coming from selection_io loader
-      this->m_messages->information(tr("Error: please select corresponding polyhedron item from Geometric Objects list."));
+      CGAL::Three::Three::information(tr("Error: please select corresponding polyhedron item from Geometric Objects list."));
       scene->erase(itemIndex);
       return;
     }
 
     if(!item->deferred_load(polyhedronItem, this->scene, this->m_messages, this->mw))
     {
-      this->m_messages->information("Error: loading selection item is not successful!");
+      CGAL::Three::Three::information("Error: loading selection item is not successful!");
       scene->erase(itemIndex);
       return;
     }
@@ -248,12 +249,12 @@ void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered(
     }
     else
     {
-      this->m_messages->warning(tr("A shortest path item for this polyhedron already exists (only one allowed per for now)"));
+      CGAL::Three::Three::warning(tr("A shortest path item for this polyhedron already exists (only one allowed per for now)"));
     }
   }
   else
   {
-    this->m_messages->warning("No polyhedron selected.");
+    CGAL::Three::Three::warning("No polyhedron selected.");
   }
 }
 

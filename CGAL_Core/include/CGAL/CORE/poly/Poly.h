@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Poly.h
  *  
@@ -52,7 +41,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef CORE_POLY_H
@@ -65,7 +54,6 @@
 #include <CGAL/tss.h>
 
 namespace CORE { 
-using namespace std;
 class Expr;
 // ==================================================
 // Typedefs
@@ -117,25 +105,25 @@ public:
   Polynomial(const Polynomial &);
   Polynomial(const VecNT &);
   Polynomial(int n, const char* s[]);
-  Polynomial(const string & s, char myX='x');
+  Polynomial(const std::string & s, char myX='x');
   Polynomial(const char* s, char myX='x');
   ~Polynomial();
 
   private:
   void constructX(int n, Polynomial<NT>& P);
-  void constructFromString(string & s, char myX='x');
+  void constructFromString(std::string & s, char myX='x');
   int getnumber(const char* c, int i, unsigned int len, Polynomial<NT> & P);
   bool isint(char c);
   int getint(const char* c, int i, unsigned int len, int & n);
   int matchparen(const char* cstr, int start);
-  int getbasicterm(string & s, Polynomial<NT> & P);
-  int getterm(string & s, Polynomial<NT> & P);
+  int getbasicterm(std::string & s, Polynomial<NT> & P);
+  int getterm(std::string & s, Polynomial<NT> & P);
 
 
   public:
   //Returns a Polynomial corresponding to s, which is supposed to
   //contain as place-holders the chars 'x' and 'y'.
-  Polynomial<NT> getpoly(string & s);
+  Polynomial<NT> getpoly(std::string & s);
 
   // Assignment:
   Polynomial & operator=(const Polynomial&);
@@ -179,7 +167,7 @@ public:
   const NT & getTailCoeff() const;      // get last non-zero coefficient
   NT** getCoeffs() ;		// get all coefficients
   const NT& getCoeff(int i) const;      // Get single coefficient of X^i
-                                        // NULL pointer if invalid i
+                                        // nullptr pointer if invalid i
   // Set functions
   bool setCoeff(int i, const NT & cc);  // Make cc the coefficient of X^i
                                         // Return FALSE if invalid i
@@ -408,7 +396,7 @@ NT** Polynomial<NT>::getCoeffs() {
 template < class NT >
 CORE_INLINE
 const NT& Polynomial<NT>::getCoeff(int i) const {
-  //if (i > degree) return NULL;
+  //if (i > degree) return nullptr;
   CGAL_assertion(i <= degree);
   return coeff[i];
 }

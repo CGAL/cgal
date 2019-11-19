@@ -18,7 +18,7 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Poisson_reconstruction_function<GeomTraits>`
 
 */

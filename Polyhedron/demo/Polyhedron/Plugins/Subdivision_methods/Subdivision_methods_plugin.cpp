@@ -6,6 +6,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include "Messages_interface.h"
 #include "Scene_surface_mesh_item.h"
@@ -82,10 +83,10 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_loop(FaceGraphItem* item,
   typename FaceGraphItem::Face_graph* graph = item->face_graph();
   QTime time;
   time.start();
-  messages->information("Loop subdivision...");
+  CGAL::Three::Three::information("Loop subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::Loop_subdivision(*graph, params::number_of_iterations(nb_steps));
-  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
+  CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
@@ -114,10 +115,10 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_catmullclark(FaceGraphIte
   if(!graph) return;
   QTime time;
   time.start();
-  messages->information("Catmull-Clark subdivision...");
+  CGAL::Three::Three::information("Catmull-Clark subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::CatmullClark_subdivision(*graph, params::number_of_iterations(nb_steps));
-  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
+  CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
@@ -144,10 +145,10 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_sqrt3(FaceGraphItem* item
   if(!graph) return;
   QTime time;
   time.start();
-  messages->information("Sqrt-3 subdivision...");
+  CGAL::Three::Three::information("Sqrt-3 subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*graph, params::number_of_iterations(nb_steps));
-  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
+  CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);
@@ -176,10 +177,10 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_doosabin(FaceGraphItem* i
   if(!graph) return;
   QTime time;
   time.start();
-  messages->information("Doo-Sabin subdivision...");
+  CGAL::Three::Three::information("Doo-Sabin subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Subdivision_method_3::DooSabin_subdivision(*graph, params::number_of_iterations(nb_steps));
-  messages->information(QString("ok (%1 ms)").arg(time.elapsed()));
+  CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
   QApplication::restoreOverrideCursor();
   item->invalidateOpenGLBuffers();
   scene->itemChanged(item);

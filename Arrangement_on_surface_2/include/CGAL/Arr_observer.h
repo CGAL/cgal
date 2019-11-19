@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
@@ -69,7 +60,7 @@ public:
   //@{
 
   /*! Default constructor. */
-  Arr_observer() : p_arr(NULL) {}
+  Arr_observer() : p_arr(nullptr) {}
 
   /*! Constructor with an associated arrangement. */
   Arr_observer(Arrangement_2& arr) : p_arr(&arr)
@@ -82,7 +73,7 @@ public:
   virtual ~Arr_observer()
   {
     // Unregister the observer object from the arrangement.
-    if (p_arr != NULL)
+    if (p_arr != nullptr)
       p_arr->_unregister_observer(this);
   }
   //@}
@@ -105,9 +96,9 @@ public:
     if (p_arr == &arr) return;
 
     // The observer is not already attached to an arrangement.
-    CGAL_precondition(p_arr == NULL);
+    CGAL_precondition (p_arr == nullptr);
 
-    if (p_arr != NULL) return;
+    if (p_arr != nullptr) return;
 
     // Notify the concrete oberver (the sub-class) about the attachment.
     before_attach(arr);
@@ -123,7 +114,7 @@ public:
   /*! Detach the observer from the arrangement. */
   void detach()
   {
-    if (p_arr == NULL) return;
+    if (p_arr == nullptr) return;
 
     // Notify the concrete oberver (the sub-class) about the detachment.
     before_detach ();
@@ -131,7 +122,7 @@ public:
     // Unregister the observer object from the current arrangement, and mark
     // that the oberver is not attached to an arrangement.
     p_arr->_unregister_observer(this);
-    p_arr = NULL;
+    p_arr = nullptr;
 
     // Notify the concrete oberver that the detachment took place.
     after_detach();

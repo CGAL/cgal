@@ -1,20 +1,11 @@
 // Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -242,6 +233,8 @@ public:
         }
     };
     
+    //!@}
+    
 public:
     //!\name Standard constructors
     //!@{
@@ -256,10 +249,11 @@ public:
     /*!\brief
      * copy constructor
      */
+#ifdef DOXYGEN_RUNNING  
     Point_2(const Self& p) : 
             Base(static_cast<const Base&>(p)) {  
     }
-
+#endif
     //!@}
 
 public:
@@ -503,7 +497,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_x_2, compare_x_2)
         CGAL_precondition(Kernel_point_2_equals_Point_2 ||
-                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_point_2* >(this) != nullptr);
         return compare_x_2(*dynamic_cast< const Kernel_point_2* >(this), q);
     }
 
@@ -526,7 +520,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Compare_xy_2, compare_xy_2)
         CGAL_precondition(Kernel_point_2_equals_Point_2 ||
-                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_point_2* >(this) != nullptr);
         return compare_xy_2(
                 *dynamic_cast< const Kernel_point_2* >(this), q, equal_x
         );
@@ -546,7 +540,7 @@ public:
 
         CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT(Is_on_2, is_on_2)
         CGAL_precondition(Kernel_point_2_equals_Point_2 ||
-                          dynamic_cast< const Kernel_point_2* >(this) != NULL);
+                          dynamic_cast< const Kernel_point_2* >(this) != nullptr);
         return is_on_2(*dynamic_cast< const Kernel_point_2* >(this), curve);
     }
 
@@ -609,7 +603,7 @@ public:
       return *(this->ptr()->_m_doubles);
     }
   
-    //!}
+    //!@}
 
 
 public:
@@ -782,8 +776,7 @@ public:
     *this = Point_2< Curved_kernel_via_analysis_2, Rep >(rep);
   }
   
-  //!@}
-  
+  //! @}
     // friends ////////////////////////////////////////////////////////////////
 
     //! befriending arc classes

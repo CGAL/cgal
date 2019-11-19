@@ -1,0 +1,22 @@
+@INCLUDE 				= ${CGAL_DOC_PACKAGE_DEFAULTS}
+
+EXAMPLE_PATH 			= ${CGAL_PACKAGE_DIR}/examples
+
+EXTRACT_ALL  			= YES
+EXTRACT_LOCAL_CLASSES  	= YES
+INHERIT_DOCS           	= YES
+
+HTML_EXTRA_FILES = 	${CGAL_PACKAGE_DOC_DIR}/fig/octagon_identification.svg \
+					${CGAL_PACKAGE_DOC_DIR}/fig/original_domain.svg \
+					${CGAL_PACKAGE_DOC_DIR}/fig/periodicity.png \
+					${CGAL_PACKAGE_DOC_DIR}/fig/dt-construction.svg \
+					${CGAL_PACKAGE_DOC_DIR}/fig/periodic_face.svg \
+					${CGAL_PACKAGE_DOC_DIR}/fig/ds_cgal.svg \
+					${CGAL_PACKAGE_DOC_DIR}/fig/dummy-points.png \
+					${CGAL_PACKAGE_DOC_DIR}/fig/non-triangulation.svg \
+					${CGAL_PACKAGE_DOC_DIR}/fig/histogram-dummy-points.png \
+					${CGAL_PACKAGE_DOC_DIR}/fig/new-triangulation-350px.png
+
+HTML_EXTRA_STYLESHEET = ${CGAL_PACKAGE_DOC_DIR}/css/customstyle.css
+
+PROJECT_NAME 			= "CGAL ${CGAL_DOC_VERSION} - 2D Periodic Hyperbolic Triangulations"

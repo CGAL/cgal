@@ -87,18 +87,18 @@ implemented as peripheral classes or as free (global) functions.
 
 \cgalClassifedRefPages
 
-## Enumerations ##
+\cgalCRPSection{Enumerations}
 
 - `CGAL::Arr_parameter_space`
 - `CGAL::Arr_curve_end`
 - `CGAL::Arr_halfedge_direction`
 
-## Tags ##
+\cgalCRPSection{Tags}
 
 - `CGAL::Arr_oblivious_side_tag`
 - `CGAL::Arr_open_side_tag`
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 
 - `ArrangementDcel`
 - `ArrangementDcelWithRebind`
@@ -142,13 +142,13 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementBottomSideTraits_2`
 - `ArrangementTopSideTraits_2`
 
-## Geometric Object Concepts ##
+\cgalCRPSection{Geometric Object Concepts}
 
 - `ArrTraits::Point_2`
 - `ArrTraits::XMonotoneCurve_2`
 - `ArrTraits::Curve_2`
 
-## Function Object Concepts ##
+\cgalCRPSection{Function Object Concepts}
 
 - `ArrTraits::CompareX_2`
 - `ArrTraits::CompareXy_2`
@@ -172,7 +172,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::Approximate_2`
 - `ArrTraits::ConstructXMonotoneCurve_2`
 
-## Classes ##
+\cgalCRPSection{Classes}
 
 
 - `CGAL::Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>`
@@ -215,10 +215,10 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_face_index_map<Arrangement>`
 - `CGAL::Arr_point_location_result<Arrangement>`
 
-## Macros ##
+\cgalCRPSection{Macros}
 - \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
 
-## Functions ##
+\cgalCRPSection{Functions}
 
 - `CGAL::is_valid()`
 - `CGAL::insert()`

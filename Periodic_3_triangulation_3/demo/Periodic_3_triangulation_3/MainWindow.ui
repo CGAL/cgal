@@ -432,6 +432,9 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="Periodic_3_triangulation_3.qrc">
      <normaloff>:/cgal/Periodic_3_triangulation_3/icons/ball.png</normaloff>:/cgal/Periodic_3_triangulation_3/icons/ball.png</iconset>

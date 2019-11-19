@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -25,14 +16,17 @@
 
 #include <CGAL/Classification/classify.h>
 #include <CGAL/Classification/Sum_of_weighted_features_classifier.h>
-#include <CGAL/Classification/ETHZ_random_forest_classifier.h>
+#include <CGAL/Classification/ETHZ/Random_forest_classifier.h>
 
 #ifdef CGAL_LINKED_WITH_OPENCV
-#include <CGAL/Classification/OpenCV_random_forest_classifier.h>
+#include <CGAL/Classification/OpenCV/Random_forest_classifier.h>
+#endif
+
+#ifdef CGAL_LINKED_WITH_TENSORFLOW
+#include <CGAL/Classification/TensorFlow/Neural_network_classifier.h>
 #endif
 
 #include <CGAL/Classification/Cluster.h>
-#include <CGAL/Classification/Color.h>
 #include <CGAL/Classification/Evaluation.h>
 #include <CGAL/Classification/Feature_base.h>
 #include <CGAL/Classification/Feature_set.h>

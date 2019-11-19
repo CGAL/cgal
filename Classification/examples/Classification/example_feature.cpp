@@ -114,7 +114,7 @@ int main (int argc, char** argv)
   classifier.set_effect (b, my_feature, Classifier::PENALIZING);
 
   std::cerr << "Classifying" << std::endl;
-  std::vector<std::size_t> label_indices(pts.size(), -1);
+  std::vector<int> label_indices(pts.size(), -1);
   Classification::classify_with_graphcut<CGAL::Sequential_tag>
     (pts, Pmap(), labels, classifier,
      neighborhood.k_neighbor_query(12),

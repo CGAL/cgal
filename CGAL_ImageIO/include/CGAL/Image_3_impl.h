@@ -2,20 +2,11 @@
 //               2008 GeometryFactory, Sophia Antipolis (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau, Pierre Alliez
 
@@ -25,12 +16,12 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
-#include <CGAL/basic.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
 CGAL_INLINE_FUNCTION
-bool Image_3::private_read(_image* im)
+bool Image_3::private_read(_image* im, Own own)
 {
   if(im != 0)
   {
@@ -38,7 +29,7 @@ bool Image_3::private_read(_image* im)
     {
       ::_freeImage(image());
     }
-    image_ptr = Image_shared_ptr(im, Image_deleter());
+    image_ptr = Image_shared_ptr(im, Image_deleter(own == OWN_THE_DATA));
 
 //     std::cerr << 
 //       boost::format("image=%1% (xdim=%2%, ydim=%3%, zdim=%4%)\n")

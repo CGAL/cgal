@@ -1,19 +1,10 @@
 // Copyright (c) 2018  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -22,6 +13,7 @@
 #define CGAL_GRAPH_TRAITS_HALFEDGEDS_DEFAULT_H
 
 #include <CGAL/boost/graph/graph_traits_HalfedgeDS.h>
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/HalfedgeDS_default.h>
@@ -32,7 +24,7 @@ namespace CGAL {
 template <class Traits_, class HalfedgeDSItems, 
           class Alloc>
 class HalfedgeDS_default;
-}; // namespace CGAL
+} // namespace CGAL
 
 namespace boost {
 
@@ -470,7 +462,16 @@ struct HDS_property_map<vertex_point_t>
       typename T::Point_3, const typename T::Point_3&> const_type;
   };
 };
-  
+
+template<class T, class I, class A>
+void reserve(HalfedgeDS_default<T,I,A>& p,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertices_size_type nv,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::edges_size_type ne,
+             typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::faces_size_type nf)
+{
+  p.reserve(nv, 2*ne, nf);
+}
+
 }// namespace CGAL
 namespace boost {
 

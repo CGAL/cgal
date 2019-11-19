@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Ron Wein          <wein@post.tau.ac.il>
@@ -36,9 +27,9 @@ namespace CGAL {
 template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 Arr_spherical_topology_traits_2() :
-  m_spherical_face(NULL),
-  m_north_pole(NULL),
-  m_south_pole(NULL),
+  m_spherical_face(nullptr),
+  m_north_pole(nullptr),
+  m_south_pole(nullptr),
   m_own_geom_traits(true)
 {
   m_geom_traits = new Gt_adaptor_2;
@@ -49,9 +40,9 @@ Arr_spherical_topology_traits_2() :
 template <typename GeomTraits, typename Dcel>
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 Arr_spherical_topology_traits_2(const Geometry_traits_2* traits) :
-  m_spherical_face(NULL),
-  m_north_pole(NULL),
-  m_south_pole(NULL),
+  m_spherical_face(nullptr),
+  m_north_pole(nullptr),
+  m_south_pole(nullptr),
   m_own_geom_traits(false)
 {
   m_geom_traits = static_cast<const Gt_adaptor_2*>(traits);
@@ -66,9 +57,9 @@ Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
   // Clear the DCEL.
   m_dcel.delete_all();
 
-  if (m_own_geom_traits && (m_geom_traits != NULL)) {
+  if (m_own_geom_traits && (m_geom_traits != nullptr)) {
     delete m_geom_traits;
-    m_geom_traits = NULL;
+    m_geom_traits = nullptr;
   }
 }
 
@@ -81,9 +72,9 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::assign(const Self& other
   m_dcel.assign(other.m_dcel);
 
   // Take care of the traits object.
-  if (m_own_geom_traits && m_geom_traits != NULL) {
+  if (m_own_geom_traits && m_geom_traits != nullptr) {
     delete m_geom_traits;
-    m_geom_traits = NULL;
+    m_geom_traits = nullptr;
   }
 
   if (other.m_own_geom_traits) {
@@ -108,8 +99,8 @@ void Arr_spherical_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
   // Go over the DCEL vertices and locate the south and north pole (if any)
   // and any other vertex on the line of discontinuity.
 
-  m_north_pole = NULL;
-  m_south_pole = NULL;
+  m_north_pole = nullptr;
+  m_south_pole = nullptr;
   m_boundary_vertices.clear();
 
   typename Dcel::Vertex_iterator vit = this->m_dcel.vertices_begin();
@@ -128,16 +119,17 @@ void Arr_spherical_topology_traits_2<GeomTraits_, Dcel_>::dcel_updated()
   // Go over the DCEL faces and locate the spherical face, which is the only
   // face with no outer CCB.
 
-  m_spherical_face = NULL;
+  m_spherical_face = nullptr;
   typename Dcel::Face_iterator fit = this->m_dcel.faces_begin();
   for (; fit != this->m_dcel.faces_end(); ++fit) {
     if (fit->number_of_outer_ccbs() == 0) {
-      CGAL_assertion(m_spherical_face == NULL);
+      CGAL_assertion(m_spherical_face == nullptr);
+
       m_spherical_face = &(*fit);
       break;
     }
   }
-  CGAL_assertion(m_spherical_face != NULL);
+  CGAL_assertion(m_spherical_face != nullptr);
 }
 
 //! \brief initializes an empty DCEL structure.
@@ -154,8 +146,8 @@ void Arr_spherical_topology_traits_2<GeomTraits, Dcel>::init_dcel()
   m_spherical_face->set_unbounded(false);
   m_spherical_face->set_fictitious(false);
 
-  m_north_pole = NULL;
-  m_south_pole = NULL;
+  m_north_pole = nullptr;
+  m_south_pole = nullptr;
 }
 
 //! \brief determines whether a point lies in the interior of a given face.
@@ -164,8 +156,8 @@ bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 {
   // std::cout << "is_in_face()" << std::endl;
-  CGAL_precondition((v == NULL) || !v->has_null_point());
-  CGAL_precondition((v == NULL) ||
+  CGAL_precondition((v == nullptr) || !v->has_null_point());
+  CGAL_precondition((v == nullptr) ||
                     m_geom_traits->equal_2_object()(p, v->point()));
 
   /* There is always one face that contains everything else. It has no
@@ -181,12 +173,12 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
             << std::endl;
 #endif
   if (f->number_of_outer_ccbs() == 0) return true;
-  if (((v != NULL) && (v->parameter_space_in_y() == ARR_TOP_BOUNDARY)) ||
+  if (((v != nullptr) && (v->parameter_space_in_y() == ARR_TOP_BOUNDARY)) ||
       (m_geom_traits->parameter_space_in_y_2_object()(p) == ARR_TOP_BOUNDARY))
     return false;
 
   /*! \todo a temporary test
-   * if (((v != NULL) && (v->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)) ||
+   * if (((v != nullptr) && (v->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)) ||
    *   (p.is_min_boundary()))
    * return false;
    */
@@ -556,12 +548,12 @@ place_boundary_vertex(Face* /* f */,
 {
   // std::cout << "place_boundary_vertex()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    if (m_south_pole == NULL) return Object();
+    if (m_south_pole == nullptr) return Object();
     return CGAL::make_object(m_south_pole);
   }
 
   if (ps_y == ARR_TOP_BOUNDARY) {
-    if (m_north_pole == NULL) return Object();
+    if (m_north_pole == nullptr) return Object();
     return CGAL::make_object(m_north_pole);
   }
 
@@ -628,7 +620,7 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
     // In case the curve end coincides with the north pole, return the vertex
     // representing the north pole, if one exists. Otherwise, return the face
     // containing this pole (the spherical face).
-    if (m_north_pole != NULL) return CGAL::make_object(m_north_pole);
+    if (m_north_pole != nullptr) return CGAL::make_object(m_north_pole);
     return CGAL::make_object(m_spherical_face);
   }
 
@@ -636,7 +628,7 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
     // In case the curve end coincides with the south pole, return the vertex
     // representing the south pole, if one exists. Otherwise, search for the
     // face containing this pole.
-    if (m_south_pole != NULL) return CGAL::make_object(m_south_pole);
+    if (m_south_pole != nullptr) return CGAL::make_object(m_south_pole);
 
     // If there are no vertices on the identification curve return the spherical
     // face.
@@ -690,7 +682,7 @@ locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
 //! \brief determines whether a given boundary vertex is redundant.
 template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
-is_redundant(const Vertex* v) const { return (v->halfedge() == NULL); }
+is_redundant(const Vertex* v) const { return (v->halfedge() == nullptr); }
 
 //! \brief erases a given redundant vertex.
 template <typename GeomTraits, typename Dcel>
@@ -700,17 +692,17 @@ erase_redundant_vertex(Vertex* v)
 {
   const Arr_parameter_space ps_y = v->parameter_space_in_y();
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    m_south_pole = NULL;
-    return NULL;
+    m_south_pole = nullptr;
+    return nullptr;
   }
   if (ps_y == ARR_TOP_BOUNDARY) {
-    m_north_pole = NULL;
-    return NULL;
+    m_north_pole = nullptr;
+    return nullptr;
   }
   CGAL_assertion_code(Arr_parameter_space ps_x = v->parameter_space_in_x());
   CGAL_assertion(ps_x != ARR_INTERIOR);
   m_boundary_vertices.erase(v->point());
-  return NULL;
+  return nullptr;
 }
 
 /*! \brief obtains the curve associated with a boundary vertex */
@@ -738,12 +730,12 @@ _locate_around_vertex_on_discontinuity(Vertex* v,
                                        Arr_curve_end ind) const
 {
   // If the vertex is isolated, there is no predecssor halfedge.
-  if (v->is_isolated()) return NULL;
+  if (v->is_isolated()) return nullptr;
 
   // Get the first incident halfedge around v and the next halfedge.
   Halfedge* first = v->halfedge();
   Halfedge* curr = first;
-  CGAL_assertion(curr != NULL);
+  CGAL_assertion(curr != nullptr);
   Halfedge* next = curr->next()->opposite();
 
   // If is only one halfedge incident to v, return this halfedge as xc's
@@ -791,12 +783,12 @@ _locate_around_pole(Vertex* v,
 
   // std::cout << "locate_around_pole() " << ind << std::endl;
   // If the vertex is isolated, return a null halfedge:
-  if (v->is_isolated()) return NULL;
+  if (v->is_isolated()) return nullptr;
 
   // Get the first incident halfedge around v and the next halfedge:
   Halfedge* first = v->halfedge();
   Halfedge* curr = first;
-  CGAL_assertion(curr != NULL);
+  CGAL_assertion(curr != nullptr);
   Halfedge* next = curr->next()->opposite();
 
   // If there is only one halfedge, it is the predecessor, return it:
@@ -866,7 +858,7 @@ _locate_around_pole(Vertex* v,
 
   // We sould never reach here:
   CGAL_error();
-  return NULL;
+  return nullptr;
 }
 
 /*! \brief Return the face that lies below the given vertex, which lies
@@ -883,7 +875,7 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   // Get the first incident halfedge around v and the next halfedge.
   Halfedge* first = v->halfedge();
   Halfedge* curr = first;
-  CGAL_assertion(curr != NULL);
+  CGAL_assertion(curr != nullptr);
   Halfedge* next = curr->next()->opposite();
 
   // If there is only one halfedge incident to v, return its incident face.
@@ -899,8 +891,8 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   typename Gt_adaptor_2::Compare_y_at_x_left_2  cmp_y_at_x_op_left =
     m_geom_traits->compare_y_at_x_left_2_object();
 
-  Halfedge* lowest_left = NULL;
-  Halfedge* top_right = NULL;
+  Halfedge* lowest_left = nullptr;
+  Halfedge* top_right = nullptr;
 
   do {
     // Check whether the current halfedge is defined to the left or to the
@@ -908,7 +900,7 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
     if (curr->direction() == ARR_LEFT_TO_RIGHT) {
       // The curve associated with the current halfedge is defined to the left
       // of v.
-      if (lowest_left == NULL ||
+      if (lowest_left == nullptr ||
           cmp_y_at_x_op_left(curr->curve(), lowest_left->curve(), v->point())
           == SMALLER)
       {
@@ -918,7 +910,7 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
     else {
       // The curve associated with the current halfedge is defined to the right
       // of v.
-      if ((top_right == NULL) ||
+      if (top_right == nullptr ||
           cmp_y_at_x_op_right(curr->curve(), top_right->curve(), v->point()) ==
           LARGER)
       {
@@ -935,7 +927,7 @@ _face_below_vertex_on_discontinuity(Vertex* v) const
   // right. Note that as the halfedge we located has v as its target, we now
   // have to return its twin.
   first =
-    (lowest_left != NULL) ? lowest_left->opposite() : top_right->opposite();
+    (lowest_left != nullptr) ? lowest_left->opposite() : top_right->opposite();
   // std::cout << "first: " << first->opposite()->vertex()->point() << " => "
   //           << first->vertex()->point() << std::endl;
 

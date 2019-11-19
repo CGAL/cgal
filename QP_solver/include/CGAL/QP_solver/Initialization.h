@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Sven Schoenherr
@@ -23,6 +14,7 @@
 //                 Kaspar Fischer
 
 #include<CGAL/QP_functions.h>
+#include<CGAL/NT_converter.h>
 
 namespace CGAL {
 
@@ -549,7 +541,8 @@ void  QP_solver<Q, ET, Tags>::
 init_solution__b_C(Tag_true)
 {
   b_C.reserve(qp_m);
-  std::copy(qp_b, qp_b+qp_m, std::back_inserter(b_C));
+  std::transform(qp_b, qp_b+qp_m, std::back_inserter(b_C),
+      NT_converter<B_entry,ET>());
 }
 
 template < typename Q, typename ET, typename Tags >  inline                                 // has ineq.
@@ -559,9 +552,11 @@ init_solution__b_C(Tag_false)
   b_C.insert(b_C.end(), l, et0);
   B_by_index_accessor  b_accessor(qp_b); // todo kf: is there some boost
 					 // replacement for this accessor?
-  std::copy(B_by_index_iterator(C.begin(), b_accessor),
-	    B_by_index_iterator(C.end  (), b_accessor),
-	    b_C.begin());
+  typedef typename std::iterator_traits<B_by_index_iterator>::value_type RT;
+  std::transform(B_by_index_iterator(C.begin(), b_accessor),
+		 B_by_index_iterator(C.end  (), b_accessor),
+		 b_C.begin(),
+		 NT_converter<RT,ET>());
 }
 
 // initial solution

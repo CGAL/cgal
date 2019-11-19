@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion
@@ -33,6 +24,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/Lazy_exact_nt.h>
 
+#include <CGAL/boost_mp.h>
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
 #  include <CGAL/Gmpq.h>
@@ -65,9 +57,17 @@ struct Exact_field_selector
 #ifdef CGAL_USE_GMPXX
 { typedef mpq_class Type; };
 #elif defined(CGAL_USE_GMP)
+# if defined(CGAL_USE_BOOST_MP)
+{ typedef boost::multiprecision::mpq_rational Type; };
+# else
 { typedef Gmpq Type; };
+# endif
 #elif defined(CGAL_USE_LEDA)
 { typedef leda_rational Type; };
+#elif 0 && defined(CGAL_USE_BOOST_MP)
+// See the discussion in https://github.com/CGAL/cgal/pull/3614
+// This is disabled for now because cpp_rational is even slower than Quotient<MP_Float>. Quotient<cpp_int> will be a good candidate after some polishing.
+{ typedef BOOST_cpp_arithmetic_kernel::Rational Type; };
 #else
 { typedef Quotient<MP_Float> Type; };
 #endif

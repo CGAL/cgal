@@ -174,7 +174,7 @@ void output_distribution_to_png(std::vector<double>& elements,
 
   const double scale = double_options["scale"];
 
-  *widget << CGAL::FillColor(CGAL::BLACK);
+  *widget << CGAL::FillColor(CGAL::black());
   //   *widget << Segment_2(Point_2(0., 0.), Point_2(1., 0.));
   for(int k=0;k<number_of_classes;k++)
     if(distribution[k]>0)
@@ -184,12 +184,12 @@ void output_distribution_to_png(std::vector<double>& elements,
 	  height = ( (distribution[k]+0.)/number_of_cells ) * scale;
 	else
 	  height = ( std::log(distribution[k]+0.)/std::log(number_of_cells) ) * (-scale);
-	*widget << CGAL::BLACK 
+	*widget << CGAL::black() 
 		<< Rectangle_2(Point_2(k*width, 0),
 			       Point_2((k+1)*width, height));
       }
     else
-      *widget << CGAL::RED << Segment_2(Point_2(k*width, 0),
+      *widget << CGAL::red() << Segment_2(Point_2(k*width, 0),
 					Point_2((k+1)*width, 0));
   
   widget->unlock();

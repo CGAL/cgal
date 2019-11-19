@@ -4,6 +4,7 @@ BGL
 Cartesian_kernel
 Circulator
 Distance_2
+Distance_3
 Installation
 Intersections_2
 Intersections_3
@@ -13,6 +14,7 @@ Modular_arithmetic
 Number_types
 Profiling_tools
 Property_map
+Random_numbers
 STL_Extension
 Spatial_searching
 Stream_support

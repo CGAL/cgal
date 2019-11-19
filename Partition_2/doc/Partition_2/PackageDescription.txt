@@ -19,11 +19,10 @@
 \cgalPkgSince{2.3}
 \cgalPkgBib{cgal:h-pp2}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{2D Polygon Partition,partition_2.zip,Operations on Polygons,polygon.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
-## Definitions ##
+\cgalCRPSection{Definitions}
 
 A <i>partition</i> of a polygon is a set 
 of polygons such that the interiors of the polygons do not intersect and
@@ -52,7 +51,7 @@ a convex partitioning from a triangulation of a polygon.
 Each of the partitioning functions uses a traits class to supply the
 primitive types and predicates used by the algorithms.
 
-## Assertions ##
+\cgalCRPSection{Assertions}
 
 The assertion flags for this package use `PARTITION` in their names
 (<I>e.g.</I>, `CGAL_PARTITION_NO_POSTCONDITIONS`).
@@ -68,29 +67,28 @@ original polygon).
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `ConvexPartitionIsValidTraits_2`
 - `IsYMonotoneTraits_2`
 - `OptimalConvexPartitionTraits_2`
 - `PartitionTraits_2`
 - `PartitionIsValidTraits_2`
 - `YMonotonePartitionIsValidTraits_2`
-- `YMonotonePartitionTraits_2`
 
-## Function Object Concepts ##
+\cgalCRPSection{Function Object Concepts}
 - `PolygonIsValid`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>`
-- `CGAL::Partition_traits_2<R>`
+- `CGAL::Partition_traits_2<R,P>`
 
 
-## Function Object Classes ##
+\cgalCRPSection{Function Object Classes}
 - `CGAL::Is_convex_2<Traits>`
 - `CGAL::Is_vacuously_valid<Traits>`
 - `CGAL::Is_y_monotone_2<Traits>`
 
-## Functions ##
+\cgalCRPSection{Functions}
 - `CGAL::approx_convex_partition_2()`
 - `CGAL::convex_partition_is_valid_2()`
 - `CGAL::greene_approx_convex_partition_2()`

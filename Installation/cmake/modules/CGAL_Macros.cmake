@@ -290,13 +290,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       # To deal with imported targets of Qt5 and Boost, when CGAL
       # targets are themselves imported by another project.
       if(NOT CGAL_BUILDING_LIBS)
-        if (NOT MSVC AND "${component}" STREQUAL "Core")
-          # See the release notes of CGAL-4.10: CGAL_Core now requires
-          # Boost.Thread, with all compilers but MSVC.
-          find_package( Boost 1.48 REQUIRED thread system )
-          add_to_list( CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES} )
-        endif()
-
         if (${component} STREQUAL "Qt5")
           find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools QUIET)
         endif()

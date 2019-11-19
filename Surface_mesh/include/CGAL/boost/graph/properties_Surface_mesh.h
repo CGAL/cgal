@@ -1,19 +1,10 @@
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Philipp Möller
@@ -304,10 +295,9 @@ struct graph_has_property<CGAL::Surface_mesh<Point>, boost::edge_weight_t>
   : CGAL::Tag_true {};
 } // CGAL
 
+// dynamic properties
 namespace boost
 {
-
-
 
 template <typename Point, typename T>
 struct property_map<CGAL::Surface_mesh<Point>, CGAL::dynamic_vertex_property_t<T> >
@@ -315,7 +305,7 @@ struct property_map<CGAL::Surface_mesh<Point>, CGAL::dynamic_vertex_property_t<T
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Vertex_index,T> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
-  typedef type const_type;
+  typedef CGAL::internal::Dynamic_with_index<typename SM::Vertex_index, T> const_type;
 };
 
 template <typename Point, typename T>
@@ -324,7 +314,7 @@ struct property_map<CGAL::Surface_mesh<Point>, CGAL::dynamic_face_property_t<T> 
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Face_index,T> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
-  typedef type const_type;
+  typedef CGAL::internal::Dynamic_with_index<typename SM::Face_index, T> const_type;
 };
 
 template <typename Point, typename T>
@@ -333,7 +323,7 @@ struct property_map<CGAL::Surface_mesh<Point>, CGAL::dynamic_halfedge_property_t
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Halfedge_index,T> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
-  typedef type const_type;
+  typedef CGAL::internal::Dynamic_with_index<typename SM::Halfedge_index, T> const_type;
 };
 
 template <typename Point, typename T>
@@ -342,47 +332,77 @@ struct property_map<CGAL::Surface_mesh<Point>, CGAL::dynamic_edge_property_t<T> 
   typedef CGAL::Surface_mesh<Point> SM;
   typedef typename SM:: template Property_map<typename SM::Edge_index,T> SMPM;
   typedef CGAL::internal::Dynamic<SM, SMPM> type;
-  typedef type const_type;
+  typedef CGAL::internal::Dynamic_with_index<typename SM::Edge_index, T> const_type;
 };
 
 } // nmamespace boost
 
 namespace CGAL {
 
+// get functions for dynamic properties of mutable Surface_mesh
 template <typename Point, typename T>
-typename boost::property_map<CGAL::Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type
+typename boost::property_map<CGAL::Surface_mesh<Point>, dynamic_vertex_property_t<T> >::type
 get(dynamic_vertex_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type DPM;
+  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::type DPM;
   return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Vertex_index, T>(std::string()).first));
 }
 
 template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type
+typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::type
 get(dynamic_face_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type DPM;
+  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::type DPM;
   return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Face_index, T>(std::string()).first));
 }
 
 template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type
+typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::type
 get(dynamic_edge_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type DPM;
+  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::type DPM;
   return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Edge_index, T>(std::string()).first));
 }
 
 template <typename Point, typename T>
-typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type
+typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::type
 get(dynamic_halfedge_property_t<T>, Surface_mesh<Point>& sm)
 {
   typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::SMPM SMPM;
-  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type DPM;
+  typedef typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::type DPM;
   return DPM(sm, new SMPM(sm.template add_property_map<typename Surface_mesh<Point>::Halfedge_index, T>(std::string()).first));
+}
+
+// get functions for dynamic properties of const Surface_mesh
+template <typename Point, typename T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_vertex_property_t<T> >::const_type
+get(dynamic_vertex_property_t<T>, const Surface_mesh<Point>& sm)
+{
+  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Vertex_index, T>(num_vertices(sm));
+}
+
+template <typename Point, typename T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_face_property_t<T> >::const_type
+get(dynamic_face_property_t<T>, const Surface_mesh<Point>& sm)
+{
+  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Face_index, T>(num_faces(sm));
+}
+
+template <typename Point, typename T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_halfedge_property_t<T> >::const_type
+get(dynamic_halfedge_property_t<T>, const Surface_mesh<Point>& sm)
+{
+  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Halfedge_index, T>(num_halfedges(sm));
+}
+
+template <typename Point, typename T>
+typename boost::property_map<Surface_mesh<Point>, dynamic_edge_property_t<T> >::const_type
+get(dynamic_edge_property_t<T>, const Surface_mesh<Point>& sm)
+{
+  return CGAL::internal::Dynamic_with_index<typename Surface_mesh<Point>::Edge_index, T>(num_edges(sm));
 }
 
 // implementation detail: required by Dynamic_property_map_deleter
@@ -392,7 +412,6 @@ remove_property(Pmap pm, CGAL::Surface_mesh<P>& sm)
 {
   return sm.remove_property_map(pm);
 }
-
 
 template <typename P, typename Property_tag>
 struct Get_pmap_of_surface_mesh {

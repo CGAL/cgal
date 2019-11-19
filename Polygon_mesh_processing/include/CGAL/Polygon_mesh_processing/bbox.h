@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jane Tournois
@@ -32,7 +23,16 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <boost/foreach.hpp>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 
@@ -66,20 +66,20 @@ namespace CGAL {
     CGAL::Bbox_3 bbox(const PolygonMesh& pmesh,
                       const CGAL_PMP_NP_CLASS& np)
     {
-      using boost::choose_param;
-      using boost::get_param;
+      using parameters::choose_parameter;
+      using parameters::get_parameter;
       typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type
-        vpm = choose_param(get_param(np, internal_np::vertex_point),
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, CGAL_PMP_NP_CLASS>::type GT;
-      GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+      GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
       CGAL::Bbox_3 bb;
-      BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+      for(vertex_descriptor v : vertices(pmesh))
       {
         bb += get_bbox( get(vpm, v) );
       }
@@ -116,14 +116,14 @@ namespace CGAL {
                              const PolygonMesh& pmesh,
                              const NamedParameters& np)
     {
-      using boost::choose_param;
-      using boost::get_param;
+      using parameters::choose_parameter;
+      using parameters::get_parameter;
       typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
-        vpm = choose_param(get_param(np, internal_np::vertex_point),
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-      GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+      GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       return get_bbox( get(vpm, vd) );
@@ -159,14 +159,14 @@ namespace CGAL {
                            const PolygonMesh& pmesh,
                            const NamedParameters& np)
     {
-      using boost::choose_param;
-      using boost::get_param;
+      using parameters::choose_parameter;
+      using parameters::get_parameter;
       typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
-        vpm = choose_param(get_param(np, internal_np::vertex_point),
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-      GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+      GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       return get_bbox( get(vpm, source(ed, pmesh)) ) +
@@ -203,20 +203,20 @@ namespace CGAL {
                            const PolygonMesh& pmesh,
                            const NamedParameters& np)
     {
-      using boost::choose_param;
-      using boost::get_param;
+      using parameters::choose_parameter;
+      using parameters::get_parameter;
       typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
-        vpm = choose_param(get_param(np, internal_np::vertex_point),
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, pmesh));
 
       typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-      GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+      GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
       typename GT::Construct_bbox_3 get_bbox = gt.construct_bbox_3_object();
 
       typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
       CGAL::Bbox_3 bb;
-      BOOST_FOREACH(halfedge_descriptor h,
+      for(halfedge_descriptor h :
                     halfedges_around_face(halfedge(fd, pmesh), pmesh))
       {
         bb += get_bbox( get(vpm, target(h, pmesh)) );

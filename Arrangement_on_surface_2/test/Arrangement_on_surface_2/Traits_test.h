@@ -1,7 +1,6 @@
 #ifndef CGAL_TRAITS_TEST_H
 #define CGAL_TRAITS_TEST_H
 
-#include <CGAL/basic.h>
 
 #include <iostream>
 #include <fstream>

@@ -6,7 +6,7 @@
 #include <CGAL/Periodic_2_triangulation_traits_2.h>
 #include <CGAL/Periodic_2_triangulation_2.h>
 
-struct K : CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Periodic_2_triangulation_traits_2<K>  Gt;
 
 typedef CGAL::Periodic_2_triangulation_2<Gt>        Triangulation;

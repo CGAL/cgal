@@ -9,6 +9,7 @@
 #include "Scene.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Three.h>
 #include "ui_Polyhedron_slicer_widget.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -40,7 +41,7 @@ public:
     return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
   }
 
-  void print_message(QString message) { messages->information(message);}
+  void print_message(QString message) { CGAL::Three::Three::information(message);}
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
   virtual void closure()
@@ -224,7 +225,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   QString item_name = sm_item->name();
 
   if(!on_Update_plane_button_clicked()) { return; }
-  const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();
   QApplication::setOverrideCursor(Qt::WaitCursor);
   // get plane position and normal
   CGAL::qglviewer::ManipulatedFrame* mf = plane_item->manipulatedFrame();

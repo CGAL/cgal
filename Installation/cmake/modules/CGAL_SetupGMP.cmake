@@ -17,17 +17,19 @@ if(CGAL_SetupGMP_included OR CGAL_DISABLE_GMP)
 endif()
 set(CGAL_SetupGMP_included TRUE)
 
+# Locally setting of CMAKE_MODULE_PATH, not exported to parent scope.
+# That is required to find the FindGMP and FindMPFR modules.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR})
+
 find_package(GMP REQUIRED)
 find_package(MPFR REQUIRED)
 
 if(NOT DEFINED WITH_GMPXX)
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)
 endif()
-set(CGAL_GMPXX_find_package_keyword QUIET)
 if(WITH_GMPXX OR CGAL_WITH_GMPXX)
-  set(CGAL_GMPXX_find_package_keyword REQUIRED)
+  find_package(GMPXX REQUIRED)
 endif()
-find_package(GMPXX ${CGAL_GMPXX_find_package_keyword})
 
 #.rst:
 # Provided Functions
@@ -54,25 +56,24 @@ function(use_CGAL_GMP_support target)
     return()
   endif()
 
-  if(NOT GMP_IN_CGAL_AUXILIARY)
+  if(NOT GMP_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
     target_include_directories(${target} SYSTEM ${keyword} ${GMP_INCLUDE_DIR})
   else()
     target_include_directories(${target} SYSTEM ${keyword}
       $<BUILD_INTERFACE:${GMP_INCLUDE_DIR}>
       $<INSTALL_INTERFACE:include>)
   endif()
-  target_link_libraries(${target} ${keyword} ${GMP_LIBRARIES})
-  if(NOT MPFR_IN_CGAL_AUXILIARY)
+  if(NOT MPFR_INCLUDE_DIR STREQUAL "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/gmp/include")
     target_include_directories(${target} SYSTEM ${keyword} ${MPFR_INCLUDE_DIR})
   else()
     target_include_directories(${target} SYSTEM ${keyword}
       $<BUILD_INTERFACE:${MPFR_INCLUDE_DIR}>
       $<INSTALL_INTERFACE:include>)
   endif()
-  target_link_libraries(${target} ${keyword} ${MPFR_LIBRARIES})
   if(WITH_GMPXX OR CGAL_WITH_GMPXX)
     target_include_directories(${target} SYSTEM ${keyword}  ${GMPXX_INCLUDE_DIR})
     target_link_libraries(${target}  ${keyword} ${GMPXX_LIBRARIES})
     target_compile_definitions(${target} ${keyword} CGAL_USE_GMPXX=1)
   endif()
+  target_link_libraries(${target} ${keyword} ${MPFR_LIBRARIES} ${GMP_LIBRARIES})
 endfunction()

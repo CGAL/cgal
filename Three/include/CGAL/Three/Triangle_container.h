@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -53,10 +44,12 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
     Vertex_indices,     //!< Designates the buffer that contains the indices for the smooth vertices.
     Flat_normals,       //!< Designates the buffer that contains the normals for the flat vertices.
     Smooth_normals,     //!< Designates the buffer that contains the normals for the smooth vertices.
-    Facet_barycenters,  //!< Designates the buffer that contains the barycenters of the c3t3 facets or the center of the spheres.
+    Facet_centers,  //!< Designates the buffer that contains the barycenters of the c3t3 facets or the center of the spheres.
     Radius,             //!< Designates the buffer that contains the radius of the spheres.
     VColors,            //!< Designates the buffer that contains the colors of the smooth vertices.
     FColors,            //!< Designates the buffer that contains the colors of the flat vertices.
+    Texture_map,        //!< Designates the buffer that contains the UV map for the texture.
+    Distances,
     NbOfVbos            //!< Designates the size of the VBOs vector for `Triangle_container`s
   };
 
@@ -66,6 +59,7 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   //! \param indexed must be `true` if the data is indexed, `false` otherwise. If `true`, `VBOs`[`Vertex_indices`] must be filled.
   //!
   Triangle_container(int program, bool indexed);
+  ~Triangle_container();
 
   //!
   //! \brief initGL creates the Vbos and Vaos of this `Triangle_container`.
@@ -99,7 +93,10 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   float getAlpha();
   //! getter for the "f_matrix" parameter
   QMatrix4x4 getFrameMatrix()const;
-//! setter for the "shrink_factor" parameter
+  //! getter for the "mv_matrix" parameter
+  QMatrix4x4 getMvMatrix()const;
+
+  //! setter for the "shrink_factor" parameter
   void setShrinkFactor(const float&);
   //! setter for the "plane" parameter
   void setPlane       (const QVector4D&);
@@ -107,6 +104,10 @@ struct DEMO_FRAMEWORK_EXPORT Triangle_container :public Primitive_container
   void setAlpha       (const float&);
   //! setter for the "f_matrix" parameter
   void setFrameMatrix(const QMatrix4x4&);
+  //! setter for the "mv_matrix" parameter
+  void setMvMatrix(const QMatrix4x4&);
+  //! setter for the "is_surface" attribute. Used in PROGRAM_C3T3
+  void setIsSurface  (const bool);
   ///@}
 
   //drawing variables

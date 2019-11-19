@@ -40,6 +40,11 @@ bool factor(const Matrix& A, NT& D);
 /// \return `true` if the solver is successful and `false` otherwise.
 bool linear_solver(const Vector& B, Vector& X);
 
+/// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
+/// provided in `SparseLinearAlgebraWithFactorTraits_d::factor()`.
+/// \return `true` if the solver is successful and `false` otherwise.
+bool linear_solver(const Matrix& B, Vector& X);
+
 /// @}
 
 }; /* end SparseLinearAlgebraWithFactorTraits_d */

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 //                 Ron Wein  <wein@post.tau.ac.il>
@@ -847,7 +838,7 @@ public:
           for (size_t i = 0; i < int_seg.size(); ++i) {
             const X_monotone_subcurve_2* x_seg =
               CGAL::object_cast<X_monotone_subcurve_2> (&(int_seg[i]));
-            if (x_seg != NULL) {
+            if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
 
               // If for some reason the subcurve intersection
@@ -859,7 +850,7 @@ public:
 
             const Point_2_pair* p_ptr =
               CGAL::object_cast<Point_2_pair>(&(int_seg[i]));
-            if (p_ptr != NULL) {
+            if (p_ptr != nullptr) {
               // Any point that is not equal to the max_vertex of the
               // subcurve should be inserted into oi.
               // The max_vertex of the current subcurve (if intersecting)
@@ -876,7 +867,7 @@ public:
           // The left point of the current subcurve of one polycurve
           // coincides with the current subcurve of the other polycurve.
           if (left_overlap) {
-            // An overlap occured at the previous iteration:
+            // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
             CGAL_assertion(ocv.number_of_subcurves() > 0);
             *oi++ = make_object(ocv);
@@ -885,7 +876,7 @@ public:
           else {
             // The left point of the current subcurve of one
             // polycurve coincides with the current subcurve of the
-            // other polycurve, and no overlap occured at the
+            // other polycurve, and no overlap occurred at the
             // previous iteration: Output the intersection
             // point. The derivative of at least one of the
             // polycurves is not defined at this point, so we give

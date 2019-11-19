@@ -83,7 +83,7 @@ of the alpha complex where singular faces are removed.
 
 \cgalClassifedRefPages
 
-## Concepts ##
+\cgalCRPSection{Concepts}
 - `AlphaShapeTraits_3`
 - `WeightedAlphaShapeTraits_3`
 - `AlphaShapeCell_3`
@@ -93,7 +93,7 @@ of the alpha complex where singular faces are removed.
 - `FixedAlphaShapeCell_3`
 - `FixedAlphaShapeVertex_3`
 
-## Classes ##
+\cgalCRPSection{Classes}
 - `CGAL::Alpha_status<NT>`
 - `CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>`
 - `CGAL::Alpha_shape_vertex_base_3<Traits,Vb>`

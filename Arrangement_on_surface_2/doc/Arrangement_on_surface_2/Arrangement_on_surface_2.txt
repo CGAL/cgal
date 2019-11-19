@@ -280,23 +280,22 @@ its interior. See \cgalFigureRef{arr_figseg_dcel} for an illustration
 of the various \sc{Dcel} features. For more details on the \sc{Dcel}
 data structure see \cgalCite{bkos-cgaa-00} Chapter 2.
 
-\cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
-An arrangement of interior-disjoint line segments with some of the
-\sc{Dcel} records that represent it. The unbounded face \f$f_0\f$ has
-a single connected component that forms a hole inside it, and this
-hole is comprised if several faces. The half-edge \f$e\f$ is directed
-from its source vertex \f$v_1\f$ to its target vertex \f$v_2\f$. This
-edge, together with its twin \f$e'\f$, correspond to a line segment
-that connects the points associated with \f$v_1\f$ and \f$v_2\f$ and
-separates the face \f$f_1\f$ from \f$f_2\f$. The predecessor \f$e_{\rm
-prev}\f$ and successor \f$e_{\rm next}\f$ of \f$e\f$ are part of the
-chain that form the outer boundary of the face \f$f_2\f$. The face
-\f$f_1\f$ has a more complicated structure as it contains two holes in
-its interior: One hole consists of two adjacent faces \f$f_3\f$ and
-\f$f_4\f$, while the other hole is comprised of two edges. \f$f_1\f$
-also contains two isolated vertices \f$u_1\f$ and \f$u_2\f$ in its
-interior.
-\cgalFigureEnd
+\cgalFigureBegin{arr_figseg_dcel,arr_segs.png} An arrangement of
+interior-disjoint line segments with some of the \sc{Dcel} records
+that represent it. The unbounded face \f$ f_0\f$ has a single
+connected component that forms a hole inside it, and this hole is
+comprised of several faces. The half-edge \f$ e\f$ is directed from
+its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This
+edge, together with its twin \f$ e'\f$, correspond to a line segment
+that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and
+separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$
+e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part
+of the chain that form the outer boundary of the face \f$ f_2\f$. The
+face \f$ f_1\f$ has a more complicated structure as it contains two
+holes in its interior: One hole consists of two adjacent faces \f$
+f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two
+edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and
+\f$ u_2\f$ in its interior.  \cgalFigureEnd
 
 \subsection aos_ssec-basic-arr_class The Arrangement Class Template
 
@@ -756,14 +755,14 @@ the halfedges returned from the various insertion functions.
 
 The following program demonstrates the usage of the four insertion
 functions. It creates an arrangement of five line segments, as
-depicted in \cgalFigureRef{arr_figex_1}.\cgalFootnote{Notice that in
+depicted in \cgalFigureRef{arr_figex_2} \cgalFootnote{Notice that in
 all figures in the rest of this chapter the coordinate axes are drawn
 only for illustrative purposes and are <em>not</em> part of the
-arrangement.} As the arrangement is very simple, we use the simple
-Cartesian kernel of \cgal with integer coordinates for the segment
+arrangement.}. As the arrangement is very simple, we use the simple
+%Cartesian kernel of \cgal with integer coordinates for the segment
 endpoints. We also use the `Arr_segment_traits_2` class that enables
 the efficient maintenance of arrangements of line segments; see more
-details on this traits class in Section \ref aos_sec-geom_traits. This
+details on this traits class in Section \ref arr_sectraits. This
 example, as many others in this chapter, uses some print-utility
 functions from the file `print_arr.h`; these functions are also listed
 in Section \ref arr_ssectraverse.
@@ -869,7 +868,7 @@ an unbounded integer number-type (in this case, the `Gmpz` type taken
 from the <span class="textsc">Gmp</span> library) instead of the
 built-in `int` type.\cgalFootnote{As a rule of thumb, one can use a
 bounded integer type for representing line segments whose coordinates
-are bounded by \f$\lfloor\sqrt[3]{M}\rfloor\f$, where \f$M\f$ is the
+are bounded by \f$ \lfloor\sqrt[3]{M}\rfloor\f$, where \f$ M\f$ is the
 maximal representable integer value. This guarantees that no overflows
 occur in the computations carried out by the traits class, hence all
 traits-class predicates always return correct results.}  In case the
@@ -877,9 +876,9 @@ traits-class predicates always return correct results.}  In case the
 by the `CGAL_USE_GMP` flag defined in `CGAL/basic.h`), we use
 `MP_Float`, a number-type included in \cgal's support library that is
 capable of storing floating-point numbers with unbounded mantissa. We
-also use the standard Cartesian kernel of \cgal as our kernel. This is
-recommended when the kernel is instantiated with a more complex number
-type, as we demonstrate in other examples in this chapter.
+also use the standard %Cartesian kernel of \cgal as our kernel. This
+is recommended when the kernel is instantiated with a more complex
+number type, as we demonstrate in other examples in this chapter.
 
 \cgalExample{Arrangement_on_surface_2/edge_manipulation.cpp}
 
@@ -990,9 +989,9 @@ ability to answer such queries effectively.
 
 The `Arrangement_2` class template does not support point-location
 queries directly, as the arrangement representation is decoupled from
-the geometric algorithms that operate on it. The <em>2D Arrangements</em>
-package includes a set of classe templates that are capable of
-answering such queries; all are models of the concept
+the geometric algorithms that operate on it. The <em>2D
+Arrangements</em> package includes a set of class templates that are
+capable of answering such queries; all are models of the concept
 `ArrangementPointLocation_2`. Each model employs a different
 algorithm or <em>strategy</em> for answering queries. A model of this
 concept must define the `locate()` member function, which accepts
@@ -1662,7 +1661,7 @@ of the edge, it is removed as well.
 \image latex h_shape.png
 
 The following example demonstrates the usage of the free removal
-functions. In creates an arrangement of four line segment forming
+functions. It creates an arrangement of four line segment forming
 an H-shape with a double horizontal line. Then it removes the two
 horizontal edges and clears all redundant vertices, such that the
 final arrangement consists of just two edges associated with the
@@ -3437,11 +3436,11 @@ Using the `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
 class template it is possible to construct and maintain arrangements
 of B&eacute;zier curves that are given by rational control points (a
 sequence of objects of the `RatKernel::Point_2` type). We can handle
-curves of arbitrary degree (in general, a sequence of \f$n+1\f$
-control points define a B&eacute;zier curve of degree \f$n\f$). The
+curves of arbitrary degree (in general, a sequence of \f$ n+1\f$
+control points define a B&eacute;zier curve of degree \f$ n\f$). The
 template parameters are the same ones used by the `Arr_conic_traits_2`
 class template, and here it is also recommended to use the
-`CORE_algebraic_number_traits` class, with Cartesian kernels
+`CORE_algebraic_number_traits` class, with %Cartesian kernels
 instantiated with the `Rational` and `Algebraic` number-types defined
 by this class.
 

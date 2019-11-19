@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
@@ -606,18 +597,33 @@ public:
       ok = copy.make_collapsible(copy_edge, copy_hull.begin(),
           copy_hull.end(), m_verbose);
       if (!ok) {
-        // std::cerr << "simulation: failed (make collapsible)" << std::endl;
+        if (m_verbose > 1)
+          std::cerr << "simulation: failed (make collapsible)" << std::endl;
+        return false;
+      }
+      ok = copy.check_validity_test();
+      if (!ok) {
+        if (m_verbose > 1)
+          std::cerr << "simulation: failed (validity test)" << std::endl;
         return false;
       }
     }
 
     ok = copy.check_kernel_test(copy_edge);
     if (!ok) {
-      std::cerr << "simulation: failed (kernel test)" << std::endl;
+      if (m_verbose > 1)
+        std::cerr << "simulation: failed (kernel test)" << std::endl;
       return false;
     }
 
     copy.collapse(copy_edge, m_verbose);
+
+    ok = copy.check_validity_test();
+    if (!ok) {
+      if (m_verbose > 1)
+        std::cerr << "simulation: failed (validity test)" << std::endl;
+      return false;
+    }
 
     Sample_vector samples;
     m_dt.collect_samples_from_vertex(s, samples, false);
@@ -671,7 +677,7 @@ public:
   {
     if (m_tolerance == (FT)(-1.))
       return false;
-    FT cost = CGAL::approximate_sqrt (pedge.after() / pedge.total_weight());
+    FT cost = CGAL::approximate_sqrt (FT(pedge.after() / pedge.total_weight()));
     return cost > m_tolerance;
   }
 
@@ -926,6 +932,9 @@ public:
 
   // edge must not be pinned or have cyclic target
   Edge copy_star(const Edge& edge, Triangulation& copy) {
+    copy.tds().clear();
+    Vertex_handle vinf = copy.tds().create_vertex();
+    copy.set_infinite_vertex (vinf);
     copy.tds().set_dimension(2);
     copy.infinite_vertex()->pinned() = true;
 
@@ -944,10 +953,9 @@ public:
     {
       Vertex_handle v = vcirc;
       CGAL_assertion(v!=m_dt.infinite_vertex());
-      if (cvmap.find(v) == cvmap.end()) {
-        Vertex_handle cv = copy.tds().create_vertex();
-        cvmap[v] = copy_vertex(v, cv);
-      }
+      CGAL_assertion (cvmap.find(v) == cvmap.end());
+      Vertex_handle cv = copy.tds().create_vertex();
+      cvmap[v] = copy_vertex(v, cv);
     }
 
     // copy faces
@@ -994,7 +1002,9 @@ public:
   {
     for (unsigned int i = 0; i < 3; ++i) {
       Vertex_handle v0i = f0->vertex(i);
+      CGAL_assertion (vmap.find(v0i) != vmap.end());
       Vertex_handle v1i = vmap[v0i];
+      CGAL_assertion (v1i != Vertex_handle());
       f1->set_vertex(i, v1i);
       v1i->set_face(f1);
     }
@@ -1079,7 +1089,7 @@ public:
       m_dt.collect_samples_from_edge(twin, samples);
       copy_twin.first->samples(copy_twin.second) = samples;
     }
-    copy_vertex->set_sample(NULL);
+    copy_vertex->set_sample(nullptr);
   }
 
   Edge get_copy_edge(
@@ -1659,7 +1669,7 @@ public:
     typename PointOutputIterator,
     typename IndexOutputIterator,
     typename IndexPairOutputIterator>
-  CGAL::cpp11::tuple<
+  std::tuple<
     PointOutputIterator, 
     IndexOutputIterator,
     IndexPairOutputIterator>
@@ -1717,7 +1727,7 @@ public:
       *segments++ = std::make_pair(pos_a, pos_b);
     }
 
-    return CGAL::cpp11::make_tuple(points, isolated_points, segments);
+    return std::make_tuple(points, isolated_points, segments);
   }
 
   /*!

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -332,8 +323,8 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
   Line_2 compute_linf_perpendicular(const Line_2& l, const Point_2& p)
   {
     RT a, b, c;
-    a = RT( - CGAL::sign(l.b()) );
-    b = RT( CGAL::sign(l.a()) );
+    a = RT( - (int) CGAL::sign(l.b()) );
+    b = RT( (int) CGAL::sign(l.a()) );
     c = - a * p.x() - b * p.y();
     return Line_2(a, b, c);
   }
@@ -391,7 +382,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     Comparison_result cmpxqp = cmpx(q,p);
     CGAL_assertion(cmpxqp != EQUAL);
     b = (cmpxqp == SMALLER) ? RT(-1) : RT(1);
-    c = (cmpxqp == SMALLER) ? p.y() : -p.y();
+    c = (cmpxqp == SMALLER) ? p.y() : RT(-p.y());
     return Line_2(RT(0), b, c);
   }
 
@@ -405,7 +396,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     CGAL_assertion(cmpypq != EQUAL);
     a = (cmpypq == SMALLER) ? RT(-1) : RT(1);
     //a = RT(CGAL::sign(p.y() - q.y()));
-    c = (cmpypq == SMALLER) ? p.x() : -p.x();
+    c = (cmpypq == SMALLER) ? p.x() : RT(-p.x());
     return Line_2(a, RT(0), c);
   }
 
@@ -457,7 +448,7 @@ public:    //    compute_supporting_line(q.supporting_segment(), a1, b1, c1);
     const RT nomin = CGAL::abs(l.a() * p.x() + l.b() * p.y() + l.c());
     const RT denom = CGAL::abs(
           l.a() +
-          ( CGAL::sign(l.a()) == CGAL::sign(l.b())? l.b() : -l.b() ) );
+          ( CGAL::sign(l.a()) == CGAL::sign(l.b())? l.b() : RT(-l.b()) ) );
     return std::pair<RT,RT>(nomin, denom);
   }
 
@@ -810,8 +801,8 @@ public:
 
       const RT one(1);
 
-      const Point_2 displaced ( corner.x() + (-cmpypq)*one ,
-                                corner.y() + cmpxpq * one   );
+      const Point_2 displaced ( corner.x() + (-(int)cmpypq)*one ,
+                                corner.y() + (int)cmpxpq * one   );
 
       const Line_2 l = compute_line_from_to(corner, displaced);
 
@@ -928,8 +919,8 @@ public:
 
       RT one(1);
 
-      Point_2 displaced ( corner.x() + (-cmpypq)*one ,
-                          corner.y() + cmpxpq * one   );
+      Point_2 displaced ( corner.x() + (-(int)cmpypq)*one ,
+                          corner.y() + (int)cmpxpq * one   );
 
       Line_2 l = compute_line_from_to(corner, displaced);
 
@@ -1808,9 +1799,9 @@ public:
   {
     CGAL_precondition(bside % 2 == 1);
     const FT ax = (bside % 4 == 1) ?
-      RT(2)*c.x() + c.y() - d.y() : c.x() + d.x();
+      FT(RT(2)*c.x() + c.y() - d.y()) : FT(c.x() + d.x());
     const FT ay = (bside % 4 == 1) ?
-      c.y() + d.y() : RT(2)*c.y() + d.x() - c.y();
+      FT(c.y() + d.y()) : FT(RT(2)*c.y() + d.x() - c.y());
     return Point_2(ax, ay, RT(2));
   }
 

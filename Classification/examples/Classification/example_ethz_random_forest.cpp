@@ -91,7 +91,7 @@ int main (int argc, char** argv)
   std::vector<int> label_indices(pts.size(), -1);
   
   std::cerr << "Using ETHZ Random Forest Classifier" << std::endl;
-  Classification::ETHZ_random_forest_classifier classifier (labels, features);
+  Classification::ETHZ::Random_forest_classifier classifier (labels, features);
   
   std::cerr << "Training" << std::endl;
   t.reset();

@@ -4,24 +4,15 @@
 // All rights reserved.
 //
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-// 
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // ----------------------------------------------------------------------------
 //
 // Library       : CGAL 
-// File          : test/Chinese_remaminder_test.C
+// File          : test/Chinese_remaminder_traits.cpp
 // CGAL_release   : $Name:  $
 // Revision      : $Revision$
 // Revision_date : $Date$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Dominik H�lse <dominik.huelse@gmx.de>
 //                 Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -29,7 +20,6 @@
 // ============================================================================
 
 #undef NDEBUG
-#include <CGAL/basic.h>
 #include <CGAL/Chinese_remainder_traits.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/CORE_arithmetic_kernel.h>
@@ -171,7 +161,7 @@ int main(){
 
 #ifdef CGAL_USE_CORE  
     test_CR<CGAL::CORE_arithmetic_kernel>();
-#endif // Lis_HAVE_CORE
+#endif // CGAL_USE_CORE
      
     return 0;
 }

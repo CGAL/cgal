@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
@@ -59,6 +50,7 @@ public:
     //    typedef typename SVertex::SVertex_handle       SVertex_handle;
     //    typedef typename SVertex::SVertex_const_handle SVertex_const_handle;
     SNC_in_place_list_svertex() {}
+  SNC_in_place_list_svertex(const SNC_in_place_list_svertex& other)=default;
     SNC_in_place_list_svertex(const SVertex& v)   // down cast
         : SVertex(v) {}
     Self& operator=( const Self& v) {
@@ -78,6 +70,7 @@ public:
     //    typedef typename SHalfedge::SHalfedge_handle       SHalfedge_handle;
     //    typedef typename SHalfedge::SHalfedge_const_handle SHalfedge_const_handle;
     SNC_in_place_list_shalfedge() {}
+    SNC_in_place_list_shalfedge(const SNC_in_place_list_shalfedge& other)=default;
     SNC_in_place_list_shalfedge(const SHalfedge& v)   // down cast
         : SHalfedge(v) {}
     Self& operator=( const Self& v) {
@@ -97,6 +90,7 @@ public:
     //    typedef typename SFace::SFace_handle       SFace_handle;
     //    typedef typename SFace::SFace_const_handle SFace_const_handle;
     SNC_in_place_list_sface() {}
+    SNC_in_place_list_sface(const SNC_in_place_list_sface& other)=default;
     SNC_in_place_list_sface(const SFace& v)   // down cast
         : SFace(v) {}
     Self& operator=( const Self& v) {
