@@ -266,7 +266,7 @@ void box_self_intersection_d(
     std::ptrdiff_t cutoff)
 {
     return box_self_intersection_d<ConcurrencyTag>(begin, end, callback, box_traits, cutoff,
-                                   Box_intersection_d::CLOSED);
+                                                   Box_intersection_d::CLOSED);
 }
 
 template< class ConcurrencyTag = Sequential_tag, class RandomAccessIter, class Callback, class BoxTraits >
@@ -311,7 +311,7 @@ void box_self_intersection_d(
     typedef typename std::iterator_traits<RandomAccessIter>::value_type val_t;
     typedef Box_intersection_d::Box_traits_d< val_t>  Box_traits;
     box_self_intersection_d<ConcurrencyTag>(begin, end, callback,
-                            Box_traits(), cutoff, topology );
+                                            Box_traits(), cutoff, topology );
 }
 
 
