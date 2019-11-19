@@ -1,15 +1,15 @@
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-
+#include <CGAL/tags.h>
 #include <CGAL/Timer.h>
+
+#include <cstdlib>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
@@ -35,17 +35,17 @@ test_self_intersections(const char* filename, const bool expected)
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::self_intersections(
+  CGAL::Polygon_mesh_processing::self_intersections<CGAL::Sequential_tag>(
     m,
     std::back_inserter(intersected_tris),
-    CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
+    CGAL::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
   bool intersecting_1 = !intersected_tris.empty();
 
   std::cout << "self_intersections test took " << timer.time() << " sec." << std::endl;
   std::cout << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect(m,
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Sequential_tag>(m,
     CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
 
   std::cout << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
