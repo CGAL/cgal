@@ -150,9 +150,8 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 
    \pre `k >= 2.`
 
-   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
-   Possible values are `Sequential_tag`
-   and `Parallel_tag`.
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 

@@ -39,17 +39,15 @@ namespace Scale_space_reconstruction_3
  *  `RealEmbeddable` field number type. Generally,
  *  `Exact_predicates_inexact_constructions_kernel` is preferred.
  *  \tparam ConcurrencyTag indicates whether to use concurrent
- *  processing. It can be omitted: if TBB (or greater) is available
+ *  processing. It can be omitted: if \ref thirdpartyTBB is available
  *  and `CGAL_LINKED_WITH_TBB` is defined then `Parallel_tag` is
  *  used. Otherwise, `Sequential_tag` is used.
  */
 template <typename Geom_traits,
 #ifdef DOXYGEN_RUNNING
           typename ConcurrencyTag>
-#elif CGAL_LINKED_WITH_TBB
-          typename ConcurrencyTag = CGAL::Parallel_tag>
 #else
-          typename ConcurrencyTag = CGAL::Sequential_tag>
+          typename ConcurrencyTag = CGAL::Parallel_if_available_tag>
 #endif
 class Jet_smoother
 {
