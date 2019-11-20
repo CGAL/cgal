@@ -26,7 +26,7 @@ namespace CGAL {
 struct DefaultColorFunctorP2T2 {
   template <typename P2T2>
   static CGAL::Color run(const P2T2 &,
-                         const typename P2T2::Periodic_triangle_iterator ti) {
+                         const typename P2T2::Periodic_triangle_iterator /*ti*/) {
     //CGAL::Random random((unsigned int)(std::size_t)(&*ti));
     //return get_random_color(random);
     return CGAL::Color(73, 250, 117);

@@ -1,8 +1,9 @@
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/draw_periodic_2_triangulation_2.h>
 
-#include<fstream>
+#include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Periodic_2_Delaunay_triangulation_traits_2<K> GT;
@@ -18,17 +19,18 @@ int main(int argc, char* argv[])
   // Read points and insert in T
   Point p;
   std::ifstream ifs((argc > 1) ? argv[1] : "data/data1.dt.cin");
-  assert(ifs);
-  while (ifs >> p) {
-    T.insert(p);
+  if (ifs)
+  {
+    while (ifs >> p)
+    { T.insert(p); }
+    CGAL_assertion(T.is_valid());
+    
+    if( T.is_triangulation_in_1_sheet())
+    { T.convert_to_9_sheeted_covering(); }
+    
+    // Draw the periodic triangulation
+    CGAL::draw(T);
   }
-  assert(T.is_valid());
-
-  if( T.is_triangulation_in_1_sheet())
-    T.convert_to_9_sheeted_covering();
-
-  // Draw the periodic triangulation
-  CGAL::draw(T);
-
+  
   return EXIT_SUCCESS;
 }
