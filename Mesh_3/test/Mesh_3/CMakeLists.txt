@@ -71,6 +71,9 @@ if ( CGAL_FOUND )
       test_meshing_unit_tetrahedron
       test_meshing_polyhedron
       test_meshing_polyhedral_complex
+      test_mesh_capsule_var_distance_bound
+      test_mesh_3_issue_1554
+      test_mesh_polyhedral_domain_with_features_deprecated
       )
     if(TBB_FOUND AND TARGET ${target})
       CGAL_target_use_TBB(${target})
