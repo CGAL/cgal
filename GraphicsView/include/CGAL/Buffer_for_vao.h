@@ -359,9 +359,9 @@ public:
 
     if (m_points_of_face.size()<3)
     {
-      std::cerr<<"PB: you try to triangulate a face with "<<m_points_of_face.size()<<" vertices."
-               <<std::endl;
-      
+      /* std::cerr<<"PB: you try to triangulate a face with "<<m_points_of_face.size()<<" vertices."
+               <<std::endl; */
+
       m_face_started=false;
       m_points_of_face.clear();
       m_vertex_normals_for_face.clear();

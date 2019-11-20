@@ -120,7 +120,7 @@ public:
     // reprensenting a hole)
     m_mark_T=m_original_map.get_new_mark();
     m_mark_L=m_original_map.get_new_mark();
-    m_mark_hole=get_map().get_new_mark();
+    m_mark_perforated=get_map().get_new_mark();
 
     /* std::cout<<"Number of darts in m_map: "<<m_map.number_of_darts()
        <<"; number of darts in origin_to_copy: "<<origin_to_copy.size()
@@ -281,7 +281,7 @@ public:
   {
     m_original_map.free_mark(m_mark_T);
     m_original_map.free_mark(m_mark_L);
-    get_map().free_mark(m_mark_hole);
+    get_map().free_mark(m_mark_perforated);
   }
 
   /// @return true iff 'p' is contractible.
@@ -580,6 +580,7 @@ protected:
       if (!is_contracted(path[i]))// here flip doesn't matter
       {
         cur=get_first_dart_of_the_path(path[i], path.get_ith_flip(i), false);
+        CGAL_assertion(!get_map().is_marked(cur, m_mark_perforated));
         while(cur!=get_second_dart_of_the_path(path[i], path.get_ith_flip(i), false))
         {
           res.push_back(cur, false, false);
@@ -610,8 +611,13 @@ protected:
     {
       if (!is_contracted(path[i]))
       {
-        res.push_back(get_first_dart_of_the_path(path[i], path.get_ith_flip(i)), true);
-        res.push_back(get_second_dart_of_the_path(path[i], path.get_ith_flip(i)), true);
+        res.push_back(get_first_dart_of_the_path
+                      (path[i], path.get_ith_flip(i)), true);
+        if (!get_map().is_marked(res.back(), m_mark_perforated) ||
+            !get_map().is_marked(get_map().template beta<2>(res.back()),
+                                 m_mark_perforated))
+        { res.push_back(get_second_dart_of_the_path
+                        (path[i], path.get_ith_flip(i)), true); }
       }
     }
     res.update_is_closed();
@@ -717,7 +723,7 @@ protected:
           get_map().template basic_link_beta_for_involution<2>(d1, d2);
           origin_to_copy[it]=d1;
           copy_to_origin[d1]=it;
-          get_map().mark(d2, m_mark_hole);
+          get_map().mark(d2, m_mark_perforated);
         }
         else if (typename Map::Dart_const_handle(it)<
                  m_original_map.template beta<2>(it))
@@ -732,9 +738,9 @@ protected:
           copy_to_origin[d2]=m_original_map.template beta<2>(it);
 
           if (m_original_map.is_perforated(it))
-          { get_map().mark(d1, m_mark_hole); }
+          { get_map().mark(d1, m_mark_perforated); }
           if (m_original_map.is_perforated(m_original_map.template beta<2>(it)))
-          { get_map().mark(d2, m_mark_hole); }
+          { get_map().mark(d2, m_mark_perforated); }
         }
       }
     }
@@ -816,35 +822,40 @@ protected:
     for (auto it=get_map().darts().begin(), itend=get_map().darts().end();
          it!=itend; ++it)
     {
-      if (!get_map().is_marked(it, grey) && !get_map().is_marked(it, m_mark_hole))
+      if (!get_map().is_marked(it, grey))
       {
-        queue.push(it);
         get_map().template mark_cell<2>(it, grey);
-
-        while (!queue.empty())
+        if (!get_map().is_marked(it, m_mark_perforated))
         {
-          dh=queue.front();
-          queue.pop();
-          ddh=dh;
-          do
+          queue.push(it);
+
+          while (!queue.empty())
           {
-            if (!get_map().is_marked(get_map().template beta<2>(ddh), grey) &&
-                !get_map().is_marked(get_map().template beta<2>(ddh), m_mark_hole))
+            dh=queue.front(); // face(dh) is not perforated (and thus all its darts)
+            queue.pop();
+            ddh=dh;
+            do
             {
-              get_map().mark(ddh, toremove);
-              get_map().mark(get_map().template beta<2>(ddh), toremove);
-              mark_edge(m_original_map, copy_to_origin[ddh], m_mark_L);
-              get_map().template mark_cell<2>(get_map().template beta<2>(ddh),
-                                              grey);
-              queue.push(get_map().template beta<2>(ddh));
+              if (!get_map().is_marked(get_map().template beta<2>(ddh), grey) &&
+                  !get_map().is_marked(get_map().template beta<2>(ddh),
+                                       m_mark_perforated))
+              {
+                get_map().mark(ddh, toremove);
+                get_map().mark(get_map().template beta<2>(ddh), toremove);
+                mark_edge(m_original_map, copy_to_origin[ddh], m_mark_L);
+                get_map().template mark_cell<2>(get_map().template beta<2>(ddh),
+                                                grey);
+                queue.push(get_map().template beta<2>(ddh));
+              }
+              ddh=get_map().template beta<1>(ddh);
             }
-            ddh=get_map().template beta<1>(ddh);
+            while (dh!=ddh);
           }
-          while (dh!=ddh);
         }
       }
     }
 
+    CGAL_assertion(get_map().is_whole_map_marked(grey));
     get_map().free_mark(grey);
   }
 
@@ -940,12 +951,16 @@ protected:
     get_map().set_automatic_attributes_management(true);
     get_map().free_mark(toremove);
 
+    // Now we consider non perforated faces which are loop.
+    // The edges of these faces are marked as if they belong to T (the spanning
+    // tree of contracted edges), i.e. they are ignored when we will transform
+    // a path in the original mesh into a path in the minimal surface.
     typename Map::Dart_const_handle origin_dart;
     for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
            it=get_map().darts().begin(), itend=get_map().darts().end();
          it!=itend; ++it)
     {
-      if (!get_map().is_marked(it, m_mark_hole) &&
+      if (!get_map().is_marked(it, m_mark_perforated) &&
           get_map().template beta<1>(it)==it)
       {
         origin_dart=copy_to_origin[it];
@@ -955,12 +970,12 @@ protected:
 
         CGAL_assertion(m_paths.find(origin_dart)!=m_paths.end());
         m_paths.erase(origin_dart);
+        mark_edge(m_original_map, origin_dart, m_mark_T);
+
         CGAL_assertion(m_paths.find(origin_dart)==m_paths.end());
         if (!m_original_map.template is_free<2>(origin_dart))
         { CGAL_assertion(m_paths.find(m_original_map.template beta<2>
                                       (origin_dart))==m_paths.end()); }
-
-        mark_edge(m_original_map, origin_dart, m_mark_T);
       }
     }
 
@@ -989,25 +1004,22 @@ protected:
     get_map().negate_mark(oldedges); // now all edges are marked
       
     // 1) We insert a vertex in each face which is not a hole.
-    //    New edges created by the operation are not marked.
+    //    New edges created by the operation are not marked oldedges.
     typename Map::size_type treated=get_map().get_new_mark();
 
     for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
-         it=get_map().darts().begin(); it!=get_map().darts().end();
-         ++it)
+         it=get_map().darts().begin(); it!=get_map().darts().end(); ++it)
     {
       if (!get_map().is_marked(it, treated))
       {
         get_map().template mark_cell<2>(it, treated);
         if (get_map().is_marked(it, oldedges) &&
-            !get_map().is_marked(it, m_mark_hole))
+            !get_map().is_marked(it, m_mark_perforated) &&
+            get_map().template beta<1>(it)!=it)
         {
-          if (get_map().template beta<1>(it)!=it)
-          {
-            get_map().negate_mark(treated); // To mark new darts
-            get_map().insert_cell_0_in_cell_2(it);
-            get_map().negate_mark(treated);
-          }
+          get_map().negate_mark(treated); // To mark new darts treated
+          get_map().insert_cell_0_in_cell_2(it);
+          get_map().negate_mark(treated);
         }
       }
     }
@@ -1033,10 +1045,24 @@ protected:
       std::pair<Dart_handle, Dart_handle>& p=itp->second;
       /* std::cout<<"Pair: "<<get_map().darts().index(p.first)<<", "
               <<get_map().darts().index(p.second)<<std::flush; */
-      if (!get_map().is_marked(p.first, m_mark_hole))
-      { p.first=get_map().template beta<0, 2>(p.first); }
-      if (!get_map().is_marked(itp->second.second, m_mark_hole))
-      { p.second=get_map().template beta<0>(p.second); }
+      if (!get_map().is_marked(p.first, m_mark_perforated) &&
+          !get_map().is_marked(p.second, m_mark_perforated))
+      { // Edge between two real faces, removed during the quadrangulation
+        p.first=get_map().template beta<0, 2>(p.first);
+        p.second=get_map().template beta<0>(p.second);
+      }
+      else if (!get_map().is_marked(p.first, m_mark_perforated))
+      { // Edge between a real face and a perforated one
+        CGAL_assertion(get_map().template beta<2>(p.first)==p.second); // The edge was not updated in update_length_two_paths_before_edge_removals
+        p.second=get_map().template beta<1>(p.first);
+        p.first=get_map().template beta<0, 2>(p.first);
+      }
+      else if (!get_map().is_marked(p.second, m_mark_perforated))
+      {
+        CGAL_assertion(get_map().template beta<2>(p.first)==p.second); // The edge was not updated in update_length_two_paths_before_edge_removals
+        p.second=get_map().template beta<0, 2>(p.first);
+        p.first=get_map().template beta<1>(p.first);
+      }
       /* std::cout<<" -> "<<get_map().darts().index(p.first)<<", "
               <<get_map().darts().index(p.second)<<std::endl; */
     }
@@ -1059,48 +1085,22 @@ protected:
       { assert(get_map().template is_whole_cell_unmarked<2>(it, m_mark_hole)); }
     } */
 
-    auto toremove=get_map().get_new_mark();
-    // 3) We remove all the old edges and extend the holes when necessary.
+    // 3) We remove all the old edges, and extend the perforated faces.
     for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
          it=get_map().darts().begin(), itend=get_map().darts().end();
          it!=itend; ++it)
     {
-      if (get_map().is_dart_used(it) && get_map().is_marked(it, oldedges) &&
-          (!get_map().is_marked(it, m_mark_hole) ||
-           !get_map().is_marked(get_map().template beta<2>(it), m_mark_hole)))
+      if (get_map().is_dart_used(it) &&
+          get_map().is_marked(it, oldedges) &&
+          !get_map().is_marked(it, m_mark_perforated))
       {
-        if (get_map().is_marked(get_map().template beta<2>(it), m_mark_hole) &&
-            !get_map().is_marked(it, m_mark_hole))
-        { get_map().template mark_cell<2>(it, m_mark_hole); }
-        else if (get_map().is_marked(it, m_mark_hole) &&
-                 !get_map().is_marked(get_map().template beta<2>(it), m_mark_hole))
-        { get_map().template mark_cell<2>(get_map().template beta<2>(it),
-                                          m_mark_hole); }
-       // get_map().template remove_cell<1>(it);
-        get_map().mark(it, toremove);
-        get_map().mark(get_map().template beta<2>(it), toremove);
+        if (get_map().is_marked(get_map().template beta<2>(it), m_mark_perforated))
+        { get_map().template mark_cell<2>(it, m_mark_perforated); }
+        get_map().template remove_cell<1>(it);
+        // get_map().mark(it, toremove);
+        // get_map().mark(get_map().template beta<2>(it), toremove);
       }
     }
-
-    for (typename TPaths::iterator itp=m_paths.begin(), itpend=m_paths.end();
-         itp!=itpend; ++itp)
-    {
-      std::pair<Dart_handle, Dart_handle>& p=itp->second;
-      while(get_map().is_marked(p.first, toremove))
-      { p.first=get_map().template beta<2, 1>(p.first); }
-      while(get_map().is_marked(p.second, toremove))
-      { p.second=get_map().template beta<2, 1>(p.second); }
-    }
-
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
-         it=get_map().darts().begin(), itend=get_map().darts().end();
-         it!=itend; ++it)
-    {
-      if (get_map().is_dart_used(it) && get_map().is_marked(it, toremove))
-      { get_map().template remove_cell<1>(it); }
-    }
-
-    get_map().free_mark(toremove);
 
     /* FOR DEBUG for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
          it=get_map().darts().begin(); it!=get_map().darts().end();
@@ -1221,8 +1221,12 @@ protected:
          ++it)
     {
       initdart=it;
-      if (!get_map().is_marked(initdart, toremove))
-      { // Here we are on a border edge
+      if (!get_map().is_marked(initdart, toremove) &&
+          !get_map().is_marked(initdart, m_mark_perforated) &&
+          !get_map().is_marked(get_map().template beta<2>(initdart),
+                               m_mark_perforated))
+      { // Here we are on a border edge of a "real" face (i.e. non perforated)
+        // and adjacent to a "real" face
         curdart=get_map().template beta<0, 2>(initdart);
         while(get_map().is_marked(curdart, toremove))
         {
@@ -1234,14 +1238,10 @@ protected:
           curdart=get_map().template beta<0, 2>(curdart);
         }
 
-        /*if (!get_map().is_marked(get_map().template beta<2>(curdart),
-                                 m_mark_hole))*/
-        {
-          d1=copy_to_origin.find(get_map().template beta<2>(curdart))->second;
-          if (m_original_map.template is_free<2>(d1) ||
-              d1<m_original_map.template beta<2>(d1))
-          { m_paths[d1].second=initdart; }
-        }
+        d1=copy_to_origin.find(get_map().template beta<2>(curdart))->second;
+        if (m_original_map.template is_free<2>(d1) ||
+            d1<m_original_map.template beta<2>(d1))
+        { m_paths[d1].second=initdart; }
       }
     }
 
@@ -1306,7 +1306,7 @@ protected:
         do
         {
           ++deg;
-          hole_detected=hole_detected || get_map().is_marked(dh, m_mark_hole);
+          hole_detected=hole_detected || get_map().is_marked(dh, m_mark_perforated);
           dh=get_map().template beta<2, 1>(dh);
         }
         while(dh!=it);
@@ -1363,7 +1363,7 @@ protected:
          // then we add 1 to the next dart if we dont cross a hole
          // and we add deg(v)+1 if we cross a hole
           dh=it;
-          while(!get_map().is_marked(dh, m_mark_hole))
+          while(!get_map().is_marked(dh, m_mark_perforated))
           {
             dh=get_map().template beta<2, 1>(dh);
           }
@@ -1377,7 +1377,7 @@ protected:
             // this is for the turn V3
             get_map().info(ddh)=id;
           #endif // CGAL_PWRLE_TURN_V2
-            if (get_map().is_marked(get_map().template beta<2>(ddh), m_mark_hole))
+            if (get_map().is_marked(get_map().template beta<2>(ddh), m_mark_perforated))
             { id+=get_map().template info<0>(ddh)+1; }
             else
             { id+=1; }
@@ -1551,7 +1551,7 @@ protected:
   {
     if (get_map().number_of_darts()!=4)
     { return false; }
-    return (get_map().number_of_marked_darts(m_mark_hole)==0);
+    return (get_map().number_of_marked_darts(m_mark_perforated)==0);
   }
 
   /// Test if m_paths are valid, i.e.:
@@ -1684,7 +1684,7 @@ protected:
                   /// (except the edges that belong to the spanning tree T).
   std::size_t m_mark_T;    /// mark each edge of m_original_map that belong to the spanning tree T
   std::size_t m_mark_L;    /// mark each edge of m_original_map that belong to the dual spanning tree L
-  std::size_t m_mark_hole; /// mark each edge of m_map that bounds a hole
+  std::size_t m_mark_perforated; /// mark each edge of m_map that bounds a hole
 
 #ifdef CGAL_PWRLE_TURN_V2
   TDartIds m_dart_ids; /// Ids of each dart of the transformed map, between 0 and n-1 (n being the number of darts)
