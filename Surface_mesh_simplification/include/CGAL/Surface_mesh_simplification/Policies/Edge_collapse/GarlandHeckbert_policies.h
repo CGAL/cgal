@@ -170,7 +170,7 @@ public:
                            const FT discontinuity_multiplier = FT(100))
   {
     Vertex_cost_map vcm = get(Cost_property(), tmesh);
-    get_cost_ = Get_cost(vcm);
+    get_cost_ = Get_cost(vcm, discontinuity_multiplier);
     get_placement_ = Get_placement(vcm);
   }
 
