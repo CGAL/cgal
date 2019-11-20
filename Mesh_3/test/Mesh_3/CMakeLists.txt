@@ -65,12 +65,10 @@ if ( CGAL_FOUND )
       test_meshing_verbose
       test_meshing_polyhedron_with_features
       test_meshing_utilities.h
-      test_mesh_implicit_domains
       test_meshing_implicit_function
       test_meshing_3D_image
       test_meshing_3D_gray_image
       test_meshing_unit_tetrahedron
-      test_backward_compatibility
       test_meshing_polyhedron
       test_meshing_polyhedral_complex
       )
