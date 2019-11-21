@@ -1480,18 +1480,23 @@ protected:
                  <<std::endl;
         res=false;
       }
-      if (!get_map().is_dart_used(it->second.second))
+
+      if (!edge_path_has_only_one_dart(it->first))
       {
-        std::cout<<"ERROR: second dart in m_paths does not exist anymore in m_map."
-                 <<std::endl;
-        res=false;
+        if (!get_map().is_dart_used(it->second.second))
+        {
+          std::cout<<"ERROR: second dart in m_paths does not exist anymore in m_map."
+                  <<std::endl;
+          res=false;
+        }
+        else if (!get_map().darts().owns(it->second.second))
+        {
+          std::cout<<"ERROR: second dart in m_paths does not belong to m_map."
+                  <<std::endl;
+          res=false;
+        }
       }
-      else if (!get_map().darts().owns(it->second.second))
-      {
-        std::cout<<"ERROR: second dart in m_paths does not belong to m_map."
-                 <<std::endl;
-        res=false;
-      }
+
       if (it->second.first==it->second.second)
       {
         std::cout<<"ERROR: two darts in the same pair are equal."
