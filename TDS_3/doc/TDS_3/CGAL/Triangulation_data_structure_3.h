@@ -17,7 +17,7 @@ additional template parameters.
 
 \tparam TriangulationDSVertexBase_3 must be a model of `TriangulationDSVertexBase_3`. The default is `Triangulation_ds_vertex_base_3<TDS>`.
 
-\tparam TriangulationDSCellBase  must be a model of `TriangulationDSCellBase_3. The default is `Triangulation_ds_cell_base_3<TDS>`.
+\tparam TriangulationDSCellBase  must be a model of `TriangulationDSCellBase_3`. The default is `Triangulation_ds_cell_base_3<TDS>`.
 
 
 \tparam ConcurrencyTag enables the use of a concurrent
@@ -25,7 +25,7 @@ container to store vertices and cells. It can be `Sequential_tag` (use of a
 `Compact_container` to store vertices and cells) or `Parallel_tag` 
 (use of a `Concurrent_compact_container`). If it is 
 `Parallel_tag`, the following functions can be called concurrently:
-`create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
+`create_vertex()`, `create_cell()`, `delete_vertex()`, and `delete_cell()`.
 `Sequential_tag` is the default value.
 
 \cgalModels `TriangulationDataStructure_3`
