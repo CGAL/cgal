@@ -60,11 +60,14 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
     else // threw and it's not a construction-less intersection ---> real intersection
     {
       assert(intersection_type == INTERSECTION);
-      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
 #if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
              (boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
-#endif
              (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+#else
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
+             (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+#endif
     }
 
     return;
@@ -78,10 +81,10 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
   else if(intersection_type == INTERSECTION)
   {
     assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) &&
-#if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
-           !(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) &&
-#endif
            !(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+#if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+#endif
   }
 }
 
