@@ -19,14 +19,14 @@ endif()
 include_directories(../../include)
 
 set(SOURCE_FILES
-  basic_example_surface_mesh_topology.cpp
-  basic_example_torus.cpp
-  map_2_constructor.cpp
-  open_path_homotopy.cpp
+  # basic_example_surface_mesh_topology.cpp
+  # basic_example_torus.cpp
+  # map_2_constructor.cpp
+  # open_path_homotopy.cpp
   path_homotopy.cpp
-  path_homotopy_with_symbols_2.cpp
-  path_homotopy_with_symbols.cpp
-  surface_mesh_topology_with_sm_and_polyhedron.cpp
+  # path_homotopy_with_symbols_2.cpp
+  # path_homotopy_with_symbols.cpp
+  # surface_mesh_topology_with_sm_and_polyhedron.cpp
    )
 
 foreach(cppfile ${SOURCE_FILES})
@@ -34,9 +34,9 @@ foreach(cppfile ${SOURCE_FILES})
 endforeach()
 
 if(CGAL_Qt5_FOUND)
-  target_link_libraries(basic_example_surface_mesh_topology PUBLIC CGAL::CGAL_Qt5)
-  target_link_libraries(basic_example_torus PUBLIC CGAL::CGAL_Qt5)
-  target_link_libraries(open_path_homotopy PUBLIC CGAL::CGAL_Qt5)
+  # target_link_libraries(basic_example_surface_mesh_topology PUBLIC CGAL::CGAL_Qt5)
+  # target_link_libraries(basic_example_torus PUBLIC CGAL::CGAL_Qt5)
+  # target_link_libraries(open_path_homotopy PUBLIC CGAL::CGAL_Qt5)
   target_link_libraries(path_homotopy PUBLIC CGAL::CGAL_Qt5)
-  target_link_libraries(surface_mesh_topology_with_sm_and_polyhedron PUBLIC CGAL::CGAL_Qt5)
+  # target_link_libraries(surface_mesh_topology_with_sm_and_polyhedron PUBLIC CGAL::CGAL_Qt5)
 endif()
