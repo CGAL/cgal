@@ -609,9 +609,7 @@ protected:
       {
         res.push_back(get_first_dart_of_the_path
                       (path[i], path.get_ith_flip(i)), true);
-        if (!get_map().is_marked(res.back(), m_mark_perforated) ||
-            !get_map().is_marked(get_map().template beta<2>(res.back()),
-                                 m_mark_perforated))
+        if (!edge_path_has_only_one_dart(path[i]))
         { res.push_back(get_second_dart_of_the_path
                         (path[i], path.get_ith_flip(i)), true); }
       }
@@ -872,11 +870,11 @@ protected:
     {
       initdart=it;
       if (!get_map().is_marked(initdart, toremove) &&
-          !get_map().is_marked(initdart, m_mark_perforated) &&
+          !get_map().is_marked(initdart, m_mark_perforated) /*&&
           !get_map().is_marked(get_map().template beta<2>(initdart),
-                               m_mark_perforated))
+                               m_mark_perforated)*/)
       { // Here we are on a border edge of a "real" face (i.e. non perforated)
-        // and adjacent to a "real" face
+        //TODO REMOVE THIS LINE OF COMMENT and adjacent to a "real" face
         curdart=get_map().template beta<0, 2>(initdart);
         while(get_map().is_marked(curdart, toremove))
         { // Here, all edges marked to remove are between two real faces.
@@ -897,10 +895,7 @@ protected:
     {
       CGAL_assertion(!m_original_map.is_marked(it->first, m_mark_T));
       CGAL_assertion(!get_map().is_marked(it->second.first, toremove));
-      if (m_original_map.is_perforated(it->first) &&
-          (m_original_map.template is_free<2>(it->first) ||
-           m_original_map.is_perforated
-           (m_original_map.template beta<2>(it->first))))
+      if (edge_path_has_only_one_dart(it->first))
       { CGAL_assertion(it->second.second==nullptr); }
       else
       { CGAL_assertion(!get_map().is_marked(it->second.second, toremove)); }
@@ -1034,45 +1029,30 @@ protected:
       std::pair<Dart_handle, Dart_handle>& p=itp->second;
       /* std::cout<<"Pair: "<<get_map().darts().index(p.first)<<", "
               <<get_map().darts().index(p.second)<<std::flush; */
-      if (!get_map().is_marked(p.first, m_mark_perforated) &&
-          !get_map().is_marked(p.second, m_mark_perforated))
-      { // Edge between two real faces, removed during the quadrangulation
-        p.first=get_map().template beta<0, 2>(p.first);
-        p.second=get_map().template beta<0>(p.second);
-      }
-      else if (!get_map().is_marked(p.first, m_mark_perforated))
-      { // Edge between a real face and a perforated one
-        CGAL_assertion(get_map().template beta<2>(p.first)==p.second); // The edge was not updated in update_length_two_paths_before_edge_removals
-        p.second=get_map().template beta<1>(p.first);
-        p.first=get_map().template beta<0, 2>(p.first);
-      }
-      else if (!get_map().is_marked(p.second, m_mark_perforated))
+      if (p.second!=nullptr) // if ==nullptr, case of an edge between two perforated faces
       {
-        CGAL_assertion(get_map().template beta<2>(p.first)==p.second); // The edge was not updated in update_length_two_paths_before_edge_removals
-        p.second=get_map().template beta<0, 2>(p.first);
-        p.first=get_map().template beta<1>(p.first);
+        if (!get_map().is_marked(p.first, m_mark_perforated) &&
+            !get_map().is_marked(p.second, m_mark_perforated))
+        { // Edge between two real faces, removed during the quadrangulation
+          p.first=get_map().template beta<0, 2>(p.first);
+          p.second=get_map().template beta<0>(p.second);
+        }
+        else if (!get_map().is_marked(p.first, m_mark_perforated))
+        { // Edge between a real face and a perforated one
+          CGAL_assertion(get_map().template beta<2>(p.first)==p.second); // The edge was not updated in update_length_two_paths_before_edge_removals
+          p.second=get_map().template beta<1>(p.first);
+          p.first=get_map().template beta<0, 2>(p.first);
+        }
+        else if (!get_map().is_marked(p.second, m_mark_perforated))
+        {
+          CGAL_assertion(get_map().template beta<2>(p.first)==p.second); // The edge was not updated in update_length_two_paths_before_edge_removals
+          p.second=get_map().template beta<0, 2>(p.first);
+          p.first=get_map().template beta<1>(p.first);
+        }
       }
       /* std::cout<<" -> "<<get_map().darts().index(p.first)<<", "
               <<get_map().darts().index(p.second)<<std::endl; */
     }
-
-    /*for (typename TPaths::iterator itp=m_paths.begin(), itpend=m_paths.end();
-         itp!=itpend; ++itp)
-    {
-      std::pair<Dart_handle, Dart_handle>& p=itp->second;
-      CGAL_assertion(get_map().is_marked(p.first, oldedges));
-      CGAL_assertion(get_map().is_marked(p.second, oldedges));
-    } */
-
-    /* FOR DEBUG for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
-         it=get_map().darts().begin(); it!=get_map().darts().end();
-         ++it)
-    {
-      if (get_map().is_marked(it, m_mark_hole))
-      { assert(get_map().template is_whole_cell_marked<2>(it, m_mark_hole)); }
-      else
-      { assert(get_map().template is_whole_cell_unmarked<2>(it, m_mark_hole)); }
-    } */
 
     // 3) We remove all the old edges, and extend the perforated faces.
     for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
@@ -1086,8 +1066,6 @@ protected:
         if (get_map().is_marked(get_map().template beta<2>(it), m_mark_perforated))
         { get_map().template mark_cell<2>(it, m_mark_perforated); }
         get_map().template remove_cell<1>(it);
-        // get_map().mark(it, toremove);
-        // get_map().mark(get_map().template beta<2>(it), toremove);
       }
     }
 
@@ -1285,6 +1263,16 @@ protected:
     return m_paths.find(m_original_map.template beta<2>(adart))!=m_paths.end();
   }
 
+  /// @return true iff the edge containing adart is associated with a path
+  ///         of only 1 dart (case of an edge bewteen two perforated faces)
+  bool edge_path_has_only_one_dart(typename Map::Dart_const_handle adart) const
+  {
+    return
+        (m_original_map.is_perforated(adart) &&
+         (m_original_map.template is_free<2>(adart) ||
+          m_original_map.is_perforated(m_original_map.template beta<2>(adart))));
+  }
+
   /// @return the pair of darts associated with the edge containing adart
   ///         in m_original_map.
   /// @pre the edge containing adart must not belong to T.
@@ -1398,7 +1386,8 @@ protected:
     if (m_original_map.template is_free<2>(adart) ||
         adart<m_original_map.template beta<2>(adart))
     { m_paths.find(adart)->second.first=d; }
-    else { m_paths.find(adart)->second.second=d; }
+    else
+    { m_paths.find(m_original_map.template beta<2>(adart))->second.second=d; }
   }
 
   void set_second_dart_of_the_path(typename Map::Dart_const_handle adart,
@@ -1517,23 +1506,32 @@ protected:
       if (!is_contracted(it))
       {
         Dart_const_handle d1=get_first_dart_of_the_path(it);
-        Dart_const_handle d2=get_second_dart_of_the_path(it);
-        if (d1==NULL || d2==NULL)
+        if (d1==NULL)
         {
-          std::cout<<"ERROR: an edge is associated with a null dart in m_paths."
-                   <<std::endl;
+          std::cout<<"ERROR: an edge is associated with a null dart in m_paths"
+                   <<" for its first dart."<<std::endl;
           res=false;
         }
-        else
+        else if (!edge_path_has_only_one_dart(it))
         {
-          Dart_const_handle dd1=get_map().other_extremity(d1);
-          CGAL_assertion(dd1!=NULL);
-          if (!CGAL::belong_to_same_cell<CMap_for_minimal_quadrangulation,0>
-              (get_map(), dd1, d2))
+          Dart_const_handle d2=get_second_dart_of_the_path(it);
+          if (d2==NULL)
           {
-            std::cout<<"ERROR: the two darts in a path are not consecutive."
-                     <<std::endl;
+            std::cout<<"ERROR: an edge is associated with a null dart in m_paths"
+                     <<" for its second dart."<<std::endl;
             res=false;
+          }
+          else
+          {
+            Dart_const_handle dd1=get_map().other_extremity(d1);
+            CGAL_assertion(dd1!=NULL);
+            if (!CGAL::belong_to_same_cell<CMap_for_minimal_quadrangulation,0>
+                (get_map(), dd1, d2))
+            {
+              std::cout<<"ERROR: the two darts in a path are not consecutive."
+                      <<std::endl;
+              res=false;
+            }
           }
         }
       }

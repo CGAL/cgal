@@ -129,7 +129,7 @@ int main(int argc, char** argv)
     {
       random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
     }
-    std::cout<<"Random seed: "<<random.get_seed()<<std::endl;
+    std::cout<<"Random seed: "<<random.get_seed()<<": ";
 
     length=static_cast<unsigned int>(random.get_int(l1, l2+1));
     defo=static_cast<unsigned int>(random.get_int(d1, d2+1));
@@ -145,9 +145,9 @@ int main(int argc, char** argv)
 
     Path_on_surface<LCC_3_cmap> path2(path1);
     path2.update_path_randomly(defo, random);
-    std::cout<<"Path2 size: "<<path2.length()<<" (from "<<defo<<" deformations): ";
+    std::cout<<"Path2 size: "<<path2.length()<<" (from "<<defo<<" deformations).";
     paths.push_back(path2);
-    std::cout<<std::flush;
+    std::cout<<std::endl;
 
     if (cst.is_contractible(path1, time))
     { ++nbcontractible; }
