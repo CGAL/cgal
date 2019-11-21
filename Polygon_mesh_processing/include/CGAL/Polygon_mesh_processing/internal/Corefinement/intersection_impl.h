@@ -821,8 +821,6 @@ class Intersection_of_triangle_meshes
     {
       edge_descriptor e_1=it->first;
 
-
-
       halfedge_descriptor h_1=halfedge(e_1,tm1);
       Face_set& fset=it->second;
       while (!fset.empty()){
@@ -834,37 +832,89 @@ class Intersection_of_triangle_meshes
     //handle degenerate case: one extremity of edge belong to f_2
         std::vector<halfedge_descriptor> all_edges;
         if ( std::get<3>(res) ) // is edge target in triangle plane
-          std::copy(halfedges_around_target(h_1,tm1).first,
-                    halfedges_around_target(h_1,tm1).second,
-                    std::back_inserter(all_edges));
+        {
+          if (!nm_features_map_1.non_manifold_edges.empty())
+          {
+            std::size_t vid1 = get(nm_features_map_1.v_nm_id, target(h_1, tm1));
+            if (vid1 != NM_NID)
+            {
+              for (vertex_descriptor vd : nm_features_map_1.non_manifold_vertices[vid1])
+              {
+                std::copy(halfedges_around_target(vd,tm1).first,
+                          halfedges_around_target(vd,tm1).second,
+                          std::back_inserter(all_edges));
+              }
+              if (all_edges.front()!=h_1)
+              {
+                // restore expected property
+                typename std::vector<halfedge_descriptor>::iterator pos =
+                  std::find(all_edges.begin(), all_edges.end(), h_1);
+                CGAL_assertion(pos!=all_edges.end());
+                std::swap(*pos, all_edges.front());
+              }
+            }
+            else
+              std::copy(halfedges_around_target(h_1,tm1).first,
+                        halfedges_around_target(h_1,tm1).second,
+                        std::back_inserter(all_edges));
+          }
+          else
+            std::copy(halfedges_around_target(h_1,tm1).first,
+                      halfedges_around_target(h_1,tm1).second,
+                      std::back_inserter(all_edges));
+        }
         else{
           if ( std::get<2>(res) ) // is edge source in triangle plane
+          {
+            if (!nm_features_map_1.non_manifold_edges.empty())
+            {
+              std::size_t vid1 = get(nm_features_map_1.v_nm_id, source(h_1, tm1));
+              if (vid1 != NM_NID)
+              {
+                for (vertex_descriptor vd : nm_features_map_1.non_manifold_vertices[vid1])
+                {
+                  std::copy(halfedges_around_source(vd,tm1).first,
+                            halfedges_around_source(vd,tm1).second,
+                            std::back_inserter(all_edges));
+                }
+                if (all_edges.front()!=h_1)
+                {
+                  // restore expected property
+                  typename std::vector<halfedge_descriptor>::iterator pos =
+                    std::find(all_edges.begin(), all_edges.end(), h_1);
+                  CGAL_assertion(pos!=all_edges.end());
+                  std::swap(*pos, all_edges.front());
+                }
+              }
+              else
+                std::copy(halfedges_around_source(h_1,tm1).first,
+                          halfedges_around_source(h_1,tm1).second,
+                          std::back_inserter(all_edges));
+            }
+            else
               std::copy(halfedges_around_source(h_1,tm1).first,
                         halfedges_around_source(h_1,tm1).second,
                         std::back_inserter(all_edges));
+          }
           else
-            all_edges.push_back(h_1);
-        }
-
-        if (!nm_features_map_1.non_manifold_edges.empty())
-        {
-          std::size_t nb_edges = all_edges.size();
-          for (std::size_t ie=0; ie<nb_edges; ++ie)
           {
-            halfedge_descriptor h1 = all_edges[ie];
-            edge_descriptor e1 = edge(h1, tm1);
-            std::size_t eid1 = get(nm_features_map_1.e_nm_id, e1);
-            if (eid1 != NM_NID)
+            all_edges.push_back(h_1);
+            edge_descriptor e_1 = edge(h_1, tm1);
+            if (!nm_features_map_1.non_manifold_edges.empty())
             {
-              for (std::size_t k=0;
-                               k<nm_features_map_1.non_manifold_edges[eid1].size();
-                               ++k)
+              std::size_t eid1 = get(nm_features_map_1.e_nm_id, e_1);
+              if (eid1 != NM_NID)
               {
-                edge_descriptor e1b = nm_features_map_1.non_manifold_edges[eid1][k];
-                if (e1b!=e1)
+                CGAL_assertion( nm_features_map_1.non_manifold_edges[eid1][0]==e_1 );
+                for (std::size_t k=1;
+                                 k<nm_features_map_1.non_manifold_edges[eid1].size();
+                                 ++k)
+                {
+                  edge_descriptor e_1b = nm_features_map_1.non_manifold_edges[eid1][k];
                   // note that the orientation of the halfedge pushed back is
                   // not relevant for how it is used in the following
-                  all_edges.push_back(halfedge(e1b, tm1));
+                  all_edges.push_back(halfedge(e_1b, tm1));
+                }
               }
             }
           }
@@ -919,12 +969,15 @@ class Intersection_of_triangle_meshes
             Node_id node_id=++current_node;
             add_new_node(h_1,f_2,tm1,tm2,vpm1,vpm2,res);
             halfedge_descriptor h_2=std::get<1>(res);
-            visitor.new_node_added(node_id,ON_EDGE,h_1,h_2,tm1,tm2,std::get<3>(res),std::get<2>(res));
 
             std::size_t eid2 = nm_features_map_2.non_manifold_edges.empty()
                              ? NM_NID
                              : get(nm_features_map_2.e_nm_id, edge(h_2, tm2));
 
+            if (eid2!=NM_NID)
+              h_2 = halfedge(nm_features_map_2.non_manifold_edges[eid2].front(), tm2);
+
+            visitor.new_node_added(node_id,ON_EDGE,h_1,h_2,tm1,tm2,std::get<3>(res),std::get<2>(res));
             for (;it_edge!=all_edges.end();++it_edge){
               if ( it_edge!=all_edges.begin() ){
                 typename Edge_to_faces::iterator it_ets=tm1_edge_to_tm2_faces.find(edge(*it_edge,tm1));
