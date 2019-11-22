@@ -57,7 +57,9 @@ public:
   typedef typename Get_map<Mesh, Mesh>::type Map; // Mesh seen as a 2-map
   typedef typename Map::Dart_const_handle    Dart_const_handle;
 
-  Path_on_surface(const Mesh& amap) : m_map(amap), m_is_closed(false)
+  typedef Dart_const_handle halfedge_descriptor; // To be compatible with BGL
+
+  Path_on_surface(const Mesh& amesh) : m_map(amesh), m_is_closed(false)
   {}
 
   template<class COST>
