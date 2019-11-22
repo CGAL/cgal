@@ -49,7 +49,8 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
     do
     {
       const typename Get_traits<Mesh>::Point*
-          next=&Get_traits<Mesh>::get_point(mesh.get_fg(), mesh.other_extremity(adart));
+          next=&Get_traits<Mesh>::get_point(mesh.get_fg(),
+                                            mesh.other_extremity(adart));
       internal::newell_single_step_3_for_lcc(*curr, *next, normal);
       ++nb;
       curr=next;
@@ -98,14 +99,17 @@ public:
   /// Construct the viewer.
   /// @param alcc the lcc to view
   /// @param title the title of the window
-  /// @param anofaces if true, do not draw faces (faces are not computed; this can be
-  ///        usefull for very big object where this time could be long)
+  /// @param anofaces if true, do not draw faces (faces are not computed;
+  ///     this can be usefull for very big object where this time could be long)
   Face_graph_with_path_viewer(QWidget* parent,
                               const Mesh& amesh,
-                              const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* paths=nullptr,
+                              const std::vector
+                              <Surface_mesh_topology::Path_on_surface<Mesh> >
+                              *paths=nullptr,
                               std::size_t amark=LCC::INVALID_MARK,
                               const char* title="", bool anofaces=false,
-                              const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
+                              const DrawingFunctorLCC&
+                              drawing_functor=DrawingFunctorLCC()) :
     Base(parent, title, true, true, true, false, true),
     mesh(amesh),
     lcc(amesh),
