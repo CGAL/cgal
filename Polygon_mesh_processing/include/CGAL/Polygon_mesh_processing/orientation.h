@@ -876,7 +876,9 @@ volume_connected_components(const TriangleMesh& tm,
     std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
     for(vertex_descriptor vd : vertices(tm))
     {
-      std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
+      halfedge_descriptor h = halfedge(vd, tm);
+      if (is_border(h, tm)) h = opposite(h, tm);
+      std::size_t cc_id = face_cc[get(fid_map, face(h, tm))];
       if (cc_handled.test(cc_id)) continue;
       if (xtrm_vertices[cc_id]==GT::null_vertex())
         xtrm_vertices[cc_id]=vd;
