@@ -140,6 +140,8 @@ supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
 
 It may work for older versions of the above listed compilers.
 
+\attention Recent versions of CMake are needed for recent versions of MS Visual C++. Please refer to CMake's documentation for further information.
+
 
 \section secconfigwithcmake Configuring CGAL with CMake 
 

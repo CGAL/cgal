@@ -260,6 +260,7 @@ struct Scene_surface_mesh_item_priv{
   double volume, area;
   unsigned int number_of_null_length_edges;
   unsigned int number_of_degenerated_faces;
+  bool has_nm_vertices;
   int genus;
   bool self_intersect;
   mutable QSlider* alphaSlider;
@@ -1515,6 +1516,7 @@ invalidate_stats()
 {
   number_of_degenerated_faces = (unsigned int)(-1);
   number_of_null_length_edges = (unsigned int)(-1);
+  has_nm_vertices = false;
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
@@ -1568,11 +1570,30 @@ QString Scene_surface_mesh_item::computeStats(int type)
     }
     faces_aspect_ratio(d->smesh_, min_altitude, min_ar, max_ar, mean_ar);
   }
+  if(type == HAS_NM_VERTICES)
+  {
 
+    d->has_nm_vertices = false;
+    typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
+    try{
+      CGAL::Polygon_mesh_processing::non_manifold_vertices(*d->smesh_, OutputIterator());
+    }
+    catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+    {
+      d->has_nm_vertices = true;
+    }
+
+  }
   switch(type)
   {
   case NB_VERTICES:
     return QString::number(num_vertices(*d->smesh_));
+  case HAS_NM_VERTICES:
+  {
+    if(d->has_nm_vertices)
+      return QString("Yes");
+    return QString("No");
+  }
 
   case NB_FACETS:
     return QString::number(num_faces(*d->smesh_));
@@ -1721,14 +1742,15 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   CGAL::Three::Scene_item::Header_data data;
   //categories
 
-  data.categories.append(std::pair<QString,int>(QString("Properties"),9));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),11));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
-  data.categories.append(std::pair<QString,int>(QString("Edges"),7));
-  data.categories.append(std::pair<QString,int>(QString("Angles"),2));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
 
   //titles
   data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("Has Non-manifold Vertices"));
   data.titles.append(QString("#Connected Components"));
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("Pure Triangle"));
