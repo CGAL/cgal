@@ -54,7 +54,7 @@ class Path_on_surface
 public:
   typedef Path_on_surface<Mesh_>             Self;
   typedef Mesh_                              Mesh;
-  typedef typename Get_map<Mesh, Mesh>::type Map;
+  typedef typename Get_map<Mesh, Mesh>::type Map; // Mesh seen as a 2-map
   typedef typename Map::Dart_const_handle    Dart_const_handle;
 
   Path_on_surface(const Mesh& amap) : m_map(amap), m_is_closed(false)
@@ -1229,7 +1229,7 @@ public:
   }
 
 protected:
-  const Map m_map; // The underlying map (the mesh seen as a 2-map)
+  const typename Get_map<Mesh, Mesh>::storage_type m_map; // The underlying map
   std::vector<Dart_const_handle> m_path; /// The sequence of darts
   bool m_is_closed;                      /// True iff the path is a cycle
   std::vector<bool> m_flip;              /// The sequence of flips

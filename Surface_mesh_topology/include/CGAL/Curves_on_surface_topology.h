@@ -34,8 +34,7 @@ template<typename Mesh>
 class Curves_on_surface_topology
 {
 public:
-  typedef typename internal::CMap_for_minimal_quadrangulation
-  CMap_for_minimal_quadrangulation;
+  typedef typename internal::Reduced_map Reduced_map;
   
   Curves_on_surface_topology(const Mesh& amap, bool /* display_time */=false) :
     m_original_map(amap),
@@ -59,7 +58,7 @@ public:
 
   /// Return the reduced map computed in the minimal quadrangulation.
   /// @pre is_minimal_quadrangulation_computed()
-  const CMap_for_minimal_quadrangulation& get_minimal_quadrangulation() const
+  const Reduced_map& get_minimal_quadrangulation() const
   {
     CGAL_assertion(is_minimal_quadrangulation_computed());
     return m_minimal_quadrangulation->get_map();

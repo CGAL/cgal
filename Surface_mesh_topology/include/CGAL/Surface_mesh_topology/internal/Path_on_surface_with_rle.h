@@ -78,8 +78,10 @@ public:
   int length; // Length of the flat, positive flat if >0, negative flat if <0
 };
 
+// Small wrapper allowing to use directly a combinatorial map as if it is a
+// minimal quadrangulation.
 template<class Map__>
-class Light_MQ
+class Light_MQ  // MQ for minimal quadrangulation
 {
 public:
   typedef Map__                             Map_;
@@ -102,13 +104,13 @@ protected:
   const Map_& m_map;
 };
 
-template<typename MQ>
+template<typename MQ> // MQ for minimal quadrangulation
 class Path_on_surface_with_rle
 {
 public:
   typedef Path_on_surface_with_rle<MQ>                       Self;
   typedef typename MQ::Map_                                  Map;
-  typedef typename MQ::Mesh		                     Mesh;
+  typedef typename MQ::Mesh                                  Mesh;
   typedef typename Map::Dart_handle                          Dart_handle;
   typedef typename Map::Dart_const_handle                    Dart_const_handle;
   typedef CFlat<Map>                                         Flat;

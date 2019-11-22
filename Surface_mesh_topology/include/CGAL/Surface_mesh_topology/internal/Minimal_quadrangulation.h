@@ -44,7 +44,7 @@ namespace CGAL {
 namespace Surface_mesh_topology {
 namespace internal {
 
-struct CMap_for_minimal_quadrangulation_items
+struct Reduced_map_items
 {
   template <class CMap>
   struct Dart_wrapper
@@ -56,20 +56,17 @@ struct CMap_for_minimal_quadrangulation_items
     typedef CGAL::cpp11::tuple<Vertex_attribute, void, void> Attributes;
   };
 };
-typedef CGAL::Combinatorial_map<2, CMap_for_minimal_quadrangulation_items>
-CMap_for_minimal_quadrangulation;
+typedef CGAL::Combinatorial_map<2, Reduced_map_items> Reduced_map;
 
 template<typename Mesh_>
 class Minimal_quadrangulation
 {
 public:
   typedef Minimal_quadrangulation<Mesh_> Self;
-  typedef Mesh_ Mesh;
-  typedef CMap_for_minimal_quadrangulation Map_;
-  typedef typename CMap_for_minimal_quadrangulation::Dart_handle
-  Dart_handle;
-  typedef typename CMap_for_minimal_quadrangulation::Dart_const_handle
-  Dart_const_handle;
+  typedef Mesh_                          Mesh;
+  typedef Reduced_map Map_;
+  typedef typename Reduced_map::Dart_handle       Dart_handle;
+  typedef typename Reduced_map::Dart_const_handle Dart_const_handle;
   typedef typename Get_map<Mesh, Mesh>::type Map;
 
   // Associate each dart of the original map, not removed, a pair of darts in the
@@ -243,10 +240,10 @@ public:
       if (!get_map().is_marked(it, marktemp))
       {
         std::cout<<"Degree="<<CGAL::template
-                   degree<CMap_for_minimal_quadrangulation, 0>(get_map(), it)
+                   degree<Reduced_map, 0>(get_map(), it)
             <<std::endl;
         std::cout<<"Co-degree="<<CGAL::template
-                   codegree<CMap_for_minimal_quadrangulation, 2>(get_map(), it)
+                   codegree<Reduced_map, 2>(get_map(), it)
             <<std::endl;
         dh2=it;
         do
@@ -305,7 +302,7 @@ public:
     bool res=false;
     if (m_map_is_a_torus_quadrangulation())
     { // Case of torus
-      Path_on_surface<CMap_for_minimal_quadrangulation>
+      Path_on_surface<Reduced_map>
         pt=transform_original_path_into_quad_surface_for_torus(p);
 
       int a, b;
@@ -357,9 +354,9 @@ public:
     bool res=false;
     if (m_map_is_a_torus_quadrangulation())
     { // Case of torus
-      Path_on_surface<CMap_for_minimal_quadrangulation>
+      Path_on_surface<Reduced_map>
         pt1=transform_original_path_into_quad_surface_for_torus(p1);
-      Path_on_surface<CMap_for_minimal_quadrangulation>
+      Path_on_surface<Reduced_map>
         pt2=transform_original_path_into_quad_surface_for_torus(p2);
 
       int a1, a2, b1, b2;
@@ -382,11 +379,11 @@ public:
                <<pt2.length()<<std::endl;
 #endif
 
-      /* std::cout<<"path1="<<Path_on_surface<CMap_for_minimal_quadrangulation>(path1)<<std::endl
-         <<"path2="<<Path_on_surface<CMap_for_minimal_quadrangulation>(path2)<<std::endl;
+      /* std::cout<<"path1="<<Path_on_surface<Reduced_map>(path1)<<std::endl
+         <<"path2="<<Path_on_surface<Reduced_map>(path2)<<std::endl;
 
-         Path_on_surface<CMap_for_minimal_quadrangulation>(path1).display_pos_and_neg_turns(); std::cout<<std::endl;
-         Path_on_surface<CMap_for_minimal_quadrangulation>(path2).display_pos_and_neg_turns(); std::cout<<std::endl;
+         Path_on_surface<Reduced_map>(path1).display_pos_and_neg_turns(); std::cout<<std::endl;
+         Path_on_surface<Reduced_map>(path2).display_pos_and_neg_turns(); std::cout<<std::endl;
 
          path1.display_pos_and_neg_turns(); std::cout<<std::endl;
          path2.display_pos_and_neg_turns(); std::cout<<std::endl; */
@@ -521,11 +518,11 @@ public:
   }
 
   /// @returns the reduced map
-  const CMap_for_minimal_quadrangulation& get_map() const
+  const Reduced_map& get_map() const
   { return m_map; }
 
   /// @returns the reduced map
-  CMap_for_minimal_quadrangulation& get_map()
+  Reduced_map& get_map()
   { return m_map; }
 
 protected:
@@ -536,7 +533,7 @@ protected:
   { return m_original_map.is_marked(dh, m_mark_T); }
 
   void count_edges_of_path_on_torus
-  (const Path_on_surface<CMap_for_minimal_quadrangulation>& path,
+  (const Path_on_surface<Reduced_map>& path,
    int& a, int& b) const
   {
     CGAL_assertion(m_map_is_a_torus_quadrangulation());
@@ -564,12 +561,12 @@ protected:
     }
   }
 
-  Path_on_surface<CMap_for_minimal_quadrangulation>
+  Path_on_surface<Reduced_map>
   transform_original_path_into_quad_surface_for_torus(const Path_on_surface<Mesh>& path) const
   {
     CGAL_assertion(get_map().number_of_darts()==4);
 
-    Path_on_surface<CMap_for_minimal_quadrangulation> res(get_map());
+    Path_on_surface<Reduced_map> res(get_map());
     if (path.is_empty()) return res;
 
     Dart_const_handle cur;
@@ -805,7 +802,7 @@ protected:
   /// dual spanning tree L (spanning tree of the dual 2-map).
 
   /// Marks all darts belonging to L using a BFS
-  void compute_L(typename CMap_for_minimal_quadrangulation::size_type toremove,
+  void compute_L(typename Reduced_map::size_type toremove,
                  boost::unordered_map<Dart_handle,
                  typename Map::Dart_const_handle>& copy_to_origin)
   {
@@ -887,7 +884,7 @@ protected:
     // std::cout<<"************************************************"<<std::endl;
     Dart_handle initdart, curdart;
     typename Map::Dart_const_handle d1, d2;
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+    for (typename Reduced_map::Dart_range::iterator
          it=get_map().darts().begin(); it!=get_map().darts().end(); ++it)
     {
       initdart=it;
@@ -953,7 +950,7 @@ protected:
     }
 
 /*    std::cout<<"************ MINIMAL MAP : "<<std::endl;
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+    for (typename Reduced_map::Dart_range::iterator
          it=get_map().darts().begin(); it!=get_map().darts().end(); ++it)
     {
       if (!get_map().is_marked(it, toremove))
@@ -1030,7 +1027,7 @@ protected:
    // do
     {
       updated=false;
-      for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+      for (typename Reduced_map::Dart_range::iterator
              it=get_map().darts().begin(), itend=get_map().darts().end();
            it!=itend; ++it)
       {
@@ -1057,7 +1054,7 @@ protected:
     //while (updated);
     get_map().set_automatic_attributes_management(true);
 
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+    for (typename Reduced_map::Dart_range::iterator
            it=get_map().darts().begin(), itend=get_map().darts().end();
          it!=itend; ++it)
     {
@@ -1091,7 +1088,7 @@ protected:
   {
     get_map().set_automatic_attributes_management(false);
 
-    typename CMap_for_minimal_quadrangulation::size_type
+    typename Reduced_map::size_type
         toremove=get_map().get_new_mark();
     compute_L(toremove, copy_to_origin);
 
@@ -1105,7 +1102,7 @@ protected:
       update_length_two_paths_before_edge_removals(toremove, copy_to_origin);
 
       // We remove all the edges to remove.
-      for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+      for (typename Reduced_map::Dart_range::iterator
              it=get_map().darts().begin(), itend=get_map().darts().end();
            it!=itend; ++it)
       {
@@ -1147,7 +1144,7 @@ protected:
     // tree of contracted edges), i.e. they are ignored when we will transform
     // a path in the original mesh into a path in the minimal surface.
     typename Map::Dart_const_handle origin_dart;
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+    for (typename Reduced_map::Dart_range::iterator
            it=get_map().darts().begin(), itend=get_map().darts().end();
          it!=itend; ++it)
     {
@@ -1215,7 +1212,7 @@ protected:
     //    New edges created by the operation are not marked oldedges.
     typename Map::size_type treated=get_map().get_new_mark();
 
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+    for (typename Reduced_map::Dart_range::iterator
          it=get_map().darts().begin(); it!=get_map().darts().end(); ++it)
     {
       if (!get_map().is_marked(it, treated))
@@ -1280,7 +1277,7 @@ protected:
     }
 
     // 3) We remove all the old edges, and extend the perforated faces.
-    for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+    for (typename Reduced_map::Dart_range::iterator
          it=get_map().darts().begin(), itend=get_map().darts().end();
          it!=itend; ++it)
     {
@@ -1294,7 +1291,7 @@ protected:
       }
     }
 
-    /* FOR DEBUG for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
+    /* FOR DEBUG for (typename Reduced_map::Dart_range::iterator
          it=get_map().darts().begin(); it!=get_map().darts().end();
          ++it)
     {
@@ -1784,7 +1781,7 @@ protected:
           {
             Dart_const_handle dd1=get_map().other_extremity(d1);
             CGAL_assertion(dd1!=NULL);
-            if (!CGAL::belong_to_same_cell<CMap_for_minimal_quadrangulation,0>
+            if (!CGAL::belong_to_same_cell<Reduced_map,0>
                 (get_map(), dd1, d2))
             {
               std::cout<<"ERROR: the two darts in a path are not consecutive."
@@ -1801,7 +1798,7 @@ protected:
 
 protected:
   const typename Get_map<Mesh, Mesh>::storage_type m_original_map; // The original map
-  CMap_for_minimal_quadrangulation m_map; /// the transformed map
+  Reduced_map m_map; /// the transformed map
   TPaths m_paths; /// Pair of edges associated with each edge of m_original_map
                   /// (except the edges that belong to the spanning tree T).
   std::size_t m_mark_T;    /// mark each edge of m_original_map that belong to the spanning tree T
