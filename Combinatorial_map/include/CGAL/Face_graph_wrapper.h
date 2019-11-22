@@ -75,8 +75,9 @@ namespace CGAL
   }
   
 ////////////////////////////////////////////////////////////////////////////////
-/** Class Face_graph_wrapper: to wrap any model of FaceGraph into a Combinatorial map.
- *  For now, only for const models, i.e. does not support modification operators.
+/** Class Face_graph_wrapper: to wrap any model of FaceGraph into a
+ *  Combinatorial map. For now, only for const models, i.e. does not support
+ *  modification operators.
  */
 template<typename HEG_>
 class Face_graph_wrapper
@@ -139,7 +140,8 @@ public:
       mnb_times_reserved_marks[i]=0;
     }
 
-    m_nb_darts=darts().size(); // Store locally the number of darts: the HEG must not be modified
+    // Store locally the number of darts: the HEG must not be modified
+    m_nb_darts=darts().size();
 
     m_all_marks=get(CGAL::dynamic_halfedge_property_t<std::bitset<NB_MARKS> >(), m_fg);
     for (typename Dart_range::const_iterator it(darts().begin()),
@@ -151,20 +153,17 @@ public:
   { return m_fg; }
   
   template<unsigned int i>
-  bool is_free(Dart_const_handle dh) const
+  bool is_free(Dart_const_handle /* dh */) const
   { return false; } // Not possible to have a free dart with an HEG.
- //return Is_free<HEG, i>::value(m_fg, dh); }
   bool is_free(Dart_const_handle dh, unsigned int i) const
-  {
-    // if (i==2) { return Is_free<HEG, 2>::value(m_fg, dh); }
-    return false; // Not possible to have a free dart with an HEG.
-  }
+  { return false; } // Not possible to have a free dart with an HEG.
+
   bool is_perforated(Dart_const_handle dh) const
   { return is_border(dh, m_fg); }
 
   Dart_const_handle get_beta(Dart_const_handle ADart, int B1) const
   {
-    CGAL_assertion(B1>=0 && B1<=(int)dimension);
+    CGAL_assertion(B1>=0 && B1<=static_cast<int>(dimension));
     if (B1==1) return Get_beta<HEG, 1>::value(m_fg, ADart);
     if (B1==2) return Get_beta<HEG, 2>::value(m_fg, ADart); 
     return Get_beta<HEG, 0>::value(m_fg, ADart);
@@ -172,7 +171,7 @@ public:
   template<int B1>
   Dart_const_handle get_beta(Dart_const_handle ADart) const
   {
-    CGAL_assertion(B1>=0 && B1<=(int)dimension);
+    CGAL_assertion(B1>=0 && B1<=static_cast<int>(dimension));
     return Get_beta<HEG, B1>::value(m_fg, ADart);
   }
 
@@ -182,8 +181,8 @@ public:
   /* ??  bool is_dart_used(Dart_const_handle dh) const
       { return true; ?? } */
   
-  int highest_nonfree_dimension(Dart_const_handle dh) const
-  { return 2; } //(Is_free<HEG, 2>(m_fg, dh)?1:2); }
+  int highest_nonfree_dimension(Dart_const_handle /* dh */) const
+  { return 2; }
 
   Dart_const_handle previous(Dart_const_handle ADart) const
   { return get_beta<0>(ADart); }  
@@ -207,8 +206,8 @@ public:
   bool is_next_exist(Dart_const_handle) const
   { return true; }
   template<unsigned int dim>
-  bool is_opposite_exist(Dart_const_handle ADart) const
-  { return true; } // !this->template is_free<dim>(ADart); }
+  bool is_opposite_exist(Dart_const_handle /* ADart */) const
+  { return true; }
 
   template<typename ...Betas>
   Dart_handle beta(Dart_handle ADart, Betas... betas)
@@ -775,7 +774,7 @@ protected:
   template<class Base, class HEG>
   struct Get_map
   {
-    typedef Face_graph_wrapper<HEG> type;
+    typedef Face_graph_wrapper<HEG>       type;
     typedef const Face_graph_wrapper<HEG> storage_type;
     Get_map(const HEG& heg): m_map(heg) {}
     static const HEG& get_mesh(const storage_type& amap)
@@ -788,10 +787,10 @@ protected:
             typename Storage, class Map>
   struct Get_map<CGAL::Combinatorial_map_base<d, Refs, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-     static const Map& get_mesh(const storage_type& amap)
+    static const Map& get_mesh(storage_type& amap)
     { return amap; }
    storage_type m_map;
   };
@@ -800,10 +799,10 @@ protected:
             typename Storage, class Map>
   struct Get_map<CGAL::Generalized_map_base<d, Refs, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-    static const Map& get_mesh(const storage_type& amap)
+    static const Map& get_mesh(storage_type& amap)
     { return amap; }
     storage_type m_map;
   };
@@ -812,12 +811,13 @@ protected:
             typename Alloc,
             template<unsigned int,class,class,class,class>
             class Map, typename Refs, typename Storage, class LCC>
-  struct Get_map<CGAL::Linear_cell_complex_base<d, d2, Traits, Items, Alloc, Map, Refs, Storage>, LCC>
+  struct Get_map<CGAL::Linear_cell_complex_base<d, d2, Traits, Items, Alloc,
+      Map, Refs, Storage>, LCC>
   {
-    typedef LCC type;
+    typedef LCC        type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
-     static const LCC& get_mesh(const storage_type& amap)
+     static const LCC& get_mesh(storage_type& amap)
     { return amap; }
     storage_type m_map;
   };
@@ -826,10 +826,10 @@ protected:
             typename Storage, class Map>
   struct Get_map<CGAL::Combinatorial_map<d, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-     static const Map& get_mesh(const storage_type& amap)
+     static const Map& get_mesh(storage_type& amap)
     { return amap; }
     storage_type m_map;
   };
@@ -838,10 +838,10 @@ protected:
   struct Get_map<CGAL::Surface_mesh_topology::
                  Polygonal_schema_with_combinatorial_map<Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-     static const Map& get_mesh(const storage_type& amap)
+     static const Map& get_mesh(storage_type& amap)
     { return amap; }
    storage_type m_map;
   };
@@ -850,10 +850,10 @@ protected:
             typename Storage, class Map>
   struct Get_map<CGAL::Generalized_map<d, Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-    static const Map& get_mesh(const storage_type& amap)
+    static const Map& get_mesh(storage_type& amap)
     { return amap; }
     storage_type m_map;
   };
@@ -862,10 +862,10 @@ protected:
   struct Get_map<CGAL::Surface_mesh_topology::
                  Polygonal_schema_with_generalized_map<Items, Alloc, Storage>, Map>
   {
-    typedef Map type;
+    typedef Map        type;
     typedef const Map& storage_type;
     Get_map(const Map& heg): m_map(heg) {}
-    static const Map& get_mesh(const storage_type& amap)
+    static const Map& get_mesh(storage_type& amap)
     { return amap; }
     storage_type m_map;
   };
@@ -877,10 +877,10 @@ protected:
   struct Get_map<CGAL::Linear_cell_complex_for_combinatorial_map
       <d, d2, Traits, Items, Alloc, Map, Storage>, LCC>
   {
-    typedef LCC type;
+    typedef LCC        type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
-    static const LCC& get_mesh(const storage_type& amap)
+    static const LCC& get_mesh(storage_type& amap)
     { return amap; }
     storage_type m_map;
   };
@@ -892,10 +892,10 @@ protected:
   struct Get_map<CGAL::Linear_cell_complex_for_generalized_map
       <d, d2, Traits, Items, Alloc, Map, Storage>, LCC>
   {
-    typedef LCC type;
+    typedef LCC        type;
     typedef const LCC& storage_type;
     Get_map(const LCC& heg): m_map(heg) {}
-    static const LCC& get_mesh(const storage_type& amap)
+    static const LCC& get_mesh(storage_type& amap)
     { return amap; }
     storage_type m_map;
   };
@@ -903,9 +903,9 @@ protected:
   template<class Mesh_>
   struct Get_traits
   {
-    typedef Mesh_ Mesh;
+    typedef Mesh_                 Mesh;
     typedef typename Mesh::Traits Kernel;
-    typedef typename Mesh::Point Point;
+    typedef typename Mesh::Point  Point;
     typedef typename Mesh::Vector Vector;
 
     template<class Dart_handle>
@@ -916,10 +916,10 @@ protected:
   template<class P>
   struct Get_traits<CGAL::Surface_mesh<P> >
   {
-    typedef CGAL::Surface_mesh<P> Mesh;
+    typedef CGAL::Surface_mesh<P>                   Mesh;
     typedef typename CGAL::Kernel_traits<P>::Kernel Kernel;
-    typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
+    typedef typename Kernel::Point_3                Point;
+    typedef typename Kernel::Vector_3               Vector;
 
     template<class Dart_handle>
     static const Point& get_point(const Mesh& m, Dart_handle dh)
@@ -933,9 +933,10 @@ protected:
   struct Get_traits<CGAL::Polyhedron_3<PolyhedronTraits_3,
       PolyhedronItems_3, T_HDS, Alloc> >
   {
-    typedef CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3, T_HDS, Alloc> Mesh;
-    typedef PolyhedronTraits_3 Kernel;
-    typedef typename Kernel::Point_3 Point;
+    typedef CGAL::Polyhedron_3<PolyhedronTraits_3, PolyhedronItems_3,
+    T_HDS, Alloc>                    Mesh;
+    typedef PolyhedronTraits_3        Kernel;
+    typedef typename Kernel::Point_3  Point;
     typedef typename Kernel::Vector_3 Vector;
 
     template<class Dart_handle>
