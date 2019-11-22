@@ -31,9 +31,9 @@ void create_path_3(Path_on_surface<LCC_3_cmap>& p)
 int main()
 {
   LCC_3_cmap lcc;
-  if (!CGAL::load_off(lcc, "data/double-torus-example.off"))
+  if (!CGAL::load_off(lcc, "data/double-torus.off"))
   {
-    std::cout<<"ERROR reading file data/double-torus-example.off"<<std::endl;
+    std::cout<<"ERROR reading file data/double-torus.off"<<std::endl;
     exit(EXIT_FAILURE);
   }
 

@@ -30,8 +30,8 @@
 #include <vector>
 #include <set>
 #include <CGAL/assertions.h>
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -80,18 +80,18 @@ public:
 
 // Small wrapper allowing to use directly a combinatorial map as if it is a
 // minimal quadrangulation.
-template<class Map__>
+template<class Map_>
 class Light_MQ  // MQ for minimal quadrangulation
 {
 public:
-  typedef Map__                             Map_;
+  typedef Map_                              Reduced_map;
   typedef Map_                              Mesh;
   typedef typename Map_::Dart_const_handle  Dart_const_handle;
   
-  Light_MQ(const Map_& m): m_map(m)
+  Light_MQ(const Reduced_map& m): m_map(m)
   {}
   
-  const Map_& get_map() const
+  const Reduced_map& get_reduced_map() const
   { return m_map; }
 
   std::size_t positive_turn(Dart_const_handle d1, Dart_const_handle d2) const
@@ -101,7 +101,7 @@ public:
   { return m_map.negative_turn(d1, d2); }
   
 protected:
-  const Map_& m_map;
+  const Reduced_map& m_map;
 };
 
 template<typename MQ> // MQ for minimal quadrangulation
@@ -109,7 +109,7 @@ class Path_on_surface_with_rle
 {
 public:
   typedef Path_on_surface_with_rle<MQ>                       Self;
-  typedef typename MQ::Map_                                  Map;
+  typedef typename MQ::Reduced_map                           Map;
   typedef typename MQ::Mesh                                  Mesh;
   typedef typename Map::Dart_handle                          Dart_handle;
   typedef typename Map::Dart_const_handle                    Dart_const_handle;
@@ -124,14 +124,14 @@ public:
   {
     std::size_t operator() (const List_iterator& lit) const
     {
-      return boost::hash<const void*>()(&*lit);
+      return std::hash<const void*>()(&*lit);
     }
   };
 
-  typedef boost::unordered_set<List_iterator, List_iterator_hash> Set_of_it;
+  typedef std::unordered_set<List_iterator, List_iterator_hash> Set_of_it;
 
 #ifdef CGAL_PWRLE_TURN_V2
-    typedef boost::unordered_map<Dart_const_handle, std::size_t> TDartIds;
+    typedef std::unordered_map<Dart_const_handle, std::size_t> TDartIds;
 #endif //CGAL_PWRLE_TURN_V2
 
   /// Constructor
@@ -307,7 +307,7 @@ public:
 
   /// @return the underlying map.
   const Map& get_map() const
-  { return m_MQ.get_map(); }
+  { return m_MQ.get_reduced_map(); }
 
   /// clear the path.
   void clear()

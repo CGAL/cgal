@@ -23,8 +23,6 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
-#include <cstring>
-  
 namespace CGAL {
 namespace Surface_mesh_topology {
 

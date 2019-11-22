@@ -34,10 +34,11 @@ template<typename Mesh>
 class Curves_on_surface_topology
 {
 public:
-  typedef typename internal::Reduced_map Reduced_map;
+  typedef internal::Minimal_quadrangulation<Mesh> Minimal_quadrangulation;
+  typedef typename Minimal_quadrangulation::Reduced_map Reduced_map;
   
-  Curves_on_surface_topology(const Mesh& amap, bool /* display_time */=false) :
-    m_original_map(amap),
+  Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
+    m_original_mesh(amesh),
     m_minimal_quadrangulation(nullptr)
   {}
 
@@ -51,8 +52,7 @@ public:
     if (m_minimal_quadrangulation==nullptr)
     {
       m_minimal_quadrangulation.reset
-          (new internal::Minimal_quadrangulation<Mesh>
-           (m_original_map, display_time));
+          (new Minimal_quadrangulation(m_original_mesh, display_time));
     }
   }
 
@@ -61,7 +61,7 @@ public:
   const Reduced_map& get_minimal_quadrangulation() const
   {
     CGAL_assertion(is_minimal_quadrangulation_computed());
-    return m_minimal_quadrangulation->get_map();
+    return m_minimal_quadrangulation->get_reduced_map();
   }
 
   /// @return true iff 'p' is contractible.
@@ -93,9 +93,8 @@ public:
   }
 
 protected:
-  const Mesh& m_original_map;
-  mutable std::unique_ptr<internal::Minimal_quadrangulation<Mesh>>
-  m_minimal_quadrangulation;
+  const Mesh& m_original_mesh;
+  mutable std::unique_ptr<Minimal_quadrangulation> m_minimal_quadrangulation;
 };
 
 } // namespace Surface_mesh_topology

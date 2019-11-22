@@ -149,7 +149,7 @@ generate_random_connected_set_of_faces(const LCC& lcc, std::size_t nb,
 
     // Here we have a new face
     set.insert(lcc.template beta<2>(dh1));
-    lcc.mark_cell<2>(lcc.template beta<2>(dh1), amark);
+    lcc.template mark_cell<2>(lcc.template beta<2>(dh1), amark);
 
     // We add it in the list of borders faces
     border_faces[border_faces.size()]=lcc.template beta<2>(dh1);
