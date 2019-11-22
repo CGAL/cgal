@@ -25,6 +25,7 @@
 
 #include <CGAL/Surface_mesh_topology/internal/Minimal_quadrangulation.h>
 #include <CGAL/Face_graph_wrapper.h>
+#include <memory>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -33,80 +34,69 @@ template<typename Mesh>
 class Curves_on_surface_topology
 {
 public:
-  typedef typename internal::CMap_for_minimal_quadrangulation CMap_for_minimal_quadrangulation;
+  typedef typename internal::CMap_for_minimal_quadrangulation
+  CMap_for_minimal_quadrangulation;
   
   Curves_on_surface_topology(const Mesh& amap, bool /* display_time */=false) :
     m_original_map(amap),
     m_minimal_quadrangulation(nullptr)
   {}
-    
-  ~Curves_on_surface_topology()
-  { delete m_minimal_quadrangulation; }
 
-  /// @return true iff 'path' is contractible.
-  bool is_contractible(const Path_on_surface<Mesh>& p,
-                       bool display_time=false) const
-  {
-    if (m_minimal_quadrangulation==nullptr)
-    {
-      m_minimal_quadrangulation=
-        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
-    }
-
-    return m_minimal_quadrangulation->is_contractible(p, display_time);
-  }
-
-  /// @return true iff 'path1' and 'path2' are freely homotopic.
-  bool are_freely_homotopic(const Path_on_surface<Mesh>& p1,
-                            const Path_on_surface<Mesh>& p2,
-                            bool display_time=false) const
-  {
-    if (m_minimal_quadrangulation==nullptr)
-    {
-      m_minimal_quadrangulation=
-        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
-    }
-
-    return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
-                                                           display_time);
-  }
-  
-  /// @return true iff 'path1' and 'path2' are base point freely homotopic.
-  bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
-                                const Path_on_surface<Mesh>& p2,
-                                bool display_time=false) const
-  {
-    if (m_minimal_quadrangulation==nullptr)
-    {
-      m_minimal_quadrangulation=
-        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
-    }
-
-    return m_minimal_quadrangulation->are_base_point_homotopic(p1, p2,
-                                                               display_time);
-  }
-
+  /// @return true iff the minimal quadrangulation is computed.
   bool is_minimal_quadrangulation_computed() const
   { return m_minimal_quadrangulation!=nullptr; }
 
-  void compute_minimal_quadrangulation(bool display_time=true)
+  /// Computes the minimal quadrangulation if it is not yet computed.
+  void compute_minimal_quadrangulation(bool display_time=true) const
   {
     if (m_minimal_quadrangulation==nullptr)
     {
-      m_minimal_quadrangulation=
-        new internal::Minimal_quadrangulation<Mesh>(m_original_map, display_time);
+      m_minimal_quadrangulation.reset
+          (new internal::Minimal_quadrangulation<Mesh>
+           (m_original_map, display_time));
     }
   }
-  
+
+  /// Return the reduced map computed in the minimal quadrangulation.
+  /// @pre is_minimal_quadrangulation_computed()
   const CMap_for_minimal_quadrangulation& get_minimal_quadrangulation() const
   {
     CGAL_assertion(is_minimal_quadrangulation_computed());
     return m_minimal_quadrangulation->get_map();
-  } 
+  }
+
+  /// @return true iff 'p' is contractible.
+  bool is_contractible(const Path_on_surface<Mesh>& p,
+                       bool display_time=false) const
+  {
+    compute_minimal_quadrangulation(display_time);
+    return m_minimal_quadrangulation->is_contractible(p, display_time);
+  }
+
+  /// @return true iff 'p1' and 'p2' are freely homotopic.
+  bool are_freely_homotopic(const Path_on_surface<Mesh>& p1,
+                            const Path_on_surface<Mesh>& p2,
+                            bool display_time=false) const
+  {
+    compute_minimal_quadrangulation(display_time);
+    return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
+                                                           display_time);
+  }
+  
+  /// @return true iff 'p1' and 'p2' are base point freely homotopic.
+  bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
+                                const Path_on_surface<Mesh>& p2,
+                                bool display_time=false) const
+  {
+    compute_minimal_quadrangulation(display_time);
+    return m_minimal_quadrangulation->are_base_point_homotopic(p1, p2,
+                                                               display_time);
+  }
 
 protected:
   const Mesh& m_original_map;
-  mutable internal::Minimal_quadrangulation<Mesh>* m_minimal_quadrangulation;
+  mutable std::unique_ptr<internal::Minimal_quadrangulation<Mesh>>
+  m_minimal_quadrangulation;
 };
 
 } // namespace Surface_mesh_topology
