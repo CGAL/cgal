@@ -897,8 +897,24 @@ protected:
            !get_map().is_marked(get_map().template beta<2>(initdart),
                                m_mark_perforated) */)
       { // Here we are on a border edge of a "real" face (i.e. non perforated)
-        // and adjacent to a "real" face
-        std::cout<<"[BEGIN] Process "<<get_map().darts().index(initdart)<<std::endl;
+        /*
+         // and adjacent to a "real" face
+          std::cout<<"[BEGIN] Process ("<<m_original_map.darts().index(copy_to_origin.find(initdart)->second)
+                <<", "<<get_map().darts().index(initdart)<<")";
+        if (get_map().is_marked(initdart, toremove)) std::cout<<" removed";
+        if (get_map().is_marked(initdart, m_mark_perforated)) std::cout<<" perforated";
+
+        if (m_original_map.is_free(copy_to_origin.find(initdart)->second,2))
+        { std::cout<<"beta2=(free"; }
+        else
+        { std::cout<<"beta2=("<<m_original_map.darts().
+                     index(m_original_map.beta
+                           (copy_to_origin.find(initdart)->second,2)); }
+        std::cout<<get_map().darts().index(get_map().beta(initdart, 2));
+        if (get_map().is_marked(get_map().beta(initdart, 2), m_mark_perforated))
+        { std::cout<<" perforated"; }
+        std::cout<<")"<<std::endl; */
+
         curdart=get_map().template beta<0, 2>(initdart);
         while(get_map().is_marked(curdart, toremove))
         { // Here, all edges marked to remove are between two real faces.
@@ -911,30 +927,32 @@ protected:
                      (copy_to_origin.find(curdart)->second))<<std::endl; */
           CGAL_assertion(initdart==get_first_dart_of_the_path_direct
                          (copy_to_origin.find(curdart)->second));
-          std::cout<<" Dart updated 1 for "<<m_original_map.darts().index
-                     (copy_to_origin.find(curdart)->second)<<" -> ";
+          /* std::cout<<" Dart updated1 for ("<<m_original_map.darts().index
+                     (copy_to_origin.find(curdart)->second)
+                  <<", "<<get_map().darts().index(curdart)<<")"
+                  <<" -> ";
           std::cout<<get_map().darts().
                      index(get_first_dart_of_the_path_direct
-                           (copy_to_origin.find(curdart)->second))<<std::endl;
+                           (copy_to_origin.find(curdart)->second))<<std::endl; */
           curdart=get_map().template beta<0, 2>(curdart);
         }
 
-        if (!get_map().is_marked(get_map().template beta<2>(initdart),
+        if (!get_map().is_marked(get_map().template beta<2>(curdart),
                                  m_mark_perforated))
         {
           d1=copy_to_origin.find(get_map().template beta<2>(curdart))->second;
           if (m_original_map.template is_free<2>(d1) ||
               d1<m_original_map.template beta<2>(d1))
           { m_paths[d1].second=initdart; }
-          std::cout<<"Dart update 2 for "
-                  <<m_original_map.darts().index(d1)<<" -> "<<get_map().darts().
-                    index(initdart)<<std::endl;
+          /* std::cout<<" Dart updated2 for ("<<m_original_map.darts().index(d1)
+                  <<", "<<get_map().darts().index(get_map().template beta<2>(curdart))<<")"
+                 <<" -> ";
+          std::cout<<" -> "<<get_map().darts().index(initdart)<<std::endl; */
         }
-        std::cout<<"[END] Process "<<get_map().darts().index(initdart)<<std::endl;
       }
     }
 
-    std::cout<<"************ MINIMAL MAP : "<<std::endl;
+/*    std::cout<<"************ MINIMAL MAP : "<<std::endl;
     for (typename CMap_for_minimal_quadrangulation::Dart_range::iterator
          it=get_map().darts().begin(); it!=get_map().darts().end(); ++it)
     {
@@ -984,7 +1002,8 @@ protected:
       if (it->second.second==nullptr)
       {
 
-        std::cout<<"Test dart "<<get_map().darts().index(it->second.first)<<std::endl;
+        std::cout<<"Test dart ("<<m_original_map.darts().index(it->first)
+                <<", "<<get_map().darts().index(it->second.first)<<std::endl;
         CGAL_assertion(get_map().is_marked(it->second.first, m_mark_perforated) ||
                        get_map().is_marked
                        (get_map().template beta<2>(it->second.first),
@@ -995,7 +1014,7 @@ protected:
         CGAL_assertion(!get_map().is_marked(it->second.first, m_mark_perforated));
         CGAL_assertion(!get_map().is_marked(it->second.second, m_mark_perforated));
       }
-    }
+    }*/
   }
 
   /// Remove all loops after having merge all real faces in one.
@@ -1203,9 +1222,9 @@ protected:
       {
         get_map().template mark_cell<2>(it, treated);
         if (get_map().is_marked(it, oldedges) &&
-            !get_map().is_marked(it, m_mark_perforated) &&
-            get_map().template beta<1>(it)!=it)
+            !get_map().is_marked(it, m_mark_perforated))
         {
+          CGAL_assertion(get_map().template beta<1>(it)!=it);
           get_map().negate_mark(treated); // To mark new darts treated
           get_map().insert_cell_0_in_cell_2(it);
           get_map().negate_mark(treated);
@@ -1267,8 +1286,7 @@ protected:
     {
       if (get_map().is_dart_used(it) &&
           get_map().is_marked(it, oldedges) &&
-          !get_map().is_marked(it, m_mark_perforated)/* &&
-          get_map().template beta<1>(it)!=it*/)
+          !get_map().is_marked(it, m_mark_perforated))
       {
         if (get_map().is_marked(get_map().template beta<2>(it), m_mark_perforated))
         { get_map().template mark_cell<2>(it, m_mark_perforated); }
@@ -1288,7 +1306,7 @@ protected:
 
     get_map().free_mark(oldedges);
 
-    std::cout<<"************ PATH AFTER: "<<std::endl;
+   /* std::cout<<"************ PATH AFTER: "<<std::endl;
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       std::cout<<m_original_map.darts().index(it->first)
@@ -1302,7 +1320,7 @@ protected:
           !get_map().is_dart_used(it->second.second))
       { std::cout<<" DELETE2"; }
       std::cout<<std::endl;
-    }
+    } */
   }
 
 #if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
