@@ -38,10 +38,10 @@ using namespace CGAL::Surface_mesh_topology;
 void process_command_line(int argc, char** argv,
                           std::string& file,
                           bool& draw,
-                          unsigned int& l1,
-                          unsigned int& l2,
-                          unsigned int& d1,
-                          unsigned int& d2,
+                          int& l1,
+                          int& l2,
+                          int& d1,
+                          int& d2,
                           unsigned int& N,
                           CGAL::Random& random,
                           bool& time)
@@ -56,15 +56,15 @@ void process_command_line(int argc, char** argv,
     {
      if (i+2>=argc)
      { error_command_line(argc, argv, "Error: not enough number after -D option."); }
-     d1=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
-     d2=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
+     d1=std::stoi(std::string(argv[++i]));
+     d2=std::stoi(std::string(argv[++i]));
     }
     else if (arg=="-L")
     {
      if (i+2>=argc)
      { error_command_line(argc, argv, "Error: not enough number after -L option."); }
-     l1=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
-     l2=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
+     l1=std::stoi(std::string(argv[++i]));
+     l2=std::stoi(std::string(argv[++i]));
     }
     else if (arg=="-N")
     {
@@ -76,7 +76,8 @@ void process_command_line(int argc, char** argv,
     {
       if (i==argc-1)
       { error_command_line(argc, argv, "Error: no number after -seed option."); }
-      random=CGAL::Random(static_cast<unsigned int>(std::stoi(std::string(argv[++i]))));
+      random=CGAL::Random(static_cast<unsigned int>
+                          (std::stoi(std::string(argv[++i]))));
       // initialize the random generator with the given seed
     }
     else if (arg=="-time")
@@ -98,8 +99,8 @@ int main(int argc, char** argv)
 {
   std::string file="data/elephant.off";  
   bool draw=false;
-  unsigned int l1=10, l2=100;
-  unsigned int d1=10, d2=100;
+  int l1=10, l2=100;
+  int d1=10, d2=100;
   unsigned int N=1;
   CGAL::Random random; // Used when user do not provide its own seed.
   bool time=false;
@@ -127,7 +128,8 @@ int main(int argc, char** argv)
   {
     if (i!=0)
     {
-      random=CGAL::Random(random.get_int(0, std::numeric_limits<int>::max()));
+      random=CGAL::Random(static_cast<unsigned int>
+             (random.get_int(0, std::numeric_limits<int>::max())));
     }
     std::cout<<"Random seed: "<<random.get_seed()<<": ";
 
@@ -165,12 +167,15 @@ int main(int argc, char** argv)
   if (errors_seeds.empty())
   {
     if (N==1) { std::cout<<"Test OK: both paths are homotopic."<<std::endl; }
-    else { std::cout<<"All the "<<N<<" tests OK: each pair of paths were homotopic."<<std::endl; }
+    else
+    { std::cout<<"All the "<<N
+               <<" tests OK: each pair of paths were homotopic."<<std::endl; }
   }
   else
   {
     std::cout<<"ERRORS for "<<errors_seeds.size()<<" tests among "<<N
-            <<" (i.e. "<<(double)(errors_seeds.size()*100)/double(N)<<"%)."<<std::endl;
+            <<" (i.e. "<<static_cast<double>(errors_seeds.size()*100)/
+              static_cast<double>(N)<<"%)."<<std::endl;
     std::cout<<"Errors for seeds: ";
     for (std::size_t i=0; i<errors_seeds.size(); ++i)
     { std::cout<<errors_seeds[i]<<"  "; }
@@ -178,7 +183,8 @@ int main(int argc, char** argv)
   }
 
   std::cout<<"Number of contractible paths: "<<nbcontractible<<" among "<<N
-           <<" (i.e. "<<(double)(nbcontractible*100)/double(N)<<"%)."<<std::endl;
+           <<" (i.e. "<<static_cast<double>(nbcontractible*100)/
+             static_cast<double>(N)<<"%)."<<std::endl;
 
   if (cst.is_minimal_quadrangulation_computed())
   {
