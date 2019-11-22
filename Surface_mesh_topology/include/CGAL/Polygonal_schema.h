@@ -41,7 +41,7 @@ namespace Surface_mesh_topology {
   {
     /// @return opposite label of label s
     ///    (i.e. add/remove - depending if s is positive or negative)
-    inline std::string opposite_label(const std::string & s)
+    inline std::string opposite_label(const std::string& s)
     {
       CGAL_assertion(!s.empty());
       if (s[0]=='-')
@@ -64,12 +64,14 @@ namespace Surface_mesh_topology {
                        Dart_handle prev_dart,
                        Dart_handle dart_same_label,
                        Dart_handle dart_opposite_label,
-                       std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
+                       std::unordered_map<std::string, Dart_handle>&
+                       edge_label_to_dart)
       {
         if (dart_same_label!=nullptr && dart_opposite_label!=nullptr)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
-                   <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
+                   <<" and "<<internal::opposite_label(s)
+                   <<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
           return nullptr;
         }
@@ -78,7 +80,8 @@ namespace Surface_mesh_topology {
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"label "<<s
                    <<" is already added in the surface."
-                   <<" Since the surface is orientable, this label can not be use anymore."<<std::endl;
+                   <<" Since the surface is orientable, this label can "
+                   <<"not be use anymore."<<std::endl;
           return nullptr;
         }
         
@@ -115,12 +118,14 @@ namespace Surface_mesh_topology {
                        Dart_handle prev_dart,
                        Dart_handle dart_same_label,
                        Dart_handle dart_opposite_label,
-                       std::unordered_map<std::string, Dart_handle>& edge_label_to_dart)
+                       std::unordered_map<std::string, Dart_handle>&
+                       edge_label_to_dart)
       {
         if (dart_same_label!=nullptr && dart_opposite_label!=nullptr)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
-                   <<" and "<<internal::opposite_label(s)<<" are already added in the surface."
+                   <<" and "<<internal::opposite_label(s)
+                   <<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
           return nullptr;
         }
@@ -198,15 +203,16 @@ namespace Surface_mesh_topology {
     typedef typename Map::size_type         size_type;
 
     Polygonal_schema_base() : Base(),
+      mark_perforated(this->get_new_mark()),
       first_dart(this->null_handle),
       prev_dart(this->null_handle),
-      facet_started(false),
-      mark_hole(this->get_new_mark())
+      facet_started(false)
     {}
 
     ~Polygonal_schema_base()
     {
-      for (auto it=this->darts().begin(), itend=this->darts().end(); it!=itend; ++it)
+      for (auto it=this->darts().begin(), itend=this->darts().end();
+           it!=itend; ++it)
       {
         if (this->info(it).m_label!=nullptr)
         {
@@ -232,7 +238,8 @@ namespace Surface_mesh_topology {
       facet_started=true;
     }
 
-    /// Add one edge to the current facet, given by its label (any string, using minus sign for orientation)
+    /// Add one edge to the current facet, given by its label
+    ///  (any string, using minus sign for orientation)
     void add_edge_to_facet(const std::string& s)
     {
       if (!facet_started)
@@ -244,11 +251,12 @@ namespace Surface_mesh_topology {
       }
 
       Dart_handle dart_same_label=get_dart_labeled(s);
-      Dart_handle dart_opposite_label=get_dart_labeled(internal::opposite_label(s));
+      Dart_handle dart_opposite_label=get_dart_labeled
+                                      (internal::opposite_label(s));
       
       Dart_handle cur=internal::Polygonal_schema_tools<Map>::
-        add_edge_to_face(*this, s, prev_dart, dart_same_label, dart_opposite_label,
-                         edge_label_to_dart);
+        add_edge_to_face(*this, s, prev_dart, dart_same_label,
+                         dart_opposite_label, edge_label_to_dart);
 
       if (prev_dart==this->null_handle)
       { first_dart=cur; }
@@ -256,8 +264,8 @@ namespace Surface_mesh_topology {
       prev_dart=cur;
     }
 
-    /// add the given edges to the current facet
-    /// s is a sequence of labels, add all the corresponding edges into the current facet.
+    /// add all the given edges to the current facet.
+    /// @param s the sequence of labels of edges to add.
     void add_edges_to_facet(const std::string& s)
     {
       if (!facet_started)
@@ -272,7 +280,8 @@ namespace Surface_mesh_topology {
       { add_edge_to_facet(token); }
     }
       
-    /// add one facet, s is a sequence of labels, add all the corresponding edges into a new facet.
+    /// add one facet, given a sequence of labels.
+    /// @param s the sequence of labels of edges to add.
     void add_facet(const std::string& s)
     {
       if (facet_started)
@@ -287,6 +296,8 @@ namespace Surface_mesh_topology {
       end_facet();
     }
 
+    /// add edges to the current facet,
+    ///  given a sequence of labels, as an initializer list.
     void add_edges_to_facet(std::initializer_list<const char*> l)
     {
       if (!facet_started)
@@ -300,6 +311,7 @@ namespace Surface_mesh_topology {
        { add_edge_to_facet(e); }
     }
       
+    /// add a new facet, given a sequence of labels, as an initializer list.
     void add_facet(std::initializer_list<const char*> l)
     {
       if (facet_started)
@@ -324,7 +336,8 @@ namespace Surface_mesh_topology {
                  <<" but the facet is not yet started."<<std::endl;
         return nullptr;
       }
-      CGAL_assertion( first_dart!=this->null_handle && prev_dart!=this->null_handle );
+      CGAL_assertion( first_dart!=this->null_handle &&
+                                  prev_dart!=this->null_handle );
       this->set_next(prev_dart, first_dart);
       
       facet_started=false;
@@ -332,7 +345,7 @@ namespace Surface_mesh_topology {
     }
 
     /// @return dart with the given label, nullptr if this dart does not exist.
-    Dart_handle get_dart_labeled(const std::string & s) const
+    Dart_handle get_dart_labeled(const std::string& s) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
@@ -348,14 +361,14 @@ namespace Surface_mesh_topology {
     /// @return the number of darts of the marked face
     size_type perforate_facet(Dart_handle dh)
     {
-      if (this->is_marked(dh, mark_hole))
+      if (this->is_marked(dh, mark_perforated))
       { return 0; }
       
-      return CGAL::mark_cell<Self, 2>(*this, dh, mark_hole);
+      return this->template mark_cell<2>(dh, mark_perforated);
     }
 
     /// same method but using a label
-    size_type perforate_facet(const std::string & s)
+    size_type perforate_facet(const std::string& s)
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
@@ -373,14 +386,14 @@ namespace Surface_mesh_topology {
     /// @return the number of darts of the unmarked face
     size_type fill_facet(Dart_handle dh)
     {
-      if (!this->is_marked(dh, mark_hole))
+      if (!this->is_marked(dh, mark_perforated))
       { return 0; }
 
-      return CGAL::unmark_cell<Self, 2>(*this, dh, mark_hole);
+      return this->template unmark_cell<2>(dh, mark_perforated);
     }
 
     /// same fonciton but using a label
-    size_type fill_facet(const std::string & s)
+    size_type fill_facet(const std::string& s)
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
@@ -396,10 +409,10 @@ namespace Surface_mesh_topology {
 
     /// @return true iff dh is on a perforated facet
     bool is_perforated(Dart_const_handle dh) const
-    { return this->is_marked(dh, mark_hole); }
+    { return this->is_marked(dh, mark_perforated); }
 
     /// same thing but using a label instead of a dart
-    bool is_perforated(const std::string & s) const
+    bool is_perforated(const std::string& s) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
@@ -413,22 +426,11 @@ namespace Surface_mesh_topology {
       return is_perforated(ite->second);
     }
 
-    /// @return true iff dh is i-free
-   /* template<unsigned int i>
-    bool is_free(Dart_const_handle dh) const
-    {
-      if(i==2)
-      {
-        return Base::template is_free<2>(dh) ||
-          this->is_perforated(this->template beta<2>(dh));
-      }
-      return Base::template is_free<i>(dh);
-    }*/
     using Base::is_free;
 
     /// same thing but using a label instead of a dart
     template<unsigned int i>
-    bool is_free(const std::string & s) const
+    bool is_free(const std::string& s) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
@@ -443,19 +445,7 @@ namespace Surface_mesh_topology {
     }
 
     /// Non templated versions
-    /// @return true iff dh is i-free
-   /* bool is_free(Dart_const_handle dh, unsigned int i) const
-    {
-      if(i==2)
-      {
-        return Base::template is_free<2>(dh) ||
-          this->is_perforated(this->template beta<2>(dh));
-      }
-      return Base::is_free(dh, i);
-    }*/
-
-    /// same thing but using a label instead of a dart
-    bool is_free(const std::string & s, unsigned int i) const
+    bool is_free(const std::string& s, unsigned int i) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
@@ -469,7 +459,7 @@ namespace Surface_mesh_topology {
       return is_free(ite->second, i);
     }
 
-    void display_perforated_darts()
+    void display_perforated_darts() const
     {
       std::cout<<"labels is_free<2> is_perforated"<<std::endl;
       for (auto it=edge_label_to_dart.begin(), itend=edge_label_to_dart.end();
@@ -484,11 +474,12 @@ namespace Surface_mesh_topology {
     // For each edge label, its corresponding dart. Stores both association a -a, to allow
     // users to start to add either a or -a.
     std::unordered_map<std::string, Dart_handle> edge_label_to_dart;
-    
+    std::size_t mark_perforated; // mark for perforated facets.
+
+    // Data members used when we create a facet.
     Dart_handle first_dart;
     Dart_handle prev_dart;
     bool        facet_started;
-    std::size_t mark_hole;
   };
 
   template <class Items_=Polygonal_schema_min_items,
@@ -496,14 +487,14 @@ namespace Surface_mesh_topology {
             class Storage_= Combinatorial_map_storage_1<2, Items_, Alloc_> >
   class Polygonal_schema_with_combinatorial_map:
     public Polygonal_schema_base<CGAL::Combinatorial_map_base
-                                 <2,
-                                  Polygonal_schema_with_combinatorial_map<Items_, Alloc_, Storage_>,
-                                  Items_, Alloc_, Storage_> >
+      <2,
+      Polygonal_schema_with_combinatorial_map<Items_, Alloc_, Storage_>,
+      Items_, Alloc_, Storage_> >
   {
   public:
-    typedef Polygonal_schema_with_combinatorial_map<Items_, Alloc_, Storage_>  Self;
-    typedef Combinatorial_map_base<2, Self, Items_, Alloc_, Storage_>          CMap_base;
-    typedef Polygonal_schema_base<CMap_base>                                   Base;
+    typedef Polygonal_schema_with_combinatorial_map<Items_, Alloc_, Storage_> Self;
+    typedef Combinatorial_map_base<2, Self, Items_, Alloc_, Storage_>         CMap_base;
+    typedef Polygonal_schema_base<CMap_base>                                  Base;
     
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
@@ -511,18 +502,20 @@ namespace Surface_mesh_topology {
     Polygonal_schema_with_combinatorial_map() : Base()
     {}
 
-    Polygonal_schema_with_combinatorial_map(const Self & amap) : Base(amap)
+    Polygonal_schema_with_combinatorial_map(const Self& amap) : Base(amap)
     {}
 
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2>
-    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base
+                                            <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap) : Base(amap)
     {}
 
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters>
-    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base
+                                            <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap, const Converters& converters) :
       Base(amap, converters)
     {}
@@ -530,7 +523,8 @@ namespace Surface_mesh_topology {
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters,
               typename DartInfoConverter>
-    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base
+                                            <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap, const Converters& converters,
                                             const DartInfoConverter& dartinfoconverter) :
       Base(amap, converters, dartinfoconverter)
@@ -539,7 +533,8 @@ namespace Surface_mesh_topology {
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters,
               typename DartInfoConverter, typename PointConverter >
-    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_combinatorial_map(const Combinatorial_map_base
+                                            <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap, const Converters& converters,
                                             const DartInfoConverter& dartinfoconverter,
                                             const PointConverter& pointconverter) :
@@ -552,9 +547,9 @@ namespace Surface_mesh_topology {
             class Storage_= Generalized_map_storage_1<2, Items_, Alloc_> >
   class Polygonal_schema_with_generalized_map:
     public Polygonal_schema_base<CGAL::Generalized_map_base
-                                 <2,
-                                  Polygonal_schema_with_generalized_map<Items_, Alloc_, Storage_>,
-                                  Items_, Alloc_, Storage_> >
+      <2,
+      Polygonal_schema_with_generalized_map<Items_, Alloc_, Storage_>,
+      Items_, Alloc_, Storage_> >
   {
   public:
     typedef Polygonal_schema_with_generalized_map<Items_, Alloc_, Storage_> Self;
@@ -567,18 +562,20 @@ namespace Surface_mesh_topology {
     Polygonal_schema_with_generalized_map() : Base()
     {}
 
-    Polygonal_schema_with_generalized_map(const Self & amap) : Base(amap)
+    Polygonal_schema_with_generalized_map(const Self& amap) : Base(amap)
     {}
 
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2>
-    Polygonal_schema_with_generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_generalized_map(const Generalized_map_base
+                                          <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap) : Base(amap)
     {}
 
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters>
-    Polygonal_schema_with_generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_generalized_map(const Generalized_map_base
+                                          <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap, const Converters& converters) :
       Base(amap, converters)
     {}
@@ -586,7 +583,8 @@ namespace Surface_mesh_topology {
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters,
               typename DartInfoConverter>
-    Polygonal_schema_with_generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_generalized_map(const Generalized_map_base
+                                          <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap, const Converters& converters,
                                             const DartInfoConverter& dartinfoconverter) :
       Base(amap, converters, dartinfoconverter)
@@ -595,7 +593,8 @@ namespace Surface_mesh_topology {
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
               typename Storage2, typename Converters,
               typename DartInfoConverter, typename PointConverter >
-    Polygonal_schema_with_generalized_map(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>&
+    Polygonal_schema_with_generalized_map(const Generalized_map_base
+                                          <d2, Refs2, Items2, Alloc2, Storage2>&
                                             amap, const Converters& converters,
                                             const DartInfoConverter& dartinfoconverter,
                                             const PointConverter& pointconverter) :
