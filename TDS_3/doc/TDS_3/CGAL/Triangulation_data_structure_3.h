@@ -15,9 +15,9 @@ see below). The class may offer some
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
-\tparam TriangulationDSVertexBase_3 must be a model of `TriangulationDSVertexBase_3`. The default is `Triangulation_ds_vertex_base_3<TDS>`.
+\tparam VertexBase must be a model of `TriangulationDSVertexBase_3`. The default is `Triangulation_ds_vertex_base_3<TDS>`.
 
-\tparam TriangulationDSCellBase  must be a model of `TriangulationDSCellBase_3`. The default is `Triangulation_ds_cell_base_3<TDS>`.
+\tparam CellBase  must be a model of `TriangulationDSCellBase_3`. The default is `Triangulation_ds_cell_base_3<TDS>`.
 
 
 \tparam ConcurrencyTag enables the use of a concurrent
