@@ -11,7 +11,7 @@ or the middle depending on the `PolicyTag`.
 
 \tparam PolicyTag must be `Hilbert_sort_median_policy` or `Hilbert_sort_middle_policy`.
 
-\tparam ConcurrencyTag must be `Sequential_tag` or `Parallel_tag`.  With `Parallel_tag`
+\tparam ConcurrencyTag must be `Sequential_tag`,`Parallel_tag`, or `Parallel_if_available_tag`.  With parallelism
 and TBB enabled, for the median policy up to eight threads are used in parallel. 
 */
 template< typename Traits, typename PolicyTag, typename ConcurrencyTag = Sequential_tag  >

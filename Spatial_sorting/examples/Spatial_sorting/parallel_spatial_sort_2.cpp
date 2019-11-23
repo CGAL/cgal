@@ -26,9 +26,9 @@ int main()
   // By default sequential
   CGAL::spatial_sort(points.begin(),points.end());
 
-  // Add the template argument to switch on parallelism
-  // You will get a compile time warning in case TBB is not enabled
-  CGAL::spatial_sort<CGAL::Parallel_tag>(points.begin(),points.end());
+  // Add the template argument to switch on parallelism if available
+  // You can also use Parallel_tag if you know that TBB is enabled
+  CGAL::spatial_sort<CGAL::Parallel_if_available_tag>(points.begin(),points.end());
 
   return 0;
 }

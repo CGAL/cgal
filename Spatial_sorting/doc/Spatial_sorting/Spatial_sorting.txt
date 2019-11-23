@@ -214,7 +214,8 @@ The Hilbert sort and spatial sort functions when using the median policy and wit
 enabled, are parallized and use up to four/eight threads for 2D/3D. 
 
 By default the sequential version is used. The parallel version is used
-by adding the template parameter `CGAL::Parallel_tag`.
+by adding the template parameter `CGAL::Parallel_tag`. In case it is not sure
+whether TBB is enabled use `CGAL::Parallel_if_available_tag`.
 
 \cgalExample{Spatial_sorting/parallel_spatial_sort_2.cpp}
 
