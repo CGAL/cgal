@@ -2469,6 +2469,30 @@ namespace CGAL {
         run(*this, adart, amark);
     }
 
+    /// Keep the biggest connected component.
+    /// @return the size (in number of darts) of the biggest cc.
+    std::size_t keep_biggest_connected_component()
+    {
+      std::map<std::size_t, Dart_handle> ccs;
+
+      size_type treated=get_new_mark();
+      for (auto it=darts().begin(), itend=darts().end(); it!=itend; ++it)
+      {
+        if (!is_marked(it, treated))
+        { ccs[mark_cell<dimension+1>(it, treated)]=it; }
+      }
+
+      if (ccs.size()>1)
+      { // Here all darts are marked
+        this->template unmark_cell<dimension+1>(ccs.rbegin()->second, treated); // Unmark the biggest cc
+        erase_marked_darts(treated);
+      }
+
+      free_mark(treated);
+
+      return ccs.rbegin()->first;
+    }
+
     /** Count the marked cells (at least one marked dart).
      * @param amark the mark to consider.
      * @param avector containing the dimensions of the cells to count.

@@ -35,8 +35,9 @@ class Curves_on_surface_topology
 {
 public:
   typedef internal::Minimal_quadrangulation<Mesh> Minimal_quadrangulation;
+  typedef typename Minimal_quadrangulation::Original_map Original_map;
   typedef typename Minimal_quadrangulation::Reduced_map Reduced_map;
-  
+
   Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
     m_original_mesh(amesh),
     m_minimal_quadrangulation(nullptr)
@@ -55,6 +56,10 @@ public:
           (new Minimal_quadrangulation(m_original_mesh, display_time));
     }
   }
+
+  /// Return the original map.
+  const Original_map& get_original_map() const
+  { return m_minimal_quadrangulation->get_original_map(); }
 
   /// Return the reduced map computed in the minimal quadrangulation.
   /// @pre is_minimal_quadrangulation_computed()
