@@ -723,8 +723,6 @@ class Intersection_of_triangle_meshes
             break;
             case ON_EDGE:
             {
-              if(is_new_node)
-                visitor.new_node_added(node_id,ON_EDGE,ipt.info_1,ipt.info_2,tm1,tm2,false,false);
               std::vector<edge_descriptor> tmp_edges_1(1, edge(ipt.info_1,tm1)),
                                            tmp_edges_2(1, edge(ipt.info_2,tm2));
               std::size_t eid1 = nm_features_map_1.non_manifold_edges.empty()
@@ -739,6 +737,8 @@ class Intersection_of_triangle_meshes
               const std::vector<edge_descriptor>& edges_2 = eid2==NM_NID
                                                           ? tmp_edges_2
                                                           : nm_features_map_2.non_manifold_edges[eid2];
+              if(is_new_node)
+                visitor.new_node_added(node_id,ON_EDGE,halfedge(edges_1.front(), tm1),halfedge(edges_2.front(),tm2),tm1,tm2,false,false);
               for(edge_descriptor e1 : edges_1)
                 for(edge_descriptor e2 : edges_2)
                 {
