@@ -140,6 +140,8 @@ void test(const char* filename)
 
 int main()
 {
+  CGAL::Set_ieee_double_precision pfr;
+
   test("data/elephant.off");
   test("data/folded_star.off");
   test("data/joint_refined.off");
