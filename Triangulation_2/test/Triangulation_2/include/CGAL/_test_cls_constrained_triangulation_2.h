@@ -45,7 +45,7 @@ _test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
     tr.insert_constraint(p0, p1);
     tr.insert_constraint(p2, p3);
   }
-  catch (typename Triang::Intersection_of_constraints_exception& e)
+  catch (typename Triang::Intersection_of_constraints_exception& /*e*/)
   {
     std::cout << "threw, expected: " << intersection_type << std::endl;
 
