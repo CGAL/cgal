@@ -129,6 +129,7 @@ public:
     // 1) We create m_reduced_map as a copy of amap, by contracting all
     //    non loop.
     surface_simplification_in_one_vertex(origin_to_copy, copy_to_origin);
+    CGAL_assertion(perforated_faces_correctly_marked());
 
     if (display_time)
     {
@@ -161,9 +162,11 @@ public:
     // 3) We simplify m_reduced_map in a surface with only one face
     //    (or maybe more if we have boundaries!)
     surface_simplification_in_one_face(origin_to_copy, copy_to_origin);
+    CGAL_assertion(perforated_faces_correctly_marked());
 
     // 4) We remove all non perforated loops
     remove_non_perforated_loops(copy_to_origin);
+    CGAL_assertion(perforated_faces_correctly_marked());
 
     if (display_time)
     {
@@ -626,9 +629,10 @@ protected:
 
   Original_dart_const_handle prev_in_boundary(Original_dart_const_handle d)
   {
+    CGAL_assertion(get_original_map().template is_free<2>(d));
     Original_dart_const_handle res=get_original_map().template beta<0>(d);
     while(!get_original_map().template is_free<2>(res))
-    { res = get_original_map().template beta<2, 0>(res); }
+    { res=get_original_map().template beta<2, 0>(res); }
     return res;
   }
 
@@ -665,6 +669,7 @@ protected:
       }
     }
 
+    CGAL_assertion(get_original_map().is_whole_map_marked(grey));
     get_original_map().free_mark(grey);
   }
 
@@ -685,12 +690,14 @@ protected:
           d1=get_reduced_map().create_dart();
           d2=get_reduced_map().create_dart();
           get_reduced_map().template basic_link_beta_for_involution<2>(d1, d2);
+
           origin_to_copy[it]=d1;
           copy_to_origin[d1]=it;
           get_reduced_map().mark(d2, m_mark_perforated);
+          if (get_original_map().is_perforated(it))
+          { get_reduced_map().mark(d1, m_mark_perforated); }
         }
-        else if (Original_dart_const_handle(it)<
-                 get_original_map().template beta<2>(it))
+        else if (it<get_original_map().template beta<2>(it))
         {
           d1=get_reduced_map().create_dart();
           d2=get_reduced_map().create_dart();
@@ -713,7 +720,7 @@ protected:
     /// Now we only need to do the basic_link_beta_1
     Original_dart_const_handle dd1;
     for (typename Original_map::Dart_range::const_iterator
-           it=get_original_map().darts().begin(),
+         it=get_original_map().darts().begin(),
          itend=get_original_map().darts().end(); it!=itend; ++it)
     {
       if (!get_original_map().is_marked(it, m_mark_T))
@@ -723,6 +730,20 @@ protected:
         { dd1=get_original_map().template beta<1>(dd1); }
         get_reduced_map().basic_link_beta_1(origin_to_copy[it],
                                             origin_to_copy[dd1]); // let's link both
+
+        // TODO DEBUG CODE
+        if (get_reduced_map().is_marked(origin_to_copy[it], m_mark_perforated))
+        {
+          CGAL_assertion(get_reduced_map().is_marked(origin_to_copy[dd1],
+                                                     m_mark_perforated));
+        }
+        else
+        {
+          CGAL_assertion(!get_reduced_map().is_marked(origin_to_copy[dd1],
+                                                      m_mark_perforated));
+        }
+        // TODO END OF DEBUG CODE
+
         if (get_original_map().template is_free<2>(it))
         {
           dd1=prev_in_boundary(it);
@@ -731,6 +752,22 @@ protected:
           get_reduced_map().basic_link_beta_1
               (get_reduced_map().template beta<2>(origin_to_copy[it]),
                get_reduced_map().template beta<2>(origin_to_copy[dd1]));
+
+          // TODO DEBUG CODE
+          if (get_reduced_map().is_marked
+              (get_reduced_map().template beta<2>(origin_to_copy[it]),
+               m_mark_perforated))
+          {
+            CGAL_assertion(get_reduced_map().is_marked
+                           (get_reduced_map().template beta<2>(origin_to_copy[dd1]),
+                            m_mark_perforated));
+          }
+          else
+          {
+            CGAL_assertion(!get_reduced_map().is_marked
+                           (get_reduced_map().template beta<2>(origin_to_copy[dd1]),
+                            m_mark_perforated));
+          }
         }
       }
     }
@@ -853,6 +890,13 @@ protected:
         }
       }
     }
+
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      CGAL_assertion(!get_reduced_map().is_marked(it->second.first, toremove));
+      CGAL_assertion(it->second.second==nullptr ||
+                     !get_reduced_map().is_marked(it->second.second, toremove));
+    }
   }
 
   /// Remove all loops after having merge all real faces in one.
@@ -943,6 +987,13 @@ protected:
 
     get_reduced_map().set_automatic_attributes_management(true);
     get_reduced_map().free_mark(toremove);
+
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      CGAL_assertion(get_reduced_map().is_dart_used(it->second.first));
+      CGAL_assertion(it->second.second==nullptr ||
+                     get_reduced_map().is_dart_used(it->second.second));
+    }
   }
 
   /// Step 4) quadrangulate the surface.
@@ -958,7 +1009,8 @@ protected:
     typename Reduced_map::size_type treated=get_reduced_map().get_new_mark();
 
     for (typename Reduced_map::Dart_range::iterator
-         it=get_reduced_map().darts().begin(); it!=get_reduced_map().darts().end(); ++it)
+         it=get_reduced_map().darts().begin();
+         it!=get_reduced_map().darts().end(); ++it)
     {
       if (!get_reduced_map().is_marked(it, treated))
       {
@@ -976,6 +1028,17 @@ protected:
     CGAL_assertion(get_reduced_map().is_whole_map_marked(treated));
     get_reduced_map().free_mark(treated);
 
+    for (typename Reduced_map::Dart_range::iterator
+         it=get_reduced_map().darts().begin();
+         it!=get_reduced_map().darts().end(); ++it)
+    {
+      if (!get_reduced_map().is_marked(it, m_mark_perforated))
+      {
+        CGAL_assertion(get_reduced_map().template beta<1>(it)!=it);
+        CGAL_assertion((get_reduced_map().template beta<1,1,1>(it)==it));
+      }
+    }
+
     // 2) We update the pair of darts
     for (typename TPaths::iterator itp=m_paths.begin(), itpend=m_paths.end();
          itp!=itpend; ++itp)
@@ -987,21 +1050,53 @@ protected:
         CGAL_assertion(!get_reduced_map().is_marked(p.second, m_mark_perforated));
         CGAL_assertion(get_reduced_map().template beta<1>(p.first)!=p.first);
         CGAL_assertion(get_reduced_map().template beta<1>(p.second)!=p.second);
+        CGAL_assertion(get_reduced_map().is_marked(p.first, oldedges));
+        CGAL_assertion(get_reduced_map().is_marked(p.second, oldedges));
+        CGAL_assertion((get_reduced_map().template beta<1,1,1>(p.first)==p.first));
+        CGAL_assertion((get_reduced_map().template beta<1,1,1>(p.second)==p.second));
         p.first=get_reduced_map().template beta<0, 2>(p.first);
         p.second=get_reduced_map().template beta<0>(p.second);
+        CGAL_assertion(!get_reduced_map().is_marked(p.first, oldedges));
+        CGAL_assertion(!get_reduced_map().is_marked(p.second, oldedges));
       }
       else if (!get_reduced_map().is_marked(p.first, m_mark_perforated))
       { // Edge between a real face and a perforated one, not updated during update_length_two_paths_before_edge_removals
+        CGAL_assertion(get_reduced_map().is_marked(p.first, oldedges));
         CGAL_assertion(get_reduced_map().template beta<1>(p.first)!=p.first);
-        p.second=get_reduced_map().template beta<1>(p.first);
+        CGAL_assertion((get_reduced_map().template beta<1,1,1>(p.first)==p.first));
+        p.second=get_reduced_map().template beta<1, 2>(p.first);
         p.first=get_reduced_map().template beta<0, 2>(p.first);
+        CGAL_assertion(!get_reduced_map().is_marked(p.first, oldedges));
+        CGAL_assertion(!get_reduced_map().is_marked(p.second, oldedges));
       }
-      else if (!get_reduced_map().is_marked(get_reduced_map().template beta<2>(p.first),
-                                    m_mark_perforated))
+      else if (!get_reduced_map().is_marked
+               (get_reduced_map().template beta<2>(p.first), m_mark_perforated))
       { // Edge between a perforated face and a real one, not updated during update_length_two_paths_before_edge_removals
-        CGAL_assertion(get_reduced_map().template beta<1>(p.first)!=p.first);
-        p.second=get_reduced_map().template beta<0, 2>(p.first);
-        p.first=get_reduced_map().template beta<1>(p.first);
+        CGAL_assertion(get_reduced_map().is_marked(p.first, oldedges));
+        CGAL_assertion((get_reduced_map().template beta<2,1,1,1>(p.first)==
+                        get_reduced_map().template beta<2>(p.first)));
+        CGAL_assertion((get_reduced_map().template beta<2,1>(p.first)!=
+            get_reduced_map().template beta<2>(p.first)));
+        p.first=get_reduced_map().template beta<2, 1>(p.first);
+        p.second=get_reduced_map().template beta<1>(p.first);
+        CGAL_assertion(!get_reduced_map().is_marked(p.first, oldedges));
+        CGAL_assertion(!get_reduced_map().is_marked(p.second, oldedges));
+      }
+    }
+
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      if (it->second.second==nullptr)
+      {
+        CGAL_assertion(get_reduced_map().is_marked(it->second.first, oldedges));
+        CGAL_assertion(get_reduced_map().is_marked(it->second.first, m_mark_perforated) &&
+                       get_reduced_map().is_marked
+                       (get_reduced_map().template beta<2>(it->second.first), m_mark_perforated));
+      }
+      else
+      {
+        CGAL_assertion(!get_reduced_map().is_marked(it->second.first, oldedges));
+        CGAL_assertion(!get_reduced_map().is_marked(it->second.second, oldedges));
       }
     }
 
@@ -1026,6 +1121,13 @@ protected:
 
     CGAL_assertion(get_reduced_map().is_whole_map_unmarked(oldedges));
     get_reduced_map().free_mark(oldedges);
+
+    for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
+    {
+      CGAL_assertion(get_reduced_map().is_dart_used(it->second.first));
+      CGAL_assertion(it->second.second==nullptr ||
+                     get_reduced_map().is_dart_used(it->second.second));
+    }
   }
 
 #if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
@@ -1356,6 +1458,39 @@ protected:
     if (get_reduced_map().number_of_darts()!=4)
     { return false; }
     return (get_reduced_map().number_of_marked_darts(m_mark_perforated)==0);
+  }
+
+  /// @return true iff the perforated faces are correctly marked
+  /// (i.e. either fully marked or fully unmarked).
+  bool perforated_faces_correctly_marked() const
+  {
+    for (typename Reduced_map::Dart_range::const_iterator
+         it=get_reduced_map().darts().begin(),
+         itend=get_reduced_map().darts().end(); it!=itend; ++it)
+    {
+      CGAL_assertion(get_reduced_map().is_without_boundary(1));
+      if (get_reduced_map().is_marked(it, m_mark_perforated))
+      {
+        if (!get_reduced_map().template is_whole_cell_marked<2>
+            (it, m_mark_perforated))
+        {
+          std::cout<<"[ERROR] perforated_faces_correctly_marked: it is marked, "
+                     <<"but its face is not fully marked."<<std::endl;
+          return false;
+        }
+      }
+      else
+      {
+        if (!get_reduced_map().template is_whole_cell_unmarked<2>
+            (it, m_mark_perforated))
+        {
+          std::cout<<"[ERROR] perforated_faces_correctly_marked: it is not marked, "
+                     <<"but its face is not fully unmarked."<<std::endl;
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   /// Test if m_paths are valid, i.e.:

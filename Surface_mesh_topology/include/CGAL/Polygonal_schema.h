@@ -426,6 +426,9 @@ namespace Surface_mesh_topology {
       return is_perforated(ite->second);
     }
 
+    std::size_t get_perforated_mark() const
+    { return mark_perforated; }
+
     using Base::is_free;
 
     /// same thing but using a label instead of a dart
