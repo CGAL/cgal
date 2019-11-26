@@ -44,6 +44,7 @@ Each curve on this surface is contained in an instance of the class `Surface_mes
 In the first two cases, the source vertex of the added dart  should coincide with the target vertex of the last dart in the path. The user is responsible for ensuring this condition. The member functions \ref Surface_mesh_topology::Path_on_surface::can_be_pushed "can_be_pushed()", \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_index "can_be_pushed_by_index()" and \ref Surface_mesh_topology::Path_on_surface::can_be_pushed_by_label "can_be_pushed_by_label()" return `true` if and only if the condition is satisfied.
 
 \subsection SMTopology_Schema Polygonal Schema Helper
+\subsubsection SMTopology_PL Polygonal Schema
 Specifying a path on a combinatorial surface might be a tedious task. Indeed, knowing in advance the pointer, index or turn of each consecutive halfedge in a path is not always easy. In order to facilitate this task, we provide an intuitive model of `CombinatorialMap` called `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map`, a model of the `PolygonalSchema` concept. In this model, a surface is viewed as a collection of clockwise oriented polygonal facets with labeled boundary (oriented) edges. Boundary edges with the same label are glued together to form a surface. Each label should appear at most twice in the collection and a label that appears only once corresponds to a boundary edge. The label of the opposite of an oriented edge is preceded by a minus. For example, the opposite of 'a1' is '-a1'. Since we are dealing with orientable surfaces only, each label that appears twice must appear once with a minus.
 The user can add facets to the surface one at a time. Each facet is specified by the sequence of its oriented edge labels given as a string where the labels are words (any sequence of characters, except space) separated by blank spaces. In the next figure we see three examples of combinatorial maps described by a collection of facets with labeled edges.
 \cgalFigureBegin{fig_sm_incremental-builder, incremental-builder.svg}
@@ -53,9 +54,17 @@ The code for creating the above left and middle examples appear in the \ref SMTo
 The class provides the following functionalities.
 - \ref PolygonalSchema::add_facet "add_facet(s)" adds a polygon to the current collection of polygons. If the polygon has "n" sides, "s" is a sequence of "n" edge labels possibly preceded by a minus and separated by blanks.
 - alternatively, the user can add a facet by adding edge labels one at a time using the member functions \ref PolygonalSchema::init_facet "init_facet()", \ref PolygonalSchema::add_edges_to_facet "add_edges_to_facet()" and \ref PolygonalSchema::finish_facet "finish_facet()"
- 
-A `Surface_mesh_topology::Curves_on_surface_topology` can be constructed with a `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map` as input surface. In this case, every halfedge has a label (possibly preceded by a minus) and a path can be specified by the sequence of labels corresponding to its halfedge sequence. A repeated call to
-the function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()" allows the user to specify the path in this way.
+
+\subsubsection SMTopology_PL_with_Boundary Polygonal Schema with Boundary
+As noted in the previous section \ref SMTopology_PL "Polygonal Schema",  every label that appears only once in a polygonal schema corresponds to a boundary edge. The Polygonal Schema helper offers another mechanism to create surfaces with boundary. Each facet already added to a polygonal schema may be perforated to create a hole in the surface. The edges of a perforated facet thus becomes boundary edges. The reverse operation consists in filling the supposedly perforated facet. The class provides the following interface.
+- \ref PolygonalSchema::perforate_facet "perforate_facet (h)" perforates the facet identified by the halfedge `h`. If `s` is the label of the oriented edge corresponding to `h`, one may equivalently call perforate_facet (s). 
+- Similarly, \ref  PolygonalSchema::fill_facet "fill_facet (h or s)" turns a facet into a plain one.
+- The member functions \ref PolygonalSchema::get_dart_labeled "get_dart_labeled(s)" and \ref PolygonalSchema::get_label "get_label(h)" allow to easily pass from a halfedge to its label and vice versa. 
+
+As an example, one may perforate all the facets of a polygonal schema \f$\cal{M}\f$ to obtain a "skeleton" surface equivalent to a thickening of the graph composed of the edges of \f$\cal{M}\f$.
+
+\subsubsection SMTopology_Curves_on_PS Curves on Polygonal Schema
+A `Surface_mesh_topology::Curves_on_surface_topology` can be constructed with a `Surface_mesh_topology::Polygonal_schema_with_combinatorial_map` as input surface. In this case, every halfedge has a label (possibly preceded by a minus) and a path can be specified by the sequence of labels corresponding to its halfedge sequence. A repeated call to the function \ref Surface_mesh_topology::Path_on_surface::push_back_by_label "push_back_by_label()" allows the user to specify the path in this way.
 
 \subsection SMTopology_DS Data Structure Presentation
 
