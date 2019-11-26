@@ -28,11 +28,14 @@
 #include <cstddef>
 #include <string>
 #include <initializer_list>
+#include <algorithm>
+#include <random>
 #include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/Polygonal_schema_min_items.h>
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Generalized_map.h>
+#include <CGAL/Random.h>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -223,7 +226,7 @@ namespace Surface_mesh_topology {
     }
     
     /// Start a new facet.
-    void begin_facet()
+    void init_facet()
     {
       if (facet_started)
       {
@@ -291,9 +294,9 @@ namespace Surface_mesh_topology {
                  <<" but the previous facet is not yet ended."<<std::endl;
         return;
       }
-      begin_facet();
+      init_facet();
       add_edges_to_facet(s);
-      end_facet();
+      finish_facet();
     }
 
     /// add edges to the current facet,
@@ -321,13 +324,13 @@ namespace Surface_mesh_topology {
                  <<" but the previous facet is not yet ended."<<std::endl;
         return;
       }
-      begin_facet();
+      init_facet();
       add_edges_to_facet(l);
-      end_facet();
+      finish_facet();
     }
     
     /// End of the facet. Return the first dart of this facet.
-    Dart_handle end_facet()
+    Dart_handle finish_facet()
     {
       if (!facet_started)
       {
@@ -429,39 +432,6 @@ namespace Surface_mesh_topology {
     std::size_t get_perforated_mark() const
     { return mark_perforated; }
 
-    using Base::is_free;
-
-    /// same thing but using a label instead of a dart
-    template<unsigned int i>
-    bool is_free(const std::string& s) const
-    {
-      auto ite=edge_label_to_dart.find(s);
-      if (ite==edge_label_to_dart.end())
-      {// maybe there is no need to put an error message
-        std::cerr<<"Polygonal_schema ERROR: "
-                 <<"you ask if label "<<s<<" represents a dart border"
-                 <<" but this label does not exist yet."<<std::endl;
-        return false;
-      }
-
-      return Self::template is_free<i>(ite->second);
-    }
-
-    /// Non templated versions
-    bool is_free(const std::string& s, unsigned int i) const
-    {
-      auto ite=edge_label_to_dart.find(s);
-      if (ite==edge_label_to_dart.end())
-      {// maybe there is no need to put an error message
-        std::cerr<<"Polygonal_schema ERROR: "
-                 <<"you ask if label "<<s<<" represents a dart border"
-                 <<" but this label does not exist yet."<<std::endl;
-        return false;
-      }
-
-      return is_free(ite->second, i);
-    }
-
     void display_perforated_darts() const
     {
       std::cout<<"labels is_free<2> is_perforated"<<std::endl;
@@ -474,8 +444,8 @@ namespace Surface_mesh_topology {
     }
     
   protected:
-    // For each edge label, its corresponding dart. Stores both association a -a, to allow
-    // users to start to add either a or -a.
+    // For each edge label, its corresponding dart. Stores both association
+    // a -a, to allow users to start to add either a or -a.
     std::unordered_map<std::string, Dart_handle> edge_label_to_dart;
     std::size_t mark_perforated; // mark for perforated facets.
 
@@ -485,6 +455,7 @@ namespace Surface_mesh_topology {
     bool        facet_started;
   };
 
+  /// Polygonal schema with combinatorial map.
   template <class Items_=Polygonal_schema_min_items,
             class Alloc_=CGAL_ALLOCATOR(int),
             class Storage_= Combinatorial_map_storage_1<2, Items_, Alloc_> >
@@ -545,6 +516,7 @@ namespace Surface_mesh_topology {
     {}
   };
   
+  /// Polygonal schema with generalized map.
   template <class Items_=Polygonal_schema_min_items,
             class Alloc_=CGAL_ALLOCATOR(int),
             class Storage_= Generalized_map_storage_1<2, Items_, Alloc_> >
@@ -605,6 +577,53 @@ namespace Surface_mesh_topology {
     {}
   };
   
+  /// Generate a random polygonal schema ps.
+  /// @param nb_labels the number of labels used to generate ps.
+  /// @param seed the seed used for random
+  /// @param max_dart_per_face maximal number of darts per face
+  /// @param closed if true generates a closed polygonal schema.
+  /// @param percentage_of_perforated percentage of perforated faces. If 0
+  ///         no perforated faces.
+  template<typename PS>
+  void generate_random_polygonal_schema(PS& ps, std::size_t nb_labels,
+                                        unsigned int seed
+                                        =static_cast<unsigned int>(std::time(nullptr)),
+                                        std::size_t max_dart_per_face=30,
+                                        bool closed=true,
+                                        std::size_t percentage_of_perforated=20)
+  {
+    CGAL::Random random(seed);
+    std::vector<std::string> all_labels(nb_labels*2);
+    for (std::size_t i=0; i<nb_labels; ++i)
+    {
+      all_labels[2*i]=std::to_string(static_cast<int>(i)+1);
+      all_labels[(2*i)+1]=std::to_string(-(static_cast<int>(i)+1));
+    }
+
+    std::shuffle(all_labels.begin(), all_labels.end(),
+                 std::default_random_engine(seed));
+
+    std::size_t endlabel=all_labels.size();
+    if (!closed)
+    { endlabel-=(all_labels.size()/10); } // We remove 10% of labels.
+
+    for (std::size_t i=0; i<endlabel; )
+    {
+      ps.init_facet();
+      for (std::size_t j=0,
+           nb=static_cast<std::size_t>
+           (random.get_int(1, static_cast<int>(max_dart_per_face)));
+           i<endlabel && j<nb; ++i, ++j)
+      { ps.add_edges_to_facet(all_labels[i]); }
+      typename PS::Dart_handle dh=ps.finish_facet();
+
+      if (rand()%101<percentage_of_perforated)
+      { ps.perforate_facet(dh); }
+    }
+
+    ps.keep_biggest_connected_component(); // We keep only the biggest cc.
+  }
+
 } //namespace Surface_mesh_topology
 } //namespace CGAL
 

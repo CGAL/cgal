@@ -697,7 +697,8 @@ protected:
           if (get_original_map().is_perforated(it))
           { get_reduced_map().mark(d1, m_mark_perforated); }
         }
-        else if (it<get_original_map().template beta<2>(it))
+        else if (Original_dart_const_handle(it)<
+                 get_original_map().template beta<2>(it))
         {
           d1=get_reduced_map().create_dart();
           d2=get_reduced_map().create_dart();

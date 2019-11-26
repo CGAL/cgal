@@ -13,12 +13,12 @@ int main()
   ps.add_facet("a b -a c"); // First facet, giving directly its sequence of edges
   ps.add_facet("d -c e -b"); // Second facet
 
-  ps.begin_facet(); // Third facet
+  ps.init_facet(); // Third facet
   ps.add_edges_to_facet("f"); // Here, each edge is added one at a time
   ps.add_edges_to_facet("-d");
   ps.add_edges_to_facet("-f");
   ps.add_edges_to_facet("-e");
-  ps.end_facet();
+  ps.finish_facet();
 
   ps.perforate_facet("f");
   

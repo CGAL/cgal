@@ -37,13 +37,16 @@
 #include <initializer_list>
 
 // A Path_on_surface contains two vectors of equal length n
-// The first one is a vector of darts called m_path and the second one a vector of booleans called m_flip
-// If n = 0, the path represented by those vectors is the empty path
+// The first one is a vector of darts called m_path and the second one a vector
+// of booleans called m_flip.
+// If n = 0, the path represented by those vectors is the empty path.
 // Else, it is the path represented by the n-1 first elements of both vectors,
-// at the one we add the m_path[n-1] dart if m_flip[n-1] is false and the opposite of this dart if m_flip[n-1] is true
-// i.e. if m_flip[i] is true means that the i-th dart m_path[i] has to be flipped
-// We use flips because sometimes opposite darts doesn't exist on surfaces with boundaries
-// But if m_flip[i] is true doesn't necesary mean that m_path[i] is 2-free
+// at the one we add the m_path[n-1] dart if m_flip[n-1] is false and the
+// opposite of this dart if m_flip[n-1] is true i.e. if m_flip[i] is true means
+// that the i-th dart m_path[i] has to be flipped.
+// We use flips because sometimes opposite darts doesn't exist on surfaces with
+// boundaries. But if m_flip[i] is true doesn't necesary mean that
+// m_path[i] is 2-free
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -722,13 +725,19 @@ public:
   /// If this face does not exist (if it is a boundary) then replace the edge
   /// by the face on the other side. Problem of complexity when used many times
   /// (like in update_path_randomly).
-  void push_around_face(std::size_t i, bool update_isclosed=true)
+  bool push_around_face(std::size_t i, bool update_isclosed=true)
   {
     CGAL_assertion(i<length());
+
+    // It is not possible to push around a perforated face since it changes
+    // the homotopy of the path.
+    if (get_map().is_perforated(get_ith_dart(i))) { return false; }
+
     Self p2(get_mesh());
 
+    // 1) We add in p2 the part of the path which is pushed.
     if (get_ith_flip(i))
-    {// in this case the face of the ith dart doesn't exist
+    {
       Dart_const_handle dh=get_map().template beta<1>(get_ith_dart(i));
       do
       {
@@ -748,16 +757,20 @@ public:
       while(dh!=get_ith_dart(i));
     }
 
+    // 2) We copy the end of the path.
     p2.m_path.reserve(p2.length()+length()-i);
     for (std::size_t j=i+1; j<length(); ++j)
     { p2.push_back(get_ith_dart(j), get_ith_flip(j), false); }
 
+    // 3) We cut this path to keep the first i darts.
     cut(i, false);
     m_path.reserve(length()+p2.length());
     for (std::size_t j=0; j<p2.length(); ++j)
     { push_back(p2[j], p2.get_ith_flip(j), false); }
 
     if (update_isclosed) { update_is_closed(); }
+    return true;
+
     //CGAL_assertion(is_valid());
   }
 
@@ -768,8 +781,8 @@ public:
   {
     if (is_empty()) return;
 
-    for (unsigned int i=0; i<nb; ++i)
-    { push_around_face(random.get_int(0, length()), false); }
+    for (unsigned int i=0; i<nb; )
+    { if (push_around_face(random.get_int(0, length()), false)) { ++i; } }
     if (update_isclosed) { update_is_closed(); }
   }
 
