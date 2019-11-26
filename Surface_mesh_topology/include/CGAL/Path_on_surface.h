@@ -781,8 +781,12 @@ public:
   {
     if (is_empty()) return;
 
-    for (unsigned int i=0; i<nb; )
-    { if (push_around_face(random.get_int(0, length()), false)) { ++i; } }
+    for (unsigned int i=0; i<nb; ++i)
+    {
+      std::size_t dartn=random.get_int(0, length()), j=dartn;
+      while(!push_around_face(dartn, false) && dartn!=j)
+      { ++dartn; }
+    }
     if (update_isclosed) { update_is_closed(); }
   }
 

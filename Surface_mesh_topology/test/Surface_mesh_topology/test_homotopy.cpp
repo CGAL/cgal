@@ -44,6 +44,7 @@ bool unit_test_canonize(Curves_on_surface_topology<LCC_3_cmap>& cst,
                         const char* msg,
                         bool draw, int testtorun)
 {
+  CGAL_USE(msg);
   bool res=true;
 
   if (testtorun==-1 || nbtests==testtorun)
@@ -122,10 +123,12 @@ bool test_double_torus_quad(bool draw, int testtorun)
 
     if (testtorun==-1 || nbtests==testtorun)
     {
-      CGAL::Random random(starting_seed+nbtests);
+      CGAL::Random random(static_cast<unsigned int>(starting_seed+nbtests));
       Path_on_surface<LCC_3_cmap> p(lcc);
 
-      internal::generate_random_closed_path(p, random.get_int(5, 20), random); // random path, length between 5 and 20
+      internal::generate_random_closed_path(p,
+                                            static_cast<std::size_t>
+                                            (random.get_int(5, 20)), random); // random path, length between 5 and 20
       paths.push_back(p);
 
       p.update_path_randomly(random);
@@ -154,10 +157,12 @@ bool test_double_torus_quad(bool draw, int testtorun)
 
     if (testtorun==-1 || nbtests==testtorun)
     {
-      CGAL::Random random(starting_seed+nbtests);
+      CGAL::Random random(static_cast<unsigned int>(starting_seed+nbtests));
       Path_on_surface<LCC_3_cmap> p(lcc);
 
-      internal::generate_random_closed_path(p, random.get_int(5, 200), random); // random path, length between 5 and 200
+      internal::generate_random_closed_path(p,
+                                            static_cast<std::size_t>
+                                            (random.get_int(5, 200)), random); // random path, length between 5 and 200
       paths.push_back(p);
 
       p.update_path_randomly(random);
@@ -177,7 +182,7 @@ bool test_double_torus_quad(bool draw, int testtorun)
 }
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-void usage(int /*argc*/, char** argv)
+[[noreturn]] void usage(int /*argc*/, char** argv)
 {
   std::cout<<"usage: "<<argv[0]<<" [-draw] [-test N] [-seed S]"<<std::endl
            <<"   Test path homotopy method."
@@ -192,7 +197,7 @@ void usage(int /*argc*/, char** argv)
   exit(EXIT_FAILURE);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void error_command_line(int argc, char** argv, const char* msg)
+[[noreturn]] void error_command_line(int argc, char** argv, const char* msg)
 {
   std::cout<<"ERROR: "<<msg<<std::endl;
   usage(argc, argv);
