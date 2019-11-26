@@ -331,6 +331,9 @@ public:
       setWindowTitle(title);
 
     resize(500, 450);
+
+    if (inverse_normal)
+    { negate_all_normals(); }
   }
 
   ~Basic_viewer_qt()
@@ -431,29 +434,27 @@ public:
   { m_buffer_for_colored_segments.add_segment(p1, p2, acolor); }
 
   template <typename KPoint, typename KVector>
-  void update_bounding_box_for_ray(const KPoint &p, const KVector &v) {
-    // m_buffer_for_mono_points.add_point(p);
-    Local_point lp = internal::get_local_point(p);
-    Local_vector lv = internal::get_local_vector(v);
+  void update_bounding_box_for_ray(const KPoint &p, const KVector &v)
+  {
+    Local_point lp = get_local_point(p);
+    Local_vector lv = get_local_vector(v);
     CGAL::Bbox_3 b = (lp + lv).bbox();
     m_bounding_box += b;
-    // m_bounding_box += CGAL::Bbox_3(b.xmin(), 0, b.ymin(), b.xmax(), 0,
-    // b.ymax());
   }
 
   template <typename KPoint, typename KVector>
   void update_bounding_box_for_line(const KPoint &p, const KVector &v,
                                     const KVector &pv)
   {
-    Local_point lp = internal::get_local_point(p);
-    Local_vector lv = internal::get_local_vector(v);
-    Local_vector lpv = internal::get_local_vector(pv);
+    Local_point lp = get_local_point(p);
+    Local_vector lv = get_local_vector(v);
+    Local_vector lpv = get_local_vector(pv);
 
     CGAL::Bbox_3 b = lp.bbox() + (lp + lv).bbox() + (lp + lpv).bbox();
     m_bounding_box += b;
   }
 
- /* template <typename KPoint, typename KVector>
+  template <typename KPoint, typename KVector>
   void add_ray(const KPoint &p, const KVector &v)
   {
     double bigNumber = 1e30;
@@ -481,12 +482,12 @@ public:
     double bigNumber = 1e30;
     m_buffer_for_colored_lines.add_line_segment((p - (bigNumber)*v),
                                                 (p + (bigNumber)*v), acolor);
-  }*/
+  }
 
   template<typename KPoint>
   void add_text(const KPoint& kp, const QString& txt)
   {
-    Local_point p=internal::get_local_point(kp);
+    Local_point p=get_local_point(kp);
     m_texts.push_back(std::make_tuple(p, txt));
   }
 
@@ -1180,9 +1181,9 @@ protected:
       if (has_zero_x())      { cx=1.; }
       else if (has_zero_y()) { cy=1.; }
       else                   { cz=1.; }
-
-      camera()->setViewDirection(CGAL::qglviewer::Vec(cx,cy,cz));
-      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(-cx, -cy, -cz));
+    
+      camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
+      constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
       camera()->frame()->setConstraint(&constraint);
     }
 
@@ -1266,11 +1267,8 @@ protected:
 
   void negate_all_normals()
   {
-    for (unsigned int k=BEGIN_NORMAL; k<END_NORMAL; ++k)
-    {
-      for (std::size_t i=0; i<arrays[k].size(); ++i)
-      { arrays[k][i]=-arrays[k][i]; }
-    }
+    m_buffer_for_mono_faces.negate_normals();
+    m_buffer_for_colored_faces.negate_normals();
   }
 
   virtual void keyPressEvent(QKeyEvent *e)

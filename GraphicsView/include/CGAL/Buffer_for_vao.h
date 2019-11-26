@@ -71,7 +71,7 @@ namespace internal
     static typename Local_kernel::Point_3 get_local_point(const typename K::Point_2& p)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
-      return Local_point(converter(p.x()), 0, converter(p.y()));
+      return typename Local_kernel::Point_3(converter(p.x()), 0, converter(p.y()));
     }
     static typename Local_kernel::Point_3 get_local_point(const typename K::Weighted_point_2& p)
     {
@@ -91,12 +91,17 @@ namespace internal
     static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_2& v)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
-      return Local_vector(converter(v.x()), 0, converter(v.y()));
+      return typename Local_kernel::Vector_3(converter(v.x()), 0, converter(v.y()));
     }
     static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_3& v)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(v);
+    }
+    static typename Local_kernel::Ray_2 get_local_ray(const typename K::Ray_2& r)
+    {
+      CGAL::Cartesian_converter<K, Local_kernel> converter;
+      return converter(r);
     }
   };
 
@@ -116,6 +121,8 @@ namespace internal
     { return typename Local_kernel::Vector_3(v.x(), 0, v.y()); }
     static const typename Local_kernel::Vector_3& get_local_vector(const typename Local_kernel::Vector_3& v)
     { return v; }
+    static const typename Local_kernel::Ray_2& get_local_ray(const typename Local_kernel::Ray_2& r)
+    { return r; }
   };
 } // End namespace internal
 
@@ -127,6 +134,7 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
   typedef Local_kernel::Point_3  Local_point;
   typedef Local_kernel::Vector_3 Local_vector;
+  typedef Local_kernel::Ray_2    Local_ray;
 
   Buffer_for_vao(std::vector<BufferType>* pos=nullptr,
                  std::vector<IndexType>* indices=nullptr,
@@ -143,6 +151,7 @@ public:
     m_zero_x(true),
     m_zero_y(true),
     m_zero_z(true),
+    m_inverse_normal(false),
     m_face_started(false)
   {}
 
@@ -193,6 +202,17 @@ public:
   bool has_zero_z() const
   { return m_zero_z; }  
 
+  void negate_normals()
+  {
+    m_inverse_normal=!m_inverse_normal;
+    for (std::vector<BufferType>*array=m_flat_normal_buffer; array!=nullptr;
+         array=(array==m_gouraud_normal_buffer?nullptr:m_gouraud_normal_buffer))
+    {
+      for (std::size_t i=0; i<array->size(); ++i)
+      { (*array)[i]=-(*array)[i]; }
+    }
+  }
+  
   // 1.1) Add a point, without color. Return the index of the added point.
   template<typename KPoint>
   std::size_t add_point(const KPoint& kp)
@@ -210,6 +230,16 @@ public:
     if (m_zero_z && p.z()!=0) { m_zero_z=false; }
 
     return m_pos_buffer->size()-3;
+  }
+
+  template<typename KPoint>
+  std::size_t add_point_infinity(const KPoint& kp)
+  {
+      if (!has_position()) return (std::size_t)-1;
+
+      Local_point p=get_local_point(kp);
+      add_point_in_buffer(p, *m_pos_buffer);
+      return m_pos_buffer->size()-3;
   }
 
   // 1.2) Add a point, with color.
@@ -251,6 +281,44 @@ public:
   {
     add_indexed_point(index1);
     add_indexed_point(index2);
+  }
+
+  // 3.1) Add a ray segment, without color
+  template<typename KPoint, typename KVector>
+  void add_ray_segment(const KPoint& kp1, const KVector& kp2)
+  {
+    add_point(kp1);
+    add_point_infinity(kp2);
+  }
+
+  //3.2) Add a ray segment, with color
+  template<typename KPoint, typename KVector>
+  void add_ray_segment(const KPoint& kp1, const KVector& kp2,
+                       const CGAL::Color& c)
+  {
+    add_point(kp1);
+    add_point_infinity(kp2);
+    add_color(c);
+    add_color(c);
+  }
+
+  // 4.1) Add a line, without color
+  template<typename KPoint>
+  void add_line_segment(const KPoint& kp1, const KPoint& kp2)
+  {
+    add_point_infinity(kp1);
+    add_point_infinity(kp2);
+  }
+
+  // 4.1) Add a line, with color
+  template<typename KPoint>
+  void add_line_segment(const KPoint& kp1, const KPoint& kp2,
+                        const CGAL::Color& c)
+  {
+    add_point_infinity(kp1);
+    add_point_infinity(kp2);
+    add_color(c);
+    add_color(c);
   }
 
   /// @return true iff a face has begun.
@@ -340,7 +408,7 @@ public:
     {
       /* std::cerr<<"PB: you try to triangulate a face with "<<m_points_of_face.size()<<" vertices."
                <<std::endl; */
-
+      
       m_face_started=false;
       m_points_of_face.clear();
       m_vertex_normals_for_face.clear();
@@ -399,9 +467,10 @@ public:
 
   /// adds `kv` coordinates to `buffer`
   template<typename KVector>
-  static void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer)
+  static void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer,
+                                   bool inverse_normal=false)
   {
-    Local_vector n=get_local_vector(kv);
+    Local_vector n=(inverse_normal?-get_local_vector(kv):get_local_vector(kv));
     buffer.push_back(n.x());
     buffer.push_back(n.y());
     buffer.push_back(n.z());
@@ -458,6 +527,8 @@ public:
     return true;
   }
 
+  CGAL::Bbox_3 *bb() const { return m_bb; }
+
 protected:
   void face_begin_internal(bool has_color, bool has_normal)
   {
@@ -484,23 +555,23 @@ protected:
       if (m_indices_of_points_of_face.size()>0)
       { 
 	add_indexed_point(m_indices_of_points_of_face[i]); 
-	}
+      }
       else
       {
         add_point(m_points_of_face[i]); // Add the position of the point
-      if (m_started_face_is_colored)
-      { add_color(m_color_of_face); } // Add the color      
-      add_flat_normal(normal); // Add the flat normal
-      // Its smooth normal (if given by the user)
-      if (m_vertex_normals_for_face.size()>0)
-      { // Here we have 3 vertex normals; we can use Gouraud
-        add_gouraud_normal(m_vertex_normals_for_face[i]);
-      }
-      else
-      { // Here user does not provide all vertex normals: we use face normal istead
-        // and thus we will not be able to use Gouraud
-        add_gouraud_normal(normal);
-      }
+        if (m_started_face_is_colored)
+        { add_color(m_color_of_face); } // Add the color      
+        add_flat_normal(normal); // Add the flat normal
+        // Its smooth normal (if given by the user)
+        if (m_vertex_normals_for_face.size()>0)
+        { // Here we have 3 vertex normals; we can use Gouraud
+          add_gouraud_normal(m_vertex_normals_for_face[i]);
+        }
+        else
+        { // Here user does not provide all vertex normals: we use face normal istead
+          // and thus we will not be able to use Gouraud
+          add_gouraud_normal(normal);
+        }
       }
     }
   }
@@ -766,14 +837,14 @@ protected:
   void add_flat_normal(const KVector& kv)
   {
     if(m_flat_normal_buffer != nullptr)
-    { add_normal_in_buffer(kv, *m_flat_normal_buffer); }
+    { add_normal_in_buffer(kv, *m_flat_normal_buffer, m_inverse_normal); }
   }
 
   template<typename KVector>
   void add_gouraud_normal(const KVector& kv)
   {
     if(m_gouraud_normal_buffer != nullptr)
-    { add_normal_in_buffer(kv, *m_gouraud_normal_buffer); }
+    { add_normal_in_buffer(kv, *m_gouraud_normal_buffer, m_inverse_normal); }
   }
 
 protected:
@@ -826,6 +897,8 @@ protected:
   bool m_zero_x; /// True iff all points have x==0
   bool m_zero_y; /// True iff all points have y==0
   bool m_zero_z; /// True iff all points have z==0
+
+  bool m_inverse_normal;;
   
   // Local variables, used when we started a new face.
   bool m_face_started;
