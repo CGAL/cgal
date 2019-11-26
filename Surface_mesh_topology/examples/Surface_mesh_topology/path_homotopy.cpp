@@ -120,6 +120,12 @@ int main(int argc, char** argv)
   
   Curves_on_surface_topology<LCC_3_cmap> cst(lcc, time);
    
+  cst.compute_minimal_quadrangulation(time);
+
+  std::cout<<"Reduced map: ";
+  cst.get_minimal_quadrangulation().display_characteristics(std::cout)
+      <<", valid="<< cst.get_minimal_quadrangulation().is_valid()<<std::endl;
+
   unsigned int nbcontractible=0;
   std::vector<std::size_t> errors_seeds;
   unsigned int length, defo;
@@ -185,13 +191,6 @@ int main(int argc, char** argv)
   std::cout<<"Number of contractible paths: "<<nbcontractible<<" among "<<N
            <<" (i.e. "<<static_cast<double>(nbcontractible*100)/
              static_cast<double>(N)<<"%)."<<std::endl;
-
-  if (cst.is_minimal_quadrangulation_computed())
-  {
-    std::cout<<"Reduced map: ";
-    cst.get_minimal_quadrangulation().display_characteristics(std::cout)
-      << ", valid="<< cst.get_minimal_quadrangulation().is_valid() << std::endl;
-  }
   
   return EXIT_SUCCESS;
 }
