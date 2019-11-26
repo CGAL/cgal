@@ -97,6 +97,7 @@
 \package_listing{Poisson_surface_reconstruction_3}
 \package_listing{Scale_space_reconstruction_3}
 \package_listing{Advancing_front_surface_reconstruction}
+\package_listing{Polygonal_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
 \cgalPackageSection{PartGeometryProcessing,Geometry Processing}

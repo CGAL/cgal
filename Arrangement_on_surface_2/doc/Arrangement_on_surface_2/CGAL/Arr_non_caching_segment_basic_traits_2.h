@@ -28,7 +28,5 @@ template< typename Kernel >
 class Arr_non_caching_segment_basic_traits_2 {
 public:
 
-/// @}
-
 }; /* end Arr_non_caching_segment_basic_traits_2 */
 } /* end namespace CGAL */

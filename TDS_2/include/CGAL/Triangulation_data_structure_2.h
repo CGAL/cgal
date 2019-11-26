@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Mariette Yvinec
@@ -61,8 +52,7 @@ class Triangulation_data_structure_2
   typedef typename Vb::template Rebind_TDS<Tds>::Other  Vertex_base;
   typedef typename Fb::template Rebind_TDS<Tds>::Other  Face_base;
 
-  friend class Triangulation_ds_edge_iterator_2<Tds,false>;
-  friend class Triangulation_ds_edge_iterator_2<Tds,true>;
+  friend class Triangulation_ds_edge_iterator_2<Tds>;
   friend class Triangulation_ds_face_circulator_2<Tds>;
   friend class Triangulation_ds_edge_circulator_2<Tds>;
   friend class Triangulation_ds_vertex_circulator_2<Tds>;
@@ -90,9 +80,7 @@ public:
 
   typedef typename Face_range::iterator              Face_iterator;
   typedef typename Vertex_range::iterator            Vertex_iterator;
-
   typedef Triangulation_ds_edge_iterator_2<Tds>      Edge_iterator;
-  typedef Triangulation_ds_edge_iterator_2<Tds,false> Halfedge_iterator;
 
   typedef Triangulation_ds_face_circulator_2<Tds>    Face_circulator;
   typedef Triangulation_ds_vertex_circulator_2<Tds>  Vertex_circulator;
@@ -104,8 +92,7 @@ public:
     
   typedef Vertex_iterator                            Vertex_handle;
   typedef Face_iterator                              Face_handle;
-
-  typedef std::pair<Face_handle,int> Edge;
+  typedef std::pair<Face_handle, int>                Edge;
 
   typedef std::list<Edge> List_edges;
 
@@ -203,15 +190,7 @@ public:
   Edges edges() const {
     return Edges(edges_begin(),edges_end());
   }
-  
-  Halfedge_iterator halfedges_begin() const {
-    return Halfedge_iterator(this);
-  }
 
-  Halfedge_iterator halfedges_end() const {
-    return Halfedge_iterator(this,1);
-  }
-  
   Face_circulator incident_faces(Vertex_handle v, 
 				 Face_handle f =  Face_handle()) const{
     return Face_circulator(v,f);

@@ -24,7 +24,5 @@ template< typename Traits, typename Vb >
 class Fixed_alpha_shape_vertex_base_3 : public Vb {
 public:
 
-/// @}
-
 }; /* end Fixed_alpha_shape_vertex_base_3 */
 } /* end namespace CGAL */

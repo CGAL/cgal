@@ -221,6 +221,17 @@ struct Test {
     check_squared_distance (L(p(2, -4,  3), p( 3,-8, 4)), Pl(0, 1, 0, 0), 0);
   }
 
+  void Pl_Pl()
+  {
+    std::cout << "Plane - Plane\n";
+    Pl p1(0, 1, 0, 0);
+    typename K::Vector_3 v = -p1.orthogonal_vector();
+    v /= CGAL::sqrt(v.squared_length());
+    Pl p2 = Pl(0,-1,0,6);
+    check_squared_distance (p1,p2, 36);
+    check_squared_distance (Pl(-2, 1, 1, 0), Pl(2, 1, 3, 0), 0);
+  }
+
   void run()
   {
     std::cout << "3D Distance tests\n";
@@ -239,6 +250,7 @@ struct Test {
     S_Pl();
     R_Pl();
     L_Pl();
+    Pl_Pl();
   }
 
 };

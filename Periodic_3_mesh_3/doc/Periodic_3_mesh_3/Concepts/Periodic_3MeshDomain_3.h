@@ -41,6 +41,4 @@ public:
   */
   const Iso_cuboid_3& bounding_box();
 
-/// @}
-
 }; /* end Periodic_3MeshDomain_3 */

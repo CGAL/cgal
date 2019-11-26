@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>489</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,6 +26,83 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
+        <item row="4" column="1">
+         <widget class="QPushButton" name="colorizeButton">
+          <property name="text">
+           <string>Colorize</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>Zoom </string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QPushButton" name="zoomToMinButton">
+             <property name="text">
+              <string>Zoom to min</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="zoomToMaxButton">
+             <property name="text">
+              <string>Zoom to max</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Ramp Colors</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QPushButton" name="minColorButton">
+             <property name="text">
+              <string>Color Min...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="maxColorButton">
+             <property name="text">
+              <string>Color Max...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QPushButton" name="sourcePointsButton">
+          <property name="text">
+           <string>Select Source Points</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="1">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
@@ -75,80 +152,13 @@
           </layout>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Ramp Colors</string>
+        <item row="7" column="1">
+         <widget class="QPushButton" name="deleteButton">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QPushButton" name="minColorButton">
-             <property name="text">
-              <string>Color Min...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="maxColorButton">
-             <property name="text">
-              <string>Color Max...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Zoom </string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QPushButton" name="zoomToMinButton">
-             <property name="text">
-              <string>Zoom to min</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="zoomToMaxButton">
-             <property name="text">
-              <string>Zoom to max</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_3">
           <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QPushButton" name="colorizeButton">
-          <property name="text">
-           <string>Colorize</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QPushButton" name="sourcePointsButton">
-          <property name="text">
-           <string>Select Source Points</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
+           <string>Delete Group</string>
           </property>
          </widget>
         </item>

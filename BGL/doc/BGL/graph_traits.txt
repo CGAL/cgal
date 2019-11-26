@@ -150,30 +150,29 @@ and `CGAL::Triangulation_hierarchy_2`
 so that they are model of the graph concepts
 `BidirectionalGraph`, `VertexAndEdgeListGraph`, and `FaceListGraph`.
 
-The mapping between vertices and edges of the triangulation and the
+Only finite simplices exist when viewed through the scope of these graph traits classes.
+The infinite vertex, halfedges, edges, and faces will thus not appear when looping around a border
+vertex, or walking through the faces container.
+
+The mapping between vertices, edges, and faces of the triangulation and the
 graph is rather straightforward, but there are some subtleties. The
 value type of the \sc{Bgl} iterators is the vertex or edge descriptor,
 whereas in \cgal all iterators and circulators are also handles and
 hence have as value type Vertex or Edge.
 
-The graph traits class for triangulations does not distinguish between
-finite and infinite vertices and edges. As the edge weight computed
-with the default property map of \sc{Bgl} algorithms (obtained with
-`get(t, boost::edge_weight)`) is the length of the edge,
-the edge weight is not well defined for infinite edges. For algorithms
-that make use of the edge weight, the user must therefore
-define a <A HREF="https://www.boost.org/libs/graph/doc/filtered_graph.html">`boost::filtered_graph`</A> or pass a property map to the
-algorithm that returns "infinity" for infinite edges.
-
 | Member                   | Value  | Description |
 | :----------------------- | :----: | :---------- |
-| `vertex_descriptor`      | `Triangulation::Vertex_handle`     | Identify vertices in the graph. |
-| `edge_descriptor`        | `unspecified_type`     | Identify edges in the graph. It is constructible from and convertible to `Triangulation::Edge`. It is not a simple typedef, but a proper class, because in an undirected graph the edges `(u,v)` and `(v,u)` must be equal. This is not the case for the Edge type of the triangulation. |
+| `vertex_descriptor`      | `unspecified_type` | Identify vertices in the graph. |
+| `halfedge_descriptor`    | `unspecified_type` | Identify halfedges in the graph. It is constructible from and convertible to `Triangulation::Edge`. It is not a simple typedef, but a proper class, because there is no representation for halfedges in the 2D triangulation data structure. |
+| `edge_descriptor`        | `unspecified_type` | Identify edges in the graph. It is constructible from and convertible to `Triangulation::Edge`. It is not a simple typedef, but a proper class, because in an undirected graph the edges `(u,v)` and `(v,u)` must be equal. This is not the case for the Edge type of the triangulation. |
+| `face_descriptor`        | `unspecified_type` | Identify faces in the graph. |
 | `adjacency_iterator`     | `unspecified_type` | An iterator to traverse through the vertices adjacent to a vertex. Its value type is `vertex_descriptor`. |
 | `out_edge_iterator`      | `unspecified_type` | An iterator to traverse through the outgoing edges incident to a vertex. Its value type is `edge_descriptor`. |
 | `in_edge_iterator`       | `unspecified_type` | An iterator to traverse through the incoming edges incident to a vertex. Its value type is `edge_descriptor`. |
-| `vertex_iterator`        | `unspecified_type`     | An iterator to traverse through the vertices of the graph. Its value type is `vertex_descriptor`. |
-| `edge_iterator`          | `unspecified_type`     | An iterator to traverse through the edges of the graph. Its value type is `edge_descriptor`. |
+| `vertex_iterator`        | `unspecified_type` | An iterator to traverse through the vertices of the graph. Its value type is `vertex_descriptor`. |
+| `halfedge_iterator`      | `unspecified_type` | An iterator to traverse through the halfedges of the graph. Its value type is `halfedge_descriptor`. |
+| `edge_iterator`          | `unspecified_type` | An iterator to traverse through the edges of the graph. Its value type is `edge_descriptor`. |
+| `face_iterator`          | `unspecified_type` | An iterator to traverse through the faces of the graph. Its value type is `face_descriptor`. |
 | `directed_category`      | `boost::undirected_tag`      | This graph is not directed. |
 | `edge_parallel_category` | `boost::disallow_parallel_edge_tag` | This graph does not support multiedges. |
 | `traversal_category`     | Inherits from `boost::bidirectional_graph_tag`, `boost::adjacency_graph_tag`, `boost::vertex_list_graph_tag`, and `boost::edge_list_graph_tag` | The ways in which the vertices in the graph can be traversed.. |

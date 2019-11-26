@@ -1,19 +1,10 @@
 // Copyright (c) 2013  GeometryFactory (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau, Xiang Gao
 //
@@ -221,7 +212,9 @@ The polylines are reported using a visitor.
         - <code>void start_new_polyline()</code>
           called when starting the description of a polyline.
         - <code>void add_node(typename boost::graph_traits<Graph>::%vertex_descriptor v)</code>
-          called for each vertex `v` of the polyline currently described.
+          called for each vertex `v` of the polyline currently described. If the polyline is closed
+          this function will be called twice for the first vertex of the cycle picked (once after
+          calling `start_new_polyline()` and once before the call to `end_polyline()`.
         - <code>void end_polyline()</code>
           called when the description of a polyline is finished.
 \tparam IsTerminal A functor providing `bool operator()(boost::graph_traits<Graph>::%vertex_descriptor v, const Graph& g) const`

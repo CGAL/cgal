@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -186,11 +177,10 @@ template <class R_> struct Power_center : Store_kernel<R_> {
     for(i=0; ++f!=e; ++i) {
       WPoint const& wp=*f;
       Point const& p=pdw(wp);
-      FT const& np = sdo(p) - pw(wp);
       for(int j=0;j<d;++j) {
 	m(i,j)=2*(c(p,j)-c(p0,j));
-	b[i] = np - n0;
       }
+      b[i] = sdo(p) - pw(wp) - n0;
     }
     CGAL_assertion (i == d);
     Vec res = typename CVec::Dimension()(d);;

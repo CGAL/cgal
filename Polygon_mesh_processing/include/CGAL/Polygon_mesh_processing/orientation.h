@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ilker O. Yaz
@@ -69,18 +60,18 @@ namespace internal{
                            const PolygonMesh& pmesh,
                            const NamedParameters& np)
   {
-    using boost::choose_param;
-    using boost::get_param;
+
+    using parameters::get_parameter;
 
     CGAL_assertion(halfedge(v_max, pmesh)!=boost::graph_traits<PolygonMesh>::null_halfedge());
 
     //VertexPointMap
     typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-    VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+    VPMap vpmap = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, pmesh));
     //Kernel
     typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-    GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+    GT gt = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
     //among the incoming edges of `v_max`, find one edge `e` with the minimal slope
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -182,16 +173,16 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   if (faces(pmesh).first == faces(pmesh).second)
     return true;
 
-  using boost::choose_param;
-  using boost::get_param;
+
+  using parameters::get_parameter;
 
   //VertexPointMap
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VPMap vpmap = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
   //Kernel
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  GT gt = choose_param(get_param(np, internal_np::geom_traits), GT());
+  GT gt = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   //find the vertex with maximal z coordinate
   internal::Compare_vertex_points_z_3<GT, VPMap> less_z(vpmap, gt);
@@ -482,16 +473,15 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
   CGAL_assertion(is_valid_polygon_mesh(tm));
   CGAL_assertion(is_closed(tm));
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::get_parameter;
 
-  bool orient_outward = choose_param(
-                          get_param(np, internal_np::outward_orientation),true);
+  bool orient_outward = CGAL::parameters::choose_parameter(
+                          get_parameter(np, internal_np::outward_orientation),true);
 
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+  Fid_map fid_map = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::face_index),
                                  get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
@@ -589,16 +579,16 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   if (!is_closed(tm)) return;
   if (!is_triangle_mesh(tm)) return;
 
-  using boost::choose_param;
-  using boost::get_param;
 
-  bool orient_outward = choose_param(
-                          get_param(np, internal_np::outward_orientation),true);
+  using parameters::get_parameter;
 
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  bool orient_outward = CGAL::parameters::choose_parameter(
+                          get_parameter(np, internal_np::outward_orientation),true);
+
+  Vpm vpm = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = choose_param(get_param(np, internal_np::face_index),
+  Fid_map fid_map = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::face_index),
                                  get_const_property_map(boost::face_index, tm));
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));

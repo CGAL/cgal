@@ -8,6 +8,7 @@
 
 #include <CGAL/IO/read_3mf.h>
 #include <CGAL/IO/write_3mf.h>
+#include <QFileDialog>
 
 #include "Scene_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -58,10 +59,10 @@ class Io_3mf_plugin:
     });
     menuFile->insertAction(CGAL::Three::Three::mainWindow()->findChild<QAction*>("actionSa_ve_Scene_as_Script"), actionSaveSceneTo3mf);
   }
-  QString name() const { return "3mf_io_plugin"; }
+  QString name() const Q_DECL_OVERRIDE { return "3mf_io_plugin"; }
 
 
-  QString nameFilters() const { return
+  QString nameFilters() const Q_DECL_OVERRIDE { return
         "3mf files (*.3mf)"; }
 
 

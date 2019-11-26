@@ -2,20 +2,11 @@
 // Copyright (c) 2014  GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sylvain Pion
 
@@ -257,17 +248,10 @@ public:
   typedef value_type&                               reference;
   typedef const value_type&                         const_reference;
 
-#ifdef CGAL_CXX11
   typedef typename std::allocator_traits<Allocator>::pointer               pointer;
   typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
   typedef typename std::allocator_traits<Allocator>::size_type             size_type;
   typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
-#else
-  typedef typename Allocator::pointer               pointer;
-  typedef typename Allocator::const_pointer         const_pointer;
-  typedef typename Allocator::size_type             size_type;
-  typedef typename Allocator::difference_type       difference_type;
-#endif
 
   typedef internal::CC_iterator<Self, false>        iterator;
   typedef internal::CC_iterator<Self, true>         const_iterator;
@@ -455,11 +439,7 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::destroy(alloc, &*x);
-#else
-    alloc.destroy(&*x);
-#endif
 /*#ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
 #endif*/
@@ -487,11 +467,7 @@ public:
 
   size_type max_size() const
   {
-#ifdef CGAL_CXX11
     return std::allocator_traits<allocator_type>::max_size(alloc);
-#else
-    return alloc.max_size();
-#endif
   }
 
   size_type capacity() const
@@ -776,11 +752,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
       {
-#ifdef CGAL_CXX11
         std::allocator_traits<allocator_type>::destroy(alloc, pp);
-#else
-        alloc.destroy(pp);
-#endif
         set_type(pp, nullptr, FREE);
       }
     }

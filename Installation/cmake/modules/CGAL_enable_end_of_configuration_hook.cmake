@@ -9,7 +9,7 @@
 
 get_property(PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED
   GLOBAL PROPERTY CGAL_run_at_the_end_of_configuration_INCLUDED)
-if(PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED)
+if(CGAL_SKIP_CMAKE_HOOKS OR PROPERTY_CGAL_run_at_the_end_of_configuration_INCLUDED)
   return()
 endif()
 
@@ -17,11 +17,42 @@ function(CGAL_run_at_the_end_of_configuration variable access value current_list
   if(NOT access STREQUAL "MODIFIED_ACCESS")
     return()
   endif()
+  if(current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        AND NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        OR NOT stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
+        OR stack MATCHES doc/CMakeLists.txt
+        OR stack MATCHES demo/Polyhedron/)
+      return()
+  endif()
+  get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
+  if(CGAL_CHECK_UNREFERENCES_TARGETS)
+    set(_list_of_deps)
+    set(_special_targets  demos examples tests ALL_CGAL_TARGETS CGAL_Qt5_moc_and_resources uninstall install_FindCGAL)
+    foreach(t ${_special_targets})
+      if(NOT TARGET ${t})
+        continue()
+      endif()
+      get_property(_deps TARGET ${t} PROPERTY MANUALLY_ADDED_DEPENDENCIES)
+#      message("  deps of ${t}: ${_deps}")
+      list(APPEND _list_of_deps ${_deps})
+    endforeach()
+    list(APPEND _list_of_deps ${CGAL_EXECUTABLE_TARGETS})
+#    message(STATUS "  all deps: ${_list_of_deps}")
+    foreach(target ${_targets})
+#      message(STATUS "  new target: ${target}")
+      if(${target} IN_LIST _special_targets)
+        continue()
+      endif()
+      if(NOT ${target} IN_LIST _list_of_deps)
+        message(AUTHOR_WARNING "  orphan target: ${target}")
+      endif()
+    endforeach()
+  endif()
   if(CGAL_CHECK_UNUSED_CPP_FILES
       AND NOT current_list_file STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt"
       AND stack STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt")
     file(GLOB _cppfiles ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-    get_property(_targets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
     if(_targets AND _cppfiles)
       set(_sources)
       foreach(_target ${_targets})

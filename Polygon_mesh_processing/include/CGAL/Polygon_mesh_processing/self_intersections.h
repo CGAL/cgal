@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pierre Alliez, Laurent Rineau, Ilker O. Yaz
@@ -272,7 +263,7 @@ self_intersections(const TriangleMesh& tmesh
 #ifdef DOXYGEN_RUNNING
                  , const NamedParameters& np)
 #else
-                 , const cgal_bgl_named_params<P,T,R>& np)
+                 , const Named_function_parameters<P,T,R>& np)
 #endif
 {
   return self_intersections(faces(tmesh), tmesh, out, np);
@@ -340,8 +331,8 @@ self_intersections( const FaceRange& face_range,
   );
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = boost::choose_param(get_param(np, internal_np::vertex_point),
-                                             get_const_property_map(boost::vertex_point, tmesh));
+  VertexPointMap vpmap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                                      get_const_property_map(boost::vertex_point, tmesh));
 
   for(face_descriptor f : face_range)
   {
@@ -366,7 +357,7 @@ self_intersections( const FaceRange& face_range,
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
   CGAL::internal::Intersect_facets<TM,GeomTraits,Box,OutputIterator,VertexPointMap>
     intersect_facets(tmesh, out, vpmap,
-      boost::choose_param(get_param(np, internal_np::geom_traits), GeomTraits()));
+      parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits()));
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);

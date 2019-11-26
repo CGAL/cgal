@@ -1,20 +1,11 @@
 // Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
@@ -185,17 +176,10 @@ public:
   typedef value_type&                               reference;
   typedef const value_type&                         const_reference;
 
-#ifdef CGAL_CXX11
   typedef typename std::allocator_traits<Allocator>::pointer               pointer;
   typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
   typedef typename std::allocator_traits<Allocator>::size_type             size_type;
   typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
-#else
-  typedef typename Allocator::pointer               pointer;
-  typedef typename Allocator::const_pointer         const_pointer;
-  typedef typename Allocator::size_type             size_type;
-  typedef typename Allocator::difference_type       difference_type;
-#endif
 
   typedef internal::CC_iterator<Self, false>        iterator;
   typedef internal::CC_iterator<Self, true>         const_iterator;
@@ -395,11 +379,7 @@ public:
 
   size_type max_size() const
   {
-#ifdef CGAL_CXX11
     return std::allocator_traits<allocator_type>::max_size(m_alloc);
-#else
-    return m_alloc.max_size();
-#endif
   }
 
   size_type capacity() const

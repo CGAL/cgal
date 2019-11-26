@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Gabriele Neyer
@@ -198,11 +189,7 @@ protected:
   {
     Segment_tree_node_t node(l,r,kl,kr);
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
-#else    
-    alloc.construct(node_ptr, node);
-#endif
     return node_ptr;
   }
 
@@ -210,11 +197,7 @@ protected:
   {
     Segment_tree_node_t node(kl,kr);
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
-#else
-    alloc.construct(node_ptr, node);
-#endif
     return node_ptr;
   }
 
@@ -222,11 +205,7 @@ protected:
   {
     Segment_tree_node_t node;
     Segment_tree_node_t* node_ptr = alloc.allocate(1);
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::construct(alloc, node_ptr, node);
-#else
-    alloc.construct(node_ptr, node);
-#endif
     return node_ptr;
   }
 
@@ -311,11 +290,7 @@ protected:
 
   void delete_node(Segment_tree_node_t* node_ptr)
   {
-#ifdef CGAL_CXX11
     std::allocator_traits<allocator_type>::destroy(alloc, node_ptr);
-#else
-    alloc.destroy(node_ptr);
-#endif
     alloc.deallocate(node_ptr,1);
   }
 

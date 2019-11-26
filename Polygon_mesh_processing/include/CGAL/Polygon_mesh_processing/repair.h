@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot,
@@ -61,6 +52,11 @@
 #include <set>
 #include <utility>
 #include <vector>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -581,8 +577,8 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
   CGAL_assertion(CGAL::is_valid_polygon_mesh(tmesh));
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
@@ -592,7 +588,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
@@ -601,7 +597,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   bool all_removed=false;
   bool some_removed=true;
 
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  bool preserve_genus = parameters::choose_parameter(parameters::get_parameter(np, internal_np::preserve_genus), true);
 
   // collect edges of length 0
   while(some_removed && !all_removed)
@@ -1109,8 +1105,8 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
@@ -1120,10 +1116,10 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
@@ -1959,6 +1955,8 @@ bool remove_degenerate_faces(TriangleMesh& tmesh)
 /// @param v a vertex of `pm`
 /// @param pm a triangle mesh containing `v`
 ///
+/// \warning This function has linear runtime with respect to the size of the mesh.
+///
 /// \sa `duplicate_non_manifold_vertices()`
 ///
 /// \return `true` if the vertex is non-manifold, `false` otherwise.
@@ -2011,6 +2009,11 @@ struct Vertex_collector
   typedef typename boost::graph_traits<G>::vertex_descriptor      vertex_descriptor;
 
   bool has_old_vertex(const vertex_descriptor v) const { return collections.count(v) != 0; }
+  void tag_old_vertex(const vertex_descriptor v)
+  {
+    CGAL_precondition(!has_old_vertex(v));
+    collections[v];
+  }
 
   void collect_vertices(vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -2032,8 +2035,6 @@ struct Vertex_collector
 
   std::map<vertex_descriptor, std::vector<vertex_descriptor> > collections;
 };
-
-} // end namespace internal
 
 template <typename PolygonMesh, typename VPM, typename ConstraintMap>
 typename boost::graph_traits<PolygonMesh>::vertex_descriptor
@@ -2078,18 +2079,18 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                     get_property_map(vertex_point, pm));
 
-  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                  NamedParameters,
                                                  Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
                                                  >::type                  VerticesMap;
-  VerticesMap cmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+  VerticesMap cmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                   Constant_property_map<vertex_descriptor, bool>(false));
 
   std::size_t nb_new_vertices = 0;
@@ -2112,17 +2113,26 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   }
   while(ih != done);
 
-  bool is_non_manifold_within_umbrella = (border_counter > 1);
-
-  // if there is a single sector, then simply move the full umbrella to a new vertex, and we're done
+  const bool is_non_manifold_within_umbrella = (border_counter > 1);
   if(!is_non_manifold_within_umbrella)
   {
-    // note that since this is marked as a non-manifold vertex, we necessarily need to create
-    // a new vertex for this umbrella (the main umbrella is not marked as non-manifold)
-    halfedge_descriptor last_h = opposite(next(h, pm), pm);
-    vertex_descriptor new_v = create_new_vertex_for_sector(h, last_h, pm, vpm, cmap);
-    dmap.collect_vertices(old_v, new_v);
-    nb_new_vertices = 1;
+    const bool first_time_meeting_v = !dmap.has_old_vertex(old_v);
+    if(first_time_meeting_v)
+    {
+      // The star is manifold, so if it is the first time we have met that vertex,
+      // there is nothing to do, we just keep the same vertex.
+      set_halfedge(old_v, h, pm); // to ensure halfedge(old_v, pm) stays valid
+      dmap.tag_old_vertex(old_v); // so that we know we have met old_v already, next time, we'll have to duplicate
+    }
+    else
+    {
+      // This is not the canonical star associated to 'v'.
+      // Create a new vertex, and move the whole star to that new vertex
+      halfedge_descriptor last_h = opposite(next(h, pm), pm);
+      vertex_descriptor new_v = create_new_vertex_for_sector(h, last_h, pm, vpm, cmap);
+      dmap.collect_vertices(old_v, new_v);
+      nb_new_vertices = 1;
+    }
   }
   // if there is more than one sector, look at each sector and split them away from the main one
   else
@@ -2155,9 +2165,9 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
       halfedge_descriptor next_start_h = prev(opposite(sector_last_h, pm), pm);
 
       // there are multiple CCs incident to this particular vertex, and we should create a new vertex
-      // if it's not the first umbrella around 'old_v' or not the first sector, but not if it's
-      // the first umbrella and first sector.
-      bool must_create_new_vertex = (!is_main_sector || dmap.has_old_vertex(old_v));
+      // if it's not the first umbrella around 'old_v' or not the first sector, but only not if it's
+      // both the first umbrella and first sector.
+      const bool must_create_new_vertex = (!is_main_sector || dmap.has_old_vertex(old_v));
 
       // In any case, we must set up the next pointer correctly
       set_next(sector_start_h, opposite(sector_last_h, pm), pm);
@@ -2168,6 +2178,11 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
         dmap.collect_vertices(old_v, new_v);
         ++nb_new_vertices;
       }
+      else
+      {
+        // Ensure that halfedge(old_v, pm) stays valid
+        set_halfedge(old_v, sector_start_h, pm);
+      }
 
       is_main_sector = false;
       sector_start_h = next_start_h;
@@ -2177,6 +2192,113 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   }
 
   return nb_new_vertices;
+}
+
+} // end namespace internal
+
+/// \ingroup PMP_repairing_grp
+/// collects the non-manifold vertices (if any) present in the mesh. A non-manifold vertex `v` is returned
+/// via one incident halfedge `h` such that `target(h, pm) = v` for all the umbrellas that `v` apppears in
+/// (an <i>umbrella</i> being the set of faces incident to all the halfedges reachable by walking around `v`
+/// using `hnext = prev(opposite(h, pm), pm)`, starting from `h`).
+///
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
+/// @tparam OutputIterator a model of `OutputIterator` holding objects of type
+///                         `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
+///
+/// @param pm a triangle mesh
+/// @param out the output iterator that collects halfedges incident to `v`
+///
+/// \sa `is_non_manifold_vertex()`
+/// \sa `duplicate_non_manifold_vertices()`
+///
+/// \return the output iterator.
+template <typename PolygonMesh, typename OutputIterator>
+OutputIterator non_manifold_vertices(const PolygonMesh& pm,
+                                     OutputIterator out)
+{
+  // Non-manifoldness can appear either:
+  // - if 'pm' is pinched at a vertex. While traversing the incoming halfedges at this vertex,
+  //   we will meet strictly more than one border halfedge.
+  // - if there are multiple umbrellas around a vertex. In that case, we will find a non-visited
+  //   halfedge that has for target a vertex that is already visited.
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                halfedge_descriptor;
+
+  typedef CGAL::dynamic_vertex_property_t<bool>                                         Vertex_bool_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_bool_tag>::const_type        Known_manifold_vertex_map;
+  typedef CGAL::dynamic_vertex_property_t<halfedge_descriptor>                          Vertex_halfedge_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_halfedge_tag>::const_type    Visited_vertex_map;
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
+
+  Known_manifold_vertex_map known_nm_vertices = get(Vertex_bool_tag(), pm);
+  Visited_vertex_map visited_vertices = get(Vertex_halfedge_tag(), pm);
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
+
+  const halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
+
+  // Dynamic pmaps do not have default initialization values (yet)
+  for(vertex_descriptor v : vertices(pm))
+  {
+    put(known_nm_vertices, v, false);
+    put(visited_vertices, v, null_h);
+  }
+  for(halfedge_descriptor h : halfedges(pm))
+    put(visited_halfedges, h, false);
+
+  for(halfedge_descriptor h : halfedges(pm))
+  {
+    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
+    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
+    // it means that the vertex is non manifold.
+    if(!get(visited_halfedges, h))
+    {
+      put(visited_halfedges, h, true);
+      bool is_non_manifold = false;
+
+      vertex_descriptor v = target(h, pm);
+      if(get(visited_vertices, v) != null_h) // already seen this vertex, but not from this star
+      {
+        is_non_manifold = true;
+        // if this is the second time we visit that vertex and the first star was manifold, we have
+        // never reported the first star, but we must now
+        if(!get(known_nm_vertices, v))
+          *out++ = get(visited_vertices, v); // that's a halfedge of the first star we've seen 'v' in
+      }
+      else
+      {
+        // first time we meet this vertex, just mark it so, and keep the halfedge we found the vertex with in memory
+        put(visited_vertices, v, h);
+      }
+
+      // While walking the star of this halfedge, if we meet a border halfedge more than once,
+      // it means the mesh is pinched and we are also in the case of a non-manifold situation
+      halfedge_descriptor ih = h, done = ih;
+      int border_counter = 0;
+      do
+      {
+        put(visited_halfedges, ih, true);
+        if(is_border(ih, pm))
+          ++border_counter;
+
+        ih = prev(opposite(ih, pm), pm);
+      }
+      while(ih != done);
+
+      if(border_counter > 1)
+        is_non_manifold = true;
+
+      if(is_non_manifold)
+      {
+        *out++ = h;
+        put(known_nm_vertices, v, true);
+      }
+    }
+  }
+
+  return out;
 }
 
 /// \ingroup PMP_repairing_grp
@@ -2210,83 +2332,29 @@ template <typename PolygonMesh, typename NamedParameters>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
                                             const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
-  typedef boost::graph_traits<PolygonMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<PolygonMesh>                            GT;
+  typedef typename GT::halfedge_descriptor                            halfedge_descriptor;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::output_iterator_t,
     NamedParameters,
     Emptyset_iterator
-  > ::type Output_iterator;
-  Output_iterator out
-    = choose_param(get_param(np, internal_np::output_iterator),
-                   Emptyset_iterator());
+  > ::type                                                            Output_iterator;
 
-  internal::Vertex_collector<PolygonMesh> dmap;
-
-  typedef CGAL::dynamic_vertex_property_t<bool>                                   Vertex_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type    Visited_vertex_map;
-  typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::type  Visited_halfedge_map;
-
-  Visited_vertex_map visited_vertices = get(Vertex_property_tag(), pm);
-  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
-
-  // Dynamic pmaps do not have default initialization values (yet)
-  for(vertex_descriptor v : vertices(pm))
-    put(visited_vertices, v, false);
-  for(halfedge_descriptor h : halfedges(pm))
-    put(visited_halfedges, h, false);
-
-  std::size_t nb_new_vertices = 0;
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   std::vector<halfedge_descriptor> non_manifold_cones;
-  for(halfedge_descriptor h : halfedges(pm))
-  {
-    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
-    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
-    // it means that the vertex is non manifold.
-    if(!get(visited_halfedges, h))
-    {
-      put(visited_halfedges, h, true);
-      bool is_non_manifold = false;
+  non_manifold_vertices(pm, std::back_inserter(non_manifold_cones));
 
-      vertex_descriptor vd = target(h, pm);
-      if(get(visited_vertices, vd)) // already seen this vertex, but not from this star
-        is_non_manifold = true;
-
-      put(visited_vertices, vd, true);
-
-      // While walking the star of this halfedge, if we meet a border halfedge more than once,
-      // it means the mesh is pinched and we are also in the case of a non-manifold situation
-      halfedge_descriptor ih = h, done = ih;
-      int border_counter = 0;
-      do
-      {
-        put(visited_halfedges, ih, true);
-        if(is_border(ih, pm))
-          ++border_counter;
-
-        ih = prev(opposite(ih, pm), pm);
-      }
-      while(ih != done);
-
-      if(border_counter > 1)
-        is_non_manifold = true;
-
-      if(is_non_manifold)
-        non_manifold_cones.push_back(h);
-    }
-  }
-
+  internal::Vertex_collector<PolygonMesh> dmap;
+  std::size_t nb_new_vertices = 0;
   if(!non_manifold_cones.empty())
   {
     for(halfedge_descriptor h : non_manifold_cones)
-      nb_new_vertices += make_umbrella_manifold(h, pm, dmap, np);
+      nb_new_vertices += internal::make_umbrella_manifold(h, pm, dmap, np);
 
     dmap.dump(out);
   }
@@ -2848,12 +2916,12 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
 
   // named parameter extraction
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+  VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                            get_property_map(vertex_point, tm));
 
-  const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
-  bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  const int max_steps = parameters::choose_parameter(parameters::get_parameter(np, internal_np::number_of_iterations), 7);
+  bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbosity_level), 0) > 0;
+  bool preserve_genus = parameters::choose_parameter(parameters::get_parameter(np, internal_np::preserve_genus), true);
 
   if (verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";
