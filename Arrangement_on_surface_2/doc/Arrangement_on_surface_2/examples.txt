@@ -40,4 +40,5 @@
 \example Arrangement_on_surface_2/io_curve_history.cpp
 \example Arrangement_on_surface_2/bgl_primal_adapter.cpp
 \example Arrangement_on_surface_2/bgl_dual_adapter.cpp
+\example Arrangement_on_surface_2/spherical_insert.cpp
 */

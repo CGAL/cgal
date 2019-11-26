@@ -237,6 +237,24 @@ data-structure (\sc{Dcel} for short), which consists of containers of
 vertices, edges and faces and maintains the incidence relations among
 these cells.
 
+\cgalAdvancedBegin
+
+The \f$ x\f$-monotone curves of an arrangement are embedded in an
+rectangular two-dimensional area called the parameter space. The
+parameter space is defined as \f$ X \times Y\f$, where \f$ X\f$ and
+\f$ Y\f$ are open, half-open, or closed intervals with endpoints in
+the compactified real line \f$ \mathbb{R} \cup
+\{-\infty,+\infty\}\f$. Let \f$ b_l\f$, \f$ b_r\f$, \f$ b_b\f$, and
+\f$ b_t\f$ denote the endpoints of \f$ X\f$ and \f$ Y\f$,
+respectively. We typically refer to these values as the left, right,
+bottom, and top sides of the boundary of the parameter space. If the
+parameter space is, for example, the entire compactified plane, as
+in the case of arrangements in the plane, \f$ b_l = b_b =
+-\infty\f$ and \f$ b_r = b_t = +\infty\f$;
+see Section \ref aos_sec-curved_surfaces for more details.
+
+\cgalAdvancedEnd
+
 The \sc{Dcel} data-structure represents each edge using a pair of
 directed <em>halfedges</em>, one going from the
 \f$xy\f$-lexicographically smaller (left) endpoint of the curve
@@ -1887,39 +1905,33 @@ the fact that we never have more than one curve incident to any true
 vertex at infinity.
 
 The nested types defined in the `Arrangement_2` class support the
-following methods, in addition to the ones listed in
-Section \ref arr_ssectraverse :
-<UL>
-<LI>The `Vertex` class provides three-valued predicates
-`parameter_space_in_x()` and `parameter_space_in_y()`, which
-return the location of the geometric embedding of the vertex in the
-parameter space. In particular, the former returns
-`ARR_LEFT_BOUNDARY`, `ARR_INTERIOR`, or
-`ARR_RIGHT_BOUNDARY`, and the latter returns
-`ARR_BOTTOM_BOUNDARY`, `ARR_INTERIOR`, or
-`ARR_TOP_BOUNDARY`. As the package currently supports only the
-case where the parameter space is the compactified plane, the former
-returns `ARR_INTERIOR` if the \f$x\f$-coordinate associated with the
-vertex is finite, `ARR_LEFT_BOUNDARY` if it is \f$-\infty\f$, and
+following methods, in addition to the ones listed in Section \ref
+arr_ssectraverse : <UL> <LI>The `Vertex` class provides three-valued
+predicates `parameter_space_in_x()` and `parameter_space_in_y()`,
+which return the location of the geometric embedding of the vertex in
+the parameter space. In particular, the former returns
+`ARR_LEFT_BOUNDARY`, `ARR_INTERIOR`, or `ARR_RIGHT_BOUNDARY`, and the
+latter returns `ARR_BOTTOM_BOUNDARY`, `ARR_INTERIOR`, or
+`ARR_TOP_BOUNDARY`. In the case of arrangements in the plane, where
+the parameter space is the compactified plane, the former returns
+`ARR_INTERIOR` if the \f$x\f$-coordinate associated with the vertex is
+finite, `ARR_LEFT_BOUNDARY` if it is \f$-\infty\f$, and
 `ARR_RIGHT_BOUNDARY` if it is \f$\infty\f$. The latter returns
-`ARR_INTERIOR` if the \f$y\f$-coordinate associated with the vertex
-is finite, `ARR_BOTTOM_BOUNDARY` if it is \f$-\infty\f$, and
+`ARR_INTERIOR` if the \f$y\f$-coordinate associated with the vertex is
+finite, `ARR_BOTTOM_BOUNDARY` if it is \f$-\infty\f$, and
 `ARR_TOP_BOUNDARY` if it is \f$\infty\f$. The Boolean predicate
-`is_at_open_boundary()` is also provided. You can access the
-point associated with a vertex only if it is not a vertex at an open
+`is_at_open_boundary()` is also provided. You can access the point
+associated with a vertex only if it is not a vertex at an open
 boundary (recall that a vertex at an open boundary is not associated
-with a `Point_2` object).
-<LI>The nested `Halfedge` class provides the Boolean predicate
-`is_fictitious()`. The \f$x\f$-monotone curve associated with
-a halfedge can be accessed by the `curve()` method only if the
-halfedge is not fictitious.
-<LI>The nested `Face` class provides the Boolean predicate
-`f.is_fictitious()`. The method `outer_ccb()` has the
-precondition that the face is not fictitious. Note that non-fictitious
-unbounded faces always have valid CCBs (although this CCB may
-comprise only fictitious halfedge in case the arrangement contains
-only bounded curves).
-</UL>
+with a `Point_2` object).  <LI>The nested `Halfedge` class provides
+the Boolean predicate `is_fictitious()`. The \f$x\f$-monotone curve
+associated with a halfedge can be accessed by the `curve()` method
+only if the halfedge is not fictitious.  <LI>The nested `Face` class
+provides the Boolean predicate `f.is_fictitious()`. The method
+`outer_ccb()` has the precondition that the face is not
+fictitious. Note that non-fictitious unbounded faces always have valid
+CCBs (although this CCB may comprise only fictitious halfedge in case
+the arrangement contains only bounded curves).  </UL>
 
 The method `arr.number_of_edges()` does not count the number of
 fictitious edges, (which is always
@@ -3614,6 +3626,66 @@ algebraic segments. The computed arrangement is displayed in
 \cgalFigureRef{arr_figex_alg_segments}.
 
 \cgalExample{Arrangement_on_surface_2/algebraic_segments.cpp}
+
+\subsubsection arr_ssectr_spherical A Traits Class for Arcs of Greate Circle Embedded on the Sphere
+
+The `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` class template
+handles arcs of great circles (also known as geodesic arcs) that lie
+on the unit sphere (centered at the origin). It is a model of the
+concept `ArrangementSphericalBoundaryTraits_2`; see Section \ref
+aos_ssec-traits-curved. An arrangement type (an instance of the
+template `Arrangement_on_surface_2<GeomTraits, TopolTraits>`) that
+uses an instance of this traits class as the geometry traits must use
+a matching topology traits.  Currently, this package provides one
+template, namely, `Arr_spherical_topology_traits_2<GeometryTraits_2,
+Dcel> an instance of which` can be used as the topology traits.
+
+The unit sphere is defined over a parameter space \f$\Phi =
+[\alpha,2\pi+\alpha] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$, where
+\f$\alpha = \arctan(X, Y)\f$. By deafult, \f$X = -1, Y = 0\f$, which
+implies \f$\alpha = \pi\f$, and a default parameterization \f$\Phi =
+[-\pi, \pi] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$. The equator
+curve, for example, is given by \f$\gamma(t) = (\pi(2t - 1) + \alpha,
+0)\f$, for \f$t \in [0,1]\f$. The surface is given by \f$\phi_S(x,y) =
+(\cos x \cos y, \sin x \cos y, \sin y)\f$; see Section \ref
+aos_sec-curved_surfaces for more details. Naturally, the explicit
+expression for the surface above is not used at all in the
+implementation the traits. Indeed, all the required geometric
+operations listed in the traits concept are implemented using only
+rational arithmetic. This parameterization induces two contraction
+points \f$(0,0,-1) = \phi_S(y,-\frac{\pi}{2})\f$ and \f$(0,0,1) =
+\phi_S(y,\frac{\pi}{2})\f$, referred to as the south and north poles
+respectively, and an identification curve \f$\{\phi_S(\pi +
+\alpha,x)\,|\,-\frac{\pi}{2} \leq v \leq \frac{\pi}{2}\}\f$, as
+\f$\phi_S(-\pi + \alpha,v) = \phi_S(+\pi + \alpha,v)\f$ for all
+\f$x\f$ (which coincides with the opposite Prime (Greenwich) Meridian
+when \f$\alpha = \pi\f$).  In other words, the left and right boundary
+sides of the parameter space are identified and the top and bottom
+boundary sides are contracted.  The elements that substitutes the
+template parameters `X` and `Y` when
+`Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` is instantiated
+must be integral values that define a not necessarily normalized
+vector \f$(x,y)\f$ in the \f$xy\f$-plane that bisects the
+identification curve.
+
+The following example constructs an arrangement induced by 12 arcs of
+great circles embedded on the sphere. The arrangement is depicted in
+Figure \cgalFigureRef{spherical_insert}.
+
+\cgalFigureBegin{spherical_insert,spherical_insert.png}
+
+An arrangement induced by 12 arcs of great circles, as constructed in
+`spherical_insert.cpp`. The number of vertices, edges, and faces of
+the arrangement is 7, 13, and 8, respectively. The intersection of the
+curve \f$(-1,0,0),(0,1,0)\f$ with the identification curve inducess a
+vertex at
+\f$(\frac{-11}{\sqrt{11^2+7^2}},\frac{7}{\sqrt{11^2+7^2}},0)\f$ drawn
+in green. The north and south poles are drawn as little spheres. The
+identification curve is drawn as a gray tube.
+
+\cgalFigureEnd
+
+\cgalExample{Arrangement_on_surface_2/spherical_insert.cpp}
 
 \subsection arr_ssecmeta_tr Traits-Class Decorators
 

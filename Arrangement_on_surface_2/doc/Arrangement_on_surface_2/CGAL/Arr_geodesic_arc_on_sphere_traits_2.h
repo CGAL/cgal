@@ -5,9 +5,9 @@ namespace CGAL {
    * The traits class `Arr_geodesic_arc_on_sphere_traits_2` is a model of the
    * `ArrangementTraits_2` concept. It enables the construction and
    * maintenance of arrangements of arcs of great circles (also known as
-   * geodesic arcs) embedded on the sphere (centered at the origin). Almost
+   * geodesic arcs) that lie on the sphere (centered at the origin). Almost
    * all operations on arrangements require a kernel that supports exact
-   * predicates. Most operations also require the kernel to support exact
+   * predicates. Most operations also require a kernel that supports exact
    * constructions. However, all operations on such arrangements can be
    * computed efficiently, since all calculations are performed with
    * rational arithmetic.
@@ -22,7 +22,7 @@ namespace CGAL {
    * We use the following parameterization of the unit sphere \f$S =
    * \phi_S(\Phi)\f$: \f$\Phi = [\alpha, 2\pi + \alpha] \times [-\frac{\pi}{2},
    * \frac{\pi}{2}]\f$, \f$\phi_S(x, y) = (\cos y \cos x, \sin y \cos x, \sin
-   * x)\f$, where \f$\alpha = atan2(X, Y)\f$. By deafult, \f$X = -1, Y = 0\f$,
+   * x)\f$, where \f$\alpha = \arctan(X, Y)\f$. By deafult, \f$X = -1, Y = 0\f$,
    * which implies \f$\alpha = \pi\f$, and a default parameterization \f$\Phi =
    * [-\pi, \pi] \times [-\frac{\pi}{2}, \frac{\pi}{2}]\f$. The equator curve,
    * for example, is given by \f$\gamma(t) = (\pi(2t - 1) + \alpha, 0)\f$, for
@@ -33,7 +33,11 @@ namespace CGAL {
    * \alpha,x)\,|\,-\frac{\pi}{2} \leq v \leq \frac{\pi}{2}\}\f$, as
    * \f$\phi_S(-\pi + \alpha,v) = \phi_S(+\pi + \alpha,v)\f$ for all \f$x\f$
    * (which coincides with the opposite Prime (Greenwich) Meridian when
-   * \f$\alpha = \pi\f$).
+   * \f$\alpha = \pi\f$).  The elements that substitutes the template parameters
+   * `X` and `Y` when `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` is
+   * instantiated must be integral values that define a not necessarily
+   * normalized vector \f$(x,y)\f$ in the \f$xy\f$-plane that bisects the
+   * identification curve.
 
    * \cgalModels `ArrangementTraits_2`
    * \cgalModels `ArrangementLandmarkTraits_2`
