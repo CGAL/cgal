@@ -180,7 +180,7 @@ the arrangement input/output functions. In Section \ref aos_sec-bgl we
 describes how to apply the graph algorithms implemented in the Boost
 Graph Library to arrangement types. Finally, in Section \ref
 aos_sec-tips we provide some tips that can be applied to expedite
-cmoputation.
+computation.
 
 \section aos_sec-basic Basic Arrangements
 
@@ -313,7 +313,8 @@ face \f$ f_1\f$ has a more complicated structure as it contains two
 holes in its interior: One hole consists of two adjacent faces \f$
 f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two
 edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and
-\f$ u_2\f$ in its interior.  \cgalFigureEnd
+\f$ u_2\f$ in its interior.
+\cgalFigureEnd
 
 \subsection aos_ssec-basic-arr_class The Arrangement Class Template
 
@@ -2096,15 +2097,15 @@ parameterized via \f$\Phi = [0,1] \times [0,1]\f$ with
 \f$\phi_S(x,y) = (a_1 + x(a_2 - a_1) + xy(a_3-a_2), b_1 +
 x(b_2 - b_1) + xy(b_3-b_2), 0)\f$. The left side of the rectangular
 domain contracts to a point. An open or closed <em>cylinder</em> is
-modelled by identifying the vertical sides and having \f$Y\f$ open or
-closed, respectively. A <em>torus</em> is modelled by identifying the
+modeled by identifying the vertical sides and having \f$Y\f$ open or
+closed, respectively. A <em>torus</em> is modeled by identifying the
 vertical sides and the horizontal sides. A <em>paraboloid</em> or
-<em>half-cone</em> may be modelled by identifying the vertical sides
+<em>half-cone</em> may be modeled by identifying the vertical sides
 and contracting one of the horizontal sides to a point. More elegantly,
-they are modelled by a bijective parameterization as given above. A
-<em>sphere</em> is modelled by identifying the vertical sides and
+they are modeled by a bijective parameterization as given above. A
+<em>sphere</em> is modeled by identifying the vertical sides and
 contracting both horizontal sides. A <em>croissant</em>, a torus with
-one pinch point, is modelled by identifying the vertical and
+one pinch point, is modeled by identifying the vertical and
 identifying the horizontal sides and, in addition, contracting one of
 the pairs. However, the croissant is excluded by our definitions. All
 surfaces supported by our framework are locally homeomorphic to a
@@ -3053,7 +3054,8 @@ polylines, as constructed in `polylines.cpp`. Disks mark vertices
 associated with polyline endpoints, while circles mark vertices that
 correspond to intersection points. Note that \f$\pi_2\f$ is split into
 three \f$ x\f$-monotone polylines, and that \f$\pi_1\f$ and
-\f$\pi_3\f$ have two overlapping sections. \cgalFigureEnd
+\f$\pi_3\f$ have two overlapping sections.
+\cgalFigureEnd
 
 The following example program constructs an arrangement of three
 polylines, as depicted in \cgalFigureRef{arr_figex_12}. Note that
@@ -3129,7 +3131,6 @@ endpoints are drawn as disks. Circles mark vertices that correspond to
 intersection points. The vertex \f$y_{\rm max}\f$ is a common
 intersection point of all three circles.
 \cgalFigureEnd
-
 
 In the following example an arrangement of three full circles is
 constructed, as shown in \cgalFigureRef{arr_figex_13}. Then, the
@@ -3292,7 +3293,6 @@ functions such as `source()`, `target()` and `orientation()`.
 \cgalFigureBegin{arr_figex_14,ex_14.png}
 An arrangement of mixed conic arcs, as constructed in conics.cpp
 \cgalFigureEnd
-
 
 The following example demonstrates the usage of the various
 constructors for conic arcs. The resulting arrangement is depicted in
@@ -3481,7 +3481,6 @@ landmark point-location strategy for arrangements of rational arcs).
 An arrangement of ten B&eacute;zier curves of degree \f$5\f$, as
 constructed in `Bezier_curves.cpp`.
 \cgalFigureEnd
-
 
 The following example reads a set of B&eacute;zier curves from an
 input file, where each file is specified by an integer stating its
@@ -3673,16 +3672,14 @@ great circles embedded on the sphere. The arrangement is depicted in
 Figure \cgalFigureRef{spherical_insert}.
 
 \cgalFigureBegin{spherical_insert,spherical_insert.png}
-
 An arrangement induced by 12 arcs of great circles, as constructed in
 `spherical_insert.cpp`. The number of vertices, edges, and faces of
 the arrangement is 7, 13, and 8, respectively. The intersection of the
-curve \f$(-1,0,0),(0,1,0)\f$ with the identification curve inducess a
+curve \f$(-1,0,0),(0,1,0)\f$ with the identification curve induces a
 vertex at
 \f$(\frac{-11}{\sqrt{11^2+7^2}},\frac{7}{\sqrt{11^2+7^2}},0)\f$ drawn
 in green. The north and south poles are drawn as little spheres. The
 identification curve is drawn as a gray tube.
-
 \cgalFigureEnd
 
 \cgalExample{Arrangement_on_surface_2/spherical_insert.cpp}
@@ -4000,7 +3997,6 @@ modified and sets its data field accordingly.
 \cgalFigureBegin{arr_figex_20,ex_20.png}
 An arrangement of six line segments, as constructed in `face_extension.cpp` and `dcel_extension.cpp` (in `dcel_extension.cpp` we treat the segments as directed, so they are drawn as arrows directed from the source to the target). The indices associated with the halfedges in `face_extension.cpp` are shown in brackets.
 \cgalFigureEnd
-
 
 The next example constructs an arrangement that contains seven bounded
 faces induced by six line segments (see
