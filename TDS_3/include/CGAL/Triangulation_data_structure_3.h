@@ -183,9 +183,20 @@ public:
   typedef std::pair<Vertex_handle,Vertex_handle> Vertex_pair;
   typedef std::pair<unsigned char, unsigned char> Local_facet;
 
+  struct Small_pair_hash {
+
+    std::size_t operator()(const Vertex_pair& k) const
+    {
+      std::size_t hf = boost::hash<Vertex_handle>()(k.first);
+      std::size_t hs = boost::hash<Vertex_handle>()(k.second);
+      
+      return hf ^ 419 * hs;
+    }
+  };
+  
   static const int maximal_nb_of_facets_of_small_hole = 128;
   typedef Small_unordered_map<Vertex_pair, Local_facet,
-                              boost::hash<Vertex_pair>, maximal_nb_of_facets_of_small_hole> Vertex_pair_facet_map;
+                              Small_pair_hash, maximal_nb_of_facets_of_small_hole *8> Vertex_pair_facet_map;
   
 //#ifndef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3
   //internally used for create_star_3 (faster than a tuple)
@@ -550,7 +561,7 @@ public:
         if(ef.first.first < ef.first.second){
           const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
           vertex_pair_facet_map.clear(it);
-          const auto p = vertex_pair_facet_map.get(std::make_pair(ef.first.second, ef.first.first));
+          const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(ef.first.second, ef.first.first));
           const Facet n = Facet{new_cells[p.first], p.second};
           f.first->set_neighbor(f.second, n.first);
           n.first->set_neighbor(n.second, f.first);
@@ -1515,10 +1526,6 @@ private:
   Vertex_range _vertices;
 
 
-  //  Vertex_pair_facet_map vertex_pair_facet_map;
-
-  
-  
   // used by is-valid :
   bool count_vertices(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity

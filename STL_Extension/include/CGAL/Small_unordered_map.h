@@ -26,30 +26,19 @@
 
 //#define CGAL_SMALL_UNORDERED_MAP_STATS
 namespace CGAL {
+
   
-template <typename K, typename T, typename H, unsigned int N>
+template <typename K, typename T, typename H, unsigned int M>
 class Small_unordered_map{
 #ifdef    CGAL_SMALL_UNORDERED_MAP_STATS
   std::array<int,20> collisions = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
-  static const unsigned int M = N<<3;
   int head = -2;
-  mutable std::array<int, M>           occupied;
-  std::array<int, M>           unfreelist; 
+  mutable std::array<int, M>    occupied;
+  std::array<int, M>            unfreelist; 
   std::array<std::pair<K,T>, M> data;
-  //const H h = {};
+  const H hash = {};
 
-  int hash(const K& k)const
-  {
-    std::size_t hf = boost::hash<typename K::first_type>()(k.first);
-    std::size_t hs = boost::hash<typename K::second_type>()(k.second);
-    /*
-    hs += 1;
-    hs += (hs << 1) + (hs << 5) + (hs << 7) + (hs << 8);
-    */
-    return (hf+1) ^ (419 * (hs+1));
-  }
-  
 public:
   Small_unordered_map()
   {
@@ -103,8 +92,8 @@ public:
     CGAL_error();
   }
 
-  
-  const T& get(const K& k) const
+  // et only once as it is erased
+  const T& get_and_erase(const K& k) const
   {
     unsigned int h  = hash(k)%M;
     int i = h;
@@ -121,7 +110,7 @@ public:
   void clear()
   {
     head = -2;
-    //    occupied.fill(-1);
+    // without erase we would have to call occupied.fill(-1); which is costly
   }
 
   struct iterator {
