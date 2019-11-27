@@ -194,7 +194,7 @@ It can be proven that the canonical form is uniquely defined and only depends on
 
 \section Implementation History
 
-The code was developed in 2018 by Guillaume Damiand and Francis Lazarus. Felix Castillon contributed to the extension of the homotopy test to the case of surfaces with boundaries.
+The code was developed in 2018 by Guillaume Damiand and Francis Lazarus. Felix Castillon contributed to the extension of the homotopy test to the case of surfaces with boundaries. Test
 
 */
 } /* namespace CGAL */
