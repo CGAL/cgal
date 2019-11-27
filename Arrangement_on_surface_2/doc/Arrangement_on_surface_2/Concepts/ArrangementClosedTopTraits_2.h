@@ -1,5 +1,5 @@
 /*!
- * \ingroup PkgArrangement2ConceptsTraits
+ * \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
  * A model of the concept `ArrangementClosedTopTraits_2` must be used when the

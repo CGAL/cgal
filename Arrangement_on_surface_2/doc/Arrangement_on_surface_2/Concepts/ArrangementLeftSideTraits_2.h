@@ -1,5 +1,5 @@
 /*!
- * \ingroup PkgArrangement2ConceptsTraits
+ * \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
  * `ArrangementLeftSideTraits_2` is an abstract concept. It generalizes all

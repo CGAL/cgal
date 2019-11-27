@@ -1,5 +1,5 @@
 /*!
- * \ingroup PkgArrangement2ConceptsTraits
+ * \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
  * Models of the concept `ArrangementSphericalBoundaryTraits_2` handle curves on

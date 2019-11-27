@@ -3562,7 +3562,6 @@ weakly \f$x\f$-monotone segment that was queried.  We call a segment
 `X_monotone_curve_2`.
 
 \cgalAdvancedBegin
-
 The subdivision of segments is due to the internal representation of
 \f$x\f$-monotone segments, which is based on a vertical decomposition.
 We assume the defining polynomial \f$f\f$ of the curve \f$C\f$ to be
