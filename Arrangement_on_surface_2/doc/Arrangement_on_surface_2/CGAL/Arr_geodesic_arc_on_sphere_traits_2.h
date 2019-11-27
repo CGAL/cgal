@@ -1,6 +1,6 @@
 namespace CGAL {
 
-  /*! \ingroup PkgArrangement2TraitsClasses
+  /*! \ingroup PkgArrangementOnSurface2TraitsClasses
    *
    * The traits class `Arr_geodesic_arc_on_sphere_traits_2` is a model of the
    * `ArrangementTraits_2` concept. It enables the construction and
