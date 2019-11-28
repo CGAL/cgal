@@ -699,7 +699,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   typedef CGAL::dynamic_face_property_t<Vector_3>                                Face_normal_tag;
   typedef typename boost::property_map<PolygonMesh, Face_normal_tag>::const_type Face_normal_dmap;
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
   GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type   VPMap;
@@ -717,7 +717,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   if(must_compute_face_normals)
     compute_face_normals(pmesh, face_normals, np);
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::ofstream out("computed_normals.cgal.polylines.txt");
   const Bbox_3 bb = bbox(pmesh, np);
   const typename GT::FT bbox_diagonal = CGAL::sqrt(CGAL::square(bb.xmax() - bb.xmin()) +
@@ -730,7 +730,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
     const Vector_3 n = compute_vertex_normal(v, pmesh, np.face_normal_map(face_normals));
     put(vertex_normals, v, n);
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     out << "2 " << get(vpmap, v) << " "
                 << get(vpmap, v) + traits.construct_scaled_vector_3_object()(n, 0.1 * bbox_diagonal) << "\n";
 #endif
