@@ -8,38 +8,45 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Sebastien Loriot
-//                 Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé
+//                 Sebastien Loriot
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAP_H
-#define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAP_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_H
+#define CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_H
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+ #ifndef CGAL_PMP_SNAP_DEBUG
+  #define CGAL_PMP_SNAP_DEBUG
+ #endif
+#endif
+
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/snap_vertices.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/box_intersection_d.h>
+#include <CGAL/boost/graph/selection.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/number_utils.h>
-
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/member.hpp>
+#include <CGAL/Real_timer.h>
+#include <CGAL/utility.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/concurrent_vector.h>
-# include <tbb/parallel_for.h>
+#include <tbb/concurrent_vector.h>
+#include <tbb/parallel_for.h>
 #endif
 
 #include <functional>
@@ -48,665 +55,427 @@
 #include <limits>
 #include <map>
 #include <type_traits>
-#include <utility>
 #include <unordered_set>
+#include <utility>
 #include <vector>
+
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+#include <fstream>
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-// Assigns at each vertex the 'tolerance' value as tolerance, but bounded by a percentage of the length of its shortest incident edge
-template <typename HalfedgeRange,
-          typename ToleranceMap,
-          typename PolygonMesh,
-          typename SourceNamedParameters>
-void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
-                                                   ToleranceMap& tol_pmap,
-                                                   const typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type::FT tolerance,
-                                                   PolygonMesh& mesh,
-                                                   const SourceNamedParameters& snp)
+template <typename HalfedgeRange, typename TriangleMesh,
+          typename ToleranceMap, typename NamedParameters>
+void simplify_range(HalfedgeRange& halfedge_range,
+                    TriangleMesh& tm,
+                    ToleranceMap tolerance_map,
+                    const NamedParameters& np)
 {
+  // @todo the simplification below is too naive and will fail to treat complicated zigzaging
+  // with long edges.
+  // A real simplification would create a fuzzy area around the border (say the dilation
+  // of the border polyline by a sphere of radius that continuously interpolates the tolerance
+  // at each vertex). The border is then simplified to use the least amount of edges possible
+  // in that fuzzy zone. Need to look into cartography papers, probably.
+
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GT;
+  typedef typename GT::FT                                                         FT;
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type         VPM;
+  typedef typename boost::property_traits<VPM>::reference                         Point_ref;
+
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
+  const GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, tm));
 
-  typedef typename GetVertexPointMap<PolygonMesh, SourceNamedParameters>::type        SVPM;
-  typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
-  typedef typename GT::FT                                                             FT;
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
+  typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type     Range_halfedges;
+  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm);
 
-  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
-  SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
-                               get_property_map(vertex_point, mesh));
+  for(halfedge_descriptor h : halfedge_range)
+    put(range_halfedges, h, true);
 
-  for(halfedge_descriptor hd : hrange)
+  std::set<halfedge_descriptor> edges_to_test(halfedge_range.begin(), halfedge_range.end());
+
+  int collapsed_n = 0;
+  while(!edges_to_test.empty())
   {
-    const vertex_descriptor vd = target(hd, mesh);
-    CGAL::Halfedge_around_target_iterator<PolygonMesh> hit, hend;
-    boost::tie(hit, hend) = CGAL::halfedges_around_target(vd, mesh);
-    CGAL_assertion(hit != hend);
+    const halfedge_descriptor h = *(edges_to_test.begin());
+    edges_to_test.erase(edges_to_test.begin());
 
-    FT sq_length = gt.compute_squared_distance_3_object()(get(svpm, source(*hit, mesh)),
-                                                          get(svpm, target(*hit, mesh)));
-    FT min_sq_dist = sq_length;
-    ++hit;
+    const vertex_descriptor vs = source(h, tm);
+    const vertex_descriptor vt = target(h, tm);
+    const Point_ref ps = get(vpm, vs);
+    const Point_ref pt = get(vpm, vt);
 
-    for(; hit!=hend; ++hit)
+    // @fixme what if the source vertex is not to be snapped? Tolerance cannot be obtained...
+    // and where should the post-collapse vertex be since we can't move the source vertex...
+    // --> simply don't collapse?
+    const FT h_sq_length = gt.compute_squared_distance_3_object()(ps, pt);
+    const FT min_tol = (std::min)(get(tolerance_map, vs), get(tolerance_map, vt));
+    const FT max_tol = (std::max)(get(tolerance_map, vs), get(tolerance_map, vt));
+
+    if(h_sq_length < CGAL::square(max_tol))
     {
-      sq_length = gt.compute_squared_distance_3_object()(get(svpm, source(*hit, mesh)),
-                                                         get(svpm, target(*hit, mesh)));
+      const halfedge_descriptor prev_h = prev(h, tm);
+      const halfedge_descriptor next_h = next(h, tm);
 
-      if(sq_length < min_sq_dist)
-        min_sq_dist = sq_length;
+      // check that the border has at least 4 edges not to create degenerate volumes
+      if(border_size(h, tm) >= 4)
+      {
+        vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
+
+        put(vpm, v, gt.construct_midpoint_3_object()(ps, pt));
+        put(tolerance_map, v, min_tol + 0.5 * CGAL::approximate_sqrt(h_sq_length));
+
+        if(get(range_halfedges, prev_h))
+          edges_to_test.insert(prev_h);
+        if(get(range_halfedges, next_h))
+          edges_to_test.insert(next_h);
+
+        ++collapsed_n;
+      }
     }
-
-#ifdef CGAL_PMP_SNAP_DEBUG
-    std::cout << "tolerance at vd: " /*<< vd */ << " [" << get(svpm, vd) << "]: min of "
-              << 0.9 * CGAL::approximate_sqrt(min_sq_dist) << " AND " << tolerance << std::endl;
-#endif
-    put(tol_pmap, vd, CGAL::min<FT>(0.9 * CGAL::approximate_sqrt(min_sq_dist), tolerance));
-  }
-}
-
-template <typename HalfedgeRange,
-          typename ToleranceMap,
-          typename PolygonMesh>
-void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
-                                                   ToleranceMap& tol_pmap,
-                                                   const typename GetGeomTraits<PolygonMesh>::type::FT tolerance,
-                                                   PolygonMesh& mesh)
-{
-  return assign_tolerance_with_local_edge_length_bound(hrange, tol_pmap, tolerance, mesh, CGAL::parameters::all_default());
-}
-
-template <typename PolygonMesh, typename GeomTraits>
-struct Snapping_pair
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor     halfedge_descriptor;
-  typedef typename GeomTraits::FT                                            FT;
-
-  Snapping_pair(const halfedge_descriptor hs_, const halfedge_descriptor ht_, const FT sq_dist_)
-    : hs(hs_), ht(ht_), sq_dist(sq_dist_)
-  { }
-
-  halfedge_descriptor hs;
-  halfedge_descriptor ht;
-  FT sq_dist;
-};
-
-template <typename PolygonMesh, typename GeomTraits,
-          typename DistanceMultiIndexContainer,
-          typename SVPM, typename TVPM,
-          typename ToleranceMap,
-          typename Box>
-struct Vertex_proximity_report
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor       vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor     halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor         edge_descriptor;
-
-  typedef typename GeomTraits::FT                                            FT;
-  typedef typename boost::property_traits<SVPM>::reference                   SPoint_ref;
-  typedef typename boost::property_traits<TVPM>::reference                   TPoint_ref;
-
-  Vertex_proximity_report(DistanceMultiIndexContainer& snapping_pairs,
-                          const SVPM& svpm, const PolygonMesh& smesh,
-                          const TVPM& tvpm, const PolygonMesh& tmesh,
-                          const ToleranceMap& tol_pmap,
-                          const GeomTraits& gt)
-    :
-      m_snapping_pairs(snapping_pairs),
-      is_same_mesh((&smesh == &tmesh)),
-      smesh(smesh), svpm(svpm),
-      tmesh(tmesh), tvpm(tvpm),
-      tol_pmap(tol_pmap),
-      gt(gt)
-  { }
-
-  void operator()(const Box& a, const Box& b)
-  {
-    const halfedge_descriptor ha = a.info();
-    const halfedge_descriptor hb = b.info();
-    const vertex_descriptor va = target(ha, smesh);
-    const vertex_descriptor vb = target(hb, tmesh);
-
-    if(is_same_mesh && ha == hb)
-      return;
-
-    const SPoint_ref sp = get(svpm, va);
-    const TPoint_ref tp = get(tvpm, vb);
-    const FT tol = get(tol_pmap, va);
-
-    // Don't reject a '0' distance, it still needs to lock the points in place
-    const FT sq_dist = gt.compute_squared_distance_3_object()(sp, tp);
-    CGAL::Comparison_result res = CGAL::compare(sq_dist, tol * tol);
-
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "distance between " /*<< va*/ << " [" << sp << "] and "
-                                     /*<< vb*/ << " [" << tp << "]: " << sq_dist
-                                     << " (bound: " << tol*tol << ") larger? " << (res == CGAL::LARGER)
-                                     << std::endl;
-#endif
-
-    if(res == CGAL::LARGER)
-      return;
-
-    m_snapping_pairs.insert(Snapping_pair<PolygonMesh, GeomTraits>(ha, hb, sq_dist));
-  }
-
-private:
-  DistanceMultiIndexContainer& m_snapping_pairs;
-
-  const bool is_same_mesh;
-  const PolygonMesh& smesh;
-  const SVPM& svpm;
-  const PolygonMesh& tmesh;
-  const TVPM& tvpm;
-  const ToleranceMap& tol_pmap;
-  const GeomTraits& gt;
-};
-
-} // namespace internal
-
-namespace experimental {
-
-// This is the function if you know what you're doing with the ranges
-//
-// \ingroup PMP_repairing_grp
-//
-// Attempts to snap the vertices in `source_hrange` onto the vertices in `target_hrange`.
-// A vertex of the source range is only snapped to a vertex of the target mesh
-// if its distance to the target mesh vertex is smaller than a user-chosen bound.
-// If a source vertex can be snapped onto multiple vertices of the target
-// range, the closest target vertex is used.
-// If multiple vertices within the source range could be snapped onto the same target vertex,
-// the source vertex closest to the target vertex will be snapped. Other source vertices will try to snap
-// to free target vertices until they find a valid target, or until there is no more target
-// to snap to (within the tolerance).
-//
-// @warning This function does not give any guarantee on the conformity between the source and target meshes after the snapping.
-// @warning This function does not merge vertices together.
-//
-// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-// @tparam SourceHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
-// @tparam TargetHalfedgeRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
-// @tparam ToleranceMap a model of `ReadablePropertyMap` with key type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-//                      and value type `GetGeomTraits<PolygonMesh, SourceNamedParameters>::type::FT`
-// @tparam SourceNamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-// @tparam TargetNamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
-//
-// @param source_hrange a range of vertices of the source mesh whose positions can be changed.
-//                      the vertices must be border vertices of `smesh`.
-// @param smesh the source mesh whose border vertices might be moved
-// @param target_hrange a range of vertices of the target mesh which are potential new positions
-//                      for the vertices in the source range
-// @param tmesh the target mesh to which the vertices in `target_hrange` belong
-// @param tol_pmap a tolerance map associating to each vertex of the source range a tolerance value:
-//               potential projection targets are sought in a sphere centered at the vertex and
-//               whose radius is the tolerance value.
-// @param snp optional \ref pmp_namedparameters "Named Parameters" related to the source mesh,
-//            amongst those described below:
-//
-// \cgalNamedParamsBegin
-//    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of the source mesh.
-//                                      The type of this map is model of `ReadWritePropertyMap`.
-//                                      If this parameter is omitted, an internal property map for
-//                                      `CGAL::vertex_point_t` must be available in `PolygonMesh`
-//    \cgalParamEnd
-//    \cgalParamBegin{geom_traits} a geometric traits class instance.
-//       The traits class must provide the nested types `Point_3` and `Vector_3`,
-//       and the nested functors :
-//         - `Construct_bbox_3` to construct a bounding box of a point,
-//         - `Compute_squared_distance_3` to compute the distance between two points,
-//
-//       and, for each functor `Foo`, a function `Foo foo_object()`
-//   \cgalParamEnd
-// \cgalNamedParamsEnd
-//
-// @param tnp optional \ref pmp_namedparameters "Named Parameters" related to the target mesh,
-//            amongst those described below:
-//
-// \cgalNamedParamsBegin
-//    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of the target mesh.
-//                                      The type of this map is model of `ReadablePropertyMap`.
-//                                      If this parameter is omitted, an internal property map for
-//                                      `CGAL::vertex_point_t` must be available in `PolygonMesh`
-//    \cgalParamEnd
-// \cgalNamedParamsEnd
-//
-// @return the number of snapped vertices
-//
-// @sa `merge_duplicated_vertices_in_boundary_cycles()`
-//
-template <typename PolygonMesh,
-          typename SourceHalfedgeRange, typename TargetHalfedgeRange,
-          typename ToleranceMap, typename StitchableHalfedgesOutputIterator,
-          typename SourceNamedParameters, typename TargetNamedParameters>
-std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& source_hrange,
-                                                PolygonMesh& smesh,
-                                                const TargetHalfedgeRange& target_hrange,
-                                                const PolygonMesh& tmesh,
-                                                const ToleranceMap& tol_pmap,
-                                                StitchableHalfedgesOutputIterator out,
-                                                const SourceNamedParameters& snp,
-                                                const TargetNamedParameters& tnp)
-{
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor      vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
-
-  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, halfedge_descriptor>   Box;
-
-  typedef typename GetVertexPointMap<PolygonMesh, SourceNamedParameters>::type        SVPM;
-  typedef typename GetVertexPointMap<PolygonMesh, TargetNamedParameters>::const_type  TVPM;
-  typedef typename boost::property_traits<TVPM>::value_type                           Point;
-  typedef typename boost::property_traits<TVPM>::reference                            Point_ref;
-
-  typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
-  typedef typename GT::FT                                                             FT;
-
-  if(is_empty_range(source_hrange.begin(), source_hrange.end()) ||
-     is_empty_range(target_hrange.begin(), target_hrange.end()))
-    return 0;
-
-  CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
-
-  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
-
-  SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
-                               get_property_map(vertex_point, smesh));
-  TVPM tvpm = choose_parameter(get_parameter(tnp, internal_np::vertex_point),
-                               get_const_property_map(vertex_point, tmesh));
-
-#ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Snapping vertices to vertices. Range sizes: "
-            << std::distance(source_hrange.begin(), source_hrange.end()) << " and "
-            << std::distance(target_hrange.begin(), target_hrange.end()) << std::endl;
-
-  if(&smesh == &tmesh)
-    std::cout << "same mesh!" << std::endl;
-#endif
-
-  // Try to snap vertices
-  std::vector<Box> boxes;
-  std::unordered_set<vertex_descriptor> unique_vertices;
-  for(halfedge_descriptor hd : source_hrange)
-  {
-    const vertex_descriptor vd = target(hd, smesh);
-    if(!unique_vertices.insert(vd).second)
-      continue; // if 'vd' appears multiple times on the border, move it only once
-
-    // this only makes the box a little larger to facilitate intersection computations,
-    // the final tolerance is not changed
-    const double eps = 1.01 * CGAL::to_double(get(tol_pmap, vd));
-
-    const Bbox_3 pb = gt.construct_bbox_3_object()(get(svpm, vd));
-    const Bbox_3 b(pb.xmin() - eps, pb.ymin() - eps, pb.zmin() - eps,
-                   pb.xmax() + eps, pb.ymax() + eps, pb.zmax() + eps);
-    boxes.push_back(Box(b, hd));
-  }
-
-  std::vector<Box> target_boxes;
-  for(halfedge_descriptor hd : target_hrange)
-    target_boxes.push_back(Box(gt.construct_bbox_3_object()(get(tvpm, target(hd, tmesh))), hd));
-
-  // Use a multi index to sort easily by sources, targets, AND distance.
-  // Then, look up the distances in increasing order, and snap whenever the source and the target
-  // have both not been snapped yet.
-  typedef internal::Snapping_pair<PolygonMesh, GT>                                    Snapping_pair;
-  typedef boost::multi_index::multi_index_container<
-    Snapping_pair,
-    boost::multi_index::indexed_by<
-      boost::multi_index::ordered_non_unique<
-        BOOST_MULTI_INDEX_MEMBER(Snapping_pair, halfedge_descriptor, hs)>,
-      boost::multi_index::ordered_non_unique<
-        BOOST_MULTI_INDEX_MEMBER(Snapping_pair, halfedge_descriptor, ht)>,
-      boost::multi_index::ordered_non_unique<
-        BOOST_MULTI_INDEX_MEMBER(Snapping_pair, FT, sq_dist)>
-    >
-  >                                                                                   Snapping_pair_container;
-
-  typedef internal::Vertex_proximity_report<PolygonMesh, GT, Snapping_pair_container,
-                                            SVPM, TVPM, ToleranceMap, Box>            Reporter;
-
-  Snapping_pair_container snapping_pairs;
-  Reporter vpr(snapping_pairs, svpm, smesh, tvpm, tmesh, tol_pmap, gt);
-
-  // Shenanigans to pass a reference as callback (which is copied by value by 'box_intersection_d')
-  std::function<void(const Box&, const Box&)> callback(std::ref(vpr));
-
-  CGAL::box_intersection_d(boxes.begin(), boxes.end(),
-                           target_boxes.begin(), target_boxes.end(),
-                           callback);
-
-#ifdef CGAL_PMP_SNAP_DEBUG
-    std::cout << snapping_pairs.size() << " snappable pair(s)!" << std::endl;
-#endif
-
-  if(snapping_pairs.empty())
-    return 0;
-
-  // Sorted views of the container
-  typedef typename Snapping_pair_container::template nth_index<0>::type   Container_by_source;
-  typedef typename Snapping_pair_container::template nth_index<1>::type   Container_by_target;
-  typedef typename Snapping_pair_container::template nth_index<2>::type   Container_by_distance;
-
-  Container_by_source& container_by_source = snapping_pairs.template get<0>();
-  Container_by_target& container_by_target = snapping_pairs.template get<1>();
-  Container_by_distance& container_by_dist = snapping_pairs.template get<2>();
-
-  std::size_t counter = 0;
-
-  CGAL_assertion_code(FT prev = -1;)
-  while(!container_by_dist.empty())
-  {
-    const Snapping_pair& sp = *(container_by_dist.begin());
-    const halfedge_descriptor hs = sp.hs;
-    const halfedge_descriptor ht = sp.ht;
-    CGAL_assertion(sp.sq_dist >= prev);
-    CGAL_assertion_code(prev = sp.sq_dist;)
-
-    const vertex_descriptor vs = target(hs, smesh);
-    const vertex_descriptor vt = target(ht, tmesh);
-
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Snapping " /*<< vs*/ << " (" << get(svpm, vs) << ") "
-              << " to " /*<< vt*/ << " (" << get(tvpm, vt)
-              << ") at dist: " << sp.sq_dist << std::endl;
-#endif
-
-    // Move the source vertex
-   ++counter;
-    put(svpm, vs, get(tvpm, vt));
-
-    // 'vs' and 'vt' cannot be used anymore, remove them from the container
-    container_by_source.erase(hs);
-    container_by_target.erase(ht);
-
-    // Check if there's a match between the edges incident to 'vs' and 'vt',
-    // if so, make the halfedge untargettable for non-conformal snapping to avoid foldings
-    const halfedge_descriptor nhs = next(hs, smesh);
-    const halfedge_descriptor nht = next(ht, tmesh);
-    if(gt.equal_3_object()(get(svpm, source(hs, smesh)), get(tvpm, target(nht, tmesh))))
-      *out++ = std::make_pair(hs, nht);
-    if(gt.equal_3_object()(get(svpm, target(nhs, smesh)), get(tvpm, source(ht, tmesh))))
-      *out++ = std::make_pair(nhs, ht);
   }
 
 #ifdef CGAL_PMP_SNAP_DEBUG
-    std::cout << "Snapped " << counter << " pair(s)!" << std::endl;
+  std::cout << "collapsed " << collapsed_n << " edges" << std::endl;
 #endif
 
-  return counter;
+  // @FIXME
+  halfedge_range.clear();
+  border_halfedges(tm, std::back_inserter(halfedge_range));
 }
-
-template <typename PolygonMesh,
-          typename SourceHalfedgeRange, typename TargetHalfedgeRange,
-          typename ToleranceMap, typename StitchableHalfedgesOutputIterator,
-          typename SourceNamedParameters, typename TargetNamedParameters>
-std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& source_hrange,
-                                                PolygonMesh& smesh,
-                                                const TargetHalfedgeRange& target_hrange,
-                                                const PolygonMesh& tmesh,
-                                                const ToleranceMap& tol_pmap,
-                                                const SourceNamedParameters& snp,
-                                                const TargetNamedParameters& tnp)
-{
-  CGAL::Emptyset_iterator unused_output_iterator;
-
-  return snap_vertex_range_onto_vertex_range(source_hrange, smesh, target_hrange, tmesh,
-                                             tol_pmap, unused_output_iterator, snp, tnp);
-}
-
-template <typename PolygonMesh, typename SourceHalfedgeRange, typename TargetHalfedgeRange,
-          typename SourceNamedParameters, typename TargetNamedParameters>
-std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& source_hrange,
-                                                PolygonMesh& smesh,
-                                                const TargetHalfedgeRange& target_hrange,
-                                                const PolygonMesh& tmesh,
-                                                const SourceNamedParameters& snp,
-                                                const TargetNamedParameters& tnp)
-{
-  typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
-  typedef typename GT::FT                                                             FT;
-  typedef CGAL::dynamic_vertex_property_t<FT>                                         Vertex_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type        Tolerance_map;
-
-  Tolerance_map tol_pmap = get(Vertex_property_tag(), smesh);
-  const FT tol_mx(std::numeric_limits<double>::max());
-  internal::assign_tolerance_with_local_edge_length_bound(source_hrange, tol_pmap, tol_mx, smesh, snp);
-
-  return snap_vertex_range_onto_vertex_range(source_hrange, smesh, target_hrange, tmesh, tol_pmap, snp, tnp);
-}
-
-template <typename PolygonMesh, typename SourceHalfedgeRange, typename TargetHalfedgeRange, typename ToleranceMap>
-std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& source_hrange,
-                                                PolygonMesh& smesh,
-                                                const TargetHalfedgeRange& target_hrange,
-                                                const PolygonMesh& tmesh,
-                                                const ToleranceMap& tol_pmap)
-{
-  return snap_vertex_range_onto_vertex_range(source_hrange, smesh, target_hrange, tmesh, tol_pmap,
-                                             CGAL::parameters::all_default(),
-                                             CGAL::parameters::all_default());
-}
-
-template <typename PolygonMesh, typename SourceHalfedgeRange, typename TargetHalfedgeRange>
-std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& source_hrange,
-                                                PolygonMesh& smesh,
-                                                const TargetHalfedgeRange& target_hrange,
-                                                const PolygonMesh& tmesh)
-{
-  return snap_vertex_range_onto_vertex_range(source_hrange, smesh, target_hrange, tmesh,
-                                             CGAL::parameters::all_default(),
-                                             CGAL::parameters::all_default());
-}
-
-template <typename PolygonMesh>
-std::size_t snap_vertex_range_onto_vertex_range(PolygonMesh& smesh, const PolygonMesh& tmesh)
-{
-  return snap_vertex_range_onto_vertex_range(halfedges(smesh), smesh, halfedges(tmesh), tmesh);
-}
-
-template <typename PolygonMesh, typename HalfedgeRange, typename ToleranceMap>
-std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh,
-                                                   const HalfedgeRange& target_hrange,
-                                                   const PolygonMesh& tmesh,
-                                                   const ToleranceMap& tol_pmap)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
-
-  std::vector<halfedge_descriptor> border_vertices;
-  border_halfedges(smesh, std::back_inserter(border_vertices));
-
-  return snap_vertex_range_onto_vertex_range(border_vertices, smesh, target_hrange, tmesh, tol_pmap);
-}
-
-template <typename PolygonMesh, typename HalfedgeRange>
-std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh,
-                                                   const HalfedgeRange& target_hrange,
-                                                   const PolygonMesh& tmesh)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
-
-  std::vector<halfedge_descriptor> border_vertices;
-  border_halfedges(smesh, std::back_inserter(border_vertices));
-
-  return snap_vertex_range_onto_vertex_range(border_vertices, smesh, target_hrange, tmesh);
-}
-
-template <typename PolygonMesh, typename ToleranceMap>
-std::size_t snap_border_vertices_onto_border_vertices(PolygonMesh& smesh,
-                                                      const PolygonMesh& tmesh,
-                                                      const ToleranceMap& tol_pmap)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor    halfedge_descriptor;
-
-  std::vector<halfedge_descriptor> sborder_vertices;
-  border_halfedges(smesh, std::back_inserter(sborder_vertices));
-
-  std::vector<halfedge_descriptor> tborder_vertices;
-  border_halfedges(tmesh, std::back_inserter(tborder_vertices));
-
-  return snap_vertex_range_onto_vertex_range(sborder_vertices, smesh, tborder_vertices, tmesh, tol_pmap);
-}
-
-// \ingroup PMP_repairing_grp
-//
-// Attempts to snap the border vertices of the source mesh onto the vertices of the target mesh.
-//
-// A vertex of the source range is only snapped to a vertex of the target mesh
-// if its distance to the target mesh vertex is smaller than a user-chosen bound.
-// If any source vertex can be snapped onto multiple vertices of the target
-// range, the closest one is chosen.
-// If multiple vertices within the source range could be snapped onto the same target vertex,
-// the source vertex closest to the target vertex will be snapped. Other source vertices will try to snap
-// to free target vertices until they find a valid target, or until there is no more target
-// to snap to (within the tolerance).
-//
-// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-// @tparam ToleranceMap a model of `ReadablePropertyMap` with key type `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-//                      and value type the number type associated with the traits of the mesh.
-//
-// @param smesh the source mesh whose border vertices might be moved
-// @param tmesh the target mesh whose vertices are potential projection targets
-// @param tol_pmap a tolerance map associating to each vertex of the source range a tolerance value:
-//               potential projection targets are sought in a sphere centered at the vertex and
-//               whose radius is the tolerance value.
-//
-// @pre `smesh` and `tmesh` are different meshes
-//
-// \return the number of snapped vertices
-//
-template <typename PolygonMesh, typename ToleranceMap>
-std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh,
-                                                   const PolygonMesh& tmesh,
-                                                   const ToleranceMap& tol_pmap)
-{
-  return snap_border_vertices_onto_vertex_range(smesh, halfedges(tmesh), tmesh, tol_pmap);
-}
-
-template <typename PolygonMesh>
-std::size_t snap_border_vertices_onto_vertex_range(PolygonMesh& smesh, const PolygonMesh& tmesh)
-{
-  return snap_border_vertices_onto_vertex_range(smesh, halfedges(tmesh), tmesh);
-}
-
-} // namespace experimental
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-namespace internal {
 
 // Adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
-template <typename AABBTraits>
+template <typename TriangleMesh,
+          typename VPMS, typename VPMT, typename FacePatchMap,
+          typename AABBTraits>
 class Projection_traits
 {
-  typedef typename AABBTraits::FT                               FT;
-  typedef typename AABBTraits::Point_3                          Point;
-  typedef typename AABBTraits::Primitive                        Primitive;
-  typedef typename AABBTraits::Bounding_box                     Bounding_box;
-  typedef typename AABBTraits::Primitive::Id                    Primitive_id;
-  typedef typename AABBTraits::Point_and_primitive_id           Point_and_primitive_id;
-  typedef typename AABBTraits::Object_and_primitive_id          Object_and_primitive_id;
+  typedef typename AABBTraits::FT                                          FT;
+  typedef typename AABBTraits::Point_3                                     Point;
+  typedef typename AABBTraits::Primitive                                   Primitive;
+  typedef typename AABBTraits::Bounding_box                                Bounding_box;
+  typedef typename AABBTraits::Primitive::Id                               Primitive_id;
+  typedef typename AABBTraits::Point_and_primitive_id                      Point_and_primitive_id;
+  typedef typename AABBTraits::Object_and_primitive_id                     Object_and_primitive_id;
 
-  typedef CGAL::AABB_node<AABBTraits>                           Node;
+  typedef CGAL::AABB_node<AABBTraits>                                      Node;
+
+  typedef typename AABBTraits::Geom_traits                                 Geom_traits;
+  typedef typename Geom_traits::Vector_3                                   Vector;
+  typedef typename Geom_traits::Plane_3                                    Plane;
+
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor      edge_descriptor;
+
+  void build_metric()
+  {
+    Vector hv(get(m_vpm_S, source(m_h, m_tm_S)), get(m_vpm_S, target(m_h, m_tm_S)));
+    Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(m_h, m_tm_S), m_tm_S), m_tm_S,
+                                                                  CGAL::parameters::geom_traits(m_gt)
+                                                                                   .vertex_point_map(m_vpm_S));
+    Vector pn = m_gt.construct_cross_product_vector_3_object()(hv, n);
+    Plane pl(get(m_vpm_S, target(m_h, m_tm_S)), pn);
+
+    Vector b1 = pl.base1();
+    Vector b2 = pl.base2();
+
+    internal::normalize(b1, m_gt);
+    internal::normalize(b2, m_gt);
+    internal::normalize(pn, m_gt);
+
+    Eigen::Matrix3d eigen_m;
+    eigen_m(0,0) = b1.x(); eigen_m(0,1) = b2.x(); eigen_m(0,2) = pn.x();
+    eigen_m(1,0) = b1.y(); eigen_m(1,1) = b2.y(); eigen_m(1,2) = pn.y();
+    eigen_m(2,0) = b1.z(); eigen_m(2,1) = b2.z(); eigen_m(2,2) = pn.z();
+
+    Eigen::Matrix3d eigen_diag = Eigen::Matrix3d::Zero();
+    eigen_diag(0,0) = 1;
+    eigen_diag(1,1) = 1;
+    eigen_diag(2,2) = 100; // we scale by 1/sqrt(lambda_0) in the direction of n
+
+    Eigen::Matrix3d eigen_mtransp = eigen_m.transpose();
+    m_metric = eigen_m * eigen_diag * eigen_mtransp;
+  }
+
+  FT squared_anisotropic_distance(const Point& p, const Point& q) const
+  {
+#ifdef CGAL_PMP_SNAP_USE_ANISOTROPIC_DISTANCE
+    Vector pq(p, q);
+    Eigen::Vector3d ev;
+    ev(0) = pq.x();
+    ev(1) = pq.y();
+    ev(2) = pq.z();
+
+    return ev.transpose() * m_metric * ev;
+#else
+    return CGAL::squared_distance(p, q);
+#endif
+  }
+
+  // The idea behind this function is to give priority to projections that are parallel to the edge 'e0'
+  // whom the query is the target of. This is done by considering an (anisotropic) distance that
+  // increases the distance if we are not projecting along the vector orthogonal to both the edge 'e0'
+  // and to the normal of the face, and also by checking the scalar product between the edges.
+  // The latter is because the distance to the projection point does not entirely reflect
+  // the alignment of the edges.
+  //
+  // This is WIP and likely to evolve...
+  bool is_better_than_current_best(const FT sq_dist,
+                                   const FT scalar_product)
+  {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "is_better_than_current_best()" << std::endl;
+    std::cout << "sq_dist: " << sq_dist << std::endl;
+    std::cout << "m_sq_adist: " << m_sq_adist << std::endl;
+    std::cout << "scalar products: " << scalar_product << " " << m_sp_with_closest_edge << std::endl;
+#endif
+
+    // Automatically accept much closer tentative targets; automatically reject much farther tentative targets
+    const FT lambda = 4; // comparing squared distances
+    if(lambda * sq_dist < m_sq_adist)
+      return true;
+    if(lambda * m_sq_adist < sq_dist)
+      return false;
+
+    return (scalar_product > m_sp_with_closest_edge);
+  }
 
 public:
-  explicit Projection_traits(const AABBTraits& traits,
-                             const FT sq_tolerance)
-    : m_traits(traits),
+  explicit Projection_traits(const halfedge_descriptor h,
+                             const std::size_t patch_id,
+                             const FT sq_tolerance,
+                             const TriangleMesh& tm_S,
+                             const VPMS vpm_S,
+                             const TriangleMesh& tm_T,
+                             const FacePatchMap face_patch_map_T,
+                             const VPMT vpm_T,
+                             const AABBTraits& aabb_traits)
+    :
+      m_h(h),
+      m_patch_id(patch_id),
+      m_sq_tol(sq_tolerance),
+      m_tm_S(tm_S), m_vpm_S(vpm_S),
+      m_tm_T(tm_T), m_face_patch_map_T(face_patch_map_T), m_vpm_T(vpm_T),
+      m_is_same_mesh((&tm_S == &tm_T)),
+      m_continue(true),
       m_closest_point_initialized(false),
-      m_sq_dist(sq_tolerance)
-  {}
+      m_traits(aabb_traits),
+      m_gt(Geom_traits()) // blame AABB's traits management
+  {
+    // not fully convinced that it is still useful after adding scalar product shenanigans
+// #define CGAL_PMP_SNAP_USE_ANISOTROPIC_DISTANCE
+#ifdef CGAL_PMP_SNAP_USE_ANISOTROPIC_DISTANCE
+    build_metric();
+#endif
 
-  bool go_further() const { return true; }
+    Vector hv(get(vpm_S, source(h, tm_S)), get(vpm_S, target(h, tm_S)));
+    m_direction = hv;
+    CGAL::Polygon_mesh_processing::internal::normalize(m_direction, m_gt);
+  }
+
+  bool go_further() const { return m_continue; }
 
   void intersection(const Point& query, const Primitive& primitive)
   {
-    // skip the primitive if one of its endpoints is the query
-    const typename Primitive::Datum& s = primitive.datum(m_traits.shared_data());
-    if(m_traits.equal_3_object()(s[0], query) || m_traits.equal_3_object()(s[1], query))
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "~~~~ intersection with primitive: " << primitive.id() << std::endl;
+#endif
+
+    halfedge_descriptor h = halfedge(primitive.id(), m_tm_T);
+    if(is_border(h, m_tm_T))
+      h = opposite(h, m_tm_T);
+
+    if(get(m_face_patch_map_T, face(h, m_tm_T)) != m_patch_id) // incompatible patches
       return;
 
-    if(!m_closest_point_initialized)
+    const typename Primitive::Datum& s = primitive.datum(m_traits.shared_data());
+    if(m_traits.equal_3_object()(s[0], query) || m_traits.equal_3_object()(s[1], query))
     {
-      m_closest_point_initialized = true;
-      m_closest_primitive = primitive.id();
-      m_closest_point = primitive.reference_point(m_traits.shared_data());
-      m_sq_dist = m_traits.squared_distance_object()(query, m_closest_point);
+      // If we are NOT using the same mesh and the query is (geometrically) equal to one extremity
+      // of the target edge, we don't want to move the source point away from the target point
+      // (because we cannot move the target point).
+      if(!m_is_same_mesh)
+      {
+        m_closest_point_initialized = false;
+        m_continue = false;
+      }
+
+      // skip the primitive if one of its endpoints is the query
+      return;
     }
 
-    Point new_closest_point = m_traits.closest_point_object()(query, primitive, m_closest_point);
-    if(!m_traits.equal_3_object()(new_closest_point, m_closest_point))
+    // We are searching for a point on the target border that is close to target(h).
+    // To try and avoid foldings, we penalize potential matches that are roughly in the direction of 'h'
+    // by using an anisotropic distance that is the Euclidean on the plane orthogonal to the direction,
+    // and much larger when traveling in the rough direction of 'h'.
+    //
+    // Note that we apply this to points that fall within the tolerance ball, so if there is
+    // only a single candidate that is in a direction we don't like, we still take it.
+    //
+    // @todo should the construct_projected_point_3 be anisotropic too?
+    const Point new_closest_point = m_gt.construct_projected_point_3_object()(
+      CGAL::internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits), query);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "tentative: " << primitive.id() << std::endl;
+    std::cout << get(m_vpm_T, source(primitive.id(), m_tm_T)) << std::endl;
+    std::cout << get(m_vpm_T, target(primitive.id(), m_tm_T)) << std::endl;
+    std::cout << "closest_point: " << new_closest_point << std::endl;
+#endif
+
+    const FT sq_ad_to_tentative_closest_pt = squared_anisotropic_distance(query, new_closest_point);
+
+    Vector tentative_dir(get(m_vpm_T, source(primitive.id(), m_tm_T)),
+                         get(m_vpm_T, target(primitive.id(), m_tm_T)));
+    CGAL::Polygon_mesh_processing::internal::normalize(tentative_dir, m_gt);
+    const FT sp_with_tentative = CGAL::abs(tentative_dir * m_direction);
+
+    if(!m_closest_point_initialized ||
+       is_better_than_current_best(sq_ad_to_tentative_closest_pt, sp_with_tentative))
     {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << "is better!" << std::endl;
+#endif
+
+      m_closest_point_initialized = true;
+
       m_closest_primitive = primitive.id();
       m_closest_point = new_closest_point;
-      m_sq_dist = m_traits.squared_distance_object()(query, m_closest_point);
+      m_sq_adist = sq_ad_to_tentative_closest_pt;
+      m_sp_with_closest_edge = sp_with_tentative;
     }
   }
 
   bool do_intersect(const Point& query, const Node& node) const
   {
-    return m_traits.compare_distance_object()(query, node.bbox(), m_sq_dist) == CGAL::SMALLER;
+    // This should NOT be the anisotropic distance, as we want to test all targets within the tolerance
+    return m_traits.compare_distance_object()(query, node.bbox(), m_sq_tol) == CGAL::SMALLER;
   }
 
   const Point& closest_point() const { return m_closest_point; }
   typename Primitive::Id closest_primitive_id() const { return m_closest_primitive; }
   bool closest_point_initialized() const { return m_closest_point_initialized; }
+  FT scalar_product_with_best() const { return m_sp_with_closest_edge; }
 
 private:
-  const AABBTraits& m_traits;
-  bool m_closest_point_initialized;
-  Point m_closest_point;
-  FT m_sq_dist;
+  halfedge_descriptor m_h;
+  const std::size_t m_patch_id;
+  const FT m_sq_tol;
+  Vector m_direction;
+  Eigen::Matrix3d m_metric;
 
+  const TriangleMesh& m_tm_S;
+  VPMS m_vpm_S;
+  const TriangleMesh& m_tm_T;
+  FacePatchMap m_face_patch_map_T;
+  VPMT m_vpm_T;
+  const bool m_is_same_mesh;
+
+  bool m_continue;
+  bool m_closest_point_initialized;
   typename Primitive::Id m_closest_primitive;
+  Point m_closest_point;
+  FT m_sq_adist;
+  FT m_sp_with_closest_edge; // scalar product between m_h and the current best edge candidate
+
+  const AABBTraits& m_traits;
+  Geom_traits m_gt;
+};
+
+template <typename ConcurrencyTag>
+struct Edges_to_split_map_inserter // Parallel
+{
+#ifdef CGAL_LINKED_WITH_TBB
+  template <typename EdgeToSplitMap, typename HalfedgeDescriptor, typename Point>
+  void operator()(EdgeToSplitMap& edges_to_split,
+                  const HalfedgeDescriptor closest_h,
+                  const HalfedgeDescriptor h,
+                  const Point& closest_p)
+  {
+    typename EdgeToSplitMap::accessor acc;
+    edges_to_split.insert(acc, closest_h);
+    acc->second.emplace_back(h, closest_p);
+  }
+#endif
+};
+
+template <>
+struct Edges_to_split_map_inserter<CGAL::Sequential_tag>
+{
+  template <typename EdgeToSplitMap, typename HalfedgeDescriptor, typename Point>
+  void operator()(EdgeToSplitMap& edges_to_split,
+                  const HalfedgeDescriptor closest_h,
+                  const HalfedgeDescriptor h,
+                  const Point& closest_p)
+  {
+    edges_to_split[closest_h].emplace_back(h, closest_p);
+  }
 };
 
 // The UniqueVertex is a pair of a container of vertex_descriptor and FT, representing
 // vertices with the same geometric position and their associated snapping tolerance
 // (defined as the minimum of the tolerances of the vertices of the bunch)
-template <typename UniqueVertex, typename TriangleMesh,
-          typename EdgeToSplitMap, typename AABBTree, typename VPM, typename GT>
-void find_splittable_edge(const UniqueVertex& unique_vertex,
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename VertexWithTolerance, typename TriangleMesh,
+          typename EdgeToSplitMap, typename AABBTree,
+          typename VertexPatchMap_S, typename FacePatchMap_T,
+          typename VPMS, typename VPMT, typename GT>
+void find_splittable_edge(const VertexWithTolerance& vertex_with_tolerance,
                           EdgeToSplitMap& edges_to_split,
                           const AABBTree* aabb_tree_ptr,
-                          const TriangleMesh& /* pms */,
-                          const VPM& vpms,
-                          const TriangleMesh& pmt,
-                          const VPM& vpmt,
+                          const TriangleMesh& tm_S,
+                          VertexPatchMap_S vertex_patch_map_S,
+                          VPMS vpm_S,
+                          const TriangleMesh& tm_T,
+                          FacePatchMap_T face_patch_map_T,
+                          VPMT vpm_T,
                           const GT& gt)
 {
-  CGAL_USE(vpmt);
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor             edge_descriptor;
 
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor       edge_descriptor;
+  typedef typename GT::FT                                                         FT;
+  typedef typename boost::property_traits<VPMS>::value_type                       Point;
+  typedef typename boost::property_traits<VPMS>::reference                        Point_ref;
 
-  typedef typename GT::FT                                                   FT;
-  typedef typename boost::property_traits<VPM>::value_type                  Point;
-  typedef typename boost::property_traits<VPM>::reference                   Point_ref;
+  typedef typename AABBTree::AABB_traits                                          AABB_traits;
 
-  typedef typename AABBTree::AABB_traits                                    AABB_traits;
+  typedef internal::Projection_traits<TriangleMesh, VPMS, VPMT, FacePatchMap_T, AABB_traits> Projection_traits;
 
-  CGAL_assertion(!unique_vertex.first.empty());
+  // by construction the whole range has the same position
+  const halfedge_descriptor h = vertex_with_tolerance.first;
+  const vertex_descriptor v = target(h, tm_S);
+  const Point_ref query = get(vpm_S, v);
+  const FT sq_tolerance = CGAL::square(vertex_with_tolerance.second);
+  const std::size_t patch_id = get(vertex_patch_map_S, v);
 
-  const Point_ref query = get(vpms, unique_vertex.first.front()); // by construction the whole range has the same position
-  const FT sq_tolerance = CGAL::square(unique_vertex.second);
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+  std::cout << "--------------------------- Query: " << v << " (" << query << ")" << std::endl;
+#endif
 
-  // use the source halfedge as hint
-  internal::Projection_traits<AABB_traits> traversal_traits(aabb_tree_ptr->traits(), sq_tolerance);
+  Projection_traits traversal_traits(h, patch_id, sq_tolerance, tm_S, vpm_S,
+                                     tm_T, face_patch_map_T, vpm_T, aabb_tree_ptr->traits());
   aabb_tree_ptr->traversal(query, traversal_traits);
 
   if(!traversal_traits.closest_point_initialized())
+  {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+  std::cout << "Couldn't find any single projection point" << std::endl;
+#endif
     return;
+  }
 
   const Point& closest_p = traversal_traits.closest_point();
 
@@ -717,7 +486,8 @@ void find_splittable_edge(const UniqueVertex& unique_vertex,
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
   std::cout << "  Closest point: (" << closest_p << ")" << std::endl
-            << "  at distance " << gt.compute_squared_distance_3_object()(query, closest_p)
+            << "  on edge: " << traversal_traits.closest_primitive_id()
+            << "  at sq distance " << gt.compute_squared_distance_3_object()(query, closest_p)
             << " with squared tolerance: " << sq_tolerance
             << " && close enough? " << is_close_enough << ")" << std::endl;
 #endif
@@ -725,62 +495,52 @@ void find_splittable_edge(const UniqueVertex& unique_vertex,
   if(!is_close_enough)
     return;
 
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-  std::cout << "\t and is thus beneath tolerance" << std::endl;
-#endif
-
   edge_descriptor closest_e = traversal_traits.closest_primitive_id();
-  CGAL_assertion(get(vpmt, source(closest_e, pmt)) != query &&
-                 get(vpmt, target(closest_e, pmt)) != query);
+  CGAL_assertion(get(vpm_T, source(closest_e, tm_T)) != query &&
+                 get(vpm_T, target(closest_e, tm_T)) != query);
 
-  halfedge_descriptor closest_h = halfedge(closest_e, pmt);
-  CGAL_assertion(is_border(edge(closest_h, pmt), pmt));
+  halfedge_descriptor closest_h = halfedge(closest_e, tm_T);
+  CGAL_assertion(is_border(edge(closest_h, tm_T), tm_T));
 
-  if(!is_border(closest_h, pmt))
-    closest_h = opposite(closest_h, pmt);
+  if(!is_border(closest_h, tm_T))
+    closest_h = opposite(closest_h, tm_T);
 
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-  std::cout << "splitting position: " << query << std::endl;
-#endif
-
-  // a map because we need to know if the same halfedge is split multiple times
-#ifdef CGAL_LINKED_WITH_TBB
-  typename EdgeToSplitMap::accessor acc;
-  edges_to_split.insert(acc, closest_h);
-  acc->second.emplace_back(&(unique_vertex.first), closest_p);
-#else
-  edges_to_split[closest_h].emplace_back(&(unique_vertex.first), closest_p);
-#endif
+  // Using a map because we need to know if the same halfedge is split multiple times
+  Edges_to_split_map_inserter<ConcurrencyTag>()(edges_to_split, closest_h, vertex_with_tolerance.first, closest_p);
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
 template <typename PointWithToleranceContainer,
-          typename TriangleMesh, typename EdgeToSplitMap,
-          typename AABBTree, typename VPM, typename GT>
+          typename TriangleMesh, typename EdgeToSplitMap, typename AABBTree,
+          typename VertexPatchMap_S, typename FacePatchMap_T,
+          typename VPMS, typename VPMT, typename GT>
 struct Find_splittable_edge_for_parallel_for
 {
   Find_splittable_edge_for_parallel_for(const PointWithToleranceContainer& points_with_tolerance,
                                         EdgeToSplitMap& edges_to_split,
                                         const AABBTree* aabb_tree_ptr,
-                                        const TriangleMesh& pms,
-                                        const VPM& vpms,
-                                        const TriangleMesh& pmt,
-                                        const VPM& vpmt,
+                                        const TriangleMesh& tm_S,
+                                        const VertexPatchMap_S vertex_patch_map_S,
+                                        const VPMS vpm_S,
+                                        const TriangleMesh& tm_T,
+                                        const FacePatchMap_T face_patch_map_T,
+                                        const VPMT vpm_T,
                                         const GT& gt)
     :
       m_points_with_tolerance(points_with_tolerance),
       m_edges_to_split(edges_to_split), m_aabb_tree_ptr(aabb_tree_ptr),
-      m_pms(pms), m_vpms(vpms), m_pmt(pmt), m_vpmt(vpmt), m_gt(gt)
+      m_tm_S(tm_S), m_vertex_patch_map_S(vertex_patch_map_S), m_vpm_S(vpm_S),
+      m_tm_T(tm_T), m_face_patch_map_T(face_patch_map_T), m_vpm_T(vpm_T),
+      m_gt(gt)
   { }
 
   void operator()(const tbb::blocked_range<size_t>& r) const
   {
     for(std::size_t i=r.begin(); i!=r.end(); ++i)
     {
-      find_splittable_edge(m_points_with_tolerance[i], m_edges_to_split,
-                           m_aabb_tree_ptr,
-                           m_pms, m_vpms, m_pmt, m_vpmt,
-                           m_gt);
+      find_splittable_edge<CGAL::Parallel_tag>(m_points_with_tolerance[i], m_edges_to_split, m_aabb_tree_ptr,
+                                               m_tm_S, m_vertex_patch_map_S, m_vpm_S,
+                                               m_tm_T, m_face_patch_map_T, m_vpm_T, m_gt);
     }
   }
 
@@ -788,282 +548,605 @@ private:
   const PointWithToleranceContainer& m_points_with_tolerance;
   EdgeToSplitMap& m_edges_to_split;
   const AABBTree* m_aabb_tree_ptr;
-  const TriangleMesh& m_pms;
-  const VPM m_vpms;
-  const TriangleMesh& m_pmt;
-  const VPM m_vpmt;
+  const TriangleMesh& m_tm_S;
+  const VertexPatchMap_S m_vertex_patch_map_S;
+  const VPMS m_vpm_S;
+  const TriangleMesh& m_tm_T;
+  const FacePatchMap_T m_face_patch_map_T;
+  const VPMT m_vpm_T;
   const GT& m_gt;
 };
 #endif
 
-} // namespace internal
-
-namespace experimental {
-
-// Try to merge vertices in 'hrange' (vd = target(hd, pm)) onto the edges in the 'erange',
-// non-conformingly
-template <typename HalfedgeRange, typename TriangleMesh,
-          typename ToleranceMap, typename NamedParameters>
-std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRange& source_hrange,
-                                                               TriangleMesh& pms,
-                                                               const HalfedgeRange& target_hrange,
-                                                               TriangleMesh& pmt,
-                                                               const ToleranceMap& tol_pmap,
-                                                               const NamedParameters& nps,
-                                                               const NamedParameters& npt)
+template <typename EdgesToSplitContainer,
+          typename TriangleMesh, typename GeomTraits,
+          typename VPMS, typename VPMT>
+std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
+                        TriangleMesh& tm_S,
+                        VPMS vpm_S,
+                        TriangleMesh& tm_T,
+                        VPMT vpm_T,
+                        const GeomTraits& gt,
+                        const bool is_source_mesh_fixed)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
-
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type   VPM;
-  typedef typename boost::property_traits<VPM>::value_type                  Point;
-  typedef typename boost::property_traits<VPM>::reference                   Point_ref;
-
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       GT;
-  typedef typename GT::FT                                                   FT;
-
-  typedef CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh, VPM>    Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive>                                  AABB_Traits;
-  typedef CGAL::AABB_tree<AABB_Traits>                                      AABB_tree;
-
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  // Need to have a triangle mesh to ensure that the refinement point of a border edge 'e' has visibility
-  // of the third p oint of the face 'f' incident to 'e'
-  CGAL_precondition(is_triangle_mesh(pmt));
-
-  VPM vpms = choose_parameter(get_parameter(nps, internal_np::vertex_point), get_property_map(vertex_point, pms));
-  VPM vpmt = choose_parameter(get_parameter(npt, internal_np::vertex_point), get_property_map(vertex_point, pmt));
-
-  const GT gt = choose_parameter(get_parameter(nps, internal_np::geom_traits), GT());
-
-  // start by snapping vertices together to simplify things
-  std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > stitchable_pairs;
-
-  std::size_t snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt,
-                                                              tol_pmap, std::back_inserter(stitchable_pairs),
-                                                              nps, npt);
-
-  typedef CGAL::dynamic_halfedge_property_t<bool>                                Halfedge_bool_tag;
-  typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type    Invalid_halfedge;
-
-  Invalid_halfedge locked_target_halfedges = get(Halfedge_bool_tag(), pmt);
-
-  for(const halfedge_descriptor ht : target_hrange) // still unsure about dynamic pmaps default values...
-    put(locked_target_halfedges, ht, false);
-
-  for(const auto& stitchable_pair : stitchable_pairs)
-    put(locked_target_halfedges, stitchable_pair.second, true);
-
-#ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Snapping vertices to edges. Range sizes: "
-            << std::distance(source_hrange.begin(), source_hrange.end()) << " and "
-            << std::distance(target_hrange.begin(), target_hrange.end()) << std::endl;
-#endif
-
-  // Collect border points that can be projected onto a border edge
-  //
-  // If multiple vertices on the source border have the same geometric position, they are moved
-  // all at once and we use the smallest tolerance from all source vertices with that position
-
-  // Pair of:
-  // - vertices with the same geometric position
-  // - the smallest tolerance for the corresponding geometric position
-  typedef std::vector<vertex_descriptor>                                      Vertex_container;
-  typedef std::pair<Vertex_container, FT>                                     Unique_vertex;
-  typedef std::vector<Unique_vertex>                                          Unique_vertices_with_tolerance;
-
-  // Map[unique geometric position, iterator of unique vertex]
-  // This is not simply a map[unique_vertices, tolerance] sorted on the geometric position
-  // because we need to use a vector in the tbb::parallel_for()
-  typedef typename Unique_vertices_with_tolerance::iterator                   Unique_vertex_iterator;
-  typedef std::map<Point, Unique_vertex_iterator>                             Unique_positions_with_iterator;
-
-#ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Gather unique points in source range..." << std::endl;
-#endif
-
-  Unique_positions_with_iterator unique_positions;
-
-  Unique_vertices_with_tolerance unique_vertices_with_tolerance;
-  unique_vertices_with_tolerance.reserve(source_hrange.size()); // ensures that iterators stay valid
-
-  for(halfedge_descriptor hd : source_hrange)
-  {
-    // Skip the source vertex if its two incident halfedges are geometrically identical (it means that
-    // the two halfedges are already stitchable and we don't want this common vertex to be used
-    // to split a halfedge somewhere else)
-    if(get(vpms, source(hd, pms)) == get(vpms, target(next(hd, pms), pms)))
-      continue;
-
-    const vertex_descriptor v = target(hd, pms);
-    const Point_ref query = get(vpms, v);
-    const FT tolerance = get(tol_pmap, v);
-
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << "Query: " << v << " (" << query << ")" << std::endl;
-#endif
-
-    // The iterator will be set after insertion
-    std::pair<typename Unique_positions_with_iterator::iterator, bool> is_insert_successful =
-      unique_positions.insert(std::make_pair(query, Unique_vertex_iterator()));
-
-    if(is_insert_successful.second) // successful insertion <=> never met this point
-    {
-      std::vector<vertex_descriptor> vv {{ v }};
-      unique_vertices_with_tolerance.emplace_back(vv, tolerance);
-      is_insert_successful.first->second = std::prev(unique_vertices_with_tolerance.end());
-    }
-    else // point was already met
-    {
-      CGAL_assertion(is_insert_successful.first->second != Unique_vertex_iterator());
-      Unique_vertex& uv = *(is_insert_successful.first->second);
-
-      std::vector<vertex_descriptor>& vv = uv.first;
-      CGAL_assertion(std::find(vv.begin(), vv.end(), v) == vv.end());
-      vv.push_back(v);
-
-      uv.second = (std::min)(uv.second, tolerance);
-    }
-  }
-
-  // Since we're inserting primitives one by one, we can't pass this shared data in the constructor of the tree
-  AABB_Traits aabb_traits;
-  aabb_traits.set_shared_data(pmt, vpmt);
-  AABB_tree aabb_tree(aabb_traits);
-
-  for(halfedge_descriptor hd : target_hrange)
-  {
-    CGAL_precondition(is_border(edge(hd, pmt), pmt));
-    if(get(locked_target_halfedges, hd))
-      continue;
-
-    aabb_tree.insert(Primitive(edge(hd, pmt), pmt, vpmt));
-  }
-
-  // Now, check which edges of the target range ought to be split by source vertices
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
-  std::cout << "Collect edges to split w/ " << unique_vertices_with_tolerance.size() << " unique vertices" << std::endl;
-#endif
-
-  typedef std::pair<const Vertex_container*, Point>                               Vertices_with_new_position;
-  typedef std::vector<Vertices_with_new_position>                                 VNP_container;
-
-#ifdef CGAL_LINKED_WITH_TBB
- #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Parallel find splittable edges!" << std::endl;
- #endif
-
-  typedef tbb::concurrent_hash_map<halfedge_descriptor, VNP_container>            Concurrent_edge_to_split_container;
-  typedef internal::Find_splittable_edge_for_parallel_for<Unique_vertices_with_tolerance,
-                                                          TriangleMesh,
-                                                          Concurrent_edge_to_split_container,
-                                                          AABB_tree, VPM, GT>     Functor;
-
-  Concurrent_edge_to_split_container edges_to_split;
-  Functor f(unique_vertices_with_tolerance, edges_to_split, &aabb_tree, pms, vpms, pmt, vpmt, gt);
-  tbb::parallel_for(tbb::blocked_range<std::size_t>(0, unique_vertices_with_tolerance.size()), f);
-#else // CGAL_LINKED_WITH_TBB
- #ifdef CGAL_PMP_SNAP_DEBUG
-  std::cout << "Sequential find splittable edges!" << std::endl;
- #endif
-
-  std::map<halfedge_descriptor, VNP_container> edges_to_split; // @todo hash ?
-  for(const Unique_vertex& uv : unique_vertices_with_tolerance)
-    internal::find_splittable_edge(uv, edges_to_split, &aabb_tree, pms, vpms, pmt, vpmt, gt);
-#endif // CGAL_LINKED_WITH_TBB
-
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "split " << edges_to_split.size() << " edges" << std::endl;
 #endif
 
-  typedef std::pair<const halfedge_descriptor, VNP_container>                     Splitters;
-  for(Splitters& splitter : edges_to_split)
-  {
-    const halfedge_descriptor h = splitter.first;
-    CGAL_assertion(is_border(h, pmt));
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
 
-    VNP_container& splitters = splitter.second;
+  typedef typename boost::property_traits<VPMS>::value_type                       Point;
+  typedef typename boost::property_traits<VPMT>::reference                        Point_ref;
+  typedef typename GeomTraits::Vector_3                                           Vector;
+
+  typedef std::pair<halfedge_descriptor, Point>                                   Vertex_with_new_position;
+  typedef std::vector<Vertex_with_new_position>                                   Vertices_with_new_position;
+  typedef std::pair<const halfedge_descriptor, Vertices_with_new_position>        Edge_and_splitters;
+
+  std::size_t snapped_n = 0;
+
+  CGAL::Real_timer timer;
+  timer.start();
+
+  for(Edge_and_splitters& es : edges_to_split)
+  {
+    halfedge_descriptor h_to_split = es.first;
+    CGAL_assertion(is_border(h_to_split, tm_T));
+
+    Vertices_with_new_position& splitters = es.second;
 
     if(splitters.size() > 1)
     {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << " MUST SORT ON BORDER!" << std::endl;
+      std::cout << " _______ Multiple splitting points on the same halfedge" << std::endl;
 #endif
-      /// \todo Sorting the projected positions is too simple (for example, this doesn't work
-      ///       for a zigzaging polyline). Rather, points should be sorted following
-      ///       the order along the matching border. Note that this requires identifying
-      ///       matching polylines because a sequence of zigzaging points might not all project
-      ///       onto the same halfedge.
 
-      const Point_ref hsp = get(vpmt, source(h, pmt));
+      const Point_ref hsp = get(vpm_T, source(h_to_split, tm_T));
       std::sort(splitters.begin(), splitters.end(),
-                [&](const Vertices_with_new_position& l, const Vertices_with_new_position& r) -> bool
+                [&](const Vertex_with_new_position& l, const Vertex_with_new_position& r) -> bool
                 {
                   return gt.less_distance_to_point_3_object()(hsp, l.second, r.second);
                 });
     }
 
-    halfedge_descriptor h_to_split = h;
-    for(const Vertices_with_new_position& vnp : splitters)
+    // Inserting new points ordered from the source to the target of (the initial) 'h'
+    for(const Vertex_with_new_position& vnp : splitters)
     {
-      // vnp.first is an iterator in the container of std::pair<vertices with same position, tolerance>
-      const Vertex_container& vertices_to_move = *(vnp.first);
-      const Point& p = vnp.second;
+      const halfedge_descriptor splitter_h = vnp.first;
+      const vertex_descriptor splitter_v = target(splitter_h, tm_S);
 
-      CGAL_assertion(!vertices_to_move.empty());
+      // Actual split
+      const bool do_split = is_source_mesh_fixed ||
+                            ((get(vpm_T, target(h_to_split, tm_T)) != vnp.second) &&
+                             (get(vpm_T, source(h_to_split, tm_T)) != vnp.second));
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-      std::cout << "Splitting " << edge(h_to_split, pmt) << " |||| "
-                << " Vs " << source(h_to_split, pmt) << " (" << pmt.point(source(h_to_split, pmt)) << ")"
-                << " --- Vt " << target(h_to_split, pmt) << " (" << pmt.point(target(h_to_split, pmt)) << ")" << std::endl;
-      std::cout << "  with pos " << p << std::endl;
-      std::cout << vertices_to_move.size() << " vertices to move" << std::endl;
+      std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
+                << " Vs " << source(h_to_split, tm_T) << " (" << tm_T.point(source(h_to_split, tm_T)) << ")"
+                << " --- Vt " << target(h_to_split, tm_T) << " (" << tm_T.point(target(h_to_split, tm_T)) << ")" << std::endl;
+      std::cout << "With point: " << vnp.second << std::endl;
+      std::cout << "Actually split? " << do_split << std::endl;
 #endif
 
-      halfedge_descriptor res = CGAL::Euler::split_edge(h_to_split, pmt);
+      vertex_descriptor new_v = boost::graph_traits<TriangleMesh>::null_vertex();
+      if(do_split)
+      {
+        CGAL::Euler::split_edge(h_to_split, tm_T);
+        new_v = source(h_to_split, tm_T);
+      }
+
       ++snapped_n;
 
-      h_to_split = next(res, pmt); // inserting new points ordered from the source to the target of (the initial) 'h'
+      halfedge_descriptor h_to_split_opp = opposite(h_to_split, tm_T); // h_to_split is now equal to 'next(res)'
 
-      // Update positions of the the source mesh and set the position of the new point in the target mesh
-      put(vpmt, target(res, pmt), p);
-      for(const vertex_descriptor v : vertices_to_move)
-        put(vpms, v, p);
+      // Update positions
+      if(is_source_mesh_fixed)
+      {
+        put(vpm_T, new_v, get(vpm_S, splitter_v)); // position of the new point on the target mesh
+      }
+      else
+      {
+        const Point& p = vnp.second;
 
-      // Now need to triangulate the quad created by the edge split
-      const halfedge_descriptor face_split_h1 = opposite(h_to_split, pmt);
-      const halfedge_descriptor face_split_h2 = prev(prev(face_split_h1, pmt), pmt);
+        put(vpm_S, splitter_v, p);
+        if(do_split)
+          put(vpm_T, new_v, p); // position of the new point on the target mesh
+      }
 
-      CGAL::Euler::split_face(face_split_h1, face_split_h2, pmt);
+      if(!do_split)
+        continue;
+
+      // Look at the geometry to determine which diagonal is better to use to split this new quad face
+
+      /*          new_p
+       *         /   \
+       *    res /     \ h_to_split
+       *       /       \
+       *      /         \
+       *    left       right
+       *     |         /
+       *     |        /
+       *     |       /
+       *     |      /
+       *     |     /
+       *     |    /
+       *      opp
+       */
+
+      const halfedge_descriptor res = prev(h_to_split, tm_T);
+      const Point_ref left_pt = get(vpm_T, source(res, tm_T));
+      const Point_ref right_pt = get(vpm_T, target(h_to_split, tm_T));
+      const Point_ref opp = get(vpm_T, target(next(opposite(res, tm_T), tm_T), tm_T));
+
+      // Check if 'p' is "visible" from 'opp' (i.e. its projection on the plane 'Pl(left, opp, right)'
+      // falls in the cone with apex 'opp' and sides given by 'left' and 'right')
+      const Vector n = gt.construct_orthogonal_vector_3_object()(right_pt, left_pt, opp);
+      const Point trans_left_pt = gt.construct_translated_point_3_object()(left_pt, n);
+      const Point trans_right_pt = gt.construct_translated_point_3_object()(right_pt, n);
+
+      const Point_ref new_p = get(vpm_T, new_v);
+      const bool left_of_left = (gt.orientation_3_object()(trans_left_pt, left_pt, opp, new_p) == CGAL::POSITIVE);
+      const bool right_of_right = (gt.orientation_3_object()(right_pt, trans_right_pt, opp, new_p) == CGAL::POSITIVE);
+
+      const bool is_visible = (!left_of_left && !right_of_right);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << "Left/Right: " << left_of_left << " " << right_of_right << std::endl;
+      std::cout << "visible from " << opp << " ? " << is_visible << std::endl;
+#endif
+
+      if(is_visible)
+      {
+        halfedge_descriptor new_hd = CGAL::Euler::split_face(h_to_split_opp,
+                                                             prev(prev(h_to_split_opp, tm_T), tm_T), tm_T);
+        h_to_split = opposite(prev(new_hd, tm_T), tm_T);
+      }
+      else
+      {
+        halfedge_descriptor new_hd = CGAL::Euler::split_face(opposite(res, tm_T),
+                                                             prev(h_to_split_opp, tm_T), tm_T);
+        h_to_split = opposite(next(new_hd, tm_T), tm_T);
+      }
     }
   }
 
   return snapped_n;
 }
 
-template <typename HalfedgeRange, typename TriangleMesh, typename ToleranceMap>
-std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRange& source_hrange,
-                                                               TriangleMesh& pms,
-                                                               const HalfedgeRange& target_hrange,
-                                                               TriangleMesh& pmt,
-                                                               const ToleranceMap& tol_pmap)
+// Collect border points that can be projected onto a border edge
+//
+// If multiple vertices on the source border have the same geometric position, they are moved
+// all at once and we use the smallest tolerance from all source vertices with that position.
+// This is done to solve situation such as:
+//          ||
+//          ||
+//      ____||____
+//      ----------
+// (vertex-vertex snapping into non-conformal snapping) in one go.
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename HalfedgeRange, typename TriangleMesh,
+          typename LockedVertexMap, typename LockedHalfedgeMap, typename ToleranceMap,
+          typename VertexPatchMap_S, typename FacePatchMap_T,
+          typename SourceNamedParameters, typename TargetNamedParameters>
+std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
+                                       TriangleMesh& tm_S,
+                                       ToleranceMap tolerance_map_S,
+                                       VertexPatchMap_S vertex_patch_map_S,
+                                       LockedVertexMap locked_vertices_S,
+                                       const HalfedgeRange& halfedge_range_T,
+                                       TriangleMesh& tm_T,
+                                       FacePatchMap_T face_patch_map_T,
+                                       LockedHalfedgeMap locked_halfedges_T,
+                                       const bool is_source_mesh_fixed,
+                                       const SourceNamedParameters& snp,
+                                       const TargetNamedParameters& tnp)
 {
-  return snap_vertex_range_onto_vertex_range_non_conforming(source_hrange, pms, target_hrange, pmt,
-                                                            tol_pmap, parameters::all_default(),
-                                                            parameters::all_default());
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, TargetNamedParameters>::type       GT;
+  typedef typename GT::FT                                                         FT;
+
+  typedef typename GetVertexPointMap<TriangleMesh, SourceNamedParameters>::type   VPMS;
+  typedef typename GetVertexPointMap<TriangleMesh, TargetNamedParameters>::type   VPMT;
+
+  typedef typename boost::property_traits<VPMT>::value_type                       Point;
+
+  typedef CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh, VPMT>         Primitive;
+  typedef CGAL::AABB_traits<GT, Primitive>                                        AABB_Traits;
+  typedef CGAL::AABB_tree<AABB_Traits>                                            AABB_tree;
+
+  typedef std::pair<halfedge_descriptor, Point>                                   Vertex_with_new_position;
+  typedef std::vector<Vertex_with_new_position>                                   Vertices_with_new_position;
+
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
+  VPMS vpm_S = choose_parameter(get_parameter(snp, internal_np::vertex_point), get_property_map(vertex_point, tm_S));
+  VPMT vpm_T = choose_parameter(get_parameter(tnp, internal_np::vertex_point), get_property_map(vertex_point, tm_T));
+  const GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
+
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "Gather unique points in source range..." << std::endl;
+#endif
+
+  typedef std::pair<halfedge_descriptor, FT>                                      Vertex_with_tolerance;
+  typedef std::vector<Vertex_with_tolerance>                                      Vertices_with_tolerance;
+
+  Vertices_with_tolerance vertices_to_snap;
+  vertices_to_snap.reserve(halfedge_range_S.size()); // ensures that iterators stay valid
+
+  for(halfedge_descriptor h : halfedge_range_S)
+  {
+    if(get(locked_vertices_S, target(h, tm_S)))
+      continue;
+
+    // Skip the source vertex if its two incident halfedges are geometrically identical (it means that
+    // the two halfedges are already stitchable and we don't want this common vertex to be used
+    // to split a halfedge somewhere else)
+    if(get(vpm_S, source(h, tm_S)) == get(vpm_S, target(next(h, tm_S), tm_S)))
+      continue;
+
+    const vertex_descriptor v = target(h, tm_S);
+    const FT tolerance = get(tolerance_map_S, v);
+    vertices_to_snap.emplace_back(h, tolerance);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::cout << "Query: " << v << " (" << get(vpm_S, v) << "), tolerance: " << tolerance << std::endl;
+#endif
+  }
+
+  // Since we're inserting primitives one by one, we can't pass this shared data in the constructor of the tree
+  AABB_Traits aabb_traits;
+  aabb_traits.set_shared_data(tm_T, vpm_T);
+  AABB_tree aabb_tree(aabb_traits);
+
+  for(halfedge_descriptor h : halfedge_range_T)
+  {
+    CGAL_precondition(is_border(edge(h, tm_T), tm_T));
+    if(get(locked_halfedges_T, h))
+    {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << edge(h, tm_T) << " is locked and not a valid target" << std::endl;
+#endif
+      continue;
+    }
+
+    aabb_tree.insert(Primitive(edge(h, tm_T), tm_T, vpm_T));
+  }
+
+  // Now, check which edges of the target range ought to be split by source vertices
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+  std::cout << "Collect edges to split with " << vertices_to_snap.size() << " vertices" << std::endl;
+#endif
+
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+                             "Parallel_tag is enabled but TBB is unavailable.");
+#else
+  if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+  {
+#ifdef CGAL_PMP_SNAP_DEBUG
+    std::cout << "Parallel find splittable edges!" << std::endl;
+#endif
+
+    typedef tbb::concurrent_hash_map<halfedge_descriptor,
+                                     Vertices_with_new_position>                 Concurrent_edge_to_split_container;
+    typedef internal::Find_splittable_edge_for_parallel_for<
+              Vertices_with_tolerance, TriangleMesh,
+              Concurrent_edge_to_split_container, AABB_tree,
+              VertexPatchMap_S, FacePatchMap_T, VPMS, VPMT, GT>                  Functor;
+
+    CGAL::Real_timer timer;
+    timer.start();
+
+    Concurrent_edge_to_split_container edges_to_split;
+    Functor f(vertices_to_snap, edges_to_split, &aabb_tree,
+              tm_S, vertex_patch_map_S, vpm_S, tm_T, face_patch_map_T, vpm_T, gt);
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, vertices_to_snap.size()), f);
+
+    std::cout << "Time to gather edges: " << timer.time() << std::endl;
+
+    return split_edges(edges_to_split, tm_S, vpm_S,  tm_T, vpm_T, gt, is_source_mesh_fixed);
+  }
+  else
+#endif // CGAL_LINKED_WITH_TBB
+  {
+#ifdef CGAL_PMP_SNAP_DEBUG
+    std::cout << "Sequential find splittable edges!" << std::endl;
+#endif
+
+    std::map<halfedge_descriptor, Vertices_with_new_position> edges_to_split;
+    for(const Vertex_with_tolerance& vt : vertices_to_snap)
+    {
+      internal::find_splittable_edge(vt, edges_to_split, &aabb_tree,
+                                     tm_S, vertex_patch_map_S, vpm_S,
+                                     tm_T, face_patch_map_T, vpm_T, gt);
+    }
+
+    return split_edges(edges_to_split, tm_S, vpm_S, tm_T, vpm_T,  gt, is_source_mesh_fixed);
+  }
 }
 
+// \ingroup PMP_repairing_grp
+//
+// Attempts to snap the vertices in `halfedge_range_A` onto edges of `halfedge_range_B`, and reciprocally.
+// A vertex from the first range is only snapped to an edge of the second range if the distance to
+// the edge is smaller than the tolerance prescribed at the vertex.
+//
+// \warning This function does not give any guarantee on the conformity between the two meshes after the snapping.
+// \warning This function does not merge vertices or the meshes, it is purely geometric.
+//
+// \tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+// \tparam HalfedgeRange_A a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%halfedge_descriptor`
+// \tparam HalfedgeRange_B a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%halfedge_descriptor`
+// \tparam ToleranceMap_A a model of `ReadablePropertyMap` with key type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+//                        and value type `GetGeomTraits<TriangleMesh, NamedParameters_A>::type::FT`
+// \tparam ToleranceMap_B a model of `ReadablePropertyMap` with key type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+//                        and value type `GetGeomTraits<TriangleMesh, NamedParameters_A>::type::FT`
+// \tparam NamedParameters_A a sequence of \ref pmp_namedparameters "Named Parameters"
+// \tparam NamedParameters_B a sequence of \ref pmp_namedparameters "Named Parameters"
+//
+// \param halfedge_range_A a range of halfedges of the first mesh defining a set of vertices (as targets of the halfeges)
+// \param tm_A the first mesh to which the vertices in `halfedge_range_A` belong
+// \param tolerance_map_A a tolerance map associating to each vertex of the first range a tolerance value
+// \param halfedge_range_B a range of vertices of the second mesh defining a set of vertices (as targets of the halfeges)
+// \param tolerance_map_B a tolerance map associating to each vertex of the second range a tolerance value
+// \param tm_B the target mesh to which the vertices in `halfedge_range_B` belong
+// \param np_A optional \ref pmp_namedparameters "Named Parameters" related to the source mesh,
+//             amongst those described below:
+//
+// \cgalNamedParamsBegin
+//   \cgalParamBegin{vertex_point_map}
+//     the property map with the points associated to the vertices of the source mesh.
+//     The type of this map is model of `ReadWritePropertyMap`. If this parameter is omitted,
+//     an internal property map for `CGAL::vertex_point_t` must be available in `TriangleMesh`.
+//   \cgalParamEnd
+//   \cgalParamBegin{geom_traits}
+//     a geometric traits class instance, must be a model of `Kernel`
+//   \cgalParamEnd
+// \cgalNamedParamsEnd
+//
+// \param np_B optional \ref pmp_namedparameters "Named Parameters" related to the target mesh,
+//             amongst those described below:
+//
+// \cgalNamedParamsBegin
+//   \cgalParamBegin{vertex_point_map}
+//     the property map with the points associated to the vertices of the target mesh.
+//     The type of this map is model of `ReadablePropertyMap`. If this parameter is omitted,
+//     an internal property map for `CGAL::vertex_point_t` must be available in `TriangleMesh`.
+//   \cgalParamEnd
+// \cgalNamedParamsEnd
+//
+// \return the number of snapped vertex pairs
+//
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename HalfedgeRange, typename TriangleMesh,
+          typename ToleranceMap_A, typename ToleranceMap_B,
+          typename NamedParameters_A, typename NamedParameters_B>
+std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
+                               TriangleMesh& tm_A,
+                               ToleranceMap_A tolerance_map_A,
+                               HalfedgeRange& halfedge_range_B,
+                               TriangleMesh& tm_B,
+                               ToleranceMap_B tolerance_map_B,
+                               const bool is_self_snapping, // == true if range and meshes are equal
+                               const NamedParameters_A& np_A,
+                               const NamedParameters_B& np_B)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor             face_descriptor;
+
+  typedef CGAL::dynamic_vertex_property_t<bool>                                   Vertex_bool_tag;
+  typedef CGAL::dynamic_vertex_property_t<std::size_t>                            Vertex_size_t_tag;
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
+
+  typedef typename boost::property_map<TriangleMesh, Vertex_bool_tag>::type       Locked_vertices;
+  typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type     Locked_halfedges;
+  typedef typename boost::property_map<TriangleMesh, Vertex_size_t_tag>::type     Vertex_patch;
+
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::face_patch_t, NamedParameters_A,
+      Constant_property_map<face_descriptor, std::size_t> /*default*/ >::type     Face_patch_map_A;
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::face_patch_t, NamedParameters_B,
+      Constant_property_map<face_descriptor, std::size_t> /*default*/ >::type     Face_patch_map_B;
+
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::is_default_parameter;
+  using CGAL::parameters::get_parameter;
+
+  const bool is_same_mesh = (&tm_A == &tm_B);
+  const bool simplify_first_mesh = choose_parameter(get_parameter(np_A, internal_np::do_simplify_border), false);
+  const bool simplify_second_mesh = choose_parameter(get_parameter(np_B, internal_np::do_simplify_border), false);
+  const bool is_second_mesh_fixed = choose_parameter(get_parameter(np_B, internal_np::do_lock_mesh), false);
+
+  // vertex-vertex and vertex-edge snapping is only considered within compatible patches
+  Face_patch_map_A face_patch_map_A = choose_parameter(get_parameter(np_A, internal_np::face_patch),
+                                                       Constant_property_map<face_descriptor, std::size_t>(-1));
+  Face_patch_map_B face_patch_map_B = choose_parameter(get_parameter(np_B, internal_np::face_patch),
+                                                       Constant_property_map<face_descriptor, std::size_t>(-1));
+
+  Vertex_patch vertex_patch_map_A = get(Vertex_size_t_tag(), tm_A);
+  Vertex_patch vertex_patch_map_B = get(Vertex_size_t_tag(), tm_B);
+
+  for(const halfedge_descriptor h : halfedge_range_A)
+  {
+    CGAL_precondition(is_border(h, tm_A));
+    halfedge_descriptor h_opp = opposite(h, tm_A);
+    for(const vertex_descriptor v : vertices_around_face(h_opp, tm_A))
+      put(vertex_patch_map_A, v, get(face_patch_map_A, face(h_opp, tm_A)));
+  }
+
+  // @todo avoid that when 'self_snapping' is true
+  for(const halfedge_descriptor h : halfedge_range_B)
+  {
+    CGAL_precondition(is_border(h, tm_B));
+    halfedge_descriptor h_opp = opposite(h, tm_B);
+    for(const vertex_descriptor v : vertices_around_face(h_opp, tm_B))
+      put(vertex_patch_map_B, v, get(face_patch_map_B, face(h_opp, tm_B)));
+  }
+
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "Non-conformal snapping... Range sizes: "
+            << std::distance(halfedge_range_A.begin(), halfedge_range_A.end()) << " and "
+            << std::distance(halfedge_range_B.begin(), halfedge_range_B.end()) << std::endl;
+#endif
+
+  CGAL_expensive_precondition(is_valid_polygon_mesh(tm_S) && is_triangle_mesh(tm_S));
+  CGAL_expensive_precondition(is_valid_polygon_mesh(tm_T) && is_triangle_mesh(tm_T));
+
+  // Steps:
+  // - #1 Simplify the source range
+  // - #1bis Simplify the target range (if it's not locked)
+  // - #2 two-way vertex-vertex snapping
+  // - #3 two-way vertex-edge snapping
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  /// #1 and #1bis (Simplification of borders)
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << "Simplify ranges (" << simplify_first_mesh << " " << simplify_second_mesh << ")..." << std::endl;
+#endif
+
+  if(simplify_first_mesh)
+  {
+    internal::simplify_range(halfedge_range_A, tm_A, tolerance_map_A, np_A);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+    std::ofstream("results/simplified_A.off") << std::setprecision(17) << tm_A;
+#endif
+  }
+
+  if(!is_self_snapping && !is_second_mesh_fixed && simplify_second_mesh)
+  {
+    internal::simplify_range(halfedge_range_B, tm_B, tolerance_map_B, np_B);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+    std::ofstream("results/simplified_B.off") << std::setprecision(17) << tm_B;
+#endif
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  /// #2 (Two-way vertex-vertex snapping)
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // We keep in memory pairs of source/target edges that are stitchable after vertex-vertex snapping
+  // --> these halfedges should not be considered as targets in non-conformal snapping
+  // Similarly, matching vertices whose incident edges have matching directions are also locked
+  Locked_vertices locked_vertices_A = get(Vertex_bool_tag(), tm_A);
+  Locked_vertices locked_vertices_B = get(Vertex_bool_tag(), tm_B);
+  Locked_halfedges locked_halfedges_A = get(Halfedge_bool_tag(), tm_A);
+  Locked_halfedges locked_halfedges_B = get(Halfedge_bool_tag(), tm_B);
+
+  std::size_t snapped_n = 0;
+
+  std::vector<std::pair<vertex_descriptor, vertex_descriptor> > locked_vertices;
+  std::vector<halfedge_descriptor> locked_halfedges_A_vector, locked_halfedges_B_vector;
+
+  snapped_n += internal::snap_vertices_two_way<ConcurrencyTag>(
+                 halfedge_range_A, tm_A, tolerance_map_A, vertex_patch_map_A,
+                 halfedge_range_B, tm_B, tolerance_map_B, vertex_patch_map_B,
+                 std::back_inserter(locked_vertices),
+                 std::back_inserter(locked_halfedges_A_vector),
+                 std::back_inserter(locked_halfedges_B_vector),
+                 is_second_mesh_fixed, np_A, np_B);
+
+  for(const auto& vpair : locked_vertices)
+  {
+    put(locked_vertices_A, vpair.first, true);
+    put(locked_vertices_B, vpair.second, true);
+    if(is_same_mesh)
+    {
+      put(locked_vertices_B, vpair.first, true);
+      put(locked_vertices_A, vpair.second, true);
+    }
+  }
+
+  for(const halfedge_descriptor h : locked_halfedges_A_vector)
+    put(locked_halfedges_A, h, true);
+  for(const halfedge_descriptor h : locked_halfedges_B_vector)
+    put(locked_halfedges_B, h, true);
+
+  if(is_same_mesh)
+  {
+    for(const halfedge_descriptor h : locked_halfedges_A_vector)
+      put(locked_halfedges_B, h, true);
+    for(const halfedge_descriptor h : locked_halfedges_B_vector)
+      put(locked_halfedges_A, h, true);
+  }
+
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+  std::ofstream("results/vertex_vertex_A.off") << std::setprecision(17) << tm_A;
+  std::ofstream("results/vertex_vertex_B.off") << std::setprecision(17) << tm_B;
+#endif
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  /// #3 (Two one-way vertex-edge snapping)
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  snapped_n += internal::snap_non_conformal_one_way<ConcurrencyTag>(
+                 halfedge_range_A, tm_A, tolerance_map_A, vertex_patch_map_A, locked_vertices_A,
+                 halfedge_range_B, tm_B, face_patch_map_B, locked_halfedges_B,
+                 false /*source is never fixed*/, np_A, np_B);
+
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+  std::ofstream("results/vertex_edge_A.off") << std::setprecision(17) << tm_A;
+  std::ofstream("results/vertex_edge_B.off") << std::setprecision(17) << tm_B;
+#endif
+
+  if(!is_self_snapping)
+  {
+    snapped_n += internal::snap_non_conformal_one_way<ConcurrencyTag>(
+                   halfedge_range_B, tm_B, tolerance_map_B, vertex_patch_map_B, locked_vertices_B,
+                   halfedge_range_A, tm_A, face_patch_map_A, locked_halfedges_A,
+                   is_second_mesh_fixed, np_B, np_A);
+  }
+
+  return snapped_n;
+}
+
+} // namespace internal
+
+namespace experimental {
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Convenience overloads
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Attempt to snap the vertices of the border of 'pm1' onto border edges of 'pm2'.
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh,
+          typename ToleranceMap_A, typename ToleranceMap_B,
+          typename NamedParameters_A, typename NamedParameters_B>
+std::size_t snap_borders(TriangleMesh& tm_A,
+                         ToleranceMap_A tolerance_map_A,
+                         TriangleMesh& tm_B,
+                         ToleranceMap_B tolerance_map_B,
+                         const NamedParameters_A& np_A,
+                         const NamedParameters_B& np_B)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
-template <typename TriangleMesh>
-std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
-                                                TriangleMesh& pm2)
+  std::vector<halfedge_descriptor> border_vertices_1;
+  border_halfedges(tm_A, std::back_inserter(border_vertices_1));
+  std::vector<halfedge_descriptor> border_vertices_2;
+  border_halfedges(tm_B, std::back_inserter(border_vertices_2));
+
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_1, tm_A, tolerance_map_A,
+                                                      border_vertices_2, tm_B, tolerance_map_B,
+                                                      false /*not self snapping*/, np_A, np_B);
+}
+
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh,
+          typename NamedParameters_A, typename NamedParameters_B>
+std::size_t snap_borders(TriangleMesh& tm_A,
+                         TriangleMesh& tm_B,
+                         const NamedParameters_A& np_A,
+                         const NamedParameters_B& np_B)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
@@ -1073,86 +1156,109 @@ std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
   typedef CGAL::dynamic_vertex_property_t<FT>                                    Vertex_property_tag;
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type  Tolerance_map;
 
-  std::vector<halfedge_descriptor> border_vertices1;
-  border_halfedges(pm1, std::back_inserter(border_vertices1));
+  std::vector<halfedge_descriptor> border_vertices_1;
+  std::vector<halfedge_descriptor> border_vertices_2;
+  border_halfedges(tm_A, std::back_inserter(border_vertices_1));
+  border_halfedges(tm_B, std::back_inserter(border_vertices_2));
 
-  std::vector<halfedge_descriptor> border_vertices2;
-  if(&pm1 == &pm2)
-    border_vertices2 = border_vertices1;
-  else
-    border_halfedges(pm2, std::back_inserter(border_vertices2));
-
-  Tolerance_map tol_pmap = get(Vertex_property_tag(), pm1);
   const FT tol_mx(std::numeric_limits<double>::max());
-  internal::assign_tolerance_with_local_edge_length_bound(border_vertices1, tol_pmap, tol_mx, pm1);
+  Tolerance_map tolerance_map_A = get(Vertex_property_tag(), tm_A);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_1, tolerance_map_A, tol_mx, tm_A, np_A);
+  Tolerance_map tolerance_map_B = get(Vertex_property_tag(), tm_A);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices_2, tolerance_map_B, tol_mx, tm_B, np_B);
 
-  return snap_vertex_range_onto_vertex_range_non_conforming(border_vertices1, pm1,
-                                                            border_vertices2, pm2, tol_pmap,
-                                                            CGAL::parameters::all_default(),
-                                                            CGAL::parameters::all_default());
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices_1, tm_A, tolerance_map_A,
+                                                      border_vertices_2, tm_B, tolerance_map_B,
+                                                      false /*no self snapping*/, np_A, np_B);
 }
 
-template <typename TriangleMesh, typename ToleranceMap, typename NamedParameters>
-std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
-                                                TriangleMesh& pm2,
-                                                const ToleranceMap& tol_pmap,
-                                                const NamedParameters& np1,
-                                                const NamedParameters& np2)
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh,
+          typename ToleranceMap_A, typename ToleranceMap_B>
+std::size_t snap_borders(TriangleMesh& tm_A,
+                         ToleranceMap_A tolerance_map_A,
+                         TriangleMesh& tm_B,
+                         ToleranceMap_B tolerance_map_B)
+{
+  return snap_borders<ConcurrencyTag>(tm_A, tolerance_map_A, tm_B, tolerance_map_B,
+                                      CGAL::parameters::all_default(), CGAL::parameters::all_default());
+}
+
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh>
+std::size_t snap_borders(TriangleMesh& tm_A,
+                         TriangleMesh& tm_B)
+{
+  return snap_borders<ConcurrencyTag>(tm_A, tm_B, CGAL::parameters::all_default(), CGAL::parameters::all_default());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Same as above, but with a single mesh
+
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh,
+          typename ToleranceMap,
+          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+std::size_t snap_border(TriangleMesh& tm,
+                        ToleranceMap tolerance_map,
+                        const CGAL_PMP_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
-  std::vector<halfedge_descriptor> border_vertices1;
-  border_halfedges(pm1, std::back_inserter(border_vertices1));
+  std::vector<halfedge_descriptor> border_vertices;
+  border_halfedges(tm, std::back_inserter(border_vertices));
 
-  std::vector<halfedge_descriptor> border_vertices2;
-  border_halfedges(pm2, std::back_inserter(border_vertices2));
-
-  return snap_vertex_range_onto_vertex_range_non_conforming(border_vertices1, pm1,
-                                                            border_vertices2, pm2,
-                                                            tol_pmap, np1, np2);
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices, tm, tolerance_map,
+                                                      border_vertices, tm, tolerance_map,
+                                                      true /*self snapping*/, np, np);
 }
 
-template <typename TriangleMesh, typename ToleranceMap>
-std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm1,
-                                                TriangleMesh& pm2,
-                                                const ToleranceMap& tol_pmap)
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh,
+          typename ToleranceMap>
+std::size_t snap_border(TriangleMesh& tm,
+                        ToleranceMap tolerance_map)
 {
-  return snap_border_vertices_non_conforming(pm1, pm2, tol_pmap,
-                                             CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  return snap_border<ConcurrencyTag>(tm, tolerance_map, CGAL::parameters::all_default());
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Same as above, but with a single mesh
-
-template <typename TriangleMesh>
-std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm)
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh,
+          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+std::size_t snap_border(TriangleMesh& tm,
+                        const CGAL_PMP_NP_CLASS& np)
 {
-  return snap_border_vertices_non_conforming(pm, pm);
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh>::type                             GT;
+  typedef typename GT::FT                                                        FT;
+
+  typedef CGAL::dynamic_vertex_property_t<FT>                                    Vertex_property_tag;
+  typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type  Tolerance_map;
+
+  std::vector<halfedge_descriptor> border_vertices;
+  border_halfedges(tm, std::back_inserter(border_vertices));
+
+  const FT tol_mx(std::numeric_limits<double>::max());
+  Tolerance_map tolerance_map = get(Vertex_property_tag(), tm);
+  internal::assign_tolerance_with_local_edge_length_bound(border_vertices, tolerance_map, tol_mx, tm, np);
+
+  return internal::snap_non_conformal<ConcurrencyTag>(border_vertices, tm, tolerance_map,
+                                                      border_vertices, tm, tolerance_map,
+                                                      true /*self snapping*/, np, np);
 }
 
-template <typename TriangleMesh, typename ToleranceMap, typename NamedParameters>
-std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm,
-                                                const ToleranceMap& tol_pmap,
-                                                const NamedParameters& np)
+template <typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename TriangleMesh>
+std::size_t snap_border(TriangleMesh& tm)
 {
-  return snap_border_vertices_non_conforming(pm, pm, tol_pmap, np, np);
-}
-
-template <typename TriangleMesh, typename ToleranceMap>
-std::size_t snap_border_vertices_non_conforming(TriangleMesh& pm,
-                                                const ToleranceMap& tol_pmap)
-{
-  return snap_border_vertices_non_conforming(pm, pm, tol_pmap,
-                                             CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  return snap_border<ConcurrencyTag>(tm, CGAL::parameters::all_default());
 }
 
 } // end namespace experimental
-
 } // end namespace Polygon_mesh_processing
-
 } // end namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_INTERNAL_SNAP_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_SNAPPING_SNAP_H
