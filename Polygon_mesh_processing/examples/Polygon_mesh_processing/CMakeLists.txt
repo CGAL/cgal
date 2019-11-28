@@ -54,7 +54,8 @@ if (EIGEN3_FOUND)
   CGAL_target_use_Eigen(refine_fair_example)
   create_single_source_cgal_program( "shape_smoothing_example.cpp")
   CGAL_target_use_Eigen(shape_smoothing_example)
-
+  create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
+  CGAL_target_use_Eigen(hole_filling_example_LCC)
 endif(EIGEN3_FOUND)
 
 create_single_source_cgal_program( "self_intersections_example.cpp" )
@@ -81,7 +82,6 @@ create_single_source_cgal_program( "corefinement_mesh_union_with_attributes.cpp"
 create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
 create_single_source_cgal_program( "random_perturbation_SM_example.cpp" )
 create_single_source_cgal_program( "corefinement_LCC.cpp")
-create_single_source_cgal_program( "hole_filling_example_LCC.cpp" )
 create_single_source_cgal_program( "detect_features_example.cpp" )
 create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
 create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
@@ -89,11 +89,15 @@ create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 create_single_source_cgal_program( "locate_example.cpp")
 
 if(OpenMesh_FOUND)
+
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
 target_link_libraries( compute_normals_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
-create_single_source_cgal_program( "hole_filling_example_OM.cpp" )
-target_link_libraries( hole_filling_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
+if (EIGEN3_FOUND)
+  create_single_source_cgal_program( "hole_filling_example_OM.cpp" )
+  target_link_libraries( hole_filling_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
+  CGAL_target_use_Eigen( hole_filling_example_OM )
+endif()
 
 create_single_source_cgal_program( "point_inside_example_OM.cpp")
 target_link_libraries( point_inside_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
