@@ -1,3 +1,5 @@
+#define CGAL_PMP_COMPUTE_NORMAL_DEBUG
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
@@ -51,6 +53,8 @@ void test(const Mesh& mesh,
   assert(v0n == get(vnormals, first_vertex));
   v0n = PMP::compute_vertex_normal(first_vertex, mesh, PMP::parameters::vertex_point_map(vpmap)
                                                                        .face_normal_map(fnormals));
+  std::cout.precision(17);
+  std::cout << v0n << " versus " << get(vnormals, first_vertex) << std::endl;
   assert(v0n == get(vnormals, first_vertex));
 
   PMP::compute_normals(mesh, vnormals, fnormals);
