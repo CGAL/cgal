@@ -120,7 +120,6 @@ public:
     // 1) We create m_reduced_map as a copy of amap, by contracting all
     //    non loop.
     surface_simplification_in_one_vertex(origin_to_copy, copy_to_origin);
-    CGAL_assertion(perforated_faces_correctly_marked());
 
     if (display_time)
     {
@@ -137,27 +136,12 @@ public:
     std::cout<<", valid="<<get_reduced_map().is_valid()<<std::endl;
 #endif
 
-    // 2) Now we initialize each length two path associated with each edge that
-    // does not belong to the spanning tree (which are thus all the
-    // survival edges).
-    initialize_length_two_paths(origin_to_copy);
-
-    if (display_time)
-    {
-      t2.stop();
-      std::cout<<"[TIME] Initialization of length two paths: "
-               <<t2.time()<<" seconds"<<std::endl;
-      t2.reset(); t2.start();
-    }
-
-    // 3) We simplify m_reduced_map in a surface with only one face
+    // 2) We simplify m_reduced_map in a surface with only one face
     //    (or maybe more if we have boundaries!)
     surface_simplification_in_one_face(origin_to_copy, copy_to_origin);
-    CGAL_assertion(perforated_faces_correctly_marked());
 
-    // 4) We remove all non perforated loops
+    // 3) We remove all non perforated loops
     remove_non_perforated_loops(copy_to_origin);
-    CGAL_assertion(perforated_faces_correctly_marked());
 
     if (display_time)
     {
@@ -175,7 +159,7 @@ public:
 
     if (!get_reduced_map().is_empty()) // is_empty if the surface is a sphere
     {
-      // 5) We quadrangulate the face, except for the torus surfaces
+      // 4) We quadrangulate the face, except for the torus surfaces
       if (!reduced_map_is_a_torus())
       {
         surface_quadrangulate();
@@ -241,6 +225,7 @@ public:
                <<t.time()<<" seconds"<<std::endl;
     }
 
+    CGAL_assertion(perforated_faces_correctly_marked());
     CGAL_assertion(reduced_map_is_a_torus() || are_paths_valid()); // Because torus is a special case
   }
 
@@ -664,9 +649,14 @@ protected:
     get_original_map().free_mark(grey);
   }
 
+  /// Step 1) Create the copy of the input mesh, while contracting all edges of
+  /// THE spanning tree. Initializes also m_path, the pair of darts of the edge
+  /// in m_copy. This pair of edges will be updated later
+  /// (in surface_simplification_in_one_face() and in surface_quadrangulate()).
   void surface_simplification_in_one_vertex
   (Origin_to_copy& origin_to_copy,Copy_to_origin& copy_to_origin)
   {
+    m_paths.clear();
     compute_T();
 
     Dart_handle d1, d2;
@@ -687,6 +677,8 @@ protected:
           get_reduced_map().mark(d2, m_mark_perforated);
           if (get_original_map().is_perforated(it))
           { get_reduced_map().mark(d1, m_mark_perforated); }
+
+          m_paths[it]=std::make_pair(d1, nullptr); // Initialize m_paths
         }
         else if (Original_dart_const_handle(it)<
                  get_original_map().template beta<2>(it))
@@ -705,6 +697,8 @@ protected:
           if (get_original_map().is_perforated
               (get_original_map().template beta<2>(it)))
           { get_reduced_map().mark(d2, m_mark_perforated); }
+
+          m_paths[it]=std::make_pair(d1, nullptr); // Initialize m_paths
         }
       }
     }
@@ -723,19 +717,6 @@ protected:
         get_reduced_map().basic_link_beta_1(origin_to_copy[it],
                                             origin_to_copy[dd1]); // let's link both
 
-        // TODO DEBUG CODE
-        if (get_reduced_map().is_marked(origin_to_copy[it], m_mark_perforated))
-        {
-          CGAL_assertion(get_reduced_map().is_marked(origin_to_copy[dd1],
-                                                     m_mark_perforated));
-        }
-        else
-        {
-          CGAL_assertion(!get_reduced_map().is_marked(origin_to_copy[dd1],
-                                                      m_mark_perforated));
-        }
-        // TODO END OF DEBUG CODE
-
         if (get_original_map().template is_free<2>(it))
         {
           dd1=prev_in_boundary(it);
@@ -744,55 +725,12 @@ protected:
           get_reduced_map().basic_link_beta_1
               (get_reduced_map().template beta<2>(origin_to_copy[it]),
                get_reduced_map().template beta<2>(origin_to_copy[dd1]));
-
-          // TODO DEBUG CODE
-          if (get_reduced_map().is_marked
-              (get_reduced_map().template beta<2>(origin_to_copy[it]),
-               m_mark_perforated))
-          {
-            CGAL_assertion(get_reduced_map().is_marked
-                           (get_reduced_map().template beta<2>(origin_to_copy[dd1]),
-                            m_mark_perforated));
-          }
-          else
-          {
-            CGAL_assertion(!get_reduced_map().is_marked
-                           (get_reduced_map().template beta<2>(origin_to_copy[dd1]),
-                            m_mark_perforated));
-          }
         }
       }
     }
   }
 
-  /// Step 2) Initialize, for each edge of get_original_map() not in the spanning
-  /// tree T, the pair of darts of the edge in m_copy. This pair of edges
-  /// will be updated later (in surface_simplification_in_one_face() and in
-  /// surface_quadrangulate() ).
-  void initialize_length_two_paths(Origin_to_copy& origin_to_copy)
-  {
-    m_paths.clear();
-
-    for (typename Original_map::Dart_range::const_iterator
-           it=get_original_map().darts().begin(),
-           itend=get_original_map().darts().end(); it!=itend; ++it)
-    {
-      if (!get_original_map().is_marked(it, m_mark_T))
-      {
-        if (get_original_map().template is_free<2>(it) ||
-            Original_dart_const_handle(it)<get_original_map().template beta<2>(it))
-        { m_paths[it]=std::make_pair(origin_to_copy.at(it), nullptr); }
-      }
-    }
-
-#ifdef CGAL_TRACE_CMAP_TOOLS
-    std::cout<<"Number of darts in paths: "<<m_paths.size()
-             <<"; number of darts in m_reduced_map: "<<get_reduced_map().number_of_darts()
-             <<std::endl;
-#endif
-  }
-
-  /// Step 3) Transform the 2-map into an equivalent surface having only
+  /// Step 2) Transform the 2-map into an equivalent surface having only
   /// one face. All edges removed during this step belong to the
   /// dual spanning tree L (spanning tree of the dual 2-map).
 
@@ -883,12 +821,14 @@ protected:
       }
     }
 
+#ifndef NDEBUG
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       CGAL_assertion(!get_reduced_map().is_marked(it->second.first, toremove));
       CGAL_assertion(it->second.second==nullptr ||
                      !get_reduced_map().is_marked(it->second.second, toremove));
     }
+#endif
   }
 
   /// Remove all loops after having merge all real faces in one.
@@ -980,12 +920,14 @@ protected:
     get_reduced_map().set_automatic_attributes_management(true);
     get_reduced_map().free_mark(toremove);
 
+#ifndef NDEBUG
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       CGAL_assertion(get_reduced_map().is_dart_used(it->second.first));
       CGAL_assertion(it->second.second==nullptr ||
                      get_reduced_map().is_dart_used(it->second.second));
     }
+#endif
   }
 
   /// Step 4) quadrangulate the surface.
@@ -1020,6 +962,7 @@ protected:
     CGAL_assertion(get_reduced_map().is_whole_map_marked(treated));
     get_reduced_map().free_mark(treated);
 
+#ifdef NDEBUG    
     for (typename Reduced_map::Dart_range::iterator
          it=get_reduced_map().darts().begin();
          it!=get_reduced_map().darts().end(); ++it)
@@ -1030,6 +973,7 @@ protected:
         CGAL_assertion((get_reduced_map().template beta<1,1,1>(it)==it));
       }
     }
+#endif
 
     // 2) We update the pair of darts
     for (typename TPaths::iterator itp=m_paths.begin(), itpend=m_paths.end();
@@ -1076,6 +1020,7 @@ protected:
       }
     }
 
+#ifdef NDEBUG 
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       if (it->second.second==nullptr)
@@ -1091,6 +1036,7 @@ protected:
         CGAL_assertion(!get_reduced_map().is_marked(it->second.second, oldedges));
       }
     }
+#endif
 
     // 3) We remove all the old edges, and extend the perforated faces
     //    (i.e. we remove edges between real and perforated faces).
@@ -1114,12 +1060,14 @@ protected:
     CGAL_assertion(get_reduced_map().is_whole_map_unmarked(oldedges));
     get_reduced_map().free_mark(oldedges);
 
+#ifdef NDEBUG 
     for (auto it=m_paths.begin(), itend=m_paths.end(); it!=itend; ++it)
     {
       CGAL_assertion(get_reduced_map().is_dart_used(it->second.first));
       CGAL_assertion(it->second.second==nullptr ||
                      get_reduced_map().is_dart_used(it->second.second));
     }
+#endif
   }
 
 #if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
