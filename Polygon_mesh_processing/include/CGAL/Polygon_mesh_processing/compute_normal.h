@@ -614,7 +614,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << std::endl << std::endl;
   std::cout << "----------------------------------------------------------------------" << std::endl;
-  std::cout << "compute vertex at " << get(vpmap, v) << std::endl;
+  std::cout << "compute vertex at " << get(vpmap, v)
+            << ", must compute face normals? " << must_compute_face_normals << std::endl;
 #endif
 
   // handle isolated vertices
@@ -622,7 +623,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   if(he == boost::graph_traits<PolygonMesh>::null_halfedge())
     return CGAL::NULL_VECTOR;
 
-  if(must_compute_face_normals) // if vertex normal type is sin-based weights, we don't need to compute normals
+  if(must_compute_face_normals)
   {
     for(face_descriptor f : CGAL::faces_around_target(halfedge(v, pmesh), pmesh))
     {
@@ -639,7 +640,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     std::cout << "Failed to find most visible normal, use weighted sum of normals" << std::endl;
 #endif
-    normal = internal::compute_vertex_normal_as_sum_of_weighted_normals(v, internal::SIN_WEIGHT, face_normals, vpmap, pmesh, traits);
+    normal = internal::compute_vertex_normal_as_sum_of_weighted_normals(
+               v, internal::SIN_WEIGHT, face_normals, vpmap, pmesh, traits);
   }
 
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
