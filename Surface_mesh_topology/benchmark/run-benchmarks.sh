@@ -1,19 +1,33 @@
 #!/bin/bash
+
+# Usage run-benchmarks.sh [1 2 3]
+#   By default, run the three benchmarks.
+#   If 1, 2, or 3, run only the given benchmark.
+
 # Requirement:
 # * data: a link to the directory containing /big/*.off big-genus/*.off and big-genus-with-holes/*.off
-# * quadrangulation_computation_benchmarks: a link to the exe of benchmark/quadrangulation_computation_benchmarks.cpp
-# * path_homotopy: a link to the exe of examples/Surface_mesh_topology/path_homotopy.cpp 
-# * path_homotopy_with_schema: a link to the exe of benchmark/path_homotopy_with_schema.cpp
-#
+# * quadrangulation_computation_benchmarks: Bench1: a link to the exe of benchmark/quadrangulation_computation_benchmarks.cpp
+# * path_homotopy: Bench2: a link to the exe of examples/Surface_mesh_topology/path_homotopy.cpp 
+# * path_homotopy_with_schema: Bench3: a link to the exe of benchmark/path_homotopy_with_schema.cpp
+
 # Output:
 # 3 files for the 3 benchmarks:
-# * res-quadrangulation-computation.txt for bench1
-# * res-path-homotopy.txt for bench2
-# * res-polygonal-schema.txt for bench3
-# These files can be transform as data for gnuplot, using the script 
+# * res-quadrangulation-computation.txt for Bench1
+# * res-path-homotopy.txt for Bench2
+# * res-polygonal-schema.txt for Bench3
+# These files can be transform as data for gnuplot, using the script generate-gnuplot-data.sh
 
 # You can run all the benchmarks or only one.
-BENCH=2 # One work among ALL 1 2 3 
+if [ $# -ge 2 ]
+then
+    echo "ERROR usage: run-benchmarks.sh [1 2 3]."
+    exit 1
+elif [ $# -eq 0 ]
+then
+    BENCH=ALL
+else
+    BENCH="${1}"
+fi
 
 # Bench 1
 if [ ${BENCH} = ALL -o ${BENCH} = 1 ]
