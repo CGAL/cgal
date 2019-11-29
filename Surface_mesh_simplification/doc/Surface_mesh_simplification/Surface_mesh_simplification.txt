@@ -368,7 +368,7 @@ Note that these policies depend on the third party \ref thirdpartyEigen library.
 The core of the package, as well as most of the simplification strategies, are the work of Fernando Cacciola,
 betwen 2006 and 2009.
 
-Andreas Fabri added the `Bounded_normal_change_placement` functionality in %CGAL 4.11.
+Andreas Fabri added the `Bounded_normal_change_placement` functionality in \cgal 4.11.
 
 The implementation of the Garland-Heckbert simplification policies is the result of the work
 of Baskın Şenbaşlar during the 2019 season of the Google Summer of Code.

@@ -11,10 +11,10 @@ and as such an object of this type appears as a parameter in the `operator()` of
 
 The template parameters of this class must be consistent with the types used in the main call
 to `edge_collapse()`: if you have specified a vertex point map or a geometric traits
-(via `CGAL::parameters::vertex_point_map` and `CGAL::parameters::geom_traits` respectively),
+(via `CGAL::parameters::vertex_point_map()` and `CGAL::parameters::geom_traits()` respectively),
 then the template parameters must be identical.
 
-Note however that if you wish to define your own models to the `GetCost` or `GetPlacement` concepts, you can
+Note however that if you wish to define your own models of the `GetCost` or `GetPlacement` concepts, you can
 simply template the call to `operator()` by an "EdgeProfile" template parameter, which will
 avoid having to explicit the template parameters of the `Edge_profile` class: indeed, the profile appears
 as an argument of the `operator()` functions of these two concepts and automatic template deduction
