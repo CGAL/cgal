@@ -44,9 +44,7 @@ int main(int argc, char** argv)
   const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.2;
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
-  // Garland&Heckbert simplification maintains an error matrix at each vertex,
-  // which must be accessible for the cost and placement evaluations.
-
+  // Garland&Heckbert simplification policies
   typedef typename SMS::GarlandHeckbert_policies<Surface_mesh, Kernel>          GH_policies;
   typedef typename GH_policies::Get_cost                                        GH_cost;
   typedef typename GH_policies::Get_placement                                   GH_placement;
