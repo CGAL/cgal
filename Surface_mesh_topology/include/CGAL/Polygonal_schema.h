@@ -608,7 +608,7 @@ namespace Surface_mesh_topology {
       { ps.add_edges_to_facet(all_labels[i]); }
       typename PS::Dart_handle dh=ps.finish_facet();
 
-      if (rand()%101<percentage_of_perforated)
+      if (rand()%100<percentage_of_perforated)
       { ps.perforate_facet(dh); }
     }
 
