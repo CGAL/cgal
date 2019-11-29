@@ -29,7 +29,10 @@
 #include <CGAL/aff_transformation_tags.h>
 
 #ifndef CGAL_NO_OSTREAM_INSERT_AFF_TRANSFORMATION_3
-#include <iostream>
+#include <ostream>
+#endif
+#ifndef CGAL_NO_ISTREAM_EXTRACT_AFF_TRANSFORMATION_3
+#include <istream>
 #endif
 namespace CGAL {
 
