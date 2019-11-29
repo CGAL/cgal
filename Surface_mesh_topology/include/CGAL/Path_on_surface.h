@@ -1164,8 +1164,8 @@ public:
       if (!iss.good())
       { return false; }
       iss>>nb;
-      if ((nb>=0 && resplus[start]!=nb) ||
-          (nb<0 && resmoins[start]!=-nb))
+      if ((nb>=0 && resplus[start]!=static_cast<std::size_t>(nb)) ||
+          (nb<0 && resmoins[start]!=static_cast<std::size_t>(-nb)))
       { return false; }
 
       start=next_index(start);

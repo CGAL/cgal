@@ -1313,15 +1313,15 @@ protected:
       if (is_two_dimensional())
       {
         displayMessage(QString("Move camera direction upside down."));
-        CGAL::qglviewer::Vec cur=camera()->viewDirection();
-        /* double cx=cur.x, cy=cur.y, cz=cur.z;
+        /* CGAL::qglviewer::Vec cur=camera()->viewDirection();
+        double cx=cur.x, cy=cur.y, cz=cur.z;
         if (has_zero_x())      { cx=-cx; }
         else if (has_zero_y()) { cy=-cy; }
-        else                   { cz=-cz; } */
+        else                   { cz=-cz; }
         double cx=0., cy=0., cz=0.;
         if (has_zero_x())      { cx=(cur.x<0?-1.:1); }
         else if (has_zero_y()) { cy=(cur.y<0?-1.:1); }
-        else                   { cz=(cur.z<0?-1.:1); }
+        else                   { cz=(cur.z<0?-1.:1); }*/
 
         camera()->setUpVector(-camera()->upVector());
         //camera()->frame()->setConstraint(NULL);

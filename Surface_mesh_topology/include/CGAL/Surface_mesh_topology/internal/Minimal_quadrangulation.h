@@ -43,7 +43,7 @@ struct Reduced_map_items
 #ifdef CGAL_PWRLE_TURN_V3
     typedef std::size_t Dart_info;
 #endif // CGAL_PWRLE_TURN_V3
-    typedef CGAL::Cell_attribute<CMap, int> Vertex_attribute;
+    typedef CGAL::Cell_attribute<CMap, int32_t> Vertex_attribute;
     typedef CGAL::cpp11::tuple<Vertex_attribute, void, void> Attributes;
   };
 };
@@ -1200,7 +1200,8 @@ protected:
     }
     // here we know there is a hole just before the dart 0 (plus maybe other ones)
     if (get_dart_id(dh1)>get_dart_id(dh2) || // we crossed dart 0, so we crossed a hole
-        get_dart_id(dh2)-get_dart_id(dh1)>get_reduced_map().template info<0>(dh1)) // the gap is more than the degree, so we crossed a hole
+        get_dart_id(dh2)-get_dart_id(dh1)>
+        static_cast<std::size_t>(get_reduced_map().template info<0>(dh1))) // the gap is more than the degree, so we crossed a hole
     {// so we return an "infinite" value
       return std::numeric_limits<std::size_t>::max();
     }
@@ -1222,7 +1223,8 @@ protected:
     }
     // here we know there is a hole just before the dart 0 (plus maybe other ones)
     if (get_dart_id(dh1)<get_dart_id(dh2) || // we crossed dart 0, so we crossed a hole
-        get_dart_id(dh1)-get_dart_id(dh2)>get_reduced_map().template info<0>(dh1)) // the gap is more than the degree, so we crossed a hole
+        get_dart_id(dh1)-get_dart_id(dh2)>
+        static_cast<std::size_t>(get_reduced_map().template info<0>(dh1))) // the gap is more than the degree, so we crossed a hole
     {// so we return an "infinite" value
       return std::numeric_limits<std::size_t>::max();
     }

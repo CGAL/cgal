@@ -166,7 +166,7 @@ namespace Surface_mesh_topology {
 
         if (label==nullptr)
         {
-          if (!gmap.is_free<2>(dh))
+          if (!gmap.template is_free<2>(dh))
           { label=gmap.info(gmap.template alpha<2>(dh)).m_label; }
           else
           {
@@ -608,7 +608,7 @@ namespace Surface_mesh_topology {
       { ps.add_edges_to_facet(all_labels[i]); }
       typename PS::Dart_handle dh=ps.finish_facet();
 
-      if (rand()%100<percentage_of_perforated)
+      if (static_cast<std::size_t>(rand()%100)<percentage_of_perforated)
       { ps.perforate_facet(dh); }
     }
 

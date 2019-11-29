@@ -127,6 +127,7 @@ bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                bool use_only_positive,
                bool use_only_negative)
 {
+  CGAL_USE(msg);
   bool res=true;
 
   if (testtorun==-1 || nbtests==testtorun)

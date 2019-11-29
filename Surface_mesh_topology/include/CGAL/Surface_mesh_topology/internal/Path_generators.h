@@ -92,7 +92,8 @@ generate_random_connected_set_of_faces(const LCC& lcc, std::size_t nb,
 
   std::unordered_map<std::size_t, typename LCC::Dart_const_handle> border_faces;
   
-  int index=random.get_int(0, static_cast<int>(lcc.darts().capacity()));
+  std::size_t index=static_cast<std::size_t>
+    (random.get_int(0, static_cast<int>(lcc.darts().capacity())));
   while (!lcc.darts().is_used(index))
   {
     ++index;

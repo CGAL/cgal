@@ -117,8 +117,8 @@ public:
   
   Face_graph_wrapper(const HEG& f) : m_fg(f),
                                      mdarts(*this),
-                                     mnb_used_marks(0),
-                                     m_nb_darts(0)
+                                     m_nb_darts(0),
+                                     mnb_used_marks(0)
 
   {
     mmask_marks.reset();
