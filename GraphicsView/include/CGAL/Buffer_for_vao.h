@@ -71,7 +71,7 @@ namespace internal
     static typename Local_kernel::Point_3 get_local_point(const typename K::Point_2& p)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
-      return typename Local_kernel::Point_3(converter(p.x()), 0, converter(p.y()));
+      return typename Local_kernel::Point_3(converter(p.x()), converter(p.y()), 0);
     }
     static typename Local_kernel::Point_3 get_local_point(const typename K::Weighted_point_2& p)
     {
@@ -91,7 +91,7 @@ namespace internal
     static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_2& v)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
-      return typename Local_kernel::Vector_3(converter(v.x()), 0, converter(v.y()));
+      return typename Local_kernel::Vector_3(converter(v.x()), converter(v.y()), 0);
     }
     static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_3& v)
     {
@@ -105,15 +105,15 @@ namespace internal
   struct Geom_utils<Local_kernel, Local_kernel>
   {
     static typename Local_kernel::Point_3 get_local_point(const typename Local_kernel::Point_2& p)
-    { return typename Local_kernel::Point_3(p.x(), 0, p.y()); }
+    { return typename Local_kernel::Point_3(p.x(), p.y(), 0); }
     static typename Local_kernel::Point_3 get_local_point(const typename Local_kernel::Weighted_point_2& p)
-    { return typename Local_kernel::Point_3(p.point().x(), 0, p.point().y());}
+    { return typename Local_kernel::Point_3(p.point().x(), p.point().y(), 0);}
     static const typename Local_kernel::Point_3 & get_local_point(const typename Local_kernel::Point_3& p)
     { return p; }
     static typename Local_kernel::Point_3 get_local_point(const typename Local_kernel::Weighted_point_3& p)
     { return typename Local_kernel::Point_3(p);}
     static typename Local_kernel::Vector_3 get_local_vector(const typename Local_kernel::Vector_2& v)
-    { return typename Local_kernel::Vector_3(v.x(), 0, v.y()); }
+    { return typename Local_kernel::Vector_3(v.x(), v.y(), 0); }
     static const typename Local_kernel::Vector_3& get_local_vector(const typename Local_kernel::Vector_3& v)
     { return v; }
   };
