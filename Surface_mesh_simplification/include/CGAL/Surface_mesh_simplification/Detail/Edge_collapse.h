@@ -136,7 +136,7 @@ public:
   } ;
   
   
-  typedef Modifiable_priority_queue<halfedge_descriptor,Compare_cost,edge_id> PQ;
+  typedef Modifiable_priority_queue<halfedge_descriptor,Compare_cost,edge_id> PQ ;
   typedef typename PQ::handle pq_handle ;
   
   // An Edge_data is associated with EVERY _ edge in the mesh (collapsable or not).
@@ -300,6 +300,7 @@ private:
     CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
 
     aData.set_PQ_handle(mPQ->update(aEdge,aData.PQ_handle())) ; 
+
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
     CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
   }   
@@ -309,7 +310,7 @@ private:
     CGAL_SURF_SIMPL_TEST_assertion(is_primary_edge(aEdge)) ;
     CGAL_SURF_SIMPL_TEST_assertion(aData.is_in_PQ());
     CGAL_SURF_SIMPL_TEST_assertion(mPQ->contains(aEdge) ) ;
-    std::cout<<"remove"<<std::endl;
+
     aData.set_PQ_handle(mPQ->erase(aEdge,aData.PQ_handle()));
 
     CGAL_SURF_SIMPL_TEST_assertion(!aData.is_in_PQ());
