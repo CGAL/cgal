@@ -39,7 +39,7 @@ fi
 # Bench 2
 if [ ${BENCH} = ALL -o ${BENCH} = 2 ]
 then
-    all_files="data/big/happy.off data/big-genus/obj9.off data/big-genus-with-holes/obj10-1.000000-2.off"
+    all_files="data/big/happy.off data/big-genus/obj9.off"
     rm -f res-path-homotopy.txt
     for file in ${all_files}
     do
