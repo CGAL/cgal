@@ -24,7 +24,7 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
 
-template<class TM_, typename GT_>
+template<typename GT_>
 struct GarlandHeckbert_matrix_type
 {
   typedef typename GT_::FT                                                      FT;
@@ -50,7 +50,7 @@ struct GarlandHeckbert_core
   typedef typename Geom_traits::Plane_3                                         Plane_3;
   typedef typename Geom_traits::Vector_3                                        Vector_3;
 
-  typedef typename GarlandHeckbert_matrix_type<TM_, GT_>::type                  Matrix4x4;
+  typedef typename GarlandHeckbert_matrix_type<GT_>::type                       Matrix4x4;
   typedef Eigen::Matrix<FT, 1, 4>                                               Row4;
   typedef Eigen::Matrix<FT, 4, 1>                                               Col4;
 
@@ -114,9 +114,9 @@ struct GarlandHeckbert_core
                     get(vpm, target(next(hd, tmesh), tmesh)));
 
       Row4 plane_mtr;
-      const FT norm = sqrt(CGAL::square(plane.a()) +
-                           CGAL::square(plane.b()) +
-                           CGAL::square(plane.c()));
+      const FT norm = CGAL::sqrt(CGAL::square(plane.a()) +
+                                 CGAL::square(plane.b()) +
+                                 CGAL::square(plane.c()));
       const FT den = FT(1) / norm;
 
       plane_mtr << den * plane.a(),
@@ -134,9 +134,7 @@ struct GarlandHeckbert_core
                                   p1p2, gt.construct_orthogonal_vector_3_object()(plane));
 
         const FT d = - normal * target_vertex_vector;
-        const FT norm = sqrt(CGAL::square(normal.x()) +
-                             CGAL::square(normal.y()) +
-                             CGAL::square(normal.z()));
+        const FT norm = CGAL::sqrt(gt.compute_squared_length_3_object()(normal));
         const FT den = FT(1) / norm;
 
         plane_mtr << den * normal.x(),
@@ -154,9 +152,7 @@ struct GarlandHeckbert_core
                                   p1p2, gt.construct_orthogonal_vector_3_object()(plane));
 
         const FT d = - normal * target_vertex_vector;
-        const FT norm = sqrt(CGAL::square(normal.x()) +
-                             CGAL::square(normal.y()) +
-                             CGAL::square(normal.z()));
+        const FT norm = CGAL::sqrt(gt.compute_squared_length_3_object()(normal));
         const FT den = FT(1) / norm;
 
         plane_mtr << den * normal.x(),
@@ -179,7 +175,7 @@ struct GarlandHeckbert_core
   {
     Matrix4x4 nq = Matrix4x4::Zero();
     for(vertex_descriptor v : vertices(tmesh))
-      put(vcm, v, nq); // @todo is that necessary ?
+      put(vcm, v, nq);
 
     for(face_descriptor f : faces(tmesh))
     {
@@ -227,9 +223,7 @@ struct GarlandHeckbert_core
         const Vector_3 vvt = gt.construct_vector_3_object()(CGAL::ORIGIN, get(vpm, vt));
         const FT disc_d = - gt.compute_scalar_product_3_object()(disc_plane_n, vvt);
 
-        const FT disc_norm = CGAL::sqrt(CGAL::square(disc_plane_n.x()) +
-                                        CGAL::square(disc_plane_n.y()) +
-                                        CGAL::square(disc_plane_n.z()));
+        const FT disc_norm = CGAL::sqrt(gt.compute_squared_length_3_object()(disc_plane_n));
         const FT disc_den = FT(1) / disc_norm;
 
         Row4 disc_mtr_r;

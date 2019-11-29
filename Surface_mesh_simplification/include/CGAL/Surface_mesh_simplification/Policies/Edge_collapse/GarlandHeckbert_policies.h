@@ -159,8 +159,7 @@ public:
   typedef GeomTraits                                                            Geom_traits;
   typedef typename Geom_traits::FT                                              FT;
 
-  typedef typename internal::GarlandHeckbert_matrix_type<TriangleMesh,
-                                                         GeomTraits>::type      Cost_matrix;
+  typedef typename internal::GarlandHeckbert_matrix_type<GeomTraits>::type      Cost_matrix;
   typedef CGAL::dynamic_vertex_property_t<Cost_matrix>                          Cost_property;
   typedef typename boost::property_map<TriangleMesh, Cost_property>::type       Vertex_cost_map;
 
