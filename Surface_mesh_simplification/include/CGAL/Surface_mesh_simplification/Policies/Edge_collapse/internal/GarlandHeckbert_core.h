@@ -24,6 +24,13 @@ namespace CGAL {
 namespace Surface_mesh_simplification {
 namespace internal {
 
+template<class TM_, typename GT_>
+struct GarlandHeckbert_matrix_type
+{
+  typedef typename GT_::FT                                                      FT;
+  typedef Eigen::Matrix<FT, 4, 4, Eigen::DontAlign>                             type;
+};
+
 template<class TM_, class VPM_, typename GT_>
 struct GarlandHeckbert_core
 {
@@ -43,7 +50,7 @@ struct GarlandHeckbert_core
   typedef typename Geom_traits::Plane_3                                         Plane_3;
   typedef typename Geom_traits::Vector_3                                        Vector_3;
 
-  typedef Eigen::Matrix<FT, 4, 4>                                               Matrix4x4;
+  typedef typename GarlandHeckbert_matrix_type<TM_, GT_>::type                  Matrix4x4;
   typedef Eigen::Matrix<FT, 1, 4>                                               Row4;
   typedef Eigen::Matrix<FT, 4, 1>                                               Col4;
 
@@ -170,7 +177,7 @@ struct GarlandHeckbert_core
                                          const Geom_traits& gt,
                                          const FT discontinuity_multiplier = FT(100))
   {
-    Matrix4x4 nq = Eigen::Matrix<FT, 4, 4>::Zero();
+    Matrix4x4 nq = Matrix4x4::Zero();
     for(vertex_descriptor v : vertices(tmesh))
       put(vcm, v, nq); // @todo is that necessary ?
 
