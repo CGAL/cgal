@@ -168,7 +168,7 @@ public:
                     bool anofaces=false,
                     const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
     // First draw: vertices; edges, faces; multi-color; inverse normal
-    Base(parent, title, true, true, true, false, true), 
+    Base(parent, title, true, true, true, false, false), 
     lcc(alcc),
     m_nofaces(anofaces),
     m_random_face_color(false),
