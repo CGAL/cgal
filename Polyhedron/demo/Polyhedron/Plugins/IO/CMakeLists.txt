@@ -80,7 +80,7 @@ endif()
 
 find_path(3MF_INCLUDE_DIR
   NAMES Model/COM/NMR_DLLInterfaces.h
-  PATHS /usr/include/lib3mf
+  PATH_SUFFIXES lib3mf
   DOC "Path to lib3MF headers"
   )
 find_library(3MF_LIBRARIES NAMES 3MF DOC "Path to the lib3MF library")
