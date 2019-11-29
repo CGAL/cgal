@@ -170,9 +170,9 @@ public:
   GarlandHeckbert_policies(TriangleMesh& tmesh,
                            const FT discontinuity_multiplier = FT(100))
   {
-    Vertex_cost_map vcm = get(Cost_property(), tmesh);
-    get_cost_ = Get_cost(vcm, discontinuity_multiplier);
-    get_placement_ = Get_placement(vcm);
+    vcm_ = get(Cost_property(), tmesh);
+    get_cost_ = Get_cost(vcm_, discontinuity_multiplier);
+    get_placement_ = Get_placement(vcm_);
   }
 
   Get_cost& get_cost() { return get_cost_; }
@@ -181,6 +181,7 @@ public:
   const Get_placement& get_placement() const { return get_placement_; }
 
 private:
+  Vertex_cost_map vcm_;
   Get_cost get_cost_;
   Get_placement get_placement_;
 };
