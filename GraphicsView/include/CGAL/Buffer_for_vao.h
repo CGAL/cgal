@@ -71,7 +71,7 @@ namespace internal
     static typename Local_kernel::Point_3 get_local_point(const typename K::Point_2& p)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
-      return Local_point(converter(p.x()), 0, converter(p.y()));
+      return typename Local_kernel::Point_3(converter(p.x()), 0, converter(p.y()));
     }
     static typename Local_kernel::Point_3 get_local_point(const typename K::Weighted_point_2& p)
     {
@@ -91,7 +91,7 @@ namespace internal
     static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_2& v)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
-      return Local_vector(converter(v.x()), 0, converter(v.y()));
+      return typename Local_kernel::Vector_3(converter(v.x()), 0, converter(v.y()));
     }
     static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_3& v)
     {
@@ -484,23 +484,23 @@ protected:
       if (m_indices_of_points_of_face.size()>0)
       { 
 	add_indexed_point(m_indices_of_points_of_face[i]); 
-	}
+      }
       else
       {
         add_point(m_points_of_face[i]); // Add the position of the point
-      if (m_started_face_is_colored)
-      { add_color(m_color_of_face); } // Add the color      
-      add_flat_normal(normal); // Add the flat normal
-      // Its smooth normal (if given by the user)
-      if (m_vertex_normals_for_face.size()>0)
-      { // Here we have 3 vertex normals; we can use Gouraud
-        add_gouraud_normal(m_vertex_normals_for_face[i]);
-      }
-      else
-      { // Here user does not provide all vertex normals: we use face normal istead
-        // and thus we will not be able to use Gouraud
-        add_gouraud_normal(normal);
-      }
+        if (m_started_face_is_colored)
+        { add_color(m_color_of_face); } // Add the color      
+        add_flat_normal(normal); // Add the flat normal
+        // Its smooth normal (if given by the user)
+        if (m_vertex_normals_for_face.size()>0)
+        { // Here we have 3 vertex normals; we can use Gouraud
+          add_gouraud_normal(m_vertex_normals_for_face[i]);
+        }
+        else
+        { // Here user does not provide all vertex normals: we use face normal istead
+          // and thus we will not be able to use Gouraud
+          add_gouraud_normal(normal);
+        }
       }
     }
   }
