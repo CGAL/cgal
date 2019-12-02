@@ -8,12 +8,20 @@
  * it maintains the doubly-connected connected edge list (DCEL) used by the
  * arrangement.
  *
- * The package contains one topology traits, namely,
- * `Arr_spherical_topology_traits_2`, which can can serve as a topology traits
+ * The package contains three topology traits, as follows:
+ * <UL>
+ * <li> `Arr_spherical_topology_traits_2`&mdash;can serve as a topology traits
+ * for an arrangement of planar bounded curves.
+ * <li> `Arr_bounded_planar_topology_traits_2`&mdash;can serve as a topology traits
+ * for an arrangement of planar unbounded curves.
+ * <li> `Arr_unb_planar_topology_traits_2`&mdash;can serve as a topology traits
  * for an arrangement of arcs of great circles embeded on a sphere.
+ * <\ul>
  *
  * At this point we do not expose all the requirements of this concept.
  *
+ * \cgalHasModel `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
+ * \cgalHasModel `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
  * \cgalHasModel `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
  *
  * \sa `Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>`

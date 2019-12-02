@@ -25,9 +25,6 @@ namespace CGAL {
  * geometric predicates on them.
  * <LI>The `TopologyTraits` template-parameter should be instantiated with a
  * class that is a model of the `ArrangementTopologyTraits` concept.
-
- * The value of this parameter is by
- * default `Arr_default_dcel<Traits>`.
  * </UL>
  *
  * The available traits classes and <span class="textsc">Dcel</span> classes are
@@ -66,7 +63,7 @@ public:
   typedef GeometryTraits_2                              Geometry_traits_2;
 
   /*! the topology traits class in use. */
-  typedef TopologyTraits_2                              Topology_traits_2;
+  typedef TopologyTraits                                Topology_traits;
 
   /*! a private type used as an abbreviation of the
    * `Arrangement_on_surface_2` type hereafter.
@@ -79,10 +76,10 @@ public:
   typedef typename Topology_traits::Dcel                Dcel;
 
   /*! the point type, as defined by the traits class. */
-  typedef typename Traits_2::Point_2 Point_2;
+  typedef typename Geometry__traits_2::Point_2 Point_2;
 
   /*! the \f$ x\f$-monotone curve type, as defined by the traits class. */
-  typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
   /*! the size type (equivalent to `size_t`). */
   typedef typename Dcel::Size Size;
@@ -159,7 +156,7 @@ public:
    * to its <I>target</I> vertex, and has an <I>incident face</I> lying to
    * its left. Each halfedge has a <I>twin</I> halfedge directed in the
    * opposite direction, where the pair of twin halfedges form together
-   * an arrangement edge, that is - a \f$ 1\f$-dimensional cell, associated
+   * an arrangement edge, that is, a \f$ 1\f$-dimensional cell, associated
    * with planar \f$ x\f$-monotone curve.
    *
    * Halfedges are stored in doubly-connected lists and form chains. These
@@ -287,9 +284,9 @@ public:
     /*! obtains a past-the-end iterator for the inner CCBs. */
     Inner_ccb_iterator inner_ccbs_end();
 
-    /*! obtains a Boolean indicating whether the face has an outer CCB.
-     * (The fictitious face and the unbounded face of an arrangement that
-     * does not have a fictitious face do not have outer CCBs.)
+    /*! indicates whether the face has an outer CCB.  (The fictitious face and
+     * the unbounded face of an arrangement that does not have a fictitious face
+     * do not have outer CCBs.)
      */
     bool has_outer_ccb() const;
 
@@ -432,7 +429,7 @@ public:
   /*! constructs an empty arrangement that uses the given `traits`
    *instance for performing the geometric predicates.
    */
-  Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>(const Traits_2 *traits);
+  Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>(const GeometryTraits_2* traits);
 
   /// @}
 
@@ -485,6 +482,9 @@ public:
   /*! obtains the past-the-end iterator of the vertices in the arrangement. */
   Vertex_iterator vertices_end();
 
+  /*! obtains a range over handles of the arrangement vertices. */
+  Iterator_range<Prevent_deref<Vertex_iterator> > vertex_handles();
+
   /*! obtains the number of arrangement vertices that lie at infinity and
    * are not associated with valid points. Such vertices are not considered
    * to be regular arrangement vertices and `arr.number_of_vertices()`
@@ -511,6 +511,9 @@ public:
   /*! obtains the past-the-end iterator of the halfedges in the arrangement. */
   Halfedge_iterator halfedges_end();
 
+  /*! obtains a range over handles of the arrangement halfedges. */
+  Iterator_range<Prevent_deref<Halfedge_iterator> > halfedge_handles();
+
   /*! obtains the number of edges in the arrangement (equivalent to
    * `arr.number_of_halfedges() / 2`).
    */
@@ -521,6 +524,9 @@ public:
 
   /*! obtains the past-the-end iterator of the edges in the arrangement. */
   Edge_iterator edges_end();
+
+  /*! obtains a range over handles of the arrangement edges. */
+  Iterator_range<Prevent_deref<Edge_iterator> > edge_handles();
 
   /// @}
 
@@ -547,6 +553,9 @@ public:
 
   /*! obtains the past-the-end iterator of the faces in the arrangement. */
   Face_iterator faces_end();
+
+  /*! obtains a range over handles of the arrangement faces. */
+  Iterator_range<Prevent_deref<Face_iterator> > face_handles();
 
   /*! obtains the number of unbounded faces in the arrangement.  Note
    * `arr.number_of_faces()` also counts the unbounded faces of the arrangement.
@@ -599,10 +608,10 @@ public:
   /*! inserts the point `p` into the arrangement as an isolated vertex in
    * the interior of the face `f` and returns a handle for the newly
    * created vertex.
+   *
    * \pre `p` lies in the interior of the face `f`.
    */
-  Vertex_handle insert_in_face_interior(const Point_2& p,
-                                        Face_handle f);
+  Vertex_handle insert_in_face_interior(const Point_2& p, Face_handle f);
 
   /*! inserts the curve `c` that is entirely contained in the interior
    * of a given face `f`. If `c` is a bounded curve two new vertices that
@@ -613,9 +622,11 @@ public:
    * `f`.  The function returns a handle for one of the new halfedges
    * corresponding to the inserted curve, directed in lexicographic increasing
    * order (from left to right).
+   *
    * \pre `c` lies entirely in the interior of the face `f` and is disjoint
    * from all existing arrangement vertices and edges (in particular, both its
    * endpoints are not already associated with existing arrangement vertices).
+   *
    * \pre In case `c` is an unbounded curve, `f` must be an unbounded face.
    */
   Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& c,
@@ -633,7 +644,9 @@ public:
    *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges.
+
    * \pre `v` is associated with the left endpoint of `c`.
+
    * \pre The right endpoint of `c` is not already associated with an existing
    * arrangement vertex.
    */
@@ -801,7 +814,6 @@ public:
   Halfedge_handle insert_at_vertices(const X_monotone_curve_2& c,
                                      Halfedge_handle pred1,
                                      Halfedge_handle pred2);
-
 
   /// @}
 
