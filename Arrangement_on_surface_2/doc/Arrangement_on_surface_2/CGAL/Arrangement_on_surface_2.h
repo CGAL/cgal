@@ -453,7 +453,7 @@ public:
   /*! obtains the traits object used by the arrangement instance.
    * A `const` version is also available.
    */
-  Traits_2* get_traits();
+  Geometry_traits_2* geometry_traits();
 
   /*! determines whether the arrangement is empty (contains only the unbounded
    * face, with no vertices or edges).
