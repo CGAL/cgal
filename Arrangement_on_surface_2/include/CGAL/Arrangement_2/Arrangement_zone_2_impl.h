@@ -260,19 +260,24 @@ do_overlap_impl(const X_monotone_curve_2& cv1,
   typename Traits_adaptor_2::Compare_y_at_x_right_2 cmp_right =
     m_geom_traits->compare_y_at_x_right_2_object();
 
-  Arr_parameter_space psx =
-    m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END);
-  Arr_parameter_space psy =
-    m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END);
+  auto psx1 = m_geom_traits->parameter_space_in_x_2_object()(cv1, ARR_MIN_END);
+  auto psy1 = m_geom_traits->parameter_space_in_y_2_object()(cv1, ARR_MIN_END);
 
-  if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
+  if ((psx1 == ARR_INTERIOR) && (psy1 == ARR_INTERIOR))
     return (cmp_right(cv1, cv2, p) == EQUAL);
 
   bool vertical1 = m_geom_traits->is_vertical_2_object()(cv1);
   bool vertical2 = m_geom_traits->is_vertical_2_object()(cv2);
   if (vertical1 != vertical2) return false;
 
-  if (psx == ARR_LEFT_BOUNDARY) {
+  auto psx2 = m_geom_traits->parameter_space_in_x_2_object()(cv2, ARR_MIN_END);
+  auto psy2 = m_geom_traits->parameter_space_in_y_2_object()(cv2, ARR_MIN_END);
+
+  // If, for example, both curves are vertical and the bottom boundary is
+  // contracted, they may have different parameter space in x values.
+  if ((psx1 != psx2) || (psy1 != psy2)) return false;
+
+  if (psx1 == ARR_LEFT_BOUNDARY) {
     // If both curves are vertical and their common min endpoint lies on the
     // left boundary, they completely lie on the left boundary and they overlap.
     if (vertical1) return true;
@@ -284,22 +289,15 @@ do_overlap_impl(const X_monotone_curve_2& cv1,
 
   // If the common min endpoint lies on the right boundary, both curves are
   // vertical, they completely lie on the right boundary, and they overlap.
-  if (psx == ARR_RIGHT_BOUNDARY) return true;
+  if (psx1 == ARR_RIGHT_BOUNDARY) return true;
 
   // If the curves are not vertical, we can safly call the standard function.
   // Observe that this case covers the case where (psy == ARR_TOP_BOUNDARY).
   if (! vertical1) return (cmp_right(cv1, cv2, p) == EQUAL);
 
-  CGAL_assertion(psy == ARR_BOTTOM_BOUNDARY);
-  // Observe, that if both curves are vertical and have a common min endpoint
-  // that lies on the bottom boundary, and the bottom boundary is contracted
-  // the curves do not necessarily overlap.
-  // In this case it is sufficient to test whether the x-coordinates on the
-  // boundary are equal.
-  typename Traits_adaptor_2::Compare_x_on_boundary_2 cmp_x_on_bd =
-    m_geom_traits->compare_x_on_boundary_2_object();
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bd =
-    m_geom_traits->compare_x_near_boundary_2_object();
+  // The common end point lies either on the bottom or the top boundary.
+  auto cmp_x_on_bd = m_geom_traits->compare_x_on_boundary_2_object();
+  auto cmp_x_near_bd = m_geom_traits->compare_x_near_boundary_2_object();
   Comparison_result res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
   if (res == EQUAL) res = cmp_x_near_bd(cv1, cv2, ARR_MIN_END);
   return (res == EQUAL);
@@ -318,42 +316,558 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
                    bool& cv_equal_cv1, bool& cv_equal_cv2,
                    Arr_not_all_sides_oblivious_tag) const
 {
+  // std::cout << "is_between_cw_impl()" << std::endl;
+  // std::cout << "cv: " << cv << std::endl;
+  // std::cout << "cv1: " << cv1 << std::endl;
+  // std::cout << "cv2: " << cv2 << std::endl;
+  // std::cout << "cv_to_right: " << cv_to_right << std::endl;
+  // std::cout << "cv1_to_right: " << cv1_to_right << std::endl;
+  // std::cout << "cv2_to_right: " << cv2_to_right << std::endl;
+
   cv_equal_cv1 = false;
   cv_equal_cv2 = false;
 
-  typename Traits_adaptor_2::Parameter_space_in_x_2 ps_in_x =
-    m_geom_traits->parameter_space_in_x_2_object();
-  typename Traits_adaptor_2::Parameter_space_in_y_2 ps_in_y =
-    m_geom_traits->parameter_space_in_y_2_object();
-  typename Traits_adaptor_2::Is_between_cw_2 is_bcw =
-    m_geom_traits->is_between_cw_2_object();
+  auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
+  auto is_bcw = m_geom_traits->is_between_cw_2_object();
 
   bool vertical = m_geom_traits->is_vertical_2_object()(cv);
   bool vertical1 = m_geom_traits->is_vertical_2_object()(cv1);
   bool vertical2 = m_geom_traits->is_vertical_2_object()(cv2);
 
-  typename Traits_adaptor_2::Compare_x_on_boundary_2 cmp_x_on_bd =
-    m_geom_traits->compare_x_on_boundary_2_object();
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bd =
-    m_geom_traits->compare_x_near_boundary_2_object();
-  typename Traits_adaptor_2::Compare_y_near_boundary_2 cmp_y_near_bd =
-    m_geom_traits->compare_y_near_boundary_2_object();
+  auto cmp_x_on_bd = m_geom_traits->compare_x_on_boundary_2_object();
+  auto cmp_x_near_bd = m_geom_traits->compare_x_near_boundary_2_object();
+  auto cmp_y_near_bd = m_geom_traits->compare_y_near_boundary_2_object();
 
-  ////
-  if (!cv1_to_right) {
-    Arr_parameter_space psx = ps_in_x(cv1, ARR_MAX_END);
-    Arr_parameter_space psy = ps_in_y(cv1, ARR_MAX_END);
-    if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
+#if 1
+  Arr_parameter_space psx, psy;
+  if (cv_to_right) {
+    psx = ps_in_x(cv, ARR_MIN_END);
+    psy = ps_in_y(cv, ARR_MIN_END);
+  }
+  else {
+    psx = ps_in_x(cv, ARR_MAX_END);
+    psy = ps_in_y(cv, ARR_MAX_END);
+  }
+
+  // Case 1: No boundary conditions.
+  if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
+    return is_bcw(cv, cv_to_right, cv1, cv1_to_right, cv2, cv2_to_right,
+                  p, cv_equal_cv1, cv_equal_cv2);
+
+  // We distinguish between 8 cases depending on the directions of cv, cv1, and
+  // cv2:
+
+  if (cv_to_right) {
+    if (cv1_to_right) {
+      auto psx1 = ps_in_x(cv1, ARR_MIN_END);
+      auto psy1 = ps_in_y(cv1, ARR_MIN_END);
+
+      if (cv2_to_right) {
+        // Case 1:
+        //
+        //       o
+        //      /
+        //     /
+        //    o----o
+        //     \
+        //      \
+        //       o
+        //
+        auto psx2 = ps_in_x(cv2, ARR_MIN_END);
+        auto psy2 = ps_in_y(cv2, ARR_MIN_END);
+
+        // First handle the sub-case where one of the curves is on the right
+        if ((psx == ARR_RIGHT_BOUNDARY) ||
+            (psx1 == ARR_RIGHT_BOUNDARY) || (psx2 == ARR_RIGHT_BOUNDARY))
+        {
+          // The bottom must be contracted!
+          // cv1 and cv2 cannot be both on the right, cuase otherwise they would
+          // overlap, and they all, including cv, must be vertical.
+          CGAL_assertion(vertical && vertical1 && vertical2);
+
+          if (psx1 == ARR_RIGHT_BOUNDARY) {
+            if (psx2 == ARR_LEFT_BOUNDARY) {
+              if (psx == ARR_LEFT_BOUNDARY) {
+                cv_equal_cv2 = true;
+                return false;
+              }
+              if (psx == ARR_RIGHT_BOUNDARY) {
+                cv_equal_cv1 = true;
+                return false;
+              }
+              return false;
+            }
+            if (psx == ARR_LEFT_BOUNDARY) return true;
+            auto res = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
+            return (res == SMALLER);
+          }
+
+          if (psx2 == ARR_RIGHT_BOUNDARY) {
+            if (psx1 == ARR_LEFT_BOUNDARY) {
+              if (psx == ARR_LEFT_BOUNDARY) {
+                cv_equal_cv1 = true;
+                return false;
+              }
+              if (psx == ARR_RIGHT_BOUNDARY) {
+                cv_equal_cv2 = true;
+                return false;
+              }
+              return true;
+            }
+            if (psx == ARR_LEFT_BOUNDARY) return false;
+            auto res = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
+            return (res == LARGER);
+          }
+
+          // cv1 and cv2 are not on the right
+          CGAL_assertion(psx == ARR_RIGHT_BOUNDARY);
+          Comparison_result cv1_cv2;
+          if (psx1 == ARR_LEFT_BOUNDARY) cv1_cv2 = SMALLER;
+          else if (psx2 == ARR_LEFT_BOUNDARY) cv1_cv2 = LARGER;
+          else {
+            cv1_cv2 = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
+            CGAL_assertion(cv1_cv2 != EQUAL);
+          }
+          return (cv1_cv2 == LARGER);
+        }
+
+        // None of the curves are on the right
+        Comparison_result cv_cv1, cv_cv2, cv1_cv2;
+        if (psx == ARR_LEFT_BOUNDARY) {
+          if (psx1 == ARR_LEFT_BOUNDARY) {
+            if (vertical && vertical1) {
+              cv_equal_cv1 = true;
+              return false;
+            }
+            if (! vertical && ! vertical1) {
+              auto res = cmp_y_near_bd(cv, cv1, ARR_MIN_END);
+              if (res == EQUAL) {
+                cv_equal_cv1 = true;
+                return false;
+              }
+              cv_cv1 = CGAL::opposite(res);
+            }
+            else if (vertical) cv_cv1 = SMALLER;
+            else if (vertical1) cv_cv1 = LARGER;
+          }
+          else cv_cv1 = SMALLER;
+
+          //
+          if (psx2 == ARR_LEFT_BOUNDARY) {
+            if (vertical && vertical2) {
+              cv_equal_cv2 = true;
+              return false;
+            }
+            if (! vertical && ! vertical2) {
+              auto res = cmp_y_near_bd(cv, cv2, ARR_MIN_END);
+              if (res == EQUAL) {
+                cv_equal_cv2 = true;
+                return false;
+              }
+              cv_cv2 = CGAL::opposite(res);
+            }
+            if (vertical) cv_cv2 = SMALLER;
+            else if (vertical2) cv_cv2 = LARGER;
+          }
+          else cv_cv2 = SMALLER;
+        }
+
+        //
+        if (psx == ARR_INTERIOR) {
+          if (psx1 == ARR_LEFT_BOUNDARY) cv_cv1 = LARGER;
+          else if (psx1 == ARR_INTERIOR) {
+            cv_cv1 = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
+            if (cv_cv1 == EQUAL) cv_cv1 = cmp_x_near_bd(cv, cv1, ARR_MIN_END);
+          }
+
+          if (psx2 == ARR_LEFT_BOUNDARY) cv_cv2 = LARGER;
+          else if (psx2 == ARR_INTERIOR) {
+            cv_cv2 = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
+            if (cv_cv2 == EQUAL) cv_cv2 = cmp_x_near_bd(cv, cv2, ARR_MIN_END);
+          }
+        }
+
+        //
+        if ((cv_cv1 == LARGER) && (cv_cv2 == SMALLER)) return true;
+        if ((cv_cv1 == SMALLER) && (cv_cv2 == LARGER)) return false;
+
+        //
+        CGAL_assertion((psx1 == ARR_INTERIOR) && (psx2 == ARR_INTERIOR));
+        cv1_cv2 = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
+        if (cv1_cv2 == EQUAL) cv1_cv2 = cmp_x_near_bd(cv1, cv2, ARR_MIN_END);
+
+        if (cv1_cv2 == SMALLER) {
+          if (cv_cv1 == SMALLER) return false;
+          return (cv_cv2 == SMALLER);
+        }
+        // cv1_cv2 == LARGER
+        if (cv_cv1 == LARGER) return true;
+        return (cv_cv2 == SMALLER);
+      }
+
+      // Case 2
+      // ------
+      //         o
+      //        /
+      //  cv2  /
+      // o----o
+      //       \
+      //        \
+      //         o
+      //
+
+      auto psx2 = ps_in_x(cv2, ARR_MAX_END);
+      auto psy2 = ps_in_y(cv2, ARR_MAX_END);
+
+      // We need to determine the order of cv and cv1.
+      if ((psx == ARR_RIGHT_BOUNDARY) || (psx1 == ARR_RIGHT_BOUNDARY)) {
+        CGAL_assertion((psx == ARR_RIGHT_BOUNDARY) &&
+                       (psx1 == ARR_RIGHT_BOUNDARY));
+        cv_equal_cv1 = true;
+        return false;
+      }
+
+      // cv and cv1 are not on the right.
+      if (psx == ARR_LEFT_BOUNDARY) {
+        if (psx1 == ARR_LEFT_BOUNDARY) {
+          cv_equal_cv1 = true;
+          return false;
+        }
+        return (cmp_y_near_bd(cv, cv1, ARR_MIN_END) == LARGER);
+      }
+
+      auto res = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
+      if (res == EQUAL) res = cmp_x_near_bd(cv, cv1, ARR_MIN_END);
+      if (res == EQUAL) {
+        cv_equal_cv1 = true;
+        return false;
+      }
+      return (res == LARGER);
+    }
+
+    auto psx1 = ps_in_x(cv1, ARR_MAX_END);
+    auto psy1 = ps_in_y(cv1, ARR_MAX_END);
+    if (cv2_to_right) {
+      // Case 3
+      // ------
+      //         o
+      //        /
+      //  cv1  /
+      // o----o
+      //       \
+      //        \
+      //         o
+      //
+      auto psx2 = ps_in_x(cv2, ARR_MIN_END);
+      auto psy2 = ps_in_y(cv2, ARR_MIN_END);
+
+      // We need to determine the order of cv and cv2.
+      if ((psx == ARR_RIGHT_BOUNDARY) || (psx2 == ARR_RIGHT_BOUNDARY)) {
+        CGAL_assertion((psx == ARR_RIGHT_BOUNDARY) &&
+                       (psx2 == ARR_RIGHT_BOUNDARY));
+        cv_equal_cv2 = true;
+        return false;
+      }
+
+      // cv and cv2 are not on the right.
+      if (psx == ARR_LEFT_BOUNDARY) {
+        if (psx2 == ARR_LEFT_BOUNDARY) {
+          cv_equal_cv2 = true;
+          return false;
+        }
+        return (cmp_y_near_bd(cv, cv2, ARR_MIN_END) == SMALLER);
+      }
+
+      auto res = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
+      if (res == EQUAL) res = cmp_x_near_bd(cv, cv2, ARR_MIN_END);
+      if (res == EQUAL) {
+        cv_equal_cv2 = true;
+        return false;
+      }
+      return (res == SMALLER);
+    }
+    // Case 4
+    // ------
+    //
+    // o
+    //  \
+    //   \   cv
+    //    o----o
+    //   /
+    //  /
+    // o
+    //
+    auto psx2 = ps_in_x(cv2, ARR_MAX_END);
+    auto psy2 = ps_in_y(cv2, ARR_MAX_END);
+
+    // We need to determine the order of cv1 and cv2.
+    CGAL_assertion((psx1 != ARR_LEFT_BOUNDARY) &&
+                   (psx2 != ARR_LEFT_BOUNDARY));
+
+    if (psx1 == ARR_RIGHT_BOUNDARY) {
+      return (cmp_y_near_bd(cv1, cv2, ARR_MAX_END) == LARGER);
+    }
+
+    auto res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
+    if (res == EQUAL) res = cmp_x_near_bd(cv1, cv2, ARR_MIN_END);
+    CGAL_assertion(res != EQUAL);
+    return (res == LARGER);
+  }
+
+  if (cv1_to_right) {
+    auto psx1 = ps_in_x(cv1, ARR_MIN_END);
+    auto psy1 = ps_in_y(cv1, ARR_MIN_END);
+    if (cv2_to_right) {
+      // Case 5
+      // ------
+      //
+      //         o
+      //        /
+      //  cv   /
+      // 0----o
+      //       \
+      //        \
+      //         o
+      //
+      auto psx2 = ps_in_x(cv2, ARR_MIN_END);
+      auto psy2 = ps_in_y(cv2, ARR_MIN_END);
+
+      // We need to determine the order of cv1 and cv2.
+      CGAL_assertion((psx1 != ARR_RIGHT_BOUNDARY) &&
+                     (psx2 != ARR_RIGHT_BOUNDARY));
+
+      if (psx1 == ARR_LEFT_BOUNDARY) {
+        return (cmp_y_near_bd(cv1, cv2, ARR_MIN_END) == SMALLER);
+      }
+
+      auto res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
+      if (res == EQUAL) res = cmp_x_near_bd(cv1, cv2, ARR_MIN_END);
+      CGAL_assertion(res != EQUAL);
+      return (res == SMALLER);
+    }
+    // Case 6
+    // ------
+    // o
+    //  \
+    //   \  cv1
+    //    o----o
+    //   /
+    //  /
+    // o
+    //
+    auto psx2 = ps_in_x(cv2, ARR_MAX_END);
+    auto psy2 = ps_in_y(cv2, ARR_MAX_END);
+
+    // We need to determine the order of cv and cv2.
+    if ((psx == ARR_LEFT_BOUNDARY) || (psx2 == ARR_LEFT_BOUNDARY)) {
+      CGAL_assertion((psx == ARR_LEFT_BOUNDARY) &&
+                     (psx2 == ARR_LEFT_BOUNDARY));
+      cv_equal_cv2 = true;
+      return false;
+    }
+
+    auto res = cmp_x_on_bd(cv, ARR_MAX_END, cv2, ARR_MAX_END);
+    if (res == EQUAL) res = cmp_x_near_bd(cv, cv2, ARR_MAX_END);
+    if(res == EQUAL) {
+      cv_equal_cv2 = true;
+      return false;
+    }
+    return (res == LARGER);
+  }
+
+  auto psx1 = ps_in_x(cv1, ARR_MAX_END);
+  auto psy1 = ps_in_y(cv1, ARR_MAX_END);
+  if (cv2_to_right) {
+    // Case 7
+    // ------
+    //
+    // o
+    //  \
+    //   \  cv2
+    //    o----o
+    //   /
+    //  /
+    // o
+    //
+    auto psx2 = ps_in_x(cv2, ARR_MIN_END);
+    auto psy2 = ps_in_y(cv2, ARR_MIN_END);
+
+    // We need to determine the order of cv and cv1.
+    if ((psx == ARR_LEFT_BOUNDARY) || (psx1 == ARR_LEFT_BOUNDARY)) {
+      CGAL_assertion((psx == ARR_LEFT_BOUNDARY) &&
+                     (psx1 == ARR_LEFT_BOUNDARY));
+      cv_equal_cv1 = true;
+      return false;
+    }
+
+    auto res = cmp_x_on_bd(cv, ARR_MAX_END, cv1, ARR_MAX_END);
+    if (res == EQUAL) res = cmp_x_near_bd(cv, cv1, ARR_MAX_END);
+    if(res == EQUAL) {
+      cv_equal_cv2 = true;
+      return false;
+    }
+    return (res == LARGER);
+  }
+
+  // Case 8
+  // ------
+  //
+  // o
+  //  \
+  //   \
+  // o--o
+  //   /
+  //  /
+  // o
+  //
+  auto psx2 = ps_in_x(cv2, ARR_MAX_END);
+  auto psy2 = ps_in_y(cv2, ARR_MAX_END);
+
+  // First handle the sub-case where one of the curves is on the left
+  if ((psx == ARR_LEFT_BOUNDARY) ||
+      (psx1 == ARR_LEFT_BOUNDARY) || (psx2 == ARR_LEFT_BOUNDARY))
+  {
+    // The top must be contracted!
+    // cv1 and cv2 cannot be both on the left, cuase otherwise they would
+    // overlap, and they all, including cv, must be vertical.
+    CGAL_assertion(vertical && vertical1 && vertical2);
+
+    if (psx1 == ARR_LEFT_BOUNDARY) {
+      if (psx2 == ARR_RIGHT_BOUNDARY) {
+        if (psx == ARR_RIGHT_BOUNDARY) {
+          cv_equal_cv2 = true;
+          return false;
+        }
+        if (psx == ARR_LEFT_BOUNDARY) {
+          cv_equal_cv1 = true;
+          return false;
+        }
+        return true;
+      }
+      if (psx == ARR_RIGHT_BOUNDARY) return false;
+      auto res = cmp_x_on_bd(cv, ARR_MAX_END, cv2, ARR_MAX_END);
+      return (res == LARGER);
+    }
+
+    if (psx2 == ARR_LEFT_BOUNDARY) {
+      if (psx1 == ARR_RIGHT_BOUNDARY) {
+        if (psx == ARR_RIGHT_BOUNDARY) {
+          cv_equal_cv1 = true;
+          return false;
+        }
+        if (psx == ARR_LEFT_BOUNDARY) {
+          cv_equal_cv2 = true;
+          return false;
+        }
+        return true;
+      }
+      if (psx == ARR_RIGHT_BOUNDARY) return true;
+      auto res = cmp_x_on_bd(cv, ARR_MAX_END, cv1, ARR_MAX_END);
+      return (res == SMALLER);
+    }
+
+    // cv1 and cv2 are not on the left
+    CGAL_assertion(psx == ARR_LEFT_BOUNDARY);
+    Comparison_result cv1_cv2;
+    if (psx1 == ARR_RIGHT_BOUNDARY) cv1_cv2 = LARGER;
+    else if (psx2 == ARR_RIGHT_BOUNDARY) cv1_cv2 = SMALLER;
+    else {
+      cv1_cv2 = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
+      CGAL_assertion(cv1_cv2 != EQUAL);
+    }
+    return (cv1_cv2 == SMALLER);
+  }
+
+  // None of the curves are on the left
+  Comparison_result cv_cv1, cv_cv2, cv1_cv2;
+  if (psx == ARR_RIGHT_BOUNDARY) {
+    if (psx1 == ARR_RIGHT_BOUNDARY) {
+      if (vertical && vertical1) {
+        cv_equal_cv1 = true;
+        return false;
+      }
+      if (! vertical && ! vertical1) {
+        auto res = cmp_y_near_bd(cv, cv1, ARR_MAX_END);
+        if (res == EQUAL) {
+          cv_equal_cv1 = true;
+          return false;
+        }
+        cv_cv1 = CGAL::opposite(res);
+      }
+      else if (vertical) cv_cv1 = LARGER;
+      else if (vertical1) cv_cv1 = SMALLER;
+    }
+    else cv_cv1 = LARGER;
+
+    //
+    if (psx2 == ARR_RIGHT_BOUNDARY) {
+      if (vertical && vertical2) {
+        cv_equal_cv2 = true;
+        return false;
+      }
+      if (! vertical && ! vertical2) {
+        auto res = cmp_y_near_bd(cv, cv2, ARR_MAX_END);
+        if (res == EQUAL) {
+          cv_equal_cv2 = true;
+          return false;
+        }
+        cv_cv2 = CGAL::opposite(res);
+      }
+
+      if (vertical) cv_cv2 = LARGER;
+      else if (vertical2) cv_cv2 = SMALLER;
+    }
+    else cv_cv2 = LARGER;
+  }
+
+  //
+  if (psx == ARR_INTERIOR) {
+    if (psx1 == ARR_RIGHT_BOUNDARY) cv_cv1 = SMALLER;
+    else if (psx1 == ARR_INTERIOR) {
+      cv_cv1 = cmp_x_on_bd(cv, ARR_MAX_END, cv1, ARR_MAX_END);
+      if (cv_cv1 == EQUAL) cv_cv1 = cmp_x_near_bd(cv, cv1, ARR_MAX_END);
+    }
+
+    if (psx2 == ARR_RIGHT_BOUNDARY) cv_cv2 = SMALLER;
+    else if (psx2 == ARR_INTERIOR) {
+      cv_cv2 = cmp_x_on_bd(cv, ARR_MAX_END, cv2, ARR_MAX_END);
+      if (cv_cv2 == EQUAL) cv_cv2 = cmp_x_near_bd(cv, cv2, ARR_MAX_END);
+    }
+  }
+
+  //
+  if ((cv_cv1 == SMALLER) && (cv_cv2 == LARGER)) return true;
+  if ((cv_cv1 == LARGER) && (cv_cv2 == SMALLER)) return false;
+
+  //
+  CGAL_assertion((psx1 == ARR_INTERIOR) && (psx2 == ARR_INTERIOR));
+  cv1_cv2 = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
+  if (cv1_cv2 == EQUAL) cv1_cv2 = cmp_x_near_bd(cv1, cv2, ARR_MAX_END);
+
+  if (cv1_cv2 == LARGER) {
+    if (cv_cv1 == LARGER) return false;
+    return (cv_cv2 == LARGER);
+  }
+  // cv1_cv2 == LARGER
+  if (cv_cv1 == SMALLER) return true;
+  return (cv_cv2 == LARGER);
+
+#else
+  if (! cv1_to_right) {
+    auto psx1 = ps_in_x(cv1, ARR_MAX_END);
+    auto psy1 = ps_in_y(cv1, ARR_MAX_END);
+    if ((psx1 == ARR_INTERIOR) && (psy1 == ARR_INTERIOR))
       return is_bcw(cv, cv_to_right, cv1, cv1_to_right, cv2, cv2_to_right,
                     p, cv_equal_cv1, cv_equal_cv2);
 
-    if (!cv2_to_right) {
+    if (! cv2_to_right) {
       // Case 1: Both cv1 and cv2 are defined to the left of p.
 
-      CGAL_assertion(psx != ARR_RIGHT_BOUNDARY);
+      CGAL_assertion(psx1 != ARR_RIGHT_BOUNDARY);
 
-      if (psx == ARR_LEFT_BOUNDARY) {
-        // Case 1.1 The point resides on the right boundary.
+      if (psx1 == ARR_LEFT_BOUNDARY) {
+        // Case 1.1 The point resides on the left boundary.
         CGAL_assertion(vertical);
 
         /* Case 1.1.1 cv1 is vertical
@@ -390,16 +904,16 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
         return (cmp_y_near_bd(cv1, cv2, ARR_MAX_END) == LARGER);
       }
 
-      CGAL_assertion((psy == ARR_TOP_BOUNDARY) || (psy == ARR_BOTTOM_BOUNDARY));
+      CGAL_assertion((psy1 == ARR_TOP_BOUNDARY) || (psy1 == ARR_BOTTOM_BOUNDARY));
       // Case 1.2 & 1.3 The point resides on the top or bottom boundaries
       Comparison_result res = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
-      if (res == SMALLER) return (psy == ARR_TOP_BOUNDARY);
-      if (res == LARGER) return (psy != ARR_TOP_BOUNDARY);
+      if (res == SMALLER) return (psy1 == ARR_TOP_BOUNDARY);
+      if (res == LARGER) return (psy1 != ARR_TOP_BOUNDARY);
 
       res = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
-      if (res == SMALLER) return (psy == ARR_TOP_BOUNDARY);
+      if (res == SMALLER) return (psy1 == ARR_TOP_BOUNDARY);
       CGAL_assertion(res == LARGER);
-      return (psy != ARR_TOP_BOUNDARY);
+      return (psy1 != ARR_TOP_BOUNDARY);
     }
 
     CGAL_assertion(!cv1_to_right && cv2_to_right);
@@ -407,7 +921,7 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
      *   cv1   cv2
      * o-----o-----o
      */
-    if (psx == ARR_LEFT_BOUNDARY) {
+    if (psx1 == ARR_LEFT_BOUNDARY) {
       /* Case 3.1
        *   cv2
        * o-----o
@@ -426,7 +940,7 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
       return (res == LARGER);
     }
 
-    if (psx == ARR_RIGHT_BOUNDARY) {
+    if (psx1 == ARR_RIGHT_BOUNDARY) {
       /* Case 3.2
        *       o
        *       |cv2
@@ -448,25 +962,25 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
      */
     Comparison_result res2 = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
     if (res2 == EQUAL) res2 = cmp_x_near_bd(cv, cv2, ARR_MIN_END);
-    if (res2 == SMALLER) return (psy == ARR_BOTTOM_BOUNDARY);
+    if (res2 == SMALLER) return (psy1 == ARR_BOTTOM_BOUNDARY);
     if (res2 == EQUAL) {
       cv_equal_cv2 = true;
       return false;
     }
     CGAL_assertion(res2 == LARGER);
-    return (psy == ARR_TOP_BOUNDARY);
+    return (psy1 == ARR_TOP_BOUNDARY);
   }
 
   ////////
-  Arr_parameter_space psx = ps_in_x(cv1, ARR_MIN_END);
-  Arr_parameter_space psy = ps_in_y(cv1, ARR_MIN_END);
-  if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
+  auto psx1 = ps_in_x(cv1, ARR_MIN_END);
+  auto psy1 = ps_in_y(cv1, ARR_MIN_END);
+  if ((psx1 == ARR_INTERIOR) && (psy1 == ARR_INTERIOR))
     return is_bcw(cv, cv_to_right, cv1, cv1_to_right, cv2, cv2_to_right,
                   p, cv_equal_cv1, cv_equal_cv2);
   if (cv2_to_right) {
     // Case 2: Both cv1 and cv2 are defined to the right of p.
-    CGAL_assertion(psx != ARR_RIGHT_BOUNDARY);
-    if (psx == ARR_LEFT_BOUNDARY) {
+    CGAL_assertion(psx1 != ARR_RIGHT_BOUNDARY);
+    if (psx1 == ARR_LEFT_BOUNDARY) {
       /* case 2.1.1 cv1 is vertical
        * o
        * |cv1
@@ -535,10 +1049,16 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
       return (res == LARGER);
     }
 
-    CGAL_assertion((psy == ARR_TOP_BOUNDARY) || (psy == ARR_BOTTOM_BOUNDARY));
+    CGAL_assertion((psy1 == ARR_TOP_BOUNDARY) || (psy1 == ARR_BOTTOM_BOUNDARY));
     // Case 2.2 & 2.3 The point resides on the top or bottom boundaries
+
+    // auto psx = ps_in_x(cv, ARR_MIN_END);
+    // Comparison_result res1 = (psx == ARR_LEFT_BOUNDARY) ? SMALLER :
+    //   cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
+
     Comparison_result res1 = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
     if (res1 == EQUAL) res1 = cmp_x_near_bd(cv, cv1, ARR_MIN_END);
+
     Comparison_result res2 = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
     if (res2 == EQUAL) res2 = cmp_x_near_bd(cv, cv2, ARR_MIN_END);
     Comparison_result res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
@@ -552,14 +1072,14 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
       cv_equal_cv2 = true;
       return false;
     }
-    if ((res1 == LARGER) && (res2 == SMALLER)) return (psy != ARR_TOP_BOUNDARY);
-    if ((res1 == SMALLER) && (res2 == LARGER)) return (psy == ARR_TOP_BOUNDARY);
+    if ((res1 == LARGER) && (res2 == SMALLER)) return (psy1 != ARR_TOP_BOUNDARY);
+    if ((res1 == SMALLER) && (res2 == LARGER)) return (psy1 == ARR_TOP_BOUNDARY);
     if ((res1 == LARGER) && (res2 == LARGER))
       return (res == SMALLER) ?
-        (psy == ARR_TOP_BOUNDARY) : (psy != ARR_TOP_BOUNDARY);
+        (psy1 == ARR_TOP_BOUNDARY) : (psy1 != ARR_TOP_BOUNDARY);
     CGAL_assertion((res1 == SMALLER) && (res2 == SMALLER));
     return (res == LARGER) ?
-      (psy != ARR_TOP_BOUNDARY) : (psy == ARR_TOP_BOUNDARY);
+      (psy1 != ARR_TOP_BOUNDARY) : (psy1 == ARR_TOP_BOUNDARY);
   }
 
   CGAL_assertion(cv1_to_right && ! cv2_to_right);
@@ -567,7 +1087,7 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
    *   cv2   cv1
    * o-----o-----o
    */
-  if (psx == ARR_LEFT_BOUNDARY) {
+  if (psx1 == ARR_LEFT_BOUNDARY) {
     /* Case 4.1
      *   cv1
      * o-----o
@@ -586,7 +1106,7 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
     return (res == SMALLER);
   }
 
-  if (psx == ARR_RIGHT_BOUNDARY) {
+  if (psx1 == ARR_RIGHT_BOUNDARY) {
     /* Case 4.2
      *       o
      *       |cv1
@@ -608,13 +1128,14 @@ is_between_cw_impl(const X_monotone_curve_2& cv, bool cv_to_right,
    */
   Comparison_result res1 = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
   if (res1 == EQUAL) res1 = cmp_x_near_bd(cv, cv1, ARR_MIN_END);
-  if (res1 == LARGER) return (psy == ARR_TOP_BOUNDARY);
+  if (res1 == LARGER) return (psy1 == ARR_TOP_BOUNDARY);
   if (res1 == EQUAL) {
     cv_equal_cv1 = true;
     return false;
   }
   CGAL_assertion(res1 == SMALLER);
-  return (psy != ARR_TOP_BOUNDARY);
+  return (psy1 != ARR_TOP_BOUNDARY);
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -626,7 +1147,7 @@ bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he)
 {
 #if defined(ARR_ZONE_VERBOSE)
-  std::cout << "_find_prev_around_vertex()" << std::endl;
+  std::cout << "_find_prev_around_vertex(" << v->point() << ")" << std::endl;
 #endif
 
   // Go over the incident halfedges of v, going in a clockwise order.
@@ -666,6 +1187,8 @@ _find_prev_around_vertex(Vertex_handle v, Halfedge_handle& he)
                                     (he_next->direction() == ARR_RIGHT_TO_LEFT),
                                     v->point(),
                                     cv_equals_curr, cv_equals_next);
+
+    // std::cout << "is_between: " << is_between << std::endl;
 
     // Check the case of overlaps:
     if (cv_equals_curr) {
@@ -828,7 +1351,7 @@ _compute_next_intersection(Halfedge_handle he,
                            bool& intersection_on_right_boundary)
 {
 #if defined(ARR_ZONE_VERBOSE)
-  std::cout << "_compute_next_intersection(): " << he->curve() << std::endl;
+  std::cout << "_compute_next_intersection(" << he->curve() << ")" << std::endl;
 #endif
 
   typename Traits_adaptor_2::Equal_2 equal = m_geom_traits->equal_2_object();
@@ -1009,18 +1532,19 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
                  Arr_not_all_sides_oblivious_tag) const
 {
 #if defined(ARR_ZONE_VERBOSE)
-  std::cout << "_is_to_left_impl()" << std::endl;
+  std::cout << "_is_to_left_impl(" << p << "," << he->curve() << ")"
+            << std::endl;
 #endif
 
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
-  const Arr_parameter_space ps_x =
+  auto ps_x =
     m_geom_traits->parameter_space_in_x_2_object()(he->curve(), ARR_MIN_END);
 
   // The minimal end of the curve is to the left of any other point:
   if (ps_x == ARR_LEFT_BOUNDARY) return false;
 
-  const Arr_parameter_space ps_y =
+  auto ps_y =
     m_geom_traits->parameter_space_in_y_2_object()(he->curve(), ARR_MIN_END);
 
   if (ps_y != ARR_INTERIOR) {
@@ -1084,13 +1608,13 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
                        bool& leftmost_on_right_boundary)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_leftmost_intersection(" << he_curr->curve() << ")" << std::endl;
+#endif
   // Obtain some geometry-traits functors.
-  typename Traits_adaptor_2::Compare_xy_2 compare_xy =
-    m_geom_traits->compare_xy_2_object();
-  typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
-    m_geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Construct_min_vertex_2 min_vertex =
-    m_geom_traits->construct_min_vertex_2_object();
+  auto compare_xy = m_geom_traits->compare_xy_2_object();
+  auto is_in_x_range = m_geom_traits->is_in_x_range_2_object();
+  auto min_vertex = m_geom_traits->construct_min_vertex_2_object();
 
   // If this edge is fictitious, skip it.
   if (he_curr->is_fictitious()) return;
@@ -1195,43 +1719,42 @@ template <typename Arrangement, typename ZoneVisitor>
 void Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_leftmost_intersection_with_face_boundary()" << std::endl;
+#endif
   // Mark that we have not found any intersection (or overlap) yet.
   m_found_intersect = false;
   m_found_overlap = false;
   m_found_iso_vert = false;
 
   // Obtain some geometry-traits functors.
-  typename Traits_adaptor_2::Compare_xy_2 compare_xy =
-    m_geom_traits->compare_xy_2_object();
-  typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
-    m_geom_traits->is_in_x_range_2_object();
+  auto compare_xy = m_geom_traits->compare_xy_2_object();
+  auto is_in_x_range = m_geom_traits->is_in_x_range_2_object();
 
   bool leftmost_on_right_boundary = false;
 
   // Traverse the face outer-boundaries; iterate through all outer CCBs.
-  typedef typename Arrangement_2::Outer_ccb_iterator    Outer_ccb_iterator;
-  for (Outer_ccb_iterator occb_it = face->outer_ccbs_begin();
+  for (auto occb_it = face->outer_ccbs_begin();
        occb_it != face->outer_ccbs_end(); ++occb_it)
   {
-    Ccb_halfedge_circulator he_first = *occb_it;
-    Ccb_halfedge_circulator he_curr = he_first;
+    auto he_first = *occb_it;
+    auto he_curr = he_first;
     do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
     while (++he_curr != he_first);
   }
 
   // Traverse the face inner-boundaries; iterate through all inner CCBs (holes).
-  typedef typename Arrangement_2::Inner_ccb_iterator    Inner_ccb_iterator;
-  for (Inner_ccb_iterator iccb_it = face->inner_ccbs_begin();
+  for (auto iccb_it = face->inner_ccbs_begin();
        iccb_it != face->inner_ccbs_end(); ++iccb_it)
   {
-    Ccb_halfedge_circulator he_first = *iccb_it;
-    Ccb_halfedge_circulator he_curr = he_first;
+    auto he_first = *iccb_it;
+    auto he_curr = he_first;
     do _leftmost_intersection(he_curr, on_boundary, leftmost_on_right_boundary);
     while (++he_curr != he_first);
   }
 
-  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
-    m_geom_traits->compare_y_at_x_2_object();
+
+  auto compare_y_at_x = m_geom_traits->compare_y_at_x_2_object();
 
   // Traverse the isolated vertices inside the face (if there exist any), and
   // check whether an isolated vertex lies on the curve.
@@ -1260,6 +1783,7 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
       m_found_iso_vert = true;
     }
   } // End:: traversal of the isolated vertices inside the face.
+
 
   // Remove the next intersection associated with m_intersect_he, as we have
   // now reported it and do not want to encounter it again.
@@ -1329,7 +1853,7 @@ _zone_in_face(Face_handle face, bool on_boundary)
     m_cv = m_sub_cv2;
   }
 
-  const X_monotone_curve_2*p_orig_curve = nullptr;
+  const X_monotone_curve_2* p_orig_curve = nullptr;
 
   if (! m_found_iso_vert) {
     // Check whether m_intersect_p coincides with one of the end-vertices of the
