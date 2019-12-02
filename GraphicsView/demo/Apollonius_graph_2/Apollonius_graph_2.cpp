@@ -244,7 +244,7 @@ MainWindow::open(QString fileName)
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<K::Point_3> point_3_s;
       CGAL::read_multi_point_WKT(ifs, point_3_s);
-      BOOST_FOREACH(const K::Point_3& point_3, point_3_s)
+      for(const K::Point_3& point_3 : point_3_s)
       {
         points.push_back(Apollonius_site_2(K::Point_2(point_3.x(), point_3.y()), point_3.z()));
       }
