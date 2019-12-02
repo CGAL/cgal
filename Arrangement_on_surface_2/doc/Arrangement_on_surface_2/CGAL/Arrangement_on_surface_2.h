@@ -237,7 +237,7 @@ public:
    * boundary of a face incident to the fictitious face are fictitious, as they
    * do not correspond to real curves. A face may also contain holes, which are
    * defined by clockwise-oriented halfedge chains, and isolated vertices.
-  */
+   */
   class Face : public Dcel::Face {
   public:
     /// \name Creation
