@@ -623,7 +623,7 @@ public:
                            T&& ... t)
 		: m_traits()
     , m_primitives()
-                , m_p_root_node(nullptr)
+		, m_p_root_node(nullptr)
 		, m_p_search_tree(nullptr)
 		, m_search_tree_constructed(false)
     , m_default_search_tree_constructed(true)
