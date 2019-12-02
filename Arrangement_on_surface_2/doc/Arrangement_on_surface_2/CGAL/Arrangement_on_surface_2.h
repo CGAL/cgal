@@ -1,7 +1,6 @@
 namespace CGAL {
 
-/*!
- * \ingroup PkgArrangementOnSurface2Ref
+/*! \ingroup PkgArrangementOnSurface2Ref
  *
  * \anchor arr_refaos
  *
@@ -15,17 +14,24 @@ namespace CGAL {
  * arrangement edge is always comprised of a pair of twin <span
  * class="textsc">Dcel</span> halfedges.
 
- * The `Arrangement_on_surface_2` template has two parameters: <UL> <LI>The
- * `Traits` template-parameter should be instantiated with a model of the
- * `ArrangementBasicTraits_2` concept. The traits class defines the types of \f$
- * x\f$-monotone curves and two-dimensional points, namely
+ * The `Arrangement_on_surface_2` template has two parameters:
+ * <UL>
+ * <LI>The `GeometryTraits_2` template-parameter should be instantiated with
+ * a model of a geometry traits. The minimal requirements are defined by the
+ * `ArrangementBasicTraits_2` concept. A model of this concept defines
+ * the types of \f$ x\f$-monotone curves and two-dimensional points, namely
  * `ArrangementBasicTraits_2::X_monotone_curve_2` and
  * `ArrangementBasicTraits_2::Point_2`, respectively, and supports basic
- * geometric predicates on them.  <LI>The `Dcel` template-parameter should be
- * instantiated with a class that is a model of the `ArrangementDcel`
- * concept. The value of this parameter is by default
- * `Arr_default_dcel<Traits>`.  </UL> The available traits classes and <span
- * class="textsc">Dcel</span> classes are described below.
+ * geometric predicates on them.
+ * <LI>The `TopologyTraits` template-parameter should be instantiated with a
+ * class that is a model of the `ArrangementTopologyTraits` concept.
+
+ * The value of this parameter is by
+ * default `Arr_default_dcel<Traits>`.
+ * </UL>
+ *
+ * The available traits classes and <span class="textsc">Dcel</span> classes are
+ * described below.
 
  * \sa `ArrangementDcel`
  * \sa `Arr_default_dcel<Traits>`

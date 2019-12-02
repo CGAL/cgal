@@ -7,6 +7,9 @@
 /// The namespace containing concepts specific to Arrangements.
 namespace ArrTraits {}
 
+/// \defgroup PkgArrangementOnSurface2ConceptsTopologyTraits Topology Traits Concepts
+/// \ingroup PkgArrangementOnSurface2Concepts
+
 /// \defgroup PkgArrangementOnSurface2ConceptsDCEL DCEL Concepts
 /// \ingroup PkgArrangementOnSurface2Concepts
 
@@ -16,10 +19,10 @@ namespace ArrTraits {}
 /// \defgroup PkgArrangementOnSurface2ConceptsFunctionObjects Function Object Concepts
 /// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangementOnSurface2ConceptsTraits Traits Concepts
+/// \defgroup PkgArrangementOnSurface2ConceptsTraits Geometry Traits Concepts
 /// \ingroup PkgArrangementOnSurface2Concepts
 
-/// \defgroup PkgArrangementOnSurface2TraitsClasses Traits Classes
+/// \defgroup PkgArrangementOnSurface2TraitsClasses Geometry Traits Classes
 /// \ingroup PkgArrangementOnSurface2Ref
 
 /// \defgroup PkgArrangementOnSurface2DCEL DCEL
@@ -142,6 +145,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementRightSideTraits_2`
 - `ArrangementBottomSideTraits_2`
 - `ArrangementTopSideTraits_2`
+- `ArrangementTopologyTraits`
 
 \cgalCRPSection{Geometric Object Concepts}
 

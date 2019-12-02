@@ -2224,10 +2224,10 @@ Sites are drawn in red and Voronoi edges are drawn in blue.
 
 \section aos_sec-geom_traits The Geometry Traits
 
-A traits class encapsulates the definitions of the geometric entities
-and implements the geometric predicates and constructions needed by
-instances of the `Arrangement_on_surface_2` class template and by the
-peripheral algorithms that operate on objects of such
+A geometry traits class encapsulates the definitions of the geometric
+entities and implements the geometric predicates and constructions
+needed by instances of the `Arrangement_on_surface_2` class template
+and by the peripheral algorithms that operate on objects of such
 instances. Observe that that there are different levels of
 requirements from the traits class; namely, the traits class can model
 different concept refinement-levels.

@@ -1,38 +1,31 @@
-
-/*!
-\ingroup PkgArrangementOnSurface2ConceptsDCEL
-\cgalConcept
-
-A doubly-connected edge-list (<span class="textsc">Dcel</span> for short) data-structure. It consists
-of three containers of records: vertices \f$ V\f$, halfedges \f$ E\f$, and faces \f$ F\f$.
-It maintains the incidence relation among them. The halfedges are ordered
-in pairs sometimes referred to as twins, such that each halfedge pair
-represent an edge.
-
-A model of the `ArrangementDcel` concept must provide the following types and
-operations. (In addition to the requirements here, the local types
-`Vertex`,`Halfedge`, `Face`, `Outer_ccb`, `Inner_ccb`, and `Isolated_vertex`
-must be models of the concepts
-`ArrangementDcelVertex`,
-`ArrangementDcelHalfedge`,
-`ArrangementDcelFace`,
-`ArrangementDcelOuterCcb`,
-`ArrangementDcelInnerCcb`, and
-`ArrangementDcelIsolatedVertex` respectively.)
-
-\cgalHasModel `CGAL::Arr_dcel_base<V,H,F>`
-\cgalHasModel `CGAL::Arr_default_dcel<Traits>`
-\cgalHasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
-\cgalHasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>`
-
-\sa `ArrangementDcelVertex`
-\sa `ArrangementDcelHalfedge`
-\sa `ArrangementDcelFace`
-\sa `ArrangementDcelOuterCcb`
-\sa `ArrangementDcelInnerCcb`
-\sa `ArrangementDcelIsolatedVertex`
-
-*/
+/*! \ingroup PkgArrangementOnSurface2ConceptsDCEL
+ * \cgalConcept
+ *
+ * A doubly-connected edge-list (<span class="textsc">Dcel</span> for short)
+ * data-structure. It consists of three containers of records: vertices \f$
+ * V\f$, halfedges \f$ E\f$, and faces \f$ F\f$.  It maintains the incidence
+ * relation among them. The halfedges are ordered in pairs sometimes referred to
+ * as twins, such that each halfedge pair represent an edge.
+ *
+ * A model of the `ArrangementDcel` concept must provide the following types and
+ * operations. (In addition to the requirements here, the local types
+ * `Vertex`,`Halfedge`, `Face`, `Outer_ccb`, `Inner_ccb`, and `Isolated_vertex`
+ * must be models of the concepts `ArrangementDcelVertex`,
+ * `ArrangementDcelHalfedge`, `ArrangementDcelFace`, `ArrangementDcelOuterCcb`,
+ * `ArrangementDcelInnerCcb`, and `ArrangementDcelIsolatedVertex` respectively.)
+ *
+ * \cgalHasModel `CGAL::Arr_dcel_base<V,H,F>`
+ * \cgalHasModel `CGAL::Arr_default_dcel<Traits>`
+ * \cgalHasModel `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
+ * \cgalHasModel `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>`
+ *
+ * \sa `ArrangementDcelVertex`
+ * \sa `ArrangementDcelHalfedge`
+ * \sa `ArrangementDcelFace`
+ * \sa `ArrangementDcelOuterCcb`
+ * \sa `ArrangementDcelInnerCcb`
+ * \sa `ArrangementDcelIsolatedVertex`
+ */
 
 class ArrangementDcel {
 public:
