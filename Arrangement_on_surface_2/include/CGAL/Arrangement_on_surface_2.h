@@ -754,57 +754,57 @@ public:
     /*! Default constrcutor. */
     Face() {}
 
-    /*! Get an iterator for the outer CCBs of the face (non-const version). */
+    /*! Obtain an iterator for the outer CCBs of the face (non-const version). */
     Outer_ccb_iterator outer_ccbs_begin()
     { return (DOuter_ccb_iter(Base::outer_ccbs_begin())); }
 
-    /*! Get an iterator for the outer CCBs the face (const version). */
+    /*! Obtain an iterator for the outer CCBs the face (const version). */
     Outer_ccb_const_iterator outer_ccbs_begin() const
     { return (DOuter_ccb_const_iter(Base::outer_ccbs_begin())); }
 
-    /*! Get a past-the-end iterator for the outer CCBs (non-const version). */
+    /*! Obtain a past-the-end iterator for the outer CCBs (non-const version). */
     Outer_ccb_iterator outer_ccbs_end()
     { return (DOuter_ccb_iter(Base::outer_ccbs_end())); }
 
-    /*! Get a past-the-end iterator for the outer CCBs (const version). */
+    /*! Obtain a past-the-end iterator for the outer CCBs (const version). */
     Outer_ccb_const_iterator outer_ccbs_end() const
     { return (DOuter_ccb_const_iter(Base::outer_ccbs_end())); }
 
-    /*! Get an iterator for the inner CCBs of the face (non-const version). */
+    /*! Obtain an iterator for the inner CCBs of the face (non-const version). */
     Inner_ccb_iterator inner_ccbs_begin()
     { return (DInner_ccb_iter(Base::inner_ccbs_begin())); }
 
-    /*! Get an iterator for the inner CCBs the face (const version). */
+    /*! Obtain an iterator for the inner CCBs the face (const version). */
     Inner_ccb_const_iterator inner_ccbs_begin() const
     { return (DInner_ccb_const_iter(Base::inner_ccbs_begin())); }
 
-    /*! Get a past-the-end iterator for the inner CCBs (non-const version). */
+    /*! Obtain a past-the-end iterator for the inner CCBs (non-const version). */
     Inner_ccb_iterator inner_ccbs_end()
     { return (DInner_ccb_iter(Base::inner_ccbs_end())); }
 
-    /*! Get a past-the-end iterator for the inner CCBs (const version). */
+    /*! Obtain a past-the-end iterator for the inner CCBs (const version). */
     Inner_ccb_const_iterator inner_ccbs_end() const
     { return (DInner_ccb_const_iter(Base::inner_ccbs_end())); }
 
-    /*! Get an iterator for the isolated_vertices inside the face
+    /*! Obtain an iterator for the isolated_vertices inside the face
      * (non-const version).
      */
     Isolated_vertex_iterator isolated_vertices_begin()
     { return (DIso_vertex_iter(Base::isolated_vertices_begin())); }
 
-    /*! Get an iterator for the isolated_vertices inside the face
+    /*! Obtain an iterator for the isolated_vertices inside the face
      * (const version).
      */
     Isolated_vertex_const_iterator isolated_vertices_begin() const
     { return (DIso_vertex_const_iter(Base::isolated_vertices_begin())); }
 
-    /*! Get a past-the-end iterator for the isolated_vertices
+    /*! Obtain a past-the-end iterator for the isolated_vertices
      * (non-const version).
      */
     Isolated_vertex_iterator isolated_vertices_end()
     { return (DIso_vertex_iter(Base::isolated_vertices_end())); }
 
-    /*! Get a past-the-end iterator for the isolated_vertices
+    /*! Obtain a past-the-end iterator for the isolated_vertices
      * (const version).
      */
     Isolated_vertex_const_iterator isolated_vertices_end() const
@@ -820,7 +820,7 @@ public:
     { return (Base::number_of_outer_ccbs() > 0); }
 
     /*!
-     * Get a circulator for the outer boundary (non-const version).
+     * Obtain a circulator for the outer boundary (non-const version).
      * \pre The face has a single outer CCB.
      */
     Ccb_halfedge_circulator outer_ccb()
@@ -833,7 +833,7 @@ public:
     }
 
     /*!
-     * Get a circulator for the outer boundary (const version).
+     * Obtain a circulator for the outer boundary (const version).
      * \pre The face has a single outer CCB.
      */
     Ccb_halfedge_const_circulator outer_ccb() const
@@ -845,23 +845,23 @@ public:
       return Ccb_halfedge_const_circulator(DHalfedge_const_iter(he));
     }
 
-    /*! Get the number of holes (inner CCBs) inside the face. */
+    /*! Obtain the number of holes (inner CCBs) inside the face. */
     Size number_of_holes() const
     { return (Base::number_of_inner_ccbs()); }
 
-    /*! Get an iterator for the holes inside the face (non-const version). */
+    /*! Obtain an iterator for the holes inside the face (non-const version). */
     Inner_ccb_iterator holes_begin()
     { return (this->inner_ccbs_begin()); }
 
-    /*! Get an iterator for the holes inside the face (const version). */
+    /*! Obtain an iterator for the holes inside the face (const version). */
     Inner_ccb_const_iterator holes_begin() const
     { return (this->inner_ccbs_begin()); }
 
-    /*! Get a past-the-end iterator for the holes (non-const version). */
+    /*! Obtain a past-the-end iterator for the holes (non-const version). */
     Inner_ccb_iterator holes_end()
     { return (this->inner_ccbs_end()); }
 
-    /*! Get a past-the-end iterator for the holes (const version). */
+    /*! Obtain a past-the-end iterator for the holes (const version). */
     Inner_ccb_const_iterator holes_end() const
     { return (this->inner_ccbs_end()); }
     //@}
@@ -966,27 +966,27 @@ public:
    */
   bool is_valid() const;
 
-  /*! Get the number of arrangement vertices. */
+  /*! Obtain the number of arrangement vertices. */
   Size number_of_vertices() const
   { return (m_topol_traits.number_of_concrete_vertices()); }
 
-  /*! Get the number of isolated arrangement vertices. */
+  /*! Obtain the number of isolated arrangement vertices. */
   Size number_of_isolated_vertices() const
   { return (_dcel().size_of_isolated_vertices()); }
 
-  /*! Get the number of arrangement halfedges (the result is always even). */
+  /*! Obtain the number of arrangement halfedges (the result is always even). */
   Size number_of_halfedges() const
   { return (m_topol_traits.number_of_valid_halfedges()); }
 
-  /*! Get the number of arrangement edges. */
+  /*! Obtain the number of arrangement edges. */
   Size number_of_edges() const
   { return (m_topol_traits.number_of_valid_halfedges() / 2); }
 
-  /*! Get the number of arrangement faces. */
+  /*! Obtain the number of arrangement faces. */
   Size number_of_faces() const
   { return (m_topol_traits.number_of_valid_faces()); }
 
-  /*! Get the number of unbounded faces in the arrangement. */
+  /*! Obtain the number of unbounded faces in the arrangement. */
   Size number_of_unbounded_faces() const
   {
     Unbounded_face_const_iterator iter = unbounded_faces_begin();
@@ -1005,14 +1005,14 @@ public:
   /// \name Traversal functions for the arrangement vertices.
   //@{
 
-  /*! Get an iterator for the first vertex in the arrangement. */
+  /*! Obtain an iterator for the first vertex in the arrangement. */
   Vertex_iterator vertices_begin()
   {
     return (Vertex_iterator(_dcel().vertices_begin(), _dcel().vertices_end(),
                             _Is_concrete_vertex(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement vertices. */
+  /*! Obtain a past-the-end iterator for the arrangement vertices. */
   Vertex_iterator vertices_end()
   {
     return (Vertex_iterator(_dcel().vertices_end(), _dcel().vertices_end(),
@@ -1028,7 +1028,7 @@ public:
     return make_prevent_deref_range(vertices_begin(), vertices_end());
   }
 
-  /*! Get a const iterator for the first vertex in the arrangement. */
+  /*! Obtain a const iterator for the first vertex in the arrangement. */
   Vertex_const_iterator vertices_begin() const
   {
     return (Vertex_const_iterator(_dcel().vertices_begin(),
@@ -1036,7 +1036,7 @@ public:
                                   _Is_concrete_vertex(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement vertices. */
+  /*! Obtain a past-the-end const iterator for the arrangement vertices. */
   Vertex_const_iterator vertices_end() const
   {
     return (Vertex_const_iterator(_dcel().vertices_end(),
@@ -1058,7 +1058,7 @@ public:
   /// \name Traversal functions for the arrangement halfedges.
   //@{
 
-  /*! Get an iterator for the first halfedge in the arrangement. */
+  /*! Obtain an iterator for the first halfedge in the arrangement. */
   Halfedge_iterator halfedges_begin()
   {
     return (Halfedge_iterator(_dcel().halfedges_begin(),
@@ -1066,7 +1066,7 @@ public:
                               _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement halfedges. */
+  /*! Obtain a past-the-end iterator for the arrangement halfedges. */
   Halfedge_iterator halfedges_end()
   {
     return (Halfedge_iterator(_dcel().halfedges_end(),
@@ -1083,7 +1083,7 @@ public:
     return make_prevent_deref_range(halfedges_begin(), halfedges_end());
   }
 
-  /*! Get a const iterator for the first halfedge in the arrangement. */
+  /*! Obtain a const iterator for the first halfedge in the arrangement. */
   Halfedge_const_iterator halfedges_begin() const
   {
     return (Halfedge_const_iterator(_dcel().halfedges_begin(),
@@ -1091,7 +1091,7 @@ public:
                                     _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement halfedges. */
+  /*! Obtain a past-the-end const iterator for the arrangement halfedges. */
   Halfedge_const_iterator halfedges_end() const
   {
     return (Halfedge_const_iterator(_dcel().halfedges_end(),
@@ -1111,14 +1111,14 @@ public:
   /// \name Traversal functions for the arrangement edges.
   //@{
 
-  /*! Get an iterator for the first edge in the arrangement. */
+  /*! Obtain an iterator for the first edge in the arrangement. */
   Edge_iterator edges_begin()
   {
     return (Edge_iterator(_dcel().edges_begin(), _dcel().edges_end(),
                           _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement edges. */
+  /*! Obtain a past-the-end iterator for the arrangement edges. */
   Edge_iterator edges_end()
   {
     return (Edge_iterator(_dcel().edges_end(), _dcel().edges_end(),
@@ -1134,14 +1134,14 @@ public:
     return make_prevent_deref_range(edges_begin(), edges_end());
   }
 
-  /*! Get a const iterator for the first edge in the arrangement. */
+  /*! Obtain a const iterator for the first edge in the arrangement. */
   Edge_const_iterator edges_begin() const
   {
     return (Edge_const_iterator(_dcel().edges_begin(), _dcel().edges_end(),
                                 _Is_valid_halfedge(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement edges. */
+  /*! Obtain a past-the-end const iterator for the arrangement edges. */
   Edge_const_iterator edges_end() const
   {
     return (Edge_const_iterator(_dcel().edges_end(), _dcel().edges_end(),
@@ -1161,14 +1161,14 @@ public:
   /// \name Traversal functions for the arrangement faces.
   //@{
 
-  /*! Get an iterator for the first face in the arrangement. */
+  /*! Obtain an iterator for the first face in the arrangement. */
   Face_iterator faces_begin()
   {
     return (Face_iterator(_dcel().faces_begin(), _dcel().faces_end(),
                           _Is_valid_face(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end iterator for the arrangement faces. */
+  /*! Obtain a past-the-end iterator for the arrangement faces. */
   Face_iterator faces_end()
   {
     return (Face_iterator(_dcel().faces_end(), _dcel().faces_end(),
@@ -1183,14 +1183,14 @@ public:
   {
     return make_prevent_deref_range(faces_begin(), faces_end());
   }
-  /*! Get a const iterator for the first face in the arrangement. */
+  /*! Obtain a const iterator for the first face in the arrangement. */
   Face_const_iterator faces_begin() const
   {
     return (Face_const_iterator(_dcel().faces_begin(), _dcel().faces_end(),
                                 _Is_valid_face(&m_topol_traits)));
   }
 
-  /*! Get a past-the-end const iterator for the arrangement faces. */
+  /*! Obtain a past-the-end const iterator for the arrangement faces. */
   Face_const_iterator faces_end() const
   {
     return (Face_const_iterator(_dcel().faces_end(), _dcel().faces_end(),
@@ -1230,21 +1230,21 @@ public:
   /// \name Traversal functions for the unbounded faces of the arrangement.
   //@{
 
-  /*! Get an iterator for the first unbounded face in the arrangement. */
+  /*! Obtain an iterator for the first unbounded face in the arrangement. */
   Unbounded_face_iterator unbounded_faces_begin()
   {
     return Unbounded_face_iterator(_dcel().faces_begin(), _dcel().faces_end(),
                                    _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get a past-the-end iterator for the unbounded arrangement faces. */
+  /*! Obtain a past-the-end iterator for the unbounded arrangement faces. */
   Unbounded_face_iterator unbounded_faces_end()
   {
     return Unbounded_face_iterator(_dcel().faces_end(), _dcel().faces_end(),
                                    _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get a const iterator for the first unbounded face in the arrangement. */
+  /*! Obtain a const iterator for the first unbounded face in the arrangement. */
   Unbounded_face_const_iterator unbounded_faces_begin() const
   {
     return Unbounded_face_const_iterator(_dcel().faces_begin(),
@@ -1252,7 +1252,7 @@ public:
                                          _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get a past-the-end const iterator for the unbounded arrangement faces. */
+  /*! Obtain a past-the-end const iterator for the unbounded arrangement faces. */
   Unbounded_face_const_iterator unbounded_faces_end() const
   {
     return Unbounded_face_const_iterator(_dcel().faces_end(),
@@ -1260,7 +1260,7 @@ public:
                                          _Is_unbounded_face(&m_topol_traits));
   }
 
-  /*! Get the fictitious face (non-const version). */
+  /*! Obtain the fictitious face (non-const version). */
   Face_handle fictitious_face()
   {
     // The fictitious contains all other faces in a single hole inside it.
@@ -1269,7 +1269,7 @@ public:
   }
 
   /*!
-   * Get the unbounded face (const version).
+   * Obtain the unbounded face (const version).
    * The fictitious contains all other faces in a single hole inside it.
    */
   Face_const_handle fictitious_face() const
