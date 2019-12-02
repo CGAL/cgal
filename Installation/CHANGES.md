@@ -1,6 +1,16 @@
 Release History
 ===============
 
+Release 5.1
+-----------
+
+Release date: June 2020
+
+### Polygon Mesh Processing
+
+-   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
+    of halfedge pairs that were stitched.
+
 Release 5.0
 -----------
 
