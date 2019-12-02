@@ -93,14 +93,14 @@ public:
   /*! Check if the point pointer is nullptr. */
   bool has_null_point() const { return (p_pt == nullptr); }
 
-  /*! Get the point (const version). */
+  /*! Obtain the point (const version). */
   const Point& point() const
   {
     CGAL_assertion(p_pt != nullptr);
     return (*p_pt);
   }
 
-  /*! Get the point (non-const version). */
+  /*! Obtain the point (non-const version). */
   Point& point()
   {
     CGAL_assertion(p_pt != nullptr);
@@ -110,11 +110,11 @@ public:
   /*! Set the point (may be a nullptr point). */
   void set_point(Point* p) { p_pt = p; }
 
-  /*! Get the boundary type in x. */
+  /*! Obtain the boundary type in x. */
   Arr_parameter_space parameter_space_in_x() const
   { return (Arr_parameter_space(pss[0])); }
 
-  /*! Get the boundary type in y. */
+  /*! Obtain the boundary type in y. */
   Arr_parameter_space parameter_space_in_y() const
   { return (Arr_parameter_space(pss[1])); }
 
@@ -180,14 +180,14 @@ public:
   /*! Check if the curve pointer is nullptr. */
   bool has_null_curve() const { return (p_cv == nullptr); }
 
-  /*! Get the x-monotone curve (const version). */
+  /*! Obtain the x-monotone curve (const version). */
   const X_monotone_curve& curve() const
   {
     CGAL_precondition(p_cv != nullptr);
     return (*p_cv);
   }
 
-  /*! Get the x-monotone curve (non-const version). */
+  /*! Obtain the x-monotone curve (non-const version). */
   X_monotone_curve& curve()
   {
     CGAL_precondition(p_cv != nullptr);
@@ -297,14 +297,14 @@ public:
     return (_is_lsb_set(this->p_inc));
   }
 
-  /*! Get an incident halfedge (const version). */
+  /*! Obtain an incident halfedge (const version). */
   const Halfedge* halfedge() const
   {
     CGAL_precondition(! is_isolated());
     return (reinterpret_cast<const Halfedge*>(this->p_inc));
   }
 
-  /*! Get an incident halfedge (non-const version). */
+  /*! Obtain an incident halfedge (non-const version). */
   Halfedge* halfedge()
   {
     CGAL_precondition(! is_isolated());
@@ -318,7 +318,7 @@ public:
     this->p_inc = he;
   }
 
-  /*! Get the isolated vertex information (const version). */
+  /*! Obtain the isolated vertex information (const version). */
   const Isolated_vertex* isolated_vertex() const
   {
     CGAL_precondition(is_isolated());
@@ -326,7 +326,7 @@ public:
                                                      (this->p_inc)));
   }
 
-  /*! Get the isolated vertex information (non-const version). */
+  /*! Obtain the isolated vertex information (non-const version). */
   Isolated_vertex* isolated_vertex()
   {
     CGAL_precondition(is_isolated());
@@ -359,17 +359,17 @@ public:
   /*! Default constructor. */
   Arr_halfedge() {}
 
-  /*! Get the opposite halfedge (const version). */
+  /*! Obtain the opposite halfedge (const version). */
   const Halfedge* opposite () const
   { return (reinterpret_cast<const Halfedge*>(this->p_opp)); }
 
-  /*! Get the opposite halfedge (non-const version). */
+  /*! Obtain the opposite halfedge (non-const version). */
   Halfedge* opposite() { return (reinterpret_cast<Halfedge*>(this->p_opp)); }
 
   /*! Sets the opposite halfedge. */
   void set_opposite(Halfedge* he) { this->p_opp = he; }
 
-  /*! Get the direction of the halfedge. */
+  /*! Obtain the direction of the halfedge. */
   Arr_halfedge_direction direction() const
   {
     // Note that we use the LSB of the p_v pointer as a Boolean flag.
@@ -392,11 +392,11 @@ public:
     }
   }
 
-  /*! Get the previous halfedge along the chain (const version). */
+  /*! Obtain the previous halfedge along the chain (const version). */
   const Halfedge* prev() const
   { return (reinterpret_cast<const Halfedge*>(this->p_prev)); }
 
-  /*! Get the previous halfedge along the chain (const version). */
+  /*! Obtain the previous halfedge along the chain (const version). */
   Halfedge* prev() { return (reinterpret_cast<Halfedge*>(this->p_prev)); }
 
   /*! Set the previous halfedge along the chain. */
@@ -406,11 +406,11 @@ public:
     he->p_next = this;
   }
 
-  /*! Get the next halfedge along the chain (const version). */
+  /*! Obtain the next halfedge along the chain (const version). */
   const Halfedge* next() const
   { return (reinterpret_cast<const Halfedge*>(this->p_next)); }
 
-  /*! Get the next halfedge along the chain (const version). */
+  /*! Obtain the next halfedge along the chain (const version). */
   Halfedge* next() { return (reinterpret_cast<Halfedge*>(this->p_next)); }
 
   /*! Set the next halfedge along the chain. */
@@ -420,11 +420,11 @@ public:
     he->p_prev = this;
   }
 
-  /*! Get the target vertex (const version). */
+  /*! Obtain the target vertex (const version). */
   const Vertex* vertex() const
   { return (reinterpret_cast<const Vertex*>(_clean_pointer(this->p_v))); }
 
-  /*! Get the target vertex (non-const version). */
+  /*! Obtain the target vertex (non-const version). */
   Vertex* vertex()
   { return (reinterpret_cast<Vertex*>(_clean_pointer(this->p_v))); }
 
@@ -439,7 +439,7 @@ public:
   /*! Check whether the halfedge lies on the boundary of an outer CCB. */
   bool is_on_outer_ccb() const { return (!_is_lsb_set(this->p_comp)); }
 
-  /*! Get an incident outer CCB (const version).
+  /*! Obtain an incident outer CCB (const version).
    * \pre The edge does not lie on an inner CCB.
    */
   const Outer_ccb* outer_ccb() const
@@ -448,7 +448,7 @@ public:
     return (reinterpret_cast<const Outer_ccb*>(this->p_comp));
   }
 
-  /*! Get an incident outer CCB (non-const version).
+  /*! Obtain an incident outer CCB (non-const version).
    * \pre The edge does not lie on an inner CCB.
    */
   Outer_ccb* outer_ccb()
@@ -467,7 +467,7 @@ public:
   /*! Check whether the halfedge lies on the boundary of an inner CCB. */
   bool is_on_inner_ccb() const { return (_is_lsb_set(this->p_comp)); }
 
-  /*! Get an incident inner CCB (const version).
+  /*! Obtain an incident inner CCB (const version).
    * \pre The edge lies on an inner CCB.
    */
   const Inner_ccb* inner_ccb() const
@@ -476,7 +476,7 @@ public:
     return (reinterpret_cast<const Inner_ccb*>(_clean_pointer(this->p_comp)));
   }
 
-  /*! Get an incident inner CCB (non-const version).
+  /*! Obtain an incident inner CCB (non-const version).
    * \pre The edge lies on an inner CCB.
    */
   Inner_ccb* inner_ccb()
@@ -531,20 +531,20 @@ public:
                            _Const_ccb_to_halfedge_cast>
                                                     Outer_ccb_const_iterator;
 
-  /*! Get the number of outer CCBs the face has. */
+  /*! Obtain the number of outer CCBs the face has. */
   size_t number_of_outer_ccbs() const { return (this->outer_ccbs.size()); }
 
-  /*! Get an iterator for the first outer CCB of the face. */
+  /*! Obtain an iterator for the first outer CCB of the face. */
   Outer_ccb_iterator outer_ccbs_begin() { return (this->outer_ccbs.begin()); }
 
-  /*! Get a past-the-end iterator for the outer CCBs inside the face. */
+  /*! Obtain a past-the-end iterator for the outer CCBs inside the face. */
   Outer_ccb_iterator outer_ccbs_end() { return (this->outer_ccbs.end()); }
 
-  /*! Get an const iterator for the first outer CCB inside the face. */
+  /*! Obtain an const iterator for the first outer CCB inside the face. */
   Outer_ccb_const_iterator outer_ccbs_begin() const
   { return (this->outer_ccbs.begin()); }
 
-  /*! Get a const past-the-end iterator for the outer CCBs inside the face. */
+  /*! Obtain a const past-the-end iterator for the outer CCBs inside the face. */
   Outer_ccb_const_iterator outer_ccbs_end() const
   { return (this->outer_ccbs.end()); }
 
@@ -567,20 +567,20 @@ public:
   typedef Inner_ccb_iterator                        Hole_iterator;
   typedef Inner_ccb_const_iterator                  Hole_const_iterator;
 
-  /*! Get the number of inner CCBs the face has. */
+  /*! Obtain the number of inner CCBs the face has. */
   size_t number_of_inner_ccbs() const { return (this->inner_ccbs.size()); }
 
-  /*! Get an iterator for the first inner CCB of the face. */
+  /*! Obtain an iterator for the first inner CCB of the face. */
   Inner_ccb_iterator inner_ccbs_begin() { return (this->inner_ccbs.begin()); }
 
-  /*! Get a past-the-end iterator for the inner CCBs inside the face. */
+  /*! Obtain a past-the-end iterator for the inner CCBs inside the face. */
   Inner_ccb_iterator inner_ccbs_end() { return (this->inner_ccbs.end()); }
 
-  /*! Get an const iterator for the first inner CCB inside the face. */
+  /*! Obtain an const iterator for the first inner CCB inside the face. */
   Inner_ccb_const_iterator inner_ccbs_begin() const
   { return (this->inner_ccbs.begin()); }
 
-  /*! Get a const past-the-end iterator for the inner CCBs inside the face. */
+  /*! Obtain a const past-the-end iterator for the inner CCBs inside the face. */
   Inner_ccb_const_iterator inner_ccbs_end() const
   { return (this->inner_ccbs.end()); }
 
@@ -635,23 +635,23 @@ public:
     typename F::Isolated_vertex_iterator::iterator_category>
                                               Isolated_vertex_const_iterator;
 
-  /*! Get the number of isloated vertices inside the face. */
+  /*! Obtain the number of isloated vertices inside the face. */
   size_t number_of_isolated_vertices() const
   { return (this->iso_verts.size()); }
 
-  /*! Get an iterator for the first isloated vertex inside the face. */
+  /*! Obtain an iterator for the first isloated vertex inside the face. */
   Isolated_vertex_iterator isolated_vertices_begin()
   { return (this->iso_verts.begin()); }
 
-  /*! Get a past-the-end iterator for the isloated vertices inside the face. */
+  /*! Obtain a past-the-end iterator for the isloated vertices inside the face. */
   Isolated_vertex_iterator isolated_vertices_end()
   { return (this->iso_verts.end()); }
 
-  /*! Get an const iterator for the first isloated vertex inside the face. */
+  /*! Obtain an const iterator for the first isloated vertex inside the face. */
   Isolated_vertex_const_iterator isolated_vertices_begin() const
   { return (this->iso_verts.begin()); }
 
-  /*! Get a const past-the-end iterator for the isloated vertices inside the
+  /*! Obtain a const past-the-end iterator for the isloated vertices inside the
    * face. */
   Isolated_vertex_const_iterator isolated_vertices_end() const
   { return (this->iso_verts.end()); }
@@ -710,32 +710,32 @@ public:
     p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   { if (other.iter_is_not_singular) iter = other.iter; }
 
-  /*! Get a halfedge along the component (const version). */
+  /*! Obtain a halfedge along the component (const version). */
   const Halfedge* halfedge() const { return (*iter); }
 
-  /*! Get a halfedge along the component (non-const version). */
+  /*! Obtain a halfedge along the component (non-const version). */
   Halfedge* halfedge() { return (*iter); }
 
   /*! Set a representative halfedge for the component. */
   void set_halfedge(Halfedge* he) { *iter = he; }
 
-  /*! Get the incident face (const version). */
+  /*! Obtain the incident face (const version). */
   const Face* face() const { return (p_f); }
 
-  /*! Get the incident face (non-const version). */
+  /*! Obtain the incident face (non-const version). */
   Face* face() { return (p_f); }
 
   /*! Set the incident face. */
   void set_face(Face* f) { p_f = f; }
 
-  /*! Get the iterator (const version). */
+  /*! Obtain the iterator (const version). */
   Outer_ccb_iterator iterator() const
   {
     CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
-  /*! Get the iterator (non-const version). */
+  /*! Obtain the iterator (non-const version). */
   Outer_ccb_iterator iterator()
   {
     CGAL_assertion(iter_is_not_singular);
@@ -776,32 +776,32 @@ public:
     p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   { if (other.iter_is_not_singular) iter = other.iter; }
 
-  /*! Get a halfedge along the component (const version). */
+  /*! Obtain a halfedge along the component (const version). */
   const Halfedge* halfedge() const { return (*iter); }
 
-  /*! Get a halfedge along the component (non-const version). */
+  /*! Obtain a halfedge along the component (non-const version). */
   Halfedge* halfedge() { return (*iter); }
 
   /*! Set a representative halfedge for the component. */
   void set_halfedge(Halfedge *he) { *iter = he; }
 
-  /*! Get the incident face (const version). */
+  /*! Obtain the incident face (const version). */
   const Face* face() const { return (p_f); }
 
-  /*! Get the incident face (non-const version). */
+  /*! Obtain the incident face (non-const version). */
   Face* face() { return (p_f); }
 
   /*! Set the incident face. */
   void set_face(Face* f) { p_f = f; }
 
-  /*! Get the iterator (const version). */
+  /*! Obtain the iterator (const version). */
   Inner_ccb_iterator iterator() const
   {
     CGAL_assertion(iter_is_not_singular);
     return (iter);
   }
 
-  /*! Get the iterator (non-const version). */
+  /*! Obtain the iterator (non-const version). */
   Inner_ccb_iterator iterator()
   {
     CGAL_assertion(iter_is_not_singular);
@@ -841,23 +841,23 @@ public:
     p_f(other.p_f), iter_is_not_singular(other.iter_is_not_singular)
   { if (other.iter_is_not_singular) iv_it = other.iv_it; }
 
-  /*! Get the containing face (const version). */
+  /*! Obtain the containing face (const version). */
   const Face* face() const { return (p_f); }
 
-  /*! Get the containing face (non-const version). */
+  /*! Obtain the containing face (non-const version). */
   Face* face() { return (p_f); }
 
   /*! Set the incident face, the one that contains the isolated vertex. */
   void set_face(Face* f) { p_f = f; }
 
-  /*! Get the isolated vertex iterator (const version). */
+  /*! Obtain the isolated vertex iterator (const version). */
   Isolated_vertex_iterator iterator() const
   {
     CGAL_assertion(iter_is_not_singular);
     return (iv_it);
   }
 
-  /*! Get the isolated vertex iterator (non-const version). */
+  /*! Obtain the isolated vertex iterator (non-const version). */
   Isolated_vertex_iterator iterator()
   {
     CGAL_assertion(iter_is_not_singular);
@@ -964,22 +964,22 @@ public:
 
   /// \name The DCEL size.
   //@{
-  /*! Get the number of DCEL vertices. */
+  /*! Obtain the number of DCEL vertices. */
   Size size_of_vertices() const { return (vertices.size()); }
 
-  /*! Get the number of DCEL halfedges (twice the number of edges). */
+  /*! Obtain the number of DCEL halfedges (twice the number of edges). */
   Size size_of_halfedges() const { return (halfedges.size()); }
 
-  /*! Get the number of DCEL faces. */
+  /*! Obtain the number of DCEL faces. */
   Size size_of_faces() const { return (faces.size()); }
 
-  /*! Get the number of outer CCBs. */
+  /*! Obtain the number of outer CCBs. */
   Size size_of_outer_ccbs() const { return (out_ccbs.size()); }
 
-  /*! Get the number of inner CCBs. */
+  /*! Obtain the number of inner CCBs. */
   Size size_of_inner_ccbs() const { return (in_ccbs.size()); }
 
-  /*! Get the number of isolated vertices. */
+  /*! Obtain the number of isolated vertices. */
   Size size_of_isolated_vertices() const { return (iso_verts.size()); }
   //@}
 
