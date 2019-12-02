@@ -32,14 +32,35 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-  template<typename K,
+  /*!
+\ingroup PkgTetrahedralRemeshingClasses
+
+The class `Remeshing_cell_base<Gt, Info>` is a model of the concept `RemeshingCellBase_3`.
+It is designed to serve as cell base class for the 3D triangulation
+used in the tetrahedral remeshing process.
+
+\tparam Gt is the geometric traits class.
+It has to be a model of the concept `RemeshingTriangulationTraits_3`.
+
+\tparam Info is the information the user would like to add to a cell.
+It has to be `DefaultConstructible` and `Assignable`.
+
+\tparam Cb is a cell base class from which `Triangulation_cell_base_with_info_3` derives.
+It must be a model of the `TriangulationCellBase_3` concept.
+It has the default value `Triangulation_cell_base_3<Gt>`.
+
+\cgalModels `RemeshingCellBase_3`
+\cgalRefines `Triangulation_cell_base_with_info_3`
+
+*/
+  template<typename Gt,
            typename Info,
-           typename Cb = CGAL::Triangulation_cell_base_3<K> >
+           typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
   class Remeshing_cell_base
-    : public CGAL::Triangulation_cell_base_with_info_3<Info, K, Cb>
+    : public CGAL::Triangulation_cell_base_with_info_3<Info, Gt, Cb>
 
   {
-    typedef CGAL::Triangulation_cell_base_with_info_3<Info, K, Cb> Base;
+    typedef CGAL::Triangulation_cell_base_with_info_3<Info, Gt, Cb> Base;
     typedef typename Base::Vertex_handle Vertex_handle;
     typedef typename Base::Cell_handle   Cell_handle;
 
@@ -61,7 +82,7 @@ namespace Tetrahedral_remeshing
     struct Rebind_TDS
     {
       typedef typename Cb::template Rebind_TDS<TDS2>::Other Cb2;
-      typedef Remeshing_cell_base<K, Info, Cb2> Other;
+      typedef Remeshing_cell_base<Gt, Info, Cb2> Other;
     };
 
     Remeshing_cell_base()
@@ -131,11 +152,11 @@ namespace Tetrahedral_remeshing
 
 
 
-  template < class K, class Info, class Cb >
+  template < class Gt, class Info, class Cb >
   std::istream&
-    operator>>(std::istream &is, Remeshing_cell_base<K, Info, Cb> &c)
+    operator>>(std::istream &is, Remeshing_cell_base<Gt, Info, Cb> &c)
   {
-    typename Remeshing_cell_base<K, Info, Cb>::Subdomain_index index;
+    typename Remeshing_cell_base<Gt, Info, Cb>::Subdomain_index index;
     if (is_ascii(is))
       is >> index;
     else
@@ -157,9 +178,9 @@ namespace Tetrahedral_remeshing
     return is;
   }
 
-  template < class K, class Info, class Cb >
+  template < class Gt, class Info, class Cb >
   std::ostream&
-    operator<<(std::ostream &os, const Remeshing_cell_base<K, Info, Cb> &c)
+    operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Info, Cb> &c)
   {
     if (is_ascii(os))
       os << c.subdomain_index();

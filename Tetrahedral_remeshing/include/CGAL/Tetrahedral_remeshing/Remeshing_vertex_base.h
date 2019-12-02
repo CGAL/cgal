@@ -96,10 +96,11 @@ namespace Tetrahedral_remeshing
       cache_validity_ = false;
     }
     // documented as set_cache()
-    void set_cache(const std::size_t i, const std::size_t j)
+    void set_cache(const std::size_t& nb_incident_facets,
+                   const std::size_t& nb_incident_subdomains);
     {
-      number_of_incident_facets_ = i;
-      number_of_components_ = j;
+      number_of_incident_facets_ = nb_incident_facets;
+      number_of_components_ = nb_incident_subdomains;
       cache_validity_ = true;
     }
 

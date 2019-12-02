@@ -22,17 +22,20 @@ public:
   /// that contains the vertex
   void set_dimension(const int dimension);
 
-  /// Returns the number of incident facets
+  /// Returns the number of incident facets,
+  /// stored in a cache variable
   std::size_t number_of_incident_facets() const;
 
-  /// Returns the number of subdomains to which belong incident cells
+  /// Returns the number of subdomains to which belong incident cells,
+  /// stored in a cache variable
   std::size_t number_of_incident_subdomains() const;
 
   /// Internal function that invalidates cache data stored for performance
   void invalidate_cache();
-  /// Internal function that sets cache data stored for performance
-  void set_cache(const std::size_t i, const std::size_t j);
 
+  /// Internal function that sets cache data stored for performance
+  void set_cache(const std::size_t& nb_incident_facets,
+                 const std::size_t& nb_incident_subdomains);
 
   /// @}
 };

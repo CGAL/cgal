@@ -4,6 +4,9 @@
 /// \defgroup PkgTetrahedralRemeshingConcepts Concepts
 /// \ingroup PkgTetrahedralRemeshingRef
 
+/// \defgroup PkgTetrahedralRemeshingClasses Classes
+/// \ingroup PkgTetrahedralRemeshingRef
+
 /// \defgroup PkgPACKAGEAlgorithmFunctions Remeshing Function
 /// \ingroup PkgPACKAGE
 
