@@ -503,7 +503,6 @@ instead of the distance itself. For instance for the Euclidean
 distance, to avoid the expensive computation of square roots, squared
 distances are used instead of the Euclidean distance itself.
 
-\cgalModifBegin
 Not storing the points coordinates inside the tree usually generates a
 lot of cache misses, leading to non-optimal performance. This is the case
 for example when indices are stored inside the tree,
@@ -518,7 +517,6 @@ set to `Tag_true`. The points coordinates will then be cached in an optimal
 way. This will increase memory consumption but provide better search
 performance. See also the `GeneralDistance` and `FuzzyQueryItem` concepts for
 additional requirements when using such a cache.
-\cgalModifEnd
 
 \section Spatial_searchingImplementationHistory Implementation History
 
