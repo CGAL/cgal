@@ -106,6 +106,7 @@ public:
   //statistics
   enum STATS {
     NB_VERTICES = 0,
+    HAS_NM_VERTICES,
     NB_CONNECTED_COMPOS,
     NB_BORDER_EDGES,
     IS_PURE_TRIANGLE,

@@ -113,3 +113,9 @@ if(TARGET ceres)
   target_link_libraries( test_mesh_smoothing PRIVATE ceres )
 endif(TARGET ceres)
 
+if(BUILD_TESTING)
+  set_tests_properties(
+      execution___of__triangulate_hole_Polyhedron_3_no_delaunay_test
+      execution___of__triangulate_hole_Polyhedron_3_test
+    PROPERTIES RESOURCE_LOCK Triangulation_with_hole)
+endif()

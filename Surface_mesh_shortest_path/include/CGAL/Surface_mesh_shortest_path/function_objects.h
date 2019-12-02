@@ -2,27 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stephen Kiazyk
 
-#include <cstddef>
+#ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
+#define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
 
-#include <boost/graph/graph_traits.hpp>
-#include <CGAL/result_of.h>
-#include <CGAL/assertions.h>
+#include <CGAL/license/Surface_mesh_shortest_path.h>
 
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
@@ -32,13 +22,15 @@
 #endif
 #endif
 
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/result_of.h>
 #include <CGAL/Cartesian_converter.h>
 
-#ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
-#define CGAL_SURFACE_MESH_SHORTEST_PATH_INTERNAL_FUNCTION_OBJECTS_H
-
-#include <CGAL/license/Surface_mesh_shortest_path.h>
-
+#include <cmath>
+#include <cstddef>
+#include <limits>
 
 namespace CGAL {
 
@@ -246,8 +238,8 @@ public:
 
     Point_3 projectedLocation3d(m_construct_projected_point_3(baseSegment, m_construct_vertex_3(t3, 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_vertex_3(t3, 0), m_construct_vertex_3(t3, 1), projectedLocation3d);
-    FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
-    FT v01Len = CGAL::internal::select_sqrt(m_compute_squared_distance_3(t3[1], t3[0]));
+    FT triangleHeight = CGAL::approximate_sqrt(m_compute_squared_distance_3(projectedLocation3d, t3[2]));
+    FT v01Len = CGAL::approximate_sqrt(m_compute_squared_distance_3(t3[1], t3[0]));
 
     Point_2 A(m_construct_point_2(0.0, 0.0));
     Point_2 B(m_construct_point_2(v01Len, 0.0));
@@ -367,12 +359,12 @@ public:
   {
     Point_3 projectedLocation3d(m_construct_projected_point_3(m_construct_line_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), m_construct_vertex_3(t3, edgeIndex + 2)));
     FT scalePoint = m_parametric_distance_along_segment_3(m_construct_segment_3(m_construct_vertex_3(t3, edgeIndex), m_construct_vertex_3(t3, edgeIndex + 1)), projectedLocation3d);
-    FT triangleHeight = CGAL::internal::select_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
+    FT triangleHeight = CGAL::approximate_sqrt(m_compute_squared_distance_3(projectedLocation3d, m_construct_vertex_3(t3, edgeIndex + 2)));
 
     Vector_2 edgeVector(m_construct_vector_2(segment));
 
     Vector_2 perpendicularEdgeVector(m_construct_perpendicular_vector_2(edgeVector, CGAL::COUNTERCLOCKWISE));
-    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1.0) / CGAL::internal::select_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
+    perpendicularEdgeVector = m_construct_scaled_vector_2(perpendicularEdgeVector, FT(1) / CGAL::approximate_sqrt(m_compute_squared_length_2(perpendicularEdgeVector)));
 
     Point_2 points[3];
     points[edgeIndex] = m_construct_source_2(segment);
@@ -433,9 +425,11 @@ public:
 
   typedef typename K::Intersect_2 Intersect_2;
   typedef typename K::Compare_distance_2 Compare_distance_2;
+  typedef typename K::Compute_squared_distance_2 Compute_squared_distance_2;
   typedef typename K::Construct_line_2 Construct_line_2;
   typedef typename K::Construct_source_2 Construct_source_2;
   typedef typename K::Construct_target_2 Construct_target_2;
+
 
   typedef CGAL::Comparison_result result_type;
 
@@ -443,6 +437,7 @@ private:
   Compute_parametric_distance_along_segment_2<K> m_parametric_distance_along_segment_2;
   Intersect_2 m_intersect_2;
   Compare_distance_2 m_compare_distance_2;
+  Compute_squared_distance_2 m_compute_squared_distance_2;
   Construct_line_2 m_construct_line_2;
   Construct_source_2 m_construct_source_2;
   Construct_target_2 m_construct_target_2;
@@ -455,6 +450,7 @@ public:
   Compare_relative_intersection_along_segment_2(const K& kernel)
     : m_intersect_2(kernel.intersect_2_object())
     , m_compare_distance_2(kernel.compare_distance_2_object())
+    , m_compute_squared_distance_2(kernel.compute_squared_distance_2_object())
     , m_construct_line_2(kernel.construct_line_2_object())
     , m_construct_source_2(kernel.construct_source_2_object())
     , m_construct_target_2(kernel.construct_target_2_object())
@@ -466,7 +462,6 @@ public:
     typedef typename CGAL::cpp11::result_of<Intersect_2(Line_2, Line_2)>::type LineLineIntersectResult;
 
     Line_2 s1Line(m_construct_line_2(s1));
-
     Line_2 s2Line(m_construct_line_2(s2));
 
     LineLineIntersectResult intersectResult1(m_intersect_2(s1Line, l1));
@@ -479,7 +474,7 @@ public:
     if (!p1_ptr) return CGAL::SMALLER;
 
     CGAL_assertion_code(FT t1 = m_parametric_distance_along_segment_2(s1, *p1_ptr);)
-    CGAL_assertion(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
+    CGAL_assertion(t1 >= FT(-1)/FT(100000) && t1 <= FT(1)+FT(1)/FT(100000));
 
     LineLineIntersectResult intersectResult2 = m_intersect_2(s2Line, l2);
     CGAL_assertion(bool(intersectResult2));
@@ -491,9 +486,27 @@ public:
     if (!p2_ptr) return CGAL::SMALLER;
 
     CGAL_assertion_code(FT t2 = m_parametric_distance_along_segment_2(s2, *p2_ptr);)
-    CGAL_assertion(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
+    CGAL_assertion(t2 >= FT(-1)/FT(100000) && t2 <= FT(1)+FT(1)/FT(100000));
 
+// #define CGAL_SMSP_DONT_USE_RELAXED_PRUNING
+#ifndef CGAL_SMSP_DONT_USE_RELAXED_PRUNING
+    const FT sqd_1 = m_compute_squared_distance_2(s1.source(), *p1_ptr);
+    const FT sqd_2 = m_compute_squared_distance_2(s2.source(), *p2_ptr);
+
+    // In the case of multiple rays reaching the same target, we want to know their respective position
+    // so that pruning of branches can be done according to the "one angle one split" idiom.
+    // However, the orientation predicate is evaluated in the unfolded 2D plane, which is obtained
+    // via square roots; inconsisnties will exist. We don't want to prune in case it might be wrong,
+    // so we add a little bit of tolerance on the evaluation of the predicate. If it's almost collinear,
+    // return 'collinear' (EQUAL).
+    const FT eps = (FT(100) * std::numeric_limits<FT>::epsilon());
+    if(CGAL::abs(sqd_1 - sqd_2) < eps)
+      return CGAL::EQUAL;
+
+    return CGAL::compare(sqd_1, sqd_2);
+#else
     return m_compare_distance_2(s1.source(), *p1_ptr, s2.source(), *p2_ptr);
+#endif
   }
 };
 
@@ -501,13 +514,14 @@ template <class Kernel, class FaceListGraph>
 class Is_saddle_vertex
 {
 public:
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_2 Point_2;
   typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Kernel::Vector_2 Vector_2;
   typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
   typedef typename Kernel::Triangle_2 Triangle_2;
-  typedef typename Kernel::Segment_2 Segment_2;
-  typedef typename Kernel::Vector_2 Vector_2;
-  typedef typename Kernel::Point_2 Point_2;
 
   typedef typename boost::graph_traits<FaceListGraph> Graph_traits;
   typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
@@ -540,7 +554,9 @@ public:
   {
   }
 
-  Is_saddle_vertex(const Kernel& kernel, const Construct_triangle_3_to_triangle_2_projection& pt3tt2, const Construct_triangle_3_along_segment_2_flattening& ft3as2)
+  Is_saddle_vertex(const Kernel& kernel,
+                   const Construct_triangle_3_to_triangle_2_projection& pt3tt2,
+                   const Construct_triangle_3_along_segment_2_flattening& ft3as2)
     : m_orientation_2(kernel.orientation_2_object())
     , m_construct_triangle_3(kernel.construct_triangle_3_object())
     , m_construct_vertex_2(kernel.construct_vertex_2_object())
@@ -557,10 +573,72 @@ public:
     return (*this)(v, g, get(boost::vertex_point, g));
   }
 
+ FT angle(const Vector_3& u, const Vector_3& v) const
+ {
+   typename Kernel::Compute_scalar_product_3 scalar_product;
+
+   double product = CGAL::sqrt(to_double(scalar_product(u,u)) * to_double(scalar_product(v,v)));
+
+   if(product == 0)
+     return 0;
+
+   // cosine
+   double dot = to_double(scalar_product(u,v));
+   double cosine = dot / product;
+
+   if(cosine > 1.)
+     cosine = 1.;
+
+   if(cosine < -1.)
+     cosine = -1.;
+
+   return std::acos(cosine) * 180./CGAL_PI;
+ }
+
+
+ FT angle(const Point_3& p, const Point_3& q, const Point_3& r) const
+ {
+   typename Kernel::Construct_vector_3 cv;
+
+   Vector_3 u = cv(q, p);
+   Vector_3 v = cv(q, r);
+
+   return angle(u, v);
+ }
+
+  template<class VertexPointMap>
+  FT vertex_angle(const vertex_descriptor v,
+                  const FaceListGraph& g,
+                  const VertexPointMap& pointMap) const
+  {
+    FT angle_sum = 0;
+
+    for(halfedge_descriptor h : halfedges_around_target(v, g))
+    {
+      if(is_border(h, g))
+        continue;
+
+      angle_sum += angle(get(pointMap, source(h, g)),
+                         get(pointMap, target(h, g)),
+                         get(pointMap, target(next(h, g), g)));
+    }
+
+    angle_sum *= CGAL_PI / FT(180);
+
+    return angle_sum;
+  }
+
   template<class VertexPointMap>
   result_type operator() (vertex_descriptor v, const FaceListGraph& g, VertexPointMap const& pointMap) const
   {
+#ifndef CGAL_SMSP_DONT_USE_RELAXED_PRUNING
+    const FT ang_sum = vertex_angle(v, g, pointMap);
+    const FT bound = (FT(1) - FT(100) * std::numeric_limits<FT>::epsilon()) * 2 * CGAL_PI;
+    return (ang_sum >= bound);
+#else
     halfedge_descriptor startEdge = halfedge(v, g);
+    while (face(startEdge, g) == Graph_traits::null_face())
+      startEdge=opposite(next(startEdge, g), g);
 
     Point_3 rootPoint(get(pointMap, v));
     Point_3 prevPoint(get(pointMap, source(startEdge, g)));
@@ -607,6 +685,7 @@ public:
     while (currentEdge != startEdge);
 
     return false;
+#endif
   }
 };
 

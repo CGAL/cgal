@@ -192,6 +192,11 @@ endmacro()
 # Get path, convert backslashes as ${ENV_${var}}
 getenv_path(TBB_ROOT)
 
+if(NOT ENV_TBB_ROOT)
+  getenv_path(TBBROOT)
+  set(ENV_TBB_ROOT ${ENV_TBBROOT})
+endif()
+
 # initialize search paths
 set(TBB_PREFIX_PATH ${TBB_ROOT} ${ENV_TBB_ROOT})
 set(TBB_INC_SEARCH_PATH "")
