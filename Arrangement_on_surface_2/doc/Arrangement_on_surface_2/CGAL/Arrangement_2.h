@@ -1,58 +1,59 @@
 namespace CGAL {
 
-/*!
-  \ingroup PkgArrangementOnSurface2Ref
-
-  \anchor arr_refarr
-
-  An object `arr` of the class `Arrangement_2` represents the
-  planar subdivision induced by a set of \f$ x\f$-monotone curves and isolated
-  points into maximally connected cells. The arrangement is represented as
-  a doubly-connected edge-list (<span class="textsc">Dcel</span>) such that each <span class="textsc">Dcel</span> vertex
-  is associated with a point of the plane and each edge is
-  associated with an \f$ x\f$-monotone curve whose interior is disjoint from all
-  other edges and vertices. Recall that an arrangement
-  edge is always comprised of a pair of twin <span class="textsc">Dcel</span> halfedges.
-
-  The `Arrangement_2` template has two parameters:
-  <UL>
-  <LI>The `Traits` template-parameter should be instantiated with
-  a model of the `ArrangementBasicTraits_2` concept. The traits
-  class defines the types of \f$ x\f$-monotone curves and two-dimensional
-  points, namely `ArrangementBasicTraits_2::X_monotone_curve_2` and `ArrangementBasicTraits_2::Point_2`,
-  respectively, and supports basic geometric predicates on them.
-  <LI>The `Dcel` template-parameter should be instantiated with
-  a class that is a model of the `ArrangementDcel` concept. The
-  value of this parameter is by default
-  `Arr_default_dcel<Traits>`.
-  </UL>
-  The available traits classes and <span class="textsc">Dcel</span> classes are described below.
-
-  \sa `ArrangementDcel`
-  \sa `Arr_default_dcel<Traits>`
-  \sa `ArrangementBasicTraits_2`
-  \sa `CGAL::overlay()`
-  \sa `CGAL::is_valid()`
-
-  Insertion Functions
-
-  \sa `PkgArrangementOnSurface2Insert`
-  \sa `CGAL::insert_non_intersecting_curve()`
-  \sa `CGAL::insert_non_intersecting_curves()`
-  \sa `CGAL::insert_point()`
-
-  Removal functions
-
-  \sa `CGAL::remove_edge()`
-  \sa `CGAL::remove_vertex()`
-
-  Input/output functions
-
-  \sa `PkgArrangementOnSurface2Read`
-  \sa `PkgArrangementOnSurface2Write`
-
-*/
-template< typename Traits, typename Dcel >
+/*! \ingroup PkgArrangementOnSurface2Ref
+ *
+ * \anchor arr_refarr
+ *
+ * An object `arr` of the class `Arrangement_2` represents the planar
+ * subdivision induced by a set of \f$ x\f$-monotone curves and isolated points
+ * into maximally connected cells. The arrangement is represented as a
+ * doubly-connected edge-list (<span class="textsc">Dcel</span>) such that each
+ * <span class="textsc">Dcel</span> vertex is associated with a point of the
+ * plane and each edge is associated with an \f$ x\f$-monotone curve whose
+ * interior is disjoint from all other edges and vertices. Recall that an
+ * arrangement edge is always comprised of a pair of twin <span
+ * class="textsc">Dcel</span> halfedges.
+ *
+ * The `Arrangement_2` template has two parameters:
+ * <UL>
+ * <LI>The `Traits` template-parameter should be instantiated with
+ * a model of the `ArrangementBasicTraits_2` concept. The traits
+ * class defines the types of \f$ x\f$-monotone curves and two-dimensional
+ * points, namely `ArrangementBasicTraits_2::X_monotone_curve_2` and
+ * `ArrangementBasicTraits_2::Point_2`,
+ *   respectively, and supports basic geometric predicates on them.
+ * <LI>The `Dcel` template-parameter should be instantiated with
+ * a class that is a model of the `ArrangementDcel` concept. The
+ * value of this parameter is by default
+ * `Arr_default_dcel<Traits>`.
+ * </UL>
+ * The available traits classes and <span class="textsc">Dcel</span> classes are
+ * described below.
+ *
+ * \sa `ArrangementDcel`
+ * \sa `Arr_default_dcel<Traits>`
+ * \sa `ArrangementBasicTraits_2`
+ * \sa `CGAL::overlay()`
+ * \sa `CGAL::is_valid()`
+ *
+ * Insertion Functions
+ *
+ * \sa `PkgArrangementOnSurface2Insert`
+ * \sa `CGAL::insert_non_intersecting_curve()`
+ * \sa `CGAL::insert_non_intersecting_curves()`
+ * \sa `CGAL::insert_point()`
+ *
+ * Removal functions
+ *
+ * \sa `CGAL::remove_edge()`
+ * \sa `CGAL::remove_vertex()`
+ *
+ * Input/output functions
+ *
+ * \sa `PkgArrangementOnSurface2Read`
+ * \sa `PkgArrangementOnSurface2Write`
+ */
+template <typename Traits, typename Dcel>
 class Arrangement_2 {
 public:
   /// \name Types
@@ -113,30 +114,33 @@ public:
     /*! obtains a circulator circulator that allows going over the halfedges
      * incident to `v` (that have `v` as their target).
      * The edges are traversed in a clockwise direction around `v`.
+     *
      * \pre `v` is <I>not</I> an isolated vertex.
      */
     Halfedge_around_vertex_circulator incident_halfedges();
 
     /*! obtains a handle to the face that contains `v` in its interior.
+     *
      * \pre `v` is an isolated vertex.
      */
     Face_handle face();
 
     /*! obtains the point associated with the vertex.
-      \pre `v` is not a vertex at infinity.
-    */
+     *
+     * \pre `v` is not a vertex at infinity.
+     */
     const typename Traits::Point_2& point() const;
 
     /*! obtains the placement of the \f$ x\f$-coordinate in the parameter space,
-      that is, either the left boundary-side, the interior, or the right
-      boundary-side.
-    */
+     * that is, either the left boundary-side, the interior, or the right
+     * boundary-side.
+     */
     Arr_parameter_space parameter_space_in_x() const;
 
     /*! obtains the placement of the \f$ y\f$-coordinate in the parameter space,
-      that is, either the bottom boundary-side, the interior, or the top
-      boundary-side.
-    */
+     * that is, either the bottom boundary-side, the interior, or the top
+     * boundary-side.
+     */
     Arr_parameter_space parameter_space_in_y() const;
 
     /// @}
@@ -210,6 +214,7 @@ public:
     Ccb_halfedge_circulator ccb();
 
     /*! obtains the \f$ x\f$-monotone curve associated with `e`.
+     *
      * \pre `e` is not a fictitious halfedge.
      */
     const typename Traits::X_monotone_curve_2& curve() const;
@@ -267,7 +272,9 @@ public:
 
     /*! obtains a circulator that enables traversing the outer boundary of
      * `f`. The edges along the CCB are traversed in a counterclockwise
-     * direction.  \pre The face `f` has an outer CCB.
+     * direction.
+     *
+     * \pre The face `f` has an outer CCB.
      */
     Ccb_halfedge_circulator outer_ccb();
 
@@ -569,6 +576,7 @@ public:
   /*! inserts the point `p` into the arrangement as an isolated vertex in
    * the interior of the face `f` and returns a handle for the newly
    * created vertex.
+   *
    * \pre `p` lies in the interior of the face `f`.
    */
   Vertex_handle insert_in_face_interior(const Point_2& p, Face_handle f);
@@ -582,9 +590,11 @@ public:
    * `f`.  The function returns a handle for one of the new halfedges
    * corresponding to the inserted curve, directed in lexicographic increasing
    * order (from left to right).
+   *
    * \pre `c` lies entirely in the interior of the face `f` and is disjoint from
    * all existing arrangement vertices and edges (in particular, both its
    * endpoints are not already associated with existing arrangement vertices).
+   *
    * \pre In case `c` is an unbounded curve, `f` must be an unbounded face.
    */
   Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& c,
@@ -599,8 +609,12 @@ public:
    * the new halfedges corresponding to the inserted curve, directed towards the
    * newly created vertex - that is, directed in lexicographic increasing order
    * (from left to right).
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
-   * and edges.  \pre `v` is associated with the left endpoint of `c`.
+   * and edges.
+   *
+   * \pre `v` is associated with the left endpoint of `c`.
+   *
    * \pre The right endpoint of `c` is not already associated with an existing
    * arrangement vertex.
    */
@@ -616,9 +630,12 @@ public:
    * halfedges corresponding to the inserted curve, directed to the newly
    * created vertex - that is, directed in lexicographic decreasing order (from
    * right to left).
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges.
+   *
    * \pre `v` is associated with the right endpoint of `c`.
+   *
    * \pre The left endpoint of `c` is not already associated with an existing
    * arrangement vertex.
    */
@@ -629,9 +646,14 @@ public:
    * endpoints correspond to existing arrangement vertices, given by `v1` and
    * `v2`. The function creates a new halfedge pair that connects the two
    * vertices, and returns a handle for the halfedge directed from `v1` to `v2`.
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
-   * and edges.  \pre `c` must not be an unbounded curve.
+   * and edges.
+   *
+   * \pre `c` must not be an unbounded curve.
+   *
    * \pre `v1` and `v2` are associated with `c`'s endpoints.
+   *
    * \pre If `v1` and `v2` are already connected by an edge, this edge
    * represents an \f$ x\f$-monotone curve that is interior-disjoint from `c`).
    */
@@ -646,10 +668,13 @@ public:
    * end and `fict_pred2` indicated a place for its right end.  The function
    * returns a handle for one of the new halfedges directed (lexicographically)
    * from left to right.
+   *
    * \pre `c` is an unbounded curve disjoint from all existing arrangement
-   * vertices and edges.  \pre `fict_pred1` (and `fict_pred2`) are fictitious
-   * halfedges that contains the unbounded end(s) of `c`. If both halfedges are
-   * given they must be both incident to the same unbounded face.
+   * vertices and edges.
+   *
+   * \pre `fict_pred1` (and `fict_pred2`) are fictitious halfedges that contains
+   * the unbounded end(s) of `c`. If both halfedges are given they must be both
+   * incident to the same unbounded face.
    */
   Halfedge_handle insert_in_face_interior(const X_monotone_curve_2& c,
                                           Halfedge_handle fict_pred1,
@@ -662,10 +687,13 @@ public:
    * circular list of halfedges around `pred->target()` right between `pred` and
    * its successor. The function returns a handle for one of the new halfedges
    * directed (lexicographically) from left to right.
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges.
+   *
    * \pre `pred->target()` is associated with the left endpoint of `c`, and `c`
    * should be inserted after `pred` in a clockwise order around this vertex.
+   *
    * \pre The right endpoint of `c` is not already associated with an existing
    * arrangement vertex.
    */
@@ -681,11 +709,14 @@ public:
    * corresponds to the unbounded right end of `c`.  The function returns a
    * handle for one of the new halfedges directed (lexicographically) from left
    * to right.
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges. `c` must have a bounded left endpoint and an unbounded right
    * end.
+   *
    * \pre `pred->target()` is associated with the left endpoint of `c`, and `c`
    * should be inserted after `pred` in a clockwise order around this vertex.
+   *
    * \pre `fict_pred` is a fictitious halfedge that contains the unbounded right
    * end of `c`.
   */
@@ -699,10 +730,13 @@ public:
    * circular list of halfedges around `pred->target()` right between `pred` and
    * its successor. The function returns a handle for one of the new halfedges
    * directed (lexicographically) from right to left.
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges.
+   *
    * \pre `pred->target()` is associated with the right endpoint of `c`, and `c`
    * should be inserted after `pred` in a clockwise order around this vertex.
+   *
    * \pre The left endpoint of `c` is not already associated with an existing
    * arrangement vertex.
    */
@@ -718,11 +752,14 @@ public:
    * corresponds to the unbounded left end of `c`.  The function returns a
    * handle for one of the new halfedges directed (lexicographically) from right
    * to left.
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges. `c` must have a bounded right endpoint and an unbounded left
    * end.
+   *
    * \pre `pred->target()` is associated with the right endpoint of `c`, and `c`
    * should be inserted after `pred` in a clockwise order around this vertex.
+   *
    * \pre `fict_pred` is a fictitious halfedge that contains the unbounded left
    * end of `c`.
    */
@@ -736,9 +773,12 @@ public:
    * connects the two vertices (where the corresponding halfedge is inserted
    * right between `pred1` and its successor around `pred1`'s target vertex) and
    * returns a handle for the halfedge directed from `pred1->target()` to `v2`.
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges.
+   *
    * \pre `pred1->target()` and `v2` are associated with `c`'s endpoints.
+   *
    * \pre If `pred1->target` and `v2` are already connected by an edge, this
    * edge represents an \f$ x\f$-monotone curve that is interior-disjoint from
    * `c`).
@@ -754,10 +794,13 @@ public:
    * indicate the exact place for these halfedges around the two target
    * vertices) and returns a handle for the halfedge directed from
    * `pred1->target()` to `pred2->target()`.
+   *
    * \pre The interior of `c` is disjoint from all existing arrangement vertices
    * and edges.
+   *
    * \pre `pred1->target()` and `pred2->target()` are associated with `c`'s
    * endpoints.
+   *
    * \pre If `pred1->target` and `pred2->target()` are already connected by an
    * edge, this edge represents an \f$ x\f$-monotone curve that is
    * interior-disjoint from `c`).
@@ -773,6 +816,7 @@ public:
 
   /*! sets `p` to be the point associated with the vertex `v`.
    * The function returns a handle for the modified vertex (same as `v`).
+   *
    * \pre `v` is not a vertex at infinity and `p` is geometrically equivalent to
    * the point currently associated with `v`.
    */
@@ -780,12 +824,14 @@ public:
 
   /*! removes the isolated vertex `v` from the arrangement. The function
    * returns the face `f` that used to contain the isolated vertex.
+   *
    * \pre `v` is an isolated vertex (has no incident edges).
    */
   Face_handle remove_isolated_vertex(Vertex_handle v);
 
   /*! sets `c` to be the \f$ x\f$-monotone curve associated with the edge `e`.
    * The function returns a handle for the modified edge (same as `e`).
+   *
    * \pre `c` is geometrically equivalent to the curve currently associated with
    * `e`.
    */
@@ -796,6 +842,7 @@ public:
    * vertex that corresponds to the split point.  The function returns a handle
    * for the halfedge, whose source is the same as `e->source()` and whose
    * target vertex is the split point.
+   *
    * \pre Either `c1`'s left endpoint and `c2`'s right endpoint correspond to
    * `e`'s end-vertices such that `c1`'s right endpoint and `c2`'s left endpoint
    * are equal and define the split point - or vice-versa (with change of roles
@@ -811,6 +858,7 @@ public:
    * denoted \f$ u_2\f$ and \f$ v\f$. The function removes the common vertex \f$
    * v\f$ returns a handle for one of the merged halfedges, directed from \f$
    * u_1\f$ to \f$ u_2\f$.
+   *
    * \pre `e1` and `e2` share a common end-vertex, such that the two other
    * end-vertices of the two edges are associated with `c`'s endpoints.
    */

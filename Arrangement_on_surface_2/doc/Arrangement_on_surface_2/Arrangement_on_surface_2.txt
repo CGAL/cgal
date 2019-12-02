@@ -110,7 +110,7 @@ Section \ref aos_sec-geom_traits.
 \subsection aos_ssec-intro-well_behaved Well-Behaved Curves
 
 What constitutes valid curves that can be handled by the
-\ref PkgArrangement2Summary package is discussed in detail in Section
+\ref PkgArrangementOnSurface2 package is discussed in detail in Section
 \ref aos_sec-geom_traits, where the models of the traits classes are
 described. However, when we cite combinatorial complexity bounds or
 bounds on the resources (running time, storage) required by

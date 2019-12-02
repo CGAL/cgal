@@ -1,27 +1,25 @@
-
-/*!
-\ingroup PkgArrangementOnSurface2ConceptsDCEL
-\cgalConcept
-
-A halfedge record in a <span class="textsc">Dcel</span> data structure. Two halfedges with opposite
-directions always form an edge (a halfedge pair). The halfedges form together
-chains, defining the boundaries of connected components, such that all
-halfedges along a chain have the same incident face. Note that the chain the
-halfedge belongs to may form the outer boundary of a bounded face (an outer
-CCB) or the boundary of a hole inside a face (an inner CCB).
-
-An edge is always associated with a curve, but the halfedge records only
-store a pointer to the associated curve, and the actual curve objects
-are stored elsewhere. Two opposite halfedges are always associated with
-the same curve.
-
-\sa `ArrangementDcel`
-\sa `ArrangementDcelVertex`
-\sa `ArrangementDcelFace`
-\sa `ArrangementDcelOuterCcb`
-\sa `ArrangementDcelInnerCcb`
-
-*/
+/*! \ingroup PkgArrangementOnSurface2ConceptsDCEL
+ * \cgalConcept
+ *
+ * A halfedge record in a <span class="textsc">Dcel</span> data structure. Two
+ * halfedges with opposite directions always form an edge (a halfedge pair). The
+ * halfedges form together chains, defining the boundaries of connected
+ * components, such that all halfedges along a chain have the same incident
+ * face. Note that the chain the halfedge belongs to may form the outer boundary
+ * of a bounded face (an outer CCB) or the boundary of a hole inside a face (an
+ * inner CCB).
+ *
+ * An edge is always associated with a curve, but the halfedge records only
+ * store a pointer to the associated curve, and the actual curve objects are
+ * stored elsewhere. Two opposite halfedges are always associated with the same
+ * curve.
+ *
+ * \sa `ArrangementDcel`
+ * \sa `ArrangementDcelVertex`
+ * \sa `ArrangementDcelFace`
+ * \sa `ArrangementDcelOuterCcb`
+ * \sa `ArrangementDcelInnerCcb`
+ */
 
 class ArrangementDcelHalfedge {
 public:

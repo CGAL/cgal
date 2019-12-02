@@ -175,7 +175,6 @@ implemented as peripheral classes or as free (global) functions.
 
 \cgalCRPSection{Classes}
 
-
 - `CGAL::Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>`
 - `CGAL::Arrangement_on_surface_with_history_2<GeometryTraits_2,TopologyTraits>`
 - `CGAL::Arrangement_2<Traits,Dcel>`

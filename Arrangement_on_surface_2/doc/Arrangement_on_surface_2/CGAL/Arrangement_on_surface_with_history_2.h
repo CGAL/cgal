@@ -1,51 +1,50 @@
 namespace CGAL {
 
-/*!
-\ingroup PkgArrangement2
-
-\anchor arr_refaos_with_hist
-
-An object `arr` of the class `Arrangement_on_surface_with_history_2` represents the
-planar subdivision induced by a set of input curves \f$ \cal C\f$.
-The arrangement is represented as a doubly-connected edge-list (<span class="textsc">Dcel</span>).
-As is the case for the `Arrangement_2<Traits,Dcel>`, each <span class="textsc">Dcel</span>
-vertex is associated with a point and each edge is associated with an
-\f$ x\f$-monotone curve whose interior is disjoint from all other edges and
-vertices. Each such \f$ x\f$-monotone curve is a subcurve of some
-\f$ C \in \cal C\f$ - or may represent an overlap among several curves
-in \f$ \cal C\f$.
-
-The `Arrangement_on_surface_with_history_2` class-template extends the `Arrangement_2`
-class-template by keeping an additional container of input curves
-representing \f$ \cal C\f$, and by maintaining a cross-mapping between these
-curves and the arrangement edges they induce. This way it is possible
-to determine the inducing curve(s) of each arrangement edge. This mapping
-also allows the traversal of input curves, and the traversal of edges
-induced by each curve.
-
-The `Arrangement_on_surface_with_history_2` template has two parameters:
-<UL>
-<LI>The `Traits` template-parameter should be instantiated with
-a model of the `ArrangementGeometry_traits_2` concept. The traits
-class defines the `Curve_2` type, which represents an input curve.
-It also defines the types of \f$ x\f$-monotone curves and two-dimensional
-points, namely `ArrangementGeometry_traits_2::X_monotone_curve_2` and `ArrangementGeometry_traits_2::Point_2`,
-respectively, and supports basic geometric predicates on them.
-<LI>The `Dcel` template-parameter should be instantiated with
-a class that is a model of the `ArrangementDcelWithRebind` concept. The
-value of this parameter is by default
-`Arr_default_dcel<Traits>`.
-</UL>
-
-\sa `ArrangementDcel`
-\sa `Arr_default_dcel<Traits>`
-\sa `ArrangementGeometry_traits_2`
-\sa `Arrangement_2<Traits,Dcel>`
-\sa `insertion functions`
-\sa `removal functions`
-\sa `overlaying arrangements`
-
-*/
+/*! \ingroup PkgArrangementOnSurface2Ref
+ *
+ * \anchor arr_refaos_with_hist
+ *
+ * An object `arr` of the class `Arrangement_on_surface_with_history_2`
+ * represents the planar subdivision induced by a set of input curves \f$ \cal
+ * C\f$.  The arrangement is represented as a doubly-connected edge-list (<span
+ * class="textsc">Dcel</span>).  As is the case for the
+ * `Arrangement_2<Traits,Dcel>`, each <span class="textsc">Dcel</span> vertex is
+ * associated with a point and each edge is associated with an \f$ x\f$-monotone
+ * curve whose interior is disjoint from all other edges and vertices. Each such
+ * \f$ x\f$-monotone curve is a subcurve of some \f$ C \in \cal C\f$ - or may
+ * represent an overlap among several curves in \f$ \cal C\f$.
+ *
+ * The `Arrangement_on_surface_with_history_2` class-template extends the
+ * `Arrangement_2` class-template by keeping an additional container of input
+ * curves representing \f$ \cal C\f$, and by maintaining a cross-mapping between
+ * these curves and the arrangement edges they induce. This way it is possible
+ * to determine the inducing curve(s) of each arrangement edge. This mapping
+ * also allows the traversal of input curves, and the traversal of edges induced
+ * by each curve.
+ *
+ * The `Arrangement_on_surface_with_history_2` template has two parameters:
+ *
+ * <UL>
+ * <LI>The `Traits` template-parameter should be instantiated with a model of
+ * the `ArrangementGeometry_traits_2` concept. The traits class defines the
+ * `Curve_2` type, which represents an input curve.  It also defines the types
+ * of \f$ x\f$-monotone curves and two-dimensional points, namely
+ * `ArrangementGeometry_traits_2::X_monotone_curve_2` and
+ * `ArrangementGeometry_traits_2::Point_2`, respectively, and supports basic
+ * geometric predicates on them.
+ * <LI>The `Dcel` template-parameter should be instantiated with a class that is
+ * a model of the `ArrangementDcelWithRebind` concept. The value of this
+ * parameter is by default `Arr_default_dcel<Traits>`.
+ * </UL>
+ *
+ * \sa `ArrangementDcel`
+ * \sa `Arr_default_dcel<Traits>`
+ * \sa `ArrangementGeometry_traits_2`
+ * \sa `Arrangement_2<Traits,Dcel>`
+ * \sa `insertion functions`
+ * \sa `removal functions`
+ * \sa `overlaying arrangements`
+ */
 template <typename Geometry_traits_2, typename TopologyTraits>
 class Arrangement_on_surface_with_history_2 : public Arrangement_on_surface_2<Geometry_traits_2, TopologyTraits> {
 public:
@@ -55,7 +54,8 @@ public:
   /*! a private type used as an abbreviation of the
    * `Arrangement_on_surface_with_history_2` type hereafter.
    */
-  typedef Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits> Self;
+  typedef Arrangement_on_surface_with_history_2<Geometry_traits_2,
+                                                TopologyTraits> Self;
 
   //! the geometry traits class in use.
   typedef Geometry_traits_2                     Geometry_traits_2;
@@ -213,7 +213,7 @@ public:
 
 }; /* end Arrangement_on_surface_with_history_2 */
 
-/*! \ingroup PkgArrangement2Insert
+/*! \ingroup PkgArrangementOnSurface2Insert
  *
  * Inserts the given curve `c` into the arrangement with history `arr`, and
  * returns a handle to the inserted curve. `c` is subdivided into \f$
@@ -231,11 +231,12 @@ public:
 template<typename GeometryTraits_2, typename TopologyTraits,
          typename PointLocation>
 typename Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>::Curve_handle
-insert (Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>& arr,
-        const typename Traits::Curve_2& c,
-        const PointLocation& pl = walk_pl);
+insert
+(Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>& arr,
+ const typename Traits::Curve_2& c,
+ const PointLocation& pl = walk_pl);
 
-/*! \ingroup PkgArrangement2Insert
+/*! \ingroup PkgArrangementOnSurface2Insert
  * Aggregately inserts the curves in the range `[first,last)` into the
  * arrangement with history `arr` using the sweep-line framework.
  */
@@ -244,7 +245,7 @@ template <typename GeometryTraits_2, typename TopologyTraits,
 void insert(Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits>& arr,
             InputIterator first, InputIterator last);
 
-/*! \ingroup PkgArrangement2Funcs
+/*! \ingroup PkgArrangementOnSurface2Funcs
  *
  * Removes a given curve from a given arrangement.
  *
@@ -253,11 +254,12 @@ void insert(Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTrai
  * deleted edges.
  */
 template <typename GeometryTraits_2, typename TopologyTraits>
-Size remove_curve(Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits>& arr,
-                  typename Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>::Curve_handle ch);
+Size remove_curve
+(Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits>& arr,
+ typename Arrangement_on_surface_with_history_2<Geometry_traits_2, TopologyTraits>::Curve_handle ch);
 
 
-/*! \addtogroup PkgArrangement2Overlay
+/*! \addtogroup PkgArrangementOnSurface2Overlay
  *
  * Computes the overlay of two arrangements with history `arr1` and `arr2`, and
  * sets the output arrangement with history `res` to represent the overlaid
@@ -268,14 +270,15 @@ Size remove_curve(Arrangement_on_surface_with_history_2<GeometryTraits_2, Topolo
 template <typename GeometryTraits_2, typename TopologyTraits1,
           typename TopologyTraits12, typename ResTopologyTraits,
           typename OverlayTraits>
-void overlay(const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits1>& arr1,
-             const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits12>& arr2,
-             Arrangement_on_surface_with_history_2<GeometryTraits_2, ResTopologyTraits>& res,
-             OverlayTraits& ovl_tr);
+void overlay
+(const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits1>& arr1,
+ const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits12>& arr2,
+ Arrangement_on_surface_with_history_2<GeometryTraits_2, ResTopologyTraits>& res,
+ OverlayTraits& ovl_tr);
 
 
 /*!
-\addtogroup PkgArrangement2Overlay
+\addtogroup PkgArrangementOnSurface2Overlay
 
 Computes the (simple) overlay of two arrangements with history `arr1`
 and `arr2`, and sets the output arrangement with history `res` to
@@ -286,8 +289,9 @@ overlay-traits, which practically does nothing.
 */
 template <typename GeometryTraits_2, typename TopologyTraits1,
           typename TopologyTraits2, typename ResTopologyTraits>
-void overlay(const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits1>& arr1,
-             const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits2>& arr2,
-             Arrangement_on_surface_with_history_2<GeometryTraits_2, ResTopologyTraits>& res);
+void overlay
+(const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits1>& arr1,
+ const Arrangement_on_surface_with_history_2<GeometryTraits_2, TopologyTraits2>& arr2,
+ Arrangement_on_surface_with_history_2<GeometryTraits_2, ResTopologyTraits>& res);
 
 } /* namespace CGAL */
