@@ -21,29 +21,18 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/box_intersection_d.h>
-#include <CGAL/intersections.h>
-#include <CGAL/Bbox_3.h>
-
-#ifdef CGAL_PMP_SI_DEBUG
-#include <CGAL/Real_timer.h>
-#endif
-
-#include <CGAL/Kernel/global_functions_3.h>
-
-#include <sstream>
-#include <vector>
-#include <exception>
-#include <boost/range.hpp>
-
-#include <boost/function_output_iterator.hpp>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/graph/graph_traits.hpp>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/properties.h>
-
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+
+#include <CGAL/Bbox_3.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/box_intersection_d.h>
+#include <CGAL/intersections.h>
+#include <CGAL/Kernel/global_functions_3.h>
+
+#include <boost/range.hpp>
+#include <boost/function_output_iterator.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -51,46 +40,144 @@
 #include <tbb/concurrent_vector.h>
 #endif
 
+#include <exception>
+#include <sstream>
+#include <type_traits>
+#include <vector>
+
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters
 #endif
 
 namespace CGAL {
+namespace Polygon_mesh_processing {
 namespace internal {
 
-template <class TM,//TriangleMesh
-          class Kernel,
-          class Box,
-          class OutputIterator,
-          class VertexPointMap>
+// Checks for 'real' intersections, i.e. not simply a shared vertex or edge
+template <class GT, class TM, class VPM>
+bool do_faces_intersect(typename boost::graph_traits<TM>::halfedge_descriptor h,
+                        typename boost::graph_traits<TM>::halfedge_descriptor g,
+                        const TM& tmesh,
+                        const VPM vpmap,
+                        const typename GT::Construct_segment_3& construct_segment,
+                        const typename GT::Construct_triangle_3& construct_triangle,
+                        const typename GT::Do_intersect_3& do_intersect)
+{
+  typedef typename boost::graph_traits<TM>::vertex_descriptor                 vertex_descriptor;
+  typedef typename boost::graph_traits<TM>::halfedge_descriptor               halfedge_descriptor;
+
+  typedef typename GT::Segment_3                                              Segment;
+  typedef typename GT::Triangle_3                                             Triangle;
+
+  vertex_descriptor hv[3], gv[3];
+  hv[0] = target(h, tmesh);
+  hv[1] = target(next(h, tmesh), tmesh);
+  hv[2] = source(h, tmesh);
+
+  gv[0] = target(g, tmesh);
+  gv[1] = target(next(g, tmesh), tmesh);
+  gv[2] = source(g, tmesh);
+
+  halfedge_descriptor opp_h;
+
+  // check for shared edge
+  for(unsigned int i=0; i<3; ++i)
+  {
+    opp_h = opposite(h, tmesh);
+    if(face(opp_h, tmesh) == face(g, tmesh))
+    {
+      // there is an intersection if the four points are coplanar and the triangles overlap
+      if(CGAL::coplanar(get(vpmap, hv[i]),
+                        get(vpmap, hv[(i+1)%3]),
+                        get(vpmap, hv[(i+2)%3]),
+                        get(vpmap, target(next(opp_h, tmesh), tmesh))) &&
+         CGAL::coplanar_orientation(get(vpmap, hv[(i+2)%3]),
+                                    get(vpmap, hv[i]),
+                                    get(vpmap, hv[(i+1)%3]),
+                                    get(vpmap, target(next(opp_h, tmesh), tmesh)))
+           == CGAL::POSITIVE)
+      {
+        return true;
+      }
+      else
+      {
+        // there is a shared edge but no intersection
+        return false;
+      }
+    }
+
+    h = next(h, tmesh);
+  }
+
+  // check for shared vertex --> maybe intersection, maybe not
+  int i(0), j(0);
+  bool shared = false;
+  for(; i<3 && (! shared); ++i)
+  {
+    for(j=0; j<3 && (! shared); ++j)
+    {
+      if(hv[i] == gv[j])
+      {
+        shared = true;
+        break;
+      }
+    }
+
+    if(shared)
+      break;
+  }
+
+  if(shared)
+  {
+    // found shared vertex:
+    CGAL_assertion(hv[i] == gv[j]);
+
+    // geometric check if the opposite segments intersect the triangles
+    Triangle t1 = construct_triangle(get(vpmap, hv[0]), get(vpmap, hv[1]), get(vpmap, hv[2]));
+    Triangle t2 = construct_triangle(get(vpmap, gv[0]), get(vpmap, gv[1]), get(vpmap, gv[2]));
+
+    Segment s1 = construct_segment(get(vpmap, hv[(i+1)%3]), get(vpmap, hv[(i+2)%3]) );
+    Segment s2 = construct_segment(get(vpmap, gv[(j+1)%3]), get(vpmap, gv[(j+2)%3]));
+
+    if(do_intersect(t1, s2))
+      return true;
+    else if(do_intersect(t2, s1))
+      return true;
+
+    return false;
+  }
+
+  // check for geometric intersection
+  Triangle t1 = construct_triangle(get(vpmap, hv[0]), get(vpmap, hv[1]), get(vpmap, hv[2]));
+  Triangle t2 = construct_triangle(get(vpmap, gv[0]), get(vpmap, gv[1]), get(vpmap, gv[2]));
+  if(do_intersect(t1, t2))
+    return true;
+
+  return false;
+};
+
+template <class Box, class TM, class VPM, class GT,
+          class OutputIterator>
 struct Intersect_facets
 {
-// typedefs
-  typedef typename Kernel::Segment_3    Segment;
-  typedef typename Kernel::Triangle_3   Triangle;
   typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
-  typedef typename boost::property_map<TM, boost::vertex_point_t>::const_type Ppmap;
 
-// members
+  mutable OutputIterator m_iterator;
   const TM& m_tmesh;
-  const VertexPointMap m_vpmap;
-  mutable OutputIterator  m_iterator;
+  const VPM m_vpmap;
+  typename GT::Construct_segment_3 m_construct_segment;
+  typename GT::Construct_triangle_3 m_construct_triangle;
+  typename GT::Do_intersect_3 m_do_intersect;
 
-  typename Kernel::Construct_segment_3  segment_functor;
-  typename Kernel::Construct_triangle_3 triangle_functor;
-  typename Kernel::Do_intersect_3       do_intersect_3_functor;
-
-  Intersect_facets(const TM& tmesh, OutputIterator it, VertexPointMap vpmap, const Kernel& kernel)
+  Intersect_facets(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
     :
-    m_tmesh(tmesh),
-    m_vpmap(vpmap),
-    m_iterator(it),
-    segment_functor(kernel.construct_segment_3_object()),
-    triangle_functor(kernel.construct_triangle_3_object()),
-    do_intersect_3_functor(kernel.do_intersect_3_object())
+      m_iterator(it),
+      m_tmesh(tmesh),
+      m_vpmap(vpmap),
+      m_construct_segment(gt.construct_segment_3_object()),
+      m_construct_triangle(gt.construct_triangle_3_object()),
+      m_do_intersect(gt.do_intersect_3_object())
   {}
 
   void operator()(const Box* b, const Box* c) const
@@ -98,272 +185,82 @@ struct Intersect_facets
     halfedge_descriptor h = halfedge(b->info(), m_tmesh);
     halfedge_descriptor g = halfedge(c->info(), m_tmesh);
 
-    vertex_descriptor hv[3], gv[3];
-    hv[0] = target(h, m_tmesh);
-    hv[1] = target(next(h, m_tmesh), m_tmesh);
-    hv[2] = source(h, m_tmesh);
-
-    gv[0] = target(g, m_tmesh);
-    gv[1] = target(next(g, m_tmesh), m_tmesh);
-    gv[2] = source(g, m_tmesh);
-
-    halfedge_descriptor opp_h;
-
-    // check for shared egde
-    for(unsigned int i=0; i<3; ++i){
-      opp_h = opposite(h, m_tmesh);
-      if(face(opp_h, m_tmesh) == c->info()){
-        // there is an intersection if the four points are coplanar and
-        // the triangles overlap
-        get(m_vpmap, hv[i]);
-        get(m_vpmap, hv[(i + 1) % 3]);
-        get(m_vpmap, hv[(i + 2) % 3]);
-        get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh));
-
-        if(CGAL::coplanar(get(m_vpmap, hv[i]),
-                          get(m_vpmap, hv[(i+1)%3]),
-                          get(m_vpmap, hv[(i+2)%3]),
-                          get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh))) &&
-           CGAL::coplanar_orientation(get(m_vpmap, hv[(i+2)%3]),
-                                      get(m_vpmap, hv[i]),
-                                      get(m_vpmap, hv[(i+1)%3]),
-                                      get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh)))
-             == CGAL::POSITIVE){
-          *m_iterator++ = std::make_pair(b->info(), c->info());
-          return;
-        } else { // there is a shared edge but no intersection
-          return;
-        }
-      }
-      h = next(h, m_tmesh);
-    }
-
-    // check for shared vertex --> maybe intersection, maybe not
-
-    halfedge_descriptor v;
-
-    int i(0),j(0);
-    bool shared = false;
-    for(; i < 3 && (! shared); ++i){
-      for(j = 0; j < 3 && (! shared); ++j){
-        if(hv[i]==gv[j]){
-          shared = true;
-          break;
-        }
-      }
-      if (shared) {
-        break;
-      }
-    }
-    if(shared){
-      // found shared vertex:
-      CGAL_assertion(hv[i] == gv[j]);
-
-      // geometric check if the opposite segments intersect the triangles
-      Triangle t1 = triangle_functor( get(m_vpmap, hv[0]),
-                                      get(m_vpmap, hv[1]),
-                                      get(m_vpmap, hv[2]));
-      Triangle t2 = triangle_functor( get(m_vpmap, gv[0]),
-                                      get(m_vpmap, gv[1]),
-                                      get(m_vpmap, gv[2]));
-
-      Segment s1 = segment_functor( get(m_vpmap, hv[(i+1)%3]),
-                                    get(m_vpmap, hv[(i+2)%3]) );
-      Segment s2 = segment_functor( get(m_vpmap, gv[(j+1)%3]),
-                                    get(m_vpmap, gv[(j+2)%3]));
-
-      if(do_intersect_3_functor(t1,s2)){
-        *m_iterator++ = std::make_pair(b->info(), c->info());
-      } else if(do_intersect_3_functor(t2,s1)){
-        *m_iterator++ = std::make_pair(b->info(), c->info());
-      }
-      return;
-    }
-
-    // check for geometric intersection
-    Triangle t1 = triangle_functor( get(m_vpmap, hv[0]),
-                                    get(m_vpmap, hv[1]),
-                                    get(m_vpmap, hv[2]));
-    Triangle t2 = triangle_functor( get(m_vpmap, gv[0]),
-                                    get(m_vpmap, gv[1]),
-                                    get(m_vpmap, gv[2]));
-    if(do_intersect_3_functor(t1, t2)){
+    if(do_faces_intersect<GT>(h, g, m_tmesh, m_vpmap, m_construct_segment, m_construct_triangle, m_do_intersect))
       *m_iterator++ = std::make_pair(b->info(), c->info());
-    }
-  } // end operator ()
-}; // end struct Intersect_facets
+  }
+};
 
-  
 #ifdef CGAL_LINKED_WITH_TBB
-//TODO: use the same code for the linear pass?
-// The functor for doing all geometric tests in parallel
-template <class TM,//TriangleMesh
-          class FacePairs,
-          class Kernel,
-          class VertexPointMap>
-struct AllPairs
+// The functor doing all geometric tests in parallel
+template <class FacePairs, class DoIntersectVector,
+          class TM, class VPM, class GT>
+struct Concurrent_face_intersection_tester
 {
-// types
-  typedef typename Kernel::Segment_3    Segment;
-  typedef typename Kernel::Triangle_3   Triangle;
-  typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<TM>::face_descriptor       face_descriptor;
 
-// data members
   const TM& m_tmesh;
-  const VertexPointMap m_vpmap;
-  const FacePairs& face_pairs;
-  std::vector<int>& dointersect;
-  typename Kernel::Construct_segment_3  segment_functor;
-  typename Kernel::Construct_triangle_3 triangle_functor;
-  typename Kernel::Do_intersect_3       do_intersect_3_functor;
+  const VPM m_vpmap;
+  const FacePairs& m_face_pairs;
+  DoIntersectVector& m_do_intersect_vector;
+  typename GT::Construct_segment_3 m_construct_segment;
+  typename GT::Construct_triangle_3 m_construct_triangle;
+  typename GT::Do_intersect_3 m_do_intersect;
 
-
-  AllPairs(const FacePairs& face_pairs,
-           std::vector<int>& dointersect,
-           const TM& tmesh, VertexPointMap vpmap, const Kernel& kernel)
-    : m_tmesh(tmesh),
+  Concurrent_face_intersection_tester(const FacePairs& face_pairs,
+                                      DoIntersectVector& do_intersect_vector,
+                                      const TM& tmesh,
+                                      VPM vpmap,
+                                      const GT& gt)
+    :
+      m_tmesh(tmesh),
       m_vpmap(vpmap),
-      face_pairs(face_pairs),
-      dointersect(dointersect),
-      triangle_functor(kernel.construct_triangle_3_object()),
-      do_intersect_3_functor(kernel.do_intersect_3_object())
+      m_face_pairs(face_pairs),
+      m_do_intersect_vector(do_intersect_vector),
+      m_construct_segment(gt.construct_segment_3_object()),
+      m_construct_triangle(gt.construct_triangle_3_object()),
+      m_do_intersect(gt.do_intersect_3_object())
   {}
 
   void operator()(const tbb::blocked_range<std::size_t> &r) const
   {
-    for (std::size_t ri = r.begin(); ri != r.end(); ++ri) {
+    for(std::size_t ri = r.begin(); ri != r.end(); ++ri)
       this->operator()(ri);
-    }
   }
 
   void operator()(std::size_t ri) const
   {
-    const std::pair<face_descriptor,face_descriptor>& ff = face_pairs[ri];
+    const std::pair<face_descriptor,face_descriptor>& ff = m_face_pairs[ri];
     halfedge_descriptor h = halfedge(ff.first, m_tmesh), g = halfedge(ff.second, m_tmesh);
 
-    vertex_descriptor hv[3], gv[3];
-    hv[0] = target(h, m_tmesh);
-    hv[1] = target(next(h, m_tmesh), m_tmesh);
-    hv[2] = source(h, m_tmesh);
-
-    gv[0] = target(g, m_tmesh);
-    gv[1] = target(next(g, m_tmesh), m_tmesh);
-    gv[2] = source(g, m_tmesh);
-
-    halfedge_descriptor opp_h;
-
-    // check for shared egde
-    for(unsigned int i=0; i<3; ++i){
-      opp_h = opposite(h, m_tmesh);
-      if(face(opp_h, m_tmesh) == ff.second){
-        // there is an intersection if the four points are coplanar and
-        // the triangles overlap
-        get(m_vpmap, hv[i]);
-        get(m_vpmap, hv[(i + 1) % 3]);
-        get(m_vpmap, hv[(i + 2) % 3]);
-        get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh));
-
-        if(CGAL::coplanar(get(m_vpmap, hv[i]),
-                          get(m_vpmap, hv[(i+1)%3]),
-                          get(m_vpmap, hv[(i+2)%3]),
-                          get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh))) &&
-           CGAL::coplanar_orientation(get(m_vpmap, hv[(i+2)%3]),
-                                      get(m_vpmap, hv[i]),
-                                      get(m_vpmap, hv[(i+1)%3]),
-                                      get(m_vpmap, target(next(opp_h, m_tmesh), m_tmesh)))
-             == CGAL::POSITIVE){
-          dointersect[ri]=true;
-          return;
-        } else { // there is a shared edge but no intersection
-          return;
-        }
-      }
-      h = next(h, m_tmesh);
-    }
-
-    // check for shared vertex --> maybe intersection, maybe not
-
-    halfedge_descriptor v;
-
-    int i(0),j(0);
-    bool shared = false;
-    for(; i < 3 && (! shared); ++i){
-      for(j = 0; j < 3 && (! shared); ++j){
-        if(hv[i]==gv[j]){
-          shared = true;
-          break;
-        }
-      }
-      if (shared) {
-        break;
-      }
-    }
-    if(shared){
-      // found shared vertex:
-      CGAL_assertion(hv[i] == gv[j]);
-
-      // geometric check if the opposite segments intersect the triangles
-      Triangle t1 = triangle_functor( get(m_vpmap, hv[0]),
-                                      get(m_vpmap, hv[1]),
-                                      get(m_vpmap, hv[2]));
-      Triangle t2 = triangle_functor( get(m_vpmap, gv[0]),
-                                      get(m_vpmap, gv[1]),
-                                      get(m_vpmap, gv[2]));
-
-      Segment s1 = segment_functor( get(m_vpmap, hv[(i+1)%3]),
-                                    get(m_vpmap, hv[(i+2)%3]) );
-      Segment s2 = segment_functor( get(m_vpmap, gv[(j+1)%3]),
-                                    get(m_vpmap, gv[(j+2)%3]));
-
-	  dointersect[ri] = (do_intersect_3_functor(t1, s2)) || do_intersect_3_functor(t2, s1);
-      return;
-    }
-
-    // check for geometric intersection
-    Triangle t1 = triangle_functor( get(m_vpmap, hv[0]),
-                                    get(m_vpmap, hv[1]),
-                                    get(m_vpmap, hv[2]));
-    Triangle t2 = triangle_functor( get(m_vpmap, gv[0]),
-                                    get(m_vpmap, gv[1]),
-                                    get(m_vpmap, gv[2]));
-    dointersect[ri] = do_intersect_3_functor(t1, t2);
+    if(do_faces_intersect<GT>(h, g, m_tmesh, m_vpmap, m_construct_segment, m_construct_triangle, m_do_intersect))
+      m_do_intersect_vector[ri] = true;
   }
 };
 
-
-// The functor that filters nothing
+// This filter does not filter anything, but simply forwards intersecting pair information so that
+// filtering can be done outside of the call to 'box_intersection_d'
 template <class OutputIterator>
 struct All_faces_filter
 {
-  mutable OutputIterator  m_iterator;
-
-  All_faces_filter(OutputIterator it) :  m_iterator(it) {}
+  All_faces_filter(OutputIterator it) :  m_iterator(it) { }
 
   template <class Box>
-  void operator()(const Box* b, const Box* c) const
-  {
-     *m_iterator ++ = std::make_pair(b->info(), c->info());
-  }
+  void operator()(const Box* b, const Box* c) const { *m_iterator++ = std::make_pair(b->info(), c->info()); }
+
+  mutable OutputIterator m_iterator;
 };
-
-
 #endif
 
-struct Throw_at_output {
-  class Throw_at_output_exception: public std::exception
-  { };
+struct Throw_at_output
+{
+  class Throw_at_output_exception: public std::exception { };
 
   template<class T>
-  void operator()(const T& /* t */) const {
-    throw Throw_at_output_exception();
-  }
+  void operator()(const T& /* t */) const { throw Throw_at_output_exception(); }
 };
 
-}// namespace internal
-
-namespace Polygon_mesh_processing {
+} // namespace internal
 
 /*!
  * \ingroup PMP_intersection_grp
@@ -403,7 +300,7 @@ template < class ConcurrencyTag = Sequential_tag,
            class OutputIterator,
            class NamedParameters>
 OutputIterator
-self_intersections( const FaceRange& face_range,
+self_intersections(const FaceRange& face_range,
                     const TriangleMesh& tmesh,
                           OutputIterator out,
                     const NamedParameters& np)
@@ -416,25 +313,25 @@ self_intersections( const FaceRange& face_range,
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS                                  Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
 
-  typedef typename GetGeomTraits<TM, NamedParameters>::type                              GeomTraits;
-  GeomTraits gt = parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GeomTraits());
+  typedef typename GetGeomTraits<TM, NamedParameters>::type                              GT;
+  GT gt = parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GT());
 
-  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                                      get_const_property_map(boost::vertex_point, tmesh));
+  typedef typename GetVertexPointMap<TM, NamedParameters>::const_type                    VPM;
+  VPM vpmap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                           get_const_property_map(boost::vertex_point, tmesh));
 
   // make one box per face
   std::vector<Box> boxes;
-  boxes.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
+  boxes.reserve(std::distance(std::begin(face_range), std::end(face_range)));
 
   for(face_descriptor f : face_range)
   {
-    typename boost::property_traits<VertexPointMap>::reference
+    typename boost::property_traits<VPM>::reference
       p = get(vpmap, target(halfedge(f,tmesh),tmesh)),
       q = get(vpmap, target(next(halfedge(f, tmesh), tmesh), tmesh)),
       r = get(vpmap, target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh));
 
-    if ( collinear(p, q, r) )
+    if(collinear(p, q, r) )
       *out++= std::make_pair(f,f);
     else
       boxes.push_back(Box(p.bbox() + q.bbox() + r.bbox(), f));
@@ -448,40 +345,43 @@ self_intersections( const FaceRange& face_range,
     box_ptr.push_back(&b);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+  CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
+  if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
   {
-    // (Parallel version of the code)
-    // (A) Sequentially write all pairs of faces with intersecting bbox into a std::vector
+    // (A) Parallel: Write all pairs of faces with intersecting bbox
     std::ptrdiff_t cutoff = 2000;
    
-    typedef tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor> >FacePairs;
+    typedef tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor> >  Face_pairs;
+    typedef std::back_insert_iterator<Face_pairs>                                 Face_pairs_back_inserter;
 
-    typedef std::back_insert_iterator<FacePairs> FacePairsI;
-    FacePairs face_pairs;
-    CGAL::internal::All_faces_filter<FacePairsI> all_faces_filter(std::back_inserter(face_pairs));
+    Face_pairs face_pairs;
+    internal::All_faces_filter<Face_pairs_back_inserter> all_faces_filter(std::back_inserter(face_pairs));
     CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), all_faces_filter, cutoff);
 
-    // (B) Parallel: perform the geometric tests
-    std::vector<int> dointersect(face_pairs.size(), 0);
-    CGAL::internal::AllPairs<TM,FacePairs,GeomTraits,VertexPointMap> all_pairs(face_pairs, dointersect, tmesh, vpmap, gt);
+    // (B) Parallel: Perform the geometric tests
+    typedef std::vector<int>                                                      Do_intersect_vector;
+    typedef internal::Concurrent_face_intersection_tester<Face_pairs, Do_intersect_vector, TM, VPM, GT> Tester;
 
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, face_pairs.size()), all_pairs);
+    Do_intersect_vector do_intersect(face_pairs.size(), 0);
+    Tester tester(face_pairs, do_intersect, tmesh, vpmap, gt);
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, face_pairs.size()), tester);
 
     // (C) Sequentially: Copy from the concurent container to the output iterator
-    for(std::size_t i=0; i < dointersect.size(); ++i){
-      if(dointersect[i])
+    for(std::size_t i=0; i<do_intersect.size(); ++i)
+    {
+      if(do_intersect[i])
         *out ++= face_pairs[i];
     }
+
     return out;
   }
 #endif
-
-  // (Sequential version of the code) compute self-intersections filtered out by boxes
-  CGAL::internal::Intersect_facets<TM, GeomTraits, Box, OutputIterator, VertexPointMap>
-    intersect_facets(tmesh, out, vpmap, gt);
+  // Sequential version of the code
+  // Compute self-intersections filtered out by boxes
+  typedef internal::Intersect_facets<Box, TM, VPM, GT, OutputIterator> Intersecting_facet_filter;
+  Intersecting_facet_filter intersect_facets(tmesh, vpmap, gt, out);
 
   std::ptrdiff_t cutoff = 2000;
   CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets, cutoff);
@@ -501,7 +401,6 @@ self_intersections(const FaceRange& face_range,
   return self_intersections<ConcurrencyTag>(face_range, tmesh, out, CGAL::parameters::all_default());
 }
 /// \endcond
-
 
 /**
  * \ingroup PMP_intersection_grp
@@ -590,10 +489,10 @@ bool does_self_intersect(const TriangleMesh& tmesh,
 
   try
   {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
+    typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
     self_intersections<ConcurrencyTag>(tmesh, OutputIterator(), np);
   }
-  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+  catch(internal::Throw_at_output::Throw_at_output_exception& )
   { return true; }
 
   return false;
@@ -636,10 +535,10 @@ bool does_self_intersect(const FaceRange& face_range,
 
   try
   {
-    typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
+    typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
     self_intersections<ConcurrencyTag>(face_range, tmesh, OutputIterator(), np);
   }
-  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+  catch(internal::Throw_at_output::Throw_at_output_exception& )
   { return true; }
 
   return false;
@@ -660,8 +559,7 @@ bool does_self_intersect(const FaceRange& face_range,
 }
 /// \endcond
 
-}// end namespace Polygon_mesh_processing
-
+}// namespace Polygon_mesh_processing
 }// namespace CGAL
 
 #include <CGAL/enable_warnings.h>
