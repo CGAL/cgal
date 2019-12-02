@@ -105,7 +105,8 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementDcelVertex`
 - `ArrangementDcelHalfedge`
 - `ArrangementDcelFace`
-- `ArrangementDcelHole`
+- `ArrangementDcelOuterCcb`
+- `ArrangementDcelInnerCcb`
 - `ArrangementDcelIsolatedVertex`
 - `ArrangementBasicTraits_2`
 - `ArrangementLandmarkTraits_2`

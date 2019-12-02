@@ -260,10 +260,26 @@ public:
      */
     bool is_fictitious() const;
 
-    /*!
-      obtains a Boolean indicating whether the face is unbounded.
-    */
+    /*! obtains a Boolean indicating whether the face is unbounded. */
     bool is_unbounded() const;
+
+    /*! obtains the number of outer CCBs of the face. */
+    Size number_of_outer_ccbs() const;
+
+    /*! obtains a begin iterator for the outer CCBs of the face. */
+    Outer_ccb_iterator outer_ccbs_begin();
+
+    /*! obtains a past-the-end iterator for the outer CCBs. */
+    Outer_ccb_iterator outer_ccbs_end();
+
+    /*! obtains the number of inner CCBs of the face. */
+    Size number_of_outer_ccbs() const;
+
+    /*! obtains a begin iterator for the inner CCBs of the face. */
+    Inner_ccb_iterator inner_ccbs_begin();
+
+    /*! obtains a past-the-end iterator for the inner CCBs. */
+    Inner_ccb_iterator inner_ccbs_end();
 
     /*! obtains a Boolean indicating whether the face has an outer CCB.
      * (The fictitious face and the unbounded face of an arrangement that
@@ -277,6 +293,9 @@ public:
      * \pre The face `f` has an outer CCB.
      */
     Ccb_halfedge_circulator outer_ccb();
+
+    /*! obtains the number of holes (inner CCBs) inside the face. */
+    Size number_of_holes() const;
 
     /*! obtains an iterator for traversing all the holes (inner CCBs) of `f`. */
     Hole_iterator holes_begin();
@@ -368,6 +387,16 @@ public:
    * have several inner CCBs representing its holes.
    */
   typedef unspecified_type Ccb_halfedge_circulator;
+
+  /*! a bidirectional iterator over the inner CCBs of a given face.
+   * Its value type is `Ccb_halfedge_circulator`.
+   */
+  typedef unspecified_type Inner_ccb_iterator;
+
+  /*! a bidirectional iterator over the outer CCBs of a given face.
+   * Its value type is `Ccb_halfedge_circulator`.
+   */
+  typedef unspecified_type Outer_ccb_iterator;
 
   /*! a bidirectional iterator over the holes
    * (i.e., inner CCBs) contained inside a given face.

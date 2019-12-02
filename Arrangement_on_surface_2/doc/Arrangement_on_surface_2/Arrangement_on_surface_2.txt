@@ -11,6 +11,8 @@ Michael Hemmer, Oren Salzman, and Baruch Zukerman
 
 \section aos_sec-intro Introduction
 
+\cgalModifBegin
+
 Geometric arrangements, or arrangements for short, are subdivisions of
 some space induced by geometric objects. Figure
 \cgalFigureRef{aos_fig-simple_arr} shows an arrangement of two curves
@@ -298,22 +300,24 @@ its interior. See \cgalFigureRef{arr_figseg_dcel} for an illustration
 of the various \sc{Dcel} features. For more details on the \sc{Dcel}
 data structure see \cgalCite{bkos-cgaa-00} Chapter 2.
 
-\cgalFigureBegin{arr_figseg_dcel,arr_segs.png} An arrangement of
-interior-disjoint line segments with some of the \sc{Dcel} records
-that represent it. The unbounded face \f$ f_0\f$ has a single
-connected component that forms a hole inside it, and this hole is
-comprised of several faces. The half-edge \f$ e\f$ is directed from
-its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This
-edge, together with its twin \f$ e'\f$, correspond to a line segment
-that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and
-separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$
-e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part
-of the chain that form the outer boundary of the face \f$ f_2\f$. The
-face \f$ f_1\f$ has a more complicated structure as it contains two
-holes in its interior: One hole consists of two adjacent faces \f$
-f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two
-edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and
-\f$ u_2\f$ in its interior.
+\cgalModifEnd
+
+\cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
+An arrangement of interior-disjoint line segments with some of the
+\sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has
+a single connected component that forms a hole inside it, and this
+hole is comprised of several faces. The half-edge \f$ e\f$ is directed
+from its source vertex \f$ v_1\f$ to its target vertex \f$
+v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a
+line segment that connects the points associated with \f$ v_1\f$ and
+\f$ v_2\f$ and separates the face \f$ f_1\f$ from \f$ f_2\f$. The
+predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of
+\f$ e\f$ are part of the chain that form the outer boundary of the
+face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure
+as it contains two holes in its interior: One hole consists of two
+adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole is
+comprised of two edges. \f$ f_1\f$ also contains two isolated vertices
+\f$ u_1\f$ and \f$ u_2\f$ in its interior.
 \cgalFigureEnd
 
 \subsection aos_ssec-basic-arr_class The Arrangement Class Template
@@ -450,14 +454,8 @@ type of handle.
 \subsection arr_sssectr_vertex Traversal Methods for an Arrangement Vertex
 
 A vertex is always associated with a geometric entity, namely with
-a `Point_2` object, which can be obtained by the `point()`
-method of the `Vertex` class nested within `Arrangement_2`.
-
-\todo With doxygen it is enough to prefix a method with the
-right scope to get the right link in the manual. So we could write:
-\"A vertex is always associated with a geometric entity, namely with
 an `Arrangement_2::Point_2` object, which can be obtained by the
-`Arrangement_2::Vertex::point()` method.\"
+`Arrangement_2::Vertex::point()` method.
 
 The `is_isolated()` method determines whether a vertex is isolated
 or not. Recall that the halfedges incident to a non-isolated vertex,
@@ -473,7 +471,7 @@ inserted into the standard output using the `<<` operator). The
 arrangement type is the same as in the simple example above.
 
 \code
-void print_neighboring_vertices (Arrangement_2::Vertex_const_handle v)
+void print_neighboring_vertices(Arrangement_2::Vertex_const_handle v)
 {
   if (v->is_isolated()) {
     std::cout << "The vertex (" << v->point() << ") is isolated" << std::endl;
@@ -563,15 +561,13 @@ A face can also contain disconnected components in its interior,
 namely holes and isolated vertices:
 <UL>
 <LI>The `holes_begin()` and `holes_end()` methods return
-`Arrangement_2::Hole_iterator` iterators that define the range
-of holes inside the face. The value type of this iterator is
-`Ccb_halfedge_circulator`, defining the CCB that winds in a
-clockwise orientation around a hole.
-<LI>The `isolated_vertices_begin()` and
-`isolated_vertices_end()` methods return
-`Arrangement_2::Isolated_vertex_iterator` iterators that
-define the range of isolated vertices inside the face. The value
-type of this iterator is `Vertex`.
+  `Arrangement_2::Hole_iterator` iterators that define the range of holes
+  inside the face. The value type of this iterator is`Ccb_halfedge_circulator`,
+  defining the CCB that winds in a clockwise orientation around a hole.
+<LI>The `isolated_vertices_begin()` and `isolated_vertices_end()` methods
+  return `Arrangement_2::Isolated_vertex_iterator` iterators that define the
+  range of isolated vertices inside the face. The value type of this iterator
+  is `Vertex`.
 </UL>
 
 The function `print_face()` listed below prints the outer and
@@ -1690,6 +1686,8 @@ vertical line segments:
 
 \section aos_sec-unbounded Arrangements of Unbounded Curves
 
+\cgalModifBegin
+
 Previous sections dealt only with arrangements of line segments,
 namely of bounded curves. Such arrangements always have one unbounded
 face that contains all other arrangement features. This section
@@ -1742,6 +1740,8 @@ direction of \f$(1,0)\f$, to the arrangement of \f$y = -x\f$ and \f$y
 the left endpoint of \f$r\f$ is already associated with an arrangement
 vertex.  Other edge-manipulation functions can also be applied on
 edges associated with unbounded curves.
+
+\cgalModifEnd
 
 \cgalFigureBegin{arr_figunb_dcel,ex_unb1.png}
 An arrangement of unbounded linear objects, as constructed in unbounded_non_intersecting.cpp.
@@ -1976,6 +1976,8 @@ using the following procedure:
 \cgalAdvancedEnd
 
 \section aos_sec-curved_surfaces Arrangements on Curved Surfaces
+
+\cgalModifBegin
 
 We are given a surface \f$S\f$ in \f$\mathbb{R}^3\f$ and a set \f$\cal
 C \f$ of curves embedded on this surface. The curves subdivide \f$S\f$
@@ -2217,6 +2219,8 @@ Sites are drawn in red and Voronoi edges are drawn in blue.
 (c) The power diagram of 10 random circles.
 (d) A degenerate power diagram of 14 sites on the sphere.
 \cgalFigureCaptionEnd
+
+\cgalModifEnd
 
 \section aos_sec-geom_traits The Geometry Traits
 
@@ -2468,6 +2472,8 @@ Most traits classes model the `ArrangementTraits_2` concept, and some
 also model the `ArrangementLandmarkTraits_2` concept.
 
 \subsubsection aos_ssec-traits-curved Unbounded or Curved Surface Concepts
+
+\cgalModifBegin
 
 We descend to the bottom level of the hierarchy. The refinements
 described in this section provide the requirements imposed on traits
@@ -2792,6 +2798,8 @@ lies in the image of the horizontal and identified sides of the
 boundary.
 
 </DL>
+
+\cgalModifEnd
 
 \subsection aos_ssec-geom_traits-models Models of the Geometry Traits Concepts
 
@@ -3627,6 +3635,8 @@ algebraic segments. The computed arrangement is displayed in
 
 \subsubsection arr_ssectr_spherical A Traits Class for Arcs of Greate Circle Embedded on the Sphere
 
+\cgalModifBegin
+
 The `Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>` class template
 handles arcs of great circles (also known as geodesic arcs) that lie
 on the unit sphere (centered at the origin). It is a model of the
@@ -3682,6 +3692,8 @@ identification curve is drawn as a gray tube.
 \cgalFigureEnd
 
 \cgalExample{Arrangement_on_surface_2/spherical_insert.cpp}
+
+\cgalModifEnd
 
 \subsection arr_ssecmeta_tr Traits-Class Decorators
 
