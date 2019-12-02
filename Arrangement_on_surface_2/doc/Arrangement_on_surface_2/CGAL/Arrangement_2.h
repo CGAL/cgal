@@ -71,10 +71,14 @@ public:
   /*! the <span class="textsc">Dcel</span> representation of the arrangement. */
   typedef unspecified_type Dcel;
 
-  /*! Types inherited from the base Arrangement_on_surface_2. */
-  typedef typename DArrangement_on_surface_2::Point_2            Point_2;
-  typedef typename DArrangement_on_surface_2::X_monotone_curve_2 X_monotone_curve_2;
-  typedef typename DArrangement_on_surface_2::Size               Size;
+  /// @}
+
+  /// \name Types inherited from the base Arrangement_on_surface_2
+  /// @{
+
+  typedef typename Arrangement_on_surface_2::Point_2            Point_2;
+  typedef typename Arrangement_on_surface_2::X_monotone_curve_2 X_monotone_curve_2;
+  typedef typename Arrangement_on_surface_2::Size               Size;
   typedef typename Arrangement_on_surface_2::Vertex              Vertex;
   typedef typename Arrangement_on_surface_2::Halfedge            Halfedge;
   typedef typename Arrangement_on_surface_2::Face                Face;
@@ -90,6 +94,8 @@ public:
   typedef typename Arrangement_on_surface_2::Ccb_halfedge_circulator Ccb_halfedge_circulator;
   typedef typename Arrangement_on_surface_2::Hole_iterator       Hole_iterator;
   typedef typename Arrangement_on_surface_2::Isolated_vertex_iterator Isolated_vertex_iterator;
+
+  /// @}
 
   /// \name Creation
   /// @{

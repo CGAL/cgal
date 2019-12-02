@@ -186,12 +186,14 @@ public:
    * pairs), at a given split point `p`.  The function returns a handle for the
    * halfedge whose source is the same as `e->source()` and whose target vertex
    * is the split point.
+   *
    * \pre `p` lies in the interior of the curve associated with `e`.
    */
   Halfedge_handle split_edge(Halfedge_handle e, const Point_2& p);
 
   /*! merges the edges represented by `e1` and `e2` into a single edge.  The
    * function returns a handle for one of the merged halfedges.
+   *
    * \pre `e1` and `e2` share a common end-vertex, of degree \f$ 2\f$, and the
    *      \f$ x\f$-monotone curves associated with `e1` and `e2` are mergeable
    *      into a single \f$ x\f$-monotone curves.
@@ -264,8 +266,10 @@ Size remove_curve
  * Computes the overlay of two arrangements with history `arr1` and `arr2`, and
  * sets the output arrangement with history `res` to represent the overlaid
  * arrangement. The function also constructs a consolidated set of curves that
- * induce `res`.  \pre `res` does not refer to either `arr1` or `arr2` (that is,
- * "self overlay" is not supported).
+ * induce `res`.
+ *
+ * \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay"
+ * is not supported).
  */
 template <typename GeometryTraits_2, typename TopologyTraits1,
           typename TopologyTraits12, typename ResTopologyTraits,
@@ -277,16 +281,17 @@ void overlay
  OverlayTraits& ovl_tr);
 
 
-/*!
-\addtogroup PkgArrangementOnSurface2Overlay
-
-Computes the (simple) overlay of two arrangements with history `arr1`
-and `arr2`, and sets the output arrangement with history `res` to
-represent the overlaid arrangement. The function also constructs a
-consolidated set of curves that induce `res`. It employs the default
-overlay-traits, which practically does nothing.
-\pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay" is not supported).
-*/
+/*! \addtogroup PkgArrangementOnSurface2Overlay
+ *
+ * Computes the (simple) overlay of two arrangements with history `arr1` and
+ *`arr2`, and sets the output arrangement with history `res` to represent the
+ *overlaid arrangement. The function also constructs a consolidated set of
+ *curves that induce `res`. It employs the default overlay-traits, which
+ *practically does nothing.
+ *
+ * \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay"
+ *is not supported).
+ */
 template <typename GeometryTraits_2, typename TopologyTraits1,
           typename TopologyTraits2, typename ResTopologyTraits>
 void overlay

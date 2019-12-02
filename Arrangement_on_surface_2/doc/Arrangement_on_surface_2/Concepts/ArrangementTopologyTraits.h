@@ -16,7 +16,7 @@
  * for an arrangement of planar unbounded curves.
  * <li> `Arr_unb_planar_topology_traits_2`&mdash;can serve as a topology traits
  * for an arrangement of arcs of great circles embeded on a sphere.
- * <\ul>
+ * </ul>
  *
  * At this point we do not expose all the requirements of this concept.
  *

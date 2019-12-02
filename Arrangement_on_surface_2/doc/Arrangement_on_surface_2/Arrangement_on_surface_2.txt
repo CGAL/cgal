@@ -777,7 +777,7 @@ arrangement.}. As the arrangement is very simple, we use the simple
 %Cartesian kernel of \cgal with integer coordinates for the segment
 endpoints. We also use the `Arr_segment_traits_2` class that enables
 the efficient maintenance of arrangements of line segments; see more
-details on this traits class in Section \ref arr_sectraits. This
+details on this traits class in Section \ref aos_sec-geom_traits. This
 example, as many others in this chapter, uses some print-utility
 functions from the file `print_arr.h`; these functions are also listed
 in Section \ref arr_ssectraverse.

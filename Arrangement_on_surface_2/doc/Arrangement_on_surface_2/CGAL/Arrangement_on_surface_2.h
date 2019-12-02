@@ -992,6 +992,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
  *
  * Checks if the given curve or \f$ x\f$-monotone curve `c` intersects
  * edges or vertices of the existing arrangement `arr`.
+ *
  * \pre If provided, `pl` must be attached to the given arrangement `arr`.
  *
  * \cgalHeading{Requirements}
@@ -1195,8 +1196,9 @@ bool remove_vertex
  * TopologyTraits> >`.
  *
  * Compute the zone of the given \f$ x\f$-monotone curve `c` in the arrangement
- * `arr`.  \pre If provided, `pl` must be attached to the given arrangement
  * `arr`.
+ *
+ * \pre If provided, `pl` must be attached to the given arrangement `arr`.
  *
  * \cgalHeading{Requirements}
  *
