@@ -73,6 +73,16 @@ Release date: October 2019
  -   Added the functions [`CGAL::Polygon_mesh_processing::stitch_boundary_cycle()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__repairing__grp.html#ga9c12c4878c08a117b3733bb45f1a34cf)
      and [`CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__repairing__grp.html#ga24d5ae37f62064b3fc576ba48a4ccc63),
      which can be used to try and merge together geometrically compatible but combinatorially different halfedges
+     that belong to the same boundary cycle.
+ -   It is now possible to pass a face-size property map to [`CGAL::Polygon_mesh_processing::keep_large_connected_components()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__keep__connected__components__grp.html#ga48e7b3e6922ee78cf8ce801e3e325d9a)
+     and [`CGAL::Polygon_mesh_processing::keep_largest_connected_components()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__keep__connected__components__grp.html#ga68c6c29dfc6a26a6a2f8befe6944f19d), enabling users to define
+     how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
+     If no property map is passed, the behavior is unchanged to previous versions: the size
+     of a connected component is the number of faces it contains.
+ -   Added the function [`CGAL::Polygon_mesh_processing::non_manifold_vertices()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__repairing__grp.html#ga36098d2415efd0604b7b996163bc22db),
+     which can be used to collect all the non-manifold vertices (i.e. pinched vertices,
+     or vertices appearing in multiple umbrellas) of a mesh.
+
 
 ### dD Spatial Searching
 
@@ -97,22 +107,6 @@ Release date: October 2019
         than or equal to some given value. This is used in the (orthogonal)
         k-NN search to interrupt some distance computations before its end,
         saving precious milliseconds, in particular in medium-to-high dimension.
-
-### Polygon Mesh Processing
- -   Added the function `CGAL::Polygon_mesh_processing::centroid()`, which computes
-     the centroid of a closed triangle mesh.
--    Added the functions `CGAL::Polygon_mesh_processing::stitch_boundary_cycle()` and
-     `CGAL::Polygon_mesh_processing::stitch_boundary_cycles()`, which can be used
-     to try and merge together geometrically compatible but combinatorially different halfedges
-     that belong to the same boundary cycle.
- -   It is now possible to pass a face-size property map to [`CGAL::Polygon_mesh_processing::keep_large_connected_components()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__keep__connected__components__grp.html#ga48e7b3e6922ee78cf8ce801e3e325d9a)
-     and [`CGAL::Polygon_mesh_processing::keep_largest_connected_components()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__keep__connected__components__grp.html#ga68c6c29dfc6a26a6a2f8befe6944f19d), enabling users to define
-     how the size of a face is computed (the size of the connected component is the sum of the sizes of its faces).
-     If no property map is passed, the behavior is unchanged to previous versions: the size
-     of a connected component is the number of faces it contains.
- -   Added the function [`CGAL::Polygon_mesh_processing::non_manifold_vertices()`](https://doc.cgal.org/5.0/Polygon_mesh_processing/group__PMP__repairing__grp.html#ga36098d2415efd0604b7b996163bc22db),
-     which can be used to collect all the non-manifold vertices (i.e. pinched vertices,
-     or vertices appearing in multiple umbrellas) of a mesh.
 
 ### [3D Point Set](https://doc.cgal.org/5.0/Manual/packages.html#PkgPointSet3)
  -   The [PLY IO functions](https://doc.cgal.org/5.0/Point_set_3/group__PkgPointSet3IO.html) now take an additional optional parameter to 
