@@ -1,6 +1,23 @@
 Release History
 ===============
 
+Release 5.1
+-----------
+
+Release date: June 2020
+
+### 2D Triangulations
+-   To fix an inconsistency between code and documentation and to clarify which types of intersections
+    are truly allowed in constrained Delaunay triangulations, the tag `CGAL::No_intersection_tag`
+    has been deprecated in favor of two new tags `CGAL::No_constraint_intersection_tag`
+    and `CGAL::No_constraint_intersection_requiring_constructions_tag`.
+    The latter is equivalent to the now-deprecated `CGAL::No_intersection_tag`, and allows constraints
+    to intersect as long as no new point has to be created to represent that intersection (for example,
+    the intersection of two constraint segments in a 'T'-like junction is an existing point
+    and does not require any new construction). The former tag, `CGAL::No_constraint_intersection_tag`,
+    does not allow any intersection, except for the configuration of two constraints having a single
+    common endpoints, for convience.
+
 Release 5.0
 -----------
 
