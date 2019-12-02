@@ -17,6 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Apurva Bhatt <response2apurva@gmail.com>
+//             Ronnie Gandhi <ronniegandhi19999@gmail.com>
 //             Efi Fogel <efifogel@gmain.com>
 
 #ifndef CGAL_QT_PIECEWISE_SET_GRAPHICS_ITEM_H

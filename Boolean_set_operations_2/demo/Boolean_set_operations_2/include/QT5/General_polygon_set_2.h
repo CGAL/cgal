@@ -18,6 +18,7 @@
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
+//                 Ronnie Gandhi <ronniegandhi19999@gmail.com>
 
 #ifndef CGAL_GENERAL_POLYGON_SET_2_H
 #define CGAL_GENERAL_POLYGON_SET_2_H

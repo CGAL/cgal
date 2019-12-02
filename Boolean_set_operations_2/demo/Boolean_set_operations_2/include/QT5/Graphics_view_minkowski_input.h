@@ -1,3 +1,27 @@
+
+// Copyright (c) 2012  Tel-Aviv University (Israel).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0+
+//
+//Author : Ronnie Gandhi <ronniegandhi19999@gmail.com>
+
+
+
+
 #ifndef CGAL_QT_GRAPHICS_VIEW_MINKOWSKI_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_MINKOWSKI_INPUT_H
 
@@ -21,40 +45,40 @@ namespace Qt{
 template <typename Kernel_>
 class Graphics_view_minkowski_input : public GraphicsViewInput {
 public:
-		typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel1;
-		typedef Kernel1::Point_2                            Point_2;
-		typedef CGAL::Polygon_2<Kernel1>                    Polygon_2;
-		typedef CGAL::Polygon_with_holes_2<Kernel1>         Polygon_with_holes_2;
-		typedef std::list<Polygon_with_holes_2>             Pgn_with_holes_2_container;
+	typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel1;
+	typedef Kernel1::Point_2                            Point_2;
+	typedef CGAL::Polygon_2<Kernel1>                    Polygon_2;
+	typedef CGAL::Polygon_with_holes_2<Kernel1>         Polygon_with_holes_2;
+	typedef std::list<Polygon_with_holes_2>             Pgn_with_holes_2_container;
 
-		typedef Kernel_                                 Kernel2;
+	typedef Kernel_                                 Kernel2;
 
-  		typedef Linear_traits                           Gps_traits;
-	    typedef typename Gps_traits::Curve_2            Linear_curve;
-	    typedef typename Gps_traits::X_monotone_curve_2 Linear_X_monotone_curve;
-	    typedef typename Gps_traits::Polygon_2          Linear_polygon;
-	    typedef typename Gps_traits::Point_2            Linear_point;
-	    typedef typename Kernel2::FT                     FT;
-	    typedef typename Kernel2::Vector_2               Vector;
-	    typedef typename Kernel2::Point_2                Point;
-	    typedef std::vector<Linear_curve>               Linear_curve_vector;
-	    typedef typename Linear_curve_vector::const_iterator const_linear_curve_iterator;
+  	typedef Linear_traits                           Gps_traits;
+    typedef typename Gps_traits::Curve_2            Linear_curve;
+    typedef typename Gps_traits::X_monotone_curve_2 Linear_X_monotone_curve;
+    typedef typename Gps_traits::Polygon_2          Linear_polygon;
+    typedef typename Gps_traits::Point_2            Linear_point;
+    typedef typename Kernel2::FT                     FT;
+    typedef typename Kernel2::Vector_2               Vector;
+    typedef typename Kernel2::Point_2                Point;
+    typedef std::vector<Linear_curve>               Linear_curve_vector;
+    typedef typename Linear_curve_vector::const_iterator const_linear_curve_iterator;
 
-	    typedef Linear_boundary_pieces_graphics_item<Linear_curve_vector> GI;
+    typedef Linear_boundary_pieces_graphics_item<Linear_curve_vector> GI;
 
-	  //constructor
-	  Graphics_view_minkowski_input(QObject* aParent, QGraphicsScene* aScene) :
-	    GraphicsViewInput(aParent),
-	    mScene(aScene),
-	    mLinearGI(new GI(&mLinearPolygonPieces)),
-	    mOngoingPieceGI(new GI(&mOngoingPieceCtr)),
-	    mHandleGI(new QGraphicsLineItem()),
-	    mLinearPolygonPen(QColor(0, 255, 0)),
-	    mOngoingCurvePen(QColor(255, 215, 0)),
-	    mHandlePen(QColor(255, 165, 0)),
-	    mState(Start)
-	  {
-	    mOngoingPieceGI->setPen(mOngoingCurvePen);
+	//constructor
+    Graphics_view_minkowski_input(QObject* aParent, QGraphicsScene* aScene) :
+    GraphicsViewInput(aParent),
+    mScene(aScene),
+    mLinearGI(new GI(&mLinearPolygonPieces)),
+    mOngoingPieceGI(new GI(&mOngoingPieceCtr)),
+    mHandleGI(new QGraphicsLineItem()),
+    mLinearPolygonPen(QColor(0, 255, 0)),
+    mOngoingCurvePen(QColor(255, 215, 0)),
+    mHandlePen(QColor(255, 165, 0)),
+    mState(Start){
+
+	   	mOngoingPieceGI->setPen(mOngoingCurvePen);
 	    mHandleGI->setPen(mHandlePen);
 
 	    mHandleGI->setLine(0,0,1,1);
@@ -65,14 +89,13 @@ public:
 	    mScene->addItem(mOngoingPieceGI);
 	    mScene->addItem(mHandleGI);
 	    mScene->addItem(mLinearGI);
-	  }
+	}
 
-	  //destructor
-	  ~Graphics_view_minkowski_input() {}
+	//destructor
+	~Graphics_view_minkowski_input() {}
 
-	  //decision making:wether to accept the event or reject it
-	  bool eventFilter(QObject* obj, QEvent* aEvent)
-	  {
+	//decision making:wether to accept the event or reject it
+	bool eventFilter(QObject* obj, QEvent* aEvent){
 	    bool rHandled = false;
 
 	    if (aEvent->type() == QEvent::GraphicsSceneMousePress) {
@@ -92,27 +115,25 @@ public:
 	    if (! rHandled) rHandled = QObject::eventFilter(obj, aEvent);
 
 	    return rHandled;
-	  }
+	}
 
 
-	  void ReStart()
-	  {
+	void ReStart(){
 	    mH = boost::optional<Point>();
 	    mState = Start;
-	  }
+	}
 
-	  void Reset()
-	  {
+	void Reset(){
 	    mLinearPolygonPieces.clear();
 	    mOngoingPieceCtr.clear();
 	    mLinearGI->modelChanged();
 	    mOngoingPieceGI->modelChanged();
 	    ReStart();
-	  }
-	protected:
-	  enum State {
+	}
+	
+	protected: enum State {
 	    Start, PieceStarted, PieceOngoing, HandleOngoing, PieceEnded, CurveEnded
-	  };
+	};
 
 	  Point cvt(QPointF const& aP) const { return Point(aP.x(), aP.y()); }
 

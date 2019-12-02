@@ -18,6 +18,7 @@
 // 
 //
 // Author(s) : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+//             Ronnie Gandhi <ronniegandhi19999@gmail.com>
 
 #ifndef CGAL_QT_PIECEWISE_BOUNDARY_GRAPHICS_ITEM_BEZIER_H
 #define CGAL_QT_PIECEWISE_BOUNDARY_GRAPHICS_ITEM_BEZIER_H

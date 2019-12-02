@@ -18,6 +18,7 @@
 // 
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
+//                 Ronnie Gandhi <ronniegandhi19999@gmail.com>
 
 #ifndef CGAL_GPS_SEGMENT_TRAITS_2_H
 #define CGAL_GPS_SEGMENT_TRAITS_2_H

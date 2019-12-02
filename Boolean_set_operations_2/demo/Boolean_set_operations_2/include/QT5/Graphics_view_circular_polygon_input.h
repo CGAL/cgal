@@ -17,6 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s) : Apurva Bhatt <response2apurva@gmail.com>
+//             Ronnie Gandhi <ronniegandhi19999@gmil.com>
 //             Efi Fogel <efifogel@gmain.com>
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_CIRCULAR_POLYGON_INPUT_H

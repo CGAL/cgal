@@ -18,6 +18,7 @@
 // 
 //
 // Author(s)     : Fernando Cacciola <Fernando.Cacciola@geometryfactory.com>
+//                 Ronnie Gandhi <ronniegandhi19999@gmail.com>
 //
 
 #ifndef CGAL_QT_GRAPHICS_VIEW_BEZIER_POLYGON_INPUT_H
