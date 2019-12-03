@@ -250,7 +250,9 @@ void box_intersection_all_pairs_d(
   if `CGAL::Sequential_tag` - the default value - is specified.
   The parallelization of the algorithm is based on a divide-and-conquer
   approach: the two ranges are split in a number of smaller ranges, and
-  all combinations of subranges are treated in parallel.
+  all combinations of subranges are treated in parallel. It is thus
+  recommended to use ranges of pointers to bounding boxes, to keep
+  these copies light.
 
   \warning The parallel mode comes with a small overhead due to the
   duplication and splitting of the input ranges. It is an improvement
