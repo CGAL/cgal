@@ -320,7 +320,7 @@ void test_compute_obb_evolution(std::string fname)
   typedef typename boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::property_map<SMesh, boost::vertex_point_t>::const_type PointPMap;
   PointPMap pmap = get(boost::vertex_point, mesh);
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
     sm_points.push_back(get(pmap, v));
 
 
@@ -393,7 +393,7 @@ void test_function_defaults_traits(std::string fname1, std::string fname2)
   typedef typename boost::property_map<SMesh, boost::vertex_point_t>::const_type PointPMap;
   PointPMap pmap = get(boost::vertex_point, mesh1);
 
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh1))
+  for(vertex_descriptor v : vertices(mesh1))
     sm_points.push_back(get(pmap, v));
 
   std::vector<K::Point_3> obb_points;

@@ -28,7 +28,6 @@
 #include <limits>
 
 namespace CGAL {
-
 namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
@@ -45,16 +44,19 @@ double compute_fitness(const Vertex& R, const Matrix& data)
   typedef typename Linear_algebra_traits::Index Index;
 
   double xmin, xmax, ymin, ymax, zmin, zmax;
-  for(Index i = 0; i < static_cast<Index>(data.rows()); ++i){
-
+  for(Index i=0; i < static_cast<Index>(data.rows()); ++i)
+  {
     Vector3d vec = Linear_algebra_traits::row3(data, i);
     vec = R * vec;
 
-    if(i == 0){
+    if(i == 0)
+    {
       xmin = xmax = vec.coeff(0);
       ymin = ymax = vec.coeff(1);
       zmin = zmax = vec.coeff(2);
-    }else {
+    }
+    else
+    {
       if(vec.coeff(0) < xmin) xmin = vec.coeff(0);
       if(vec.coeff(1) < ymin) ymin = vec.coeff(1);
       if(vec.coeff(2) < zmin) zmin = vec.coeff(2);
@@ -83,13 +85,13 @@ struct Fitness_map
   {
     std::size_t simplex_id, vertex_id;
     double best_fitness = std::numeric_limits<int>::max();
-    for(std::size_t i = 0; i < pop.size(); ++i)
+    for(std::size_t i=0; i<pop.size(); ++i)
     {
-      for(std::size_t j =0; j < 4; ++j)
+      for(std::size_t j=0; j<4; ++j)
       {
         const Vertex vertex = pop[i][j];
         const double fitness = compute_fitness<Linear_algebra_traits>(vertex, points);
-        if (fitness < best_fitness)
+        if(fitness < best_fitness)
         {
           simplex_id = i;
           vertex_id = j;

@@ -28,24 +28,25 @@
 #include <vector>
 
 namespace CGAL {
-
 namespace Optimal_bounding_box {
 
 template<typename Linear_algebra_traits>
 class Population
 {
-  typedef typename Linear_algebra_traits::Matrix3d Matrix;
-  typedef std::vector<Matrix> Simplex;
+  typedef typename Linear_algebra_traits::Matrix3d            Matrix;
+  typedef std::vector<Matrix>                                 Simplex;
 
 public:
   Population(std::size_t size)
-    : n(size), random_generator(CGAL::Random())
+    :
+      n(size),
+      random_generator(CGAL::Random())
   {
     // reserve pop space
     pop.reserve(n);
 
     // create simplices
-    for(std::size_t i = 0 ; i < n; ++i)
+    for(std::size_t i=0 ; i<n; ++i)
     {
       Simplex simplex(4);
       create_simplex(simplex);
@@ -58,16 +59,16 @@ public:
   void show_population();
 #endif
 
-  std::size_t size(){return n;}
+  std::size_t size() const { return n; }
 
   // access simplex
-  Simplex& operator[](std::size_t i)
+  Simplex& operator[](const std::size_t i)
   {
     CGAL_assertion(i < n);
     return pop[i];
   }
 
-  const Simplex& operator[](std::size_t i) const
+  const Simplex& operator[](const std::size_t i) const
   {
     CGAL_assertion(i < n);
     return pop[i];
@@ -78,7 +79,7 @@ private:
   void create_simplex(Simplex& simplex)
   {
     CGAL_assertion(simplex.size() == 4);
-    for(std::size_t i = 0; i < 4; ++i)
+    for(std::size_t i=0; i<4; ++i)
     {
       Matrix R;
       if(R.cols() == 0 || R.rows() == 0)
@@ -97,12 +98,10 @@ private:
     CGAL_assertion(R.rows() == 3);
     CGAL_assertion(R.cols() == 3);
 
-    for(std::size_t i = 0; i < 3; ++i)
+    for(std::size_t i=0; i<3; ++i)
     {
-      for(std::size_t j = 0; j < 3; ++j)
-      {
+      for(std::size_t j=0; j<3; ++j)
         R.set_coef(i, j, random_generator.get_double());
-      }
     }
   }
 
@@ -116,11 +115,11 @@ template <typename Matrix>
 void Population<Matrix>::show_population()
 {
   std::size_t id = 0;
-  for(const Simplex i : pop)
+  for(const Simplex& i : pop)
   {
     CGAL_assertion(i.size() == 4);
     std:: cout << "Simplex: "<< id++ << std::endl;
-    for(const Matrix R : i)
+    for(const Matrix& R : i)
     {
       std::cout << R; // eigen out
       std::cout << "\n\n";

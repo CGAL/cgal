@@ -22,16 +22,18 @@
 #define CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 
 #include <CGAL/assertions.h>
-#include <boost/iterator/counting_iterator.hpp>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
+
+#include <boost/iterator/counting_iterator.hpp>
+
 #include <vector>
 
 namespace CGAL {
-
 namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits, typename Matrix>
-const Matrix reflection(const Matrix& S_centroid, const Matrix& S_worst)
+const Matrix reflection(const Matrix& S_centroid,
+                        const Matrix& S_worst)
 {
   CGAL_assertion(S_centroid.rows() == 3);
   CGAL_assertion(S_centroid.rows() == 3);
@@ -42,7 +44,9 @@ const Matrix reflection(const Matrix& S_centroid, const Matrix& S_worst)
 }
 
 template <typename Linear_algebra_traits, typename Matrix>
-const Matrix expansion(const Matrix& S_centroid, const Matrix& S_worst, const Matrix& S_reflection)
+const Matrix expansion(const Matrix& S_centroid,
+                       const Matrix& S_worst,
+                       const Matrix& S_reflection)
 {
   CGAL_assertion(S_centroid.rows() == 3);
   CGAL_assertion(S_centroid.rows() == 3);
@@ -55,7 +59,8 @@ const Matrix expansion(const Matrix& S_centroid, const Matrix& S_worst, const Ma
 }
 
 template <typename Linear_algebra_traits, typename Matrix>
-Matrix mean(const Matrix& m1, const Matrix& m2)
+Matrix mean(const Matrix& m1,
+            const Matrix& m2)
 {
   // same API for reduction
   CGAL_assertion(m1.rows() == 3);
@@ -70,7 +75,9 @@ Matrix mean(const Matrix& m1, const Matrix& m2)
 }
 
 template <typename Linear_algebra_traits, typename Matrix>
-const Matrix nm_centroid(const Matrix& S1, const Matrix& S2, const Matrix& S3)
+const Matrix nm_centroid(const Matrix& S1,
+                         const Matrix& S2,
+                         const Matrix& S3)
 {
   Matrix mean = (S1 + S2 + S3) / 3.0;
   Matrix Q = Linear_algebra_traits::qr_factorization(mean);
@@ -81,7 +88,7 @@ const Matrix nm_centroid(const Matrix& S1, const Matrix& S2, const Matrix& S3)
 // needed in nelder mead algorithm
 struct Comparator
 {
-  Comparator(const std::vector<double>& in) : fitness(in) {}
+  Comparator(const std::vector<double>& in) : fitness(in) { }
 
   inline bool operator() (std::size_t& i, std::size_t& j) {
     return fitness[i] < fitness[j];
@@ -107,7 +114,7 @@ void nelder_mead(std::vector<typename Linear_algebra_traits::Matrix3d>& simplex,
 
   for(std::size_t t = 0; t < nelder_mead_iterations; ++t)
   {
-    for(std::size_t i = 0; i < 4; ++i)
+    for(std::size_t i=0; i<4; ++i)
     {
       fitness[i] = compute_fitness<Linear_algebra_traits>(simplex[i], point_data);
     }
@@ -116,7 +123,7 @@ void nelder_mead(std::vector<typename Linear_algebra_traits::Matrix3d>& simplex,
     CGAL_assertion(indices.size() == 4);
 
     // get indices of sorted sequence
-    Comparator compare_indices(fitness);
+    Comparator compare_indices(fitness); // @todo lambda this stuff
     std::sort(indices.begin(), indices.end(), compare_indices);
 
     // new sorted simplex & fitness
@@ -167,7 +174,7 @@ void nelder_mead(std::vector<typename Linear_algebra_traits::Matrix3d>& simplex,
       else
       {
         // reduction: move all vertices towards the best
-        for(std::size_t i=1; i < 4; ++i)
+        for(std::size_t i=1; i<4; ++i)
         {
           simplex[i] = mean<Linear_algebra_traits>(simplex[i], simplex[0]);
         }

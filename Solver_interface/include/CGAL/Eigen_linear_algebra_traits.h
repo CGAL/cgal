@@ -316,11 +316,7 @@ const Eigen_dense_vector<NT, D1> operator* (const CGAL::Eigen_dense_matrix<NT, D
   return Eigen_dense_vector<NT, D1>(A.m_matrix * V.m_vector);
 }
 
-
-
-}
-// end namespace
-
+} // end namespace
 
 
 #endif // CGAL_EIGEN_LINEAR_ALGEBRA_TRAITS_H

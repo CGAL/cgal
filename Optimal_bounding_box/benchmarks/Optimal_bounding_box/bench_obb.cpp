@@ -28,7 +28,7 @@ void gather_mesh_points(SurfaceMesh& mesh, std::vector<Point>& points)
   typedef typename boost::graph_traits<SurfaceMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::property_map<SurfaceMesh, CGAL::vertex_point_t>::type PointPMap;
   PointPMap pmap = get(boost::vertex_point, mesh);
-  BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+  for(vertex_descriptor v : vertices(mesh))
     points.push_back(get(pmap, v));
 }
 

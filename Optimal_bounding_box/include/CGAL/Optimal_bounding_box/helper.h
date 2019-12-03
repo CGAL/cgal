@@ -35,7 +35,6 @@
 #include <vector>
 
 namespace CGAL {
-
 namespace Optimal_bounding_box {
 
 template <typename Matrix, typename Point>

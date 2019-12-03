@@ -33,7 +33,6 @@
 #include <vector>
 
 namespace CGAL {
-
 namespace Optimal_bounding_box {
 
 template <typename Linear_algebra_traits>
@@ -51,39 +50,35 @@ public:
   void genetic_algorithm()
   {
     // random permutations
-    std::size_t m = population.size();
+    const std::size_t m = population.size();
 
     //groups 1,2 : size m/2  groups 3,4 : size (m - m/2).   m/2 is floored
-    std::size_t size_first_group = m/2;
-    std::size_t size_second_group = m - m/2;
+    const std::size_t size_first_group = m/2;
+    const std::size_t size_second_group = m - size_first_group;
 
-    std::vector<std::size_t> ids1(m/2), ids2(m/2);
-    std::vector<std::size_t> ids3(m - m/2), ids4(m - m/2);
+    std::vector<std::size_t> ids1(size_first_group), ids2(size_first_group);
+    std::vector<std::size_t> ids3(size_second_group), ids4(size_second_group);
 
     CGAL::Random rng;
     int im = static_cast<int>(m);
-    std::generate(ids1.begin(), ids1.end(),
-                  [&rng, &im] () { return rng.get_int(0, im); });
-    std::generate(ids2.begin(), ids2.end(),
-                  [&rng, &im] () { return rng.get_int(0, im); });
-    std::generate(ids3.begin(), ids3.end(),
-                  [&rng, &im] () { return rng.get_int(0, im); });
-    std::generate(ids4.begin(), ids4.end(),
-                  [&rng, &im] () { return rng.get_int(0, im); });
+    std::generate(ids1.begin(), ids1.end(), [&rng, &im] () { return rng.get_int(0, im); });
+    std::generate(ids2.begin(), ids2.end(), [&rng, &im] () { return rng.get_int(0, im); });
+    std::generate(ids3.begin(), ids3.end(), [&rng, &im] () { return rng.get_int(0, im); });
+    std::generate(ids4.begin(), ids4.end(), [&rng, &im] () { return rng.get_int(0, im); });
 
-    Population<Linear_algebra_traits> group1(m/2), group2(m/2);
-    Population<Linear_algebra_traits> group3(m - m/2), group4(m - m/2);
+    Population<Linear_algebra_traits> group1(size_first_group), group2(size_first_group);
+    Population<Linear_algebra_traits> group3(size_second_group), group4(size_second_group);
 
-    for(std::size_t i = 0; i < ids1.size(); ++i)
+    for(std::size_t i=0; i<size_first_group; ++i)
       group1[i] = population[ids1[i]];
 
-    for(std::size_t i = 0; i < ids2.size(); ++i)
+    for(std::size_t i=0; i<size_first_group; ++i)
       group2[i] = population[ids2[i]];
 
-    for(std::size_t i = 0; i < ids3.size(); ++i)
+    for(std::size_t i=0; i<size_second_group; ++i)
       group3[i] = population[ids3[i]];
 
-    for(std::size_t i = 0; i < ids4.size(); ++i)
+    for(std::size_t i=0; i<size_second_group; ++i)
       group4[i] = population[ids4[i]];
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
@@ -97,10 +92,10 @@ public:
     Population<Linear_algebra_traits> offspringsA(size_first_group);
     double bias = 0.1;
 
-    for(std::size_t i = 0; i < size_first_group; ++i)
+    for(std::size_t i=0; i<size_first_group; ++i)
     {
       std::vector<Matrix3d> offspring(4);
-      for(int j = 0; j < 4; ++j)
+      for(int j=0; j<4; ++j)
       {
         double r = rng.get_double();
         double fitnessA = compute_fitness<Linear_algebra_traits>(group1[i][j], point_data);
@@ -129,10 +124,10 @@ public:
     Population<Linear_algebra_traits> offspringsB(size_second_group);
     bias = 0.1;
 
-    for(std::size_t i = 0; i < size_second_group; ++i)
+    for(std::size_t i=0; i<size_second_group; ++i)
     {
       std::vector<Matrix3d> offspring(4);
-      for(int j = 0; j < 4; ++j)
+      for(int j=0; j<4; ++j)
       {
         double fitnessA = compute_fitness<Linear_algebra_traits>(group3[i][j], point_data);
         double fitnessB = compute_fitness<Linear_algebra_traits>(group4[i][j], point_data);
@@ -160,25 +155,25 @@ public:
     CGAL_assertion(offspringsA.size() + offspringsB.size() == population.size());
 
     // next generatrion
-    for(std::size_t i = 0; i < size_first_group; ++i)
+    for(std::size_t i=0; i<size_first_group; ++i)
       population[i] = offspringsA[i];
 
-    for(std::size_t i = 0; i < size_second_group; ++i)
+    for(std::size_t i=0; i<size_second_group; ++i)
       population[size_first_group + i] = offspringsB[i];
   }
 
   void evolve(std::size_t generations)
   {
     // hardcoded nelder_mead_iterations
-    std::size_t nelder_mead_iterations = 20;
+    const std::size_t nelder_mead_iterations = 20;
 
     // stopping criteria prameters
-    double prev_fit_value = 0;
-    double new_fit_value = 0;
-    double tolerance = 1e-2;
+    double prev_fit_value = 0.;
+    double new_fit_value = 0.;
+    const double tolerance = 1e-2;
     int stale = 0;
 
-    for(std::size_t t = 0; t < generations; ++t)
+    for(std::size_t t=0; t<generations; ++t)
     {
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       std::cout << "generation= " << t << "\n";
@@ -201,7 +196,7 @@ public:
       //std::cout << std::endl;
       Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map_debug(population, point_data);
       Matrix3d R_now = fitness_map_debug.get_best();
-      std::cout << "det= " << Linear_algebra_traits::determinant(R_now) << std::endl;
+      std::cout << "det = " << Linear_algebra_traits::determinant(R_now) << std::endl;
 #endif
 
       // stopping criteria
@@ -210,7 +205,7 @@ public:
       double difference = new_fit_value - prev_fit_value;
 
       if(CGAL::abs(difference) < tolerance * new_fit_value)
-        stale++;
+        ++stale;
 
       if(stale == 5)
         break;
@@ -226,7 +221,6 @@ public:
   }
 
 private:
-  // data
   Population<Linear_algebra_traits> population;
   MatrixXd point_data;
 };
@@ -235,13 +229,10 @@ private:
 template <typename Simplex>
 void check_det(Population<Simplex>& pop)
 {
-  for(std::size_t i = 0; i < pop.size(); ++i)
+  for(std::size_t i=0, ps=pop.size(); i<ps; ++i)
   {
-    for(std::size_t j = 0; j < 4; ++j)
-    {
-      auto A = pop[i][j]; // Simplex
-      std::cout << Linear_algebra_traits::determinant(A) << std::endl;
-    }
+    for(std::size_t j=0; j<4; ++j)
+      std::cout << Linear_algebra_traits::determinant(pop[i][j]) << std::endl;
   }
 }
 #endif

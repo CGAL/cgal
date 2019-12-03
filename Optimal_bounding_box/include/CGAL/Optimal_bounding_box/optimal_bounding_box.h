@@ -35,7 +35,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  #include <CGAL/Timer.h>
+#include <CGAL/Timer.h>
 #endif
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -47,13 +47,14 @@
 #include <vector>
 
 namespace CGAL {
-
 namespace Optimal_bounding_box {
 
 // works on matrices only
 /// \cond SKIP_IN_MANUAL
 template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
-void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
+void post_processing(const Matrix& points,
+                     Vertex& R,
+                     Matrix& obb)
 {
   CGAL_assertion(points.cols() == 3);
   CGAL_assertion(R.rows() == 3);
@@ -66,13 +67,13 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
   rotated_points = points * Linear_algebra_traits::transpose(R);
 
   // 2) get AABB from rotated points
-  typedef CGAL::Simple_cartesian<double> K;
-  typedef K::Point_3 Point;
+  typedef CGAL::Simple_cartesian<double>                                          K;
+  typedef K::Point_3                                                              Point;
   typedef typename Linear_algebra_traits::Index index;
 
   // Simplex -> std::vector
   std::vector<Point> v_points;
-  for(index i = 0; i < static_cast<index>(rotated_points.rows()); ++i)
+  for(index i=0; i<static_cast<index>(rotated_points.rows()); ++i)
   {
     Point p(rotated_points(i, 0), rotated_points(i, 1), rotated_points(i, 2));
     v_points.push_back(p);
@@ -82,7 +83,7 @@ void post_processing(const Matrix& points, Vertex& R, Matrix& obb)
   K::Iso_cuboid_3 ic(bbox);
 
   Matrix aabb(8, 3);
-  for(std::size_t i = 0; i < 8; ++i)
+  for(std::size_t i = 0; i<8; ++i)
   {
     aabb.set_coef(i, 0, ic[i].x());
     aabb.set_coef(i, 1, ic[i].y());
@@ -115,11 +116,10 @@ void compute_optimal_bounding_box(const std::vector<Point>& points,
 
   if(obb_points.size() != 8)
     obb_points.resize(8);
-  CGAL_assertion(obb_points.size() == 8);
 
   // eigen linear algebra traits
-  typedef typename LinearAlgebraTraits::MatrixXd MatrixXd;
-  typedef typename LinearAlgebraTraits::Matrix3d Matrix3d;
+  typedef typename LinearAlgebraTraits::MatrixXd                                  MatrixXd;
+  typedef typename LinearAlgebraTraits::Matrix3d                                  Matrix3d;
   MatrixXd points_mat;
 
   if(use_ch) // get the ch3
@@ -133,39 +133,31 @@ void compute_optimal_bounding_box(const std::vector<Point>& points,
     CGAL::Optimal_bounding_box::fill_matrix(points, points_mat);
   }
 
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  CGAL::Timer timer;
-#endif
-
   std::size_t max_generations = 100;
   Population<LinearAlgebraTraits> pop(50);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
+  CGAL::Timer timer;
   timer.start();
 #endif
 
   CGAL::Optimal_bounding_box::Evolution<LinearAlgebraTraits> search_solution(pop, points_mat);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  timer.stop();
   std::cout << "constructor: " << timer.time() << std::endl;
   timer.reset();
-  timer.start();
 #endif
 
   search_solution.evolve(max_generations);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  timer.stop();
   std::cout << "evolve: " << timer.time() << std::endl;
   timer.reset();
-  timer.start();
 #endif
 
   Matrix3d rotation = search_solution.get_best();
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  timer.stop();
   std::cout << "get best: " << timer.time() << std::endl;
 #endif
 
@@ -174,22 +166,17 @@ void compute_optimal_bounding_box(const std::vector<Point>& points,
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.reset();
-  timer.start();
 #endif
 
   post_processing<LinearAlgebraTraits>(points_mat, rotation, obb);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  timer.stop();
   std::cout << "post porcessing: " << timer.time() << std::endl;
 #endif
 
   // matrix -> vector
-  for(std::size_t i = 0; i < 8; ++i)
-  {
-    Point p(obb(i, 0), obb(i, 1), obb(i, 2));
-    obb_points[i] = p;
-  }
+  for(std::size_t i=0; i<8; ++i)
+    obb_points.emplace(obb_points.begin() + i, obb(i, 0), obb(i, 1), obb(i, 2));
 }
 
 template <typename Point>
@@ -234,15 +221,14 @@ void compute_optimal_bounding_box(const PolygonMesh& pmesh,
     return;
   }
 
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type Vpm;
-  typedef typename boost::property_traits<Vpm>::value_type Point;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor            vertex_descriptor;
+  typedef typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type   Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type                        Point;
 
   std::vector<Point> points;
   Vpm pmap = get(boost::vertex_point, pmesh);
-  BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+  for(vertex_descriptor v : vertices(pmesh))
     points.push_back(get(pmap, v));
-
 
   std::vector<Point> obb_points;
   compute_optimal_bounding_box(points, obb_points, la_traits, use_ch);
@@ -257,7 +243,7 @@ void compute_optimal_bounding_box(const PolygonMesh& pmesh,
                                   bool use_ch)
 {
 #if defined(CGAL_EIGEN3_ENABLED)
-  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
+  typedef CGAL::Eigen_linear_algebra_traits                                       Linear_algebra_traits;
 #else
   #pragma message("Error: You must either provide linear traits or link CGAL with the Eigen library")
   Linear_algebra_traits; // no parameter provided, and Eigen is not enabled --> don't compile!
