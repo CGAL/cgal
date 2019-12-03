@@ -159,7 +159,7 @@ bool do_faces_intersect(typename boost::graph_traits<TM>::halfedge_descriptor h,
 
 template <class Box, class TM, class VPM, class GT,
           class OutputIterator>
-struct Intersect_faces
+struct Strict_intersect_faces // meaning, not just a shared subface
 {
   typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
 
@@ -170,7 +170,7 @@ struct Intersect_faces
   typename GT::Construct_triangle_3 m_construct_triangle;
   typename GT::Do_intersect_3 m_do_intersect;
 
-  Intersect_faces(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
+  Strict_intersect_faces(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
     :
       m_iterator(it),
       m_tmesh(tmesh),
@@ -333,7 +333,7 @@ self_intersections_impl(const FaceRange& face_range,
   // to do the same as for `self_intersections()`. However, doing like `self_intersections()` would
   // be a major slow-down over sequential code if there are a lot of self-intersections...
   typedef boost::function_output_iterator<internal::Throw_at_output>              Throwing_output_iterator;
-  typedef internal::Intersect_faces<Box, TM, VPM, GT, Throwing_output_iterator>   Throwing_filter;
+  typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, Throwing_output_iterator>   Throwing_filter;
   Throwing_filter throwing_filter(tmesh, vpmap, gt, Throwing_output_iterator());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
@@ -374,7 +374,7 @@ self_intersections_impl(const FaceRange& face_range,
 #endif
   // Sequential version of the code
   // Compute self-intersections filtered out by boxes
-  typedef internal::Intersect_faces<Box, TM, VPM, GT, FacePairOutputIterator> Intersecting_faces_filter;
+  typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, FacePairOutputIterator> Intersecting_faces_filter;
   Intersecting_faces_filter intersect_faces(tmesh, vpmap, gt, out);
 
   if(throw_on_SI)
