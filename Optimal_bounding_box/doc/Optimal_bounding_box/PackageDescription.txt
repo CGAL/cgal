@@ -1,0 +1,30 @@
+/// \defgroup PkgOptimalBoundingBox Optimal Bounding Box Reference
+/// \defgroup PkgOptimalBoundingBoxConcepts Concepts
+/// \ingroup PkgOptimalBoundingBox
+
+\cgalPkgDescriptionBegin{Optimal Bounding Box, PkgOptimalBoundingBoxSummary}
+\cgalPkgPicture{}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{}
+\cgalPkgDesc{This package provides stuff.}
+\cgalPkgManuals{Chapter_OptimalBoundingBox,PkgOptimalBoundingBox}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.2}
+\cgalPkgDependsOn{documented for each function;}
+\cgalPkgBib{cgal:lty-pmp}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Parameters ##
+
+## Functions ##
+
+*/
