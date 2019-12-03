@@ -113,8 +113,11 @@ int main()
   }
 
   if (res)
-  { std::cout<<"SUCCESS homotopy_rond_point_saucisse; all tests ok."<<std::endl; }
+  {
+    std::cout<<"SUCCESS homotopy_rond_point_saucisse; all tests ok."<<std::endl;
+    return EXIT_SUCCESS;
+  }
 
-  return res;
+  return EXIT_FAILURE;
 }
 ///////////////////////////////////////////////////////////////////////////////

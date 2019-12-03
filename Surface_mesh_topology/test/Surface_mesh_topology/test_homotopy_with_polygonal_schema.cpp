@@ -130,8 +130,11 @@ int main(int argc, char** argv)
   }
 
   if (res)
-  { std::cout<<"test_homotopy_with_polygonal_schema ALL TESTS OK."<<std::endl; }
+  {
+    std::cout<<"test_homotopy_with_polygonal_schema ALL TESTS OK."<<std::endl;
+    return EXIT_SUCCESS;
+  }
 
-  return res;
+  return EXIT_FAILURE;
 }
 ///////////////////////////////////////////////////////////////////////////////

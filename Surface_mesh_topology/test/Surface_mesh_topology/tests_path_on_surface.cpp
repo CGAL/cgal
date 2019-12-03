@@ -100,6 +100,9 @@ int main()
 
   std::cout<<"tests_path_on_surface "<<(success?"OK":"failed") <<std::endl;
 
-  return success;
+  if (!success) 
+  { return EXIT_FAILURE; }
+
+  return EXIT_SUCCESS;
 }
 ///////////////////////////////////////////////////////////////////////////////

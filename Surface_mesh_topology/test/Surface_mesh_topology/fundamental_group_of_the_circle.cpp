@@ -169,8 +169,11 @@ int main()
   }
 
   if (test_valid)
-  { std::cout<<"All tests are OK"<<std::endl; }
+  {
+    std::cout<<"All tests are OK"<<std::endl;
+    return EXIT_SUCCESS;
+  }
 
-  return test_valid;
+  return EXIT_FAILURE;
 }
 ///////////////////////////////////////////////////////////////////////////////
