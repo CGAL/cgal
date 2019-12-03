@@ -430,7 +430,7 @@ namespace Surface_mesh_topology {
            it!=itend; ++it)
       {
         std::cout<<it->first<<" "<<Self::template is_free<2>(it->second)
-                 <<" "<<is_border(it->second)<<std::endl;
+                 <<" "<<is_perforated(it->second)<<std::endl;
       }
     }
     
