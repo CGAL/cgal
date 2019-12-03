@@ -273,7 +273,7 @@ public:
     add_segment(kp1, kp2);
     add_color(c);
     add_color(c);
-  }
+  }  
 
   // 2.3) Add an indexed segment, without color.
   template<typename T>
@@ -900,7 +900,7 @@ protected:
 
   bool m_inverse_normal;;
   
-  // Local variables, used when we started a new face.
+  // Local variables, used when we started a new face.g
   bool m_face_started;
   bool m_started_face_is_colored;
   bool m_started_face_has_normal;
