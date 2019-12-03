@@ -124,15 +124,37 @@ namespace CCC_internal {
 template< typename pointer, typename size_type, typename CCC >
 class Free_list {
 public:
-  Free_list() : m_head(NULL), m_size(0) {}
+  Free_list() : m_head(NULL), m_size(0) {
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    // Note that the performance penalty with
+    // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE=1 is
+    // measured to be 3%, in a parallel insertion of 100k random
+    // points, in Delaunay_triangulation_3.
+    refresh_approximate_size();
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  }
 
   void init()                { m_head = NULL; m_size = 0; }
   pointer head() const       { return m_head; }
   void set_head(pointer p)   { m_head = p; }
   size_type size() const     { return m_size; }
-  void set_size(size_type s) { m_size = s; }
-  void inc_size()            { ++m_size; }
-  void dec_size()            { --m_size; }
+  void set_size(size_type s) {
+    m_size = s;
+  }
+  void inc_size() {
+    ++m_size;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    if(m_size > (m_approximate_size * precision_of_approximate_size_plus_1))
+      refresh_approximate_size();
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  }
+  void dec_size() {
+    --m_size;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    if((m_size * precision_of_approximate_size_plus_1) < m_approximate_size)
+      refresh_approximate_size();
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  }
   bool empty()               { return size() == 0; }
   // Warning: copy the pointer, not the data!
   Free_list& operator= (const Free_list& other)
@@ -158,9 +180,26 @@ public:
     other.init(); // clear other
   }
 
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  size_type approximate_size() const {
+    return m_atomic_approximate_size.load(std::memory_order_relaxed);
+  }
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+
 protected:
   pointer   m_head;  // the free list head pointer
   size_type m_size;  // the free list size
+
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  // `m_size` plus or minus `precision_of_approximate_size - 1`
+  static constexpr double precision_of_approximate_size_plus_1 = 1.10;
+  size_type m_approximate_size;
+  std::atomic<size_type> m_atomic_approximate_size;
+  void refresh_approximate_size() {
+    m_approximate_size = m_size;
+    m_atomic_approximate_size.store(m_size, std::memory_order_relaxed);
+  }
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
 };
 
 // Class Concurrent_compact_container
@@ -257,7 +296,16 @@ public:
   void swap(Self &c)
   {
     std::swap(m_alloc, c.m_alloc);
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    { // non-atomic swap
+      size_type other_capacity = c.m_capacity;
+      c.m_capacity = size_type(m_capacity);
+      m_capacity = other_capacity;
+    }
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     std::swap(m_capacity, c.m_capacity);
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+
     std::swap(m_block_size, c.m_block_size);
     std::swap(m_first_item, c.m_first_item);
     std::swap(m_last_item, c.m_last_item);
@@ -471,7 +519,11 @@ public:
   // Do not call this function while others are inserting/erasing elements
   size_type size() const
   {
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    size_type size = m_capacity.load(std::memory_order_relaxed);
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     size_type size = m_capacity;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     for( typename Free_lists::iterator it_free_list = m_free_lists.begin() ;
          it_free_list != m_free_lists.end() ;
          ++it_free_list )
@@ -480,6 +532,20 @@ public:
     }
     return size;
   }
+
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  size_type approximate_size() const
+  {
+    size_type size = m_capacity.load(std::memory_order_relaxed);
+    for( typename Free_lists::iterator it_free_list = m_free_lists.begin() ;
+         it_free_list != m_free_lists.end() ;
+         ++it_free_list )
+    {
+      size -= it_free_list->approximate_size();
+    }
+    return size;
+  }
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
 
   size_type max_size() const
   {
@@ -492,7 +558,11 @@ public:
 
   size_type capacity() const
   {
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    return m_capacity.load(std::memory_order_relaxed);
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     return m_capacity;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   }
 
   // void resize(size_type sz, T c = T()); // TODO  makes sense ???
@@ -684,7 +754,11 @@ private:
   }
 
   allocator_type    m_alloc;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  std::atomic<size_type> m_capacity;
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   size_type         m_capacity;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   size_type         m_block_size;
   Free_lists        m_free_lists;
   pointer           m_first_item;
@@ -734,7 +808,11 @@ void Concurrent_compact_container<T, Allocator>::merge(Self &d)
   }
   m_all_items.insert(m_all_items.end(), d.m_all_items.begin(), d.m_all_items.end());
   // Add the capacities.
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  m_capacity.fetch_add(d.m_capacity, std::memory_order_relaxed);
+#else // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   m_capacity += d.m_capacity;
+#endif // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   // It seems reasonnable to take the max of the block sizes.
   m_block_size = (std::max)(m_block_size, d.m_block_size);
   // Clear d.
@@ -772,7 +850,11 @@ void Concurrent_compact_container<T, Allocator>::
     old_block_size = m_block_size;
     new_block = m_alloc.allocate(old_block_size + 2);
     m_all_items.push_back(std::make_pair(new_block, old_block_size + 2));
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    m_capacity.fetch_add(old_block_size, std::memory_order_relaxed);
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     m_capacity += old_block_size;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
 
     // We insert this new block at the end.
     if (m_last_item == NULL) // First time
