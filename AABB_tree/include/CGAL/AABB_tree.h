@@ -739,7 +739,7 @@ public:
 		ConstPointIterator beyond) const
 	{
 		m_p_search_tree = new Search_tree(first, beyond);
-		m_default_search_tree_constructed = true;
+                m_default_search_tree_constructed = true;
 		if(m_p_search_tree != nullptr)
 		{
 			m_search_tree_constructed = true;
