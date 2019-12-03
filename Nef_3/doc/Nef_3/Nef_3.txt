@@ -425,6 +425,18 @@ the symbolical value, large but finite, for the size of the infimaximal box.
 
 \cgalExample{Nef_3/extended_kernel.cpp}
 
+\subsection Nef_3DrawNefPolyhedron Draw a Nef Polyhedron
+
+A nef polyhedron can be visualised by calling the \link PkgDrawNef3 CGAL::draw<Nef_3>() \endlink function as shown in the following example. This function opens a new window showing the given Nef Polyhedron.
+
+\cgalExample{Nef_3/draw_nef_3.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_nef_polyhedron, draw_nef_3.png}
+Result of the run  of the draw_nef_3 program. A window shows the nef polyhedron and allows to navigate through the 3D scene.
+\cgalFigureEnd
+
 \section Nef_3File File I/O
 
 \anchor sectionNef_3IO
