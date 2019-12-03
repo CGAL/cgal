@@ -289,6 +289,7 @@ self_intersections_impl(const FaceRange& face_range,
   std::vector<Box> boxes;
   boxes.reserve(std::distance(std::begin(face_range), std::end(face_range)));
 
+  // This loop is very cheap, so there is hardly anything to gain from parallelizing it
   for(face_descriptor f : face_range)
   {
     typename boost::property_traits<VPM>::reference
@@ -347,7 +348,7 @@ self_intersections_impl(const FaceRange& face_range,
     Tester tester(face_pairs, do_intersect, tmesh, vpmap, gt);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, face_pairs.size()), tester);
 
-    // (C) Sequentially: Copy from the concurent container to the output iterator
+    // (C) Sequential: Copy from the concurent container to the output iterator
     for(std::size_t i=0; i<do_intersect.size(); ++i)
     {
       if(do_intersect[i])
@@ -506,11 +507,6 @@ self_intersections(const TriangleMesh& tmesh, FacePairOutputIterator out)
  *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
  * \cgalNamedParamsEnd
- *
- * @warning The parallel version of the algorithm has a small overhead as the range of faces
- *          is duplicated to allow concurrent work. Consequently, if the mesh has a large number
- *          of self-intersections, the sequential version of the algorithm might be faster.
- *
  *
  * @return `true` if the faces in `face_range` self-intersect
  */
