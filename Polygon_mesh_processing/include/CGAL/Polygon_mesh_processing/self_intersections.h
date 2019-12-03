@@ -37,6 +37,8 @@
 #include <tbb/concurrent_vector.h>
 #endif
 
+#include <boost/function_output_iterator.hpp>
+
 #include <exception>
 #include <sstream>
 #include <type_traits>
@@ -156,7 +158,7 @@ bool do_faces_intersect(typename boost::graph_traits<TM>::halfedge_descriptor h,
 
 template <class Box, class TM, class VPM, class GT,
           class OutputIterator>
-struct Intersect_facets
+struct Intersect_faces
 {
   typedef typename boost::graph_traits<TM>::halfedge_descriptor halfedge_descriptor;
 
@@ -167,7 +169,7 @@ struct Intersect_facets
   typename GT::Construct_triangle_3 m_construct_triangle;
   typename GT::Do_intersect_3 m_do_intersect;
 
-  Intersect_facets(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
+  Intersect_faces(const TM& tmesh, VPM vpmap, const GT& gt, OutputIterator it)
     :
       m_iterator(it),
       m_tmesh(tmesh),
@@ -253,6 +255,12 @@ class Throw_at_output_exception
   : public std::exception
 { };
 
+struct Throw_at_output
+{
+  template<class T>
+  void operator()(const T&) const { throw Throw_at_output_exception(); }
+};
+
 template <class ConcurrencyTag,
           class TriangleMesh,
           class FaceRange,
@@ -319,8 +327,13 @@ self_intersections_impl(const FaceRange& face_range,
   for(Box& b : boxes)
     box_ptr.push_back(&b);
 
-  // In case we are throwing, like in `does_self_intersect()`
-  auto throwing_callback = [] (const Box*, const Box*) { throw internal::Throw_at_output_exception(); };
+  // In case we are throwing, like in `does_self_intersect()`, we keep the geometric test to throw ASAP.
+  // This is obviously not optimal if there are no or few self-intersections: it would be a greater speed-up
+  // to do the same as for `self_intersections()`. However, doing like `self_intersections()` would
+  // be a major slow-down over sequential code if there are a lot of self-intersections...
+  typedef boost::function_output_iterator<internal::Throw_at_output>              Throwing_output_iterator;
+  typedef internal::Intersect_faces<Box, TM, VPM, GT, Throwing_output_iterator>   Throwing_filter;
+  Throwing_filter throwing_filter(tmesh, vpmap, gt, Throwing_output_iterator());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
@@ -336,7 +349,7 @@ self_intersections_impl(const FaceRange& face_range,
     internal::All_faces_filter<Face_pairs_back_inserter> all_faces_filter(std::back_inserter(face_pairs));
 
     if(throw_on_SI)
-      CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), throwing_callback, cutoff);
+      CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), throwing_filter, cutoff);
     else
       CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), all_faces_filter, cutoff);
 
@@ -360,15 +373,15 @@ self_intersections_impl(const FaceRange& face_range,
 #endif
   // Sequential version of the code
   // Compute self-intersections filtered out by boxes
-  typedef internal::Intersect_facets<Box, TM, VPM, GT, FacePairOutputIterator> Intersecting_facet_filter;
-  Intersecting_facet_filter intersect_facets(tmesh, vpmap, gt, out);
+  typedef internal::Intersect_faces<Box, TM, VPM, GT, FacePairOutputIterator> Intersecting_faces_filter;
+  Intersecting_faces_filter intersect_faces(tmesh, vpmap, gt, out);
 
   if(throw_on_SI)
-    CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(), throwing_callback, cutoff);
+    CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(), throwing_filter, cutoff);
   else
-    CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(), intersect_facets, cutoff);
+    CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(), intersect_faces, cutoff);
 
-  return intersect_facets.m_iterator;
+  return intersect_faces.m_iterator;
 }
 
 } // namespace internal
