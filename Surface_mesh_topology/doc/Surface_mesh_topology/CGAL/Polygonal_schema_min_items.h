@@ -35,8 +35,6 @@ struct Polygonal_schema_min_items
 */
 struct Polygonal_schema_min_items {
 
-/// @}
-
 }; /* end Linear_cell_complex_min_items */
 
 } /* end namespace Surface_mesh_topology */
