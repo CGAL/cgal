@@ -387,7 +387,7 @@ self_intersections_impl(const FaceRange& face_range,
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam FaceRange a model of `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`.
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam OutputIterator a model of `OutputIterator` holding objects of type
+ * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
@@ -444,7 +444,7 @@ self_intersections(const FaceRange& face_range,
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam FacePairOutputIterator a model of `FacePairOutputIterator` holding objects of type
+ * @tparam FacePairOutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
