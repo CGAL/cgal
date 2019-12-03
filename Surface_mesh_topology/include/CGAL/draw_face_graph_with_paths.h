@@ -349,7 +349,7 @@ void draw(const Mesh& alcc,
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
