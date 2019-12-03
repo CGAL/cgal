@@ -31,9 +31,6 @@
 #include <CGAL/intersections.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-#include <boost/range.hpp>
-#include <boost/function_output_iterator.hpp>
-
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
@@ -252,60 +249,26 @@ struct All_faces_filter
 };
 #endif
 
-struct Throw_at_output
-{
-  class Throw_at_output_exception: public std::exception { };
+class Throw_at_output_exception
+  : public std::exception
+{ };
 
-  template<class T>
-  void operator()(const T& /* t */) const { throw Throw_at_output_exception(); }
-};
-
-} // namespace internal
-
-/*!
- * \ingroup PMP_intersection_grp
- * collects intersections between a subset of faces of a triangulated surface mesh.
- * Two faces are said to intersect if the corresponding triangles intersect
- * and the intersection is not an edge nor a vertex incident to both faces.
- *
- * This function depends on the package \ref PkgBoxIntersectionD
- *
- * @pre `CGAL::is_triangle_mesh(tmesh)`
- *
- * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
- * @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
- *  model of `Range`.
- * Its iterator type is `RandomAccessIterator`.
- * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam OutputIterator a model of `OutputIterator` holding objects of type
- *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
- *
- * @param face_range the range of faces to check for self-intersection.
- * @param tmesh the triangulated surface mesh to be checked
- * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
- * \cgalNamedParamsEnd
- */
-template < class ConcurrencyTag = Sequential_tag,
-           class TriangleMesh,
-           class FaceRange,
-           class OutputIterator,
-           class NamedParameters>
-OutputIterator
-self_intersections(const FaceRange& face_range,
-                    const TriangleMesh& tmesh,
-                          OutputIterator out,
-                    const NamedParameters& np)
+template <class ConcurrencyTag,
+          class TriangleMesh,
+          class FaceRange,
+          class FacePairOutputIterator,
+          class NamedParameters>
+FacePairOutputIterator
+self_intersections_impl(const FaceRange& face_range,
+                        const TriangleMesh& tmesh,
+                        FacePairOutputIterator out,
+                        const bool throw_on_SI,
+                        const NamedParameters& np)
 {
   CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+
+  using CGAL::parameters::choose_parameter;
+  using CGAL::parameters::get_parameter;
 
   typedef TriangleMesh                                                                   TM;
   typedef typename boost::graph_traits<TM>::face_descriptor                              face_descriptor;
@@ -314,11 +277,13 @@ self_intersections(const FaceRange& face_range,
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type                              GT;
-  GT gt = parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type                    VPM;
-  VPM vpmap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                           get_const_property_map(boost::vertex_point, tmesh));
+  VPM vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_const_property_map(boost::vertex_point, tmesh));
+
+  const std::ptrdiff_t cutoff = 2000;
 
   // make one box per face
   std::vector<Box> boxes;
@@ -331,10 +296,19 @@ self_intersections(const FaceRange& face_range,
       q = get(vpmap, target(next(halfedge(f, tmesh), tmesh), tmesh)),
       r = get(vpmap, target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh));
 
-    if(collinear(p, q, r) )
-      *out++= std::make_pair(f,f);
+    // tiny fixme: if f is degenerate, we might still have a real intersection between f
+    // and another face f', but right now we are not creating a box for f and thus not returning those
+    if(collinear(p, q, r))
+    {
+      if(throw_on_SI)
+        throw internal::Throw_at_output_exception();
+      else
+        *out++= std::make_pair(f, f);
+    }
     else
+    {
       boxes.push_back(Box(p.bbox() + q.bbox() + r.bbox(), f));
+    }
   }
 
   // generate box pointers
@@ -344,6 +318,9 @@ self_intersections(const FaceRange& face_range,
   for(Box& b : boxes)
     box_ptr.push_back(&b);
 
+  // In case we are throwing, like in `does_self_intersect()`
+  auto throwing_callback = [] (const Box*, const Box*) { throw internal::Throw_at_output_exception(); };
+
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
@@ -351,14 +328,16 @@ self_intersections(const FaceRange& face_range,
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
   {
     // (A) Parallel: Write all pairs of faces with intersecting bbox
-    std::ptrdiff_t cutoff = 2000;
-   
     typedef tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor> >  Face_pairs;
     typedef std::back_insert_iterator<Face_pairs>                                 Face_pairs_back_inserter;
 
     Face_pairs face_pairs;
     internal::All_faces_filter<Face_pairs_back_inserter> all_faces_filter(std::back_inserter(face_pairs));
-    CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), all_faces_filter, cutoff);
+
+    if(throw_on_SI)
+      CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), throwing_callback, cutoff);
+    else
+      CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), all_faces_filter, cutoff);
 
     // (B) Parallel: Perform the geometric tests
     typedef std::vector<int>                                                      Do_intersect_vector;
@@ -380,23 +359,72 @@ self_intersections(const FaceRange& face_range,
 #endif
   // Sequential version of the code
   // Compute self-intersections filtered out by boxes
-  typedef internal::Intersect_facets<Box, TM, VPM, GT, OutputIterator> Intersecting_facet_filter;
+  typedef internal::Intersect_facets<Box, TM, VPM, GT, FacePairOutputIterator> Intersecting_facet_filter;
   Intersecting_facet_filter intersect_facets(tmesh, vpmap, gt, out);
 
-  std::ptrdiff_t cutoff = 2000;
-  CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets, cutoff);
+  if(throw_on_SI)
+    CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(), throwing_callback, cutoff);
+  else
+    CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(), intersect_facets, cutoff);
+
   return intersect_facets.m_iterator;
+}
+
+} // namespace internal
+
+/*!
+ * \ingroup PMP_intersection_grp
+ * collects intersections between a subset of faces of a triangulated surface mesh.
+ * Two faces are said to intersect if the corresponding triangles intersect
+ * and the intersection is not an edge nor a vertex incident to both faces.
+ *
+ * This function depends on the package \ref PkgBoxIntersectionD
+ *
+ * @pre `CGAL::is_triangle_mesh(tmesh)`
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam FaceRange a model of `ConstRange` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`.
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam OutputIterator a model of `OutputIterator` holding objects of type
+ *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
+ * @param face_range the range of faces to check for self-intersection.
+ * @param tmesh the triangulated surface mesh to be checked
+ * @param out output iterator to be filled with all pairs of non-adjacent faces that intersect
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
+ *   If this parameter is omitted, an internal property map for
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPSelfIntersectionTraits` \cgalParamEnd
+ * \cgalNamedParamsEnd
+ */
+template < class ConcurrencyTag = Sequential_tag,
+           class TriangleMesh,
+           class FaceRange,
+           class FacePairOutputIterator,
+           class NamedParameters>
+FacePairOutputIterator
+self_intersections(const FaceRange& face_range,
+                   const TriangleMesh& tmesh,
+                         FacePairOutputIterator out,
+                   const NamedParameters& np)
+{
+  return internal::self_intersections_impl<ConcurrencyTag>(face_range, tmesh, out, false /*don't throw*/, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
           class FaceRange,
-          class OutputIterator>
-OutputIterator
+          class FacePairOutputIterator>
+FacePairOutputIterator
 self_intersections(const FaceRange& face_range,
                    const TriangleMesh& tmesh,
-                         OutputIterator out)
+                         FacePairOutputIterator out)
 {
   return self_intersections<ConcurrencyTag>(face_range, tmesh, out, CGAL::parameters::all_default());
 }
@@ -415,7 +443,7 @@ self_intersections(const FaceRange& face_range,
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam OutputIterator a model of `OutputIterator` holding objects of type
+ * @tparam FacePairOutputIterator a model of `FacePairOutputIterator` holding objects of type
  *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
@@ -437,24 +465,77 @@ self_intersections(const FaceRange& face_range,
  */
 template <class ConcurrencyTag = Sequential_tag,
           class TriangleMesh,
-          class OutputIterator,
+          class FacePairOutputIterator,
           class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-OutputIterator
+FacePairOutputIterator
 self_intersections(const TriangleMesh& tmesh,
-                          OutputIterator out,
+                         FacePairOutputIterator out,
                    const CGAL_PMP_NP_CLASS& np)
 {
   return self_intersections<ConcurrencyTag>(faces(tmesh), tmesh, out, np);
 }
 
 /// \cond SKIP_IN_MANUAL
-template <class ConcurrencyTag = Sequential_tag, class TriangleMesh, class OutputIterator>
-OutputIterator
-self_intersections(const TriangleMesh& tmesh, OutputIterator out)
+template <class ConcurrencyTag = Sequential_tag, class TriangleMesh, class FacePairOutputIterator>
+FacePairOutputIterator
+self_intersections(const TriangleMesh& tmesh, FacePairOutputIterator out)
 {
   return self_intersections<ConcurrencyTag>(faces(tmesh), tmesh, out, parameters::all_default());
 }
 /// \endcond
+
+/**
+ * \ingroup PMP_intersection_grp
+ * tests if a set of faces of a triangulated surface mesh self-intersects.
+ * This function depends on the package \ref PkgBoxIntersectionD
+ * @pre `CGAL::is_triangle_mesh(tmesh)`
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam FaceRange a range of `face_descriptor`
+ * @tparam TriangleMesh a model of `FaceListGraph`
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
+ * @param face_range the set of faces to test for self-intersection
+ * @param tmesh the triangulated surface mesh to be tested
+ * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
+ *   If this parameter is omitted, an internal property map for
+ *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
+ *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ * @warning The parallel version of the algorithm has a small overhead as the range of faces
+ *          is duplicated to allow concurrent work. Consequently, if the mesh has a large number
+ *          of self-intersections, the sequential version of the algorithm might be faster.
+ *
+ *
+ * @return `true` if the faces in `face_range` self-intersect
+ */
+template <class ConcurrencyTag = Sequential_tag,
+          class FaceRange,
+          class TriangleMesh,
+          class NamedParameters>
+bool does_self_intersect(const FaceRange& face_range,
+                         const TriangleMesh& tmesh,
+                         const NamedParameters& np)
+{
+  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
+
+  try
+  {
+    CGAL::Emptyset_iterator unused_out;
+    internal::self_intersections_impl<ConcurrencyTag>(face_range, tmesh, unused_out, true /*throw*/, np);
+  }
+  catch(internal::Throw_at_output_exception&)
+  {
+    return true;
+  }
+
+  return false;
+}
 
 /**
  * \ingroup PMP_intersection_grp
@@ -485,70 +566,14 @@ template <class ConcurrencyTag = Sequential_tag,
 bool does_self_intersect(const TriangleMesh& tmesh,
                          const CGAL_PMP_NP_CLASS& np)
 {
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
-
-  try
-  {
-    typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
-    self_intersections<ConcurrencyTag>(tmesh, OutputIterator(), np);
-  }
-  catch(internal::Throw_at_output::Throw_at_output_exception& )
-  { return true; }
-
-  return false;
-}
-
-/**
- * \ingroup PMP_intersection_grp
- * tests if a set of faces of a triangulated surface mesh self-intersects.
- * This function depends on the package \ref PkgBoxIntersectionD
- * @pre `CGAL::is_triangle_mesh(tmesh)`
- *
- * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
- *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
- * @tparam FaceRange a range of `face_descriptor`
- * @tparam TriangleMesh a model of `FaceListGraph`
- * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
- *
- * @param face_range the set of faces to test for self-intersection
- * @param tmesh the triangulated surface mesh to be tested
- * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
- *
- * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `TriangleMesh`\cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `SelfIntersectionTraits` \cgalParamEnd
- * \cgalNamedParamsEnd
- *
- * @return `true` if the faces in `face_range` self-intersect
- */
-template <class ConcurrencyTag = Sequential_tag,
-          class FaceRange,
-          class TriangleMesh,
-          class NamedParameters>
-bool does_self_intersect(const FaceRange& face_range,
-                         const TriangleMesh& tmesh,
-                         const NamedParameters& np)
-{
-  CGAL_precondition(CGAL::is_triangle_mesh(tmesh));
-
-  try
-  {
-    typedef boost::function_output_iterator<internal::Throw_at_output> OutputIterator;
-    self_intersections<ConcurrencyTag>(face_range, tmesh, OutputIterator(), np);
-  }
-  catch(internal::Throw_at_output::Throw_at_output_exception& )
-  { return true; }
-
-  return false;
+  return does_self_intersect<ConcurrencyTag>(faces(tmesh), tmesh, np);
 }
 
 /// \cond SKIP_IN_MANUAL
 template <class ConcurrencyTag = Sequential_tag, class TriangleMesh>
 bool does_self_intersect(const TriangleMesh& tmesh)
 {
-  return does_self_intersect<ConcurrencyTag>(tmesh, CGAL::parameters::all_default());
+  return does_self_intersect<ConcurrencyTag>(faces(tmesh), tmesh, CGAL::parameters::all_default());
 }
 
 template <class ConcurrencyTag = Sequential_tag, class FaceRange, class TriangleMesh>
