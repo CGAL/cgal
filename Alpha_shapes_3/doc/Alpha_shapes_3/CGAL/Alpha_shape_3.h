@@ -119,8 +119,8 @@ typedef unspecified_type FT;
 /*!
 The point type.
 
-For basic alpha shapes, `Point` will be equal to `Gt::Point_2`. For weighted alpha
-shapes, `Point` will be equal to `Gt::Weighted_point_2`.
+For basic alpha shapes, `Point` will be equal to `Gt::Point_3`. For weighted alpha
+shapes, `Point` will be equal to `Gt::Weighted_point_3`.
 */
 typedef Dt::Point Point;
 

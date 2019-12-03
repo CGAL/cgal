@@ -2,20 +2,11 @@
 // INRIA Saclay - Ile de France (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)	:  Marc Glisse
 
@@ -664,7 +655,7 @@ struct Mpzf {
 	  rdata=Mpzf_impl::fill_n_ptr(rdata,xexp-absysize,-1);
 	  mpn_sub_1(rdata, xdata, absxsize, 1);
 	  res.size=absxsize+xexp;
-	  if(res.data()[res.size-1]==0) --res.size;
+	  while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
 	  if(xsize<0) res.size=-res.size;
 	  return res;
 	} else {

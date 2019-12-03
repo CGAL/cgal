@@ -406,12 +406,12 @@ void MainWindow::loadWKT(QString
   if(! points.empty()){
     std::cout << "Ignore " << points.size() << " isolated points" << std::endl;
   }
-  BOOST_FOREACH(LineString poly, polylines){
+  for(LineString poly : polylines){
     if ( poly.size() > 2 ){
       m_pct.insert_constraint(poly.begin(), poly.end());
     }
   }
- BOOST_FOREACH(Polygon_with_holes_2 poly, polygons){
+ for(Polygon_with_holes_2 poly : polygons){
    m_pct.insert_constraint(poly.outer_boundary().vertices_begin(), poly.outer_boundary().vertices_end());
    for(Polygon_with_holes_2::Hole_const_iterator it = poly.holes_begin(); it != poly.holes_end(); ++it){
      const Polygon_2& hole = *it;
