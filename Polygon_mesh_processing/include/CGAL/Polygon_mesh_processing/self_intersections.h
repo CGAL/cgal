@@ -28,8 +28,9 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/box_intersection_d.h>
-#include <CGAL/intersections.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/intersections.h>
+#include <CGAL/iterator.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
