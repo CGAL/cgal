@@ -131,6 +131,9 @@ public:
   size_type size() const     { return m_size; }
   void set_size(size_type s) {
     m_size = s;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    refresh_approximate_size();
+#endif
   }
   void inc_size() {
     ++m_size;
