@@ -31,6 +31,7 @@
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/intersections.h>
 #include <CGAL/iterator.h>
+#include <CGAL/exceptions.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -252,16 +253,6 @@ struct All_faces_filter
 };
 #endif
 
-class Throw_at_output_exception
-  : public std::exception
-{ };
-
-struct Throw_at_output
-{
-  template<class T>
-  void operator()(const T&) const { throw Throw_at_output_exception(); }
-};
-
 template <class ConcurrencyTag,
           class TriangleMesh,
           class FaceRange,
@@ -311,7 +302,7 @@ self_intersections_impl(const FaceRange& face_range,
     if(collinear(p, q, r))
     {
       if(throw_on_SI)
-        throw internal::Throw_at_output_exception();
+        throw CGAL::internal::Throw_at_output_exception();
       else
         *out++= std::make_pair(f, f);
     }
@@ -332,7 +323,7 @@ self_intersections_impl(const FaceRange& face_range,
   // This is obviously not optimal if there are no or few self-intersections: it would be a greater speed-up
   // to do the same as for `self_intersections()`. However, doing like `self_intersections()` would
   // be a major slow-down over sequential code if there are a lot of self-intersections...
-  typedef boost::function_output_iterator<internal::Throw_at_output>              Throwing_output_iterator;
+  typedef boost::function_output_iterator<CGAL::internal::Throw_at_output>               Throwing_output_iterator;
   typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, Throwing_output_iterator>   Throwing_filter;
   Throwing_filter throwing_filter(tmesh, vpmap, gt, Throwing_output_iterator());
 
@@ -539,7 +530,7 @@ bool does_self_intersect(const FaceRange& face_range,
     CGAL::Emptyset_iterator unused_out;
     internal::self_intersections_impl<ConcurrencyTag>(face_range, tmesh, unused_out, true /*throw*/, np);
   }
-  catch(internal::Throw_at_output_exception&)
+  catch(CGAL::internal::Throw_at_output_exception&)
   {
     return true;
   }
