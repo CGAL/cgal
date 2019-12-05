@@ -55,6 +55,7 @@ int main()
     conformer.restore_Delaunay();
     conformer.insert_constrained_edge(vertices[5], vertices[11]);
     conformer.restore_Delaunay();
+    return 0;
   };
   CGAL_USE(test1);
 
@@ -86,5 +87,5 @@ int main()
     return 0;
   };
 
-  return test2();
+  return test1() + test2();
 }

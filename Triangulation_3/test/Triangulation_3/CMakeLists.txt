@@ -36,6 +36,10 @@ if ( CGAL_FOUND )
   target_compile_features(cdt_3 PRIVATE cxx_std_17) # Structured bindings
   if(CGAL_Qt5_FOUND)
     target_link_libraries(cdt_3 PRIVATE CGAL::CGAL_Qt5)
+    target_compile_definitions(cdt_3 PRIVATE -DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+    if(BUILD_TESTING) # @TODO Remove this special treatment of `execution___of__cdt_3`
+      set_property(TEST execution___of__cdt_3 PROPERTY ENVIRONMENT)
+    endif()
   endif()
 
   if(TBB_FOUND)
