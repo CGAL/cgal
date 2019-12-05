@@ -1,28 +1,19 @@
 Release History
 ===============
+
 Release 5.1
 -----------
-Release date: March 2020
+
+Release date: June 2020
 
 ### 3D Fast Intersection and Distance Computation
 -   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
     the new function `do_not_accelerate_distance_queries()` before the first distance query.
 
-
-Release 5.1
------------
-
-Release date: June 2020
-
 ### Polygon Mesh Processing
 
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
-
-Release 5.1
------------
-
-Release date: June 2020
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
@@ -35,6 +26,7 @@ Release date: June 2020
     and does not require any new construction). The former tag, `CGAL::No_constraint_intersection_tag`,
     does not allow any intersection, except for the configuration of two constraints having a single
     common endpoints, for convience.
+
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
