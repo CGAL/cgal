@@ -39,6 +39,28 @@
 
 namespace CGAL{
 
+namespace internal {
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_2<K>& poly)
+  {
+    CGAL::Polygon_2<K>::iterator it = poly.end();
+    --it;
+    if( (*poly.begin()) == *it){
+      poly.erase(it);
+    }
+  }
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
+  {
+    pop_back_if_equal_to_front(pwh.outer_boundary());
+    for(auto i = pwh.holes_begin(); i!= pwh.holes_end(); ++i){
+      pop_back_if_equal_to_front(*i);
+    }
+  }
+}
+  
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
@@ -177,7 +199,13 @@ read_polygon_WKT( std::istream& in,
     
     if(type.substr(0, 7).compare("POLYGON")==0)
     {
-      boost::geometry::read_wkt(line, polygon);
+      try {
+        boost::geometry::read_wkt(line, polygon);
+      } catch( ...){
+        in.setstate(std::ios::failbit);
+        return in;
+      };
+      pop_back_if_equal_to_front(polygon);
       break;
     }
   }
