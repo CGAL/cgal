@@ -26,7 +26,7 @@
 
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 #include <CGAL/tuple.h>
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>

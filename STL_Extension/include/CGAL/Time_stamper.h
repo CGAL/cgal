@@ -149,6 +149,17 @@ struct Get_time_stamper<T,false>{
 template <class T>
 struct Time_stamper_impl : public Get_time_stamper<T>::type {};
 
+struct Hash_handles_with_or_without_timestamps
+{
+  template <typename Handle>
+  std::size_t operator()(const Handle h) const
+  {
+    typedef typename std::iterator_traits<Handle>::value_type Type;
+
+    return Get_time_stamper<Type>::type::hash_value(&*h);
+  }
+};
+
 } //end of namespace CGAL
 
 #endif // CGAL_TIME_STAMPER_H
