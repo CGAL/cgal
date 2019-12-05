@@ -2130,10 +2130,13 @@ void MainWindow::save(QString filename, QList<CGAL::Three::Scene_item*>& to_save
     }
   }
   if(!saved)
+  {
     QMessageBox::warning(this,
                          tr("Cannot save"),
                          tr("The selected object %1 was not saved. (Maybe a wrong extension ?)")
                          .arg(to_save.front()->name()));
+    to_save.pop_front();
+  }
 }
 
 void MainWindow::on_actionSaveSnapshot_triggered()
