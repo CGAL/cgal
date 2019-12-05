@@ -195,8 +195,6 @@ private:
             ui.edgeLength_dspinbox, SLOT(setEnabled(bool)));
 
     //Set default parameter edge length
-    ui.edgeLength_dspinbox->setDecimals(3);
-    ui.edgeLength_dspinbox->setSingleStep(0.001);
     ui.edgeLength_dspinbox->setRange(1e-6 * diag_length, //min
                                      2.   * diag_length);//max
     ui.edgeLength_dspinbox->setValue(0.05 * diag_length);
