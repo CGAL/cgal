@@ -206,7 +206,7 @@ public:
   struct Primitive_type {
       //setting OneFaceGraphPerTree to false transforms the id type into 
       //std::pair<FD, const FaceGraph*>.
-    typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::type, CGAL::Tag_false> type;
+    typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::const_type, CGAL::Tag_false> type;
 
     static
     typename IGT_::Triangle_3 datum(const typename type::Id primitive_id) {

@@ -190,7 +190,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Scene_item_rendering_helper.cpp
     Scene_item_rendering_helper_moc.cpp
     Primitive_container.cpp
-    Polyhedron_demo_plugin_helper.cpp)
+    Polyhedron_demo_plugin_helper.cpp
+    CGAL_double_edit.cpp)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )

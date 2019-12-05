@@ -30,9 +30,10 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QSpinBox>
 
 #include <QMultipleInputDialog.h>
-#include <QDoubleSpinBox>
+#include "CGAL_double_edit.h"
 
 #include <map>
 #include <fstream>
@@ -821,19 +822,15 @@ protected Q_SLOTS:
       return;
 
     QMultipleInputDialog dialog ("Region Selection Parameters", mw);
-    QDoubleSpinBox* epsilon = dialog.add<QDoubleSpinBox> ("Epsilon: ");
-    epsilon->setRange (0.00001, 1000000.);
-    epsilon->setDecimals (5);
+    DoubleEdit* epsilon = dialog.add<DoubleEdit> ("Epsilon: ");
     if (rg_epsilon < 0.)
       rg_epsilon = (std::max)(0.00001, 0.005 * scene->len_diagonal());
-    epsilon->setValue (rg_epsilon);
+    epsilon->setValue(rg_epsilon);
     
-    QDoubleSpinBox* cluster_epsilon = dialog.add<QDoubleSpinBox> ("Cluster epsilon: ");
-    cluster_epsilon->setRange (0.00001, 1000000.);
-    cluster_epsilon->setDecimals (5);
+    DoubleEdit* cluster_epsilon = dialog.add<DoubleEdit> ("Cluster epsilon: ");
     if (rg_cluster_epsilon < 0.)
       rg_cluster_epsilon = (std::max)(0.00001, 0.03 * scene->len_diagonal());
-    cluster_epsilon->setValue (rg_cluster_epsilon);
+    cluster_epsilon->setText(tr("%1").arg(rg_cluster_epsilon));
 
     QSpinBox* normal_threshold = dialog.add<QSpinBox> ("Normal threshold: ");
     normal_threshold->setRange (0, 90);

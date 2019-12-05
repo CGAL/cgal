@@ -532,7 +532,7 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   setEdgeContainer(Grid_edges, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   setEdgeContainer(C3t3_edges, new Ec(Vi::PROGRAM_C3T3_EDGES, false));
   setPointContainer(C3t3_points, new Pc(Vi::PROGRAM_C3T3_EDGES, false));
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     v->installEventFilter(this);
   }
@@ -611,7 +611,7 @@ void Scene_c3t3_item::updateCutPlane()
   if(!d)
     return;
   if(d->need_changed) {
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       d->are_intersection_buffers_filled[viewer] = false;
@@ -1581,7 +1581,7 @@ Scene_c3t3_item::setColor(QColor c)
   d->compute_color_map(c);
   invalidateOpenGLBuffers();
   d->invalidate_stats();
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     d->are_intersection_buffers_filled[viewer] = false;
@@ -1636,7 +1636,7 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
 
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       d->are_intersection_buffers_filled[viewer] = false;

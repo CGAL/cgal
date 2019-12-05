@@ -4,20 +4,40 @@ Release History
 Release 5.1
 -----------
 
-Release date: March 2020
+Release date: June 2020
+
+### 3D Fast Intersection and Distance Computation
+-   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
+    the new function `do_not_accelerate_distance_queries()` before the first distance query.
 
 ### Polygon Mesh Processing
--   Introduced a new function, `remove_connected_components_of_negligible_size()`, which can be used to remove connected
-    components whose area or volume is under a certain threshold. Area and volume thresholds are either specified by the user
-    or deduced from the bounding box of the mesh.
+
+-   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
+    which can be used to remove connected components whose area or volume is under a certain threshold.
+    Area and volume thresholds are either specified by the user or deduced from the bounding box of the mesh.
 -   Added a new named parameter for `keep_large_connected_components()` and `remove_connected_components_of_negligible_size`
     that can be used to perform a dry run of the operation, meaning that the function will return the number of connected
     components that would be removed with the specified threshold, but without actually removing them.
+-   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
+    of halfedge pairs that were stitched.
+
+### 2D Triangulations
+-   To fix an inconsistency between code and documentation and to clarify which types of intersections
+    are truly allowed in constrained Delaunay triangulations, the tag `CGAL::No_intersection_tag`
+    has been deprecated in favor of two new tags `CGAL::No_constraint_intersection_tag`
+    and `CGAL::No_constraint_intersection_requiring_constructions_tag`.
+    The latter is equivalent to the now-deprecated `CGAL::No_intersection_tag`, and allows constraints
+    to intersect as long as no new point has to be created to represent that intersection (for example,
+    the intersection of two constraint segments in a 'T'-like junction is an existing point
+    and does not require any new construction). The former tag, `CGAL::No_constraint_intersection_tag`,
+    does not allow any intersection, except for the configuration of two constraints having a single
+    common endpoints, for convience.
+
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
 
-Release date: October 2019
+Release date: November 2019
 
 ### General changes
 
@@ -31,6 +51,9 @@ Release date: October 2019
 - Since CGAL 4.9, CGAL can be used as a header-only library, with
   dependencies. Since CGAL 5.0, that is now the default, unless
   specified differently in the (optional) CMake configuration.
+- The section "Getting Started with CGAL" of the documentation has
+  been updated and reorganized.
+- The minimal version of Boost is now 1.57.0.
 
 
 ### [Polygonal Surface Reconstruction](https://doc.cgal.org/5.0/Manual/packages.html#PkgPolygonalSurfaceReconstruction) (new package)

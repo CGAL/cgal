@@ -280,7 +280,7 @@ void Surface_sweep_2<Vis>::_handle_overlaps_in_right_curves()
         Subcurve_iterator next_after = this->m_currentEvent->get_curve_after_on_right(it->first);
         for (std::size_t i=0; i<nbc; ++i)
         {
-          _intersect(it->second[i], *cpp11::prev(next_after), this->m_currentEvent);
+          _intersect(it->second[i], *std::prev(next_after), this->m_currentEvent);
           CGAL_assertion(it->second.size()==nbc); // make sure the container was not updated
         }
       }
@@ -904,7 +904,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   // Get the left end of overlap_cv.
   Event* left_event;
 
-  if (event_on_overlap!=nullptr)
+  if (event_on_overlap!=NULL)
   {
     CGAL_SS_PRINT_EVENT_INFO(event_on_overlap);
     CGAL_SS_PRINT_EOL();
