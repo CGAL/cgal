@@ -451,7 +451,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
         action->setVisible(!(submenu->isEmpty()));
 
       }
-      else if(action->text().contains(filter, Qt::CaseInsensitive)){
+      else if(action->text().remove("&").contains(filter, Qt::CaseInsensitive)){
         //menu->addAction(action);
         addActionToMenu(action, menu);
       }
@@ -491,7 +491,7 @@ void MainWindow::filterOperations(bool)
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
       action->setVisible( p.first->applicable(action)
-                          && (action->text().contains(filter, Qt::CaseInsensitive)
+                          && (action->text().remove("&").contains(filter, Qt::CaseInsensitive)
                               || action->property("subMenuName")
                               .toString().contains(filter, Qt::CaseInsensitive)));
     }
