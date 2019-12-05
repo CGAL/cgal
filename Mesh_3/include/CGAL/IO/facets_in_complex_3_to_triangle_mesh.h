@@ -18,9 +18,9 @@
 
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>

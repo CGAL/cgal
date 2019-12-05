@@ -19,7 +19,7 @@
 #include <CGAL/Compare_handles_with_or_without_timestamps.h>
 #include <CGAL/Mesh_3/Detect_polylines_in_polyhedra_fwd.h>
 #include <CGAL/Default.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>

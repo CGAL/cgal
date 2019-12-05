@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>483</width>
+    <width>498</width>
     <height>279</height>
    </rect>
   </property>
@@ -51,7 +51,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
           <item>
            <widget class="QLabel" name="label_omega_H">
             <property name="text">
@@ -60,12 +60,22 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="omega_H"/>
+           <widget class="DoubleEdit" name="omega_H">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>0.00</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
           <item>
            <widget class="QLabel" name="label_omega_P">
             <property name="text">
@@ -74,12 +84,22 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="omega_P"/>
+           <widget class="DoubleEdit" name="omega_P">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>0.00</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
           <item>
            <widget class="QLabel" name="label_min_edge_length">
             <property name="text">
@@ -88,12 +108,16 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="min_edge_length"/>
+           <widget class="DoubleEdit" name="min_edge_length">
+            <property name="text">
+             <string>0.00</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0">
           <item>
            <widget class="QLabel" name="label_delta_area">
             <property name="text">
@@ -102,7 +126,17 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="delta_area"/>
+           <widget class="DoubleEdit" name="delta_area">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>0.00</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -203,6 +237,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
  <slots>

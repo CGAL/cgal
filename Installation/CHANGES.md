@@ -1,10 +1,10 @@
 Release History
 ===============
 
-[Release 5.X](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.X)
+[Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
-Release date: XXX
+Release date: June 2020
 
 ### Surface Mesh Topology (new package)
 
@@ -13,6 +13,27 @@ Release date: XXX
      on a combinatorial surface are homotopic. The user can choose
      between free homotopy and homotopy with fixed endpoints. 
      A contractibility test is also provided.
+
+### 3D Fast Intersection and Distance Computation
+-   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
+    the new function `do_not_accelerate_distance_queries()` before the first distance query.
+
+### Polygon Mesh Processing
+
+-   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
+    of halfedge pairs that were stitched.
+
+### 2D Triangulations
+-   To fix an inconsistency between code and documentation and to clarify which types of intersections
+    are truly allowed in constrained Delaunay triangulations, the tag `CGAL::No_intersection_tag`
+    has been deprecated in favor of two new tags `CGAL::No_constraint_intersection_tag`
+    and `CGAL::No_constraint_intersection_requiring_constructions_tag`.
+    The latter is equivalent to the now-deprecated `CGAL::No_intersection_tag`, and allows constraints
+    to intersect as long as no new point has to be created to represent that intersection (for example,
+    the intersection of two constraint segments in a 'T'-like junction is an existing point
+    and does not require any new construction). The former tag, `CGAL::No_constraint_intersection_tag`,
+    does not allow any intersection, except for the configuration of two constraints having a single
+    common endpoints, for convience.
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------

@@ -128,17 +128,16 @@ private:
 
   // Types used for the convexification of the mesh
     // Each triangulation vertex is associated its corresponding vertex_descriptor
-  typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor,
-                                                      Kernel>       Vb;
-    // Each triangultaion face is associated a color (inside/outside information)
-  typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>    Fb;
-  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>   Cfb;
-  typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>             TDS;
-  typedef CGAL::No_intersection_tag                                 Itag;
+  typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor, Kernel>  Vb;
+    // Each triangulation face is associated a color (inside/outside information)
+  typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>                  Fb;
+  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>                 Cfb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>                           TDS;
+  typedef CGAL::No_constraint_intersection_requiring_constructions_tag            Itag;
 
     // Can choose either a triangulation or a Delaunay triangulation
-  typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>                CT;
-//    typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>   CT;
+  typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>                    CT;
+//  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>           CT;
 
 // Private fields
 private:
