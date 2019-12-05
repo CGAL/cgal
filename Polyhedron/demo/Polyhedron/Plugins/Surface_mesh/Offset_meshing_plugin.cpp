@@ -58,7 +58,6 @@ public:
     , m_is_closed( is_closed(tm) )
   {
     CGAL_assertion(!m_tree_ptr->empty());
-    m_tree_ptr->accelerate_distance_queries();
   }
 
   double operator()(const typename GeomTraits::Point_3& p) const
@@ -188,7 +187,6 @@ public:
     , m_offset_distance(offset_distance)
   {
     CGAL_assertion(! m_tree_ptr->empty() );
-    m_tree_ptr->accelerate_distance_queries();
   }
 
   double operator()(const EPICK::Point_3& p) const

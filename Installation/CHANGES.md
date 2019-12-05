@@ -1,5 +1,13 @@
 Release History
 ===============
+Release 5.1
+-----------
+Release date: March 2020
+
+### 3D Fast Intersection and Distance Computation
+-   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
+    the new function `do_not_accelerate_distance_queries()` before the first distance query.
+
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
