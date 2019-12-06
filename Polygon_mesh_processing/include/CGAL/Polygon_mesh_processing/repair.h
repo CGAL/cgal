@@ -119,7 +119,6 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param tmesh the triangulated polygon mesh
-/// \param nb_components_to_keep the number of components to be kept
 /// \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
