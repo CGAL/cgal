@@ -699,7 +699,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   typedef CGAL::dynamic_face_property_t<Vector_3>                                Face_normal_tag;
   typedef typename boost::property_map<PolygonMesh, Face_normal_tag>::const_type Face_normal_dmap;
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type   VPMap;
