@@ -30,6 +30,7 @@
 #include <Eigen/Dense>
 #include <CGAL/NewKernel_d/LA_eigen/constructors.h>
 #include <CGAL/iterator_from_indices.h>
+#include <CGAL/determinant.h>
 
 namespace CGAL {
 
@@ -114,14 +115,58 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 	}
 
 	template<class Mat_> static NT determinant(Mat_ const&m,bool=false){
+	  switch(m.rows()){
+	    //case 0:
+	    //  return 1;
+	    case 1:
+	      return m(0,0);
+	    case 2:
+	      return CGAL::determinant(
+		  m(0,0),m(0,1),
+		  m(1,0),m(1,1));
+	    case 3:
+	      return CGAL::determinant(
+		  m(0,0),m(0,1),m(0,2),
+		  m(1,0),m(1,1),m(1,2),
+		  m(2,0),m(2,1),m(2,2));
+	    case 4:
+	      return CGAL::determinant(
+		  m(0,0),m(0,1),m(0,2),m(0,3),
+		  m(1,0),m(1,1),m(1,2),m(1,3),
+		  m(2,0),m(2,1),m(2,2),m(2,3),
+		  m(3,0),m(3,1),m(3,2),m(3,3));
+	    case 5:
+	      return CGAL::determinant(
+		  m(0,0),m(0,1),m(0,2),m(0,3),m(0,4),
+		  m(1,0),m(1,1),m(1,2),m(1,3),m(1,4),
+		  m(2,0),m(2,1),m(2,2),m(2,3),m(2,4),
+		  m(3,0),m(3,1),m(3,2),m(3,3),m(3,4),
+		  m(4,0),m(4,1),m(4,2),m(4,3),m(4,4));
+	    case 6:
+	      return CGAL::determinant(
+		  m(0,0),m(0,1),m(0,2),m(0,3),m(0,4),m(0,5),
+		  m(1,0),m(1,1),m(1,2),m(1,3),m(1,4),m(1,5),
+		  m(2,0),m(2,1),m(2,2),m(2,3),m(2,4),m(2,5),
+		  m(3,0),m(3,1),m(3,2),m(3,3),m(3,4),m(3,5),
+		  m(4,0),m(4,1),m(4,2),m(4,3),m(4,4),m(4,5),
+		  m(5,0),m(5,1),m(5,2),m(5,3),m(5,4),m(5,5));
+	    default:
+#if __cpp_if_constexpr >= 201606L
+	      // Avoid compiling the LU decomposition for nothing
+	      if constexpr (Mat_::MaxRowsAtCompileTime >= 1 && Mat_::MaxRowsAtCompileTime <= 6) {
+		CGAL_ASSUME(false);
+	      }
+	      else
+#endif
 		return m.determinant();
+	  }
 	}
 
 	template<class Mat_> static typename
 	Same_uncertainty_nt<CGAL::Sign, NT>::type
 	sign_of_determinant(Mat_ const&m,bool=false)
 	{
-		return CGAL::sign(m.determinant());
+		return CGAL::sign(LA_eigen::determinant(m));
 	}
 
 	template<class Mat_> static int rank(Mat_ const&m){
