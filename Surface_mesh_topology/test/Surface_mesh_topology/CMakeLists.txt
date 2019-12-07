@@ -8,21 +8,8 @@ if(CGAL_Qt5_FOUND)
 endif()
 
 if ( NOT CGAL_FOUND )
-
   message(FATAL_ERROR "This program requires the CGAL library, and will not be compiled.")
-
 endif()
-
-set(HEADER_FILES
-  ../../include/CGAL/Curves_on_surface_topology.h
-  ../../include/CGAL/draw_face_graph_with_paths.h
-  ../../include/CGAL/Path_on_surface.h
-  ../../include/CGAL/Polygonal_schema.h
-  ../../include/CGAL/Polygonal_schema_min_items.h
-  ../../include/CGAL/Surface_mesh_topology/internal/Minimal_quadrangulation.h
-  ../../include/CGAL/Surface_mesh_topology/internal/Path_generators.h
-  ../../include/CGAL/Surface_mesh_topology/internal/Path_on_surface_with_rle.h
-  )
 
 set(SOURCE_FILES
   fundamental_group_of_the_circle.cpp
@@ -39,7 +26,7 @@ set(SOURCE_FILES
   )
 
 foreach(cppfile ${SOURCE_FILES})
-  create_single_source_cgal_program("${cppfile}" ${HEADER_FILES})
+  create_single_source_cgal_program("${cppfile}")
 endforeach()
 
 if(CGAL_Qt5_FOUND)
