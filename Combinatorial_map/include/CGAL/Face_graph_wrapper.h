@@ -146,7 +146,7 @@ public:
   template<unsigned int i>
   bool is_free(Dart_const_handle /* dh */) const
   { return false; } // Not possible to have a free dart with an HEG.
-  bool is_free(Dart_const_handle dh, unsigned int i) const
+  bool is_free(Dart_const_handle /*dh*/, unsigned int /*i*/) const
   { return false; } // Not possible to have a free dart with an HEG.
 
   bool is_perforated(Dart_const_handle dh) const
