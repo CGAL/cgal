@@ -142,7 +142,7 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>,
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
 	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
 	    typedef typename Get_functor<Exact_kernel, T>::type FE;
-	    typedef Filtered_predicate2<FE,FA,C2E,C2A> type;
+	    typedef Filtered_predicate2<Lazy_cartesian,FE,FA,C2E,C2A> type;
     };
     template<class T,class D> struct Functor<T,D,Compute_tag> {
 	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
