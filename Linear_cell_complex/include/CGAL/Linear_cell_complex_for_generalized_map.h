@@ -144,6 +144,11 @@ namespace CGAL {
         Base(alcc, converters, dartinfoconverter, pointconverter)
       {}
 
+      Self & operator= (const Self & alcc)
+      {
+        Base::operator=(alcc);
+        return *this;
+      }
     };
 
 } // namespace CGAL

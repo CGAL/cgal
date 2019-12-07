@@ -148,6 +148,12 @@ namespace CGAL {
         Base(alcc, converters, dartinfoconverter, pointconverter)
       {}
 
+      Self & operator= (const Self & alcc)
+      {
+        Base::operator=(alcc);
+        return *this;
+      }
+      
       /** Import the given hds which should be a model of an halfedge graph. */
       template<class HEG, class PointConverter>
       void import_from_halfedge_graph(const HEG& heg              ,
