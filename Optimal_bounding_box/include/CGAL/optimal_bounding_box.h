@@ -159,7 +159,7 @@ void construct_optimal_bounding_box(std::array<typename Traits::Point_3, 8>& obb
 /// \ingroup PkgOptimalBoundingBoxFunctions
 ///
 /// constructs a rectangular box that contains all the input points. This bounding box
-/// is obtained via an optimization process aiming to get a close approximation to the
+/// is obtained via an optimization process aiming to get a close approximation of the
 /// optimal bounding box.
 ///
 /// \tparam PointRange a model of `Range` with value type `Point`
@@ -249,7 +249,7 @@ void optimal_bounding_box(const PointRange& points,
 /// \ingroup PkgOptimalBoundingBoxFunctions
 ///
 /// constructs a rectangular box that contains the input mesh. This bounding box
-/// is obtained via an optimization process aiming to get a close approximation to the
+/// is obtained via an optimization process aiming to get a close approximation of the
 /// optimal bounding box.
 ///
 /// \tparam PolygonMesh a model of `FaceListGraph`
