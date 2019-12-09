@@ -5,6 +5,9 @@
 
 #include <CGAL/optimal_bounding_box.h>
 
+#include <fstream>
+#include <iostream>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_3                                             Point;
 typedef CGAL::Surface_mesh<Point>                              Surface_mesh;
