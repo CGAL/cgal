@@ -4,6 +4,7 @@ BGL
 Cartesian_kernel
 Circulator
 Distance_2
+Distance_3
 Installation
 Intersections_2
 Intersections_3
@@ -17,4 +18,3 @@ STL_Extension
 Spatial_searching
 Stream_support
 Surface_mesh_shortest_path
-Distance_3
