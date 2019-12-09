@@ -32,15 +32,6 @@ void gather_mesh_points(SurfaceMesh& mesh, std::vector<Point>& points)
     points.push_back(get(pmap, v));
 }
 
-template <typename Point>
-double calculate_volume(std::vector<Point> points)
-{
-  CGAL::Bbox_3 bbox;
-  bbox = bbox_3(points.begin(), points.end());
-  K::Iso_cuboid_3 ic(bbox);
-  return ic.volume();
-}
-
 void bench_finding_obb(std::string fname)
 {
   std::ifstream input(fname);

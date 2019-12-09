@@ -1,23 +1,16 @@
-// Copyright (c) 2018 GeometryFactory (France).
+// Copyright (c) 2018-2019 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Konstantinos Katrioplas
-
+//                 Mael Rouxel-Labbé
+//
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 
@@ -29,141 +22,124 @@
 #include <CGAL/number_utils.h>
 
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <vector>
 
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-template <typename Linear_algebra_traits>
+template <typename PointRange, typename Traits>
 class Evolution
 {
-  typedef typename Linear_algebra_traits::MatrixXd MatrixXd;
-  typedef typename Linear_algebra_traits::Matrix3d Matrix3d;
-  typedef typename Linear_algebra_traits::Vector3d Vector3d;
-
 public:
-  Evolution(Population<Linear_algebra_traits>& pop, MatrixXd& points)
-    : population(pop), point_data(points)
-  {}
+  typedef typename Traits::FT                                               FT;
+  typedef typename Traits::Matrix                                           Matrix;
 
-  void genetic_algorithm()
+  typedef Optimal_bounding_box::Population<Traits>                          Population;
+  typedef typename Population::Simplex                                      Simplex;
+
+  typedef Optimal_bounding_box::Fitness_map<Population, PointRange, Traits> Fitness_map;
+
+  Evolution(const PointRange& points,
+            CGAL::Random& rng,
+            const Traits& traits)
+    :
+      m_population(traits),
+      m_rng(rng), // @todo just a parameter of genetic_algorithm() ?
+      m_points(points),
+      m_traits(traits)
+  { }
+
+  void genetic_algorithm(const std::size_t population_size = 50)
   {
     // random permutations
-    const std::size_t m = population.size();
+    m_population.initialize(population_size, m_rng);
 
     //groups 1,2 : size m/2  groups 3,4 : size (m - m/2).   m/2 is floored
-    const std::size_t size_first_group = m/2;
-    const std::size_t size_second_group = m - size_first_group;
+    const std::size_t m = population_size;
+    const std::size_t first_group_size = m / 2;
+    const std::size_t second_group_size = m - first_group_size;
 
-    std::vector<std::size_t> ids1(size_first_group), ids2(size_first_group);
-    std::vector<std::size_t> ids3(size_second_group), ids4(size_second_group);
+    std::vector<std::size_t> group1(first_group_size), group2(first_group_size);
+    std::vector<std::size_t> group3(second_group_size), group4(second_group_size);
 
-    CGAL::Random rng;
     int im = static_cast<int>(m);
-    std::generate(ids1.begin(), ids1.end(), [&rng, &im] () { return rng.get_int(0, im); });
-    std::generate(ids2.begin(), ids2.end(), [&rng, &im] () { return rng.get_int(0, im); });
-    std::generate(ids3.begin(), ids3.end(), [&rng, &im] () { return rng.get_int(0, im); });
-    std::generate(ids4.begin(), ids4.end(), [&rng, &im] () { return rng.get_int(0, im); });
-
-    Population<Linear_algebra_traits> group1(size_first_group), group2(size_first_group);
-    Population<Linear_algebra_traits> group3(size_second_group), group4(size_second_group);
-
-    for(std::size_t i=0; i<size_first_group; ++i)
-      group1[i] = population[ids1[i]];
-
-    for(std::size_t i=0; i<size_first_group; ++i)
-      group2[i] = population[ids2[i]];
-
-    for(std::size_t i=0; i<size_second_group; ++i)
-      group3[i] = population[ids3[i]];
-
-    for(std::size_t i=0; i<size_second_group; ++i)
-      group4[i] = population[ids4[i]];
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-    check_det(group1);
-    check_det(group2);
-    check_det(group3);
-    check_det(group4);
-#endif
+    std::generate(group1.begin(), group1.end(), [&]{ return m_rng.get_int(0, im); });
+    std::generate(group2.begin(), group2.end(), [&]{ return m_rng.get_int(0, im); });
+    std::generate(group3.begin(), group3.end(), [&]{ return m_rng.get_int(0, im); });
+    std::generate(group4.begin(), group4.end(), [&]{ return m_rng.get_int(0, im); });
 
     // crossover I
-    Population<Linear_algebra_traits> offspringsA(size_first_group);
     double bias = 0.1;
 
-    for(std::size_t i=0; i<size_first_group; ++i)
+    std::vector<Simplex> new_simplices(m);
+
+    for(std::size_t i=0; i<first_group_size; ++i)
     {
-      std::vector<Matrix3d> offspring(4);
+      std::array<Matrix, 4> offspring;
       for(int j=0; j<4; ++j)
       {
-        double r = rng.get_double();
-        double fitnessA = compute_fitness<Linear_algebra_traits>(group1[i][j], point_data);
-        double fitnessB = compute_fitness<Linear_algebra_traits>(group2[i][j], point_data);
-        double threshold;
+        const double r = m_rng.get_double();
+        const double fitnessA = compute_fitness<Traits>(m_population[group1[i]][j], m_points);
+        const double fitnessB = compute_fitness<Traits>(m_population[group2[i]][j], m_points);
+        const double threshold = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
 
-        if(fitnessA < fitnessB)
-          threshold = 0.5 + bias;
+        if(r < threshold)
+          offspring[j] = m_population[group1[i]][j];
         else
-          threshold = 0.5 - bias;
-
-        if(r < threshold) // choose A
-          offspring[j] = group1[i][j];
-        else // choose B
-          offspring[j] = group2[i][j];
+          offspring[j] = m_population[group2[i]][j];
       }
-      offspringsA[i] = offspring;
-    }
 
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-    std::cout << "offspringsA: \n" ;
-    check_det(offspringsA);
-#endif
+      new_simplices[i] = std::move(offspring);
+    }
 
     // crossover II
-    Population<Linear_algebra_traits> offspringsB(size_second_group);
-    bias = 0.1;
+    bias = 0.1; // @fixme should the bias change? What should be the initial value?
 
-    for(std::size_t i=0; i<size_second_group; ++i)
+    for(std::size_t i=0; i<second_group_size; ++i)
     {
-      std::vector<Matrix3d> offspring(4);
+      std::array<Matrix, 4> offspring;
       for(int j=0; j<4; ++j)
       {
-        double fitnessA = compute_fitness<Linear_algebra_traits>(group3[i][j], point_data);
-        double fitnessB = compute_fitness<Linear_algebra_traits>(group4[i][j], point_data);
-        double lambda;
-        if(fitnessA < fitnessB)
-          lambda = 0.5 + bias;
-        else
-          lambda = 0.5 - bias;
+        const double fitnessA = compute_fitness<Traits>(m_population[group3[i]][j], m_points);
+        const double fitnessB = compute_fitness<Traits>(m_population[group4[i]][j], m_points);
+        const double lambda = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
+        const double rambda = 1 - lambda; // the 'l' in 'lambda' stands for left
+
         // combine information from A and B
-        offspring[j] = lambda * group3[i][j] + lambda * group4[i][j];
+        Matrix new_vertex(3, 3);
+
+        const Matrix& lm = m_population[group3[i]][j];
+        const Matrix& rm = m_population[group4[i]][j];
+
+        // just avoiding having to add matrix sums and scalar multiplications to the concept
+        new_vertex.set(0, 0, lambda * lm(0, 0) + rambda * rm(0, 0));
+        new_vertex.set(0, 1, lambda * lm(0, 1) + rambda * rm(0, 1));
+        new_vertex.set(0, 2, lambda * lm(0, 2) + rambda * rm(0, 2));
+
+        new_vertex.set(1, 0, lambda * lm(1, 0) + rambda * rm(1, 0));
+        new_vertex.set(1, 1, lambda * lm(1, 1) + rambda * rm(1, 1));
+        new_vertex.set(1, 2, lambda * lm(1, 2) + rambda * rm(1, 2));
+
+        new_vertex.set(2, 0, lambda * lm(2, 0) + rambda * rm(2, 0));
+        new_vertex.set(2, 1, lambda * lm(2, 1) + rambda * rm(2, 1));
+        new_vertex.set(2, 2, lambda * lm(2, 2) + rambda * rm(2, 2));
+
+        offspring[j] = m_traits.qr_factorization(new_vertex);
       }
 
-      // qr factorization of the offspring
-      Linear_algebra_traits::qr_factorization(offspring);
-      offspringsB[i] = offspring;
+      new_simplices[first_group_size + i] = std::move(offspring);
     }
 
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-    std::cout << "offspringsB: \n" ;
-    check_det(offspringsB);
-#endif
-
-    CGAL_assertion(offspringsA.size() == size_first_group);
-    CGAL_assertion(offspringsB.size() == size_second_group);
-    CGAL_assertion(offspringsA.size() + offspringsB.size() == population.size());
-
-    // next generatrion
-    for(std::size_t i=0; i<size_first_group; ++i)
-      population[i] = offspringsA[i];
-
-    for(std::size_t i=0; i<size_second_group; ++i)
-      population[size_first_group + i] = offspringsB[i];
+    m_population.simplices() = std::move(new_simplices);
   }
 
-  void evolve(std::size_t generations)
+  void evolve(const std::size_t generations)
   {
+    // hardcoded population size
+    const std::size_t population_size = 50;
+
     // hardcoded nelder_mead_iterations
     const std::size_t nelder_mead_iterations = 20;
 
@@ -176,10 +152,10 @@ public:
     for(std::size_t t=0; t<generations; ++t)
     {
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      std::cout << "generation= " << t << "\n";
+      std::cout << "generation = " << t << "\n";
 #endif
 
-      genetic_algorithm();
+      genetic_algorithm(population_size);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       //std::cout << "pop after genetic" << std::endl;
@@ -187,22 +163,22 @@ public:
       //std::cout << std::endl;
 #endif
 
-      for(std::size_t s = 0; s < population.size(); ++s)
-        nelder_mead<Linear_algebra_traits>(population[s], point_data, nelder_mead_iterations);
+      for(std::size_t s=0; s<population_size; ++s)
+        nelder_mead(m_population[s], m_points, nelder_mead_iterations, m_traits);
+
+      // stopping criteria
+      Fitness_map fitness_map(m_population, m_points);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       //std::cout << "pop after nelder mead: " << std::endl;
       //pop.show_population();
       //std::cout << std::endl;
-      Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map_debug(population, point_data);
-      Matrix3d R_now = fitness_map_debug.get_best();
-      std::cout << "det = " << Linear_algebra_traits::determinant(R_now) << std::endl;
+      const Matrix& R_now = fitness_map.get_best();
+      std::cout << "det = " << m_traits.determinant(R_now) << std::endl;
 #endif
 
-      // stopping criteria
-      Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map(population, point_data);
       new_fit_value = fitness_map.get_best_fitness_value();
-      double difference = new_fit_value - prev_fit_value;
+      const double difference = new_fit_value - prev_fit_value;
 
       if(CGAL::abs(difference) < tolerance * new_fit_value)
         ++stale;
@@ -214,28 +190,18 @@ public:
     }
   }
 
-  const Matrix3d get_best()
+  const Matrix& get_best()
   {
-    Fitness_map<Linear_algebra_traits, Matrix3d, MatrixXd> fitness_map(population, point_data);
+    Fitness_map fitness_map(m_population, m_points);
     return fitness_map.get_best();
   }
 
 private:
-  Population<Linear_algebra_traits> population;
-  MatrixXd point_data;
+  Population m_population;
+  CGAL::Random m_rng;
+  const PointRange& m_points;
+  const Traits& m_traits;
 };
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-template <typename Simplex>
-void check_det(Population<Simplex>& pop)
-{
-  for(std::size_t i=0, ps=pop.size(); i<ps; ++i)
-  {
-    for(std::size_t j=0; j<4; ++j)
-      std::cout << Linear_algebra_traits::determinant(pop[i][j]) << std::endl;
-  }
-}
-#endif
 
 } // end namespace Optimal_bounding_box
 } // end namespace CGAL

@@ -1,188 +1,160 @@
-// Copyright (c) 2018 GeometryFactory (France).
+// Copyright (c) 2018-2019 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Konstantinos Katrioplas
-
+//                 Mael Rouxel-Labbé
+//
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 
-#include <CGAL/assertions.h>
 #include <CGAL/Optimal_bounding_box/fitness_function.h>
 
-#include <boost/iterator/counting_iterator.hpp>
+#include <CGAL/assertions.h>
 
-#include <vector>
+#include <algorithm>
+#include <array>
 
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-template <typename Linear_algebra_traits, typename Matrix>
-const Matrix reflection(const Matrix& S_centroid,
-                        const Matrix& S_worst)
+template <typename Matrix, typename Traits>
+Matrix reflection(const Matrix& S_centroid,
+                  const Matrix& S_worst,
+                  const Traits& traits)
 {
-  CGAL_assertion(S_centroid.rows() == 3);
-  CGAL_assertion(S_centroid.rows() == 3);
-  CGAL_assertion(S_worst.cols() == 3);
-  CGAL_assertion(S_worst.cols() == 3);
+  CGAL_assertion(S_centroid.number_of_rows() == 3 && S_centroid.number_of_columns() == 3);
+  CGAL_assertion(S_worst.number_of_rows() == 3 && S_worst.number_of_columns() == 3);
 
-  return S_centroid * Linear_algebra_traits::transpose(S_worst) * S_centroid;
+  return S_centroid * traits.transpose(S_worst) * S_centroid;
 }
 
-template <typename Linear_algebra_traits, typename Matrix>
-const Matrix expansion(const Matrix& S_centroid,
-                       const Matrix& S_worst,
-                       const Matrix& S_reflection)
+template <typename Matrix, typename Traits>
+Matrix expansion(const Matrix& S_centroid,
+                 const Matrix& S_worst,
+                 const Matrix& S_reflection,
+                 const Traits& traits)
 {
-  CGAL_assertion(S_centroid.rows() == 3);
-  CGAL_assertion(S_centroid.rows() == 3);
-  CGAL_assertion(S_worst.cols() == 3);
-  CGAL_assertion(S_worst.cols() == 3);
-  CGAL_assertion(S_reflection.cols() == 3);
-  CGAL_assertion(S_reflection.cols() == 3);
+  CGAL_assertion(S_centroid.number_of_rows() == 3 && S_centroid.number_of_columns() == 3);
+  CGAL_assertion(S_worst.number_of_rows() == 3 && S_worst.number_of_columns() == 3);
+  CGAL_assertion(S_reflection.number_of_rows() == 3 && S_reflection.number_of_columns() == 3);
 
-  return S_centroid * Linear_algebra_traits::transpose(S_worst) * S_reflection;
+  return S_centroid * traits.transpose(S_worst) * S_reflection;
 }
 
-template <typename Linear_algebra_traits, typename Matrix>
+template <typename Matrix, typename Traits>
 Matrix mean(const Matrix& m1,
-            const Matrix& m2)
+            const Matrix& m2,
+            const Traits& traits)
 {
   // same API for reduction
-  CGAL_assertion(m1.rows() == 3);
-  CGAL_assertion(m1.rows() == 3);
-  CGAL_assertion(m2.cols() == 3);
-  CGAL_assertion(m2.cols() == 3);
+  CGAL_assertion(m1.number_of_rows() == 3 && m1.number_of_columns() == 3);
+  CGAL_assertion(m2.number_of_rows() == 3 && m2.number_of_columns() == 3);
 
-  Matrix reduction = 0.5 * m1 + 0.5 * m2;
-  Matrix Q = Linear_algebra_traits::qr_factorization(reduction);
-  double det = Linear_algebra_traits::determinant(Q);
-  return Q / det;
+  const Matrix reduction = 0.5 * m1 + 0.5 * m2;
+  const Matrix Q = traits.qr_factorization(reduction);
+  const typename Traits::FT det = traits.determinant(Q);
+
+  return (1. / det) * Q;
 }
 
-template <typename Linear_algebra_traits, typename Matrix>
+template <typename Matrix, typename Traits>
 const Matrix nm_centroid(const Matrix& S1,
                          const Matrix& S2,
-                         const Matrix& S3)
+                         const Matrix& S3,
+                         const Traits& traits)
 {
-  Matrix mean = (S1 + S2 + S3) / 3.0;
-  Matrix Q = Linear_algebra_traits::qr_factorization(mean);
-  double det = Linear_algebra_traits::determinant(Q);
-  return Q / det;
+  const Matrix mean = (1./3.) * (S1 + S2 + S3);
+  const Matrix Q = traits.qr_factorization(mean);
+  const typename Traits::FT det = traits.determinant(Q);
+
+  return (1. / det) * Q;
 }
 
-// needed in nelder mead algorithm
-struct Comparator
+// It's a 3D simplex with 4 rotation matrices as vertices
+template <typename Simplex, typename PointRange, typename Traits>
+void nelder_mead(Simplex& simplex,
+                 const PointRange& points,
+                 const std::size_t nelder_mead_iterations,
+                 const Traits& traits)
 {
-  Comparator(const std::vector<double>& in) : fitness(in) { }
+  typedef typename Traits::FT                                 FT;
+  typedef typename Traits::Matrix                             Matrix;
 
-  inline bool operator() (std::size_t& i, std::size_t& j) {
-    return fitness[i] < fitness[j];
-  }
+  std::array<FT, 4> fitness;
+  std::array<std::size_t, 4> indices = {{ 0, 1, 2, 3 }};
 
-  const std::vector<double>& fitness;
-};
-
-// simplex: 4 rotation matrices are its vertices
-template <typename Linear_algebra_traits>
-void nelder_mead(std::vector<typename Linear_algebra_traits::Matrix3d>& simplex,
-                 const typename Linear_algebra_traits::MatrixXd& point_data,
-                 std::size_t nelder_mead_iterations)
-{
-  CGAL_assertion(simplex.size() == 4); // tetrahedron
-
-
-  typedef typename Linear_algebra_traits::Matrix3d Matrix3d;
-
-  std::vector<double> fitness(4);
-  std::vector<std::size_t> indices(boost::counting_iterator<std::size_t>(0),
-                                   boost::counting_iterator<std::size_t>(simplex.size()));
-
-  for(std::size_t t = 0; t < nelder_mead_iterations; ++t)
+  for(std::size_t t=0; t<nelder_mead_iterations; ++t)
   {
     for(std::size_t i=0; i<4; ++i)
-    {
-      fitness[i] = compute_fitness<Linear_algebra_traits>(simplex[i], point_data);
-    }
-
-    CGAL_assertion(fitness.size() == 4);
-    CGAL_assertion(indices.size() == 4);
+      fitness[i] = compute_fitness<Traits>(simplex[i], points);
 
     // get indices of sorted sequence
-    Comparator compare_indices(fitness); // @todo lambda this stuff
-    std::sort(indices.begin(), indices.end(), compare_indices);
+    std::sort(indices.begin(), indices.end(),
+              [&fitness](const std::size_t i, const std::size_t j) -> bool
+                        { return fitness[i] < fitness[j]; });
 
     // new sorted simplex & fitness
-    std::vector<Matrix3d> s_simplex(4);
-    std::vector<double> s_fitness(4);
-    for(int i = 0; i < 4; ++i)
+    Simplex s_simplex;
+    std::array<FT, 4> s_fitness;
+    for(int i=0; i<4; ++i)
     {
       s_simplex[i] = simplex[indices[i]];
       s_fitness[i] = fitness[indices[i]];
     }
 
-    simplex = s_simplex;
-    fitness = s_fitness;
+    simplex = std::move(s_simplex);
+    fitness = std::move(s_fitness);
 
     // centroid
-    const Matrix3d v_centroid = nm_centroid<Linear_algebra_traits>(simplex[0], simplex[1], simplex[2]);
+    const Matrix v_centroid = nm_centroid(simplex[0], simplex[1], simplex[2], traits);
 
     // find worst's vertex reflection
-    const Matrix3d v_worst = simplex[3];
-    const Matrix3d v_refl = reflection<Linear_algebra_traits>(v_centroid, v_worst);
-    const double f_refl = compute_fitness<Linear_algebra_traits>(v_refl, point_data);
+    const Matrix& v_worst = simplex[3];
+    const Matrix v_refl = reflection(v_centroid, v_worst, traits);
+    const FT f_refl = compute_fitness<Traits>(v_refl, points);
 
     if(f_refl < fitness[2])
     {
       if(f_refl >= fitness[0]) // if reflected point is not better than the best
       {
-        // do reflection
-        simplex[3] = v_refl;
+        // reflection
+        simplex[3] = std::move(v_refl);
       }
       else
       {
         // expansion
-        const Matrix3d v_expand = expansion<Linear_algebra_traits>(v_centroid, v_worst, v_refl);
-        const double f_expand = compute_fitness<Linear_algebra_traits>(v_expand, point_data);
+        const Matrix v_expand = expansion(v_centroid, v_worst, v_refl, traits);
+        const FT f_expand = compute_fitness<Traits>(v_expand, points);
         if(f_expand < f_refl)
-          simplex[3] = v_expand;
+          simplex[3] = std::move(v_expand);
         else
-          simplex[3] = v_refl;
+          simplex[3] = std::move(v_refl);
       }
     }
     else // if reflected vertex is not better
     {
-      const Matrix3d v_mean = mean<Linear_algebra_traits>(v_centroid, v_worst);
-      const double f_mean = compute_fitness<Linear_algebra_traits>(v_mean, point_data);
+      const Matrix v_mean = mean(v_centroid, v_worst, traits);
+      const FT f_mean = compute_fitness<Traits>(v_mean, points);
       if(f_mean <= fitness[3])
+      {
         // contraction of worst
-        simplex[3] = v_mean;
+        simplex[3] = std::move(v_mean);
+      }
       else
       {
         // reduction: move all vertices towards the best
         for(std::size_t i=1; i<4; ++i)
-        {
-          simplex[i] = mean<Linear_algebra_traits>(simplex[i], simplex[0]);
-        }
+          simplex[i] = mean(simplex[i], simplex[0], traits);
       }
     }
-
-    CGAL_assertion(simplex.size() == 4); // tetrahedron
-  } // iterations
+  } // nelder mead iterations
 }
 
 } // end namespace Optimal_bounding_box

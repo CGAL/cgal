@@ -1,96 +1,85 @@
-// Copyright (c) 2018 GeometryFactory (France).
+// Copyright (c) 2018-2019 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Konstantinos Katrioplas
-
+//                 Mael Rouxel-Labbé
+//
 #ifndef CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 #define CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 
-#include <CGAL/Optimal_bounding_box/population.h>
-
 #include <CGAL/assertions.h>
 
+#include <algorithm>
 #include <limits>
 
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
-double compute_fitness(const Vertex& R, const Matrix& data)
+template <typename Traits, typename PointRange>
+typename Traits::FT
+compute_fitness(const typename Traits::Matrix& R, // rotation matrix
+                const PointRange& points)
 {
-  // R: rotation matrix
-  CGAL_assertion(R.cols() == 3);
-  CGAL_assertion(R.rows() == 3);
-  // data: points
-  CGAL_assertion(data.cols() == 3);
-  CGAL_assertion(data.rows() >= 3);
+  typedef typename Traits::FT                                   FT;
+  typedef typename Traits::Point_3                              Point;
 
-  typedef typename Linear_algebra_traits::Vector3d Vector3d;
-  typedef typename Linear_algebra_traits::Index Index;
+  CGAL_assertion(R.number_of_rows() == 3 && R.number_of_columns() == 3);
+  CGAL_assertion(points.size() >= 3);
 
-  double xmin, xmax, ymin, ymax, zmin, zmax;
-  for(Index i=0; i < static_cast<Index>(data.rows()); ++i)
+  FT xmin, ymin, zmin, xmax, ymax, zmax;
+  xmin = ymin = zmin = std::numeric_limits<double>::max();
+  xmax = ymax = zmax = std::numeric_limits<double>::lowest();
+
+  for(const Point& pt : points)
   {
-    Vector3d vec = Linear_algebra_traits::row3(data, i);
-    vec = R * vec;
+    const FT x = pt.x(), y = pt.y(), z = pt.z();
 
-    if(i == 0)
-    {
-      xmin = xmax = vec.coeff(0);
-      ymin = ymax = vec.coeff(1);
-      zmin = zmax = vec.coeff(2);
-    }
-    else
-    {
-      if(vec.coeff(0) < xmin) xmin = vec.coeff(0);
-      if(vec.coeff(1) < ymin) ymin = vec.coeff(1);
-      if(vec.coeff(2) < zmin) zmin = vec.coeff(2);
-      if(vec.coeff(0) > xmax) xmax = vec.coeff(0);
-      if(vec.coeff(1) > ymax) ymax = vec.coeff(1);
-      if(vec.coeff(2) > zmax) zmax = vec.coeff(2);
-    }
+    const FT rx = x*R(0, 0) + y*R(0, 1) + z*R(0, 2);
+    const FT ry = x*R(1, 0) + y*R(1, 1) + z*R(1, 2);
+    const FT rz = x*R(2, 0) + y*R(2, 1) + z*R(2, 2);
+
+    xmin = (std::min)(xmin, rx);
+    ymin = (std::min)(ymin, ry);
+    zmin = (std::min)(zmin, rz);
+    xmax = (std::max)(xmax, rx);
+    ymax = (std::max)(ymax, ry);
+    zmax = (std::max)(zmax, rz);
   }
-
-  CGAL_assertion(xmax > xmin);
-  CGAL_assertion(ymax > ymin);
-  CGAL_assertion(zmax > zmin);
 
   // volume
   return ((xmax - xmin) * (ymax - ymin) * (zmax - zmin));
 }
 
-template <typename Linear_algebra_traits, typename Vertex, typename Matrix>
+template <typename Population, typename PointRange, typename Traits>
 struct Fitness_map
 {
-  Fitness_map(Population<Linear_algebra_traits>& p, Matrix& points)
-    : pop(p), points(points)
-  {}
+  typedef typename Traits::FT                               FT;
+  typedef typename Population::Vertex                       Vertex;
 
-  const Vertex get_best()
+  Fitness_map(const Population& population,
+              const PointRange& points)
+    :
+      m_pop(population),
+      m_points(points)
+  { }
+
+  const Vertex& get_best() const // @todo any point caching this?
   {
     std::size_t simplex_id, vertex_id;
-    double best_fitness = std::numeric_limits<int>::max();
-    for(std::size_t i=0; i<pop.size(); ++i)
+    FT best_fitness = std::numeric_limits<double>::max();
+    for(std::size_t i=0, ps=m_pop.size(); i<ps; ++i)
     {
       for(std::size_t j=0; j<4; ++j)
       {
-        const Vertex vertex = pop[i][j];
-        const double fitness = compute_fitness<Linear_algebra_traits>(vertex, points);
+        const Vertex& vertex = m_pop[i][j];
+        const FT fitness = compute_fitness<Traits>(vertex, m_points);
         if(fitness < best_fitness)
         {
           simplex_id = i;
@@ -100,17 +89,18 @@ struct Fitness_map
       }
     }
 
-    return pop[simplex_id][vertex_id];
+    return m_pop[simplex_id][vertex_id];
   }
 
-  double get_best_fitness_value()
+  FT get_best_fitness_value() const
   {
-    const Vertex best_mat = get_best();
-    return compute_fitness<Linear_algebra_traits>(best_mat, points);
+    const Vertex& best_mat = get_best();
+    return compute_fitness<Traits>(best_mat, m_points);
   }
 
-  Population<Linear_algebra_traits>& pop;
-  const Matrix& points;
+private:
+  const Population& m_pop;
+  const PointRange& m_points;
 };
 
 } // end namespace Optimal_bounding_box
