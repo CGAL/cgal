@@ -1,8 +1,8 @@
 # This is the CMake script for compiling this folder.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Point_set_processing_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 # Find CGAL
@@ -37,7 +37,7 @@ if ( CGAL_FOUND )
     find_package( TBB REQUIRED )
   endif()
 
-  # Executables that do *not* require EIGEN or LAPACK
+  # Executables that do *not* require EIGEN
   create_single_source_cgal_program( "average_spacing_example.cpp" )
   create_single_source_cgal_program( "bilateral_smooth_point_set_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
@@ -70,27 +70,18 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
   
-  # Use Eigen or BLAS and LAPACK (optional)
+  # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(LAPACK)
-    if(LAPACK_FOUND)
-      include( ${LAPACK_USE_FILE} )
-    endif(LAPACK_FOUND)
-  else()
+  if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
-  endif()
-
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
-    # Executables that require Eigen or BLAS and LAPACK
+    # Executables that require Eigen
     create_single_source_cgal_program( "jet_smoothing_example.cpp" )
     create_single_source_cgal_program( "normal_estimation.cpp" )
     create_single_source_cgal_program( "edges_example.cpp" )
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
+  else()
 
-    message(STATUS "NOTICE: Some of the executables in this directory need either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
-
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+    message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
+  endif()
 
   foreach(target
       scale_estimation_example

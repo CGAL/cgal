@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -55,6 +46,7 @@
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
+#include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 
@@ -100,7 +92,7 @@ template <class Point_3, class OutputIterator>
 void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2,
                             internal::Convex_hull_3::Output_iterator_wrapper<OutputIterator>& w)
 {
-  BOOST_FOREACH(const Point_3& p, CH_2)
+  for(const Point_3& p : CH_2)
     *w.out++ = p;
 }
 
@@ -111,7 +103,7 @@ void copy_face_graph(const TDS& tds, internal::Convex_hull_3::Output_iterator_wr
 {
   typedef typename boost::graph_traits<TDS>::vertex_descriptor vertex_descriptor;
   typename boost::property_map<TDS, boost::vertex_point_t >::const_type vpm = get(boost::vertex_point, tds);
-  BOOST_FOREACH(vertex_descriptor vh, vertices(tds))
+  for(vertex_descriptor vh : vertices(tds))
   {
     *wrapper.out++ = get(vpm, vh);
   }
@@ -301,7 +293,7 @@ public:
   Is_on_positive_side_of_plane_3(const Traits&,const Point_3& p_,const Point_3& q_,const Point_3& r_)
     : p(p_),q(q_),r(r_)
     , ak_plane()
-    , ek_plane_ptr(0)
+    , ek_plane_ptr(nullptr)
   {
     ak_plane.vector =
       typename Approx_K::Vector_3(Interval_nt_advanced(0., std::numeric_limits<double>::infinity()),
@@ -331,7 +323,7 @@ public:
   }
 
   ~Is_on_positive_side_of_plane_3(){
-    if (ek_plane_ptr!=NULL) delete ek_plane_ptr;
+    if (ek_plane_ptr!=nullptr) delete ek_plane_ptr;
   }
 
   bool operator() (const Point_3& s) const
@@ -360,7 +352,7 @@ public:
       }
     }
     catch (Uncertain_conversion_exception&){}
-    if (ek_plane_ptr==NULL) {
+    if (ek_plane_ptr==nullptr) {
       const typename Exact_K::Point_3 ep = to_EK(p);
       ek_plane_ptr = new Vector_plus_point<Exact_K>;
       ek_plane_ptr->vector = cross_product(to_EK(q)-ep, to_EK(r)-ep);
@@ -422,7 +414,7 @@ void copy_ch2_to_face_graph(const std::list<Point_3>& CH_2, Polyhedron_3& P)
   typedef typename Graph_traits::face_descriptor face_descriptor;
   std::vector<vertex_descriptor> vertices;
   vertices.reserve(CH_2.size());
-  BOOST_FOREACH(const Point_3& p, CH_2){
+  for(const Point_3& p : CH_2){
     vertices.push_back(add_vertex(P));
     put(vpm, vertices.back(),p);
   }

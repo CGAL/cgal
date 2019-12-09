@@ -55,8 +55,8 @@ void main(void) {
     vec3 L = light_pos.xyz - fP.xyz;
     vec3 V = -fP.xyz;
     vec3 N;
-    if(fN == highp vec3(0.0,0.0,0.0))
-      N = highp vec3(0.0,0.0,0.0);
+    if(fN == vec3(0.0,0.0,0.0))
+      N = vec3(0.0,0.0,0.0);
     else
       N = normalize(fN);
     L = normalize(L);

@@ -1,19 +1,10 @@
 // Copyright (c) 2016  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Mael Rouxel-Labbé
@@ -29,7 +20,6 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Unique_hash_map.h>
 
-#include <boost/foreach.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -237,7 +227,7 @@ public:
     bool seam;
     const Self* mesh_;
 
-    halfedge_iterator() : hd(), end(), seam(false), mesh_(NULL) { }
+    halfedge_iterator() : hd(), end(), seam(false), mesh_(nullptr) { }
 
     halfedge_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), seam(false), mesh_(m)
@@ -350,7 +340,7 @@ public:
 
   public:
     /// Constructors
-    vertex_iterator() : hd(), end(), mesh_(NULL) { }
+    vertex_iterator() : hd(), end(), mesh_(nullptr) { }
 
     vertex_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), mesh_(m)
@@ -433,7 +423,7 @@ public:
 #endif
 
     edge_descriptor()
-      : mesh_(NULL)
+      : mesh_(nullptr)
     {}
 
     edge_descriptor(const halfedge_descriptor& hd, const Self* m)
@@ -470,7 +460,7 @@ public:
     const Self* mesh_;
 
   public:
-    edge_iterator() : hd(), end(), seam(false), mesh_(NULL) { }
+    edge_iterator() : hd(), end(), seam(false), mesh_(nullptr) { }
 
     edge_iterator(const Iterator_range<TM_halfedge_iterator>& ir, const Self* m)
       : hd(ir.first), end(ir.second), seam(false), mesh_(m)

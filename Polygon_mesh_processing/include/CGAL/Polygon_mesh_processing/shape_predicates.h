@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Konstantinos Katrioplas,
@@ -32,7 +23,6 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 #include <limits>
@@ -308,9 +298,9 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   const FT sq_threshold = threshold * threshold;
   const halfedge_descriptor h0 = halfedge(f, tm);
 
-  cpp11::array<FT, 3> sq_lengths;
+  std::array<FT, 3> sq_lengths;
   int pos = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
+  for(halfedge_descriptor h : halfedges_around_face(h0, tm))
   {
     const FT sq_d = traits.compute_squared_distance_3_object()(get(vpmap, source(h, tm)),
                                                                get(vpmap, target(h, tm)));
@@ -323,7 +313,7 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   }
 
   pos = 0;
-  BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(h0, tm))
+  for(halfedge_descriptor h : halfedges_around_face(h0, tm))
   {
     const vertex_descriptor v0 = source(h, tm);
     const vertex_descriptor v1 = target(h, tm);

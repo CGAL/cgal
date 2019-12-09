@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
@@ -35,13 +26,10 @@
 #include <vector>
 #include <cstdlib>
 #include <queue>
-#include <boost/unordered_map.hpp>
+#include <map>
 
 namespace CGAL
 {
-  typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-  typedef Local_kernel::Point_3  Local_point;
-  typedef Local_kernel::Vector_3 Local_vector;
 
 //------------------------------------------------------------------------------
 namespace internal
@@ -58,90 +46,77 @@ namespace internal
                n.z()+((p.x()-q.x())*(p.y()+q.y())));
     }
 
-  inline
-  Local_vector compute_normal_of_face(const std::vector<Local_point>& points)
+  template <class Point, class Vector>
+  Vector compute_normal_of_face(const std::vector<Point>& points)
   {
-    Local_vector normal(CGAL::NULL_VECTOR);
+    Vector normal(CGAL::NULL_VECTOR);
     unsigned int nb = 0;
     for (std::size_t i=0; i<points.size(); ++i)
     {
-      newell_single_step_3(points[i], points[(i+1)%points.size()], normal);
+      internal::newell_single_step_3(points[i], points[(i+1)%points.size()],
+                                     normal);
       ++nb;
     }
     
     assert(nb>0);
-    return (Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
+    return (typename Kernel_traits<Vector>::Kernel::Construct_scaled_vector_3()
+            (normal, 1.0/nb));
   }
 
   ////////////////////////////////////////////////////////////////
   // Structs to transform any CGAL point/vector into a Local_point/Local_vector
-  template<typename K>
+  template<typename K, typename Local_kernel>
   struct Geom_utils
   {
-    static Local_point get_local_point(const typename K::Point_2& p)
+    static typename Local_kernel::Point_3 get_local_point(const typename K::Point_2& p)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return Local_point(converter(p.x()), 0, converter(p.y()));
     }
-    static Local_point get_local_point(const typename K::Weighted_point_2& p)
+    static typename Local_kernel::Point_3 get_local_point(const typename K::Weighted_point_2& p)
     {
       typename K::Point_2 lp(p);
-      return Geom_utils<K>::get_local_point(lp);
+      return Geom_utils<K, Local_kernel>::get_local_point(lp);
     }
-    static Local_point get_local_point(const typename K::Point_3& p)
+    static typename Local_kernel::Point_3 get_local_point(const typename K::Point_3& p)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(p);
     }
-    static Local_point get_local_point(const typename K::Weighted_point_3& p)
+    static typename Local_kernel::Point_3 get_local_point(const typename K::Weighted_point_3& p)
     {
       typename K::Point_3 lp(p);
-      return Geom_utils<K>::get_local_point(lp);
+      return Geom_utils<K, Local_kernel>::get_local_point(lp);
     }
-    static Local_vector get_local_vector(const typename K::Vector_2& v)
+    static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_2& v)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return Local_vector(converter(v.x()), 0, converter(v.y()));
     }
-    static Local_vector get_local_vector(const typename K::Vector_3& v)
+    static typename Local_kernel::Vector_3 get_local_vector(const typename K::Vector_3& v)
     {
       CGAL::Cartesian_converter<K, Local_kernel> converter;
       return converter(v);
     }
   };
 
-  // Specialization for Local_kernel, because there is no need of convertion here.
-  template<>
-  struct Geom_utils<Local_kernel>
+  // Specialization when K==Local_kernel, because there is no need of convertion here.
+  template<typename Local_kernel>
+  struct Geom_utils<Local_kernel, Local_kernel>
   {
-    static Local_point get_local_point(const Local_kernel::Point_2& p)
-    { return Local_point(p.x(), 0, p.y()); }
-    static Local_point get_local_point(const Local_kernel::Weighted_point_2& p)
-    { return Local_point(p.point().x(), 0, p.point().y());}
-    static const Local_point & get_local_point(const Local_kernel::Point_3& p)
+    static typename Local_kernel::Point_3 get_local_point(const typename Local_kernel::Point_2& p)
+    { return typename Local_kernel::Point_3(p.x(), 0, p.y()); }
+    static typename Local_kernel::Point_3 get_local_point(const typename Local_kernel::Weighted_point_2& p)
+    { return typename Local_kernel::Point_3(p.point().x(), 0, p.point().y());}
+    static const typename Local_kernel::Point_3 & get_local_point(const typename Local_kernel::Point_3& p)
     { return p; }
-    static Local_point get_local_point(const Local_kernel::Weighted_point_3& p)
-    { return Local_point(p);}
-    static Local_vector get_local_vector(const Local_kernel::Vector_2& v)
-    { return Local_vector(v.x(), 0, v.y()); }
-    static const Local_vector& get_local_vector(const Local_kernel::Vector_3& v)
+    static typename Local_kernel::Point_3 get_local_point(const typename Local_kernel::Weighted_point_3& p)
+    { return typename Local_kernel::Point_3(p);}
+    static typename Local_kernel::Vector_3 get_local_vector(const typename Local_kernel::Vector_2& v)
+    { return typename Local_kernel::Vector_3(v.x(), 0, v.y()); }
+    static const typename Local_kernel::Vector_3& get_local_vector(const typename Local_kernel::Vector_3& v)
     { return v; }
-  };    
-
-  ////////////////////////////////////////////////////////////////
-  // Global function to simplify function calls.
-  template<typename KPoint>
-  Local_point get_local_point(const KPoint& p)
-  {
-    return Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel>::
-      get_local_point(p);
-  }
-  template<typename KVector>
-  Local_vector get_local_vector(const KVector& v)
-  {
-    return Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel>::
-      get_local_vector(v);
-  }
+  };
 } // End namespace internal
 
 //------------------------------------------------------------------------------
@@ -149,54 +124,74 @@ template<typename BufferType=float, typename IndexType=std::size_t>
 class Buffer_for_vao
 {
 public:
-  Buffer_for_vao(std::vector<BufferType>* pos=NULL,
-                 std::vector<IndexType>* indices=NULL,
-                 CGAL::Bbox_3* bbox=NULL,
-                 std::vector<BufferType>* color=NULL,
-                 std::vector<BufferType>* flat_normal=NULL,
-                 std::vector<BufferType>* gouraud_normal=NULL) :
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+  typedef Local_kernel::Point_3  Local_point;
+  typedef Local_kernel::Vector_3 Local_vector;
+
+  Buffer_for_vao(std::vector<BufferType>* pos=nullptr,
+                 std::vector<IndexType>* indices=nullptr,
+                 CGAL::Bbox_3* bbox=nullptr,
+                 std::vector<BufferType>* color=nullptr,
+                 std::vector<BufferType>* flat_normal=nullptr,
+                 std::vector<BufferType>* gouraud_normal=nullptr) :
     m_pos_buffer(pos),
     m_index_buffer(indices),
     m_color_buffer(color),
     m_flat_normal_buffer(flat_normal),
     m_gouraud_normal_buffer(gouraud_normal),
     m_bb(bbox),
+    m_zero_x(true),
+    m_zero_y(true),
+    m_zero_z(true),
     m_face_started(false)
   {}
 
   void clear()
   {
-    if (m_pos_buffer!=NULL)            { m_pos_buffer->clear(); }
-    if (m_color_buffer!=NULL)          { m_color_buffer->clear(); }
-    if (m_index_buffer!=NULL)          { m_index_buffer->clear(); }
-    if (m_flat_normal_buffer!=NULL)    { m_flat_normal_buffer->clear(); }
-    if (m_gouraud_normal_buffer!=NULL) { m_gouraud_normal_buffer->clear(); }
+    if (m_pos_buffer!=nullptr)            { m_pos_buffer->clear(); }
+    if (m_color_buffer!=nullptr)          { m_color_buffer->clear(); }
+    if (m_index_buffer!=nullptr)          { m_index_buffer->clear(); }
+    if (m_flat_normal_buffer!=nullptr)    { m_flat_normal_buffer->clear(); }
+    if (m_gouraud_normal_buffer!=nullptr) { m_gouraud_normal_buffer->clear(); }
+
+    m_zero_x=true;
+    m_zero_y=true;
+    m_zero_z=true;
   }
 
   bool is_empty() const
   {
     return
-      (m_pos_buffer!=NULL && m_pos_buffer->empty()) &&
-      (m_color_buffer!=NULL || m_color_buffer->empty()) &&
-      (m_flat_normal_buffer!=NULL || m_flat_normal_buffer->empty()) &&
-      (m_gouraud_normal_buffer!=NULL || m_gouraud_normal_buffer->empty()) &&
-      (m_index_buffer!=NULL || m_index_buffer->empty());
+      (m_pos_buffer==nullptr || m_pos_buffer->empty()) &&
+      (m_color_buffer==nullptr || m_color_buffer->empty()) &&
+      (m_flat_normal_buffer==nullptr || m_flat_normal_buffer->empty()) &&
+      (m_gouraud_normal_buffer==nullptr || m_gouraud_normal_buffer->empty()) &&
+      (m_index_buffer==nullptr || m_index_buffer->empty());
   }
 
   bool has_position() const
-  { return m_pos_buffer!=NULL; }
+  { return m_pos_buffer!=nullptr; }
 
   bool has_indices() const
-  { return m_index_buffer!=NULL; }
+  { return m_index_buffer!=nullptr; }
 
   bool has_color() const
-  { return m_color_buffer!=NULL; }
+  { return m_color_buffer!=nullptr; }
 
   bool has_flat_normal() const
-  { return m_flat_normal_buffer!=NULL; }
+  { return m_flat_normal_buffer!=nullptr; }
   
   bool has_gouraud_normal() const
-  { return m_gouraud_normal_buffer!=NULL; }
+  { return m_gouraud_normal_buffer!=nullptr; }
+
+  bool has_zero_x() const
+  { return m_zero_x; }  
+
+  bool has_zero_y() const
+  { return m_zero_y; }  
+
+  bool has_zero_z() const
+  { return m_zero_z; }  
 
   // 1.1) Add a point, without color. Return the index of the added point.
   template<typename KPoint>
@@ -204,11 +199,15 @@ public:
   {
     if (!has_position()) return (std::size_t)-1;
     
-    Local_point p=internal::get_local_point(kp);
+    Local_point p=get_local_point(kp);
     add_point_in_buffer(p, *m_pos_buffer);
 
-    if (m_bb!=NULL)
+    if (m_bb!=nullptr)
     { (*m_bb)=(*m_bb)+p.bbox(); }
+    
+    if (m_zero_x && p.x()!=0) { m_zero_x=false; }
+    if (m_zero_y && p.y()!=0) { m_zero_y=false; }
+    if (m_zero_z && p.z()!=0) { m_zero_z=false; }
 
     return m_pos_buffer->size()-3;
   }
@@ -273,7 +272,7 @@ public:
   template<typename KNormal>
   void face_begin(const KNormal& kv)
   {
-    m_normal_of_face=internal::get_local_vector(kv);
+    m_normal_of_face=get_local_vector(kv);
     face_begin_internal(false, true);
   }
 
@@ -282,7 +281,7 @@ public:
   void face_begin(const CGAL::Color& c, const KNormal& kv)
   {
     m_color_of_face=c;
-    m_normal_of_face=internal::get_local_vector(kv);
+    m_normal_of_face=get_local_vector(kv);
     face_begin_internal(true, true);
   }
 
@@ -294,7 +293,7 @@ public:
   {
     if (!is_a_face_started()) return false;
 
-    Local_point p=internal::get_local_point(kp);
+    Local_point p=get_local_point(kp);
     if (m_points_of_face.empty() || m_points_of_face.back()!=p) // TODO test if the distance between prev point and kp is smaller than an epsilon (?? not sure ??)
     {
       m_points_of_face.push_back(p);
@@ -311,7 +310,7 @@ public:
   {
     if (add_point_in_face(kp))
     {
-      m_vertex_normals_for_face.push_back(internal::get_local_vector(p_normal));
+      m_vertex_normals_for_face.push_back(get_local_vector(p_normal));
       return true;
     }
     return false;
@@ -368,7 +367,8 @@ public:
     }
     
     Local_vector normal=(m_started_face_has_normal?m_normal_of_face:
-                         internal::compute_normal_of_face(m_points_of_face));
+                         internal::compute_normal_of_face
+                         <Local_point, Local_vector>(m_points_of_face));
 
     if (m_points_of_face.size()==3)
     { triangular_face_end_internal(normal); } // Triangle: no need to triangulate
@@ -391,7 +391,7 @@ public:
   template<typename KPoint>
   static void add_point_in_buffer(const KPoint& kp, std::vector<float>& buffer)
   {
-    Local_point p=internal::get_local_point(kp);
+    Local_point p=get_local_point(kp);
     buffer.push_back(p.x());
     buffer.push_back(p.y());
     buffer.push_back(p.z());
@@ -401,7 +401,7 @@ public:
   template<typename KVector>
   static void add_normal_in_buffer(const KVector& kv, std::vector<float>& buffer)
   {
-    Local_vector n=internal::get_local_vector(kv);
+    Local_vector n=get_local_vector(kv);
     buffer.push_back(n.x());
     buffer.push_back(n.y());
     buffer.push_back(n.z());
@@ -605,15 +605,30 @@ protected:
     {
       P_traits cdt_traits(normal);
       CDT cdt(cdt_traits);
-      
       bool with_vertex_normal=(m_vertex_normals_for_face.size()==m_points_of_face.size());
+      Local_point p1, p2;
+        
+      // For each point of the face, store the list of adjacent points and the number of time
+      // the edge is found in the face. For an edge p1, p2, store edge min(p1,p2)->max(p1,p2)
+      std::map<Local_point, std::map<Local_point, unsigned int> > edges;
+      for (unsigned int i=0; i<m_points_of_face.size(); ++i)
+      {
+        p1=m_points_of_face[i];
+        p2=m_points_of_face[i==0?m_points_of_face.size()-1:i-1];
+        if (p2<p1) { std::swap(p1, p2); }
+        
+        if (edges.count(p1)==0)
+        { std::map<Local_point, unsigned int> m; m[p2]=1; edges[p1]=m; }
+        else if (edges[p1].count(p2)==0) { edges[p1][p2]=1; }
+        else { ++(edges[p1][p2]); }
+      }
       
       // (1) We insert all the edges as contraint in the CDT.
-      typename CDT::Vertex_handle previous=NULL, first=NULL;
+      typename CDT::Vertex_handle previous=nullptr, first=nullptr;
       for (unsigned int i=0; i<m_points_of_face.size(); ++i)
       {
         typename CDT::Vertex_handle vh = cdt.insert(m_points_of_face[i]);
-        if(first==NULL)
+        if(first==nullptr)
         { first=vh; }
         
         if (with_vertex_normal)
@@ -624,13 +639,23 @@ protected:
         if (m_indices_of_points_of_face.size()>0)
         { vh->info().index=m_indices_of_points_of_face[i]; }
         
-        if(previous!=NULL && previous!=vh)
-        { cdt.insert_constraint(previous, vh); }
+        if(previous!=nullptr && previous!=vh)
+        {
+          p1=m_points_of_face[i]; p2=m_points_of_face[i-1];
+          if (p2<p1) { std::swap(p1, p2); }
+          if ((edges[p1][p2])%2==1) // odd number of time => constraint
+          { cdt.insert_constraint(previous, vh); }
+        }
         previous=vh;
       }
       
-      if (previous!=NULL && previous!=first)
-      { cdt.insert_constraint(previous, first); }
+      if (previous!=nullptr && previous!=first)
+      {
+        p1=m_points_of_face[m_points_of_face.size()-1]; p2=m_points_of_face[0];
+        if (p2<p1) std::swap(p1, p2);
+        if ((edges[p1][p2])%2==1) // odd number of time => constraint
+        { cdt.insert_constraint(previous, first); }
+      }
       
       // (2) We mark all external triangles
       // (2.1) We initialize is_external and is_process values 
@@ -642,8 +667,8 @@ protected:
       }
       // (2.2) We check if the facet is external or internal
       std::queue<typename CDT::Face_handle> face_queue;
-      typename CDT::Face_handle face_internal = NULL;
-      if (cdt.infinite_vertex()->face()!=NULL)
+      typename CDT::Face_handle face_internal = nullptr;
+      if (cdt.infinite_vertex()->face()!=nullptr)
       { face_queue.push(cdt.infinite_vertex()->face()); }
       while(!face_queue.empty())
       {
@@ -656,10 +681,10 @@ protected:
           {
             if(!cdt.is_constrained(std::make_pair(fh, i)))
             {
-              if (fh->neighbor(i)!=NULL)
+              if (fh->neighbor(i)!=nullptr)
               { face_queue.push(fh->neighbor(i)); }
             }
-            else if (face_internal==NULL)
+            else if (face_internal==nullptr)
             {
               face_internal = fh->neighbor(i);
             }
@@ -667,7 +692,7 @@ protected:
         }
       }
       
-      if ( face_internal!=NULL )
+      if ( face_internal!=nullptr )
       { face_queue.push(face_internal); }
       
       while(!face_queue.empty())
@@ -682,7 +707,7 @@ protected:
           {
             if(!cdt.is_constrained(std::make_pair(fh, i)))
             {
-              if (fh->neighbor(i)!=NULL)
+              if (fh->neighbor(i)!=nullptr)
               { face_queue.push(fh->neighbor(i)); }
             }
           }
@@ -733,22 +758,37 @@ protected:
 
   void add_color(const CGAL::Color& acolor)
   {
-    if (m_color_buffer!=NULL)
+    if (m_color_buffer!=nullptr)
     { add_color_in_buffer(acolor, *m_color_buffer); }
   }
   
   template<typename KVector>
   void add_flat_normal(const KVector& kv)
   {
-    if(m_flat_normal_buffer != NULL)
+    if(m_flat_normal_buffer != nullptr)
     { add_normal_in_buffer(kv, *m_flat_normal_buffer); }
   }
 
   template<typename KVector>
   void add_gouraud_normal(const KVector& kv)
   {
-    if(m_gouraud_normal_buffer != NULL)
+    if(m_gouraud_normal_buffer != nullptr)
     { add_normal_in_buffer(kv, *m_gouraud_normal_buffer); }
+  }
+
+protected:
+  // Shortcuts to simplify function calls.
+  template<typename KPoint>
+  static Local_point get_local_point(const KPoint& p)
+  {
+    return internal::Geom_utils<typename CGAL::Kernel_traits<KPoint>::Kernel, Local_kernel>::
+      get_local_point(p);
+  }
+  template<typename KVector>
+  static Local_vector get_local_vector(const KVector& v)
+  {
+    return internal::Geom_utils<typename CGAL::Kernel_traits<KVector>::Kernel, Local_kernel>::
+      get_local_vector(v);
   }
 
 protected:
@@ -782,6 +822,10 @@ protected:
   std::vector<BufferType>* m_gouraud_normal_buffer;
 
   CGAL::Bbox_3* m_bb;
+
+  bool m_zero_x; /// True iff all points have x==0
+  bool m_zero_y; /// True iff all points have y==0
+  bool m_zero_z; /// True iff all points have z==0
   
   // Local variables, used when we started a new face.
   bool m_face_started;

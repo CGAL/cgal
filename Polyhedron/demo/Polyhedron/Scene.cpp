@@ -5,6 +5,7 @@
 #include <CGAL/Three/Scene_print_item_interface.h>
 #include <CGAL/Three/Scene_transparent_interface.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
+#include <CGAL/Three/Three.h>
 
 #include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_print_item_interface.h>
@@ -81,6 +82,11 @@ Scene::addItem(CGAL::Three::Scene_item* item)
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
         addGroup(group);
+    //init the item for the mainViewer to avoid using unexisting 
+    //VAOs if the mainViewer is not the first to be drawn.
+    item->draw(CGAL::Three::Three::mainViewer());
+    item->drawEdges(CGAL::Three::Three::mainViewer());
+    item->drawPoints(CGAL::Three::Three::mainViewer());
     return id;
 }
 
@@ -279,8 +285,16 @@ void Scene::remove_item_from_groups(Scene_item* item)
 }
 Scene::~Scene()
 {
-  vao->destroy();
-  delete vao;  
+  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+  {
+    removeViewer(static_cast<CGAL::Three::Viewer_interface*>(viewer));
+    viewer->setProperty("is_destroyed", true);
+  }
+  Q_FOREACH(QOpenGLVertexArrayObject* vao, vaos.values())
+  {
+    vao->destroy();
+    delete vao;
+  }
   Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
   {
     item_ptr->deleteLater();
@@ -440,10 +454,10 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   vbo[1].create();
   
   viewer->makeCurrent();
-  vao = new QOpenGLVertexArrayObject();
-  vao->create();
+  vaos[viewer] = new QOpenGLVertexArrayObject();
+  vaos[viewer]->create();
   program.bind();
-  vao->bind();
+  vaos[viewer]->bind();
   vbo[0].bind();
   vbo[0].allocate(points, 18 * sizeof(float));
   program.enableAttributeArray("vertex");
@@ -455,7 +469,7 @@ void Scene::initializeGL(CGAL::Three::Viewer_interface* viewer)
   program.enableAttributeArray("v_texCoord");
   program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
   vbo[1].release();
-  vao->release();
+  vaos[viewer]->release();
   program.release();
   gl_init = true;
 }
@@ -511,7 +525,6 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
                         bool writing_depth,
                         QOpenGLFramebufferObject *fbo)
 {
-
   viewer->setCurrentPass(pass);
   viewer->setDepthWriting(writing_depth);
   viewer->setDepthPeelingFbo(fbo);
@@ -525,21 +538,18 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
       item.selection_changed(true);
     }
     else
-
     {
       item.selection_changed(false);
     }
-
     if(group ||item.visible())
     {
-      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
+      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud || item.renderingMode() == GouraudPlusEdges )
       {
         if(with_names) {
           viewer->glClearDepthf(1.0);
           viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         item.draw(viewer);
-
         if(with_names) {
           
           //    read depth buffer at pick location;
@@ -581,7 +591,8 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
      {
        if( group || (!with_names && item.renderingMode() == FlatPlusEdges )
           || item.renderingMode() == Wireframe
-          || item.renderingMode() == PointsPlusNormals)
+          || item.renderingMode() == PointsPlusNormals
+          || item.renderingMode() == GouraudPlusEdges)
        {
          viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
@@ -720,7 +731,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       std::vector<QOpenGLFramebufferObject*> fbos;
       std::vector<QOpenGLFramebufferObject*> depth_test;
       QColor background = viewer->backgroundColor();
-   
       fbos.resize((int)viewer->total_pass());
       depth_test.resize((int)viewer->total_pass()-1);
       
@@ -811,7 +821,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
    
       //blending
       program.bind();
-      vao->bind();
+      vaos[viewer]->bind();
       viewer->glClearColor(background.redF(),
                            background.greenF(),
                            background.blueF(),
@@ -835,7 +845,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       }
       viewer->glDisable(GL_BLEND);
       viewer->glEnable(GL_DEPTH_TEST);
-      vao->release();
+      vaos[viewer]->release();
       program.release();
     }
    
@@ -1096,7 +1106,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
           if(item->parentGroup())
           {
             item->parentGroup()->removeChild(item);
-            children.push_back(item_id(item));
+            addChild(item);
           }
         }
         redraw_model();
@@ -1617,18 +1627,18 @@ void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer
       item->printPrimitiveId(point, viewer);
   }
 }
-void Scene::printVertexIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printVertexIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
   {
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printVertexIds(viewer);
+      item->printVertexIds();
   }
 }
 
-void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printEdgeIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1636,11 +1646,11 @@ void Scene::printEdgeIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printEdgeIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printEdgeIds(viewer);
+      item->printEdgeIds();
   }
 }
 
-void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printFaceIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1648,11 +1658,11 @@ void Scene::printFaceIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printFaceIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printFaceIds(viewer);
+      item->printFaceIds();
   }
 }
 
-void Scene::printAllIds(CGAL::Three::Viewer_interface* viewer)
+void Scene::printAllIds()
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
@@ -1660,10 +1670,10 @@ void Scene::printAllIds(CGAL::Three::Viewer_interface* viewer)
     //Only call printFaceIds if the item is a Scene_print_item_interface
     Scene_print_item_interface* item= qobject_cast<Scene_print_item_interface*>(it);
     if(item)
-      item->printAllIds(viewer);
+      item->printAllIds();
   }
 }
-void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Three::Scene_item* it)
+void Scene::updatePrimitiveIds(CGAL::Three::Scene_item* it)
 {
   if(it)
   {
@@ -1672,14 +1682,14 @@ void Scene::updatePrimitiveIds(CGAL::Three::Viewer_interface* viewer, CGAL::Thre
     {
       //As this function works as a toggle, the first call hides the ids and the second one shows them again,
       //thereby triggering their re-computation.
-      item->printVertexIds(viewer);
-      item->printVertexIds(viewer);
+      item->printVertexIds();
+      item->printVertexIds();
 
-      item->printEdgeIds(viewer);
-      item->printEdgeIds(viewer);
+      item->printEdgeIds();
+      item->printEdgeIds();
 
-      item->printFaceIds(viewer);
-      item->printFaceIds(viewer);
+      item->printFaceIds();
+      item->printFaceIds();
     }
   }
 }
@@ -1761,7 +1771,6 @@ void Scene::addGroup(Scene_group_item* group)
     connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
     connect(this, SIGNAL(indexErased(Scene_interface::Item_id)),
                 group, SLOT(adjustIds(Scene_interface::Item_id)));
-    group->setScene(this);
 }
 
 namespace scene { namespace details {
@@ -1830,7 +1839,93 @@ void Scene::adjustIds(Item_id removed_id)
   }
 }
 
+void Scene::computeBbox()
+{
+  if(m_entries.empty())
+  {
+    last_bbox = Bbox(0,0,0,0,0,0);
+    return;
+  }
+
+  bool bbox_initialized = false;
+  Bbox bbox = Bbox(0,0,0,0,0,0);
+  Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+  {
+    if(item->isFinite() && !item->isEmpty() ) {
+      if(bbox_initialized) {
+
+        bbox = bbox + item->bbox();
+      }
+      else {
+        bbox = item->bbox();
+        bbox_initialized = true;
+
+      }
+    }
+
+  }
+  last_bbox = bbox;
+}
+
+void Scene::newViewer(Viewer_interface *viewer)
+{
+  initGL(viewer);
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    item->newViewer(viewer);
+  }
+}
+
+void Scene::removeViewer(Viewer_interface *viewer)
+{
+ //already destroyed;
+  if(viewer->property("is_destroyed").toBool())
+    return;
+
+  vaos[viewer]->destroy();
+  vaos[viewer]->deleteLater();
+  vaos.remove(viewer);
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    item->removeViewer(viewer);
+  }
+}
+
+void Scene::initGL(Viewer_interface *viewer)
+{
+  viewer->makeCurrent();
+  vaos[viewer] = new QOpenGLVertexArrayObject();
+  vaos[viewer]->create();
+  program.bind();
+  vaos[viewer]->bind();
+  vbo[0].bind();
+  vbo[0].allocate(points, 18 * sizeof(float));
+  program.enableAttributeArray("vertex");
+  program.setAttributeArray("vertex", GL_FLOAT, 0, 3);
+  vbo[0].release();
+
+  vbo[1].bind();
+  vbo[1].allocate(uvs, 12 * sizeof(float));
+  program.enableAttributeArray("v_texCoord");
+  program.setAttributeArray("v_texCoord", GL_FLOAT, 0, 2);
+  vbo[1].release();
+  vaos[viewer]->release();
+  program.release();
+}
+
+void Scene::callDraw(){  
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  {
+    qobject_cast<Viewer_interface*>(v)->update();
+  }
+}
+
 void Scene::enableVisibilityRecentering(bool b)
 {
   visibility_recentering_enabled = b;
+}
+
+void Scene::addChild(Scene_item *item)
+{
+  children.push_back(item_id(item));
 }

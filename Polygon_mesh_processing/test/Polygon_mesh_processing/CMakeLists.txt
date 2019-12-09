@@ -1,18 +1,8 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing_Tests )
-
-
-cmake_minimum_required(VERSION 3.1)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -50,10 +40,11 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("fairing_test.cpp")
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
+  create_single_source_cgal_program("test_shape_smoothing.cpp")
+
 endif(EIGEN3_FOUND)
 
 find_package( OpenMesh QUIET )
-
 if ( OpenMesh_FOUND )
   include( UseOpenMesh )
 else()
@@ -98,7 +89,12 @@ endif()
   create_single_source_cgal_program("test_repair_polygon_soup.cpp")
   create_single_source_cgal_program("test_shape_predicates.cpp")
   create_single_source_cgal_program("test_pmp_collision_detection.cpp")
+  create_single_source_cgal_program("test_pmp_locate.cpp")
+  create_single_source_cgal_program("test_pmp_snapping.cpp")
+  create_single_source_cgal_program("test_pmp_non_conforming_snapping.cpp")
+  create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
+  create_single_source_cgal_program("test_mesh_smoothing.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
@@ -110,6 +106,12 @@ if(OpenMesh_FOUND)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp" )
   target_link_libraries( remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES} )
 endif()
+
+find_package(Ceres QUIET)
+if(TARGET ceres)
+  target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries( test_mesh_smoothing PRIVATE ceres )
+endif(TARGET ceres)
 
 if(BUILD_TESTING)
   set_tests_properties(

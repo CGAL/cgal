@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -457,7 +448,7 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
     typedef typename Traits::Point_2                      Point_2;
     typedef std::pair<Point_2, Point_2>                   Point_pair;
 
-    Vis_graph graph(polygon.begin(), polygon.end());
+    Vis_graph graph(polygon.begin(), polygon.end(), traits);
 
     size_type prev_i, i, next_i, next_next_i;
     size_type prev_j, j, next_j;
@@ -528,7 +519,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
    Tee_for_output_iterator<OutputIterator, Polygon_2>      res(result);
 #endif // no postconditions
 
-   P_Polygon_2 polygon(first, beyond);
+   P_Polygon_2 polygon(first, beyond,traits);
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 

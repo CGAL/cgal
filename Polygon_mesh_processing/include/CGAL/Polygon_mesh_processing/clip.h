@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -85,7 +76,7 @@ clip_to_bbox(const Plane_3& plane,
   corners[6] = Point_3(bbox.xmax(),bbox.ymax(),bbox.zmax());
   corners[7] = Point_3(bbox.xmax(),bbox.ymin(),bbox.zmax());
 
-  cpp11::array<CGAL::Oriented_side,8> orientations = {{
+  std::array<CGAL::Oriented_side,8> orientations = {{
     plane.oriented_side(corners[0]),
     plane.oriented_side(corners[1]),
     plane.oriented_side(corners[2]),
@@ -97,7 +88,7 @@ clip_to_bbox(const Plane_3& plane,
   }};
 
   // description of faces of the bbox
-  cpp11::array<int, 24> face_indices =
+  std::array<int, 24> face_indices =
     {{ 0, 1, 2, 3,
        2, 1, 5, 6,
        3, 2, 6, 7,
@@ -173,7 +164,7 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename graph_traits::face_descriptor face_descriptor;
 
   std::map<int, vertex_descriptor> out_vertices;
-  BOOST_FOREACH(int i, in_point_ids)
+  for(int i : in_point_ids)
   {
     vertex_descriptor v = add_vertex(tm_out);
     out_vertices.insert( std::make_pair(i, v ) );
@@ -183,7 +174,7 @@ clip_to_bbox(const Plane_3& plane,
   std::map< std::pair<int,int>, halfedge_descriptor> hedge_map;
   const halfedge_descriptor null_hedge = graph_traits::null_halfedge();
   const face_descriptor null_fd = graph_traits::null_face();
-  BOOST_FOREACH( const std::vector<int>& findices, output_faces)
+  for(const std::vector<int>& findices : output_faces)
   {
     if (findices.empty()) continue;
     const face_descriptor fd=add_face(tm_out);
@@ -192,7 +183,7 @@ clip_to_bbox(const Plane_3& plane,
     // create of recover face boundary halfedges
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(findices.size());
-    BOOST_FOREACH( int current_id, findices)
+    for(int current_id : findices)
     {
       vertex_descriptor src = out_vertices[prev_id], tgt = out_vertices[current_id];
 
@@ -226,7 +217,7 @@ clip_to_bbox(const Plane_3& plane,
 
     // set next/prev relationship
     halfedge_descriptor prev_h=hedges.back();
-    BOOST_FOREACH(halfedge_descriptor h, hedges)
+    for(halfedge_descriptor h : hedges)
     {
       set_next(prev_h, h, tm_out);
       prev_h = h;
@@ -237,7 +228,7 @@ clip_to_bbox(const Plane_3& plane,
   // look for a border halfedge and reconstruct the face of the plane
   // by turning around vertices inside the mesh constructed above
   // until we reach another border halfedge
-  BOOST_FOREACH(halfedge_descriptor h, halfedges(tm_out))
+  for(halfedge_descriptor h : halfedges(tm_out))
   {
     if (face(h, tm_out) == null_fd)
     {

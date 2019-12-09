@@ -9,7 +9,6 @@
 #include <CGAL/centroid.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
-#include <boost/foreach.hpp>
 #include <boost/graph/filtered_graph.hpp>
 
 #include <fstream>
@@ -63,7 +62,7 @@ test_triangulate_faces_with_named_parameters()
 
   CGAL::Cartesian_converter<Epic, K> to_custom;
 
-  BOOST_FOREACH(boost::graph_traits<Surface_mesh>::vertex_descriptor vd, vertices(mesh))
+  for(boost::graph_traits<Surface_mesh>::vertex_descriptor vd : vertices(mesh))
   {
     put(custom_vpm, vd, to_custom(get(cvpm, vd)));
   }
@@ -119,7 +118,7 @@ test_triangulate_face()
   }
 
   unsigned int nb = 0;
-  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
+  for(typename boost::graph_traits<Surface_mesh>::face_descriptor fit : faces(mesh))
   {
     if (nb > 4)
       break;
@@ -152,7 +151,7 @@ test_triangulate_triangle_face()
     return false;
   }
 
-  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(mesh))
+  for(typename boost::graph_traits<Surface_mesh>::face_descriptor fit : faces(mesh))
   {
     if(!CGAL::Polygon_mesh_processing::triangulate_face(fit, mesh, CGAL::parameters::geom_traits(K())))
       assert(false);
@@ -191,7 +190,7 @@ struct Dual_vpm
   {
     std::vector<Point> face_points;
 
-    BOOST_FOREACH(vertex_descriptor v,
+    for(vertex_descriptor v :
                   CGAL::vertices_around_face(halfedge(f, map.primal()), map.primal()))
     {
       face_points.push_back( get(map.primal_map(), v) );
@@ -236,7 +235,7 @@ test_dual_with_various_faces()
                         CGAL::Emptyset_iterator(),
                         Dual_vpm<Surface_mesh, Point, Pmap>(mesh, vpmap));
 
-  BOOST_FOREACH(typename boost::graph_traits<Surface_mesh>::face_descriptor fit, faces(sm_dual))
+  for(typename boost::graph_traits<Surface_mesh>::face_descriptor fit : faces(sm_dual))
   {
     if(!CGAL::Polygon_mesh_processing::triangulate_face(fit, sm_dual))
       assert(false);

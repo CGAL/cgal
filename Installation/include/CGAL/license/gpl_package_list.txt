@@ -41,7 +41,6 @@ Periodic_4_hyperbolic_triangulation_2 2D Periodic Hyperbolic Triangulations
 Point_set_2 2D Range and Neighbor Search
 Point_set_3 3D Point Set
 Point_set_processing_3 Point Set Processing
-Point_set_shape_detection_3 Point Set Shape Detection
 Poisson_surface_reconstruction_3 Poisson Surface Reconstruction
 Polygon_mesh_processing Polygon Mesh Processing
 Polygon_mesh_processing/Compute_normal Polygon Mesh Processing - Normal Computation
@@ -68,6 +67,7 @@ SearchStructures dD Range and Segment Trees
 Segment_Delaunay_graph_2 2D Segment Delaunay Graphs
 Segment_Delaunay_graph_Linf_2 L Infinity Segment Delaunay Graphs
 Set_movable_separability_2 2D Movable Separability of Sets
+Shape_detection Shape Detection
 Skin_surface_3 3D Skin Surface Meshing
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching

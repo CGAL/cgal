@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
@@ -147,8 +138,8 @@ struct Homogeneous_base
     typedef Aff_transformationH3<Kernel>            Aff_transformation_3;
     typedef Weighted_pointH3<Kernel>                Weighted_point_3;
 
-    typedef Cartesian_const_iterator_d<typename cpp11::array<RT, 3>::const_iterator> Cartesian_const_iterator_2;
-    typedef Cartesian_const_iterator_d<typename cpp11::array<RT, 4>::const_iterator> Cartesian_const_iterator_3;
+    typedef Cartesian_const_iterator_d<typename std::array<RT, 3>::const_iterator> Cartesian_const_iterator_2;
+    typedef Cartesian_const_iterator_d<typename std::array<RT, 4>::const_iterator> Cartesian_const_iterator_3;
 
     typedef FT_                                     Cartesian_coordinate_type;
     typedef const RT_&                              Homogeneous_coordinate_type;

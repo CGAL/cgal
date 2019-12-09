@@ -21,7 +21,6 @@
 #endif
 #endif
 
-#include <CGAL/basic.h>
 
 #include <sstream>
 

@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -819,7 +810,7 @@ public:
           // Removes component from list
           components.erase(components.begin());
 
-          if (vertex->halfedge() != NULL) // if not isolated vertex
+          if (vertex->halfedge() != nullptr) // if not isolated vertex
           {
             erase_connected_component(vertex->halfedge());
             nb_erased_components++;
@@ -935,7 +926,7 @@ private:
                 return it;
         }
 
-        return NULL;
+        return nullptr;
     }
 
     /// Helper method for keep_largest_connected_components():
@@ -1015,8 +1006,8 @@ private:
         }
 
         // Record each component
-        Vertex_handle seed_vertex = NULL;
-        while((seed_vertex = get_any_free_vertex(tags)) != NULL)
+        Vertex_handle seed_vertex = nullptr;
+        while((seed_vertex = get_any_free_vertex(tags)) != nullptr)
         {
             // Tag it as "done" and compute its size (number of vertices)
             unsigned int number_of_vertices = tag_component(seed_vertex, tags);

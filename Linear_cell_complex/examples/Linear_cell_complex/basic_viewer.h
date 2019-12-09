@@ -1,19 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -97,24 +89,24 @@ const char fragment_source_mono[] =
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "uniform highp vec4 color; \n"
-    "uniform vec4 light_pos;  \n"
-    "uniform vec4 light_diff; \n"
-    "uniform vec4 light_spec; \n"
-    "uniform vec4 light_amb;  \n"
+    "uniform highp vec4 light_pos;  \n"
+    "uniform highp vec4 light_diff; \n"
+    "uniform highp vec4 light_spec; \n"
+    "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
     
     "void main(void) { \n"
     
-    "   vec3 L = light_pos.xyz - fP.xyz; \n"
-    "   vec3 V = -fP.xyz; \n"
+    "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+    "   highp vec3 V = -fP.xyz; \n"
     
-    "   vec3 N = normalize(fN); \n"
+    "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
     
-    "   vec3 R = reflect(-L, N); \n"
-    "   vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
-    "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+    "   highp vec3 R = reflect(-L, N); \n"
+    "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * color; \n"
+    "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
     
     "gl_FragColor = light_amb*color + diffuse  ; \n"
     "} \n"
@@ -127,24 +119,24 @@ const char fragment_source_color[] =
     "varying highp vec4 fP; \n"
     "varying highp vec3 fN; \n"
     "varying highp vec4 fColor; \n"
-    "uniform vec4 light_pos;  \n"
-    "uniform vec4 light_diff; \n"
-    "uniform vec4 light_spec; \n"
-    "uniform vec4 light_amb;  \n"
+    "uniform highp vec4 light_pos;  \n"
+    "uniform highp vec4 light_diff; \n"
+    "uniform highp vec4 light_spec; \n"
+    "uniform highp vec4 light_amb;  \n"
     "uniform float spec_power ; \n"
     
     "void main(void) { \n"
     
-    "   vec3 L = light_pos.xyz - fP.xyz; \n"
-    "   vec3 V = -fP.xyz; \n"
+    "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+    "   highp vec3 V = -fP.xyz; \n"
     
-    "   vec3 N = normalize(fN); \n"
+    "   highp vec3 N = normalize(fN); \n"
     "   L = normalize(L); \n"
     "   V = normalize(V); \n"
     
-    "   vec3 R = reflect(-L, N); \n"
-    "   vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
-    "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+    "   highp vec3 R = reflect(-L, N); \n"
+    "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
+    "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
     
     "gl_FragColor = light_amb*fColor + diffuse  ; \n"
     "} \n"

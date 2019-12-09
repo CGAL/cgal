@@ -1,14 +1,14 @@
 #ifndef SCENE_EDIT_BOX_ITEM_H
 #define SCENE_EDIT_BOX_ITEM_H
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_transparent_interface.h>
 #include <CGAL/Simple_cartesian.h>
 #include "create_sphere.h"
 #include "Scene_edit_box_item_config.h"
 struct Scene_edit_box_item_priv;
 class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
-    public CGAL::Three::Scene_item,
+    public CGAL::Three::Scene_item_rendering_helper,
     public CGAL::Three::Scene_transparent_interface
 {
     Q_OBJECT
@@ -42,11 +42,8 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
     void drawHl(CGAL::Three::Viewer_interface *) const;
     void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
     void drawSpheres(CGAL::Three::Viewer_interface* viewer, const QMatrix4x4 f_matrix) const;
-    void invalidateOpenGLBuffers()
-    {
-      compute_bbox();
-      are_buffers_filled = false;
-    }
+    void invalidateOpenGLBuffers();
+    
     //      5-----6
     //  .   |  .  |
     // 4------7   |
@@ -56,9 +53,12 @@ class SCENE_EDIT_BOX_ITEM_EXPORT Scene_edit_box_item:
     // 0------3
 
     double point(short i, short j) const;
+    void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+    void computeElements() const;
 public Q_SLOTS:
     void highlight(CGAL::Three::Viewer_interface* viewer);
     void clearHL();
+    void connectNewViewer(QObject* o);
 protected:
     friend struct Scene_edit_box_item_priv;
     Scene_edit_box_item_priv* d;

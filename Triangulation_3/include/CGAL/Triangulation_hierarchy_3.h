@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //                 Sylvain Pion
@@ -163,7 +154,7 @@ public:
                 typename std::iterator_traits<InputIterator>::value_type,
                 Point
             >
-          >::type* = NULL
+          >::type* = nullptr
   )
 #else
   template < class InputIterator >
@@ -299,7 +290,7 @@ public:
             boost::is_convertible<
               typename std::iterator_traits<InputIterator>::value_type,
               std::pair<Point,typename internal::Info_check<Vertex>::type>
-            > >::type* =NULL
+            > >::type* =nullptr
   )
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<Vertex>::type> >(first,last);
@@ -314,7 +305,7 @@ public:
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<Vertex>::type >
             >
-          >::type* =NULL
+          >::type* =nullptr
   )
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<Vertex>::type> >(first,last);

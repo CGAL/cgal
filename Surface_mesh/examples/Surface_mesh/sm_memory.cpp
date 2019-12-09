@@ -25,7 +25,7 @@ int main()
   
   std::cout << "Iterate over vertices\n";
   {
-    BOOST_FOREACH(vertex_descriptor vd, m.vertices()){
+    for(vertex_descriptor vd : m.vertices()){
       std::cout << m.point(vd) << std::endl;
     }
   }

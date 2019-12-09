@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Julia Floetotto
@@ -94,7 +85,7 @@ void generate_sphere_points(const int& n,
 			    //the test point + normal
 			    Point &p, Vector &normal){
   CGAL::Random_points_on_sphere_3<Point> g(r);
-  CGAL::cpp11::copy_n( g, n, std::back_inserter(points));
+  std::copy_n( g, n, std::back_inserter(points));
   p = Point(0,0, r);
   normal = Vector(p - CGAL::ORIGIN);
 }
@@ -110,7 +101,7 @@ void generate_cylinder_points(const int& n,
   Point_2_vector points_2;
   points_2.reserve(n);
   CGAL::Random_points_on_circle_2<Point_2> g(r);
-  CGAL::cpp11::copy_n( g, n , std::back_inserter(points_2));
+  std::copy_n( g, n , std::back_inserter(points_2));
   CGAL::Random random;
 
   double h;
@@ -217,21 +208,21 @@ int main()
   }
 
   char ch;
-  gv << CGAL::VIOLET;
+  gv << CGAL::violet();
   visu_points(gv,points);
 
-  gv << CGAL::RED << Segment(p, p+ 0.3*normal);
-  gv << CGAL::ORANGE <<p;
+  gv << CGAL::red() << Segment(p, p+ 0.3*normal);
+  gv << CGAL::orange() <<p;
 
   std::cout << "Visualizing the intersection of "
 	    << "3D Voronoi diagram with tangent plane at "
 	    << p << "." << std::endl;
-  gv << CGAL::BLUE;
+  gv << CGAL::blue();
   T.draw_dual(gv);
   Face_iterator fit = T.finite_faces_begin(),
     fend = T.finite_faces_end();
   for(;fit != fend;fit++)
-    gv <<CGAL::BLACK<<T.dual(fit);
+    gv <<CGAL::black()<<T.dual(fit);
 
   std::cout << "Enter any character to quit" << std::endl;
   std::cin >> ch;

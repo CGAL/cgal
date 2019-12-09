@@ -1,8 +1,6 @@
-# This is the CMake script for compiling the CGAL Polyhedron demo.
-
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Polyhedron_Demo )
 
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
@@ -68,9 +66,6 @@ find_package(Qt5
              COMPONENTS            OpenGL Script
              OPTIONAL_COMPONENTS   ScriptTools)
 
-# Find OpenGL
-find_package(OpenGL)
-
 if(Qt5_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
@@ -128,10 +123,11 @@ endif()
 
 
 
-if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
 
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
+  qt5_wrap_ui( SubViewerUI_files SubViewer.ui)
   qt5_wrap_ui( statisticsUI_FILES Statistics_on_item_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
@@ -227,12 +223,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   target_link_libraries(point_dialog
     PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
 
+  add_custom_target(all_scene_items)
   if(BUILD_TESTING)
-    add_custom_target(test_items)
-    cgal_add_compilation_test(test_items)
-    set_property(TEST compilation_of__test_items
+    cgal_add_compilation_test(all_scene_items)
+    set_property(TEST compilation_of__all_scene_items
       APPEND PROPERTY DEPENDS compilation_of__demo_framework)
-    set_property(TEST compilation_of__test_items
+    set_property(TEST compilation_of__all_scene_items
       APPEND PROPERTY TIMEOUT 1700)
   endif(BUILD_TESTING)
 
@@ -241,9 +237,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     target_link_libraries(${item_name}
       PUBLIC demo_framework ${CGAL_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
-    if(BUILD_TESTING)
-      add_dependencies(test_items ${item_name})
-    endif()
+    add_dependencies(all_scene_items ${item_name})
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${item_name} )
   endmacro(add_item)
 
@@ -258,9 +252,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
   # special
-
-  add_item(scene_polylines_item Scene_polylines_item.cpp)
-  target_link_libraries(scene_polylines_item PUBLIC scene_basic_objects)
 
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_item_decorator PUBLIC scene_surface_mesh_item)
@@ -312,6 +303,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
 
+  add_item(scene_polylines_item Scene_polylines_item.cpp)
+  target_link_libraries(scene_polylines_item PUBLIC scene_basic_objects scene_points_with_normal_item)
+  
+  add_item(scene_lcc_item Scene_lcc_item.cpp)
+  
   foreach( lib 
       demo_framework
       scene_basic_objects
@@ -327,7 +323,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
-    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${statisticsUI_FILES})
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} 
+    ${statisticsUI_FILES} ${SubViewerUI_files})
   target_link_libraries(polyhedron_demo PUBLIC
     demo_framework point_dialog Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Script)
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
@@ -373,6 +370,11 @@ add_executable  ( CGAL_Classification Classification.cpp )
 add_dependencies(CGAL_Classification Classification)
 target_link_libraries( CGAL_Classification PRIVATE polyhedron_demo )
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Classification )
+
+add_executable  ( CGAL_PMP PMP.cpp )
+add_dependencies(CGAL_PMP PMP)
+target_link_libraries( CGAL_PMP PRIVATE polyhedron_demo )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_PMP )
 #
 # Exporting
 #
@@ -403,7 +405,7 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS CGAL_Classification )
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
 #TO DO script the activation of all the plugins.
 
-else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+else (CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(POLYHEDRON_MISSING_DEPS "")
 
@@ -415,11 +417,7 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
     set(POLYHEDRON_MISSING_DEPS "Qt5, ${POLYHEDRON_MISSING_DEPS}")
   endif()
 
-  if(NOT OPENGL_FOUND)
-    set(POLYHEDRON_MISSING_DEPS "OpenGL, ${POLYHEDRON_MISSING_DEPS}")
-  endif()
-
   message(STATUS "NOTICE: This demo requires ${POLYHEDRON_MISSING_DEPS}and will not be compiled.")
 
 
-endif (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
+endif (CGAL_Qt5_FOUND AND Qt5_FOUND)

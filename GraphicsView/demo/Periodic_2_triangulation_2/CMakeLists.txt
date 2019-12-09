@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project (Periodic_2_triangulation_2_Demo)
 
-cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
   cmake_policy(SET CMP0053 OLD)
@@ -20,6 +20,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
 add_definitions(-DQT_NO_KEYWORDS)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
 #--------------------------------
 # The "2D Periodic triangulation" demo: Periodic_2_triangulation_2
@@ -30,8 +31,6 @@ qt5_wrap_ui( DT_UI_FILES Periodic_2_triangulation_2.ui )
 # qrc files (resources files, that contain icons, at least)
 qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Periodic_2_triangulation_2.qrc )
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt5_generate_moc( Periodic_2_Delaunay_triangulation_2.cpp Periodic_2_triangulation_2.moc )
 
 # find header files for projects that can show them
 file(GLOB headers "*.h")
@@ -42,8 +41,7 @@ SOURCE_GROUP("QT" FILES ${QT_headers})
 
 # The executable itself.
 add_executable  ( Periodic_2_Delaunay_triangulation_2 
-  Periodic_2_Delaunay_triangulation_2.cpp
-  Periodic_2_triangulation_2.moc 
+  Periodic_2_Delaunay_triangulation_2.cpp 
   ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
   ${headers} ${QT_headers} ${P2T2_headers})
 

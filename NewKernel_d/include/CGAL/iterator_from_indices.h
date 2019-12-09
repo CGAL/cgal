@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -33,11 +24,7 @@ struct Default_coordinate_access {
 
 //TODO: default type for Value_: typename same_cv<Container_,typename remove_cv<Container_>::type::value_type>::type
 template <class Container_, class Value_, class Ref_=
-#ifdef CGAL_CXX11
 	decltype(std::declval<Container_>()[0])
-#else
-	Value_&
-#endif
 	, class Coord_access = Default_coordinate_access<Ref_>
 	>
 class Iterator_from_indices
@@ -50,7 +37,7 @@ class Iterator_from_indices
 	typedef std::ptrdiff_t index_t;
 	Container_* cont;
 	index_t index;
-	Coord_access ca;
+	CGAL_NO_UNIQUE_ADDRESS Coord_access ca;
 	void increment(){ ++index; }
 	void decrement(){ --index; }
 	void advance(std::ptrdiff_t n){ index+=n; }
@@ -66,6 +53,7 @@ class Iterator_from_indices
 		return ca(*cont,index);
 	}
 	public:
+	Iterator_from_indices(){}
 	Iterator_from_indices(Container_& cont_,std::size_t n)
 		: cont(&cont_), index(n) {}
 	template<class T>

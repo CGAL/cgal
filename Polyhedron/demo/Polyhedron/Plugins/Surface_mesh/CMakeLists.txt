@@ -44,7 +44,6 @@ qt5_wrap_ui(basicUI_FILES Surface_mesh_approximation_dockwidget.ui)
 polyhedron_demo_plugin(surface_mesh_approximation_plugin
   Surface_mesh_approximation_plugin
   ${basicUI_FILES}
-  Color_cheat_sheet
   VSA_wrapper)
 target_link_libraries(surface_mesh_approximation_plugin
   PUBLIC

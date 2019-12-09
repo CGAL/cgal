@@ -49,7 +49,5 @@ typedef CGAL::HalfedgeDS_face_min_base< Refs> Face;
 class HalfedgeDS_min_items {
 public:
 
-/// @}
-
 }; /* end HalfedgeDS_min_items */
 } /* end namespace CGAL */

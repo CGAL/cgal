@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau and Sebastien Loriot
@@ -30,7 +21,6 @@
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
-#include <boost/foreach.hpp>
 #include <boost/container/flat_set.hpp>
 #include <boost/container/flat_map.hpp>
 
@@ -94,7 +84,7 @@ struct Polygon_soup_orienter
     marked_edges.insert(canonical_edge(i,j));
   }
 
-  static cpp11::array<V_ID,3>
+  static std::array<V_ID,3>
   get_neighbor_vertices(V_ID v_id, P_ID polygon_index, const Polygons& polygons)
   {
     std::size_t nbv = polygons[polygon_index].size(), pvid=0;
@@ -139,7 +129,7 @@ struct Polygon_soup_orienter
     V_ID old_index,
     V_ID new_index)
   {
-    BOOST_FOREACH(V_ID& i, polygons[polygon_id])
+    for(V_ID& i : polygons[polygon_id])
       if( i==old_index )
         i=new_index;
   }
@@ -152,7 +142,7 @@ struct Polygon_soup_orienter
     P_ID nb_polygons=polygons.size();
     for(P_ID ip=0; ip<nb_polygons; ++ip)
     {
-      BOOST_FOREACH(V_ID iv, polygons[ip])
+      for(V_ID iv : polygons[ip])
         incident_polygons_per_vertex[iv].push_back(ip);
     }
   }
@@ -333,7 +323,7 @@ struct Polygon_soup_orienter
       std::set<P_ID> visited_polygons;
 
       bool first_pass = true;
-      BOOST_FOREACH(P_ID p_id, incident_polygons)
+      for(P_ID p_id : incident_polygons)
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
@@ -343,7 +333,7 @@ struct Polygon_soup_orienter
           vertices_to_duplicate.back().first=v_id;
         }
 
-        const cpp11::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
+        const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
         V_ID next = neighbors[2];
 
@@ -352,7 +342,7 @@ struct Polygon_soup_orienter
 
         do{
           P_ID other_p_id;
-          cpp11::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
+          std::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
           if( !first_pass)
@@ -365,7 +355,7 @@ struct Polygon_soup_orienter
           next = neighbors[0];
           do{
             P_ID other_p_id;
-            cpp11::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
+            std::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
             visited_polygons.insert(other_p_id);
             if( !first_pass)
@@ -380,11 +370,11 @@ struct Polygon_soup_orienter
     /// now duplicate the vertices
     typedef std::pair<V_ID, std::vector<P_ID> > V_ID_and_Polygon_ids;
     edges.resize(edges.size()+vertices_to_duplicate.size());
-    BOOST_FOREACH(const V_ID_and_Polygon_ids& vid_and_pids, vertices_to_duplicate)
+    for(const V_ID_and_Polygon_ids& vid_and_pids : vertices_to_duplicate)
     {
       V_ID new_index = static_cast<V_ID>(points.size());
       points.push_back( points[vid_and_pids.first] );
-      BOOST_FOREACH(P_ID polygon_id, vid_and_pids.second)
+      for(P_ID polygon_id : vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
     }
   }
@@ -408,20 +398,20 @@ struct Polygon_soup_orienter
       std::set<P_ID> visited_polygons;
 
       bool first_pass = true;
-      BOOST_FOREACH(P_ID p_id, incident_polygons)
+      for(P_ID p_id : incident_polygons)
       {
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
         if (!first_pass)
           return false; //there will be duplicate vertices
 
-        const cpp11::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
+        const std::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
         V_ID next = neighbors[2];
 
         do{
           P_ID other_p_id;
-          cpp11::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
+          std::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
         }
@@ -432,7 +422,7 @@ struct Polygon_soup_orienter
           next = neighbors[0];
           do{
             P_ID other_p_id;
-            cpp11::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
+            std::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
             visited_polygons.insert(other_p_id);
           }

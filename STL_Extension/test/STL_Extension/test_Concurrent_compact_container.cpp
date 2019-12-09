@@ -241,7 +241,7 @@ void test(const Cont &)
   assert(check_empty(c0));
   assert(check_empty(c1));
 
-  typename Cont::allocator_type  t20 = c0.get_allocator();
+  c0.get_allocator();
 
   std::cout << "Now filling some containers" << std::endl;
 
