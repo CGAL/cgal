@@ -21,4 +21,4 @@ else()
   include(${EIGEN3_USE_FILE})
 endif()
 
-create_single_source_cgal_program("example.cpp")
+create_single_source_cgal_program("obb_example.cpp")
