@@ -78,7 +78,8 @@ target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item)
 polyhedron_demo_plugin(surface_intersection_plugin Surface_intersection_plugin KEYWORDS PMP)
 target_link_libraries(surface_intersection_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
-polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin KEYWORDS PMP)
+qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui)
+polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
 target_link_libraries(repair_polyhedron_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)

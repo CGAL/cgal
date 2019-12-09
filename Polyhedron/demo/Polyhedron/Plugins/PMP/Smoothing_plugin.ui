@@ -31,13 +31,13 @@
        <string>Shape Smoothing</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="1" column="2">
-        <widget class="QDoubleSpinBox" name="time_step_spinBox">
-         <property name="decimals">
-          <number>6</number>
+       <item row="1" column="0">
+        <widget class="QLabel" name="time_step_label">
+         <property name="toolTip">
+          <string>The time step should not be too large or the smoothing will be unsatisfactory</string>
          </property>
-         <property name="minimum">
-          <double>0.000001000000000</double>
+         <property name="text">
+          <string>Time Step:</string>
          </property>
         </widget>
        </item>
@@ -48,13 +48,16 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="time_step_label">
-         <property name="toolTip">
-          <string>The time step should not be too large or the smoothing will be unsatisfactory</string>
+       <item row="1" column="2">
+        <widget class="DoubleEdit" name="time_step_spinBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
          <property name="text">
-          <string>Time Step:</string>
+          <string>0.000001</string>
          </property>
         </widget>
        </item>
@@ -173,6 +176,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

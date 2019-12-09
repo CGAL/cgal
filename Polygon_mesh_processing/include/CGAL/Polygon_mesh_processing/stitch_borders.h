@@ -799,12 +799,15 @@ std::size_t stitch_boundary_cycles(PolygonMesh& pm)
 }
 
 ///\cond SKIP_IN_MANUAL
+// The VPM is only used here for debugging info purposes as in this overload, the halfedges
+// to stitch are already provided and all further checks are combinatorial and not geometrical.
+// There is thus nothing interesting to pass via named parameters and this overload is not documented.
 template <typename PolygonMesh,
           typename HalfedgePairsRange,
           typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void stitch_borders(PolygonMesh& pmesh,
-                    const HalfedgePairsRange& hedge_pairs_to_stitch,
-                    const CGAL_PMP_NP_CLASS& np)
+std::size_t stitch_borders(PolygonMesh& pmesh,
+                           const HalfedgePairsRange& hedge_pairs_to_stitch,
+                           const CGAL_PMP_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -813,7 +816,7 @@ void stitch_borders(PolygonMesh& pmesh,
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(vertex_point, pmesh));
 
-  internal::stitch_borders_impl(pmesh, hedge_pairs_to_stitch, vpm);
+  return internal::stitch_borders_impl(pmesh, hedge_pairs_to_stitch, vpm);
 }
 ///\endcond
 
@@ -834,13 +837,15 @@ void stitch_borders(PolygonMesh& pmesh,
 * @param pmesh the polygon mesh to be modified by stitching
 * @param hedge_pairs_to_stitch a range of `std::pair` of halfedges to be stitched together
 *
+* @return the number of pairs of halfedges that were stitched.
+*
 */
 template <typename PolygonMesh,
           typename HalfedgePairsRange>
-void stitch_borders(PolygonMesh& pmesh,
+std::size_t stitch_borders(PolygonMesh& pmesh,
                     const HalfedgePairsRange& hedge_pairs_to_stitch)
 {
-  stitch_borders(pmesh, hedge_pairs_to_stitch, CGAL::parameters::all_default());
+  return stitch_borders(pmesh, hedge_pairs_to_stitch, CGAL::parameters::all_default());
 }
 
 /// \ingroup PMP_repairing_grp
@@ -869,11 +874,14 @@ void stitch_borders(PolygonMesh& pmesh,
 /// \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
+/// @return the number of pairs of halfedges that were stitched.
+///
 /// @sa `stitch_boundary_cycle()`
 /// @sa `stitch_boundary_cycles()`
 ///
 template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
+std::size_t stitch_borders(PolygonMesh& pmesh,
+                           const CGAL_PMP_NP_CLASS& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -902,26 +910,27 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
                                                          internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm),
                                                          vpm, np);
 
-  stitch_borders(pmesh, hedge_pairs_to_stitch, np);
+  res += stitch_borders(pmesh, hedge_pairs_to_stitch, np);
 
 #ifdef CGAL_PMP_STITCHING_DEBUG
+  std::cout << "------- Stitched " << res << " after cycles & general" << std::endl;
   std::cout << "------- Stitch cycles (#2)..." << std::endl;
 #endif
 
   res += stitch_boundary_cycles(pmesh, np);
 
 #ifdef CGAL_PMP_STITCHING_DEBUG
-  std::cout << "------- Stitched " << res << " in boundary cycles" << std::endl;
+  std::cout << "------- Stitched " << res << " (total)" << std::endl;
 #endif
 
-  CGAL_USE(res);
+  return res;
 }
 
 ///\cond SKIP_IN_MANUAL
 template <typename PolygonMesh>
-void stitch_borders(PolygonMesh& pmesh)
+std::size_t stitch_borders(PolygonMesh& pmesh)
 {
-  stitch_borders(pmesh, CGAL::parameters::all_default());
+  return stitch_borders(pmesh, CGAL::parameters::all_default());
 }
 ///\endcond
 

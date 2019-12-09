@@ -38,7 +38,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSpinBox>
-#include <QDoubleSpinBox>
+#include "CGAL_double_edit.h"
 #include <QSlider>
 
 #include <map>
@@ -619,10 +619,7 @@ public Q_SLOTS:
     scales->setRange (1, 99);
     scales->setValue (5);
 
-    QDoubleSpinBox* voxel_size = dialog.add<QDoubleSpinBox> ("Voxel size (0 for automatic):");
-    voxel_size->setRange (0.0, 10000.0);
-    voxel_size->setValue (0.0);
-    voxel_size->setSingleStep (0.01);
+    DoubleEdit* voxel_size = dialog.add<DoubleEdit> ("Voxel size (0 for automatic):");
 
     if (dialog.exec() != QDialog::Accepted)
       return;
@@ -921,10 +918,9 @@ public Q_SLOTS:
     subdivisions->setRange (1, 9999);
     subdivisions->setValue (16);
 
-    QDoubleSpinBox* smoothing = dialog.add<QDoubleSpinBox> ("Regularization weight: ");
-    smoothing->setRange (0.0, 100.0);
-    smoothing->setValue (0.5);
-    smoothing->setSingleStep (0.1);
+    DoubleEdit* smoothing = dialog.add<DoubleEdit> ("Regularization weight: ");
+
+    smoothing->setText(tr("%1").arg(0.5));
 
     if (dialog.exec() != QDialog::Accepted)
       return;
@@ -1371,10 +1367,9 @@ public Q_SLOTS:
       QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
       trials->setRange (1, 99999);
       trials->setValue (500);
-      QDoubleSpinBox* rate = dialog.add<QDoubleSpinBox> ("Learning rate: ", "learning_rate");
+      DoubleEdit* rate = dialog.add<DoubleEdit> ("Learning rate: ", "learning_rate");
       rate->setRange (0.00001, 10000.0);
       rate->setValue (0.001);
-      rate->setDecimals (5);
       QSpinBox* batch = dialog.add<QSpinBox> ("Batch size: ", "batch_size");
       batch->setRange (1, 2000000000);
       batch->setValue (1000);
