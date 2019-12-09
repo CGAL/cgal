@@ -208,7 +208,7 @@ void test_random_unit_tetra()
 
   Matrix R = evolution.get_best();
   const double epsilon = 1e-3;
-  assert(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
+  assert(assert_doubles(Linear_algebra_traits::compute_determinant(R), 1, epsilon));
   assert(assert_doubles(R(0,0), -0.25791, epsilon));
   assert(assert_doubles(R(0,1), 0.796512, epsilon));
   assert(assert_doubles(R(0,2), -0.546855, epsilon));
@@ -249,7 +249,7 @@ void test_reference_tetrahedron(const char* fname)
 
   Matrix R = experiment.get_best();
   double epsilon = 1e-5;
-  assert(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
+  assert(assert_doubles(Linear_algebra_traits::compute_determinant(R), 1, epsilon));
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
   // postprocessing
@@ -282,7 +282,7 @@ void test_long_tetrahedron(const std::string fname)
 
   Matrix R = experiment.get_best();
   double epsilon = 1e-3;
-  assert(assert_doubles(Linear_algebra_traits::determinant(R), 1, epsilon));
+  assert(assert_doubles(Linear_algebra_traits::compute_determinant(R), 1, epsilon));
   assert(assert_doubles(R(0,0), -1, epsilon));
   assert(assert_doubles(R(0,1), 0, epsilon));
   assert(assert_doubles(R(0,2), 0, epsilon));

@@ -61,8 +61,8 @@ Matrix mean(const Matrix& m1,
   CGAL_assertion(m2.number_of_rows() == 3 && m2.number_of_columns() == 3);
 
   const Matrix reduction = 0.5 * m1 + 0.5 * m2;
-  const Matrix Q = traits.qr_factorization(reduction);
-  const typename Traits::FT det = traits.determinant(Q);
+  const Matrix Q = traits.get_Q(reduction);
+  const typename Traits::FT det = traits.compute_determinant(Q);
 
   return (1. / det) * Q;
 }
@@ -74,8 +74,8 @@ const Matrix nm_centroid(const Matrix& S1,
                          const Traits& traits)
 {
   const Matrix mean = (1./3.) * (S1 + S2 + S3);
-  const Matrix Q = traits.qr_factorization(mean);
-  const typename Traits::FT det = traits.determinant(Q);
+  const Matrix Q = traits.get_Q(mean);
+  const typename Traits::FT det = traits.compute_determinant(Q);
 
   return (1. / det) * Q;
 }

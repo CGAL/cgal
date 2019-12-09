@@ -20,7 +20,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.1}
-\cgalPkgDependsOn{documented for each function;}
+\cgalPkgDependsOn{\ref PkgConvexHull3}
 \cgalPkgBib{cgal:obb}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}

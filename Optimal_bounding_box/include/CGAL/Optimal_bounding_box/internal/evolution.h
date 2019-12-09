@@ -129,7 +129,7 @@ public:
         new_vertex.set(2, 1, lambda * lm(2, 1) + rambda * rm(2, 1));
         new_vertex.set(2, 2, lambda * lm(2, 2) + rambda * rm(2, 2));
 
-        offspring[j] = m_traits.qr_factorization(new_vertex);
+        offspring[j] = m_traits.get_Q(new_vertex);
       }
 
       new_simplices[first_group_size + i] = std::move(offspring);
@@ -177,7 +177,7 @@ public:
       //pop.show_population();
       //std::cout << std::endl;
       const Matrix& R_now = fitness_map.get_best();
-      std::cout << "det = " << m_traits.determinant(R_now) << std::endl;
+      std::cout << "det = " << m_traits.compute_determinant(R_now) << std::endl;
 #endif
 
       new_fit_value = fitness_map.get_best_fitness_value();

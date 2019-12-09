@@ -61,17 +61,17 @@ public:
   }
 
   /// Get the determinant of a matrix
-  FT determinant(const Matrix& matrix) const
+  FT compute_determinant(const Matrix& matrix) const
   {
     return matrix.eigen_object().determinant();
   }
 
   /// Performs QR decomposition of matrix A to a unitary matrix and an upper triagonal
   /// and returns the unitary matrix.
-  Matrix qr_factorization(const Matrix& A) const
+  Matrix get_Q(const Matrix& A) const
   {
     Eigen::HouseholderQR<EigenType> qr(A.eigen_object());
-    CGAL_assertion(CGAL::abs(determinant(Matrix(EigenType(qr.householderQ()))) - 1.) < 0.000001);
+    CGAL_assertion(CGAL::abs(compute_determinant(Matrix(EigenType(qr.householderQ()))) - 1.) < 0.000001);
 
     return Matrix(EigenType(qr.householderQ()));
   }

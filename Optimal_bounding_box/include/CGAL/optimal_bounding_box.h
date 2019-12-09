@@ -160,12 +160,13 @@ void construct_optimal_bounding_box(std::array<typename Traits::Point_3, 8>& obb
 ///
 /// constructs a rectangular box that contains all the input points. This bounding box
 /// is obtained via an optimization process aiming to get a close approximation of the
-/// optimal bounding box.
+/// optimal bounding box, which is defined as the smallest (in terms of volume)
+/// of all the rectangular boxes containing the input points.
 ///
 /// \tparam PointRange a model of `Range` with value type `Point`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param points the input points that the optimal bounding box will contain
+/// \param points the input points
 /// \param obb_points the eight points of the resulting englobing box.
 ///                   The order of points is the same as in the function `CGAL::make_hexahedron()`
 /// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
@@ -179,7 +180,7 @@ void construct_optimal_bounding_box(std::array<typename Traits::Point_3, 8>& obb
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of the concept `OptimalBoundingBoxTraits`. %Default is
 ///     `CGAL::Optimal_bounding_box::Optimal_bounding_box_traits<K>` where `K` is deduced
-///     from the point type, which must be compatible with `CGAL::Kernel_traits`.
+///     from the point type, which must then be compatible with `CGAL::Kernel_traits`.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{use_convex_hull}
 ///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme
@@ -188,6 +189,8 @@ void construct_optimal_bounding_box(std::array<typename Traits::Point_3, 8>& obb
 ///     as it is a balance between two costs. %Default is `true`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
+///
+/// \pre the value type of `PointRange` is `Point`
 ///
 template <typename PointRange,
           typename Point,
@@ -250,14 +253,14 @@ void optimal_bounding_box(const PointRange& points,
 ///
 /// constructs a rectangular box that contains the input mesh. This bounding box
 /// is obtained via an optimization process aiming to get a close approximation of the
-/// optimal bounding box.
+/// optimal bounding box, which is defined as the smallest (in terms of volume)
+/// of all the rectangular boxes containing the input mesh.
 ///
 /// \tparam PolygonMesh a model of `FaceListGraph`
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh
-/// \param obb_mesh the eight points of the resulting englobing box.
-///                   The order of points is the same as in the function `CGAL::make_hexahedron()`
+/// \param obb_mesh the resulting enclosing bounding box (an hexahedron)
 /// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin

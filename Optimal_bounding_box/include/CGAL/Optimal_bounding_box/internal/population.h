@@ -54,7 +54,7 @@ private:
   {
     Simplex simplex;
     for(std::size_t i=0; i<4; ++i)
-      simplex[i] = m_traits.qr_factorization(create_vertex(rng));
+      simplex[i] = m_traits.get_Q(create_vertex(rng));
 
     return simplex;
   }

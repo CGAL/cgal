@@ -9,7 +9,7 @@ bool assert_doubles(double d1, double d2, double epsilon)
   return (d1 < d2 + epsilon && d1 > d2 - epsilon) ? true : false;
 }
 
-void test_qr_factorization()
+void test_get_Q()
 {
   typedef CGAL::Eigen_dense_matrix<double, 3, 3> Mat;
   Mat A(3, 3);
@@ -23,7 +23,7 @@ void test_qr_factorization()
   A.set_coef(2, 1, 0.0202949);
   A.set_coef(2, 2, 0.9240308);
 
-  CGAL_assertion_code(Mat Q = CGAL::Eigen_linear_algebra_traits::qr_factorization(A));
+  CGAL_assertion_code(Mat Q = CGAL::Eigen_linear_algebra_traits::get_Q(A));
   CGAL_assertion_code(double epsilon = 1e-6);
   CGAL_assertion(assert_doubles(Q(0,0), -0.504895, epsilon));
   CGAL_assertion(assert_doubles(Q(0,1), 0.862834, epsilon));
@@ -243,7 +243,7 @@ void test_eigen_matrix_interface()
   C.set_coef(2, 1, 0.0202949);
   C.set_coef(2, 2, 0.9240308);
 
-  CGAL_assertion_code(Matrix Q = CGAL::Eigen_linear_algebra_traits::qr_factorization(C));
+  CGAL_assertion_code(Matrix Q = CGAL::Eigen_linear_algebra_traits::get_Q(C));
   CGAL_assertion_code(double epsilon = 1e-5);
   CGAL_assertion(assert_doubles(Q(0,0), -0.504895, epsilon));
   CGAL_assertion(assert_doubles(Q(0,1), 0.862834, epsilon));
@@ -291,7 +291,7 @@ void test_eigen_matrix_interface()
 
 int main()
 {
-  test_qr_factorization();
+  test_get_Q();
   test_fitness_function();
   test_simplex_operations();
   test_centroid();
