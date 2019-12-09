@@ -12,5 +12,5 @@ namespace CGAL {
 AABB and stuff
 
 \section secOBB Optimal Bounding Box
-
+*/
 } /* namespace CGAL */
