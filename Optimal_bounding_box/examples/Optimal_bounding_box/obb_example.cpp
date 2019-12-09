@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
+#include <CGAL/optimal_bounding_box.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_3                                             Point;

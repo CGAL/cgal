@@ -14,9 +14,9 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 
-#include <CGAL/Optimal_bounding_box/population.h>
-#include <CGAL/Optimal_bounding_box/nelder_mead_functions.h>
-#include <CGAL/Optimal_bounding_box/fitness_function.h>
+#include <CGAL/Optimal_bounding_box/internal/fitness_function.h>
+#include <CGAL/Optimal_bounding_box/internal/nelder_mead_functions.h>
+#include <CGAL/Optimal_bounding_box/internal/population.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/number_utils.h>

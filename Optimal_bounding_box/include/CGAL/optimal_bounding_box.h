@@ -14,9 +14,9 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 
-#include <CGAL/Optimal_bounding_box/population.h>
-#include <CGAL/Optimal_bounding_box/evolution.h>
-#include <CGAL/Optimal_bounding_box/helper.h>
+#include <CGAL/Optimal_bounding_box/internal/population.h>
+#include <CGAL/Optimal_bounding_box/internal/evolution.h>
+#include <CGAL/Optimal_bounding_box/Optimal_bounding_box_traits.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h> // @tmp
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>

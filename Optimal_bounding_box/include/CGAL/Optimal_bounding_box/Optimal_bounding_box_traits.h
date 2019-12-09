@@ -11,8 +11,8 @@
 // Author(s)     : Konstantinos Katrioplas
 //                 Mael Rouxel-Labbé
 //
-#ifndef CGAL_OPTIMAL_BOUNDING_BOX_HELPER_H
-#define CGAL_OPTIMAL_BOUNDING_BOX_HELPER_H
+#ifndef CGAL_OPTIMAL_BOUNDING_BOX_BOUNDING_BOX_TRAITS_H
+#define CGAL_OPTIMAL_BOUNDING_BOX_BOUNDING_BOX_TRAITS_H
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -77,4 +77,4 @@ public:
 } // end namespace Optimal_bounding_box
 } // end namespace CGAL
 
-#endif // CGAL_OPTIMAL_BOUNDING_BOX_HELPER_H
+#endif // CGAL_OPTIMAL_BOUNDING_BOX_BOUNDING_BOX_TRAITS_H
