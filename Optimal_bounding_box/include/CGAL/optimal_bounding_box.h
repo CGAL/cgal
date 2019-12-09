@@ -14,12 +14,14 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 
+#include <CGAL/license/Optimal_bounding_box.h>
+
 #include <CGAL/Optimal_bounding_box/internal/population.h>
 #include <CGAL/Optimal_bounding_box/internal/evolution.h>
 #include <CGAL/Optimal_bounding_box/Optimal_bounding_box_traits.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h> // @tmp
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/Bbox_3.h>
@@ -27,6 +29,7 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Iso_cuboid_3.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/Random.h>
 #include <CGAL/Simple_cartesian.h>
 
@@ -39,6 +42,11 @@
 #include <iterator>
 #include <type_traits>
 #include <vector>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_BGL_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 namespace Optimal_bounding_box {
@@ -100,12 +108,6 @@ void construct_optimal_bounding_box(std::array<typename Traits::Point_3, 8>& obb
 #endif
 
   Evolution<PointRange, Traits> search_solution(points, rng, traits);
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  std::cout << "constructor: " << timer.time() << std::endl;
-  timer.reset();
-#endif
-
   search_solution.evolve(max_generations);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
@@ -117,16 +119,13 @@ void construct_optimal_bounding_box(std::array<typename Traits::Point_3, 8>& obb
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   std::cout << "get best: " << timer.time() << std::endl;
-#endif
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   timer.reset();
 #endif
 
   post_processing(rotation, obb_points, points, traits);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
-  std::cout << "post porcessing: " << timer.time() << std::endl;
+  std::cout << "post-processing: " << timer.time() << std::endl;
 #endif
 }
 
@@ -157,72 +156,134 @@ void construct_optimal_bounding_box(std::array<typename Traits::Point_3, 8>& obb
 } // namespace Optimal_bounding_box
 } // namespace internal
 
-/// \ingroup OBB_grp
-/// calculates the optimal bounding box.
+/// \ingroup PkgOptimalBoundingBoxFunctions
+///
+/// constructs a rectangular box that contains all the input points. This bounding box
+/// is obtained via an optimization process aiming to get a close approximation to the
+/// optimal bounding box.
 ///
 /// \tparam PointRange a model of `Range` with value type `Point`
-/// \tparam NamedParameters
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param points the input points that are included in the optimal bounding box.
-/// \param obb_points the eight points of the optimal bounding box to be calculated.
+/// \param points the input points that the optimal bounding box will contain
+/// \param obb_points the eight points of the resulting englobing box.
+///                   The order of points is the same as in the function `CGAL::make_hexahedron()`
+/// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamBegin{vertex_point_map}
+///     the property map with the points associated to the vertices of `pmesh`.
+///     If this parameter is omitted, an internal property map for
+///     `CGAL::vertex_point_t` must be available in `PolygonMesh`
+///   \cgalParamEnd
+///   \cgalParamBegin{geom_traits}
+///     a geometric traits class instance, model of the concept `OptimalBoundingBoxTraits`. %Default is
+///     `CGAL::Optimal_bounding_box::Optimal_bounding_box_traits<K>` where `K` is deduced
+///     from the point type, which must be compatible with `CGAL::Kernel_traits`.
+///   \cgalParamEnd
+///   \cgalParamBegin{use_convex_hull}
+///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme
+///     points of the data range (i.e. construct the convex hull) to reduce the input data range
+///     and accelerate the algorithm. The optimal value of this parameter will depend on the data
+///     as it is a balance between two costs. %Default is `true`.
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
 ///
 template <typename PointRange,
           typename Point,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void optimal_bounding_box(const PointRange& points,
                           std::array<Point, 8>& obb_points,
-                          const CGAL_PMP_NP_CLASS& np)
+                          const CGAL_BGL_NP_CLASS& np)
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
-#if 0 // @fixme
-  typedef typename GetSvdTraits<CGAL_PMP_NP_CLASS>::type                          SVD_traits;
-  CGAL_static_assertion_msg(
-    !(std::is_same<SVD_traits, typename GetSvdTraits<CGAL_PMP_NP_CLASS>::NoTraits>::value),
-    "Error: must provide traits or enable Eigen");
-
-  const SVD_traits traits = choose_parameter(get_parameter(np, svd_traits), SVD_traits());
+#if defined(CGAL_EIGEN3_ENABLED)
+  typedef typename CGAL::Kernel_traits<Point>::type                                 K;
+  typedef Optimal_bounding_box::Optimal_bounding_box_traits<K>                      Default_traits;
 #else
-  typedef typename CGAL::Kernel_traits<Point>::type K;
-  typedef Optimal_bounding_box::Optimal_bounding_box_traits<K> Traits;
-  Traits traits;
+  typedef void                                                                      Default_traits;
 #endif
 
-  // @fixme
-  const bool use_ch = true; //choose_parameter(get_parameter(np, internal_np::use_convex_hull), false);
-  unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0);
+  typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
+                                                       CGAL_BGL_NP_CLASS,
+                                                       Default_traits>::type        Geom_traits;
+
+  CGAL_static_assertion_msg(!(std::is_same<Geom_traits, void>::value),
+                            "You must provide a traits class or have Eigen enabled!");
+
+  Geom_traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Geom_traits());
+
+  const bool use_ch = choose_parameter(get_parameter(np, internal_np::use_convex_hull), false);
+  const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0); // undocumented
 
   CGAL::Random rng(seed);
+
+  // @todo handle those cases instead
+  CGAL_assertion(points.size() >= 3);
+  if(points.size() <= 3)
+  {
+    std::cerr << "The optimal bounding box cannot YET be computed for a mesh with fewer than 4 vertices!\n";
+    return;
+  }
 
   return Optimal_bounding_box::internal::construct_optimal_bounding_box(obb_points, use_ch, points, rng, traits);
 }
 
-template <typename PolygonMesh, typename Point>
-void optimal_bounding_box(const PolygonMesh& pmesh,
-                          std::array<Point, 8>& obb_mesh)
-{
-  return optimal_bounding_box(pmesh, obb_mesh, CGAL::parameters::all_default());
-}
+/// \cond SKIP_IN_MANUAL
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// With polygon meshes
+/// Convenience overloads for point ranges
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// \ingroup OBB_grp
-/// calculates the optimal bounding box.
+template <typename PointRange, typename Point>
+void optimal_bounding_box(const PointRange& points,
+                          std::array<Point, 8>& obb_points)
+{
+  return optimal_bounding_box(points, obb_points, CGAL::parameters::all_default());
+}
+
+/// \endcond
+
+/// \ingroup PkgOptimalBoundingBoxFunctions
+///
+/// constructs a rectangular box that contains the input mesh. This bounding box
+/// is obtained via an optimization process aiming to get a close approximation to the
+/// optimal bounding box.
 ///
 /// \tparam PolygonMesh a model of `FaceListGraph`
-/// \tparam NamedParameters
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
-/// \param pmesh the input mesh.
-/// \param obb_mesh the hexaedron mesh to be built out of the optimal bounding box.
+/// \param pmesh the input mesh
+/// \param obb_mesh the eight points of the resulting englobing box.
+///                   The order of points is the same as in the function `CGAL::make_hexahedron()`
+/// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamBegin{vertex_point_map}
+///     the property map with the points associated to the vertices of `pmesh`.
+///     If this parameter is omitted, an internal property map for
+///     `CGAL::vertex_point_t` must be available in `PolygonMesh`
+///   \cgalParamEnd
+///   \cgalParamBegin{geom_traits}
+///     a geometric traits class instance, model of the concept `OptimalBoundingBoxTraits`. %Default is
+///     `CGAL::Optimal_bounding_box::Optimal_bounding_box_traits<K>` where `K` is deduced
+///     from the point type, which must be compatible with `CGAL::Kernel_traits`.
+///   \cgalParamEnd
+///   \cgalParamBegin{use_convex_hull}
+///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme
+///     points of the data range (i.e. construct the convex hull) to reduce the input data range
+///     and accelerate the algorithm. The optimal value of this parameter will depend on the data
+///     as it is a balance between two costs. %Default is `true`.
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
 ///
 template <typename PolygonMesh,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void optimal_bounding_box(const PolygonMesh& pmesh,
                           PolygonMesh& obb_mesh,
-                          const CGAL_PMP_NP_CLASS& np)
+                          const CGAL_BGL_NP_CLASS& np)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -231,17 +292,8 @@ void optimal_bounding_box(const PolygonMesh& pmesh,
 
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
 
-  typedef typename PMP::GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type   VPM;
+  typedef typename PMP::GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type   VPM;
   typedef typename boost::property_traits<VPM>::value_type                              Point;
-
-  CGAL_assertion(vertices(pmesh).size() >= 3);
-
-  if(vertices(pmesh).size() <= 3)
-  {
-    // @fixme is that even true
-    std::cerr << "The optimal bounding box cannot be computed for a mesh with fewer than 4 vertices!\n";
-    return;
-  }
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
@@ -259,6 +311,8 @@ void optimal_bounding_box(const PolygonMesh& pmesh,
                         obb_points[4], obb_points[5], obb_points[6], obb_points[7], obb_mesh);
 }
 
+/// \cond SKIP_IN_MANUAL
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /// Convenience overloads for polygon meshes
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -269,6 +323,8 @@ void optimal_bounding_box(const PolygonMesh& pmesh,
 {
   return optimal_bounding_box(pmesh, obb_mesh, CGAL::parameters::all_default());
 }
+
+/// \endcond
 
 } // end namespace CGAL
 

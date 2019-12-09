@@ -14,6 +14,8 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H
 
+#include <CGAL/license/Optimal_bounding_box.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/Random.h>
 
@@ -22,6 +24,7 @@
 
 namespace CGAL {
 namespace Optimal_bounding_box {
+namespace internal {
 
 template<typename Traits>
 class Population
@@ -99,7 +102,8 @@ void Population<Matrix>::show_population()
 }
 #endif
 
-} // end namespace Optimal_bounding_box
-} // end namespace CGAL
+} // namespace internal
+} // namespace Optimal_bounding_box
+} // namespace CGAL
 
 #endif // CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H

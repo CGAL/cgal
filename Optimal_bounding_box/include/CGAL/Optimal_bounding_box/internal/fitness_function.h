@@ -14,6 +14,8 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 #define CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 
+#include <CGAL/license/Optimal_bounding_box.h>
+
 #include <CGAL/assertions.h>
 
 #include <algorithm>
@@ -21,6 +23,7 @@
 
 namespace CGAL {
 namespace Optimal_bounding_box {
+namespace internal {
 
 template <typename Traits, typename PointRange>
 typename Traits::FT
@@ -103,7 +106,8 @@ private:
   const PointRange& m_points;
 };
 
-} // end namespace Optimal_bounding_box
-} // end namespace CGAL
+} // namespace internal
+} // namespace Optimal_bounding_box
+} // namespace CGAL
 
 #endif // CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H

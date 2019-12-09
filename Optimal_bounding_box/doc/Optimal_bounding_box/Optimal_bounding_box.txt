@@ -1,9 +1,16 @@
 namespace CGAL {
+
 /*!
 \mainpage User Manual
-\anchor Chapter_OptimalBoundingBox
+\anchor Chapter_Building_Optimal_Bounding_Box
 
 \cgalAutoToc
-\authors
+\authors Konstantinos Katrioplas, Mael Rouxel-Labbé
+
+\section sectionSubIntro Introduction
+
+AABB and stuff
+
+\section secOBB Optimal Bounding Box
 
 } /* namespace CGAL */

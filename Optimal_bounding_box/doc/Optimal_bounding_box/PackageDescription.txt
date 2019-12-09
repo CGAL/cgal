@@ -1,30 +1,50 @@
-/// \defgroup PkgOptimalBoundingBox Optimal Bounding Box Reference
+/// \defgroup PkgOptimalBoundingBoxRef Optimal Bounding Box Reference
+
 /// \defgroup PkgOptimalBoundingBoxConcepts Concepts
-/// \ingroup PkgOptimalBoundingBox
+/// \ingroup PkgOptimalBoundingBoxRef
 
-\cgalPkgDescriptionBegin{Optimal Bounding Box, PkgOptimalBoundingBoxSummary}
-\cgalPkgPicture{}
+/// \defgroup PkgOptimalBoundingBoxClasses Optimal Bounding Box Classes
+/// \ingroup PkgOptimalBoundingBoxRef
 
+/// \defgroup PkgOptimalBoundingBoxFunctions Optimal Bounding Box Methods
+/// \ingroup PkgOptimalBoundingBoxRef
+
+/*!
+\addtogroup PkgOptimalBoundingBoxRef
+\cgalPkgDescriptionBegin{Optimal Bounding Box,PkgOptimalBoundingBox}
+\cgalPkgPicture{Envelope_2.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{}
-\cgalPkgDesc{This package provides stuff.}
-\cgalPkgManuals{Chapter_OptimalBoundingBox,PkgOptimalBoundingBox}
+\cgalPkgAuthor{Konstantinos Katrioplas, Mael Rouxel-Labbé}
+\cgalPkgDesc{This package provides functions to compute oriented bounding boxes around a point set or a polygon mesh.}
+\cgalPkgManuals{Chapter_Building_Optimal_Bounding_Box,PkgOptimalBoundingBoxRef}
 \cgalPkgSummaryEnd
-
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.2}
+\cgalPkgSince{5.1}
 \cgalPkgDependsOn{documented for each function;}
-\cgalPkgBib{cgal:lty-pmp}
+\cgalPkgBib{cgal:obb}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
 \cgalPkgShortInfoEnd
-
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
-## Parameters ##
+\cgalCRPSection{Parameters}
 
-## Functions ##
+Optional parameters of the functions of this package are implemented as \ref BGLNamedParameters.
+The page \ref obb_namedparameters describes their usage and provides a list of the parameters
+that are used in this package.
+
+\cgalCRPSection{Concepts}
+
+- `CGAL::OptimalBoundingBoxTraits`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Optimal_bounding_box::Optimal_bounding_box_traits`
+
+\cgalCRPSection{Methods}
+
+- `CGAL::optimal_bounding_box()`
 
 */

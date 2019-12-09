@@ -14,6 +14,8 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 
+#include <CGAL/license/Optimal_bounding_box.h>
+
 #include <CGAL/Optimal_bounding_box/internal/fitness_function.h>
 #include <CGAL/Optimal_bounding_box/internal/nelder_mead_functions.h>
 #include <CGAL/Optimal_bounding_box/internal/population.h>
@@ -28,6 +30,7 @@
 
 namespace CGAL {
 namespace Optimal_bounding_box {
+namespace internal {
 
 template <typename PointRange, typename Traits>
 class Evolution
@@ -36,10 +39,10 @@ public:
   typedef typename Traits::FT                                               FT;
   typedef typename Traits::Matrix                                           Matrix;
 
-  typedef Optimal_bounding_box::Population<Traits>                          Population;
+  typedef Population<Traits>                                                Population;
   typedef typename Population::Simplex                                      Simplex;
 
-  typedef Optimal_bounding_box::Fitness_map<Population, PointRange, Traits> Fitness_map;
+  typedef Fitness_map<Population, PointRange, Traits>                       Fitness_map;
 
   Evolution(const PointRange& points,
             CGAL::Random& rng,
@@ -203,7 +206,8 @@ private:
   const Traits& m_traits;
 };
 
-} // end namespace Optimal_bounding_box
-} // end namespace CGAL
+} // namespace internal
+} // namespace Optimal_bounding_box
+} // namespace CGAL
 
 #endif // CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H

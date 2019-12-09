@@ -8,55 +8,59 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Konstantinos Katrioplas
-//                 Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé
 //
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_BOUNDING_BOX_TRAITS_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_BOUNDING_BOX_TRAITS_H
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Bbox_3.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/license/Optimal_bounding_box.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_matrix.h>
 #include <Eigen/QR>
 #endif
 
-#include <fstream>
-#include <string>
-#include <vector>
-
 namespace CGAL {
 namespace Optimal_bounding_box {
 
-#ifdef CGAL_EIGEN3_ENABLED
-// @tmp move the header include too
+#if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
+
+/// \ingroup PkgOptimalBoundingBoxClasses
+///
+/// The class `CGAL::Optimal_bounding_box::Optimal_bounding_box_traits` is a traits type
+/// to be used with the functions `CGAL::optimal_bounding_box()`.
+/// It uses the third party library \ref thirdpartyEigen "Eigen", which must therefore
+/// be available on the system for this class to be used.
+///
+/// \tparam K must be a model of `Kernel`
+///
+/// \cgalModels `OptimalBoundingBoxTraits`
+///
 template <typename K>
 class Optimal_bounding_box_traits
   : public K
 {
 public:
+  /// The field number type
   typedef typename K::FT                               FT;
+
+  /// The matrix type
   typedef CGAL::Eigen_matrix<FT, 3, 3>                 Matrix;
 
 private:
   typedef typename Matrix::EigenType                   EigenType;
 
 public:
+  /// Constructor from the base kernel
   explicit Optimal_bounding_box_traits(const K& k = K()) : K(k) { }
 
-  /// Get the transpose of a `Matrix<NT>` matrix
+  /// Get the transpose of a matrix
   Matrix transpose(const Matrix& mat) const
   {
     return Matrix(mat.eigen_object().transpose());
   }
 
-  /// Get the determinant of a `Matrix<NT>` matrix
+  /// Get the determinant of a matrix
   FT determinant(const Matrix& matrix) const
   {
     return matrix.eigen_object().determinant();
@@ -72,9 +76,9 @@ public:
     return Matrix(EigenType(qr.householderQ()));
   }
 };
-#endif
+#endif // defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
 
-} // end namespace Optimal_bounding_box
-} // end namespace CGAL
+} // namespace Optimal_bounding_box
+} // namespace CGAL
 
 #endif // CGAL_OPTIMAL_BOUNDING_BOX_BOUNDING_BOX_TRAITS_H

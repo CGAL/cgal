@@ -129,6 +129,7 @@
 \package_listing{Box_intersection_d}
 \package_listing{AABB_tree}
 \package_listing{Spatial_sorting}
+\package_listing{Optimal_bounding_box}
 
 \cgalPackageSection{PartGeometricOptimization,Geometric Optimization}
 

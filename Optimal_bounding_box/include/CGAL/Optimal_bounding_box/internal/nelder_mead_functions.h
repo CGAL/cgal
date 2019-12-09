@@ -14,6 +14,8 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 
+#include <CGAL/license/Optimal_bounding_box.h>
+
 #include <CGAL/Optimal_bounding_box/internal/fitness_function.h>
 
 #include <CGAL/assertions.h>
@@ -23,6 +25,7 @@
 
 namespace CGAL {
 namespace Optimal_bounding_box {
+namespace internal {
 
 template <typename Matrix, typename Traits>
 Matrix reflection(const Matrix& S_centroid,
@@ -157,7 +160,8 @@ void nelder_mead(Simplex& simplex,
   } // nelder mead iterations
 }
 
-} // end namespace Optimal_bounding_box
-} // end namespace CGAL
+} // namespace internal
+} // namespace Optimal_bounding_box
+} // namespace CGAL
 
 #endif

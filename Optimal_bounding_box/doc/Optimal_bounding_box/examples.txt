@@ -1,4 +1,4 @@
 /*!
 
-\example Optimal_bounding_box/example_todo.cpp
+\example Optimal_bounding_box/obb_example.cpp
 */
