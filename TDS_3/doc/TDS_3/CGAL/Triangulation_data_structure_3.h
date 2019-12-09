@@ -41,8 +41,8 @@ specified by the concept.
 \sa `CGAL::Triangulation_vertex_base_with_info_3` 
 \sa `CGAL::Triangulation_cell_base_with_info_3` 
 */
-template< typename TriangulationDSVertexBase_3, 
-          typename TriangulationDSCellBase_3,
+template< typename VertexBase, 
+          typename CellBase,
           typename ConcurrencyTag >
 class Triangulation_data_structure_3 : public CGAL::Triangulation_utils_3 {
 public:
