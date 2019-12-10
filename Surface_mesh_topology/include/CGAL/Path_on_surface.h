@@ -551,10 +551,12 @@ public:
 
     // first select a random edge by taking the lower index of
     // the two darts when it is not a boundary
-    unsigned int index=random.get_int(0, get_map().darts().capacity());
+    unsigned int index=random.get_int
+      (0, static_cast<unsigned int>(get_map().darts().capacity()));
     while (!get_map().darts().is_used(index) ||
           (!get_map().template is_free<2>(get_map().dart_handle(index)) &&
-           get_map().dart_handle(index)>get_map().template beta<2>(get_map().dart_handle(index))))
+           get_map().dart_handle(index)>get_map().
+           template beta<2>(get_map().dart_handle(index))))
     {
       ++index;
       if (index==get_map().darts().capacity()) index=0;
@@ -630,7 +632,8 @@ public:
     // the path (maybe with a flip) the first of them in the list is the
     // opposite of back(), or back() itself if it is 2-free
 
-    unsigned int i=random.get_int(allow_half_turn?0:1, candidats.size());
+    unsigned int i=random.get_int(allow_half_turn?0:1,
+                                  static_cast<unsigned int>(candidats.size()));
     auto it=candidats.begin();
     for (unsigned int nb=0; nb<i; ++nb, ++it) {}
     push_back(it->first, it->second, update_isclosed);

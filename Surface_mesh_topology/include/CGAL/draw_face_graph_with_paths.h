@@ -291,7 +291,8 @@ protected:
     }
     else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))
     {
-      m_current_dart=(m_current_dart==0?lcc.number_of_darts():m_current_dart-1);
+      m_current_dart=(m_current_dart==0?lcc.number_of_darts():
+                      m_current_dart-1);
       if (m_current_dart==lcc.number_of_darts())
       {
         displayMessage(QString("Draw all darts."));
@@ -332,8 +333,8 @@ protected:
   bool m_nofaces;
   const DrawingFunctorLCC& m_drawing_functor;
   const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* m_paths;
-  unsigned int m_current_path;
-  unsigned int m_current_dart;
+  std::size_t m_current_path;
+  std::size_t m_current_dart;
   bool m_draw_marked_darts;
   std::size_t m_amark; // If !=INVALID_MARK, show darts marked with this mark
 };

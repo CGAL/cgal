@@ -179,8 +179,8 @@ public:
         if (i==0) // Case of a closed path, made of only one flat part.
         {
           m_path.push_back(Flat(apath.real_front(), apath.real_back(),
-                                (positive_flat?(apath.length()-1):
-                                               -(apath.length()-1))));
+                                (positive_flat?(static_cast<int>(apath.length()-1)):
+                                 -(static_cast<int>(apath.length()-1)))));
           m_length=apath.length();
           CGAL_assertion(is_valid());
           return;

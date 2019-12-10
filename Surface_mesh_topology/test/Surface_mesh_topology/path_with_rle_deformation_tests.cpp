@@ -48,7 +48,11 @@ using namespace CGAL::Surface_mesh_topology;
 void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     bool use_only_positive,
                     bool use_only_negative,
-                    bool draw=false,
+                    bool
+#ifdef CGAL_USE_BASIC_VIEWER
+                    draw
+#endif
+                    =false,
                     std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
                                            // otherwise repeat the given number of times
 {
