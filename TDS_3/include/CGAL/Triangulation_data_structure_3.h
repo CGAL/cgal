@@ -532,7 +532,7 @@ public:
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map, vertex_pair_facet_map);
     Vertex_handle nv = create_vertex();
     std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
-    for (int local_facet_index = 0, end = facets.size();
+    for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
          local_facet_index < end; ++local_facet_index) {
       const Facet f = mirror_facet(facets[local_facet_index]);
       f.first->tds_data().clear(); // was on boundary
