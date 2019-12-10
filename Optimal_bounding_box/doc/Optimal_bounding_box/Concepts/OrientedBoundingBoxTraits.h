@@ -9,8 +9,6 @@ used in the function `CGAL::oriented_bounding_box()`, and in particular the need
 a 3x3 matrix type with a number of supporting functions (determinant and transposed matrix
 computations, etc.).
 
-\cgalRefines `Kernel`
-
 \cgalHasModel `CGAL::Oriented_bounding_box_traits`
 
 */
