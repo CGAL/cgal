@@ -96,6 +96,9 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
   assert(get_parameter(np, CGAL::internal_np::get_placement_policy).v == 35);
 
+  // Named parameters that we use in the package 'Optimal_bounding_box'
+  assert(get_parameter(np, CGAL::internal_np::use_convex_hull).v == 58);
+
     // To-be-documented named parameters
   assert(get_parameter(np, CGAL::internal_np::face_normal).v == 36);
   assert(get_parameter(np, CGAL::internal_np::random_seed).v == 37);
@@ -180,6 +183,9 @@ void test(const NamedParameters& np)
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
   check_same_type<35>(get_parameter(np, CGAL::internal_np::get_placement_policy));
 
+  // Named parameters that we use in the package 'Optimal_bounding_box'
+  check_same_type<58>(get_parameter(np, CGAL::internal_np::use_convex_hull));
+
     // To-be-documented named parameters
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
   check_same_type<37>(get_parameter(np, CGAL::internal_np::random_seed));
@@ -260,11 +266,12 @@ int main()
                          .use_bool_op_to_clip_surface(A<50>(50))
                          .use_binary_mode(A<51>(51))
                          .face_size_map(A<52>(52))
-                         .snapping_tolerance(A<57>(57))
                          .use_angle_smoothing(A<53>(53))
                          .use_area_smoothing(A<54>(54))
                          .use_Delaunay_flips(A<55>(55))
-                         .use_safety_constraints(A<56>(56))
+                         .use_safety_constraints(A<56>(56)
+                         .snapping_tolerance(A<57>(57))
+                         .use_convex_hull(A<58>(58))
        );
 
   return EXIT_SUCCESS;
