@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
@@ -124,7 +115,7 @@ namespace CGAL {
       formatter.read_vertices_end();
 
       // Read the DCEL halfedges and store them in the halfedges vector.
-      DHalfedge* he = NULL;
+      DHalfedge* he = nullptr;
       formatter.read_edges_begin();
 
       m_halfedges.resize(number_of_halfedges);
@@ -179,7 +170,7 @@ namespace CGAL {
       else
       {
         // Allocate a vertex at infinity.
-        new_v = m_arr_access.new_vertex(NULL, ps_x, ps_y);
+        new_v = m_arr_access.new_vertex(nullptr, ps_x, ps_y);
       }
 
       formatter.read_vertex_end();
@@ -213,7 +204,7 @@ namespace CGAL {
       else
       {
         // Allocate a new fictitious edge.
-        new_he = m_arr_access.new_edge(NULL);
+        new_he = m_arr_access.new_edge(nullptr);
       }
 
       // Set the cross pointers between the twin halfedges and the end vertices.
@@ -251,7 +242,7 @@ namespace CGAL {
     {
       formatter.read_face_begin();
 
-      // Allocate a new face and determine whether it is unbounded and wether it
+      // Allocate a new face and determine whether it is unbounded and whether it
       // is valid (non-fictitious).
       DFace*      new_f = m_arr_access.new_face();
       const bool  is_unbounded = (formatter.read_vertex_index() != 0);
@@ -276,7 +267,7 @@ namespace CGAL {
 
         // Read the current outer CCB.
         n = formatter.read_size("halfedges_on_outer_ccb");
-        he = _read_ccb(formatter, n, new_occb, NULL);
+        he = _read_ccb(formatter, n, new_occb, nullptr);
         new_f->add_outer_ccb(new_occb, he);
       }
       formatter.read_outer_ccbs_end();
@@ -293,7 +284,7 @@ namespace CGAL {
 
         // Read the current inner CCB.
         n = formatter.read_size("halfedges_on_inner_ccb");
-        he = _read_ccb(formatter, n, NULL, new_iccb);
+        he = _read_ccb(formatter, n, nullptr, new_iccb);
         new_f->add_inner_ccb(new_iccb, he);
       }
       formatter.read_inner_ccbs_end();
@@ -331,7 +322,7 @@ namespace CGAL {
      * \param boundary_size The number of halfedges along the boundary.
      * \param p_outer The outer CCB.
      * \param p_inner The inner CCB.
-     * \pre p_outer is valid and p_inner is NULL, or vice versa.
+     * \pre p_outer is valid and p_inner is nullptr, or vice versa.
      * \return A pointer to the first halfedge read.
      */
     template <class Formatter>
@@ -340,8 +331,8 @@ namespace CGAL {
                          DOuter_ccb* p_outer,
                          DInner_ccb* p_inner)
     {
-      CGAL_assertion((p_outer != NULL && p_inner == NULL) ||
-                     (p_outer == NULL && p_inner != NULL));
+      CGAL_assertion((p_outer != nullptr && p_inner == nullptr) ||
+                     (p_outer == nullptr && p_inner != nullptr));
 
       formatter.read_ccb_halfedges_begin();
  
@@ -349,7 +340,7 @@ namespace CGAL {
       std::size_t  first_idx = formatter.read_halfedge_index();
       DHalfedge*   first_he = m_halfedges [first_idx];
 
-      if (p_outer != NULL)
+      if (p_outer != nullptr)
         first_he->set_outer_ccb(p_outer);
       else
         first_he->set_inner_ccb(p_inner);
@@ -369,7 +360,7 @@ namespace CGAL {
         prev_he->set_next(curr_he);
 
         // Set the CCB.
-        if (p_outer != NULL)
+        if (p_outer != nullptr)
           curr_he->set_outer_ccb(p_outer);
         else
           curr_he->set_inner_ccb(p_inner);

@@ -2,7 +2,6 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/iterator.h>
 
-#include <boost/foreach.hpp>
 #include <boost/concept/assert.hpp>
 #include <CGAL/Circulator/Circulator_concepts.h>
 
@@ -134,7 +133,7 @@ int main(int argc, char* argv[])
   } 
 
   {
-    BOOST_FOREACH(edge_descriptor ed,out_edges(target(hd,P),P)){
+    for(edge_descriptor ed : out_edges(target(hd,P),P)){
       halfedge_descriptor hd2 = halfedge(ed,P);
       std::cout << get(CGAL::vertex_point, P, target(hd2,P)) << std::endl;
     }

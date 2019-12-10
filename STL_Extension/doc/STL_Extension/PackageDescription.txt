@@ -41,11 +41,11 @@
 - `CGAL::Multiset<Type,Compare,Allocator>`
 
 \cgalCRPSection{Generic Algorithms}
-- `CGAL::cpp11::copy_n`
+- `std::copy_n`
 - `CGAL::copy_n`
 - `CGAL::min_max_element`
-- `CGAL::cpp11::next`
-- `CGAL::cpp11::prev`
+- `std::next`
+- `std::prev`
 - `CGAL::predecessor`
 - `CGAL::successor`
 

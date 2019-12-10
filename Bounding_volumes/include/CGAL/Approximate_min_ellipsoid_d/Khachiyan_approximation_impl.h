@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
@@ -183,7 +174,7 @@ namespace CGAL {
     // Since the transformations we apply do not change the solution
     // space of the intermediate systems, we can say: The system t x =
     // e_j has, for any i in {1,...,d}, the same solution space as I x
-    // = n_i (with n_i being the i-th colum of N); it follows that
+    // = n_i (with n_i being the i-th column of N); it follows that
     // x=n_i.
 
     // store the identity matrix in mi:

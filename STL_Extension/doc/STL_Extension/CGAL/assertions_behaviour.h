@@ -18,7 +18,7 @@ enum Failure_behaviour { ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE,
 \param type is a string that contains one of the words precondition, postcondition, assertion or warning. 
 \param expression contains the expression that was violated. 
 \param file, line contain the place where the check was made. 
-\param explanation contains an explanation of what was checked. It can be `NULL`, in which case the expression is thought to be descriptive enough.
+\param explanation contains an explanation of what was checked. It can be `null_ptr`, in which case the expression is thought to be descriptive enough.
 
 
  */

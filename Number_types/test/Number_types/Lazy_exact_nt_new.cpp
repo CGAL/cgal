@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cassert>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>

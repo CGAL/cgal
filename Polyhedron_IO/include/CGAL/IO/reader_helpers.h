@@ -1,19 +1,10 @@
 // Copyright (c) 2015 GeometryFactory
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -39,7 +30,7 @@ CGAL_GENERATE_MEMBER_DETECTOR(resize);
 // Typical container
 template <class Container>
 void resize(Container& c, std::size_t size,
-            typename boost::enable_if_c<has_resize<Container>::value>::type* = NULL)
+            typename boost::enable_if_c<has_resize<Container>::value>::type* = nullptr)
 {
   c.resize(size);
 }
@@ -50,7 +41,7 @@ void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_co
             typename boost::enable_if<
               boost::mpl::and_<
                 boost::mpl::not_<has_resize<Container> >,
-                                 has_size<Container> > >::type* = NULL)
+                                 has_size<Container> > >::type* = nullptr)
 {
   CGAL_assertion(array.size() == size);
 }
@@ -60,7 +51,7 @@ template <class Container>
 void resize(Container&, std::size_t,
             typename boost::disable_if<
               boost::mpl::or_<has_resize<Container>,
-                              has_size<Container> > >::type* = NULL)
+                              has_size<Container> > >::type* = nullptr)
 {
 }
 

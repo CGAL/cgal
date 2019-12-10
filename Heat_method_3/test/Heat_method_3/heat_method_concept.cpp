@@ -7,7 +7,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <boost/foreach.hpp>
 
 typedef Heat_method_traits_3                                 Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -46,7 +45,7 @@ int main()
   vertex_descriptor far;
   // double sdistance = 0;
   
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     std::cout << vd << "  is at distance " << get(heat_intensity, vd) << " from " << source << std::endl;
     /*
     if(squared_distance(sp,sm.point(vd)) > sdistance){
@@ -58,7 +57,7 @@ int main()
   hm.add_source(far);
   hm.estimate_geodesic_distances(heat_intensity);
 
-  BOOST_FOREACH(vertex_descriptor vd , vertices(sm)){
+  for(vertex_descriptor vd : vertices(sm)){
     std::cout << vd << "  is at distance " << get(heat_intensity, vd) << " " << std::endl;
   }
 

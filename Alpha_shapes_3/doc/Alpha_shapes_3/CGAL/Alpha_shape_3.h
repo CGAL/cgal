@@ -119,8 +119,8 @@ typedef unspecified_type FT;
 /*!
 The point type.
 
-For basic alpha shapes, `Point` will be equal to `Gt::Point_2`. For weighted alpha
-shapes, `Point` will be equal to `Gt::Weighted_point_2`.
+For basic alpha shapes, `Point` will be equal to `Gt::Point_3`. For weighted alpha
+shapes, `Point` will be equal to `Gt::Weighted_point_3`.
 */
 typedef Dt::Point Point;
 
@@ -477,7 +477,7 @@ Defined in `CGAL/IO/io.h`
 \pre The insert operator must be defined for `Point`. 
 \relates Alpha_shape_3 
 */ 
-  ostream& operator<<(std::ostream& os, 
+std::ostream& operator<<(std::ostream& os, 
 const Alpha_shape_3<Dt,ExactAlphaComparisonTag>& A); 
 
 /*!

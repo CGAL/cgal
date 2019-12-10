@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_2_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
   # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
@@ -31,6 +31,8 @@ if ( CGAL_FOUND )
 
   if(CGAL_Qt5_FOUND)
     target_link_libraries(draw_triangulation_2 PUBLIC CGAL::CGAL_Qt5)
+  else()
+    message(STATUS "NOTICE: The example draw_triangulation_2 requires Qt and will not be compiled.")
   endif()
 
 else()

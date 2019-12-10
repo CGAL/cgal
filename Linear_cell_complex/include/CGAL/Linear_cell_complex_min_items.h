@@ -1,20 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -50,7 +41,7 @@ namespace CGAL {
       typedef CGAL::Dart<d, LCC> Dart;
       
       typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
-      typedef CGAL::cpp11::tuple<Vertex_attrib>    Attributes;
+      typedef std::tuple<Vertex_attrib>    Attributes;
     };
   };
 #else
@@ -61,7 +52,7 @@ namespace CGAL {
     struct Dart_wrapper
     {
       typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
-      typedef CGAL::cpp11::tuple<Vertex_attrib>    Attributes;
+      typedef std::tuple<Vertex_attrib>    Attributes;
     };
   };
 #endif

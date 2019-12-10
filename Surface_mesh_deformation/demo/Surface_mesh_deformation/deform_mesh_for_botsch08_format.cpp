@@ -5,7 +5,6 @@
 // HalfedgeGraph adapters for Polyhedron_3
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <boost/foreach.hpp>
 // #define CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
 #include <CGAL/Surface_mesh_deformation.h>
 
@@ -80,7 +79,7 @@ int main(int argc,char** argv)
   input >> sink >> sink >> sink >> hw;
 
   Kernel::Aff_transformation_3 aff(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
-  BOOST_FOREACH(vertex_descriptor vd, control_vertices)
+  for(vertex_descriptor vd : control_vertices)
   {
     Surface_mesh_deformation::Point pos = vd->point().transform(aff);
     deform_mesh.set_target_position(vd, pos);

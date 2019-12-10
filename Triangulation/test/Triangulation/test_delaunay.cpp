@@ -40,7 +40,7 @@ void test(const int d, const string & type, const int N)
     vector<Point> points;
     //CGAL::Random rng;
     //Random_points_iterator rand_it(d, 2.0, rng);
-    //CGAL::cpp11::copy_n(rand_it, N, back_inserter(points));
+    //std::copy_n(rand_it, N, back_inserter(points));
     
     srand(10);
     for( int i = 0; i < N; ++i )

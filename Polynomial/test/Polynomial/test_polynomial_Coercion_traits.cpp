@@ -1,5 +1,3 @@
-#include <CGAL/basic.h>
-
 #include <cassert>
 
 #include <CGAL/Polynomial_traits_d.h>

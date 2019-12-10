@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Yin Xu, Andreas Fabri and Ilker O. Yaz
@@ -271,9 +262,9 @@ struct Cotangent_value_minimum_zero_impl : CotangentValue
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
 
   template <class VertexPointMap>
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const VertexPointMap& ppmap)
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const VertexPointMap ppmap)
   {
-    double value = CotangentValue::operator()(v0, v1, v2,ppmap);
+    double value = CotangentValue::operator()(v0, v1, v2, ppmap);
     return (std::max)(0.0, value);
   }
 };
@@ -284,17 +275,10 @@ template<class PolygonMesh
            = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
 class Voronoi_area : CotangentValue
 {
-  //Voronoi_area()
-  //{}
-  
 public:
   Voronoi_area(PolygonMesh& pmesh_, VertexPointMap vpmap_)
     : CotangentValue(pmesh_, vpmap_)
   {}
-
-  //Voronoi_area(PolygonMesh& pmesh_)
-  //  : CotangentValue(pmesh_, get(CGAL::vertex_point, pmesh_))
-  //{}
 
   PolygonMesh& pmesh()
   {
@@ -318,7 +302,7 @@ public:
 
     //return 1.0;
     double voronoi_area = 0.0;
-    BOOST_FOREACH(halfedge_descriptor he,
+    for(halfedge_descriptor he :
                   halfedges_around_target( halfedge(v0,pmesh()), pmesh()) )
     {
       if( is_border(he,pmesh()) ) { continue; }
@@ -391,8 +375,10 @@ public:
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    return CotangentValue::operator()(v0, v1, v2)
-      / CGAL::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
+    return CotangentValue::operator()(v0, v1, v2) /
+      CGAL::sqrt(squared_area(get(this->ppmap(), v0),
+                              get(this->ppmap(), v1),
+                              get(this->ppmap(), v2)));
   }
 };
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -683,7 +669,7 @@ public:
   {
     vertex_descriptor v0 = target(he, pmesh());
     vertex_descriptor v1 = source(he, pmesh());
-    Vector vec = v0->point() - v1->point();
+    Vector vec = get(vpmap_, v0) - get(vpmap_, v1);
     double norm = CGAL::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
@@ -714,9 +700,9 @@ private:
   // Returns the tangent value of half angle v0_v1_v2/2
   double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector vec0 = v1->point() - v2->point();
-    Vector vec1 = v2->point() - v0->point();
-    Vector vec2 = v0->point() - v1->point();
+    Vector vec0 = get(vpmap_, v1) - get(vpmap_, v2);
+    Vector vec1 = get(vpmap_, v2) - get(vpmap_, v0);
+    Vector vec2 = get(vpmap_, v0) - get(vpmap_, v1);
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
@@ -732,8 +718,8 @@ private:
   // My deviation built on Meyer_02
   double half_tan_value_2(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = v0->point() - v1->point();
-    Vector b = v2->point() - v1->point();
+    Vector a = get(vpmap_, v0) - get(vpmap_, v1);
+    Vector b = get(vpmap_, v2) - get(vpmap_, v1);
     double dot_ab = a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
     double dot_aa = a.squared_length();
     double dot_bb = b.squared_length();

@@ -5,7 +5,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
-#include "Messages_interface.h"
 
 #include <QAction>
 #include <QApplication>
@@ -25,7 +24,7 @@ class Polyhedron_demo_repair_polyhedron_plugin :
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "repair_polyhedron_plugin.json")
 
 public:
 
@@ -152,10 +151,10 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
       CGAL::Polygon_mesh_processing::remove_degenerate_faces(
       *poly_item->polyhedron());
     nbv -= num_faces(*poly_item->polyhedron());
-    CGAL::Three::Three::information(tr(" %1 degenerate faces have been removed.")
-      .arg(nbv));
     poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
+    CGAL::Three::Three::information(tr(" %1 degenerate faces have been removed.")
+                          .arg(nbv));
   }
 }
 

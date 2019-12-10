@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -90,7 +81,6 @@
 #include <CGAL/Kernel/Conic_misc.h> // used to solve conic equations
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_set.hpp>
@@ -320,7 +310,7 @@ private:
                        const VertexIndexMap vimap,
                        const VertexParameterizedMap vpmap)
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       // The solver might not have managed to exactly constrain the vertex that was marked
       // as constrained; simply don't update its position.
       if(get(vpmap, vd))
@@ -451,7 +441,7 @@ private:
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
   {
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh);
@@ -554,7 +544,7 @@ private:
 
     // compute A
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the line i of the matrix A
         status = fill_linear_system_matrix(A, mesh, vd, ctmap, vimap);
@@ -763,7 +753,7 @@ private:
   {
     Error_code status = OK;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       // Compute the coefficients C1, C2, C3
       NT C1 = 0., C2 = 0., C3 = 0.;
 
@@ -912,7 +902,7 @@ private:
   {
     int global_index = 0;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 
       vertex_descriptor vi = target(hd, mesh); // hd is k -- > i
@@ -1073,7 +1063,7 @@ private:
     Error_code status = OK;
 
     unsigned int count = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       if(!get(vpmap, vd)) { // not yet parameterized
         // Compute the lines i of the vectors Bu and Bv
         status = fill_linear_system_rhs(mesh, vd, ctmap, lp, lpmap,
@@ -1136,7 +1126,7 @@ private:
     CGAL_postcondition_code
     (
       // make sure that the constrained vertices have not been moved
-      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      for(vertex_descriptor vd : vertices) {
         if(get(vpmap, vd)) {
           int index = get(vimap, vd);
           CGAL_warning(std::abs(Xu[index] - Bu[index] ) < 1e-7);
@@ -1222,7 +1212,7 @@ private:
   {
     NT E = 0.;
 
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       NT Ef = compute_current_face_energy(mesh, fd, ctmap, lp, lpmap,
                                           ltmap, uvmap);
       E += Ef;

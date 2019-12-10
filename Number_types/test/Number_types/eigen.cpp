@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Lazy_exact_nt.h>
 #ifdef CGAL_USE_GMP

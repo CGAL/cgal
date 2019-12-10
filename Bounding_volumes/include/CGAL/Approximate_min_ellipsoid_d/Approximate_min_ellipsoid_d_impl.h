@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
@@ -152,11 +143,11 @@ namespace CGAL {
     CGAL_APPEL_ASSERT(d==2);
 
     // write matrix M' as [ a, b; b, c ]:
-    const CGAL::cpp11::array<double, 3> matrix = {{ E->matrix(0, 0),    // a
+    const std::array<double, 3> matrix = {{ E->matrix(0, 0),    // a
 						    E->matrix(0, 1),    // b
 						    E->matrix(1, 1) }}; // c
-    CGAL::cpp11::array<double, 4> eigenvectors; // Note: not neces. normalized.
-    CGAL::cpp11::array<double, 2> eigenvalues;  // Note: sorted ascendent.
+    std::array<double, 4> eigenvectors; // Note: not neces. normalized.
+    std::array<double, 2> eigenvalues;  // Note: sorted ascendent.
 
     CGAL::Default_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
@@ -191,15 +182,15 @@ namespace CGAL {
     //   M' = [ b d e ]
     //        [ c e f ]
     //
-    const CGAL::cpp11::array<double, 6> matrix = {{ E->matrix(0, 0),   // a
+    const std::array<double, 6> matrix = {{ E->matrix(0, 0),   // a
                                                     E->matrix(0, 1),   // b
                                                     E->matrix(0, 2),   // c
                                                     E->matrix(1, 1),   // d
                                                     E->matrix(1, 2),   // e
                                                     E->matrix(2, 2) }}; // f
     
-    CGAL::cpp11::array<double, 9> eigenvectors; // Note: not necessarily normalized.
-    CGAL::cpp11::array<double, 3> eigenvalues;  // Note: sorted ascendent.
+    std::array<double, 9> eigenvectors; // Note: not necessarily normalized.
+    std::array<double, 3> eigenvalues;  // Note: sorted ascendent.
 
     CGAL::Default_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);

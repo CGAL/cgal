@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -114,7 +105,7 @@ PVertex_()
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_()
 { }
 
@@ -123,7 +114,7 @@ PVertex_(const Vertex_handle& vh, id_type id)
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_(id)
 { }
 
@@ -143,7 +134,7 @@ void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
 bool is_perturbable() const
 {
   return (   (vertex_handle_->in_dimension() > 1)
-          && (NULL != perturbation())
+          && (nullptr != perturbation())
           && (sliver_nb() != 0) );
 }
 
@@ -223,7 +214,7 @@ PVertex_()
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_()
 { }
 
@@ -234,7 +225,7 @@ PVertex_(const Vertex_handle& vh, id_type id)
 , incident_sliver_nb_(0)
 , min_value_((std::numeric_limits<double>::max)())
 , try_nb_(0)
-, p_perturbation_(NULL)
+, p_perturbation_(nullptr)
 , id_(id)
 { }
 
@@ -264,7 +255,7 @@ void set_perturbation(const Perturbation* p) { p_perturbation_ = p; }
 bool is_perturbable() const
 {
   return (   (vertex_handle_->in_dimension() > 1)
-          && (NULL != perturbation())
+          && (nullptr != perturbation())
           && (sliver_nb() != 0) );
 }
 
@@ -892,7 +883,7 @@ add_perturbation(Perturbation* perturbation)
   if ( !perturbation_vector_.empty() )
     perturbation_vector_.back().set_next(perturbation);
 
-  if ( NULL != perturbation )
+  if ( nullptr != perturbation )
   {
     // Set order
     perturbation->set_order(next_perturbation_order_++);
@@ -1001,8 +992,8 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
       // Perturb vertex
       Vertex_vector modified_vertices;
 
-      // pv.perturbation() should not be NULL if pv is in pqueue
-      CGAL_assertion(pv.perturbation() != NULL);
+      // pv.perturbation() should not be nullptr if pv is in pqueue
+      CGAL_assertion(pv.perturbation() != nullptr);
 
       std::pair<bool,Vertex_handle> perturbation_ok =
         pv.perturbation()->operator()(pv.vertex(),
@@ -1041,7 +1032,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
         // If perturbation fails, try next one
         pv.set_perturbation(pv.perturbation()->next());
 
-        if ( NULL == pv.perturbation() )
+        if ( nullptr == pv.perturbation() )
         {
           bad_vertices.push_back(pv.vertex());
         }
@@ -1333,8 +1324,8 @@ perturb_vertex( PVertex pv
     // Perturb vertex
     Vertex_vector modified_vertices;
 
-    // pv.perturbation() should not be NULL if pv is in pqueue
-    CGAL_assertion(pv.perturbation() != NULL);
+    // pv.perturbation() should not be nullptr if pv is in pqueue
+    CGAL_assertion(pv.perturbation() != nullptr);
 
     std::pair<bool,Vertex_handle> perturbation_ok =
       pv.perturbation()->operator()(pv.vertex(),
@@ -1383,7 +1374,7 @@ perturb_vertex( PVertex pv
         pv.set_perturbation(pv.perturbation()->next());
         pv.update_saved_erase_counter();
 
-        if ( NULL == pv.perturbation() )
+        if ( nullptr == pv.perturbation() )
         {
           bad_vertices.push_back(pv.vertex());
         }

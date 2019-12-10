@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -173,7 +164,7 @@ public:
   friend class K_neighbor_query;
   friend class Sphere_neighbor_query;
 
-  Point_set_neighborhood () : m_tree (NULL) { }
+  Point_set_neighborhood () : m_tree (nullptr) { }
   /// \endcond
 
   /// \name Constructors
@@ -187,7 +178,7 @@ public:
   */
   Point_set_neighborhood (const PointRange& input,
                           PointMap point_map)
-    : m_tree (NULL)
+    : m_tree (nullptr)
   {
     My_point_property_map pmap (&input, point_map);
     m_tree = new Tree (boost::counting_iterator<boost::uint32_t> (0),
@@ -213,7 +204,7 @@ public:
   Point_set_neighborhood (const PointRange& input,
                           PointMap point_map,
                           float voxel_size)
-    : m_tree (NULL)
+    : m_tree (nullptr)
   {
     // First, simplify
     std::vector<boost::uint32_t> indices;
@@ -232,7 +223,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   ~Point_set_neighborhood ()
   {
-    if (m_tree != NULL)
+    if (m_tree != nullptr)
       delete m_tree;
   }
   /// \endcond
@@ -263,7 +254,7 @@ private:
   template <typename OutputIterator>
   void sphere_neighbors (const Point& query, const FT radius_neighbors, OutputIterator output) const
   {
-    CGAL_assertion (m_tree != NULL);
+    CGAL_assertion (m_tree != nullptr);
     Sphere fs (query, radius_neighbors, 0, m_tree->traits());
     m_tree->search (output, fs);
   }
@@ -271,7 +262,7 @@ private:
   template <typename OutputIterator>
   void k_neighbors (const Point& query, const unsigned int k, OutputIterator output) const
   {
-    CGAL_assertion (m_tree != NULL);
+    CGAL_assertion (m_tree != nullptr);
     Knn search (*m_tree, query, k, 0, true, m_distance);
     for (typename Knn::iterator it = search.begin(); it != search.end(); ++ it)
       *(output ++) = it->first;

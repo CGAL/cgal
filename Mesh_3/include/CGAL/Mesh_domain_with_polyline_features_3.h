@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stéphane Tayeb, Laurent Rineau
@@ -47,7 +38,6 @@
 
 #include <boost/next_prior.hpp> // for boost::prior and boost::next
 #include <boost/variant.hpp>
-#include <boost/foreach.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/shared_ptr.hpp>
@@ -593,7 +583,6 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 
-#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   template <typename T1, typename T2, typename ... T>
   Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2, const T& ...o)
     : MeshDomain_3(o1, o2, o...)
@@ -601,32 +590,6 @@ public:
     , current_curve_index_(1)
     , curves_aabb_tree_is_built(false) {}
 /// @}
-#else
-  /// Constructors
-  /// Call the base class constructor
-  template <typename T1, typename T2>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2)
-    : MeshDomain_3(o1, o2)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
-  template <typename T1, typename T2, typename T3>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
-                                       const T3& o3)
-    : MeshDomain_3(o1, o2, o3)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-
-  template <typename T1, typename T2, typename T3, typename T4>
-  Mesh_domain_with_polyline_features_3(const T1& o1, const T2& o2,
-                                       const T3& o3, const T4& o4)
-    : MeshDomain_3(o1, o2, o3, o4)
-    , current_corner_index_(1)
-    , current_curve_index_(1)
-    , curves_aabb_tree_is_built(false) {}
-#endif
 
 /// \name Operations
 /// @{
@@ -745,7 +708,7 @@ public:
   OutputIterator get_corners(OutputIterator out) const;
 
   /// Implements `MeshDomainWithFeatures_3::get_curves()`.
-  /// OutputIterator value type is CGAL::cpp11::tuple<Curve_index,
+  /// OutputIterator value type is std::tuple<Curve_index,
   /// std::pair<Point_3,Index>, std::pair<Point_3,Index> >
   template <typename OutputIterator>
   OutputIterator get_curves(OutputIterator out) const;
@@ -868,6 +831,9 @@ public:
   template <typename InputIterator>
   Curve_index insert_edge(InputIterator first, InputIterator end);
   /// @endcond
+
+/// @}
+
 private:
   void compute_corners_incidences();
 
@@ -999,7 +965,7 @@ get_curves(OutputIterator out) const
       q_index = p_index;
     }
 
-    *out++ = CGAL::cpp11::make_tuple(eit->first,
+    *out++ = std::make_tuple(eit->first,
                                      std::make_pair(p,p_index),
                                      std::make_pair(q,q_index));
   }
@@ -1244,7 +1210,7 @@ Mesh_domain_with_polyline_features_3<MD_>::
 reindex_patches(const std::vector<Surf_p_index>& map,
                 IncidenceMap& incidence_map)
 {
-  BOOST_FOREACH(typename IncidenceMap::value_type& pair,
+  for(typename IncidenceMap::value_type& pair :
                 incidence_map)
   {
     Surface_patch_index_set& patch_index_set = pair.second;
@@ -1332,7 +1298,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 {
   os << "Corner #" << id << " (" << p
      << ") is incident to the following curves: {";
-  BOOST_FOREACH(typename MDwPF_::Curve_index curve_index,
+  for(typename MDwPF_::Curve_index curve_index :
                 corners_tmp_incidences_of_id)
   {
     os << " " << curve_index;
@@ -1364,7 +1330,7 @@ operator()(std::ostream& os, Point p, typename MDwPF_::Curve_index id,
 {
   os << "Corner #" << id << " (" << p
      << ") is incident to the following patches: {";
-  BOOST_FOREACH(typename MDwPF_::Surface_patch_index i,
+  for(typename MDwPF_::Surface_patch_index i :
                 corners_incidences_of_id)
   {
     os << " " << i;
@@ -1438,7 +1404,7 @@ compute_corners_incidences()
 
     Surface_patch_index_set& incidences = corners_incidences_[id];
 
-    BOOST_FOREACH(Curve_index curve_index, corner_tmp_incidences)
+    for(Curve_index curve_index : corner_tmp_incidences)
     {
       get_incidences(curve_index,
                      std::inserter(incidences,

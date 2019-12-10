@@ -1,0 +1,12 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: configure all
+      run: cmake -DWITH_examples=ON -DWITH_tests=ON -DWITH_demos=ON .

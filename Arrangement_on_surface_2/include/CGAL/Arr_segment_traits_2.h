@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
@@ -766,7 +757,7 @@ public:
       // Check if we have a single intersection point.
       const Point_2  *ip = object_cast<Point_2> (&obj);
 
-      if (ip != NULL) {
+      if (ip != nullptr) {
         // Check if the intersection point ip lies on both segments.
         const bool    ip_on_cv1 = cv1.is_vertical() ? cv1.is_in_y_range(*ip) :
                                                       cv1.is_in_x_range(*ip);

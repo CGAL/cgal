@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -29,10 +20,6 @@
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
-#ifndef CGAL_CXX11
-#include <boost/preprocessor/repetition.hpp>
-#endif
-#include <boost/utility/result_of.hpp>
 
 // no need for a fancy interface here, people can use the Point_d wrapper on
 // top.
@@ -67,7 +54,6 @@ public:
     return CGAL::get_pointee_or_identity(data);
   }
 
-#ifdef CGAL_CXX11
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Ref_count_obj> >::value>::type> explicit Ref_count_obj(U&&...u)
 	  : data(Eval_functor(),CBase(),std::forward<U>(u)...){}
 
@@ -87,32 +73,6 @@ public:
 //    : data(Eval_functor(),CBase(),v) {}
 //  Ref_count_obj(Origin&& v)
 //    : data(Eval_functor(),CBase(),std::move(v)) {}
-
-#else
-
-  Ref_count_obj() : data(Eval_functor(),CBase()) {}
-
-  Ref_count_obj(Rep const& v) : data(v) {} // try not to use it
-
-#define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  explicit Ref_count_obj(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : data(Eval_functor(),CBase(),BOOST_PP_ENUM_PARAMS(N,t)) {} \
-  \
-  template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Ref_count_obj(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : data(Eval_functor(),f,BOOST_PP_ENUM_PARAMS(N,t)) {}
-
-  BOOST_PP_REPEAT_FROM_TO(1,11,CGAL_CODE,_)
-#undef CGAL_CODE
-  template<class F>
-  Ref_count_obj(Eval_functor,F const& f)
-  : data(Eval_functor(),f) {}
-
-//  // this one should be implicit
-//  Ref_count_obj(Origin const& o)
-//    : data(Eval_functor(),CBase(),o) {}
-
-#endif
 
 };
 

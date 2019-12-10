@@ -396,12 +396,12 @@ void Cluster_classification::backup_existing_colors_and_add_new()
 {
   if (m_points->point_set()->has_colors())
   {
-    m_color = m_points->point_set()->add_property_map<Color>("real_color").first;
+    m_color = m_points->point_set()->add_property_map<CGAL::Color>("real_color").first;
     for (Point_set::const_iterator it = m_points->point_set()->begin();
          it != m_points->point_set()->first_selected(); ++ it)
-      m_color[*it] = {{ (unsigned char)(255 * m_points->point_set()->red(*it)),
-                        (unsigned char)(255 * m_points->point_set()->green(*it)),
-                        (unsigned char)(255 * m_points->point_set()->blue(*it)) }};
+      m_color[*it] = CGAL::Color ((unsigned char)(255 * m_points->point_set()->red(*it)),
+                                  (unsigned char)(255 * m_points->point_set()->green(*it)),
+                                  (unsigned char)(255 * m_points->point_set()->blue(*it)));
 
     m_points->point_set()->remove_colors();
   }
@@ -411,7 +411,7 @@ void Cluster_classification::backup_existing_colors_and_add_new()
 
 void Cluster_classification::reset_colors()
 {
-  if (m_color == Point_set::Property_map<Color>())
+  if (m_color == Point_set::Property_map<CGAL::Color>())
     m_points->point_set()->remove_colors();
   else
   {
@@ -606,7 +606,7 @@ int Cluster_classification::real_index_color() const
 {
   int out = m_index_color;
   
-  if (out == 0 && m_color == Point_set::Property_map<Color>())
+  if (out == 0 && m_color == Point_set::Property_map<CGAL::Color>())
     out = -1;
   return out;
 }
@@ -642,7 +642,7 @@ void Cluster_classification::compute_features (std::size_t nb_scales, float voxe
   if (normals)
     normal_map = m_points->point_set()->normal_map();
   
-  bool colors = (m_color != Point_set::Property_map<Color>());
+  bool colors = (m_color != Point_set::Property_map<CGAL::Color>());
   
   Point_set::Property_map<boost::uint8_t> echo_map;
   bool echo;

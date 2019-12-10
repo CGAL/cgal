@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
@@ -154,7 +145,7 @@ public:
   
   void resolve_indexes()
   {
-    BOOST_FOREACH(face_descriptor fi, faces(P)) {
+    for(face_descriptor fi : faces(P)) {
       Halfedge_around_facet_const_circulator 
 	fc(halfedge(fi,P),P), end(fc);
       typename boost::property_traits<HalfedgeIndexMap>::value_type
@@ -206,7 +197,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
 
   std::vector<Vector_3> normals(num_faces(P));
 
-  BOOST_FOREACH(face_descriptor f, faces(P)){
+  for(face_descriptor f : faces(P)){
     Vertex_around_face_circulator<PolygonMesh> vafc(halfedge(f,P),P), done(vafc);
     Vector_3 v;
     normal_vector_newell_3(vafc, done, pmap, v);
@@ -217,7 +208,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
                  PolygonMesh, SNC_structure,HalfedgeIndexMap> index_adder(P,himap);
 
 
-  BOOST_FOREACH(vertex_descriptor pv, vertices(P) ) {
+  for(vertex_descriptor pv : vertices(P) ) {
     Vertex_handle nv = S.new_vertex();
     nv->point() = get(pmap,pv);
     nv->mark() = true;

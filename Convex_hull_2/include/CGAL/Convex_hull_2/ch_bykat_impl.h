@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -163,8 +154,8 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
   P.push_back(Point_2() );
   std::copy(first,last,std::back_inserter(P));
   P.push_back(Point_2() );
-  Pbegin = cpp11::next(P.begin());
-  Pend   = cpp11::prev(P.end());
+  Pbegin = std::next(P.begin());
+  Pend   = std::prev(P.end());
   ch_we_point(Pbegin, Pend, l, r, ch_traits);
   Point_2 a = *l;
   Point_2 b = *r;
@@ -205,15 +196,15 @@ ch_bykat_with_threshold(InputIterator   first, InputIterator last,
               std::swap( b, *++r);
               if ( ch_traits.less_xy_2_object()(*l,*r) )
               {
-		std::sort(cpp11::next(l), r, 
+		std::sort(std::next(l), r, 
 			  ch_traits.less_xy_2_object() );
               }
               else
               {
-		std::sort(cpp11::next(l), r, 
+		std::sort(std::next(l), r, 
                             boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
               }
-              ch__ref_graham_andrew_scan(l, cpp11::next(r), res, ch_traits);
+              ch__ref_graham_andrew_scan(l, std::next(r), res, ch_traits);
               std::swap( a, *l);
               std::swap( b, *r);
               if ( L.empty() ) break;

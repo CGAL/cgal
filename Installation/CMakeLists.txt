@@ -3,16 +3,11 @@
 # refer to the root source directory of the project as ${CMAKE_SOURCE_DIR} or
 # ${CMAKE_SOURCE_DIR} and to the root binary directory of the project as
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
-
-# Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
-
 if(NOT PROJECT_NAME)
+  cmake_minimum_required(VERSION 3.1...3.15)
   project(CGAL CXX C)
 endif()
 
-# Tested version:
-cmake_policy(VERSION 3.1)
 
 if(POLICY CMP0056)
   # https://cmake.org/cmake/help/v3.2/policy/CMP0056.html
@@ -33,7 +28,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" TRUE)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -571,8 +566,8 @@ message("== Detect external libraries ==")
 # Remarks: 
 #  External libs configured when Qt5 lib of cgal are required
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
-#  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 BLAS LAPACK ESBTL Coin3D NTL IPE)
+#  There exists FindIPE, FindMKL, but they are only used to support supporting libs
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 ESBTL Coin3D NTL IPE)
 if (NOT WIN32)
   # GMPXX is not supported on WIN32 machines
   list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
@@ -614,6 +609,8 @@ if(CGAL_DISABLE_GMP)
   unset(WITH_CGAL_Core CACHE)
   unset(WITH_GMP)
   unset(WITH_GMP CACHE)
+  unset(CGAL_USE_GMP)
+  unset(CGAL_USE_GMP CACHE)
   unset(WITH_GMPXX)
   unset(WITH_GMPXX CACHE)
   unset(WITH_MPFR)

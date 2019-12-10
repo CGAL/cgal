@@ -1,19 +1,10 @@
 // Copyright (c) 2015  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri
@@ -76,7 +67,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
               static_cast<typename boost::graph_traits<TargetMesh>::faces_size_type>(faces(sm).size()) );
 
   //insert halfedges and create each vertex when encountering its halfedge
-  BOOST_FOREACH(sm_edge_descriptor sm_e, edges(sm))
+  for(sm_edge_descriptor sm_e : edges(sm))
   {
     tm_edge_descriptor tm_e = add_edge(tm);
     sm_halfedge_descriptor sm_h = halfedge(sm_e, sm), sm_h_opp = opposite(sm_h, sm);
@@ -125,7 +116,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     }
   }
   //create faces and connect halfedges
-  BOOST_FOREACH(sm_face_descriptor sm_f, faces(sm))
+  for(sm_face_descriptor sm_f : faces(sm))
   {
     tm_face_descriptor tm_f = add_face(tm);
     *f2f++=std::make_pair(sm_f, tm_f);
@@ -135,7 +126,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     set_halfedge(tm_f, tm_h_prev, tm);
 
     CGAL_precondition(*halfedges_around_face(sm_h_i, sm).first == sm_h_i);
-    BOOST_FOREACH(sm_halfedge_descriptor sm_h, halfedges_around_face(sm_h_i, sm))
+    for(sm_halfedge_descriptor sm_h : halfedges_around_face(sm_h_i, sm))
     {
       tm_halfedge_descriptor tm_h = get(hmap, sm_h);
       set_next(tm_h_prev, tm_h, tm);
@@ -155,7 +146,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
 
     tm_halfedge_descriptor tm_h_prev = tm_h;
     CGAL_precondition(*halfedges_around_face(sm_border_halfedges[i], sm).first == sm_border_halfedges[i]);
-    BOOST_FOREACH(sm_halfedge_descriptor sm_h,
+    for(sm_halfedge_descriptor sm_h :
                   halfedges_around_face(next(sm_border_halfedges[i], sm), sm))
     {
       CGAL_assertion(next(tm_h_prev, tm) == tm_h_prev);

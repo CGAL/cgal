@@ -54,7 +54,7 @@ void test_point_generators_2() {
     std::vector<Point_2> points;
     points.reserve(1000);
     Random_points_in_disc_2<Point_2,Creator>     g1( 100.0);
-    CGAL::cpp11::copy_n( g1, 100, std::back_inserter(points));
+    std::copy_n( g1, 100, std::back_inserter(points));
     Random_points_on_circle_2<Point_2,Creator>   g2( 100.0);
     Random_points_in_square_2<Point_2,Creator>   g3( 100.0);
     Random_points_on_square_2<Point_2,Creator>   g4( 100.0);
@@ -63,11 +63,11 @@ void test_point_generators_2() {
     Points_on_segment_2<Point_2>                g5a( Point_2( 50,-50),
                                                     Point_2(-50, 50),
                                                    50);
-    CGAL::cpp11::copy_n( g2, 100, std::back_inserter(points));
-    CGAL::cpp11::copy_n( g3, 100, std::back_inserter(points));
-    CGAL::cpp11::copy_n( g4, 100, std::back_inserter(points));
-    CGAL::cpp11::copy_n( g5,  50, std::back_inserter(points));
-    CGAL::cpp11::copy_n( g5a, 50, std::back_inserter(points));
+    std::copy_n( g2, 100, std::back_inserter(points));
+    std::copy_n( g3, 100, std::back_inserter(points));
+    std::copy_n( g4, 100, std::back_inserter(points));
+    std::copy_n( g5,  50, std::back_inserter(points));
+    std::copy_n( g5a, 50, std::back_inserter(points));
     points_on_square_grid_2( 50.0, (std::size_t)1,
                              std::back_inserter(points), Creator());
     points_on_square_grid_2( 50.0, (std::size_t)2,
@@ -88,7 +88,7 @@ void test_point_generators_2() {
     // the 100 x 100 square. 10 pixel perturbation allowed.
     Random_points_in_square_2<Point_2,Creator>   g6( 90.0);
     int count = 100 ;
-    CGAL::cpp11::copy_n( g6, count, std::back_inserter(points));
+    std::copy_n( g6, count, std::back_inserter(points));
     std::vector<Point_2>::iterator i2 = points.end();
     std::vector<Point_2>::iterator i1 = i2 ;
     std::advance(i1,-count);
@@ -115,14 +115,14 @@ void test_point_generators_3() {
     std::vector<Point_3> points;
     points.reserve(600);
     Random_points_in_sphere_3<Point_3,Creator>      g1( 100.0);
-    CGAL::cpp11::copy_n( g1, 100, std::back_inserter(points));
+    std::copy_n( g1, 100, std::back_inserter(points));
     Random_points_on_sphere_3<Point_3,Creator>      g2( 100.0);
     Random_points_in_cube_3<Point_3,Creator>        g3( 100.0);
     Random_points_on_segment_3<Point_3,Creator>     g4( Point_3(-100,-100, -100),
                                                         Point_3( 100, 100, 100));
-    CGAL::cpp11::copy_n( g2, 100, std::back_inserter(points));
-    CGAL::cpp11::copy_n( g3, 100, std::back_inserter(points));
-    CGAL::cpp11::copy_n( g4, 100, std::back_inserter(points));
+    std::copy_n( g2, 100, std::back_inserter(points));
+    std::copy_n( g3, 100, std::back_inserter(points));
+    std::copy_n( g4, 100, std::back_inserter(points));
     points_on_cube_grid_3( 50.0, (std::size_t)1,
                            std::back_inserter(points), Creator());
     points_on_cube_grid_3( 50.0, (std::size_t)2,
@@ -160,7 +160,7 @@ void test_point_generators_d()
     // 100 random points in dim 36
       std::cout<<"    cube dim 36"<<std::flush;
       CGAL::Random_points_in_cube_d<Point> gen (36, 1.0);
-      CGAL::cpp11::copy_n( gen, 100, std::back_inserter(points));
+      std::copy_n( gen, 100, std::back_inserter(points));
       i+=100;
       std::cout<<" done"<<std::endl;
     }
@@ -170,7 +170,7 @@ void test_point_generators_d()
       std::cout<<"    in ball 4D"<<std::flush;
       Point o4(4,o,o+4);
       CGAL::Random_points_in_ball_d<Point> gen (4, 100.0);
-      CGAL::cpp11::copy_n( gen, 100, std::back_inserter(points));
+      std::copy_n( gen, 100, std::back_inserter(points));
       std::cout<<" done"<<std::flush;
       for(ii=i+100; i<ii; ++i)
 	assert( CGAL::squared_distance(o4,points[i]) <= 10000.0);
@@ -182,7 +182,7 @@ void test_point_generators_d()
       Point o3(3,o,o+3);
       Point g=o3;
       CGAL::Random_points_in_ball_d<Point> gen (3, 1.0);
-      CGAL::cpp11::copy_n( gen, nb_g, std::back_inserter(points));
+      std::copy_n( gen, nb_g, std::back_inserter(points));
       std::cout<<" done"<<std::flush;
       for(ii=i+nb_g; i<ii; ++i){
 	assert( CGAL::squared_distance(o3,points[i]) <= 1.0);
@@ -197,7 +197,7 @@ void test_point_generators_d()
       std::cout<<"    on sphere 26D"<<std::flush;
       Point o26(26,o,o+26);
       CGAL::Random_points_on_sphere_d<Point> gen (26, 1.0);
-      CGAL::cpp11::copy_n( gen, 100, std::back_inserter(points));
+      std::copy_n( gen, 100, std::back_inserter(points));
       std::cout<<" done"<<std::flush;
       for(ii=i+100; i<ii; ++i) {
 	assert( CGAL::squared_distance(o26,points[i]) - 1.0 <= 0.1);

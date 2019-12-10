@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -55,6 +46,26 @@ struct Vao{
   {
     vao->create();
   }
+  
+  //!
+  //! \brief Creates a `Vao` from another one.
+  //! \param program the `QOpenGLShaderProgram` corresponding to the one of `vao` but from 
+  //! the right viewer.
+  //! \param vao the Vao to copy. 
+  //! 
+  //! All `vao`'s vbos will be shared. Use it for shared viewers. 
+  //! `initializeBuffers()` will have to be called again.
+  //! 
+  //! \attention This must be called within a valid OpenGLContext.
+  //! Most of the time, initGL() functions are safe places to do so.
+  //!
+  Vao( Vao* vao, QOpenGLShaderProgram* program)
+    :vao(new QOpenGLVertexArrayObject()),
+      program(program)
+  {
+    this->vao->create();
+    vbos = vao->vbos;
+  }
 
   ~Vao()
   {
@@ -88,11 +99,12 @@ struct Vao{
 //! A Vbo can be shared between Vaos of the same context.
 struct Vbo
 {
-enum Flag{
-  GEOMETRY=0,
-  COLORS,
-  NORMALS
-};
+  enum Flag{
+    GEOMETRY=0,
+    COLORS,
+    NORMALS,
+    NOT_INSTANCED
+  };
   QOpenGLBuffer vbo;
   const char* attribute;
   Flag flag;

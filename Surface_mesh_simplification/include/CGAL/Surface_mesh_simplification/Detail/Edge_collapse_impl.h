@@ -1,19 +1,10 @@
 // Copyright (c) 2006  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 //
@@ -260,7 +251,7 @@ namespace Surface_mesh_simplification
         // satisfying its constraints. In that case the remaining vertex is simply left unmoved.
         Placement_type lPlacement = get_placement(lProfile);
         
-        if ( Is_collapse_geometrically_valid(lProfile,lPlacement) )
+        if ( lPlacement!=boost::none && Is_collapse_geometrically_valid(lProfile,lPlacement) )
         {
           #ifdef CGAL_SURF_SIMPL_INTERMEDIATE_STEPS_PRINTING
           std::cout << "step " << i_rm << " " << source(*lEdge,mSurface)->point() << " " << target(*lEdge,mSurface)->point() << "\n";
@@ -675,12 +666,12 @@ bool EdgeCollapse<M,SP,VIM,VPM,EIM,ECTM,CF,PF,V>::Is_collapse_geometrically_vali
     typedef typename Profile::vertex_descriptor_vector::const_iterator link_iterator ;
     link_iterator linkb = aProfile.link().begin();
     link_iterator linke = aProfile.link().end  ();
-    link_iterator linkl = cpp11::prev(linke) ;
+    link_iterator linkl = std::prev(linke) ;
     
     for ( link_iterator l = linkb ; l != linke && rR ; ++ l )
     {
-      link_iterator pv = ( l == linkb ? linkl : cpp11::prev (l) );
-      link_iterator nx = ( l == linkl ? linkb : cpp11::next  (l) ) ;
+      link_iterator pv = ( l == linkb ? linkl : std::prev (l) );
+      link_iterator nx = ( l == linkl ? linkb : std::next  (l) ) ;
       
       // k0,k1 and k3 are three consecutive vertices along the link.
       vertex_descriptor k1 = *pv ;

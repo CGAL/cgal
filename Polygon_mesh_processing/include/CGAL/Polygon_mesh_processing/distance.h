@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime Gimeno and Sebastien Loriot
@@ -46,7 +37,6 @@
 #include <tbb/atomic.h>
 #endif // CGAL_LINKED_WITH_TBB
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 
 namespace CGAL{
@@ -149,7 +139,7 @@ double approximate_Hausdorff_distance_impl(
 #endif
   {
     double hdist = 0;
-    BOOST_FOREACH(const typename Kernel::Point_3& pt, sample_points)
+    for(const typename Kernel::Point_3& pt : sample_points)
     {
       hint = tree.closest_point(pt, hint);
       typename Kernel::Compute_squared_distance_3 squared_distance;
@@ -188,7 +178,7 @@ sample_triangles(const FaceRange& triangles,
   boost::unordered_set<typename GT::edge_descriptor> sampled_edges;
   boost::unordered_set<typename GT::vertex_descriptor> endpoints;
 
-  BOOST_FOREACH(face_descriptor fd, triangles)
+  for(face_descriptor fd : triangles)
   {
     // sample edges but skip endpoints
     halfedge_descriptor hd = halfedge(fd, tm);
@@ -390,7 +380,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
       double grid_spacing_ = (std::numeric_limits<double>::max)();
       typedef typename boost::graph_traits<TriangleMesh>
         ::edge_descriptor edge_descriptor;
-      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      for(edge_descriptor ed : edges(tm))
       {
         double el = std::sqrt(
           to_double( typename Geom_traits::Compute_squared_distance_3()(
@@ -419,7 +409,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     {
       typedef typename boost::graph_traits<TriangleMesh>
         ::edge_descriptor edge_descriptor;
-      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      for(edge_descriptor ed : edges(tm))
       {
         double el = std::sqrt(
           to_double( squared_distance(get(pmap, source(ed, tm)),
@@ -436,7 +426,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
       if (nb_points_per_face == 0 && nb_pts_a_u ==0.)
         nb_pts_a_u = 2. / CGAL::square(min_edge_length);
 
-      BOOST_FOREACH(face_descriptor f, faces(tm))
+      for(face_descriptor f : faces(tm))
       {
         std::size_t nb_points = nb_points_per_face;
         if (nb_points == 0)
@@ -458,7 +448,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
         // sample the triangle face
         Random_points_in_triangle_3<typename Geom_traits::Point_3, Creator>
           g(points[0], points[1], points[2]);
-        out=CGAL::cpp11::copy_n(g, nb_points, out);
+        out=std::copy_n(g, nb_points, out);
       }
     }
     // sample edges
@@ -466,7 +456,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
     {
       if (nb_points_per_edge == 0 && nb_pts_l_u == 0)
         nb_pts_l_u = 1. / min_edge_length;
-      BOOST_FOREACH(edge_descriptor ed, edges(tm))
+      for(edge_descriptor ed : edges(tm))
       {
         std::size_t nb_points = nb_points_per_edge;
         if (nb_points == 0)
@@ -480,7 +470,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
         // now do the sampling of the edge
         Random_points_on_segment_3<typename Geom_traits::Point_3, Creator>
           g(get(pmap, source(ed,tm)), get(pmap, target(ed,tm)));
-        out=CGAL::cpp11::copy_n(g, nb_points, out);
+        out=std::copy_n(g, nb_points, out);
       }
     }
   }
@@ -501,7 +491,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
           nb_points = static_cast<std::size_t>(
             std::ceil(g.mesh_area()*nb_pts_a_u) );
       }
-      out = CGAL::cpp11::copy_n(g, nb_points, out);
+      out = std::copy_n(g, nb_points, out);
     }
     // sample edges
     if (smpl_dgs)
@@ -517,7 +507,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
           nb_points = static_cast<std::size_t>(
             std::ceil( g.mesh_length()*nb_pts_a_u) );
       }
-      out = CGAL::cpp11::copy_n(g, nb_points, out);
+      out = std::copy_n(g, nb_points, out);
     }
   }
 
@@ -731,7 +721,7 @@ double approximate_max_distance_to_point_set(const TriangleMesh& tm,
   typedef typename Knn::Tree Tree;
   Tree tree(points.begin(), points.end());
   CRefiner<Geom_traits> ref;
-  BOOST_FOREACH(typename GT::face_descriptor f, faces(tm))
+  for(typename GT::face_descriptor f : faces(tm))
   {
     typename Geom_traits::Point_3 points[3];
     typename GT::halfedge_descriptor hd(halfedge(f,tm));

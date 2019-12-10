@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -63,7 +54,6 @@
 #  include <tbb/scalable_allocator.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
 namespace CGAL {
@@ -169,6 +159,12 @@ public:
   typedef internal::Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef internal::Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
 
+  typedef Iterator_range<Prevent_deref<Cell_iterator> >    Cell_handles;
+  typedef Iterator_range<Prevent_deref<Vertex_iterator> >  Vertex_handles;
+
+  typedef Iterator_range<Facet_iterator> Facets;
+  typedef Iterator_range<Edge_iterator> Edges;
+  
 //private: // In 2D only :
   typedef internal::Triangulation_ds_face_circulator_3<Tds>  Face_circulator;
 
@@ -483,7 +479,7 @@ public:
                                 Vertex_handle newv)
   {
       CGAL_triangulation_precondition(begin != Cell_handle());
-      // if begin == NULL (default arg), we could compute one by walking in
+      // if begin == nullptr (default arg), we could compute one by walking in
       // CellIt.  At the moment, the functionality is not available, you have
       // to specify a starting facet.
 
@@ -636,6 +632,11 @@ public:
     return cells().end();
   }
 
+  Cell_handles cell_handles() const
+  {
+    return make_prevent_deref_range(cells_begin(), cells_end()); 
+  }
+  
   Cell_iterator raw_cells_begin() const
   {
     return cells().begin();
@@ -658,6 +659,11 @@ public:
     return Facet_iterator(this, 1);
   }
 
+  Facets facets() const
+  {
+    return Facets(facets_begin(), facets_end());
+  }
+  
   Edge_iterator edges_begin() const
   {
     if ( dimension() < 1 )
@@ -670,6 +676,11 @@ public:
     return Edge_iterator(this,1);
   }
 
+  Edges edges() const
+  {
+    return Edges(edges_begin(), edges_end());
+  }
+  
   Vertex_iterator vertices_begin() const
   {
     return vertices().begin();
@@ -680,6 +691,11 @@ public:
     return vertices().end();
   }
 
+  Vertex_handles vertex_handles() const
+  {
+    return make_prevent_deref_range(vertices_begin(), vertices_end()); 
+  }
+  
   // CIRCULATOR METHODS
 
   // cells around an edge
@@ -903,9 +919,7 @@ public:
         filter = f.filter;
         return *this;
       }  
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
       Facet_it(const Facet_it&)=default;
-#endif      
     };
     Facet_it facet_it() {
       return Facet_it(output, filter);
@@ -2860,7 +2874,7 @@ insert_increase_dimension(Vertex_handle star)
   // star = vertex from which we triangulate the facet of the
   // incremented dimension
   // ( geometrically : star = infinite vertex )
-  // = NULL only used to insert the 1st vertex (dimension -2 to dimension -1)
+  // = nullptr only used to insert the 1st vertex (dimension -2 to dimension -1)
   // changes the dimension
 {
   CGAL_triangulation_precondition( dimension() < 3);
@@ -3575,14 +3589,14 @@ is_valid(Cell_handle c, bool verbose, int level) const
     {
       if ( c->vertex(0) == Vertex_handle() ) {
         if (verbose)
-            std::cerr << "vertex 0 NULL" << std::endl;
+            std::cerr << "vertex 0 nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
       is_valid(c->vertex(0),verbose,level);
       if ( c->vertex(1) != Vertex_handle() || c->vertex(2) != Vertex_handle()) {
         if (verbose)
-            std::cerr << "vertex 1 or 2 != NULL" << std::endl;
+            std::cerr << "vertex 1 or 2 != nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
@@ -3590,7 +3604,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
            c->neighbor(1) != Cell_handle() ||
            c->neighbor(2) != Cell_handle()) {
         if (verbose)
-            std::cerr << "one neighbor != NULL" << std::endl;
+            std::cerr << "one neighbor != nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
@@ -3601,28 +3615,28 @@ is_valid(Cell_handle c, bool verbose, int level) const
       {
       if ( c->vertex(0) == Vertex_handle() ) {
         if (verbose)
-            std::cerr << "vertex 0 NULL" << std::endl;
+            std::cerr << "vertex 0 nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
       is_valid(c->vertex(0),verbose,level);
       if ( c->neighbor (0) == Cell_handle() ) {
         if (verbose)
-            std::cerr << "neighbor 0 NULL" << std::endl;
+            std::cerr << "neighbor 0 nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
       if ( c->vertex(1) != Vertex_handle() ||
            c->vertex(2) != Vertex_handle() ) {
         if (verbose)
-            std::cerr << "vertex 1 or 2 != NULL" << std::endl;
+            std::cerr << "vertex 1 or 2 != nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
       if ( c->neighbor(1) != Cell_handle() ||
            c->neighbor(2) != Cell_handle() ) {
         if (verbose)
-            std::cerr << "neighbor 1 or 2 != NULL" << std::endl;
+            std::cerr << "neighbor 1 or 2 != nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
@@ -3645,7 +3659,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
 
       if ( v0 == Vertex_handle() || v1 == Vertex_handle() ) {
         if (verbose)
-            std::cerr << "vertex 0 or 1 NULL" << std::endl;
+            std::cerr << "vertex 0 or 1 nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
@@ -3653,7 +3667,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
       is_valid(c->vertex(1),verbose,level);
       if ( n0 == Cell_handle() || n1 == Cell_handle() ) {
         if (verbose)
-            std::cerr << "neighbor 0 or 1 NULL" << std::endl;
+            std::cerr << "neighbor 0 or 1 nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
@@ -3697,7 +3711,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
            c->vertex(1) == Vertex_handle() ||
            c->vertex(2) == Vertex_handle() ) {
         if (verbose)
-            std::cerr << "vertex 0, 1, or 2 NULL" << std::endl;
+            std::cerr << "vertex 0, 1, or 2 nullptr" << std::endl;
         CGAL_triangulation_assertion(false);
         return false;
       }
@@ -3710,7 +3724,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
         n = c->neighbor(i);
         if ( n == Cell_handle() ) {
           if (verbose)
-              std::cerr << "neighbor " << i << " NULL" << std::endl;
+              std::cerr << "neighbor " << i << " nullptr" << std::endl;
           CGAL_triangulation_assertion(false);
           return false;
         }
@@ -3748,7 +3762,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
         for(i = 0; i < 4; i++) {
           if ( c->vertex(i) == Vertex_handle() ) {
             if (verbose)
-                std::cerr << "vertex " << i << " NULL" << std::endl;
+                std::cerr << "vertex " << i << " nullptr" << std::endl;
             CGAL_triangulation_assertion(false);
             return false;
           }
@@ -3759,7 +3773,7 @@ is_valid(Cell_handle c, bool verbose, int level) const
           Cell_handle n = c->neighbor(i);
           if ( n == Cell_handle() ) {
             if (verbose)
-              std::cerr << "neighbor " << i << " NULL" << std::endl;
+              std::cerr << "neighbor " << i << " nullptr" << std::endl;
             CGAL_triangulation_assertion(false);
             return false;
           }

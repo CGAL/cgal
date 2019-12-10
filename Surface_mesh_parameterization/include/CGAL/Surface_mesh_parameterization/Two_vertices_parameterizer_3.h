@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -30,7 +21,6 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 
 #include <cfloat>
@@ -110,7 +100,7 @@ public:
   {
     if(vertices_given) {
       bool found_min = false, found_max = false;
-      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      for(vertex_descriptor vd : vertices) {
         if(vd == vxmin) {
           found_min = true;
           if(found_max) break;
@@ -144,7 +134,7 @@ public:
     double ymax = -std::numeric_limits<double>::infinity();
     double zmax = -std::numeric_limits<double>::infinity();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       const Point_3& position = get(ppmap,vd);
 
       xmin = (std::min)(position.x(), xmin);
@@ -239,7 +229,7 @@ public:
     double vmin = std::numeric_limits<double>::infinity();
     double vmax = -std::numeric_limits<double>::infinity();
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       const Point_3& position = get(ppmap, vd);
       Vector_3 position_as_vector = position - Point_3(0, 0, 0);
 

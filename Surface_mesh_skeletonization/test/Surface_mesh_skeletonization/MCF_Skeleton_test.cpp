@@ -35,7 +35,7 @@ bool is_mesh_valid(Polyhedron& pMesh)
   }
 
   std::size_t i = 0;
-  BOOST_FOREACH(Polyhedron::Face_handle fh, faces(pMesh))
+  for(Polyhedron::Face_handle fh : faces(pMesh))
     fh->id()=i++;
 
   // the algorithm is only applicable on a mesh

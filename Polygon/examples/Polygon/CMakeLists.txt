@@ -2,11 +2,15 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
-find_package(CGAL QUIET)
+find_package(CGAL QUIET COMPONENTS Qt5)
+
+if(CGAL_Qt5_FOUND)
+    add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+endif()
 
 if ( CGAL_FOUND )
 
@@ -15,6 +19,11 @@ if ( CGAL_FOUND )
   foreach(cppfile ${cppfiles})
     create_single_source_cgal_program( "${cppfile}" )
   endforeach()
+
+  if(CGAL_Qt5_FOUND)
+    target_link_libraries(draw_polygon PUBLIC CGAL::CGAL_Qt5)
+    target_link_libraries(draw_polygon_with_holes PUBLIC CGAL::CGAL_Qt5)
+  endif()
 
 else()
   
