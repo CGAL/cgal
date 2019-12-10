@@ -214,8 +214,8 @@ void construct_oriented_bounding_box(Output& output,
 ///
 /// \tparam PointRange a model of `Range`
 /// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
-///                or the traits' `Affine_transformation_3` type
-/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+///                or the traits' `Aff_transformation_3` type
+/// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param points the input points
 /// \param out the resulting array of points or affine transformation
@@ -293,8 +293,8 @@ void oriented_bounding_box(const PointRange& points,
 ///
 /// \tparam PolygonMesh a model of `VertexListGraph`
 /// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
-///                or the traits' `Affine_transformation_3` type
-/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+///                or the traits' `Aff_transformation_3` type
+/// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh
 /// \param out the resulting array of points or affine transformation
