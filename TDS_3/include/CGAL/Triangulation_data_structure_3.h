@@ -28,6 +28,7 @@
 #include <set>
 #include <vector>
 #include <stack>
+#include <limits>
 
 #include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
@@ -525,6 +526,7 @@ public:
   template <class Cells, class Facets>
   Vertex_handle _insert_in_small_hole(const Cells& cells, const Facets& facets)
   {
+    CGAL_assertion(facets.size() < (std::numeric_limits<unsigned char>::max)());
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map, vertex_pair_facet_map);
     Vertex_handle nv = create_vertex();
     std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
