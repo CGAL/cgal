@@ -21,6 +21,8 @@ else()
   include(${EIGEN3_USE_FILE})
 endif()
 
-create_single_source_cgal_program("test_linear_algebra_functions.cpp")
+create_single_source_cgal_program("test_nelder_mead.cpp")
+create_single_source_cgal_program("test_OBB_traits.cpp")
 create_single_source_cgal_program("test_optimization_algorithms.cpp")
+
 

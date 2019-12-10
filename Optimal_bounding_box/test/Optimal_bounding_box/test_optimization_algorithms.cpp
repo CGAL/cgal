@@ -18,126 +18,6 @@ bool assert_doubles(double d1, double d2, double epsilon)
   return (d1 < d2 + epsilon && d1 > d2 - epsilon) ? true : false;
 }
 
-void test_nelder_mead()
-{
-  typedef CGAL::Eigen_linear_algebra_traits Linear_algebra_traits;
-  typedef Linear_algebra_traits::Matrix Matrix;
-
-  Matrix data_points(4,3);
-  data_points(0,0) = 0.866802;
-  data_points(0,1) = 0.740808;
-  data_points(0,2) = 0.895304;
-  data_points(1,0) = 0.912651;
-  data_points(1,1) = 0.761565;
-  data_points(1,2) = 0.160330;
-  data_points(2,0) = 0.093661;
-  data_points(2,1) = 0.892578;
-  data_points(2,2) = 0.737412;
-  data_points(3,0) = 0.166461;
-  data_points(3,1) = 0.149912;
-  data_points(3,2) = 0.364944;
-
-  // one simplex
-  std::vector<Matrix> simplex(4);
-  Matrix v0(3,3);
-  Matrix v1(3,3);
-  Matrix v2(3,3);
-  Matrix v3(3,3);
-
-  v0(0,0) = -0.2192721;
-  v0(0,1) = 0.2792986;
-  v0(0,2) = -0.9348326;
-  v0(1,0) = -0.7772152;
-  v0(1,1) = -0.6292092;
-  v0(1,2) = -0.0056861;
-  v0(2,0) = -0.5897934;
-  v0(2,1) = 0.7253193;
-  v0(2,2) = 0.3550431;
-
-  v1(0,0) = -0.588443;
-  v1(0,1) = 0.807140;
-  v1(0,2) = -0.047542;
-  v1(1,0) = -0.786228;
-  v1(1,1) = -0.584933;
-  v1(1,2) = -0.199246;
-  v1(2,0) = -0.188629;
-  v1(2,1) = -0.079867;
-  v1(2,2) = 0.978795;
-
-  v2(0,0) = -0.277970;
-  v2(0,1) = 0.953559;
-  v2(0,2) = 0.116010;
-  v2(1,0) = -0.567497;
-  v2(1,1) = -0.065576;
-  v2(1,2) = -0.820760;
-  v2(2,0) = -0.775035;
-  v2(2,1) = -0.293982;
-  v2(2,2) = 0.559370;
-
-  v3(0,0) = -0.32657;
-  v3(0,1) = -0.60013;
-  v3(0,2) = -0.73020;
-  v3(1,0) = -0.20022;
-  v3(1,1) = -0.71110;
-  v3(1,2) = 0.67398;
-  v3(2,0) = -0.92372;
-  v3(2,1) = 0.36630;
-  v3(2,2) = 0.11207;
-
-  simplex[0] = v0;
-  simplex[1] = v1;
-  simplex[2] = v2;
-  simplex[3] = v3;
-
-  std::size_t nm_iterations = 19;
-  CGAL::Optimal_bounding_box::nelder_mead<Linear_algebra_traits>(simplex, data_points, nm_iterations);
-
-  double epsilon = 1e-5;
-  const Matrix& v0_new = simplex[0];
-  assert(assert_doubles(v0_new(0,0), -0.288975, epsilon));
-  assert(assert_doubles(v0_new(0,1), 0.7897657, epsilon));
-  assert(assert_doubles(v0_new(0,2), -0.541076, epsilon));
-  assert(assert_doubles(v0_new(1,0), -0.9407046, epsilon));
-  assert(assert_doubles(v0_new(1,1), -0.3391466, epsilon));
-  assert(assert_doubles(v0_new(1,2), 0.0073817, epsilon));
-  assert(assert_doubles(v0_new(2,0), -0.1776743, epsilon));
-  assert(assert_doubles(v0_new(2,1), 0.5111260, epsilon));
-  assert(assert_doubles(v0_new(2,2), 0.84094, epsilon));
-
-  const Matrix& v1_new = simplex[1];
-  assert(assert_doubles(v1_new(0,0), -0.458749, epsilon));
-  assert(assert_doubles(v1_new(0,1), 0.823283, epsilon));
-  assert(assert_doubles(v1_new(0,2), -0.334296, epsilon));
-  assert(assert_doubles(v1_new(1,0), -0.885235, epsilon));
-  assert(assert_doubles(v1_new(1,1), -0.455997, epsilon));
-  assert(assert_doubles(v1_new(1,2), 0.091794, epsilon));
-  assert(assert_doubles(v1_new(2,0), -0.076866, epsilon));
-  assert(assert_doubles(v1_new(2,1), 0.338040, epsilon));
-  assert(assert_doubles(v1_new(2,2), 0.937987, epsilon));
-
-  const Matrix& v2_new = simplex[2];
-  assert(assert_doubles(v2_new(0,0), -0.346582, epsilon));
-  assert(assert_doubles(v2_new(0,1), 0.878534, epsilon));
-  assert(assert_doubles(v2_new(0,2), -0.328724, epsilon));
-  assert(assert_doubles(v2_new(1,0), -0.936885, epsilon));
-  assert(assert_doubles(v2_new(1,1), -0.341445, epsilon));
-  assert(assert_doubles(v2_new(1,2), 0.075251, epsilon));
-  assert(assert_doubles(v2_new(2,0), -0.046131, epsilon));
-  assert(assert_doubles(v2_new(2,1), 0.334057, epsilon));
-  assert(assert_doubles(v2_new(2,2), 0.941423, epsilon));
-
-  const Matrix& v3_new = simplex[3];
-  assert(assert_doubles(v3_new(0,0), -0.394713, epsilon));
-  assert(assert_doubles(v3_new(0,1), 0.791782, epsilon));
-  assert(assert_doubles(v3_new(0,2), -0.466136, epsilon));
-  assert(assert_doubles(v3_new(1,0), -0.912112, epsilon));
-  assert(assert_doubles(v3_new(1,1), -0.398788, epsilon));
-  assert(assert_doubles(v3_new(1,2), 0.094972, epsilon));
-  assert(assert_doubles(v3_new(2,0), -0.110692, epsilon));
-  assert(assert_doubles(v3_new(2,1), 0.462655, epsilon));
-  assert(assert_doubles(v3_new(2,2), 0.879601, epsilon));
-}
-
 void test_genetic_algorithm()
 {
   CGAL::Eigen_dense_matrix<double, -1, -1> data_points(4, 3); // -1 = dynamic size at run time
@@ -412,8 +292,8 @@ void test_function_defaults_traits(const std::string fname1,
 
 int main()
 {
-  test_nelder_mead();
   test_genetic_algorithm();
+
   test_random_unit_tetra();
   test_reference_tetrahedron("data/reference_tetrahedron.off");
   test_long_tetrahedron("data/long_tetrahedron.off");
