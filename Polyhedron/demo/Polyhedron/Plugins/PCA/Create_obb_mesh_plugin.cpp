@@ -14,7 +14,7 @@
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
-#include <CGAL/Optimal_bounding_box/optimal_bounding_box.h>
+#include <CGAL/optimal_bounding_box.h>
 
 using namespace CGAL::Three;
 
@@ -138,7 +138,7 @@ void Create_obb_mesh_plugin::obb()
 
   // find obb
   std::array<Point_3, 8> obb_points;
-  CGAL::optimal_bounding_box(points, obb_points);
+  CGAL::oriented_bounding_box(points, obb_points);
 
   Scene_facegraph_item* item;
   SMesh* p = new SMesh;
