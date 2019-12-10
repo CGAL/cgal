@@ -58,7 +58,6 @@
 #include <CGAL/Default.h>
 #include <CGAL/internal/boost/function_property_map.hpp>
 
-
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
@@ -1194,7 +1193,7 @@ public:
     v->set_point(p);
     return v;
   }
-  
+
  // Internal function, cells should already be marked.
   template <class Cells, class Facets>
   Vertex_handle _insert_in_small_hole(const Point& p,
@@ -1205,7 +1204,7 @@ public:
     v->set_point(p);
     return v;
   }
-  
+
   // Internal function, cells should already be marked.
   template <class CellIt>
   Vertex_handle _insert_in_hole(const Point& p,
@@ -1264,7 +1263,7 @@ protected:
     typedef boost::container::small_vector<Cell_handle,64> SV;
     SV sv;
     std::stack<Cell_handle, SV > cell_stack(sv);
-    
+
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
 
@@ -3617,7 +3616,6 @@ insert_in_conflict(const Point& p,
                    Hidden_points_visitor& hider,
                    bool *could_lock_zone)
 {
-
   if(could_lock_zone)
     *could_lock_zone = true;
 
@@ -3643,7 +3641,7 @@ insert_in_conflict(const Point& p,
       Facet facet;
 
       boost::container::small_vector<Facet,32> facets;
-      
+
       // Parallel
       if(could_lock_zone)
       {
@@ -3685,18 +3683,17 @@ insert_in_conflict(const Point& p,
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
-      Vertex_handle nv;
 
-      if(tds().is_small_hole(facets.size())){
-          nv = _insert_in_small_hole(p, cells, facets);
-      }else{
-      nv = _insert_in_hole(p,
-                           cells.begin(), cells.end(),
-                           facet.first, facet.second);
-      }
+      Vertex_handle v =
+        tds().is_small_hole(facets.size()) ?
+        _insert_in_small_hole(p, cells, facets) :
+        _insert_in_hole(p,
+                        cells.begin(), cells.end(),
+                        facet.first, facet.second);
+
       // Store the hidden points in their new cells.
-      hider.reinsert_vertices(nv);
-      return nv;
+      hider.reinsert_vertices(v);
+      return v;
     }
     case 2:
     {

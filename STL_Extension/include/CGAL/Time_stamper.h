@@ -26,14 +26,14 @@
 
 namespace CGAL {
 
-namespace internal {  
+namespace internal {
 
 constexpr size_t rounded_down_log2(size_t n)
 {
   return ( (n<2) ? 0 : 1+rounded_down_log2(n/2));
 }
 } // namespace internal
-  
+
 template <typename T>
 struct Time_stamper
 {

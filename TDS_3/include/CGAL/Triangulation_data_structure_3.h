@@ -189,15 +189,15 @@ public:
     {
       std::size_t hf = boost::hash<Vertex_handle>()(k.first);
       std::size_t hs = boost::hash<Vertex_handle>()(k.second);
-      
+
       return hf ^ 419 * hs;
     }
   };
-  
+
   static const int maximal_nb_of_facets_of_small_hole = 128;
   typedef Small_unordered_map<Vertex_pair, Local_facet,
                               Small_pair_hash, maximal_nb_of_facets_of_small_hole *8> Vertex_pair_facet_map;
-  
+
 //#ifndef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3
   //internally used for create_star_3 (faster than a tuple)
   struct iAdjacency_info{
@@ -531,50 +531,50 @@ public:
   {
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map, vertex_pair_facet_map);
     Vertex_handle nv = create_vertex();
-        std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
-        for (int local_facet_index = 0, end = facets.size();
-             local_facet_index < end; ++local_facet_index) {
-          const Facet f = mirror_facet(facets[local_facet_index]);
-          f.first->tds_data().clear(); // was on boundary
-          const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
-          const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
-          const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
-          u->set_cell(f.first);
-          v->set_cell(f.first);
-          w->set_cell(f.first);
-          const Cell_handle nc = create_cell(v, u, w, nv);
-          new_cells[local_facet_index] = nc;
-          nv->set_cell(nc);
-          nc->set_neighbor(3, f.first);
-          f.first->set_neighbor(f.second, nc);
+    std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
+    for (int local_facet_index = 0, end = facets.size();
+         local_facet_index < end; ++local_facet_index) {
+      const Facet f = mirror_facet(facets[local_facet_index]);
+      f.first->tds_data().clear(); // was on boundary
+      const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
+      const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
+      const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
+      u->set_cell(f.first);
+      v->set_cell(f.first);
+      w->set_cell(f.first);
+      const Cell_handle nc = create_cell(v, u, w, nv);
+      new_cells[local_facet_index] = nc;
+      nv->set_cell(nc);
+      nc->set_neighbor(3, f.first);
+      f.first->set_neighbor(f.second, nc);
 
-          vertex_pair_facet_map.set({u, v}, {local_facet_index,
-                           static_cast<unsigned char>(nc->index(w))});
-          vertex_pair_facet_map.set({v, w}, {local_facet_index,
-                           static_cast<unsigned char>(nc->index(u))});
-          vertex_pair_facet_map.set({w, u}, {local_facet_index,
-                           static_cast<unsigned char>(nc->index(v))});
-      }
+      vertex_pair_facet_map.set({u, v}, {local_facet_index,
+                                         static_cast<unsigned char>(nc->index(w))});
+      vertex_pair_facet_map.set({v, w}, {local_facet_index,
+                                         static_cast<unsigned char>(nc->index(u))});
+      vertex_pair_facet_map.set({w, u}, {local_facet_index,
+                                         static_cast<unsigned char>(nc->index(v))});
+    }
 
-      for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){
-        const std::pair<Vertex_pair,Local_facet>& ef = *it;
-        if(ef.first.first < ef.first.second){
-          const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
-          vertex_pair_facet_map.clear(it);
-          const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(ef.first.second, ef.first.first));
-          const Facet n = Facet{new_cells[p.first], p.second};
-          f.first->set_neighbor(f.second, n.first);
-          n.first->set_neighbor(n.second, f.first);
-        }
+    for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){
+      const std::pair<Vertex_pair,Local_facet>& ef = *it;
+      if(ef.first.first < ef.first.second){
+        const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
+        vertex_pair_facet_map.clear(it);
+        const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(ef.first.second, ef.first.first));
+        const Facet n = Facet{new_cells[p.first], p.second};
+        f.first->set_neighbor(f.second, n.first);
+        n.first->set_neighbor(n.second, f.first);
       }
-      for(Cell_handle c : cells){
-        c->tds_data().clear(); // was in conflict
-      }
-      delete_cells(cells.begin(), cells.end());
-      vertex_pair_facet_map.clear();
-      return nv;
+    }
+    for(Cell_handle c : cells){
+      c->tds_data().clear(); // was in conflict
+    }
+    delete_cells(cells.begin(), cells.end());
+    vertex_pair_facet_map.clear();
+    return nv;
   }
-  
+
 
   //INSERTION
   
@@ -1504,7 +1504,7 @@ public:
   {
     return s <= maximal_nb_of_facets_of_small_hole;
   }
-  
+
 private:
 
   // Change the orientation of the cell by swapping indices 0 and 1.
@@ -1524,7 +1524,6 @@ private:
 
   Cell_range   _cells;
   Vertex_range _vertices;
-
 
   // used by is-valid :
   bool count_vertices(size_type &i, bool verbose = false, int level = 0) const;
