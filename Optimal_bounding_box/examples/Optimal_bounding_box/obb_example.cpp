@@ -11,7 +11,6 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_3                                             Point;
-typedef K::Aff_transformation_3                                Aff_transformation;
 typedef CGAL::Surface_mesh<Point>                              Surface_mesh;
 
 int main(int argc, char** argv)
@@ -24,9 +23,6 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  Aff_transformation aff;
-
-  // API test
   CGAL::Real_timer timer;
   timer.start();
 
