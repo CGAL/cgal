@@ -45,7 +45,7 @@ is the geometric traits instance in which the mesh processing operation should b
 \cgalNPEnd
 
 \cgalNPBegin{use_convex_hull} \anchor OBB_use_convex_hull
-Parameter used in optimal bounding box construction to indicate whether the algorithm should
+Parameter used in the construction of oriented bounding box to indicate whether the algorithm should
 first extract the extreme points (points that are on the 3D convex hull) of the input data range
 to accelerate the computation of the bounding box.
 \n

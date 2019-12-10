@@ -49,7 +49,7 @@ public:
             const Traits& traits)
     :
       m_population(traits),
-      m_rng(rng), // @todo just a parameter of genetic_algorithm() ?
+      m_rng(rng),
       m_points(points),
       m_traits(traits)
   { }
@@ -144,12 +144,12 @@ public:
     const std::size_t population_size = 50;
 
     // hardcoded nelder_mead_iterations
-    const std::size_t nelder_mead_iterations = 20;
+    const std::size_t nelder_mead_iterations = 150;
 
     // stopping criteria prameters
     double prev_fit_value = 0.;
     double new_fit_value = 0.;
-    const double tolerance = 1e-2;
+    const double tolerance = 1e-9;
     int stale = 0;
 
     for(std::size_t t=0; t<generations; ++t)
@@ -176,14 +176,19 @@ public:
       //std::cout << "pop after nelder mead: " << std::endl;
       //pop.show_population();
       //std::cout << std::endl;
-      const Matrix& R_now = fitness_map.get_best();
-      std::cout << "det = " << m_traits.compute_determinant(R_now) << std::endl;
 #endif
 
       new_fit_value = fitness_map.get_best_fitness_value();
       const double difference = new_fit_value - prev_fit_value;
 
-      if(CGAL::abs(difference) < tolerance * new_fit_value)
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+      const Matrix& R_now = fitness_map.get_best();
+      std::cout << "new best: " << R_now << std::endl;
+      std::cout << "det = " << m_traits.compute_determinant(R_now) << std::endl;
+      std::cout << "value difference with previous: " << difference << std::endl;
+#endif
+
+      if(CGAL::abs(difference) < tolerance * new_fit_value) // @todo should depend on input bbox diag
         ++stale;
 
       if(stale == 5)

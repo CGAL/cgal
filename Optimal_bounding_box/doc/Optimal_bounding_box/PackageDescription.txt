@@ -9,6 +9,9 @@
 /// \defgroup PkgOptimalBoundingBoxFunctions Optimal Bounding Box Methods
 /// \ingroup PkgOptimalBoundingBoxRef
 
+/// \defgroup PkgOptimalBoundingBox_Oriented_bounding_box Oriented Bounding Box Methods
+/// \ingroup PkgOptimalBoundingBoxFunctions
+
 /*!
 \addtogroup PkgOptimalBoundingBoxRef
 \cgalPkgDescriptionBegin{Optimal Bounding Box,PkgOptimalBoundingBox}
@@ -37,14 +40,14 @@ that are used in this package.
 
 \cgalCRPSection{Concepts}
 
-- `CGAL::OptimalBoundingBoxTraits`
+- `CGAL::OrientedBoundingBoxTraits`
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Optimal_bounding_box::Optimal_bounding_box_traits`
+- `CGAL::Oriented_bounding_box_traits`
 
 \cgalCRPSection{Methods}
 
-- `CGAL::optimal_bounding_box()`
+- \link PkgOptimalBoundingBox_Oriented_bounding_box `CGAL::oriented_bounding_box()` \endlink
 
 */
