@@ -87,13 +87,19 @@ void sum_normals(const PM& pmesh,
 
   typedef typename boost::property_traits<VertexPointMap>::reference    Point_ref;
 
+  std::cout << "sum_normals..." << std::endl;
+
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
   const Point_ref pv = get(vpmap, v);
+  std::cout << "pv: " << pv << std::endl;
+
   while(v != target(next(he, pmesh), pmesh))
   {
     const Point_ref pvn = get(vpmap, target(he, pmesh));
     const Point_ref pvnn = get(vpmap, target(next(he, pmesh), pmesh));
+    std::cout << "pvn: " << pvn << std::endl;
+    std::cout << "pvnn: " << pvnn << std::endl;
 
     const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
@@ -632,6 +638,13 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 
       put(face_normals, f, compute_face_normal(f, pmesh, np));
     }
+  }
+
+  std::cout << "Incident face normals:" << std::endl;
+  for(halfedge_descriptor h : CGAL::halfedges_around_target(v, pmesh))
+  {
+    if(!is_border(h, pmesh))
+      std::cout << "normal: " << get(face_normals, face(h, pmesh)) << std::endl;
   }
 
   Vector_3 normal = internal::compute_vertex_normal_most_visible_min_circle(v, face_normals, pmesh, traits);

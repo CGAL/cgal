@@ -32,6 +32,8 @@ void test(const Mesh& mesh,
   typedef typename CGAL::GetVertexPointMap<Mesh>::const_type              VPMap;
   VPMap vpmap = get_const_property_map(CGAL::vertex_point, mesh);
 
+  assert(!is_empty(mesh));
+
   const vertex_descriptor first_vertex = *(vertices(mesh).begin());
   const face_descriptor first_face = *(faces(mesh).begin());
 
@@ -80,6 +82,8 @@ void test_SM(const char* file_name)
 
   typedef typename K::Vector_3                                            Vector;
 
+  std::cout << "Test with Surface_mesh, and kernel: " << typeid(K).name() << std::endl;
+
   SM mesh;
   std::ifstream input(file_name);
   if(!(input >> mesh))
@@ -104,6 +108,8 @@ void test_Polyhedron(const char* file_name)
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor       face_descriptor;
 
   typedef typename K::Vector_3                                            Vector;
+
+  std::cout << "Test with Polyhedron, and kernel: " << typeid(K).name() << std::endl;
 
   Polyhedron mesh;
   std::ifstream input(file_name);
@@ -146,10 +152,10 @@ int main()
 {
   CGAL::Set_ieee_double_precision pfr;
 
-  test("data/elephant.off");
-  test("data/folded_star.off");
-  test("data/joint_refined.off");
-  test("data/mannequin-devil.off");
+//  test("data/elephant.off");
+//  test("data/folded_star.off");
+//  test("data/joint_refined.off");
+//  test("data/mannequin-devil.off");
   test("data/U.off");
 
   std::cerr << "All done." << std::endl;
