@@ -87,7 +87,7 @@ public:
   const T& get_and_erase(const K& k) const
   {
     unsigned int h  = hash(k)%M;
-    int i = h;
+    unsigned int i = h;
     do{
       if((occupied[i] == 1) && (data[i].first == k)){
         occupied[i] = -1;
