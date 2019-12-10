@@ -183,9 +183,9 @@ void construct_oriented_bounding_box(Output& output,
 /// which is defined as the rectangular box with smallest volume of all the rectangular boxes containing
 /// the input points.
 ///
-/// Internally, the algorithm uses an optimization process to find a transformation (rotation)
+/// Internally, the algorithm uses an optimization process to compute a transformation (rotation)
 /// \f$ {\mathcal R}_b\f$ such that the axis-aligned box of the rotated input point set
-/// has a volume that is as small as possible.
+/// has a volume that is as small as possible given a fixed maximal number of optimization iterations.
 ///
 /// \cgalHeading{Input}
 ///
@@ -193,7 +193,7 @@ void construct_oriented_bounding_box(Output& output,
 ///
 /// \cgalHeading{Output}
 ///
-/// The result of the algorithm can be obtained as either:
+/// The result of the algorithm can be retrieved as either:
 /// - the best affine transformation (\f$ {\mathcal R}_b\f$) that the algorithm has found;
 /// - an array of eight points, representing the best oriented bounding box (\f$ {\mathcal B}_b\f$)
 ///   that the algorithm has constructed, which is related to (\f$ {\mathcal R}_b\f$) as it is
@@ -203,8 +203,8 @@ void construct_oriented_bounding_box(Output& output,
 ///   which is a useful function to construct a mesh from these points.
 ///
 /// Note that when returning an array of points, these points are constructed from the axis-aligned
-/// bounding box and some precision loss should be expected if a kernel not providing exact constructions
-/// is used.
+/// bounding box and some precision loss should therefore be expected if a kernel not providing
+/// exact constructions is used.
 ///
 /// The algorithm is based on a paper by Chang, Gorissen, and Melchior \cgalCite{cgal:cgm-fobbo-11}.
 
@@ -213,8 +213,8 @@ void construct_oriented_bounding_box(Output& output,
 /// See above.
 ///
 /// \tparam PointRange a model of `Range`
-/// \tparam Output `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
-///                or `CGAL::Affine_transformation_3<K>` with `K` being a kernel compatible with the point type.
+/// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
+///                or the traits' `Affine_transformation_3` type
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param points the input points
@@ -292,8 +292,8 @@ void oriented_bounding_box(const PointRange& points,
 /// Extracts the vertices of the mesh as a point range and calls the other overload.
 ///
 /// \tparam PolygonMesh a model of `VertexListGraph`
-/// \tparam Output `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
-///                or `CGAL::Affine_transformation_3<K>` with `K` being a kernel compatible with the point type.
+/// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
+///                or the traits' `Affine_transformation_3` type
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh

@@ -58,9 +58,6 @@ private:
   typedef typename Matrix::EigenType                   EigenType;
 
 public:
-  /// Constructor from the base kernel
-  explicit Oriented_bounding_box_traits() { }
-
   /// Offers `construct_bbox_3_object()(const Point_3&)`
   Construct_bbox_3 construct_bbox_3_object() const { return Construct_bbox_3(); }
 

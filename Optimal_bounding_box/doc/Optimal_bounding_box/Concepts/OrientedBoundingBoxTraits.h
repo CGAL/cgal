@@ -21,6 +21,10 @@ public:
   /// The 3D point type; must be model of `Point_3`
   typedef unspecified_type                                Point_3;
 
+  /// The 3D affine transformation type; the template parameter `K` must be a model of `Kernel`
+  /// and be compatible with the type `Point_3`.
+  typedef CGAL::Aff_transformation_3<K>                   Aff_transformation_3;
+
   /// A construction object that must provide the function operator:
   /// `CGAL::Bbox_3 operator()(const Point_3&)`,
   /// which returns an axis-aligned bounding that contains the point
