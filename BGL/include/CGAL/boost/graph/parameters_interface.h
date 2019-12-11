@@ -162,4 +162,5 @@ CGAL_add_named_parameter(number_of_samples_t, number_of_samples, number_of_sampl
 CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
 CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
+CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
 

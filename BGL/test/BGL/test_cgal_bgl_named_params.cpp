@@ -229,6 +229,7 @@ void test(const NamedParameters& np)
   check_same_type<9031>(get_parameter(np, CGAL::internal_np::transformation_checkers));
   check_same_type<9032>(get_parameter(np, CGAL::internal_np::inspector));
   check_same_type<9033>(get_parameter(np, CGAL::internal_np::logger));
+  check_same_type<9034>(get_parameter(np, CGAL::internal_np::maximum_normal_deviation));
 }
 
 int main()
@@ -334,7 +335,8 @@ int main()
                          .error_minimizer(A<9030>(9030))
                          .transformation_checkers(A<9031>(9031))
                          .inspector(A<9032>(9032))
-                         .logger(A<9033>(9033))
+                         .logger(A<9033>(9033)
+                         .maximum_normal_deviation(A<9034>(9034))
        );
   return EXIT_SUCCESS;
 }

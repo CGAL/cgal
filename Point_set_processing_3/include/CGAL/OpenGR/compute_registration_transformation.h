@@ -203,6 +203,12 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
      refine the transformation using a local algorithm, like the ICP, or its
      variant SparseICP.\cgalParamEnd
 
+     \cgalParamBegin{maximum_normal_deviation} angle threshold (in
+     degrees) used to filter pairs of points according to their normal
+     consistency. Small values decrease computation time but may also
+     decrease the quality if pairs of points that should match have
+     a normal deviation higher than the threshold.\cgalParamEnd
+
      \cgalParamBegin{accuracy} registration accuracy (delta in the
      paper). Setting a small value means that the two clouds needs to be very
      close to be considered as well aligned. It is expressed in scene units. A
@@ -289,6 +295,8 @@ compute_registration_transformation (const PointRange1& point_set_1, const Point
   options.sample_size = choose_parameter(get_parameter(np1, internal_np::number_of_samples), 200);
   options.delta = choose_parameter(get_parameter(np1, internal_np::accuracy), 5.00);
   options.max_time_seconds = choose_parameter(get_parameter(np1, internal_np::maximum_running_time), 1000);
+  options.max_normal_difference = choose_parameter(get_parameter(np1, internal_np::maximum_normal_deviation), 90.);
+
   bool overlap_ok = options.configureOverlap (choose_parameter(get_parameter(np1, internal_np::overlap), 0.20));
   CGAL_USE (overlap_ok);
   // TODO: non-constant condition for static assertion, the value of ‘overlap_ok’ is not usable in a constant expression

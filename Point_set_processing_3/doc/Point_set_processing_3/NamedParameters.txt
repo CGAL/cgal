@@ -203,6 +203,12 @@ is the wanted output accuracy, expressed in scene units.\n
 <b>Default value</b>: `5.00`
 \cgalNPEnd
 
+\cgalNPBegin{maximum_normal_deviation} \anchor PSP_maximum_normal_deviation
+is the maximum angle between the normals of a pair of points, expressed in degrees.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `90.00`
+\cgalNPEnd
+
 \cgalNPBegin{overlap} \anchor PSP_overlap
 is the expected overlap ratio (between 0 and 1) between two points sets to register.\n
 \b Type: floating scalar value\n
