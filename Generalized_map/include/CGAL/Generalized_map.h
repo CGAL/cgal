@@ -3020,7 +3020,7 @@ namespace CGAL {
       return alpha<0, 1>(adart);
     }
 
-    /** Insert a vertex in the given 2-cell which is splitted in triangles,
+    /** Insert a vertex in the given 2-cell which is split in triangles,
      * once for each inital edge of the facet.
      * @param adart a dart of the facet to triangulate.
      * @return A dart incident to the new vertex.
