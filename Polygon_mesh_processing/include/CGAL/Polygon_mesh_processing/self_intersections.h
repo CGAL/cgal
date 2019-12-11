@@ -24,14 +24,16 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <CGAL/algorithm.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/box_intersection_d.h>
-#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/exceptions.h>
 #include <CGAL/intersections.h>
 #include <CGAL/iterator.h>
-#include <CGAL/exceptions.h>
+#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Random.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -191,68 +193,6 @@ struct Strict_intersect_faces // meaning, not just a shared subface
   }
 };
 
-#ifdef CGAL_LINKED_WITH_TBB
-// The functor doing all geometric tests in parallel
-template <class FacePairs, class DoIntersectVector,
-          class TM, class VPM, class GT>
-struct Concurrent_face_intersection_tester
-{
-  typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;
-  typedef typename boost::graph_traits<TM>::face_descriptor       face_descriptor;
-
-  const TM& m_tmesh;
-  const VPM m_vpmap;
-  const FacePairs& m_face_pairs;
-  DoIntersectVector& m_do_intersect_vector;
-  typename GT::Construct_segment_3 m_construct_segment;
-  typename GT::Construct_triangle_3 m_construct_triangle;
-  typename GT::Do_intersect_3 m_do_intersect;
-
-  Concurrent_face_intersection_tester(const FacePairs& face_pairs,
-                                      DoIntersectVector& do_intersect_vector,
-                                      const TM& tmesh,
-                                      VPM vpmap,
-                                      const GT& gt)
-    :
-      m_tmesh(tmesh),
-      m_vpmap(vpmap),
-      m_face_pairs(face_pairs),
-      m_do_intersect_vector(do_intersect_vector),
-      m_construct_segment(gt.construct_segment_3_object()),
-      m_construct_triangle(gt.construct_triangle_3_object()),
-      m_do_intersect(gt.do_intersect_3_object())
-  {}
-
-  void operator()(const tbb::blocked_range<std::size_t> &r) const
-  {
-    for(std::size_t ri = r.begin(); ri != r.end(); ++ri)
-      this->operator()(ri);
-  }
-
-  void operator()(std::size_t ri) const
-  {
-    const std::pair<face_descriptor,face_descriptor>& ff = m_face_pairs[ri];
-    halfedge_descriptor h = halfedge(ff.first, m_tmesh), g = halfedge(ff.second, m_tmesh);
-
-    if(do_faces_intersect<GT>(h, g, m_tmesh, m_vpmap, m_construct_segment, m_construct_triangle, m_do_intersect))
-      m_do_intersect_vector[ri] = true;
-  }
-};
-
-// This filter does not filter anything, but simply forwards intersecting pair information so that
-// filtering can be done outside of the call to 'box_intersection_d'
-template <class OutputIterator>
-struct All_faces_filter
-{
-  All_faces_filter(OutputIterator it) :  m_iterator(it) { }
-
-  template <class Box>
-  void operator()(const Box* b, const Box* c) const { *m_iterator++ = std::make_pair(b->info(), c->info()); }
-
-  mutable OutputIterator m_iterator;
-};
-#endif
-
 template <class ConcurrencyTag,
           class TriangleMesh,
           class FaceRange,
@@ -282,6 +222,8 @@ self_intersections_impl(const FaceRange& face_range,
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type                    VPM;
   VPM vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(boost::vertex_point, tmesh));
+
+  const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0);
 
   const std::ptrdiff_t cutoff = 2000;
 
@@ -333,32 +275,27 @@ self_intersections_impl(const FaceRange& face_range,
 #else
   if(std::is_convertible<ConcurrencyTag, Parallel_tag>::value)
   {
-    // (A) Parallel: Write all pairs of faces with intersecting bbox
-    typedef tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor> >  Face_pairs;
-    typedef std::back_insert_iterator<Face_pairs>                                 Face_pairs_back_inserter;
+    // We are going to split the range into a number of smaller ranges. To handle
+    // smaller trees of roughly the same size, we first apply a random shuffle to the range
+    CGAL::Random rng(seed);
+    CGAL::cpp98::random_shuffle(box_ptr.begin(), box_ptr.end(), rng);
+
+    // Write in a concurrent vector all pairs that intersect
+    typedef tbb::concurrent_vector<std::pair<face_descriptor, face_descriptor> >         Face_pairs;
+    typedef std::back_insert_iterator<Face_pairs>                                        Face_pairs_back_inserter;
+    typedef internal::Strict_intersect_faces<Box, TM, VPM, GT, Face_pairs_back_inserter> Intersecting_faces_filter;
 
     Face_pairs face_pairs;
-    internal::All_faces_filter<Face_pairs_back_inserter> all_faces_filter(std::back_inserter(face_pairs));
+    Intersecting_faces_filter callback(tmesh, vpmap, gt, std::back_inserter(face_pairs));
 
     if(throw_on_SI)
       CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), throwing_filter, cutoff);
     else
-      CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), all_faces_filter, cutoff);
+      CGAL::box_self_intersection_d<ConcurrencyTag>(box_ptr.begin(), box_ptr.end(), callback, cutoff);
 
-    // (B) Parallel: Perform the geometric tests
-    typedef std::vector<int>                                                      Do_intersect_vector;
-    typedef internal::Concurrent_face_intersection_tester<Face_pairs, Do_intersect_vector, TM, VPM, GT> Tester;
-
-    Do_intersect_vector do_intersect(face_pairs.size(), 0);
-    Tester tester(face_pairs, do_intersect, tmesh, vpmap, gt);
-    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, face_pairs.size()), tester);
-
-    // (C) Sequential: Copy from the concurent container to the output iterator
-    for(std::size_t i=0; i<do_intersect.size(); ++i)
-    {
-      if(do_intersect[i])
-        *out ++= face_pairs[i];
-    }
+    // Sequentially write into the output iterator
+    for(std::size_t i=0; i<face_pairs.size(); ++i)
+      *out ++= face_pairs[i];
 
     return out;
   }
