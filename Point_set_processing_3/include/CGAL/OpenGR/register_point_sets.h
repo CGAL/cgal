@@ -210,8 +210,7 @@ register_point_sets (const PointRange1& point_set_1, PointRange2& point_set_2,
 
   bool overlap_ok = options.configureOverlap (choose_parameter(get_parameter(np1, internal_np::overlap), 0.20));
   CGAL_USE (overlap_ok);
-  // TODO: non-constant condition for static assertion, the value of ‘overlap_ok’ is not usable in a constant expression
-  // CGAL_static_assertion_msg (overlap_ok, "Invalid overlap configuration.");
+  CGAL_assertion_msg (overlap_ok, "Invalid overlap configuration.");
 
   return internal::register_point_sets<Kernel>(point_set_1, point_set_2,
                                                point_map1, point_map2,
