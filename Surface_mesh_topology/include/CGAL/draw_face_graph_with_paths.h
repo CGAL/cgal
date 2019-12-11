@@ -125,9 +125,9 @@ protected:
   {
     clear();
 
-    unsigned int markfaces    = lcc.get_new_mark();
-    unsigned int markedges    = lcc.get_new_mark();
-    unsigned int markvertices = lcc.get_new_mark();
+    typename LCC::size_type markfaces    = lcc.get_new_mark();
+    typename LCC::size_type markedges    = lcc.get_new_mark();
+    typename LCC::size_type markvertices = lcc.get_new_mark();
 
     if (m_current_dart!=lcc.number_of_darts())
     { // We want to draw only one dart
@@ -156,7 +156,7 @@ protected:
     {
       if (m_current_path==m_paths->size())
       {
-        for (unsigned int i=0; i<m_paths->size(); ++i)
+        for (std::size_t i=0; i<m_paths->size(); ++i)
         { compute_path(i, markedges); }
       }
       else if (m_current_path!=m_paths->size()+1)
@@ -308,7 +308,7 @@ protected:
     { Base::keyPressEvent(e); }
   }
 
-  void compute_path(unsigned int i, unsigned int amark)
+  void compute_path(std::size_t i, typename LCC::size_type amark)
   {
     if ((*m_paths)[i].is_empty())
     { return; }
@@ -336,7 +336,7 @@ protected:
   std::size_t m_current_path;
   std::size_t m_current_dart;
   bool m_draw_marked_darts;
-  std::size_t m_amark; // If !=INVALID_MARK, show darts marked with this mark
+  typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
 };
   
 template<class Mesh, class DrawingFunctor>
