@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-#include <CGAL/Delaunay_triangulation_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
 
 #include <CGAL/algorithm.h>
@@ -31,8 +31,8 @@ typedef CGAL::Delaunay_triangulation_3<K>                      Delaunay;
 
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>        Gt;
 typedef CGAL::Projection_sphere_traits_3<K>                    Gt2;
-typedef CGAL::Delaunay_triangulation_sphere_2<Gt>              DTOS;
-typedef CGAL::Delaunay_triangulation_sphere_2<Gt2>             DTOS2;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>              DTOS;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt2>             DTOS2;
 typedef K::Point_3                                             Point;
 
 typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location> Delaunay_fast;

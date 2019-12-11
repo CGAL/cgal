@@ -1,9 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
-#include <CGAL/Delaunay_triangulation_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
-#include <CGAL/Triangulation_sphere_2.h>
+#include <CGAL/Triangulation_on_sphere_2.h>
 
 #include <iostream>
 #include <vector>
@@ -11,8 +11,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 typedef CGAL::Projection_sphere_traits_3<K>                         Pgt;
-typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                   DTOS;
-typedef CGAL::Delaunay_triangulation_sphere_2<Pgt>                  PDTOS;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>                   DTOS;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Pgt>                  PDTOS;
 
 void testProjection()
 {

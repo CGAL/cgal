@@ -142,7 +142,6 @@ public:
   typedef typename K::Construct_circumcenter_3      Construct_circumcenter_3;
   typedef typename K::Construct_point_3             Construct_point_3;
   typedef typename K::Construct_segment_3           Construct_segment_3;
-  typedef typename K::Coplanar_orientation_3        Coplanar_orientation_3;
   typedef typename K::Orientation_3                 Orientation_3;
 
   typedef typename K::Compute_squared_distance_3    Construct_circumcenter_on_sphere_2; // @fixme project on sphere?
@@ -184,10 +183,6 @@ public:
   construct_segment_3_object() const
   { return Base().construct_segment_3_object(); }
 
-  Coplanar_orientation_3
-  coplanar_orientation_3_object() const
-  { return Coplanar_orientation_3(); }
-
   Orientation_3
   orientation_3_object() const
   { return Base().orientation_3_object(); }
@@ -215,7 +210,7 @@ public:
 
 public:
   const Point_3& center() const { return _center; }
-
+  FT radius() const { return _radius; }
   void set_center(const Point_3& center) { _center = center; }
   void set_radius(const FT radius) { _radius = radius; initialize_bounds(); }
 

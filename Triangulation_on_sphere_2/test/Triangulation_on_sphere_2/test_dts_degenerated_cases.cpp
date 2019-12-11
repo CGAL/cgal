@@ -2,8 +2,8 @@
 
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
-#include <CGAL/Triangulation_sphere_2.h>
-#include <CGAL/Delaunay_triangulation_sphere_2.h>
+#include <CGAL/Triangulation_on_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 
 #include <algorithm>
 #include <iostream>
@@ -12,11 +12,11 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Delaunay_triangulation_sphere_traits_2<K>             Gt;
 
-typedef CGAL::Delaunay_triangulation_sphere_2<Gt>                   DTOS;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Gt>                   DTOS;
 typedef DTOS::Point                                                 Point;
 
 typedef CGAL::Projection_sphere_traits_3<K>                         Projection_traits;
-typedef CGAL::Delaunay_triangulation_sphere_2<Projection_traits>    PDTOS;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits>    PDTOS;
 
 template <class Vertex_handle, class Face_handle>
 bool has_face(const Face_handle fh,

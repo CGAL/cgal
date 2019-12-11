@@ -4,7 +4,7 @@
 #include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/Delaunay_triangulation_sphere_traits_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
-#include <CGAL/Delaunay_triangulation_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 #include <CGAL/utility.h>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <QMainWindow>
@@ -21,7 +21,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel         Kernel;
 
 
 typedef CGAL::Projection_sphere_traits_3<Kernel>          Projection_traits;
-typedef CGAL::Delaunay_triangulation_sphere_2<Projection_traits>                 Projected_DToS2;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits>                 Projected_DToS2;
 
 
 struct Cell_info{

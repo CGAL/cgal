@@ -48,7 +48,7 @@ public:
   Triangulation_on_sphere_vertex_base_2(Face_handle f) : Vb(f) { }
 
   void set_point(const Point & p) { _p = p; }
-  const Point&  point() const { return _p; }
+  const Point& point() const { return _p; }
 
   // the non-const version of point() is undocument but needed to make the point iterator works
   // using Lutz projection scheme

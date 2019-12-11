@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/Delaunay_triangulation_sphere_2.h>
+#include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 #include <CGAL/Projection_sphere_traits_3.h>
 
 #include <boost/iterator/transform_iterator.hpp>
@@ -8,7 +8,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Projection_sphere_traits_3<K> Projection_traits;
-typedef CGAL::Delaunay_triangulation_sphere_2<Projection_traits> Projected_DToS2;
+typedef CGAL::Delaunay_triangulation_on_sphere_2<Projection_traits> Projected_DToS2;
 
 int main()
 {
