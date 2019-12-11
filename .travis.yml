@@ -50,8 +50,8 @@ env:
     - PACKAGE='Surface_mesh_skeletonization Surface_mesher Surface_sweep_2 '
     - PACKAGE='TDS_2 TDS_3 Testsuite '
     - PACKAGE='Three Triangulation Triangulation_2 '
-    - PACKAGE='Triangulation_3 Union_find Visibility_2 '
-    - PACKAGE='Voronoi_diagram_2 wininst '
+    - PACKAGE='Triangulation_3 Triangulation_on_sphere_2 Union_find '
+    - PACKAGE='Visibility_2 Voronoi_diagram_2 wininst '
 compiler: clang
 install:
   - echo "$PWD"
