@@ -131,6 +131,7 @@ Three
 Triangulation 
 Triangulation_2 
 Triangulation_3 
+Triangulation_on_sphere_2
 Union_find 
 Visibility_2 
 Voronoi_diagram_2 
