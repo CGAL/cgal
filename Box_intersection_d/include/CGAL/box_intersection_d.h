@@ -29,7 +29,7 @@
 #include <CGAL/tags.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/parallel_invoke.h>
+#include <tbb/task_group.h>
 #endif
 
 #include <iterator>
@@ -68,71 +68,133 @@ void box_intersection_segment_tree_d(
 #else // CGAL_LINKED_WITH_TBB
   if(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
   {
-    // Below takes both box ranges and split each range in 3, and then does cross products
-    // to get all combinations (9 pairs).
+    // Here is an illustration for n=2.
     //
-    // 3 is chosen such that we get 9 tasks in parallel, which is close to the usual number
-    // of threads (8-12) on a (current) "normal" machine. This could potentially be generalized
-    // by grabbing the number of available threads (n = std::thread::hardware_concurrency()) and
-    // splitting in 'i' and 'j' such that i*j=n.
+    // Doing a R1-R2 intersection with a 2-split is doing 4 subpairs in parallel
+    // a-c and b-d
+    // r1[0][0] --a-- r1[0][1] --b-- r1[0][2]
+    // r2[0][0] --c-- r2[0][1] --d-- r2[0][2]
     //
-    // The memory footprint due to having to duplicate box ranges is empirically observed
-    // to be negligible (as long as a range of pointers is passed)
+    // a-d and b-c
+    // r1[1][0] --a-- r1[1][1] --b-- r1[1][2]
+    // r2[1][0] --c-- r2[1][1] --d-- r2[1][2]
     //
-    typedef typename std::iterator_traits<RandomAccessIter1>::value_type   val_t;
-    typedef typename std::vector< val_t>::iterator                         It;
+    // Ranges must be duplicates since sorting is performed
 
-    typename std::iterator_traits<RandomAccessIter1>::difference_type r1_third = std::distance(begin1, end1) / 3;
-    typename std::iterator_traits<RandomAccessIter1>::difference_type r1_two_third = 2 * r1_third;
-    typename std::iterator_traits<RandomAccessIter2>::difference_type r2_third = std::distance(begin2, end2) / 3;
-    typename std::iterator_traits<RandomAccessIter2>::difference_type r2_two_third = 2 * r2_third;
+    typedef typename std::iterator_traits<RandomAccessIter1>::value_type         val_t;
+    typedef typename std::iterator_traits<RandomAccessIter1>::difference_type    diff_size;
 
-    CGAL_assertion(0 <= r1_third && r1_third <= r1_two_third &&
-                   (r1_two_third < std::distance(begin1, end1) || std::distance(begin1, end1) == 0));
-    CGAL_assertion(0 <= r2_third && r2_third <= r2_two_third &&
-                   (r2_two_third < std::distance(begin2, end2) || std::distance(begin2, end2) == 0));
+    typedef std::vector<val_t>                                                   val_container;
+    typedef typename val_container::iterator                                     It;
 
-    std::vector< val_t> r3( begin1, end1);
-    std::vector< val_t> r4( begin2, end2);
-    std::vector< val_t> r5( begin1, end1);
-    std::vector< val_t> r6( begin2, end2);
+    static constexpr int n = 4;
 
-    RandomAccessIter1 r1_left = begin1; std::advance(r1_left, r1_third);
-    RandomAccessIter2 r2_left = begin2; std::advance(r2_left, r2_third);
-    It r3_left = r3.begin(); std::advance(r3_left, r1_third);
-    It r4_left = r4.begin(); std::advance(r4_left, r2_third);
-    It r5_left = r5.begin(); std::advance(r5_left, r1_third);
-    It r6_left = r6.begin(); std::advance(r6_left, r2_third);
+    const diff_size r1s = std::distance(begin1, end1);
+    const diff_size r2s = std::distance(begin2, end2);
 
-    RandomAccessIter1 r1_right = begin1; std::advance(r1_right, r1_two_third);
-    RandomAccessIter2 r2_right = begin2; std::advance(r2_right, r2_two_third);
-    It r3_right = r3.begin(); std::advance(r3_right, r1_two_third);
-    It r4_right = r4.begin(); std::advance(r4_right, r2_two_third);
-    It r5_right = r5.begin(); std::advance(r5_right, r1_two_third);
-    It r6_right = r6.begin(); std::advance(r6_right, r2_two_third);
+    val_container range_1_copies, range_2_copies;
+    range_1_copies.reserve(r1s * n);
+    range_2_copies.reserve(r2s * n);
 
-    tbb::parallel_invoke([&]{ Box_intersection_d::segment_tree( begin1, r1_left, begin2, r2_left, inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
-                         [&]{ Box_intersection_d::segment_tree( r1_left, r1_right, r2_left, r2_right, inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
-                         [&]{ Box_intersection_d::segment_tree( r1_right, end1, r2_right, end2, inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
+    const diff_size r1_step = r1s / n;
+    const diff_size r2_step = r2s / n;
 
-                         // shifted 1
-                         [&]{ Box_intersection_d::segment_tree( r3.begin(), r3_left, r4_left, r4_right, inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
-                         [&]{ Box_intersection_d::segment_tree( r3_left, r3_right, r4_right, r4.end(), inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
-                         [&]{ Box_intersection_d::segment_tree( r3_right, r3.end(), r4.begin(), r4_left, inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
+    for(int i=0; i<n; ++i)
+    {
+      range_1_copies.insert(range_1_copies.end(), begin1, end1);
+      range_2_copies.insert(range_2_copies.end(), begin2, end2);
+    }
 
-                          // shifted 2
-                         [&]{ Box_intersection_d::segment_tree( r5.begin(), r5_left, r6_right, r6.end(), inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
-                         [&]{ Box_intersection_d::segment_tree( r5_left, r5_right, r6.begin(), r6_left, inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); },
-                         [&]{ Box_intersection_d::segment_tree( r5_right, r5.end(), r6_left, r6_right, inf, sup,
-                                                                callback, traits, cutoff, dim, in_order); } );
+    // for example for n=2, there's 'begin', 'mid', and 'end' but we leave out 'end' for convenience
+    std::array<std::array<It, n>, n> range_1_iterators;
+    std::array<std::array<It, n>, n> range_2_iterators;
+
+    for(int i=0; i<n; ++i)
+    {
+      for(int j=0; j<n; ++j)
+      {
+        range_1_iterators[i][j] = range_1_copies.begin() + i * r1s + j * r1_step;
+        range_2_iterators[i][j] = range_2_copies.begin() + i * r2s + j * r2_step;
+      }
+    }
+
+    tbb::task_group g;
+
+    for(int i=0; i<n; ++i)
+    {
+      for(int j=0; j<n; ++j)
+      {
+        // 'j' vs 'j+i', meaning for each value of 'i' we're matching r1[i] with a shifted version of r2[i]
+        int r1_endi, r1_endj;
+        int r2_endi, r2_endj;
+
+        if(i == (n-1))
+        {
+          if(j == (n-1)) // both very last range and very last iterator
+          {
+            r1_endi = -1;
+            r1_endj = -1;
+          }
+          else
+          {
+            r1_endi = i;
+            r1_endj = j+1;
+          }
+        }
+        else // i != (n-1)
+        {
+          if(j == (n-1)) // end of that range, but not of the full container
+          {
+            r1_endi = i+1;
+            r1_endj = 0;
+          }
+          else
+          {
+            r1_endi = i;
+            r1_endj = j+1;
+          }
+        }
+
+        if(i == (n-1))
+        {
+          if(j+i == (n-1)) // both very last range and very last iterator
+          {
+            r2_endi = -1;
+            r2_endj = -1;
+          }
+          else
+          {
+            r2_endi = i;
+            r2_endj = (j+i+1)%n;
+          }
+        }
+        else // i != (n-1)
+        {
+          if(j+i == (n-1)) // end of that range, but not of the full container
+          {
+            r2_endi = i+1;
+            r2_endj = 0;
+          }
+          else
+          {
+            r2_endi = i;
+            r2_endj = (j+i+1)%n;
+          }
+        }
+
+        It r1_start = range_1_iterators[i][j];
+        It r1_end = (r1_endi == -1) ? range_1_copies.end() : range_1_iterators[r1_endi][r1_endj];
+        It r2_start = range_2_iterators[i][(j+i)%n];
+        It r2_end = (r2_endi == -1) ? range_2_copies.end() : range_2_iterators[r2_endi][r2_endj];
+
+        // Specify "copy by value" otherwise the values of iterators for next (i,j) iterations
+        // become shared with different lambdas being run in parallel, and things go wrong
+        g.run([=]{ Box_intersection_d::segment_tree( r1_start, r1_end, r2_start, r2_end,
+                                                     inf, sup, callback, traits, cutoff, dim, in_order); });
+      }
+    }
+
+    g.wait();
   }
   else
 #endif // CGAL_LINKED_WITH_TBB
