@@ -164,6 +164,14 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
 
    \note This function requires the \ref thirdpartyOpenGR library.
 
+   \warning Although this may seem counter-intuitive, if one of the
+   two point set matches only a small section of the other one, it is
+   advised to _use the small point set as reference_ instead of the
+   big one. The reason is that the reference point set is used to
+   construct a base that is sought after in the other point set: if
+   the big point set is used as reference, chances are the constructed
+   base will not be present in the small point set.
+
    \tparam PointRange1 is a model of `Range`. The value type of its iterator is
    the key type of the named parameter `point_map` in `NamedParameters1`.
    \tparam PointRange2 is a model of `Range`. The value type of its iterator is
