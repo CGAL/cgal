@@ -20,6 +20,8 @@
 * Convenience header file including the headers for all the free functions of this package.
 */
 
+#include <CGAL/license/Optimal_bounding_box.h>
+
 #include <CGAL/Optimal_bounding_box/Oriented_bounding_box_traits.h>
 #include <CGAL/Optimal_bounding_box/oriented_bounding_box.h>
 
