@@ -389,6 +389,15 @@ Using too wide values will slow down the algorithm by increasing the size of the
 while using to small values prevents to find a solution. This parameter impacts other steps of
 the algorithm, see the paper \cgalCite{cgal:mam-sffgp-14} for more details. 
 
+\subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_normal Parameter: maximum normal deviation
+
+This parameter sets an angle threshold above which two pairs of points are discarded as candidates
+for matching. It is expressed in degrees.
+
+The default value is 90° (no filtering). Decreasing this value allows to decrease the computation
+time by being more selective on candidates. Using too small values might result in ignoring
+candidates that should indeed have been matched and may thus result in a quality decrease.
+
 \subsubsection Point_set_processing_3Examples_registration_OpenGR_parameter_overlap Parameter: overlap
 
 Ratio of expected overlap between the two point sets: it is ranging between 0 (no overlap) to 1 (100% overlap). 
