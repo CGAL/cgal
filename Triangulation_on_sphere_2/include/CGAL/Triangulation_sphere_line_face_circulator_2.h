@@ -83,7 +83,7 @@ public:
   bool operator==(const Face_handle& fh) const { return fh == pos; }
   bool operator!=(const Face_handle& fh) const { return fh != pos; }
 
-  bool operator==(Nullptr_t  CGAL_triangulation_assertion_code(n)) const;
+  bool operator==(Nullptr_t  CGAL_assertion_code(n)) const;
   bool operator!=(Nullptr_t n) const;
   bool  is_empty() const;
   bool locate(const Point& t, Locate_type &lt,  int &li);
@@ -127,7 +127,7 @@ Triangulation_sphere_line_face_circulator_2(Vertex_handle v,
   // begin at the face incident to v, traversed by the ray from v to  dir
   // or null iterator
 {
-  CGAL_triangulation_precondition((_tr->dimension() == 2) &&
+  CGAL_precondition((_tr->dimension() == 2) &&
                                   (! _tr->xy_equal(v->point(), dir)));
   p = v->point();
   q = dir;
@@ -165,7 +165,7 @@ Triangulation_sphere_line_face_circulator_2(Vertex_handle v,
   //  [pqr] is COLLINEAR or RIGHT_TURN
   ic = fc->index(v);
   vt= fc->vertex(cw(ic));
-  CGAL_triangulation_assertion (_tr->orientation(p, q, vt->point()) == LEFT_TURN);
+  CGAL_assertion (_tr->orientation(p, q, vt->point()) == LEFT_TURN);
 
   if(pqr == COLLINEAR)
   {
@@ -187,7 +187,7 @@ void
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 increment()
 {
-  CGAL_triangulation_precondition(pos != Face_handle());
+  CGAL_precondition(pos != Face_handle());
   if(s == vertex_vertex || s == edge_vertex)
   {
     Orientation o;
@@ -240,7 +240,7 @@ void
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 decrement()
 {
-  CGAL_triangulation_precondition(pos != Face_handle());
+  CGAL_precondition(pos != Face_handle());
   if(s == vertex_vertex || s == vertex_edge)
   {
     if(s == vertex_vertex)
@@ -283,7 +283,7 @@ Triangulation_sphere_line_face_circulator_2<Triangulation>&
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator++()
 {
-  CGAL_triangulation_precondition(pos != Face_handle()) ;
+  CGAL_precondition(pos != Face_handle()) ;
   increment();
   return *this;
 }
@@ -294,7 +294,7 @@ Triangulation_sphere_line_face_circulator_2<Triangulation>&
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator--()
 {
-  CGAL_triangulation_precondition(pos != Face_handle()) ;
+  CGAL_precondition(pos != Face_handle()) ;
   decrement();
   return *this;
 }
@@ -326,7 +326,7 @@ inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator==(const Line_face_circulator& lfc) const
 {
-  CGAL_triangulation_precondition(pos != Face_handle() && lfc.pos != Face_handle());
+  CGAL_precondition(pos != Face_handle() && lfc.pos != Face_handle());
   return (pos == lfc.pos &&  _tr == lfc._tr &&
           s == lfc.s && p==lfc.p && q==lfc.q);
 }
@@ -350,9 +350,9 @@ is_empty() const
 template <typename Triangulation>
 inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
-operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator==(Nullptr_t CGAL_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion(n == NULL);
+  CGAL_assertion(n == NULL);
   return pos == Face_handle();
 }
 
@@ -361,7 +361,7 @@ inline bool
 Triangulation_sphere_line_face_circulator_2<Triangulation>::
 operator!=(Nullptr_t n) const
 {
-  CGAL_triangulation_assertion(n == NULL);
+  CGAL_assertion(n == NULL);
   return !(*this == n);
 }
 
