@@ -42,7 +42,11 @@ using namespace CGAL::Surface_mesh_topology;
 bool unit_test_canonize(Curves_on_surface_topology<LCC_3_cmap>& cst,
                         std::vector<Path_on_surface<LCC_3_cmap> >& paths,
                         const char* msg,
-                        bool draw, int testtorun)
+                        bool
+#ifdef CGAL_USE_BASIC_VIEWER
+                        draw
+#endif
+                        , int testtorun)
 {
   CGAL_USE(msg);
   bool res=true;
