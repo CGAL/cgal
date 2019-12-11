@@ -10,12 +10,11 @@
 //
 // Author(s)     : Mariette Yvinec
 
-#ifndef CGAL_Triangulation_on_sphere_vertex_base_2_H
-#define CGAL_Triangulation_on_sphere_vertex_base_2_H
+#ifndef CGAL_TRIANGULATION_ON_SPHERE_VERTEX_BASE_2_H
+#define CGAL_TRIANGULATION_ON_SPHERE_VERTEX_BASE_2_H
 
-#include <CGAL/license/Triangulation_2.h>
+#include <CGAL/license/Triangulation_on_sphere_2.h>
 
-#include <CGAL/config.h>
 #include <CGAL/Triangulation_ds_vertex_base_2.h>
 
 namespace CGAL {
@@ -79,4 +78,4 @@ operator<<(std::ostream &os, const Triangulation_on_sphere_vertex_base_2<GT, Vb>
 
 } //namespace CGAL
 
-#endif //CGAL_Triangulation_on_sphere_vertex_base_2_H
+#endif //CGAL_TRIANGULATION_ON_SPHERE_VERTEX_BASE_2_H
