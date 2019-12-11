@@ -1,0 +1,18 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_2D_Triangulations_on_sphere
+
+\cgalAutoToc
+\author Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner
+
+This chapter describes the two dimensional triangulations on the sphere of \cgal.
+
+\section Section_2D_ToS_Definitions Definitions
+
+\section Section_2D_ToS_Design Design and Implementation History
+
+*/ 
+} /* namespace CGAL */
+

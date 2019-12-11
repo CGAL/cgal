@@ -1,0 +1,50 @@
+/// \defgroup PkgTriangulationOnSphere2Ref 2D Triangulation Reference
+
+/// \defgroup PkgTriangulationOnSphere2Concepts Concepts
+/// \ingroup PkgTriangulationOnSphere2Ref
+
+/// \defgroup PkgTriangulationOnSphere2TriangulationClasses Triangulation Classes
+/// \ingroup PkgTriangulationOnSphere2Ref
+
+/// \defgroup PkgTriangulationOnSphere2VertexFaceClasses Vertex and Face Classes
+/// \ingroup PkgTriangulationOnSphere2Ref
+
+/// \defgroup PkgTriangulationOnSphere2Miscellaneous Miscellaneous
+/// \ingroup PkgTriangulationOnSphere2Ref
+
+/*!
+\addtogroup PkgTriangulationOnSphere2Ref
+
+\cgalPkgDescriptionBegin{2D Triangulations on sphere,PkgTriangulationOnSphere2}
+\cgalPkgPicture{cdt2d-small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Mael Rouxel-Labbé, Monique Teillaud, and Claudia Werner}
+\cgalPkgDesc{This package allows to build and handle triangulations on the 2-sphere.}
+\cgalPkgManuals{Chapter_2D_Triangulations_on_sphere,PkgTriangulationOnSphere2Ref}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.1}
+\cgalPkgDependsOn{\ref PkgTDS2}
+\cgalPkgBib{cgal:rtw-tos2}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Delaunay Triangulation, delaunay_triangulation_2.zip}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+SOMETHING ABOUT THE SPECIFICITY OF BEING ON THE SPHERE, LACK OF INFINITE FACES
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `DelaunayTriangulationOnSphereTraits_2`
+- `TriangulationOnSphereFaceBase_2`
+- `TriangulationOnSphereVertexBase_2`
+
+\cgalCRPSection{Classes}
+- `CGAL::Triangulation_on_sphere_2<Traits, Tds>`
+- `CGAL::Delaunay_triangulation_on_sphere_2<Traits, Tds>`
+- `CGAL::Delaunay_triangulation_sphere_traits_2<Traits, Tds>`
+- `CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>`
+- `CGAL::Triangulation_on_sphere_vertex_base_2<Traits, Vb>`
+
+*/
