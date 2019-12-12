@@ -1147,7 +1147,7 @@ insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj, bool *coul
   }
 }
 
-template < class Gt, class Tds, class Lds >
+  template < class Gt, class Tds, class Lds >
 template <class OutputItCells>
 typename Delaunay_triangulation_3<Gt,Tds,Default,Lds>::Vertex_handle
 Delaunay_triangulation_3<Gt,Tds,Default,Lds>::

@@ -11,7 +11,10 @@
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
-typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location>  Delaunay;
+typedef CGAL::Triangulation_data_structure_3<
+  CGAL::Conforming_Delaunay_triangulation_vertex_base_3<K>,
+  CGAL::Delaunay_triangulation_cell_base_3<K> >                 Tds;
+typedef CGAL::Delaunay_triangulation_3<K, Tds>                  Delaunay;
 typedef Delaunay::Point                                         Point;
 using Point_3 = K::Point_3;
 
@@ -37,7 +40,8 @@ int main()
     };
     std::vector<Delaunay::Vertex_handle> vertices;
     vertices.reserve(points.size());
-    Delaunay dt;
+    CGAL::Triangulation_conformer_3<Delaunay> conformer;
+    CGAL::Triangulation_conformer_3<Delaunay>& dt = conformer;
     for(auto p: points) vertices.push_back(dt.insert(p));
     Delaunay::Cell_handle c;
     assert( dt.is_valid() );
@@ -46,7 +50,6 @@ int main()
 
     std::cerr << dt.number_of_vertices() << '\n';
     std::cerr << dt.number_of_finite_cells() << '\n';
-    CGAL::Triangulation_conformer_3<Delaunay> conformer(dt);
     Delaunay::Cell_handle ch;
     int li, lj;
     assert(!dt.is_edge(vertices[0], vertices[1], ch, li, lj));
@@ -55,13 +58,13 @@ int main()
     conformer.restore_Delaunay();
     conformer.insert_constrained_edge(vertices[5], vertices[11]);
     conformer.restore_Delaunay();
-    return 0;
+    return conformer.is_conforming() ? 0 : 1;
   };
   CGAL_USE(test1);
 
   auto test2 = []() {
-    Delaunay dt;
-    CGAL::Triangulation_conformer_3<Delaunay> conformer(dt);
+    CGAL::Triangulation_conformer_3<Delaunay> conformer;
+    CGAL::Triangulation_conformer_3<Delaunay>& dt = conformer;
 
     std::ifstream input("clusters2.edg");
     if(!input) return 1;
@@ -78,13 +81,19 @@ int main()
       auto v4 = dt.insert({x, y, 1});
       conformer.insert_constrained_edge(v1, v2);
       conformer.insert_constrained_edge(v3, v4);
+      CGAL_assertion(conformer.is_conforming());
     }
     conformer.restore_Delaunay();
     std::cerr << dt.number_of_vertices() << '\n';
     std::cerr << dt.number_of_finite_cells() << '\n';
     // assert(dt.is_edge(vertices[0], vertices[1], ch, li, lj));
+    for(auto v: dt.finite_vertex_handles()) {
+      std::cout << "Point ( " << v->point() << " )\n";
+      std::cout << "  on " << v->nb_of_incident_constraints << " constraint(s): "
+                << v->c_id << "\n";
+    }
     CGAL::draw(dt, "CDT_3", true);
-    return 0;
+    return conformer.is_conforming() ? 0 : 1;
   };
 
   return test1() + test2();

@@ -229,6 +229,7 @@ public:
   std::size_t number_of_enclosing_constraints(T va, T vb) const;
   Context_iterator contexts_begin(T va, T vb) const;
   Context_iterator contexts_end(T va, T vb) const;
+  Iterator_range<Context_iterator> contexts_range(T va, T vb) const;
   std::size_t number_of_constraints() const  { return constraint_set.size();}
   std::size_t number_of_subconstraints()const {return sc_to_c_map.size();}
   
@@ -495,6 +496,15 @@ contexts_end(T va, T vb) const
    if( !get_contexts(va,vb,first,last))  CGAL_triangulation_assertion(false);
    return last;
 } 
+
+template <class T, class Compare, class Data>
+auto
+Polyline_constraint_hierarchy_2<T,Compare,Data>::
+contexts_range(T va, T vb) const -> Iterator_range<Context_iterator> {
+  Context_iterator first, last;
+  if( !get_contexts(va,vb,first,last)) return { first, first };
+  else return { first, last };
+}
 
 template <class T, class Compare, class Data>
 void
