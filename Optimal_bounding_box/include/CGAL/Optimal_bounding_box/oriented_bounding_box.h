@@ -119,7 +119,7 @@ void compute_best_transformation(typename Traits::Aff_transformation_3& transfor
                                         rot(1, 0), rot(1, 1), rot(1, 2),
                                         rot(2, 0), rot(2, 1), rot(2, 2));
 
-  // inverse transformation is simply the transposed since the matrix is unary
+  // inverse transformation is simply the transposed since the matrix is unitary
   inverse_transformation = Aff_transformation_3(rot(0, 0), rot(1, 0), rot(2, 0),
                                                 rot(0, 1), rot(1, 1), rot(2, 1),
                                                 rot(0, 2), rot(1, 2), rot(2, 2));

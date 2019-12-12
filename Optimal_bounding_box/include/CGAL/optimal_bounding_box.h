@@ -14,13 +14,15 @@
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_OBB_H
 
+#ifndef DOXYGEN_RUNNING
+#include <CGAL/license/Optimal_bounding_box.h>
+#endif
+
 /**
 * \ingroup PkgOptimalBoundingBoxRef
 * \file CGAL/optimal_bounding_box.h
-* Convenience header file including the headers for all the free functions of this package.
+* Convenience header file including the headers for all the classes and functions of this package.
 */
-
-#include <CGAL/license/Optimal_bounding_box.h>
 
 #include <CGAL/Optimal_bounding_box/Oriented_bounding_box_traits.h>
 #include <CGAL/Optimal_bounding_box/oriented_bounding_box.h>

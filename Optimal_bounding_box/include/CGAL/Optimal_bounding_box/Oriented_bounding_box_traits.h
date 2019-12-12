@@ -46,7 +46,7 @@ public:
   typedef typename K::Point_3                          Point_3;
 
   /// The affine transformation type
-  typedef typename K::Aff_transformation_3             Aff_transformation_3;
+  typedef typename CGAL::Aff_transformation_3<K>       Aff_transformation_3;
 
   /// The axis-aligned bounding box construction object
   typedef typename K::Construct_bbox_3                 Construct_bbox_3;
@@ -61,25 +61,11 @@ public:
   /// Offers `construct_bbox_3_object()(const Point_3&)`
   Construct_bbox_3 construct_bbox_3_object() const { return Construct_bbox_3(); }
 
-  /// Returns the transpose of a matrix
-  Matrix transpose(const Matrix& mat) const
-  {
-    return Matrix(mat.eigen_object().transpose());
-  }
-
-  /// Returns the determinant of a matrix
-  FT compute_determinant(const Matrix& matrix) const
-  {
-    return matrix.eigen_object().determinant();
-  }
-
-  /// Performs QR decomposition of matrix A to a unitary matrix and an upper triagonal
+  /// Performs QR-decomposition of matrix `m` to a unitary matrix and an upper triagonal
   /// and returns the unitary matrix.
-  Matrix get_Q(const Matrix& A) const
+  Matrix get_Q(const Matrix& m) const
   {
-    Eigen::HouseholderQR<EigenType> qr(A.eigen_object());
-    CGAL_assertion(CGAL::abs(compute_determinant(Matrix(EigenType(qr.householderQ()))) - 1.) < 0.000001);
-
+    Eigen::HouseholderQR<EigenType> qr(m.eigen_object());
     return Matrix(EigenType(qr.householderQ()));
   }
 };

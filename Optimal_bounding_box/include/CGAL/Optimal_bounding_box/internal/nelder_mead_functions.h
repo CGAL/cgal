@@ -17,6 +17,7 @@
 #include <CGAL/license/Optimal_bounding_box.h>
 
 #include <CGAL/Optimal_bounding_box/internal/fitness_function.h>
+#include <CGAL/Optimal_bounding_box/internal/helper.h>
 
 #include <CGAL/assertions.h>
 
@@ -27,28 +28,19 @@ namespace CGAL {
 namespace Optimal_bounding_box {
 namespace internal {
 
-template <typename Matrix, typename Traits>
+template <typename Matrix>
 Matrix reflection(const Matrix& S_centroid,
-                  const Matrix& S_worst,
-                  const Traits& traits)
+                  const Matrix& S_worst)
 {
-  CGAL_assertion(S_centroid.number_of_rows() == 3 && S_centroid.number_of_columns() == 3);
-  CGAL_assertion(S_worst.number_of_rows() == 3 && S_worst.number_of_columns() == 3);
-
-  return S_centroid * traits.transpose(S_worst) * S_centroid;
+  return S_centroid * transpose(S_worst) * S_centroid;
 }
 
-template <typename Matrix, typename Traits>
+template <typename Matrix>
 Matrix expansion(const Matrix& S_centroid,
                  const Matrix& S_worst,
-                 const Matrix& S_reflection,
-                 const Traits& traits)
+                 const Matrix& S_reflection)
 {
-  CGAL_assertion(S_centroid.number_of_rows() == 3 && S_centroid.number_of_columns() == 3);
-  CGAL_assertion(S_worst.number_of_rows() == 3 && S_worst.number_of_columns() == 3);
-  CGAL_assertion(S_reflection.number_of_rows() == 3 && S_reflection.number_of_columns() == 3);
-
-  return S_centroid * traits.transpose(S_worst) * S_reflection;
+  return S_centroid * transpose(S_worst) * S_reflection;
 }
 
 template <typename Matrix, typename Traits>
@@ -56,15 +48,11 @@ Matrix mean(const Matrix& m1,
             const Matrix& m2,
             const Traits& traits)
 {
-  // same API for reduction
-  CGAL_assertion(m1.number_of_rows() == 3 && m1.number_of_columns() == 3);
-  CGAL_assertion(m2.number_of_rows() == 3 && m2.number_of_columns() == 3);
+  typedef typename Traits::FT                                 FT;
 
-  const Matrix reduction = 0.5 * m1 + 0.5 * m2;
-  const Matrix Q = traits.get_Q(reduction);
-  const typename Traits::FT det = traits.compute_determinant(Q);
+  const Matrix reduction = 0.5 * (m1 + m2);
 
-  return (1. / det) * Q;
+  return traits.get_Q(reduction);
 }
 
 template <typename Matrix, typename Traits>
@@ -73,11 +61,11 @@ const Matrix nm_centroid(const Matrix& S1,
                          const Matrix& S3,
                          const Traits& traits)
 {
-  const Matrix mean = (1./3.) * (S1 + S2 + S3);
-  const Matrix Q = traits.get_Q(mean);
-  const typename Traits::FT det = traits.compute_determinant(Q);
+  typedef typename Traits::FT                                 FT;
 
-  return (1. / det) * Q;
+  const Matrix mean = (1./3.) * (S1 + S2 + S3);
+
+  return traits.get_Q(mean);
 }
 
 // It's a 3D simplex with 4 rotation matrices as vertices
@@ -120,7 +108,7 @@ void nelder_mead(Simplex& simplex,
 
     // find worst's vertex reflection
     const Matrix& v_worst = simplex[3];
-    const Matrix v_refl = reflection(v_centroid, v_worst, traits);
+    const Matrix v_refl = reflection(v_centroid, v_worst);
     const FT f_refl = compute_fitness<Traits>(v_refl, points);
 
     if(f_refl < fitness[2])
@@ -133,7 +121,7 @@ void nelder_mead(Simplex& simplex,
       else
       {
         // expansion
-        const Matrix v_expand = expansion(v_centroid, v_worst, v_refl, traits);
+        const Matrix v_expand = expansion(v_centroid, v_worst, v_refl);
         const FT f_expand = compute_fitness<Traits>(v_expand, points);
         if(f_expand < f_refl)
           simplex[3] = std::move(v_expand);

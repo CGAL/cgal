@@ -17,6 +17,7 @@
 #include <CGAL/license/Optimal_bounding_box.h>
 
 #include <CGAL/Optimal_bounding_box/internal/fitness_function.h>
+#include <CGAL/Optimal_bounding_box/internal/helper.h>
 #include <CGAL/Optimal_bounding_box/internal/nelder_mead_functions.h>
 #include <CGAL/Optimal_bounding_box/internal/population.h>
 
@@ -184,7 +185,6 @@ public:
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       const Matrix& R_now = fitness_map.get_best();
       std::cout << "new best: " << R_now << std::endl;
-      std::cout << "det = " << m_traits.compute_determinant(R_now) << std::endl;
       std::cout << "value difference with previous: " << difference << std::endl;
 #endif
 

@@ -6,8 +6,7 @@ namespace CGAL {
 
 The concept `OrientedBoundingBoxTraits` describes the requirements of the traits class
 used in the function `CGAL::oriented_bounding_box()`, and in particular the need for
-a 3x3 matrix type with a number of supporting functions (determinant and transposed matrix
-computations, etc.).
+a 3x3 matrix type.
 
 \cgalHasModel `CGAL::Oriented_bounding_box_traits`
 
@@ -34,13 +33,7 @@ public:
   /// matrix-matrix and scalar-matrix multiplication, as well as matrix-matrix addition.
   typedef unspecified_type                                Matrix;
 
-  /// Returns the transpose of the matrix `m`.
-  Matrix transpose(const Matrix& m) const;
-
-  /// Returns the determinant of the matrix `m`.
-  FT compute_determinant(const Matrix& m) const;
-
-  /// Returns the unary matrix `Q` obtained in the QR-decomposition of the matrix `m`.
+  /// Returns the unitary matrix `Q` obtained in the QR-decomposition of the matrix `m`.
   Matrix get_Q(const Matrix& m) const;
 };
 
