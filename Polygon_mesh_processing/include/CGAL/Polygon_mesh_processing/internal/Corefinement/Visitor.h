@@ -162,7 +162,7 @@ private:
     typedef typename CDT::Vertex_handle                       CDT_Vertex_handle;
 // data members
 private:
-  // boost::dynamic_bitset<> non_manifold_nodes;
+  boost::dynamic_bitset<> is_node_on_boundary; // indicate if a vertex is a border vertex in tm1 or tm2
   std::vector< std::vector<Node_id> > graph_of_constraints;
   boost::dynamic_bitset<> is_node_of_degree_one;
   //nb of intersection points between coplanar faces, see fixes XSL_TAG_CPL_VERT
@@ -293,14 +293,32 @@ public:
     is_node_of_degree_one.resize(nb_nodes);
     for(std::size_t node_id=0;node_id<nb_nodes;++node_id)
     {
-    //   if (non_manifold_nodes.test(node_id))
-    //     graph[node_id].make_terminal();
       graph_of_constraints[node_id].assign(
         graph[node_id].neighbors.begin(),
         graph[node_id].neighbors.end());
 
       if (graph_of_constraints[node_id].size()==1)
         is_node_of_degree_one.set(node_id);
+
+      // mark every vertex on the boundary connected to another vertex by a non-boundary edge
+      // The logic is somehow equivalent to what was done with the container `non_manifold_nodes`
+      // that was used to split polylines at certains points. Non-manifold was used in the context
+      // of the combinatorial map where the import inside the combinatorial map was possible (see broken_bound-[12].off)
+      if (is_node_on_boundary.test(node_id))
+      {
+        // TODO: the commented condition is not restrictive enough. It only tests the vertices, not the edge used
+        //       to go from one vertex to the other. Right now we are marking too many norder vertices as
+        //       terminal than necessary. We cannot use mesh_to_node_id_to_vertex since it will be filled only
+        //       after the call to visitor.finalize() in the main algorithm
+        //       The current version of the code is correct but too many nodes are potentially
+        //       marked as terminal
+        if (graph_of_constraints[node_id].size()==2 /* && (
+            !is_node_on_boundary.test(graph_of_constraints[node_id][0]) ||
+            !is_node_on_boundary.test(graph_of_constraints[node_id][1]) ) */ )
+        {
+          graph[node_id].make_terminal();
+        }
+      }
     }
   }
 
@@ -336,33 +354,26 @@ public:
     CGAL_assertion(!"This function should not be called");
   }
 
-// The following code was used to split polylines at certains points.
-// Here manifold was used in the context of the combinatorial map where
-// the import inside the combinatorial map was possible (see broken_bound-[12].off)
-// I keep the code here for now as it could be use to detect non-manifold
-// situation of surfaces
-// void check_node_on_non_manifold_edge(
-//     std::size_t node_id,
-//     halfedge_descriptor h,
-//     const TriangleMesh& tm)
-// {
-//   if ( is_border_edge(h,tm) )
-//    non_manifold_nodes.set(node_id);
-// }
-//
-// void check_node_on_non_manifold_vertex(
-//   std::size_t node_id,
-//   halfedge_descriptor h,
-//   const TriangleMesh& tm)
-// {
-//   //we turn around the hedge and check no halfedge is a border halfedge
-//   for(halfedge_descriptor hc :halfedges_around_target(h,tm))
-//     if ( is_border_edge(hc,tm) )
-//     {
-//       non_manifold_nodes.set(node_id);
-//       return;
-//     }
-// }
+void check_node_on_boundary_edge_case(std::size_t node_id,
+                                     halfedge_descriptor h,
+                                     const TriangleMesh& tm)
+{
+  if ( is_border_edge(h,tm) )
+    is_node_on_boundary.set(node_id);
+}
+
+void check_node_on_boundary_vertex_case(std::size_t node_id,
+                                       halfedge_descriptor h,
+                                       const TriangleMesh& tm)
+{
+  //we turn around the hedge and check no halfedge is a border halfedge
+   for(halfedge_descriptor hc :halfedges_around_target(h,tm))
+    if ( is_border_edge(hc,tm) )
+    {
+      is_node_on_boundary.set(node_id);
+      return;
+    }
+}
 
   //keep track of the fact that a polyhedron original vertex is a node
   void all_incident_faces_got_a_node_as_vertex(
@@ -402,7 +413,7 @@ public:
                       bool is_target_coplanar,
                       bool is_source_coplanar)
   {
-    // non_manifold_nodes.resize(node_id+1);
+    is_node_on_boundary.resize(node_id+1, false);
 
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
@@ -417,7 +428,7 @@ public:
       case ON_EDGE: //Edge intersected by an edge
       {
         on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
-      //   check_node_on_non_manifold_edge(node_id,h_2,tm2);
+        check_node_on_boundary_edge_case(node_id,h_2,tm2);
       }
       break;
       case ON_VERTEX:
@@ -429,7 +440,7 @@ public:
           node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
         node_id_to_vertex[node_id]=target(h_2,tm2);
         all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
-      //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
+        check_node_on_boundary_vertex_case(node_id,h_2,tm2);
         output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
       }
       break;
@@ -450,7 +461,7 @@ public:
       all_incident_faces_got_a_node_as_vertex(h_1,node_id, *tm1_ptr);
       // register the vertex in the output builder
       output_builder.set_vertex_id(target(h_1, tm1), node_id, tm1);
-      // check_node_on_non_manifold_vertex(node_id,h_1,tm1);
+      check_node_on_boundary_vertex_case(node_id,h_1,tm1);
     }
     else{
       if ( is_source_coplanar ){
@@ -464,7 +475,7 @@ public:
         all_incident_faces_got_a_node_as_vertex(h_1_opp,node_id, *tm1_ptr);
         // register the vertex in the output builder
         output_builder.set_vertex_id(source(h_1, tm1), node_id, tm1);
-      //   check_node_on_non_manifold_vertex(node_id,h_1_opp,tm1);
+        check_node_on_boundary_vertex_case(node_id,h_1_opp,tm1);
       }
       else{
         //handle intersection on principal edge
@@ -491,7 +502,7 @@ public:
         }
 
         on_edge[tm1_ptr][edge(h_1,tm1)].push_back(node_id);
-      //   check_node_on_non_manifold_edge(node_id,h_1,tm1);
+        check_node_on_boundary_edge_case(node_id,h_1,tm1);
       }
     }
   }
