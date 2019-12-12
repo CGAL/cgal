@@ -34,14 +34,14 @@ public:
   /// matrix-matrix and scalar-matrix multiplication, as well as matrix-matrix addition.
   typedef unspecified_type                                Matrix;
 
-  /// Returns the transpose of a matrix.
-  Matrix transpose(const Matrix& mat) const;
+  /// Returns the transpose of the matrix `m`.
+  Matrix transpose(const Matrix& m) const;
 
-  /// Returns the determinant of a matrix.
-  FT compute_determinant(const Matrix& matrix) const;
+  /// Returns the determinant of the matrix `m`.
+  FT compute_determinant(const Matrix& m) const;
 
-  /// Returns the unary matrix Q obtained in the QR decomposition of the matrix `A`.
-  Matrix get_Q(const Matrix& A) const;
+  /// Returns the unary matrix `Q` obtained in the QR-decomposition of the matrix `m`.
+  Matrix get_Q(const Matrix& m) const;
 };
 
 } // namespace CGAL
