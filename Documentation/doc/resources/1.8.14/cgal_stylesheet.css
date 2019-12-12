@@ -343,5 +343,5 @@ div.fragment {
 /* Make summary smaller to avoid wrapping of classes and concepts */
 div.summary
 {
-  width: 20%;
+  width: auto;
 }
