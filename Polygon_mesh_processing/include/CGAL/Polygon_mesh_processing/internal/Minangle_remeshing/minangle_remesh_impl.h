@@ -41,73 +41,73 @@ class Minangle_remesher {
  public:
   // type definitions
   // types
-  typedef typename Mesh_properties<Kernel> Mesh_properties;
-  typedef typename Mesh_properties::FT FT;
-  typedef typename Mesh_properties::Vector Vector;
-  typedef typename Mesh_properties::Normal Normal;
-  typedef typename Mesh_properties::Point Point;
-  typedef typename Mesh_properties::Point_Comp Point_Comp;
-  typedef typename Mesh_properties::Point_pair Point_pair;
-  typedef typename Mesh_properties::Bbox Bbox;
-  typedef typename Mesh_properties::Mesh Mesh;
+  typedef Mesh_properties<Kernel> Mesh_properties_;
+  typedef typename Mesh_properties_::FT FT;
+  typedef typename Mesh_properties_::Vector Vector;
+  typedef typename Mesh_properties_::Normal Normal;
+  typedef typename Mesh_properties_::Point Point;
+  typedef typename Mesh_properties_::Point_Comp Point_Comp;
+  typedef typename Mesh_properties_::Point_pair Point_pair;
+  typedef typename Mesh_properties_::Bbox Bbox;
+  typedef typename Mesh_properties_::Mesh Mesh;
   // descriptors
-  typedef typename Mesh_properties::halfedge_descriptor halfedge_descriptor;
-  typedef typename Mesh_properties::edge_descriptor edge_descriptor;
-  typedef typename Mesh_properties::vertex_descriptor vertex_descriptor;
-  typedef typename Mesh_properties::face_descriptor face_descriptor;
+  typedef typename Mesh_properties_::halfedge_descriptor halfedge_descriptor;
+  typedef typename Mesh_properties_::edge_descriptor edge_descriptor;
+  typedef typename Mesh_properties_::vertex_descriptor vertex_descriptor;
+  typedef typename Mesh_properties_::face_descriptor face_descriptor;
   // element list
-  typedef typename Mesh_properties::Halfedge_list Halfedge_list;
-  typedef typename Mesh_properties::Halfedge_iter Halfedge_iter;
-  typedef typename Mesh_properties::Halfedge_const_iter Halfedge_const_iter;
-  typedef typename Mesh_properties::Edge_list Edge_list;
-  typedef typename Mesh_properties::Edge_iter Edge_iter;
-  typedef typename Mesh_properties::Edge_const_iter Edge_const_iter;
-  typedef typename Mesh_properties::Vertex_list Vertex_list;
-  typedef typename Mesh_properties::Vertex_iter Vertex_iter;
-  typedef typename Mesh_properties::Vertex_const_iter Vertex_const_iter;
-  typedef typename Mesh_properties::Face_list Face_list;
-  typedef typename Mesh_properties::Face_iter Face_iter;
-  typedef typename Mesh_properties::Face_const_iter Face_const_iter;
+  typedef typename Mesh_properties_::Halfedge_list Halfedge_list;
+  typedef typename Mesh_properties_::Halfedge_iter Halfedge_iter;
+  typedef typename Mesh_properties_::Halfedge_const_iter Halfedge_const_iter;
+  typedef typename Mesh_properties_::Edge_list Edge_list;
+  typedef typename Mesh_properties_::Edge_iter Edge_iter;
+  typedef typename Mesh_properties_::Edge_const_iter Edge_const_iter;
+  typedef typename Mesh_properties_::Vertex_list Vertex_list;
+  typedef typename Mesh_properties_::Vertex_iter Vertex_iter;
+  typedef typename Mesh_properties_::Vertex_const_iter Vertex_const_iter;
+  typedef typename Mesh_properties_::Face_list Face_list;
+  typedef typename Mesh_properties_::Face_iter Face_iter;
+  typedef typename Mesh_properties_::Face_const_iter Face_const_iter;
   // sample links
-  typedef typename Mesh_properties::Link Link;
-  typedef typename Mesh_properties::Link_list Link_list;
-  typedef typename Mesh_properties::Link_list_iter Link_list_iter;
-  typedef typename Mesh_properties::Link_list_const_iter Link_list_const_iter;
-  typedef typename Mesh_properties::Link_iter_list Link_iter_list;
-  typedef typename Mesh_properties::Link_iter_list_iter Link_iter_list_iter;
-  typedef typename Mesh_properties::Link_iter_list_const_iter
-                                    Link_iter_list_const_iter;
-  typedef typename Mesh_properties::Link_pointer_list Link_pointer_list;
-  typedef typename Mesh_properties::Link_pointer_iter Link_pointer_iter;
-  typedef typename Mesh_properties::Link_pointer_const_iter
-                                    Link_pointer_const_iter;
+  typedef typename Mesh_properties_::Link Link;
+  typedef typename Mesh_properties_::Link_list Link_list;
+  typedef typename Mesh_properties_::Link_list_iter Link_list_iter;
+  typedef typename Mesh_properties_::Link_list_const_iter Link_list_const_iter;
+  typedef typename Mesh_properties_::Link_iter_list Link_iter_list;
+  typedef typename Mesh_properties_::Link_iter_list_iter Link_iter_list_iter;
+  typedef typename Mesh_properties_::Link_iter_list_const_iter
+                                     Link_iter_list_const_iter;
+  typedef typename Mesh_properties_::Link_pointer_list Link_pointer_list;
+  typedef typename Mesh_properties_::Link_pointer_iter Link_pointer_iter;
+  typedef typename Mesh_properties_::Link_pointer_const_iter
+                                     Link_pointer_const_iter;
   // Point list
-  typedef typename Mesh_properties::Point_list Point_list;
-  typedef typename Mesh_properties::Point_iter Point_iter;
-  typedef typename Mesh_properties::Point_const_iter Point_const_iter;
+  typedef typename Mesh_properties_::Point_list Point_list;
+  typedef typename Mesh_properties_::Point_iter Point_iter;
+  typedef typename Mesh_properties_::Point_const_iter Point_const_iter;
   // Color list
-  typedef typename Mesh_properties::Color_list Color_list;
-  typedef typename Mesh_properties::Color_iter Color_iter;
-  typedef typename Mesh_properties::Color_const_iter Color_const_iter;
+  typedef typename Mesh_properties_::Color_list Color_list;
+  typedef typename Mesh_properties_::Color_iter Color_iter;
+  typedef typename Mesh_properties_::Color_const_iter Color_const_iter;
   // AABB tree
-  typedef typename Mesh_properties::Face_tree Face_tree;
+  typedef typename Mesh_properties_::Face_tree Face_tree;
   // Dynamic priority queues
-  typedef typename Mesh_properties::DPQueue_halfedge_long
-                                    DPQueue_halfedge_long;
-  typedef typename Mesh_properties::Halfedge_long Halfedge_long;
-  typedef typename Mesh_properties::DPQueue_halfedge_short
-                                    DPQueue_halfedge_short;
-  typedef typename Mesh_properties::Halfedge_short Halfedge_short;
-  typedef typename Mesh_properties::DPQueue_vertex_long DPQueue_vertex_long;
-  typedef typename Mesh_properties::Vertex_long Vertex_long;
-  typedef typename Mesh_properties::DPQueue_vertex_short DPQueue_vertex_short;
-  typedef typename Mesh_properties::Vertex_short Vertex_short;
-  typedef typename Mesh_properties::DPQueue_face_long DPQueue_face_long;
-  typedef typename Mesh_properties::Face_long Face_long;
-  typedef typename Mesh_properties::DPQueue_face_short DPQueue_face_short;
-  typedef typename Mesh_properties::Face_short Face_short;
+  typedef typename Mesh_properties_::DPQueue_halfedge_long
+                                     DPQueue_halfedge_long;
+  typedef typename Mesh_properties_::Halfedge_long Halfedge_long;
+  typedef typename Mesh_properties_::DPQueue_halfedge_short
+                                     DPQueue_halfedge_short;
+  typedef typename Mesh_properties_::Halfedge_short Halfedge_short;
+  typedef typename Mesh_properties_::DPQueue_vertex_long DPQueue_vertex_long;
+  typedef typename Mesh_properties_::Vertex_long Vertex_long;
+  typedef typename Mesh_properties_::DPQueue_vertex_short DPQueue_vertex_short;
+  typedef typename Mesh_properties_::Vertex_short Vertex_short;
+  typedef typename Mesh_properties_::DPQueue_face_long DPQueue_face_long;
+  typedef typename Mesh_properties_::Face_long Face_long;
+  typedef typename Mesh_properties_::DPQueue_face_short DPQueue_face_short;
+  typedef typename Mesh_properties_::Face_short Face_short;
   // Visit list and iterator
-  typedef typename std::list<std::pair<Point, FT>> Visit_list;
+  typedef std::list<std::pair<Point, FT>> Visit_list;
   typedef typename std::list<std::pair<Point, FT>>::iterator Visit_iter;
 
  public:
@@ -321,7 +321,7 @@ class Minangle_remesher {
   void set_input(Mesh *input, bool verbose_progress) {
     // step 1: set the input
     delete_input();
-    input_ = new Mesh_properties(input);
+    input_ = new Mesh_properties_(input);
     input_bbox = input_->calculate_bounding_box();
     // step 2: calculate the properties
     calculate_normals(true, verbose_progress);
@@ -330,19 +330,19 @@ class Minangle_remesher {
     // step 4: update status
     input_aabb_tree_constructed_ = false;
   }
-  Mesh_properties* get_input() { return input_; }
-  const Mesh_properties* get_input() const { return input_; }
+  Mesh_properties_* get_input() { return input_; }
+  const Mesh_properties_* get_input() const { return input_; }
   void set_remesh(Mesh *remesh, bool verbose_progress) {
     // step 1: set the remesh
     delete_remesh();
-    remesh_ = new Mesh_properties(remesh);
+    remesh_ = new Mesh_properties_(remesh);
     // step 2: calculate the properties
     calculate_normals(false, verbose_progress);
     // step 3: update feature intensities and clear links
     calculate_feature_intensities(false, true, verbose_progress);
   }
-  Mesh_properties* get_remesh() { return remesh_; }
-  const Mesh_properties* get_remesh() const { return remesh_; }
+  Mesh_properties_* get_remesh() { return remesh_; }
+  const Mesh_properties_* get_remesh() const { return remesh_; }
   void delete_input() {
     if (input_ != NULL) {
       delete input_;
@@ -363,7 +363,7 @@ class Minangle_remesher {
     }
     std::string extension = file_name.substr(pos);
     std::transform(extension.begin(), extension.end(),
-      extension.begin(), std::tolower);
+      extension.begin(), [](unsigned char c){ return std::tolower(c); });
     if (extension == ".off") {
       save_as_off(file_name);
     } else {
@@ -513,7 +513,7 @@ class Minangle_remesher {
       (!large_error_queue.empty() || !collapse_candidate_queue.empty())) {
       while (remesh_->size_of_vertices() < np_.max_mesh_complexity &&
         !large_error_queue.empty()) {
-        DPQueue_halfedge_long::right_map::iterator eit =
+        typename DPQueue_halfedge_long::right_map::iterator eit =
           large_error_queue.right.begin();
         max_error = CGAL::sqrt(eit->first);
         max_error_halfedge = eit->second;
@@ -532,7 +532,7 @@ class Minangle_remesher {
             << collapse_candidate_queue.size() << " ";
         }
         // step 1: get the top halfedge that might be collapsed
-        DPQueue_halfedge_short::right_map::iterator eit =
+        typename DPQueue_halfedge_short::right_map::iterator eit =
           collapse_candidate_queue.right.begin();
         halfedge_descriptor hd = eit->second;
         collapse_candidate_queue.right.erase(eit);
@@ -638,7 +638,7 @@ class Minangle_remesher {
       (!large_error_queue.empty() || !small_radian_queue.empty())) {
       while (remesh_->size_of_vertices() < np_.max_mesh_complexity &&
         !large_error_queue.empty()) {
-        DPQueue_halfedge_long::right_map::iterator eit =
+        typename DPQueue_halfedge_long::right_map::iterator eit =
           large_error_queue.right.begin();
         max_error = CGAL::sqrt(eit->first);
         max_error_halfedge = eit->second;
@@ -653,7 +653,7 @@ class Minangle_remesher {
       }
       if (remesh_->size_of_vertices() < np_.max_mesh_complexity &&
         !small_radian_queue.empty()) {
-        DPQueue_halfedge_short::right_map::iterator eit =
+        typename DPQueue_halfedge_short::right_map::iterator eit =
           small_radian_queue.right.begin();
         min_radian = eit->first;
         min_radian_halfedge = eit->second;
@@ -737,7 +737,7 @@ class Minangle_remesher {
           << relocate_candidate_queue.size() << " ";
       }
       // step 1: get the top vertex that might be relocated
-      DPQueue_vertex_short::right_map::iterator eit =
+      typename DPQueue_vertex_short::right_map::iterator eit =
         relocate_candidate_queue.right.begin();
       FT min_radian = eit->first;
       vertex_descriptor vd = eit->second;
@@ -937,7 +937,7 @@ class Minangle_remesher {
   }
 
   bool caused_infinite_loop(halfedge_descriptor hd) {
-    std::map<Point, std::map<FT, Visit_iter>, Point_Comp>::iterator it1;
+    typename std::map<Point, std::map<FT, Visit_iter>, Point_Comp>::iterator it1;
     Visit_iter it2;
     Point point = remesh_->get_point(remesh_->get_opposite_vertex(hd));
     FT sl = remesh_->squared_length(hd);
@@ -945,7 +945,7 @@ class Minangle_remesher {
     bool found = false;
     it1 = collapsed_map_.find(point);
     if (it1 != collapsed_map_.end()) {
-      std::map<FT, Visit_iter>::iterator it = it1->second.find(sl);
+      typename std::map<FT, Visit_iter>::iterator it = it1->second.find(sl);
       if (it != it1->second.end()) {
         found = true;
         it2 = it->second;
@@ -1052,7 +1052,7 @@ class Minangle_remesher {
     Mesh local_mesh;
     vertex_descriptor local_vd = remesh_->construct_local_mesh(one_ring_faces,
         extended_faces, halfedges, *new_point, is_ring, &local_mesh);
-    Mesh_properties local_mp(&local_mesh);
+    Mesh_properties_ local_mp(&local_mesh);
     local_mp.calculate_feature_intensities(np_);
     // step 2: get the in_link_faces (for function compatability)
     std::set<face_descriptor> in_link_faces;
@@ -1088,7 +1088,7 @@ class Minangle_remesher {
   std::map<Point, std::map<FT, Visit_iter>, Point_Comp> collapsed_map_;
 
   // 3) member data and properties
-  Mesh_properties *input_, *remesh_;
+  Mesh_properties_ *input_, *remesh_;
   Face_tree input_face_tree_, remesh_face_tree_;
   Bbox input_bbox;
 

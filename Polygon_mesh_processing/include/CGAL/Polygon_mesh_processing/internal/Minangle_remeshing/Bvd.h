@@ -50,6 +50,11 @@ public:
   typedef typename Color_list::iterator Color_iter;
   typedef typename Color_list::const_iterator Color_const_iter;
 
+  using Dt::incident_edges;
+  using Dt::is_infinite;
+  using Dt::dual;
+  using Dt::incident_faces;
+  using Dt::circumcenter;
 public:
   //
   // life cyle

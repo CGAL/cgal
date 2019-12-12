@@ -17,11 +17,11 @@ static double random_sign() {
   return r >= 0.5 ? 1.0 : -1.0;
 }
 
-template<class Vector, class Point, class Ray>
-static Ray random_ray_from(const Point& p) {
-  Vector vec = random_vec<Vector>(1.0);
-  return Ray(source,vec);
-}
+// template<class Vector, class Point, class Ray>
+// static Ray random_ray_from(const Point& p) {
+//  Vector vec = random_vec<Vector>(1.0);
+//  return Ray(source,vec);
+// }
 
 template<class Vector>
 static Vector random_vec(const double mag = 1.0) {
