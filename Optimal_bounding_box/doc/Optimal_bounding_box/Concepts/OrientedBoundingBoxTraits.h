@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgOrientedBoundingBoxConcepts
+\ingroup PkgOptimalBoundingBoxConcepts
 \cgalConcept
 
 The concept `OrientedBoundingBoxTraits` describes the requirements of the traits class
