@@ -39,6 +39,7 @@ int main()
   CGAL::read_ply (in2, mesh);
 
   std::ofstream out ("out.ply");
+  out.precision(17);
 //  CGAL::set_binary_mode(out);
   CGAL::write_ply (out, mesh);
 
