@@ -15,8 +15,8 @@
 
 #include <CGAL/license/Optimal_bounding_box.h>
 
-#include <CGAL/Optimal_bounding_box/internal/population.h>
 #include <CGAL/Optimal_bounding_box/internal/evolution.h>
+#include <CGAL/Optimal_bounding_box/internal/population.h>
 #include <CGAL/Optimal_bounding_box/Oriented_bounding_box_traits.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -165,7 +165,6 @@ void construct_oriented_bounding_box(Output& output,
   {
     std::vector<Point> ch_points;
     extreme_points_3(points, std::back_inserter(ch_points));
-    std::cout << "points on CH: " << ch_points.size() << std::endl;
     return construct_oriented_bounding_box(output, ch_points, rng, traits);
   }
   else
