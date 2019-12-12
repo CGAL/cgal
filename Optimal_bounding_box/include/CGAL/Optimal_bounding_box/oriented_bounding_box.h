@@ -211,20 +211,20 @@ void construct_oriented_bounding_box(Output& output,
 ///
 /// See above.
 ///
-/// \tparam PointRange a model of `Range`
+/// \tparam PointRange a model of `Range`. The value type may not be equal to the traits' `Point_3` type
+///                    if a point map is provided via named parameters (see below) to access points.
 /// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
 ///                or the traits' `Aff_transformation_3` type
 /// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
-/// \param points the input points
+/// \param points the input range
 /// \param out the resulting array of points or affine transformation
 /// \param np an optional sequence of \ref obb_namedparameters "Named Parameters" among the ones listed below:
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     the property map with the points associated to the vertices of `pmesh`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` must be available in `PolygonMesh`
+///   \cgalParamBegin{point_map}
+///     a model of `ReadPropertyMap` with value type `geom_traits::Point_3`. If this parameter is omitted,
+///     `CGAL::Identity_property_map<geom_traits::Point_3>` is used.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits`.
@@ -288,7 +288,7 @@ void oriented_bounding_box(const PointRange& points,
 
 /// \ingroup PkgOptimalBoundingBox_Oriented_bounding_box
 ///
-/// Extracts the vertices of the mesh as a point range and calls the other overload.
+/// Extracts the vertices of the mesh as a point range and calls the overload above.
 ///
 /// \tparam PolygonMesh a model of `VertexListGraph`
 /// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
