@@ -1333,7 +1333,6 @@ protected:
     CGAL_triangulation_precondition(tester(d));
 
     // To store the boundary cells, in case we need to rollback
-
     typedef boost::container::small_vector<Cell_handle,64> SV;
     SV sv;
     std::stack<Cell_handle, SV > cell_stack(sv);
@@ -3728,9 +3727,6 @@ insert(const Point& p, Locate_type lt, Cell_handle c, int li, int lj)
   }
 }
 
-#define AF_NEW  
-
-  
 template < class GT, class Tds, class Lds >
 template < class Conflict_tester, class Hidden_points_visitor >
 typename Triangulation_3<GT,Tds,Lds>::Vertex_handle
