@@ -711,8 +711,8 @@ void check_node_on_boundary_vertex_case(std::size_t node_id,
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
 
     std::map<TriangleMesh*, VertexPointMap> vpms;
-    vpms[tm1_ptr] = vpm1;
-    vpms[tm2_ptr] = vpm2;
+    vpms.insert( std::make_pair(tm1_ptr, vpm1) );
+    vpms.insert( std::make_pair(tm2_ptr, vpm2) );
 
     vertex_descriptor null_vertex = Graph_traits::null_vertex();
     const Node_id nb_nodes = nodes.size();
