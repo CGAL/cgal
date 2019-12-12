@@ -143,7 +143,7 @@ private:
    typedef boost::unordered_map<edge_descriptor,Node_ids>           On_edge_map;
    //to keep the correspondance between node_id and vertex_handle in each mesh
    typedef std::vector<vertex_descriptor>                     Node_id_to_vertex;
-   typedef std::map<TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
+   typedef std::map<const TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
    //to handle coplanar halfedge of polyhedra that are full in the intersection
    typedef std::multimap<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
    typedef std::map<TriangleMesh*,Node_to_target_of_hedge_map>
@@ -1132,7 +1132,7 @@ public:
       }
     }
 
-    nodes.finalize();
+    nodes.finalize(mesh_to_node_id_to_vertex);
 
     // additional operations
     output_builder(nodes,
