@@ -45,6 +45,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>
+#include <boost/utility/result_of.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/info_check.h>
@@ -295,9 +296,13 @@ public:
                Face_handle &fr) const;
 
   // GEOMETRIC FEATURES AND CONSTRUCTION
-  Point_2 construct_point(const Point& p) const;
+  template <typename P> // Point or Point_2
+  typename boost::result_of<const typename Geom_traits::Construct_point_2(const P&)>::type
+  construct_point(const P& p) const { return geom_traits().construct_point_2_object()(p); }
+
   const Point& point(Face_handle c, int i) const;
   const Point& point(Vertex_handle v) const;
+
   Segment segment(Face_handle f, int i) const;
   Segment segment(const Edge& e) const;
   Segment segment(const Edge_circulator& ec) const;
@@ -1062,14 +1067,6 @@ is_face(Vertex_handle v1,
         Face_handle &fr) const
 {
   return _tds.is_face(v1, v2, v3, fr);
-}
-
-template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::Point_2
-Triangulation_2<Gt, Tds>::
-construct_point(const Point& p) const
-{
-  return geom_traits().construct_point_2_object()(p);
 }
 
 template <class Gt, class Tds >

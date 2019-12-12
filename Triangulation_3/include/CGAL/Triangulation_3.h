@@ -563,7 +563,8 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  Point_3 construct_point(const P& p) const
+  typename boost::result_of<const typename Geom_traits::Construct_point_3(const P&)>::type
+  construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
   }
