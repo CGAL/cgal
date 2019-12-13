@@ -266,7 +266,7 @@ clip_to_bbox(const Plane_3& plane,
   * clips `tm` by keeping the part that is inside the volume \link coref_def_subsec bounded \endlink
   * by `clipper`.
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
-  * See subsection \ref coref_clip for more details.
+  * See Subsection \ref coref_clip for more details.
   * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
   *
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
@@ -305,7 +305,7 @@ clip_to_bbox(const Plane_3& plane,
   *   \cgalParamEnd
   *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e. `tm` will be kept closed).
+  *      (i.e., `tm` will be kept closed).
   *   \cgalParamEnd
   *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `clipper`
   *                                        will not be part of the output.
@@ -358,10 +358,10 @@ bool dispatch_clip_call(TriangleMesh& tm, TriangleMesh& clipper,
   * \ingroup PMP_corefinement_grp
   * clips `tm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
-  * See subsection \ref coref_clip for more details.
+  * See Subsection \ref coref_clip for more details.
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used. `Plane_3` must be
-  * from the same Kernel as the point of the vertex point map.
+  * from the same %Kernel as the point of the vertex point map.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
@@ -387,7 +387,7 @@ bool dispatch_clip_call(TriangleMesh& tm, TriangleMesh& clipper,
   *   \cgalParamEnd
   *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e. `tm` will be kept closed).
+  *      (i.e., `tm` will be kept closed).
   *   \cgalParamEnd
   *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
   *                                        will not be part of the output.
@@ -437,10 +437,10 @@ bool clip(      TriangleMesh& tm,
   * \ingroup PMP_corefinement_grp
   * clips `tm` by keeping the part that is inside `iso_cuboid`.
   * If `tm` is closed, the clipped part can be closed too if the named parameter `clip_volume` is set to `true`.
-  * See subsection \ref coref_clip for more details.
+  * See Subsection \ref coref_clip for more details.
   *
   * \note In the current implementation it is not possible to set the vertex point map and the default will be used. `Iso_cuboid_3` must be
-  * from the same Kernel as the point of the vertex point map.
+  * from the same %Kernel as the point of the vertex point map.
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
@@ -465,7 +465,7 @@ bool clip(      TriangleMesh& tm,
   *   \cgalParamEnd
   *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e. `tm` will be kept closed).
+  *      (i.e., `tm` will be kept closed).
   *   \cgalParamEnd
   *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
   *                                        will not be part of the output.
