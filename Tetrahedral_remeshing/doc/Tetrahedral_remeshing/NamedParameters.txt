@@ -40,22 +40,26 @@ in the mesh.\n
 
 \cgalNPBegin{protect_boundaries}
 \anchor Remeshing_protect_boundaries
-a boolean that states whether the boudaries should be modified by the remeshing
+a Boolean that states whether the boundaries should be preserved by the remeshing
 process. Boundaries are between the exterior and the interior,
 between two subdomains, and between the areas selected or not for remeshing
-(cf \ref Remeshing_cell_selector). If `true` they cannot.\n
+(cf \ref Remeshing_cell_is_selected_map).
+If `true`, they are preserved. Otherwise, they can be modified.\n
 \b Type : `bool` \n
-\b Default value is `true`
+\b Default value is `false`
 \cgalNPEnd
 
 \cgalNPBegin{edge_is_constrained_map}
 \anchor Remeshing_edge_is_constrained_map
 is a property map containing information about edges of the input triangulation
-being marked as constrained or not. In `tetrahedral_adaptive_remeshing()`,
-the marked edges are constrained.\n
+being marked as constrained or not.\n
 <b>Type:</b> a class model of `ReadWritePropertyMap` with
-`Triangulation::%Edge` as key type and
-`bool` as value type. It must be default constructible.\n
+`std::pair<Triangulation::%Vertex_handle, Triangulation::%Vertex_handle>` as key type and
+`bool` as value type.
+During the meshing process, the set of constrained edges evolves consistently with
+edge splits and collapses, so the property map must be writable.
+It must be default constructible.
+\n
 <b>Default:</b> a default property map where no edge is constrained
 \cgalNPEnd
 
@@ -67,6 +71,9 @@ Only selected cells are modified (and possibly their neighbors if surfaces are
 modified) by the remeshing process. Unselected cells will not be modified.\n
 \b Type : a class model of `ReadWritePropertyMap` with
 `Triangulation::%Cell_handle` as key type and `bool` as value type.
+During the meshing process, the set of selected cells evolves consistently with
+the atomic operations that are performed,
+so the property map must be writable.
 It must be default constructible.\n
 <b>Default:</b> a default property map where all cells of the domain
 (i.e. with a non-zero `Subdomain_index` are selected)

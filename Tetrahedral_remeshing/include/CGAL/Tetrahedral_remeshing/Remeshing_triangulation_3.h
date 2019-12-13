@@ -31,6 +31,7 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/tags.h>
 
 #include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -39,22 +40,53 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
+  /*!
+  \ingroup PkgTetrahedralRemeshingClasses
+  
+  The class `Remeshing_triangulation_3`
+  is a class template which provides the triangulation type to be used
+  for the 3D triangulation
+  used in the tetrahedral remeshing process.
+  
+  \tparam Gt is the geometric traits class.
+  It has to be a model of the concept `RemeshingTriangulationTraits_3`.
+
+  \tparam Info is the information the user would like to add to a cell.
+  It has to be `DefaultConstructible` and `Assignable`.
+
+  \tparam Concurrency_tag enables sequential versus parallel implementation of the
+  triangulation data structure.
+  Possible values are `Sequential_tag` (the default) and `Parallel_tag`.
+
+  \tparam Cb is a cell base class from which `Remeshing_cell_base` derives.
+  It must be a model of the `TriangulationCellBase_3` concept.
+  It has the default value `Triangulation_cell_base_3<Gt>`.
+
+  \tparam Vb is a vertex base class deriving from  `Triangulation_vertex_base_3`.
+  It must be a model of the `TriangulationVertexBase_3` concept.
+  It has the default value `Triangulation_vertex_base_3<Gt>`.
+
+  \cgalRefines `Triangulation_3`
+  
+  */
   template<typename K,
-           typename Info = void,
-           typename Cb = CGAL::Triangulation_cell_base_3<K> >
+           typename Info,
+           typename Concurrency_tag = CGAL::Sequential_tag,
+           typename Cb = CGAL::Triangulation_cell_base_3<K>,
+           typename Vb = CGAL::Triangulation_vertex_base_3<K> >
   class Remeshing_triangulation_3
     : public CGAL::Triangulation_3<K,
         CGAL::Triangulation_data_structure_3<
-          Remeshing_vertex_base<K>,
+          Remeshing_vertex_base<K, Vb>,
           Remeshing_cell_base<K, Info, Cb>
         >
       >
   {
-    typedef Remeshing_vertex_base<K>                       RVb;
+    typedef Remeshing_vertex_base<K, Vb>                   RVb;
     typedef Remeshing_cell_base<K, Info, Cb>               RCb;
 
   public:
-    typedef CGAL::Triangulation_data_structure_3<RVb, RCb> Tds;
+    typedef CGAL::Triangulation_data_structure_3<RVb, RCb, Concurrency_tag> Tds;
     typedef CGAL::Triangulation_3<K, Tds>                  Self;
     typedef Self                                           type;
   };

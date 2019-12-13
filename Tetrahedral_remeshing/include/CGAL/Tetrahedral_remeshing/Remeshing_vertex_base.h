@@ -40,6 +40,25 @@ namespace Tetrahedral_remeshing
     };
   }
 
+  /*!
+  \ingroup PkgTetrahedralRemeshingClasses
+  
+  The class `Remeshing_vertex_base` is a model of the concept `RemeshingVertexBase_3`.
+  It is designed to serve as vertex base class for the 3D triangulation
+  used in the tetrahedral remeshing process.
+
+  \tparam Gt is the geometric traits class.
+  It has to be a model of the concept `RemeshingTriangulationTraits_3`.
+
+  \tparam Vb is a vertex base class from which `Remeshing_vertex_base` derives.
+  It must be a model of the `TriangulationVertexBase_3` concept.
+  It has the default value `Triangulation_vertex_base_3<Gt>`.
+  
+  \cgalModels `RemeshingVertexBase_3`
+  \cgalRefines `Triangulation_vertex_base_3`
+  
+  */
+
   template<typename GT,
            typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
   class Remeshing_vertex_base
@@ -96,8 +115,8 @@ namespace Tetrahedral_remeshing
       cache_validity_ = false;
     }
     // documented as set_cache()
-    void set_cache(const std::size_t& nb_incident_facets,
-                   const std::size_t& nb_incident_subdomains);
+    void set_c2t3_cache(const std::size_t& nb_incident_facets,
+                        const std::size_t& nb_incident_subdomains)
     {
       number_of_incident_facets_ = nb_incident_facets;
       number_of_components_ = nb_incident_subdomains;

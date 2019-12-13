@@ -2,7 +2,7 @@
 /// \cgalConcept
 ///
 /// The concept `RemeshingVertexBase_3` defines the requirements for the vertex base
-/// used in the triangulation given as input to the remeshing algorithm
+/// used in the triangulation given as input to the remeshing algorithm.
 ///
 /// \cgalRefines `TriangulationVertexBase_3`, `CopyConstructible`
 /// \cgalHasModel `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base`.

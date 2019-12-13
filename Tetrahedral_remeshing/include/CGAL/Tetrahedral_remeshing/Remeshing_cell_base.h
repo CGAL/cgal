@@ -35,7 +35,7 @@ namespace Tetrahedral_remeshing
   /*!
 \ingroup PkgTetrahedralRemeshingClasses
 
-The class `Remeshing_cell_base<Gt, Info>` is a model of the concept `RemeshingCellBase_3`.
+The class `Remeshing_cell_base` is a model of the concept `RemeshingCellBase_3`.
 It is designed to serve as cell base class for the 3D triangulation
 used in the tetrahedral remeshing process.
 
@@ -45,7 +45,7 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 \tparam Info is the information the user would like to add to a cell.
 It has to be `DefaultConstructible` and `Assignable`.
 
-\tparam Cb is a cell base class from which `Triangulation_cell_base_with_info_3` derives.
+\tparam Cb is a cell base class from which `Remeshing_cell_base` derives.
 It must be a model of the `TriangulationCellBase_3` concept.
 It has the default value `Triangulation_cell_base_3<Gt>`.
 
@@ -133,7 +133,7 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
         return 0;
     }
 
-    /// Returns true if facet lies on a surface patch
+    /// Returns `true` if facet lies on a surface patch
     bool is_facet_on_surface(const int& facet) const
     {
       CGAL_precondition(facet >= 0 && facet<4);

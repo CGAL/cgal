@@ -41,11 +41,28 @@ namespace CGAL
   * \ingroup PkgTetrahedralRemeshingRef
   * remeshes a tetrahedral mesh.
   *
-  * This operation sequentially performs edge splits, edge collapses,
-  * edge flips, smoothing and projection to the initial surface to generate
-  * a quality mesh with a prescribed edge length.
+  * This function takes as input a 3-dimensional triangulation
+  * and performs a sequence of atomic operations
+  * in order to generate as output a quality mesh with a prescribed edge length.
+  * These atomic operations are performed as follows :
+  *   - edge splits, until all edges satisfy a prescribed length criterion,
+  *   - edge collapses, ntil all edges satisfy a prescribed length criterion,
+  *   - edge flips, to locally improve dihedral angles, until they can't be improved by flipping,
+  *   - global smoothing by vertex relocations,
+  *   - re-projection of boundary vertices to the initial surface.
   *
-  * @tparam Triangulation model of `Triangulation_3`,
+  * This remeshing function can deal with multi-domains and preserves the geometry of
+  * subdomains throughout the remeshing process. Subdomains are defined by indices that
+  * are stored in the cells of the input triangulation, following the `RemeshingCellBase_3`
+  * concept.
+  * The surfacic interfaces between subdomains are formed by facets which two incident cells
+  * have different subdomain indices.
+  * The edges where three or more subdomains meet form feature polylines,
+  * and are considered as constrained edges.
+  *
+  *
+  * @tparam Triangulation a 3-dimensional triangulation
+  * deriving from `Triangulation_3`,
   * with cell base model of `RemeshingCellBase_3`
   * and vertex base model of `RemeshingVertexBase_3`.
   * 
@@ -61,19 +78,24 @@ namespace CGAL
   *     sequence of atomic operations
   *     performed (listed in the above description)
   *  \cgalParamEnd
-  *  \cgalParamBegin{protect_boundaries} If `true`, the volume boundaries cannot be modified
+  *  \cgalParamBegin{protect_boundaries} If `true`, none of the volume boundaries can be modified.
+  *     Otherwise, the geometry is preserved, but atomic operations can be performed on the
+  *     surfaces, and along feature polylines.
   *  \cgalParamEnd
   *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *    constrained - or - not status of each edge of `tr`. A constrained edge can be split
-  *    or collapsed, but not flipped, nor its endpoints moved by smoothing
+  *    or collapsed, but not flipped.
+todo////  *    Its endpoints could be moved by smoothing
   *  \cgalParamEnd
   *  \cgalParamBegin{cell_is_selected_map} a property map containing the
   *    selected - or - not status for each cell of `tr` for remeshing.
   *    Only selected cells are modified (and possibly their neighbors if surfaces are
   *    modified) by remeshing.
-  *    By default, all inside cells are selected.
+  *    By default, all cells with a non-zero `Subdomain_index` are selected.
   *  \cgalParamEnd
   * \cgalNamedParamsEnd
+
+  * @todo implement 1D smoothing for constrained edges
   */
 
   //  * @tparam SizingField model of `CGAL::Sizing_field`
@@ -101,7 +123,7 @@ namespace CGAL
     using boost::get_param;
 
     bool protect = choose_param(get_param(np, internal_np::protect_boundaries),
-                                true);
+                                false);
     // bool adaptive = choose_param(get_param(np, internal_np::adaptive_size),
     //                              false);
     std::size_t max_it = choose_param(get_param(np, internal_np::number_of_iterations),
