@@ -300,7 +300,7 @@ public:
   typename boost::result_of<const typename Geom_traits::Construct_point_2(const P&)>::type
   construct_point(const P& p) const { return geom_traits().construct_point_2_object()(p); }
 
-  const Point& point(Face_handle c, int i) const;
+  const Point& point(Face_handle f, int i) const;
   const Point& point(Vertex_handle v) const;
 
   Segment segment(Face_handle f, int i) const;
