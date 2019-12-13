@@ -362,7 +362,8 @@ namespace internal
            ++eit)
       {
         Edge e = *eit;
-        if (get(ecmap, e) || nb_incident_subdomains(e, m_c3t3) > 2)
+        if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
+          || nb_incident_subdomains(e, m_c3t3) > 2)
         {
           m_c3t3.add_to_complex(e, 1);
 

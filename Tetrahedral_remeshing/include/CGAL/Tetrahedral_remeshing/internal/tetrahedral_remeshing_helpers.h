@@ -131,6 +131,13 @@ namespace Tetrahedral_remeshing
       point(c->vertex(3)->point()));
   }
 
+  template<typename Vh>
+  std::pair<Vh, Vh> make_vertex_pair(const Vh v1, const Vh v2)
+  {
+    if (v2 < v1) return std::make_pair(v2, v1);
+    else         return std::make_pair(v1, v2);
+  }
+
   template<typename Tr>
   std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle>
     make_vertex_pair(const typename Tr::Edge& e)
@@ -138,16 +145,7 @@ namespace Tetrahedral_remeshing
     typedef typename Tr::Vertex_handle Vertex_handle;
     Vertex_handle v1 = e.first->vertex(e.second);
     Vertex_handle v2 = e.first->vertex(e.third);
-    if (v2 < v1) std::swap(v1, v2);
-
-    return std::make_pair(v1, v2);
-  }
-
-  template<typename Vh>
-  std::pair<Vh, Vh> make_vertex_pair(const Vh v1, const Vh v2)
-  {
-    if (v2 < v1) return std::make_pair(v2, v1);
-    else         return std::make_pair(v1, v2);
+    return make_vertex_pair(v1, v2);
   }
 
   template<typename Vh>

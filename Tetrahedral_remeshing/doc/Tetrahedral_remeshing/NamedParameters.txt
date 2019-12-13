@@ -56,6 +56,7 @@ being marked as constrained or not.\n
 <b>Type:</b> a class model of `ReadWritePropertyMap` with
 `std::pair<Triangulation::%Vertex_handle, Triangulation::%Vertex_handle>` as key type and
 `bool` as value type.
+The pairs must be ordered to ensure consistency.
 During the meshing process, the set of constrained edges evolves consistently with
 edge splits and collapses, so the property map must be writable.
 It must be default constructible.

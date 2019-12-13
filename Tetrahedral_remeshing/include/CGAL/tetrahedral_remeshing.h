@@ -117,7 +117,6 @@ todo////  *    Its endpoints could be moved by smoothing
     CGAL_assertion(tr.is_valid(true));
 
     typedef Triangulation Tr;
-    typedef typename Tr::Edge Edge;
 
     using boost::choose_param;
     using boost::get_param;
@@ -138,7 +137,8 @@ todo////  *    Its endpoints could be moved by smoothing
       = choose_param(get_param(np, internal_np::cell_selector),
                      Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
-    typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Edge> No_constraint;
+    typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
+    typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Edge_vv> No_constraint;
 
     typedef typename boost::lookup_named_param_def <
       internal_np::edge_is_constrained_t,

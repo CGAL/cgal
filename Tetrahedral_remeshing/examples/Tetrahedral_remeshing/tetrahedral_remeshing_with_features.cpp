@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <utility>
 
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #define CGAL_DUMP_REMESHING_STEPS
@@ -9,7 +10,7 @@
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
-#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
+//#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
@@ -19,8 +20,6 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K, int> Remeshing_triangulation;
-//todo : add specialization for Cell_base without info
-// (does not compile with `void` instead of `int`)
 
 typedef Remeshing_triangulation::Point         Point;
 typedef Remeshing_triangulation::Vertex_handle Vertex_handle;
@@ -33,7 +32,7 @@ class Constrained_edges_property_map
 public:
   typedef bool                               value_type;
   typedef bool                               reference;
-  typedef typename T3::Edge                  key_type;
+  typedef std::pair<Vertex_handle, Vertex_handle> key_type;
   typedef boost::read_write_property_map_tag category;
 
 private:
@@ -53,6 +52,7 @@ public:
                   const bool b)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
+    CGAL_assertion(k.first < k.second);
     if (b)  map.m_set_ptr->insert(k);
     else    map.m_set_ptr->erase(k);
   }
@@ -61,6 +61,7 @@ public:
                               const key_type& k)
   {
     CGAL_assertion(map.m_set_ptr != NULL);
+    CGAL_assertion(k.first < k.second);
     return map.m_set_ptr->count(k);
   }
 };
@@ -68,17 +69,17 @@ public:
 void add_edge(Vertex_handle v1,
               Vertex_handle v2,
               const Remeshing_triangulation& tr,
-              boost::unordered_set<Edge>& constraints)
+              boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
 {
   Cell_handle c;
   int i, j;
   if(tr.is_edge(v1, v2, c, i, j))
-    constraints.insert(Edge(c, i, j));
+    constraints.insert(std::make_pair(c->vertex(i), c->vertex(j)));
 }
 
 void generate_input(const std::size_t& n,
                     const char* filename,
-                    boost::unordered_set<Edge>& constraints)
+                    boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> >& constraints)
 {
   Remeshing_triangulation tr;
   CGAL::Random rng;
@@ -123,7 +124,7 @@ void generate_input(const std::size_t& n,
 
 int main(int argc, char* argv[])
 {
-  boost::unordered_set<Edge> constraints;
+  boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
   generate_input(1000, "data/sphere_in_cube.tr.cgal", constraints);
 
   const char* filename     = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
