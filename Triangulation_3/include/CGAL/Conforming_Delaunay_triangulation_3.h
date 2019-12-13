@@ -210,6 +210,12 @@ public:
                        });
   }
 
+  /// @{
+  /// remove functions cannot be called
+  void remove(Vertex_handle) = delete;
+  void remove_cluster() = delete;
+  /// @}
+
 protected:
   void restore_Delaunay() {
     while(!subconstraints_to_conform.empty()) {
