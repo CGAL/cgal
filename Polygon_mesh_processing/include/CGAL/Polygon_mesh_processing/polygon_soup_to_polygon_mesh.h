@@ -42,9 +42,6 @@ class Polygon_soup_to_polygon_mesh
   const PointRange& _points;
   const PolygonRange& _polygons;
 
-  typedef typename boost::property_map<PM, CGAL::vertex_point_t>::type Vpmap;
-  typedef typename boost::property_traits<Vpmap>::value_type Point_3;
-
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
@@ -63,13 +60,14 @@ public:
       _polygons(polygons)
   { }
 
-  void operator()(PM& pmesh, const bool insert_isolated_vertices = true)
+  template <class Vpmap>
+  void operator()(PM& pmesh, Vpmap vpmap, const bool insert_isolated_vertices = true)
   {
+    typedef typename boost::property_traits<Vpmap>::value_type Point_3;
+
     reserve(pmesh, static_cast<typename boost::graph_traits<PM>::vertices_size_type>(_points.size()),
                    static_cast<typename boost::graph_traits<PM>::edges_size_type>(2*_polygons.size()),
                    static_cast<typename boost::graph_traits<PM>::faces_size_type>(_polygons.size()) );
-
-    Vpmap vpmap = get(CGAL::vertex_point, pmesh);
 
     boost::dynamic_bitset<> not_isolated;
     if (!insert_isolated_vertices)
@@ -192,17 +190,19 @@ public:
   * @pre the input polygon soup describes a consistently oriented
   * polygon mesh.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point 
-  * property map
-  * @tparam PointRange a model of the concepts `RandomAccessContainer` and 
+  * @tparam PolygonMesh a model of `MutableFaceGraph`
+  * @tparam PointRange a model of the concepts `RandomAccessContainer` and
   * `BackInsertionSequence` whose value type is the point type
-  * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose 
+  * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose
   * `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
-
+  * @tparam VertexPointMap a model of `ReadWritePropertyMap` with the vertex descriptor of `PolygonMesh` as
+  * `key_type` and the same `value_type` as `PointRange`.
   *
   * @param points points of the soup of polygons
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
   * @param out the polygon mesh to be built
+  * @param vpm the vertex point map of `out`. For convenience, an overload without this parameter is
+  * provided and the internal vertex point map will be used.
   *
   * @pre \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
   *            CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons) \endlink
@@ -211,18 +211,28 @@ public:
   * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
   *
   */
-  template<class PolygonMesh, class PointRange, class PolygonRange>
+  template<class PolygonMesh, class PointRange, class PolygonRange, class VertexPointMap>
   void polygon_soup_to_polygon_mesh(
     const PointRange& points,
     const PolygonRange& polygons,
-    PolygonMesh& out)
+    PolygonMesh& out,
+    VertexPointMap vpm)
   {
     CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                           "Input soup needs to be a polygon mesh!");
 
     internal::Polygon_soup_to_polygon_mesh<PolygonMesh, PointRange, PolygonRange>
       converter(points, polygons);
-    converter(out);
+    converter(out, vpm);
+  }
+
+  template<class PolygonMesh, class PointRange, class PolygonRange>
+  void polygon_soup_to_polygon_mesh(
+    const PointRange& points,
+    const PolygonRange& polygons,
+    PolygonMesh& out)
+  {
+    return polygon_soup_to_polygon_mesh(points, polygons, out, get(CGAL::vertex_point, out));
   }
 
 }//end namespace Polygon_mesh_processing
