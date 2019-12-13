@@ -128,13 +128,8 @@ class Triangulation_conformer_3 : public T_3 {
     subconstraints_to_conform.push({pair, id});
   }
 
-public:
-  Triangulation_conformer_3()
-      : tr(*this), comp(&tr), constraint_hierarchy(comp) {
-  }
-
-  Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c, int li,
-                       int lj)
+  Vertex_handle private_insert(const Point &p, Locate_type lt, Cell_handle c,
+                               int li, int lj)
   {
     Vertex_handle v1, v2;
     Vertex_handle new_vertex;
@@ -170,6 +165,19 @@ public:
       CGAL_error_msg("case not yet handled");
     }
     return new_vertex;
+  }
+
+public:
+  Triangulation_conformer_3()
+      : tr(*this), comp(&tr), constraint_hierarchy(comp) {
+  }
+
+  Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
+                               int li, int lj)
+  {
+    auto v = private_insert(p, lt, c, li, lj);
+    restore_Delaunay();
+    return v;
   }
 
   Vertex_handle insert(const Point &p, Cell_handle start = {}) {
@@ -209,8 +217,10 @@ public:
                                                       pair.first.second)) {
         continue;
       }
+#if CGAL_DEBUG_CDT_3
       std::cerr << "tr.subconstraints_to_conform.pop()="
                 << display_subcstr(pair.first) << "\n";
+#endif // CGAL_DEBUG_CDT_3
       conform_subconstraint(pair.first, pair.second);
     }
   }
@@ -227,7 +237,7 @@ protected:
       Locate_type lt;
       int li, lj;
       const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
-      const Vertex_handle v = this->insert(steiner_pt, lt, c, li, lj);
+      const Vertex_handle v = this->private_insert(steiner_pt, lt, c, li, lj);
       if(lt != T_3::VERTEX) {
         v->nb_of_incident_constraints = 1;
         v->c_id = constraint.vl_ptr();

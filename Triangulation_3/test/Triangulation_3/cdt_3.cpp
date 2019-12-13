@@ -75,13 +75,18 @@ int main()
       double x, y;
       input >> x >> y;
       auto v1 = dt.insert({x, y, 0});
+        CGAL_assertion(conformer.is_conforming());
       auto v3 = dt.insert({x, y, 1});
+        CGAL_assertion(conformer.is_conforming());
       input >> x >> y;
       auto v2 = dt.insert({x, y, 0});
+        CGAL_assertion(conformer.is_conforming());
       auto v4 = dt.insert({x, y, 1});
+        CGAL_assertion(conformer.is_conforming());
       conformer.insert_constrained_edge(v1, v2);
+        CGAL_assertion(conformer.is_conforming());
       conformer.insert_constrained_edge(v3, v4);
-      CGAL_assertion(conformer.is_conforming());
+        CGAL_assertion(conformer.is_conforming());
     }
     conformer.restore_Delaunay();
     std::cerr << dt.number_of_vertices() << '\n';
