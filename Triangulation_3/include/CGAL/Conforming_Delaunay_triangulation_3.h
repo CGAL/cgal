@@ -56,6 +56,7 @@ class Triangulation_conformer_3 : public T_3 {
   using Point = typename T_3::Point;
   using Locate_type = typename T_3::Locate_type;
 
+protected:
   struct Compare_vertex_handle {
     const T_3* tr;
     Compare_vertex_handle(const T_3* tr) : tr(tr) {}
