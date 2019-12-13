@@ -27,10 +27,8 @@ find_package(GMPXX QUIET)
 
 if(NOT GMPXX_FOUND)
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" OFF)
-  option(WITH_GMPXX "Select external library GMPXX" OFF)
 else()
   option(CGAL_WITH_GMPXX "Use CGAL with GMPXX: use C++ classes of GNU MP instead of CGAL wrappers" ON)
-  option(WITH_GMPXX "Select external library GMPXX" ON)
 endif()
 
 #.rst:

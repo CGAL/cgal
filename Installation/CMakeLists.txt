@@ -621,9 +621,6 @@ if(CGAL_DISABLE_GMP)
     "#error GMP is disabled by the CMake option CGAL_DISABLE_GMP")
 else()
   list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMP MPFR)
-  if(WITH_GMPXX)
-    list(APPEND      CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES GMPXX)
-  endif()
 
   # When CMake is run several times, to avoid duplicates
   list (REMOVE_DUPLICATES CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES)
@@ -643,11 +640,8 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
   # add option
   list( FIND CGAL_ESSENTIAL_3RD_PARTY_LIBRARIES "${lib}" POSITION )
   if ( "${POSITION}" STRGREATER "-1" ) # if lib is essential
-   option(WITH_${lib} "Select external library ${lib}" ON)
+
   else() #GMPXX set in CGAL_SetupGMP.cmake
-    if(NOT "${lib}" STREQUAL "GMPXX")
-      option(WITH_${lib} "Select external library ${lib}" OFF)
-    endif()
   endif()
 
 endforeach()
