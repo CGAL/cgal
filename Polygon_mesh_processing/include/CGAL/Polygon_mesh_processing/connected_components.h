@@ -245,7 +245,7 @@ connected_components(const PolygonMesh& pmesh,
       if ( handled[fq_id]) continue;
       handled[fq_id]=true;
       put(fcm, fq, i);
-      for (typename PolygonMesh::Halfedge_index h : halfedges_around_face(halfedge(fq, pmesh), pmesh))
+      for (halfedge_descriptor h : halfedges_around_face(halfedge(fq, pmesh), pmesh))
       {
         if ( get(ecmap, edge(h, pmesh)) ) continue;
         halfedge_descriptor opp = opposite(h, pmesh);
