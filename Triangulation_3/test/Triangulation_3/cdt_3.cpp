@@ -86,6 +86,10 @@ int main()
       conformer.insert_constrained_edge(v3, v4);
         CGAL_assertion(conformer.is_conforming());
     }
+    dt.insert({11, 28, 0});
+      CGAL_assertion(conformer.is_conforming());
+    dt.insert({11, 33, 0});
+      CGAL_assertion(conformer.is_conforming());
     std::cerr << dt.number_of_vertices() << '\n';
     std::cerr << dt.number_of_finite_cells() << '\n';
     // assert(dt.is_edge(vertices[0], vertices[1], ch, li, lj));
