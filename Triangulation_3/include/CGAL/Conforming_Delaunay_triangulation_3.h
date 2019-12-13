@@ -209,6 +209,7 @@ public:
                        });
   }
 
+protected:
   void restore_Delaunay() {
     while(!subconstraints_to_conform.empty()) {
       auto pair = subconstraints_to_conform.top();
@@ -224,7 +225,7 @@ public:
       conform_subconstraint(pair.first, pair.second);
     }
   }
-protected:
+
   /// Return `true` if a Steiner point was inserted
   bool conform_subconstraint(Subconstraint subconstraint,
                              Constraint_id constraint)

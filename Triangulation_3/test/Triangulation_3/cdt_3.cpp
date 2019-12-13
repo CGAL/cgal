@@ -55,9 +55,7 @@ int main()
     assert(!dt.is_edge(vertices[0], vertices[1], ch, li, lj));
     conformer.insert_constrained_edge(vertices[0], vertices[1]);
     // conformer.insert_constrained_edge(vertices[5], vertices[1]);
-    conformer.restore_Delaunay();
     conformer.insert_constrained_edge(vertices[5], vertices[11]);
-    conformer.restore_Delaunay();
     return conformer.is_conforming() ? 0 : 1;
   };
   CGAL_USE(test1);
@@ -88,7 +86,6 @@ int main()
       conformer.insert_constrained_edge(v3, v4);
         CGAL_assertion(conformer.is_conforming());
     }
-    conformer.restore_Delaunay();
     std::cerr << dt.number_of_vertices() << '\n';
     std::cerr << dt.number_of_finite_cells() << '\n';
     // assert(dt.is_edge(vertices[0], vertices[1], ch, li, lj));
