@@ -102,7 +102,10 @@ struct Scene_surface_mesh_item_priv{
   Scene_surface_mesh_item_priv(const Scene_surface_mesh_item& other, Scene_surface_mesh_item* parent):
     smesh_(new SMesh(*other.d->smesh_)),
     idx_data_(other.d->idx_data_),
-    idx_edge_data_(other.d->idx_edge_data_)
+    idx_edge_data_(other.d->idx_edge_data_),
+    fpatch_id_map(other.d->fpatch_id_map),
+    min_patch_id(other.d->min_patch_id),
+    colors_(other.d->colors_)
   {
     item = parent;
     item->setTriangleContainer(1, new Triangle_container(VI::PROGRAM_WITH_LIGHT,
