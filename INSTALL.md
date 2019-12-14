@@ -1,12 +1,12 @@
 Building a Program Using CGAL
 =============================
 
-Since Version 5.0, CGAL is header-only, hence it does not create a library. It needs however to link to the external libraries GMP and MPRF. 
+Since Version 5.0, CGAL is header-only, hence it does not create a library. Some parts of it, however, link to several external libraries, such as GMP, MPFR, etc. 
 
 If you are trying to build examples or tests that do not already have a `CMakeLists.txt`,
 you can trigger its creation by calling the script [`cgal_create_cmake_script`](Scripts/scripts/cgal_create_cmake_script)
 found in `/path/to/cgal.git/Scripts/scripts/` at the root of the example/test directory.
-Here is an example for the examples of the 2D Triangulation package:
+Here is a recipe for the examples of the 2D Triangulation package:
 
 ``` {.bash}
  cd /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
@@ -22,6 +22,3 @@ Note that this page describes the setting of CGAL as a sources release and, as s
 files are organized in a slightly different way, see the [Layout of the CGAL Git Repository](README.md).
 
 For more information head over to the [CGAL manual](https://doc.cgal.org/latest/Manual/general_intro.html).
-
-
-
