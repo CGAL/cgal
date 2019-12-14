@@ -192,10 +192,11 @@ public:
     // Set the curve and check whether its left end has boundary conditions.
     m_cv = cv;
 
-    const Arr_parameter_space bx1 =
-      m_geom_traits->parameter_space_in_x_2_object()(m_cv, ARR_MIN_END);
-    const Arr_parameter_space by1 =
-      m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MIN_END);
+    auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
+    auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
+
+    auto bx1 = ps_in_x(m_cv, ARR_MIN_END);
+    auto by1 = ps_in_y(m_cv, ARR_MIN_END);
 
     if ((bx1 == ARR_INTERIOR) && (by1 == ARR_INTERIOR)) {
       // The curve has a finite left endpoint with no boundary conditions:
@@ -219,10 +220,8 @@ public:
 
     // Check the boundary conditions of th right curve end.
     if (m_geom_traits->is_closed_2_object()(m_cv, ARR_MAX_END)) {
-      const Arr_parameter_space bx2 =
-        m_geom_traits->parameter_space_in_x_2_object()(m_cv, ARR_MAX_END);
-      const Arr_parameter_space by2 =
-        m_geom_traits->parameter_space_in_y_2_object()(m_cv, ARR_MAX_END);
+      auto bx2 = ps_in_x(m_cv, ARR_MAX_END);
+      auto by2 = ps_in_y(m_cv, ARR_MAX_END);
 
       // The right endpoint is valid.
       m_has_right_pt = true;
@@ -421,6 +420,7 @@ private:
    * \param p The point.
    * \param he The halfedge.
    * \pre he is not a fictitious edge.
+   * \pre p is not on the left or right boundary.
    * \return if p entirely lies to the right of the edge true; otherwise false.
    */
   bool _is_to_right(const Point_2& p, Halfedge_handle he) const
