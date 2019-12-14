@@ -89,7 +89,6 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
 
   // Break the input curve into x-monotone subcurves and isolated points.
   std::list<CGAL::Object> x_objects;
-  std::list<CGAL::Object>::const_iterator obj_iter;
   const typename Gt2::X_monotone_curve_2* x_curve;
   const typename Gt2::Point_2* iso_p;
 
@@ -97,9 +96,9 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     make_x_monotone_2_object()(c, std::back_inserter(x_objects));
 
   // Insert each x-monotone curve into the arrangement.
-  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter) {
+  for (auto it = x_objects.begin(); it != x_objects.end(); ++it) {
     // Act according to the type of the current object.
-    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*obj_iter));
+    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*it));
 
     if (x_curve != nullptr) {
       // Inserting an x-monotone curve:
@@ -118,7 +117,7 @@ void insert(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
       arr_access.notify_after_global_change();
     }
     else {
-      iso_p = object_cast<typename Gt2::Point_2>(&(*obj_iter));
+      iso_p = object_cast<typename Gt2::Point_2>(&(*it));
       CGAL_assertion(iso_p != nullptr);
 
       // Inserting a point into the arrangement:
@@ -1611,22 +1610,21 @@ do_intersect(Arrangement_on_surface_2<GeometryTraits_2, TopologyTraits>& arr,
     static_cast<const Traits_adaptor_2*>(arr.geometry_traits());
 
   std::list<CGAL::Object> x_objects;
-  std::list<CGAL::Object>::const_iterator obj_iter;
   const typename Gt2::X_monotone_curve_2* x_curve;
   const typename Gt2::Point_2* iso_p;
 
   traits->make_x_monotone_2_object()(c, std::back_inserter(x_objects));
 
   // Insert each x-monotone curve into the arrangement.
-  for (obj_iter = x_objects.begin(); obj_iter != x_objects.end(); ++obj_iter) {
+  for (auto it = x_objects.begin(); it != x_objects.end(); ++it) {
     // Act according to the type of the current object.
-    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*obj_iter));
+    x_curve = object_cast<typename Gt2::X_monotone_curve_2>(&(*it));
     if (x_curve != nullptr) {
       // Check if the x-monotone subcurve intersects the arrangement.
       if (do_intersect(arr, *x_curve, pl) == true) return true;
     }
     else {
-      iso_p = object_cast<typename Gt2::Point_2>(&(*obj_iter));
+      iso_p = object_cast<typename Gt2::Point_2>(&(*it));
       CGAL_assertion(iso_p != nullptr);
 
       // Check whether the isolated point lies inside a face (otherwise,
