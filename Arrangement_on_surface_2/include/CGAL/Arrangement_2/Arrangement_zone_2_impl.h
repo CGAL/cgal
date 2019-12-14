@@ -175,7 +175,6 @@ void Arrangement_zone_2<Arrangement, ZoneVisitor>::compute_zone()
     // Compute the zone of the curve at the interior of the face.
     // m_left_pt is not on the face boundary.
     done = _zone_in_face(m_arr.non_const_handle(*fh), false);
-
     // In case we have just discovered an overlap, compute the overlapping
     // zone as well.
     if (! done && m_found_overlap) done = _zone_in_overlap();
@@ -1538,65 +1537,64 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
 
   // Check the boundary conditions of the minimal end of the curve associated
   // with the given halfedge.
-  auto ps_x =
-    m_geom_traits->parameter_space_in_x_2_object()(he->curve(), ARR_MIN_END);
+  auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_x_min = ps_in_x(he->curve(), ARR_MIN_END);
 
-  // The minimal end of the curve is to the left of any other point:
-  if (ps_x == ARR_LEFT_BOUNDARY) return false;
+  // Any point is not to the left of the left boundary.
+  if (ps_x_min == ARR_LEFT_BOUNDARY) return false;
 
-  auto ps_y =
-    m_geom_traits->parameter_space_in_y_2_object()(he->curve(), ARR_MIN_END);
-
+  auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
+  auto ps_y = ps_in_y(he->curve(), ARR_MIN_END);
   if (ps_y != ARR_INTERIOR) {
     // Check if p is to the left of the minimal curve-end:
-    const Comparison_result res =
-      m_geom_traits->compare_x_point_curve_end_2_object()(p, he->curve(),
-                                                          ARR_MIN_END);
-
+    auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
+    const auto res = cmp_x(p, he->curve(), ARR_MIN_END);
     return ((res == SMALLER) || (res == EQUAL && ps_y == ARR_TOP_BOUNDARY));
   }
 
   // In case the minimal curve-end does not have boundary conditions, simply
   // compare p with the left endpoint of the curve.
-  Vertex_const_handle v_left =
-    (he->direction() == ARR_LEFT_TO_RIGHT) ? he->source() : he->target();
-
+  auto v_left = (he->direction() == ARR_LEFT_TO_RIGHT) ?
+    he->source() : he->target();
   return (m_geom_traits->compare_xy_2_object()(p, v_left->point()) == SMALLER);
 }
 
 //-----------------------------------------------------------------------------
-// Determine whether a given point lies completely to the right of a given egde.
+// Determine whether a given point lies completely to the right of a given curve.
 //
 template <typename Arrangement, typename ZoneVisitor>
 bool Arrangement_zone_2<Arrangement, ZoneVisitor>::
 _is_to_right_impl(const Point_2& p, Halfedge_handle he,
                   Arr_not_all_sides_oblivious_tag) const
 {
+#if defined(ARR_ZONE_VERBOSE)
+  std::cout << "_is_to_right_impl(" << p << "," << he->curve() << ")"
+            << std::endl;
+#endif
+
   // Check the boundary conditions of the maximal end of the curve associated
   // with the given halfedge.
-  const Arr_parameter_space ps_x =
-    m_geom_traits->parameter_space_in_x_2_object()(he->curve(), ARR_MAX_END);
+  auto ps_in_x = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_x_max = ps_in_x(he->curve(), ARR_MAX_END);
 
-    // The maximal end of the curve is to the right of any other point:
-  if (ps_x == ARR_RIGHT_BOUNDARY) return false;
+  // Any point is not to the right of the right boundary.
+  if (ps_x_max == ARR_RIGHT_BOUNDARY) return false;
+  // Any interior point is to the right of the left boundary.
+  if (ps_x_max == ARR_LEFT_BOUNDARY) return true;
 
-  const Arr_parameter_space ps_y =
-    m_geom_traits->parameter_space_in_y_2_object()(he->curve(), ARR_MAX_END);
-
+  auto ps_in_y = m_geom_traits->parameter_space_in_y_2_object();
+  auto ps_y = ps_in_y(he->curve(), ARR_MAX_END);
   if (ps_y != ARR_INTERIOR) {
     // Check if p is to the right of the maximal curve-end:
-    const Comparison_result   res =
-      m_geom_traits->compare_x_point_curve_end_2_object()(p, he->curve(),
-                                                          ARR_MAX_END);
-
+    auto cmp_x = m_geom_traits->compare_x_point_curve_end_2_object();
+    auto res = cmp_x(p, he->curve(), ARR_MAX_END);
     return ((res == LARGER) || (res == EQUAL && ps_y == ARR_BOTTOM_BOUNDARY));
   }
 
   // In case the maximal curve-end does not have boundary conditions, simply
   // compare p with the right endpoint of the curve.
-  Vertex_const_handle v_right =
-    (he->direction() == ARR_LEFT_TO_RIGHT) ? he->target() : he->source();
-
+  auto v_right = (he->direction() == ARR_LEFT_TO_RIGHT) ?
+    he->target() : he->source();
   return (m_geom_traits->compare_xy_2_object()(p, v_right->point()) == LARGER);
 }
 
@@ -1611,6 +1609,7 @@ _leftmost_intersection(Ccb_halfedge_circulator he_curr, bool on_boundary,
 #if defined(ARR_ZONE_VERBOSE)
   std::cout << "_leftmost_intersection(" << he_curr->curve() << ")" << std::endl;
 #endif
+
   // Obtain some geometry-traits functors.
   auto compare_xy = m_geom_traits->compare_xy_2_object();
   auto is_in_x_range = m_geom_traits->is_in_x_range_2_object();
@@ -1753,14 +1752,11 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
     while (++he_curr != he_first);
   }
 
-
   auto compare_y_at_x = m_geom_traits->compare_y_at_x_2_object();
 
   // Traverse the isolated vertices inside the face (if there exist any), and
   // check whether an isolated vertex lies on the curve.
-  typedef typename Arrangement_2::Isolated_vertex_iterator
-    Isolated_vertex_iterator;
-  for (Isolated_vertex_iterator iv_it = face->isolated_vertices_begin();
+  for (auto iv_it = face->isolated_vertices_begin();
        iv_it != face->isolated_vertices_end(); ++iv_it)
   {
     // If the isolated vertex is not in the x-range of our curve, disregard it.
@@ -1784,10 +1780,9 @@ _leftmost_intersection_with_face_boundary(Face_handle face, bool on_boundary)
     }
   } // End:: traversal of the isolated vertices inside the face.
 
-
   // Remove the next intersection associated with m_intersect_he, as we have
   // now reported it and do not want to encounter it again.
-  if (m_found_intersect && !m_found_iso_vert)
+  if (m_found_intersect && ! m_found_iso_vert)
     _remove_next_intersection(m_intersect_he);
 }
 
