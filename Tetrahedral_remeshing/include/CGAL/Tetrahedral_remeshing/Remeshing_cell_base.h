@@ -24,7 +24,6 @@
 
 
 #include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Triangulation_cell_base_with_info_3.h>
 
 #include <utility>
 
@@ -54,13 +53,12 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
 
 */
   template<typename Gt,
-           typename Info,
            typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
   class Remeshing_cell_base
-    : public CGAL::Triangulation_cell_base_with_info_3<Info, Gt, Cb>
+    : public Cb
 
   {
-    typedef CGAL::Triangulation_cell_base_with_info_3<Info, Gt, Cb> Base;
+    typedef Cb Base;
     typedef typename Base::Vertex_handle Vertex_handle;
     typedef typename Base::Cell_handle   Cell_handle;
 
@@ -82,7 +80,7 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
     struct Rebind_TDS
     {
       typedef typename Cb::template Rebind_TDS<TDS2>::Other Cb2;
-      typedef Remeshing_cell_base<Gt, Info, Cb2> Other;
+      typedef Remeshing_cell_base<Gt, Cb2> Other;
     };
 
     Remeshing_cell_base()
@@ -154,7 +152,7 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
 
   template < class Gt, class Info, class Cb >
   std::istream&
-    operator>>(std::istream &is, Remeshing_cell_base<Gt, Info, Cb> &c)
+    operator>>(std::istream &is, Remeshing_cell_base<Gt, Cb> &c)
   {
     typename Remeshing_cell_base<Gt, Info, Cb>::Subdomain_index index;
     if (is_ascii(is))
@@ -180,7 +178,7 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
 
   template < class Gt, class Info, class Cb >
   std::ostream&
-    operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Info, Cb> &c)
+    operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Cb> &c)
   {
     if (is_ascii(os))
       os << c.subdomain_index();

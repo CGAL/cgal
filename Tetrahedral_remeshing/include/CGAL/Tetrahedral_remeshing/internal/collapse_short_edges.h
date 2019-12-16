@@ -64,7 +64,7 @@ namespace internal
     typedef CGAL::Triangulation_incremental_builder_3<Tr> Builder;
 
   public:
-    CollapseTriangulation(const C3t3& c3t3,
+    CollapseTriangulation(C3t3& c3t3,
                           const Edge& edge,
                           Collapse_type _collapse_type)
     {
@@ -109,7 +109,7 @@ namespace internal
           Cell_handle new_ch = builder.add_cell(v2v.left.at(ch->vertex(0)), v2v.left.at(ch->vertex(1)),
                                                 v2v.left.at(ch->vertex(2)), v2v.left.at(ch->vertex(3)));
           new_ch->set_subdomain_index(ch->subdomain_index());
-          new_ch->info() = ch->info();
+          c3t3.triangulation().visitor().after_add_cell(ch, new_ch);
 
           c2c.left.insert(std::make_pair(ch, new_ch));
         }

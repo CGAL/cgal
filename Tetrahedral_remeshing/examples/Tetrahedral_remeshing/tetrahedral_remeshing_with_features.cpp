@@ -19,7 +19,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K, int> Remeshing_triangulation;
+typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 
 typedef Remeshing_triangulation::Point         Point;
 typedef Remeshing_triangulation::Vertex_handle Vertex_handle;

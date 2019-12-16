@@ -769,7 +769,7 @@ namespace internal
 
     //Subdomain index?
     typename C3t3::Subdomain_index subdomain = to_remove[0]->subdomain_index();
-    typename C3t3::Triangulation::Cell::Info info = to_remove[0]->info();
+    tr.visitor().before_flip(to_remove[0]);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     for (std::size_t i = 1; i < to_remove.size(); ++i)
@@ -792,7 +792,7 @@ namespace internal
       new_cell->set_vertex(fi.second, vh);
 
       c3t3.add_to_complex(new_cell, subdomain);
-      new_cell->info() = info;
+      tr.visitor().after_flip(new_cell);
       cells_to_update.push_back(new_cell);
     }
 

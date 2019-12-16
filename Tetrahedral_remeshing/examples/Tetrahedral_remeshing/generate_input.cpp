@@ -9,7 +9,7 @@
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K, int> T3;
+typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> T3;
 
 
 bool load_binary_triangulation(std::istream& is, T3& t3)

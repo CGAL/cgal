@@ -49,7 +49,6 @@ namespace internal
     typedef typename Tr::Vertex_handle     Vertex_handle;
     typedef typename Tr::Cell_handle       Cell_handle;
     typedef typename Tr::Cell_circulator   Cell_circulator;
-    typedef typename Tr::Cell::Info        Cell_info;
 
     Tr& tr = c3t3.triangulation();
     Vertex_handle v1 = e.first->vertex(e.second);
@@ -57,7 +56,8 @@ namespace internal
 
     //backup subdomain info of incident cells before making changes
     short dimension = (c3t3.is_in_complex(e)) ? 1 : 3;
-    boost::unordered_map<Facet, std::pair<Subdomain_index, Cell_info> > info;
+    boost::unordered_map<Facet, Subdomain_index> info;
+    tr.visitor().before_split(c3t3.triangulation(), e);
 
     Cell_circulator circ = tr.incident_cells(e);
     Cell_circulator end = circ;
@@ -68,12 +68,10 @@ namespace internal
       //keys are the opposite facets to the ones not containing e,
       //because they will not be modified
       Facet opp_facet = tr.mirror_facet(Facet(circ, circ->index(v1)));
-      info.insert(std::make_pair(opp_facet,
-          std::make_pair(c3t3.subdomain_index(circ), circ->info())));
+      info.insert(std::make_pair(opp_facet, c3t3.subdomain_index(circ)));
 
       opp_facet = tr.mirror_facet(Facet(circ, circ->index(v2)));
-      info.insert(std::make_pair(opp_facet,
-          std::make_pair(c3t3.subdomain_index(circ), circ->info())));
+      info.insert(std::make_pair(opp_facet, c3t3.subdomain_index(circ)));
 
       ++circ;
       prev = curr;
@@ -92,15 +90,16 @@ namespace internal
     c3t3.set_dimension(new_v, dimension);
 
     // update c3t3
+    tr.visitor().after_split(tr, new_v);
+
     std::vector<Cell_handle> new_cells;
     tr.incident_cells(new_v, std::back_inserter(new_cells));
     for (std::size_t i = 0; i < new_cells.size(); ++i)
     {
       Cell_handle nci = new_cells[i];
       Facet fi(nci, nci->index(new_v));
-      Subdomain_index n_index = info.at(tr.mirror_facet(fi)).first;
+      Subdomain_index n_index = info.at(tr.mirror_facet(fi));
       c3t3.set_subdomain_index(nci, n_index);
-      nci->info() = info.at(tr.mirror_facet(fi)).second;
     }
 
     return new_v;

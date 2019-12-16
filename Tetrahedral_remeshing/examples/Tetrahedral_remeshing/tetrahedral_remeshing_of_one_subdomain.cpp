@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 
 typedef CGAL::Triangulation_3<K>                                       T3;
-typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K, int> Remeshing_triangulation;
+typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
 //todo : add specialization for Cell_base without info
 // (does not compile with `void` instead of `int`)
 
