@@ -467,7 +467,7 @@ bool clip(      TriangleMesh& tm,
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
   *      (i.e., `tm` will be kept closed).
   *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
+  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `is_cuboid`
   *                                        will not be part of the output.
   * \cgalNamedParamsEnd
   *
