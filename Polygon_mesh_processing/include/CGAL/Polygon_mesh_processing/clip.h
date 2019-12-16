@@ -459,7 +459,7 @@ bool clip(      TriangleMesh& tm,
   *                            that is used to track the creation of new faces.
   *   \cgalParamEnd
   *   \cgalParamBegin{throw_on_self_intersection} if `true`,
-  *      the set of triangles closed to the intersection of `tm` and `plane` will be
+  *      the set of triangles closed to the intersection of `tm` and `iso_cuboid` will be
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *      will be thrown if at least one is found.
   *   \cgalParamEnd
