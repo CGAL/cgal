@@ -472,7 +472,7 @@ bool clip(      TriangleMesh& tm,
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
-  *         If `false` is returned `tm` is only refined by the intersection with `plane`.
+  *         If `false` is returned `tm` is only refined by the intersection with `iso_cuboid`.
   */
 template <class TriangleMesh,
           class NamedParameters>
