@@ -84,7 +84,7 @@ public:
   using Base::orientation_on_sphere;
   using Base::show_face; // @todo rename this
   using Base::delete_faces;
-  using Base::compare_xyz;
+  using Base::compare;
   using Base::NOT_ON_SPHERE;
   using Base::TOO_CLOSE;
   using Base::VERTEX;
@@ -92,16 +92,16 @@ public:
 #endif
 
   // class to sort points lexicographically.
-  // This sorting is used for the symbolic perturbation in power_test
+  // This sorting is used for the symbolic perturbation in side_of_oriented_circle
   class Perturbation_order
   {
     const Self *t;
   public:
     Perturbation_order(const Self *tr) : t(tr) { }
 
-    bool operator()(const Point_3* p, const Point_3* q) const
+    bool operator()(const Point* p, const Point* q) const
     {
-      return t->compare_xyz(*p, *q) == SMALLER;
+      return t->compare(*p, *q) == SMALLER;
     }
   };
 
@@ -132,16 +132,15 @@ public:
 
   //REMOVAL
   void remove_degree_3(Vertex_handle v, Face_handle f = Face_handle());
-  void remove(Vertex_handle v);
   void remove_1D(Vertex_handle v);
   void remove_2D(Vertex_handle v);
+  void remove(Vertex_handle v);
   bool test_dim_down(Vertex_handle v);
   bool test_dim_up(const Point& p) const;
   void fill_hole_regular(std::list<Edge>& hole);
 
-  Oriented_side power_test(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;
-  Oriented_side power_test(const Face_handle f, const Point& p, bool perturb = false) const;
-  Oriented_side power_test(const Face_handle f, int i, const Point& p) const;
+  Oriented_side side_of_oriented_circle(const Point& p, const Point& q, const Point& r, const Point& s, bool perturb = false) const;
+  Oriented_side side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb = false) const;
 
   // Dual
   Point_3 circumcenter(const Point& p0, const Point& p1, const Point& p2) const;
@@ -149,7 +148,7 @@ public:
   Point_3 dual(const Face_handle f) const;
   Object dual(const Edge& e) const ;
   Object dual(const Edge_circulator ec) const { return dual(*ec); }
-  Object dual(const All_edges_iterator ei) const { return  dual(*ei); }
+  Object dual(const All_edges_iterator ei) const { return dual(*ei); }
 
   template <typename Stream>
   Stream& write_vertices(Stream& out, std::vector<Vertex_handle>& t)
@@ -166,13 +165,14 @@ public:
     return out;
   }
 
+  // @todo move this stuff to helper
   template <typename Stream>
   Stream& write_triangulation_to_off(Stream& out, Stream& out2)
   {
     // Points of triangulation
     for(All_faces_iterator it=tds().face_iterator_base_begin(); it!=all_faces_end(); ++it)
     {
-      if(!it->is_ghost())
+      if(!it->ghost())
         write_face_to_off(out, it);
       else
         write_face_to_off(out2, it);
@@ -254,7 +254,9 @@ public:
 
     std::vector<Point> points(first, last);
     std::random_shuffle(points.begin(), points.end());
-    spatial_sort(points.begin(), points.end()); // @fixme test that
+
+    // @fixme need an adapter
+    spatial_sort(points.begin(), points.end());
 
     Face_handle hint;
     Vertex_handle v;
@@ -279,7 +281,7 @@ public:
     CGAL_precondition(test_conflict(p, fh));
 
     *fit++ = fh; //put fh in OutputItFaces
-    fh->set_in_conflict_flag(1);
+    fh->in_conflict() = true;
 
     std::pair<OutputItFaces, OutputItBoundaryEdges> pit = std::make_pair(fit, eit);
     pit = propagate_conflicts(p, fh, 0, pit);
@@ -337,7 +339,7 @@ private:
       return non_recursive_propagate_conflicts(p, fh, i, pit);
 
     Face_handle fn = fh->neighbor(i);
-    if(fn->get_in_conflict_flag() == 1)
+    if(fn->in_conflict())
       return pit;
 
     if(!test_conflict(p, fn))
@@ -347,7 +349,10 @@ private:
     else
     {
       *(pit.first)++ = fn;
-      fn->set_in_conflict_flag(1);
+      // @fixme, change it to tds_data() like T3.h also update the code in HT2 because
+      // it doesn't need to have tds_data() in HT_face_base_2
+      // @fixme when is that reset ?
+      fn->in_conflict() = true;
       int j = fn->index(fh);
       pit = propagate_conflicts(p, fn, ccw(j), pit, depth + 1);
       pit = propagate_conflicts(p, fn, cw(j), pit, depth + 1);
@@ -357,26 +362,6 @@ private:
   }
 };
 
-// Power tests
-
-template <typename Gt, typename Tds>
-Oriented_side
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-power_test(const Face_handle f, const Point& p, bool perturb) const
-{
-  return power_test(point(f, 0), point(f, 1), point(f, 2), p, perturb);
-}
-
-template <typename Gt, typename Tds>
-Oriented_side
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-power_test(const Face_handle f, int i, const Point& p) const
-{
-  CGAL_precondition(orientation_on_sphere(point(f->vertex(ccw(i))), point(f->vertex(cw(i))), p) == COLLINEAR);
-
-  return power_test(point(f->vertex(ccw(i))), point(f->vertex(cw(i))), p);
-}
-
 // computes the power test of 4 points. 'perturb' defines whether a symbolic perturbation
 // is used (by default, perturb == false)
 // in the perturbation the smallest vertex is in conflict with the others
@@ -384,9 +369,11 @@ template <typename Gt, typename Tds>
 inline
 Oriented_side
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-power_test(const Point& p0, const Point& p1, const Point& p2, const Point& p, bool perturb) const
+side_of_oriented_circle(const Point& p0, const Point& p1, const Point& p2, const Point& p,
+                        bool perturb) const
 {
-  Oriented_side os = geom_traits().power_test_2_object()(p0, p1, p2, p);
+  // Specificity of the ToS_2: the in-circle is a call to orientation_3
+  Oriented_side os = geom_traits().orientation_3_object()(p0, p1, p2, p);
   if(os != ON_ORIENTED_BOUNDARY || !perturb)
     return os;
 
@@ -413,6 +400,15 @@ power_test(const Point& p0, const Point& p1, const Point& p2, const Point& p, bo
 
   CGAL_assertion(false);
   return ON_NEGATIVE_SIDE;
+}
+
+
+template <typename Gt, typename Tds>
+Oriented_side
+Delaunay_triangulation_on_sphere_2<Gt, Tds>::
+side_of_oriented_circle(const Face_handle f, const Point& p, bool perturb) const
+{
+  return side_of_oriented_circle(point(f, 0), point(f, 1), point(f, 2), p, perturb);
 }
 
 //-------------------------------------------CHECK------------------------------------------------//
@@ -462,7 +458,7 @@ is_plane() const
 
   while(it4 != vertices_end())
   {
-    Orientation s = power_test(point(it1), point(it2), point(it3), point(it4));
+    Orientation s = side_of_oriented_circle(point(it1), point(it2), point(it3), point(it4));
     plane = plane && s == ON_ORIENTED_BOUNDARY;
 
     if(!plane)
@@ -510,7 +506,7 @@ is_valid(bool verbose, int level) const
       for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
       {
         Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-        result = result && (s != NEGATIVE || it->is_ghost());
+        result = result && (s != NEGATIVE || it->ghost());
         CGAL_assertion(result);
       }
 
@@ -557,10 +553,10 @@ bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 is_valid_face(Face_handle fh, bool verbose, int /*level*/) const
 {
-  bool result = fh->get_in_conflict_flag() == 0;
+  bool result = true;
   for(int i=0; i<+2; ++i)
   {
-    Orientation test = power_test(fh, point(fh->vertex(i)));
+    Orientation test = side_of_oriented_circle(fh, point(fh->vertex(i)));
     result = result && test == ON_ORIENTED_BOUNDARY;
     CGAL_assertion(result);
   }
@@ -585,7 +581,7 @@ inline bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 test_conflict(const Point& p, Face_handle fh) const
 {
-  return(power_test(fh, p, true) != ON_NEGATIVE_SIDE);
+  return(side_of_oriented_circle(fh, p, true) != ON_NEGATIVE_SIDE);
 }
 
 // ------------------------ INSERTION --------------------------------//
@@ -765,7 +761,7 @@ insert_outside_affine_hull_regular(const Point& p)
     const Point& p2 = point(fn, 1);
 
     CGAL_assertion(orientation_on_sphere(p0, p1, p2) != NEGATIVE);
-    Orientation orient2 = power_test(p0, p1, p2, p);
+    Orientation orient2 = side_of_oriented_circle(p0, p1, p2, p);
 
     if(orient2 == POSITIVE)
       conform = true;
@@ -931,11 +927,15 @@ Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 test_dim_down(Vertex_handle v)
 {
   CGAL_precondition(dimension() == 2);
-  bool dim1 = true;
+  bool will_decrease = true;
   if(number_of_vertices() == 4)
-    return dim1;
+    return will_decrease;
 
-  std::vector<Point> points; // @fixme array and reserve
+  // @todo looks too painful to copy all vertices just to exit very quickly usually.
+  // Check how it is done in newer triangulations
+  std::vector<Point> points;
+  points.reserve(number_of_vertices());
+
   All_vertices_iterator it = vertices_begin();
   for(; it!=vertices_end(); ++it)
   {
@@ -945,10 +945,10 @@ test_dim_down(Vertex_handle v)
 
   for(std::size_t i=0; i<points.size()-4; ++i)
   {
-    Orientation s = power_test(points.at(i), points.at(i+1), points.at(i+2), points.at(i+3)); // @fixme use []
-    dim1 = dim1 && s == ON_ORIENTED_BOUNDARY;
-    if(!dim1)
-      return dim1;
+    Orientation s = side_of_oriented_circle(points[i], points[i+1], points[i+2], points[i+3]);
+    will_decrease = will_decrease && s == ON_ORIENTED_BOUNDARY;
+    if(!will_decrease)
+      return will_decrease;
   }
 
   return true;
@@ -967,7 +967,7 @@ test_dim_up(const Point& p) const
   Vertex_handle v2 = f->vertex(1);
   Vertex_handle v3 = f->neighbor(0)->vertex(1);
 
-  return (power_test(point(v1), point(v2), point(v3), p) != ON_ORIENTED_BOUNDARY);
+  return (side_of_oriented_circle(point(v1), point(v2), point(v3), p) != ON_ORIENTED_BOUNDARY);
 }
 
 //fill the hole in a triangulation after vertex removal.
@@ -1058,7 +1058,7 @@ fill_hole_regular(std::list<Edge>& first_hole)
           p2 = p;
           cut_after=hit;
         }
-        else if(power_test(p0, p1, p2, p) == ON_POSITIVE_SIDE)
+        else if(side_of_oriented_circle(p0, p1, p2, p) == ON_POSITIVE_SIDE)
         {
           v2 = vv;
           p2 = p;

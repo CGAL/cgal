@@ -56,7 +56,7 @@ class Triangulation_on_sphere_2
 {
   friend std::istream& operator>> <>(std::istream& is, Triangulation_on_sphere_2& tr);
 
-  typedef Triangulation_on_sphere_2<Gt, Tds>         Self;
+  typedef Triangulation_on_sphere_2<Gt, Tds>      Self;
 
 public:
   typedef Tds                                     Triangulation_data_structure;
@@ -90,15 +90,15 @@ public:
   public:
     Ghost_tester() { }
     Ghost_tester(const Triangulation_on_sphere_2& tr) : tr(tr) { }
-    bool operator()(const All_faces_iterator& fit) const { return fit->is_ghost(); }
+    bool operator()(const All_faces_iterator& fit) const { return fit->ghost(); }
     bool operator()(const All_edges_iterator& eit) const
     {
       // int dim = t->dimension();
       Face_handle f = eit->first;
-      bool edge1 = f->is_ghost();
+      bool edge1 = f->ghost();
       Face_handle f2 = f->neighbor(eit->second);
-      // bool edge2b = f2->is_ghost();
-      bool edge2 = (f->neighbor(eit->second))->is_ghost();
+      // bool edge2b = f2->ghost();
+      bool edge2 = (f->neighbor(eit->second))->ghost();
       bool result = edge1 && edge2;
       return !result;
     }
@@ -114,8 +114,8 @@ public:
     bool operator()(const All_edges_iterator& eit) const
     {
       Face_handle f = eit->first;
-      bool edge1 = f->is_ghost();
-      bool edge2 = f->neighbor(eit->second)->is_ghost();
+      bool edge1 = f->ghost();
+      bool edge2 = f->neighbor(eit->second)->ghost();
       return edge1 != edge2;
     }
   };
@@ -155,8 +155,8 @@ protected:
 
 public:
   //-----------------------Creation-----------------------------------------------------------------
-  Triangulation_on_sphere_2(const Geom_traits& gt = Geom_traits());
-  Triangulation_on_sphere_2(const Point_3& center, const FT radius);
+  Triangulation_on_sphere_2(const Geom_traits& gt = Geom_traits()) : _gt(gt) { }
+  Triangulation_on_sphere_2(const Point_3& center, const FT radius) : _gt(center, radius) { }
   Triangulation_on_sphere_2(const Triangulation_on_sphere_2<Gt, Tds>& tr);
   void clear();
 
@@ -169,8 +169,8 @@ public:
   }
 
   // Assignement
-  Triangulation_on_sphere_2& operator=(Triangulation_on_sphere_2 tr);
   void swap(Triangulation_on_sphere_2& tr);
+  Triangulation_on_sphere_2& operator=(Triangulation_on_sphere_2 tr); // intentional copy
 
 public:
   // Members
@@ -198,7 +198,7 @@ public:
   const Point& point(const Face_handle f, const int i) const { return point(f->vertex(i)); }
 
   //-----------------------LOCATION-----------------------------------------------------------------
-  Face_handle march_locate_2D(Face_handle f, const Point& t,Locate_type& lt, int& li) const;
+  Face_handle march_locate_2D(Face_handle f, const Point& t, Locate_type& lt, int& li) const;
   Face_handle march_locate_1D(const Point& t, Locate_type& lt, int& li) const ;
   Face_handle locate(const Point& p, Locate_type& lt, int& li, Face_handle start) const;
   Face_handle locate(const Point& p, const Face_handle start) const;
@@ -207,10 +207,11 @@ public:
   //-----------------------PREDICATES---------------------------------------------------------------
   Orientation orientation(const Point& p, const Point& q, const Point& r, const Point& s) const;
   Orientation orientation(const Face_handle f, const Point& p) const;
+
   Orientation orientation_on_sphere(const Point& p, const Point& q, const Point& r) const;
   Orientation orientation_on_sphere(const Face_handle f) const;
 
-  Comparison_result compare_xyz(const Point& p, const Point& q) const;
+  Comparison_result compare(const Point& p, const Point& q) const;
   bool are_equal(const Point& p, const Point& q) const;
   bool collinear_between(const Point& p, const Point& q, const Point& r) const;
 
@@ -306,25 +307,12 @@ public:
   }
 };
 
-// CONSTRUCTORS
-template <typename Gt, typename Tds>
-Triangulation_on_sphere_2<Gt, Tds>::
-Triangulation_on_sphere_2(const Geom_traits& gt) : _gt(gt), _tds()
-{ }
-
-template <typename Gt, typename Tds>
-Triangulation_on_sphere_2<Gt, Tds>::
-Triangulation_on_sphere_2(const Point_3& center,
-                       const FT radius)
-  : _gt(center, radius), _tds()
-{ }
-
 // copy constructor duplicates vertices and faces
 template <typename Gt, typename Tds>
 Triangulation_on_sphere_2<Gt, Tds>::
 Triangulation_on_sphere_2(const Triangulation_on_sphere_2& tr)
   : _gt(tr.geom_traits()), _tds(tr.tds())
-{ } // @fixme _ghost ?
+{ } // @fixme _ghost is wrong
 
 template <typename Gt, typename Tds>
 void
@@ -336,15 +324,6 @@ clear()
 
 // Assignement
 template <typename Gt, typename Tds>
-Triangulation_on_sphere_2<Gt, Tds>&
-Triangulation_on_sphere_2<Gt, Tds>::
-operator=(Triangulation_on_sphere_2 tr) // intentional copy
-{
-  swap(tr);
-  return *this;
-}
-
-template <typename Gt, typename Tds>
 void
 Triangulation_on_sphere_2<Gt, Tds>::
 swap(Triangulation_on_sphere_2& tr)
@@ -354,10 +333,16 @@ swap(Triangulation_on_sphere_2& tr)
   std::swap(tr._ghost, _ghost); // @fixme doesn't look very safe
 }
 
-//--------------------------CHECKING---------------------------
+template <typename Gt, typename Tds>
+Triangulation_on_sphere_2<Gt, Tds>&
+Triangulation_on_sphere_2<Gt, Tds>::
+operator=(Triangulation_on_sphere_2 tr) // intentional copy
+{
+  swap(tr);
+  return *this;
+}
 
-// is_valid is used by in the instream method, Delaunay_tri...
-// has its own is_valid
+//--------------------------CHECKING---------------------------
 
 template <typename Gt, typename Tds>
 bool
@@ -378,9 +363,9 @@ is_valid(bool verbose,
     for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
     {
       const Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-      CGAL_assertion(s == LEFT_TURN || it->is_ghost());
+      CGAL_assertion(s == LEFT_TURN || it->ghost());
 
-      result = result && (s == LEFT_TURN || it->is_ghost());
+      result = result && (s == LEFT_TURN || it->ghost());
     }
 
     // check number of faces. This cannot be done by the TDS,
@@ -478,7 +463,7 @@ locate_edge(const Point& p,
     All_edges_iterator eit;
     for(eit=all_edges_begin(); eit!=all_edges_end(); ++eit)
     {
-      if(!eit->first->is_ghost())
+      if(!eit->first->ghost())
       {
         if(collinear_between(point(eit->first, 0), point(eit->first, 1), p))
         {
@@ -487,7 +472,7 @@ locate_edge(const Point& p,
         }
       }
 
-      if(eit->first->is_ghost())
+      if(eit->first->ghost())
         loc = eit->first;
     }
 
@@ -637,7 +622,7 @@ march_locate_2D(Face_handle f,
                 Locate_type& lt,
                 int& li) const
 {
-  CGAL_assertion(!f->is_ghost());
+  CGAL_assertion(!f->ghost());
 
   boost::rand48 rng;
   boost::uniform_smallint<> two(0, 1);
@@ -648,7 +633,7 @@ march_locate_2D(Face_handle f,
 
   for(;;)
   {
-    if(f->is_ghost())
+    if(f->ghost())
     {
       if(orientation(f, t) == ON_POSITIVE_SIDE) // conflict with the corresponding face
       {
@@ -667,7 +652,7 @@ march_locate_2D(Face_handle f,
           {
             lt = CONTOUR;
             li = 4;
-            test_distance(t, next, lt, li);
+            test_distance(t, next, lt, li); // @fixme should be done later once the whole conflit zone is known?
             return next;
           }
         }
@@ -838,13 +823,13 @@ march_locate_2D(Face_handle f,
     }
 
     //********FACE LOCATED************/
-    int sum = (o0 == COLLINEAR) + (o1 == COLLINEAR) + (o2 == COLLINEAR);
+    int sum =  ((o0 == COLLINEAR) ? 1 : 0)
+             + ((o1 == COLLINEAR) ? 1 : 0)
+             + ((o2 == COLLINEAR) ? 1 : 0);
 
     switch(sum)
     {
       case 0:
-      case -1:
-      case -2:
       {
         lt = FACE;
         li = 4;
@@ -862,10 +847,11 @@ march_locate_2D(Face_handle f,
         li = (o0 != COLLINEAR) ? 2 : (o1 != COLLINEAR) ? 0 : 1;
         break;
       }
-      case 3:
+      default:
       {
-        lt = FACE;
-        li = 4;
+        // impossible
+        CGAL_triangulation_assertion(false);
+        return f;
       }
     }
 
@@ -949,11 +935,11 @@ locate(const Point& p,
   if(start == Face_handle())
     start = all_faces_begin();
 
-  if(start->is_ghost())
+  if(start->ghost())
   {
     for(All_faces_iterator it = this->_tds.face_iterator_base_begin(); it !=all_faces_end(); it++)
     {
-      if(!it->is_ghost())
+      if(!it->ghost())
       {
         start = it;
         break;
@@ -1006,9 +992,9 @@ locate(const Point& p,
 template <typename Gt, typename Tds>
 Comparison_result
 Triangulation_on_sphere_2< Gt,  Tds>::
-compare_xyz(const Point& p, const Point& q) const
+compare(const Point& p, const Point& q) const
 {
-  return geom_traits().compare_xyz_3_object()(p, q);
+  return geom_traits().compare_on_sphere_2_object()(p, q);
 }
 
 template <class Gt, class Tds>
@@ -1043,8 +1029,6 @@ orientation_on_sphere(const Face_handle f) const
   return orientation_on_sphere(point(f, 0), point(f, 1), point(f, 2));
 }
 
-// returns true if p, q, and the center of the sphere are aligned
-// and if p (q) is located in the ray Oq (Op)
 template <typename Gt, typename Tds>
 inline bool
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -1122,7 +1106,7 @@ number_of_ghost_faces() const
 {
   std::size_t nb = 0;
   for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
-    if(it->is_ghost())
+    if(it->ghost())
       ++nb;
 
   return nb;
@@ -1143,7 +1127,7 @@ Triangulation_on_sphere_2<Gt, Tds>::
 show_face(Face_handle fh) const
 {
   std::cerr << "face : " << (void*)&(*fh) << " => " << std::endl;
-  if(fh->is_ghost()) std::cerr << "ghost " << std::endl;
+  if(fh->ghost()) std::cerr << "ghost " << std::endl;
 
   int i = fh->dimension();
   switch(i)

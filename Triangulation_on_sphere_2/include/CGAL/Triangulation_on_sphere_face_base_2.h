@@ -35,23 +35,19 @@ public:
   };
 
 public:
-  void set_in_conflict_flag(unsigned char f) { _in_conflict_flag = f; }
-  unsigned char get_in_conflict_flag() const { return _in_conflict_flag; }
+  bool& in_conflict() { return _in_conflict_flag; }
+  bool& ghost() { return _ghost_flag; }
 
 public:
   Triangulation_on_sphere_face_base_2()
-    : Fb(), _ghost(false)
-  {
-    set_in_conflict_flag(0);
-  }
+    : Fb(), _in_conflict_flag(false), _ghost_flag(false)
+  { }
 
   Triangulation_on_sphere_face_base_2(Vertex_handle v0,
                                       Vertex_handle v1,
                                       Vertex_handle v2)
-    : Fb(v0, v1, v2), _ghost(false)
-  {
-    set_in_conflict_flag(0);
-  }
+    : Fb(v0, v1, v2), _in_conflict_flag(false), _ghost_flag(false)
+  { }
 
   Triangulation_on_sphere_face_base_2(Vertex_handle v0,
                                       Vertex_handle v1,
@@ -59,17 +55,12 @@ public:
                                       Face_handle n0,
                                       Face_handle n1,
                                       Face_handle n2)
-    : Fb(v0, v1, v2, n0, n1, n2), _ghost(false)
-  {
-    set_in_conflict_flag(0);
-  }
-
-  bool is_ghost() const { return _ghost; }
-  bool& ghost() { return _ghost; }
+    : Fb(v0, v1, v2, n0, n1, n2), _in_conflict_flag(false), _ghost_flag(false)
+  { }
 
 protected:
-  bool _ghost;
-  unsigned char _in_conflict_flag;
+  bool _ghost_flag;
+  bool _in_conflict_flag;
 };
 
 } // namespace CGAL
