@@ -568,10 +568,6 @@ message("== Detect external libraries ==")
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindIPE, FindMKL, but they are only used to support supporting libs
 list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 0 GMP MPFR ZLIB OpenGL LEDA MPFI RS RS3 OpenNL Eigen3 ESBTL Coin3D NTL IPE)
-if (NOT WIN32)
-  # GMPXX is not supported on WIN32 machines
-  list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIBRARIES 1 GMPXX)
-endif()
 
 # Where CMake is run several times, to avoid duplicates
 list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIBRARIES)
@@ -611,8 +607,6 @@ if(CGAL_DISABLE_GMP)
   unset(WITH_GMP CACHE)
   unset(CGAL_USE_GMP)
   unset(CGAL_USE_GMP CACHE)
-  unset(WITH_GMPXX)
-  unset(WITH_GMPXX CACHE)
   unset(WITH_MPFR)
   unset(WITH_MPFR CACHE)
 
@@ -643,7 +637,6 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
     option(WITH_${lib} "Select external library ${lib}" ON)
   else()
     option(WITH_${lib} "Select external library ${lib}" OFF)
-  else() #GMPXX set in CGAL_SetupGMP.cmake
   endif()
 
 endforeach()
