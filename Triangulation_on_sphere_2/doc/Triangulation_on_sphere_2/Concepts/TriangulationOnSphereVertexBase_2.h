@@ -2,13 +2,12 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-The concept `TriangulationVertexBase_2` describes the requirements for the vertex base class
-of a triangulation data structure to be plugged in a Delaunay triangulation on the sphere.
-
-The concept `TriangulationVertexBase_2` refines the concept `TriangulationDSVertexBase_2`
-adding geometric information: the vertex base of a triangulation stores a point.
-
 \cgalRefines `TriangulationDSVertexBase_2`
+
+The concept `TriangulationOnSphereVertexBase_2` describes the requirements for the vertex base class
+of a triangulation data structure to be plugged in a Delaunay triangulation on the sphere.
+It refines the concept `TriangulationDSVertexBase_2`, adding geometric information:
+the vertex base of a triangulation stores a point.
 
 \cgalHasModel `CGAL::Triangulation_on_sphere_vertex_base_2<Traits,Vb>`
 
@@ -18,13 +17,11 @@ adding geometric information: the vertex base of a triangulation stores a point.
 class TriangulationOnSphereVertexBase_2
 {
 public:
-
   /// \name Types
   /// @{
 
   /*!
-  Must be the same as the point type `DelaunayTriangulationOnSphereTraits_2::Point_on_sphere`
-  defined by the geometric traits class of the Delaunay triangulation.
+  Must be the equivalent to the point type `Point_on_sphere` of the concept `TriangulationOnSphereTraits_2`
   */
   typedef unspecified_type Point;
 
