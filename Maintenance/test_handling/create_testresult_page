@@ -48,9 +48,10 @@ sub sort_releases($$)
     my $b = $_[0];
     my $a = $_[1];
 
-    #take only the numbers from release id, skipping I and Ic
-    my @A = ($a =~ /\d+/g);
-    my @B = ($b =~ /\d+/g);
+    #take only the numbers from release id, skipping the bug-fix
+    #number, and I and Ic
+    my @A = ($a =~ /(\d+)\.(\d+)\.?(:?\d+)?(:?-Ic?-)?(\d+)?/a);
+    my @B = ($b =~ /(\d+)\.(\d+)\.?(:?\d+)?(:?-Ic?-)?(\d+)?/a);
 
     while(@A and @B) {
         my $av = shift(@A);
@@ -67,8 +68,8 @@ sub write_selects()
     print OUTPUTV "<p>You can browse the test results of a different version :</p>";
     my %releases;
     foreach $_  (glob("results-*.shtml")) {
-        $_ =~ /results-([^I]*)((-Ic?)-([^I].*))\.shtml/;
-        $releases{"$1$3"}=1;
+        $_ =~ /results-(\d+.\d+)([^I]*)((-Ic?)-([^I].*))\.shtml/a;
+        $releases{"$1"}=1;
     }
     print OUTPUTV "<table><tr>\n";
     print OUTPUTV "  <th>All releases (<a href=\"${test_results_url}\">last one</a>)</th>\n";
@@ -79,7 +80,7 @@ sub write_selects()
     }
     print OUTPUTV "</tr>\n";
     print OUTPUTV "<tr>\n";
-    write_select("sel", ".*");
+    write_select("sel");
     $count = 0;
     foreach $_ (sort sort_releases (keys %releases)) {
         write_select("sel" . $count, $_);
@@ -91,19 +92,27 @@ sub write_selects()
 sub write_select()
 {
   my $id = shift(@_);
-  my $pattern = shift(@_);
+  my $pattern = ".*";
+  if (@_ != 0)  {
+      $pattern = quotemeta(shift(@_));
+  }
   my($filename, @result);
   print OUTPUTV "  <td><select id=\"$id\" onchange=\"sel=document.getElementById(\'$id\'); top.location.href=sel.options[sel.selectedIndex].value\">\n";
 
-  print OUTPUTV '<option value="">', "</option>\n";
-  foreach $_ (sort sort_releases (glob("results-*.shtml"))) {
-      $_ =~ /results-${pattern}(-.*|)\.shtml/ || next;
+  print OUTPUTV '<option disabled selected value="">(select a release)', "</option>\n";
+  my %results;
+  foreach $_ (glob("results-*.shtml")) {
+      my $ctime = (stat($_))[10];
+      $results{$_} = $ctime;
+  }
+  foreach $_ (sort { $results{$b} <=> $results{$a} } keys %results) {
+      $_ =~ /results-${pattern}(\.\d+)?(-.*|)\.shtml/ || next;
       my $ctime = (stat($_))[10];
       my $date = time2str('%a %Y/%m/%d', $ctime);
      print OUTPUTV '<option value="', $_, '">';
      ($filename) = m/results-(.*?)\.shtml\s*/;
 #     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;
-     printf OUTPUTV '%2$s: %1$s</option>
+     printf OUTPUTV '%1$s  (%2$s)</option>
 ', $filename, $date;
   }
   print OUTPUTV "</select></td>";
