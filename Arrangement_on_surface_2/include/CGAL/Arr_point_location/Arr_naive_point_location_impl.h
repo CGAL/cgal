@@ -34,23 +34,19 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
 {
   // Go over the arrangement vertices and check whether one of them equals
   // the query point.
-  typename Traits_adaptor_2::Equal_2 equal = geom_traits->equal_2_object();
+  auto equal = geom_traits->equal_2_object();
 
-  typename Arrangement_2::Vertex_const_iterator vit;
-  for (vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
+  for (auto vit = p_arr->vertices_begin(); vit != p_arr->vertices_end(); ++vit) {
     Vertex_const_handle vh = vit;
     if (equal(p, vh->point())) return make_result(vh);
   }
 
   // Go over arrangement halfedges and check whether one of them contains
   // the query point in its interior.
-  typename Traits_adaptor_2::Is_in_x_range_2 is_in_x_range =
-    geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 compare_y_at_x =
-    geom_traits->compare_y_at_x_2_object();
+  auto is_in_x_range = geom_traits->is_in_x_range_2_object();
+  auto compare_y_at_x = geom_traits->compare_y_at_x_2_object();
 
-  typename Arrangement_2::Edge_const_iterator eit;
-  for (eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit) {
+  for (auto eit = p_arr->edges_begin(); eit != p_arr->edges_end(); ++eit) {
     Halfedge_const_handle hh = eit;
     if (is_in_x_range(hh->curve(), p) && compare_y_at_x(p, hh->curve()) == EQUAL)
       return make_result(hh);
@@ -61,10 +57,8 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
   Face_const_handle f_inner;
   const Face_const_handle invalid_f;
 
-  typename Arrangement_2::Face_const_iterator fit;
-  for (fit = p_arr->faces_begin(); fit != p_arr->faces_end(); ++fit) {
+  for (auto fit = p_arr->faces_begin(); fit != p_arr->faces_end(); ++fit) {
     Face_const_handle fh = fit;
-
     if (top_traits->is_in_face(&(*fh), p, nullptr)) {
       // The current face contains p in its interior.
       if (f_inner == invalid_f ||
@@ -83,11 +77,10 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
         // This is a workaround for MSVC. For some reason the compiler barfs
         // when the iterator is not saved in a variable and only then the
         // source() of its value_type is accessed.
-        typename Arrangement_2::Outer_ccb_const_iterator it =
-          fh->outer_ccbs_begin();
+        auto it = fh->outer_ccbs_begin();
         Vertex_const_handle v = (*it)->source();
-
-        if (top_traits->is_in_face(&(*f_inner), v->point(), nullptr)) f_inner = fh;
+        if (top_traits->is_in_face(&(*f_inner), v->point(), nullptr))
+          f_inner = fh;
       }
     }
   }

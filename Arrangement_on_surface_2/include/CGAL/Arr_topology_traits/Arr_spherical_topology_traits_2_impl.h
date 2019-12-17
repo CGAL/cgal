@@ -155,7 +155,6 @@ template <typename GeomTraits, typename Dcel>
 bool Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
 {
-  // std::cout << "is_in_face()" << std::endl;
   CGAL_precondition((v == nullptr) || !v->has_null_point());
   CGAL_precondition((v == nullptr) ||
                     m_geom_traits->equal_2_object()(p, v->point()));
@@ -169,7 +168,8 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
    */
 #if 0
   std::cout << "p: " << p
-            << ", f->number_of_outer_ccbs(): " << f->number_of_outer_ccbs()
+            << ", # outer_ccbs: " << f->number_of_outer_ccbs()
+            << ", # inner ccbs: " << f->number_of_inner_ccbs()
             << std::endl;
 #endif
   if (f->number_of_outer_ccbs() == 0) return true;
@@ -183,16 +183,13 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
    * return false;
    */
 
-  typename Gt_adaptor_2::Parameter_space_in_x_2 ps_x_op =
-    m_geom_traits->parameter_space_in_x_2_object();
-  typename Gt_adaptor_2::Parameter_space_in_y_2 ps_y_op =
-    m_geom_traits->parameter_space_in_y_2_object();
-  typename Gt_adaptor_2::Compare_x_2 cmp_x_op =
-    m_geom_traits->compare_x_2_object();
-  typename Gt_adaptor_2::Compare_y_at_x_2 cmp_y_at_x_op =
-    m_geom_traits->compare_y_at_x_2_object();
-  typename Gt_adaptor_2::Compare_x_point_curve_end_2 cmp_x_pt_ce =
-    m_geom_traits->compare_x_point_curve_end_2_object();
+  auto ps_x_op = m_geom_traits->parameter_space_in_x_2_object();
+  auto ps_y_op = m_geom_traits->parameter_space_in_y_2_object();
+  auto cmp_x_op = m_geom_traits->compare_x_2_object();
+  auto cmp_y_at_x_op = m_geom_traits->compare_y_at_x_2_object();
+  auto cmp_x_pt_ce = m_geom_traits->compare_x_point_curve_end_2_object();
+  auto is_vertical = m_geom_traits->is_vertical_2_object();
+  auto is_on_y_identification = m_geom_traits->is_on_y_identification_2_object();
 
   // Process the input point.
   bool p_is_interior_x = !(m_geom_traits->is_on_y_identification_2_object()(p));
@@ -206,8 +203,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
   /* Traverse all outer CCBs of the face. For each boundary component go over
    * all its halfedges, and count those which are above p.
    */
-  typename Face::Outer_ccb_const_iterator oit;
-  for (oit = f->outer_ccbs_begin(); oit != f->outer_ccbs_end(); ++oit) {
+  for (auto oit = f->outer_ccbs_begin(); oit != f->outer_ccbs_end(); ++oit) {
     const Halfedge* first = *oit;
     const Halfedge* curr = first;
 
@@ -243,13 +239,19 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
      */
     bool last_pending = false;
 
-    Comparison_result res_pending = EQUAL, res_last = EQUAL,
-      res_source = EQUAL, res_target;
-    Arr_parameter_space ps_x_pending = ARR_INTERIOR, ps_x_last = ARR_INTERIOR,
-      ps_x_source, ps_x_target = ARR_INTERIOR,
-      ps_y_source, ps_y_target;
+    Comparison_result res_pending(EQUAL);
+    Comparison_result res_last(EQUAL);
+    Comparison_result res_source(EQUAL);
+    Comparison_result res_target;
+    Arr_parameter_space ps_x_pending(ARR_INTERIOR);
+    Arr_parameter_space ps_x_last(ARR_INTERIOR);
+    Arr_parameter_space ps_x_source;
+    Arr_parameter_space ps_x_target(ARR_INTERIOR);
+    Arr_parameter_space ps_y_source;
+    Arr_parameter_space ps_y_target;
 
     do {
+
       /* Compare p to the target vertex of the current halfedge. If the
        * vertex v is on the boundary of the component, p is not in the interior
        * the face.
@@ -257,22 +259,47 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       if (curr->vertex() == v) return false;
 
       // Ignore vertical curves:
-      bool is_vertical = m_geom_traits->is_vertical_2_object()(curr->curve());
-      if (is_vertical) {
+      if (is_vertical(curr->curve())) {
         /* If this outer ccb chain contains the north pole, and our point
          * lies horizontaly between the two vertical curves that meet at
          * the north pole, increase the intersection counter
          */
         if (curr->direction() == ARR_LEFT_TO_RIGHT) {
-          Arr_parameter_space ps_y_1 = ps_y_op(curr->curve(), ARR_MAX_END);
-          Arr_parameter_space ps_y_2 = ps_y_op(curr->next()->curve(),
-                                               ARR_MAX_END);
+          auto ps_y_1 = ps_y_op(curr->curve(), ARR_MAX_END);
+          auto ps_y_2 = ps_y_op(curr->next()->curve(), ARR_MAX_END);
           if ((ps_y_1 == ARR_TOP_BOUNDARY) && (ps_y_2 == ARR_TOP_BOUNDARY)) {
             // Compare the x-coordinates:
-            Comparison_result rc1 =
-              cmp_x_pt_ce(p, curr->curve(), ARR_MAX_END);
-            Comparison_result rc2 =
-              cmp_x_pt_ce(p, curr->next()->curve(), ARR_MAX_END);
+            const auto& cv1 = curr->curve();
+            const auto& cv2 = curr->next()->curve();
+            Comparison_result rc1, rc2;
+            if (is_on_y_identification(cv1)) {
+              // -----------
+              // |     |  |<---- cv1 go
+              // |     |  ||
+              // |     |   |
+              // -----------
+              // cv1 coincide with the identification curve. In this case we
+              // consider the identification to be on the right. All (interior)
+              // points are smaller then the right boundary.
+              rc1 = SMALLER;
+              rc2 = cmp_x_pt_ce(p, cv2, ARR_MAX_END);
+            }
+            else if (is_on_y_identification(cv2)) {
+              //       -----------
+              // cv2--->|  |     |
+              //       ||  |     |
+              //       |   |     |
+              //       -----------
+              // cv2 coincide with the identification curve. In this case we
+              // consider the identification to be on the left. All (interior)
+              // points are larger then the left boundary.
+              rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
+              rc2 = LARGER;
+            }
+            else {
+              rc1 = cmp_x_pt_ce(p, cv1, ARR_MAX_END);
+              rc2 = cmp_x_pt_ce(p, cv2, ARR_MAX_END);
+            }
             if (rc1 == opposite(rc2)) ++num_intersections;
           }
         }
@@ -328,7 +355,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
             if (ps_x_pending == ps_x_source) {
               Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
               if (res_y_at_x == EQUAL) return false;
-              if (res_y_at_x == SMALLER) num_intersections++;
+              if (res_y_at_x == SMALLER) ++num_intersections;
             }
           } else {
             // This must be the first curve. Remember to check the last curve
@@ -371,7 +398,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
           if (res_pending == res_target) {
             Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
             if (res_y_at_x == EQUAL) return false;
-            if (res_y_at_x == SMALLER) num_intersections++;
+            if (res_y_at_x == SMALLER) ++num_intersections;
           }
         } else {
           // This must be the first curve. Remember to check the last curve
@@ -391,7 +418,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
         if (ps_x_last == ps_x_target) {
           Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
           if (res_y_at_x == EQUAL) return false;
-          if (res_y_at_x == SMALLER) num_intersections++;
+          if (res_y_at_x == SMALLER) ++num_intersections;
         }
         continue;
       }
@@ -399,7 +426,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       if (res_last == res_source) {
         Comparison_result res_y_at_x = cmp_y_at_x_op(p, curr->curve());
         if (res_y_at_x == EQUAL) return false;
-        if (res_y_at_x == SMALLER) num_intersections++;
+        if (res_y_at_x == SMALLER) ++num_intersections;
       }
     }
   }
