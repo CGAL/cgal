@@ -204,7 +204,6 @@ public:
       m_has_left_pt = true;
       m_left_on_boundary = (bx1 != ARR_INTERIOR || by1 != ARR_INTERIOR);
       m_left_pt = m_geom_traits->construct_min_vertex_2_object()(m_cv);
-
       m_obj = pl.locate(m_left_pt);
     }
     else {
@@ -272,58 +271,6 @@ private:
   bool do_overlap_impl(const X_monotone_curve_2& cv1,
                        const X_monotone_curve_2& cv2,
                        const Point_2& p, Arr_not_all_sides_oblivious_tag) const;
-
-  /* Check whether the given query curve is encountered when rotating the
-   * first curve in a clockwise direction around a given point until reaching
-   * the second curve.
-   * \pre p == min_point(xcv)
-   * \pre p == min_point(xcv1)
-   * \pre p == min_point(cxv2)
-   * \pre xcv_to_right == TRUE
-   * \todo move this function to a more accessible place so that it can be reused
-   */
-  bool is_between_cw(const X_monotone_curve_2& xcv, bool xcv_to_right,
-                     const X_monotone_curve_2& xcv1, bool xcv1_to_right,
-                     const X_monotone_curve_2& xcv2, bool xcv2_to_right,
-                     const Point_2& p,
-                     bool& xcv_equal_xcv1, bool& xcv_equal_xcv2) const
-  {
-    return is_between_cw_impl(xcv, xcv_to_right,
-                              xcv1, xcv1_to_right,
-                              xcv2, xcv2_to_right,
-                              p, xcv_equal_xcv1, xcv_equal_xcv2,
-                              Are_all_sides_oblivious_category());
-  }
-
-  /* Check whether the given query curve is encountered when rotating the
-   * first curve in a clockwise direction around a given point until reaching
-   * the second curve.
-   */
-  bool is_between_cw_impl(const X_monotone_curve_2& xcv, bool xcv_to_right,
-                          const X_monotone_curve_2& xcv1, bool xcv1_to_right,
-                          const X_monotone_curve_2& xcv2, bool xcv2_to_right,
-                          const Point_2& p,
-                          bool& xcv_equal_xcv1, bool& xcv_equal_xcv2,
-                          Arr_all_sides_oblivious_tag) const
-  {
-    return m_geom_traits->is_between_cw_2_object()(xcv, xcv_to_right,
-                                                   xcv1, xcv1_to_right,
-                                                   xcv2, xcv2_to_right,
-                                                   p,
-                                                   xcv_equal_xcv1,
-                                                   xcv_equal_xcv2);
-  }
-
-  /* Check whether the given query curve is encountered when rotating the
-   * first curve in a clockwise direction around a given point until reaching
-   * the second curve.
-   */
-  bool is_between_cw_impl(const X_monotone_curve_2& xcv, bool xcv_to_right,
-                          const X_monotone_curve_2& xcv1, bool xcv1_to_right,
-                          const X_monotone_curve_2& xcv2, bool xcv2_to_right,
-                          const Point_2& p,
-                          bool& xcv_equal_xcv1, bool& xcv_equal_xcv2,
-                          Arr_not_all_sides_oblivious_tag) const;
 
   /*! Find a face containing the query curve m_cv around the given vertex.
    * In case an overlap occurs, sets m_intersect_he to be the overlapping edge.

@@ -204,8 +204,8 @@ public:
         (ps_x1 != ARR_INTERIOR ? ARR_INTERIOR : ps_y(xcv1, ARR_MIN_END));
       const bool has_left1 = (ps_x1 == ARR_INTERIOR && ps_y1 == ARR_INTERIOR);
 
-      const Arr_parameter_space  ps_x2 = ps_x(xcv2, ARR_MIN_END);
-      const Arr_parameter_space  ps_y2 =
+      const Arr_parameter_space ps_x2 = ps_x(xcv2, ARR_MIN_END);
+      const Arr_parameter_space ps_y2 =
         (ps_x2 != ARR_INTERIOR ? ARR_INTERIOR : ps_y(xcv2, ARR_MIN_END));
       const bool has_left2 = (ps_x2 == ARR_INTERIOR && ps_y2 == ARR_INTERIOR);
 
@@ -868,7 +868,7 @@ public:
                                     Arr_boundary_side_tag) const
     { CGAL_error(); return SMALLER; }
 
-    /*! Implementation for the case the the base should be used. */
+    /*! Implementation for the case the base should be used. */
     Comparison_result comp_x_on_bnd(const Point_2& pt,
                                     const X_monotone_curve_2& xcv,
                                     Arr_curve_end ce,
@@ -882,7 +882,7 @@ public:
                                     Arr_all_sides_oblivious_tag) const
     { CGAL_error(); return SMALLER; }
 
-    /*! Implementation for the case the the base should be used. */
+    /*! Implementation for the case the base should be used. */
     Comparison_result comp_x_on_bnd(const X_monotone_curve_2& xcv1,
                                     Arr_curve_end ce1,
                                     const X_monotone_curve_2& xcv2,
@@ -1092,15 +1092,15 @@ public:
     {
       // pt must be interior
       // xcv,ce must be bottom or top
-      CGAL_precondition
-        (m_self->parameter_space_in_y_2_object()(pt) == ARR_INTERIOR);
-      CGAL_precondition_code(Arr_parameter_space ps_y2 =
-                             m_self->parameter_space_in_y_2_object()(xcv,ce));
+      CGAL_precondition_code(auto ps_in_y =
+                             m_self->parameter_space_in_y_2_object());
+      CGAL_precondition(ps_in_y(pt) == ARR_INTERIOR);
+      CGAL_precondition_code(auto ps_y2 = ps_in_y(xcv,ce));
       CGAL_precondition((ps_y2 == ARR_BOTTOM_BOUNDARY) ||
                         (ps_y2 == ARR_TOP_BOUNDARY));
 
-      Comparison_result res =
-        m_self->compare_x_on_boundary_2_object()(pt, xcv, ce);
+      auto ps_in_x = m_self->compare_x_on_boundary_2_object();
+      Comparison_result res = ps_in_x(pt, xcv, ce);
       if ((res != EQUAL) || m_self->is_vertical_2_object()(xcv)) return res;
 
       // look at the side from which the
@@ -1963,9 +1963,8 @@ public:
       }
 
       // In this case we compare two normal points.
-      Compare_xy_2            compare_xy = m_self->compare_xy_2_object();
-      Compare_y_at_x_right_2  compare_y_at_x_right =
-        m_self->compare_y_at_x_right_2_object();
+      auto compare_xy = m_self->compare_xy_2_object();
+      auto compare_y_at_x_right = m_self->compare_y_at_x_right_2_object();
 
       // Obtain the left endpoints of xcv1 and xcv2.
       const Point_2& left1 = min_vertex(xcv1);
@@ -2020,8 +2019,7 @@ public:
 
   class Is_between_cw_2 {
   public:
-    /*!
-     * Check whether the given query curve is encountered when rotating the
+    /*! Check whether the given query curve is encountered when rotating the
      * first curve in a clockwise direction around a given point until reaching
      * the second curve.
      * \param xcv The query curve.
@@ -2040,133 +2038,66 @@ public:
      *         If xcv1 and xcv2 overlap, the result is (true), unless xcv
      *         also overlaps them.
      */
-    bool operator()(const X_monotone_curve_2& xcv, bool xcv_to_right,
-                     const X_monotone_curve_2& xcv1, bool xcv1_to_right,
-                     const X_monotone_curve_2& xcv2, bool xcv2_to_right,
-                     const Point_2& p,
-                     bool& xcv_equal_xcv1,
-                     bool& xcv_equal_xcv2) const
+    bool operator()(const X_monotone_curve_2& cv, bool cv_to_right,
+                    const X_monotone_curve_2& cv1, bool cv1_to_right,
+                    const X_monotone_curve_2& cv2, bool cv2_to_right,
+                    const Point_2& p,
+                    bool& cv_equal_cv1, bool& cv_equal_cv2) const
     {
-      Compare_y_at_x_left_2 compare_y_at_x_left =
-        m_self->compare_y_at_x_left_2_object();
-      Compare_y_at_x_right_2 compare_y_at_x_right =
-        m_self->compare_y_at_x_right_2_object();
+      std::cout << "is_between(" << std::endl
+                << "  " << cv << "," << cv_to_right << "," << std::endl
+                << "  " << cv1 << "," << cv1_to_right << "," << std::endl
+                << "  " << cv2 << "," << cv2_to_right << "," << std::endl
+                << "  " << p
+                << ")" << std::endl;
 
-      // Initialize output flags.
-      xcv_equal_xcv1 = false;
-      xcv_equal_xcv2 = false;
+      auto equal = m_self->equal_2_object();
+      auto min_vertex = m_self->construct_min_vertex_2_object();
+      auto max_vertex = m_self->construct_max_vertex_2_object();
+      const auto q = (cv_to_right) ? min_vertex(cv) : max_vertex(cv);
+      const auto q1 = (cv1_to_right) ? min_vertex(cv1) : max_vertex(cv1);
+      const auto q2 = (cv2_to_right) ? min_vertex(cv2) : max_vertex(cv2);
+      CGAL_assertion(equal(p, q));
+      CGAL_assertion(equal(p, q1));
+      CGAL_assertion(equal(p, q2));
 
-      // Take care of the general 4 cases:
-      Comparison_result l_res, r_res;
-      Comparison_result res1, res2;
+      auto left_right_category = Left_or_right_sides_category();
+      auto bottom_top_category = Bottom_or_top_sides_category();
 
-      if (!xcv1_to_right && !xcv2_to_right) {
-        // Case 1: Both xcv1 and xcv2 are defined to the left of p.
-        l_res = compare_y_at_x_left(xcv1, xcv2, p);
+      cv_equal_cv1 = false;
+      cv_equal_cv2 = false;
 
-        if (l_res == LARGER) {
-          // Case 1(a) : xcv1 is above xcv2.
-          if (!xcv_to_right) {
-            res1 = compare_y_at_x_left(xcv1, xcv, p);
-            res2 = compare_y_at_x_left(xcv2, xcv, p);
-            if (res1 == EQUAL) xcv_equal_xcv1 = true;
-            if (res2 == EQUAL) xcv_equal_xcv2 = true;
-            return (res1 == SMALLER || res2 == LARGER);
+      if (cv_to_right) {
+        if (cv1_to_right) {
+          if (cv2_to_right) {
+            return is_between_rrr(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                                  left_right_category, bottom_top_category);
           }
-          return true;
+          return is_between_rrl(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                                left_right_category, bottom_top_category);
         }
-
-        if (l_res == SMALLER) {
-          // Case 1(b): xcv1 is below xcv2.
-          if (!xcv_to_right) {
-            res1 = compare_y_at_x_left(xcv1, xcv, p);
-            res2 = compare_y_at_x_left(xcv2, xcv, p);
-            if (res1 == EQUAL) xcv_equal_xcv1 = true;
-            if (res2 == EQUAL) xcv_equal_xcv2 = true;
-            return (res1 == SMALLER && res2  == LARGER);
-          }
-          return false;
+        if (cv2_to_right) {
+          return is_between_rlr(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                                left_right_category, bottom_top_category);
         }
-
-        // Overlapping segments.
-        if (!xcv_to_right) {
-          res1 = compare_y_at_x_left(xcv1, xcv, p);
-          if (res1 == EQUAL) {
-            xcv_equal_xcv1 = true;
-            xcv_equal_xcv2 = true;
-            return false;
-          }
-          return true;
-        }
-        return true;
+        return is_between_rll(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              left_right_category, bottom_top_category);
       }
-
-      if (xcv1_to_right && xcv2_to_right) {
-        // Case 2: Both xcv1 and xcv2 are defined to the right of p.
-        r_res = compare_y_at_x_right(xcv1, xcv2, p);
-
-        if (r_res == LARGER) {
-          // Case 2(a) : xcv1 is above xcv2.
-          if (xcv_to_right) {
-            res1 = compare_y_at_x_right(xcv1, xcv, p);
-            res2 = compare_y_at_x_right(xcv2, xcv, p);
-            if (res1 == EQUAL) xcv_equal_xcv1 = true;
-            if (res2 == EQUAL) xcv_equal_xcv2 = true;
-            return (res1 == LARGER && res2 == SMALLER);
-          }
-          return false;
+      if (cv1_to_right) {
+        if (cv2_to_right) {
+          return is_between_lrr(cv, cv1, cv2, p,
+                                cv_equal_cv1, cv_equal_cv2,
+                                left_right_category, bottom_top_category);
         }
-
-        if (r_res == SMALLER) {
-          // Case 2(b): xcv1 is below xcv2.
-          if (xcv_to_right) {
-            res1 = compare_y_at_x_right(xcv1, xcv, p);
-            res2 = compare_y_at_x_right(xcv2, xcv, p);
-            if (res1 == EQUAL) xcv_equal_xcv1 = true;
-            if (res2 == EQUAL) xcv_equal_xcv2 = true;
-            return ((res1 == LARGER) || (res2 == SMALLER));
-          }
-          return true;
-        }
-
-        // Overlapping segments.
-        if (xcv_to_right) {
-          res1 = compare_y_at_x_right(xcv1, xcv, p);
-          if (res1 == EQUAL) {
-            xcv_equal_xcv1 = true;
-            xcv_equal_xcv2 = true;
-            return false;
-          }
-          return true;
-        }
-        return true;
+        return is_between_lrl(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              left_right_category, bottom_top_category);
       }
-
-      if (!xcv1_to_right && xcv2_to_right) {
-        // Case 3: xcv1 is defined to the left of p, and xcv2 to its right.
-        if (!xcv_to_right) {
-          res1 = compare_y_at_x_left(xcv1, xcv, p);
-          if (res1 == EQUAL) xcv_equal_xcv1 = true;
-          return (res1 == SMALLER);
-        }
-
-        res2 = compare_y_at_x_right(xcv2, xcv, p);
-        if (res2 == EQUAL) xcv_equal_xcv2 = true;
-        return (res2 == SMALLER);
+      if (cv2_to_right) {
+        return is_between_llr(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                              left_right_category, bottom_top_category);
       }
-
-      CGAL_assertion(xcv1_to_right && !xcv2_to_right);
-
-      // Case 4: xcv1 is defined to the right of p, and xcv2 to its left.
-      if (xcv_to_right) {
-	res1 = compare_y_at_x_right(xcv1, xcv, p);
-	if (res1 == EQUAL) xcv_equal_xcv1 = true;
-	return (res1  == LARGER);
-      }
-
-      res2 = compare_y_at_x_left(xcv2, xcv, p);
-      if (res2 == EQUAL) xcv_equal_xcv2 = true;
-      return (res2 == LARGER);
+      return is_between_lll(cv, cv1, cv2, p, cv_equal_cv1, cv_equal_cv2,
+                            left_right_category, bottom_top_category);
     }
 
   protected:
@@ -2184,6 +2115,777 @@ public:
 
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_traits_basic_adaptor_2<Base>;
+
+  private:
+    /* Case 1
+     * cv, cv1, and cv2 are to the right
+     *
+     *          o
+     *         /
+     *        /
+     *       o----o
+     *        \
+     *         \
+     *          o
+     */
+
+    /* All curves are to the right.
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_rrr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto compare_y_at_x_right = m_self->compare_y_at_x_right_2_object();
+
+      auto res1 = compare_y_at_x_right(cv, cv1, p);
+      auto res2 = compare_y_at_x_right(cv, cv2, p);
+      if (res1 == EQUAL) cv_equal_cv1 = true;
+      if (res2 == EQUAL) cv_equal_cv2 = true;
+      if (cv_equal_cv1 || cv_equal_cv2) return false;
+
+      auto res = compare_y_at_x_right(cv1, cv2, p);
+      if (res == LARGER)
+        // cv1 is above cv2.
+        return ((res1 == SMALLER) && (res2 == LARGER));
+
+      if (res == SMALLER)
+        // cv1 is below cv2.
+        return ((res1 == SMALLER) || (res2 == LARGER));
+
+      // res == EQUAL && res1 != EQUAL && res2 != EQUAL
+      return true;
+    }
+
+    /* All curves are to the right.
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sided are contracted.
+     * \pre p cannot lie on the top boundary
+     */
+    bool is_between_rrr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_x_on_bd = m_self->compare_x_on_boundary_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion(psy != ARR_TOP_BOUNDARY);
+
+      auto on_y_idnt = is_on_y_identification(cv);
+      auto on_y_idnt1 = is_on_y_identification(cv1);
+      auto on_y_idnt2 = is_on_y_identification(cv2);
+
+      if (on_y_idnt) {
+        if (on_y_idnt1) cv_equal_cv1 = true;
+        if (on_y_idnt2) cv_equal_cv2 = true;
+        if (cv_equal_cv1 || cv_equal_cv2) return false;
+
+        if (psy == ARR_BOTTOM_BOUNDARY) {
+          auto res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
+          return (res != SMALLER);
+        }
+        auto res = cmp_y_near_bd(cv1, cv2, ARR_MIN_END);
+        return (res != LARGER);
+      }
+
+      if (on_y_idnt1) {
+        if (psy == ARR_BOTTOM_BOUNDARY) {
+          auto res = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
+          if (res == EQUAL) cv_equal_cv2 = true;
+          return (res == SMALLER);
+        }
+        auto res = cmp_y_near_bd(cv, cv2, ARR_MIN_END);
+        if (res == EQUAL) cv_equal_cv2 = true;
+        return (res == LARGER);
+      }
+
+      if (on_y_idnt2) {
+        if (psy == ARR_BOTTOM_BOUNDARY) {
+          auto res = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
+          if (res == EQUAL) cv_equal_cv1 = true;
+          return (res == LARGER);
+        }
+        auto res = cmp_y_near_bd(cv, cv1, ARR_MIN_END);
+        if (res == EQUAL) cv_equal_cv1 = true;
+        return (res == SMALLER);
+      }
+
+      // None of the curves coincide with the identification curve
+      auto psx = ps_in_x(cv, ARR_MIN_END);
+      if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
+        return is_between_rrr(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+      if (psy == ARR_BOTTOM_BOUNDARY) {
+        auto res = cmp_x_on_bd(cv1, ARR_MIN_END, cv2, ARR_MIN_END);
+        auto res1 = cmp_x_on_bd(cv, ARR_MIN_END, cv1, ARR_MIN_END);
+        auto res2 = cmp_x_on_bd(cv, ARR_MIN_END, cv2, ARR_MIN_END);
+        if (res1 == EQUAL) cv_equal_cv1 = true;
+        if (res2 == EQUAL) cv_equal_cv2 = true;
+        if (cv_equal_cv1 || cv_equal_cv2) return false;
+        if (res == SMALLER)
+          // cv1 is left of cv2
+          return ((res1 == LARGER) && (res2 == SMALLER));
+
+        if (res == LARGER)
+          // cv1 is right of cv2
+          return ((res1 == LARGER) || (res2 == SMALLER));
+
+        // res == EQUAL
+        return true;
+      }
+      auto res = cmp_y_near_bd(cv1, cv2, ARR_MIN_END);
+      auto res1 = cmp_y_near_bd(cv, cv1, ARR_MIN_END);
+      auto res2 = cmp_y_near_bd(cv, cv2, ARR_MIN_END);
+      if (res1 == EQUAL) cv_equal_cv1 = true;
+      if (res2 == EQUAL) cv_equal_cv2 = true;
+      if (cv_equal_cv1 || cv_equal_cv2) return false;
+      if (res == LARGER)
+        // cv1 is above cv2
+        return ((res1 == SMALLER) && (res2 == LARGER));
+
+      if (res == SMALLER)
+        // cv2 is above cv1
+        return ((res1 == SMALLER) || (res2 == LARGER));
+
+      // res == EQUAL
+      return true;
+    }
+
+    /* Case 2
+     * cv to the left, cv1 and cv2 are to the right
+     *
+     *         o
+     *        /
+     *  cv   /
+     * o----o
+     *       \
+     *        \
+     *         o
+     */
+
+    /* cv to the left, cv1 and cv2 to the right
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_lrr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto cmp_y_at_x_right = m_self->compare_y_at_x_right_2_object();
+      auto res = cmp_y_at_x_right(cv1, cv2, p);
+      return (res != LARGER);
+    }
+
+    /* cv to the left, cv1 and cv2 to the right
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sides are contracted
+     * \pre p cannot lie on the bottom or top boundaries
+     */
+    bool is_between_lrr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      auto psy = ps_in_y(cv, ARR_MAX_END);
+      CGAL_assertion(psy == ARR_INTERIOR);
+
+      auto on_y_idnt1 = is_on_y_identification(cv1);
+      auto on_y_idnt2 = is_on_y_identification(cv2);
+      if (on_y_idnt1 && on_y_idnt2) return true;
+      if (on_y_idnt1) return false;
+      if (on_y_idnt2) return true;
+
+      auto psx1 = ps_in_x(cv1, ARR_MIN_END);
+      CGAL_assertion(psx1 != ARR_RIGHT_BOUNDARY);
+      if (psx1 == ARR_INTERIOR)
+        return is_between_lrr(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+
+      return (cmp_y_near_bd(cv1, cv2, ARR_MIN_END) == SMALLER);
+    }
+
+    /* Case 3
+     * cv1 to the left, cv and cv2 are to the right
+     *
+     *         o
+     *        /
+     *  cv1  /
+     * o----o
+     *       \
+     *        \
+     *         o
+     */
+
+    /* cv1 to the left, cv and cv2 are to the right
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_rlr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto cmp_y_at_x_right = m_self->compare_y_at_x_right_2_object();
+      auto res = cmp_y_at_x_right(cv2, cv, p);
+      if (res == EQUAL) cv_equal_cv2 = true;
+      return (res == SMALLER);
+    }
+
+    /* cv1 to the left, cv and cv2 to the right
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sides are contracted
+     * \pre p cannot lie on the bottom or top boundaries
+     */
+    bool is_between_rlr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      // Precondition
+      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion(psy == ARR_INTERIOR);
+
+      auto on_y_idnt = is_on_y_identification(cv);
+      auto on_y_idnt2 = is_on_y_identification(cv2);
+
+      if (on_y_idnt) {
+        if (on_y_idnt2) {
+          cv_equal_cv2 = true;
+          return false;
+        }
+        return true;
+      }
+
+      if (on_y_idnt2) return false;
+
+      // If cv does not coincide with the identification curve,
+      // then p cannot be on the right
+      auto psx = ps_in_x(cv, ARR_MIN_END);
+      CGAL_assertion(psx != ARR_RIGHT_BOUNDARY);
+      if (psx == ARR_INTERIOR)
+        return is_between_rlr(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+
+      return (cmp_y_near_bd(cv, cv2, ARR_MIN_END) == LARGER);
+    }
+
+    /* Case 4
+     * cv1 to the left, cv and cv2 are to the right
+     *
+     *         o
+     *        /
+     *  cv2  /
+     * o----o
+     *       \
+     *        \
+     *         o
+     */
+
+    /* cv1 to the left, cv and cv2 are to the right
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_rrl(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto cmp_y_at_x_right = m_self->compare_y_at_x_right_2_object();
+      auto res = cmp_y_at_x_right(cv1, cv, p);
+      if (res == EQUAL) cv_equal_cv1 = true;
+      return (res  == LARGER);
+    }
+
+    /* cv1 to the left, cv and cv2 to the right
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sides are contracted
+     * \pre p cannot lie on the bottom or top boundaries
+     */
+    bool is_between_rrl(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      // Precondition
+      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion(psy == ARR_INTERIOR);
+
+      auto on_y_idnt = is_on_y_identification(cv);
+      auto on_y_idnt1 = is_on_y_identification(cv1);
+
+      if (on_y_idnt) {
+        if (on_y_idnt1) cv_equal_cv1 = true;
+        return false;
+      }
+
+      if (on_y_idnt1) return true;
+
+      // If cv does not coincide with the identification curve,
+      // then p cannot be on the right
+      auto psx = ps_in_x(cv, ARR_MIN_END);
+      CGAL_assertion(psx != ARR_RIGHT_BOUNDARY);
+      if (psx == ARR_INTERIOR)
+        return is_between_rrl(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+
+      return (cmp_y_near_bd(cv, cv1, ARR_MIN_END) == SMALLER);
+    }
+
+    /* Case 5
+     * cv1 and cv2 are to the left and cv is to the right
+     *
+     * o
+     *  \
+     *   \   cv
+     *    o----o
+     *   /
+     *  /
+     * o
+     */
+
+    /* cv1 and cv2 are to the left and cv is to the right
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_rll(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto cmp_y_at_x_left = m_self->compare_y_at_x_left_2_object();
+      auto res = cmp_y_at_x_left(cv1, cv2, p);
+      return (res == LARGER);
+    }
+
+    /* cv1 and cv2 are to the left and cv is to the right
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sides are contracted
+     * \pre p cannot lie on the bottom or top boundaries
+     */
+    bool is_between_rll(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion(psy == ARR_INTERIOR);
+
+      auto on_y_idnt1 = is_on_y_identification(cv1);
+      auto on_y_idnt2 = is_on_y_identification(cv2);
+      if(on_y_idnt1 && on_y_idnt2) return true;
+
+      /* Case 5.1                 Case 5.2
+       *
+       * o                        o
+       *  \                        \
+       *   \   cv                   \   cv
+       *    o----o                   o----o
+       *    |                        |
+       *    |cv1                     |cv2
+       *    o                        o
+       *    ^                        ^
+       *    |Identification          |Identification
+       */
+      if (on_y_idnt1) return false;     // case 5.1
+      if (on_y_idnt2) return true;      // case 5.2
+
+      auto psx1 = ps_in_x(cv1, ARR_MAX_END);
+      if (psx1 == ARR_INTERIOR)         // case 5.3
+        return is_between_rll(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+
+      /* Case 5.4
+       *
+       * o
+       *  \cv2/cv1
+       *   \   cv
+       *    o----o
+       *   /
+       *  /cv1/cv2
+       * o
+       *    ^
+       *    |Identification
+       */
+      return (cmp_y_near_bd(cv1, cv2, ARR_MAX_END) != SMALLER);
+    }
+
+    /* Case 6
+     * cv and cv2 are to the left and cv1 is to the right
+     *
+     * o
+     *  \
+     *   \   cv1
+     *    o----o
+     *   /
+     *  /
+     * o
+     */
+
+    /* cv and cv2 are to the left and cv1 is to the right
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_lrl(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto cmp_y_at_x_left = m_self->compare_y_at_x_left_2_object();
+      auto res = cmp_y_at_x_left(cv, cv2, p);
+      if (res == EQUAL) cv_equal_cv2 = true;
+      return (res == SMALLER);
+    }
+
+    /* cv and cv2 are to the left and cv1 is to the right
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sides are contracted
+     * \pre p cannot lie on the bottom or top boundaries.
+     */
+    bool is_between_lrl(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      auto psy = ps_in_y(cv, ARR_MAX_END);
+      CGAL_assertion(psy == ARR_INTERIOR);
+
+      auto on_y_idnt = is_on_y_identification(cv);
+      auto on_y_idnt2 = is_on_y_identification(cv2);
+
+      if (on_y_idnt) {
+        if (on_y_idnt2) {
+          cv_equal_cv2 = true;
+          return false;
+        }
+        return true;
+      }
+
+      if (on_y_idnt2) return false;
+
+      auto psx = ps_in_x(cv, ARR_MAX_END);
+      CGAL_assertion(psx != ARR_LEFT_BOUNDARY);
+      if (psx == ARR_INTERIOR)
+        return is_between_lrl(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+
+      // psx == ARR_RIGHT_BOUNDARY)
+      auto res = cmp_y_near_bd(cv, cv2, ARR_MAX_END);
+      if (res == EQUAL) cv_equal_cv2 == true;
+      return (res == SMALLER);
+    }
+
+    /* Case 7
+     * cv and cv1 are to the left and cv2 is to the right
+     *
+     * o
+     *  \
+     *   \   cv2
+     *    o----o
+     *   /
+     *  /
+     * o
+     */
+
+    /* cv and cv1 are to the left and cv2 is to the right
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_llr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto cmp_y_at_x_left = m_self->compare_y_at_x_left_2_object();
+      auto res = cmp_y_at_x_left(cv1, cv, p);
+      if (res == EQUAL) cv_equal_cv1 = true;
+      return (res == SMALLER);
+    }
+
+    /* cv and cv1 are to the left and cv2 is to the right
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sides are contracted
+     * \pre p cannot lie on the bottom or top boundaries.
+     */
+    bool is_between_llr(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      auto psy = ps_in_y(cv, ARR_MAX_END);
+      CGAL_assertion(psy == ARR_INTERIOR);
+
+      auto on_y_idnt = is_on_y_identification(cv);
+      auto on_y_idnt1 = is_on_y_identification(cv1);
+
+      if (on_y_idnt) {
+        if (on_y_idnt1) cv_equal_cv1 = true;
+        return false;
+      }
+
+      if (on_y_idnt1) return true;
+
+      auto psx = ps_in_x(cv, ARR_MAX_END);
+      CGAL_assertion(psx != ARR_LEFT_BOUNDARY);
+      if (psx == ARR_INTERIOR)
+        return is_between_llr(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+
+      // psx == ARR_RIGHT_BOUNDARY
+      auto res = cmp_y_near_bd(cv, cv1, ARR_MAX_END);
+      if (res == EQUAL) cv_equal_cv1 = true;
+      return (res == LARGER);
+    }
+
+    /* Case 8
+     * cv and cv1 and cv2 are to the left
+     *  o
+     *   \
+     *    \
+     * o---o
+     *    /
+     *   /
+     *  o
+     */
+
+    /* cv and cv1 and cv2 are to the left
+     * Default implelemntation; good for the following
+     * left-right boundary sides are oblivious or open, and
+     * bottom-top boundary sides are oblivious or open
+     */
+    bool is_between_lll(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_boundary_cond_tag,
+                        Arr_boundary_cond_tag) const
+    {
+      auto cmp_y_at_x_left = m_self->compare_y_at_x_left_2_object();
+      auto cmp_y_at_x_right = m_self->compare_y_at_x_right_2_object();
+
+      auto res1 = cmp_y_at_x_left(cv, cv1, p);
+      auto res2 = cmp_y_at_x_left(cv, cv2, p);
+      if (res1 == EQUAL) cv_equal_cv1 = true;
+      if (res2 == EQUAL) cv_equal_cv2 = true;
+      if (cv_equal_cv1 || cv_equal_cv2) return false;
+
+      auto res = cmp_y_at_x_left(cv1, cv2, p);
+      if (res == LARGER)
+        // cv1 is above cv2
+        return (res1 == LARGER || res2 == SMALLER);
+
+      if (res == SMALLER)
+        // cv1 is below cv2
+        return (res1 == LARGER && res2  == SMALLER);
+
+      // res == EQUAL && res1 != EQUAL && res2 != EQUAL
+      return true;
+    }
+
+    /* cv and cv1 and cv2 are to the left
+     * left-right boundary sides are identified, and
+     * bottom-top boundary sides are contracted
+     * \pre p cannot lie on the bottom boundary
+     */
+    bool is_between_lll(const X_monotone_curve_2& cv,
+                        const X_monotone_curve_2& cv1,
+                        const X_monotone_curve_2& cv2,
+                        const Point_2& p,
+                        bool& cv_equal_cv1, bool& cv_equal_cv2,
+                        Arr_has_identified_side_tag,
+                        Arr_has_contracted_side_tag) const
+    {
+      auto ps_in_x = m_self->parameter_space_in_x_2_object();
+      auto ps_in_y = m_self->parameter_space_in_y_2_object();
+      auto is_on_y_identification = m_self->is_on_y_identification_2_object();
+      auto cmp_x_on_bd = m_self->compare_x_on_boundary_2_object();
+      auto cmp_y_near_bd = m_self->compare_y_near_boundary_2_object();
+
+      auto psy = ps_in_y(cv, ARR_MIN_END);
+      CGAL_assertion(psy != ARR_BOTTOM_BOUNDARY);
+
+      auto on_y_idnt = is_on_y_identification(cv);
+      auto on_y_idnt1 = is_on_y_identification(cv1);
+      auto on_y_idnt2 = is_on_y_identification(cv2);
+
+      if (on_y_idnt) {
+        if (on_y_idnt1) cv_equal_cv1 = true;
+        if (on_y_idnt2) cv_equal_cv2 = true;
+        if (cv_equal_cv1 || cv_equal_cv2) return false;
+
+        if (psy == ARR_TOP_BOUNDARY) {
+          auto res = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
+          return (res != LARGER);
+        }
+        auto res = cmp_y_near_bd(cv1, cv2, ARR_MAX_END);
+        return (res != SMALLER);
+      }
+
+      if (on_y_idnt1) {
+        if (psy == ARR_TOP_BOUNDARY) {
+          auto res = cmp_x_on_bd(cv, ARR_MAX_END, cv2, ARR_MAX_END);
+          if (res == EQUAL) cv_equal_cv2 = true;
+          return (res == LARGER);
+        }
+        auto res = cmp_y_near_bd(cv, cv2, ARR_MAX_END);
+        if (res == EQUAL) cv_equal_cv2 = true;
+        return (res == SMALLER);
+      }
+
+      if (on_y_idnt2) {
+        if (psy == ARR_TOP_BOUNDARY) {
+          auto res = cmp_x_on_bd(cv, ARR_MAX_END, cv1, ARR_MAX_END);
+          if (res == EQUAL) cv_equal_cv1 = true;
+          return (res == SMALLER);
+        }
+        auto res = cmp_y_near_bd(cv, cv1, ARR_MAX_END);
+        if (res == EQUAL) cv_equal_cv1 = true;
+        return (res == LARGER);
+      }
+
+      // None of the curves coincide with the identification curve
+      auto psx = ps_in_x(cv, ARR_MAX_END);
+      if ((psx == ARR_INTERIOR) && (psy == ARR_INTERIOR))
+        return is_between_lll(cv, cv1, cv2, p,
+                              cv_equal_cv1, cv_equal_cv2,
+                              Arr_all_sides_oblivious_tag(),
+                              Arr_all_sides_oblivious_tag());
+      if (psy == ARR_TOP_BOUNDARY) {
+        auto res = cmp_x_on_bd(cv1, ARR_MAX_END, cv2, ARR_MAX_END);
+        auto res1 = cmp_x_on_bd(cv, ARR_MAX_END, cv1, ARR_MAX_END);
+        auto res2 = cmp_x_on_bd(cv, ARR_MAX_END, cv2, ARR_MAX_END);
+        if (res1 == EQUAL) cv_equal_cv1 = true;
+        if (res2 == EQUAL) cv_equal_cv2 = true;
+        if (cv_equal_cv1 || cv_equal_cv2) return false;
+        if (res == LARGER)
+          // cv2 is left of cv1
+          return ((res1 == SMALLER) && (res2 == LARGER));
+
+        if (res == SMALLER)
+          // cv2 is right of cv1
+          return ((res1 == SMALLER) || (res2 == LARGER));
+
+        // res == EQUAL
+        return true;
+      }
+      auto res = cmp_y_near_bd(cv1, cv2, ARR_MAX_END);
+      auto res1 = cmp_y_near_bd(cv, cv1, ARR_MAX_END);
+      auto res2 = cmp_y_near_bd(cv, cv2, ARR_MAX_END);
+      if (res1 == EQUAL) cv_equal_cv1 = true;
+      if (res2 == EQUAL) cv_equal_cv2 = true;
+      if (cv_equal_cv1 || cv_equal_cv2) return false;
+      if (res == SMALLER)
+        // cv1 is below cv2
+        return ((res1 == LARGER) && (res2 == SMALLER));
+
+      if (res == LARGER)
+        // cv2 is below cv1
+        return ((res1 == LARGER) || (res2 == SMALLER));
+
+      // res == EQUAL
+      return true;
+    }
   };
 
   /*! Obtain an Is_between_cw_2 function object. */
