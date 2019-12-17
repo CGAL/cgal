@@ -6,6 +6,8 @@
 #  OPENMESH_LIBRARIES - OpenMesh libraries
 #
 
+find_package(OpenMesh NO_MODULE QUIET)
+
 # Is it already configured?
 if (NOT OpenMesh_FOUND)
 
@@ -51,6 +53,11 @@ find_package_handle_standard_args(OpenMesh
 
 if(OpenMesh_FOUND AND NOT TARGET OpenMesh::OpenMesh)
   add_library(OpenMesh::OpenMesh UNKNOWN IMPORTED)
+
+  if(TARGET OpenMeshCore)
+    target_link_libraries(OpenMesh::OpenMesh PUBLIC OpenMeshCore)
+    return()
+  endif()
 
   set_target_properties(OpenMesh::OpenMesh PROPERTIES
     INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_OPENMESH;NOMINMAX;_USE_MATH_DEFINES"
