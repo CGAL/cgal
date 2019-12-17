@@ -19,9 +19,9 @@ Section on definitions here ...
 
 The following example shows ...
 
-\cgalExample{tetrahedral_remeshing_example.cpp }
-\cgalExample{tetrahedral_remeshing_of_one_subdomain.cpp }
-\cgalExample{tetrahedral_remeshing_with_features.cpp }
+\cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_example.cpp }
+\cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_of_one_subdomain.cpp }
+\cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp }
 
 */
 } /* namespace CGAL */
