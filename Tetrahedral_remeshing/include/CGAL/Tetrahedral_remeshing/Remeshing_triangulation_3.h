@@ -167,7 +167,7 @@ namespace Tetrahedral_remeshing
       typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
       {
         typename TDS_tgt::Cell c_tgt;
-        c_tgt.set_subdomain_index(c_src.subdomain_index());
+        c_tgt.set_subdomain_index(1);//c_src.subdomain_index());
 //        c_tgt.info() = c_src.info();
         c_tgt.set_time_stamp(-1);
         return c_tgt;
@@ -176,7 +176,7 @@ namespace Tetrahedral_remeshing
       void operator()(const typename TDS_src::Cell& c_src,
                       typename TDS_tgt::Cell& c_tgt) const
       {
-        c_tgt.set_subdomain_index(c_src.subdomain_index());
+//        c_tgt.set_subdomain_index(c_src.subdomain_index());
         //        c_tgt.info() = c_src.info();
       }
     };
@@ -198,7 +198,7 @@ namespace Tetrahedral_remeshing
       typename TDS_tgt::Vertex v_tgt;
       v_tgt.set_point(conv(v_src.point()));
       v_tgt.set_time_stamp(-1);
-      v_tgt.set_dimension(v_src.info());//-1 if unset, 0,1,2, or 3 if set
+//      v_tgt.set_dimension(v_src.info());//-1 if unset, 0,1,2, or 3 if set
       return v_tgt;
     }
     //This operator is meant to be used in case heavy data should transferred to v_tgt.
@@ -212,7 +212,7 @@ namespace Tetrahedral_remeshing
       CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
 
       v_tgt.set_point(conv(v_src.point()));
-      v_tgt.set_dimension(v_src.info());
+//      v_tgt.set_dimension(v_src.info());
     }
   };
 
@@ -223,7 +223,7 @@ namespace Tetrahedral_remeshing
     typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
     {
       typename TDS_tgt::Cell c_tgt;
-      c_tgt.info() = c_src.info();
+//      c_tgt.info() = c_src.info();
       c_tgt.input_cell() = c_src;
       c_tgt.set_time_stamp(-1);
       return c_tgt;
@@ -232,7 +232,7 @@ namespace Tetrahedral_remeshing
     void operator()(const typename TDS_src::Cell& c_src,
       typename TDS_tgt::Cell& c_tgt) const
     {
-      c_tgt.info() = c_src.info();
+//      c_tgt.info() = c_src.info();
       c_tgt.input_cell() = c_src;
     }
   };
@@ -243,7 +243,7 @@ namespace Tetrahedral_remeshing
                                      Remeshing_triangulation_3<K>& remeshing_tr)
   {
     typedef typename T3::Triangulation_data_structure Tds;
-    typedef Remeshing_triangulation_3<K, Info>::Tds   RTds;
+    typedef Remeshing_triangulation_3<K>::Tds   RTds;
 
     remeshing_tr.clear();
 
@@ -261,7 +261,7 @@ namespace Tetrahedral_remeshing
     T3& tr)
   {
     typedef typename T3::Triangulation_data_structure Tds;
-    typedef Remeshing_triangulation_3<K, Info>::Tds   RTds;
+    typedef Remeshing_triangulation_3<K>::Tds   RTds;
 
     tr.clear();
 
