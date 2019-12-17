@@ -291,7 +291,7 @@ EOF
     print_result_table();
 
     if ($PLATFORMS_BESIDE_RESULTS) {
-    	print OUTPUT "<td>\n<table border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
+    	print OUTPUT "<td>\n<table class=\"beside\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
     	if ($platform_count > 0) {
     	    my $repeat_count = (1 + 1.1/16.5)*scalar(keys %test_directories)/($platform_count+0.25);
 	    while ($repeat_count >= 1) {
