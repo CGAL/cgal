@@ -2044,12 +2044,11 @@ public:
                     const Point_2& p,
                     bool& cv_equal_cv1, bool& cv_equal_cv2) const
     {
-      std::cout << "is_between(" << std::endl
-                << "  " << cv << "," << cv_to_right << "," << std::endl
-                << "  " << cv1 << "," << cv1_to_right << "," << std::endl
-                << "  " << cv2 << "," << cv2_to_right << "," << std::endl
-                << "  " << p
-                << ")" << std::endl;
+      // std::cout << "is_between(" << std::endl
+      //           << "  " << cv << "," << cv_to_right << "," << std::endl
+      //           << "  " << cv1 << "," << cv1_to_right << "," << std::endl
+      //           << "  " << cv2 << "," << cv2_to_right << "," << std::endl
+      //           << "  " << p << ")" << std::endl;
 
       auto equal = m_self->equal_2_object();
       auto min_vertex = m_self->construct_min_vertex_2_object();
