@@ -43,6 +43,7 @@ struct Projector<R,0>
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.y();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.z();}
+  static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.ymin(),bb.zmin(),bb.ymax(),bb.zmax()); }
   static const int x_index=1;
   static const int y_index=2;
 };
@@ -60,6 +61,7 @@ struct Projector<R,1>
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.z();}
+  static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.xmin(),bb.zmin(),bb.xmax(),bb.zmax()); }
   static const int x_index=0;
   static const int y_index=2;  
 };
@@ -78,11 +80,18 @@ struct Projector<R,2>
   static typename R::FT y(const typename R::Point_3& p) {return p.y();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.y();}
+  static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.xmin(),bb.ymin(),bb.xmax(),bb.ymax()); }
   static const int x_index=0;
   static const int y_index=1;  
 };
-  
 
+template <class R,int dim>
+class Construct_bbox_projected_2 {
+public:
+  typedef typename R::Point_3     Point;
+  
+  Bbox_2 operator()(const Point& p) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(p)); }
+};
 
 template <class R,int dim>
 class Orientation_projected_3 
@@ -795,7 +804,8 @@ public:
   typedef Construct_weighted_circumcenter_projected_3<Rp,dim> Construct_weighted_circumcenter_2;
   typedef Power_side_of_bounded_power_circle_projected_3<Rp,dim> Power_side_of_bounded_power_circle_2;
   typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
-
+  typedef Construct_bbox_projected_2<Rp,dim>                  Construct_bbox_2;
+  
   typedef typename Rp::Construct_point_3                      Construct_point_2;
   typedef typename Rp::Construct_weighted_point_3             Construct_weighted_point_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
@@ -805,7 +815,7 @@ public:
   typedef typename Rp::Construct_scaled_vector_3              Construct_scaled_vector_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
-  typedef typename Rp::Construct_bbox_3                       Construct_bbox_2;
+
 
   struct Less_xy_2 {
     typedef bool result_type;
