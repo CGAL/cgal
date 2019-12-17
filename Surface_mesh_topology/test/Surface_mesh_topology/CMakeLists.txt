@@ -21,7 +21,8 @@ endif()
 
 # add_definitions(-DCGAL_TRACE_PATH_TESTS)
 # add_definitions(-DCGAL_TRACE_CMAP_TOOLS)
-# ADD_DEFINITIONS("-Wall -Wextra")
+# add_definitions("-Wall -Wextra")
+# add_definitions("-D_GLIBCXX_DEBUG")
 
 set(SOURCE_FILES
   fundamental_group_of_the_circle.cpp

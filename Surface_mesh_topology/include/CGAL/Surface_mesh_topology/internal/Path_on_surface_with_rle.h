@@ -461,7 +461,7 @@ public:
     { m_path.push_back(Flat(dh)); } // Create a new flat
     else
     {
-      --itlast;
+      itlast=std::prev(itlast);
       set_end_of_flat(itlast, dh); // Move the last dart of the last flat
       if (positive_flat && flat_length(itlast)>=0)
       {
@@ -850,7 +850,7 @@ public:
   /// @return true if a merging was done.
   bool merge_last_flat_with_next_if_possible()
   {
-    List_iterator lastit=m_path.end(); --lastit;
+    List_iterator lastit=std::prev(m_path.end());
     return merge_with_next_flat_if_possible(lastit);
   }
 
