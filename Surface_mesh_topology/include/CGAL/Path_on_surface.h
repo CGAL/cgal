@@ -1069,10 +1069,13 @@ public:
   /// Reverse the path (i.e. negate its orientation).
   void reverse()
   {
+    bool tmpbool;
     for (unsigned int i=0; i<length()/2; ++i)
     {
       std::swap(m_path[i], m_path[length()-1-i]);
-      std::swap(m_flip[i], m_flip[length()-1-i]);
+      tmpbool=m_flip[i]; // Cannot swap in vector bool
+      m_flip[i]=m_flip[length()-1-i];
+      m_flip[length()-1-i]=tmpbool;
     }
 
     for (unsigned int i=0; i<length(); ++i)
