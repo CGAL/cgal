@@ -10,7 +10,8 @@
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel    Kernel;
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7>
+typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>
+// typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7>
                                                              Geom_traits_2;
 typedef Geom_traits_2::Point_2                               Point_2;
 typedef Geom_traits_2::Curve_2                               Curve_2;
@@ -48,13 +49,25 @@ int main()
   arcs.push_back(ctr_cv(ctr_p(-1, 0, 0), ctr_p(0, 1, 0)));
   arcs.push_back(ctr_cv(ctr_p(-1, 0, 0), ctr_p(0, -1, 0)));
 
-  CGAL::insert(arr, arcs.begin(), arcs.end());
+  // CGAL::insert(arr, arcs.begin(), arcs.end());
+  for (const auto& arc : arcs) CGAL::insert(arr, arc);
 
   // Print the size of the arrangement.
   std::cout << "The arrangement size:" << std::endl
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges()
             << ",  F = " << arr.number_of_faces() << std::endl;
+
+  for (auto it = arr.halfedges_begin(); it != arr.halfedges_end(); ++ it)
+    std::cout << it->source()->point() << " => "
+              << it->target()->point() << ", "
+              << it->direction() << std::endl;
+
+  std::cout << "# outer ccbs: " << arr.faces_begin()->number_of_outer_ccbs()
+            << std::endl;
+  std::cout << "# inner ccbs: " << arr.faces_begin()->number_of_inner_ccbs()
+            << std::endl;
+
 
   return 0;
 }
