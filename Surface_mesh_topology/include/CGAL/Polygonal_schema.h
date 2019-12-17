@@ -14,6 +14,11 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
+#ifdef _MSC_VER
+// To remove the warning on windows about unsafe strncpy function.
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <vector>
 #include <unordered_map>
 #include <cstddef>
@@ -27,11 +32,6 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Generalized_map.h>
 #include <CGAL/Random.h>
-
-#ifdef _MSC_VER
-// To remove the warning on windows about unsafe strncpy function.
-#define _CRT_SECURE_NO_WARNINGS
-#endif
 
 namespace CGAL {
 namespace Surface_mesh_topology {

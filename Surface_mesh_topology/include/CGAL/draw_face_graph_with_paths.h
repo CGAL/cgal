@@ -313,11 +313,11 @@ protected:
     if ((*m_paths)[i].is_empty())
     { return; }
 
-    CGAL::Random random(i);
+    CGAL::Random random(static_cast<unsigned int>(i));
     CGAL::Color color=get_random_color(random);
     
     add_point(get_point((*m_paths)[i].get_ith_dart(0)), color);
-    for (unsigned int j=0; j<(*m_paths)[i].length(); ++j)
+    for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
     {
       if ( !lcc.is_marked( (*m_paths)[i].get_ith_dart(j), amark) )
       {

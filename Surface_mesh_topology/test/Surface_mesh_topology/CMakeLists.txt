@@ -1,6 +1,14 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(Surface_mesh_topology_Tests)
 
-cmake_minimum_required(VERSION 3.1)
+if(NOT POLICY CMP0070 AND POLICY CMP0053)
+  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
+  cmake_policy(SET CMP0053 OLD)
+endif()
+
+if(POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
 find_package(CGAL COMPONENTS Qt5)
 if(CGAL_Qt5_FOUND)
@@ -10,6 +18,10 @@ endif()
 if ( NOT CGAL_FOUND )
   message(FATAL_ERROR "This program requires the CGAL library, and will not be compiled.")
 endif()
+
+# add_definitions(-DCGAL_TRACE_PATH_TESTS)
+# add_definitions(-DCGAL_TRACE_CMAP_TOOLS)
+# ADD_DEFINITIONS("-Wall -Wextra")
 
 set(SOURCE_FILES
   fundamental_group_of_the_circle.cpp

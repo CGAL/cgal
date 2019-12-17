@@ -73,14 +73,20 @@ public:
     CGAL_assertion(is_valid(true));
   }
 
+  Path_on_surface(const Self& apath) : m_map(apath.m_map),
+                                       m_path(apath.m_path),
+                                       m_is_closed(apath.m_is_closed),
+                                       m_flip(apath.m_flip)
+  {}
+  
   void swap(Self& p2)
   {
     if (this==&p2) { return; }
     
     CGAL_assertion(&m_map==&(p2.m_map));
     m_path.swap(p2.m_path);
-    m_flip.swap(p2.m_flip);
     std::swap(m_is_closed, p2.m_is_closed);
+    m_flip.swap(p2.m_flip);
   }
 
   Self& operator=(const Self& other)
@@ -89,8 +95,8 @@ public:
     if (this!=&other)
     {
       m_path=other.m_path;
-      m_flip=other.m_flip;
       m_is_closed=other.m_is_closed;
+      m_flip=other.m_flip;
     }
     return *this;
   }
@@ -777,7 +783,8 @@ public:
 
     for (unsigned int i=0; i<nb; ++i)
     {
-      std::size_t dartn=random.get_int(0, length()), j=dartn;
+      std::size_t dartn=static_cast<std::size_t>(random.get_int(0, length()));
+      std::size_t j=dartn;
       while(!push_around_face(dartn, false) && dartn!=j)
       { ++dartn; }
     }
