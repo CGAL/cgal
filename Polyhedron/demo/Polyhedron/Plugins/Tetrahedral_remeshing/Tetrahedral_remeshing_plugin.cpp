@@ -22,6 +22,95 @@
 
 //#include "ui_Tetrahedral_remeshing_dialog.h"
 
+namespace CGAL {
+
+  namespace internal {
+
+    template<typename TDS_src, typename TDS_tgt>
+    struct Vertex_converter
+    {
+      typename TDS_tgt::Vertex operator()(const typename TDS_src::Vertex& v_src) const
+      {
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_src::Vertex::Point>::Kernel GT_src;
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
+        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
+
+        typedef typename TDS_tgt::Vertex::Point Tgt_point;
+
+        typename TDS_tgt::Vertex v_tgt;
+        v_tgt.set_point(Tgt_point(conv(v_src.point())));
+        v_tgt.set_time_stamp(-1);
+//        v_tgt.set_dimension(v_src.dimension());
+        return v_tgt;
+      }
+      void operator()(const typename TDS_src::Vertex& v_src,
+                      typename TDS_tgt::Vertex& v_tgt) const
+      {
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_src::Vertex::Point>::Kernel GT_src;
+        typedef typename CGAL::Kernel_traits<
+          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
+        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
+
+        typedef typename TDS_tgt::Vertex::Point Tgt_point;
+
+        v_tgt.set_point(Tgt_point(conv(v_src.point())));
+//        v_tgt.set_dimension(v_src.dimension());
+      }
+    };
+
+    template<typename TDS_src, typename TDS_tgt>
+    struct Cell_converter
+    {
+      typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
+      {
+        typename TDS_tgt::Cell c_tgt;
+        c_tgt.set_subdomain_index(c_src.subdomain_index());
+        c_tgt.set_time_stamp(-1);
+        return c_tgt;
+      }
+      void operator()(const typename TDS_src::Cell& c_src,
+                      typename TDS_tgt::Cell& c_tgt) const
+      {
+        c_tgt.set_subdomain_index(c_src.subdomain_index());
+      }
+    };
+
+    template<typename T3, typename Remeshing_tr>
+    void build_remeshing_triangulation(const T3& tr,
+                                       Remeshing_tr& remeshing_tr)
+    {
+      typedef typename T3::Triangulation_data_structure Tds;
+      typedef typename Remeshing_tr::Tds                RTds;
+
+      remeshing_tr.clear();
+      remeshing_tr.set_infinite_vertex(
+        remeshing_tr.tds().copy_tds(
+          tr.tds(),
+          tr.infinite_vertex(),
+          Vertex_converter<Tds, RTds>(),
+          Cell_converter<Tds, RTds>()));
+    }
+
+    template<typename T3, typename Remeshing_tr>
+    void build_from_remeshing_triangulation(const Remeshing_tr& remeshing_tr,
+                                            T3& tr)
+    {
+      typedef typename T3::Triangulation_data_structure Tds;
+      typedef typename Remeshing_tr::Tds                RTds;
+
+      tr.clear();
+      tr.set_infinite_vertex(
+        tr.tds().copy_tds(
+          remeshing_tr.tds(),
+          remeshing_tr.infinite_vertex(),
+          Vertex_converter<RTds, Tds>(),
+          Cell_converter<RTds, Tds>()));
+    }
+  }
+}
 
 using namespace CGAL::Three;
 class Polyhedron_demo_tetrahedral_remeshing_plugin :
@@ -58,7 +147,7 @@ public:
 public Q_SLOTS:
   void tetrahedral_remeshing()
   {
-    typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<EPICK, int> Remeshing_triangulation;
+    typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<EPICK> Remeshing_triangulation;
 
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -110,7 +199,7 @@ public Q_SLOTS:
       time.start();
 
       Remeshing_triangulation tr;
-      CGAL::Tetrahedral_remeshing::build_remeshing_triangulation(c3t3_item->c3t3().triangulation(), tr);
+      CGAL::internal::build_remeshing_triangulation(c3t3_item->c3t3().triangulation(), tr);
 
       std::cout << "Remeshing triangulation built (" << time.elapsed() << " ms)" << std::endl;
       time.restart();
@@ -120,7 +209,7 @@ public Q_SLOTS:
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
       time.restart();
 
-      CGAL::Tetrahedral_remeshing::build_from_remeshing_triangulation(tr, c3t3_item->c3t3().triangulation());
+      CGAL::internal::build_from_remeshing_triangulation(tr, c3t3_item->c3t3().triangulation());
 
       std::cout << "Back conversion done (" << time.elapsed() << " ms)" << std::endl;
 
