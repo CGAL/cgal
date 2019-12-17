@@ -114,6 +114,20 @@ todo////  *    Its endpoints could be moved by smoothing
                                       const double& target_edge_length,
                                       const NamedParameters& np)
   {
+    tetrahedral_adaptive_remeshing(
+      tr,
+      [target_edge_length](const typename Triangulation::Point& p)
+                          {return target_edge_length;},
+      np);
+  }
+
+  template<typename Triangulation,
+           typename SizingFunction,
+           typename NamedParameters>
+  void tetrahedral_adaptive_remeshing(Triangulation& tr,
+                                      const SizingFunction& sizing,
+                                      const NamedParameters& np)
+  {
     CGAL_assertion(tr.is_valid(true));
 
     typedef Triangulation Tr;
@@ -154,8 +168,8 @@ todo////  *    Its endpoints could be moved by smoothing
 #endif
 
     typedef Tetrahedral_remeshing::internal::Adaptive_remesher<
-      Tr, ECMap, SelectionFunctor> Remesher;
-    Remesher remesher(tr, target_edge_length, protect, ecmap
+      Tr, SizingFunction, ECMap, SelectionFunctor> Remesher;
+    Remesher remesher(tr, sizing, protect, ecmap
                     , cell_select
                   /*, adaptive*/);
 

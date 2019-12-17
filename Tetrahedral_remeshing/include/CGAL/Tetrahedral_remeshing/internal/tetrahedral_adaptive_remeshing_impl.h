@@ -73,6 +73,7 @@ namespace internal
   };
 
   template<typename Triangulation
+         , typename SizingFunction
          , typename EdgeIsConstrainedMap
          , typename CellSelector
          >
@@ -89,7 +90,7 @@ namespace internal
     typedef int Surface_patch_index; //only needed for is_in_complex()
 
   private:
-    const FT& m_target_edge_length;
+    const SizingFunction& m_sizing;
     const bool m_protect_boundaries;
 //    const bool m_adaptive;//adaptive sizing field TODO, outside remeshing
     C3t3 m_c3t3;
@@ -99,13 +100,13 @@ namespace internal
 
   public:
     Adaptive_remesher(Triangulation& tr
-      , const FT& target_edge_length
+      , const SizingFunction& sizing
       , const bool protect_boundaries
       , EdgeIsConstrainedMap ecmap
       , CellSelector cell_selector
 //      , const bool adaptive
       )
-      : m_target_edge_length(target_edge_length)
+      : m_sizing(sizing)
       , m_protect_boundaries(protect_boundaries)
 //      , m_adaptive(adaptive)
       , m_c3t3()
@@ -150,7 +151,8 @@ namespace internal
     {
       CGAL_assertion(check_vertex_dimensions());
 
-      const FT emax = FT(4)/FT(3) * m_target_edge_length;
+      const FT target_edge_length = m_sizing(CGAL::ORIGIN);
+      const FT emax = FT(4)/FT(3) * target_edge_length;
       split_long_edges(m_c3t3, emax, m_protect_boundaries, m_imaginary_index,
                        m_cell_selector);
 
@@ -166,8 +168,9 @@ namespace internal
     {
       CGAL_assertion(check_vertex_dimensions());
 
-      FT emin = FT(4)/FT(5) * m_target_edge_length;
-      FT emax = FT(4)/FT(3) * m_target_edge_length;
+      const FT target_edge_length = m_sizing(CGAL::ORIGIN);
+      FT emin = FT(4)/FT(5) * target_edge_length;
+      FT emax = FT(4)/FT(3) * target_edge_length;
       collapse_short_edges(m_c3t3, emin, emax, m_protect_boundaries,
                            m_imaginary_index,
                            m_cell_selector);
@@ -211,8 +214,10 @@ namespace internal
 
     bool resolution_reached()
     {
-      FT emax = FT(4) / FT(3) * m_target_edge_length;
-      FT emin = FT(4) / FT(5) * m_target_edge_length;
+      const FT target_edge_length = m_sizing(CGAL::ORIGIN);
+
+      FT emax = FT(4) / FT(3) * target_edge_length;
+      FT emin = FT(4) / FT(5) * target_edge_length;
 
       FT sqmax = emax * emax;
       FT sqmin = emin * emin;

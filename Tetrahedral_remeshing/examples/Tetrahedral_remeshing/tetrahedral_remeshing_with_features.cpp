@@ -127,7 +127,7 @@ int main(int argc, char* argv[])
   generate_input(1000, "data/sphere_in_cube.tr.cgal", constraints);
 
   const char* filename     = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
-  float target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1f;
+  double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1;
 
   std::ifstream input(filename, std::ios::in);
   if (!input)
