@@ -34,6 +34,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Random.h>
+#include <CGAL/use.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
@@ -224,6 +225,7 @@ self_intersections_impl(const FaceRange& face_range,
                                get_const_property_map(boost::vertex_point, tmesh));
 
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0);
+  CGAL_USE(seed); // used in the random shuffle of the range, which is only done to balance tasks in parallel
 
   const std::ptrdiff_t cutoff = 2000;
 
