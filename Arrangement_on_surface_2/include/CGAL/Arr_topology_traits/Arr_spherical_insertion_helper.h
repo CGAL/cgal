@@ -100,7 +100,7 @@ public:
   virtual void before_handle_event(Event* event);
 
   //@}
-  
+
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
 
@@ -204,11 +204,6 @@ before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
   }
 
   if (ps_x == ARR_LEFT_BOUNDARY) {
-    // Process left discontinuity boundary:
-    // The event has only right curves, as there is exactly one curve
-    // incident to an event with boundary conditions.
-    // CGAL_assertion((event->number_of_left_curves() == 0) &&
-    //                (event->number_of_right_curves() >= 1));
     const X_monotone_curve_2& xc =
       (*(event->right_curves_begin()))->last_curve();
     if (xc.halfedge_handle() != Halfedge_handle()) {
