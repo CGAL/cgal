@@ -14,10 +14,11 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
-#ifdef _MSC_VER
+// TODO ADD SOME TEST IF WE ARE ON WINDOWS ?
+// THIS SEEMS A WRONG TEST =>  #ifdef _MSC_VER
 // To remove the warning on windows about unsafe strncpy function.
 #define _CRT_SECURE_NO_WARNINGS
-#endif
+// #endif
 
 #include <vector>
 #include <unordered_map>
