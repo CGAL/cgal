@@ -159,12 +159,16 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   typedef typename GT::Point_3                                                     Point;
   typedef typename GT::Vector_3                                                    Vector_3;
 
+  std::cout << "Call to compute_face_normal()" << std::endl;
+  
   Vector_3 normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   internal::sum_normals<Point>(pmesh, f, vpmap, normal, traits);
 
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
 
+  std::cout << "result: " << normal << std::endl;
+  
   return normal;
 }
 
