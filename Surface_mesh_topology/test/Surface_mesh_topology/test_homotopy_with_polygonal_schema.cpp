@@ -23,10 +23,8 @@ bool test_two_random_paths(const PS& ps,
   CGAL_assertion(lmin>0 && lmin<lmax);
   CGAL::Random random(seed++);
   Path_on_surface<PS> p1(ps), p2(ps);
-  internal::generate_random_closed_path(p1,
-                                        static_cast<std::size_t>
-                                        (random.get_int(lmin, lmax)),
-                                        random);
+  internal::generate_random_closed_path
+    (p1, static_cast<std::size_t>(random.get_int(lmin, lmax)), random);
 
   p2=p1;
   p2.update_path_randomly(100, random);
@@ -84,7 +82,7 @@ bool run_n_random_paths_tests(const PS& ps,
 void process_command_line(int argc, char** argv,
                           unsigned int& seed)
 {
-  seed=unsigned(std::time(nullptr));
+  seed=static_cast<unsigned int>(std::time(nullptr));
   std::string arg;
   for (int i=1; i<argc; ++i)
   {

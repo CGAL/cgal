@@ -130,9 +130,8 @@ bool test_double_torus_quad(bool draw, int testtorun)
       CGAL::Random random(static_cast<unsigned int>(starting_seed+nbtests));
       Path_on_surface<LCC_3_cmap> p(lcc);
 
-      internal::generate_random_closed_path(p,
-                                            static_cast<std::size_t>
-                                            (random.get_int(5, 20)), random); // random path, length between 5 and 20
+      internal::generate_random_closed_path
+        (p, static_cast<std::size_t>(random.get_int(5, 20)), random); // random path, length between 5 and 20
       paths.push_back(p);
 
       p.update_path_randomly(random);
@@ -164,9 +163,8 @@ bool test_double_torus_quad(bool draw, int testtorun)
       CGAL::Random random(static_cast<unsigned int>(starting_seed+nbtests));
       Path_on_surface<LCC_3_cmap> p(lcc);
 
-      internal::generate_random_closed_path(p,
-                                            static_cast<std::size_t>
-                                            (random.get_int(5, 200)), random); // random path, length between 5 and 200
+      internal::generate_random_closed_path
+        (p, static_cast<std::size_t>(random.get_int(5, 200)), random); // random path, length between 5 and 200
       paths.push_back(p);
 
       p.update_path_randomly(random);

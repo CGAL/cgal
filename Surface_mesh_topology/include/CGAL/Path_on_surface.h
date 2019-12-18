@@ -557,8 +557,8 @@ public:
 
     // first select a random edge by taking the lower index of
     // the two darts when it is not a boundary
-    unsigned int index=random.get_int
-      (0, static_cast<unsigned int>(get_map().darts().capacity()));
+    std::size_t index=static_cast<std::size_t>
+      (random.get_int(0, static_cast<int>(get_map().darts().capacity())));
     while (!get_map().darts().is_used(index) ||
           (!get_map().template is_free<2>(get_map().dart_handle(index)) &&
            get_map().dart_handle(index)>get_map().
@@ -570,7 +570,7 @@ public:
     
     // second we take randomly one of the two darts of this edge
     // (potentially with the help of a flip)
-    bool heads_or_tails=random.get_int(0, 2);
+    bool heads_or_tails=random.get_bool();
     if (get_map().template is_free<2>(get_map().dart_handle(index)))
     {
       push_back(get_map().dart_handle(index), heads_or_tails, update_isclosed);
@@ -638,10 +638,10 @@ public:
     // the path (maybe with a flip) the first of them in the list is the
     // opposite of back(), or back() itself if it is 2-free
 
-    unsigned int i=random.get_int(allow_half_turn?0:1,
-                                  static_cast<unsigned int>(candidats.size()));
+    std::size_t i=static_cast<std::size_t>
+      (random.get_int(allow_half_turn?0:1,static_cast<int>(candidats.size())));
     auto it=candidats.begin();
-    for (unsigned int nb=0; nb<i; ++nb, ++it) {}
+    for (std::size_t nb=0; nb<i; ++nb, ++it) {}
     push_back(it->first, it->second, update_isclosed);
     return true;
   }
@@ -783,7 +783,8 @@ public:
 
     for (unsigned int i=0; i<nb; ++i)
     {
-      std::size_t dartn=static_cast<std::size_t>(random.get_int(0, length()));
+      std::size_t dartn=static_cast<std::size_t>
+        (random.get_int(0, static_cast<int>(length())));
       std::size_t j=dartn;
       while(!push_around_face(dartn, false) && dartn!=j)
       { ++dartn; }
