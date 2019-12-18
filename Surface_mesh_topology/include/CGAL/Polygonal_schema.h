@@ -14,12 +14,6 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
-// TODO ADD SOME TEST IF WE ARE ON WINDOWS ?
-// THIS SEEMS A WRONG TEST =>  #ifdef _MSC_VER
-// To remove the warning on windows about unsafe strncpy function.
-#define _CRT_SECURE_NO_WARNINGS
-// #endif
-
 #include <vector>
 #include <unordered_map>
 #include <cstddef>
@@ -86,10 +80,8 @@ namespace Surface_mesh_topology {
         }
         
         Dart_handle res=cmap.create_dart();
-        edge_label_to_dart[s]=res;
-        
-        cmap.info(res).m_label=new char[s.size()+1];
-        strncpy(cmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
+        edge_label_to_dart[s]=res;        
+        cmap.info(res).m_label=s;
         
         if (prev_dart!=cmap.null_handle)
         { cmap.template link_beta<1>(prev_dart, res); }
@@ -100,11 +92,8 @@ namespace Surface_mesh_topology {
         return res;
       }
       
-      std::string get_label(CMap& cmap, Dart_handle dh) const
-      {
-        CGAL_assertion(cmap.info(dh).m_label!=nullptr);
-        return std::string(cmap.info(dh).m_label);
-      }
+      const std::string& get_label(CMap& cmap, Dart_handle dh) const
+      { return cmap.info(dh).m_label; }
     };
     template<class GMap>
     struct Polygonal_schema_tools<GMap, Generalized_map_tag>
@@ -141,23 +130,20 @@ namespace Surface_mesh_topology {
         { // Here dart_same_label!=nullptr
           std::string s2=internal::opposite_label(s);
           edge_label_to_dart[s2]=dh2;
-          gmap.info(dh2).m_label=new char[s2.size()+1];
-          strncpy(gmap.info(dh2).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
+          gmap.info(dh2).m_label=s2;
 
           gmap.template sew<2>(res, dart_same_label);
         }
         else
         { // Here either dart_opposite_label!=nullptr, or both are nullptr
           edge_label_to_dart[s]=res;
-          gmap.info(res).m_label=new char[s.size()+1];
-          strncpy(gmap.info(res).m_label, s.c_str(), s.size()+1); // +1 to copy also the \0 char
+          gmap.info(res).m_label=s;
 
           if (dart_opposite_label!=nullptr)
           {
             std::string s2=internal::opposite_label(s);
             edge_label_to_dart[s2]=res;
-            gmap.info(res).m_label=new char[s2.size()+1];
-            strncpy(gmap.info(res).m_label, s2.c_str(), s2.size()+1); // +1 to copy also the \0 char
+            gmap.info(res).m_label=s2;
           
             gmap.template sew<2>(dh2, dart_opposite_label);
           }
@@ -168,20 +154,16 @@ namespace Surface_mesh_topology {
 
       std::string get_label(GMap& gmap, Dart_handle dh) const
       {
-        char* label=gmap.info(dh).m_label;
-
-        if (label==nullptr)
+        if (gmap.info(dh).m_label.empty())
         {
           if (!gmap.template is_free<2>(dh))
-          { label=gmap.info(gmap.template alpha<2>(dh)).m_label; }
+          { return gmap.info(gmap.template alpha<2>(dh)).m_label; }
           else
           {
-            return internal::opposite_label
-              (std::string(gmap.info(gmap.template alpha<0>(dh))));
+            return internal::opposite_label(gmap.info(gmap.template alpha<0>(dh)));
           }
         }
-        CGAL_assertion(label!=nullptr);
-        return std::string(label);
+        return gmap.info(dh).m_label;
       }
     };
 
@@ -209,19 +191,6 @@ namespace Surface_mesh_topology {
       facet_started(false)
     {}
 
-    ~Polygonal_schema_base()
-    {
-      for (auto it=this->darts().begin(), itend=this->darts().end();
-           it!=itend; ++it)
-      {
-        if (this->info(it).m_label!=nullptr)
-        {
-          delete []this->info(it).m_label;
-          this->info(it).m_label=nullptr;
-        }
-      }
-    }
-    
     /// Start a new facet.
     void init_facet()
     {

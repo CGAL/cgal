@@ -4,7 +4,7 @@
 
   The concept `PolygonalSchema` defines a 2D polygonal schema, i.e. a combinatorial surface with labeled edges. A PolygonalSchema is created incrementally by adding facets one at a time. A label is any word, that does not contain a space.
 
-  PolygonalSchema::Dart_info should be a class having a public data member char* m_label.
+  PolygonalSchema::Dart_info should be a class having a public data member std::string m_label.
   PolygonalSchema::dimension should be equal to 2.
   
   \cgalRefines GenericMap

@@ -13,6 +13,7 @@
 #define CGAL_POLYGONAL_SCHEMA_MIN_ITEMS_H 1
 
 #include <CGAL/license/Surface_mesh_topology.h>
+#include <string>
 
 namespace CGAL {
 namespace Surface_mesh_topology {
@@ -23,7 +24,7 @@ namespace Surface_mesh_topology {
 
   /** Minimal items for polygonal schema.
    * Generic_map_min_items defines what is the minimal item class for a generic map.
-   * One struct associated with darts, having one char* named m_label..
+   * One struct associated with darts, having one std::string named m_label..
    */
   struct Polygonal_schema_min_items
   {
@@ -31,12 +32,7 @@ namespace Surface_mesh_topology {
     struct Dart_wrapper
     {
       struct Info_for_darts
-      {
-        char* m_label;
-
-        Info_for_darts() : m_label(nullptr)
-        {}
-      };
+      { std::string m_label; };
       
       typedef Info_for_darts Dart_info;
     };
