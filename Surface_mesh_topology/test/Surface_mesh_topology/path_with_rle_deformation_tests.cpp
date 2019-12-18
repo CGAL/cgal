@@ -33,7 +33,9 @@ typedef CGAL::Linear_cell_complex_for_combinatorial_map<2, 3,
                                             MyTraits, MyItems> LCC_3_cmap;
 
 #define NB_TESTS 21 // 0 ... 20
-static int nbtests=0;
+static unsigned int nbtests=0;
+
+static const unsigned int ALL_TESTS=std::numeric_limits<unsigned int>::max();
 
 enum Transformation // enum for the type of transformations
 {
@@ -127,14 +129,14 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                std::size_t repeat,
                const char* msg, const char* expected_result,
-               bool draw, int testtorun,
+               bool draw, unsigned int testtorun,
                bool use_only_positive,
                bool use_only_negative)
 {
   CGAL_USE(msg);
   bool res=true;
 
-  if (testtorun==-1 || nbtests==testtorun)
+  if (testtorun==ALL_TESTS || nbtests==testtorun)
   {
 #ifdef CGAL_TRACE_PATH_TESTS
     std::cout<<"[Test "<<nbtests<<"] "<<msg<<": "<<std::flush;
@@ -163,7 +165,7 @@ bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool test_all_cases_spurs_and_bracket(bool draw, int testtorun)
+bool test_all_cases_spurs_and_bracket(bool draw, unsigned int testtorun)
 {
   bool res=true;
   LCC_3_cmap lcc;
@@ -237,7 +239,7 @@ bool test_all_cases_spurs_and_bracket(bool draw, int testtorun)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool test_all_cases_l_shape(bool draw, int testtorun)
+bool test_all_cases_l_shape(bool draw, unsigned int testtorun)
 {
   bool res=true;
   LCC_3_cmap lcc;
@@ -326,7 +328,7 @@ bool test_all_cases_l_shape(bool draw, int testtorun)
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
-bool test_some_random_paths_on_cube(bool draw, int testtorun)
+bool test_some_random_paths_on_cube(bool draw, unsigned int testtorun)
 {
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, "./data/cube-mesh-5-5.off"))
@@ -347,7 +349,7 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   random=CGAL::Random(nbtests);
   internal::generate_random_positive_bracket(path, 3, 8, 4, random); // Test 18
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
-                   "2 1 2 2 2 2 2 2 2", draw, testtorun, true, false))
+                   "1 2 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
   random=CGAL::Random(nbtests);
@@ -359,14 +361,14 @@ bool test_some_random_paths_on_cube(bool draw, int testtorun)
   random=CGAL::Random(nbtests);
   internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 20
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                   "2 1", draw, testtorun, true, false))
+                   "1 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-void usage(int /*argc*/, char** argv)
+[[noreturn]] void usage(int /*argc*/, char** argv)
 {
   std::cout<<"usage: "<<argv[0]<<" [-draw] [-test N]"<<std::endl
            <<"   Test several path transformations "
@@ -380,7 +382,7 @@ void usage(int /*argc*/, char** argv)
   exit(EXIT_FAILURE);
 }
 ///////////////////////////////////////////////////////////////////////////////
-void error_command_line(int argc, char** argv, const char* msg)
+[[noreturn]] void error_command_line(int argc, char** argv, const char* msg)
 {
   std::cout<<"ERROR: "<<msg<<std::endl;
   usage(argc, argv);
@@ -390,7 +392,7 @@ int main(int argc, char** argv)
 {
   bool draw=false;
   std::string arg;
-  int testN=-1;
+  unsigned int testN=ALL_TESTS;
 
   for (int i=1; i<argc; ++i)
   {
@@ -401,7 +403,7 @@ int main(int argc, char** argv)
     {
       if (i==argc-1)
       { error_command_line(argc, argv, "Error: no number after -test option."); }
-      testN=std::stoi(std::string(argv[++i]));
+      testN=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
       if (testN<0 || testN>=NB_TESTS)
       { error_command_line(argc, argv, "Error: invalid value for -test option."); }
     }
@@ -433,7 +435,7 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  if (testN==-1)
+  if (testN==ALL_TESTS)
   { std::cout<<"all the "<<nbtests<<" tests OK."<<std::endl; }
   else
   { std::cout<<"test "<<testN<<" OK."<<std::endl; }

@@ -497,13 +497,13 @@ public:
   bool next_flat_exist(const List_iterator& it) const
   {
     CGAL_assertion(it!=m_path.end());
-    return is_closed() || std::next(it)!=m_path.end();
+    return !is_empty() && (is_closed() || std::next(it)!=m_path.end());
   }
 
   /// @return true iff there is a flat before it
   bool prev_flat_exist(const List_iterator& it) const
   {
-    return is_closed() || it!=m_path.begin();
+    return !is_empty() && (is_closed() || it!=m_path.begin());
   }
 
   void advance_iterator(List_iterator& it)
@@ -830,9 +830,11 @@ public:
     set_flat_length(it, flat_length(it)+flat_length(it2)+
                     (positive2?1:-1));
     set_end_of_flat(it, end_of_flat(it2));
-    m_path.erase(it2);
+
     if (modified_flats.count(it2)==1)
       modified_flats.erase(it2);
+
+    m_path.erase(it2);
 
     // CGAL_assertion(is_flat_valid(it));
     return true;

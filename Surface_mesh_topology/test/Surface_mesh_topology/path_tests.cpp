@@ -60,18 +60,7 @@ bool basic_tests()
   }
 
   Path_on_surface<CMap> p4(p3);
-  // TEMPO TO DEBUG THE TEST SUITE
-  std::cout<<"P3="<<p3<<std::endl;
-  std::cout<<"P4 after copy="<<p4<<std::endl;
-  // END TEMPO  
   p4.reverse(); // Here p3==p4 because the path is symetric (it does a round trip)
-
-  // TEMPO TO DEBUG THE TEST SUITE
-  std::cout<<"P4 after reverse="<<p4<<std::endl;
-  std::cout<<"p3==p4?"<<(p3==p4?"true":"false")<<std::endl;
-  std::cout<<"p3.are_paths_equals(p4)?"<<(p3.are_paths_equals(p4)?"true":"false")<<std::endl;
-  // END TEMPO
-
   if (p3!=p4 || !p3.are_paths_equals(p4))
   {
     std::cerr<<"path_tests ERROR: p3!=p4 || !p3.are_paths_equals(p4)."<<std::endl;

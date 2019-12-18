@@ -22,6 +22,7 @@ endif()
 # add_definitions(-DCGAL_TRACE_PATH_TESTS)
 # add_definitions(-DCGAL_TRACE_CMAP_TOOLS)
 # add_definitions("-Wall -Wextra")
+# add_definitions("-D_GLIBCXX_DEBUG")
 
 set(SOURCE_FILES
   basic_example_surface_mesh_topology.cpp

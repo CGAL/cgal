@@ -561,7 +561,8 @@ protected:
       }
     }
     res.update_is_closed();
-    res.merge_last_flat_with_next_if_possible();
+    if (!res.is_empty())
+    { res.merge_last_flat_with_next_if_possible(); }
     CGAL_assertion(res.is_closed() || res.is_empty());
     CGAL_assertion(res.is_valid());
     return res;

@@ -116,8 +116,8 @@ int main(int argc, char** argv)
       //    (open/closed; with  or without perforated)
       PS ps;
       Curves_on_surface_topology<PS> cst(ps);
-      generate_random_polygonal_schema(ps, 5000, starting_seed++,  30, closed,  percent);   // Closed, no perforated faces
-      res&=run_n_random_paths_tests(ps, 20, cst, starting_seed);
+      generate_random_polygonal_schema(ps, 1000, starting_seed++,  30, closed,  percent);   // Closed, no perforated faces
+      res&=run_n_random_paths_tests(ps, 10, cst, starting_seed);
     }
     switch(i)
     {
