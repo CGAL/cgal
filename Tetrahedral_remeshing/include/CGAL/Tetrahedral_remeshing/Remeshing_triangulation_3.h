@@ -87,28 +87,28 @@ namespace Tetrahedral_remeshing
   \cgalRefines `Triangulation_3`
   
   */
-  template<typename K,
+  template<typename Gt,
            typename Concurrency_tag = CGAL::Sequential_tag,
-           typename Cb = CGAL::Triangulation_cell_base_3<K>,
-           typename Vb = CGAL::Triangulation_vertex_base_3<K>
+           typename Cb = CGAL::Triangulation_cell_base_3<Gt>,
+           typename Vb = CGAL::Triangulation_vertex_base_3<Gt>
 #ifndef DOXYGEN_RUNNING
     ,      typename Cell_visitor = Default_remeshing_visitor
 #endif
   >
   class Remeshing_triangulation_3
-    : public CGAL::Triangulation_3<K,
+    : public CGAL::Triangulation_3<Gt,
         CGAL::Triangulation_data_structure_3<
-          Remeshing_vertex_base<K, Vb>,
-          Remeshing_cell_base<K, Cb>
+          Remeshing_vertex_base<Gt, Vb>,
+          Remeshing_cell_base<Gt, Cb>
         >
       >
   {
-    typedef Remeshing_vertex_base<K, Vb>             RVb;
-    typedef Remeshing_cell_base<K, Cb>               RCb;
+    typedef Remeshing_vertex_base<Gt, Vb>             RVb;
+    typedef Remeshing_cell_base<Gt, Cb>               RCb;
 
   public:
     typedef CGAL::Triangulation_data_structure_3<RVb, RCb, Concurrency_tag> Tds;
-    typedef CGAL::Triangulation_3<K, Tds>            Self;
+    typedef CGAL::Triangulation_3<Gt, Tds>            Self;
     typedef Self                                     type;
 
   private:
@@ -184,12 +184,12 @@ namespace Tetrahedral_remeshing
   }
   
 
-  template<typename T3, typename K>
+  template<typename T3, typename Gt>
   void build_remeshing_triangulation(const T3& tr,
-                                     Remeshing_triangulation_3<K>& remeshing_tr)
+                                     Remeshing_triangulation_3<Gt>& remeshing_tr)
   {
     typedef typename T3::Triangulation_data_structure Tds;
-    typedef Remeshing_triangulation_3<K>::Tds   RTds;
+    typedef Remeshing_triangulation_3<Gt>::Tds   RTds;
 
     remeshing_tr.clear();
 
@@ -201,13 +201,13 @@ namespace Tetrahedral_remeshing
         internal::Cell_converter<Tds, RTds>()));
   }
 
-  template<typename T3, typename K>
+  template<typename T3, typename Gt>
   void build_from_remeshing_triangulation(
-    const Remeshing_triangulation_3<K>& remeshing_tr,
+    const Remeshing_triangulation_3<Gt>& remeshing_tr,
     T3& tr)
   {
     typedef typename T3::Triangulation_data_structure Tds;
-    typedef Remeshing_triangulation_3<K>::Tds   RTds;
+    typedef Remeshing_triangulation_3<Gt>::Tds   RTds;
 
     tr.clear();
 

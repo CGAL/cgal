@@ -84,10 +84,11 @@ namespace internal
     return oit;
   }
 
-  template<typename VertexNormalsMap, typename OutputIterator>
+  template<typename VertexNormalsMap, typename OutputIterator, typename Gt>
   OutputIterator compute_offset_points(const VertexNormalsMap& normals,
                                        const double& offset,
-                                       OutputIterator oit)
+                                       OutputIterator oit,
+                                       const Gt& gt)
   {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     std::ofstream ofs("imaginary_points.off");
@@ -95,13 +96,16 @@ namespace internal
     ofs << normals.size() << " 0 0" << std::endl;
 #endif
 
+    typename Gt::Construct_translated_point_3 translate
+      = gt.construct_translated_point_3_object();
+
     for (typename VertexNormalsMap::const_iterator nit = normals.begin();
          nit != normals.end(); ++nit)
     {
-      *oit++ = point((*nit).first->point()) + offset * (*nit).second;
+      *oit++ = translate(point((*nit).first->point()), offset * (*nit).second);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      ofs << ((*nit).first->point() + offset * (*nit).second) << std::endl;
+      ofs << translate(point((*nit).first->point()), offset * (*nit).second) << std::endl;
 #endif
     }
 
@@ -219,7 +223,8 @@ namespace internal
     std::vector<Point> offset_points;
     compute_offset_points(normals,
       offset,
-      std::back_inserter(offset_points));
+      std::back_inserter(offset_points),
+      tr.geom_traits());
 
     //insert vertices on offset
     //note we only need to insert them in the T3, because they
