@@ -50,7 +50,7 @@ public:
 
 
 template <typename T_3>
-class Triangulation_conformer_3 : public T_3 {
+class Conforming_Delaunay_triangulation_3 : public T_3 {
   using Vertex_handle = typename T_3::Vertex_handle;
   using Cell_handle = typename T_3::Cell_handle;
   using Point = typename T_3::Point;
@@ -87,9 +87,9 @@ protected:
 
   class Insert_in_conflict_visitor
   {
-    Triangulation_conformer_3<T_3>& self;
+    Conforming_Delaunay_triangulation_3<T_3>& self;
   public:
-    Insert_in_conflict_visitor(Triangulation_conformer_3& self) : self(self) {}
+    Insert_in_conflict_visitor(Conforming_Delaunay_triangulation_3& self) : self(self) {}
 
     template <class InputIterator>
     void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
@@ -169,7 +169,7 @@ protected:
   }
 
 public:
-  Triangulation_conformer_3()
+  Conforming_Delaunay_triangulation_3()
       : tr(*this), comp(&tr), constraint_hierarchy(comp) {
   }
 

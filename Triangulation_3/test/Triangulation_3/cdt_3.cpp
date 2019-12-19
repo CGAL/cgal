@@ -40,29 +40,25 @@ int main()
     };
     std::vector<Delaunay::Vertex_handle> vertices;
     vertices.reserve(points.size());
-    CGAL::Triangulation_conformer_3<Delaunay> conformer;
-    CGAL::Triangulation_conformer_3<Delaunay>& dt = conformer;
-    for(auto p: points) vertices.push_back(dt.insert(p));
+    CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
+    for(auto p: points) vertices.push_back(cdt.insert(p));
     Delaunay::Cell_handle c;
-    assert( dt.is_valid() );
-    assert(dt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));
-    assert(dt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
+    assert( cdt.is_valid() );
+    assert(cdt.is_cell(vertices[0], vertices[2], vertices[3], vertices[4], c));
+    assert(cdt.is_cell(vertices[1], vertices[2], vertices[3], vertices[4], c));
 
-    std::cerr << dt.number_of_vertices() << '\n';
-    std::cerr << dt.number_of_finite_cells() << '\n';
     Delaunay::Cell_handle ch;
     int li, lj;
-    assert(!dt.is_edge(vertices[0], vertices[1], ch, li, lj));
-    conformer.insert_constrained_edge(vertices[0], vertices[1]);
-    // conformer.insert_constrained_edge(vertices[5], vertices[1]);
-    conformer.insert_constrained_edge(vertices[5], vertices[11]);
-    return conformer.is_conforming() ? 0 : 1;
+    assert(!cdt.is_edge(vertices[0], vertices[1], ch, li, lj));
+    cdt.insert_constrained_edge(vertices[0], vertices[1]);
+    // cdt.insert_constrained_edge(vertices[5], vertices[1]);
+    cdt.insert_constrained_edge(vertices[5], vertices[11]);
+    return cdt.is_conforming() ? 0 : 1;
   };
   CGAL_USE(test1);
 
   auto test2 = []() {
-    CGAL::Triangulation_conformer_3<Delaunay> conformer;
-    CGAL::Triangulation_conformer_3<Delaunay>& dt = conformer;
+    CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
 
     std::ifstream input("clusters2.edg");
     if(!input) return 1;
@@ -72,34 +68,32 @@ int main()
     while(n-- > 0) {
       double x, y;
       input >> x >> y;
-      auto v1 = dt.insert({x, y, 0});
-        CGAL_assertion(conformer.is_conforming());
-      auto v3 = dt.insert({x, y, 1});
-        CGAL_assertion(conformer.is_conforming());
+      auto v1 = cdt.insert({x, y, 0});
+        CGAL_assertion(cdt.is_conforming());
+      auto v3 = cdt.insert({x, y, 1});
+        CGAL_assertion(cdt.is_conforming());
       input >> x >> y;
-      auto v2 = dt.insert({x, y, 0});
-        CGAL_assertion(conformer.is_conforming());
-      auto v4 = dt.insert({x, y, 1});
-        CGAL_assertion(conformer.is_conforming());
-      conformer.insert_constrained_edge(v1, v2);
-        CGAL_assertion(conformer.is_conforming());
-      conformer.insert_constrained_edge(v3, v4);
-        CGAL_assertion(conformer.is_conforming());
+      auto v2 = cdt.insert({x, y, 0});
+        CGAL_assertion(cdt.is_conforming());
+      auto v4 = cdt.insert({x, y, 1});
+        CGAL_assertion(cdt.is_conforming());
+      cdt.insert_constrained_edge(v1, v2);
+        CGAL_assertion(cdt.is_conforming());
+      cdt.insert_constrained_edge(v3, v4);
+        CGAL_assertion(cdt.is_conforming());
     }
-    dt.insert({11, 28, 0});
-      CGAL_assertion(conformer.is_conforming());
-    dt.insert({11, 33, 0});
-      CGAL_assertion(conformer.is_conforming());
-    std::cerr << dt.number_of_vertices() << '\n';
-    std::cerr << dt.number_of_finite_cells() << '\n';
-    // assert(dt.is_edge(vertices[0], vertices[1], ch, li, lj));
-    for(auto v: dt.finite_vertex_handles()) {
+    cdt.insert({11, 28, 0});
+      CGAL_assertion(cdt.is_conforming());
+    cdt.insert({11, 33, 0});
+      CGAL_assertion(cdt.is_conforming());
+    // assert(cdt.is_edge(vertices[0], vertices[1], ch, li, lj));
+    for(auto v: cdt.finite_vertex_handles()) {
       std::cout << "Point ( " << v->point() << " )\n";
       std::cout << "  on " << v->nb_of_incident_constraints << " constraint(s): "
                 << v->c_id << "\n";
     }
-    CGAL::draw(dt, "CDT_3", true);
-    return conformer.is_conforming() ? 0 : 1;
+    CGAL::draw(static_cast<Delaunay&>(cdt), "CDT_3", true);
+    return cdt.is_conforming() ? 0 : 1;
   };
 
   return test1() + test2();

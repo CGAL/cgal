@@ -42,14 +42,13 @@ int main(int argc, char* argv[])
   PMP::sharp_edges_segmentation(mesh, 80, edge_is_feature_map,
                                 face_patch_id_map);
 
-  CGAL::Triangulation_conformer_3<Delaunay> conformer;
-  CGAL::Triangulation_conformer_3<Delaunay>& dt = conformer;
+  CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
 
   auto point_map = get(CGAL::vertex_point, mesh);
   auto dt_vertex_handle_map =
       get(CGAL::dynamic_vertex_property_t<Delaunay::Vertex_handle>(), mesh);
   for(auto vertex_descriptor: vertices(mesh)) {
-    auto vertex_handle = dt.insert(get(point_map, vertex_descriptor));
+    auto vertex_handle = cdt.insert(get(point_map, vertex_descriptor));
     put(dt_vertex_handle_map, vertex_descriptor, vertex_handle);
   }
 
@@ -57,10 +56,10 @@ int main(int argc, char* argv[])
     if(get(edge_is_feature_map, edge_descriptor)) {
       auto s = source(edge_descriptor, mesh);
       auto t = target(edge_descriptor, mesh);
-      dt.insert_constrained_edge(get(dt_vertex_handle_map, s),
+      cdt.insert_constrained_edge(get(dt_vertex_handle_map, s),
                                  get(dt_vertex_handle_map, t));
     }
   }
-  CGAL::draw(dt, "CDT_3", true);
-  assert(conformer.is_conforming());
+  CGAL::draw(static_cast<Delaunay&>(cdt), "CDT_3", true);
+  assert(cdt.is_conforming());
 }
