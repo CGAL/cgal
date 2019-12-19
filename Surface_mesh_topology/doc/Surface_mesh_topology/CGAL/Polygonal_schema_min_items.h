@@ -4,7 +4,7 @@ namespace Surface_mesh_topology {
 /*!
 \ingroup PkgSurfaceMeshTopologyClasses
 
-The class `Polygonal_schema_min_items` defines a struct with a char* as the information associated with darts, and no attribute is enabled.
+The class `Polygonal_schema_min_items` defines a struct with a std::string as the information associated with darts, and no attribute is enabled.
 
 \cgalModels `PolygonalSchemaItems`
 
@@ -20,9 +20,7 @@ struct Polygonal_schema_min_items
   struct Dart_wrapper
   {
     struct Info_for_darts
-    { char* m_label;
-      Info_for_darts() : m_label(NULL) {}
-    };
+    { std::string m_label; };
     typedef Info_for_darts Dart_info;
   };
 };

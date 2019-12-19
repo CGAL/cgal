@@ -11,6 +11,7 @@
 
 class PolygonalSchemaItems
 {
+public:
     /*!
   - `%Dart_wrapper<Map>::%Dart_info`, should be a class having a public data member std::string m_label.
     */
