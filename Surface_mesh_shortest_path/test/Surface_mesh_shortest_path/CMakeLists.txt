@@ -14,6 +14,8 @@ create_single_source_cgal_program( "Surface_mesh_shortest_path_test_1.cpp" )
 create_single_source_cgal_program( "Surface_mesh_shortest_path_test_2.cpp" )
 create_single_source_cgal_program( "Surface_mesh_shortest_path_test_3.cpp" )
 create_single_source_cgal_program( "Surface_mesh_shortest_path_test_4.cpp" )
+  create_single_source_cgal_program( "Surface_mesh_shortest_path_test_5.cpp" )
+  create_single_source_cgal_program( "Surface_mesh_shortest_path_test_6.cpp" )
 create_single_source_cgal_program( "Surface_mesh_shortest_path_traits_test.cpp" )
 
 # Link with Boost.ProgramOptions (optional)

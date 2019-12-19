@@ -258,7 +258,7 @@ public:
       is_tree_empty = tree.empty();
       nb_lines = positions_lines.size();
       setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
-      BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+      for(auto v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
         initGL(viewer);
@@ -488,7 +488,7 @@ public:
     setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
     texture = new ::Texture(m_grid_size,m_grid_size);
     getTriangleContainer(0)->setTextureSize(QSize(m_grid_size, m_grid_size));
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       initGL(viewer);

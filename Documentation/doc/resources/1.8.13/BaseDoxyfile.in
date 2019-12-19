@@ -233,6 +233,9 @@ ALIASES                = "sc{1}=<span style=\"font-variant: small-caps;\">\1</sp
                          "protocgal=\sc{C++gal}" \
                          "plageo=\sc{Plageo}" \
                          "stl=\sc{STL}" \
+                         "gmp=\sc{GMP}" \
+                         "mpir=\sc{MPIR}" \
+                         "mpfr=\sc{MPFR}" \
                          "leda=\sc{LEDA}" \
                          "gcc=\sc{GCC}" \
                          "cpp=\sc{C++}" \

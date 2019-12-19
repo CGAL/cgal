@@ -11,8 +11,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <boost/foreach.hpp>
-
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel; 

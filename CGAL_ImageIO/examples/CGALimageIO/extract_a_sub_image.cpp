@@ -1,5 +1,6 @@
 #include <CGAL/ImageIO.h>
 #include <iostream>
+#include <string>
 
 int main(int argc, char **argv) {
   if (argc != 9) {

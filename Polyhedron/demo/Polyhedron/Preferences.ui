@@ -296,6 +296,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="backFrontColor_pushButton">
+              <property name="text">
+               <string>Change Back/Front Colors...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
