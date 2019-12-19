@@ -404,7 +404,7 @@ int main(int argc, char** argv)
       if (i==argc-1)
       { error_command_line(argc, argv, "Error: no number after -test option."); }
       testN=static_cast<unsigned int>(std::stoi(std::string(argv[++i])));
-      if (testN<0 || testN>=NB_TESTS)
+      if (testN>=NB_TESTS)
       { error_command_line(argc, argv, "Error: invalid value for -test option."); }
     }
     else if (arg=="-h" || arg=="--help" || arg=="-?")
