@@ -1,14 +1,13 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <iostream>
-#include <fstream>
-#include <string>
 
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
+#include <iostream>
+#include <fstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -63,12 +62,6 @@ int main(int argc, char* argv[])
   file_out.append("_out.binary.cgal");
   std::ofstream out(file_out.c_str(), std::ios_base::out | std::ios_base::binary);
   save_binary_triangulation(out, t3);
-
-  //// ascii
-  //file_out = file_in.substr(0, file_in.find_first_of("."));
-  //file_out.append("_out.mesh");
-  //std::ofstream medit_out(file_out.c_str(), std::ios_base::out);
-  //c3t3.output_to_medit(medit_out);
 
   return EXIT_SUCCESS;
 }

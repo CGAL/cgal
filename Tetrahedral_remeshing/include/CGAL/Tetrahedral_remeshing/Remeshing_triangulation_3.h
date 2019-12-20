@@ -69,9 +69,6 @@ namespace Tetrahedral_remeshing
   \tparam Gt is the geometric traits class.
   It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 
-  \tparam Info is the information the user would like to add to a cell.
-  It has to be `DefaultConstructible` and `Assignable`.
-
   \tparam Concurrency_tag enables sequential versus parallel implementation of the
   triangulation data structure.
   Possible values are `Sequential_tag` (the default) and `Parallel_tag`.
@@ -91,9 +88,9 @@ namespace Tetrahedral_remeshing
            typename Concurrency_tag = CGAL::Sequential_tag,
            typename Cb = CGAL::Triangulation_cell_base_3<Gt>,
            typename Vb = CGAL::Triangulation_vertex_base_3<Gt>
-#ifndef DOXYGEN_RUNNING
+    /// \cond SKIP_IN_MANUAL
     ,      typename Cell_visitor = Default_remeshing_visitor
-#endif
+    /// \endcond
   >
   class Remeshing_triangulation_3
     : public CGAL::Triangulation_3<Gt,
@@ -109,16 +106,17 @@ namespace Tetrahedral_remeshing
   public:
     typedef CGAL::Triangulation_data_structure_3<RVb, RCb, Concurrency_tag> Tds;
     typedef CGAL::Triangulation_3<Gt, Tds>            Self;
-    typedef Self                                     type;
 
   private:
     Cell_visitor m_visitor;
 
+  /// \cond SKIP_IN_MANUAL
   public:
     Cell_visitor& visitor()
     {
       return m_visitor;
     }
+  /// \endcond
   };
 
   namespace internal

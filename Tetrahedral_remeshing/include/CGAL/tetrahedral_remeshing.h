@@ -43,7 +43,7 @@ namespace CGAL
   *
   * This function takes as input a 3-dimensional triangulation
   * and performs a sequence of atomic operations
-  * in order to generate as output a quality mesh with a prescribed edge length.
+  * in order to generate as output a high quality mesh with a prescribed density.
   * These atomic operations are performed as follows :
   *   - edge splits, until all edges satisfy a prescribed length criterion,
   *   - edge collapses, ntil all edges satisfy a prescribed length criterion,
@@ -51,8 +51,11 @@ namespace CGAL
   *   - global smoothing by vertex relocations,
   *   - re-projection of boundary vertices to the initial surface.
   *
-  * This remeshing function can deal with multi-domains and preserves the geometry of
-  * subdomains throughout the remeshing process. Subdomains are defined by indices that
+  * This remeshing function can deal with multi-domains, multi-material boundaries and features.
+  * It preserves the geometry of
+  * subdomains throughout the remeshing process.
+  *
+  * Subdomains are defined by indices that
   * are stored in the cells of the input triangulation, following the `RemeshingCellBase_3`
   * concept.
   * The surfacic interfaces between subdomains are formed by facets which two incident cells
@@ -63,9 +66,10 @@ namespace CGAL
   *
   * @tparam Triangulation a 3-dimensional triangulation
   * deriving from `Triangulation_3`,
-  * with cell base model of `RemeshingCellBase_3`
+  * with geometric traits model of `RemeshingTriangulationTraits_3`,
+  * cell base model of `RemeshingCellBase_3`
   * and vertex base model of `RemeshingVertexBase_3`.
-  * 
+  *
   * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
   *
   * @param tr the triangulation to the remeshed
@@ -85,7 +89,6 @@ namespace CGAL
   *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *    constrained - or - not status of each edge of `tr`. A constrained edge can be split
   *    or collapsed, but not flipped.
-todo////  *    Its endpoints could be moved by smoothing
   *  \cgalParamEnd
   *  \cgalParamBegin{cell_is_selected_map} a property map containing the
   *    selected - or - not status for each cell of `tr` for remeshing.
@@ -96,6 +99,7 @@ todo////  *    Its endpoints could be moved by smoothing
   * \cgalNamedParamsEnd
 
   * @todo implement 1D smoothing for constrained edges
+  * @todo implement sizing field instead of uniform target edge length
   */
 
   //  * @tparam SizingField model of `CGAL::Sizing_field`

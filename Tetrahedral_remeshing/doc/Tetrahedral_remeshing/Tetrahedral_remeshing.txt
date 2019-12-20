@@ -7,20 +7,69 @@ namespace CGAL {
 \authors Jane Tournois, Noura Faraj
 \cgalAutoToc
 
-This chapter describes the tetrahedral remeshing algorithm...
+\section secTetRemeshing Multi-Material Tetrahedral Remeshing
 
-\section secmydefinitions Definitions
+This package implements an algorithm for quality tetrahedral remeshing,
+introduced by N.Faraj et al in%\cgalCite{faraj2016mvr}.
+This practical iterative remeshing algorithm is designed to remesh
+multi-material tetrahedral meshes, by iteratively performing a sequence of simple
+elementary operations such as edge collapses, edge splits, edge flips,
+and vertex relocations following a Laplacian smoothing.
+The algorithm results in high quality isotropic meshes, with the desired mesh density,
+while preserving the input geometric polyline and surfacic features.
 
-Section on definitions here ...
+Specific remeshing rules have been designed to satisfy the following criteria.
+First, the algorithm preserves the geometric complex topology, including
+multi-material surface patches and polyline features. Polyline features
+can be defined as intersections between more than two subdomains, or listed by
+the user. Second, it has been made possible to remesh only a selection of cells,
+instead of remeshing the whole domain, while preserving or remeshing the
+interface surfaces between the preserved and the remeshed tetrahedra.
 
-\section secmyexamples Examples
+All the local atomic operations that are performed by the algorithm
+preserve the input topology of the geometric complex.
 
-\subsection myFirstExample First Example
+The tetrahedral remeshing algorithm improves the quality of dihedral angles,
+while targetting the user-defined uniform sizing field and preserving the
+topology of the feature complex.
 
-The following example shows ...
+
+\section secTetRemeshingAPI API
+
+The tetrahedral remeshing algorithm is implemented as a single free function that
+takes only two parameters : the input triangulation, and the desired edge length,
+which drives the remeshing process.
+
+\ref BGLNamedParameters are used to deal with optional parameters.
+The page \ref Remeshing_namedparameters describes their usage
+and provides a list of the parameters that are used in this package for tuning
+of the remeshing process and results.
+
+
+\section secTetRemeshingExamples Examples
+
+\subsection ssecEx1 Tetrahedral Remeshing Example
+
+The following example shows the simplest use of the tetrahedral remeshing function.
+The only needed parameter is a given target edge length that will drive the remeshing process
+towards a high quality tetrahedral mesh with improved dihedral angles, and a more
+uniform mesh, with edge lengths getting closer to the input parameter value.
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_example.cpp }
+
+
+\subsection ssecEx2 Tetrahedral Remeshing of A Selection
+
+Optional BGL named parameters can be used to get more precise
+control on the remeshing process. In this example, a triangulation with two subdomains
+(defined by indices stored in cells) is given as input, but only one of its subdomains
+is remeshed.
+
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_of_one_subdomain.cpp }
+
+
+\subsection ssecEx3 Tetrahedral Remeshing With Polyline Features
+
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp }
 
 */
