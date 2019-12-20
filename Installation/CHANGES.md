@@ -56,6 +56,11 @@ Release date: June 2020
     `Compute_squared_radius_smallest_orthogonal_sphere_d`. Those are
     essential for the computation of weighted alpha-complexes.
 
+### Surface Mesh Simplification
+- Added a new simplification method based on the quadric error defined by Garland and Heckbert.
+- The concept "EdgeProfile" has been removed. This concept was not actually in use as the CGAL-provided model `CGAL::Edge_profile`
+  was imposed to the user. Other concepts have been clarified to reflect the fact that the API uses this particular class.
+
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
 
