@@ -25,6 +25,13 @@
 #include <fstream>
 #include <sstream>
 #include <set>
+
+
+#ifdef CGAL_FORCE_DETERMINISTIC_COREFINEMENT
+#include <boost/container/flat_set.hpp>
+#endif
+
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace Corefinement {
@@ -295,6 +302,47 @@ triangulate_a_face(
   //insert the new halfedge and set their incident vertex
 
   //grab edges that are not on the convex hull (these have already been created)
+#ifdef CGAL_FORCE_DETERMINISTIC_COREFINEMENT
+  typedef std::pair<Node_id, Node_id> Node_id_pair;
+  boost::container::flat_set<Node_id_pair> the_set;
+
+  for (typename CDT::Finite_edges_iterator it=cdt.finite_edges_begin();
+                                           it!=cdt.finite_edges_end(); ++it)
+  {
+    typename CDT::Vertex_handle cdt_v0=it->first->vertex( cdt.ccw(it->second) );
+    typename CDT::Vertex_handle cdt_v1=it->first->vertex( cdt.cw(it->second) );
+
+    // consider edges not on the convex hull (not on the boundary of the face)
+    // and create the corresponding halfedges
+    if ( !cdt.is_infinite(it->first->vertex(it->second)) &&
+         !cdt.is_infinite(cdt.mirror_vertex(it->first,it->second)) )
+    {
+      Node_id i0=cdt_v0->info(), i1=cdt_v1->info();
+      the_set.insert(CGAL::make_sorted_pair(i0, i1));
+    }
+  }
+
+  BOOST_FOREACH(const Node_id_pair& the_pair, the_set)
+  {
+      Node_id i0=the_pair.first, i1 = the_pair.second;
+      edge_descriptor e=add_edge(tm);
+      halfedge_descriptor h=halfedge(e,tm), h_opp=opposite(h,tm);
+
+
+      CGAL_assertion( node_id_to_vertex[i0]!=GT::null_vertex());
+      CGAL_assertion( node_id_to_vertex[i1]!=GT::null_vertex());
+
+      vertex_descriptor v0=node_id_to_vertex[i0], v1=node_id_to_vertex[i1];
+
+      set_target(h,v0,tm);
+      set_target(h_opp,v1,tm);
+      set_halfedge(v0,h,tm);
+      set_halfedge(v1,h_opp,tm);
+
+      edge_to_hedge[std::make_pair(i0,i1)]=h_opp;
+      edge_to_hedge[std::make_pair(i1,i0)]=h;
+  }
+#else
   for (typename CDT::Finite_edges_iterator it=cdt.finite_edges_begin();
                                            it!=cdt.finite_edges_end(); ++it)
   {
@@ -324,6 +372,7 @@ triangulate_a_face(
       edge_to_hedge[std::make_pair(i1,i0)]=h;
     }
   }
+#endif
 
   //grab triangles.
   user_visitor.before_subface_creations(current_face,tm);
