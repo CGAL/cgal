@@ -51,6 +51,11 @@ Release date: June 2020
         k-NN search to interrupt some distance computations before its end,
         saving precious milliseconds, in particular in medium-to-high dimension.
 
+### dD Geometry Kernel
+-   Epick\_d and Epeck\_d gain 2 new functors: `Power_side_of_bounded_power_sphere_d` and
+    `Compute_squared_radius_smallest_orthogonal_sphere_d`. Those are
+    essential for the computation of weighted alpha-complexes.
+
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
 
