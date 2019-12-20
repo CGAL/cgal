@@ -30,8 +30,6 @@
 
 namespace CGAL {
 
-namespace {
-
 #ifdef CGAL_HEADER_ONLY
 
 inline Failure_behaviour& get_static_error_behaviour()
@@ -47,6 +45,8 @@ inline Failure_behaviour& get_static_warning_behaviour()
 
 #else // CGAL_HEADER_ONLY
 
+namespace {
+
 // behaviour variables
 // -------------------
 
@@ -58,7 +58,11 @@ inline Failure_behaviour& get_static_error_behaviour()
 inline Failure_behaviour& get_static_warning_behaviour()
 { return _warning_behaviour; }
 
+} // anonymous namespace
+
 #endif // CGAL_HEADER_ONLY
+
+namespace {
 
 // standard error handlers
 // -----------------------
@@ -110,6 +114,8 @@ _standard_warning_handler( const char *,
 	 << std::endl;
 }
 
+} // anonymous namespace
+
 #ifdef CGAL_HEADER_ONLY
 
 inline Failure_function& get_static_error_handler()
@@ -124,6 +130,9 @@ inline Failure_function& get_static_warning_handler()
 }
 
 #else // CGAL_HEADER_ONLY
+
+namespace {
+
 // default handler settings
 // ------------------------
 Failure_function _error_handler   = _standard_error_handler;
@@ -134,9 +143,9 @@ inline Failure_function& get_static_error_handler()
 inline Failure_function& get_static_warning_handler()
 { return _warning_handler; }
 
-#endif // CGAL_HEADER_ONLY
-
 } // anonymous namespace
+
+#endif // CGAL_HEADER_ONLY
 
 // failure functions
 // -----------------

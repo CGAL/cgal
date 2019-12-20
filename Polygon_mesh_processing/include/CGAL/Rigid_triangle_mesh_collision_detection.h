@@ -215,11 +215,10 @@ public:
   std::size_t add_mesh(const TriangleMesh& tm,
                        const NamedParameters& np)
   {
-  // handle vpm
-    using Polygon_mesh_processing::GetVertexPointMap;
-    typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::const_type Local_vpm;
+    // handle vpm
+    typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
+
     CGAL_assertion_code(
       static const bool same_vpm = (boost::is_same<Local_vpm,Vpm>::value); )
     CGAL_static_assertion(same_vpm);
@@ -517,15 +516,11 @@ public:
           std::vector<Point_3>& points,
     const NamedParameters& np)
   {
-    using Polygon_mesh_processing::GetVertexPointMap;
-    using Polygon_mesh_processing::GetFaceIndexMap;
-
     const bool maybe_several_cc =
       parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
-    typedef typename GetVertexPointMap<TriangleMesh,
-                                       NamedParameters>::const_type Local_vpm;
+    typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
 
     CGAL_assertion_code(
@@ -542,8 +537,7 @@ public:
       std::vector<std::size_t> cc_ids(num_faces(tm));
 
       // face index map
-      typedef typename GetFaceIndexMap<TriangleMesh,
-                                       NamedParameters>::type Fid_map;
+      typedef typename CGAL::GetFaceIndexMap<TriangleMesh, NamedParameters>::type Fid_map;
 
       Fid_map fid_map =
         parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
