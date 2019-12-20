@@ -1390,7 +1390,7 @@ void Scene_c3t3_item_priv::computeSpheres()
 
   if(!spheres)
     return;
-
+  int s_id = 0;
   for(Tr::Finite_vertices_iterator
       vit = c3t3.triangulation().finite_vertices_begin(),
       end =  c3t3.triangulation().finite_vertices_end();
@@ -1436,7 +1436,7 @@ void Scene_c3t3_item_priv::computeSpheres()
                           wp2p(vit->point()).z() + offset.z);
     float radius = vit->point().weight() ;
     typedef unsigned char UC;
-    spheres->add_sphere(Geom_traits::Sphere_3(center, radius),
+    spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
                         CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
   }
   spheres->invalidateOpenGLBuffers();
@@ -1602,7 +1602,7 @@ void Scene_c3t3_item::show_spheres(bool b)
     contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
     if(b && !d->spheres)
     {
-      d->spheres = new Scene_spheres_item(this, true);
+      d->spheres = new Scene_spheres_item(this, d->c3t3.number_of_vertices_in_complex(), true);
       d->spheres->setName("Protecting spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
