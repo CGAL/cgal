@@ -266,7 +266,7 @@ namespace CGAL{
         {
           has_uv = true;
         }
-        cpp11::tuple<unsigned int, unsigned int, float, float, float>  new_hedge;
+        std::tuple<unsigned int, unsigned int, float, float, float>  new_hedge;
         for (std::size_t j = 0; j < element.number_of_items(); ++ j)
         {
           for (std::size_t k = 0; k < element.number_of_properties(); ++ k)

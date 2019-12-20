@@ -499,7 +499,7 @@ MainWindow::open(QString fileName)
   {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     CGAL::read_multi_point_WKT(ifs, points);
-    BOOST_FOREACH(K::Point_2 p, points)
+    for(K::Point_2 p : points)
     {
       mc.insert(p);
       me.insert(p);

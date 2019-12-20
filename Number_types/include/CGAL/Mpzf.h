@@ -655,7 +655,7 @@ struct Mpzf {
 	  rdata=Mpzf_impl::fill_n_ptr(rdata,xexp-absysize,-1);
 	  mpn_sub_1(rdata, xdata, absxsize, 1);
 	  res.size=absxsize+xexp;
-	  if(res.data()[res.size-1]==0) --res.size;
+	  while(/*res.size>0&&*/res.data()[res.size-1]==0) --res.size;
 	  if(xsize<0) res.size=-res.size;
 	  return res;
 	} else {

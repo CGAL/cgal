@@ -27,9 +27,6 @@ _test_cls_segment_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typename R::Segment_3 is;
- CGAL::Segment_3<R>  s1(is);
-
  RT  n1 =  7;
  RT  n2 = 21;
  RT  n3 = 14;
@@ -42,10 +39,18 @@ _test_cls_segment_3(const R& )
  CGAL::Point_3<R> p2( n4, n5, n6, n5);
  CGAL::Point_3<R> p3( n2, n8, n2, n8);
 
+ typename R::Segment_3 is ( p2, p1 );
+
+ CGAL::Segment_3<R> s1( is );
  CGAL::Segment_3<R> s2( p1, p2 );
  CGAL::Segment_3<R> s3( p2, p1 );
  CGAL::Segment_3<R> s4( s2 );
+
  s1 = s4;
+
+ typename R::Segment_3 is2 ( s4 );
+ is = s1;
+ s4 = is2;
 
  assert( CGAL::parallel(s2, s3) );
 

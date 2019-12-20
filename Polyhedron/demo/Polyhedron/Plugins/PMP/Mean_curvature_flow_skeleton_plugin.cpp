@@ -189,17 +189,9 @@ public:
                                             "to a surface mesh item. The generated mcf group must be selected in "
                                             "order to continue an on-going set of operations. "));});
     ui->omega_H->setValue(0.1);
-    ui->omega_H->setSingleStep(0.1);
-    ui->omega_H->setDecimals(3);
     ui->omega_P->setValue(0.2);
-    ui->omega_P->setSingleStep(0.1);
-    ui->omega_P->setDecimals(3);
-    ui->min_edge_length->setDecimals(7);
     ui->min_edge_length->setValue(0.002 * diag);
-    ui->min_edge_length->setSingleStep(0.0000001);
-    ui->delta_area->setDecimals(7);
     ui->delta_area->setValue(1e-4);
-    ui->delta_area->setSingleStep(1e-5);
     ui->is_medially_centered->setChecked(false);
 
     ui->label_omega_H->setToolTip(QString("omega_H controls the velocity of movement and approximation quality"));

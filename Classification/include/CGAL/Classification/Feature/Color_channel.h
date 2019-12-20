@@ -99,7 +99,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   virtual float value (std::size_t pt_index)
   {
-    cpp11::array<double, 3> c = get(color_map, *(input.begin()+pt_index)).to_hsv();
+    std::array<double, 3> c = get(color_map, *(input.begin()+pt_index)).to_hsv();
     return float(c[std::size_t(m_channel)]);
   }
   /// \endcond

@@ -1987,7 +1987,8 @@ private:
 
       for (boost::tie(current,end) = vertices(m_graph); current != end; ++current)
       {
-        std::cout << "Vertex#" << numVertices << ": p = " << get(m_vertexPointMap,*current)
+        std::cout << "Vertex#" << numVertices
+                  << ": p = " << get(m_vertexPointMap,*current)
                   << " , Saddle Vertex: " << (is_saddle_vertex(*current) ? "yes" : "no")
                   << " , Boundary Vertex: " << (is_boundary_vertex(*current) ? "yes" : "no") << std::endl;
         ++numVertices;
@@ -2100,7 +2101,8 @@ private:
             {
               std::cout << "PseudoSource Expansion: Parent = " << parent
                         << " , Vertex = " << get(m_vertexIndexMap, event->m_parent->target_vertex())
-                        << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << " , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_pseudo_source(parent);
@@ -2111,7 +2113,8 @@ private:
               std::cout << "Left Expansion: Parent = " << parent
                         << " Edge = (" << get(m_vertexIndexMap, source(event->m_parent->left_child_edge(), m_graph))
                         << "," << get(m_vertexIndexMap, target(event->m_parent->left_child_edge(), m_graph))
-                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << ") , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_left_child(parent, event->m_windowSegment);
@@ -2122,7 +2125,8 @@ private:
               std::cout << "Right Expansion: Parent = " << parent
                         << " , Edge = (" << get(m_vertexIndexMap, source(event->m_parent->right_child_edge(), m_graph))
                         << "," << get(m_vertexIndexMap, target(event->m_parent->right_child_edge(), m_graph))
-                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << ") , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_right_child(parent, event->m_windowSegment);
@@ -2218,7 +2222,7 @@ public:
 
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm,
+  Surface_mesh_shortest_path(const Triangle_mesh& tm,
                              Vertex_index_map vertexIndexMap,
                              Halfedge_index_map halfedgeIndexMap,
                              Face_index_map faceIndexMap,
@@ -2824,8 +2828,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
 
   \details The following static overload is also available:
-    - `static Face_location locate(const Point_3& p, const Triangle_mesh& tm,
-                                   Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const %Point_3& p, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2856,8 +2859,7 @@ public:
   \brief Returns the face location nearest to the given point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
-                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const %Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2898,7 +2900,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
 
   \details The following static overload is also available:
-    - `static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const %Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \tparam AABBTraits A model of `AABBTraits` used to define an `AABB_tree`.
 
@@ -2930,8 +2932,7 @@ public:
     its source point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
-                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const %Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -3004,9 +3005,7 @@ public:
 
   /// \endcond
 
-  /// @}
-
-  /*
+  /*!
   \brief Creates an `AABB_tree` suitable for use with `locate`.
 
   \details The following static overload is also available:
@@ -3022,14 +3021,14 @@ public:
     build_aabb_tree(m_graph, outTree, m_vertexPointMap);
   }
 
+  /// \cond
+
   template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree,
                        Vertex_point_map vertexPointMap) const
   {
     build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
-
-  /// \cond
 
   template <class AABBTraits>
   static void build_aabb_tree(const Triangle_mesh& tm,
@@ -3043,6 +3042,7 @@ public:
   }
   /// \endcond
 
+  /// @}
 };
 
 } // namespace CGAL
