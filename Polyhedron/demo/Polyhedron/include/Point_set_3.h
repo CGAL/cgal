@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud, Simon Giraudot
@@ -505,13 +496,13 @@ public:
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
   
-  CGAL::cgal_bgl_named_params
+  CGAL::Named_function_parameters
   <Kernel,
    CGAL::internal_np::geom_traits_t,
-   CGAL::cgal_bgl_named_params
+   CGAL::Named_function_parameters
    <typename Base::template Property_map<Vector>,
     CGAL::internal_np::normal_t,
-    CGAL::cgal_bgl_named_params
+    CGAL::Named_function_parameters
     <typename Base::template Property_map<Point>,
      CGAL::internal_np::point_t> > >
   inline parameters() const
@@ -598,13 +589,13 @@ namespace Point_set_processing_3
   namespace parameters
   {
     template <typename Kernel>
-    cgal_bgl_named_params
+    Named_function_parameters
     <Kernel,
      internal_np::geom_traits_t,
-     cgal_bgl_named_params
+     Named_function_parameters
      <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Vector_3>,
       internal_np::normal_t,
-      cgal_bgl_named_params
+      Named_function_parameters
       <typename ::Point_set_3<Kernel>::template Property_map<typename Kernel::Point_3>,
        internal_np::point_t> > >
     inline all_default(const ::Point_set_3<Kernel>& ps)

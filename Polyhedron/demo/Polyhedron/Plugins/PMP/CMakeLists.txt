@@ -34,7 +34,8 @@ if(EIGEN3_FOUND)
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
-else()
+
+else(EIGEN3_FOUND)
   message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
 endif()
 
@@ -49,12 +50,9 @@ target_link_libraries(inside_out_plugin PUBLIC scene_surface_mesh_item scene_pol
 polyhedron_demo_plugin(join_and_split_plugin Join_and_split_polyhedra_plugin KEYWORDS PMP)
 target_link_libraries(join_and_split_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-
-
 qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
 polyhedron_demo_plugin(point_inside_polyhedron_plugin Point_inside_polyhedron_plugin ${point_inside_polyhedronUI_FILES})
 target_link_libraries(point_inside_polyhedron_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item)
-
 
 qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
 polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
@@ -80,7 +78,8 @@ target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item)
 polyhedron_demo_plugin(surface_intersection_plugin Surface_intersection_plugin KEYWORDS PMP)
 target_link_libraries(surface_intersection_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
-polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin KEYWORDS PMP)
+qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui)
+polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
 target_link_libraries(repair_polyhedron_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
@@ -101,8 +100,6 @@ endif()
 polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin KEYWORDS IO Mesh_3 PMP)
 target_link_libraries(detect_sharp_edges_plugin PUBLIC scene_surface_mesh_item)
 
-
-
 qt5_wrap_ui( randomPerturbationUI_FILES Random_perturbation_dialog.ui)
 polyhedron_demo_plugin(random_perturbation_plugin Random_perturbation_plugin ${randomPerturbationUI_FILES} KEYWORDS PMP)
 target_link_libraries(random_perturbation_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
@@ -116,3 +113,14 @@ target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_s
 
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+
+# The smoothing plugin can still do some things, even if Ceres is not found
+qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
+polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+
+find_package(Ceres QUIET)
+if(TARGET ceres)
+  target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+  target_link_libraries(smoothing_plugin PUBLIC ceres)
+endif()

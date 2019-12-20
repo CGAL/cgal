@@ -352,6 +352,7 @@ Past-the-end iterator.
 Finite_faces_iterator finite_faces_end() 
 const; 
 
+/// @}
 
 /// \name Infinite Face, Edge, and Vertex Iterators
 /// The following iterators allow respectively to visit all (both

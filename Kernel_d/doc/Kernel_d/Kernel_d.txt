@@ -224,7 +224,6 @@ Note that it provides few interfaces in addition to those documented in the
 `Kernel_d` concept. In particular, the type of a point is only available as
 `Epick_d<DimensionTag>::%Point_d`, <B>not</B> `Point_d<Epick_d<DimensionTag>>`.
 
-\cgalModifBegin
 \subsection Kernel_dEpeckKernel Epeck_d Kernel
 
 The kernel `Epeck_d<DimensionTag>`, short for <em>Exact Predicates Exact
@@ -240,7 +239,6 @@ geometric predicates and constructions.
 Note that it provides few interfaces in addition to those documented in the
 `Kernel_d` concept. In particular, the type of a point is only available as
 `Epeck_d<DimensionTag>::%Point_d`, <B>not</B> `Point_d<Epeck_d<DimensionTag>>`.
-\cgalModifEnd
 
 
 \subsection Kernel_dNamingconventions Naming Conventions

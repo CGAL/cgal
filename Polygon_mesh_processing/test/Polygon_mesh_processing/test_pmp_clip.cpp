@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace params = PMP::parameters;
@@ -283,6 +284,49 @@ void test()
   assert(is_valid_polygon_mesh(tm1));
   CGAL::clear(tm1);
   CGAL::clear(tm2);
+
+  // non-manifold border vertices
+  std::stringstream ss;
+  ss << "OFF\n 5 2 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 0 1 4\n3 1 2 3\n";
+  ss >> tm1;
+  PMP::clip(tm1, K::Plane_3(-1,0,0,2));
+  assert(vertices(tm1).size()==3);
+  CGAL::clear(tm1);
+
+  ss.str(std::string());
+  ss << "OFF\n 7 4 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 3 5\n";
+  ss >> tm1;
+  CGAL::Euler::remove_face(halfedge(*std::prev(faces(tm1).end()),tm1),tm1);
+  PMP::clip(tm1, K::Plane_3(-1,0,0,2));
+  assert(vertices(tm1).size()==6);
+  CGAL::clear(tm1);
+
+  ss.str(std::string());
+  ss << "OFF\n 9 7 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n3 1 3 5\n3 1 6 4\n3 1 0 8\n";
+  ss >> tm1;
+  for (int i=0;i<3;++i)
+    CGAL::Euler::remove_face(halfedge(*std::prev(faces(tm1).end()),tm1),tm1);
+  PMP::clip(tm1, K::Plane_3(-1,0,0,2));
+  assert(vertices(tm1).size()==7);
+  CGAL::clear(tm1);
+
+  ss.str(std::string());
+  ss << "OFF\n 9 7 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n3 1 3 5\n3 1 6 4\n3 1 0 8\n";
+  ss >> tm1;
+  for (int i=0;i<3;++i)
+    CGAL::Euler::remove_face(halfedge(*std::prev(faces(tm1).end()),tm1),tm1);
+  PMP::clip(tm1, K::Plane_3(0,1,0,0));
+  assert(vertices(tm1).size()==3);
+  CGAL::clear(tm1);
+
+  ss.str(std::string());
+  ss << "OFF\n 9 7 0\n 0 0 0\n2 0 0\n4 0 0\n4 1 0\n0 1 0\n3 1 0\n 1 1 0\n3 -1 0\n1 -1 0\n3 0 1 4\n3 1 2 3\n3 1 5 6\n3 1 8 7\n3 1 3 5\n3 1 6 4\n3 1 0 8\n";
+  ss >> tm1;
+  for (int i=0;i<3;++i)
+    CGAL::Euler::remove_face(halfedge(*std::prev(faces(tm1).end()),tm1),tm1);
+  PMP::clip(tm1, K::Plane_3(0,-1,0,0));
+  assert(vertices(tm1).size()==7);
+  CGAL::clear(tm1);
 }
 
 int main()

@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -34,16 +25,9 @@ template <class R_> class Segment {
 	Data_ data;
 	public:
 	//typedef Segmentd<R_> Segment;
-#ifdef CGAL_CXX11
 	//FIXME: don't forward directly, piecewise_construct should call the point construction functor (I guess? or is it unnecessary?)
 	template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segment>>::value>::type>
 	Segment(U&&...u):data(std::forward<U>(u)...){}
-#else
-	Segment(){}
-	Segment(Point_ const&a, Point_ const&b): data(a,b) {}
-	//template<class A,class T1,class T2>
-	  //Segment(A const&,T1 const&t1,T2 const&t2)
-#endif
 	Point_ source()const{return data.first;}
 	Point_ target()const{return data.second;}
 	Point_ operator[](int i)const{
@@ -110,13 +94,11 @@ template<class R_> struct Segment_extremity {
 		CGAL_assertion(i==1);
 		return s.target();
 	}
-#ifdef CGAL_CXX11
 	result_type operator()(Segment &&s, int i)const{
 		if(i==0) return std::move(s.source());
 		CGAL_assertion(i==1);
 		return std::move(s.target());
 	}
-#endif
 };
 } // CartesianDKernelFunctors
 

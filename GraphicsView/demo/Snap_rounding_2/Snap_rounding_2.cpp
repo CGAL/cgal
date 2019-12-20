@@ -273,7 +273,7 @@ MainWindow::open(QString fileName)
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
     std::vector<std::vector<Point_2> > mls;
     CGAL::read_multi_linestring_WKT(ifs, mls);
-    BOOST_FOREACH(const std::vector<Point_2>& ls, mls)
+    for(const std::vector<Point_2>& ls : mls)
     {
       if(ls.size() > 2)
         continue;
@@ -315,7 +315,7 @@ MainWindow::on_actionSaveSegments_triggered()
     {
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
       std::vector<std::vector<Point_2> >mls;
-      BOOST_FOREACH(const Segment_2& seg, input)
+      for(const Segment_2& seg : input)
       {
         std::vector<Point_2> ls(2);
         ls[0] = seg.source();

@@ -81,6 +81,8 @@ public:
     dock_widget = new QDockWidget("Mesh approximation parameters", mw);
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
+    ui_widget.chord_error->setRange(0.0, 10.0);
+    ui_widget.error_drop->setRange(0.01, 1.0);
     mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
     // connect ui actions

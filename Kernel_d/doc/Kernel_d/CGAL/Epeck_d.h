@@ -4,7 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgKernelDKernels
 
-\cgalModifBegin
 A model for `Kernel_d`, minus `Kernel_d::Point_of_sphere_d`, that uses %Cartesian coordinates to represent the
 geometric objects.
 
@@ -156,4 +155,3 @@ Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_small
 Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
 }; /* end Epeck_d */
 } /* end namespace CGAL */
-/// \cgalModifEnd

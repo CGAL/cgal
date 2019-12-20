@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -452,18 +444,18 @@ void CGAL::QGLViewer::initializeGL() {
       "   highp vec4 light_spec = vec4(0.0, 0.0, 0.0, 1.0); \n"
       "   highp vec4 light_amb = vec4(0.4, 0.4, 0.4, 0.4);  \n"
       "   highp float spec_power = 51.8 ; \n"
-      "   vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   vec3 V = -fP.xyz; \n"
-      "   vec3 N; \n"
+      "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+      "   highp vec3 V = -fP.xyz; \n"
+      "   highp vec3 N; \n"
       "   if(fN == vec3(0.0,0.0,0.0)) \n"
       "       N = vec3(0.0,0.0,0.0); \n"
       "   else \n"
       "       N = normalize(fN); \n"
       "   L = normalize(L); \n"
       "   V = normalize(V); \n"
-      "   vec3 R = reflect(-L, N); \n"
-      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+      "   highp vec3 R = reflect(-L, N); \n"
+      "   highp vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+      "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
       
       "gl_FragColor = color*light_amb + diffuse + specular; \n"
       "gl_FragColor = vec4(gl_FragColor.xyz, 1.0); \n"
@@ -1618,7 +1610,7 @@ CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
   switch (ma) {
   case CGAL::qglviewer::NO_MOUSE_ACTION:
-    return QString::null;
+    return QString();
   case CGAL::qglviewer::ROTATE:
     return CGAL::QGLViewer::tr("Rotates", "ROTATE mouse action");
   case CGAL::qglviewer::ZOOM:
@@ -1644,14 +1636,14 @@ QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
   case CGAL::qglviewer::ZOOM_ON_REGION:
     return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
   }
-  return QString::null;
+  return QString();
 }
 
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   switch (ca) {
   case CGAL::qglviewer::NO_CLICK_ACTION:
-    return QString::null;
+    return QString();
   case CGAL::qglviewer::ZOOM_ON_PIXEL:
     return CGAL::QGLViewer::tr("Zooms on pixel", "ZOOM_ON_PIXEL click action");
   case CGAL::qglviewer::ZOOM_TO_FIT:
@@ -1676,7 +1668,7 @@ QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   case CGAL::qglviewer::ALIGN_CAMERA:
     return CGAL::QGLViewer::tr("Aligns camera", "ALIGN_CAMERA click action");
   }
-  return QString::null;
+  return QString();
 }
 
 static QString keyString(unsigned int key) {
@@ -1958,7 +1950,7 @@ void CGAL::QGLViewer::setKeyDescription(unsigned int key, QString description) {
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::cameraPathKeysString() const {
   if (pathIndex_.isEmpty())
-    return QString::null;
+    return QString();
 
   QVector< ::Qt::Key> keys;
   keys.reserve(pathIndex_.count());
@@ -1966,7 +1958,7 @@ QString CGAL::QGLViewer::cameraPathKeysString() const {
                                                   endi = pathIndex_.end();
        i != endi; ++i)
     keys.push_back(i.key());
-  qSort(keys);
+  std::sort(keys.begin(), keys.end());
 
   QVector< ::Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
   QString res = keyString(*it);
@@ -3558,7 +3550,7 @@ This is the name of the XML file where saveStateToFile() saves the viewer state
 restoreStateFromFile() to restore this state later (usually in your init()
 method).
 
-Setting this value to \c QString::null will disable the automatic state file
+Setting this value to \c QString() will disable the automatic state file
 saving that normally occurs on exit.
 
 If more than one viewer are created by the application, this function will
@@ -3590,7 +3582,7 @@ Use restoreStateFromFile() to restore this viewer state.
 
 This method is automatically called when a viewer is closed (using Escape or
 using the window's upper right \c x close button). setStateFileName() to \c
-QString::null to prevent this. */
+QString() to prevent this. */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::saveStateToFile() {
   QString name = stateFileName();

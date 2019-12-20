@@ -32,7 +32,7 @@ triangulation, which is a pair of a face handle and an index.
 
 The triangulation also enables the retrieval of the set
 of subconstraints of the triangulation (not ordered along constraints).
-It further enables the retrieval of the set of input constraints that induce a subconstraint,.
+It further enables the retrieval of the set of input constraints that induce a subconstraint.
 As it is straightforward to obtain a subconstraint from a constrained edge `e`,
 one can obtain the input constraints which induce `e`.
 
@@ -91,7 +91,7 @@ typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
 An iterator 
 to visit all the subconstraints of the triangulation. 
 The order of visit is undefined. 
-The value type of this iterator is `Subconstraint` 
+The value type of this iterator is `std::pair<Subconstraint,std::list<Context>*>` 
 corresponding to the vertices of the 
 subconstraint. 
 */ 

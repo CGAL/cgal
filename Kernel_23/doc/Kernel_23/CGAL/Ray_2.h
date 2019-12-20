@@ -64,10 +64,10 @@ Point_2<Kernel> source() const;
 
 /*!
 returns a point on `r`. `point(0)` is the source, 
-`point(i)`, with `i>0`, is different from the 
+`point(i)`, with `i>0`, is different from the
 source. \pre \f$ i \geq0\f$. 
 */ 
-Point_2<Kernel> point(int i) const; 
+Point_2<Kernel> point(const Kernel::FT i) const;
 
 /*!
 returns the direction of `r`. 
