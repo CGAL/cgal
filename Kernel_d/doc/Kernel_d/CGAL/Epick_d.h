@@ -109,6 +109,15 @@ public:
 template<class ForwardIterator>
 FT operator()(ForwardIterator first, ForwardIterator last);
 };
+class Compute_squared_radius_smallest_orthogonal_sphere_d {
+public:
+/*! returns the radius of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and orthogonal to all the spheres of A. The order of the points of A does not matter.
+    \pre A is affinely independent.
+    \tparam ForwardIterator has `Epick_d::Weighted_point_d` as value type.
+    */
+template<class ForwardIterator>
+FT operator()(ForwardIterator first, ForwardIterator last);
+};
 /*! \cgalModels `Kernel_d::Side_of_bounded_sphere_d`
  */
 class Side_of_bounded_sphere_d {
@@ -120,7 +129,18 @@ public:
 template<class ForwardIterator>
 Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Point_d&p);
 };
+class Power_side_of_bounded_power_sphere_d {
+public:
+/*! returns the relative position of weighted point p to the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and orthogonal to all the spheres of A. The order of the points of A does not matter.
+    \pre A is affinely independent.
+    \tparam ForwardIterator has `Epick_d::Weighted_point_d` as value type.
+    */
+template<class ForwardIterator>
+Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Weighted_point_d&p);
+};
 Construct_circumcenter_d construct_circumcenter_d_object();
 Compute_squared_radius_d compute_squared_radius_d_object();
+Compute_squared_radius_smallest_orthogonal_sphere_d compute_squared_radius_smallest_orthogonal_sphere_d_object();
+Power_side_of_bounded_power_sphere_d power_side_of_bounded_power_sphere_d_object();
 }; /* end Epick_d */
 } /* end namespace CGAL */
