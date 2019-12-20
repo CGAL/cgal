@@ -27,6 +27,29 @@ Release date: June 2020
     does not allow any intersection, except for the configuration of two constraints having a single
     common endpoints, for convience.
 
+### dD Spatial Searching
+
+-   Improved the performance of the kd-tree in some cases:
+    -   Not storing the points coordinates inside the tree usually
+        generates a lot of cache misses, leading to non-optimal
+        performance. This is the case for example
+        when indices are stored inside the tree, or to a lesser extent when the points
+        coordinates are stored in a dynamically allocated array (e.g., `Epick_d`
+        with dynamic dimension) &mdash; we says "to a lesser extent" because the points
+        are re-created by the kd-tree in a cache-friendly order after its construction,
+        so the coordinates are more likely to be stored in a near-optimal order
+        on the heap.
+        In these cases, the new `EnablePointsCache` template parameter of the
+        `CGAL::Kd_tree` class can be set to `CGAL::Tag_true`. The points coordinates
+        will then be cached in an optimal way. This will increase memory
+        consumption but provides better search performance. See the updated
+        `GeneralDistance` and `FuzzyQueryItem`
+        concepts for additional requirements when using such a cache.
+    -   In most cases (e.g., Euclidean distance), the distance computation
+        algorithm knows before its end that the distance will be greater
+        than or equal to some given value. This is used in the (orthogonal)
+        k-NN search to interrupt some distance computations before its end,
+        saving precious milliseconds, in particular in medium-to-high dimension.
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
