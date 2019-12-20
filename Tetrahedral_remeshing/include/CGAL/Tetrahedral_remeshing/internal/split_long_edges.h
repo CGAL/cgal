@@ -83,7 +83,8 @@ namespace internal
 
     // insert midpoint
     Vertex_handle new_v = tr.tds().insert_in_edge(e);
-    const Point m(CGAL::midpoint(point(v1->point()), point(v2->point())));
+    const Point m = tr.geom_traits().construct_midpoint_3_object()
+                           (point(v1->point()), point(v2->point()));
     new_v->set_point(m);
 
     // update dimension
@@ -116,11 +117,6 @@ namespace internal
       return false;
     if (is_imaginary(e, c3t3, imaginary_index))
       return false;
-
-#ifdef CGAL_LIMITED_APERTURE_EDGE_SELECTION
-    if (CGAL::helpers::is_on_the_outer_box(e, c3t3, imaginary_index))
-      return true;
-#endif
 
     if (protect_boundaries)
     {
@@ -162,6 +158,7 @@ namespace internal
     typedef typename T3::Vertex_handle         Vertex_handle;
     typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
+    typedef typename T3::Geom_traits     Gt;
     typedef typename T3::Geom_traits::FT FT;
     typedef boost::bimap<
       boost::bimaps::set_of<Edge_vv>,
@@ -185,7 +182,9 @@ namespace internal
       if (!can_be_split(e, c3t3, protect_boundaries, imaginary_index, cell_selector))
         continue;
 
-      FT sqlen = tr.segment(e).squared_length();
+      typename Gt::Compute_squared_length_3 sql
+        = tr.geom_traits().compute_squared_length_3_object();
+      FT sqlen = sql(tr.segment(e));
       if (sqlen > sq_high)
         long_edges.insert(long_edge(make_vertex_pair<T3>(e), sqlen));
     }

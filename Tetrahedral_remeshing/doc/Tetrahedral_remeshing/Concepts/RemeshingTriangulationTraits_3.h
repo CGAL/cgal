@@ -61,6 +61,16 @@ A constructor object model of `ConstructTranslatedPoint_3`
 */
 typedef unspecified_type Construct_translated_point_3;
 
+/*!
+A constructor object model of `ConstructMidpoint_3`
+*/
+typedef unspecified_type Construct_midpoint_3;
+
+/*!
+A constructor obeject model of `ComputeApproximateDihedralAngle_3`
+*/
+typedef unspecified_type Compute_approximate_dihedral_angle_3;
+
 /////*!
 ////A predicate object that must provide the function operator
 ////
@@ -110,6 +120,14 @@ Construct_divided_vector_3 construct_divided_vector_3_object();
 /*!
 */
 Construct_translated_point_3 construct_translated_point_3_object();
+
+/*!
+*/
+Construct_midpoint_3 	construct_midpoint_3_object();
+
+/*!
+*/
+Compute_approximate_dihedral_angle_3 compute_approximate_dihedral_angle_3_object();
 
 /// @}
 

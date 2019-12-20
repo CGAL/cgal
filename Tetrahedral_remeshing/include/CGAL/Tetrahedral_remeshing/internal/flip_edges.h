@@ -108,11 +108,11 @@ namespace internal
     int vh1_id = ch1->index(vh1);
 
     //Check if flip valid
-    if (!is_well_oriented(vh2,
+    if (!is_well_oriented(tr, vh2,
                           ch0->vertex(indices(vh0_id, 0)),
                           ch0->vertex(indices(vh0_id, 1)),
                           ch0->vertex(indices(vh0_id, 2)))
-      || !is_well_oriented(vh3,
+      || !is_well_oriented(tr, vh3,
                            ch1->vertex(indices(vh1_id, 0)),
                            ch1->vertex(indices(vh1_id, 1)),
                            ch1->vertex(indices(vh1_id, 2))))
@@ -147,16 +147,16 @@ namespace internal
     if (criterion == MIN_ANGLE_BASED)
     {
       //Current worst dihedral angle
-      FT curr_min_dh = min_dihedral_angle<Gt>(ch0);
-      curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle<Gt>(ch1));
-      curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle<Gt>(cell_to_remove));
+      FT curr_min_dh = min_dihedral_angle(tr, ch0);
+      curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, ch1));
+      curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, cell_to_remove));
 
       //Result worst dihedral angle
-      if (curr_min_dh > min_dihedral_angle<Gt, Vertex_handle>(vh2,
+      if (curr_min_dh > min_dihedral_angle(tr, vh2,
                                                ch0->vertex(indices(vh0_id, 0)),
                                                ch0->vertex(indices(vh0_id, 1)),
                                                ch0->vertex(indices(vh0_id, 2)))
-       || curr_min_dh > min_dihedral_angle<Gt, Vertex_handle>(vh3,
+       || curr_min_dh > min_dihedral_angle(tr, vh3,
                                                ch1->vertex(indices(vh1_id, 0)),
                                                ch1->vertex(indices(vh1_id, 1)),
                                                ch1->vertex(indices(vh1_id, 2))))
@@ -165,17 +165,17 @@ namespace internal
     else if (criterion == AVERAGE_ANGLE_BASED)
     {
       //Current worst dihedral angle
-      double average_min_dh = min_dihedral_angle<Gt>(ch0);
-      average_min_dh += min_dihedral_angle<Gt>(ch1);
-      average_min_dh += min_dihedral_angle<Gt>(cell_to_remove);
+      double average_min_dh = min_dihedral_angle(tr, ch0);
+      average_min_dh += min_dihedral_angle(tr, ch1);
+      average_min_dh += min_dihedral_angle(tr, cell_to_remove);
 
       average_min_dh /= 3.;
 
       FT new_average_min_dh = 0.5 *
-        (min_dihedral_angle<Gt, Vertex_handle>(vh2, ch0->vertex(indices(vh0_id, 0)),
+        (min_dihedral_angle(tr, vh2, ch0->vertex(indices(vh0_id, 0)),
                                      ch0->vertex(indices(vh0_id, 1)),
                                      ch0->vertex(indices(vh0_id, 2)))
-         + min_dihedral_angle<Gt, Vertex_handle>(vh3, ch1->vertex(indices(vh1_id, 0)),
+         + min_dihedral_angle(tr, vh3, ch1->vertex(indices(vh1_id, 0)),
                                        ch1->vertex(indices(vh1_id, 1)),
                                        ch1->vertex(indices(vh1_id, 2))));
       //Result worst dihedral angle
@@ -427,12 +427,12 @@ namespace internal
         const Facet& fi = facets[i];
         if (!tr.is_infinite(fi.first))
         {
-          if (is_well_oriented(vh, fi.first->vertex(indices(fi.second, 0)),
+          if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                    fi.first->vertex(indices(fi.second, 1)),
                                    fi.first->vertex(indices(fi.second, 2))))
           {
             min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-              min_dihedral_angle<Gt, Vertex_handle>(vh, fi.first->vertex(indices(fi.second, 0)),
+              min_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                          fi.first->vertex(indices(fi.second, 1)),
                                          fi.first->vertex(indices(fi.second, 2))));
           }
@@ -566,12 +566,12 @@ namespace internal
         const Facet& fi = facets[i];
         if (!tr.is_infinite(fi.first))
         {
-          if (is_well_oriented(vh, fi.first->vertex(indices(fi.second, 0)),
+          if (is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                    fi.first->vertex(indices(fi.second, 1)),
                                    fi.first->vertex(indices(fi.second, 2))))
           {
             min_flip_dihedral_angle = (std::min)(min_flip_dihedral_angle,
-              min_dihedral_angle<Gt, Vertex_handle>(vh, fi.first->vertex(indices(fi.second, 0)),
+              min_dihedral_angle(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                          fi.first->vertex(indices(fi.second, 1)),
                                          fi.first->vertex(indices(fi.second, 2))));
           }
@@ -729,7 +729,7 @@ namespace internal
       const Facet& fi = facets_for_new_cells[i];
 
       if ( !tr.is_infinite(fi.first)
-        && !is_well_oriented(vh, fi.first->vertex(indices(fi.second, 0)),
+        && !is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                  fi.first->vertex(indices(fi.second, 1)),
                                  fi.first->vertex(indices(fi.second, 2))))
         return NOT_FLIPPABLE;
@@ -739,7 +739,7 @@ namespace internal
       const Facet& fi = facets_for_updated_cells[i];
 
       if ( !tr.is_infinite(fi.first)
-        && !is_well_oriented(vh, fi.first->vertex(indices(fi.second, 0)),
+        && !is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                  fi.first->vertex(indices(fi.second, 1)),
                                  fi.first->vertex(indices(fi.second, 2))))
         return NOT_FLIPPABLE;
@@ -923,6 +923,7 @@ namespace internal
     typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
     typedef typename C3t3::Triangulation::Geom_traits Gt;
     typedef typename Gt::FT FT;
+    typename C3t3::Triangulation& tr = c3t3.triangulation();
 
     Sliver_removal_result result = NOT_FLIPPABLE;
 
@@ -936,10 +937,10 @@ namespace internal
       Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
       Cell_circulator done = circ;
 
-      FT curr_min_dh = min_dihedral_angle<Gt>(circ++);
+      FT curr_min_dh = min_dihedral_angle(tr, circ++);
       while (circ != done)
       {
-        curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle<Gt>(circ++));
+        curr_min_dh = (std::min)(curr_min_dh, min_dihedral_angle(tr, circ++));
       }
       if (boundary_vertices.size() == 2)
         find_best_flip_to_improve_dh(c3t3, edge, boundary_vertices[0], boundary_vertices[1],

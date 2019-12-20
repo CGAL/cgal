@@ -73,62 +73,68 @@ namespace Tetrahedral_remeshing
     return indices_table[i][j];
   }
 
-  template<typename Gt>
-  typename Gt::FT dihedral_angle(const CGAL::Point_3<Gt>& p,
-    const CGAL::Point_3<Gt>& q,
-    const CGAL::Point_3<Gt>& r,
-    const CGAL::Point_3<Gt>& s)
+  template<typename Tr>
+  typename Tr::Geom_traits::FT dihedral_angle(const Tr& tr,
+                                              const typename Tr::Point& p,
+                                              const typename Tr::Point& q,
+                                              const typename Tr::Point& r,
+                                              const typename Tr::Point& s)
   {
-    return Gt().compute_approximate_dihedral_angle_3_object()(p, q, r, s);
+    return tr.geom_traits().compute_approximate_dihedral_angle_3_object()(p, q, r, s);
   }
 
-  template<typename Gt>
-  typename Gt::FT min_dihedral_angle(const CGAL::Point_3<Gt>& p,
-    const CGAL::Point_3<Gt>& q,
-    const CGAL::Point_3<Gt>& r,
-    const CGAL::Point_3<Gt>& s)
+  template<typename Tr>
+  typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
+                                                  const typename Tr::Point& p,
+                                                  const typename Tr::Point& q,
+                                                  const typename Tr::Point& r,
+                                                  const typename Tr::Point& s)
   {
-    typedef typename Gt::FT FT;
-    FT a = CGAL::abs(dihedral_angle(p, q, r, s));
+    typedef typename Tr::Geom_traits::FT FT;
+    FT a = CGAL::abs(dihedral_angle(tr, p, q, r, s));
     FT min_dh = a;
 
-    a = CGAL::abs(dihedral_angle(p, r, q, s));
+    a = CGAL::abs(dihedral_angle(tr, p, r, q, s));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(p, s, q, r));
+    a = CGAL::abs(dihedral_angle(tr, p, s, q, r));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(q, r, p, s));
+    a = CGAL::abs(dihedral_angle(tr, q, r, p, s));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(q, s, p, r));
+    a = CGAL::abs(dihedral_angle(tr, q, s, p, r));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(r, s, p, q));
+    a = CGAL::abs(dihedral_angle(tr, r, s, p, q));
     min_dh = (std::min)(a, min_dh);
 
     return min_dh;
   }
 
-  template<typename Gt, typename VertexHandle>
-  typename Gt::FT min_dihedral_angle(VertexHandle v0,
-    VertexHandle v1,
-    VertexHandle v2,
-    VertexHandle v3)
+  template<typename Tr>
+  typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
+                                                  const typename Tr::Vertex_handle v0,
+                                                  const typename Tr::Vertex_handle v1,
+                                                  const typename Tr::Vertex_handle v2,
+                                                  const typename Tr::Vertex_handle v3)
   {
-    return min_dihedral_angle(point(v0->point()),
-      point(v1->point()),
-      point(v2->point()),
-      point(v3->point()));
+    return min_dihedral_angle(tr,
+                              point(v0->point()),
+                              point(v1->point()),
+                              point(v2->point()),
+                              point(v3->point()));
   }
 
-  template<typename Gt, typename CellHandle>
-  typename Gt::FT min_dihedral_angle(CellHandle c)
+  template<typename Tr>
+  typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
+                                                  const typename Tr::Cell_handle c)
   {
-    return min_dihedral_angle(point(c->vertex(0)->point()),
-      point(c->vertex(1)->point()),
-      point(c->vertex(2)->point()),
-      point(c->vertex(3)->point()));
+    return min_dihedral_angle(tr,
+                              point(c->vertex(0)->point()),
+                              point(c->vertex(1)->point()),
+                              point(c->vertex(2)->point()),
+                              point(c->vertex(3)->point()));
   }
 
   template<typename Vh>
@@ -164,31 +170,26 @@ namespace Tetrahedral_remeshing
     return (v->in_dimension() == 1);
   }
 
-  template<typename CellHandle>
-  CGAL::Orientation orientation(const CellHandle ch)
+  template<typename Tr>
+  bool is_well_oriented(const Tr& tr, const typename Tr::Cell_handle ch)
   {
-    return CGAL::orientation(point(ch->vertex(0)->point()),
-                             point(ch->vertex(1)->point()),
-                             point(ch->vertex(2)->point()),
-                             point(ch->vertex(3)->point()));
+    return is_well_oriented(tr, ch->vertex(0), ch->vertex(1),
+                            ch->vertex(2), ch->vertex(3));
   }
 
-  template<typename CellHandle>
-  bool is_well_oriented(const CellHandle ch)
+  template<typename Tr>
+  bool is_well_oriented(const Tr& tr,
+                        const typename Tr::Vertex_handle v0,
+                        const typename Tr::Vertex_handle v1,
+                        const typename Tr::Vertex_handle v2,
+                        const typename Tr::Vertex_handle v3)
   {
-    return CGAL::POSITIVE == orientation(ch);
-  }
-
-  template<typename VertexHandle>
-  bool is_well_oriented(const VertexHandle v0, const VertexHandle v1,
-    const VertexHandle v2, const VertexHandle v3)
-  {
-    return CGAL::POSITIVE == CGAL::orientation(point(v0->point()),
+    return CGAL::POSITIVE == tr.geom_traits().orientation_3_object()(
+                                               point(v0->point()),
                                                point(v1->point()),
                                                point(v2->point()),
                                                point(v3->point()));
   }
-
 
   template<typename C3T3, typename CellSelector>
   bool is_boundary(const C3T3& c3t3,

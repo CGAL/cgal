@@ -282,7 +282,7 @@ namespace internal
         for (Finite_cells_iterator cit = triangulation.finite_cells_begin();
              cit != triangulation.finite_cells_end(); ++cit)
         {
-          if (!is_well_oriented(cit))
+          if (!is_well_oriented(triangulation, cit))
             return ORIENTATION_PROBLEM;
         }
 
@@ -940,6 +940,7 @@ namespace internal
     typedef typename T3::Vertex_handle         Vertex_handle;
     typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
+    typedef typename T3::Geom_traits     Gt;
     typedef typename T3::Geom_traits::FT FT;
     typedef boost::bimap<
       boost::bimaps::set_of<Edge_vv>,
@@ -964,7 +965,9 @@ namespace internal
       if (!can_be_collapsed(e, c3t3, protect_boundaries, imaginary_index, cell_selector))
         continue;
 
-      double sqlen = tr.segment(e).squared_length();
+      typename Gt::Compute_squared_length_3 sql
+        = tr.geom_traits().compute_squared_length_3_object();
+      FT sqlen = sql(tr.segment(e));
       if (sqlen < sq_low)
         short_edges.insert(short_edge(make_vertex_pair<T3>(e), sqlen));
     }
