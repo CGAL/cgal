@@ -67,6 +67,10 @@ public:
   Point_set_demo_point_set_upsampling_dialog(QWidget * /*parent*/ = 0)
   {
     setupUi(this);
+    m_edgeSensitivity->setMaximum(1.0);
+    m_neighborhoodRadius->setRange(0.1, 10.0);
+
+
   }
 
   unsigned int sharpness_angle () const { return m_sharpnessAngle->value(); }

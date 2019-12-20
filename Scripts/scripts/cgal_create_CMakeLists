@@ -90,6 +90,8 @@ create_cmake_script_with_options()
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
+
 EOF
   #---------------------------------------------------------------------------
   if [ "$SINGLE_SOURCE" = "n" ]; then
@@ -101,8 +103,6 @@ EOF
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
 
-
-cmake_minimum_required(VERSION 2.8.11)
 
 # CGAL and its components
 EOF

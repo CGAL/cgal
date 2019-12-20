@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Mesh_3.h>
 
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 
 #include <vtkPoints.h>
 #include <vtkUnstructuredGrid.h>
