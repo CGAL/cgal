@@ -183,7 +183,10 @@ namespace internal
   {
     typedef typename C3T3::Edge Edge;
     typedef typename C3T3::Vertex_handle Vertex_handle;
-    typedef typename C3T3::Triangulation::Geom_traits::Vector_3 Vector_3;
+    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    typedef typename Gt::Vector_3 Vector_3;
+
+    const Gt& gt = c3t3.triangulation().geom_traits();
 
     Vector_3 move = CGAL::NULL_VECTOR;
 
@@ -193,15 +196,22 @@ namespace internal
     if (edges.empty())
       return move;
 
+    typename Gt::Construct_vector_3 vec
+      = gt.construct_vector_3_object();
+    typename Gt::Construct_sum_of_vectors_3 sum
+      = gt.construct_sum_of_vectors_3_object();
+
     BOOST_FOREACH(Edge e, edges)
     {
       Vertex_handle ve = (e.first->vertex(e.second) != v)
                         ? e.first->vertex(e.second)
                         : e.first->vertex(e.third);
-      move = move + Vector_3(CGAL::ORIGIN,  point(ve->point()));
+      move = sum(move, Vector_3(CGAL::ORIGIN,  point(ve->point())));
     }
 
-    return 1. / edges.size() * move;
+    typename Gt::Construct_scaled_vector_3 scale
+      = gt.construct_scaled_vector_3_object();
+    return scale(move, 1. / edges.size());
   }
 
   template<typename C3T3>
@@ -212,7 +222,10 @@ namespace internal
   {
     typedef typename C3T3::Edge Edge;
     typedef typename C3T3::Vertex_handle Vertex_handle;
-    typedef typename C3T3::Triangulation::Geom_traits::Vector_3 Vector_3;
+    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    typedef typename Gt::Vector_3 Vector_3;
+
+    const Gt& gt = c3t3.triangulation().geom_traits();
 
     Vector_3 move = CGAL::NULL_VECTOR;
 
@@ -222,6 +235,11 @@ namespace internal
     if (edges.empty())
       return move;
 
+    typename Gt::Construct_vector_3 vec
+      = gt.construct_vector_3_object();
+    typename Gt::Construct_sum_of_vectors_3 sum
+      = gt.construct_sum_of_vectors_3_object();
+
     std::size_t nbe = 0;
     BOOST_FOREACH(Edge e, edges)
     {
@@ -230,13 +248,17 @@ namespace internal
         Vertex_handle ve = (e.first->vertex(e.second) != v)
                           ? e.first->vertex(e.second)
                           : e.first->vertex(e.third);
-        move = move + Vector_3(CGAL::ORIGIN, point(ve->point()));
+        move = sum(move, vec(CGAL::ORIGIN, point(ve->point())));
         ++nbe;
       }
     }
 
     if (nbe > 0)
-      return (1. / nbe) * move;
+    {
+      typename Gt::Construct_scaled_vector_3 scale
+        = gt.construct_scaled_vector_3_object();
+      return scale(move, 1. / nbe);
+    }
     else
       return CGAL::NULL_VECTOR;
   }
@@ -249,7 +271,10 @@ namespace internal
   {
     typedef typename C3T3::Edge Edge;
     typedef typename C3T3::Vertex_handle Vertex_handle;
-    typedef typename C3T3::Triangulation::Geom_traits::Vector_3 Vector_3;
+    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    typedef typename Gt::Vector_3 Vector_3;
+
+    const Gt& gt = c3t3.triangulation().geom_traits();
 
     Vector_3 move = CGAL::NULL_VECTOR;
 
@@ -258,6 +283,11 @@ namespace internal
 
     if (edges.empty())
       return move;
+
+    typename Gt::Construct_vector_3 vec
+      = gt.construct_vector_3_object();
+    typename Gt::Construct_sum_of_vectors_3 sum
+      = gt.construct_sum_of_vectors_3_object();
 
     std::size_t nbe = 0;
     BOOST_FOREACH(Edge e, edges)
@@ -269,12 +299,16 @@ namespace internal
                       ? e.first->vertex(e.second)
                       : e.first->vertex(e.third);
 
-      move = move + Vector_3(CGAL::ORIGIN, point(ve->point()));
+      move = sum(move, vec(CGAL::ORIGIN, point(ve->point())));
       ++nbe;
     }
 
     if (nbe == 2)
-      return 0.5 * move;
+    {
+      typename Gt::Construct_scaled_vector_3 scale
+        = gt.construct_scaled_vector_3_object();
+      return scale(move, 0.5);
+    }
     else
       return CGAL::NULL_VECTOR;
   }
