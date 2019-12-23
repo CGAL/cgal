@@ -33,7 +33,7 @@ public:
   typedef std::pair<Sphere, CGAL::Color> Sphere_pair;
   typedef std::vector<std::vector<Sphere_pair> > Spheres_container;
 
-  Scene_spheres_item(Scene_group_item* parent, std::size_t max_index = 0, bool planed = false);
+  Scene_spheres_item(Scene_group_item* parent, std::size_t max_index = 0, bool planed = false, bool pickable = true);
 
   ~Scene_spheres_item();
 
