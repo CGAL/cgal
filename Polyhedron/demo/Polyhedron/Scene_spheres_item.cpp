@@ -170,10 +170,10 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     {
       QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
       getTriangleContainer(0)->setPlane(cp);
+      getTriangleContainer(1)->setPlane(cp);
     }
     if(d->spheres.size() > 1 && viewer->inDrawWithNames())
     {
-      getTriangleContainer(1)->allocate(Tc::Flat_normals, 0, 0);
       getTriangleContainer(1)->getVao(viewer)->program->setAttributeValue("normals", QVector3D(0,0,0));
       getTriangleContainer(1)->draw(viewer, false);
     }
@@ -182,22 +182,22 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
       getTriangleContainer(0)->draw(viewer, false);
     }
     if(d->spheres.size() > 1 && viewer->inDrawWithNames())
+    {
+      int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
+      const static int dataLength = rowLength * deviceHeight;
+      GLubyte* buffer = new GLubyte[dataLength];
+      // Qt uses upper corner for its origin while GL uses the lower corner.
+      QPoint picking_target = viewer->mapFromGlobal(QCursor::pos());
+      viewer->glReadPixels(picking_target.x(), deviceHeight-1-picking_target.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+      int ID = (buffer[0] + buffer[1] * 256 +buffer[2] * 256*256) ;
+      if(buffer[0]*buffer[1]*buffer[2] < 255*255*255)
       {
-        int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
-        const static int dataLength = rowLength * deviceHeight;
-        GLubyte* buffer = new GLubyte[dataLength];
-        // Qt uses upper corner for its origin while GL uses the lower corner.
-        QPoint picking_target = viewer->mapFromGlobal(QCursor::pos());
-        viewer->glReadPixels(picking_target.x(), deviceHeight-1-picking_target.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-        int ID = (buffer[0] + buffer[1] * 256 +buffer[2] * 256*256) ;
-        if(buffer[0]*buffer[1]*buffer[2] < 255*255*255)
-        {
-          d->pick(ID);
-          viewer->displayMessage(QString("Picked spheres index : %1 .").arg(ID), 2000);
-        }
-        else
-          d->pick(-1);
+        d->pick(ID);
+        viewer->displayMessage(QString("Picked spheres index : %1 .").arg(ID), 2000);
       }
+      else
+        d->pick(-1);
+    }
 }
 
 void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const

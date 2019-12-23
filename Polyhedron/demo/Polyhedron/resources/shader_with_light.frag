@@ -57,8 +57,6 @@ void main(void) {
       out_color = my_color;
       return;
     }
-    if(fN ==  vec3(0.0,0.0,0.0))
-      N =  vec3(0.0,0.0,0.0);
     else
       N = normalize(fN);
     L = normalize(L);
