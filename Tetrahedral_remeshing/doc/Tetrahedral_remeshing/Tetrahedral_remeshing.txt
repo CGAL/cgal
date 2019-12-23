@@ -62,13 +62,19 @@ uniform mesh, with edge lengths getting closer to the input parameter value.
 
 Optional BGL named parameters can be used to get more precise
 control on the remeshing process. In this example, a triangulation with two subdomains
-(defined by indices stored in cells) is given as input, but only one of its subdomains
-is remeshed.
+(defined by indices stored in cells) is given as input, but only one
+(defined by the `Subdomain_index` 2)
+of its subdomains is remeshed.
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_of_one_subdomain.cpp }
 
 
 \subsection ssecEx3 Tetrahedral Remeshing With Polyline Features
+
+Optional BGL named parameters can be used to get more precise
+control on the remeshing process. In this example, a triangulation
+with polyline features that should be preserved - though resampled -
+during the remeshing process.
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp }
 

@@ -1,17 +1,12 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 
-#include <CGAL/Random.h>
-
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> T3;
-
-
+template<typename T3>
 bool load_binary_triangulation(std::istream& is, T3& t3)
 {
   std::string s;
@@ -29,6 +24,7 @@ bool load_binary_triangulation(std::istream& is, T3& t3)
   return bool(is);
 }
 
+template<typename T3>
 bool save_binary_triangulation(std::ostream& os, const T3& t3)
 {
   typedef T3::Geom_traits::FT FT;
@@ -37,15 +33,17 @@ bool save_binary_triangulation(std::ostream& os, const T3& t3)
   return !!(os << t3);
 }
 
-int main(int argc, char* argv[])
+template<typename T3>
+void save_ascii_triangulation(const char* filename, const T3& t3)
 {
-  const std::size_t nbv = 1000;
+  CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(
+        t3, filename);
+}
 
-  int input_id = (argc > 1) ? atoi(argv[1]) : 1;
+template<typename T3>
+int generate_input(int input_id, std::size_t nbv, T3& tr)
+{
   char* filename;
-
-  T3 tr;
-
   CGAL::Random rng;
 
   if (input_id == 1) //sphere and only one subdomain

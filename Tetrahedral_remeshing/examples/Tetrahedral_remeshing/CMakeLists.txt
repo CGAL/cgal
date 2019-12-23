@@ -29,5 +29,4 @@ endif()
   create_single_source_cgal_program( "tetrahedral_remeshing_with_features.cpp")
   create_single_source_cgal_program( "tetrahedral_remeshing_of_one_subdomain.cpp")
 
-  create_single_source_cgal_program( "generate_input.cpp ")
   create_single_source_cgal_program( "test_mesh_loader.cpp ")

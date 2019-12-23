@@ -1,7 +1,3 @@
-#include <iostream>
-#include <fstream>
-#include <utility>
-
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #define CGAL_DUMP_REMESHING_STEPS
 
@@ -10,11 +6,16 @@
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
-
 #include <CGAL/Random.h>
 #include <CGAL/property_map.h>
 
 #include <boost/unordered_set.hpp>
+
+#include <iostream>
+#include <fstream>
+#include <utility>
+
+#include "tetrahedral_remeshing_io.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -140,19 +141,13 @@ int main(int argc, char* argv[])
   input >> t3;
   CGAL_assertion(t3.is_valid());
 
-  CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(t3,
-    "tet_remeshing_with_features_before.mesh");
+  save_ascii_triangulation("tet_remeshing_with_features_before.mesh", t3);
 
   CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
       Constrained_edges_property_map<Remeshing_triangulation>(&constraints)));
 
-  std::ofstream oFileT("output.tr.cgal", std::ios::out);
-  // writing file output;
-  oFileT << t3;
-
-  CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(t3,
-    "tet_remeshing_with_features_after.mesh");
+  save_ascii_triangulation("tet_remeshing_with_features_after.mesh", t3);
 
   return EXIT_SUCCESS;
 }

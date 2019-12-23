@@ -125,6 +125,18 @@ namespace CGAL
       np);
   }
 
+  template<typename Triangulation, typename NamedParameters>
+  void tetrahedral_adaptive_remeshing(Triangulation& tr,
+    const float& target_edge_length,
+    const NamedParameters& np)
+  {
+    tetrahedral_adaptive_remeshing(
+      tr,
+      [target_edge_length](const typename Triangulation::Point& p)
+                          {return target_edge_length; },
+      np);
+  }
+
   template<typename Triangulation,
            typename SizingFunction,
            typename NamedParameters>

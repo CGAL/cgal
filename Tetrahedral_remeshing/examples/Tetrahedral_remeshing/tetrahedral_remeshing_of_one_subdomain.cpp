@@ -10,36 +10,32 @@
 
 #include <CGAL/Random.h>
 
+#include "tetrahedral_remeshing_io.h"
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
-
-typedef CGAL::Triangulation_3<K>                                       T3;
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;
-//todo : add specialization for Cell_base without info
-// (does not compile with `void` instead of `int`)
 
-bool generate_input(const std::size_t& n,
-                    const char* filename)
+struct Cells_of_subdomain
 {
-  T3 tr;
-  CGAL::Random rng;
+private:
+  int m_subdomain;
 
-  while (tr.number_of_vertices() < n)
-    tr.insert(T3::Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
+public:
+  Cells_of_subdomain(const int& subdomain)
+    : m_subdomain(subdomain)
+  {}
 
-  std::ofstream oFileT(filename, std::ios::out);
-  // writing file output;
-  oFileT << tr;
-
-  return (!oFileT.bad());
-}
+  const bool operator()(Remeshing_triangulation::Cell_handle c)
+  {
+    return m_subdomain == c->subdomain_index();
+  }
+};
 
 int main(int argc, char* argv[])
 {
-  generate_input(1000, "data/random_sphere_triangulation.cgal");
-
-  const char* filename     = (argc > 1) ? argv[1] : "data/random_sphere_triangulation.cgal";
-  float target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1f;
+  const char* filename     = "data/triangulation_two_subdomains.binary.cgal";
+  float target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1f;
 
   std::ifstream input(filename, std::ios::in);
   if (!input)
@@ -48,19 +44,16 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  T3 t3;
-  input >> t3;
-  CGAL_assertion(t3.is_valid());
-
   Remeshing_triangulation tr;
-  CGAL::Tetrahedral_remeshing::build_remeshing_triangulation(t3, tr);
-  
-  CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length);
+  generate_input(2, 1000, tr);
 
-  std::ofstream oFileT("output.tr.cgal", std::ios::out);
-  // writing file output;
-  oFileT << tr;
+  CGAL::tetrahedral_adaptive_remeshing(tr, target_edge_length,
+    CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
 
+  std::ofstream oFileT("output.binary.cgal", std::ios::out);
+  save_binary_triangulation(oFileT, tr);
+
+  std::cout << "done" << std::endl;
   return EXIT_SUCCESS;
 }
 
