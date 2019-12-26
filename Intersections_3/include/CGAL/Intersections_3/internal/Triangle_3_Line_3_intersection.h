@@ -15,8 +15,7 @@
 #ifndef CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_LINE_3_INTERSECTION_H
 #define CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_LINE_3_INTERSECTION_H
 
-#include <CGAL/kernel_basic.h>
-#include <CGAL/intersections.h>
+#include <CGAL/Intersections_3/Line_3_Plane_3.h>
 
 namespace CGAL {
   

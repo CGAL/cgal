@@ -17,6 +17,14 @@
 
 namespace CGAL {
 
+namespace internal {
+
+constexpr size_t rounded_down_log2(size_t n)
+{
+  return ( (n<2) ? 0 : 1+rounded_down_log2(n/2));
+}
+} // namespace internal
+
 template <typename T>
 struct Time_stamper
 {
@@ -118,7 +126,9 @@ public:
   }
 
   static std::size_t hash_value(const T* p) {
-    return reinterpret_cast<std::size_t>(p)/sizeof(T);
+
+    constexpr std::size_t shift = internal::rounded_down_log2(sizeof(T));
+    return reinterpret_cast<std::size_t>(p) >> shift;
   }
 
   void reset()                {}
@@ -148,6 +158,17 @@ struct Get_time_stamper<T,false>{
 // in `Compact_container` for example is possible with an incomplete type.
 template <class T>
 struct Time_stamper_impl : public Get_time_stamper<T>::type {};
+
+struct Hash_handles_with_or_without_timestamps
+{
+  template <typename Handle>
+  std::size_t operator()(const Handle h) const
+  {
+    typedef typename std::iterator_traits<Handle>::value_type Type;
+
+    return Get_time_stamper<Type>::type::hash_value(&*h);
+  }
+};
 
 } //end of namespace CGAL
 

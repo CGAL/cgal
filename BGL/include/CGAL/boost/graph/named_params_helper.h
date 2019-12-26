@@ -112,9 +112,6 @@ namespace CGAL {
     typedef typename boost::property_traits<PMap>::value_type type;
   };
 
-  namespace Polygon_mesh_processing
-  {
-
   template<typename PolygonMesh,
            typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
   class GetVertexPointMap
@@ -136,6 +133,8 @@ namespace CGAL {
       > ::type  const_type;
   };
 
+  namespace Polygon_mesh_processing {
+
   template<typename PolygonMesh, typename NamedParameters>
   class GetK
   {
@@ -145,6 +144,8 @@ namespace CGAL {
   public:
     typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
   };
+
+  } // namespace Polygon_mesh_processing
 
   template<typename PolygonMesh,
            typename NamedParametersGT = Named_function_parameters<bool, internal_np::all_default_t>,
@@ -162,10 +163,9 @@ namespace CGAL {
 
     struct Fake_GT {};//to be used if there is no internal vertex_point_map in PolygonMesh
 
-    typedef typename boost::mpl::if_c< Has_internal_pmap::value || !boost::is_same<internal_np::Param_not_found, NP_vpm>::value
-                                     , typename GetK<PolygonMesh, NamedParametersVPM>::Kernel
-                                     , Fake_GT
-    >::type DefaultKernel;
+    typedef typename boost::mpl::if_c<Has_internal_pmap::value || !boost::is_same<internal_np::Param_not_found, NP_vpm>::value,
+                                     typename Polygon_mesh_processing::GetK<PolygonMesh, NamedParametersVPM>::Kernel,
+                                     Fake_GT>::type DefaultKernel;
 
   public:
     typedef typename internal_np::Lookup_named_param_def <
@@ -229,8 +229,6 @@ namespace CGAL {
       DummyNormalPmap//default
       > ::type  type;
   };
-
-  } // namespace Polygon_mesh_processing
 
   namespace Point_set_processing_3
   {
