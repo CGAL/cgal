@@ -38,9 +38,7 @@ the dimension of the triangulation is lower than 3
 (see Section \ref TDS3secintro). 
 
 Thus, a 3D-triangulation data structure can store a triangulation of a 
-topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR> 
-
- 
+topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR>
 
 The second template parameter of the basic triangulation class 
 (see Chapter \ref chapterTriangulation3 "3D Triangulations") 
@@ -67,7 +65,7 @@ neighbors of each cell, where the index corresponds to the preceding
 list of cells. When dimension < 3, the same information is stored 
 for faces of maximal dimension instead of cells. 
 
-\cgalHasModel `CGAL::Triangulation_data_structure_3` 
+\cgalHasModel `CGAL::Triangulation_data_structure_3<Vb, Cb>`
 
 \sa `TriangulationDataStructure_3::Vertex` 
 \sa `TriangulationDataStructure_3::Cell` 

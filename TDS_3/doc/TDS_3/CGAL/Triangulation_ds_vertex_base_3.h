@@ -22,7 +22,6 @@ example) tuned for a specific application.
 
 \sa `CGAL::Triangulation_vertex_base_3` 
 \sa `CGAL::Triangulation_ds_cell_base_3` 
-\sa `CGAL::Triangulation_vertex_base_with_info_3` 
 
 */
 template< typename TDS = void >

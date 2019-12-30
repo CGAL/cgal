@@ -19,7 +19,6 @@ additional template parameters.
 
 \tparam CellBase  must be a model of `TriangulationDSCellBase_3`. The default is `Triangulation_ds_cell_base_3<TDS>`.
 
-
 \tparam ConcurrencyTag enables the use of a concurrent
 container to store vertices and cells. It can be `Sequential_tag` (use of a 
 `Compact_container` to store vertices and cells) or `Parallel_tag` 

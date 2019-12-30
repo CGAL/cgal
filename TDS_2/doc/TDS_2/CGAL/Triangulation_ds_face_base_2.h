@@ -14,7 +14,7 @@ The class `Triangulation_ds_face_base_2` is a model for the concept
 \sa `CGAL::Triangulation_ds_vertex_base_2<Tds>` 
 
 */
-template< typename Tds >
+template< typename TDS >
 class Triangulation_ds_face_base_2 {
 public:
 

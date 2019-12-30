@@ -723,8 +723,9 @@ triangulation data structure.
 
 \cgalHasModel `CGAL::Triangulation_ds_vertex_base_2<Tds>` 
 
-\sa `TriangulationDataStructure_2` 
+\sa `TriangulationDSVertexBase_2`
 \sa `TriangulationDataStructure_2::Face` 
+\sa `TriangulationDataStructure_2`
 
 */
 class TriangulationDataStructure_2::Vertex {
@@ -843,9 +844,9 @@ define new faces and to delete no longer used faces.
 
 \cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
 
+\sa `TriangulationDSFaceBase_2`
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationDataStructure_2::Vertex`
-\sa `TriangulationFaceBase_2`
 
 */
 class TriangulationDataStructure_2::Face {
