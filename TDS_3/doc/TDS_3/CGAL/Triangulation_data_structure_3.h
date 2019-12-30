@@ -33,22 +33,31 @@ container to store vertices and cells. It can be `Sequential_tag` (use of a
 The base class `Triangulation_utils_3` defines basic computations on
 indices of vertices and neighbors of cells.
 
-\attention All members listed here are additional to the interface
-specified by the concept.
-
 \sa `CGAL::Triangulation_ds_vertex_base_3` 
 \sa `CGAL::Triangulation_ds_cell_base_3` 
-\sa `CGAL::Triangulation_vertex_base_with_info_3` 
-\sa `CGAL::Triangulation_cell_base_with_info_3` 
 */
 template< typename VertexBase, 
           typename CellBase,
           typename ConcurrencyTag >
-class Triangulation_data_structure_3 : public CGAL::Triangulation_utils_3 {
+class Triangulation_data_structure_3
+  : public CGAL::Triangulation_utils_3
+{
 public:
 
 /// \name Types 
 /// @{
+
+typedef Triangulation_data_structure_2<VertexBase,FaceBase>  Tds;
+
+/// The vertex type.
+///
+/// \sa Section \ref tds3cyclic
+typedef  typename VertexBase::template Rebind_TDS<Tds>::Other  Vertex;
+
+/// The face type.
+///
+/// \sa Section \ref tds3cyclic
+typedef  typename CellBase::template Rebind_TDS<Tds>::Other  Cell;
 
 /*!
 Vertex container type. If `ConcurrencyTag` is `Parallel_tag`, a
@@ -64,6 +73,10 @@ typedef Compact_container<Cell, Default> Cell_range;
 /// @} 
 
 /// \name Operations 
+///
+/// In addition to the interface documented in the concept,
+/// the class offers the following functions.
+///
 /// @{
 
 /*!
