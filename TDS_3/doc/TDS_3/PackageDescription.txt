@@ -50,6 +50,7 @@ Section  \ref TDS3secintro.)
 
 - `TriangulationDataStructure_3`
 - `TriangulationDataStructure_3::Cell`
+- `TriangulationDataStructure_3::Cell_data`
 - `TriangulationDataStructure_3::Vertex`
 - `TriangulationDSCellBase_3`
 - `TriangulationDSVertexBase_3`

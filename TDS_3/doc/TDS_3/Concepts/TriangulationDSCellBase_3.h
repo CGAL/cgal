@@ -75,11 +75,6 @@ typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;
 */ 
 typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
 
-/*!
-
-*/ 
-typedef TriangulationDataStructure_3::Cell_data TDS_data; 
-
 /// @} 
 
 /// \name Creation 
@@ -233,26 +228,6 @@ void * for_compact_container() const;
 
 */ 
 void * & for_compact_container(); 
-
-/// @}
-
-/// \name Internal
-/// \cgalAdvancedBegin
-/// These functions are used internally by the triangulation data
-/// structure. The user is not encouraged to use them directly as they
-/// may change in the future.
-/// \cgalAdvancedEnd
-/// @{
-
-/*!
-
-*/ 
-TDS_data& tds_data(); 
-
-/*!
-
-*/ 
-const TDS_data& tds_data() const; 
 
 /// @}
 
