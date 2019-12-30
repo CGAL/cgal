@@ -240,6 +240,18 @@ public:
     return *this;
   }
 
+  /// \cond SKIP_IN_MANUAL
+  // copy constructor (same as assignment)
+  Point_set_3 (const Point_set_3& ps)
+  {
+    m_base = ps.m_base;
+    m_indices = this->property_map<Index> ("index").first;
+    m_points = this->property_map<Point> ("point").first;
+    m_normals = this->property_map<Vector> ("normal").first;
+    m_nb_removed = ps.m_nb_removed;
+  }
+  /// \endcond
+
   /// @}
 
   /// \cond SKIP_IN_MANUAL
