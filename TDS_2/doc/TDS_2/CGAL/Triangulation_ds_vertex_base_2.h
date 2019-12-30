@@ -18,7 +18,7 @@ geometric triangulation, there are additional geometric requirements
 to be fulfilled by the vertex base class, 
 and `Triangulation_ds_vertex_base_2` cannot be plugged in. 
 
-\tparam TDS A
+\tparam TDS should not be specified (see Section \ref TDS_2TheRebindMechanism and examples)
 
 \cgalModels `TriangulationDSVertexBase_2`
 
@@ -26,7 +26,7 @@ and `Triangulation_ds_vertex_base_2` cannot be plugged in.
 \sa `CGAL::Triangulation_ds_face_base_2<TDS>`
 
 */
-template< typename TDS >
+template< typename TDS = void >
 class Triangulation_ds_vertex_base_2 {
 public:
 

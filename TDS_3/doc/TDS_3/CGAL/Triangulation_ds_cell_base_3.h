@@ -10,11 +10,13 @@ The class `Triangulation_ds_cell_base_3<>` is a model for the concept
 
 \cgalModels `TriangulationDSCellBase_3`
 
+\tparam TDS should not be specified (see Section \ref tds3cyclic and examples)
+
 \sa `CGAL::Triangulation_cell_base_3` 
 \sa `CGAL::Triangulation_ds_vertex_base_3` 
 
 */
-template< typename TDS >
+template< typename TDS = void >
 class Triangulation_ds_cell_base_3 {
 public:
 

@@ -20,6 +20,8 @@ example) tuned for a specific application.
 
 \cgalModels `TriangulationDSVertexBase_3`
 
+\tparam TDS should not be specified (see Section \ref tds3cyclic and examples)
+
 \sa `CGAL::Triangulation_vertex_base_3` 
 \sa `CGAL::Triangulation_ds_cell_base_3` 
 
