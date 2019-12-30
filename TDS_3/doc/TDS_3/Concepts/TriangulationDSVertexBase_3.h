@@ -3,13 +3,17 @@
 \ingroup PkgTDS3Concepts
 \cgalConcept
 
+\cgalRefines TriangulationDataStructure_3::Vertex
+
+The concept TriangulationDSVertexBase_3 describes the requirements for the vertex base class
+of a CGAL::Triangulation_data_structure_3<Vb,Cb>.
+
+Note that if the `CGAL::Triangulation_data_structure_3` is plugged into a triangulation class,
+the vertex base class may have additional geometric requirements depending on the triangulation class.
+
 At the bottom level of 3D-triangulations 
 (see Sections \ref Triangulation3secdesign and \ref TDS3secdesign), 
 a vertex provides access to one of its incident cells through a handle. 
-
-Note that when you use the triangulation data structure as parameter of a 
-geometric triangulation, the vertex base class has additional geometric 
-requirements : it has to match the `TriangulationVertexBase_3` concept. 
 
 Since the Triangulation data structure is the class which defines the handle 
 types, the vertex base class has to be somehow parameterized by the 
@@ -24,18 +28,16 @@ cell classes. The <I>rebound</I> base classes so obtained are the classes which
 are used as base classes for the final vertex and cell classes. 
 More information can be found in Section \ref TDS3secdesign. 
 
-\cgalHasModel CGAL::Triangulation_ds_vertex_base_3 
-\cgalHasModel CGAL::Triangulation_vertex_base_3 
-\cgalHasModel CGAL::Triangulation_vertex_base_with_info_3 
+\cgalHasModel `CGAL::Triangulation_ds_vertex_base_3<TDS>`
 
-\sa `TriangulationVertexBase_3` 
-\sa `TriangulationHierarchyVertexBase_3` 
-\sa `TriangulationDSCellBase_3` 
-\sa `TriangulationCellBase_3` 
+\sa `TriangulationDSCellBase_3`
+\sa `CGAL::Triangulation_data_structure_3<Vb,Cb>`
 
 */
 
-class TriangulationDSVertexBase_3 {
+class TriangulationDSVertexBase_3
+  : public TriangulationDataStructure_3::Vertex
+{
 public:
 
 /// \name Types 
