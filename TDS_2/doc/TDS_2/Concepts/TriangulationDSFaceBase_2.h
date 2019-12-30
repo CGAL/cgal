@@ -76,6 +76,7 @@ This template class has to define a type `Rebind_TDS<TDS_2>::%Other` which is th
 This type `Other` will be the actual base 
 of the class `CGAL::Triangulation_data_structure_2::Face`. 
 \note It can be implemented using a nested template class.
+\sa Section \ref TDS_2TheRebindMechanism
 */ 
 template <typename TDS2> 
 using Rebind_TDS = unspecified_type;
