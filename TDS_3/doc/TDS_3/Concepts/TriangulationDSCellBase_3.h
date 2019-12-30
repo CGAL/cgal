@@ -83,113 +83,23 @@ typedef TriangulationDataStructure_3::Cell_handle Cell_handle;
 /*!
 Default constructor 
 */ 
-Cell_base(); 
+TriangulationDSCellBase_3();
 
 /*!
 Initializes the vertices with `v0, v1, v2, v3`. Neighbors are 
 initialized to the default constructed handle. 
 */ 
-Cell_base( Vertex_handle v0, Vertex_handle v1, 
-Vertex_handle v2, Vertex_handle v3); 
+TriangulationDSCellBase_3( Vertex_handle v0, Vertex_handle v1,
+                           Vertex_handle v2, Vertex_handle v3);
 
 /*!
 Initializes the vertices with `v0, v1, v2, v3` and the neighbors with 
 `n0, n1, n2, n3`. 
 */ 
-Cell_base( Vertex_handle v0, Vertex_handle v1, 
-Vertex_handle v2, Vertex_handle v3, 
-Cell_handle n0, Cell_handle n1, 
-Cell_handle n2, Cell_handle n3); 
-
-/// @} 
-
-/// \name Access Functions 
-/// @{
-
-/*!
-Returns the vertex `i` of `c`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-Vertex_handle vertex(int i) const; 
-
-/*!
-Returns the index of `v`. 
-\pre `v` is a vertex of `c` 
-*/ 
-int index(Vertex_handle v) const; 
-
-/*!
-True iff `v` is a vertex of `c`. 
-*/ 
-bool has_vertex(Vertex_handle v); 
-
-/*!
-Returns `true` if `v` is a vertex of `c`, and 
-computes its index `i` in `c`. 
-*/ 
-bool has_vertex(Vertex_handle v, int & i) const; 
-
-/*!
-Returns the neighbor `i` of `c`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-Cell_handle neighbor(int i) const; 
-
-/*!
-Returns the index of cell `n` in `c`. 
-\pre `n` is a neighbor of `c`. 
-*/ 
-int index(Cell_handle n) const; 
-
-/*!
-Returns `true` if `n` is a neighbor of `c`. 
-*/ 
-bool has_neighbor(Cell_handle n); 
-
-/*!
-Returns `true` if `n` is a neighbor of `c`, and 
-computes its index `i` in `c`. 
-*/ 
-bool has_neighbor(Cell_handle n, int & i) const; 
-
-/// @} 
-
-/// \name Setting 
-/// @{
-
-/*!
-Sets vertex `i` to `v`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-void set_vertex(int i, Vertex_handle v); 
-
-/*!
-Sets the vertices to the default constructed handle. 
-*/ 
-void set_vertices(); 
-
-/*!
-Sets the vertices. 
-*/ 
-void set_vertices( Vertex_handle v0, Vertex_handle v1, 
-Vertex_handle v2, Vertex_handle v3); 
-
-/*!
-Sets neighbor `i` to `n`. 
-\pre \f$ i \in\{0, 1, 2, 3\}\f$. 
-*/ 
-void set_neighbor(int i, Cell_handle n); 
-
-/*!
-Sets the neighbors to the default constructed handle. 
-*/ 
-void set_neighbors(); 
-
-/*!
-Sets the neighbors. 
-*/ 
-void set_neighbors(Cell_handle n0, Cell_handle n1, 
-Cell_handle n2, Cell_handle n3); 
+TriangulationDSCellBase_3( Vertex_handle v0, Vertex_handle v1,
+                           Vertex_handle v2, Vertex_handle v3,
+                           Cell_handle n0, Cell_handle n1,
+                           Cell_handle n2, Cell_handle n3);
 
 /// @} 
 

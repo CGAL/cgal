@@ -77,32 +77,12 @@ typedef TriangulationDataStructure_3::Cell_handle Cell_handle;
 /*!
 Default constructor. 
 */ 
-TriangulationVertexBase_3(); 
+TriangulationDSVertexBase_3();
 
 /*!
 Constructs a vertex pointing to cell `c`. 
 */ 
-TriangulationVertexBase_3(Cell_handle c); 
-
-/// @} 
-
-/// \name Access Functions 
-/// @{
-
-/*!
-Returns the pointer to an incident cell 
-*/ 
-Cell_handle cell() const; 
-
-/// @} 
-
-/// \name Setting 
-/// @{
-
-/*!
-Sets the incident cell. 
-*/ 
-void set_cell(Cell_handle c); 
+TriangulationDSVertexBase_3(Cell_handle c);
 
 /// @} 
 
