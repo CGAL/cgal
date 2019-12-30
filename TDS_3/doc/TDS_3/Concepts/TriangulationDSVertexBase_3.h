@@ -44,13 +44,14 @@ public:
 /// @{
 
 /*!
-This template class has to define a type `Rebind_TDS<TDS2>::%Other` which is the 
+This template class has to define a type `Rebind_TDS<TDS3>::%Other` which is the
 <I>rebound</I> vertex, that is, the one whose `Triangulation_data_structure` 
-will be the actually used one. `Rebind_TDS<TDS2>::%Other` will be the real base 
+will be the actually used one. `Rebind_TDS<TDS3>::%Other` will be the real base
 class of `Triangulation_data_structure_3::Vertex`.
 \note It can be implemented using a nested template class.
+\sa Section \ref tds3cyclic
 */ 
-template <typename TDS2> 
+template <typename TDS3>
 using Rebind_TDS = unspecified_type; 
 
 /*!
