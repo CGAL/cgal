@@ -150,6 +150,8 @@ void test(const char* filename)
 
 int main()
 {
+  std::cout.precision(17);
+
   CGAL::Set_ieee_double_precision pfr;
 
 //  test("data/elephant.off");
