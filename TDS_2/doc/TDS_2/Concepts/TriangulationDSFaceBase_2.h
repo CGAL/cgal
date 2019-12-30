@@ -3,6 +3,8 @@
 \ingroup PkgTDS2Concepts
 \cgalConcept
 
+\cgalRefines `TriangulationDataStructure_2::Face`
+
 The concept `TriangulationDSFaceBase_2` describes the requirements for 
 the face base class of a `CGAL::Triangulation_data_structure_2<Vb,Fb>`.
 
@@ -46,22 +48,16 @@ that the `CGAL::Triangulation_data_structure_2`
 actually uses as a base class for the class 
 `CGAL::Triangulation_data_structure_2::Face`. 
 
-\cgalRefines `TriangulationDataStructure_2::Face`
-
-\cgalHasModel `CGAL::Triangulation_ds_face_base_2<Tds>`
-\cgalHasModel `CGAL::Triangulation_face_base_2<Traits,Fb>` 
-\cgalHasModel `CGAL::Regular_triangulation_face_base_2<Traits,Fb>` 
-\cgalHasModel `CGAL::Constrained_triangulation_face_base_2<Traits,Fb>` 
-\cgalHasModel `CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>` 
+\cgalHasModel `CGAL::Triangulation_ds_face_base_2<TDS>`
 
 \sa `TriangulationDSVertexBase_2` 
-\sa `TriangulationDataStructure_2::Face` 
-\sa `TriangulationFaceBase_2` 
 \sa `CGAL::Triangulation_data_structure_2<Vb,Fb>` 
 
 */
 
-class TriangulationDSFaceBase_2 {
+class TriangulationDSFaceBase_2
+  : public TriangulationDataStructure_2::Face
+{
 public:
 
 /// \name Types 
