@@ -111,26 +111,6 @@ Handle to a face.
 typedef unspecified_type Face_handle; 
 
 /*!
-This template class allows to get the type of a triangulation 
-data structure that only changes the vertex type. It has to define a type 
-`Rebind_vertex<Vb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
-one whose `TriangulationDSVertexBase_2` will be `Vb2`.
-\note It can be implemented using a nested template class.
-*/ 
-template <typename Vb2> 
-using Rebind_vertex = unspecified_type;
-
-/*!
-This template class allows to get the type of a triangulation 
-data structure that only changes the face type. It has to define a type 
-`Rebind_face<Fb2>::%Other` which is a <I>rebound</I> triangulation data structure, that is, the 
-one whose `TriangulationDSFaceBase_2` will be `Fb2`.
-\note It can be implemented using a nested template class.
-*/ 
-template <typename Fb2> 
-using Rebind_face = unspecified_type;
-
-/*!
 The edge type. 
 The `Edge(f,i)` is edge common to faces `f` and 
 `f.neighbor(i)`. It is also the edge joining the vertices 
