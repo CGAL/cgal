@@ -66,7 +66,7 @@
     </property>
     <addaction name="actionDelete"/>
     <addaction name="actionDeleteAll"/>
-    <addaction name="actionClearResult"/>
+    <!--<addaction name="actionClearResult"/>-->
     <addaction name="actionDeleteResult"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -87,6 +87,7 @@
     <addaction name="actionInsertLinear"/> 
     <addaction name="actionInsertCircular"/>
     <addaction name="actionInsertBezier" />
+    <addaction name="actionInsertResult" />
     <!--<addaction name="actionInsertMink_Polygon" />-->
     <addaction name="separator"/>
     <addaction name="actionComplement"/>
@@ -138,6 +139,44 @@
    <addaction name="actionAddColor"/>
    <addaction name="actionMinusColor"/>
    <addaction name="actionNew" />
+  </widget>
+  <widget class="QToolBar" name="insertResultToolBar">
+  	<property name="windowTitle">
+  		<string>Insert Result Mode</string>
+  	</property>
+  	<attribute name="toolBarArea">
+  		<enum>TopToolBarArea</enum>
+  	</attribute>
+  	<attribute name="toolBarBreak">
+  		<bool>false</bool>
+  	</attribute>
+  	<widget class="QRadioButton" name="PlanAActive">
+    <property name="checked" >
+      <bool>true</bool>
+    </property>
+    <property name="icon" >
+     <iconset resource="boolean_operations_2.qrc" >
+      <normaloff>:/cgal/icons/resources/P.xpm</normaloff>:/cgal/icons/resources/P.xpm
+     </iconset>
+    </property>
+    <property name="toolTip" >
+     <string>Get result in Green and later insert into selected color bucket</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="PlanBActive">
+    <property name="checked" >
+      <bool>false</bool>
+    </property>
+    <property name="icon" >
+     <iconset resource="boolean_operations_2.qrc" >
+      <normaloff>:/cgal/icons/resources/Q.xpm</normaloff>:/cgal/icons/resources/Q.xpm
+     </iconset>
+    </property>
+    <property name="toolTip" >
+     <string>Directly insert result into selected color bucket</string>
+    </property>
+   </widget>
+   <addaction name="actionInsertResult" />
   </widget>
   <widget class="QToolBar" name="operationsToolBar" >
    <property name="windowTitle" >
@@ -240,7 +279,7 @@
    </attribute>
    <addaction name="actionDelete"/>
    <addaction name="actionDeleteAll"/>
-   <addaction name="actionClearResult"/>
+   <!--<addaction name="actionClearResult"/>-->
    <addaction name="actionDeleteResult"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -269,7 +308,7 @@
   <widget class="QDockWidget" name="sceneDockWidget">
    <property name="minimumSize" >
     <size>
-      <width>560</width>
+      <width>462</width>
       <height>200</height>
     </size>
    </property>
@@ -286,7 +325,7 @@
     <set>Qt::BottomDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>                                         BOOLEAN OPERATIONS COLOR BUCKET</string>
+    <string>                         BOOLEAN OPERATIONS COLOR BUCKET</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -339,7 +378,7 @@
               </rect>
              </property>
              <property name="text">
-              <string>Green</string>
+              <string>Black</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -2221,6 +2260,9 @@
                 <height>125</height>
                 </rect>
               </property>
+              <property name="visible">
+              	<bool>false</bool>
+              </property>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -2585,7 +2627,7 @@
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>Output</string>
+               <string>Insert</string>
               </property>
             </widget>
             <widget class="QLabel" name="ClearHeader" >
@@ -2606,6 +2648,9 @@
               <property name="text" >
                <string>Clear</string>
               </property>
+              <property name="visible">
+              	<bool>false</bool>
+              </property>
             </widget>
             <widget class="QLabel" name="VisibleHeader" >
               <property name="geometry">
@@ -2615,6 +2660,9 @@
                   <width>101</width>
                   <height>40</height>  
                 </rect>
+              </property>
+              <property name="visible">
+              	<bool>false</bool>
               </property>
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -2756,6 +2804,24 @@
               <string></string>
              </property>
             </widget>
+
+            <widget class="QCheckBox" name="showResult">
+             <property name="geometry">
+              <rect>
+               <x>140</x>
+               <y>270</y>
+               <width>140</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Result(Green)</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+
             <widget class="QCheckBox" name="clearBlueRes">
               <property name="checked">
               <bool>false</bool>
@@ -2771,6 +2837,9 @@
              <property name="text">
               <string></string>
              </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
             </widget>
             <widget class="QCheckBox" name="clearRedRes">
               <property name="checked">
@@ -2787,6 +2856,9 @@
              <property name="text">
               <string></string>
              </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
             </widget>
             <widget class="QCheckBox" name="clearBlackRes">
              <property name="checked">
@@ -2804,7 +2876,7 @@
               <string></string>
              </property>
              <property name="Visible">
-                <bool>true</bool>
+                <bool>false</bool>
               </property>
             </widget>
             <widget class="QCheckBox" name="clearBrownRes">
@@ -2883,10 +2955,9 @@
                 <bool>false</bool>
               </property>
             </widget>
-
             <widget class="QCheckBox" name="visibleBlueRes">
               <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="geometry">
               <rect>
@@ -2899,10 +2970,13 @@
              <property name="text">
               <string></string>
              </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
             </widget>
             <widget class="QCheckBox" name="visibleRedRes">
               <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="geometry">
               <rect>
@@ -2915,10 +2989,13 @@
              <property name="text">
               <string></string>
              </property>
+             <property name="Visible">
+                <bool>false</bool>
+              </property>
             </widget>
             <widget class="QCheckBox" name="visibleBlackRes">
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="geometry">
               <rect>
@@ -2932,12 +3009,12 @@
               <string></string>
              </property>
              <property name="Visible">
-                <bool>true</bool>
+                <bool>false</bool>
               </property>
             </widget>
             <widget class="QCheckBox" name="visibleBrownRes">
               <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="geometry">
               <rect>
@@ -2956,7 +3033,7 @@
             </widget>
             <widget class="QCheckBox" name="visibleYellowRes">
               <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="geometry">
               <rect>
@@ -2975,7 +3052,7 @@
             </widget>
             <widget class="QCheckBox" name="visibleMagentaRes">
               <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="geometry">
               <rect>
@@ -2994,7 +3071,7 @@
             </widget>
             <widget class="QCheckBox" name="visibleAquaRes">
               <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="geometry">
               <rect>
@@ -3413,7 +3490,7 @@
      <normaloff>:/cgal/icons/resources/check-off.png</normaloff>:/cgal/icons/resources/check-off.png</iconset>
    </property> 
    <property name="text">
-    <string>Clear All Outputs</string>
+    <string>Clear Result</string>
    </property>
   </action>
   <action name="actionOpenDXF" >
@@ -3474,6 +3551,28 @@
    </property>
    <property name="toolTip" >
     <string>Draw Bezier Polygon</string>
+   </property>
+  </action>
+  <action name="actionInsertResult" >
+  	<property name="visible" >
+    <bool>true</bool>
+   </property>
+   <property name="checkable" >
+    <bool>false</bool>
+   </property>
+   <!--<property name="checked" >
+    <bool>false</bool>
+   </property>-->
+   <property name="icon" >
+    <iconset resource="boolean_operations_2.qrc" >
+     <normaloff>:/cgal/icons/resources/insert.svg</normaloff>:/cgal/icons/resources/insert.svg
+    </iconset>
+   </property>
+   <property name="text" >
+    <string>Insert Result</string>
+   </property>
+   <property name="toolTip" >
+    <string>Insert Result</string>
    </property>
   </action>
  </widget>
