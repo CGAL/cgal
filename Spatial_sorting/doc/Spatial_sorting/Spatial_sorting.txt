@@ -230,7 +230,7 @@ Olivier Devillers improved its design, and implemented its multidimensional vers
 
 Pedro Machado Manhaes de Castro and Olivier Devillers added Hilbert sorting on the sphere.
 
-Andreas Fabri added a parallel version of hilbert and spatial sorting.
+Andreas Fabri added a parallel version of Hilbert and spatial sorting.
 
 */ 
 } /* namespace CGAL */
