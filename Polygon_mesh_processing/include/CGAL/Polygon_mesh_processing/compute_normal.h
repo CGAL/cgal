@@ -214,7 +214,9 @@ void compute_face_normals(const PolygonMesh& pmesh,
   {
     typename Kernel::Vector_3 vec = compute_face_normal(f, pmesh, np);
     put(face_normals, f, vec);
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
     std::cout << "normal at face " << f << " is " << get(face_normals, f) << std::endl;
+#endif
   }
 }
 
@@ -647,12 +649,14 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 
   std::cout << "type of FT: " << typeid(typename GT::FT).name() << std::endl;
 
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
   std::cout << "Incident face normals:" << std::endl;
   for(halfedge_descriptor h : CGAL::halfedges_around_target(v, pmesh))
   {
     if(!is_border(h, pmesh))
-      std::cout << "get normal at f " << face(h, pmesh) << " : " << get(face_normals, face(h, pmesh)).approx() << std::endl;
+      std::cout << "get normal at f " << face(h, pmesh) << " : " << get(face_normals, face(h, pmesh)) << std::endl;
   }
+#endif
 
   Vector_3 normal = internal::compute_vertex_normal_most_visible_min_circle(v, face_normals, pmesh, traits);
   if(traits.equal_3_object()(normal, CGAL::NULL_VECTOR)) // can't always find a most visible normal
