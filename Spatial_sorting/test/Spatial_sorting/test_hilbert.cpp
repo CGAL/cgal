@@ -16,8 +16,7 @@
 #include <algorithm>
 #include <vector>
 
-
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point_2;
@@ -32,10 +31,10 @@ typedef CGAL::Creator_uniform_d<std::vector<double>::iterator, Point>Creator_d;
 
 int main ()
 {
-  int nb_points_2 = 5000, nb_points_3 = 5000,
+  int nb_points_2 = 10000, nb_points_3 = 10000,
       nb_points_d=10000, small_nb_points_d=3;
   CGAL::Random random (42);
-  CGAL::Timer cost;
+  CGAL::Real_timer timer;
 
   std::cout << "Testing Hilbert sort." << std::endl;
 
@@ -57,19 +56,19 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Sorting points (parallel)...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(v2.begin(), v2.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in " << cost.time() << "seconds." << std::endl;
+    std::cout << "done in " << timer.time() << "seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
     assert(v == v2);
@@ -90,11 +89,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -122,11 +121,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort(v.begin(),v.end(), CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -151,11 +150,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort(v.begin(),v.end(), CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -183,19 +182,19 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Sorting points (parallel)...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(v2.begin(), v2.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in " << cost.time() << "seconds." << std::endl;
+    std::cout << "done in " << timer.time() << "seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
     assert(v == v2);
@@ -218,11 +217,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -250,11 +249,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -280,11 +279,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -312,19 +311,19 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort(v.begin(),v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Sorting points (parallel)...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(v2.begin(), v2.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in " << cost.time() << "seconds." << std::endl;
+    std::cout << "done in " << timer.time() << "seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
     assert(v == v2);
@@ -349,11 +348,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort_on_sphere(v.begin(),v.end(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -381,11 +380,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -413,11 +412,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -446,11 +445,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end(),CGAL::Hilbert_sort_median_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -479,11 +478,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -512,12 +511,12 @@ int main ()
 
     std::cout << "            Sorting points ...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end(),
                         CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -546,11 +545,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -576,11 +575,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.begin()+size);
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -605,12 +604,12 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.begin()+size,
                         CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -636,12 +635,12 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.begin()+size,
                         CGAL::Hilbert_sort_middle_policy());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
@@ -670,11 +669,11 @@ int main ()
 
     std::cout << "            Sorting points...    " << std::flush;
 
-    cost.reset();cost.start();
+    timer.reset();timer.start();
     CGAL::hilbert_sort (v.begin(), v.end());
-    cost.stop();
+    timer.stop();
 
-    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<timer.time()<<"seconds." << std::endl;
 
     std::cout << "            Checking...          " << std::flush;
 
