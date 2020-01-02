@@ -1197,6 +1197,10 @@ void MainWindow::open(QString filename)
           selected_items << io_plugin->name();
       }
     }
+    //if no plugin is correct, offer them all.
+    for(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin : io_plugins) {
+        all_items << io_plugin->name();
+    }
   }
   else
     selected_items << *dfs_it;
