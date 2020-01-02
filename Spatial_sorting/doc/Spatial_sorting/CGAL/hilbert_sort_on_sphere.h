@@ -16,8 +16,9 @@ It sorts the range `[begin, end)` in place.
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
 
-\tparam PolicyTag The default policy is `Hilbert_sort_median_policy()` and the 
-other option is `Hilbert_sort_middle_policy()`. 
+\tparam PolicyTag is used to specify the strategy policy.
+Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
+(the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
 
 The input sphere is given by a squared radius and a center, parameter `sqr_radius` and parameter `center` respectively.
 The default squared radius of the sphere is 1.0.

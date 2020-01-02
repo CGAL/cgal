@@ -11,7 +11,9 @@ or the middle depending on the `PolicyTag`.
 
 \tparam Traits must be a model of the concept `SpatialSortingTraits_2`. 
 
-\tparam PolicyTag must be `Hilbert_sort_median_policy` or `Hilbert_sort_middle_policy`.
+\tparam PolicyTag is used to specify the strategy policy.
+Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
+(the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
 
 \tparam ConcurrencyTag must be `Sequential_tag`, `Parallel_tag`, or `Parallel_if_available_tag. With parallelism
 and TBB enabled, for the median policy up to four threads are used in parallel. 

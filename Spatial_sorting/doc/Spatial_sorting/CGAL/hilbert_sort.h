@@ -23,6 +23,9 @@ Parallel sorting is available only when the median strategy policy (the default 
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<InputPointIterator>::%value_type` is defined.
 
+\tparam PolicyTag is used to specify the strategy policy.
+Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
+(the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
 
 \cgalHeading{Implementation}
 

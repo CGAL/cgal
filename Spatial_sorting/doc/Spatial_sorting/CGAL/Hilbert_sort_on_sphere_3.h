@@ -12,6 +12,10 @@ If input points are not close to the input sphere, this function still works, bu
 
 \tparam Traits must be a model for `SpatialSortingTraits_3`. 
 
+\tparam PolicyTag is used to specify the strategy policy.
+Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
+(the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
+
 */
 template< typename Traits, typename PolicyTag >
 class Hilbert_sort_on_sphere_3 {

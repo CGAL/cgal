@@ -23,8 +23,9 @@ done using up to four threads in 2D, and up to eight threads in 3D with the medi
 The default traits class `Default_traits` is the kernel in which the type 
 `std::iterator_traits<InputPointIterator>::%value_type` is defined.
 
-\tparam PolicyTag The default policy is `Hilbert_sort_median_policy` and the 
-other option is `Hilbert_sort_middle_policy`. 
+\tparam PolicyTag is used to specify the strategy policy.
+Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
+(the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
 
 The default values for the thresholds and the ratio depend on the dimension. 
 
