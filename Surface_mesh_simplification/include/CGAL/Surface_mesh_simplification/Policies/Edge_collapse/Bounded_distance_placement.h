@@ -30,7 +30,7 @@ public:
   Bounded_distance_placement(const double dist,
                              const Tree& tree,
                              const Placement& placement = Placement())
-    : m_get_placement(placement), m_tree(tree), m_threshold_dist(dist)
+    : m_get_placement(placement), m_tree(tree), m_sq_threshold_dist(CGAL::square(dist))
   { }
 
   template <typename Profile>
@@ -52,13 +52,12 @@ public:
 
       // We could do better by having access to the internal kd-tree
       // and call search_any_point with a fuzzy_sphere.
-      const double sqtd = CGAL::square(m_threshold_dist);
 
       // if no input vertex is closer than the threshold, then
       // any face closer than the threshold is intersected by
       // the sphere (avoid the inclusion of the mesh into the threshold sphere)
-      if(CGAL::compare_squared_distance(p, cp, sqtd) != LARGER ||
-         m_tree.do_intersect(CGAL::Sphere_3<Kernel>(p, sqtd)))
+      if(CGAL::compare_squared_distance(p, cp, m_sq_threshold_dist) != LARGER ||
+         m_tree.do_intersect(CGAL::Sphere_3<Kernel>(p, m_sq_threshold_dist)))
         return op;
 
       return boost::optional<Point>();
@@ -70,7 +69,7 @@ public:
 private:
   const Placement m_get_placement;
   const Tree& m_tree;
-  const double m_threshold_dist;
+  const double m_sq_threshold_dist;
 };
 
 } // namespace Surface_mesh_simplification
