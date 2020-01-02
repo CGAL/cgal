@@ -99,7 +99,6 @@ struct Scene_edit_polyhedron_item_priv
   mutable std::vector<GLfloat> color_lines;
   mutable std::vector<GLfloat> ROI_points;
   mutable std::vector<GLfloat> control_points;
-  mutable std::vector<GLfloat> ROI_color;
   mutable std::vector<GLfloat> control_color;
   mutable std::vector<GLfloat> normals;
   mutable std::vector<GLfloat> pos_bbox;
@@ -365,10 +364,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
         }
 
     }
-    ROI_color.assign(ROI_points.size(),0);
-    for(std::size_t i=0; i<ROI_color.size()/3; i++)
-      ROI_color[3*i+1]=1.0;
-
+   
     for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data = fs.get_ctrl_vertex_frame_map(mesh).begin(); hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
     {
         if(hgb_data->frame == Three::mainViewer()->manipulatedFrame())
