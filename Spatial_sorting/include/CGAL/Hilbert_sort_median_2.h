@@ -12,6 +12,7 @@
 #ifndef CGAL_HILBERT_SORT_MEDIAN_2_H
 #define CGAL_HILBERT_SORT_MEDIAN_2_H
 
+#include <CGAL/assertions.h>
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
 #include <CGAL/Hilbert_sort_base.h>

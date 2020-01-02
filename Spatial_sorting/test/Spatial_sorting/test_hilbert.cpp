@@ -40,7 +40,7 @@ int main ()
   std::cout << "Testing Hilbert sort." << std::endl;
 
   {
-    std::cout << "Testing 2D: Generating "<<nb_points_2<<" random points... " << std::flush;
+    std::cout << "Testing 2D (median policy): Generating "<<nb_points_2<<" random points... " << std::flush;
 
     std::vector<Point_2> v;
     v.reserve (nb_points_2);
@@ -63,18 +63,23 @@ int main ()
 
     std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-    std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points (parallel)...    " << std::flush;
 
-    std::sort (v.begin(),  v.end(),  K().less_xy_2_object());
-    std::sort (v2.begin(), v2.end(), K().less_xy_2_object());
+    cost.reset();cost.start();
+    CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(v2.begin(), v2.end());
+    cost.stop();
+
+    std::cout << "done in " << cost.time() << "seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
     assert(v == v2);
 
-    std::cout << "no points lost." << std::endl;
+    std::cout << "Ok" << std::endl;
   }
   {
     int size=256;               // 2^(xd)   with x=4 d=2
     double box_size = 15.0;     // 2^x -1
-    std::cout << "Testing 2D: Generating "<<size<<" grid points... " << std::flush;
+    std::cout << "Testing 2D (median policy): Generating "<<size<<" grid points... " << std::flush;
     std::vector<Point_2> v;
     v.reserve(size);
 
@@ -161,7 +166,7 @@ int main ()
   }
 
   {
-    std::cout << "Testing 3D: Generating "<<nb_points_3<<" random points... " << std::flush;
+    std::cout << "Testing 3D (median policy): Generating "<<nb_points_3<<" random points... " << std::flush;
 
     std::vector<Point_3> v;
     v.reserve (nb_points_3);
@@ -184,10 +189,15 @@ int main ()
 
     std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-    std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points (parallel)...    " << std::flush;
 
-    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    cost.reset();cost.start();
+    CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(v2.begin(), v2.end());
+    cost.stop();
+
+    std::cout << "done in " << cost.time() << "seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
     assert(v == v2);
 
     std::cout << "no points lost." << std::endl;
@@ -196,7 +206,7 @@ int main ()
     int size=512;              // 2^(xd)   with x=3 d=3
     double box_size = 7.0;     // 2^x -1
 
-    std::cout << "Testing 3D: Generating "<<size<<" grid points... " << std::flush;
+    std::cout << "Testing 3D (median policy): Generating "<<size<<" grid points... " << std::flush;
 
     std::vector<Point_3> v;
     v.reserve(size);
@@ -281,6 +291,7 @@ int main ()
     for (int i = 0; i < size-1; ++i) {
       assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
     }
+
     std::cout << "OK." << std::endl;
   }
   {
@@ -307,10 +318,15 @@ int main ()
 
     std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-    std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points (parallel)...    " << std::flush;
 
-    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    cost.reset();cost.start();
+    CGAL::hilbert_sort<CGAL::Parallel_if_available_tag>(v2.begin(), v2.end());
+    cost.stop();
+
+    std::cout << "done in " << cost.time() << "seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
     assert(v == v2);
 
     std::cout << "no points lost." << std::endl;
