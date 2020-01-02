@@ -441,6 +441,7 @@ struct Scene_c3t3_item_priv {
     return false;
   }
   Scene_spheres_item *spheres;
+  std::vector<Tr::Vertex> tr_vertices;
   Scene_intersection_item *intersection;
   bool spheres_are_shown;
   const Scene_item* data_item_;
@@ -1436,8 +1437,10 @@ void Scene_c3t3_item_priv::computeSpheres()
                           wp2p(vit->point()).z() + offset.z);
     float radius = vit->point().weight() ;
     typedef unsigned char UC;
+    tr_vertices.push_back(*vit);
     spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
                         CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
+    
   }
   spheres->invalidateOpenGLBuffers();
 }
@@ -1603,6 +1606,16 @@ void Scene_c3t3_item::show_spheres(bool b)
     if(b && !d->spheres)
     {
       d->spheres = new Scene_spheres_item(this, d->c3t3.number_of_vertices_in_complex(), true);
+      connect(d->spheres, &Scene_spheres_item::picked,
+              this, [this](std::size_t id)
+      {
+        if(id == (std::size_t)(-1))
+          return;
+        QString msg = QString("Vertex's index : %1; Vertex's in dimension: %2.").arg(d->tr_vertices[id].index()).arg(d->tr_vertices[id].in_dimension());
+        CGAL::Three::Three::information(msg);
+        CGAL::Three::Three::mainViewer()->displayMessage(msg, 5000);
+        
+      });
       d->spheres->setName("Protecting spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
@@ -1619,7 +1632,6 @@ void Scene_c3t3_item::show_spheres(bool b)
     }
     Q_EMIT redraw();
   }
-
 }
 void Scene_c3t3_item::show_intersection(bool b)
 {

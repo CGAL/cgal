@@ -39,7 +39,7 @@ struct Scene_spheres_item_priv
   {
   }
 
-  void pick(int id)const;
+  void pick(int &id)const;
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const;
 
@@ -67,10 +67,16 @@ struct Scene_spheres_item_priv
 
 };
 
-void Scene_spheres_item_priv::pick(int id) const
+void Scene_spheres_item_priv::pick(int& id) const
 {
   if(!pickable)
     return;
+  
+  if(id >= spheres.size())
+  {
+    id = -1;
+  }
+    
   int offset = 0;
   float color[4];
   for(std::size_t i=0; i<spheres.size(); ++i)
@@ -203,10 +209,8 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
       if(buffer[0]*buffer[1]*buffer[2] < 255*255*255)
       {
         d->pick(ID);
-        viewer->displayMessage(QString("Picked spheres index : %1 .").arg(ID), 2000);
+        picked(ID);
       }
-      else
-        d->pick(-1);
     }
 }
 

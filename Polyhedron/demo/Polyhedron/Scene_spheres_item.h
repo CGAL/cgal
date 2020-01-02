@@ -62,6 +62,7 @@ public:
   void computeElements() const Q_DECL_OVERRIDE;
 Q_SIGNALS:
   void on_color_changed();
+  void picked(std::size_t id) const;
 protected:
   friend struct Scene_spheres_item_priv;
   Scene_spheres_item_priv* d;
