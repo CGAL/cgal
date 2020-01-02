@@ -32,643 +32,642 @@ typedef CGAL::Creator_uniform_d<std::vector<double>::iterator, Point>Creator_d;
 
 int main ()
 {
-  int nb_points_2 = 5000, nb_points_3 = 5000, 
-    nb_points_d=10000, small_nb_points_d=3;
+  int nb_points_2 = 5000, nb_points_3 = 5000,
+      nb_points_d=10000, small_nb_points_d=3;
   CGAL::Random random (42);
   CGAL::Timer cost;
 
-    std::cout << "Testing Hilbert sort." << std::endl;
+  std::cout << "Testing Hilbert sort." << std::endl;
 
-    {
-      std::cout << "Testing 2D: Generating "<<nb_points_2<<" random points... " << std::flush;
+  {
+    std::cout << "Testing 2D: Generating "<<nb_points_2<<" random points... " << std::flush;
 
-        std::vector<Point_2> v;
-        v.reserve (nb_points_2);
+    std::vector<Point_2> v;
+    v.reserve (nb_points_2);
 
-        CGAL::Random_points_in_square_2<Point_2> gen (1.0, random);
+    CGAL::Random_points_in_square_2<Point_2> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_2 - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    for (int i = 0; i < nb_points_2 - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "done." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::vector<Point_2> v2 (v);
+    std::vector<Point_2> v2 (v);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
-	cost.stop();
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    cost.stop();
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Checking...          " << std::flush;
 
-        std::sort (v.begin(),  v.end(),  K().less_xy_2_object());
-        std::sort (v2.begin(), v2.end(), K().less_xy_2_object());
-        assert(v == v2);
+    std::sort (v.begin(),  v.end(),  K().less_xy_2_object());
+    std::sort (v2.begin(), v2.end(), K().less_xy_2_object());
+    assert(v == v2);
 
-        std::cout << "no points lost." << std::endl;
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int size=256;               // 2^(xd)   with x=4 d=2
+    double box_size = 15.0;     // 2^x -1
+    std::cout << "Testing 2D: Generating "<<size<<" grid points... " << std::flush;
+    std::vector<Point_2> v;
+    v.reserve(size);
+
+    CGAL::points_on_square_grid_2 (box_size, (std::size_t)size,
+                                   std::back_inserter(v), Creator_2() );
+
+    std::cout << "done." << std::endl;
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    cost.stop();
+
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    for (int i = 0; i < size-1; ++i)
+      assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
+
+    std::cout << "OK." << std::endl;
+  }
+  {
+    std::cout << "Testing 2D (middle policy): Generating "
+              <<nb_points_2<<" random points... " << std::flush;
+
+    std::vector<Point_2> v;
+    v.reserve (nb_points_2);
+
+    CGAL::Random_points_in_square_2<Point_2> gen (1.0, random);
+
+    for (int i = 0; i < nb_points_2 - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
+
+    std::cout << "done." << std::endl;
+
+    std::vector<Point_2> v2 (v);
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    cost.reset();cost.start();
+    CGAL::hilbert_sort(v.begin(),v.end(), CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
+
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    std::sort (v.begin(),  v.end(),  K().less_xy_2_object());
+    std::sort (v2.begin(), v2.end(), K().less_xy_2_object());
+    assert(v == v2);
+
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int size=256;               // 2^(xd)
+    double box_size = 15.0;     // 2^x -1                with x=4 d=2
+    std::cout << "Testing 2D (middle policy): Generating "
+              <<size<<" grid points... " << std::flush;
+    std::vector<Point_2> v;
+    v.reserve(size);
+
+    CGAL::points_on_square_grid_2 (box_size, (std::size_t)size,
+                                   std::back_inserter(v), Creator_2() );
+
+    std::cout << "done." << std::endl;
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    cost.reset();cost.start();
+    CGAL::hilbert_sort(v.begin(),v.end(), CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
+
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    for (int i = 0; i < size-1; ++i) {
+      assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
     }
-    {
-	int size=256;               // 2^(xd)   with x=4 d=2
-	double box_size = 15.0;     // 2^x -1
-	std::cout << "Testing 2D: Generating "<<size<<" grid points... " << std::flush;
-        std::vector<Point_2> v; 
-	v.reserve(size);
+    std::cout << "OK." << std::endl;
+  }
 
-        CGAL::points_on_square_grid_2 (box_size, (std::size_t)size, 
-				     std::back_inserter(v), Creator_2() );
+  {
+    std::cout << "Testing 3D: Generating "<<nb_points_3<<" random points... " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::vector<Point_3> v;
+    v.reserve (nb_points_3);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    CGAL::Random_points_in_cube_3<Point_3> gen (1.0, random);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
-	cost.stop();
+    for (int i = 0; i < nb_points_3 - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::vector<Point_3> v2 (v);
 
-        for (int i = 0; i < size-1; ++i) 
-	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::cout << "OK." << std::endl;
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    cost.stop();
+
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    assert(v == v2);
+
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int size=512;              // 2^(xd)   with x=3 d=3
+    double box_size = 7.0;     // 2^x -1
+
+    std::cout << "Testing 3D: Generating "<<size<<" grid points... " << std::flush;
+
+    std::vector<Point_3> v;
+    v.reserve(size);
+
+    CGAL::points_on_cube_grid_3 (box_size, (std::size_t)size,
+                                 std::back_inserter(v), Creator_3() );
+
+    std::cout << "done." << std::endl;
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    cost.stop();
+
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    for (int i = 0; i < size-1; ++i)
+      assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
+
+    std::cout << "OK." << std::endl;
+  }
+
+  {
+    std::cout << "Testing 3D (middle policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+
+    std::vector<Point_3> v;
+    v.reserve (nb_points_3);
+
+    CGAL::Random_points_in_cube_3<Point_3> gen (1.0, random);
+
+    for (int i = 0; i < nb_points_3 - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
+
+    std::cout << "done." << std::endl;
+
+    std::vector<Point_3> v2 (v);
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    cost.reset();cost.start();
+    CGAL::hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
+
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    assert(v == v2);
+
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int size=4096;              // 2^(xd)   with x=4 d=3
+    double box_size = 15.0;     // 2^x -1
+
+    std::cout << "Testing 3D (middle policy): Generating "<<size<<" grid points... " << std::flush;
+
+    std::vector<Point_3> v;
+    v.reserve(size);
+
+    CGAL::points_on_cube_grid_3 (box_size, (std::size_t)size,
+                                 std::back_inserter(v), Creator_3() );
+
+    std::cout << "done." << std::endl;
+
+    std::cout << "            Sorting points...    " << std::flush;
+
+    cost.reset();cost.start();
+    CGAL::hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
+
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+
+    std::cout << "            Checking...          " << std::flush;
+
+    for (int i = 0; i < size-1; ++i) {
+      assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
     }
-    {
-      std::cout << "Testing 2D (middle policy): Generating "
-		<<nb_points_2<<" random points... " << std::flush;
+    std::cout << "OK." << std::endl;
+  }
+  {
+    std::cout << "Testing Spherical (median policy): Generating "<<nb_points_3<<" random points... " << std::flush;
 
-        std::vector<Point_2> v;
-        v.reserve (nb_points_2);
+    std::vector<Point_3> v;
+    v.reserve (nb_points_3);
 
-        CGAL::Random_points_in_square_2<Point_2> gen (1.0, random);
+    CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
 
-        for (int i = 0; i < nb_points_2 - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    for (int i = 0; i < nb_points_3 - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "done." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::vector<Point_2> v2 (v);
+    std::vector<Point_3> v2 (v);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort(v.begin(),v.end(), CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
+    cost.reset();cost.start();
+    CGAL::hilbert_sort(v.begin(),v.end());
+    cost.stop();
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Checking...          " << std::flush;
 
-        std::sort (v.begin(),  v.end(),  K().less_xy_2_object());
-        std::sort (v2.begin(), v2.end(), K().less_xy_2_object());
-        assert(v == v2);
+    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    assert(v == v2);
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-	int size=256;               // 2^(xd)
-	double box_size = 15.0;     // 2^x -1                with x=4 d=2
-	std::cout << "Testing 2D (middle policy): Generating "
-		  <<size<<" grid points... " << std::flush;
-        std::vector<Point_2> v; 
-	v.reserve(size);
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    std::cout << "Testing Spherical (median policy) + given sphere: Generating "<<nb_points_3<<" random points... " << std::flush;
 
-        CGAL::points_on_square_grid_2 (box_size, (std::size_t)size, 
-				     std::back_inserter(v), Creator_2() );
+    std::vector<Point_3> v;
+    v.reserve (nb_points_3);
 
-        std::cout << "done." << std::endl;
+    CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    for (int i = 0; i < nb_points_3 - 1; ++i)
+      v.push_back (*gen++ + Vector_3(3,5,5));
+    v.push_back(v[0]); //insert twice the same point
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort(v.begin(),v.end(), CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
+    std::cout << "done." << std::endl;
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::vector<Point_3> v2 (v);
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-        for (int i = 0; i < size-1; ++i) {
-	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
-	}
-        std::cout << "OK." << std::endl;
-    }
+    cost.reset();cost.start();
+    CGAL::hilbert_sort_on_sphere(v.begin(),v.end(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
+    cost.stop();
 
-    {
-      std::cout << "Testing 3D: Generating "<<nb_points_3<<" random points... " << std::flush;
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        std::vector<Point_3> v;
-        v.reserve (nb_points_3);
+    std::cout << "            Checking...          " << std::flush;
 
-        CGAL::Random_points_in_cube_3<Point_3> gen (1.0, random);
+    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    assert(v == v2);
 
-        for (int i = 0; i < nb_points_3 - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    std::cout << "Testing Spherical (middle policy): Generating "<<nb_points_3<<" random points... " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::vector<Point_3> v;
+    v.reserve (nb_points_3);
 
-        std::vector<Point_3> v2 (v);
+    CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    for (int i = 0; i < nb_points_3 - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
-	cost.stop();
+    std::cout << "done." << std::endl;
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::vector<Point_3> v2 (v);
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
-        assert(v == v2);
+    cost.reset();cost.start();
+    CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-	int size=512;              // 2^(xd)   with x=3 d=3
-	double box_size = 7.0;     // 2^x -1
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-	std::cout << "Testing 3D: Generating "<<size<<" grid points... " << std::flush;
+    std::cout << "            Checking...          " << std::flush;
 
-        std::vector<Point_3> v;
-	v.reserve(size);
+    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    assert(v == v2);
 
-        CGAL::points_on_cube_grid_3 (box_size, (std::size_t)size, 
-				     std::back_inserter(v), Creator_3() );
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    std::cout << "Testing Spherical (middle policy) + given sphere: Generating "<<nb_points_3<<" random points... " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::vector<Point_3> v;
+    v.reserve (nb_points_3);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
-	cost.stop();
+    for (int i = 0; i < nb_points_3 - 1; ++i)
+      v.push_back (*gen++ + Vector_3(3,5,5));
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::vector<Point_3> v2 (v);
 
-        for (int i = 0; i < size-1; ++i)
-	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::cout << "OK." << std::endl;
-    }
+    cost.reset();cost.start();
+    CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
+    cost.stop();
 
-    {
-      std::cout << "Testing 3D (middle policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        std::vector<Point_3> v;
-        v.reserve (nb_points_3);
+    std::cout << "            Checking...          " << std::flush;
 
-        CGAL::Random_points_in_cube_3<Point_3> gen (1.0, random);
+    std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
+    std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
+    assert(v == v2);
 
-        for (int i = 0; i < nb_points_3 - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int dim =5;
+    std::cout << "Testing "<<dim<<"D: Generating "<<nb_points_d<<" random points... " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::vector<Point> v;
+    v.reserve (nb_points_d);
 
-        std::vector<Point_3> v2 (v);
+    CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    for (int i = 0; i < nb_points_d - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
+    std::cout << "done." << std::endl;
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::vector<Point> v2 (v);
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
-        assert(v == v2);
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end(),CGAL::Hilbert_sort_median_policy());
+    cost.stop();
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-      int size=4096;              // 2^(xd)   with x=4 d=3
-      double box_size = 15.0;     // 2^x -1
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-	std::cout << "Testing 3D (middle policy): Generating "<<size<<" grid points... " << std::flush;
+    std::cout << "            Checking...          " << std::flush;
 
-        std::vector<Point_3> v;
-	v.reserve(size);
+    std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
+    std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
+    assert(v == v2);
 
-        CGAL::points_on_cube_grid_3 (box_size, (std::size_t)size, 
-				     std::back_inserter(v), Creator_3() );
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int dim = 1000;
+    std::cout << "Testing "<<dim<<"D: Generating "<<nb_points_d<<" random points... " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::vector<Point> v;
+    v.reserve (nb_points_d);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
+    for (int i = 0; i < nb_points_d - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::vector<Point> v2 (v);
 
-        for (int i = 0; i < size-1; ++i) {
-	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
-	}
-        std::cout << "OK." << std::endl;
-    }
-	{
-      std::cout << "Testing Spherical (median policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::vector<Point_3> v;
-        v.reserve (nb_points_3);
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    cost.stop();
 
-        CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        for (int i = 0; i < nb_points_3 - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    std::cout << "            Checking...          " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
+    std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
+    assert(v == v2);
 
-        std::vector<Point_3> v2 (v);
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int dim = 10;
+    std::cout << "Testing "<<dim<<"D (middle policy): Generating "<<nb_points_d<<" random points... " << std::flush;
 
-        std::cout << "            Sorting points...    " << std::flush;
+    std::vector<Point> v;
+    v.reserve (nb_points_d);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort(v.begin(),v.end());
-	cost.stop();
+    CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    for (int i = 0; i < nb_points_d - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "done." << std::endl;
 
-        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
-        assert(v == v2);
+    std::vector<Point> v2 (v);
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-      std::cout << "Testing Spherical (median policy) + given sphere: Generating "<<nb_points_3<<" random points... " << std::flush;
+    std::cout << "            Sorting points ...    " << std::flush;
 
-        std::vector<Point_3> v;
-        v.reserve (nb_points_3);
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end(),
+                        CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
 
-        CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        for (int i = 0; i < nb_points_3 - 1; ++i)
-            v.push_back (*gen++ + Vector_3(3,5,5));
-        v.push_back(v[0]); //insert twice the same point
+    std::cout << "            Checking...          " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
+    std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
+    assert(v == v2);
 
-        std::vector<Point_3> v2 (v);
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int dim=5;
+    std::cout << "Testing "<<dim<<"D: Generating "<<small_nb_points_d<<" random points... " << std::flush;
 
-        std::cout << "            Sorting points...    " << std::flush;
+    std::vector<Point> v;
+    v.reserve (nb_points_d);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
-	cost.stop();
+    CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    for (int i = 0; i < nb_points_d - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "done." << std::endl;
 
-        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
-        assert(v == v2);
+    std::vector<Point> v2 (v);
 
-        std::cout << "no points lost." << std::endl;
-    }
-	{
-      std::cout << "Testing Spherical (middle policy): Generating "<<nb_points_3<<" random points... " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::vector<Point_3> v;
-        v.reserve (nb_points_3);
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    cost.stop();
 
-        CGAL::Random_points_on_sphere_3<Point_3> gen (1.0, random);
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        for (int i = 0; i < nb_points_3 - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    std::cout << "            Checking...          " << std::flush;
 
-        std::cout << "done." << std::endl;
+    std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
+    std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
+    assert(v == v2);
 
-        std::vector<Point_3> v2 (v);
+    std::cout << "no points lost." << std::endl;
+  }
+  {
+    int dim=5;
+    int size=32768;            // 2^(x.dim)   with x=3
+    double box_size = 7.0;     // 2^x -1
 
-        std::cout << "            Sorting points...    " << std::flush;
+    std::cout << "Testing "<<dim<<"D: Generating "<<size<<" grid points... " << std::flush;
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
+    std::vector<Point> v(size);
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    CGAL::points_on_cube_grid_d (dim, box_size, (std::size_t)size,
+                                 v.begin(), Creator_d(dim) );
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "done." << std::endl;
 
-        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
-        assert(v == v2);
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-      std::cout << "Testing Spherical (middle policy) + given sphere: Generating "<<nb_points_3<<" random points... " << std::flush;
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.begin()+size);
+    cost.stop();
 
-        std::vector<Point_3> v;
-        v.reserve (nb_points_3);
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        CGAL::Random_points_on_sphere_3<Point_3> gen (2.0, random);
+    std::cout << "            Checking...          " << std::flush;
 
-        for (int i = 0; i < nb_points_3 - 1; ++i)
-            v.push_back (*gen++ + Vector_3(3,5,5));
-        v.push_back(v[0]); //insert twice the same point
+    for (int i = 0; i < size-1; ++i)
+      assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
 
-        std::cout << "done." << std::endl;
+    std::cout << "OK." << std::endl;
+  }
+  {
+    int dim=3;
+    int size=32768;            // 2^(x.dim)   with x=5
+    double box_size = 31.0;     // 2^x -1
 
-        std::vector<Point_3> v2 (v);
+    std::cout << "Testing "<<dim<<"D (middle policy): Generating "<<size<<" grid points... " << std::flush;
 
-        std::cout << "            Sorting points...    " << std::flush;
+    std::vector<Point> v(size);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort_on_sphere(v.begin(),v.end(),CGAL::Hilbert_sort_middle_policy(), 4, CGAL::ORIGIN + Vector_3(3,5,5));
-	cost.stop();
+    CGAL::points_on_cube_grid_d (dim, box_size, (std::size_t)size,
+                                 v.begin(), Creator_d(dim) );
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::sort (v.begin(),  v.end(),  K().less_xyz_3_object());
-        std::sort (v2.begin(), v2.end(), K().less_xyz_3_object());
-        assert(v == v2);
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.begin()+size,
+                        CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-      int dim =5;
-      std::cout << "Testing "<<dim<<"D: Generating "<<nb_points_d<<" random points... " << std::flush;
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        std::vector<Point> v;
-        v.reserve (nb_points_d);
+    std::cout << "            Checking...          " << std::flush;
 
-        CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
+    for (int i = 0; i < size-1; ++i)
+      assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
 
-        for (int i = 0; i < nb_points_d - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    std::cout << "OK." << std::endl;
+  }
 
-        std::cout << "done." << std::endl;
+  {
+    int dim=5;
+    int size=32768;            // 2^(x.dim)   with x=3
+    double box_size = 7.0;     // 2^x -1
 
-        std::vector<Point> v2 (v);
+    std::cout << "Testing "<<dim<<"D (middle policy): Generating "<<size<<" grid points... " << std::flush;
 
-        std::cout << "            Sorting points...    " << std::flush;
+    std::vector<Point> v(size);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end(),CGAL::Hilbert_sort_median_policy());
-	cost.stop();
+    CGAL::points_on_cube_grid_d (dim, box_size, (std::size_t)size,
+                                 v.begin(), Creator_d(dim) );
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
-        std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
-        assert(v == v2);
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.begin()+size,
+                        CGAL::Hilbert_sort_middle_policy());
+    cost.stop();
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-      int dim = 1000;
-      std::cout << "Testing "<<dim<<"D: Generating "<<nb_points_d<<" random points... " << std::flush;
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        std::vector<Point> v;
-        v.reserve (nb_points_d);
+    std::cout << "            Checking...          " << std::flush;
 
-        CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
+    for (int i = 0; i < size-1; ++i)
+      assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
 
-        for (int i = 0; i < nb_points_d - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    std::cout << "OK." << std::endl;
+  }
 
-        std::cout << "done." << std::endl;
+  {
+    int dim = 50;
+    std::cout << "Testing "<<dim<<"D (median policy): Generating "<<nb_points_d<<" random points... " << std::flush;
 
-        std::vector<Point> v2 (v);
+    std::vector<Point> v;
+    v.reserve (nb_points_d);
 
-        std::cout << "            Sorting points...    " << std::flush;
+    CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
 
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
-	cost.stop();
+    for (int i = 0; i < nb_points_d - 1; ++i)
+      v.push_back (*gen++);
+    v.push_back(v[0]); //insert twice the same point
 
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
+    std::cout << "done." << std::endl;
 
-        std::cout << "            Checking...          " << std::flush;
+    std::vector<Point> v2 (v);
 
-        std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
-        std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
-        assert(v == v2);
+    std::cout << "            Sorting points...    " << std::flush;
 
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-      int dim = 10;
-      std::cout << "Testing "<<dim<<"D (middle policy): Generating "<<nb_points_d<<" random points... " << std::flush;
+    cost.reset();cost.start();
+    CGAL::hilbert_sort (v.begin(), v.end());
+    cost.stop();
 
-        std::vector<Point> v;
-        v.reserve (nb_points_d);
+    std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
 
-        CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
+    std::cout << "            Checking...          " << std::flush;
 
-        for (int i = 0; i < nb_points_d - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
+    std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
+    std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
+    assert(v == v2);
 
-        std::cout << "done." << std::endl;
+    std::cout << "no points lost." << std::endl;
+  }
 
-        std::vector<Point> v2 (v);
-
-        std::cout << "            Sorting points ...    " << std::flush;
-
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end(),
-			    CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
-
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
-
-        std::cout << "            Checking...          " << std::flush;
-
-        std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
-        std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
-        assert(v == v2);
-
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-      int dim=5;
-      std::cout << "Testing "<<dim<<"D: Generating "<<small_nb_points_d<<" random points... " << std::flush;
-
-        std::vector<Point> v;
-        v.reserve (nb_points_d);
-
-        CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
-
-        for (int i = 0; i < nb_points_d - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
-
-        std::cout << "done." << std::endl;
-
-        std::vector<Point> v2 (v);
-
-        std::cout << "            Sorting points...    " << std::flush;
-
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
-	cost.stop();
-
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
-
-        std::cout << "            Checking...          " << std::flush;
-
-        std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
-        std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
-        assert(v == v2);
-
-        std::cout << "no points lost." << std::endl;
-    }
-    {
-	int dim=5;
-	int size=32768;            // 2^(x.dim)   with x=3  
-	double box_size = 7.0;     // 2^x -1
-
-	std::cout << "Testing "<<dim<<"D: Generating "<<size<<" grid points... " << std::flush;
-
-        std::vector<Point> v(size);
-
-        CGAL::points_on_cube_grid_d (dim, box_size, (std::size_t)size, 
-					  v.begin(), Creator_d(dim) );
-
-        std::cout << "done." << std::endl;
-
-        std::cout << "            Sorting points...    " << std::flush;
-
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.begin()+size);
-	cost.stop();
-
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
-
-        std::cout << "            Checking...          " << std::flush;
-
-        for (int i = 0; i < size-1; ++i) 
-	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
-
-        std::cout << "OK." << std::endl;
-    }
-    {
-	int dim=3;
-	int size=32768;            // 2^(x.dim)   with x=5
-	double box_size = 31.0;     // 2^x -1
-
-	std::cout << "Testing "<<dim<<"D (middle policy): Generating "<<size<<" grid points... " << std::flush;
-
-        std::vector<Point> v(size);
-
-        CGAL::points_on_cube_grid_d (dim, box_size, (std::size_t)size, 
-					  v.begin(), Creator_d(dim) );
-
-        std::cout << "done." << std::endl;
-
-        std::cout << "            Sorting points...    " << std::flush;
-
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.begin()+size,
-			    CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
-
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
-
-        std::cout << "            Checking...          " << std::flush;
-
-        for (int i = 0; i < size-1; ++i) 
-	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
-
-        std::cout << "OK." << std::endl;
-    }
-
-    {
-	int dim=5;
-	int size=32768;            // 2^(x.dim)   with x=3  
-	double box_size = 7.0;     // 2^x -1
-
-	std::cout << "Testing "<<dim<<"D (middle policy): Generating "<<size<<" grid points... " << std::flush;
-
-        std::vector<Point> v(size);
-
-        CGAL::points_on_cube_grid_d (dim, box_size, (std::size_t)size, 
-					  v.begin(), Creator_d(dim) );
-
-        std::cout << "done." << std::endl;
-
-        std::cout << "            Sorting points...    " << std::flush;
-
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.begin()+size,
-			    CGAL::Hilbert_sort_middle_policy());
-	cost.stop();
-
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
-
-        std::cout << "            Checking...          " << std::flush;
-
-        for (int i = 0; i < size-1; ++i) 
-	  assert(CGAL::squared_distance( v[i], v[i+1]) - 4.0 < 0.1 );
-
-        std::cout << "OK." << std::endl;
-    }
-
-    {
-      int dim = 50;
-      std::cout << "Testing "<<dim<<"D (median policy): Generating "<<nb_points_d<<" random points... " << std::flush;
-
-        std::vector<Point> v;
-        v.reserve (nb_points_d);
-
-        CGAL::Random_points_in_cube_d<Point> gen (dim, 1.0, random);
-
-        for (int i = 0; i < nb_points_d - 1; ++i)
-            v.push_back (*gen++);
-        v.push_back(v[0]); //insert twice the same point
-
-        std::cout << "done." << std::endl;
-
-        std::vector<Point> v2 (v);
-
-        std::cout << "            Sorting points...    " << std::flush;
-
-	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
-	cost.stop();
-
-        std::cout << "done in "<<cost.time()<<"seconds." << std::endl;
-
-        std::cout << "            Checking...          " << std::flush;
-
-        std::sort (v.begin(),  v.end(), Kd().less_lexicographically_d_object());
-        std::sort (v2.begin(), v2.end(),Kd().less_lexicographically_d_object());
-        assert(v == v2);
-
-        std::cout << "no points lost." << std::endl;
-    }
-
-    return 0;
+  return 0;
 }
-
