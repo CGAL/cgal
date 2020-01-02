@@ -24,11 +24,7 @@ The input sphere is given by a squared radius and a center, parameter `sqr_radiu
 The default squared radius of the sphere is 1.0.
 The default center of the sphere is the origin (0,0,0).
 
-\cgalHeading{Precondition}
-
-<OL> 
-<LI>`sqr_radius` greater than 0. 
-</OL>
+\pre `sqr_radius` greater than 0.
 
 \cgalHeading{Implementation}
 
