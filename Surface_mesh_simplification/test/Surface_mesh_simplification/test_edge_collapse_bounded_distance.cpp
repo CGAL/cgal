@@ -57,14 +57,14 @@ int main(int argc, char** argv)
   Filtered_placement placement_big(50*diag, tree, placement_ref);
 
   SMS::edge_collapse(small_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_small));
-  SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_big));
   SMS::edge_collapse(ref_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_ref));
+  SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_big));
 
-  std::cout << "There are " << num_vertices(surface_mesh) << " vertices left when filtered"
-            << " and " << num_vertices(copy_mesh) << " when not filtered." << std::endl;
+  std::cout << "There are " << vertices(small_mesh).size() << " vertices left when filtered"
+            << " and " << num_vertices(big_mesh) << " when not filtered." << std::endl;
 
-  assert(vertices(big_mesh).size() == vertices(ref_mesh).size());
   assert(vertices(small_mesh).size() != vertices(ref_mesh).size());
+  assert(vertices(big_mesh).size() == vertices(ref_mesh).size());
 
   return EXIT_SUCCESS;
 }

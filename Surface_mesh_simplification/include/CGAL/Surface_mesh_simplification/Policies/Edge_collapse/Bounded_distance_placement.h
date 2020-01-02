@@ -30,7 +30,7 @@ public:
   Bounded_distance_placement(const double dist,
                              const Tree& tree,
                              const Placement& placement = Placement())
-    : m_get_placement(placement), m_tree(tree), m_(dist)
+    : m_get_placement(placement), m_tree(tree), m_threshold_dist(dist)
   { }
 
   template <typename Profile>
@@ -43,12 +43,12 @@ public:
     boost::optional<typename Profile::Point> op = m_get_placement(profile);
     if(op)
     {
-      CGAL_assertion(!tree.empty());
+      CGAL_assertion(!m_tree.empty());
 
       const Point& p = *op;
 
-      tree.accelerate_distance_queries();
-      const Point& cp = tree.best_hint(*p).first; // requires accelerate distance query to be called.
+      m_tree.accelerate_distance_queries();
+      const Point& cp = m_tree.best_hint(p).first; // requires accelerate distance query to be called.
 
       // We could do better by having access to the internal kd-tree
       // and call search_any_point with a fuzzy_sphere.
@@ -58,7 +58,7 @@ public:
       // any face closer than the threshold is intersected by
       // the sphere (avoid the inclusion of the mesh into the threshold sphere)
       if(CGAL::compare_squared_distance(p, cp, sqtd) != LARGER ||
-         tree.do_intersect(CGAL::Sphere_3<Kernel>(p, sqtd)))
+         m_tree.do_intersect(CGAL::Sphere_3<Kernel>(p, sqtd)))
         return op;
 
       return boost::optional<Point>();
