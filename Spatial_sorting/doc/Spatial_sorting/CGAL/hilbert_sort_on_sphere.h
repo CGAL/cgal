@@ -9,12 +9,12 @@ If input points are not close to the input sphere, this function still works, bu
 
 It sorts the range `[begin, end)` in place. 
 
-\tparam RandomAccessIterator `std::iterator_traits<RandomAccessIterator>::%value_type` must be convertible to 
-`Traits::Point_3`. 
+\tparam InputPointIterator must be a model of `RandomAccessIterator` and
+`std::iterator_traits<InputPointIterator>::%value_type` must be convertible to `Traits::Point_3`.
 
 \tparam Traits must be a model for concept `SpatialSortingTraits_3`.
 The default traits class `Default_traits` is the kernel in which the type 
-`std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
+`std::iterator_traits<InputPointIterator>::%value_type` is defined.
 
 \tparam PolicyTag is used to specify the strategy policy.
 Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink

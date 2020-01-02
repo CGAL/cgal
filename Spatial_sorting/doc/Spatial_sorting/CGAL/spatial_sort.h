@@ -10,9 +10,11 @@ of being close in the order.
 
 It sorts the range `[begin, end)` in place. 
 
-\tparam ConcurrencyTag must be `Sequential_tag`, `Parallel_tag`, or `Parallel_if_available_tag`. 
-With parallelism and TBB enabled, the sorting will be 
-done using up to four threads in 2D, and up to eight threads in 3D with the median policy.
+\tparam ConcurrencyTag enables sequential versus parallel algorithm.
+Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+With parallelism enabled, sorting will be performed using up to four threads in 2D,
+and up to eight threads in 3D.
+Parallel sorting is available only when the median strategy policy (the default policy) is used.
 
 \tparam InputPointIterator must be a model of `RandomAccessIterator` and
 `std::iterator_traits<InputPointIterator>::%value_type` must be convertible to

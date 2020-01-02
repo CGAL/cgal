@@ -5,7 +5,8 @@ namespace CGAL {
 
 The function object `Hilbert_sort_3` sorts iterator ranges of 
 `Traits::Point_3` along a Hilbert curve by recursively subdividing at the median 
-or the middle depending on the `PolicyTag`. 
+or the middle, depending on the `PolicyTag`(see Section \ref sechilbert_sorting
+for more information on the policies).
 
 \tparam Traits must be a model of the concept `SpatialSortingTraits_3`. 
 
@@ -13,8 +14,10 @@ or the middle depending on the `PolicyTag`.
 Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
 (the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
 
-\tparam ConcurrencyTag must be `Sequential_tag`,`Parallel_tag`, or `Parallel_if_available_tag`.  With parallelism
-and TBB enabled, for the median policy up to eight threads are used in parallel. 
+\tparam ConcurrencyTag enables sequential versus parallel algorithm.
+Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+With parallelism enabled, sorting will be performed using up to eight threads.
+Parallel sorting is available only when the median strategy policy (the default policy) is used.
 */
 template< typename Traits, typename PolicyTag, typename ConcurrencyTag = Sequential_tag  >
 class Hilbert_sort_3 {
