@@ -225,10 +225,12 @@ In case it is not sure whether TBB is available and linked with \cgal,
 
 \section Spatial_sortingDesign Design and Implementation History
 
-The first implementation of Hilbert and spatial sorting (2D and 3D) in CGAL was done by Cristophe Delage. Then, Olivier Devillers improved its design,
-and implemented its multidimensional version. Finally, Pedro Machado Manhaes de Castro and Olivier Devillers added Hilbert sorting
-on the sphere as well.
+The first implementation of Hilbert and spatial sorting (2D and 3D) in \cgal was done by Cristophe Delage.
+Olivier Devillers improved its design, and implemented its multidimensional version.
 
+Pedro Machado Manhaes de Castro and Olivier Devillers added Hilbert sorting on the sphere.
+
+Andreas Fabri added a parallel version of hilbert and spatial sorting.
 
 */ 
 } /* namespace CGAL */
