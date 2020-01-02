@@ -221,7 +221,7 @@ The parallel version of the algorithm is enabled by specifying the template para
 In case it is not sure whether TBB is available and linked with \cgal,
 `CGAL::Parallel_if_available_tag` can be used. By default, the sequential version is used.
 
-\cgalExample{Spatial_sorting/parallel_spatial_sort_2.cpp}
+\cgalExample{Spatial_sorting/parallel_spatial_sort_3.cpp}
 
 \section Spatial_sortingDesign Design and Implementation History
 
