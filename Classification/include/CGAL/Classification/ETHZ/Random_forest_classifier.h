@@ -127,11 +127,7 @@ public:
               std::size_t num_trees = 25,
               std::size_t max_depth = 20)
   {
-#ifdef CGAL_LINKED_WITH_TBB
-    train<CGAL::Parallel_tag>(ground_truth, reset_trees, num_trees, max_depth);
-#else
-    train<CGAL::Sequential_tag>(ground_truth, reset_trees, num_trees, max_depth);
-#endif
+    train<CGAL::Parallel_if_available_tag>(ground_truth, reset_trees, num_trees, max_depth);
   }
   /// \endcond
     
@@ -146,7 +142,7 @@ public:
     label.
 
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value is
+    algorithm. Possible values are `Parallel_tag` (default value if
     %CGAL is linked with TBB) or `Sequential_tag` (default value
     otherwise).
 

@@ -64,7 +64,7 @@ public:
                  bbox.xmax(),bbox.ymax(),bbox.zmax()));
     
     nb_points = points.size();
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       initGL(viewer);

@@ -201,7 +201,7 @@ static void addimgtag(byte *dptr, int xsize, int ysize)
 /*****************************************************/
 static unsigned short getshort( const _image *im)
 {
-  byte buf[2];
+  byte buf[2] = { '\0', '\0' };
   ImageIO_read( im, buf, (size_t) 2);
   return (unsigned short)((buf[0]<<8)+(buf[1]<<0));
 }
@@ -209,7 +209,7 @@ static unsigned short getshort( const _image *im)
 /*****************************************************/
 static unsigned long getlong( const _image *im )
 {
-  byte buf[4];
+  byte buf[4] = { '\0', '\0', '\0', '\0' };
   ImageIO_read( im, buf, (size_t) 4);
   return (((unsigned long) buf[0])<<24) + (((unsigned long) buf[1])<<16)
        + (((unsigned long) buf[2])<<8) + buf[3];

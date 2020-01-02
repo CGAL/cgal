@@ -63,7 +63,6 @@ typedef CGAL::Parallel_tag Parallel_if_available_tag;
 #else
 typedef CGAL::Sequential_tag Parallel_if_available_tag;
 #endif
-  
 
 // A function that asserts a specific compile time tag
 // forcing its two arguments to have equal type.

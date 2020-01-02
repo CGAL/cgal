@@ -25,14 +25,8 @@
 #include "SMesh_type.h"
 #include "Scene_points_with_normal_item.h"
 
-
-
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 template <typename Triangulation>
 class Marching_tets
