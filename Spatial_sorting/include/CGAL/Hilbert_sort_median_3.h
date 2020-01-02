@@ -179,13 +179,12 @@ public:
     if ((end - begin) <= _limit) return;
 
     RandomAccessIterator m0 = begin, m8 = end;
-    if((end - begin) > 1024){
+    if((end - begin) > 2048){ // 2^11, empirically a good cutoff
       RandomAccessIterator m1, m2, m3, m4, m5, m6, m7;
       m4 = internal::hilbert_split(m0, m8, Cmp<x, upx>(_k));
 
       tbb::parallel_invoke(Hilbert_split<RandomAccessIterator,Cmp<y,  upy> >(m2, m0, m4, Cmp<y,  upy>(_k)),
                            Hilbert_split<RandomAccessIterator,Cmp<y, !upy> >(m6, m4, m8, Cmp<y, !upy>(_k)));
-
 
       tbb::parallel_invoke(Hilbert_split<RandomAccessIterator,Cmp<z,  upz> >(m1, m0, m2, Cmp<z,  upz>(_k)),
                            Hilbert_split<RandomAccessIterator,Cmp<z, !upz> >(m3, m2, m4, Cmp<z, !upz>(_k)),

@@ -164,7 +164,7 @@ public:
 
     RandomAccessIterator m0 = begin, m4 = end;
 
-    if((end - begin) > 1024){
+    if((end - begin) > 8192){ // 2^13, empirically a good cutoff
       RandomAccessIterator m1, m2, m3;
       m2 = internal::hilbert_split (m0, m4, Cmp< x,  upx> (_k));
 
