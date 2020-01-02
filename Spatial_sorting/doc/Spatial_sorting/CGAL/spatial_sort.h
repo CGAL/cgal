@@ -45,7 +45,7 @@ times the original size of the set, Hilbert sort is applied on the
 second subset. 
 
 */
-  template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Traits, class PolicyTag>
+template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Traits, class PolicyTag>
 void
 spatial_sort( RandomAccessIterator begin,
 RandomAccessIterator end,
