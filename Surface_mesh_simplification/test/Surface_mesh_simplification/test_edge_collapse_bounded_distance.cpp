@@ -60,8 +60,9 @@ int main(int argc, char** argv)
   SMS::edge_collapse(ref_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_ref));
   SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_big));
 
-  std::cout << "There are " << vertices(small_mesh).size() << " vertices left when filtered"
-            << " and " << num_vertices(big_mesh) << " when not filtered." << std::endl;
+  std::cout << "no filtering: " << vertices(ref_mesh).size() << " vertices left" << std::endl;
+  std::cout << "large filtering distance: " << vertices(big_mesh).size() << " vertices left" << std::endl;
+  std::cout << "small filtering distance: " << vertices(small_mesh).size() << " vertices left" << std::endl;
 
   assert(vertices(small_mesh).size() != vertices(ref_mesh).size());
   assert(vertices(big_mesh).size() == vertices(ref_mesh).size());
