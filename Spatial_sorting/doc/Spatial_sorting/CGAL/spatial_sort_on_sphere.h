@@ -54,17 +54,17 @@ times the original size of the set, `Hilbert_sort_on_sphere_3` functor is applie
 second subset. 
 
 */
-template <class RandomAccessIterator, class Traits, class PolicyTag>
+template <class InputPointIterator, class Traits, class PolicyTag>
 void
-spatial_sort_on_sphere( RandomAccessIterator begin,
-RandomAccessIterator end,
-const Traits& traits = Default_traits,
-PolicyTag policy = Default_policy,
-double sqr_radius = 1.0,
-const Traits::Point_3 &center = Default_center,
-std::ptrdiff_t threshold_hilbert=default,
-std::ptrdiff_t threshold_multiscale=default,
-double ratio=default);
+spatial_sort_on_sphere( InputPointIterator begin,
+                        InputPointIterator end,
+                        const Traits& traits = Default_traits,
+                        PolicyTag policy = Default_policy,
+                        double sqr_radius = 1.0,
+                        const Traits::Point_3& center = Default_center,
+                        std::ptrdiff_t threshold_hilbert=default,
+                        std::ptrdiff_t threshold_multiscale=default,
+                        double ratio=default);
 
 } /* namespace CGAL */
 

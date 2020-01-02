@@ -14,19 +14,19 @@ It sorts the range `[begin, end)` in place.
 With parallelism and TBB enabled, the sorting will be 
 done using up to four threads in 2D, and up to eight threads in 3D with the median policy.
 
-\tparam RandomAccessIterator `std::iterator_traits<RandomAccessIterator>::%value_type` must be convertible to 
-`Traits::Point_2`, `Traits::Point_3`, or `Traits::Point_d`. 
+\tparam InputPointIterator must be a model of `RandomAccessIterator` and
+`std::iterator_traits<InputPointIterator>::%value_type` must be convertible to
+`Traits::Point_2`, `Traits::Point_3`, or `Traits::Point_d`.
 
 \tparam Traits  must be a model for concept `SpatialSortingTraits_2`, 
 `SpatialSortingTraits_3`, or `SpatialSortingTraits_d`. 
 The default traits class `Default_traits` is the kernel in which the type 
-`std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
+`std::iterator_traits<InputPointIterator>::%value_type` is defined.
 
 \tparam PolicyTag The default policy is `Hilbert_sort_median_policy` and the 
 other option is `Hilbert_sort_middle_policy`. 
 
 The default values for the thresholds and the ratio depend on the dimension. 
-
 
 \cgalHeading{Implementation}
 
@@ -45,15 +45,15 @@ times the original size of the set, Hilbert sort is applied on the
 second subset. 
 
 */
-template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Traits, class PolicyTag>
+template <class ConcurrencyTag = Sequential_tag, class InputPointIterator, class Traits, class PolicyTag>
 void
-spatial_sort( RandomAccessIterator begin,
-RandomAccessIterator end,
-const Traits& traits = Default_traits,
-PolicyTag policy = Default_policy,
-std::ptrdiff_t threshold_hilbert=default,
-std::ptrdiff_t threshold_multiscale=default,
-double ratio=default);
+spatial_sort( InputPointIterator begin,
+              InputPointIterator end,
+              const Traits& traits = Default_traits,
+              PolicyTag policy = Default_policy,
+              std::ptrdiff_t threshold_hilbert=default,
+              std::ptrdiff_t threshold_multiscale=default,
+              double ratio=default);
 
 } /* namespace CGAL */
 

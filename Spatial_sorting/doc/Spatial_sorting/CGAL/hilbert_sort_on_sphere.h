@@ -35,14 +35,14 @@ Creates an instance of `Hilbert_sort_on_sphere<Traits, PolicyTag>`,
 and calls its `operator()`. 
 
 */
-template <class RandomAccessIterator, class Traits, class PolicyTag>
+template <class InputPointIterator, class Traits, class PolicyTag>
 void
-hilbert_sort_on_sphere( RandomAccessIterator begin,
-RandomAccessIterator end,
-const Traits& traits = Default_traits,
-PolicyTag policy = Default_policy,
-double sqr_radius = 1.0,
-const Traits::Point_3 &center = Default_center);
+hilbert_sort_on_sphere( InputPointIterator begin,
+                        InputPointIterator end,
+                        const Traits& traits = Default_traits,
+                        PolicyTag policy = Default_policy,
+                        double sqr_radius = 1.0,
+                        const Traits::Point_3 &center = Default_center);
 
 } /* namespace CGAL */
 

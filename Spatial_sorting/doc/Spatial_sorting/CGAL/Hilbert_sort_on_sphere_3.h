@@ -37,9 +37,10 @@ Hilbert_sort_on_sphere_3(const Traits &traits = Traits(),
 /*!
 It sorts the range `[begin, end)` along a hilbert curve on the sphere centered at `p` with squared radius `sq_r`; 
 these arguments are passed in the construction of the object `Hilbert_sort_on_sphere_3`. 
-\tparam RandomAccessIterator must be an iterator with value type `Traits::Point_3`. 
+\tparam InputPointIterator must be a model of `RandomAccessIterator` with value type `Traits::Point_3`.
 */ 
-template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const; 
+template <class InputPointIterator>
+void operator() (InputPointIterator begin, InputPointIterator end) const;
 
 /// @}
 

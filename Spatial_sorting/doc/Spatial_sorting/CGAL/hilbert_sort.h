@@ -8,21 +8,20 @@ along a Hilbert curve.
 
 It sorts the range `[begin, end)` in place. 
 
-\tparam ConcurrencyTag must be `Sequential_tag`, `Parallel_tag`, or `Parallel_if_available_tag`. 
-With parallelism and TBB enabled, the sorting will be 
-done using up to four threads in 2D, and up to eight threads in 3D with the median policy.
+\tparam ConcurrencyTag enables sequential versus parallel algorithm.
+Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+With parallelism enabled, sorting will be performed using up to four threads in 2D,
+and up to eight threads in 3D.
+Parallel sorting is available only when the median strategy policy (the default policy) is used.
 
-\tparam RandomAccessIterator 
-`std::iterator_traits<RandomAccessIterator>::%value_type` must be convertible to 
+\tparam InputPointIterator must be a model of `RandomAccessIterator` and
+`std::iterator_traits<InputPointIterator>::%value_type` must be convertible to
 `Traits::Point_2`, `Traits::Point_3`, or `Traits::Point_d`. 
 
 \tparam Traits must be a model for concept `SpatialSortingTraits_2`, 
 `SpatialSortingTraits_3`, or `SpatialSortingTraits_d`. 
 The default traits class `Default_traits` is the kernel in which the type 
-`std::iterator_traits<RandomAccessIterator>::%value_type` is defined. 
-
-\tparam PolicyTag The default policy is `Hilbert_sort_median_policy()` and the 
-other option is `Hilbert_sort_middle_policy()`. 
+`std::iterator_traits<InputPointIterator>::%value_type` is defined.
 
 
 \cgalHeading{Implementation}
@@ -34,10 +33,10 @@ Creates an instance of
 and calls its `operator()`. 
 
 */
-template <class ConcurrencyTag = Sequential_tag, class RandomAccessIterator, class Traits, class PolicyTag>
+template <class ConcurrencyTag = Sequential_tag, class InputPointIterator, class Traits, class PolicyTag>
 void
-hilbert_sort( RandomAccessIterator begin,
-              RandomAccessIterator end,
+hilbert_sort( InputPointIterator begin,
+              InputPointIterator end,
               const Traits& traits = Default_traits,
               PolicyTag policy = Default_policy);
 
