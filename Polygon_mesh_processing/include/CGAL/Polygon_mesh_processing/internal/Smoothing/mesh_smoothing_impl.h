@@ -21,7 +21,7 @@
 #endif
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
@@ -86,10 +86,18 @@ public:
     const halfedge_descriptor h = halfedge(e, mesh_);
     const halfedge_descriptor opp_h = opposite(h, mesh_);
 
-    vertex_descriptor v0 = source(h, mesh_);
-    vertex_descriptor v1 = target(h, mesh_);
-    vertex_descriptor v2 = target(next(h, mesh_), mesh_);
-    vertex_descriptor v3 = target(next(opp_h, mesh_), mesh_);
+    const vertex_descriptor v0 = source(h, mesh_);
+    const vertex_descriptor v1 = target(h, mesh_);
+    const vertex_descriptor v2 = target(next(h, mesh_), mesh_);
+    const vertex_descriptor v3 = target(next(opp_h, mesh_), mesh_);
+
+    // Don't want to flip if the other diagonal already exists
+    // @todo remeshing can be used to still flip those
+    std::pair<edge_descriptor, bool> other_hd_already_exists = edge(v2, v3, mesh_);
+    if(other_hd_already_exists.second)
+      return false;
+
+    // not local Delaunay := sum of the opposite angles is greater than pi
     const Point_ref p0 = get(vpmap_, v0);
     const Point_ref p1 = get(vpmap_, v1);
     const Point_ref p2 = get(vpmap_, v2);
@@ -98,17 +106,7 @@ public:
     double alpha = get_radian_angle(Vector(p0 - p2), Vector(p1 - p2), traits_);
     double beta = get_radian_angle(Vector(p1 - p3), Vector(p0 - p3), traits_);
 
-    // not local Delaunay if the sum of the angles is greater than pi
-    if(alpha + beta <= CGAL_PI)
-      return false;
-
-    // Don't want to flip if the other diagonal already exists
-    // @todo remeshing can be used to still flip those
-    std::pair<edge_descriptor, bool> other_hd_already_exists = edge(v2, v3, mesh_);
-    if(other_hd_already_exists.second)
-      return false;
-
-    return true;
+    return (alpha + beta > CGAL_PI);
   }
 
   template <typename Marked_edges_map, typename EdgeRange>
