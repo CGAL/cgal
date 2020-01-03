@@ -366,13 +366,15 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
   }
 #  endif
 
-  bbox = item->bbox();
-  if (auto poly_items = get<Polyhedral_mesh_items>(&*items)) {
-    for (auto it : poly_items->sm_items) {
-      bbox = bbox + it->bbox();
+  if(item) {
+    bbox = item->bbox();
+    if (auto poly_items = get<Polyhedral_mesh_items>(&*items)) {
+      for (auto it : poly_items->sm_items) {
+        bbox = bbox + it->bbox();
+      }
+      if (poly_items->polylines_item)
+        bbox = bbox + poly_items->polylines_item->bbox();
     }
-    if (poly_items->polylines_item)
-      bbox = bbox + poly_items->polylines_item->bbox();
   }
   return {};
 }
