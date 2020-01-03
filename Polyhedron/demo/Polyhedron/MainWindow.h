@@ -360,9 +360,9 @@ protected Q_SLOTS:
     QString cameraString(CGAL::Three::Viewer_interface *v) const;
   //!Hides not available operations and show available operations in all the
   //!menus.
-  void filterOperations();
+  void filterOperations(bool hide);
   //!Updates the bounding box and moves the camera to fits the scene.
-  void on_actionRecenterScene_triggered();
+  void recenterScene();
   //!Resizes the header of the scene view
   void resetHeader();
   //!apply an action named `name` to all selected items
@@ -463,7 +463,7 @@ private:
 
 private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();
-  void on_action_Organize_Viewers_triggered();
+  void on_action_Rearrange_Viewers_triggered();
   void recenterViewer();
   
 private:

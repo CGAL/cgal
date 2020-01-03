@@ -106,6 +106,7 @@ public:
   //statistics
   enum STATS {
     NB_VERTICES = 0,
+    HAS_NM_VERTICES,
     NB_CONNECTED_COMPOS,
     NB_BORDER_EDGES,
     IS_PURE_TRIANGLE,
@@ -154,7 +155,8 @@ public:
   QSlider* alphaSlider();
   void computeElements() const Q_DECL_OVERRIDE;
   void initializeBuffers(CGAL::Three::Viewer_interface*)const Q_DECL_OVERRIDE;
-
+  void updateVertex(vertex_descriptor vh);
+  void switchToGouraudPlusEdge(bool b); //replace flatPlusEdge by gouraudPlusEdge and ban Flat.
 Q_SIGNALS:
   void item_is_about_to_be_changed();
   void selection_done();

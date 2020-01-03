@@ -16,7 +16,7 @@ endif()
 find_package(CGAL COMPONENTS Qt5)
 
 if(CGAL_Qt5_FOUND)
-    add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
 # For Gprof.

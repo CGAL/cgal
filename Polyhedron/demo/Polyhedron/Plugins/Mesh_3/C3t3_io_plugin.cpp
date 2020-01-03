@@ -196,6 +196,11 @@ Polyhedron_demo_c3t3_binary_io_plugin::
 save(QFileInfo fileinfo, QList<Scene_item *> &items)
 {
   Scene_item* item = items.front();
+  if(!qobject_cast<Scene_c3t3_item*>(item)->is_valid())
+  {
+    QMessageBox::warning(CGAL::Three::Three::mainWindow(), "", "The c3t3_item is not valid. You cannot save it.");
+    return false;
+  }
   const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item);
   if ( NULL == c3t3_item )
   {

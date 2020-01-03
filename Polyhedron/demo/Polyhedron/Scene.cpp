@@ -543,7 +543,7 @@ void Scene::renderScene(const QList<Scene_interface::Item_id> &items,
     }
     if(group ||item.visible())
     {
-      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
+      if( group || item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud || item.renderingMode() == GouraudPlusEdges )
       {
         if(with_names) {
           viewer->glClearDepthf(1.0);
@@ -591,7 +591,8 @@ void Scene::renderWireScene(const QList<Scene_interface::Item_id> &items,
      {
        if( group || (!with_names && item.renderingMode() == FlatPlusEdges )
           || item.renderingMode() == Wireframe
-          || item.renderingMode() == PointsPlusNormals)
+          || item.renderingMode() == PointsPlusNormals
+          || item.renderingMode() == GouraudPlusEdges)
        {
          viewer->setGlPointSize(2.f);
          item.drawEdges(viewer);
@@ -859,7 +860,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         QList<float> depths = picked_item_IDs.keys();
         if(!depths.isEmpty())
         {
-            qSort(depths);
+            std::sort(depths.begin(), depths.end());
             int id = picked_item_IDs[depths.first()];
             setSelectedItemIndex(id);
             viewer->setSelectedName(id);
@@ -1105,7 +1106,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
           if(item->parentGroup())
           {
             item->parentGroup()->removeChild(item);
-            children.push_back(item_id(item));
+            addChild(item);
           }
         }
         redraw_model();
@@ -1922,4 +1923,9 @@ void Scene::callDraw(){
 void Scene::enableVisibilityRecentering(bool b)
 {
   visibility_recentering_enabled = b;
+}
+
+void Scene::addChild(Scene_item *item)
+{
+  children.push_back(item_id(item));
 }

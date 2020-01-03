@@ -183,7 +183,8 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
     if(getChild(id)->visible() &&
        (getChild(id)->renderingMode() == Flat ||
         getChild(id)->renderingMode() == FlatPlusEdges ||
-        getChild(id)->renderingMode() == Gouraud))
+        getChild(id)->renderingMode() == Gouraud ||
+        getChild(id)->renderingMode() == GouraudPlusEdges))
     {
       getChild(id)->draw(viewer);
     }
@@ -191,7 +192,8 @@ void Scene_group_item::renderChildren(Viewer_interface *viewer,
     if(getChild(id)->visible() &&
        (getChild(id)->renderingMode() == FlatPlusEdges
         || getChild(id)->renderingMode() == Wireframe
-        || getChild(id)->renderingMode() == PointsPlusNormals))
+        || getChild(id)->renderingMode() == PointsPlusNormals
+        || getChild(id)->renderingMode() == GouraudPlusEdges))
     {
       getChild(id)->drawEdges(viewer);
     }

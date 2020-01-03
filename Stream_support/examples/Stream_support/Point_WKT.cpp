@@ -9,8 +9,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <boost/foreach.hpp>
-
 #include <vector>
 
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
@@ -26,7 +24,7 @@ int main(int argc, char* argv[])
   std::ifstream is((argc>1)?argv[1]:"data/multipoint.wkt");
   MultiPoint mp;
   CGAL::read_multi_point_WKT(is, mp);
-  BOOST_FOREACH(const Point& p, mp)
+  for(const Point& p : mp)
   {
     std::cout<<p<<std::endl;
   }

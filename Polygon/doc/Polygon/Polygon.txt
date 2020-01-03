@@ -70,6 +70,18 @@ and 3D Linear Geometric %Kernel.
 
 \cgalExample{Polygon/projected_polygon.cpp}
 
+\subsection subsecPolygonDraw Draw a Polygon
+
+A polygon can be visualized by calling the \link  PkgDrawPolygon2 CGAL::draw<P>() \endlink function as shown in the following example. This function opens a new window showing the given polygon. A call to this function is blocking, that is the program continues as soon as the user closes the window (a version exists for polygon with holes, cf. \link PkgDrawPolygonWithHoles2 CGAL::draw<PH>() \endlink).
+
+\cgalExample{Polygon/draw_polygon.cpp}
+
+This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASIC_VIEWER is defined at compile time.
+
+\cgalFigureBegin{fig_draw_polygon,draw_polygon.png}
+Result of the run of the draw_polygon program. A window shows the polygon and allows to navigate through the scene.
+\cgalFigureEnd
+
 */
 
 \section secPolygonWithHole Polygons with Holes

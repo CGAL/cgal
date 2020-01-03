@@ -27,7 +27,5 @@ struct Generic_map_min_items
 */
 struct Generic_map_min_items {
 
-/// @}
-
 }; /* end Generic_map_min_items */
 } /* end namespace CGAL */

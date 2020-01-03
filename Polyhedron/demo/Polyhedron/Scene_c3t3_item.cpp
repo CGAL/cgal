@@ -137,13 +137,15 @@ public :
   {
     if(is_fast)
       return;
+
     if(!alphaSlider)
     {
       alphaSlider = new QSlider(::Qt::Horizontal);
       alphaSlider->setMinimum(0);
       alphaSlider->setMaximum(255);
       alphaSlider->setValue(255);
-    }    
+    }
+    viewer->makeCurrent();
     const EPICK::Plane_3& plane = qobject_cast<Scene_c3t3_item*>(this->parent())->plane();
     float shrink_factor = qobject_cast<Scene_c3t3_item*>(this->parent())->getShrinkFactor();
     QVector4D cp(-plane.a(), -plane.b(), -plane.c(), -plane.d());
@@ -530,7 +532,7 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   setEdgeContainer(Grid_edges, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   setEdgeContainer(C3t3_edges, new Ec(Vi::PROGRAM_C3T3_EDGES, false));
   setPointContainer(C3t3_points, new Pc(Vi::PROGRAM_C3T3_EDGES, false));
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     v->installEventFilter(this);
   }
@@ -609,7 +611,7 @@ void Scene_c3t3_item::updateCutPlane()
   if(!d)
     return;
   if(d->need_changed) {
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       d->are_intersection_buffers_filled[viewer] = false;
@@ -1337,7 +1339,7 @@ void Scene_c3t3_item_priv::computeIntersection(const Primitive& cell)
 
   typedef unsigned char UC;
   Tr::Cell_handle ch = cell.id();
-  QColor c = this->colors_subdomains[ch->subdomain_index()].light(50);
+  QColor c = this->colors_subdomains[ch->subdomain_index()].lighter(50);
 
   const Tr::Bare_point& pa = wp2p(ch->vertex(0)->point());
   const Tr::Bare_point& pb = wp2p(ch->vertex(1)->point());
@@ -1579,7 +1581,7 @@ Scene_c3t3_item::setColor(QColor c)
   d->compute_color_map(c);
   invalidateOpenGLBuffers();
   d->invalidate_stats();
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     d->are_intersection_buffers_filled[viewer] = false;
@@ -1605,10 +1607,10 @@ void Scene_c3t3_item::show_spheres(bool b)
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
       connect(d->spheres, SIGNAL(on_color_changed()), this, SLOT(on_spheres_color_changed()));
+      d->computeSpheres();
+      lockChild(d->spheres);
       scene->addItem(d->spheres);
       scene->changeGroup(d->spheres, this);
-      lockChild(d->spheres);
-      d->computeSpheres();
     }
     else if (!b && d->spheres!=NULL)
     {
@@ -1634,7 +1636,7 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
 
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       d->are_intersection_buffers_filled[viewer] = false;
@@ -1644,7 +1646,6 @@ void Scene_c3t3_item::show_intersection(bool b)
         Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
         ncthis->d->computeIntersections(viewer);
         d->are_intersection_buffers_filled[viewer] = true;
-        ncthis->show_intersection(true);
       }
     }
     scene->addItem(d->intersection);

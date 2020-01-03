@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -209,8 +200,8 @@ RegularTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
     }
 
 
-    QMatrix matrix = painter->matrix();
-    painter->resetMatrix();
+    QTransform matrix = painter->worldTransform();
+    painter->resetTransform();
     for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
         it != t->finite_vertices_end();
         it++){
@@ -228,10 +219,10 @@ RegularTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& poi
   typename T::Bare_point p = t->geom_traits().construct_point_2_object()(point);
 
   m_painter->setPen(this->verticesPen());
-  QMatrix matrix = m_painter->matrix();
-  m_painter->resetMatrix();
+  QTransform matrix = m_painter->worldTransform();
+  m_painter->resetTransform();
   m_painter->drawPoint(matrix.map(convert(p)));
-  m_painter->setMatrix(matrix);
+  m_painter->setWorldTransform(matrix);
 }
 
 template <typename T>

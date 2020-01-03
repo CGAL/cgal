@@ -56,7 +56,5 @@ template< typename PTr >
 class Periodic_3_triangulation_hierarchy_3 : public PTr {
 public:
 
-/// @}
-
 }; /* end Periodic_3_triangulation_hierarchy_3 */
 } /* end namespace CGAL */

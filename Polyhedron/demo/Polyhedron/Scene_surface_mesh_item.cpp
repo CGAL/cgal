@@ -125,6 +125,12 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    supported_rendering_modes << FlatPlusEdges
+                              << Wireframe
+                              << Flat
+                              << Gouraud
+                              << GouraudPlusEdges
+                              << Points;
     item->setProperty("classname", QString("surface_mesh"));
   }
 
@@ -152,6 +158,12 @@ struct Scene_surface_mesh_item_priv{
     alphaSlider = NULL;
     has_vcolors = false;
     has_fcolors = false;
+    supported_rendering_modes << FlatPlusEdges
+                              << Wireframe
+                              << Flat
+                              << Gouraud
+                                 << GouraudPlusEdges
+                              << Points;
     item->setProperty("classname", QString("surface_mesh"));
   }
 
@@ -248,9 +260,11 @@ struct Scene_surface_mesh_item_priv{
   double volume, area;
   unsigned int number_of_null_length_edges;
   unsigned int number_of_degenerated_faces;
+  bool has_nm_vertices;
   int genus;
   bool self_intersect;
   mutable QSlider* alphaSlider;
+  QList<RenderingMode> supported_rendering_modes;
 };
 
 const char* aabb_property_name = "Scene_surface_mesh_item aabb tree";
@@ -742,7 +756,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
     }
   
   
-  if(renderingMode() == Gouraud)
+  if(renderingMode() == Gouraud ||
+     renderingMode() == GouraudPlusEdges)
   {
     getTriangleContainer(0)->setColor(color());
     getTriangleContainer(0)->setSelected(is_selected);
@@ -805,7 +820,7 @@ Scene_surface_mesh_item::selection_changed(bool p_is_selected)
 
 bool
 Scene_surface_mesh_item::supportsRenderingMode(RenderingMode m) const
-{ return (m == FlatPlusEdges || m == Wireframe || m == Flat || m == Gouraud || m == Points); }
+{ return d->supported_rendering_modes.contains(m); }
 
 CGAL::Three::Scene_item::Bbox Scene_surface_mesh_item::bbox() const
 {
@@ -1280,7 +1295,7 @@ void Scene_surface_mesh_item::invalidate(Gl_data_names name)
   getEdgeContainer(0)->reset_vbos(name);
   getPointContainer(0)->reset_vbos(name);
   bool has_been_init = false;
-  BOOST_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(!isInit(viewer))
@@ -1501,6 +1516,7 @@ invalidate_stats()
 {
   number_of_degenerated_faces = (unsigned int)(-1);
   number_of_null_length_edges = (unsigned int)(-1);
+  has_nm_vertices = false;
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
@@ -1554,11 +1570,30 @@ QString Scene_surface_mesh_item::computeStats(int type)
     }
     faces_aspect_ratio(d->smesh_, min_altitude, min_ar, max_ar, mean_ar);
   }
+  if(type == HAS_NM_VERTICES)
+  {
 
+    d->has_nm_vertices = false;
+    typedef boost::function_output_iterator<CGAL::internal::Throw_at_output> OutputIterator;
+    try{
+      CGAL::Polygon_mesh_processing::non_manifold_vertices(*d->smesh_, OutputIterator());
+    }
+    catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+    {
+      d->has_nm_vertices = true;
+    }
+
+  }
   switch(type)
   {
   case NB_VERTICES:
     return QString::number(num_vertices(*d->smesh_));
+  case HAS_NM_VERTICES:
+  {
+    if(d->has_nm_vertices)
+      return QString("Yes");
+    return QString("No");
+  }
 
   case NB_FACETS:
     return QString::number(num_faces(*d->smesh_));
@@ -1707,14 +1742,15 @@ CGAL::Three::Scene_item::Header_data Scene_surface_mesh_item::header() const
   CGAL::Three::Scene_item::Header_data data;
   //categories
 
-  data.categories.append(std::pair<QString,int>(QString("Properties"),9));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),11));
   data.categories.append(std::pair<QString,int>(QString("Faces"),10));
-  data.categories.append(std::pair<QString,int>(QString("Edges"),7));
-  data.categories.append(std::pair<QString,int>(QString("Angles"),2));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
 
   //titles
   data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("Has Non-manifold Vertices"));
   data.titles.append(QString("#Connected Components"));
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("Pure Triangle"));
@@ -2259,6 +2295,7 @@ void Scene_surface_mesh_item::computeElements()const
 {
   d->compute_elements(ALL);
   setBuffersFilled(true);
+  const_cast<Scene_surface_mesh_item*>(this)->itemChanged();
 }
 
 void 
@@ -2280,4 +2317,77 @@ void Scene_surface_mesh_item::copyProperties(Scene_item *item)
 void Scene_surface_mesh_item::computeItemColorVectorAutomatically(bool b)
 {
   this->setProperty("recompute_colors",b);
+}
+
+void write_in_vbo(Vbo* vbo, cgal_gl_data* data,
+               std::size_t size)
+{
+  vbo->bind();
+  vbo->vbo.write(static_cast<int>((3*size)*sizeof(cgal_gl_data)),
+                 data,
+                 static_cast<int>(3*sizeof(cgal_gl_data)));
+  vbo->release();
+}
+
+//only works on indexed data
+void Scene_surface_mesh_item::updateVertex(vertex_descriptor vh)
+{
+  const CGAL::qglviewer::Vec offset =
+      static_cast<CGAL::Three::Viewer_interface*>(
+        CGAL::QGLViewer::QGLViewerPool().first())->offset();
+  {
+    std::size_t id = vh;
+    cgal_gl_data new_point[3];
+    Point_3 p = face_graph()->point(vh);
+    for(int i=0; i<3; ++i)
+      new_point[i]=p[i]+offset[i];
+
+    write_in_vbo(getTriangleContainer(0)->getVbo(Tri::Smooth_vertices),
+                 new_point,
+                 id);
+
+    write_in_vbo(
+          getPointContainer(0)->getVbo(Pt::Vertices),
+          new_point,id);
+
+    write_in_vbo(
+          getEdgeContainer(0)->getVbo(Ed::Vertices),
+          new_point,id);
+
+    for(auto v_it : CGAL::vertices_around_target(vh, *face_graph()))
+    {
+      EPICK::Vector_3 n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v_it, *face_graph());
+      for(int i=0; i<3; ++i)
+        new_point[i]=n[i];
+      id = v_it;
+      write_in_vbo(
+            getTriangleContainer(0)->getVbo(Tri::Smooth_normals),
+            new_point,id);
+    }
+  }
+  invalidate_aabb_tree();
+  redraw();
+}
+
+void Scene_surface_mesh_item::switchToGouraudPlusEdge(bool b)
+{
+  if (!b && !d->supported_rendering_modes.contains(Flat))
+  {
+    d->supported_rendering_modes = QList<RenderingMode>() << FlatPlusEdges
+                                                       << Wireframe
+                                                       << Flat
+                                                       << Gouraud
+                                                       << Points;
+    setFlatPlusEdgesMode();
+    invalidateOpenGLBuffers();
+    redraw();
+  }
+  else if(b)
+  {
+    d->supported_rendering_modes = QList<RenderingMode>() << GouraudPlusEdges
+                                                       << Wireframe
+                                                       << Gouraud
+                                                       << Points;
+    setGouraudPlusEdgesMode();
+  }
 }

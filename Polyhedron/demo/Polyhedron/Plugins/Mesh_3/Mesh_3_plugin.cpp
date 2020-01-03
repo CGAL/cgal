@@ -187,7 +187,6 @@ private:
   double angle;
   double sharp_edges_angle_bound;
   int sizing_decimals;
-  int decimals = 0;
   double approx;
   int approx_decimals;
   double edges_sizing;
@@ -427,6 +426,13 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
 
+  ui.facetAngle->setRange(0.0, 30.0);
+  ui.facetAngle->setValue(25.0);
+  ui.edgeSizing->setMinimum(0.0);
+  ui.sharpEdgesAngle->setMaximum(180);
+  ui.iso_value_spinBox->setRange(-65536.0, 65536.0);
+  ui.tetShape->setMinimum(1.0);
+
   ui.advanced->setVisible(false);
   connect(ui.facetTopologyLabel,
           &QLabel::linkActivated,
@@ -498,31 +504,23 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       more_than_one_item ? QString("%1...").arg(item->name()) : item->name();
 
   ui.objectName->setText(item_name);
-  ui.objectNameSize->setText(
-      tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
-          .arg(bbox.xmax() - bbox.xmin(), 0, 'g', 3)
-          .arg(bbox.ymax() - bbox.ymin(), 0, 'g', 3)
-          .arg(bbox.zmax() - bbox.zmin(), 0, 'g', 3));
+  ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
+                             .arg(bbox.xmax() - bbox.xmin(),0,'g',3)
+                             .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
+                             .arg(bbox.zmax() - bbox.zmin(),0,'g',3) );
+
   set_defaults();
-  double diag =
-      CGAL::sqrt((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin()) +
-                 (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) +
-                 (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
-  ui.facetSizing->setDecimals(-sizing_decimals + 2);
-  ui.facetSizing->setSingleStep(std::pow(10., sizing_decimals));
-  ui.facetSizing->setRange(diag * 10e-6,   // min
-                           diag);          // max
-  ui.facetSizing->setValue(facets_sizing); // default value
+  double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
+  int decimals = 0;
+  ui.facetSizing->setRange(diag * 10e-6, // min
+                           diag); // max
+  ui.facetSizing->setValue(facets_sizing);
   ui.edgeSizing->setValue(edges_sizing);
 
-  ui.tetSizing->setDecimals(-sizing_decimals + 2);
-  ui.tetSizing->setSingleStep(std::pow(10., sizing_decimals));
   ui.tetSizing->setRange(diag * 10e-6, // min
                          diag);        // max
   ui.tetSizing->setValue(tets_sizing); // default value
 
-  ui.approx->setDecimals(-approx_decimals + 2);
-  ui.approx->setSingleStep(std::pow(10., approx_decimals));
   ui.approx->setRange(diag * 10e-7, // min
                       diag);        // max
   ui.approx->setValue(approx);
@@ -614,12 +612,14 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     const auto bounding_sm_item = poly_items.bounding_sm_item;
     const auto polylines_item = poly_items.polylines_item;
     QList<const SMesh*> polyhedrons;
-    sm_items.removeAll(gsl::make_not_null(bounding_sm_item));
-    std::transform(
-        sm_items.begin(),
-        sm_items.end(),
-        std::back_inserter(polyhedrons),
-        [](Scene_surface_mesh_item* item) { return item->polyhedron(); });
+    if(mesh_type != Mesh_type::SURFACE_ONLY) {
+      sm_items.removeAll(gsl::make_not_null(bounding_sm_item));
+    }
+    std::transform(sm_items.begin(), sm_items.end(),
+                   std::back_inserter(polyhedrons),
+                   [](Scene_surface_mesh_item* item) {
+                     return item->polyhedron();
+                   });
     Scene_polylines_item::Polylines_container plc;
     SMesh* bounding_polyhedron = (bounding_sm_item == nullptr)
                                      ? nullptr
