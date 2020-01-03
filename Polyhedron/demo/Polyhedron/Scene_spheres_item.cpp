@@ -72,7 +72,7 @@ void Scene_spheres_item_priv::pick(int& id) const
   if(!pickable)
     return;
   
-  if(id >= spheres.size())
+  if(id >= static_cast<int>(spheres.size()))
   {
     id = -1;
   }
