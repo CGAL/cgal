@@ -44,7 +44,7 @@ namespace internal {
   template <typename K>
   void pop_back_if_equal_to_front(CGAL::Polygon_2<K>& poly)
   {
-    CGAL::Polygon_2<K>::iterator it = poly.end();
+    typename CGAL::Polygon_2<K>::iterator it = poly.end();
     --it;
     if( (*poly.begin()) == *it){
       poly.erase(it);
@@ -233,7 +233,16 @@ read_multi_polygon_WKT( std::istream& in,
     
     if(type.substr(0, 12).compare("MULTIPOLYGON")==0)
     {
-      boost::geometry::read_wkt(line, gc);
+      try {
+              boost::geometry::read_wkt(line, gc);
+            } catch( ...){
+              in.setstate(std::ios::failbit);
+              return in;
+            };
+      for( typename
+           internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it
+          = gc.begin(); it != gc.end(); ++it)
+        pop_back_if_equal_to_front(*it);
       break;
     }
   }
