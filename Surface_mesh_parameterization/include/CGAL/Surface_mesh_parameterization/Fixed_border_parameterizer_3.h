@@ -44,6 +44,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
 
 /// \file Fixed_border_parameterizer_3.h
@@ -114,6 +115,11 @@ public:
     BorderParameterizer_,
     Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
+  #if !defined(CGAL_EIGEN3_ENABLED)
+  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+                            "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+  #endif
+
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
@@ -121,7 +127,6 @@ public:
       Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                       Eigen::IncompleteLUT<double> > >
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;

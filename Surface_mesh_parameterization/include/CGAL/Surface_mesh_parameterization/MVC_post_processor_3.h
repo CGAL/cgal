@@ -99,7 +99,6 @@ public:
       Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                       Eigen::IncompleteLUT<double> > >
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;
