@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # coding: utf8
 
 import re
@@ -157,7 +157,7 @@ def protect_upper_case(title):
   return title.replace("dD","{dD}").replace("2D","{2D}").replace("3D","{3D}").replace("CGAL","{CGAL}").replace("Qt","{Qt}").replace("Boost","{Boost}")
 
 def protect_accentuated_letters(authors):
-  res=authors.replace(u"é",r"{\'e}").replace(u"è",r"{\`e}").replace(u"É",r"{\'E}").replace(u"ä",r"{\"a}").replace(u"ö",r"{\"o}").replace(u"ñ",r"{\~n}").replace(u"ã",r"{\~a}").replace(u"ë",r"{\"e}").replace(u"ı",r"{\i}").replace(u"Ş",r"{\c{S}}").replace(u"ş",r"{\c{s}}").replace("%","")
+  res=authors.replace("é",r"{\'e}").replace("è",r"{\`e}").replace("É",r"{\'E}").replace("ä",r"{\"a}").replace("ö",r"{\"o}").replace("ñ",r"{\~n}").replace("ã",r"{\~a}").replace("ë",r"{\"e}").replace("ı",r"{\i}").replace("Ş",r"{\c{S}}").replace("ş",r"{\c{s}}").replace("%","")
   try:
     res.encode('ascii')
   except UnicodeEncodeError:

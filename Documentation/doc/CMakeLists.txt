@@ -25,7 +25,7 @@ else()
 endif()
 
 find_package(Doxygen)
-find_package(PythonInterp 2.6.7)
+find_package(PythonInterp 3.5)
 
 if(NOT DOXYGEN_FOUND)
   message(WARNING "Cannot build the documentation without Doxygen!")

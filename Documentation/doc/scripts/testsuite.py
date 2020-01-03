@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # Copyright (c) 2012 GeometryFactory (France). All rights reserved.
 # All rights reserved.
 # 

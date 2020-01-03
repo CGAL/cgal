@@ -62,7 +62,7 @@ def write_out_html(d, fn):
     f.close()
 
 def package_glob(target):
-    return filter(lambda x: not os.path.join(os.path.join('.','Manual'),'')  in x, glob.glob(target))
+    return [x for x in glob.glob(target) if not os.path.join(os.path.join('.','Manual'),'')  in x]
 
 # remove duplicate files
 def clean_doc():

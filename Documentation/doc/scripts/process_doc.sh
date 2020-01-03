@@ -45,7 +45,7 @@ mv diff.txt diff2.txt
 
 #update overview
 CGAL_NAME=$(cat cgal_version)
-python ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_4/doc_output/ --output-dir2 $PWD/doc_1_8_13/doc_output/ --doc-log-dir1 $PWD/doc_1_8_4/doc_log/ \
+python3 ${PWD}/testsuite.py --output-dir1 $PWD/doc_1_8_4/doc_output/ --output-dir2 $PWD/doc_1_8_13/doc_output/ --doc-log-dir1 $PWD/doc_1_8_4/doc_log/ \
   --doc-log-dir2 $PWD/doc_1_8_13/doc_log/ --doc-log-dir-master $PWD/doc_master/doc_log/ \
   --publish $PUBLISH_DIR --diff1 $PWD/diff1.txt --diff2 $PWD/diff2.txt --master-dir $PWD/doc_master/doc_output/ \
   --cgal-version "$CGAL_NAME" --do-copy-results --version-to-keep 10 --doxygen-version1 "$DOXYGEN_1" --doxygen-version2 "$DOXYGEN_2" --master-describe "$MASTER_DESCRIBE"
