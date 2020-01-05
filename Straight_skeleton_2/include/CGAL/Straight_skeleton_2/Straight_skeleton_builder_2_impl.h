@@ -1421,8 +1421,8 @@ double angle_wrt_X ( Point const& a, Point const& b )
   double dx = to_double(b.x() - a.x() ) ;
   double dy = to_double(b.y() - a.y() ) ;
   double atan = std::atan2(dy,dx);
-  double rad  = atan >= 0.0 ? atan : 2.0 * 3.141592 + atan ;
-  double deg  = rad * 180.0 / 3.141592 ;
+  double rad  = atan >= 0.0 ? atan : 2.0 * 3.141592653589793238462643 + atan ;
+  double deg  = rad * 180.0 / 3.141592653589793238462643;
   return deg ;
 }
 
