@@ -1,4 +1,4 @@
-#define CGAL_PMP_COMPUTE_NORMAL_DEBUG
+// #define CGAL_PMP_COMPUTE_NORMAL_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
@@ -56,7 +56,6 @@ void test(const Mesh& mesh,
   v0n = PMP::compute_vertex_normal(first_vertex, mesh, PMP::parameters::vertex_point_map(vpmap)
                                                                        .face_normal_map(fnormals));
   std::cout.precision(17);
-  std::cout << v0n << " versus " << get(vnormals, first_vertex) << std::endl;
   assert(v0n == get(vnormals, first_vertex));
 
   PMP::compute_normals(mesh, vnormals, fnormals);
@@ -142,10 +141,10 @@ void test(const char* filename)
 {
   std::cout << "test " << filename << "..." << std::endl;
 
-//  test_SM<EPICK>(filename);
+  test_SM<EPICK>(filename);
   test_SM<EPECK>(filename);
-//  test_Polyhedron<EPICK>(filename);
-//  test_Polyhedron<EPECK>(filename);
+  test_Polyhedron<EPICK>(filename);
+  test_Polyhedron<EPECK>(filename);
 }
 
 int main()
@@ -154,10 +153,10 @@ int main()
 
   CGAL::Set_ieee_double_precision pfr;
 
-//  test("data/elephant.off");
-//  test("data/folded_star.off");
-//  test("data/joint_refined.off");
-//  test("data/mannequin-devil.off");
+  test("data/elephant.off");
+  test("data/folded_star.off");
+  test("data/joint_refined.off");
+  test("data/mannequin-devil.off");
   test("data/U.off");
 
   std::cerr << "All done." << std::endl;

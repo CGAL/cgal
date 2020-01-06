@@ -87,19 +87,14 @@ void sum_normals(const PM& pmesh,
 
   typedef typename boost::property_traits<VertexPointMap>::reference    Point_ref;
 
-  std::cout << "sum_normals..." << std::endl;
-
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
   const Point_ref pv = get(vpmap, v);
-  std::cout << "pv: " << pv << std::endl;
 
   while(v != target(next(he, pmesh), pmesh))
   {
     const Point_ref pvn = get(vpmap, target(he, pmesh));
     const Point_ref pvnn = get(vpmap, target(next(he, pmesh), pmesh));
-    std::cout << "pvn: " << pvn << std::endl;
-    std::cout << "pvnn: " << pvnn << std::endl;
 
     const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
     sum = traits.construct_sum_of_vectors_3_object()(sum, n);
@@ -159,16 +154,12 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   typedef typename GT::Point_3                                                     Point;
   typedef typename GT::Vector_3                                                    Vector_3;
 
-  std::cout << "Call to compute_face_normal()" << std::endl;
-  
   Vector_3 normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   internal::sum_normals<Point>(pmesh, f, vpmap, normal, traits);
 
   if(!traits.equal_3_object()(normal, CGAL::NULL_VECTOR))
     internal::normalize(normal, traits);
 
-  std::cout << "result: " << normal << std::endl;
-  
   return normal;
 }
 
@@ -624,7 +615,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
                                                   Default_map(default_fvmap));
   const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
 
-#if 1//def CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << std::endl << std::endl;
   std::cout << "----------------------------------------------------------------------" << std::endl;
   std::cout << "compute vertex at " << get(vpmap, v)
@@ -646,8 +637,6 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
       put(face_normals, f, compute_face_normal(f, pmesh, np));
     }
   }
-
-  std::cout << "type of FT: " << typeid(typename GT::FT).name() << std::endl;
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
   std::cout << "Incident face normals:" << std::endl;
