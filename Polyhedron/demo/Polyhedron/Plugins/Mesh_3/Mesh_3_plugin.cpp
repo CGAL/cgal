@@ -513,7 +513,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
 
   set_defaults();
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-  int decimals = 0;
   ui.facetSizing->setRange(diag * 10e-6, // min
                            diag); // max
   ui.facetSizing->setValue(facets_sizing);
@@ -601,7 +600,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                        (ui.facetTopology->isChecked() ? 2 : 0);
   const float iso_value = float(ui.iso_value_spinBox->value());
   const float value_outside = float(ui.value_outside_spinBox->value());
-  const float inside_is_less = float(ui.inside_is_less_checkBox->isChecked());
+  const bool inside_is_less = ui.inside_is_less_checkBox->isChecked();
   as_facegraph = (mesh_type == Mesh_type::SURFACE_ONLY)
                      ? ui.facegraphCheckBox->isChecked()
                      : false;

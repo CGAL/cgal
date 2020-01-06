@@ -521,9 +521,9 @@ treat_result(Scene_c3t3_item& source_item,
   if ( &source_item != &result_item)
   {
     const Scene_item::Bbox& bbox = result_item.bbox();
-    result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
-                            (bbox.ymin() + bbox.ymax())/2.f,
-                            (bbox.zmin() + bbox.zmax())/2.f);
+    result_item.setPosition(static_cast<float>(bbox.xmin() + bbox.xmax())/2.f,
+                            static_cast<float>(bbox.ymin() + bbox.ymax())/2.f,
+                            static_cast<float>(bbox.zmin() + bbox.zmax())/2.f);
     
     result_item.setColor(QColor(59,74,226));
     result_item.setRenderingMode(source_item.renderingMode());

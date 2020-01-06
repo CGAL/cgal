@@ -570,6 +570,7 @@ protected:
     Facet canonical_facet = this->canonical_facet(facet);
     this->remove_element(canonical_facet);
 #endif
+    CGAL_USE(facet);
   }
 #ifdef CGAL_LINKED_WITH_TBB
   /// Removes facet from refinement queue
