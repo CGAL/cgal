@@ -1,5 +1,5 @@
-//A class that follows a straight line through a Delaunay triangulation structure.
-//Copyright (C) 2012  Utrecht University
+// Copyright (C) 2020  Utrecht University, Inria, GeometryFactory
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
@@ -14,12 +14,14 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s): Thijs van Lankveld
+// Author(s): Thijs van Lankveld, Olivier Devillers, Jane Tournois
 
 #ifndef CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
 #define CGAL_TRIANGULATION_SEGMENT_TRAVERSER_3_IMPL_H
+
+#include <CGAL/license/Triangulation_3.h>
 
 #include <boost/array.hpp>
 
