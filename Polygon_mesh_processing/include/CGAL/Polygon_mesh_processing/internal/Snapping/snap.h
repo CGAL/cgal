@@ -182,6 +182,7 @@ class Projection_traits
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor      edge_descriptor;
 
+#ifdef CGAL_PMP_SNAP_USE_ANISOTROPIC_DISTANCE
   void build_metric()
   {
     Vector hv(get(m_vpm_S, source(m_h, m_tm_S)), get(m_vpm_S, target(m_h, m_tm_S)));
@@ -211,6 +212,7 @@ class Projection_traits
     Eigen::Matrix3d eigen_mtransp = eigen_m.transpose();
     m_metric = eigen_m * eigen_diag * eigen_mtransp;
   }
+#endif
 
   FT squared_anisotropic_distance(const Point& p, const Point& q) const
   {
@@ -377,7 +379,9 @@ private:
   const std::size_t m_patch_id;
   const FT m_sq_tol;
   Vector m_direction;
+#ifdef CGAL_PMP_SNAP_USE_ANISOTROPIC_DISTANCE
   Eigen::Matrix3d m_metric;
+#endif
 
   const TriangleMesh& m_tm_S;
   VPMS m_vpm_S;
