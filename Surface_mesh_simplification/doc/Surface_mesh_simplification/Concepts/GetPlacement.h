@@ -18,6 +18,7 @@ or can be intentionally returned to prevent the edge from being collapsed.
 \cgalHasModel `CGAL::Surface_mesh_simplification::Midpoint_placement<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
+\cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_distance_placement<Placement>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 \cgalHasModel `CGAL::Surface_mesh_simplification::Constrained_placement<Placement>`
 
