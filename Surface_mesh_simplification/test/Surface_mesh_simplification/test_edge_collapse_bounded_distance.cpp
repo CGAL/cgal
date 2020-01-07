@@ -25,13 +25,15 @@ typedef CGAL::Simple_cartesian<double>                        Kernel;
 typedef Kernel::Point_3                                       Point_3;
 typedef CGAL::Surface_mesh<Point_3>                           Surface;
 
+typedef SMS::LindstromTurk_cost<Surface>                      Cost;
+typedef SMS::LindstromTurk_placement<Surface>                 Placement;
+
 typedef CGAL::AABB_face_graph_triangle_primitive<Surface>     Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive>                  Traits;
 typedef CGAL::AABB_tree<Traits>                               Tree;
 
-typedef SMS::LindstromTurk_cost<Surface>                      Cost;
-typedef SMS::LindstromTurk_placement<Surface>                 Placement;
-typedef SMS::Bounded_distance_placement<Placement, Tree>      Filtered_placement;
+typedef SMS::Bounded_distance_placement<Placement, Kernel>    Filtered_placement;
+typedef SMS::Bounded_distance_placement<Placement, Tree>      Filtered_placement_with_tree;
 
 int main(int argc, char** argv)
 {
@@ -48,16 +50,18 @@ int main(int argc, char** argv)
   Point_3 cmax = (bbox.max)();
   const double diag = std::sqrt(CGAL::squared_distance(cmin, cmax));
 
+  Surface mesh_cpy = ref_mesh; // need a copy to keep the AABB tree valid
   Surface small_mesh = ref_mesh;
   Surface big_mesh = ref_mesh;
-  Tree tree(faces(ref_mesh).first, faces(ref_mesh).second, ref_mesh);
+  Tree tree(faces(mesh_cpy).first, faces(mesh_cpy).second, mesh_cpy);
 
   Placement placement_ref;
-  Filtered_placement placement_small(0.00005*diag, tree, placement_ref);
-  Filtered_placement placement_big(50*diag, tree, placement_ref);
-
-  SMS::edge_collapse(small_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_small));
   SMS::edge_collapse(ref_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_ref));
+
+  Filtered_placement_with_tree placement_small(0.00005*diag, tree, placement_ref);
+  SMS::edge_collapse(small_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_small));
+
+  Filtered_placement placement_big(50*diag, placement_ref); // lazily builds the AABB tree
   SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_big));
 
   std::cout << "no filtering: " << vertices(ref_mesh).size() << " vertices left" << std::endl;
