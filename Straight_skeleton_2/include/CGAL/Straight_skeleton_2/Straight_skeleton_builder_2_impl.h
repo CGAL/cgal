@@ -22,9 +22,10 @@
 #include <boost/type_traits/detail/ice_not.hpp>
 #endif
 #include <boost/graph/adjacency_matrix.hpp>
-#include <CGAL/Unique_hash_map.h>
 
+#include <CGAL/number_type_config.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Unique_hash_map.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -1421,8 +1422,8 @@ double angle_wrt_X ( Point const& a, Point const& b )
   double dx = to_double(b.x() - a.x() ) ;
   double dy = to_double(b.y() - a.y() ) ;
   double atan = std::atan2(dy,dx);
-  double rad  = atan >= 0.0 ? atan : 2.0 * 3.141592653589793238462643 + atan ;
-  double deg  = rad * 180.0 / 3.141592653589793238462643;
+  double rad  = atan >= 0.0 ? atan : 2.0 * CGAL_PI + atan ;
+  double deg  = rad * 180.0 / CGAL_PI;
   return deg ;
 }
 
