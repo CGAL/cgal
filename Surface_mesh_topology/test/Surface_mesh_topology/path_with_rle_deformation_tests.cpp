@@ -102,9 +102,15 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
       if (draw) { v.push_back(prevp); }
 #endif // CGAL_USE_BASIC_VIEWER
 
-      /* curp->display_negative_turns();
-      std::cout<<"  "; curp->display_positive_turns();
-      std::cout<<std::endl; */
+      // DEBUG CODE
+      if (nbtests==19)
+      {
+        std::cout<<"[Test "<<nbtests<<"] "<<" current path: "<<std::flush;
+        curp.display();
+        curp.display_pos_and_neg_turns();
+        std::cout<<std::endl;
+      }
+      // END OF DEBUG CODE
     }
 
     // if (draw /* && nbtest==1*/)
@@ -124,6 +130,16 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 
   path.swap(prevp);
   CGAL_assertion(path.is_valid(true));
+
+  // DEBUG CODE
+  if (nbtests==19)
+  {
+    std::cout<<"[Test "<<nbtests<<"] "<<" final path: "<<std::flush;
+    path.display();
+    path.display_pos_and_neg_turns();
+    std::cout<<std::endl;
+  }
+  // END OF DEBUG CODE
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
@@ -354,6 +370,14 @@ bool test_some_random_paths_on_cube(bool draw, unsigned int testtorun)
 
   random=CGAL::Random(nbtests);
   internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 19
+
+  // DEBUG CODE
+  std::cout<<"[Test "<<nbtests<<"] "<<" initial path: "<<std::flush;
+  path.display();
+  path.display_pos_and_neg_turns();
+  std::cout<<std::endl;
+  // END OF DEBUG CODE
+  
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
                  "1 2 2 2", draw, testtorun, true, false))
   { res=false; }

@@ -1504,7 +1504,10 @@ public:
     std::cout<<"+(";
     for (List_iterator it=m_path.begin(), itend=m_path.end();
          it!=itend; ++it)
-    { std::cout<<next_positive_turn(it)<<" "; }
+    {
+      if (next_flat_exist(it))
+      { std::cout<<next_positive_turn(it)<<" "; }
+    }
     std::cout<<")";
   }
 
@@ -1513,8 +1516,11 @@ public:
     std::cout<<"-(";
     for (List_iterator it=m_path.begin(), itend=m_path.end();
          it!=itend; ++it)
-    { std::cout<<next_negative_turn(it)<<" "; }
-   std::cout<<")";
+    {
+      if (next_flat_exist(it))
+      { std::cout<<next_negative_turn(it)<<" "; }
+    }
+    std::cout<<")";
   }
 
   void display_pos_and_neg_turns()
