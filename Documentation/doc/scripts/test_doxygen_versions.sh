@@ -95,7 +95,7 @@ echo "done."
 cd ./build_doc
 echo "Adding postprocessing..."
 
-make -j$NB_CORES doc_with_postprocessing  #& > /dev/null
+make -j$NB_CORES doc_with_postprocessing  & > /dev/null
 
 echo "done."
 cd .. #scripts
@@ -128,7 +128,6 @@ if [ "$HAS_REF" -ne "1" ]; then
     CGAL_NAME="$(cat $ROOT/VERSION)"
     cd $ROOT/doc/scripts
   fi
-  echo "CGAL_NAME = $CGAL_NAME"
   echo "$CGAL_NAME">cgal_version
 else
   echo "There is already a reference. Not re-building."
