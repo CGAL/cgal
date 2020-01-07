@@ -15,6 +15,8 @@
 
 #include <CGAL/license/Optimal_bounding_box.h>
 
+#include <CGAL/Aff_transformation_3.h>
+
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_matrix.h>
 #include <Eigen/QR>

@@ -1,5 +1,6 @@
-#include <CGAL/Optimal_bounding_box/internal/population.h>
-#include <CGAL/Optimal_bounding_box/internal/nelder_mead_functions.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/optimal_bounding_box.h>
 
 #include <iostream>
 
