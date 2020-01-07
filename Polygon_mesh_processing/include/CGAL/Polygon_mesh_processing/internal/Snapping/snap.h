@@ -44,6 +44,10 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/utility.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <Eigen/Dense>
+#endif
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/concurrent_vector.h>
 #include <tbb/parallel_for.h>
