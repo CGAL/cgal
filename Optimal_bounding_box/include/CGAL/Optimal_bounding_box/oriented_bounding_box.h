@@ -193,13 +193,13 @@ void construct_oriented_bounding_box(Output& output,
 /// \cgalHeading{Output}
 ///
 /// The result of the algorithm can be retrieved as either:
-/// - the best affine transformation (\f$ {\mathcal R}_b\f$) that the algorithm has found;
-/// - an array of eight points, representing the best oriented bounding box (\f$ {\mathcal B}_b\f$)
-///   that the algorithm has constructed, which is related to (\f$ {\mathcal R}_b\f$) as it is
+/// - the best affine transformation \f${\mathcal R}_b\f$ that the algorithm has found;
+/// - an array of eight points, representing the best oriented bounding box (\f${\mathcal B}_b\f$)
+///   that the algorithm has constructed, which is related to \f$ {\mathcal R}_b\f$ as it is
 ///   the inverse transformation of the axis-aligned bounding box of the transformed point set.
 ///   The order of the points in the array is the same as in the function
 ///   \link PkgBGLHelperFct `CGAL::make_hexahedron()` \endlink,
-///   which is a useful function to construct a mesh from these points.
+///   which can be used to construct a mesh from these points.
 ///
 /// Note that when returning an array of points, these points are constructed from the axis-aligned
 /// bounding box and some precision loss should therefore be expected if a kernel not providing
@@ -213,8 +213,8 @@ void construct_oriented_bounding_box(Output& output,
 ///
 /// \tparam PointRange a model of `Range`. The value type may not be equal to the traits' `Point_3` type
 ///                    if a point map is provided via named parameters (see below) to access points.
-/// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
-///                or the traits' `Aff_transformation_3` type
+/// \tparam Output either the traits' `Aff_transformation_3` type,
+///                or `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type
 /// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param points the input range
@@ -223,7 +223,7 @@ void construct_oriented_bounding_box(Output& output,
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{point_map}
-///     a model of `ReadPropertyMap` with value type `geom_traits::Point_3`. If this parameter is omitted,
+///     a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`. If this parameter is omitted,
 ///     `CGAL::Identity_property_map<geom_traits::Point_3>` is used.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
@@ -291,8 +291,8 @@ void oriented_bounding_box(const PointRange& points,
 /// Extracts the vertices of the mesh as a point range and calls the overload above.
 ///
 /// \tparam PolygonMesh a model of `VertexListGraph`
-/// \tparam Output either `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type,
-///                or the traits' `Aff_transformation_3` type
+/// \tparam Output either the traits' `Aff_transformation_3` type,
+///                or `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type
 /// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh

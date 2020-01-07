@@ -9,4 +9,5 @@ BGL
 Solver_interface
 Surface_mesh
 AABB_tree
+Property_map
 
