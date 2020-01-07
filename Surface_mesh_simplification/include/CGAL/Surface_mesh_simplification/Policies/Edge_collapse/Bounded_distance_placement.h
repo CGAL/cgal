@@ -24,6 +24,9 @@
 
 #include <boost/optional.hpp>
 
+#include <vector>
+#include <type_traits>
+
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
@@ -31,9 +34,13 @@ namespace Surface_mesh_simplification {
 template<typename BasePlacement, typename GeomTraits>
 class Bounded_distance_placement
 {
+  typedef GeomTraits                                                          Geom_traits;
+  typedef typename Geom_traits::FT                                            FT;
+
   typedef typename GeomTraits::Triangle_3                                     Triangle;
   typedef std::vector<Triangle>                                               Triangle_container;
   typedef typename Triangle_container::iterator                               TC_iterator;
+
   typedef CGAL::AABB_triangle_primitive<GeomTraits, TC_iterator>              Primitive;
   typedef CGAL::AABB_traits<GeomTraits, Primitive>                            Traits;
   typedef CGAL::AABB_tree<Traits>                                             AABB_tree;
@@ -42,8 +49,7 @@ private:
   template <typename Profile>
   void initialize_tree(const Profile& profile) const
   {
-    typedef typename Profile::Geom_traits                                     Geom_traits;
-    typedef typename Geom_traits::Triangle_3                                  Triangle;
+    CGAL_static_assertion((std::is_same<GeomTraits, typename Profile::Geom_traits>::value));
 
     typedef typename Profile::Triangle_mesh                                   Triangle_mesh;
     typedef typename boost::graph_traits<Triangle_mesh>::halfedge_descriptor  halfedge_descriptor;
@@ -71,7 +77,7 @@ private:
   }
 
 public:
-  Bounded_distance_placement(const double dist,
+  Bounded_distance_placement(const FT dist,
                              const BasePlacement& placement = BasePlacement())
     :
       m_sq_threshold_dist(CGAL::square(dist)),
@@ -89,7 +95,6 @@ public:
   boost::optional<typename Profile::Point>
   operator()(const Profile& profile) const
   {
-    typedef typename Profile::Geom_traits                                     Geom_traits;
     typedef typename Profile::Point                                           Point;
 
     boost::optional<typename Profile::Point> op = m_base_placement(profile);
@@ -123,7 +128,7 @@ public:
   }
 
 private:
-  const double m_sq_threshold_dist;
+  const FT m_sq_threshold_dist;
   mutable const AABB_tree* m_tree_ptr;
 
   const BasePlacement m_base_placement;
@@ -133,10 +138,11 @@ private:
 template<typename BasePlacement, typename AABBTraits>
 class Bounded_distance_placement<BasePlacement, CGAL::AABB_tree<AABBTraits> >
 {
-  typedef CGAL::AABB_tree<AABBTraits>                                       AABB_tree;
+  typedef CGAL::AABB_tree<AABBTraits>                                         AABB_tree;
+  typedef typename AABB_tree::AABB_traits::FT                                 FT;
 
 public:
-  Bounded_distance_placement(const double dist,
+  Bounded_distance_placement(const FT dist,
                              const AABB_tree& tree,
                              const BasePlacement& placement = BasePlacement())
     :
@@ -174,7 +180,7 @@ public:
   }
 
 private:
-  const double m_sq_threshold_dist;
+  const FT m_sq_threshold_dist;
   mutable const AABB_tree* m_tree_ptr;
 
   const BasePlacement m_base_placement;

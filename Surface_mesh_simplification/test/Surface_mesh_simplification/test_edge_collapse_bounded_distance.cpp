@@ -22,6 +22,7 @@
 namespace SMS = CGAL::Surface_mesh_simplification;
 
 typedef CGAL::Simple_cartesian<double>                        Kernel;
+
 typedef Kernel::Point_3                                       Point_3;
 typedef CGAL::Surface_mesh<Point_3>                           Surface;
 
@@ -48,7 +49,7 @@ int main(int argc, char** argv)
 
   Point_3 cmin = (bbox.min)();
   Point_3 cmax = (bbox.max)();
-  const double diag = std::sqrt(CGAL::squared_distance(cmin, cmax));
+  const double diag = CGAL::approximate_sqrt(CGAL::squared_distance(cmin, cmax));
 
   Surface mesh_cpy = ref_mesh; // need a copy to keep the AABB tree valid
   Surface small_mesh = ref_mesh;
