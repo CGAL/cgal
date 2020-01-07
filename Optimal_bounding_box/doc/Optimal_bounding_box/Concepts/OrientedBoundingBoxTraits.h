@@ -1,5 +1,3 @@
-namespace CGAL {
-
 /*!
 \ingroup PkgOptimalBoundingBoxConcepts
 \cgalConcept
@@ -36,5 +34,3 @@ public:
   /// Returns the unitary matrix `Q` obtained in the QR-decomposition of the matrix `m`.
   Matrix get_Q(const Matrix& m) const;
 };
-
-} // namespace CGAL
