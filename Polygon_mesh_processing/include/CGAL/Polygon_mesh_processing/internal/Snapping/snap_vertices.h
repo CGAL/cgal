@@ -275,7 +275,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
   typedef const Unique_vertex*                                                        Unique_vertex_ptr;
   typedef std::map<std::pair<Point, std::size_t>, Unique_vertex>                      Unique_positions;
 
-  typedef Box_intersection_d::ID_FROM_BOX_ADDRESS                                                     Box_policy;
+  typedef Box_intersection_d::ID_FROM_BOX_ADDRESS                                             Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, Unique_vertex_ptr, Box_policy> Box;
 
   using parameters::get_parameter;
