@@ -17,6 +17,7 @@
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
 #include <QAction>
+#include <QRegularExpressionMatch>
 #ifdef CGAL_USE_WEBSOCKETS
 #include <QtWebSockets/QWebSocket>
 #endif
