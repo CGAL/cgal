@@ -564,7 +564,8 @@ std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
     {
       if(is_second_mesh_fixed)
       {
-        put(vpm_A, va, get(vpm_B, vb));
+        for(const halfedge_descriptor ha : vs_a)
+          put(vpm_A, target(ha, tm_A), get(vpm_B, vb));
       }
       else
       {
