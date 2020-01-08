@@ -619,15 +619,23 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
     }
 
     // Inserting new points ordered from the source to the target of (the initial) 'h'
+    bool first_split = true;
+    Point previous_split_position;
     for(const Vertex_with_new_position& vnp : splitters)
     {
       const halfedge_descriptor splitter_h = vnp.first;
       const vertex_descriptor splitter_v = target(splitter_h, tm_S);
+      const Point new_position = is_source_mesh_fixed ? get(vpm_S, splitter_v) : vnp.second;
 
-      // Actual split
-      const bool do_split = is_source_mesh_fixed ||
-                            ((get(vpm_T, target(h_to_split, tm_T)) != vnp.second) &&
-                             (get(vpm_T, source(h_to_split, tm_T)) != vnp.second));
+      bool do_split = true;
+
+      // Some splits can create degenerate faces, avoid that
+      if((new_position == get(vpm_T, target(h_to_split, tm_T))) ||
+         (new_position == get(vpm_T, source(h_to_split, tm_T))))
+        do_split = false;
+
+      if(!first_split && new_position == previous_split_position)
+        do_split = false;
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
       std::cout << " -.-.-. Splitting " << edge(h_to_split, tm_T) << " |||| "
@@ -637,35 +645,26 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       std::cout << "Actually split? " << do_split << std::endl;
 #endif
 
+      // Split and update positions
       vertex_descriptor new_v = boost::graph_traits<TriangleMesh>::null_vertex();
       if(do_split)
       {
         CGAL::Euler::split_edge(h_to_split, tm_T);
         new_v = source(h_to_split, tm_T);
+        put(vpm_T, new_v, new_position); // position of the new point on the target mesh
       }
 
+      if(!is_source_mesh_fixed)
+        put(vpm_S, splitter_v, new_position);
+
+      first_split = false;
+      previous_split_position = new_position;
       ++snapped_n;
 
-      halfedge_descriptor h_to_split_opp = opposite(h_to_split, tm_T); // h_to_split is now equal to 'next(res)'
-
-      // Update positions
-      if(is_source_mesh_fixed)
-      {
-        put(vpm_T, new_v, get(vpm_S, splitter_v)); // position of the new point on the target mesh
-      }
-      else
-      {
-        const Point& p = vnp.second;
-
-        put(vpm_S, splitter_v, p);
-        if(do_split)
-          put(vpm_T, new_v, p); // position of the new point on the target mesh
-      }
-
+      // Everything below is choosing the diagonal to triangulate the quad formed by the edge split
+      // So, it's only relevant if splitting has been performed
       if(!do_split)
         continue;
-
-      // Look at the geometry to determine which diagonal is better to use to split this new quad face
 
       /*          new_p
        *         /   \
@@ -703,6 +702,9 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
       std::cout << "Left/Right: " << left_of_left << " " << right_of_right << std::endl;
       std::cout << "visible from " << opp << " ? " << is_visible << std::endl;
 #endif
+
+      // h_to_split is equal to 'next(res)' after splitting
+      const halfedge_descriptor h_to_split_opp = opposite(h_to_split, tm_T);
 
       if(is_visible)
       {
