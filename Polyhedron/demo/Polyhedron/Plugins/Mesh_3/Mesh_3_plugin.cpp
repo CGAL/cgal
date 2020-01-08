@@ -29,6 +29,7 @@
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Scene_image_item.h"
+#include "Image_type.h"
 #endif
 
 #include "Meshing_thread.h"

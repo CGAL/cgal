@@ -747,8 +747,8 @@ Scene_c3t3_item::build_histogram()
   const int text_margin = 3;
   const int text_height = 34;
 
-  histogram_ = QPixmap(width, height + text_height);
-  histogram_.fill(QColor(255, 255, 255));
+  d->histogram_ = QPixmap(width, height + text_height);
+  d->histogram_.fill(QColor(255, 255, 255));
 #else
   // Create an histogram_ and display it
   const int height = 140;
