@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Laurent Rineau
+// Author(s)     : Laurent Rineau, Maxime Gimeno
 //
 
 // Adapted from operator>>(std::istream&, Triangulation_3&) from
@@ -28,13 +28,13 @@
 
 namespace CGAL {
 
-template <typename Tr1, 
-          typename Tr2,
-          typename Update_vertex,
-          typename Update_cell>
-std::istream& file_input(std::istream& is, Tr2 &tr,
-                         Update_vertex update_vertex = Update_vertex(),
-                         Update_cell update_cell = Update_cell())
+template <typename Tr_src, 
+          typename Tr_tgt,
+          typename ConvertVertex,
+          typename ConvertCell>
+std::istream& file_input(std::istream& is, Tr_tgt &tr,
+                         ConvertVertex convert_vertex = ConvertVertex(),
+                         ConvertCell convert_cell = ConvertCell())
   // reads
   // the dimension
   // the number of finite vertices
@@ -45,12 +45,12 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
   // the neighbors of each cell by their index in the preceding list of cells
   // when dimension < 3 : the same with faces of maximal dimension
 {
-  typedef Tr2 Triangulation;
+  typedef Tr_tgt Triangulation;
   typedef typename Triangulation::Vertex_handle  Vertex_handle;
   typedef typename Triangulation::Cell_handle    Cell_handle;
 
-  typedef typename Tr1::Vertex Vertex1;
-  typedef typename Tr1::Cell Cell1;
+  typedef typename Tr_src::Vertex Vertex1;
+  typedef typename Tr_src::Cell Cell1;
 
   tr.clear();
   tr.tds().cells().clear();
@@ -71,13 +71,12 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
   // the infinite vertex is numbered 0
 
   for (std::size_t i=1; i <= n; i++) {
-    V[i] = tr.tds().create_vertex();
+    //V[i] = tr.tds().create_vertex();   
     Vertex1 v;
     if(!(is >> v)) return is;
-    if(!update_vertex(v, *V[i])) {
-      is.setstate(std::ios_base::failbit);
-      return is;
-    }
+    Vertex_handle vh=tr.tds().create_vertex( convert_vertex(v) );
+    V[i] = vh;
+    convert_vertex(v, *V[i]);
   }
 
   std::vector< Cell_handle > C;
@@ -88,10 +87,9 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
   for (std::size_t j=0 ; j < m; j++) {
     Cell1 c;
     if(!(is >> c)) return is;
-    if(!update_cell(c, *(C[j]))) {
-      is.setstate(std::ios_base::failbit);
-      return is;
-    }
+    Cell_handle ch=tr.tds().create_cell(convert_cell(c));
+    C[j] = ch;
+    convert_cell(c, *ch);
   }
 
   CGAL_triangulation_assertion( tr.is_valid(false) );
@@ -100,4 +98,5 @@ std::istream& file_input(std::istream& is, Tr2 &tr,
 
 } // end namespace CGAL
 
-#endif // CGAL_TRIANGULATION_FILE_INPUT_3_H
+
+#endif // TRIANGULATION_FILE_INPUT_H

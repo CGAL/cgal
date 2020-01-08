@@ -400,7 +400,12 @@ struct Update_vertex
   typedef typename Tr1::Vertex                  V1;
   typedef typename Tr2::Vertex                  V2;
   typedef typename Tr2::Point                   Point;
-
+  
+  V2 operator()(const V1&)
+  {
+    return V2();
+  }
+  
   bool operator()(const V1& v1, V2& v2)
   {
     v2.set_point(Point(v1.point()));
@@ -413,7 +418,7 @@ struct Update_vertex
       const Sp_index sp_index = boost::get<Sp_index>(index);
       v2.set_index((std::max)(sp_index.first, sp_index.second));
     }
-    break;
+      break;
     default:// -1, 0, 1, 3
       v2.set_index(boost::get<int>(v1.index()));
     }
@@ -421,9 +426,18 @@ struct Update_vertex
   }
 }; // end struct Update_vertex
 
+template <typename Tr1, typename Tr2>
 struct Update_cell {
+  
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-  template <typename C1, typename C2>
+  typedef typename Tr2::Cell          C2;
+  
+  template <typename C1>
+  C2 operator()(const C1&) {
+    return C2();
+  }
+  
+  template <typename C1>
   bool operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(c1.subdomain_index());
     for(int i = 0; i < 4; ++i) {
@@ -437,7 +451,7 @@ struct Update_cell {
   }
 }; // end struct Update_cell
 
-#include <CGAL/Triangulation_file_input.h>
+#include <CGAL/IO/Triangulation_file_input.h>
 
 template <typename Tr1, typename Tr2>
 struct Update_vertex_from_CDT_3 {
@@ -447,24 +461,35 @@ struct Update_vertex_from_CDT_3 {
   typedef typename Tr2::Vertex          V2;
   typedef typename Tr2::Point           Point;
 
-  bool operator()(const V1& v1, V2& v2)
+   V2 operator()(const V1&)
+  {
+    return V2();
+  }
+  void operator()(const V1& v1, V2& v2)
   {
     v2.set_point(Point(v1.point()));
     v2.set_dimension(2);
     v2.set_special(false);
-    return true;
   }
 }; // end struct Update_vertex
 
+template <typename Tr1, typename Tr2>
 struct Update_cell_from_CDT_3 {
+  
   typedef Fake_mesh_domain::Surface_patch_index Sp_index;
-  template <typename C1, typename C2>
-  bool operator()(const C1& c1, C2& c2) {
+  typedef typename Tr2::Cell          C2;
+  
+  template <typename C1>
+  C2 operator()(const C1&) {
+    return C2();
+  }
+  
+  template <typename C1>
+  void operator()(const C1& c1, C2& c2) {
     c2.set_subdomain_index(1);
     for(int i = 0; i < 4; ++i) {
       c2.set_surface_patch_index(i, c1.constrained_facet[i]);
     }
-    return true;
   }
 }; // end struct Update_cell
 
@@ -499,7 +524,7 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
        Fake_CDT_3,
        C3t3::Triangulation,
        Update_vertex_from_CDT_3<Fake_CDT_3, C3t3::Triangulation>,
-       Update_cell_from_CDT_3>(is, c3t3.triangulation()))
+       Update_cell_from_CDT_3<Fake_CDT_3, C3t3::Triangulation> >(is, c3t3.triangulation()))
   {
     c3t3.rescan_after_load_of_triangulation();
     std::cerr << "Try load a CDT_3... DONE";
@@ -543,7 +568,7 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
                          Fake_c3t3::Triangulation,
                          C3t3::Triangulation,
                          Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
-                         Update_cell>(is, c3t3.triangulation());
+                         Update_cell<Fake_c3t3::Triangulation, C3t3::Triangulation> >(is, c3t3.triangulation());
 
   c3t3.rescan_after_load_of_triangulation();
   return f_is.good();
