@@ -1809,7 +1809,10 @@ void MainWindow::readSettings()
     scene->enableVisibilityRecentering(settings.value("offset_update", false).toBool());
     viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
     int val  = settings.value("transparency_pass_number", 4).toInt();
-    if (val < 4 ) val = 4;
+    if (val < 4 ) {
+      val = 4;
+      settings.setValue("transparency_pass_number", 4);
+    }
     viewer->setTotalPass(val);
     CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
           settings.value("default_sm_rm", "flat+edges").toString());
