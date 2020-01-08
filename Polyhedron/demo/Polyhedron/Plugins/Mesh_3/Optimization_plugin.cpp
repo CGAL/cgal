@@ -16,7 +16,6 @@
 #include "ui_Local_optimizers_dialog.h"
 
 #include "Scene_c3t3_item.h"
-#include "C3t3_type.h"
 
 #include "Optimizer_thread.h"
 
