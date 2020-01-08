@@ -268,17 +268,18 @@ public:
         std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_id.first);
         if (vid!=NM_NID)
           vertices_to_add.push_back(std::make_pair(vd_and_id.first,vd_and_id.second));
-        for(const std::pair<vertex_descriptor, Node_id>& vd_and_nid : vertices_to_add)
+      }
+
+      for(const std::pair<vertex_descriptor, Node_id>& vd_and_nid : vertices_to_add)
+      {
+        std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_nid.first);
+        for(vertex_descriptor vd : tm_and_nm.second->non_manifold_vertices[vid])
         {
-          std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_nid.first);
-          for(vertex_descriptor vd : tm_and_nm.second->non_manifold_vertices[vid])
+          if (vd != vd_and_nid.first)
           {
-            if (vd != vd_and_nid.first)
-            {
-              vertex_to_node_id.insert(std::make_pair(vd,vd_and_nid.second));
-              output_builder.set_vertex_id(vd, vd_and_nid.second, *tm_ptr);
-              vertices_on_inter.insert(std::make_pair(vd_and_nid.second,halfedge(vd,*tm_ptr)));
-            }
+            vertex_to_node_id.insert(std::make_pair(vd,vd_and_nid.second));
+            output_builder.set_vertex_id(vd, vd_and_nid.second, *tm_ptr);
+            vertices_on_inter.insert(std::make_pair(vd_and_nid.second,halfedge(vd,*tm_ptr)));
           }
         }
       }
@@ -740,15 +741,19 @@ void check_node_on_boundary_vertex_case(std::size_t node_id,
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
       Node_to_target_of_hedge_map& nodes_to_hedge=it->second;
+
+      // iterate on the vertices that are on the intersection between the input meshes
       for(typename Node_to_target_of_hedge_map::iterator
             it_node_2_hedge=nodes_to_hedge.begin();
             it_node_2_hedge!=nodes_to_hedge.end();
             ++it_node_2_hedge)
       {
         Node_id node_id_of_first=it_node_2_hedge->first;
+        // look for neighbors of the current node in the intersection graph
         std::vector<Node_id>& neighbors=graph_of_constraints[node_id_of_first];
         if ( !neighbors.empty() )
         {
+          // for all neighbors look for input vertices that are also on the intersection
           for(Node_id node_id : neighbors)
           {
             //if already done for the opposite
