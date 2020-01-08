@@ -195,13 +195,13 @@ QPen sPens[] = {
 
 
 QBrush sBrushes[] = {
-  QBrush(QColor(255,0,0,32)),           //blue
-  QBrush(QColor(0,0,0,32)),           //red
-  QBrush(QColor(0,0,255,32)),             //black
-  QBrush(QColor(210,105,30,32)),        //brown
-  QBrush(QColor(255,255,0,32)),         //yellow
-  QBrush(QColor(255,0,255,32)),         //magenta
-  QBrush(QColor(0,255,255,32)),         //aqua
+  QBrush(QColor(255,0,0,75)),           //blue
+  QBrush(QColor(0,0,0,75)),           //red
+  QBrush(QColor(0,0,255,75)),             //black
+  QBrush(QColor(210,105,30,75)),        //brown
+  QBrush(QColor(255,255,0,75)),         //yellow
+  QBrush(QColor(255,0,255,75)),         //magenta
+  QBrush(QColor(0,255,255,75)),         //aqua
   QBrush(QColor(0,255,0,140)),             //Result
   QBrush(QColor("#808000")),   //olive
   QBrush(QColor("#ff69b4"))   //hot pink
@@ -3985,7 +3985,7 @@ void MainWindow::on_actionNew_triggered()
   SetViewMagenta (true);
   SetViewAqua (true);
   SetViewResult(true);
-  PlanAActive -> setChecked(true);
+  PlanBActive -> setChecked(true);
 
   actionDelete->setVisible(true);
   actionClearResult -> setVisible(true);
@@ -6781,7 +6781,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 	{
 		switch(m_color_result_active)
 		{
-				case 0: brush.setColor(QColor(255,0,0,32)); pen.setColor((QColor(255,0,0,32)));
+				case 0: brush.setColor(QColor(255,0,0,75)); pen.setColor((QColor(255,0,0,32)));
 						brush.setStyle(Qt::SolidPattern);
 						if (pathItem0_exists) m_scene.removeItem(pathItem0);
 						pathItem0 = m_scene.addPath(m_pathTrack,pen,brush);
@@ -6819,7 +6819,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 						modelChanged(); 
 						break; //blue
 
-			case 1: brush.setColor(QColor(0,0,0,32)); pen.setColor((QColor(0,0,0,32))); 
+			case 1: brush.setColor(QColor(0,0,0,75)); pen.setColor((QColor(0,0,0,32))); 
 					brush.setStyle(Qt::SolidPattern);
 	  				if (pathItem1_exists) m_scene.removeItem(pathItem1);
 					pathItem1 = m_scene.addPath(m_pathTrack,pen,brush);
@@ -6857,7 +6857,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 					modelChanged(); 
 					break; //red
 
-				case 2:brush.setColor(QColor(0,0,255,32)); pen.setColor((QColor(0,0,255,32))); 
+				case 2:brush.setColor(QColor(0,0,255,75)); pen.setColor((QColor(0,0,255,32))); 
 					   brush.setStyle(Qt::SolidPattern);
 		  			   if (pathItem2_exists) m_scene.removeItem(pathItem2);
 					   pathItem2 = m_scene.addPath(m_pathTrack,pen,brush);
@@ -6895,7 +6895,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 						modelChanged();
 						break;	//black
 
-			case 3: brush.setColor(QColor(210,105,30,32)); pen.setColor((QColor(210,105,30,32))); 
+			case 3: brush.setColor(QColor(210,105,30,75)); pen.setColor((QColor(210,105,30,32))); 
 					brush.setStyle(Qt::SolidPattern);
 		  			if (pathItem3_exists) m_scene.removeItem(pathItem3);
 					pathItem3 = m_scene.addPath(m_pathTrack,pen,brush);
@@ -6933,7 +6933,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 					modelChanged();
 					break; //brown
 
-				case 4: brush.setColor(QColor(255,255,0,32)); pen.setColor((QColor(255,255,0,32))); 
+				case 4: brush.setColor(QColor(255,255,0,75)); pen.setColor((QColor(255,255,0,32))); 
 						brush.setStyle(Qt::SolidPattern);
 		  				if (pathItem4_exists) m_scene.removeItem(pathItem4);
 						pathItem4 = m_scene.addPath(m_pathTrack,pen,brush);
@@ -6971,7 +6971,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 						modelChanged();
 						break; // yellow
 
-			case 5: brush.setColor(QColor(255,0,255,32)); pen.setColor((QColor(255,0,255,32))); 
+			case 5: brush.setColor(QColor(255,0,255,75)); pen.setColor((QColor(255,0,255,32))); 
 					brush.setStyle(Qt::SolidPattern);
 		  			if (pathItem5_exists) m_scene.removeItem(pathItem5);
 					pathItem5 = m_scene.addPath(m_pathTrack,pen,brush);
@@ -7009,7 +7009,7 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 					modelChanged();
 					break;  //magenta
 
-			case 6: brush.setColor(QColor(0,255,255,32)); pen.setColor((QColor(0,255,255,32))); 
+			case 6: brush.setColor(QColor(0,255,255,75)); pen.setColor((QColor(0,255,255,32))); 
 					brush.setStyle(Qt::SolidPattern);
 					if (pathItem6_exists) m_scene.removeItem(pathItem6);
 					pathItem6 = m_scene.addPath(m_pathTrack,pen,brush);

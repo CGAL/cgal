@@ -141,6 +141,9 @@
    <addaction name="actionNew" />
   </widget>
   <widget class="QToolBar" name="insertResultToolBar">
+    <property name="visible">
+      <bool>false</bool>
+    </property>
   	<property name="windowTitle">
   		<string>Insert Result Mode</string>
   	</property>
@@ -152,7 +155,7 @@
   	</attribute>
   	<widget class="QRadioButton" name="PlanAActive">
     <property name="checked" >
-      <bool>true</bool>
+      <bool>false</bool>
     </property>
     <property name="icon" >
      <iconset resource="boolean_operations_2.qrc" >
@@ -165,7 +168,7 @@
    </widget>
    <widget class="QRadioButton" name="PlanBActive">
     <property name="checked" >
-      <bool>false</bool>
+      <bool>true</bool>
     </property>
     <property name="icon" >
      <iconset resource="boolean_operations_2.qrc" >
@@ -2135,7 +2138,7 @@
               <property name="geometry">
                 <rect>
                 <x>0</x>
-                <y>25</y>
+                <y>20</y>
                 <width>640</width>
                 <height>30</height>
                 </rect>
@@ -2503,7 +2506,7 @@
                   <x>120</x>
                   <y>0</y>
                   <width>101</width>
-                  <height>40</height>  
+                  <height>35</height>  
                 </rect>
               </property>
               <property name="sizePolicy" >
@@ -2522,7 +2525,7 @@
                   <x>165</x>
                   <y>0</y>
                   <width>101</width>
-                  <height>40</height>  
+                  <height>35</height>  
                 </rect>
               </property>  
               <property name="sizePolicy" >
@@ -2541,7 +2544,7 @@
                   <x>210</x>
                   <y>0</y>
                   <width>101</width>
-                  <height>40</height>  
+                  <height>35</height>  
                 </rect>
                 </property>
                 <property name="sizePolicy" >
@@ -2560,7 +2563,7 @@
                 <x>255</x>
                 <y>0</y>
                 <width>101</width>
-                <height>40</height>  
+                <height>35</height>  
               </rect>
               </property>
               <property name="sizePolicy" >
@@ -2579,7 +2582,7 @@
                 <x>300</x>
                 <y>0</y>
                 <width>101</width>
-                <height>40</height>  
+                <height>35</height>  
               </rect>
               </property>
               <property name="sizePolicy" >
@@ -2601,7 +2604,7 @@
                 <x>345</x>
                 <y>0</y>
                 <width>101</width>
-                <height>40</height>  
+                <height>35</height>  
               </rect>
              </property>
              <property name="sizePolicy" >
@@ -2806,6 +2809,9 @@
             </widget>
 
             <widget class="QCheckBox" name="showResult">
+             <property name="visible">
+              <bool>false</bool>
+             </property>
              <property name="geometry">
               <rect>
                <x>140</x>
