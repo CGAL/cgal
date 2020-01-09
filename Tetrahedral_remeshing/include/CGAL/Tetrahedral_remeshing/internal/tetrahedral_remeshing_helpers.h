@@ -73,14 +73,14 @@ namespace Tetrahedral_remeshing
     return indices_table[i][j];
   }
 
-  template<typename Tr>
-  typename Tr::Geom_traits::FT dihedral_angle(const Tr& tr,
-                                              const typename Tr::Point& p,
-                                              const typename Tr::Point& q,
-                                              const typename Tr::Point& r,
-                                              const typename Tr::Point& s)
+  template<typename Gt, typename Point>
+  typename Gt::FT dihedral_angle(const Point& p,
+                                 const Point& q,
+                                 const Point& r,
+                                 const Point& s,
+                                 const Gt& gt)
   {
-    return tr.geom_traits().compute_approximate_dihedral_angle_3_object()(p, q, r, s);
+    return gt.compute_approximate_dihedral_angle_3_object()(p, q, r, s);
   }
 
   template<typename Tr>
@@ -91,22 +91,22 @@ namespace Tetrahedral_remeshing
                                                   const typename Tr::Point& s)
   {
     typedef typename Tr::Geom_traits::FT FT;
-    FT a = CGAL::abs(dihedral_angle(tr, p, q, r, s));
+    FT a = CGAL::abs(dihedral_angle(p, q, r, s, tr.geom_traits()));
     FT min_dh = a;
 
-    a = CGAL::abs(dihedral_angle(tr, p, r, q, s));
+    a = CGAL::abs(dihedral_angle(p, r, q, s, tr.geom_traits()));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(tr, p, s, q, r));
+    a = CGAL::abs(dihedral_angle(p, s, q, r, tr.geom_traits()));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(tr, q, r, p, s));
+    a = CGAL::abs(dihedral_angle(q, r, p, s, tr.geom_traits()));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(tr, q, s, p, r));
+    a = CGAL::abs(dihedral_angle(q, s, p, r, tr.geom_traits()));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(tr, r, s, p, q));
+    a = CGAL::abs(dihedral_angle(r, s, p, q, tr.geom_traits()));
     min_dh = (std::min)(a, min_dh);
 
     return min_dh;
@@ -1169,8 +1169,6 @@ namespace Tetrahedral_remeshing
           ofs << " 1" << std::endl;
         else
         {
-          // std::cerr << "Cell #" << (cit - cells.begin())
-          //           << " has original index " << *iit << std::endl;
           ofs << " " << (*iit) << std::endl;
           ++iit;
         }
@@ -1279,6 +1277,35 @@ namespace Tetrahedral_remeshing
       ofs.close();
     }
 
+    template<typename Tr, typename CellSelector>
+    void dump_cells_with_small_dihedral_angle(const Tr& tr,
+                                              const double angle_bound,
+                                              const int imaginary_index,
+                                              CellSelector cell_select,
+                                              const char* filename)
+    {
+      typedef typename Tr::Cell_handle           Cell_handle;
+      typedef typename Tr::Cell::Subdomain_index Subdomain_index;
+      std::vector<Cell_handle>     cells;
+      std::vector<Subdomain_index> indices;
+
+      for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
+           cit != tr.finite_cells_end(); ++cit)
+      {
+        Cell_handle c = cit;
+        if ( c->subdomain_index() != Subdomain_index()
+          && cell_select(c)
+          && min_dihedral_angle(tr, c) < angle_bound)
+        {
+
+          cells.push_back(c);
+          indices.push_back(c->subdomain_index());
+        }
+      }
+      std::cout << "bad cells : " << cells.size() << std::endl;
+      dump_cells<Tr>(cells, indices, filename);
+    }
+
     template<typename Tr>
     void dump_vertices_by_dimension(const Tr& tr, const char* prefix)
     {
@@ -1322,13 +1349,15 @@ namespace Tetrahedral_remeshing
     void dump_triangulation_cells(const Tr& tr, const char* filename)
     {
       std::vector<typename Tr::Cell_handle> cells(tr.number_of_finite_cells());
+      std::vector<typename Tr::Cell::Subdomain_index> indices(tr.number_of_finite_cells());
       int i = 0;
       for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
         cit != tr.finite_cells_end(); ++cit)
       {
-        cells[i++] = cit;
+        cells[i] = cit;
+        indices[i++] = cit->subdomain_index();
       }
-      dump_cells<Tr>(cells, filename);
+      dump_cells<Tr>(cells, indices, filename);
     }
 
     template<typename Tr>
@@ -1345,7 +1374,7 @@ namespace Tetrahedral_remeshing
           && cit->subdomain_index() != imaginary_index)
         {
           cells.push_back(cit);
-          indices.push_back(1);
+          indices.push_back(cit->subdomain_index());
         }
       }
       dump_cells<Tr>(cells, indices, filename);

@@ -179,6 +179,11 @@ namespace CGAL
                              , No_constraint());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    std::cout << "Tetrahedral remeshing ("
+      << "nb_iter = " << max_it
+      << "protect = " << std::boolalpha << protect << ", "
+      << ")" << std::endl;
+
     std::cout << "Init tetrahedral remeshing...";
     std::cout.flush();
 #endif
@@ -199,13 +204,16 @@ namespace CGAL
     remesher.preprocess();
 
     std::size_t it_nb = 0;
-    while (it_nb++ < max_it && !remesher.resolution_reached())
+    while (it_nb++ < max_it)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " #" << std::endl;
 #endif
-      remesher.split();
-      remesher.collapse();
+      if (!remesher.resolution_reached())
+      {
+        remesher.split();
+        remesher.collapse();
+      }
       remesher.flip();
       remesher.smooth();
 
@@ -246,10 +254,16 @@ namespace CGAL
     remesher.postprocess();
 
     remesher.finalize();
+    //remesher.triangulation() is now empty
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    const double angle_bound = 5.0;
+    Tetrahedral_remeshing::debug::dump_cells_with_small_dihedral_angle(tr,
+      angle_bound, remesher.imaginary_index(), cell_select, "bad_cells.mesh");
+#endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     Tetrahedral_remeshing::internal::compute_statistics(tr,
-           remesher.imaginary_index(), cell_select, "statistics_end.txt");
+      remesher.imaginary_index(), cell_select, "statistics_end.txt");
 #endif
   }
 
