@@ -2,6 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <iostream>
 #include <fstream>
@@ -17,30 +18,23 @@ typedef boost::graph_traits<Mesh>::face_descriptor       face_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor     vertex_descriptor;
 
 bool is_small_hole(halfedge_descriptor h, Mesh & mesh,
-                   std::set<Point> & examined_points,
                    double max_hole_diam, int max_num_hole_edges)
 {
   int num_hole_edges = 0;
-  auto cvpm = CGAL::get_const_property_map(CGAL::vertex_point, mesh);
-  CGAL::Halfedge_around_face_circulator<Mesh> circ(h, mesh), done(circ);
   CGAL::Bbox_3 hole_bbox;
+  for (halfedge_descriptor hc : CGAL::halfedges_around_face(h, mesh))
+  {
+    const Point& p = mesh.point(target(hc, mesh));
 
-  do {
-    Point p = get(cvpm, target(*circ, mesh));
-
-    if (examined_points.find(p) != examined_points.end())
-      return false;
-    examined_points.insert(p);
-
-    hole_bbox += CGAL::Bbox_3(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-    num_hole_edges++;
+    hole_bbox += p.bbox();
+    ++num_hole_edges;
 
     // Exit early, to avoid unnecessary traversal of large holes
     if (num_hole_edges > max_num_hole_edges) return false;
     if (hole_bbox.xmax() - hole_bbox.xmin() > max_hole_diam) return false;
     if (hole_bbox.ymax() - hole_bbox.ymin() > max_hole_diam) return false;
     if (hole_bbox.zmax() - hole_bbox.zmin() > max_hole_diam) return false;
-  } while (++circ != done);
+  }
 
   return true;
 }
@@ -63,36 +57,31 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  // Avoid examining a hole we studied before using a different half edge.
-  std::set<Point> examined_points;
-
   unsigned int nb_holes = 0;
-  for(halfedge_descriptor h : halfedges(mesh))
+  std::vector<halfedge_descriptor> border_cycles;
+
+  // collect one halfedge per boundary cycle
+  CGAL::Polygon_mesh_processing::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
+
+  for(halfedge_descriptor h : border_cycles)
   {
-    if(is_border(h,mesh))
-    {
+    if(max_hole_diam > 0 && max_num_hole_edges > 0 &&
+       !is_small_hole(h, mesh, max_hole_diam, max_num_hole_edges))
+      continue;
 
-      if(max_hole_diam > 0 && max_num_hole_edges > 0 &&
-         !is_small_hole(h, mesh, examined_points,
-                        max_hole_diam, max_num_hole_edges))
-        continue;
+    std::vector<face_descriptor>  patch_facets;
+    std::vector<vertex_descriptor> patch_vertices;
+    bool success = std::get<0>(
+      CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
+                mesh,
+                h,
+                std::back_inserter(patch_facets),
+                std::back_inserter(patch_vertices)) );
 
-      std::vector<face_descriptor>  patch_facets;
-      std::vector<vertex_descriptor> patch_vertices;
-      bool success = std::get<0>(
-        CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
-                  mesh,
-                  h,
-                  std::back_inserter(patch_facets),
-                  std::back_inserter(patch_vertices),
-     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
-                  geom_traits(Kernel())) );
-
-      std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
-      std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
-      std::cout << "  Is fairing successful: " << success << std::endl;
-      nb_holes++;
-    }
+    std::cout << "* Number of facets in constructed patch: " << patch_facets.size() << std::endl;
+    std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
+    std::cout << "  Is fairing successful: " << success << std::endl;
+    ++nb_holes;
   }
 
   std::cout << std::endl;
