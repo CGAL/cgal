@@ -1,5 +1,6 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #define CGAL_DUMP_REMESHING_STEPS
+#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 
 #include <QtCore/qglobal.h>
 
@@ -109,6 +110,39 @@ namespace CGAL {
           Vertex_converter<RTds, Tds>(),
           Cell_converter<RTds, Tds>()));
     }
+
+    void update_c3t3(C3t3& c3t3)
+    {
+      for (typename C3t3::Triangulation::Finite_facets_iterator
+        fit = c3t3.triangulation().finite_facets_begin();
+        fit != c3t3.triangulation().finite_facets_end();
+        ++fit)
+      {
+        typename C3t3::Triangulation::Facet f = *fit;
+        typename C3t3::Triangulation::Cell::Subdomain_index
+          s1 = f.first->subdomain_index(),
+          s2 = f.first->neighbor(f.second)->subdomain_index();
+        if (s1 != s2)
+        {
+          if (s1 > s2)
+            std::swap(s1, s2);
+          c3t3.add_to_complex(f, s1 + 100 * s2);// std::make_pair(s1, s2));
+        }
+      }
+      for (typename C3t3::Triangulation::Finite_cells_iterator
+        cit = c3t3.triangulation().finite_cells_begin();
+        cit != c3t3.triangulation().finite_cells_end();
+        ++cit)
+      {
+        typename C3t3::Triangulation::Cell::Subdomain_index
+          si = cit->subdomain_index();
+        if (si != 0)
+        {
+          cit->set_subdomain_index(0);//o.w. add_to_complex() does nothing
+          c3t3.add_to_complex(cit, si);
+        }
+      }
+    }
   }
 }
 
@@ -183,7 +217,6 @@ public Q_SLOTS:
       std::cout << "Remeshing triangulation built (" << time.elapsed() << " ms)" << std::endl;
       time.restart();
 
-
       CGAL::tetrahedral_adaptive_remeshing(tr, target_length,
         CGAL::parameters::protect_boundaries(protect)
         .number_of_iterations(nb_iter));
@@ -191,7 +224,9 @@ public Q_SLOTS:
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
       time.restart();
 
+      c3t3_item->c3t3().clear();
       CGAL::internal::build_from_remeshing_triangulation(tr, c3t3_item->c3t3().triangulation());
+      CGAL::internal::update_c3t3(c3t3_item->c3t3());
 
       std::cout << "Back conversion done (" << time.elapsed() << " ms)" << std::endl;
 
