@@ -122,13 +122,23 @@ void generate_input(const std::size_t& n,
   add_edge(v3, v7, tr, constraints);
 }
 
+void set_subdomain(Remeshing_triangulation& tr, const int index)
+{
+  for (Remeshing_triangulation::Finite_cells_iterator cit = tr.finite_cells_begin();
+       cit != tr.finite_cells_end(); ++cit)
+  {
+    cit->set_subdomain_index(index);
+  }
+}
+
 int main(int argc, char* argv[])
 {
   boost::unordered_set<std::pair<Vertex_handle, Vertex_handle> > constraints;
   generate_input(1000, "data/sphere_in_cube.tr.cgal", constraints);
 
   const char* filename     = (argc > 1) ? argv[1] : "data/sphere_in_cube.tr.cgal";
-  double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.1;
+  double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.02;
+  int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
 
   std::ifstream input(filename, std::ios::in);
   if (!input)
@@ -139,13 +149,15 @@ int main(int argc, char* argv[])
 
   Remeshing_triangulation t3;
   input >> t3;
+  set_subdomain(t3, 1);
   CGAL_assertion(t3.is_valid());
 
   save_ascii_triangulation("tet_remeshing_with_features_before.mesh", t3);
 
   CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
-      Constrained_edges_property_map<Remeshing_triangulation>(&constraints)));
+      Constrained_edges_property_map<Remeshing_triangulation>(&constraints))
+    .number_of_iterations(nb_iter));
 
   save_ascii_triangulation("tet_remeshing_with_features_after.mesh", t3);
 
