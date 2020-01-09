@@ -403,7 +403,7 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
   this->add_features_with_context(polylines.begin(),
                                   polylines.end());
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {//DEBUG
     std::ofstream og("polylines_graph.polylines.txt");
     og.precision(17);
@@ -416,7 +416,7 @@ add_features_from_split_graph_into_polylines(Featured_edges_copy_graph& g_copy)
     }
     og.close();
   }
-#endif // CGAL_MESH_3_PROTECTION_DEBUG > 1
+#endif // CGAL_MESH_3_PROTECTION_DEBUG & 2
 
 }
 
@@ -475,7 +475,7 @@ add_featured_edges_to_graph(const Polyhedron& p,
     }
   }
 
-#if CGAL_MESH_3_PROTECTION_DEBUG > 1
+#if CGAL_MESH_3_PROTECTION_DEBUG & 2
   {// DEBUG
     dump_graph_edges("edges-graph.polylines.txt", g_copy);
   }

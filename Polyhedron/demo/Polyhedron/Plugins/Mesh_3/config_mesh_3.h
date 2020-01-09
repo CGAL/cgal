@@ -3,6 +3,15 @@
 
 #define  BOOST_PARAMETER_MAX_ARITY 12
 
+// CGAL_MESH_3_PROTECTION_DEBUG:
+// -  1 : display debug messages
+// -  2 : dump file `polylines_graph.polylines.txt` and
+//        `edges-graph.polylines.txt` from polyhedral and image domains
+// -  4 : dump c3t3 in case of a bug
+// -  8 : dump c3t3 at various stages of the protection
+// - 16 : more precise debug messages
+//#define CGAL_MESH_3_PROTECTION_DEBUG 255
+
 
 //#define CGAL_PROFILE
 

@@ -1410,7 +1410,7 @@ compute_corners_incidences()
                      std::inserter(incidences,
                                    incidences.begin()));
     }
-#ifdef CGAL_MESH_3_PROTECTION_DEBUG
+#if CGAL_MESH_3_PROTECTION_DEBUG & 1
     display_corner_incidences(std::cerr, cit->first, id);
 #endif // CGAL_MESH_3_PROTECTION_DEBUG
 
