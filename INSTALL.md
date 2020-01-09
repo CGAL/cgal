@@ -12,7 +12,6 @@ Here is a recipe for the examples of the 2D Triangulation package:
  git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
  cd /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
  /path/to/cgal.git/Scripts/scripts/cgal_create_cmake_script
- cd /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
  mkdir -p build/debug
  cd build/debug
  cmake -DCGAL_DIR:PATH=/path/to/cgal.git ../..
