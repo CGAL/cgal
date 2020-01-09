@@ -7,7 +7,7 @@
 #include <CGAL/Qt/constraint.h>
 #include <boost/foreach.hpp>
 #include <algorithm>
-#include <QTime>
+#include <QElapsedTimer>
 
 #include <QApplication>
 

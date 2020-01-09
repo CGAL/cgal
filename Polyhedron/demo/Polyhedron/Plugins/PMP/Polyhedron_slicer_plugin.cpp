@@ -16,7 +16,7 @@
 #include <CGAL/bounding_box.h> 
 #include <CGAL/Polygon_mesh_slicer.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -287,7 +287,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   if(!new_polyline_item_for_polylines) 
   {
     Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
-    QTime time; time.start();
+    QElapsedTimer time; time.start();
     // call algorithm and fill polylines in polylines_item
     intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, new_polylines_item->polylines);
     // set names etc and print timing
@@ -301,7 +301,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
     scene->addItem(new_polylines_item);
   }
   else {
-    QTime time; time.start();
+    QElapsedTimer time; time.start();
     std::list<std::vector<Epic_kernel::Point_3> > polylines;
     // call algorithm and fill polylines in polylines_item
     intersection_of_plane_Polyhedra_3_using_AABB_wrapper(*smesh, planes, plane_positions, polylines);

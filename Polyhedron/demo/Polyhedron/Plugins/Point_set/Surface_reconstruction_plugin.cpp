@@ -1,4 +1,4 @@
-#include <QTime>
+#include <QElapsedTimer>
 #include <QApplication>
 #include <QAction>
 #include <QList>

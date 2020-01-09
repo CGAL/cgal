@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
@@ -137,7 +137,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       return;
 
     // simplify
-    QTime time;
+    QElapsedTimer time;
     time.start();
     std::cout << "Simplify...";
     QApplication::setOverrideCursor(Qt::WaitCursor);

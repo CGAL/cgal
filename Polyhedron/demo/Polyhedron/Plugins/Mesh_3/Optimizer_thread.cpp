@@ -25,7 +25,7 @@
 
 #include "config_mesh_3.h"
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include "Optimizer_thread.h"
 #include "Scene_c3t3_item.h"
@@ -56,7 +56,7 @@ void
 Optimizer_thread::
 run()
 {
-  QTime timer;
+  QElapsedTimer timer;
   timer.start();
   //SEGFAULT
   rc_ = f_->launch();
