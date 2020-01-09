@@ -386,6 +386,42 @@ void generate_g1_double_torus(Path& p, std::size_t i)
   }
 }
 
+template<typename Path>
+void generate_path(Path& p,
+                   const std::initializer_list<int>& v1,
+                   const std::initializer_list<int>& v2)
+{
+  p.clear();
+  p.push_back(p.get_map().darts().iterator_to(p.get_map().darts()[0]));
+  
+  std::vector<int> before(v1);
+  for (auto it=before.begin(), itend=before.end(); it!=itend; )
+  {
+    if (*it<0) { p.extend_negative_turn(-(*it), false); }
+    else { p.extend_positive_turn(*it, false); }
+    ++it;
+
+    p.extend_straight_positive(*it, false);
+    ++it;
+  }
+
+  Surface_mesh_topology::internal::create_braket_positive(p, 6, false);
+  
+  std::vector<int> after(v2);
+  for (auto it=after.begin(), itend=after.end(); it!=itend; )
+  {
+    if (*it<0) { p.extend_negative_turn(-(*it), false); }
+    else { p.extend_positive_turn(*it, false); }
+    ++it;
+
+    p.extend_straight_positive(*it, false);
+    ++it;
+  }
+
+  p.update_is_closed();
+}
+
+
 } // namespace CGAL
 
 #endif // CGAL_CREATION_OF_TEST_CASES_FOR_PATHS_H //

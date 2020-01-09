@@ -101,16 +101,6 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 #ifdef CGAL_USE_BASIC_VIEWER
       if (draw) { v.push_back(prevp); }
 #endif // CGAL_USE_BASIC_VIEWER
-
-      // DEBUG CODE
-      if (nbtests==19)
-      {
-        std::cout<<"[Test "<<nbtests<<"] "<<" current path: "<<std::flush;
-        curp.display();
-        curp.display_pos_and_neg_turns();
-        std::cout<<std::endl;
-      }
-      // END OF DEBUG CODE
     }
 
     // if (draw /* && nbtest==1*/)
@@ -130,16 +120,6 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 
   path.swap(prevp);
   CGAL_assertion(path.is_valid(true));
-
-  // DEBUG CODE
-  if (nbtests==19)
-  {
-    std::cout<<"[Test "<<nbtests<<"] "<<" final path: "<<std::flush;
-    path.display();
-    path.display_pos_and_neg_turns();
-    std::cout<<std::endl;
-  }
-  // END OF DEBUG CODE
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,
@@ -356,36 +336,35 @@ bool test_some_random_paths_on_cube(bool draw, unsigned int testtorun)
   Path_on_surface<LCC_3_cmap> path(lcc);
   bool res=true;
 
-  CGAL::Random random(nbtests); // fix seed
-  internal::generate_random_positive_bracket(path, 2, 6, 3, random); // Test 17
-  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^1 1 2^6 1 2^3 ... )",
-                 "2 2 2 2 1", draw, testtorun, true, false))
+  generate_path(path, // Test 17
+                {-8,8,6,0,-10,10,-7,0,2,2,-7,10,-2,3,-9,2,2,8,-6,5,0,
+                    8,3,2,2,10,-10,7,9,4,-10,0,10,6,-5,8,-5,6,3,6}, // pair of numbers: (turn, length of flat)
+                {3,0,-6,4,-8,6,10,1,-6,7,-5,0,5,1,2,5,-10,10,10,6,-7,6
+                    ,1,10,8,5,7,4,2,7,10,7,10,0,-8,6,7,0,1,0,-2,4,-4,9,4,9,0,18});                      
+  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "first random path on cube",
+                 "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
-  random=CGAL::Random(nbtests);
-  internal::generate_random_positive_bracket(path, 3, 8, 4, random); // Test 18
-  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^2 1 2^8 1 2^4 ... )",
+  generate_path(path, {1,3,0,6,9,4,1,10,-3,3}, // Test 18
+                {-3,4,-10,4,-3,0,-6,10,-10,4});
+  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "second random path on cube",
                    "1 2 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
-  random=CGAL::Random(nbtests);
-  internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 19
-
-  // DEBUG CODE
-  std::cout<<"[Test "<<nbtests<<"] "<<" initial path: "<<std::flush;
-  path.display();
-  path.display_pos_and_neg_turns();
-  std::cout<<std::endl;
-  // END OF DEBUG CODE
-  
-  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                 "1 2 2 2", draw, testtorun, true, false))
+  generate_path(path, {10,6,-4,5,-5,8,-2,2,4,9,5,3,8,4,-7,7}, // Test 19  
+                {6,0,-7,7,8,9,3,0,-9,1,-8,2,-3,1,4,8});
+  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "third random path on cube",
+                 "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 2 2 2 2 2 2",
+                 draw, testtorun, true, false))
   { res=false; }
-
-  random=CGAL::Random(nbtests);
-  internal::generate_random_positive_bracket(path, 5, 12, 8, random); // Test 20
-  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "(2^4 1 2^12 1 2^8 ...)",
-                   "1 2 2 2", draw, testtorun, true, false))
+    
+  generate_path(path, // Test 20
+                {-2,10,6,5,8,1,-2,10,3,8,-7,7,5,10,1,5,9,0,-5,2,-2,4,7,8,-9,9,
+                    -9,0,10,3,1,10,-4,8,5,4,-3,5,7,5,-4,7,-4,10,-8,8,2,0,2,1},
+                {6,0,0,9,-3,7,-10,10,6,7,1,9,10,7,2,6,1,0,-6,8,-8,8,9,9,-8,2
+                    ,-2,2,4,8,-2,6,3,10,-2,8,1,6,-7,5,7,6,5,5,6,7,-2,6,1,4});
+  if (!unit_test(path, FULL_SIMPLIFICATION, 0, "fourth random path on cube",
+                   "1 2 2 2 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
   return res;
