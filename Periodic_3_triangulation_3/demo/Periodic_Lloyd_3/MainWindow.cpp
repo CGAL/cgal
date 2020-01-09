@@ -16,8 +16,8 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
   scene.eight_copies=false;
   scene.two_dimensional=false;
 
-  QTimer = new QTimer(this);
-  connect(QTimer, SIGNAL(timeout()), this, SLOT(lloydStep()));
+  qtimer= new QTimer(this);
+  connect(qtimer, SIGNAL(timeout()), this, SLOT(lloydStep()));
 }
 
 void
@@ -65,9 +65,9 @@ MainWindow::togglePause(bool p)
 {
   if (p) {
     int speed = (100-(speedSlider->value()))*100;
-    QTimer->start(speed);
+    qtimer->start(speed);
   }
-  else QTimer->stop();
+  else qtimer->stop();
 }
 
 void
@@ -158,9 +158,9 @@ void
 MainWindow::speedChanged(int i)
 {
   int speed = (100-i)*100;
-  if (QTimer->isActive()) {
-     QTimer->stop();
-     QTimer->start(speed);
+  if (qtimer->isActive()) {
+     qtimer->stop();
+     qtimer->start(speed);
   }
 }
 
