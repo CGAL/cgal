@@ -18,7 +18,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/iterator.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>

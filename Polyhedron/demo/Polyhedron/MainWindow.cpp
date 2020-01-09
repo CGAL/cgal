@@ -38,7 +38,7 @@
 #include <QSpinBox>
 #include <stdexcept>
 #include <fstream>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QWidgetAction>
 #include <QJsonArray>
 #include <QSequentialIterable>

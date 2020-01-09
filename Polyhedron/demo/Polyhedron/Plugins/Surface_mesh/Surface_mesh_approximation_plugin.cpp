@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QMainWindow>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QObject>
 #include <QDockWidget>
@@ -303,7 +303,7 @@ void Polyhedron_demo_surface_mesh_approximation_plugin::on_buttonSeeding_clicked
   approx.set_metric(static_cast<VSA_wrapper::Metric>(
     ui_widget.comboMetric->currentIndex()));
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   approx.initialize_seeds(CGAL::parameters::seeding_method(
     static_cast<VSA::Seeding_method>(ui_widget.comboMethod->currentIndex()))
