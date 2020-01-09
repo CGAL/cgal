@@ -14,6 +14,7 @@
 //
 // $URL$
 // $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Rineau, Maxime Gimeno
 //
@@ -23,6 +24,9 @@
 
 #ifndef CGAL_TRIANGULATION_FILE_INPUT_3_H
 #define CGAL_TRIANGULATION_FILE_INPUT_3_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 #include <CGAL/basic.h>
 
@@ -87,9 +91,7 @@ std::istream& file_input(std::istream& is, Tr_tgt &tr,
   for (std::size_t j=0 ; j < m; j++) {
     Cell1 c;
     if(!(is >> c)) return is;
-    Cell_handle ch=tr.tds().create_cell(convert_cell(c));
-    C[j] = ch;
-    convert_cell(c, *ch);
+    convert_cell(c, *C[j]);
   }
 
   CGAL_triangulation_assertion( tr.is_valid(false) );
