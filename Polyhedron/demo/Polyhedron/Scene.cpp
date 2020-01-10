@@ -822,9 +822,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
       //blending
       program.bind();
       vaos[viewer]->bind();
-      viewer->glClearColor(background.redF(),
-                           background.greenF(),
-                           background.blueF(),
+      viewer->glClearColor((GLclampf)background.redF(),
+                           (GLclampf)background.greenF(),
+                           (GLclampf)background.blueF(),
                            0.0f);
       viewer->glDisable(GL_DEPTH_TEST);
       viewer->glClear(GL_COLOR_BUFFER_BIT);

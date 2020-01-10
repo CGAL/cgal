@@ -128,23 +128,23 @@ public:
                                .arg(d->position.y())
                                .arg(d->position.z()));    
     QPalette palette;
-    ambient=QColor(255*d->ambient.x(), 
-                   255*d->ambient.y(), 
-                   255*d->ambient.z());
+    ambient=QColor::fromRgbF(d->ambient.x(),
+                             d->ambient.y(),
+                             d->ambient.z());
     palette.setColor(QPalette::Button,ambient);
     ambientButton->setPalette(palette);
     ambientButton->setStyle(QStyleFactory::create("Fusion"));
     
-    diffuse=QColor(255*d->diffuse.x(), 
-                   255*d->diffuse.y(), 
-                   255*d->diffuse.z());
+    diffuse=QColor::fromRgbF(d->diffuse.x(),
+                             d->diffuse.y(),
+                             d->diffuse.z());
     palette.setColor(QPalette::Button,diffuse);
     diffuseButton->setPalette(palette);
     diffuseButton->setStyle(QStyleFactory::create("Fusion"));
     
-    specular=QColor(255*d->specular.x(), 
-                    255*d->specular.y(), 
-                    255*d->specular.z());
+    specular=QColor::fromRgbF(d->specular.x(),
+                              d->specular.y(),
+                              d->specular.z());
     palette.setColor(QPalette::Button,specular);
     specularButton->setPalette(palette);
     specularButton->setStyle(QStyleFactory::create("Fusion"));
@@ -256,15 +256,15 @@ void Viewer::doBindings()
                           1.0f);
 
   QString front_color = viewer_settings.value("front_color", QString("1.0,0.0,0.0")).toString();
-  d->front_color= QColor(255*front_color.split(",").at(0).toFloat(),
-                         255*front_color.split(",").at(1).toFloat(),
-                         255*front_color.split(",").at(2).toFloat(),
-                         1.0f);
+  d->front_color= QColor::fromRgbF(front_color.split(",").at(0).toFloat(),
+                                   front_color.split(",").at(1).toFloat(),
+                                   front_color.split(",").at(2).toFloat(),
+                                   1.0f);
   QString back_color = viewer_settings.value("back_color", QString("0.0,0.0,1.0")).toString();
-  d->back_color= QColor( 255*back_color.split(",").at(0).toFloat(),
-                         255*back_color.split(",").at(1).toFloat(),
-                         255*back_color.split(",").at(2).toFloat(),
-                         1.0f);
+  d->back_color= QColor::fromRgbF( back_color.split(",").at(0).toFloat(),
+                                   back_color.split(",").at(1).toFloat(),
+                                   back_color.split(",").at(2).toFloat(),
+                                   1.0f);
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
@@ -1770,7 +1770,7 @@ void Viewer::setLighting()
       msgBox->exec();
       return;
     }
-    double coords[3];
+    float coords[3];
     for(int j=0; j<3; ++j)
     {
       bool ok;
@@ -1792,9 +1792,9 @@ void Viewer::setLighting()
   //set ambient
   connect(dialog, &LightingDialog::s_ambient_changed,
           [this, dialog](){
-    d->ambient=QVector4D(dialog->ambient.redF(), 
-                         dialog->ambient.greenF(), 
-                         dialog->ambient.blueF(), 
+    d->ambient=QVector4D((float)dialog->ambient.redF(),
+                         (float)dialog->ambient.greenF(),
+                         (float)dialog->ambient.blueF(),
                          1.0f);
     update();
   });
@@ -1802,18 +1802,18 @@ void Viewer::setLighting()
   //set diffuse
   connect(dialog, &LightingDialog::s_diffuse_changed,
           [this, dialog](){
-    d->diffuse=QVector4D(dialog->diffuse.redF(), 
-                         dialog->diffuse.greenF(), 
-                         dialog->diffuse.blueF(), 
+    d->diffuse=QVector4D((float)dialog->diffuse.redF(),
+                         (float)dialog->diffuse.greenF(),
+                         (float)dialog->diffuse.blueF(),
                          1.0f);
     update();
   });
   //set specular
   connect(dialog, &LightingDialog::s_specular_changed,
           [this, dialog](){
-    d->specular=QVector4D(dialog->specular.redF() , 
-                         dialog->specular.greenF(), 
-                         dialog->specular.blueF() , 
+    d->specular=QVector4D((float)dialog->specular.redF(),
+                          (float)dialog->specular.greenF(),
+                          (float)dialog->specular.blueF(),
                          1.0f);
     update();
     
@@ -1823,8 +1823,8 @@ void Viewer::setLighting()
   connect(dialog->buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
           [this](){
     d->position = QVector4D(0,0,1,1);
-    d->ambient=QVector4D(77.0/255,77.0/255,77.0/255, 1.0);
-    d->diffuse=QVector4D(204.0/255,204.0/255,204.0/255,1.0);
+    d->ambient=QVector4D(77.0f/255,77.0f/255,77.0f/255, 1.0);
+    d->diffuse=QVector4D(204.0f/255,204.0f/255,204.0f/255,1.0);
     d->specular=QVector4D(0,0,0,1.0);
     d->spec_power = 51;    
     update();
