@@ -109,7 +109,7 @@ bool is_collinear_with_tolerance(const typename GeomTraits::Point_3& p, // va ==
 
   const FT sq_va_l = gt.compute_squared_distance_3_object()(p, pa);
   const FT sq_vb_l = gt.compute_squared_distance_3_object()(p, pb);
-  const FT sq_cos = 0.99999228397046306; // CGAL::square(std::cos(1/360));
+  const FT sq_cos = 0.99999228397046306; // CGAL::square(std::cos(1°));
 
   return (CGAL::square(sp) >= sq_va_l * sq_vb_l * sq_cos);
 }

@@ -315,7 +315,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
     const FT tolerance = get(tolerance_map_A, v);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Pos: " << v << " (" << get(vpm_A, v) << ")" << std::endl;
+    std::cout << "Pos (A): " << v << " (" << get(vpm_A, v) << ")" << std::endl;
 #endif
 
     Vertex_container nvc {{ h }};
@@ -342,7 +342,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
     const FT tolerance = get(tolerance_map_B, v);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Pos: " << v << " (" << get(vpm_B, v) << ")" << std::endl;
+    std::cout << "Pos (B): " << v << " (" << get(vpm_B, v) << ")" << std::endl;
 #endif
 
     Vertex_container nvc {{ h }};
@@ -524,8 +524,8 @@ std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     const Point& pa = get(vpm_A, target(uv_a->first.front(), tm_A));
     const Point& pb = get(vpm_B, target(uv_b->first.front(), tm_B));
-    std::cout << "Snapping " << pa << " to " << pb << " at dist: " << sp.sq_dist << std::endl;
-    std::cout << "#A: " << uv_a->first.size() << " #B: " << uv_b->first.size() << std::endl;
+    std::cout << "Snapping (" << pa << ") to (" << pb << ") at dist: " << sp.sq_dist << std::endl;
+    std::cout << "#verts A: " << uv_a->first.size() << " #verts B: " << uv_b->first.size() << std::endl;
 #endif
 
     snappable_vertices_pairs.emplace_back(uv_a, uv_b);
@@ -680,9 +680,9 @@ std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
 
         if(is_collinear_left && is_collinear_right) // #3
         {
-    #ifdef CGAL_PMP_SNAP_DEBUG
-          std::cout << va << " and " << vb << " are locked vertices" << std::endl;
-    #endif
+#ifdef CGAL_PMP_SNAP_DEBUG
+          std::cout << va << " (" << get(vpm_A, va) << ") and " << vb << " (" << get(vpm_B, vb) << ") are locked vertices" << std::endl;
+#endif
           *lockable_vps_out++ = std::make_pair(va, vb);
         }
       }

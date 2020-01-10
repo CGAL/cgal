@@ -296,13 +296,19 @@ public:
   {
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "~~~~ intersection with primitive: " << primitive.id() << std::endl;
+    std::cout << get(m_vpm_T, source(primitive.id(), m_tm_T)) << std::endl;
+    std::cout << get(m_vpm_T, target(primitive.id(), m_tm_T)) << std::endl;
 #endif
 
     halfedge_descriptor h = halfedge(primitive.id(), m_tm_T);
     if(is_border(h, m_tm_T))
       h = opposite(h, m_tm_T);
 
-    if(get(m_face_patch_map_T, face(h, m_tm_T)) != m_patch_id) // incompatible patches
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+      std::cout << "patches: " << get(m_face_patch_map_T, face(h, m_tm_T)) << " " << m_patch_id << std::endl;
+#endif
+
+    if(get(m_face_patch_map_T, face(h, m_tm_T)) != m_patch_id)
       return;
 
     const typename Primitive::Datum& s = primitive.datum(m_traits.shared_data());
@@ -313,6 +319,9 @@ public:
       // (because we cannot move the target point).
       if(!m_is_same_mesh)
       {
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+        std::cout << "This vertex is stuck because it is equal to a vertex on the target mesh" << std::endl;
+#endif
         m_closest_point_initialized = false;
         m_continue = false;
       }
@@ -334,10 +343,7 @@ public:
       CGAL::internal::Primitive_helper<AABBTraits>::get_datum(primitive, m_traits), query);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "tentative: " << primitive.id() << std::endl;
-    std::cout << get(m_vpm_T, source(primitive.id(), m_tm_T)) << std::endl;
-    std::cout << get(m_vpm_T, target(primitive.id(), m_tm_T)) << std::endl;
-    std::cout << "closest_point: " << new_closest_point << std::endl;
+    std::cout << "closest point to primitive: " << new_closest_point << std::endl;
 #endif
 
     const FT sq_ad_to_tentative_closest_pt = squared_anisotropic_distance(query, new_closest_point);
@@ -497,7 +503,7 @@ void find_splittable_edge(const VertexWithTolerance& vertex_with_tolerance,
             << "  on edge: " << traversal_traits.closest_primitive_id()
             << "  at sq distance " << gt.compute_squared_distance_3_object()(query, closest_p)
             << " with squared tolerance: " << sq_tolerance
-            << " && close enough? " << is_close_enough << ")" << std::endl;
+            << " && close enough? " << is_close_enough << std::endl;
 #endif
 
   if(!is_close_enough)
@@ -575,7 +581,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
                         TriangleMesh& tm_T,
                         VPMT vpm_T,
                         const GeomTraits& gt,
-                        const bool is_source_mesh_fixed)
+                        const bool is_source_mesh_fixed) // when snapping is B --> A and the mesh B is fixed
 {
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "split " << edges_to_split.size() << " edges" << std::endl;
@@ -803,7 +809,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
     vertices_to_snap.emplace_back(h, tolerance);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "Query: " << v << " (" << get(vpm_S, v) << "), tolerance: " << tolerance << std::endl;
+    std::cout << "Non-conformal query: " << v << " (" << get(vpm_S, v) << "), tolerance: " << tolerance << std::endl;
 #endif
   }
 
@@ -945,6 +951,11 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
                                const NamedParameters_A& np_A,
                                const NamedParameters_B& np_B)
 {
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout.precision(17);
+  std::cerr.precision(17);
+#endif
+
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor             face_descriptor;
@@ -1098,6 +1109,10 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   /// #3 (Two one-way vertex-edge snapping)
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << " ///////////// Two one-way vertex-edge snapping (A --> B) " << std::endl;
+#endif
+
   snapped_n += internal::snap_non_conformal_one_way<ConcurrencyTag>(
                  halfedge_range_A, tm_A, tolerance_map_A, vertex_patch_map_A, locked_vertices_A,
                  halfedge_range_B, tm_B, face_patch_map_B, locked_halfedges_B,
@@ -1110,6 +1125,10 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
 
   if(!is_self_snapping)
   {
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::cout << " ///////////// Two one-way vertex-edge snapping (B --> A) " << std::endl;
+#endif
+
     snapped_n += internal::snap_non_conformal_one_way<ConcurrencyTag>(
                    halfedge_range_B, tm_B, tolerance_map_B, vertex_patch_map_B, locked_vertices_B,
                    halfedge_range_A, tm_A, face_patch_map_A, locked_halfedges_A,
