@@ -60,6 +60,7 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/container/small_vector.hpp>
+#include <CGAL/IO/Triangulation_file_input.h>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/info_check.h>
@@ -2193,7 +2194,19 @@ public:
   bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid(Cell_handle c, bool verbose = false, int level = 0) const;
   bool is_valid_finite(Cell_handle c, bool verbose = false, int level=0) const;
+  
+  //IO
+  template <typename Tr_src, 
+            typename ConvertVertex,
+            typename ConvertCell>
+  std::istream& file_input(std::istream& is,
+                           ConvertVertex convert_vertex = ConvertVertex(),
+                           ConvertCell convert_cell = ConvertCell())
+  {
+    return CGAL::file_input<Tr_src, Self, ConvertVertex, ConvertCell>(is, *this, convert_vertex, convert_cell);
+  }
 };
+
 
 template < class GT, class Tds, class Lds >
 std::istream& operator>> (std::istream& is, Triangulation_3<GT, Tds, Lds>& tr)
