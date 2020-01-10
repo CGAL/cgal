@@ -25,7 +25,7 @@
 \cgalPkgManuals{Chapter_Surface_Mesh_Topology,PkgSurfaceMeshTopology}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.XX}
+\cgalPkgSince{5.1}
 \cgalPkgBib{cgal:dl-smtopology}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
