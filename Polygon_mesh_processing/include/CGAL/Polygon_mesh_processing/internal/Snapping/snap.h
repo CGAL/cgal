@@ -102,10 +102,12 @@ void simplify_range(HalfedgeRange& halfedge_range,
 
   typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
   typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type     Range_halfedges;
-  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm);
 
+  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm);
   for(halfedge_descriptor h : halfedge_range)
     put(range_halfedges, h, true);
+
+  const std::size_t initial_n = halfedge_range.size();
 
   std::set<halfedge_descriptor> edges_to_test(halfedge_range.begin(), halfedge_range.end());
 
@@ -154,9 +156,16 @@ void simplify_range(HalfedgeRange& halfedge_range,
   std::cout << "collapsed " << collapsed_n << " edges" << std::endl;
 #endif
 
-  // @FIXME
-  halfedge_range.clear();
-  border_halfedges(tm, std::back_inserter(halfedge_range));
+  std::vector<halfedge_descriptor> new_range;
+  new_range.reserve(halfedge_range.size());
+
+  for(halfedge_descriptor h : halfedges(tm))
+    if(get(range_halfedges, h))
+      new_range.push_back(h);
+
+  halfedge_range = HalfedgeRange(new_range.begin(), new_range.end());
+
+  CGAL_postcondition(halfedge_range.size() == initial_n - collapsed_n);
 }
 
 // Adapted from <CGAL/internal/AABB_tree/AABB_traversal_traits.h>
