@@ -17,7 +17,7 @@
 
 #include <CGAL/Optimal_bounding_box/internal/evolution.h>
 #include <CGAL/Optimal_bounding_box/internal/population.h>
-#include <CGAL/Optimal_bounding_box/Oriented_bounding_box_traits.h>
+#include <CGAL/Optimal_bounding_box/Oriented_bounding_box_traits_3.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -58,7 +58,6 @@ void construct_oriented_bounding_box(std::array<typename Traits::Point_3, 8>& ob
                                      const PointRange& points,
                                      const Traits& traits)
 {
-  typedef typename Traits::FT                                        FT;
   typedef typename Traits::Point_3                                   Point;
 
   // Construct the bbox of the transformed point set
@@ -209,12 +208,16 @@ void construct_oriented_bounding_box(Output& output,
 
 /// \ingroup PkgOptimalBoundingBox_Oriented_bounding_box
 ///
-/// See above.
+/// The function `oriented_bounding_box` computes an approximation of the <i>optimal bounding box</i>,
+/// which is defined as the rectangular box with smallest volume of all the rectangular boxes containing
+/// the input points.
 ///
-/// \tparam PointRange a model of `Range`. The value type may not be equal to the traits' `Point_3` type
+/// See \ref PkgOptimalBoundingBox_Oriented_bounding_box for more information.
+///
+/// \tparam PointRange a model of `Range`. The value type may not be equal to the type `%Point_3` of the traits class
 ///                    if a point map is provided via named parameters (see below) to access points.
-/// \tparam Output either the traits' `Aff_transformation_3` type,
-///                or `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type
+/// \tparam Output either the type `Aff_transformation_3` of the traits class,
+///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class
 /// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param points the input range
@@ -223,12 +226,12 @@ void construct_oriented_bounding_box(Output& output,
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{point_map}
-///     a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`. If this parameter is omitted,
-///     `CGAL::Identity_property_map<geom_traits::Point_3>` is used.
+///     a model of `ReadablePropertyMap` with value type the type`%Point_3` of the traits class.
+///     If this parameter is omitted, `CGAL::Identity_property_map<%Point_3>` is used.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits`.
-///     %Default is `CGAL::Oriented_bounding_box_traits<K>` where `K` is deduced from the point type.
+///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits_3`.
+///     %Default is `CGAL::Oriented_bounding_box_traits_3<K>` where `K` is deduced from the point type.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{use_convex_hull}
 ///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme
@@ -256,7 +259,7 @@ void oriented_bounding_box(const PointRange& points,
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef typename boost::range_value<PointRange>::type                                 Point;
   typedef typename CGAL::Kernel_traits<Point>::type                                     K;
-  typedef Oriented_bounding_box_traits<K>                                               Default_traits;
+  typedef Oriented_bounding_box_traits_3<K>                                             Default_traits;
 #else
   typedef void                                                                          Default_traits;
 #endif
@@ -288,11 +291,11 @@ void oriented_bounding_box(const PointRange& points,
 
 /// \ingroup PkgOptimalBoundingBox_Oriented_bounding_box
 ///
-/// Extracts the vertices of the mesh as a point range and calls the overload above.
+/// Extracts the vertices of the mesh as a point range and calls the overload using points as input.
 ///
 /// \tparam PolygonMesh a model of `VertexListGraph`
-/// \tparam Output either the traits' `Aff_transformation_3` type,
-///                or `std::array<Point, 8>` with `Point` being equivalent to the traits' `Point_3` type
+/// \tparam Output either the type `Aff_transformation_3` of the traits class,
+///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class
 /// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh
@@ -306,8 +309,8 @@ void oriented_bounding_box(const PointRange& points,
 ///     `CGAL::vertex_point_t` must be available in `PolygonMesh`
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
-///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits`.
-///     %Default is `CGAL::Oriented_bounding_box_traits<K>` where `K` is deduced from the point type.
+///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits_3`.
+///     %Default is `CGAL::Oriented_bounding_box_traits_3<K>` where `K` is deduced from the point type.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{use_convex_hull}
 ///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme

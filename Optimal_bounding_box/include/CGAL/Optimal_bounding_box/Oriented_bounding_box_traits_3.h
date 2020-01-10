@@ -28,17 +28,17 @@ namespace CGAL {
 
 /// \ingroup PkgOptimalBoundingBoxClasses
 ///
-/// The class `CGAL::Oriented_bounding_box_traits` is a traits type
-/// to be used with the functions `CGAL::oriented_bounding_box()`.
+/// The class `CGAL::Oriented_bounding_box_traits_3` is a traits type
+/// to be used with the overloads of the function `CGAL::oriented_bounding_box()`.
 /// It uses the third party library \ref thirdpartyEigen "Eigen", which must therefore
 /// be available on the system for this class to be used.
 ///
 /// \tparam K must be a model of `Kernel`
 ///
-/// \cgalModels `OrientedBoundingBoxTraits`
+/// \cgalModels `OrientedBoundingBoxTraits_3`
 ///
 template <typename K>
-class Oriented_bounding_box_traits
+class Oriented_bounding_box_traits_3
 {
 public:
   /// The field number type
@@ -60,7 +60,7 @@ private:
   typedef typename Matrix::EigenType                   EigenType;
 
 public:
-  /// Offers `construct_bbox_3_object()(const Point_3&)`
+  /// Returns a default-constructed construction object
   Construct_bbox_3 construct_bbox_3_object() const { return Construct_bbox_3(); }
 
   /// Performs QR-decomposition of matrix `m` to a unitary matrix and an upper triagonal

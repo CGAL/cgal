@@ -75,7 +75,7 @@ public:
     std::generate(group4.begin(), group4.end(), [&]{ return m_rng.get_int(0, im); });
 
     // crossover I
-    double bias = 0.1;
+    FT bias = FT(0.1);
 
     std::vector<Simplex> new_simplices(m);
 
@@ -84,10 +84,10 @@ public:
       std::array<Matrix, 4> offspring;
       for(int j=0; j<4; ++j)
       {
-        const double r = m_rng.get_double();
-        const double fitnessA = compute_fitness<Traits>(m_population[group1[i]][j], m_points);
-        const double fitnessB = compute_fitness<Traits>(m_population[group2[i]][j], m_points);
-        const double threshold = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
+        const FT r = FT(m_rng.get_double());
+        const FT fitnessA = compute_fitness<Traits>(m_population[group1[i]][j], m_points);
+        const FT fitnessB = compute_fitness<Traits>(m_population[group2[i]][j], m_points);
+        const FT threshold = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
 
         if(r < threshold)
           offspring[j] = m_population[group1[i]][j];
@@ -106,10 +106,10 @@ public:
       std::array<Matrix, 4> offspring;
       for(int j=0; j<4; ++j)
       {
-        const double fitnessA = compute_fitness<Traits>(m_population[group3[i]][j], m_points);
-        const double fitnessB = compute_fitness<Traits>(m_population[group4[i]][j], m_points);
-        const double lambda = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
-        const double rambda = 1 - lambda; // the 'l' in 'lambda' stands for left
+        const FT fitnessA = compute_fitness<Traits>(m_population[group3[i]][j], m_points);
+        const FT fitnessB = compute_fitness<Traits>(m_population[group4[i]][j], m_points);
+        const FT lambda = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
+        const FT rambda = 1 - lambda; // the 'l' in 'lambda' stands for left
 
         // combine information from A and B
         Matrix new_vertex(3, 3);
@@ -148,9 +148,9 @@ public:
     const std::size_t nelder_mead_iterations = 150;
 
     // stopping criteria prameters
-    double prev_fit_value = 0.;
-    double new_fit_value = 0.;
-    const double tolerance = 1e-9;
+    FT prev_fit_value = 0.;
+    FT new_fit_value = 0.;
+    const FT tolerance = 1e-9;
     int stale = 0;
 
     for(std::size_t t=0; t<generations; ++t)
@@ -180,7 +180,7 @@ public:
 #endif
 
       new_fit_value = fitness_map.get_best_fitness_value();
-      const double difference = new_fit_value - prev_fit_value;
+      const FT difference = new_fit_value - prev_fit_value;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       const Matrix& R_now = fitness_map.get_best();

@@ -40,11 +40,11 @@ that are used in this package.
 
 \cgalCRPSection{Concepts}
 
-- `OrientedBoundingBoxTraits`
+- `OrientedBoundingBoxTraits_3`
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Oriented_bounding_box_traits`
+- `CGAL::Oriented_bounding_box_traits_3`
 
 \cgalCRPSection{Methods}
 

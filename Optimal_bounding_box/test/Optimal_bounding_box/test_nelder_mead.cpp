@@ -7,7 +7,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::Point_3                                                  Point_3;
 
-typedef CGAL::Oriented_bounding_box_traits<K>                       Traits;
+typedef CGAL::Oriented_bounding_box_traits_3<K>                     Traits;
 typedef Traits::Matrix                                              Matrix;
 
 bool are_equal(double d1, double d2, double epsilon)
