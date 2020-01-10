@@ -288,7 +288,8 @@ put(CGAL::vertex_point_t p, pmp::SurfaceMesh& sm,
 } // namespace pmp
 
 namespace boost {
-  
+
+template <>
 struct edge_property_type<pmp::SurfaceMesh>
 {
   typedef boost::edge_weight_t type;
@@ -309,16 +310,15 @@ struct graph_has_property<pmp::SurfaceMesh, boost::edge_index_t>
 template <>
 struct graph_has_property<pmp::SurfaceMesh, boost::halfedge_index_t>
   : CGAL::Tag_true {};
-template <>
+
+  template <>
 struct graph_has_property<pmp::SurfaceMesh, boost::face_index_t>
   : CGAL::Tag_true {};
 
- 
 template <>
 struct graph_has_property<pmp::SurfaceMesh, CGAL::vertex_point_t>
   : CGAL::Tag_true {};
   
-
 template <>
 struct graph_has_property<pmp::SurfaceMesh, boost::edge_weight_t>
   : CGAL::Tag_true {};
