@@ -861,8 +861,8 @@ std::size_t snap_border_vertices(PolygonMesh& tm_A,
   std::vector<halfedge_descriptor> border_B;
   border_halfedges(tm_B, std::back_inserter(border_B));
 
-  return snap_vertex_range_onto_vertex_range(border_A, tm_A, tolerance_map_A,
-                                             border_B, tm_B, tolerance_map_B);
+  return snap_vertices(border_A, tm_A, tolerance_map_A,
+                       border_B, tm_B, tolerance_map_B);
 }
 
 template <typename PolygonMesh>
