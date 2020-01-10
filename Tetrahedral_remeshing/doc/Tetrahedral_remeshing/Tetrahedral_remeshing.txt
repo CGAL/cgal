@@ -31,7 +31,15 @@ preserve the input topology of the geometric complex.
 
 The tetrahedral remeshing algorithm improves the quality of dihedral angles,
 while targetting the user-defined uniform sizing field and preserving the
-topology of the feature complex.
+topology of the feature complex, as highlighted by Figure \cgalFigureRef{Remesh_liver}.
+
+
+\cgalFigureBegin{Remesh_liver, tetrahedral_remeshing_before_after.png}
+Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
+(Left) Before remeshing, dihedral angles were in the interval [1.3; 177.8].
+(Right) After remeshing and keeping the same density,
+dihedral angles were are the interval [9.5; 161.9].
+\cgalFigureEnd
 
 
 \section secTetRemeshingAPI API
@@ -74,7 +82,8 @@ of its subdomains is remeshed.
 Optional BGL named parameters can be used to get more precise
 control on the remeshing process. In this example, a triangulation
 with polyline features that should be preserved - though resampled -
-during the remeshing process.
+during the remeshing process. It would also be possible to preserve
+the input polyline features exactly.
 
 \cgalExample{Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp }
 
