@@ -167,6 +167,42 @@ struct property_map<pmp::SurfaceMesh, boost::edge_index_t >
   
 }
 
+namespace boost{
+
+template <typename T>
+struct property_traits<pmp::VertexProperty<T>> {
+  typedef pmp::Vertex key_type;
+  typedef T value_type;
+  typedef boost::lvalue_property_map_tag category;
+  typedef typename pmp::VertexProperty<T>::reference reference;
+};
+ 
+template <typename T>
+struct property_traits<pmp::HalfedgeProperty<T>> {
+  typedef pmp::Halfedge key_type;
+  typedef T value_type;
+  typedef boost::lvalue_property_map_tag category;
+  typedef typename pmp::HalfedgeProperty<T>::reference reference;
+};
+  
+template <typename T>
+struct property_traits<pmp::EdgeProperty<T>> {
+  typedef pmp::Edge key_type;
+  typedef T value_type;
+  typedef boost::lvalue_property_map_tag category;
+  typedef typename pmp::EdgeProperty<T>::reference reference;
+};
+  
+template <typename T>
+struct property_traits<pmp::FaceProperty<T>> {
+  typedef pmp::Face key_type;
+  typedef T value_type;
+  typedef boost::lvalue_property_map_tag category;
+  typedef typename pmp::FaceProperty<T>::reference reference;
+}; 
+}
+
+
 namespace pmp{
 
 CGAL::SM_index_pmap<CGAL::internal::PMP_edge>

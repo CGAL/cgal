@@ -91,10 +91,10 @@ struct Dynamic_property_map_deleter {
 
 template <typename Mesh, typename PM>
 struct Dynamic {
-  typedef typename PM::key_type key_type;
-  typedef typename PM::value_type value_type;
-  typedef typename PM::reference reference;
-  typedef typename PM::category category;
+  typedef typename boost::property_traits<PM>::key_type key_type;
+  typedef typename boost::property_traits<PM>::value_type value_type;
+  typedef typename boost::property_traits<PM>::reference reference;
+  typedef typename boost::property_traits<PM>::category category;
 
   typedef Dynamic_property_map_deleter<Mesh,PM> Deleter;
 
