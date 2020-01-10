@@ -18,14 +18,11 @@
 
 #include <CGAL/license/Surface_mesh.h>
 
-#include <CGAL/assertions.h>
 #include <pmp/SurfaceMesh.h>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/squared_distance_3.h>
+
+#include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
-
 #include <CGAL/boost/graph/properties.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <boost/cstdint.hpp>
@@ -39,7 +36,7 @@ class pmp_edge_weight_pmap
   typedef pmp::SurfaceMesh SM;
 public:
   typedef boost::readable_property_map_tag                category;
-  typedef double   value_type;
+  typedef double                                          value_type;
   typedef value_type                                      reference;
   typedef typename boost::graph_traits<pmp::SurfaceMesh>::edge_descriptor key_type;
 
@@ -101,15 +98,12 @@ get(boost::edge_weight_t, const SurfaceMesh& sm)
 }
 
 
-
 Scalar
 get(boost::edge_weight_t, const SurfaceMesh& sm,
     const boost::graph_traits<SurfaceMesh>::edge_descriptor& e)
 {
   return CGAL::pmp_edge_weight_pmap(sm)[e];
 }
-
-
   
 } 
 //
@@ -125,30 +119,32 @@ struct property_map<pmp::SurfaceMesh, boost::vertex_index_t >
 };
 }
 
-namespace pmp{
 
+namespace pmp{
 
 CGAL::SM_index_pmap<Vertex>
 get(const boost::vertex_index_t&, const SurfaceMesh&)
 {
   return CGAL::SM_index_pmap<Vertex>();
 }
+  
 }
+
 //
 // face_index
 //
 namespace boost{
  
- template<>
+template<>
 struct property_map<pmp::SurfaceMesh, boost::face_index_t >
 {
   typedef CGAL::SM_index_pmap<pmp::Face> type;
   typedef CGAL::SM_index_pmap<pmp::Face> const_type;
 };
+  
 }
 
 namespace pmp{
-
 
 CGAL::SM_index_pmap<Face>
 get(const boost::face_index_t&, const SurfaceMesh&)
@@ -156,17 +152,21 @@ get(const boost::face_index_t&, const SurfaceMesh&)
   return CGAL::SM_index_pmap<pmp::Face>();
 }
 }
+
 //
 // edge_index
 //
 namespace boost{
+  
 template <>
 struct property_map<pmp::SurfaceMesh, boost::edge_index_t >
 {
   typedef CGAL::SM_index_pmap<CGAL::internal::PMP_edge> type;
   typedef CGAL::SM_index_pmap<CGAL::internal::PMP_edge> const_type;
 };
+  
 }
+
 namespace pmp{
 
 CGAL::SM_index_pmap<CGAL::internal::PMP_edge>
@@ -175,33 +175,37 @@ get(const boost::edge_index_t&, const SurfaceMesh&)
   return CGAL::SM_index_pmap<CGAL::internal::PMP_edge>();
 }
 }
+
 //
 // halfedge_index
 //
 namespace boost{
+  
 template <>
 struct property_map<pmp::SurfaceMesh, boost::halfedge_index_t >
 {
   typedef CGAL::SM_index_pmap<pmp::Halfedge> type;
   typedef CGAL::SM_index_pmap<pmp::Halfedge> const_type;
 };
+  
 }
-namespace pmp{
 
+namespace pmp{
 
 CGAL::SM_index_pmap<Halfedge>
 get(const boost::halfedge_index_t&, const SurfaceMesh&)
 {
   return CGAL::SM_index_pmap<Halfedge>();
 }
+  
 }
+
 //
 // vertex_point
 //
-
 namespace pmp {
 
-  template <typename P>
+template <typename P>
 struct VertexPointMap {
   typedef P value_type;
   typedef P reference;
@@ -214,8 +218,7 @@ struct VertexPointMap {
   inline friend value_type get(const VertexPointMap& pm, key_type v)
   {
     const Point& p = pm.sm->position(v);
-    return P(p[0],p[1],p[2]);
-    
+    return P(p[0],p[1],p[2]);   
   }
   
   inline friend void put(const VertexPointMap& pm, key_type v, const value_type& p)
@@ -225,10 +228,12 @@ struct VertexPointMap {
   
   SurfaceMesh* sm;
 };
+  
 }
 
 
 namespace boost{
+  
 template <>
 struct property_map<pmp::SurfaceMesh, CGAL::vertex_point_t >
 {
@@ -237,6 +242,7 @@ struct property_map<pmp::SurfaceMesh, CGAL::vertex_point_t >
   typedef pmp::VertexPointMap<P> type;
   typedef type const_type;
 };
+  
 }
 
 
@@ -246,8 +252,6 @@ boost::property_map<SurfaceMesh, CGAL::vertex_point_t >::type
 get(CGAL::vertex_point_t, const SurfaceMesh& g) {
   return boost::property_map<SurfaceMesh, CGAL::vertex_point_t >::type(g);
 }
-
-  
 
 
 // get for intrinsic properties
@@ -273,7 +277,6 @@ CGAL_SM_INTRINSIC_PROPERTY(CGAL::Exact_predicates_inexact_constructions_kernel::
 // only available for vertex_point
 
 
-
 void
 put(CGAL::vertex_point_t p, pmp::SurfaceMesh& sm,
     typename boost::graph_traits< pmp::SurfaceMesh >::vertex_descriptor v,
@@ -283,6 +286,15 @@ put(CGAL::vertex_point_t p, pmp::SurfaceMesh& sm,
 }
 
 } // namespace pmp
+
+namespace boost {
+  
+struct edge_property_type<pmp::SurfaceMesh>
+{
+  typedef boost::edge_weight_t type;
+};
+ 
+}
 
 namespace CGAL {
 
@@ -315,8 +327,7 @@ struct graph_has_property<pmp::SurfaceMesh, boost::edge_weight_t>
 
 
 // dynamic properties
-namespace boost
-{
+namespace boost {
 
 template <typename T>
 struct property_map<pmp::SurfaceMesh, CGAL::dynamic_vertex_property_t<T> >

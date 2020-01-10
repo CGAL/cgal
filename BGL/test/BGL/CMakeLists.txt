@@ -6,8 +6,6 @@ project( BGL_Tests )
 
 
 
-
-
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
 
@@ -34,6 +32,11 @@ if ( OpenMesh_FOUND )
 else()
   message(STATUS "Examples that use OpenMesh will not be compiled.")
 endif()
+
+
+
+find_package(pmp QUIET)
+
 
 
 
@@ -108,3 +111,8 @@ if(OpenMesh_FOUND)
   target_link_libraries( test_Properties PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_bgl_read_write PRIVATE ${OPENMESH_LIBRARIES})
 endif()
+
+# if(PMP_FOUND)
+create_single_source_cgal_program( "graph_concept_PMP.cpp" )
+target_link_libraries (graph_concept_PMP PRIVATE pmp )
+# endif()

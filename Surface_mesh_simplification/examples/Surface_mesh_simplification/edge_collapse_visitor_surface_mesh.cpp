@@ -15,6 +15,7 @@
 
 typedef CGAL::Simple_cartesian<double>                                  Kernel;
 typedef Kernel::Point_3                                                 Point_3;
+typedef Kernel::Point_2                                                 Point_2;
 
 typedef CGAL::Surface_mesh<Point_3>                                     Surface_mesh;
 
@@ -24,73 +25,45 @@ typedef boost::graph_traits<Surface_mesh>::vertex_descriptor            vertex_d
 namespace SMS = CGAL::Surface_mesh_simplification;
 
 typedef SMS::Edge_profile<Surface_mesh>                                 Profile;
+typedef Surface_mesh::Property_map<vertex_descriptor, Point_2>          UV_pmap;
 
 // The following is a Visitor that keeps track of the simplification process.
-// In this example the progress is printed real-time and a few statistics are
-// recorded (and printed in the end).
-//
-struct Stats
-{
-  std::size_t collected = 0;
-  std::size_t processed = 0;
-  std::size_t collapsed = 0;
-  std::size_t non_collapsable = 0;
-  std::size_t cost_uncomputable = 0;
-  std::size_t placement_uncomputable = 0;
-};
+
+
 
 struct My_visitor : SMS::Edge_collapse_visitor_base<Surface_mesh>
 {
-  My_visitor(Stats* s) : stats(s) {}
-
-  // Called during the collecting phase for each edge collected.
-  void OnCollected(const Profile&, const boost::optional<double>&)
-  {
-    ++(stats->collected);
-    std::cerr << "\rEdges collected: " << stats->collected << std::flush;
-  }
-
-  // Called during the processing phase for each edge selected.
-  // If cost is absent the edge won't be collapsed.
-  void OnSelected(const Profile&,
-                  boost::optional<double> cost,
-                  std::size_t initial,
-                  std::size_t current)
-  {
-    ++(stats->processed);
-    if(!cost)
-      ++(stats->cost_uncomputable);
-
-    if(current == initial)
-      std::cerr << "\n" << std::flush;
-    std::cerr << "\r" << current << std::flush;
-  }
+  My_visitor(UV_pmap)
+    : uv_pmap(uv_pmap)
+  {}
 
   // Called during the processing phase for each edge being collapsed.
   // If placement is absent the edge is left uncollapsed.
-  void OnCollapsing(const Profile&,
+  void OnCollapsing(const Profile& prof,
                     boost::optional<Point> placement)
   {
-    if(!placement)
-      ++(stats->placement_uncomputable);
-  }
-
-  // Called for each edge which failed the so called link-condition,
-  // that is, which cannot be collapsed because doing so would
-  // turn the surface mesh into a non-manifold.
-  void OnNonCollapsable(const Profile&)
-  {
-    ++(stats->non_collapsable);
+      if (placement) {
+        p0 = prof.p0();
+        p1 = prof.p1();
+        vertex_descriptor v0 = prof.v0();
+        vertex_descriptor v1 = prof.v1();
+        p0_2 = get(uv_pmap, v0);
+        p1_2 = get(uv_pmap, v1);
+        p_2 = CGAL::midpoint(p0_2,p1_2);
+      }
   }
 
   // Called after each edge has been collapsed
-  void OnCollapsed(const Profile&, vertex_descriptor)
+  void OnCollapsed(const Profile&, vertex_descriptor vd)
   {
-    ++(stats->collapsed);
+    put(uv_pmap, vd, p_2);
   }
 
-  Stats* stats;
+  UV_pmap uv_pmap;
+  Point_3 p0, p1;
+  Point_2 p0_2, p1_2, p_2;
 };
+
 
 int main(int argc, char** argv)
 {
@@ -114,31 +87,15 @@ int main(int argc, char** argv)
   const double ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
   SMS::Count_ratio_stop_predicate<Surface_mesh> stop(ratio);
 
-  Stats stats;
-  My_visitor vis(&stats);
+  UV_pmap uv_pmap = surface_mesh.add_property_map<vertex_descriptor, Point_2>("v:uv").first;
+  
 
-  // The index maps are not explicitelty passed as in the previous
-  // example because the surface mesh items have a proper id() field.
-  // On the other hand, we pass here explicit cost and placement
-  // function which differ from the default policies, ommited in
-  // the previous example.
+  My_visitor vis(uv_pmap);
+
+
   int r = SMS::edge_collapse(surface_mesh, stop, CGAL::parameters::visitor(vis));
 
-  std::cout << "\nEdges collected: "  << stats.collected
-            << "\nEdges proccessed: " << stats.processed
-            << "\nEdges collapsed: "  << stats.collapsed
-            << std::endl
-            << "\nEdges not collapsed due to topological constraints: "  << stats.non_collapsable
-            << "\nEdge not collapsed due to cost computation constraints: "  << stats.cost_uncomputable
-            << "\nEdge not collapsed due to placement computation constraints: " << stats.placement_uncomputable
-            << std::endl;
-
-  std::cout << "\nFinished!\n" << r << " edges removed.\n"
-            << surface_mesh.number_of_edges() << " final edges.\n";
-
-  std::ofstream os(argc > 3 ? argv[3] : "out.off");
-  os.precision(17);
-  os << surface_mesh;
+ 
 
   return EXIT_SUCCESS;
 }

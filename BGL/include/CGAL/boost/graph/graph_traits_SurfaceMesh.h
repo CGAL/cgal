@@ -18,7 +18,7 @@
 
 // include this to avoid a VC15 warning
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
+#include <CGAL/boost/graph/properties.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
@@ -29,6 +29,42 @@
 #include <pmp/SurfaceMesh.h>
 #include <CGAL/assertions.h>
 
+namespace std {
+
+template<>
+struct iterator_traits<pmp::SurfaceMesh::VertexIterator> {
+  typedef int difference_type;
+  typedef pmp::Vertex value_type;
+  typedef const pmp::Vertex& reference;
+  typedef pmp::Vertex* pointer;
+  typedef std::random_access_iterator_tag iterator_category;
+};
+  
+template<>
+struct iterator_traits<pmp::SurfaceMesh::EdgeIterator> {
+  typedef int difference_type;
+  typedef pmp::Edge value_type;
+  typedef const pmp::Edge& reference;
+  typedef pmp::Edge* pointer;
+  typedef std::random_access_iterator_tag iterator_category;
+};
+template<>
+struct iterator_traits<pmp::SurfaceMesh::HalfedgeIterator> {
+  typedef int difference_type;
+  typedef pmp::Halfedge value_type;
+  typedef const pmp::Halfedge& reference;
+  typedef pmp::Halfedge* pointer;
+  typedef std::random_access_iterator_tag iterator_category;
+};
+template<>
+struct iterator_traits<pmp::SurfaceMesh::FaceIterator> {
+  typedef int difference_type;
+  typedef pmp::Face value_type;
+  typedef const pmp::Face& reference;
+  typedef pmp::Face* pointer;
+  typedef std::random_access_iterator_tag iterator_category;
+};
+}
 
 
 namespace CGAL { namespace internal {
