@@ -1,26 +1,19 @@
 // Copyright (c) 1997-2010  INRIA Sophia-Antipolis (France).
-// Copyright (c) 2011       GeometryFactory Sarl (France)
+// Copyright (c) 2011, 2020 GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you may redistribute it under
-// the terms of the Q Public License version 1.0.
-// See the file LICENSE.QPL distributed with CGAL.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Laurent Rineau, Maxime Gimeno
 //
+// Author(s)     : Laurent Rineau, Maxime Gimeno
 
 // Adapted from operator>>(std::istream&, Triangulation_3&) from
 // <CGAL/Triangulation_3.h>
+
 
 #ifndef CGAL_TRIANGULATION_FILE_INPUT_3_H
 #define CGAL_TRIANGULATION_FILE_INPUT_3_H
