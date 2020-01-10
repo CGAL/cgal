@@ -161,6 +161,7 @@ public:
   // Graph
   typedef pmp::Vertex                                        vertex_descriptor;
   typedef pmp::Point                                         vertex_property_type;
+  typedef pmp::Scalar                                        edge_property_type;                         
   typedef typename CGAL::internal::PMP_edge                  edge_descriptor;
   typedef boost::undirected_tag                              directed_category;
   typedef boost::disallow_parallel_edge_tag                  edge_parallel_category; 
