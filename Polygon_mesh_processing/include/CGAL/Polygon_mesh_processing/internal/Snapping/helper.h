@@ -22,6 +22,20 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
+template <typename VertexRange,
+          typename HalfedgeOutputIterator,
+          typename PolygonMesh>
+void vertices_as_halfedges(const VertexRange& vertex_range,
+                           const PolygonMesh& pmesh,
+                           HalfedgeOutputIterator out)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
+
+  for(vertex_descriptor v : vertex_range)
+    *out++ = halfedge(v, pmesh);
+}
+
 // Assigns at each vertex the 'tolerance' value as tolerance, but bounded by a percentage of the length of its shortest incident edge
 template <typename HalfedgeRange,
           typename ToleranceMap,
