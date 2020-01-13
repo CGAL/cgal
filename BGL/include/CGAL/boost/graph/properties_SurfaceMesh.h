@@ -323,6 +323,7 @@ put(CGAL::vertex_point_t p, pmp::SurfaceMesh& sm,
 
 } // namespace pmp
 
+#if 0
 namespace boost {
 
 template <>
@@ -332,6 +333,7 @@ struct edge_property_type<pmp::SurfaceMesh>
 };
  
 }
+#endif
 
 namespace CGAL {
 

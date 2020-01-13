@@ -8,7 +8,7 @@ find_package(pmp)
 if ( NOT PMP_FOUND )
 
   message(STATUS "This project requires the PMP library, and will not be compiled.")
-  return()  
+#  return()  
 
 endif()
 
@@ -23,6 +23,11 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
+find_package(Eigen3 3.2.0)
+if (EIGEN3_FOUND)
+  # Executables that require Eigen 3.2
+  include( ${EIGEN3_USE_FILE} )
+endif()
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -38,4 +43,4 @@ endif()
 
 create_single_source_cgal_program( "bgl_pmp.cpp" )
 
-target_link_libraries(bgl_pmp pmp)
+target_link_libraries(bgl_pmp PRIVATE pmp)

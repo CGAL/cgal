@@ -35,7 +35,7 @@ void concept_check_polyhedron() {
   boost::function_requires< CGAL::MutableFaceGraphConcept<Sm> >();
   
   // this uses some internal boost concepts, better than nothing
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, edge_descriptor,     boost::edge_weight_t> >();
+//  boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, edge_descriptor,     boost::edge_weight_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, vertex_descriptor,   boost::vertex_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<Sm, edge_descriptor,     boost::edge_index_t> >();
   //boost::function_requires< boost::concepts::PropertyGraphConcept <Sm, vertex_descriptor,   boost::vertex_point_t> >();

@@ -160,8 +160,8 @@ private:
 public:
   // Graph
   typedef pmp::Vertex                                        vertex_descriptor;
-  typedef pmp::Point                                         vertex_property_type;
-  typedef pmp::Scalar                                        edge_property_type;                         
+  //typedef pmp::Point                                         vertex_property_type;
+  //typedef boost::edge_weight_t                               edge_property_type;                         
   typedef typename CGAL::internal::PMP_edge                  edge_descriptor;
   typedef boost::undirected_tag                              directed_category;
   typedef boost::disallow_parallel_edge_tag                  edge_parallel_category; 
@@ -343,16 +343,29 @@ out_edges(typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor v,
   return CGAL::make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
+std::pair<
+  typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor,
+  bool
+>
+halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor u,
+         typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor v,
+         const pmp::SurfaceMesh& sm);
 
-template<typename P>
+  
+typename boost::graph_traits<pmp::SurfaceMesh >::edge_descriptor
+edge(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
+     const pmp::SurfaceMesh& sm);
+
+    
 std::pair<typename boost::graph_traits<pmp::SurfaceMesh >::edge_descriptor,
           bool>
 edge(typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor u, 
      typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor v, 
      const pmp::SurfaceMesh& sm) {
-  typename boost::graph_traits<pmp::SurfaceMesh >::edge_descriptor 
-    he(sm.halfedge(u, v));
-  return std::make_pair(he, he.is_valid());
+
+  std::pair<typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor,bool> res = halfedge(u,v,sm);
+
+  return std::make_pair(edge(res.first,sm), res.second);
 }
 
 
@@ -410,8 +423,6 @@ halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor v,
   return sm.opposite_halfedge(sm.halfedge(v));
 }
 
-#if 0
-  
 
 std::pair<
   typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor,
@@ -421,11 +432,18 @@ halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor u,
          typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor v,
          const pmp::SurfaceMesh& sm)
 {
-  typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h = sm.halfedge(u, v);
-  return std::make_pair(h, h.is_valid());
+  pmp::SurfaceMesh::HalfedgeAroundVertexCirculator c(&sm,u), done;
+  if(c){
+    do {
+      if(target(*c,sm)==v){
+        return std::make_pair(*c,true);
+      }
+      ++c;
+    }while(c != done);
+  }
+  return std::make_pair(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor(),false);
 }
 
-#endif
 
 //
 // HalfedgeListGraph
@@ -450,18 +468,18 @@ num_halfedges(const pmp::SurfaceMesh& sm)
 //
 // MutableHalfedgeGraph
 //
-template<typename P>
+
 void
-set_next_halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h1, 
-                  typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h2,
-                  pmp::SurfaceMesh& sm)
+set_next(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h1, 
+         typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h2,
+         pmp::SurfaceMesh& sm)
 {
-  sm.set_next(h1, h2);
+  sm.set_next_halfedge(h1, h2);
 }
 
 
 
-template<typename P>
+
 void
 set_target(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
            typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor v,
@@ -471,7 +489,7 @@ set_target(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor 
 }
 
 
-template<typename P>
+
 void
 set_halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor v,
              typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
@@ -481,25 +499,26 @@ set_halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor 
 }
 
 
-template<typename P>
+
 void
 collect_garbage(pmp::SurfaceMesh& sm)
 {
   sm.garbage_collection();
 }
 
-template<typename P>
+
 typename boost::graph_traits<pmp::SurfaceMesh >::edge_descriptor
 add_edge(pmp::SurfaceMesh& sm)
 {
-  return sm.edge(sm.add_edge());
+  assert(false);
+  return boost::graph_traits<pmp::SurfaceMesh >::edge_descriptor();
 }
 
 
 //
 // FaceGraph
 //
-template<typename P>
+
 typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor
 halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::face_descriptor f,
      const pmp::SurfaceMesh& sm) 
@@ -507,7 +526,7 @@ halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::face_descriptor f,
   return sm.halfedge(f);
 }
   
-template<typename P>
+
 typename boost::graph_traits<pmp::SurfaceMesh >::face_descriptor
 face(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
      const pmp::SurfaceMesh& sm) 
@@ -520,7 +539,7 @@ face(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
 //
 // MutableFaceGraph
 //
-template<typename P>
+
 void
 set_face(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
          typename boost::graph_traits<pmp::SurfaceMesh >::face_descriptor f,
@@ -529,8 +548,7 @@ set_face(typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
   sm.set_face(h, f);
 }
 
-  
-template<typename P>
+
 void
 set_halfedge(typename boost::graph_traits<pmp::SurfaceMesh >::face_descriptor f,
              typename boost::graph_traits<pmp::SurfaceMesh >::halfedge_descriptor h,
@@ -561,18 +579,17 @@ faces(const pmp::SurfaceMesh& sm)
 
 typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor
 add_vertex(pmp::SurfaceMesh& sm) {
-    typename boost::graph_traits<pmp::SurfaceMesh >::vertex_property_type p;
+    pmp::Point p;
   return sm.add_vertex(p);
 }
 
 
 typename boost::graph_traits<pmp::SurfaceMesh >::vertex_descriptor
-add_vertex(const typename boost::graph_traits<pmp::SurfaceMesh >::vertex_property_type& p, pmp::SurfaceMesh& sm) {
+add_vertex(const pmp::Point& p, pmp::SurfaceMesh& sm) {
   return sm.add_vertex(p);
 }
 
 // MutableGraph
-template<typename P>
 void
 reserve(pmp::SurfaceMesh& sm,
         typename boost::graph_traits< pmp::SurfaceMesh >::vertices_size_type nv,

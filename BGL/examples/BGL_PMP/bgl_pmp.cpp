@@ -2,53 +2,24 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <pmp/SurfaceMesh.h>
 
-namespace std {
-
-template<>
-struct iterator_traits<pmp::SurfaceMesh::VertexIterator> {
-  typedef int difference_type;
-  typedef pmp::Vertex value_type;
-  typedef const pmp::Vertex& reference;
-  typedef pmp::Vertex* pointer;
-  typedef std::random_access_iterator_tag iterator_category;
-};
-  
-template<>
-struct iterator_traits<pmp::SurfaceMesh::EdgeIterator> {
-  typedef int difference_type;
-  typedef pmp::Edge value_type;
-  typedef const pmp::Edge& reference;
-  typedef pmp::Edge* pointer;
-  typedef std::random_access_iterator_tag iterator_category;
-};
-template<>
-struct iterator_traits<pmp::SurfaceMesh::HalfedgeIterator> {
-  typedef int difference_type;
-  typedef pmp::Halfedge value_type;
-  typedef const pmp::Halfedge& reference;
-  typedef pmp::Halfedge* pointer;
-  typedef std::random_access_iterator_tag iterator_category;
-};
-template<>
-struct iterator_traits<pmp::SurfaceMesh::FaceIterator> {
-  typedef int difference_type;
-  typedef pmp::Face value_type;
-  typedef const pmp::Face& reference;
-  typedef pmp::Face* pointer;
-  typedef std::random_access_iterator_tag iterator_category;
-};
-}
-
 #include <CGAL/boost/graph/graph_traits_SurfaceMesh.h>
 #include <CGAL/boost/graph/properties_SurfaceMesh.h>
 
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_3 Point_3;
+#include <CGAL/boost/graph/helpers.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::Point_3 Point_3;
+
+typedef boost::graph_traits<pmp::SurfaceMesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<pmp::SurfaceMesh>::edge_descriptor edge_descriptor;
 typedef boost::graph_traits<pmp::SurfaceMesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<pmp::SurfaceMesh>::face_descriptor face_descriptor;
 
 int main()
 {
@@ -100,5 +71,33 @@ int main()
   V_index_map dvim;
   dvim = get(CGAL::dynamic_vertex_property_t<int>(), sm);
 
+
+  // Incrementally fill the holes
+  unsigned int nb_holes = 0;
+  for(halfedge_descriptor h : halfedges(sm))
+  {
+    if(CGAL::is_border(h,sm))
+    {
+      std::vector<face_descriptor>  patch_facets;
+      std::vector<vertex_descriptor> patch_vertices;
+      bool success = std::get<0>(
+        CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(
+                  sm,
+                  h,
+                  std::back_inserter(patch_facets),
+                  std::back_inserter(patch_vertices),
+     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, sm)).
+                  geom_traits(Kernel())) );
+
+      CGAL_assertion(CGAL::is_valid_polygon_mesh(sm));
+
+      std::cout << "* FILL HOLE NUMBER " << ++nb_holes << std::endl;
+      std::cout << "  Number of facets in constructed patch: " << patch_facets.size() << std::endl;
+      std::cout << "  Number of vertices in constructed patch: " << patch_vertices.size() << std::endl;
+      std::cout << "  Is fairing successful: " << success << std::endl;
+    }
+  }
+
+  
   return 0;
 }
