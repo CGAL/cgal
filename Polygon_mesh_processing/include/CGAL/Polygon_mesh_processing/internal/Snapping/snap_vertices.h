@@ -877,7 +877,7 @@ std::size_t snap_border_vertices(PolygonMesh& tm_A,
   std::vector<halfedge_descriptor> border_vertices_B;
   border_halfedges(tm_B, std::back_inserter(border_vertices_B));
 
-  return snap_border_vertices_onto_vertex_range(border_vertices_A, tm_A, border_vertices_B, tm_B);
+  return snap_vertices(border_vertices_A, tm_A, border_vertices_B, tm_B);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
