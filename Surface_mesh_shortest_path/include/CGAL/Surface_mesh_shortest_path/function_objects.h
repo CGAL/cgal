@@ -622,7 +622,7 @@ public:
   {
     FT angle_sum = 0;
 
-    for(halfedge_descriptor h : halfedges_around_target(v, g))
+    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, g))
     {
       if(is_border(h, g))
         continue;
