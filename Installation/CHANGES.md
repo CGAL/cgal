@@ -27,6 +27,12 @@ Release date: June 2020
     does not allow any intersection, except for the configuration of two constraints having a single
     common endpoints, for convience.
 
+### 3D Triangulations
+-   The free function `CGAL::file_input()` and the member function `CGAL::Triangulation_3::file_input()` 
+    have been added. The first allows to load a `Triangulation_3` from an input stream, using functors to create vertices and cells.
+    The second is simply the member function version of the first one. 
+
+
 ### dD Spatial Searching
 
 -   Improved the performance of the kd-tree in some cases:
