@@ -3,19 +3,15 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
+#include <CGAL/Surface_mesh.h>
+
 #include <CGAL/remove_outliers.h>
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 
-#include <CGAL/Poisson_reconstruction_function.h>
-
-#include <CGAL/Surface_mesh_default_triangulation_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Poisson_implicit_surface_3.h>
-#include <CGAL/IO/output_surface_facets_to_polyhedron.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/poisson_surface_reconstruction.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Scale_space_reconstruction_3/Jet_smoother.h>
@@ -29,10 +25,10 @@
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
-typedef Kernel::Point_3 Point;
-typedef Kernel::Vector_3 Vector;
-typedef Kernel::Sphere_3 Sphere;
-typedef CGAL::Point_set_3<Point, Vector> Point_set;
+typedef Kernel::Point_3 Point_3;
+typedef Kernel::Vector_3 Vector_3;
+typedef Kernel::Sphere_3 Sphere_3;
+typedef CGAL::Point_set_3<Point_3, Vector_3> Point_set;
 
 int main(int argc, char*argv[])
 {
@@ -44,22 +40,22 @@ int main(int argc, char*argv[])
   if (argc < 2)
   {
     std::cerr << "Usage: " << argv[0] << " [input.xyz/off/ply] (output.off)" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   const char* input_file = argv[1];
-  std::ifstream stream (input_file);
+  std::ifstream stream (input_file, std::ios_base::binary);
   if (!stream)
   {
     std::cerr << "Error: cannot read file " << input_file << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   stream >> points;
   
   std::cout << "Read " << points.size () << " point(s)" << std::endl;
   if (points.empty())
-    return -1;
+    return EXIT_FAILURE;
 
   //! [Reading input]
   ///////////////////////////////////////////////////////////////////
@@ -72,7 +68,7 @@ int main(int argc, char*argv[])
                          points.parameters().threshold_percent (5.0)); // Percentage of points to remove
 
   std::cout << points.number_of_removed_points()
-	    << " point(s) are outliers." << std::endl;
+            << " point(s) are outliers." << std::endl;
 
   // Applying point set processing algorithm to a CGAL::Point_set_3
   // object does not erase the points from memory but place them in
@@ -92,7 +88,7 @@ int main(int argc, char*argv[])
   CGAL::grid_simplify_point_set (points, 2. * spacing);
 
   std::cout << points.number_of_removed_points()
-	    << " point(s) removed after simplification." << std::endl;
+            << " point(s) removed after simplification." << std::endl;
 
   points.collect_garbage();
 
@@ -129,73 +125,22 @@ int main(int argc, char*argv[])
       
     ///////////////////////////////////////////////////////////////////
     //! [Poisson reconstruction]
-      
-    typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;      
-    Poisson_reconstruction_function function
-      (points.begin(), points.end(), points.point_map(), points.normal_map());
 
-    if ( ! function.compute_implicit_function() )
-    {
-      std::cerr << "Error: cannot compute implicit function.";
-      return EXIT_FAILURE;
-    }
+    CGAL::Surface_mesh<Point_3> output_mesh;
+    CGAL::poisson_surface_reconstruction_delaunay
+      (points.begin(), points.end(),
+       points.point_map(), points.normal_map(),
+       output_mesh, spacing);
 
     //! [Poisson reconstruction]
     ///////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////
-    //! [Surface mesh generation]
-      
-    typedef CGAL::Surface_mesh_default_triangulation_3 STr;
-    typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-    typedef CGAL::Poisson_implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
-
-    // Gets one point inside the implicit surface
-    // and computes implicit function bounding sphere radius.
-    Point inner_point = function.get_inner_point();
-    Sphere bsphere = function.bounding_sphere();
-    FT radius = std::sqrt(bsphere.squared_radius());
-
-    FT sm_angle = 20.0; // Min triangle angle (degrees).
-    FT sm_radius = 100; // Max triangle size w.r.t. point set average spacing.
-    FT sm_distance = 0.25; // Approximation error w.r.t. point set average spacing.
-      
-    // Defines the implicit surface: requires defining a
-    // conservative bounding sphere centered at inner point.
-    FT sm_sphere_radius = 1.5 * radius;
-    FT sm_dichotomy_error = sm_distance * spacing/1000.0;
-    // Dichotomy error must be << sm_distance
-      
-    Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
-                      sm_dichotomy_error/sm_sphere_radius);
-
-    // Defines surface mesh generation criteria
-    CGAL::Surface_mesh_default_criteria_3<STr>
-      criteria(sm_angle,  // Min triangle angle (degrees)
-               sm_radius * spacing,  // Max triangle size
-               sm_distance * spacing); // Approximation error
-
-    // Generates surface mesh with manifold option
-    STr tr; // 3D Delaunay triangulation for surface mesh generation
-    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
-
-    //! [Surface mesh generation]
-    ///////////////////////////////////////////////////////////////////
-      
     ///////////////////////////////////////////////////////////////////      
     //! [Output poisson]
 
-    CGAL::Polyhedron_3<Kernel> output_mesh;
-    // Convert to Polyhedron
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
-      
-    std::ofstream f ("out.off");
-    f << output_mesh;
+    std::ofstream f ("out.ply", std::ios_base::binary);
+    CGAL::set_binary_mode (f);
+    CGAL::write_ply (f, output_mesh);
     f.close ();
 
     //! [Output poisson]
@@ -206,7 +151,7 @@ int main(int argc, char*argv[])
     ///////////////////////////////////////////////////////////////////      
     //! [Advancing front reconstruction]
       
-    typedef CGAL::cpp11::array<std::size_t,3> Facet; // Triple of indices
+    typedef std::array<std::size_t, 3> Facet; // Triple of indices
 
     std::vector<Facet> facets;
 
@@ -227,14 +172,14 @@ int main(int argc, char*argv[])
   
     f << "OFF" << std::endl << points.size () << " " << facets.size () << " 0" << std::endl;
 
-    for (typename Point_set::iterator it = points.begin(); it != points.end(); ++ it)
-      f << points.point(*it) << std::endl;
+    for (Point_set::Index idx : points)
+      f << points.point(idx) << std::endl;
 
-    for (std::size_t i = 0; i < facets.size (); ++ i)
+    for (const Facet& facet : facets)
     {
       f << "3";
-      for (std::size_t j = 0; j < 3; ++ j)
-        f << " " << facets[i][j];
+      for (const std::size_t& idx : facet)
+        f << " " << idx;
       f << std::endl;
     }
 
@@ -264,13 +209,11 @@ int main(int argc, char*argv[])
     f << "OFF" << std::endl << points.size () << " "
       << reconstruct.number_of_facets() << " 0" << std::endl;
 
-    for (typename Point_set::iterator it = points.begin(); it != points.end(); ++ it)
-      f << points.point(*it) << std::endl;
+    for (Point_set::Index idx : points)
+      f << points.point (idx) << std::endl;
 
-    typedef typename CGAL::Scale_space_surface_reconstruction_3<Kernel>::Facet_iterator Facet_iterator;
-    for (Facet_iterator it = reconstruct.facets_begin();
-         it != reconstruct.facets_end(); ++it)
-      f << "3 "<< *it << std::endl;
+    for (const auto& facet : CGAL::make_range (reconstruct.facets_begin(), reconstruct.facets_end()))
+      f << "3 "<< facet << std::endl;
 
     f.close ();
 
