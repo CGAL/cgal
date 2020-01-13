@@ -48,7 +48,7 @@ best suited to each problem:
 | Is the output always closed?             | Yes     | No               | No               |
 | Is the output always smooth?             | Yes     | No               | No               |
 | Is the output always manifold?           | Yes     | Yes              | Optional         |
-| Is the output always orientable?         | Yes     | Yes              | No               |
+| Is the output always orientable?         | Yes     | Yes              | Optional         |
 </center>
 
 \cgalFigureBegin{TutorialsReconstructionFigComparisons, compare_reconstructions.png}
@@ -83,13 +83,15 @@ container as input and use property maps to access the points (and the
 normals when they are required). Points are typically stored in plain
 text format (denoted as 'XYZ' format) where each point is separated by
 a newline character and each coordinate separated by a white
-space. Other formats available are 'OFF' and 'PLY'. \cgal provides
-functions to read such formats:
+space. Other formats available are 'OFF', 'PLY' and 'LAS'. \cgal
+provides functions to read such formats:
 
 - `read_xyz_points()`
 - `read_off_points()`
 - `read_ply_points()`
 - `read_ply_points_with_properties()` to read additional PLY properties
+- `read_las_points()`
+- `read_las_points_with_properties()` to read additional LAS properties
 
 \cgal also provides a dedicated container `CGAL::Point_set_3` to
 handle point sets with additional properties such as normal
@@ -115,11 +117,8 @@ without any preprocessing.
 \cgalFigureBegin{TutorialsReconstructionFigPreprocessing, reconstruction_preproc.png}
 
 __Comparison of advancing front reconstruction output using different
-preprocessing on the same input (point set, mesh and mesh without
-edges).__
-
-From top to bottom: unaltered point cloud; smoothed point cloud (jet
-smoothing); simplified point cloud (grid simplification).
+preprocessing on the same input. Smooth point cloud was generated
+using _jet smoothing_; simplified point cloud was generated using _grid simplification_.__
 
 \cgalFigureEnd
 
@@ -208,17 +207,7 @@ surface is expected to interpolate the input points. On the contrary,
 it performs well if the aim is to approximate a noisy point cloud with
 a smooth surface.
 
-Notice that it does not generate directly a mesh but computes an
-_implicit function_ (which can later be used to generate a mesh):
-
 \snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Poisson reconstruction
-
-To produce a mesh out of this implicit function, the
-\ref Chapter_3D_Surface_Mesh_Generation "CGAL Surface Mesh Generator"
-\cgalCite{cgal:ry-gsddrm-06} can be used:
-
-\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Surface mesh generation
-
 
 \subsection TutorialsReconstruction_reconstruction_advancing Advancing Front
 
@@ -244,20 +233,15 @@ a simple example:
 Scale space reconstruction aims at producing a surface which
 interpolates the input points (interpolant) while offering some
 robustness to noise. More specifically, it first applies several times
-a smoothing filter to the input point set to produce a scale space;
-then, the smoothest scale is meshed using an alpha shape; finally, the
-resulting connectivity between smoothed points is propagated to the
-original raw input point set. This method is the right choice if the
-input point cloud is noisy but the user still wants the surface to
-pass exactly through the points.
-
-Note that although there is an option to force the output to be
-manifold, it is not guaranteed to be orientable (contrary to _Poisson_
-and _Advancing front_).
+a smoothing filter (such as Jet Smoothing) to the input point set to
+produce a scale space; then, the smoothest scale is meshed (using for
+example the Advancing Front mesher); finally, the resulting
+connectivity between smoothed points is propagated to the original raw
+input point set. This method is the right choice if the input point
+cloud is noisy but the user still wants the surface to pass exactly
+through the points.
 
 \snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Scale space reconstruction
-
-
 
 \section TutorialsReconstruction_postprocessing Output and Postprocessing
 
@@ -271,13 +255,21 @@ We do not discuss these functions here as there are many
 postprocessing possibilities whose relevance strongly depends on the
 user's expectations on the output mesh.
 
-The mesh (postprocessed or not) can easily be saved in the OFF format:
+The mesh (postprocessed or not) can easily be saved in the PLY format
+(here, using the binary variant):
 
 \snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output poisson
 
-\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output advancing front
+A polygon soup can also be saved in the OFF format by iterating on the
+points and faces:
 
 \snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output scale space
+
+Finally, if the polygon soup can be converted into a polygon mesh, it
+can also be saved directly in the OFF format using the stream
+operator:
+
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output advancing front
 
 \section TutorialsReconstruction_recap Full Code Example
 
@@ -301,10 +293,6 @@ for more information).
 \cgalFigureBegin{TutorialsReconstructionFigPipeline, reconstruction_pipeline.png}
 
 __Full reconstruction pipeline (with close-ups).__
-
-From top-left to bottom-right: unaltered noisy point cloud; grid
-simplification; jet smoothing; advancing front surface
-reconstruction; hole filling; isotropic remeshing.
 
 \cgalFigureEnd
 

@@ -3,8 +3,6 @@
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
 
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/remove_outliers.h>
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>
@@ -17,6 +15,8 @@
 #include <CGAL/Scale_space_reconstruction_3/Jet_smoother.h>
 #include <CGAL/Scale_space_reconstruction_3/Advancing_front_mesher.h>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <cstdlib>
 #include <vector>
@@ -39,7 +39,7 @@ int main(int argc, char*argv[])
 
   if (argc < 2)
   {
-    std::cerr << "Usage: " << argv[0] << " [input.xyz/off/ply] (output.off)" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " [input.xyz/off/ply/las]" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -168,21 +168,15 @@ int main(int argc, char*argv[])
     ///////////////////////////////////////////////////////////////////      
     //! [Output advancing front]
       
+    // copy points for random access
+    std::vector<Point_3> vertices;
+    vertices.reserve (points.size());
+    std::copy (points.points().begin(), points.points().end(), std::back_inserter (vertices));
+    
+    CGAL::Surface_mesh<Point_3> output_mesh;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh (vertices, facets, output_mesh);
     std::ofstream f ("out.off");
-  
-    f << "OFF" << std::endl << points.size () << " " << facets.size () << " 0" << std::endl;
-
-    for (Point_set::Index idx : points)
-      f << points.point(idx) << std::endl;
-
-    for (const Facet& facet : facets)
-    {
-      f << "3";
-      for (const std::size_t& idx : facet)
-        f << " " << idx;
-      f << std::endl;
-    }
-
+    f << output_mesh;
     f.close ();
 
     //! [Output advancing front]
@@ -196,7 +190,9 @@ int main(int argc, char*argv[])
     CGAL::Scale_space_surface_reconstruction_3<Kernel> reconstruct
       (points.points().begin(), points.points().end());
 
+    // Smooth using 4 iterations of Jet Smoothing
     reconstruct.increase_scale (4, CGAL::Scale_space_reconstruction_3::Jet_smoother<Kernel>());
+    // Mesh with the Advancing Front mesher with a maximum facet length of 0.5
     reconstruct.reconstruct_surface (CGAL::Scale_space_reconstruction_3::Advancing_front_mesher<Kernel>(0.5));
 
     //! [Scale space reconstruction]
@@ -204,17 +200,14 @@ int main(int argc, char*argv[])
 
     ///////////////////////////////////////////////////////////////////
     //! [Output scale space]
-      
+
     std::ofstream f ("out.off");
     f << "OFF" << std::endl << points.size () << " "
       << reconstruct.number_of_facets() << " 0" << std::endl;
-
     for (Point_set::Index idx : points)
       f << points.point (idx) << std::endl;
-
     for (const auto& facet : CGAL::make_range (reconstruct.facets_begin(), reconstruct.facets_end()))
       f << "3 "<< facet << std::endl;
-
     f.close ();
 
     //! [Output scale space]
