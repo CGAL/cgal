@@ -3166,9 +3166,9 @@ void SubViewer::lookat()
     if (viewer->camera()->frame()->isSpinning())
       viewer->camera()->frame()->stopSpinning();
     mw->viewerShow(viewer,
-                   (float)dialog.get_x(),
-                   (float)dialog.get_y(),
-                   (float)dialog.get_z());
+                   (float)dialog.get_x() + viewer->offset().x,
+                   (float)dialog.get_y() + viewer->offset().y,
+                   (float)dialog.get_z() + viewer->offset().z);
   }
 }
 
