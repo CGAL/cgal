@@ -1,8 +1,16 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Point_set_3.h>
 #include <CGAL/Point_set_3/IO.h>
-#include <CGAL/Point_set_3/Point_set_processing_3.h>
+
+#include <CGAL/remove_outliers.h>
+#include <CGAL/grid_simplify_point_set.h>
+#include <CGAL/jet_smooth_point_set.h>
+#include <CGAL/jet_estimate_normals.h>
+#include <CGAL/mst_orient_normals.h>
+
 #include <CGAL/Poisson_reconstruction_function.h>
+
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>
 #include <CGAL/Poisson_implicit_surface_3.h>
@@ -10,6 +18,9 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
+#include <CGAL/Scale_space_reconstruction_3/Jet_smoother.h>
+#include <CGAL/Scale_space_reconstruction_3/Advancing_front_mesher.h>
+
 
 #include <cstdlib>
 #include <vector>
@@ -58,7 +69,7 @@ int main(int argc, char*argv[])
 
   CGAL::remove_outliers (points,
                          24, // Number of neighbors considered for evaluation
-                         5.0); // Percentage of points to remove
+                         points.parameters().threshold_percent (5.0)); // Percentage of points to remove
 
   std::cout << points.number_of_removed_points()
 	    << " point(s) are outliers." << std::endl;
@@ -181,7 +192,7 @@ int main(int argc, char*argv[])
 
     CGAL::Polyhedron_3<Kernel> output_mesh;
     // Convert to Polyhedron
-    CGAL::output_surface_facets_to_polyhedron(c2t3, output_mesh);
+    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
       
     std::ofstream f ("out.off");
     f << output_mesh;
@@ -238,13 +249,10 @@ int main(int argc, char*argv[])
     //! [Scale space reconstruction]
 
     CGAL::Scale_space_surface_reconstruction_3<Kernel> reconstruct
-      (10, // Number of neighborhood points
-       300); // Number of samples used to estimate neighborhood radius
+      (points.points().begin(), points.points().end());
 
-    reconstruct.reconstruct_surface(points.points().begin (), points.points().end (),
-                                    4, // Number of iterations
-                                    false, // Do not separate connected components
-                                    true); // Force manifold output
+    reconstruct.increase_scale (4, CGAL::Scale_space_reconstruction_3::Jet_smoother<Kernel>());
+    reconstruct.reconstruct_surface (CGAL::Scale_space_reconstruction_3::Advancing_front_mesher<Kernel>(0.5));
 
     //! [Scale space reconstruction]
     ///////////////////////////////////////////////////////////////////
@@ -254,14 +262,14 @@ int main(int argc, char*argv[])
       
     std::ofstream f ("out.off");
     f << "OFF" << std::endl << points.size () << " "
-      << reconstruct.number_of_triangles() << " 0" << std::endl;
+      << reconstruct.number_of_facets() << " 0" << std::endl;
 
     for (typename Point_set::iterator it = points.begin(); it != points.end(); ++ it)
       f << points.point(*it) << std::endl;
 
-    typedef typename CGAL::Scale_space_surface_reconstruction_3<Kernel>::Triple_iterator Triple_iterator;
-    for (Triple_iterator it = reconstruct.surface_begin();
-         it != reconstruct.surface_end(); ++it)
+    typedef typename CGAL::Scale_space_surface_reconstruction_3<Kernel>::Facet_iterator Facet_iterator;
+    for (Facet_iterator it = reconstruct.facets_begin();
+         it != reconstruct.facets_end(); ++it)
       f << "3 "<< *it << std::endl;
 
     f.close ();
