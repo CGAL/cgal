@@ -860,7 +860,7 @@ public:
     return ok;
   }
 
-  bool isDefaultLoader(const Scene_item* item) const{
+  bool isDefaultLoader(const Scene_item* item) const Q_DECL_OVERRIDE{
     if(qobject_cast<const Scene_edges_item*>(item))
       return true;
     return false;

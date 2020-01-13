@@ -2349,7 +2349,7 @@ void MainWindow::on_actionPreferences_triggered()
     dialog.exec();
   });
   connect(prefdiag.sshButton, &QPushButton::clicked,
-          this, [this, prefdiag](){
+          this, [this](){
     QDialog dialog(this);
     Ui::SSHDialog sshdiag;
     sshdiag.setupUi(&dialog);
