@@ -66,6 +66,23 @@ struct iterator_traits<pmp::SurfaceMesh::FaceIterator> {
 };
 }
 
+namespace pmp {
+
+  int operator-(pmp::SurfaceMesh::FaceIterator a, pmp::SurfaceMesh::FaceIterator b)
+  {
+    return (*b).idx() - (*a).idx();
+  }
+  
+  int operator-(pmp::SurfaceMesh::HalfedgeIterator a, pmp::SurfaceMesh::HalfedgeIterator b)
+  {
+    return (*b).idx() - (*a).idx();
+  }
+  
+  int operator-(pmp::SurfaceMesh::VertexIterator a, pmp::SurfaceMesh::VertexIterator b)
+  {
+    return (*b).idx() - (*a).idx();
+  }
+}
 
 namespace CGAL { namespace internal {
 

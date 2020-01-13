@@ -105,7 +105,8 @@ get(boost::edge_weight_t, const SurfaceMesh& sm,
   return CGAL::pmp_edge_weight_pmap(sm)[e];
 }
   
-} 
+} // namespace pmp
+
 //
 // vertex_index
 //
@@ -246,6 +247,8 @@ struct VertexPointMap {
   typedef P value_type;
   typedef P reference;
   typedef Vertex key_type;
+
+  typedef boost::read_write_property_map_tag category;
 
   VertexPointMap(const SurfaceMesh& sm)
     : sm(&const_cast<SurfaceMesh&>(sm))

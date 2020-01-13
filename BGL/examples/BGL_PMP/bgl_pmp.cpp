@@ -61,6 +61,9 @@ int main()
     std::cout << degree(v,sm) << " " << get(vim,v) << " " << get(vpm,v) << std::endl;
   }
 
+  boost::property_traits<VPM>::value_type vt;
+
+  
   EIM eim = get(boost::edge_index,sm);
   
   for(auto e : edges(sm)){
@@ -71,7 +74,7 @@ int main()
   V_index_map dvim;
   dvim = get(CGAL::dynamic_vertex_property_t<int>(), sm);
 
-
+#if 1
   // Incrementally fill the holes
   unsigned int nb_holes = 0;
   for(halfedge_descriptor h : halfedges(sm))
@@ -97,7 +100,7 @@ int main()
       std::cout << "  Is fairing successful: " << success << std::endl;
     }
   }
-
+#endif
   
   return 0;
 }
