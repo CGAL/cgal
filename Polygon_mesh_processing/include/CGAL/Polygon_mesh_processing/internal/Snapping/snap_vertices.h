@@ -51,6 +51,7 @@
 #endif
 
 #include <functional>
+#include <fstream>
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -558,6 +559,11 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
   std::size_t counter = 0;
 
+#ifdef CGAL_PMP_SNAP_DEBUG
+  std::ofstream out_edges("results/snappable.polylines.txt");
+  out_edges.precision(17);
+#endif
+
   for(const Unique_vertex_pair& uvp : snappable_vertices_pairs)
   {
     Unique_vertex_ptr uv_a = uvp.first;
@@ -566,6 +572,10 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     const Vertex_container& vs_b = uv_b->first;
     const vertex_descriptor va = target(vs_a.front(), tm_A);
     const vertex_descriptor vb = target(vs_b.front(), tm_B);
+
+#ifdef CGAL_PMP_SNAP_DEBUG
+    out_edges << "2 " << tm_A.point(va) << " " << tm_B.point(vb) << std::endl;
+#endif
 
     if(!gt.equal_3_object()(get(vpm_A, va), get(vpm_B, vb)))
     {
@@ -600,6 +610,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Snapped " << counter << " pair(s)!" << std::endl;
+  out_edges.close();
 #endif
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
