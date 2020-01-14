@@ -72,9 +72,9 @@ public:
 
 } // CGAL
 
+
 namespace boost {
 
- 
 //
 // edge_weight
 //
@@ -293,19 +293,19 @@ get(CGAL::vertex_point_t, const SurfaceMesh& g) {
 // get for intrinsic properties
 #define CGAL_SM_INTRINSIC_PROPERTY(RET, PROP, TYPE)                     \
  RET                                                                   \
- get(PROP p, const pmp::SurfaceMesh& sm,                      \
+ get(PROP p, const SurfaceMesh& sm,                      \
      const TYPE& x)                                                \
  { return get(get(p, sm), x); }                                        \
 
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t, pmp::Vertex)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::vertex_index_t, Vertex)
 
 CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::edge_index_t, CGAL::internal::PMP_edge)
 
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::halfedge_index_t, pmp::Halfedge)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::halfedge_index_t, Halfedge)
 
-CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::face_index_t, pmp::Face)
+CGAL_SM_INTRINSIC_PROPERTY(boost::uint32_t, boost::face_index_t, Face)
 
-CGAL_SM_INTRINSIC_PROPERTY(CGAL::Exact_predicates_inexact_constructions_kernel::Point_3, CGAL::vertex_point_t, pmp::Vertex)
+CGAL_SM_INTRINSIC_PROPERTY(CGAL::Exact_predicates_inexact_constructions_kernel::Point_3, CGAL::vertex_point_t, Vertex)
 
 #undef CGAL_SM_INTRINSIC_PROPERTY
 
@@ -314,8 +314,8 @@ CGAL_SM_INTRINSIC_PROPERTY(CGAL::Exact_predicates_inexact_constructions_kernel::
 
 
 void
-put(CGAL::vertex_point_t p, pmp::SurfaceMesh& sm,
-    typename boost::graph_traits< pmp::SurfaceMesh >::vertex_descriptor v,
+put(CGAL::vertex_point_t p, SurfaceMesh& sm,
+    typename boost::graph_traits<SurfaceMesh>::vertex_descriptor v,
     const Point& point)
 {
   sm.position(v) = point;
