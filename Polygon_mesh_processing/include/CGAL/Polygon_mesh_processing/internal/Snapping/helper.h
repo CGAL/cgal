@@ -30,7 +30,6 @@ void vertices_as_halfedges(const VertexRange& vertex_range,
                            HalfedgeOutputIterator out)
 {
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor              halfedge_descriptor;
 
   for(vertex_descriptor v : vertex_range)
     *out++ = halfedge(v, pmesh);
