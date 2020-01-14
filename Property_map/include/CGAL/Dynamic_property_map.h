@@ -189,7 +189,6 @@ struct dynamic_face_property_t
 
 namespace boost {
 
-
 template <typename G, typename T>
 struct property_map<G, CGAL::dynamic_vertex_property_t<T> >
 {

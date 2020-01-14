@@ -56,7 +56,7 @@ private:
   
 
 template <typename VEF>
-class SM_index_pmap : public boost::put_get_helper<boost::uint32_t, SM_index_pmap<VEF> >
+class pmp_index_pmap : public boost::put_get_helper<boost::uint32_t, pmp_index_pmap<VEF> >
 {
 public:
   typedef boost::readable_property_map_tag category;
@@ -113,18 +113,18 @@ namespace boost {
 template <>  
 struct property_map<pmp::SurfaceMesh, boost::vertex_index_t >
 {
-  typedef CGAL::SM_index_pmap<pmp::Vertex> type;
-  typedef CGAL::SM_index_pmap<pmp::Vertex> const_type;
+  typedef CGAL::pmp_index_pmap<pmp::Vertex> type;
+  typedef CGAL::pmp_index_pmap<pmp::Vertex> const_type;
 };
 }
 
 
 namespace pmp{
 
-CGAL::SM_index_pmap<Vertex>
+CGAL::pmp_index_pmap<Vertex>
 get(const boost::vertex_index_t&, const SurfaceMesh&)
 {
-  return CGAL::SM_index_pmap<Vertex>();
+  return CGAL::pmp_index_pmap<Vertex>();
 }
   
 }
@@ -137,18 +137,18 @@ namespace boost{
 template<>
 struct property_map<pmp::SurfaceMesh, boost::face_index_t >
 {
-  typedef CGAL::SM_index_pmap<pmp::Face> type;
-  typedef CGAL::SM_index_pmap<pmp::Face> const_type;
+  typedef CGAL::pmp_index_pmap<pmp::Face> type;
+  typedef CGAL::pmp_index_pmap<pmp::Face> const_type;
 };
   
 }
 
 namespace pmp{
 
-CGAL::SM_index_pmap<Face>
+CGAL::pmp_index_pmap<Face>
 get(const boost::face_index_t&, const SurfaceMesh&)
 {
-  return CGAL::SM_index_pmap<pmp::Face>();
+  return CGAL::pmp_index_pmap<pmp::Face>();
 }
 }
 
@@ -160,8 +160,8 @@ namespace boost{
 template <>
 struct property_map<pmp::SurfaceMesh, boost::edge_index_t >
 {
-  typedef CGAL::SM_index_pmap<CGAL::internal::PMP_edge> type;
-  typedef CGAL::SM_index_pmap<CGAL::internal::PMP_edge> const_type;
+  typedef CGAL::pmp_index_pmap<CGAL::internal::PMP_edge> type;
+  typedef CGAL::pmp_index_pmap<CGAL::internal::PMP_edge> const_type;
 };
   
 }
@@ -204,10 +204,10 @@ struct property_traits<pmp::FaceProperty<T>> {
 
 namespace pmp{
 
-CGAL::SM_index_pmap<CGAL::internal::PMP_edge>
+CGAL::pmp_index_pmap<CGAL::internal::PMP_edge>
 get(const boost::edge_index_t&, const SurfaceMesh&)
 {
-  return CGAL::SM_index_pmap<CGAL::internal::PMP_edge>();
+  return CGAL::pmp_index_pmap<CGAL::internal::PMP_edge>();
 }
 }
 
@@ -219,18 +219,18 @@ namespace boost{
 template <>
 struct property_map<pmp::SurfaceMesh, boost::halfedge_index_t >
 {
-  typedef CGAL::SM_index_pmap<pmp::Halfedge> type;
-  typedef CGAL::SM_index_pmap<pmp::Halfedge> const_type;
+  typedef CGAL::pmp_index_pmap<pmp::Halfedge> type;
+  typedef CGAL::pmp_index_pmap<pmp::Halfedge> const_type;
 };
   
 }
 
 namespace pmp{
 
-CGAL::SM_index_pmap<Halfedge>
+CGAL::pmp_index_pmap<Halfedge>
 get(const boost::halfedge_index_t&, const SurfaceMesh&)
 {
-  return CGAL::SM_index_pmap<Halfedge>();
+  return CGAL::pmp_index_pmap<Halfedge>();
 }
   
 }
@@ -242,10 +242,9 @@ namespace pmp {
 
 template <typename P>
 struct VertexPointMap {
+  typedef Vertex key_type;
   typedef P value_type;
   typedef P reference;
-  typedef Vertex key_type;
-
   typedef boost::read_write_property_map_tag category;
 
   VertexPointMap(const SurfaceMesh& sm)
