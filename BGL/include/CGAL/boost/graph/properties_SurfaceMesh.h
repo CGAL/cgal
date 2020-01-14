@@ -16,8 +16,6 @@
 
 #ifndef DOXYGEN_RUNNING
 
-#include <CGAL/license/Surface_mesh.h>
-
 #include <pmp/SurfaceMesh.h>
 
 #include <CGAL/assertions.h>
@@ -426,7 +424,7 @@ get(dynamic_face_property_t<T>, pmp::SurfaceMesh& sm)
 {
   typedef typename boost::property_map<pmp::SurfaceMesh, dynamic_face_property_t<T> >::SMPM SMPM;
   typedef typename boost::property_map<pmp::SurfaceMesh, dynamic_face_property_t<T> >::type DPM;
-  return DPM(sm, new SMPM(sm.template add_face_propert<T>(std::string())));
+  return DPM(sm, new SMPM(sm.template add_face_property<T>(std::string())));
 }
 
 template <typename T>

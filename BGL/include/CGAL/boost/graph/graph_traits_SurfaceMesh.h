@@ -14,20 +14,7 @@
 
 #ifndef DOXYGEN_RUNNING
 
-#include <CGAL/license/Surface_mesh.h>
-
-// include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
-#include <CGAL/boost/graph/properties.h>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/properties.hpp>
-
-#include <CGAL/boost/iterator/transform_iterator.hpp>
-
-#include <CGAL/boost/graph/iterator.h>
-
 #include <pmp/SurfaceMesh.h>
-#include <CGAL/assertions.h>
 
 namespace std {
 
@@ -65,6 +52,25 @@ struct iterator_traits<pmp::SurfaceMesh::FaceIterator> {
   typedef std::random_access_iterator_tag iterator_category;
 };
 }
+
+namespace CGAL{
+template <typename T>
+void
+remove_property(pmp::VertexProperty<T> pm, pmp::SurfaceMesh& sm);
+}
+
+// include this to avoid a VC15 warning
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/properties.h>
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+
+#include <CGAL/boost/graph/iterator.h>
+
+#include <CGAL/assertions.h>
+
 
 namespace pmp {
 
@@ -124,7 +130,7 @@ public:
 
   
 friend
-static std::ostream& operator<<(std::ostream& os, const PMP_edge& e)
+std::ostream& operator<<(std::ostream& os, const PMP_edge& e)
 {
   os << "Edge around " << e.halfedge_ ; 
   return os;
@@ -686,6 +692,8 @@ void normalize_border(const pmp::SurfaceMesh&)
 {}
 
 } // namespace pmp
+
+#include <CGAL/boost/graph/properties_SurfaceMesh.h>
 
 #endif // DOXYGEN_RUNNING
 
