@@ -15,6 +15,12 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
+#ifdef CGAL_PMP_SNAP_DEBUG_PP
+ #ifndef CGAL_PMP_SNAP_DEBUG
+  #define CGAL_PMP_SNAP_DEBUG
+ #endif
+#endif
+
 #include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
