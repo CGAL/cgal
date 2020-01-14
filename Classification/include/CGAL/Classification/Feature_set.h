@@ -19,7 +19,7 @@
 #include <boost/make_shared.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-#include <tbb/mutex.h>
+#include <mutex>
 #include <tbb/task_group.h>
 #endif // CGAL_LINKED_WITH_TBB
 

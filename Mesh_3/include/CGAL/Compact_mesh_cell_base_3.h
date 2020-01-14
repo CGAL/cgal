@@ -34,7 +34,7 @@
 
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/atomic.h>
+# include <atomic>
 #endif
 
 namespace CGAL {
@@ -152,7 +152,8 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-    while (bits_.compare_and_swap(current_bits | char(1 << facet), current_bits) != current_bits)
+   
+    while (!bits_.compare_exchange_weak(current_bits, current_bits | char(1 << facet)))
     {
       current_bits = bits_;
     }
@@ -165,7 +166,7 @@ public:
     char current_bits = bits_;
     char mask = char(15 & ~(1 << facet));
     char wanted_value = current_bits & mask;
-    while (bits_.compare_and_swap(wanted_value, current_bits) != current_bits)
+    while (!bits_.compare_exchange_weak(current_bits, wanted_value))
     {
       current_bits = bits_;
     }
@@ -182,18 +183,19 @@ public:
   /// this function "deletes" cc
   void try_to_set_circumcenter(Point_3 *cc) const
   {
-    if (weighted_circumcenter_.compare_and_swap(cc, nullptr) != nullptr)
+    Point_3* base_test = nullptr;
+    if (!weighted_circumcenter_.compare_exchange_strong(base_test, cc))
       delete cc;
   }
 
 private:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
   /// Stores visited facets (4 first bits)
-  tbb::atomic<char> bits_;
+  std::atomic<char> bits_;
 
 protected:
-  mutable tbb::atomic<Point_3*> weighted_circumcenter_;
+  mutable std::atomic<Point_3*> weighted_circumcenter_;
 };
 
 #endif // CGAL_LINKED_WITH_TBB

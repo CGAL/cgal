@@ -22,7 +22,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/atomic.h>
+#include <atomic>
 #endif // CGAL_LINKED_WITH_TBB
 
 #if defined(CGAL_LINKED_WITH_TBB)
@@ -31,13 +31,13 @@ struct Distance_computation{
   const AABB_tree& tree;
   const Point_set & point_set;
   Point_3 initial_hint;
-  tbb::atomic<double>* distance;
+  std::atomic<double>* distance;
   std::vector<double>& output;
 
   Distance_computation(const AABB_tree& tree,
                        const Point_3 p,
                        const Point_set & point_set,
-                       tbb::atomic<double>* d,
+                       std::atomic<double>* d,
                        std::vector<double>& out )
     : tree(tree)
     , point_set(point_set)
@@ -96,7 +96,7 @@ double compute_distances(const Mesh& m,
   }
     return hdist;
 #else
-  tbb::atomic<double> distance;
+  std::atomic<double> distance;
   distance.store(0);
   Distance_computation<Tree, typename Traits::Point_3> f(tree, hint, point_set, &distance, out);
   tbb::parallel_for(tbb::blocked_range<Point_set::const_iterator>(point_set.begin(), point_set.end()), f);

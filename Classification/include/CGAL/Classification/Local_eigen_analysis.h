@@ -34,7 +34,8 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
-#include <tbb/mutex.h>
+#include <mutex>
+
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -69,7 +70,7 @@ private:
     PointMap m_point_map;
     const NeighborQuery& m_neighbor_query;
     float& m_mean_range;
-    tbb::mutex& m_mutex;
+    std::mutex& m_mutex;
     
   public:
     
@@ -78,7 +79,7 @@ private:
                           PointMap point_map,
                           const NeighborQuery& neighbor_query,
                           float& mean_range,
-                          tbb::mutex& mutex)
+                          std::mutex& mutex)
       : m_eigen (eigen), m_input (input), m_point_map (point_map),
         m_neighbor_query (neighbor_query), m_mean_range (mean_range), m_mutex (mutex)
     { }
@@ -120,7 +121,7 @@ private:
     const FaceListGraph& m_input;
     const NeighborQuery& m_neighbor_query;
     float& m_mean_range;
-    tbb::mutex& m_mutex;
+    std::mutex& m_mutex;
     
   public:
     
@@ -128,7 +129,7 @@ private:
                                 const FaceListGraph& input,
                                 const NeighborQuery& neighbor_query,
                                 float& mean_range,
-                                tbb::mutex& mutex)
+                                std::mutex& mutex)
       : m_eigen (eigen), m_input (input),
         m_neighbor_query (neighbor_query), m_mean_range (mean_range), m_mutex (mutex)
     { }
@@ -271,7 +272,7 @@ public:
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
-      tbb::mutex mutex;
+      std::mutex mutex;
       Compute_eigen_values<PointRange, PointMap, NeighborQuery, DiagonalizeTraits>
         f(out, input, point_map, neighbor_query, out.m_content->mean_range, mutex);
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
@@ -361,7 +362,7 @@ public:
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
-      tbb::mutex mutex;
+      std::mutex mutex;
       Compute_eigen_values_graph<FaceListGraph, NeighborQuery, DiagonalizeTraits>
         f(out, input, neighbor_query, out.m_content->mean_range, mutex);
 
