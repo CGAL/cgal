@@ -75,7 +75,8 @@ public:
     return QList<QAction*>()<<actionSplit_polylines
                             <<actionJoin_polylines;
   }
-  bool isDefaultLoader(const Scene_item* item) const{
+  
+  bool isDefaultLoader(const Scene_item* item) const override{
     if(qobject_cast<const Scene_polylines_item*>(item))
       return true;
     return false;

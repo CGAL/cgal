@@ -22,7 +22,7 @@ public:
 
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items);
-  bool isDefaultLoader(const Scene_item* item) const{
+  bool isDefaultLoader(const Scene_item* item) const override{
     if(qobject_cast<const Scene_nef_polyhedron_item*>(item))
       return true;
     return false;

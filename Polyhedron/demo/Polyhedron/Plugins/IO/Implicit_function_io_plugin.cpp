@@ -59,11 +59,6 @@ public:
   {
     return QList<QAction*>();
   }
-  bool isDefaultLoader(const Scene_item* item) const{
-    if(qobject_cast<const Scene_implicit_function_item*>(item))
-      return true;
-    return false;
-  }
   
 public Q_SLOTS:
   void load_function() const;

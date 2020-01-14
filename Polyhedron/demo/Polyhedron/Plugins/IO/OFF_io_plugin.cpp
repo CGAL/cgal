@@ -26,14 +26,14 @@ class Polyhedron_demo_off_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "off_io_plugin.json")
 
 public:
-  bool isDefaultLoader(const Scene_item *item) const
+  bool isDefaultLoader(const Scene_item *item) const override
   {
     if(qobject_cast<const Scene_surface_mesh_item*>(item)
        || qobject_cast<const Scene_polygon_soup_item*>(item))
       return true;
     return false;
   }
-  bool isDefaultLoader(const QString& name) const
+  bool isDefaultLoader(const QString& name) const override
   {
     if(name == QString("off"))
       return true;
