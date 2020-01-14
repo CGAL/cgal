@@ -289,17 +289,13 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  if(is_empty_range(halfedge_range_A.begin(), halfedge_range_A.end()) ||
-     is_empty_range(halfedge_range_B.begin(), halfedge_range_B.end()))
-    return 0;
-
   CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
 
   GT gt = choose_parameter(get_parameter(np_A, internal_np::geom_traits), GT());
   VPM_A vpm_A = choose_parameter(get_parameter(np_A, internal_np::vertex_point),
                                  get_property_map(vertex_point, tm_A));
   VPM_B vpm_B = choose_parameter(get_parameter(np_B, internal_np::vertex_point),
-                                 get_const_property_map(vertex_point, tm_B));
+                                 get_property_map(vertex_point, tm_B));
 
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Finding snappables vertices. Range sizes: "
@@ -307,15 +303,19 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
             << std::distance(halfedge_range_B.begin(), halfedge_range_B.end()) << std::endl;
 #endif
 
-  // Try to snap vertices
+  if(is_empty_range(halfedge_range_A.begin(), halfedge_range_A.end()) ||
+     is_empty_range(halfedge_range_B.begin(), halfedge_range_B.end()))
+    return 0;
+
+  // Vertex-Vertex snapping is performed as follows:
+  // - Identify points which are already equal and group them together so that they are moved together
+  // - Create a single box for these points
+
   std::vector<Box> boxes_A;
   boxes_A.reserve(halfedge_range_A.size());
   std::vector<Box> boxes_B;
   boxes_B.reserve(halfedge_range_B.size());
 
-  // Done in two steps:
-  // - First, identify points which are already equal and group them together so that they are moved together
-  // - Then, create a single box for these points
   Unique_positions unique_positions_A;
   for(halfedge_descriptor h : halfedge_range_A)
   {
@@ -410,7 +410,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     boxes_B.push_back(Box(b, &ev));
   }
 
-  // @fixme bench and delete if useless
+  // @fixme bench and don't use ptrs if not useful
   std::vector<const Box*> boxes_A_ptr;
   boxes_A_ptr.reserve(boxes_A.size());
   for(const Box& b : boxes_A)
@@ -617,6 +617,9 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   /// Done snapping; start analyzing
   //////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // Below is used in non-conformal snapping
+  // @todo could avoid doing it if not required
+  //
   // Now that vertex-vertex snapping has been performed, look around to see if we can already
   // lock some vertices and halfedges...
   //
@@ -627,7 +630,6 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
   // #3 : If a pair of incident edges are not fully matching, but still have compatible directions
   //      (i.e. collinear and opposite directions), then we don't want to project onto the shorter
   //      of the two
-
   for(const Unique_vertex_pair& uvp : snappable_vertices_pairs)
   {
     Unique_vertex_ptr uv_a = uvp.first;
