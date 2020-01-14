@@ -476,8 +476,7 @@ public:
   bool try_lock_cell_impl(int cell_index)
   {
     bool v1 = true, v2 = false;
-    bool old_value = m_grid[cell_index].compare_exchange_strong(v1,v2);
-    if (old_value == false)
+    if(m_grid[cell_index].compare_exchange_strong(v2,v1))
     {
       get_thread_local_grid()[cell_index] = true;
       m_tls_locked_cells.local().push_back(cell_index);
@@ -544,7 +543,7 @@ public:
     if (no_spin)
     {
       unsigned int old_value = 0;
-      if(!m_grid[cell_index].compare_exchange_strong(old_value, this_thread_priority))
+      if(m_grid[cell_index].compare_exchange_strong(old_value, this_thread_priority))
       {
         get_thread_local_grid()[cell_index] = true;
         m_tls_locked_cells.local().push_back(cell_index);
