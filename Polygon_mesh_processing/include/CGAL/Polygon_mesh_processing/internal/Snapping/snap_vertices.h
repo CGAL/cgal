@@ -247,16 +247,16 @@ private:
 };
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
-          typename HalfedgeRange, typename PolygonMesh,
+          typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh,
           typename ToleranceMap_A, typename ToleranceMap_B,
           typename VertexPatchMap_A, typename VertexPatchMap_B,
           typename LockableVerticesOutputIterator, typename LockableHalfedgesOutputIterator,
           typename NamedParameters_A, typename NamedParameters_B>
-std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
+std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
                                   PolygonMesh& tm_A,
                                   ToleranceMap_A tolerance_map_A,
                                   VertexPatchMap_A vertex_patch_map_A,
-                                  const HalfedgeRange& halfedge_range_B,
+                                  const HalfedgeRange_B& halfedge_range_B,
                                   PolygonMesh& tm_B,
                                   ToleranceMap_B tolerance_map_B,
                                   VertexPatchMap_B vertex_patch_map_B,
@@ -701,14 +701,14 @@ std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
 
 // Convenience overload for snap_borders
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
-          typename HalfedgeRange, typename PolygonMesh,
+          typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh,
           typename ToleranceMap_A, typename ToleranceMap_B,
           typename LockableVerticesOutputIterator, typename LockableHalfedgesOutputIterator,
           typename NamedParameters_A, typename NamedParameters_B>
-std::size_t snap_vertices_two_way(const HalfedgeRange& halfedge_range_A,
+std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
                                   PolygonMesh& tm_A,
                                   ToleranceMap_A tolerance_map_A,
-                                  const HalfedgeRange& halfedge_range_B,
+                                  const HalfedgeRange_B& halfedge_range_B,
                                   PolygonMesh& tm_B,
                                   ToleranceMap_B tolerance_map_B,
                                   LockableVerticesOutputIterator lockable_vps_out,
@@ -792,13 +792,13 @@ namespace experimental {
 //
 // \return the number of snapped vertex pairs
 //
-template <typename HalfedgeRange, typename PolygonMesh,
+template <typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh,
           typename ToleranceMap_A, typename ToleranceMap_B,
           typename NamedParameters_A, typename NamedParameters_B>
-std::size_t snap_vertices(const HalfedgeRange& halfedge_range_A,
+std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           PolygonMesh& tm_A,
                           ToleranceMap_A tolerance_map_A,
-                          const HalfedgeRange& halfedge_range_B,
+                          const HalfedgeRange_B& halfedge_range_B,
                           PolygonMesh& tm_B,
                           ToleranceMap_B tolerance_map_B,
                           const NamedParameters_A& np_A,
@@ -812,11 +812,12 @@ std::size_t snap_vertices(const HalfedgeRange& halfedge_range_A,
                                          unused_output_iterator, np_A, np_B);
 }
 
-template <typename HalfedgeRange, typename PolygonMesh, typename ToleranceMap_A, typename ToleranceMap_B>
-std::size_t snap_vertices(const HalfedgeRange& halfedge_range_A,
+template <typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh,
+          typename ToleranceMap_A, typename ToleranceMap_B>
+std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           PolygonMesh& tm_A,
                           ToleranceMap_A tolerance_map_A,
-                          const HalfedgeRange& halfedge_range_B,
+                          const HalfedgeRange_B& halfedge_range_B,
                           PolygonMesh& tm_B,
                           ToleranceMap_B tolerance_map_B)
 {
@@ -824,13 +825,12 @@ std::size_t snap_vertices(const HalfedgeRange& halfedge_range_A,
                        CGAL::parameters::all_default(), CGAL::parameters::all_default());
 }
 
-template <typename HalfedgeRange, typename PolygonMesh,
-          typename ToleranceMap_A, typename ToleranceMap_B,
+template <typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh,
           typename T_A, typename Tag_A, typename Base_A,
           typename T_B, typename Tag_B, typename Base_B>
-std::size_t snap_vertices(const HalfedgeRange& halfedge_range_A,
+std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
                           PolygonMesh& tm_A,
-                          const HalfedgeRange& halfedge_range_B,
+                          const HalfedgeRange_B& halfedge_range_B,
                           PolygonMesh& tm_B,
                           const CGAL::Named_function_parameters<T_A, Tag_A, Base_A>& np_A,
                           const CGAL::Named_function_parameters<T_B, Tag_B, Base_B>& np_B)
@@ -851,8 +851,18 @@ std::size_t snap_vertices(const HalfedgeRange& halfedge_range_A,
   return snap_vertices(halfedge_range_A, tm_A, tolerance_map_A, halfedge_range_B, tm_B, tolerance_map_B, np_A, np_B);
 }
 
+template <typename HalfedgeRange_A, typename HalfedgeRange_B, typename PolygonMesh>
+std::size_t snap_vertices(const HalfedgeRange_A& halfedge_range_A,
+                          PolygonMesh& tm_A,
+                          const HalfedgeRange_B& halfedge_range_B,
+                          PolygonMesh& tm_B)
+{
+  return snap_vertices(halfedge_range_A, tm_A, halfedge_range_B, tm_B,
+                       parameters::all_default(), parameters::all_default());
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-/// Border overloads
+/// Border convenience overloads
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename PolygonMesh, typename ToleranceMap_A, typename ToleranceMap_B>
@@ -886,10 +896,6 @@ std::size_t snap_border_vertices(PolygonMesh& tm_A,
 
   return snap_vertices(border_vertices_A, tm_A, border_vertices_B, tm_B);
 }
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/// Single mesh overloads
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
 template <typename PolygonMesh, typename ToleranceMap>
 std::size_t snap_border_vertices(PolygonMesh& tm, ToleranceMap tolerance_map)
