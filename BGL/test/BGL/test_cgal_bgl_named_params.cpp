@@ -91,6 +91,11 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::use_area_smoothing).v == 54);
   assert(get_parameter(np, CGAL::internal_np::use_Delaunay_flips).v == 55);
   assert(get_parameter(np, CGAL::internal_np::use_safety_constraints).v == 56);
+  assert(get_parameter(np, CGAL::internal_np::area_threshold).v == 57);
+  assert(get_parameter(np, CGAL::internal_np::volume_threshold).v == 58);
+  assert(get_parameter(np, CGAL::internal_np::dry_run).v == 59);
+  assert(get_parameter(np, CGAL::internal_np::do_lock_mesh).v == 60);
+  assert(get_parameter(np, CGAL::internal_np::do_simplify_mesh).v == 61);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -175,6 +180,11 @@ void test(const NamedParameters& np)
   check_same_type<54>(get_parameter(np, CGAL::internal_np::use_area_smoothing));
   check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
   check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
+  check_same_type<57>(get_parameter(np, CGAL::internal_np::area_threshold));
+  check_same_type<58>(get_parameter(np, CGAL::internal_np::volume_threshold));
+  check_same_type<59>(get_parameter(np, CGAL::internal_np::dry_run));
+  check_same_type<60>(get_parameter(np, CGAL::internal_np::do_lock_mesh));
+  check_same_type<61>(get_parameter(np, CGAL::internal_np::do_simplify_mesh));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
@@ -265,6 +275,11 @@ int main()
                          .use_area_smoothing(A<54>(54))
                          .use_Delaunay_flips(A<55>(55))
                          .use_safety_constraints(A<56>(56))
+                         .area_threshold(A<57>(57))
+                         .volume_threshold(A<58>(58))
+                         .dry_run(A<59>(59))
+                         .do_lock_mesh(A<60>(60))
+                         .do_simplify_border(A<61>(61))
        );
 
   return EXIT_SUCCESS;
