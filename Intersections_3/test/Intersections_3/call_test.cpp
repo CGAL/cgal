@@ -266,6 +266,6 @@ int main(int argc, char**)
     call_do_intersect_with_kernel(Bbox_3(), S(), K());
     call_do_intersect_with_kernel(Bbox_3(), Sph(), K());
     call_do_intersect_with_kernel(Bbox_3(), Tr(), K());
-}
+  }
   return EXIT_SUCCESS;
 }
