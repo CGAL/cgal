@@ -61,6 +61,11 @@ Release date: June 2020
 - The concept "EdgeProfile" has been removed. This concept was not actually in use as the CGAL-provided model `CGAL::Edge_profile`
   was imposed to the user. Other concepts have been clarified to reflect the fact that the API uses this particular class.
 
+### CGAL and the Boost Graph Library (BGL)
+- Added function `alpha_expansion_graphcut()` which regularizes a
+  multi-label partition over a user-defined graph.
+
+
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
 
