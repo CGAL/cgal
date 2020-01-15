@@ -335,7 +335,7 @@ int main()
                          .error_minimizer(A<9030>(9030))
                          .transformation_checkers(A<9031>(9031))
                          .inspector(A<9032>(9032))
-                         .logger(A<9033>(9033)
+                         .logger(A<9033>(9033))
                          .maximum_normal_deviation(A<9034>(9034))
        );
   return EXIT_SUCCESS;
