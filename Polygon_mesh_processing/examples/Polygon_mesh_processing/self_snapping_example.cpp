@@ -331,7 +331,7 @@ int main(int argc, char** argv)
             << "ms" << std::endl;
 
   // Snap
-  std::size_t nb_snapped = PMP::experimental::snap_border<CGAL::Parallel_tag>(
+  std::size_t nb_snapped = PMP::experimental::snap_borders<CGAL::Parallel_tag>(
                              sm, tolerance_map, CGAL::parameters::face_patch_map(fpmap));
   std::cout << "#snapped: " << nb_snapped << std::endl;
 

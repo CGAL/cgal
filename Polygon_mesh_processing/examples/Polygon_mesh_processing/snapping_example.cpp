@@ -138,8 +138,8 @@ int main(int /*argc*/, char** argv)
 
   std::cout << "#Snapped: " << nb_snapped << std::endl;
 
-  std::ofstream out("results/snapped_organic.off") << std::setprecision(17) << organic_mesh;
-  std::ofstream out("results/snapped_fixed.off") << std::setprecision(17) << fixed_mesh;
+  std::ofstream("results/snapped_organic.off") << std::setprecision(17) << organic_mesh;
+  std::ofstream("results/snapped_fixed.off") << std::setprecision(17) << fixed_mesh;
 
   return EXIT_SUCCESS;
 }
