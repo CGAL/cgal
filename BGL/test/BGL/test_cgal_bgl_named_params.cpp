@@ -279,7 +279,7 @@ int main()
                          .volume_threshold(A<58>(58))
                          .dry_run(A<59>(59))
                          .do_lock_mesh(A<60>(60))
-                         .do_simplify_border(A<61>(61))
+                         .do_simplify_mesh(A<61>(61))
        );
 
   return EXIT_SUCCESS;
