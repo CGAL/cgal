@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-typedef CGAL::Simple_cartesian<float> K;
+typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
 typedef K::Vector_3 Vector_3;
 typedef std::pair<Point_3, Vector_3> Pwn;

@@ -100,8 +100,8 @@ if ( CGAL_FOUND )
 
     # Executables that require both libpointmatcher and OpenGR
     if (libpointmatcher_FOUND AND OpenGR_FOUND)
-      # include_directories(SYSTEM ${libpointmatcher_INCLUDE_DIR}) 
-      # include_directories(SYSTEM ${OpenGR_INCLUDE_DIR})
+      include_directories(SYSTEM ${libpointmatcher_INCLUDE_DIR}) 
+      include_directories(SYSTEM ${OpenGR_INCLUDE_DIR})
       create_single_source_cgal_program( "registration_with_opengr_pointmatcher_pipeline.cpp" )
       target_link_libraries(registration_with_opengr_pointmatcher_pipeline PRIVATE ${libpointmatcher_LIBRARIES})
     else()
