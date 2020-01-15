@@ -578,7 +578,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
       next_around_vertex = opposite( next(hd, tm), tm);
       if (hd==start) break;
     }
-    if ( get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
+    if ( is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
 
     while( true )
     {
@@ -600,7 +600,7 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
           break;
         next_around_vertex = opposite( next(next_around_vertex, tm), tm);
       }
-      while( get(is_selected, face(next_around_vertex, tm) ) );
+      while(is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) );
 
       if (next_around_vertex==start)
         break;
