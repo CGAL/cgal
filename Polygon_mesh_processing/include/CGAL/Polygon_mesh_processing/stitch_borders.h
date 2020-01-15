@@ -892,7 +892,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, pmesh));
+                               get_const_property_map(vertex_point, pmesh));
 
 #ifdef CGAL_PMP_STITCHING_DEBUG
   std::cout << "------- Stitch cycles..." << std::endl;
