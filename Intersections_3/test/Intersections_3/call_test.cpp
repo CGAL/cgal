@@ -52,11 +52,13 @@ void call_do_intersect_with_kernel(const A& a, const B& b, const K&) {
 }
 
 
-int main()
+int main(int argc, char**)
 {
   CGAL::Interval_nt_advanced::Protector p;
   CGAL_USE(p);
-  try {
+  //we only want to check compilation
+  if(argc > 666 )
+  {
     call_intersection_global(S(), S());
     call_intersection_global(S(), L());
     call_intersection_global(S(), Pl());
@@ -264,10 +266,6 @@ int main()
     call_do_intersect_with_kernel(Bbox_3(), S(), K());
     call_do_intersect_with_kernel(Bbox_3(), Sph(), K());
     call_do_intersect_with_kernel(Bbox_3(), Tr(), K());
-    // There is no kernel to call
-    // call_do_intersect_with_kernel(Bbox_3(), Bbox_3(), K());
-  } catch(...) {
-    // as long as this test compiles, it is fine
-  }
+}
   return EXIT_SUCCESS;
 }
