@@ -654,10 +654,10 @@ can be done directly using `Face_filtered_graph`.
 Using \ref BGLNamedParameters some of the many options of METIS can be customized,
 as shown in \ref BGL_polyhedron_3/polyhedron_partition.cpp "this example".
 
-\section BGLGraphcut Graphcut
+\section BGLGraphcut Graph Cut
 
-Optimal partition from a set of labels can be computed through a
-graphcut approach called Alpha Expansion
+An optimal partition from a set of labels can be computed through a
+graph cut approach called Alpha Expansion
 \cgalCite{boykov2001fastapproximate}. \cgal provides
 `CGAL::alpha_expansion_graphcut()` which, or a graph \f$(V,E)\f$, this
 function seeks for the partioning `f` that minimizes the following
@@ -694,6 +694,33 @@ implementation.
 Comparison of time and memory consumed by the different Alpha
 Expansion implementation.
 \cgalFigureEnd
+
+The following example shows how to apply the Alpha Expansion algorithm
+to a `boost::adjacency_list` describing a 2D array with 3 labels "X",
+" " and "O":
+
+\cgalExample{BGL_graphcut/alpha_expansion_example.cpp}
+
+The output of this program shows how the initial 2D array is
+regularized spatially:
+
+```
+Input:
+XOX   
+XX X O
+OX  OO
+X  OOX
+  OXOO
+
+Alpha expansion...
+
+Output:
+XXX   
+XX   O
+XX  OO
+X  OOO
+  OOOO
+```
 
 
 */

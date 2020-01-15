@@ -473,7 +473,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 /**
    \ingroup PkgBGLPartition
 
-   Regularizes a partition of a graph into `n` labels using the Alpha
+   regularizes a partition of a graph into `n` labels using the Alpha
    Expansion algorithm \cgalCite{Boykov2001FastApproximate}.
 
    For a graph \f$(V,E)\f$, this function seeks for the partioning `f`
@@ -487,7 +487,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
    \f$\{v0,v1\}\f$ and \f$C(f_v)\f$ is the cost of assigning the
    vertex \f$v\f$ to the labeling \f$f\f$.
 
-   \tparam InputGraph a model of `Graph`
+   \tparam InputGraph a model of `VertexAndEdgeListGraph`
 
    \tparam EdgeWeightMap a model of `ReadablePropertyMap` with
    `boost::graph_traits<InputGraph>::%edge_descriptor` as key and `double`
@@ -532,9 +532,11 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
    \param vertex_label_cost_map a property map providing, for each
    vertex, an `std::vector` containing the cost of this vertex to
-   belong to each label. For example,
-   `get(vertex_label_cost_map, vd)[label_idx]` returns the cost
-   of vertex `vd` to belong to the label `label_idx`.
+   belong to each label. Each `std::vector` should have the same size
+   `n` (which is the number of labels), each label being indexed from
+   `0` to `n-1`. For example, `get(vertex_label_cost_map,
+   vd)[label_idx]` returns the cost of vertex `vd` to belong to the
+   label `label_idx`.
 */
 template <typename InputGraph,
           typename EdgeWeightMap,
@@ -571,7 +573,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
   std::vector<Vertex_descriptor> inserted_vertices;
   inserted_vertices.resize(num_vertices (input_graph));
 
-  std::size_t number_of_labels = get(vertex_label_cost_map, *std::begin(vertices(input_graph))).size();
+  std::size_t number_of_labels = get(vertex_label_cost_map, *(vertices(input_graph).first)).size();
 
   bool success;
   do {
@@ -588,7 +590,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
       // For E-Data
       // add every input vertex as a vertex to the graph, put edges to source & sink vertices
-      for (input_vertex_descriptor vd : vertices(input_graph))
+      for (input_vertex_descriptor vd : CGAL::make_range(vertices(input_graph)))
       {
         std::size_t vertex_i = get(vertex_index_map, vd);
         Vertex_descriptor new_vertex = alpha_expansion.add_vertex();
@@ -609,7 +611,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
       // For E-Smooth
       // add edge between every vertex,
-      for (input_edge_descriptor ed : edges(input_graph))
+      for (input_edge_descriptor ed : CGAL::make_range(edges(input_graph)))
       {
         input_vertex_descriptor vd1 = source(ed, input_graph);
         input_vertex_descriptor vd2 = target(ed, input_graph);
@@ -659,7 +661,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
       min_cut = flow;
       success = true;
       //update labeling
-      for (input_vertex_descriptor vd : vertices (input_graph))
+      for (input_vertex_descriptor vd : CGAL::make_range(vertices (input_graph)))
       {
         std::size_t vertex_i = get (vertex_index_map, vd);
         alpha_expansion.update(vertex_label_map, inserted_vertices, vd, vertex_i, alpha);
