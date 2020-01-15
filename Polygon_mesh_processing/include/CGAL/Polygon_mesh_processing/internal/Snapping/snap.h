@@ -802,6 +802,9 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
   Vertices_with_tolerance vertices_to_snap;
   vertices_to_snap.reserve(halfedge_range_S.size()); // ensures that iterators stay valid
 
+  // Take the min tolerance for all points that have the same coordinates
+  std::map<Point, FT> point_tolerance_map;
+
   for(halfedge_descriptor h : halfedge_range_S)
   {
     if(get(locked_vertices_S, target(h, tm_S)))
@@ -815,12 +818,22 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 
     const vertex_descriptor v = target(h, tm_S);
     const FT tolerance = get(tolerance_map_S, v);
+
     vertices_to_snap.emplace_back(h, tolerance);
 
-#ifdef CGAL_PMP_SNAP_DEBUG_PP
+    std::pair<Point, FT> entry(get(vpm_S, v), tolerance);
+    std::pair<typename std::map<Point, FT>::iterator, bool> is_insert_successful =
+      point_tolerance_map.insert(entry);
+    if(!is_insert_successful.second)
+      is_insert_successful.first->second = (std::min)(is_insert_successful.first->second, tolerance);
+
+    #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "Non-conformal query: " << v << " (" << get(vpm_S, v) << "), tolerance: " << tolerance << std::endl;
 #endif
   }
+
+  for(auto& p : vertices_to_snap)
+    p.second = point_tolerance_map[get(vpm_S, target(p.first, tm_S))];
 
   // Since we're inserting primitives one by one, we can't pass this shared data in the constructor of the tree
   AABB_Traits aabb_traits;
