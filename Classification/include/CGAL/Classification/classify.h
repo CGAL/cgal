@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Classification.h>
 
-#include <CGAL/internal/Surface_mesh_segmentation/Alpha_expansion_graph_cut.h>
+#include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Classification/Label_set.h>
 #include <CGAL/property_map.h>
@@ -234,12 +234,6 @@ namespace internal {
     const std::vector<std::pair<std::size_t, std::size_t> >& m_input_to_indices;
     LabelIndexRange& m_out;
 
-#ifdef CGAL_DO_NOT_USE_BOYKOV_KOLMOGOROV_MAXFLOW_SOFTWARE
-    typedef CGAL::internal::Alpha_expansion_graph_cut_boost             Alpha_expansion;
-#else
-    typedef CGAL::internal::Alpha_expansion_graph_cut_boykov_kolmogorov Alpha_expansion;
-#endif
-    
   public:
 
     Classify_functor_graphcut (const ItemRange& input,
@@ -309,9 +303,8 @@ namespace internal {
         }
         assigned_label[j] = nb_class_best;
       }
-    
-      Alpha_expansion graphcut;
-      graphcut(edges, edge_weights, probability_matrix, assigned_label);
+
+      CGAL::alpha_expansion_graphcut (edges, edge_weights, probability_matrix, assigned_label);
 
       for (std::size_t i = 0; i < assigned_label.size(); ++ i)
         m_out[m_indices[sub][i]] = static_cast<typename LabelIndexRange::iterator::value_type>(assigned_label[i]);
