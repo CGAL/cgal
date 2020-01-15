@@ -17,7 +17,7 @@
 
 #include "ui_Smoothing_plugin.h"
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>

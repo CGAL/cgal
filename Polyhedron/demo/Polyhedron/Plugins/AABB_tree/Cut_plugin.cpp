@@ -27,7 +27,7 @@
 
 #include <CGAL/bounding_box.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 
 #include <QAction>
 #include <QMainWindow>
@@ -1241,7 +1241,7 @@ void Polyhedron_demo_cut_plugin::computeIntersection()
   Simple_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * pos);
   //std::cerr << plane << std::endl;
   edges_item->edges.clear();
-  QTime time;
+  QElapsedTimer time;
   time.start();
   bool does_intersect = false;
   for(Facet_sm_trees::iterator it = facet_sm_trees.begin(); it != facet_sm_trees.end(); ++it)

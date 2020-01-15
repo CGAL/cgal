@@ -38,7 +38,7 @@
 #include <QSpinBox>
 #include <stdexcept>
 #include <fstream>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QWidgetAction>
 #include <QJsonArray>
 #include <QSequentialIterable>
@@ -1477,11 +1477,11 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
                 this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
-      saveas->setData(qVariantFromValue((void*)item));
+      saveas->setData(QVariant::fromValue((void*)item));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
       QAction* showobject = menu->addAction(tr("&Zoom to this Object"));
-      showobject->setData(qVariantFromValue((void*)item));
+      showobject->setData(QVariant::fromValue((void*)item));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
 
