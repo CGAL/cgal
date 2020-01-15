@@ -6022,20 +6022,20 @@ void MainWindow::on_actionIntersection_triggered()
   {
 	  switch(m_color_result_active)	{
 	  		case 0:if (!blue_set().is_empty() && m_blue_int) result_set().assign(blue_set());
-				else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
-				else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
+				  else if (!red_set().is_empty() && m_red_int) result_set().assign(red_set());
+				  else if (!black_set().is_empty() && m_black_int) result_set().assign(black_set());
 			    else if (!brown_set().is_empty() && m_brown_int) result_set().assign(brown_set());
-				else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
-				else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
-				else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
+				  else if (!yellow_set().is_empty() && m_yellow_int) result_set().assign(yellow_set());
+				  else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
+				  else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
 
 	      		result_set().difference(blue_set());
 	      		blue_set().join(result_set());
@@ -6050,13 +6050,14 @@ void MainWindow::on_actionIntersection_triggered()
 			  	else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
 			  	else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
+
 	      		
 	      		result_set().difference(red_set());
 	      		red_set().join(result_set());
@@ -6073,13 +6074,14 @@ void MainWindow::on_actionIntersection_triggered()
 			  	else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
 			  	else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());	
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
+
 
 			  	result_set().difference(black_set());
 	      		black_set().join(result_set());
@@ -6094,13 +6096,14 @@ void MainWindow::on_actionIntersection_triggered()
 			  	else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
 			  	else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
+
 
 	      		result_set().difference(brown_set());
 	      		brown_set().join(result_set());
@@ -6115,13 +6118,14 @@ void MainWindow::on_actionIntersection_triggered()
 			  	else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
 			  	else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
+
 	      		
 	      		result_set().difference(yellow_set());
 	      		yellow_set().join(result_set());
@@ -6136,13 +6140,14 @@ void MainWindow::on_actionIntersection_triggered()
 			  	else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
 			  	else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
+
 	      		
 	      		result_set().difference(magenta_set());
 	      		magenta_set().join(result_set());
@@ -6157,13 +6162,14 @@ void MainWindow::on_actionIntersection_triggered()
 			  	else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
 			  	else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
+
 
 	      		result_set().difference(aqua_set());
 	      		aqua_set().join(result_set());
@@ -6184,13 +6190,14 @@ void MainWindow::on_actionIntersection_triggered()
 			  	else if (!magenta_set().is_empty() && m_magenta_int) result_set().assign(magenta_set());
 			  	else if (!aqua_set().is_empty() && m_aqua_int) result_set().assign(aqua_set());
 
-			  	if (!blue_set().is_empty() && m_blue_int) result_set().intersect(blue_set());
-			  	if (!red_set().is_empty() && m_red_int) result_set().intersect(red_set());
-			  	if (!black_set().is_empty() && m_black_int) result_set().intersect(black_set());
-			  	if (!brown_set().is_empty() && m_brown_int) result_set().intersect(brown_set());
-			  	if (!yellow_set().is_empty() && m_yellow_int) result_set().intersect(yellow_set());
-			  	if (!magenta_set().is_empty() && m_magenta_int) result_set().intersect(magenta_set());
-			  	if (!aqua_set().is_empty() && m_aqua_int) result_set().intersect(aqua_set());
+			  	if (m_blue_int) result_set().intersect(blue_set());
+			  	if (m_red_int) result_set().intersect(red_set());
+			  	if (m_black_int) result_set().intersect(black_set());
+			  	if (m_brown_int) result_set().intersect(brown_set());
+			  	if (m_yellow_int) result_set().intersect(yellow_set());
+			  	if (m_magenta_int) result_set().intersect(magenta_set());
+			  	if (m_aqua_int) result_set().intersect(aqua_set());
+
 	}
 
 
