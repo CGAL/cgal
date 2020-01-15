@@ -152,11 +152,11 @@ std::size_t num_component_wrapper(Mesh& pmesh,
 }
 
 template <typename Mesh>
-struct Default_halfedge_comparer
+struct Default_halfedges_comparator
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor       halfedge_descriptor;
 
-  Default_halfedge_comparer() { }
+  Default_halfedges_comparator() { }
 
   bool operator()(halfedge_descriptor h1, halfedge_descriptor h2) const
   {
@@ -167,11 +167,11 @@ struct Default_halfedge_comparer
 // Provided for convenience. If passed to stitch_borders(), this ensures that if any of the two
 // edge is constrained, then the preserver edge is also constrained
 template <typename ECM, typename PolygonMesh>
-struct Halfedge_comparer_with_constraint_priority
+struct Halfedges_comparator_with_constraint_priority
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
 
-  Halfedge_comparer_with_constraint_priority(const ECM& ecm, const PolygonMesh& pmesh)
+  Halfedges_comparator_with_constraint_priority(const ECM& ecm, const PolygonMesh& pmesh)
     : ecm(ecm), pmesh(pmesh)
   { }
 
@@ -212,11 +212,11 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
   std::size_t num_component = 0;
   std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
 
-  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedge_comparer_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_comparator_t,
                                                        CGAL_PMP_NP_CLASS,
-                                                       Default_halfedge_comparer<PolygonMesh> >::type  Halfedge_comparer;
-  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedge_comparer),
-                                                     Default_halfedge_comparer<PolygonMesh>());
+                                                       Default_halfedges_comparator<PolygonMesh> >::type  Halfedge_comparer;
+  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedges_comparator),
+                                                     Default_halfedges_comparator<PolygonMesh>());
 
   bool per_cc = choose_parameter(get_parameter(np, internal_np::apply_per_connected_component), false);
 
@@ -678,12 +678,12 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pm));
 
-  typedef internal::Default_halfedge_comparer<PolygonMesh>                         Default_halfedge_comparer;
-  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedge_comparer_t,
+  typedef internal::Default_halfedges_comparator<PolygonMesh>                         Default_halfedges_comparator;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_comparator_t,
                                                        CGAL_PMP_NP_CLASS,
-                                                        Default_halfedge_comparer>::type  Halfedge_comparer;
-  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedge_comparer),
-                                                     Default_halfedge_comparer());
+                                                        Default_halfedges_comparator>::type  Halfedge_comparer;
+  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedges_comparator),
+                                                     Default_halfedges_comparator());
 
   std::size_t stitched_boundary_cycles_n = 0;
 

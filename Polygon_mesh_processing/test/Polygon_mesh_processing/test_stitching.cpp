@@ -67,7 +67,7 @@ void test_stitch_borders(const char* fname,
   typedef typename boost::graph_traits<Mesh>::edge_descriptor         edge_descriptor;
   typedef CGAL::dynamic_edge_property_t<bool>                         Edge_property_tag;
   typedef typename boost::property_map<Mesh, Edge_property_tag>::type Marked_edges;
-  typedef PMP::internal::Halfedge_comparer_with_constraint_priority<Marked_edges, Mesh> Comparer;
+  typedef PMP::internal::Halfedges_comparator_with_constraint_priority<Marked_edges, Mesh> Comparer;
 
   Marked_edges marks = get(Edge_property_tag(), mesh);
   int id = 0;
@@ -77,7 +77,7 @@ void test_stitch_borders(const char* fname,
   Comparer cmp(marks, mesh);
 
   std::size_t res = PMP::stitch_borders(mesh, params::apply_per_connected_component(per_cc)
-                                                     .halfedge_comparer(cmp));
+                                                     .halfedges_comparator(cmp));
   std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
 
   for(edge_descriptor e : edges(mesh)) {
