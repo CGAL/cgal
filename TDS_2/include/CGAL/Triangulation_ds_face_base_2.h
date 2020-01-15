@@ -239,14 +239,14 @@ set_neighbor(int i, Face_handle n)
   N[i] = n;
 }
 
-template <class TDS>      
+template <class TDS>
 inline void
-Triangulation_ds_face_base_2<TDS> :: 
+Triangulation_ds_face_base_2<TDS> ::
 set_vertices()
 {
   V[0] = V[1] = V[2] = Vertex_handle();
 }
-    
+
 template <class TDS>      
 inline void
 Triangulation_ds_face_base_2<TDS> ::     
