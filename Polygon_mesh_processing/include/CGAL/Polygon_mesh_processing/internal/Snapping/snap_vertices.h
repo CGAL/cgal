@@ -51,7 +51,9 @@
 #endif
 
 #include <functional>
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
 #include <fstream>
+#endif
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -559,7 +561,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
 
   std::size_t counter = 0;
 
-#ifdef CGAL_PMP_SNAP_DEBUG
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
   std::ofstream out_edges("results/snappable.polylines.txt");
   out_edges.precision(17);
 #endif
@@ -573,7 +575,7 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     const vertex_descriptor va = target(vs_a.front(), tm_A);
     const vertex_descriptor vb = target(vs_b.front(), tm_B);
 
-#ifdef CGAL_PMP_SNAP_DEBUG
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
     out_edges << "2 " << tm_A.point(va) << " " << tm_B.point(vb) << std::endl;
 #endif
 
@@ -608,9 +610,12 @@ std::size_t snap_vertices_two_way(const HalfedgeRange_A& halfedge_range_A,
     }
   }
 
+#ifdef CGAL_PMP_SNAP_DEBUG_OUTPUT
+  out_edges.close();
+#endif
+
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Snapped " << counter << " pair(s)!" << std::endl;
-  out_edges.close();
 #endif
 
   //////////////////////////////////////////////////////////////////////////////////////////////////

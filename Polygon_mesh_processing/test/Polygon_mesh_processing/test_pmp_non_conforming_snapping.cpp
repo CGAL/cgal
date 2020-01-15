@@ -1,3 +1,6 @@
+//#define CGAL_PMP_SNAP_DEBUG_PP
+//#define CGAL_PMP_SNAP_DEBUG_OUTPUT
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

@@ -82,7 +82,7 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge
     }
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
-    std::cout << "tolerance at vd: " /*<< vd */ << " [" << get(vpm, vd) << "]: min of "
+    std::cout << "tolerance at vd: " << vd << " [" << get(vpm, vd) << "]: min of "
               << 0.9 * CGAL::approximate_sqrt(min_sq_dist) << " AND " << tolerance << std::endl;
 #endif
     put(tolerance_map, vd, CGAL::min<FT>(0.9 * CGAL::approximate_sqrt(min_sq_dist), tolerance));
