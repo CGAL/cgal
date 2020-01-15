@@ -107,7 +107,7 @@ void fill_pairs(const Halfedge& he,
   bool insertion_ok;
   std::tie(set_it, insertion_ok)
       = border_halfedge_map.insert(std::make_pair(he,std::make_pair(1,0)));
-  
+
   if ( !insertion_ok ){ // we found already a halfedge with the points
     ++set_it->second.first; // increase the multiplicity
     if(set_it->second.first == 2)
@@ -122,43 +122,38 @@ void fill_pairs(const Halfedge& he,
       else
         manifold_halfedge_pairs.push_back(false);
     }
-    else
-      if ( set_it->second.first > 2 )
-      {
-        manifold_halfedge_pairs[ set_it->second.second ] = false;
-      }
+    else if ( set_it->second.first > 2 )
+    {
+      manifold_halfedge_pairs[ set_it->second.second ] = false;
+    }
   }
 }
 
 template<typename Mesh,
          typename CCMap,
          typename FIMap>
-std::size_t num_component_wrapper(const Mesh& pmesh, 
-                      CCMap cc, 
-                      FIMap fim)
+std::size_t num_component_wrapper(const Mesh& pmesh,
+                                  CCMap cc,
+                                  FIMap fim)
 {
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh, cc, 
-                                                             CGAL::Polygon_mesh_processing::parameters::face_index_map(fim));
+  return connected_components(pmesh, cc, parameters::face_index_map(fim));
 }
 
 //specialization if there is no default FIMap, create one
 template<typename Mesh,
          typename CCMap>
-std::size_t num_component_wrapper(Mesh& pmesh, 
-                      CCMap cc, 
-                      boost::cgal_no_property::type)
+std::size_t num_component_wrapper(Mesh& pmesh,
+                                  CCMap cc,
+                                  boost::cgal_no_property::type)
 {
-  
-     boost::unordered_map<typename boost::graph_traits<Mesh>::face_descriptor, std::size_t> fim;
- 
-   //init the map
-   std::size_t i=-1;
-   for(typename boost::graph_traits<Mesh>::face_descriptor f : faces(pmesh))
-     fim[f]=++i;
- 
-   return CGAL::Polygon_mesh_processing::connected_components(pmesh,
-                                                              cc,
-                                                              parameters::face_index_map(boost::make_assoc_property_map(fim)));
+  std::unordered_map<typename boost::graph_traits<Mesh>::face_descriptor, std::size_t> fim;
+
+  //init the map
+  std::size_t i=-1;
+  for(typename boost::graph_traits<Mesh>::face_descriptor f : faces(pmesh))
+    fim[f] = ++i;
+
+  return connected_components(pmesh, cc, parameters::face_index_map(boost::make_assoc_property_map(fim)));
 }
 
 template <typename Mesh>
@@ -248,7 +243,7 @@ collect_duplicated_stitchable_boundary_edges(PM& pmesh,
     }
     else
     {
-      fill_pairs(he, border_halfedge_map, halfedge_pairs, 
+      fill_pairs(he, border_halfedge_map, halfedge_pairs,
                  manifold_halfedge_pairs, vpmap, pmesh);
     }
   }
@@ -262,7 +257,7 @@ collect_duplicated_stitchable_boundary_edges(PM& pmesh,
       for(int j = 0; j < static_cast<int>(border_edges_per_cc[i].size()); ++j)
       {
         halfedge_descriptor he = border_edges_per_cc[i][j];
-        fill_pairs(he, border_halfedge_map_in_cc, halfedge_pairs, 
+        fill_pairs(he, border_halfedge_map_in_cc, halfedge_pairs,
                    manifold_halfedge_pairs, vpmap, pmesh);
       }
       // put in `out` only manifold edges from the set of edges to stitch.
@@ -747,7 +742,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 
     halfedge_descriptor curr_h = start_h;
     halfedge_descriptor curr_hn = next(curr_h, pm);
-    for(;;) // while we can expand the zipping range
+    for(;;) //while we can expand the zipping range
     {
       // Don't create an invalid polygon mesh, even if the geometry allows it
       if(face(opposite(curr_h, pm), pm) == face(opposite(curr_hn, pm), pm))
