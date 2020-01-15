@@ -169,9 +169,6 @@ template<typename K>
 struct Intersection_traits<K, typename K::Iso_cuboid_3, CGAL::Bbox_3>
     : public Intersection_traits<K, CGAL::Bbox_3, typename K::Iso_cuboid_3> {};
 
-
-
-
 // Iso_cuboid_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Point_3>  {
@@ -395,7 +392,6 @@ struct Intersection_traits<K, typename K::Plane_3,typename K::Tetrahedron_3>
   typename K::Triangle_3, std::vector<typename K::Point_3> > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
-
 
 //Triangle_3 Tetrahedron_3, variant of 4
 template<class K>

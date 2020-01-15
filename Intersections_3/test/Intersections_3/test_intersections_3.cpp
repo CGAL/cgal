@@ -1251,7 +1251,7 @@ int main()
 {
   std::cout << " |||||||| Test Simple_cartesian<double> ||||||||" << std::endl;
   Test< CGAL::Simple_cartesian<double> >().run();
-
+/*
   std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::MP_Float> ||||||||" << std::endl;
   Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
 
@@ -1260,4 +1260,5 @@ int main()
 
   std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::Epeck_ft> ||||||||" << std::endl;
   Test< CGAL::Homogeneous<CGAL::Epeck_ft> >().run(true);
+  */
 }

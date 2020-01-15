@@ -139,19 +139,18 @@ intersection(
 
         CGAL_assertion(p1_found && p2_found);
         res[0] = entry_seg.target();
-
-        if((entry_seg.target() - p1)
-           * (p2 - p1) > 0)
-        {
-          res[1] = p2;
-          res[2] = p1;
-        }
-        else
-        {
-          res[1] = p1;
-          res[2] = p2;
-        }
+        res[1] = p2;
+        res[2] = p1;
         res[3] = entry_seg.source();
+        
+        typename K::Coplanar_orientation_3 coplanar_orientation = 
+          k.coplanar_orientation_3_object();
+        
+        if( coplanar_orientation(res[0], res[1], res[2])
+            != coplanar_orientation(res[0], res[1], res[3]))
+        {
+          std::swap(res[1], res[2]);
+        }
 
         return result_type(std::forward<Poly>(res));
       }
@@ -164,41 +163,39 @@ intersection(
       Segment_3 front(segments.front()),
           back(segments.back());
       res[0] = front.target();
-      if((front.target() - front.source())
-         * (back.target() - back.source()) > 0)
-      {
-        res[1] = back.target();
-        res[2] = back.source();
-      }
-      else
-      {
-        res[1] = back.source();
-        res[2] = back.target();
-      }
+      res[1] = back.target();
+      res[2] = back.source();
       res[3] = front.source();
+      typename K::Coplanar_orientation_3 coplanar_orientation = 
+        k.coplanar_orientation_3_object();
+      
+      if( coplanar_orientation(res[0], res[1], res[2])
+          != coplanar_orientation(res[0], res[1], res[3]))
+      {
+        std::swap(res[1], res[2]);
+      }
 
       return result_type(std::forward<Poly>(res));
     }
-      break;
-    case 4: // intersects a face
-    {
-      Poly res;
-      res.reserve(4);
-      std::list<Point_3> tmp;
-      std::list<Segment_3> seg_list;
-      for(const Segment_3& s : segments)
-        seg_list.push_back(s);
-      fill_points_list(seg_list, tmp);
-      for(const Point_3& p : tmp)
-        res.push_back(p);
-
-      return result_type(std::forward<Poly>(res));
-    }
-      break;
-    default:
-      break;
+    break;
+  case 4: // intersects a face
+  {
+    Poly res;
+    res.reserve(4);
+    std::list<Point_3> tmp;
+    std::list<Segment_3> seg_list;
+    for(auto s : segments)
+      seg_list.push_back(s);
+    fill_points_list(seg_list, tmp);
+    for(auto p : tmp)
+      res.push_back(p);
+    return result_type(std::forward<Poly>(res));
   }
-
+    break;
+  default:
+    break;
+  }
+  
   Poly filtered_points;
   filter_points(points, filtered_points);
 
