@@ -161,37 +161,83 @@ std::size_t num_component_wrapper(Mesh& pmesh,
                                                               parameters::face_index_map(boost::make_assoc_property_map(fim)));
 }
 
+template <typename Mesh>
+struct Default_halfedge_comparer
+{
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor       halfedge_descriptor;
+
+  Default_halfedge_comparer() { }
+
+  bool operator()(halfedge_descriptor h1, halfedge_descriptor h2) const
+  {
+    return h1 < h2; // Arbitrary preference
+  }
+};
+
+// Provided for convenience. If passed to stitch_borders(), this ensures that if any of the two
+// edge is constrained, then the preserver edge is also constrained
+template <typename ECM, typename Mesh>
+struct Halfedge_comparer_with_constraint_priority
+{
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor       halfedge_descriptor;
+
+  Halfedge_comparer_with_constraint_priority(const ECM& ecm, const Mesh& pmesh) : ecm(ecm), pmesh(pmesh) { }
+
+  bool operator()(const halfedge_descriptor /*h1*/, const halfedge_descriptor h2) const
+  {
+    if(get(ecm, edge(h2, pmesh)))
+      return false;
+
+    // If both or none are constrained, it does not matter which we are keeping
+    return true;
+  }
+
+private:
+  const ECM& ecm;
+  const Mesh& pmesh;
+};
+
 template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap
           , class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 OutputIterator
-collect_duplicated_stitchable_boundary_edges
-(PM& pmesh, OutputIterator out, LessHedge less_hedge, 
- const VertexPointMap& vpmap, const CGAL_PMP_NP_CLASS& np)
+collect_duplicated_stitchable_boundary_edges(PM& pmesh,
+                                             OutputIterator out,
+                                             LessHedge less_hedge,
+                                             const VertexPointMap& vpmap,
+                                             const CGAL_PMP_NP_CLASS& np)
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef std::map<halfedge_descriptor, std::pair<int, std::size_t>, LessHedge> Border_halfedge_map;
   Border_halfedge_map border_halfedge_map(less_hedge);
   std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > halfedge_pairs;
   std::vector< bool > manifold_halfedge_pairs;
 
-
   typedef CGAL::dynamic_face_property_t<int>                        Face_property_tag;
   typedef typename boost::property_map<PM, Face_property_tag>::type Face_cc_map;
   Face_cc_map cc;
   std::size_t num_component = 0;
   std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
-  bool per_cc = parameters::choose_parameter(parameters::get_parameter(np, internal_np::apply_per_connected_component),
-                                             false);
+
+  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedge_comparer_t,
+                                                       CGAL_PMP_NP_CLASS,
+                                                       Default_halfedge_comparer<PM> >::type  Halfedge_comparer;
+  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedge_comparer),
+                                                     Default_halfedge_comparer<PM>());
+
+  bool per_cc = choose_parameter(get_parameter(np, internal_np::apply_per_connected_component), false);
   if(per_cc)
   {
     cc = get(Face_property_tag(), pmesh);
     typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::const_type FIMap;
-    FIMap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                             get_const_property_map(face_index, pmesh));
+    FIMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
+                                 get_const_property_map(face_index, pmesh));
     num_component = num_component_wrapper(pmesh, cc, fim);
     border_edges_per_cc.resize(num_component);
   }
-  
+
   for(halfedge_descriptor he : halfedges(pmesh))
   {
     if ( !CGAL::is_border(he, pmesh) )
@@ -227,7 +273,18 @@ collect_duplicated_stitchable_boundary_edges
       {
         if( manifold_halfedge_pairs[k] )
         {
-          *out++=halfedge_pairs[k];
+          if(!hd_comp(halfedge_pairs[k].first, halfedge_pairs[k].second))
+            std::swap(halfedge_pairs[k].first, halfedge_pairs[k].second);
+
+          *out++ = halfedge_pairs[k];
+
+#ifdef CGAL_PMP_STITCHING_DEBUG
+          halfedge_descriptor h = halfedge_pairs[k].first;
+          halfedge_descriptor hn = halfedge_pairs[k].second;
+          std::cout << "Stitch "
+                    << edge(h, pmesh) << " (" << get(vpmap, source(h, pmesh)) << ") - (" << get(vpmap, target(h, pmesh)) << ") and "
+                    << edge(hn, pmesh) << " (" << get(vpmap, source(hn, pmesh)) << ") - (" << get(vpmap, target(hn, pmesh)) << ")" << std::endl;
+#endif
         }
       }
       halfedge_pairs.clear();
@@ -243,7 +300,19 @@ collect_duplicated_stitchable_boundary_edges
     for (std::size_t i=0; i<nb_pairs; ++i)
     {
       if( manifold_halfedge_pairs[i] )
-        *out++=halfedge_pairs[i];
+      {
+        if(!hd_comp(halfedge_pairs[i].first, halfedge_pairs[i].second))
+          std::swap(halfedge_pairs[i].first, halfedge_pairs[i].second);
+
+        *out++ = halfedge_pairs[i];
+#ifdef CGAL_PMP_STITCHING_DEBUG
+        halfedge_descriptor h = halfedge_pairs[i].first;
+        halfedge_descriptor hn = halfedge_pairs[i].second;
+        std::cout << "Stitch "
+                  << edge(h, pmesh) << " (" << get(vpmap, source(h, pmesh)) << ") - (" << get(vpmap, target(h, pmesh)) << ") and "
+                  << edge(hn, pmesh) << " (" << get(vpmap, source(hn, pmesh)) << ") - (" << get(vpmap, target(hn, pmesh)) << ")" << std::endl;
+#endif
+      }
     }
   }
 
@@ -608,6 +677,13 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(vertex_point, pm));
 
+  typedef internal::Default_halfedge_comparer<PolygonMesh>                         Default_halfedge_comparer;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedge_comparer_t,
+                                                       CGAL_PMP_NP_CLASS,
+                                                        Default_halfedge_comparer>::type  Halfedge_comparer;
+  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedge_comparer),
+                                                     Default_halfedge_comparer());
+
   std::size_t stitched_boundary_cycles_n = 0;
 
   // A boundary cycle might need to be stitched starting from different extremities
@@ -684,7 +760,10 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
       CGAL_assertion(is_border(curr_h, pm));
       CGAL_assertion(is_border(curr_hn, pm));
 
-      hedges_to_stitch.push_back(std::make_pair(curr_h, curr_hn));
+      if(hd_comp(curr_h, curr_hn))
+        hedges_to_stitch.push_back(std::make_pair(curr_h, curr_hn));
+      else
+        hedges_to_stitch.push_back(std::make_pair(curr_hn, curr_h));
 
 #ifdef CGAL_PMP_STITCHING_DEBUG_PP
       std::cout << "expand zip with:\n"
