@@ -1252,9 +1252,9 @@ template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
           typename ToleranceMap,
           typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-std::size_t snap_border(TriangleMesh& tm,
-                        ToleranceMap tolerance_map,
-                        const CGAL_PMP_NP_CLASS& np)
+std::size_t snap_borders(TriangleMesh& tm,
+                         ToleranceMap tolerance_map,
+                         const CGAL_PMP_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
@@ -1269,17 +1269,17 @@ std::size_t snap_border(TriangleMesh& tm,
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
           typename ToleranceMap>
-std::size_t snap_border(TriangleMesh& tm,
-                        ToleranceMap tolerance_map)
+std::size_t snap_borders(TriangleMesh& tm,
+                         ToleranceMap tolerance_map)
 {
-  return snap_border<ConcurrencyTag>(tm, tolerance_map, CGAL::parameters::all_default());
+  return snap_borders<ConcurrencyTag>(tm, tolerance_map, CGAL::parameters::all_default());
 }
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh,
           typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-std::size_t snap_border(TriangleMesh& tm,
-                        const CGAL_PMP_NP_CLASS& np)
+std::size_t snap_borders(TriangleMesh& tm,
+                         const CGAL_PMP_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor        halfedge_descriptor;
 
@@ -1303,9 +1303,9 @@ std::size_t snap_border(TriangleMesh& tm,
 
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
           typename TriangleMesh>
-std::size_t snap_border(TriangleMesh& tm)
+std::size_t snap_borders(TriangleMesh& tm)
 {
-  return snap_border<ConcurrencyTag>(tm, CGAL::parameters::all_default());
+  return snap_borders<ConcurrencyTag>(tm, CGAL::parameters::all_default());
 }
 
 } // end namespace experimental
