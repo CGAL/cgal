@@ -70,7 +70,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
  
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Sébastien Loriot, Jane Tournois, Ilker %O. Yaz}
+\cgalPkgAuthor{Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz}
 \cgalPkgDesc{This package provides
 a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms.}

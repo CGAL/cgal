@@ -1,8 +1,30 @@
 include( polyhedron_demo_macros )
 if(EIGEN3_FOUND)
+
+  set(polyfit_linked_libraries)
+  set(polyfit_compile_definitions)
+
+  find_package(SCIP QUIET)
+  if(SCIP_FOUND)
+    include_directories(BEFORE ${SCIP_INCLUDE_DIRS})
+    set(polyfit_linked_libraries ${polyfit_linked_libraries} ${SCIP_LIBRARIES})
+    set(polyfit_compile_definitions ${polyfit_compile_definitions} "-DCGAL_USE_SCIP")
+  endif()
+  find_package(GLPK QUIET)
+  if(GLPK_FOUND)
+    include_directories(BEFORE ${GLPK_INCLUDE_DIR})
+    set(polyfit_linked_libraries ${polyfit_linked_libraries} ${GLPK_LIBRARIES})
+    set(polyfit_compile_definitions ${polyfit_compile_definitions} "-DCGAL_USE_GLPK")
+  endif()
+
+  if(NOT SCIP_FOUND AND NOT GLPK_FOUND)
+    message(STATUS "NOTICE: SCIP and GLPK were not found. Polygonal surface reconstruction will not be available.")
+  endif()
+
   qt5_wrap_ui( surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
-  polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin Surface_reconstruction_plugin_impl ${surface_reconstructionUI_FILES} KEYWORDS PointSetProcessing)
-  target_link_libraries(surface_reconstruction_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_points_with_normal_item)
+  polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin Surface_reconstruction_poisson_impl Surface_reconstruction_advancing_front_impl Surface_reconstruction_scale_space_impl Surface_reconstruction_polygonal_impl ${surface_reconstructionUI_FILES} KEYWORDS PointSetProcessing)
+  target_link_libraries(surface_reconstruction_plugin PUBLIC scene_polygon_soup_item scene_surface_mesh_item scene_points_with_normal_item ${polyfit_linked_libraries})
+  target_compile_definitions(surface_reconstruction_plugin PRIVATE ${polyfit_compile_definitions})
 
   qt5_wrap_ui( point_set_normal_estimationUI_FILES Point_set_normal_estimation_plugin.ui)
   polyhedron_demo_plugin(point_set_normal_estimation_plugin Point_set_normal_estimation_plugin ${point_set_normal_estimationUI_FILES} KEYWORDS PointSetProcessing Classification)

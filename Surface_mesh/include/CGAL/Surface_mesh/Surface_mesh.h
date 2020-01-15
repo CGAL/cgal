@@ -1,22 +1,12 @@
-//=============================================================================
 // Copyright (C) 2001-2005 by Computer Graphics Group, RWTH Aachen
 // Copyright (C) 2011 by Graphics & Geometry Group, Bielefeld University
 // Copyright (C) 2014 GeometryFactory
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
 
@@ -56,7 +46,7 @@
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 
 namespace CGAL {
 
@@ -90,21 +80,6 @@ namespace CGAL {
           return idx_ != inf;
         }
 
-        /// are two indices equal?
-        bool operator==(const T& _rhs) const {
-            return idx_ == _rhs.idx_;
-        }
-
-        /// are two indices different?
-        bool operator!=(const T& _rhs) const {
-            return idx_ != _rhs.idx_;
-        }
-
-        /// Comparison by index.
-        bool operator<(const T& _rhs) const {
-            return idx_ < _rhs.idx_;
-        }
-
         // Compatibility with OpenMesh handle
         size_type idx() const {
           return idx_;
@@ -130,7 +105,7 @@ namespace CGAL {
 
         SM_Index operator+=(std::ptrdiff_t n) { idx_ = size_type(std::ptrdiff_t(idx_) + n); return *this; }
       
-    private:
+    protected:
         size_type idx_;
     };
 
@@ -141,8 +116,8 @@ namespace CGAL {
     return ret;
   }
 
-    // Implementation for Surface_mesh::Vertex_index
- 
+  
+    // Implementation for Surface_mesh::Vertex_index  
     class SM_Vertex_index
  : public SM_Index<SM_Vertex_index>
     {
@@ -151,6 +126,25 @@ namespace CGAL {
         SM_Vertex_index() : SM_Index<SM_Vertex_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Vertex_index(size_type _idx) : SM_Index<SM_Vertex_index>(_idx) {}
+
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+      
+        /// are two indices equal?
+        bool operator==(const SM_Vertex_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Vertex_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Vertex_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
 
         friend std::ostream& operator<<(std::ostream& os, SM_Vertex_index const& v)
@@ -177,6 +171,25 @@ namespace CGAL {
         SM_Halfedge_index() : SM_Index<SM_Halfedge_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
+
+        /// are two indices equal?
+        bool operator==(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Halfedge_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Halfedge_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
         friend std::ostream& operator<<(std::ostream& os, SM_Halfedge_index const& h)
         {
@@ -193,7 +206,25 @@ namespace CGAL {
         SM_Face_index() : SM_Index<SM_Face_index>((std::numeric_limits<size_type>::max)()) {}
 
         explicit SM_Face_index(size_type _idx) : SM_Index<SM_Face_index>(_idx) {}
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
 
+        /// are two indices equal?
+        bool operator==(const SM_Face_index& _rhs) const {
+            return this->idx_ == _rhs.idx_;
+        }
+
+        /// are two indices different?
+        bool operator!=(const SM_Face_index& _rhs) const {
+            return this->idx_ != _rhs.idx_;
+        }
+
+        /// Comparison by index.
+        bool operator<(const SM_Face_index& _rhs) const {
+          return this->idx_ < _rhs.idx_;
+        }
 
         friend std::ostream& operator<<(std::ostream& os, SM_Face_index const& f)
         {
@@ -227,6 +258,11 @@ namespace CGAL {
 
         // returns whether the index is valid, i.e., the index is not equal to std::numeric_limits<size_type>::max().
         bool is_valid() const { return halfedge_.is_valid(); }
+
+      
+        template<class T> bool operator==(const T&) const = delete;
+        template<class T> bool operator!=(const T&) const = delete;
+        template<class T> bool operator<(const T&) const = delete;
 
         // Are two indices equal?
         bool operator==(const SM_Edge_index& other) const { return (size_type)(*this) == (size_type)other; }
@@ -1758,6 +1794,8 @@ public:
     /// With `check_all_incident_halfedges == false` the function returns `true`, if the incident
     /// halfedge associated to vertex `v` is a border halfedge, or if the vertex is isolated.
     /// \cgalAdvancedEnd
+    /// \attention If the data contained in the `Surface_mesh` is not a 2-manifold, then
+    /// this operation is not guaranteed to return the right result.
   bool is_border(Vertex_index v, bool check_all_incident_halfedges = true) const
     {
         Halfedge_index h(halfedge(v));
@@ -2112,13 +2150,16 @@ private: //------------------------------------------------------- private data
     bool has_fcolors;
     boost::tie(fcolors, has_fcolors) = sm.template property_map<typename Mesh::Face_index, CGAL::Color >("f:color");
 
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     if(!has_fcolors && !has_vcolors)
       os << "OFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     else
       os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
-    typename Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
-        vpm = choose_param(get_param(np, internal_np::vertex_point),
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
+        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
@@ -2398,8 +2439,11 @@ private: //------------------------------------------------------- private data
    typedef typename Mesh::Face_index Face_index;
    typedef typename Mesh::Vertex_index Vertex_index;
    typedef typename Mesh::size_type size_type;
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
-        vpm = choose_param(get_param(np, CGAL::internal_np::vertex_point),
+   using parameters::choose_parameter;
+   using parameters::get_parameter;
+
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
+        vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
                            get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
     std::string off;

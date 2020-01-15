@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Mael Rouxel-Labbé
@@ -29,10 +20,15 @@
 #include <CGAL/Polygon_mesh_processing/internal/Smoothing/smoothing_evaluation.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/property_map.h>
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -119,12 +115,12 @@ void smooth_mesh(const FaceRange& faces,
   // its vertices are constrained.
   typedef CGAL::dynamic_vertex_property_t<bool>                                       Vertex_property_tag;
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type       Default_VCMap;
-  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                  NamedParameters,
                                                  Default_VCMap
                                                  > ::type                             VCMap;
 
-  typedef typename boost::lookup_named_param_def<internal_np::edge_is_constrained_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::edge_is_constrained_t,
                                                  NamedParameters,
                                                  Constant_property_map<edge_descriptor, bool> // default
                                                  > ::type                             ECMap;
@@ -150,17 +146,17 @@ void smooth_mesh(const FaceRange& faces,
   if(std::begin(faces) == std::end(faces))
     return;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // named parameters
-  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits),
+  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits),
                                GeomTraits());
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_property_map(CGAL::vertex_point, tmesh));
 
-  const bool use_angle_smoothing = choose_param(get_param(np, internal_np::use_angle_smoothing), true);
-  bool use_area_smoothing = choose_param(get_param(np, internal_np::use_area_smoothing), true);
+  const bool use_angle_smoothing = choose_parameter(get_parameter(np, internal_np::use_angle_smoothing), true);
+  bool use_area_smoothing = choose_parameter(get_parameter(np, internal_np::use_area_smoothing), true);
 
 #ifndef CGAL_PMP_USE_CERES_SOLVER
   std::cerr << "Area-based smoothing requires the Ceres Library, which is not available." << std::endl;
@@ -171,12 +167,12 @@ void smooth_mesh(const FaceRange& faces,
   if(!use_angle_smoothing && !use_area_smoothing)
     std::cerr << "Called PMP::smooth_mesh() without any smoothing method selected or available" << std::endl;
 
-  unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
-  const bool do_project = choose_param(get_param(np, internal_np::do_project), true);
-  const bool use_safety_constraints = choose_param(get_param(np, internal_np::use_safety_constraints), true);
-  const bool use_Delaunay_flips = choose_param(get_param(np, internal_np::use_Delaunay_flips), true);
+  unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
+  const bool do_project = choose_parameter(get_parameter(np, internal_np::do_project), true);
+  const bool use_safety_constraints = choose_parameter(get_parameter(np, internal_np::use_safety_constraints), true);
+  const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
-  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                              get(Vertex_property_tag(), tmesh));
 
   // If it's the default vcmap, manually set everything to false because the dynamic pmap has no default initialization
@@ -186,7 +182,7 @@ void smooth_mesh(const FaceRange& faces,
       put(vcmap, v, false);
   }
 
-  ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
+  ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                              Constant_property_map<edge_descriptor, bool>(false));
 
   // a constrained edge has constrained extremities
@@ -225,7 +221,6 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   Tree aabb_tree(input_triangles.begin(), input_triangles.end());
-  aabb_tree.accelerate_distance_queries();
 
   // Setup the working ranges and check some preconditions
   Angle_smoother angle_smoother(tmesh, vpmap, vcmap, gt);

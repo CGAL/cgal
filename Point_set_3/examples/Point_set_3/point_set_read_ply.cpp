@@ -14,14 +14,15 @@ typedef CGAL::Point_set_3<Point> Point_set;
 
 int main (int argc, char** argv)
 {
-  std::ifstream f (argc > 1 ? argv[1] : "data/example.ply");
+  std::ifstream f (argc > 1 ? argv[1] : "data/example.ply",
+                   std::ios_base::binary); // Mandatory on Windows if input is binary PLY
 
   Point_set point_set;
 
-  if (!f || !CGAL::read_ply_point_set (f, point_set))
-    {
-      std::cerr << "Can't read input file " << std::endl;
-    }
+  if (!f || !CGAL::read_ply_point_set (f, point_set)) // same as `f >> point_set`
+  {
+    std::cerr << "Can't read input file " << std::endl;
+  }
 
   // Shows which properties are defined
   std::vector<std::string> properties = point_set.properties();
@@ -41,9 +42,19 @@ int main (int argc, char** argv)
         std::cerr << " * " << label_prop[*it] << std::endl;
     }
 
-  std::ofstream out ("out.ply");
-  out.precision(17);
-  CGAL::write_ply_point_set (out, point_set);
+  if (argc > 2 && strcmp (argv[2], "-b") == 0) // Optional binary output
+  {
+    std::ofstream out ("out.ply",
+                       std::ios_base::binary); // Mandatory on Windows
+    CGAL::set_binary_mode (out); // Select binary mode (ASCII is default)
+    out << point_set; // same as `CGAL::write_ply_point_set (out, point_set)`
+  }
+  else // ASCII output
+  {
+    std::ofstream out ("out.ply");
+    out.precision(17); // Use sufficient precision in ASCII
+    CGAL::write_ply_point_set (out, point_set); // same as `out << point_set`
+  }
   
   return 0;
 }

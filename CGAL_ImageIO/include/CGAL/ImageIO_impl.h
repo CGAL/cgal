@@ -3,21 +3,11 @@
 // Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France) 
 // All rights reserved.
 //
-// The files in this directory are part of the ImageIO Library.
-// You can redistribute them and/or  modify them under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-// PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 
 #ifdef CGAL_HEADER_ONLY
@@ -507,14 +497,19 @@ void _openWriteImage(_image* im, const char *name)
 #endif
 	im->openMode = OM_GZ;
       }
-#if CGAL_USE_GZFWRITE
-    else 
+    else
     {
+#if CGAL_USE_GZFWRITE
       im->fd = (_ImageIO_file) gzopen(name, "wb");
       im->openMode = OM_FILE;
-    }
-#endif// CGAL_USE_GZFWRITE
 #else
+      fprintf(stderr, "_openWriteImage: error: zlib version 1.2.9 or later\n"
+                      "is required to save in non-compressed files\n");
+      return; 
+#endif// CGAL_USE_GZFWRITE
+    }
+
+#else //CGAL_USE_ZLIB
     {
       im->fd = (_ImageIO_file) fopen(name, "wb");
       im->openMode = OM_FILE;
@@ -623,8 +618,8 @@ _image *_initImage() {
 }
 
 CGAL_INLINE_FUNCTION
-_image *_createImage(int x, int y, int z, int v,
-		     float vx, float vy, float vz, int w,
+_image *_createImage(std::size_t x, std::size_t y, std::size_t z, std::size_t v,
+		     double vx, double vy, double vz, std::size_t w,
 		     WORD_KIND wk, SIGN sgn)
 {
   _image *im;

@@ -152,9 +152,9 @@ typename Traits::Barycentric_coordinates random_coordinates(CGAL::Random& rand)
 {
   typedef typename Traits::FT FT;
   typename Traits::Construct_barycentric_coordinates construct_barycentric_coordinates;
-  FT u = rand.uniform_real(FT(0.0), FT(1.0));
-  FT v = rand.uniform_real(FT(0.0), FT(1.0) - u);
-  return construct_barycentric_coordinates(u, v, FT(1.0) - u - v);
+  FT u = rand.uniform_real(FT(0), FT(1));
+  FT v = rand.uniform_real(FT(0), FT(1) - u);
+  return construct_barycentric_coordinates(u, v, FT(1) - u - v);
 }
 
 template <class Kernel>

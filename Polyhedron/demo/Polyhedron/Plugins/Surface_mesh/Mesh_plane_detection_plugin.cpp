@@ -191,7 +191,7 @@ void Polyhedron_demo_mesh_plane_detection_plugin::on_actionPlaneDetection_trigge
       QDialog dialog(mw);
       Ui::Mesh_plane_detection_dialog ui;
       ui.setupUi(&dialog);
-  
+      ui.minimumAreaDoubleSpinBox->setMinimum(0.00001);
       // check user cancellation
       if(dialog.exec() == QDialog::Rejected)
         return;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Jane Tournois
@@ -137,14 +128,14 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  GT traits = choose_param(get_param(np, internal_np::geom_traits), GT());
+  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
-  VPMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
   typedef typename GT::Point_3 Point;
@@ -234,18 +225,19 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
                       const NamedParameters& np
                       )
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GT::Vector_3 Vector;
-  GT traits = choose_param(get_param(np, internal_np::geom_traits), GT());
+  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap DefaultMap;
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::face_normal_t,
     NamedParameters,
     DefaultMap> ::type FaceNormalMap;
-  FaceNormalMap fnmap = choose_param(get_param(np, internal_np::face_normal), DefaultMap());
+  FaceNormalMap fnmap = choose_parameter(get_parameter(np, internal_np::face_normal), DefaultMap());
   bool fnmap_valid
     = !boost::is_same<FaceNormalMap,
                       DefaultMap

@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -452,18 +444,18 @@ void CGAL::QGLViewer::initializeGL() {
       "   highp vec4 light_spec = vec4(0.0, 0.0, 0.0, 1.0); \n"
       "   highp vec4 light_amb = vec4(0.4, 0.4, 0.4, 0.4);  \n"
       "   highp float spec_power = 51.8 ; \n"
-      "   vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   vec3 V = -fP.xyz; \n"
-      "   vec3 N; \n"
+      "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+      "   highp vec3 V = -fP.xyz; \n"
+      "   highp vec3 N; \n"
       "   if(fN == vec3(0.0,0.0,0.0)) \n"
       "       N = vec3(0.0,0.0,0.0); \n"
       "   else \n"
       "       N = normalize(fN); \n"
       "   L = normalize(L); \n"
       "   V = normalize(V); \n"
-      "   vec3 R = reflect(-L, N); \n"
-      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+      "   highp vec3 R = reflect(-L, N); \n"
+      "   highp vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+      "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
       
       "gl_FragColor = color*light_amb + diffuse + specular; \n"
       "gl_FragColor = vec4(gl_FragColor.xyz, 1.0); \n"

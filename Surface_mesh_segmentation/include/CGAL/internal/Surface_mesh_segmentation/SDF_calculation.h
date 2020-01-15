@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ilker O. Yaz
 
@@ -126,6 +117,7 @@ private:
   typename GeomTraits::Construct_normal_3              normal_functor;
   typename GeomTraits::Construct_translated_point_3    translated_point_functor;
   typename GeomTraits::Construct_centroid_3            centroid_functor;
+  typename GeomTraits::Collinear_3                     collinear_functor;
 
   Tree tree;
 
@@ -153,11 +145,11 @@ public:
     normal_functor(traits.construct_normal_3_object()),
     translated_point_functor(traits.construct_translated_point_3_object()),
     centroid_functor(traits.construct_centroid_3_object()),
+    collinear_functor(traits.collinear_3_object()),
     tree(create_traits(mesh, vertex_point_map)),
     use_diagonal(use_diagonal) 
   {
     typedef typename boost::property_traits<VertexPointPmap>::reference Point_ref;
-    typename GeomTraits::Collinear_3  collinear = traits.collinear_3_object();
     face_iterator it, end;
     for(it = faces(mesh).begin(), end = faces(mesh).end(); it!=end; it++)
     {
@@ -167,15 +159,14 @@ public:
         Point_ref b(get(vertex_point_map,target(h, mesh)));
         h = next(h, mesh);
         Point_ref c(get(vertex_point_map, target(h, mesh)));
-        bool test = collinear(a,b,c);
+        bool test = collinear_functor(a,b,c);
         if(!test)
           tree.insert(Primitive(it, mesh, vertex_point_map));
     }
-    tree.build();
-
-    if(build_kd_tree) {
-      tree.accelerate_distance_queries();
+    if(!build_kd_tree) {
+      tree.do_not_accelerate_distance_queries();
     }
+    tree.build();
 
     if(use_diagonal) {
       CGAL::Bbox_3 bbox = tree.bbox();
@@ -388,10 +379,11 @@ private:
     const Point p2 = get(vertex_point_map,target(next(halfedge(facet,mesh),mesh),mesh));
     const Point p3 = get(vertex_point_map,target(prev(halfedge(facet,mesh),mesh),mesh));
     const Point center  = centroid_functor(p1, p2, p3);
+    if (collinear_functor(p1, p2, p3)) return boost::none;
     Vector normal = normal_functor(p2, p1, p3);
     normal=scale_functor(normal,
                          FT(1.0/std::sqrt(to_double(normal.squared_length()))));
-
+    if (normal!=normal) return boost::none;
     CGAL::internal::SkipPrimitiveFunctor<face_handle>
     skip(facet);
     CGAL::internal::FirstIntersectionVisitor<face_handle>

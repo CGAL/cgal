@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Mael Rouxel-Labbé
@@ -37,6 +28,11 @@
 #ifdef CGAL_PMP_SMOOTHING_OUTPUT_INTERMEDIARY_STEPS
 #include <fstream>
 #include <sstream>
+#endif
+
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
 #endif
 
 namespace CGAL {
@@ -93,20 +89,20 @@ void smooth_shape(const FaceRange& faces,
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor      vertex_descriptor;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type        GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type    VertexPointMap;
-  typedef typename boost::lookup_named_param_def<
+  typedef typename internal_np::Lookup_named_param_def<
                      internal_np::vertex_is_constrained_t,
                      NamedParameters,
                      Constant_property_map<vertex_descriptor, bool> >::type  VCMap;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  GeomTraits gt = choose_param(get_param(np, internal_np::geom_traits), GeomTraits());
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                       get_property_map(CGAL::vertex_point, tmesh));
-  VCMap vcmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                              Constant_property_map<vertex_descriptor, bool>(false));
-  const unsigned int nb_iterations = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  const unsigned int nb_iterations = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #if EIGEN_VERSION_AT_LEAST(3,2,0)
@@ -136,7 +132,7 @@ void smooth_shape(const FaceRange& faces,
   typedef typename Sparse_solver::Matrix                                          Eigen_matrix;
   typedef typename Sparse_solver::Vector                                          Eigen_vector;
 
-  Sparse_solver solver = choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver());
+  Sparse_solver solver = choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver());
 
   std::size_t n = vertices(tmesh).size();
   Eigen_matrix A(n, n);

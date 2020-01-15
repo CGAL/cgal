@@ -292,7 +292,8 @@ public:
 
     point_image p_im = *im_item->image()->image();
     bool ok = _writeImage(&p_im, fileinfo.filePath().toUtf8()) == 0;
-    items.pop_front();
+    if(ok)
+      items.pop_front();
     return ok;
   }
   QString name() const override{ return "segmented images"; }

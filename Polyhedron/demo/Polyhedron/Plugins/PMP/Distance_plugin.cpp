@@ -133,7 +133,6 @@ private:
     typedef CGAL::AABB_tree< Traits > Tree;
 
     Tree tree( faces(m).first, faces(m).second, m);
-    tree.accelerate_distance_queries();
     tree.build();
     boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
     Traits::Point_3 hint = get(CGAL::vertex_point,m, vd);
