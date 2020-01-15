@@ -18,15 +18,15 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "c3t3_io_plugin.json")
 
 public:
-  QString name() const { return "C3t3_io_plugin"; }
-  QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
-  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
-  QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
-  bool canLoad(QFileInfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString name() const override { return "C3t3_io_plugin"; }
+  QString nameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
+  QString saveNameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
+  QString loadNameFilters() const override { return "binary files (*.cgal);;ascii (*.mesh)"; }
+  bool canLoad(QFileInfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) override;
   bool isDefaultLoader(const Scene_item* item) const override{
     if(qobject_cast<const Scene_c3t3_item*>(item))
       return true;

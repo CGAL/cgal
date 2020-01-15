@@ -39,15 +39,15 @@ public:
       return true;
     return false;
   }
-  QString name() const { return "off_plugin"; }
-  QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
-  bool canLoad(QFileInfo fileinfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString name() const override{ return "off_plugin"; }
+  QString nameFilters() const override { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
+  bool canLoad(QFileInfo fileinfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
   CGAL::Three::Scene_item* load_off(QFileInfo fileinfo);
   CGAL::Three::Scene_item* load_obj(QFileInfo fileinfo);
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) override;
 };
 
 bool Polyhedron_demo_off_plugin::canLoad(QFileInfo) const {
