@@ -10,7 +10,7 @@
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Qt/constraint.h>
 #include <algorithm>
-#include <QTime>
+#include <QElapsedTimer>
 
 #include <QApplication>
 

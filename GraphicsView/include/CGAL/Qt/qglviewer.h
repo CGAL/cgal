@@ -28,7 +28,7 @@
 #include <QOpenGLBuffer>
 #include <QMap>
 #include <QVector>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QTimer>
 #include <QGLContext>
 #include <QOpenGLWidget>
@@ -1038,7 +1038,7 @@ protected:
   int animationTimerId_;
 
   // F P S    d i s p l a y
-  QTime fpsTime_;
+  QElapsedTimer fpsTime_;
   unsigned int fpsCounter_;
   QString fpsString_;
   qreal f_p_s_;
