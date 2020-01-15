@@ -112,7 +112,8 @@ namespace CGAL {
     typedef typename boost::property_traits<PMap>::value_type type;
   };
 
-  template<typename PolygonMesh, typename NamedParameters>
+  template<typename PolygonMesh,
+           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
   class GetVertexPointMap
   {
     typedef typename property_map_selector<PolygonMesh, boost::vertex_point_t>::const_type
