@@ -817,7 +817,13 @@ status() const
   if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value) {
     const WorksharingDataStructureType* ws_ds =
       this->get_worksharing_data_structure();
-    return Mesher_status(approximate_number_of_vertices(Concurrency_tag()),
+    return Mesher_status(
+#  if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+                         approximate_number_of_vertices(Concurrency_tag()),
+#else
+                         // not thread-safe, but that is not important
+                         approximate_number_of_vertices(CGAL::Sequential_tag()),
+#endif
                          0,
                          ws_ds->approximate_number_of_enqueued_element());
   }
