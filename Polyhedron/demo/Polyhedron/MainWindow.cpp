@@ -451,7 +451,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
         action->setVisible(!(submenu->isEmpty()));
 
       }
-      else if(action->text().contains(filter, Qt::CaseInsensitive)){
+      else if(action->text().remove("&").contains(filter, Qt::CaseInsensitive)){
         //menu->addAction(action);
         addActionToMenu(action, menu);
       }
@@ -491,7 +491,7 @@ void MainWindow::filterOperations(bool)
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
       action->setVisible( p.first->applicable(action)
-                          && (action->text().contains(filter, Qt::CaseInsensitive)
+                          && (action->text().remove("&").contains(filter, Qt::CaseInsensitive)
                               || action->property("subMenuName")
                               .toString().contains(filter, Qt::CaseInsensitive)));
     }
@@ -1197,6 +1197,10 @@ void MainWindow::open(QString filename)
           selected_items << io_plugin->name();
       }
     }
+    //if no plugin is correct, offer them all.
+    for(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin : io_plugins) {
+        all_items << io_plugin->name();
+    }
   }
   else
     selected_items << *dfs_it;
@@ -1804,7 +1808,12 @@ void MainWindow::readSettings()
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
     scene->enableVisibilityRecentering(settings.value("offset_update", false).toBool());
     viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
-    viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
+    int val  = settings.value("transparency_pass_number", 4).toInt();
+    if (val < 4 ) {
+      val = 4;
+      settings.setValue("transparency_pass_number", 4);
+    }
+    viewer->setTotalPass(val);
     CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
           settings.value("default_sm_rm", "flat+edges").toString());
     CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
@@ -3173,9 +3182,9 @@ void SubViewer::lookat()
     if (viewer->camera()->frame()->isSpinning())
       viewer->camera()->frame()->stopSpinning();
     mw->viewerShow(viewer,
-                   (float)dialog.get_x(),
-                   (float)dialog.get_y(),
-                   (float)dialog.get_z());
+                   (float)dialog.get_x() + viewer->offset().x,
+                   (float)dialog.get_y() + viewer->offset().y,
+                   (float)dialog.get_z() + viewer->offset().z);
   }
 }
 
