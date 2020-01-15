@@ -71,6 +71,7 @@ void read_mesh(const char* filename,
 template <typename Kernel, typename Mesh>
 void test(const char* filename,
           const double large_tolerance,
+          const double good_tolerance,
           const double small_tolerance)
 {
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor       vertex_descriptor;
@@ -87,19 +88,19 @@ void test(const char* filename,
 
   // zero tolerance, just to test the API
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_pmap_zero(0);
-  PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, sm_cpy);
-  PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, sm_cpy, tol_pmap_zero);
-  PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, sm_cpy, tol_pmap_zero,
-                                                         CGAL::parameters::geom_traits(Kernel()),
-                                                         CGAL::parameters::geom_traits(Kernel()));
+  PMP::experimental::snap_borders(sm_cpy, sm_cpy);
+  PMP::experimental::snap_borders(sm_cpy, tol_pmap_zero, sm_cpy, tol_pmap_zero);
+  PMP::experimental::snap_borders(sm_cpy, tol_pmap_zero, sm_cpy, tol_pmap_zero,
+                                  CGAL::parameters::geom_traits(Kernel()),
+                                  CGAL::parameters::geom_traits(Kernel()));
 
   // too big, creates wrong snaps
   sm_cpy = sm;
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_pmap_large(large_tolerance);
-  res = PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, tol_pmap_large);
+  res = PMP::experimental::snap_borders(sm_cpy, tol_pmap_large);
   std::cout << "snapped: " << res << std::endl;
 
-  std::ofstream out1("out1.off");
+  std::ofstream out1("too_large.off");
   out1.precision(17);
   out1 << sm_cpy;
   out1.close();
@@ -107,53 +108,64 @@ void test(const char* filename,
   // too small
   sm_cpy = sm;
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_pmap_small(small_tolerance);
-  res = PMP::experimental::snap_border_vertices_non_conforming(sm_cpy, tol_pmap_small,
-                                                               CGAL::parameters::geom_traits(Kernel()));
+  res = PMP::experimental::snap_borders(sm_cpy, tol_pmap_small,
+                                        CGAL::parameters::geom_traits(Kernel()));
   std::cout << "snapped: " << res << std::endl;
 
-  std::ofstream out2("out2.off");
+  std::ofstream out2("too_small.off");
   out2.precision(17);
   out2 << sm_cpy;
   out2.close();
 
-  // automatically computed, custom tolerance at each vertex
   sm_cpy = sm;
-  res = PMP::experimental::snap_border_vertices_non_conforming(sm_cpy);
+  CGAL::Constant_property_map<vertex_descriptor, FT> tol_pmap_good(good_tolerance);
+  res = PMP::experimental::snap_borders(sm_cpy, tol_pmap_good);
   std::cout << "snapped: " << res << std::endl;
 
-  std::ofstream out3("out3.off");
+  std::ofstream out3("good.off");
   out3.precision(17);
   out3 << sm_cpy;
   out3.close();
+
+  // automatically computed, custom tolerance at each vertex
+  sm_cpy = sm;
+  res = PMP::experimental::snap_borders(sm_cpy);
+  std::cout << "snapped: " << res << std::endl;
+
+  std::ofstream out4("custom.off");
+  out4.precision(17);
+  out4 << sm_cpy;
+  out4.close();
 }
 
 void test(const char* filename,
           const double large_tolerance,
+          const double good_tolerance,
           const double small_tolerance)
 {
   std::cout << "######################## TEST FILE: " << filename << " ################## " << std::endl;
 
   std::cout << "~~~~~~~~~~~ TEST EPECK POLYHEDRON ~~~~~~~~~~~" << std::endl;
-  test<EPECK, Exact_polyhedron>(filename, large_tolerance, small_tolerance);
+  test<EPECK, Exact_polyhedron>(filename, large_tolerance, good_tolerance, small_tolerance);
 
   std::cout << std::endl << "~~~~~~~~~~~ TEST EPICK POLYHEDRON ~~~~~~~~~~~" << std::endl;
-  test<EPICK, Polyhedron>(filename, large_tolerance, small_tolerance);
+  test<EPICK, Polyhedron>(filename, large_tolerance, good_tolerance, small_tolerance);
 
   std::cout << std::endl << "~~~~~~~~~~~ TEST EPICK SURFACE MESH ~~~~~~~~~~~" << std::endl;
-  test<EPICK, Surface_mesh>(filename, large_tolerance, small_tolerance);
+  test<EPICK, Surface_mesh>(filename, large_tolerance, good_tolerance, small_tolerance);
 }
 
 int main(int, char**)
 {
-  test("data_snapping/non_conform_snapping.off", 0.02, 0.001);
-  test("data_snapping/non-conform_snapping-hole.off", 0.02, 0.001);
-  test("data_snapping/non_conform_snapping-multiple_ccs.off", 0.02, 0.001);
-  test("data_snapping/non-conform_snapping-overlap.off", 0.02, 0.001);
+  test("data_snapping/non_conform_snapping.off", 0.2, 0.01, 0.0001);
+  test("data_snapping/non-conform_snapping-hole.off", 0.2, 0.01, 0.0001);
+  test("data_snapping/non_conform_snapping-multiple_ccs.off", 0.02, 0.01, 0.0001);
+  test("data_snapping/non-conform_snapping-overlap.off", 0.2, 0.01, 0.0001);
 
-  test("data_snapping/real_data.off", 1., 0.05);
-  test("data_snapping/real_data_2.off", 2, 0.1);
+  test("data_snapping/real_data.off", 1., 0.05, 0.0008);
+  test("data_snapping/real_data_2.off", 2, 0.05, 0.000001);
 
-  test("data_snapping/pig.stl", 20, 0.01);
+  test("data_snapping/pig.stl", 20, 0.3, 0.001);
 
   return EXIT_SUCCESS;
 }
