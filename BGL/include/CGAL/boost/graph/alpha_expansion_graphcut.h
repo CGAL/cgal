@@ -23,12 +23,14 @@
 
 #include <CGAL/Iterator_range.h>
 #include <CGAL/assertions.h>
+#include <CGAL/property_map.h>
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
 #include <CGAL/Timer.h>
 #endif
 #include <CGAL/IO/trace.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/version.hpp>
 
@@ -442,23 +444,6 @@ public:
 
 };
 
-// Default version using boost adjacency list
-template <typename InputGraph,
-          typename EdgeWeightMap,
-          typename VertexIndexMap,
-          typename VertexLabelCostMap,
-          typename VertexLabelMap>
-double alpha_expansion_graphcut (const InputGraph& input_graph,
-                                 EdgeWeightMap edge_weight_map,
-                                 VertexIndexMap vertex_index_map,
-                                 VertexLabelCostMap vertex_label_cost_map,
-                                 VertexLabelMap vertex_label_map)
-{
-  return alpha_expansion_graphcut
-    (input_graph, edge_weight_map, vertex_index_map, vertex_label_cost_map, vertex_label_map,
-     Alpha_expansion_boost_adjacency_list_tag());
-}
-
 /// \endcond
 
 // NOTE: latest performances check (2019-07-22)
@@ -493,10 +478,6 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
    `boost::graph_traits<InputGraph>::%edge_descriptor` as key and `double`
    as value
 
-   \tparam VertexIndexMap a model of `ReadablePropertyMap` with
-   `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
-   `std::size_t` as value
-
    \tparam VertexLabelCostMap a model of `ReadablePropertyMap`
    with `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
    `std::vector<double>` as value
@@ -505,26 +486,12 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
    `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
    `std::size_t` as value
 
-   \tparam AlphaExpansionImplementationTag optional tag used to select
-   which implementation of the Alpha Expansion should be
-   used. Available implementation tags are:
-
-   - `CGAL::Alpha_expansion_boost_adjacency_list` (default)
-   - `CGAL::Alpha_expansion_boost_compressed_sparse_row_tag`
-   - `CGAL::Alpha_expansion_MaxFlow_tag`
-
-   \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentationRef
-   under GPL license. The header
-   `<CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>`
-   must be included if users want to use this implementation.
+   \tparam NamedParameters a sequence of named parameters
 
    \param input_graph the input graph.
 
    \param edge_weight_map a property map providing the weight of each
    edge.
-
-   \param vertex_index_map a property map providing the index of each
-   vertex.
 
    \param vertex_label_map a property map providing the label of each
    vertex. This map will be updated by the algorithm with the
@@ -537,25 +504,52 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
    `0` to `n-1`. For example, `get(vertex_label_cost_map,
    vd)[label_idx]` returns the cost of vertex `vd` to belong to the
    label `label_idx`.
+
+   \param np optional sequence of named parameters among the ones listed below
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{vertex_index_map}
+       a property map providing the index of each vertex
+     \cgalParamEnd
+     \cgalParamBegin{implementation_tag}
+       tag used to select
+       which implementation of the Alpha Expansion should be
+       used. Available implementation tags are:
+       - `CGAL::Alpha_expansion_boost_adjacency_list` (default)
+       - `CGAL::Alpha_expansion_boost_compressed_sparse_row_tag`
+       - `CGAL::Alpha_expansion_MaxFlow_tag`
+     \cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \note The `MaxFlow` implementation is provided by the \ref PkgSurfaceMeshSegmentationRef
+   under GPL license. The header
+   `<CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>`
+   must be included if users want to use this implementation.
+
 */
 template <typename InputGraph,
           typename EdgeWeightMap,
-          typename VertexIndexMap,
           typename VertexLabelCostMap,
           typename VertexLabelMap,
-          typename AlphaExpansionImplementationTag>
+          typename NamedParameters>
 double alpha_expansion_graphcut (const InputGraph& input_graph,
                                  EdgeWeightMap edge_weight_map,
-                                 VertexIndexMap vertex_index_map,
                                  VertexLabelCostMap vertex_label_cost_map,
                                  VertexLabelMap vertex_label_map,
-                                 const AlphaExpansionImplementationTag&)
+                                 const NamedParameters& np)
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  
   typedef boost::graph_traits<InputGraph> GT;
   typedef typename GT::edge_descriptor input_edge_descriptor;
   typedef typename GT::vertex_descriptor input_vertex_descriptor;
 
-  typedef AlphaExpansionImplementationTag Alpha_expansion;
+  typedef typename GetVertexIndexMap<InputGraph, NamedParameters>::type VertexIndexMap;
+  VertexIndexMap vertex_index_map = choose_parameter (get_parameter (np, internal_np::vertex_index),
+                                                      get_const_property_map(boost::vertex_index, input_graph));
+
+  typedef typename GetImplementationTag<NamedParameters, Alpha_expansion_boost_adjacency_list_tag>::type Alpha_expansion;
   typedef typename Alpha_expansion::Vertex_descriptor Vertex_descriptor;
 
   Alpha_expansion alpha_expansion;
@@ -681,6 +675,21 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 
 
 /// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename InputGraph,
+          typename EdgeWeightMap,
+          typename VertexLabelCostMap,
+          typename VertexLabelMap>
+double alpha_expansion_graphcut (const InputGraph& input_graph,
+                                 EdgeWeightMap edge_weight_map,
+                                 VertexLabelCostMap vertex_label_cost_map,
+                                 VertexLabelMap vertex_label_map)
+{
+  return alpha_expansion_graphcut (input_graph, edge_weight_map,
+                                   vertex_label_cost_map, vertex_label_map,
+                                   CGAL::parameters::all_default());
+}
+
 // Old API
 inline double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
                                         const std::vector<double>& edge_weights,
@@ -688,12 +697,11 @@ inline double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t,
                                         std::vector<std::size_t>& labels)
 {
   internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_weights, cost_matrix, labels);
-  
   return alpha_expansion_graphcut(graph,
                                   graph.edge_weight_map(),
-                                  graph.vertex_index_map(),
                                   graph.vertex_label_cost_map(),
-                                  graph.vertex_label_map());
+                                  graph.vertex_label_map(),
+                                  CGAL::parameters::vertex_index_map (graph.vertex_index_map()));
 }
 
 template <typename AlphaExpansionImplementationTag>
@@ -707,13 +715,24 @@ double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::s
   
   return alpha_expansion_graphcut(graph,
                                   graph.edge_weight_map(),
-                                  graph.vertex_index_map(),
                                   graph.vertex_label_cost_map(),
                                   graph.vertex_label_map(),
-                                  AlphaExpansionImplementationTag());
+                                  CGAL::parameters::vertex_index_map (graph.vertex_index_map()).
+                                  implementation_tag (AlphaExpansionImplementationTag()));
 }
 /// \endcond
 
-
 }//namespace CGAL
+
+namespace boost
+{
+
+template <>
+struct property_map<CGAL::internal::Alpha_expansion_old_API_wrapper_graph, boost::vertex_index_t>
+{
+  typedef CGAL::internal::Alpha_expansion_old_API_wrapper_graph::Vertex_index_map type;
+  typedef CGAL::internal::Alpha_expansion_old_API_wrapper_graph::Vertex_index_map const_type;
+};
+}
+
 #endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_H

@@ -180,7 +180,11 @@ operation.\n
 <b>Default:</b> None.
 \cgalNPEnd
 
-
+\cgalNPBegin{implementation_tag} \anchor BGL_implementation_tag
+tag used to select the implementation to be used among an algorithm-specific list.\n
+<b>Type:</b>a tag class\n
+<b>Default:</b> algorithm-specific.
+\cgalNPEnd
 
 \cgalNPTableEnd
 

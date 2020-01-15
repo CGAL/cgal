@@ -78,9 +78,10 @@ int main()
   std::cerr << std::endl << "Alpha expansion..." << std::endl << std::endl;
   CGAL::alpha_expansion_graphcut (g,
                                   get (&Edge_property::weight, g),
-                                  get (boost::vertex_index, g),
                                   get (&Vertex_property::cost, g),
-                                  get (&Vertex_property::label, g));
+                                  get (&Vertex_property::label, g),
+                                  CGAL::parameters::vertex_index_map (get (boost::vertex_index, g)));
+
 
   // Display output graph
   std::cerr << "Output:" << std::endl;

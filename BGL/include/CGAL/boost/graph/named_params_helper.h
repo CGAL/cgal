@@ -39,6 +39,7 @@ namespace CGAL {
   class Default_diagonalize_traits;
   class Eigen_svd;
   class Lapack_svd;
+  struct Alpha_expansion_boost_adjacency_list_tag;
   //
   
   
@@ -476,6 +477,19 @@ namespace CGAL {
 #endif
     > ::type type;
   };
+
+  template<typename NamedParameters, typename DefaultImplementation>
+  class GetImplementationTag
+  {
+  public:
+    typedef typename internal_np::Lookup_named_param_def <
+    internal_np::implementation_tag_t,
+    NamedParameters,
+    DefaultImplementation
+    >::type type;
+  };
+
+
 } //namespace CGAL
 
 
