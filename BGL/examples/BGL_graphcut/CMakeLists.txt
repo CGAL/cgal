@@ -3,7 +3,7 @@
 
 cmake_minimum_required(VERSION 3.1...3.15)
 
-project( BGL_graphcut )
+project( BGL_graphcut_Examples )
 
 
 # CGAL and its components
