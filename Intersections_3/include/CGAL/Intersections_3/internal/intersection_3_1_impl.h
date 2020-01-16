@@ -1249,14 +1249,10 @@ inline
 typename Intersection_traits<K, Bbox_3, Bbox_3>::result_type
 intersection(const Bbox_3 &a,
 	     const Bbox_3 &b,
-	     const K& k)
+	     const K&)
 {
   return CGAL::intersection<K>(a, b);
 }
-
-
-
-
 
 template <class K>
 typename Intersection_traits<K, CGAL::Bbox_3, typename K::Iso_cuboid_3>::result_type

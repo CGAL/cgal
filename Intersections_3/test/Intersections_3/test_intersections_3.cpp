@@ -574,9 +574,16 @@ struct Test {
     if(is_exact)
     {
       check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
+      //on edge
       check_intersection (tet, L(P(0,2,0), P(0,3,0)), S(P(0,0,0), P(0,1,0)));
+      //through vertex and out from face
       check_intersection (tet, L(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
+      //through a vertex only
       check_intersection (tet, L(P(1,1,0), P(-1,1,0)), P(0,1,0));
+      //through 2 faces
+      check_intersection (tet, L(P(0.25,0.25,0), P(0.25,0,0.25)), S(P(0.25,0,0.25), P(0.25,0.25,0)));
+      //through one edge
+      check_intersection (tet, L(P(0.5,-0.5,0.5), P(0.5,0.5,0.5)), P(0.5,0,0.5));
     }
 
   }
@@ -1251,7 +1258,7 @@ int main()
 {
   std::cout << " |||||||| Test Simple_cartesian<double> ||||||||" << std::endl;
   Test< CGAL::Simple_cartesian<double> >().run();
-/*
+  
   std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::MP_Float> ||||||||" << std::endl;
   Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
 
@@ -1260,5 +1267,4 @@ int main()
 
   std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::Epeck_ft> ||||||||" << std::endl;
   Test< CGAL::Homogeneous<CGAL::Epeck_ft> >().run(true);
-  */
 }

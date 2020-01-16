@@ -46,7 +46,7 @@ intersection(
 {
   typedef typename Intersection_traits<K,
       typename K::Tetrahedron_3,
-      typename K::Plane_3>::result_type Result_type;
+      typename K::Plane_3>::result_type result_type;
 
   typedef typename Intersection_traits<K,
       typename K::Triangle_3,
@@ -68,7 +68,7 @@ intersection(
       if(const typename K::Triangle_3* tr = boost::get<typename K::Triangle_3>(&*intersections[i]))
       {
         typename K::Triangle_3 res = *tr;
-        return Result_type(std::forward<typename K::Triangle_3>(res));
+        return result_type(std::forward<typename K::Triangle_3>(res));
       }
       else if( const Segment_3* s
                = boost::get<Segment_3>(&*intersections[i]))
@@ -91,25 +91,25 @@ intersection(
   case 0:
   {
     if(p_id == -1)
-      return Result_type();
+      return result_type();
     else
     {
       typename K::Point_3 p
           = *boost::get<typename K::Point_3>(&*intersections[p_id]);
 
-      return Result_type(std::forward<typename  K::Point_3>(p));
+      return result_type(std::forward<typename  K::Point_3>(p));
     }
   }
     break;
   case 2:
   {
-    return Result_type(std::forward<typename  K::Segment_3>(segments.back()));
+    return result_type(std::forward<typename  K::Segment_3>(segments.back()));
   }
     break;
   default:
   {
     std::set<typename K::Point_3> all_points;
-    for (auto s : segments)
+    for (const auto& s : segments)
     {
       all_points.insert(s.source());
       all_points.insert(s.target());
@@ -121,7 +121,7 @@ intersection(
       typename K::Point_3 mid_point = *p_it;
       ++p_it;
       typename K::Triangle_3 result(*all_points.begin(), mid_point, *p_it );
-      return Result_type(std::forward<typename K::Triangle_3>(result));
+      return result_type(std::forward<typename K::Triangle_3>(result));
     }
     else //size = 4
     {
@@ -129,14 +129,14 @@ intersection(
       std::list<typename K::Point_3> tmp;
       fill_points_list(segs, tmp);
       std::vector<typename K::Point_3> res;
-      for( auto p : tmp)
+      for( const auto& p : tmp)
         res.push_back(p);
-      return Result_type(std::forward<std::vector<typename K::Point_3> >(res));
+      return result_type(std::forward<std::vector<typename K::Point_3> >(res));
     }
   }
     break;
   }
-  return Result_type();
+  return result_type();
 }
 
 template <class K>

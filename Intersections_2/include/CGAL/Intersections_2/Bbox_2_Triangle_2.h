@@ -42,7 +42,7 @@ inline bool do_intersect(
 template <class K>
 inline bool do_intersect(
     const Bbox_2 &box,
-const Triangle_2<K> &tr)
+    const Triangle_2<K> &tr)
 {
   return do_intersect(tr, box);
 }

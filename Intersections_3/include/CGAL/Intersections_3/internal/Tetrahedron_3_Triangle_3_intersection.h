@@ -41,11 +41,11 @@ typename Intersection_traits<K, typename K::Tetrahedron_3, typename K::Triangle_
 intersection(
     const typename K::Tetrahedron_3 &tet,
     const typename K::Triangle_3 &tr,
-    const K&)
+    const K& k)
 {
   typedef typename Intersection_traits<K,
       typename K::Tetrahedron_3,
-      typename K::Triangle_3>::result_type Result_type;
+      typename K::Triangle_3>::result_type result_type;
 
   typedef typename Intersection_traits<K,
       typename K::Triangle_3,
@@ -83,7 +83,7 @@ intersection(
         if(const Triangle_3* t = boost::get<typename K::Triangle_3>(&*intersections[i]))
         {
           Triangle_3 res = *t;
-          return Result_type(std::forward<Triangle_3>(res));
+          return result_type(std::forward<Triangle_3>(res));
         }
         //get segs and pts to construct poly
         else if( const Segment_3* s
@@ -102,7 +102,7 @@ intersection(
                  = boost::get<Poly>(&*intersections[i]))
         {
           Poly res = *p;
-          return Result_type(std::forward<Poly>(res));
+          return result_type(std::forward<Poly>(res));
         }
       }
     }
@@ -119,21 +119,21 @@ intersection(
       fill_segments_infos(segments,tmp, tr);
       Poly res;
       res.reserve(4);
-      for( auto p : tmp){
+      for( const auto& p : tmp){
         res.push_back(p);
       }
-      return Result_type(std::forward<Poly>(res));
+      return result_type(std::forward<Poly>(res));
     }
     //else it must be adjacent to an vertex, so we return the point
     else if(segments.size() == 1)
     {
       //adjacency to an edge, return resulting segment.
-      return Result_type(std::forward<Segment_3>(segments.front()));
+      return result_type(std::forward<Segment_3>(segments.front()));
     }
     else
     {
       //no segment = adjacency to an vertex or an edge : return result point
-      return Result_type(std::forward<Point_3>(points.front()));
+      return result_type(std::forward<Point_3>(points.front()));
 
     }
   }
@@ -155,7 +155,7 @@ intersection(
         if(const Triangle_3* t = boost::get<typename K::Triangle_3>(&*intersections[i]))
         {
           Triangle_3 res = *t;
-          return Result_type(std::forward<Triangle_3>(res));
+          return result_type(std::forward<Triangle_3>(res));
         }
         //get segs and pts to construct poly
         else if( const Segment_3* s
@@ -173,14 +173,14 @@ intersection(
                  = boost::get<Poly>(&*intersections[i]))
         {
           Poly res = *p;
-          return Result_type(std::forward<Poly>(res));
+          return result_type(std::forward<Poly>(res));
         }
       }
     }
     if(segments.empty())
     {
       //then there is only one point of contact. Return it:
-      return Result_type(std::forward<Point_3>(points.front()));
+      return result_type(std::forward<Point_3>(points.front()));
     }
 
     if(segments.size() > 1)
@@ -197,7 +197,7 @@ intersection(
       bool return_solo_seg = true;
       //only one intersection, a triangle edge is one of the tet edges, and
       //the 3rd point is outside. This is the only intersection.
-      for(auto p : inside_points)
+      for(const auto& p : inside_points)
       {
         if(!tet.has_on_boundary(p))
         {
@@ -207,14 +207,14 @@ intersection(
       }
       if(return_solo_seg)
       {
-        return Result_type(std::forward<Segment_3>(segments.front()));
+        return result_type(std::forward<Segment_3>(segments.front()));
       }
 
       if(inside_points.size() == 1)
       {
         Triangle_3 res(inside_points.front(), segments.front().source(),
                        segments.front().target());
-        return Result_type(std::forward<Triangle_3>(res));
+        return result_type(std::forward<Triangle_3>(res));
       }
       else //size 2
       {
@@ -232,15 +232,14 @@ intersection(
           res[3] = segments.front().target();
           res[2] = segments.front().source();
         }
-        return Result_type(std::forward<Poly>(res));
+        return result_type(std::forward<Poly>(res));
       }
       }
       break;
     case 2:
     case 3:
     {
-      std::list<Segment_3> segs;
-      for(auto s : segments){segs.push_back(s);}
+      std::list<Segment_3> segs(segments.begin(), segments.end());
       std::list<Point_3> tmp;
       fill_points_list(segs, tmp);
       if(inside_points.size() == 1)
@@ -248,21 +247,26 @@ intersection(
         Poly res;
         res.reserve(4);
         res.push_back(inside_points.front());
-        for( auto p : tmp){res.push_back(p);}
-        return Result_type(std::forward<Poly>(res));
+        for( const auto& p : tmp){res.push_back(p);}
+        return result_type(std::forward<Poly>(res));
       }
       else //size 2
       {
         Poly res;
         res.reserve(5);
-        if((inside_points.front() - inside_points.back()) *
-           (tmp.front() - tmp.back()) > 0)
+        typename K::Compute_scalar_product_3 scalar = 
+          k.compute_scalar_product_3_object();
+        typename K::Construct_vector_3 construct_vector = 
+          k.construct_vector_3_object();
+        
+        if(scalar(construct_vector(inside_points.front(), inside_points.back()),
+           construct_vector(tmp.front(), tmp.back())) > 0)
         {
           res.push_back(inside_points.front());
         }
         res.push_back(inside_points.back());
-        for( auto p : tmp){res.push_back(p);}
-        return Result_type(std::forward<Poly>(res));
+        for( const auto& p : tmp){res.push_back(p);}
+        return result_type(std::forward<Poly>(res));
       }
     }
       break;
@@ -276,8 +280,7 @@ intersection(
   case 3:
   {
     //triangle entirely inside tetra : return input triangle
-    typename K::Triangle_3 res = tr;
-    return Result_type(std::forward<typename K::Triangle_3>(res));
+    return result_type(tr);
   }
     break;
   default:

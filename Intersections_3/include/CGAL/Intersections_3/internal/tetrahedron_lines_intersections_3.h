@@ -138,8 +138,8 @@ struct Tetrahedron_lines_intersection_3_base
 
     for(std::size_t i = 0; i< res_points.size(); ++i)
     {
-      auto p1 = res_points[i];
-      for(auto p2 : res_points)
+      const auto& p1 = res_points[i];
+      for(const auto& p2 : res_points)
       {
         sq_distances[i].push_back(CGAL::squared_distance(p1, p2));
         if(sq_distances[i].back() > max_dist)

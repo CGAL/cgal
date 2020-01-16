@@ -182,13 +182,62 @@ intersection(
   {
     Poly res;
     res.reserve(4);
-    std::list<Point_3> tmp;
-    std::list<Segment_3> seg_list;
-    for(auto s : segments)
-      seg_list.push_back(s);
-    fill_points_list(seg_list, tmp);
-    for(auto p : tmp)
-      res.push_back(p);
+    typename K::Has_on_3 has_on;
+    if(has_on(pl, cub.vertex(0))
+       && has_on(pl, cub.vertex(5))
+       && has_on(pl, cub.vertex(4)))
+    {
+      res.push_back(cub.vertex(0));
+      res.push_back(cub.vertex(5));
+      res.push_back(cub.vertex(4));
+      res.push_back(cub.vertex(3));
+    }
+    else if(has_on(pl, cub.vertex(0))
+            && has_on(pl, cub.vertex(1))
+            && has_on(pl, cub.vertex(6)))
+    {
+      res.push_back(cub.vertex(0));
+      res.push_back(cub.vertex(1));
+      res.push_back(cub.vertex(6));
+      res.push_back(cub.vertex(5));
+      
+    }
+    else if(has_on(pl, cub.vertex(1))
+            && has_on(pl, cub.vertex(2))
+            && has_on(pl, cub.vertex(7)))
+    {
+      res.push_back(cub.vertex(1));
+      res.push_back(cub.vertex(2));
+      res.push_back(cub.vertex(7));
+      res.push_back(cub.vertex(6));
+    }
+    else if(has_on(pl, cub.vertex(2))
+            && has_on(pl, cub.vertex(3))
+            && has_on(pl, cub.vertex(4)))
+    {
+      res.push_back(cub.vertex(2));
+      res.push_back(cub.vertex(3));
+      res.push_back(cub.vertex(4));
+      res.push_back(cub.vertex(7));
+    }
+    else if(has_on(pl, cub.vertex(6))
+            && has_on(pl, cub.vertex(7))
+            && has_on(pl, cub.vertex(4)))
+    {
+      res.push_back(cub.vertex(6));
+      res.push_back(cub.vertex(7));
+      res.push_back(cub.vertex(4));
+      res.push_back(cub.vertex(5));
+    }
+    else if(has_on(pl, cub.vertex(2))
+            && has_on(pl, cub.vertex(1))
+            && has_on(pl, cub.vertex(0)))
+    {
+      res.push_back(cub.vertex(2));
+      res.push_back(cub.vertex(1));
+      res.push_back(cub.vertex(0));
+      res.push_back(cub.vertex(3));
+    }
     return result_type(std::forward<Poly>(res));
   }
     break;
@@ -249,11 +298,11 @@ intersection(
   }
 
   std::list<Segment_3> tmp_segs;
-  for(auto line : plane_intersections)
+  for(const auto& line : plane_intersections)
   {
     bool first_found = false;
     Point_3 first_p;
-    for(auto p : filtered_points)
+    for(const auto  &p : filtered_points)
     {
       if(line.has_on(p))
       {
@@ -264,7 +313,7 @@ intersection(
         }
         else
         {
-          tmp_segs.push_back(Segment_3(first_p, p));
+          tmp_segs.emplace_back(first_p, p);
           break;
         }
       }
@@ -275,7 +324,7 @@ intersection(
   std::list<Point_3> tmp_pts;
   fill_points_list(tmp_segs,tmp_pts);
   Poly res;
-  for(auto p : tmp_pts)
+  for(const auto& p : tmp_pts)
     res.push_back(p);
   if(res.size() == 3){
     typename K::Triangle_3 tr(res[0], res[1], res[2]);
