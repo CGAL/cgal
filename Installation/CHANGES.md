@@ -29,6 +29,20 @@ Release date: June 2020
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
 
+### Point Set Processing
+ -   Added wrapper functions for registration:
+     - `CGAL::OpenGR::compute_registration_transformation()` computes the registration transformation
+        for two point sets using Super4PCS algorithm implemented in the third party library OpenGR.
+     - `CGAL::OpenGR::register_point_sets()` computes the registration transformation for two point 
+        sets using Super4PCS algorithm implemented in the third party library OpenGR, and registers
+        the points sets by transforming the data point set using the computed transformation.
+     - `CGAL::pointmatcher::compute_registration_transformation()` computes the registration
+        transformation for two point sets using ICP algorithm implemented in the third party library
+        libpointmatcher.
+     - `CGAL::pointmatcher::register_point_sets()` computes the registration transformation for two point
+        sets using ICP algorithm implemented in the third party library libpointmatcher, and registers 
+        the points sets by transforming the data point set using the computed transformation.
+
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
     are truly allowed in constrained Delaunay triangulations, the tag `CGAL::No_intersection_tag`
