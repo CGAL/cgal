@@ -126,7 +126,7 @@ CGAL_Kernel_pred_RT(Compare_power_distance_2,
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
                     compare_power_distance_3_object)
 CGAL_Kernel_pred(Compare_signed_distance_to_line_2,
-		 compare_signed_distance_to_line_2_object)
+                 compare_signed_distance_to_line_2_object)
 CGAL_Kernel_pred(Compare_slope_2,
 		 compare_slope_2_object)
 CGAL_Kernel_pred(Compare_slope_3,

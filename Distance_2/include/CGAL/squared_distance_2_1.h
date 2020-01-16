@@ -196,8 +196,8 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance(const typename K::Segment_2 &seg1,
-		   const typename K::Segment_2 &seg2,
-		   const K& k,
+                   const typename K::Segment_2 &seg2,
+                   const K& k,
                    const Cartesian_tag&)
   {
     typedef typename K::RT RT;
@@ -217,87 +217,87 @@ namespace internal {
       crossing1 = (o1e != RIGHT_TURN);
     } else {
       if (o1e != LEFT_TURN) {
-	if (o1s == COLLINEAR && o1e == COLLINEAR)
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	crossing1 = true;
+        if (o1s == COLLINEAR && o1e == COLLINEAR)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        crossing1 = true;
       } else {
-	crossing1 = (o1s == COLLINEAR);
+        crossing1 = (o1s == COLLINEAR);
       }
     }
+
     if (o2s == RIGHT_TURN) {
       crossing2 = (o2e != RIGHT_TURN);
     } else {
       if (o2e != LEFT_TURN) {
-	if (o2s == COLLINEAR && o2e == COLLINEAR)
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	crossing2 = true;
+        if (o2s == COLLINEAR && o2e == COLLINEAR)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        crossing2 = true;
       } else {
-	crossing2 = (o2s == COLLINEAR);
+        crossing2 = (o2s == COLLINEAR);
       }
     }
 
     if (crossing1) {
       if (crossing2)
-	return (FT)0;
+        return (FT)0;
       
       c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
       c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
       Comparison_result dm = compare(c2s,c2e);
-    
+
       if (dm == SMALLER) {
-	return internal::squared_distance(seg2.source(), seg1, k);
+        return internal::squared_distance(seg2.source(), seg1, k);
       } else {
-	if (dm == LARGER) {
-	  return internal::squared_distance(seg2.target(), seg1, k);
-	} else {
-	  // parallel, should not happen (no crossing)
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	}
+        if (dm == LARGER) {
+          return internal::squared_distance(seg2.target(), seg1, k);
+        } else {
+          // parallel, should not happen (no crossing)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        }
       }
     } else {
       c1s = CGAL::abs(wcross(seg2.source(), seg2.target(), seg1.source(), k));
       c1e = CGAL::abs(wcross(seg2.source(), seg2.target(), seg1.target(), k));
       Comparison_result dm = compare(c1s,c1e);
-      if (crossing2) {               
-	if (dm == SMALLER) {
-	  return internal::squared_distance(seg1.source(), seg2, k);
-	} else {
-	  if (dm == LARGER) {
-	    return internal::squared_distance(seg1.target(), seg2, k);
-	  } else {
-	    // parallel, should not happen (no crossing)
-	    return internal::squared_distance_parallel(seg1, seg2, k);
-	  }
-	}
+      if (crossing2) {
+        if (dm == SMALLER) {
+          return internal::squared_distance(seg1.source(), seg2, k);
+        } else {
+          if (dm == LARGER) {
+            return internal::squared_distance(seg1.target(), seg2, k);
+          } else {
+            // parallel, should not happen (no crossing)
+            return internal::squared_distance_parallel(seg1, seg2, k);
+          }
+        }
       } else {
-	FT min1, min2;
-	
-	if (dm == EQUAL)
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	min1 = (dm == SMALLER) ?
-	  internal::squared_distance(seg1.source(), seg2, k):
-	  internal::squared_distance(seg1.target(), seg2, k);
+        FT min1, min2;
+
+        if (dm == EQUAL)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        min1 = (dm == SMALLER) ?
+                 internal::squared_distance(seg1.source(), seg2, k):
+                 internal::squared_distance(seg1.target(), seg2, k);
         
         c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
         c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
-	dm = compare(c2s,c2e);
+        dm = compare(c2s,c2e);
         
-	if (dm == EQUAL)  // should not happen.
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	min2 = (dm == SMALLER) ?
-	  internal::squared_distance(seg2.source(), seg1, k):
-	  internal::squared_distance(seg2.target(), seg1, k);
-	return (min1 < min2) ? min1 : min2;
+        if (dm == EQUAL)  // should not happen.
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        min2 = (dm == SMALLER) ?
+                 internal::squared_distance(seg2.source(), seg1, k):
+                 internal::squared_distance(seg2.target(), seg1, k);
+        return (min1 < min2) ? min1 : min2;
       }
     }
   }
 
-  
   template <class K>
   typename K::FT
   squared_distance(const typename K::Segment_2 &seg1,
-		   const typename K::Segment_2 &seg2,
-		   const K& k,
+                   const typename K::Segment_2 &seg2,
+                   const K& k,
                    const Homogeneous_tag&)
   {
     typedef typename K::RT RT;

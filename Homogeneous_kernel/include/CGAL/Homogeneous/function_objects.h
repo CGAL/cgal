@@ -784,29 +784,27 @@ namespace HomogeneousKernelFunctors {
     {
       typedef typename K::RT RT;
 
-      const RT & phx= p.hx();
-      const RT & phy= p.hy();
-      const RT & phw= p.hw();
-      const RT & qhx= q.hx();
-      const RT & qhy= q.hy();
-      const RT & qhw= q.hw();
-      const RT & rhx= r.hx();
-      const RT & rhy= r.hy();
-      const RT & rhw= r.hw();
-      const RT & shx= s.hx();
-      const RT & shy= s.hy();
-      const RT & shw= s.hw();
+      const RT & phx = p.hx();
+      const RT & phy = p.hy();
+      const RT & phw = p.hw();
+      const RT & qhx = q.hx();
+      const RT & qhy = q.hy();
+      const RT & qhw = q.hw();
+      const RT & rhx = r.hx();
+      const RT & rhy = r.hy();
+      const RT & rhw = r.hw();
+      const RT & shx = s.hx();
+      const RT & shy = s.hy();
+      const RT & shw = s.hw();
 
       RT  scaled_dist_r_minus_scaled_dist_s =
-	( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
-	- ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
+          ( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
+          - ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
 
       return compare(scaled_dist_r_minus_scaled_dist_s, 0);
     }
-
   };
 
-  
   template <typename K>
   class Compare_slope_2
   {
@@ -4180,7 +4178,7 @@ namespace HomogeneousKernelFunctors {
       return scaled_dist_p_minus_scaled_dist_q < 0;
     }
   };
-  
+
   template <typename K>
   class Less_signed_distance_to_plane_3
   {
