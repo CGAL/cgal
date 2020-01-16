@@ -234,8 +234,8 @@ namespace CGAL
     std::size_t nb_extra_iterations = 3;
     while (it_nb++ < max_it + nb_extra_iterations)
     {
-      remesher.flip();
-      remesher.smooth();
+//      remesher.flip();
+//      remesher.smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "

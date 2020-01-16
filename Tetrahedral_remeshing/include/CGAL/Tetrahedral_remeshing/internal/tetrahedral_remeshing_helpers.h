@@ -137,6 +137,18 @@ namespace Tetrahedral_remeshing
                               point(c->vertex(3)->point()));
   }
 
+  template<typename Tr>
+  typename Tr::Geom_traits::Vector_3 facet_normal(const Tr& tr,
+                                                  const typename Tr::Facet& f)
+  {
+    const typename Tr::Geom_traits gt = tr.geom_traits();
+    typename Tr::Geom_traits::Construct_normal_3 cn
+      = gt.construct_normal_3_object();
+    return cn(point(f.first->vertex((f.second + 1) % 4)->point()),
+              point(f.first->vertex((f.second + 2) % 4)->point()),
+              point(f.first->vertex((f.second + 3) % 4)->point()));
+  }
+
   template<typename Vh>
   std::pair<Vh, Vh> make_vertex_pair(const Vh v1, const Vh v2)
   {
