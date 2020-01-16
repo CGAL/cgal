@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#ifdef CGAL_LINKED_WITH_OPENGR
+
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -239,5 +241,7 @@ register_point_sets(const PointRange1& point_set_1, PointRange2& point_set_2)
 }
 
 } } // end of namespace CGAL::OpenGR
+
+#endif // CGAL_LINKED_WITH_OPENGR
 
 #endif // CGAL_OPENGR_REGISTER_POINT_SETS_H

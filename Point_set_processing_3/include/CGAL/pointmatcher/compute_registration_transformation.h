@@ -14,6 +14,8 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
+#ifdef CGAL_LINKED_WITH_POINTMATCHER
+
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -620,5 +622,7 @@ compute_registration_transformation(const PointRange1& point_set_1, const PointR
 
 
 } } // end of namespace CGAL::pointmatcher
+
+#endif // CGAL_LINKED_WITH_POINTMATCHER
 
 #endif // CGAL_POINTMATCHER_COMPUTE_REGISTRATION_TRANSFORMATION_H
