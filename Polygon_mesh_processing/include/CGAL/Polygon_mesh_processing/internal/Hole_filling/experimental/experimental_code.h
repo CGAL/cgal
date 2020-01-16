@@ -172,7 +172,7 @@ triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend,
       if(new_facets.empty()) {
         // if no patch facets created and also we are using brute force approach, then there is nothing to do,
         // leave `out` intact and return
-        CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+        CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
         return out;
       }
     }
@@ -221,7 +221,7 @@ triangulate_hole_Polyhedron_incomplete(Polyhedron& polyhedron,
       if(patch_facets_before == patch_facets.size()) {
         // if no patch facets created and also we are using brute force approach, then there is nothing to do,
         // leave `out` intact and return
-        CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+        CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
         return std::make_pair(out, Weight_min_max_dihedral_and_area::NOT_VALID());
       }
     }

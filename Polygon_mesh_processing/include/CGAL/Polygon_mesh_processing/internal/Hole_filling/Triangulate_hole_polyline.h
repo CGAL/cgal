@@ -790,7 +790,7 @@ public:
     boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, range, tr, edge_exist);
     if(!res.template get<2>()) {
       #ifndef CGAL_TEST_SUITE
-      CGAL_warning(!"Returning no output. Dimension of 3D Triangulation is below 2!");
+      CGAL_warning_msg(false, "Returning no output. Dimension of 3D Triangulation is below 2!");
       #else
       std::cerr << "W: Returning no output. Dimension of 3D Triangulation is below 2!\n";
       #endif
@@ -814,7 +814,7 @@ public:
 
       if(W.get(0, n-1) == Weight::NOT_VALID()) {
         #ifndef CGAL_TEST_SUITE
-        CGAL_warning(!"Returning no output. No possible triangulation is found!");
+        CGAL_warning_msg(false, "Returning no output. No possible triangulation is found!");
         #else
         std::cerr << "W: Returning no output. No possible triangulation is found!\n";
         #endif
@@ -1009,7 +1009,7 @@ private:
         Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
         all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
         if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
-          CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+          CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
           return Weight::NOT_VALID();
         }
       }
@@ -1030,7 +1030,7 @@ private:
           Triangulate_hole_polyline<Kernel, Tracer, WeightCalculator, LookupTable> all_space;
           all_space.triangulate_all(P, Q, WC, std::make_pair(h.first, h.second), W, lambda);
           if(W.get(h.first, h.second) == Weight::NOT_VALID()) {
-            CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+            CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
             return Weight::NOT_VALID();
           }
         }
@@ -1045,7 +1045,7 @@ private:
       tr.clear();
       boost::tuple<boost::optional<Edge>, bool, bool> res = construct_3D_triangulation(P, h, tr, edge_exist);
       if(!boost::get<0>(res)) {
-        CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+        CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
         return Weight::NOT_VALID();
       }
       start_edge = *boost::get<0>(res);
@@ -1106,7 +1106,7 @@ private:
     
     if(W.get(0, n-1) == Weight::NOT_VALID()) {
       #ifndef CGAL_TEST_SUITE
-      CGAL_warning(!"Returning no output. Filling hole with extra triangles is not successful!");
+      CGAL_warning_msg(false, "Returning no output using Delaunay triangulation.\n Falling back to the general Triangulation framework.");
       #else
       std::cerr << "W: Returning no output. Filling hole with extra triangles is not successful!\n";
       #endif
@@ -1151,7 +1151,7 @@ public:
 
     if(W.get(0,n-1) == Weight::NOT_VALID() || n <= 2) {
       #ifndef CGAL_TEST_SUITE
-      CGAL_warning(!"Returning no output. No possible triangulation is found!");
+      CGAL_warning_msg(false, "Returning no output. No possible triangulation is found!");
       #else
       std::cerr << "W: Returning no output. No possible triangulation is found!\n";
       #endif
