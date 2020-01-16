@@ -211,8 +211,6 @@ namespace internal {
     
     Orientation o1s = orientation(seg2.source(), seg2.target(), seg1.source());
     Orientation o1e = orientation(seg2.source(), seg2.target(), seg1.target());
-    Orientation o2s = orientation(seg1.source(), seg1.target(), seg2.source());
-    Orientation o2e = orientation(seg1.source(), seg1.target(), seg2.target());
     if (o1s == RIGHT_TURN) {
       crossing1 = (o1e != RIGHT_TURN);
     } else {
@@ -225,6 +223,8 @@ namespace internal {
       }
     }
 
+    Orientation o2s = orientation(seg1.source(), seg1.target(), seg2.source());
+    Orientation o2e = orientation(seg1.source(), seg1.target(), seg2.target());
     if (o2s == RIGHT_TURN) {
       crossing2 = (o2e != RIGHT_TURN);
     } else {
