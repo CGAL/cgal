@@ -106,9 +106,8 @@ public Q_SLOTS:
 
   void insert_mp() {
     insert_point(moving_point);
-    QString str;
-    ui->viewer->displayMessage(str.sprintf("Added point (%f, %f, %f)",
-           moving_point.x(),moving_point.y(),moving_point.z()));
+    ui->viewer->displayMessage(QString("Added point (%1, %2, %3)").arg(
+           moving_point.x()).arg(moving_point.y()).arg(moving_point.z()));
     changed();
   }
 

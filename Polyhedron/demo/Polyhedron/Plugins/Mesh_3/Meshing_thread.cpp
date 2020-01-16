@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QApplication>
 
 #include "Meshing_thread.h"
@@ -61,7 +61,7 @@ void
 Meshing_thread::
 run()
 {
-  QTime timer;
+  QElapsedTimer timer;
   timer.start();
   CGAL::Three::Three::CursorScopeGuard guard(Qt::BusyCursor);
   f_->launch();

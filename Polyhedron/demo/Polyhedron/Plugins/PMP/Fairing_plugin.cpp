@@ -14,7 +14,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>

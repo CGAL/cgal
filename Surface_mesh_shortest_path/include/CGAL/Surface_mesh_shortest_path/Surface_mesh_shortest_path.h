@@ -1201,7 +1201,7 @@ private:
       if (m_debugOutput)
       {
         std::cout << "\t Distance to target: " << currentNodeDistance << std::endl;
-        std::cout << "\t Is there a current occupier? " << (currentOccupier.first != nullptr) << std::endl;
+        std::cout << "\t Is there a current occupier? " << (currentOccupier.first != NULL) << std::endl;
       }
 
       // the relative position of the ray between node.source() and node.target_vertex() and the ray
@@ -1329,7 +1329,7 @@ private:
         }
 
         // If equal times, give priority to vertex sources since it's cleaner and simpler to handle than interval windows
-        if (currentClosest.first == nullptr ||
+        if (currentClosest.first == NULL ||
            currentClosest.second > currentNodeDistance ||
            (currentClosest.second == currentNodeDistance && node->node_type() == Cone_tree_node::VERTEX_SOURCE))
         {
@@ -2070,7 +2070,7 @@ private:
 
         std::cout << "Prio Queue size = " << m_expansionPriqueue.size() << std::endl;
         std::cout << "Queue:" << std::endl;
-        auto duplicate_queue = m_expansionPriqueue;
+        Expansion_priqueue duplicate_queue = m_expansionPriqueue;
         while(duplicate_queue.size() > 0)
         {
           Cone_expansion_event* event = duplicate_queue.top();
