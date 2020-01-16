@@ -976,6 +976,37 @@ public:
   /// @}
 }; /* end Kernel::ComparePowerDistance_3 */
 
+
+
+  
+/*!
+  \ingroup PkgKernel23ConceptsFunctionObjects
+  \cgalConcept
+
+  \cgalRefines `AdaptableFunctor` (with two arguments) 
+
+  \sa `compare_slopes_grp`
+
+*/
+class CompareSignedDistanceToLine_2 {
+public:
+
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+
+  /*!
+    compares the signed distance of `r` and `s` to the directed line through `p` and `q`. 
+  */ 
+  Comparison_result operator()(const Kernel::Point_2& p, 
+                               const Kernel::Point_2& q,
+                               const Kernel::Point_2& r, 
+                               const Kernel::Point_2& s); 
+  /// @}
+}; /* end Kernel::CompareSignedDistanceToLine_2 */
+
+  
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
