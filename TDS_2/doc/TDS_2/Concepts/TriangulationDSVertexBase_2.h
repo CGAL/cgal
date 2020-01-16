@@ -52,7 +52,6 @@ of `CGAL::Triangulation_data_structure_2::Vertex`.
 */
 
 class TriangulationDSVertexBase_2
-  : public TriangulationDataStructure_2::Vertex
 {
 public:
 

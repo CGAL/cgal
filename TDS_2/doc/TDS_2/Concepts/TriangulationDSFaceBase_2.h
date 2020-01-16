@@ -56,7 +56,6 @@ actually uses as a base class for the class
 */
 
 class TriangulationDSFaceBase_2
-  : public TriangulationDataStructure_2::Face
 {
 public:
 

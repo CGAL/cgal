@@ -36,7 +36,6 @@ More information can be found in Section \ref TDS3secdesign.
 */
 
 class TriangulationDSVertexBase_3
-  : public TriangulationDataStructure_3::Vertex
 {
 public:
 

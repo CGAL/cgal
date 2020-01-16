@@ -41,7 +41,6 @@ More information can be found in Section \ref TDS3secdesign.
 */
 
 class TriangulationDSCellBase_3
-  : public TriangulationDataStructure_3::Cell
 {
 public:
 
