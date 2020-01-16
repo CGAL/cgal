@@ -93,7 +93,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::area_threshold).v == 57);
   assert(get_parameter(np, CGAL::internal_np::volume_threshold).v == 58);
   assert(get_parameter(np, CGAL::internal_np::snapping_tolerance).v == 59);
-  assert(get_parameter(np, CGAL::internal_np::halfedges_comparator).v == 60);
+  assert(get_parameter(np, CGAL::internal_np::halfedges_keeper).v == 60);
   assert(get_parameter(np, CGAL::internal_np::dry_run).v == 61);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
@@ -181,7 +181,7 @@ void test(const NamedParameters& np)
   check_same_type<57>(get_parameter(np, CGAL::internal_np::area_threshold));
   check_same_type<58>(get_parameter(np, CGAL::internal_np::volume_threshold));
   check_same_type<59>(get_parameter(np, CGAL::internal_np::snapping_tolerance));
-  check_same_type<60>(get_parameter(np, CGAL::internal_np::halfedges_comparator));
+  check_same_type<60>(get_parameter(np, CGAL::internal_np::halfedges_keeper));
   check_same_type<61>(get_parameter(np, CGAL::internal_np::dry_run));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
@@ -275,7 +275,7 @@ int main()
                          .area_threshold(A<57>(57))
                          .volume_threshold(A<58>(58))
                          .snapping_tolerance(A<59>(59))
-                         .halfedges_comparator(A<60>(60))
+                         .halfedges_keeper(A<60>(60))
                          .dry_run(A<61>(61))
        );
 

@@ -152,40 +152,42 @@ std::size_t num_component_wrapper(Mesh& pmesh,
 }
 
 template <typename Mesh>
-struct Default_halfedges_comparator
+struct Default_halfedges_keeper
 {
   typedef typename boost::graph_traits<Mesh>::halfedge_descriptor       halfedge_descriptor;
 
-  Default_halfedges_comparator() { }
+  Default_halfedges_keeper() { }
 
-  bool operator()(halfedge_descriptor h1, halfedge_descriptor h2) const
+  halfedge_descriptor operator()(const halfedge_descriptor h1, const halfedge_descriptor h2) const
   {
-    return h1 < h2; // Arbitrary preference
+    return (h1 < h2) ? h1 : h2; // Arbitrary preference
   }
 };
 
 // Provided for convenience. If passed to stitch_borders(), this ensures that if any of the two
-// edge is constrained, then the preserver edge is also constrained
-template <typename ECM, typename PolygonMesh>
-struct Halfedges_comparator_with_constraint_priority
+// edges is marked, then the preserver edge is also marked.
+template <typename EMM, typename PolygonMesh>
+struct Halfedges_keeper_with_marked_edge_priority
 {
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
 
-  Halfedges_comparator_with_constraint_priority(const ECM& ecm, const PolygonMesh& pmesh)
-    : ecm(ecm), pmesh(pmesh)
+  Halfedges_keeper_with_marked_edge_priority(const EMM& emm, const PolygonMesh& pmesh)
+    : emm(emm), pmesh(pmesh)
   { }
 
-  bool operator()(const halfedge_descriptor /*h1*/, const halfedge_descriptor h2) const
+  halfedge_descriptor operator()(const halfedge_descriptor h1, const halfedge_descriptor h2) const
   {
-    if(get(ecm, edge(h2, pmesh)))
-      return false;
+    // If h2 is marked, then whether h1 is marked or not, we can just return h2
+    if(get(emm, edge(h2, pmesh)))
+      return h2;
 
-    // If both or none are constrained, it does not matter which we are keeping
-    return true;
+    // If only h1 is marked, return h1;
+    // If both or none are marked, it does not matter which we are keeping, so also return h1
+    return h1;
   }
 
 private:
-  const ECM& ecm;
+  const EMM& emm;
   const PolygonMesh& pmesh;
 };
 
@@ -212,11 +214,11 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
   std::size_t num_component = 0;
   std::vector<std::vector<halfedge_descriptor> > border_edges_per_cc;
 
-  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_comparator_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
                                                        CGAL_PMP_NP_CLASS,
-                                                       Default_halfedges_comparator<PolygonMesh> >::type  Halfedge_comparer;
-  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedges_comparator),
-                                                     Default_halfedges_comparator<PolygonMesh>());
+                                                       Default_halfedges_keeper<PolygonMesh> >::type  Halfedge_keeper;
+  const Halfedge_keeper hd_kpr = choose_parameter(get_parameter(np, internal_np::halfedges_keeper),
+                                                  Default_halfedges_keeper<PolygonMesh>());
 
   bool per_cc = choose_parameter(get_parameter(np, internal_np::apply_per_connected_component), false);
 
@@ -273,7 +275,8 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
       {
         if(manifold_halfedge_pairs[k])
         {
-          if(!hd_comp(halfedge_pairs[k].first, halfedge_pairs[k].second))
+          // the first halfedge of the pair is kept
+          if(hd_kpr(halfedge_pairs[k].first, halfedge_pairs[k].second) == halfedge_pairs[k].second)
             std::swap(halfedge_pairs[k].first, halfedge_pairs[k].second);
 
           *out++ = halfedge_pairs[k];
@@ -302,7 +305,8 @@ collect_duplicated_stitchable_boundary_edges(PolygonMesh& pmesh,
     {
       if(manifold_halfedge_pairs[i])
       {
-        if(!hd_comp(halfedge_pairs[i].first, halfedge_pairs[i].second))
+        // the first halfedge of the pair is kept
+        if(hd_kpr(halfedge_pairs[i].first, halfedge_pairs[i].second) == halfedge_pairs[i].second)
           std::swap(halfedge_pairs[i].first, halfedge_pairs[i].second);
 
         *out++ = halfedge_pairs[i];
@@ -678,12 +682,12 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pm));
 
-  typedef internal::Default_halfedges_comparator<PolygonMesh>                         Default_halfedges_comparator;
-  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_comparator_t,
+  typedef internal::Default_halfedges_keeper<PolygonMesh>                          Default_halfedges_keeper;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::halfedges_keeper_t,
                                                        CGAL_PMP_NP_CLASS,
-                                                        Default_halfedges_comparator>::type  Halfedge_comparer;
-  const Halfedge_comparer hd_comp = choose_parameter(get_parameter(np, internal_np::halfedges_comparator),
-                                                     Default_halfedges_comparator());
+                                                        Default_halfedges_keeper>::type  Halfedge_keeper;
+  const Halfedge_keeper hd_kpr = choose_parameter(get_parameter(np, internal_np::halfedges_keeper),
+                                                  Default_halfedges_keeper());
 
   std::size_t stitched_boundary_cycles_n = 0;
 
@@ -761,7 +765,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
       CGAL_assertion(is_border(curr_h, pm));
       CGAL_assertion(is_border(curr_hn, pm));
 
-      if(hd_comp(curr_h, curr_hn))
+      if(hd_kpr(curr_h, curr_hn) == curr_h)
         hedges_to_stitch.push_back(std::make_pair(curr_h, curr_hn));
       else
         hedges_to_stitch.push_back(std::make_pair(curr_hn, curr_h));
