@@ -46,6 +46,7 @@
 #include <QColorDialog>
 #include <QOpenGLFramebufferObject>
 #include <QFileDialog>
+#include <QElapsedTimer>
 
 namespace CGAL{
 // Static private variable
@@ -2244,7 +2245,7 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
     unsigned int index = pathIndex_[::Qt::Key(key)];
 
     // not safe, but try to double press on two viewers at the same time !
-    static QTime doublePress;
+    static QElapsedTimer doublePress;
 
     if (modifiers == playPathKeyboardModifiers()) {
       int elapsed = doublePress.restart();

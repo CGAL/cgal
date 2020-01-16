@@ -1,1 +1,0 @@
-mesh_with_border.off

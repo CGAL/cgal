@@ -40,15 +40,15 @@
 
 namespace CGAL {
 
-namespace Polygon_mesh_processing {
-
-// workaround for area(face_range,tm) overload
+// workaround for area(face_range, tm) overload
 template<typename CGAL_PMP_NP_TEMPLATE_PARAMETERS, typename NP>
 class GetGeomTraits<CGAL_PMP_NP_CLASS, NP>
 {
 public:
   struct type{};
 };
+
+namespace Polygon_mesh_processing {
 
 /**
   * \ingroup measure_grp
@@ -326,7 +326,8 @@ face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   halfedge_descriptor hd = halfedge(f, tmesh);
   halfedge_descriptor nhd = next(hd, tmesh);
 
-  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type traits;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type GT;
+  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
 
   return approximate_sqrt(traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
                                                                  get(vpm, target(hd, tmesh)),

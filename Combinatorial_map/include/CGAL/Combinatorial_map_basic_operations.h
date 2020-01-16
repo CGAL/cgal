@@ -194,7 +194,7 @@ namespace CGAL
                               typename Map::size_type amark)
   {  
     return CGAL::is_whole_orbit_unmarked<Map,
-        typename Map::template Dart_of_cell_range<i,d>::iterator>
+        typename Map::template Dart_of_cell_range<i,d>::const_iterator>
         (amap, adart, amark);
   }
 

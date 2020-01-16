@@ -68,7 +68,7 @@ for faces of maximal dimension instead of faces.
 
 \sa `TriangulationDataStructure_2::Face` 
 \sa `TriangulationDataStructure_2::Vertex` 
-\sa `CGAL::Triangulation_2<Traits,Tds>` 
+\sa `CGAL::Triangulation_2`
 
 */
 

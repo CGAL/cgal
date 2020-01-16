@@ -195,7 +195,6 @@ void
 DemosMainWindow::setUseAntialiasing(bool checked)
 {
   view->setRenderHint(QPainter::Antialiasing, checked);
-  view->setRenderHint(QPainter::HighQualityAntialiasing, checked);
 
   statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-"),
                            1000);

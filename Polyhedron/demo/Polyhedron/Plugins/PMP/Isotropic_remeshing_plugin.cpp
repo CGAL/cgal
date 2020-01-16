@@ -23,7 +23,7 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/property_map.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -50,6 +50,7 @@
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
+
 
 // give a halfedge and a target edge length, put in `out` points
 // which the edge equally spaced such that splitting the edge
@@ -340,7 +341,7 @@ public Q_SLOTS:
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
@@ -698,7 +699,7 @@ public Q_SLOTS:
       detect_and_split_duplicates(selection, edges_to_protect, target_length);
 
 #ifdef CGAL_LINKED_WITH_TBB
-    QTime time;
+    QElapsedTimer time;
     time.start();
 
       tbb::parallel_for(
@@ -714,7 +715,7 @@ public Q_SLOTS:
       target_length, nb_iter, protect, smooth_features);
     for(Scene_facegraph_item* poly_item : selection)
     {
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       remesher(poly_item, edges_to_protect[poly_item->polyhedron()]);
@@ -904,13 +905,8 @@ private:
     double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin())
                                    + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin())
                                    + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-    double log = std::log10(diago_length);
-    unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log)+3);
 
-    ui.edgeLength_dspinbox->setDecimals(nb_decimals);
-    ui.edgeLength_dspinbox->setSingleStep(1e-3);
-    ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
-                                     2.   * diago_length);//max
+
     ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
 
     std::ostringstream oss;

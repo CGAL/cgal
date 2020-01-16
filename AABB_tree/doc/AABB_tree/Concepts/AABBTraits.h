@@ -75,7 +75,7 @@ using Intersection_and_primitive_id = unspecified_type;
 
 /// \name Splitting
 /// During the construction of the AABB tree, the primitives are
-/// splitted according to some comparison functions related to the longest axis:
+/// split according to some comparison functions related to the longest axis:
 /// @{
 
 /*!

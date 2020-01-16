@@ -1,4 +1,4 @@
-#include <QTime>
+#include <QElapsedTimer>
 #include <QApplication>
 #include <QMainWindow>
 #include <QAction>
@@ -81,7 +81,7 @@ template<class FaceGraphItem>
 void Polyhedron_demo_subdivision_methods_plugin::apply_loop(FaceGraphItem* item, int nb_steps)
 {
   typename FaceGraphItem::Face_graph* graph = item->face_graph();
-  QTime time;
+  QElapsedTimer time;
   time.start();
   CGAL::Three::Three::information("Loop subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -113,7 +113,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_catmullclark(FaceGraphIte
 {
   typename FaceGraphItem::Face_graph* graph = item->face_graph();
   if(!graph) return;
-  QTime time;
+  QElapsedTimer time;
   time.start();
   CGAL::Three::Three::information("Catmull-Clark subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -143,7 +143,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_sqrt3(FaceGraphItem* item
 {
   typename FaceGraphItem::Face_graph* graph = item->face_graph();
   if(!graph) return;
-  QTime time;
+  QElapsedTimer time;
   time.start();
   CGAL::Three::Three::information("Sqrt-3 subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -175,7 +175,7 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_doosabin(FaceGraphItem* i
 {
   typename FaceGraphItem::Face_graph* graph = item->face_graph();
   if(!graph) return;
-  QTime time;
+  QElapsedTimer time;
   time.start();
   CGAL::Three::Three::information("Doo-Sabin subdivision...");
   QApplication::setOverrideCursor(Qt::WaitCursor);
