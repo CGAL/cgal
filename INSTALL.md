@@ -1,5 +1,5 @@
-Building an Example Using CGAL
-==============================
+Building an Example or a Demo of CGAL
+=====================================
 
 Since Version 5.0, CGAL is a header-only library, hence it is not needed to build it. Usage of CGAL should simply amount to:
 
@@ -19,7 +19,7 @@ Note that although CGAL is a header-only library, some parts of it must link to 
 Building a Program Using CGAL
 =============================
 
-If you are trying to build a program that is not provided with CGAL and does not already have a `CMakeLists.txt`,
+If you wish to build a program that is not provided with CGAL and does not already have a `CMakeLists.txt`,
 you can trigger the creation of a basic `CmakeLists.txt` by calling the script [`cgal_create_cmake_script`](Scripts/scripts/cgal_create_cmake_script)
 found in `/path/to/cgal.git/Scripts/scripts/` at the root of your program directory.
 
