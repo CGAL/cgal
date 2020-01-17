@@ -983,10 +983,7 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
-  \cgalRefines `AdaptableFunctor` (with two arguments) 
-
-  \sa `compare_slopes_grp`
-
+  \cgalRefines `AdaptableFunctor` (with four arguments)
 */
 class CompareSignedDistanceToLine_2 {
 public:
@@ -995,14 +992,13 @@ public:
   /// A model of this concept must provide:
   /// @{
 
-
   /*!
     compares the signed distance of `r` and `s` to the directed line through `p` and `q`. 
   */ 
-  Comparison_result operator()(const Kernel::Point_2& p, 
+  Comparison_result operator()(const Kernel::Point_2& p,
                                const Kernel::Point_2& q,
-                               const Kernel::Point_2& r, 
-                               const Kernel::Point_2& s); 
+                               const Kernel::Point_2& r,
+                               const Kernel::Point_2& s);
   /// @}
 }; /* end Kernel::CompareSignedDistanceToLine_2 */
 
