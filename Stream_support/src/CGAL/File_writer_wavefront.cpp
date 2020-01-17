@@ -16,8 +16,8 @@
 
 #ifndef CGAL_HEADER_ONLY
 
-#include <CGAL/IO/File_writer_wavefront.h>
-#include <CGAL/IO/File_writer_wavefront_impl.h>
+#include <CGAL/IO/OBJ/File_writer_wavefront.h>
+#include <CGAL/IO/OBJ/File_writer_wavefront_impl.h>
 
 #endif // CGAL_HEADER_ONLY
 

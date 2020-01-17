@@ -114,7 +114,7 @@ bool parse_ASCII_STL(std::istream& input,
                      bool verbose = false)
 {
   typedef typename PointRange::value_type Point;
-  typedef typename TriangleRange::value_type Triangle;
+
   if(verbose)
     std::cout << "Parsing ASCII file..." << std::endl;
 

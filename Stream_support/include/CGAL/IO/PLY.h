@@ -791,7 +791,7 @@ template <typename ForwardIterator,
 void simple_property_write (std::ostream& stream, ForwardIterator it,
                             std::pair<PropertyMap, PLY_property<T> > map)
 {
-  if (CGAL::get_mode(stream) == IO::ASCII)
+  if (CGAL::get_mode(stream) == CGAL::IO::ASCII)
     stream << no_char_character(get (map.first, *it));
   else
   {
@@ -808,7 +808,7 @@ void simple_property_write (std::ostream& stream, ForwardIterator it,
 {
   const typename PropertyMap::reference value = get(map.first, *it);
     
-  if (CGAL::get_mode(stream) == IO::ASCII)
+  if (CGAL::get_mode(stream) == CGAL::IO::ASCII)
   {
     stream << value.size();
     for (std::size_t i = 0; i < value.size(); ++ i)
@@ -835,7 +835,7 @@ void output_properties (std::ostream& stream,
                         std::tuple<PropertyMap, PLY_property<T>... >&& current)
 {
   property_write (stream, it, std::get<0>(current));
-  if (get_mode(stream) == IO::ASCII)
+  if (get_mode(stream) == CGAL::IO::ASCII)
     stream << std::endl;
 }
 
@@ -848,7 +848,7 @@ void output_properties (std::ostream& stream,
                         std::pair<PropertyMap, PLY_property<T> >&& current)
 {
   simple_property_write (stream, it, std::forward<std::pair<PropertyMap, PLY_property<T> > >(current));
-  if (get_mode(stream) == IO::ASCII)
+  if (get_mode(stream) == CGAL::IO::ASCII)
     stream << std::endl;
 }
 
@@ -864,7 +864,7 @@ void output_properties (std::ostream& stream,
                         PropertyHandler&& ... properties)
 {
   simple_property_write (stream, it, current);
-  if (get_mode(stream) == IO::ASCII)
+  if (get_mode(stream) == CGAL::IO::ASCII)
     stream << " ";
   output_properties (stream, it, std::forward<NextPropertyHandler>(next),
                      std::forward<PropertyHandler>(properties)...);
@@ -882,7 +882,7 @@ void output_properties (std::ostream& stream,
                         PropertyHandler&& ... properties)
 {
   property_write (stream, it, std::get<0>(current));
-  if (get_mode(stream) == IO::ASCII)
+  if (get_mode(stream) == CGAL::IO::ASCII)
     stream << " ";
   output_properties (stream, it, std::forward<NextPropertyHandler>(next),
                      std::forward<PropertyHandler>(properties)...);
@@ -929,7 +929,7 @@ public:
     
   virtual void print(std::ostream& stream, const Index& index)
   {
-    if (get_mode(stream) == IO::ASCII)
+    if (get_mode(stream) == CGAL::IO::ASCII)
       stream << get(m_pmap, index);
     else
     {
@@ -952,7 +952,7 @@ public:
     
   virtual void print(std::ostream& stream, const Index& index)
   {
-    if (get_mode(stream) == IO::ASCII)
+    if (get_mode(stream) == CGAL::IO::ASCII)
       stream << int(get(m_pmap, index));
     else
     {

@@ -25,15 +25,11 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
-#include <CGAL/Kernel_traits.h>
-
-#ifdef CGAL_USE_VTK
-#include <CGAL/IO/VTK.h>
-#endif
-
 #include <CGAL/internal/Generic_facegraph_builder.h>
-#include <CGAL/IO/STL.h>
 #include <CGAL/IO/OBJ.h>
+#include <CGAL/IO/STL.h>
+#include <CGAL/IO/VTK.h>
+#include <CGAL/Kernel_traits.h>
 
 namespace CGAL {
   /*!
@@ -589,7 +585,7 @@ write_gocad(FaceGraph& face_graph, std::ostream& os, const std::string& name)
 }
 
 namespace internal {
-  namespace write_vtp {
+namespace write_vtp {
 
 // writes the polys appended data at the end of the .vtp file
 template <class Mesh,
