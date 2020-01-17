@@ -15,12 +15,11 @@
 
 #include <CGAL/license/Polyhedron.h>
 
-
-#include <CGAL/basic.h>
-#include <CGAL/IO/OFF/File_writer_OFF.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_3.h>
-#include <iostream>
+
+#include <fstream>
 
 namespace CGAL {
 

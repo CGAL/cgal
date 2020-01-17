@@ -41,7 +41,7 @@
 
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 #endif
 
 #include <boost/algorithm/minmax_element.hpp>

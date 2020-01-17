@@ -4,9 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_header_OFF.h>
-#include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/write_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>

@@ -2,12 +2,13 @@
 // (Terrain triangulation)
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>

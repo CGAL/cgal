@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/array.h>
-#include <CGAL/IO/STL_reader.h>
+#include <CGAL/IO/STL.h>
 
 #include <cassert>
 #include <fstream>

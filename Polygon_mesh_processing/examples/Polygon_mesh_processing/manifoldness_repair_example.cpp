@@ -3,7 +3,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/IO/OFF_reader.h>
+#include <CGAL/IO/OFF.h>
 
 
 #include <fstream>

@@ -15,14 +15,16 @@
 #include <CGAL/IO/OFF/File_scanner_OFF.h>
 #include <CGAL/IO/reader_helpers.h>
 
-#include <vector>
-#include <iostream>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
+#include <vector>
+#include <iostream>
+
 namespace CGAL {
 namespace OFF_internal {
+
 template <class Point_3, class Polygon_3>
 bool
 read_OFF( std::istream& in,

@@ -1,6 +1,6 @@
-#include <CGAL/IO/STL/STL_reader.h>
-#include <CGAL/IO/STL/STL_writer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/IO/STL.h>
 
 #include <iostream>
 #include <fstream>

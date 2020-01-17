@@ -1,22 +1,25 @@
 #include "Scene_surface_mesh_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
+
 #include <CGAL/Three/Three.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
-
-
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
-#include <fstream>
 
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/OBJ_reader.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/IO/OBJ.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+
 #include <QMessageBox>
 #include <QApplication>
 
+#include <iostream>
+#include <fstream>
+#include <limits>
+
 using namespace CGAL::Three;
+
 class Polyhedron_demo_off_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface

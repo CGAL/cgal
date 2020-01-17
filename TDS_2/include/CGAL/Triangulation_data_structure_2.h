@@ -37,8 +37,7 @@
 #include <CGAL/Triangulation_ds_iterators_2.h>
 #include <CGAL/Triangulation_ds_circulators_2.h>
 
-#include <CGAL/IO/File_header_OFF.h>
-#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/OFF.h>
 
 namespace CGAL { 
 

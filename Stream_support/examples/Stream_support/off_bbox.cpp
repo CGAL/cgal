@@ -2,14 +2,14 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/OFF.h>
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <fstream>
 #include <cfloat>
-
 
 using namespace std;
 

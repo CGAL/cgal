@@ -11,7 +11,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/property_map.h>
-#include <CGAL/IO/STL_reader.h>
+#include <CGAL/IO/STL.h>
 
 #include <array>
 #include <iostream>

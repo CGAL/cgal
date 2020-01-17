@@ -3,17 +3,24 @@
 #include "Scene_textured_surface_mesh_item.h"
 #include "Scene_points_with_normal_item.h"
 
+#include <CGAL/IO/PLY.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
+
 #include <QInputDialog>
 #include <QApplication>
-#include <fstream>
-
-#include <CGAL/IO/PLY_reader.h>
-#include <CGAL/IO/PLY_writer.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <QMessageBox>
+
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <sstream>
+#include <string>
+#include <vector>
+
 using namespace CGAL::Three;
+
 class Polyhedron_demo_ply_plugin :
   public QObject,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface

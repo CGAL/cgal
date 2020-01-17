@@ -18,11 +18,11 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>
-#include <CGAL/IO/OFF/File_header_OFF.h>
-#include <CGAL/IO/OFF/File_scanner_OFF.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+
 #include <iostream>
 #include <cstddef>
 

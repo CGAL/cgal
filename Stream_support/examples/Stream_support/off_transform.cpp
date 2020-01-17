@@ -1,9 +1,10 @@
 // Applies translation and scaling to an OFF object.
 
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_scanner_OFF.h>
-#include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/IO/OFF.h>
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>

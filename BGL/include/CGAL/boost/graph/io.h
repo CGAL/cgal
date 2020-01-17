@@ -26,14 +26,14 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Kernel_traits.h>
+
 #ifdef CGAL_USE_VTK
-#include <CGAL/IO/VTK/vtk_internals.h>
+#include <CGAL/IO/VTK.h>
 #endif
-#include <CGAL/IO/write_vtk.h>
+
 #include <CGAL/internal/Generic_facegraph_builder.h>
-#include <CGAL/IO/STL/STL_reader.h>
-#include <CGAL/IO/OBJ/OBJ_reader.h>
-#include <CGAL/IO/OBJ/File_writer_wavefront.h>
+#include <CGAL/IO/STL.h>
+#include <CGAL/IO/OBJ.h>
 
 namespace CGAL {
   /*!

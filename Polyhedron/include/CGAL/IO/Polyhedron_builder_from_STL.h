@@ -15,7 +15,7 @@
 
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
-#include <CGAL/IO/STL_reader.h>
+#include <CGAL/IO/STL.h>
 
 #include <iostream>
 

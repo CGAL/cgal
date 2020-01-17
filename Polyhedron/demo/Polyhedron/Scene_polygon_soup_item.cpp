@@ -1,40 +1,32 @@
-#include <vector>
-#include <queue>
+#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
+
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Edge_container.h>
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Three/Three.h>
 
-#include <QObject>
-#include <QApplication>
-#include <QtDebug>
+#include "triangulate_primitive.h"
 
-#include <set>
-#include <stack>
-#include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <CGAL/IO/OFF_reader.h>
-#include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/version.h> 
-
+#include <CGAL/array.h>
+#include <CGAL/IO/OFF.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-
-#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE 1
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
-
 #include <CGAL/Polygon_2.h>
+#include <CGAL/version.h>
 
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include "triangulate_primitive.h"
-#include <CGAL/array.h>
+#include <QObject>
+#include <QApplication>
+#include <QtDebug>
 
 #include <boost/accumulators/accumulators.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
@@ -43,8 +35,13 @@
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
 
+#include <algorithm>
 #include <map>
+#include <queue>
+#include <set>
+#include <stack>
 #include <streambuf>
+#include <vector>
 
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;

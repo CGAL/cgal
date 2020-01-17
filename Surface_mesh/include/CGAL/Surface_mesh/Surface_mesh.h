@@ -42,7 +42,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/IO/File_scanner_OFF.h>
+#include <CGAL/IO/OFF.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/boost/graph/named_params_helper.h>

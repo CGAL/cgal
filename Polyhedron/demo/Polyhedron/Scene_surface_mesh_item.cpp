@@ -33,9 +33,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include "triangulate_primitive.h"
 
-#include <CGAL/IO/File_writer_wavefront.h>
-#include <CGAL/IO/generic_copy_OFF.h>
-#include <CGAL/IO/OBJ_reader.h>
+#include <CGAL/IO/OBJ.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/statistics_helpers.h>
 
