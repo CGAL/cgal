@@ -115,6 +115,9 @@ namespace internal
 
     const Tr& tr = c3t3.triangulation();
 
+    typename Tr::Geom_traits::Construct_opposite_vector_3
+      opp = tr.geom_traits().construct_opposite_vector_3_object();
+
     for (Finite_facets_iterator fit = tr.finite_facets_begin();
          fit != tr.finite_facets_end(); ++fit)
     {
@@ -151,11 +154,12 @@ namespace internal
         Vector_3 n = CGAL::Tetrahedral_remeshing::facet_normal(tr, *fit);
 
         if (si < si_mirror || tr.is_infinite(ch))
-          n = -1.*n;
+          n = opp(n);
 
         for (int i = 0; i < 3; ++i)
         {
-          Vector_3& v_n = normals_map[fit->first->vertex(indices(fit->second, i))][surf_i];
+          Vertex_handle v_id = fit->first->vertex(indices(fit->second, i));
+          Vector_3& v_n = normals_map[v_id][surf_i];
           v_n = v_n + n;
         }
       }
@@ -555,11 +559,12 @@ namespace internal
     return scale(move, 1. / edges.size());
   }
 
-  template<typename C3T3>
+  template<typename C3T3, typename CellSelector>
   typename C3T3::Triangulation::Geom_traits::Vector_3
     move_2d(typename C3T3::Vertex_handle v,
             const C3T3& c3t3,
-            const typename C3T3::Subdomain_index& imaginary_index)
+            const typename C3T3::Subdomain_index& imaginary_index,
+            const CellSelector cell_selector)
   {
     typedef typename C3T3::Subdomain_index            Subdomain_index;
     typedef typename C3T3::Edge                       Edge;
@@ -570,12 +575,10 @@ namespace internal
 
     const Gt& gt = c3t3.triangulation().geom_traits();
 
-    const Point_3& pos = point(v->point());
-    Vector_3 move = CGAL::NULL_VECTOR;
-
     std::vector<Edge> edges;
     c3t3.triangulation().incident_edges(v, std::back_inserter(edges));
 
+    Vector_3 move = CGAL::NULL_VECTOR;
     if (edges.empty())
       return move;
 
@@ -585,9 +588,9 @@ namespace internal
       = gt.construct_sum_of_vectors_3_object();
 
     std::size_t nbe = 0;
-    BOOST_FOREACH(Edge e, edges)
+    for(Edge e : edges)
     {
-//      if (is_on_domain_hull(e, c3t3, imaginary_index))
+      if(!c3t3.is_in_complex(e) && is_boundary(c3t3, e, cell_selector))
       {
         Vertex_handle ve = (e.first->vertex(e.second) != v)
                           ? e.first->vertex(e.second)
@@ -597,23 +600,29 @@ namespace internal
       }
     }
 
-    typedef std::pair<Subdomain_index, Subdomain_index> Surface_index;
-    typedef std::map<Surface_index, unsigned int/*, Compare*/> SurfaceIndexMap;
-    SurfaceIndexMap subdomain_FMLS_indices;
-    std::vector< FMLS > subdomain_FMLS;
-    createMLSSurfaces(c3t3, subdomain_FMLS, subdomain_FMLS_indices);
-
     if (nbe > 0)
     {
+      // WIP in this section
+
+      typedef std::pair<Subdomain_index, Subdomain_index> Surface_index;
+      typedef std::map<Surface_index, unsigned int/*, Compare*/> SurfaceIndexMap;
+      SurfaceIndexMap subdomain_FMLS_indices;
+      std::vector< FMLS > subdomain_FMLS;
+      //createMLSSurfaces(c3t3, subdomain_FMLS, subdomain_FMLS_indices);
+
       typename Gt::Construct_scaled_vector_3 scale
         = gt.construct_scaled_vector_3_object();
       move = scale(move, 1. / nbe);
 
+      const Point_3 current_pos = point(v->point());
+      const Point_3 smoothed_position = current_pos + move;
+      Point_3 final_position = CGAL::ORIGIN;
+
       Vector_3 normal = compute_vertex_normal(v, c3t3);
 
       Vector_3 normal_projection = project_on_tangent_plane(
-                                     pos + move, //smoothed position
-                                     pos,        //current position
+                                     smoothed_position, //smoothed position
+                                     current_pos,       //current position
                                      normal);
 
       Vector_3 mls_projection;
@@ -739,7 +748,7 @@ namespace internal
         if (protect_boundaries)
           break;
 
-        smoothing_vecs[vertex_id.at(vit)] = move_2d(vit, c3t3, imaginary_index);
+        smoothing_vecs[vertex_id.at(vit)] = move_2d(vit, c3t3, imaginary_index, cell_selector);
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         if (smoothing_vecs[vertex_id.at(vit)] != CGAL::NULL_VECTOR)
           ofs_2d << "2 " << vit->point()
