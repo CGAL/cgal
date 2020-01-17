@@ -1,4 +1,4 @@
-// file: test/Inventor/VRML2.C
+// file: test/Support_stream/VRML2.C
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/VRML_2_ostream.h>

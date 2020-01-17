@@ -54,7 +54,7 @@ Polygon soups can also be exported using the function write_OFF().
 Note that we only support OFF, and COFF for CGAL::Surface_mesh.
 
 
-\section IOStreamOBJ Wavefront (OBJ)
+\section IOStreamOBJ Wavefront Advanced Visualizer Object Format (OBJ)
 The OBJ file format is a simple data-format that represents 3D geometry.
 Vertices are stored in a counter-clockwise order by default, making explicit declaration of face normals unnecessary.
 A precise specification of the format is available <a href="http://www.martinreddy.net/gfx/3d/OBJ.spec">here</a>.
@@ -129,12 +129,12 @@ write_xyz_point_set().
 \section IOStreamVTK VTK Formats (VTU VTP)
 The VTK libraries use different file formats to handle data structures, but we only support two:
 - The `VTU` format can be used to store am unordered collection of 3D cells, like tetrahedra,
-  but also points, triangles, lines, ... In the <a href="https://vtk.org/"> VTK Libraries</a>,
+  but also points, triangles, lines, etc. In the <a href="https://vtk.org/"> VTK Libraries</a>,
   it is the format reserved to store `Unstructured Grids`, and in \cgal,
   we use it to store triangulations(2D and 3D).
 
 - The `VTP` format can be used to store collections of points, lines and triangles.
-  In the <a href="https://vtk.org/"> VTK Libraries</a>,it is the format
+  In the <a href="https://vtk.org/"> VTK Libraries</a>, it is the format
   reserved to store `PolyData`., and in CGAL, we use it to store Polygon Meshes.
 
 A precise specification of those formats is available at
@@ -204,9 +204,9 @@ using any structure that is a model of the concept `FaceGraph`, and the function
  using the function `write_gocad()`
 
 
-\section IOStreamWRL
-WRL is a file extension for a Virtual Reality Modeling Language (VRML)
-file format often used by browser plug-ins to display virtual reality environments.
+\section IOStreamWRL Virtual Reality Modeling Language (VRML)
+
+File format often used by browser plug-ins to display virtual reality environments.
 VRML files are known as “worlds,” which is what WRL stands for.
 WRL files are plain ASCII text files.
 A WRL file includes data specifying 3-D details such as vertices,
