@@ -106,7 +106,8 @@ template< class TriangleMesh,
           class OutputBuilder_ = Default,
           class EdgeMarkMapBind_ = Default,
           class UserVisitor_ = Default,
-          bool doing_autorefinement = false >
+          bool doing_autorefinement = false,
+          bool handle_non_manifold_features = false >
 class Surface_intersection_visitor_for_corefinement{
 //default template parameters
   typedef typename Default::Get<EdgeMarkMapBind_,
@@ -133,13 +134,14 @@ private:
    typedef boost::unordered_map<edge_descriptor,Node_ids>           On_edge_map;
    //to keep the correspondance between node_id and vertex_handle in each mesh
    typedef std::vector<vertex_descriptor>                     Node_id_to_vertex;
-   typedef std::map<TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
+   typedef std::map<const TriangleMesh*, Node_id_to_vertex >         Mesh_to_map_node;
    //to handle coplanar halfedge of polyhedra that are full in the intersection
    typedef std::multimap<Node_id,halfedge_descriptor>    Node_to_target_of_hedge_map;
    typedef std::map<TriangleMesh*,Node_to_target_of_hedge_map>
                                            Mesh_to_vertices_on_intersection_map;
    typedef boost::unordered_map<vertex_descriptor,Node_id>    Vertex_to_node_id;
    typedef std::map<TriangleMesh*, Vertex_to_node_id> Mesh_to_vertex_to_node_id;
+   typedef Non_manifold_feature_map<TriangleMesh>               NM_features_map;
 // typedef for the CDT
    typedef typename Intersection_nodes<TriangleMesh,
         VertexPointMap, Predicates_on_constructions_needed>::Exact_kernel    EK;
@@ -151,7 +153,7 @@ private:
     typedef typename CDT::Vertex_handle                       CDT_Vertex_handle;
 // data members
 private:
-  // boost::dynamic_bitset<> non_manifold_nodes;
+  boost::dynamic_bitset<> is_node_on_boundary; // indicate if a vertex is a border vertex in tm1 or tm2
   std::vector< std::vector<Node_id> > graph_of_constraints;
   boost::dynamic_bitset<> is_node_of_degree_one;
   //nb of intersection points between coplanar faces, see fixes XSL_TAG_CPL_VERT
@@ -164,6 +166,9 @@ private:
   Mesh_to_vertex_to_node_id mesh_to_vertex_to_node_id;
 
   std::map< Node_id,std::set<Node_id> > coplanar_constraints;
+
+// optional data members to handle non-manifold issues
+  std::map<const TriangleMesh*, const NM_features_map*> non_manifold_feature_maps;
 
 //data members that require initialization in the constructor
   UserVisitor& user_visitor;
@@ -208,6 +213,70 @@ public:
     , input_with_coplanar_faces(false)
   {}
 
+  void
+  set_non_manifold_feature_map(
+    const TriangleMesh& tm,
+    const NM_features_map& nm)
+  {
+    non_manifold_feature_maps[&tm] = &nm;
+  }
+
+  void copy_nodes_ids_for_non_manifold_features()
+  {
+    static const constexpr std::size_t NM_NID((std::numeric_limits<std::size_t>::max)());
+
+    for(const std::pair<const TriangleMesh*, const NM_features_map*>& tm_and_nm :
+        non_manifold_feature_maps)
+    {
+      TriangleMesh* tm_ptr = const_cast<TriangleMesh*>(tm_and_nm.first);
+      // update nodes on edges
+      On_edge_map& on_edge_map = on_edge[tm_ptr];
+      std::vector< std::pair<std::size_t, const Node_ids*> > edges_to_copy;
+      for (const std::pair<const edge_descriptor, Node_ids>& ed_and_ids : on_edge_map)
+      {
+        std::size_t eid = get(tm_and_nm.second->e_nm_id, ed_and_ids.first);
+        if (eid!=NM_NID)
+          edges_to_copy.push_back(std::make_pair(eid,&(ed_and_ids.second)));
+      }
+      for(const std::pair<const std::size_t, const Node_ids*>& id_and_nodes : edges_to_copy)
+      {
+        const std::vector<edge_descriptor>& nm_edges =
+          tm_and_nm.second->non_manifold_edges[id_and_nodes.first];
+        CGAL_assertion( on_edge_map.count(nm_edges.front())==1 );
+
+        for (std::size_t i=1; i<nm_edges.size(); ++i)
+          on_edge_map[nm_edges[i]] = *id_and_nodes.second;
+      }
+
+      // update map vertex -> node_id
+      Vertex_to_node_id& vertex_to_node_id = mesh_to_vertex_to_node_id[tm_ptr];
+      Node_to_target_of_hedge_map& vertices_on_inter = mesh_to_vertices_on_inter[tm_ptr];
+
+      std::vector< std::pair<vertex_descriptor, Node_id> > vertices_to_add;
+      for (const typename std::pair<const vertex_descriptor, Node_id>& vd_and_id
+          : vertex_to_node_id)
+      {
+        std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_id.first);
+        if (vid!=NM_NID)
+          vertices_to_add.push_back(std::make_pair(vd_and_id.first,vd_and_id.second));
+      }
+
+      for(const std::pair<vertex_descriptor, Node_id>& vd_and_nid : vertices_to_add)
+      {
+        std::size_t vid = get(tm_and_nm.second->v_nm_id, vd_and_nid.first);
+        for(vertex_descriptor vd : tm_and_nm.second->non_manifold_vertices[vid])
+        {
+          if (vd != vd_and_nid.first)
+          {
+            vertex_to_node_id.insert(std::make_pair(vd,vd_and_nid.second));
+            output_builder.set_vertex_id(vd, vd_and_nid.second, *tm_ptr);
+            vertices_on_inter.insert(std::make_pair(vd_and_nid.second,halfedge(vd,*tm_ptr)));
+          }
+        }
+      }
+    }
+  }
+
   template<class Graph_node>
   void annotate_graph(std::vector<Graph_node>& graph)
   {
@@ -216,14 +285,32 @@ public:
     is_node_of_degree_one.resize(nb_nodes);
     for(std::size_t node_id=0;node_id<nb_nodes;++node_id)
     {
-    //   if (non_manifold_nodes.test(node_id))
-    //     graph[node_id].make_terminal();
       graph_of_constraints[node_id].assign(
         graph[node_id].neighbors.begin(),
         graph[node_id].neighbors.end());
 
       if (graph_of_constraints[node_id].size()==1)
         is_node_of_degree_one.set(node_id);
+
+      // mark every vertex on the boundary connected to another vertex by a non-boundary edge
+      // The logic is somehow equivalent to what was done with the container `non_manifold_nodes`
+      // that was used to split polylines at certains points. Non-manifold was used in the context
+      // of the combinatorial map where the import inside the combinatorial map was possible (see broken_bound-[12].off)
+      if (is_node_on_boundary.test(node_id))
+      {
+        // TODO: the commented condition is not restrictive enough. It only tests the vertices, not the edge used
+        //       to go from one vertex to the other. Right now we are marking too many norder vertices as
+        //       terminal than necessary. We cannot use mesh_to_node_id_to_vertex since it will be filled only
+        //       after the call to visitor.finalize() in the main algorithm
+        //       The current version of the code is correct but too many nodes are potentially
+        //       marked as terminal
+        if (graph_of_constraints[node_id].size()==2 /* && (
+            !is_node_on_boundary.test(graph_of_constraints[node_id][0]) ||
+            !is_node_on_boundary.test(graph_of_constraints[node_id][1]) ) */ )
+        {
+          graph[node_id].make_terminal();
+        }
+      }
     }
   }
 
@@ -259,33 +346,26 @@ public:
     CGAL_assertion(!"This function should not be called");
   }
 
-// The following code was used to split polylines at certains points.
-// Here manifold was used in the context of the combinatorial map where
-// the import inside the combinatorial map was possible (see broken_bound-[12].off)
-// I keep the code here for now as it could be use to detect non-manifold
-// situation of surfaces
-// void check_node_on_non_manifold_edge(
-//     std::size_t node_id,
-//     halfedge_descriptor h,
-//     const TriangleMesh& tm)
-// {
-//   if ( is_border_edge(h,tm) )
-//    non_manifold_nodes.set(node_id);
-// }
-//
-// void check_node_on_non_manifold_vertex(
-//   std::size_t node_id,
-//   halfedge_descriptor h,
-//   const TriangleMesh& tm)
-// {
-//   //we turn around the hedge and check no halfedge is a border halfedge
-//   for(halfedge_descriptor hc :halfedges_around_target(h,tm))
-//     if ( is_border_edge(hc,tm) )
-//     {
-//       non_manifold_nodes.set(node_id);
-//       return;
-//     }
-// }
+void check_node_on_boundary_edge_case(std::size_t node_id,
+                                     halfedge_descriptor h,
+                                     const TriangleMesh& tm)
+{
+  if ( is_border_edge(h,tm) )
+    is_node_on_boundary.set(node_id);
+}
+
+void check_node_on_boundary_vertex_case(std::size_t node_id,
+                                       halfedge_descriptor h,
+                                       const TriangleMesh& tm)
+{
+  //we turn around the hedge and check no halfedge is a border halfedge
+   for(halfedge_descriptor hc :halfedges_around_target(h,tm))
+    if ( is_border_edge(hc,tm) )
+    {
+      is_node_on_boundary.set(node_id);
+      return;
+    }
+}
 
   //keep track of the fact that a polyhedron original vertex is a node
   void all_incident_faces_got_a_node_as_vertex(
@@ -325,7 +405,7 @@ public:
                       bool is_target_coplanar,
                       bool is_source_coplanar)
   {
-    // non_manifold_nodes.resize(node_id+1);
+    is_node_on_boundary.resize(node_id+1, false);
 
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
@@ -340,7 +420,7 @@ public:
       case ON_EDGE: //Edge intersected by an edge
       {
         on_edge[tm2_ptr][edge(h_2,tm2)].push_back(node_id);
-      //   check_node_on_non_manifold_edge(node_id,h_2,tm2);
+        check_node_on_boundary_edge_case(node_id,h_2,tm2);
       }
       break;
       case ON_VERTEX:
@@ -352,7 +432,7 @@ public:
           node_id_to_vertex.resize(node_id+1,Graph_traits::null_vertex());
         node_id_to_vertex[node_id]=target(h_2,tm2);
         all_incident_faces_got_a_node_as_vertex(h_2,node_id,*tm2_ptr);
-      //   check_node_on_non_manifold_vertex(node_id,h_2,tm2);
+        check_node_on_boundary_vertex_case(node_id,h_2,tm2);
         output_builder.set_vertex_id(target(h_2, tm2), node_id, tm2);
       }
       break;
@@ -373,7 +453,7 @@ public:
       all_incident_faces_got_a_node_as_vertex(h_1,node_id, *tm1_ptr);
       // register the vertex in the output builder
       output_builder.set_vertex_id(target(h_1, tm1), node_id, tm1);
-      // check_node_on_non_manifold_vertex(node_id,h_1,tm1);
+      check_node_on_boundary_vertex_case(node_id,h_1,tm1);
     }
     else{
       if ( is_source_coplanar ){
@@ -387,12 +467,34 @@ public:
         all_incident_faces_got_a_node_as_vertex(h_1_opp,node_id, *tm1_ptr);
         // register the vertex in the output builder
         output_builder.set_vertex_id(source(h_1, tm1), node_id, tm1);
-      //   check_node_on_non_manifold_vertex(node_id,h_1_opp,tm1);
+        check_node_on_boundary_vertex_case(node_id,h_1_opp,tm1);
       }
       else{
         //handle intersection on principal edge
+        typename std::map<const TriangleMesh*, const NM_features_map*>::iterator it_find =
+          non_manifold_feature_maps.find(&tm1);
+        if ( it_find != non_manifold_feature_maps.end() )
+        {
+          // update h_1 if it is not the canonical non-manifold edge
+          // This is important to make sure intersection points on non-manifold
+          // edges are all connected for the same edge so that the redistribution
+          // on other edges does not overwrite some nodes.
+          // This update might be required in case of EDGE-EDGE intersection or
+          // COPLANAR intersection.
+          const NM_features_map& nm_features_map_1 = *it_find->second;
+          std::size_t eid1 = nm_features_map_1.non_manifold_edges.empty()
+                           ? std::size_t(-1)
+                           : get(nm_features_map_1.e_nm_id, edge(h_1, tm1));
+
+          if (eid1 != std::size_t(-1))
+          {
+            if ( edge(h_1, tm1) != nm_features_map_1.non_manifold_edges[eid1].front() )
+              h_1 = halfedge(nm_features_map_1.non_manifold_edges[eid1].front(), tm1);
+          }
+        }
+
         on_edge[tm1_ptr][edge(h_1,tm1)].push_back(node_id);
-      //   check_node_on_non_manifold_edge(node_id,h_1,tm1);
+        check_node_on_boundary_edge_case(node_id,h_1,tm1);
       }
     }
   }
@@ -461,8 +563,9 @@ public:
       std::copy(begin,end,std::back_inserter(node_ids_array[it_id->second]));
     }
 
-    // Used by the autorefinement to re-set the id of nodes on the boundary of a
-    // face since another vertex (inside a face or on another edge) might have
+    // Used by the autorefinement and non-manifold edge handling to re-set
+    // the id of nodes on the boundary of a face since another vertex
+    // (inside a face or on another edge) might have
     // overwritten the vertex in node_id_to_vertex
     template <class Node_id_to_vertex>
     void update_node_id_to_vertex_map(Node_id_to_vertex& node_id_to_vertex,
@@ -552,7 +655,7 @@ public:
           // this condition ensures to consider only graph edges that are in
           // the same triangle
           if ( !points_on_triangle || it_vh!=id_to_CDT_vh.end() ){
-            CGAL_assertion(doing_autorefinement || it_vh!=id_to_CDT_vh.end());
+            CGAL_assertion(doing_autorefinement || handle_non_manifold_features || it_vh!=id_to_CDT_vh.end());
             if (it_vh==id_to_CDT_vh.end()) continue; // needed for autorefinement (interior nodes)
             cdt.insert_constraint(vh,it_vh->second);
             constrained_edges.push_back(std::make_pair(id,id_n));
@@ -592,14 +695,16 @@ public:
                  const VertexPointMap& vpm1,
                  const VertexPointMap& vpm2)
   {
+    copy_nodes_ids_for_non_manifold_features();
+
     nodes.all_nodes_created();
 
     TriangleMesh* tm1_ptr = const_cast<TriangleMesh*>(&tm1);
     TriangleMesh* tm2_ptr = const_cast<TriangleMesh*>(&tm2);
 
     std::map<TriangleMesh*, VertexPointMap> vpms;
-    vpms[tm1_ptr] = vpm1;
-    vpms[tm2_ptr] = vpm2;
+    vpms.insert( std::make_pair(tm1_ptr, vpm1) );
+    vpms.insert( std::make_pair(tm2_ptr, vpm2) );
 
     vertex_descriptor null_vertex = Graph_traits::null_vertex();
     const Node_id nb_nodes = nodes.size();
@@ -627,15 +732,19 @@ public:
     //   Face_boundaries& face_boundaries=mesh_to_face_boundaries[&tm];
 
       Node_to_target_of_hedge_map& nodes_to_hedge=it->second;
+
+      // iterate on the vertices that are on the intersection between the input meshes
       for(typename Node_to_target_of_hedge_map::iterator
             it_node_2_hedge=nodes_to_hedge.begin();
             it_node_2_hedge!=nodes_to_hedge.end();
             ++it_node_2_hedge)
       {
         Node_id node_id_of_first=it_node_2_hedge->first;
+        // look for neighbors of the current node in the intersection graph
         std::vector<Node_id>& neighbors=graph_of_constraints[node_id_of_first];
         if ( !neighbors.empty() )
         {
+          // for all neighbors look for input vertices that are also on the intersection
           for(Node_id node_id : neighbors)
           {
             //if already done for the opposite
@@ -653,7 +762,7 @@ public:
                       target(it_node_2_hedge_two->second,tm) )
               {
                 hedge=opposite(next(hedge,tm),tm);
-                if (tm1_ptr==tm2_ptr && hedge==start)
+                if ((doing_autorefinement || handle_non_manifold_features) && hedge==start)
                 {
                   ++it_node_2_hedge_two; // we are using a multimap and
                                          // the halfedge we are looking for
@@ -815,7 +924,7 @@ public:
           f_vertices[1]=it_fb->second.vertices[1];
           f_vertices[2]=it_fb->second.vertices[2];
           update_face_indices(f_vertices,f_indices,vertex_to_node_id);
-          if (doing_autorefinement)
+          if (doing_autorefinement || handle_non_manifold_features)
             it_fb->second.update_node_id_to_vertex_map(node_id_to_vertex, tm);
         }
         else{
@@ -861,7 +970,7 @@ public:
           {
             id_to_CDT_vh.insert(
                 std::make_pair(f_indices[ik],triangle_vertices[ik]));
-            if (doing_autorefinement)
+            if (doing_autorefinement || handle_non_manifold_features)
               // update the current vertex in node_id_to_vertex
               // to match the one of the face
               node_id_to_vertex[f_indices[ik]]=f_vertices[ik];
@@ -1030,7 +1139,7 @@ public:
       }
     }
 
-    nodes.finalize();
+    nodes.finalize(mesh_to_node_id_to_vertex);
 
     // additional operations
     output_builder(nodes,

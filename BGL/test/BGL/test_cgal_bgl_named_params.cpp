@@ -94,6 +94,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::area_threshold).v == 57);
   assert(get_parameter(np, CGAL::internal_np::volume_threshold).v == 58);
   assert(get_parameter(np, CGAL::internal_np::dry_run).v == 59);
+ assert(get_parameter(np, CGAL::internal_np::non_manifold_feature_map).v == 60);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -181,6 +182,7 @@ void test(const NamedParameters& np)
   check_same_type<57>(get_parameter(np, CGAL::internal_np::area_threshold));
   check_same_type<58>(get_parameter(np, CGAL::internal_np::volume_threshold));
   check_same_type<59>(get_parameter(np, CGAL::internal_np::dry_run));
+  check_same_type<60>(get_parameter(np, CGAL::internal_np::non_manifold_feature_map));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
@@ -259,6 +261,7 @@ int main()
                          .throw_on_self_intersection(A<43>(43))
                          .clip_volume(A<44>(44))
                          .use_compact_clipper(A<45>(45))
+                         .non_manifold_feature_map(A<60>(60))
                          .apply_per_connected_component(A<46>(46))
                          .output_iterator(A<47>(47))
                          .erase_all_duplicates(A<48>(48))
