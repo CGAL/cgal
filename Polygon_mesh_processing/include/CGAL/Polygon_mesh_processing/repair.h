@@ -1856,7 +1856,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           if ( target(next(opposite(h_side1, tmesh), tmesh), tmesh) ==
                target(next(opposite(h_side2, tmesh), tmesh), tmesh) )
           {
-            CGAL_assertion(!"Forbidden simplification");
+            CGAL_error_msg("Forbidden simplification");
           }
 
           h_side2 = prev(h_side2, tmesh);

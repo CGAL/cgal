@@ -884,7 +884,7 @@ public:
       else CGAL_error_msg( "wrong handle type");
     }
 
-    CGAL_warning("altered code in SNC_point_locator");
+    //CGAL_warning("altered code in SNC_point_locator");
     /*
       Halffacet_iterator fc;
       CGAL_forall_facets(fc, *this->sncp()) {
@@ -907,7 +907,7 @@ public:
     if( CGAL::assign( v, result)) {
       _CGAL_NEF_TRACEN("vertex hit, obtaining volume..." << v->point());
 
-      CGAL_warning("altered code in SNC_point_locator");
+      //CGAL_warning("altered code in SNC_point_locator");
       SM_point_locator L(&*v);
       //      Object_handle so = L.locate(s.source()-s.target(), true);
       Object_handle so = L.locate(s.source()-s.target());
