@@ -104,7 +104,7 @@ const char fragment_source_color[] =
     "   highp vec3 R = reflect(-L, N); \n"
     "   highp vec4 diffuse = max(dot(N,L), 0.0) * light_diff * fColor; \n"
     "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-    "gl_FragColor = light_amb*fColor + diffuse  ; \n"
+    "   gl_FragColor = light_amb*fColor + diffuse  ; \n"
     "} \n"
     "\n"
   };
@@ -1223,6 +1223,7 @@ protected:
     setKeyDescription(::Qt::Key_M, "Toggles mono color");
     setKeyDescription(::Qt::Key_N, "Inverse direction of normals");
     setKeyDescription(::Qt::Key_T, "Toggles text display");
+    setKeyDescription(::Qt::Key_U, "Move camera direction upside down");
     setKeyDescription(::Qt::Key_V, "Toggles vertices display");
     setKeyDescription(::Qt::Key_Plus, "Increase size of edges");
     setKeyDescription(::Qt::Key_Minus, "Decrease size of edges");
@@ -1304,6 +1305,30 @@ protected:
       displayMessage(QString("Inverse normal=%1.").arg(m_inverse_normal?"true":"false"));
       negate_all_normals();
       redraw();
+    }
+    else if ((e->key()==::Qt::Key_U) && (modifiers==::Qt::NoButton))
+    {
+      if (is_two_dimensional())
+      {
+        displayMessage(QString("Move camera direction upside down."));
+        /* CGAL::qglviewer::Vec cur=camera()->viewDirection();
+        double cx=cur.x, cy=cur.y, cz=cur.z;
+        if (has_zero_x())      { cx=-cx; }
+        else if (has_zero_y()) { cy=-cy; }
+        else                   { cz=-cz; }
+        double cx=0., cy=0., cz=0.;
+        if (has_zero_x())      { cx=(cur.x<0?-1.:1); }
+        else if (has_zero_y()) { cy=(cur.y<0?-1.:1); }
+        else                   { cz=(cur.z<0?-1.:1); }*/
+
+        camera()->setUpVector(-camera()->upVector());
+        //camera()->frame()->setConstraint(NULL);
+        // camera()->setViewDirection(CGAL::qglviewer::Vec(-cx,-cy,-cz));
+        //constraint.setRotationConstraintDirection(CGAL::qglviewer::Vec(cx, cy, cz));
+        //camera()->frame()->setConstraint(&constraint);
+        //update();
+        redraw();
+      }
     }
     else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::NoButton))
     {

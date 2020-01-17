@@ -89,6 +89,7 @@ template <class R,int dim>
 class Construct_bbox_projected_2 {
 public:
   typedef typename R::Point_3     Point;
+  typedef Bbox_2 result_type;
   
   Bbox_2 operator()(const Point& p) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(p)); }
 };

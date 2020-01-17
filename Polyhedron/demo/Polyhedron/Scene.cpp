@@ -84,9 +84,12 @@ Scene::addItem(CGAL::Three::Scene_item* item)
         addGroup(group);
     //init the item for the mainViewer to avoid using unexisting 
     //VAOs if the mainViewer is not the first to be drawn.
+    QOpenGLFramebufferObject* fbo = CGAL::Three::Three::mainViewer()->depthPeelingFbo();
+    CGAL::Three::Three::mainViewer()->setDepthPeelingFbo(nullptr);//to prevent crashing as the fbo is not initialized in this call.
     item->draw(CGAL::Three::Three::mainViewer());
     item->drawEdges(CGAL::Three::Three::mainViewer());
     item->drawPoints(CGAL::Three::Three::mainViewer());
+    CGAL::Three::Three::mainViewer()->setDepthPeelingFbo(fbo);
     return id;
 }
 

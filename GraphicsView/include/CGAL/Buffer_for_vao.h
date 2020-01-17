@@ -406,8 +406,8 @@ public:
 
     if (m_points_of_face.size()<3)
     {
-      std::cerr<<"PB: you try to triangulate a face with "<<m_points_of_face.size()<<" vertices."
-               <<std::endl;
+      /* std::cerr<<"PB: you try to triangulate a face with "<<m_points_of_face.size()<<" vertices."
+               <<std::endl; */
       
       m_face_started=false;
       m_points_of_face.clear();
@@ -526,9 +526,10 @@ public:
     }
     return true;
   }
+
   CGAL::Bbox_3 *bb() const { return m_bb; }
 
-  protected:
+protected:
   void face_begin_internal(bool has_color, bool has_normal)
   {
     if (is_a_face_started())

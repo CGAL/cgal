@@ -1,0 +1,265 @@
+Mesh data/big/803_neptune_4Mtriangles_manifold.off
+[TIME] Simplification in one vertex: 5.77141 seconds
+[TIME] Simplification in one face: 6.60485 seconds
+[TIME] Face quadrangulation: 1.14649 seconds
+[TIME] Total time for computation of reduced map: 13.5703 seconds
+Initial map: #Darts=12023616, #0-cells=2003932, #1-cells=6011808, #2-cells=4007872, #ccs=1
+Reduced map: #Darts=24, #0-cells=2, #1-cells=12, #2-cells=6, #ccs=1
+Mesh data/big/blade-several-cc.off
+[TIME] Simplification in one vertex: 1.96106 seconds
+[TIME] Simplification in one face: 2.84259 seconds
+[TIME] Face quadrangulation: 0.554043 seconds
+[TIME] Total time for computation of reduced map: 5.37898 seconds
+Initial map: #Darts=5296164, #0-cells=882954, #1-cells=2648082, #2-cells=1765388, #ccs=295
+Reduced map: #Darts=13112, #0-cells=3538, #1-cells=6556, #2-cells=3278, #ccs=295
+Mesh data/big/Drum_Dancer_2670868.off
+[TIME] Simplification in one vertex: 3.26392 seconds
+[TIME] Simplification in one face: 1.45876 seconds
+[TIME] Total time for computation of reduced map: 4.72275 seconds
+Initial map: #Darts=8012604, #0-cells=1335436, #1-cells=4006302, #2-cells=2670868, #ccs=1
+Reduced map: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0
+Mesh data/big-genus/obj10.off
+[TIME] Simplification in one vertex: 0.054267 seconds
+[TIME] Simplification in one face: 0.081982 seconds
+[TIME] Face quadrangulation: 0.017711 seconds
+[TIME] Total time for computation of reduced map: 0.154715 seconds
+Initial map: #Darts=205662, #0-cells=33871, #1-cells=102831, #2-cells=68554, #ccs=1
+Reduced map: #Darts=1632, #0-cells=2, #1-cells=816, #2-cells=408, #ccs=1
+Mesh data/big-genus/obj11.off
+[TIME] Simplification in one vertex: 0.108287 seconds
+[TIME] Simplification in one face: 0.143657 seconds
+[TIME] Face quadrangulation: 0.031098 seconds
+[TIME] Total time for computation of reduced map: 0.284387 seconds
+Initial map: #Darts=334926, #0-cells=55617, #1-cells=167463, #2-cells=111642, #ccs=1
+Reduced map: #Darts=824, #0-cells=2, #1-cells=412, #2-cells=206, #ccs=1
+Mesh data/big-genus/obj12.off
+[TIME] Simplification in one vertex: 0.095036 seconds
+[TIME] Simplification in one face: 0.163535 seconds
+[TIME] Face quadrangulation: 0.030391 seconds
+[TIME] Total time for computation of reduced map: 0.290279 seconds
+Initial map: #Darts=310740, #0-cells=50528, #1-cells=155370, #2-cells=103580, #ccs=1
+Reduced map: #Darts=5056, #0-cells=2, #1-cells=2528, #2-cells=1264, #ccs=1
+Mesh data/big-genus/obj13.off
+[TIME] Simplification in one vertex: 0.047877 seconds
+[TIME] Simplification in one face: 0.075205 seconds
+[TIME] Face quadrangulation: 0.013692 seconds
+[TIME] Total time for computation of reduced map: 0.137383 seconds
+Initial map: #Darts=172800, #0-cells=28564, #1-cells=86400, #2-cells=57600, #ccs=1
+Reduced map: #Darts=952, #0-cells=2, #1-cells=476, #2-cells=238, #ccs=1
+Mesh data/big-genus/obj14.off
+[TIME] Simplification in one vertex: 0.274628 seconds
+[TIME] Simplification in one face: 0.325655 seconds
+[TIME] Face quadrangulation: 0.070724 seconds
+[TIME] Total time for computation of reduced map: 0.67383 seconds
+Initial map: #Darts=694992, #0-cells=115612, #1-cells=347496, #2-cells=231664, #ccs=1
+Reduced map: #Darts=888, #0-cells=2, #1-cells=444, #2-cells=222, #ccs=1
+Mesh data/big-genus/obj15.off
+[TIME] Simplification in one vertex: 1.27469 seconds
+[TIME] Simplification in one face: 1.51623 seconds
+[TIME] Face quadrangulation: 0.339918 seconds
+[TIME] Total time for computation of reduced map: 3.14391 seconds
+Initial map: #Darts=3298422, #0-cells=548955, #1-cells=1649211, #2-cells=1099474, #ccs=1
+Reduced map: #Darts=3136, #0-cells=2, #1-cells=1568, #2-cells=784, #ccs=1
+Mesh data/big-genus/obj16.off
+[TIME] Simplification in one vertex: 0.002664 seconds
+[TIME] Simplification in one face: 0.003016 seconds
+[TIME] Face quadrangulation: 0.000657 seconds
+[TIME] Total time for computation of reduced map: 0.006399 seconds
+Initial map: #Darts=16326, #0-cells=2491, #1-cells=8163, #2-cells=5442, #ccs=1
+Reduced map: #Darts=928, #0-cells=2, #1-cells=464, #2-cells=232, #ccs=1
+Mesh data/big-genus/obj17.off
+[TIME] Simplification in one vertex: 0.007386 seconds
+[TIME] Simplification in one face: 0.008476 seconds
+[TIME] Face quadrangulation: 0.00218 seconds
+[TIME] Total time for computation of reduced map: 0.018229 seconds
+Initial map: #Darts=38292, #0-cells=5488, #1-cells=19146, #2-cells=12764, #ccs=1
+Reduced map: #Darts=3584, #0-cells=2, #1-cells=1792, #2-cells=896, #ccs=1
+Mesh data/big-genus/obj1.off
+[TIME] Simplification in one vertex: 0.001849 seconds
+[TIME] Simplification in one face: 0.002086 seconds
+[TIME] Face quadrangulation: 0.000568 seconds
+[TIME] Total time for computation of reduced map: 0.004556 seconds
+Initial map: #Darts=11532, #0-cells=1684, #1-cells=5766, #2-cells=3844, #ccs=1
+Reduced map: #Darts=960, #0-cells=2, #1-cells=480, #2-cells=240, #ccs=1
+Mesh data/big-genus/obj2.off
+[TIME] Simplification in one vertex: 0.002474 seconds
+[TIME] Simplification in one face: 0.002939 seconds
+[TIME] Face quadrangulation: 0.000663 seconds
+[TIME] Total time for computation of reduced map: 0.006134 seconds
+Initial map: #Darts=16188, #0-cells=2460, #1-cells=8094, #2-cells=5396, #ccs=1
+Reduced map: #Darts=960, #0-cells=2, #1-cells=480, #2-cells=240, #ccs=1
+Mesh data/big-genus/obj3.off
+[TIME] Simplification in one vertex: 0.356866 seconds
+[TIME] Simplification in one face: 0.519399 seconds
+[TIME] Face quadrangulation: 0.106446 seconds
+[TIME] Total time for computation of reduced map: 0.987253 seconds
+Initial map: #Darts=1037988, #0-cells=172466, #1-cells=518994, #2-cells=345996, #ccs=1
+Reduced map: #Darts=2136, #0-cells=2, #1-cells=1068, #2-cells=534, #ccs=1
+Mesh data/big-genus/obj5.off
+[TIME] Simplification in one vertex: 0.020143 seconds
+[TIME] Simplification in one face: 0.035718 seconds
+[TIME] Face quadrangulation: 0.005571 seconds
+[TIME] Total time for computation of reduced map: 0.061761 seconds
+Initial map: #Darts=97644, #0-cells=15520, #1-cells=48822, #2-cells=32548, #ccs=1
+Reduced map: #Darts=3024, #0-cells=2, #1-cells=1512, #2-cells=756, #ccs=1
+Mesh data/big-genus/obj6.off
+[TIME] Simplification in one vertex: 0.001718 seconds
+[TIME] Simplification in one face: 0.00174 seconds
+[TIME] Face quadrangulation: 0.000691 seconds
+[TIME] Total time for computation of reduced map: 0.004214 seconds
+Initial map: #Darts=9186, #0-cells=1311, #1-cells=4593, #2-cells=3062, #ccs=1
+Reduced map: #Darts=888, #0-cells=2, #1-cells=444, #2-cells=222, #ccs=1
+Mesh data/big-genus/obj7.off
+[TIME] Simplification in one vertex: 0.001889 seconds
+[TIME] Simplification in one face: 0.002058 seconds
+[TIME] Face quadrangulation: 0.000642 seconds
+[TIME] Total time for computation of reduced map: 0.00465 seconds
+Initial map: #Darts=11520, #0-cells=1608, #1-cells=5760, #2-cells=3840, #ccs=1
+Reduced map: #Darts=1256, #0-cells=2, #1-cells=628, #2-cells=314, #ccs=1
+Mesh data/big-genus/obj8.off
+[TIME] Simplification in one vertex: 0.005149 seconds
+[TIME] Simplification in one face: 0.007093 seconds
+[TIME] Face quadrangulation: 0.000993 seconds
+[TIME] Total time for computation of reduced map: 0.013347 seconds
+Initial map: #Darts=29676, #0-cells=4716, #1-cells=14838, #2-cells=9892, #ccs=1
+Reduced map: #Darts=928, #0-cells=2, #1-cells=464, #2-cells=232, #ccs=1
+Mesh data/big-genus/obj9.off
+[TIME] Simplification in one vertex: 0.105654 seconds
+[TIME] Simplification in one face: 0.138156 seconds
+[TIME] Face quadrangulation: 0.031414 seconds
+[TIME] Total time for computation of reduced map: 0.276585 seconds
+Initial map: #Darts=334212, #0-cells=55498, #1-cells=167106, #2-cells=111404, #ccs=1
+Reduced map: #Darts=824, #0-cells=2, #1-cells=412, #2-cells=206, #ccs=1
+Mesh data/big-genus-with-holes/obj10-1.000000-2.off
+[TIME] Simplification in one vertex: 0.051923 seconds
+[TIME] Simplification in one face: 0.07859 seconds
+[TIME] Face quadrangulation: 0.017452 seconds
+[TIME] Total time for computation of reduced map: 0.148973 seconds
+Initial map: #Darts=197493, #0-cells=33955, #1-cells=100736, #2-cells=65831, #ccs=1
+Reduced map: #Darts=2594, #0-cells=211, #1-cells=1297, #2-cells=690, #ccs=1
+Mesh data/big-genus-with-holes/obj1-1.000000-2.off
+[TIME] Simplification in one vertex: 0.001813 seconds
+[TIME] Simplification in one face: 0.001997 seconds
+[TIME] Face quadrangulation: 0.000637 seconds
+[TIME] Total time for computation of reduced map: 0.004537 seconds
+Initial map: #Darts=11079, #0-cells=1687, #1-cells=5650, #2-cells=3693, #ccs=1
+Reduced map: #Darts=892, #0-cells=5, #1-cells=446, #2-cells=203, #ccs=1
+Mesh data/big-genus-with-holes/obj11-1.000000-2.off
+[TIME] Simplification in one vertex: 0.097106 seconds
+[TIME] Simplification in one face: 0.14531 seconds
+[TIME] Face quadrangulation: 0.031042 seconds
+[TIME] Total time for computation of reduced map: 0.275295 seconds
+Initial map: #Darts=321591, #0-cells=55737, #1-cells=164019, #2-cells=107197, #ccs=1
+Reduced map: #Darts=3050, #0-cells=367, #1-cells=1525, #2-cells=956, #ccs=1
+Mesh data/big-genus-with-holes/obj12-1.000000-2.off
+[TIME] Simplification in one vertex: 0.088681 seconds
+[TIME] Simplification in one face: 0.144801 seconds
+[TIME] Face quadrangulation: 0.031967 seconds
+[TIME] Total time for computation of reduced map: 0.267131 seconds
+Initial map: #Darts=298413, #0-cells=50589, #1-cells=152202, #2-cells=99471, #ccs=1
+Reduced map: #Darts=5672, #0-cells=161, #1-cells=2836, #2-cells=1413, #ccs=1
+Mesh data/big-genus-with-holes/obj13-1.000000-2.off
+[TIME] Simplification in one vertex: 0.049629 seconds
+[TIME] Simplification in one face: 0.075687 seconds
+[TIME] Face quadrangulation: 0.014603 seconds
+[TIME] Total time for computation of reduced map: 0.140701 seconds
+Initial map: #Darts=165912, #0-cells=28588, #1-cells=84592, #2-cells=55304, #ccs=1
+Reduced map: #Darts=1742, #0-cells=90, #1-cells=871, #2-cells=545, #ccs=1
+Mesh data/big-genus-with-holes/obj14-1.000000-2.off
+[TIME] Simplification in one vertex: 0.244695 seconds
+[TIME] Simplification in one face: 0.340334 seconds
+[TIME] Face quadrangulation: 0.071015 seconds
+[TIME] Total time for computation of reduced map: 0.659971 seconds
+Initial map: #Darts=667356, #0-cells=115730, #1-cells=340370, #2-cells=222452, #ccs=1
+Reduced map: #Darts=5712, #0-cells=638, #1-cells=2856, #2-cells=1998, #ccs=1
+Mesh data/big-genus-with-holes/obj15-1.000000-2.off
+[TIME] Simplification in one vertex: 1.34474 seconds
+[TIME] Simplification in one face: 1.54192 seconds
+[TIME] Face quadrangulation: 0.348176 seconds
+[TIME] Total time for computation of reduced map: 3.25409 seconds
+Initial map: #Darts=3167334, #0-cells=549481, #1-cells=1615459, #2-cells=1055778, #ccs=1
+Reduced map: #Darts=26678, #0-cells=3121, #1-cells=13339, #2-cells=9436, #ccs=1
+Mesh data/big-genus-with-holes/obj16-1.000000-2.off
+[TIME] Simplification in one vertex: 0.002708 seconds
+[TIME] Simplification in one face: 0.002982 seconds
+[TIME] Face quadrangulation: 0.000796 seconds
+[TIME] Total time for computation of reduced map: 0.006591 seconds
+Initial map: #Darts=15681, #0-cells=2493, #1-cells=7993, #2-cells=5227, #ccs=1
+Reduced map: #Darts=880, #0-cells=9, #1-cells=440, #2-cells=201, #ccs=1
+Mesh data/big-genus-with-holes/obj17-1.000000-2.off
+[TIME] Simplification in one vertex: 0.007083 seconds
+[TIME] Simplification in one face: 0.010609 seconds
+[TIME] Face quadrangulation: 0.002437 seconds
+[TIME] Total time for computation of reduced map: 0.020382 seconds
+Initial map: #Darts=36780, #0-cells=5494, #1-cells=18750, #2-cells=12260, #ccs=1
+Reduced map: #Darts=3372, #0-cells=19, #1-cells=1686, #2-cells=775, #ccs=1
+Mesh data/big-genus-with-holes/obj2-1.000000-2.off
+[TIME] Simplification in one vertex: 0.002827 seconds
+[TIME] Simplification in one face: 0.002946 seconds
+[TIME] Face quadrangulation: 0.000779 seconds
+[TIME] Total time for computation of reduced map: 0.006666 seconds
+Initial map: #Darts=15555, #0-cells=2468, #1-cells=7932, #2-cells=5185, #ccs=1
+Reduced map: #Darts=948, #0-cells=13, #1-cells=474, #2-cells=225, #ccs=1
+Mesh data/big-genus-with-holes/obj3-1.000000-2.off
+[TIME] Simplification in one vertex: 0.385589 seconds
+[TIME] Simplification in one face: 0.519306 seconds
+[TIME] Face quadrangulation: 0.111635 seconds
+[TIME] Total time for computation of reduced map: 1.02332 seconds
+Initial map: #Darts=996714, #0-cells=172645, #1-cells=508357, #2-cells=332238, #ccs=1
+Reduced map: #Darts=9820, #0-cells=1247, #1-cells=4910, #2-cells=3131, #ccs=1
+Mesh data/big-genus-with-holes/obj5-1.000000-2.off
+[TIME] Simplification in one vertex: 0.019963 seconds
+[TIME] Simplification in one face: 0.035344 seconds
+[TIME] Face quadrangulation: 0.0059 seconds
+[TIME] Total time for computation of reduced map: 0.061693 seconds
+Initial map: #Darts=93777, #0-cells=15548, #1-cells=47826, #2-cells=31259, #ccs=1
+Reduced map: #Darts=3200, #0-cells=61, #1-cells=1600, #2-cells=787, #ccs=1
+Mesh data/big-genus-with-holes/obj6-1.000000-2.off
+[TIME] Simplification in one vertex: 0.001449 seconds
+[TIME] Simplification in one face: 0.00172 seconds
+[TIME] Face quadrangulation: 0.000585 seconds
+[TIME] Total time for computation of reduced map: 0.003816 seconds
+Initial map: #Darts=8826, #0-cells=1315, #1-cells=4501, #2-cells=2942, #ccs=1
+Reduced map: #Darts=822, #0-cells=7, #1-cells=411, #2-cells=186, #ccs=1
+Mesh data/big-genus-with-holes/obj7-1.000000-2.off
+[TIME] Simplification in one vertex: 0.001814 seconds
+[TIME] Simplification in one face: 0.001931 seconds
+[TIME] Face quadrangulation: 0.000688 seconds
+[TIME] Total time for computation of reduced map: 0.004506 seconds
+Initial map: #Darts=11064, #0-cells=1614, #1-cells=5646, #2-cells=3688, #ccs=1
+Reduced map: #Darts=1146, #0-cells=4, #1-cells=573, #2-cells=257, #ccs=1
+Mesh data/big-genus-with-holes/obj8-1.000000-2.off
+[TIME] Simplification in one vertex: 0.004751 seconds
+[TIME] Simplification in one face: 0.00573 seconds
+[TIME] Face quadrangulation: 0.00114 seconds
+[TIME] Total time for computation of reduced map: 0.011759 seconds
+Initial map: #Darts=28500, #0-cells=4727, #1-cells=14534, #2-cells=9500, #ccs=1
+Reduced map: #Darts=918, #0-cells=20, #1-cells=459, #2-cells=211, #ccs=1
+Mesh data/big-genus-with-holes/obj9-1.000000-2.off
+[TIME] Simplification in one vertex: 0.096304 seconds
+[TIME] Simplification in one face: 0.148061 seconds
+[TIME] Face quadrangulation: 0.030264 seconds
+[TIME] Total time for computation of reduced map: 0.276335 seconds
+Initial map: #Darts=320889, #0-cells=55616, #1-cells=163663, #2-cells=106963, #ccs=1
+Reduced map: #Darts=3042, #0-cells=362, #1-cells=1521, #2-cells=959, #ccs=1
+Mesh data/big/happy.off
+[TIME] Simplification in one vertex: 1.40868 seconds
+[TIME] Simplification in one face: 1.77778 seconds
+[TIME] Face quadrangulation: 0.340586 seconds
+[TIME] Total time for computation of reduced map: 3.54039 seconds
+Initial map: #Darts=3263148, #0-cells=543652, #1-cells=1631574, #2-cells=1087716, #ccs=1
+Reduced map: #Darts=832, #0-cells=2, #1-cells=416, #2-cells=208, #ccs=1
+Mesh data/big/iphigenia.off
+[TIME] Simplification in one vertex: 0.760665 seconds
+[TIME] Simplification in one face: 1.06874 seconds
+[TIME] Face quadrangulation: 0.192173 seconds
+[TIME] Total time for computation of reduced map: 2.03018 seconds
+Initial map: #Darts=2110536, #0-cells=351750, #1-cells=1055268, #2-cells=703512, #ccs=1
+Reduced map: #Darts=32, #0-cells=2, #1-cells=16, #2-cells=8, #ccs=1
+Mesh data/big/xyzrgb_statuette.off
+[TIME] Simplification in one vertex: 14.6903 seconds
+[TIME] Simplification in one face: 16.1494 seconds
+[TIME] Face quadrangulation: 2.88612 seconds
+[TIME] Total time for computation of reduced map: 33.841 seconds
+Initial map: #Darts=30000000, #0-cells=4999996, #1-cells=15000000, #2-cells=10000000, #ccs=1
+Reduced map: #Darts=24, #0-cells=2, #1-cells=12, #2-cells=6, #ccs=1

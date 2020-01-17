@@ -21,7 +21,7 @@
 #include <QDockWidget>
 #include <QDialog>
 #include <QApplication>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMessageBox>
 
 #include "ui_Transformation_widget.h"

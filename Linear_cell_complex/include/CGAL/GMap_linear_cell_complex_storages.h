@@ -142,6 +142,8 @@ namespace CGAL {
       CGAL_assertion(i <= dimension);
       return dh->mf[i]==dh;
     }
+    bool is_perforated(Dart_const_handle /*dh*/) const
+    { return false; }
 
     /// Set simultaneously all the marks of this dart to a given value.
     void set_dart_marks(Dart_const_handle ADart,
