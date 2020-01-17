@@ -869,6 +869,7 @@ output_to_medit(std::ostream& os,
  * @param show_patches if true, patches are labeled with different labels than
  * cells. If false, each surface facet is written twice, using label of
  * each adjacent cell.
+ * \see \ref IOStreamMedit
  */
 template <class C3T3>
 void

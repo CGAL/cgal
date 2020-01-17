@@ -28,13 +28,13 @@
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
 
-#include <CGAL/IO/traits_point.h>
-#include <CGAL/IO/traits_point_3.h>
-#include <CGAL/IO/traits_linestring.h>
-#include <CGAL/IO/traits_polygon.h>
-#include <CGAL/IO/traits_multipoint.h>
-#include <CGAL/IO/traits_multilinestring.h>
-#include <CGAL/IO/traits_multipolygon.h>
+#include <CGAL/IO/WKT/traits_point.h>
+#include <CGAL/IO/WKT/traits_point_3.h>
+#include <CGAL/IO/WKT/traits_linestring.h>
+#include <CGAL/IO/WKT/traits_polygon.h>
+#include <CGAL/IO/WKT/traits_multipoint.h>
+#include <CGAL/IO/WKT/traits_multilinestring.h>
+#include <CGAL/IO/WKT/traits_multipolygon.h>
 
 
 namespace CGAL{
@@ -62,14 +62,14 @@ namespace internal {
 }
   
 template<typename Point>
-std::istream&
+bool
 read_point_WKT( std::istream& in,
                 Point& point)
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return false;
   }
   
   std::string line;
@@ -81,22 +81,28 @@ read_point_WKT( std::istream& in,
     
     if(type.substr(0, 5).compare("POINT")==0)
     {
-      boost::geometry::read_wkt(line, point);
+      try{
+        boost::geometry::read_wkt(line, point);
+      } catch(...)
+      {
+        std::cerr<<"error."<<std::endl;
+        return false;
+      }
       break;
     }
   }
-  return in;  
+  return in.good();
 }
 
 template<typename MultiPoint>
-std::istream&
+bool
 read_multi_point_WKT( std::istream& in,
                      MultiPoint& mp)
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return false;
   }
   internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   std::string line;
@@ -108,23 +114,28 @@ read_multi_point_WKT( std::istream& in,
     
     if(type.substr(0, 10).compare("MULTIPOINT")==0)
     {
-      boost::geometry::read_wkt(line, gc);
+      try{
+        boost::geometry::read_wkt(line, gc);
+      } catch(...){
+        std::cerr<<"error."<<std::endl;
+        return false;
+      }
       break;
     }
   }
-  return in;  
+  return in.good();
 }
 
 
 template<typename LineString>
-std::istream&
+bool
 read_linestring_WKT( std::istream& in,
                      LineString& polyline)
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return false;
   }
   internal::Geometry_container<LineString, boost::geometry::linestring_tag> gc(polyline);
   std::string line;
@@ -136,22 +147,27 @@ read_linestring_WKT( std::istream& in,
     
     if(type.substr(0, 10).compare("LINESTRING")==0)
     {
-      boost::geometry::read_wkt(line, gc);
+      try{
+        boost::geometry::read_wkt(line, gc);
+      } catch(...){
+        std::cerr<<"error."<<std::endl;
+        return false;
+      }
       break;
     }
   }
-  return in;  
+  return in.good();
 }
 
 template<typename MultiLineString>
-std::istream&
+bool
 read_multi_linestring_WKT( std::istream& in,
                           MultiLineString& mls)
 {
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return false;
   }
   typedef typename MultiLineString::value_type PointRange;
   typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
@@ -167,7 +183,12 @@ read_multi_linestring_WKT( std::istream& in,
     
     if(type.substr(0, 15).compare("MULTILINESTRING")==0)
     {
-      boost::geometry::read_wkt(line, gc);
+      try{
+        boost::geometry::read_wkt(line, gc);
+      } catch(...){
+        std::cerr<<"error."<<std::endl;
+        return false;
+      }
       break;
     }
   }
@@ -175,11 +196,11 @@ read_multi_linestring_WKT( std::istream& in,
   {
     mls.push_back(*ls.range);
   }
-  return in;  
+  return in.good();
 }
 
 template<typename Polygon>
-std::istream&
+bool
 read_polygon_WKT( std::istream& in,
                   Polygon& polygon
                   )
@@ -187,7 +208,7 @@ read_polygon_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return false;
   }
   
   std::string line;
@@ -209,11 +230,11 @@ read_polygon_WKT( std::istream& in,
       break;
     }
   }
-  return in;  
+  return in.good();
 }
 
 template<typename MultiPolygon>
-std::istream&
+bool
 read_multi_polygon_WKT( std::istream& in,
                         MultiPolygon& polygons
                         )
@@ -221,7 +242,7 @@ read_multi_polygon_WKT( std::istream& in,
   if(!in)
   {
     std::cerr << "Error: cannot open file" << std::endl;
-    return in;  
+    return false;
   }
   internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag> gc(polygons);
   std::string line;
@@ -234,11 +255,11 @@ read_multi_polygon_WKT( std::istream& in,
     if(type.substr(0, 12).compare("MULTIPOLYGON")==0)
     {
       try {
-              boost::geometry::read_wkt(line, gc);
-            } catch( ...){
-              in.setstate(std::ios::failbit);
-              return in;
-            };
+        boost::geometry::read_wkt(line, gc);
+      } catch( ...){
+        in.setstate(std::ios::failbit);
+        return in;
+      };
       for( typename
            internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it
           = gc.begin(); it != gc.end(); ++it)
@@ -248,7 +269,7 @@ read_multi_polygon_WKT( std::istream& in,
       break;
     }
   }
-  return in;  
+  return in.good();
 }
 
 template<typename Point>

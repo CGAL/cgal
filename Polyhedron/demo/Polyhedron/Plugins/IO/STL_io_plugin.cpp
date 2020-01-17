@@ -8,8 +8,8 @@
 #include <CGAL/Three/Three.h>
 #include <fstream>
 
-#include <CGAL/IO/Polyhedron_builder_from_STL.h>
-#include <CGAL/IO/STL_writer.h>
+#include <CGAL/IO/STL_reader.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 

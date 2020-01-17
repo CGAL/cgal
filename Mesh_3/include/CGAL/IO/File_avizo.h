@@ -146,6 +146,7 @@ output_to_avizo(std::ostream& os,
  * @brief outputs mesh to avizo format
  * @param os the stream
  * @param c3t3 the mesh
+ * \see \ref IOStreamAvizo
  */
 template <class C3T3>
 void

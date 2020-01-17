@@ -25,11 +25,6 @@
 #include <sstream>
 
 namespace CGAL {
-
-//-------------------------------------------------------
-// IO functions
-//-------------------------------------------------------
-  
 template <class C3T3>
 void
 output_to_maya(std::ostream& os, 

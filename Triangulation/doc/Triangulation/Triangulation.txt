@@ -566,6 +566,11 @@ Performance of the insertion of 1000 points in a Delaunay triangulation.
 Running time wrt. number of maximal simplices, for dimensions for 2 to 12.
 \cgalFigureEnd
 
+\section TriangulationSecIO Input/Output
+
+It is possible to export a Triangulation to the OFF format with the function
+`CGAL::export_triangulation_to_off()`.
+
 \section TriangulationSecDesign Design and Implementation History
 
 Starting with the version 2.3 of \cgal, a package written by Susan Hert and Michael Seel

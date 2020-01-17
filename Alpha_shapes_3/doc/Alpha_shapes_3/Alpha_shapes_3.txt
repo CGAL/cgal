@@ -192,6 +192,10 @@ the vertices, edges, facets and cells of the different types
 (`EXTERIOR`, `SINGULAR`, `REGULAR` or 
 `INTERIOR`).
 
+\subsection AlphaShape3DIO Input/Output
+It is possible to export a 3D alpha shape to a `std::ostream` or to a `Geomview_stream`
+using the `operator<<`. More information in the references of `Alpha_shape_3`.
+
 \section AlphaShape3D_ConceptAndModels Concepts and Models
 
 We currently do not specify concepts for the underlying triangulation

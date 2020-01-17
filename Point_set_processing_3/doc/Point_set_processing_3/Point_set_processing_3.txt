@@ -240,6 +240,8 @@ container.
 
 \cgalExample{Point_set_processing_3/read_las_example.cpp}
 
+\sa \ref IOstreamPointSetIO
+
 \section Point_set_processing_3Spacing Average Spacing
 
 Function `compute_average_spacing()` computes the average

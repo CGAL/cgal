@@ -24,7 +24,16 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Kernel_traits.h>
+#ifdef CGAL_USE_VTK
+#include <CGAL/IO/VTK/vtk_internals.h>
+#endif
 #include <CGAL/IO/write_vtk.h>
+#include <CGAL/internal/Generic_facegraph_builder.h>
+#include <CGAL/IO/STL/STL_reader.h>
+#include <CGAL/IO/OBJ/OBJ_reader.h>
+#include <CGAL/IO/OBJ/File_writer_wavefront.h>
 
 namespace CGAL {
   /*!
@@ -36,6 +45,7 @@ namespace CGAL {
     *       If this parameter is omitted, an internal property map for
     *       `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
     * \cgalNamedParamsEnd
+    * \see \ref IOStreamWRL
     */ 
 template <typename FaceGraph, typename NamedParameters>
 bool write_wrl(std::ostream& os,
@@ -124,6 +134,7 @@ bool write_wrl(std::ostream& os,
     * \cgalNamedParamsEnd
     
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
+    \see \ref IOStreamOFF
 
   */ 
 template <typename FaceGraph, typename NamedParameters>
@@ -168,7 +179,7 @@ bool write_off(std::ostream& os,
    \ingroup PkgBGLIOFct
     writes the graph `g` in the OFF format into a file named `fname`.
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
+    \see \ref IOStreamOFF
   */ 
 template <typename FaceGraph, typename NamedParameters>
 bool write_off(const char* fname,
@@ -247,6 +258,7 @@ inline std::string next_non_comment(std::istream& is)
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
     \pre The data must represent a 2-manifold
     \attention The graph `g` is not cleared, and the data from the stream are added.
+    \see \ref IOStreamOFF
 
   */ 
 template <typename FaceGraph, typename NamedParameters>
@@ -322,6 +334,7 @@ bool read_off(std::istream& is,
     \sa Overloads of this function for specific models of the concept `FaceGraph`.
     \pre The data must represent a 2-manifold
     \attention The graph `g` is not cleared, and the data from the stream are added.
+    \see \ref IOStreamOFF
 
   */ 
 template <typename FaceGraph, typename NamedParameters>
@@ -404,6 +417,177 @@ bool write_inp(std::ostream& os,
   return write_inp(os, g, name, type, parameters::all_default());
 }
 
+namespace GOCAD_internal{
+//Use CRTP to gain access to the protected members without getters/setters.
+template <class Facegraph, class P>
+class GOCAD_builder : public CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, GOCAD_builder<Facegraph, P> >
+{
+  typedef GOCAD_builder<Facegraph, P> Self;
+  typedef CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, Self> Base;
+  typedef typename Base::Point_3 Point_3;
+  typedef typename Base::Points_3 Points_3;
+  typedef typename Base::Facet Facet;
+  typedef typename Base::Surface Surface;
+public:
+  GOCAD_builder(std::istream& is_)
+    :Base(is_){}
+  void do_construct(Facegraph& graph)
+  {
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor
+        vertex_descriptor;
+
+    std::vector<vertex_descriptor> vertices(this->meshPoints.size());
+    for(std::size_t id = 0; id < this->meshPoints.size(); ++id)
+    {
+      vertices[id] = add_vertex( this->meshPoints[id], graph);
+    }
+    //    graph.begin_surface( meshPoints.size(), mesh.size());
+    typedef typename Points_3::size_type size_type;
+
+    for(size_type i=0; i < this->mesh.size(); i++){
+      std::array<vertex_descriptor, 3> face;
+      face[0] = vertices[this->mesh[i][0]];
+      face[1] = vertices[this->mesh[i][1]];
+      face[2] = vertices[this->mesh[i][2]];
+
+      CGAL::Euler::add_face(face, graph);
+    }
+  }
+
+  void
+  read(std::istream& input, Points_3& points, Surface& surface)
+  {
+    int offset = 0;
+    char c;
+    std::string s, tface("TFACE");
+    int i,j,k;
+    Point_3 p;
+    bool vertices_read = false;
+    while(input >> s){
+      if(s == tface){
+        break;
+      }
+      std::string::size_type idx;
+
+      if((idx = s.find("name")) != std::string::npos){
+        std::istringstream str(s.substr(idx+5));
+        str >> this->name;
+      }
+      if((idx = s.find("color")) != std::string::npos){
+        std::istringstream str(s.substr(idx+6));
+        str >> this->color;
+      }
+    }
+    std::getline(input, s);
+
+    while(input.get(c)){
+      if((c == 'V')||(c == 'P')){
+        input >> s >> i >> p;
+        if(! vertices_read){
+          vertices_read = true;
+          offset -= i; // Some files start with index 0 others with 1
+        }
+
+        points.push_back(p);
+
+      } else if(vertices_read && (c == 'T')){
+        input >> c >> c >> c >>  i >> j >> k;
+        typename Base::Facet new_face(3);
+        new_face[0] = offset+i;
+        new_face[1] = offset+j;
+        new_face[2] = offset+k;
+        surface.push_back(new_face);
+      } else if(c == 'E'){
+        break;
+      }
+      std::getline(input, s);
+    }
+  }
+
+};
+}//end GOCAD_internal
+
+/*!
+   \ingroup PkgBGLIOFct
+    reads the graph `face_graph` from data in the TS format.
+    `name` and `color` will be filled according to the values contained in the file.
+
+    \pre The data must represent a 2-manifold
+    \attention The graph `face_graph` is not cleared, and the data from the stream are added.
+    \see \ref IOStreamGocad
+  */
+template <typename FaceGraph>
+bool
+read_gocad(FaceGraph& face_graph, std::istream& in, std::string& name, std::string& color)
+{
+  //typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename boost::property_traits<typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type Point_3;
+
+  GOCAD_internal::GOCAD_builder<FaceGraph, Point_3> builder(in);
+  builder(face_graph);
+  name=builder.name;
+  color=builder.color;
+
+  return in.good() && face_graph.is_valid();
+}
+
+/*!
+   \ingroup PkgBGLIOFct
+    writes the graph `face_graph` in the TS format into `os`. `name` is the
+    mandatory name that will be assigned to `face_graph`in the file.
+    \see \ref IOStreamGocad
+  */
+template <typename FaceGraph>
+bool
+write_gocad(FaceGraph& face_graph, std::ostream& os, const std::string& name)
+{
+  os << "GOCAD TSurf 1\n"
+    "HEADER {\n"
+    "name:";
+  os << name << std::endl;
+  os << "*border:on\n"
+    "*border*bstone:on\n"
+    "}\n"
+    "GOCAD_ORIGINAL_COORDINATE_SYSTEM\n"
+    "NAME Default\n"
+    "AXIS_NAME \"X\" \"Y\" \"Z\"\n"
+    "AXIS_UNIT \"m\" \"m\" \"m\"\n"
+    "ZPOSITIVE Elevation\n"
+    "END_ORIGINAL_COORDINATE_SYSTEM\n"
+    "TFACE\n";
+
+  os.precision(16);
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type VPMap;
+  VPMap vpmap = get(CGAL::vertex_point, face_graph);
+  std::map<typename boost::graph_traits<FaceGraph>::vertex_descriptor, int> id_map;
+  {
+    typename boost::graph_traits<FaceGraph>::vertex_iterator it, end;
+    it = vertices(face_graph).begin();
+    end = vertices(face_graph).end();
+    int i=0;
+    for(; it != end; ++it){
+      id_map[*it] = i;
+      os << "VRTX " << i << " " << get(vpmap, *it) << "\n";
+      ++i;
+    }
+  }
+
+  {
+    typename boost::graph_traits<FaceGraph>::face_iterator it, end;
+    it = faces(face_graph).begin();
+    end = faces(face_graph).end();
+    for(; it != end; ++it){
+      os << "TRGL " << id_map[target(prev(halfedge(*it, face_graph), face_graph), face_graph)] << " "
+         << id_map[target(halfedge(*it, face_graph), face_graph)] << " "
+         << id_map[target(next(halfedge(*it, face_graph), face_graph), face_graph)] << "\n";
+    }
+  }
+
+  os << "END" << std::endl;
+
+  return true;
+}
+
 namespace internal {
   namespace write_vtp {
 
@@ -438,7 +622,7 @@ write_polys(std::ostream& os,
     offsets.push_back(off);
     for(vertex_descriptor v :
                   vertices_around_face(halfedge(*fit, mesh), mesh))
-        connectivity_table.push_back(V[v]);
+        connectivity_table.push_back(get(V, v));
   }
   write_vector<std::size_t>(os,connectivity_table);
   write_vector<std::size_t>(os,offsets);
@@ -492,7 +676,7 @@ write_polys_tag(std::ostream& os,
     {
       for(vertex_descriptor v :
                     vertices_around_face(halfedge(*fit, mesh), mesh))
-          os << V[v] << " ";
+          os << get(V, v) << " ";
     }
     os << "      </DataArray>\n";
   }
@@ -617,7 +801,7 @@ write_polys_points(std::ostream& os,
   } // end namespace CGAL::internal::write_vtp
 } // end namespace CGAL::internal
 
-/*!\ingroup PkgBGLIOFct
+/*! \ingroup PkgBGLIOFct
  *
  * \brief  writes a triangulated surface mesh in the `PolyData` XML format.
  *
@@ -642,6 +826,7 @@ write_polys_points(std::ostream& os,
  *       `CGAL::vertex_index_t` must be available in `TriangleMesh`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
+ * \see \ref IOStreamVTK
  */
 template<class TriangleMesh,
          class NamedParameters>
@@ -687,6 +872,348 @@ void write_vtp(std::ostream& os,
   write_vtp(os, mesh, CGAL::parameters::all_default());
 }
 
+#ifdef CGAL_USE_VTK
+namespace VTK_internal{
+
+template <typename FaceGraph>
+bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
+                                 FaceGraph& face_graph)
+{
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type VPMap;
+  typedef typename boost::property_map_value<FaceGraph, CGAL::vertex_point_t>::type Point_3;
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
+
+  VPMap vpmap = get(CGAL::vertex_point, face_graph);
+
+  // get nb of points and cells
+  vtkIdType nb_points = poly_data->GetNumberOfPoints();
+  vtkIdType nb_cells = poly_data->GetNumberOfCells();
+  //extract points
+  std::vector<vertex_descriptor> vertex_map(nb_points);
+  for (vtkIdType i = 0; i<nb_points; ++i)
+  {
+    double coords[3];
+    poly_data->GetPoint(i, coords);
+
+    vertex_descriptor v = add_vertex(face_graph);
+    put(vpmap, v, Point_3(coords[0], coords[1], coords[2]));
+    vertex_map[i]=v;
+  }
+
+  //extract cells
+  for (vtkIdType i = 0; i<nb_cells; ++i)
+  {
+    int cell_type = poly_data->GetCellType(i);
+    if(cell_type != 5
+       && cell_type != 7
+       && cell_type != 9) //only supported cells are triangles, quads and polygons
+      continue;
+    vtkCell* cell_ptr = poly_data->GetCell(i);
+
+    vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
+    if (nb_vertices < 3)
+      return false;
+    std::vector<vertex_descriptor> vr(nb_vertices);
+    for (vtkIdType k=0; k<nb_vertices; ++k){
+      vtkIdType id = cell_ptr->GetPointId(k);
+      vr[k]=vertex_map[id];
+    }
+
+    CGAL::Euler::add_face(vr, face_graph);
+  }
+  return true;
+}
+} //end VTK_internal
+
+template<class FaceGraph>
+bool read_vtp(const char* filename, FaceGraph& face_graph)
+{
+  vtkSmartPointer<vtkPointSet> data;
+  if(!CGAL::read_vtp_file(filename, data))
+  {
+    return false;
+  }
+  return VTK_internal::vtkPointSet_to_polygon_mesh(data, face_graph);
+}
+#endif //CGAL_USE_VTK
+
+#ifdef DOXYGEN_RUNNING
+/*! \ingroup PkgBGLIOFct
+ * \brief  reads a PolyData in the VTP format into a triangulated surface mesh.
+ *
+ * \tparam FaceGraph a model of `FaceListGraph`.
+ *
+ * \param filename the path to the file that will be read.
+ * \param face_graph the output mesh.
+ *
+ * \pre \cgal needs to be configured with the VTK Libraries for this function to be available.
+ */
+template<class FaceGraph>
+bool read_vtp(const char* filename, FaceGraph& face_graph);
+
+#endif
+
+/*!
+  \ingroup PkgBGLIOFct
+  writes the graph `tm` in the stream `out` in the STL format.
+  \pre The graph must contain only triangle faces.
+  \see \ref IOStreamSTL
+  */
+template <class TriangleMesh>
+std::ostream&
+write_STL(const TriangleMesh& tm, std::ostream& out)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type Vpm;
+  typedef typename boost::property_traits<Vpm>::reference Point_3_ref;
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel::Vector_3 Vector_3;
+
+  Vpm vpm = get(boost::vertex_point, tm);
+
+  if (get_mode(out) == IO::BINARY)
+  {
+    out << "FileType: Binary                                                                ";
+    const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(tm).size());
+    out.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
+
+    for(face_descriptor f : faces(tm))
+    {
+      halfedge_descriptor h = halfedge(f, tm);
+      Point_3_ref p = get(vpm, target(h, tm));
+      Point_3_ref q = get(vpm, target(next(h, tm), tm));
+      Point_3_ref r = get(vpm, source(h, tm));
+
+      Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
+                                      unit_normal(p,q,r);
+
+      const float coords[12]={
+        static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z()),
+        static_cast<float>(p.x()), static_cast<float>(p.y()), static_cast<float>(p.z()),
+        static_cast<float>(q.x()), static_cast<float>(q.y()), static_cast<float>(q.z()),
+        static_cast<float>(r.x()), static_cast<float>(r.y()), static_cast<float>(r.z()) };
+
+      for (int i=0; i<12; ++i)
+        out.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
+      out << "  ";
+    }
+  }
+  else
+  {
+    out << "solid\n";
+    for(face_descriptor f : faces(tm))
+    {
+      halfedge_descriptor h = halfedge(f, tm);
+      Point_3_ref p = get(vpm, target(h, tm));
+      Point_3_ref q = get(vpm, target(next(h, tm), tm));
+      Point_3_ref r = get(vpm, source(h, tm));
+
+      Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
+                                      unit_normal(p,q,r);
+      out << "facet normal " << n << "\nouter loop\n";
+      out << "vertex " << p << "\n";
+      out << "vertex " << q << "\n";
+      out << "vertex " << r << "\n";
+      out << "endloop\nendfacet\n";
+    }
+    out << "endsolid\n";
+  }
+  return out;
+}
+
+
+namespace STL_internal
+{
+//Use CRTP to gain access to the protected members without getters/setters.
+template <class Facegraph, class P>
+class STL_builder : public CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, STL_builder<Facegraph, P> >
+{
+  typedef STL_builder<Facegraph, P> Self;
+  typedef CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, Self> Base;
+  typedef typename Base::Point_3 Point_3;
+  typedef typename Base::Points_3 Points_3;
+  typedef typename Base::Facet Facet;
+  typedef typename Base::Surface Surface;
+public:
+  STL_builder(std::istream& is_)
+    :Base(is_){}
+  void do_construct(Facegraph& graph)
+  {
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor
+        vertex_descriptor;
+
+    std::vector<vertex_descriptor> vertices(this->meshPoints.size());
+    for(std::size_t id = 0; id < this->meshPoints.size(); ++id)
+    {
+      vertices[id] = add_vertex( this->meshPoints[id], graph);
+    }
+    //    graph.begin_surface( meshPoints.size(), mesh.size());
+    typedef typename Points_3::size_type size_type;
+
+    for(size_type i=0; i < this->mesh.size(); i++){
+      std::array<vertex_descriptor, 3> face;
+      face[0] = vertices[this->mesh[i][0]];
+      face[1] = vertices[this->mesh[i][1]];
+      face[2] = vertices[this->mesh[i][2]];
+
+      CGAL::Euler::add_face(face, graph);
+    }
+  }
+
+  void
+  read(std::istream& input, Points_3& points, Surface& surface)
+  {
+    read_STL(input, points, surface);
+  }
+
+};
+} // end STL_internal
+
+/*!
+  \ingroup PkgBGLIOFct
+  reads the graph `tm` from the stream `in` in the STL format.
+  \returns `true` if the resulting mesh is valid.
+  \pre The data must represent a 2-manifold
+  \see \ref IOStreamSTL
+  */
+template <class TriangleMesh>
+bool
+read_STL(TriangleMesh& tm, std::istream& in)
+{
+  //typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename boost::property_traits<typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type Point_3;
+
+  STL_internal::STL_builder<TriangleMesh, Point_3> builder(in);
+  builder(tm);
+  bool ok = in.good() || in.eof();
+  ok &= tm.is_valid();
+  return ok;
+}
+
+
+
+
+
+
+
+namespace OBJ_internal
+{
+//Use CRTP to gain access to the protected members without getters/setters.
+template <class Facegraph, class P>
+class OBJ_builder : public CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, OBJ_builder<Facegraph, P> >
+{
+  typedef OBJ_builder<Facegraph, P> Self;
+  typedef CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, Self> Base;
+  typedef typename Base::Point_3 Point_3;
+  typedef typename Base::Points_3 Points_3;
+  typedef typename Base::Facet Facet;
+  typedef typename Base::Surface Surface;
+public:
+  OBJ_builder(std::istream& is_)
+    :Base(is_){}
+  void do_construct(Facegraph& graph)
+  {
+    typedef typename boost::graph_traits<Facegraph>::vertex_descriptor
+        vertex_descriptor;
+
+    std::vector<vertex_descriptor> vertices(this->meshPoints.size());
+    for(std::size_t id = 0; id < this->meshPoints.size(); ++id)
+    {
+      vertices[id] = add_vertex( this->meshPoints[id], graph);
+    }
+    typedef typename Points_3::size_type size_type;
+
+    for(size_type i=0; i < this->mesh.size(); i++){
+      std::vector<vertex_descriptor> face(this->mesh[i].size());
+      for(std::size_t j=0; j< face.size(); ++j)
+        face[j] = vertices[this->mesh[i][j]];
+
+      CGAL::Euler::add_face(face, graph);
+    }
+  }
+
+  void
+  read(std::istream& input, Points_3& points, Surface& surface)
+  {
+    read_OBJ(input, points, surface);
+  }
+
+};
+} // end STL_internal
+
+/*!
+  \ingroup PkgBGLIOFct
+  reads the graph `tm` from the stream `in` in the OBJ format.
+  \returns `true` if the resulting mesh is valid.
+  \pre The data must represent a 2-manifold
+  \see \ref IOStreamOBJ
+  */
+template <class TriangleMesh>
+bool
+read_OBJ(TriangleMesh& tm, std::istream& in)
+{
+  //typedef typename Polyhedron::HalfedgeDS HDS;
+  typedef typename boost::property_traits<typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type Point_3;
+
+  OBJ_internal::OBJ_builder<TriangleMesh, Point_3> builder(in);
+  builder(tm);
+  bool ok = in.good() || in.eof();
+  ok &= tm.is_valid();
+  return ok;
+}
+
+/*!
+ \ingroup PkgBGLIOFct
+  writes the graph `face_graph` in the OBJ format.
+  \returns `true` if writing was successful.
+  \see \ref IOStreamOBJ
+  */
+template <typename FaceGraph>
+bool
+write_OBJ(const FaceGraph& face_graph, std::ostream& os)
+{
+  // writes M to `out' in the format provided by `writer'.
+  CGAL::File_writer_wavefront writer;
+  typedef typename boost::graph_traits<FaceGraph >::vertex_iterator VCI;
+  typedef typename boost::graph_traits<FaceGraph >::face_iterator   FCI;
+  typedef typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type VPmap;
+  VPmap map = get(CGAL::vertex_point, face_graph);
+  // Print header.
+  writer.write_header( os,
+                       num_vertices(face_graph),
+                       num_halfedges(face_graph),
+                       num_faces(face_graph));
+
+  std::map<typename boost::graph_traits<FaceGraph>::vertex_descriptor, std::size_t> index_map;
+  auto hint = index_map.begin();
+  std::size_t id = 0;
+
+  for( VCI vi = vertices(face_graph).begin(); vi != vertices(face_graph).end(); ++vi) {
+    writer.write_vertex( ::CGAL::to_double( get(map, *vi).x()),
+                         ::CGAL::to_double( get(map, *vi).y()),
+                         ::CGAL::to_double( get(map, *vi).z()));
+
+    hint = index_map.insert(hint, std::make_pair(*vi, id++));
+  }
+
+  writer.write_facet_header();
+  for( FCI fi = faces(face_graph).begin(); fi != faces(face_graph).end(); ++fi) {
+    CGAL::Halfedge_around_face_circulator<FaceGraph> hc(halfedge(*fi, face_graph), face_graph);
+    auto hc_end = hc;
+    std::size_t n = circulator_size( hc);
+    CGAL_assertion( n >= 3);
+    writer.write_facet_begin( n);
+    do {
+      writer.write_facet_vertex_index(index_map[target(*hc, face_graph)]);
+      ++hc;
+    } while( hc != hc_end);
+    writer.write_facet_end();
+  }
+  writer.write_footer();
+  return os.good();
+}
 } // namespace CGAL
+
 
 #endif // CGAL_BOOST_GRAPH_IO_H
