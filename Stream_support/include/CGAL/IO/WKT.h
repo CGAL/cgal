@@ -224,7 +224,7 @@ read_polygon_WKT( std::istream& in,
         boost::geometry::read_wkt(line, polygon);
       } catch( ...){
         in.setstate(std::ios::failbit);
-        return in;
+        return false;
       };
       internal::pop_back_if_equal_to_front(polygon);
       break;
@@ -258,7 +258,7 @@ read_multi_polygon_WKT( std::istream& in,
         boost::geometry::read_wkt(line, gc);
       } catch( ...){
         in.setstate(std::ios::failbit);
-        return in;
+        return false;
       };
       for( typename
            internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it
