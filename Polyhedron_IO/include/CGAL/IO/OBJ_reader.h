@@ -14,10 +14,9 @@
 #include <CGAL/disable_warnings.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/IO/OBJ_reader.h>"
-#define CGAL_REPLACEMENT_HEADER "<CGAL/IO/OBJ/OBJ_reader.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/IO/OBJ.h>"
 #include <CGAL/internal/deprecation_warning.h>
-#include <CGAL/IO/OBJ/OBJ_reader.h>
-#include <CGAL/enable_warnings.h>
 
+#include <CGAL/IO/OBJ/OBJ_reader.h>
 
 #endif // CGAL_IO_OBJ_READER_H
