@@ -4153,7 +4153,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_2& p, const Point_2& q,
                const Point_2& r, const Point_2& s) const
     {
-      return Compare_signed_distance_to_line_2<K>::operator(p, q, r, s) == SMALLER;
+      return Compare_signed_distance_to_line_2<K>::operator()(p, q, r, s) == SMALLER;
     }
 
     result_type
