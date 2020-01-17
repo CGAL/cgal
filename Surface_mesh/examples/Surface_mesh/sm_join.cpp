@@ -34,5 +34,5 @@ int main(int argc, char* argv[])
   }
   
   
-  std::cout <<std::setprecision(17)<< sm1 << std::endl;
+  std::cout << std::setprecision(17)<< sm1 << std::endl;
 }
