@@ -26,6 +26,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 
+
 #include <boost/tuple/tuple.hpp>
 
 #include <vector>
@@ -413,7 +414,7 @@ namespace Polygon_mesh_processing {
     return triangulate_hole_polyline(points, out,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
-
+  
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL
