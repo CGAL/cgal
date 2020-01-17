@@ -16,10 +16,12 @@
 #ifndef CGAL_IO_VRML_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
 #define CGAL_IO_VRML_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
 
-#include <CGAL/basic.h>
-#include <CGAL/IO/VRML_2_ostream.h>
+#include <CGAL/license/Alpha_shapes_3.h>
 
-#ifdef CGAL_ALPHA_SHAPE_3_H
+#include <CGAL/Alpha_shape_3.h>
+#include <CGAL/IO/VRML/VRML_2_ostream.h>
+#include <CGAL/number_utils.h>
+
 namespace CGAL {
 
 template <class Dt >
@@ -90,6 +92,5 @@ operator<<(VRML_2_ostream& os,
 }
 
 } //namespace CGAL
-#endif // CGAL_ALPHA_SHAPE_3_H
 
 #endif CGAL_IO_VRML_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
