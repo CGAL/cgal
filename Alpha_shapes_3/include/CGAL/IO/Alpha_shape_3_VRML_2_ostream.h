@@ -13,8 +13,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_IO_VRML_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
-#define CGAL_IO_VRML_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
+#ifndef CGAL_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
+#define CGAL_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
 
 #include <CGAL/license/Alpha_shapes_3.h>
 
@@ -93,4 +93,4 @@ operator<<(VRML_2_ostream& os,
 
 } //namespace CGAL
 
-#endif CGAL_IO_VRML_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
+#endif // CGAL_ALPHA_SHAPE_3_VRML_2_OSTREAM_H
