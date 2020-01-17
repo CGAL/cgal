@@ -7,7 +7,7 @@ BOOST_AUTO_TEST_CASE( edges_test )
   edge_iterator eb, ee;
   vertex_iterator vb, ve;
   
-  Surface_fixtu   re f;
+  Surface_fixture f;
   boost::tie(eb, ee) = edges(f.m);
   boost::tie(vb, ve) = vertices(f.m);
   BOOST_CHECK(std::distance(eb, ee) == 7);
