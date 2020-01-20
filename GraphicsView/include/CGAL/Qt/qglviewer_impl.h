@@ -2248,7 +2248,7 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
     static QElapsedTimer doublePress;
 
     if (modifiers == playPathKeyboardModifiers()) {
-      int elapsed = doublePress.restart();
+      qint64 elapsed = doublePress.restart();
       if ((elapsed < 250) && (index == previousPathId_))
         camera()->resetPath(index);
       else {
@@ -2263,7 +2263,7 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
       }
       previousPathId_ = index;
     } else if (modifiers == addKeyFrameKeyboardModifiers()) {
-      int elapsed = doublePress.restart();
+      qint64 elapsed = doublePress.restart();
       if ((elapsed < 250) && (index == previousPathId_)) {
         if (camera()->keyFrameInterpolator(index)) {
           disconnect(camera()->keyFrameInterpolator(index),
