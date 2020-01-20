@@ -24,7 +24,7 @@
 
 namespace CGAL {
 
-class CGAL_EXPORT File_writer_inventor
+class File_writer_inventor
 {
   std::ostream*      m_out;
   std::size_t        m_facets;
