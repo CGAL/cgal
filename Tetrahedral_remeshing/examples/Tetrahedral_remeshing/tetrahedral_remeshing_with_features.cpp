@@ -26,7 +26,6 @@ typedef Remeshing_triangulation::Vertex_handle Vertex_handle;
 typedef Remeshing_triangulation::Cell_handle   Cell_handle;
 typedef Remeshing_triangulation::Edge          Edge;
 
-template <typename T3>
 class Constrained_edges_property_map
 {
 public:
@@ -74,7 +73,7 @@ void add_edge(Vertex_handle v1,
   Cell_handle c;
   int i, j;
   if(tr.is_edge(v1, v2, c, i, j))
-    constraints.insert(std::make_pair(c->vertex(i), c->vertex(j)));
+    constraints.insert(std::make_pair(v1, v2));
 }
 
 void generate_input(const std::size_t& n,
@@ -156,7 +155,7 @@ int main(int argc, char* argv[])
 
   CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
-      Constrained_edges_property_map<Remeshing_triangulation>(&constraints))
+      Constrained_edges_property_map(&constraints))
     .number_of_iterations(nb_iter));
 
   save_ascii_triangulation("tet_remeshing_with_features_after.mesh", t3);

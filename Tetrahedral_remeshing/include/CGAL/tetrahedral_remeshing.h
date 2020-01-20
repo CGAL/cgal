@@ -46,7 +46,7 @@ namespace CGAL
   * in order to generate as output a high quality mesh with a prescribed density.
   * These atomic operations are performed as follows :
   *   - edge splits, until all edges satisfy a prescribed length criterion,
-  *   - edge collapses, ntil all edges satisfy a prescribed length criterion,
+  *   - edge collapses, until all edges satisfy a prescribed length criterion,
   *   - edge flips, to locally improve dihedral angles, until they can't be improved by flipping,
   *   - global smoothing by vertex relocations,
   *   - re-projection of boundary vertices to the initial surface.
@@ -82,7 +82,7 @@ namespace CGAL
   *     sequence of atomic operations
   *     performed (listed in the above description)
   *  \cgalParamEnd
-  *  \cgalParamBegin{protect_boundaries} If `true`, none of the volume boundaries can be modified.
+  *  \cgalParamBegin{remesh_boundaries} If `false`, none of the volume boundaries can be modified.
   *     Otherwise, the geometry is preserved, but atomic operations can be performed on the
   *     surfaces, and along feature polylines.
   *  \cgalParamEnd
@@ -151,8 +151,9 @@ namespace CGAL
     using boost::choose_param;
     using boost::get_param;
 
-    bool protect = choose_param(get_param(np, internal_np::protect_boundaries),
-                                false);
+    bool remesh_surfaces = choose_param(get_param(np, internal_np::remesh_boundaries),
+                                        true);
+    bool protect = !remesh_surfaces;
     // bool adaptive = choose_param(get_param(np, internal_np::adaptive_size),
     //                              false);
     std::size_t max_it = choose_param(get_param(np, internal_np::number_of_iterations),

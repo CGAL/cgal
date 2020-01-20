@@ -138,7 +138,7 @@ CGAL_add_named_parameter(optimize_anchor_location_t, optimize_anchor_location, o
 CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 
 // tetrahedral remeshing parameters
-CGAL_add_named_parameter(protect_boundaries_t, protect_boundaries, protect_boundaries)
+CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
 
 // output parameters

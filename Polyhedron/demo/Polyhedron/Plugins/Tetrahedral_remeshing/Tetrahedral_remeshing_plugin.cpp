@@ -218,7 +218,7 @@ public Q_SLOTS:
       time.restart();
 
       CGAL::tetrahedral_adaptive_remeshing(tr, target_length,
-        CGAL::parameters::protect_boundaries(protect)
+        CGAL::parameters::remesh_boundaries(!protect)
         .number_of_iterations(nb_iter));
 
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;

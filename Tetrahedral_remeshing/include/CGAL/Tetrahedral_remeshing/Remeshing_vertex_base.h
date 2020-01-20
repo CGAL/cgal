@@ -29,17 +29,6 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-  namespace internal
-  {
-    class Fake_MD
-    {
-    public:
-      typedef int Index;
-      typedef int Surface_patch_index;
-      typedef int Subdomain_index;
-    };
-  }
-
   /*!
   \ingroup PkgTetrahedralRemeshingClasses
   

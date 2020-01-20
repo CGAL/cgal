@@ -47,10 +47,10 @@ int main(int argc, char* argv[])
 
   T3 t3;
   if (!input)
-    return false;
+    return EXIT_FAILURE;
 
   if( !load_binary_triangulation(input, t3))
-    return false;
+    return EXIT_FAILURE;
 
   CGAL::tetrahedral_adaptive_remeshing(t3, target_edge_length);
 

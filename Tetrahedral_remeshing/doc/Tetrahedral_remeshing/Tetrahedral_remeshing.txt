@@ -10,13 +10,13 @@ namespace CGAL {
 \section secTetRemeshing Multi-Material Tetrahedral Remeshing
 
 This package implements an algorithm for quality tetrahedral remeshing,
-introduced by N.Faraj et al in%\cgalCite{faraj2016mvr}.
+introduced by N.Faraj et al in \cgalCite{faraj2016mvr}.
 This practical iterative remeshing algorithm is designed to remesh
 multi-material tetrahedral meshes, by iteratively performing a sequence of simple
 elementary operations such as edge collapses, edge splits, edge flips,
 and vertex relocations following a Laplacian smoothing.
 The algorithm results in high quality isotropic meshes, with the desired mesh density,
-while preserving the input geometric polyline and surfacic features.
+while preserving the input geometric linear and surfacic features.
 
 Specific remeshing rules have been designed to satisfy the following criteria.
 First, the algorithm preserves the geometric complex topology, including
@@ -33,7 +33,6 @@ The tetrahedral remeshing algorithm improves the quality of dihedral angles,
 while targetting the user-defined uniform sizing field and preserving the
 topology of the feature complex, as highlighted by Figure \cgalFigureRef{Remesh_liver}.
 
-
 \cgalFigureBegin{Remesh_liver, tetrahedral_remeshing_before_after.png}
 Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
 (Left) Before remeshing, dihedral angles were in the interval [1.3; 177.8].
@@ -41,6 +40,8 @@ Tetrahedral mesh, modified by our uniform tetrahedral remeshing method.
 dihedral angles were are the interval [9.5; 161.9].
 \cgalFigureEnd
 
+Experimental evidence show that a higher number of remeshing iterations
+lead to a mesh with a better fitted sizing criterion, and higher quality dihedral angles.
 
 \section secTetRemeshingAPI API
 

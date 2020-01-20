@@ -41,15 +41,11 @@ used in the tetrahedral remeshing process.
 \tparam Gt is the geometric traits class.
 It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 
-\tparam Info is the information the user would like to add to a cell.
-It has to be `DefaultConstructible` and `Assignable`.
-
 \tparam Cb is a cell base class from which `Remeshing_cell_base` derives.
 It must be a model of the `TriangulationCellBase_3` concept.
 It has the default value `Triangulation_cell_base_3<Gt>`.
 
 \cgalModels `RemeshingCellBase_3`
-\cgalRefines `Triangulation_cell_base_with_info_3`
 
 */
   template<typename Gt,

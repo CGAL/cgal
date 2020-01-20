@@ -38,13 +38,14 @@ in the mesh.\n
 \b Default value is `1`
 \cgalNPEnd
 
-\cgalNPBegin{protect_boundaries}
+\cgalNPBegin{remeshing_boundaries}
 \anchor Remeshing_protect_boundaries
-a Boolean that states whether the boundaries should be preserved by the remeshing
+a Boolean that states whether the boundaries should be remeshed or
+exactly preserved by the remeshing
 process. Boundaries are between the exterior and the interior,
 between two subdomains, and between the areas selected or not for remeshing
 (cf \ref Remeshing_cell_is_selected_map).
-If `true`, they are preserved. Otherwise, they can be modified.\n
+If `true`, they are remeshed. Otherwise, they cannot be modified by the remeshing process.\n
 \b Type : `bool` \n
 \b Default value is `false`
 \cgalNPEnd
@@ -77,7 +78,7 @@ the atomic operations that are performed,
 so the property map must be writable.
 It must be default constructible.\n
 <b>Default:</b> a default property map where all cells of the domain
-(i.e. with a non-zero `Subdomain_index` are selected)
+(i.e. with a non-zero `Subdomain_index`) are selected.
 \cgalNPEnd
 
 \cgalNPTableEnd
