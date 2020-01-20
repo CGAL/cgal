@@ -15,7 +15,7 @@
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/reader_helpers.h>
 
-#include <boost/cstdint.hpp> 
+#include <boost/cstdint.hpp>
 
 #include <cctype>
 #include <iostream>
@@ -40,7 +40,7 @@ bool read_ASCII_facet(std::istream& input,
 
   std::string s;
   std::string vertex("vertex"),
-      endfacet("endfacet");
+              endfacet("endfacet");
 
   int count = 0;
   double x,y,z;
@@ -133,9 +133,8 @@ bool parse_ASCII_STL(std::istream& input,
     if(s == solid)
     {
       if(in_solid)
-      {
         break;
-      }
+
       in_solid = true;
     }
     if(s == facet)
@@ -149,12 +148,14 @@ bool parse_ASCII_STL(std::istream& input,
     }
   }
 
-  if(in_solid){
+  if(in_solid)
+  {
     if(verbose)
       std::cerr << "Error while parsing ASCII file" << std::endl;
 
     return false;
   }
+
   return true;
 }
 
@@ -331,9 +332,7 @@ bool read_STL(std::istream& input,
     return true; // empty file
 
   // If the first word is not 'solid', the file must be binary
-  if(s != "solid"
-     || (word[5] !='\n'
-     && word[5] != ' '))
+  if(s != "solid" || (word[5] !='\n' && word[5] != ' '))
   {
     if(parse_binary_STL(input, points, facets, verbose))
     {

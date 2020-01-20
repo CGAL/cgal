@@ -14,21 +14,28 @@
 
 #ifndef CGAL_IO_WKT_TRAITS_MULTIPOINT_H
 #define CGAL_IO_WKT_TRAITS_MULTIPOINT_H
+
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+
 #include <CGAL/internal/Geometry_container.h>
+
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 
-namespace boost{
-namespace geometry{
-namespace traits{
+namespace boost {
+namespace geometry {
+namespace traits {
+
 // WKT traits for MultiPoint
 template< typename R >
 struct tag<CGAL::internal::Geometry_container<R, multi_point_tag > >
-{ typedef multi_point_tag type; };
+{
+  typedef multi_point_tag type;
+};
 
-}//end traits
-}//end geometry
-}//end boost
-#endif // TRAITS_MULTIPOINT_H
-#endif
+} // namespace traits
+} // namespace geometry
+} // namespace boost
+
+#endif // BOOST VERSION CHECKS
+#endif // CGAL_IO_WKT_TRAITS_MULTIPOINT_H

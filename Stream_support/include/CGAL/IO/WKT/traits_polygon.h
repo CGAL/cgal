@@ -14,35 +14,50 @@
 
 #ifndef CGAL_IO_WKT_TRAITS_POLYGON_H
 #define CGAL_IO_WKT_TRAITS_POLYGON_H
+
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Point_2.h>
+
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 
-namespace boost{
-namespace geometry{
-namespace traits{
+namespace boost {
+namespace geometry {
+namespace traits {
+
 // WKT traits for Polygon
-template< typename K > struct tag<CGAL::Polygon_2<K> >
-{ typedef ring_tag type; };
+template< typename K >
+struct tag<CGAL::Polygon_2<K> >
+{
+  typedef ring_tag type;
+};
 
 template< typename K >
 struct tag<CGAL::Polygon_with_holes_2<K> >
-{ typedef polygon_tag type; };
+{
+  typedef polygon_tag type;
+};
 
 template< typename K >
 struct ring_const_type<CGAL::Polygon_with_holes_2<K> >
-{ typedef const CGAL::Polygon_2<K>& type; };
+{
+  typedef const CGAL::Polygon_2<K>& type;
+};
 
 template< typename K >
 struct ring_mutable_type<CGAL::Polygon_with_holes_2<K> >
-{ typedef CGAL::Polygon_2<K>& type; };
+{
+  typedef CGAL::Polygon_2<K>& type;
+};
 
 template< typename K >
 struct interior_const_type<CGAL::Polygon_with_holes_2<K> >
-{ typedef const typename CGAL::Polygon_with_holes_2<K>::Holes_container& type; };
+{
+  typedef const typename CGAL::Polygon_with_holes_2<K>::Holes_container& type;
+};
 
 template< typename K >
 struct interior_mutable_type<CGAL::Polygon_with_holes_2<K> >
@@ -55,7 +70,7 @@ struct exterior_ring<CGAL::Polygon_with_holes_2<K> >
   {
     return (p.outer_boundary());
   }
-  static CGAL::Polygon_2<K> const& get(CGAL::Polygon_with_holes_2<K> const& p)
+  static const CGAL::Polygon_2<K>& get(const CGAL::Polygon_with_holes_2<K>& p)
   {
     return (p.outer_boundary());
   }
@@ -73,8 +88,9 @@ struct interior_rings<CGAL::Polygon_with_holes_2<K> >
     return p.holes();
   }
 };
-}//end traits
-}//end geometry
+
+} // namespace traits
+} // namespace geometry
 
 //extra specialization
 template< typename K >
@@ -83,7 +99,7 @@ struct range_value<CGAL::Polygon_2<K> >
   typedef typename CGAL::Polygon_2<K>::Point_2  type;
 };
 
-}//end boost
+} // namespace boost
 
-#endif 
-#endif
+#endif // BOOST VERSION CHECKS
+#endif // CGAL_IO_WKT_TRAITS_POLYGON_H

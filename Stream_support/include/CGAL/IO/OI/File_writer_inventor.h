@@ -18,36 +18,62 @@
 #define CGAL_IO_FILE_WRITER_INVENTOR_H 1
 
 #include <CGAL/basic.h>
+
 #include <iostream>
 #include <cstddef>
 
 namespace CGAL {
 
-class CGAL_EXPORT File_writer_inventor {
-    std::ostream*      m_out;
-    std::size_t        m_facets;
+class CGAL_EXPORT File_writer_inventor
+{
+  std::ostream*      m_out;
+  std::size_t        m_facets;
+
 public:
-    File_writer_inventor() {}
-    std::ostream& out() const { return *m_out; }
-    void write_header( std::ostream& o,
-                       std::size_t vertices,
-                       std::size_t halfedges,
-                       std::size_t facets);
-    void write_footer() const;
-    void write_vertex( const double& x, const double& y, const double& z) {
-        out() << "            " << x << ' ' << y << ' ' << z << ',' <<'\n';
-    }
-    void write_facet_header() const;
-    void write_facet_begin( std::size_t) { out() << "            "; }
-    void write_facet_vertex_index( std::size_t idx) { out() << idx << ',';}
-    void write_facet_end() { out() << "-1,\n"; }
+  File_writer_inventor() {}
+  std::ostream& out() const { return *m_out; }
+
+  void write_header(std::ostream& o,
+                    std::size_t vertices,
+                    std::size_t halfedges,
+                    std::size_t facets)
+  {
+    m_out = &o;
+    m_facets = facets;
+
+    out() << "# " << vertices  << " vertices\n";
+    out() << "# " << halfedges << " halfedges\n";
+    out() << "# " << facets    << " facets\n\n";
+    out() << "Separator {\n"
+             "    Coordinate3 {\n"
+             "        point   [" << std::endl;
+  }
+
+  void write_footer() const
+  {
+    out() << "        ] #coordIndex\n"
+             "    } #IndexedFaceSet\n"
+             "} #Separator" << std::endl;
+  }
+
+  void write_vertex( const double& x, const double& y, const double& z) {
+    out() << "            " << x << ' ' << y << ' ' << z << ',' <<'\n';
+  }
+
+  void write_facet_header() const
+  {
+    out() << "        ] #point\n"
+             "    } #Coordinate3\n"
+             "    # " << m_facets << " facets\n"
+             "    IndexedFaceSet {\n"
+             "        coordIndex [\n";
+  }
+
+  void write_facet_begin( std::size_t) { out() << "            "; }
+  void write_facet_vertex_index( std::size_t idx) { out() << idx << ','; }
+  void write_facet_end() { out() << "-1,\n"; }
 };
 
 } //namespace CGAL
 
-#ifdef CGAL_HEADER_ONLY
-#include <CGAL/IO/File_writer_inventor_impl.h>
-#endif // CGAL_HEADER_ONLY
-
-#endif // CGAL_IO_FILE_WRITER_INVENTOR_H //
-// EOF //
+#endif // CGAL_IO_FILE_WRITER_INVENTOR_H

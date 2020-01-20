@@ -14,20 +14,27 @@
 
 #ifndef CGAL_IO_WKT_TRAITS_LINESTRING_H
 #define CGAL_IO_WKT_TRAITS_LINESTRING_H
+
 #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+
 #include <CGAL/internal/Geometry_container.h>
+
 #include <boost/geometry/io/wkt/write.hpp>
 #include <boost/geometry/io/wkt/read.hpp>
 
+namespace boost {
+namespace geometry {
+namespace traits {
 
+template< typename R>
+struct tag<CGAL::internal::Geometry_container<R, linestring_tag> >
+{
+  typedef linestring_tag type;
+};
 
-namespace boost{
-namespace geometry{
-namespace traits{
-template< typename R> struct tag<CGAL::internal::Geometry_container<R, linestring_tag> >
-{ typedef linestring_tag type; };
+} // namespace traits
+} // namespace geometry
+} // namespace boost
 
-}}} //end namespaces
-
-#endif
-#endif // TRAITS_LINESTRING_H
+#endif // BOOST VERSION CHECKS
+#endif // CGAL_IO_WKT_TRAITS_LINESTRING_H

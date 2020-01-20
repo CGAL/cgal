@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org);
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Andreas Fabri
 //                 Lutz Kettner <kettner@inf.ethz.ch>
 //                 Herve Bronnimann <Herve.Bronnimann@sophia.inria.fr>
@@ -20,6 +20,7 @@
 #define CGAL_IO_VRML_VRML_1_OSTREAM_H
 
 #include <CGAL/basic.h>
+
 #include <iostream>
 
 // Declare the common base class for OpenInventor and VRML 1.0 format.
@@ -32,22 +33,23 @@
 
 namespace CGAL {
 
-class VRML_1_ostream : public Inventor_ostream_base {
+class VRML_1_ostream : public Inventor_ostream_base
+{
 public:
-    VRML_1_ostream() {}
-    VRML_1_ostream(std::ostream& o) : Inventor_ostream_base(o) {
-        header();
-    }
-    void open(std::ostream& o) {
-        Inventor_ostream_base::open(o);
-        header();
-    }
+  VRML_1_ostream() {}
+  VRML_1_ostream(std::ostream& o) : Inventor_ostream_base(o) { header(); }
+  void open(std::ostream& o) {
+    Inventor_ostream_base::open(o);
+    header();
+  }
+
 private:
-    void header() {
-        os() << "#VRML V1.0 ascii" << std::endl;
-        os() << "# File written with the help of the CGAL Library" 
-	     << std::endl;
-    }
+  void header()
+  {
+    os() << "#VRML V1.0 ascii" << std::endl;
+    os() << "# File written with the help of the CGAL Library"
+         << std::endl;
+  }
 };
 
 } //namespace CGAL
@@ -86,11 +88,13 @@ operator<<(VRML_1_ostream& os,
           << CGAL::to_double(t[3].y()) << " "
           << CGAL::to_double(t[3].z()) << " ]"
           << "\n   } #Coordinate3" ;
+
   os.os() << "\n   IndexedFaceSet {"
           << Indent << "coordIndex  [ 0,1,2,-1, 1,3,2,-1,\n"
           << Indent << "              0,2,3,-1, 0,3,1,-1 ]\n"
           << "\n   } #IndexedFaceSet"
           << "\n } #Separator\n";
+
   return os;
 }
 

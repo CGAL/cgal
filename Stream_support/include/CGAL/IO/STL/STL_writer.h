@@ -16,20 +16,16 @@
 
 #include <boost/cstdint.hpp>
 
-
-
-namespace CGAL{
+namespace CGAL {
 
 template <class PointRange, class TriangleRange>
-std::ostream&
-write_STL(const PointRange& points,
-          const TriangleRange& facets,
-          std::ostream& out)
+std::ostream& write_STL(const PointRange& points,
+                        const TriangleRange& facets,
+                        std::ostream& out)
 {
   typedef typename PointRange::value_type Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;
   typedef typename K::Vector_3 Vector_3;
-
 
   if (get_mode(out) == IO::BINARY)
   {
@@ -43,14 +39,12 @@ write_STL(const PointRange& points,
       const Point& q = points[face[1]];
       const Point& r = points[face[2]];
 
-      Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
-                                      unit_normal(p,q,r);
+      Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
 
-      const float coords[12]={
-        static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z()),
-        static_cast<float>(p.x()), static_cast<float>(p.y()), static_cast<float>(p.z()),
-        static_cast<float>(q.x()), static_cast<float>(q.y()), static_cast<float>(q.z()),
-        static_cast<float>(r.x()), static_cast<float>(r.y()), static_cast<float>(r.z()) };
+      const float coords[12] = { static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z()),
+                                 static_cast<float>(p.x()), static_cast<float>(p.y()), static_cast<float>(p.z()),
+                                 static_cast<float>(q.x()), static_cast<float>(q.y()), static_cast<float>(q.z()),
+                                 static_cast<float>(r.x()), static_cast<float>(r.y()), static_cast<float>(r.z()) };
 
       for (int i=0; i<12; ++i)
         out.write(reinterpret_cast<const char *>(&coords[i]), sizeof(coords[i]));
@@ -66,8 +60,7 @@ write_STL(const PointRange& points,
       const Point& q = points[face[1]];
       const Point& r = points[face[2]];
 
-      Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0):
-                                      unit_normal(p,q,r);
+      Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
       out << "facet normal " << n << "\nouter loop\n";
       out << "vertex " << p << "\n";
       out << "vertex " << q << "\n";
@@ -76,9 +69,10 @@ write_STL(const PointRange& points,
     }
     out << "endsolid\n";
   }
+
   return out;
 }
 
-} // end of namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_IO_STL_STL_WRITER_H
