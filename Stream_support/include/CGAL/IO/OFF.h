@@ -23,48 +23,13 @@
 
 namespace CGAL {
 
-template <class Point_3, class Polygon_3>
-bool read_OFF(std::istream& in,
-              std::vector< Point_3 >& points,
-              std::vector< Polygon_3 >& polygons,
-              bool /* verbose */ = false)
-{
-  CGAL::File_scanner_OFF scanner(in);
-
-  points.resize(scanner.size_of_vertices());
-  polygons.resize(scanner.size_of_facets());
-  for(std::size_t i = 0; i < scanner.size_of_vertices(); ++i)
-  {
-    double x, y, z, w;
-    scanner.scan_vertex( x, y, z, w);
-    CGAL_assertion(w!=0);
-    IO::internal::fill_point( x/w, y/w, z/w, points[i] );
-    scanner.skip_to_next_vertex( i);
-  }
-
-  if(!in)
-    return false;
-
-  for(std::size_t i = 0; i < scanner.size_of_facets(); ++i)
-  {
-    std::size_t no;
-
-    scanner.scan_facet( no, i);
-    IO::internal::resize(polygons[i], no);
-    for(std::size_t j = 0; j < no; ++j)
-    {
-      std::size_t id;
-      scanner.scan_facet_vertex_index(id, i);
-      if(id < scanner.size_of_vertices())
-        polygons[i][j] = id;
-      else
-        return false;
-    }
-  }
-
-  return in.good();
-}
-
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of `in` into `points` and `polygons`, in the COFF format.
+ *
+ * \see \ref IOStreamOFF
+ */
 template <class Point_3, class Polygon_3, class Color_rgb >
 bool read_OFF(std::istream& in,
               std::vector< Point_3 >& points,
@@ -148,6 +113,62 @@ bool read_OFF(std::istream& in,
   return in.good();
 }
 
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * reads the content of `in` into `points` and `polygons`, in the OFF format.
+ *
+ * \see \ref IOStreamOFF
+ */
+template <class Point_3, class Polygon_3>
+bool read_OFF(std::istream& in,
+              std::vector< Point_3 >& points,
+              std::vector< Polygon_3 >& polygons,
+              bool /* verbose */ = false)
+{
+  CGAL::File_scanner_OFF scanner(in);
+
+  points.resize(scanner.size_of_vertices());
+  polygons.resize(scanner.size_of_facets());
+  for(std::size_t i = 0; i < scanner.size_of_vertices(); ++i)
+  {
+    double x, y, z, w;
+    scanner.scan_vertex( x, y, z, w);
+    CGAL_assertion(w!=0);
+    IO::internal::fill_point( x/w, y/w, z/w, points[i] );
+    scanner.skip_to_next_vertex( i);
+  }
+
+  if(!in)
+    return false;
+
+  for(std::size_t i = 0; i < scanner.size_of_facets(); ++i)
+  {
+    std::size_t no;
+
+    scanner.scan_facet( no, i);
+    IO::internal::resize(polygons[i], no);
+    for(std::size_t j = 0; j < no; ++j)
+    {
+      std::size_t id;
+      scanner.scan_facet_vertex_index(id, i);
+      if(id < scanner.size_of_vertices())
+        polygons[i][j] = id;
+      else
+        return false;
+    }
+  }
+
+  return in.good();
+}
+
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in `out`, in the OFF format.
+ *
+ * \see \ref IOStreamOFF
+ */
 template <class Point_3, class Polygon_3>
 bool write_OFF(std::ostream& out,
                std::vector< Point_3 >& points,

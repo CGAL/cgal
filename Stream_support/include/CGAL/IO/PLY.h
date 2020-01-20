@@ -39,10 +39,9 @@
   else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("ushort", "uint16", boost::uint16_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE); \
   else TRY_TO_GENERATE_SIZED_LIST_PROPERTY("uint", "uint32", boost::uint32_t, STD_INDEX_TYPE, T_INDEX_TYPE, INDEX_TYPE)
 
+namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
-
-namespace CGAL {
 
 // PLY types:
 // name        type        number of bytes
@@ -131,6 +130,8 @@ make_ply_normal_writer(VectorMap normal_map)
                           PLY_property<typename Get_FT_from_map<VectorMap>::type>("ny"),
                           PLY_property<typename Get_FT_from_map<VectorMap>::type>("nz"));
 }
+
+/// \endcond
 
 namespace internal {
 
