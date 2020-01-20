@@ -565,6 +565,10 @@ protected:
       {
         if ( !(v2->index() == index) )
         {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+          std::cerr << "Bad facet (on same surface criterion: "
+                    << v2->index() << " != " << index << ")" << std::endl;
+#endif
           return Is_bad(Quality(1));
         }
       }
@@ -579,6 +583,10 @@ protected:
     {
       if ( is_index_initialized && !(v3->index() == index) )
       {
+#ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
+          std::cerr << "Bad facet (on same surface criterion: "
+                    << v3->index() << " != " << index << ")" << std::endl;
+#endif
         return Is_bad(Quality(1));
       } 
     }
