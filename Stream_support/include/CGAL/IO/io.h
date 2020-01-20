@@ -298,21 +298,156 @@ Benchmark_rep<T> bmformat( const T& t) { return Benchmark_rep<T>(t); }
 template <class T, class F>
 Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
 
-CGAL_EXPORT IO::Mode get_mode(std::ios& i);
+/*!
+\ingroup PkgStreamSupportRef
 
-CGAL_EXPORT IO::Mode set_ascii_mode(std::ios& i);
+returns the printing mode of the %IO stream `s`.
 
-CGAL_EXPORT IO::Mode set_binary_mode(std::ios& i);
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+IO::Mode get_mode(std::ios& i) { return static_cast<IO::Mode>(i.iword(IO::Static::get_mode())); }
 
-CGAL_EXPORT IO::Mode set_pretty_mode(std::ios& i);
+/*!
+\ingroup PkgStreamSupportRef
 
-CGAL_EXPORT IO::Mode set_mode(std::ios& i, IO::Mode m);
+sets the mode of the %IO stream `s` to be the `IO::ASCII` mode.
+Returns the previous mode of `s`.
 
-CGAL_EXPORT bool is_pretty(std::ios& i);
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+IO::Mode set_ascii_mode(std::ios& i)
+{
+  IO::Mode m = get_mode(i);
+  i.iword(IO::Static::get_mode()) = IO::ASCII;
+  return m;
+}
 
-CGAL_EXPORT bool is_ascii(std::ios& i);
+/*!
+\ingroup PkgStreamSupportRef
 
-CGAL_EXPORT bool is_binary(std::ios& i);
+sets the mode of the %IO stream `s` to be the `IO::BINARY` mode.
+Returns the previous mode of `s`.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+IO::Mode set_binary_mode(std::ios& i)
+{
+  IO::Mode m = get_mode(i);
+  i.iword(IO::Static::get_mode()) = IO::BINARY;
+  return m;
+}
+
+/*!
+\ingroup PkgStreamSupportRef
+
+sets the mode of the %IO stream `s` to be the `IO::PRETTY` mode.
+Returns the previous mode of `s`.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+IO::Mode set_pretty_mode(std::ios& i)
+{
+  IO::Mode m = get_mode(i);
+  i.iword(IO::Static::get_mode()) = IO::PRETTY;
+  return m;
+}
+
+/*!
+\ingroup PkgStreamSupportRef
+
+sets the printing mode of the %IO stream `s`.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+IO::Mode set_mode(std::ios& i, IO::Mode m)
+{
+  IO::Mode old = get_mode(i);
+  i.iword(IO::Static::get_mode()) = m;
+  return old;
+}
+
+/*!
+\ingroup PkgStreamSupportRef
+
+checks if the %IO stream `s` is in `IO::PRETTY` mode.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+*/
+bool is_pretty(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::PRETTY; }
+
+/*!
+\ingroup PkgStreamSupportRef
+
+checks if the %IO stream `s` is in `IO::ASCII` mode.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
+
+/*!
+\ingroup PkgStreamSupportRef
+
+checks if the %IO stream `s` is in `IO::BINARY` mode.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_pretty()`
+*/
+bool is_binary(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
 
 template < class T >
 inline void write(std::ostream& os, const T& t, const io_Read_write&)
@@ -412,12 +547,37 @@ inline std::istream &operator>>(std::istream &is, Color& col)
   return is;
 }
 
-CGAL_EXPORT const char* mode_name( IO::Mode m );
+const char* mode_name( IO::Mode m )
+{
+  static const char* const names[] = {"ASCII", "PRETTY", "BINARY" };
+  CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
+  return names[m];
+}
 
 // From polynomial.h TODO: Where to put this?
-CGAL_EXPORT void swallow(std::istream &is, char d);
+void swallow(std::istream &is, char d)
+{
+  char c;
+  do { is.get(c); } while(isspace(c));
+  if(c != d)
+  {
+    std::stringstream msg;
+    msg << "input error: expected '" << d << "' but got '" << c << "'";
+    CGAL_error_msg( msg.str().c_str() );
+  }
+}
 
-CGAL_EXPORT void swallow(std::istream &is, const std::string& s );
+void swallow(std::istream &is, const std::string& s)
+{
+  std::string t;
+  is >> t;
+  if(s != t)
+  {
+    std::stringstream msg;
+    msg << "input error: expected '" << s << "' but got '" << t << "'";
+    CGAL_error_msg( msg.str().c_str() );
+  }
+}
 
 namespace internal {
 
@@ -427,7 +587,7 @@ inline void eat_white_space(std::istream &is)
   do
   {
     c = is.peek();
-    if(c== std::istream::traits_type::eof())
+    if(c == std::istream::traits_type::eof())
     {
       return;
     }
@@ -465,7 +625,7 @@ inline bool is_digit(const std::istream& /*is*/, std::istream::int_type c)
 {
   CGAL_assertion(c != std::istream::traits_type::eof());
   return std::isdigit(static_cast<std::istream::char_type>(c),
-                      std::locale::classic() );
+                      std::locale::classic());
 }
 
 inline std::istream::int_type peek(std::istream& is)
@@ -515,7 +675,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
       is.get();
       negative = (c == '-');
       internal::eat_white_space(is);
-      c=internal::peek(is);
+      c = internal::peek(is);
     }
 
     // read n (could be empty)
@@ -552,7 +712,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
       is >> d;
       is.flags(old_flags);
       if(!is.fail())
-        z = negative? compose(-n,d): compose(n,d);
+        z = negative? compose(-n,d) : compose(n,d);
       return;
     }
 
@@ -602,10 +762,6 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 } // namespace internal
 
 } // namespace CGAL
-
-#ifdef CGAL_HEADER_ONLY
-#include <CGAL/IO/io_impl.h>
-#endif // CGAL_HEADER_ONLY
 
 #include <CGAL/enable_warnings.h>
 
