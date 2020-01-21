@@ -2191,7 +2191,7 @@ void MainWindow::on_actionShowHide_triggered()
     item->redraw();
   }
   scene->setUpdatesEnabled(true);
-  updateViewersBboxes(false);
+//  updateViewersBboxes(false); //Not usable :when the scene changes scale, smaller items disappear.
 }
 
 void MainWindow::on_actionSetPolyhedronA_triggered()
