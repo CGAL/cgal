@@ -159,12 +159,12 @@ public:
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
     const int y = (x + 1) % 2;
-    if (std::distance(begin,end)) <= _limit)
+    if (std::distance(begin,end) <= _limit)
       return;
 
     RandomAccessIterator m0 = begin, m4 = end;
 
-    if((std::distance(begin,end)) > 8192){ // 2^13, empirically a good cutoff
+    if(std::distance(begin,end) > 8192){ // 2^13, empirically a good cutoff
       RandomAccessIterator m1, m2, m3;
       m2 = internal::hilbert_split (m0, m4, Cmp< x,  upx> (_k));
 
