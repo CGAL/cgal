@@ -512,11 +512,9 @@ public:
 
   Spatial_lock_grid_3(const Bbox_3 &bbox, int num_grid_cells_per_axis)
   : Base(bbox, num_grid_cells_per_axis),
-    m_tls_thread_priorities(init_TLS_thread_priorities),
-    m_grid(num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis)
+    m_grid(num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis),
+    m_tls_thread_priorities(init_TLS_thread_priorities)
   {
-    int num_cells =
-      num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
     // Explicitly initialize the atomics
     std::vector<std::atomic<unsigned int> >::iterator it     = m_grid.begin();
     std::vector<std::atomic<unsigned int> >::iterator it_end = m_grid.end();

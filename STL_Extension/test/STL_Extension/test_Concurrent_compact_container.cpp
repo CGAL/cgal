@@ -163,7 +163,8 @@ public:
       // Random-pick an element to erase
       int index_to_erase = rand() % m_values.size();
       // If it exists
-      if (m_free_elements[index_to_erase].compare_and_swap(true, false) == false)
+      bool comparand = false;
+      if (m_free_elements[index_to_erase].compare_exchange_weak(comparand, true) )
       {
         m_cont.erase(m_iterators[index_to_erase]);
         ++m_num_erasures;
