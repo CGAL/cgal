@@ -1493,6 +1493,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
     }
   }
   menu->addMenu(ui->menuOperations);
+
   if(menu)
     menu->exec(global_pos);
 }
@@ -1755,6 +1756,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QAction* saveas = menu.addAction(tr("&Save as..."));
         connect(saveas,  SIGNAL(triggered()),
                 this, SLOT(on_actionSaveAs_triggered()));
+        menu.addMenu(ui->menuOperations);
         menu.exec(sender->mapToGlobal(p));
         return;
       }
