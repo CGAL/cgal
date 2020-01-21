@@ -77,7 +77,7 @@ namespace Tetrahedral_remeshing
   It must be a model of the `TriangulationCellBase_3` concept.
   It has the default value `Triangulation_cell_base_3<Gt>`.
 
-  \tparam Vb is a vertex base class deriving from  `Triangulation_vertex_base_3`.
+  \tparam Vb is a vertex base class from which `Remeshing_vertex_base` derives.
   It must be a model of the `TriangulationVertexBase_3` concept.
   It has the default value `Triangulation_vertex_base_3<Gt>`.
 
@@ -100,12 +100,13 @@ namespace Tetrahedral_remeshing
         >
       >
   {
-    typedef Remeshing_vertex_base<Gt, Vb>             RVb;
-    typedef Remeshing_cell_base<Gt, Cb>               RCb;
-
   public:
-    typedef CGAL::Triangulation_data_structure_3<RVb, RCb, Concurrency_tag> Tds;
-    typedef CGAL::Triangulation_3<Gt, Tds>            Self;
+    typedef Remeshing_vertex_base<Gt, Vb> Remeshing_Vb;
+    typedef Remeshing_cell_base<Gt, Cb>   Remeshing_Cb;
+
+    typedef CGAL::Triangulation_data_structure_3<
+              Remeshing_Vb, Remeshing_Cb, Concurrency_tag>  Tds;
+    typedef CGAL::Triangulation_3<Gt, Tds>                  Self;
 
   private:
     Cell_visitor m_visitor;

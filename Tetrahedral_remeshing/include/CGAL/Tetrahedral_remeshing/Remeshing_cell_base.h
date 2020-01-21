@@ -22,19 +22,26 @@
 #ifndef CGAL_TET_ADAPTIVE_REMESHING_CELL_BASE_H
 #define CGAL_TET_ADAPTIVE_REMESHING_CELL_BASE_H
 
-
-#include <CGAL/Triangulation_cell_base_3.h>
-
-#include <utility>
+#include <CGAL/Mesh_cell_base_3.h>
 
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-  /*!
+  namespace internal
+  {
+    struct Fake_MD_C
+    {
+      typedef int Subdomain_index;
+      typedef int Surface_patch_index;
+      typedef int Index;
+    };
+  }
+
+/*!
 \ingroup PkgTetrahedralRemeshingClasses
 
-The class `Remeshing_cell_base` is a model of the concept `RemeshingCellBase_3`.
+The class `Remeshing_cell_base` is a model of the concept `MeshCellBase_3`.
 It is designed to serve as cell base class for the 3D triangulation
 used in the tetrahedral remeshing process.
 
@@ -45,30 +52,19 @@ It has to be a model of the concept `RemeshingTriangulationTraits_3`.
 It must be a model of the `TriangulationCellBase_3` concept.
 It has the default value `Triangulation_cell_base_3<Gt>`.
 
-\cgalModels `RemeshingCellBase_3`
+\cgalModels `MeshCellBase_3`
 
 */
   template<typename Gt,
            typename Cb = CGAL::Triangulation_cell_base_3<Gt> >
   class Remeshing_cell_base
-    : public Cb
-
+#ifndef DOXYGEN_RUNNING
+    : public CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb>
+#endif
   {
-    typedef Cb Base;
+    typedef CGAL::Mesh_cell_base_3<Gt, internal::Fake_MD_C, Cb> Base;
     typedef typename Base::Vertex_handle Vertex_handle;
     typedef typename Base::Cell_handle   Cell_handle;
-
-  public:
-    typedef int Subdomain_index;
-    typedef int Surface_patch_index;
-
-  private:
-    Subdomain_index subdomain_index_;
-        //  0 is undefined
-        // -1 for infinite cells
-        //  1 to n for subdomains
-        // n + 1 for imaginary cells
-    std::size_t time_stamp_;
 
   public:
     // To get correct cell type in TDS
@@ -79,78 +75,26 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
       typedef Remeshing_cell_base<Gt, Cb2> Other;
     };
 
-    Remeshing_cell_base()
-      : subdomain_index_(0)
-      , time_stamp_(-1)
-    {}
+    using Base::Base;
 
-    Remeshing_cell_base(Vertex_handle v0,
-                        Vertex_handle v1,
-                        Vertex_handle v2,
-                        Vertex_handle v3)
-      : Base(v0, v1, v2, v3)
-      , subdomain_index_(0)
-      , time_stamp_(-1)
-    {}
-
-    Remeshing_cell_base(Vertex_handle v0,
-                        Vertex_handle v1,
-                        Vertex_handle v2,
-                        Vertex_handle v3,
-                        Cell_handle n0,
-                        Cell_handle n1,
-                        Cell_handle n2,
-                        Cell_handle n3)
-      : Base(v0, v1, v2, v3, n0, n1, n2, n3)
-      , subdomain_index_(0)
-      , time_stamp_(-1)
-    {}
-
-    const Subdomain_index& subdomain_index() const
-    {
-      return subdomain_index_;
-    }
-    void set_subdomain_index(const Subdomain_index& si)
-    {
-      subdomain_index_ = si;
-    }
-
-    void set_surface_patch_index(const int, const Surface_patch_index&)
-    {/*nothing to do because we use incident subdomain indices*/ }
-
-    const Surface_patch_index surface_patch_index(const int& i) const
-    {
-      CGAL_precondition(i >= 0 && i < 4);
-      if(is_facet_on_surface(i))
-        return 1;
-      else
-        return 0;
-    }
-
+#ifndef DOXYGEN_RUNNING
+    /// TODO : remove this function from here
     /// Returns `true` if facet lies on a surface patch
-    bool is_facet_on_surface(const int& facet) const
+    bool is_facet_on_surface(const int facet) const
     {
       CGAL_precondition(facet >= 0 && facet<4);
       return this->subdomain_index() != this->neighbor(facet)->subdomain_index();
     }
-
-    typedef Tag_true Has_timestamp;
-    std::size_t time_stamp() const {
-      return time_stamp_;
-    }
-    void set_time_stamp(const std::size_t& ts) {
-      time_stamp_ = ts;
-    }
-
+#endif
  };
 
 
 
-  template < class Gt, class Info, class Cb >
+  template < class Gt, class Cb >
   std::istream&
     operator>>(std::istream &is, Remeshing_cell_base<Gt, Cb> &c)
   {
-    typename Remeshing_cell_base<Gt, Info, Cb>::Subdomain_index index;
+    typename Remeshing_cell_base<Gt, Cb>::Subdomain_index index;
     if (is_ascii(is))
       is >> index;
     else
@@ -172,7 +116,7 @@ It has the default value `Triangulation_cell_base_3<Gt>`.
     return is;
   }
 
-  template < class Gt, class Info, class Cb >
+  template < class Gt, class Cb >
   std::ostream&
     operator<<(std::ostream &os, const Remeshing_cell_base<Gt, Cb> &c)
   {

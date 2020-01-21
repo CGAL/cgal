@@ -7,9 +7,6 @@
 /// \defgroup PkgTetrahedralRemeshingClasses Classes
 /// \ingroup PkgTetrahedralRemeshingRef
 
-/// \defgroup PkgPACKAGEAlgorithmFunctions Remeshing Function
-/// \ingroup PkgPACKAGE
-
 /// \defgroup PkgPACKAGETraitsClasses Traits Classes
 /// \ingroup PkgPACKAGE
 
@@ -34,7 +31,7 @@ targetting high quality meshes with respect to dihedral angles.}
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.1}
-\cgalPkgDependsOn{\ref PkgTriangulation3}
+\cgalPkgDependsOn{\ref PkgTriangulation3, PkgMesh3}
 \cgalPkgBib{faraj2016mvr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -46,8 +43,13 @@ targetting high quality meshes with respect to dihedral angles.}
 
 \cgalCRPSection{Concepts}
 
-- `RemeshingCellBase_3`
-- `RemeshingVertexBase_3`
+- `RemeshingTriangulationTraits_3`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base`
+- `CGAL::Tetrahedral_remeshing::Remeshing_cell_base`
+- `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
 
 \cgalCRPSection{Function Templates}
 

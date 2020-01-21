@@ -67,8 +67,10 @@ namespace CGAL
   * @tparam Triangulation a 3-dimensional triangulation
   * deriving from `Triangulation_3`,
   * with geometric traits model of `RemeshingTriangulationTraits_3`,
-  * cell base model of `RemeshingCellBase_3`
-  * and vertex base model of `RemeshingVertexBase_3`.
+  * cell base model of `MeshCellBase_3`
+  * and vertex base model of `MeshVertexBase_3`.
+  * The class `Remeshing_triangulation_3` is a helper triangulation class that fits all
+  * these requirements.
   *
   * @tparam NamedParameters a sequence of \ref Remeshing_namedparameters "Named Parameters"
   *

@@ -23,16 +23,26 @@
 #ifndef CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
 #define CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
 
-#include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Mesh_vertex_base_3.h>
 
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
+  namespace internal
+  {
+    struct Fake_MD_V
+    {
+      typedef int Subdomain_index;
+      typedef int Surface_patch_index;
+      typedef int Index;
+    };
+  }
+
   /*!
   \ingroup PkgTetrahedralRemeshingClasses
   
-  The class `Remeshing_vertex_base` is a model of the concept `RemeshingVertexBase_3`.
+  The class `Remeshing_vertex_base` is a model of the concept `MeshVertexBase_3`.
   It is designed to serve as vertex base class for the 3D triangulation
   used in the tetrahedral remeshing process.
 
@@ -43,29 +53,20 @@ namespace Tetrahedral_remeshing
   It must be a model of the `TriangulationVertexBase_3` concept.
   It has the default value `Triangulation_vertex_base_3<Gt>`.
   
-  \cgalModels `RemeshingVertexBase_3`
-  \cgalRefines `Triangulation_vertex_base_3`
-  
+  \cgalModels `MeshVertexBase_3`
+  \cgalRefines `Triangulation_vertex_base_3` 
   */
 
   template<typename GT,
            typename Vb = CGAL::Triangulation_vertex_base_3<GT> >
   class Remeshing_vertex_base
-    : public Vb
+#ifndef DOXYGEN_RUNNING
+    : public CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb>
+#endif
   {
-  private:
-    short dimension_;
-    std::size_t time_stamp_;
-    std::size_t number_of_incident_facets_;
-    std::size_t number_of_components_;
-    bool cache_validity_;
+    typedef CGAL::Mesh_vertex_base_3<GT, internal::Fake_MD_V, Vb> Base;
 
   public:
-    Remeshing_vertex_base() : dimension_(-1)
-					   // time_stamp_ // do not initialize
-    {}
-    typedef int                   Index;
-
     // To get correct vertex type in TDS
     template < class TDS3 >
     struct Rebind_TDS {
@@ -73,60 +74,10 @@ namespace Tetrahedral_remeshing
       typedef Remeshing_vertex_base<GT, Vb3> Other;
     };
 
-    // Returns the dimension of the lowest dimensional face of the input 3D
-    // complex that contains the vertex
-    int in_dimension() const {
-      if (dimension_ < -1) return -2 - dimension_;
-      else return dimension_;
-    }
-
-    // Sets the dimension of the lowest dimensional face of the input 3D complex
-    // that contains the vertex
-    void set_dimension(const int dimension) {
-      CGAL_assertion(dimension < 4);
-      dimension_ = short(dimension);
-    }
-
-    /// For the determinism of Compact_container iterators
-    ///@{
-    typedef Tag_true Has_timestamp;
-    std::size_t time_stamp() const {
-      return time_stamp_;
-    }
-    void set_time_stamp(const std::size_t& ts) {
-      time_stamp_ = ts;
-    }
-    ///@}
-
-    // documented as invalidate_cache()
-    void invalidate_c2t3_cache()
-    {
-      cache_validity_ = false;
-    }
-    // documented as set_cache()
-    void set_c2t3_cache(const std::size_t& nb_incident_facets,
-                        const std::size_t& nb_incident_subdomains)
-    {
-      number_of_incident_facets_ = nb_incident_facets;
-      number_of_components_ = nb_incident_subdomains;
-      cache_validity_ = true;
-    }
-
-    // documented as number_of_incident_facets
-    std::size_t cached_number_of_incident_facets() const
-    {
-      return number_of_incident_facets_;
-    }
-
-    // documented as number_of_incident_subdomains
-    std::size_t cached_number_of_components() const
-    {
-      return number_of_components_;
-    }
-
   };
 
 }//end namespace Tetrahedral_remeshing
+
 }//end namespace CGAL
 
 #endif //CGAL_TET_ADAPTIVE_REMESHING_VERTEX_BASE_H
