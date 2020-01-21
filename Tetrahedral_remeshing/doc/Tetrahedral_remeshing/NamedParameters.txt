@@ -38,8 +38,8 @@ in the mesh.\n
 \b Default value is `1`
 \cgalNPEnd
 
-\cgalNPBegin{remeshing_boundaries}
-\anchor Remeshing_protect_boundaries
+\cgalNPBegin{remesh_boundaries}
+\anchor Remeshing_remesh_boundaries
 a Boolean that states whether the boundaries should be remeshed or
 exactly preserved by the remeshing
 process. Boundaries are between the exterior and the interior,
