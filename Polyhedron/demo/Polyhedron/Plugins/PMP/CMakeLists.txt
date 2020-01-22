@@ -36,6 +36,17 @@ if(EIGEN3_FOUND)
         scene_mcf_item
         demo_framework)
       CGAL_target_use_Eigen(mean_curvature_flow_skeleton_plugin)
+      # The smoothing plugin can still do some things, even if Ceres is not found
+      qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
+      polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+      target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+      CGAL_target_use_Eigen(smoothing_plugin)
+      find_package(Ceres QUIET)
+      if(TARGET ceres)
+        target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+        target_link_libraries(smoothing_plugin PUBLIC ceres)
+      endif()
+      
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
@@ -118,14 +129,3 @@ target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_s
 
 polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
-
-# The smoothing plugin can still do some things, even if Ceres is not found
-qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
-polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
-target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
-
-find_package(Ceres QUIET)
-if(TARGET ceres)
-  target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-  target_link_libraries(smoothing_plugin PUBLIC ceres)
-endif()
