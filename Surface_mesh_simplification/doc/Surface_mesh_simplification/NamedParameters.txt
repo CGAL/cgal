@@ -102,5 +102,13 @@ and override only the callbacks you are interested in.\n
 <b>Type:</b> user specific\n
 <b>Default:</b> an implementation-defined dummy visitor
 \cgalNPEnd
+
+\cgalNPBegin{constrain_geometry} \anchor SMS_constrain_geometry
+is the boolean that determines the type of constraint for an edge.
+If this parameter is `true`, then a constrained edge will be constrained topologically and geometrically.
+If it is set to `false`, then then a constrained edge will only be constrained topologically, but it's geometry may change.
+<b>Type:</b> boolean\n
+<b>Default:</b> `true`
+\cgalNPEnd
 \cgalNPTableEnd
 */

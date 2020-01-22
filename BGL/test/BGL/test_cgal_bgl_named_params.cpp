@@ -98,6 +98,7 @@ void test(const NamedParameters& np)
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
   assert(get_parameter(np, CGAL::internal_np::get_placement_policy).v == 35);
+  assert(get_parameter(np, CGAL::internal_np::constrain_geometry).v == 5678);
 
     // To-be-documented named parameters
   assert(get_parameter(np, CGAL::internal_np::face_normal).v == 36);
@@ -185,6 +186,7 @@ void test(const NamedParameters& np)
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
   check_same_type<35>(get_parameter(np, CGAL::internal_np::get_placement_policy));
+  check_same_type<5678>(get_parameter(np, CGAL::internal_np::constrain_geometry));
 
     // To-be-documented named parameters
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
@@ -274,6 +276,7 @@ int main()
                          .area_threshold(A<57>(57))
                          .volume_threshold(A<58>(58))
                          .dry_run(A<59>(59))
+                         .constrain_geometry(A<5678>(5678))
        );
 
   return EXIT_SUCCESS;

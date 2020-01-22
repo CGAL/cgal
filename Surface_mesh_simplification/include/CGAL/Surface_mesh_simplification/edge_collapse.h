@@ -78,49 +78,8 @@ struct Dummy_visitor
   void OnNonCollapsable(const Profile&) const {}
 };
 
-
-
-
-//from here {
-
-//base class : create a Constrained_placement
-template<class IsConstrainedMap, class Placement>
-struct GetPlacement{
-  typedef Constrained_placement<Placement, IsConstrainedMap> type;
-  
-  static type get_placement(const IsConstrainedMap map, const Placement& placement)
-  {
-    return type(map, placement);
-  }
-};
-
-//Spec for no constrained : Placement untouched
-template<class TM, class Placement>
-struct GetPlacement<No_constrained_edge_map<TM>, Placement>{
-  typedef Placement type;
-  
-  static type get_placement(const No_constrained_edge_map<TM>, const Placement& placement)
-  {
-    return placement;
-  }
-};
-
-//Spec for placement already constrained : placement untouched
-template<class IsConstrainedMap, class Placement>
-struct GetPlacement<IsConstrainedMap, Constrained_placement<Placement, IsConstrainedMap> >{
-  typedef Constrained_placement<Placement, IsConstrainedMap> type;
-  
-  static type get_placement(const IsConstrainedMap, const type& placement)
-  {
-    return placement;
-  }
-  
-};
-
-
-//specs
-
-//} to here
+//To detect if a Placement type is already constrained
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_constrained_tag, Constrained_tag, false)
 
 } // namespace internal
 
@@ -143,10 +102,6 @@ int edge_collapse(TM& tmesh,
   internal_np::get_placement_policy_t,
   NamedParameters, LindstromTurk_placement<TM> > ::type      PlacementType;
   
-  typedef typename internal::
-      GetPlacement<ConstrainedMapType, PlacementType>::type  FinalPlacementType;
-  
-  
   ConstrainedMapType c_map 
       = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                          No_constrained_edge_map<TM>());
@@ -154,26 +109,47 @@ int edge_collapse(TM& tmesh,
   PlacementType placement
       = choose_parameter(get_parameter(np, internal_np::get_placement_policy),
                          LindstromTurk_placement<TM>());
+
+  bool do_constrain = choose_parameter(get_parameter(np, internal_np::constrain_geometry),
+                                       true);
   
-  FinalPlacementType final_placement = 
-      internal::GetPlacement<ConstrainedMapType, PlacementType>::get_placement(c_map, placement);
-  
-  //Use GetPlacement to get an initialized placement from the map.
-  return internal::edge_collapse(tmesh, should_stop,
-                                 choose_parameter(get_parameter(np, internal_np::geom_traits),
-                                                  Geom_traits()),
-                                 choose_parameter(get_parameter(np, internal_np::vertex_index),
-                                                  get_const_property_map(boost::vertex_index, tmesh)),
-                                 choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                                  get_property_map(vertex_point, tmesh)),
-                                 choose_parameter(get_parameter(np, internal_np::halfedge_index),
-                                                  get_const_property_map(boost::halfedge_index, tmesh)),
-                                 c_map,
-                                 choose_parameter(get_parameter(np, internal_np::get_cost_policy),
-                                                  LindstromTurk_cost<TM>()),
-                                 final_placement,
-                                 choose_parameter(get_parameter(np, internal_np::graph_visitor),
-                                                  internal::Dummy_visitor()));
+  if(!internal::Has_nested_type_constrained_tag<PlacementType>::value && do_constrain)
+  {
+    
+    return internal::edge_collapse(tmesh, should_stop,
+                                   choose_parameter(get_parameter(np, internal_np::geom_traits),
+                                                    Geom_traits()),
+                                   choose_parameter(get_parameter(np, internal_np::vertex_index),
+                                                    get_const_property_map(boost::vertex_index, tmesh)),
+                                   choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                                    get_property_map(vertex_point, tmesh)),
+                                   choose_parameter(get_parameter(np, internal_np::halfedge_index),
+                                                    get_const_property_map(boost::halfedge_index, tmesh)),
+                                   c_map,
+                                   choose_parameter(get_parameter(np, internal_np::get_cost_policy),
+                                                    LindstromTurk_cost<TM>()),
+                                   Constrained_placement<PlacementType, ConstrainedMapType>(c_map, placement),
+                                   choose_parameter(get_parameter(np, internal_np::graph_visitor),
+                                                    internal::Dummy_visitor()));
+  }
+  else
+  {
+    return internal::edge_collapse(tmesh, should_stop,
+                                   choose_parameter(get_parameter(np, internal_np::geom_traits),
+                                                    Geom_traits()),
+                                   choose_parameter(get_parameter(np, internal_np::vertex_index),
+                                                    get_const_property_map(boost::vertex_index, tmesh)),
+                                   choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                                    get_property_map(vertex_point, tmesh)),
+                                   choose_parameter(get_parameter(np, internal_np::halfedge_index),
+                                                    get_const_property_map(boost::halfedge_index, tmesh)),
+                                   c_map,
+                                   choose_parameter(get_parameter(np, internal_np::get_cost_policy),
+                                                    LindstromTurk_cost<TM>()),
+                                   placement,
+                                   choose_parameter(get_parameter(np, internal_np::graph_visitor),
+                                                    internal::Dummy_visitor()));
+  }
 }
 
 template<class TM, class ShouldStop>
