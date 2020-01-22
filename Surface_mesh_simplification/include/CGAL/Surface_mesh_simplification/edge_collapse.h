@@ -20,6 +20,7 @@
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/internal/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -77,6 +78,50 @@ struct Dummy_visitor
   void OnNonCollapsable(const Profile&) const {}
 };
 
+
+
+
+//from here {
+
+//base class : create a Constrained_placement
+template<class IsConstrainedMap, class Placement>
+struct GetPlacement{
+  typedef Constrained_placement<Placement, IsConstrainedMap> type;
+  
+  static type get_placement(const IsConstrainedMap map, const Placement& placement)
+  {
+    return type(map, placement);
+  }
+};
+
+//Spec for no constrained : Placement untouched
+template<class TM, class Placement>
+struct GetPlacement<No_constrained_edge_map<TM>, Placement>{
+  typedef Placement type;
+  
+  static type get_placement(const No_constrained_edge_map<TM>, const Placement& placement)
+  {
+    return placement;
+  }
+};
+
+//Spec for placement already constrained : placement untouched
+template<class IsConstrainedMap, class Placement>
+struct GetPlacement<IsConstrainedMap, Constrained_placement<Placement, IsConstrainedMap> >{
+  typedef Constrained_placement<Placement, IsConstrainedMap> type;
+  
+  static type get_placement(const IsConstrainedMap, const type& placement)
+  {
+    return placement;
+  }
+  
+};
+
+
+//specs
+
+//} to here
+
 } // namespace internal
 
 template<class TM, class ShouldStop, class NamedParameters>
@@ -88,7 +133,32 @@ int edge_collapse(TM& tmesh,
   using parameters::get_parameter;
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type                   Geom_traits;
-
+  
+  
+  typedef typename internal_np::Lookup_named_param_def <
+  internal_np::edge_is_constrained_t,
+  NamedParameters, No_constrained_edge_map<TM> > ::type      ConstrainedMapType;
+  
+  typedef typename internal_np::Lookup_named_param_def <
+  internal_np::get_placement_policy_t,
+  NamedParameters, LindstromTurk_placement<TM> > ::type      PlacementType;
+  
+  typedef typename internal::
+      GetPlacement<ConstrainedMapType, PlacementType>::type  FinalPlacementType;
+  
+  
+  ConstrainedMapType c_map 
+      = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                         No_constrained_edge_map<TM>());
+  
+  PlacementType placement
+      = choose_parameter(get_parameter(np, internal_np::get_placement_policy),
+                         LindstromTurk_placement<TM>());
+  
+  FinalPlacementType final_placement = 
+      internal::GetPlacement<ConstrainedMapType, PlacementType>::get_placement(c_map, placement);
+  
+  //Use GetPlacement to get an initialized placement from the map.
   return internal::edge_collapse(tmesh, should_stop,
                                  choose_parameter(get_parameter(np, internal_np::geom_traits),
                                                   Geom_traits()),
@@ -98,12 +168,10 @@ int edge_collapse(TM& tmesh,
                                                   get_property_map(vertex_point, tmesh)),
                                  choose_parameter(get_parameter(np, internal_np::halfedge_index),
                                                   get_const_property_map(boost::halfedge_index, tmesh)),
-                                 choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                                  No_constrained_edge_map<TM>()),
+                                 c_map,
                                  choose_parameter(get_parameter(np, internal_np::get_cost_policy),
                                                   LindstromTurk_cost<TM>()),
-                                 choose_parameter(get_parameter(np, internal_np::get_placement_policy),
-                                                  LindstromTurk_placement<TM>()),
+                                 final_placement,
                                  choose_parameter(get_parameter(np, internal_np::graph_visitor),
                                                   internal::Dummy_visitor()));
 }
