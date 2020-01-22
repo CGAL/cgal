@@ -40,8 +40,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "bilateral_smooth_point_set_example.cpp" )
   create_single_source_cgal_program( "grid_simplification_example.cpp" )
   create_single_source_cgal_program( "grid_simplify_indices.cpp" )
-  create_single_source_cgal_program( "hierarchy_simplification_example.cpp" )
-  create_single_source_cgal_program( "normals_example.cpp" )
   create_single_source_cgal_program( "property_map.cpp" )
   create_single_source_cgal_program( "random_simplification_example.cpp" )
   create_single_source_cgal_program( "read_write_xyz_point_set_example.cpp" )
@@ -82,6 +80,13 @@ if ( CGAL_FOUND )
     
     create_single_source_cgal_program( "scale_estimation_2d_example.cpp" )
     CGAL_target_use_Eigen(scale_estimation_2d_example)
+
+    create_single_source_cgal_program( "hierarchy_simplification_example.cpp" )
+    CGAL_target_use_Eigen(hierarchy_simplification_example)
+
+    create_single_source_cgal_program( "normals_example.cpp" )
+    CGAL_target_use_Eigen(normals_example)
+
   else()
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
   endif()
