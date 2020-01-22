@@ -2,7 +2,6 @@
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Unique_hash_map.h>
@@ -74,8 +73,7 @@ int main(int argc, char** argv)
 
   CGAL::Unique_hash_map<edge_descriptor, bool> constraint_hmap(false);
   Constrained_edge_map constraints_map(constraint_hmap);
-  SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
-                             Constrained_edge_map > placement(constraints_map);
+  SMS::Midpoint_placement<Surface_mesh> placement;
 
   // map used to check that constrained_edges and the points of its vertices
   // are preserved at the end of the simplification

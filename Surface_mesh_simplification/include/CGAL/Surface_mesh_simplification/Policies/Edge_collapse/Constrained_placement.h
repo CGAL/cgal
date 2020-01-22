@@ -11,49 +11,24 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_CONSTRAINED_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_CONSTRAINED_PLACEMENT_H
 
-#include <CGAL/license/Surface_mesh_simplification.h>
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS "See the Named Parameter `constrain_geometry` for more information."
+#include <CGAL/internal/deprecation_warning.h>
 
-#include <CGAL/Surface_mesh_simplification/internal/Common.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
+#include <CGAL/Surface_mesh_simplification/internal/Constrained_placement.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
 template<class BasePlacement, class EdgeIsConstrainedMap>
 class Constrained_placement
-  : public BasePlacement
+  : public internal::Constrained_placement<BasePlacement, EdgeIsConstrainedMap>
 {
 public:
-  typedef Tag_true Constrained_tag;
   Constrained_placement(const EdgeIsConstrainedMap map = EdgeIsConstrainedMap(),
                         const BasePlacement& base = BasePlacement())
-    : BasePlacement(base),
-      m_ecm(map)
+    : internal::Constrained_placement<BasePlacement, EdgeIsConstrainedMap>(map, base)
   {}
-
-  template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
-  {
-    typedef typename Profile::TM                                    TM;
-    typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;
-
-    for(halfedge_descriptor h : halfedges_around_target(profile.v0(), profile.surface_mesh()))
-    {
-      if(get(m_ecm, edge(h, profile.surface_mesh())))
-        return get(profile.vertex_point_map(), profile.v0());
-    }
-
-    for(halfedge_descriptor h : halfedges_around_target(profile.v1(), profile.surface_mesh()))
-    {
-      if(get(m_ecm, edge(h, profile.surface_mesh())))
-        return get(profile.vertex_point_map(), profile.v1());
-    }
-
-    return static_cast<const BasePlacement*>(this)->operator()(profile);
-  }
-
-private:
-  EdgeIsConstrainedMap m_ecm;
 };
 
 } // namespace Surface_mesh_simplification

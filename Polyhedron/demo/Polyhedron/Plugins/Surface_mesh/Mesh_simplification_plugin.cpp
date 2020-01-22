@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_stop_predicate.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
+#include <CGAL/Surface_mesh_simplification/internal/Constrained_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 
@@ -153,7 +153,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
 
     if (selection_item)
       {
-        CGAL::Surface_mesh_simplification::Constrained_placement
+        CGAL::Surface_mesh_simplification::internal::Constrained_placement
           <CGAL::Surface_mesh_simplification::Bounded_normal_change_placement
            <CGAL::Surface_mesh_simplification::LindstromTurk_placement
             <FaceGraph> >,

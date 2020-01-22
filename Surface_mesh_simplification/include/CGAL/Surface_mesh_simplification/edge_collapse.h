@@ -20,7 +20,7 @@
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/internal/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
+#include <CGAL/Surface_mesh_simplification/internal/Constrained_placement.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -128,7 +128,7 @@ int edge_collapse(TM& tmesh,
                                    c_map,
                                    choose_parameter(get_parameter(np, internal_np::get_cost_policy),
                                                     LindstromTurk_cost<TM>()),
-                                   Constrained_placement<PlacementType, ConstrainedMapType>(c_map, placement),
+                                   internal::Constrained_placement<PlacementType, ConstrainedMapType>(c_map, placement),
                                    choose_parameter(get_parameter(np, internal_np::graph_visitor),
                                                     internal::Dummy_visitor()));
   }

@@ -7,8 +7,6 @@
 // Midpoint placement policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Midpoint_placement.h>
 
-//Placement wrapper
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 
 // Stop-condition policy
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
@@ -40,8 +38,7 @@ struct Border_is_constrained_edge_map
 };
 
 // Placement class
-typedef SMS::Constrained_placement<SMS::Midpoint_placement<Surface_mesh>,
-                                   Border_is_constrained_edge_map > Placement;
+SMS::Midpoint_placement<Surface_mesh> Placement;
 
 int main(int argc, char** argv)
 {
@@ -91,7 +88,7 @@ int main(int argc, char** argv)
                              CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,surface_mesh))
                                               .halfedge_index_map(get(CGAL::halfedge_external_index  ,surface_mesh))
                                               .edge_is_constrained_map(bem)
-                                              .get_placement(Placement(bem)));
+                                              .get_placement(Placement));
 
   std::cout << "\nFinished!\n" << r << " edges removed.\n"
             << (surface_mesh.size_of_halfedges()/2) << " final edges.\n";
