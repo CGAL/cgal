@@ -44,8 +44,8 @@ if(EIGEN3_FOUND)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES} KEYWORDS PointSetProcessing Classification)
   target_link_libraries(point_set_shape_detection_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item scene_callback_signaler)
 
-  find_package(OpenGR)
-  find_package(libpointmatcher)
+  find_package(OpenGR QUIET)
+  find_package(libpointmatcher QUIET)
 
   if (OpenGR_FOUND OR libpointmatcher_FOUND)
     qt5_wrap_ui(register_point_setsUI_FILES Register_point_sets_plugin.ui)

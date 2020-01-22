@@ -80,7 +80,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "edges_example.cpp" )
     
     # Executables that require libpointmatcher
-    find_package(libpointmatcher)
+    find_package(libpointmatcher QUIET)
     if (libpointmatcher_FOUND)
       create_single_source_cgal_program( "registration_with_pointmatcher.cpp" )
       CGAL_target_use_pointmatcher(registration_with_pointmatcher)
@@ -89,7 +89,7 @@ if ( CGAL_FOUND )
     endif()
     
     # Executables that require OpenGR
-    find_package(OpenGR)
+    find_package(OpenGR QUIET)
     if (OpenGR_FOUND)
       create_single_source_cgal_program( "registration_with_OpenGR.cpp" )
       CGAL_target_use_OpenGR(registration_with_OpenGR)
