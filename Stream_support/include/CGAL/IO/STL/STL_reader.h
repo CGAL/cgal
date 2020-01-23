@@ -24,6 +24,8 @@
 #include <vector>
 
 namespace CGAL {
+namespace Stream_support {
+namespace internal {
 
 template <class PointRange, class TriangleRange, typename IndexMap>
 bool read_ASCII_facet(std::istream& input,
@@ -282,87 +284,8 @@ bool parse_binary_STL(std::istream& input,
   return true;
 }
 
-
-template <class PointRange, class TriangleRange>
-bool read_STL(std::istream& input,
-              PointRange& points,
-              TriangleRange& facets,
-              bool verbose = false)
-{
-  int pos = 0;
-
-  // Ignore all initial whitespace
-  unsigned char c;
-
-  while(input.read(reinterpret_cast<char*>(&c), sizeof(c)))
-  {
-    if(!isspace(c))
-    {
-      input.unget(); // move back to the first interesting char
-      break;
-    }
-    ++pos;
-  }
-
-  if(!input.good()) // reached the end
-    return true;
-
-  // If we have gone beyond 80 characters and have not read anything yet,
-  // then this must be an ASCII file.
-  if(pos > 80)
-    return parse_ASCII_STL(input, points, facets, verbose);
-
-  // We are within the first 80 characters, both ASCII and binary are possible
-
-  // Read the 5 first characters to check if the first word is "solid"
-  std::string s;
-
-  char word[6];
-  if(input.read(reinterpret_cast<char*>(&word[0]), sizeof(c)) &&
-     input.read(reinterpret_cast<char*>(&word[1]), sizeof(c)) &&
-     input.read(reinterpret_cast<char*>(&word[2]), sizeof(c)) &&
-     input.read(reinterpret_cast<char*>(&word[3]), sizeof(c)) &&
-     input.read(reinterpret_cast<char*>(&word[4]), sizeof(c)) &&
-     input.read(reinterpret_cast<char*>(&word[5]), sizeof(c)))
-  {
-    s = std::string(word, 5);
-    pos += 5;
-  }
-  else
-    return true; // empty file
-
-  // If the first word is not 'solid', the file must be binary
-  if(s != "solid" || (word[5] !='\n' && word[5] != ' '))
-  {
-    if(parse_binary_STL(input, points, facets, verbose))
-    {
-      return true;
-    }
-    else
-    {
-      // If we failed to read it as a binary, try as ASCII just in case...
-      // The file does not start with 'solid' anyway, so it's fine to reset it.
-      input.clear();
-      input.seekg(0, std::ios::beg);
-      return parse_ASCII_STL(input, points, facets, verbose);
-    }
-  }
-
-  // Now, we have found the keyword "solid" which is supposed to indicate that the file is ASCII
-  input.clear();
-  input.seekg(0, std::ios::beg); //the parser needs to read all "solid" to work correctly.
-  if(parse_ASCII_STL(input, points, facets, verbose))
-  {
-    // correctly read the input as an ASCII file
-    return true;
-  }
-  else // Failed to read the ASCII file
-  {
-    // It might have actually have been a binary file... ?
-    return parse_binary_STL(input, points, facets, verbose);
-  }
-}
-
+} // namespace internal
+} // namespace Stream_support
 } // namespace CGAL
 
 #endif // CGAL_IO_STL_STL_READER_H

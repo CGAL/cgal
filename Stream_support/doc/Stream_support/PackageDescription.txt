@@ -43,9 +43,18 @@ the printing mode.
 - \link IOstreamOperators `CGAL::operator<<()` \endlink
 - `CGAL::iformat()`
 - `CGAL::oformat()`
-- `CGAL::read_STL()`
 
-\cgalCRPSection{WKT I/O Functions}
+\cgalCRPSection{File I/O Functions}
+- `CGAL::read_STL()`
+- `CGAL::write_STL()`
+- `CGAL::read_PLY()`
+- `CGAL::write_PLY()`
+- `CGAL::read_OBJ()`
+- `CGAL::read_OFF()`
+- `CGAL::write_OFF()`
+- `CGAL::read_VTK()`
+- `CGAL::write_VTK()`
+
 - `CGAL::read_point_WKT()`
 - `GCAL::read_multi_point_WKT()`
 - `GCAL::read_linestring_WKT()`

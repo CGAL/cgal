@@ -47,14 +47,14 @@ public:
 };
 
 /*!
-  \ingroup PkgStreamSupportRef
+\ingroup PkgStreamSupportRef
 
 All classes in the \cgal `Kernel` provide input and output operators for
 IOStreams.  The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
 characters on devices as a console, a file, or a pipe. The enum `Mode` distinguish between three different printing formats.
 
-In  `ASCII` mode, numbers
+In `ASCII` mode, numbers
 e.g. the coordinates of a point or
 the coefficients of a line, are written
 in a machine independent format.

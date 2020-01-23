@@ -15,12 +15,12 @@
 #ifndef CGAL_IO_WKT_H
 #define CGAL_IO_WKT_H
 
+#if defined(DOXYGEN_RUNNING) || (BOOST_VERSION >= 105600 && (!defined(BOOST_GCC) || BOOST_GCC >= 40500))
+
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
-
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
 
 #include <CGAL/IO/WKT/traits_point.h>
 #include <CGAL/IO/WKT/traits_point_3.h>
@@ -614,7 +614,7 @@ std::istream& read_WKT(std::istream& input,
   return input;
 }
 
-}//end CGAL
+} // namespace CGAL CGAL
 
 #endif // BOOST VERSION CHECKS
 #endif // CGAL_IO_WKT_H

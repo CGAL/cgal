@@ -16,7 +16,6 @@
 #define CGAL_IO_VRML_H
 
 #include <CGAL/IO/VRML/File_writer_VRML_2.h>
-#include <CGAL/IO/VRML/Inventor_ostream.h>
 #include <CGAL/IO/VRML/VRML_1_ostream.h>
 #include <CGAL/IO/VRML/VRML_2_ostream.h>
 

@@ -1068,16 +1068,19 @@ public:
 
 /*!
   \ingroup PkgBGLIOFct
+
   reads the graph `tm` from the stream `in` in the STL format.
+
   \returns `true` if the resulting mesh is valid.
+
   \pre The data must represent a 2-manifold
+
   \see \ref IOStreamSTL
   */
 template <class TriangleMesh>
-bool
-read_STL(TriangleMesh& tm, std::istream& in)
+bool read_STL(std::istream& in,
+              TriangleMesh& tm)
 {
-  //typedef typename Polyhedron::HalfedgeDS HDS;
   typedef typename boost::property_traits<typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::type>::value_type Point_3;
 
   STL_internal::STL_builder<TriangleMesh, Point_3> builder(in);
@@ -1087,14 +1090,8 @@ read_STL(TriangleMesh& tm, std::istream& in)
   return ok;
 }
 
+namespace OBJ_internal {
 
-
-
-
-
-
-namespace OBJ_internal
-{
 //Use CRTP to gain access to the protected members without getters/setters.
 template <class Facegraph, class P>
 class OBJ_builder : public CGAL::internal::IO::Generic_facegraph_builder<Facegraph, P, OBJ_builder<Facegraph, P> >

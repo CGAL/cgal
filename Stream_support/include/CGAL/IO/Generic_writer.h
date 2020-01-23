@@ -15,7 +15,7 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_GENERIC_WRITER_H
-#define CGAL_IO_GENERIC_WRITER_H 1
+#define CGAL_IO_GENERIC_WRITER_H
 
 #include <CGAL/basic.h>
 #include <iterator>
