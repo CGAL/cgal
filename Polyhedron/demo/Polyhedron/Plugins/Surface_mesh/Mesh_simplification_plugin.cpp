@@ -12,7 +12,7 @@
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_stop_predicate.h>
-#include <CGAL/Surface_mesh_simplification/internal/Constrained_placement.h>
+#include <CGAL/Surface_mesh_simplification/internal/Placement_wrappers.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
 #include <CGAL/Surface_mesh_simplification/internal/Edge_collapse.h>
 

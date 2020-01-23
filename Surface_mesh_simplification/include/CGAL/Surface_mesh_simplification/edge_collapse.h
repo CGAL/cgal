@@ -20,7 +20,7 @@
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/internal/Edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk.h>
-#include <CGAL/Surface_mesh_simplification/internal/Constrained_placement.h>
+#include <CGAL/Surface_mesh_simplification/internal/Placement_wrappers.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {

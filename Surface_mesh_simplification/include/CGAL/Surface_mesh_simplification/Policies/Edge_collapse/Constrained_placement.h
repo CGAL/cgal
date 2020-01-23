@@ -17,7 +17,7 @@
 #define CGAL_DEPRECATED_MESSAGE_DETAILS "See the Named Parameter `constrain_geometry` for more information."
 #include <CGAL/internal/deprecation_warning.h>
 
-#include <CGAL/Surface_mesh_simplification/internal/Constrained_placement.h>
+#include <CGAL/Surface_mesh_simplification/internal/Placement_wrappers.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
