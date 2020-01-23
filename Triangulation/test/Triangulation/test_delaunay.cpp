@@ -115,19 +115,19 @@ void go(const int N)
 {
     typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > KI;
     typedef CGAL::Delaunay_triangulation<KI> Triangulation;
-    test<Triangulation>(D, "static", N);
+    test<Triangulation>(D, "inexact static", N);
 
     typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> KI_dyn;
     typedef CGAL::Delaunay_triangulation<KI_dyn> Triangulation_dyn;
-    test<Triangulation_dyn>(D, "dynamic", N);
+    test<Triangulation_dyn>(D, "inexact dynamic", N);
 
     typedef CGAL::Epeck_d<CGAL::Dimension_tag<D> > KE;
     typedef CGAL::Delaunay_triangulation<KE> TriangulationE;
-    test<TriangulationE>(D, "static", N);
+    test<TriangulationE>(D, "exact static", N);
 
     typedef CGAL::Epeck_d<CGAL::Dynamic_dimension_tag> KE_dyn;
     typedef CGAL::Delaunay_triangulation<KE_dyn> TriangulationE_dyn;
-    test<TriangulationE_dyn>(D, "dynamic", N);
+    test<TriangulationE_dyn>(D, "exact dynamic", N);
 }
 
 int main(int argc, char **argv)
