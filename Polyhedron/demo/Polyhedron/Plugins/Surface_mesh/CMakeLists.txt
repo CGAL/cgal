@@ -32,7 +32,9 @@ target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item 
 qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
 polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
 target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
-
+if(EIGEN3_FOUND)
+  CGAL_target_use_Eigen(offset_meshing_plugin)
+endif()
 if(TBB_FOUND)
   CGAL_target_use_TBB(offset_meshing_plugin)
 endif()

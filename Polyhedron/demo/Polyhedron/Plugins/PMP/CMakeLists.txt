@@ -9,6 +9,9 @@ else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif(EIGEN3_FOUND)
 
+polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
+target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+
 if(EIGEN3_FOUND)
   if("${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
 
@@ -47,6 +50,7 @@ if(EIGEN3_FOUND)
         target_link_libraries(smoothing_plugin PUBLIC ceres)
       endif()
       
+      CGAL_target_use_Eigen(extrude_plugin)
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
@@ -127,5 +131,3 @@ qt5_wrap_ui( engravUI_FILES Engrave_dock_widget.ui )
 polyhedron_demo_plugin(engrave_text_plugin Engrave_text_plugin ${engravUI_FILES})
 target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item scene_polylines_item)
 
-polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
-target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
