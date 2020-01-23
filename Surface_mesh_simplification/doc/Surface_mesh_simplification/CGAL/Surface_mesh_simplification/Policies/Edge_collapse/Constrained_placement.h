@@ -15,6 +15,9 @@ is the point of the common vertex. Otherwise the placement is the one computed b
 
 \cgalModels `GetPlacement`
 
+\deprecated This class is now deprecated. If a constrained_edge_map is given to `edge_collapse()`, then it will automatically be used.
+
+
 */
 template<class Get_placement_, class Edge_is_constrained_map_>
 class Constrained_placement

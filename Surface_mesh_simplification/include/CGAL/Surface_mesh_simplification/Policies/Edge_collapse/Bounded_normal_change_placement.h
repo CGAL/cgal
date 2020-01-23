@@ -28,7 +28,7 @@ class Bounded_normal_change_placement
 {
 public:
    Bounded_normal_change_placement(const GetPlacement& get_placement = GetPlacement())
-     :internal::Bounded_normal_change_placement<GetPlacement>(get_placement)
+     :internal::Bounded_normal_change_placement<GetPlacement>(CGAL_PI/4.0, get_placement)
    {}
 };
 } // namespace Surface_mesh_simplification

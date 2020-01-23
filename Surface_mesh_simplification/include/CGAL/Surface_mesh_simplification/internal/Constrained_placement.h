@@ -74,8 +74,9 @@ template<class GetPlacement>
 class Bounded_normal_change_placement
 {
 public:
-  Bounded_normal_change_placement(const GetPlacement& get_placement = GetPlacement())
-    : m_get_placement(get_placement)
+  Bounded_normal_change_placement(const double& angle = CGAL_PI,
+                                  const GetPlacement& get_placement = GetPlacement())
+    : m_get_placement(get_placement), m_angle(angle)
   {}
 
   template <typename Profile>
@@ -85,6 +86,7 @@ public:
     typedef typename Profile::VertexPointMap                              Vertex_point_map;
 
     typedef typename Profile::Geom_traits                                 Geom_traits;
+    typedef typename Geom_traits::FT                                      FT;
     typedef typename Geom_traits::Vector_3                                Vector;
 
     typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
@@ -125,7 +127,11 @@ public:
            Vector n1 = gt.construct_cross_product_vector_3_object()(eqp, eqr);
            Vector n2 = gt.construct_cross_product_vector_3_object()(eq2p, eq2r);
 
-           if(!is_positive(gt.compute_scalar_product_3_object()(n1, n2)))
+           const FT sp = gt.compute_scalar_product_3_object()(n1, n2);
+           bool is_pos = is_positive(sp);
+           const FT sq_cos_bound = CGAL::square(std::cos(m_angle));
+           if((is_pos && CGAL::square(sp) < n1.squared_length() * n2.squared_length() * sq_cos_bound)
+              || (!is_pos && CGAL::square(sp) > n1.squared_length() * n2.squared_length() * sq_cos_bound))
              return boost::optional<typename Profile::Point>();
 
            ++it;
@@ -138,6 +144,7 @@ public:
 
 private:
   const GetPlacement m_get_placement;
+  const double m_angle;
 };
 
 
@@ -145,11 +152,12 @@ private:
 /*******************
  * helper classes *
  ******************/
+
 template<class Placement, class IsConstrainedMap>
 struct GetPlacementType{
   typedef Constrained_placement<Placement, IsConstrainedMap> type;
 
-  static type get_placement(const IsConstrainedMap map, const Placement& placement, bool do_constrain)
+  static type get_placement(const IsConstrainedMap map, Placement& placement, bool do_constrain)
   {
     return type(map, do_constrain, placement);
   }
@@ -160,11 +168,33 @@ template<class Placement>
 struct GetPlacementType<Placement, internal_np::Param_not_found>{
 
   typedef Placement type;
-  static type get_placement(const internal_np::Param_not_found, const Placement& placement, bool)
+  static type get_placement(const internal_np::Param_not_found, Placement& placement, bool)
   {
     return placement;
   }
 };
+
+template<class Placement, class Type>
+struct HasAngleBound{
+  typedef Bounded_normal_change_placement<Placement> type;
+
+  static type get_placement(const double& angle, Placement& placement)
+  {
+    return type(angle, placement);
+  }
+};
+
+//spec without angle
+template<class Placement>
+struct HasAngleBound<Placement, internal_np::Param_not_found>{
+
+  typedef Placement type;
+  static type get_placement(const double&, Placement& placement)
+  {
+    return placement;
+  }
+};
+
 
 }//end internal
 }

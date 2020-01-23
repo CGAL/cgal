@@ -7,7 +7,6 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_cost.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
@@ -37,7 +36,7 @@ int main(int argc, char** argv)
   const std::size_t stop_n = (argc > 2) ? std::stoi(argv[2]) : num_halfedges(surface_mesh)/2 - 1;
   SMS::Count_stop_predicate<Surface_mesh> stop(stop_n);
 
-  typedef SMS::Bounded_normal_change_placement<SMS::LindstromTurk_placement<Surface_mesh> > Placement;
+  typedef SMS::LindstromTurk_placement<Surface_mesh> Placement;
 
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
@@ -46,7 +45,8 @@ int main(int argc, char** argv)
   std::cout << "Collapsing edges of mesh: " << filename << ", aiming for " << stop_n << " final edges..." << std::endl;
   SMS::edge_collapse(surface_mesh, stop,
                      CGAL::parameters::get_cost(SMS::LindstromTurk_cost<Surface_mesh>())
-                                      .get_placement(Placement()));
+                                      .get_placement(Placement())
+                                      .max_normal_angle_change(CGAL_PI/2.0));
 
   std::ofstream os((argc > 3) ? argv[3] : "out.off");
   os.precision(17);

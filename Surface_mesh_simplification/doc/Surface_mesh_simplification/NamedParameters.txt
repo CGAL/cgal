@@ -114,7 +114,7 @@ If it is set to `false`, then then a constrained edge will only be constrained t
 \cgalNPBegin{bound_normal_angle_change} \anchor SMS_bound_normal_angle_change
 is the maximal difference between the angle of the normal of a face before and after collapsing.
 <b>Type:</b> double\n
-<b>Default:</b> `pi`
+<b>Default:</b> None
 \cgalNPEnd
 \cgalNPTableEnd
 */

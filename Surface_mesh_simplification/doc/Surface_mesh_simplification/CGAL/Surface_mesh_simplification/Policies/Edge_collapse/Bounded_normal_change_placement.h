@@ -13,6 +13,8 @@ triangle in the profile changes the normal by more than 90 degree.
 
 \cgalModels `GetPlacement`
 
+\deprecated This class is now deprecated, and has been replaced by the NamedParameter `max_normal_angle_change`.
+
 */
 template <typename Get_placement_>
 class Bounded_normal_change_placement {
