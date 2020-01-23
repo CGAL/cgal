@@ -13,83 +13,24 @@
 
 #include <CGAL/license/Surface_mesh_simplification.h>
 
-#include <CGAL/property_map.h>
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_normal_change_placement.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS "See the Named Parameter `max_normal_angle_change` for more information."
 
-#include <boost/optional.hpp>
+#include <CGAL/internal/deprecation_warning.h>
+#include <CGAL/Surface_mesh_simplification/internal/Constrained_placement.h>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
 template<class GetPlacement>
 class Bounded_normal_change_placement
+    : public internal::Bounded_normal_change_placement<GetPlacement>
 {
 public:
-  Bounded_normal_change_placement(const GetPlacement& get_placement = GetPlacement())
-    : m_get_placement(get_placement)
-  {}
-
-  template <typename Profile>
-  boost::optional<typename Profile::Point>
-  operator()(const Profile& profile) const
-  {
-    typedef typename Profile::VertexPointMap                              Vertex_point_map;
-
-    typedef typename Profile::Geom_traits                                 Geom_traits;
-    typedef typename Geom_traits::Vector_3                                Vector;
-
-    typedef typename boost::property_traits<Vertex_point_map>::value_type Point;
-    typedef typename boost::property_traits<Vertex_point_map>::reference  Point_reference;
-
-    const Geom_traits& gt = profile.geom_traits();
-    const Vertex_point_map& vpm = profile.vertex_point_map();
-
-    boost::optional<typename Profile::Point> op = m_get_placement(profile);
-    if(op)
-    {
-      // triangles returns the triangles of the star of the vertices of the edge to collapse
-      // First the two trianges incident to the edge, then the other triangles
-      // The second vertex of each triangle is the vertex that gets placed
-       const typename Profile::Triangle_vector& triangles = profile.triangles();
-       if(triangles.size() > 2)
-       {
-         typename Profile::Triangle_vector::const_iterator it = triangles.begin();
-
-         if(profile.left_face_exists())
-           ++it;
-         if(profile.right_face_exists())
-           ++it;
-
-         while(it!= triangles.end())
-         {
-           const typename Profile::Triangle& t = *it;
-           Point_reference p = get(vpm, t.v0);
-           Point_reference q = get(vpm, t.v1);
-           Point_reference r = get(vpm, t.v2);
-           const Point& q2 = *op;
-
-           Vector eqp = gt.construct_vector_3_object()(q, p);
-           Vector eqr = gt.construct_vector_3_object()(q, r);
-           Vector eq2p = gt.construct_vector_3_object()(q2, p);
-           Vector eq2r = gt.construct_vector_3_object()(q2, r);
-
-           Vector n1 = gt.construct_cross_product_vector_3_object()(eqp, eqr);
-           Vector n2 = gt.construct_cross_product_vector_3_object()(eq2p, eq2r);
-
-           if(!is_positive(gt.compute_scalar_product_3_object()(n1, n2)))
-             return boost::optional<typename Profile::Point>();
-
-           ++it;
-         }
-       }
-    }
-
-    return op;
-  }
-
-private:
-  const GetPlacement m_get_placement;
+   Bounded_normal_change_placement(const GetPlacement& get_placement = GetPlacement())
+     :internal::Bounded_normal_change_placement<GetPlacement>(get_placement)
+   {}
 };
-
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 

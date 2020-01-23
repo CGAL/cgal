@@ -90,6 +90,7 @@ CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
 CGAL_add_named_parameter(constrain_geometry_t, constrain_geometry, constrain_geometry)
+CGAL_add_named_parameter(max_normal_angle_change_t, max_normal_angle_change, max_normal_angle_change)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)
