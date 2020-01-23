@@ -81,7 +81,7 @@ int main(int argc, char** argv)
   std::cout << "Collapsing as many edges of mesh: " << filename << " as possible..." << std::endl;
   int r = SMS::edge_collapse(surface_mesh, stop,
                              CGAL::parameters::edge_is_constrained_map(bem)
-                                              .get_placement(Placement(bem)));
+                                              .get_placement(Placement()));
 
   std::cout << "\nFinished!\n" << r << " edges removed.\n"
             << surface_mesh.number_of_edges() << " final edges.\n";

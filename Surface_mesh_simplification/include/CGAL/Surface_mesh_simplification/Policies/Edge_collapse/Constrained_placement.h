@@ -11,6 +11,8 @@
 #ifndef CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_CONSTRAINED_PLACEMENT_H
 #define CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_CONSTRAINED_PLACEMENT_H
 
+#include <CGAL/license/Surface_mesh_simplification.h>
+
 #define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS "See the Named Parameter `constrain_geometry` for more information."
 #include <CGAL/internal/deprecation_warning.h>

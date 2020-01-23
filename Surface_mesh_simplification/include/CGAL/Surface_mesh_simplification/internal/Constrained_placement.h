@@ -25,7 +25,7 @@ class Constrained_placement
 {
 public:
   typedef Tag_true Constrained_tag;
-  Constrained_placement(const EdgeIsConstrainedMap map = EdgeIsConstrainedMap(),
+  Constrained_placement(const EdgeIsConstrainedMap map,
                         const BasePlacement& base = BasePlacement())
     : BasePlacement(base),
       m_ecm(map)
