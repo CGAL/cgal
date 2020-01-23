@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Jane Tournois
 //                 Mael Rouxel-Labbé
@@ -271,6 +271,8 @@ bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const 
     // with theta_j - theta_i = theta_bound
     const FT sp_diff_bound = nbn * 0.00017453292431333;
     const FT sp_bl = sp(nb, nl);
+
+    // norm of nl is 1 by construction
     if(CGAL::abs(sp_bi - sp_bl) <= sp_diff_bound)
       continue;
 
@@ -382,9 +384,10 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
       if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
         return CGAL::NULL_VECTOR;
 
-      const FT sp_bi = sp_3(nb, ni);
+      FT sp_bi = sp_3(nb, ni);
+      CGAL_assertion(sp_bi >= - std::numeric_limits<FT>::epsilon());
 
-      CGAL_assertion(sp_bi >= 0);
+      sp_bi = (std::max)(FT(0), sp_bi);
       if(sp_bi <= min_sp)
         continue;
 
