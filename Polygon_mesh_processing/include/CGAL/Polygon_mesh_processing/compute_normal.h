@@ -27,6 +27,7 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
+#include <limits>
 #include <utility>
 #include <vector>
 
