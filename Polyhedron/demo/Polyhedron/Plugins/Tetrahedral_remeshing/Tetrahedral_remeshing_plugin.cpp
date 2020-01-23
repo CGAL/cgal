@@ -43,7 +43,7 @@ namespace CGAL {
         typename TDS_tgt::Vertex v_tgt;
         v_tgt.set_point(Tgt_point(conv(v_src.point())));
         v_tgt.set_time_stamp(-1);
-//        v_tgt.set_dimension(v_src.dimension());
+        v_tgt.set_dimension(v_src.in_dimension());
         return v_tgt;
       }
       void operator()(const typename TDS_src::Vertex& v_src,
@@ -58,7 +58,7 @@ namespace CGAL {
         typedef typename TDS_tgt::Vertex::Point Tgt_point;
 
         v_tgt.set_point(Tgt_point(conv(v_src.point())));
-//        v_tgt.set_dimension(v_src.dimension());
+        v_tgt.set_dimension(v_src.in_dimension());
       }
     };
 
