@@ -23,128 +23,6 @@
 
 #include "ui_Tetrahedral_remeshing_dialog.h"
 
-namespace CGAL {
-
-  namespace internal {
-
-    template<typename TDS_src, typename TDS_tgt>
-    struct Vertex_converter
-    {
-      typename TDS_tgt::Vertex operator()(const typename TDS_src::Vertex& v_src) const
-      {
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_src::Vertex::Point>::Kernel GT_src;
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
-        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
-
-        typedef typename TDS_tgt::Vertex::Point Tgt_point;
-
-        typename TDS_tgt::Vertex v_tgt;
-        v_tgt.set_point(Tgt_point(conv(v_src.point())));
-        v_tgt.set_time_stamp(-1);
-        v_tgt.set_dimension(v_src.in_dimension());
-        return v_tgt;
-      }
-      void operator()(const typename TDS_src::Vertex& v_src,
-                      typename TDS_tgt::Vertex& v_tgt) const
-      {
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_src::Vertex::Point>::Kernel GT_src;
-        typedef typename CGAL::Kernel_traits<
-          typename TDS_tgt::Vertex::Point>::Kernel GT_tgt;
-        CGAL::Cartesian_converter<GT_src, GT_tgt> conv;
-
-        typedef typename TDS_tgt::Vertex::Point Tgt_point;
-
-        v_tgt.set_point(Tgt_point(conv(v_src.point())));
-        v_tgt.set_dimension(v_src.in_dimension());
-      }
-    };
-
-    template<typename TDS_src, typename TDS_tgt>
-    struct Cell_converter
-    {
-      typename TDS_tgt::Cell operator()(const typename TDS_src::Cell& c_src) const
-      {
-        typename TDS_tgt::Cell c_tgt;
-        c_tgt.set_subdomain_index(c_src.subdomain_index());
-        c_tgt.set_time_stamp(-1);
-        return c_tgt;
-      }
-      void operator()(const typename TDS_src::Cell& c_src,
-                      typename TDS_tgt::Cell& c_tgt) const
-      {
-        c_tgt.set_subdomain_index(c_src.subdomain_index());
-      }
-    };
-
-    template<typename T3, typename Remeshing_tr>
-    void build_remeshing_triangulation(const T3& tr,
-                                       Remeshing_tr& remeshing_tr)
-    {
-      typedef typename T3::Triangulation_data_structure Tds;
-      typedef typename Remeshing_tr::Tds                RTds;
-
-      remeshing_tr.clear();
-      remeshing_tr.set_infinite_vertex(
-        remeshing_tr.tds().copy_tds(
-          tr.tds(),
-          tr.infinite_vertex(),
-          Vertex_converter<Tds, RTds>(),
-          Cell_converter<Tds, RTds>()));
-    }
-
-    template<typename T3, typename Remeshing_tr>
-    void build_from_remeshing_triangulation(const Remeshing_tr& remeshing_tr,
-                                            T3& tr)
-    {
-      typedef typename T3::Triangulation_data_structure Tds;
-      typedef typename Remeshing_tr::Tds                RTds;
-
-      tr.clear();
-      tr.set_infinite_vertex(
-        tr.tds().copy_tds(
-          remeshing_tr.tds(),
-          remeshing_tr.infinite_vertex(),
-          Vertex_converter<RTds, Tds>(),
-          Cell_converter<RTds, Tds>()));
-    }
-
-    void update_c3t3(C3t3& c3t3)
-    {
-      for (typename C3t3::Triangulation::Finite_facets_iterator
-        fit = c3t3.triangulation().finite_facets_begin();
-        fit != c3t3.triangulation().finite_facets_end();
-        ++fit)
-      {
-        typename C3t3::Triangulation::Facet f = *fit;
-        typename C3t3::Triangulation::Cell::Subdomain_index
-          s1 = f.first->subdomain_index(),
-          s2 = f.first->neighbor(f.second)->subdomain_index();
-        if (s1 != s2)
-        {
-          if (s1 > s2)
-            std::swap(s1, s2);
-          c3t3.add_to_complex(f, s1 + 100 * s2);// std::make_pair(s1, s2));
-        }
-      }
-      for (typename C3t3::Triangulation::Finite_cells_iterator
-        cit = c3t3.triangulation().finite_cells_begin();
-        cit != c3t3.triangulation().finite_cells_end();
-        ++cit)
-      {
-        typename C3t3::Triangulation::Cell::Subdomain_index
-          si = cit->subdomain_index();
-        if (si != 0)
-        {
-          cit->set_subdomain_index(0);//o.w. add_to_complex() does nothing
-          c3t3.add_to_complex(cit, si);
-        }
-      }
-    }
-  }
-}
 
 using namespace CGAL::Three;
 class Polyhedron_demo_tetrahedral_remeshing_plugin :
@@ -211,13 +89,8 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-      Remeshing_triangulation tr;
-      CGAL::internal::build_remeshing_triangulation(c3t3_item->c3t3().triangulation(), tr);
-
-      std::cout << "Remeshing triangulation built (" << time.elapsed() << " ms)" << std::endl;
-      time.restart();
-
-      CGAL::tetrahedral_adaptive_remeshing(tr, target_length,
+      CGAL::tetrahedral_adaptive_remeshing(c3t3_item->c3t3().triangulation(),
+        target_length,
         CGAL::parameters::remesh_boundaries(!protect)
         .number_of_iterations(nb_iter));
 
@@ -225,10 +98,6 @@ public Q_SLOTS:
       time.restart();
 
       c3t3_item->c3t3().clear();
-      CGAL::internal::build_from_remeshing_triangulation(tr, c3t3_item->c3t3().triangulation());
-      CGAL::internal::update_c3t3(c3t3_item->c3t3());
-
-      std::cout << "Back conversion done (" << time.elapsed() << " ms)" << std::endl;
 
       c3t3_item->c3t3_changed();
       this->scene->itemChanged(index);

@@ -140,6 +140,7 @@ CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 // tetrahedral remeshing parameters
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_selector)
+CGAL_add_named_parameter(remeshing_visitor_t, remeshing_visitor, remeshing_visitor)
 
 // output parameters
 CGAL_add_named_parameter(face_proxy_map_t, face_proxy_map, face_proxy_map)

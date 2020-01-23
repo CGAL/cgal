@@ -56,7 +56,7 @@ namespace CGAL
   * subdomains throughout the remeshing process.
   *
   * Subdomains are defined by indices that
-  * are stored in the cells of the input triangulation, following the `RemeshingCellBase_3`
+  * are stored in the cells of the input triangulation, following the `MeshCellBase_3`
   * concept.
   * The surfacic interfaces between subdomains are formed by facets which two incident cells
   * have different subdomain indices.
@@ -181,6 +181,15 @@ namespace CGAL
     ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained)
                              , No_constraint());
 
+    typedef typename boost::lookup_named_param_def <
+      internal_np::remeshing_visitor_t,
+      NamedParameters,
+      Tetrahedral_remeshing::internal::Default_remeshing_visitor
+    > ::type Visitor;
+    Visitor visitor
+      = choose_param(get_param(np, internal_np::remeshing_visitor),
+                     Tetrahedral_remeshing::internal::Default_remeshing_visitor());
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Tetrahedral remeshing ("
       << "nb_iter = " << max_it
@@ -192,9 +201,9 @@ namespace CGAL
 #endif
 
     typedef Tetrahedral_remeshing::internal::Adaptive_remesher<
-      Tr, SizingFunction, ECMap, SelectionFunctor> Remesher;
+      Tr, SizingFunction, ECMap, SelectionFunctor, Visitor> Remesher;
     Remesher remesher(tr, sizing, protect, ecmap
-                    , cell_select
+                    , cell_select, visitor
                   /*, adaptive*/);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -218,7 +227,7 @@ namespace CGAL
         remesher.collapse();
       }
       remesher.flip();
-      remesher.smooth();
+//      remesher.smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "# Iteration " << it_nb << " done : "

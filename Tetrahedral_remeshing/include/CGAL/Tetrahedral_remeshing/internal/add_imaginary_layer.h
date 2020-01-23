@@ -209,7 +209,7 @@ namespace internal
   void add_layer_of_imaginary_tets(T3& tr, const Index& imaginary_index)
   {
     typedef typename T3::Vertex_handle         Vertex_handle;
-    typedef typename T3::Point                 Point;
+    typedef typename T3::Geom_traits::Point_3  Point_3;
     typedef typename T3::Geom_traits::Vector_3 Vector_3;
 
     //compute normals
@@ -220,7 +220,7 @@ namespace internal
     const double offset = 0.04 * compute_bbox_max_size(tr);
 
     //compute points to be inserted
-    std::vector<Point> offset_points;
+    std::vector<Point_3> offset_points;
     compute_offset_points(normals,
       offset,
       std::back_inserter(offset_points),

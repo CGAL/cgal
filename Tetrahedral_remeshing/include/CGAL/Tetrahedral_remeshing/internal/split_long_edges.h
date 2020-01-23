@@ -42,13 +42,13 @@ namespace internal
   typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
                                           C3t3& c3t3)
   {
-    typedef typename C3t3::Triangulation   Tr;
-    typedef typename C3t3::Subdomain_index Subdomain_index;
-    typedef typename Tr::Point             Point;
-    typedef typename Tr::Facet             Facet;
-    typedef typename Tr::Vertex_handle     Vertex_handle;
-    typedef typename Tr::Cell_handle       Cell_handle;
-    typedef typename Tr::Cell_circulator   Cell_circulator;
+    typedef typename C3t3::Triangulation      Tr;
+    typedef typename C3t3::Subdomain_index    Subdomain_index;
+    typedef typename Tr::Geom_traits::Point_3 Point;
+    typedef typename Tr::Facet                Facet;
+    typedef typename Tr::Vertex_handle        Vertex_handle;
+    typedef typename Tr::Cell_handle          Cell_handle;
+    typedef typename Tr::Cell_circulator      Cell_circulator;
 
     Tr& tr = c3t3.triangulation();
     Vertex_handle v1 = e.first->vertex(e.second);
@@ -57,7 +57,6 @@ namespace internal
     //backup subdomain info of incident cells before making changes
     short dimension = (c3t3.is_in_complex(e)) ? 1 : 3;
     boost::unordered_map<Facet, Subdomain_index> info;
-    tr.visitor().before_split(c3t3.triangulation(), e);
 
     Cell_circulator circ = tr.incident_cells(e);
     Cell_circulator end = circ;
@@ -85,13 +84,10 @@ namespace internal
     Vertex_handle new_v = tr.tds().insert_in_edge(e);
     const Point m = tr.geom_traits().construct_midpoint_3_object()
                            (point(v1->point()), point(v2->point()));
-    new_v->set_point(m);
+    new_v->set_point(typename Tr::Point(m));
 
     // update dimension
     c3t3.set_dimension(new_v, dimension);
-
-    // update c3t3
-    tr.visitor().after_split(tr, new_v);
 
     std::vector<Cell_handle> new_cells;
     tr.incident_cells(new_v, std::back_inserter(new_cells));
@@ -144,12 +140,13 @@ namespace internal
     }
   }
 
-  template<typename C3T3, typename CellSelector>
+  template<typename C3T3, typename CellSelector, typename Visitor>
   void split_long_edges(C3T3& c3t3,
     const typename C3T3::Triangulation::Geom_traits::FT& high,
     const bool protect_boundaries,
     const typename C3T3::Subdomain_index& imaginary_index,
-    CellSelector cell_selector)
+    CellSelector cell_selector,
+    Visitor& visitor)
   {
     typedef typename C3T3::Triangulation       T3;
     typedef typename T3::Cell_handle           Cell_handle;
@@ -216,7 +213,9 @@ namespace internal
         if (!can_be_split(edge, c3t3, protect_boundaries, imaginary_index, cell_selector))
           continue;
 
+        visitor.before_split(tr, edge);
         Vertex_handle vh = split_edge(edge, c3t3);
+        visitor.after_split(tr, vh);
         //CGAL_assertion(tr.is_valid(true));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG

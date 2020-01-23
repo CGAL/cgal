@@ -50,7 +50,7 @@ namespace internal
                        V_PROBLEM, C_PROBLEM, E_PROBLEM,
                        TOPOLOGICAL_PROBLEM, ORIENTATION_PROBLEM, SHARED_NEIGHBOR_PROBLEM };
 
-  template<typename C3t3>
+  template<typename C3t3, typename Visitor>
   class CollapseTriangulation
   {
     typedef typename C3t3::Triangulation                        Tr;
@@ -66,7 +66,8 @@ namespace internal
   public:
     CollapseTriangulation(C3t3& c3t3,
                           const Edge& edge,
-                          Collapse_type _collapse_type)
+                          Collapse_type _collapse_type,
+                          Visitor& visitor)
     {
       v0_init = edge.first->vertex(edge.second);
       v1_init = edge.first->vertex(edge.third);
@@ -109,7 +110,7 @@ namespace internal
           Cell_handle new_ch = builder.add_cell(v2v.left.at(ch->vertex(0)), v2v.left.at(ch->vertex(1)),
                                                 v2v.left.at(ch->vertex(2)), v2v.left.at(ch->vertex(3)));
           new_ch->set_subdomain_index(ch->subdomain_index());
-          c3t3.triangulation().visitor().after_add_cell(ch, new_ch);
+          visitor.after_add_cell(ch, new_ch);
 
           c2c.left.insert(std::make_pair(ch, new_ch));
         }
@@ -834,13 +835,14 @@ namespace internal
     return vh;
   }
 
-  template<typename C3t3, typename CellSelector>
+  template<typename C3t3, typename CellSelector, typename Visitor>
   typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
                      C3t3& c3t3,
                      const typename C3t3::Triangulation::Geom_traits::FT& sqhigh,
                      const bool protect_boundaries,
                      const typename C3t3::Subdomain_index& imaginary_index,
-                     CellSelector cell_selector)
+                     CellSelector cell_selector,
+                     Visitor& visitor)
   {
     typedef typename C3t3::Triangulation   Tr;
     typedef typename Tr::Point             Point;
@@ -874,7 +876,7 @@ namespace internal
                                    edges_sqlength_after_collapse, sqhigh,
                                    imaginary_index /*, adaptive = false*/))
         {
-          CollapseTriangulation<C3t3> local_tri(c3t3, edge, collapse_type);
+          CollapseTriangulation<C3t3, Visitor> local_tri(c3t3, edge, collapse_type, visitor);
           local_tri.update();
 
           Result_type res = local_tri.collapse();
@@ -925,13 +927,14 @@ namespace internal
     }
   }
 
-  template<typename C3T3, typename CellSelector>
+  template<typename C3T3, typename CellSelector, typename Visitor>
   void collapse_short_edges(C3T3& c3t3,
     const typename C3T3::Triangulation::Geom_traits::FT& low,
     const typename C3T3::Triangulation::Geom_traits::FT& high,
     const bool protect_boundaries,
     const typename C3T3::Subdomain_index& imaginary_index,
-    CellSelector cell_selector)
+    CellSelector cell_selector,
+    Visitor& visitor)
   {
     typedef typename C3T3::Triangulation       T3;
     typedef typename T3::Cell_handle           Cell_handle;
@@ -1004,7 +1007,8 @@ namespace internal
         Vertex_handle vh =
 #endif
         collapse_edge(edge, c3t3, sq_high,
-                      protect_boundaries, imaginary_index, cell_selector);
+                      protect_boundaries, imaginary_index, cell_selector,
+                      visitor);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         if (vh != Vertex_handle())

@@ -591,10 +591,11 @@ namespace internal
     }
   }
 
-  template<typename C3t3>
+  template<typename C3t3, typename Visitor>
   Sliver_removal_result flip_n_to_m(C3t3& c3t3,
                                     typename C3t3::Edge& edge,
                                     typename C3t3::Vertex_handle vh,
+                                    Visitor& visitor,
                                     bool check_validity = false)
   {
     CGAL_USE(check_validity);
@@ -769,7 +770,7 @@ namespace internal
 
     //Subdomain index?
     typename C3t3::Subdomain_index subdomain = to_remove[0]->subdomain_index();
-    tr.visitor().before_flip(to_remove[0]);
+    visitor.before_flip(to_remove[0]);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     for (std::size_t i = 1; i < to_remove.size(); ++i)
@@ -792,7 +793,7 @@ namespace internal
       new_cell->set_vertex(fi.second, vh);
 
       c3t3.add_to_complex(new_cell, subdomain);
-      tr.visitor().after_flip(new_cell);
+      visitor.after_flip(new_cell);
       cells_to_update.push_back(new_cell);
     }
 
@@ -913,11 +914,12 @@ namespace internal
   }
 
 
-  template<typename C3t3>
+  template<typename C3t3, typename Visitor>
   Sliver_removal_result flip_n_to_m(typename C3t3::Edge& edge,
     C3t3& c3t3,
     std::vector<typename C3t3::Vertex_handle>& boundary_vertices,
-    const Flip_Criterion& criterion)
+    const Flip_Criterion& criterion,
+    Visitor& visitor)
   {
     typedef typename C3t3::Vertex_handle Vertex_handle;
     typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
@@ -959,7 +961,7 @@ namespace internal
         if (curr_min_dh >= curr_cost_vpair.first)
           return NO_BEST_CONFIGURATION;
 
-        result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first);
+        result = flip_n_to_m(c3t3, edge, curr_cost_vpair.second.first, visitor);
 
         if (result != NOT_FLIPPABLE)
           flip_performed = true;
@@ -969,10 +971,11 @@ namespace internal
     return result;
   }
 
-  template<typename C3t3>
+  template<typename C3t3, typename Visitor>
   Sliver_removal_result find_best_flip(typename C3t3::Edge& edge,
                                        C3t3& c3t3,
-                                       const Flip_Criterion& criterion)
+                                       const Flip_Criterion& criterion,
+                                       Visitor& visitor)
   {
     typedef typename C3t3::Triangulation Tr;
     typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -1044,7 +1047,7 @@ namespace internal
       {
         std::vector<Vertex_handle> vertices;
         vertices.insert(vertices.end(), boundary_vertices.begin(), boundary_vertices.end());
-        return flip_n_to_m(edge, c3t3, vertices, criterion);
+        return flip_n_to_m(edge, c3t3, vertices, criterion, visitor);
         //return n_to_m_flip(edge, boundary_vertices, flip_criterion);
       }
     }
@@ -1052,10 +1055,11 @@ namespace internal
   }
 
 
-  template<typename VertexPair, typename C3t3>
+  template<typename VertexPair, typename C3t3, typename Visitor>
   std::size_t flip_all_edges(std::vector<VertexPair>& edges,
                              C3t3& c3t3,
-                             const Flip_Criterion& criterion)
+                             const Flip_Criterion& criterion,
+                             Visitor& visitor)
   {
     typedef typename C3t3::Triangulation Tr;
     typedef typename Tr::Vertex_handle Vertex_handle;
@@ -1076,7 +1080,7 @@ namespace internal
       {
         Edge edge(ch, i0, i1);
 
-        Sliver_removal_result res = find_best_flip(edge, c3t3, criterion);
+        Sliver_removal_result res = find_best_flip(edge, c3t3, criterion, visitor);
         if (res == INVALID_CELL || res == INVALID_VERTEX || res == INVALID_ORIENTATION)
         {
           std::cout << "FLIP PROBLEM!!!!" << std::endl;
@@ -1096,11 +1100,12 @@ namespace internal
     return count;
   }
 
-  template<typename C3T3, typename CellSelector>
+  template<typename C3T3, typename CellSelector, typename Visitor>
   void flip_edges(C3T3& c3t3,
     const typename C3T3::Subdomain_index& imaginary_index,
     const bool protect_boundaries,
-    CellSelector cell_selector)
+    CellSelector cell_selector,
+    Visitor& visitor)
   {
     CGAL_USE(protect_boundaries);
     typedef typename C3T3::Triangulation       T3;
@@ -1153,7 +1158,7 @@ namespace internal
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       nb_flips =
 #endif
-      flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED);
+      flip_all_edges(inside_edges, c3t3, MIN_ANGLE_BASED, visitor);
     //}
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE

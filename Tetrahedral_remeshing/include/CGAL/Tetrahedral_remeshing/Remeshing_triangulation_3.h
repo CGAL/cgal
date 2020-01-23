@@ -40,24 +40,6 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-  class Default_remeshing_visitor
-  {
-  public:
-    template<typename Tr>
-    void before_split(const Tr& tr,
-                      const typename Tr::Edge& e) {}
-    template<typename Tr>
-    void after_split(const Tr& tr,
-                     const typename Tr::Vertex_handle new_v) {}
-    template<typename CellHandleOld, typename CellHandleNew>
-    void after_add_cell(CellHandleOld co,
-                        CellHandleNew cn) const {}
-    template<typename CellHandle>
-    void before_flip(const CellHandle c) {}
-    template<typename CellHandle>
-    void after_flip(CellHandle c) {}
-  };
-
   /*!
   \ingroup PkgTetrahedralRemeshingClasses
   
@@ -88,9 +70,6 @@ namespace Tetrahedral_remeshing
            typename Concurrency_tag = CGAL::Sequential_tag,
            typename Cb = CGAL::Triangulation_cell_base_3<Gt>,
            typename Vb = CGAL::Triangulation_vertex_base_3<Gt>
-    /// \cond SKIP_IN_MANUAL
-    ,      typename Cell_visitor = Default_remeshing_visitor
-    /// \endcond
   >
   class Remeshing_triangulation_3
     : public CGAL::Triangulation_3<Gt,
@@ -107,17 +86,6 @@ namespace Tetrahedral_remeshing
     typedef CGAL::Triangulation_data_structure_3<
               Remeshing_Vb, Remeshing_Cb, Concurrency_tag>  Tds;
     typedef CGAL::Triangulation_3<Gt, Tds>                  Self;
-
-  private:
-    Cell_visitor m_visitor;
-
-  /// \cond SKIP_IN_MANUAL
-  public:
-    Cell_visitor& visitor()
-    {
-      return m_visitor;
-    }
-  /// \endcond
   };
 
   namespace internal

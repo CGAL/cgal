@@ -83,30 +83,30 @@ namespace Tetrahedral_remeshing
     return gt.compute_approximate_dihedral_angle_3_object()(p, q, r, s);
   }
 
-  template<typename Tr>
-  typename Tr::Geom_traits::FT min_dihedral_angle(const Tr& tr,
-                                                  const typename Tr::Point& p,
-                                                  const typename Tr::Point& q,
-                                                  const typename Tr::Point& r,
-                                                  const typename Tr::Point& s)
+  template<typename Point, typename Geom_traits>
+  typename Geom_traits::FT min_dihedral_angle(const Point& p,
+                                              const Point& q,
+                                              const Point& r,
+                                              const Point& s,
+                                              const Geom_traits& gt)
   {
-    typedef typename Tr::Geom_traits::FT FT;
-    FT a = CGAL::abs(dihedral_angle(p, q, r, s, tr.geom_traits()));
+    typedef typename Geom_traits::FT FT;
+    FT a = CGAL::abs(dihedral_angle(p, q, r, s, gt));
     FT min_dh = a;
 
-    a = CGAL::abs(dihedral_angle(p, r, q, s, tr.geom_traits()));
+    a = CGAL::abs(dihedral_angle(p, r, q, s, gt));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(p, s, q, r, tr.geom_traits()));
+    a = CGAL::abs(dihedral_angle(p, s, q, r, gt));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(q, r, p, s, tr.geom_traits()));
+    a = CGAL::abs(dihedral_angle(q, r, p, s, gt));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(q, s, p, r, tr.geom_traits()));
+    a = CGAL::abs(dihedral_angle(q, s, p, r, gt));
     min_dh = (std::min)(a, min_dh);
 
-    a = CGAL::abs(dihedral_angle(r, s, p, q, tr.geom_traits()));
+    a = CGAL::abs(dihedral_angle(r, s, p, q, gt));
     min_dh = (std::min)(a, min_dh);
 
     return min_dh;
@@ -119,11 +119,11 @@ namespace Tetrahedral_remeshing
                                                   const typename Tr::Vertex_handle v2,
                                                   const typename Tr::Vertex_handle v3)
   {
-    return min_dihedral_angle(tr,
-                              point(v0->point()),
+    return min_dihedral_angle(point(v0->point()),
                               point(v1->point()),
                               point(v2->point()),
-                              point(v3->point()));
+                              point(v3->point()),
+                              tr.geom_traits());
   }
 
   template<typename Tr>
@@ -131,10 +131,10 @@ namespace Tetrahedral_remeshing
                                                   const typename Tr::Cell_handle c)
   {
     return min_dihedral_angle(tr,
-                              point(c->vertex(0)->point()),
-                              point(c->vertex(1)->point()),
-                              point(c->vertex(2)->point()),
-                              point(c->vertex(3)->point()));
+                              c->vertex(0),
+                              c->vertex(1),
+                              c->vertex(2),
+                              c->vertex(3));
   }
 
   template<typename Tr>

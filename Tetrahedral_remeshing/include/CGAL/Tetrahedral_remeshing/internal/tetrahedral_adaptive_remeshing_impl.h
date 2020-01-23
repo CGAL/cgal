@@ -43,6 +43,23 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
+  class Default_remeshing_visitor
+  {
+  public:
+    template<typename Tr>
+    void before_split(const Tr& tr, const typename Tr::Edge& e) {}
+    template<typename Tr>
+    void after_split(const Tr& tr, const typename Tr::Vertex_handle new_v) {}
+
+    template<typename CellHandleOld, typename CellHandleNew>
+    void after_add_cell(CellHandleOld co, CellHandleNew cn) const {}
+
+    template<typename CellHandle>
+    void before_flip(const CellHandle c) {}
+    template<typename CellHandle>
+    void after_flip(CellHandle c) {}
+  };
+
   template<typename Tr>
   struct All_cells_selected
   {
@@ -76,6 +93,7 @@ namespace internal
          , typename SizingFunction
          , typename EdgeIsConstrainedMap
          , typename CellSelector
+         , typename Visitor
          >
   class Adaptive_remesher
   {
@@ -97,6 +115,7 @@ namespace internal
     Triangulation& m_tr; //backup to re-swap triangulations when done
     CellSelector m_cell_selector;
     Subdomain_index m_imaginary_index;
+    Visitor& m_visitor;
 
   public:
     Adaptive_remesher(Triangulation& tr
@@ -104,6 +123,7 @@ namespace internal
       , const bool protect_boundaries
       , EdgeIsConstrainedMap ecmap
       , CellSelector cell_selector
+      , Visitor& visitor
 //      , const bool adaptive
       )
       : m_sizing(sizing)
@@ -112,6 +132,7 @@ namespace internal
       , m_c3t3()
       , m_tr(tr)
       , m_cell_selector(cell_selector)
+      , m_visitor(visitor)
     {
       m_c3t3.triangulation().swap(tr);
       init_c3t3(ecmap);
@@ -154,7 +175,7 @@ namespace internal
       const FT target_edge_length = m_sizing(CGAL::ORIGIN);
       const FT emax = FT(4)/FT(3) * target_edge_length;
       split_long_edges(m_c3t3, emax, m_protect_boundaries, m_imaginary_index,
-                       m_cell_selector);
+                       m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -173,7 +194,7 @@ namespace internal
       FT emax = FT(4)/FT(3) * target_edge_length;
       collapse_short_edges(m_c3t3, emin, emax, m_protect_boundaries,
                            m_imaginary_index,
-                           m_cell_selector);
+                           m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -187,7 +208,7 @@ namespace internal
     void flip()
     {
       flip_edges(m_c3t3, m_imaginary_index, m_protect_boundaries,
-                 m_cell_selector);
+                 m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
