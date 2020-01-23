@@ -41,6 +41,19 @@ the number of edges effectively removed.
     The property map containing the constrained-or-not status of each edge of `pmesh`
   \cgalParamEnd
 
+  \cgalParamBegin{constrain_geometry}
+    If this is set to `false`, then the edges constrained in the map will be allowed 
+    to be moved, and the constraints will only be topologic.
+  The default value of this parameter is `true`.
+  \cgalParamEnd
+
+  \cgalParamBegin{max_normal_angle_change}
+    The maximal angle formed by the normals of a face before and after collapsing,
+    in radians.
+    
+    If this parameter is omitted, there won't be any constraint on the normal angles.
+  \cgalParamEnd
+
   \cgalParamBegin{visitor}
     The visitor that is called by the `edge_collapse` function
     in certain points to allow the user to track the simplification process.
