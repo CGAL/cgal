@@ -15,45 +15,48 @@
 
 #include <CGAL/license/Polyhedron.h>
 
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/IO/Polyhedron_scan_OFF.h>
-#include <CGAL/Polyhedron_3.h>
+
 #include <iostream>
 
 namespace CGAL {
 
-template < class Traits,
-           class Items,
-           template < class T, class I, class A>
-           class HDS, class Alloc>
-void scan_OFF( std::istream& in,
-               Polyhedron_3<Traits,Items,HDS,Alloc>& P,
-               File_header_OFF& header) {
-    // reads a polyhedron from `in' and appends it to P.
-    // Returns also the File_header_OFF structure of the object.
-    typedef Polyhedron_3<Traits,Items,HDS,Alloc> Polyhedron;
-    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
-    typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
-    Scanner scanner( in, header.verbose());
-    P.delegate(scanner);
-    header = scanner.header();
+template <class Traits,
+          class Items,
+          template < class T, class I, class A>
+          class HDS, class Alloc>
+void scan_OFF(std::istream& in,
+              Polyhedron_3<Traits, Items, HDS, Alloc>& P,
+              File_header_OFF& header)
+{
+  // reads a polyhedron from `in' and appends it to P.
+  // Returns also the File_header_OFF structure of the object.
+  typedef Polyhedron_3<Traits, Items, HDS, Alloc> Polyhedron;
+  typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
+  typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
+  Scanner scanner(in, header.verbose());
+  P.delegate(scanner);
+  header = scanner.header();
 }
 
-template < class Traits,
-           class Items,
-           template < class T, class I, class A>
-           class HDS, class Alloc>
-void scan_OFF( std::istream& in, Polyhedron_3<Traits,Items,HDS,Alloc>& P,
-               bool verbose = false) {
-    // reads a polyhedron from `in' and appends it to P.
-    typedef Polyhedron_3<Traits,Items,HDS,Alloc> Polyhedron;
-    typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
-    typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
-    Scanner scanner( in, verbose);
-    P.delegate(scanner);
+template <class Traits,
+          class Items,
+          template < class T, class I, class A>
+          class HDS, class Alloc>
+void scan_OFF(std::istream& in,
+              Polyhedron_3<Traits, Items, HDS, Alloc>& P,
+              bool verbose = false)
+{
+  // reads a polyhedron from `in' and appends it to P.
+  typedef Polyhedron_3<Traits, Items, HDS, Alloc> Polyhedron;
+  typedef typename Polyhedron::HalfedgeDS HalfedgeDS;
+  typedef Polyhedron_scan_OFF<HalfedgeDS> Scanner;
+  Scanner scanner(in, verbose);
+  P.delegate(scanner);
 }
-
 
 } //namespace CGAL
-#endif // CGAL_IO_SCAN_OFF_H //
-// EOF //
+
+#endif // CGAL_IO_SCAN_OFF_H

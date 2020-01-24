@@ -11,30 +11,30 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H
-#define CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H 1
+#define CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H
 
 #include <CGAL/license/Polyhedron.h>
 
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/IO/Inventor_ostream.h>
 #include <CGAL/IO/File_writer_inventor.h>
 #include <CGAL/IO/generic_print_polyhedron.h>
-#include <CGAL/Polyhedron_3.h>
 
 namespace CGAL {
 
-template < class Traits,
-           class Items,
-           template < class T, class I, class A>
-           class HDS, class Alloc>
-Inventor_ostream_base&
-operator<<( Inventor_ostream_base& out, 
-            const Polyhedron_3<Traits,Items,HDS,Alloc>& P) {
-    File_writer_inventor  writer;
-    generic_print_polyhedron( out.os(), P, writer);
-    return out;
+template <class Traits,
+          class Items,
+          template < class T, class I, class A>
+          class HDS, class Alloc>
+Inventor_ostream_base& operator<<(Inventor_ostream_base& out,
+                                  const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
+{
+  File_writer_inventor writer;
+  generic_print_polyhedron(out.os(), P, writer);
+  return out;
 }
 
-} //namespace CGAL
-#endif // CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H //
-// EOF //
+} // namespace CGAL
+
+#endif // CGAL_IO_POLYHEDRON_INVENTOR_OSTREAM_H

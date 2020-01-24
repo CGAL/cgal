@@ -15,12 +15,14 @@
 
 #include <CGAL/license/Polyhedron.h>
 
-
 #include <CGAL/Polyhedron_3.h>
+
 #include <CGAL/IO/print_OFF.h>
 #include <CGAL/IO/scan_OFF.h>
+
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
+
 #include <iostream>
 
 namespace CGAL {
@@ -71,18 +73,19 @@ bool read_off(std::istream& in,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(CGAL::vertex_point, P));
-  CGAL::scan_OFF( in, P);
+  CGAL::scan_OFF(in, P);
+
   if(!parameters::is_default_parameter(get_parameter(np, internal_np::vertex_point)))
   {
     typedef typename boost::graph_traits<Polyhedron_3<Traits,Items,HDS,Alloc> >::vertex_descriptor Vertex;
+
     typename property_map_selector<Polyhedron_3<Traits,Items,HDS,Alloc>, boost::vertex_point_t>::type
         def_vpm = get_property_map(CGAL::vertex_point, P);
+    Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                               get_property_map(CGAL::vertex_point, P));
+
     for(Vertex v : vertices(P))
-    {
       put(vpm, v, get(def_vpm, v));
-    }
   }
 
   return in.good();
@@ -107,7 +110,6 @@ std::ostream& operator<<( std::ostream& out, const Polyhedron_3<Traits,Items,HDS
   write_off(out,P);
   return out;
 }
-
 
 template < class Traits,
            class Items,
