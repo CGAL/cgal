@@ -22,6 +22,8 @@
 #ifndef TETRAHEDRAL_REMESHING_H
 #define TETRAHEDRAL_REMESHING_H
 
+#include <CGAL/Triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
@@ -109,50 +111,50 @@ namespace CGAL
   */
 
   //  * @tparam SizingField model of `CGAL::Sizing_field`
-
   //*  \cgalParamBegin{ adaptive } If `true`, size of elements adapts
   //*     ....
   //*  \cgalParamEnd
-    //template<typename Triangulation,
-  //         typename SizingField,
-  //         typename NamedParameters>
-  //void tetrahedral_adaptive_remeshing(Triangulation& tr,
-  //                                    const SizingField& sizing_field,
-  //                                    const NamedParameters& np)
-  template<typename Triangulation, typename NamedParameters>
-  void tetrahedral_adaptive_remeshing(Triangulation& tr,
-                                      const double& target_edge_length,
-                                      const NamedParameters& np)
+  template<typename Traits, typename TDS, typename SLDS,
+           typename NamedParameters>
+  void tetrahedral_adaptive_remeshing(
+    CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
+    const double& target_edge_length,
+    const NamedParameters& np)
   {
+    typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
     tetrahedral_adaptive_remeshing(
       tr,
-      [target_edge_length](const typename Triangulation::Point& p)
+      [target_edge_length](const Triangulation::Point& p)
                           {return target_edge_length;},
       np);
   }
 
-  template<typename Triangulation, typename NamedParameters>
-  void tetrahedral_adaptive_remeshing(Triangulation& tr,
+  template<typename Traits, typename TDS, typename SLDS,
+           typename NamedParameters>
+  void tetrahedral_adaptive_remeshing(
+    CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
     const float& target_edge_length,
     const NamedParameters& np)
   {
+    typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Triangulation;
     tetrahedral_adaptive_remeshing(
       tr,
-      [target_edge_length](const typename Triangulation::Point& p)
+      [target_edge_length](const Triangulation::Point& p)
                           {return target_edge_length; },
       np);
   }
 
-  template<typename Triangulation,
+  template<typename Traits, typename TDS, typename SLDS,
            typename SizingFunction,
            typename NamedParameters>
-  void tetrahedral_adaptive_remeshing(Triangulation& tr,
-                                      const SizingFunction& sizing,
-                                      const NamedParameters& np)
+  void tetrahedral_adaptive_remeshing(
+    CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
+    const SizingFunction& sizing,
+    const NamedParameters& np)
   {
     CGAL_assertion(tr.is_valid(true));
 
-    typedef Triangulation Tr;
+    typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Tr;
 
     using boost::choose_param;
     using boost::get_param;
@@ -312,9 +314,10 @@ namespace CGAL
   //    Polygon_mesh_processing::parameters::all_default());
   //}
 
-  template<typename Triangulation>
-  void tetrahedral_adaptive_remeshing(Triangulation& tr,
-                                      const double& target_edge_length)
+  template<typename Traits, typename TDS, typename SLDS>
+  void tetrahedral_adaptive_remeshing(
+    CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
+    const double& target_edge_length)
   {
     tetrahedral_adaptive_remeshing(tr, target_edge_length,
       Polygon_mesh_processing::parameters::all_default());
