@@ -128,10 +128,13 @@ public:
            Vector n2 = gt.construct_cross_product_vector_3_object()(eq2p, eq2r);
 
            const FT sp = gt.compute_scalar_product_3_object()(n1, n2);
+           const FT cos_bound = std::cos(m_angle);
+           bool is_bound_pos = is_positive(cos_bound);
            bool is_pos = is_positive(sp);
-           const FT sq_cos_bound = CGAL::square(std::cos(m_angle));
-           if((is_pos && CGAL::square(sp) < n1.squared_length() * n2.squared_length() * sq_cos_bound)
-              || (!is_pos && CGAL::square(sp) > n1.squared_length() * n2.squared_length() * sq_cos_bound))
+           const FT sq_cos_bound = CGAL::square(cos_bound);
+           if(!is_pos && is_bound_pos
+              || (!is_pos && !is_bound_pos && CGAL::square(sp) > n1.squared_length() * n2.squared_length() * sq_cos_bound)
+              || (is_pos && is_bound_pos && CGAL::square(sp) < n1.squared_length() * n2.squared_length() * sq_cos_bound))
              return boost::optional<typename Profile::Point>();
 
            ++it;
