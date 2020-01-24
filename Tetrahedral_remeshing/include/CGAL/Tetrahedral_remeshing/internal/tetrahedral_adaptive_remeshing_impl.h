@@ -95,28 +95,31 @@ namespace internal
          , typename FacetIsConstrainedMap
          , typename CellSelector
          , typename Visitor
-         >
+         , typename CornerIndex = int
+         , typename CurveIndex = int
+  >
   class Adaptive_remesher
   {
     typedef Triangulation Tr;
     typedef typename Tr::Geom_traits::FT FT;
 
-    typedef typename CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+    typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> C3t3;
 
     typedef typename C3t3::Cell_handle         Cell_handle;
     typedef typename C3t3::Vertex_handle       Vertex_handle;
     typedef typename C3t3::Subdomain_index     Subdomain_index;
-    typedef int Surface_patch_index; //only needed for is_in_complex()
+    typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
   private:
+    C3t3 m_c3t3;
     const SizingFunction& m_sizing;
     const bool m_protect_boundaries;
-//    const bool m_adaptive;//adaptive sizing field TODO, outside remeshing
-    C3t3 m_c3t3;
-    Triangulation& m_tr; //backup to re-swap triangulations when done
     CellSelector m_cell_selector;
     Subdomain_index m_imaginary_index;
     Visitor& m_visitor;
+
+    Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
+    C3t3* m_c3t3_pbackup;
 
   public:
     Adaptive_remesher(Triangulation& tr
@@ -126,17 +129,43 @@ namespace internal
       , FacetIsConstrainedMap fcmap
       , CellSelector cell_selector
       , Visitor& visitor
-//      , const bool adaptive
       )
-      : m_sizing(sizing)
+      : m_c3t3()
+      , m_sizing(sizing)
       , m_protect_boundaries(protect_boundaries)
-//      , m_adaptive(adaptive)
-      , m_c3t3()
-      , m_tr(tr)
       , m_cell_selector(cell_selector)
       , m_visitor(visitor)
+      , m_c3t3_pbackup(NULL)
+      , m_tr_pbackup(&tr)
     {
       m_c3t3.triangulation().swap(tr);
+
+      init_c3t3(ecmap, fcmap);
+
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
+        "00-init-no-imaginary.mesh", m_imaginary_index);
+#endif
+    }
+
+    Adaptive_remesher(C3t3& c3t3
+      , const SizingFunction& sizing
+      , const bool protect_boundaries
+      , EdgeIsConstrainedMap ecmap
+      , FacetIsConstrainedMap fcmap
+      , CellSelector cell_selector
+      , Visitor& visitor
+      )
+      : m_c3t3()
+      , m_sizing(sizing)
+      , m_protect_boundaries(protect_boundaries)
+      , m_cell_selector(cell_selector)
+      , m_visitor(visitor)
+      , m_c3t3_pbackup(&c3t3)
+      , m_tr_pbackup(NULL)
+    {
+      m_c3t3.swap(c3t3);
+
       init_c3t3(ecmap, fcmap);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -301,20 +330,13 @@ namespace internal
 
     void finalize()
     {
-      m_tr.swap(m_c3t3.triangulation());
+      if (m_c3t3_pbackup != NULL)
+        m_c3t3_pbackup->swap(m_c3t3);
+      else
+        m_tr_pbackup->swap(m_c3t3.triangulation());
     }
 
-    const Tr& triangulation() const
-    {
-      return m_c3t3.triangulation();
-    }
-
-  private:
-    Tr& tr()
-    {
-      return m_c3t3.triangulation();
-    }
-
+private:
     void init_c3t3(const EdgeIsConstrainedMap& ecmap,
                    const FacetIsConstrainedMap& fcmap)
     {
@@ -365,7 +387,8 @@ namespace internal
         Subdomain_index s2 = mf.first->subdomain_index();
         if ( s1 != s2
           || get(fcmap, f)
-          || get(fcmap, mf) )
+          || get(fcmap, mf)
+          || (m_c3t3_pbackup == NULL && f.first->is_facet_on_surface(f.second)))
         {
           m_c3t3.add_to_complex(f, 1);
 
@@ -459,6 +482,73 @@ namespace internal
           return false;
       }
       return true;
+    }
+
+  
+  public:
+    Tr& tr()
+    {
+      return m_c3t3.triangulation();
+    }
+    const Tr& tr() const
+    {
+      return m_c3t3.triangulation();
+    }
+
+    void remesh(const std::size_t& max_it,
+                const std::size_t& nb_extra_iterations)
+    {
+      preprocess();
+
+      std::size_t it_nb = 0;
+      while (it_nb++ < max_it)
+      {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+        std::cout << "# Iteration " << it_nb << " #" << std::endl;
+#endif
+        if (!resolution_reached())
+        {
+          split();
+          collapse();
+        }
+        flip();
+        smooth();
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+        std::cout << "# Iteration " << it_nb << " done : "
+          << tr().number_of_vertices()
+          << " vertices #" << std::endl;
+#endif
+#ifdef CGAL_DUMP_REMESHING_STEPS
+        std::ostringstream ossi;
+        ossi << "statistics_" << it_nb << ".txt";
+        Tetrahedral_remeshing::internal::compute_statistics(
+          tr(), imaginary_index(), m_cell_selector, ossi.str().c_str());
+#endif
+      }
+
+      while (it_nb++ < max_it + nb_extra_iterations)
+      {
+        //      flip();
+        //      smooth();
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+        std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "
+          << tr().number_of_vertices()
+          << " vertices #" << std::endl;
+#endif
+#ifdef CGAL_DUMP_REMESHING_STEPS
+        std::ostringstream ossi;
+        ossi << "statistics_" << it_nb << ".txt";
+        Tetrahedral_remeshing::internal::compute_statistics(
+          tr(), imaginary_index(), m_cell_selector, ossi.str().c_str());
+#endif
+      }
+
+      postprocess(); //remove imaginary cells
+
+      finalize();
+      //triangulation() is now empty
     }
 
   };//end class Adaptive_remesher

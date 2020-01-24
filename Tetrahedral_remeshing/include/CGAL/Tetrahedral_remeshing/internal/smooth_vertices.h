@@ -698,7 +698,7 @@ namespace internal
     typedef typename C3T3::Vertex_handle          Vertex_handle;
     typedef typename C3T3::Cell_handle            Cell_handle;
     typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
-    typedef typename C3T3::Point                  Point;
+    typedef typename Tr::Geom_traits::Point_3     Point_3;
     typedef typename Tr::Geom_traits::Vector_3    Vector_3;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -781,7 +781,7 @@ namespace internal
          vit != tr.finite_vertices_end(); ++vit)
     {
       const std::size_t& vid = vertex_id.at(vit);
-      const Point new_pos(CGAL::ORIGIN + smoothing_vecs[vid]);
+      const Point_3 new_pos = CGAL::ORIGIN + smoothing_vecs[vid];
       const Vector_3 move(point(vit->point()), new_pos);
 
       std::vector<Cell_handle> cells;
