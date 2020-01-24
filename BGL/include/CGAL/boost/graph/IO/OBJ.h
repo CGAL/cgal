@@ -51,7 +51,6 @@ class OBJ_builder
 public:
   OBJ_builder(std::istream& is_) : Base(is_) { }
 
-  // Implementation of the two functions required by the generic builder
   bool read(std::istream& input, Point_container& points, Face_container& faces)
   {
     return read_OBJ(input, points, faces);

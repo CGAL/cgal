@@ -46,7 +46,6 @@ class GOCAD_builder
 public:
   GOCAD_builder(std::istream& is_) : Base(is_) { }
 
-  // Implementation of the two functions required by the generic builder
   bool read(std::istream& input,
             Point_container& points,
             Face_container& faces)

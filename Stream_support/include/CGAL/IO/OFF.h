@@ -23,6 +23,10 @@
 
 namespace CGAL {
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Read
+
 /*!
  * \ingroup IOstreamFunctions
  *
@@ -46,16 +50,16 @@ bool read_OFF(std::istream& in,
   if(scanner.has_colors())
     vcolors.resize(scanner.size_of_vertices());
 
-  for(std::size_t i = 0; i < scanner.size_of_vertices(); ++i)
+  for(std::size_t i=0; i<scanner.size_of_vertices(); ++i)
   {
     double x, y, z, w;
-    scanner.scan_vertex( x, y, z, w);
+    scanner.scan_vertex(x, y, z, w);
     CGAL_assertion(w!=0);
-    IO::internal::fill_point( x/w, y/w, z/w, points[i] );
+    IO::internal::fill_point(x/w, y/w, z/w, points[i]);
     if(scanner.has_colors())
     {
       unsigned char r=0, g=0, b=0;
-      scanner.scan_color( r, g, b);
+      scanner.scan_color(r, g, b);
       vcolors[i] = Color_rgb(r,g,b);
     }
     else
@@ -68,10 +72,10 @@ bool read_OFF(std::istream& in,
   }
 
   bool has_fcolors = false;
-  for(std::size_t i = 0; i < scanner.size_of_facets(); ++i)
+  for(std::size_t i=0; i<scanner.size_of_facets(); ++i)
   {
     std::size_t no;
-    scanner.scan_facet( no, i);
+    scanner.scan_facet(no, i);
 
     if(!in)
       return false;
@@ -130,25 +134,25 @@ bool read_OFF(std::istream& in,
 
   points.resize(scanner.size_of_vertices());
   polygons.resize(scanner.size_of_facets());
-  for(std::size_t i = 0; i < scanner.size_of_vertices(); ++i)
+  for(std::size_t i=0; i<scanner.size_of_vertices(); ++i)
   {
     double x, y, z, w;
-    scanner.scan_vertex( x, y, z, w);
-    CGAL_assertion(w!=0);
-    IO::internal::fill_point( x/w, y/w, z/w, points[i] );
-    scanner.skip_to_next_vertex( i);
+    scanner.scan_vertex(x, y, z, w);
+    CGAL_assertion(w != 0);
+    IO::internal::fill_point(x/w, y/w, z/w, points[i]);
+    scanner.skip_to_next_vertex(i);
   }
 
   if(!in)
     return false;
 
-  for(std::size_t i = 0; i < scanner.size_of_facets(); ++i)
+  for(std::size_t i=0; i<scanner.size_of_facets(); ++i)
   {
     std::size_t no;
 
-    scanner.scan_facet( no, i);
+    scanner.scan_facet(no, i);
     IO::internal::resize(polygons[i], no);
-    for(std::size_t j = 0; j < no; ++j)
+    for(std::size_t j=0; j<no; ++j)
     {
       std::size_t id;
       scanner.scan_facet_vertex_index(id, i);
@@ -161,6 +165,10 @@ bool read_OFF(std::istream& in,
 
   return in.good();
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Write
 
 /*!
  * \ingroup IOstreamFunctions
@@ -177,10 +185,10 @@ bool write_OFF(std::ostream& out,
   CGAL::File_writer_OFF writer;
   writer.write_header(out, points.size(), 0, polygons.size());
 
-  for(std::size_t i = 0, end = points.size(); i < end; ++i)
+  for(std::size_t i = 0, end = points.size(); i<end; ++i)
   {
     const Point_3& p = points[i];
-    writer.write_vertex( p.x(), p.y(), p.z() );
+    writer.write_vertex(p.x(), p.y(), p.z());
   }
 
   writer.write_facet_header();

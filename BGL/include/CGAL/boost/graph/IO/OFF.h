@@ -11,6 +11,9 @@
 #ifndef CGAL_BGL_IO_OFF_H
 #define CGAL_BGL_IO_OFF_H
 
+#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
+#include <CGAL/IO/OFF.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -32,32 +35,28 @@ namespace CGAL {
 
 namespace IO {
 namespace internal {
-namespace read_off_tools {
 
-inline bool is_whitespace(const std::string& s)
+// Use CRTP to gain access to the protected members without getters/setters.
+template <typename FaceGraph, typename Point>
+class OFF_builder
+  : public Generic_facegraph_builder<FaceGraph, Point, OFF_builder<FaceGraph, Point> >
 {
-  for(unsigned int i=0; i<s.size(); ++i)
+  typedef OFF_builder<FaceGraph, Point>                                         Self;
+  typedef Generic_facegraph_builder<FaceGraph, Point, Self>                     Base;
+
+  typedef typename Base::Point_container                                        Point_container;
+  typedef typename Base::Face                                                   Face;
+  typedef typename Base::Face_container                                         Face_container;
+
+public:
+  OFF_builder(std::istream& is_) : Base(is_) { }
+
+  bool read(std::istream& input, Point_container& points, Face_container& faces)
   {
-    if(s[i] != ' ' && s[i] != '\t')
-      return false;
+    return read_OFF(input, points, faces);
   }
+};
 
-  return true;
-}
-
-inline std::string next_non_comment(std::istream& is)
-{
-  std::string line;
-  do
-  {
-    std::getline(is, line);
-  }
-  while(line[0] == '#' || is_whitespace(line));
-
-  return line;
-}
-
-} // namespace read_off_tools
 } // namespace internal
 } // namespace IO
 
@@ -76,80 +75,18 @@ inline std::string next_non_comment(std::istream& is)
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream are added.
-
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::istream& is,
+bool read_OFF(std::istream& in,
               FaceGraph& g,
               const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor           vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type          vertices_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor             face_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::faces_size_type             faces_size_type;
+  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
+  typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type VPM;
-  typedef typename boost::property_traits<VPM>::value_type                     Point;
-
-  using namespace IO::internal::read_off_tools;
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(CGAL::vertex_point, g));
-
-  vertices_size_type nv, nvf;
-  faces_size_type nf;
-  int ignore;
-
-  std::string line = next_non_comment(is);
-  {
-    std::istringstream iss(line);
-    std::string off;
-    iss >> off;
-    CGAL_assertion( off == "OFF" || off == "COFF");
-  }
-
-  line = next_non_comment(is);
-  {
-    std::istringstream iss(line);
-    iss >> nv >> nf >> ignore;
-  }
-
-  std::vector<vertex_descriptor> vertices(nv);
-  Point p;
-
-  for(vertices_size_type i=0; i<nv; ++i)
-  {
-    line = next_non_comment(is);
-    std::istringstream iss(line);
-    iss >> p;
-    vertices[i] = add_vertex(g);
-    put(vpm, vertices[i], p);
-  }
-
-  for(faces_size_type i=0; i<nf; ++i)
-  {
-    line = next_non_comment(is);
-    std::istringstream iss(line);
-    iss >> nvf;
-    std::vector<vertex_descriptor> face(nvf);
-    for(vertices_size_type j=0; j<nvf; ++j)
-    {
-      faces_size_type fvi;
-      iss >> fvi;
-      face[j] = vertices[fvi];
-    }
-
-    face_descriptor f = CGAL::Euler::add_face(face, g);
-    if(f == boost::graph_traits<FaceGraph>::null_face())
-      return false;
-  }
-
-  return true;
+  IO::internal::OFF_builder<FaceGraph, Point> builder(in);
+  return builder(g, np);
 }
 
 /*!
