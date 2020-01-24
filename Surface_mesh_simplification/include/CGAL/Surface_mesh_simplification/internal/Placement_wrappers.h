@@ -77,7 +77,14 @@ public:
   Bounded_normal_change_placement(const double& angle = CGAL_PI,
                                   const GetPlacement& get_placement = GetPlacement())
     : m_get_placement(get_placement), m_angle(angle)
-  {}
+  {
+    if(m_angle < 0 || m_angle >CGAL_PI)
+    {
+      CGAL_assertion(false);
+      m_angle = CGAL_PI/2.0;
+    }
+      
+  }
 
   template <typename Profile>
   boost::optional<typename Profile::Point>

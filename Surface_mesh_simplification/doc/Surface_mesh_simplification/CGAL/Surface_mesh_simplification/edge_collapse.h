@@ -49,7 +49,7 @@ the number of edges effectively removed.
 
   \cgalParamBegin{max_normal_angle_change}
     The maximal angle formed by the normals of a face before and after collapsing,
-    in radians.
+    in radians. Must be included between `0` and `pi` and is in radians.
     
     If this parameter is omitted, there won't be any constraint on the normal angles.
   \cgalParamEnd
