@@ -97,7 +97,7 @@ public:
     
     for (std::size_t j = 0; j < element.number_of_properties(); ++ j)
     {
-      internal::PLY::PLY_read_number* property = element.property(j);
+      IO::internal::PLY_read_number* property = element.property(j);
         
       const std::string& name = property->name();
       if (name == "x" ||
@@ -324,9 +324,9 @@ read_ply_point_set(
       return false;
     }
 
-  internal::PLY::PLY_reader reader;
-  internal::PLY::Point_set_3_filler<Point, Vector> filler(point_set);
-  
+  IO::internal::PLY_reader reader;
+  IO::internal::Point_set_3_filler<Point, Vector> filler(point_set);
+
   if (!(reader.init (stream)))
   {
     stream.setstate(std::ios::failbit);
@@ -337,7 +337,7 @@ read_ply_point_set(
 
   for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
   {
-    internal::PLY::PLY_element& element = reader.element(i);
+    IO::internal::PLY_element& element = reader.element(i);
 
     bool is_vertex = (element.name() == "vertex" || element.name() == "vertices");
     if (is_vertex)
@@ -350,7 +350,7 @@ read_ply_point_set(
     {
       for (std::size_t k = 0; k < element.number_of_properties(); ++ k)
       {
-        internal::PLY::PLY_read_number* property = element.property(k);
+        IO::internal::PLY_read_number* property = element.property(k);
         property->get (stream);
         if (stream.fail())
           return false;
@@ -417,7 +417,7 @@ write_ply_point_set(
   stream << "element vertex " << point_set.number_of_points() << std::endl;
   
   std::vector<std::string> prop = point_set.base().properties();
-  std::vector<internal::PLY::Abstract_property_printer<Index>*> printers;
+  std::vector<IO::internal::Abstract_property_printer<Index>*> printers;
   
   for (std::size_t i = 0; i < prop.size(); ++ i)
     {
@@ -438,7 +438,7 @@ write_ply_point_set(
                    << "property double y" << std::endl
                    << "property double z" << std::endl;
           }
-          printers.push_back (new internal::PLY::Property_printer<Index,Point_map>(point_set.point_map()));
+          printers.push_back (new IO::internal::Property_printer<Index,Point_map>(point_set.point_map()));
           continue;
         }
       if (prop[i] == "normal")
@@ -455,7 +455,7 @@ write_ply_point_set(
                    << "property double ny" << std::endl
                    << "property double nz" << std::endl;
           }
-          printers.push_back (new internal::PLY::Property_printer<Index,Vector_map>(point_set.normal_map()));
+          printers.push_back (new IO::internal::Property_printer<Index,Vector_map>(point_set.normal_map()));
           continue;
         }
       
@@ -466,7 +466,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property char " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Char_property_printer<Index,Int8_map>(pmap));
+            printers.push_back (new IO::internal::Char_property_printer<Index,Int8_map>(pmap));
             continue;
           }
       }
@@ -476,7 +476,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property uchar " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Char_property_printer<Index,Uint8_map>(pmap));
+            printers.push_back (new IO::internal::Char_property_printer<Index,Uint8_map>(pmap));
             continue;
           }
       }
@@ -486,7 +486,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property short " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Int16_map>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Int16_map>(pmap));
             continue;
           }
       }
@@ -496,7 +496,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property ushort " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint16_map>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Uint16_map>(pmap));
             continue;
           }
       }
@@ -506,7 +506,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property int " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Int32_map>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Int32_map>(pmap));
             continue;
           }
       }
@@ -516,7 +516,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property uint " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint32_map>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Uint32_map>(pmap));
             continue;
           }
       }
@@ -526,7 +526,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property int " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Int64_map,boost::int32_t>(pmap));
             continue;
           }
       }
@@ -536,7 +536,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property uint " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Uint64_map,boost::uint32_t>(pmap));
             continue;
           }
       }
@@ -546,7 +546,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property float " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Float_map>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Float_map>(pmap));
             continue;
           }
       }
@@ -556,7 +556,7 @@ write_ply_point_set(
         if (okay)
           {
             stream << "property double " << prop[i] << std::endl;
-            printers.push_back (new internal::PLY::Simple_property_printer<Index,Double_map>(pmap));
+            printers.push_back (new IO::internal::Simple_property_printer<Index,Double_map>(pmap));
             continue;
           }
       }

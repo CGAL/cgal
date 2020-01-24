@@ -2246,20 +2246,20 @@ private: //------------------------------------------------------- private data
   
     os << "element vertex " << sm.number_of_vertices() << std::endl;
 
-    std::vector<internal::PLY::Abstract_property_printer<VIndex>*> vprinters;
-    internal::PLY::fill_header (os, sm, vprinters);
+    std::vector<IO::internal::Abstract_property_printer<VIndex>*> vprinters;
+    IO::internal::fill_header (os, sm, vprinters);
     
     os << "element face " << sm.number_of_faces() << std::endl;
     os << "property list uchar int vertex_indices" << std::endl;
-    std::vector<internal::PLY::Abstract_property_printer<FIndex>*> fprinters;
-    internal::PLY::fill_header (os, sm, fprinters);
+    std::vector<IO::internal::Abstract_property_printer<FIndex>*> fprinters;
+    IO::internal::fill_header (os, sm, fprinters);
 
     
-    std::vector<internal::PLY::Abstract_property_printer<EIndex>*> eprinters;
+    std::vector<IO::internal::Abstract_property_printer<EIndex>*> eprinters;
     if (sm.template properties<EIndex>().size() > 1)
     {
       std::ostringstream oss;
-      internal::PLY::fill_header (oss, sm, eprinters);
+      IO::internal::fill_header (oss, sm, eprinters);
 
       if (!eprinters.empty())
       {
@@ -2270,11 +2270,11 @@ private: //------------------------------------------------------- private data
       }
     }
 
-    std::vector<internal::PLY::Abstract_property_printer<HIndex>*> hprinters;
+    std::vector<IO::internal::Abstract_property_printer<HIndex>*> hprinters;
     if (sm.template properties<HIndex>().size() > 1)
     {
       std::ostringstream oss;
-      internal::PLY::fill_header (oss, sm, hprinters);
+      IO::internal::fill_header (oss, sm, hprinters);
 
       if (!hprinters.empty())
       {
@@ -2431,7 +2431,7 @@ private: //------------------------------------------------------- private data
   ///      the `failbit` of `is` is set and the mesh cleared.
 
   template <typename P, typename NamedParameters>
-  bool read_off(std::istream& is, Surface_mesh<P>& sm, NamedParameters np)
+  bool read_off(std::istream& is, Surface_mesh<P>& sm, const NamedParameters& np)
   {
    typedef Surface_mesh<P> Mesh;
    typedef typename Kernel_traits<P>::Kernel K;
@@ -2613,8 +2613,8 @@ private: //------------------------------------------------------- private data
       return false;
     }
 
-    internal::PLY::PLY_reader reader;
-    internal::PLY::Surface_mesh_filler<P> filler(sm);
+    IO::internal::PLY_reader reader;
+    IO::internal::Surface_mesh_filler<P> filler(sm);
   
     if (!(reader.init (is)))
     {
@@ -2626,7 +2626,7 @@ private: //------------------------------------------------------- private data
 
     for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
     {
-      internal::PLY::PLY_element& element = reader.element(i);
+      IO::internal::PLY_element& element = reader.element(i);
 
       bool is_vertex = (element.name() == "vertex" || element.name() == "vertices");
       bool is_face = false;
@@ -2664,7 +2664,7 @@ private: //------------------------------------------------------- private data
       {
         for (std::size_t k = 0; k < element.number_of_properties(); ++ k)
         {
-          internal::PLY::PLY_read_number* property = element.property(k);
+          IO::internal::PLY_read_number* property = element.property(k);
           property->get (is);
           if (is.fail())
             return false;

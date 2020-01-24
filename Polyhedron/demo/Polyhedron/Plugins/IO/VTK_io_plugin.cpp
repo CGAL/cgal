@@ -39,7 +39,6 @@
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/IO/output_to_vtu.h>
-#include <CGAL/IO/VTK/vtk_internals.h>
 #include <CGAL/boost/graph/io.h>
 
 #include <vtkSmartPointer.h>
@@ -288,21 +287,20 @@ public:
     }
     
     vtkSmartPointer<vtkPointSet> data;
-    vtkSmartPointer<CGAL::VTK_internal::ErrorObserverVtk> obs =
-      vtkSmartPointer<CGAL::VTK_internal::ErrorObserverVtk>::New();
+    vtkSmartPointer<CGAL::IO::internal::ErrorObserverVtk> obs =
+      vtkSmartPointer<CGAL::IO::internal::ErrorObserverVtk>::New();
 
     if (extension=="vtp")
-      data = CGAL::VTK_internal::read_vtk_file<vtkXMLPolyDataReader>(fname,obs)
+      data = CGAL::IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname,obs)
               ->GetOutput();
     else
      if (extension=="vtu")
-       data = CGAL::VTK_internal::
-           read_vtk_file<vtkXMLUnstructuredGridReader>(fname,obs)
+       data = CGAL::IO::internal::read_vtk_file<vtkXMLUnstructuredGridReader>(fname,obs)
                 ->GetOutput();
      else{
        //read non-XML data
        vtkSmartPointer<vtkDataSetReader> reader =
-         CGAL::VTK_internal::read_vtk_file<vtkDataSetReader>(fname,obs);
+         CGAL::IO::internal::read_vtk_file<vtkDataSetReader>(fname,obs);
        data = vtkPolyData::SafeDownCast(reader->GetOutput());
        if (!data)
         data = vtkUnstructuredGrid::SafeDownCast(reader->GetOutput());
@@ -356,7 +354,7 @@ public:
     if(is_polygon_mesh)
     {
       FaceGraph* poly = new FaceGraph();
-      if (CGAL::VTK_internal::vtkPointSet_to_polygon_mesh(data, *poly))
+      if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly))
       {
         Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
         if(group)

@@ -16,11 +16,10 @@
 #include <CGAL/IO/PLY.h>
 
 namespace CGAL {
-
+namespace IO {
 namespace internal {
 
 #if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-namespace PLY {
 
 template <typename Point>
 class Surface_mesh_filler
@@ -103,7 +102,7 @@ public:
       delete m_halfedge_properties[i];
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Vertex_index)
+  bool has_simplex_specific_property (IO::internal::PLY_read_number* property, Vertex_index)
   {
     const std::string& name = property->name();
     if (name == "x" ||
@@ -135,7 +134,7 @@ public:
     return false;
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Face_index)
+  bool has_simplex_specific_property (IO::internal::PLY_read_number* property, Face_index)
   {
     const std::string& name = property->name();
     if (name == "vertex_indices" || name == "vertex_index")
@@ -159,7 +158,7 @@ public:
     return false;
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Edge_index)
+  bool has_simplex_specific_property (IO::internal::PLY_read_number* property, Edge_index)
   {
     const std::string& name = property->name();
     if (name == "v0" || name == "v1")
@@ -167,7 +166,7 @@ public:
     return false;
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Halfedge_index)
+  bool has_simplex_specific_property (IO::internal::PLY_read_number* property, Halfedge_index)
   {
     const std::string& name = property->name();
     if (name == "source" || name == "target")
@@ -202,7 +201,7 @@ public:
   {
     for (std::size_t j = 0; j < element.number_of_properties(); ++ j)
     {
-      internal::PLY::PLY_read_number* property = element.property(j);
+      IO::internal::PLY_read_number* property = element.property(j);
 
       if (has_simplex_specific_property (property, Simplex()))
         continue;
@@ -612,7 +611,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property char " << name << std::endl;
-        printers.push_back (new internal::PLY::Char_property_printer<Simplex,Int8_map>(pmap));
+        printers.push_back (new IO::internal::Char_property_printer<Simplex,Int8_map>(pmap));
         continue;
       }
     }
@@ -622,7 +621,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property uchar " << name << std::endl;
-        printers.push_back (new internal::PLY::Char_property_printer<Simplex,Uint8_map>(pmap));
+        printers.push_back (new IO::internal::Char_property_printer<Simplex,Uint8_map>(pmap));
         continue;
       }
     }
@@ -632,7 +631,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property short " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Int16_map>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Int16_map>(pmap));
         continue;
       }
     }
@@ -642,7 +641,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property ushort " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Uint16_map>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Uint16_map>(pmap));
         continue;
       }
     }
@@ -652,7 +651,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property int " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Int32_map>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Int32_map>(pmap));
         continue;
       }
     }
@@ -662,7 +661,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property uint " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Uint32_map>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Uint32_map>(pmap));
         continue;
       }
     }
@@ -672,7 +671,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property int " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Int64_map,boost::int32_t>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Int64_map,boost::int32_t>(pmap));
         continue;
       }
     }
@@ -682,7 +681,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property uint " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Uint64_map,boost::uint32_t>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Uint64_map,boost::uint32_t>(pmap));
         continue;
       }
     }
@@ -692,7 +691,7 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property float " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Float_map>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Float_map>(pmap));
         continue;
       }
     }
@@ -702,19 +701,17 @@ void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
       if (okay)
       {
         os << "property double " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Double_map>(pmap));
+        printers.push_back (new IO::internal::Simple_property_printer<Simplex,Double_map>(pmap));
         continue;
       }
     }
   }
 }
 
-} // namespace PLY
 #endif
 
 } // namespace internal
-
+} // namespace IO
 } // namespace CGAL
-
 
 #endif // CGAL_SURFACE_MESH_IO_PLY

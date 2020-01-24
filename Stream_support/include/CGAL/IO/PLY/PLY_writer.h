@@ -14,8 +14,8 @@
 #include <CGAL/IO/io.h>
 
 namespace CGAL {
+namespace IO {
 namespace internal {
-namespace PLY {
 
 template <typename T> inline void property_header_type (std::ostream& stream)
 {
@@ -296,8 +296,8 @@ public:
   }
 };
 
-} // namespace PLY
 } // namespace internal
+} // namespace IO
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_PLY_WRITER_H

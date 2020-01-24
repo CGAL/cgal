@@ -132,7 +132,7 @@ make_ply_normal_writer(VectorMap normal_map)
 
 /// \endcond
 
-namespace Stream_support {
+namespace IO {
 
 namespace internal {
 
@@ -675,7 +675,7 @@ void process_properties(PLY_element& element, OutputValueType& new_element,
 
 template <typename Integer, class Polygon_3, class Color_rgb>
 bool read_PLY_faces(std::istream& in,
-                    internal::PLY::PLY_element& element,
+                    IO::internal::PLY_element& element,
                     std::vector< Polygon_3 >& polygons,
                     std::vector< Color_rgb >& fcolors,
                     const char* vertex_indices_tag)
@@ -696,7 +696,7 @@ bool read_PLY_faces(std::istream& in,
   {
     for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
     {
-      internal::PLY::PLY_read_number* property = element.property(k);
+      IO::internal::PLY_read_number* property = element.property(k);
       property->get(in);
 
       if(in.fail())
@@ -707,23 +707,23 @@ bool read_PLY_faces(std::istream& in,
 
     if(has_colors)
     {
-      PLY::process_properties(element, new_face,
-                              std::make_pair(CGAL::make_nth_of_tuple_property_map<0>(new_face),
-                                             PLY_property<std::vector<Integer> >(vertex_indices_tag)),
-                              std::make_pair(CGAL::make_nth_of_tuple_property_map<1>(new_face),
-                                             PLY_property<boost::uint8_t>(rtag.c_str())),
-                              std::make_pair(CGAL::make_nth_of_tuple_property_map<2>(new_face),
-                                             PLY_property<boost::uint8_t>(gtag.c_str())),
-                              std::make_pair(CGAL::make_nth_of_tuple_property_map<3>(new_face),
-                                             PLY_property<boost::uint8_t>(btag.c_str())));
+      process_properties(element, new_face,
+                         std::make_pair(CGAL::make_nth_of_tuple_property_map<0>(new_face),
+                                        PLY_property<std::vector<Integer> >(vertex_indices_tag)),
+                         std::make_pair(CGAL::make_nth_of_tuple_property_map<1>(new_face),
+                                        PLY_property<boost::uint8_t>(rtag.c_str())),
+                         std::make_pair(CGAL::make_nth_of_tuple_property_map<2>(new_face),
+                                        PLY_property<boost::uint8_t>(gtag.c_str())),
+                         std::make_pair(CGAL::make_nth_of_tuple_property_map<3>(new_face),
+                                        PLY_property<boost::uint8_t>(btag.c_str())));
 
       fcolors.push_back(Color_rgb(get<1>(new_face), get<2>(new_face), get<3>(new_face)));
     }
     else
     {
-      PLY::process_properties(element, new_face,
-                              std::make_pair(CGAL::make_nth_of_tuple_property_map<0>(new_face),
-                                             PLY_property<std::vector<Integer> >(vertex_indices_tag)));
+      process_properties(element, new_face,
+                         std::make_pair(CGAL::make_nth_of_tuple_property_map<0>(new_face),
+                                        PLY_property<std::vector<Integer> >(vertex_indices_tag)));
     }
 
     polygons.push_back(Polygon_3(get<0>(new_face).size()));
@@ -735,7 +735,7 @@ bool read_PLY_faces(std::istream& in,
 }
 
 } // namespace internal
-} // namespace Stream_support
+} // namespace IO
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_PLY_READER_H
