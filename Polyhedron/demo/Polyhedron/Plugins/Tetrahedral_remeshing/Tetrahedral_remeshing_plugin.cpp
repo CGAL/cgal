@@ -12,6 +12,9 @@
 #include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
+#include <unordered_map>
+#include <memory>
+
 #include <QTime>
 #include <QAction>
 #include <QMainWindow>
@@ -23,7 +26,6 @@
 
 #include "ui_Tetrahedral_remeshing_dialog.h"
 
-
 using namespace CGAL::Three;
 class Polyhedron_demo_tetrahedral_remeshing_plugin :
   public QObject,
@@ -34,6 +36,9 @@ class Polyhedron_demo_tetrahedral_remeshing_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "tetrahedral_remeshing_plugin.json")
 
 public:
+  typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<EPICK> Remeshing_triangulation;
+
+
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
   {
     this->scene = scene_interface;
@@ -58,8 +63,6 @@ public:
 public Q_SLOTS:
   void tetrahedral_remeshing()
   {
-    typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<EPICK> Remeshing_triangulation;
-
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
     Scene_c3t3_item* c3t3_item =
@@ -89,15 +92,14 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-      CGAL::tetrahedral_adaptive_remeshing(c3t3_item->c3t3().triangulation(),
-        target_length,
-        CGAL::parameters::remesh_boundaries(!protect)
-        .number_of_iterations(nb_iter));
+      CGAL::tetrahedral_adaptive_remeshing(
+          c3t3_item->c3t3(),
+          target_length,
+          CGAL::parameters::remesh_boundaries(!protect)
+          .number_of_iterations(nb_iter));
 
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
       time.restart();
-
-      c3t3_item->c3t3().clear();
 
       c3t3_item->c3t3_changed();
       this->scene->itemChanged(index);
