@@ -397,7 +397,7 @@ returns the printing mode of the %IO stream `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-IO::Mode get_mode(std::ios& i) { return static_cast<IO::Mode>(i.iword(IO::Static::get_mode())); }
+CGAL_EXPORT IO::Mode get_mode(std::ios& i) { return static_cast<IO::Mode>(i.iword(IO::Static::get_mode())); }
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -414,7 +414,7 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-IO::Mode set_ascii_mode(std::ios& i)
+CGAL_EXPORT IO::Mode set_ascii_mode(std::ios& i)
 {
   IO::Mode m = get_mode(i);
   i.iword(IO::Static::get_mode()) = IO::ASCII;
@@ -436,7 +436,7 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-IO::Mode set_binary_mode(std::ios& i)
+CGAL_EXPORT IO::Mode set_binary_mode(std::ios& i)
 {
   IO::Mode m = get_mode(i);
   i.iword(IO::Static::get_mode()) = IO::BINARY;
@@ -458,7 +458,7 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-IO::Mode set_pretty_mode(std::ios& i)
+CGAL_EXPORT IO::Mode set_pretty_mode(std::ios& i) //@todo export ?
 {
   IO::Mode m = get_mode(i);
   i.iword(IO::Static::get_mode()) = IO::PRETTY;
@@ -479,7 +479,7 @@ sets the printing mode of the %IO stream `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-IO::Mode set_mode(std::ios& i, IO::Mode m)
+CGAL_EXPORT IO::Mode set_mode(std::ios& i, IO::Mode m)
 {
   IO::Mode old = get_mode(i);
   i.iword(IO::Static::get_mode()) = m;
