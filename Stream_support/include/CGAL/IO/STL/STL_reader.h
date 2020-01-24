@@ -24,7 +24,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Stream_support {
+namespace IO {
 namespace internal {
 
 template <class PointRange, class TriangleRange, typename IndexMap>
@@ -285,7 +285,7 @@ bool parse_binary_STL(std::istream& input,
 }
 
 } // namespace internal
-} // namespace Stream_support
+} // namespace IO
 } // namespace CGAL
 
 #endif // CGAL_IO_STL_STL_READER_H

@@ -17,11 +17,6 @@
 #ifndef CGAL_IO_OBJ_FILE_WRITER_WAVEFRONT_H
 #define CGAL_IO_OBJ_FILE_WRITER_WAVEFRONT_H
 
-#include <CGAL/IO/binary_file_io.h>
-
-#include <iostream>
-#include <cstddef>
-
 namespace CGAL {
 
 class File_writer_wavefront
@@ -31,7 +26,8 @@ class File_writer_wavefront
 
 public:
   std::ostream& out() const { return *m_out; }
-  void write_header(std::ostream& out,
+
+  void write_header(std::ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)

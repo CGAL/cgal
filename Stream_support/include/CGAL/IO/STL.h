@@ -57,7 +57,7 @@ bool read_STL(std::istream& input,
   // If we have gone beyond 80 characters and have not read anything yet,
   // then this must be an ASCII file.
   if(pos > 80)
-    return parse_ASCII_STL(input, points, facets, verbose);
+    return IO::internal::parse_ASCII_STL(input, points, facets, verbose);
 
   // We are within the first 80 characters, both ASCII and binary are possible
 
@@ -81,7 +81,7 @@ bool read_STL(std::istream& input,
   // If the first word is not 'solid', the file must be binary
   if(s != "solid" || (word[5] !='\n' && word[5] != ' '))
   {
-    if(parse_binary_STL(input, points, facets, verbose))
+    if(IO::internal::parse_binary_STL(input, points, facets, verbose))
     {
       return true;
     }
@@ -91,14 +91,14 @@ bool read_STL(std::istream& input,
       // The file does not start with 'solid' anyway, so it's fine to reset it.
       input.clear();
       input.seekg(0, std::ios::beg);
-      return parse_ASCII_STL(input, points, facets, verbose);
+      return IO::internal::parse_ASCII_STL(input, points, facets, verbose);
     }
   }
 
   // Now, we have found the keyword "solid" which is supposed to indicate that the file is ASCII
   input.clear();
   input.seekg(0, std::ios::beg); //the parser needs to read all "solid" to work correctly.
-  if(parse_ASCII_STL(input, points, facets, verbose))
+  if(IO::internal::parse_ASCII_STL(input, points, facets, verbose))
   {
     // correctly read the input as an ASCII file
     return true;
@@ -106,7 +106,7 @@ bool read_STL(std::istream& input,
   else // Failed to read the ASCII file
   {
     // It might have actually have been a binary file... ?
-    return parse_binary_STL(input, points, facets, verbose);
+    return IO::internal::parse_binary_STL(input, points, facets, verbose);
   }
 }
 
@@ -122,9 +122,9 @@ bool read_STL(std::istream& input,
  * \see \ref IOStreamSTL
  */
 template <class PointRange, class TriangleRange>
-std::ostream& write_STL(const PointRange& points,
-                        const TriangleRange& facets,
-                        std::ostream& out)
+std::ostream& write_STL(std::ostream& out,
+                        const PointRange& points,
+                        const TriangleRange& facets)
 {
   typedef typename PointRange::value_type Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel K;

@@ -22,20 +22,20 @@ namespace CGAL {
 //!
 /// reads the content of `input` into `points` and `faces`, using the `OBJ` format.
 ///
-/// \tparam Points_3 a `RandomAccessContainer` of `Point_3,
+/// \tparam Points a `RandomAccessContainer` of `Point_3,
 /// \tparam Faces a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
 ///
 /// \see \ref IOStreamOBJ
-template <class Points_3, class Faces>
+template <class Points, class Faces>
 bool read_OBJ(std::istream& input,
-              Points_3& points,
+              Points& points,
               Faces& faces)
 {
-  typedef typename Points_3::value_type                       Point_3;
+  typedef typename Points::value_type                          Point;
 
   int mini(1),
       maxi(-INT_MAX);
-  Point_3 p;
+  Point p;
   std::string line;
 
   while(getline(input, line))
@@ -46,6 +46,7 @@ bool read_OBJ(std::istream& input,
       iss >> p;
       if(!iss)
         return false;
+
       points.push_back(p);
     }
     else if(line[0] == 'f')
@@ -57,9 +58,9 @@ bool read_OBJ(std::istream& input,
       {
         if(i < 1)
         {
-          faces.back().push_back(points.size()+i);//negative indices are relative references
-          if(i<mini)
-            mini=i;
+          faces.back().push_back(points.size()+i); // negative indices are relative references
+          if(i < mini)
+            mini = i;
         }
         else
         {
@@ -80,7 +81,7 @@ bool read_OBJ(std::istream& input,
     }
   }
 
-  if(maxi > points.size() || mini < -static_cast<int>(points.size()))
+  if(maxi > static_cast<int>(points.size()) || mini < -static_cast<int>(points.size()))
   {
     std::cerr << "a face index is invalid " << std::endl;
     return false;

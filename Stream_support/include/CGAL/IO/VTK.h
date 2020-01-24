@@ -15,6 +15,7 @@
 #ifndef CGAL_IO_VTK_H
 #define CGAL_IO_VTK_H
 
-#include <CGAL/IO/VTK/write_vtk.h>
+#include <CGAL/IO/VTK/VTK_reader.h>
+#include <CGAL/IO/VTK/VTK_writer.h>
 
 #endif // CGAL_IO_VTK_H
