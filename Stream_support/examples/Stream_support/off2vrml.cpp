@@ -1,11 +1,10 @@
 // Convert from OFF format to VRML (.wrl) 1.0 or 2.0 format.
 
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/VRML_1_ostream.h>
-#include <CGAL/IO/VRML_2_ostream.h>
-#include <CGAL/IO/File_writer_inventor.h>
-#include <CGAL/IO/File_writer_VRML_2.h>
-#include <CGAL/IO/generic_copy_OFF.h>
+#include <CGAL/IO/OI.h>
+#include <CGAL/IO/VRML.h>
+#include <CGAL/IO/OFF.h>
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -19,7 +18,8 @@ int   version      = 1;
 
 // main function with standard unix commandline arguments
 // ------------------------------------------------------
-int main( int argc, char **argv) {
+int main( int argc, char **argv)
+{
   int n = 0; // number of filenames
   char *filename[2];
   bool help = false;

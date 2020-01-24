@@ -28,57 +28,67 @@
 
 namespace CGAL {
 
-class Inventor_ostream_base {
+class Inventor_ostream_base
+{
 private:
-    std::ostream*  m_os;
-public:
-    Inventor_ostream_base()           : m_os(0)  {}
-    Inventor_ostream_base(std::ostream& o) : m_os(&o) {}
-    ~Inventor_ostream_base()  { close(); }
-    void open(std::ostream& o)        { m_os = &o; }
-    void close() {
-        if ( m_os)
-            os() << std::endl;
-        m_os = 0;
-    }
-    explicit operator bool ()
-    {
-      return m_os && !m_os->fail();
-    }
+  std::ostream* m_os;
 
-    std::ostream& os() {
-        // The behaviour if m_os == 0 could be changed to return
-        // cerr or a file handle to /dev/null. The latter one would
-        // mimick the behaviour that one can still use a stream with
-        // an invalid stream, but without producing any output.
-        CGAL_assertion( m_os != 0 );
-        return *m_os;
-    }
+public:
+  Inventor_ostream_base() : m_os(0)  {}
+  Inventor_ostream_base(std::ostream& o) : m_os(&o) {}
+  ~Inventor_ostream_base() { close(); }
+  void open(std::ostream& o) { m_os = &o; }
+  void close()
+  {
+    if ( m_os)
+      os() << std::endl;
+    m_os = 0;
+  }
+
+  bool fail() const { return m_os->fail(); }
+  bool good() const { return m_os->good(); }
+
+  explicit operator bool()
+  {
+    return m_os && !m_os->fail();
+  }
+
+  std::ostream& os()
+  {
+    // The behaviour if m_os == 0 could be changed to return
+    // cerr or a file handle to /dev/null. The latter one would
+    // mimick the behaviour that one can still use a stream with
+    // an invalid stream, but without producing any output.
+    CGAL_assertion( m_os != 0 );
+    return *m_os;
+  }
 };
 
-
-class Inventor_ostream : public  Inventor_ostream_base
+class Inventor_ostream
+  : public Inventor_ostream_base
 {
 public:
-    Inventor_ostream() {}
-    Inventor_ostream(std::ostream& o) : Inventor_ostream_base(o) {
-        header();
-    }
-    void open(std::ostream& o) {
-        Inventor_ostream_base::open(o);
-        header();
-    }
+  Inventor_ostream() {}
+  Inventor_ostream(std::ostream& o) : Inventor_ostream_base(o) { header(); }
+
+  void open(std::ostream& o)
+  {
+    Inventor_ostream_base::open(o);
+    header();
+  }
+
 private:
-    void header() {
-        os() << "#Inventor V2.0 ascii" << std::endl;
-        os() << "# File written with the help of the CGAL Library" 
-	     << std::endl;
-    }
+  void header()
+  {
+    os() << "#Inventor V2.0 ascii" << std::endl;
+    os() << "# File written with the help of the CGAL Library"
+         << std::endl;
+  }
 };
 
-} //namespace CGAL
-#endif // CGAL_IO_INVENTOR_OSTREAM_H
+} // namespace CGAL
 
+#endif // CGAL_IO_INVENTOR_OSTREAM_H
 
 #ifdef CGAL_TETRAHEDRON_3_H
 #ifndef CGAL_INVENTOR_TETRAHEDRON_3

@@ -17,8 +17,9 @@
 
 #include <CGAL/Polyhedron_3.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/IO/Geomview_stream.h>
-#include <CGAL/IO/generic_print_polyhedron.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
 
 namespace CGAL {
 
@@ -27,13 +28,13 @@ class Polyhedron_writer_geomview
   Geomview_stream* out;
 
 public:
-  Polyhedron_writer_geomview(Geomview_stream& geo) : out(&geo) { }
-
-  void write_header(std::ostream& /*os*/, // ignore ostream. Output goes to Geomview_stream.
+  void write_header(Geomview_stream& os,
                     std::size_t vertices,
                     std::size_t,
                     std::size_t facets)
   {
+    out = &os;
+
     // Print header.
     out->set_ascii_mode();
     *out << "(geometry " << out->get_new_id("polyhedron")
@@ -50,7 +51,7 @@ public:
 
   void write_vertex( const double& x, const double& y, const double& z) { *out << x << y << z; }
   void write_facet_header() {}
-  void write_facet_begin( std::size_t no) { *out << int(no); }
+  void write_facet_begin(std::size_t no) { *out << int(no); }
   void write_facet_vertex_index( std::size_t index) { *out << int(index); }
   void write_facet_end()
   {
@@ -68,8 +69,11 @@ template <class Traits,
 Geomview_stream& operator<<(Geomview_stream &gv,
                             const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 {
-  Polyhedron_writer_geomview writer(gv);
-  generic_print_polyhedron(std::cerr, P, writer); // note: cerr not used.
+  IO::internal::Generic_facegraph_printer<Geomview_stream,
+                                          Polyhedron_3<Traits, Items, HDS, Alloc>,
+                                          Polyhedron_writer_geomview> printer(gv);
+  printer(P);
+
   return gv;
 }
 

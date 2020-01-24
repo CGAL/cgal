@@ -10,8 +10,8 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#ifndef CGAL_IO_SCAN_OFF_H
-#define CGAL_IO_SCAN_OFF_H 1
+#ifndef CGAL_POLYHEDRON_IO_SCAN_OFF_H
+#define CGAL_POLYHEDRON_IO_SCAN_OFF_H
 
 #include <CGAL/license/Polyhedron.h>
 
@@ -25,7 +25,7 @@ namespace CGAL {
 
 template <class Traits,
           class Items,
-          template < class T, class I, class A>
+          template <class T, class I, class A>
           class HDS, class Alloc>
 void scan_OFF(std::istream& in,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
@@ -43,7 +43,7 @@ void scan_OFF(std::istream& in,
 
 template <class Traits,
           class Items,
-          template < class T, class I, class A>
+          template <class T, class I, class A>
           class HDS, class Alloc>
 void scan_OFF(std::istream& in,
               Polyhedron_3<Traits, Items, HDS, Alloc>& P,
@@ -57,6 +57,6 @@ void scan_OFF(std::istream& in,
   P.delegate(scanner);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_IO_SCAN_OFF_H
+#endif // CGAL_POLYHEDRON_IO_SCAN_OFF_H

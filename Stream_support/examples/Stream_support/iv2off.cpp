@@ -3,8 +3,10 @@
 // keywords. It does not recognize transformations nor groups.
 
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_writer_OFF.h>
+#include <CGAL/IO/OFF.h>
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -37,7 +39,8 @@ Facet_list  facets;
 
 // iv File Scanner
 // ===============
-void iv_file_scanner( istream& in) {
+void iv_file_scanner( istream& in)
+{
   std::size_t offset    = 0;    // offset for the Index....Set
     char      c;                // one read character (comment, vertex, or facet)
     char      str[2000];        // temporal storage for rest of identifier

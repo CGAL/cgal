@@ -16,11 +16,8 @@
 
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/IO/VRML_2_ostream.h>
-#include <CGAL/IO/File_writer_VRML_2.h>
-#include <CGAL/IO/generic_print_polyhedron.h>
-
-#include <iostream>
+#include <CGAL/IO/VRML.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
 
 namespace CGAL {
 
@@ -31,8 +28,11 @@ template <class Traits,
 VRML_2_ostream& operator<<(VRML_2_ostream& out,
                            const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 {
-  File_writer_VRML_2 writer;
-  generic_print_polyhedron( out.os(), P, writer);
+  IO::internal::Generic_facegraph_printer<VRML_2_ostream,
+                                          Polyhedron_3<Traits, Items, HDS, Alloc>,
+                                          File_writer_VRML_2> printer(out);
+  printer(P);
+
   return out;
 }
 

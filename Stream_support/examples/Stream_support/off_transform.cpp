@@ -29,7 +29,8 @@ double  scale        =  1.0;
 
 // main function with standard unix commandline arguments
 // ------------------------------------------------------
-int main( int argc, char **argv) {
+int main( int argc, char **argv)
+{
   int n = 0; // number of filenames
   char *filename[2];
   bool help = false;

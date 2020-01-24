@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Polyhedron.h>
 
-#include <CGAL/IO/VRML_1_ostream.h>
+// VRML_1 derives from inventor_ostream and will use that one
 #include <CGAL/IO/Polyhedron_inventor_ostream.h>
 
 #endif // CGAL_IO_POLYHEDRON_VRML_1_OSTREAM_H

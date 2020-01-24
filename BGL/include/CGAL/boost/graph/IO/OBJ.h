@@ -12,8 +12,9 @@
 #ifndef CGAL_BGL_IO_OBJ_H
 #define CGAL_BGL_IO_OBJ_H
 
-#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/IO/OBJ.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -139,56 +140,8 @@ bool write_OBJ(std::ostream& os,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor                  vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type                 vertices_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor                    face_descriptor;
-
-  typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::const_type  VPM;
-  typedef typename boost::property_traits<VPM>::reference                             Point_ref;
-
-  VPM vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                         get_const_property_map(CGAL::vertex_point, g));
-
-  if(!os.good())
-    return false;
-
-  CGAL::File_writer_wavefront writer;
-  writer.write_header(os, num_vertices(g), num_halfedges(g), num_faces(g));
-
-  boost::container::flat_map<vertex_descriptor, vertices_size_type> index_map;
-  vertices_size_type id = 0;
-
-  for(vertex_descriptor v : vertices(g))
-  {
-    Point_ref p = get(vpm, v);
-    writer.write_vertex(::CGAL::to_double(p.x()),
-                        ::CGAL::to_double(p.y()),
-                        ::CGAL::to_double(p.z()));
-    index_map[v] = id++;
-  }
-
-  writer.write_facet_header();
-  for(face_descriptor f : faces(g))
-  {
-    CGAL::Halfedge_around_face_circulator<FaceGraph> hc(halfedge(f, g), g);
-    CGAL::Halfedge_around_face_circulator<FaceGraph> hc_end = hc;
-
-    const std::size_t n = circulator_size(hc);
-    CGAL_assertion(n >= 3);
-
-    writer.write_facet_begin(n);
-    do
-    {
-      writer.write_facet_vertex_index(index_map[target(*hc, g)]);
-      ++hc;
-    }
-    while(hc != hc_end);
-
-    writer.write_facet_end();
-  }
-  writer.write_footer();
-
-  return os.good();
+  IO::internal::Generic_facegraph_printer<std::ostream, FaceGraph, CGAL::File_writer_wavefront> printer(os);
+  return printer(g, np);
 }
 
 /*!

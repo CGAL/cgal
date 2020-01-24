@@ -17,21 +17,23 @@
 
 #include <CGAL/Polyhedron_3.h>
 
-#include <CGAL/IO/Inventor_ostream.h>
-#include <CGAL/IO/File_writer_inventor.h>
-#include <CGAL/IO/generic_print_polyhedron.h>
+#include <CGAL/IO/OI.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
 
 namespace CGAL {
 
 template <class Traits,
           class Items,
-          template < class T, class I, class A>
+          template <class T, class I, class A>
           class HDS, class Alloc>
 Inventor_ostream_base& operator<<(Inventor_ostream_base& out,
                                   const Polyhedron_3<Traits, Items, HDS, Alloc>& P)
 {
-  File_writer_inventor writer;
-  generic_print_polyhedron(out.os(), P, writer);
+  IO::internal::Generic_facegraph_printer<Inventor_ostream_base,
+                                          Polyhedron_3<Traits, Items, HDS, Alloc>,
+                                          File_writer_inventor> printer(out);
+  printer(P);
+
   return out;
 }
 

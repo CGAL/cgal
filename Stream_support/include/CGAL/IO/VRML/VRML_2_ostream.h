@@ -30,13 +30,17 @@ public:
   VRML_2_ostream() : m_os(0) {}
   VRML_2_ostream(std::ostream& o) : m_os(&o) { header(); }
   ~VRML_2_ostream() { close(); }
+
   void open(std::ostream& o) { m_os = &o; header(); }
   void close()
   {
-    if ( m_os)
+    if(m_os)
       footer();
     m_os = 0;
   }
+
+  bool fail() const { return m_os->fail(); }
+  bool good() const { return m_os->good(); }
 
   explicit operator bool () { return m_os && !m_os->fail(); }
 

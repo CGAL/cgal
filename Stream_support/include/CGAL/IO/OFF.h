@@ -54,7 +54,7 @@ bool read_OFF(std::istream& in,
   {
     double x, y, z, w;
     scanner.scan_vertex(x, y, z, w);
-    CGAL_assertion(w!=0);
+    CGAL_assertion(w != 0);
     IO::internal::fill_point(x/w, y/w, z/w, points[i]);
     if(scanner.has_colors())
     {

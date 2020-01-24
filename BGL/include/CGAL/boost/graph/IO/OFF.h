@@ -11,15 +11,14 @@
 #ifndef CGAL_BGL_IO_OFF_H
 #define CGAL_BGL_IO_OFF_H
 
-#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/IO/OFF.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
-#include <boost/container/flat_map.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -150,44 +149,8 @@ bool write_OFF(std::ostream& os,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor  vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor    face_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
-  typedef typename boost::graph_traits<FaceGraph>::faces_size_type    faces_size_type;
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::const_type
-      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, g));
-
-  vertices_size_type nv = static_cast<vertices_size_type>(std::distance(vertices(g).first, vertices(g).second));
-  faces_size_type nf = static_cast<faces_size_type>(std::distance(faces(g).first, faces(g).second));
-
-  if(!os.good())
-    return false;
-
-  os << "OFF\n"
-     << nv << " " << nf << " 0\n";
-
-  boost::container::flat_map<vertex_descriptor, vertices_size_type> reindex;
-  int n = 0;
-  for(vertex_descriptor v : vertices(g))
-  {
-    os << get(vpm, v) << '\n';
-    reindex[v] = n++;
-  }
-
-  for(face_descriptor f : faces(g))
-  {
-    os << degree(f, g);
-    for(vertex_descriptor v : vertices_around_face(halfedge(f, g), g))
-      os << " " << reindex[v];
-    os << '\n';
-  }
-
-  return os.good();
+  IO::internal::Generic_facegraph_printer<std::ostream, FaceGraph, CGAL::File_writer_OFF> printer(os);
+  return printer(g, np);
 }
 
 /*!

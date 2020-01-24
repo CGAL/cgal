@@ -1,8 +1,9 @@
 // Convert from OFF format to Wavefront (.obj) format.
 
 #include <CGAL/IO/Verbose_ostream.h>
-#include <CGAL/IO/File_writer_wavefront.h>
-#include <CGAL/IO/generic_copy_OFF.h>
+#include <CGAL/IO/OBJ.h>
+#include <CGAL/IO/OFF.h>
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -15,7 +16,8 @@ bool  verbose  = false;
 
 // main function with standard unix commandline arguments
 // ------------------------------------------------------
-int main( int argc, char **argv) {
+int main( int argc, char **argv)
+{
   int n = 0; // number of filenames
   char *filename[2];
   bool help = false;

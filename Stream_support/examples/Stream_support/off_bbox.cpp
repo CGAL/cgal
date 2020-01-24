@@ -18,7 +18,8 @@ bool  unitcube  = false;
 
 // main function with standard unix commandline arguments
 // ------------------------------------------------------
-int main( int argc, char **argv) {
+int main( int argc, char **argv)
+{
   int n = 0; // number of filenames
   char *filename[1] = { NULL }; // stop compiler warning (too hard to rewrite the code to avoid it)
   bool help = false;

@@ -17,28 +17,27 @@
 #ifndef CGAL_IO_FILE_WRITER_INVENTOR_H
 #define CGAL_IO_FILE_WRITER_INVENTOR_H 1
 
-#include <CGAL/basic.h>
+#include <CGAL/IO/OI/Inventor_ostream.h>
 
 #include <iostream>
-#include <cstddef>
 
 namespace CGAL {
 
 class File_writer_inventor
 {
-  std::ostream*      m_out;
-  std::size_t        m_facets;
+  std::ostream* m_out;
+  std::size_t m_facets;
 
 public:
   File_writer_inventor() {}
   std::ostream& out() const { return *m_out; }
 
-  void write_header(std::ostream& o,
+  void write_header(Inventor_ostream_base& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)
   {
-    m_out = &o;
+    m_out = &(o.os());
     m_facets = facets;
 
     out() << "# " << vertices  << " vertices\n";

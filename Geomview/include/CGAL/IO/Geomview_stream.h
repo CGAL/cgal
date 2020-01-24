@@ -43,6 +43,10 @@ public:
 		    const char *machine = nullptr,
 		    const char *login = nullptr);
 
+    bool fail() const { return false; }
+    bool good() const { return true; }
+    explicit operator bool() { return true; }
+
     ~Geomview_stream();
 
     Geomview_stream &operator<<(const Color &c);

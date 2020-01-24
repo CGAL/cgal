@@ -3,6 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Verbose_ostream.h>
+
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
@@ -25,7 +26,8 @@ typedef Polyhedron::Halfedge_handle     Halfedge_handle;
 
 // main function with standard unix commandline arguments
 // ------------------------------------------------------
-int main( int argc, char **argv) {
+int main( int argc, char **argv)
+{
   int n = 0; // number of filenames
   char *filename[2];
   bool help = false;

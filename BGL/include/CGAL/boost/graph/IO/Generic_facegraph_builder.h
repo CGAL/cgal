@@ -21,7 +21,7 @@ namespace CGAL{
 namespace IO {
 namespace internal {
 
-template <class FaceGraph, class Point, class Derived>
+template <typename FaceGraph, typename Point, typename Derived>
 class Generic_facegraph_builder
 {
 protected:

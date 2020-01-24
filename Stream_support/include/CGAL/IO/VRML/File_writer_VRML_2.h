@@ -15,9 +15,11 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_FILE_WRITER_VRML_2_H
-#define CGAL_IO_FILE_WRITER_VRML_2_H 1
+#define CGAL_IO_FILE_WRITER_VRML_2_H
 
 #include <CGAL/basic.h>
+
+#include <CGAL/IO/VRML/VRML_2_ostream.h>
 
 #include <iostream>
 #include <cstddef>
@@ -26,17 +28,19 @@ namespace CGAL {
 
 class File_writer_VRML_2
 {
-  std::ostream*      m_out;
-  std::size_t        m_facets;
+  std::ostream* m_out;
+  std::size_t m_facets;
+
 public:
   File_writer_VRML_2() {}
   std::ostream& out() const { return *m_out; }
-  void write_header( std::ostream& o,
-                     std::size_t vertices,
-                     std::size_t halfedges,
-                     std::size_t facets)
+
+  void write_header(VRML_2_ostream& o,
+                    std::size_t vertices,
+                    std::size_t halfedges,
+                    std::size_t facets)
   {
-    m_out    = &o;
+    m_out = &o.os();
     m_facets = facets;
 
     out() << "        #-- Begin of Polyhedron_3\n";

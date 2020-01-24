@@ -71,7 +71,7 @@ bool read_OBJ(std::istream& input,
         iss.ignore(256, ' ');
       }
 
-      if(!iss.good() && !iss.eof())
+      if(iss.fail())
         return false;
     }
     else

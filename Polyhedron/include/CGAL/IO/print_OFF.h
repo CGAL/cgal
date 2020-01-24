@@ -18,22 +18,27 @@
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/IO/OFF.h>
-#include <CGAL/IO/generic_print_polyhedron.h>
+#include <CGAL/boost/graph/IO/Generic_facegraph_printer.h>
 
 #include <fstream>
 
 namespace CGAL {
 
-template <class Polyhedron, class Vpm>
+template <class Polyhedron, class VPM>
 void print_polyhedron_with_header_OFF(std::ostream& out,
                                       const Polyhedron& P,
                                       const File_header_OFF& header,
-                                      const Vpm& vpm)
+                                      const VPM& vpm)
 {
   File_writer_OFF writer(header);
   writer.header().set_polyhedral_surface(true);
   writer.header().set_halfedges(P.size_of_halfedges());
-  generic_print_polyhedron(out, P, writer, vpm);
+
+  IO::internal::Generic_facegraph_printer<std::ostream,
+                                          Polyhedron,
+                                          File_writer_OFF> printer(out, writer);
+
+  printer(P, parameters::vertex_point_map(vpm));
 }
 
 template <class Polyhedron>

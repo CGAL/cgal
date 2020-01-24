@@ -24,15 +24,10 @@
 // Polyhedral Surface File IO: Scanner and Writer
 // ============================================================================
 
-
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Polyhedron_3.h>
-
-// This is the test file for the new design. Skip new design test for 
-// disabled compilers.
-#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
-
-#include <CGAL/IO/print_OFF.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <cstddef>
 #include <iostream>
@@ -42,6 +37,9 @@
 #include <cassert>
 
 using namespace CGAL;
+
+typedef Simple_cartesian<double> Kernel;
+typedef Polyhedron_3<Kernel>     Polyhedron;
 
 const char* triangle = "OFF\n"
                        "3 1 0\n"
@@ -61,77 +59,95 @@ const char* tetra =    "OFF\n"
                        "3  2 3 1\n";
 
 const char* empty=    "OFF\n"
-                       "0 0 0\n";
+                      "0 0 0\n";
 
-void test_file_IO_OFF() {
-    typedef Simple_cartesian<double> Kernel;
-    typedef Polyhedron_3<Kernel>     Polyhedron;
+void test_file_IO_OFF()
+{
+  {
+    Polyhedron P;
+    std::istringstream in( triangle);
+    in >> P;    /* 'in' is the stream where the object is read from. */
+    assert(! in.fail());
+    assert( P.is_triangle( P.halfedges_begin()));
+    std::stringstream stream;
+    stream << P << '\0';
+    P = Polyhedron();
+    scan_OFF( stream, P, true);
+    assert( ! ! stream); // ! ! to fool VC7 CL1310
+    assert( P.is_triangle( P.halfedges_begin()));
+
+    std::stringstream stream_new;
+    print_polyhedron_OFF( stream_new, P, true);
+    stream_new << '\0';
+    P = Polyhedron();
+    stream_new >> P;
+    assert( ! ! stream_new); // ! ! to fool VC7 CL1310
+    assert( P.is_triangle( P.halfedges_begin()));
     {
-        Polyhedron P;
-        std::istringstream in( triangle);
-        in >> P;    /* 'in' is the stream where the object is read from. */
-        assert(! in.fail());
-        assert( P.is_triangle( P.halfedges_begin()));
-        std::stringstream stream;
-        stream << P << '\0';
-        P = Polyhedron();
-        scan_OFF( stream, P, true);
-        assert( ! ! stream); // ! ! to fool VC7 CL1310
-        assert( P.is_triangle( P.halfedges_begin()));
-
-        std::stringstream stream_new;
-        print_polyhedron_OFF( stream_new, P, true);
-        stream_new << '\0';
-        P = Polyhedron();
-        stream_new >> P;
-        assert( ! ! stream_new); // ! ! to fool VC7 CL1310
-        assert( P.is_triangle( P.halfedges_begin()));
-        {
-            std::ofstream out2( "triangle_binary.off");
-            print_polyhedron_OFF( out2, P, true);
-        }
-        std::ifstream filein( "triangle_binary.off");
-        P = Polyhedron();
-        filein >> P;
-        assert(! filein.fail());
-        assert( P.is_triangle( P.halfedges_begin()));
-    }{
-        Polyhedron P;
-        std::istringstream in( tetra);
-        in >> P;    /* 'in' is the stream where the object is read from. */
-        assert( P.is_tetrahedron( P.halfedges_begin()));
-        std::stringstream stream;
-        stream << P << '\0';
-        P = Polyhedron();
-        stream >> P;
-        assert( P.is_tetrahedron( P.halfedges_begin()));
-        {
-            std::ofstream out2( "tetra_binary.off");
-            print_polyhedron_OFF( out2, P, true);
-        }
-        std::ifstream filein( "tetra_binary.off");
-        P = Polyhedron();
-        filein >> P;
-        assert( P.is_tetrahedron( P.halfedges_begin()));
+      std::ofstream out2( "triangle_binary.off");
+      print_polyhedron_OFF( out2, P, true);
     }
-
+    std::ifstream filein( "triangle_binary.off");
+    P = Polyhedron();
+    filein >> P;
+    assert(! filein.fail());
+    assert( P.is_triangle( P.halfedges_begin()));
+  }{
+    Polyhedron P;
+    std::istringstream in( tetra);
+    in >> P;    /* 'in' is the stream where the object is read from. */
+    assert( P.is_tetrahedron( P.halfedges_begin()));
+    std::stringstream stream;
+    stream << P << '\0';
+    P = Polyhedron();
+    stream >> P;
+    assert( P.is_tetrahedron( P.halfedges_begin()));
     {
-      Polyhedron P;
-      std::istringstream in( ::empty);
-      read_off(in, P);
-      assert(P.empty());
-      assert(in);
+      std::ofstream out2( "tetra_binary.off");
+      print_polyhedron_OFF( out2, P, true);
     }
+    std::ifstream filein( "tetra_binary.off");
+    P = Polyhedron();
+    filein >> P;
+    assert( P.is_tetrahedron( P.halfedges_begin()));
+  }
+
+  {
+    Polyhedron P;
+    std::istringstream in( ::empty);
+    read_off(in, P);
+    assert(P.empty());
+    assert(in);
+  }
 }
 
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-
-int main(){
-// This is the test file for the new design. Skip new design test for 
-// disabled compilers.
-#ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
-    test_file_IO_OFF();
-#endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
-    return 0;
+void test_file_IO_geomview()
+{
+  Geomview_stream gv;
+  Polyhedron P;
+  gv << P;
 }
-// EOF //
+
+void test_file_IO_inventor()
+{
+  VRML_1_ostream out;
+  Polyhedron P;
+  out << P;
+}
+
+void test_file_IO_VRML_2()
+{
+  VRML_2_ostream out;
+  Polyhedron P;
+  out << P;
+}
+
+int main()
+{
+  test_file_IO_OFF();
+  test_file_IO_geomview();
+  test_file_IO_inventor();
+  test_file_IO_VRML_2();
+
+  return 0;
+}

@@ -19,12 +19,10 @@
 #ifndef CGAL_IO_VRML_VRML_1_OSTREAM_H
 #define CGAL_IO_VRML_VRML_1_OSTREAM_H
 
-#include <CGAL/basic.h>
+// Declare the common base class for OpenInventor and VRML 1.0 format.
+#include <CGAL/IO/OI.h>
 
 #include <iostream>
-
-// Declare the common base class for OpenInventor and VRML 1.0 format.
-#include <CGAL/IO/Inventor_ostream.h>
 
 // OpenInventor and VRML 1.0 are quite similar formats, so
 // output operators could be shared if they use the common
@@ -33,7 +31,8 @@
 
 namespace CGAL {
 
-class VRML_1_ostream : public Inventor_ostream_base
+class VRML_1_ostream
+  : public Inventor_ostream_base
 {
 public:
   VRML_1_ostream() {}
