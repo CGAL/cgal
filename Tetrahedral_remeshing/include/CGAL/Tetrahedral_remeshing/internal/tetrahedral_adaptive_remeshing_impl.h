@@ -92,6 +92,7 @@ namespace internal
   template<typename Triangulation
          , typename SizingFunction
          , typename EdgeIsConstrainedMap
+         , typename FacetIsConstrainedMap
          , typename CellSelector
          , typename Visitor
          >
@@ -122,6 +123,7 @@ namespace internal
       , const SizingFunction& sizing
       , const bool protect_boundaries
       , EdgeIsConstrainedMap ecmap
+      , FacetIsConstrainedMap fcmap
       , CellSelector cell_selector
       , Visitor& visitor
 //      , const bool adaptive
@@ -135,7 +137,7 @@ namespace internal
       , m_visitor(visitor)
     {
       m_c3t3.triangulation().swap(tr);
-      init_c3t3(ecmap);
+      init_c3t3(ecmap, fcmap);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
@@ -313,7 +315,8 @@ namespace internal
       return m_c3t3.triangulation();
     }
 
-    void init_c3t3(const EdgeIsConstrainedMap& ecmap)
+    void init_c3t3(const EdgeIsConstrainedMap& ecmap,
+                   const FacetIsConstrainedMap& fcmap)
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       std::size_t nbc = 0;
@@ -330,7 +333,7 @@ namespace internal
            cit != tr().finite_cells_end();
            ++cit)
       {
-        if (m_cell_selector(cit))//->subdomain_index() != Subdomain_index())
+        if (m_cell_selector(cit))
         {
           m_c3t3.add_to_complex(cit, cit->subdomain_index());
           max_si = (std::max)(max_si, cit->subdomain_index());
@@ -360,7 +363,9 @@ namespace internal
         Facet mf = tr().mirror_facet(f);
         Subdomain_index s1 = f.first->subdomain_index();
         Subdomain_index s2 = mf.first->subdomain_index();
-        if (s1 != s2)
+        if ( s1 != s2
+          || get(fcmap, f)
+          || get(fcmap, mf) )
         {
           m_c3t3.add_to_complex(f, 1);
 

@@ -92,6 +92,10 @@ namespace CGAL
   *    constrained - or - not status of each edge of `tr`. A constrained edge can be split
   *    or collapsed, but not flipped.
   *  \cgalParamEnd
+  *  \cgalParamBegin{facet_is_constrained_map} a property map containing the
+  *    constrained - or - not status of each facet of `tr`. A constrained facet can be split
+  *    or collapsed, but not flipped.
+  *  \cgalParamEnd
   *  \cgalParamBegin{cell_is_selected_map} a property map containing the
   *    selected - or - not status for each cell of `tr` for remeshing.
   *    Only selected cells are modified (and possibly their neighbors if surfaces are
@@ -172,7 +176,6 @@ namespace CGAL
 
     typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
     typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Edge_vv> No_constraint;
-
     typedef typename boost::lookup_named_param_def <
       internal_np::edge_is_constrained_t,
       NamedParameters,
@@ -180,6 +183,16 @@ namespace CGAL
     > ::type ECMap;
     ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained)
                              , No_constraint());
+
+    typedef typename Tr::Facet Facet;
+    typedef Tetrahedral_remeshing::internal::No_constraint_pmap<Facet> No_facet;
+    typedef typename boost::lookup_named_param_def <
+      internal_np::facet_is_constrained_t,
+      NamedParameters,
+      No_facet//default
+    > ::type FCMap;
+    FCMap fcmap = choose_param(get_param(np, internal_np::facet_is_constrained)
+                             , No_facet());
 
     typedef typename boost::lookup_named_param_def <
       internal_np::remeshing_visitor_t,
@@ -201,8 +214,9 @@ namespace CGAL
 #endif
 
     typedef Tetrahedral_remeshing::internal::Adaptive_remesher<
-      Tr, SizingFunction, ECMap, SelectionFunctor, Visitor> Remesher;
-    Remesher remesher(tr, sizing, protect, ecmap
+      Tr, SizingFunction, ECMap, FCMap, SelectionFunctor, Visitor> Remesher;
+    Remesher remesher(tr, sizing, protect
+                    , ecmap, fcmap
                     , cell_select, visitor
                   /*, adaptive*/);
 
