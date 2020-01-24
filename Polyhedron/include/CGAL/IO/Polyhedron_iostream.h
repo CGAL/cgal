@@ -62,7 +62,7 @@ template < class Traits,
 bool 
 read_off(std::istream& in,
          Polyhedron_3<Traits,Items,HDS,Alloc>& P,
-         NamedParameters np) {
+         const NamedParameters& np) {
     // reads a polyhedron from `in' and appends it to P.
     typedef typename CGAL::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::type Vpm;
     using parameters::choose_parameter;

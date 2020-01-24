@@ -320,7 +320,7 @@ template<class OutputIterator, class TriangleMesh, class NamedParameters>
 OutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
                            OutputIterator out,
-                           NamedParameters np)
+                     const NamedParameters& np)
 {
   typedef typename GetGeomTraits<TriangleMesh,
           NamedParameters>::type Geom_traits;

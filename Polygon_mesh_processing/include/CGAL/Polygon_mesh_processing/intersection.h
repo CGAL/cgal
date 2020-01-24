@@ -1585,8 +1585,8 @@ template <class TriangleMeshRange,
           class NamedParametersRange>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
-                                         NamedParameters np,
-                                         NamedParametersRange nps)
+                                   const NamedParameters& np,
+                                   const NamedParametersRange& nps)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -1625,7 +1625,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 template <class TriangleMeshRange, class NamedParameters, class OutputIterator>
 OutputIterator intersecting_meshes(const TriangleMeshRange& range,
                                          OutputIterator out,
-                                         NamedParameters np)
+                                   const NamedParameters& np)
 {
   std::vector<Named_function_parameters<bool, internal_np::all_default_t> >nps(
     std::distance(range.begin(), range.end()), parameters::all_default());
