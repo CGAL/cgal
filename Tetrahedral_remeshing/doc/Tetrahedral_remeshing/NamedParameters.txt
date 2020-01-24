@@ -65,6 +65,18 @@ It must be default constructible.
 <b>Default:</b> a default property map where no edge is constrained
 \cgalNPEnd
 
+\cgalNPBegin{facet_is_constrained_map}
+\anchor Remeshing_facet_is_constrained_map
+is a property map containing information about facets of the input triangulation
+being marked as constrained or not.\n
+<b>Type:</b> a class model of `ReadPropertyMap` with
+`Triangulation::%Facet` as key type and `bool` as value type.
+It is not updated throughout the remeshing process.
+It must be default constructible.
+\n
+<b>Default:</b> a default property map where no facet is constrained
+\cgalNPEnd
+
 \cgalNPBegin{cell_is_selected_map}
 \anchor Remeshing_cell_is_selected_map
 is a property map containing information about cells of the input triangulation
