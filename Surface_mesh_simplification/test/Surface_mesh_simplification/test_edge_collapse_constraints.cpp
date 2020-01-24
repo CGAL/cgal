@@ -114,6 +114,9 @@ int main(int argc, char** argv)
                      .max_normal_angle_change(45*CGAL_PI/180.0)
                      .get_placement(placement));
   
+  std::ofstream out("out.off");
+  out << surface_mesh;
+  out.close();
   assert(surface_mesh.number_of_edges() == 12 );
   
   
@@ -121,9 +124,6 @@ int main(int argc, char** argv)
                      CGAL::parameters::edge_is_constrained_map(constraints_map)
                      .max_normal_angle_change(CGAL_PI)
                      .get_placement(placement));
-  std::ofstream out("out.off");
-  out << surface_mesh;
-  out.close();
 assert(surface_mesh.number_of_edges() == 9 );
   return EXIT_SUCCESS;
 }

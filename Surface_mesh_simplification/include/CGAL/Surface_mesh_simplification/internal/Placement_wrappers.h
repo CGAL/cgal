@@ -142,10 +142,9 @@ public:
           
           const FT sp = gt.compute_scalar_product_3_object()(n1, n2);
           bool is_pos = is_positive(sp);
-          bool sq_inf_bound = CGAL::square(sp) < n1.squared_length() * n2.squared_length() * sq_cos_bound;
-          bool is_neg_and_inf = !is_pos && sq_inf_bound;
-          
-          if(is_neg_and_inf || !is_neg_and_inf && is_bound_pos)
+          bool is_sq_inf= CGAL::square(sp) < n1.squared_length() * n2.squared_length() * sq_cos_bound;
+          // Simplified using !A.(B+C) + A.B.C == !A.(B+C) + B.C
+          if(!is_pos && (is_bound_pos || is_sq_inf) || is_bound_pos && is_sq_inf)
             return boost::optional<typename Profile::Point>();
           
           ++it;
