@@ -33,10 +33,6 @@
 #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
 
 #include <CGAL/IO/print_OFF.h>
-#include <CGAL/IO/print_wavefront.h>
-#include <CGAL/IO/print_inventor.h>
-#include <CGAL/IO/print_VRML_1.h>
-#include <CGAL/IO/print_VRML_2.h>
 
 #include <cstddef>
 #include <iostream>
@@ -127,9 +123,6 @@ void test_file_IO_OFF() {
       assert(in);
     }
 }
-void test_file_IO_wavefront() {}
-void test_file_IO_inventor() {}
-void test_file_IO_VRML_2() {}
 
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 
@@ -138,9 +131,6 @@ int main(){
 // disabled compilers.
 #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
     test_file_IO_OFF();
-    test_file_IO_wavefront();
-    test_file_IO_inventor();
-    test_file_IO_VRML_2();
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
     return 0;
 }
