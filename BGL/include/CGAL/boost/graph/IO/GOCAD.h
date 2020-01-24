@@ -107,7 +107,7 @@ public:
       std::getline(input, s);
     }
 
-    return true;
+    return !input.fail();
   }
 };
 
@@ -143,7 +143,7 @@ bool read_GOCAD(std::istream& in,
   name = builder.name;
   color = builder.color;
 
-  return g.is_valid(); // @fixme keep validity check?
+  return is_valid(g); // @fixme keep validity check?
 }
 
 /*!

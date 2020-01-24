@@ -121,7 +121,7 @@ bool parse_ASCII_STL(std::istream& input,
     std::cout << "Parsing ASCII file..." << std::endl;
 
   if(!input.good())
-    return true;
+    return false;
 
   // Here, we have already read the word 'solid'
 
@@ -158,7 +158,7 @@ bool parse_ASCII_STL(std::istream& input,
     return false;
   }
 
-  return true;
+  return !input.fail();
 }
 
 template <class PointRange, class TriangleRange>
@@ -178,7 +178,7 @@ bool parse_binary_STL(std::istream& input,
   input.seekg(0, std::ios::beg);
 
   if(!input.good())
-    return true;
+    return false;
 
   // Discard the first 80 chars (unused header)
   int pos = 0;
@@ -281,7 +281,7 @@ bool parse_binary_STL(std::istream& input,
     }
   }
 
-  return true;
+  return !input.fail();
 }
 
 } // namespace internal

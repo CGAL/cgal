@@ -67,7 +67,7 @@ bool read_OFF(std::istream& in,
       scanner.skip_to_next_vertex(i);
     }
 
-    if(!in)
+    if(!in.good())
       return false;
   }
 
@@ -77,7 +77,7 @@ bool read_OFF(std::istream& in,
     std::size_t no;
     scanner.scan_facet(no, i);
 
-    if(!in)
+    if(!in.good())
       return false;
 
     IO::internal::resize(polygons[i], no);
@@ -114,7 +114,7 @@ bool read_OFF(std::istream& in,
     }
   }
 
-  return in.good();
+  return !in.fail();
 }
 
 /*!
@@ -163,7 +163,7 @@ bool read_OFF(std::istream& in,
     }
   }
 
-  return in.good();
+  return !in.fail();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

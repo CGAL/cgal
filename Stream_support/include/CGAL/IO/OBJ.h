@@ -87,7 +87,7 @@ bool read_OBJ(std::istream& input,
     return false;
   }
 
-  return true;
+  return !input.fail();
 }
 
 } // namespace CGAL
