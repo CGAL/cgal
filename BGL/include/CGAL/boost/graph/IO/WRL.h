@@ -57,7 +57,6 @@ bool write_WRL(const char* fname, const FaceGraph& g) { return write_WRL(fname, 
 template <typename FaceGraph>
 bool write_WRL(const std::string& fname, const FaceGraph& g) { return write_WRL(fname, g, parameters::all_default()); }
 
-
 } // namespace CGAL
 
 #endif // CGAL_BGL_IO_WRL_H

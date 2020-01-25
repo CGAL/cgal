@@ -47,7 +47,7 @@ public:
 
   void write_footer() const { out() << "\n# End of Wavefront obj format #" << std::endl; }
 
-  void write_vertex(const double& x, const double& y, const double& z) {
+  void write_vertex(const double x, const double y, const double z) {
     out() << "v " << x << ' ' << y << ' ' << z << '\n';
   }
 

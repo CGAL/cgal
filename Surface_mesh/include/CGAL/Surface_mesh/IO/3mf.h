@@ -13,9 +13,11 @@
 #ifndef CGAL_SURFACE_MESH_IO_3MF_H
 #define CGAL_SURFACE_MESH_IO_3MF_H
 
-#include <iostream>
-#include <CGAL/IO/read_3mf.h>
 #include <CGAL/Surface_mesh.h>
+
+#include <CGAL/IO/3MF.h>
+
+#include <iostream>
 
 namespace CGAL{
 /*!

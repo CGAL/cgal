@@ -15,7 +15,7 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_FILE_WRITER_INVENTOR_H
-#define CGAL_IO_FILE_WRITER_INVENTOR_H 1
+#define CGAL_IO_FILE_WRITER_INVENTOR_H
 
 #include <CGAL/IO/OI/Inventor_ostream.h>
 
@@ -25,24 +25,24 @@ namespace CGAL {
 
 class File_writer_inventor
 {
-  std::ostream* m_out;
+  Inventor_ostream_base* m_out;
   std::size_t m_facets;
 
 public:
   File_writer_inventor() {}
-  std::ostream& out() const { return *m_out; }
+  std::ostream& out() const { return m_out->os(); }
 
   void write_header(Inventor_ostream_base& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)
   {
-    m_out = &(o.os());
+    m_out = &o;
     m_facets = facets;
 
-    out() << "# " << vertices  << " vertices\n";
+    out() << "# " << vertices << " vertices\n";
     out() << "# " << halfedges << " halfedges\n";
-    out() << "# " << facets    << " facets\n\n";
+    out() << "# " << facets << " facets\n\n";
     out() << "Separator {\n"
              "    Coordinate3 {\n"
              "        point   [" << std::endl;
@@ -55,7 +55,8 @@ public:
              "} #Separator" << std::endl;
   }
 
-  void write_vertex( const double& x, const double& y, const double& z) {
+  void write_vertex( const double x, const double y, const double z)
+  {
     out() << "            " << x << ' ' << y << ' ' << z << ',' <<'\n';
   }
 
@@ -73,6 +74,6 @@ public:
   void write_facet_end() { out() << "-1,\n"; }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_IO_FILE_WRITER_INVENTOR_H

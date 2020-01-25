@@ -179,8 +179,8 @@ bool read_OFF(std::istream& in,
  */
 template <class Point_3, class Polygon_3>
 bool write_OFF(std::ostream& out,
-               std::vector< Point_3 >& points,
-               std::vector< Polygon_3 >& polygons)
+               std::vector<Point_3>& points,
+               std::vector<Polygon_3>& polygons)
 {
   CGAL::File_writer_OFF writer;
   writer.write_header(out, points.size(), 0, polygons.size());

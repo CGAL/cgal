@@ -28,25 +28,25 @@ namespace CGAL {
 
 class File_writer_VRML_2
 {
-  std::ostream* m_out;
+  VRML_2_ostream* m_out;
   std::size_t m_facets;
 
 public:
   File_writer_VRML_2() {}
-  std::ostream& out() const { return *m_out; }
+  std::ostream& out() const { return m_out->os(); }
 
   void write_header(VRML_2_ostream& o,
                     std::size_t vertices,
                     std::size_t halfedges,
                     std::size_t facets)
   {
-    m_out = &o.os();
+    m_out = &o;
     m_facets = facets;
 
     out() << "        #-- Begin of Polygon Mesh\n";
-    out() << "        # " << vertices  << " vertices\n";
+    out() << "        # " << vertices << " vertices\n";
     out() << "        # " << halfedges << " halfedges\n";
-    out() << "        # " << facets    << " facets\n";
+    out() << "        # " << facets << " facets\n";
     out() << "        Group {\n"
              "            children [\n"
              "                Shape {\n"
@@ -67,10 +67,12 @@ public:
              "        } #Group" << std::endl;
   }
 
-  void write_vertex( const double& x, const double& y, const double& z) {
+  void write_vertex( const double& x, const double& y, const double& z)
+  {
     out() << "                                "
           << x << ' ' << y << ' ' << z << ',' << '\n';
   }
+
   void write_facet_header() const
   {
     out() << "                            ] #point\n"
@@ -78,9 +80,7 @@ public:
              "                        coordIndex  [" << std::endl;
   }
 
-  void write_facet_begin( std::size_t) {
-    out() << "                            ";
-  }
+  void write_facet_begin( std::size_t) { out() << "                            "; }
   void write_facet_vertex_index( std::size_t idx) { out() << idx << ',';}
   void write_facet_end() { out() << "-1,\n"; }
 };
