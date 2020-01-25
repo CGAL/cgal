@@ -71,7 +71,7 @@ public:
         return false;
     }
 
-    return is_valid_polygon_mesh(g);
+    return is_valid(g);
   }
 
   template <typename NamedParameters>
