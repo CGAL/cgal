@@ -18,6 +18,10 @@
 
 namespace CGAL {
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Read
+
 //! \ingroup IOstreamFunctions
 //!
 /// reads the content of `input` into `points` and `faces`, using the `OBJ` format.
@@ -88,6 +92,48 @@ bool read_OBJ(std::istream& input,
   }
 
   return !input.fail();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Write
+
+
+/*!
+ * \ingroup IOstreamFunctions
+ *
+ * writes the content of `points` and `polygons` in `out`, in the OBJ format.
+ *
+ * \see \ref IOStreamOBJ
+ */
+template <class Point_3, class Polygon_3>
+bool write_OBJ(std::ostream& out,
+               std::vector<Point_3>& points,
+               std::vector<Polygon_3>& polygons)
+{
+  CGAL::File_writer_wavefront writer;
+  writer.write_header(out, points.size(), 0, polygons.size());
+
+  for(std::size_t i = 0, end = points.size(); i<end; ++i)
+  {
+    const Point_3& p = points[i];
+    writer.write_vertex(p.x(), p.y(), p.z());
+  }
+
+  writer.write_facet_header();
+  for(std::size_t i=0, end=polygons.size(); i<end; ++i)
+  {
+    Polygon_3& polygon = polygons[i];
+    const std::size_t size = polygon.size();
+
+    writer.write_facet_begin(size);
+    for(std::size_t j=0; j<size; ++j)
+      writer.write_facet_vertex_index(polygon[j]);
+    writer.write_facet_end();
+  }
+  writer.write_footer();
+
+  return out.good();
 }
 
 } // namespace CGAL
