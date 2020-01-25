@@ -136,7 +136,7 @@ std::ostream& write_STL(std::ostream& out,
     const boost::uint32_t N32 = static_cast<boost::uint32_t>(facets.size());
     out.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
-    for(auto face : facets)
+    for(const auto& face : facets)
     {
       const Point& p = points[face[0]];
       const Point& q = points[face[1]];
@@ -157,7 +157,7 @@ std::ostream& write_STL(std::ostream& out,
   else
   {
     out << "solid\n";
-    for(auto face : facets)
+    for(const auto& face : facets)
     {
       const Point& p = points[face[0]];
       const Point& q = points[face[1]];
