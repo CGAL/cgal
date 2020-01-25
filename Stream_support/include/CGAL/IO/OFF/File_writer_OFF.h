@@ -15,10 +15,11 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #ifndef CGAL_IO_OFF_FILE_WRITER_OFF_H
-#define CGAL_IO_OFF_FILE_WRITER_OFF_H 1
+#define CGAL_IO_OFF_FILE_WRITER_OFF_H
 
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/OFF/File_header_OFF.h>
+
 #include <iostream>
 #include <cstddef>
 
@@ -35,11 +36,22 @@ public:
     File_header_OFF&        header()       { return m_header; }
     const File_header_OFF&  header() const { return m_header; }
 
-    void write_header( std::ostream& out,
-                       std::size_t   vertices,
-                       std::size_t   halfedges,
-                       std::size_t   facets,
-                       bool          normals = false);
+    void write_header(std::ostream& out,
+                      std::size_t vertices,
+                      std::size_t /*halfedges*/,
+                      std::size_t facets,
+                      bool normals = false)
+    {
+      m_out = &o;
+
+      m_header.set_vertices(vertices);
+      m_header.set_facets(facets);
+      m_header.set_normals(normals);
+
+      // Print header.
+      out() << m_header;
+    }
+
     void write_footer() {
         if ( m_header.ascii() && m_header.comments())
             out() << "\n\n# End of OFF #";
@@ -97,9 +109,4 @@ public:
 
 } //namespace CGAL
 
-#ifdef CGAL_HEADER_ONLY
-#include <CGAL/IO/OFF/File_writer_OFF_impl.h>
-#endif // CGAL_HEADER_ONLY
-
-#endif // CGAL_IO_OFF_FILE_WRITER_OFF_H //
-// EOF //
+#endif // CGAL_IO_OFF_FILE_WRITER_OFF_H
