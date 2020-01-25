@@ -12,10 +12,10 @@
 #ifndef CGAL_BGL_IO_WRL_H
 #define CGAL_BGL_IO_WRL_H
 
+#include <CGAL/IO/VRML.h>
+
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-
-#include <boost/container/flat_map.hpp>
 
 #include <fstream>
 
@@ -40,70 +40,8 @@ bool write_WRL(std::ostream& os,
                const FaceGraph& g,
                const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor  vertex_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::face_descriptor    face_descriptor;
-  typedef typename boost::graph_traits<FaceGraph>::vertices_size_type vertices_size_type;
-
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  typename CGAL::GetVertexPointMap<FaceGraph, NamedParameters>::const_type
-      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(CGAL::vertex_point, g));
-
-  boost::container::flat_map<vertex_descriptor,vertices_size_type> reindex;
-  int n = 0;
-
-  os << "#VRML V2.0 utf8\n"
-        "Group {\n"
-        "children [\n"
-        "Shape {\n"
-        "appearance DEF A1 Appearance {\n"
-        "material Material {\n"
-        "diffuseColor .6 .5 .9\n"
-        "}\n"
-        "}\n"
-        "appearance\n"
-        "Appearance {\n"
-        "material DEF Material Material {}\n"
-        "}\n"
-        "}\n"
-        "Group {\n"
-        "children [\n"
-        "Shape {\n"
-        "appearance Appearance { material USE Material }\n"
-        "geometry IndexedFaceSet {\n"
-        "convex FALSE\n"
-        "solid  FALSE\n"
-        "coord  Coordinate {\n"
-        "point [\n";
-
-  for(vertex_descriptor v : vertices(g))
-  {
-    os << get(vpm,v) << ",\n";
-    reindex[v] = n++;
-  }
-
-  os << "] #point\n"
-        "} #coord Coordinate\n"
-        "coordIndex  [\n";
-
-  for(face_descriptor f : faces(g))
-  {
-    for(vertex_descriptor v : vertices_around_face(halfedge(f, g), g))
-      os << reindex[v] << ",";
-    os << "-1,\n";
-  }
-
-  os << "] #coordIndex\n"
-        "} #geometry\n"
-        "} #Shape\n"
-        "] #children\n"
-        "} #group\n"
-        "]\n"
-        "}\n";
-
-  return os.good();
+  IO::internal::Generic_facegraph_printer<std::ostream, FaceGraph, CGAL::File_writer_VRML_2> printer(os);
+  return printer(g, np);
 }
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>

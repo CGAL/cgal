@@ -43,15 +43,14 @@ public:
     m_out = &o.os();
     m_facets = facets;
 
-    out() << "        #-- Begin of Polyhedron_3\n";
+    out() << "        #-- Begin of Polygon Mesh\n";
     out() << "        # " << vertices  << " vertices\n";
     out() << "        # " << halfedges << " halfedges\n";
     out() << "        # " << facets    << " facets\n";
     out() << "        Group {\n"
              "            children [\n"
              "                Shape {\n"
-             "                    appearance Appearance { material "
-                                               "USE Material }\n"
+             "                    appearance Appearance { material USE Material }\n"
              "                    geometry IndexedFaceSet {\n"
              "                        convex FALSE\n"
              "                        solid  FALSE\n"
