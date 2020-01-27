@@ -38,13 +38,13 @@ public:
   File_header_OFF& header() { return m_header; }
   const File_header_OFF& header() const { return m_header; }
 
-  void write_header(std::ostream& out,
+  void write_header(std::ostream& os,
                     std::size_t vertices,
                     std::size_t /*halfedges*/,
                     std::size_t facets,
                     bool normals = false)
   {
-    m_out = &o;
+    m_out = &os;
 
     m_header.set_vertices(vertices);
     m_header.set_facets(facets);
