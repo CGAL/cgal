@@ -479,6 +479,14 @@ It is for example used in the fucntion `keep_large_connected_components()`.
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{maximum_number_of_faces} \anchor PMP_maximum_number_of_faces
+
+Parameter that specifies the maximum number of faces that a component
+of a mesh can have to be considered reversible \n
+<b>Type:</b> `size_type` \n
+<b>Default:</b> 0
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */

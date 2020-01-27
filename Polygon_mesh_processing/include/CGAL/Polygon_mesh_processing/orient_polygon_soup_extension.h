@@ -36,6 +36,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
+ * \ingroup PMP_orientation_grp
  * Duplicate each point \a p at which the intersection
  * of an infinitesimally small ball centered at \a p
  * with the polygons incident to it is not a topological disk.
@@ -76,6 +77,7 @@ duplicate_incompatible_edges_in_polygon_soup(PointRange& points,
 }
 
 /*!
+ * \ingroup PMP_orientation_grp
  * Orient each triangle of a triangle soup using the orientation of its
  * closest non degenerate triangle in `tm_ref`.
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
@@ -91,7 +93,21 @@ duplicate_incompatible_edges_in_polygon_soup(PointRange& points,
  * \param tm_ref the reference TriangleMesh.
  * \param points the points of the soup.
  * \param triangles the triangles of the soup.
+ * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamBegin{vertex_point_map}
+ *     the property map with the points associated to the vertices of `tm`.
+ *     If this parameter is omitted, an internal property map for
+ *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
+ *   \cgalParamEnd
+ *   \cgalParamBegin{geom_traits} a geometric traits class instance.
+ *      The traits class must provide the nested functor `Collinear_3`
+ *      to check whether three points are collinear.
+ *   \cgalParamEnd
+ * \cgalNamedParamsEnd
  */
+
 template <class Concurrency_tag, class PointRange, class TriangleRange,
           class TriangleMesh, class NamedParameters>
 void

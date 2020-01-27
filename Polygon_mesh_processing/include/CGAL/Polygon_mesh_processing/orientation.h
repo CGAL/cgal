@@ -649,6 +649,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
 }
 
 /*!
+ * \ingroup PMP_orientation_grp
  * look at connected components of `tm` having possibly compatible boundary cycles
  * that could be merged if the orientation of one patch was reversed, and merge them.
  *
@@ -657,7 +658,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *                     as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
- * @param tm a closed triangulated surface mesh
+ * @param pm a closed triangulated surface mesh
  * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -669,7 +670,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamBegin{face_index_map}
  *     a property map containing an index for each face initialized from 0 to num_faces(pm).
  *   \cgalParamEnd
- * *   \cgalParamBegin{maximum_number_of_faces}
+ *   \cgalParamBegin{maximum_number_of_faces}
  *     if not 0 (default), a connected component is considered reversible only
  *     if it has not more faces than the value given.
  *   \cgalParamEnd
