@@ -395,7 +395,7 @@ public:
     // Iterates on the vector of face descriptors
     for(face_descriptor f : facets)
     {
-     if(!this->triangulate_face(f, pmesh, use_cdt))
+     if(!this->triangulate_face(f, pmesh, use_cdt, Emptyset_iterator()))
        result = false;
     }
     return result;
