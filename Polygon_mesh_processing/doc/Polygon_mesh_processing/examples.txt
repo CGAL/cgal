@@ -26,4 +26,5 @@
 \example Polygon_mesh_processing/mesh_smoothing_example.cpp
 \example Polygon_mesh_processing/shape_smoothing_example.cpp
 \example Polygon_mesh_processing/locate_example.cpp
+\example Polygon_mesh_processing/orientation_pipeline_example.cpp
 */

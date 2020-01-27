@@ -597,7 +597,7 @@ duplicates points to make a soup orientable.
 takes an input mesh as a model and orients the triangles of a soup according to it.
 - The function `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`
 merges the connected components of a polygon mesh if possible.
-\subsection PolygonSoupExample Orientation Example
+\subsection PolygonSoupExample Orientation Examples
 
 This example shows how to generate a mesh from a polygon soup.
 The first step is to get a soup of consistently oriented faces, before
@@ -607,6 +607,11 @@ polygon mesh to illustrate
 Section \ref PMPOrientation.
 
 \cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
+
+This example shows how to correctly repair and orient a soup to get a mesh from a reference : 
+
+\cgalExample{Polygon_mesh_processing/orientation_pipeline_example.cpp}
+
 
 ****************************************
 \section PMPRepairing Combinatorial Repairing
