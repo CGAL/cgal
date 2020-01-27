@@ -42,10 +42,19 @@ public:
   template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
+    auto base_res = BasePlacement::operator()(profile);
+    
+    if(base_res == boost::none)
+    {
+      return base_res;
+    }
+    
     if(!m_constrain_geom)
     {
-      return BasePlacement::operator()(profile);
+      return base_res;
     }
+    
+    
     typedef typename Profile::TM                                    TM;
     typedef typename boost::graph_traits<TM>::halfedge_descriptor   halfedge_descriptor;
     
