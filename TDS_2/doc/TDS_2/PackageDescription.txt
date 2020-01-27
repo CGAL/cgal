@@ -58,7 +58,7 @@ These refining concepts and their models are described in Chapter
 - `TriangulationDSVertexBase_2`
 
 \cgalCRPSection{Classes}
-- `CGAL::Triangulation_data_structure_2<Vb,Fb>`
+- `CGAL::Triangulation_data_structure_2<VertexBase,FaceBase>`
 - `CGAL::Triangulation_ds_face_base_2<Tds>`
 - `CGAL::Triangulation_ds_vertex_base_2<Tds>`
 

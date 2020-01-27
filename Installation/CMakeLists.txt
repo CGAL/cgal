@@ -28,7 +28,7 @@ include(GNUInstallDirs)
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" FALSE)
+option(CGAL_HEADER_ONLY "Enable header-only mode of CGAL (no compilation of CGAL libraries)" TRUE)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -925,7 +925,10 @@ if(NOT CGAL_HEADER_ONLY)
     ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 else()
+  configure_file(${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in
+    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake)
   install(FILES
+    ${CMAKE_BINARY_DIR}/config/CGALConfig-installation-dirs.cmake
     ${CMAKE_CURRENT_LIST_DIR}/lib/cmake/CGAL/CGALConfig.cmake
     DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 endif()
@@ -957,12 +960,17 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
+if(NOT TARGET ALL_CGAL_TARGETS)
+  add_custom_target( ALL_CGAL_TARGETS )
+endif()
+
 macro( add_programs subdir target ON_OFF )
 
   cache_set( CGAL_EXECUTABLE_TARGETS "" )
   
   add_custom_target( ${target} )
-  
+  add_dependencies( ALL_CGAL_TARGETS ${target} )
+
   option( WITH_${target} "Select ${target}" ${ON_OFF} )
   if ( WITH_${target} )
     add_subdirectory( ${subdir} EXCLUDE_FROM_ALL )
@@ -1183,7 +1191,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   file(GLOB html_files RELATIVE "${DOC_DIR}/doc_output/" "${DOC_DIR}/doc_output/*/*.html")
   file(GLOB example_files RELATIVE "${CMAKE_SOURCE_DIR}/" "${CMAKE_SOURCE_DIR}/*/examples/*/*.cpp")
   find_program(AWK awk)
-  set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)/,arr); if(arr[2]!="") print arr[2] }]=])
+  set(awk_arguments [=[{ match($0, /# *include *(&lt;|[<"])(CGAL\/[^>&"]*)([>"]|&gt;)| (CGAL\/[^>&"]*\.h)/,arr); if(arr[2]!="") print arr[2]; if(arr[4]!="") print arr[4] }]=])
   message("listing headers from html files")
   foreach(f ${html_files})
     execute_process(COMMAND "${AWK}" "${awk_arguments}" "${DOC_DIR}/doc_output/${f}"

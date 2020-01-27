@@ -2,20 +2,11 @@
 //
 // Copyright (c) 2017 GeometryFactory (France).  All Rights Reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s): Le-Jeng Shiue <Andy.Shiue@gmail.com>
@@ -31,7 +22,7 @@
 
 #include <CGAL/circulator.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/Subdivision_method_3/internal/subdivision_hosts_impl_3.h>
@@ -84,14 +75,14 @@ void PQQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
 template <class PolygonMesh, class Mask, class NamedParameters>
 void PQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   // todo:  static assert that PolygonMesh == Mask::PolygonMesh
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::PQQ_1step(pmesh, vpm, mask);
 }
@@ -131,14 +122,14 @@ void PTQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
 template <class PolygonMesh, class Mask, class NamedParameters>
 void PTQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   // todo:  static assert that PolygonMesh == Mask::PolygonMesh
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::PTQ_1step(pmesh, vpm, mask);
 }
@@ -181,14 +172,14 @@ void DQQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
 template <class PolygonMesh, class Mask, class NamedParameters>
 void DQQ(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   // todo:  static assert that PolygonMesh == Mask::PolygonMesh
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::DQQ_1step(pmesh, vpm, mask);
 }
@@ -233,14 +224,14 @@ void Sqrt3(PolygonMesh& pmesh, Mask mask, int step = 1) {
 template <class PolygonMesh, class Mask, class NamedParameters>
 void Sqrt3(PolygonMesh& pmesh, Mask mask, const NamedParameters& np) {
   // todo:  static assert that PolygonMesh == Mask::PolygonMesh
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type Vpm;
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
-  unsigned int step = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+  unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
   for (unsigned int i = 0; i < step; i++)
     internal::Sqrt3_1step(pmesh, vpm, mask, (i%2==1));
 }

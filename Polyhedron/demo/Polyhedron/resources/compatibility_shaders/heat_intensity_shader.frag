@@ -1,9 +1,9 @@
-#version 120
+
 varying highp vec4 color;
 varying highp float out_dist;
 void main(void) {
-  vec3 c = color.xyz;
-  float h = out_dist;
+  highp vec3 c = color.xyz;
+  highp float h = out_dist;
   h = h * 20.;
   h = h - floor(h);
   h = (1./(1.+exp(-100.*(h-.55)))) + (1./(1.+exp(-100.*(-h+.45))));

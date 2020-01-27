@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -37,6 +28,7 @@
 #include <list>
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include <stack>
 
@@ -67,6 +59,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
+#include <boost/container/small_vector.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/info_check.h>
@@ -1275,6 +1268,17 @@ public:
     return v;
   }
 
+ // Internal function, cells should already be marked.
+  template <class Cells, class Facets>
+  Vertex_handle _insert_in_small_hole(const Point& p,
+                                      const Cells& cells,
+                                      const Facets& facets )
+  {
+    Vertex_handle v = _tds._insert_in_small_hole(cells, facets);
+    v->set_point(p);
+    return v;
+  }
+
   // Internal function, cells should already be marked.
   template <class CellIt>
   Vertex_handle _insert_in_hole(const Point& p,
@@ -1329,7 +1333,10 @@ protected:
     CGAL_triangulation_precondition(tester(d));
 
     // To store the boundary cells, in case we need to rollback
-    std::stack<Cell_handle> cell_stack;
+    typedef boost::container::small_vector<Cell_handle,64> SV;
+    SV sv;
+    std::stack<Cell_handle, SV > cell_stack(sv);
+
     cell_stack.push(d);
     d->tds_data().mark_in_conflict();
 
@@ -3751,15 +3758,14 @@ insert_in_conflict(const Point& p,
 
       // Ok, we really insert the point now.
       // First, find the conflict region.
-      std::vector<Cell_handle> cells;
-      cells.reserve(32);
+      boost::container::small_vector<Cell_handle,32> cells;
       Facet facet;
+
+      boost::container::small_vector<Facet,32> facets;
 
       // Parallel
       if(could_lock_zone)
       {
-        std::vector<Facet> facets;
-        facets.reserve(32);
 
         find_conflicts(c,
                        tester,
@@ -3781,28 +3787,30 @@ insert_in_conflict(const Point& p,
           }
           return Vertex_handle();
         }
-
-        facet = facets.back();
       }
       // Sequential
       else
       {
-        cells.reserve(32);
         find_conflicts(c,
                        tester,
                        make_triple(
-                         Oneset_iterator<Facet>(facet),
+                         std::back_inserter(facets),
                          std::back_inserter(cells),
                          Emptyset_iterator()));
       }
+
+      facet = facets.back();
 
       // Remember the points that are hidden by the conflicting cells,
       // as they will be deleted during the insertion.
       hider.process_cells_in_conflict(cells.begin(), cells.end());
 
-      Vertex_handle v = _insert_in_hole(p,
-                                        cells.begin(), cells.end(),
-                                        facet.first, facet.second);
+      Vertex_handle v =
+        tds().is_small_hole(facets.size()) ?
+        _insert_in_small_hole(p, cells, facets) :
+        _insert_in_hole(p,
+                        cells.begin(), cells.end(),
+                        facet.first, facet.second);
 
       // Store the hidden points in their new cells.
       hider.reinsert_vertices(v);

@@ -10,8 +10,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <boost/foreach.hpp>
-
 #include <vector>
 #include <deque>
 
@@ -35,7 +33,7 @@ int main(int argc, char* argv[])
         if(!p.outer_boundary().is_empty())
           polys.push_back(p);
       }while(is.good() && !is.eof());
-    BOOST_FOREACH(Polygon p, polys)
+    for(Polygon p : polys)
       std::cout<<p<<std::endl;
   }
   
@@ -43,7 +41,7 @@ int main(int argc, char* argv[])
     std::ifstream  is((argc>2)?argv[2]:"data/multipolygon.wkt");
     MultiPolygon mp;
     CGAL::read_multi_polygon_WKT(is, mp);
-    BOOST_FOREACH(Polygon p, mp)
+    for(Polygon p : mp)
       std::cout<<p<<std::endl;
   }
   return 0;

@@ -15,7 +15,7 @@ class Polyhedron_demo_inside_out_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "inside_out_plugin.json")
 
 public:
 
@@ -120,9 +120,9 @@ void Polyhedron_demo_inside_out_plugin::on_actionOrientCC_triggered()
       SMesh* pMesh = sm_item->polyhedron();
       if(pMesh){
         if(is_closed(*pMesh))
-          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient_to_bound_a_volume(*pMesh);
         else
-          CGAL::Polygon_mesh_processing::orient(*pMesh, item==items.first());
+          CGAL::Polygon_mesh_processing::orient(*pMesh);
         sm_item->invalidateOpenGLBuffers();
       }
     }

@@ -16,7 +16,7 @@ endif()
 find_package(CGAL COMPONENTS Qt5)
 
 if(CGAL_Qt5_FOUND)
-    add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
+  add_definitions(-DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)
 endif()
 
 # For Gprof.
@@ -24,7 +24,7 @@ endif()
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
 # To use valgrind, we must disable rounding math ckeck.
-# add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
+# add_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 if (CGAL_FOUND)
 

@@ -58,7 +58,6 @@ public:
     , m_is_closed( is_closed(tm) )
   {
     CGAL_assertion(!m_tree_ptr->empty());
-    m_tree_ptr->accelerate_distance_queries();
   }
 
   double operator()(const typename GeomTraits::Point_3& p) const
@@ -188,7 +187,6 @@ public:
     , m_offset_distance(offset_distance)
   {
     CGAL_assertion(! m_tree_ptr->empty() );
-    m_tree_ptr->accelerate_distance_queries();
   }
 
   double operator()(const EPICK::Point_3& p) const
@@ -452,17 +450,16 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   QDialog dialog(mw);
   Ui::Remeshing_dialog ui;
   ui.setupUi(&dialog);
+  ui.angle->setRange(1.0, 30.0);
   connect(ui.buttonBox, SIGNAL(accepted()),
           &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()),
           &dialog, SLOT(reject()));
 
-  ui.sizing->setDecimals(4);
   ui.sizing->setRange(diag * 10e-6, // min
                       diag); // max
   ui.sizing->setValue(diag * 0.05); // default value
 
-  ui.approx->setDecimals(6);
   ui.approx->setRange(diag * 10e-7, // min
                       diag); // max
   ui.approx->setValue(diag * 0.005);

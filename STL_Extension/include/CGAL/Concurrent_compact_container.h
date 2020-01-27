@@ -1,20 +1,11 @@
 // Copyright (c) 2012  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
@@ -124,15 +115,40 @@ namespace CCC_internal {
 template< typename pointer, typename size_type, typename CCC >
 class Free_list {
 public:
-  Free_list() : m_head(nullptr), m_size(0) {}
+  Free_list() : m_head(nullptr), m_size(0) {
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    // Note that the performance penalty with
+    // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE=1 is
+    // measured to be 3%, in a parallel insertion of 100k random
+    // points, in Delaunay_triangulation_3.
+    refresh_approximate_size();
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  }
 
   void init()                { m_head = nullptr; m_size = 0; }
   pointer head() const       { return m_head; }
   void set_head(pointer p)   { m_head = p; }
   size_type size() const     { return m_size; }
-  void set_size(size_type s) { m_size = s; }
-  void inc_size()            { ++m_size; }
-  void dec_size()            { --m_size; }
+  void set_size(size_type s) {
+    m_size = s;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    refresh_approximate_size();
+#endif
+  }
+  void inc_size() {
+    ++m_size;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    if(m_size > (m_approximate_size * precision_of_approximate_size_plus_1))
+      refresh_approximate_size();
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  }
+  void dec_size() {
+    --m_size;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    if((m_size * precision_of_approximate_size_plus_1) < m_approximate_size)
+      refresh_approximate_size();
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  }
   bool empty()               { return size() == 0; }
   // Warning: copy the pointer, not the data!
   Free_list& operator= (const Free_list& other)
@@ -158,9 +174,26 @@ public:
     other.init(); // clear other
   }
 
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  size_type approximate_size() const {
+    return m_atomic_approximate_size.load(std::memory_order_relaxed);
+  }
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+
 protected:
   pointer   m_head;  // the free list head pointer
   size_type m_size;  // the free list size
+
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  // `m_size` plus or minus `precision_of_approximate_size - 1`
+  static constexpr double precision_of_approximate_size_plus_1 = 1.10;
+  size_type m_approximate_size;
+  std::atomic<size_type> m_atomic_approximate_size;
+  void refresh_approximate_size() {
+    m_approximate_size = m_size;
+    m_atomic_approximate_size.store(m_size, std::memory_order_relaxed);
+  }
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
 };
 
 // Class Concurrent_compact_container
@@ -185,17 +218,10 @@ public:
   typedef value_type&                               reference;
   typedef const value_type&                         const_reference;
 
-#ifdef CGAL_CXX11
   typedef typename std::allocator_traits<Allocator>::pointer               pointer;
   typedef typename std::allocator_traits<Allocator>::const_pointer         const_pointer;
   typedef typename std::allocator_traits<Allocator>::size_type             size_type;
   typedef typename std::allocator_traits<Allocator>::difference_type       difference_type;
-#else
-  typedef typename Allocator::pointer               pointer;
-  typedef typename Allocator::const_pointer         const_pointer;
-  typedef typename Allocator::size_type             size_type;
-  typedef typename Allocator::difference_type       difference_type;
-#endif
 
   typedef internal::CC_iterator<Self, false>        iterator;
   typedef internal::CC_iterator<Self, true>         const_iterator;
@@ -263,12 +289,16 @@ public:
   void swap(Self &c)
   {
     std::swap(m_alloc, c.m_alloc);
-    std::swap(m_capacity, c.m_capacity);
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     { // non-atomic swap
-      size_type other_size = c.m_size;
-      c.m_size = size_type(m_size);
-      m_size = other_size;
+      size_type other_capacity = c.m_capacity;
+      c.m_capacity = size_type(m_capacity);
+      m_capacity = other_capacity;
     }
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    std::swap(m_capacity, c.m_capacity);
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+
     std::swap(m_block_size, c.m_block_size);
     std::swap(m_first_item, c.m_first_item);
     std::swap(m_last_item, c.m_last_item);
@@ -354,7 +384,6 @@ private:
 #ifndef CGAL_NO_ASSERTIONS
     std::memset(&*x, 0, sizeof(T));
 #endif*/
-    --m_size;
     put_on_free_list(&*x, fl);
   }
 public:
@@ -375,12 +404,14 @@ public:
   // The complexity is O(size(free list = capacity-size)).
   void merge(Self &d);
 
-  // If `CGAL_NO_ATOMIC` is defined, do not call this function while others
-  // are inserting/erasing elements
+  // Do not call this function while others are inserting/erasing elements
   size_type size() const
   {
-#ifdef CGAL_NO_ATOMIC
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    size_type size = m_capacity.load(std::memory_order_relaxed);
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     size_type size = m_capacity;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     for( typename Free_lists::iterator it_free_list = m_free_lists.begin() ;
          it_free_list != m_free_lists.end() ;
          ++it_free_list )
@@ -388,23 +419,34 @@ public:
       size -= it_free_list->size();
     }
     return size;
-#else // atomic can be used
-    return m_size;
-#endif
   }
+
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  size_type approximate_size() const
+  {
+    size_type size = m_capacity.load(std::memory_order_relaxed);
+    for( typename Free_lists::iterator it_free_list = m_free_lists.begin() ;
+         it_free_list != m_free_lists.end() ;
+         ++it_free_list )
+    {
+      size -= it_free_list->approximate_size();
+    }
+    return size;
+  }
+#endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
 
   size_type max_size() const
   {
-#ifdef CGAL_CXX11
     return std::allocator_traits<allocator_type>::max_size(m_alloc);
-#else
-    return m_alloc.max_size();
-#endif
   }
 
   size_type capacity() const
   {
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    return m_capacity.load(std::memory_order_relaxed);
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     return m_capacity;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   }
 
   // void resize(size_type sz, T c = T()); // TODO  makes sense ???
@@ -502,7 +544,6 @@ private:
   {
     CGAL_assertion(type(ret) == USED);
     fl->dec_size();
-    ++m_size;
     m_time_stamper->set_time_stamp(ret);
     return iterator(ret, 0);
   }
@@ -595,23 +636,21 @@ private:
     m_first_item = nullptr;
     m_last_item  = nullptr;
     m_all_items  = All_items();
-    m_size = 0;
     m_time_stamper->reset();
   }
 
   allocator_type    m_alloc;
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  std::atomic<size_type> m_capacity;
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   size_type         m_capacity;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   size_type         m_block_size;
   Free_lists        m_free_lists;
   pointer           m_first_item;
   pointer           m_last_item;
   All_items         m_all_items;
   mutable Mutex     m_mutex;
-#ifdef CGAL_NO_ATOMIC
-  size_type         m_size;
-#else
-  CGAL::cpp11::atomic<size_type> m_size;
-#endif
 
   // This is a pointer, so that the definition of Compact_container does
   // not require a complete type `T`.
@@ -621,7 +660,6 @@ private:
 template < class T, class Allocator >
 void Concurrent_compact_container<T, Allocator>::merge(Self &d)
 {
-  m_size += d.m_size;
   CGAL_precondition(&d != this);
 
   // Allocators must be "compatible" :
@@ -660,7 +698,11 @@ void Concurrent_compact_container<T, Allocator>::merge(Self &d)
   }
   m_all_items.insert(m_all_items.end(), d.m_all_items.begin(), d.m_all_items.end());
   // Add the capacities.
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+  m_capacity.fetch_add(d.m_capacity, std::memory_order_relaxed);
+#else // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   m_capacity += d.m_capacity;
+#endif // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   // It seems reasonnable to take the max of the block sizes.
   m_block_size = (std::max)(m_block_size, d.m_block_size);
   // Clear d.
@@ -698,7 +740,11 @@ void Concurrent_compact_container<T, Allocator>::
     old_block_size = m_block_size;
     new_block = m_alloc.allocate(old_block_size + 2);
     m_all_items.push_back(std::make_pair(new_block, old_block_size + 2));
+#if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+    m_capacity.fetch_add(old_block_size, std::memory_order_relaxed);
+#else // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
     m_capacity += old_block_size;
+#endif // not CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
 
     // We insert this new block at the end.
     if (m_last_item == nullptr) // First time

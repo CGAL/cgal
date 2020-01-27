@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot and Andreas Fabri
@@ -29,13 +20,14 @@
 #include<set>
 #include<vector>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 
+#include <CGAL/assertions.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -43,9 +35,12 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/tuple.h>
+
 #include <CGAL/boost/graph/Dual.h>
-#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Default.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/iterator.h>
+#include <CGAL/tuple.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -98,7 +93,7 @@ namespace internal {
       EdgeConstraintMap ecm;
     };
 
-}// namespace internal
+} // namespace internal
 
 /*!
  * \ingroup keep_connected_components_grp
@@ -134,16 +129,16 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
                     , FaceOutputIterator out
                     , const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, internal_np::edge_is_constrained),
+    = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
@@ -214,16 +209,16 @@ connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap fcm,
                      const NamedParameters& np)
 {
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, internal_np::edge_is_constrained),
+    = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
   typedef Dual<PolygonMesh>                              Dual;
@@ -235,7 +230,7 @@ connected_components(const PolygonMesh& pmesh,
     internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
 
   typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-    fimap = choose_param(get_param(np, internal_np::face_index),
+    fimap = choose_parameter(get_parameter(np, internal_np::face_index),
                          get_const_property_map(boost::face_index, pmesh));
 
   return boost::connected_components(finite_dual,
@@ -249,11 +244,8 @@ typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
                      FaceComponentMap fcm)
 {
-
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm, CGAL::parameters::all_default());
 }
-
 
 template <typename PolygonMesh
         , typename ComponentRange
@@ -263,6 +255,50 @@ void keep_connected_components(PolygonMesh& pmesh
                               , const ComponentRange& components_to_keep
                               , const FaceComponentMap& fcm
                               , const NamedParameters& np);
+
+namespace internal {
+
+//  /*!
+//  * \ingroup keep_connected_components_grp
+//  *  returns the number of connected components in the mesh.
+//  *
+//  *  A property map for `CGAL::face_index_t` must be either available as an internal property map
+//  *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
+//  *
+//  *  \tparam PolygonMesh a model of `FaceGraph`
+//  *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+//  *
+//  *  \param pmesh the polygon mesh
+//  *  \param np optional \ref pmp_namedparameters "Named Parameters" described below
+//  *
+//  * \cgalNamedParamsBegin
+//  *  \cgalParamBegin{edge_is_constrained_map}  a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+//  *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+//  * \cgalNamedParamsEnd
+//  *
+//  * \returns the output iterator.
+//  *
+//  */
+template <typename PolygonMesh,
+          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+std::size_t number_of_connected_components(const PolygonMesh& pmesh,
+                                           const CGAL_PMP_NP_CLASS& np)
+{
+  typedef CGAL::dynamic_face_property_t<std::size_t>                                Face_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Face_property_tag >::const_type Patch_ids_map;
+
+  Patch_ids_map patch_ids_map = get(Face_property_tag(), pmesh);
+
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, patch_ids_map, np);
+}
+
+template <typename PolygonMesh>
+std::size_t number_of_connected_components(const PolygonMesh& pmesh)
+{
+  return internal::number_of_connected_components(pmesh, CGAL::parameters::all_default());
+}
+
+} // end namespace internal
 
 /*!
  * \ingroup keep_connected_components_grp
@@ -281,7 +317,8 @@ void keep_connected_components(PolygonMesh& pmesh
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
- * \param nb_components_to_keep the number of components to be kept
+ * \param nb_components_to_keep the number of components to be kept. If this number is larger than
+ *                              the number of components in the mesh, all components are kept.
  * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
@@ -292,6 +329,14 @@ void keep_connected_components(PolygonMesh& pmesh
  *      a property map containing a size for each face of `pmesh`. The value type of this property map
  *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
  *      comparisons.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{dry_run}
+ *      a Boolean parameter. If set to `true`, the mesh will not be altered, but the number
+ *      of components that would be removed is returned. The default value is `false`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
+ *      When using the "dry run" mode (see parameter `dry_run`), faces that would be removed by the
+ *      algorithm can be collected with this output iterator.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
@@ -306,23 +351,30 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   typedef PolygonMesh                                                   PM;
   typedef typename boost::graph_traits<PM>::face_descriptor             face_descriptor;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type            FaceIndexMap;
-  FaceIndexMap fimap = choose_param(get_param(np, internal_np::face_index),
-                                    get_property_map(boost::face_index, pmesh));
+  FaceIndexMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
+                                        get_property_map(boost::face_index, pmesh));
 
   // FaceSizeMap
-  typedef typename boost::lookup_named_param_def<internal_np::face_size_map_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,
                                                  Constant_property_map<face_descriptor, std::size_t> // default
                                                 >::type                  FaceSizeMap;
   typedef typename boost::property_traits<FaceSizeMap>::value_type       Face_size;
 
-  FaceSizeMap face_size_pmap = choose_param(get_param(np, internal_np::face_size_map),
+  FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                                 Constant_property_map<face_descriptor, std::size_t>(1));
+
+  const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
+
+  typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
+                                                       NamedParameters,
+                                                       Emptyset_iterator>::type Output_iterator;
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fimap);
@@ -331,12 +383,13 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   // Even if we do not want to keep anything we need to first
   // calculate the number of existing connected_components to get the
   // correct return value.
-  if(nb_components_to_keep == 0) {
+  if(nb_components_to_keep == 0)
+  {
     CGAL::clear(pmesh);
     return num;
   }
 
-  if((num == 1)|| (nb_components_to_keep > num) )
+  if(nb_components_to_keep >= num)
     return 0;
 
   std::vector<std::pair<std::size_t, Face_size> > component_size(num);
@@ -349,11 +402,25 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
 
   // we sort the range [0, num) by component size
   std::sort(component_size.begin(), component_size.end(), internal::MoreSecond());
-  std::vector<std::size_t> cc_to_keep;
-  for(std::size_t i=0; i<nb_components_to_keep; ++i)
-    cc_to_keep.push_back( component_size[i].first );
 
-  keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+  if(dry_run)
+  {
+    std::vector<bool> is_to_be_removed(num, false);
+    for(std::size_t i=0; i<nb_components_to_keep; ++i)
+      is_to_be_removed[component_size[i].first] = true;
+
+    for(face_descriptor f : faces(pmesh))
+      if(is_to_be_removed[face_cc[f]])
+        *out++ = f;
+  }
+  else
+  {
+    std::vector<std::size_t> cc_to_keep;
+    for(std::size_t i=0; i<nb_components_to_keep; ++i)
+      cc_to_keep.push_back(component_size[i].first);
+
+    keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+  }
 
   return num - nb_components_to_keep;
 }
@@ -396,6 +463,14 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
  *      comparisons.
  *    \cgalParamEnd
+ *    \cgalParamBegin{dry_run}
+ *      a Boolean parameter. If set to `true`, the mesh will not be altered, but the number
+ *      of components that would be removed is returned. The default value is `false`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
+ *      When using the "dry run" mode (see parameter `dry_run`), faces that would be removed by the
+ *      algorithm can be collected with this output iterator.
+ *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
  * \pre If a face size property map is passed by the user, `ThresholdValueType` must be the same
@@ -413,15 +488,15 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   typedef PolygonMesh                                                     PM;
   typedef typename boost::graph_traits<PM>::face_descriptor               face_descriptor;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type             FaceIndexMap;
-  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
-                                  get_property_map(boost::face_index, pmesh));
+  FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
+                                      get_property_map(boost::face_index, pmesh));
 
-  typedef typename boost::lookup_named_param_def<internal_np::face_size_map_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,
                                                  Constant_property_map<face_descriptor, std::size_t> // default
                                                 >::type                   FaceSizeMap;
@@ -429,34 +504,54 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 
   CGAL_static_assertion((std::is_convertible<ThresholdValueType, Face_size>::value));
 
-  FaceSizeMap face_size_pmap = choose_param(get_param(np, internal_np::face_size_map),
+  typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
+                                                       NamedParameters,
+                                                       Emptyset_iterator>::type Output_iterator;
+
+  FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
                                            Constant_property_map<face_descriptor, std::size_t>(1));
+  const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
   std::size_t num = connected_components(pmesh, face_cc, np);
-  std::vector<Face_size> component_size(num);
-
-  for(std::size_t i=0; i<num; ++i)
-    component_size[i] = Face_size(0);
+  std::vector<Face_size> component_size(num, 0);
 
   for(face_descriptor f : faces(pmesh))
     component_size[face_cc[f]] += get(face_size_pmap, f);
 
   const Face_size thresh = threshold_value;
+  std::vector<bool> is_to_be_kept(num, false);
+  std::size_t res = 0;
 
-  std::vector<std::size_t> cc_to_keep;
   for(std::size_t i=0; i<num; ++i)
   {
     if(component_size[i] >= thresh)
-      cc_to_keep.push_back(i);
+    {
+      is_to_be_kept[i] = true;
+      ++res;
+    }
   }
 
-  keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+  if(dry_run)
+  {
+    for(face_descriptor f : faces(pmesh))
+      if(!is_to_be_kept[face_cc[f]])
+        *out++ = f;
+  }
+  else
+  {
+    std::vector<std::size_t> ccs_to_keep;
+    for(std::size_t i=0; i<num; ++i)
+      if(is_to_be_kept[i])
+        ccs_to_keep.push_back(i);
 
-  return num - cc_to_keep.size();
+    keep_connected_components(pmesh, ccs_to_keep, face_cc, np);
+  }
+
+  return num - res;
 }
-
 
 template <typename PolygonMesh>
 std::size_t keep_large_connected_components(PolygonMesh& pmesh,
@@ -479,8 +574,8 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
                                         , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor   face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_iterator     face_iterator;
@@ -492,7 +587,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 
   //VertexIndexMap
   typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
-  VertexIndexMap vim = choose_param(get_param(np, internal_np::vertex_index),
+  VertexIndexMap vim = choose_parameter(get_parameter(np, internal_np::vertex_index),
                                     get_const_property_map(boost::vertex_index, pmesh));
 
   std::set<std::size_t> cc_to_keep;
@@ -729,12 +824,12 @@ void remove_connected_components(PolygonMesh& pmesh
   if (components_to_remove.empty()) return;
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
-  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
+  FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
                                   get_property_map(boost::face_index, pmesh));
 
   //vector_property_map
@@ -787,12 +882,12 @@ void keep_connected_components(PolygonMesh& pmesh
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
-  FaceIndexMap fim = choose_param(get_param(np, internal_np::face_index),
+  FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
                                   get_property_map(boost::face_index, pmesh));
 
   //vector_property_map
@@ -862,7 +957,7 @@ get_index_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, const Range&)
 // use the one internal to the mesh (user must have initialized it)
 template <class Default_tag, class Dynamic_tag, class Mesh, class Range>
 typename boost::property_map<Mesh, Default_tag >::const_type
-get_index_map(boost::param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, const Range& )
+get_index_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, const Range& )
 {
 
   return get(t,m);
@@ -871,7 +966,7 @@ get_index_map(boost::param_not_found, Default_tag t, Dynamic_tag , const Mesh& m
 // create a dynamic property and initialize it
 template <class Dynamic_tag, class Mesh, class Range>
 typename boost::property_map<Mesh, Dynamic_tag >::const_type
-get_index_map(boost::param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, const Range& r)
+get_index_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, const Range& r)
 {
   typename boost::property_map<Mesh, Dynamic_tag >::const_type map = get(t,m);
 
@@ -990,22 +1085,22 @@ void split_connected_components(const PolygonMesh& pm,
     internal::No_mark<PolygonMesh>//default
   > ::type Ecm;
 
-  Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
+  Ecm ecm = parameters::choose_parameter( parameters::get_parameter(np, internal_np::edge_is_constrained),
                                    internal::No_mark<PolygonMesh>() );
 
   internal::split_connected_components_impl(
         internal::get_index_map(
-          get_param(np, internal_np::face_index),
+          parameters::get_parameter(np, internal_np::face_index),
           FIM_def_tag(),
           CGAL::dynamic_face_property_t<std::size_t >(),
           pm, faces(pm)),
         internal::get_index_map(
-          get_param(np, internal_np::halfedge_index),
+          parameters::get_parameter(np, internal_np::halfedge_index),
           HIM_def_tag(),
           CGAL::dynamic_halfedge_property_t<std::size_t >(),
           pm, halfedges(pm)),
         internal::get_index_map(
-          get_param(np, internal_np::vertex_index),
+          parameters::get_parameter(np, internal_np::vertex_index),
           VIM_def_tag(),
           CGAL::dynamic_vertex_property_t<std::size_t >(),
           pm, vertices(pm)),

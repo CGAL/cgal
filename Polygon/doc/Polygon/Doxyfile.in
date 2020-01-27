@@ -4,7 +4,6 @@ PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D Polygons"
 EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples \
                ${CGAL_Stream_support_EXAMPLE_DIR}
 
-
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true

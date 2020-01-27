@@ -358,7 +358,7 @@ MainWindow::loadWKTConstraints(QString
   do{
     std::vector<Polygon> polygons;
     CGAL::read_multi_polygon_WKT(ifs, polygons);
-    BOOST_FOREACH(const Polygon& poly, polygons)
+    for(const Polygon& poly : polygons)
     {
       if(poly.outer_boundary().is_empty())
         continue;
@@ -388,7 +388,7 @@ MainWindow::loadWKTConstraints(QString
   do{
     std::vector<LineString > linestrings;
     CGAL::read_multi_linestring_WKT(ifs, linestrings);
-    BOOST_FOREACH(const LineString& ls, linestrings)
+    for(const LineString& ls : linestrings)
     {
       bool first_pass=true;      
       LineString::const_iterator it = ls.begin();

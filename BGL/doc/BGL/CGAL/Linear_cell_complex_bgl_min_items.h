@@ -33,8 +33,6 @@ struct Linear_cell_complex_bgl_min_items
 */
 struct Linear_cell_complex_bgl_min_items {
 
-/// @}
-
 }; /* end Linear_cell_complex_bgl_min_items */
 
 } /* end namespace CGAL */

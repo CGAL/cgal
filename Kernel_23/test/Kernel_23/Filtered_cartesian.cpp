@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -79,8 +73,7 @@ main()
   test<Cls>();
   std::cout << "Testing with Epick:\n";
   test<CGAL::Epick>();
-  std::cout << "Testing with Epick_without_intervals:\n";
-  test<CGAL::Epick_without_intervals>();
+
   return 0;
 }
 

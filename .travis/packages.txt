@@ -84,6 +84,7 @@ Point_set_processing_3
 Poisson_surface_reconstruction_3 
 Polygon 
 Polygon_mesh_processing 
+Polygonal_surface_reconstruction 
 Polyhedron 
 Polyhedron_IO 
 Polyline_simplification_2 
@@ -121,6 +122,7 @@ Surface_mesh_segmentation
 Surface_mesh_shortest_path 
 Surface_mesh_simplification 
 Surface_mesh_skeletonization 
+Surface_mesh_topology 
 Surface_mesher 
 Surface_sweep_2 
 TDS_2 

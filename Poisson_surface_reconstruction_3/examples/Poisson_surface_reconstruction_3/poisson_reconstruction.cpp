@@ -360,7 +360,6 @@ int main(int argc, char * argv[])
     // Constructs AABB tree and computes internal KD-tree
     // data structure to accelerate distance queries
     AABB_tree tree(faces(output_mesh).first, faces(output_mesh).second, output_mesh);
-    tree.accelerate_distance_queries();
 
     // Computes distance from each input point to reconstructed mesh
     double max_distance = DBL_MIN;

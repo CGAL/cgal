@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Ilker O. Yaz
@@ -116,8 +107,8 @@ namespace internal {
             const VertexRange& vertices,
             const NamedParameters& np)
   {
-    using boost::get_param;
-    using boost::choose_param;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
 
     CGAL_precondition(is_triangle_mesh(tmesh));
 
@@ -149,13 +140,13 @@ namespace internal {
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
-    VPMap vpmap_ = choose_param(get_param(np, internal_np::vertex_point),
+    VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                 get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_param(get_param(np, internal_np::sparse_linear_solver), Default_solver()),
-      choose_param(get_param(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
-      choose_param(get_param(np, internal_np::fairing_continuity), 1),
+      choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver()),
+      choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
+      choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
       vpmap_
       );
   }
