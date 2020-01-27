@@ -86,6 +86,7 @@ create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
 create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
 create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 create_single_source_cgal_program( "locate_example.cpp")
+create_single_source_cgal_program( "orientation_pipeline_example.cpp")
 
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
@@ -119,4 +120,3 @@ if(TARGET ceres)
   target_compile_definitions( mesh_smoothing_example PRIVATE CGAL_PMP_USE_CERES_SOLVER )
   target_link_libraries( mesh_smoothing_example PRIVATE ceres )
 endif(TARGET ceres)
-

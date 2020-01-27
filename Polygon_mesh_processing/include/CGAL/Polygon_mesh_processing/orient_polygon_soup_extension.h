@@ -123,10 +123,10 @@ orient_triangle_soup_with_reference_triangle_mesh(
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename PointRange::value_type Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel K;
-  typedef typename Polygon_mesh_processing::
+  typedef typename 
       GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
 
-  Vpm vpm = choose_param(get_param(np, internal_np::vertex_point),
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(CGAL::vertex_point, tm_ref));
 
 

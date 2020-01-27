@@ -688,7 +688,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
       GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
-  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                 get_const_property_map(vertex_point, pm));
 
   typedef std::size_t F_CC_ID;
@@ -697,7 +697,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   typedef typename Polygon_mesh_processing::
       GetFaceIndexMap<PolygonMesh, NamedParameters>::type Fidmap;
 
-  Fidmap fim = boost::choose_param(boost::get_param(np, internal_np::face_index),
+  Fidmap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
                                    get_const_property_map(face_index, pm));
 
   typedef dynamic_face_property_t<F_CC_ID>                   Face_property_tag;
@@ -760,7 +760,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
 
   // max nb of faces for a CC to be reversed
   const std::size_t threshold =
-    boost::choose_param( boost::get_param(np, internal_np::maximum_number_of_faces), 0);
+    parameters::choose_parameter( parameters::get_parameter(np, internal_np::maximum_number_of_faces), 0);
 
   std::vector<bool> border_cycle_to_ignore(bcc_id, false);
   std::vector<F_CC_ID> cycle_f_cc_id(bcc_id);
