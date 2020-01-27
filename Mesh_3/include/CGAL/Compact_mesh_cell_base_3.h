@@ -67,25 +67,25 @@ void delete_circumcenter(T t )
 //} atomic {
 //normal
 template<typename T>
-void set_weighted_circumcenter(std::atomic<T>& t, T value)
+void set_weighted_circumcenter(std::atomic<T*>& t, T* value)
 {
   t.load() = value;
 }
 
 //nullptr
 template<typename T>
-void set_weighted_circumcenter(std::atomic<T>& t, std::nullptr_t)
+void set_weighted_circumcenter(std::atomic<T*>& t, std::nullptr_t)
 {
   t = nullptr;
 }
 
 template<typename T>
-bool compare_weighted_circumcenter(std::atomic<T>& t)
+bool compare_weighted_circumcenter(std::atomic<T*>& t)
 {
   return t.load() == nullptr;
 }
 template<typename T>
-void delete_circumcenter(std::atomic<T>& t)
+void delete_circumcenter(std::atomic<T*>& t)
 {
   delete t.load();
 }
