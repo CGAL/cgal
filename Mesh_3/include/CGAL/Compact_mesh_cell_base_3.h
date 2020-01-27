@@ -37,6 +37,61 @@
 # include <atomic>
 #endif
 
+namespace internal_tbb
+{
+//classic pointer{
+//normal
+template<typename T>
+void set_weighted_circumcenter(T t, T value)
+{
+  t = value;
+}
+
+//overload for nullptr
+template<typename T>
+void set_weighted_circumcenter(T t, std::nullptr_t)
+{
+  t = nullptr;
+}
+template<typename T>
+bool compare_weighted_circumcenter(T t)
+{
+  return t == nullptr;
+}
+
+template<typename T>
+void delete_circumcenter(T t )
+{
+  delete t;
+}
+//} atomic {
+//normal
+template<typename T>
+void set_weighted_circumcenter(std::atomic<T>& t, T value)
+{
+  t.load() = value;
+}
+
+//nullptr
+template<typename T>
+void set_weighted_circumcenter(std::atomic<T>& t, std::nullptr_t)
+{
+  t = nullptr;
+}
+
+template<typename T>
+bool compare_weighted_circumcenter(std::atomic<T>& t)
+{
+  return t.load() == nullptr;
+}
+template<typename T>
+void delete_circumcenter(std::atomic<T>& t)
+{
+  delete t.load();
+}
+//}
+} //end internal_tbb
+
 namespace CGAL {
 
 // Class Compact_mesh_cell_base_3_base
@@ -52,8 +107,9 @@ class Compact_mesh_cell_base_3_base
 protected:
   Compact_mesh_cell_base_3_base()
     : bits_(0)
-    , weighted_circumcenter_(nullptr)
-  {}
+  {
+    internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
+  }
 
 public:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
@@ -247,8 +303,8 @@ public:
   void invalidate_weighted_circumcenter_cache() const
   {
     if (weighted_circumcenter_) {
-      delete weighted_circumcenter_;
-      weighted_circumcenter_ = nullptr;
+      internal_tbb::delete_circumcenter(weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
   }
 
@@ -330,8 +386,8 @@ public:
 
   ~Compact_mesh_cell_base_3()
   {
-    if(weighted_circumcenter_ != nullptr){
-      delete weighted_circumcenter_;
+    if(!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)){
+      internal_tbb::delete_circumcenter(weighted_circumcenter_);
     }
   }
 
