@@ -445,7 +445,7 @@ public:
 
 
     // reserve memory for n entries in all arrays
-    void reserve(size_t n) const
+    void reserve(size_t n)
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->reserve(n);
@@ -461,7 +461,7 @@ public:
     }
 
     // free unused space in all arrays
-    void shrink_to_fit() const
+    void shrink_to_fit()
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->shrink_to_fit();
@@ -500,7 +500,7 @@ public:
 private:
     std::vector<Base_property_array*>  parrays_;
     size_t  size_;
-    mutable size_t  capacity_;
+    size_t  capacity_;
 };
 
   /// @endcond
