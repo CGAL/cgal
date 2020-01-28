@@ -696,8 +696,8 @@ void split(      TriangleMesh& tm,
            #endif
            const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = PMP::parameters;
 
