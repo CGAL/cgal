@@ -105,7 +105,7 @@ bool read_VTP(const char* fname, FaceGraph& g, const NamedParameters& np)
   vtkSmartPointer<IO::internal::ErrorObserverVtk> obs =
     vtkSmartPointer<IO::internal::ErrorObserverVtk>::New();
 
-  data = IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput();;
+  data = IO::internal::read_vtk_file<vtkXMLPolyDataReader>(fname, obs)->GetOutput();
 
   return IO::internal::vtkPointSet_to_polygon_mesh(data, g, np);
 }
