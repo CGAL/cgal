@@ -397,7 +397,7 @@ returns the printing mode of the %IO stream `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-CGAL_EXPORT IO::Mode get_mode(std::ios& i) { return static_cast<IO::Mode>(i.iword(IO::Static::get_mode())); }
+CGAL_EXPORT inline IO::Mode get_mode(std::ios& i) { return static_cast<IO::Mode>(i.iword(IO::Static::get_mode())); }
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -414,7 +414,7 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-CGAL_EXPORT IO::Mode set_ascii_mode(std::ios& i)
+CGAL_EXPORT inline IO::Mode set_ascii_mode(std::ios& i)
 {
   IO::Mode m = get_mode(i);
   i.iword(IO::Static::get_mode()) = IO::ASCII;
@@ -436,7 +436,7 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-CGAL_EXPORT IO::Mode set_binary_mode(std::ios& i)
+CGAL_EXPORT inline  IO::Mode set_binary_mode(std::ios& i)
 {
   IO::Mode m = get_mode(i);
   i.iword(IO::Static::get_mode()) = IO::BINARY;
@@ -458,7 +458,7 @@ Returns the previous mode of `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-CGAL_EXPORT IO::Mode set_pretty_mode(std::ios& i) //@todo export ?
+CGAL_EXPORT inline  IO::Mode set_pretty_mode(std::ios& i) //@todo export ?
 {
   IO::Mode m = get_mode(i);
   i.iword(IO::Static::get_mode()) = IO::PRETTY;
@@ -479,7 +479,7 @@ sets the printing mode of the %IO stream `s`.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-CGAL_EXPORT IO::Mode set_mode(std::ios& i, IO::Mode m)
+CGAL_EXPORT inline  IO::Mode set_mode(std::ios& i, IO::Mode m)
 {
   IO::Mode old = get_mode(i);
   i.iword(IO::Static::get_mode()) = m;
@@ -500,7 +500,7 @@ checks if the %IO stream `s` is in `IO::PRETTY` mode.
 \sa `CGAL::is_ascii()`
 \sa `CGAL::is_binary()`
 */
-bool is_pretty(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::PRETTY; }
+inline bool is_pretty(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::PRETTY; }
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -516,7 +516,7 @@ checks if the %IO stream `s` is in `IO::ASCII` mode.
 \sa `CGAL::is_binary()`
 \sa `CGAL::is_pretty()`
 */
-bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
+inline bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
 
 /*!
 \ingroup PkgStreamSupportRef
@@ -532,7 +532,7 @@ checks if the %IO stream `s` is in `IO::BINARY` mode.
 \sa `CGAL::is_ascii()`
 \sa `CGAL::is_pretty()`
 */
-bool is_binary(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
+inline bool is_binary(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
 
 template < class T >
 inline void write(std::ostream& os, const T& t, const io_Read_write&)
@@ -632,7 +632,7 @@ inline std::istream &operator>>(std::istream &is, Color& col)
   return is;
 }
 
-const char* mode_name( IO::Mode m )
+inline const char* mode_name( IO::Mode m )
 {
   static const char* const names[] = {"ASCII", "PRETTY", "BINARY" };
   CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
@@ -640,7 +640,7 @@ const char* mode_name( IO::Mode m )
 }
 
 // From polynomial.h TODO: Where to put this?
-void swallow(std::istream &is, char d)
+inline void swallow(std::istream &is, char d)
 {
   char c;
   do { is.get(c); } while(isspace(c));
@@ -652,7 +652,7 @@ void swallow(std::istream &is, char d)
   }
 }
 
-void swallow(std::istream &is, const std::string& s)
+inline void swallow(std::istream &is, const std::string& s)
 {
   std::string t;
   is >> t;
