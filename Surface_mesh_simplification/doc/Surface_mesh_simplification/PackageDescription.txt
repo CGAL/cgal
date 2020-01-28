@@ -43,7 +43,6 @@
 - `CGAL::Surface_mesh_simplification::LindstromTurk_cost<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`
 - `CGAL::Surface_mesh_simplification::GarlandHeckbert_policies<TriangleMesh, GeomTraits>`
-- `CGAL::Surface_mesh_simplification::Bounded_distance_placement<Placement, GeomTraits>`
 - `CGAL::Surface_mesh_simplification::Bounded_normal_change_placement<Placement>`
 - `CGAL::Surface_mesh_simplification::Constrained_placement<Placement, TriangleMesh>`
 */

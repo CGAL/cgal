@@ -2,7 +2,7 @@
 namespace CGAL {
 namespace Surface_mesh_simplification {
 
-/*!
+/*
 \ingroup PkgSurfaceMeshSimplificationRef
 
 The class `Bounded_distance_placement` is a model for the concept `GetPlacement`.
@@ -28,27 +28,27 @@ class Bounded_distance_placement
   : public BasePlacement
 {
 public:
-  ///
+  //
   typedef typename GeomTraits::FT FT;
 
-  /// \name Creation
-  ///
-  /// @{
+  // \name Creation
+  //
+  // @{
 
-  /// The distance bound `d` is used to control that during simplification,
-  /// no vertex has a distance to the input that would be greater than `d`.
+  // The distance bound `d` is used to control that during simplification,
+  // no vertex has a distance to the input that would be greater than `d`.
   Bounded_distance_placement(const FT d, const BasePlacement& base_placement = BasePlacement());
 
-  /// @}
+  // @}
 
-  /// \name Operations
-  /// @{
+  // \name Operations
+  // @{
 
-  /// Returns the placement computed by `base_placement`, provided the distance between the input
-  /// and this placement is smaller than `d`. Otherwise, nothing is returned.
+  // Returns the placement computed by `base_placement`, provided the distance between the input
+  // and this placement is smaller than `d`. Otherwise, nothing is returned.
   boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile) const;
 
-  /// @}
+  // @}
 };
 
 } // namespace Surface_Mesh_Simplification
