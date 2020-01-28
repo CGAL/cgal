@@ -31,7 +31,7 @@ Release date: June 2020
 -   Introduced the new functions `CGAL::Polygon_mesh_processing::merge_reversible_connected_components()`,
     `CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup()`,
     and `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()` that can be helpful 
-    when repairing a soup.
+    when repairing a polygon soup.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections

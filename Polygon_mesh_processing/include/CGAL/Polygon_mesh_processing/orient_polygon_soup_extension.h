@@ -37,7 +37,7 @@ namespace Polygon_mesh_processing {
 
 /*!
  * \ingroup PMP_orientation_grp
- * Duplicate each point \a p at which the intersection
+ * Duplicates each point \a p at which the intersection
  * of an infinitesimally small ball centered at \a p
  * with the polygons incident to it is not a topological disk.
  *
@@ -52,7 +52,7 @@ namespace Polygon_mesh_processing {
  * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
  * @return `true`  if the orientation operation succeded.
- * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
+ * @return `false` if some points were duplicated, thus producing a self-intersecting surface mesh.
  * @sa `orient_polygon_soup()`
  */
 template <class PointRange, class PolygonRange>
@@ -78,7 +78,7 @@ duplicate_incompatible_edges_in_polygon_soup(PointRange& points,
 
 /*!
  * \ingroup PMP_orientation_grp
- * Orient each triangle of a triangle soup using the orientation of its
+ * Orients each triangle of a triangle soup using the orientation of its
  * closest non degenerate triangle in `tm_ref`.
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
                         Possible values are `Sequential_tag` (the default) and
@@ -152,10 +152,10 @@ orient_triangle_soup_with_reference_triangle_mesh(
   tree.accelerate_distance_queries();
   auto process_facet =
     [&points, &tree, &tm_ref, &triangles](std::size_t fid) {
-      const auto& p0 = points[triangles[fid][0]];
-      const auto& p1 = points[triangles[fid][1]];
-      const auto& p2 = points[triangles[fid][2]];
-      const typename K::Point_3 mid = CGAL::centroid(p0, p1, p2);
+      const Point_3& p0 = points[triangles[fid][0]];
+      const Point_3& p1 = points[triangles[fid][1]];
+      const Point_3& p2 = points[triangles[fid][2]];
+      const Point_3 mid = CGAL::centroid(p0, p1, p2);
       std::pair<Point_3, face_descriptor> pt_and_f =
         tree.closest_point_and_primitive(mid);
       auto face_ref_normal = PMP::compute_face_normal(pt_and_f.second, tm_ref);
@@ -187,7 +187,7 @@ orient_triangle_soup_with_reference_triangle_mesh(
   PointRange& points,
   TriangleRange& triangles)
 {
-  orient_triangle_soup_with_reference_triangle_mesh<Concurrency_tag>(tm_ref, points, triangles, CGAL::Polygon_mesh_processing::parameters::all_default());
+  orient_triangle_soup_with_reference_triangle_mesh<Concurrency_tag>(tm_ref, points, triangles, CGAL::parameters::all_default());
 }
 
 } }//end namespace CGAL::Polygon_mesh_processing

@@ -650,15 +650,15 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
 
 /*!
  * \ingroup PMP_orientation_grp
- * look at connected components of `tm` having possibly compatible boundary cycles
- * that could be merged if the orientation of one patch was reversed, and merge them.
+ * looks at connected components of `tm` having possibly compatible boundary cycles
+ * that could be merged if the orientation of one patch was reversed, and merges them.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
  *                     If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
  *                     as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
- * @param pm a closed triangulated surface mesh
+ * @param pm a surface mesh
  * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -691,8 +691,8 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                 get_const_property_map(vertex_point, pm));
 
-  typedef std::size_t F_CC_ID;
-  typedef std::size_t B_CC_ID;
+  typedef std::size_t F_cc_id;
+  typedef std::size_t B_cc_id;
 
   typedef typename Polygon_mesh_processing::
       GetFaceIndexMap<PolygonMesh, NamedParameters>::type Fidmap;
@@ -700,10 +700,10 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   Fidmap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
                                    get_const_property_map(face_index, pm));
 
-  typedef dynamic_face_property_t<F_CC_ID>                   Face_property_tag;
+  typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
   typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
   Face_cc_map f_cc_ids  = get(Face_property_tag(), pm);
-  F_CC_ID nb_cc = connected_components(pm, f_cc_ids, parameters::face_index_map(fim));
+  F_cc_id nb_cc = connected_components(pm, f_cc_ids, parameters::face_index_map(fim));
 
   std::vector<std::size_t> nb_faces_per_cc(nb_cc, 0);
   for (face_descriptor f : faces(pm))
@@ -711,10 +711,10 @@ void merge_reversible_connected_components(PolygonMesh& pm,
 
   std::map< std::pair<Point_3, Point_3>, std::vector<halfedge_descriptor> > border_hedges_map;
   std::vector<halfedge_descriptor> border_hedges;
-  typedef typename boost::property_map<PolygonMesh, dynamic_halfedge_property_t<B_CC_ID> >::type H_to_bcc_id;
-  H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_CC_ID>(), pm);
-  const B_CC_ID DV(-1);
-  const B_CC_ID FILTERED_OUT(-2);
+  typedef typename boost::property_map<PolygonMesh, dynamic_halfedge_property_t<B_cc_id> >::type H_to_bcc_id;
+  H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_cc_id>(), pm);
+  const B_cc_id DV(-1);
+  const B_cc_id FILTERED_OUT(-2);
 
   // collect border halfedges
   for (halfedge_descriptor h : halfedges(pm))
@@ -725,7 +725,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
     }
 
   // compute the border cc id of all halfedges and mark those duplicated in their own cycle
-  B_CC_ID bcc_id=0;
+  B_cc_id bcc_id=0;
   for (halfedge_descriptor h : border_hedges)
   {
     if (get(h_bcc_ids,h) == DV)
@@ -763,8 +763,8 @@ void merge_reversible_connected_components(PolygonMesh& pm,
     parameters::choose_parameter( parameters::get_parameter(np, internal_np::maximum_number_of_faces), 0);
 
   std::vector<bool> border_cycle_to_ignore(bcc_id, false);
-  std::vector<F_CC_ID> cycle_f_cc_id(bcc_id);
-  std::vector< std::vector<F_CC_ID> > patch_neighbors(nb_cc);
+  std::vector<F_cc_id> cycle_f_cc_id(bcc_id);
+  std::vector< std::vector<F_cc_id> > patch_neighbors(nb_cc);
 
   for (const auto& p : border_hedges_map)
   {
@@ -776,7 +776,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
       break;
       case 2:
       {
-        F_CC_ID cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], pm), pm)),
+        F_cc_id cc_id_0 = get(f_cc_ids, face(opposite(hedges[0], pm), pm)),
                 cc_id_1 = get(f_cc_ids, face(opposite(hedges[1], pm), pm));
 
         if (cc_id_0!=cc_id_1)
@@ -798,14 +798,14 @@ void merge_reversible_connected_components(PolygonMesh& pm,
 
   // sort the connected components with potential matches using their number
   // of faces (sorted by decreasing number of faces)
-  std::set<F_CC_ID> ccs_to_reverse;
+  std::set<F_cc_id> ccs_to_reverse;
   std::vector<bool> reversible(nb_cc, false);
-  std::set< F_CC_ID, std::function<bool(F_CC_ID,F_CC_ID)> > queue(
-    [&nb_faces_per_cc](F_CC_ID i, F_CC_ID j)
+  std::set< F_cc_id, std::function<bool(F_cc_id,F_cc_id)> > queue(
+    [&nb_faces_per_cc](F_cc_id i, F_cc_id j)
     {return nb_faces_per_cc[i]==nb_faces_per_cc[j] ? i<j : nb_faces_per_cc[i]>nb_faces_per_cc[j];}
   );
 
-  for (B_CC_ID i=0; i<bcc_id; ++i)
+  for (B_cc_id i=0; i<bcc_id; ++i)
   {
     if ( !border_cycle_to_ignore[i] )
     {
@@ -818,10 +818,10 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   // not already reversed or not marked as reversible
   while( !queue.empty() )
   {
-    F_CC_ID f_cc_id = *queue.begin();
+    F_cc_id f_cc_id = *queue.begin();
     queue.erase( queue.begin() );
     CGAL_assertion( reversible[f_cc_id] );
-    for (F_CC_ID id : patch_neighbors[f_cc_id])
+    for (F_cc_id id : patch_neighbors[f_cc_id])
     {
       if (reversible[id] && (threshold==0 || threshold >= nb_faces_per_cc[id]))
       {

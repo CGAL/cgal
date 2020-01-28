@@ -52,9 +52,7 @@ class Handle
     ~Handle()
     {
 	if ( PTR && (--PTR->count == 0))
-	{
-	  delete PTR;
-	}
+	    delete PTR;
     }
 
     Handle&
