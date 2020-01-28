@@ -67,7 +67,7 @@ public:
              "        } #Group" << std::endl;
   }
 
-  void write_vertex( const double& x, const double& y, const double& z)
+  void write_vertex( const double x, const double y, const double z)
   {
     out() << "                                "
           << x << ' ' << y << ' ' << z << ',' << '\n';

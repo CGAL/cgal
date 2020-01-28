@@ -75,7 +75,7 @@ public:
     }
   }
 
-  void write_normal(const double x, const double y, const double z)
+  void write_vertex_normal(const double x, const double y, const double z)
   {
     if(m_header.binary())
     {
@@ -87,6 +87,18 @@ public:
     {
       out() << ' ' << ' ' << x << ' ' << y << ' ' << z;
     }
+  }
+
+  void write_vertex_color(const double r, const double g, const double b)
+  {
+    // @todo
+    CGAL_assertion(false);
+  }
+
+  void write_vertex_texture(const double, const double)
+  {
+    // @todo
+    CGAL_assertion(false);
   }
 
   void write_facet_header()
@@ -122,6 +134,8 @@ public:
     else
       out() << ' ' << index;
   }
+
+  void write_face_normal(const double, const double, const double) { }
 
   void write_facet_end()
   {

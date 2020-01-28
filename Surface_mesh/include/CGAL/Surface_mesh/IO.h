@@ -392,65 +392,7 @@ bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
     return false;
 }
 
-/// group io
-template <class P, class Writer>
-void
-generic_print_surface_mesh( std::ostream&   out,
-                          const Surface_mesh<P>&       M,
-                          Writer&           writer) {
-  // writes M to `out' in the format provided by `writer'.
-  typedef typename boost::graph_traits<Surface_mesh<P> >::vertex_iterator VCI;
-  typedef typename boost::graph_traits<Surface_mesh<P> >::face_iterator   FCI;
-  typedef typename Surface_mesh<P>::Halfedge_around_face_circulator            HFCC;
-  typedef typename boost::property_map<Surface_mesh<P>,CGAL::vertex_point_t>::type VPmap;
-  VPmap map = get(CGAL::vertex_point, M);
-  // Print header.
-  writer.write_header( out,
-                       num_vertices(M),
-                       num_halfedges(M),
-                       num_faces(M));
-
-  std::map<typename Surface_mesh<P>::vertex_index, std::size_t> index_map;
-  typename std::map<typename Surface_mesh<P>::vertex_index, std::size_t>::iterator hint = index_map.begin();
-  std::size_t id = 0;
-
-  for( VCI vi = vertices(M).begin(); vi != vertices(M).end(); ++vi) {
-    writer.write_vertex( ::CGAL::to_double( get(map, *vi).x()),
-                         ::CGAL::to_double( get(map, *vi).y()),
-                         ::CGAL::to_double( get(map, *vi).z()));
-
-    hint = index_map.insert(hint, std::make_pair(*vi, id++));
-  }
-  typedef typename boost::property_traits<VPmap>::value_type Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel K;
-  typename Surface_mesh<P>::template Property_map<typename Surface_mesh<P>::Vertex_index, typename K::Vector_3 > vnormals;
-  bool has_normals = false;
-  boost::tie(vnormals, has_normals) = M.template property_map<typename Surface_mesh<P>::Vertex_index, typename K::Vector_3>("v:normal");
-  if(has_normals)
-  {
-    for( VCI vi = vertices(M).begin(); vi != vertices(M).end(); ++vi) {
-      writer.write_vertex_normal( ::CGAL::to_double( get(vnormals, *vi).x()),
-                                  ::CGAL::to_double( get(vnormals, *vi).y()),
-                                  ::CGAL::to_double( get(vnormals, *vi).z()));
-    }
-  }
-
-  writer.write_facet_header();
-  for( FCI fi = faces(M).begin(); fi != faces(M).end(); ++fi) {
-    HFCC hc(halfedge(*fi, M), M);
-    HFCC hc_end = hc;
-    std::size_t n = circulator_size( hc);
-    CGAL_assertion( n >= 3);
-    writer.write_facet_begin( n);
-    do {
-      writer.write_facet_vertex_index(index_map[target(*hc, M)]);
-      ++hc;
-    } while( hc != hc_end);
-    writer.write_facet_end();
-  }
-  writer.write_footer();
-}
-} // CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

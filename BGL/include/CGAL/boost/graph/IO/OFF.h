@@ -50,9 +50,13 @@ class OFF_builder
 public:
   OFF_builder(std::istream& is_) : Base(is_) { }
 
-  bool read(std::istream& input, Point_container& points, Face_container& faces)
+  template <typename NamedParameters>
+  bool read(std::istream& input,
+            Point_container& points,
+            Face_container& faces,
+            const NamedParameters& np)
   {
-    return read_OFF(input, points, faces);
+    return read_OFF(input, points, faces, np);
   }
 };
 
@@ -177,7 +181,7 @@ bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_C
   return write_OFF(fname.c_str(), g, np);
 }
 
-template <typename FaceGraph>
+template <typename Input, typename FaceGraph>
 bool write_OFF(std::ostream& os, const FaceGraph& g) { return write_OFF(os, g, parameters::all_default()); }
 template <typename FaceGraph>
 bool write_OFF(const char* fname, const FaceGraph& g) { return write_OFF(fname, g, parameters::all_default()); }

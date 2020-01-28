@@ -46,9 +46,12 @@ class GOCAD_builder
 public:
   GOCAD_builder(std::istream& is_) : Base(is_) { }
 
+  // @check ascii
+  template <typename NamedParameters>
   bool read(std::istream& input,
             Point_container& points,
-            Face_container& faces)
+            Face_container& faces,
+            const NamedParameters& np)
   {
     int offset = 0;
     char c;

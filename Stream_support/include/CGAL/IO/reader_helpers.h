@@ -59,18 +59,18 @@ void resize(Container&, std::size_t,
 // Ideally this should be a std::is_constructible(double, double, double) but boost::is_constructible
 // is not safe to use without CXX11
 template <typename Kernel>
-void fill_point(const double x, const double y, const double z, CGAL::Point_3<Kernel>& pt)
+void fill_point(const double x, const double y, const double z, const double w, CGAL::Point_3<Kernel>& pt)
 {
-  pt = CGAL::Point_3<Kernel>(x, y, z);
+  pt = CGAL::Point_3<Kernel>(x, y, z, w);
 }
 
 template <typename Point_3>
-void fill_point(const double x, const double y, const double z, Point_3& pt)
+void fill_point(const double x, const double y, const double z, const double w, Point_3& pt)
 {
   // just in case something weirder than arrays or CGAL points are used as points...
   resize(pt, 3);
 
-  pt[0] = x; pt[1] = y; pt[2] = z;
+  pt[0] = x/w; pt[1] = y/w; pt[2] = z/w;
 }
 
 } // end namespace internal

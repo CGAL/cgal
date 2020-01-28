@@ -702,7 +702,7 @@ public:
           I_Binary_read_big_endian_float32(m_in, f);
       }
 
-      if(has_colors())
+      if(has_colors()) // @fixme 'has_colors_read' ?
       {
         // It is not well stated in the Geomview manual
         // how color is coded following a vertex. It is

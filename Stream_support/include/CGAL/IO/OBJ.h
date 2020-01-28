@@ -15,6 +15,14 @@
 #define CGAL_IO_OBJ_H
 
 #include <CGAL/IO/OBJ/File_writer_wavefront.h>
+#include <CGAL/IO/Generic_writer.h>
+
+#include <boost/range/value_type.hpp>
+
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace CGAL {
 
@@ -22,20 +30,18 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
 
-//! \ingroup IOstreamFunctions
-//!
-/// reads the content of `input` into `points` and `faces`, using the `OBJ` format.
-///
-/// \tparam Points a `RandomAccessContainer` of `Point_3,
-/// \tparam Faces a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
-///
-/// \see \ref IOStreamOBJ
-template <class Points, class Faces>
+namespace IO {
+namespace internal {
+
+template <typename Points, typename Faces, typename VertexNormalOutputIterator>
 bool read_OBJ(std::istream& input,
               Points& points,
-              Faces& faces)
+              Faces& faces,
+              VertexNormalOutputIterator vn_out)
 {
-  typedef typename Points::value_type                          Point;
+  typedef typename boost::range_value<Points>::type                                   Point;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
+  typedef typename Kernel::Vector_3                                                   Normal;
 
   int mini(1),
       maxi(-INT_MAX);
@@ -47,13 +53,13 @@ bool read_OBJ(std::istream& input,
     if(line[0] == 'v' && line[1] == ' ')
     {
       std::istringstream iss(line.substr(1));
-      iss >> p;
+      iss >> p; // @fixme check successful reading
       if(!iss)
         return false;
 
       points.push_back(p);
     }
-    else if(line[0] == 'f')
+    else if(line[0] == 'f' && line[1] == ' ') // @fixme range checks
     {
       std::istringstream iss(line.substr(1));
       int i;
@@ -78,6 +84,15 @@ bool read_OBJ(std::istream& input,
       if(iss.fail())
         return false;
     }
+    else if(line[0] == 'v' &&  line[1] == 'n' && line[2] == ' ')
+    {
+      std::istringstream iss(line.substr(1));
+      double nx, ny, nz; // @fixme double?
+      if(iss >> nx >> ny >> nz)
+        *vn_out++ = Normal(nx, ny, nz); // @fixme check that every vertex has a normal?
+      else
+        return false;
+    }
     else
     {
       //std::cerr << "ERROR : Cannnot read line beginning with " << line[0] << std::endl;
@@ -94,6 +109,31 @@ bool read_OBJ(std::istream& input,
   return !input.fail();
 }
 
+} // namespace internal
+} // namespace IO
+
+//! \ingroup IOstreamFunctions
+//!
+/// reads the content of `input` into `points` and `faces`, using the `OBJ` format.
+///
+/// \tparam Points a `RandomAccessContainer` of `Point_3,
+/// \tparam Faces a `RandomAccessContainer` of `RandomAccessContainer` of `std::size_t`
+///
+/// \see \ref IOStreamOBJ
+template <typename Points, typename Faces, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OBJ(std::istream& is,
+              Points& points,
+              Faces& faces,
+              const CGAL_BGL_NP_CLASS& np)
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  return IO::internal::read_OBJ(is, points, faces,
+                                choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
+                                                 CGAL::Emptyset_iterator()));
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
@@ -102,38 +142,17 @@ bool read_OBJ(std::istream& input,
 /*!
  * \ingroup IOstreamFunctions
  *
- * writes the content of `points` and `polygons` in `out`, in the OBJ format.
+ * writes the content of `points` and `polygons` in `os`, in the OBJ format.
  *
  * \see \ref IOStreamOBJ
  */
 template <class Point_3, class Polygon_3>
-bool write_OBJ(std::ostream& out,
+bool write_OBJ(std::ostream& os,
                std::vector<Point_3>& points,
                std::vector<Polygon_3>& polygons)
 {
-  CGAL::File_writer_wavefront writer;
-  writer.write_header(out, points.size(), 0, polygons.size());
-
-  for(std::size_t i = 0, end = points.size(); i<end; ++i)
-  {
-    const Point_3& p = points[i];
-    writer.write_vertex(p.x(), p.y(), p.z());
-  }
-
-  writer.write_facet_header();
-  for(std::size_t i=0, end=polygons.size(); i<end; ++i)
-  {
-    Polygon_3& polygon = polygons[i];
-    const std::size_t size = polygon.size();
-
-    writer.write_facet_begin(size);
-    for(std::size_t j=0; j<size; ++j)
-      writer.write_facet_vertex_index(polygon[j]);
-    writer.write_facet_end();
-  }
-  writer.write_footer();
-
-  return out.good();
+  Generic_writer<std::ostream, File_writer_wavefront> writer(os); // @fixme uniformize os and out
+  return writer(points, polygons);
 }
 
 } // namespace CGAL

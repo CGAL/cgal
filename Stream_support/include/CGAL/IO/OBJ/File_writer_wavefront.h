@@ -17,6 +17,10 @@
 #ifndef CGAL_IO_OBJ_FILE_WRITER_WAVEFRONT_H
 #define CGAL_IO_OBJ_FILE_WRITER_WAVEFRONT_H
 
+#include <CGAL/IO/Color.h>
+
+#include <iostream>
+
 namespace CGAL {
 
 class File_writer_wavefront
@@ -51,6 +55,13 @@ public:
     out() << "v " << x << ' ' << y << ' ' << z << '\n';
   }
 
+  void write_vertex_normal(const double x, const double y, const double z) {
+    out() << "vn " << x << ' ' << y << ' ' << z << '\n';
+  }
+
+  void write_vertex_color(const double, const double, const double) { }
+  void write_vertex_texture(const double, const double) { }
+
   void write_facet_header()
   {
     out() << "\n# " << m_facets << " facets\n";
@@ -58,6 +69,7 @@ public:
   }
   void write_facet_begin(std::size_t) { out() << "f "; }
   void write_facet_vertex_index(std::size_t idx) { out() << ' ' << idx+1; }
+  void write_face_normal(const double, const double, const double) { }
   void write_facet_end() { out() << '\n'; }
 };
 

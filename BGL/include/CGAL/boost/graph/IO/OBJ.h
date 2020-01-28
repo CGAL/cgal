@@ -52,9 +52,13 @@ class OBJ_builder
 public:
   OBJ_builder(std::istream& is_) : Base(is_) { }
 
-  bool read(std::istream& input, Point_container& points, Face_container& faces)
+  template <typename NamedParameters>
+  bool read(std::istream& input,
+            Point_container& points,
+            Face_container& faces,
+            const NamedParameters& np)
   {
-    return read_OBJ(input, points, faces);
+    return read_OBJ(input, points, faces, np);
   }
 };
 
