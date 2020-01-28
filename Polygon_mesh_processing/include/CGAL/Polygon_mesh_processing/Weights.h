@@ -55,8 +55,8 @@ struct Cotangent_value_Meyer_impl
     if(divider == 0 /*|| divider != divider*/) 
     {
       CGAL::collinear(get(ppmap, v0), get(ppmap, v1), get(ppmap, v2)) ? 
-        CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
-        CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
+        CGAL_warning_msg(false, "Infinite Cotangent value with degenerate triangle!") :
+        CGAL_warning_msg(false, "Infinite Cotangent value due to floating point arithmetic!");
       
 
       return dot_ab > 0 ? (std::numeric_limits<double>::max)() :
@@ -341,7 +341,7 @@ public:
         }
       }
     }
-    CGAL_warning(voronoi_area != 0 && "Zero voronoi area!");
+    CGAL_warning_msg(voronoi_area != 0, "Zero voronoi area!");
     return voronoi_area;
   }
 };
@@ -806,7 +806,7 @@ public:
     Vector v = target(he, pmesh())->point() - source(he, pmesh())->point();
     double divider = CGAL::sqrt(v.squared_length());
     if(divider == 0.0) {
-      CGAL_warning(!"Scale dependent weight - zero length edge.");
+      CGAL_warning_msg(false, "Scale dependent weight - zero length edge.");
       return (std::numeric_limits<double>::max)();
     }
     return 1.0 / divider;
