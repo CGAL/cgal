@@ -36,9 +36,6 @@ class Polyhedron_demo_tetrahedral_remeshing_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "tetrahedral_remeshing_plugin.json")
 
 public:
-  typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<EPICK> Remeshing_triangulation;
-
-
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface*)
   {
     this->scene = scene_interface;
