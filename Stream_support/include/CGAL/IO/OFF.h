@@ -83,13 +83,13 @@ bool read_OFF(std::istream& in,
     }
 
     // @fixme
-//    if(scanner.has_textures())
-//    {
-//      double nx, ny, nw;
-//      scanner.scan_texture(nx, ny, nw);
-//      CGAL_assertion(nw != 0);
-//      *vt_out++ = Texture(nx, ny, nw);
-//    }
+    if(scanner.has_textures())
+    {
+      double nx, ny, nw;
+      scanner.scan_texture(nx, ny, nw);
+      CGAL_assertion(nw != 0);
+      *vt_out++ = Texture(nx, ny, nw);
+    }
 
     scanner.skip_to_next_vertex(i);
 

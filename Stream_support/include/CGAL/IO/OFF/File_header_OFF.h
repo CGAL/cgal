@@ -38,6 +38,7 @@ private:
   std::size_t  m_offset; // index offset for vertices, usually 0.
 
   // Publicly accessible but not that well supported file informations.
+  bool m_textures; // STOFF detected.
   bool m_colors; // COFF detected.
   bool m_normals; // NOFF format stores also normals at vertices.
 
@@ -78,6 +79,7 @@ public:
   bool comments() const { return ! m_no_comments; }
 
   std::size_t  index_offset()       const { return m_offset; }
+  bool has_textures()       const { return m_textures; } // STOFF detected.
   bool has_colors()         const { return m_colors; } // COFF detected.
   bool has_normals()        const { return m_normals;} // NOFF format.
   bool is_homogeneous()     const { return m_tag4; } // 4OFF detected.
@@ -95,6 +97,7 @@ public:
   void set_no_comments(bool b) { m_no_comments = b; }
   void set_index_offset(std::size_t i) { m_offset = i; }
 
+  void set_textures(bool b) { m_textures = b; }
   void set_colors(bool b) { m_colors = b; }
   void set_normals(bool b) { m_normals = b;}
   void set_homogeneous(bool b) { m_tag4 = b; }

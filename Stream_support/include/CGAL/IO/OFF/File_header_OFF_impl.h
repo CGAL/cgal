@@ -21,14 +21,16 @@
 #endif
 
 #include <CGAL/basic.h>
+#include <CGAL/IO/binary_file_io.h>
+#include <CGAL/IO/OFF/File_header_OFF.h>
+
+#include <boost/cstdint.hpp>
+
+#include <algorithm>
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
 #include <iostream>
-#include <CGAL/IO/binary_file_io.h>
-#include <CGAL/IO/OFF/File_header_OFF.h>
-#include <algorithm>
-#include <boost/cstdint.hpp>
 
 namespace CGAL {
 
@@ -41,6 +43,7 @@ File_header_OFF::File_header_OFF( bool verbose)
     m_binary(false),
     m_no_comments(false),
     m_offset(0),
+    m_textures(false),
     m_colors(false),
     m_normals(false),
     m_tag4(false),
@@ -57,6 +60,7 @@ File_header_OFF::File_header_OFF(
     m_binary(binary),
     m_no_comments(noc),
     m_offset(0),
+    m_textures(false),
     m_colors(false),
     m_normals(false),
     m_tag4(false),
@@ -73,6 +77,7 @@ File_header_OFF::File_header_OFF(
 //    m_binary(false),
 //    m_no_comments(false),
 //    m_offset(0),
+//    m_textures(false),
 //    m_colors(false),
 //    m_normals(false),
 //    m_tag4(false),
@@ -91,6 +96,7 @@ File_header_OFF::File_header_OFF( std::size_t v, std::size_t h, std::size_t f,
     m_binary(binary),
     m_no_comments(noc),
     m_offset(0),
+    m_textures(false),
     m_colors(false),
     m_normals(false),
     m_tag4(false),
@@ -109,6 +115,7 @@ File_header_OFF::File_header_OFF(
     m_binary(false),
     m_no_comments(false),
     m_offset(0),
+    m_textures(false),
     m_colors(false),
     m_normals(false),
     m_tag4(false),
@@ -126,6 +133,7 @@ File_header_OFF::File_header_OFF(
     m_binary(binary),
     m_no_comments(noc),
     m_offset(0),
+    m_textures(false),
     m_colors(false),
     m_normals(false),
     m_tag4(false),
@@ -143,6 +151,7 @@ File_header_OFF::File_header_OFF(
     m_binary(false),
     m_no_comments(false),
     m_offset(0),
+    m_textures(false),
     m_colors(false),
     m_normals(false),
     m_tag4(false),
@@ -163,6 +172,7 @@ File_header_OFF::File_header_OFF(
     m_binary(binary),
     m_no_comments(noc),
     m_offset(0),
+    m_textures(false),
     m_colors(false),
     m_normals(false),
     m_tag4(false),
@@ -231,14 +241,15 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     }
     if ( ! in)
         return in;
-    h.set_skel( false);
-    h.set_binary( false);
-    h.set_index_offset( 1);
-    h.set_colors( false);
-    h.set_normals( false);
-    h.set_homogeneous( false);
-    h.set_dimensional( false);
-    h.set_dimension( 3);
+    h.set_skel(false);
+    h.set_binary(false);
+    h.set_index_offset(1);
+    h.set_textures(false),
+    h.set_colors(false);
+    h.set_normals(false);
+    h.set_homogeneous(false);
+    h.set_dimensional(false);
+    h.set_dimension(3);
 
     const int max_keyword = 42;
     char keyword[max_keyword] = "";
@@ -253,6 +264,10 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     } else {
         h.set_index_offset( 0);
         int j = 0;
+        if ( j+1 < i && keyword[j] == 'S' && keyword[j+1] == 'T') {
+            h.set_textures( true);
+            j += 2;
+        }
         if ( j < i && keyword[j] == 'C') {
             h.set_colors( true);
             j++;

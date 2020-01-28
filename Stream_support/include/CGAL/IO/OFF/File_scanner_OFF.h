@@ -245,6 +245,19 @@ public:
     }
   }
 
+  void scan_texture(float& x, float& y, float& w)
+  {
+    // @ todo
+    CGAL_assertion(false);
+  }
+
+  void scan_texture(double& x, double& y, double& w)
+  {
+    // @ todo
+    CGAL_assertion(false);
+  }
+
+
   void scan_normal(float& x, float& y, float& z)
   {
     if(has_normals())
