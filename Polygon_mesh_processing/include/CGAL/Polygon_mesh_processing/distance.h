@@ -289,10 +289,8 @@ struct Triangle_structure_sampler_base
           nb_pts_a_u = 2. / CGAL::square(min_edge_length);
         }
 
-        for(TriangleIterator it = static_cast<Derived*>(this)->get_range().first;
-            it != static_cast<Derived*>(this)->get_range().second; ++it)
+        for(const auto& tr: make_range(static_cast<Derived*>(this)->get_range()))
         {
-          auto tr = *it;
           std::size_t nb_points = nb_points_per_face;
           if (nb_points == 0)
           {
