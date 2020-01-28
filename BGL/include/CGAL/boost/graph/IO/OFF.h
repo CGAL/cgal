@@ -60,30 +60,12 @@ public:
   }
 };
 
-} // namespace internal
-} // namespace IO
-
-/*!
-  \ingroup PkgBGLIOFct
-
-  reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash, and lines with whitespace.
-
-  \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
-      If this parameter is omitted, an internal property map for
-      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
-    \cgalNamedParamsEnd
-
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
-  \pre The data must represent a 2-manifold
-
-  \see \ref IOStreamOFF
-*/
+// Because some packages can provide overloads with the same signature to automatically initialize
+// property maps (see Surface_mesh/IO/ for example)
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(std::istream& in,
-              FaceGraph& g,
-              const CGAL_BGL_NP_CLASS& np)
+bool read_OFF_BGL(std::istream& in,
+                  FaceGraph& g,
+                  const CGAL_BGL_NP_CLASS& np)
 {
   typedef typename CGAL::GetVertexPointMap<FaceGraph, CGAL_BGL_NP_CLASS>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
@@ -92,24 +74,36 @@ bool read_OFF(std::istream& in,
   return builder(g, np);
 }
 
+} // namespace internal
+} // namespace IO
+
 /*!
   \ingroup PkgBGLIOFct
 
   reads the graph `g` from data in the OFF format. Ignores comment lines which start with a hash,
   and lines with whitespace.
 
-  \sa Overloads of this function for specific models of the concept `FaceGraph`.
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`\cgalParamEnd
+    \cgalNamedParamsEnd
 
   \pre The data must represent a 2-manifold
 
-  \attention The graph `g` is not cleared, and the data from the stream are added.
+  \sa Overloads of this function for specific models of the concept `FaceGraph`.
 
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const char* fname,
-              FaceGraph& g,
-              const CGAL_BGL_NP_CLASS& np)
+bool read_OFF(std::istream& in, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
+{
+  return IO::internal::read_OFF_BGL(in, g, np);
+}
+
+// document that too
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(const char* fname, FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream in(fname);
   return read_OFF(in, g, np);
@@ -132,6 +126,21 @@ bool read_OFF(const std::string& fname, FaceGraph& g) { return read_OFF(fname, g
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Write
 
+namespace IO {
+namespace internal {
+
+template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_OFF_BGL(std::ostream& os,
+                   const FaceGraph& g,
+                   const CGAL_BGL_NP_CLASS& np)
+{
+  IO::internal::Generic_facegraph_printer<std::ostream, FaceGraph, CGAL::File_writer_OFF> printer(os);
+  return printer(g, np);
+}
+
+} // namespace internal
+} // namespace IO
+
 /*!
   \ingroup PkgBGLIOFct
 
@@ -149,27 +158,14 @@ bool read_OFF(const std::string& fname, FaceGraph& g) { return read_OFF(fname, g
   \see \ref IOStreamOFF
 */
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(std::ostream& os,
-               const FaceGraph& g,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(std::ostream& os, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
-  IO::internal::Generic_facegraph_printer<std::ostream, FaceGraph, CGAL::File_writer_OFF> printer(os);
-  return printer(g, np);
+  return IO::internal::write_OFF_BGL(os, g, np);
 }
 
-/*!
-\ingroup PkgBGLIOFct
-
- writes the graph `g` in the OFF format into a file named `fname`.
-
- \sa Overloads of this function for specific models of the concept `FaceGraph`.
-
- \see \ref IOStreamOFF
-*/
+// document that too
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_OFF(const char* fname,
-               const FaceGraph& g,
-               const CGAL_BGL_NP_CLASS& np)
+bool write_OFF(const char* fname, const FaceGraph& g, const CGAL_BGL_NP_CLASS& np)
 {
   std::ofstream out(fname);
   return write_OFF(out, g, np);
@@ -181,7 +177,7 @@ bool write_OFF(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP_C
   return write_OFF(fname.c_str(), g, np);
 }
 
-template <typename Input, typename FaceGraph>
+template <typename FaceGraph>
 bool write_OFF(std::ostream& os, const FaceGraph& g) { return write_OFF(os, g, parameters::all_default()); }
 template <typename FaceGraph>
 bool write_OFF(const char* fname, const FaceGraph& g) { return write_OFF(fname, g, parameters::all_default()); }

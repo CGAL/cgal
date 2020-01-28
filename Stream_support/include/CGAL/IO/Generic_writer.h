@@ -38,6 +38,9 @@ public:
   bool operator()(std::vector<Point_3>& points,
                   std::vector<Polygon_3>& polygons)
   {
+    if(m_out.fail())
+      return false;
+
     m_writer.write_header(m_out, points.size(), 0, polygons.size());
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {

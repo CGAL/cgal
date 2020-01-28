@@ -4,7 +4,6 @@
 #include "Scene_points_with_normal_item.h"
 
 #include <CGAL/IO/PLY.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 

@@ -23,6 +23,8 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/use.h>
 
+#include <boost/range/value_type.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -36,26 +38,29 @@ namespace CGAL {
 namespace IO {
 namespace internal {
 
-template <typename Point_3, typename Polygon_3,
+template <typename PointRange, typename PolygonRange,
           typename VertexNormalOutputIterator,
           typename VertexColorOutputIterator,
           typename VertexTextureOutputIterator,
           typename FaceColorOutputIterator>
-bool read_OFF(std::istream& in,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons,
+bool read_OFF(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
               VertexNormalOutputIterator vn_out,
               VertexColorOutputIterator vc_out,
               VertexTextureOutputIterator vt_out,
               FaceColorOutputIterator fc_out)
-
 {
-  typedef typename CGAL::Kernel_traits<Point_3>::Kernel                               Kernel;
+  typedef typename boost::range_value<PointRange>::type                               Point;
+  typedef typename CGAL::Kernel_traits<Point>::Kernel                                 Kernel;
   typedef typename Kernel::Point_2                                                    Texture;
   typedef typename Kernel::Vector_3                                                   Normal;
   typedef CGAL::Color                                                                 Color;
 
-  CGAL::File_scanner_OFF scanner(in);
+  if(!is.good())
+    return false;
+
+  CGAL::File_scanner_OFF scanner(is);
 
   points.resize(scanner.size_of_vertices());
   polygons.resize(scanner.size_of_facets());
@@ -82,7 +87,6 @@ bool read_OFF(std::istream& in,
       *vc_out++ = Color(r,g,b);
     }
 
-    // @fixme
     if(scanner.has_textures())
     {
       double nx, ny, nw;
@@ -93,7 +97,7 @@ bool read_OFF(std::istream& in,
 
     scanner.skip_to_next_vertex(i);
 
-    if(!in.good())
+    if(!is.good())
       return false;
   }
 
@@ -103,7 +107,7 @@ bool read_OFF(std::istream& in,
     std::size_t no;
     scanner.scan_facet(no, i);
 
-    if(!in.good())
+    if(!is.good())
       return false;
 
     IO::internal::resize(polygons[i], no);
@@ -120,7 +124,7 @@ bool read_OFF(std::istream& in,
     if(i == 0)
     {
       std::string col;
-      std::getline(in, col);
+      std::getline(is, col);
       std::istringstream iss(col);
       char ci =' ';
 
@@ -139,7 +143,7 @@ bool read_OFF(std::istream& in,
     }
   }
 
-  return !in.fail();
+  return !is.fail();
 }
 
 } // namespace internal
@@ -148,22 +152,22 @@ bool read_OFF(std::istream& in,
 /*!
  * \ingroup IOstreamFunctions
  *
- * reads the content of `in` into `points` and `polygons`, in the OFF format.
+ * reads the content of `is` into `points` and `polygons`, in the OFF format.
  *
  * @fixme re-add support for STOFF
  *
  * \see \ref IOStreamOFF
  */
-template <typename Point_3, typename Polygon_3, typename NamedParameters>
-bool read_OFF(std::istream& in,
-              std::vector<Point_3>& points, // @fixme doesn't need a vector specifically
-              std::vector<Polygon_3>& polygons,
+template <typename PointRange, typename PolygonRange, typename NamedParameters>
+bool read_OFF(std::istream& is,
+              PointRange& points,
+              PolygonRange& polygons,
               const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  return IO::internal::read_OFF(in, points, polygons,
+  return IO::internal::read_OFF(is, points, polygons,
                                 choose_parameter(get_parameter(np, internal_np::vertex_normal_output_iterator),
                                                  CGAL::Emptyset_iterator()),
                                 choose_parameter(get_parameter(np, internal_np::vertex_color_output_iterator),
@@ -174,45 +178,36 @@ bool read_OFF(std::istream& in,
                                                  CGAL::Emptyset_iterator()));
 }
 
-template <typename Point_3, typename Polygon_3, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool read_OFF(const char* fname,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons,
+              PointRange& points,
+              PolygonRange& polygons,
               const CGAL_BGL_NP_CLASS& np)
 {
   std::ifstream in(fname);
   return read_OFF(in, points, polygons, np);
 }
 
-template <typename Point_3, typename Polygon_3, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool read_OFF(const std::string& fname,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons,
-              const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons, const CGAL_BGL_NP_CLASS& np)
 {
   return read_OFF(fname.c_str(), points, polygons, np);
 }
 
-template <typename Point_3, typename Polygon_3>
-bool read_OFF(std::istream& is,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons)
+template <typename PointRange, typename PolygonRange>
+bool read_OFF(std::istream& is, PointRange& points, PolygonRange& polygons)
 {
   return read_OFF(is, points, polygons, parameters::all_default());
 }
 
-template <typename Point_3, typename Polygon_3>
-bool read_OFF(const char* fname,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons)
+template <typename PointRange, typename PolygonRange>
+bool read_OFF(const char* fname, PointRange& points, PolygonRange& polygons)
 {
   return read_OFF(fname, points, polygons, parameters::all_default());
 }
 
-template <typename Point_3, typename Polygon_3>
-bool read_OFF(const std::string& fname,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons)
+template <typename PointRange, typename PolygonRange>
+bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygons)
 {
   return read_OFF(fname, points, polygons, parameters::all_default());
 }
@@ -228,20 +223,20 @@ bool read_OFF(const std::string& fname,
  *
  * \see \ref IOStreamOFF
  */
-template <typename Point_3, typename Polygon_3, typename NamedParameters>
+template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
-               std::vector<Point_3>& points,
-               std::vector<Polygon_3>& polygons,
-               const NamedParameters& np)
+               PointRange& points,
+               PolygonRange& polygons,
+               const CGAL_BGL_NP_CLASS& np)
 {
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
   return writer(points, polygons, np);
 }
 
-template <class Point_3, class Polygon_3>
+template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os,
-               std::vector<Point_3>& points,
-               std::vector<Polygon_3>& polygons)
+               PointRange& points,
+               PolygonRange& polygons)
 {
   return write_OFF(os, points, polygons, parameters::all_default());
 }

@@ -10,7 +10,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
-
 #ifndef CGAL_SURFACE_MESH_PROPERTY_H
 #define CGAL_SURFACE_MESH_PROPERTY_H
 
@@ -18,13 +17,13 @@
 
 #ifndef DOXYGEN_RUNNING
 
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <typeinfo>
-
-#include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
+#include <CGAL/property_map.h>
+
+#include <algorithm>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 namespace CGAL {
 

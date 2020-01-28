@@ -461,12 +461,12 @@ struct Constant_property_map
   Constant_property_map(const value_type& default_value = value_type()) : default_value (default_value) { }
 
   /// Free function that returns `pm.default_value`.
-  inline friend value_type
-  get (const Constant_property_map& pm, const key_type&){ return pm.default_value; }
+  inline friend
+  const value_type& get (const Constant_property_map& pm, const key_type&) { return pm.default_value; }
 
   /// Free function that does nothing.
-  inline friend void
-  put (const Constant_property_map&, const key_type&, const value_type&) { }
+  inline friend
+  void put (const Constant_property_map&, const key_type&, const value_type&) { }
 };
 
 /// \ingroup PkgPropertyMapRef

@@ -91,14 +91,29 @@ public:
 
   void write_vertex_color(const double r, const double g, const double b)
   {
-    // @todo
-    CGAL_assertion(false);
+    if(m_header.binary())
+    {
+      I_Binary_write_big_endian_float32(out(), float(r));
+      I_Binary_write_big_endian_float32(out(), float(g));
+      I_Binary_write_big_endian_float32(out(), float(b));
+    }
+    else
+    {
+      out() << ' ' << ' ' << r << ' ' << g << ' ' << b;
+    }
   }
 
-  void write_vertex_texture(const double, const double)
+  void write_vertex_texture(const double tx, const double ty)
   {
-    // @todo
-    CGAL_assertion(false);
+    if(m_header.binary())
+    {
+      I_Binary_write_big_endian_float32(out(), float(tx));
+      I_Binary_write_big_endian_float32(out(), float(ty));
+    }
+    else
+    {
+      out() << ' ' << ' ' << tx << ' ' << ty;
+    }
   }
 
   void write_facet_header()
@@ -135,7 +150,7 @@ public:
       out() << ' ' << index;
   }
 
-  void write_face_normal(const double, const double, const double) { }
+  void write_face_color(const double, const double, const double) { }
 
   void write_facet_end()
   {

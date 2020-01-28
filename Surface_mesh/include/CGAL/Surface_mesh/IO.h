@@ -15,12 +15,15 @@
 
 #include <CGAL/license/Surface_mesh.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/use.h>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
-#include <CGAL/Surface_mesh/Properties.h>
+
+#include <CGAL/Surface_mesh/IO/3mf.h>
+#include <CGAL/Surface_mesh/IO/OFF.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
+
+#include <CGAL/assertions.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/use.h>
 
 #include <boost/array.hpp>
 
@@ -34,194 +37,7 @@
 
 namespace CGAL {
 
-namespace internal {
-// helper function
-template <typename T> void read(std::istream& in, T& t)
-{
-  in.read(reinterpret_cast<char*>(&t), sizeof(t));
-}
-
-template <typename Point_3>
-bool read_off_binary(Surface_mesh<Point_3>& mesh,
-                     std::istream& in,
-                     const bool has_normals,
-                     const bool has_texcoords)
-{
-  typedef Surface_mesh<Point_3> Mesh;
-  typedef typename Kernel_traits<Point_3>::Kernel K;
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Vector_2 Vector_2;
-  typedef typename K::Vector_3 Normal;
-  typedef typename K::Vector_3 Texture_coordinate;
-
-  unsigned int       i, j, idx;
-  unsigned int       nV, nF, nE;
-  Point_3            p;
-  Vector_3           n, c;
-  Vector_2           t;
-  typename Mesh::Vertex_index  v;
-
-  // properties
-  typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>              normals;
-  typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
-  if(has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
-  if(has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
-
-  // #Vertice, #Faces, #Edges
-  internal::read(in, nV);
-  internal::read(in, nF);
-  internal::read(in, nE);
-  mesh.clear();
-  mesh.reserve(nV, (std::max)(3*nV, nE), nF);
-
-  // read vertices: pos [normal] [color] [texcoord]
-  for(i=0; i<nV && in.good(); ++i)
-  {
-    // position
-    internal::read(in, p);
-    v = mesh.add_vertex(p);
-
-    // normal
-    if(has_normals)
-    {
-      internal::read(in, n);
-      normals[v] = n;
-    }
-
-    // tex coord
-    if(has_texcoords)
-    {
-      internal::read(in, t);
-      texcoords[v] = Vector_3(t[0], t[1], 0.0);
-    }
-  }
-
-
-  // read faces: #N v[1] v[2] ... v[n-1]
-  std::vector<typename Mesh::Vertex_index> vertices;
-  for(i=0; i<nF; ++i)
-  {
-    internal::read(in, nV);
-    vertices.resize(nV);
-    for(j=0; j<nV; ++j)
-    {
-      internal::read(in, idx);
-      vertices[j] = typename Mesh::Vertex_index(idx);
-    }
-    if(!mesh.add_face(vertices).is_valid()) {
-      // adding a face did not succeed, stop reading the rest
-      return false;
-    }
-  }
-
-  return true;
-}
-
-template <typename Point_3>
-bool read_off_ascii(Surface_mesh<Point_3>& mesh,
-                    std::istream& in,
-                    const bool has_normals,
-                    const bool has_texcoords)
-{
-  typedef Surface_mesh<Point_3> Mesh;
-  typedef typename Kernel_traits<Point_3>::Kernel K;
-  typedef typename K::Vector_3 Vector_3;
-  typedef typename K::Vector_3 Normal;
-  typedef typename K::Vector_3 Texture_coordinate;
-
-  boost::array<double, 3> buffer;
-  std::string             line;
-  unsigned int            i, j, idx;
-  unsigned int            nV, nF, nE;
-  typename Mesh::Vertex_index   v;
-
-  // properties
-  typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>                 normals;
-  typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>     texcoords;
-
-  if(has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
-  if(has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
-
-  char c;
-  do {
-    c = in.get();
-    if(c == '#'){
-      getline(in,line);
-    } else {
-      in.putback(c);
-      break;
-    }
-  }while(1);
-
-  // #Vertice, #Faces, #Edges
-  in >> nV >> nF >> nE;
-  getline(in,line); // reads eol
-
-  mesh.clear();
-  mesh.reserve(nV, (std::max)(3*nV, nE), nF);
-
-  // read vertices: pos [normal] [color] [texcoord]
-  for(i=0; i<nV && in.good(); ++i)
-  {
-    // read line
-    getline(in, line);
-    if(line[0] == '#') // if the first column is a # we are looking at a comment line
-    {
-      --i;
-      continue;
-    }
-
-    // position
-    std::istringstream iss(line);
-    iss >> iformat(buffer[0]) >> iformat(buffer[1]) >> iformat(buffer[2]);
-    v = mesh.add_vertex(Point_3(buffer[0], buffer[1], buffer[2]));
-
-    // normal
-    if(has_normals)
-    {
-      iss >> iformat(buffer[0]) >> iformat(buffer[1]) >> iformat(buffer[2]);
-    }
-
-    // tex coord
-    if(has_texcoords)
-    {
-      iss >> iformat(buffer[0]) >> iformat(buffer[1]);
-      texcoords[v] = Vector_3(buffer[0], buffer[1], 0.0);
-    }
-  }
-
-  // read faces: #N v[1] v[2] ... v[n-1]
-  std::vector<typename Mesh::Vertex_index> vertices;
-  for(i=0; i<nF; ++i)
-  {
-    // read line
-    getline(in, line);
-    if(line[0] == '#') // if the first column is a # we are looking at a comment line
-    {
-      --i;
-      continue;
-    }
-
-    // #vertices
-    std::istringstream iss(line);
-    iss >> nV;
-    vertices.resize(nV);
-
-    // indices
-    for(j=0; j<nV; ++j)
-    {
-      iss >> idx;
-      vertices[j] = typename Mesh::Vertex_index(idx);
-    }
-
-    if(!mesh.add_face(vertices).is_valid()) {
-      // adding a face did not succeed, stop reading the rest
-      return false;
-    }
-  }
-  return true;
-}
-}
+// @todo move that to read_polygon_mesh in BGL
 
 /// \addtogroup PkgSurfaceMeshIO
 ///
@@ -231,90 +47,6 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
 /// supported.
 ///
 /// @{
-
-/// This function reads an `OFF` file into a `Surface_mesh`. It
-/// supports the `OFF` vertex properties normal, color, and vertex
-/// coordinates. If a property is detected in the `OFF` file, it will be
-/// read into the `mesh` as a vertex property with the name 
-/// `"v:normal"`, `"v:color"`, and `"v:texcoord"`, respectivly.
-///
-/// @param mesh The mesh that should contain the file contents.
-/// @param filename The name of the file to be read.
-///
-/// @returns `true`, if reading succeeded, `false` otherwise
-///
-template <typename K>
-bool read_off(Surface_mesh<K>& mesh, const std::string& filename)
-{
-  std::string  line;
-  bool  has_texcoords = false;
-  bool  has_normals   = false;
-  bool  has_hcoords   = false;
-  bool  has_dim       = false;
-  bool  is_binary     = false;
-
-  // open file (in ASCII mode)
-  std::ifstream in(filename.c_str());
-  if(!in) return false;
-
-  // read header: [ST][C][N][4][n]OFF BINARY
-  std::getline(in,line);
-  const char *c = line.c_str();
-  if(c[0] == 'S' && c[1] == 'T') { has_texcoords = true; c += 2; }
-  if(c[0] == 'N') { has_normals = true; ++c; }
-  if(c[0] == '4') { has_hcoords = true; ++c; }
-  if(c[0] == 'n') { has_dim     = true; ++c; }
-  if(strncmp(c, "OFF", 3) != 0) { in.close(); return false; } // no OFF
-  if(strncmp(c+4, "BINARY", 6) == 0) is_binary = true;
-
-
-  // homogeneous coords, and vertex dimension != 3 are not supported
-  if(has_hcoords || has_dim)
-  {
-    in.close();
-    return false;
-  }
-
-
-  // if binary: reopen file in binary mode
-  if(is_binary)
-  {
-    in.close();
-    in.open(filename.c_str(), std::ios::binary);
-    std::getline(in,line);
-  }
-
-  // read as ASCII or binary
-  bool ok = (is_binary ?
-               internal::read_off_binary(mesh, in, has_normals, has_texcoords) :
-               internal::read_off_ascii(mesh, in, has_normals, has_texcoords));
-
-  in.close();
-  return ok;
-}
-
-#if 0
-/// This function writes a `Surface_mesh` into an ASCII `OFF`
-/// file. It does not support properties.
-///
-/// @param mesh The mesh that should be written.
-/// @param filename The name of the file to be written.
-///
-/// @returns `true`, if reading succeeded, `false` otherwise
-///
-#endif 
-template <typename K>
-bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
-{
-  std::ofstream out(filename.c_str());
-  if(out.fail())
-    return false;
-
-  out << std::setprecision(17);
-  write_off(out, mesh);
-
-  return !out.fail();
-}
 
 #if 0
 /// Read a file into a `Surface_mesh`. The extension of the
@@ -330,7 +62,8 @@ bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 ///
 #endif 
 template <typename K>
-bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename) {
+bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename)
+{
   // clear mesh before reading from file
   mesh.clear();
 
@@ -381,6 +114,8 @@ bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
   // we didn't find a writer module
   return false;
 }
+
+/// @}
 
 } // namespace CGAL
 

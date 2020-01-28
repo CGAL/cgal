@@ -1510,9 +1510,14 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
 bool
 Scene_surface_mesh_item::save_obj(std::ostream& out) const
 {
-  CGAL::File_writer_wavefront  writer;
-  CGAL::generic_print_surface_mesh(out, *(d->smesh_), writer);
-  return out.good();
+  typename SMesh::template Property_map<typename SMesh::Vertex_index, EPICK::Vector_3> vnormals;
+  bool has_normals = false;
+  boost::tie(vnormals, has_normals) = M.template property_map<typename SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
+
+  if(has_normals)
+    return CGAL::write_OBJ(out, *(d->smesh_), parameters::normal_map(vnormals));
+  else
+    return CGAL::write_OBJ(out, *(d->smesh_));
 }
 
 void

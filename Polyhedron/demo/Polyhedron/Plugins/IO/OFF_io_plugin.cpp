@@ -9,7 +9,6 @@
 #include <CGAL/IO/OFF.h>
 #include <CGAL/IO/OBJ.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <QMessageBox>
 #include <QApplication>

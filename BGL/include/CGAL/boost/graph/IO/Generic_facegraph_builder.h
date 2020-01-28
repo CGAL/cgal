@@ -7,6 +7,7 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_BGL_IO_GENERIC_FACEGRAPH_BUILDER_H
 #define CGAL_BGL_IO_GENERIC_FACEGRAPH_BUILDER_H

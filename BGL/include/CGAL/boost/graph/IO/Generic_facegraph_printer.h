@@ -136,7 +136,7 @@ public:
       if(has_face_colors)
       {
         const CGAL::Color& fc = get(fcm, f);
-        m_writer.write_face_normal(fc.red(), fc.green(), fc.blue());
+        m_writer.write_face_color(fc.red(), fc.green(), fc.blue());
       }
 
       m_writer.write_facet_end();
