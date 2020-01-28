@@ -69,13 +69,13 @@ public:
       if((idx = s.find("name")) != std::string::npos)
       {
         std::istringstream str(s.substr(idx + 5));
-        str >> this->name;
+        str >> name;
       }
 
       if((idx = s.find("color")) != std::string::npos)
       {
         std::istringstream str(s.substr(idx + 6));
-        str >> this->color;
+        str >> color;
       }
     }
     std::getline(input, s);
@@ -112,6 +112,10 @@ public:
 
     return !input.fail();
   }
+
+public:
+  std::string name;
+  std::string color;
 };
 
 } // namespace internal
