@@ -180,6 +180,13 @@ operation.\n
 <b>Default:</b> None.
 \cgalNPEnd
 
+\cgalNPBegin{maximum_number_of_faces} \anchor BGL_maximum_number_of_faces
+is a size_type containing the maximum number of faces a connected component can have to be considered `reversable`.\n
+It is used in the function `merge_reversible_connected_components()`.\n
+<b>Type:</b> std::size_t.\n
+<b>Default:</b> 0.
+\cgalNPEnd
+
 
 
 \cgalNPTableEnd

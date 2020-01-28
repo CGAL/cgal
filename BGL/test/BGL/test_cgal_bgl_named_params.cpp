@@ -94,6 +94,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::area_threshold).v == 57);
   assert(get_parameter(np, CGAL::internal_np::volume_threshold).v == 58);
   assert(get_parameter(np, CGAL::internal_np::dry_run).v == 59);
+  assert(get_param(np, CGAL::internal_np::maximum_number_of_faces).v == 78910);
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   assert(get_parameter(np, CGAL::internal_np::get_cost_policy).v == 34);
@@ -181,6 +182,7 @@ void test(const NamedParameters& np)
   check_same_type<57>(get_parameter(np, CGAL::internal_np::area_threshold));
   check_same_type<58>(get_parameter(np, CGAL::internal_np::volume_threshold));
   check_same_type<59>(get_parameter(np, CGAL::internal_np::dry_run));
+  check_same_type<78910>(get_param(np, CGAL::internal_np::maximum_number_of_faces));
 
     // Named parameters that we use in the package 'Surface Mesh Simplification'
   check_same_type<34>(get_parameter(np, CGAL::internal_np::get_cost_policy));
@@ -274,6 +276,7 @@ int main()
                          .area_threshold(A<57>(57))
                          .volume_threshold(A<58>(58))
                          .dry_run(A<59>(59))
+                         .maximum_number_of_faces(A<78910>(78910))
        );
 
   return EXIT_SUCCESS;

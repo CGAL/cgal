@@ -122,6 +122,7 @@ CGAL_add_named_parameter(plane_index_t, plane_index_map, plane_index_map)
 CGAL_add_named_parameter(select_percentage_t, select_percentage, select_percentage)
 CGAL_add_named_parameter(require_uniform_sampling_t, require_uniform_sampling, require_uniform_sampling)
 CGAL_add_named_parameter(point_is_constrained_t, point_is_constrained, point_is_constrained_map)
+CGAL_add_named_parameter(maximum_number_of_faces_t, maximum_number_of_faces, maximum_number_of_faces)
 
 // List of named parameters used in Surface_mesh_approximation package
 CGAL_add_named_parameter(verbose_level_t, verbose_level, verbose_level)

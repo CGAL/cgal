@@ -669,6 +669,10 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamBegin{face_index_map}
  *     a property map containing the index of each face of `tm`.
  *   \cgalParamEnd
+ * *   \cgalParamBegin{maximum_number_of_faces}
+ *     if not 0 (default), a connected component is considered reversible only
+ *     if it has less than the given number of faces.
+ *   \cgalParamEnd
  * \cgalNamedParamsEnd
  */
 template <class TriangleMesh, class NamedParameters>
