@@ -27,6 +27,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <array>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
@@ -168,12 +169,12 @@ template<typename OutputIterator,
          typename Derived>
 struct Triangle_structure_sampler_base
 {
-  NamedParameters np;
+  const NamedParameters& np;
   GeomTraits geomtraits;
   OutputIterator& out;
 
   Triangle_structure_sampler_base(OutputIterator& out,
-                                  NamedParameters np)
+                                  const NamedParameters& np)
     :np(np), out(out)
   {}
 
@@ -185,7 +186,7 @@ struct Triangle_structure_sampler_base
   double get_tr_area(const Tr&);
 
   template<typename Tr>
-  void get_tr_points(const Tr& tr, typename GeomTraits::Point_3 points[]);
+  std::array<typename GeomTraits::Point_3, 3> get_tr_points(const Tr& tr);
 
   void ms_edges_sample(const std::size_t& nb_points_per_edge,
                        const std::size_t& nb_pts_l_u);
@@ -273,8 +274,8 @@ struct Triangle_structure_sampler_base
       std::size_t nb_points_per_edge =
           choose_parameter(get_parameter(np, internal_np::number_of_points_per_edge), 0);
 
-      if ((nb_points_per_face == 0 && nb_pts_a_u ==0.) ||
-          (nb_points_per_edge == 0 && nb_pts_l_u ==0.) )
+      if ((nb_points_per_face == 0 && nb_pts_a_u ==0.) 
+          || (nb_points_per_edge == 0 && nb_pts_l_u ==0.) )
       {
         min_edge_length = static_cast<Derived*>(this)->get_minimum_edge_length();
       }
@@ -284,7 +285,9 @@ struct Triangle_structure_sampler_base
       {
         // set default value
         if (nb_points_per_face == 0 && nb_pts_a_u ==0.)
+        {
           nb_pts_a_u = 2. / CGAL::square(min_edge_length);
+        }
 
         for(TriangleIterator it = static_cast<Derived*>(this)->get_range().first;
             it != static_cast<Derived*>(this)->get_range().second; ++it)
@@ -296,12 +299,11 @@ struct Triangle_structure_sampler_base
             nb_points = (std::max)(
                   static_cast<std::size_t>(
                     std::ceil(static_cast<Derived*>(this)->get_tr_area(tr))
-                    *nb_pts_a_u)
-                  ,std::size_t(1));
+                    *nb_pts_a_u), std::size_t(1));
           }
           // extract triangle face points
-          typename GeomTraits::Point_3 points[3];
-          static_cast<Derived*>(this)->get_tr_points(tr, points);
+          std::array<typename GeomTraits::Point_3, 3>points =
+              static_cast<Derived*>(this)->get_tr_points(tr);
           Random_points_in_triangle_3<typename GeomTraits::Point_3, Creator>
               g(points[0], points[1], points[2]);
           out=CGAL::cpp11::copy_n(g, nb_points, out);
@@ -468,11 +470,9 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
   Vpm pmap;
   double min_edge_length_;
-  std::pair<TriangleIterator,TriangleIterator> get_range()
-  {
-    return std::make_pair(faces(tm).begin(), faces(tm).end());
-  }
   const Mesh& tm;
+  
+
   Triangle_structure_sampler_for_triangle_mesh(const Mesh& m,
                                                OutputIterator& out,
                                                NamedParameters np)
@@ -487,6 +487,11 @@ struct Triangle_structure_sampler_for_triangle_mesh
     min_edge_length_ = (std::numeric_limits<double>::max)();
   }
 
+  std::pair<TriangleIterator,TriangleIterator> get_range()
+  {
+    return std::make_pair(faces(tm).begin(), faces(tm).end());
+  }
+  
   void sample_points()
   {
     Property_map_to_unary_function<Vpm> unary(pmap);
@@ -501,7 +506,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
       return min_edge_length_;
     typedef typename boost::graph_traits<Mesh>
       ::edge_descriptor edge_descriptor;
-    BOOST_FOREACH(edge_descriptor ed, edges(tm))
+    for(edge_descriptor ed : edges(tm))
     {
       double el = std::sqrt(
         to_double( typename GeomTraits::Compute_squared_distance_3()(
@@ -511,21 +516,23 @@ struct Triangle_structure_sampler_for_triangle_mesh
     }
     return min_edge_length_;
   }
-  template<typename Tr>//tr = face_descriptor here
-  double get_tr_area(const Tr& tr)
+  
+  double get_tr_area(const typename boost::graph_traits<Mesh>::face_descriptor& tr)
   {
     return to_double(face_area(tr,tm,parameters::geom_traits(this->geomtraits)));
   }
 
   template<typename Tr>//tr = face_descriptor here
-  void get_tr_points(const Tr& tr, typename GeomTraits::Point_3 points[])
+  std::array<typename GeomTraits::Point_3, 3> get_tr_points(const Tr& tr)
   {
+    std::array<typename GeomTraits::Point_3, 3> points;
     halfedge_descriptor hd(halfedge(tr,tm));
     for(int i=0; i<3; ++i)
     {
       points[i] = get(pmap, target(hd, tm));
       hd = next(hd, tm);
     }
+    return points;
   }
   void ms_edges_sample(std::size_t nb_points_per_edge,
                        double nb_pts_l_u)
@@ -688,12 +695,14 @@ struct Triangle_structure_sampler_for_triangle_soup
   }
 
   template<typename Tr>
-  void get_tr_points(const Tr& tr, typename GeomTraits::Point_3 points[])
+  std::array<typename GeomTraits::Point_3, 3> get_tr_points(const Tr& tr)
   {
+    std::array<typename GeomTraits::Point_3, 3> points;
     for(int i=0; i<3; ++i)
     {
       points[i] = this->points[tr[i] ];
     }
+    return points;
   }
 
   void ms_edges_sample(std::size_t ,
@@ -872,13 +881,15 @@ sample_triangle_mesh(const TriangleMesh& tm,
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`. \cgalParamEnd
  *    \cgalParamBegin{use_random_uniform_sampling}
- *      if `true` is passed (the default), points are generated in a random
+ *      if `true` is passed, points are generated in a random
  *      and uniform way on the surface of the soup.
  *      The number of sample points is the value passed to the named
  *      parameter `number_of_points_on_faces()`. If not set,
  *      the value passed to the named parameter `number_of_points_per_area_unit()`
  *      is multiplied by the area of the soup to get the number of sample points.
  *      If none of these parameters is set, the number of points sampled is `points.size()`.
+ *
+ *      Default is `true`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_grid_sampling}
  *      if `true` is passed, points are generated on a grid in each triangle,
@@ -886,6 +897,8 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      two consecutive points in the grid is that of the length of the
  *      smallest non-null edge of the soup, or the value passed to
  *      the named parameter `grid_spacing()`.
+ * 
+ *      Default is `false`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
  *      if `true` is passed, points are generated randomly in each triangle.
@@ -897,9 +910,14 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      is set, 2 divided by the square of the length of the smallest non-null
  *      edge of the soup is used as if it was passed to
  *      `number_of_points_per_area_unit()`.
+ *
+ *      Default is `false`.
  *    \cgalParamEnd
  *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
- *    the points of `points` are put into `out`.\cgalParamEnd
+ *    the points of `points` are put into `out`.
+ * 
+ *    Default is `true`.
+ *    \cgalParamEnd
  *    \cgalParamBegin{grid_spacing} a double value used as the grid spacing
  *      for the grid sampling method.
  *    \cgalParamEnd
@@ -930,7 +948,7 @@ OutputIterator
 sample_triangle_soup(const PointRange& points,
                      const TriangleRange& triangles,
                      OutputIterator out,
-                     NamedParameters np)
+                     const NamedParameters& np)
 {
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;

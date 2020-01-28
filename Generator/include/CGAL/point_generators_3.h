@@ -550,7 +550,7 @@ public:
 };
 
 template<typename Triangle, typename PointRange>
-class Triangle_from_soup
+class Triangle_3_from_soup
 {
   typedef typename boost::range_value<PointRange>::type  Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel        Kernel;
@@ -559,7 +559,7 @@ public:
 private:
   const PointRange& points;
 public:
-  Triangle_from_soup(const PointRange& pts)
+  Triangle_3_from_soup(const PointRange& pts)
     :points(pts)
   {}
 
@@ -727,12 +727,12 @@ template <class PointRange,
          >
 struct Random_points_in_triangle_soup
     : public Generic_random_point_generator<Triangle,
-                                            internal::Triangle_from_soup<Triangle, PointRange>,
+                                            internal::Triangle_3_from_soup<Triangle, PointRange>,
                                             Random_points_in_triangle_3<typename PointRange::value_type>,
                                             typename PointRange::value_type>
 {
   typedef Generic_random_point_generator<Triangle,
-                                         internal::Triangle_from_soup<Triangle, PointRange>,
+                                         internal::Triangle_3_from_soup<Triangle, PointRange>,
                                          Random_points_in_triangle_3<typename PointRange::value_type>,
                                          typename PointRange::value_type> Base;
   typedef typename PointRange::value_type                                 Point_3;
@@ -746,7 +746,7 @@ struct Random_points_in_triangle_soup
                                  const PointRange& points,
                                  Random& rnd = get_default_random())
     : Base(triangles,
-           internal::Triangle_from_soup<Triangle, PointRange>(points),
+           internal::Triangle_3_from_soup<Triangle, PointRange>(points),
            internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>()
            ,rnd )
   {
