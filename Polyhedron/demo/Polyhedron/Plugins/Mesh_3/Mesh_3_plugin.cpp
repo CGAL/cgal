@@ -19,7 +19,14 @@
 #include <QUrl>
 #include <fstream>
 
-#include <gsl/gsl>
+#include <gsl/pointers>
+
+// Small addition from GSL v2.0.0:
+template <class T>
+auto make_not_null(T&& t) {
+    return gsl::not_null<std::remove_cv_t<std::remove_reference_t<T>>>{std::forward<T>(t)};
+}
+
 #include <boost/variant/variant.hpp>
 #include <boost/optional/optional.hpp>
 #include "Scene_polylines_item.h"
@@ -208,6 +215,7 @@ private:
   };
   struct Image_mesh_items {
     gsl::not_null<Scene_image_item*> image_item;
+    Scene_polylines_item* polylines_item = nullptr;
   };
   struct Implicit_mesh_items {
     gsl::not_null<Scene_implicit_function_item*> function_item;
@@ -275,7 +283,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
         if (!items) items = Polyhedral_mesh_items{};
         auto& poly_items = get<Polyhedral_mesh_items>(*items);
         auto& sm_items = poly_items.sm_items;
-        sm_items.push_back(gsl::make_not_null(sm_item));
+        sm_items.push_back(make_not_null(sm_item));
         if (is_closed(*sm_item->polyhedron())) {
           poly_items.bounding_sm_item = sm_item;
         }
@@ -284,7 +292,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
       else if (auto function_item = qobject_cast<Scene_implicit_function_item*>(
                    scene->item(ind))) {
         if (!items)
-          items = Implicit_mesh_items{gsl::make_not_null(function_item)};
+          items = Implicit_mesh_items{make_not_null(function_item)};
         else
           return tr(
               "An implicit function cannot be mixed with other items type");
@@ -294,7 +302,7 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
       else if (auto image_item =
                    qobject_cast<Scene_image_item*>(scene->item(ind))) {
         if (!items)
-          items = Image_mesh_items{gsl::make_not_null(image_item)};
+          items = Image_mesh_items{make_not_null(image_item)};
         else
           return tr("An image items cannot be mixed with other items type");
       }
@@ -302,11 +310,20 @@ boost::optional<QString> Mesh_3_plugin::get_items_or_return_error_string() const
       else if (auto polylines_item =
                    qobject_cast<Scene_polylines_item*>(scene->item(ind))) {
         if (!items) items = Polyhedral_mesh_items{};
-        auto& poly_items = get<Polyhedral_mesh_items>(*items);
-        if (poly_items.polylines_item) {
-          return tr("Only one polyline item is accepted");
+        auto poly_items_ptr = get<Polyhedral_mesh_items>(&*items);
+        if(poly_items_ptr) {
+          if (poly_items_ptr->polylines_item) {
+            return tr("Only one polyline item is accepted");
+          } else {
+            poly_items_ptr->polylines_item = polylines_item;
+          }
         } else {
-          poly_items.polylines_item = polylines_item;
+          auto image_items = get<Image_mesh_items>(*items);
+          if (image_items.polylines_item) {
+            return tr("Only one polyline item is accepted");
+          } else {
+            image_items.polylines_item = polylines_item;
+          }
         }
       } else {
         return tr("Wrong selection of items");
@@ -615,7 +632,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
     const auto polylines_item = poly_items.polylines_item;
     QList<const SMesh*> polyhedrons;
     if(mesh_type != Mesh_type::SURFACE_ONLY) {
-      sm_items.removeAll(gsl::make_not_null(bounding_sm_item));
+      sm_items.removeAll(make_not_null(bounding_sm_item));
     }
     std::transform(sm_items.begin(), sm_items.end(),
                    std::back_inserter(polyhedrons),
