@@ -15,10 +15,14 @@
 
 #include <CGAL/license/Surface_mesh.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/use.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Properties.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
-#include <CGAL/disable_warnings.h>
-
-//== INCLUDES =================================================================
+#include <boost/array.hpp>
 
 #include <string>
 #include <fstream>
@@ -28,25 +32,13 @@
 #include <vector>
 #include <stdexcept>
 
-
-#include <boost/array.hpp>
-
-#include <CGAL/assertions.h>
-#include <CGAL/use.h>
-#include <CGAL/Surface_mesh/Surface_mesh.h>
-#include <CGAL/Surface_mesh/Properties.h>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-
-//=============================================================================
-
 namespace CGAL {
 
 namespace internal {
 // helper function
-  template <typename T> void read(std::istream& in, T& t)
+template <typename T> void read(std::istream& in, T& t)
 {
-    in.read(reinterpret_cast<char*>(&t), sizeof(t));
+  in.read(reinterpret_cast<char*>(&t), sizeof(t));
 }
 
 template <typename Point_3>
@@ -55,76 +47,74 @@ bool read_off_binary(Surface_mesh<Point_3>& mesh,
                      const bool has_normals,
                      const bool has_texcoords)
 {
-    typedef Surface_mesh<Point_3> Mesh;
-    typedef typename Kernel_traits<Point_3>::Kernel K;
-    typedef typename K::Vector_3 Vector_3;
-    typedef typename K::Vector_2 Vector_2;
-    typedef typename K::Vector_3 Normal;
-    typedef typename K::Vector_3 Texture_coordinate;
+  typedef Surface_mesh<Point_3> Mesh;
+  typedef typename Kernel_traits<Point_3>::Kernel K;
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::Vector_2 Vector_2;
+  typedef typename K::Vector_3 Normal;
+  typedef typename K::Vector_3 Texture_coordinate;
 
-    unsigned int       i, j, idx;
-    unsigned int       nV, nF, nE;
-    Point_3            p;
-    Vector_3           n, c;
-    Vector_2           t;
-    typename Mesh::Vertex_index  v;
+  unsigned int       i, j, idx;
+  unsigned int       nV, nF, nE;
+  Point_3            p;
+  Vector_3           n, c;
+  Vector_2           t;
+  typename Mesh::Vertex_index  v;
 
-    // properties
-    typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>              normals;
-    typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
-    if (has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
-    if (has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
+  // properties
+  typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>              normals;
+  typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>  texcoords;
+  if(has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
+  if(has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
+
+  // #Vertice, #Faces, #Edges
+  internal::read(in, nV);
+  internal::read(in, nF);
+  internal::read(in, nE);
+  mesh.clear();
+  mesh.reserve(nV, (std::max)(3*nV, nE), nF);
+
+  // read vertices: pos [normal] [color] [texcoord]
+  for(i=0; i<nV && in.good(); ++i)
+  {
+    // position
+    internal::read(in, p);
+    v = mesh.add_vertex(p);
+
+    // normal
+    if(has_normals)
+    {
+      internal::read(in, n);
+      normals[v] = n;
+    }
+
+    // tex coord
+    if(has_texcoords)
+    {
+      internal::read(in, t);
+      texcoords[v] = Vector_3(t[0], t[1], 0.0);
+    }
+  }
 
 
-    // #Vertice, #Faces, #Edges
+  // read faces: #N v[1] v[2] ... v[n-1]
+  std::vector<typename Mesh::Vertex_index> vertices;
+  for(i=0; i<nF; ++i)
+  {
     internal::read(in, nV);
-    internal::read(in, nF);
-    internal::read(in, nE);
-    mesh.clear();
-    mesh.reserve(nV, (std::max)(3*nV, nE), nF);
-
-
-    // read vertices: pos [normal] [color] [texcoord]
-    for (i=0; i<nV && in.good(); ++i)
+    vertices.resize(nV);
+    for(j=0; j<nV; ++j)
     {
-        // position
-        internal::read(in, p);
-        v = mesh.add_vertex(p);
-
-        // normal
-        if (has_normals)
-        {
-            internal::read(in, n);
-            normals[v] = n;
-        }
-
-        // tex coord
-        if (has_texcoords)
-        {
-            internal::read(in, t);
-            texcoords[v] = Vector_3(t[0], t[1], 0.0);
-        }
+      internal::read(in, idx);
+      vertices[j] = typename Mesh::Vertex_index(idx);
     }
-
-
-    // read faces: #N v[1] v[2] ... v[n-1]
-    std::vector<typename Mesh::Vertex_index> vertices;
-    for (i=0; i<nF; ++i)
-    {
-        internal::read(in, nV);
-        vertices.resize(nV);
-        for (j=0; j<nV; ++j)
-        {
-            internal::read(in, idx);
-            vertices[j] = typename Mesh::Vertex_index(idx);
-        }
-        if(!mesh.add_face(vertices).is_valid()) {
-          // adding a face did not succeed, stop reading the rest
-          return false;
-        }
+    if(!mesh.add_face(vertices).is_valid()) {
+      // adding a face did not succeed, stop reading the rest
+      return false;
     }
+  }
 
-    return true;
+  return true;
 }
 
 template <typename Point_3>
@@ -133,103 +123,103 @@ bool read_off_ascii(Surface_mesh<Point_3>& mesh,
                     const bool has_normals,
                     const bool has_texcoords)
 {
-    typedef Surface_mesh<Point_3> Mesh;
-    typedef typename Kernel_traits<Point_3>::Kernel K;
-    typedef typename K::Vector_3 Vector_3;
-    typedef typename K::Vector_3 Normal;
-    typedef typename K::Vector_3 Texture_coordinate;
+  typedef Surface_mesh<Point_3> Mesh;
+  typedef typename Kernel_traits<Point_3>::Kernel K;
+  typedef typename K::Vector_3 Vector_3;
+  typedef typename K::Vector_3 Normal;
+  typedef typename K::Vector_3 Texture_coordinate;
 
-    boost::array<double, 3> buffer;
-    std::string             line;
-    unsigned int            i, j, idx;
-    unsigned int            nV, nF, nE;
-    typename Mesh::Vertex_index   v;
+  boost::array<double, 3> buffer;
+  std::string             line;
+  unsigned int            i, j, idx;
+  unsigned int            nV, nF, nE;
+  typename Mesh::Vertex_index   v;
 
-    // properties
-    typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>                 normals;
-    typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>     texcoords;
-    
-    if (has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
-    if (has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
+  // properties
+  typename Mesh::template Property_map<typename Mesh::Vertex_index, Normal>                 normals;
+  typename Mesh::template Property_map<typename Mesh::Vertex_index, Texture_coordinate>     texcoords;
 
-    char c;
-    do {
-      c = in.get();
-      if(c == '#'){
-        getline(in,line);
-      } else {
-        in.putback(c);
-        break;
-      }
-    }while(1);
+  if(has_normals)   normals   = mesh.template add_property_map<typename Mesh::Vertex_index, Normal>("v:normal").first;
+  if(has_texcoords) texcoords = mesh.template add_property_map<typename Mesh::Vertex_index, Texture_coordinate>("v:texcoord").first;
 
-    // #Vertice, #Faces, #Edges
-    in >> nV >> nF >> nE; 
-    getline(in,line); // reads eol
+  char c;
+  do {
+    c = in.get();
+    if(c == '#'){
+      getline(in,line);
+    } else {
+      in.putback(c);
+      break;
+    }
+  }while(1);
 
-    mesh.clear();
-    mesh.reserve(nV, (std::max)(3*nV, nE), nF);
+  // #Vertice, #Faces, #Edges
+  in >> nV >> nF >> nE;
+  getline(in,line); // reads eol
 
-    // read vertices: pos [normal] [color] [texcoord]
-    for (i=0; i<nV && in.good(); ++i)
+  mesh.clear();
+  mesh.reserve(nV, (std::max)(3*nV, nE), nF);
+
+  // read vertices: pos [normal] [color] [texcoord]
+  for(i=0; i<nV && in.good(); ++i)
+  {
+    // read line
+    getline(in, line);
+    if(line[0] == '#') // if the first column is a # we are looking at a comment line
     {
-        // read line
-        getline(in, line);
-        if(line[0] == '#') // if the first column is a # we are looking at a comment line
-        {
-          --i;
-          continue;
-        }
-
-        // position
-        std::istringstream iss(line);
-        iss >> iformat(buffer[0]) >> iformat(buffer[1]) >> iformat(buffer[2]);
-        v = mesh.add_vertex(Point_3(buffer[0], buffer[1], buffer[2]));
-
-        // normal
-        if (has_normals)
-        {
-            iss >> iformat(buffer[0]) >> iformat(buffer[1]) >> iformat(buffer[2]);
-        }
-
-        // tex coord
-        if (has_texcoords)
-        {
-            iss >> iformat(buffer[0]) >> iformat(buffer[1]);
-            texcoords[v] = Vector_3(buffer[0], buffer[1], 0.0);
-        }
+      --i;
+      continue;
     }
 
-    // read faces: #N v[1] v[2] ... v[n-1]
-    std::vector<typename Mesh::Vertex_index> vertices;
-    for (i=0; i<nF; ++i)
+    // position
+    std::istringstream iss(line);
+    iss >> iformat(buffer[0]) >> iformat(buffer[1]) >> iformat(buffer[2]);
+    v = mesh.add_vertex(Point_3(buffer[0], buffer[1], buffer[2]));
+
+    // normal
+    if(has_normals)
     {
-        // read line
-        getline(in, line);
-        if(line[0] == '#') // if the first column is a # we are looking at a comment line
-        {
-          --i;
-          continue;
-        }
-
-        // #vertices
-        std::istringstream iss(line);
-        iss >> nV;
-        vertices.resize(nV);
-
-        // indices
-        for (j=0; j<nV; ++j)
-        {
-           iss >> idx;
-            vertices[j] = typename Mesh::Vertex_index(idx);
-        }
-
-        if(!mesh.add_face(vertices).is_valid()) {
-            // adding a face did not succeed, stop reading the rest
-            return false;
-        }
+      iss >> iformat(buffer[0]) >> iformat(buffer[1]) >> iformat(buffer[2]);
     }
-    return true;
+
+    // tex coord
+    if(has_texcoords)
+    {
+      iss >> iformat(buffer[0]) >> iformat(buffer[1]);
+      texcoords[v] = Vector_3(buffer[0], buffer[1], 0.0);
+    }
+  }
+
+  // read faces: #N v[1] v[2] ... v[n-1]
+  std::vector<typename Mesh::Vertex_index> vertices;
+  for(i=0; i<nF; ++i)
+  {
+    // read line
+    getline(in, line);
+    if(line[0] == '#') // if the first column is a # we are looking at a comment line
+    {
+      --i;
+      continue;
+    }
+
+    // #vertices
+    std::istringstream iss(line);
+    iss >> nV;
+    vertices.resize(nV);
+
+    // indices
+    for(j=0; j<nV; ++j)
+    {
+      iss >> idx;
+      vertices[j] = typename Mesh::Vertex_index(idx);
+    }
+
+    if(!mesh.add_face(vertices).is_valid()) {
+      // adding a face did not succeed, stop reading the rest
+      return false;
+    }
+  }
+  return true;
 }
 }
 
@@ -257,50 +247,50 @@ template <typename K>
 bool read_off(Surface_mesh<K>& mesh, const std::string& filename)
 {
   std::string  line;
-    bool  has_texcoords = false;
-    bool  has_normals   = false;
-    bool  has_hcoords   = false;
-    bool  has_dim       = false;
-    bool  is_binary     = false;
+  bool  has_texcoords = false;
+  bool  has_normals   = false;
+  bool  has_hcoords   = false;
+  bool  has_dim       = false;
+  bool  is_binary     = false;
 
-    // open file (in ASCII mode)
-    std::ifstream in(filename.c_str());
-    if (!in) return false;
+  // open file (in ASCII mode)
+  std::ifstream in(filename.c_str());
+  if(!in) return false;
 
-    // read header: [ST][C][N][4][n]OFF BINARY
+  // read header: [ST][C][N][4][n]OFF BINARY
+  std::getline(in,line);
+  const char *c = line.c_str();
+  if(c[0] == 'S' && c[1] == 'T') { has_texcoords = true; c += 2; }
+  if(c[0] == 'N') { has_normals = true; ++c; }
+  if(c[0] == '4') { has_hcoords = true; ++c; }
+  if(c[0] == 'n') { has_dim     = true; ++c; }
+  if(strncmp(c, "OFF", 3) != 0) { in.close(); return false; } // no OFF
+  if(strncmp(c+4, "BINARY", 6) == 0) is_binary = true;
+
+
+  // homogeneous coords, and vertex dimension != 3 are not supported
+  if(has_hcoords || has_dim)
+  {
+    in.close();
+    return false;
+  }
+
+
+  // if binary: reopen file in binary mode
+  if(is_binary)
+  {
+    in.close();
+    in.open(filename.c_str(), std::ios::binary);
     std::getline(in,line);
-    const char *c = line.c_str();
-    if (c[0] == 'S' && c[1] == 'T') { has_texcoords = true; c += 2; }
-    if (c[0] == 'N') { has_normals = true; ++c; }
-    if (c[0] == '4') { has_hcoords = true; ++c; }
-    if (c[0] == 'n') { has_dim     = true; ++c; }
-    if (strncmp(c, "OFF", 3) != 0) { in.close(); return false; } // no OFF
-    if (strncmp(c+4, "BINARY", 6) == 0) is_binary = true;
+  }
 
-
-    // homogeneous coords, and vertex dimension != 3 are not supported
-    if (has_hcoords || has_dim)
-    {
-        in.close();
-        return false;
-    }
-
-
-    // if binary: reopen file in binary mode
-    if (is_binary)
-    {
-      in.close();
-      in.open(filename.c_str(), std::ios::binary);
-      std::getline(in,line);
-    }
-
-    // read as ASCII or binary
-    bool ok = (is_binary ?
+  // read as ASCII or binary
+  bool ok = (is_binary ?
                internal::read_off_binary(mesh, in, has_normals, has_texcoords) :
                internal::read_off_ascii(mesh, in, has_normals, has_texcoords));
 
-    in.close();
-    return ok;
+  in.close();
+  return ok;
 }
 
 #if 0
@@ -316,14 +306,14 @@ bool read_off(Surface_mesh<K>& mesh, const std::string& filename)
 template <typename K>
 bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 {
-    std::ofstream out(filename.c_str());
-    if (out.fail())
-        return false;
+  std::ofstream out(filename.c_str());
+  if(out.fail())
+    return false;
 
-    out << std::setprecision(17);
-    write_off(out, mesh);
+  out << std::setprecision(17);
+  write_off(out, mesh);
 
-    return !out.fail();
+  return !out.fail();
 }
 
 #if 0
@@ -341,23 +331,23 @@ bool write_off(const Surface_mesh<K>& mesh, const std::string& filename)
 #endif 
 template <typename K>
 bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename) {
-      // clear mesh before reading from file
-    mesh.clear();
+  // clear mesh before reading from file
+  mesh.clear();
 
-    // extract file extension
-    std::string::size_type dot(filename.rfind("."));
-    if (dot == std::string::npos) return false;
-    std::string ext = filename.substr(dot+1, filename.length()-dot-1);
-    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+  // extract file extension
+  std::string::size_type dot(filename.rfind("."));
+  if(dot == std::string::npos) return false;
+  std::string ext = filename.substr(dot+1, filename.length()-dot-1);
+  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
-    // extension determines reader
-    if (ext == "off")
-    {
-        return read_off(mesh, filename);
-    }
+  // extension determines reader
+  if(ext == "off")
+  {
+    return read_off(mesh, filename);
+  }
 
-    // we didn't find a reader module
-    return false;
+  // we didn't find a reader module
+  return false;
 }
 
 #if 0
@@ -376,25 +366,22 @@ bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename) {
 template <typename K>
 bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename) 
 {
-      // extract file extension
-    std::string::size_type dot(filename.rfind("."));
-    if (dot == std::string::npos) return false;
-    std::string ext = filename.substr(dot+1, filename.length()-dot-1);
-    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+  // extract file extension
+  std::string::size_type dot(filename.rfind("."));
+  if(dot == std::string::npos) return false;
+  std::string ext = filename.substr(dot+1, filename.length()-dot-1);
+  std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
-    // extension determines reader
-    if (ext == "off")
-    {
-        return write_off(mesh, filename);
-    }
+  // extension determines reader
+  if(ext == "off")
+  {
+    return write_off(mesh, filename);
+  }
 
-    // we didn't find a writer module
-    return false;
+  // we didn't find a writer module
+  return false;
 }
 
 } // namespace CGAL
 
-#include <CGAL/enable_warnings.h>
-
 #endif // CGAL_SURFACE_MESH_IO_H
-
