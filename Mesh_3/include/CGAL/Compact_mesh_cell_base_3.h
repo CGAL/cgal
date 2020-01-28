@@ -42,25 +42,25 @@ namespace internal_tbb
 //classic pointer{
 //normal
 template<typename T>
-void set_weighted_circumcenter(T t, T value)
+void set_weighted_circumcenter(T* &t, T* value)
 {
   t = value;
 }
 
 //overload for nullptr
 template<typename T>
-void set_weighted_circumcenter(T t, std::nullptr_t)
+void set_weighted_circumcenter(T* &t, std::nullptr_t)
 {
   t = nullptr;
 }
 template<typename T>
-bool compare_weighted_circumcenter(T t)
+bool compare_weighted_circumcenter(T* t)
 {
   return t == nullptr;
 }
 
 template<typename T>
-void delete_circumcenter(T t )
+void delete_circumcenter(T* &t )
 {
   delete t;
 }
@@ -302,7 +302,7 @@ public:
 public:
   void invalidate_weighted_circumcenter_cache() const
   {
-    if (weighted_circumcenter_) {
+    if (!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)) {
       internal_tbb::delete_circumcenter(weighted_circumcenter_);
       internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
@@ -388,6 +388,7 @@ public:
   {
     if(!internal_tbb::compare_weighted_circumcenter(weighted_circumcenter_)){
       internal_tbb::delete_circumcenter(weighted_circumcenter_);
+      internal_tbb::set_weighted_circumcenter(weighted_circumcenter_, nullptr);
     }
   }
 
