@@ -1122,16 +1122,18 @@ In 2011, Pedro de Castro and Olivier Devillers implemented in release
 3.8 the
 structural filtering method, improving the efficiency of point location.
 
-\cgalModifBegin
-In 2014, Thijs van Lankveld added the segment traverser utility class.
-\cgalModifEnd
-
 A new demo of this package was introduced in \cgal 3.8, coded by Fei
 (Sophie) Che, who was co-mentored by Manuel Caroli and Monique
 Teillaud in the framework of the Google Summer of Code, 2010.
 
 In 2013, Clément Jamin added parallel algorithms (insert, remove) to the
 Delaunay and regular triangulations.
+
+\cgalModifBegin
+In 2014, Thijs van Lankveld implemented the segment cell traverser iterator.
+In 2018, Jane Tournois introduced the segment simplex traverser iterator
+and finalized both iterators that were integrated in release 5.1.
+\cgalModifEnd
 
 The authors wish to thank Lutz Kettner for inspiring discussions about
 the design of \cgal. Jean-Daniel Boissonnat is also acknowledged
