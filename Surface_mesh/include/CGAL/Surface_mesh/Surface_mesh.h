@@ -9,44 +9,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
-
 #ifndef CGAL_SURFACE_MESH_H
 #define CGAL_SURFACE_MESH_H
-
 
 #include <CGAL/license/Surface_mesh.h>
 
 #include <CGAL/disable_warnings.h>
 
-#include <iterator>
-#include <algorithm>
-#include <utility>
-#include <iostream>
-#include <sstream>
-#include <cstddef>
-#include <vector>
-#include <string>
-#include <typeinfo>
-#include <functional>
+#include <CGAL/Surface_mesh/IO.h>
+#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <CGAL/Surface_mesh/Properties.h>
+
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/circulator.h>
+#include <CGAL/Handle_hash_function.h>
+#include <CGAL/Iterator_range.h>
+#include <CGAL/property_map.h>
 
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <CGAL/property_map.h>
-#include <CGAL/Iterator_range.h>
-#include <CGAL/circulator.h>
-#include <CGAL/assertions.h>
-#include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/Surface_mesh/Properties.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
-#include <CGAL/boost/graph/iterator.h>
-#include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/IO/OFF.h>
-#include <CGAL/Surface_mesh/IO/PLY.h>
-#include <CGAL/Handle_hash_function.h>
-#include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+
+#include <algorithm>
+#include <cstddef>
+#include <functional>
+#include <iterator>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
 namespace CGAL {
 
