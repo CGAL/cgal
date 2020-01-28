@@ -449,7 +449,7 @@ public:
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->reserve(n);
-        capacity_ = n;
+        capacity_ = std::max(n, capacity_);
     }
 
     // resize all arrays to size n
