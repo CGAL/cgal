@@ -684,7 +684,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename GrT::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename Polygon_mesh_processing::
+  typedef typename 
       GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
@@ -694,7 +694,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   typedef std::size_t F_cc_id;
   typedef std::size_t B_cc_id;
 
-  typedef typename Polygon_mesh_processing::
+  typedef typename
       GetFaceIndexMap<PolygonMesh, NamedParameters>::type Fidmap;
 
   Fidmap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
