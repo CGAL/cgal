@@ -1298,9 +1298,9 @@ Points points() const;
 
 /*!\name Segment Cell Iterator
 \cgalModifBegin
-The triangulation defines an iterator that visits the cells intersected by a line segment.
+The triangulation defines an iterator that visits cells intersected by a line segment.
 
-The cells visited form a connected region containing both source and target points of the line segment `[s,t]`.
+The cells visited form a facet-connected region containing both source and target points of the line segment `[s,t]`.
 Each cell falls within one or more of the following categories:
 1. a finite cell whose interior is intersected by `[s,t]`
 2. a finite cell with a facet `f` whose interior is intersected by `[s,t]` in a line segment.
@@ -1344,7 +1344,7 @@ Its `value_type` is `Cell_handle`.
 \cgalModifBegin
 returns the iterator that allows to visit the cells intersected by the line segment `[vs,vt]`.
 
-The starting point of the iterator is the cell containing `vs` and intersecting the
+The initial value of the iterator is the cell containing `vs` and intersecting the
 line segment `[vs,vt]`.
 
 The iterator remains valid until the first cell incident to `vt` is passed.
@@ -1370,14 +1370,14 @@ Segment_cell_iterator segment_traverser_cells_end(Vertex_handle vs, Vertex_handl
 
 /*!
 \cgalModifBegin
-returns the iterator that allows to visit the cells intersected by the line segment `[ps,pt]`.
+returns the iterator that allows to visit the cells intersected by the line segment `[ps, pt]`.
 
 If `[ps,pt]` entirely lies outside the convex hull, the iterator visits exactly one infinite cell.
 
-The starting point of the iterator is the cell containing `ps`.
+The initial value of the iterator is the cell containing `ps`.
 If more than one cell
 contains `ps` (e.g. if `ps` lies on a vertex),
-the starting point is the cell intersecting the line segment `[ps,pt]`.
+the initial value is the cell intersected by the line segment `[ps,pt]`.
 
 The iterator remains valid until the first cell containing `pt` is passed.
 
@@ -1411,8 +1411,11 @@ Segment_cell_iterator segment_traverser_cells_end(const Point& ps, const Point& 
 \cgalModifBegin
 The triangulation defines an iterator that visits all the triangulation simplices
 (vertices, edges, facets and cells) intersected by a line segment.
-The iterator covers a connected sequence of simplices - possibly of all dimensions -
-intersected by the line segment `[s,t]`.
+The iterator traverses a connected sequence of simplices - possibly of all dimensions -
+intersected by the line segment `[s, t]`.
+In the degenerate case where the query segment goes exactly through a vertex
+(or along an edge, or along a facet), only one of the cells incident to that vertex
+(or edge, or facet) is returned by the iterator, and not all of them.
 
 Each simplex falls within one or more of the following categories:
 1. a finite cell whose interior is intersected by `[s,t]`,
@@ -1438,7 +1441,7 @@ Its `value_type` is `Triangulation_simplex_3`.
 \cgalModifBegin
 returns the iterator that allows to visit the simplices intersected by the line segment `[vs,vt]`.
 
-The starting point of the iterator is `vs`.
+The initial value of the iterator is `vs`.
 The iterator remains valid until `vt` is passed.
 
 \pre `vs` and `vt` must be different vertices and neither can be the infinite vertex.
@@ -1466,7 +1469,7 @@ returns the iterator that allows to visit the simplices intersected by the line 
 
 If `[ps,pt]` entirely lies outside the convex hull, the iterator visits exactly one infinite cell.
 
-The starting point of the iterator is the lowest dimension simplex containing `ps`.
+The initial value of the iterator is the lowest dimension simplex containing `ps`.
 
 The iterator remains valid until the first simplex containing `pt` is passed.
 
