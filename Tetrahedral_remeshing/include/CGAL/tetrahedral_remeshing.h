@@ -30,7 +30,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -155,15 +155,15 @@ namespace CGAL
 
     typedef CGAL::Triangulation_3<Traits, TDS, SLDS> Tr;
 
-    using boost::choose_param;
-    using boost::get_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
 
-    bool remesh_surfaces = choose_param(get_param(np, internal_np::remesh_boundaries),
+    bool remesh_surfaces = choose_parameter(get_parameter(np, internal_np::remesh_boundaries),
                                         true);
     bool protect = !remesh_surfaces;
-    // bool adaptive = choose_param(get_param(np, internal_np::adaptive_size),
+    // bool adaptive = choose_parameter(get_parameter(np, internal_np::adaptive_size),
     //                              false);
-    std::size_t max_it = choose_param(get_param(np, internal_np::number_of_iterations),
+    std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations),
                                       1);
 
     typedef typename boost::lookup_named_param_def <
@@ -172,7 +172,7 @@ namespace CGAL
       Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
     > ::type SelectionFunctor;
     SelectionFunctor cell_select
-      = choose_param(get_param(np, internal_np::cell_selector),
+      = choose_parameter(get_parameter(np, internal_np::cell_selector),
                      Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
     typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
@@ -182,7 +182,7 @@ namespace CGAL
       NamedParameters,
       No_edge//default
     > ::type ECMap;
-    ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
+    ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                No_edge());
 
     typedef typename Tr::Facet Facet;
@@ -192,7 +192,7 @@ namespace CGAL
       NamedParameters,
       No_facet//default
     > ::type FCMap;
-    FCMap fcmap = choose_param(get_param(np, internal_np::facet_is_constrained),
+    FCMap fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
                                No_facet());
 
     typedef typename boost::lookup_named_param_def <
@@ -201,7 +201,7 @@ namespace CGAL
       Tetrahedral_remeshing::internal::Default_remeshing_visitor
     > ::type Visitor;
     Visitor visitor
-      = choose_param(get_param(np, internal_np::remeshing_visitor),
+      = choose_parameter(get_parameter(np, internal_np::remeshing_visitor),
                      Tetrahedral_remeshing::internal::Default_remeshing_visitor());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -308,13 +308,13 @@ namespace CGAL
   {
     CGAL_assertion(tr.is_valid(true));
 
-    using boost::choose_param;
-    using boost::get_param;
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
 
-    bool remesh_surfaces = choose_param(get_param(np, internal_np::remesh_boundaries),
+    bool remesh_surfaces = choose_parameter(get_parameter(np, internal_np::remesh_boundaries),
                                         true);
     bool protect = !remesh_surfaces;
-    std::size_t max_it = choose_param(get_param(np, internal_np::number_of_iterations), 1);
+    std::size_t max_it = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
 
     typedef typename boost::lookup_named_param_def <
       internal_np::cell_selector_t,
@@ -322,7 +322,7 @@ namespace CGAL
       Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
     > ::type SelectionFunctor;
     SelectionFunctor cell_select
-      = choose_param(get_param(np, internal_np::cell_selector),
+      = choose_parameter(get_parameter(np, internal_np::cell_selector),
                      Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 
     typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
@@ -332,7 +332,7 @@ namespace CGAL
       NamedParameters,
       No_edge//default
     > ::type ECMap;
-    ECMap ecmap = choose_param(get_param(np, internal_np::edge_is_constrained),
+    ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                No_edge());
 
     typedef typename Tr::Facet Facet;
@@ -342,7 +342,7 @@ namespace CGAL
       NamedParameters,
       No_facet//default
     > ::type FCMap;
-    FCMap fcmap = choose_param(get_param(np, internal_np::facet_is_constrained),
+    FCMap fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
                                No_facet());
 
     typedef typename boost::lookup_named_param_def <
@@ -351,7 +351,7 @@ namespace CGAL
       Tetrahedral_remeshing::internal::Default_remeshing_visitor
     > ::type Visitor;
     Visitor visitor
-      = choose_param(get_param(np, internal_np::remeshing_visitor),
+      = choose_parameter(get_parameter(np, internal_np::remeshing_visitor),
                      Tetrahedral_remeshing::internal::Default_remeshing_visitor());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
