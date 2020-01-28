@@ -621,8 +621,8 @@ void split(      TriangleMesh& tm,
            const NamedParameters2& np_s)
 {
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
   namespace params = PMP::parameters;
 
@@ -638,9 +638,9 @@ void split(      TriangleMesh& tm,
   typedef typename VPMap1::value_type Point;
   typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
 
-  VPMap1 vpm_tm = choose_param(get_param(np_tm, internal_np::vertex_point),
+  VPMap1 vpm_tm = choose_parameter(get_parameter(np_tm, internal_np::vertex_point),
                              get_property_map(vertex_point, tm));
-  VPMap2 vpm_s = choose_param(get_param(np_s, internal_np::vertex_point),
+  VPMap2 vpm_s = choose_parameter(get_parameter(np_s, internal_np::vertex_point),
                              get_property_map(vertex_point, splitter));
 
   Ecm ecm  = get(CGAL::dynamic_edge_property_t<bool>(), tm);
