@@ -41,13 +41,15 @@ in the mesh.\n
 \cgalNPBegin{remesh_boundaries}
 \anchor Remeshing_remesh_boundaries
 a Boolean that states whether the boundaries should be remeshed or
-exactly preserved by the remeshing
-process. Boundaries are between the exterior and the interior,
-between two subdomains, and between the areas selected or not for remeshing
-(cf \ref Remeshing_cell_is_selected_map).
-If `true`, they are remeshed. Otherwise, they cannot be modified by the remeshing process.\n
+exactly preserved by the remeshing process.
+Boundaries are between the exterior and the interior,
+between two subdomains, between the areas selected or not for remeshing
+(cf \ref Remeshing_cell_is_selected_map),
+or defined by \ref Remeshing_edge_is_constrained_map
+and \ref Remeshing_facet_is_constrained_map.
+If `true`, they are remeshed. Otherwise, they cannot be modified at all by the remeshing process.\n
 \b Type : `bool` \n
-\b Default value is `false`
+\b Default value is `true`
 \cgalNPEnd
 
 \cgalNPBegin{edge_is_constrained_map}

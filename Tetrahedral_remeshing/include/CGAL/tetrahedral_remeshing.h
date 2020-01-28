@@ -70,7 +70,8 @@ namespace CGAL
   *
   *
   * @tparam Traits is the geometric traits, model of `RemeshingTriangulationTraits_3`
-  * @tparam TDS is the triangulation data structure, model of ` TriangulationDataStructure_3`,
+  * @tparam TDS is the triangulation data structure for `Triangulation_3`,
+  *             model of ` TriangulationDataStructure_3`,
   *             with cell base model of `MeshCellBase_3`
   *             and vertex base model of `MeshVertexBase_3`.
   * @tparam SLDS is an optional parameter for `Triangulation_3`, that
@@ -90,8 +91,8 @@ namespace CGAL
   *     performed (listed in the above description)
   *  \cgalParamEnd
   *  \cgalParamBegin{remesh_boundaries} If `false`, none of the volume boundaries can be modified.
-  *     Otherwise, the geometry is preserved, but atomic operations can be performed on the
-  *     surfaces, and along feature polylines.
+  *     Otherwise, the topology is preserved, but atomic operations can be performed on the
+  *     surfaces, and along feature polylines, such that boundaries are remeshed.
   *  \cgalParamEnd
   *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
   *    constrained - or - not status of each edge of `tr`. A constrained edge can be split
