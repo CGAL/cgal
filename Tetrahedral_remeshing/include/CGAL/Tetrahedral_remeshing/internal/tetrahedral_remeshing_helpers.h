@@ -28,6 +28,8 @@
 #include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 
+#include <CGAL/IO/File_binary_mesh_3.h>
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -1390,6 +1392,14 @@ namespace Tetrahedral_remeshing
         }
       }
       dump_cells<Tr>(cells, indices, filename);
+    }
+
+    template<typename C3t3>
+    void dump_binary(const C3t3& c3t3, const char* filename)
+    {
+      std::ofstream os(filename);
+      CGAL::Mesh_3::save_binary_file(os, c3t3);
+      os.close();
     }
 
     //template<typename VertexPairsSet>

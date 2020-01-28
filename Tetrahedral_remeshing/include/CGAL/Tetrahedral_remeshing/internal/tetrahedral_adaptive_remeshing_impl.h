@@ -193,6 +193,7 @@ namespace internal
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "0-preprocess.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "0-preprocess-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "0-preprocess.binary.cgal");
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "done." << std::endl;
@@ -213,6 +214,7 @@ namespace internal
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "1-split.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "1-split-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "1-split.binary.cgal");
 #endif
     }
 
@@ -233,6 +235,7 @@ namespace internal
         "2-collapse.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "2-collapse-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "2-collapse.binary.cgal");
 #endif
     }
 
@@ -247,6 +250,7 @@ namespace internal
         "3-flip.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "3-flip-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "3-flip.binary.cgal");
 #endif
     }
 
@@ -261,6 +265,7 @@ namespace internal
         "4-smooth.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "4-smooth-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "4-smooth.binary.cgal");
 #endif
     }
 
@@ -322,6 +327,7 @@ namespace internal
         "99-postprocess.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
         "99-postprocess-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "99-postprocess.binary.cgal");
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "done." << std::endl;
