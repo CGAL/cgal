@@ -44,8 +44,8 @@ bool write_triangle_meshes_to_3mf(const std::string& file_name,
   typedef typename boost::property_map<FaceGraph, boost::vertex_point_t>::type  VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  typedef boost::graph_traits<FaceGraph>::vertex_descriptor                     vertex_descriptor;
-  typedef boost::graph_traits<FaceGraph>::face_descriptor                       face_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor            vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor              face_descriptor;
 
   typedef std::vector<std::size_t>                                              Polygon;
   typedef std::vector<Polygon>                                                  PolygonRange;
