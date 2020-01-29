@@ -183,6 +183,10 @@ private:
 template < class Cont >
 void test(const Cont &)
 {
+  static_assert(std::is_nothrow_move_constructible<Cont>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cont>::value,
+                "move assignment is missing");
   // Testing if all types are provided.
 
   typename Cont::value_type              t0;
