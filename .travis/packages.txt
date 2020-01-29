@@ -49,7 +49,6 @@ Intersections_2
 Intersections_3 
 Interval_skip_list 
 Interval_support 
-Inventor 
 Jet_fitting_3 
 Kernel_23 
 Kernel_d 
