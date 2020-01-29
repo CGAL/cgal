@@ -15,6 +15,7 @@
 #include <CGAL/boost/graph/IO/INP.h>
 #include <CGAL/boost/graph/IO/OBJ.h>
 #include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/boost/graph/IO/PLY.h>
 #include <CGAL/boost/graph/IO/STL.h>
 #include <CGAL/boost/graph/IO/VTK.h>
 #include <CGAL/boost/graph/IO/WRL.h>
