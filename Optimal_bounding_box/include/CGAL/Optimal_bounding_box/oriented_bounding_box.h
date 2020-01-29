@@ -231,7 +231,8 @@ void construct_oriented_bounding_box(Output& output,
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits_3`.
-///     %Default is `CGAL::Oriented_bounding_box_traits_3<K>` where `K` is deduced from the point type.
+///     %Default is a default construction object of type `CGAL::Oriented_bounding_box_traits_3<K>`
+///     where `K` is a kernel type deduced from the point type.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{use_convex_hull}
 ///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme
@@ -310,7 +311,8 @@ void oriented_bounding_box(const PointRange& points,
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
 ///     a geometric traits class instance, model of the concept `OrientedBoundingBoxTraits_3`.
-///     %Default is `CGAL::Oriented_bounding_box_traits_3<K>` where `K` is deduced from the point type.
+///     %Default is a default construction object of type `CGAL::Oriented_bounding_box_traits_3<K>`
+///     where `K` is a kernel type deduced from the point type.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{use_convex_hull}
 ///     a Boolean value to indicate whether the algorithm should first extract the so-called extreme

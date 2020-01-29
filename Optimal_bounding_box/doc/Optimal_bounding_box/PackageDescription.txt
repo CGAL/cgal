@@ -6,10 +6,10 @@
 /// \defgroup PkgOptimalBoundingBoxClasses Optimal Bounding Box Classes
 /// \ingroup PkgOptimalBoundingBoxRef
 
-/// \defgroup PkgOptimalBoundingBoxFunctions Optimal Bounding Box Methods
+/// \defgroup PkgOptimalBoundingBoxFunctions Optimal Bounding Box Functions
 /// \ingroup PkgOptimalBoundingBoxRef
 
-/// \defgroup PkgOptimalBoundingBox_Oriented_bounding_box Oriented Bounding Box Methods
+/// \defgroup PkgOptimalBoundingBox_Oriented_bounding_box Oriented Bounding Box Functions
 /// \ingroup PkgOptimalBoundingBoxFunctions
 
 /*!

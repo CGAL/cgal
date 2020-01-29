@@ -33,9 +33,9 @@ is the property map with the points associated to the vertices of the polygon me
 
 \cgalNPBegin{point_map} \anchor OBB_point_map
  is the property map containing the points associated to the elements of the point range `points`.\n
-\b Type: a class model of `ReadablePropertyMap` with `PointRange::iterator::value_type` as key type
+<b>Type:</b> a class model of `ReadablePropertyMap` with `PointRange::iterator::value_type` as key type
          and `geom_traits::Point_3` as value type. \n
-<b>Default value</b>: \code CGAL::Identity_property_map<geom_traits::Point_3>\endcode
+<b>Default:</b> \code CGAL::Identity_property_map<geom_traits::Point_3>\endcode
 \cgalNPEnd
 \cgalNPTableEnd
 
@@ -45,7 +45,7 @@ In addition to these named parameters, this package offers the following named p
 \cgalNPBegin{geom_traits} \anchor OBB_geom_traits
 is the geometric traits instance in which the mesh processing operation should be performed.\n
 <b>Type:</b> a Geometric traits class.\n
-<b>Default</b>:
+<b>Default:</b>
 \code typename CGAL::Kernel_traits<
         typename boost::property_traits<
           typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
@@ -56,8 +56,8 @@ Parameter used in the construction of oriented bounding box to indicate whether 
 first extract the extreme points (points that are on the 3D convex hull) of the input data range
 to accelerate the computation of the bounding box.
 \n
-\b Type : `bool` \n
-\b Default value is `true`
+<b>Type:</b> `bool` \n
+<b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPTableEnd

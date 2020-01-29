@@ -15,7 +15,7 @@ public:
   /// The field number type; must be a model of the concept `FieldNumberType`
   typedef unspecified_type                                FT;
 
-  /// The 3D point type; must be model of `Point_3`
+  /// The 3D point type; must be model of `Kernel::Point_3`
   typedef unspecified_type                                Point_3;
 
   /// The 3D affine transformation type; the template parameter `K` must be a model of `Kernel`
@@ -24,7 +24,7 @@ public:
 
   /// A construction object that must provide the function operator:
   /// `CGAL::Bbox_3 operator()(const Point_3&)`,
-  /// which returns an axis-aligned bounding that contains the point
+  /// which returns an axis-aligned bounding box that contains the point
   typedef unspecified_type                               Construct_bbox_3;
 
   /// A 3x3 matrix type; model of the concept `SvdTraits::Matrix` and which supports
@@ -35,5 +35,5 @@ public:
   Matrix get_Q(const Matrix& m) const;
 
   /// Gives access to the `Construct_bbox_3` construction object
-  Construct_bbox_3 construct_bbox_3_object() const { return Construct_bbox_3(); }
+  Construct_bbox_3 construct_bbox_3_object() const;
 };

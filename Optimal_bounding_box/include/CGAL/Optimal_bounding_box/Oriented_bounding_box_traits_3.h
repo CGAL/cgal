@@ -30,8 +30,8 @@ namespace CGAL {
 ///
 /// The class `CGAL::Oriented_bounding_box_traits_3` is a traits type
 /// to be used with the overloads of the function `CGAL::oriented_bounding_box()`.
-/// It uses the third party library \ref thirdpartyEigen "Eigen", which must therefore
-/// be available on the system for this class to be used.
+///
+/// \attention This class requires the \ref thirdpartyEigen "Eigen" library.
 ///
 /// \tparam K must be a model of `Kernel`
 ///
@@ -63,7 +63,7 @@ public:
   /// Returns a default-constructed construction object
   Construct_bbox_3 construct_bbox_3_object() const { return Construct_bbox_3(); }
 
-  /// Performs QR-decomposition of matrix `m` to a unitary matrix and an upper triagonal
+  /// Performs the QR-decomposition of the matrix `m` to a unitary matrix and an upper triagonal
   /// and returns the unitary matrix.
   Matrix get_Q(const Matrix& m) const
   {
