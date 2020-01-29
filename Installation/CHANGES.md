@@ -75,6 +75,10 @@ Release date: June 2020
 - The concept "EdgeProfile" has been removed. This concept was not actually in use as the CGAL-provided model `CGAL::Edge_profile`
   was imposed to the user. Other concepts have been clarified to reflect the fact that the API uses this particular class.
 
+### STL Extensions for CGAL
+ -   Added a new concurrency tag: `CGAL::Parallel_if_available_tag`. This tag is a convenience typedef to `CGAL::Parallel_tag`
+     if the third party library TBB has been found and linked with, and to `CGAL::Sequential_tag` otherwise.
+
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------
 
