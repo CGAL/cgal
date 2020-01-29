@@ -10,7 +10,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QDebug>
 #include <QObject>
@@ -92,6 +92,7 @@ public:
         dock_widget = new QDockWidget("Mesh segmentation parameters", mw);
         dock_widget->setVisible(false); // do not show at the beginning
         ui_widget.setupUi(dock_widget);
+        ui_widget.Smoothness_spin_box->setMaximum(10.0);
         mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));
@@ -210,7 +211,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_SDF_button_clicked(Facegrap
   typename boost::property_map<Facegraph, CGAL::face_index_t>::type fidmap =
       get(CGAL::face_index, *pair->first->face_graph());
   FaceGraph_with_id_to_vector_property_map<Facegraph, double> sdf_pmap(&pair->second, fidmap);
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::pair<double, double> min_max_sdf = sdf_values(*(pair->first->face_graph()), sdf_pmap, cone_angle, number_of_rays);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
@@ -283,7 +284,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
     QApplication::setOverrideCursor(Qt::WaitCursor);
   }
   check_and_set_ids(pair->first->face_graph());
-  QTime time;
+  QElapsedTimer time;
   time.start();
   typename boost::property_map<Facegraph, CGAL::face_index_t>::type fidmap =
       get(CGAL::face_index, *pair->first->face_graph());

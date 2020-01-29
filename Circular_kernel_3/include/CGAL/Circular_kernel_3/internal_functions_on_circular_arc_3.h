@@ -516,7 +516,7 @@ namespace CGAL {
           break;
         }
         case BIPOLAR:
-          CGAL_kernel_precondition(!"This function does not accept bipolar circle as input.");
+          CGAL_kernel_precondition_msg(false, "This function does not accept bipolar circle as input.");
       }
       
       return out_it;

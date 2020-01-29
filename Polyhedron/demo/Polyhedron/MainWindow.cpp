@@ -38,7 +38,7 @@
 #include <QSpinBox>
 #include <stdexcept>
 #include <fstream>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QWidgetAction>
 #include <QJsonArray>
 #include <QSequentialIterable>
@@ -451,7 +451,7 @@ void filterMenuOperations(QMenu* menu, QString filter, bool keep_from_here)
         action->setVisible(!(submenu->isEmpty()));
 
       }
-      else if(action->text().contains(filter, Qt::CaseInsensitive)){
+      else if(action->text().remove("&").contains(filter, Qt::CaseInsensitive)){
         //menu->addAction(action);
         addActionToMenu(action, menu);
       }
@@ -491,7 +491,7 @@ void MainWindow::filterOperations(bool)
   Q_FOREACH(const PluginNamePair& p, plugins) {
     Q_FOREACH(QAction* action, p.first->actions()) {
       action->setVisible( p.first->applicable(action)
-                          && (action->text().contains(filter, Qt::CaseInsensitive)
+                          && (action->text().remove("&").contains(filter, Qt::CaseInsensitive)
                               || action->property("subMenuName")
                               .toString().contains(filter, Qt::CaseInsensitive)));
     }
@@ -1197,6 +1197,10 @@ void MainWindow::open(QString filename)
           selected_items << io_plugin->name();
       }
     }
+    //if no plugin is correct, offer them all.
+    for(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin : io_plugins) {
+        all_items << io_plugin->name();
+    }
   }
   else
     selected_items << *dfs_it;
@@ -1477,11 +1481,11 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
                 this, SLOT(reloadItem()));
       }
       QAction* saveas = menu->addAction(tr("&Save as..."));
-      saveas->setData(qVariantFromValue((void*)item));
+      saveas->setData(QVariant::fromValue((void*)item));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
       QAction* showobject = menu->addAction(tr("&Zoom to this Object"));
-      showobject->setData(qVariantFromValue((void*)item));
+      showobject->setData(QVariant::fromValue((void*)item));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
 
@@ -1804,7 +1808,12 @@ void MainWindow::readSettings()
     viewer->setFastDrawing(settings.value("quick_camera_mode", true).toBool());
     scene->enableVisibilityRecentering(settings.value("offset_update", false).toBool());
     viewer->textRenderer()->setMax(settings.value("max_text_items", 10000).toInt());
-    viewer->setTotalPass(settings.value("transparency_pass_number", 4).toInt());
+    int val  = settings.value("transparency_pass_number", 4).toInt();
+    if (val < 4 ) {
+      val = 4;
+      settings.setValue("transparency_pass_number", 4);
+    }
+    viewer->setTotalPass(val);
     CGAL::Three::Three::s_defaultSMRM = CGAL::Three::Three::modeFromName(
           settings.value("default_sm_rm", "flat+edges").toString());
     CGAL::Three::Three::s_defaultPSRM = CGAL::Three::Three::modeFromName(
@@ -2130,10 +2139,13 @@ void MainWindow::save(QString filename, QList<CGAL::Three::Scene_item*>& to_save
     }
   }
   if(!saved)
+  {
     QMessageBox::warning(this,
                          tr("Cannot save"),
                          tr("The selected object %1 was not saved. (Maybe a wrong extension ?)")
                          .arg(to_save.front()->name()));
+    to_save.pop_front();
+  }
 }
 
 void MainWindow::on_actionSaveSnapshot_triggered()
@@ -2275,6 +2287,11 @@ void MainWindow::on_actionPreferences_triggered()
     this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
   
+  connect(prefdiag.backFrontColor_pushButton, &QPushButton::clicked,
+          this, [](){
+    qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer())->setBackFrontColors();
+  });
+
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
@@ -2959,6 +2976,9 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     }
     viewer->setTotalPass(nb);
   });
+  action= subviewer->findChild<QAction*>("actionBackFrontShading");
+  connect(action, SIGNAL(toggled(bool)),
+          viewer, SLOT(setBackFrontShading(bool)));
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
   connect(viewer, SIGNAL(selected(int)),
@@ -3127,6 +3147,11 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
+  QAction* actionBackFrontShading = new QAction("Activate Back/Front shading.",this);
+  actionBackFrontShading->setObjectName("actionBackFrontShading");
+  actionBackFrontShading->setCheckable(true);
+  actionBackFrontShading->setChecked(false);
+  viewMenu->addAction(actionBackFrontShading);
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
@@ -3157,9 +3182,9 @@ void SubViewer::lookat()
     if (viewer->camera()->frame()->isSpinning())
       viewer->camera()->frame()->stopSpinning();
     mw->viewerShow(viewer,
-                   (float)dialog.get_x(),
-                   (float)dialog.get_y(),
-                   (float)dialog.get_z());
+                   (float)dialog.get_x() + viewer->offset().x,
+                   (float)dialog.get_y() + viewer->offset().y,
+                   (float)dialog.get_z() + viewer->offset().z);
   }
 }
 

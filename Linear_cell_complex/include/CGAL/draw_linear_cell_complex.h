@@ -16,7 +16,7 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-#include <CGAL/Linear_cell_complex_base.h>
+#include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
@@ -168,7 +168,7 @@ public:
                     bool anofaces=false,
                     const DrawingFunctorLCC& drawing_functor=DrawingFunctorLCC()) :
     // First draw: vertices; edges, faces; multi-color; inverse normal
-    Base(parent, title, true, true, true, false, true), 
+    Base(parent, title, true, true, true, false, false), 
     lcc(alcc),
     m_nofaces(anofaces),
     m_random_face_color(false),

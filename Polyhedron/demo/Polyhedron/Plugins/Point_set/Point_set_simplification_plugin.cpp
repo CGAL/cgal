@@ -130,6 +130,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
     Point_set_demo_point_set_simplification_dialog(QWidget * /*parent*/ = 0)
     {
       setupUi(this);
+      m_maximumSurfaceVariation->setRange(0.000010, 0.33330);
     }
 
   unsigned int simplificationMethod() const

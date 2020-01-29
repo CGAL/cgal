@@ -79,6 +79,11 @@ public:
   Point_set_demo_point_set_shape_detection_dialog(QWidget * /*parent*/ = 0)
   {
     setupUi(this);
+    m_normal_tolerance_field->setMaximum(1.0);
+    m_probability_field->setRange(0.00001, 1.0);
+    m_epsilon_field->setMinimum(0.000001);
+    m_normal_tolerance_field->setMinimum(0.01);
+    m_cluster_epsilon_field->setMinimum(0.000001);
   }
 
   bool region_growing() const { return m_region_growing->isChecked(); }

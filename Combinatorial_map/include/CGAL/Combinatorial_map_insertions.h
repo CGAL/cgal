@@ -39,7 +39,7 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
   return amap.insert_cell_0_in_cell_1(adart, ah, update_attributes);
 }
 
-/** Insert a vertex in the given 2-cell which is splitted in triangles,
+/** Insert a vertex in the given 2-cell which is split in triangles,
  * once for each inital edge of the facet.
  * @param amap the used combinatorial map.
  * @param adart a dart of the facet to triangulate.

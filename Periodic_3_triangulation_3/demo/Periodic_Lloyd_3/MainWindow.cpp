@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget* parent): CGAL::Qt::DemosMainWindow(parent)
   scene.eight_copies=false;
   scene.two_dimensional=false;
 
-  qtimer = new QTimer(this);
+  qtimer= new QTimer(this);
   connect(qtimer, SIGNAL(timeout()), this, SLOT(lloydStep()));
 }
 

@@ -3,3 +3,5 @@ The following files have been copied from Qt Free Edition version 4.4:
   fileOpen.png
   fileSave.png,
   fit-page-32.png 
+
+This Qt version was released under GPL-2 and GPL-3.

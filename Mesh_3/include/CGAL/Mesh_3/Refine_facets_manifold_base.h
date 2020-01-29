@@ -19,9 +19,9 @@
 
 #include <CGAL/Mesh_facet_topology.h>
 
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
-#include <CGAL/utility.h>
 #include <CGAL/atomic.h>
+#include <CGAL/utility.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/bimap.hpp>
 #include <boost/bimap/unordered_set_of.hpp>

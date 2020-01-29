@@ -45,7 +45,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
-# include <tbb/task_scheduler_init.h>
+# include <thread>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -289,7 +289,7 @@ private:
                                          bbox.zmin() + 0.5*zdelta);
       Random_points_on_sphere_3<Point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-                                                 tbb::task_scheduler_init::default_num_threads() * 3.5);
+                                                 std::thread::hardware_concurrency() * 3.5);
       std::vector<Point> points_on_far_sphere;
 
       points_on_far_sphere.reserve(NUM_PSEUDO_INFINITE_VERTICES);
