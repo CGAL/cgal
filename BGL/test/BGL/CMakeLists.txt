@@ -97,8 +97,6 @@ create_single_source_cgal_program( "test_graph_traits.cpp" )
 
 create_single_source_cgal_program( "test_Properties.cpp" )
 
-create_single_source_cgal_program( "test_wrl.cpp" )
-
 create_single_source_cgal_program( "test_io.cpp" )
 
 if(OpenMesh_FOUND)
