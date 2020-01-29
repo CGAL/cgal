@@ -81,7 +81,6 @@ public:
                        FT s0, FT s1) const
   {
     CGAL_precondition(STEP > 0);
-    CGAL_precondition(s0 < s1);
 
     p.clear();
 
