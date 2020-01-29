@@ -11,6 +11,7 @@
 #ifndef CGAL_BOOST_GRAPH_IO_H
 #define CGAL_BOOST_GRAPH_IO_H
 
+#include <CGAL/boost/graph/IO/3MF.h>
 #include <CGAL/boost/graph/IO/GOCAD.h>
 #include <CGAL/boost/graph/IO/INP.h>
 #include <CGAL/boost/graph/IO/OBJ.h>

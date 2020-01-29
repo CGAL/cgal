@@ -1,22 +1,24 @@
-//needed by functions
-#include <iostream>
-#include <vector>
-#include <string>
-#include "Model/COM/NMR_DLLInterfaces.h"
-//needed by example
-#include <CGAL/boost/graph/helpers.h>
-#include <fstream>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO/3mf.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/IO/3MF.h>
+
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+
+#include "Model/COM/NMR_DLLInterfaces.h"
+
+#include <fstream>
+#include <iostream>
+#include <string>
 #include <unordered_map>
-#include <CGAL/IO/read_3mf.h>
-#include <CGAL/IO/write_3mf.h>
+#include <vector>
+
 // Use NMR namespace for the interfaces
 using namespace NMR;
 namespace PMP = CGAL::Polygon_mesh_processing;
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef Kernel::Point_3 Point_3;
@@ -83,17 +85,20 @@ int main(int argc, char** argv)
   Mesh sphere, tube;
   CGAL::make_icosahedron<Mesh, Point_3>(sphere);
   CGAL::make_regular_prism(10, tube, Point_3(0,-10,0), 10);
+
   all_points.clear();
   all_polygons.clear();
   all_colors.clear();
   names.clear();
+
   PointRange points;
   PolygonRange triangles;
   ColorRange colors;
+
   typedef boost::property_map<Mesh, boost::vertex_point_t>::type VPMap;
   VPMap vpm = get(boost::vertex_point, sphere);
-  std::unordered_map<boost::graph_traits<Mesh>::vertex_descriptor,
-      std::size_t> vertex_id_map;
+
+  std::unordered_map<boost::graph_traits<Mesh>::vertex_descriptor, std::size_t> vertex_id_map;
   std::size_t i = 0;
   for(auto v : sphere.vertices())
   {
@@ -101,6 +106,7 @@ int main(int argc, char** argv)
     vertex_id_map[v] = i++;
   }
   all_points.push_back(points);
+
   for(auto f : sphere.faces())
   {
     Polygon triangle;
@@ -111,6 +117,7 @@ int main(int argc, char** argv)
     triangles.push_back(triangle);
     colors.push_back(CGAL::Color(255,0,0,255));
   }
+
   all_polygons.push_back(triangles);
   all_colors.push_back(colors);
   points.clear();
@@ -126,6 +133,7 @@ int main(int argc, char** argv)
     vertex_id_map[v] = i++;
   }
   all_points.push_back(points);
+
   for(auto f : tube.faces())
   {
     Polygon triangle;
@@ -145,8 +153,8 @@ int main(int argc, char** argv)
   meshes.resize(2);
   meshes[0] = sphere;
   meshes[1] = tube;
+  // @fixme this should be in BGL
   CGAL::write_triangle_meshes_to_3mf("meshes.3mf", meshes, names);
-
 
   //testing of point clouds
 
