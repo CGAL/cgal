@@ -22,8 +22,8 @@ namespace CGAL {
 
 template <typename FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_INP(std::ostream& os,
-               std::string name,
-               std::string type,
+               const std::string name,
+               const std::string type,
                const FaceGraph& g,
                const CGAL_BGL_NP_CLASS& np)
 {
@@ -80,7 +80,7 @@ bool write_INP(const char* fname,
 }
 
 template <typename FaceGraph>
-bool write_INP(std::ostream& os, std::string name, std::string type, const FaceGraph& g)
+bool write_INP(std::ostream& os, const std::string name, const std::string type, const FaceGraph& g)
 {
   return write_INP(os, name, type, g, parameters::all_default());
 }

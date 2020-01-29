@@ -181,22 +181,22 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
  */
 template <typename PointRange, typename PolygonRange>
 bool write_OBJ(std::ostream& os,
-               PointRange& points,
-               PolygonRange& polygons)
+               const PointRange& points,
+               const PolygonRange& polygons)
 {
   Generic_writer<std::ostream, File_writer_wavefront> writer(os);
   return writer(points, polygons);
 }
 
 template <typename PointRange, typename PolygonRange>
-bool write_OBJ(const char* fname, PointRange& points, PolygonRange& polygons)
+bool write_OBJ(const char* fname, const PointRange& points, const PolygonRange& polygons)
 {
   std::ofstream out(fname);
   return write_OBJ(out, points, polygons);
 }
 
 template <typename PointRange, typename PolygonRange>
-bool write_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons)
+bool write_OBJ(const std::string& fname, const PointRange& points, const PolygonRange& polygons)
 {
   return write_OBJ(fname.c_str(), points, polygons);
 }

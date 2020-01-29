@@ -223,8 +223,8 @@ bool read_OFF(const std::string& fname, PointRange& points, PolygonRange& polygo
  */
 template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool write_OFF(std::ostream& os,
-               PointRange& points,
-               PolygonRange& polygons,
+               const PointRange& points,
+               const PolygonRange& polygons,
                const CGAL_BGL_NP_CLASS& np)
 {
   Generic_writer<std::ostream, File_writer_OFF> writer(os);
@@ -233,8 +233,8 @@ bool write_OFF(std::ostream& os,
 
 template <typename PointRange, typename PolygonRange>
 bool write_OFF(std::ostream& os,
-               PointRange& points,
-               PolygonRange& polygons)
+               const PointRange& points,
+               const PolygonRange& polygons)
 {
   return write_OFF(os, points, polygons, parameters::all_default());
 }

@@ -222,14 +222,14 @@ std::ostream& write_STL(std::ostream& out,
 }
 
 template <typename PointRange, typename TriangleRange>
-bool write_STL(const char* fname, PointRange& points, TriangleRange& facets)
+bool write_STL(const char* fname, const PointRange& points, const TriangleRange& facets)
 {
   std::ofstream out(fname);
   return write_STL(out, points, facets);
 }
 
 template <typename PointRange, typename TriangleRange>
-bool write_STL(const std::string& fname, PointRange& points, TriangleRange& facets)
+bool write_STL(const std::string& fname, const PointRange& points, const TriangleRange& facets)
 {
   return write_STL(fname.c_str(), points, facets);
 }
