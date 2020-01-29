@@ -42,7 +42,7 @@
 //#undef  CGAL_LINKED_WITH_TBB
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
 #endif // CGAL_LINKED_WITH_TBB
