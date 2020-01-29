@@ -244,8 +244,6 @@ bool write_GOCAD(std::ostream& os,
         "END_ORIGINAL_COORDINATE_SYSTEM\n"
         "TFACE\n";
 
-  os.precision(17);
-
   boost::container::flat_map<vertex_descriptor, vertices_size_type> reindex;
 
   vertices_size_type i = 0;
