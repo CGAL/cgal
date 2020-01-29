@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/structure_point_set.h>
 #include <CGAL/Delaunay_triangulation_3.h>

@@ -20,7 +20,6 @@
 #include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -41,7 +40,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
+typedef std::pair<Point, Vector> Point_with_normal;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::deque<Point_with_normal> PointList;
 
@@ -178,7 +177,7 @@ int main(int argc, char * argv[])
                     vertices(input_mesh)){
         const Point& p = v->point();
         Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v,input_mesh);
-        points.push_back(Point_with_normal(p,n));
+        points.push_back(std::make_pair(p,n));
       }
     }
     // If XYZ file format
@@ -188,14 +187,14 @@ int main(int argc, char * argv[])
       // Reads the point set file in points[].
       // Note: read_xyz_points_and_normals() requires an iterator over points
       // + property maps to access each point's position and normal.
-      // The position property map can be omitted here as we use iterators over Point_3 elements.
       std::ifstream stream(input_filename.c_str());
       if (!stream ||
           !CGAL::read_xyz_points(
                                 stream,
                                 std::back_inserter(points),
-                                CGAL::parameters::normal_map
-                                (CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))))
+                                CGAL::parameters::point_map
+                                (CGAL::make_first_of_pair_property_map(Point_with_normal())).
+                                normal_map (CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {
         std::cerr << "Error: cannot read file " << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -224,7 +223,7 @@ int main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    bool points_have_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
+    bool points_have_normals = (points.begin()->second != CGAL::NULL_VECTOR);
     if ( ! points_have_normals )
     {
       std::cerr << "Input point set not supported: this reconstruction method requires oriented normals" << std::endl;
@@ -247,11 +246,10 @@ int main(int argc, char * argv[])
     // Creates implicit function from the read points.
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
-    // The position property map can be omitted here as we use iterators over Point_3 elements.
     Poisson_reconstruction_function function(
                               points.begin(), points.end(),
-                              CGAL::make_identity_property_map(PointList::value_type()),
-                              CGAL::make_normal_of_point_with_normal_map(PointList::value_type()),
+                              CGAL::make_first_of_pair_property_map(Point_with_normal()),
+                              CGAL::make_second_of_pair_property_map(Point_with_normal()),
                               visitor);
 
     #ifdef CGAL_EIGEN3_ENABLED
@@ -293,7 +291,9 @@ int main(int argc, char * argv[])
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points, 6 /* knn = 1 ring */);
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
+      (points, 6 /* knn = 1 ring */,
+       CGAL::parameters::point_map (CGAL::make_first_of_pair_property_map(Point_with_normal())));
 
     // Gets one point inside the implicit surface
     Point inner_point = function.get_inner_point();
@@ -367,7 +367,7 @@ int main(int argc, char * argv[])
     double avg_distance = 0;
     for (PointList::const_iterator p=points.begin(); p!=points.end(); p++)
     {
-      double distance = std::sqrt(tree.squared_distance(*p));
+      double distance = std::sqrt(tree.squared_distance(p->first));
 
       max_distance = (std::max)(max_distance, distance);
       avg_distance += distance;
