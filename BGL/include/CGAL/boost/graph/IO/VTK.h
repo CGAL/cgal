@@ -12,6 +12,8 @@
 #ifndef CGAL_BGL_IO_VTK_H
 #define CGAL_BGL_IO_VTK_H
 
+#ifdef CGAL_USE_VTK
+
 #include <CGAL/IO/VTK.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -427,5 +429,7 @@ void write_VTP(std::ostream& os, const FaceGraph& g)
 }
 
 } // namespace CGAL
+
+#endif // CGAL_USE_VTK
 
 #endif // CGAL_BGL_IO_VTK_H

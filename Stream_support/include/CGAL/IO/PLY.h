@@ -14,6 +14,7 @@
 
 #include <CGAL/IO/PLY/PLY_reader.h>
 #include <CGAL/IO/PLY/PLY_writer.h>
+
 #include <CGAL/property_map.h>
 
 namespace CGAL {
@@ -23,7 +24,7 @@ namespace CGAL {
 /// Read
 
 template <class Point_3, class Polygon_3, class Color_rgb>
-bool read_PLY(std::istream& in,
+bool read_PLY(std::istream& is,
               std::vector<Point_3>& points,
               std::vector<Polygon_3>& polygons,
               std::vector<std::pair<unsigned int, unsigned int> >& hedges,
@@ -32,18 +33,20 @@ bool read_PLY(std::istream& in,
               std::vector<std::pair<float, float> >& huvs,
               bool /* verbose */ = false)
 {
-  if(!in)
+  if(!is.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
+
   IO::internal::PLY_reader reader;
 
-  if(!(reader.init(in)))
+  if(!(reader.init(is)))
   {
-    in.setstate(std::ios::failbit);
+    is.setstate(std::ios::failbit);
     return false;
   }
+
   for(std::size_t i = 0; i < reader.number_of_elements(); ++ i)
   {
     IO::internal::PLY_element& element = reader.element(i);
@@ -68,9 +71,9 @@ bool read_PLY(std::istream& in,
         for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
         {
           IO::internal::PLY_read_number* property = element.property(k);
-          property->get(in);
+          property->get(is);
 
-          if(in.fail())
+          if(is.fail())
             return false;
         }
 
@@ -99,13 +102,13 @@ bool read_PLY(std::istream& in,
     else if(element.name() == "face" || element.name() == "faces")
     {
       if(element.has_property<std::vector<boost::int32_t> >("vertex_indices"))
-        IO::internal::read_PLY_faces<boost::int32_t>(in, element, polygons, fcolors, "vertex_indices");
+        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fcolors, "vertex_indices");
       else if(element.has_property<std::vector<boost::uint32_t> >("vertex_indices"))
-        IO::internal::read_PLY_faces<boost::uint32_t>(in, element, polygons, fcolors, "vertex_indices");
+        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fcolors, "vertex_indices");
       else if(element.has_property<std::vector<boost::int32_t> >("vertex_index"))
-        IO::internal::read_PLY_faces<boost::int32_t>(in, element, polygons, fcolors, "vertex_index");
+        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, fcolors, "vertex_index");
       else if(element.has_property<std::vector<boost::uint32_t> >("vertex_index"))
-        IO::internal::read_PLY_faces<boost::uint32_t>(in, element, polygons, fcolors, "vertex_index");
+        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, fcolors, "vertex_index");
       else
       {
         std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
@@ -123,15 +126,16 @@ bool read_PLY(std::istream& in,
       {
         has_uv = true;
       }
+
       cpp11::tuple<unsigned int, unsigned int, float, float, float>  new_hedge;
       for(std::size_t j = 0; j < element.number_of_items(); ++ j)
       {
         for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
         {
           IO::internal::PLY_read_number* property = element.property(k);
-          property->get(in);
+          property->get(is);
 
-          if(in.eof())
+          if(is.fail())
             return false;
         }
 
@@ -167,20 +171,20 @@ bool read_PLY(std::istream& in,
         for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
         {
           IO::internal::PLY_read_number* property = element.property(k);
-          property->get(in);
-          if(in.fail())
+          property->get(is);
+          if(is.fail())
             return false;
         }
       }
     }
   }
-  return !in.bad();
+  return !is.fail();
 }
 
 template <class Point_3, class Polygon_3, class Color_rgb>
-bool read_PLY(std::istream& in,
-              std::vector< Point_3 >& points,
-              std::vector< Polygon_3 >& polygons,
+bool read_PLY(std::istream& is,
+              std::vector<Point_3>& points,
+              std::vector<Polygon_3>& polygons,
               std::vector<Color_rgb>& fcolors,
               std::vector<Color_rgb>& vcolors,
               bool /* verbose */ = false)
@@ -188,24 +192,24 @@ bool read_PLY(std::istream& in,
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
 
-  return read_PLY<Point_3, Polygon_3, Color_rgb>(in, points, polygons, dummy_pui, fcolors, vcolors, dummy_pf);
+  return read_PLY<Point_3, Polygon_3, Color_rgb>(is, points, polygons, dummy_pui, fcolors, vcolors, dummy_pf);
 }
 
 /*!
  * \ingroup IOstreamFunctions
  *
- * reads the content of `in` into `points` and `polygons`, in the PLY format.
+ * reads the content of `is` into `points` and `polygons`, in the PLY format.
  *
  * \see \ref IOStreamPLY
  */
 template <class Point_3, class Polygon_3>
 bool
-read_PLY(std::istream& in,
-         std::vector< Point_3 >& points,
-         std::vector< Polygon_3 >& polygons,
+read_PLY(std::istream& is,
+         std::vector<Point_3>& points,
+         std::vector<Polygon_3>& polygons,
          bool /* verbose */ = false)
 {
-  if(!in)
+  if(!is.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -213,9 +217,9 @@ read_PLY(std::istream& in,
 
   IO::internal::PLY_reader reader;
 
-  if(!(reader.init(in)))
+  if(!(reader.init(is)))
   {
-    in.setstate(std::ios::failbit);
+    is.setstate(std::ios::failbit);
     return false;
   }
 
@@ -230,9 +234,9 @@ read_PLY(std::istream& in,
         for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
         {
           IO::internal::PLY_read_number* property = element.property(k);
-          property->get(in);
+          property->get(is);
 
-          if(in.fail())
+          if(is.fail())
             return false;
         }
 
@@ -249,13 +253,13 @@ read_PLY(std::istream& in,
       std::vector<CGAL::Color> dummy;
 
       if(element.has_property<std::vector<boost::int32_t> >("vertex_indices"))
-        IO::internal::read_PLY_faces<boost::int32_t>(in, element, polygons, dummy, "vertex_indices");
+        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, dummy, "vertex_indices");
       else if(element.has_property<std::vector<boost::uint32_t> >("vertex_indices"))
-        IO::internal::read_PLY_faces<boost::uint32_t>(in, element, polygons, dummy, "vertex_indices");
+        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, dummy, "vertex_indices");
       else if(element.has_property<std::vector<boost::int32_t> >("vertex_index"))
-        IO::internal::read_PLY_faces<boost::int32_t>(in, element, polygons, dummy, "vertex_index");
+        IO::internal::read_PLY_faces<boost::int32_t>(is, element, polygons, dummy, "vertex_index");
       else if(element.has_property<std::vector<boost::uint32_t> >("vertex_index"))
-        IO::internal::read_PLY_faces<boost::uint32_t>(in, element, polygons, dummy, "vertex_index");
+        IO::internal::read_PLY_faces<boost::uint32_t>(is, element, polygons, dummy, "vertex_index");
       else
       {
         std::cerr << "Error: can't find vertex indices in PLY input" << std::endl;
@@ -269,16 +273,16 @@ read_PLY(std::istream& in,
         for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
         {
           IO::internal::PLY_read_number* property = element.property(k);
-          property->get(in);
+          property->get(is);
 
-          if(in.fail())
+          if(is.fail())
             return false;
         }
       }
     }
   }
 
-  return !in.bad();
+  return !is.fail();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -294,11 +298,10 @@ read_PLY(std::istream& in,
  */
 template <class Point_3, class Polygon_3>
 bool write_PLY(std::ostream& out,
-               const std::vector< Point_3 >& points,
-               const std::vector< Polygon_3 >& polygons,
-               bool /* verbose */ = false)
+               const std::vector<Point_3>& points,
+               const std::vector<Polygon_3>& polygons)
 {
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -333,8 +336,7 @@ bool write_PLY(std::ostream& out,
 
 template <class SurfaceMesh>
 bool write_PLY(std::ostream& out,
-               const SurfaceMesh& mesh,
-               bool /* verbose */ = false)
+               const SurfaceMesh& mesh)
 {
   typedef typename boost::graph_traits<SurfaceMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<SurfaceMesh>::halfedge_descriptor halfedge_descriptor;
@@ -346,7 +348,7 @@ bool write_PLY(std::ostream& out,
   bool has_texture;
   boost::tie(h_uv, has_texture) = mesh.template property_map<halfedge_descriptor,std::pair<float, float> >("h:uv");
 
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -358,38 +360,31 @@ bool write_PLY(std::ostream& out,
       << "comment Generated by the CGAL library" << std::endl
       << "element vertex " << num_vertices(mesh) << std::endl;
 
-  IO::internal::output_property_header(out,
-                                        make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+  IO::internal::output_property_header(out, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
 
   out << "element face " << num_faces(mesh) << std::endl;
 
-  IO::internal::output_property_header(out,
-                                        std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
-                                                       PLY_property<std::vector<int> >("vertex_indices")));
+  IO::internal::output_property_header(out, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
+                                                           PLY_property<std::vector<int> >("vertex_indices")));
 
   if(has_texture)
   {
     out << "element halfedge " << num_halfedges(mesh) << std::endl;
 
-    IO::internal::output_property_header(out,
-                                          std::make_pair(CGAL::Identity_property_map<std::size_t >(),
-                                                         PLY_property<unsigned int >("source")));
-
-    IO::internal::output_property_header(out,
-                                          std::make_pair(CGAL::Identity_property_map<std::size_t >(),
-                                                         PLY_property<unsigned int >("target")));
-    IO::internal::output_property_header(out,
-                                          std::make_tuple (h_uv,
-                                                           PLY_property<float>("u"),
-                                                           PLY_property<float>("v")));
+    IO::internal::output_property_header(out, std::make_pair(CGAL::Identity_property_map<std::size_t >(),
+                                                             PLY_property<unsigned int >("source")));
+    IO::internal::output_property_header(out, std::make_pair(CGAL::Identity_property_map<std::size_t >(),
+                                                             PLY_property<unsigned int >("target")));
+    IO::internal::output_property_header(out, std::make_tuple(h_uv,
+                                                              PLY_property<float>("u"),
+                                                              PLY_property<float>("v")));
   }
   out << "end_header" << std::endl;
 
   for(vertex_descriptor vd : vertices(mesh))
   {
     Point_3 p = get(get(CGAL::vertex_point, mesh), vd);
-    IO::internal::output_properties(out, &p,
-                                     make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+    IO::internal::output_properties(out, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
   }
 
   std::vector<std::size_t> polygon;
@@ -414,14 +409,14 @@ bool write_PLY(std::ostream& out,
                                       h_uv[hd].second);
 
       IO::internal::output_properties(out, &t,
-                                       std::make_pair(Nth_of_tuple_property_map<0,Super_tuple>(),
-                                                      PLY_property<unsigned int >("source")),
-                                       std::make_pair(Nth_of_tuple_property_map<1,Super_tuple>(),
-                                                      PLY_property<unsigned int >("target")),
-                                       std::make_pair(Nth_of_tuple_property_map<2,Super_tuple>(),
-                                                      PLY_property<float>("u")),
-                                       std::make_pair(Nth_of_tuple_property_map<3,Super_tuple>(),
-                                                      PLY_property<float>("v")));
+                                      std::make_pair(Nth_of_tuple_property_map<0,Super_tuple>(),
+                                                     PLY_property<unsigned int >("source")),
+                                      std::make_pair(Nth_of_tuple_property_map<1,Super_tuple>(),
+                                                     PLY_property<unsigned int >("target")),
+                                      std::make_pair(Nth_of_tuple_property_map<2,Super_tuple>(),
+                                                     PLY_property<float>("u")),
+                                      std::make_pair(Nth_of_tuple_property_map<3,Super_tuple>(),
+                                                     PLY_property<float>("v")));
     }
   }
 

@@ -12,8 +12,11 @@
 #ifndef CGAL_IO_WRITE_3MF_H
 #define CGAL_IO_WRITE_3MF_H
 
-#include <CGAL/boost/graph/iterator.h>
+#ifdef CGAL_LINKED_WITH_3MF
+
 #include <CGAL/IO/Color.h>
+
+#include <CGAL/boost/graph/iterator.h>
 
 #include <Model/COM/NMR_DLLInterfaces.h>
 
@@ -356,5 +359,7 @@ bool write_polyline_to_model(const PointRange& points,
 
 } // namespace 3MF
 } // namespace CGAL
+
+#endif // CGAL_LINKED_WITH_3MF
 
 #endif // CGAL_IO_WRITE_3MF_H

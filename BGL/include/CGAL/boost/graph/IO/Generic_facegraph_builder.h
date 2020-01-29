@@ -71,10 +71,6 @@ public:
     using parameters::is_default_parameter;
     using parameters::get_parameter;
 
-    // Read
-    if(!m_in.good())
-      return false;
-
     const bool is_vnm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_normal_map)));
     const bool is_vcm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_color_map)));
     const bool is_vtm_requested = !(is_default_parameter(get_parameter(np, internal_np::vertex_texture_map)));

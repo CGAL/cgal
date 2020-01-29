@@ -712,10 +712,10 @@ user might encounter.
 - `CGAL::METIS::partition_dual_graph()`
 
 \cgalCRPSection{I/O Functions}
-- \link PkgBGLIOFct CGAL::read_off() \endlink
-- \link PkgBGLIOFct CGAL::write_off() \endlink
-- \link PkgBGLIOFct CGAL::write_wrl() \endlink
-- `CGAL::write_vtp()`
+- `CGAL::read_OFF()`
+- `CGAL::write_OFF()`
+- `CGAL::write_WRL()`
+- `CGAL::write_VTP()`
 
 */
 

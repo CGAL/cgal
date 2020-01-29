@@ -153,6 +153,15 @@ bool read_GOCAD(std::istream& in,
   return is_valid(g); // @fixme keep validity check?
 }
 
+template <typename FaceGraph>
+bool read_GOCAD(std::istream& in,
+                std::string& name,
+                std::string& color,
+                FaceGraph& g)
+{
+  return read_GOCAD(in, name, color, g, parameters::all_default());
+}
+
 /*!
   \ingroup PkgBGLIOFct
 
@@ -259,6 +268,14 @@ bool write_GOCAD(std::ostream& os,
   return os.good();
 }
 
+template <typename FaceGraph>
+bool write_GOCAD(std::ostream& os,
+                 const char* fname,
+                 const FaceGraph& g)
+{
+  return write_GOCAD(os, fname, g, parameters::all_default());
+}
+
 /*!
   \ingroup PkgBGLIOFct
 
@@ -283,6 +300,8 @@ bool write_GOCAD(const std::string& fname, const FaceGraph& g, const CGAL_BGL_NP
   return write_GOCAD(fname.c_str(), g, np);
 }
 
+template <typename FaceGraph>
+bool write_GOCAD(std::ostream& os, const FaceGraph& g) { return write_OBJ(os, g, parameters::all_default()); }
 template <typename FaceGraph>
 bool write_GOCAD(const char* fname, const FaceGraph& g) { return write_GOCAD(fname, g, parameters::all_default()); }
 template <typename FaceGraph>

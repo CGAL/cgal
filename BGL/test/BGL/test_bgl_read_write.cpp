@@ -45,8 +45,8 @@ void test_bgl_read_write(const char* filename)
 {
   Mesh sm;
   std::ifstream in(filename);
-  CGAL::read_off(in,sm);
-  CGAL::write_off(std::cout, sm);
+  CGAL::read_OFF(in,sm);
+  CGAL::write_OFF(std::cout, sm);
 }
 
 #ifdef CGAL_USE_VTK
@@ -58,7 +58,7 @@ bool test_bgl_vtp()
                          Point(2, 0, 1), Point(3, 0, 0), fg);
 
   std::ofstream os("tetrahedron.vtp");
-  CGAL::write_vtp(os, fg);
+  CGAL::write_VTP(os, fg);
   if(!os)
   {
     std::cerr<<"vtp writing failed."<<std::endl;
@@ -66,7 +66,7 @@ bool test_bgl_vtp()
   }
   os.close();
   Mesh fg2;
-  if(!CGAL::read_vtp("tetrahedron.vtp", fg2))
+  if(!CGAL::read_VTP("tetrahedron.vtp", fg2))
   {
     std::cerr<<"vtp reading failed."<<std::endl;
     return false;
@@ -94,7 +94,7 @@ bool test_bgl_vtp<Polyhedron>()
    for(auto v : vertices(fg))
      put(vid,v, id++);
   std::ofstream os("tetrahedron.vtp");
-  CGAL::write_vtp(os, fg, CGAL::parameters::vertex_index_map(vid));
+  CGAL::write_VTP(os, fg, CGAL::parameters::vertex_index_map(vid));
   if(!os)
   {
     std::cerr<<"vtp writing failed."<<std::endl;
@@ -102,7 +102,7 @@ bool test_bgl_vtp<Polyhedron>()
   }
   os.close();
   Polyhedron fg2;
-  if(!CGAL::read_vtp("tetrahedron.vtp", fg2))
+  if(!CGAL::read_VTP("tetrahedron.vtp", fg2))
   {
     std::cerr<<"vtp reading failed."<<std::endl;
     return false;
@@ -124,7 +124,7 @@ bool test_gocad()
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
                          Point(2, 0, 1), Point(3, 0, 0), fg);
   std::ostringstream out;
-  CGAL::write_gocad(fg, out, "tetrahedron");
+  CGAL::write_GOCAD(out, fg, "tetrahedron");
   if(out.fail())
   {
     std::cerr<<"Tetrahedron writing failed."<<std::endl;
@@ -133,7 +133,7 @@ bool test_gocad()
   FaceGraph fg2;
   std::istringstream in( out.str());
   std::string name, color;
-  CGAL::read_gocad(fg2, in, name, color);
+  CGAL::read_GOCAD(in, name, color, fg2);
   if(name != "tetrahedron"){
     std::cerr<<"reading error: tetrahedron != "<<name<<std::endl;
     return 1;
@@ -198,29 +198,33 @@ bool test_STL()
 
 int main(int argc, char** argv)
 {
-  const char* filename=(argc>1)?argv[1]:"data/prim.off";
-  //OFF
+  const char* filename=(argc>1) ? argv[1] : "data/prim.off";
+
+  // OFF
   test_bgl_read_write<Polyhedron>(filename);
   test_bgl_read_write<SM>(filename);
   test_bgl_read_write<LCC>(filename);
 #ifdef CGAL_USE_OPENMESH
   test_bgl_read_write<OMesh>(filename);
 #endif
-  //GOCAD
+
+  // GOCAD
   if(!test_gocad<Polyhedron>())
     return 1;
   if(!test_gocad<SM>())
     return 1;
   if(!test_gocad<LCC>())
     return 1;
-  //STL
+
+  // STL
   if(!test_STL<Polyhedron>())
     return 1;
   if(!test_STL<SM>())
     return 1;
   if(!test_STL<LCC>())
     return 1;
-  //VTP
+
+  // VTP
 #ifdef CGAL_USE_VTK
   if(!test_bgl_vtp<Polyhedron>())
     return 1;

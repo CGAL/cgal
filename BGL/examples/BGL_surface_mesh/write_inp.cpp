@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/io.h>
 
 #include <iostream>
@@ -20,6 +21,6 @@ int main()
   CGAL::make_quad(Point(0,0,1), Point(1,0,1),Point(1,1,1),Point(0,1,1), sm);
 
   std::ofstream out("out.inp");
-  CGAL::write_inp(out, sm, "out.inp", "S4R");
+  CGAL::write_INP(out, sm, "out.inp", "S4R");
   return 0;
 }

@@ -16,6 +16,7 @@
 #include <CGAL/IO/reader_helpers.h>
 
 #include <boost/cstdint.hpp>
+#include <boost/range/value_type.hpp>
 
 #include <cctype>
 #include <iostream>
@@ -28,15 +29,15 @@ namespace IO {
 namespace internal {
 
 template <class PointRange, class TriangleRange, typename IndexMap>
-bool read_ASCII_facet(std::istream& input,
+bool read_ASCII_facet(std::istream& is,
                       PointRange& points,
                       TriangleRange& facets,
                       int& index,
                       IndexMap& index_map,
                       bool verbose = false)
 {
-  typedef typename PointRange::value_type Point;
-  typedef typename TriangleRange::value_type Triangle;
+  typedef typename boost::range_value<PointRange>::type         Point;
+  typedef typename boost::range_value<TriangleRange>::type      Triangle;
 
   // Here, we have already read the word 'facet' and are looking to read till 'endfacet'
 
@@ -50,7 +51,7 @@ bool read_ASCII_facet(std::istream& input,
   Triangle ijk;
   IO::internal::resize(ijk, 3);
 
-  while(input >> s)
+  while(is >> s)
   {
     if(s == endfacet)
     {
@@ -75,7 +76,7 @@ bool read_ASCII_facet(std::istream& input,
         return false;
       }
 
-      if(!(input >> iformat(x) >> iformat(y) >> iformat(z)))
+      if(!(is >> iformat(x) >> iformat(y) >> iformat(z)))
       {
         if(verbose)
           std::cerr << "Error while reading point coordinates (premature end of file)" << std::endl;
@@ -110,17 +111,17 @@ bool read_ASCII_facet(std::istream& input,
 }
 
 template <class PointRange, class TriangleRange>
-bool parse_ASCII_STL(std::istream& input,
+bool parse_ASCII_STL(std::istream& is,
                      PointRange& points,
                      TriangleRange& facets,
                      bool verbose = false)
 {
-  typedef typename PointRange::value_type Point;
+  typedef typename boost::range_value<PointRange>::type           Point;
 
   if(verbose)
     std::cout << "Parsing ASCII file..." << std::endl;
 
-  if(!input.good())
+  if(!is.good())
     return false;
 
   // Here, we have already read the word 'solid'
@@ -130,7 +131,7 @@ bool parse_ASCII_STL(std::istream& input,
 
   std::string s, facet("facet"), endsolid("endsolid"), solid("solid");
   bool in_solid(false);
-  while(input >> s)
+  while(is >> s)
   {
     if(s == solid)
     {
@@ -141,7 +142,7 @@ bool parse_ASCII_STL(std::istream& input,
     }
     if(s == facet)
     {
-      if(!read_ASCII_facet(input, points, facets, index, index_map, verbose))
+      if(!read_ASCII_facet(is, points, facets, index, index_map, verbose))
         return false;
     }
     else if(s == endsolid)
@@ -158,26 +159,26 @@ bool parse_ASCII_STL(std::istream& input,
     return false;
   }
 
-  return !input.fail();
+  return !is.fail();
 }
 
 template <class PointRange, class TriangleRange>
-bool parse_binary_STL(std::istream& input,
+bool parse_binary_STL(std::istream& is,
                       PointRange& points,
                       TriangleRange& facets,
                       bool verbose = false)
 {
-  typedef typename PointRange::value_type Point;
-  typedef typename TriangleRange::value_type Triangle;
+  typedef typename boost::range_value<PointRange>::type         Point;
+  typedef typename boost::range_value<TriangleRange>::type      Triangle;
 
   if(verbose)
     std::cout << "Parsing binary file..." << std::endl;
 
   // Start from the beginning again to simplify things
-  input.clear();
-  input.seekg(0, std::ios::beg);
+  is.clear();
+  is.seekg(0, std::ios::beg);
 
-  if(!input.good())
+  if(!is.good())
     return false;
 
   // Discard the first 80 chars (unused header)
@@ -189,8 +190,8 @@ bool parse_binary_STL(std::istream& input,
 
   while(pos < 80)
   {
-    input.read(reinterpret_cast<char*>(&c), sizeof(c));
-    if(!input.good())
+    is.read(reinterpret_cast<char*>(&c), sizeof(c));
+    if(!is.good())
       break;
 
     if(verbose)
@@ -209,7 +210,7 @@ bool parse_binary_STL(std::istream& input,
   std::map<Point, int> index_map;
 
   boost::uint32_t N32;
-  if(!(input.read(reinterpret_cast<char*>(&N32), sizeof(N32))))
+  if(!(is.read(reinterpret_cast<char*>(&N32), sizeof(N32))))
   {
     if(verbose)
       std::cerr << "Error while reading number of facets" << std::endl;
@@ -224,9 +225,9 @@ bool parse_binary_STL(std::istream& input,
   for(unsigned int i=0; i<N; ++i)
   {
     float normal[3];
-    if(!(input.read(reinterpret_cast<char*>(&normal[0]), sizeof(normal[0]))) ||
-       !(input.read(reinterpret_cast<char*>(&normal[1]), sizeof(normal[1]))) ||
-       !(input.read(reinterpret_cast<char*>(&normal[2]), sizeof(normal[2]))))
+    if(!(is.read(reinterpret_cast<char*>(&normal[0]), sizeof(normal[0]))) ||
+       !(is.read(reinterpret_cast<char*>(&normal[1]), sizeof(normal[1]))) ||
+       !(is.read(reinterpret_cast<char*>(&normal[2]), sizeof(normal[2]))))
     {
       if(verbose)
         std::cerr << "Error while reading normal coordinates (premature end of file)" << std::endl;
@@ -240,9 +241,9 @@ bool parse_binary_STL(std::istream& input,
     for(int j=0; j<3; ++j)
     {
       float x,y,z;
-      if(!(input.read(reinterpret_cast<char*>(&x), sizeof(x))) ||
-         !(input.read(reinterpret_cast<char*>(&y), sizeof(y))) ||
-         !(input.read(reinterpret_cast<char*>(&z), sizeof(z))))
+      if(!(is.read(reinterpret_cast<char*>(&x), sizeof(x))) ||
+         !(is.read(reinterpret_cast<char*>(&y), sizeof(y))) ||
+         !(is.read(reinterpret_cast<char*>(&z), sizeof(z))))
       {
         if(verbose)
           std::cerr << "Error while reading vertex coordinates (premature end of file)" << std::endl;
@@ -271,8 +272,8 @@ bool parse_binary_STL(std::istream& input,
 
     // Read so-called attribute byte count and ignore it
     char c;
-    if(!(input.read(reinterpret_cast<char*>(&c), sizeof(c))) ||
-       !(input.read(reinterpret_cast<char*>(&c), sizeof(c))))
+    if(!(is.read(reinterpret_cast<char*>(&c), sizeof(c))) ||
+       !(is.read(reinterpret_cast<char*>(&c), sizeof(c))))
     {
       if(verbose)
         std::cerr << "Error while reading attribute byte count (premature end of file)" << std::endl;
@@ -281,7 +282,7 @@ bool parse_binary_STL(std::istream& input,
     }
   }
 
-  return !input.fail();
+  return !is.fail();
 }
 
 } // namespace internal

@@ -33,12 +33,12 @@ polyhedral surface.
 
 */
 template <class PolyhedronTraits_3>
-bool read_off( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
+bool read_OFF( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);
 
 /*!
 \relates Polyhedron_3
 \ingroup PkgPolyhedronIOFunc
-calls \link read_off() `read_off(in, P)` \endlink.
+calls \link read_OFF() `read_OFF(in, P)` \endlink.
 */
 template <class PolyhedronTraits_3>
 std::istream& operator>>( std::istream& in, Polyhedron_3<PolyhedronTraits_3>& P);

@@ -29,12 +29,8 @@
 #include <CGAL/IO/PLY.h>
 
 namespace CGAL {
-
-namespace internal
-{
-  
-namespace PLY
-{
+namespace IO {
+namespace internal {
 
 template <typename Point,
           typename Vector = typename Kernel_traits<Point>::Kernel::Vector_3>
@@ -97,8 +93,8 @@ public:
     
     for (std::size_t j = 0; j < element.number_of_properties(); ++ j)
     {
-      IO::internal::PLY_read_number* property = element.property(j);
-        
+      PLY_read_number* property = element.property(j);
+
       const std::string& name = property->name();
       if (name == "x" ||
           name == "y" ||
@@ -212,9 +208,8 @@ public:
   }
 };
 
-}
-
-}
+} // namespace internal
+} // namespace IO
 
 /*!
   \ingroup PkgPointSet3IO

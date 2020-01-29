@@ -286,7 +286,7 @@ int main()
 
   //load the model from <mesh.off>
   PolyhedralSurf P;
-  CGAL::read_off(if_name.c_str(), P);
+  CGAL::read_OFF(if_name.c_str(), P);
   fprintf(stderr, "loadMesh %d Ves %d Facets\n",
 	  (int)num_vertices(P), (int)num_faces(P));
   if(verbose)

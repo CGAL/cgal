@@ -12,7 +12,10 @@
 #ifndef CGAL_IO_READ_3MF_H
 #define CGAL_IO_READ_3MF_H
 
+#ifdef CGAL_LINKED_WITH_3MF
+
 #include <CGAL/IO/Color.h>
+
 #include <CGAL/Kernel_traits.h>
 
 #include <Model/COM/NMR_DLLInterfaces.h>
@@ -286,5 +289,7 @@ bool extract_point_clouds (NMR::PLib3MFModelMeshObject *pMeshObject,
 }
 
 } // namespace CGAL
+
+#endif // CGAL_LINKED_WITH_3MF
 
 #endif // CGAL_IO_READ_3MF_H

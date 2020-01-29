@@ -189,9 +189,10 @@ write_cells_2(std::ostream& os,
         connectivity_table.push_back(V[cei->first->vertex(i)]);
     }
   }
-  write_vector<std::size_t>(os,connectivity_table);
-  write_vector<std::size_t>(os,offsets);
-  write_vector<unsigned char>(os,cell_type);
+
+  IO::internal::write_vector<std::size_t>(os,connectivity_table);
+  IO::internal::write_vector<std::size_t>(os,offsets);
+  IO::internal::write_vector<unsigned char>(os,cell_type);
 }
 
 // writes the points tags before binary data is appended
@@ -264,7 +265,7 @@ write_cdt_points(std::ostream& os,
       coordinates.push_back(vit->point()[1]);
       coordinates.push_back(dim == 3 ? vit->point()[2] : 0.0);
     }
-  write_vector<FT>(os,coordinates);
+  IO::internal::write_vector<FT>(os,coordinates);
 }
 
 // writes the attribute tags before binary data is appended
@@ -301,7 +302,7 @@ void
 write_attributes_2(std::ostream& os,
 		 const std::vector<FT>& att)
 {
-  write_vector(os,att);
+  IO::internal::write_vector(os,att);
 }
 
 template <class CDT>

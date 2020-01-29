@@ -29,12 +29,12 @@ A precise specification of the format is available at <a href="http://www.geomvi
 Objects represented in the `.OFF` format can be imported into \cgal's working environment
 using the following data structures and functions.
 
-- CGAL::Surface_mesh (\ref read_off(Surface_mesh<K>&, const std::string&)), a halfedge data structure allowing to represent polyhedral surfaces
+- CGAL::Surface_mesh (\ref read_OFF(Surface_mesh<K>&, const std::string&)), a halfedge data structure allowing to represent polyhedral surfaces
 
-- CGAL::Polyhedron_3 (\ref read_off( std::istream&, Polyhedron_3<PolyhedronTraits_3>&)), a halfedge data structure, which restricts the class of representable surfaces
+- CGAL::Polyhedron_3 (\ref read_OFF( std::istream&, Polyhedron_3<PolyhedronTraits_3>&)), a halfedge data structure, which restricts the class of representable surfaces
   to orientable 2-manifolds.
 
-- Any structure that is a model of the concept `FaceGraph` (read_off(std::istream&,FaceGraph&,NamedParameters))
+- Any structure that is a model of the concept `FaceGraph` (read_OFF(std::istream&,FaceGraph&,NamedParameters))
 
 - CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)
 
@@ -46,8 +46,8 @@ and it is only supported for the CGAL::Surface_mesh.
 \subsection IOStreamOFFOutput Writing OFF files
 The following \cgal data structures can be exported into the `OFF` file format:
 
-- CGAL::Surface_mesh (write_off(std::ostream&, const Surface_mesh<P>&, const NamedParameters&))
-- Any structure that is a model of the concept `FaceGraph` (write_off(std::ostream&,const FaceGraph&,const NamedParameters&))
+- CGAL::Surface_mesh (write_OFF(std::ostream&, const Surface_mesh<P>&, const NamedParameters&))
+- Any structure that is a model of the concept `FaceGraph` (write_OFF(std::ostream&,const FaceGraph&,const NamedParameters&))
 - CGAL::Point_set_3 (\ref write_off_point_set())
 
 Polygon soups can also be exported using the function write_OFF().
@@ -79,12 +79,12 @@ A precise specification of those formats is available at
 \subsection IOStreamPLYInput Reading PLY files
 Objects represented in the `.PLY` format can be imported into \cgal's working environment
 using the following data structures and functions.
-- CGAL::Surface_mesh (read_ply())
+- CGAL::Surface_mesh (read_PLY())
 - CGAL::Point_set_3 (operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&))a collection of points with dynamically associated properties
 
 \subsection IOStreamPLYOutput Writing PLY files
 The following \cgal data structures can be exported into the `PLY` file format:
-- CGAL::Surface_mesh (write_ply())
+- CGAL::Surface_mesh (write_PLY())
 - CGAL::Point_set_3 (operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&))
 
 
@@ -156,7 +156,7 @@ The following \cgal data structures can be exported into the `.VTP` file format:
 - CGAL::Surface_mesh
 - CGAL::Polyhedron_3
 
-using the function \ref CGAL::write_vtp().
+using the function \ref CGAL::write_VTP().
 
 The following \cgal data structures can be exported into the `.VTU` file format:
 - CGAL::Mesh_complex_3_in_triangulation_3 using \ref CGAL::output_to_vtu()`.
@@ -197,11 +197,11 @@ A precise specification of the format is available <a href="http://paulbourke.ne
 
 \subsection IOStreamGocadInput Reading Gocad files
 Objects represented in the `.ts` format can be imported into \cgal's working environment
-using any structure that is a model of the concept `FaceGraph`, and the function `read_gocad()`.
+using any structure that is a model of the concept `FaceGraph`, and the function `read_GOCAD()`.
 
 \subsection IOStreamGocadOutput Writing Gocad files
  Any structure that is a model of the concept `FaceGraph` can be exported into the `.ts` file format
- using the function `write_gocad()`
+ using the function `write_GOCAD()`
 
 
 \section IOStreamWRL Virtual Reality Modeling Language (VRML)
@@ -215,6 +215,6 @@ A precise specification of the format is available <a href="http://gun.teipir.gr
 
 \subsection IOStreamtWRLOutput Writing WRL files
 Any structure that is a model of the concept `FaceGraph` can be exported into the `.wrl` file format
-using the `write_wrl()` function.
+using the `write_WRL()` function.
 
 */

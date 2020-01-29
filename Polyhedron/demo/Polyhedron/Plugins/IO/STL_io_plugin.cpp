@@ -143,7 +143,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 
   if (sm_item)
   {
-    CGAL::write_STL(*sm_item->face_graph(), out);
+    CGAL::write_STL(out, *sm_item->face_graph());
     items.pop_front();
     return true;
   }

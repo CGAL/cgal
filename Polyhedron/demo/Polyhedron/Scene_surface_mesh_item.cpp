@@ -1490,32 +1490,36 @@ bool
 Scene_surface_mesh_item::load_obj(std::istream& in)
 {
   typedef SMesh::Point Point;
-  bool failed = !CGAL::read_OBJ(*d->smesh_, in);
-  if(failed){
+  bool failed = !CGAL::read_OBJ(in, *(d->smesh_));
+  if(failed)
+  {
     std::vector<Point> points;
     std::vector<std::vector<std::size_t> > faces;
-    failed = !CGAL::read_OBJ(in,points,faces);
+    failed = !CGAL::read_OBJ(in, points, faces);
 
-    CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces);
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points,faces,*(d->smesh_));
+    failed = !CGAL::Polygon_mesh_processing::orient_polygon_soup(points, faces);
+    if(!failed)
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, faces, *(d->smesh_));
   }
-  if ( (! failed) && !isEmpty() )
+
+  if((!failed) && !isEmpty())
   {
     invalidate(ALL);
     return true;
   }
+
   return false;
 }
 
 bool
 Scene_surface_mesh_item::save_obj(std::ostream& out) const
 {
-  typename SMesh::template Property_map<typename SMesh::Vertex_index, EPICK::Vector_3> vnormals;
+  SMesh::template Property_map<SMesh::Vertex_index, EPICK::Vector_3> vnormals;
   bool has_normals = false;
-  boost::tie(vnormals, has_normals) = M.template property_map<typename SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
+  boost::tie(vnormals, has_normals) = d->smesh_->template property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
 
   if(has_normals)
-    return CGAL::write_OBJ(out, *(d->smesh_), parameters::normal_map(vnormals));
+    return CGAL::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(vnormals));
   else
     return CGAL::write_OBJ(out, *(d->smesh_));
 }

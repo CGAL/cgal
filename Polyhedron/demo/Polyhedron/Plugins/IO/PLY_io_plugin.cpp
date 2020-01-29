@@ -102,7 +102,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     SMesh *surface_mesh = new SMesh();
     std::string comments;
     
-    if (CGAL::read_ply (in, *surface_mesh, comments))
+    if (CGAL::read_PLY(in, *surface_mesh, comments))
     {
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
       sm_item->setName(fileinfo.completeBaseName());
@@ -228,7 +228,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (sm_item)
   {
     bool res =
-        CGAL::write_ply (out, *(sm_item->polyhedron()), sm_item->comments());
+        CGAL::write_PLY(out, *(sm_item->polyhedron()), sm_item->comments());
     if(res)
       items.pop_front();
     return res;
@@ -240,7 +240,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   if (stm_item)
   {
     bool res =
-        CGAL::write_ply (out, *(stm_item->textured_face_graph()));
+        CGAL::write_PLY(out, *(stm_item->textured_face_graph()));
     if(res)
       items.pop_front();
     return res;

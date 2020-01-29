@@ -712,7 +712,9 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 /// "comment ").
 ///
 template <typename P>
-bool read_PLY(std::ostream& os, const Surface_mesh<P>& sm, const std::string& comments = std::string())
+bool write_PLY(std::ostream& os,
+               const Surface_mesh<P>& sm,
+               const std::string& comments = std::string())
 {
   typedef Surface_mesh<P> SMesh;
   typedef typename SMesh::Vertex_index VIndex;
@@ -891,16 +893,6 @@ bool read_PLY(std::ostream& os, const Surface_mesh<P>& sm, const std::string& co
   return true;
 }
 
-
-/// \cond SKIP_IN_MANUAL
-template <typename P>
-bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
-{
-  std::string dummy;
-  return read_PLY(is, sm, dummy);
-}
-/// \endcond
-
 /// Extracts the surface mesh from an input stream in Ascii or
 /// Binary PLY format and appends it to the surface mesh `sm`.
 ///
@@ -1017,6 +1009,15 @@ bool read_PLY(std::istream& is,
 
   return true;
 }
+
+/// \cond SKIP_IN_MANUAL
+template <typename P>
+bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
+{
+  std::string dummy;
+  return read_PLY(is, sm, dummy);
+}
+/// \endcond
 
 } // namespace CGAL
 

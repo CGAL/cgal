@@ -13,6 +13,8 @@
 #ifndef CGAL_IO_VTK_READER_H
 #define CGAL_IO_VTK_READER_H
 
+#ifdef CGAL_USE_VTK
+
 #include <vtkSmartPointer.h>
 #include <vtkCommand.h>
 
@@ -85,5 +87,7 @@ vtkSmartPointer<vtkReader> read_vtk_file(const std::string& input_filename,
 } // namespace internal
 } // namespace IO
 } // namespace CGAL
+
+#endif // CGAL_USE_VTK
 
 #endif // CGAL_IO_VTK_READER_H

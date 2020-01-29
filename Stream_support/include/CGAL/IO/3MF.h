@@ -11,10 +11,13 @@
 #ifndef CGAL_IO_3MF_H
 #define CGAL_IO_3MF_H
 
-#include <CGAL/boost/graph/iterator.h>
+#ifdef CGAL_LINKED_WITH_3MF
+
 #include <CGAL/IO/Color.h>
 #include <CGAL/IO/3MF/read_3mf.h>
 #include <CGAL/IO/3MF/write_3mf.h>
+
+#include <CGAL/boost/graph/iterator.h>
 
 #include <Model/COM/NMR_DLLInterfaces.h>
 
@@ -573,5 +576,7 @@ bool write_triangle_meshes_to_3mf(const std::string& file_name,
 }
 
 } // namespace CGAL
+
+#endif // CGAL_LINKED_WITH_3MF
 
 #endif // CGAL_IO_3MF_H

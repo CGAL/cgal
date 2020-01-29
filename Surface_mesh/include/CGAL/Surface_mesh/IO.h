@@ -53,7 +53,7 @@ namespace CGAL {
 /// filename determines which reader is used.
 ///
 /// Mapping from extension to reader:
-/// - off/OFF -> `read_off()`
+/// - off/OFF -> `read_OFF()`
 ///
 /// @param mesh The mesh that should contain the input.
 /// @param filename The name of the file to be read.
@@ -76,7 +76,7 @@ bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename)
   // extension determines reader
   if(ext == "off")
   {
-    return read_off(mesh, filename);
+    return read_OFF(mesh, filename);
   }
 
   // we didn't find a reader module

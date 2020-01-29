@@ -51,22 +51,22 @@ with some other restrictions. A more precise definition can be found \ref PMPDef
     </tr>
     <tr>
       <td>Export</td>
-      <td>\ref write_off(std::ostream&,const FaceGraph&,const NamedParameters&) "CGAL::write_off()"</td>
-      <td>\ref CGAL::write_STL(const TriangleMesh&, std::ostream&) "CGAL::write_STL()"</td>
-      <td>\ref CGAL::write_vtp()</td>
-      <td>\ref CGAL::write_vtp()</td>
+      <td>`write_OFF()`</td>
+      <td>`write_STL()`</td>
+      <td>`write_VTP()`</td>
+      <td>`write_VTP()`</td>
       <td>`write_OBJ()`</td>
-      <td>`write_gocad()`</td>
-      <td>`write_wrl()`</td>
+      <td>`write_GOCAD()`</td>
+      <td>`write_WRL()`</td>
     </tr>
     <tr>
       <td>Import</td>
-      <td>\ref read_off(std::istream&,FaceGraph&,NamedParameters) "CGAL::read_off()"</td>
-      <td>\ref CGAL::read_STL()</td>
-      <td>\ref CGAL::read_vtp()</td>
-      <td>\ref CGAL::read_vtp()</td>
+      <td>`read_OFF()`</td>
+      <td>`read_STL()`</td>
+      <td>`read_VTP()`</td>
+      <td>`read_VTP()`</td>
       <td>`read_OBJ()`</td>
-      <td>`read_gocad()`</td>
+      <td>`read_GOCAD()`</td>
       <td>n/a</td>
     </tr>
 </table>

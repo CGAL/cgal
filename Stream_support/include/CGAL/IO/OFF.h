@@ -154,8 +154,6 @@ bool read_OFF(std::istream& is,
  *
  * reads the content of `is` into `points` and `polygons`, in the OFF format.
  *
- * @fixme re-add support for STOFF
- *
  * \see \ref IOStreamOFF
  */
 template <typename PointRange, typename PolygonRange, typename NamedParameters>

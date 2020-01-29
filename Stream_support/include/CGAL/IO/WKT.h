@@ -75,7 +75,7 @@ template<typename Point>
 bool read_point_WKT(std::istream& in,
                     Point& point)
 {
-  if(!in)
+  if(!in.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -104,7 +104,7 @@ bool read_point_WKT(std::istream& in,
     }
   }
 
-  return in.good();
+  return !in.fail();
 }
 
 //! \ingroup PkgStreamSupportRef
@@ -128,7 +128,7 @@ template<typename MultiPoint>
 bool read_multi_point_WKT(std::istream& in,
                           MultiPoint& mp)
 {
-  if(!in)
+  if(!in.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -152,7 +152,8 @@ bool read_multi_point_WKT(std::istream& in,
       break;
     }
   }
-  return in.good();
+
+  return !in.fail();
 }
 
 //! \ingroup PkgStreamSupportRef
@@ -175,7 +176,7 @@ template<typename LineString>
 bool read_linestring_WKT(std::istream& in,
                          LineString& polyline)
 {
-  if(!in)
+  if(!in.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -199,7 +200,8 @@ bool read_linestring_WKT(std::istream& in,
       break;
     }
   }
-  return in.good();
+
+  return !in.fail();
 }
 
 //! \ingroup PkgStreamSupportRef
@@ -222,7 +224,7 @@ template<typename MultiLineString>
 bool read_multi_linestring_WKT(std::istream& in,
                                MultiLineString& mls)
 {
-  if(!in)
+  if(!in.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -259,7 +261,7 @@ bool read_multi_linestring_WKT(std::istream& in,
   for(LineString& ls : gc)
     mls.push_back(*ls.range);
 
-  return in.good();
+  return !in.fail();
 }
 
 //! \ingroup PkgStreamSupportRef
@@ -277,7 +279,7 @@ template<typename Polygon>
 bool read_polygon_WKT(std::istream& in,
                       Polygon& polygon)
 {
-  if(!in)
+  if(!in.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -306,7 +308,7 @@ bool read_polygon_WKT(std::istream& in,
       break;
     }
   }
-  return in.good();
+  return !in.fail();
 }
 
 //! \ingroup PkgStreamSupportRef
@@ -329,7 +331,7 @@ template<typename MultiPolygon>
 bool read_multi_polygon_WKT(std::istream& in,
                             MultiPolygon& polygons)
 {
-  if(!in)
+  if(!in.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
@@ -361,7 +363,8 @@ bool read_multi_polygon_WKT(std::istream& in,
       break;
     }
   }
-  return in.good();
+
+  return !in.fail();
 }
 
 //! \ingroup PkgStreamSupportRef
@@ -378,7 +381,7 @@ template<typename Point>
 std::ostream& write_point_WKT(std::ostream& out,
                               const Point& point)
 {
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return out;
@@ -402,7 +405,7 @@ template<typename Polygon>
 std::ostream& write_polygon_WKT(std::ostream& out,
                                 const Polygon& poly)
 {
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return out;
@@ -426,7 +429,7 @@ template<typename LineString>
 std::ostream& write_linestring_WKT(std::ostream& out,
                                    LineString ls)
 {
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return out;
@@ -451,11 +454,12 @@ template<typename MultiPoint>
 std::ostream& write_multi_point_WKT(std::ostream& out,
                                     MultiPoint& mp)
 {
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return out;
   }
+
   internal::Geometry_container<MultiPoint, boost::geometry::multi_point_tag> gc(mp);
   out << boost::geometry::wkt(gc) << std::endl;
   return out;
@@ -475,7 +479,7 @@ template<typename MultiPolygon>
 std::ostream& write_multi_polygon_WKT(std::ostream& out,
                                       MultiPolygon& polygons)
 {
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return out;
@@ -500,7 +504,7 @@ template<typename MultiLineString>
 std::ostream& write_multi_linestring_WKT(std::ostream& out,
                                          MultiLineString& mls)
 {
-  if(!out)
+  if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return out;

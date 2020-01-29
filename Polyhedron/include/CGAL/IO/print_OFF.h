@@ -10,8 +10,8 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#ifndef CGAL_IO_PRINT_OFF_H
-#define CGAL_IO_PRINT_OFF_H
+#ifndef CGAL_POLYHEDRON_IO_PRINT_OFF_H
+#define CGAL_POLYHEDRON_IO_PRINT_OFF_H
 
 #include <CGAL/license/Polyhedron.h>
 
@@ -25,7 +25,7 @@
 namespace CGAL {
 
 template <class Polyhedron, class VPM>
-void print_polyhedron_with_header_OFF(std::ostream& out,
+bool print_polyhedron_with_header_OFF(std::ostream& out,
                                       const Polyhedron& P,
                                       const File_header_OFF& header,
                                       const VPM& vpm)
@@ -38,28 +38,29 @@ void print_polyhedron_with_header_OFF(std::ostream& out,
                                           Polyhedron,
                                           File_writer_OFF> printer(out, writer);
 
-  printer(P, parameters::vertex_point_map(vpm));
+  return printer(P, parameters::vertex_point_map(vpm));
 }
 
 template <class Polyhedron>
-void print_polyhedron_with_header_OFF(std::ostream& out,
+bool print_polyhedron_with_header_OFF(std::ostream& out,
                                       const Polyhedron& P,
                                       const File_header_OFF& header)
 {
-  print_polyhedron_with_header_OFF(out, P, header, get(CGAL::vertex_point, P));
+  return print_polyhedron_with_header_OFF(out, P, header, get(CGAL::vertex_point, P));
 }
 
 template <class Polyhedron>
-void print_polyhedron_OFF(std::ostream& out,
+bool print_polyhedron_OFF(std::ostream& out,
                           const Polyhedron& P,
                           bool verbose = false)
 {
   File_header_OFF header(verbose);
   header.set_binary(is_binary(out));
   header.set_no_comments(!is_pretty(out));
-  print_polyhedron_with_header_OFF(out, P, header);
+
+  return print_polyhedron_with_header_OFF(out, P, header);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif // CGAL_IO_PRINT_OFF_H
+#endif // CGAL_POLYHEDRON_IO_PRINT_OFF_H

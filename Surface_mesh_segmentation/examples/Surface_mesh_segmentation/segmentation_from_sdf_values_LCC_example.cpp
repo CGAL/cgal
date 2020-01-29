@@ -1,8 +1,9 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/mesh_segmentation.h>
 
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/mesh_segmentation.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Unique_hash_map.h>
 
@@ -19,7 +20,7 @@ int main()
 {
     // create and read LCC
     LCC mesh;
-    CGAL::read_off("data/cactus.off", mesh);
+    CGAL::read_OFF("data/cactus.off", mesh);
 
     // create a property-map for SDF values
     typedef CGAL::Unique_hash_map<Facet_const_handle, double> Facet_double_map;

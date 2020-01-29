@@ -1,7 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
-
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <iostream>
 #include <fstream>
@@ -50,8 +51,8 @@ void fct(const LCC& lcc)
 
 int main(int argc, char** argv)
 {
-  LCC lcc;  
-  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
+  LCC lcc;
+  CGAL::read_OFF((argc>1)?argv[1]:"cube.off", lcc);
 
   fct(lcc);
   return 0;

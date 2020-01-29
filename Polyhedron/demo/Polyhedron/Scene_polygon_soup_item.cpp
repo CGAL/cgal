@@ -343,11 +343,15 @@ Scene_polygon_soup_item::clone() const {
 bool
 Scene_polygon_soup_item::load(std::istream& in)
 {
-  if (!d->soup) d->soup=new Polygon_soup();
-  else d->soup->clear();
+  if (!d->soup)
+    d->soup = new Polygon_soup();
+  else
+    d->soup->clear();
 
   bool result = CGAL::read_OFF(in, d->soup->points, d->soup->polygons,
-                               d->soup->fcolors, d->soup->vcolors);
+                               CGAL::parameters::vertex_color_output_iterator(std::back_inserter(d->soup->vcolors))
+                                                .face_color_output_iterator(std::back_inserter(d->soup->fcolors)));
+
   invalidateOpenGLBuffers();
   return result;
 }

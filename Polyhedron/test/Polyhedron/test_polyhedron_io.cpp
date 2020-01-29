@@ -115,7 +115,7 @@ void test_file_IO_OFF()
   {
     Polyhedron P;
     std::istringstream in( ::empty);
-    read_off(in, P);
+    read_OFF(in, P);
     assert(P.empty());
     assert(in);
   }
