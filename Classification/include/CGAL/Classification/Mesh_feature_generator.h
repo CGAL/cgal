@@ -45,7 +45,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/task_group.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {

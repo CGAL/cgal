@@ -27,7 +27,7 @@
 #include <CGAL/Mesh_3/io_signature.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/atomic.h>
+# include <atomic>
 #endif
 
 #ifdef _MSC_VER
@@ -123,7 +123,7 @@ public:
 
 protected:
   /// Stores visited facets (4 first bits)
-  tbb::atomic<char> bits_;
+  std::atomic<char> bits_;
 };
 #endif // CGAL_LINKED_WITH_TBB
 
