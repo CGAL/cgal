@@ -1454,7 +1454,7 @@ void Scene_c3t3_item_priv::computeElements()
      alphaSlider->setMaximum(255);
      alphaSlider->setValue(255);
    }
-  
+
   positions_poly.clear();
   normals.clear();
   f_colors.clear();
@@ -1466,6 +1466,7 @@ void Scene_c3t3_item_priv::computeElements()
 
   //The grid
   {
+    positions_grid.resize(0);
 
     float x = (2 * (float)complex_diag()) / 10.0;
     float y = (2 * (float)complex_diag()) / 10.0;
