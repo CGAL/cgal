@@ -404,6 +404,41 @@ public:
     return Construct_object_3();
   }
   
+
+  class Assign_2
+  {
+    typedef typename Kernel_::Object_2  Object_2;
+  public:
+    typedef bool                  result_type;
+
+    template <class T>
+    result_type
+    operator()(T& t, const Object_2& o) const
+    { return assign(t, o); }
+  };
+
+  Assign_2 assign_2_object() const
+  {
+    return Assign_2();
+  }
+
+  class Assign_3
+  {
+    typedef typename Kernel_::Object_3        Object_3;
+  public:
+    typedef bool                        result_type;
+
+    template <class T>
+    result_type
+    operator()(T& t, const Object_3& o) const
+    { return assign(t, o); }
+  };
+
+  Assign_3 assign_3_object() const
+  {
+    return Assign_3();
+  }
+  
   class Construct_bbox_2 {
   public:
     typedef Bbox_2 result_type;
