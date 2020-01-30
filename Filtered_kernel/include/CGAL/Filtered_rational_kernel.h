@@ -252,6 +252,9 @@ public:
   typedef Cartesian_coordinate_iterator_2<Kernel> Cartesian_const_iterator_2;
   typedef Cartesian_coordinate_iterator_3<Kernel> Cartesian_const_iterator_3;
 
+  typedef CGAL::Aff_transformation_2<Kernel> Aff_transformation_2;
+  typedef CGAL::Aff_transformation_3<Kernel> Aff_transformation_3;
+  
   // Kernel objects are defined as pairs, with primitives run in parallel.
 #define CGAL_kc_pair(X) typedef std::pair<typename K1::X, typename K2::X> X;
 
@@ -276,7 +279,7 @@ public:
   CGAL_kc_pair(Iso_rectangle_2)
   CGAL_kc_pair(Circle_2)
   CGAL_kc_pair(Conic_2)
-  CGAL_kc_pair(Aff_transformation_2)
+
 
   CGAL_kc_pair(Point_3)
   CGAL_kc_pair(Weighted_point_3)
@@ -291,7 +294,6 @@ public:
   CGAL_kc_pair(Iso_cuboid_3)
   CGAL_kc_pair(Circle_3)
   CGAL_kc_pair(Sphere_3)
-  CGAL_kc_pair(Aff_transformation_3)
 
 #undef CGAL_kc_pair
 
