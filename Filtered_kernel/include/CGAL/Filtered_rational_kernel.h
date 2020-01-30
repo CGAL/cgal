@@ -212,7 +212,7 @@ public:
     typedef typename CGAL::cpp11::result_of<P1(const AT&,int)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<P2(const ET&,int)>::type result_type_2;
     result_type_2 res2 = p2(get_second(p),i);
-    typedef typename Type_map<ET,K2,EK>::type T;
+    typedef typename Type_mapper<ET,K2,EK>::type T;
     return Pairify<result_type_1,result_type_2,K2,EK>()(to_k1(res2), res2);
   }
 };
@@ -319,7 +319,8 @@ class Filtered_rational_kernel_base
 
 public:
   typedef Filtered_rational_kernel_base<K1,K2,Kernel_> Self;
-
+  using typename Filtered_rational_kernel_generic_base<K1,K2,Kernel_>::Cartesian_const_iterator_2;
+  using typename Filtered_rational_kernel_generic_base<K1,K2,Kernel_>::Cartesian_const_iterator_3;
 
   class Construct_object_2
   {
