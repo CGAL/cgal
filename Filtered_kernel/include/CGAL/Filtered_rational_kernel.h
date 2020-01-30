@@ -40,43 +40,45 @@ template <class T> struct is_pair_ {
   
 // Small utility to manipulate pairs for kernel objects, and
 // simple things for bool, Sign...  Object is yet another case...
-template < typename T1, typename T2 >
+  template < typename T1, typename T2, typename K2, typename EK >
 struct Pairify {
-  typedef std::pair<T1, T2>  result_type;
+  typedef typename Type_mapper<T2,K2,EK>::type result_type;
   result_type operator()(const T1 &t1, const T2 &t2) const
-  { return std::make_pair(t1, t2); }
+  {
+    typedef typename Type_mapper<T2,K2,EK>::type T;
+    return T(std::make_pair(t1, t2)); }
 };
 
-template <>
-struct Pairify <bool, bool> {
+template <typename K2, typename EK>
+struct Pairify <bool, bool, K2, EK> {
   typedef bool   result_type;
   result_type operator()(const bool &t1, const bool &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
-template <>
-struct Pairify <Sign, Sign> {
+template <typename K2, typename EK>
+struct Pairify <Sign, Sign, K2, EK> {
   typedef Sign   result_type;
   result_type operator()(const Sign &t1, const Sign &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
-template <>
-struct Pairify <Bounded_side, Bounded_side> {
+template <typename K2, typename EK>
+struct Pairify <Bounded_side, Bounded_side, K2, EK> {
   typedef Bounded_side   result_type;
   result_type operator()(const Bounded_side &t1, const Bounded_side &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
-template <>
-struct Pairify <Angle, Angle> {
+template <typename K2, typename EK>
+struct Pairify <Angle, Angle, K2, EK> {
   typedef Angle   result_type;
   result_type operator()(const Angle &t1, const Angle &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
-template <>
-struct Pairify <const Interval_nt<false>&,const Gmpq&> {
+template <typename K2, typename EK>
+struct Pairify <const Interval_nt<false>&,const Gmpq&, K2, EK> {
   
   typedef Filtered_rational<Interval_nt<false>,Gmpq> result_type;
   
@@ -140,7 +142,7 @@ public:
   };
 
                                   
-template <class P1, class P2, class K1, class K2>
+template <class P1, class P2, class K1, class K2, class EK>
 class Construction_wrapper
 {
   P1  p1;
@@ -183,37 +185,40 @@ public:
   struct result<F(A...)> {
     typedef typename cpp11::result_of<P1(const typename Getter<A>::first_type&...)>::type R1;
     typedef typename cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type R2;
-    typedef typename Pairify<R1,R2>::result_type type;
+    typedef typename Pairify<R1,R2,K2,EK>::result_type type;
   };
   
   // TODO: I think the result_of is simply using P1::result_type because arguments are not valid (pairs...)
   template <class ... A>
   typename Pairify<typename CGAL::cpp11::result_of<P1(const typename Getter<A>::first_type&...)>::type,
-                   typename CGAL::cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type>::result_type
+                   typename CGAL::cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type,
+                   K2,EK>::result_type
   operator()(const A&... a) const
   {
     typedef typename CGAL::cpp11::result_of<P1(const typename Getter<A>::first_type&...)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type result_type_2;
     result_type_2 res2 = p2(get_second(a)...);
-    return Pairify<result_type_1, result_type_2>()(to_k1(res2), res2);
+    return Pairify<result_type_1, result_type_2,K2,EK>()(to_k1(res2), res2);
   }
 
 
   // this is the overload for functors such as Construct_vertex_2
   template <typename AT, typename ET>
   typename Pairify<typename CGAL::cpp11::result_of<P1(const AT&,int)>::type,
-                   typename CGAL::cpp11::result_of<P2(const ET&,int)>::type>::result_type
+                   typename CGAL::cpp11::result_of<P2(const ET&,int)>::type,
+                   K2,EK>::result_type
   operator()(const std::pair<AT,ET>& p, int i) const
   {
     typedef typename CGAL::cpp11::result_of<P1(const AT&,int)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<P2(const ET&,int)>::type result_type_2;
     result_type_2 res2 = p2(get_second(p),i);
-    return Pairify<result_type_1, result_type_2>()(to_k1(res2), res2);
+    typedef typename Type_map<ET,K2,EK>::type T;
+    return Pairify<result_type_1,result_type_2,K2,EK>()(to_k1(res2), res2);
   }
 };
 
 
-  template < class K1, class K2, class Kernel_ >
+template < class K1, class K2, class Kernel_ >
 class Filtered_rational_kernel_generic_base
 {
 protected:
@@ -291,7 +296,7 @@ public:
   X Y() const { return X(k1.Y(), k2.Y()); }
 
 #define CGAL_Kernel_cons(X, Y) \
-  typedef Construction_wrapper<typename K1::X, typename K2::X, K1, K2> X; \
+  typedef Construction_wrapper<typename K1::X, typename K2::X, K1, K2, Kernel_> X; \
   X Y() const { return X(k1.Y(), k2.Y()); }
 
 
@@ -301,7 +306,7 @@ public:
 };
 
 
-  template < class K1, class K2, class Kernel_ >
+template < class K1, class K2, class Kernel_ >
 class Filtered_rational_kernel_base
     : public Filtered_rational_kernel_generic_base<K1,K2,Kernel_>
 {
