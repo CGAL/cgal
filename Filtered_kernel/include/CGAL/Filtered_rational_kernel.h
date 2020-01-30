@@ -235,6 +235,9 @@ public:
   typedef CGAL::Bounded_side        Bounded_side;
   typedef CGAL::Angle               Angle;
 
+  typedef CGAL::Object Object_2;
+  typedef CGAL::Object Object_3;
+  
   typedef Kernel_ Kernel;
   typedef K1     Kernel1;
   typedef K2     Kernel2;
@@ -259,8 +262,8 @@ public:
   // takes its first argument by non-const reference.
   // Maybe Primitive_checker should provide a variant with non-const ref...
 
-  CGAL_kc_pair(Object_2)
-  CGAL_kc_pair(Object_3)
+  //CGAL_kc_pair(Object_2)
+  //CGAL_kc_pair(Object_3)
 
   CGAL_kc_pair(Point_2)
   CGAL_kc_pair(Weighted_point_2)
@@ -286,6 +289,7 @@ public:
   CGAL_kc_pair(Triangle_3)
   CGAL_kc_pair(Tetrahedron_3)
   CGAL_kc_pair(Iso_cuboid_3)
+  CGAL_kc_pair(Circle_3)
   CGAL_kc_pair(Sphere_3)
   CGAL_kc_pair(Aff_transformation_3)
 
@@ -314,6 +318,42 @@ class Filtered_rational_kernel_base
 public:
   typedef Filtered_rational_kernel_base<K1,K2,Kernel_> Self;
 
+
+  class Construct_object_2
+  {
+    typedef typename Kernel_::Object_2   Object_2;
+  public:
+    typedef Object_2         result_type;
+
+    template <class Cls>
+    Object_2
+    operator()( const Cls& c) const
+    { return make_object(c); }
+  };
+  
+  Construct_object_2 construct_object_2_object() const
+  {
+    return Construct_object_2();
+  }
+
+  class Construct_object_3
+  {
+    typedef typename Kernel_::Object_3   Object_3;
+  public:
+    typedef Object_3         result_type;
+
+    template <class Cls>
+    Object_3
+    operator()( const Cls& c) const
+    { return make_object(c); }
+  };
+
+  
+  Construct_object_3 construct_object_3_object() const
+  {
+    return Construct_object_3();
+  }
+  
   class Construct_bbox_2 {
   public:
     typedef Bbox_2 result_type;
@@ -391,15 +431,15 @@ public:
     
     template<typename F, typename A, typename B>
     struct result<F(A,B)> {
-      typedef typename Intersection_traits<Self, A, B>::result_type type;
+      typedef typename Intersection_traits<Kernel_, A, B>::result_type type;
     };
     
     template <typename T1, typename T2>
-    typename Intersection_traits<Self,T1,T2>::result_type
+    typename Intersection_traits<Kernel_,T1,T2>::result_type
     operator()(const T1& s1, const T2& s2) const
     {
-      typedef typename Type_mapper<T1,Self,K2>::type K2T1;
-      typedef typename Type_mapper<T2,Self,K2>::type K2T2;
+      typedef typename Type_mapper<T1,Kernel_,K2>::type K2T1;
+      typedef typename Type_mapper<T2,Kernel_,K2>::type K2T2;
       
       typedef  typename Intersection_traits<K2, K2T1, K2T2>::result_type Exact_optional_variant;
       typedef typename Exact_optional_variant::value_type Exact_variant;
@@ -411,7 +451,7 @@ public:
       }
       Exact_variant ev = *eres;
 
-      typedef typename Intersection_traits<Self,T1,T2>::result_type result_type;
+      typedef typename Intersection_traits<Kernel_,T1,T2>::result_type result_type;
       result_type res;
       boost::apply_visitor( Make_optional_variant<result_type>(res), ev );
 
@@ -419,28 +459,41 @@ public:
     }
     
   };
-  
+
+  Intersect_2 intersect_2_object() const
+  {
+    return Intersect_2();
+  }
+
   class Intersect_3 {
   public:
 
+    template<typename>
+    struct result;
+    
+    template<typename F, typename A, typename B>
+    struct result<F(A,B)> {
+      typedef typename Intersection_traits<Kernel_, A, B>::result_type type;
+    };
+    
     template <typename T1, typename T2>
-    typename Intersection_traits<Self,T1,T2>::result_type
+    typename Intersection_traits<Kernel_,T1,T2>::result_type
     operator()(const T1& s1, const T2& s2) const
     {
-      typedef typename Type_mapper<T1,Self,K2>::type K2T1;
-      typedef typename Type_mapper<T2,Self,K2>::type K2T2;
+      typedef typename Type_mapper<T1,Kernel_,K2>::type K2T1;
+      typedef typename Type_mapper<T2,Kernel_,K2>::type K2T2;
       
       typedef  typename Intersection_traits<K2, K2T1, K2T2>::result_type Exact_optional_variant;
       typedef typename Exact_optional_variant::value_type Exact_variant;
       
-      Exact_optional_variant  eres = K2::Intersect_3()(s1.second,s2.second);
+      Exact_optional_variant  eres = typename K2::Intersect_3()(s1.second,s2.second);
 
       if(! eres){
         return boost::none;
       }
       Exact_variant ev = *eres;
 
-      typedef typename Intersection_traits<Self,T1,T2>::result_type result_type;
+      typedef typename Intersection_traits<Kernel_,T1,T2>::result_type result_type;
       result_type res;
       boost::apply_visitor( Make_optional_variant<result_type>(res), ev );
 
@@ -448,8 +501,14 @@ public:
     }
     
   };
-
   
+  
+  Intersect_3 intersect_3_object() const
+  {
+    return Intersect_3();
+  }
+
+
 };
 
 template < class K1, class K2 >

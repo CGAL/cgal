@@ -245,7 +245,7 @@ test_new_2(const R& rep)
   cccit = construct_cartesian_const_iterator_2(p1,0);
   cccit = construct_cartesian_const_iterator_2(v6);
   cccit = construct_cartesian_const_iterator_2(v6,0);
-  
+
   typename R::Construct_perpendicular_vector_2 construct_perpendicular_vector
         = rep.construct_perpendicular_vector_2_object();
   Vector_2 tmp9 = construct_perpendicular_vector(v2,CLOCKWISE);
