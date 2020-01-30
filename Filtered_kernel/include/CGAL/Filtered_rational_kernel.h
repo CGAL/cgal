@@ -164,20 +164,20 @@ public:
   { }
 
   template <class ... A>
-  typename CGAL::cpp11::result_of<P1(const A&...)>::type
+  typename CGAL::cpp11::result_of<P2(const typename Getter<typename A::Rep>::second_type&...)>::type
   operator()(const A&... a) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const typename Getter<A>::first_type&...)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename Getter<typename A::Rep>::first_type&...)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename Getter<typename A::Rep>::second_type&...)>::type result_type_2;
     CGAL::Interval_nt<false>::Protector p;
     try{
-      result_type_1 res1 = p1(get_first(a)...);
+      result_type_1 res1 = p1(get_first(a.rep())...);
       if (is_certain(res1))
         return make_certain(res1);
     }
     catch(Uncertain_conversion_exception&)
     {}
-    result_type_2 res2 = p2(get_second(a)...);
+    result_type_2 res2 = p2(get_second(a.rep())...);
     return res2;
   }
 };
