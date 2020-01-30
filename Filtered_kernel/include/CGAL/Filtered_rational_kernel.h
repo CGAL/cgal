@@ -508,7 +508,48 @@ public:
     return Intersect_3();
   }
 
+  class Construct_cartesian_const_iterator_2 {
+  public:
 
+    template <typename PV>
+    Cartesian_const_iterator_2 operator()(const PV& pv) const
+    {
+      return Cartesian_const_iterator_2(&pv);
+    }
+    
+    template <typename PV>
+    Cartesian_const_iterator_2 operator()(const PV& pv, int i) const
+    {
+      return Cartesian_const_iterator_2(&pv, i);
+    }
+  };
+
+  
+  Construct_cartesian_const_iterator_2 construct_cartesian_const_iterator_2_object() const
+  {
+    return Construct_cartesian_const_iterator_2();
+  }
+
+  class Construct_cartesian_const_iterator_3 {
+  public:
+
+    template <typename PV>
+    Cartesian_const_iterator_3 operator()(const PV& pv) const
+    {
+      return Cartesian_const_iterator_3(&pv);
+    }
+    
+    template <typename PV>
+    Cartesian_const_iterator_3 operator()(const PV& pv, int i) const
+    {
+      return Cartesian_const_iterator_3(&pv, i);
+    }
+  };
+
+  Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3_object() const
+  {
+    return Construct_cartesian_const_iterator_3();
+  }
 };
 
 template < class K1, class K2 >
