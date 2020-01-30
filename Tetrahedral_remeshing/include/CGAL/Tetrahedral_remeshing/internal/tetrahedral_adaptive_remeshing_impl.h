@@ -187,7 +187,7 @@ namespace internal
 #endif
 
       add_layer_of_imaginary_tets(tr(), m_imaginary_index);
-      CGAL_assertion(tr().is_valid(true));
+      CGAL_assertion(tr().tds().is_valid(true));
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "0-preprocess.mesh");
@@ -209,7 +209,7 @@ namespace internal
       split_long_edges(m_c3t3, emax, m_protect_boundaries, m_imaginary_index,
                        m_cell_selector, m_visitor);
 
-      CGAL_assertion(tr().is_valid(true));
+      CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "1-split.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
@@ -229,7 +229,7 @@ namespace internal
                            m_imaginary_index,
                            m_cell_selector, m_visitor);
 
-      CGAL_assertion(tr().is_valid(true));
+      CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "2-collapse.mesh");
@@ -244,7 +244,7 @@ namespace internal
       flip_edges(m_c3t3, m_imaginary_index, m_protect_boundaries,
                  m_cell_selector, m_visitor);
 
-      CGAL_assertion(tr().is_valid(true));
+      CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "3-flip.mesh");
@@ -259,7 +259,7 @@ namespace internal
       smooth_vertices_new(m_c3t3, m_imaginary_index, m_protect_boundaries,
                       m_cell_selector);
 
-      CGAL_assertion(tr().is_valid(true));
+      CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "4-smooth.mesh");
@@ -321,7 +321,7 @@ namespace internal
         }
       }
 
-      CGAL_assertion(tr().is_valid(true));
+      CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "99-postprocess.mesh");

@@ -306,7 +306,7 @@ namespace CGAL
       const SizingFunction& sizing,
       const NamedParameters& np)
   {
-    CGAL_assertion(tr.is_valid(true));
+    CGAL_assertion(c3t3.triangulation().tds().is_valid(true));
 
     using parameters::get_parameter;
     using parameters::choose_parameter;
