@@ -342,7 +342,7 @@ private:
   Messages_interface* messageInterface;
   CGAL::Three::Scene_interface* scene;
   QMainWindow* mw;
-  CGAL::Rigid_triangle_mesh_collision_detection<SMesh> *col_det;
+  CGAL::Rigid_triangle_mesh_collision_detection<SMesh, CGAL::Default, CGAL::Default, CGAL::Default, CGAL::Tag_true, CGAL::Tag_true> *col_det;
   std::vector<Scene_movable_sm_item*> items;
   std::vector<std::size_t> prev_ids;
   Scene_group_item* group_item;
