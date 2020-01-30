@@ -96,8 +96,8 @@ public Q_SLOTS:
           .number_of_iterations(nb_iter));
 
       std::cout << "Remeshing done (" << time.elapsed() << " ms)" << std::endl;
-      time.restart();
 
+      c3t3_item->invalidateOpenGLBuffers();
       c3t3_item->c3t3_changed();
       this->scene->itemChanged(index);
 
