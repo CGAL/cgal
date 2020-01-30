@@ -87,8 +87,71 @@ struct Pairify <const Interval_nt<false>&,const Gmpq&, K2, EK> {
     return Filtered_rational<Interval_nt<false>, Gmpq>(a,e);
   }
 };
+
+template <class A>
+struct Getter
+{
+  typedef A first_type;
+  typedef A second_type;
+};
+
+template <class A1, class A2>
+struct Getter<std::pair<A1,A2>>
+{
+  typedef A1 first_type;
+  typedef A2 second_type;
+};
+
+template <class A_FT, class E_FT>
+struct Getter<Filtered_rational<A_FT,E_FT>>
+{
+  typedef A_FT first_type;
+  typedef E_FT second_type;
+};
+
+
+template <class A>
+const A&
+get_first(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
+{
+  return a;
+}
+
+template <class A1, class A2>
+const A2&
+get_first(const std::pair<A1,A2>& p)
+{
+  return p.first;
+}
+
+template <class A1, class A2>
+const A2&
+get_first(const Filtered_rational<A1,A2>& p)
+{
+  return p.n1();
+}
+
+template <class A>
+const A&
+get_second(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
+{
+  return a;
+}
+
+template <class A1, class A2>
+const A2&
+get_second(const std::pair<A1,A2>& p)
+{
+  return p.second;
+}
+
+template <class A1, class A2>
+const A2&
+get_second(const Filtered_rational<A1,A2>& p)
+{
+  return p.n2();
+}
   
-// Class used by Kernel_checker.
 template <class P1, class P2>
 class Predicate_wrapper
 {
@@ -104,44 +167,21 @@ public:
   typename CGAL::cpp11::result_of<P1(const A&...)>::type
   operator()(const A&... a) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const typename A::first_type&...)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const typename A::second_type&...)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename Getter<A>::first_type&...)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type result_type_2;
     CGAL::Interval_nt<false>::Protector p;
     try{
-      result_type_1 res1 = p1(a.first...);
+      result_type_1 res1 = p1(get_first(a)...);
       if (is_certain(res1))
         return make_certain(res1);
     }
     catch(Uncertain_conversion_exception&)
     {}
-    result_type_2 res2 = p2(a.second...);
+    result_type_2 res2 = p2(get_second(a)...);
     return res2;
   }
 };
 
-
-  template <class A>
-  struct Getter
-  {
-    typedef A first_type;
-    typedef A second_type;
-  };
-
-  template <class A1, class A2>
-  struct Getter<std::pair<A1,A2>>
-  {
-    typedef A1 first_type;
-    typedef A2 second_type;
-  };
-
-  template <class A_FT, class E_FT>
-  struct Getter<Filtered_rational<A_FT,E_FT>>
-  {
-    typedef A_FT first_type;
-    typedef E_FT second_type;
-  };
-
-                                  
 template <class P1, class P2, class K1, class K2, class EK>
 class Construction_wrapper
 {
@@ -154,29 +194,6 @@ public:
   Construction_wrapper(const P1 &pp1 = P1(), const P2 &pp2 = P2())
     : p1(pp1), p2(pp2)
   { }
-
-  
-  //get_second is used to allow constructions from K2 
-  template <class A>
-  const A&
-  get_second(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr) const
-  {
-    return a;
-  }
-  
-  template <class A1, class A2>
-  const A2&
-  get_second(const std::pair<A1,A2>& p) const
-  {
-    return p.second;
-  }
-  
-  template <class A1, class A2>
-  const A2&
-  get_second(const Filtered_rational<A1,A2>& p) const
-  {
-    return p.n2();
-  }
 
   template <class T>
   struct result;
@@ -252,8 +269,8 @@ public:
   typedef Cartesian_coordinate_iterator_2<Kernel> Cartesian_const_iterator_2;
   typedef Cartesian_coordinate_iterator_3<Kernel> Cartesian_const_iterator_3;
 
-  typedef CGAL::Aff_transformation_2<Kernel> Aff_transformation_2;
-  typedef CGAL::Aff_transformation_3<Kernel> Aff_transformation_3;
+  typedef CGAL::Aff_transformationC2<Kernel_> Aff_transformation_2;
+  typedef CGAL::Aff_transformationC3<Kernel_> Aff_transformation_3;
   
   // Kernel objects are defined as pairs, with primitives run in parallel.
 #define CGAL_kc_pair(X) typedef std::pair<typename K1::X, typename K2::X> X;
