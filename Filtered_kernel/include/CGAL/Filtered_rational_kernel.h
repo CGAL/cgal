@@ -176,7 +176,15 @@ public:
     return p.n2();
   }
 
-  typedef Filtered_rational<Interval_nt<false>,Gmpq> result_type;
+  template <class T>
+  struct result;
+
+  template<typename F, typename ... A>
+  struct result<F(A...)> {
+    typedef typename cpp11::result_of<P1(const typename Getter<A>::first_type&...)>::type R1;
+    typedef typename cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type R2;
+    typedef typename Pairify<R1,R2>::result_type type;
+  };
   
   // TODO: I think the result_of is simply using P1::result_type because arguments are not valid (pairs...)
   template <class ... A>
@@ -197,12 +205,11 @@ public:
                    typename CGAL::cpp11::result_of<P2(const ET&,int)>::type>::result_type
   operator()(const std::pair<AT,ET>& p, int i) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const AT&,int)>::result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const ET&,int)>::result_type_2;
-    result_type_2 res2 = p2(get_second(a)...);
+    typedef typename CGAL::cpp11::result_of<P1(const AT&,int)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const ET&,int)>::type result_type_2;
+    result_type_2 res2 = p2(get_second(p),i);
     return Pairify<result_type_1, result_type_2>()(to_k1(res2), res2);
   }
-  
 };
 
 
