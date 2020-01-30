@@ -88,12 +88,30 @@ struct Pairify <const Interval_nt<false>&,const Gmpq&, K2, EK> {
   }
 };
 
+#define SPEC_NT_GETTER(X) \
+template <> \
+struct Getter<X>\
+{ \
+  typedef X first_type; \
+  typedef X second_type; \
+}; \
+const X& get_first(const X& x) { return x; }\
+const X& get_second(const X& x) { return x; }
+
+
 template <class A>
-struct Getter
-{
-  typedef A first_type;
-  typedef A second_type;
-};
+struct Getter;
+
+SPEC_NT_GETTER(int)
+SPEC_NT_GETTER(unsigned int)
+SPEC_NT_GETTER(double)
+SPEC_NT_GETTER(Origin)
+SPEC_NT_GETTER(Null_vector)
+SPEC_NT_GETTER(Sign)
+SPEC_NT_GETTER(Object)
+SPEC_NT_GETTER(Return_base_tag)
+
+#undef SPEC_NT_GETTER
 
 template <class A1, class A2>
 struct Getter<std::pair<A1,A2>>
@@ -109,33 +127,30 @@ struct Getter<Filtered_rational<A_FT,E_FT>>
   typedef E_FT second_type;
 };
 
-
 template <class A>
-const A&
-get_first(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
-{
-  return a;
-}
+struct Getter
+  : Getter<typename A::Rep>
+{};
 
 template <class A1, class A2>
-const A2&
+const A1&
 get_first(const std::pair<A1,A2>& p)
 {
   return p.first;
 }
 
 template <class A1, class A2>
-const A2&
+const A1&
 get_first(const Filtered_rational<A1,A2>& p)
 {
   return p.n1();
 }
 
 template <class A>
-const A&
-get_second(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
+const typename A::Rep::first_type&
+get_first(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
 {
-  return a;
+  return get_first(a.rep());
 }
 
 template <class A1, class A2>
@@ -152,6 +167,13 @@ get_second(const Filtered_rational<A1,A2>& p)
   return p.n2();
 }
   
+template <class A>
+const typename A::Rep::second_type&
+get_second(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
+{
+  return get_second(a.rep());
+}
+
 template <class P1, class P2>
 class Predicate_wrapper
 {
@@ -164,20 +186,20 @@ public:
   { }
 
   template <class ... A>
-  typename CGAL::cpp11::result_of<P2(const typename Getter<typename A::Rep>::second_type&...)>::type
+  typename CGAL::cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type
   operator()(const A&... a) const
   {
-    typedef typename CGAL::cpp11::result_of<P1(const typename Getter<typename A::Rep>::first_type&...)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<P2(const typename Getter<typename A::Rep>::second_type&...)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<P1(const typename Getter<A>::first_type&...)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<P2(const typename Getter<A>::second_type&...)>::type result_type_2;
     CGAL::Interval_nt<false>::Protector p;
     try{
-      result_type_1 res1 = p1(get_first(a.rep())...);
+      result_type_1 res1 = p1(get_first(a)...);
       if (is_certain(res1))
         return make_certain(res1);
     }
     catch(Uncertain_conversion_exception&)
     {}
-    result_type_2 res2 = p2(get_second(a.rep())...);
+    result_type_2 res2 = p2(get_second(a)...);
     return res2;
   }
 };
