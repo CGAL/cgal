@@ -129,13 +129,17 @@ private Q_SLOTS:
     scene->setSelectedItem(group_item->getChildren().last());
     connect(static_cast<Scene*>(scene), &Scene::itemIndexSelected,
             this, &DoTreesIntersectplugin::update_trees);
-    col_det = new CGAL::Rigid_triangle_mesh_collision_detection<SMesh>();
+    col_det = new CGAL::Rigid_triangle_mesh_collision_detection<SMesh, CGAL::Default, CGAL::Default, CGAL::Default, CGAL::Tag_true, CGAL::Tag_true>();
+    std::cerr<<"reserving..."<<std::endl;
     col_det->reserve(items.size());
+    std::cerr<<"adding..."<<std::endl;
     Q_FOREACH(Scene_movable_sm_item* item, items)
     {
-      col_det->add_mesh(*item->getFaceGraph());
+      col_det->add_mesh(*item->getFaceGraph(), CGAL::parameters::all_default());
     }
+    std::cerr<<"added."<<std::endl;
     init_trees();
+    
     static_cast<CGAL::Three::Viewer_interface*>(
           CGAL::QGLViewer::QGLViewerPool().first())->installEventFilter(this);
     QApplication::restoreOverrideCursor();

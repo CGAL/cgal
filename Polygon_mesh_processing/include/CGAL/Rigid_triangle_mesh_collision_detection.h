@@ -34,8 +34,14 @@
 #include <boost/dynamic_bitset.hpp>
 #endif
 
-namespace CGAL {
+#ifndef CGAL_RMCD_USE_CH
+#define CGAL_RMCD_USE_CH 1
+#endif
 
+#if CGAL_RMCD_USE_CH
+#include <CGAL/convex_hull_3.h>
+#endif
+namespace CGAL {
 /*!
  * \ingroup PkgPolygonMeshProcessing
  * This class provides methods to perform some intersection tests between triangle meshes
@@ -60,7 +66,8 @@ template <class TriangleMesh,
           class VertexPointMap = Default,
           class Kernel = Default,
           class AABBTree = Default,
-          class Has_rotation = CGAL::Tag_true>
+          class Has_rotation = CGAL::Tag_true,
+          class Is_chull= CGAL::Tag_false>
 class Rigid_triangle_mesh_collision_detection
 {
 // Vertex point map type
@@ -86,7 +93,7 @@ class Rigid_triangle_mesh_collision_detection
                                                             K,
                                                             Has_rotation>
                                                                Traversal_traits;
-
+protected:
 // Data members
   std::vector<bool> m_own_aabb_trees;
   std::vector<Tree*> m_aabb_trees;
@@ -95,6 +102,7 @@ class Rigid_triangle_mesh_collision_detection
   std::vector<Traversal_traits> m_traversal_traits;
   std::size_t m_free_id; // position in m_id_pool of the first free element
   std::vector<std::size_t> m_id_pool; // 0-> m_id_pool-1 are valid mesh ids
+  
 #if CGAL_RMCD_CACHE_BOXES
   boost::dynamic_bitset<> m_bboxes_is_invalid;
   std::vector<Bbox_3> m_bboxes;
@@ -120,13 +128,13 @@ class Rigid_triangle_mesh_collision_detection
     }
     return m_id_pool[m_free_id++];
   }
-
+private:
   template <class NamedParameters>
   void add_cc_points(const TriangleMesh& tm, std::size_t id, const NamedParameters& np)
   {
     collect_one_point_per_connected_component(tm, m_points_per_cc[id], np);
   }
-
+protected:
   // precondition A and B does not intersect
   bool does_A_contains_a_CC_of_B(std::size_t id_A, std::size_t id_B) const
   {
@@ -147,7 +155,7 @@ class Rigid_triangle_mesh_collision_detection
   }
 
   // this function expects a protector was initialized
-  bool does_A_intersect_B(std::size_t id_A, std::size_t id_B) const
+  virtual bool does_A_intersect_B(std::size_t id_A, std::size_t id_B) const
   {
 #if CGAL_RMCD_CACHE_BOXES
     if (!do_overlap(m_bboxes[id_B], m_bboxes[id_A])) continue;
@@ -176,7 +184,7 @@ public:
     : m_free_id(0)
   {}
 
-  ~Rigid_triangle_mesh_collision_detection()
+  virtual ~Rigid_triangle_mesh_collision_detection()
   {
     for (std::size_t k=0; k<m_free_id; ++k)
     {
@@ -215,6 +223,7 @@ public:
   std::size_t add_mesh(const TriangleMesh& tm,
                        const NamedParameters& np)
   {
+    std::cerr<<"WRONG ADD_MESH()"<<std::endl;
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
     CGAL_USE_TYPE(Local_vpm);
@@ -236,7 +245,6 @@ public:
     m_aabb_trees[id] = t;
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
     add_cc_points(tm, id, np);
-
     return id;
   }
 
@@ -424,7 +432,7 @@ public:
  /*!
   * increases the capacity of data structures used internally, `size` being the number of meshes expected to be added.
   */
-  void reserve(std::size_t size)
+  virtual void reserve(std::size_t size)
   {
     m_own_aabb_trees.reserve(size);
     m_aabb_trees.reserve(size);
@@ -614,9 +622,95 @@ public:
   {
     return add_mesh(tree, tm, parameters::all_default());
   }
+  
+#endif
+#if CGAL_RMCD_USE_CH
+  
+  class Rigid_triangle_mesh_collision_detection<TriangleMesh,
+      VertexPointMap, Kernel, AABBTree, Has_rotation, CGAL::Tag_true>;
+  friend class Rigid_triangle_mesh_collision_detection<TriangleMesh,
+      VertexPointMap, Kernel, AABBTree, Has_rotation, CGAL::Tag_true>;
 #endif
 };
 
+#if CGAL_RMCD_USE_CH
+  template <class TriangleMesh,
+            class VertexPointMap,
+            class Kernel,
+            class AABBTree,
+            class Has_rotation>
+  class Rigid_triangle_mesh_collision_detection<TriangleMesh,
+      VertexPointMap, Kernel, AABBTree, Has_rotation, CGAL::Tag_true>
+      :public Rigid_triangle_mesh_collision_detection<TriangleMesh,
+      VertexPointMap, Kernel, AABBTree, Has_rotation, CGAL::Tag_false>
+  {
+    typedef Rigid_triangle_mesh_collision_detection<TriangleMesh,
+    VertexPointMap, Kernel, AABBTree, Has_rotation, CGAL::Tag_false>       Base;
+    
+    Base m_chulls_detector;
+    Base m_mesh_detector;
+    std::vector<TriangleMesh> m_chulls;
+  public:
+    Rigid_triangle_mesh_collision_detection()
+      :Base()
+    {
+    std::cerr<<"created"<<std::endl;
+    }
+    
+  public:
+    void reserve(std::size_t size) override
+    {
+      Base::reserve(size);
+      m_chulls.reserve(size);
+      std::cerr<<"reserved."<<std::endl;
+    }
+    
+    template <class NamedParameters>
+    std::size_t add_mesh(const TriangleMesh& tm,
+                         const NamedParameters& np)
+    {
+      std::cerr<<"add mesh"<<std::endl;
+      std::size_t id = Base::get_id_for_new_mesh();
+      if(m_chulls.size()<this->m_free_id)
+      {
+        m_chulls.resize(this->m_free_id);
+      }
+      m_mesh_detector.add_mesh(tm, np);
+      std::cerr<<"compute chull"<<std::endl;
+      typename Base::Vpm vpm =
+          parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                       get_const_property_map(boost::vertex_point, tm) );
+      
+      CGAL::Property_map_to_unary_function<typename Base::Vpm> v2p(vpm);
+      typename boost::graph_traits<TriangleMesh>::vertex_iterator b,e;
+      boost::tie(b,e) = vertices(tm);
+      
+      CGAL::convex_hull_3(boost::make_transform_iterator(b,v2p),
+                          boost::make_transform_iterator(e,v2p),
+                          m_chulls[id]);
+      
+      std::cerr<<"add chull"<<std::endl;
+      m_chulls_detector.add_mesh(m_chulls[id], parameters::all_default());
+      return id;
+    }
+    
+  protected:
+    bool does_A_intersect_B(std::size_t id_A, std::size_t id_B) const override
+    {
+      std::cerr<<"do chull intersect ? "<<std::endl;
+      if(!m_chulls_detector.does_A_intersect_B(id_A, id_B))
+      {
+        std::cerr<<"nope"<<std::endl;
+        return false;
+      }
+      else
+      {
+        std::cerr<<"yes"<<std::endl;
+        return m_mesh_detector.does_A_intersect_B(id_A, id_B);
+      }
+    }
+  };
+#endif
 } // end of CGAL namespace
 
 #undef CGAL_RMCD_CACHE_BOXES
