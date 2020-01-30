@@ -281,6 +281,14 @@ public:
   typedef K1     Kernel1;
   typedef K2     Kernel2;
 
+  template < typename T >
+  struct Ambient_dimension {
+    typedef typename T::Ambient_dimension type;
+  };
+  
+  typedef typename K2::Kernel_tag                       Kernel_tag;
+  typedef typename K2::Rep_tag                          Rep_tag;
+  
   enum { Has_filtered_predicates = true };
   enum { Has_static_filters = false };
   typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;

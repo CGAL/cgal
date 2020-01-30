@@ -65,16 +65,16 @@ public:
     : _n1(d), _n2(d)
   { CGAL_assertion(is_valid()); }
   
-  Filtered_rational(const NT1 &n1, const NT2 &n2)
-    : _n1(n1), _n2(n2)
+  Filtered_rational(const NT1 &_n1, const NT2 &_n2)
+    : _n1(_n1), _n2(_n2)
   { CGAL_assertion(is_valid()); }
 
   Filtered_rational(const std::pair<NT1,NT2> &np)
     : _n1(np.first), _n2(np.second)
   { CGAL_assertion(is_valid()); }
 
-  Filtered_rational(const NT2 &n2)
-    : _n1(to_interval(n1)), _n2(n2)
+  Filtered_rational(const NT2 &_n2)
+    : _n1(to_interval(_n2)), _n2(_n2)
   { CGAL_assertion(is_valid()); }
 
   Self& operator=(const std::pair<NT1,NT2> &np)
@@ -268,7 +268,7 @@ operator<(const Filtered_rational<NT1, NT2, Cmp> &a,
   if(a.n1().sup() < b.n1().inf()){
     return true;
   }
-  if(a.n1().inf() > b.n1.sup){
+  if(a.n1().inf() > b.n1().sup()){
     return false;
   }
   return a.n2() < b.n2();
@@ -290,7 +290,7 @@ operator<=(const Filtered_rational<NT1, NT2, Cmp> &a,
   if(a.n1().sup() <= b.n1().inf()){
     return true;
   }
-  if(a.n1().inf() >= b.n1.sup){
+  if(a.n1().inf() >= b.n1().sup()){
     return false;
   }
   return a.n2() <= b.n2();
@@ -673,6 +673,7 @@ public:
 
 };
 
+
 template < typename NT1, typename NT2, typename Cmp >
 class NTC_AST_base
       < Filtered_rational< NT1, NT2, Cmp> , Field_with_sqrt_tag >
@@ -685,6 +686,7 @@ private:
     typedef Filtered_rational<NT1, NT2, Cmp> Type;
 
 public:
+
 
     // CGAL::Algebraic_structure_traits<  >::Sqrt
     class Sqrt
@@ -699,15 +701,16 @@ public:
     };
 };
 
+
 } // namespace NTC_INTERN
 
 
 template < typename NT1, typename NT2, typename Cmp >
 class Algebraic_structure_traits <Filtered_rational<NT1, NT2, Cmp> >
   :public NTC_INTERN::NTC_AST_base< Filtered_rational< NT1, NT2, Cmp> ,
-                                 typename Algebraic_structure_traits<NT1>::Algebraic_category >
+                                 typename Algebraic_structure_traits<NT2>::Algebraic_category >
 {
-    typedef Algebraic_structure_traits<NT1> AST1;
+    typedef Algebraic_structure_traits<NT2> AST1;
 public:
     typedef Filtered_rational< NT1, NT2, Cmp> Type;
     typedef typename AST1::Algebraic_category Algebraic_category;
