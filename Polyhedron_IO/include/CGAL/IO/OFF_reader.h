@@ -85,19 +85,35 @@ namespace CGAL {
     polygons.resize(scanner.size_of_facets());
     if(scanner.has_colors())
       vcolors.resize(scanner.size_of_vertices());
+    bool vcolored = false;
     for (std::size_t i = 0; i < scanner.size_of_vertices(); ++i) {
         double x, y, z, w;
         scanner.scan_vertex( x, y, z, w);
         CGAL_assertion(w!=0);
         IO::internal::fill_point( x/w, y/w, z/w, points[i] );
-        if(scanner.has_colors())
+        if(i == 0)
         {
-            unsigned char r=0, g=0, b=0;
-            scanner.scan_color( r, g, b);
-            vcolors[i] = Color_rgb(r,g,b);
+          std::string col;
+          char ci;
+          std::getline(in, col);
+          std::istringstream iss(col);
+          if(iss >> ci){
+            std::istringstream iss2(col);
+            vcolors[i] = scanner.get_color_from_line(iss2);
+            vcolored = true;
+          }
         }
         else
-            scanner.skip_to_next_vertex(i);
+        {
+          if(vcolored){
+            //stores the RGB value
+            std::string col;
+            std::getline(in, col);
+            std::istringstream iss(col);
+            vcolors[i] = scanner.get_color_from_line(iss);
+          }
+        }
+        
         if(!in)
           return false;
     }
