@@ -42,8 +42,9 @@ namespace internal
   typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
                                           C3t3& c3t3)
   {
-    typedef typename C3t3::Triangulation      Tr;
-    typedef typename C3t3::Subdomain_index    Subdomain_index;
+    typedef typename C3t3::Triangulation       Tr;
+    typedef typename C3t3::Subdomain_index     Subdomain_index;
+    typedef typename C3t3::Surface_patch_index Surface_patch_index;
     typedef typename Tr::Geom_traits::Point_3 Point;
     typedef typename Tr::Facet                Facet;
     typedef typename Tr::Vertex_handle        Vertex_handle;
@@ -51,33 +52,52 @@ namespace internal
     typedef typename Tr::Cell_circulator      Cell_circulator;
 
     Tr& tr = c3t3.triangulation();
-    Vertex_handle v1 = e.first->vertex(e.second);
-    Vertex_handle v2 = e.first->vertex(e.third);
+    const Vertex_handle v1 = e.first->vertex(e.second);
+    const Vertex_handle v2 = e.first->vertex(e.third);
 
     //backup subdomain info of incident cells before making changes
     short dimension = (c3t3.is_in_complex(e)) ? 1 : 3;
-    boost::unordered_map<Facet, Subdomain_index> info;
+    boost::unordered_map<Facet, Subdomain_index> cells_info;
+    boost::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index> > facets_info;
 
     Cell_circulator circ = tr.incident_cells(e);
     Cell_circulator end = circ;
-    Subdomain_index prev = c3t3.subdomain_index(circ);
-    Subdomain_index curr = prev;
     do
     {
+      const int index_v1 = circ->index(v1);
+      const int index_v2 = circ->index(v2);
+
       //keys are the opposite facets to the ones not containing e,
       //because they will not be modified
-      Facet opp_facet = tr.mirror_facet(Facet(circ, circ->index(v1)));
-      info.insert(std::make_pair(opp_facet, c3t3.subdomain_index(circ)));
+      const Subdomain_index subdomain = c3t3.subdomain_index(circ);
+      const Facet opp_facet1 = tr.mirror_facet(Facet(circ, index_v1));
+      const Facet opp_facet2 = tr.mirror_facet(Facet(circ, index_v2));
 
-      opp_facet = tr.mirror_facet(Facet(circ, circ->index(v2)));
-      info.insert(std::make_pair(opp_facet, c3t3.subdomain_index(circ)));
+      // volume data
+      cells_info.insert(std::make_pair(opp_facet1, subdomain));
+      cells_info.insert(std::make_pair(opp_facet2, subdomain));
+      if (c3t3.is_in_complex(circ))
+        c3t3.remove_from_complex(circ);
+
+      // surface data for facets of the cells to be split
+      const int findex = CGAL::Triangulation_utils_3::next_around_edge(index_v1, index_v2);
+      if (c3t3.is_in_complex(circ, findex))
+      {
+        if (dimension == 3)
+          dimension = 2;
+      }
+      Surface_patch_index patch = c3t3.surface_patch_index(circ, findex);
+      Vertex_handle opp_vertex = circ->vertex(findex);
+      facets_info.insert(std::make_pair(opp_facet1,
+          std::make_pair(opp_vertex, patch)));
+      facets_info.insert(std::make_pair(opp_facet2,
+          std::make_pair(opp_vertex, patch)));
+
+      if(c3t3.is_in_complex(circ, findex))
+        c3t3.remove_from_complex(circ, findex);
 
       ++circ;
-      prev = curr;
-      curr = c3t3.subdomain_index(circ);
 
-      if (prev != curr && dimension == 3)
-        dimension = 2;
     } while (circ != end);
 
     // insert midpoint
@@ -85,18 +105,54 @@ namespace internal
     const Point m = tr.geom_traits().construct_midpoint_3_object()
                            (point(v1->point()), point(v2->point()));
     new_v->set_point(typename Tr::Point(m));
+    new_v->set_dimension(dimension);
 
-    // update dimension
-    c3t3.set_dimension(new_v, dimension);
-
+    // update c3t3 with subdomain and surface patch indices
     std::vector<Cell_handle> new_cells;
     tr.incident_cells(new_v, std::back_inserter(new_cells));
-    for (std::size_t i = 0; i < new_cells.size(); ++i)
+    for (Cell_handle new_cell : new_cells)
     {
-      Cell_handle nci = new_cells[i];
-      Facet fi(nci, nci->index(new_v));
-      Subdomain_index n_index = info.at(tr.mirror_facet(fi));
-      c3t3.set_subdomain_index(nci, n_index);
+      const Facet fi(new_cell, new_cell->index(new_v));
+      const Facet mfi = tr.mirror_facet(fi);
+
+      //get subdomain info back
+      CGAL_assertion(cells_info.find(mfi) != cells_info.end());
+      Subdomain_index n_index = cells_info.at(mfi);
+      if (Subdomain_index() != n_index)
+        c3t3.add_to_complex(new_cell, n_index);
+      else
+        new_cell->set_subdomain_index(Subdomain_index());
+
+      // get surface info back
+      CGAL_assertion(facets_info.find(mfi) != facets_info.end());
+      const std::pair<Vertex_handle, Surface_patch_index> v_and_opp_patch = facets_info.at(mfi);
+
+      // facet opposite to new_v (status wrt c3t3 is unchanged)
+      new_cell->set_surface_patch_index(new_cell->index(new_v),
+                                        mfi.first->surface_patch_index(mfi.second));
+      
+      // new half-facet (added or not to c3t3 depending on the stored surface patch index)
+      if (Surface_patch_index() == v_and_opp_patch.second)
+        new_cell->set_surface_patch_index(new_cell->index(v_and_opp_patch.first),
+                                          Surface_patch_index());
+      else
+        c3t3.add_to_complex(new_cell,
+                            new_cell->index(v_and_opp_patch.first),
+                            v_and_opp_patch.second);
+
+      // newly created internal facet
+      for (int i = 0; i < 4; ++i)
+      {
+        const Vertex_handle vi = new_cell->vertex(i);
+        if (vi == v1 || vi == v2)
+        {
+          new_cell->set_surface_patch_index(i, Surface_patch_index());
+          break;
+        }
+      }
+
+      //the 4th facet (new_v, v_and_opp_patch.first, v1 or v2)
+      // will have its patch tagged from the other side, if needed
     }
 
     return new_v;
@@ -110,8 +166,6 @@ namespace internal
                     CellSelector cell_selector)
   {
     if (is_outside(e, c3t3, imaginary_index, cell_selector))
-      return false;
-    if (is_imaginary(e, c3t3, imaginary_index))
       return false;
 
     if (protect_boundaries)
@@ -216,7 +270,6 @@ namespace internal
         visitor.before_split(tr, edge);
         Vertex_handle vh = split_edge(edge, c3t3);
         visitor.after_split(tr, vh);
-        //CGAL_assertion(tr.is_valid(true));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ofs << vh->point() << std::endl;
