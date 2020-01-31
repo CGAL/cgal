@@ -251,8 +251,9 @@ public:
   Tds & operator= (Tds && tds)
     noexcept(noexcept(Tds(std::move(tds))))
   {
-    Tds tmp(std::move(tds));
-    swap(tmp);
+    _cells = std::move(tds._cells);
+    _vertices = std::move(tds._vertices);
+    _dimension = std::exchange(tds._dimension, -2);
     return *this;
   }
 
