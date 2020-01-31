@@ -34,6 +34,36 @@ Barnard <I>et al.</I> \cgalCite{bdh-qach-96}.
 template <class InputIterator, class PolygonMesh, class Traits>
 void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, const Traits& ch_traits = Default_traits);
 
+
+/*!
+\ingroup PkgConvexHull3Functions
+ * \brief computes the convex hull of the points of `g`.
+ * The polygon mesh `pm` is cleared, then
+ * the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
+ * that is `pm` will contain only triangular facets.
+ * if the convex hull is a point or a segment, endpoints will be added in `pm` as isolated vertices.
+ * 
+ * \tparam VertexListGraph a model of `VertexListGraph`.
+ * \tparam PolygonMesh must be a model of `MutableFaceGraph`.
+ * \tparam NamedParameters a sequence of named parameters
+ * 
+ * \param g the graph
+ * \param pm the `PolygonMesh` that will contain the convex hull
+ * \param np optional sequence of named parameters among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.
+ *   If this parameter is omitted, an internal property map for
+ *   `CGAL::vertex_point_t` must be available in `VertexListGraph`
+ * \cgalParamEnd
+   
+ * \attention The user must include the header file of the `Polygon_mesh` type.
+ */
+template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+void convex_hull_3(const VertexListGraph& g,
+                   PolygonMesh& pm,
+                   const NamedParameters& np);
+
 /*!
 \ingroup PkgConvexHull3Functions
 

@@ -54,6 +54,9 @@ create_single_source_cgal_program( "lloyd_algorithm.cpp" )
 
 create_single_source_cgal_program( "quickhull_3.cpp" )
 
+create_single_source_cgal_program( "quickhull_3_SM.cpp" )
+
+
 create_single_source_cgal_program( "quickhull_any_dim_3.cpp" )
 
 create_single_source_cgal_program( "extreme_points_3_sm.cpp" )
