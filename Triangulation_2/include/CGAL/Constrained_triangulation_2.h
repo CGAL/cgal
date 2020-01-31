@@ -556,7 +556,7 @@ public:
     {
       Edge_circulator ec=incident_edges(v), done(ec);
       bool are_there = false;
-      if (ec == 0) return are_there;
+      if (ec == nullptr) return are_there;
       do {
 	if(is_constrained(*ec)) {
 	  *out++ = *ec;
@@ -572,7 +572,7 @@ public:
  OutputItEdges  incident_constraints(Vertex_handle v, 
 				      OutputItEdges out) const {
    Edge_circulator ec=incident_edges(v), done(ec);
-   if (ec == 0) return  out;
+   if (ec == nullptr) return  out;
    do {
      if(is_constrained(*ec))    *out++ = *ec;
      ec++;
@@ -1064,7 +1064,7 @@ update_constraints_incident(Vertex_handle va,
     //dimension() ==2
     int cwi, ccwi, indf;
     Face_circulator fc=incident_faces(va), done(fc);  
-    CGAL_triangulation_assertion(fc != 0);
+    CGAL_triangulation_assertion(fc != nullptr);
     do {
       indf = fc->index(va);
       cwi=cw(indf);
@@ -1091,7 +1091,7 @@ clear_constraints_incident(Vertex_handle va)
  Edge_circulator ec=incident_edges(va), done(ec);
  Face_handle f;
  int indf;
-  if ( ec != 0){
+  if ( ec != nullptr){
     do {
       f = (*ec).first ;
       indf = (*ec).second;
@@ -1278,7 +1278,7 @@ Constrained_triangulation_2<Gt,Tds,Itag>::
 remove_incident_constraints(Vertex_handle v)
 {
    Edge_circulator ec=incident_edges(v), done(ec);
-   if (ec == 0) return;
+   if (ec == nullptr) return;
    do {
 	if(is_constrained(*ec)) { remove_constrained_edge((*ec).first,
 						   (*ec).second);}

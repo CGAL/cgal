@@ -822,7 +822,7 @@ is_edge(Vertex_handle va, Vertex_handle vb,
 {
   Face_handle fc = va->face(); 
   Face_handle start = fc;
-  if (fc == 0) return false;
+  if (fc == nullptr) return false;
   int inda, indb;
   do {
     inda=fc->index(va);
