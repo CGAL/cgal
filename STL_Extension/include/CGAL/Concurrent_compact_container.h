@@ -114,6 +114,8 @@ namespace CCC_internal {
 // Free list (head and size)
 template< typename pointer, typename size_type, typename CCC >
 class Free_list {
+  // Not that the implicitly-defined member functions copy the
+  // pointer, and not the pointed data.
 public:
   Free_list() : m_head(nullptr), m_size(0) {
 #if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
@@ -150,13 +152,6 @@ public:
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   }
   bool empty()               { return size() == 0; }
-  // Warning: copy the pointer, not the data!
-  Free_list& operator= (const Free_list& other)
-  {
-    m_head = other.m_head;
-    m_size = other.m_size;
-    return *this;
-  }
 
   void merge(Free_list &other)
   {

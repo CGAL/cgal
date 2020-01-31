@@ -33,7 +33,6 @@ struct Node_1
 : public CGAL::Compact_container_base
 {
   Node_1() {}
-  Node_1(const Node_1& o) : time_stamp_(o.time_stamp_) {}
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -89,11 +88,6 @@ public:
     : m_values(values), m_cont(cont), m_iterators(iterators) 
   {}
   
-  Insert_in_CCC_functor(const Insert_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
-      m_iterators(other.m_iterators)
-  {}
-
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for( size_t i = r.begin() ; i != r.end() ; ++i)
@@ -118,11 +112,6 @@ public:
     : m_cont(cont), m_iterators(iterators) 
   {}
   
-  Erase_in_CCC_functor(const Erase_in_CCC_functor &other)
-    : m_cont(other.m_cont), 
-      m_iterators(other.m_iterators)
-  {}
-
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for( size_t i = r.begin() ; i != r.end() ; ++i)
@@ -149,12 +138,6 @@ public:
     m_free_elements(free_elements), m_num_erasures(num_erasures)
   {}
   
-  Insert_and_erase_in_CCC_functor(const Insert_and_erase_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
-      m_iterators(other.m_iterators), m_free_elements(other.m_free_elements),
-      m_num_erasures(other.m_num_erasures)
-  {}
-
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for( size_t i = r.begin() ; i != r.end() ; ++i)

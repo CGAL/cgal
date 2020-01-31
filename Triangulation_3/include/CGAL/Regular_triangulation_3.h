@@ -1408,11 +1408,6 @@ protected:
       : m_rt(rt), m_points(points), m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point(const Insert_point& ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1517,12 +1512,6 @@ protected:
                            tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
       : m_rt(rt), m_points(points), m_infos(infos), m_indices(indices),
         m_tls_hint(tls_hint)
-    {}
-
-    // Constructor
-    Insert_point_with_info(const Insert_point_with_info &ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_infos(ip.m_infos),
-        m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
     {}
 
     // operator()
@@ -1634,12 +1623,6 @@ protected:
                  tbb::concurrent_vector<Vertex_handle>& vertices_to_remove_sequentially)
       : m_rt(rt), m_vertices(vertices),
         m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
-    {}
-
-    // Constructor
-    Remove_point(const Remove_point& rp)
-      : m_rt(rp.m_rt), m_vertices(rp.m_vertices),
-        m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
     {}
 
     // operator()
