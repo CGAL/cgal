@@ -193,21 +193,42 @@ public:
     CGAL_triangulation_postcondition(is_valid());
   }
 
+  Regular_triangulation_3(Regular_triangulation_3&& rt)
+    noexcept(noexcept(Tr_Base(std::move(rt))))
+    : Tr_Base(std::move(rt)), hidden_point_visitor(this)
+  {
+    CGAL_triangulation_postcondition(is_valid());
+  }
+
+  ~Regular_triangulation_3() = default;
+
   void swap(Regular_triangulation_3& tr)
+    noexcept(noexcept(this->Tr_Base::swap(tr)))
   {
     // The 'vertices' and 'hidden_points' members of 'hidden_point_visitor' should be empty
     // as they are only filled (and cleared) during the insertion of a point.
     // Hidden points are not stored there, but rather in cells. Thus, the only thing that must be set
     // is the triangulation pointer.
     Hidden_point_visitor<Concurrency_tag> new_hpv(this);
-    std::swap(hidden_point_visitor, new_hpv);
+    using std::swap;
+    swap(hidden_point_visitor, new_hpv);
 
     Tr_Base::swap(tr);
   }
 
-  Regular_triangulation_3& operator=(Regular_triangulation_3 tr)
+  Regular_triangulation_3& operator=(const Regular_triangulation_3& tr)
   {
-    swap(tr);
+    Regular_triangulation_3 copy(tr);
+    copy.swap(*this);
+    return *this;
+  }
+
+  Regular_triangulation_3& operator=(Regular_triangulation_3&& tr)
+    noexcept(noexcept(Regular_triangulation_3(std::move(tr))) &&
+             noexcept(std::declval<Regular_triangulation_3>().swap(*this)))
+  {
+    Regular_triangulation_3 copy(std::move(tr));
+    copy.swap(*this);
     return *this;
   }
 

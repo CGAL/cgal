@@ -15,6 +15,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <type_traits>
 
 #include "_test_cls_iterator.h"
 #include "_test_cls_circulator.h"
@@ -78,6 +79,11 @@ void
 _test_cls_triangulation_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
+
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
 
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested

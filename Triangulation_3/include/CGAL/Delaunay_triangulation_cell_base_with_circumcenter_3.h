@@ -63,10 +63,25 @@ public:
     : Cb(c), circumcenter_(c.circumcenter_ != nullptr ? new Point(*(c.circumcenter_)) : nullptr)
   {}
 
+  Delaunay_triangulation_cell_base_with_circumcenter_3
+        (Delaunay_triangulation_cell_base_with_circumcenter_3 &&c)
+    : Cb(std::move(c)), circumcenter_(nullptr)
+  {
+      std::swap(circumcenter_, c.circumcenter_);
+  }
+
   Delaunay_triangulation_cell_base_with_circumcenter_3&
   operator=(const Delaunay_triangulation_cell_base_with_circumcenter_3 &c)
   {
       Delaunay_triangulation_cell_base_with_circumcenter_3 tmp=c;
+      std::swap(tmp, *this);
+      return *this;
+  }
+
+  Delaunay_triangulation_cell_base_with_circumcenter_3&
+  operator=(Delaunay_triangulation_cell_base_with_circumcenter_3 &&c)
+  {
+      Delaunay_triangulation_cell_base_with_circumcenter_3 tmp=std::move(c);
       std::swap(tmp, *this);
       return *this;
   }

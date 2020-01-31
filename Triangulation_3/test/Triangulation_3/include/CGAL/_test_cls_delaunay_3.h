@@ -19,6 +19,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <type_traits>
 
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
@@ -169,6 +170,11 @@ void
 _test_cls_delaunay_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
+
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
 
   typedef typename Test_location_policy<Cls>::Location_policy Location_policy;
 
