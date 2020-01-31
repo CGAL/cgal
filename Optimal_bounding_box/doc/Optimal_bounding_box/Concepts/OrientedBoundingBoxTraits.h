@@ -34,6 +34,6 @@ public:
   /// Returns the unitary matrix `Q` obtained in the QR-decomposition of the matrix `m`
   Matrix get_Q(const Matrix& m) const;
 
-  /// Gives access to the `Construct_bbox_3` construction object
+  /// Returns the 3D box construction functor
   Construct_bbox_3 construct_bbox_3_object() const;
 };

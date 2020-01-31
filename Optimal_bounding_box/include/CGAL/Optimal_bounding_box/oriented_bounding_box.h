@@ -246,11 +246,11 @@ template <typename PointRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void oriented_bounding_box(const PointRange& points,
                            Output& out,
-                           const CGAL_BGL_NP_CLASS& np,
+                           const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                           typename boost::enable_if<
-                             typename boost::has_range_iterator<PointRange>
-                                    >::type* = 0
+                           , typename boost::enable_if<
+                               typename boost::has_range_iterator<PointRange>
+                           >::type* = 0
 #endif
                            )
 {
@@ -326,11 +326,11 @@ template <typename PolygonMesh,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 void oriented_bounding_box(const PolygonMesh& pmesh,
                            Output& out,
-                           const CGAL_BGL_NP_CLASS& np,
+                           const CGAL_BGL_NP_CLASS& np
 #ifndef DOXYGEN_RUNNING
-                           typename boost::disable_if<
-                             typename boost::has_range_iterator<PolygonMesh>
-                                    >::type* = 0
+                           , typename boost::disable_if<
+                              typename boost::has_range_iterator<PolygonMesh>
+                           >::type* = 0
 #endif
                            )
 {
