@@ -179,7 +179,7 @@ public:
 
   void *get_lock_data_structure() const
   {
-    return 0;
+    return nullptr;
   }
 
   void set_lock_data_structure(void *) const {}
@@ -245,7 +245,7 @@ protected:
 public:
   bool is_parallel() const
   {
-    return m_lock_ds != 0;
+    return m_lock_ds != nullptr;
   }
 
   // LOCKS
@@ -1139,7 +1139,7 @@ public:
                               typename std::iterator_traits<InputIterator>::value_type,
                               Point
                           >
-                        >::type* = NULL)
+                        >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last)
