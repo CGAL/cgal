@@ -481,27 +481,27 @@ public:
     OptionalVariant& ov;
   public:
 
-    Make_optional_variant(OptionalVariant ov)
+    Make_optional_variant(OptionalVariant& ov)
       : ov(ov)
     {}
     
     template <typename ET>
     void operator()( const ET & et ) const
     {
-      typedef typename Type_mapper<ET, K2, Self>::type T;
+      typedef typename Type_mapper<ET, K2, Kernel_>::type T;
       Cartesian_converter<K2,K1> to_k1;
       to_k1(et);
-      ov = OptionalVariant(std::make_pair(to_k1(et),et));
+      ov = OptionalVariant(T(std::make_pair(to_k1(et),et)));
     }
 
     template <typename ET>
     void operator()( const std::vector<ET>& vec) const
     {
-      typedef typename Type_mapper<ET, K2, Self>::type T;
+      typedef typename Type_mapper<ET, K2, Kernel_>::type T;
       std::vector<T> resvec;
       Cartesian_converter<K2,K1> to_k1;
       for(const ET& et : vec){
-        resvec.push_back(std::make_pair(to_k1(et),et));
+        resvec.push_back(T(std::make_pair(to_k1(et),et)));
       }
       ov = OptionalVariant(resvec);
     }
