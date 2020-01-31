@@ -185,11 +185,11 @@ public:
   { }
 
   template <class ... A>
-  typename CGAL::cpp11::result_of<EP(const typename Getter<A>::second_type&...)>::type
+  typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type
   operator()(const A&... a) const
   {
-    typedef typename CGAL::cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<EP(const typename Getter<A>::second_type&...)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
     CGAL::Interval_nt<false>::Protector p;
     try{
       result_type_1 res1 = ap(get_approx(a)...);
@@ -221,8 +221,8 @@ public:
 
   template<typename F, typename ... A>
   struct result<F(A...)> {
-    typedef typename cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type R1;
-    typedef typename cpp11::result_of<EP(const typename Getter<A>::second_type&...)>::type R2;
+    typedef typename cpp11::result_of<AP(typename Getter<A>::first_type...)>::type R1;
+    typedef typename cpp11::result_of<EP(typename Getter<A>::second_type...)>::type R2;
     typedef typename Pairify<R1,R2,EK,FRK>::result_type type;
   };
   
@@ -242,19 +242,8 @@ public:
     template <typename ERT, typename ... A>
     const AT& operator()(const ERT&, const A&... a) const
     {
-          std::cout << std::is_lvalue_reference<AT>::value << std::endl;
-        std::cout << "XXXXXX" << typeid(AT).name() << std::endl;
-        std::cout << "YYYYYY" << typeid(const AT&).name() << std::endl;
-        
       return ap(a ...);
     }
-    
-    template <typename ERT>
-    const AT& operator()(const ERT&, int i, const AT& at) const
-    {
-      return ap(at,i);
-    }
-    
   };
   
   // In case we have to generate the approximation from the result of the exact construction
@@ -275,56 +264,22 @@ public:
      {
        return e2a(ert);
      }
-     
-     template <typename ERT>
-     AT operator()(const ERT& ert, int i, const AT& ) const
-     {
-       return e2a(ert);
-     }
-
    };
-  
-  
+
   // TODO: I think the result_of is simply using AP::result_type because arguments are not valid (pairs...)
   template <class ... A>
-  typename Pairify<typename CGAL::cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type,
-                   typename CGAL::cpp11::result_of<EP(const typename Getter<A>::second_type&...)>::type,
+  typename Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
+                   typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type,
                    EK,FRK>::result_type
   operator()(const A&... a) const
   {
-    typedef typename CGAL::cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<EP(const typename Getter<A>::second_type&...)>::type result_type_2;
+    typedef typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type result_type_1;
+    typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
     result_type_2 res2 = ep(get_exact(a)...);
 
-    std::cout << typeid(AP).name() << std::endl;
-    
-    
-    std::cout << std::is_lvalue_reference<result_type_1>::value << std::endl;
-    
-    std::cout << std::is_lvalue_reference<typename CGAL::cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type>::value << std::endl;
-    
-    
     return Pairify<result_type_1, result_type_2,EK,FRK>()(Approx<result_type_1,std::is_lvalue_reference<result_type_1>::value>(e2a,ap)
                                                           (res2, get_approx(a)...),
                                                           res2);
-  }
-
-
-  
-  // this is the overload for functors such as Construct_vertex_2
-  template <typename AT, typename ET>
-  typename Pairify<typename CGAL::cpp11::result_of<AP(const AT&,int)>::type,
-                   typename CGAL::cpp11::result_of<EP(const ET&,int)>::type,
-                   EK,FRK>::result_type
-  operator()(const std::pair<AT,ET>& p, int i) const
-  {
-    typedef typename CGAL::cpp11::result_of<AP(const AT&,int)>::type result_type_1;
-    typedef typename CGAL::cpp11::result_of<EP(const ET&,int)>::type result_type_2;
-    result_type_2 res2 = ep(get_exact(p),i);
-
-    return Pairify<result_type_1,result_type_2,EK,FRK>()(Approx<result_type_1,std::is_lvalue_reference<result_type_1>::value>(e2a,ap)
-                                                         (res2, i, get_approx(p)),
-                                                         res2);
   }
 };
 
