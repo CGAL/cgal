@@ -11,7 +11,7 @@ typedef CGAL::Simple_cartesian<CGAL::Gmpq>  EC;
 template <typename Kernel>
 int fct() {
 
-	typedef Kernel::Segment_2 Segment_2;
+	typedef typename Kernel::Segment_2 Segment_2;
   const Segment_2 segi = {
     { -4.0380854964382, -1.9947196614192 },
     { 10.43442091460618, -0.5886833953492263 } };
