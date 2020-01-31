@@ -143,6 +143,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 
     if(emit_item_about_to_be_destroyed) {
       Q_EMIT itemAboutToBeDestroyed(item);
+      item->aboutToBeDestroyed();
     }
 
     Q_EMIT updated();
