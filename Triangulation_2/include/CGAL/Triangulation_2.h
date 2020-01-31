@@ -241,6 +241,7 @@ public:
   // CONSTRUCTORS
   Triangulation_2(const Geom_traits& geom_traits=Geom_traits());
   Triangulation_2(const Triangulation_2<Gt,Tds> &tr);
+  Triangulation_2(Triangulation_2&&) = default;
 
   template <class InputIterator>
   Triangulation_2(InputIterator first, InputIterator last,
@@ -253,6 +254,10 @@ public:
   
   //Assignement
   Triangulation_2 &operator=(const Triangulation_2 &tr);
+  Triangulation_2 &operator=(Triangulation_2 &&) = default;
+
+  // Destructor
+  ~Triangulation_2() = default;
 
   //Helping
   void copy_triangulation(const Triangulation_2 &tr);

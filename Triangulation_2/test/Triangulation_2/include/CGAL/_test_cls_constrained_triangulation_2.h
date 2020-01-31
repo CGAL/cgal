@@ -92,6 +92,11 @@ template <class Triang>
 void 
 _test_cls_constrained_triangulation(const Triang &)
 {
+  static_assert(std::is_nothrow_move_constructible<Triang>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Triang>::value,
+                "move assignment is missing");
+
   // typedef Triangulation                       Cls;
   typedef typename Triang::Geom_traits          Gt;
 

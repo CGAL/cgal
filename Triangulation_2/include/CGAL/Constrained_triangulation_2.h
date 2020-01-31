@@ -201,6 +201,17 @@ public:
   //TODO Is that destructor correct ?
   virtual ~Constrained_triangulation_2() {}
 
+  // Ensure rule-of-five: define the copy- and move- constructors
+  // as well as the copy- and move- assignment operators.
+  Constrained_triangulation_2(const Constrained_triangulation_2 &) = default;
+  Constrained_triangulation_2(Constrained_triangulation_2 &&) = default;
+
+  Constrained_triangulation_2 &
+  operator=(const Constrained_triangulation_2 &) = default;
+
+  Constrained_triangulation_2 &
+  operator=(Constrained_triangulation_2 &&) = default;
+
 
   Constrained_edges_iterator constrained_edges_begin() const
   {
