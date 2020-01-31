@@ -319,8 +319,7 @@ void split_along_edges(TriangleMesh& tm,
   // now duplicate the edge and set its pointers
   for(std::size_t k=0; k<nb_shared_edges; ++k)
   {
-    halfedge_descriptor h    = halfedge(shared_edges[k], tm),
-                        h_opp = opposite(h, tm);
+    halfedge_descriptor h    = halfedge(shared_edges[k], tm);
     face_descriptor fh = face(h, tm);
     //add edge
     halfedge_descriptor new_hedge = halfedge(add_edge(tm), tm),
@@ -624,19 +623,11 @@ void split(      TriangleMesh& tm,
   using parameters::get_parameter;
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
-  namespace params = PMP::parameters;
 
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-  typedef typename GT::edge_descriptor edge_descriptor;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPMap1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPMap2;
 
   typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Ecm;
-  typedef typename VPMap1::value_type Point;
-  typedef CGAL::Face_filtered_graph<TriangleMesh> Filtered_graph;
 
   VPMap1 vpm_tm = choose_parameter(get_parameter(np_tm, internal_np::vertex_point),
                              get_property_map(vertex_point, tm));
