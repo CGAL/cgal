@@ -99,9 +99,12 @@ struct Getter<X>\
 const X& get_approx(const X& x) { return x; }\
 const X& get_exact(const X& x) { return x; }
 
-
 template <class A>
-struct Getter;
+struct Getter
+{
+  typedef typename Getter<typename A::Rep>::first_type first_type;
+  typedef typename Getter<typename A::Rep>::second_type second_type;
+};
 
 SPEC_NT_GETTER(int)
 SPEC_NT_GETTER(unsigned int)
@@ -115,7 +118,7 @@ SPEC_NT_GETTER(Return_base_tag)
 #undef SPEC_NT_GETTER
 
 template <class A1, class A2>
-struct Getter<std::pair<A1,A2>>
+struct Getter<std::pair<A1, A2> >
 {
   typedef A1 first_type;
   typedef A2 second_type;
@@ -127,11 +130,6 @@ struct Getter<Filtered_rational<A_FT,E_FT>>
   typedef A_FT first_type;
   typedef E_FT second_type;
 };
-
-template <class A>
-struct Getter
-  : Getter<typename A::Rep>
-{};
 
 template <class A1, class A2>
 const A1&
