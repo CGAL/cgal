@@ -105,8 +105,13 @@ protected:
 public:
   Triangulation_data_structure_2(); 
   Triangulation_data_structure_2(const Tds &tds);
+  Triangulation_data_structure_2(Triangulation_data_structure_2&& tds)
+    noexcept(noexcept(Face_range(std::move(tds._faces))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))));
+
   ~Triangulation_data_structure_2();
   Tds& operator= (const Tds &tds);
+  Tds& operator= (Tds&& tds) noexcept(noexcept(Tds(std::move(tds))));
   void swap(Tds &tds);
 
   //ACCESS FUNCTIONS
@@ -642,9 +647,6 @@ public:
 
   Triangulation_default_data_structure_2(const Geom_traits& = Geom_traits())
     : Tds() {}
- 
-  Triangulation_default_data_structure_2(const Tdds &tdds)
-    : Tds(tdds) {}
 };
 
 //for backward compatibility
@@ -657,8 +659,6 @@ public:
   typedef Triangulation_data_structure_using_list_2<Vb,Fb>  Tdsul;
 
   Triangulation_data_structure_using_list_2(): Tds() {} 
-  Triangulation_data_structure_using_list_2(const Tdsul &tdsul)
-    : Tds(tdsul) {}
 };
 
  
@@ -677,18 +677,41 @@ Triangulation_data_structure_2(const Tds &tds)
 
 template < class Vb, class Fb>
 Triangulation_data_structure_2<Vb,Fb> ::
+Triangulation_data_structure_2(Tds &&tds)
+    noexcept(noexcept(Face_range(std::move(tds._faces))) &&
+             noexcept(Vertex_range(std::move(tds._vertices))))
+  : _dimension(std::exchange(tds._dimension, -2))
+  , _faces(std::move(tds._faces))
+  , _vertices(std::move(tds._vertices))
+{
+}
+
+template < class Vb, class Fb>
+Triangulation_data_structure_2<Vb,Fb> ::
 ~Triangulation_data_structure_2()
 {
   clear();
 }
 
-//assignement  
+//copy-assignment  
 template < class Vb, class Fb>
 Triangulation_data_structure_2<Vb,Fb>&
 Triangulation_data_structure_2<Vb,Fb> ::
 operator= (const Tds &tds)
 {
   copy_tds(tds);
+  return *this;
+}  
+
+//move-assignment  
+template < class Vb, class Fb>
+Triangulation_data_structure_2<Vb,Fb>&
+Triangulation_data_structure_2<Vb,Fb> ::
+operator= (Tds &&tds) noexcept(noexcept(Tds(std::move(tds))))
+{
+  _faces = std::move(tds._faces);
+  _vertices = std::move(tds._vertices);
+  _dimension = std::exchange(tds._dimension, -2);
   return *this;
 }  
 
