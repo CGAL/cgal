@@ -73,7 +73,7 @@ Refer to those respective papers for the details of the implementation.
 \tparam VPM a model of `ReadablePropertyMap` with `vertex_descriptor` as key and `Traits::Point_3` as value type.
             The default is `boost::property_map<HG, CGAL::vertex_point_t>::%const_type`.
 
-If no property map is provided through the constructor of the class, the internal property maps must
+If index property maps are not provided through the constructor of the class, internal property maps must
 be available and initialized.
 
 \sa \link PkgBGLHelper `CGAL::set_halfedgeds_items_id()`\endlink
