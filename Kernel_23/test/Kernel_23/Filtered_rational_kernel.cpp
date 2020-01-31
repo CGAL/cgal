@@ -46,10 +46,19 @@ typedef CGAL::Filtered_rational_kernel<K1,K2>    Cls;
 
 int main()
 {
+
+  {
+  typedef CGAL::cpp11::result_of<K1::Construct_vertex_2(K1::Iso_rectangle_2,int)>::type T;
+
+  std::cout << std::is_reference<T>::value << std::endl;
+  }
+  
+
   std::cout << "Testing 2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_2( Cls() );
 
+#if 0
   std::cout << "Testing 3d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_3( Cls() );
@@ -75,6 +84,6 @@ int main()
   std::cout << "Testing 3d-2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-
+#endif
   return 0;
 }

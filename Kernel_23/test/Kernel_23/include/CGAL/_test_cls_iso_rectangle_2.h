@@ -90,7 +90,11 @@ _test_cls_iso_rectangle_2(const R& )
 
  std::cout << '.';
 
+
  assert( r1.vertex(0) == p1 );
+
+#if 0
+
  assert( r1.vertex(1) == p5 );
  assert( r1.vertex(2) == p3 );
  assert( r1.vertex(3) == p2 );
@@ -104,7 +108,7 @@ _test_cls_iso_rectangle_2(const R& )
  assert( r2[1] == r2.vertex(1) );
  assert( r2[3] == r2.vertex(3) );
  assert( r2[4] == r2.vertex(0) );
-
+#endif
  std::cout << '.';
 
  assert( (r4.min)() == p1 );

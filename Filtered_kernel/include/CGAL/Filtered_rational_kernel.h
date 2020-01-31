@@ -8,10 +8,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
-// Author(s)     : Sebastien Loriot
+// Author(s)     : Sebastien Loriot, Andreas Fabri
 
 #ifndef CGAL_FILTERED_RATIONAL_KERNEL_H
 #define CGAL_FILTERED_RATIONAL_KERNEL_H
+
+#include <type_traits>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/intersections.h>
@@ -226,6 +228,65 @@ public:
     typedef typename Pairify<R1,R2,EK,FRK>::result_type type;
   };
   
+  // In case the exact result type is a reference 
+  template <typename AT, bool b> // = std::is_lvalue_reference<AT>::value>
+  struct Approx {
+    
+     CGAL::Cartesian_converter<EK, AK> e2a;
+     AP ap;
+
+     Approx(const CGAL::Cartesian_converter<EK, AK>& e2a,
+            const AP& ap)
+       : e2a(e2a), ap(ap)
+     {}
+     
+
+    template <typename ERT, typename ... A>
+    const AT& operator()(const ERT&, const A&... a) const
+    {
+          std::cout << std::is_lvalue_reference<AT>::value << std::endl;
+        std::cout << "XXXXXX" << typeid(AT).name() << std::endl;
+        std::cout << "YYYYYY" << typeid(const AT&).name() << std::endl;
+        
+      return ap(a ...);
+    }
+    
+    template <typename ERT>
+    const AT& operator()(const ERT&, int i, const AT& at) const
+    {
+      return ap(at,i);
+    }
+    
+  };
+  
+  // In case we have to generate the approximation from the result of the exact construction
+   template <typename AT>
+   struct Approx<AT, false> {
+
+     CGAL::Cartesian_converter<EK, AK> e2a;
+     AP ap;
+
+     Approx(const CGAL::Cartesian_converter<EK, AK>& e2a,
+            const AP& ap)
+       : e2a(e2a), ap(ap)
+     {}
+     
+     
+     template <typename ERT, typename ... A>
+     AT operator()(const ERT& ert, const A&... ) const
+     {
+       return e2a(ert);
+     }
+     
+     template <typename ERT>
+     AT operator()(const ERT& ert, int i, const AT& ) const
+     {
+       return e2a(ert);
+     }
+
+   };
+  
+  
   // TODO: I think the result_of is simply using AP::result_type because arguments are not valid (pairs...)
   template <class ... A>
   typename Pairify<typename CGAL::cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type,
@@ -236,10 +297,22 @@ public:
     typedef typename CGAL::cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<EP(const typename Getter<A>::second_type&...)>::type result_type_2;
     result_type_2 res2 = ep(get_exact(a)...);
-    return Pairify<result_type_1, result_type_2,EK,FRK>()(e2a(res2), res2);
+
+    std::cout << typeid(AP).name() << std::endl;
+    
+    
+    std::cout << std::is_lvalue_reference<result_type_1>::value << std::endl;
+    
+    std::cout << std::is_lvalue_reference<typename CGAL::cpp11::result_of<AP(const typename Getter<A>::first_type&...)>::type>::value << std::endl;
+    
+    
+    return Pairify<result_type_1, result_type_2,EK,FRK>()(Approx<result_type_1,std::is_lvalue_reference<result_type_1>::value>(e2a,ap)
+                                                          (res2, get_approx(a)...),
+                                                          res2);
   }
 
 
+  
   // this is the overload for functors such as Construct_vertex_2
   template <typename AT, typename ET>
   typename Pairify<typename CGAL::cpp11::result_of<AP(const AT&,int)>::type,
@@ -250,8 +323,10 @@ public:
     typedef typename CGAL::cpp11::result_of<AP(const AT&,int)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<EP(const ET&,int)>::type result_type_2;
     result_type_2 res2 = ep(get_exact(p),i);
-    typedef typename Type_mapper<ET,EK,FRK>::type T;
-    return Pairify<result_type_1,result_type_2,EK,FRK>()(e2a(res2), res2);
+
+    return Pairify<result_type_1,result_type_2,EK,FRK>()(Approx<result_type_1,std::is_lvalue_reference<result_type_1>::value>(e2a,ap)
+                                                         (res2, i, get_approx(p)),
+                                                         res2);
   }
 };
 
