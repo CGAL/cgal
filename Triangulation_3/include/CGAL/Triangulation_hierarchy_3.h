@@ -139,12 +139,15 @@ public:
     return *this;
   }
 
-  Triangulation_hierarchy_3 & operator=(Triangulation_hierarchy_3&& tr)
-    noexcept( noexcept(Triangulation_hierarchy_3(std::move(tr))) &&
-              noexcept(this->swap(std::declval<Triangulation_hierarchy_3&>())) )
+  Triangulation_hierarchy_3 & operator=(Triangulation_hierarchy_3&& other)
+    noexcept( noexcept(Triangulation_hierarchy_3(std::move(other))) )
   {
-    Triangulation_hierarchy_3 tmp(std::move(tr));
-    swap(tmp);
+    static_cast<Tr_Base&>(*this) = std::move(other);
+    hierarchy[0] = this;
+    for(int i=1; i<maxlevel; ++i) {
+      hierarchy[i] = other.hierarchy[i];
+      other.hierarchy[i] = nullptr;
+    }
     return *this;
   }
 

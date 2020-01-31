@@ -216,6 +216,8 @@ public:
     , hierarchy(Vh_less_xy(this))
   { copy_triangulation(ctp);}
 
+  Constrained_triangulation_plus_2(Constrained_triangulation_plus_2&&) = default;
+
   virtual ~Constrained_triangulation_plus_2() {}
 
   Constrained_triangulation_plus_2 & operator=(const Constrained_triangulation_plus_2& ctp)
@@ -223,6 +225,8 @@ public:
     copy_triangulation(ctp);
     return *this;
   }
+
+  Constrained_triangulation_plus_2& operator=(Constrained_triangulation_plus_2&&) = default;
 
   template<class InputIterator>
   Constrained_triangulation_plus_2(InputIterator first,

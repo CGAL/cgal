@@ -182,10 +182,12 @@ public:
     : comp(comp)
     , sc_to_c_map(Pair_compare(comp))
   { }
-  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch); 
+  Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch);
+  Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
   ~Polyline_constraint_hierarchy_2(){ clear();}
   void clear();
   Polyline_constraint_hierarchy_2& operator=(const Polyline_constraint_hierarchy_2& ch);
+  Polyline_constraint_hierarchy_2& operator=(Polyline_constraint_hierarchy_2&& ch) = default;
 
   // Query 
   bool is_subconstrained_edge(T va, T vb) const;
