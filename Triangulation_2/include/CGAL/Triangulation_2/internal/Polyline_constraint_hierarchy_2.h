@@ -154,10 +154,6 @@ public:
   public:
     Context() : enclosing(nullptr) {}
 
-    Context(const Context& hc)
-      : enclosing(hc.enclosing), pos(hc.pos)
-    {}
-
     Vertex_it    vertices_begin()const { return enclosing->skip_begin();}
     Vertex_it    current()const {return pos;}
     Vertex_it    vertices_end()const {return enclosing->skip_end();}
@@ -499,7 +495,7 @@ swap(Constraint_id first, Constraint_id second){
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
       if(ctit->enclosing == first.vl_ptr()){
-	ctit->enclosing = 0;
+	ctit->enclosing = nullptr;
 	break;
       }
     }
@@ -530,7 +526,7 @@ swap(Constraint_id first, Constraint_id second){
 
     // and replace the context of the constraint
     for(Context_iterator ctit=hcl->begin(); ctit != hcl->end(); ctit++) {
-      if(ctit->enclosing == 0){
+      if(ctit->enclosing == nullptr){
 	ctit->enclosing = second.vl_ptr();
 	break;
       }

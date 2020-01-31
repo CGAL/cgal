@@ -724,7 +724,7 @@ locate_in_all(const Point& p,
     level--;
   }
 
-  for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=0;
+  for (int i=level+1; i<Triangulation_hierarchy_2__maxlevel;++i) pos[i]=nullptr;
   while(level > 0) {
     pos[level]=position=hierarchy[level]->locate(p, position);
     // locate at that level from "position"

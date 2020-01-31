@@ -398,7 +398,7 @@ public:
     ++beg;
     Face_container<Constrained_triangulation_plus_2> fc(*this);
 
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     if(pos != beg){
       // split off head
       --pos;
@@ -479,7 +479,7 @@ public:
       return pos;
       
     }
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     Vertices_in_constraint_iterator bit = vertices_in_constraint_begin(cid);
     Vertices_in_constraint_iterator pred = pos;
     --pred;
