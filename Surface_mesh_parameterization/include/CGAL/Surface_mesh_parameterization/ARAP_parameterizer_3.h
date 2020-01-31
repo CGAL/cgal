@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -42,6 +33,9 @@
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
+#ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+#include <Eigen/UmfPackSupport>
+#endif
 #endif
 
 #include <CGAL/assertions.h>
@@ -89,6 +83,7 @@
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <iostream>
@@ -156,7 +151,14 @@ namespace Surface_mesh_parameterization {
 ///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits`
 ///         is provided as default parameter:
 /// \code
-///   CGAL::Eigen_solver_traits<Eigen::BICGSTAB< Eigen::SparseMatrix<double> > >
+///   CGAL::Eigen_solver_traits<
+///           Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
+/// \endcode
+///         Moreover, if SparseSuite solvers are available, which is greatly preferable for speed,
+///         then the default parameter is:
+/// \code
+///   CGAL::Eigen_solver_traits<
+///           Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
 /// \endcode
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
@@ -172,12 +174,22 @@ public:
     BorderParameterizer_,
     Two_vertices_parameterizer_3<TriangleMesh_> >::type       Border_parameterizer;
 
+  #if !defined(CGAL_EIGEN3_ENABLED)
+  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+                            "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+  #endif
+
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
-    Eigen_solver_traits< > // defaults to Eigen::BICGSTAB with Eigen_sparse_matrix
+    #ifdef CGAL_SMP_USE_SPARSESUITE_SOLVERS
+      CGAL::Eigen_solver_traits<
+        Eigen::UmfPackLU<Eigen_sparse_matrix<double>::EigenType> >
+    #else
+      CGAL::Eigen_solver_traits<
+        Eigen::SparseLU<Eigen_sparse_matrix<double>::EigenType> >
+    #endif
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;
@@ -289,19 +301,26 @@ private:
     std::ostringstream out_ss;
     out_ss << filename << iter << ".off" << std::ends;
     std::ofstream out(out_ss.str().c_str());
-    output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
+    IO::output_uvmap_to_off(mesh, vertices, faces, uvmap, vimap, out);
   }
 
   // Copy the data from two vectors to the UVmap.
   template <typename VertexUVMap,
-            typename VertexIndexMap>
+            typename VertexIndexMap,
+            typename VertexParameterizedMap>
   void assign_solution(const Vector& Xu,
                        const Vector& Xv,
                        const Vertex_set& vertices,
                        VertexUVMap uvmap,
-                       const VertexIndexMap vimap)
+                       const VertexIndexMap vimap,
+                       const VertexParameterizedMap vpmap)
   {
     for(vertex_descriptor vd : vertices) {
+      // The solver might not have managed to exactly constrain the vertex that was marked
+      // as constrained; simply don't update its position.
+      if(get(vpmap, vd))
+        continue;
+
       int index = get(vimap, vd);
       NT u = Xu(index);
       NT v = Xv(index);
@@ -1115,13 +1134,13 @@ private:
       for(vertex_descriptor vd : vertices) {
         if(get(vpmap, vd)) {
           int index = get(vimap, vd);
-          CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);
-          CGAL_postcondition(std::abs(Xv[index] - Bv[index] ) < 1e-10);
+          CGAL_warning(std::abs(Xu[index] - Bu[index] ) < 1e-7);
+          CGAL_warning(std::abs(Xv[index] - Bv[index] ) < 1e-7);
         }
       }
     )
 
-    assign_solution(Xu, Xv, vertices, uvmap, vimap);
+    assign_solution(Xu, Xv, vertices, uvmap, vimap, vpmap);
     return status;
   }
 
@@ -1339,41 +1358,52 @@ public:
 #endif
 
     // main loop
-    for(unsigned int ite=1; ite<=m_iterations; ++ite)
+    unsigned int ite = 1;
+    for(;;)
     {
       compute_optimal_Lt_matrices(mesh, faces, ctmap, lp, lpmap, uvmap, ltmap);
       status = update_solution(mesh, vertices, ctmap, lp, lpmap, ltmap,
                                                uvmap, vimap, vpmap, A);
 
-      // Output the current situation
+      // Output the current parameterization
 #ifdef CGAL_SMP_ARAP_DEBUG
-      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap vimap);
+      output_uvmap("ARAP_iteration_", ite, mesh, vertices, faces, uvmap, vimap);
 #endif
-      energy_last = energy_this;
-      energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap,
-                                                        ltmap, uvmap);
-#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
-      std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
-#endif
-      CGAL_warning(energy_this >= 0);
 
       if(status != OK)
         return status;
 
       // energy based termination
-      if(m_tolerance > 0.0 && ite <= m_iterations) // if tolerance <= 0, don't compute energy
-      {  // also no need compute energy if this iteration is the last iteration
+      if(m_tolerance > 0. && ite <= m_iterations) { // if tolerance <= 0, don't compute energy
+        energy_last = energy_this;
+        energy_this = compute_current_energy(mesh, faces, ctmap, lp, lpmap, ltmap, uvmap);
+
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
+        std::cout << "Energy at iteration " << ite << " : " << energy_this << std::endl;
+#endif
+
+        if(energy_this < 0) {
+          // numerical issues can make it so you may get an energy of -1e-17,
+          // but it shouldn't be too wrong
+          CGAL_assertion(energy_this >= - std::numeric_limits<NT>::epsilon());
+          break;
+        }
+
         double energy_diff = std::abs((energy_last - energy_this) / energy_this);
         if(energy_diff < m_tolerance) {
-#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
-          std::cout << "Minimization process ended after: "
-                    << ite + 1 << " iterations. "
-                    << "Energy diff: " << energy_diff << std::endl;
-#endif
           break;
         }
       }
+
+      if(ite >= m_iterations)
+        break;
+      else
+        ++ite;
     }
+
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
+    std::cout << "Minimization process ended after: " << ite << " iterations. " << std::endl;
+#endif
 
 #ifdef CGAL_SMP_ARAP_DEBUG
     output_uvmap("ARAP_final_pre_processing.off", mesh, vertices, faces, uvmap, vimap);
@@ -1381,7 +1411,9 @@ public:
 
     if(!is_one_to_one_mapping(mesh, faces, uvmap)) {
      // Use post processing to handle flipped elements
-      std::cerr << "Parameterization is not valid; calling post processor" << std::endl;
+#ifdef CGAL_PARAMETERIZATION_ARAP_VERBOSE
+      std::cout << "Parameterization is not valid; calling post processor" << std::endl;
+#endif
       status = post_process(mesh, vertices, faces, bhd, uvmap, vimap);
     }
 

@@ -1,19 +1,10 @@
 // Copyright (c) 2017  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -102,6 +93,9 @@ CGAL_add_named_parameter(intersecting_volume_pairs_t, intersecting_volume_pairs_
 CGAL_add_named_parameter(i_used_as_a_predicate_t, i_used_as_a_predicate, i_used_as_a_predicate);
 CGAL_add_named_parameter(nesting_levels_t, nesting_levels, nesting_levels);
 CGAL_add_named_parameter(i_used_for_volume_orientation_t, i_used_for_volume_orientation, i_used_for_volume_orientation);
+CGAL_add_named_parameter(area_threshold_t, area_threshold, area_threshold)
+CGAL_add_named_parameter(volume_threshold_t, volume_threshold, volume_threshold)
+CGAL_add_named_parameter(dry_run_t, dry_run, dry_run)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

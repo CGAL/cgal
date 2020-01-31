@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Sebastien Loriot
@@ -157,7 +148,8 @@ public:
   public:
     
     No_lvalue_iterator() : point(NULL), idx(0) { }
-    No_lvalue_iterator(const Point& point, std::size_t idx = 0) : point(new Point(point)), idx(idx) { }
+    No_lvalue_iterator(const Point& point) : point(new Point(point)), idx(0) { }
+    No_lvalue_iterator(const Point& point, int) : point(new Point(point)), idx(Base::Dimension::value) { }
     
   private:
     
@@ -277,11 +269,7 @@ public:
 template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter : public Base_distance {
   PointPropertyMap ppmap;
-  typedef typename Base_distance::FT FT;
 
-  CGAL_static_assertion( ( boost::is_same< boost::lvalue_property_map_tag,
-                           typename boost::property_traits<PointPropertyMap>::category
-                         >::value ) );
 public:
     
   Distance_adapter( const PointPropertyMap& ppmap_=PointPropertyMap(),
@@ -289,7 +277,8 @@ public:
   ):Base_distance(distance),ppmap(ppmap_){}
 
   using Base_distance::transformed_distance;
-  
+
+  typedef typename Base_distance::FT FT;
   typedef Point_with_info Point_d;
   typedef typename Base_distance::Query_item Query_item;
 

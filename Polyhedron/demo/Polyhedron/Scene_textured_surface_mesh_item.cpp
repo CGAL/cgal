@@ -165,7 +165,7 @@ void Scene_textured_surface_mesh_item::common_constructor()
   setEdgeContainer(0, new Ec(Vi::PROGRAM_WITH_TEXTURED_EDGES, false));//edges
   getTriangleContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
   getEdgeContainer(0)->setTextureSize(QSize(d->texture.GetWidth(), d->texture.GetHeight()));
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     initGL(viewer);

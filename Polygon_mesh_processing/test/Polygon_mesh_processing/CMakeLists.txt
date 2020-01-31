@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing_Tests )
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL QUIET COMPONENTS Core)
 
 if ( NOT CGAL_FOUND )
 
@@ -13,6 +13,8 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
+
+include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -96,6 +98,7 @@ endif()
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
+  create_single_source_cgal_program("test_remove_caps_needles.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
@@ -114,3 +117,9 @@ if(TARGET ceres)
   target_link_libraries( test_mesh_smoothing PRIVATE ceres )
 endif(TARGET ceres)
 
+if(BUILD_TESTING)
+  set_tests_properties(
+      execution___of__triangulate_hole_Polyhedron_3_no_delaunay_test
+      execution___of__triangulate_hole_Polyhedron_3_test
+    PROPERTIES RESOURCE_LOCK Triangulation_with_hole)
+endif()

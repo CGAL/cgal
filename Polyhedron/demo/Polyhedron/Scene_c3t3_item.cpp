@@ -441,6 +441,7 @@ struct Scene_c3t3_item_priv {
     return false;
   }
   Scene_spheres_item *spheres;
+  std::vector<Tr::Vertex> tr_vertices;
   Scene_intersection_item *intersection;
   bool spheres_are_shown;
   const Scene_item* data_item_;
@@ -532,7 +533,7 @@ void Scene_c3t3_item::common_constructor(bool is_surface)
   setEdgeContainer(Grid_edges, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   setEdgeContainer(C3t3_edges, new Ec(Vi::PROGRAM_C3T3_EDGES, false));
   setPointContainer(C3t3_points, new Pc(Vi::PROGRAM_C3T3_EDGES, false));
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     v->installEventFilter(this);
   }
@@ -611,7 +612,7 @@ void Scene_c3t3_item::updateCutPlane()
   if(!d)
     return;
   if(d->need_changed) {
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       d->are_intersection_buffers_filled[viewer] = false;
@@ -1390,7 +1391,7 @@ void Scene_c3t3_item_priv::computeSpheres()
 
   if(!spheres)
     return;
-
+  int s_id = 0;
   for(Tr::Finite_vertices_iterator
       vit = c3t3.triangulation().finite_vertices_begin(),
       end =  c3t3.triangulation().finite_vertices_end();
@@ -1436,8 +1437,10 @@ void Scene_c3t3_item_priv::computeSpheres()
                           wp2p(vit->point()).z() + offset.z);
     float radius = vit->point().weight() ;
     typedef unsigned char UC;
-    spheres->add_sphere(Geom_traits::Sphere_3(center, radius),
+    tr_vertices.push_back(*vit);
+    spheres->add_sphere(Geom_traits::Sphere_3(center, radius),s_id++,
                         CGAL::Color(UC(c.red()), UC(c.green()), UC(c.blue())));
+    
   }
   spheres->invalidateOpenGLBuffers();
 }
@@ -1581,7 +1584,7 @@ Scene_c3t3_item::setColor(QColor c)
   d->compute_color_map(c);
   invalidateOpenGLBuffers();
   d->invalidate_stats();
-  BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+  for(auto v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     d->are_intersection_buffers_filled[viewer] = false;
@@ -1602,7 +1605,17 @@ void Scene_c3t3_item::show_spheres(bool b)
     contextMenu()->findChild<QAction*>("actionShowSpheres")->setChecked(b);
     if(b && !d->spheres)
     {
-      d->spheres = new Scene_spheres_item(this, true);
+      d->spheres = new Scene_spheres_item(this, d->c3t3.number_of_vertices_in_complex(), true);
+      connect(d->spheres, &Scene_spheres_item::picked,
+              this, [this](std::size_t id)
+      {
+        if(id == (std::size_t)(-1))
+          return;
+        QString msg = QString("Vertex's index : %1; Vertex's in dimension: %2.").arg(d->tr_vertices[id].index()).arg(d->tr_vertices[id].in_dimension());
+        CGAL::Three::Three::information(msg);
+        CGAL::Three::Three::mainViewer()->displayMessage(msg, 5000);
+        
+      });
       d->spheres->setName("Protecting spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
@@ -1619,7 +1632,6 @@ void Scene_c3t3_item::show_spheres(bool b)
     }
     Q_EMIT redraw();
   }
-
 }
 void Scene_c3t3_item::show_intersection(bool b)
 {
@@ -1636,7 +1648,7 @@ void Scene_c3t3_item::show_intersection(bool b)
     d->intersection->setRenderingMode(renderingMode());
     connect(d->intersection, SIGNAL(destroyed()), this, SLOT(reset_intersection_item()));
 
-    BOOST_FOREACH(auto v, CGAL::QGLViewer::QGLViewerPool())
+    for(auto v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       d->are_intersection_buffers_filled[viewer] = false;

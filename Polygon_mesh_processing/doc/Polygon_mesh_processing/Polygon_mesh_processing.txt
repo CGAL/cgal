@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors Sébastien Loriot, Jane Tournois, Ilker %O. Yaz
+\authors Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -535,6 +535,8 @@ finding the nearest point on a mesh given a point or a ray
 (`CGAL::Polygon_mesh_processing::locate_with_AABB_tree()`, and similar), and location-based predicates
 (for example, `CGAL::Polygon_mesh_processing::is_on_face_border()`).
 
+The example \ref Polygon_mesh_processing/locate_example.cpp presents a few of these functions.
+
 ****************************************
 \section PMPOrientation Orientation
 
@@ -878,6 +880,12 @@ and the number of surface patches that are separated by these edges.
 A first version of this package was started by Ilker %O. Yaz and Sébastien Loriot.
 Jane Tournois worked on the finalization of the API, code, and documentation.
 
+A prototype of mesh and shape smoothing was developed during the 2017 edition of the Google Summer of Code
+by Konstantinos Katrioplas, under supervision of Jane Tournois. It was finalized by Mael Rouxel-Labbé and
+integrated in \cgal 5.0.
+
+Functionalities related to mesh and polygon soup reparation have been introduced steadily over multiple versions
+since \cgal 4.10, in joint work between Sébastien Loriot and Mael Rouxel-Labbé.
 
 */
 } /* namespace CGAL */

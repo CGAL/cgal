@@ -70,7 +70,7 @@
 \cgalPkgPicture{hole_filling_ico.png}
  
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Sébastien Loriot, Jane Tournois, Ilker %O. Yaz}
+\cgalPkgAuthor{Sébastien Loriot, Mael Rouxel-Labbé, Jane Tournois, Ilker %O. Yaz}
 \cgalPkgDesc{This package provides
 a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms.}
@@ -157,6 +157,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycle()`
 - `CGAL::Polygon_mesh_processing::merge_duplicated_vertices_in_boundary_cycles()`
+- `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`
 
 \cgalCRPSection{Normal Computation Functions}
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`

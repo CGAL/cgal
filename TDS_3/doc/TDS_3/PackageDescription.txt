@@ -56,7 +56,7 @@ Section  \ref TDS3secintro.)
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3,Vertex_container_strategy,Cell_container_strategy,Concurrency_tag>` is a model for the concept of the 3D-triangulation data structure `TriangulationDataStructure_3`. It is templated by base classes for vertices and cells.
+- `CGAL::Triangulation_data_structure_3<VertexBase,CellBase,ConcurrencyTag>` is a model for the concept of the 3D-triangulation data structure `TriangulationDataStructure_3`. It is templated by base classes for vertices and cells.
 
 \cgal provides base vertex classes and base cell classes:
 

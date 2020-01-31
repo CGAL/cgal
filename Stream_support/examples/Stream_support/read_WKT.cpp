@@ -10,8 +10,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-#include <boost/foreach.hpp>
-
 #include <vector>
 
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
@@ -35,12 +33,12 @@ int main(int argc, char* argv[])
     MultiPolygon polygons;
     CGAL::read_WKT(is, points,polylines,polygons);
     
-    BOOST_FOREACH(Point p, points)
+    for(Point p : points)
       std::cout<<p<<std::endl;
-    BOOST_FOREACH(LineString ls, polylines)
-        BOOST_FOREACH(Point p, ls)
+    for(LineString ls : polylines)
+        for(Point p : ls)
           std::cout<<p<<std::endl;
-    BOOST_FOREACH(Polygon p, polygons)
+    for(Polygon p : polygons)
       std::cout<<p<<std::endl;
     
   }

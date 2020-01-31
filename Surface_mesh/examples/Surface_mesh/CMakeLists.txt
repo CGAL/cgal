@@ -39,6 +39,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("draw_surface_mesh.cpp")
   create_single_source_cgal_program("sm_draw_small_faces.cpp")
+  create_single_source_cgal_program("check_orientation.cpp")
   if(CGAL_Qt5_FOUND )
     target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Qt5)
