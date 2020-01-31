@@ -6,14 +6,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot, Andreas Fabri
 
 #ifndef CGAL_FILTERED_RATIONAL_KERNEL_H
 #define CGAL_FILTERED_RATIONAL_KERNEL_H
-
-#include <type_traits>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/intersections.h>
@@ -25,24 +23,28 @@
 
 #include <CGAL/Cartesian_converter.h>
 
+#include <type_traits>
+
 namespace CGAL {
 
-  namespace mpl
-{
+namespace mpl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(first_type)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(second_type)
 
-template <class T> struct is_pair_ {
-  enum { value = has_first_type<T>::value && has_second_type<T>::value }; 
+template <class T>
+struct is_pair_
+{
+  enum { value = has_first_type<T>::value && has_second_type<T>::value };
 };
 
 } // mpl namespace
-  
+
 // Small utility to manipulate pairs for kernel objects, and
 // simple things for bool, Sign...  Object is yet another case...
-  template < typename T1, typename T2, typename EK, typename FRK >
-struct Pairify {
+template < typename T1, typename T2, typename EK, typename FRK >
+struct Pairify
+{
   typedef typename Type_mapper<T2,EK,FRK>::type result_type;
   result_type operator()(const T1 &t1, const T2 &t2) const
   {
@@ -51,38 +53,42 @@ struct Pairify {
 };
 
 template <typename EK, typename FRK>
-struct Pairify <bool, bool, EK, FRK> {
+struct Pairify <bool, bool, EK, FRK>
+{
   typedef bool   result_type;
   result_type operator()(const bool &t1, const bool &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 template <typename EK, typename FRK>
-struct Pairify <Sign, Sign, EK, FRK> {
+struct Pairify <Sign, Sign, EK, FRK>
+{
   typedef Sign   result_type;
   result_type operator()(const Sign &t1, const Sign &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 template <typename EK, typename FRK>
-struct Pairify <Bounded_side, Bounded_side, EK, FRK> {
+struct Pairify <Bounded_side, Bounded_side, EK, FRK>
+{
   typedef Bounded_side   result_type;
   result_type operator()(const Bounded_side &t1, const Bounded_side &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 template <typename EK, typename FRK>
-struct Pairify <Angle, Angle, EK, FRK> {
+struct Pairify <Angle, Angle, EK, FRK>
+{
   typedef Angle   result_type;
   result_type operator()(const Angle &t1, const Angle &t2) const
   { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 template <typename EK, typename FRK>
-struct Pairify <const Interval_nt<false>&,const Gmpq&, EK, FRK> {
-  
+struct Pairify <const Interval_nt<false>&,const Gmpq&, EK, FRK>
+{
   typedef Filtered_rational<Interval_nt<false>,Gmpq> result_type;
-  
+
   result_type operator()(const Interval_nt<false>& a, const Gmpq& e) const
   {
     return Filtered_rational<Interval_nt<false>, Gmpq>(a,e);
@@ -165,7 +171,7 @@ get_exact(const Filtered_rational<A1,A2>& p)
 {
   return p.n2();
 }
-  
+
 template <class A>
 const typename A::Rep::second_type&
 get_exact(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
@@ -176,13 +182,11 @@ get_exact(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nu
 template <class AP, class EP>
 class Predicate_wrapper
 {
-  AP  ap;
-  EP  ep;
+  AP ap;
+  EP ep;
 
 public:
-  Predicate_wrapper(const AP &pap = AP(), const EP &pep = EP())
-    : ap(pap), ep(pep)
-  { }
+  Predicate_wrapper(const AP &pap = AP(), const EP &pep = EP()) : ap(pap), ep(pep) { }
 
   template <class ... A>
   typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type
@@ -190,14 +194,17 @@ public:
   {
     typedef typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
+
     CGAL::Interval_nt<false>::Protector p;
-    try{
+
+    try
+    {
       result_type_1 res1 = ap(get_approx(a)...);
       if (is_certain(res1))
         return make_certain(res1);
     }
-    catch(Uncertain_conversion_exception&)
-    {}
+    catch(Uncertain_conversion_exception&) { }
+
     result_type_2 res2 = ep(get_exact(a)...);
     return res2;
   }
@@ -206,83 +213,65 @@ public:
 template <class AP, class EP, class AK, class EK, class FRK>
 class Construction_wrapper
 {
-  AP  ap;
-  EP  ep;
+  AP ap;
+  EP ep;
 
   CGAL::Cartesian_converter<EK, AK> e2a;
 
 public:
-  Construction_wrapper(const AP &pap = AP(), const EP &pep = EP())
-    : ap(pap), ep(pep)
-  { }
+  Construction_wrapper(const AP &pap = AP(), const EP &pep = EP()) : ap(pap), ep(pep) { }
 
   template <class T>
   struct result;
 
   template<typename F, typename ... A>
-  struct result<F(A...)> {
+  struct result<F(A...)>
+  {
     typedef typename cpp11::result_of<AP(typename Getter<A>::first_type...)>::type R1;
     typedef typename cpp11::result_of<EP(typename Getter<A>::second_type...)>::type R2;
     typedef typename Pairify<R1,R2,EK,FRK>::result_type type;
   };
-  
-  // In case the exact result type is a reference 
-  template <typename AT, bool b> // = std::is_lvalue_reference<AT>::value>
-  struct Approx {
-    
-     CGAL::Cartesian_converter<EK, AK> e2a;
-     AP ap;
 
-     Approx(const CGAL::Cartesian_converter<EK, AK>& e2a,
-            const AP& ap)
-       : e2a(e2a), ap(ap)
-     {}
-     
+  // In case the exact result type is a reference
+  template <typename AT, bool b = std::is_lvalue_reference<AT>::value>
+  struct Approx
+  {
+    CGAL::Cartesian_converter<EK, AK> e2a;
+    AP ap;
+
+    Approx(const CGAL::Cartesian_converter<EK, AK>& e2a, const AP& ap) : e2a(e2a), ap(ap) { }
 
     template <typename ERT, typename ... A>
-    const AT& operator()(const ERT&, const A&... a) const
-    {
-      return ap(a ...);
-    }
+    const AT& operator()(const ERT&, const A&... a) const { return ap(a ...); }
   };
-  
+
   // In case we have to generate the approximation from the result of the exact construction
-   template <typename AT>
-   struct Approx<AT, false> {
+  template <typename AT>
+  struct Approx<AT, false>
+  {
+    CGAL::Cartesian_converter<EK, AK> e2a;
+    AP ap;
 
-     CGAL::Cartesian_converter<EK, AK> e2a;
-     AP ap;
+    Approx(const CGAL::Cartesian_converter<EK, AK>& e2a, const AP& ap) : e2a(e2a), ap(ap) { }
 
-     Approx(const CGAL::Cartesian_converter<EK, AK>& e2a,
-            const AP& ap)
-       : e2a(e2a), ap(ap)
-     {}
-     
-     
-     template <typename ERT, typename ... A>
-     AT operator()(const ERT& ert, const A&... ) const
-     {
-       return e2a(ert);
-     }
-   };
+    template <typename ERT, typename ... A>
+    AT operator()(const ERT& ert, const A&... ) const { return e2a(ert); }
+  };
 
   // TODO: I think the result_of is simply using AP::result_type because arguments are not valid (pairs...)
   template <class ... A>
   typename Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
-                   typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type,
-                   EK,FRK>::result_type
+  typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type, EK, FRK>::result_type
   operator()(const A&... a) const
   {
     typedef typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
     result_type_2 res2 = ep(get_exact(a)...);
 
-    return Pairify<result_type_1, result_type_2,EK,FRK>()(Approx<result_type_1,std::is_lvalue_reference<result_type_1>::value>(e2a,ap)
-                                                          (res2, get_approx(a)...),
-                                                          res2);
+    return Pairify<result_type_1, result_type_2, EK, FRK>()(Approx<result_type_1>(e2a, ap)
+                                                            (res2, get_approx(a)...), res2);
   }
 };
-
 
 template < class AK, class EK, class Kernel_ >
 class Filtered_rational_kernel_generic_base
@@ -303,7 +292,7 @@ public:
 
   typedef CGAL::Object Object_2;
   typedef CGAL::Object Object_3;
-  
+
   typedef Kernel_ Kernel;
   typedef AK     Kernel1;
   typedef EK     Kernel2;
@@ -312,14 +301,14 @@ public:
   struct Ambient_dimension {
     typedef typename T::Ambient_dimension type;
   };
-  
+
   typedef typename EK::Kernel_tag                       Kernel_tag;
   typedef typename EK::Rep_tag                          Rep_tag;
-  
+
   enum { Has_filtered_predicates = true };
   enum { Has_static_filters = false };
   typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
-  
+
   typedef Filtered_rational<typename AK::FT, typename EK::FT> FT;
   typedef FT RT;
 
@@ -328,7 +317,7 @@ public:
 
   typedef CGAL::Aff_transformationC2<Kernel_> Aff_transformation_2;
   typedef CGAL::Aff_transformationC3<Kernel_> Aff_transformation_3;
-  
+
   // Kernel objects are defined as pairs, with primitives run in parallel.
 #define CGAL_kc_pair(X) typedef std::pair<typename AK::X, typename EK::X> X;
 
@@ -382,12 +371,10 @@ public:
   #include <CGAL/Kernel/interface_macros.h>
 };
 
-
 template < class AK, class EK, class Kernel_ >
 class Filtered_rational_kernel_base
     : public Filtered_rational_kernel_generic_base<AK,EK,Kernel_>
 {
-
 public:
   typedef Filtered_rational_kernel_base<AK,EK,Kernel_> Self;
   using typename Filtered_rational_kernel_generic_base<AK,EK,Kernel_>::Cartesian_const_iterator_2;
@@ -404,7 +391,7 @@ public:
     operator()( const Cls& c) const
     { return make_object(c); }
   };
-  
+
   Construct_object_2 construct_object_2_object() const
   {
     return Construct_object_2();
@@ -422,12 +409,12 @@ public:
     { return make_object(c); }
   };
 
-  
+
   Construct_object_3 construct_object_3_object() const
   {
     return Construct_object_3();
   }
-  
+
 
   class Assign_2
   {
@@ -462,29 +449,29 @@ public:
   {
     return Assign_3();
   }
-  
+
   class Construct_bbox_2 {
   public:
     typedef Bbox_2 result_type;
-    
+
     template <typename T1, typename T2>
     Bbox_2 operator()(const std::pair<T1,T2>& p) const
     {
       // AF: Or do we want to construct the BBox from Gmpq ?
       return typename AK::Construct_bbox_2()(p.first);
     }
-    
+
   };
-  
+
   Construct_bbox_2 construct_bbox_2_object() const
   {
     return Construct_bbox_2();
   }
-  
+
   class Construct_bbox_3 {
   public:
     typedef Bbox_2 result_type;
-    
+
     template <typename T1, typename T2>
     Bbox_3 operator()(const std::pair<T1,T2>& p) const
     {
@@ -497,7 +484,7 @@ public:
   {
     return Construct_bbox_3();
   }
-  
+
   template <typename OptionalVariant>
   class Make_optional_variant
     : public boost::static_visitor<>
@@ -508,7 +495,7 @@ public:
     Make_optional_variant(OptionalVariant& ov)
       : ov(ov)
     {}
-    
+
     template <typename ET>
     void operator()( const ET & et ) const
     {
@@ -530,29 +517,29 @@ public:
       ov = OptionalVariant(resvec);
     }
   };
-  
-  
+
+
   class Intersect_2 {
   public:
 
     template<typename>
     struct result;
-    
+
     template<typename F, typename A, typename B>
     struct result<F(A,B)> {
       typedef typename Intersection_traits<Kernel_, A, B>::result_type type;
     };
-    
+
     template <typename T1, typename T2>
     typename Intersection_traits<Kernel_,T1,T2>::result_type
     operator()(const T1& s1, const T2& s2) const
     {
       typedef typename Type_mapper<T1,Kernel_,EK>::type EKT1;
       typedef typename Type_mapper<T2,Kernel_,EK>::type EKT2;
-      
+
       typedef  typename Intersection_traits<EK, EKT1, EKT2>::result_type Exact_optional_variant;
       typedef typename Exact_optional_variant::value_type Exact_variant;
-      
+
       Exact_optional_variant  eres = typename EK::Intersect_2()(s1.second,s2.second);
 
       if(! eres){
@@ -566,7 +553,7 @@ public:
 
       return res;
     }
-    
+
   };
 
   Intersect_2 intersect_2_object() const
@@ -579,22 +566,22 @@ public:
 
     template<typename>
     struct result;
-    
+
     template<typename F, typename A, typename B>
     struct result<F(A,B)> {
       typedef typename Intersection_traits<Kernel_, A, B>::result_type type;
     };
-    
+
     template <typename T1, typename T2>
     typename Intersection_traits<Kernel_,T1,T2>::result_type
     operator()(const T1& s1, const T2& s2) const
     {
       typedef typename Type_mapper<T1,Kernel_,EK>::type EKT1;
       typedef typename Type_mapper<T2,Kernel_,EK>::type EKT2;
-      
+
       typedef  typename Intersection_traits<EK, EKT1, EKT2>::result_type Exact_optional_variant;
       typedef typename Exact_optional_variant::value_type Exact_variant;
-      
+
       Exact_optional_variant  eres = typename EK::Intersect_3()(s1.second,s2.second);
 
       if(! eres){
@@ -608,10 +595,9 @@ public:
 
       return res;
     }
-    
+
   };
-  
-  
+
   Intersect_3 intersect_3_object() const
   {
     return Intersect_3();
@@ -625,7 +611,7 @@ public:
     {
       return Cartesian_const_iterator_2(&pv);
     }
-    
+
     template <typename PV>
     Cartesian_const_iterator_2 operator()(const PV& pv, int i) const
     {
@@ -633,7 +619,6 @@ public:
     }
   };
 
-  
   Construct_cartesian_const_iterator_2 construct_cartesian_const_iterator_2_object() const
   {
     return Construct_cartesian_const_iterator_2();
@@ -647,7 +632,7 @@ public:
     {
       return Cartesian_const_iterator_3(&pv);
     }
-    
+
     template <typename PV>
     Cartesian_const_iterator_3 operator()(const PV& pv, int i) const
     {
