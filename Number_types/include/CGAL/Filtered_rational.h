@@ -63,7 +63,9 @@ public:
 
   Filtered_rational(double d)
     : _n1(d), _n2(d)
-  { CGAL_assertion(is_valid()); }
+  {
+    _n1 = to_interval(_n2);
+    CGAL_assertion(is_valid()); }
   
   Filtered_rational(const NT1 &_n1, const NT2 &_n2)
     : _n1(_n1), _n2(_n2)
@@ -952,10 +954,8 @@ template < typename NT1, typename NT2, typename Cmp >
 std::istream &
 operator>> (std::istream & is, Filtered_rational<NT1, NT2, Cmp> &b)
 {
-  is >> b.n1();
-  std::stringstream ss;
-  ss << b.n1();
-  ss >> b.n2();
+  is >> b.n2();
+  b.n1() = to_interval(b.n2());
   return is;
 }
 
