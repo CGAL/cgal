@@ -1079,7 +1079,7 @@ void split_connected_components(const PolygonMesh& pm,
         , CGAL::dynamic_vertex_property_t<std::size_t >
         >::type VIM_def_tag;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
     internal::No_mark<PolygonMesh>//default
