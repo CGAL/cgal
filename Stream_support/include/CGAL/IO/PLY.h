@@ -1,20 +1,11 @@
 // Copyright (c) 2015  Geometry Factory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
@@ -23,11 +14,16 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/IO/io.h>
+#include <CGAL/property_map.h>
 
-#include <tuple>
+#include <boost/cstdint.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 #define TRY_TO_GENERATE_PROPERTY(STD_TYPE, T_TYPE, TYPE)                \
   if (type == STD_TYPE  || type == T_TYPE)                              \
@@ -341,7 +337,7 @@ public:
   {
     for (std::size_t i = 0; i < number_of_properties(); ++ i)
       if (m_properties[i]->name () == tag)
-        return (dynamic_cast<PLY_read_typed_list<Type>*>(m_properties[i]) != NULL);
+        return (dynamic_cast<PLY_read_typed_list<Type>*>(m_properties[i]) != nullptr);
     return false;
   }
     
@@ -350,15 +346,15 @@ public:
   {
     for (std::size_t i = 0; i < number_of_properties(); ++ i)
       if (m_properties[i]->name () == tag)
-        return (dynamic_cast<PLY_read_typed_number<Type>*>(m_properties[i]) != NULL);
+        return (dynamic_cast<PLY_read_typed_number<Type>*>(m_properties[i]) != nullptr);
     return false;
   }
   bool has_property (const char* tag, double)
   {
     for (std::size_t i = 0; i < number_of_properties(); ++ i)
       if (m_properties[i]->name () == tag)
-        return (dynamic_cast<PLY_read_typed_number<double>*>(m_properties[i]) != NULL
-                || dynamic_cast<PLY_read_typed_number<float>*>(m_properties[i]) != NULL);
+        return (dynamic_cast<PLY_read_typed_number<double>*>(m_properties[i]) != nullptr
+                || dynamic_cast<PLY_read_typed_number<float>*>(m_properties[i]) != nullptr);
 
     return false;
   }
@@ -371,10 +367,11 @@ public:
       {
         PLY_read_typed_number<Type>*
           property = dynamic_cast<PLY_read_typed_number<Type>*>(m_properties[i]);
-        CGAL_assertion (property != NULL);
+        CGAL_assertion (property != nullptr);
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   template <typename Type>
@@ -385,10 +382,11 @@ public:
       {
         PLY_read_typed_list<Type>*
           property = dynamic_cast<PLY_read_typed_list<Type>*>(m_properties[i]);
-        CGAL_assertion (property != NULL);
+        CGAL_assertion (property != nullptr);
         t = property->buffer();
         return;
       }
+    t = {};
   }
 
   void assign (double& t, const char* tag)
@@ -398,11 +396,11 @@ public:
       {
         PLY_read_typed_number<double>*
           property_double = dynamic_cast<PLY_read_typed_number<double>*>(m_properties[i]);
-        if (property_double == NULL)
+        if (property_double == nullptr)
         {
           PLY_read_typed_number<float>*
             property_float = dynamic_cast<PLY_read_typed_number<float>*>(m_properties[i]);
-          CGAL_assertion (property_float != NULL);
+          CGAL_assertion (property_float != nullptr);
           t = property_float->buffer();
         }
         else
@@ -410,6 +408,7 @@ public:
           
         return;
       }
+    t = {};
   }
   
 };

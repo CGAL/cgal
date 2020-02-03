@@ -1,20 +1,11 @@
 // Copyright (c) 2014 GeometryFactory Sarl (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Jane Tournois
 
@@ -25,6 +16,14 @@
 #include <CGAL/atomic.h>
 
 namespace CGAL {
+
+namespace internal {
+
+constexpr size_t rounded_down_log2(size_t n)
+{
+  return ( (n<2) ? 0 : 1+rounded_down_log2(n/2));
+}
+} // namespace internal
 
 template <typename T>
 struct Time_stamper
@@ -76,22 +75,22 @@ struct Time_stamper
 
   static std::size_t time_stamp(const T* pt)
   {
-    if(pt == NULL){
+    if(pt == nullptr){
       return std::size_t(-1);
     }
     return pt->time_stamp();
   }
 
   static std::size_t hash_value(const T* p) {
-    if(NULL == p)
+    if(nullptr == p)
       return std::size_t(-1);
     else
       return p->time_stamp();
   }
 
   static bool less(const T* p_t1, const T* p_t2) {
-    if(p_t1 == NULL)      return (p_t2 != NULL);
-    else if(p_t2 == NULL) return false;
+    if(p_t1 == nullptr)      return (p_t2 != nullptr);
+    else if(p_t2 == nullptr) return false;
     else {
       CGAL_assertion((p_t1 == p_t2) == (time_stamp(p_t1) == time_stamp(p_t2)));
       return time_stamp(p_t1) < time_stamp(p_t2);
@@ -127,7 +126,9 @@ public:
   }
 
   static std::size_t hash_value(const T* p) {
-    return reinterpret_cast<std::size_t>(p)/sizeof(T);
+
+    constexpr std::size_t shift = internal::rounded_down_log2(sizeof(T));
+    return reinterpret_cast<std::size_t>(p) >> shift;
   }
 
   void reset()                {}
@@ -157,6 +158,17 @@ struct Get_time_stamper<T,false>{
 // in `Compact_container` for example is possible with an incomplete type.
 template <class T>
 struct Time_stamper_impl : public Get_time_stamper<T>::type {};
+
+struct Hash_handles_with_or_without_timestamps
+{
+  template <typename Handle>
+  std::size_t operator()(const Handle h) const
+  {
+    typedef typename std::iterator_traits<Handle>::value_type Type;
+
+    return Get_time_stamper<Type>::type::hash_value(&*h);
+  }
+};
 
 } //end of namespace CGAL
 

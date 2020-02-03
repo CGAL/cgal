@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -160,7 +151,7 @@ public:
          if (p != tree.end())
             std::cout << "p = " << *p << std::endl;
          else
-            std::cout << "p == NULL" << std::endl;
+            std::cout << "p == nullptr" << std::endl;
 #endif
          stack.pop();
          p_r = tree.right_sibling(p);
@@ -168,14 +159,14 @@ public:
          if (p_r != tree.end())
             std::cout << "p_r = " << *p_r << std::endl;
          else
-            std::cout << "p_r == NULL" << std::endl;
+            std::cout << "p_r == nullptr" << std::endl;
 #endif
          q = tree.parent(p);
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          if (q != tree.end())
             std::cout << "q = " << *q << std::endl;
          else
-            std::cout << "q == NULL" << std::endl;
+            std::cout << "q == nullptr" << std::endl;
 #endif
          if (!tree.parent_is_p_minus_infinity(p))
          {
@@ -189,7 +180,7 @@ public:
          if (z != tree.end())
             std::cout << "z = " << *z << std::endl;
          else
-            std::cout << "z == NULL" << std::endl;
+            std::cout << "z == nullptr" << std::endl;
          std::cout << "erasing " << *p << " from tree " << std::endl;
 #endif
          tree.erase(p);

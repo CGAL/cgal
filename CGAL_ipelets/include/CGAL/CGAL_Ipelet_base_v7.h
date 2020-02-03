@@ -1,20 +1,11 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
@@ -107,7 +98,7 @@ namespace CGAL{
   
   
     Ipelet_base(const std::string NameS,const std::string SubLabS[],const std::string HMsgS[])
-      :SubLab(&SubLabS[0]),HMsg(&HMsgS[0]),Name(NameS),data_(NULL),helper_(NULL){};
+      :SubLab(&SubLabS[0]),HMsg(&HMsgS[0]),Name(NameS),data_(nullptr),helper_(nullptr){};
     
     
     ipe::Page* get_IpePage() const {return data_->iPage;}
@@ -127,7 +118,7 @@ namespace CGAL{
         return true;
       }
       catch(...){
-        helper->messageBox("Error : Save your page in a file and submit it to \n https://www.cgal.org/bug_report.html",NULL,ipe::IpeletHelper::EOkCancelButtons);
+        helper->messageBox("Error : Save your page in a file and submit it to \n https://www.cgal.org/bug_report.html",nullptr,ipe::IpeletHelper::EOkCancelButtons);
         return false;
       }
     };
@@ -142,7 +133,7 @@ namespace CGAL{
           hmsg=hmsg+"<li><i>"+SubLab[i]+"</i>: "+HMsg[i]+"</li>";
       else
         hmsg=hmsg+"<li>"+HMsg[0]+"</li>";
-      get_IpeletHelper()->messageBox(&hmsg[0],NULL,ipe::IpeletHelper::EOkCancelButtons);
+      get_IpeletHelper()->messageBox(&hmsg[0],nullptr,ipe::IpeletHelper::EOkCancelButtons);
       return;
     }
 
@@ -276,7 +267,7 @@ public:
         return Iso_rectangle_2();
       }
       
-      for (int i=0;i<static_cast<int>(static_cast<int>(get_IpePage()->count()));++i){
+      for (int i=0;i<static_cast<int>(get_IpePage()->count());++i){
         if (get_IpePage()->select(i)==ipe::ENotSelected)
           continue;
         
@@ -350,7 +341,7 @@ public:
           SSP_ipe->setClosed(true);
         return SSP_ipe;
       }
-      return NULL;
+      return nullptr;
     }
     
     
@@ -364,10 +355,10 @@ public:
                                       typename std::iterator_traits<iterator>::value_type,
                                       Point_2
                                     > 
-                                  >::type* =NULL) const 
+                                  >::type* =nullptr) const 
     {
       ipe::Curve* SSP_ipe=create_polyline(first,last,setclose);
-      if (SSP_ipe!=NULL){
+      if (SSP_ipe!=nullptr){
         ipe::Shape shape;
         shape.appendSubPath(SSP_ipe);
         ipe::Path* obj_ipe=new ipe::Path(CURRENTATTRIBUTES,shape);
@@ -378,7 +369,7 @@ public:
         get_IpePage()->append( (deselect_all?ipe::ENotSelected:get_selection_type()),CURRENTLAYER,obj_ipe);
         return obj_ipe;
       }
-      return NULL;  
+      return nullptr;  
     }
     
     void draw_in_ipe(const Circle_2& C,bool deselect_all=false) const {
@@ -660,7 +651,7 @@ public:
                                  boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
                                                   boost::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
                                                 > > > >
-                    >::type* = NULL) const
+                    >::type* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)
         draw_in_ipe(*it,bbox);

@@ -4,17 +4,11 @@
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -33,8 +27,6 @@
 
 #include <boost/geometry/io/wkt/read.hpp>
 #include <boost/geometry/io/wkt/write.hpp>
-#include <boost/foreach.hpp>
-
 
 #include <CGAL/IO/traits_point.h>
 #include <CGAL/IO/traits_point_3.h>
@@ -47,6 +39,28 @@
 
 namespace CGAL{
 
+namespace internal {
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_2<K>& poly)
+  {
+    typename CGAL::Polygon_2<K>::iterator it = poly.end();
+    --it;
+    if( (*poly.begin()) == *it){
+      poly.erase(it);
+    }
+  }
+
+  template <typename K>
+  void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
+  {
+    pop_back_if_equal_to_front(pwh.outer_boundary());
+    for(auto i = pwh.holes_begin(); i!= pwh.holes_end(); ++i){
+      pop_back_if_equal_to_front(*i);
+    }
+  }
+}
+  
 template<typename Point>
 std::istream&
 read_point_WKT( std::istream& in,
@@ -157,7 +171,7 @@ read_multi_linestring_WKT( std::istream& in,
       break;
     }
   }
-  BOOST_FOREACH(LineString& ls, gc)
+  for(LineString& ls : gc)
   {
     mls.push_back(*ls.range);
   }
@@ -185,7 +199,13 @@ read_polygon_WKT( std::istream& in,
     
     if(type.substr(0, 7).compare("POLYGON")==0)
     {
-      boost::geometry::read_wkt(line, polygon);
+      try {
+        boost::geometry::read_wkt(line, polygon);
+      } catch( ...){
+        in.setstate(std::ios::failbit);
+        return in;
+      };
+      internal::pop_back_if_equal_to_front(polygon);
       break;
     }
   }
@@ -213,7 +233,18 @@ read_multi_polygon_WKT( std::istream& in,
     
     if(type.substr(0, 12).compare("MULTIPOLYGON")==0)
     {
-      boost::geometry::read_wkt(line, gc);
+      try {
+              boost::geometry::read_wkt(line, gc);
+            } catch( ...){
+              in.setstate(std::ios::failbit);
+              return in;
+            };
+      for( typename
+           internal::Geometry_container<MultiPolygon, boost::geometry::multi_polygon_tag>::iterator it
+          = gc.begin(); it != gc.end(); ++it)
+      {
+        internal::pop_back_if_equal_to_front(*it);
+      }
       break;
     }
   }
@@ -312,7 +343,7 @@ write_multi_linestring_WKT( std::ostream& out,
   typedef typename MultiLineString::value_type PointRange;
   typedef internal::Geometry_container<PointRange, boost::geometry::linestring_tag> LineString;
   std::vector<LineString> pr_range;
-  BOOST_FOREACH(PointRange& pr, mls)
+  for(PointRange& pr : mls)
   {
     LineString ls(pr);
     pr_range.push_back(ls);
@@ -374,21 +405,21 @@ read_WKT( std::istream& input,
     {
       MultiPoint mp;
       CGAL::read_multi_point_WKT(input, mp);
-      BOOST_FOREACH(const Point& point, mp)
+      for(const Point& point : mp)
           points.push_back(point);
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
       CGAL::read_multi_linestring_WKT(input, mls);
-      BOOST_FOREACH(const LineString& ls, mls)
+      for(const LineString& ls : mls)
           polylines.push_back(ls);
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
       CGAL::read_multi_polygon_WKT(input, mp);
-      BOOST_FOREACH(const Polygon& poly, mp)
+      for(const Polygon& poly : mp)
           polygons.push_back(poly);
     }
   }while(input.good() && !input.eof());

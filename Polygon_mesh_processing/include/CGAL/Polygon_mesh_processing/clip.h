@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -71,7 +62,7 @@ clip_to_bbox(const Plane_3& plane,
   typedef typename GetVertexPointMap<TriangleMesh,
                                      NamedParameters>::type Vpm;
 
-  Vpm vpm_out = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+  Vpm vpm_out = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                     get_property_map(boost::vertex_point, tm_out));
 
 
@@ -334,7 +325,7 @@ clip(      TriangleMesh& tm,
      const NamedParameters2& np_c)
 {
   const bool clip_volume =
-    boost::choose_param(boost::get_param(np_tm, internal_np::clip_volume), false);
+    parameters::choose_parameter(parameters::get_parameter(np_tm, internal_np::clip_volume), false);
 
   if (clip_volume && is_closed(tm))
     return corefine_and_compute_intersection(tm, clipper, tm, np_tm, np_c);

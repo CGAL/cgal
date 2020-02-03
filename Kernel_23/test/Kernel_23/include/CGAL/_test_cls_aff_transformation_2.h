@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -23,6 +17,9 @@
 
 #ifndef CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
+
+#include <CGAL/use.h>
+#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -32,6 +29,8 @@ _test_cls_aff_transformation_2(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
+
+ const bool nonexact = boost::is_same<FT, double>::value;
 
  typename R::Aff_transformation_2 ia;
  CGAL::Aff_transformation_2<R> a1(ia);
@@ -56,7 +55,7 @@ _test_cls_aff_transformation_2(const R& )
  CGAL::Vector_2<R> tvec;
  CGAL::Point_2<R>  pnt( n8, n1, n10 );      // ( 6,-5)
  CGAL::Point_2<R>  tpnt;
- CGAL::Point_2<R>  pvec = CGAL::ORIGIN + vec;
+ CGAL::Point_2<R>  pvec = CGAL::ORIGIN + vec; CGAL_USE(pvec);
  CGAL::Vector_2<R> vpnt = pnt - CGAL::ORIGIN;
 
  CGAL::Point_2<R>  p1(-n3, n7, n3 );        // (-1, 2)
@@ -116,7 +115,7 @@ _test_cls_aff_transformation_2(const R& )
  CGAL::Aff_transformation_2<R> xrefl(-n4,  n0, n0,
                                       n0,  n4, n0,
                                                n4 );
-
+ 
  CGAL::Aff_transformation_2<R> gat4( gat3);
 
  CGAL::Aff_transformation_2<R> gat5( n7,  n9,
@@ -168,7 +167,7 @@ _test_cls_aff_transformation_2(const R& )
     tisor= isor.transform( a[i]);
     assert( tseg == CGAL::Segment_2<R>(tp1, tp2) );
     assert( tray == CGAL::Ray_2<R>(tp3, tp2) );
-    assert( tlin == CGAL::Line_2<R>(tp2, tp4) );
+    assert( tlin == CGAL::Line_2<R>(tp2, tp4) || nonexact);
     assert( ttri == CGAL::Triangle_2<R>(tp2, tp3, tp4) );
     assert( tisor== CGAL::Iso_rectangle_2<R>( tp3, tp4 ) );
 
@@ -178,11 +177,11 @@ _test_cls_aff_transformation_2(const R& )
     tray = tray.transform( inv );
     tlin = tlin.transform( inv );
     ttri = ttri.transform( inv );
-    assert( tp4  == p4 );
-    assert( tseg == seg );
-    assert( tray == ray );
-    assert( tlin == lin );
-    assert( ttri == tri );
+    assert( tp4  == p4  || nonexact );
+    assert( tseg == seg || nonexact );
+    assert( tray == ray || nonexact );
+    assert( tlin == lin || nonexact );
+    assert( ttri == tri || nonexact );
  };
 
  std::cout << '.';
@@ -291,7 +290,7 @@ _test_cls_aff_transformation_2(const R& )
  // rotation
  assert( d0.transform( rot90 ) == d1 );
  assert( d1.transform( rot90.inverse() ) == d0 );
- assert( d0.transform( rot3 ) == CGAL::Direction_2<R>( RT(4), RT(3)) );
+ assert( d0.transform( rot3 ) == CGAL::Direction_2<R>( RT(4), RT(3)) || nonexact);
  co1 = rot3 * rot90;
  assert( d1.transform( rot3) == d0.transform( co1 ) );
  co1 = rot2 * rot90;
@@ -324,7 +323,7 @@ _test_cls_aff_transformation_2(const R& )
  tp3 = p3.transform( rot3 );
  tp4 = p4.transform( rot3 );
  tcirc = circ.orthogonal_transform( rot3 );
- assert( tcirc == CGAL::Circle_2<R>( tp2, tp3, tp4 ) );
+ assert( tcirc == CGAL::Circle_2<R>( tp2, tp3, tp4 ) || nonexact );
 
 
  // copy
@@ -551,6 +550,7 @@ _test_cls_aff_transformation_2(const R& )
  assert( FT( ident.hm(2,1) ) / FT( ident.hm(2,2) ) == FTzero );
  assert( FT( ident.hm(2,2) ) / FT( ident.hm(2,2) ) == FTone );
 
+ 
  // samples
  // cartesian == m
  assert( gat1.cartesian(1,2) == gat1.m(1,2) );
@@ -577,13 +577,74 @@ _test_cls_aff_transformation_2(const R& )
  assert( ident.homogeneous(1,2) == ident.hm(1,2) );
  assert( gscale.homogeneous(1,1) == gscale.hm(1,1) );
 
+ //tests for reflection
+ CGAL::Aff_transformation_2<R> refl(CGAL::REFLECTION, CGAL::Line_2<R>(
+                                      CGAL::Point_2<R>(1,3),
+                                      CGAL::Point_2<R>(2,1))); 
+ CGAL::Point_2<R> p(4,2);
+ assert(p.transform(refl) == CGAL::Point_2<R>(0,0));
+ 
+ 
+ //with translation
+ CGAL::Aff_transformation_2<R> trans(CGAL::TRANSLATION, CGAL::Vector_2<R>(1,-2)); 
+ CGAL::Aff_transformation_2<R> comp1(refl*trans),
+     comp2(trans*refl);
+ p1 = p.transform(trans);
+ p1 = p1.transform(refl);
+ assert(p1 == CGAL::Point_2<R>(1,-2));
+ assert(p1 == p.transform(comp1) || nonexact);
+ p1 = p.transform(refl);
+ p1 = p1.transform(trans);
+ assert(p1 == p.transform(comp2));
+ //with scaling
+ CGAL::Aff_transformation_2<R> scal(CGAL::SCALING, 2); 
+ comp1 = refl*scal;
+ comp2 = scal*refl;
+ p1 = p.transform(scal);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(scal);
+ assert(p1 == p.transform(comp2)); 
+ //with rotation
+ CGAL::Aff_transformation_2<R> rot(CGAL::ROTATION, 1, 0); 
+ comp1 = refl*rot;
+ comp2 = rot*refl;
+ p1 = p.transform(rot);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(rot);
+ assert(p1 == p.transform(comp2));
+ //with reflection
+ CGAL::Aff_transformation_2<R> refl2(CGAL::REFLECTION, CGAL::Line_2<R>(
+                                      CGAL::Point_2<R>(0,0),
+                                      CGAL::Point_2<R>(1,1))); 
+ comp1 = refl*refl2;
+ comp2 = refl2*refl;
+ p1 = p.transform(refl2);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(refl2);
+ assert(p1 == p.transform(comp2));
+ //with transformation
+ CGAL::Aff_transformation_2<R> afft(1,2,3,4,5,6); 
+ comp1 = refl*afft;
+ comp2 = afft*refl;
+ p1 = p.transform(afft);
+ p1 = p1.transform(refl);
+ assert(p1 == p.transform(comp1));
+ p1 = p.transform(refl);
+ p1 = p1.transform(afft);
+ assert(p1 == p.transform(comp2));
+
  //equality
  CGAL::Aff_transformation_2<R> a2(0,1,0,1),
      a3(0,1,0,1), a4(0,0,1,1);
  assert(a2 == a3);
  assert(a3 != a4);
  
-
  std::cout << "done" << std::endl;
  return true;
 }

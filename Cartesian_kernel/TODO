@@ -83,13 +83,6 @@ Backward
 - Merge Intersection package ?  What about Conic ?
 - Cd must come back to life somehow...  Currently, I've disabled it ~totally
   in Cartesian.h.  Same thing for Conics...
-- line_get_pointC2() could take "i" as "const FT&" directly, not "int", it
-  will avoid several constructions.  Also, propagating that to the higher
-  level will also bring more functionality at the top level...
-  Seems like a stupid design choice at the beginning ?
-  Or did I miss something ?
-  Do we want to allow that for other implementations ?
-  Maybe there are other similar places.
 - Homogeneous' Point_2 has member functions :
     // and for efficiency in the predicates:
     const RT&     hx_ref() const;

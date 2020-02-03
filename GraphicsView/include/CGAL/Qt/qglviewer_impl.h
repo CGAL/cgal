@@ -4,19 +4,11 @@
  Copyright (C) 2002-2014 Gilles Debunne. All rights reserved.
 
  This file is part of a fork of the QGLViewer library version 2.7.0.
- http://www.libqglviewer.com - contact@libqglviewer.com
-
- This file may be used under the terms of the GNU General Public License 
- version 3.0 as published by the Free Software Foundation and
- appearing in the LICENSE file included in the packaging of this file.
-
- This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 *****************************************************************************/
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0-only
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -54,6 +46,7 @@
 #include <QColorDialog>
 #include <QOpenGLFramebufferObject>
 #include <QFileDialog>
+#include <QElapsedTimer>
 
 namespace CGAL{
 // Static private variable
@@ -111,15 +104,15 @@ void CGAL::QGLViewer::defaultConstructor() {
   // setFullScreen(true)
 
   // #CONNECTION# default values in initFromDOMElement()
-  manipulatedFrame_ = NULL;
+  manipulatedFrame_ = nullptr;
   manipulatedFrameIsACamera_ = false;
   mouseGrabberIsAManipulatedFrame_ = false;
   mouseGrabberIsAManipulatedCameraFrame_ = false;
   displayMessage_ = false;
   connect(&messageTimer_, SIGNAL(timeout()), SLOT(hideMessage()));
   messageTimer_.setSingleShot(true);
-  helpWidget_ = NULL;
-  setMouseGrabber(NULL);
+  helpWidget_ = nullptr;
+  setMouseGrabber(nullptr);
 
   setSceneRadius(1.0);
   showEntireScene();
@@ -139,7 +132,7 @@ void CGAL::QGLViewer::defaultConstructor() {
   stopAnimation();
   setAnimationPeriod(40); // 25Hz
 
-  selectBuffer_ = NULL;
+  selectBuffer_ = nullptr;
   setSelectBufferSize(4 * 1000);
   setSelectRegionWidth(3);
   setSelectRegionHeight(3);
@@ -158,10 +151,10 @@ void CGAL::QGLViewer::defaultConstructor() {
   axisIsDrawn_ = true;
 
   _offset = CGAL::qglviewer::Vec(0,0,0);
-  stored_fbo = NULL;
+  stored_fbo = nullptr;
   is_sharing = false;
   is_linked = false;
-  shared_context = NULL;
+  shared_context = nullptr;
 }
 
 CGAL_INLINE_FUNCTION
@@ -181,7 +174,7 @@ CGAL::QGLViewer::QGLViewer(QOpenGLContext* context, QWidget *parent,
 
 /*! Virtual destructor.
 
-The viewer is replaced by \c NULL in the QGLViewerPool() (in order to preserve
+The viewer is replaced by \c nullptr in the QGLViewerPool() (in order to preserve
 other viewer's indexes) and allocated memory is released. The camera() is
 deleted and should be copied before if it is shared by an other viewer. */
 CGAL_INLINE_FUNCTION
@@ -452,18 +445,18 @@ void CGAL::QGLViewer::initializeGL() {
       "   highp vec4 light_spec = vec4(0.0, 0.0, 0.0, 1.0); \n"
       "   highp vec4 light_amb = vec4(0.4, 0.4, 0.4, 0.4);  \n"
       "   highp float spec_power = 51.8 ; \n"
-      "   vec3 L = light_pos.xyz - fP.xyz; \n"
-      "   vec3 V = -fP.xyz; \n"
-      "   vec3 N; \n"
+      "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+      "   highp vec3 V = -fP.xyz; \n"
+      "   highp vec3 N; \n"
       "   if(fN == vec3(0.0,0.0,0.0)) \n"
       "       N = vec3(0.0,0.0,0.0); \n"
       "   else \n"
       "       N = normalize(fN); \n"
       "   L = normalize(L); \n"
       "   V = normalize(V); \n"
-      "   vec3 R = reflect(-L, N); \n"
-      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+      "   highp vec3 R = reflect(-L, N); \n"
+      "   highp vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+      "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
       
       "gl_FragColor = color*light_amb + diffuse + specular; \n"
       "gl_FragColor = vec4(gl_FragColor.xyz, 1.0); \n"
@@ -787,7 +780,7 @@ It you simply want to save and restore Camera positions, use
 CGAL::qglviewer::Camera::addKeyFrameToPath() and CGAL::qglviewer::Camera::playPath()
 instead.
 
-This method silently ignores \c NULL \p camera pointers. The calling method is
+This method silently ignores \c nullptr \p camera pointers. The calling method is
 responsible for deleting the previous camera pointer in order to prevent memory
 leaks if needed.
 
@@ -1412,7 +1405,7 @@ void CGAL::QGLViewer::mouseMoveEvent(QMouseEvent *e) {
       else
         mouseGrabber()->mouseMoveEvent(e, camera());
     else
-      setMouseGrabber(NULL);
+      setMouseGrabber(nullptr);
     update();
   }
 
@@ -1463,7 +1456,7 @@ void CGAL::QGLViewer::mouseReleaseEvent(QMouseEvent *e) {
       mouseGrabber()->mouseReleaseEvent(e, camera());
     mouseGrabber()->checkIfGrabsMouse(e->x(), e->y(), camera());
     if (!(mouseGrabber()->grabsMouse()))
-      setMouseGrabber(NULL);
+      setMouseGrabber(nullptr);
     // update();
   } else
       //#CONNECTION# mouseMoveEvent has the same structure
@@ -1597,9 +1590,9 @@ void CGAL::QGLViewer::setMouseGrabber(qglviewer::MouseGrabber *mouseGrabber) {
   mouseGrabber_ = mouseGrabber;
 
   mouseGrabberIsAManipulatedFrame_ =
-      (dynamic_cast<qglviewer::ManipulatedFrame *>(mouseGrabber) != NULL);
+      (dynamic_cast<qglviewer::ManipulatedFrame *>(mouseGrabber) != nullptr);
   mouseGrabberIsAManipulatedCameraFrame_ =
-      ((dynamic_cast<qglviewer::ManipulatedCameraFrame *>(mouseGrabber) != NULL) &&
+      ((dynamic_cast<qglviewer::ManipulatedCameraFrame *>(mouseGrabber) != nullptr) &&
        (mouseGrabber != camera()->frame()));
   Q_EMIT mouseGrabberChanged(mouseGrabber);
 }
@@ -1618,7 +1611,7 @@ CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
   switch (ma) {
   case CGAL::qglviewer::NO_MOUSE_ACTION:
-    return QString::null;
+    return QString();
   case CGAL::qglviewer::ROTATE:
     return CGAL::QGLViewer::tr("Rotates", "ROTATE mouse action");
   case CGAL::qglviewer::ZOOM:
@@ -1644,14 +1637,14 @@ QString CGAL::QGLViewer::mouseActionString(qglviewer::MouseAction ma) {
   case CGAL::qglviewer::ZOOM_ON_REGION:
     return CGAL::QGLViewer::tr("Zooms on region for", "ZOOM_ON_REGION mouse action");
   }
-  return QString::null;
+  return QString();
 }
 
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   switch (ca) {
   case CGAL::qglviewer::NO_CLICK_ACTION:
-    return QString::null;
+    return QString();
   case CGAL::qglviewer::ZOOM_ON_PIXEL:
     return CGAL::QGLViewer::tr("Zooms on pixel", "ZOOM_ON_PIXEL click action");
   case CGAL::qglviewer::ZOOM_TO_FIT:
@@ -1676,7 +1669,7 @@ QString CGAL::QGLViewer::clickActionString(CGAL::qglviewer::ClickAction ca) {
   case CGAL::qglviewer::ALIGN_CAMERA:
     return CGAL::QGLViewer::tr("Aligns camera", "ALIGN_CAMERA click action");
   }
-  return QString::null;
+  return QString();
 }
 
 static QString keyString(unsigned int key) {
@@ -1958,7 +1951,7 @@ void CGAL::QGLViewer::setKeyDescription(unsigned int key, QString description) {
 CGAL_INLINE_FUNCTION
 QString CGAL::QGLViewer::cameraPathKeysString() const {
   if (pathIndex_.isEmpty())
-    return QString::null;
+    return QString();
 
   QVector< ::Qt::Key> keys;
   keys.reserve(pathIndex_.count());
@@ -1966,7 +1959,7 @@ QString CGAL::QGLViewer::cameraPathKeysString() const {
                                                   endi = pathIndex_.end();
        i != endi; ++i)
     keys.push_back(i.key());
-  qSort(keys);
+  std::sort(keys.begin(), keys.end());
 
   QVector< ::Qt::Key>::const_iterator it = keys.begin(), end = keys.end();
   QString res = keyString(*it);
@@ -2137,13 +2130,13 @@ void CGAL::QGLViewer::help() {
                             tr("&About", "Help window about title")};
 
   if (!helpWidget()) {
-    // Qt4 requires a NULL parent...
-    helpWidget_ = new QTabWidget(NULL);
+    // Qt4 requires a nullptr parent...
+    helpWidget_ = new QTabWidget(nullptr);
     helpWidget()->setWindowTitle(tr("Help", "Help window title"));
 
     resize = true;
     for (int i = 0; i < 4; ++i) {
-      QTextEdit *tab = new QTextEdit(NULL);
+      QTextEdit *tab = new QTextEdit(nullptr);
       tab->setReadOnly(true);
 
       helpWidget()->insertTab(i, tab, label[i]);
@@ -2252,7 +2245,7 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
     unsigned int index = pathIndex_[::Qt::Key(key)];
 
     // not safe, but try to double press on two viewers at the same time !
-    static QTime doublePress;
+    static QElapsedTimer doublePress;
 
     if (modifiers == playPathKeyboardModifiers()) {
       int elapsed = doublePress.restart();
@@ -2284,7 +2277,7 @@ void CGAL::QGLViewer::keyPressEvent(QKeyEvent *e) {
           camera()->deletePath(index);
         }
       } else {
-        bool nullBefore = (camera()->keyFrameInterpolator(index) == NULL);
+        bool nullBefore = (camera()->keyFrameInterpolator(index) == nullptr);
         camera()->addKeyFrameToPath(index);
         if (nullBefore)
           connect(camera()->keyFrameInterpolator(index), SIGNAL(interpolated()),
@@ -3084,7 +3077,7 @@ void CGAL::QGLViewer::setManipulatedFrame(qglviewer::ManipulatedFrame *frame) {
 
   manipulatedFrameIsACamera_ =
       ((manipulatedFrame() != camera()->frame()) &&
-       (dynamic_cast<qglviewer::ManipulatedCameraFrame *>(manipulatedFrame()) != NULL));
+       (dynamic_cast<qglviewer::ManipulatedCameraFrame *>(manipulatedFrame()) != nullptr));
 
   if (manipulatedFrame()) {
     // Prevent multiple connections, that would result in useless display
@@ -3558,7 +3551,7 @@ This is the name of the XML file where saveStateToFile() saves the viewer state
 restoreStateFromFile() to restore this state later (usually in your init()
 method).
 
-Setting this value to \c QString::null will disable the automatic state file
+Setting this value to \c QString() will disable the automatic state file
 saving that normally occurs on exit.
 
 If more than one viewer are created by the application, this function will
@@ -3590,7 +3583,7 @@ Use restoreStateFromFile() to restore this viewer state.
 
 This method is automatically called when a viewer is closed (using Escape or
 using the window's upper right \c x close button). setStateFileName() to \c
-QString::null to prevent this. */
+QString() to prevent this. */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::saveStateToFile() {
   QString name = stateFileName();
@@ -3976,7 +3969,7 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
       setBackgroundColor(c);
     }
     else
-      return NULL;
+      return nullptr;
     break;
   }
 
@@ -4029,7 +4022,7 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
                          "Unable to create resulting image",
                          QMessageBox::Ok, QMessageBox::NoButton);
     setBackgroundColor(previousBGColor);
-    return NULL;
+    return nullptr;
   }
 
   qreal scaleX = subSize.width() / static_cast<qreal>(finalSize.width());
@@ -4090,7 +4083,7 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
   if(background_color !=0)
     setBackgroundColor(previousBGColor);
   camera()->setFrustum(frustum);
-  stored_fbo = NULL;
+  stored_fbo = nullptr;
   return image;
 }
 
@@ -4110,7 +4103,7 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::saveSnapshot()
 {
   qreal aspectRatio = width() / static_cast<qreal>(height());
-  static ImageInterface* imageInterface = NULL;
+  static ImageInterface* imageInterface = nullptr;
 
   if (!imageInterface)
     imageInterface = new ImageInterface(this, aspectRatio);

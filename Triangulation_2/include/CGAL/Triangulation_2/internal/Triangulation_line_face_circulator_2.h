@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Mariette Yvinec
@@ -71,7 +62,7 @@ private:
             
 public:
   Triangulation_line_face_circulator_2()
-    : pos(), _tr(NULL), s(undefined), i(-1)
+    : pos(), _tr(nullptr), s(undefined), i(-1)
     {}
             
   Triangulation_line_face_circulator_2(Vertex_handle v,
@@ -101,8 +92,8 @@ public:
   bool  operator==(const Face_handle& fh) const { return fh == pos; }
   bool  operator!=(const Face_handle& fh) const { return fh != pos; }
 
-  bool  operator==(Nullptr_t  CGAL_triangulation_assertion_code(n)) const;
-  bool  operator!=(Nullptr_t n) const;
+  bool  operator==(std::nullptr_t  CGAL_triangulation_assertion_code(n)) const;
+  bool  operator!=(std::nullptr_t n) const;
   bool  is_empty() const;
   bool  collinear_outside() const;
   bool locate(const Point& t, Locate_type &lt,  int &li);
@@ -179,7 +170,7 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
     ++fc;
     ic = fc->index(v);
     vt= fc->vertex(cw(ic));
-    if (fc == done) { _tr=NULL; return;}
+    if (fc == done) { _tr=nullptr; return;}
   }
   
   // now vt is finite and to the left of pq
@@ -214,7 +205,7 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
       i = ic;
       break;
     case LEFT_TURN:
-     _tr = NULL;
+     _tr = nullptr;
      break;
     }
   }
@@ -643,7 +634,7 @@ operator==(const Line_face_circulator& lfc) const
 {
   CGAL_triangulation_precondition( pos != Face_handle() &&
 			       lfc.pos != Face_handle());
-  return ( _tr == lfc._tr && ( _tr==NULL ||
+  return ( _tr == lfc._tr && ( _tr==nullptr ||
             (pos == lfc.pos  && s== lfc.s && p==lfc.p && q==lfc.q) ) );
 }
 
@@ -666,18 +657,18 @@ is_empty() const
 template < class Triangulation >
 inline bool
 Triangulation_line_face_circulator_2<Triangulation>::            
-operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
   return pos == Face_handle();
 }
             
 template < class Triangulation >
 inline bool
 Triangulation_line_face_circulator_2<Triangulation>::            
-operator!=(Nullptr_t n) const
+operator!=(std::nullptr_t n) const
 {
-  CGAL_triangulation_assertion( n == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
   return !(*this == n);
 }
             

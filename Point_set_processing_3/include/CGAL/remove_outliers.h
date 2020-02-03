@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Laurent Saboret and Nader Salman and Pierre Alliez
 
@@ -32,7 +23,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -139,7 +130,7 @@ compute_avg_knn_sq_distance_3(
    \note There are two thresholds that can be used:
    `threshold_percent` and `threshold_distance`. This function
    returns the smallest number of outliers such that at least one of
-   these threshold is fullfilled. This means that if
+   these threshold is fulfilled. This means that if
    `threshold_percent=100`, only `threshold_distance` is taken into
    account; if `threshold_distance=0` only `threshold_percent` is
    taken into account.
@@ -153,18 +144,19 @@ remove_outliers(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
-                                                     typename Kernel::FT(0));
-  double threshold_percent = choose_param(get_param(np, internal_np::threshold_percent), 10.);
-  double threshold_distance = choose_param(get_param(np, internal_np::threshold_distance), 0.);
-  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
+                                                         typename Kernel::FT(0));
+  double threshold_percent = choose_parameter(get_parameter(np, internal_np::threshold_percent), 10.);
+  double threshold_distance = choose_parameter(get_parameter(np, internal_np::threshold_distance), 0.);
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
   
   typedef typename Kernel::FT FT;
@@ -242,82 +234,6 @@ remove_outliers(
 {
   return remove_outliers (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename InputIterator,
-          typename PointMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
-InputIterator
-remove_outliers(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3
-  unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< maximum percentage of points to remove.
-  double threshold_distance, ///< minimum distance for a point to be
-                             ///< considered as outlier (distance here is the square root of the average
-                             ///< squared distance to K nearest
-                             ///< neighbors)
-  const Kernel& /*kernel*/) ///< geometric traits.
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return remove_outliers
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     threshold_percent (threshold_percent).
-     threshold_distance (threshold_distance). 
-     geom_traits(Kernel()));
-}
-  
-// deprecated API
-template <typename InputIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
-InputIterator
-remove_outliers(
-  InputIterator first, ///< iterator over the first input point
-  InputIterator beyond, ///< past-the-end iterator
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3
-  unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< percentage of points to remove
-  double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
-                             ///< for a point to be removed.
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return remove_outliers
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     threshold_percent (threshold_percent).
-     threshold_distance (threshold_distance));
-}
-
-// deprecated API
-template <typename InputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::remove_outliers(), please update your code")
-InputIterator
-remove_outliers(
-  InputIterator first, ///< iterator over the first input point
-  InputIterator beyond, ///< past-the-end iterator
-  unsigned int k, ///< number of neighbors.
-  double threshold_percent, ///< percentage of points to remove
-  double threshold_distance = 0.0)  ///< minimum average squared distance to K nearest neighbors
-                             ///< for a point to be removed.
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return remove_outliers
-    (points,
-     k,
-     CGAL::parameters::threshold_percent (threshold_percent).
-     threshold_distance (threshold_distance));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

@@ -8,4 +8,3 @@ HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/IO/Color.h
 
-

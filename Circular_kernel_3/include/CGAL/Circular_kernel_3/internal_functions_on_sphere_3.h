@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 
@@ -29,6 +20,7 @@
 
 
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
+#include <CGAL/number_utils.h>
 #include <utility>
 #include <vector>
 
@@ -140,10 +132,10 @@ namespace CGAL {
     {
       // Should we compare anyway even if they are degenerated?
       CGAL_kernel_assertion(!(p1.is_degenerate() || p2.is_degenerate()));
-      if(is_zero(p1.a())) {
-        if(!is_zero(p2.a())) return false;
-        if(is_zero(p1.b())) {
-          if(!is_zero(p2.b())) return false;
+      if(CGAL::is_zero(p1.a())) {
+        if(!CGAL::is_zero(p2.a())) return false;
+        if(CGAL::is_zero(p1.b())) {
+          if(!CGAL::is_zero(p2.b())) return false;
           return p1.c() * p2.d() == p1.d() * p2.c();
         }
         return (p2.c() * p1.b() == p1.c() * p2.b()) &&

@@ -6,10 +6,9 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 
-#include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_length_stop_predicate.h>
@@ -137,7 +136,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       return;
 
     // simplify
-    QTime time;
+    QElapsedTimer time;
     time.start();
     std::cout << "Simplify...";
     QApplication::setOverrideCursor(Qt::WaitCursor);

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Pouget and Frédéric Cazals
 #ifndef CGAL_MONGE_VIA_JET_FITTING_H_
@@ -32,10 +23,6 @@
 #include <utility>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
-#else
-#ifdef CGAL_LAPACK_ENABLED
-#include <CGAL/Lapack_svd.h>
-#endif
 #endif
 
 namespace CGAL {
@@ -51,11 +38,7 @@ unsigned int fact(unsigned int n){
 #ifdef CGAL_EIGEN3_ENABLED
 template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Eigen_svd >
 #else
-#ifdef CGAL_LAPACK_ENABLED
-template < class DataKernel, class LocalKernel = Simple_cartesian<double>, class SvdTraits = Lapack_svd>  
-#else
 template < class DataKernel, class LocalKernel, class SvdTraits >  
-#endif
 #endif
   class Monge_via_jet_fitting {
  public:

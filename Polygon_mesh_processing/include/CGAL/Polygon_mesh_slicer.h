@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ilker O. Yaz and Sebastien Loriot
@@ -38,6 +29,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/Polygon_mesh_slicer/Axis_parallel_plane_traits.h>
 
 #include <boost/variant.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -85,7 +78,13 @@ template<class TriangleMesh,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
                        AABB_traits<Traits,
-                         AABB_halfedge_graph_segment_primitive<TriangleMesh> > >,
+                         AABB_halfedge_graph_segment_primitive<TriangleMesh,
+                                                                typename boost::mpl::if_<
+                                                                  typename boost::is_same<
+                                                                    VertexPointMap,
+                                                                    typename boost::property_map< TriangleMesh, vertex_point_t>::type >::type,
+                                                                  Default,
+                                                                  VertexPointMap>::type> > >,
   bool UseParallelPlaneOptimization=true>
 class Polygon_mesh_slicer
 {
@@ -391,6 +390,9 @@ class Polygon_mesh_slicer
   }
 
 public:
+
+  /// the AABB-tree type used internally
+  typedef AABBTree AABB_tree;
 
   /**
   * Constructor using `edges(tmesh)` to initialize the

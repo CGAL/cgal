@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -94,7 +85,7 @@ protected:
   union {
     const Face_red* red;
     const Face_blue* blue;
-  } m_top_face;         // If m_above is NULL, points the top face in
+  } m_top_face;         // If m_above is nullptr, points the top face in
                         // the arrangement of the opposite color that
                         // contains the subcurve.
 
@@ -102,14 +93,14 @@ public:
   /*! Constructor. */
   Arr_overlay_subcurve() :
     Base(),
-    m_above(NULL)
-  { m_top_face.red = NULL; }
+    m_above(nullptr)
+  { m_top_face.red = nullptr; }
 
   /*! constructor given a curve. */
   Arr_overlay_subcurve(const X_monotone_curve_2& curve) :
     Base(curve),
-    m_above(NULL)
-  { m_top_face.red = NULL; }
+    m_above(nullptr)
+  { m_top_face.red = nullptr; }
 
   /*! Get the subcurve lying above above this subcurve in the status line. */
   Self* subcurve_above() const { return m_above; }
@@ -149,10 +140,10 @@ public:
   /*! Copy the top face from the given subcurve. */
   void set_top_face(const Self* sc)
   {
-    CGAL_precondition(sc->m_above == NULL);
+    CGAL_precondition(sc->m_above == nullptr);
 
     // Mark there is no curve above and copy the face pointer.
-    m_above = NULL;
+    m_above = nullptr;
     m_top_face.red = sc->m_top_face.red;
   }
 };

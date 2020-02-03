@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // 
 //
 // Author(s)     : Michael Seel
@@ -35,7 +29,7 @@
 #include "_test_cls_iso_rectangle_new_2.h"
 #include "_test_cls_circle_new_2.h"
 
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 using CGAL::internal::use;
 
@@ -175,8 +169,8 @@ test_new_2(const R& rep)
 
   typename R::Construct_triangle_2 construct_triangle
         = rep.construct_triangle_2_object();
-  Triangle_2 t1;
-  Triangle_2 t2 = construct_triangle(p2,p3,p4);
+  Triangle_2 t0; CGAL_USE(t0); // test default-construction
+  Triangle_2 t2 = construct_triangle(p2,p3,p4), t1 = t2;
 
   typename R::Construct_iso_rectangle_2 construct_iso_rectangle
         = rep.construct_iso_rectangle_2_object();
@@ -379,6 +373,7 @@ test_new_2(const R& rep)
   typename R::Compute_power_product_2 compute_power_product
         = rep.compute_power_product_2_object();
      tmp22d = compute_power_product(wp6, wp7);
+  CGAL_USE(tmp22d);
 
   typename R::Compute_squared_length_2 Compute_squared_length
         = rep.compute_squared_length_2_object();
@@ -672,7 +667,7 @@ test_new_2(const R& rep)
   use(tmp9); use(tmp10); use(tmp11); use(tmp12); use(tmp12a);
   use(tmp14); use(tmp14a); use(tmp15); use(tmp16);
   use(tmp16); use(tmp17); use(tmp19); use(tmp19a); use(tmp22a);
-  use(tmp22b); use(tmp22c); use(tmp23);
+  use(tmp22b); use(tmp22c); use(tmp22d); use(tmp23);
 
   use(tmp58);
   use(tmp57); use(tmp56); use(tmp55); use(tmp54); use(tmp53b); use(tmp53a);

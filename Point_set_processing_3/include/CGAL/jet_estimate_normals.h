@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret and Marc Pouget and Frederic Cazals
 
@@ -35,7 +26,7 @@
 #include <CGAL/Memory_sizer.h>
 #include <functional>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -206,7 +197,8 @@ jet_estimate_normals(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   CGAL_TRACE("Calls jet_estimate_normals()\n");
 
@@ -224,12 +216,12 @@ jet_estimate_normals(
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
-  FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius), FT(0));
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
+  FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
   
-  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
@@ -325,121 +317,6 @@ jet_estimate_normals(
   jet_estimate_normals<ConcurrencyTag>
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap,
-          typename Kernel,
-          typename SvdTraits
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
-void
-jet_estimate_normals(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-  unsigned int k, ///< number of neighbors.
-  const Kernel& /*kernel*/, ///< geometric traits.
-  unsigned int degree_fitting = 2) ///< fitting degree
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return jet_estimate_normals<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     degree_fitting (degree_fitting).
-     geom_traits(Kernel()));
-}
-  
-#if defined(CGAL_EIGEN3_ENABLED) || defined(CGAL_LAPACK_ENABLED)
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
-void
-jet_estimate_normals(
-  ForwardIterator first,
-  ForwardIterator beyond,
-  PointMap point_map,
-  NormalMap normal_map,
-  unsigned int k,
-  const Kernel& kernel,
-  unsigned int degree_fitting = 2)
-{
-  #ifdef CGAL_EIGEN3_ENABLED
-  typedef Eigen_svd SvdTraits;
-  #else
-  typedef Lapack_svd SvdTraits;
-  #endif
-
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return jet_estimate_normals<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     degree_fitting (degree_fitting).
-     svd_traits (SvdTraits()).
-     geom_traits(kernel));
-}
-
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
-void
-jet_estimate_normals(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-  unsigned int k, ///< number of neighbors.
-  unsigned int degree_fitting = 2)
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return jet_estimate_normals<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     degree_fitting (degree_fitting));
-}
-  
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename ForwardIterator,
-          typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_estimate_normals(), please update your code")
-void
-jet_estimate_normals(
-  ForwardIterator first,  ///< iterator over the first input point.
-  ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-  unsigned int k, ///< number of neighbors.
-  unsigned int degree_fitting = 2)
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return jet_estimate_normals<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::normal_map (normal_map).
-     degree_fitting (degree_fitting));
-}
-#endif // CGAL Eigen / Lapack
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 } //namespace CGAL

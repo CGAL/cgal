@@ -1,4 +1,4 @@
-#include <CGAL/CORE_Expr.h>
+#include <CGAL/Exact_algebraic.h>
 #include <CGAL/internal/Exact_complex.h>
 #include <CGAL/Cartesian.h>
 
@@ -6,7 +6,7 @@
 
 int main(int, char**)
 {
-  typedef CORE::Expr                  NT;
+  typedef CGAL::Exact_algebraic       NT;
   typedef CGAL::Cartesian<NT>         Kernel;
   typedef CGAL::Exact_complex<NT>     cplx;
   typedef Kernel::Point_2             Point;

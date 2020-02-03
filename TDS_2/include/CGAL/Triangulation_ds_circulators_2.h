@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Mariette Yvinec
@@ -80,8 +71,8 @@ public:
   bool operator!=(const Face_handle &fh) const { return pos != fh; }
 
   bool is_empty() const;
-  bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
-  bool operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
+  bool operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const;
+  bool operator!=(std::nullptr_t CGAL_triangulation_assertion_code(n)) const;
 
   Face&
   operator*() const
@@ -161,8 +152,8 @@ public:
   { return pos->vertex(_ri) != vh; }
 
   bool is_empty() const;
-  bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
-  bool operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
+  bool operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const;
+  bool operator!=(std::nullptr_t CGAL_triangulation_assertion_code(n)) const;
 
   Vertex&
   operator*() const
@@ -240,8 +231,8 @@ public:
   bool operator==(const Edge_circulator &vc) const;
   bool operator!=(const Edge_circulator &vc) const;
   bool is_empty() const;
-  bool operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
-  bool operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const;
+  bool operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const;
+  bool operator!=(std::nullptr_t CGAL_triangulation_assertion_code(n)) const;
 
   Edge*  operator->() const { 
     edge.first=pos;
@@ -347,19 +338,19 @@ return (_v == Vertex_handle() ||  pos == Face_handle() );
 template < class Tds >
 inline bool
 Triangulation_ds_face_circulator_2<Tds> ::
-operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
   return (_v == Vertex_handle() ||  pos == Face_handle() );  
 }
         
 template < class Tds >
 inline bool
 Triangulation_ds_face_circulator_2<Tds> ::
-operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator!=(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == NULL);
-  return ! (*this == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
+  return ! (*this == nullptr);
 }
 
 template < class Tds >
@@ -471,19 +462,19 @@ is_empty() const
 template < class Tds >
 inline bool
 Triangulation_ds_vertex_circulator_2<Tds> ::
-operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
   return (_v == Vertex_handle() || pos == Face_handle());
 }
         
 template < class Tds >
 inline bool
 Triangulation_ds_vertex_circulator_2<Tds> ::        
-operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator!=(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == NULL);
-  return !(*this == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
+  return !(*this == nullptr);
 }
         
 
@@ -593,19 +584,19 @@ is_empty() const
 template < class Tds >
 inline bool
 Triangulation_ds_edge_circulator_2<Tds> ::
-operator==(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
   return (_v == Vertex_handle() || pos == Face_handle());
 }
                
 template < class Tds >
 inline bool
 Triangulation_ds_edge_circulator_2<Tds> ::
-operator!=(Nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator!=(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == NULL);
-  return !(*this == NULL);
+  CGAL_triangulation_assertion( n == nullptr);
+  return !(*this == nullptr);
 }
        
 

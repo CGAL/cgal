@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot,
@@ -38,8 +29,10 @@
 #include <CGAL/boost/graph/selection.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -62,8 +55,291 @@
 #include <utility>
 #include <vector>
 
-namespace CGAL{
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
+namespace CGAL {
 namespace Polygon_mesh_processing {
+
+/// \ingroup PMP_repairing_grp
+/// removes the isolated vertices from any polygon mesh.
+/// A vertex is considered isolated if it is not incident to any simplex
+/// of higher dimension.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///
+/// @param pmesh the polygon mesh to be repaired
+///
+/// @return number of removed isolated vertices
+///
+template <class PolygonMesh>
+std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  std::vector<vertex_descriptor> to_be_removed;
+
+  for(vertex_descriptor v : vertices(pmesh))
+  {
+    if (CGAL::halfedges_around_target(v, pmesh).first
+      == CGAL::halfedges_around_target(v, pmesh).second)
+      to_be_removed.push_back(v);
+  }
+  std::size_t nb_removed = to_be_removed.size();
+  for(vertex_descriptor v : to_be_removed)
+  {
+    remove_vertex(v, pmesh);
+  }
+  return nb_removed;
+}
+
+/// \ingroup PMP_repairing_grp
+///
+/// removes connected components whose area or volume is under a certain threshold value.
+///
+/// Thresholds are provided via \ref pmp_namedparameters "Named Parameters". (see below).
+/// If thresholds are not provided by the user, default values are computed as follows:
+/// - the area threshold is taken as the square of one percent of the length of the diagonal
+///   of the bounding box of the mesh.
+/// - the volume threshold is taken as the third power of one percent of the length of the diagonal
+///   of the bounding box of the mesh.
+///
+/// The area and volume of a connected component will always be positive values (regardless
+/// of the orientation of the mesh).
+///
+/// As a consequence of the last sentence, the area or volume criteria can be disabled
+/// by passing zero (`0`) as threshold value.
+///
+/// Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+/// must be either available as internal property maps
+/// to `tmesh` or provided as \ref pmp_namedparameters "Named Parameters".
+///
+/// \tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+/// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// \param tmesh the triangulated polygon mesh
+/// \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamBegin{area_threshold} a fixed value such that only connected components whose area is
+///                                   larger than this value are kept \cgalParamEnd
+///   \cgalParamBegin{volume_threshold} a fixed value such that only connected components whose volume is
+///                                    larger than this value are kept (only applies to closed connected components) \cgalParamEnd
+///   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+///   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tmesh` \cgalParamEnd
+///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
+///                                     If this parameter is omitted, an internal property map for
+///                                     `CGAL::vertex_point_t` should be available in `TriangleMesh` \cgalParamEnd
+///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
+///    \cgalParamBegin{dry_run} a Boolean parameter. If set to `true`, the mesh will not be altered,
+///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
+///    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
+///                                     When using the "dry run" mode (see parameter `dry_run`), faces
+///                                     that would be removed by the algorithm can be collected with this output iterator. \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \return the number of connected components removed (ignoring isolated vertices).
+///
+template <typename TriangleMesh,
+          typename NamedParameters>
+std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
+                                                           const NamedParameters& np)
+{
+  using parameters::choose_parameter;
+  using parameters::is_default_parameter;
+  using parameters::get_parameter;
+
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor          halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor              face_descriptor;
+
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
+  typedef typename GT::FT                                                          FT;
+  const GT traits = choose_parameter(get_parameter(np, internal_np::vertex_point), GT());
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    VPM;
+  typedef typename boost::property_traits<VPM>::value_type                         Point_3;
+  const VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                   get_const_property_map(CGAL::vertex_point, tmesh));
+
+  typedef typename GetFaceIndexMap<TriangleMesh, NamedParameters>::type            FaceIndexMap;
+  FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
+                                      get_property_map(boost::face_index, tmesh));
+
+  FT area_threshold = choose_parameter(get_parameter(np, internal_np::area_threshold), FT(-1));
+  FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), FT(-1));
+
+  // If no threshold is provided, compute it as a % of the bbox
+  const bool is_default_area_threshold = is_default_parameter(get_parameter(np, internal_np::area_threshold));
+  const bool is_default_volume_threshold = is_default_parameter(get_parameter(np, internal_np::volume_threshold));
+
+  const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
+
+  typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
+                                                       NamedParameters,
+                                                       Emptyset_iterator>::type Output_iterator;
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  std::cout << "default threshold? " << is_default_area_threshold << " " << is_default_volume_threshold << std::endl;
+#endif
+
+  FT bbox_diagonal = FT(0), threshold_value = FT(0);
+
+  if(is_default_area_threshold || is_default_volume_threshold)
+  {
+    if(is_empty(tmesh))
+      return 0;
+
+    const Bbox_3 bb = bbox(tmesh, np);
+
+    bbox_diagonal = FT(CGAL::sqrt(CGAL::square(bb.xmax() - bb.xmin()) +
+                                  CGAL::square(bb.ymax() - bb.ymin()) +
+                                  CGAL::square(bb.zmax() - bb.zmin())));
+    threshold_value = bbox_diagonal / FT(100); // default filter is 1%
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+    std::cout << "bb xmin xmax: " << bb.xmin() << " " << bb.xmax() << std::endl;
+    std::cout << "bb ymin ymax: " << bb.ymin() << " " << bb.ymax() << std::endl;
+    std::cout << "bb zmin zmax: " << bb.zmin() << " " << bb.zmax() << std::endl;
+    std::cout << "bbox_diagonal: " << bbox_diagonal << std::endl;
+    std::cout << "threshold_value: " << threshold_value << std::endl;
+#endif
+  }
+
+  if(is_default_area_threshold)
+    area_threshold = CGAL::square(threshold_value);
+
+  if(is_default_volume_threshold)
+    volume_threshold = CGAL::square(threshold_value);
+
+  const bool use_areas = (is_default_area_threshold || area_threshold > 0);
+  const bool use_volumes = (is_default_volume_threshold || volume_threshold > 0);
+
+  if(!use_areas && !use_volumes)
+    return 0;
+
+  // Compute the connected components only once
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  std::size_t num = connected_components(tmesh, face_cc, np);
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  std::cout << num << " different connected components" << std::endl;
+#endif
+
+  if(!dry_run)
+    CGAL::Polygon_mesh_processing::remove_isolated_vertices(tmesh);
+
+  // Compute CC-wide and total areas/volumes
+  FT total_area = 0;
+  std::vector<FT> component_areas(num, 0);
+
+  if(use_areas)
+  {
+    for(face_descriptor f : faces(tmesh))
+    {
+      const FT fa = face_area(f, tmesh, np);
+      component_areas[face_cc[f]] += fa;
+      total_area += fa;
+    }
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  std::cout << "area threshold: " << area_threshold << std::endl;
+  std::cout << "total area: " << total_area << std::endl;
+#endif
+  }
+
+  // Volumes make no sense for CCs that are not closed
+  std::vector<bool> cc_closeness(num, true);
+  std::vector<FT> component_volumes(num);
+
+  if(use_volumes)
+  {
+    for(halfedge_descriptor h : halfedges(tmesh))
+    {
+      if(is_border(h, tmesh))
+        cc_closeness[face_cc[face(opposite(h, tmesh), tmesh)]] = false;
+    }
+
+    typename GT::Compute_volume_3 cv3 = traits.compute_volume_3_object();
+    Point_3 origin(0, 0, 0);
+
+    for(face_descriptor f : faces(tmesh))
+    {
+      const std::size_t i = face_cc[f];
+      if(!cc_closeness[i])
+        continue;
+
+      const FT fv = cv3(origin,
+                        get(vpm, target(halfedge(f, tmesh), tmesh)),
+                        get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
+                        get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
+
+      component_volumes[i] += fv;
+    }
+
+    // negative volume means the CC was oriented inward
+    FT total_volume = 0;
+    for(std::size_t i=0; i<num; ++i)
+    {
+      component_volumes[i] = CGAL::abs(component_volumes[i]);
+      total_volume += component_volumes[i];
+    }
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+    std::cout << "volume threshold: " << volume_threshold << std::endl;
+    std::cout << "total volume: " << total_volume << std::endl;
+#endif
+  }
+
+  std::size_t res = 0;
+  std::vector<bool> is_to_be_removed(num, false);
+
+  for(std::size_t i=0; i<num; ++i)
+  {
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+    std::cout << "CC " << i << " has area: " << component_areas[i]
+              << " and volume: " << component_volumes[i] << std::endl;
+#endif
+
+    if((use_volumes && cc_closeness[i] && component_volumes[i] <= volume_threshold) ||
+       (use_areas && component_areas[i] <= area_threshold))
+    {
+      is_to_be_removed[i] = true;
+      ++res;
+    }
+  }
+
+#ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
+  std::cout << "Removing " << res << " CCs" << std::endl;
+#endif
+
+  if(dry_run)
+  {
+    for(face_descriptor f : faces(tmesh))
+      if(is_to_be_removed[face_cc[f]])
+        *out++ = f;
+  }
+  else
+  {
+    std::vector<std::size_t> ccs_to_remove;
+    for(std::size_t i=0; i<num; ++i)
+      if(is_to_be_removed[i])
+        ccs_to_remove.push_back(i);
+
+    remove_connected_components(tmesh, ccs_to_remove, face_cc, np);
+    CGAL_expensive_postcondition(is_valid_polygon_mesh(tmesh));
+  }
+
+  return res;
+}
+
+template <typename TriangleMesh>
+std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh)
+{
+  return remove_connected_components_of_negligible_size(tmesh, parameters::all_default());
+}
+
 namespace debug{
 
   template <class TriangleMesh, class VertexPointMap>
@@ -581,8 +857,8 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
   CGAL_assertion(CGAL::is_valid_polygon_mesh(tmesh));
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
@@ -592,7 +868,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
@@ -601,7 +877,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
   bool all_removed=false;
   bool some_removed=true;
 
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  bool preserve_genus = parameters::choose_parameter(parameters::get_parameter(np, internal_np::preserve_genus), true);
 
   // collect edges of length 0
   while(some_removed && !all_removed)
@@ -1109,8 +1385,8 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef TriangleMesh TM;
   typedef typename boost::graph_traits<TriangleMesh> GT;
@@ -1120,10 +1396,10 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   typedef typename GT::vertex_descriptor vertex_descriptor;
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                       get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
@@ -1860,7 +2136,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           if ( target(next(opposite(h_side1, tmesh), tmesh), tmesh) ==
                target(next(opposite(h_side2, tmesh), tmesh), tmesh) )
           {
-            CGAL_assertion(!"Forbidden simplification");
+            CGAL_error_msg("Forbidden simplification");
           }
 
           h_side2 = prev(h_side2, tmesh);
@@ -1959,6 +2235,8 @@ bool remove_degenerate_faces(TriangleMesh& tmesh)
 /// @param v a vertex of `pm`
 /// @param pm a triangle mesh containing `v`
 ///
+/// \warning This function has linear runtime with respect to the size of the mesh.
+///
 /// \sa `duplicate_non_manifold_vertices()`
 ///
 /// \return `true` if the vertex is non-manifold, `false` otherwise.
@@ -2011,6 +2289,11 @@ struct Vertex_collector
   typedef typename boost::graph_traits<G>::vertex_descriptor      vertex_descriptor;
 
   bool has_old_vertex(const vertex_descriptor v) const { return collections.count(v) != 0; }
+  void tag_old_vertex(const vertex_descriptor v)
+  {
+    CGAL_precondition(!has_old_vertex(v));
+    collections[v];
+  }
 
   void collect_vertices(vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -2032,8 +2315,6 @@ struct Vertex_collector
 
   std::map<vertex_descriptor, std::vector<vertex_descriptor> > collections;
 };
-
-} // end namespace internal
 
 template <typename PolygonMesh, typename VPM, typename ConstraintMap>
 typename boost::graph_traits<PolygonMesh>::vertex_descriptor
@@ -2078,15 +2359,18 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
 
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = choose_param(get_param(np, internal_np::vertex_point),
+  VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                     get_property_map(vertex_point, pm));
 
-  typedef typename boost::lookup_named_param_def<internal_np::vertex_is_constrained_t,
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_is_constrained_t,
                                                  NamedParameters,
                                                  Constant_property_map<vertex_descriptor, bool> // default (no constraint pmap)
                                                  >::type                  VerticesMap;
-  VerticesMap cmap = choose_param(get_param(np, internal_np::vertex_is_constrained),
+  VerticesMap cmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
                                   Constant_property_map<vertex_descriptor, bool>(false));
 
   std::size_t nb_new_vertices = 0;
@@ -2109,17 +2393,26 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   }
   while(ih != done);
 
-  bool is_non_manifold_within_umbrella = (border_counter > 1);
-
-  // if there is a single sector, then simply move the full umbrella to a new vertex, and we're done
+  const bool is_non_manifold_within_umbrella = (border_counter > 1);
   if(!is_non_manifold_within_umbrella)
   {
-    // note that since this is marked as a non-manifold vertex, we necessarily need to create
-    // a new vertex for this umbrella (the main umbrella is not marked as non-manifold)
-    halfedge_descriptor last_h = opposite(next(h, pm), pm);
-    vertex_descriptor new_v = create_new_vertex_for_sector(h, last_h, pm, vpm, cmap);
-    dmap.collect_vertices(old_v, new_v);
-    nb_new_vertices = 1;
+    const bool first_time_meeting_v = !dmap.has_old_vertex(old_v);
+    if(first_time_meeting_v)
+    {
+      // The star is manifold, so if it is the first time we have met that vertex,
+      // there is nothing to do, we just keep the same vertex.
+      set_halfedge(old_v, h, pm); // to ensure halfedge(old_v, pm) stays valid
+      dmap.tag_old_vertex(old_v); // so that we know we have met old_v already, next time, we'll have to duplicate
+    }
+    else
+    {
+      // This is not the canonical star associated to 'v'.
+      // Create a new vertex, and move the whole star to that new vertex
+      halfedge_descriptor last_h = opposite(next(h, pm), pm);
+      vertex_descriptor new_v = create_new_vertex_for_sector(h, last_h, pm, vpm, cmap);
+      dmap.collect_vertices(old_v, new_v);
+      nb_new_vertices = 1;
+    }
   }
   // if there is more than one sector, look at each sector and split them away from the main one
   else
@@ -2152,9 +2445,9 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
       halfedge_descriptor next_start_h = prev(opposite(sector_last_h, pm), pm);
 
       // there are multiple CCs incident to this particular vertex, and we should create a new vertex
-      // if it's not the first umbrella around 'old_v' or not the first sector, but not if it's
-      // the first umbrella and first sector.
-      bool must_create_new_vertex = (!is_main_sector || dmap.has_old_vertex(old_v));
+      // if it's not the first umbrella around 'old_v' or not the first sector, but only not if it's
+      // both the first umbrella and first sector.
+      const bool must_create_new_vertex = (!is_main_sector || dmap.has_old_vertex(old_v));
 
       // In any case, we must set up the next pointer correctly
       set_next(sector_start_h, opposite(sector_last_h, pm), pm);
@@ -2165,6 +2458,11 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
         dmap.collect_vertices(old_v, new_v);
         ++nb_new_vertices;
       }
+      else
+      {
+        // Ensure that halfedge(old_v, pm) stays valid
+        set_halfedge(old_v, sector_start_h, pm);
+      }
 
       is_main_sector = false;
       sector_start_h = next_start_h;
@@ -2174,6 +2472,113 @@ std::size_t make_umbrella_manifold(typename boost::graph_traits<PolygonMesh>::ha
   }
 
   return nb_new_vertices;
+}
+
+} // end namespace internal
+
+/// \ingroup PMP_repairing_grp
+/// collects the non-manifold vertices (if any) present in the mesh. A non-manifold vertex `v` is returned
+/// via one incident halfedge `h` such that `target(h, pm) = v` for all the umbrellas that `v` apppears in
+/// (an <i>umbrella</i> being the set of faces incident to all the halfedges reachable by walking around `v`
+/// using `hnext = prev(opposite(h, pm), pm)`, starting from `h`).
+///
+/// @tparam PolygonMesh a model of `HalfedgeListGraph`
+/// @tparam OutputIterator a model of `OutputIterator` holding objects of type
+///                         `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
+///
+/// @param pm a triangle mesh
+/// @param out the output iterator that collects halfedges incident to `v`
+///
+/// \sa `is_non_manifold_vertex()`
+/// \sa `duplicate_non_manifold_vertices()`
+///
+/// \return the output iterator.
+template <typename PolygonMesh, typename OutputIterator>
+OutputIterator non_manifold_vertices(const PolygonMesh& pm,
+                                     OutputIterator out)
+{
+  // Non-manifoldness can appear either:
+  // - if 'pm' is pinched at a vertex. While traversing the incoming halfedges at this vertex,
+  //   we will meet strictly more than one border halfedge.
+  // - if there are multiple umbrellas around a vertex. In that case, we will find a non-visited
+  //   halfedge that has for target a vertex that is already visited.
+
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                halfedge_descriptor;
+
+  typedef CGAL::dynamic_vertex_property_t<bool>                                         Vertex_bool_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_bool_tag>::const_type        Known_manifold_vertex_map;
+  typedef CGAL::dynamic_vertex_property_t<halfedge_descriptor>                          Vertex_halfedge_tag;
+  typedef typename boost::property_map<PolygonMesh, Vertex_halfedge_tag>::const_type    Visited_vertex_map;
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
+
+  Known_manifold_vertex_map known_nm_vertices = get(Vertex_bool_tag(), pm);
+  Visited_vertex_map visited_vertices = get(Vertex_halfedge_tag(), pm);
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
+
+  const halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
+
+  // Dynamic pmaps do not have default initialization values (yet)
+  for(vertex_descriptor v : vertices(pm))
+  {
+    put(known_nm_vertices, v, false);
+    put(visited_vertices, v, null_h);
+  }
+  for(halfedge_descriptor h : halfedges(pm))
+    put(visited_halfedges, h, false);
+
+  for(halfedge_descriptor h : halfedges(pm))
+  {
+    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
+    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
+    // it means that the vertex is non manifold.
+    if(!get(visited_halfedges, h))
+    {
+      put(visited_halfedges, h, true);
+      bool is_non_manifold = false;
+
+      vertex_descriptor v = target(h, pm);
+      if(get(visited_vertices, v) != null_h) // already seen this vertex, but not from this star
+      {
+        is_non_manifold = true;
+        // if this is the second time we visit that vertex and the first star was manifold, we have
+        // never reported the first star, but we must now
+        if(!get(known_nm_vertices, v))
+          *out++ = get(visited_vertices, v); // that's a halfedge of the first star we've seen 'v' in
+      }
+      else
+      {
+        // first time we meet this vertex, just mark it so, and keep the halfedge we found the vertex with in memory
+        put(visited_vertices, v, h);
+      }
+
+      // While walking the star of this halfedge, if we meet a border halfedge more than once,
+      // it means the mesh is pinched and we are also in the case of a non-manifold situation
+      halfedge_descriptor ih = h, done = ih;
+      int border_counter = 0;
+      do
+      {
+        put(visited_halfedges, ih, true);
+        if(is_border(ih, pm))
+          ++border_counter;
+
+        ih = prev(opposite(ih, pm), pm);
+      }
+      while(ih != done);
+
+      if(border_counter > 1)
+        is_non_manifold = true;
+
+      if(is_non_manifold)
+      {
+        *out++ = h;
+        put(known_nm_vertices, v, true);
+      }
+    }
+  }
+
+  return out;
 }
 
 /// \ingroup PMP_repairing_grp
@@ -2207,83 +2612,29 @@ template <typename PolygonMesh, typename NamedParameters>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
                                             const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
-  typedef boost::graph_traits<PolygonMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef boost::graph_traits<PolygonMesh>                            GT;
+  typedef typename GT::halfedge_descriptor                            halfedge_descriptor;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::output_iterator_t,
     NamedParameters,
     Emptyset_iterator
-  > ::type Output_iterator;
-  Output_iterator out
-    = choose_param(get_param(np, internal_np::output_iterator),
-                   Emptyset_iterator());
+  > ::type                                                            Output_iterator;
 
-  internal::Vertex_collector<PolygonMesh> dmap;
-
-  typedef CGAL::dynamic_vertex_property_t<bool>                                   Vertex_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Vertex_property_tag>::type    Visited_vertex_map;
-  typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::type  Visited_halfedge_map;
-
-  Visited_vertex_map visited_vertices = get(Vertex_property_tag(), pm);
-  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pm);
-
-  // Dynamic pmaps do not have default initialization values (yet)
-  for(vertex_descriptor v : vertices(pm))
-    put(visited_vertices, v, false);
-  for(halfedge_descriptor h : halfedges(pm))
-    put(visited_halfedges, h, false);
-
-  std::size_t nb_new_vertices = 0;
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   std::vector<halfedge_descriptor> non_manifold_cones;
-  for(halfedge_descriptor h : halfedges(pm))
-  {
-    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
-    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
-    // it means that the vertex is non manifold.
-    if(!get(visited_halfedges, h))
-    {
-      put(visited_halfedges, h, true);
-      bool is_non_manifold = false;
+  non_manifold_vertices(pm, std::back_inserter(non_manifold_cones));
 
-      vertex_descriptor vd = target(h, pm);
-      if(get(visited_vertices, vd)) // already seen this vertex, but not from this star
-        is_non_manifold = true;
-
-      put(visited_vertices, vd, true);
-
-      // While walking the star of this halfedge, if we meet a border halfedge more than once,
-      // it means the mesh is pinched and we are also in the case of a non-manifold situation
-      halfedge_descriptor ih = h, done = ih;
-      int border_counter = 0;
-      do
-      {
-        put(visited_halfedges, ih, true);
-        if(is_border(ih, pm))
-          ++border_counter;
-
-        ih = prev(opposite(ih, pm), pm);
-      }
-      while(ih != done);
-
-      if(border_counter > 1)
-        is_non_manifold = true;
-
-      if(is_non_manifold)
-        non_manifold_cones.push_back(h);
-    }
-  }
-
+  internal::Vertex_collector<PolygonMesh> dmap;
+  std::size_t nb_new_vertices = 0;
   if(!non_manifold_cones.empty())
   {
     for(halfedge_descriptor h : non_manifold_cones)
-      nb_new_vertices += make_umbrella_manifold(h, pm, dmap, np);
+      nb_new_vertices += internal::make_umbrella_manifold(h, pm, dmap, np);
 
     dmap.dump(out);
   }
@@ -2295,37 +2646,6 @@ template <class PolygonMesh>
 std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm)
 {
   return duplicate_non_manifold_vertices(pm, parameters::all_default());
-}
-
-/// \ingroup PMP_repairing_grp
-/// removes the isolated vertices from any polygon mesh.
-/// A vertex is considered isolated if it is not incident to any simplex
-/// of higher dimension.
-///
-/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-///
-/// @param pmesh the polygon mesh to be repaired
-///
-/// @return number of removed isolated vertices
-///
-template <class PolygonMesh>
-std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
-{
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  std::vector<vertex_descriptor> to_be_removed;
-
-  for(vertex_descriptor v : vertices(pmesh))
-  {
-    if (CGAL::halfedges_around_target(v, pmesh).first
-      == CGAL::halfedges_around_target(v, pmesh).second)
-      to_be_removed.push_back(v);
-  }
-  std::size_t nb_removed = to_be_removed.size();
-  for(vertex_descriptor v : to_be_removed)
-  {
-    remove_vertex(v, pmesh);
-  }
-  return nb_removed;
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -2845,12 +3165,12 @@ bool remove_self_intersections(TriangleMesh& tm, const NamedParameters& np)
 
   // named parameter extraction
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type VertexPointMap;
-  VertexPointMap vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
+  VertexPointMap vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                            get_property_map(vertex_point, tm));
 
-  const int max_steps = boost::choose_param(boost::get_param(np, internal_np::number_of_iterations), 7);
-  bool verbose = boost::choose_param(boost::get_param(np, internal_np::verbosity_level), 0) > 0;
-  bool preserve_genus = boost::choose_param(boost::get_param(np, internal_np::preserve_genus), true);
+  const int max_steps = parameters::choose_parameter(parameters::get_parameter(np, internal_np::number_of_iterations), 7);
+  bool verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbosity_level), 0) > 0;
+  bool preserve_genus = parameters::choose_parameter(parameters::get_parameter(np, internal_np::preserve_genus), true);
 
   if (verbose)
     std::cout << "DEBUG: Starting remove_self_intersections, is_valid(tm)? " << is_valid_polygon_mesh(tm) << "\n";

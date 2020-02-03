@@ -1,20 +1,11 @@
 // Copyright (c) 2002-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Radu Ursu
@@ -272,7 +263,10 @@ namespace internal {
       //remove duplicated consecutive points
       typename std::vector<Point>::iterator last = std::unique(result.begin(),result.end());
       result.erase(last,result.end());
-      
+
+      while(result.size() > 1 && result.back() == result.front())
+        result.pop_back();
+
       switch(result.size()){
         case 0:
           return intersection_return<typename K::Intersect_2, Triangle, typename K::Iso_rectangle_2>();

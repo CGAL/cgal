@@ -75,9 +75,9 @@ template<class SDG, class InputStream>
 bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
 	      bool test_remove)
 {
-  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
-
   typedef SDG SDG2;
+
+  std::string ifname_full = get_fname(typename SDG2::Geom_traits::FT(), ifname);
 
   typedef SDG2 Segment_Delaunay_graph_2;
 
@@ -167,7 +167,8 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
   start_testing("assignment operator");
   sdg.insert(site_list.begin(), site_list.end());
 
-  sdg = (Segment_Delaunay_graph_2&)sdg;
+  Segment_Delaunay_graph_2 tmp;
+  tmp = sdg;
   sdg2 = sdg;
 
   assert( sdg.is_valid() );
@@ -439,7 +440,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     vnearest = sdg.nearest_neighbor(p2, vnearest);
   }
   end_testing("nearest neighbor methods");
-
+  /*
   start_testing("drawing methods");
   {
     sdg.draw_dual(null_os);
@@ -448,7 +449,7 @@ bool test_sdg(InputStream&, const SDG&, const char* ifname, const char* ofname,
     sdg.draw_dual_edge(sdg.finite_edges_begin(), null_os);
   }
   end_testing("drawing methods");
-
+  */
   start_testing("swap method");
   {
     sdg.swap(sdg);

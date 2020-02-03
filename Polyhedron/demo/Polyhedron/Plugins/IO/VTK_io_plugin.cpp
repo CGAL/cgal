@@ -1,19 +1,10 @@
 // Copyright (c) 2015  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sebastien Loriot <sebastien.loriot@cgal.org>,
 //                 Jane Tournois
@@ -291,7 +282,7 @@ class Polyhedron_demo_vtk_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "vtk_io_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "vtk_io_plugin.json")
 
 public:
   typedef boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
@@ -308,8 +299,9 @@ public:
   }
   
   
-  bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   {
+    Scene_item* item = items.front();
     std::string extension = fileinfo.suffix().toLower().toStdString();
     if ( extension != "vtk" && extension != "vtp" && extension != "vtu")
       return false;
@@ -356,10 +348,11 @@ public:
       
       CGAL::output_to_vtu(os, c3t3);
     }
+    items.pop_front();
     return true;
   }
 
-  bool canLoad() const { return true; }
+  bool canLoad(QFileInfo) const { return true; }
 
   template <class vtkReader>
   vtkSmartPointer<vtkReader>
@@ -374,11 +367,14 @@ public:
     return reader;
   }
 
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo)
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   {
     std::string extension=fileinfo.suffix().toLower().toStdString();
     if (extension != "vtk" && extension != "vtp" && extension != "vtu")
-      return 0;
+    {
+      ok = false;
+      return QList<Scene_item*>();
+    }
 
     std::string fname = fileinfo.absoluteFilePath().toStdString();
 
@@ -389,7 +385,10 @@ public:
       Scene_facegraph_item* item =
           new Scene_facegraph_item();
       item->setName(fileinfo.completeBaseName());
-      return item;
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(item);
+      return QList<Scene_item*>()<<item;
     }
     
     vtkSmartPointer<vtkPointSet> data;
@@ -421,7 +420,8 @@ public:
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.exec();
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
     if (obs->GetWarning())
     {
@@ -442,7 +442,8 @@ public:
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.exec();
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
     if (obs->GetWarning())
     {
@@ -491,7 +492,10 @@ public:
         }
         else{
           poly_item->setName(fileinfo.baseName());
-          return poly_item;
+          ok = true;
+          if(add_to_scene)
+            CGAL::Three::Three::scene()->addItem(poly_item);
+          return QList<Scene_item*>()<<poly_item;
         }
       }
     }
@@ -592,7 +596,10 @@ public:
       }
       else{
         c3t3_item->setName(fileinfo.baseName());
-        return c3t3_item;
+        ok = true;
+        if(add_to_scene)
+          CGAL::Three::Three::scene()->addItem(c3t3_item);
+        return QList<Scene_item*>()<<c3t3_item;
       }
     }
     
@@ -611,12 +618,19 @@ public:
       }
       else{
         polyline_item->setName(fileinfo.baseName());
-        return polyline_item;
+        ok = true;
+        if(add_to_scene)
+          CGAL::Three::Three::scene()->addItem(polyline_item);
+        return QList<Scene_item*>()<<polyline_item;
       }
     }
     
-    if(group)
-      return group;
+    if(group){
+      ok = true;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(group);
+      return QList<Scene_item*>()<<group;
+    }
     
     QApplication::restoreOverrideCursor();
     QMessageBox::warning(CGAL::Three::Three::mainWindow(),
@@ -630,7 +644,10 @@ public:
       point_item->point_set()->insert(Point_3(p[0], p[1], p[2]));
     }
     point_item->setName(fileinfo.baseName());
-    return point_item;
+    ok = true;
+    if(add_to_scene)
+      CGAL::Three::Three::scene()->addItem(point_item);
+    return QList<Scene_item*>()<<point_item;
   }
 }; // end Polyhedron_demo_vtk_plugin
 

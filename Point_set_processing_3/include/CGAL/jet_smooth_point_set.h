@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez, Marc Pouget and Laurent Saboret
 
@@ -34,7 +25,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -210,7 +201,8 @@ jet_smooth_point_set(
   unsigned int k,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
   
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -221,12 +213,12 @@ jet_smooth_point_set(
                               typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
-                                                     typename Kernel::FT(0));
-  unsigned int degree_fitting = choose_param(get_param(np, internal_np::degree_fitting), 2);
-  unsigned int degree_monge = choose_param(get_param(np, internal_np::degree_monge), 2);
-  const std::function<bool(double)>& callback = choose_param(get_param(np, internal_np::callback),
+  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
+                                                         typename Kernel::FT(0));
+  unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
+  unsigned int degree_monge = choose_parameter(get_parameter(np, internal_np::degree_monge), 2);
+  const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
   typedef typename Kernel::Point_3 Point;
@@ -309,117 +301,6 @@ jet_smooth_point_set(
   jet_smooth_point_set<ConcurrencyTag>
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename InputIterator,
-          typename PointMap,
-          typename Kernel,
-          typename SvdTraits
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
-void
-jet_smooth_point_set(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3.
-  unsigned int k, ///< number of neighbors.
-  const Kernel& /*kernel*/, ///< geometric traits.
-  unsigned int degree_fitting = 2, ///< fitting degree
-  unsigned int degree_monge = 2)  ///< Monge degree
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return jet_smooth_point_set<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     degree_fitting (degree_fitting).
-     degree_monge (degree_monge).
-     geom_traits(Kernel()));
-}
-  
-#if defined(CGAL_EIGEN3_ENABLED) || defined(CGAL_LAPACK_ENABLED)
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename InputIterator,
-          typename PointMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
-void
-jet_smooth_point_set(
-  InputIterator first,  ///< iterator over the first input point.
-  InputIterator beyond, ///< past-the-end iterator over the input points.
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3.
-  unsigned int k, ///< number of neighbors.
-  const Kernel& kernel, ///< geometric traits.
-  unsigned int degree_fitting = 2, ///< fitting degree
-  unsigned int degree_monge = 2)  ///< Monge degree
-{
-  #ifdef CGAL_EIGEN3_ENABLED
-  typedef Eigen_svd SvdTraits;
-  #else
-  typedef Lapack_svd SvdTraits;
-  #endif
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return jet_smooth_point_set<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     degree_fitting (degree_fitting).
-     degree_monge (degree_monge).
-     svd_traits (SvdTraits()).
-     geom_traits(kernel));
-}
-
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename InputIterator,
-          typename PointMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
-void
-jet_smooth_point_set(
-  InputIterator first, ///< iterator over the first input point
-  InputIterator beyond, ///< past-the-end iterator
-  PointMap point_map, ///< property map: value_type of InputIterator -> Point_3
-  unsigned int k, ///< number of neighbors.
-  const unsigned int degree_fitting = 2,
-  const unsigned int degree_monge = 2)
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return jet_smooth_point_set<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     degree_fitting (degree_fitting).
-     degree_monge (degree_monge));
-}
-
-// deprecated API
-template <typename ConcurrencyTag,
-	  typename InputIterator
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::jet_smooth_point_set(), please update your code")
-void
-jet_smooth_point_set(
-  InputIterator first, ///< iterator over the first input point
-  InputIterator beyond, ///< past-the-end iterator
-  unsigned int k, ///< number of neighbors.
-  const unsigned int degree_fitting = 2,
-  const unsigned int degree_monge = 2)
-{
-  CGAL::Iterator_range<InputIterator> points (first, beyond);
-  return jet_smooth_point_set<ConcurrencyTag>
-    (points,
-     k,
-     CGAL::parameters::degree_fitting (degree_fitting).
-     degree_monge (degree_monge));
-}
-#endif // CGAL Eigen / Lapack
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
   
 

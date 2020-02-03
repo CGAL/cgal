@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // 
 //
 // Author(s)     : Stefan Schirra
@@ -26,6 +20,7 @@
 
 #include <CGAL/Bbox_3.h>
 #include <cassert>
+#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -38,6 +33,7 @@ _test_cls_sphere_3(const R& )
  typename R::Sphere_3  ic;
  CGAL::Sphere_3<R> c0;
 
+ const bool nonexact = boost::is_same<FT, double>::value;
  RT n0 =  0;
  RT n1 = 16;
  RT n2 = -4;
@@ -104,8 +100,8 @@ _test_cls_sphere_3(const R& )
  assert( cn3 == cp3.opposite() );
  assert( c7.opposite() == c8 );
  assert( c8.opposite() == c7 );
- assert( c1.opposite() == c3 );
- assert( c3.opposite() == c1 );
+ assert( c1.opposite() == c3 || nonexact );
+ assert( c3.opposite() == c1 || nonexact );
  assert( c7.orientation() == CGAL::POSITIVE );
  assert( c8.orientation() == CGAL::NEGATIVE );
  assert( c5.orientation() == CGAL::POSITIVE );
@@ -181,22 +177,22 @@ _test_cls_sphere_3(const R& )
 
  CGAL::Point_3<R> ori = CGAL::Point_3<R>( RT(0), RT(0), RT(0));
  CGAL::Point_3<R> p6  = p2.transform( rotate1 );
- assert( CGAL::compare_distance_to_point( ori, p2, p6) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p6) == CGAL::EQUAL || nonexact );
  CGAL::Point_3<R> p7  = p2.transform( rotate2 );
- assert( CGAL::compare_distance_to_point( ori, p2, p7) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p7) == CGAL::EQUAL || nonexact );
  CGAL::Point_3<R> p8  = p2.transform( rotate3 );
- assert( CGAL::compare_distance_to_point( ori, p2, p8) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p8) == CGAL::EQUAL || nonexact );
  CGAL::Point_3<R> p9  = p2.transform( rotate4 );
  assert( CGAL::compare_distance_to_point( ori, p2, p9) == CGAL::EQUAL );
  CGAL::Point_3<R> p10 = p2.transform( rotate5 );
- assert( CGAL::compare_distance_to_point( ori, p2, p10) == CGAL::EQUAL );
+ assert( CGAL::compare_distance_to_point( ori, p2, p10) == CGAL::EQUAL || nonexact );
  p6 = p6 + v1;
  p7 = p7 + v1;
  p8 = p8 + v1;
  p9 = p9 + v1;
  p10 = p10 + v1;
  CGAL::Sphere_3<R> c10 (p6, p8, p7, p9);
- assert( c10.center() == ori + v1 );
+ assert( c10.center() == ori + v1 || nonexact );
  assert( c10.orientation() == CGAL::POSITIVE );
  assert( c10.opposite().orientation() == CGAL::NEGATIVE );
 
@@ -205,9 +201,9 @@ _test_cls_sphere_3(const R& )
          == CGAL::ON_POSITIVE_SIDE );
  assert( c10.oriented_side(CGAL::ORIGIN + v1 + vx*n2 ) \
          == CGAL::ON_NEGATIVE_SIDE );
- assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY );
- assert( c10.has_on_boundary(p9) );
- assert( c10.has_on_boundary(p4 + v1) );
+ assert( c10.oriented_side(p9 ) == CGAL::ON_ORIENTED_BOUNDARY || nonexact );
+ assert( c10.has_on_boundary(p9) || nonexact );
+ assert( c10.has_on_boundary(p4 + v1) || nonexact );
  CGAL::Point_3<R> p11( n4, n4, n4, n3) ; // (2.5, 2.5, 2.5)
  CGAL::Point_3<R> p12( n5, n5, n5, n3) ; // ( 5 ,  5,   5 )
  assert( c10.has_on_bounded_side( p11 ) );
@@ -217,8 +213,8 @@ _test_cls_sphere_3(const R& )
  assert( c10.has_on_negative_side( p12 ) );
  assert( c10.opposite().has_on_negative_side( p11 ) );
  assert( c10.opposite().has_on_positive_side( p12 ) );
- assert( c10.has_on_boundary( p6 ) );
- assert( c10.has_on_boundary( p8 ) );
+ assert( c10.has_on_boundary( p6 ) || nonexact );
+ assert( c10.has_on_boundary( p8 ) || nonexact );
 
 
  std::cout << '.';

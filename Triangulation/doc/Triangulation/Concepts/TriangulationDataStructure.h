@@ -83,7 +83,7 @@ class TriangulationDataStructure {
 public:
 
 /// \name Types
-// @{
+/// @{
 
 /*!
 The vertex type, requirements for this type are described 
@@ -122,6 +122,7 @@ typedef unspecified_type Face;
 /// Vertices and full cells are manipulated via
 /// <I>handles</I>. Handles support the usual two dereference
 /// operators and `operator->`. 
+/// @{
 
 /*!
 Handle to a `Vertex`.
@@ -556,8 +557,8 @@ This method does exactly the opposite of
 `insert_increase_dimension()`:
 `v` is removed,
 full cells not containing `star` are removed,
-full cells containing `star` but not `v` loose vertex `star`,
-full cells containing `star` and `v` loose vertex `v`
+full cells containing `star` but not `v` lose vertex `star`,
+full cells containing `star` and `v` lose vertex `v`
 (see Figure \cgalFigureRef{triangulationfiginsertincreasedim}).
 \pre All cells contain either `star` or `v`.
 Edge `star-v` exists in the triangulation

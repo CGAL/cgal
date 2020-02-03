@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri, Mariette Yvinec
@@ -31,6 +22,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -179,21 +171,27 @@ public:
   // for user interface with the constraint hierarchy
   typedef typename Constraint_hierarchy::Vertex_it 
                                             Vertices_in_constraint_iterator;
+
+  typedef Iterator_range<Vertices_in_constraint_iterator> Vertices_in_constraint;
   
   typedef typename Constraint_hierarchy::Point_it
                                             Points_in_constraint_iterator;
-
-  typedef typename Constraint_hierarchy::Context      Context;
-  typedef typename Constraint_hierarchy::Context_iterator  Context_iterator;
+  typedef Iterator_range<Points_in_constraint_iterator> Points_in_constraint;
+  
+  typedef typename Constraint_hierarchy::Context          Context;
+  typedef typename Constraint_hierarchy::Context_iterator Context_iterator;
+  typedef Iterator_range<Context_iterator>                Contexts;
+  
   typedef typename Constraint_hierarchy::C_iterator   Constraint_iterator;
+  typedef Iterator_range<Constraint_iterator> Constraints;
+  
   typedef typename Constraint_hierarchy::Subconstraint_iterator  Subconstraint_iterator;
+  typedef Iterator_range<Subconstraint_iterator> Subconstraints;
+  
   typedef typename Constraint_hierarchy::Constraint_id Constraint_id;   
                                             
   typedef std::pair<Vertex_handle, Vertex_handle> Subconstraint;
   
-  //for backward compatibility
-  typedef Vertices_in_constraint_iterator     Vertices_in_constraint;
-
   using Triangulation::geom_traits;
   using Triangulation::cw;
   using Triangulation::ccw;
@@ -277,11 +275,11 @@ public:
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-      return Constraint_id(NULL);
+      return Constraint_id(nullptr);
     }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint_old_API(va, vb);
-    if (va != vb && (cid != Constraint_id(NULL)) )  insert_subconstraint(va,vb); 
+    if (va != vb && (cid != Constraint_id(nullptr)) )  insert_subconstraint(va,vb); 
 
     return cid;
   }
@@ -541,7 +539,7 @@ public:
     }
     int n = vertices.size();
     if(n == 1){
-      return NULL;
+      return nullptr;
     }
     Constraint_id ca = hierarchy.insert_constraint(vertices[0],vertices[1]);
     insert_subconstraint(vertices[0],vertices[1], std::back_inserter(fc)); 
@@ -586,7 +584,7 @@ private:
 
     std::size_t n = vertices.size();
     if(n == 1){
-      return NULL;
+      return nullptr;
     }
     CGAL_assertion(n >= 2);
     
@@ -623,10 +621,7 @@ public:
 
     for(Constraint_iterator cit = constraints_begin(); cit != constraints_end(); ++cit){
       os << (*cit).second->all_size();
-       for(Vertices_in_constraint it = vertices_in_constraint_begin(*cit);
-           it != vertices_in_constraint_end(*cit);
-           it++){
-         Vertex_handle vh = *it;
+      for(Vertex_handle vh : vertices_in_constraint(*cit)){
          os << " " << V[vh];
        }
        os << std::endl;
@@ -668,11 +663,11 @@ public:
   {
     // protects against inserting a zero length constraint
     if(va == vb){
-    return Constraint_id(NULL);
+    return Constraint_id(nullptr);
     }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);
-    if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb,out); 
+    if (va != vb && (cid != nullptr) )  insert_subconstraint(va,vb,out); 
   
     for(Vertices_in_constraint_iterator vcit = vertices_in_constraint_begin(cid);
 	vcit != vertices_in_constraint_end(cid);
@@ -682,21 +677,25 @@ public:
     return cid;
   }
 
-  virtual Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  No_intersection_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Exact_intersections_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Exact_predicates_tag);
+  virtual Vertex_handle intersect(Face_handle f, int i,
+                                  Vertex_handle vaa,
+                                  Vertex_handle vbb);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_constraint_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_constraint_intersection_requiring_constructions_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_intersections_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_predicates_tag);
  
   // REMOVAL
 
@@ -767,8 +766,19 @@ public:
   // Query of the constraint hierarchy
   Constraint_iterator constraints_begin() const;
   Constraint_iterator constraints_end()   const;
+  Constraints constraints() const
+  {
+    return Constraints(constraints_begin(),constraints_end());
+  }
+  
   Subconstraint_iterator subconstraints_begin() const;
   Subconstraint_iterator subconstraints_end() const;
+
+  Subconstraints subconstraints() const
+  {
+    return Subconstraints(subconstraints_begin(),subconstraints_end());
+  }
+  
   Context   context(Vertex_handle va, Vertex_handle vb); //AF: const; 
 
   bool is_subconstraint(Vertex_handle va, 
@@ -780,11 +790,26 @@ public:
   Context_iterator   contexts_end(Vertex_handle va, 
 				  Vertex_handle vb) const;
 
+  Contexts contexts(Vertex_handle va, Vertex_handle vb) const
+  {
+    return Contexts(contexts_begin(va,vb),contexts_end(va,vb));
+  }
+  
   Vertices_in_constraint_iterator vertices_in_constraint_begin(Constraint_id cid) const;
-  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const ;  
+  Vertices_in_constraint_iterator vertices_in_constraint_end(Constraint_id cid) const;
+  
+  Vertices_in_constraint vertices_in_constraint(Constraint_id cid) const
+  {
+    return Vertices_in_constraint(vertices_in_constraint_begin(cid), vertices_in_constraint_end(cid));
+  }
+  
   Points_in_constraint_iterator points_in_constraint_begin(Constraint_id cid) const;
   Points_in_constraint_iterator points_in_constraint_end(Constraint_id cid) const ;
 
+  Points_in_constraint points_in_constraint(Constraint_id cid) const
+  {
+    return Points_in_constraint(points_in_constraint_begin(cid), points_in_constraint_end(cid));
+  }
 
   size_type number_of_constraints() {
     return static_cast<size_type> (hierarchy.number_of_constraints());}
@@ -832,7 +857,7 @@ insert_subconstraint(Vertex_handle vaa,
 		     Vertex_handle vbb,
 		     OutputItertator out)
   // insert the subconstraint [vaa vbb] 
-  // it will eventually be splitted into several subconstraints
+  // it will eventually be split into several subconstraints
 {
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
@@ -998,11 +1023,16 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == Triangulation::EDGE && loc->is_constrained(li) ){
+  if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
+  {
+    if(boost::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
+      throw typename Tr::Intersection_of_constraints_exception();
+
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
   }
+
   Vertex_handle va = Triangulation::insert(a,lt,loc,li);
   // update the hierarchy
   if (insert_in_constrained_edge) {
@@ -1024,16 +1054,24 @@ intersect(Face_handle f, int i,
 template <class Tr>
 typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
 Constrained_triangulation_plus_2<Tr>::
-
-intersect(Face_handle , int , 
-	  Vertex_handle ,
-	  Vertex_handle ,
-	  No_intersection_tag)
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_constraint_intersection_tag)
 {
-  std::cerr << " sorry, this triangulation does not deal with" 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
+  throw typename Tr::Intersection_of_constraints_exception();
+  return Vertex_handle();
+}
+
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_constraint_intersection_requiring_constructions_tag)
+{
+  throw typename Tr::Intersection_of_constraints_exception();
   return Vertex_handle();
 }
 

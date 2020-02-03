@@ -5,65 +5,82 @@
 #include <CGAL/Three/Three.h>
 #include <CGAL/Buffer_for_vao.h>
 
+#include "Color_map.h"
 #include "Scene_lcc_item.h"
+
+//todo : create a struct for facets containing useful infos for drawing and their volume, and fill it during computeElements().
 using namespace CGAL::Three;
 typedef Triangle_container Tri;
 typedef Edge_container Ec;
 typedef Point_container Pc;
 typedef Viewer_interface Vi;
 
+typedef Scene_lcc_item::LCC::Dart_const_handle Dart_const_handle;
 typedef Scene_lcc_item::LCC::Dart_handle Dart_handle;
-typedef Scene_lcc_item::LCC::Point Point;  
+typedef Scene_lcc_item::LCC::Point Point;
+
+struct Facet{
+  Facet():normal(Scene_lcc_item::LCC::Vector(0,0,0)){}
+  Dart_const_handle f_handle;
+  std::vector<Point> points;
+  Scene_lcc_item::LCC::Vector normal;
+  std::size_t volume_id;
+  std::size_t size() { return points.size(); }
+};
+
 
 struct lcc_priv{
-  typedef Scene_lcc_item::LCC::Dart_const_handle Dart_const_handle;
+
   Scene_lcc_item::LCC lcc;
   std::vector<float> faces;
   std::vector<float> lines;
   std::vector<float> vertices;
+  std::vector<float> colors;
+
+  std::vector<Facet> facets;
+  std::size_t nb_volumes;
+  bool is_mono_color;
   
   std::size_t nb_lines, nb_vertices, nb_faces;
   
   lcc_priv(const Scene_lcc_item::LCC& lcc)
-    :lcc(lcc){}
+    :lcc(lcc), is_mono_color(true){}
 
-  void compute_face(Dart_const_handle dh)
+  bool compute_face(Dart_const_handle dh, Facet& f)
   {
+    f.f_handle = dh;
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     // We fill only closed faces.
     Dart_const_handle cur=dh;
     Dart_const_handle min=dh;
     do
     {
-      if (!lcc.is_next_exist(cur)) return; // open face=>not filled
+      if (!lcc.is_next_exist(cur)) return false; // open face=>not filled
       if (cur<min) min=cur;
       cur=lcc.next(cur);
     }
     while(cur!=dh);
     
     cur=dh;
-    std::vector<Point> pts_in_face;
     do
     {
-      pts_in_face.push_back(lcc.point(cur));
+      f.points.push_back(lcc.point(cur));
       cur=lcc.next(cur);
     }
     while(cur!=dh);
-    Scene_lcc_item::LCC::Vector normal(0,0,0);
-    
-    for (std::size_t i = 0; i < pts_in_face.size() ; ++ i){
-      const Point& pa = pts_in_face[i];
-      const Point& pb = pts_in_face[(i+1)%pts_in_face.size()];
-      double x = normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
-      double y = normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
-      double z = normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
-      normal = Scene_lcc_item::LCC::Vector(x,y,z);
+    for (std::size_t i = 0; i < f.size() ; ++ i){
+      const Point& pa = f.points[i];
+      const Point& pb = f.points[(i+1)%f.size()];
+      double x = f.normal.x() + (pa.y()-pb.y())*(pa.z()+pb.z());
+      double y = f.normal.y() + (pa.z()-pb.z())*(pa.x()+pb.x());
+      double z = f.normal.z() + (pa.x()-pb.x())*(pa.y()+pb.y());
+      f.normal = Scene_lcc_item::LCC::Vector(x,y,z);
     }
     
-    if (pts_in_face.size()==3)
+    if (f.size()==3)
     { 
-      for(auto pt = pts_in_face.begin();
-          pt != pts_in_face.end();
+      for(auto pt = f.points.begin();
+          pt != f.points.end();
           ++pt)
       {
         faces.push_back(pt->x() + offset.x);
@@ -71,43 +88,43 @@ struct lcc_priv{
         faces.push_back(pt->z() + offset.z);    
       }
     }
-    else if (CGAL::Buffer_for_vao<float, std::size_t>::is_facet_convex(pts_in_face,normal))
+    else if (CGAL::Buffer_for_vao<float, std::size_t>::is_facet_convex(f.points,f.normal))
     {
-      if (pts_in_face.size()==4)
+      if (f.size()==4)
       {
-        Point p = pts_in_face[0];
+        Point p = f.points[0];
         faces.push_back(p.x() + offset.x);
         faces.push_back(p.y() + offset.y);
         faces.push_back(p.z() + offset.z);
-        p = pts_in_face[1];
+        p = f.points[1];
         faces.push_back(p.x() + offset.x);
         faces.push_back(p.y() + offset.y);
         faces.push_back(p.z() + offset.z);
-        p = pts_in_face[2];
+        p = f.points[2];
         faces.push_back(p.x() + offset.x);
         faces.push_back(p.y() + offset.y);
         faces.push_back(p.z() + offset.z);
         
-        p = pts_in_face[0];
+        p = f.points[0];
         faces.push_back(p.x() + offset.x);
         faces.push_back(p.y() + offset.y);
         faces.push_back(p.z() + offset.z);
-        p = pts_in_face[2];
+        p = f.points[2];
         faces.push_back(p.x() + offset.x);
         faces.push_back(p.y() + offset.y);
         faces.push_back(p.z() + offset.z);
-        p = pts_in_face[3];
+        p = f.points[3];
         faces.push_back(p.x() + offset.x);
         faces.push_back(p.y() + offset.y);
         faces.push_back(p.z() + offset.z);
       }
       else 
       {
-        for(std::size_t i=1; i<pts_in_face.size()-1; ++i)
+        for(std::size_t i=1; i<f.size()-1; ++i)
         {
-          Point& p0 = pts_in_face[0];
-          Point& p1 = pts_in_face[i];
-          Point& p2 = pts_in_face[i+1];
+          Point& p0 = f.points[0];
+          Point& p1 = f.points[i];
+          Point& p2 = f.points[i+1];
   
           // (1) add points
           faces.push_back(p0.x() + offset.x);
@@ -145,16 +162,16 @@ struct lcc_priv{
       typedef CGAL::Exact_predicates_tag                                         Itag;
       typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>    CDT;
       
-      P_traits cdt_traits(normal);
+      P_traits cdt_traits(f.normal);
       CDT cdt(cdt_traits);
         // (1) We insert all the edges as contraint in the CDT.
         typename CDT::Vertex_handle previous=NULL, first=NULL;
-        for (unsigned int i=0; i<pts_in_face.size(); ++i)
+        for (unsigned int i=0; i<f.size(); ++i)
         {
-          typename CDT::Vertex_handle vh = cdt.insert(pts_in_face[i]);
+          typename CDT::Vertex_handle vh = cdt.insert(f.points[i]);
           if(first==NULL)
           { first=vh; }
-          vh->info().v=normal;
+          vh->info().v=f.normal;
 
           if(previous!=NULL && previous!=vh)
           { cdt.insert_constraint(previous, vh); }
@@ -238,9 +255,8 @@ struct lcc_priv{
           }
         }
     }
-      
+    return true;
   }
-
 };
 
 Scene_lcc_item::Scene_lcc_item(const LCC& lcc)
@@ -249,11 +265,12 @@ Scene_lcc_item::Scene_lcc_item(const LCC& lcc)
   d->nb_faces = 0;
   d->nb_lines = 0;
   d->nb_vertices = 0;
+  d->nb_volumes = 0;
   setTriangleContainer(0,
                        new Tri(Three::mainViewer()->isOpenGL_4_3() ? Vi::PROGRAM_FLAT
                                                                    : Vi::PROGRAM_OLD_FLAT, false));
   
-  setEdgeContainer(0, 
+  setEdgeContainer(0,
                    new Ec(Three::mainViewer()->isOpenGL_4_3() ? Vi::PROGRAM_SOLID_WIREFRAME
                                                               : Vi::PROGRAM_NO_SELECTION
                                                                 , false));
@@ -309,9 +326,9 @@ void Scene_lcc_item::draw(CGAL::Three::Viewer_interface* viewer) const
     computeElements();
     initializeBuffers(viewer);
   }
-  
-  getTriangleContainer(0)->setColor(this->color());
-  getTriangleContainer(0)->draw(viewer, true);
+  if(d->is_mono_color)
+    getTriangleContainer(0)->setColor(this->color());
+  getTriangleContainer(0)->draw(viewer, d->is_mono_color);
 }
 
 void Scene_lcc_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
@@ -378,12 +395,13 @@ void Scene_lcc_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 void Scene_lcc_item::computeElements() const
 {
   CGAL::Three::Three::CursorScopeGuard guard{QCursor(Qt::WaitCursor)};
+  d->facets.clear();
   const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   typename LCC::size_type markvolumes  = d->lcc.get_new_mark();
   typename LCC::size_type markfaces    = d->lcc.get_new_mark();
   typename LCC::size_type markedges    = d->lcc.get_new_mark();
   typename LCC::size_type markvertices = d->lcc.get_new_mark();
-  
+  std::size_t volume_id = 0;
   for (typename LCC::Dart_range::const_iterator it=d->lcc.darts().begin(),
        itend=d->lcc.darts().end(); it!=itend; ++it )
   {
@@ -397,7 +415,10 @@ void Scene_lcc_item::computeElements() const
         d->lcc.mark(itv, markvolumes); // To be sure that all darts of the basic iterator will be marked
         if (!d->lcc.is_marked(itv, markfaces))
         {
-          d->compute_face(itv); 
+          Facet f;
+          if(d->compute_face(itv, f))
+            d->facets.push_back(f);
+          d->facets.back().volume_id = volume_id;
           for (typename LCC::template Dart_of_cell_basic_range<2>::
                const_iterator itf=d->lcc.template darts_of_cell_basic<2>(itv, markfaces).begin(),
                itfend=d->lcc.template darts_of_cell_basic<2>(itv, markfaces).end();
@@ -436,9 +457,10 @@ void Scene_lcc_item::computeElements() const
           }
         }
       }
+      ++volume_id;
     }
   }
-  
+  d->nb_volumes = volume_id;
   for (typename LCC::Dart_range::const_iterator it=d->lcc.darts().begin(),
        itend=d->lcc.darts().end(); it!=itend; ++it )
   {
@@ -457,7 +479,14 @@ void Scene_lcc_item::computeElements() const
   getTriangleContainer(0)->allocate(
         Tri::Flat_vertices, d->faces.data(),
         static_cast<int>(d->faces.size()*sizeof(float)));
-  
+  if(!d->is_mono_color)
+  {
+    getTriangleContainer(0)->allocate(Tri::FColors, d->colors.data(),
+                                            static_cast<int>(d->colors.size()*sizeof(float)));
+  }
+  else
+    getTriangleContainer(0)->allocate(Tri::FColors, 0, 0);
+
   getEdgeContainer(0)->allocate(
         Ec::Vertices, d->lines.data(),
         static_cast<int>(d->lines.size()*sizeof(float)));
@@ -500,4 +529,87 @@ void Scene_lcc_item::invalidateOpenGLBuffers()
 bool Scene_lcc_item::isEmpty() const
 {
   return false;
+}
+
+void Scene_lcc_item::randomFaceColors()
+{
+  d->is_mono_color = false;
+  d->colors.resize(d->nb_faces);
+  for(std::size_t i=0; i< d->colors.size()-3; i+=3)
+  {
+    QColor col = generate_random_color();
+    d->colors[i] = col.redF();
+    d->colors[i+1] = col.greenF();
+    d->colors[i+2] = col.blueF();
+  }
+
+  invalidateOpenGLBuffers();
+  redraw();
+}
+
+void Scene_lcc_item::randomVolumeColors()
+{
+  d->is_mono_color = false;
+  d->colors.resize(d->nb_faces);
+  std::vector<QColor> colors(d->nb_volumes);
+  for(std::size_t i = 0; i<d->nb_volumes; ++i)
+  {
+    colors[i] = generate_random_color();
+  }
+  std::size_t color_id = 0;
+  for(auto f : d->facets)//filled in the same order as GL faces
+  {
+    QColor col = colors[f.volume_id];
+    //3 points per face.
+    for(std::size_t j = 0; j < 3; ++j)
+    {
+      d->colors[color_id+j*3] = col.redF();
+      d->colors[color_id+j*3+1] = col.greenF();
+      d->colors[color_id+j*3+2] = col.blueF();
+    }
+    color_id += 9;
+  }
+  invalidateOpenGLBuffers();
+  redraw();
+}
+
+void Scene_lcc_item::resetColors()
+{
+  d->is_mono_color = true;
+  invalidateOpenGLBuffers();
+  redraw();
+}
+QMenu* Scene_lcc_item::contextMenu()
+{
+  const char* prop_name = "Menu modified by Scene_lcc_item.";
+
+  QMenu* menu = Scene_item::contextMenu();
+
+  // Use dynamic properties:
+  // https://doc.qt.io/qt-5/qobject.html#property
+  bool menuChanged = menu->property(prop_name).toBool();
+
+  if(!menuChanged) {
+    menu->addSeparator();
+    QAction* action = menu->addAction(tr("Set Random Colors for Faces."));
+    action->setObjectName("actionRandomFaceColors");
+    connect(action, &QAction::triggered,
+            this, &Scene_lcc_item::randomFaceColors);
+    action = menu->addAction(tr("Set Random Colors for Volumes."));
+        action->setObjectName("actionRandomVolumeColors");
+        connect(action, &QAction::triggered,
+                this, &Scene_lcc_item::randomVolumeColors);
+    menu->setProperty(prop_name, true);
+  }
+  QAction* action = menu->findChild<QAction*>("actionResetColors");
+  if(!action)
+  {
+    action = menu->addAction(tr("Reset Colors."));
+    action->setObjectName("actionResetColors");
+    connect(action, &QAction::triggered,
+            this, &Scene_lcc_item::resetColors);
+  }
+  action->setVisible(!d->is_mono_color);
+
+  return menu;
 }

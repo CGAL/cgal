@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Laurent Saboret and Andreas Fabri
 
@@ -36,7 +27,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/use.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -128,7 +119,8 @@ class Default_constrained_map
 public:
 
   typedef boost::readable_property_map_tag     category;
-  typedef typename ForwardIterator::value_type key_type;
+  typedef typename std::iterator_traits<
+            ForwardIterator>::value_type       key_type;
   typedef bool                                 value_type;
   typedef value_type                           reference;
 
@@ -613,7 +605,9 @@ mst_orient_normals(
   unsigned int k,
   const NamedParameters& np)
 {
-    using boost::choose_param;
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
     CGAL_TRACE("Calls mst_orient_normals()\n");
 
     typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
@@ -625,11 +619,11 @@ mst_orient_normals(
                                 typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
-    PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-    typename Kernel::FT neighbor_radius = choose_param(get_param(np, internal_np::neighbor_radius),
+    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+    typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                        typename Kernel::FT(0));
-    ConstrainedMap constrained_map = choose_param(get_param(np, internal_np::point_is_constrained), ConstrainedMap());
+    ConstrainedMap constrained_map = choose_parameter(get_parameter(np, internal_np::point_is_constrained), ConstrainedMap());
     Kernel kernel;
 
   // Bring private stuff to scope
@@ -745,74 +739,6 @@ mst_orient_normals(
 {
   return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-
-#ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap,
-          typename Kernel
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
-ForwardIterator
-mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k, ///< number of neighbors
-    const Kernel& kernel) ///< geometric traits.
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return mst_orient_normals
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     geom_traits(kernel));
-}
-  
-// deprecated API
-template <typename ForwardIterator,
-          typename PointMap,
-          typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
-ForwardIterator
-mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    PointMap point_map, ///< property map: value_type of ForwardIterator -> Point_3.
-    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k) ///< number of neighbors
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return mst_orient_normals
-    (points,
-     k,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
-}
-
-// deprecated API
-template <typename ForwardIterator,
-          typename NormalMap
->
-CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::mst_orient_normals(), please update your code")
-ForwardIterator
-mst_orient_normals(
-    ForwardIterator first,  ///< iterator over the first input point.
-    ForwardIterator beyond, ///< past-the-end iterator over the input points.
-    NormalMap normal_map, ///< property map: value_type of ForwardIterator -> Vector_3.
-    unsigned int k) ///< number of neighbors
-{
-  CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return mst_orient_normals
-    (points,
-     k,
-     CGAL::parameters::normal_map (normal_map));
-}
-#endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 

@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri, Lutz Kettner
@@ -63,6 +54,9 @@ public:
 
   virtual Aff_transformation_2 compose(
                        const Scaling_repC2<R> &t) const  = 0;
+  
+  virtual Aff_transformation_2 compose(
+                       const Reflection_repC2<R> &t) const  = 0;
 
   virtual Aff_transformation_2 inverse() const  = 0;
   virtual bool                 is_even() const  = 0;
@@ -86,6 +80,7 @@ public:
 friend class Translation_repC2<R>;
 friend class Rotation_repC2<R>;
 friend class Scaling_repC2<R>;
+friend class Reflection_repC2<R>;
 
   Aff_transformation_repC2()
   {}
@@ -131,6 +126,7 @@ friend class Scaling_repC2<R>;
   Aff_transformation_2 compose(const Translation_repC2<R> &t) const;
   Aff_transformation_2 compose(const Rotation_repC2<R> &t) const;
   Aff_transformation_2 compose(const Scaling_repC2<R> &t) const;
+  Aff_transformation_2 compose(const Reflection_repC2<R> &t) const;
 
   bool is_even() const
   {
@@ -250,6 +246,17 @@ compose(const Scaling_repC2<R> &t) const
                                t.scalefactor_ * t21,
                                t.scalefactor_ * t22,
                                t.scalefactor_ * t23);
+}
+
+template < class R >
+CGAL_KERNEL_LARGE_INLINE
+typename Aff_transformation_repC2<R>::Aff_transformation_2
+Aff_transformation_repC2<R>::
+compose(const Reflection_repC2<R> &r) const
+{
+  return Aff_transformation_2(
+        r.cosinus_*t11+r.sinus_*t21, r.cosinus_*t12+r.sinus_*t22, r.cosinus_*(t13-r.t.x())+r.sinus_*(t23-r.t.y())+r.t.x(),
+        r.sinus_*(t11)-r.cosinus_*(t21), r.sinus_*(t12)-r.cosinus_*(t22), r.sinus_*(t13-r.t.x())-r.cosinus_*(t23-r.t.y())+r.t.y());
 }
 
 } //namespace CGAL

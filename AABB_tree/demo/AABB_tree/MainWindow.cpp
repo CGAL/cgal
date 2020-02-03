@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget* parent)
 	m_pViewer = ui->viewer;
 
 	// does not save the state of the viewer 
-	m_pViewer->setStateFileName(QString::null);
+	m_pViewer->setStateFileName(QString());
 
 	// accepts drop events
 	setAcceptDrops(true);

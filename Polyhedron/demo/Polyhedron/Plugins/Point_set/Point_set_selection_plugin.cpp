@@ -30,9 +30,10 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QSpinBox>
 
 #include <QMultipleInputDialog.h>
-#include <QDoubleSpinBox>
+#include "CGAL_double_edit.h"
 
 #include <map>
 #include <fstream>
@@ -42,7 +43,7 @@
 //#undef  CGAL_LINKED_WITH_TBB
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
 #endif // CGAL_LINKED_WITH_TBB
@@ -306,9 +307,9 @@ public:
     if(!static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isClipping())
       return true;
 
-    double x = p.x(), y = p.y(), z = p.z();
+    double x = p.x()+offset.x, y = p.y()+offset.y, z = p.z()+offset.z;
 
-    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3]>0 ||
+    return !(clipbox[0][0]*x+clipbox[0][1]*y+clipbox[0][2]*z+clipbox[0][3] >0 ||
              clipbox[1][0]*x+clipbox[1][1]*y+clipbox[1][2]*z+clipbox[1][3]>0 ||
              clipbox[2][0]*x+clipbox[2][1]*y+clipbox[2][2]*z+clipbox[2][3]>0 ||
              clipbox[3][0]*x+clipbox[3][1]*y+clipbox[3][2]*z+clipbox[3][3]>0 ||
@@ -821,19 +822,15 @@ protected Q_SLOTS:
       return;
 
     QMultipleInputDialog dialog ("Region Selection Parameters", mw);
-    QDoubleSpinBox* epsilon = dialog.add<QDoubleSpinBox> ("Epsilon: ");
-    epsilon->setRange (0.00001, 1000000.);
-    epsilon->setDecimals (5);
+    DoubleEdit* epsilon = dialog.add<DoubleEdit> ("Epsilon: ");
     if (rg_epsilon < 0.)
       rg_epsilon = (std::max)(0.00001, 0.005 * scene->len_diagonal());
-    epsilon->setValue (rg_epsilon);
+    epsilon->setValue(rg_epsilon);
     
-    QDoubleSpinBox* cluster_epsilon = dialog.add<QDoubleSpinBox> ("Cluster epsilon: ");
-    cluster_epsilon->setRange (0.00001, 1000000.);
-    cluster_epsilon->setDecimals (5);
+    DoubleEdit* cluster_epsilon = dialog.add<DoubleEdit> ("Cluster epsilon: ");
     if (rg_cluster_epsilon < 0.)
       rg_cluster_epsilon = (std::max)(0.00001, 0.03 * scene->len_diagonal());
-    cluster_epsilon->setValue (rg_cluster_epsilon);
+    cluster_epsilon->setText(tr("%1").arg(rg_cluster_epsilon));
 
     QSpinBox* normal_threshold = dialog.add<QSpinBox> ("Normal threshold: ");
     normal_threshold->setRange (0, 90);

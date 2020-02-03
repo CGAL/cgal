@@ -10,7 +10,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-only
  ***************************************************************************/
 
 /* Auxiliary functions for C++-style input of GMP types. 
@@ -19,20 +19,7 @@ Copyright 2001 Free Software Foundation, Inc.
 
 This file is part of the GNU MP Library.
 
-The GNU MP Library is free software; you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation; either version 3 of the License, or (at your
-option) any later version.
-
-The GNU MP Library is distributed in the hope that it will be useful, but
-WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the GNU MP Library; see the file COPYING.LIB.  If not, write to
-the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-MA 02110-1301, USA. */
+*/
 
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
@@ -46,15 +33,14 @@ MA 02110-1301, USA. */
 #include <string>
 #include <cstdio>
 
-using namespace std;
-
 namespace CORE { 
 
 CGAL_INLINE_FUNCTION
 int
-__gmp_istream_set_base (istream &i, char &c, bool &zero, bool &showbase)
+__gmp_istream_set_base (std::istream &i, char &c, bool &zero, bool &showbase)
 {
   int base;
+  using std::ios;
 
   zero = showbase = false;
   switch (i.flags() & ios::basefield)
@@ -96,7 +82,7 @@ __gmp_istream_set_base (istream &i, char &c, bool &zero, bool &showbase)
 
 CGAL_INLINE_FUNCTION
 void
-__gmp_istream_set_digits (string &s, istream &i, char &c, bool &ok, int base)
+__gmp_istream_set_digits (std::string &s, std::istream &i, char &c, bool &ok, int base)
 {
   switch (base)
     {
@@ -131,13 +117,14 @@ __gmp_istream_set_digits (string &s, istream &i, char &c, bool &ok, int base)
 }
 
 CGAL_INLINE_FUNCTION
-istream &
-//operator>> (istream &i, mpz_ptr z)
-io_read (istream &i, mpz_ptr z)
+std::istream &
+//operator>> (std::istream &i, mpz_ptr z)
+io_read (std::istream &i, mpz_ptr z)
 {
+  using namespace std;
   int base;
   char c = 0;
-  string s;
+  std::string s;
   bool ok = false, zero, showbase;
 
   i.get(c); // start reading
@@ -175,13 +162,14 @@ io_read (istream &i, mpz_ptr z)
 }
 
 CGAL_INLINE_FUNCTION
-istream &
-//operator>> (istream &i, mpq_ptr q)
-io_read (istream &i, mpq_ptr q)
+std::istream &
+//operator>> (std::istream &i, mpq_ptr q)
+io_read (std::istream &i, mpq_ptr q)
 {
+  using namespace std;
   int base;
   char c = 0;
-  string s;
+  std::string s;
   bool ok = false, zero, showbase;
 
   i.get(c); // start reading
@@ -253,9 +241,9 @@ io_read (istream &i, mpq_ptr q)
 }
 
 CGAL_INLINE_FUNCTION
-ostream&
-//operator<< (ostream &o, mpz_srcptr z)
-io_write (ostream &o, mpz_srcptr z)
+std::ostream&
+//operator<< (std::ostream &o, mpz_srcptr z)
+io_write (std::ostream &o, mpz_srcptr z)
 { 
   char *str = new char [mpz_sizeinbase(z,10) + 2];
   str = mpz_get_str(str, 10, z);
@@ -265,9 +253,9 @@ io_write (ostream &o, mpz_srcptr z)
 }
 
 CGAL_INLINE_FUNCTION
-ostream&
-//operator<< (ostream &o, mpq_srcptr q)
-io_write (ostream &o, mpq_srcptr q)
+std::ostream&
+//operator<< (std::ostream &o, mpq_srcptr q)
+io_write (std::ostream &o, mpq_srcptr q)
 { 
   // size according to GMP documentation
   char *str = new char [mpz_sizeinbase(mpq_numref(q), 10) +
