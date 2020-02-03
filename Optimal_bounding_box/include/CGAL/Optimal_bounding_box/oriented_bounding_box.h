@@ -226,7 +226,7 @@ void construct_oriented_bounding_box(Output& output,
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{point_map}
-///     a model of `ReadablePropertyMap` with value type the type`%Point_3` of the traits class.
+///     a model of `ReadablePropertyMap` with value type the type `%Point_3` of the traits class.
 ///     If this parameter is omitted, `CGAL::Identity_property_map<%Point_3>` is used.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{geom_traits}
