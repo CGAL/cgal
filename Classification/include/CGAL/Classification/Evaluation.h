@@ -16,6 +16,9 @@
 
 #include <CGAL/Classification/Label.h>
 #include <CGAL/Classification/Label_set.h>
+
+#include <boost/iterator/zip_iterator.hpp>
+
 #include <map>
 #include <cmath> // for std::isnan
 
@@ -79,11 +82,14 @@ public:
 
     std::size_t sum_true_positives = 0;
     std::size_t total = 0;
-    
-    for (std::size_t j = 0; j < ground_truth.size(); ++ j)
+
+    for (const auto& zip : CGAL::make_range (boost::make_zip_iterator
+                                             (boost::make_tuple(ground_truth.begin(), result.begin())),
+                                             boost::make_zip_iterator
+                                             (boost::make_tuple(ground_truth.end(), result.end()))))
     {
-      int gt = static_cast<int>(ground_truth[j]);
-      int res = static_cast<int>(result[j]);
+      int gt = static_cast<int>(get<0>(zip));
+      int res = static_cast<int>(get<1>(zip));
       if (gt == -1 || res == -1)
         continue;
       ++ total;
