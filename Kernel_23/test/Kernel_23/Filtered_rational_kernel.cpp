@@ -58,7 +58,6 @@ int main()
   std::cout << std::endl;
   _test_2( Cls() );
 
-#if 0
   std::cout << "Testing 3d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_3( Cls() );
@@ -84,6 +83,6 @@ int main()
   std::cout << "Testing 3d-2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
-#endif
+
   return 0;
 }
