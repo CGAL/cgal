@@ -57,7 +57,8 @@ set(targets
   example_feature
   example_generation_and_training
   example_mesh_classification
-  example_cluster_classification)
+  example_cluster_classification
+  gis_tutorial_example)
 
 # Classification requires some C++11 features
 set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)

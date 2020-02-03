@@ -16,6 +16,7 @@ User Manual.
   geometric primitives, the notion of <em>traits classes</em> which
   define what primitives are used by a geometric algorithm, the
   notions of \em concept and \em model.
+- \subpage tuto_gis
 
 \section tuto_examples Package Examples
 
