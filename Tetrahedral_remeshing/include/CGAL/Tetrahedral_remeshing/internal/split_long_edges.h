@@ -162,10 +162,9 @@ namespace internal
   bool can_be_split(const typename C3T3::Edge& e,
                     const C3T3& c3t3,
                     const bool protect_boundaries,
-                    const typename C3T3::Subdomain_index& imaginary_index,
                     CellSelector cell_selector)
   {
-    if (is_outside(e, c3t3, imaginary_index, cell_selector))
+    if (is_outside(e, c3t3, cell_selector))
       return false;
 
     if (protect_boundaries)
@@ -176,7 +175,7 @@ namespace internal
         return false;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      if (!is_inside(e, c3t3, imaginary_index, cell_selector))
+      if (!is_inside(e, c3t3, cell_selector))
       {
         std::cerr << "e is not inside!?" << std::endl;
         typename C3T3::Vertex_handle v1 = e.first->vertex(e.second);
@@ -185,7 +184,7 @@ namespace internal
       }
 #endif
 
-      CGAL_assertion(is_inside(e, c3t3, imaginary_index, cell_selector));
+      CGAL_assertion(is_inside(e, c3t3, cell_selector));
       return true;
     }
     else
@@ -198,7 +197,6 @@ namespace internal
   void split_long_edges(C3T3& c3t3,
     const typename C3T3::Triangulation::Geom_traits::FT& high,
     const bool protect_boundaries,
-    const typename C3T3::Subdomain_index& imaginary_index,
     CellSelector cell_selector,
     Visitor& visitor)
   {
@@ -230,7 +228,7 @@ namespace internal
          eit != tr.finite_edges_end(); ++eit)
     {
       Edge e = *eit;
-      if (!can_be_split(e, c3t3, protect_boundaries, imaginary_index, cell_selector))
+      if (!can_be_split(e, c3t3, protect_boundaries, cell_selector))
         continue;
 
       typename Gt::Compute_squared_length_3 sql
@@ -264,7 +262,7 @@ namespace internal
         Edge edge(cell, i1, i2);
 
         //check that splittability has not changed
-        if (!can_be_split(edge, c3t3, protect_boundaries, imaginary_index, cell_selector))
+        if (!can_be_split(edge, c3t3, protect_boundaries, cell_selector))
           continue;
 
         visitor.before_split(tr, edge);
@@ -274,27 +272,12 @@ namespace internal
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         ofs << vh->point() << std::endl;
 #endif
-        if (vh != Vertex_handle())
-        {
+
 #if  defined(CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS) \
   || defined(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
+        if (vh != Vertex_handle())
           ++nb_splits;
 #endif
-          ////insert newly created edges if needed
-          //std::vector<Edge> new_edges;
-          //tr.incident_edges(vh, std::back_inserter(new_edges));
-          //
-          //for (std::size_t i = 0; i < new_edges.size(); ++i)
-          //{
-          //  const Edge& ei = new_edges[i];
-          //  Segment seg(ei.first->vertex(ei.second)->point(),
-          //              ei.first->vertex(ei.third)->point());
-          //
-          //  const FT sqlen_i = seg.squared_length();
-          //  if (sqlen_i > sq_high)
-          //    long_edges.insert(long_edge(make_vertex_pair<T3>(ei), sqlen_i));
-          //}
-        }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
         std::cout << "\rSplit (" << high << ")... ("

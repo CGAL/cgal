@@ -731,17 +731,7 @@ namespace Tetrahedral_remeshing
     const C3t3& c3t3,
     const typename C3t3::Subdomain_index& imaginary_index)
   {
-    typedef typename C3t3::Triangulation::Cell_handle Cell_handle;
-
-    std::vector<Cell_handle> cells;
-    c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
-
-    BOOST_FOREACH(Cell_handle c, cells)
-    {
-      if (c->subdomain_index() != imaginary_index)
-        return false;
-    }
-    return true;
+    return false;
   }
 
   /**
@@ -754,24 +744,13 @@ namespace Tetrahedral_remeshing
     const C3t3& c3t3,
     const typename C3t3::Subdomain_index& imaginary_index)
   {
-    typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
-    Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
-    Cell_circulator done = circ;
-    do
-    {
-      if (c3t3.is_in_complex(circ)
-        && circ->subdomain_index() != imaginary_index)
-        return false;
-    } while (++circ != done);
-
-    return    true;
+    return false;
   }
 
   template<typename C3t3, typename CellSelector>
   bool is_outside(const typename C3t3::Edge & edge,
-    const C3t3& c3t3,
-    const typename C3t3::Subdomain_index& imaginary_index,
-    CellSelector cell_selector)
+                  const C3t3& c3t3,
+                  CellSelector cell_selector)
   {
     typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
     Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
@@ -779,20 +758,18 @@ namespace Tetrahedral_remeshing
     do
     {
       // is cell infinite?
-      if (c3t3.triangulation().is_infinite(circ))
-        continue;
-      // is cell imaginary?
-      if (c3t3.is_in_complex(circ) && circ->subdomain_index() == imaginary_index)
-        continue;
+      if (!c3t3.triangulation().is_infinite(circ))
+        return false;
+      // is cell in complex?
+      if (c3t3.is_in_complex(circ))
+        return false;
       // circ does not belong to the selection
-      if (!cell_selector(circ))
-        continue;
+      if (cell_selector(circ))
+        return false;
 
-      // none of the above conditions was met
-      return false;
     } while (circ != done);
 
-    return true; //all cells have met the loop conditions
+    return false; //all incident cells are outside or infinite
   }
 
   template<typename C3t3, typename CellSelector>
@@ -815,17 +792,14 @@ namespace Tetrahedral_remeshing
 
   template<typename C3t3, typename CellSelector>
   bool is_inside(const typename C3t3::Edge& edge,
-    const C3t3& c3t3,
-    const typename C3t3::Subdomain_index& imaginary_index,
-    CellSelector cell_selector)
+                 const C3t3& c3t3,
+                 CellSelector cell_selector)
   {
     typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
     Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
     Cell_circulator done = circ;
 
     const typename C3t3::Subdomain_index si = circ->subdomain_index();
-    if (si == imaginary_index || !c3t3.is_in_complex(circ))
-      return false;
     do
     {
       if (c3t3.triangulation().is_infinite(circ))
@@ -956,7 +930,7 @@ namespace Tetrahedral_remeshing
 //          && !is_boundary_edge(e, c3t3)
 //          && !is_on_hull(e, c3t3)
 //          && !is_imaginary(e, c3t3, imaginary_index))
-      if (is_inside(e, c3t3, imaginary_index, cell_selector))
+      if (is_inside(e, c3t3, cell_selector))
       {
         *oit++ = make_vertex_pair<typename C3t3::Triangulation>(e);
       }
@@ -979,8 +953,8 @@ namespace Tetrahedral_remeshing
 
       BOOST_FOREACH(typename Bimap::left_const_reference it, edges.left)
       {
-        ofs << "2 " << it.first.first->point()
-          << " " << it.first.second->point() << std::endl;
+        ofs << "2 " << point(it.first.first->point())
+            << " " << point(it.first.second->point()) << std::endl;
       }
       ofs.close();
     }
@@ -989,10 +963,10 @@ namespace Tetrahedral_remeshing
     void dump_facet(const Facet& f, OutputStream& os)
     {
       os << "4 ";
-      os << f.first->vertex((f.second + 1) % 4)->point() << " "
-        << f.first->vertex((f.second + 2) % 4)->point() << " "
-        << f.first->vertex((f.second + 3) % 4)->point() << " "
-        << f.first->vertex((f.second + 1) % 4)->point();
+      os << point(f.first->vertex((f.second + 1) % 4)->point()) << " "
+         << point(f.first->vertex((f.second + 2) % 4)->point()) << " "
+         << point(f.first->vertex((f.second + 3) % 4)->point()) << " "
+         << point(f.first->vertex((f.second + 1) % 4)->point());
       os << std::endl;
     }
 
@@ -1063,7 +1037,7 @@ namespace Tetrahedral_remeshing
       for (typename Bimap_t::right_iterator vit = vertices.right.begin();
         vit != vertices.right.end(); ++vit)
       {
-        ofs << vit->second->point() << std::endl;
+        ofs << point(vit->second->point()) << std::endl;
       }
 
       //write facets
@@ -1255,7 +1229,7 @@ namespace Tetrahedral_remeshing
       for (typename Bimap_t::right_iterator vit = vertices.right.begin();
         vit != vertices.right.end(); ++vit)
       {
-        ofs << vit->second->point() << std::endl;
+        ofs << point(vit->second->point()) << std::endl;
       }
 
       //write facets

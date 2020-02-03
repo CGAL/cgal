@@ -145,6 +145,7 @@ namespace internal
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
         "00-init-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
 #endif
     }
 
@@ -169,8 +170,9 @@ namespace internal
       init_c3t3(ecmap, fcmap);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
-        "00-init-no-imaginary.mesh", m_imaginary_index);
+      //CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
+      //  "00-init-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
 #endif
     }
 
@@ -179,26 +181,26 @@ namespace internal
       return m_imaginary_index;
     }
 
-    void preprocess()
-    {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      std::cout << "Preprocess...";
-      std::cout.flush();
-#endif
-
-      add_layer_of_imaginary_tets(tr(), m_imaginary_index);
-      CGAL_assertion(tr().tds().is_valid(true));
-
-#ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "0-preprocess.mesh");
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
-        "0-preprocess-no-imaginary.mesh", m_imaginary_index);
-      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "0-preprocess.binary.cgal");
-#endif
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      std::cout << "done." << std::endl;
-#endif
-    }
+//    void preprocess()
+//    {
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//      std::cout << "Preprocess...";
+//      std::cout.flush();
+//#endif
+//
+//      add_layer_of_imaginary_tets(tr(), m_imaginary_index);
+//      CGAL_assertion(tr().tds().is_valid(true));
+//
+//#ifdef CGAL_DUMP_REMESHING_STEPS
+//      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "0-preprocess.mesh");
+//      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
+//        "0-preprocess-no-imaginary.mesh", m_imaginary_index);
+//      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "0-preprocess.binary.cgal");
+//#endif
+//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//      std::cout << "done." << std::endl;
+//#endif
+//    }
 
     void split()
     {
@@ -206,7 +208,7 @@ namespace internal
 
       const FT target_edge_length = m_sizing(CGAL::ORIGIN);
       const FT emax = FT(4)/FT(3) * target_edge_length;
-      split_long_edges(m_c3t3, emax, m_protect_boundaries, m_imaginary_index,
+      split_long_edges(m_c3t3, emax, m_protect_boundaries,
                        m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().tds().is_valid(true));
@@ -504,7 +506,7 @@ private:
     void remesh(const std::size_t& max_it,
                 const std::size_t& nb_extra_iterations)
     {
-      preprocess();
+//      preprocess();
 
       std::size_t it_nb = 0;
       while (it_nb++ < max_it)
@@ -517,8 +519,8 @@ private:
           split();
           collapse();
         }
-        flip();
-        smooth();
+//        flip();
+//        smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << "# Iteration " << it_nb << " done : "
@@ -551,7 +553,7 @@ private:
 #endif
       }
 
-      postprocess(); //remove imaginary cells
+//      postprocess(); //remove imaginary cells
 
       finalize();
       //triangulation() is now empty
