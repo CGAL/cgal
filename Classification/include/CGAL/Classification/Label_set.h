@@ -38,6 +38,15 @@ public:
   
   Label_set() { }
   
+  /*!
+    \brief Initializes the set with the provided `labels` names.
+  */
+  Label_set (const std::initializer_list<const char*>& labels)
+  {
+    for (const char* l : labels)
+      add(l);
+  }
+  
   /// \cond SKIP_IN_MANUAL
   virtual ~Label_set() { }
   /// \endcond
