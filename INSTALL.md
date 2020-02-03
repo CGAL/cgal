@@ -20,7 +20,7 @@ Building a Program Using CGAL
 =============================
 
 If you wish to build a program that is not provided with CGAL and does not already have a `CMakeLists.txt`,
-you can trigger the creation of a basic `CmakeLists.txt` by calling the script [`cgal_create_cmake_script`](Scripts/scripts/cgal_create_cmake_script)
+you can trigger the creation of a basic `CMakeLists.txt` by calling the script [`cgal_create_cmake_script`](Scripts/scripts/cgal_create_cmake_script)
 found in `/path/to/cgal.git/Scripts/scripts/` at the root of your program directory.
 
 ``` {.bash}
@@ -33,12 +33,12 @@ found in `/path/to/cgal.git/Scripts/scripts/` at the root of your program direct
  make your_program
 ```
 
-Since the basic `CmakeLists.txt` created by the script `cgal_create_cmake_script` cannot
+Since the basic `CMakeLists.txt` created by the script `cgal_create_cmake_script` cannot
 guess which part(s) of CGAL you are using, it does not link with any optional third party 
 dependency of CGAL. You should look at the documentation of the package(s) that you
-are using to learn which dependencies you must add. The `CmakeLists.txt`
+are using to learn which dependencies you must add. The `CMakeLists.txt`
 of the examples and demos provided with the package(s) that you are using can be used
-to complete your basic `CmakeLists.txt`.
+to complete your basic `CMakeLists.txt`.
 
 
 Repository Structure
