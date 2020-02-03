@@ -64,7 +64,7 @@ public:
   Construct_bbox_3 construct_bbox_3_object() const { return Construct_bbox_3(); }
 
   /// Performs the QR-decomposition of the matrix `m` to a unitary matrix and an upper triagonal
-  /// and returns the unitary matrix.
+  /// and returns the unitary matrix
   Matrix get_Q(const Matrix& m) const
   {
     Eigen::HouseholderQR<EigenType> qr(m.eigen_object());
