@@ -310,18 +310,18 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
 
   Vector_3 nb = cv_3(CGAL::NULL_VECTOR);
 
-  if(almost_equal(ni, nj, traits))
+  if(almost_equal(ni, nj, traits) || nk == CGAL::NULL_VECTOR)
   {
     if(almost_equal(nj, nk, traits))
       nb = ni;
     else // ni == nj, but nij != nk
       nb = compute_normals_bisector(nj, nk, traits);
   }
-  else if(almost_equal(ni, nk, traits)) // ni != nj
+  else if(almost_equal(ni, nk, traits) || nj == CGAL::NULL_VECTOR) // ni != nj
   {
     nb = compute_normals_bisector(nj, nk, traits);
   }
-  else if(almost_equal(nj, nk, traits)) // ni != nj, ni != nk
+  else if(almost_equal(nj, nk, traits) || ni == CGAL::NULL_VECTOR) // ni != nj, ni != nk
   {
     nb = compute_normals_bisector(ni, nk, traits);
   }
@@ -344,7 +344,7 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
       return csv_3(csv_3(cslv_3(ni, third), cslv_3(nj, third)), cslv_3(nk, third));
     }
 
-    nb = cv_3(CGAL::ORIGIN, c); // note that this isn't normalized
+    nb = cv_3(CGAL::ORIGIN, c); // not normalized
   }
 
   return nb;
@@ -431,6 +431,10 @@ compute_most_visible_normal_3_points(const std::vector<typename boost::graph_tra
         const Vector_ref nj = get(face_normals, incident_faces[j]);
         const Vector_ref nk = get(face_normals, incident_faces[k]);
 
+        CGAL_warning(ni != CGAL::NULL_VECTOR);
+        CGAL_warning(nj != CGAL::NULL_VECTOR);
+        CGAL_warning(nk != CGAL::NULL_VECTOR);
+
         Vector_3 nb = compute_normals_bisector(ni, nj, nk, traits);
         if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
           return nb;
@@ -490,7 +494,12 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   if(res != CGAL::NULL_VECTOR) // found a valid normal through 2 point min circle
     return res;
 
-  CGAL_assertion(incident_faces.size() > 2);
+  // The vertex has only two incident faces with opposite normals (fold)...
+  // @todo devise something based on the directions of the 2/3/4 incident edges?
+  if(incident_faces.size() == 2 && res == CGAL::NULL_VECTOR)
+    return res;
+
+  CGAL_assertion(incident_faces.size() >= 2);
 
   return compute_most_visible_normal_3_points<PolygonMesh>(incident_faces, face_normals, traits);
 }
