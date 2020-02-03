@@ -217,9 +217,9 @@ connected_components(const PolygonMesh& pmesh,
     = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
-  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-    fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                         get_const_property_map(boost::face_index, pmesh));
+  typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type  FaceIndexMap;
+  FaceIndexMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
+                                        get_const_property_map(boost::face_index, pmesh));
 
   typename boost::property_traits<FaceComponentMap>::value_type i=0;
   std::vector<bool> handled(num_faces(pmesh), false);
@@ -232,7 +232,7 @@ connected_components(const PolygonMesh& pmesh,
     {
       face_descriptor fq = queue.back();
       queue.pop_back();
-      typename boost::property_traits<FaceComponentMap>::value_type  fq_id = get(fimap,fq);
+      typename boost::property_traits<FaceIndexMap>::value_type  fq_id = get(fimap,fq);
       if ( handled[fq_id]) continue;
       handled[fq_id]=true;
       put(fcm, fq, i);
