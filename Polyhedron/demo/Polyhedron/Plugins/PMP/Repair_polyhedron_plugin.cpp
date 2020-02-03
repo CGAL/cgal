@@ -209,7 +209,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
   if (poly_item)
   {
     bool solved =
-      CGAL::Polygon_mesh_processing::remove_self_intersections(
+      CGAL::Polygon_mesh_processing::experimental::remove_self_intersections(
       *poly_item->polyhedron());
     if (!solved)
       CGAL::Three::Three::information(tr("Some self-intersection could not be fixed"));

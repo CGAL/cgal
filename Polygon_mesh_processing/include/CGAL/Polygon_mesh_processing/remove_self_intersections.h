@@ -1703,7 +1703,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 
 } // namespace internal
 
-/// \cond SKIP_IN_MANUAL
+namespace experimental {
 
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
 bool remove_self_intersections(const FaceRange& face_range,
@@ -1826,8 +1826,7 @@ bool remove_self_intersections(TriangleMesh& tmesh)
   return remove_self_intersections(tmesh, parameters::all_default());
 }
 
-/// \endcond
-
+} // namespace experimental
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
