@@ -535,10 +535,14 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
         const Vector_3 v1 = cv_3(get(vpmap, v), get(vpmap, source(h, pmesh)));
         const Vector_3 v2 = cv_3(get(vpmap, v), get(vpmap, target(next(h, pmesh), pmesh)));
 
-        //v(i) and v(i+1) must me seen in ccw order, from v, so we reverse v1 and v2
+        //v(i) and v(i+1) must be seen in ccw order, from v, so we reverse v1 and v2
         Vector_3 n = traits.construct_cross_product_vector_3_object()(v2, v1);
-        n = traits.construct_scaled_vector_3_object()(n, CGAL::approximate_sqrt(FT(1)/(csl_3(v1) * csl_3(v2))));
+        const FT den = CGAL::approximate_sqrt(csl_3(v1) * csl_3(v2));
 
+        if(den == FT(0))
+          return compute_vertex_normal_as_sum_of_weighted_normals(v, NO_WEIGHT, face_normals, vpmap, pmesh, traits);
+
+        n = traits.construct_scaled_vector_3_object()(n, FT(1) / den);
         normal = traits.construct_sum_of_vectors_3_object()(normal, n);
       }
       else
