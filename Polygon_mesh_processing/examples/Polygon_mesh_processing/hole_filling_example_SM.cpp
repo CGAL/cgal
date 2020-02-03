@@ -4,6 +4,8 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 
+#include <boost/lexical_cast.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <vector>
