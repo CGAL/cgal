@@ -16,6 +16,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Filtered_rational.h>
+#include <CGAL/Static_filtered_predicate.h>
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_2.h>
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Interval_nt.h>
@@ -27,6 +28,27 @@
 
 namespace CGAL {
 
+template <typename T1, typename T2>
+struct Approximate_exact_pair : public std::pair<T1,T2> {
+  typedef std::pair<T1,T2> Base;
+
+  Approximate_exact_pair()
+  {}
+
+  Approximate_exact_pair(const T1& t1, const T2& ts)
+    : Base(t1,t2)
+  {}
+
+  Approximate_exact_pair(const std::pair<T1,T2>& p)
+    : Base(p)
+  {}
+  
+  const T1& approx() const
+  {
+    return first;
+  }
+};
+  
 namespace mpl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(first_type)
@@ -102,7 +124,7 @@ struct Getter<X>\
   typedef X first_type; \
   typedef X second_type; \
 }; \
-const X& get_approx(const X& x) { return x; }\
+const X& approx(const X& x) { return x; }\
 const X& get_exact(const X& x) { return x; }
 
 template <class A>
@@ -130,6 +152,13 @@ struct Getter<std::pair<A1, A2> >
   typedef A2 second_type;
 };
 
+template <class A1, class A2>
+struct Getter<Approximate_exact_pair<A1, A2> >
+{
+  typedef A1 first_type;
+  typedef A2 second_type;
+};
+
 template <class A_FT, class E_FT>
 struct Getter<Filtered_rational<A_FT,E_FT>>
 {
@@ -139,23 +168,23 @@ struct Getter<Filtered_rational<A_FT,E_FT>>
 
 template <class A1, class A2>
 const A1&
-get_approx(const std::pair<A1,A2>& p)
+approx(const Approximate_exact_pair<A1,A2>& p)
 {
   return p.first;
 }
 
 template <class A1, class A2>
 const A1&
-get_approx(const Filtered_rational<A1,A2>& p)
+approx(const Filtered_rational<A1,A2>& p)
 {
   return p.n1();
 }
 
 template <class A>
 const typename A::Rep::first_type&
-get_approx(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
+approx(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
 {
-  return get_approx(a.rep());
+  return approx(a.rep());
 }
 
 template <class A1, class A2>
@@ -180,13 +209,17 @@ get_exact(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nu
 }
 
 template <class AP, class EP>
-class Predicate_wrapper
+class Filtered_rational_predicate
 {
   AP ap;
   EP ep;
 
 public:
-  Predicate_wrapper(const AP &pap = AP(), const EP &pep = EP()) : ap(pap), ep(pep) { }
+  // CGAL_static_assertion((std::is_same<typename AP::result_type, typename EP::result_type>::value));
+  typedef typename EP::result_type result_type;
+  
+public:
+  Filtered_rational_predicate(const AP &pap = AP(), const EP &pep = EP()) : ap(pap), ep(pep) { }
 
   template <class ... A>
   typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type
@@ -199,7 +232,7 @@ public:
 
     try
     {
-      result_type_1 res1 = ap(get_approx(a)...);
+      result_type_1 res1 = ap(approx(a)...);
       if (is_certain(res1))
         return make_certain(res1);
     }
@@ -211,7 +244,7 @@ public:
 };
 
 template <class AP, class EP, class AK, class EK, class FRK>
-class Construction_wrapper
+class Filtered_rational_construction
 {
   AP ap;
   EP ep;
@@ -219,7 +252,7 @@ class Construction_wrapper
   CGAL::Cartesian_converter<EK, AK> e2a;
 
 public:
-  Construction_wrapper(const AP &pap = AP(), const EP &pep = EP()) : ap(pap), ep(pep) { }
+  Filtered_rational_construction(const AP &pap = AP(), const EP &pep = EP()) : ap(pap), ep(pep) { }
 
   template <class T>
   struct result;
@@ -269,10 +302,12 @@ public:
     result_type_2 res2 = ep(get_exact(a)...);
 
     return Pairify<result_type_1, result_type_2, EK, FRK>()(Approx<result_type_1>(e2a, ap)
-                                                            (res2, get_approx(a)...), res2);
+                                                            (res2, approx(a)...), res2);
   }
 };
 
+
+  
 template < class AK, class EK, class Kernel_ >
 class Filtered_rational_kernel_generic_base
 {
@@ -294,8 +329,9 @@ public:
   typedef CGAL::Object Object_3;
 
   typedef Kernel_ Kernel;
-  typedef AK     Kernel1;
-  typedef EK     Kernel2;
+  typedef AK     Approximate_kernel;
+  typedef EK     Exact_kernel;
+
 
   template < typename T >
   struct Ambient_dimension {
@@ -319,7 +355,7 @@ public:
   typedef CGAL::Aff_transformationC3<Kernel_> Aff_transformation_3;
 
   // Kernel objects are defined as pairs, with primitives run in parallel.
-#define CGAL_kc_pair(X) typedef std::pair<typename AK::X, typename EK::X> X;
+#define CGAL_frk_pair(X) typedef Approximate_exact_pair<typename AK::X, typename EK::X> X;
 
 
   // TODO : Object_[23] are subtil : should probably be Object(pair<...>).
@@ -328,42 +364,42 @@ public:
   // takes its first argument by non-const reference.
   // Maybe Primitive_checker should provide a variant with non-const ref...
 
-  CGAL_kc_pair(Point_2)
-  CGAL_kc_pair(Weighted_point_2)
-  CGAL_kc_pair(Vector_2)
-  CGAL_kc_pair(Direction_2)
-  CGAL_kc_pair(Line_2)
-  CGAL_kc_pair(Ray_2)
-  CGAL_kc_pair(Segment_2)
-  CGAL_kc_pair(Triangle_2)
-  CGAL_kc_pair(Iso_rectangle_2)
-  CGAL_kc_pair(Circle_2)
-  CGAL_kc_pair(Conic_2)
+  CGAL_frk_pair(Point_2)
+  CGAL_frk_pair(Weighted_point_2)
+  CGAL_frk_pair(Vector_2)
+  CGAL_frk_pair(Direction_2)
+  CGAL_frk_pair(Line_2)
+  CGAL_frk_pair(Ray_2)
+  CGAL_frk_pair(Segment_2)
+  CGAL_frk_pair(Triangle_2)
+  CGAL_frk_pair(Iso_rectangle_2)
+  CGAL_frk_pair(Circle_2)
+  CGAL_frk_pair(Conic_2)
 
 
-  CGAL_kc_pair(Point_3)
-  CGAL_kc_pair(Weighted_point_3)
-  CGAL_kc_pair(Plane_3)
-  CGAL_kc_pair(Vector_3)
-  CGAL_kc_pair(Direction_3)
-  CGAL_kc_pair(Line_3)
-  CGAL_kc_pair(Ray_3)
-  CGAL_kc_pair(Segment_3)
-  CGAL_kc_pair(Triangle_3)
-  CGAL_kc_pair(Tetrahedron_3)
-  CGAL_kc_pair(Iso_cuboid_3)
-  CGAL_kc_pair(Circle_3)
-  CGAL_kc_pair(Sphere_3)
+  CGAL_frk_pair(Point_3)
+  CGAL_frk_pair(Weighted_point_3)
+  CGAL_frk_pair(Plane_3)
+  CGAL_frk_pair(Vector_3)
+  CGAL_frk_pair(Direction_3)
+  CGAL_frk_pair(Line_3)
+  CGAL_frk_pair(Ray_3)
+  CGAL_frk_pair(Segment_3)
+  CGAL_frk_pair(Triangle_3)
+  CGAL_frk_pair(Tetrahedron_3)
+  CGAL_frk_pair(Iso_cuboid_3)
+  CGAL_frk_pair(Circle_3)
+  CGAL_frk_pair(Sphere_3)
 
-#undef CGAL_kc_pair
+#undef CGAL_frk_pair
 
-#define CGAL_Kernel_pred(X, Y) \
-  typedef Predicate_wrapper<typename AK::X, typename EK::X> X; \
-  X Y() const { return X(ak.Y(), ek.Y()); }
+#define CGAL_Kernel_pred(P, Pf) \
+  typedef Static_filtered_predicate<Approximate_kernel,Filtered_rational_predicate<typename AK::P, typename EK::P>, Exact_predicates_inexact_constructions_kernel::P> P; \
+  P Pf() const { return P(); } // AF: Why was it P(ak.Pf(), ek.Pf()) ?
 
-#define CGAL_Kernel_cons(X, Y) \
-  typedef Construction_wrapper<typename AK::X, typename EK::X, AK, EK, Kernel_> X; \
-  X Y() const { return X(ak.Y(), ek.Y()); }
+#define CGAL_Kernel_cons(C, Cf) \
+  typedef Filtered_rational_construction<typename AK::C, typename EK::C, AK, EK, Kernel_> C; \
+  C Cf() const { return C(ak.Cf(), ek.Cf()); }
 
 
   public:

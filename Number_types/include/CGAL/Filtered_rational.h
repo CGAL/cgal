@@ -107,7 +107,9 @@ public:
 
   NT1& n1() { return _n1; }
   NT2& n2() { return _n2; }
-
+  
+  const NT1& approx() const { return _n1; }
+  
   // Validity checking: the exact number must be in the interval
 
   bool is_valid() const
