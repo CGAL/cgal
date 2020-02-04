@@ -205,14 +205,13 @@ public:
   void swap(Regular_triangulation_3& tr)
     noexcept(noexcept(this->Tr_Base::swap(tr)))
   {
-    // The 'vertices' and 'hidden_points' members of 'hidden_point_visitor' should be empty
-    // as they are only filled (and cleared) during the insertion of a point.
-    // Hidden points are not stored there, but rather in cells. Thus, the only thing that must be set
-    // is the triangulation pointer.
-    Hidden_point_visitor<Concurrency_tag> new_hpv(this);
-    using std::swap;
-    swap(hidden_point_visitor, new_hpv);
-
+    // The 'vertices' and 'hidden_points' members of
+    // 'hidden_point_visitor' should be empty as they are only filled
+    // (and cleared) during the insertion of a point.  Hidden points
+    // are not stored there, but rather in cells. Thus, the only thing
+    // that must be set is the triangulation pointer, and it is
+    // already correctly set. There is nothing to do about
+    // 'hidden_point_visitor'.
     Tr_Base::swap(tr);
   }
 
@@ -224,11 +223,9 @@ public:
   }
 
   Regular_triangulation_3& operator=(Regular_triangulation_3&& tr)
-    noexcept(noexcept(Regular_triangulation_3(std::move(tr))) &&
-             noexcept(std::declval<Regular_triangulation_3>().swap(*this)))
+    noexcept(noexcept(Regular_triangulation_3(std::move(tr))))
   {
-    Regular_triangulation_3 copy(std::move(tr));
-    copy.swap(*this);
+    Tr_Base::operator=(std::move(tr));
     return *this;
   }
 
