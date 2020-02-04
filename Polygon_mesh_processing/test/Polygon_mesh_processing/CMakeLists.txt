@@ -98,6 +98,7 @@ endif()
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
+    CGAL_target_use_TBB(self_intersection_surface_mesh_test)
   else()
     message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
   endif()
