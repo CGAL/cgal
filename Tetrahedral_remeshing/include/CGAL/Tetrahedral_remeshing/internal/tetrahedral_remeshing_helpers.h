@@ -914,9 +914,8 @@ namespace Tetrahedral_remeshing
 
   template<typename C3t3, typename CellSelector, typename OutputIterator>
   OutputIterator get_inside_edges(const C3t3& c3t3,
-    const typename C3t3::Subdomain_index& imaginary_index,
-    CellSelector cell_selector,
-    OutputIterator oit)/*holds pairs of Vertex_handles*/
+                                  CellSelector cell_selector,
+                                  OutputIterator oit)/*holds Edges*/
   {
     for (typename C3t3::Triangulation::Finite_edges_iterator
       eit = c3t3.triangulation().finite_edges_begin();
@@ -924,10 +923,6 @@ namespace Tetrahedral_remeshing
       ++eit)
     {
       const typename C3t3::Edge& e = *eit;
-//        if ( !c3t3.is_in_complex(e)
-//          && !is_boundary_edge(e, c3t3)
-//          && !is_on_hull(e, c3t3)
-//          && !is_imaginary(e, c3t3, imaginary_index))
       if (is_inside(e, c3t3, cell_selector))
       {
         *oit++ = make_vertex_pair<typename C3t3::Triangulation>(e);
