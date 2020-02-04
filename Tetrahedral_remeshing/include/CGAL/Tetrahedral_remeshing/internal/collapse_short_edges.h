@@ -479,7 +479,6 @@ namespace internal
                          const typename C3t3::Triangulation::Point& new_pos,
                          const C3t3& c3t3,
                          const bool /*protect_boundaries*/,
-                         const typename C3t3::Subdomain_index& /*imaginary_index*/,
                          CellSelector cell_selector)
   {
     typedef typename C3t3::Vertex_handle        Vertex_handle;
@@ -565,7 +564,6 @@ namespace internal
                               const typename C3t3::Triangulation::Point& new_pos,
                               SqLengthMap& edges_sqlength,
                               const typename C3t3::Triangulation::Geom_traits::FT& sqhigh,
-                              const typename C3t3::Subdomain_index& imaginary_index,
                               const bool /* adaptive */ = false)
   {
     //SqLengthMap::key_type is Vertex_handle
@@ -581,9 +579,6 @@ namespace internal
     for (std::size_t i = 0; i < inc_edges.size(); i++)
     {
       const Edge& ei = inc_edges[i];
-
-      if (is_imaginary(ei, c3t3, imaginary_index)) //should we also test outside cells?
-        continue;
 
       Vertex_handle ivh = ei.first->vertex(ei.second);
       if (ivh == v1)
@@ -622,7 +617,6 @@ namespace internal
                               const typename C3t3::Triangulation::Point& new_pos,
                               SqLengthMap& edges_sqlength,
                               const typename C3t3::Triangulation::Geom_traits::FT& sqhigh,
-                              const typename C3t3::Subdomain_index& imaginary_index,
                               const bool adaptive = false)
   {
     //SqLengthMap::key_type is Vertex_handle
@@ -637,26 +631,60 @@ namespace internal
     if (collapse_type == TO_V1 || collapse_type == TO_MIDPOINT)
     {
       if (!are_edge_lengths_valid(v0, v1, c3t3, new_pos,
-                                  edges_sqlength, sqhigh, imaginary_index, adaptive))
+                                  edges_sqlength, sqhigh, adaptive))
         return false;
     }
     else if (collapse_type == TO_V0 || collapse_type == TO_MIDPOINT)
     {
       if (!are_edge_lengths_valid(v1, v0, c3t3, new_pos,
-                                  edges_sqlength, sqhigh, imaginary_index, adaptive))
+                                  edges_sqlength, sqhigh, adaptive))
         return false;
     }
     return true;
   }
 
   template<typename C3t3>
+  void merge_surface_patch_indices(typename C3t3::Facet& f1,
+                                   typename C3t3::Facet& f2,
+                                   C3t3& c3t3)
+  {
+    const bool in_cx_f1 = c3t3.is_in_complex(f1);
+    const bool in_cx_f2 = c3t3.is_in_complex(f2);
+
+    if (in_cx_f1 && !in_cx_f2)
+    {
+      typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f1);
+      c3t3.remove_from_complex(f1);
+      c3t3.add_to_complex(f1, patch);
+      c3t3.add_to_complex(f2, patch);
+    }
+    else if (in_cx_f2 && !in_cx_f1)
+    {
+      typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(f2);
+      c3t3.remove_from_complex(f2);
+      c3t3.add_to_complex(f1, patch);
+      c3t3.add_to_complex(f2, patch);
+    }
+    else
+    {
+      CGAL_assertion(
+        //f1 and f2 are not both in complex
+        !(in_cx_f1 && in_cx_f2)
+        // unless they are on the same surface
+        || c3t3.surface_patch_index(f1) == c3t3.surface_patch_index(f2));
+    }
+  }
+
+  template<typename C3t3>
   typename C3t3::Vertex_handle
-  collapse(const typename C3t3::Cell_handle ch, const int to, const int from,
+  collapse(const typename C3t3::Cell_handle ch,
+           const int to, const int from,
            C3t3& c3t3)
   {
+    typedef typename C3t3::Triangulation Tr;
     typedef typename C3t3::Vertex_handle Vertex_handle;
     typedef typename C3t3::Cell_handle   Cell_handle;
-    typedef typename C3t3::Triangulation Tr;
+    typedef typename C3t3::Facet         Facet;
     typedef typename Tr::Cell_circulator Cell_circulator;
 
     Tr& tr = c3t3.triangulation();
@@ -682,14 +710,19 @@ namespace internal
     Cell_circulator done = circ;
     do
     {
-      int v0_id = circ->index(vh0);
-      int v1_id = circ->index(vh1);
+      const int v0_id = circ->index(vh0);
+      const int v1_id = circ->index(vh1);
 
       Cell_handle n0_ch = circ->neighbor(v0_id);
       Cell_handle n1_ch = circ->neighbor(v1_id);
 
-      int ch_id_in_n0 = n0_ch->index(circ);
-      int ch_id_in_n1 = n1_ch->index(circ);
+      const int ch_id_in_n0 = n0_ch->index(circ);
+      const int ch_id_in_n1 = n1_ch->index(circ);
+
+      //Merge surface patch indices
+      merge_surface_patch_indices(Facet(n0_ch, ch_id_in_n0),
+                                  Facet(n1_ch, ch_id_in_n1),
+                                  c3t3);
 
       //Update neighbors before removing cell
       n0_ch->set_neighbor(ch_id_in_n0, n1_ch);
@@ -725,12 +758,11 @@ namespace internal
 
     } while (++circ != done);
 
-    Vertex_handle infinite_vertex = tr.infinite_vertex();
+    const Vertex_handle infinite_vertex = tr.infinite_vertex();
 
     bool v0_updated = false;
-    for (std::size_t i = 0; i < find_incident.size(); ++i)
+    for (const Cell_handle ch : find_incident)
     {
-      const Cell_handle ch = find_incident[i];
       if (invalid_cells.find(ch) == invalid_cells.end())//valid cell
       {
         if (tr.is_infinite(ch))
@@ -743,10 +775,8 @@ namespace internal
     }
 
     //Update the vertex before removing it
-    for (std::size_t i = 0; i < cells_to_update.size(); ++i)
+    for (const Cell_handle ch : cells_to_update)
     {
-      Cell_handle ch = cells_to_update[i];
-
       if (invalid_cells.find(ch) == invalid_cells.end()) //valid cell
       {
         ch->set_vertex(ch->index(vh1), vh0);
@@ -764,14 +794,16 @@ namespace internal
 
     if (!v0_updated)
       std::cout << "PB i cell not valid!!!" << std::endl;
+
+    // Delete vertex
     c3t3.triangulation().tds().delete_vertex(vh1);
 
-    //Removing cells
-    for (std::size_t i = 0; i < cells_to_remove.size(); i++)
+    // Delete cells
+    for (Cell_handle cell_to_remove : cells_to_remove)
     {
-      if (cells_to_remove[i]->subdomain_index() > 0)
-        c3t3.remove_from_complex(cells_to_remove[i]);
-      c3t3.triangulation().tds().delete_cell(cells_to_remove[i]);
+      if (cell_to_remove->subdomain_index() > 0)
+        c3t3.remove_from_complex(cell_to_remove);
+      c3t3.triangulation().tds().delete_cell(cell_to_remove);
     }
 
     if (!valid){
@@ -810,7 +842,7 @@ namespace internal
       vh1->set_point(new_position);
 
       vh = collapse(edge.first, edge.second, edge.third, c3t3);
-      c3t3.set_dimension(vh, std::min(dim_vh0, dim_vh1));
+      c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at vertex
     {
@@ -818,7 +850,7 @@ namespace internal
       {
         vh0->set_point(p1);
         vh = collapse(edge.first, edge.third, edge.second, c3t3);
-        c3t3.set_dimension(vh, std::min(dim_vh0, dim_vh1));
+        c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else //Collapse at v0
       {
@@ -826,7 +858,7 @@ namespace internal
         {
           vh1->set_point(p0);
           vh = collapse(edge.first, edge.second, edge.third, c3t3);
-          c3t3.set_dimension(vh, std::min(dim_vh0, dim_vh1));
+          c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
         }
         else
           CGAL_assertion(false);
@@ -840,7 +872,6 @@ namespace internal
                      C3t3& c3t3,
                      const typename C3t3::Triangulation::Geom_traits::FT& sqhigh,
                      const bool protect_boundaries,
-                     const typename C3t3::Subdomain_index& imaginary_index,
                      CellSelector cell_selector,
                      Visitor& visitor)
   {
@@ -870,11 +901,11 @@ namespace internal
 
       boost::unordered_map<Vertex_handle, double> edges_sqlength_after_collapse;
       if (is_valid_collapse(edge, collapse_type, new_pos, c3t3,
-                            protect_boundaries, imaginary_index, cell_selector))
+                            protect_boundaries, cell_selector))
       {
         if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos,
-                                   edges_sqlength_after_collapse, sqhigh,
-                                   imaginary_index /*, adaptive = false*/))
+                                   edges_sqlength_after_collapse, sqhigh
+                                   /*, adaptive = false*/))
         {
           CollapseTriangulation<C3t3, Visitor> local_tri(c3t3, edge, collapse_type, visitor);
           local_tri.update();
@@ -893,7 +924,6 @@ namespace internal
   bool can_be_collapsed(const typename C3T3::Edge& e,
                         const C3T3& c3t3,
                         const bool protect_boundaries,
-                        const typename C3T3::Subdomain_index& imaginary_index,
                         CellSelector cell_selector)
   {
     if (is_outside(e, c3t3, cell_selector))
@@ -930,7 +960,6 @@ namespace internal
     const typename C3T3::Triangulation::Geom_traits::FT& low,
     const typename C3T3::Triangulation::Geom_traits::FT& high,
     const bool protect_boundaries,
-    const typename C3T3::Subdomain_index& imaginary_index,
     CellSelector cell_selector,
     Visitor& visitor)
   {
@@ -963,7 +992,7 @@ namespace internal
          eit != tr.finite_edges_end(); ++eit)
     {
       const Edge& e = *eit;
-      if (!can_be_collapsed(e, c3t3, protect_boundaries, imaginary_index, cell_selector))
+      if (!can_be_collapsed(e, c3t3, protect_boundaries, cell_selector))
         continue;
 
       typename Gt::Compute_squared_length_3 sql
@@ -998,14 +1027,14 @@ namespace internal
       {
         Edge edge(cell, i1, i2);
 
-        if (!can_be_collapsed(edge, c3t3, protect_boundaries, imaginary_index, cell_selector))
+        if (!can_be_collapsed(edge, c3t3, protect_boundaries, cell_selector))
           continue;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         Vertex_handle vh =
 #endif
         collapse_edge(edge, c3t3, sq_high,
-                      protect_boundaries, imaginary_index, cell_selector,
+                      protect_boundaries, cell_selector,
                       visitor);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
