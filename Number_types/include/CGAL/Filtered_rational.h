@@ -117,6 +117,7 @@ public:
     NT1 n2i = to_interval(n2());
     return (n2i.inf() >= n1().inf())  && (n2i.sup() <= n1().sup());
   }
+
 };
 
   
@@ -961,6 +962,13 @@ operator>> (std::istream & is, Filtered_rational<NT1, NT2, Cmp> &b)
   return is;
 }
 
+
+template < typename NT1, typename NT2, typename Cmp >  
+bool fit_in_double(const Filtered_rational<NT1, NT2, Cmp> &a, double &r)
+{
+  return fit_in_double(a.n1(),r);
+}
+    
 } //namespace CGAL
 
 #endif // CGAL_FILTERED_RATIONAL_H

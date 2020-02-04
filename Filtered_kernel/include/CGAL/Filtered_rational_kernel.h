@@ -453,7 +453,7 @@ public:
 #undef CGAL_frk_pair
 
 #define CGAL_Kernel_pred(P, Pf) \
-  typedef Static_filtered_predicate<Approximate_kernel,Filtered_rational_predicate<typename AK::P, typename EK::P>, Exact_predicates_inexact_constructions_kernel::P> P; \
+  typedef Filtered_rational_predicate<typename AK::P, typename EK::P> P; \
   P Pf() const { return P(); } // AF: Why was it P(ak.Pf(), ek.Pf()) ?
 
 #define CGAL_Kernel_cons(C, Cf) \
@@ -748,8 +748,8 @@ class Filtered_rational_kernel_without_type_equality
   
 template < class AK, class EK >
 class Filtered_rational_kernel
-  : public Type_equality_wrapper<Filtered_rational_kernel_base<AK,EK, Filtered_rational_kernel<AK,EK>>,
-                                 Filtered_rational_kernel<AK,EK> >
+  : public Static_filters_base<Type_equality_wrapper<Filtered_rational_kernel_base<AK,EK, Filtered_rational_kernel<AK,EK>>,
+                                                     Filtered_rational_kernel<AK,EK> > >
 {
 };
   

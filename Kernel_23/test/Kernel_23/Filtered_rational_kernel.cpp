@@ -1,3 +1,5 @@
+#define CGAL_PROFILE 
+
 // Copyright (c) 2001,2002  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
@@ -46,13 +48,13 @@ typedef CGAL::Filtered_rational_kernel<K1,K2>    Cls;
 
 int main()
 {
+    Cls frk;
 
-  {
-  typedef CGAL::cpp11::result_of<K1::Construct_vertex_2(K1::Iso_rectangle_2,int)>::type T;
+    Cls::Point_2 p;
 
-  std::cout << std::is_reference<T>::value << std::endl;
-  }
-  
+    Cls::Orientation o = frk.orientation_2_object()(p, p, p);
+
+#if 0
 
   std::cout << "Testing 2d with Filtered_rational_kernel :";
   std::cout << std::endl;
@@ -83,6 +85,8 @@ int main()
   std::cout << "Testing 3d-2d with Filtered_rational_kernel :";
   std::cout << std::endl;
   _test_mf_plane_3_to_2d( Cls() );
+
+#endif
 
   return 0;
 }
