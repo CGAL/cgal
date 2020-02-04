@@ -29,13 +29,15 @@
 namespace CGAL {
 
 template <typename T1, typename T2>
-struct Approximate_exact_pair : public std::pair<T1,T2> {
+struct Approximate_exact_pair
+  : public std::pair<T1,T2>
+{
   typedef std::pair<T1,T2> Base;
 
   Approximate_exact_pair()
   {}
 
-  Approximate_exact_pair(const T1& t1, const T2& ts)
+  Approximate_exact_pair(const T1& t1, const T2& t2)
     : Base(t1,t2)
   {}
 
@@ -45,15 +47,15 @@ struct Approximate_exact_pair : public std::pair<T1,T2> {
   
   const T1& approx() const
   {
-    return first;
+    return this->first;
   }
 
   const T2& exact() const
   {
-    return second;
+    return this->second;
   }
 };
-  
+
 namespace mpl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(first_type)
