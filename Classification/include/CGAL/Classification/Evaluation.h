@@ -18,6 +18,7 @@
 #include <CGAL/Classification/Label_set.h>
 
 #include <boost/iterator/zip_iterator.hpp>
+#include <CGAL/Iterator_range.h>
 
 #include <map>
 #include <cmath> // for std::isnan

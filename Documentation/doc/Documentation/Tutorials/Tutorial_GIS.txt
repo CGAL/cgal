@@ -139,26 +139,72 @@ light blue for low values to dark red for high values.
 \section TutorialGIS_Contour Contouring
 
 Extracting isolevels of a function defined on a TIN is another
-application that can be done with \cgal. The following example does
-the following:
+application that can be done with \cgal. We demonstrate here how to
+extract isolevels of height to build a topographic map.
 
-1. Smooth the height values in order to generate less noisy
-isocontours
-2. Compute 50 isovalues evenly distributed between the minimum and
-maximum heights of the point cloud
-3. Output the contours found in a polyline file
+\subsection TutorialGIS_Contour_Extraction Building Contour Graph
 
-\snippet Classification/gis_tutorial_example.cpp Contouring
-
-The functions used for this contouring algorithm are the following:
+The first step is to extract, from all faces of the triangulation, the
+section of each isolevel that goes through that face, in the form of a
+segment. The following functions allow to test if one isovalue does
+cross a face, and to extract it then:
 
 \snippet Classification/gis_tutorial_example.cpp Contouring functions
+
+From these functions, we can create a graph of segments to process
+later into a set of polylines. To do so, we use the `adjacency_list`
+structure from boost and keep track of a mapping from the positions of
+the end points to the vertices of the graph.
+
+The following code computes 50 isovalues evenly distributed between
+the minimum and maximum heights of the point cloud and creates a graph
+containing all the segment sections of all isolevels:
+
+\snippet Classification/gis_tutorial_example.cpp Contouring extraction
+
+\subsection TutorialGIS_Contour_Splitting Splitting Into Polylines
+
+Once the graph is created, splitting it into polylines is easily
+performed using the function `CGAL::split_graph_into_polylines()`:
+
+\snippet Classification/gis_tutorial_example.cpp Contouring split
+
+This function requires a visitor which is called when starting a
+polyline, when adding a point to it and when ending it. Defining such
+a class is straightforward in our case:
+
+\snippet Classification/gis_tutorial_example.cpp Contouring visitor
 
 An example of contouring using 50 isovalues is given on Figure
 \cgalFigureRef{TutorialGISFigContour}.
 
 \cgalFigureBegin{TutorialGISFigContour, contour.jpg}
 Contouring using 50 isovalues evenly spaced.
+\cgalFigureEnd
+
+\subsection TutorialGIS_Contour_Simplifying Simplifying
+
+Because the output is quite noisy, users may want to simplify the
+polylines. \cgal provides a polyline simplification algorithm that
+guarantees that two polylines won't intersect after
+simplification. This algorithm takes advantage of the Constrained
+Delaunay Triangulation 2 Plus, which embeds polylines as a set of
+constraints:
+
+\snippet Classification/gis_tutorial_example.cpp CDT
+
+The following code simplies the polyline set based on the squared
+distance to the original polylines, stopping when no more vertex can
+be removed without going farther than 4 times the average spacing.
+
+\snippet Classification/gis_tutorial_example.cpp Contouring simplify
+
+An example of simplified contouring is given on Figure
+\cgalFigureRef{TutorialGISFigSimplified}.
+
+\cgalFigureBegin{TutorialGISFigSimplified, contour_simplified.jpg}
+Simplified contour which only uses less than 2\% of the original
+vertices.
 \cgalFigureEnd
 
 \section TutorialGIS_Classify Classifying
