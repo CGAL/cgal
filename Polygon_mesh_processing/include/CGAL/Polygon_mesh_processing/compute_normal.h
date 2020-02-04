@@ -264,6 +264,8 @@ bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const 
       continue;
 
     const Vector_ref nl = get(face_normals, incident_faces[l]);
+    if(nl == CGAL::NULL_VECTOR)
+      continue;
 
     // this is a bound on how much the scalar product between (v1,v2) and (v1, v3) can change
     // when the angle changes theta_bound := 0.01°
@@ -431,9 +433,8 @@ compute_most_visible_normal_3_points(const std::vector<typename boost::graph_tra
         const Vector_ref nj = get(face_normals, incident_faces[j]);
         const Vector_ref nk = get(face_normals, incident_faces[k]);
 
-        CGAL_warning(ni != CGAL::NULL_VECTOR);
-        CGAL_warning(nj != CGAL::NULL_VECTOR);
-        CGAL_warning(nk != CGAL::NULL_VECTOR);
+        if(ni == CGAL::NULL_VECTOR || nj == CGAL::NULL_VECTOR || nk == CGAL::NULL_VECTOR)
+          continue;
 
         Vector_3 nb = compute_normals_bisector(ni, nj, nk, traits);
         if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
