@@ -35,7 +35,7 @@ test_self_intersections(const char* filename, const bool expected)
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::self_intersections<CGAL::Sequential_tag>(
+  CGAL::Polygon_mesh_processing::self_intersections<CGAL::Parallel_if_available_tag>(
     m,
     std::back_inserter(intersected_tris),
     CGAL::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
@@ -45,7 +45,7 @@ test_self_intersections(const char* filename, const bool expected)
   std::cout << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Sequential_tag>(m,
+  bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Parallel_if_available_tag>(m,
     CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
 
   std::cout << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
