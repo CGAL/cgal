@@ -977,14 +977,16 @@ namespace internal
                                        const Flip_Criterion& criterion,
                                        Visitor& visitor)
   {
-    typedef typename C3t3::Triangulation Tr;
-    typedef typename C3t3::Vertex_handle Vertex_handle;
-    typedef typename Tr::Facet_circulator Facet_circulator;
+    typedef typename C3t3::Triangulation        Tr;
+    typedef typename C3t3::Vertex_handle        Vertex_handle;
+    typedef typename C3t3::Facet                Facet;
+    typedef typename C3t3::Surface_patch_index  Surface_patch_index;
+    typedef typename Tr::Facet_circulator       Facet_circulator;
 
     Tr& tr = c3t3.triangulation();
 
-    Vertex_handle v0 = edge.first->vertex(edge.second);
-    Vertex_handle v1 = edge.first->vertex(edge.third);
+    const Vertex_handle v0 = edge.first->vertex(edge.second);
+    const Vertex_handle v1 = edge.first->vertex(edge.third);
 
     Facet_circulator circ = tr.incident_facets(edge);
     Facet_circulator done = circ;
@@ -996,6 +998,7 @@ namespace internal
 
     boost::unordered_set<Vertex_handle> boundary_vertices;
     boost::unordered_set<Vertex_handle> hull_vertices;
+    boost::unordered_set<Facet> mirror_facets;
     do
     {
       //Get the ids of the opposite vertices
@@ -1021,6 +1024,10 @@ namespace internal
           }
         }
       }
+      mirror_facets.insert(
+        tr.mirror_facet(Facet(circ->first, circ->first->index(v0))));
+      mirror_facets.insert(
+        tr.mirror_facet(Facet(circ->first, circ->first->index(v1))));
     }
     while (++circ != done);
 
@@ -1029,13 +1036,15 @@ namespace internal
     if (boundary_vertices.size() > 2)
       return NOT_FLIPPABLE;
 
+    // perform flip when possible
+    Sliver_removal_result res = NOT_FLIPPABLE;
     if (vertices_around_edge.size() == 3)
     {
       if (!boundary_edge && !hull_edge)
       {
         std::vector<Vertex_handle> vertices;
         vertices.insert(vertices.end(), vertices_around_edge.begin(), vertices_around_edge.end());
-        return flip_3_to_2(edge, c3t3, vertices, criterion);
+        res = flip_3_to_2(edge, c3t3, vertices, criterion);
       }
     }
     else
@@ -1047,11 +1056,25 @@ namespace internal
       {
         std::vector<Vertex_handle> vertices;
         vertices.insert(vertices.end(), boundary_vertices.begin(), boundary_vertices.end());
-        return flip_n_to_m(edge, c3t3, vertices, criterion, visitor);
+        res = flip_n_to_m(edge, c3t3, vertices, criterion, visitor);
         //return n_to_m_flip(edge, boundary_vertices, flip_criterion);
       }
     }
-    return NOT_FLIPPABLE;
+
+    if (res == VALID_FLIP)
+    {
+      for (Facet f : mirror_facets)
+      {
+        if (c3t3.is_in_complex(f))
+        {
+          Surface_patch_index patch = c3t3.surface_patch_index(f);
+          c3t3.remove_from_complex(f);
+          c3t3.add_to_complex(f, patch);
+        }
+      }
+    }
+
+    return res;
   }
 
 
@@ -1102,7 +1125,6 @@ namespace internal
 
   template<typename C3T3, typename CellSelector, typename Visitor>
   void flip_edges(C3T3& c3t3,
-    const typename C3T3::Subdomain_index& imaginary_index,
     const bool protect_boundaries,
     CellSelector cell_selector,
     Visitor& visitor)
@@ -1147,9 +1169,9 @@ namespace internal
     std::cout << "\tInside flips" << std::endl;
 #endif
     std::vector<Edge_vv> inside_edges;
-    get_inside_edges(c3t3, imaginary_index,
-                              cell_selector,
-                              std::back_inserter(inside_edges));
+    get_inside_edges(c3t3,
+                     cell_selector,
+                     std::back_inserter(inside_edges));
 
     //if (criterion == VALENCE_BASED)
     //  flip_inside_edges(inside_edges);

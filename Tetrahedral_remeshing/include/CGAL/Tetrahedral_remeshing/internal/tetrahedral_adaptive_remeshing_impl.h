@@ -214,8 +214,6 @@ namespace internal
       CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "1-split.mesh");
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
-        "1-split-no-imaginary.mesh", m_imaginary_index);
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "1-split.binary.cgal");
 #endif
     }
@@ -228,30 +226,24 @@ namespace internal
       FT emin = FT(4)/FT(5) * target_edge_length;
       FT emax = FT(4)/FT(3) * target_edge_length;
       collapse_short_edges(m_c3t3, emin, emax, m_protect_boundaries,
-                           m_imaginary_index,
                            m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "2-collapse.mesh");
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
-        "2-collapse-no-imaginary.mesh", m_imaginary_index);
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "2-collapse.binary.cgal");
 #endif
     }
 
     void flip()
     {
-      flip_edges(m_c3t3, m_imaginary_index, m_protect_boundaries,
+      flip_edges(m_c3t3, m_protect_boundaries,
                  m_cell_selector, m_visitor);
 
       CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
-        "3-flip.mesh");
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
-        "3-flip-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "3-flip.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "3-flip.binary.cgal");
 #endif
     }
@@ -519,7 +511,7 @@ private:
           split();
           collapse();
         }
-//        flip();
+        flip();
 //        smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
