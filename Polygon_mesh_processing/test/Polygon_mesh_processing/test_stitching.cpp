@@ -111,7 +111,7 @@ void test_stitch_borders()
 template <typename Mesh>
 void test_degenerate()
 {
-  std::cout << "Testing degenerate cases" << std::flush;
+  std::cout << "Testing degenerate cases" << std::endl;
 
   typedef typename boost::property_traits<
     typename CGAL::GetVertexPointMap<Mesh>::const_type>::value_type Point;
@@ -152,6 +152,8 @@ int main()
 
   std::cout << "--- Test EPECK Polyhedron" << std::endl;
   test<CGAL::Polyhedron_3<EPECK> >();
+
+  std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;
 }
