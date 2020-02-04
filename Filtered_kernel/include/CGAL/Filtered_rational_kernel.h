@@ -47,6 +47,11 @@ struct Approximate_exact_pair : public std::pair<T1,T2> {
   {
     return first;
   }
+
+  const T2& exact() const
+  {
+    return second;
+  }
 };
   
 namespace mpl {
@@ -306,6 +311,58 @@ public:
   }
 };
 
+namespace FRK {
+template < typename K1, typename K2 >
+struct Approx_converter
+{
+  typedef K1         Source_kernel;
+  typedef K2         Target_kernel;
+  //typedef Converter  Number_type_converter;
+
+  template < typename T >
+  const typename T::AT&
+  operator()(const T&t) const
+  { return t.approx(); }
+
+  const Null_vector&
+  operator()(const Null_vector& n) const
+  { return n; }
+  
+  const Bbox_2&
+  operator()(const Bbox_2& b) const
+  { return b; }
+  
+  const Bbox_3&
+  operator()(const Bbox_3& b) const
+  { return b; }
+};
+
+template < typename K1, typename K2 >
+struct Exact_converter
+{
+  typedef K1         Source_kernel;
+  typedef K2         Target_kernel;
+  //typedef Converter  Number_type_converter;
+
+  template < typename T >
+  const typename T::ET&
+  operator()(const T&t) const
+  { return t.exact(); }
+
+  const Null_vector&
+  operator()(const Null_vector& n) const
+  { return n; }
+  
+  const Bbox_2&
+  operator()(const Bbox_2& b) const
+  { return b; }
+  
+  const Bbox_3&
+  operator()(const Bbox_3& b) const
+  { return b; }
+};
+
+}// namespace FRK
 
   
 template < class AK, class EK, class Kernel_ >
@@ -332,6 +389,8 @@ public:
   typedef AK     Approximate_kernel;
   typedef EK     Exact_kernel;
 
+  typedef FRK::Approx_converter<Kernel, Approximate_kernel>   C2F;
+  typedef FRK::Exact_converter<Kernel, Exact_kernel>    C2E;
 
   template < typename T >
   struct Ambient_dimension {
