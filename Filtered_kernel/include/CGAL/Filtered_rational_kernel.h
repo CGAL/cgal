@@ -750,8 +750,9 @@ class Filtered_rational_kernel_without_type_equality
   
 template < class AK, class EK >
 class Filtered_rational_kernel
-  : public Static_filters_base<Type_equality_wrapper<Filtered_rational_kernel_base<AK,EK, Filtered_rational_kernel<AK,EK>>,
-                                                     Filtered_rational_kernel<AK,EK> > >
+  : public Static_filters_base_without_filtered_wrapping<
+             Type_equality_wrapper<Filtered_rational_kernel_base<AK,EK, Filtered_rational_kernel<AK,EK>>,
+                                   Filtered_rational_kernel<AK,EK> > >
 {
 };
   

@@ -104,6 +104,18 @@ struct Static_filters_base
     };
 };
 
+template < typename CK >
+struct Static_filters_base_without_filtered_wrapping
+  : public internal::Static_filters< CK >
+{
+    template < typename Kernel2 >
+    struct Base {
+        typedef typename CK::template Base<Kernel2>::Type  CK2;
+        typedef Static_filters_base<CK2>                   Type;
+    };
+};
+
+
 #ifdef CGAL_NO_STATIC_FILTERS
 template < typename CK, bool UseStaticFilters = false >
 #else
