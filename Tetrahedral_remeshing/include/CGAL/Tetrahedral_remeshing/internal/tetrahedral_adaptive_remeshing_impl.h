@@ -298,34 +298,46 @@ namespace internal
       return true;
     }
 
-    void postprocess()
+    //peel off slivers
+    std::size_t postprocess(const double sliver_angle = 0.1)
     {
+      if (m_protect_boundaries)
+        return 0;
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
       std::cout << "Postprocess...";
       std::cout.flush();
 #endif
-      //unset imaginary cells
+
+      std::size_t nb_slivers_peel = 0;
       typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
       for (Finite_cells_iterator cit = tr().finite_cells_begin();
            cit != tr().finite_cells_end(); ++cit)
       {
-        if (cit->subdomain_index() == m_imaginary_index)
+        if(m_c3t3.is_in_complex(cit) && min_dihedral_angle(tr(), cit) < sliver_angle)
         {
-          m_c3t3.remove_from_complex(cit);
+          for (int i = 0; i < 4; ++i)
+          {
+            if (!m_c3t3.is_in_complex(cit->neighbor(i)))
+            {
+              m_c3t3.remove_from_complex(cit);
+              ++nb_slivers_peel;
+            }
+          }
         }
       }
 
       CGAL_assertion(tr().tds().is_valid(true));
+
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
-        "99-postprocess.mesh");
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
-        "99-postprocess-no-imaginary.mesh", m_imaginary_index);
+      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "99-postprocess.mesh");
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "99-postprocess.binary.cgal");
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+      std::cout << "(peeling removed " << nb_slivers_peel << " slivers)" << std::endl;
       std::cout << "done." << std::endl;
 #endif
+      return nb_slivers_peel;
     }
 
     void finalize()
@@ -529,7 +541,7 @@ private:
 
       while (it_nb++ < max_it + nb_extra_iterations)
       {
-        //      flip();
+        flip();
         //      smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -545,10 +557,10 @@ private:
 #endif
       }
 
-//      postprocess(); //remove imaginary cells
+      postprocess(); //peel off boundary slivers
 
       finalize();
-      //triangulation() is now empty
+      //Warning : triangulation() is now empty
     }
 
   };//end class Adaptive_remesher
