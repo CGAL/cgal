@@ -146,7 +146,7 @@ public:
 	       ?  Vertex_index(m_size-1)
 	       : Vertex_index(k.as_int()-1);
 	}
-    Point_2 point(Vertex_index i)
+    const Point_2& point(Vertex_index i)
         { return *iterators[i.as_int()];}
 //    { return points_start[i.as_int()];}
 };
