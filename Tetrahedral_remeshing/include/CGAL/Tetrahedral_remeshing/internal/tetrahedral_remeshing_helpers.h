@@ -757,19 +757,17 @@ namespace Tetrahedral_remeshing
     Cell_circulator done = circ;
     do
     {
-      // is cell infinite?
-      if (!c3t3.triangulation().is_infinite(circ))
-        return false;
       // is cell in complex?
       if (c3t3.is_in_complex(circ))
         return false;
-      // circ does not belong to the selection
+      // does circ belong to the selection?
       if (cell_selector(circ))
         return false;
 
+      ++circ;
     } while (circ != done);
 
-    return false; //all incident cells are outside or infinite
+    return true; //all incident cells are outside or infinite
   }
 
   template<typename C3t3, typename CellSelector>
