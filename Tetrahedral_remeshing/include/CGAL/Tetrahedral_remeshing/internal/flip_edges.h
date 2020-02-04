@@ -1165,9 +1165,6 @@ namespace internal
     //    flipBoundaryEdges(boundary_edges, boundary_vertices_valences, MIN_ANGLE_BASED);
     //}
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-    std::cout << "\tInside flips" << std::endl;
-#endif
     std::vector<Edge_vv> inside_edges;
     get_inside_edges(c3t3,
                      cell_selector,

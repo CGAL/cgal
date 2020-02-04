@@ -38,7 +38,6 @@ namespace internal
 {
   template<typename Triangulation, typename CellSelector>
   void compute_statistics(const Triangulation& tr,
-    const typename Triangulation::Cell::Subdomain_index& imaginary_index,
     CellSelector cell_selector,
     const char* filename = "statistics_c3t3.txt")
   {
@@ -103,7 +102,7 @@ namespace internal
          ++cit)
     {
       const Subdomain_index& si = cit->subdomain_index();
-      if (si == Subdomain_index() || si == imaginary_index || !cell_selector(cit))
+      if (si == Subdomain_index() || !cell_selector(cit))
         continue;
 
       ++nb_tets;

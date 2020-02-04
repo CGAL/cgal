@@ -29,7 +29,6 @@
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Triangulation_utils_3.h>
 
-#include <CGAL/Tetrahedral_remeshing/internal/add_imaginary_layer.h>
 #include <CGAL/Tetrahedral_remeshing/internal/split_long_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/collapse_short_edges.h>
 #include <CGAL/Tetrahedral_remeshing/internal/flip_edges.h>
@@ -115,7 +114,6 @@ namespace internal
     const SizingFunction& m_sizing;
     const bool m_protect_boundaries;
     CellSelector m_cell_selector;
-    Subdomain_index m_imaginary_index;
     Visitor& m_visitor;
 
     Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
@@ -143,8 +141,6 @@ namespace internal
       init_c3t3(ecmap, fcmap);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
-        "00-init-no-imaginary.mesh", m_imaginary_index);
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
 #endif
     }
@@ -170,37 +166,9 @@ namespace internal
       init_c3t3(ecmap, fcmap);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
-      //CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(m_c3t3.triangulation(),
-      //  "00-init-no-imaginary.mesh", m_imaginary_index);
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
 #endif
     }
-
-    const Subdomain_index& imaginary_index() const
-    {
-      return m_imaginary_index;
-    }
-
-//    void preprocess()
-//    {
-//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-//      std::cout << "Preprocess...";
-//      std::cout.flush();
-//#endif
-//
-//      add_layer_of_imaginary_tets(tr(), m_imaginary_index);
-//      CGAL_assertion(tr().tds().is_valid(true));
-//
-//#ifdef CGAL_DUMP_REMESHING_STEPS
-//      CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(), "0-preprocess.mesh");
-//      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
-//        "0-preprocess-no-imaginary.mesh", m_imaginary_index);
-//      CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "0-preprocess.binary.cgal");
-//#endif
-//#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-//      std::cout << "done." << std::endl;
-//#endif
-//    }
 
     void split()
     {
@@ -250,15 +218,13 @@ namespace internal
 
     void smooth()
     {
-      smooth_vertices_new(m_c3t3, m_imaginary_index, m_protect_boundaries,
+      smooth_vertices_new(m_c3t3, -1, m_protect_boundaries,
                       m_cell_selector);
 
       CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_triangulation_cells(tr(),
         "4-smooth.mesh");
-      CGAL::Tetrahedral_remeshing::debug::dump_without_imaginary(tr(),
-        "4-smooth-no-imaginary.mesh", m_imaginary_index);
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "4-smooth.binary.cgal");
 #endif
     }
@@ -286,9 +252,6 @@ namespace internal
             || is_boundary(m_c3t3, e, m_cell_selector))
             continue;
         }
-        // skip imaginary edges
-        if (is_imaginary(e, m_c3t3, m_imaginary_index))
-          continue;
 
         FT sqlen = tr().segment(e).squared_length();
         if (sqlen < sqmin || sqlen > sqmax)
@@ -361,7 +324,7 @@ private:
 
       Subdomain_index max_si = 0;
 
-      //tag cells (no imaginary cell yet)
+      //tag cells
       typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
       for (Finite_cells_iterator cit = tr().finite_cells_begin();
            cit != tr().finite_cells_end();
@@ -381,7 +344,6 @@ private:
             cit->vertex(i)->set_dimension(3);
         }
       }
-      m_imaginary_index = max_si + 1;
       if(max_si == 0)
         std::cerr << "Warning : Maximal subdomain index is 0" << std::endl
                   << "          Remeshing is likely to fail." << std::endl;
@@ -510,8 +472,6 @@ private:
     void remesh(const std::size_t& max_it,
                 const std::size_t& nb_extra_iterations)
     {
-//      preprocess();
-
       std::size_t it_nb = 0;
       while (it_nb++ < max_it)
       {
@@ -535,7 +495,7 @@ private:
         std::ostringstream ossi;
         ossi << "statistics_" << it_nb << ".txt";
         Tetrahedral_remeshing::internal::compute_statistics(
-          tr(), imaginary_index(), m_cell_selector, ossi.str().c_str());
+          tr(), m_cell_selector, ossi.str().c_str());
 #endif
       }
 
@@ -553,7 +513,7 @@ private:
         std::ostringstream ossi;
         ossi << "statistics_" << it_nb << ".txt";
         Tetrahedral_remeshing::internal::compute_statistics(
-          tr(), imaginary_index(), m_cell_selector, ossi.str().c_str());
+          tr(),  m_cell_selector, ossi.str().c_str());
 #endif
       }
 

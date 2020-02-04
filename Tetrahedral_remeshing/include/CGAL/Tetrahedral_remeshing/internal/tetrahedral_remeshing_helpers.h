@@ -726,27 +726,6 @@ namespace Tetrahedral_remeshing
     return false;
   }
 
-  template<typename C3t3>
-  bool is_imaginary(const typename C3t3::Vertex_handle v,
-    const C3t3& c3t3,
-    const typename C3t3::Subdomain_index& imaginary_index)
-  {
-    return false;
-  }
-
-  /**
-  * returns true off edge is fully imaginary
-  * i.e. if all its incident cells are not in the complex,
-  * and have their subdomain index == imaginary_index
-  */
-  template<typename C3t3>
-  bool is_imaginary(const typename C3t3::Edge & edge,
-    const C3t3& c3t3,
-    const typename C3t3::Subdomain_index& imaginary_index)
-  {
-    return false;
-  }
-
   template<typename C3t3, typename CellSelector>
   bool is_outside(const typename C3t3::Edge & edge,
                   const C3t3& c3t3,
@@ -1261,7 +1240,6 @@ namespace Tetrahedral_remeshing
     template<typename Tr, typename CellSelector>
     void dump_cells_with_small_dihedral_angle(const Tr& tr,
                                               const double angle_bound,
-                                              const int imaginary_index,
                                               CellSelector cell_select,
                                               const char* filename)
     {
@@ -1337,26 +1315,6 @@ namespace Tetrahedral_remeshing
       {
         cells[i] = cit;
         indices[i++] = cit->subdomain_index();
-      }
-      dump_cells<Tr>(cells, indices, filename);
-    }
-
-    template<typename Tr>
-    void dump_without_imaginary(const Tr& tr, const char* filename,
-      const int imaginary_index)
-    {
-      std::vector<typename Tr::Cell_handle> cells;
-      std::vector<std::ptrdiff_t> indices;
-
-      for (typename Tr::Finite_cells_iterator cit = tr.finite_cells_begin();
-        cit != tr.finite_cells_end(); ++cit)
-      {
-        if (cit->subdomain_index() > 0
-          && cit->subdomain_index() != imaginary_index)
-        {
-          cells.push_back(cit);
-          indices.push_back(cit->subdomain_index());
-        }
       }
       dump_cells<Tr>(cells, indices, filename);
     }
