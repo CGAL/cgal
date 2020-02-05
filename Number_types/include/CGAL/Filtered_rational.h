@@ -64,7 +64,6 @@ public:
   Filtered_rational(double d)
     : _n1(d), _n2(d)
   {
-    _n1 = to_interval(_n2);
     CGAL_assertion(is_valid()); }
   
   Filtered_rational(const NT1 &_n1, const NT2 &_n2)
@@ -950,7 +949,7 @@ template < typename NT1, typename NT2, typename Cmp >
 std::ostream &
 operator<< (std::ostream & os, const Filtered_rational<NT1, NT2, Cmp> &b)
 {
-  return os << b.n1();
+  return os << to_double(b.n1());
 }
 
 template < typename NT1, typename NT2, typename Cmp >
