@@ -544,12 +544,13 @@ public:
 
       // Gram Schmidt so that the new location is on the tangent plane of v (i.e. do mv -= (mv*n)*n)
       const FT sp = traits_.compute_scalar_product_3_object()(vn, move);
-      move = traits_.construct_sum_of_vectors_3_object()(move,
-                                                         traits_.construct_scaled_vector_3_object()(vn, - sp));
+      move = traits_.construct_sum_of_vectors_3_object()(
+               move, traits_.construct_scaled_vector_3_object()(vn, - sp));
 
-      Point new_pos = pos + move;
-
-      if((!use_sanity_checks || !does_move_create_bad_faces(v, new_pos)) &&
+      const Point new_pos = pos + move;
+      if(move != CGAL::NULL_VECTOR &&
+         !does_move_create_degenerate_faces(v, new_pos) &&
+         (!use_sanity_checks || !does_move_create_bad_faces(v, new_pos)) &&
          (!enforce_no_min_angle_regression || does_improve_min_angle_in_star(v, new_pos)))
       {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
@@ -619,11 +620,10 @@ private:
     return get(vcmap_, v);
   }
 
-  // check for degenerate or inversed faces
-  bool does_move_create_bad_faces(const vertex_descriptor v,
-                                  const Point& new_pos) const
+  // Null faces are bad because they make normal computation difficult
+  bool does_move_create_degenerate_faces(const vertex_descriptor v,
+                                         const Point& new_pos) const
   {
-    // check for null faces and face inversions
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
     {
       const halfedge_descriptor prev_he = prev(main_he, mesh_);
@@ -632,6 +632,23 @@ private:
 
       if(traits_.collinear_3_object()(lpt, rpt, new_pos))
         return true;
+    }
+
+    return false;
+  }
+
+  // check for degenerate or inversed faces
+  bool does_move_create_bad_faces(const vertex_descriptor v,
+                                  const Point& new_pos) const
+  {
+    // check for face inversions
+    for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
+    {
+      const halfedge_descriptor prev_he = prev(main_he, mesh_);
+      const Point_ref lpt = get(vpmap_, target(main_he, mesh_));
+      const Point_ref rpt = get(vpmap_, source(prev_he, mesh_));
+
+      CGAL_assertion(!traits_.collinear_3_object()(lpt, rpt, new_pos)); // checked above
 
       const Point_ref old_pos = get(vpmap_, v);
       Vector ov_1 = traits_.construct_vector_3_object()(old_pos, lpt);
