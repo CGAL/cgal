@@ -186,6 +186,8 @@ void box_intersection_segment_tree_d(
         It r1_end = (r1_endi == -1) ? range_1_copies.end() : range_1_iterators[r1_endi][r1_endj];
         It r2_start = range_2_iterators[i][(j+i)%n];
         It r2_end = (r2_endi == -1) ? range_2_copies.end() : range_2_iterators[r2_endi][r2_endj];
+        CGAL_assertion(range_1_copies.begin() <= r1_start && r1_start <= r1_end && r1_end <= range_1_copies.end());
+        CGAL_assertion(range_2_copies.begin() <= r2_start && r2_start <= r2_end && r2_end <= range_2_copies.end());
 
         // Specify "copy by value" otherwise the values of iterators for next (i,j) iterations
         // become shared with different lambdas being run in parallel, and things go wrong
