@@ -183,7 +183,7 @@ void smooth_mesh(const FaceRange& faces,
   }
 
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                             Constant_property_map<edge_descriptor, bool>(false));
+                                 Constant_property_map<edge_descriptor, bool>(false));
 
   // a constrained edge has constrained extremities
   for(face_descriptor f : faces)

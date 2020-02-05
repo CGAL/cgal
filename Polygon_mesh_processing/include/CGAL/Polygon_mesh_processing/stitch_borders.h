@@ -843,7 +843,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 template <typename PolygonMesh,
           typename HalfedgePairsRange>
 std::size_t stitch_borders(PolygonMesh& pmesh,
-                    const HalfedgePairsRange& hedge_pairs_to_stitch)
+                           const HalfedgePairsRange& hedge_pairs_to_stitch)
 {
   return stitch_borders(pmesh, hedge_pairs_to_stitch, CGAL::parameters::all_default());
 }
@@ -890,9 +890,9 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
     halfedge_descriptor;
   std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
 
-  typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
-  VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, pmesh));
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPM
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, pmesh));
 
 #ifdef CGAL_PMP_STITCHING_DEBUG
   std::cout << "------- Stitch cycles..." << std::endl;
@@ -907,7 +907,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 
   internal::collect_duplicated_stitchable_boundary_edges(pmesh,
                                                          std::back_inserter(hedge_pairs_to_stitch),
-                                                         internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm),
+                                                         internal::Less_for_halfedge<PolygonMesh, VPM>(pmesh, vpm),
                                                          vpm, np);
 
   res += stitch_borders(pmesh, hedge_pairs_to_stitch, np);
