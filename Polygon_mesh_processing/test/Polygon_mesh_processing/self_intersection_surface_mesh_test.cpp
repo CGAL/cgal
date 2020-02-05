@@ -11,12 +11,15 @@
 #include <fstream>
 #include <sstream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epic;
-typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPICK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel       EPECK;
+
+namespace PMP = ::CGAL::Polygon_mesh_processing;
+namespace CP = ::CGAL::parameters;
 
 template <typename K>
-int
-test_self_intersections(const char* filename, const bool expected)
+int test_self_intersections(const char* filename,
+                            const bool expected)
 {
   typedef CGAL::Surface_mesh<typename K::Point_3>                Mesh;
   typedef typename boost::graph_traits<Mesh>::face_descriptor    face_descriptor;
@@ -35,18 +38,36 @@ test_self_intersections(const char* filename, const bool expected)
   timer.start();
 
   std::vector<std::pair<face_descriptor, face_descriptor> > intersected_tris;
-  CGAL::Polygon_mesh_processing::self_intersections<CGAL::Parallel_if_available_tag>(
-    m,
-    std::back_inserter(intersected_tris),
-    CGAL::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
+
+  if(std::is_same<K, EPECK>::value) // EPECK isn't threadsafe
+  {
+    PMP::self_intersections<CGAL::Sequential_tag>(
+      m, std::back_inserter(intersected_tris), CP::vertex_index_map(get(CGAL::vertex_point, m)));
+  }
+  else
+  {
+    PMP::self_intersections<CGAL::Parallel_if_available_tag>(
+      m, std::back_inserter(intersected_tris), CP::vertex_index_map(get(CGAL::vertex_point, m)));
+  }
   bool intersecting_1 = !intersected_tris.empty();
 
   std::cout << "self_intersections test took " << timer.time() << " sec." << std::endl;
   std::cout << intersected_tris.size() << " pairs of triangles are intersecting." << std::endl;
 
   timer.reset();
-  bool intersecting_2 = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Parallel_if_available_tag>(m,
-    CGAL::Polygon_mesh_processing::parameters::vertex_index_map(get(CGAL::vertex_point, m)));
+
+  bool intersecting_2;
+
+  if(std::is_same<K, EPECK>::value) // EPECK isn't threadsafe
+  {
+    intersecting_2 = PMP::does_self_intersect<CGAL::Sequential_tag>(
+                            m, CP::vertex_index_map(get(CGAL::vertex_point, m)));
+  }
+  else
+  {
+    intersecting_2 = PMP::does_self_intersect<CGAL::Parallel_if_available_tag>(
+                            m, CP::vertex_index_map(get(CGAL::vertex_point, m)));
+  }
 
   std::cout << "does_self_intersect test took " << timer.time() << " sec." << std::endl;
   std::cout << (intersecting_2 ? "There is a self-intersection." :
@@ -77,11 +98,11 @@ int main(int argc, char** argv)
     assert(!ss.fail()); // make sure that argv[2] is either 'true' or 'false'
   }
 
-  std::cout << "First test (Epic):" << std::endl;
-  int r = test_self_intersections<Epic>(filename, expected);
+  std::cout << "First test (EPICK):" << std::endl;
+  int r = test_self_intersections<EPICK>(filename, expected);
 
-  std::cout << "First test (Epec):" << std::endl;
-  r += test_self_intersections<Epec>(filename, expected);
+  std::cout << "First test (EPECK):" << std::endl;
+  r += test_self_intersections<EPECK>(filename, expected);
 
   // Second test ---------------------------------------------------------------
   expected = true;
@@ -93,11 +114,11 @@ int main(int argc, char** argv)
     assert(!ss.fail());
   }
 
-  std::cout << "Second test (Epic):" << std::endl;
-  r += test_self_intersections<Epic>(filename, expected);
+  std::cout << "Second test (EPICK):" << std::endl;
+  r += test_self_intersections<EPICK>(filename, expected);
 
-  std::cout << "Second test (Epec):" << std::endl;
-  r += test_self_intersections<Epec>(filename, expected);
+  std::cout << "Second test (EPECK):" << std::endl;
+  r += test_self_intersections<EPECK>(filename, expected);
 
   // Third test ----------------------------------------------------------------
   expected = true;
@@ -109,11 +130,11 @@ int main(int argc, char** argv)
     assert(!ss.fail());
   }
 
-  std::cout << "Third test (Epic):" << std::endl;
-  r += test_self_intersections<Epic>(filename, expected);
+  std::cout << "Third test (EPICK):" << std::endl;
+  r += test_self_intersections<EPICK>(filename, expected);
 
-  std::cout << "Third test (Epec):" << std::endl;
-  r += test_self_intersections<Epec>(filename, expected);
+  std::cout << "Third test (EPECK):" << std::endl;
+  r += test_self_intersections<EPECK>(filename, expected);
 
   // Fourth test ----------------------------------------------------------------
   expected = true;
@@ -125,11 +146,11 @@ int main(int argc, char** argv)
     assert(!ss.fail());
   }
 
-  std::cout << "Fourth test (Epic):" << std::endl;
-  r += test_self_intersections<Epic>(filename, expected);
+  std::cout << "Fourth test (EPICK):" << std::endl;
+  r += test_self_intersections<EPICK>(filename, expected);
 
-  std::cout << "Fourth test (Epec):" << std::endl;
-  r += test_self_intersections<Epec>(filename, expected);
+  std::cout << "Fourth test (EPECK):" << std::endl;
+  r += test_self_intersections<EPECK>(filename, expected);
 
   return r;
 }
