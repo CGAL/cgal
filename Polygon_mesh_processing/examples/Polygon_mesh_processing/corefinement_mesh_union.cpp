@@ -1,5 +1,3 @@
-#define CGAL_USE_FILTERED_RATIONAL_KERNEL
-
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 

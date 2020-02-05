@@ -132,7 +132,7 @@ struct Getter<X>\
   typedef X second_type; \
 }; \
 const X& approx(const X& x) { return x; }\
-const X& get_exact(const X& x) { return x; }
+const X& exact(const X& x) { return x; }
 
 template <class A>
 struct Getter
@@ -151,6 +151,21 @@ SPEC_NT_GETTER(Object)
 SPEC_NT_GETTER(Return_base_tag)
 
 #undef SPEC_NT_GETTER
+
+template<>
+struct Getter<Bbox_2>
+{
+    typedef Bbox_2 first_type;
+    typedef Bbox_2 second_type;
+};
+
+template<>
+struct Getter<Bbox_3>
+{
+    typedef Bbox_3 first_type;
+    typedef Bbox_3 second_type;
+};
+
 
 template <class A1, class A2>
 struct Getter<std::pair<A1, A2> >
@@ -193,26 +208,26 @@ approx(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullp
 {
   return approx(a.rep());
 }
-
+  
 template <class A1, class A2>
 const A2&
-get_exact(const std::pair<A1,A2>& p)
+exact(const std::pair<A1,A2>& p)
 {
   return p.second;
 }
-
+  
 template <class A1, class A2>
 const A2&
-get_exact(const Filtered_rational<A1,A2>& p)
+exact(const Filtered_rational<A1,A2>& p)
 {
   return p.n2();
 }
 
 template <class A>
 const typename A::Rep::second_type&
-get_exact(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
+exact(const A& a, typename boost::disable_if< mpl::is_pair_<A> >::type* = nullptr)
 {
-  return get_exact(a.rep());
+  return exact(a.rep());
 }
 
 template <class AP, class EP>
@@ -245,7 +260,7 @@ public:
     }
     catch(Uncertain_conversion_exception&) { }
 
-    result_type_2 res2 = ep(get_exact(a)...);
+    result_type_2 res2 = ep(exact(a)...);
     return res2;
   }
 };
@@ -306,7 +321,7 @@ public:
   {
     typedef typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type result_type_1;
     typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
-    result_type_2 res2 = ep(get_exact(a)...);
+    result_type_2 res2 = ep(exact(a)...);
 
     return Pairify<result_type_1, result_type_2, EK, FRK>()(Approx<result_type_1>(e2a, ap)
                                                             (res2, approx(a)...), res2);
@@ -322,10 +337,11 @@ struct Approx_converter
   //typedef Converter  Number_type_converter;
 
   template < typename T >
-  const typename T::AT&
+  const typename Getter<T>::first_type&
   operator()(const T&t) const
-  { return t.approx(); }
+  { return approx(t); }
 
+  
   const Null_vector&
   operator()(const Null_vector& n) const
   { return n; }
@@ -347,9 +363,9 @@ struct Exact_converter
   //typedef Converter  Number_type_converter;
 
   template < typename T >
-  const typename T::ET&
+  const typename Getter<T>::second_type&
   operator()(const T&t) const
-  { return t.exact(); }
+  { return exact(t); }
 
   const Null_vector&
   operator()(const Null_vector& n) const
@@ -456,7 +472,7 @@ public:
 
 #define CGAL_Kernel_pred(P, Pf) \
   typedef Filtered_rational_predicate<typename AK::P, typename EK::P> P; \
-  P Pf() const { return P(); } // AF: Why was it P(ak.Pf(), ek.Pf()) ?
+  P Pf() const { return P(ak.Pf(), ek.Pf()); }
 
 #define CGAL_Kernel_cons(C, Cf) \
   typedef Filtered_rational_construction<typename AK::C, typename EK::C, AK, EK, Kernel_> C; \
@@ -703,6 +719,8 @@ public:
   class Construct_cartesian_const_iterator_2 {
   public:
 
+    typedef Cartesian_const_iterator_2 result_type;
+    
     template <typename PV>
     Cartesian_const_iterator_2 operator()(const PV& pv) const
     {
@@ -723,7 +741,9 @@ public:
 
   class Construct_cartesian_const_iterator_3 {
   public:
-
+    
+    typedef Cartesian_const_iterator_3 result_type;
+    
     template <typename PV>
     Cartesian_const_iterator_3 operator()(const PV& pv) const
     {
