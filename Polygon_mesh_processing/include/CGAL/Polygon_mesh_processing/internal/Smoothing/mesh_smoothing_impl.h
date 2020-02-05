@@ -129,6 +129,10 @@ public:
   template <typename FaceRange>
   void operator()(const FaceRange& face_range)
   {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+    std::cout << "Flipping faces" << std::endl;
+#endif
+
     // edges to consider
     std::vector<edge_descriptor> edge_range;
     edge_range.reserve(3 * face_range.size());
@@ -168,6 +172,10 @@ public:
         ++flipped_n;
 
         halfedge_descriptor h = halfedge(e, mesh_);
+
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+        std::cout << "Flipping " << edge(h, mesh_) << std::endl;
+#endif
         Euler::flip_edge(h, mesh_);
 
         add_to_stack_if_unmarked(edge(next(h, mesh_), mesh_), marks, edge_range);
@@ -534,6 +542,10 @@ public:
       if(is_border(v, mesh_) || is_constrained(v))
         continue;
 
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+      std::cout << "Considering " << v << " pos: " << get(vpmap_, v) << std::endl;
+#endif
+
       // compute normal to v
       Vector vn = compute_vertex_normal(v, mesh_, CGAL::parameters::vertex_point_map(vpmap_)
                                                                    .geom_traits(traits_));
@@ -610,6 +622,10 @@ public:
 
       Point_ref p_query = get(vpmap_, v);
       const Point projected = tree.closest_point(p_query);
+#ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
+      std::cout << p_query << " to " << projected << std::endl;
+#endif
+
       put(vpmap_, v, projected);
     }
   }

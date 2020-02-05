@@ -235,8 +235,16 @@ void smooth_mesh(const FaceRange& faces,
 
   for(unsigned int i=0; i<nb_iterations; ++i)
   {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+    std::cout << "Iteration #" << i << std::endl;
+#endif
+
     if(use_area_smoothing)
     {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      std::cout << "Smooth areas..." << std::endl;
+#endif
+
       // First apply area smoothing...
       area_smoother.optimize(use_safety_constraints /*check for bad faces*/,
                              false /*apply moves as soon as they're calculated*/,
@@ -261,6 +269,10 @@ void smooth_mesh(const FaceRange& faces,
     // ... then angle smoothing
     if(use_angle_smoothing)
     {
+#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+      std::cout << "Smooth angles..." << std::endl;
+#endif
+
       angle_smoother.optimize(use_safety_constraints /*check for bad faces*/,
                               true /*apply all moves at once*/,
                               use_safety_constraints /*check if the min angle is improved*/);
