@@ -73,7 +73,7 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, mesh));
 
-  CGAL::dynamic_vertex_property_t<std::size_t>                                      Vertex_index;
+  typedef CGAL::dynamic_vertex_property_t<std::size_t>                              Vertex_index;
   typedef typename boost::property_map<PolygonMesh, Vertex_index>::type             VIM;
   VIM vim = get(Vertex_index(), mesh);
 
@@ -86,7 +86,7 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
 
   for(const vertex_descriptor v : vertices(mesh))
   {
-    points.push_back(get(vpmap, v));
+    points.push_back(get(vpm, v));
     put(vim, v, index++);
   }
 
