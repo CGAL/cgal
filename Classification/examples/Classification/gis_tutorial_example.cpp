@@ -18,6 +18,8 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 
+#include <CGAL/IO/WKT.h>
+
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
@@ -69,7 +71,7 @@ using Concurrency_tag = CGAL::Parallel_tag;
 using Concurrency_tag = CGAL::Sequential_tag;
 #endif
 
-///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 //! [Contouring functions]
 
 bool face_has_isovalue (TIN_with_info::Face_handle fh, double isovalue)
@@ -77,6 +79,8 @@ bool face_has_isovalue (TIN_with_info::Face_handle fh, double isovalue)
   bool above = false, below = false;
   for (int i = 0; i < 3; ++ i)
   {
+    // Face has isovalue if one of its vertices is above and another
+    // one below
     if (fh->vertex(i)->point().z() > isovalue)
       above = true;
     if (fh->vertex(i)->point().z() < isovalue)
@@ -97,6 +101,7 @@ Segment_3 isocontour_in_face (TIN_with_info::Face_handle fh, double isovalue)
     Point_3 p0 = fh->vertex((i+1) % 3)->point();
     Point_3 p1 = fh->vertex((i+2) % 3)->point();
 
+    // Check if the isovalue crosses segment (p0,p1)
     if ((p0.z() - isovalue) * (p1.z() - isovalue) > 0)
       continue;
 
@@ -107,9 +112,9 @@ Segment_3 isocontour_in_face (TIN_with_info::Face_handle fh, double isovalue)
       std::swap (zbottom, ztop);
       std::swap (p0, p1);
     }
-    
+
+    // Compute position of segment vertex
     double ratio = (isovalue - zbottom) / (ztop - zbottom);
-    
     Point_3 p = CGAL::barycenter (p0, (1 - ratio), p1,ratio);
     
     if (source_found)
@@ -298,7 +303,7 @@ int main (int argc, char** argv)
                          (boost::make_function_output_iterator
                           ([&](const std::pair<TIN_with_info::Face_handle, Mesh::Face_index>& ff)
                            {
-                             // Color unassigned faces grey
+                             // Color unassigned faces gray
                              if (ff.first->info() < 0)
                                color_map[ff.second] = CGAL::Color(128, 128, 128);
                              else
@@ -324,9 +329,6 @@ int main (int argc, char** argv)
   int min_size = 100000;
 
   std::vector<TIN_with_info::Vertex_handle> to_remove;
-  std::ofstream dbg ("dbg.xyz");
-  dbg.precision(18);
-
   for (TIN_with_info::Vertex_handle vh : tin_with_info.finite_vertex_handles())
   {
     TIN_with_info::Face_circulator circ = tin_with_info.incident_faces (vh),
@@ -345,10 +347,7 @@ int main (int argc, char** argv)
     while (++ circ != start);
 
     if (!keep)
-    {
       to_remove.push_back (vh);
-      dbg << vh->point() << std::endl;
-    }
   }
 
   std::cerr << to_remove.size() << " vertices(s) will be removed after filtering" << std::endl;
@@ -359,11 +358,11 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
 
   // Save as Mesh
-  CGAL::Surface_mesh<Point_3> dsm_mesh;
-  CGAL::copy_face_graph (tin_with_info, dsm_mesh);
-  std::ofstream dsm_ofile ("dsm.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dsm_ofile);
-  CGAL::write_ply (dsm_ofile, dsm_mesh);
+  CGAL::Surface_mesh<Point_3> dem_mesh;
+  CGAL::copy_face_graph (tin_with_info, dem_mesh);
+  std::ofstream dem_ofile ("dem.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dem_ofile);
+  CGAL::write_ply (dem_ofile, dem_mesh);
 
   ///////////////////////////////////////////////////////////////////
   //! [Rastering]
@@ -378,13 +377,20 @@ int main (int argc, char** argv)
 
   // Use PPM format (Portable PixMap) for simplicity
   std::ofstream raster_ofile ("raster.ppm", std::ios_base::binary);
-  raster_ofile << "P6" << std::endl << width << " " << height << std::endl << 255 << std::endl;
 
-  TIN_with_info::Face_handle location;
+  // PPM header
+  raster_ofile << "P6" << std::endl // magic number
+               << width << " " << height << std::endl // dimensions of the image
+               << 255 << std::endl; // maximum color value
 
   // Use rainbow color ramp output
   Color_ramp color_ramp;
-  
+
+  // Keeping track of location from one point to its neighbor allows
+  // for fast locate in DT
+  TIN_with_info::Face_handle location;
+
+  // Query each pixel of the image
   for (std::size_t y = 0; y < height; ++ y)
     for (std::size_t x = 0; x < width; ++ x)
     {
@@ -394,8 +400,8 @@ int main (int argc, char** argv)
       
       location = tin_with_info.locate (query, location);
 
+      // Points outside the convex hull will be colored black
       std::array<unsigned char, 3> colors { 0, 0, 0 };
-      
       if (!tin_with_info.is_infinite(location))
       {
         std::array<double, 3> barycentric_coordinates
@@ -411,11 +417,11 @@ int main (int argc, char** argv)
              + barycentric_coordinates[1] * location->vertex(1)->point().z()
              + barycentric_coordinates[2] * location->vertex(2)->point().z());
 
+        // Color ramp generates a color depending on a value from 0 to 1
         double height_ratio = (height_at_query - bbox.zmin()) / (bbox.zmax() - bbox.zmin());
         colors = color_ramp.get(height_ratio);
       }
       raster_ofile.write ((char*)(&colors), 3);
-
     }
   
   //! [Rastering]
@@ -470,6 +476,7 @@ int main (int argc, char** argv)
         Segment_3 segment = isocontour_in_face (vh, iv);
         for (const Point_3& p : { segment.source(), segment.target() })
         {
+          // Only insert end points of segments once to get a well connected graph
           Map_p2v::iterator iter;
           bool inserted;
           std::tie (iter, inserted) = map_p2v.insert (std::make_pair (p, Segment_graph::vertex_descriptor()));
@@ -496,16 +503,10 @@ int main (int argc, char** argv)
   std::cerr << polylines.size() << " polylines computed, with "
             << map_p2v.size() << " vertices in total" << std::endl;
 
-  // Output to polyline file
-  std::ofstream contour_ofile ("contour.polylines.txt");
+  // Output to WKT file
+  std::ofstream contour_ofile ("contour.wkt");
   contour_ofile.precision(18);
-  for (const std::vector<Point_3>& poly : polylines)
-  {
-    contour_ofile << poly.size();
-    for (const Point_3& p : poly)
-      contour_ofile << " " << p;
-    contour_ofile << std::endl;
-  }
+  CGAL::write_multi_linestring_WKT (contour_ofile, polylines);
 
   //! [Contouring split]
   ///////////////////////////////////////////////////////////////////
@@ -521,22 +522,28 @@ int main (int argc, char** argv)
   // Simplification algorithm with limit on distance
   PS::simplify (ctp, PS::Squared_distance_cost(), PS::Stop_above_cost_threshold (16 * spacing * spacing));
 
-  // Output to file
-  std::ofstream simplified_ofile ("simplified.polylines.txt");
-  simplified_ofile.precision(18);
-  std::size_t nb_vertices = 0;
+  polylines.clear();
   for (CTP::Constraint_id cid : ctp.constraints())
   {
-    simplified_ofile << ctp.vertices_in_constraint (cid).size();
-    nb_vertices += ctp.vertices_in_constraint (cid).size();
+    polylines.push_back (std::vector<Point_3>());
+    polylines.back().reserve (ctp.vertices_in_constraint (cid).size());
     for (CTP::Vertex_handle vh : ctp.vertices_in_constraint(cid))
-      simplified_ofile << " " << vh->point();
-    simplified_ofile << std::endl;
+      polylines.back().push_back (vh->point());
   }
 
-  std::cerr << nb_vertices << " vertices remaining after simplification ("
+  std::size_t nb_vertices
+    = std::accumulate (polylines.begin(), polylines.end(), 0,
+                       [](std::size_t size, const std::vector<Point_3>& poly) -> std::size_t
+                       { return size + poly.size(); });
+
+  std::cerr << nb_vertices
+            << " vertices remaining after simplification ("
             << 100. * (nb_vertices / double(map_p2v.size())) << "%)" << std::endl;
   
+  // Output to WKT file
+  std::ofstream simplified_ofile ("simplified.wkt");
+  simplified_ofile.precision(18);
+  CGAL::write_multi_linestring_WKT (simplified_ofile, polylines);
 
   //! [Contouring simplify]
   ///////////////////////////////////////////////////////////////////
