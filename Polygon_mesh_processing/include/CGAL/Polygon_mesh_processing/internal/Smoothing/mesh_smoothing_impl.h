@@ -91,6 +91,10 @@ public:
     const vertex_descriptor v2 = target(next(h, mesh_), mesh_);
     const vertex_descriptor v3 = target(next(opp_h, mesh_), mesh_);
 
+    std::set<vertex_descriptor> unique_vs { v0, v1, v2, v3 };
+    if(unique_vs.size() != 4)
+      return false;
+
     // Don't want to flip if the other diagonal already exists
     // @todo remeshing can be used to still flip those
     std::pair<edge_descriptor, bool> other_hd_already_exists = edge(v2, v3, mesh_);
