@@ -17,23 +17,99 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/algorithm.h>
-#include <set>
-#include <boost/dynamic_bitset.hpp>
 
+#include <CGAL/algorithm.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/property_map.h>
+
+#include <boost/dynamic_bitset.hpp>
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
 
-namespace CGAL
+#include <set>
+
+namespace CGAL {
+namespace Polygon_mesh_processing {
+namespace internal {
+
+// \ingroup PMP_repairing_grp
+//
+// Adds the vertices and faces of a mesh into a (possibly non-empty) soup.
+//
+// @tparam PolygonMesh a model of `FaceListGraph` with an internal point property map
+// @tparam PointRange a model of the concepts `RandomAccessContainer` and
+//                    `BackInsertionSequence` whose value type is the point type
+// @tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence` whose
+//                      `value_type` is itself a model of the concepts `RandomAccessContainer` and
+//                      `BackInsertionSequence` whose `value_type` is `std::size_t`.
+//
+// @param mesh the mesh whose faces are being put in the soup
+// @param points points of the soup of polygons
+// @param polygons each element in the vector describes a polygon using the index of the points in `points`
+//
+// \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+// \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
+// \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+//
+template<typename PolygonMesh, typename PointRange, typename PolygonRange, typename NamedParameters>
+void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
+                                  PointRange& points,
+                                  PolygonRange& polygons,
+                                  const NamedParameters& np)
 {
-namespace Polygon_mesh_processing
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor              vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor            halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor                face_descriptor;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type      VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(vertex_point, mesh));
+
+  CGAL::dynamic_vertex_property_t<std::size_t>                                      Vertex_index;
+  typedef typename boost::property_map<PolygonMesh, Vertex_index>::type             VIM;
+  VIM vim = get(Vertex_index(), mesh);
+
+  typedef typename boost::range_value<PolygonRange>                                 Polygon;
+
+  std::size_t index = points.size(); // so that multiple meshes can be put into the same soup
+
+  points.reserve(points.size() + vertices(mesh).size());
+  polygons.reserve(polygons.size() + faces(mesh).size());
+
+  for(const vertex_descriptor v : vertices(mesh))
+  {
+    points.push_back(get(vpmap, v));
+    put(vim, v, index++);
+  }
+
+  for(const face_descriptor f : faces(mesh))
+  {
+    Polygon polygon;
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
+      polygon.push_back(get(vim, target(h, mesh)));
+
+    polygons.push_back(polygon);
+  }
+}
+
+template<typename PolygonMesh, typename PointRange, typename PolygonRange>
+void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
+                                  PointRange& points,
+                                  PolygonRange& polygons)
 {
-namespace internal
-{
+  return polygon_mesh_to_polygon_soup(mesh, points, polygons, CGAL::parameters::all_default());
+}
+
+// -------------------------------------------------------------------------------------------------
+
 template <typename PM
         , typename PointRange
         , typename PolygonRange>
