@@ -50,9 +50,11 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template <typename V, typename GT>
-double get_radian_angle(const V& v1, const V& v2, const GT& gt)
+typename GT::FT get_radian_angle(const V& v1, const V& v2, const GT& gt)
 {
-  return gt.compute_approximate_angle_3_object()(v1, v2) * CGAL_PI / 180.;
+  typedef typename GT::FT FT;
+
+  return gt.compute_approximate_angle_3_object()(v1, v2) * CGAL_PI / FT(180);
 }
 
 // super naive for now. Not sure it even makes sense to do something like that for surfaces
@@ -68,6 +70,7 @@ class Delaunay_edge_flipper
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor      face_descriptor;
 
   typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
+  typedef typename GeomTraits::FT                                          FT;
   typedef typename GeomTraits::Vector_3                                    Vector;
 
 public:
@@ -107,8 +110,8 @@ public:
     const Point_ref p2 = get(vpmap_, v2);
     const Point_ref p3 = get(vpmap_, v3);
 
-    double alpha = get_radian_angle(Vector(p0 - p2), Vector(p1 - p2), traits_);
-    double beta = get_radian_angle(Vector(p1 - p3), Vector(p0 - p3), traits_);
+    FT alpha = get_radian_angle(Vector(p0 - p2), Vector(p1 - p2), traits_);
+    FT beta = get_radian_angle(Vector(p1 - p3), Vector(p0 - p3), traits_);
 
     return (alpha + beta > CGAL_PI);
   }
@@ -200,6 +203,7 @@ class Angle_smoother
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
 
   typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
+  typedef typename GeomTraits::FT                                          FT;
   typedef typename GeomTraits::Vector_3                                    Vector;
 
   typedef std::pair<halfedge_descriptor, halfedge_descriptor>              He_pair;
@@ -241,7 +245,7 @@ public:
   Vector operator()(const vertex_descriptor v) const
   {
     Vector move = CGAL::NULL_VECTOR;
-    double weights_sum = 0.;
+    FT weights_sum = FT(0);
 
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
     {
@@ -259,26 +263,37 @@ public:
       Vector right_v(pt, right_pt);
 
       // rotate
-      double angle = get_radian_angle(right_v, left_v, traits_);
-      CGAL_warning(angle != 0.); // no degenerate faces is a precondition
-      if(angle == 0.)
-        continue;
-
       Vector bisector = rotate_edge(main_he, incident_pair);
-      double scaling_factor = CGAL::approximate_sqrt(
-                                traits_.compute_squared_distance_3_object()(get(vpmap_, source(main_he, mesh_)),
-                                                                            get(vpmap_, target(main_he, mesh_))));
+      FT scaling_factor = CGAL::approximate_sqrt(
+                            traits_.compute_squared_distance_3_object()(get(vpmap_, source(main_he, mesh_)),
+                                                                        get(vpmap_, target(main_he, mesh_))));
       bisector = traits_.construct_scaled_vector_3_object()(bisector, scaling_factor);
       Vector ps_psi(ps, traits_.construct_translated_point_3_object()(pt, bisector));
 
+      FT angle = get_radian_angle(right_v, left_v, traits_);
+
+      CGAL_warning(angle != FT(0));
+      if(angle == FT(0))
+      {
+        // no degenerate faces is a precondition, angle can be 0 but it should be a numerical error
+        CGAL_assertion(!is_degenerate_triangle_face(face(main_he, mesh_), mesh_));
+
+        std::cout << "zero angle at " << pt << std::endl;
+        std::ofstream out("results/debug.off");
+        out << std::setprecision(17) << mesh_;
+        out.close();
+
+        return ps_psi; // if the angle is 0
+      }
+
       // small angles carry more weight
-      double weight = 1. / (angle*angle);
+      FT weight = 1. / CGAL::square(angle);
       weights_sum += weight;
 
       move += weight * ps_psi;
     }
 
-    if(weights_sum != 0.)
+    if(weights_sum != FT(0))
      move /= weights_sum;
 
     return move;
@@ -298,6 +313,7 @@ class Area_smoother
 
   typedef typename boost::property_traits<VertexPointMap>::value_type      Point;
   typedef typename boost::property_traits<VertexPointMap>::reference       Point_ref;
+  typedef typename GeomTraits::FT                                          FT;
   typedef typename GeomTraits::Vector_3                                    Vector;
 
 public:
@@ -308,27 +324,27 @@ public:
   { }
 
 private:
-  double element_area(const vertex_descriptor v1,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
+  FT element_area(const vertex_descriptor v1,
+                  const vertex_descriptor v2,
+                  const vertex_descriptor v3) const
   {
-    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(get(vpmap_, v1),
-                                                                                          get(vpmap_, v2),
-                                                                                          get(vpmap_, v3))));
+    return CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(get(vpmap_, v1),
+                                                                          get(vpmap_, v2),
+                                                                          get(vpmap_, v3)));
   }
 
-  double element_area(const Point& P,
-                      const vertex_descriptor v2,
-                      const vertex_descriptor v3) const
+  FT element_area(const Point& P,
+                  const vertex_descriptor v2,
+                  const vertex_descriptor v3) const
   {
-    return CGAL::to_double(CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(P,
-                                                                                          get(vpmap_, v2),
-                                                                                          get(vpmap_, v3))));
+    return CGAL::approximate_sqrt(traits_.compute_squared_area_3_object()(P,
+                                                                          get(vpmap_, v2),
+                                                                          get(vpmap_, v3)));
   }
 
-  double compute_average_area_around(const vertex_descriptor v) const
+  FT compute_average_area_around(const vertex_descriptor v) const
   {
-    double sum_areas = 0.;
+    FT sum_areas = 0;
     unsigned int number_of_edges = 0;
 
     for(halfedge_descriptor h : halfedges_around_source(v, mesh_))
@@ -337,7 +353,7 @@ private:
       vertex_descriptor vi = source(next(h, mesh_), mesh_);
       vertex_descriptor vj = target(next(h, mesh_), mesh_);
 
-      double S = element_area(v, vi, vj);
+      FT S = element_area(v, vi, vj);
       sum_areas += S;
       ++number_of_edges;
     }
@@ -347,7 +363,7 @@ private:
 
   struct Face_energy
   {
-    Face_energy(const Point& pi, const Point& pj, const double s_av)
+    Face_energy(const Point& pi, const Point& pj, const FT s_av)
       :
         qx(pi.x()), qy(pi.y()), qz(pi.z()),
         rx(pj.x()), ry(pj.y()), rz(pj.z()),
@@ -356,7 +372,7 @@ private:
 
     // next two functions are just for convencience, the only thing ceres cares about is the operator()
     template <typename T>
-    double area(const T x, const T y, const T z) const
+    FT area(const T x, const T y, const T z) const
     {
       return CGAL::approximate_sqrt(CGAL::squared_area(Point(x, y, z),
                                                        Point(qx, qy, qz),
@@ -364,7 +380,7 @@ private:
     }
 
     template <typename T>
-    double evaluate(const T x, const T y, const T z) const { return area(x, y, z) - s_av; }
+    FT evaluate(const T x, const T y, const T z) const { return area(x, y, z) - s_av; }
 
     template <typename T>
     bool operator()(const T* const x, const T* const y, const T* const z,
@@ -400,9 +416,9 @@ private:
     }
 
   private:
-    const double qx, qy, qz;
-    const double rx, ry, rz;
-    const double s_av;
+    const FT qx, qy, qz;
+    const FT rx, ry, rz;
+    const FT s_av;
   };
 
 public:
@@ -411,12 +427,12 @@ public:
 #ifdef CGAL_PMP_USE_CERES_SOLVER
     const Point_ref vp = get(vpmap_, v);
 
-    const double S_av = compute_average_area_around(v);
+    const FT S_av = compute_average_area_around(v);
 
-    const double initial_x = vp.x();
-    const double initial_y = vp.y();
-    const double initial_z = vp.z();
-    double x = initial_x, y = initial_y, z = initial_z;
+    const FT initial_x = vp.x();
+    const FT initial_y = vp.y();
+    const FT initial_z = vp.z();
+    FT x = initial_x, y = initial_y, z = initial_z;
 
     ceres::Problem problem;
 
@@ -533,7 +549,7 @@ public:
     Optimizer compute_move(mesh_, vpmap_, traits_);
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    double total_displacement = 0;
+    FT total_displacement = 0;
 #endif
 
     std::size_t moved_points = 0;
@@ -690,7 +706,7 @@ private:
                                       const Point& new_pos) const
   {
     // check if the minimum angle of the star has not deteriorated
-    double old_min_angle = CGAL_PI;
+    FT old_min_angle = CGAL_PI;
     for(halfedge_descriptor main_he : halfedges_around_source(v, mesh_))
     {
       const Point_ref old_pos = get(vpmap_, v);
