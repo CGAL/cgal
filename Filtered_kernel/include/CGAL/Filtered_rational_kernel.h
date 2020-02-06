@@ -131,8 +131,8 @@ struct Getter<X>\
   typedef X first_type; \
   typedef X second_type; \
 }; \
-const X& approx(const X& x) { return x; }\
-const X& exact(const X& x) { return x; }
+inline const X& approx(const X& x) { return x; }\
+inline const X& exact(const X& x) { return x; }
 
 template <class A>
 struct Getter
