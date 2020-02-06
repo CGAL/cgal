@@ -772,6 +772,9 @@ namespace Tetrahedral_remeshing
                  const C3t3& c3t3,
                  CellSelector cell_selector)
   {
+    const typename C3t3::Vertex_handle vs = edge.first->vertex(edge.second);
+    const typename C3t3::Vertex_handle vt = edge.first->vertex(edge.third);
+
     typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
     Cell_circulator circ = c3t3.triangulation().incident_cells(edge);
     Cell_circulator done = circ;
@@ -784,6 +787,10 @@ namespace Tetrahedral_remeshing
       if (si != circ->subdomain_index())
         return false;
       if (!cell_selector(circ))
+        return false;
+      if (c3t3.is_in_complex(
+          circ,
+          CGAL::Triangulation_utils_3::next_around_edge(circ->index(vs), circ->index(vt))))
         return false;
     } while (++circ != done);
 
