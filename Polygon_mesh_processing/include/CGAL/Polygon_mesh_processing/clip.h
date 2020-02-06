@@ -271,12 +271,10 @@ clip_to_bbox(const Plane_3& plane,
   return ON_ORIENTED_BOUNDARY;
 }
 
-template <class TriangleMesh, class Ecm,
-          class VPMap1, class VPMap2>
+template <class TriangleMesh, class Ecm, class VPM>
 void split_along_edges(TriangleMesh& tm,
                        Ecm ecm,
-                       VPMap1 vpm_tm,
-                       VPMap2 vpm_s)
+                       VPM vpm)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
@@ -381,7 +379,7 @@ void split_along_edges(TriangleMesh& tm,
   for(const std::pair<halfedge_descriptor, vertex_descriptor>& p : vertices_to_duplicate)
   {
     vertex_descriptor nv = add_vertex(tm);
-    put(vpm_tm, nv, get(vpm_tm, p.second));
+    put(vpm, nv, get(vpm, p.second));
     for(halfedge_descriptor h : halfedges_around_target(p.first, tm))
       set_target(h, nv, tm);
     set_halfedge(nv, p.first, tm);
@@ -624,15 +622,15 @@ void split(      TriangleMesh& tm,
   using parameters::choose_parameter;
   namespace PMP = CGAL::Polygon_mesh_processing;
 
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPMap1;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPMap2;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPM1;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPM2;
 
   typedef typename boost::template property_map<TriangleMesh, CGAL::dynamic_edge_property_t<bool> >::type Ecm;
 
-  VPMap1 vpm_tm = choose_parameter(get_parameter(np_tm, internal_np::vertex_point),
-                             get_property_map(vertex_point, tm));
-  VPMap2 vpm_s = choose_parameter(get_parameter(np_s, internal_np::vertex_point),
-                             get_property_map(vertex_point, splitter));
+  VPM1 vpm_tm = choose_parameter(get_parameter(np_tm, internal_np::vertex_point),
+                                 get_property_map(vertex_point, tm));
+  VPM2 vpm_s = choose_parameter(get_parameter(np_s, internal_np::vertex_point),
+                                get_property_map(vertex_point, splitter));
 
   Ecm ecm  = get(CGAL::dynamic_edge_property_t<bool>(), tm);
 
@@ -644,7 +642,7 @@ void split(      TriangleMesh& tm,
                 CGAL::parameters::vertex_point_map(vpm_s));
 
   //split mesh along marked edges
-  internal::split_along_edges(tm, ecm, vpm_tm, vpm_s);
+  internal::split_along_edges(tm, ecm, vpm_tm);
 }
 
 
