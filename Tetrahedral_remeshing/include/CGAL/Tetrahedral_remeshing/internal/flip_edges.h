@@ -49,7 +49,7 @@ namespace internal
   template<typename C3t3>
   Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
     C3t3& c3t3,
-    std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
+    const std::vector<typename C3t3::Vertex_handle>& vertices_around_edge,
     const Flip_Criterion& criterion)
   {
     typedef typename C3t3::Triangulation Tr;
@@ -87,12 +87,11 @@ namespace internal
       return NOT_FLIPPABLE;
 
     //Check topological validity
-    if ( ch0->subdomain_index() != ch1->subdomain_index()
-      || ch0->subdomain_index() != cell_to_remove->subdomain_index()
+    const typename C3t3::Subdomain_index subdomain = ch0->subdomain_index();
+    if ( subdomain != ch1->subdomain_index()
+      || subdomain != cell_to_remove->subdomain_index()
       || ch1->subdomain_index() != cell_to_remove->subdomain_index())
       return NOT_FLIPPABLE;
-
-    circ = Cell_circulator(done);
 
     Vertex_handle vh2;
     Vertex_handle vh3;
@@ -188,7 +187,8 @@ namespace internal
     typedef boost::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
 
     FaceMapIndex facet_map_indices;
-    std::vector<Facet> facets;
+    std::vector<Facet> mirror_facets;
+    circ = Cell_circulator(done);
     do
     {
       int curr_vh0_id = circ->index(vh0);
@@ -200,8 +200,8 @@ namespace internal
       typename FaceMapIndex::iterator it = facet_map_indices.find(face0);
       if (it == facet_map_indices.end())
       {
-        facet_map_indices[face0] = facets.size();
-        facets.push_back(n_vh0_facet);
+        facet_map_indices[face0] = mirror_facets.size();
+        mirror_facets.push_back(n_vh0_facet);
       }
 
       int curr_vh1_id = circ->index(vh1);
@@ -212,8 +212,8 @@ namespace internal
       it = facet_map_indices.find(face1);
       if (it == facet_map_indices.end())
       {
-        facet_map_indices[face1] = facets.size();
-        facets.push_back(n_vh1_facet);
+        facet_map_indices[face1] = mirror_facets.size();
+        mirror_facets.push_back(n_vh1_facet);
       }
     }
     while (++circ != done);
@@ -235,14 +235,15 @@ namespace internal
     ch0->set_vertex(vh0_id, vh2);
     ch1->set_vertex(vh1_id, vh3);
 
+    // "New" cells are not created, only modified/updated
     std::vector<Cell_handle> cells_to_update;
     cells_to_update.push_back(ch0);
     cells_to_update.push_back(ch1);
 
     //Update adjacencies and vertices' cells
-    for (std::size_t i = 0; i < cells_to_update.size(); ++i)
+    for (Cell_handle ch : cells_to_update)
     {
-      Cell_handle ch = cells_to_update[i];
+
       for (int v = 0; v < 4; ++v)
       {
         Facet_vvv face = make_vertex_triple(ch->vertex(indices(v, 0)),
@@ -251,15 +252,16 @@ namespace internal
         typename FaceMapIndex::iterator it = facet_map_indices.find(face);
         if (it == facet_map_indices.end())
         {
-          facet_map_indices[face] = facets.size();
-          facets.push_back(Facet(ch, v));
+          facet_map_indices[face] = mirror_facets.size();
+          mirror_facets.push_back(Facet(ch, v));
         }
         else
         {
-          Facet facet = facets[it->second];
+          Facet mirror_facet = mirror_facets[it->second];
+
           //Update neighbor
-          facet.first->set_neighbor(facet.second, ch);
-          ch->set_neighbor(v, facet.first);
+          mirror_facet.first->set_neighbor(mirror_facet.second, ch);
+          ch->set_neighbor(v, mirror_facet.first);
         }
         ch->vertex(v)->set_cell(ch);
       }
@@ -1092,14 +1094,11 @@ namespace internal
     Tr& tr = c3t3.triangulation();
 
     std::size_t count = 0;
-    for (unsigned int i = 0; i < edges.size(); ++i)
+    for (const VertexPair vp : edges)
     {
-      const Vertex_handle vh0 = edges[i].first;
-      const Vertex_handle vh1 = edges[i].second;
-
       Cell_handle ch;
       int i0, i1;
-      if (tr.is_edge(vh0, vh1, ch, i0, i1))
+      if (tr.is_edge(vp.first, vp.second, ch, i0, i1))
       {
         Edge edge(ch, i0, i1);
 
