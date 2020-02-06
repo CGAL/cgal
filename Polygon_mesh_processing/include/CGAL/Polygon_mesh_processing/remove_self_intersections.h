@@ -1087,7 +1087,7 @@ bool check_patch_sanity(const std::vector<std::vector<Point> >& patch)
     std::vector<std::size_t> ps_f;
     for(const Point& pt : face)
     {
-      std::size_t id;
+      std::size_t id = c;
       std::pair<typename std::map<Point, std::size_t>::iterator, bool> is_insert_successful =
         ids.insert(std::make_pair(pt, c));
       if(is_insert_successful.second) // first time we've seen that point
@@ -1100,6 +1100,7 @@ bool check_patch_sanity(const std::vector<std::vector<Point> >& patch)
         id = is_insert_successful.first->second;
       }
 
+      CGAL_assertion(id < points.size());
       ps_f.push_back(id);
     }
 
