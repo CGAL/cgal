@@ -129,7 +129,7 @@ public:
   template <typename FaceRange>
   void operator()(const FaceRange& face_range)
   {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "Flipping faces" << std::endl;
 #endif
 
@@ -173,7 +173,7 @@ public:
 
         halfedge_descriptor h = halfedge(e, mesh_);
 
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
         std::cout << "Flipping " << edge(h, mesh_) << std::endl;
 #endif
         Euler::flip_edge(h, mesh_);
@@ -542,7 +542,7 @@ public:
       if(is_border(v, mesh_) || is_constrained(v))
         continue;
 
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
       std::cout << "Considering " << v << " pos: " << get(vpmap_, v) << std::endl;
 #endif
 
@@ -565,7 +565,7 @@ public:
          (!use_sanity_checks || !does_move_create_bad_faces(v, new_pos)) &&
          (!enforce_no_min_angle_regression || does_improve_min_angle_in_star(v, new_pos)))
       {
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
         std::cout << "moving " << get(vpmap_, v) << " to " << new_pos << std::endl;
         total_displacement += CGAL::approximate_sqrt(traits_.compute_squared_length_3_object()(move));
 #endif
@@ -579,7 +579,7 @@ public:
       }
       else // some sanity check failed
       {
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
         std::cout << "move is rejected!" << std::endl;
 #endif
         if(apply_moves_in_single_batch)
@@ -676,7 +676,7 @@ private:
 
       if(!is_positive(traits_.compute_scalar_product_3_object()(old_n, new_n)))
       {
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
       std::cout << "Moving vertex would result in the inversion of a face normal!" << std::endl;
 #endif
         return true;
@@ -718,7 +718,7 @@ private:
          get_radian_angle(Vector(lpt, rpt), Vector(lpt, new_pos), traits_) < old_min_angle ||
          get_radian_angle(Vector(rpt, new_pos), Vector(rpt, lpt), traits_) < old_min_angle)
       {
-#ifdef CGAL_PMP_SMOOTHING_DEBUG
+#ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
         const Point_ref old_pos = get(vpmap_, v);
 
         std::cout << "deterioration of min angle in the star!" << std::endl;

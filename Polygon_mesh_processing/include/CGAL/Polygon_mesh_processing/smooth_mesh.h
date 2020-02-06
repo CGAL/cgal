@@ -235,13 +235,13 @@ void smooth_mesh(const FaceRange& faces,
 
   for(unsigned int i=0; i<nb_iterations; ++i)
   {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
     std::cout << "Iteration #" << i << std::endl;
 #endif
 
     if(use_area_smoothing)
     {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
       std::cout << "Smooth areas..." << std::endl;
 #endif
 
@@ -253,7 +253,7 @@ void smooth_mesh(const FaceRange& faces,
       {
         if(use_safety_constraints && does_self_intersect(tmesh))
         {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
           std::cerr << "Cannot re-project as there are self-intersections in the mesh!\n";
 #endif
           break;
@@ -269,7 +269,7 @@ void smooth_mesh(const FaceRange& faces,
     // ... then angle smoothing
     if(use_angle_smoothing)
     {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
       std::cout << "Smooth angles..." << std::endl;
 #endif
 
@@ -281,7 +281,7 @@ void smooth_mesh(const FaceRange& faces,
       {
         if(use_safety_constraints && does_self_intersect(tmesh))
         {
-#ifdef CGAL_PMP_SMOOTHING_VERBOSE
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
           std::cerr << "Can't do re-projection, there are self-intersections in the mesh!\n";
 #endif
           break;

@@ -98,7 +98,7 @@ void sum_normals(const PM& pmesh,
 
     const Vector n = internal::triangle_normal(pv, pvn, pvnn, traits);
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     std::cout << "Normal of " << f << " pts: " << pv << " ; " << pvn << " ; " << pvnn << std::endl;
     std::cout << " --> " << n << std::endl;
 #endif
@@ -211,7 +211,7 @@ void compute_face_normals(const PolygonMesh& pmesh,
   {
     typename Kernel::Vector_3 vec = compute_face_normal(f, pmesh, np);
     put(face_normals, f, vec);
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
     std::cout << "normal at face " << f << " is " << get(face_normals, f) << std::endl;
 #endif
   }
@@ -669,7 +669,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     }
   }
 
-#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG
+#ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "Incident face normals:" << std::endl;
   for(halfedge_descriptor h : CGAL::halfedges_around_target(v, pmesh))
   {
