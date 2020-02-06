@@ -271,19 +271,18 @@ public:
       Vector ps_psi(ps, traits_.construct_translated_point_3_object()(pt, bisector));
 
       FT angle = get_radian_angle(right_v, left_v, traits_);
-
-      CGAL_warning(angle != FT(0));
       if(angle == FT(0))
       {
-        // no degenerate faces is a precondition, angle can be 0 but it should be a numerical error
-        CGAL_assertion(!is_degenerate_triangle_face(face(main_he, mesh_), mesh_));
-
         std::cout << "zero angle at " << pt << std::endl;
         std::ofstream out("results/debug.off");
         out << std::setprecision(17) << mesh_;
         out.close();
 
-        return ps_psi; // if the angle is 0
+        // no degenerate faces is a precondition, angle can be 0 but it should be a numerical error
+        CGAL_warning(!is_degenerate_triangle_face(face(main_he, mesh_), mesh_));
+
+        std::cout << "move: " << ps_psi << std::endl;
+        return ps_psi; // since a small angle gives more weight, a null angle give priority (?)
       }
 
       // small angles carry more weight
