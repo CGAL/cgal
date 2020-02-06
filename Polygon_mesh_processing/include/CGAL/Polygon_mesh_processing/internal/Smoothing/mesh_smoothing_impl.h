@@ -277,15 +277,9 @@ public:
       FT angle = get_radian_angle(right_v, left_v, traits_);
       if(angle == FT(0))
       {
-        std::cout << "zero angle at " << pt << std::endl;
-        std::ofstream out("results/debug.off");
-        out << std::setprecision(17) << mesh_;
-        out.close();
-
         // no degenerate faces is a precondition, angle can be 0 but it should be a numerical error
         CGAL_warning(!is_degenerate_triangle_face(face(main_he, mesh_), mesh_));
 
-        std::cout << "move: " << ps_psi << std::endl;
         return ps_psi; // since a small angle gives more weight, a null angle give priority (?)
       }
 
