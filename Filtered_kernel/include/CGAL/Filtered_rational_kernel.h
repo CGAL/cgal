@@ -69,6 +69,7 @@ struct is_pair_
 
 } // mpl namespace
 
+namespace frk {
 // Small utility to manipulate pairs for kernel objects, and
 // simple things for bool, Sign...  Object is yet another case...
 template < typename T1, typename T2, typename EK, typename FRK >
@@ -124,6 +125,8 @@ struct Pairify <const Interval_nt<false>&,const Gmpq&, EK, FRK>
   }
 };
 
+} // namespace frk
+  
 #define SPEC_NT_GETTER(X) \
 template <> \
 struct Getter<X>\
@@ -284,7 +287,7 @@ public:
   {
     typedef typename cpp11::result_of<AP(typename Getter<A>::first_type...)>::type R1;
     typedef typename cpp11::result_of<EP(typename Getter<A>::second_type...)>::type R2;
-    typedef typename Pairify<R1,R2,EK,FRK>::result_type type;
+    typedef typename frk::Pairify<R1,R2,EK,FRK>::result_type type;
   };
 
   // In case the exact result type is a reference
@@ -315,7 +318,7 @@ public:
 
   // TODO: I think the result_of is simply using AP::result_type because arguments are not valid (pairs...)
   template <class ... A>
-  typename Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
+  typename frk::Pairify<typename CGAL::cpp11::result_of<AP(typename Getter<A>::first_type...)>::type,
   typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type, EK, FRK>::result_type
   operator()(const A&... a) const
   {
@@ -323,8 +326,8 @@ public:
     typedef typename CGAL::cpp11::result_of<EP(typename Getter<A>::second_type...)>::type result_type_2;
     result_type_2 res2 = ep(exact(a)...);
 
-    return Pairify<result_type_1, result_type_2, EK, FRK>()(Approx<result_type_1>(e2a, ap)
-                                                            (res2, approx(a)...), res2);
+    return frk::Pairify<result_type_1, result_type_2, EK, FRK>()(Approx<result_type_1>(e2a, ap)
+                                                                 (res2, approx(a)...), res2);
   }
 };
 
