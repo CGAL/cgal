@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2019 GeometryFactory (France).
+// Copyright (c) 2015-2020 GeometryFactory (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -23,7 +23,6 @@
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/internal/detect_features_pp.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
