@@ -156,7 +156,9 @@ public:
     RandomAccessIterator begin, end;
     const Comp& comp;
 
-    Hilbert_split(RandomAccessIterator& res, RandomAccessIterator begin, RandomAccessIterator end, const Comp comp)
+    Hilbert_split(RandomAccessIterator& res,
+                  RandomAccessIterator begin, RandomAccessIterator end,
+                  const Comp& comp)
       : res(res), begin(begin), end(end), comp(comp)
     {}
 
