@@ -173,7 +173,7 @@ void smooth_mesh(const FaceRange& faces,
   const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                             get(Vertex_property_tag(), tmesh));
+                                 get(Vertex_property_tag(), tmesh));
 
   // If it's the default vcmap, manually set everything to false because the dynamic pmap has no default initialization
   if((std::is_same<VCMap, Default_VCMap>::value))

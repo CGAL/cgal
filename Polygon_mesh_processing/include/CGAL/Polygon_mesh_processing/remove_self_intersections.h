@@ -457,11 +457,6 @@ bool remove_self_intersections_with_smoothing(std::set<typename boost::graph_tra
 
   CGAL_precondition(does_self_intersect(face_range, tmesh));
 
-  std::cout << "range: " << face_range.size() << " faces" << std::endl;
-  std::vector<typename boost::graph_traits<TriangleMesh>::face_descriptor> dfaces;
-  degenerate_faces(face_range, tmesh, std::back_inserter(dfaces));
-  std::cout << dfaces.size() << " dfaces" << std::endl;
-
   // Rather than working directly on the mesh, copy a range and work on this instead
   const CGAL::Face_filtered_graph<TriangleMesh> ffg(tmesh, face_range);
   TriangleMesh local_mesh;
@@ -1703,7 +1698,6 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
       }
     }
 
-    // sort halfedges so that they describe the sequence of halfedges of the hole to be made
     if(!remove_self_intersections_with_hole_filling(cc_border_hedges, cc_faces, working_face_range,
                                                     tmesh, only_treat_self_intersections_locally,
                                                     strong_dihedral_angle, weak_dihedral_angle,

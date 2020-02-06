@@ -133,7 +133,7 @@ public:
   void operator()(const FaceRange& face_range)
   {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
-    std::cout << "Flipping faces" << std::endl;
+    std::cout << "Flipping edges" << std::endl;
 #endif
 
     // edges to consider
@@ -187,6 +187,10 @@ public:
         add_to_stack_if_unmarked(edge(prev(opposite(h, mesh_), mesh_), mesh_), marks, edge_range);
       }
     }
+
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+    std::cout << flipped_n << " flips" << std::endl;
+#endif
   }
 
 private:
@@ -549,6 +553,7 @@ public:
 
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
     FT total_displacement = 0;
+    std::cout << "apply_moves_in_single_batch: " << apply_moves_in_single_batch << std::endl;
 #endif
 
     std::size_t moved_points = 0;
@@ -582,13 +587,16 @@ public:
       {
 #ifdef CGAL_PMP_SMOOTHING_DEBUG_PP
         std::cout << "moving " << get(vpmap_, v) << " to " << new_pos << std::endl;
-        total_displacement += CGAL::approximate_sqrt(traits_.compute_squared_length_3_object()(move));
 #endif
 
         if(apply_moves_in_single_batch)
           put(new_positions, v, new_pos);
         else
           put(vpmap_, v, new_pos);
+
+#ifdef CGAL_PMP_SMOOTHING_DEBUG
+        total_displacement += CGAL::approximate_sqrt(traits_.compute_squared_length_3_object()(move));
+#endif
 
         ++moved_points;
       }
