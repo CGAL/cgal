@@ -937,7 +937,7 @@ namespace internal
         return false;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      if (!is_inside(e, c3t3, cell_selector))
+      if (!is_internal(e, c3t3, cell_selector))
       {
         std::cerr << "e is not inside!?" << std::endl;
         typename C3T3::Vertex_handle v1 = e.first->vertex(e.second);
@@ -946,7 +946,7 @@ namespace internal
       }
 #endif
 
-      CGAL_assertion(is_inside(e, c3t3, cell_selector));
+      CGAL_assertion(is_internal(e, c3t3, cell_selector));
       return true;
     }
     else

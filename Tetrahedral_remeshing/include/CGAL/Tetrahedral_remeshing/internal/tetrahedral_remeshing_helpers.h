@@ -768,7 +768,7 @@ namespace Tetrahedral_remeshing
   }
 
   template<typename C3t3, typename CellSelector>
-  bool is_inside(const typename C3t3::Edge& edge,
+  bool is_internal(const typename C3t3::Edge& edge,
                  const C3t3& c3t3,
                  CellSelector cell_selector)
   {
@@ -820,7 +820,7 @@ namespace Tetrahedral_remeshing
   }
 
   template<typename C3t3, typename CellSelector, typename OutputIterator>
-  OutputIterator get_inside_edges(const C3t3& c3t3,
+  OutputIterator get_internal_edges(const C3t3& c3t3,
                                   CellSelector cell_selector,
                                   OutputIterator oit)/*holds Edges*/
   {
@@ -830,7 +830,7 @@ namespace Tetrahedral_remeshing
       ++eit)
     {
       const typename C3t3::Edge& e = *eit;
-      if (is_inside(e, c3t3, cell_selector))
+      if (is_internal(e, c3t3, cell_selector))
       {
         *oit++ = make_vertex_pair<typename C3t3::Triangulation>(e);
       }

@@ -1166,7 +1166,7 @@ namespace internal
     //}
 
     std::vector<Edge_vv> inside_edges;
-    get_inside_edges(c3t3,
+    get_internal_edges(c3t3,
                      cell_selector,
                      std::back_inserter(inside_edges));
 
