@@ -393,8 +393,6 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
         return CGAL::NULL_VECTOR;
 
       FT sp_bi = sp_3(nb, ni);
-      CGAL_assertion(sp_bi >= - std::numeric_limits<FT>::epsilon());
-
       sp_bi = (std::max)(FT(0), sp_bi);
       if(sp_bi <= min_sp)
         continue;
