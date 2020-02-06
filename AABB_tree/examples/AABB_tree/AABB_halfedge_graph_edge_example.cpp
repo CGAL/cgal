@@ -27,7 +27,6 @@ void run(const HalfedgeGraph& graph){
   // efficient distance queries.  
   Tree tree( CGAL::edges(graph).first,
              CGAL::edges(graph).second, graph);
-  tree.accelerate_distance_queries();
 
   // counts #intersections with a triangle query
   Triangle triangle_query(p,q,r);

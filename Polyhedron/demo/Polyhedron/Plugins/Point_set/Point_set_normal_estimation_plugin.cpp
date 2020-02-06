@@ -148,6 +148,7 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::Norm
     Point_set_demo_normal_estimation_dialog(QWidget* /*parent*/ = 0)
     {
       setupUi(this);
+      m_offset_radius->setMinimum(0.01);
     }
 
   int pca_neighbors() const { return m_pca_neighbors->value(); }

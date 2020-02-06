@@ -704,7 +704,7 @@ class Intersection_of_triangle_meshes
         switch(type){
           case COPLANAR_TRIANGLES:
             #ifndef DO_NOT_HANDLE_COPLANAR_FACES
-            assert(!"COPLANAR_TRIANGLES : this point should never be reached!");
+            CGAL_error_msg("COPLANAR_TRIANGLES : this point should never be reached!");
             #else
             //nothing needs to be done, cf. comments at the beginning of the file
             #endif

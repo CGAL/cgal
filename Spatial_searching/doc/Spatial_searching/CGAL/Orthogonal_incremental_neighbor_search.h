@@ -18,7 +18,7 @@ and `Euclidean_distance<Traits>` otherwise.
 The default type is `Sliding_midpoint<Traits>`. 
 
 \tparam SpatialTree must be a model of the concept `SpatialTree`. 
-The default type is `Kd_tree<Traits, Splitter, Tag_true>`. The 
+The default type is `Kd_tree<Traits, Splitter, Tag_true, Tag_false>`. The third
 template argument must be `Tag_true` because orthogonal search needs extended 
 kd tree nodes. 
 

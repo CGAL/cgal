@@ -904,7 +904,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   // Get the left end of overlap_cv.
   Event* left_event;
 
-  if (event_on_overlap!=nullptr)
+  if (event_on_overlap!=NULL)
   {
     CGAL_SS_PRINT_EVENT_INFO(event_on_overlap);
     CGAL_SS_PRINT_EOL();

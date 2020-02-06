@@ -8,7 +8,7 @@
 #include <QMenu>
 #include <QMainWindow>
 #include <QApplication>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMessageBox>
 using namespace CGAL::Three;
 class Polyhedron_demo_nef_plugin :
@@ -115,7 +115,7 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
   }
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cerr << "Convert facegraph to nef polyhedron...";
 
@@ -146,7 +146,7 @@ Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
            : qobject_cast<Scene_nef_polyhedron_item*>(scene->item(index));
   QApplication::restoreOverrideCursor();
   if(item) {
-    QTime time;
+    QElapsedTimer time;
     time.start();
     std::cerr << "Convex decomposition...";
 
@@ -188,7 +188,7 @@ Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
   if(item)
   {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
+    QElapsedTimer time;
     time.start();
     std::cerr << "Convert nef polyhedron to facegraph...";
 
@@ -277,7 +277,7 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
 
  // perform Boolean operation
   std::cout << "Boolean operation...";
-  QTime time;
+  QElapsedTimer time;
   time.start();
   switch(operation)
   {

@@ -459,7 +459,8 @@ public:
 
       if (! cv.is_vertical()) {
         // Compare p with the segment's supporting line.
-        return (kernel.compare_y_at_x_2_object()(p, cv.line()));
+        CGAL_assertion( kernel.compare_x_2_object()(cv.left(), cv.right()) == SMALLER );
+        return kernel.orientation_2_object()(cv.left(), cv.right(), p);
       }
       else {
         // Compare with the vertical segment's end-points.

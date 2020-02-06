@@ -352,7 +352,6 @@ SMesh* poisson_reconstruct(Point_set& points,
   // Constructs AABB tree and computes internal KD-tree
   // data structure to accelerate distance queries
   AABB_tree tree(faces(*mesh).first, faces(*mesh).second, *mesh);
-  tree.accelerate_distance_queries();
 
   // Computes distance from each input point to reconstructed mesh
   double max_distance = DBL_MIN;

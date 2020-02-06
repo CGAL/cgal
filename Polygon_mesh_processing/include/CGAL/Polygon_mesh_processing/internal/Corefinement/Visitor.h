@@ -256,7 +256,7 @@ public:
 
   void update_terminal_nodes(std::vector<bool>&)
   {
-    CGAL_assertion(!"This function should not be called");
+    CGAL_error_msg("This function should not be called");
   }
 
 // The following code was used to split polylines at certains points.

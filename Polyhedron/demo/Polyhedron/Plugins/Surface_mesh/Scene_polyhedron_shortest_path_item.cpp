@@ -472,7 +472,7 @@ bool Scene_polyhedron_shortest_path_item_priv::run_point_select(const Ray_3& ray
 
         CGAL::Three::Three::information(QObject::tr("Computing shortest path polyline..."));
 
-        QTime time;
+        QElapsedTimer time;
         time.start();
         //~ m_shortestPaths->m_debugOutput=true;
         m_shortestPaths->shortest_path_points_to_source_points(

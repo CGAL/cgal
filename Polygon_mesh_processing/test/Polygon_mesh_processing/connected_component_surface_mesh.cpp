@@ -161,8 +161,26 @@ void test_CC_with_area_size_map(Mesh sm,
   typedef boost::graph_traits<Mesh>::face_descriptor                      face_descriptor;
 
   Face_descriptor_area_functor<Mesh, Kernel> f(sm, k);
+  std::vector<face_descriptor> faces_to_remove; // faces that would be removed but are not because we're doing a dry run
+  std::size_t nv = num_vertices(sm);
+  std::size_t num = PMP::internal::number_of_connected_components(sm);
 
   std::cout << "We keep the " << 2 << " largest components" << std::endl;
+  std::size_t res = PMP::keep_largest_connected_components(sm, 2,
+                                                           PMP::parameters::face_size_map(CGAL::internal::boost_::make_function_property_map<face_descriptor>(f))
+                                                                           .dry_run(true)
+                                                                           .output_iterator(std::back_inserter(faces_to_remove)));
+
+  // didn't actually remove anything
+  assert(PMP::internal::number_of_connected_components(sm) == num);
+  assert(num_vertices(sm) == nv);
+
+  if(num > 2)
+  {
+    assert(res == num - 2);
+    assert(!faces_to_remove.empty());
+  }
+
   PMP::keep_largest_connected_components(sm, 2,
                                          PMP::parameters::face_size_map(
                                            CGAL::internal::boost_::make_function_property_map<face_descriptor>(f)));
@@ -183,6 +201,12 @@ void test_CC_with_area_size_map(Mesh sm,
                                          CGAL::parameters::face_size_map(
                                            CGAL::internal::boost_::make_function_property_map<face_descriptor>(f)));
     assert(vertices(m).size() == 3);
+
+    PMP::keep_largest_connected_components(m, 1);
+    assert(PMP::internal::number_of_connected_components(m) == 1);
+    PMP::keep_largest_connected_components(m, 0);
+    assert(is_empty(m));
+    assert(PMP::internal::number_of_connected_components(m) == 0);
   }
 }
 
