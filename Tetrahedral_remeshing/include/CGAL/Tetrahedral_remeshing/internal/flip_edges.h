@@ -22,14 +22,16 @@
 #ifndef CGAL_INTERNAL_FLIP_EDGES_H
 #define CGAL_INTERNAL_FLIP_EDGES_H
 
-#include <boost/unordered_map.hpp>
-#include <limits>
-#include <queue>
-
 #include <CGAL/Triangulation_utils_3.h>
 #include <CGAL/utility.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
+
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <limits>
+#include <queue>
 
 namespace CGAL
 {
@@ -185,14 +187,19 @@ namespace internal
     //Keep the facets
     typedef CGAL::Triple<Vertex_handle, Vertex_handle, Vertex_handle> Facet_vvv;
     typedef boost::unordered_map<Facet_vvv, std::size_t> FaceMapIndex;
+    boost::unordered_set<Facet> outer_mirror_facets;
 
     FaceMapIndex facet_map_indices;
     std::vector<Facet> mirror_facets;
     circ = Cell_circulator(done);
     do
     {
+      // facet opposite to vh0
       int curr_vh0_id = circ->index(vh0);
       Facet n_vh0_facet = tr.mirror_facet(Facet(circ, curr_vh0_id));
+
+      outer_mirror_facets.insert(n_vh0_facet);
+
       Facet_vvv face0 = make_vertex_triple(circ->vertex(indices(curr_vh0_id, 0)),
                                            circ->vertex(indices(curr_vh0_id, 1)),
                                            circ->vertex(indices(curr_vh0_id, 2)));
@@ -204,8 +211,12 @@ namespace internal
         mirror_facets.push_back(n_vh0_facet);
       }
 
+      // facet opposite to vh1
       int curr_vh1_id = circ->index(vh1);
       Facet n_vh1_facet = tr.mirror_facet(Facet(circ, curr_vh1_id));
+
+      outer_mirror_facets.insert(n_vh1_facet);
+
       Facet_vvv face1 = make_vertex_triple(circ->vertex(indices(curr_vh1_id, 0)),
                                            circ->vertex(indices(curr_vh1_id, 1)),
                                            circ->vertex(indices(curr_vh1_id, 2)));
@@ -243,7 +254,6 @@ namespace internal
     //Update adjacencies and vertices' cells
     for (Cell_handle ch : cells_to_update)
     {
-
       for (int v = 0; v < 4; ++v)
       {
         Facet_vvv face = make_vertex_triple(ch->vertex(indices(v, 0)),
@@ -267,8 +277,39 @@ namespace internal
       }
     }
 
+    // Update c3t3
     c3t3.remove_from_complex(cell_to_remove);
     tr.tds().delete_cell(cell_to_remove);
+
+    for (Cell_handle c : cells_to_update)
+    {
+      //their subdomain indices have not been modified because we kept the same cells
+      //surface patch indices need to be fixed though
+      for (int i = 0; i < 4; ++i)
+      {
+        const Facet f(c, i);
+        const Facet mf = tr.mirror_facet(f);
+        if (outer_mirror_facets.find(mf) == outer_mirror_facets.end())
+        {
+          //we are inside the modified zone, c3t3 info is not valid anymore
+          if (c3t3.is_in_complex(f))
+            c3t3.remove_from_complex(f);
+          if (c3t3.is_in_complex(mf))
+            c3t3.remove_from_complex(mf);
+        }
+        else
+        {
+          //we are on the border of the modified zone, c3t3 info is valid outside,
+          //on mirror facet
+          const typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(mf);
+          if (c3t3.is_in_complex(mf))
+          {
+            c3t3.remove_from_complex(mf);
+            c3t3.add_to_complex(mf, patch);
+          }
+        }
+      }
+    }
 
     /********************VALIDITY CHECK***************************/
     //if (check_validity)
@@ -1000,7 +1041,6 @@ namespace internal
 
     boost::unordered_set<Vertex_handle> boundary_vertices;
     boost::unordered_set<Vertex_handle> hull_vertices;
-    boost::unordered_set<Facet> mirror_facets;
     do
     {
       //Get the ids of the opposite vertices
@@ -1026,10 +1066,6 @@ namespace internal
           }
         }
       }
-      mirror_facets.insert(
-        tr.mirror_facet(Facet(circ->first, circ->first->index(v0))));
-      mirror_facets.insert(
-        tr.mirror_facet(Facet(circ->first, circ->first->index(v1))));
     }
     while (++circ != done);
 
@@ -1063,18 +1099,6 @@ namespace internal
       }
     }
 
-    if (res == VALID_FLIP)
-    {
-      for (Facet f : mirror_facets)
-      {
-        if (c3t3.is_in_complex(f))
-        {
-          Surface_patch_index patch = c3t3.surface_patch_index(f);
-          c3t3.remove_from_complex(f);
-          c3t3.add_to_complex(f, patch);
-        }
-      }
-    }
 
     return res;
   }
