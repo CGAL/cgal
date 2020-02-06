@@ -1103,21 +1103,18 @@ bool check_patch_sanity(const std::vector<std::vector<Point> >& patch)
   }
 
   TriangleMesh patch_mesh;
-  if(!orient_polygon_soup(points, faces))
-    return false;
-
   if(is_polygon_soup_a_polygon_mesh(faces))
     polygon_soup_to_polygon_mesh(points, faces, patch_mesh);
   else
     return false;
 
-  bool self_intersect = does_self_intersect(patch_mesh);
-
-  if(self_intersect)
+  if(does_self_intersect(patch_mesh))
   {
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
     std::cout << "  DEBUG: Tentative patch has self-intersections." << std::endl;
 #endif
+
+    return false;
   }
 
   return true;
