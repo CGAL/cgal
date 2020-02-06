@@ -74,10 +74,10 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
                              get_const_property_map(vertex_point, mesh));
 
   typedef CGAL::dynamic_vertex_property_t<std::size_t>                              Vertex_index;
-  typedef typename boost::property_map<PolygonMesh, Vertex_index>::type             VIM;
+  typedef typename boost::property_map<PolygonMesh, Vertex_index>::const_type       VIM;
   VIM vim = get(Vertex_index(), mesh);
 
-  typedef typename boost::range_value<PolygonRange>                                 Polygon;
+  typedef typename boost::range_value<PolygonRange>::type                           Polygon;
 
   std::size_t index = points.size(); // so that multiple meshes can be put into the same soup
 
