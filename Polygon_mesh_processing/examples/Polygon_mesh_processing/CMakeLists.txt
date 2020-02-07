@@ -109,6 +109,7 @@ endif(OpenMesh_FOUND)
 
 find_package( TBB )
 if( TBB_FOUND )
+  CGAL_target_use_TBB(self_intersections_example)
   CGAL_target_use_TBB(hausdorff_distance_remeshing_example)
 else()
   message( STATUS "NOTICE: Intel TBB was not found. Sequential code will be used." )
