@@ -68,12 +68,12 @@ introduces a vector `v` initialized to `(x, y, z)`.
 Vector_3(int x, int y, int z); 
 
 /*!
-introduces a vector `v` initialized to `(x, y, z). 
+introduces a vector `v` initialized to `(x, y, z)`.
 */ 
 Vector_3(double x, double y, double z); 
 
 /*!
-introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw).
+introduces a vector `v` initialized to `(hx/hw, hy/hw, hz/hw)`.
 */ 
 Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1)); 
 
