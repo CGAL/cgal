@@ -710,7 +710,7 @@ namespace internal
     std::vector<Cell_handle> to_remove;
 
     //Neighbors that will need to be updated after flip
-    std::vector<Facet> neighbor_facets;
+    boost::unordered_set<Facet> neighbor_facets;
 
     //Facets that will be used to create new cells
     // i.e. all the facets opposite to vh1 and don't have vh
@@ -729,11 +729,11 @@ namespace internal
 
       //Facets opposite to vh0
       Facet facet_vh0(cell_circulator, cell_circulator->index(vh0));
-      neighbor_facets.push_back(tr.mirror_facet(facet_vh0));
+      neighbor_facets.insert(tr.mirror_facet(facet_vh0));
 
       //Facets opposite to vh1
       Facet facet_vh1(cell_circulator, cell_circulator->index(vh1));
-      neighbor_facets.push_back(tr.mirror_facet(facet_vh1));
+      neighbor_facets.insert(tr.mirror_facet(facet_vh1));
 
       //Store it if it do not have vh
       if (cell_circulator->has_vertex(vh)){
@@ -749,22 +749,6 @@ namespace internal
       //            return WRONG;
     }
     while (++cell_circulator != done);
-
-
-    for (Cell_handle ch : cells_around_edge)
-    {
-      for (int v = 0; v < 4; v++)
-      {
-        Cell_handle neighbor = ch->neighbor(v);
-        if (std::find(cells_around_edge.begin(), cells_around_edge.end(), neighbor)
-            == cells_around_edge.end())
-        {
-          //Facets opposite
-          Facet facet_vh(ch, v);
-          neighbor_facets.push_back(tr.mirror_facet(facet_vh));
-        }
-      }
-    }
 
     //Check that the result will be valid
     for (const Facet& fi : facets_for_new_cells)
@@ -895,7 +879,36 @@ namespace internal
       tr.tds().delete_cell(ch);
     }
 
-    //Update c3t3
+    // Update c3t3
+    for (Cell_handle c : cells_to_update)
+    {
+      //their subdomain indices have not been modified because we kept the same cells
+      //surface patch indices need to be fixed though
+      for (int i = 0; i < 4; ++i)
+      {
+        const Facet f(c, i);
+        const Facet mf = tr.mirror_facet(f);
+        if (neighbor_facets.find(mf) == neighbor_facets.end())
+        {
+          //we are inside the modified zone, c3t3 info is not valid anymore
+          if (c3t3.is_in_complex(f))
+            c3t3.remove_from_complex(f);
+          if (c3t3.is_in_complex(mf))
+            c3t3.remove_from_complex(mf);
+        }
+        else
+        {
+          //we are on the border of the modified zone, c3t3 info is valid outside,
+          //on mirror facet
+          const typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(mf);
+          if (c3t3.is_in_complex(mf))
+          {
+            c3t3.remove_from_complex(mf);
+            c3t3.add_to_complex(mf, patch);
+          }
+        }
+      }
+    }
 
 
     ///********************VALIDITY CHECK***************************/
