@@ -1,7 +1,11 @@
+#define CGAL_PROFILE
+#define CGAL_USE_FILTERED_RATIONAL_KERNEL
+#define MSC_USE_DLL 1
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Timer.h>
 
 #include <fstream>
 
@@ -14,15 +18,17 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 struct Exact_vertex_point_map
 {
   typedef Mesh::Property_map<Mesh::Vertex_index, Exact_kernel::Point_3> Exact_vpm;
+  typedef Mesh::Property_map<Mesh::Vertex_index, bool> Exact_vpm_initialized;
   typedef Mesh::Vertex_index key_type;
   typedef Exact_kernel::Point_3 value_type;
   typedef const value_type& reference;
   typedef boost::lvalue_property_map_tag category;
 
   Exact_vertex_point_map()
-    : tm_ptr(NULL)
+    : tm_ptr(nullptr)
   {}
 
+  
   Exact_vertex_point_map(Mesh& tm)
     : tm_ptr(&tm)
   {
@@ -61,6 +67,8 @@ struct Exact_vertex_point_map
 
 int main(int argc, char* argv[])
 {
+  CGAL::Timer t;
+  {
   const char* filename1 = (argc > 1) ? argv[1] : "data/blobby.off";
   const char* filename2 = (argc > 2) ? argv[2] : "data/eight.off";
   std::ifstream input(filename1);
@@ -79,19 +87,25 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+
+  t.start();
   Mesh out;
   bool valid_union = PMP::corefine_and_compute_union(mesh1, mesh2, out,
                                                      CGAL::parameters::vertex_point_map(Exact_vertex_point_map(mesh1)),
                                                      CGAL::parameters::vertex_point_map(Exact_vertex_point_map(mesh2)),
                                                      CGAL::parameters::vertex_point_map(Exact_vertex_point_map(out)) );
 
-  if (valid_union)
+
+  if (! valid_union)
   {
-    std::cout << "Union was successfully computed\n";
-    std::ofstream output("union.off");
-    output << out;
-    return 0;
+    std::cout << "Union could not be computed\n";
+    return 1;
   }
-  std::cout << "Union could not be computed\n";
-  return 1;
+  std::cout << "Union was successfully computed\n";
+  //std::ofstream output("union.off");
+  //output << out;
+  
+  }
+  std::cout << t.time() << " sec." << std::endl;
+  return 0;
 }
