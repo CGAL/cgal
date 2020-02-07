@@ -327,8 +327,6 @@ private:
       std::size_t nbv = 0;
 #endif
 
-      Subdomain_index max_si = 0;
-
       //tag cells
       typedef typename Tr::Finite_cells_iterator Finite_cells_iterator;
       for (Finite_cells_iterator cit = tr().finite_cells_begin();
@@ -338,7 +336,7 @@ private:
         if (m_cell_selector(cit))
         {
           m_c3t3.add_to_complex(cit, cit->subdomain_index());
-          max_si = (std::max)(max_si, cit->subdomain_index());
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbc;
 #endif
@@ -351,10 +349,11 @@ private:
               cit->vertex(i)->set_dimension(3);
           }
         }
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        else if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
+          ++nbc;
+#endif
       }
-      if(max_si == 0)
-        std::cerr << "Warning : Maximal subdomain index is 0" << std::endl
-                  << "          Remeshing is likely to fail." << std::endl;
 
       //tag facets
       typedef typename Tr::Facet                  Facet;
@@ -367,7 +366,7 @@ private:
         Facet mf = tr().mirror_facet(f);
         Subdomain_index s1 = f.first->subdomain_index();
         Subdomain_index s2 = mf.first->subdomain_index();
-        if ( s1 != s2
+        if (s1 != s2
           || get(fcmap, f)
           || get(fcmap, mf)
           || (m_c3t3_pbackup == NULL && f.first->is_facet_on_surface(f.second)))
@@ -388,6 +387,10 @@ private:
           ++nbf;
 #endif
         }
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        else if (input_is_c3t3() && m_c3t3.is_in_complex(f))
+          ++nbf;
+#endif
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3, "facets_in_complex.off");
@@ -420,6 +423,10 @@ private:
           ++nbe;
 #endif
         }
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        else if (input_is_c3t3() && m_c3t3.is_in_complex(e))
+          ++nbe;
+#endif
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3, "edges_in_complex.polylines.txt");
