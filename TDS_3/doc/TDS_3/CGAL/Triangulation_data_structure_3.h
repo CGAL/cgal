@@ -21,7 +21,7 @@ additional template parameters.
 
 \tparam ConcurrencyTag enables the use of a concurrent
 container to store vertices and cells. It can be `Sequential_tag` (use of a 
-`Compact_container` to store vertices and cells) or `Parallel_tag` 
+`Compact_container` to store vertices and cells) or `Parallel_tag`
 (use of a `Concurrent_compact_container`). If it is 
 `Parallel_tag`, the following functions can be called concurrently:
 `create_vertex()`, `create_cell()`, `delete_vertex()`, and `delete_cell()`.

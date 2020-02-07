@@ -145,8 +145,9 @@ int main()
 
 #ifdef CGAL_LINKED_WITH_TBB
   Triangulation_3 T3;
-fct3(T3);
+  fct3(T3);
 #endif
+
   return 0;
 }
 

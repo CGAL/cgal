@@ -114,7 +114,7 @@ typedef unspecified_type Vertex_handle;
 typedef unspecified_type Cell_handle; 
 
 /*!
-Can be `CGAL::Sequential_tag` or `CGAL::Parallel_tag`. If it is 
+Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `Parallel_if_available_tag`. If it is
 `CGAL::Parallel_tag`, the following functions can be called concurrently:
 `create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
 */

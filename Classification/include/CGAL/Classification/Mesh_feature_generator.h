@@ -79,7 +79,7 @@ namespace Classification {
   is `GeomTraits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
   computation of `CGAL::Classification::Local_eigen_analysis`
-  objects. Possible values are `Parallel_tag` (default value is %CGAL
+  objects. Possible values are `Parallel_tag` (default value if %CGAL
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
   matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -93,10 +93,8 @@ template <typename GeomTraits,
           typename PointMap,
 #if defined(DOXYGEN_RUNNING)
           typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-          typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-          typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Mesh_feature_generator

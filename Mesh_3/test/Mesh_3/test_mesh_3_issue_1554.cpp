@@ -18,11 +18,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Mesh_polyhedron_3<K>::type Polyhedron;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
-#ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain,
