@@ -9,12 +9,15 @@
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
-#include <fstream>
 
+#include <CGAL/exceptions.h>
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/OBJ_reader.h>
 #include <QMessageBox>
 #include <QApplication>
+
+#include <iostream>
+#include <fstream>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_off_plugin :
@@ -186,7 +189,7 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   try{
     CGAL::Polygon_mesh_processing::non_manifold_vertices(*surface_mesh, OutputIterator());
   }
-  catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+  catch( CGAL::internal::Throw_at_output_exception& )
   {
 
     QApplication::restoreOverrideCursor();

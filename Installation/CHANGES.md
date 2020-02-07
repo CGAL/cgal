@@ -18,6 +18,9 @@ Release date: June 2020
 -   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
     the new function `do_not_accelerate_distance_queries()` before the first distance query.
 
+### Intersecting Sequences of dD Iso-oriented Boxes 
+ -   Added parallel versions of the functions `CGAL::box_intersection_d()` and `CGAL::box_self_intersection_d()`.
+
 ### Polygon Mesh Processing
 
 -   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
@@ -28,6 +31,8 @@ Release date: June 2020
     components that would be removed with the specified threshold, but without actually removing them.
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
+ -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
+     and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
