@@ -14,6 +14,7 @@
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Has_member.h>
+#include <CGAL/Point_3.h>
 
 #include <boost/mpl/logical.hpp>
 #include <boost/utility/enable_if.hpp>
