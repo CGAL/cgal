@@ -16,6 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/number_type_config.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
@@ -144,7 +145,7 @@ compute_denoise_projection(
   FT project_weight_sum = FT(0.0);
   Vector normal_sum = CGAL::NULL_VECTOR; 
 
-  FT cos_sigma = cos(sharpness_angle / 180.0 * 3.1415926);
+  FT cos_sigma = cos(sharpness_angle * CGAL_PI / 180.0);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
 
   typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> >::const_iterator 
