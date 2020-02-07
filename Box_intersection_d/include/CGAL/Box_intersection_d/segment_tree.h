@@ -16,14 +16,12 @@
 
 #include <CGAL/license/Box_intersection_d.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
-
 
 #include <algorithm>
 #include <iterator>
@@ -93,6 +91,8 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
+
+    // Putting a parallel sort here slows down the overall parallel algorithm
     std::sort( p_begin, p_end, Compare( 0 ) );
     std::sort( i_begin, i_end, Compare( 0 ) );
 
@@ -323,7 +323,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback callback, Predicate_traits traits,
-                   std::ptrdiff_t cutoff, int dim, bool in_order )
+                   std::ptrdiff_t cutoff, int dim, bool in_order)
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;

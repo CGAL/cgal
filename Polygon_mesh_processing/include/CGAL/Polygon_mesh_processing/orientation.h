@@ -168,8 +168,11 @@ bool is_outward_oriented(const PolygonMesh& pmesh,
   CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
 
+#ifdef CGAL_PMP_DEBUG_CODE
   //check for empty pmesh
   CGAL_warning(faces(pmesh).first != faces(pmesh).second);
+#endif
+
   if (faces(pmesh).first == faces(pmesh).second)
     return true;
 
