@@ -564,15 +564,12 @@ namespace Tetrahedral_remeshing
   {
     typedef typename C3t3::Edge Edge;
     boost::unordered_set<Edge> edges;
-    c3t3.triangulation().incident_edges(v,
-      std::inserter(edges, edges.begin()));
+    c3t3.triangulation().finite_incident_edges(v, std::inserter(edges, edges.begin()));
 
     std::size_t count = 0;
-    for (typename boost::unordered_set<Edge>::iterator eit = edges.begin();
-      eit != edges.end();
-      ++eit)
+    for (const Edge& e : edges)
     {
-      if (c3t3.is_in_complex(*eit))
+      if (c3t3.is_in_complex(e))
         ++count;
     }
     return count;
@@ -605,7 +602,7 @@ namespace Tetrahedral_remeshing
       c3t3.triangulation().finite_incident_edges(v, std::back_inserter(edges));
 
       int feature_count = 0;
-      BOOST_FOREACH(Edge ei, edges)
+      for(const Edge& ei : edges)
       {
         if (c3t3.is_in_complex(ei))
         {
@@ -1204,7 +1201,10 @@ namespace Tetrahedral_remeshing
         vit != tr.finite_vertices_end();
         ++vit)
       {
-        //vertices_per_dimension[vit->info()].push_back(vit);
+        if (vit->in_dimension() == -1)
+          continue;//far point
+        CGAL_assertion(vit->in_dimension() >= 0 && vit->in_dimension() < 4);
+
         vertices_per_dimension[vit->in_dimension()].push_back(vit);
       }
 

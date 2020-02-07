@@ -170,6 +170,11 @@ namespace internal
 #endif
     }
 
+    bool input_is_c3t3() const
+    {
+      return m_c3t3_pbackup != NULL;
+    }
+
     void split()
     {
       CGAL_assertion(check_vertex_dimensions());
@@ -338,10 +343,13 @@ private:
           ++nbc;
 #endif
         }
-        for (int i = 0; i < 4; ++i)
+        if (!input_is_c3t3())
         {
-          if (cit->vertex(i)->in_dimension() == -1)
-            cit->vertex(i)->set_dimension(3);
+          for (int i = 0; i < 4; ++i)
+          {
+            if (cit->vertex(i)->in_dimension() == -1)
+              cit->vertex(i)->set_dimension(3);
+          }
         }
       }
       if(max_si == 0)
@@ -366,12 +374,15 @@ private:
         {
           m_c3t3.add_to_complex(f, 1);
 
-          const int i = f.second;
-          for (int j = 0; j < 3; ++j)
+          if (!input_is_c3t3())
           {
-            Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
-            if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
-              vij->set_dimension(2);
+            const int i = f.second;
+            for (int j = 0; j < 3; ++j)
+            {
+              Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
+              if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
+                vij->set_dimension(2);
+            }
           }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbf;
@@ -395,13 +406,16 @@ private:
         {
           m_c3t3.add_to_complex(e, 1);
 
-          Vertex_handle v = e.first->vertex(e.second);
-          if(v->in_dimension() == -1 || v->in_dimension() > 1)
-            v->set_dimension(1);
+          if (!input_is_c3t3())
+          {
+            Vertex_handle v = e.first->vertex(e.second);
+            if (v->in_dimension() == -1 || v->in_dimension() > 1)
+              v->set_dimension(1);
 
-          v = e.first->vertex(e.third);
-          if (v->in_dimension() == -1 || v->in_dimension() > 1)
-            v->set_dimension(1);
+            v = e.first->vertex(e.third);
+            if (v->in_dimension() == -1 || v->in_dimension() > 1)
+              v->set_dimension(1);
+          }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbe;
 #endif
@@ -423,9 +437,11 @@ private:
         {
           m_c3t3.add_to_complex(vit, ++corner_id);
 
-          if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
-            vit->set_dimension(0);
-
+          if (!input_is_c3t3())
+          {
+            if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
+              vit->set_dimension(0);
+          }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbv;
 #endif
@@ -452,7 +468,9 @@ private:
       for (vit = tr().finite_vertices_begin();
            vit != tr().finite_vertices_end(); ++vit)
       {
-        if (vit->in_dimension() < 0 || vit->in_dimension() > 3)
+        // dimension is -1 for Mesh_3 "far points"
+        // for other vertices, it is in [0; 3]
+        if (vit->in_dimension() < -1 || vit->in_dimension() > 3)
           return false;
       }
       return true;
