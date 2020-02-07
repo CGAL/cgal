@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 
   //dump polylines
   std::ofstream output("intersection_polylines.cgal");
+  output.precision(17);
   for(const std::vector<Point>& polyline : polylines)
   {
     output << polyline.size() << " ";
