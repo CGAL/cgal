@@ -33,62 +33,34 @@
 #include <CGAL/basic.h>
 #include <string>
 
-namespace CGAL{
-/// \ingroup PkgBGLProperties
-/// \brief graph_has_property is used to indicate if
-/// a model of `HalfedgeGraph` or `FaceGraph`
-/// has an internal property associated with the
-/// given `PropertyTag`.
-///
-/// It inherits from `CGAL::Tag_true` if there is a
-/// default internal property map for the
-/// corresponding property tag and from
-/// `CGAL::Tag_false` otherwise.
-///
-/// \tparam Graph a model of `HalfedgeGraph` or `FaceGraph`
-/// \tparam PropertyTag the type of a property tag
-/// referring to the property of interest.
-///
+namespace CGAL {
+
 template<typename Graph, typename PropertyTag>
-struct graph_has_property
-#ifndef DOXYGEN_RUNNING
-    : CGAL::Tag_false
-#endif
-{};
-}
-/// Boost Namespace
+struct graph_has_property : CGAL::Tag_false { };
+
+} // namespace CGAL
+
 namespace boost {
 
-/// \ingroup PkgBGLProperties
-/// @{
-
-/// A property tag which refers to the geometric embedding property
-/// of a vertex of a \ref HalfedgeGraph.
 enum vertex_point_t          { vertex_point          };
-enum vertex_external_index_t { vertex_external_index } ;
 
-/// A property tag which refers to the property
-/// of a halfedge of being a border halfedge.
-enum edge_external_index_t   { edge_external_index   } ;
+// vertex_index_t is defined in boost
+enum vertex_external_index_t { vertex_external_index };
 
-/// A property tag which identifies the *index* property of
-/// a halfedge of a \ref HalfedgeGraph.
-enum halfedge_index_t        { halfedge_index        };
-enum halfedge_external_index_t   { halfedge_external_index   } ;
+enum halfedge_index_t          { halfedge_index };
+enum halfedge_external_index_t { halfedge_external_index };
 
-/// A property tag which identifies the *index* property of
-/// a face of a \ref FaceGraph.
+// edge_index_t is defined in boost
+enum edge_external_index_t   { edge_external_index   };
+
 enum face_index_t            { face_index            };
-enum face_external_index_t   { face_external_index   } ;
+enum face_external_index_t   { face_external_index   };
 
-  
 struct cgal_no_property
 {
   typedef bool type;
   typedef const bool const_type;
 };
-
-/// @}
 
 // Introduce those two tags so we can use BOOST_INSTALL_PROPERTY
 // macro. This is dangerous because we now rely on implementation
