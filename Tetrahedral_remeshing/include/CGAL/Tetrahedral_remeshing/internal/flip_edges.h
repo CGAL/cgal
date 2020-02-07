@@ -751,9 +751,8 @@ namespace internal
     while (++cell_circulator != done);
 
 
-    for (std::size_t i = 0; i < cells_around_edge.size(); ++i)
+    for (Cell_handle ch : cells_around_edge)
     {
-      Cell_handle ch = cells_around_edge[i];
       for (int v = 0; v < 4; v++)
       {
         Cell_handle neighbor = ch->neighbor(v);
@@ -768,20 +767,16 @@ namespace internal
     }
 
     //Check that the result will be valid
-    for (std::size_t i = 0; i < facets_for_new_cells.size(); ++i)
+    for (const Facet& fi : facets_for_new_cells)
     {
-      const Facet& fi = facets_for_new_cells[i];
-
       if ( !tr.is_infinite(fi.first)
         && !is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                  fi.first->vertex(indices(fi.second, 1)),
                                  fi.first->vertex(indices(fi.second, 2))))
         return NOT_FLIPPABLE;
     }
-    for (std::size_t i = 0; i < facets_for_updated_cells.size(); ++i)
+    for (const Facet& fi : facets_for_updated_cells)
     {
-      const Facet& fi = facets_for_updated_cells[i];
-
       if ( !tr.is_infinite(fi.first)
         && !is_well_oriented(tr, vh, fi.first->vertex(indices(fi.second, 0)),
                                  fi.first->vertex(indices(fi.second, 1)),
@@ -823,10 +818,8 @@ namespace internal
     std::vector<Cell_handle> cells_to_update;
 
     //Create new cells
-    for (std::size_t i = 0; i < facets_for_new_cells.size(); ++i)
+    for (const Facet& fi : facets_for_new_cells)
     {
-      const Facet& fi = facets_for_new_cells[i];
-
       Cell_handle new_cell = tr.tds().create_cell();
 
       for (int v = 0; v < 4; v++){
@@ -841,9 +834,8 @@ namespace internal
     }
 
     //Update_existing cells
-    for (std::size_t i = 0; i < facets_for_updated_cells.size(); ++i)
+    for (const Facet& fi : facets_for_updated_cells)
     {
-      const Facet& fi = facets_for_updated_cells[i];
       fi.first->set_vertex(fi.second, vh);
       cells_to_update.push_back(fi.first);
     }
@@ -854,10 +846,10 @@ namespace internal
     FaceMapIndex facet_map_indices;
     std::vector<Facet> facets;
 
-    for (std::size_t i = 0; i < neighbor_facets.size(); ++i)
+    for (const Facet& f : neighbor_facets)
     {
-      Cell_handle ch = neighbor_facets[i].first;
-      int v = neighbor_facets[i].second;
+      Cell_handle ch = f.first;
+      int v = f.second;
 
       Facet_vvv face = make_vertex_triple(ch->vertex(indices(v,0)),
                                           ch->vertex(indices(v,1)),
@@ -871,9 +863,8 @@ namespace internal
     }
 
     //Update adjacencies and vertices cells
-    for (std::size_t i = 0; i < cells_to_update.size(); ++i)
+    for (Cell_handle ch : cells_to_update)
     {
-      Cell_handle ch = cells_to_update[i];
       for (int v = 0; v < 4; v++)
       {
         Facet_vvv face = make_vertex_triple(ch->vertex(indices(v,0)),
@@ -898,11 +889,14 @@ namespace internal
     }
 
     //Remove cells
-    for (std::size_t i = 0; i < to_remove.size(); ++i)
+    for (Cell_handle ch : to_remove)
     {
-      c3t3.remove_from_complex(to_remove[i]);
-      tr.tds().delete_cell(to_remove[i]);
+      c3t3.remove_from_complex(ch);
+      tr.tds().delete_cell(ch);
     }
+
+    //Update c3t3
+
 
     ///********************VALIDITY CHECK***************************/
     //if (check_validity){
