@@ -48,6 +48,49 @@ namespace internal
   //  //TODO
   //}
 
+  //outer_mirror_facets contains the set of facets of the outer hull
+  //of the set of cells modified by the flip operation,
+  //"seen from" outside
+  //i.e. for each facet f among those, f.first has not been modified by flip
+  template<typename C3t3, typename CellSet, typename FacetSet>
+  void update_c3t3_facets(C3t3& c3t3,
+                          const CellSet& cells_to_update,
+                          const FacetSet& outer_mirror_facets)
+  {
+    typedef typename C3t3::Facet       Facet;
+    typedef typename C3t3::Cell_handle Cell_handle;
+
+    for (Cell_handle c : cells_to_update)
+    {
+      //their subdomain indices have not been modified because we kept the same cells
+      //surface patch indices need to be fixed though
+      for (int i = 0; i < 4; ++i)
+      {
+        const Facet f(c, i);
+        const Facet mf = c3t3.triangulation().mirror_facet(f);
+        if (outer_mirror_facets.find(mf) == outer_mirror_facets.end())
+        {
+          //we are inside the modified zone, c3t3 info is not valid anymore
+          if (c3t3.is_in_complex(f))
+            c3t3.remove_from_complex(f);
+          if (c3t3.is_in_complex(mf))
+            c3t3.remove_from_complex(mf);
+        }
+        else
+        {
+          //we are on the border of the modified zone, c3t3 info is valid outside,
+          //on mirror facet
+          const typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(mf);
+          if (c3t3.is_in_complex(mf))
+          {
+            c3t3.remove_from_complex(mf);
+            c3t3.add_to_complex(mf, patch);
+          }
+        }
+      }
+    }
+  }
+
   template<typename C3t3>
   Sliver_removal_result flip_3_to_2(typename C3t3::Edge& edge,
     C3t3& c3t3,
@@ -281,35 +324,7 @@ namespace internal
     c3t3.remove_from_complex(cell_to_remove);
     tr.tds().delete_cell(cell_to_remove);
 
-    for (Cell_handle c : cells_to_update)
-    {
-      //their subdomain indices have not been modified because we kept the same cells
-      //surface patch indices need to be fixed though
-      for (int i = 0; i < 4; ++i)
-      {
-        const Facet f(c, i);
-        const Facet mf = tr.mirror_facet(f);
-        if (outer_mirror_facets.find(mf) == outer_mirror_facets.end())
-        {
-          //we are inside the modified zone, c3t3 info is not valid anymore
-          if (c3t3.is_in_complex(f))
-            c3t3.remove_from_complex(f);
-          if (c3t3.is_in_complex(mf))
-            c3t3.remove_from_complex(mf);
-        }
-        else
-        {
-          //we are on the border of the modified zone, c3t3 info is valid outside,
-          //on mirror facet
-          const typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(mf);
-          if (c3t3.is_in_complex(mf))
-          {
-            c3t3.remove_from_complex(mf);
-            c3t3.add_to_complex(mf, patch);
-          }
-        }
-      }
-    }
+    update_c3t3_facets(c3t3, cells_to_update, outer_mirror_facets);
 
     /********************VALIDITY CHECK***************************/
     //if (check_validity)
@@ -880,35 +895,7 @@ namespace internal
     }
 
     // Update c3t3
-    for (Cell_handle c : cells_to_update)
-    {
-      //their subdomain indices have not been modified because we kept the same cells
-      //surface patch indices need to be fixed though
-      for (int i = 0; i < 4; ++i)
-      {
-        const Facet f(c, i);
-        const Facet mf = tr.mirror_facet(f);
-        if (neighbor_facets.find(mf) == neighbor_facets.end())
-        {
-          //we are inside the modified zone, c3t3 info is not valid anymore
-          if (c3t3.is_in_complex(f))
-            c3t3.remove_from_complex(f);
-          if (c3t3.is_in_complex(mf))
-            c3t3.remove_from_complex(mf);
-        }
-        else
-        {
-          //we are on the border of the modified zone, c3t3 info is valid outside,
-          //on mirror facet
-          const typename C3t3::Surface_patch_index patch = c3t3.surface_patch_index(mf);
-          if (c3t3.is_in_complex(mf))
-          {
-            c3t3.remove_from_complex(mf);
-            c3t3.add_to_complex(mf, patch);
-          }
-        }
-      }
-    }
+    update_c3t3_facets(c3t3, cells_to_update, neighbor_facets);
 
 
     ///********************VALIDITY CHECK***************************/
