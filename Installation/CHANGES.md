@@ -70,6 +70,10 @@ Release date: June 2020
         k-NN search to interrupt some distance computations before its end,
         saving precious milliseconds, in particular in medium-to-high dimension.
 
+### Spatial Sorting
+ -   Added parallel versions of `hilbert_sort()` and `spatial_sort()` in 2D and 3D when the median policy is used.
+     The parallel versions use up to four threads in 2D, and up to eight threads in 3D.
+
 ### dD Geometry Kernel
 -   Epick\_d and Epeck\_d gain 2 new functors: `Power_side_of_bounded_power_sphere_d` and
     `Compute_squared_radius_smallest_orthogonal_sphere_d`. Those are
