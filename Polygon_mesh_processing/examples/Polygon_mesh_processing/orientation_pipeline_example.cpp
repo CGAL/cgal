@@ -17,7 +17,7 @@
 int main(int argc, char** argv)
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-  typedef typename K::Point_3 Point_3;
+  typedef K::Point_3 Point_3;
   typedef CGAL::Surface_mesh<Point_3> Mesh;
   
   std::vector<Point_3> points;
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     std::cerr << "Error: can not read input file.\n";
     return 1;
   }
-  typedef typename K::Point_3 Point_3;
+  typedef  K::Point_3 Point_3;
   CGAL::File_scanner_OFF scanner(input);
   points.resize(scanner.size_of_vertices());
   polygons.resize(scanner.size_of_facets());
@@ -79,16 +79,27 @@ int main(int argc, char** argv)
   }
   input.close();
   
-  std::cout<<"Is the soup a polygon mesh ? : "<<CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)<<std::endl;
+  std::cout << "Is the soup a polygon mesh ? : "
+            << CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)
+            << std::endl;
+  
   CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh<CGAL::Sequential_tag>(ref1, points, polygons);
-  std::cout<<"And now ? : "<<CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)<<std::endl;
-  CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup(points, polygons);
-  std::cout<<"And now ? : "<<CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)<<std::endl;
+  
+  std::cout << "And now ? : "
+            << CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)
+            << std::endl;
+  
+  CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup(points, polygons);
+  
+  std::cout << "And now ? : "
+            << CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)
+            << std::endl;
+  
   Mesh poly;
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
         points, polygons, poly);
   
-  typedef typename boost::property_map<Mesh, CGAL::dynamic_face_property_t<std::size_t> >::type Fccmap;
+  typedef boost::property_map<Mesh, CGAL::dynamic_face_property_t<std::size_t> >::type Fccmap;
   Fccmap fccmap = get(CGAL::dynamic_face_property_t<std::size_t>(), poly);
   
   std::cout<<CGAL::Polygon_mesh_processing::

@@ -162,7 +162,7 @@ int test_pipeline()
   input.close();
   CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh<Tag>(ref1, points, polygons);
 
-  CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup(points, polygons);
+  CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup(points, polygons);
 
   Polyhedron poly;
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(

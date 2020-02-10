@@ -42,14 +42,14 @@ namespace Polygon_mesh_processing {
  * with the polygons incident to it is not a topological disk.
  *
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
- * and `BackInsertionSequence` whose value type is the point type.
+ * and `BackInsertionSequence` whose `value_type` is the point type.
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
- * whose value_type is a model of the concept `RandomAccessContainer`
- * whose value_type is `std::size_t`.
+ * whose `value_type` is a model of the concept `RandomAccessContainer`
+ * whose `value_type` is `std::size_t`. It is also mutable.
  *
  * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
  *               non-manifoldness or non-orientability issues.
- * @param polygons each element in the vector describes a polygon using the index of the points in `points`.
+ * @param polygons each element in the vector describes a polygon using the indices of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
  * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting surface mesh.
@@ -57,7 +57,7 @@ namespace Polygon_mesh_processing {
  */
 template <class PointRange, class PolygonRange>
 bool
-duplicate_incompatible_edges_in_polygon_soup(PointRange& points,
+duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
                                             PolygonRange& polygons)
 {
   std::size_t inital_nb_pts = points.size();

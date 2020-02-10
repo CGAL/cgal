@@ -672,7 +672,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamEnd
  *   \cgalParamBegin{maximum_number_of_faces}
  *     if not 0 (default), a connected component is considered reversible only
- *     if it has not more faces than the value given.
+ *     if it has not more faces than the value given. Else, it is always considered reversible.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  */

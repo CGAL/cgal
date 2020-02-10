@@ -483,6 +483,7 @@ It is for example used in the fucntion `keep_large_connected_components()`.
 
 Parameter that specifies the maximum number of faces that a component
 of a mesh can have to be considered reversible \n
+If it is left default, then it is ignored and all components are considered reversible. \n
 <b>Type:</b> `size_type` \n
 <b>Default:</b> 0
 \cgalNPEnd
