@@ -241,7 +241,7 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
 }
 void Scene_spheres_item::add_sphere(const Sphere &sphere, std::size_t index,  CGAL::Color color)
 {
-  if(index > d->spheres.size()-1)
+  if((int)index > (int)d->spheres.size() - 1)
     d->spheres.resize(index+1);
 
   d->spheres[index].push_back(std::make_pair(sphere, color));
