@@ -305,7 +305,9 @@ get_parameters_from_dialog()
   QDialog dialog(mw);
   Ui::Rib_dialog ui;
   ui.setupUi(&dialog);
-  
+  ui.ambientIntensity->setMaximum(1.0);
+  ui.shadowIntensity->setMaximum(1.0);
+
   connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
   connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
   connect(ui.resWidth, SIGNAL(valueChanged(int)), this, SLOT(width_changed(int)));

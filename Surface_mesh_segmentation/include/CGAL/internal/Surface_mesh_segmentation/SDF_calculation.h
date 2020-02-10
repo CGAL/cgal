@@ -163,11 +163,10 @@ public:
         if(!test)
           tree.insert(Primitive(it, mesh, vertex_point_map));
     }
-    tree.build();
-
-    if(build_kd_tree) {
-      tree.accelerate_distance_queries();
+    if(!build_kd_tree) {
+      tree.do_not_accelerate_distance_queries();
     }
+    tree.build();
 
     if(use_diagonal) {
       CGAL::Bbox_3 bbox = tree.bbox();

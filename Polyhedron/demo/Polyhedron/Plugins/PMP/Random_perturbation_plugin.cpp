@@ -196,12 +196,8 @@ public Q_SLOTS:
     double diago_length = CGAL::sqrt((bbox.xmax() - bbox.xmin())*(bbox.xmax() - bbox.xmin())
       + (bbox.ymax() - bbox.ymin())*(bbox.ymax() - bbox.ymin())
       + (bbox.zmax() - bbox.zmin())*(bbox.zmax() - bbox.zmin()));
-    double log = std::log10(diago_length);
-    unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log) + 3);
 
     //parameters
-    ui.moveSize_dspinbox->setDecimals(nb_decimals);
-    ui.moveSize_dspinbox->setSingleStep(1e-3);
     ui.moveSize_dspinbox->setRange(0., diago_length);
     ui.moveSize_dspinbox->setValue(0.05 * diago_length);
 

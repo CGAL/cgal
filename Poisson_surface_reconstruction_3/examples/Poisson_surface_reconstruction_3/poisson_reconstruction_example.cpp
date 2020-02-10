@@ -5,12 +5,13 @@
 #include <CGAL/Implicit_surface_3.h>
 #include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
-#include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/compute_average_spacing.h>
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
+
+#include <boost/iterator/transform_iterator.hpp>
 
 #include <vector>
 #include <fstream>
@@ -19,7 +20,10 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
-typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal;
+typedef Kernel::Vector_3 Vector;
+typedef std::pair<Point, Vector> Point_with_normal;
+typedef CGAL::First_of_pair_property_map<Point_with_normal> Point_map;
+typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 typedef Kernel::Sphere_3 Sphere;
 typedef std::vector<Point_with_normal> PointList;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
@@ -38,14 +42,14 @@ int main(void)
     // Reads the point set file in points[].
     // Note: read_xyz_points_and_normals() requires an iterator over points
     // + property maps to access each point's position and normal.
-    // The position property map can be omitted here as we use iterators over Point_3 elements.
     PointList points;
     std::ifstream stream("data/kitten.xyz");
     if (!stream ||
         !CGAL::read_xyz_points(
                               stream,
                               std::back_inserter(points),
-                              CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))))
+                              CGAL::parameters::point_map (Point_map()).
+                              normal_map (Normal_map())))
     {
       std::cerr << "Error: cannot read file data/kitten.xyz" << std::endl;
       return EXIT_FAILURE;
@@ -55,9 +59,7 @@ int main(void)
 
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
-    // The position property map can be omitted here as we use iterators over Point_3 elements.
-    Poisson_reconstruction_function function(points.begin(), points.end(),
-                                             CGAL::make_normal_of_point_with_normal_map(PointList::value_type()) );
+    Poisson_reconstruction_function function(points.begin(), points.end(), Point_map(), Normal_map());
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
@@ -65,7 +67,9 @@ int main(void)
       return EXIT_FAILURE;
 
     // Computes average spacing
-    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points, 6 /* knn = 1 ring */);
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
+      (points, 6 /* knn = 1 ring */,
+       CGAL::parameters::point_map (Point_map()));
 
     // Gets one point inside the implicit surface
     // and computes implicit function bounding sphere radius.
@@ -107,9 +111,13 @@ int main(void)
     /// [PMP_distance_snippet]
     // computes the approximation error of the reconstruction
     double max_dist =
-      CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set(output_mesh,
-                                                               points,
-                                                               4000);
+      CGAL::Polygon_mesh_processing::approximate_max_distance_to_point_set
+      (output_mesh,
+       CGAL::make_range (boost::make_transform_iterator
+                         (points.begin(), CGAL::Property_map_to_unary_function<Point_map>()),
+                         boost::make_transform_iterator
+                         (points.end(), CGAL::Property_map_to_unary_function<Point_map>())),
+       4000);
     std::cout << "Max distance to point_set: " << max_dist << std::endl;
     /// [PMP_distance_snippet]
 

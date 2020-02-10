@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing_Tests )
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL QUIET COMPONENTS Core)
 
 if ( NOT CGAL_FOUND )
 
@@ -13,6 +13,8 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
+
+include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -95,9 +97,11 @@ endif()
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
+  create_single_source_cgal_program("test_remove_caps_needles.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
+    CGAL_target_use_TBB(self_intersection_surface_mesh_test)
   else()
     message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
   endif()

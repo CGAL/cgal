@@ -190,7 +190,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Scene_item_rendering_helper.cpp
     Scene_item_rendering_helper_moc.cpp
     Primitive_container.cpp
-    Polyhedron_demo_plugin_helper.cpp)
+    Polyhedron_demo_plugin_helper.cpp
+    CGAL_double_edit.cpp)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )
@@ -250,7 +251,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
-
+  
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_surface_mesh_item)
+  endif()
   # special
 
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp )
@@ -261,6 +265,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_selection_item Scene_polyhedron_selection_item.cpp)
   target_link_libraries(scene_selection_item PUBLIC scene_item_decorator  scene_k_ring_selection)
+ if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_selection_item)
+  endif()
 
   add_item(scene_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
   target_link_libraries(scene_shortest_path_item PUBLIC scene_item_decorator scene_surface_mesh_item scene_polylines_item)

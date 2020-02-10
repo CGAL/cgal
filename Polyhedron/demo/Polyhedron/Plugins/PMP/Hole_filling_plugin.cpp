@@ -443,6 +443,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   dock_widget->installEventFilter(this);
 
   ui_widget.setupUi(dock_widget);
+  ui_widget.Density_control_factor_spin_box->setMaximum(96.989999999999995);
   ui_widget.Accept_button->setVisible(false);
   ui_widget.Reject_button->setVisible(false);
 

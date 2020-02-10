@@ -131,7 +131,6 @@ public:
 
     m_own_ptree.reset(new Tree(triangles.begin(), triangles.end()));
     m_own_ptree->build();
-    m_own_ptree->accelerate_distance_queries();
   }
 
 private:

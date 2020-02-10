@@ -14,13 +14,28 @@ It defaults to `Sliding_midpoint<Traits>`.
 \tparam UseExtendedNode must be  `Tag_true`, if the
 tree shall be built with extended nodes, and `Tag_false` otherwise.
 
+\tparam EnablePointsCache can be `Tag_true` or `Tag_false`.
+Not storing the points coordinates inside the tree usually generates a
+lot of cache misses, leading to non-optimal performance. This is the case
+for example when indices are stored inside the tree,
+or to a lesser extent when the points coordinates are stored
+in a dynamically allocated array (e.g., `Epick_d` with dynamic
+dimension) &mdash; we says "to a lesser extent" because the points
+are re-created by the kd-tree in a cache-friendly order after its construction,
+so the coordinates are more likely to be stored in a near-optimal order on the
+heap. When EnablePointsCache` is set to `Tag_true`, the points 
+coordinates will be cached in an optimal way. This will 
+increase memory consumption but provide better search performance.
+See also the `GeneralDistance` and `FuzzyQueryItem` concepts for
+additional requirements when using such a cache.
+
 \sa `CGAL::Kd_tree_node<Traits>`
 \sa `CGAL::Search_traits_2<Kernel>`
 \sa `CGAL::Search_traits_3<Kernel>`
 \sa `CGAL::Search_traits<FT_,Point,CartesianIterator,ConstructCartesianIterator>`
 
 */
-template< typename Traits, typename Splitter, typename UseExtendedNode >
+template< typename Traits, typename Splitter, typename UseExtendedNode, typename EnablePointsCache >
 class Kd_tree {
 public:
 

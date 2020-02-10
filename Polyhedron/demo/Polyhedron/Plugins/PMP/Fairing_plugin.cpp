@@ -64,6 +64,7 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
+    ui_widget.Density_control_factor_spin_box->setMaximum(96.989999999999995);
     addDockWidget(dock_widget);
     dock_widget->setWindowTitle(tr(
                                   "Fairing "
