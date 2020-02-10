@@ -17,9 +17,9 @@ int main(int argc, char* argv[])
   std::ifstream in( (argc>1)? argv[1] : "data/cross.off");
   
   Surface_mesh poly;
-  if(!(in >> poly))
+  if(!in || !(in >> poly))
   {
-    std::cerr<<"Could not find input file."<<std::endl;
+    std::cerr<<"Could not find a correct input file."<<std::endl;
     return 1;
   }
   

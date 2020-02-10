@@ -1058,14 +1058,13 @@ void convex_hull_3(const VertexListGraph& g,
 {
   typedef typename GetVertexPointMap<VertexListGraph, NamedParameters>::const_type Vpmap;
   typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
-  Vpmap vpm = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::vertex_point),
-                                        get_const_property_map(boost::vertex_point, g));
-
-    Vpmap_fct v2p(vpm);
-  convex_hull_3(
-    boost::make_transform_iterator(vertices(g).begin(), v2p),
-    boost::make_transform_iterator(vertices(g).end(), v2p),
-    pm);
+  Vpmap vpm = CGAL::parameters::choose_parameter(
+        CGAL::parameters::get_parameter(np, internal_np::vertex_point),
+        get_const_property_map(boost::vertex_point, g));
+  
+  Vpmap_fct v2p(vpm);
+  convex_hull_3(boost::make_transform_iterator(vertices(g).begin(), v2p),
+                boost::make_transform_iterator(vertices(g).end(), v2p), pm);
 }
 
 template <class VertexListGraph, class PolygonMesh>
@@ -1074,6 +1073,7 @@ void convex_hull_3(const VertexListGraph& g,
 {
   convex_hull_3(g,pm,CGAL::parameters::all_default());
 }
+
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator
 extreme_points_3(const InputRange& range,

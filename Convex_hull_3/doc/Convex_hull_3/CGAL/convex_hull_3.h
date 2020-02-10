@@ -21,7 +21,7 @@ is a kernel with exact predicates but inexact constructions
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
 then the default traits class of `::convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise.
 
-\attention The user must include the header file of the `Polygon_mesh` type.
+\attention The user must include the header file of the `PolygonMesh` type.
 
 \cgalHeading{Implementation}
 
@@ -37,7 +37,7 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
 
 /*!
 \ingroup PkgConvexHull3Functions
- * \brief computes the convex hull of the points of `g`.
+ * \brief computes the convex hull of the points associated to the vertices of `g`.
  * The polygon mesh `pm` is cleared, then
  * the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
  * that is `pm` will contain only triangular facets.
@@ -56,8 +56,8 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
  *   If this parameter is omitted, an internal property map for
  *   `CGAL::vertex_point_t` must be available in `VertexListGraph`
  * \cgalParamEnd
-   
- * \attention The user must include the header file of the `Polygon_mesh` type.
+* \cgalNamedParamsEnd
+ * \attention The user must include the header file of the `PolygonMesh` and `VertexListGraph` types.
  */
 template <class VertexListGraph, class PolygonMesh, class NamedParameters>
 void convex_hull_3(const VertexListGraph& g,
@@ -77,7 +77,7 @@ that is the polygon mesh will contain only triangular facets.
 \tparam Traits must be model of the concept `ConvexHullTraits_3`.
 For the purposes of checking the postcondition that the convex hull
 is valid, `Traits` must also be a model of the concept
-`IsStronglyConvexTraits_3`.   Furthermore, `Traits` must define a type `Polygon_mesh` that is a model of
+`IsStronglyConvexTraits_3`.   Furthermore, `Traits` must define a type `PolygonMesh` that is a model of
 `MutableFaceGraph`.
 
 If the kernel `R` of the points determined by the value type  of `InputIterator`
@@ -85,7 +85,7 @@ is a kernel with exact predicates but inexact constructions
 (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
 then the default traits class of `convex_hull_3()` is `Convex_hull_traits_3<R>`, and `R` otherwise.
 
-\attention The user must include the header file of the `Polygon_mesh` type.
+\attention The user must include the header file of the `PolygonMesh` type.
 */
 
 template <class InputIterator, class Traits>

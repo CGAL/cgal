@@ -7,7 +7,6 @@
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-typedef CGAL::Polyhedron_3<K>                     Polyhedron_3;
 typedef K::Point_3                                Point_3;
 typedef CGAL::Surface_mesh<Point_3>               Surface_mesh;
 
@@ -16,7 +15,7 @@ int main(int argc, char* argv[])
 {
   std::ifstream in( (argc>1)? argv[1] : "data/star.off");
   
-  Polyhedron_3 poly;
+  Surface_mesh poly;
   if(!(in >> poly))
   {
     std::cerr<<"Could not find input file."<<std::endl;
