@@ -110,7 +110,8 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   typedef boost::unordered_map<halfedge_descriptor, int> Halfedge_multiplicity;
   typedef std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > Halfedge_pairs;
 
-  typedef typename Box_intersection_d::Box_with_info_d<double, 3, edge_descriptor> Box;
+  typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
+  typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, edge_descriptor, Box_policy> Box;
 
   typedef Union_find<vertex_descriptor> UF_vertices;
   typedef std::map<vertex_descriptor, typename UF_vertices::handle> Handle_map;
@@ -140,7 +141,6 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   box_ptrs.reserve(boxes.size());
   for(Box& b : boxes)
     box_ptrs.push_back(&b);
-
 
   Halfedge_multiplicity multiplicity;
   Halfedge_pairs matching_hedges;

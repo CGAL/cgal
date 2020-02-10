@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
   {
     CGAL::copy_face_graph(S, T1);
     std::ofstream out("sm.off");
+    out.precision(17);
     out << T1;
   }
 
@@ -81,6 +82,7 @@ int main(int argc, char* argv[])
     boost::unordered_map<source_face_descriptor, tm_face_descriptor> f2f;
     CGAL::copy_face_graph(T1, S, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     std::ofstream out("reverse.off");
+    out.precision(17);
     out << S;
     CGAL::copy_face_graph(T1, S, CGAL::parameters::vertex_to_vertex_map(boost::make_assoc_property_map(v2v))
                           .halfedge_to_halfedge_output_iterator(std::inserter(h2h, h2h.end()))
