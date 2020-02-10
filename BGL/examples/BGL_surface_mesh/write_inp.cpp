@@ -20,6 +20,7 @@ int main()
   CGAL::make_quad(Point(0,0,1), Point(1,0,1),Point(1,1,1),Point(0,1,1), sm);
 
   std::ofstream out("out.inp");
+  out.precision(17);
   CGAL::write_inp(out, sm, "out.inp", "S4R");
   return 0;
 }

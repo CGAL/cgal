@@ -18,6 +18,9 @@ Release date: June 2020
 -   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
     the new function `do_not_accelerate_distance_queries()` before the first distance query.
 
+### Intersecting Sequences of dD Iso-oriented Boxes 
+ -   Added parallel versions of the functions `CGAL::box_intersection_d()` and `CGAL::box_self_intersection_d()`.
+
 ### Polygon Mesh Processing
 
 -   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
@@ -32,6 +35,8 @@ Release date: June 2020
     `CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup()`,
     and `CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh()` that can be helpful 
     when repairing a polygon soup.
+ -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
+     and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
@@ -69,6 +74,10 @@ Release date: June 2020
         k-NN search to interrupt some distance computations before its end,
         saving precious milliseconds, in particular in medium-to-high dimension.
 
+### Spatial Sorting
+ -   Added parallel versions of `hilbert_sort()` and `spatial_sort()` in 2D and 3D when the median policy is used.
+     The parallel versions use up to four threads in 2D, and up to eight threads in 3D.
+
 ### dD Geometry Kernel
 -   Epick\_d and Epeck\_d gain 2 new functors: `Power_side_of_bounded_power_sphere_d` and
     `Compute_squared_radius_smallest_orthogonal_sphere_d`. Those are
@@ -78,6 +87,10 @@ Release date: June 2020
 - Added a new simplification method based on the quadric error defined by Garland and Heckbert.
 - The concept "EdgeProfile" has been removed. This concept was not actually in use as the CGAL-provided model `CGAL::Edge_profile`
   was imposed to the user. Other concepts have been clarified to reflect the fact that the API uses this particular class.
+
+### STL Extensions for CGAL
+ -   Added a new concurrency tag: `CGAL::Parallel_if_available_tag`. This tag is a convenience typedef to `CGAL::Parallel_tag`
+     if the third party library TBB has been found and linked with, and to `CGAL::Sequential_tag` otherwise.
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------

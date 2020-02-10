@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Jane Tournois
 //                 Mael Rouxel-Labbé
@@ -27,6 +27,7 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
+#include <limits>
 #include <utility>
 #include <vector>
 
@@ -264,6 +265,8 @@ bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const 
       continue;
 
     const Vector_ref nl = get(face_normals, incident_faces[l]);
+    if(nl == CGAL::NULL_VECTOR)
+      continue;
 
     // this is a bound on how much the scalar product between (v1,v2) and (v1, v3) can change
     // when the angle changes theta_bound := 0.01°
@@ -271,6 +274,8 @@ bool does_enclose_other_normals(const std::size_t i, const std::size_t j, const 
     // with theta_j - theta_i = theta_bound
     const FT sp_diff_bound = nbn * 0.00017453292431333;
     const FT sp_bl = sp(nb, nl);
+
+    // norm of nl is 1 by construction
     if(CGAL::abs(sp_bi - sp_bl) <= sp_diff_bound)
       continue;
 
@@ -308,18 +313,18 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
 
   Vector_3 nb = cv_3(CGAL::NULL_VECTOR);
 
-  if(almost_equal(ni, nj, traits))
+  if(almost_equal(ni, nj, traits) || nk == CGAL::NULL_VECTOR)
   {
     if(almost_equal(nj, nk, traits))
       nb = ni;
     else // ni == nj, but nij != nk
       nb = compute_normals_bisector(nj, nk, traits);
   }
-  else if(almost_equal(ni, nk, traits)) // ni != nj
+  else if(almost_equal(ni, nk, traits) || nj == CGAL::NULL_VECTOR) // ni != nj
   {
     nb = compute_normals_bisector(nj, nk, traits);
   }
-  else if(almost_equal(nj, nk, traits)) // ni != nj, ni != nk
+  else if(almost_equal(nj, nk, traits) || ni == CGAL::NULL_VECTOR) // ni != nj, ni != nk
   {
     nb = compute_normals_bisector(ni, nk, traits);
   }
@@ -342,7 +347,7 @@ typename GT::Vector_3 compute_normals_bisector(const typename GT::Vector_3& ni,
       return csv_3(csv_3(cslv_3(ni, third), cslv_3(nj, third)), cslv_3(nk, third));
     }
 
-    nb = cv_3(CGAL::ORIGIN, c); // note that this isn't normalized
+    nb = cv_3(CGAL::ORIGIN, c); // not normalized
   }
 
   return nb;
@@ -382,9 +387,8 @@ compute_most_visible_normal_2_points(std::vector<typename boost::graph_traits<Po
       if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
         return CGAL::NULL_VECTOR;
 
-      const FT sp_bi = sp_3(nb, ni);
-
-      CGAL_assertion(sp_bi >= 0);
+      FT sp_bi = sp_3(nb, ni);
+      sp_bi = (std::max)(FT(0), sp_bi);
       if(sp_bi <= min_sp)
         continue;
 
@@ -427,6 +431,9 @@ compute_most_visible_normal_3_points(const std::vector<typename boost::graph_tra
         const Vector_ref ni = get(face_normals, incident_faces[i]);
         const Vector_ref nj = get(face_normals, incident_faces[j]);
         const Vector_ref nk = get(face_normals, incident_faces[k]);
+
+        if(ni == CGAL::NULL_VECTOR || nj == CGAL::NULL_VECTOR || nk == CGAL::NULL_VECTOR)
+          continue;
 
         Vector_3 nb = compute_normals_bisector(ni, nj, nk, traits);
         if(traits.equal_3_object()(nb, CGAL::NULL_VECTOR))
@@ -487,7 +494,12 @@ compute_vertex_normal_most_visible_min_circle(typename boost::graph_traits<Polyg
   if(res != CGAL::NULL_VECTOR) // found a valid normal through 2 point min circle
     return res;
 
-  CGAL_assertion(incident_faces.size() > 2);
+  // The vertex has only two incident faces with opposite normals (fold)...
+  // @todo devise something based on the directions of the 2/3/4 incident edges?
+  if(incident_faces.size() == 2 && res == CGAL::NULL_VECTOR)
+    return res;
+
+  CGAL_assertion(incident_faces.size() >= 2);
 
   return compute_most_visible_normal_3_points<PolygonMesh>(incident_faces, face_normals, traits);
 }
@@ -531,10 +543,14 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
         const Vector_3 v1 = cv_3(get(vpmap, v), get(vpmap, source(h, pmesh)));
         const Vector_3 v2 = cv_3(get(vpmap, v), get(vpmap, target(next(h, pmesh), pmesh)));
 
-        //v(i) and v(i+1) must me seen in ccw order, from v, so we reverse v1 and v2
+        //v(i) and v(i+1) must be seen in ccw order, from v, so we reverse v1 and v2
         Vector_3 n = traits.construct_cross_product_vector_3_object()(v2, v1);
-        n = traits.construct_scaled_vector_3_object()(n, CGAL::approximate_sqrt(FT(1)/(csl_3(v1) * csl_3(v2))));
+        const FT den = CGAL::approximate_sqrt(csl_3(v1) * csl_3(v2));
 
+        if(den == FT(0))
+          return compute_vertex_normal_as_sum_of_weighted_normals(v, NO_WEIGHT, face_normals, vpmap, pmesh, traits);
+
+        n = traits.construct_scaled_vector_3_object()(n, FT(1) / den);
         normal = traits.construct_sum_of_vectors_3_object()(normal, n);
       }
       else

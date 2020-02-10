@@ -24,7 +24,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -334,7 +334,7 @@ namespace internal {
     suboptimal results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
     
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`. Its value type depends on the data that is
@@ -424,7 +424,7 @@ namespace internal {
     efficiency and better quality results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`.
     \tparam ItemMap model of `ReadablePropertyMap` whose key
@@ -502,7 +502,7 @@ namespace internal {
     results.
 
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` or `Sequential_tag`.
+    algorithm. Possible values are `Parallel_if_available_tag`, `Parallel_tag` or `Sequential_tag`.
     \tparam ItemRange model of `ConstRange`. Its iterator type is
     `RandomAccessIterator`.
     \tparam ItemMap model of `ReadablePropertyMap` whose key
