@@ -106,6 +106,8 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  *      to check whether three points are collinear.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
+ * 
+ * \attention The types of points in `PointRange`, `geom_traits` and `vertex_point_map` must be the same.
  */
 
 template <class Concurrency_tag, class PointRange, class TriangleRange,
@@ -122,7 +124,7 @@ orient_triangle_soup_with_reference_triangle_mesh(
   typedef boost::graph_traits<TriangleMesh> GrT;
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename PointRange::value_type Point_3;
-  typedef typename Kernel_traits<Point_3>::Kernel K;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type K;
   typedef typename 
       GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
 
