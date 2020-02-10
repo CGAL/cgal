@@ -73,7 +73,7 @@ corresponds to the minimum height of a building, and a perimeter
 threshold that corresponds to the maximum size of a building on the 2D
 projection.
 
-\subsection TutorialGIS_DEM_info TIN with info
+\subsection TutorialGIS_DEM_info TIN With Info
 
 Because it takes advantage of the flexible \cgal Delaunay
 %Triangulation API, our TIN can be enriched with information on
@@ -84,7 +84,7 @@ index of its connected component.
 
 \snippet Classification/gis_tutorial_example.cpp TIN_with_info
 
-\subsection TutorialGIS_DEM_components Identifying connected components
+\subsection TutorialGIS_DEM_components Identifying Connected Components
 
 Connected components are identified through a flooding algorithm: from
 a seed face, all incident faces are inserted in the current connected
@@ -155,9 +155,9 @@ cross a face, and to extract it then:
 
 From these functions, we can create a graph of segments to process
 later into a set of polylines. To do so, we use the
-`boost::adjacency_list` structure from boost and keep track of a
-mapping from the positions of the end points to the vertices of the
-graph.
+[boost::adjacency_list](https://www.boost.org/doc/libs/1_72_0/libs/graph/doc/adjacency_list.html)
+structure and keep track of a mapping from the positions of
+the end points to the vertices of the graph.
 
 The following code computes 50 isovalues evenly distributed between
 the minimum and maximum heights of the point cloud and creates a graph
@@ -212,14 +212,14 @@ vertices.
 
 \section TutorialGIS_Classify Classifying
 
-\cgal provides a %Classification package which can be used to segment a
+\cgal provides a package %Classification which can be used to segment a
 point cloud into a user-defined label set. The state-of-the-art
-classifier currently available in \cgal is the %Random Forest from
+classifier currently available in \cgal is the %random forest from
 ETHZ. As it is a supervised classifier, a training set is needed.
 
 The following snippet shows how to use some manually selected training
-set to train a %Random Forest classifier and compute a classification
-regularized by a Graph Cut algorithm:
+set to train a %fandom rorest classifier and compute a classification
+regularized by a graph cut algorithm:
 
 \snippet Classification/gis_tutorial_example.cpp Classification
 
@@ -228,7 +228,7 @@ Figure \cgalFigureRef{TutorialGISFigClassif}.
 
 \cgalFigureBegin{TutorialGISFigClassif, classif_tuto.jpg}
 Top: a slice of the point cloud classified by hand. Bottom: a
-classification regularized by Graph Cut after training on 3 manually
+classification regularized by graph cut after training on 3 manually
 classified slices.
 \cgalFigureEnd
 
