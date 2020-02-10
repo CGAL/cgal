@@ -174,6 +174,48 @@ public:
                   R().construct_opposite_vector_2_object()(v));
     return *this;
   }
+  
+  Point_2<R_>&
+  operator+=(const typename Point_2<R_> &p)
+  {
+    *this = Point_2<R_>(x() + p.x(), y() + p.y());
+    return *this;
+  }
+  
+  Point_2<R_>&
+  operator-=(const typename Point_2<R_> &p)
+  {
+    *this = Point_2<R_>(x() - p.x(), y() - p.y());
+    return *this;
+  }
+  
+  Point_2<R_>&
+  operator*=(const double &value)
+  {
+    *this = Point_2<R_>(x() * value, y() * value);
+    return *this;
+  }
+  
+  Point_2<R_>&
+  operator/=(const double &value)
+  {
+    *this = Point_2<R_>(x() / value, y() / value);
+    return *this;
+  }
+  
+  Point_2<R_>&
+  operator*=(const int &value)
+  {
+    *this = Point_2<R_>(x() * value, y() * value);
+    return *this;
+  }
+  
+  Point_2<R_>&
+  operator/=(const int &value)
+  {
+    *this = Point_2<R_>(x() / value, y() / value);
+    return *this;
+  }
 
 };
 
