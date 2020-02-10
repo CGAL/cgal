@@ -45,7 +45,7 @@ struct Equal_to
 } // namespace internal
 
 
-  template < typename NT1 = Interval_nt<true>, typename NT2=Gmpq, typename Cmp = internal::Equal_to >
+  template < typename NT1 = Interval_nt<false>, typename NT2=Gmpq, typename Cmp = internal::Equal_to >
 class Filtered_rational
 {
   NT1 _n1;
