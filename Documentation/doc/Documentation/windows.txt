@@ -37,7 +37,7 @@ The first step is to clone or download `vcpkg` from
 
 By default `vcpkg` installs for 32 bit binaries and will use the latest version of Visual C++
 installed on your machine.   If you develop 64 bit software you must
-set the Windows environment variable `VCPKG_DEFAULT_TRIPLE` to `x64-windows`
+set the Windows environment variable `VCPKG_DEFAULT_TRIPLET` to `x64-windows`
 or pass the option `--triplet x64-windows` whenever you install a package.
 We refer to the
 <a href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md#step-2-use">official documentation</a>
