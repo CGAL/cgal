@@ -26,13 +26,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Counted_number.cpp" )
   create_single_source_cgal_program( "double.cpp" )
   create_single_source_cgal_program( "doubletst.cpp" )
-  
-  create_single_source_cgal_program( "eigen.cpp" )
-  find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-  if (EIGEN3_FOUND)
-    cgal_target_use_Eigen(eigen)
-  endif()
-  
   create_single_source_cgal_program( "float.cpp" )
   create_single_source_cgal_program( "floattst.cpp" )
   create_single_source_cgal_program( "Gmpfr.cpp" )
@@ -86,7 +79,13 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Gmpfr_bug.cpp" )
   create_single_source_cgal_program( "Quotient_new.cpp" )
   create_single_source_cgal_program( "test_nt_Coercion_traits.cpp" )
-
+  
+  create_single_source_cgal_program( "eigen.cpp" )
+  find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
+  if (EIGEN3_FOUND)
+    cgal_target_use_Eigen(eigen)
+  endif()
+  
 else( CGAL_FOUND )
 
   message(STATUS
