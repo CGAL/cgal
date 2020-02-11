@@ -60,11 +60,12 @@ On most operating systems, package managers offer \cgal and its essential third 
 On macOS, we recommend using of <a href="https://brew.sh/">Homebrew</a> in the following way:
 
     brew install cgal
-    brew install cgal-qt5 (only for GUI)
+    brew install cgal-qt5   #(only for GUI)
 
 You should check that cgal and cgal-qt5 are correctly "linked", especially when upgrading from an old version. If not, run the following command:
 
     brew link cgal
+    brew link cgal-qt5  #(if you installed it)
 
 On Linux distributions such as `Debian`/`Ubuntu`/`Mint`, use `apt-get` in the following way:
 
@@ -171,7 +172,7 @@ if no debugging is intended. Users should thus run:
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # we are here using a release tarball
 
-Note that for recent versions of Qt on brew (>= 5.14), the package has become "keg-only", which means it cannot be "linked" with brew.
+Note that the package Qt on brew is "keg-only", which means it cannot be "linked" with brew.
 You will have to specify the Qt5_DIR by hand to cmake, using something like
 
     -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5
