@@ -157,7 +157,7 @@ In the rare event that it has not, the variable `CGAL_DIR` should be set manuall
 <li>something like `/usr/lib/x86_64-linux-gnu/cmake/CGAL`, for Linux distributions.</li>
 </ul>
 
-Note that you can also use `CGAL_PREFIX_PATH` to point to a directory that contains all dependencies, like so:
+Note that you can also use `CMAKE_PREFIX_PATH` to point to a directory that contains all dependencies, like so:
 
     cmake -DCMAKE_PREFIX_PATH=/my/custom/brew/installation/dir -DCMAKE_BUILD_TYPE=Release .
 
