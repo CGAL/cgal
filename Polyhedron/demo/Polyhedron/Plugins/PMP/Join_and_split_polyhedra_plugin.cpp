@@ -153,7 +153,6 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
 
       if (new_polyhedra.size()==1)
       {
-        new_polyhedra.front();
         CGAL::Three::Three::information( tr("%1 has only one connected component").arg(item->name()) );
         QApplication::restoreOverrideCursor();
         continue;
@@ -167,9 +166,9 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
         compute_color_map(item->color(), new_polyhedra.size(), std::back_inserter(color_map));
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
-      for(FaceGraph polyhedron_ptr : new_polyhedra)
+      for(FaceGraph& poly : new_polyhedra)
       {
-        Scene_facegraph_item* new_item=new Scene_facegraph_item(polyhedron_ptr);
+        Scene_facegraph_item* new_item=new Scene_facegraph_item(poly);
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
         new_item->setColor(color_map[cc]);
         ++cc;

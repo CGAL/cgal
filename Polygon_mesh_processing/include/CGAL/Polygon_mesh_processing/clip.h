@@ -411,7 +411,7 @@ void split_along_edges(TriangleMesh& tm,
   * See Subsection \ref coref_clip for more details.
   * \attention With the current implementation, `clipper` will be modified (refined with the intersection with `tm`).
   *
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(clipper)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(clipper)` \endlink
   *
@@ -580,7 +580,7 @@ bool clip(      TriangleMesh& tm,
   * \ingroup PMP_corefinement_grp
   * corefines `tm` and `splitter` and duplicates edges in `tm` that are on the intersection with `splitter`.
   *
-  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
+  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(splitter)` \endlink
   *
   * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
@@ -666,6 +666,9 @@ void split(      TriangleMesh& tm,
   * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
   *
   * \cgalNamedParamsBegin
+  *   \cgalParamBegin{vertex_point_map}
+  *     the property map with the points associated to the vertices of `tm`.
+  *   \cgalParamEnd
   *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
   *                            that is used to track the creation of new faces.
   *   \cgalParamEnd

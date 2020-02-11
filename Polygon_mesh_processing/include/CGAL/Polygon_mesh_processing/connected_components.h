@@ -1056,8 +1056,7 @@ void split_connected_components_impl(
  *
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
- *  \tparam PolygonMeshRange a model of `SequenceContainer` (providing
- *  `void push_back()` and `PolygonMesh& back()`) with `PolygonMesh` as value type.
+ *  \tparam PolygonMeshRange a model of `SequenceContainer` with `PolygonMesh` as value type.
  *
  *  \tparam NamedParameters a sequence of Named Parameters
  *
