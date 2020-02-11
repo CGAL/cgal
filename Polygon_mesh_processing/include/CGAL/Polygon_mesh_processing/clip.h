@@ -695,7 +695,7 @@ void split(      TriangleMesh& tm,
   namespace params = PMP::parameters;
 
   // create a splitter mesh for the splitting plane using an internal CGAL function
-  CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm);
+  CGAL::Bbox_3 bbox = ::CGAL::Polygon_mesh_processing::bbox(tm, np);
   double xd=(std::max)(1.,(bbox.xmax()-bbox.xmin())/100);
   double yd=(std::max)(1.,(bbox.ymax()-bbox.ymin())/100);
   double zd=(std::max)(1.,(bbox.zmax()-bbox.zmin())/100);
