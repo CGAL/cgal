@@ -60,6 +60,11 @@ On most operating systems, package managers offer \cgal and its essential third 
 On macOS, we recommend using of <a href="https://brew.sh/">Homebrew</a> in the following way:
 
     brew install cgal
+    brew install cgal-qt5 (only for GUI)
+
+You should check that cgal and cgal-qt5 are correctly "linked", especially when upgrading from an old version. If not, run the following command:
+
+    brew link cgal
 
 On Linux distributions such as `Debian`/`Ubuntu`/`Mint`, use `apt-get` in the following way:
 
@@ -148,9 +153,13 @@ The variable `CGAL_DIR` is also generally found when \cgal has been obtained via
 In the rare event that it has not, the variable `CGAL_DIR` should be set manually to:
 
 <ul>
-<li>something like `/usr/local/Cellar/cgal/CGAL-\cgalReleaseNumber/lib/cmake/CGAL`, for Brew.</li>
+<li>something like `/usr/local/opt/cgal/lib/cmake/CGAL`, for Brew.</li>
 <li>something like `/usr/lib/x86_64-linux-gnu/cmake/CGAL`, for Linux distributions.</li>
 </ul>
+
+Note that you can also use `CGAL_PREFIX_PATH` to point to a directory that contains all dependencies, like so:
+
+    cmake -DCMAKE_PREFIX_PATH=/my/custom/brew/installation/dir -DCMAKE_BUILD_TYPE=Release .
 
 If \cgal has been obtained via other means, `CGAL_DIR` must point to the root directory
 of the \cgal source code (either the root of the unpacked release tarball or the root
@@ -161,6 +170,13 @@ if no debugging is intended. Users should thus run:
 
     cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
     cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Release . # we are here using a release tarball
+
+Note that for recent versions of Qt on brew (>= 5.14), the package has become "keg-only", which means it cannot be "linked" with brew.
+You will have to specify the Qt5_DIR by hand to cmake, using something like
+
+    -DQt5_DIR=/usr/local/opt/qt/lib/cmake/Qt5
+
+where '/usr/local/` is actually your current brew installation directory.
 
 \subsection usage_configuring_cmake_gui Specifying Missing Dependencies
 
