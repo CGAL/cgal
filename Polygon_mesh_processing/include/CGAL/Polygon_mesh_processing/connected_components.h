@@ -23,8 +23,6 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/graph/filtered_graph.hpp>
-#include <boost/graph/connected_components.hpp>
 #include <boost/property_map/vector_property_map.hpp>
 
 #include <CGAL/assertions.h>
@@ -206,6 +204,10 @@ connected_components(const PolygonMesh& pmesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
+  typedef boost::graph_traits<PolygonMesh> GT;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
@@ -215,22 +217,40 @@ connected_components(const PolygonMesh& pmesh,
     = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                    internal::No_constraint<PolygonMesh>());
 
-  typedef Dual<PolygonMesh>                              Dual;
-  typedef boost::filtered_graph<Dual,
-    internal::No_border<PolygonMesh,EdgeConstraintMap> > FiniteDual;
-  Dual dual(pmesh);
+  typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type  FaceIndexMap;
+  FaceIndexMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
+                                        get_const_property_map(boost::face_index, pmesh));
 
-  FiniteDual finite_dual(dual,
-    internal::No_border<PolygonMesh, EdgeConstraintMap>(pmesh, ecmap));
-
-  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-    fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                         get_const_property_map(boost::face_index, pmesh));
-
-  return boost::connected_components(finite_dual,
-    fcm,
-    boost::vertex_index_map(fimap)
-  );
+  typename boost::property_traits<FaceComponentMap>::value_type i=0;
+  std::vector<bool> handled(num_faces(pmesh), false);
+  for (face_descriptor f : faces(pmesh))
+  {
+    if (handled[get(fimap,f)]) continue;
+    std::vector<face_descriptor> queue;
+    queue.push_back(f);
+    while(!queue.empty())
+    {
+      face_descriptor fq = queue.back();
+      queue.pop_back();
+      typename boost::property_traits<FaceIndexMap>::value_type  fq_id = get(fimap,fq);
+      if ( handled[fq_id]) continue;
+      handled[fq_id]=true;
+      put(fcm, fq, i);
+      for (halfedge_descriptor h : halfedges_around_face(halfedge(fq, pmesh), pmesh))
+      {
+        if ( get(ecmap, edge(h, pmesh)) ) continue;
+        halfedge_descriptor opp = opposite(h, pmesh);
+        face_descriptor fqo = face(opp, pmesh);
+        if ( fqo != GT::null_face() )
+        {
+          if ( !handled[get(fimap,fqo)] )
+            queue.push_back(fqo);
+        }
+      }
+    }
+    ++i;
+  }
+  return i;
 }
 
 template <typename PolygonMesh, typename FaceComponentMap>

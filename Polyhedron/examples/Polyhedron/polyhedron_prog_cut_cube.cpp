@@ -66,6 +66,6 @@ int main() {
                       Point( 0.0, 0.0, 1.5),
                       Point( 0.0, 0.5, 0.0));
     CGAL::polyhedron_cut_plane_3( P, h, pl);
-    std::cout << P;
+    std::cout << std::setprecision(17)<< P;
     return 0;
 }
