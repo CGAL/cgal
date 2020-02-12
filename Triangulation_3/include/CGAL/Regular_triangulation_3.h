@@ -203,7 +203,6 @@ public:
   ~Regular_triangulation_3() = default;
 
   void swap(Regular_triangulation_3& tr)
-    noexcept(noexcept(this->Tr_Base::swap(tr)))
   {
     // The 'vertices' and 'hidden_points' members of
     // 'hidden_point_visitor' should be empty as they are only filled

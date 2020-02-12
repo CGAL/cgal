@@ -133,8 +133,7 @@ public:
 
   //Helping
   void copy_triangulation(const Triangulation_hierarchy_2 &tr);
-  void swap(Triangulation_hierarchy_2 &tr)
-    noexcept(noexcept(this->Tr_Base::swap(tr)));
+  void swap(Triangulation_hierarchy_2 &tr);
   void clear();
 
   // CHECKING
@@ -393,7 +392,6 @@ template <class Tr_>
 void
 Triangulation_hierarchy_2<Tr_>::
 swap(Triangulation_hierarchy_2<Tr_> &tr)
-  noexcept(noexcept(this->Tr_Base::swap(tr)))
 {
   Tr_Base* temp;
   Tr_Base::swap(tr);

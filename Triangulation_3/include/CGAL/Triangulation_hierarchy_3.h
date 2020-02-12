@@ -160,7 +160,6 @@ public:
   };
 
   void swap(Triangulation_hierarchy_3 &tr)
-    noexcept(noexcept(this->Tr_Base::swap(tr)))
   {
     Tr_Base::swap(tr);
     for(int i=1; i<maxlevel; ++i)
