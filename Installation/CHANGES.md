@@ -33,6 +33,7 @@ Release date: June 2020
     of halfedge pairs that were stitched.
  -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
      and `CGAL::Polygon_mesh_processing::self_intersections()`.
+-   Added a new function `CGAL::Polygon_mesh_processing::sample_triangle_soup()` that generates points on a triangle soup surface.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
