@@ -862,16 +862,16 @@ sample_triangle_mesh(const TriangleMesh& tm,
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                      whose value_type is itself a model of the concept `RandomAccessContainer`
  *                      whose value_type is `std::size_t`.
- * @tparam OutputIterator a model of `OutputIterator`
- *  holding point type objects.
+ * @tparam PointOutputIterator a model of `OutputIterator`
+ *  holding objects of the same type as `PointRange`'s value type.
  *
  * @param points the points of the soup that will be sampled.
  * @param triangles a vector containing the triangles of the soup that will be sampled.
- * @param out output iterator to be filled with sampled points
+ * @param out output iterator to be filled with sample points
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`. \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`, which `Point_3` type is the same as `PointRange`'s `value_type`. \cgalParamEnd
  *    \cgalParamBegin{use_random_uniform_sampling}
  *      if `true` is passed, points are generated in a random
  *      and uniform way on the surface of the soup.
@@ -881,7 +881,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      is multiplied by the area of the soup to get the number of sample points.
  *      If none of these parameters is set, the number of points sampled is `points.size()`.
  *
- *      Default is `true`.
+ *      %Default is `true`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_grid_sampling}
  *      if `true` is passed, points are generated on a grid in each triangle,
@@ -890,7 +890,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      smallest non-null edge of the soup, or the value passed to
  *      the named parameter `grid_spacing()`.
  * 
- *      Default is `false`.
+ *      %Default is `false`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
  *      if `true` is passed, points are generated randomly in each triangle.
@@ -899,16 +899,15 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      to the named parameter `number_of_points_per_area_unit()` is
  *      used to pick a number of points per face proportional to the triangle
  *      area with a minimum of one point per face. If none of these parameters
- *      is set, 2 divided by the square of the length of the smallest non-null
- *      edge of the soup is used as if it was passed to
- *      `number_of_points_per_area_unit()`.
+ *      is set, the number of points per area unit is set to 2/sqrt2 divided 
+ *      by the square of the length of the smallest non-null edge of the soup.
  *
- *      Default is `false`.
+ *      %Default is `false`.
  *    \cgalParamEnd
  *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
  *    the points of `points` are put into `out`.
  * 
- *    Default is `true`.
+ *    %Default is `true`.
  *    \cgalParamEnd
  *    \cgalParamBegin{grid_spacing} a double value used as the grid spacing
  *      for the grid sampling method.
@@ -927,27 +926,28 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \attention contrary to `sample_triangle_mesh()`,
+ * \attention Contrary to `sample_triangle_mesh()`,
  *  this method does not allow to sample edges.
  * @see `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
  */
 
-template<class OutputIterator,
+template<class PointOutputIterator,
          class TriangleRange,
          class PointRange,
          class NamedParameters>
-OutputIterator
+PointOutputIterator
 sample_triangle_soup(const PointRange& points,
                      const TriangleRange& triangles,
-                     OutputIterator out,
+                     PointOutputIterator out,
                      const NamedParameters& np)
 {
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+  static_assert(std::is_same<Point_3, typename GeomTraits::Point_3>::value, "Wrong point type.");
 
   internal::Triangle_structure_sampler_for_triangle_soup<PointRange,
       TriangleRange,
-      OutputIterator,
+      PointOutputIterator,
       GeomTraits,
       Creator_uniform_3<typename GeomTraits::FT,
       typename GeomTraits::Point_3>,
