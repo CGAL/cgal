@@ -94,7 +94,7 @@ if ( CGAL_FOUND )
       create_single_source_cgal_program( "registration_with_OpenGR.cpp" )
       CGAL_target_use_OpenGR(registration_with_OpenGR)
     else()
-      message(STATUS "NOTICE: registration_with_OpenGR requires OpenGR, and will not be compiled.")
+      message(STATUS "NOTICE : registration_with_OpenGR requires OpenGR, and will not be compiled.")
     endif()
 
     # Executables that require both libpointmatcher and OpenGR
@@ -103,7 +103,7 @@ if ( CGAL_FOUND )
       CGAL_target_use_OpenGR(registration_with_opengr_pointmatcher_pipeline)
       CGAL_target_use_pointmatcher(registration_with_opengr_pointmatcher_pipeline)
     else()
-      message(STATUS "NOTICE: registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled.")
+      message(STATUS "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled.")
     endif()
 
   else()
