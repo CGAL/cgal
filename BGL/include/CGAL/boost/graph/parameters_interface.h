@@ -91,6 +91,7 @@ CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
 CGAL_add_named_parameter(get_placement_policy_t, get_placement_policy, get_placement)
 CGAL_add_named_parameter(constrain_geometry_t, constrain_geometry, constrain_geometry)
 CGAL_add_named_parameter(max_normal_angle_change_t, max_normal_angle_change, max_normal_angle_change)
+CGAL_add_named_parameter(max_input_dist_placement_t, max_input_dist_placement, max_input_dist)
 
 //to be documented
 CGAL_add_named_parameter(face_normal_t, face_normal, face_normal_map)

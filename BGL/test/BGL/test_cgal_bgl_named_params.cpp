@@ -100,6 +100,7 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::get_placement_policy).v == 35);
   assert(get_parameter(np, CGAL::internal_np::constrain_geometry).v == 5678);
   assert(get_parameter(np, CGAL::internal_np::max_normal_angle_change).v == 5679);
+  assert(get_parameter(np, CGAL::internal_np::max_input_dist_placement).v == 5875);
 
     // To-be-documented named parameters
   assert(get_parameter(np, CGAL::internal_np::face_normal).v == 36);
@@ -189,6 +190,7 @@ void test(const NamedParameters& np)
   check_same_type<35>(get_parameter(np, CGAL::internal_np::get_placement_policy));
   check_same_type<5678>(get_parameter(np, CGAL::internal_np::constrain_geometry));
   check_same_type<5679>(get_parameter(np, CGAL::internal_np::max_normal_angle_change));
+  check_same_type<5875>(get_parameter(np, CGAL::internal_np::max_input_dist_placement));
 
     // To-be-documented named parameters
   check_same_type<36>(get_parameter(np, CGAL::internal_np::face_normal));
@@ -280,6 +282,7 @@ int main()
                          .dry_run(A<59>(59))
                          .constrain_geometry(A<5678>(5678))
                          .max_normal_angle_change(A<5679>(5679))
+                         .max_input_dist(A<5875>(5875))
        );
 
   return EXIT_SUCCESS;

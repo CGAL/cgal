@@ -29,6 +29,7 @@
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
+namespace internal {
 
 // An AABB tree can also be passed to the placement instead, see undocumented specialization below
 template<typename BasePlacement, typename GeomTraits>
@@ -186,6 +187,7 @@ private:
   const BasePlacement m_base_placement;
 };
 
+} // namespace internal
 } // namespace Surface_mesh_simplification
 } // namespace CGAL
 

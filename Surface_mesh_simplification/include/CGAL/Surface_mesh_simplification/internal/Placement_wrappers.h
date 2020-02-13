@@ -217,6 +217,26 @@ struct HasAngleBound<Placement, internal_np::Param_not_found>{
   }
 };
 
+template<class Placement, class GT, class Type>
+struct HasDistBound{
+  typedef Bounded_distance_placement<Placement, GT> type;
+  
+  static type get_placement(const double& dist, Placement& placement)
+  {
+    return type(dist, placement);
+  }
+};
+
+//spec without angle
+template<class Placement, class GT>
+struct HasDistBound<Placement, GT, internal_np::Param_not_found>{
+  
+  typedef Placement type;
+  static type get_placement(const double&, Placement& placement)
+  {
+    return placement;
+  }
+};
 
 }//end internal
 }

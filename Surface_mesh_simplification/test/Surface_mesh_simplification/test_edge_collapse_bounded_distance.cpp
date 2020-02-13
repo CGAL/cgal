@@ -33,8 +33,7 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Surface>     Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive>                  Traits;
 typedef CGAL::AABB_tree<Traits>                               Tree;
 
-typedef SMS::Bounded_distance_placement<Placement, Kernel>    Filtered_placement;
-typedef SMS::Bounded_distance_placement<Placement, Tree>      Filtered_placement_with_tree;
+typedef SMS::internal::Bounded_distance_placement<Placement, Tree>      Filtered_placement_with_tree;
 
 int main(int argc, char** argv)
 {
@@ -62,8 +61,7 @@ int main(int argc, char** argv)
   Filtered_placement_with_tree placement_small(0.00005*diag, tree, placement_ref);
   SMS::edge_collapse(small_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_small));
 
-  Filtered_placement placement_big(50*diag, placement_ref); // lazily builds the AABB tree
-  SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_big));
+  SMS::edge_collapse(big_mesh, stop, CGAL::parameters::get_cost(Cost()).get_placement(placement_ref).max_input_dist(50.0*diag));
 
   std::cout << "no filtering: " << vertices(ref_mesh).size() << " vertices left" << std::endl;
   std::cout << "large filtering distance: " << vertices(big_mesh).size() << " vertices left" << std::endl;
