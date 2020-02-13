@@ -498,8 +498,9 @@ private:
                 const std::size_t& nb_extra_iterations)
     {
       std::size_t it_nb = 0;
-      while (it_nb++ < max_it)
+      while (it_nb < max_it)
       {
+        ++it_nb;
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << "# Iteration " << it_nb << " #" << std::endl;
 #endif
@@ -524,8 +525,10 @@ private:
 #endif
       }
 
-      while (it_nb++ < max_it + nb_extra_iterations)
+      while (it_nb < max_it + nb_extra_iterations)
       {
+        ++it_nb;
+
         flip();
         //      smooth();
 
