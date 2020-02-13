@@ -2241,6 +2241,9 @@ private: //------------------------------------------------------- private data
 
     os << "end_header" << std::endl;  
 
+    std::vector<int> reindex;
+    reindex.resize (sm.num_vertices());
+    int n = 0;
     for(VIndex vi : sm.vertices())
     {
       for (std::size_t i = 0; i < vprinters.size(); ++ i)
@@ -2251,22 +2254,23 @@ private: //------------------------------------------------------- private data
       }
       if (get_mode (os) == IO::ASCII)
         os << std::endl;
+      reindex[std::size_t(vi)] = n ++;
     }
 
-    std::vector<VIndex> polygon;
+    std::vector<int> polygon;
     
     for(FIndex fi : sm.faces())
     {
       // Get list of vertex indices
       polygon.clear();
-      for(HIndex hi : halfedges_around_face(halfedge(fi, sm), sm))
-        polygon.push_back (sm.target(hi));
+      for(VIndex vi : CGAL::vertices_around_face(sm.halfedge(fi),sm))
+        polygon.push_back (reindex[std::size_t(vi)]);
 
       if (get_mode (os) == IO::ASCII)
       {
         os << polygon.size() << " ";
         for (std::size_t i = 0; i < polygon.size(); ++ i)
-          os << int(polygon[i]) << " ";
+          os << polygon[i] << " ";
       }
       else
       {
@@ -2274,7 +2278,7 @@ private: //------------------------------------------------------- private data
         os.write (reinterpret_cast<char*>(&size), sizeof(size));
         for (std::size_t i = 0; i < polygon.size(); ++ i)
         {
-          int idx = int(polygon[i]);
+          int idx = polygon[i];
           os.write (reinterpret_cast<char*>(&idx), sizeof(idx));
         }
       }
@@ -2294,12 +2298,12 @@ private: //------------------------------------------------------- private data
     {
       for(EIndex ei : sm.edges())
       {
+        int v0 = reindex[std::size_t(sm.vertex(ei,0))];
+        int v1 = reindex[std::size_t(sm.vertex(ei,1))];
         if (get_mode (os) == IO::ASCII)
-          os << int(sm.vertex(ei,0)) << " " << int(sm.vertex(ei,1)) << " ";
+          os << v0 << " " << v1 << " ";
         else
         {
-          int v0 = int(sm.vertex(ei,0));
-          int v1 = int(sm.vertex(ei,1));
           os.write (reinterpret_cast<char*>(&v0), sizeof(v0));
           os.write (reinterpret_cast<char*>(&v1), sizeof(v1));
         }
@@ -2320,12 +2324,12 @@ private: //------------------------------------------------------- private data
     {
       for(HIndex hi : sm.halfedges())
       {
+        int source = reindex[std::size_t(sm.source(hi))];
+        int target = reindex[std::size_t(sm.target(hi))];
         if (get_mode (os) == IO::ASCII)
-          os << int(sm.source(hi)) << " " << int(sm.target(hi)) << " ";
+          os << source << " " << target << " ";
         else
         {
-          int source = int(sm.source(hi));
-          int target = int(sm.target(hi));
           os.write (reinterpret_cast<char*>(&source), sizeof(source));
           os.write (reinterpret_cast<char*>(&target), sizeof(target));
         }
