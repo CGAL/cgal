@@ -206,8 +206,8 @@ namespace CGAL
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Tetrahedral remeshing ("
-      << "nb_iter = " << max_it
-      << ", protect = " << std::boolalpha << protect
+      << "nb_iter = " << max_it << ", "
+      << "protect = " << std::boolalpha << protect
       << ")" << std::endl;
 
     std::cout << "Init tetrahedral remeshing...";
@@ -355,8 +355,8 @@ namespace CGAL
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << "Tetrahedral remeshing ("
-      << "nb_iter = " << max_it
-      << "protect = " << std::boolalpha << protect << ", "
+      << "nb_iter = " << max_it << ", "
+      << "protect = " << std::boolalpha << protect
       << ")" << std::endl;
 
     std::cout << "Init tetrahedral remeshing...";
