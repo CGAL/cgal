@@ -1009,9 +1009,9 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
   double bbox_diag = CGAL::approximate_sqrt(
-        (xmax - xmin)*(xmax - xmin)
-      + (ymax - ymin)*(ymax - ymin)
-      + (zmax - zmin)*(zmax - zmin));
+        CGAL::square(xmax - xmin)
+        + CGAL::square(ymax - ymin)
+        + CGAL::square(zmax - zmin));
   
   CGAL::qglviewer::Vec offset(0,0,0);
   
