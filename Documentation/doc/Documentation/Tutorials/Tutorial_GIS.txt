@@ -111,8 +111,34 @@ Components smaller than the largest building can be easily removed:
 
 \snippet Classification/gis_tutorial_example.cpp Filtering
 
-An example of a DEM computed with the described algorithm is given on
-Figure \cgalFigureRef{TutorialGISFigDEM}.
+\subsection Tutorial_DEM_hole_filling Hole Filling and Remeshing
+
+Because simply removing vertices in the large areas covered by
+buildings results in large Delaunay faces that offer a poor 3D
+representation of the DEM, an additional step can help producing
+better shaped meshed: faces larger than a threshold are removed and
+filled with a hole filling algorithm that triangulates, refines and
+fairs the holes.
+
+The following snippet copies the TIN into a mesh while filtering out
+overly large faces, then identifies the holes and fills them all
+except for the largest one (which is the outer hull).
+
+\snippet Classification/gis_tutorial_example.cpp Hole filling
+
+Isotropic remeshing can also be performed as a final step in order to
+produce a more regular mesh that is not constrained by the shape of 2D
+Delaunay faces.
+
+\snippet Classification/gis_tutorial_example.cpp Remeshing
+
+Figure \cgalFigureRef{TutorialGISFigProc} shows how these different
+steps affect the output mesh and Figure
+\cgalFigureRef{TutorialGISFigDEM} shows the final DEM isotropic mesh.
+
+\cgalFigureBegin{TutorialGISFigProc, dem_proc.jpg}
+
+\cgalFigureEnd
 
 \cgalFigureBegin{TutorialGISFigDEM, dem.jpg}
 Simple Digital Elevation Model.
@@ -124,6 +150,11 @@ Simple Digital Elevation Model.
 The TIN data structure can be combined with barycentric coordinates in
 order to interpolate and thus rasterize at any resolution needed the
 information embedded in the vertices.
+
+Because the latest two steps (hole filling and remeshing) were
+performed on a 3D mesh, the hypothesis that our DEM is a 2.5D
+representation may no longer be valid. We thus first rebuild a TIN
+using the vertices of the isotropic DEM mesh lastly computed.
 
 The following snippet generates a raster image of the height in the
 form of rainbow ramp PPM file (simple bitmap format):

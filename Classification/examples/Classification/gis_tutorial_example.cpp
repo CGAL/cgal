@@ -15,6 +15,10 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/locate.h>
 
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 
@@ -74,7 +78,7 @@ using Concurrency_tag = CGAL::Sequential_tag;
 ///////////////////////////////////////////////////////////////////
 //! [Contouring functions]
 
-bool face_has_isovalue (TIN_with_info::Face_handle fh, double isovalue)
+bool face_has_isovalue (TIN::Face_handle fh, double isovalue)
 {
   bool above = false, below = false;
   for (int i = 0; i < 3; ++ i)
@@ -90,7 +94,7 @@ bool face_has_isovalue (TIN_with_info::Face_handle fh, double isovalue)
   return (above && below);
 }
 
-Segment_3 isocontour_in_face (TIN_with_info::Face_handle fh, double isovalue)
+Segment_3 isocontour_in_face (TIN::Face_handle fh, double isovalue)
 {
   Point_3 source;
   Point_3 target;
@@ -208,11 +212,14 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Save TIN]
 
-  CGAL::Surface_mesh<Point_3> tin_mesh;
+  using Mesh = CGAL::Surface_mesh<Point_3>;
+  
+  Mesh tin_mesh;
   CGAL::copy_face_graph (tin, tin_mesh);
   std::ofstream tin_ofile ("tin.ply", std::ios_base::binary);
   CGAL::set_binary_mode (tin_ofile);
   CGAL::write_ply (tin_ofile, tin_mesh);
+  tin_ofile.close();
 
   //! [Save TIN]
   ///////////////////////////////////////////////////////////////////
@@ -291,8 +298,6 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Save TIN with info]
 
-  using Mesh = CGAL::Surface_mesh<Point_3>;
-  
   Mesh tin_colored_mesh;
   
   Mesh::Property_map<Mesh::Face_index, CGAL::Color>
@@ -319,6 +324,7 @@ int main (int argc, char** argv)
   std::ofstream tin_colored_ofile ("colored_tin.ply", std::ios_base::binary);
   CGAL::set_binary_mode (tin_colored_ofile);
   CGAL::write_ply (tin_colored_ofile, tin_colored_mesh);
+  tin_colored_ofile.close();
 
   //! [Save TIN with info]
   ///////////////////////////////////////////////////////////////////
@@ -357,12 +363,141 @@ int main (int argc, char** argv)
   //! [Filtering]
   ///////////////////////////////////////////////////////////////////
 
-  // Save as Mesh
-  CGAL::Surface_mesh<Point_3> dem_mesh;
-  CGAL::copy_face_graph (tin_with_info, dem_mesh);
+  ///////////////////////////////////////////////////////////////////
+  //! [Hole filling]
+
+  // Copy and keep track of overly large faces
+  Mesh dem_mesh;
+  
+  std::vector<Mesh::Face_index> face_selection;
+  Mesh::Property_map<Mesh::Face_index, bool> face_selection_map
+   = dem_mesh.add_property_map<Mesh::Face_index, bool>("is_selected", false).first;
+
+  double limit = CGAL::square (5 * spacing);
+  CGAL::copy_face_graph (tin_with_info, dem_mesh,
+                         CGAL::parameters::face_to_face_output_iterator
+                         (boost::make_function_output_iterator
+                          ([&](const std::pair<TIN_with_info::Face_handle, Mesh::Face_index>& ff)
+                           {
+                             double longest_edge = 0.;
+                             bool border = false;
+                             for (int i = 0; i < 3; ++ i)
+                             {
+                               longest_edge = (std::max)(longest_edge, CGAL::squared_distance
+                                                         (ff.first->vertex((i+1)%3)->point(),
+                                                          ff.first->vertex((i+2)%3)->point()));
+
+                               TIN_with_info::Face_circulator circ
+                                 = tin_with_info.incident_faces (ff.first->vertex(i)),
+                                 start = circ;
+                               do
+                               {
+                                 if (tin_with_info.is_infinite (circ))
+                                 {
+                                   border = true;
+                                   break;
+                                 }
+                               }
+                               while (++ circ != start);
+
+                               if (border)
+                                 break;
+                             }
+
+                             // Select if face is too big AND it's not
+                             // on the border (to have closed holes)
+                             if (!border && longest_edge > limit)
+                             {
+                               face_selection_map[ff.second] = true;
+                               face_selection.push_back (ff.second);
+                             }
+                           })));
+
+  // Save original DEM
   std::ofstream dem_ofile ("dem.ply", std::ios_base::binary);
   CGAL::set_binary_mode (dem_ofile);
   CGAL::write_ply (dem_ofile, dem_mesh);
+  dem_ofile.close();
+
+  std::cerr << face_selection.size() << " face(s) are selected for removal" << std::endl;
+
+  // Expand face selection to keep a well formed 2-manifold mesh after removal
+  CGAL::expand_face_selection_for_removal (face_selection, dem_mesh, face_selection_map);
+  face_selection.clear();
+  for (Mesh::Face_index fi : faces(dem_mesh))
+    if (face_selection_map[fi])
+      face_selection.push_back(fi);
+
+  std::cerr << face_selection.size() << " face(s) are selected for removal after expansion" << std::endl;
+  
+  for (Mesh::Face_index fi : face_selection)
+    CGAL::Euler::remove_face (halfedge(fi, dem_mesh), dem_mesh);
+  dem_mesh.collect_garbage();
+
+  if (!dem_mesh.is_valid())
+    std::cerr << "Invalid mesh!" << std::endl;
+
+  // Save filtered DEM
+  std::ofstream dem_holes_ofile ("dem_with_holes.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dem_holes_ofile);
+  CGAL::write_ply (dem_holes_ofile, dem_mesh);
+  dem_holes_ofile.close();
+
+  // Get all holes
+  std::vector<Mesh::Halfedge_index> holes;
+  CGAL::Polygon_mesh_processing::extract_boundary_cycles (dem_mesh, std::back_inserter (holes));
+
+  std::cerr << holes.size() << " hole(s) identified" << std::endl;
+
+  // Identify outer hull (hole with maximum size)
+  double max_size = 0.;
+  Mesh::Halfedge_index outer_hull;
+  for (Mesh::Halfedge_index hi : holes)
+  {
+    CGAL::Bbox_3 hole_bbox;
+    for (Mesh::Halfedge_index haf : CGAL::halfedges_around_face(hi, dem_mesh))
+    {
+      const Point_3& p = dem_mesh.point(target(haf, dem_mesh));
+      hole_bbox += p.bbox();
+    }
+    double size = CGAL::squared_distance (Point_2(hole_bbox.xmin(), hole_bbox.ymin()),
+                                          Point_2(hole_bbox.xmax(), hole_bbox.ymax()));
+    if (size > max_size)
+    {
+      max_size = size;
+      outer_hull = hi;
+    }
+  }
+
+  // Fill all holes except the bigest (which is the outer hull of the mesh)
+  for (Mesh::Halfedge_index hi : holes)
+    if (hi != outer_hull)
+      CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
+        (dem_mesh, hi, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator());
+  
+  // Save DEM with holes filled
+  std::ofstream dem_filled_ofile ("dem_filled.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dem_filled_ofile);
+  CGAL::write_ply (dem_filled_ofile, dem_mesh);
+  dem_filled_ofile.close();
+
+  //! [Hole filling]
+  ///////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////
+  //! [Remeshing]
+
+  CGAL::Polygon_mesh_processing::isotropic_remeshing (faces(dem_mesh), spacing, dem_mesh);
+
+  std::ofstream dem_remeshed_ofile ("dem_remeshed.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dem_remeshed_ofile);
+  CGAL::write_ply (dem_remeshed_ofile, dem_mesh);
+  dem_remeshed_ofile.close();
+  
+  //! [Remeshing]
+  ///////////////////////////////////////////////////////////////////
+
+  TIN dem_clean (dem_mesh.points().begin(), dem_mesh.points().end());
 
   ///////////////////////////////////////////////////////////////////
   //! [Rastering]
@@ -388,21 +523,21 @@ int main (int argc, char** argv)
 
   // Keeping track of location from one point to its neighbor allows
   // for fast locate in DT
-  TIN_with_info::Face_handle location;
+  TIN::Face_handle location;
 
   // Query each pixel of the image
   for (std::size_t y = 0; y < height; ++ y)
     for (std::size_t x = 0; x < width; ++ x)
     {
       Point_3 query (bbox.xmin() + x * (bbox.xmax() - bbox.xmin()) / double(width),
-                     bbox.ymin() + y * (bbox.ymax() - bbox.ymin()) / double(height),
+                     bbox.ymin() + (height-y) * (bbox.ymax() - bbox.ymin()) / double(height),
                      0); // not relevant for location in 2D
       
-      location = tin_with_info.locate (query, location);
+      location = dem_clean.locate (query, location);
 
       // Points outside the convex hull will be colored black
       std::array<unsigned char, 3> colors { 0, 0, 0 };
-      if (!tin_with_info.is_infinite(location))
+      if (!dem_clean.is_infinite(location))
       {
         std::array<double, 3> barycentric_coordinates
           = CGAL::Polygon_mesh_processing::barycentric_coordinates
@@ -423,38 +558,39 @@ int main (int argc, char** argv)
       }
       raster_ofile.write ((char*)(&colors), 3);
     }
+
+  raster_ofile.close();
   
   //! [Rastering]
   ///////////////////////////////////////////////////////////////////
 
   // Smooth heights with 5 successive Gaussian filters
   double gaussian_variance = 4 * spacing * spacing;
-  for (std::size_t i = 0; i < 5; ++ i)
-    for (TIN_with_info::Vertex_handle vh : tin_with_info.finite_vertex_handles())
+  for (TIN::Vertex_handle vh : dem_clean.finite_vertex_handles())
+  {
+    double z = vh->point().z();
+    double total_weight = 1;
+
+    TIN::Vertex_circulator circ = dem_clean.incident_vertices (vh),
+      start = circ;
+
+    do
     {
-      double z = vh->point().z();
-      double total_weight = 1;
-
-      TIN_with_info::Vertex_circulator circ = tin_with_info.incident_vertices (vh),
-        start = circ;
-
-      do
+      if (!dem_clean.is_infinite(circ))
       {
-        if (!tin_with_info.is_infinite(circ))
-        {
-          double sq_dist = CGAL::squared_distance (vh->point(), circ->point());
+        double sq_dist = CGAL::squared_distance (vh->point(), circ->point());
 
-          double weight = std::exp(- sq_dist / gaussian_variance);
-          z += weight * circ->point().z();
-          total_weight += weight;
-        }
+        double weight = std::exp(- sq_dist / gaussian_variance);
+        z += weight * circ->point().z();
+        total_weight += weight;
       }
-      while (++ circ != start);
-
-      z /= total_weight;
-
-      vh->point() = Point_3 (vh->point().x(), vh->point().y(), z);
     }
+    while (++ circ != start);
+
+    z /= total_weight;
+
+    vh->point() = Point_3 (vh->point().x(), vh->point().y(), z);
+  }
   
   ///////////////////////////////////////////////////////////////////
   //! [Contouring extraction]
@@ -469,7 +605,7 @@ int main (int argc, char** argv)
   Segment_graph graph;
   using Map_p2v = std::map<Point_3, Segment_graph::vertex_descriptor>;
   Map_p2v map_p2v;
-  for (TIN_with_info::Face_handle vh : tin_with_info.finite_face_handles())
+  for (TIN::Face_handle vh : dem_clean.finite_face_handles())
     for (double iv : isovalues)
       if (face_has_isovalue (vh, iv))
       {
@@ -507,6 +643,7 @@ int main (int argc, char** argv)
   std::ofstream contour_ofile ("contour.wkt");
   contour_ofile.precision(18);
   CGAL::write_multi_linestring_WKT (contour_ofile, polylines);
+  contour_ofile.close();
 
   //! [Contouring split]
   ///////////////////////////////////////////////////////////////////
@@ -544,6 +681,7 @@ int main (int argc, char** argv)
   std::ofstream simplified_ofile ("simplified.wkt");
   simplified_ofile.precision(18);
   CGAL::write_multi_linestring_WKT (simplified_ofile, polylines);
+  simplified_ofile.close();
 
   //! [Contouring simplify]
   ///////////////////////////////////////////////////////////////////
@@ -600,6 +738,7 @@ int main (int argc, char** argv)
     std::ofstream classified_ofile ("classified.ply");
     CGAL::set_binary_mode (classified_ofile);
     classified_ofile << points;
+    classified_ofile.close();
   }
   
   //! [Classification]
