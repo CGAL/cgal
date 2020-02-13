@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Simon Giraudot
@@ -239,6 +230,18 @@ public:
     m_nb_removed = ps.m_nb_removed;
     return *this;
   }
+
+  /// \cond SKIP_IN_MANUAL
+  // copy constructor (same as assignment)
+  Point_set_3 (const Point_set_3& ps)
+  {
+    m_base = ps.m_base;
+    m_indices = this->property_map<Index> ("index").first;
+    m_points = this->property_map<Point> ("point").first;
+    m_normals = this->property_map<Vector> ("normal").first;
+    m_nb_removed = ps.m_nb_removed;
+  }
+  /// \endcond
 
   /// @}
 

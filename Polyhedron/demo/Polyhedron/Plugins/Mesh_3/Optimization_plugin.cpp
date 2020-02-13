@@ -227,6 +227,9 @@ Mesh_3_optimization_plugin::odt()
   QDialog dialog(mw);
   Ui::Smoother_dialog ui;
   ui.setupUi(&dialog);
+  ui.convergenceRatio->setMaximum(1.0);
+  ui.convergenceRatio->setMinimum(0.0001);
+  ui.freezeRatio->setMinimum(0.0);
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("ODT-smoothing parameters"));
 
@@ -362,6 +365,7 @@ Mesh_3_optimization_plugin::perturb()
   QDialog dialog(mw);
   Ui::LocalOptim_dialog ui;
   ui.setupUi(&dialog);
+  ui.sliverBound->setRange(0,180);
   dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
   dialog.setWindowTitle(tr("Sliver perturbation parameters"));
   

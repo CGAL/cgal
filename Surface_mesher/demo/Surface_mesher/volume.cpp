@@ -21,7 +21,7 @@
 #include <QDoubleSpinBox>
 #include <QMessageBox>
 #include <QTreeWidgetItem>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QColor>
 #include <QColorDialog>
 #include <QSettings>
@@ -88,7 +88,7 @@ public:
     }
     result_type result = 0;
 //     std::cerr << "isovalues: ";
-    for(int i = 1, end = static_cast<int>(isovalues->size()); i <= end; ++i)
+    for(result_type i = 1, end = static_cast<result_type>(isovalues->size()); i <= end; ++i)
     {
 //       std::cerr << (*isovalues)[i-1] << ", ";
       if(value >= (*isovalues)[i-1].first &&
@@ -479,7 +479,7 @@ bool Volume::open_xt(const QString& filename)
       return false;
     }
     vtk_reader->SetHeaderSize(header_size);
-    vtk_reader->SetDataExtent(1, dimx, 1, dimy, 1,  dimz);
+    vtk_reader->SetDataExtent(1, int(dimx), 1, int(dimy), 1,  int(dimz));
     vtk_reader->SetDataSpacing(1., 1., 1.);
     vtk_reader->SetFileDimensionality(3);
     vtk_reader->Update();
@@ -708,7 +708,7 @@ void Volume::display_marchin_cube()
 #ifdef CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE
   if(m_surface_mc.empty())
   {
-    QTime total_time;
+    QElapsedTimer total_time;
     total_time.start();
 
     values_list->save_values(fileinfo.absoluteFilePath());
@@ -824,7 +824,7 @@ void Volume::display_surface_mesher_result()
      m_view_surface) // Or it is computed and displayed, and one want
                      // to recompute it.
   {
-    QTime total_time;
+    QElapsedTimer total_time;
     total_time.start();
 
     values_list->save_values(fileinfo.absoluteFilePath());
@@ -1421,7 +1421,7 @@ void Volume::gl_draw_surface()
       }
       else 
       {
-	const unsigned char volume_index = values_list->value(i);
+	const auto volume_index = static_cast<unsigned char>(values_list->value(i));
 
 	::glBegin(GL_TRIANGLES);
 	unsigned int counter = 0;

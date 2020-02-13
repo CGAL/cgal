@@ -11,8 +11,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 
-#include <boost/foreach.hpp>
-
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel; 
@@ -62,17 +60,14 @@ Polygon generate_polygon()
   border.push_back(bl);
   border.push_back(t);
   border.push_back(br);
-  border.push_back(bl);
   Polygon::Polygon_2 hole1;
   hole1.push_back(Point((xt+xmax)/2, (ymin+ymid)/2));
   hole1.push_back(Point(((xt+xmax)/2), ymid));
   hole1.push_back(Point(xt+(xmax-xt)/4, (ymin+ymid)/2));
-  hole1.push_back(Point((xt+xmax)/2, (ymin+ymid)/2));
   Polygon::Polygon_2 hole2;
   hole2.push_back(Point((xt+xmin)/2, (ymin+ymid)/2));
   hole2.push_back(Point(((xt+xmin)/2), ymid));
   hole2.push_back(Point(xmin+(xt-xmin)/4, (ymin+ymid)/2));
-  hole2.push_back(Point((xt+xmin)/2, (ymin+ymid)/2));
   Polygon::Holes_container holes;
   holes.push_back(hole1);
   holes.push_back(hole2);
@@ -152,6 +147,7 @@ int main()
     CGAL::read_polygon_WKT(is, test_poly);
     is.close();
   }
+
   CGAL_assertion(poly == test_poly);
   
   MultiPoint pees = generate_multipoint();

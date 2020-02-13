@@ -136,6 +136,7 @@ int main(int argc, char* argv[])
     {
       std::cout << "Intersection and union were successfully computed\n";
       std::ofstream output("inter_union.off");
+      output.precision(17);
       output << mesh2;
       return 0;
     }

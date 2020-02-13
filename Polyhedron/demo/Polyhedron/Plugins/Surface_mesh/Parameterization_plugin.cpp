@@ -11,7 +11,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include "Scene.h"
-#include <QTime>
+#include <QElapsedTimer>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QPen>
@@ -602,7 +602,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   ////////// PARAMETERIZE ///////////
   ///////////////////////////////////
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   // add textured polyhedon to the scene
   

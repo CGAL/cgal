@@ -1,20 +1,11 @@
 // Copyright (c) 1997-2010, 2017  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mariette Yvinec, Sebastien Loriot, Mael Rouxel-Labbé
 
@@ -52,6 +43,7 @@ struct Projector<R,0>
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.y();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.z();}
+  static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.ymin(),bb.zmin(),bb.ymax(),bb.zmax()); }
   static const int x_index=1;
   static const int y_index=2;
 };
@@ -69,6 +61,7 @@ struct Projector<R,1>
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.z();}
+  static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.xmin(),bb.zmin(),bb.xmax(),bb.zmax()); }
   static const int x_index=0;
   static const int y_index=2;  
 };
@@ -87,11 +80,19 @@ struct Projector<R,2>
   static typename R::FT y(const typename R::Point_3& p) {return p.y();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.y();}
+  static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.xmin(),bb.ymin(),bb.xmax(),bb.ymax()); }
   static const int x_index=0;
   static const int y_index=1;  
 };
-  
 
+template <class R,int dim>
+class Construct_bbox_projected_2 {
+public:
+  typedef typename R::Point_3     Point;
+  typedef Bbox_2 result_type;
+  
+  Bbox_2 operator()(const Point& p) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(p)); }
+};
 
 template <class R,int dim>
 class Orientation_projected_3 
@@ -804,7 +805,8 @@ public:
   typedef Construct_weighted_circumcenter_projected_3<Rp,dim> Construct_weighted_circumcenter_2;
   typedef Power_side_of_bounded_power_circle_projected_3<Rp,dim> Power_side_of_bounded_power_circle_2;
   typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
-
+  typedef Construct_bbox_projected_2<Rp,dim>                  Construct_bbox_2;
+  
   typedef typename Rp::Construct_point_3                      Construct_point_2;
   typedef typename Rp::Construct_weighted_point_3             Construct_weighted_point_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
@@ -814,7 +816,7 @@ public:
   typedef typename Rp::Construct_scaled_vector_3              Construct_scaled_vector_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
-  typedef typename Rp::Construct_bbox_3                       Construct_bbox_2;
+
 
   struct Less_xy_2 {
     typedef bool result_type;

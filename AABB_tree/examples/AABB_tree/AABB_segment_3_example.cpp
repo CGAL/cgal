@@ -36,7 +36,6 @@ int main()
     // constructs the AABB tree and the internal search tree for 
     // efficient distance computations.
     Tree tree(segments.begin(),segments.end());
-    tree.accelerate_distance_queries();
 
     // counts #intersections with a plane query
     Plane plane_query(a,b,d);

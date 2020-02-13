@@ -1,19 +1,10 @@
 // Copyright (c) 2005, 2006 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
@@ -31,9 +22,10 @@
 #include <boost/type_traits/detail/ice_not.hpp>
 #endif
 #include <boost/graph/adjacency_matrix.hpp>
-#include <CGAL/Unique_hash_map.h>
 
+#include <CGAL/number_type_config.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Unique_hash_map.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -1430,8 +1422,8 @@ double angle_wrt_X ( Point const& a, Point const& b )
   double dx = to_double(b.x() - a.x() ) ;
   double dy = to_double(b.y() - a.y() ) ;
   double atan = std::atan2(dy,dx);
-  double rad  = atan >= 0.0 ? atan : 2.0 * 3.141592 + atan ;
-  double deg  = rad * 180.0 / 3.141592 ;
+  double rad  = atan >= 0.0 ? atan : 2.0 * CGAL_PI + atan ;
+  double deg  = rad * 180.0 / CGAL_PI;
   return deg ;
 }
 

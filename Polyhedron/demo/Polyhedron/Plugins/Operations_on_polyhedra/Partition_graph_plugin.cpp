@@ -14,7 +14,7 @@
 #include <QMenu>
 #include <QMainWindow>
 #include <QApplication>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMessageBox>
 
 typedef Scene_surface_mesh_item Scene_facegraph_item;

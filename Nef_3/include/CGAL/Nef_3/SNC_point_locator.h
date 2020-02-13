@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
@@ -221,11 +212,11 @@ public:
   template<typename Kernel>
   class Triangulation_handler {
 
-    typedef typename CGAL::Triangulation_vertex_base_2<Kernel>               Vb;
-    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>     Fb;
-    typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>             TDS;
-    typedef typename CGAL::No_intersection_tag                               Itag;
-    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS,Itag>      CT;
+    typedef typename CGAL::Triangulation_vertex_base_2<Kernel>                      Vb;
+    typedef typename CGAL::Constrained_triangulation_face_base_2<Kernel>            Fb;
+    typedef typename CGAL::Triangulation_data_structure_2<Vb,Fb>                    TDS;
+    typedef typename CGAL::No_constraint_intersection_requiring_constructions_tag   Itag;
+    typedef typename CGAL::Constrained_triangulation_2<Kernel,TDS,Itag>             CT;
 
     typedef typename CT::Face_handle           Face_handle;
     typedef typename CT::Finite_faces_iterator Finite_face_iterator;
@@ -893,7 +884,7 @@ public:
       else CGAL_error_msg( "wrong handle type");
     }
 
-    CGAL_warning("altered code in SNC_point_locator");
+    //CGAL_warning("altered code in SNC_point_locator");
     /*
       Halffacet_iterator fc;
       CGAL_forall_facets(fc, *this->sncp()) {
@@ -916,7 +907,7 @@ public:
     if( CGAL::assign( v, result)) {
       _CGAL_NEF_TRACEN("vertex hit, obtaining volume..." << v->point());
 
-      CGAL_warning("altered code in SNC_point_locator");
+      //CGAL_warning("altered code in SNC_point_locator");
       SM_point_locator L(&*v);
       //      Object_handle so = L.locate(s.source()-s.target(), true);
       Object_handle so = L.locate(s.source()-s.target());

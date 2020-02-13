@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
 
@@ -25,6 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/number_type_config.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
@@ -47,11 +39,12 @@
 #include <CGAL/property_map.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
+
 #include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>  
-#include <tbb/atomic.h>
+#include <atomic>
 #endif // CGAL_LINKED_WITH_TBB
 
 // Default allocator: use TBB allocators if available
@@ -152,7 +145,7 @@ compute_denoise_projection(
   FT project_weight_sum = FT(0.0);
   Vector normal_sum = CGAL::NULL_VECTOR; 
 
-  FT cos_sigma = cos(sharpness_angle / 180.0 * 3.1415926);
+  FT cos_sigma = cos(sharpness_angle * CGAL_PI / 180.0);
   FT sharpness_bandwidth = std::pow((CGAL::max)(1e-8, 1 - cos_sigma), 2);
 
   typename std::vector<Pwn,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwn> >::const_iterator 
@@ -358,9 +351,8 @@ public:
    \pre Normals must be unit vectors
    \pre k >= 2
 
-   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
-   Possible values are `Sequential_tag`
-   And `Parallel_tag`.
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
 

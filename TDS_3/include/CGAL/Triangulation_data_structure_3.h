@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
 //                 Sylvain Pion
@@ -37,6 +28,7 @@
 #include <set>
 #include <vector>
 #include <stack>
+#include <limits>
 
 #include <boost/unordered_set.hpp>
 #include <CGAL/utility.h>
@@ -49,6 +41,7 @@
 
 #include <CGAL/Concurrent_compact_container.h>
 #include <CGAL/Compact_container.h>
+#include <CGAL/Small_unordered_map.h>
 
 #include <CGAL/Triangulation_ds_cell_base_3.h>
 #include <CGAL/Triangulation_ds_vertex_base_3.h>
@@ -56,6 +49,7 @@
 
 #include <CGAL/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
+#include <CGAL/tss.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/scalable_allocator.h>
@@ -182,6 +176,25 @@ public:
   typedef Triple<Cell_handle, int, int>            Edge;
 
   typedef Triangulation_simplex_3<Tds>             Simplex;
+
+  typedef std::pair<Vertex_handle,Vertex_handle> Vertex_pair;
+  typedef std::pair<unsigned char, unsigned char> Local_facet;
+
+  struct Small_pair_hash {
+
+    std::size_t operator()(const Vertex_pair& k) const
+    {
+      std::size_t hf = boost::hash<Vertex_handle>()(k.first);
+      std::size_t hs = boost::hash<Vertex_handle>()(k.second);
+
+      return hf ^ 419 * hs;
+    }
+  };
+
+  static const int maximal_nb_of_facets_of_small_hole = 128;
+  typedef Small_unordered_map<Vertex_pair, Local_facet,
+                              Small_pair_hash, maximal_nb_of_facets_of_small_hole *8> Vertex_pair_facet_map;
+
 //#ifndef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3
   //internally used for create_star_3 (faster than a tuple)
   struct iAdjacency_info{
@@ -205,7 +218,7 @@ public:
     }
   };
 //#endif  
- 
+
 
 public:
   Triangulation_data_structure_3()
@@ -509,6 +522,57 @@ public:
   {
       return insert_in_hole(cell_begin, cell_end, begin, i, create_vertex());
   }
+
+  template <class Cells, class Facets>
+  Vertex_handle _insert_in_small_hole(const Cells& cells, const Facets& facets)
+  {
+    CGAL_assertion(facets.size() < (std::numeric_limits<unsigned char>::max)());
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Vertex_pair_facet_map, vertex_pair_facet_map);
+    Vertex_handle nv = create_vertex();
+    std::array <Cell_handle, maximal_nb_of_facets_of_small_hole> new_cells;
+    for (unsigned char local_facet_index = 0, end = static_cast<unsigned char>(facets.size());
+         local_facet_index < end; ++local_facet_index) {
+      const Facet f = mirror_facet(facets[local_facet_index]);
+      f.first->tds_data().clear(); // was on boundary
+      const Vertex_handle u = f.first->vertex(vertex_triple_index(f.second, 0));
+      const Vertex_handle v = f.first->vertex(vertex_triple_index(f.second, 1));
+      const Vertex_handle w = f.first->vertex(vertex_triple_index(f.second, 2));
+      u->set_cell(f.first);
+      v->set_cell(f.first);
+      w->set_cell(f.first);
+      const Cell_handle nc = create_cell(v, u, w, nv);
+      new_cells[local_facet_index] = nc;
+      nv->set_cell(nc);
+      nc->set_neighbor(3, f.first);
+      f.first->set_neighbor(f.second, nc);
+
+      vertex_pair_facet_map.set({u, v}, {local_facet_index,
+                                         static_cast<unsigned char>(nc->index(w))});
+      vertex_pair_facet_map.set({v, w}, {local_facet_index,
+                                         static_cast<unsigned char>(nc->index(u))});
+      vertex_pair_facet_map.set({w, u}, {local_facet_index,
+                                         static_cast<unsigned char>(nc->index(v))});
+    }
+
+    for(auto it = vertex_pair_facet_map.begin(); it != vertex_pair_facet_map.end(); ++it){
+      const std::pair<Vertex_pair,Local_facet>& ef = *it;
+      if(ef.first.first < ef.first.second){
+        const Facet f = Facet{new_cells[ef.second.first], ef.second.second};
+        vertex_pair_facet_map.clear(it);
+        const auto p = vertex_pair_facet_map.get_and_erase(std::make_pair(ef.first.second, ef.first.first));
+        const Facet n = Facet{new_cells[p.first], p.second};
+        f.first->set_neighbor(f.second, n.first);
+        n.first->set_neighbor(n.second, f.first);
+      }
+    }
+    for(Cell_handle c : cells){
+      c->tds_data().clear(); // was in conflict
+    }
+    delete_cells(cells.begin(), cells.end());
+    vertex_pair_facet_map.clear();
+    return nv;
+  }
+
 
   //INSERTION
   
@@ -1451,6 +1515,11 @@ public:
   Vertex_range & vertices() {return _vertices;}
   Vertex_range & vertices() const
   { return const_cast<Tds*>(this)->_vertices; }
+
+  bool is_small_hole(std::size_t s)
+  {
+    return s <= maximal_nb_of_facets_of_small_hole;
+  }
 
 private:
 

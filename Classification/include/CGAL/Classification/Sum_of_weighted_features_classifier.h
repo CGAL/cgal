@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot, Florent Lafarge
 
@@ -42,7 +33,7 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #endif // CGAL_LINKED_WITH_TBB
 
 #define CLASSIFICATION_TRAINING_QUICK_ESTIMATION
@@ -81,9 +72,9 @@ private:
     std::vector<std::size_t>& m_true_positives;
     std::vector<std::size_t>& m_false_positives;
     std::vector<std::size_t>& m_false_negatives;
-    std::vector<tbb::mutex>& m_tp_mutex;
-    std::vector<tbb::mutex>& m_fp_mutex;
-    std::vector<tbb::mutex>& m_fn_mutex;
+    std::vector<std::mutex>& m_tp_mutex;
+    std::vector<std::mutex>& m_fp_mutex;
+    std::vector<std::mutex>& m_fn_mutex;
 
     
   public:
@@ -94,9 +85,9 @@ private:
                  std::vector<std::size_t>& true_positives,
                  std::vector<std::size_t>& false_positives,
                  std::vector<std::size_t>& false_negatives,
-                 std::vector<tbb::mutex>& tp_mutex,
-                 std::vector<tbb::mutex>& fp_mutex,
-                 std::vector<tbb::mutex>& fn_mutex)
+                 std::vector<std::mutex>& tp_mutex,
+                 std::vector<std::mutex>& fp_mutex,
+                 std::vector<std::mutex>& fn_mutex)
       : m_training_set (training_set)
       , m_classifier (classifier)
       , m_label (label)
@@ -910,9 +901,9 @@ private:
 #else
       if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
       {
-        std::vector<tbb::mutex> tp_mutex (m_labels.size());
-        std::vector<tbb::mutex> fp_mutex (m_labels.size());
-        std::vector<tbb::mutex> fn_mutex (m_labels.size());
+        std::vector<std::mutex> tp_mutex (m_labels.size());
+        std::vector<std::mutex> fp_mutex (m_labels.size());
+        std::vector<std::mutex> fn_mutex (m_labels.size());
         Compute_iou f(training_sets[j], *this, j,
                       true_positives, false_positives, false_negatives,
                       tp_mutex, fp_mutex, fn_mutex);
