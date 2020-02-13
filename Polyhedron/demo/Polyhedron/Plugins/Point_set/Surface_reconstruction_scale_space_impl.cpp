@@ -13,11 +13,7 @@
 
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
 typedef CGAL::Scale_space_reconstruction_3::Advancing_front_mesher<Kernel> ScaleSpaceAFM;

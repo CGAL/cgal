@@ -45,7 +45,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
-# include <tbb/task_scheduler_init.h>
+# include <thread>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -93,6 +93,7 @@ class Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_>
   typedef Delaunay_triangulation_3<Gt, Tds_, Default, Lock_data_structure_> Self;
 
 public:
+  typedef typename Tds::Concurrency_tag                     Concurrency_tag;
   typedef Triangulation_3<Gt, Tds, Lock_data_structure_>    Tr_Base;
 
   typedef Tds                                               Triangulation_data_structure;
@@ -289,7 +290,7 @@ private:
                                          bbox.zmin() + 0.5*zdelta);
       Random_points_on_sphere_3<Point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-                                                 tbb::task_scheduler_init::default_num_threads() * 3.5);
+                                                 std::thread::hardware_concurrency() * 3.5);
       std::vector<Point> points_on_far_sphere;
 
       points_on_far_sphere.reserve(NUM_PSEUDO_INFINITE_VERTICES);
@@ -349,7 +350,7 @@ public:
 
     size_type n = number_of_vertices();
     std::vector<Point> points(first, last);
-    spatial_sort(points.begin(), points.end(), geom_traits());
+    spatial_sort<Concurrency_tag>(points.begin(), points.end(), geom_traits());
 
     // Parallel
 #ifdef CGAL_LINKED_WITH_TBB
@@ -425,8 +426,8 @@ private:
     typedef typename Pointer_property_map<Point>::type Pmap;
     typedef Spatial_sort_traits_adapter_3<Geom_traits,Pmap> Search_traits;
 
-    spatial_sort(indices.begin(), indices.end(),
-                 Search_traits(make_property_map(points),geom_traits()));
+    spatial_sort<Concurrency_tag>(indices.begin(), indices.end(),
+                                  Search_traits(make_property_map(points),geom_traits()));
 
 #ifdef CGAL_LINKED_WITH_TBB
     if(this->is_parallel())

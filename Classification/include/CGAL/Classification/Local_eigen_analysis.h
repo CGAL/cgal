@@ -34,7 +34,8 @@
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
 #include <tbb/scalable_allocator.h>
-#include <tbb/mutex.h>
+#include <mutex>
+
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -69,7 +70,7 @@ private:
     PointMap m_point_map;
     const NeighborQuery& m_neighbor_query;
     float& m_mean_range;
-    tbb::mutex& m_mutex;
+    std::mutex& m_mutex;
     
   public:
     
@@ -78,7 +79,7 @@ private:
                           PointMap point_map,
                           const NeighborQuery& neighbor_query,
                           float& mean_range,
-                          tbb::mutex& mutex)
+                          std::mutex& mutex)
       : m_eigen (eigen), m_input (input), m_point_map (point_map),
         m_neighbor_query (neighbor_query), m_mean_range (mean_range), m_mutex (mutex)
     { }
@@ -120,7 +121,7 @@ private:
     const FaceListGraph& m_input;
     const NeighborQuery& m_neighbor_query;
     float& m_mean_range;
-    tbb::mutex& m_mutex;
+    std::mutex& m_mutex;
     
   public:
     
@@ -128,7 +129,7 @@ private:
                                 const FaceListGraph& input,
                                 const NeighborQuery& neighbor_query,
                                 float& mean_range,
-                                tbb::mutex& mutex)
+                                std::mutex& mutex)
       : m_eigen (eigen), m_input (input),
         m_neighbor_query (neighbor_query), m_mean_range (mean_range), m_mutex (mutex)
     { }
@@ -225,7 +226,7 @@ public:
     is `CGAL::Point_3`.
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value is %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted if Eigen 3 (or greater)
@@ -241,10 +242,8 @@ public:
             typename NeighborQuery,
 #if defined(DOXYGEN_RUNNING)
             typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-            typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-            typename ConcurrencyTag = CGAL::Sequential_tag,
+            typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
 #if defined(DOXYGEN_RUNNING)
             typename DiagonalizeTraits>
@@ -271,7 +270,7 @@ public:
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
-      tbb::mutex mutex;
+      std::mutex mutex;
       Compute_eigen_values<PointRange, PointMap, NeighborQuery, DiagonalizeTraits>
         f(out, input, point_map, neighbor_query, out.m_content->mean_range, mutex);
       tbb::parallel_for(tbb::blocked_range<size_t>(0, input.size ()), f);
@@ -309,7 +308,7 @@ public:
     \tparam FaceListGraph model of `FaceListGraph`. 
     \tparam NeighborQuery model of `NeighborQuery`
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value is %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -324,10 +323,8 @@ public:
             typename NeighborQuery,
 #if defined(DOXYGEN_RUNNING)
             typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-            typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-            typename ConcurrencyTag = CGAL::Sequential_tag,
+            typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
 #if defined(DOXYGEN_RUNNING)
             typename DiagonalizeTraits>
@@ -361,7 +358,7 @@ public:
 #else
     if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
-      tbb::mutex mutex;
+      std::mutex mutex;
       Compute_eigen_values_graph<FaceListGraph, NeighborQuery, DiagonalizeTraits>
         f(out, input, neighbor_query, out.m_content->mean_range, mutex);
 
@@ -395,7 +392,7 @@ public:
     `RandomAccessIterator` and its value type is the key type of
     `PointMap`.
     \tparam ConcurrencyTag enables sequential versus parallel
-    algorithm. Possible values are `Parallel_tag` (default value is %CGAL
+    algorithm. Possible values are `Parallel_tag` (default value if %CGAL
     is linked with TBB) or `Sequential_tag` (default value otherwise).
     \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
     matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -408,10 +405,8 @@ public:
   template <typename ClusterRange,
 #if defined(DOXYGEN_RUNNING)
             typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-            typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-            typename ConcurrencyTag = CGAL::Sequential_tag,
+            typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
 #if defined(DOXYGEN_RUNNING)
             typename DiagonalizeTraits>

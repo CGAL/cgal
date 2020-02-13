@@ -9,6 +9,10 @@ or the middle depending on the `PolicyTag`.
 
 \tparam Traits must be a model for `SpatialSortingTraits_d`. 
 
+\tparam PolicyTag is used to specify the strategy policy.
+Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
+(the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
+
 */
 template< typename Traits, typename PolicyTag >
 class Hilbert_sort_d {
@@ -29,9 +33,10 @@ Hilbert_sort_d(const Traits &traits = Traits());
 
 /*!
 It sorts the range `[begin, end)`. 
-\tparam RandomAccessIterator must be an iteratoe with value type `Traits::Point_d`. 
+\tparam InputPointIterator must be a model of `RandomAccessIterator` with value type `Traits::Point_d`.
 */ 
-template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const; 
+template <class InputPointIterator>
+void operator() (InputPointIterator begin, InputPointIterator end) const;
 
 /// @}
 

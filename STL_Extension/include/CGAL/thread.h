@@ -34,7 +34,7 @@
 #  include <tbb/tbb_config.h>
 #  if TBB_IMPLEMENT_CPP0X
 #    include <tbb/compat/thread>
-#    include <tbb/atomic.h>
+#    include <atomic>
 #    include <tbb/tick_count.h>
 #    define CGAL_USE_TBB_THREADS 1
 #  else
@@ -83,8 +83,8 @@ namespace cpp11 {
 
 #if defined(CGAL_NO_ATOMIC) && defined(CGAL_LINKED_WITH_TBB)
   // If <CGAL/atomic.h> did not defined CGAL::cpp11::atomic, then use
-  // tbb::atomic as a fallback.
-  using tbb::atomic;
+  // std::atomic as a fallback.
+  using std::atomic;
 #endif
 
 } // cpp11

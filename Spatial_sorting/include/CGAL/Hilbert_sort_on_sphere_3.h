@@ -42,7 +42,7 @@ class Hilbert_sort_on_sphere_3 {
 	typedef internal::Transform_coordinates_traits_3<K,-1,0,1,1> Face_5_traits_3;  // -z +x
 	typedef internal::Transform_coordinates_traits_3<K,1,1,0,0> Face_6_traits_3;  // +x +y
 	
-	Hilbert_sort_2<Face_1_traits_3, Hilbert_policy > _hs_1_object;
+        Hilbert_sort_2<Face_1_traits_3, Hilbert_policy > _hs_1_object;
 	Hilbert_sort_2<Face_2_traits_3, Hilbert_policy > _hs_2_object;
 	Hilbert_sort_2<Face_3_traits_3, Hilbert_policy > _hs_3_object;
 	Hilbert_sort_2<Face_4_traits_3, Hilbert_policy > _hs_4_object;
