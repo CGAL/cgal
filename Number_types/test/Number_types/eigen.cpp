@@ -34,7 +34,7 @@ void check_(){
   v << 1, 2, 3;
   NT t=v.dot(v);
   v+=d*m*(t*v);
-  int si=v.size();
+  std::ptrdiff_t si=v.size();
   CGAL_USE(si);
 }
 template <class NT>
