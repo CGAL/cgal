@@ -1,12 +1,11 @@
 #include <iostream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/squared_distance_2.h>
 
 typedef CGAL::Simple_cartesian<double> SC;
-typedef CGAL::Simple_cartesian<CGAL::Gmpq>  EC;
+typedef CGAL::Simple_cartesian<CGAL::Exact_rational>  EC;
 
 template <typename Kernel>
 int fct() {
