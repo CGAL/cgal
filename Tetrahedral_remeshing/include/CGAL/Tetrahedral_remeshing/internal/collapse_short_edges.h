@@ -306,7 +306,7 @@ namespace internal
         //int si_nb_vh0 = nb_incident_subdomains(vh0, c3t3);
         //int si_nb_vh1 = nb_incident_subdomains(vh1, c3t3);
         //int vertices_subdomain_nb_vh0 = std::max(si_nb_vh0, si_nb_vh1);
-        //bool is_on_hull_vh0 = is_on_hull(vh0, c3t3) || is_on_hull(vh1, c3t3);
+        //bool is_on_hull_vh0 = is_on_convex_hull(vh0, c3t3) || is_on_convex_hull(vh1, c3t3);
 
         //if( is_valid_for_domains() )
         return VALID;
@@ -337,6 +337,219 @@ namespace internal
     bool not_an_edge;
   };
 
+  template<typename C3t3, typename CellSelector>
+  bool topology_test(const typename C3t3::Edge& edge,
+                     const C3t3& c3t3,
+                     const CellSelector& cell_selector)
+  {
+    typedef typename C3t3::Vertex_handle Vertex_handle;
+    typedef typename C3t3::Cell_handle   Cell_handle;
+    typedef typename C3t3::Edge          Edge;
+    typedef typename C3t3::Facet         Facet;
+    typedef typename C3t3::Triangulation::Facet_circulator Facet_circulator;
+
+    const Vertex_handle v0 = edge.first->vertex(edge.second);
+    const Vertex_handle v1 = edge.first->vertex(edge.third);
+
+    // the "topology test" checks that :
+    // no incident non-boundary facet has 3 boundary edges
+    // no incident boundary facet has 3 feature edges
+
+    Facet_circulator fcirc = c3t3.triangulation().incident_facets(edge);
+    Facet_circulator fdone = fcirc;
+    do
+    {
+      if (c3t3.triangulation().is_infinite(fcirc->first))
+        continue;
+
+      const Facet& f = *fcirc;
+      if (is_boundary(c3t3, f, cell_selector))
+        //boundary : check that facet does not have 3 feature edges
+      {
+        //Get the ids of the opposite vertices
+        for (int i = 1; i < 4; i++)
+        {
+          Vertex_handle vi = f.first->vertex((f.second + i) % 4);
+          if (vi != v0 && vi != v1 && nb_incident_subdomains(vi, c3t3) > 1)
+          {
+            if (is_edge_in_complex(v0, vi, c3t3)
+              && is_edge_in_complex(v1, vi, c3t3))
+              return false;
+          }
+        }
+      }
+      else //non-boundary : check that facet does not have 3 boundary edges
+      {
+        const Cell_handle circ = f.first;
+        const int i = f.second;
+        if ( is_boundary(c3t3, Edge(circ, (i + 1) % 4, (i + 2) % 4), cell_selector)
+          && is_boundary(c3t3, Edge(circ, (i + 2) % 4, (i + 3) % 4), cell_selector)
+          && is_boundary(c3t3, Edge(circ, (i + 3) % 4, (i + 1) % 4), cell_selector))
+          return false;
+      }
+    } while (++fcirc != fdone);
+
+    return true;
+  }
+
+
+  template<typename C3t3>
+  Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
+                                        const typename C3t3::Vertex_handle v1,
+                                        const C3t3& c3t3)
+  {
+    typedef typename C3t3::Subdomain_index Subdomain_index;
+
+    std::vector<Subdomain_index> subdomains_v0;
+    incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
+    std::sort(subdomains_v0.begin(), subdomains_v0.end());
+
+    std::vector<Subdomain_index> subdomains_v1;
+    incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
+    std::sort(subdomains_v1.begin(), subdomains_v1.end());
+
+    if (subdomains_v0.size() == subdomains_v1.size())
+    {
+      for (unsigned int i = 0; i < subdomains_v0.size(); i++)
+        if (subdomains_v0[i] != subdomains_v1[i])
+          return DIFFERENT;
+      return EQUAL;
+    }
+    else
+    {
+      std::vector<Subdomain_index>
+        intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
+      typename std::vector<Subdomain_index>::iterator
+        end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
+          subdomains_v1.begin(), subdomains_v1.end(),
+          intersection.begin());
+      std::ptrdiff_t intersection_size = (end_it - intersection.begin());
+
+      if (subdomains_v0.size() > subdomains_v1.size()
+        && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
+      {
+        return INCLUDES;
+      }
+      else if (intersection_size == std::ptrdiff_t(subdomains_v0.size())) {
+        return INCLUDED;
+      }
+    }
+    return DIFFERENT;
+  }
+
+  template<typename C3t3, typename CellSelector>
+  void get_edge_info_for_collapse(const typename C3t3::Edge& edge,
+                                  bool& update_v0,
+                                  bool& update_v1,
+                                  const C3t3& c3t3,
+                                  const CellSelector& cell_selector)
+  {
+    typedef typename C3t3::Vertex_handle Vertex_handle;
+
+    update_v0 = false;
+    update_v1 = false;
+
+    const Vertex_handle v0 = edge.first->vertex(edge.second);
+    const Vertex_handle v1 = edge.first->vertex(edge.third);
+
+    const int dim0 = c3t3.in_dimension(v0);
+    const int dim1 = c3t3.in_dimension(v1);
+
+    if (dim0 == 3)
+    {
+      CGAL_assertion(!is_on_convex_hull(v0, c3t3));
+      update_v0 = true;
+      if (dim1 == 3)
+      {
+        CGAL_assertion(!is_on_convex_hull(v1, c3t3));
+        update_v1 = true;
+        return;
+      }
+      else // dim1 is 2, 1, or 0
+        return;
+    }
+    else if (dim1 == 3)
+    {
+      update_v1 = true;
+      return;
+    }
+
+    // from now on, all cases lie on surfaces, or between surfaces
+    CGAL_assertion(dim0 != 3 && dim1 != 3);
+
+    //feature edges and feature vertices
+    if (dim0 < 2 || dim1 < 2)
+    {
+      if (c3t3.is_in_complex(edge))
+      {
+        if (!topology_test(edge, c3t3, cell_selector))
+          return;
+
+        const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
+        const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
+
+        if (nb_si_v0 > nb_si_v1) {
+          update_v1 = true;
+        }
+        else if (nb_si_v1 > nb_si_v0) {
+          update_v0 = true;
+        }
+        else {
+          update_v0 = true;
+          update_v1 = true;
+        }
+      }
+      return;
+    }
+
+    if (dim0 == 2 && dim1 == 2)
+    {
+      if (is_boundary(c3t3, edge, cell_selector))
+      {
+        if (!topology_test(edge, c3t3, cell_selector))
+          return;
+        Subdomain_relation subdomain_rel = compare_subdomains(v0, v1, c3t3);
+
+        //Vertices on the same surface
+        if (subdomain_rel == INCLUDES) {
+          update_v1 = true;
+        }
+        else if (subdomain_rel == INCLUDED) {
+          update_v0 = true;
+        }
+        else if (subdomain_rel == EQUAL)
+        {
+          if (c3t3.number_of_edges() == 0)
+          {
+            update_v0 = true;
+            update_v1 = true;
+          }
+          else
+          {
+            const bool v0_on_feature = is_on_feature(v0);
+            const bool v1_on_feature = is_on_feature(v1);
+
+            if (v0_on_feature && v1_on_feature) {
+              if (c3t3.is_in_complex(edge)) {
+                if (!c3t3.is_in_complex(v0))
+                  update_v0 = true;
+                if (!c3t3.is_in_complex(v1))
+                  update_v1 = true;
+              }
+            }
+            else {
+              if (!v0_on_feature) {
+                update_v0 = true;
+              }
+              if (!v1_on_feature) {
+                update_v1 = true;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   template<typename C3t3, typename CellSelector>
   Collapse_type get_collapse_type(const typename C3t3::Edge& edge,
@@ -345,7 +558,7 @@ namespace internal
   {
     bool update_v0 = false;
     bool update_v1 = false;
-    get_edge_info(edge, update_v0, update_v1, c3t3, cell_selector);
+    get_edge_info_for_collapse(edge, update_v0, update_v1, c3t3, cell_selector);
 
     if (update_v0 && update_v1) return TO_MIDPOINT;
     else if (update_v0)         return TO_V1;
@@ -367,8 +580,8 @@ namespace internal
     int dim0 = c3t3.in_dimension(v0);
     int dim1 = c3t3.in_dimension(v1);
 
-    bool is_v0_on_hull = is_on_hull(v0, c3t3);
-    bool is_v1_on_hull = is_on_hull(v1, c3t3);
+    bool is_v0_on_hull = is_on_convex_hull(v0, c3t3);
+    bool is_v1_on_hull = is_on_convex_hull(v1, c3t3);
 
     if (dim0 == 3 && dim1 == 3)
     {
@@ -1004,6 +1217,10 @@ namespace internal
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     debug::dump_edges(short_edges, "short_edges.polylines.txt");
+
+    std::ofstream short_success("short_collapse_success.polylines.txt");
+    std::ofstream short_fail("short_collapse_fail.polylines.txt");
+    std::ofstream short_cancel("short_collapse_canceled.polylines.txt");
 #endif
 
     while(!short_edges.empty())
@@ -1025,24 +1242,43 @@ namespace internal
         && tr.tds().is_edge(e.first, e.second, cell, i1, i2)
         && tr.segment(Edge(cell, i1, i2)).squared_length() < sq_low)
       {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        const typename T3::Point p1 = e.first->point();
+        const typename T3::Point p2 = e.second->point();
+#endif
+
         Edge edge(cell, i1, i2);
 
         if (!can_be_collapsed(edge, c3t3, protect_boundaries, cell_selector))
+        {
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+            short_cancel << "2 " << point(p1) << " " << point(p2) << std::endl;
+#endif
           continue;
-
+        }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         Vertex_handle vh =
 #endif
         collapse_edge(edge, c3t3, sq_high,
-                      protect_boundaries, cell_selector,
+                      protect_boundaries, cell_selector, 
                       visitor);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         if (vh != Vertex_handle())
           ++nb_collapses;
 #endif
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        if (vh != Vertex_handle())
+          short_success << "2 " << point(p1) << " " << point(p2) << std::endl;
+        else
+          short_fail << "2 " << point(p1) << " " << point(p2) << std::endl;
+#endif
       }
     }//end loop on short_edges
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    short_success.close();
+    short_fail.close();
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
