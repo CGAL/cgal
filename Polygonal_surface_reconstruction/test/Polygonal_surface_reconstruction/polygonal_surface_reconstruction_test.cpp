@@ -20,9 +20,6 @@ typedef CGAL::GLPK_mixed_integer_program_traits<double>				GLPK_Solver;
 typedef CGAL::SCIP_mixed_integer_program_traits<double>				SCIP_Solver;
 #endif
 
-#if defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)
-
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -36,23 +33,6 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel			Epick;
 int main(int argc, char* argv[])
 {
     std::cerr << "Testing the Polygonal Surface Reconstruction method...\n";
-
-#if 0
-    argc = 2;
-    argv[1] = "data/icosahedron.pwn";
-    //argv[1] = "data/house.ply";
-    //argv[1] = "data/chair.ply";
-    //argv[1] = "data/square.ply";
-
-	// usage
-	if (argc - 1 == 0) {
-		std::cerr << "For the input point cloud, reconstruct a water-tight polygonal surface.\n";
-		std::cerr << "\n";
-		std::cerr << "Usage: " << argv[0] << " point_cloud_file" << std::endl;
-        std::cerr << "Input file formats are \'pwn\' and \'ply\'. No output.\n";
-		return EXIT_FAILURE;
-	}
-#endif
 
         const char* input_file =
             (argc > 1) ? argv[1]
@@ -84,6 +64,16 @@ int main(int argc, char* argv[])
 	reconstruct<Cartesian, SCIP_Solver>(input_file, true);
 #endif
 
+#if !defined(CGAL_USE_GLPK) && !defined(CGAL_USE_SCIP)
+    std::cerr << "\n\t---- Using no solver (partial test)\n";
+
+	std::cerr << "\t\t---- using provided planes\n";
+	reconstruct<Cartesian, int>(input_file, false);
+
+    std::cerr << "\t\t---- re-extract planes\n";
+	reconstruct<Cartesian, int>(input_file, true);
+#endif
+
 	//---------------------------------------------------------------------
 
     std::cerr << "\n--- Using Epick kernel";
@@ -110,15 +100,16 @@ int main(int argc, char* argv[])
 	reconstruct<Epick, SCIP_Solver>(input_file, true);
 #endif
 
+#if !defined(CGAL_USE_GLPK) && !defined(CGAL_USE_SCIP)
+    std::cerr << "\n\t---- Using no solver (partial test)\n";
+
+	std::cerr << "\t\t---- using provided planes\n";
+	reconstruct<Epick, int>(input_file, false);
+
+    std::cerr << "\t\t---- re-extract planes\n";
+	reconstruct<Epick, int>(input_file, true);
+#endif
+
     return EXIT_SUCCESS;
 }
 
-#else
-
-int main(int , char**)
-{
-    std::cerr << "This test requires either GLPK or SCIP.\n";
-    return EXIT_SUCCESS;
-}
-
-#endif  // defined(CGAL_USE_GLPK) || defined(CGAL_USE_SCIP)

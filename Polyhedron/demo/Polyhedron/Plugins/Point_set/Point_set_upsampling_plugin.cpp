@@ -19,12 +19,8 @@
 
 #include "ui_Point_set_upsampling_plugin.h"
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
- 
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
+
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_upsampling_plugin :
   public QObject,
@@ -67,6 +63,10 @@ public:
   Point_set_demo_point_set_upsampling_dialog(QWidget * /*parent*/ = 0)
   {
     setupUi(this);
+    m_edgeSensitivity->setMaximum(1.0);
+    m_neighborhoodRadius->setRange(0.1, 10.0);
+
+
   }
 
   unsigned int sharpness_angle () const { return m_sharpnessAngle->value(); }

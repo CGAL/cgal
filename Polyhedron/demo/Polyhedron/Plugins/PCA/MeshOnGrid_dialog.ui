@@ -26,13 +26,6 @@
       <string>Along X</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="x_space_doubleSpinBox">
-        <property name="maximum">
-         <double>99999999999999999475366575191804932315794610450682175621941694731908308538307845136842752.000000000000000</double>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
@@ -57,6 +50,13 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="x_space_doubleSpinBox">
+        <property name="text">
+         <string>0.00</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -66,13 +66,6 @@
       <string>Along Y</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="y_space_doubleSpinBox">
-        <property name="maximum">
-         <double>99999999999999999475366575191804932315794610450682175621941694731908308538307845136842752.000000000000000</double>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
@@ -97,6 +90,13 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="y_space_doubleSpinBox">
+        <property name="text">
+         <string>0.00</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -106,13 +106,6 @@
       <string>Along Z</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="z_space_doubleSpinBox">
-        <property name="maximum">
-         <double>99999999999999999475366575191804932315794610450682175621941694731908308538307845136842752.000000000000000</double>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
@@ -134,6 +127,13 @@
         </property>
         <property name="value">
          <number>2</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="z_space_doubleSpinBox">
+        <property name="text">
+         <string>0.00</string>
         </property>
        </widget>
       </item>
@@ -165,6 +165,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

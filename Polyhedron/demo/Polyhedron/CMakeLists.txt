@@ -1,5 +1,3 @@
-# This is the CMake script for compiling the CGAL Polyhedron demo.
-
 cmake_minimum_required(VERSION 3.1...3.15)
 project( Polyhedron_Demo )
 
@@ -192,10 +190,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     Scene_item_rendering_helper.cpp
     Scene_item_rendering_helper_moc.cpp
     Primitive_container.cpp
-    Polyhedron_demo_plugin_helper.cpp)
+    Polyhedron_demo_plugin_helper.cpp
+    CGAL_double_edit.cpp)
   target_link_libraries(demo_framework
     PUBLIC Qt5::OpenGL Qt5::Widgets Qt5::Gui Qt5::Script
     )
+  cgal_add_compilation_test(demo_framework)
   # Let's define `three_EXPORT` during the compilation of `demo_framework`,
   # in addition of `demo_framework_EXPORT` (defined automatically by
   # CMake). That is to deal with the visibility of symbols of
@@ -224,12 +224,22 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(point_dialog
     PUBLIC Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
 
+  add_custom_target(all_scene_items)
+  if(BUILD_TESTING)
+    cgal_add_compilation_test(all_scene_items)
+    set_property(TEST compilation_of__all_scene_items
+      APPEND PROPERTY DEPENDS compilation_of__demo_framework)
+    set_property(TEST compilation_of__all_scene_items
+      APPEND PROPERTY TIMEOUT 1700)
+  endif(BUILD_TESTING)
+
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(${item_name}
       PUBLIC demo_framework ${CGAL_LIBRARIES}
       Qt5::OpenGL Qt5::Gui Qt5::Script Qt5::Widgets)
-    cgal_add_compilation_test(${item_name})
+    add_dependencies(all_scene_items ${item_name})
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${item_name} )
   endmacro(add_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
@@ -241,7 +251,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
-
+  
+  if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_surface_mesh_item)
+  endif()
   # special
 
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp )
@@ -252,6 +265,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_selection_item Scene_polyhedron_selection_item.cpp)
   target_link_libraries(scene_selection_item PUBLIC scene_item_decorator  scene_k_ring_selection)
+ if(TBB_FOUND)
+    CGAL_target_use_TBB(scene_selection_item)
+  endif()
 
   add_item(scene_shortest_path_item Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
   target_link_libraries(scene_shortest_path_item PUBLIC scene_item_decorator scene_surface_mesh_item scene_polylines_item)
@@ -321,7 +337,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
   target_link_libraries( Polyhedron_3 PRIVATE polyhedron_demo )
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-  cgal_add_compilation_test(polyhedron_demo)
 
   if( POLYHEDRON_QTSCRIPT_DEBUGGER )
     if(TARGET Qt5::ScriptTools)

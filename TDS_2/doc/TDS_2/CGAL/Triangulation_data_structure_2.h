@@ -14,6 +14,10 @@ implemented using `Compact_container`. The class may offer some
 flexibility for the choice of container in the future, in the form of 
 additional template parameters. 
 
+\tparam VertexBase must be a model of `TriangulationDSVertexBase_2`. The default is `Triangulation_ds_vertex_base_2<TDS>`.
+
+\tparam FaceBase  must be a model of `TriangulationDSFaceBase_2`. The default is `Triangulation_ds_face_base_2<TDS>`.
+
 \cgalModels `TriangulationDataStructure_2`
 
 \cgalHeading{Modifiers}
@@ -33,7 +37,7 @@ guarantee the combinatorial validity of the resulting data structure.
 \image html tds-insert_degree_2.png "Insertion and removal of degree 2 vertices. "
 \image latex tds-insert_degree_2.png "Insertion and removal of degree 2 vertices. "
 */
-template< typename Vb, typename Fb >
+template< typename VertexBase, typename FaceBase >
 class Triangulation_data_structure_2 {
 public:
 
@@ -42,13 +46,17 @@ public:
 
 /// @{
 
-  typedef Triangulation_data_structure_2<Vb,Fb>  Tds;
+  typedef Triangulation_data_structure_2<VertexBase,FaceBase>  Tds;
 
-/// The vertex type.
-  typedef  typename Vb::template Rebind_TDS<Tds>::Other  Vertex;
+  /// The vertex type.
+  ///
+  /// \sa Section \ref TDS_2TheRebindMechanism
+  typedef  typename VertexBase::template Rebind_TDS<Tds>::Other  Vertex;
 
-/// The face type.
-  typedef  typename Fb::template Rebind_TDS<Tds>::Other  Face;
+  /// The face type.
+  ///
+  /// \sa Section \ref TDS_2TheRebindMechanism
+  typedef  typename FaceBase::template Rebind_TDS<Tds>::Other  Face;
 
 /// @}
 

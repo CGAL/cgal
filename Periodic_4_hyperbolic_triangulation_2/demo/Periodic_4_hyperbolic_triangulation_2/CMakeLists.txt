@@ -39,6 +39,7 @@ if(CGAL_FOUND AND (CGAL_Core_FOUND OR LEDA_FOUND) AND Qt5_FOUND AND CGAL_Qt5_FOU
   if(LEDA_FOUND)
     target_link_libraries( P4HDT2 PRIVATE ${LEDA_LIBRARIES} )
   endif()
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS P4HDT2 )
 else()
   message(STATUS "NOTICE: This demo requires Qt5 and will not be compiled.")
 endif()

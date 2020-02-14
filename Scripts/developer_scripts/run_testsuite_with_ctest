@@ -252,6 +252,9 @@ run_test_on_platform()
   PLATFORM=${1}
 
   NUMBER_OF_PROCESSORS="`value_of PROCESSORS_${HOST}`"
+  if [ -z "${NUMBER_OF_PROCESSORS}" ]; then
+    NUMBER_OF_PROCESSORS=1
+  fi
   CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
   cd "${CGAL_BINARY_DIR}"
   log "${ACTUAL_LOGFILE}.test.${PLATFORM}" "Testing on host ${HOST} and platform ${PLATFORM}"
@@ -286,7 +289,7 @@ run_test_on_platform()
   #unsets the limit of 1024 bits for the logs through ssh
   echo "SET(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE 1000000000)" > CTestCustom.cmake
   echo "SET(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE 1000000000)" >> CTestCustom.cmake
-  CTEST_OPTS="-T Start -T Test -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} --timeout 1200"
+  CTEST_OPTS="-T Start -T Test --timeout 1200 -j${NUMBER_OF_PROCESSORS} ${DO_NOT_TEST:+-E execution___of__} "
   if [ -z "${SHOW_PROGRESS}" ]; then
     ctest ${TO_TEST:+-L ${TO_TEST} } ${CTEST_OPTS} ${KEEP_TESTS:+-FC .}> tmp.txt
   else

@@ -84,9 +84,12 @@ Scene::addItem(CGAL::Three::Scene_item* item)
         addGroup(group);
     //init the item for the mainViewer to avoid using unexisting 
     //VAOs if the mainViewer is not the first to be drawn.
+    QOpenGLFramebufferObject* fbo = CGAL::Three::Three::mainViewer()->depthPeelingFbo();
+    CGAL::Three::Three::mainViewer()->setDepthPeelingFbo(nullptr);//to prevent crashing as the fbo is not initialized in this call.
     item->draw(CGAL::Three::Three::mainViewer());
     item->drawEdges(CGAL::Three::Three::mainViewer());
     item->drawPoints(CGAL::Three::Three::mainViewer());
+    CGAL::Three::Three::mainViewer()->setDepthPeelingFbo(fbo);
     return id;
 }
 
@@ -1106,7 +1109,7 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
           if(item->parentGroup())
           {
             item->parentGroup()->removeChild(item);
-            children.push_back(item_id(item));
+            addChild(item);
           }
         }
         redraw_model();
@@ -1923,4 +1926,9 @@ void Scene::callDraw(){
 void Scene::enableVisibilityRecentering(bool b)
 {
   visibility_recentering_enabled = b;
+}
+
+void Scene::addChild(Scene_item *item)
+{
+  children.push_back(item_id(item));
 }

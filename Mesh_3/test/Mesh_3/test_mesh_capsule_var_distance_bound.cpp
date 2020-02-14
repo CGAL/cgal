@@ -16,11 +16,7 @@ typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
 typedef CGAL::Labeled_mesh_domain_3<K> Mesh_domain;
 
-#ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain,K,Concurrency_tag>::type Tr;

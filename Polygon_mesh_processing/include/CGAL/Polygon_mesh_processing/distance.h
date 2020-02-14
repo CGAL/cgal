@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime Gimeno and Sebastien Loriot
@@ -43,7 +34,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/atomic.h>
+#include <atomic>
 #endif // CGAL_LINKED_WITH_TBB
 
 #include <boost/unordered_set.hpp>
@@ -80,18 +71,20 @@ triangle_grid_sampling( const typename Kernel::Point_3& p0,
 }
 
 #if defined(CGAL_LINKED_WITH_TBB)
-template <class AABB_tree, class Point_3>
+template <class AABB_tree, class PointRange>
 struct Distance_computation{
+  typedef typename PointRange::const_iterator::value_type Point_3;
+  
   const AABB_tree& tree;
-  const std::vector<Point_3>& sample_points;
+  const PointRange& sample_points;
   Point_3 initial_hint;
-  tbb::atomic<double>* distance;
+  std::atomic<double>* distance;
 
   Distance_computation(
           const AABB_tree& tree,
           const Point_3& p,
-          const std::vector<Point_3>& sample_points,
-          tbb::atomic<double>* d)
+          const PointRange& sample_points,
+          std::atomic<double>* d)
     : tree(tree)
     , sample_points(sample_points)
     , initial_hint(p)
@@ -105,9 +98,9 @@ struct Distance_computation{
     double hdist = 0;
     for( std::size_t i = range.begin(); i != range.end(); ++i)
     {
-      hint = tree.closest_point(sample_points[i], hint);
+      hint = tree.closest_point(*(sample_points.begin() + i), hint);
       typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
-      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,sample_points[i]) ));
+      double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,*(sample_points.begin() + i)) ));
       if (d>hdist) hdist=d;
     }
 
@@ -115,7 +108,8 @@ struct Distance_computation{
     double current_value = *distance;
     while( current_value < hdist )
     {
-      current_value = distance->compare_and_swap(hdist, current_value);
+      if(distance->compare_exchange_weak(current_value, hdist))
+        current_value = hdist;
     }
   }
 };
@@ -136,9 +130,9 @@ double approximate_Hausdorff_distance_impl(
 #else
   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
-    tbb::atomic<double> distance;
+    std::atomic<double> distance;
     distance=0;
-    Distance_computation<AABBTree, typename Kernel::Point_3> f(tree, hint, sample_points, &distance);
+    Distance_computation<AABBTree, PointRange> f(tree, hint, sample_points, &distance);
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, sample_points.size()), f);
     return distance;
   }
@@ -556,7 +550,6 @@ double approximate_Hausdorff_distance(
 
   Tree tree( faces(tm).first, faces(tm).second, tm);
   tree.build();
-  tree.accelerate_distance_queries();
   Point_3 hint = get(vpm, *vertices(tm).first);
 
   return internal::approximate_Hausdorff_distance_impl<Concurrency_tag, Kernel>
@@ -596,8 +589,7 @@ double approximate_Hausdorff_distance(
  * for more details.
  *
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
- *                         Possible values are `Sequential_tag`
- *                         and `Parallel_tag`.
+ *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm2`
@@ -660,7 +652,7 @@ double approximate_symmetric_Hausdorff_distance(
  * \ingroup PMP_distance_grp
  * returns the distance to `tm` of the point from `points`
  * that is the furthest from `tm`.
- * @tparam PointRange a range of `Point_3`, model of `Range`.
+ * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  * @param points the range of points of interest

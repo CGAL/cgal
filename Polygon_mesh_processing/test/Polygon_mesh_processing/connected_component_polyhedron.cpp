@@ -45,6 +45,19 @@ void mesh_with_id(const char* argv1, const bool save_output)
     assert(num == 3);
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
+  std::size_t nb_faces = num_faces(sm);
+  std::vector<face_descriptor> faces_to_remove; // faces that would be removed but are not because we're doing a dry run
+  std::size_t nb_to_remove =   PMP::keep_large_connected_components(sm, 1000,
+                                                                      CGAL::parameters::face_size_map(
+                                                                        CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
+                                                                                       .dry_run(true)
+                                                                                       .output_iterator(std::back_inserter(faces_to_remove)));
+  assert(!faces_to_remove.empty());
+  if (strcmp(argv1, "data/blobby_3cc.off") == 0)
+  {
+    assert(nb_to_remove == 1);
+    assert(num_faces(sm) == nb_faces);
+  }
 
   PMP::keep_largest_connected_components(sm, 2,
                                          CGAL::parameters::face_size_map(

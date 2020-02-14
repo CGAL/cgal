@@ -70,12 +70,10 @@ data-fitting, model complexity, and point coverage.
 - Data-fitting. This term is intended to evaluate the fitting quality of the faces to the point cloud. It is
 defined to measure a confidence-weighted percentage of points that do not contribute to the final reconstruction.
 
-    \f$
-  		\begin{equation}
-			E_f = 1 - \frac{1}{|P|} \sum_{i=1}^N x_i \cdot support(f_i),
-			\label{eq:datafitting}
-		\end{equation}
-    \f$
+  \f{equation}{
+    E_f = 1 - \frac{1}{|P|} \sum_{i=1}^N x_i \cdot support(f_i),
+    \label{eq:datafitting}
+  \f}
 
   \f$|P|\f$ is the total number of points in \f$P\f$. \f$support(f_i)\f$ is the number of supporting points
   accounting for an appropriate notion of confidence.
@@ -84,29 +82,25 @@ defined to measure a confidence-weighted percentage of points that do not contri
 - Model complexity. This term is to encourage simple structures (i.e., large planar regions).
 It is defined as the ratio of sharp edges in the model.
 
-    \f$
-  		\begin{equation}
-		E_m = \frac{1}{|E|}\sum_{i=1}^{|E|} corner(e_i),
-		\label{eq:complexity}
-		\end{equation}
-	\f$
+  \f{equation}{
+    E_m = \frac{1}{|E|}\sum_{i=1}^{|E|} corner(e_i),
+    \label{eq:complexity}
+  \f}
 
-	\f$|E|\f$ denotes the total number of pairwise intersections in the candidate face set.
-	\f$corner(e_i)\f$ is an indicator function whose value is determined by the configuration of the two selected
-	faces connected by \f$e_i\f$. \f$corner(e_i)\f$ will have a value of 1 if the faces associated with \f$e_i\f$
-	introduce a sharp edge in the final model. Otherwise, \f$corner(e_i)\f$ has a zero value meaning the two faces
-	are coplanar.
+  \f$|E|\f$ denotes the total number of pairwise intersections in the candidate face set.
+  \f$corner(e_i)\f$ is an indicator function whose value is determined by the configuration of the two selected
+  faces connected by \f$e_i\f$. \f$corner(e_i)\f$ will have a value of 1 if the faces associated with \f$e_i\f$
+  introduce a sharp edge in the final model. Otherwise, \f$corner(e_i)\f$ has a zero value meaning the two faces
+  are coplanar.
 
 - Point coverage. This term is intended to handle missing data. The idea is to keep the unsupported regions
   (i.e., regions not covered by points) of the final model as small as possible. This term is defined as the ratio of
   uncovered regions in the model.
 
-    \f$
-  			\begin{equation}
-			E_c = \frac{1}{area(M)}\sum_{i=1}^N x_i \cdot (area(f_i) - area(M_i^\alpha)),
-			\label{eq:coverage}
-			\end{equation}
-	\f$
+  \f{equation}{
+    E_c = \frac{1}{area(M)}\sum_{i=1}^N x_i \cdot (area(f_i) - area(M_i^\alpha)),
+    \label{eq:coverage}
+  \f}
 
   Here \f$area(M)\f$, \f$area(f_i)\f$, and \f$area(M_i^\alpha)\f$ denote the surface areas of the final model,
   a candidate face \f$f_i\f$, and the \f$\alpha\f$-shape mesh \f$M_i^\alpha\f$ of \f$f_i\f$, respectively.
@@ -121,8 +115,7 @@ It is defined as the ratio of sharp edges in the model.
 With the above energy terms, the optimal set of faces can be obtained by minimizing a weighted sum of these terms
 under certain hard constraints.
 
-\f$
-    \begin{equation}
+\f{equation}{
     \begin{aligned}
     \underset{\mathbf{X}}{\text{min}} \quad & \lambda_f \cdot E_f + \lambda_m \cdot E_m +  \lambda_c \cdot E_c   \\
     \text{s.t.}                       \quad & \begin{cases}
@@ -133,8 +126,7 @@ under certain hard constraints.
     \end{cases}
     \end{aligned}
     \label{eq:optimization}
-    \end{equation}
-\f$
+\f}
 
 Here \f$ \sum_{j \in \mathcal{N}(e_i)} {x_j} \f$ counts the number of faces connected by an edge \f$ e_i \f$.
 This value is enforced to be either 0 or 2, meaning none or two of the faces can be selected. These hard constraints
@@ -153,11 +145,14 @@ sharp edges in the final model.
 
 \subsection subsecExampleNoInputPlane Reconstruction from Point Clouds
 
-The method assumes that all necessary planes can be extracted from the input point set. The following example
-first extracts planes from the input point cloud and then reconstructs the surface model.
+The method assumes that all necessary planes can be extracted from the input point set. The following examples
+first extract planes from the input point cloud and then reconstruct the surface model. In the first example,
+the \ref Shape_detection_RANSAC "Efficient RANSAC approach" is used to extract planes. It is very fast,
+but not deterministic, as opposed to the \ref Shape_detection_RegionGrowing "region growing approach" from the second example 
+that is slower, but more precise and always returns the same result for the same given parameters.
 
 \cgalExample{Polygonal_surface_reconstruction/polyfit_example_without_input_planes.cpp}
-
+\cgalExample{Polygonal_surface_reconstruction/polyfit_example_with_region_growing.cpp}
 
 
 
@@ -201,7 +196,7 @@ may result in an extremely large number of candidate faces, and thus a huge inte
 to be solved.
 
 The reconstruction time of a single object with moderate complexity is typically within a few seconds.
-Among the three steps, the face selection step deminates the reconstruction pipeline when the number
+Among the three steps, the face selection step dominates the reconstruction pipeline when the number
 of candidate faces is large (e.g., more than 5,000).
 
 

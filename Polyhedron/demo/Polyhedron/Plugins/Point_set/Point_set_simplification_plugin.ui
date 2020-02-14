@@ -7,24 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>392</width>
-    <height>248</height>
+    <height>249</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Simplification</string>
   </property>
   <layout class="QGridLayout" columnstretch="0,1" columnminimumwidth="0,1">
-   <item row="7" column="0">
-    <widget class="QLabel" name="label_4">
+   <item row="2" column="0">
+    <widget class="QRadioButton" name="Random">
      <property name="text">
-      <string>Maximum Cluster Size</string>
+      <string>Random</string>
      </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
-    <widget class="QRadioButton" name="Grid">
-     <property name="text">
-      <string>Grid</string>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -44,51 +40,10 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Maximum Surface Variation</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QRadioButton" name="Random">
-     <property name="text">
-      <string>Random</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QRadioButton" name="Hierarchy">
-     <property name="text">
-      <string>Hierarchy</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Points to Remove Randomly</string>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Grid Cell Size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -114,28 +69,10 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
-    <widget class="QDoubleSpinBox" name="m_maximumSurfaceVariation">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="suffix">
-      <string/>
-     </property>
-     <property name="decimals">
-      <number>5</number>
-     </property>
-     <property name="minimum">
-      <double>0.000010000000000</double>
-     </property>
-     <property name="maximum">
-      <double>0.333330000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.012340000000000</double>
-     </property>
-     <property name="value">
-      <double>0.333330000000000</double>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Maximum Surface Variation</string>
      </property>
     </widget>
    </item>
@@ -177,8 +114,60 @@
      </property>
     </spacer>
    </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Maximum Cluster Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Points to Remove Randomly</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QRadioButton" name="Grid">
+     <property name="text">
+      <string>Grid</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QRadioButton" name="Hierarchy">
+     <property name="text">
+      <string>Hierarchy</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="DoubleEdit" name="m_maximumSurfaceVariation">
+     <property name="text">
+      <string>0.333333</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

@@ -23,7 +23,9 @@ macro(create_link_to_program COMPONENT )
   else()
     target_link_libraries(link_to_${COMPONENT} CGAL::${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )
   endif()
-  
+
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS link_to_${COMPONENT} )
+
 endmacro()
 
 find_package(CGAL QUIET COMPONENTS Core)
@@ -82,6 +84,7 @@ if ( CGAL_FOUND )
     add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)
     target_link_libraries(test_gmp_mpfr_dll version)
     CGAL_add_test(test_gmp_mpfr_dll)
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS test_gmp_mpfr_dll )
   endif()
 
   find_package( LEDA QUIET)

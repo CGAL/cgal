@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Pouget and Frédéric Cazals
 #ifndef CGAL_UMBILIC_H_
@@ -22,15 +13,17 @@
 
 #include <CGAL/license/Ridges_3.h>
 
+#include <CGAL/basic.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/number_type_config.h>
+#include <CGAL/PolyhedralSurf_neighbors.h>
+#include <CGAL/Kernel/global_functions_3.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <list>
 #include <vector>
 #include <math.h>
-#include <CGAL/basic.h>
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/PolyhedralSurf_neighbors.h>
-#include <CGAL/Kernel/global_functions_3.h>
-#include <boost/shared_ptr.hpp>
 
 namespace CGAL {
 
@@ -239,7 +232,6 @@ compute_type(Umbilic& umb)
 {
   Vector_3 dir, dirnext, normal;
   double cosinus, angle=0, angleSum=0;
-  const double  pi=3.141592653589793;
   vertex_descriptor v;
   typename std::list<halfedge_descriptor>::const_iterator itb = umb.contour_list().begin(),
     itlast = --umb.contour_list().end();
@@ -275,9 +267,9 @@ compute_type(Umbilic& umb)
   else angle = -acos(cosinus);
   angleSum += angle;
 
-  if ((angleSum > (pi/2)) && (angleSum < (3*pi/2))) umb.umbilic_type() = HYPERBOLIC_UMBILIC ;
-  else if ((angleSum < (-pi/2)) && (angleSum > (-3*pi/2))) umb.umbilic_type() = ELLIPTIC_UMBILIC;
-  else if ((angleSum <= (pi/2)) && (angleSum >= (-pi/2))) return 0;//is not considered as an umbilic
+  if ((angleSum > (CGAL_PI/2)) && (angleSum < (3*CGAL_PI/2))) umb.umbilic_type() = HYPERBOLIC_UMBILIC ;
+  else if ((angleSum < (-CGAL_PI/2)) && (angleSum > (-3*CGAL_PI/2))) umb.umbilic_type() = ELLIPTIC_UMBILIC;
+  else if ((angleSum <= (CGAL_PI/2)) && (angleSum >= (-CGAL_PI/2))) return 0;//is not considered as an umbilic
   else umb.umbilic_type() = NON_GENERIC_UMBILIC;
   return 1;
 }
