@@ -570,6 +570,164 @@ namespace Tetrahedral_remeshing
     return oit;
   }
 
+  template<typename C3t3, typename CellSelector>
+  void get_edge_info(const typename C3t3::Edge& edge,
+                     bool& update_v0,
+                     bool& update_v1,
+                     const C3t3& c3t3,
+                     const CellSelector& cell_selector)
+  {
+    typedef typename C3t3::Vertex_handle Vertex_handle;
+
+    update_v0 = false;
+    update_v1 = false;
+
+    const Vertex_handle v0 = edge.first->vertex(edge.second);
+    const Vertex_handle v1 = edge.first->vertex(edge.third);
+
+    const int dim0 = c3t3.in_dimension(v0);
+    const int dim1 = c3t3.in_dimension(v1);
+
+    if (dim0 == 3)
+    {
+      CGAL_assertion(!is_on_convex_hull(v0, c3t3));
+      update_v0 = true;
+      if (dim1 == 3)
+      {
+        CGAL_assertion(!is_on_convex_hull(v1, c3t3));
+        update_v1 = true;
+        return;
+      }
+      else // dim1 is 2, 1, or 0
+        return;
+    }
+    else if (dim1 == 3)
+    {
+      update_v1 = true;
+      return;
+    }
+
+    // from now on, all cases lie on surfaces, or between surfaces
+    CGAL_assertion(dim0 != 3 && dim1 != 3);
+
+    //feature edges and feature vertices
+    if (dim0 < 2 || dim1 < 2)
+    {
+      if (c3t3.is_in_complex(edge))
+      {
+        if (!topology_test(edge, c3t3, cell_selector))
+          return;
+
+        const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
+        const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
+
+        if (nb_si_v0 > nb_si_v1) {
+          update_v1 = true;
+        }
+        else if (nb_si_v1 > nb_si_v0) {
+          update_v0 = true;
+        }
+        else {
+          update_v0 = true;
+          update_v1 = true;
+        }
+      }
+      return;
+    }
+
+    if (dim0 == 2 && dim1 == 2)
+    {
+      if (is_boundary(c3t3, edge, cell_selector))
+      {
+        if (!topology_test(edge, c3t3, cell_selector))
+          return;
+        Subdomain_relation subdomain_rel = compare_subdomains(v0, v1, c3t3);
+
+        //Vertices on the same surface
+        if (subdomain_rel == INCLUDES) {
+          update_v1 = true;
+        }
+        else if (subdomain_rel == INCLUDED) {
+          update_v0 = true;
+        }
+        else if (subdomain_rel == EQUAL)
+        {
+          if (c3t3.number_of_edges() == 0)
+          {
+            update_v0 = true;
+            update_v1 = true;
+          }
+          else
+          {
+            const bool v0_on_feature = is_on_feature(v0);
+            const bool v1_on_feature = is_on_feature(v1);
+
+            if (v0_on_feature && v1_on_feature) {
+              if (c3t3.is_in_complex(edge)) {
+                if (!c3t3.is_in_complex(v0))
+                  update_v0 = true;
+                if (!c3t3.is_in_complex(v1))
+                  update_v1 = true;
+              }
+            }
+            else {
+              if (!v0_on_feature) {
+                update_v0 = true;
+              }
+              if (!v1_on_feature) {
+                update_v1 = true;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  template<typename C3t3>
+  Subdomain_relation compare_subdomains(const typename C3t3::Vertex_handle v0,
+                                        const typename C3t3::Vertex_handle v1,
+                                        const C3t3& c3t3)
+  {
+    typedef typename C3t3::Subdomain_index Subdomain_index;
+
+    std::vector<Subdomain_index> subdomains_v0;
+    incident_subdomains(v0, c3t3, std::back_inserter(subdomains_v0));
+    std::sort(subdomains_v0.begin(), subdomains_v0.end());
+
+    std::vector<Subdomain_index> subdomains_v1;
+    incident_subdomains(v1, c3t3, std::back_inserter(subdomains_v1));
+    std::sort(subdomains_v1.begin(), subdomains_v1.end());
+
+    if (subdomains_v0.size() == subdomains_v1.size())
+    {
+      for (unsigned int i = 0; i < subdomains_v0.size(); i++)
+        if (subdomains_v0[i] != subdomains_v1[i])
+          return DIFFERENT;
+      return EQUAL;
+    }
+    else
+    {
+      std::vector<Subdomain_index>
+        intersection((std::min)(subdomains_v0.size(), subdomains_v1.size()), -1);
+      typename std::vector<Subdomain_index>::iterator
+        end_it = std::set_intersection(subdomains_v0.begin(), subdomains_v0.end(),
+          subdomains_v1.begin(), subdomains_v1.end(),
+          intersection.begin());
+      std::ptrdiff_t intersection_size = (end_it - intersection.begin());
+
+      if (subdomains_v0.size() > subdomains_v1.size()
+        && intersection_size == std::ptrdiff_t(subdomains_v1.size()))
+      {
+        return INCLUDES;
+      }
+      else if (intersection_size == std::ptrdiff_t(subdomains_v0.size())) {
+        return INCLUDED;
+      }
+    }
+    return DIFFERENT;
+  }
+
 
   namespace debug
   {
