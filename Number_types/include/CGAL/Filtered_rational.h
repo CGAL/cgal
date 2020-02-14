@@ -32,28 +32,14 @@
 
 namespace CGAL {
 
-namespace internal {
-
-// std::equal_to<T> sticks things to one type, so I define my own.
-struct Equal_to
-{
-  template < typename NT1, typename NT2 >
-  bool operator()(const NT1& a, const NT2& b) const
-  { return true; }
-};
-
-} // namespace internal
-
-
-  template < typename NT1 = Interval_nt<false>, typename NT2=Gmpq, typename Cmp = internal::Equal_to >
+template < typename NT1 = Interval_nt<false>, typename NT2=Gmpq>
 class Filtered_rational
 {
   NT1 _n1;
   NT2 _n2;
-  Cmp cmp;
 public:
 
-  typedef Filtered_rational<NT1, NT2, Cmp> Self;
+  typedef Filtered_rational<NT1, NT2> Self;
 
   Filtered_rational() {}
   
@@ -121,129 +107,129 @@ public:
 
   
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator+(const Filtered_rational<NT1, NT2, Cmp> &a)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator+(const Filtered_rational<NT1, NT2> &a)
 {
    CGAL_NT_CHECK_DEBUG("operator+");
-   return Filtered_rational<NT1, NT2, Cmp>(+ a.n1(), + a.n2() );
+   return Filtered_rational<NT1, NT2>(+ a.n1(), + a.n2() );
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator+(const Filtered_rational<NT1, NT2, Cmp> &a,
-          const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator+(const Filtered_rational<NT1, NT2> &a,
+          const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator+");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() + b.n2());
+   return Filtered_rational<NT1, NT2>(a.n2() + b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator+(int a, const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator+(int a, const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator+");
-   return Filtered_rational<NT1, NT2, Cmp>(a + b.n2());
+   return Filtered_rational<NT1, NT2>(a + b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator+(const Filtered_rational<NT1, NT2, Cmp> &a, int b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator+(const Filtered_rational<NT1, NT2> &a, int b)
 {
    CGAL_NT_CHECK_DEBUG("operator+");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() + b);
+   return Filtered_rational<NT1, NT2>(a.n2() + b);
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator-(const Filtered_rational<NT1, NT2, Cmp> &a,
-          const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator-(const Filtered_rational<NT1, NT2> &a,
+          const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator-");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() - b.n2());
+   return Filtered_rational<NT1, NT2>(a.n2() - b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator-(int a, const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator-(int a, const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator-");
-   return Filtered_rational<NT1, NT2, Cmp>(a - b.n2());
+   return Filtered_rational<NT1, NT2>(a - b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator-(const Filtered_rational<NT1, NT2, Cmp> &a, int b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator-(const Filtered_rational<NT1, NT2> &a, int b)
 {
    CGAL_NT_CHECK_DEBUG("operator-");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() - b);
+   return Filtered_rational<NT1, NT2>(a.n2() - b);
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator-(const Filtered_rational<NT1, NT2, Cmp> &a)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator-(const Filtered_rational<NT1, NT2> &a)
 {
    CGAL_NT_CHECK_DEBUG("unary operator-");
-   return Filtered_rational<NT1, NT2, Cmp>(-a.n2());
+   return Filtered_rational<NT1, NT2>(-a.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator*(const Filtered_rational<NT1, NT2, Cmp> &a,
-          const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator*(const Filtered_rational<NT1, NT2> &a,
+          const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator*");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() * b.n2());
+   return Filtered_rational<NT1, NT2>(a.n2() * b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator*(int a, const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator*(int a, const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator*");
-   return Filtered_rational<NT1, NT2, Cmp>(a * b.n2());
+   return Filtered_rational<NT1, NT2>(a * b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator*(const Filtered_rational<NT1, NT2, Cmp> &a, int b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator*(const Filtered_rational<NT1, NT2> &a, int b)
 {
    CGAL_NT_CHECK_DEBUG("operator*");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() * b);
+   return Filtered_rational<NT1, NT2>(a.n2() * b);
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator/(const Filtered_rational<NT1, NT2, Cmp> &a,
-          const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator/(const Filtered_rational<NT1, NT2> &a,
+          const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator/");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() / b.n2());
+   return Filtered_rational<NT1, NT2>(a.n2() / b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator/(int a, const Filtered_rational<NT1, NT2, Cmp> &b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator/(int a, const Filtered_rational<NT1, NT2> &b)
 {
    CGAL_NT_CHECK_DEBUG("operator/");
-   return Filtered_rational<NT1, NT2, Cmp>(a / b.n2());
+   return Filtered_rational<NT1, NT2>(a / b.n2());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
-Filtered_rational<NT1, NT2, Cmp>
-operator/(const Filtered_rational<NT1, NT2, Cmp> &a, int b)
+template < typename NT1, typename NT2>
+Filtered_rational<NT1, NT2>
+operator/(const Filtered_rational<NT1, NT2> &a, int b)
 {
    CGAL_NT_CHECK_DEBUG("operator/");
-   return Filtered_rational<NT1, NT2, Cmp>(a.n2() / b);
+   return Filtered_rational<NT1, NT2>(a.n2() / b);
 }
 
 // arithmetic operators end
 // compare operators begin
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator==(const Filtered_rational<NT1, NT2, Cmp> &a,
-           const Filtered_rational<NT1, NT2, Cmp> &b)
+operator==(const Filtered_rational<NT1, NT2> &a,
+           const Filtered_rational<NT1, NT2> &b)
 {
   if(a.n1().is_point() && (b.n1().is_point())){
     return a.n1().inf() == b.n1().inf();
@@ -255,19 +241,19 @@ operator==(const Filtered_rational<NT1, NT2, Cmp> &a,
   return false;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator!=(const Filtered_rational<NT1, NT2, Cmp> &a,
-           const Filtered_rational<NT1, NT2, Cmp> &b)
+operator!=(const Filtered_rational<NT1, NT2> &a,
+           const Filtered_rational<NT1, NT2> &b)
 {
   
   return ! (a == b);
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator<(const Filtered_rational<NT1, NT2, Cmp> &a,
-          const Filtered_rational<NT1, NT2, Cmp> &b)
+operator<(const Filtered_rational<NT1, NT2> &a,
+          const Filtered_rational<NT1, NT2> &b)
 {
   if(a.n1().sup() < b.n1().inf()){
     return true;
@@ -278,18 +264,18 @@ operator<(const Filtered_rational<NT1, NT2, Cmp> &a,
   return a.n2() < b.n2();
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator>(const Filtered_rational<NT1, NT2, Cmp> &a,
-          const Filtered_rational<NT1, NT2, Cmp> &b)
+operator>(const Filtered_rational<NT1, NT2> &a,
+          const Filtered_rational<NT1, NT2> &b)
 {
   return b < a;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator<=(const Filtered_rational<NT1, NT2, Cmp> &a,
-           const Filtered_rational<NT1, NT2, Cmp> &b)
+operator<=(const Filtered_rational<NT1, NT2> &a,
+           const Filtered_rational<NT1, NT2> &b)
 {
   if(a.n1().sup() <= b.n1().inf()){
     return true;
@@ -300,26 +286,26 @@ operator<=(const Filtered_rational<NT1, NT2, Cmp> &a,
   return a.n2() <= b.n2();
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator>=(const Filtered_rational<NT1, NT2, Cmp> &a,
-           const Filtered_rational<NT1, NT2, Cmp> &b)
+operator>=(const Filtered_rational<NT1, NT2> &a,
+           const Filtered_rational<NT1, NT2> &b)
 {
    return b <= a;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator==(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
+operator==(const Filtered_rational<NT1, NT2> &a, int i)
 {
    bool b1 = a.n1() == i;
    CGAL_assertion(b1 == ( a.n2() == i ) );
    return b1;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator!=(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
+operator!=(const Filtered_rational<NT1, NT2> &a, int i)
 {
   Uncertain<bool> ub  = a.n1() != i;
   if(is_certain(ub)){
@@ -328,9 +314,9 @@ operator!=(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
    return a.n2() != i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator<(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
+operator<(const Filtered_rational<NT1, NT2> &a, int i)
 {
   Uncertain<bool> ub  = a.n1() < i;
   if(is_certain(ub)){
@@ -339,9 +325,9 @@ operator<(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
    return a.n2() < i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator>(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
+operator>(const Filtered_rational<NT1, NT2> &a, int i)
 {
   Uncertain<bool> ub  = a.n1() > i;
   if(is_certain(ub)){
@@ -350,9 +336,9 @@ operator>(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
    return a.n2() > i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator<=(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
+operator<=(const Filtered_rational<NT1, NT2> &a, int i)
 {
   Uncertain<bool> ub  = a.n1() <= i;
   if(is_certain(ub)){
@@ -361,9 +347,9 @@ operator<=(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
    return a.n2() <= i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator>=(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
+operator>=(const Filtered_rational<NT1, NT2> &a, int i)
 {
   Uncertain<bool> ub  = a.n1() >= i;
   if(is_certain(ub)){
@@ -372,44 +358,44 @@ operator>=(const Filtered_rational<NT1, NT2, Cmp> &a, int i)
    return a.n2() >= i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator==(int i, const Filtered_rational<NT1, NT2, Cmp> &b)
+operator==(int i, const Filtered_rational<NT1, NT2> &b)
 {
   return b == i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator!=(int i, const Filtered_rational<NT1, NT2, Cmp> &b)
+operator!=(int i, const Filtered_rational<NT1, NT2> &b)
 {
   return b != i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator<(int i, const Filtered_rational<NT1, NT2, Cmp> &b)
+operator<(int i, const Filtered_rational<NT1, NT2> &b)
 {
   return b > i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator>(int i, const Filtered_rational<NT1, NT2, Cmp> &b)
+operator>(int i, const Filtered_rational<NT1, NT2> &b)
 {
   return b < i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator<=(int i, const Filtered_rational<NT1, NT2, Cmp> &b)
+operator<=(int i, const Filtered_rational<NT1, NT2> &b)
 {
   return b >= i;
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 bool
-operator>=(int i, const Filtered_rational<NT1, NT2, Cmp> &b)
+operator>=(int i, const Filtered_rational<NT1, NT2> &b)
 {
    return b <= i;
 }
@@ -417,11 +403,11 @@ operator>=(int i, const Filtered_rational<NT1, NT2, Cmp> &b)
 // compare operators end
 // Functors Is_valid
 
-template < typename NT1, typename NT2, typename Cmp >
-class Is_valid< Filtered_rational<NT1, NT2, Cmp> >
-    : public CGAL::cpp98::unary_function< Filtered_rational<NT1, NT2, Cmp> , bool > {
+template < typename NT1, typename NT2>
+class Is_valid< Filtered_rational<NT1, NT2> >
+    : public CGAL::cpp98::unary_function< Filtered_rational<NT1, NT2> , bool > {
 public :
-    bool operator()(const  Filtered_rational<NT1, NT2, Cmp>& a ) const {
+    bool operator()(const  Filtered_rational<NT1, NT2>& a ) const {
         bool b1 = is_valid(a.n1());
         CGAL_assertion(b1 == is_valid(a.n2()) );
         return b1;
@@ -437,16 +423,16 @@ class NTC_AST_base
     :public Algebraic_structure_traits_base< Filtered_rational , Null_tag>{
 };
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class NTC_AST_base
-< Filtered_rational<NT1, NT2, Cmp> , Integral_domain_without_division_tag>
-:public Algebraic_structure_traits_base<Filtered_rational<NT1, NT2, Cmp>, 
+< Filtered_rational<NT1, NT2> , Integral_domain_without_division_tag>
+:public Algebraic_structure_traits_base<Filtered_rational<NT1, NT2>, 
 Integral_domain_without_division_tag>
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Filtered_rational<NT1, NT2, Cmp> Type;
+    typedef Filtered_rational<NT1, NT2> Type;
 
 public:
     //CGAL::Algebraic_structure_traits<>::Simplify
@@ -506,16 +492,16 @@ public:
     };
 };
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class NTC_AST_base
-      < Filtered_rational< NT1, NT2, Cmp> , Integral_domain_tag >
+      < Filtered_rational< NT1, NT2> , Integral_domain_tag >
       :public  NTC_AST_base
-      < Filtered_rational< NT1, NT2, Cmp> , Integral_domain_without_division_tag >
+      < Filtered_rational< NT1, NT2> , Integral_domain_without_division_tag >
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Filtered_rational<NT1, NT2, Cmp> Type;
+    typedef Filtered_rational<NT1, NT2> Type;
 
 public:
 
@@ -557,16 +543,16 @@ public:
 };
 
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class NTC_AST_base
-< Filtered_rational< NT1, NT2, Cmp> , Unique_factorization_domain_tag >
+< Filtered_rational< NT1, NT2> , Unique_factorization_domain_tag >
     :public  NTC_AST_base
-< Filtered_rational< NT1, NT2, Cmp> , Integral_domain_tag >
+< Filtered_rational< NT1, NT2> , Integral_domain_tag >
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Filtered_rational<NT1, NT2, Cmp> Type;
+    typedef Filtered_rational<NT1, NT2> Type;
 public:
     // CGAL::Algebraic_structure_traits< >::Gcd
     class Gcd
@@ -585,16 +571,16 @@ public:
     };
 };
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class NTC_AST_base
-< Filtered_rational< NT1, NT2, Cmp> , Euclidean_ring_tag >
+< Filtered_rational< NT1, NT2> , Euclidean_ring_tag >
     :public  NTC_AST_base
-< Filtered_rational< NT1, NT2, Cmp> , Unique_factorization_domain_tag >
+< Filtered_rational< NT1, NT2> , Unique_factorization_domain_tag >
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Filtered_rational<NT1, NT2, Cmp> Type;
+    typedef Filtered_rational<NT1, NT2> Type;
 public:
     // CGAL::Algebraic_structure_traits< >::Div
     class Div
@@ -653,16 +639,16 @@ public:
 };
 
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class NTC_AST_base
-      < Filtered_rational< NT1, NT2, Cmp> , Field_tag >
+      < Filtered_rational< NT1, NT2> , Field_tag >
       :public  NTC_AST_base
-      < Filtered_rational< NT1, NT2, Cmp> , Integral_domain_tag >
+      < Filtered_rational< NT1, NT2> , Integral_domain_tag >
 {
 private:
   typedef Algebraic_structure_traits<NT1> AST1;
   typedef Algebraic_structure_traits<NT2> AST2;
-  typedef Filtered_rational<NT1, NT2, Cmp> Type;
+  typedef Filtered_rational<NT1, NT2> Type;
 public:  
   class Inverse
     : public CGAL::cpp98::unary_function< Type, Type > {
@@ -678,16 +664,16 @@ public:
 };
 
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class NTC_AST_base
-      < Filtered_rational< NT1, NT2, Cmp> , Field_with_sqrt_tag >
+      < Filtered_rational< NT1, NT2> , Field_with_sqrt_tag >
       :public  NTC_AST_base
-      < Filtered_rational< NT1, NT2, Cmp> , Field_tag >
+      < Filtered_rational< NT1, NT2> , Field_tag >
 {
 private:
     typedef Algebraic_structure_traits<NT1> AST1;
     typedef Algebraic_structure_traits<NT2> AST2;
-    typedef Filtered_rational<NT1, NT2, Cmp> Type;
+    typedef Filtered_rational<NT1, NT2> Type;
 
 public:
 
@@ -709,14 +695,14 @@ public:
 } // namespace NTC_INTERN
 
 
-template < typename NT1, typename NT2, typename Cmp >
-class Algebraic_structure_traits <Filtered_rational<NT1, NT2, Cmp> >
-  :public NTC_INTERN::NTC_AST_base< Filtered_rational< NT1, NT2, Cmp> ,
+template < typename NT1, typename NT2>
+class Algebraic_structure_traits <Filtered_rational<NT1, NT2> >
+  :public NTC_INTERN::NTC_AST_base< Filtered_rational< NT1, NT2> ,
                                  typename Algebraic_structure_traits<NT2>::Algebraic_category >
 {
     typedef Algebraic_structure_traits<NT2> AST1;
 public:
-    typedef Filtered_rational< NT1, NT2, Cmp> Type;
+    typedef Filtered_rational< NT1, NT2> Type;
     typedef typename AST1::Algebraic_category Algebraic_category;
     typedef typename AST1::Is_exact Is_exact;
 
@@ -731,15 +717,15 @@ template < typename NT >
 class NTC_RET_base<NT,Tag_false> : public Real_embeddable_traits<NT>
 {};
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class NTC_RET_base
-< Filtered_rational<NT1, NT2, Cmp> , Tag_true>
-  :public INTERN_RET::Real_embeddable_traits_base< Filtered_rational< NT1, NT2, Cmp > , CGAL::Tag_true >
+< Filtered_rational<NT1, NT2> , Tag_true>
+  :public INTERN_RET::Real_embeddable_traits_base< Filtered_rational< NT1, NT2> , CGAL::Tag_true >
 {
 private:
     typedef Real_embeddable_traits<NT1> RET1;
     typedef Real_embeddable_traits<NT2> RET2;
-    typedef Filtered_rational<NT1, NT2, Cmp> Type;
+    typedef Filtered_rational<NT1, NT2> Type;
 public:
 
     // CGAL::Real_embeddable_traits<  >::Abs
@@ -864,35 +850,35 @@ public:
 
 } // namespace NTC_INTERN
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 class Real_embeddable_traits
-< Filtered_rational<NT1, NT2, Cmp> >
-    :public NTC_INTERN::NTC_RET_base< Filtered_rational< NT1, NT2, Cmp > ,
+< Filtered_rational<NT1, NT2> >
+    :public NTC_INTERN::NTC_RET_base< Filtered_rational< NT1, NT2> ,
       typename Real_embeddable_traits<NT1>::Is_real_embeddable >
 {
     typedef Real_embeddable_traits<NT1> RET1;
 public:
-    typedef Filtered_rational< NT1, NT2, Cmp >  Type;
+    typedef Filtered_rational< NT1, NT2>  Type;
     typedef typename RET1::Is_real_embeddable     Is_real_embeddable;
 };
 
-template < typename NT1, typename NT2, typename Cmp >
-struct Coercion_traits< Filtered_rational<NT1,NT2,Cmp>,
-                        Filtered_rational<NT1,NT2,Cmp> >{
+template < typename NT1, typename NT2>
+struct Coercion_traits< Filtered_rational<NT1,NT2>,
+                        Filtered_rational<NT1,NT2> >{
     typedef Tag_true  Are_explicit_interoperable;
     typedef Tag_true  Are_implicit_interoperable;
-    typedef Filtered_rational<NT1,NT2,Cmp> Type;
+    typedef Filtered_rational<NT1,NT2> Type;
     struct Cast{
         typedef Type result_type;
         Type operator()(const Type& x) const { return x;}
     };
 };
 
-template < typename NT1, typename NT2, typename Cmp >
-struct Coercion_traits< Filtered_rational<NT1,NT2,Cmp>, int >{
+template < typename NT1, typename NT2>
+struct Coercion_traits< Filtered_rational<NT1,NT2>, int >{
     typedef Tag_true  Are_explicit_interoperable;
     typedef Tag_true  Are_implicit_interoperable;
-    typedef Filtered_rational<NT1,NT2,Cmp> Type;
+    typedef Filtered_rational<NT1,NT2> Type;
     struct Cast{
         typedef Type result_type;
         Type operator()(const Type& x) const { return x;}
@@ -900,9 +886,9 @@ struct Coercion_traits< Filtered_rational<NT1,NT2,Cmp>, int >{
     };
 };
 
-template < typename NT1, typename NT2, typename Cmp >
-struct Coercion_traits< int , Filtered_rational<NT1,NT2,Cmp> >
-    :public Coercion_traits< Filtered_rational<NT1,NT2,Cmp> , int >{};
+template < typename NT1, typename NT2>
+struct Coercion_traits< int , Filtered_rational<NT1,NT2> >
+    :public Coercion_traits< Filtered_rational<NT1,NT2> , int >{};
 
 namespace NTC_INTERN {
 
@@ -914,12 +900,12 @@ struct Coercion_traits_double{
     typedef Null_tag Type;
 };
 
-template < typename NT1, typename NT2, typename Cmp>
-struct Coercion_traits_double< Filtered_rational<NT1,NT2,Cmp> ,
+template < typename NT1, typename NT2>
+struct Coercion_traits_double< Filtered_rational<NT1,NT2> ,
                                Tag_true >{
     typedef Tag_true  Are_explicit_interoperable;
     typedef Tag_true  Are_implicit_interoperable;
-    typedef Filtered_rational<NT1,NT2,Cmp> Type;
+    typedef Filtered_rational<NT1,NT2> Type;
      struct Cast{
         typedef Type result_type;
          Type operator()(const Type& x) const { return x;}
@@ -930,31 +916,31 @@ struct Coercion_traits_double< Filtered_rational<NT1,NT2,Cmp> ,
 };
 } // namespace NTC_INTERN
 
-template < typename NT1, typename NT2, typename Cmp >
-struct Coercion_traits< Filtered_rational<NT1,NT2,Cmp>, double >
-    :public NTC_INTERN::Coercion_traits_double< Filtered_rational<NT1,NT2,Cmp>,
+template < typename NT1, typename NT2>
+struct Coercion_traits< Filtered_rational<NT1,NT2>, double >
+    :public NTC_INTERN::Coercion_traits_double< Filtered_rational<NT1,NT2>,
             typename Coercion_traits<NT1,double>::Are_implicit_interoperable >
 {};
 
-template < typename NT1, typename NT2, typename Cmp >
-struct Coercion_traits< double , Filtered_rational<NT1,NT2,Cmp> >
-    :public Coercion_traits< Filtered_rational<NT1,NT2,Cmp>, double > {};
+template < typename NT1, typename NT2>
+struct Coercion_traits< double , Filtered_rational<NT1,NT2> >
+    :public Coercion_traits< Filtered_rational<NT1,NT2>, double > {};
 
 
 // What to do with the IO ?
 // - either pick one as the main, and convert to the second.
 // - output/input pairs, and read both (=> problems with FP values).
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 std::ostream &
-operator<< (std::ostream & os, const Filtered_rational<NT1, NT2, Cmp> &b)
+operator<< (std::ostream & os, const Filtered_rational<NT1, NT2> &b)
 {
   return os << to_double(b.n1());
 }
 
-template < typename NT1, typename NT2, typename Cmp >
+template < typename NT1, typename NT2>
 std::istream &
-operator>> (std::istream & is, Filtered_rational<NT1, NT2, Cmp> &b)
+operator>> (std::istream & is, Filtered_rational<NT1, NT2> &b)
 {
   is >> b.n2();
   b.n1() = to_interval(b.n2());
@@ -962,8 +948,8 @@ operator>> (std::istream & is, Filtered_rational<NT1, NT2, Cmp> &b)
 }
 
 
-template < typename NT1, typename NT2, typename Cmp >  
-bool fit_in_double(const Filtered_rational<NT1, NT2, Cmp> &a, double &r)
+template < typename NT1, typename NT2>  
+bool fit_in_double(const Filtered_rational<NT1, NT2> &a, double &r)
 {
   return fit_in_double(a.n1(),r);
 }
