@@ -271,7 +271,7 @@ namespace Tetrahedral_remeshing
     std::vector<Facet> facets;
     c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
 
-    BOOST_FOREACH(Facet f, facets)
+    BOOST_FOREACH(const Facet& f, facets)
     {
       if (c3t3.is_in_complex(f))
         return true;
@@ -279,6 +279,23 @@ namespace Tetrahedral_remeshing
         return true;
     }
     return false;
+  }
+
+  template<typename C3t3>
+  typename C3t3::Surface_patch_index surface_patch_index(const typename C3t3::Vertex_handle v,
+                                                         const C3t3& c3t3)
+  {
+    typedef typename C3t3::Surface_patch_index Surface_patch_index;
+    typedef typename C3t3::Facet Facet;
+    std::vector<Facet> facets;
+    c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
+
+    BOOST_FOREACH(const Facet& f, facets)
+    {
+      if (c3t3.is_in_complex(f))
+        return c3t3.surface_patch_index(f);
+    }
+    return Surface_patch_index();
   }
 
   template<typename C3t3>
@@ -391,7 +408,11 @@ namespace Tetrahedral_remeshing
   {
     typedef typename C3t3::Edge Edge;
 
-    if (nb_incident_subdomains(v, c3t3) > 2)
+    if (c3t3.number_of_corners() > 0)
+    {
+      return c3t3.is_in_complex(v);
+    }
+    else if (nb_incident_subdomains(v, c3t3) > 2)
     {
       std::vector<Edge> edges;
       c3t3.triangulation().finite_incident_edges(v, std::back_inserter(edges));
@@ -406,10 +427,6 @@ namespace Tetrahedral_remeshing
             return true;
         }
       }
-    }
-    else if (c3t3.number_of_corners() > 0)
-    {
-      return c3t3.is_in_complex(v);
     }
     return false;
   }
@@ -458,6 +475,7 @@ namespace Tetrahedral_remeshing
 
     return false;
   }
+
   template<typename C3t3, typename CellSelector>
   bool is_outside(const typename C3t3::Edge & edge,
                   const C3t3& c3t3,
@@ -493,10 +511,10 @@ namespace Tetrahedral_remeshing
 
     BOOST_FOREACH(Cell_handle c, cells)
     {
-      if (!cell_selector(c))
-        return false;
+      if (cell_selector(c))
+        return true;
     }
-    return true;
+    return false;
   }
 
   template<typename C3t3, typename CellSelector>

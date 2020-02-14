@@ -24,9 +24,14 @@
 
 #include <cmath>
 #include <string>
+#include <vector>
 
+#include <boost/unordered_map.hpp>
+
+#include <CGAL/Tetrahedral_remeshing/internal/Tetrahedral_remeshing_helpers.h>
 
 #include "Vec3D.h"
+
 
 namespace CGAL
 {
@@ -580,6 +585,264 @@ namespace CGAL
         Grid grid;
       };
 
+
+      template<typename Subdomain__FMLS,
+               typename Subdomain__FMLS_indices,
+               typename VerticesNormalsMap,
+               typename C3t3>
+      void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
+                             Subdomain__FMLS_indices& subdomain_FMLS_indices,
+                             VerticesNormalsMap& vertices_normals,
+                             const C3t3& c3t3,
+                             int upsample = 0)
+      {
+//        upsample = 0;
+        typedef typename C3t3::Surface_patch_index Surface_index;
+        typedef typename C3t3::Subdomain_index     Subdomain_index;
+        typedef typename C3t3::Triangulation       Tr;
+        typedef typename Tr::Edge                  Edge;
+        typedef typename Tr::Vertex_handle         Vertex_handle;
+        typedef typename Tr::Geom_traits           Gt;
+        typedef typename Gt::Point_3               Point_3;
+        typedef typename Gt::Vector_3              Vector_3;
+
+        const Tr& tr = c3t3.triangulation();
+
+        //createAreaWeightedUpSampledMLSSurfaces(0);
+        //return ;
+        subdomain_FMLS.clear();
+        subdomain_FMLS_indices.clear();
+
+        typedef boost::unordered_map<Surface_index, unsigned int> SurfaceIndexMap;
+
+        SurfaceIndexMap current_subdomain_FMLS_indices;
+        SurfaceIndexMap subdomain_sample_numbers;
+
+        //Count the number of vertices for each boundary surface (i.e. one per label)
+        for (typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
+          vit != tr.finite_vertices_end(); ++vit)
+        {
+          if (vit->in_dimension() == 2)
+          {
+            const Surface_index si = surface_patch_index(vit, c3t3);
+            subdomain_sample_numbers[si]++;
+          }
+        }
+
+        //if (upsample > 0) {
+        //  std::cout << "Up sampling MLS " << upsample << std::endl;
+        //  for (C3t3_with_info::Facet_iterator fit = c3t3_with_info.facets_begin(); fit != c3t3_with_info.facets_end(); ++fit) {
+        //    Surface_index surf_i = triangulated_domain.make_surface_index(fit->first->subdomain_index(),
+        //      fit->first->neighbor(fit->second)->subdomain_index());
+        //    if (upsample == 1)
+        //      subdomain_sample_numbers[surf_i] ++;
+        //    else if (upsample == 2)
+        //      subdomain_sample_numbers[surf_i] += 4;
+        //  }
+        //}
+
+        std::vector< float* > pns;
+
+        int count = 0;
+        //Memory allocation for the point plus normals of the point samples
+        for (typename SurfaceIndexMap::iterator it = subdomain_sample_numbers.begin();
+             it != subdomain_sample_numbers.end(); ++it)
+        {
+          current_subdomain_FMLS_indices[it->first] = count;
+          pns.push_back(new float[it->second * 6]);
+          count++;
+        }
+
+        std::vector<int> current_v_count(count, 0);
+        std::vector<double> point_spacing(count, 0);
+        std::vector<int> point_spacing_count(count, 0);
+
+        //Allocation of the PN
+        for (typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
+             vit != tr.finite_vertices_end(); ++vit)
+        {
+          if (vit->in_dimension() == 2)
+          {
+            const Surface_index surf_i = surface_patch_index(vit, c3t3);
+
+            int fmls_id = current_subdomain_FMLS_indices[surf_i];
+
+            const Point_3& p = point(vit->point());
+
+            pns[fmls_id][6 * current_v_count[fmls_id]] = p.x();
+            pns[fmls_id][6 * current_v_count[fmls_id] + 1] = p.y();
+            pns[fmls_id][6 * current_v_count[fmls_id] + 2] = p.z();
+
+            const Vector_3& normal = vertices_normals[vit][surf_i];
+
+            pns[fmls_id][6 * current_v_count[fmls_id] + 3] = normal.x();
+            pns[fmls_id][6 * current_v_count[fmls_id] + 4] = normal.y();
+            pns[fmls_id][6 * current_v_count[fmls_id] + 5] = normal.z();
+
+            current_v_count[fmls_id]++;
+          }
+        }
+
+        typedef std::pair<Vertex_handle, Vertex_handle> Edge_vv;
+        typedef boost::unordered_map<Edge_vv, unsigned int> EdgeMapIndex;
+        if (upsample == 0)
+        {
+          EdgeMapIndex edgeMap;
+
+          for (typename C3t3::Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin();
+               fit != c3t3.facets_in_complex_end(); ++fit)
+          {
+            for (int i = 0; i < 2; i++)
+            {
+              for (int j = i + 1; j < 3; j++)
+              {
+                Edge edge(fit->first, indices(fit->second,i), indices(fit->second,j));
+
+                Vertex_handle vh0 = edge.first->vertex(edge.second);
+                Vertex_handle vh1 = edge.first->vertex(edge.third);
+                Edge_vv e = make_vertex_pair(vh0, vh1);
+                if ( vh0->in_dimension() == 2
+                  && vh1->in_dimension() == 2
+                  && edgeMap.find(e) == edgeMap.end())
+                {
+                  edgeMap[e] = 0;
+                  Surface_index surf_i = c3t3.surface_patch_index(*fit);
+                  int fmls_id = current_subdomain_FMLS_indices[surf_i];
+
+                  point_spacing[fmls_id] += CGAL::approximate_sqrt(
+                    CGAL::squared_distance(point(vh0->point()), point(vh1->point())));
+                  point_spacing_count[fmls_id] ++;
+                }
+              }
+            }
+          }
+        }
+
+//        if (upsample > 0) {
+//
+//          for (C3t3_with_info::Facet_iterator fit = c3t3_with_info.facets_begin(); fit != c3t3_with_info.facets_end(); ++fit) {
+//
+//            Surface_index surf_i = triangulated_domain.make_surface_index(fit->first->subdomain_index(),
+//              fit->first->neighbor(fit->second)->subdomain_index());
+//
+//            int fmls_id = current_subdomain_FMLS_indices[surf_i];
+//
+//            Vertex_handle vhs[3] = { fit->first->vertex(indices[fit->second][0]),
+//                                      fit->first->vertex(indices[fit->second][1]),
+//                                      fit->first->vertex(indices[fit->second][2]) };
+//            K::Vector_3 points[3] = { PointToVector(vhs[0]->point()), PointToVector(vhs[1]->point()), PointToVector(vhs[2]->point()) };
+//            K::Vector_3 normals[3] = { vertices_normals[vhs[0]->info()][surf_i], vertices_normals[vhs[1]->info()][surf_i], vertices_normals[vhs[2]->info()][surf_i] };
+//
+//            std::vector<K::Vector_3> points_to_add;
+//            std::vector<K::Vector_3> n_points_to_add;
+//
+//            //Add the barycenter of the facet
+//            K::Vector_3 barycenter = (points[0] + points[1] + points[2]) / 3.;
+//            K::Vector_3 n_barycenter = (normals[0] + normals[1] + normals[2]);
+//
+//            barycenter = (points[0] + points[1] + points[2]) / 3.;
+//            n_barycenter = (normals[0] + normals[1] + normals[2]);
+//
+//            n_barycenter = n_barycenter / CGAL::sqrt((n_barycenter * n_barycenter));
+//
+//            points_to_add.push_back(barycenter);
+//            n_points_to_add.push_back(n_barycenter);
+//
+//            if (upsample == 1) {
+//              for (int i = 0; i < 3; i++) {
+//                K::Vector_3 space_1 = barycenter - points[i];
+//
+//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
+//                point_spacing_count[fmls_id] ++;
+//              }
+//            }
+//            else if (upsample == 2) {
+//              for (int i = 0; i < 3; i++) {
+//
+//                int i1 = (i + 1) % 3;
+//                int i2 = (i + 2) % 3;
+//
+//                K::Vector_3 p = (barycenter + points[i1] + points[i2]) / 3.;
+//                K::Vector_3 n = (n_barycenter + normals[i1] + normals[i2]);
+//
+//                n = n / CGAL::sqrt(n * n);
+//
+//                points_to_add.push_back(p);
+//                n_points_to_add.push_back(n);
+//
+//                K::Vector_3 space_1 = p - barycenter;
+//                K::Vector_3 space_2 = p - points[i1];
+//                K::Vector_3 space_3 = p - points[i2];
+//
+//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
+//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_2 * space_2));
+//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_3 * space_3));
+//
+//                point_spacing_count[fmls_id] += 3;
+//              }
+//            }
+//            for (unsigned int i = 0; i < points_to_add.size(); i++) {
+//              K::Vector_3& point = points_to_add[i];
+//
+//              pns[fmls_id][6 * current_v_count[fmls_id]] = point.x();
+//              pns[fmls_id][6 * current_v_count[fmls_id] + 1] = point.y();
+//              pns[fmls_id][6 * current_v_count[fmls_id] + 2] = point.z();
+//
+//              K::Vector_3& normal = n_points_to_add[i];
+//
+//              pns[fmls_id][6 * current_v_count[fmls_id] + 3] = normal.x();
+//              pns[fmls_id][6 * current_v_count[fmls_id] + 4] = normal.y();
+//              pns[fmls_id][6 * current_v_count[fmls_id] + 5] = normal.z();
+//
+//              current_v_count[fmls_id]++;
+//            }
+//          }
+//        }
+
+
+        int nb_of_mls_to_create = 0;
+        double average_point_spacing = 0;
+
+        //Cretaing the actual MLS surfaces
+        for (typename SurfaceIndexMap::iterator it = current_subdomain_FMLS_indices.begin();
+             it != current_subdomain_FMLS_indices.end(); ++it)
+        {
+          if (current_v_count[it->second] > 3)
+          {
+            nb_of_mls_to_create++;
+
+            double current_point_spacing = point_spacing[it->second] / point_spacing_count[it->second];
+            point_spacing[it->second] = current_point_spacing;
+
+            average_point_spacing += current_point_spacing;
+          }
+        }
+
+        average_point_spacing = average_point_spacing / nb_of_mls_to_create;
+
+        subdomain_FMLS.resize(nb_of_mls_to_create, FMLS());
+
+        count = 0;
+        //Cretaing the actual MLS surfaces
+        for (typename SurfaceIndexMap::iterator it = current_subdomain_FMLS_indices.begin();
+             it != current_subdomain_FMLS_indices.end(); ++it)
+        {
+          if (current_v_count[it->second] > 3)
+          {
+            double current_point_spacing = point_spacing[it->second];
+
+            //subdomain_FMLS[count].toggleHermite(true);
+            subdomain_FMLS[count].setPN(pns[it->second], current_v_count[it->second], current_point_spacing);
+            //  subdomain_FMLS[count].toggleHermite(true);
+            subdomain_FMLS_indices[it->first] = count;
+
+            count++;
+          }
+          else {
+            std::cout << "Problem of number for MLS : " << current_v_count[it->second] << std::endl;
+          }
+        }
+      }
     }
   }
 }
