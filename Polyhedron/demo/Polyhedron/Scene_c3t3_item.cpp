@@ -1453,6 +1453,7 @@ void Scene_c3t3_item_priv::computeElements()
    }
   
   positions_poly.clear();
+  positions_grid.clear();
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
