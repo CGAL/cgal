@@ -40,7 +40,7 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
  * \brief computes the convex hull of the points associated to the vertices of `g`.
  * The polygon mesh `pm` is cleared, then
  * the convex hull is stored in `pm`. Note that the convex hull will be triangulated,
- * that is `pm` will contain only triangular facets.
+ * that is `pm` will contain only triangular faces.
  * if the convex hull is a point or a segment, endpoints will be added in `pm` as isolated vertices.
  * 
  * \tparam VertexListGraph a model of `VertexListGraph`.
