@@ -1640,9 +1640,22 @@ void remove_unused_polylines(
     halfedge_descriptor h = halfedge(v, tm), start=GT::null_halfedge();
 
     do{
+
+      halfedge_descriptor tmp_start = h;
       while ( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
+      {
         h = opposite(next(h, tm), tm);
+        if (tmp_start==h) break;
+      }
+      if( !is_border(h, tm) )
+      {
+        // nothing to do: the vertex has already been updated and is now in the middle of a patch kept.
+        // This function can be called after the stitching of the patches kept, the vertex halfedge
+        // can have been updated and no border halfedge might be found
+        break;
+      }
       halfedge_descriptor in = h;
+
       if (start==GT::null_halfedge())
         start=in;
       else
