@@ -32,6 +32,7 @@
 
 #include <boost/type_traits/is_same.hpp>
 
+#include <type_traits>
 
 namespace CGAL {
 
@@ -154,10 +155,12 @@ namespace CGAL {
     }
   };
 
-#define CGAL_IS_PMAP_WRITABLE(TAG) template<> \
-  struct Is_pmap_writable<TAG>{ typedef CGAL::Tag_true result; };
+#define CGAL_IS_PMAP_WRITABLE(TAG) template<typename IsRefConst> \
+  struct Is_pmap_writable<TAG, IsRefConst>{ typedef CGAL::Tag_true result; }; \
+  template<> \
+  struct Is_pmap_writable<TAG,std::integral_constant<bool, true> >{ typedef CGAL::Tag_false result; };
 
-  template<typename PMapCategory>
+  template<typename PMapCategory, typename IsRefConst>
   struct Is_pmap_writable{
     typedef CGAL::Tag_false result;
   };
@@ -189,7 +192,11 @@ namespace CGAL {
         typename Is_pmap_writable<
         typename boost::property_traits
         <typename boost::property_map<Mesh, Default_tag >
-        ::const_type>::category>::result>
+        ::const_type>::category,
+        typename boost::property_traits
+        <typename boost::property_map<Mesh, Default_tag >
+        ::const_type>::reference
+        >::result>
         ()(map, m);
     return map;
   }
