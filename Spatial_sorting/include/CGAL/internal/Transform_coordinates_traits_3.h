@@ -13,10 +13,10 @@
 #ifndef CGAL_INTERNAL_SCALE_COORDINATES_ADAPTOR_TRAITS_3_H
 #define CGAL_INTERNAL_SCALE_COORDINATES_ADAPTOR_TRAITS_3_H
 
-namespace CGAL { 
+namespace CGAL {
 
 namespace internal {
-	
+
 template <int x, int y, int z, int ord>
 struct Transform_constant_struct;
 
@@ -52,162 +52,162 @@ struct Coordinate_value_adaptor;
 
 template <class R>
 struct Coordinate_value_adaptor<R,0> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.y();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,1> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.y();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,2> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,3> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,4> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,5> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,6> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,7> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,8> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,9> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,10> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,11> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,12> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,13> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,14> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,15> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.x();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,16> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,17> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,18> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,19> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.z();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,20> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.y();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,21> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.y();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,22> {
-	static typename R::FT x(const typename R::Point_3& p) {return p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
 };
 
 template <class R>
 struct Coordinate_value_adaptor<R,23> {
-	static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
-	static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
+  static typename R::FT x(const typename R::Point_3& p) {return -p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return -p.y();}
 };
 
 template <class R, int opt>
 class Compute_x_2
 {
 public:
-  typedef typename R::Point_3     Point; 
+  typedef typename R::Point_3     Point;
   typename R::FT x(const Point &p) const { return Coordinate_value_adaptor<R,opt>::x(p); }
   typename R::FT operator()(const Point& p) const { return x(p); }
 };
 
 template <class R, int opt>
-class Compute_y_2 
+class Compute_y_2
 {
 public:
-  typedef typename R::Point_3     Point; 
+  typedef typename R::Point_3     Point;
   typename R::FT y(const Point &p) const { return Coordinate_value_adaptor<R,opt>::y(p); }
   typename R::FT operator()(const Point& p) const { return y(p); }
 };
@@ -216,7 +216,7 @@ template <class R, int opt>
 class Less_x_2
 {
 public:
-  typedef typename R::Point_3     Point; 
+  typedef typename R::Point_3     Point;
   typename R::FT x(const Point &p) const { return Coordinate_value_adaptor<R,opt>::x(p); }
   bool operator()(const Point& p, const Point& q) const { return x(p) < x(q); }
 };
@@ -225,34 +225,33 @@ template <class R, int opt>
 class Less_y_2
 {
 public:
-  typedef typename R::Point_3     Point; 
+  typedef typename R::Point_3     Point;
   typename R::FT y(const Point &p) const { return Coordinate_value_adaptor<R,opt>::y(p); }
   bool operator()(const Point& p, const Point& q) const { return y(p) < y(q); }
 };
 
 template <class R, int x, int y, int z, int ord>
 struct Transform_coordinates_traits_3 {
-	private:
-		enum {opt = Transform_constant_struct<x,y,z,ord>::value};
-	
-	public:
-		typedef Transform_coordinates_traits_3<R,x,y,z,ord>  	  		Traits;
-		typedef R                                               		Rp;
-		typedef typename Rp::Point_3                            		Point_2;
-		typedef Less_x_2<R,opt>        									Less_x;
-		typedef Less_y_2<R,opt>       									Less_y;
-		typedef Compute_x_2<R,opt>     									Compute_x;
-		typedef Compute_y_2<R,opt>     									Compute_y;
-		
-		Transform_coordinates_traits_3(){}
-		Transform_coordinates_traits_3(const Transform_coordinates_traits_3&){}
-				
-		Less_x less_x_2_object() const { return Less_x(); }
-		Less_y less_y_2_object() const { return Less_y(); }
-		Compute_x compute_x_2_object() const { return Compute_x(); }
-		Compute_y compute_y_2_object() const { return Compute_y(); }
+private:
+  enum {opt = Transform_constant_struct<x,y,z,ord>::value};
+
+public:
+  typedef Transform_coordinates_traits_3<R,x,y,z,ord>  Traits;
+  typedef R                                            Rp;
+  typedef typename Rp::Point_3                         Point_2;
+  typedef Less_x_2<R,opt>                              Less_x;
+  typedef Less_y_2<R,opt>                              Less_y;
+  typedef Compute_x_2<R,opt>                           Compute_x;
+  typedef Compute_y_2<R,opt>                           Compute_y;
+
+  Transform_coordinates_traits_3(){}
+  Transform_coordinates_traits_3(const Transform_coordinates_traits_3&){}
+
+  Less_x less_x_2_object() const { return Less_x(); }
+  Less_y less_y_2_object() const { return Less_y(); }
+  Compute_x compute_x_2_object() const { return Compute_x(); }
+  Compute_y compute_y_2_object() const { return Compute_y(); }
 };
-  
 
 } } //namespace CGAL::internal
 

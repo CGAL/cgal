@@ -25,6 +25,7 @@
 #include <CGAL/utility.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/number_type_config.h>
 
 #include <boost/type_traits/is_pointer.hpp>
 
@@ -394,7 +395,7 @@ public:
   Multiple_kd_tree(const Point_saved_pair_list & inp_points_list,
                    int inp_number_of_trees,
                    const Segment_list & seg_list) :
-    pi(3.1415), half_pi(1.57075),
+    pi(CGAL_PI), half_pi(0.5 * CGAL_PI),
     number_of_trees(inp_number_of_trees), input_points_list(inp_points_list)
   {
 
