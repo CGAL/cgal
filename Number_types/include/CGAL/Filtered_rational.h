@@ -414,17 +414,17 @@ public :
     }
 };
 
-namespace NTC_INTERN{
+namespace FR_INTERN{
 // -----------------------------
 
 // fwd
 template < typename Filtered_rational, typename Algebraic_category>
-class NTC_AST_base
+class FR_AST_base
     :public Algebraic_structure_traits_base< Filtered_rational , Null_tag>{
 };
 
 template < typename NT1, typename NT2>
-class NTC_AST_base
+class FR_AST_base
 < Filtered_rational<NT1, NT2> , Integral_domain_without_division_tag>
 :public Algebraic_structure_traits_base<Filtered_rational<NT1, NT2>, 
 Integral_domain_without_division_tag>
@@ -493,9 +493,9 @@ public:
 };
 
 template < typename NT1, typename NT2>
-class NTC_AST_base
+class FR_AST_base
       < Filtered_rational< NT1, NT2> , Integral_domain_tag >
-      :public  NTC_AST_base
+      :public  FR_AST_base
       < Filtered_rational< NT1, NT2> , Integral_domain_without_division_tag >
 {
 private:
@@ -544,9 +544,9 @@ public:
 
 
 template < typename NT1, typename NT2>
-class NTC_AST_base
+class FR_AST_base
 < Filtered_rational< NT1, NT2> , Unique_factorization_domain_tag >
-    :public  NTC_AST_base
+    :public  FR_AST_base
 < Filtered_rational< NT1, NT2> , Integral_domain_tag >
 {
 private:
@@ -572,9 +572,9 @@ public:
 };
 
 template < typename NT1, typename NT2>
-class NTC_AST_base
+class FR_AST_base
 < Filtered_rational< NT1, NT2> , Euclidean_ring_tag >
-    :public  NTC_AST_base
+    :public  FR_AST_base
 < Filtered_rational< NT1, NT2> , Unique_factorization_domain_tag >
 {
 private:
@@ -640,9 +640,9 @@ public:
 
 
 template < typename NT1, typename NT2>
-class NTC_AST_base
+class FR_AST_base
       < Filtered_rational< NT1, NT2> , Field_tag >
-      :public  NTC_AST_base
+      :public  FR_AST_base
       < Filtered_rational< NT1, NT2> , Integral_domain_tag >
 {
 private:
@@ -665,9 +665,9 @@ public:
 
 
 template < typename NT1, typename NT2>
-class NTC_AST_base
+class FR_AST_base
       < Filtered_rational< NT1, NT2> , Field_with_sqrt_tag >
-      :public  NTC_AST_base
+      :public  FR_AST_base
       < Filtered_rational< NT1, NT2> , Field_tag >
 {
 private:
@@ -692,12 +692,12 @@ public:
 };
 
 
-} // namespace NTC_INTERN
+} // namespace FR_INTERN
 
 
 template < typename NT1, typename NT2>
 class Algebraic_structure_traits <Filtered_rational<NT1, NT2> >
-  :public NTC_INTERN::NTC_AST_base< Filtered_rational< NT1, NT2> ,
+  :public FR_INTERN::FR_AST_base< Filtered_rational< NT1, NT2> ,
                                  typename Algebraic_structure_traits<NT2>::Algebraic_category >
 {
     typedef Algebraic_structure_traits<NT2> AST1;
@@ -709,16 +709,16 @@ public:
 };
 
 
-namespace NTC_INTERN{
+namespace FR_INTERN{
 template < typename Filtered_rational, typename Is_real_embeddable >
-class NTC_RET_base;
+class FR_RET_base;
 
 template < typename NT >
-class NTC_RET_base<NT,Tag_false> : public Real_embeddable_traits<NT>
+class FR_RET_base<NT,Tag_false> : public Real_embeddable_traits<NT>
 {};
 
 template < typename NT1, typename NT2>
-class NTC_RET_base
+class FR_RET_base
 < Filtered_rational<NT1, NT2> , Tag_true>
   :public INTERN_RET::Real_embeddable_traits_base< Filtered_rational< NT1, NT2> , CGAL::Tag_true >
 {
@@ -848,12 +848,12 @@ public:
     };
 };
 
-} // namespace NTC_INTERN
+} // namespace FR_INTERN
 
 template < typename NT1, typename NT2>
 class Real_embeddable_traits
 < Filtered_rational<NT1, NT2> >
-    :public NTC_INTERN::NTC_RET_base< Filtered_rational< NT1, NT2> ,
+    :public FR_INTERN::FR_RET_base< Filtered_rational< NT1, NT2> ,
       typename Real_embeddable_traits<NT1>::Is_real_embeddable >
 {
     typedef Real_embeddable_traits<NT1> RET1;
@@ -890,7 +890,7 @@ template < typename NT1, typename NT2>
 struct Coercion_traits< int , Filtered_rational<NT1,NT2> >
     :public Coercion_traits< Filtered_rational<NT1,NT2> , int >{};
 
-namespace NTC_INTERN {
+namespace FR_INTERN {
 
 
 template < typename NT_checker, typename Tag = Tag_false >
@@ -914,11 +914,11 @@ struct Coercion_traits_double< Filtered_rational<NT1,NT2> ,
          }
     };
 };
-} // namespace NTC_INTERN
+} // namespace FR_INTERN
 
 template < typename NT1, typename NT2>
 struct Coercion_traits< Filtered_rational<NT1,NT2>, double >
-    :public NTC_INTERN::Coercion_traits_double< Filtered_rational<NT1,NT2>,
+    :public FR_INTERN::Coercion_traits_double< Filtered_rational<NT1,NT2>,
             typename Coercion_traits<NT1,double>::Are_implicit_interoperable >
 {};
 
