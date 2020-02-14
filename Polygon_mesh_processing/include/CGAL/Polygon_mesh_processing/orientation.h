@@ -650,8 +650,9 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
 
 /*!
  * \ingroup PMP_orientation_grp
- * looks at connected components of `tm` having possibly compatible boundary cycles
- * that could be merged if the orientation of one patch was reversed, and merges them.
+ * reverses connected components of `tm` having compatible boundary cycles
+ * that could be merged if their orientation were reversed, and stitches them.
+ * Connected components are examined by increasing number of faces.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
  *                     If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,

@@ -37,7 +37,7 @@ namespace Polygon_mesh_processing {
 
 /*!
  * \ingroup PMP_orientation_grp
- * Duplicates each point \a p at which the intersection
+ * duplicates each point \a p at which the intersection
  * of an infinitesimally small ball centered at \a p
  * with the polygons incident to it is not a topological disk.
  *
@@ -78,7 +78,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
 
 /*!
  * \ingroup PMP_orientation_grp
- * Orients each triangle of a triangle soup using the orientation of its
+ * orients each triangle of a triangle soup using the orientation of its
  * closest non degenerate triangle in `tm_ref`.
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
                         Possible values are `Sequential_tag` (the default) and
@@ -86,11 +86,11 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
- * whose value_type is a model of the concept `RandomAccessContainer`
- * whose value_type is `std::size_t`and of size 3.
+ * whose `value_type` is a model of the concept `RandomAccessContainer`
+ * whose `value_type` is `std::size_t`and of size 3.
  * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
  *
- * \param tm_ref the reference TriangleMesh.
+ * \param tm_ref the reference triangle_mesh.
  * \param points the points of the soup.
  * \param triangles the triangles of the soup.
  * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
@@ -99,7 +99,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
  *     If this parameter is omitted, an internal property map for
- *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
+ *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{geom_traits} a geometric traits class instance.
  *      The traits class must provide the nested functor `Collinear_3`
