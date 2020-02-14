@@ -128,7 +128,7 @@ public:
   
  private:
   
-  Data* ptr() const { return (Data*)(PTR);  }
+  Data* ptr() const { return (Data*)(PTR.p);  }
 	
 	
 #ifndef CGAL_TD_DEBUG
@@ -161,7 +161,7 @@ public:
   /*! Constructor given Vertex & Halfedge handles. */
   Td_inactive_edge (boost::shared_ptr<X_monotone_curve_2>& cv, Dag_node* node = nullptr)
   {
-    PTR = new Data(cv,node);
+    PTR.p = new Data(cv,node);
   }
   
   /*! Copy constructor. */
@@ -215,7 +215,7 @@ public:
   /*! Access the trapezoid id (PTR). */
   inline unsigned long id() const
   {
-    return (unsigned long) PTR;
+    return (unsigned long) PTR.p;
   }
 
   inline X_monotone_curve_2& curve() const  
