@@ -133,7 +133,10 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   // Try to read .off in a surface_mesh
   SMesh *surface_mesh = new SMesh();
   try{
-    in >> *surface_mesh;
+    if(!(in >> *surface_mesh))
+    {
+      surface_mesh->clear();
+    }
   } catch(...)
   {
     surface_mesh->clear();

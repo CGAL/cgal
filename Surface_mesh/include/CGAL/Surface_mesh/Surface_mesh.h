@@ -2415,6 +2415,7 @@ private: //------------------------------------------------------- private data
       is.setstate(std::ios::failbit);
       return false;
     }
+    is >> sm_skip_comments;
     is >> n >> f >> e;
     if(!is){
       return false;
@@ -2432,12 +2433,14 @@ private: //------------------------------------------------------- private data
       boost::tie(vnormal, created) = sm.template add_property_map<Vertex_index,Vector_3>("v:normal",Vector_3(0,0,0));
       v_has_normals = true;
     }
+    std::string line;
     char ci;
-
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
+      std::getline(is, line);
+      std::istringstream iss(line);
       double x, y, z;
-      is >> iformat(x) >> iformat(y) >> iformat(z);
+      iss >> iformat(x) >> iformat(y) >> iformat(z);
       
       Vertex_index vi = sm.add_vertex();
       put(vpm, vi, P(x, y, z));
@@ -2445,26 +2448,37 @@ private: //------------------------------------------------------- private data
       
       vertexmap[i] = vi;
       if(v_has_normals){
-        is >> v;
+        if(!(iss >> v))
+        {
+          std::cerr<<"This doesn't seem to be a correct NOFF file. Aborting."<<std::endl;
+          is.setstate(std::ios::failbit);          
+          return false;
+        }
         vnormal[vi] = v;
       }
 
 
       if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
         std::string col;
-        std::getline(is, col);
-        std::istringstream iss(col);
-        if(iss >> ci){
+        std::getline(iss, col);
+        std::istringstream iss2(col);
+        if(iss2 >> ci){
          bool created;
          boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
-         std::istringstream iss2(col);
-         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss2);
+         std::istringstream iss3(col);
+         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss3);
          vcolored = true;
+        }
+        else
+        {
+          std::cerr<<"This doesn't seem to be a correct COFF file. Aborting."<<std::endl;
+          is.setstate(std::ios::failbit);
+          return false;
         }
       }else{
          if(vcolored){
            //stores the RGB value
-           vcolor[vi] = File_scanner_OFF::get_color_from_line(is);
+           vcolor[vi] = File_scanner_OFF::get_color_from_line(iss);
          }
        }
     }
