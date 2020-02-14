@@ -891,11 +891,11 @@ endif()
 
 foreach (dir ${CGAL_CONFIGURED_PACKAGES})
   if (EXISTS ${dir}/include/CGAL) 
-    install(DIRECTORY ${dir}/include/CGAL              DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+    install(DIRECTORY ${dir}/include/CGAL              DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE PATTERN "Qt" EXCLUDE)
   endif()
 endforeach()
 if(EXISTS ${CMAKE_BINARY_DIR}/include/CGAL)
-  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE)
+  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/CGAL     DESTINATION ${CGAL_INSTALL_INC_DIR} PATTERN ".svn" EXCLUDE PATTERN "Qt" EXCLUDE)
 endif()
 
 file(GLOB scripts "scripts/*")
