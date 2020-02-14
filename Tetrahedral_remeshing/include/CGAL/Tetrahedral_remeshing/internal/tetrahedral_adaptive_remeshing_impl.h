@@ -223,8 +223,7 @@ namespace internal
 
     void smooth()
     {
-      smooth_vertices_new(m_c3t3, -1, m_protect_boundaries,
-                      m_cell_selector);
+      smooth_vertices(m_c3t3, m_protect_boundaries, m_cell_selector);
 
       CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS
@@ -510,7 +509,7 @@ private:
           collapse();
         }
         flip();
-//        smooth();
+        smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << "# Iteration " << it_nb << " done : "
@@ -530,7 +529,7 @@ private:
         ++it_nb;
 
         flip();
-        //      smooth();
+        smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "
