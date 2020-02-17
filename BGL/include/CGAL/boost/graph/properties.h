@@ -22,6 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <string>
+#include <set>
 
 namespace CGAL{
 /// \ingroup PkgBGLProperties
