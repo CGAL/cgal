@@ -2,10 +2,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 
-#include <vector>
-
 typedef CGAL::Exact_predicates_exact_constructions_kernel                 K;
-typedef CGAL::Polygon_2<K>                                                Polygon_2;
 typedef CGAL::Constrained_Delaunay_triangulation_2<K>                     CDT;
 typedef CGAL::Constrained_triangulation_plus_2<CDT>                       CDTP;
 

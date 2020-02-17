@@ -294,8 +294,17 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
 
 
 /*! 
-splits into polylines the graph `g` at vertices of degree greater than 2
-and at vertices for which `is_terminal(v)==true`.
+splits into constraints the graph of subconstraints.
+
+Consider the graph `g={V,E}` where `V` is the set of vertices of the
+triangulation and `E` is the set of all subconstraints of all
+constraints of the triangulation.
+
+This function splits into polylines the graph `g` at vertices of
+degree greater than 2 and at vertices for which
+`is_terminal(v)==true`.
+
+Each computed polyline is stored as a constraint of the triangulation.
 
 \warning all existing constraints will be discarded.
 
