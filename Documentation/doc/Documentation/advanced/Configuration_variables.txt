@@ -85,6 +85,7 @@ and will serverly limit performances.
 | Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
+| `Qt5_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
 
 
 \subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
@@ -299,6 +300,20 @@ environment variable is sufficient.
 | `ESBTL_DIR` | Directory of \sc{ESBTL} default installation | Environment |
 | `ESBTL_INC_DIR` | Directory containing the `ESBTL/default.h` file | Environment |
 | `ESBTL_INCLUDE_DIR` | Directory containing the `ESBTL/default.h` file | CMake |
+
+\subsection installation_metis METIS Library
+
+Some BGL examples require the \sc{Metis} library in order to partition \sc{Metis} meshes.
+
+If \sc{Metis} is not automatically found, setting the `METIS_INCLUDE_DIR` and `METIS_LIBRARY`
+cmake variables is necessary.
+
+
+| Variable             | Description           | Type        |
+| :-                   | :-                    | :-             |
+| `METIS_INCLUDE_DIR` | Directory of \sc{Metis} default installation | CMAKE |
+| `METIS_LIBRARY` | Directory containing the `libmetis.so or .lib` file | CMAKE |
+
 
 \subsection installation_tbb TBB Library
 
