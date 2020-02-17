@@ -28,9 +28,14 @@ qt5_wrap_ui( mesh_simplificationUI_FILES  Mesh_simplification_dialog.ui)
 polyhedron_demo_plugin(mesh_simplification_plugin Mesh_simplification_plugin ${mesh_simplificationUI_FILES})
 target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
-qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
-polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
-target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item Threads::Threads)
+find_package(Threads)
+if(Threads_FOUND)
+  qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
+  polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
+  target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item Threads::Threads)
+else()
+  message("NOTICE : The Offset_meshing_plugin needs pthreads and will not be compiled")
+endif() #Threads_FOUND
 
 if(TBB_FOUND)
   CGAL_target_use_TBB(offset_meshing_plugin)
