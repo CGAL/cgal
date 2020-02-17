@@ -16,6 +16,7 @@
 
 #include <CGAL/Surface_mesh_simplification/internal/Common.h>
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_profile.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Bounded_distance_placement.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
 
