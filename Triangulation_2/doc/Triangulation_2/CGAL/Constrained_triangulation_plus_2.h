@@ -294,6 +294,13 @@ std::size_t insert_constraints(PointIterator points_first, PointIterator points_
 
 
 /*! 
+splits into constraints the subconstraint graph g at vertices of degree greater than 2.
+
+\warning all existing constraints will be discarded.
+*/ 
+void split_subconstraint_graph_into_constraints();
+  
+/*! 
 removes the constraint `cid`, without removing the points from the triangulation.
 */ 
 void remove_constraint(Constraint_id cid); 
