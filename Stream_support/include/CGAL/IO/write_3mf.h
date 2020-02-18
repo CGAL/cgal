@@ -359,6 +359,8 @@ bool write_polyline_to_model(const PointRange& points,
  *  soups in `file_name`.
  * \param names will contains the name of each mesh in `file_name`.
  * \return `true` if the writing is successful, `false` otherwise.
+ * 
+ * \attention Versions superior to 2.0 of lib3mf are not supported.
  */
 template<typename PointRanges, typename PolygonRanges>
 bool write_triangle_soups_to_3mf(const std::string& file_name,
@@ -406,6 +408,8 @@ bool write_triangle_soups_to_3mf(const std::string& file_name,
  * must be available for each mesh.
  * \param names will contains the name of each mesh in `file_name`.
  * \return `true` if the writing is successful, `false` otherwise.
+ *
+ * \attention Versions superior to 2.0 of lib3mf are not supported.
  */
 template<typename TriangleMeshRange>
 bool write_triangle_meshes_to_3mf(const std::string& file_name,
