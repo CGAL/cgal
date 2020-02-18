@@ -37,8 +37,8 @@ void mesh_with_id(const char* argv1, const bool save_output)
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
 
   boost::vector_property_map<int,
-    boost::property_map<Mesh_with_id, boost::face_index_t>::type>
-      fccmap(get(boost::face_index,sm));
+    boost::property_map<Mesh_with_id, CGAL::face_index_t>::type>
+      fccmap(get(CGAL::face_index,sm));
 
   std::size_t num = PMP::connected_components(sm, fccmap);
   if (strcmp(argv1, "data/blobby_3cc.off") == 0)

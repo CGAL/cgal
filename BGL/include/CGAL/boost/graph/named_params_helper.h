@@ -116,44 +116,48 @@ namespace CGAL {
 
   namespace internal_np
   {
-  template<typename key_value, class PMap, class Graph, typename Tag>
-  struct Index_map_initializer{
-    void operator()(PMap, const Graph& )
-    {}
-  };
 
+  //cases the map is writable for vertices
   template< class PMap, class Graph>
-  struct Index_map_initializer<
-      typename boost::graph_traits<Graph>::vertex_descriptor,
-      PMap, Graph,
-      CGAL::Tag_true>{
-    void operator()(PMap map, const Graph& g)
-    {
-      CGAL::helpers::init_vertex_indices(g, map);
-    }
-  };
-
+  void initialize_index_map(PMap map, const Graph& g, const boost::vertex_index_t&, const CGAL::Tag_true&)
+  {
+    CGAL::helpers::init_vertex_indices(g, map);
+  }
+  
+  template< class PMap, class Graph, typename T>
+  void initialize_index_map(PMap map, const Graph& g, const CGAL::dynamic_vertex_property_t<T>&, const CGAL::Tag_true&)
+  {
+    CGAL::helpers::init_vertex_indices(g, map);
+  }
+  
+  //cases the map is writable for halfedges
   template< class PMap, class Graph>
-  struct Index_map_initializer<
-      typename boost::graph_traits<Graph>::halfedge_descriptor,
-      PMap, Graph,
-      CGAL::Tag_true>{
-    void operator()(PMap map, const Graph& g)
-    {
-      CGAL::helpers::init_halfedge_indices(g, map);
-    }
-  };
-
+  void initialize_index_map(PMap map, const Graph& g, const boost::halfedge_index_t&, const CGAL::Tag_true&)
+  {
+    CGAL::helpers::init_halfedge_indices(g, map);
+  }
+  
+  template< class PMap, class Graph, typename T>
+  void initialize_index_map(PMap map, const Graph& g, const  CGAL::dynamic_halfedge_property_t<T>&&, const CGAL::Tag_true&)
+  {
+    CGAL::helpers::init_halfedge_indices(g, map);
+  }
+  //cases the map is writable for faces
   template< class PMap, class Graph>
-  struct Index_map_initializer<
-      typename boost::graph_traits<Graph>::face_descriptor,
-      PMap, Graph,
-      CGAL::Tag_true>{
-    void operator()(PMap map,const Graph& g)
-    {
-      CGAL::helpers::init_face_indices(g, map);
-    }
-  };
+  void initialize_index_map(PMap map, const Graph& g, const boost::face_index_t&, const CGAL::Tag_true&)
+  {
+    CGAL::helpers::init_face_indices(g, map);
+  }
+  template< class PMap, class Graph, typename T>
+  void initialize_index_map(PMap map, const Graph& g, const CGAL::dynamic_face_property_t<T>&, const CGAL::Tag_true&)
+  {
+    CGAL::helpers::init_face_indices(g, map);
+  }
+  
+  //default case : don't do anything
+  template<typename SimplexTag, class PMap, class Graph, typename IsWritableTag>
+  void initialize_index_map(PMap, const Graph&, const SimplexTag& t, const IsWritableTag& w)
+  {}
 
   
 #define CGAL_IS_PMAP_WRITABLE(TAG) template<typename IsRefConst> \
@@ -196,15 +200,9 @@ namespace CGAL {
         ::const_type>::reference Reference;
     
     Map_const_type map = get(t, m);
-    Index_map_initializer<
-        Key_type,
-        Map_const_type,
-        Mesh,
-        typename Is_pmap_writable<
-        Category,
-        std::is_const<Reference> >::result
-        >
-        ()(map, m);
+    typename Is_pmap_writable<Category,
+        std::is_const<Reference> >::result is_writable;
+    initialize_index_map(map, m, t,is_writable);
     return map;
   }
 
@@ -215,9 +213,7 @@ namespace CGAL {
   {
     typedef typename boost::property_map<Mesh, Dynamic_tag >::const_type Map_const_type;
     Map_const_type map = get(t,m);
-    Index_map_initializer<
-        typename boost::property_traits<Map_const_type>::key_type,
-        Map_const_type, Mesh, CGAL::Tag_true>()(map, m);
+    initialize_index_map(map, m, t, CGAL::Tag_true());
     return map;
   }
 
