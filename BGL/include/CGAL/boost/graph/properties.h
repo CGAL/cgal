@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <string>
-#include <set>
+#include <vector>
 
 namespace CGAL{
 /// \ingroup PkgBGLProperties
@@ -116,62 +116,24 @@ namespace CGAL{
 namespace helpers {
 
 //check that an existing map is initialized/valid
-template <class PolygonMesh, class FaceIndexMap>
-bool is_face_index_map_valid(PolygonMesh& pm,
-                               FaceIndexMap& fid)
+template <class SimplexRange, class IndexMap>
+bool is_index_map_valid(typename boost::property_traits<IndexMap>::value_type max_id,
+                        const SimplexRange& range,
+                        const IndexMap& idmap)
 {
-  typedef typename boost::property_traits<FaceIndexMap>::value_type Id_type;
-  const std::size_t num_f = num_faces(pm);
-  std::set<Id_type> indices;
-  for(typename boost::graph_traits<PolygonMesh>::face_descriptor fd :
-                faces(pm))
+  typedef typename boost::property_traits<IndexMap>::value_type Id_type;
+  std::vector<bool> indices(max_id + 1);
+  for(const auto& simplex : range)
   {
-    Id_type id = get(fid, fd);
-    if(static_cast<std::size_t>(id) >=static_cast<std::size_t>(num_f)) //also covers the case where the id is < 0 as size_t(-1) = max_int or smthg.
-      return false;
-    if(!indices.insert(id).second)
+    Id_type id = get(idmap, simplex);
+    if( id >= 0 && id <= max_id && ! indices[id])
+      indices[id] = true;
+    else
       return false;
   }
   return true;
 }
 
-template <class PolygonMesh, class HalfedgeIndexMap>
-bool is_halfedge_index_map_valid(PolygonMesh& pm,
-                               HalfedgeIndexMap& fid)
-{
-  typedef typename boost::property_traits<HalfedgeIndexMap>::value_type Id_type;
-  const std::size_t num_hd = num_halfedges(pm);
-  std::set<Id_type> indices;
-  for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
-                halfedges(pm))
-  {
-    Id_type id = get(fid, hd);
-    if(static_cast<std::size_t>(id) >=static_cast<std::size_t>(num_hd)) //also covers the case where the id is < 0 as size_t(-1) = max_int or smthg.
-      return false;
-    if(!indices.insert(id).second)
-      return false;
-  }
-  return true;
-}
-
-template <class PolygonMesh, class VertexIndexMap>
-bool is_vertex_index_map_valid(PolygonMesh& pm,
-                               VertexIndexMap& fid)
-{
-  typedef typename boost::property_traits<VertexIndexMap>::value_type Id_type;
-  const std::size_t num_v= num_vertices(pm);
-  std::set<Id_type> indices;
-  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
-                vertices(pm))
-  {
-    Id_type id = get(fid, vd);
-    if(static_cast<std::size_t>(id) >=static_cast<std::size_t>(num_v)) //also covers the case where the id is < 0 as size_t(-1) = max_int or smthg.
-      return false;
-    if(!indices.insert(id).second)
-      return false;
-  }
-  return true;
-}
 
 // matches read-write property maps
 template <class PolygonMesh, class FaceIndexMap, class Tag>
@@ -180,7 +142,7 @@ void init_face_indices(PolygonMesh& pm,
                        boost::read_write_property_map_tag,
                        Tag)
 {
-  if(is_face_index_map_valid(pm, fid))
+  if(is_index_map_valid(num_faces(pm), faces(pm), fid))
     return;
   typename boost::property_traits<FaceIndexMap>::value_type i = 0;
   for(typename boost::graph_traits<PolygonMesh>::face_descriptor fd :
@@ -196,7 +158,7 @@ void init_vertex_indices(PolygonMesh& pm,
                          boost::read_write_property_map_tag,
                          Tag)
 {
-  if(is_vertex_index_map_valid(pm, vid))
+  if(is_index_map_valid(num_vertices(pm), vertices(pm), vid))
     return;
   typename boost::property_traits<VertexIndexMap>::value_type i = 0;
   for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
@@ -212,7 +174,7 @@ void init_halfedge_indices(PolygonMesh& pm,
                            boost::read_write_property_map_tag,
                            Tag)
 {
-  if(is_halfedge_index_map_valid(pm, hid))
+  if(is_index_map_valid(num_halfedges(pm), halfedges(pm), hid))
     return;
   typename boost::property_traits<HalfedgeIndexMap>::value_type i = 0;
   for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :

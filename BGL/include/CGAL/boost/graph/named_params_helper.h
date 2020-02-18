@@ -155,16 +155,19 @@ namespace CGAL {
     }
   };
 
+  
 #define CGAL_IS_PMAP_WRITABLE(TAG) template<typename IsRefConst> \
   struct Is_pmap_writable<TAG, IsRefConst>{ typedef CGAL::Tag_true result; }; \
-  template<> \
+  template<> \ //if ref is const, then return false
   struct Is_pmap_writable<TAG,std::integral_constant<bool, true> >{ typedef CGAL::Tag_false result; };
 
+  //Default is false
   template<typename PMapCategory, typename IsRefConst>
   struct Is_pmap_writable{
     typedef CGAL::Tag_false result;
   };
 
+  //Pmaps with these tags will be considered writabl, unless their reference is const
   CGAL_IS_PMAP_WRITABLE(boost::read_write_property_map_tag)
   CGAL_IS_PMAP_WRITABLE(boost::writable_property_map_tag)
   CGAL_IS_PMAP_WRITABLE(boost::lvalue_property_map_tag)
@@ -193,9 +196,10 @@ namespace CGAL {
         typename boost::property_traits
         <typename boost::property_map<Mesh, Default_tag >
         ::const_type>::category,
+        std::is_const<
         typename boost::property_traits
         <typename boost::property_map<Mesh, Default_tag >
-        ::const_type>::reference
+        ::const_type>::reference>
         >::result>
         ()(map, m);
     return map;
