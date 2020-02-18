@@ -158,7 +158,7 @@ namespace CGAL {
   
 #define CGAL_IS_PMAP_WRITABLE(TAG) template<typename IsRefConst> \
   struct Is_pmap_writable<TAG, IsRefConst>{ typedef CGAL::Tag_true result; }; \
-  template<> \ //if ref is const, then return false
+  template<> \
   struct Is_pmap_writable<TAG,std::integral_constant<bool, true> >{ typedef CGAL::Tag_false result; };
 
   //Default is false
@@ -167,7 +167,7 @@ namespace CGAL {
     typedef CGAL::Tag_false result;
   };
 
-  //Pmaps with these tags will be considered writabl, unless their reference is const
+  //Pmaps with these tags will be considered writable, unless their reference is const
   CGAL_IS_PMAP_WRITABLE(boost::read_write_property_map_tag)
   CGAL_IS_PMAP_WRITABLE(boost::writable_property_map_tag)
   CGAL_IS_PMAP_WRITABLE(boost::lvalue_property_map_tag)
@@ -187,20 +187,23 @@ namespace CGAL {
   typename boost::property_map<Mesh, Default_tag >::const_type
   get_ndi_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m)
   {
-    typename boost::property_map<Mesh, Default_tag >::const_type map = get(t, m);
+    typedef typename boost::property_map<Mesh, Default_tag >::const_type Map_const_type;
+    typedef typename boost::property_traits<Map_const_type>::key_type Key_type;
+    typedef typename boost::property_traits
+        <typename boost::property_map<Mesh, Default_tag >
+        ::const_type>::category Category;
+    typedef typename boost::property_traits<typename boost::property_map<Mesh, Default_tag >
+        ::const_type>::reference Reference;
+    
+    Map_const_type map = get(t, m);
     Index_map_initializer<
-        typename boost::property_traits<typename boost::property_map<Mesh, Default_tag >::const_type>::key_type,
-        typename boost::property_map<Mesh, Default_tag >::const_type,
+        Key_type,
+        Map_const_type,
         Mesh,
         typename Is_pmap_writable<
-        typename boost::property_traits
-        <typename boost::property_map<Mesh, Default_tag >
-        ::const_type>::category,
-        std::is_const<
-        typename boost::property_traits
-        <typename boost::property_map<Mesh, Default_tag >
-        ::const_type>::reference>
-        >::result>
+        Category,
+        std::is_const<Reference> >::result
+        >
         ()(map, m);
     return map;
   }
@@ -210,12 +213,11 @@ namespace CGAL {
   typename boost::property_map<Mesh, Dynamic_tag >::const_type
   get_ndi_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m)
   {
-    typename boost::property_map<Mesh, Dynamic_tag >::const_type map = get(t,m);
+    typedef typename boost::property_map<Mesh, Dynamic_tag >::const_type Map_const_type;
+    Map_const_type map = get(t,m);
     Index_map_initializer<
-        typename boost::property_traits<typename boost::property_map<Mesh, Dynamic_tag >::const_type>::key_type,
-        typename boost::property_map<Mesh, Dynamic_tag >::const_type,
-        Mesh,
-        CGAL::Tag_true>()(map, m);
+        typename boost::property_traits<Map_const_type>::key_type,
+        Map_const_type, Mesh, CGAL::Tag_true>()(map, m);
     return map;
   }
 
