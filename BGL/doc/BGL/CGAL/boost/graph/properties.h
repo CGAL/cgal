@@ -34,6 +34,7 @@ enum face_index_t { face_index };
 /// \cgalModels <a href="https://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>
 enum vertex_point_t { vertex_point };
 
+/// @}
 /// \ingroup PkgBGLPropertiesDynamic
 /// Dynamic vertex property tag
 /// \tparam T the value type of the vertex property
