@@ -1,5 +1,5 @@
-/// Boost Namespace
-namespace boost {
+/// CGAL Namespace
+namespace CGAL {
 
 /// \ingroup PkgBGLProperties
 /// @{
@@ -33,15 +33,6 @@ enum face_index_t { face_index };
 /// This is a property tag introduced by \cgal.
 /// \cgalModels <a href="https://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>
 enum vertex_point_t { vertex_point };
-
-
-/// @}
-} // namespace boost
-
-namespace CGAL {
-
-
-/// @{
 
 /// \ingroup PkgBGLPropertiesDynamic
 /// Dynamic vertex property tag
