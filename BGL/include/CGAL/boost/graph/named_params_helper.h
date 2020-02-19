@@ -225,7 +225,7 @@ namespace CGAL {
   //struct Default_face_index_map
   //struct Default_vertex_index_map
   //struct Default_halfedge_index_map
-#define CGAL_DEF_MAP_TYPE(TYPE)                                    \
+#define CGAL_DEF_MAP_TYPE(TYPE)                               \
   template<typename NP, typename TM>                          \
   struct Default_##TYPE##_index_map{                          \
   typedef typename boost::mpl::if_c<                          \
@@ -234,7 +234,7 @@ namespace CGAL {
   , CGAL::dynamic_##TYPE##_property_t<int>                    \
   >::type Final_tag;                                          \
   typedef typename internal_np::Lookup_named_param_def<       \
-  internal_np::TYPE##_index_t,                                  \
+  internal_np::TYPE##_index_t,                                \
   NP,                                                         \
   typename boost::property_map<TM, Final_tag >::const_type    \
   > ::type  type;                                             \
