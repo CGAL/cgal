@@ -17,6 +17,8 @@
 #include <CGAL/boost/graph/internal/graph_traits_2D_triangulation_helper.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 
+#include <CGAL/property_map.h>
+
 namespace CGAL
 {
 
