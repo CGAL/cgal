@@ -14,7 +14,8 @@
 
 namespace CGAL {
 namespace Total {
-namespace internal{
+namespace internal {
+
 //To avoid "fopen may be unsafe" on Visual.
 bool open_file(FILE **fin, const char* filename)
 {
@@ -25,7 +26,9 @@ bool open_file(FILE **fin, const char* filename)
   return (fin != NULL);
 #endif
 }
-} //end internal
+
+} // namespace internal
+
 void permuteLong(char *a)
 {
     char tmp;
