@@ -230,8 +230,43 @@ namespace CGAL {
       > ::type  type;
   };
 
-  namespace Point_set_processing_3
+  namespace internal {
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
+  }
+
+  template<typename PointRange, typename NamedParameters,
+           bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value>
+  class GetPointMap
   {
+    typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
+    typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
+
+  public:
+    typedef typename internal_np::Lookup_named_param_def<
+    internal_np::point_t,
+    NamedParameters,
+    DefaultPMap
+    > ::type  type;
+
+    typedef typename internal_np::Lookup_named_param_def<
+    internal_np::point_t,
+    NamedParameters,
+    DefaultPMap
+    > ::type  const_type;
+  };
+
+  // to please compiler instantiating non valid overloads
+  template<typename PointRange, typename NamedParameters>
+  class GetPointMap<PointRange, NamedParameters, false>
+  {
+    struct Dummy_point{};
+  public:
+    typedef typename CGAL::Identity_property_map<Dummy_point> type;
+    typedef typename CGAL::Identity_property_map<Dummy_point> const_type;
+  };
+
+  namespace Point_set_processing_3 {
+
     template <typename ValueType>
     struct Fake_point_range
     {
@@ -254,41 +289,6 @@ namespace CGAL {
         return CGAL::parameters::all_default();
       }
     }
-
-    namespace internal{
-      BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
-    }
-    
-    template<typename PointRange, typename NamedParameters,
-             bool has_nested_iterator=internal::Has_nested_type_iterator<PointRange>::value>
-    class GetPointMap
-    {
-      typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Point;
-      typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
-
-    public:
-      typedef typename internal_np::Lookup_named_param_def<
-      internal_np::point_t,
-      NamedParameters,
-      DefaultPMap
-      > ::type  type;
-
-      typedef typename internal_np::Lookup_named_param_def<
-      internal_np::point_t,
-      NamedParameters,
-      DefaultPMap
-      > ::type  const_type;
-    };
-
-    // to please compiler instantiating non valid overloads
-    template<typename PointRange, typename NamedParameters>
-    class GetPointMap<PointRange, NamedParameters, false>
-    {
-      struct Dummy_point{};
-    public:
-      typedef typename CGAL::Identity_property_map<Dummy_point> type;
-      typedef typename CGAL::Identity_property_map<Dummy_point> const_type;
-    };
 
     template<typename PointRange>
     class GetFT

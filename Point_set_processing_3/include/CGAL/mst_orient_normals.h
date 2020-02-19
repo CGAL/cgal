@@ -610,7 +610,7 @@ mst_orient_normals(
 
     CGAL_TRACE("Calls mst_orient_normals()\n");
 
-    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
     typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
     typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
     typedef typename Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::type ConstrainedMap;
