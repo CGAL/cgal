@@ -1,7 +1,12 @@
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/properties_Polyhedron_3.h>
+
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/IO/OFF_reader.h>
@@ -34,28 +39,45 @@ void test_polygon_soup(std::string fname, bool expected)
     exit(EXIT_FAILURE);
   }
 
-
   bool is_mesh = CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons);
   std::cout << "is_polygon_soup_a_polygon_mesh(" << fname << ") == "
             << std::boolalpha << is_mesh << ";" << std::endl;
   assert(is_mesh == expected);
 
-  if(is_mesh) {
+  if(is_mesh)
+  {
     Polyhedron p;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, p);
-    assert(p.is_valid());
+
+    // just to test the named paramers
+    typedef std::pair<typename K::Point_3, bool>                  Point_with_Boolean;
+    std::vector<Point_with_Boolean> points_with_pairs;
+    for(const typename K::Point_3& pt : points)
+      points_with_pairs.emplace_back(pt, false);
+
+    typedef typename CGAL::GetVertexPointMap<Polyhedron>::type    VPM;
+    VPM vpm = get_property_map(CGAL::vertex_point, p);
+
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
+          points_with_pairs, polygons, p,
+          CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Point_with_Boolean>()),
+          CGAL::parameters::vertex_point_map(vpm));
+
+    std::cout << num_vertices(p) << " nv and " << num_faces(p) << " nf" << std::endl;
+    assert(!CGAL::is_empty(p) && CGAL::is_valid_polygon_mesh(p));
   }
 
-  if(!expected) {
+  if(!expected)
+  {
     CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
     bool is_mesh = CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons);
     std::cout << "After orientation: is_polygon_soup_a_polygon_mesh(" << fname << ") == "
               << std::boolalpha << is_mesh << ";" << std::endl;
     if(is_mesh)
     {
-    Polyhedron p;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, p);
-    assert(p.is_valid());
+      Polyhedron p;
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, p);
+      std::cout << num_vertices(p) << " nv and " << num_faces(p) << " nf" << std::endl;
+      assert(!CGAL::is_empty(p) && CGAL::is_valid_polygon_mesh(p));
     }
   }
 
