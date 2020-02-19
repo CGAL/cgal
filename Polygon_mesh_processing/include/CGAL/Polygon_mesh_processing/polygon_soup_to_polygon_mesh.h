@@ -15,8 +15,6 @@
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
-#include <CGAL/disable_warnings.h>
-
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
 #include <CGAL/algorithm.h>
@@ -38,19 +36,20 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
 
-template <typename PM
-        , typename PointRange
-        , typename PolygonRange>
+template <typename PolygonMesh,
+          typename PointRange,
+          typename PolygonRange>
 class Polygon_soup_to_polygon_mesh
 {
   const PointRange& _points;
   const PolygonRange& _polygons;
 
-  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
-  typedef typename PolygonRange::value_type Polygon;
-  typedef typename PointRange::value_type Point;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor  halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
+
+  typedef typename PolygonRange::value_type                               Polygon;
+  typedef typename PointRange::value_type                                 Point;
 
 public:
   /**
@@ -64,57 +63,59 @@ public:
       _polygons(polygons)
   { }
 
-  template <class Vpmap>
-  void operator()(PM& pmesh, Vpmap vpmap, const bool insert_isolated_vertices = true)
+  template <class VPM>
+  void operator()(PM& pmesh,
+                  VPM vpm,
+                  const bool insert_isolated_vertices = true)
   {
-    typedef typename boost::property_traits<Vpmap>::value_type Point_3;
+    typedef typename boost::property_traits<VPM>::value_type              Point_3;
 
     reserve(pmesh, static_cast<typename boost::graph_traits<PM>::vertices_size_type>(_points.size()),
                    static_cast<typename boost::graph_traits<PM>::edges_size_type>(2*_polygons.size()),
-                   static_cast<typename boost::graph_traits<PM>::faces_size_type>(_polygons.size()) );
+                   static_cast<typename boost::graph_traits<PM>::faces_size_type>(_polygons.size()));
 
     boost::dynamic_bitset<> not_isolated;
-    if (!insert_isolated_vertices)
+    if(!insert_isolated_vertices)
     {
       not_isolated.resize(_points.size());
-      for (std::size_t i = 0, end = _polygons.size(); i < end; ++i)
+      for(std::size_t i = 0, end = _polygons.size(); i < end; ++i)
       {
         const Polygon& polygon = _polygons[i];
         const std::size_t size = polygon.size();
-        for (std::size_t j = 0; j < size; ++j)
+        for(std::size_t j = 0; j < size; ++j)
           not_isolated.set(polygon[j], true);
       }
     }
 
     std::vector<vertex_descriptor> vertices(_points.size());
-    for (std::size_t i = 0, end = _points.size(); i < end; ++i)
+    for(std::size_t i = 0, end = _points.size(); i < end; ++i)
     {
-      if (!insert_isolated_vertices && !not_isolated.test(i))
+      if(!insert_isolated_vertices && !not_isolated.test(i))
         continue;
 
       Point_3 pi(_points[i][0], _points[i][1], _points[i][2]);
       vertices[i] = add_vertex(pmesh);
-      put(vpmap, vertices[i], pi);
+      put(vpm, vertices[i], pi);
     }
 
-    for (std::size_t i = 0, end = _polygons.size(); i < end; ++i)
+    for(std::size_t i = 0, end = _polygons.size(); i < end; ++i)
     {
       const Polygon& polygon = _polygons[i];
       const std::size_t size = polygon.size();
 
       std::vector<vertex_descriptor> vr(size); //vertex range
       vr.resize(size);
-      for (std::size_t j = 0; j < size; ++j)
+      for(std::size_t j = 0; j < size; ++j)
         vr[j] = vertices[polygon[j] ];
 
-      CGAL_assertion_code(face_descriptor fd = )
+      CGAL_assertion_code(face_descriptor fd =)
       CGAL::Euler::add_face(vr, pmesh);
       CGAL_assertion(fd != boost::graph_traits<PM>::null_face());
     }
   }
 };
-}//end namespace internal
 
+} // namespace internal
 
   /**
    * \ingroup PMP_repairing_grp
@@ -143,48 +144,51 @@ public:
   template<class PolygonRange>
   bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   {
-    typedef typename boost::range_value<
-      typename boost::range_value<
-        PolygonRange>::type >::type V_ID;
-    typedef typename boost::range_value<
-      PolygonRange>::type           Polygon;
+    typedef typename boost::range_value<PolygonRange>::type           Polygon;
+    typedef typename boost::range_value<Polygon>::type                V_ID;
 
-    if(boost::begin(polygons) == boost::end(polygons)){
+    if(boost::begin(polygons) == boost::end(polygons))
       return true;
-    }
+
     //check there is no duplicated ordered edge, and
     //check there is no polygon with twice the same vertex
-    std::set< std::pair<V_ID, V_ID> > edge_set;
-    V_ID max_id=0;
+    std::set<std::pair<V_ID, V_ID> > edge_set;
+    V_ID max_id = 0;
     for(const Polygon& polygon : polygons)
     {
       std::size_t nb_edges = boost::size(polygon);
-      if (nb_edges<3) return false;
+      if(nb_edges < 3)
+        return false;
 
       std::set<V_ID> polygon_vertices;
-      V_ID prev= *std::prev(boost::end(polygon));
+      V_ID prev = *std::prev(boost::end(polygon));
       for(V_ID id : polygon)
       {
-        if (max_id<id) max_id=id;
-        if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
+        if(max_id<id)
+          max_id = id;
+
+        if(! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second)
           return false;
         else
-          prev=id;
+          prev = id;
 
-        if (!polygon_vertices.insert(id).second)
-          return false;//vertex met twice in the same polygon
+        if(!polygon_vertices.insert(id).second)
+          return false; // vertex met twice in the same polygon
       }
     }
 
     //check manifoldness
-    typedef std::vector<V_ID> PointRange;
-    typedef internal::Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
+    typedef std::vector<V_ID>                                           PointRange;
+    typedef internal::Polygon_soup_orienter<PointRange, PolygonRange>   Orienter;
+
     typename Orienter::Edge_map edges(max_id+1);
     typename Orienter::Marked_edges marked_edges;
     Orienter::fill_edge_map(edges, marked_edges, polygons);
+
     //returns false if duplication is necessary
-    if (!marked_edges.empty())
+    if(!marked_edges.empty())
       return false;
+
     return Orienter::has_singular_vertices(static_cast<std::size_t>(max_id+1),polygons,edges,marked_edges);
   }
 
@@ -216,33 +220,27 @@ public:
   *
   */
   template<class PolygonMesh, class PointRange, class PolygonRange, class VertexPointMap>
-  void polygon_soup_to_polygon_mesh(
-    const PointRange& points,
-    const PolygonRange& polygons,
-    PolygonMesh& out,
-    VertexPointMap vpm)
+  void polygon_soup_to_polygon_mesh(const PointRange& points,
+                                    const PolygonRange& polygons,
+                                    PolygonMesh& out,
+                                    VertexPointMap vpm)
   {
     CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
                           "Input soup needs to be a polygon mesh!");
 
-    internal::Polygon_soup_to_polygon_mesh<PolygonMesh, PointRange, PolygonRange>
-      converter(points, polygons);
+    internal::Polygon_soup_to_polygon_mesh<PolygonMesh, PointRange, PolygonRange> converter(points, polygons);
     converter(out, vpm);
   }
 
   template<class PolygonMesh, class PointRange, class PolygonRange>
-  void polygon_soup_to_polygon_mesh(
-    const PointRange& points,
-    const PolygonRange& polygons,
-    PolygonMesh& out)
+  void polygon_soup_to_polygon_mesh(const PointRange& points,
+                                    const PolygonRange& polygons,
+                                    PolygonMesh& out)
   {
     return polygon_soup_to_polygon_mesh(points, polygons, out, get(CGAL::vertex_point, out));
   }
 
-}//end namespace Polygon_mesh_processing
-
-}// end namespace CGAL
-
-#include <CGAL/enable_warnings.h>
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
