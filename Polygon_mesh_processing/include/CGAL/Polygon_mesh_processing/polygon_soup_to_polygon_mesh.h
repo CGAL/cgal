@@ -10,30 +10,34 @@
 //
 // Author(s)     : Laurent Rineau and Ilker O. Yaz
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
-#define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
+#ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
+#define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/property_map.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
-#include <CGAL/algorithm.h>
-#include <set>
-#include <boost/dynamic_bitset.hpp>
 
+#include <CGAL/algorithm.h>
+#include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/property_map.h>
+
+#include <boost/dynamic_bitset.hpp>
 #include <boost/range/size.hpp>
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
 
-namespace CGAL
-{
-namespace Polygon_mesh_processing
-{
-namespace internal
-{
+#include <set>
+#include <vector>
+
+namespace CGAL {
+namespace Polygon_mesh_processing {
+namespace internal {
+
 template <typename PM
         , typename PointRange
         , typename PolygonRange>
@@ -241,4 +245,4 @@ public:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
+#endif // CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH_H
