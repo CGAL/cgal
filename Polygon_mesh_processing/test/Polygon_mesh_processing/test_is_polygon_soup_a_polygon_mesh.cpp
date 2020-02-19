@@ -7,6 +7,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/property_maps.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/IO/OFF_reader.h>
@@ -22,8 +23,12 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 template <typename K>
 void test_polygon_soup(std::string fname, bool expected)
 {
-  typedef CGAL::Polyhedron_3<K> Polyhedron;
-  std::vector<typename K::Point_3> points;
+  typedef typename K::Point_3                                                 Point;
+
+  typedef CGAL::Polyhedron_3<K>                                               Polyhedron;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor         vertex_descriptor;
+
+  std::vector<Point> points;
   std::vector< std::vector<std::size_t> > polygons;
   std::ifstream input(fname.c_str());
 
@@ -49,13 +54,15 @@ void test_polygon_soup(std::string fname, bool expected)
     Polyhedron p;
 
     // just to test the named paramers
-    typedef std::pair<typename K::Point_3, bool>                  Point_with_Boolean;
+    typedef std::pair<Point, bool>                                            Point_with_Boolean;
     std::vector<Point_with_Boolean> points_with_pairs;
-    for(const typename K::Point_3& pt : points)
+    for(const Point& pt : points)
       points_with_pairs.emplace_back(pt, false);
 
-    typedef typename CGAL::GetVertexPointMap<Polyhedron>::type    VPM;
-    VPM vpm = get_property_map(CGAL::vertex_point, p);
+    typedef CGAL::dynamic_vertex_property_t<Point>                            Point_property;
+    typedef typename boost::property_map<Polyhedron, Point_property>::type    Custom_VPM;
+
+    Custom_VPM vpm = get(Point_property(), p);
 
     CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
           points_with_pairs, polygons, p,
@@ -64,6 +71,12 @@ void test_polygon_soup(std::string fname, bool expected)
 
     std::cout << num_vertices(p) << " nv and " << num_faces(p) << " nf" << std::endl;
     assert(!CGAL::is_empty(p) && CGAL::is_valid_polygon_mesh(p));
+
+    std::set<Point> ppts;
+    for(const vertex_descriptor v : vertices(p))
+      ppts.insert(get(vpm, v));
+
+    assert(ppts.size() == num_vertices(p));
   }
 
   if(!expected)
