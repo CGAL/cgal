@@ -139,19 +139,21 @@ void test()
 int main()
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPICK;
-  typedef CGAL::Exact_predicates_exact_constructions_kernel       EPECK;
 
   std::cout << "--- Test EPICK SM" << std::endl;
   test<CGAL::Surface_mesh<EPICK::Point_3> >();
 
-  std::cout << "--- Test EPECK SM" << std::endl;
-  test<CGAL::Surface_mesh<EPECK::Point_3> >();
-
   std::cout << "--- Test EPICK Polyhedron" << std::endl;
   test<CGAL::Polyhedron_3<EPICK> >();
 
-  std::cout << "--- Test EPECK Polyhedron" << std::endl;
-  test<CGAL::Polyhedron_3<EPECK> >();
+  // Disabled because it takes too long for some test plateforms
+//  typedef CGAL::Exact_predicates_exact_constructions_kernel       EPECK;
+
+//  std::cout << "--- Test EPECK SM" << std::endl;
+//  test<CGAL::Surface_mesh<EPECK::Point_3> >();
+
+//  std::cout << "--- Test EPECK Polyhedron" << std::endl;
+//  test<CGAL::Polyhedron_3<EPECK> >();
 
   std::cout << "Done!" << std::endl;
 
