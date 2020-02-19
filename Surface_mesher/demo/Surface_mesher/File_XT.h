@@ -18,7 +18,7 @@ namespace internal{
 //To avoid "fopen may be unsafe" on Visual.
 bool open_file(FILE **fin, const char* filename)
 {
-#ifdef _MSC_VER
+#if defined(BOOST_MSVC)
   return (fopen_s(fin, filename, "rw") == 0);
 #else
   *fin = fopen(filename, "rw");
