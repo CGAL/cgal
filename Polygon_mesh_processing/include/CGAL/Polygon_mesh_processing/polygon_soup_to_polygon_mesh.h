@@ -243,7 +243,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 */
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
-         typename NamedParameters_PM, typename NamedParameters_PS>
+         typename NamedParameters_PS, typename NamedParameters_PM>
 void polygon_soup_to_polygon_mesh(const PointRange& points,
                                   const PolygonRange& polygons,
                                   PolygonMesh& out,
