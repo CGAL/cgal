@@ -16,22 +16,22 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int argc, char** argv)
 {
-  if(argc != 3)
+  if(argc != 4)
   {
-    std::cerr << "Usage: " << argv[0] << " movable_mesh fixed_mesh" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " movable_mesh fixed_mesh tolerance" << std::endl;
     return EXIT_FAILURE;
   }
 
   Surface_mesh movable_mesh, fixed_mesh;
 
-  std::ifstream in_m((argc>1) ? argv[1] : "data/nefertiti.off");
+  std::ifstream in_m(argv[1]);
   if(!in_m || in_m >> movable_mesh)
   {
     std::cerr << "Problem loading the input data" << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::ifstream in_f((argc>2) ? argv[2] : "data/nefertiti.off");
+  std::ifstream in_f(argv[2]);
   if(!in_f || in_f >> fixed_mesh)
   {
     std::cerr << "Problem loading the input data" << std::endl;
@@ -41,21 +41,23 @@ int main(int argc, char** argv)
   std::cout << "Movable mesh: " << num_vertices(movable_mesh) << std::endl;
   std::cout << "Fixed mesh: " << num_vertices(fixed_mesh) << std::endl;
 
+  const double tolerance = std::atof(argv[3]);
+
   Surface_mesh::Property_map<vertex_descriptor, double> movable_tolerance_map;
   movable_tolerance_map = movable_mesh.add_property_map<vertex_descriptor, double>("v:t").first;
   for(vertex_descriptor v : vertices(movable_mesh))
-    put(movable_tolerance_map, v, 0.3);
+    put(movable_tolerance_map, v, tolerance);
 
   Surface_mesh::Property_map<vertex_descriptor, double> fixed_tolerance_map;
   fixed_tolerance_map = fixed_mesh.add_property_map<vertex_descriptor, double>("v:t").first;
   for(vertex_descriptor v : vertices(fixed_mesh))
-    put(fixed_tolerance_map, v, 0.3);
+    put(fixed_tolerance_map, v, tolerance);
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
-  // Choice of named parameters indicate that:
+  // Choice of named parameters indicates that:
   // - We want to simplify the boundary of the first mesh
-  // - The second mesh's geometry cannot change
+  // - The geometry of the second mesh cannot change
   std::size_t nb_snapped = PMP::experimental::snap_borders(movable_mesh, movable_tolerance_map,
                                                            fixed_mesh, fixed_tolerance_map,
                                                            CGAL::parameters::do_simplify_border(true),

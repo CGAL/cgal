@@ -107,7 +107,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
   for(halfedge_descriptor h : halfedge_range)
     put(range_halfedges, h, true);
 
-  const std::size_t initial_n = halfedge_range.size();
+  CGAL_postcondition_code(const std::size_t initial_n = halfedge_range.size();)
 
   std::set<halfedge_descriptor> edges_to_test(halfedge_range.begin(), halfedge_range.end());
 

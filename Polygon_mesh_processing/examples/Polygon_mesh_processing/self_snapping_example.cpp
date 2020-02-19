@@ -22,14 +22,14 @@ int main(int argc, char** argv)
 {
   std::cout.precision(17);
 
-  if(argc != 2)
+  if(argc != 3)
   {
-    std::cerr << "Usage: " << argv[0] << " input_mesh" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " input_mesh tolerance" << std::endl;
     return EXIT_FAILURE;
   }
 
   Surface_mesh sm;
-  std::ifstream in((argc>1) ? argv[1] : "data/nefertiti.off");
+  std::ifstream in(argv[1]);
   if(!in || in >> sm)
   {
     std::cerr << "Problem loading the input data" << std::endl;
@@ -39,7 +39,7 @@ int main(int argc, char** argv)
   Surface_mesh::Property_map<vertex_descriptor, double> tolerance_map;
   tolerance_map = sm.add_property_map<vertex_descriptor, double>("v:t").first;
   for(vertex_descriptor v : vertices(sm))
-    put(tolerance_map, v, snapping_tolerance);
+    put(tolerance_map, v, std::atof(argv[3]));
 
   std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
 
@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
   std::chrono::steady_clock::time_point snap_time = std::chrono::steady_clock::now();
   std::cout << "Time elapsed (snap): "
-            << std::chrono::duration_cast<std::chrono::milliseconds>(snap_time - segmentation_time).count()
+            << std::chrono::duration_cast<std::chrono::milliseconds>(snap_time - start_time).count()
             << "ms" << std::endl;
 
   // Stitch

@@ -34,6 +34,7 @@
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Dynamic_property_map.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Kernel/global_functions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/utility.h>
