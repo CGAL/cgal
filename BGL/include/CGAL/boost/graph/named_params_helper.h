@@ -192,7 +192,6 @@ namespace CGAL {
   get_ndi_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m)
   {
     typedef typename boost::property_map<Mesh, Default_tag >::const_type Map_const_type;
-    typedef typename boost::property_traits<Map_const_type>::key_type Key_type;
     typedef typename boost::property_traits
         <typename boost::property_map<Mesh, Default_tag >
         ::const_type>::category Category;
