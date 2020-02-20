@@ -39,7 +39,7 @@ namespace internal {
 
 template <typename PointRange,
           typename PolygonRange,
-          typename PointMap>
+          typename PointMap = typename CGAL::GetPointMap<PointRange> >
 class PS_to_PM_converter
 {
   typedef typename boost::range_value<PolygonRange>::type                 Polygon;
@@ -53,7 +53,7 @@ public:
   */
   PS_to_PM_converter(const PointRange& points,
                      const PolygonRange& polygons,
-                     const PointMap pm)
+                     const PointMap pm = PointMap())
     : m_points(points),
       m_polygons(polygons),
       m_pm(pm)
@@ -112,6 +112,13 @@ public:
           CGAL::Euler::add_face(vr, pmesh);
       CGAL_assertion(fd != boost::graph_traits<PolygonMesh>::null_face());
     }
+  }
+
+  template <typename PolygonMesh, typename VertexPointMap>
+  void operator()(PolygonMesh& pmesh,
+                  const bool insert_isolated_vertices = true)
+  {
+    return operator()(pmesh, get(CGAL::vertex_point, pmesh), insert_isolated_vertices);
   }
 
 private:
