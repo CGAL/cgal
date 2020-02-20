@@ -65,7 +65,6 @@ public:
                   const bool insert_isolated_vertices = true)
   {
     typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor    vertex_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor      face_descriptor;
 
     typedef typename boost::property_traits<VertexPointMap>::value_type     PM_Point;
 
@@ -109,7 +108,7 @@ public:
       for(std::size_t j = 0; j < size; ++j)
         vr[j] = vertices[polygon[j] ];
 
-      CGAL_assertion_code(face_descriptor fd =)
+      CGAL_assertion_code(typename boost::graph_traits<PolygonMesh>::face_descriptor fd =)
           CGAL::Euler::add_face(vr, pmesh);
       CGAL_assertion(fd != boost::graph_traits<PolygonMesh>::null_face());
     }
