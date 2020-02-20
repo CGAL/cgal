@@ -478,11 +478,12 @@
     <string>&amp;Start a Session</string>
    </property>
    <property name="toolTip">
-    <string>Start a WebSocket Server to share your camera with others on your network.</string>
+    <string>Start a WebSocket Server to Share your Camera with Others on your Network.</string>
    </property>
   </action>
  </widget>
  <resources>
+  <include location="Polyhedron_3.qrc"/>
   <include location="Polyhedron_3.qrc"/>
  </resources>
  <connections/>

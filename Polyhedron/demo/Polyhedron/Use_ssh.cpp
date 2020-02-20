@@ -1,4 +1,7 @@
 #ifdef CGAL_USE_SSH
+
+#include <CGAL/Three/Three.h>
+
 #include "CGAL/Use_ssh.h"
 #include <iostream>
 #include <fstream>
@@ -6,6 +9,8 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+
+#include <QMessageBox>
 
 bool test_result(int res)
 {
@@ -50,30 +55,47 @@ bool establish_ssh_session(ssh_session &session,
 
   //Can use SSH_LOG_PROTOCOL here for verbose output
   int verbosity = SSH_LOG_NOLOG;
-
-  session = ssh_new();
-  ssh_options_set( session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity );
-  ssh_options_set( session, SSH_OPTIONS_PORT, &port );
-  ssh_options_set( session, SSH_OPTIONS_USER, user );
-  ssh_options_set( session, SSH_OPTIONS_HOST, server);
-
-  ssh_connect(session);
-
-  if( ssh_is_server_known(session) != SSH_SERVER_KNOWN_OK )
+  int res;
+  //retry 4 times max each time the connection asks to be retried.
+  for(int k = 0; k < 4; ++k)
   {
-    if( ssh_write_knownhost(session) != SSH_OK )
+    session = ssh_new();
+    ssh_options_set( session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity );
+    ssh_options_set( session, SSH_OPTIONS_PORT, &port );
+    ssh_options_set( session, SSH_OPTIONS_USER, user );
+    ssh_options_set( session, SSH_OPTIONS_HOST, server);
+    
+    ssh_connect(session);
+    
+    if( ssh_is_server_known(session) != SSH_SERVER_KNOWN_OK )
     {
-      std::cerr << "writeKnownHost failed" << std::endl;
-      return false;
+      if(QMessageBox::warning(CGAL::Three::Three::mainWindow(), QString("Unknown Server"),
+                              QString ("The server you are trying to join is not known.\n"
+                                       "Do you wish to add it to the known servers list and continue?"),
+                              QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+      {
+        return false;
+      }
+      
+      if( ssh_write_knownhost(session) != SSH_OK )
+      {
+        std::cerr << "writeKnownHost failed" << std::endl;
+        return false;
+      }
+      else
+      {
+        ssh_connect(session);
+      }
     }
+    ssh_key pubkey = ssh_key_new();
+    ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
+    res = ssh_userauth_try_publickey(session, NULL, pubkey);
+    if(res == SSH_AUTH_AGAIN)
+      ssh_disconnect(session);
     else
-    {
-      ssh_connect(session);
-    }
+      break;
   }
-  ssh_key pubkey = ssh_key_new();
-  ssh_pki_import_pubkey_file(pub_key_path, &pubkey);
-  int res = ssh_userauth_try_publickey(session, NULL, pubkey);
+  
   if(!test_result(res))
   {
     ssh_disconnect(session);

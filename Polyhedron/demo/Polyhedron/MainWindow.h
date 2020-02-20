@@ -1,6 +1,5 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#undef CGAL_USE_WEBSOCKETS
 #include "config.h"
 #include "MainWindow_config.h"
 
