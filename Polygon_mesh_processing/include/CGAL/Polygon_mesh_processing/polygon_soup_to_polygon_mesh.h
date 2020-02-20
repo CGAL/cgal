@@ -215,8 +215,8 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * `BackInsertionSequence` whose value type is the point type
 * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose
 * `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
-* @tparam NamedParameters_PM a sequence of \ref pmp_namedparameters
 * @tparam NamedParameters_PS a sequence of \ref pmp_namedparameters
+* @tparam NamedParameters_PM a sequence of \ref pmp_namedparameters
 *
 * @param points points of the soup of polygons
 * @param polygons each element in the vector describes a polygon using the index of the points in `points`
@@ -225,7 +225,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *
 * \cgalNamedParamsBegin
 *   \cgalParamBegin{point_map}
-*     a model of `ReadWritePropertyMap` whose value type is a point type convertible to the point type
+*     a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
 *     of the polygon mesh. If this parameter is omitted, `CGAL::Identity_property_map` is used.
 *   \cgalParamEnd
 * \cgalNamedParamsEnd
@@ -234,7 +234,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *
 * \cgalNamedParamsBegin
 *   \cgalParamBegin{vertex_point_map}
-*     the property map with the points associated to the vertices of `tm`.
+*     a model of `WritablePropertyMap`, the property map with the points associated to the vertices of `out`.
 *     If this parameter is omitted, an internal property map for
 *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
 *   \cgalParamEnd
@@ -245,7 +245,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *
 * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
-*
+* \sa `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`
 */
 template<typename PolygonMesh,
          typename PointRange, typename PolygonRange,
