@@ -204,7 +204,7 @@ jet_smooth_point_set(
   using parameters::get_parameter;
   
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
