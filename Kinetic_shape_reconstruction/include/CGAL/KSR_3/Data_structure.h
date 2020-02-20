@@ -1124,7 +1124,7 @@ public:
     else
     {
       IEdge iedge = disconnect_iedge (pvertex);
-      std::cerr << "Disconnect " << str(pvertex) << " from " << str(iedge) << std::endl;
+//      std::cerr << "Disconnect " << str(pvertex) << " from " << str(iedge) << std::endl;
 
       PEdge pedge = null_pedge();
       for (PEdge pe : pedges_around_pvertex (pvertex))
@@ -1142,13 +1142,13 @@ public:
 
       if (mesh(pedge).target(hi) == pvertex.second)
       {
-        std::cerr << "Shift target" << std::endl;
+//        std::cerr << "Shift target" << std::endl;
         CGAL::Euler::shift_target (hi, mesh(pedge));
       }
       else
       {
         CGAL_assertion (mesh(pedge).source(hi) == pvertex.second);
-        std::cerr << "Shift source" << std::endl;
+//        std::cerr << "Shift source" << std::endl;
         CGAL::Euler::shift_source (hi, mesh(pedge));
       }
 
@@ -1170,7 +1170,7 @@ public:
       support_plane(pother).set_point (pother.second,
                                        pinit - direction(pother) * m_current_time);
 
-      std::cerr << "Connect " << str(pother) << " to " << str(iedge) << std::endl;
+//      std::cerr << "Connect " << str(pother) << " to " << str(iedge) << std::endl;
       connect (pother, iedge);
     }
     

@@ -407,7 +407,7 @@ private:
         Segment_2 so (m_data.point_2 (pother, m_min_time),
                       m_data.point_2 (pother, m_max_time));
         CGAL::Bbox_2 so_bbox = so.bbox();
-
+        
         if (!do_overlap (sv_bbox, so_bbox))
           continue;
 
@@ -502,7 +502,7 @@ private:
       
       ++ iter;
       
-      if (iter == 43)
+      if (iter == 57)
       {
         exit(0);
       }
@@ -538,7 +538,21 @@ private:
       else // One constrained vertex meets a free vertex
       {
         if (m_data.transfer_vertex (pvertex, pother))
+        {
           compute_events_of_vertices (std::array<PVertex,2>{pvertex, pother});
+
+          PVertex prev, next;
+          std::tie (prev, next) = m_data.border_prev_and_next(pvertex);
+          
+          PVertex pthird = prev;
+          if (pthird == pother)
+            pthird = next;
+          else
+            CGAL_assertion (next == pother);
+
+          remove_events (pthird);
+          compute_events_of_vertices (std::array<PVertex,1>{pthird});
+        }
         else
           compute_events_of_vertices (std::array<PVertex,1>{pvertex});
       }
@@ -627,16 +641,11 @@ private:
         std::cerr << m_data.point_3(pv) << " ";
       std::cerr << std::endl;
       
-//      CGAL_assertion_msg (pvertices.size() > 3, "Isolated PVertex reaching an IVertex");
-      
       std::cerr << "Found " << pvertices.size() << " pvertices ready to be merged" << std::endl;
 
       // Remove associated events
       for (const PVertex pvertex : pvertices)
         remove_events (pvertex);
-      
-//      for (std::size_t i = 0; i < pvertices.size() - 1; ++ i)
-//        remove_events (pvertices[i]);
 
       // Merge them and get the newly created vertices
       std::vector<PVertex> new_pvertices
@@ -660,7 +669,6 @@ private:
   template <typename PVertexRange>
   void compute_events_of_vertices (const PVertexRange& pvertices)
   {
-    // TODO
     m_min_time = m_data.current_time();
     
     m_data.update_positions(m_max_time);
