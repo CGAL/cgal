@@ -121,11 +121,13 @@ namespace helpers {
 
 //check that an existing map is initialized/valid
 template <class SimplexRange, class IndexMap>
-bool is_index_map_valid(typename boost::property_traits<IndexMap>::value_type max_id,
+bool is_index_map_valid( std::size_t num_simplices,
                         const SimplexRange& range,
                         const IndexMap& idmap)
 {
+  
   typedef typename boost::property_traits<IndexMap>::value_type Id_type;
+  Id_type max_id = static_cast<Id_type>(num_simplices);
   std::vector<bool> indices(max_id + 1);
   for(const auto& simplex : range)
   {
