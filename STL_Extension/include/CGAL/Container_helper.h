@@ -12,8 +12,10 @@
 #ifndef CGAL_CONTAINER_HELPER_H
 #define CGAL_CONTAINER_HELPER_H
 
+#include <CGAL/array.h>
 #include <CGAL/Has_member.h>
 
+#include <CGAL/assertions.h>
 #include <boost/mpl/logical.hpp>
 #include <boost/utility/enable_if.hpp>
 

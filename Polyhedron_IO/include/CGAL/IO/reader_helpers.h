@@ -11,8 +11,8 @@
 #ifndef CGAL_IO_READER_HELPERS_H
 #define CGAL_IO_READER_HELPERS_H
 
-#include <CGAL/array.h>
-#include <CGAL/assertions.h>
+#include <CGAL/Container_helper.h>
+#include <CGAL/Point_3.h>
 
 namespace CGAL{
 namespace IO {
@@ -30,7 +30,7 @@ template <typename Point_3>
 void fill_point(const double x, const double y, const double z, Point_3& pt)
 {
   // just in case something weirder than arrays or CGAL points are used as points...
-  resize(pt, 3);
+  CGAL::internal::resize(pt, 3);
 
   pt[0] = x; pt[1] = y; pt[2] = z;
 }
