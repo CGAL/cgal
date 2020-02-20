@@ -9,6 +9,7 @@
 #include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/IO/OFF_reader.h>
 
@@ -77,6 +78,34 @@ void test_polygon_soup(std::string fname, bool expected)
       ppts.insert(get(vpm, v));
 
     assert(ppts.size() == num_vertices(p));
+
+    // twice to check if adds correctly
+    std::deque<Point> soup_points;
+    std::vector<std::deque<std::size_t> > soup_polygons;
+
+    CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(p, soup_points, soup_polygons);
+    CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(p, soup_points, soup_polygons);
+
+    std::size_t nv = static_cast<std::size_t>(num_vertices(p));
+    std::size_t nf = static_cast<std::size_t>(num_faces(p));
+
+    assert(soup_points.size() == 2 * nv);
+    assert(soup_polygons.size() == 2 * nf);
+
+    // check sanity of the polygons
+    for(std::size_t fi=0; fi<nf; ++fi)
+    {
+      for(const std::size_t pi : soup_polygons[fi]) {
+        assert(pi < nv);
+      }
+    }
+
+    for(std::size_t fi=nf; fi<2*nf; ++fi)
+    {
+      for(const std::size_t pi : soup_polygons[fi]) {
+        assert(nv <= pi && pi < 2 * nv);
+      }
+    }
   }
 
   if(!expected)
