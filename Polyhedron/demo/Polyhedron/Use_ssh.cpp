@@ -1,3 +1,14 @@
+// Copyright (c) 2020  GeometryFactory (France).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// 
+//
+// Author(s)     : Maxime Gimeno
+
 #ifdef CGAL_USE_SSH
 
 #include <CGAL/Three/Three.h>
