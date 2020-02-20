@@ -234,7 +234,8 @@ namespace CGAL {
     BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
   }
 
-  template<typename PointRange, typename NamedParameters,
+  template<typename PointRange,
+           typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t>,
            bool has_nested_iterator = internal::Has_nested_type_iterator<PointRange>::value>
   class GetPointMap
   {
