@@ -39,7 +39,7 @@ namespace internal {
 
 template <typename PointRange,
           typename PolygonRange,
-          typename PointMap = typename CGAL::GetPointMap<PointRange> >
+          typename PointMap = typename CGAL::GetPointMap<PointRange>::const_type>
 class PS_to_PM_converter
 {
   typedef typename boost::range_value<PolygonRange>::type                 Polygon;
@@ -114,7 +114,7 @@ public:
     }
   }
 
-  template <typename PolygonMesh, typename VertexPointMap>
+  template <typename PolygonMesh>
   void operator()(PolygonMesh& pmesh,
                   const bool insert_isolated_vertices = true)
   {
@@ -262,7 +262,7 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters_PS>::type          Point_map;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters_PS>::const_type    Point_map;
   Point_map pm = choose_parameter(get_parameter(np_ps, internal_np::point_map), Point_map());
 
   typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters_PM>::type   Vertex_point_map;
