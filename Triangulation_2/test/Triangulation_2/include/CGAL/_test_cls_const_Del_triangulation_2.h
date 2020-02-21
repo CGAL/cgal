@@ -30,8 +30,13 @@ template <class Triangul>
 void 
 _test_cls_const_Del_triangulation(const Triangul&)
 {
-  static_assert(std::is_nothrow_move_constructible<Triangul>::value,
-                "move cstr is missing");
+  // The following assertion is commented, because, in CT_plus_2,
+  // one uses `std::set` and `std::map`, and their move-constructors
+  // may throw.
+  //
+  // static_assert(std::is_nothrow_move_constructible<Triangul>::value,
+  //               "move cstr is missing");
+
   static_assert(std::is_nothrow_move_assignable<Triangul>::value,
                 "move assignment is missing");
 
