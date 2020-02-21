@@ -140,7 +140,7 @@ detect_surface_patches(PolygonMesh& p,
 {
   //extract types from NPs
   auto fimap =
-      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(p, np);
+      CGAL::get_initialized_face_index_map(p, np);
 
   int offset = static_cast<int>(
           parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index),

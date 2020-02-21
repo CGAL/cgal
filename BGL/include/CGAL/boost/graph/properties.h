@@ -100,11 +100,11 @@ bool is_index_map_valid( std::size_t num_simplices,
   
   typedef typename boost::property_traits<IndexMap>::value_type Id_type;
   Id_type max_id = static_cast<Id_type>(num_simplices);
-  std::vector<bool> indices(max_id + 1);
+  std::vector<bool> indices(max_id);
   for(const auto& simplex : range)
   {
     Id_type id = get(idmap, simplex);
-    if( id >= 0 && id <= max_id && ! indices[id])
+    if( id >= 0 && id < max_id && ! indices[id])
       indices[id] = true;
     else
       return false;

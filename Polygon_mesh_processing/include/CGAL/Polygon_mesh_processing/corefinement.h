@@ -186,7 +186,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
                                 get_const_property_map(boost::vertex_point, tm));
 
   auto fid_map =
-      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(tm, np);
+      CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -514,9 +514,9 @@ corefine_and_compute_boolean_operations(
 
 // Face index point maps
 
-  typedef typename CGAL::Polygon_mesh_processing::
+  typedef typename CGAL::
       Default_face_index_map<NamedParameters1, TriangleMesh>::type Fid_map;
-  typedef typename CGAL::Polygon_mesh_processing::
+  typedef typename CGAL::
       Default_face_index_map<NamedParameters2, TriangleMesh>::type Fid_map2;
 
   CGAL_USE_TYPE(Fid_map2);
@@ -1013,7 +1013,7 @@ namespace experimental {
 // Face index map
   typedef typename Default_face_index_map<NamedParameters, TriangleMesh>::type Fid_map;
   Fid_map fid_map =
-      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(tm, np);
+      CGAL::get_initialized_face_index_map(tm, np);
 
 // Edge is-constrained maps
   typedef typename internal_np::Lookup_named_param_def <

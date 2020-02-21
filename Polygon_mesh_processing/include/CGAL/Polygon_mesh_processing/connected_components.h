@@ -172,9 +172,9 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  *  computes for each face the index of the corresponding connected component.
  *
  * If `PolygonMesh`
-  *  has an internal not writable property map
-  *  for `CGAL::face_index_t` and no `face_index_map` is given
-  *  as a named parameter, then the internal one must be initialized; else, it will be.
+ *  has an internal non writable property map
+ *  for `CGAL::face_index_t` and no `face_index_map` is given
+ *  as a named parameter, then the internal one must be initialized; otherwise, it will be.
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
@@ -222,9 +222,8 @@ connected_components(const PolygonMesh& pmesh,
 
   typedef typename Default_face_index_map<NamedParameters, PolygonMesh>::type FaceIndexMap;
   
-  FaceIndexMap  fimap
-      = get_initialized_face_index_map(pmesh, np);
-
+  FaceIndexMap  fimap = get_initialized_face_index_map(pmesh, np);
+  
   typename boost::property_traits<FaceComponentMap>::value_type i=0;
   std::vector<bool> handled(num_faces(pmesh), false);
   for (face_descriptor f : faces(pmesh))
@@ -328,9 +327,9 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  * of faces it contains), but it is also possible to pass custom sizes, such as the area of the face.
  *
 * If `PolygonMesh`
-*  has a not writable internal property map
+*  has a non writable internal property map
 *  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
-*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
+*  as a named parameter, then the internal one(s) must be initialized. Otherwise, it will be.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -460,9 +459,9 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  * to pass custom sizes, such as the area of the face.
  *
 * If `PolygonMesh`
-*  has a not writable internal property map
+*  has a non writable internal property map
 *  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
-*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
+*  as a named parameter, then the internal one(s) must be initialized. Otherwise, it will be.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam ThresholdValueType the type of the threshold value
@@ -511,7 +510,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
 
   typedef typename Default_face_index_map<NamedParameters, PolygonMesh>::type FaceIndexMap;
   FaceIndexMap fim =
-      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(pmesh, np);
+      CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,
@@ -724,9 +723,9 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * If `PolygonMesh`
-*  has a not writable internal property map
+*  has a non writable internal property map
 *  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
-*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
+*  as a named parameter, then the internal one(s) must be initialized. Otherwise, it will be.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -768,9 +767,9 @@ void keep_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * If `PolygonMesh`
-*  has a not writable internal property map
+*  has a non writable internal property map
 *  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
-*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
+*  as a named parameter, then the internal one(s) must be initialized. Otherwise, it will be.
 *
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
@@ -810,9 +809,9 @@ void remove_connected_components(PolygonMesh& pmesh
 *  and removes the other connected components and all isolated vertices.
 *
 * If `PolygonMesh`
-*  has a not writable internal property map
+*  has a non writable internal property map
 *  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
-*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
+*  as a named parameter, then the internal one(s) must be initialized. Otherwise, it will be.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
@@ -849,7 +848,7 @@ void remove_connected_components(PolygonMesh& pmesh
   //FaceIndexMap
   typedef typename Default_face_index_map<CGAL_PMP_NP_CLASS, PolygonMesh>::type FaceIndexMap;
   FaceIndexMap fim =
-      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(pmesh, np);
+      CGAL::get_initialized_face_index_map(pmesh, np);
 
   //vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
@@ -869,9 +868,9 @@ void remove_connected_components(PolygonMesh& pmesh
 *  and removes the other connected components and all isolated vertices.
 *
 * If `PolygonMesh`
-*  has a not writable internal property map
+*  has a non writable internal property map
 *  for `CGAL::face_index_t` or `CGAL::vertex_index_t` and no `face_index_map` (respectively `vertex_index_map`) is given
-*  as a named parameter, then the internal one(s) must be initialized. Else, it will be.
+*  as a named parameter, then the internal one(s) must be initialized. Otherwise, it will be.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
@@ -908,7 +907,7 @@ void keep_connected_components(PolygonMesh& pmesh
   //FaceIndexMap
   typedef typename Default_face_index_map<CGAL_PMP_NP_CLASS, PolygonMesh>::type FaceIndexMap;
   FaceIndexMap fim =
-      CGAL::Polygon_mesh_processing::get_initialized_face_index_map(pmesh, np);
+      CGAL::get_initialized_face_index_map(pmesh, np);
 
   //vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);

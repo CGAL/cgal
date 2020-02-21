@@ -180,7 +180,7 @@ namespace Polygon_mesh_processing {
 
 
     auto fim =
-        CGAL::Polygon_mesh_processing::get_initialized_face_index_map(pmesh, np);
+        CGAL::get_initialized_face_index_map(pmesh, np);
 
     return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
   }
