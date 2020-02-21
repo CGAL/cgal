@@ -417,8 +417,8 @@ void
 Triangulation_hierarchy_2<Tr_>::
 clear()
 {
-        for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
-	hierarchy[i]->clear();
+  for(int i=0;i<Triangulation_hierarchy_2__maxlevel;++i)
+    if(hierarchy[i]) hierarchy[i]->clear();
 }
 
 
