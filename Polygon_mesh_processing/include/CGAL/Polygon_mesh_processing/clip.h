@@ -308,8 +308,8 @@ clip_to_bbox(const Plane_3& plane,
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
   *      (i.e., `tm` will be kept closed).
   *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `clipper`
-  *                                        will not be part of the output.
+  *   \cgalParamBegin{use_compact_clipper} if `false`, the parts of `tm` coplanar with `clipper` will not be part of the output.
+  *                                        This option has an effect only if a surface and not a volume is clipped (i.e. if `clip_volume` is `false` or if `tm` is open).
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
