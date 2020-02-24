@@ -277,26 +277,28 @@ public:
     This allows to easily save and recover a specific classification
     configuration.
 
-    The output file is written in an GZIP container that is readable
-    by the `load_configuration()` method.
+    The output file is written in a binary format that is readable by
+    the `load_configuration()` method.
   */
   void save_configuration (std::ostream& output) const
   {
-    boost::iostreams::filtering_ostream outs;
-    outs.push(boost::iostreams::gzip_compressor());
-    outs.push(output);
-    boost::archive::text_oarchive oas(outs);
-    oas << BOOST_SERIALIZATION_NVP(*m_rfc);
+    m_rfc->write(output);
   }
-
+  
   /*!
     \brief Loads a configuration from the stream `input`.
 
-    The input file should be a GZIP container written by the
+    The input file should be a binary file written by the
     `save_configuration()` method. The feature set of the classifier
     should contain the exact same features in the exact same order as
     the ones present when the file was generated using
     `save_configuration()`.
+
+    \warning If the file you are trying to load was saved using CGAL
+    5.1 or earlier, you have to convert it first using
+    `convert_deprecated_configuration_to_new_format()` as the exchange
+    format for ETHZ Random Forest changed in CGAL 5.2.
+
   */
   void load_configuration (std::istream& input)
   {
@@ -304,15 +306,50 @@ public:
     if (m_rfc != nullptr)
       delete m_rfc;
     m_rfc = new Forest (params);
-    
+
+    m_rfc->read(input);
+  }
+  
+  /// @}
+
+  /// \name Deprecated Input/Output
+  /// @{
+  
+  /*!
+    \brief Converts a deprecated GZ configuration to a new BIN
+    configuration.
+
+    The input file should be a GZIP container written by the
+    `save_configuration()` method from CGAL 5.1 and earlier. The
+    output is a valid configuration for CGAL 5.2 and later.
+  */
+  static void convert_deprecated_configuration_to_new_format (std::istream& input, std::ostream& output)
+  {
+    Label_set dummy_labels;
+    Feature_set dummy_features;
+    Random_forest_classifier classifier (dummy_labels, dummy_features);
+    classifier.load_deprecated_configuration(input);
+    classifier.save_configuration(output);
+  }
+
+/// @}
+
+  /// \cond SKIP_IN_MANUAL
+  void load_deprecated_configuration (std::istream& input)
+  {
+    CGAL::internal::liblearning::RandomForest::ForestParams params;
+    if (m_rfc != nullptr)
+      delete m_rfc;
+    m_rfc = new Forest (params);
+
     boost::iostreams::filtering_istream ins;
     ins.push(boost::iostreams::gzip_decompressor());
     ins.push(input);
     boost::archive::text_iarchive ias(ins);
     ias >> BOOST_SERIALIZATION_NVP(*m_rfc);
   }
+  /// \endcond
 
-/// @}
 
 };
 

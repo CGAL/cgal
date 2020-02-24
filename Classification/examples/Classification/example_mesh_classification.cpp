@@ -32,7 +32,7 @@ typedef Classification::Mesh_feature_generator<Kernel, Mesh, Face_point_map>    
 int main (int argc, char** argv)
 {
   std::string filename = "data/b9_mesh.off";
-  std::string filename_config = "data/b9_mesh_config.gz";
+  std::string filename_config = "data/b9_mesh_config.bin";
   
   if (argc > 1)
     filename = argv[1];

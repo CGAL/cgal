@@ -50,7 +50,7 @@ typedef Classification::Cluster<Point_set, Pmap>                             Clu
 int main (int argc, char** argv)
 {
   std::string filename        = "data/b9.ply";
-  std::string filename_config = "data/b9_clusters_config.gz";
+  std::string filename_config = "data/b9_clusters_config.bin";
   
   if (argc > 1)
     filename = argv[1];

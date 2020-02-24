@@ -658,8 +658,8 @@ public Q_SLOTS:
     else if (classifier == 1) // Random Forest (ETHZ)
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
-                                              tr("%1 (ETHZ random forest config).gz").arg(classif->item()->name()),
-                                              "Compressed ETHZ random forest configuration (*.gz);;");
+                                              tr("%1 (ETHZ random forest config).bin").arg(classif->item()->name()),
+                                              "ETHZ random forest configuration (*.bin);;");
 #ifdef CGAL_LINKED_WITH_OPENCV
     else if (classifier == 2) // Random Forest (OpenCV)
       filename = QFileDialog::getSaveFileName(mw,
@@ -713,7 +713,7 @@ public Q_SLOTS:
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open ETHZ random forest configuration"),
                                               ".",
-                                              "Compressed ETHZ random forest configuration (*.gz);;All Files (*)");
+                                              "ETHZ random forest configuration (*.bin);Deprecated compressed ETHZ random forest configuration (*.gz);All Files (*)");
 #ifdef CGAL_LINKED_WITH_OPENCV
     else if (classifier == 2) // OpenCV
       filename = QFileDialog::getOpenFileName(mw,

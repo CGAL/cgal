@@ -126,6 +126,41 @@ int main (int argc, char** argv)
             << "Mean F1 score = " << evaluation.mean_f1_score() << std::endl
             << "Mean IoU = " << evaluation.mean_intersection_over_union() << std::endl;
 
+  {
+    std::ofstream out ("toto.bin", std::ios_base::binary);
+    classifier.save_configuration(out);
+    
+    Classification::ETHZ::Random_forest_classifier classifier_2 (labels, features);
+    std::ifstream in ("toto.bin", std::ios_base::binary);
+    classifier_2.load_configuration(in);
+    
+    t.reset();
+    t.start();
+    Classification::classify_with_graphcut<CGAL::Sequential_tag>
+      (pts, pts.point_map(), labels, classifier_2,
+       generator.neighborhood().k_neighbor_query(12),
+       0.2f, 1, label_indices);
+    t.stop();
+  
+    std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
+
+    std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
+    Classification::Evaluation evaluation (labels, ground_truth, label_indices);
+  
+    for (std::size_t i = 0; i < labels.size(); ++ i)
+    {
+      std::cerr << " * " << labels[i]->name() << ": "
+                << evaluation.precision(labels[i]) << " ; "
+                << evaluation.recall(labels[i]) << " ; "
+                << evaluation.f1_score(labels[i]) << " ; "
+                << evaluation.intersection_over_union(labels[i]) << std::endl;
+    }
+
+    std::cerr << "Accuracy = " << evaluation.accuracy() << std::endl
+              << "Mean F1 score = " << evaluation.mean_f1_score() << std::endl
+              << "Mean IoU = " << evaluation.mean_intersection_over_union() << std::endl;
+  }
+
   // Color point set according to class
   UCmap red = pts.add_property_map<unsigned char>("red", 0).first;
   UCmap green = pts.add_property_map<unsigned char>("green", 0).first;
