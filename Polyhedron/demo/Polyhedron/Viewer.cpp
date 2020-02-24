@@ -50,6 +50,10 @@ public:
   QVector4D diffuse;
   QVector4D specular;
   float spec_power;
+
+  //Back and Front Colors
+  QColor front_color;
+  QColor back_color;
   
   // M e s s a g e s
   QString message;
@@ -250,12 +254,23 @@ void Viewer::doBindings()
                           specular.split(",").at(1).toFloat(),
                           specular.split(",").at(2).toFloat(),
                           1.0f);
-  
+
+  QString front_color = viewer_settings.value("front_color", QString("1.0,0.0,0.0")).toString();
+  d->front_color= QColor(255*front_color.split(",").at(0).toFloat(),
+                         255*front_color.split(",").at(1).toFloat(),
+                         255*front_color.split(",").at(2).toFloat(),
+                         1.0f);
+  QString back_color = viewer_settings.value("back_color", QString("0.0,0.0,1.0")).toString();
+  d->back_color= QColor( 255*back_color.split(",").at(0).toFloat(),
+                         255*back_color.split(",").at(1).toFloat(),
+                         255*back_color.split(",").at(2).toFloat(),
+                         1.0f);
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("back_front_shading", false);
   d->macro_mode = false;
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
@@ -333,6 +348,7 @@ Viewer::Viewer(QWidget* parent,
   is_sharing = true;
   d->antialiasing = antialiasing;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("back_front_shading", false);
   this->setProperty("helpText", QString("This is a sub-viewer. It displays the scene "
                                         "from another point of view. \n "));
   is_ogl_4_3 = sharedWidget->is_ogl_4_3;
@@ -367,6 +383,17 @@ Viewer::~Viewer()
                              .arg(d->specular.z()));
     viewer_settings.setValue("spec_power",
                              d->spec_power);
+    viewer_settings.setValue("front_color",
+                             QString("%1,%2,%3")
+                             .arg(d->front_color.redF())
+                             .arg(d->front_color.greenF())
+                             .arg(d->front_color.blueF()));
+    viewer_settings.setValue("back_color",
+                             QString("%1,%2,%3")
+                             .arg(d->back_color.redF())
+                             .arg(d->back_color.greenF())
+                             .arg(d->back_color.blueF()));
+
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
@@ -397,6 +424,13 @@ void Viewer::setTwoSides(bool b)
 {
   this->setProperty("draw_two_sides", b);
   d->twosides = b;
+  update();
+}
+
+
+void Viewer::setBackFrontShading(bool b)
+{
+  this->setProperty("back_front_shading", b);
   update();
 }
 
@@ -947,7 +981,10 @@ void Viewer::attribBuffers(int program_name) const {
         program->setUniformValue("light_spec", d->specular);
         program->setUniformValue("light_amb", d->ambient);
         program->setUniformValue("spec_power", d->spec_power);
+        program->setUniformValue("front_color", d->front_color);
+        program->setUniformValue("back_color", d->back_color);
         program->setUniformValue("is_two_side", d->twosides);
+        program->setUniformValue("back_front_shading", this->property("back_front_shading").toBool());
         break;
     }
     switch(program_name)
@@ -1354,8 +1391,8 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
       return 0;
     }
     QOpenGLShaderProgram* program = declare_program(name,
-                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.vert", 
-                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.frag");
+                                                    ":/cgal/Polyhedron_3/resources/no_interpolation_shader.vert",
+                                                    ":/cgal/Polyhedron_3/resources/no_interpolation_shader.frag");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
     program->setProperty("drawLinesAdjacency", true);
@@ -1801,6 +1838,65 @@ void Viewer::setLighting()
     d->ambient = prev_ambient;
     d->diffuse = prev_diffuse;
     d->specular = prev_spec_color;
+    return;
+  }
+}
+
+void Viewer::setBackFrontColors()
+{
+
+  //save current settings;
+
+  QColor prev_front_color = d->front_color;
+  QColor prev_back_color = d->back_color;
+  QDialog *dialog = new QDialog(this);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                   | QDialogButtonBox::Cancel, dialog);
+
+  connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
+  connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+
+  QGridLayout* layout = new QGridLayout(dialog);
+  layout->addWidget(new QLabel("Front color: ",dialog),0,0);
+  QPalette front_palette;
+  front_palette.setColor(QPalette::Button, d->front_color);
+  QPushButton* frontButton = new QPushButton(dialog);
+  frontButton->setPalette(front_palette);
+  QPalette back_palette;
+  back_palette.setColor(QPalette::Button, d->back_color);
+  QPushButton* backButton = new QPushButton(dialog);
+  backButton->setPalette(back_palette);
+  layout->addWidget(frontButton,0,1);
+  layout->addWidget(new QLabel("Back color: ",dialog),1,0);
+  layout->addWidget(backButton,1,1);
+  layout->addWidget(buttonBox);
+  dialog->setLayout(layout);
+  connect(frontButton, &QPushButton::clicked,
+          [this, dialog, frontButton](){
+    QColorDialog *color_dial = new QColorDialog(dialog);
+    color_dial->exec();
+    QColor front_color = color_dial->selectedColor();
+    QPalette palette;
+    palette.setColor(QPalette::Button, front_color);
+    frontButton->setPalette(palette);
+    d->front_color= front_color;
+  });
+  connect(backButton, &QPushButton::clicked,
+          [this, dialog, backButton](){
+    QColorDialog *color_dial = new QColorDialog(dialog);
+    color_dial->exec();
+    QColor back_color = color_dial->selectedColor();
+    QPalette palette;
+    palette.setColor(QPalette::Button, back_color);
+    backButton->setPalette(palette);
+    d->back_color= back_color;
+
+  });
+  if(!dialog->exec())
+  {
+    //restore previous settings
+    d->front_color= prev_front_color;
+    d->back_color= prev_back_color;
     return;
   }
 }

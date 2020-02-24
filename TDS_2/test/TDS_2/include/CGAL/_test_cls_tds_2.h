@@ -44,6 +44,11 @@ template <class Tds>
 void
 _test_cls_tds_2( const Tds &)
 {
+  static_assert(std::is_nothrow_move_constructible<Tds>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Tds>::value,
+                "move assignment is missing");
+
   typedef typename Tds::Vertex_range      Vertex_range;
   typedef typename Tds::Face_range        Face_range;
   
@@ -128,6 +133,34 @@ _test_cls_tds_2( const Tds &)
   assert(tds3.dimension()== 1);
   assert(tds3.number_of_vertices() == 4);
   assert(tds3.is_valid() );
+
+    // Test move-constructors and move-assignments
+  {
+    Tds tds7 = tds3;
+    Tds tds8{std::move(tds7)};
+    Tds tds9 = tds3;
+    Tds tds10;
+    tds10 = std::move(tds9);
+    Tds tds11 = Tds(tds3);  // construct from a temporary
+    Tds tds12 = std::move(tds11);
+
+    assert(tds7.is_valid());
+    assert(tds8.is_valid());
+    assert(tds9.is_valid());
+    assert(tds10.is_valid());
+    assert(tds11.is_valid());
+    assert(tds12.is_valid());
+    assert(tds7.dimension()==-2);
+    assert(tds8.dimension()==1);
+    assert(tds9.dimension()==-2);
+    assert(tds10.dimension()==1);
+    assert(tds11.dimension()==-2);
+    assert(tds12.dimension()==1);
+    tds11.~Tds();
+    // check tds12 is still valid after the destruction of tds11
+    assert(tds12.is_valid());
+    assert(tds12.dimension()==1);
+  }
  
   Vertex_handle w4 = tds4.insert_first();
   Vertex_handle v4_1 = tds4.insert_second();

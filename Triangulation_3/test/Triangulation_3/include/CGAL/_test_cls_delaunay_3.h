@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Francois Rebufat, Monique Teillaud, Sylvain Pion
@@ -28,6 +19,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <type_traits>
 
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
@@ -178,6 +170,11 @@ void
 _test_cls_delaunay_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
+
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
 
   typedef typename Test_location_policy<Cls>::Location_policy Location_policy;
 

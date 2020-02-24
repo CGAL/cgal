@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri, Mariette Yvinec
@@ -31,6 +22,7 @@
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <boost/tuple/tuple.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -224,6 +216,8 @@ public:
     , hierarchy(Vh_less_xy(this))
   { copy_triangulation(ctp);}
 
+  Constrained_triangulation_plus_2(Constrained_triangulation_plus_2&&) = default;
+
   virtual ~Constrained_triangulation_plus_2() {}
 
   Constrained_triangulation_plus_2 & operator=(const Constrained_triangulation_plus_2& ctp)
@@ -231,6 +225,8 @@ public:
     copy_triangulation(ctp);
     return *this;
   }
+
+  Constrained_triangulation_plus_2& operator=(Constrained_triangulation_plus_2&&) = default;
 
   template<class InputIterator>
   Constrained_triangulation_plus_2(InputIterator first,
@@ -406,7 +402,7 @@ public:
     ++beg;
     Face_container<Constrained_triangulation_plus_2> fc(*this);
 
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     if(pos != beg){
       // split off head
       --pos;
@@ -487,7 +483,7 @@ public:
       return pos;
       
     }
-    Constraint_id head = 0, tail = 0;
+    Constraint_id head = nullptr, tail = nullptr;
     Vertices_in_constraint_iterator bit = vertices_in_constraint_begin(cid);
     Vertices_in_constraint_iterator pred = pos;
     --pred;
@@ -685,21 +681,25 @@ public:
     return cid;
   }
 
-  virtual Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  No_intersection_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Exact_intersections_tag);
-  Vertex_handle intersect(Face_handle f, int i, 
-			  Vertex_handle vaa,
-			  Vertex_handle vbb,
-			  Exact_predicates_tag);
+  virtual Vertex_handle intersect(Face_handle f, int i,
+                                  Vertex_handle vaa,
+                                  Vertex_handle vbb);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_constraint_intersection_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          No_constraint_intersection_requiring_constructions_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_intersections_tag);
+  Vertex_handle intersect(Face_handle f, int i,
+                          Vertex_handle vaa,
+                          Vertex_handle vbb,
+                          Exact_predicates_tag);
  
   // REMOVAL
 
@@ -861,7 +861,7 @@ insert_subconstraint(Vertex_handle vaa,
 		     Vertex_handle vbb,
 		     OutputItertator out)
   // insert the subconstraint [vaa vbb] 
-  // it will eventually be splitted into several subconstraints
+  // it will eventually be split into several subconstraints
 {
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));
@@ -1027,11 +1027,16 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   Vertex_handle v1, v2;
   bool insert_in_constrained_edge = false;
 
-  if ( lt == Triangulation::EDGE && loc->is_constrained(li) ){
+  if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
+  {
+    if(boost::is_same<typename Tr::Itag, No_constraint_intersection_tag>::value)
+      throw typename Tr::Intersection_of_constraints_exception();
+
     insert_in_constrained_edge = true;
     v1=loc->vertex(ccw(li)); //endpoint of the constraint
     v2=loc->vertex(cw(li)); // endpoint of the constraint
   }
+
   Vertex_handle va = Triangulation::insert(a,lt,loc,li);
   // update the hierarchy
   if (insert_in_constrained_edge) {
@@ -1053,16 +1058,24 @@ intersect(Face_handle f, int i,
 template <class Tr>
 typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle 
 Constrained_triangulation_plus_2<Tr>::
-
-intersect(Face_handle , int , 
-	  Vertex_handle ,
-	  Vertex_handle ,
-	  No_intersection_tag)
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_constraint_intersection_tag)
 {
-  std::cerr << " sorry, this triangulation does not deal with" 
-	    <<    std::endl
-	    << " intersecting constraints" << std::endl;
-  CGAL_triangulation_assertion(false);
+  throw typename Tr::Intersection_of_constraints_exception();
+  return Vertex_handle();
+}
+
+template <class Tr>
+typename Constrained_triangulation_plus_2<Tr>:: Vertex_handle
+Constrained_triangulation_plus_2<Tr>::
+intersect(Face_handle, int,
+          Vertex_handle,
+          Vertex_handle,
+          No_constraint_intersection_requiring_constructions_tag)
+{
+  throw typename Tr::Intersection_of_constraints_exception();
   return Vertex_handle();
 }
 

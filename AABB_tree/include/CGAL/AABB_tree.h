@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
@@ -185,7 +176,7 @@ namespace CGAL {
       clear_nodes();
 			m_primitives.clear();
 			clear_search_tree();
-			m_default_search_tree_constructed = false;
+			m_default_search_tree_constructed = true;
 		}
 
 		/// Returns the axis-aligned bounding box of the whole tree.
@@ -439,6 +430,8 @@ public:
 		/// a point set taken on the internal primitives
 		/// returns `true` iff successful memory allocation
 		bool accelerate_distance_queries() const;
+		///Turns off the lazy construction of the internal search tree.
+		void do_not_accelerate_distance_queries() const;
 
     /// Constructs an internal KD-tree containing the specified point
     /// set, to be used as the set of potential hints for accelerating
@@ -610,7 +603,7 @@ public:
     , m_p_root_node(nullptr)
     , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
+    , m_default_search_tree_constructed(true)
     , m_need_build(false)
   {}
 
@@ -624,7 +617,7 @@ public:
 		, m_p_root_node(nullptr)
 		, m_p_search_tree(nullptr)
 		, m_search_tree_constructed(false)
-    , m_default_search_tree_constructed(false)
+    , m_default_search_tree_constructed(true)
     , m_need_build(false)
 	{
 		// Insert each primitive into tree
@@ -682,7 +675,6 @@ public:
 	void AABB_tree<Tr>::build()
 	{
     clear_nodes();
-
     if(m_primitives.size() > 1) {
 
 			// allocates tree nodes
@@ -704,8 +696,9 @@ public:
 		// In case the users has switched on the accelerated distance query
 		// data structure with the default arguments, then it has to be
 		// /built/rebuilt.
-		if(m_default_search_tree_constructed)
+		if(m_default_search_tree_constructed && !empty()){
 			build_kd_tree();
+		}
 		m_need_build = false;
 	}
 	// constructs the search KD tree from given points
@@ -749,6 +742,14 @@ public:
 			return false;
     }
 	}
+
+	template<typename Tr>
+	void AABB_tree<Tr>::do_not_accelerate_distance_queries()const
+	{
+	  clear_search_tree();
+	  m_default_search_tree_constructed = false;
+	}
+
 
 	// constructs the search KD tree from internal primitives
 	template<typename Tr>

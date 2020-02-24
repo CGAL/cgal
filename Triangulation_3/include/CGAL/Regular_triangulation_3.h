@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -41,7 +32,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 # include <CGAL/point_generators_3.h>
 # include <tbb/parallel_for.h>
-# include <tbb/task_scheduler_init.h>
+# include <thread>
 # include <tbb/enumerable_thread_specific.h>
 # include <tbb/concurrent_vector.h>
 #endif
@@ -202,21 +193,38 @@ public:
     CGAL_triangulation_postcondition(is_valid());
   }
 
+  Regular_triangulation_3(Regular_triangulation_3&& rt)
+    noexcept(noexcept(Tr_Base(std::move(rt))))
+    : Tr_Base(std::move(rt)), hidden_point_visitor(this)
+  {
+    CGAL_triangulation_postcondition(is_valid());
+  }
+
+  ~Regular_triangulation_3() = default;
+
   void swap(Regular_triangulation_3& tr)
   {
-    // The 'vertices' and 'hidden_points' members of 'hidden_point_visitor' should be empty
-    // as they are only filled (and cleared) during the insertion of a point.
-    // Hidden points are not stored there, but rather in cells. Thus, the only thing that must be set
-    // is the triangulation pointer.
-    Hidden_point_visitor<Concurrency_tag> new_hpv(this);
-    std::swap(hidden_point_visitor, new_hpv);
-
+    // The 'vertices' and 'hidden_points' members of
+    // 'hidden_point_visitor' should be empty as they are only filled
+    // (and cleared) during the insertion of a point.  Hidden points
+    // are not stored there, but rather in cells. Thus, the only thing
+    // that must be set is the triangulation pointer, and it is
+    // already correctly set. There is nothing to do about
+    // 'hidden_point_visitor'.
     Tr_Base::swap(tr);
   }
 
-  Regular_triangulation_3& operator=(Regular_triangulation_3 tr)
+  Regular_triangulation_3& operator=(const Regular_triangulation_3& tr)
   {
-    swap(tr);
+    Regular_triangulation_3 copy(tr);
+    copy.swap(*this);
+    return *this;
+  }
+
+  Regular_triangulation_3& operator=(Regular_triangulation_3&& tr)
+    noexcept(noexcept(Regular_triangulation_3(std::move(tr))))
+  {
+    Tr_Base::operator=(std::move(tr));
     return *this;
   }
 
@@ -267,7 +275,7 @@ private:
                                          bbox.zmin() + 0.5*zdelta);
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-                                                 tbb::task_scheduler_init::default_num_threads() * 3.5);
+                                                 std::thread::hardware_concurrency() * 3.5);
       typename Gt::Construct_weighted_point_3 cwp =
           geom_traits().construct_weighted_point_3_object();
 
@@ -1396,11 +1404,6 @@ protected:
       : m_rt(rt), m_points(points), m_tls_hint(tls_hint)
     {}
 
-    // Constructor
-    Insert_point(const Insert_point& ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_tls_hint(ip.m_tls_hint)
-    {}
-
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
@@ -1505,12 +1508,6 @@ protected:
                            tbb::enumerable_thread_specific<Vertex_handle>& tls_hint)
       : m_rt(rt), m_points(points), m_infos(infos), m_indices(indices),
         m_tls_hint(tls_hint)
-    {}
-
-    // Constructor
-    Insert_point_with_info(const Insert_point_with_info &ip)
-      : m_rt(ip.m_rt), m_points(ip.m_points), m_infos(ip.m_infos),
-        m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
     {}
 
     // operator()
@@ -1622,12 +1619,6 @@ protected:
                  tbb::concurrent_vector<Vertex_handle>& vertices_to_remove_sequentially)
       : m_rt(rt), m_vertices(vertices),
         m_vertices_to_remove_sequentially(vertices_to_remove_sequentially)
-    {}
-
-    // Constructor
-    Remove_point(const Remove_point& rp)
-      : m_rt(rp.m_rt), m_vertices(rp.m_vertices),
-        m_vertices_to_remove_sequentially(rp.m_vertices_to_remove_sequentially)
     {}
 
     // operator()

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Francois Rebufat
@@ -35,6 +26,11 @@ template <class Tds>
 void
 _test_cls_tds_3( const Tds &)
 {
+  static_assert(std::is_nothrow_move_constructible<Tds>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Tds>::value,
+                "move assignment is missing");
+
   typedef typename Tds::Vertex_range      Vertex_range;
   typedef typename Tds::Cell_range        Cell_range;
 
@@ -123,6 +119,34 @@ _test_cls_tds_3( const Tds &)
   tds6.insert_increase_dimension(vit);
   std::cout << "ok" << std::endl;
   assert(tds6.is_valid());
+
+  // Test move-constructors and move-assignments
+  {
+    Tds tds7 = tds5;
+    Tds tds8{std::move(tds7)};
+    Tds tds9 = tds5;
+    Tds tds10;
+    tds10 = std::move(tds9);
+    Tds tds11 = Tds(tds5);  // construct from a temporary
+    Tds tds12 = std::move(tds11);
+
+    assert(tds7.is_valid());
+    assert(tds8.is_valid());
+    assert(tds9.is_valid());
+    assert(tds10.is_valid());
+    assert(tds11.is_valid());
+    assert(tds12.is_valid());
+    assert(tds7.dimension()==-2);
+    assert(tds8.dimension()==2);
+    assert(tds9.dimension()==-2);
+    assert(tds10.dimension()==2);
+    assert(tds11.dimension()==-2);
+    assert(tds12.dimension()==2);
+    tds11.~Tds();
+    // check tds12 is still valid after the destruction of tds11
+    assert(tds12.is_valid());
+    assert(tds12.dimension()==2);
+  }
 
   std::cout << "  Insert are tested in test_triangulation_3  " << std::endl;
 

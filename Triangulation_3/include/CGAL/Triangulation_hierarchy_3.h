@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //                 Sylvain Pion
@@ -60,6 +51,8 @@
 #include <boost/mpl/identity.hpp>
 #include <boost/mpl/if.hpp>
 
+#include <array>
+
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 namespace CGAL {
@@ -101,7 +94,7 @@ public:
 private:
 
   // here is the stack of triangulations which form the hierarchy
-  Tr_Base*       hierarchy[maxlevel];
+  std::array<Tr_Base*,maxlevel> hierarchy;
   boost::rand48  random;
 
   void set_up_down(Vertex_handle up, Vertex_handle down)
@@ -115,6 +108,18 @@ public:
   Triangulation_hierarchy_3(const Geom_traits& traits = Geom_traits());
 
   Triangulation_hierarchy_3(const Triangulation_hierarchy_3& tr);
+
+  Triangulation_hierarchy_3(Triangulation_hierarchy_3&& other)
+    noexcept( noexcept(Tr_Base(std::move(other))) )
+    : Tr_Base(std::move(other))
+    , random(std::move(other.random))
+  {
+    hierarchy[0] = this;
+    for(int i=1; i<maxlevel; ++i) {
+      hierarchy[i] = other.hierarchy[i];
+      other.hierarchy[i] = nullptr;
+    }
+  }
 
   template < typename InputIterator >
   Triangulation_hierarchy_3(InputIterator first, InputIterator last,
@@ -134,9 +139,32 @@ public:
     return *this;
   }
 
-  ~Triangulation_hierarchy_3();
+  Triangulation_hierarchy_3 & operator=(Triangulation_hierarchy_3&& other)
+    noexcept( noexcept(Triangulation_hierarchy_3(std::move(other))) )
+  {
+    static_cast<Tr_Base&>(*this) = std::move(other);
+    hierarchy[0] = this;
+    for(int i=1; i<maxlevel; ++i) {
+      hierarchy[i] = other.hierarchy[i];
+      other.hierarchy[i] = nullptr;
+    }
+    return *this;
+  }
 
-  void swap(Triangulation_hierarchy_3 &tr);
+  ~Triangulation_hierarchy_3()
+  {
+    clear();
+    for(int i=1; i<maxlevel; ++i) {
+      delete hierarchy[i];
+    }
+  };
+
+  void swap(Triangulation_hierarchy_3 &tr)
+  {
+    Tr_Base::swap(tr);
+    for(int i=1; i<maxlevel; ++i)
+      std::swap(hierarchy[i], tr.hierarchy[i]);
+  };
 
   void clear();
 
@@ -468,26 +496,6 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
 	if (it->up() != Vertex_handle())
 	    V[ it->up()->down() ] = it;
     }
-  }
-}
-
-template <class Tr>
-void
-Triangulation_hierarchy_3<Tr>::
-swap(Triangulation_hierarchy_3<Tr> &tr)
-{
-  Tr_Base::swap(tr);
-  for(int i=1; i<maxlevel; ++i)
-      std::swap(hierarchy[i], tr.hierarchy[i]);
-}
-
-template <class Tr>
-Triangulation_hierarchy_3<Tr>::
-~Triangulation_hierarchy_3()
-{
-  clear();
-  for(int i=1; i<maxlevel; ++i) {
-    delete hierarchy[i];
   }
 }
 

@@ -14,7 +14,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QInputDialog>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QMessageBox>
 
 #include <Eigen/Sparse>
@@ -189,17 +189,9 @@ public:
                                             "to a surface mesh item. The generated mcf group must be selected in "
                                             "order to continue an on-going set of operations. "));});
     ui->omega_H->setValue(0.1);
-    ui->omega_H->setSingleStep(0.1);
-    ui->omega_H->setDecimals(3);
     ui->omega_P->setValue(0.2);
-    ui->omega_P->setSingleStep(0.1);
-    ui->omega_P->setDecimals(3);
-    ui->min_edge_length->setDecimals(7);
     ui->min_edge_length->setValue(0.002 * diag);
-    ui->min_edge_length->setSingleStep(0.0000001);
-    ui->delta_area->setDecimals(7);
     ui->delta_area->setValue(1e-4);
-    ui->delta_area->setSingleStep(1e-5);
     ui->is_medially_centered->setChecked(false);
 
     ui->label_omega_H->setToolTip(QString("omega_H controls the velocity of movement and approximation quality"));
@@ -368,7 +360,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
   if (num_vertices(item->skeleton_curve)==0 ) { QApplication::restoreOverrideCursor(); return;}
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
 
     // init the polyhedron simplex indices
@@ -461,7 +453,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     if ( !is_mesh_valid(pMesh) ) return;
 
-    QTime time;
+    QElapsedTimer time;
     time.start();
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -499,7 +491,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Contract...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -524,7 +516,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Collapse...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -550,7 +542,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Split...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -575,7 +567,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   std::cout << "Detect degeneracy...\n";
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -626,7 +618,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -749,7 +741,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -810,7 +802,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     return;
   }
 
-  QTime time;
+  QElapsedTimer time;
   time.start();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 

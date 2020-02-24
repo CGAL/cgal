@@ -25,7 +25,7 @@ int main()
 
 # include <tbb/task_scheduler_init.h>
 # include <tbb/parallel_for.h>
-# include <tbb/atomic.h>
+# include <atomic>
 
 #include <CGAL/disable_warnings.h>
 
@@ -33,7 +33,6 @@ struct Node_1
 : public CGAL::Compact_container_base
 {
   Node_1() {}
-  Node_1(const Node_1& o) : time_stamp_(o.time_stamp_) {}
   bool operator==(const Node_1 &) const { return true; }
   bool operator!=(const Node_1 &) const { return false; }
   bool operator< (const Node_1 &) const { return false; }
@@ -61,7 +60,7 @@ public:
   int      rnd;
 
   Node_2()
-  : p(NULL), rnd(CGAL::get_default_random().get_int(0, 100)) {}
+  : p(nullptr), rnd(CGAL::get_default_random().get_int(0, 100)) {}
 
   bool operator==(const Node_2 &n) const { return rnd == n.rnd; }
   bool operator!=(const Node_2 &n) const { return rnd != n.rnd; }
@@ -89,11 +88,6 @@ public:
     : m_values(values), m_cont(cont), m_iterators(iterators) 
   {}
   
-  Insert_in_CCC_functor(const Insert_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
-      m_iterators(other.m_iterators)
-  {}
-
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for( size_t i = r.begin() ; i != r.end() ; ++i)
@@ -118,11 +112,6 @@ public:
     : m_cont(cont), m_iterators(iterators) 
   {}
   
-  Erase_in_CCC_functor(const Erase_in_CCC_functor &other)
-    : m_cont(other.m_cont), 
-      m_iterators(other.m_iterators)
-  {}
-
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for( size_t i = r.begin() ; i != r.end() ; ++i)
@@ -139,31 +128,26 @@ template <typename Values_vec, typename Cont>
 class Insert_and_erase_in_CCC_functor
 {
   typedef std::vector<typename Cont::iterator>  Iterators_vec;
-  typedef std::vector<tbb::atomic<bool> >       Free_elts_vec;
+  typedef std::vector<std::atomic<bool> >       Free_elts_vec;
 
 public:
   Insert_and_erase_in_CCC_functor(
     const Values_vec &values, Cont &cont, Iterators_vec &iterators,
-    Free_elts_vec &free_elements, tbb::atomic<unsigned int> &num_erasures)
+    Free_elts_vec &free_elements, std::atomic<unsigned int> &num_erasures)
   : m_values(values), m_cont(cont), m_iterators(iterators),
     m_free_elements(free_elements), m_num_erasures(num_erasures)
   {}
   
-  Insert_and_erase_in_CCC_functor(const Insert_and_erase_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
-      m_iterators(other.m_iterators), m_free_elements(other.m_free_elements),
-      m_num_erasures(other.m_num_erasures)
-  {}
-
   void operator() (const tbb::blocked_range<size_t>& r) const
   {
     for( size_t i = r.begin() ; i != r.end() ; ++i)
     {
       m_iterators[i] = m_cont.insert(m_values[i]);
       // Random-pick an element to erase
-      int index_to_erase = rand() % m_values.size();
+      auto index_to_erase = rand() % m_values.size();
       // If it exists
-      if (m_free_elements[index_to_erase].compare_and_swap(true, false) == false)
+      bool comparand = false;
+      if (m_free_elements[index_to_erase].compare_exchange_weak(comparand, true) )
       {
         m_cont.erase(m_iterators[index_to_erase]);
         ++m_num_erasures;
@@ -176,12 +160,16 @@ private:
   Cont                      & m_cont;
   Iterators_vec             & m_iterators;
   Free_elts_vec             & m_free_elements;
-  tbb::atomic<unsigned int> & m_num_erasures;
+  std::atomic<unsigned int> & m_num_erasures;
 };
 
 template < class Cont >
 void test(const Cont &)
 {
+  static_assert(std::is_nothrow_move_constructible<Cont>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cont>::value,
+                "move assignment is missing");
   // Testing if all types are provided.
 
   typename Cont::value_type              t0;
@@ -372,14 +360,14 @@ void test(const Cont &)
   {
   Cont c12;
   Vect v12(1000000);
-  std::vector<tbb::atomic<bool> > free_elements(v12.size());
-  for(typename std::vector<tbb::atomic<bool> >::iterator 
+  std::vector<std::atomic<bool> > free_elements(v12.size());
+  for(typename std::vector<std::atomic<bool> >::iterator 
     it = free_elements.begin(), end = free_elements.end(); it != end; ++it) 
   {
     *it = true;
   }
     
-  tbb::atomic<unsigned int> num_erasures; 
+  std::atomic<unsigned int> num_erasures; 
   num_erasures = 0;
   std::vector<typename Cont::iterator> iterators(v12.size());
   tbb::parallel_for(

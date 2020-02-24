@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Stéphane Tayeb
@@ -40,7 +31,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Mesh_3/io_signature.h>
 #include <CGAL/Union_find.h>
-#include <CGAL/Hash_handles_with_or_without_timestamps.h>
+#include <CGAL/Time_stamper.h>
 
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
@@ -50,7 +41,7 @@
 
 
 #ifdef CGAL_LINKED_WITH_TBB
-  #include <tbb/atomic.h>
+  #include <atomic>
   #include <tbb/concurrent_hash_map.h>
 
 namespace CGAL {
@@ -183,7 +174,7 @@ public:
     , manifold_info_initialized_(false) //TODO: parallel!
   {
     // We don't put it in the initialization list because
-    // tbb::atomic has no contructors
+    // std::atomic has no contructors
     number_of_facets_ = 0;
     number_of_cells_ = 0;
   }
@@ -195,8 +186,9 @@ public:
     , edge_facet_counter_(rhs.edge_facet_counter_)
     , manifold_info_initialized_(rhs.manifold_info_initialized_)
   {
-    number_of_facets_ = rhs.number_of_facets_;
-    number_of_cells_ = rhs.number_of_cells_;
+    Init_number_of_elements<Concurrency_tag> init;
+    init(number_of_facets_, rhs.number_of_facets_);
+    init(number_of_cells_, rhs.number_of_cells_);
   }
 
   /// Destructor
@@ -514,9 +506,10 @@ public:
   /// Swaps this & rhs
   void swap(Self& rhs)
   {
-    std::swap(rhs.number_of_facets_, number_of_facets_);
+    Swap_elements<Concurrency_tag> swapper;
+    swapper(rhs.number_of_facets_, number_of_facets_);
     tr_.swap(rhs.tr_);
-    std::swap(rhs.number_of_cells_, number_of_cells_);
+    swapper(rhs.number_of_cells_, number_of_cells_);
   }
 
   /// Returns bbox
@@ -859,12 +852,55 @@ private:
   {
     typedef size_type type;
   };
+  
+  template<typename Concurrency_tag2, typename dummy = void>
+  struct Init_number_of_elements
+  {
+    template<typename T>
+    void operator()(T& a, const T& b)
+    {
+      a = b;
+    }
+  };
+  
+  template<typename Concurrency_tag2, typename dummy = void>
+  struct Swap_elements
+  {
+    template<typename T>
+    void operator()(T& a, T& b)
+    {
+      std::swap(a, b);
+    }
+  };
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel: atomic
   template<typename dummy>
   struct Number_of_elements<Parallel_tag, dummy>
   {
-    typedef tbb::atomic<size_type> type;
+    typedef std::atomic<size_type> type;
+  };
+  
+  template<typename dummy>
+  struct Init_number_of_elements<Parallel_tag, dummy>
+  {
+    template<typename T>
+    void operator()(T& a, const T& b)
+    {
+      a = b.load();
+    }
+  };
+  
+  template<typename dummy>
+  struct Swap_elements<Parallel_tag, dummy>
+  {
+    template<typename T>
+    void operator()(T& a, T& b)
+    {
+      T tmp;
+      tmp.exchange(a);
+      a.exchange(b);
+      b.exchange(tmp);
+    }
   };
 #endif // CGAL_LINKED_WITH_TBB
 

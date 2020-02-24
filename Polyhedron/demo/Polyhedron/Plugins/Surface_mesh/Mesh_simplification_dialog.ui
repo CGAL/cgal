@@ -105,15 +105,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="m_edge_length">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="decimals">
-        <number>5</number>
-       </property>
-       <property name="maximum">
-        <double>10000.000000000000000</double>
+      <widget class="DoubleEdit" name="m_edge_length">
+       <property name="text">
+        <string>0.000</string>
        </property>
       </widget>
      </item>
@@ -144,6 +138,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
