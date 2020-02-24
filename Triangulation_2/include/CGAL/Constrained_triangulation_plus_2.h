@@ -857,7 +857,7 @@ insert_subconstraint(Vertex_handle vaa,
 		     Vertex_handle vbb,
 		     OutputItertator out)
   // insert the subconstraint [vaa vbb] 
-  // it will eventually be splitted into several subconstraints
+  // it will eventually be split into several subconstraints
 {
   std::stack<std::pair<Vertex_handle, Vertex_handle> > stack;
   stack.push(std::make_pair(vaa,vbb));

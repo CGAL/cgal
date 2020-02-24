@@ -122,10 +122,10 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
 
-  typedef typename Polygon_mesh_processing::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+  typedef typename CGAL::GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
   typedef typename Geom_traits::FT FT;
 
-  typedef typename Polygon_mesh_processing::GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
+  typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::type Vertex_point_map;
   Vertex_point_map point_pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
     get_property_map(vertex_point, const_cast<TriangleMesh &>(tm)));
 

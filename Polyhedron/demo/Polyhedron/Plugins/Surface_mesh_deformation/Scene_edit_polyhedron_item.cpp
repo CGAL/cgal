@@ -10,7 +10,7 @@
 #include <CGAL/Three/Point_container.h>
 #include <CGAL/Qt/constraint.h>
 #include <algorithm>
-#include <QTime>
+#include <QElapsedTimer>
 
 #include <QApplication>
 
@@ -99,7 +99,6 @@ struct Scene_edit_polyhedron_item_priv
   mutable std::vector<GLfloat> color_lines;
   mutable std::vector<GLfloat> ROI_points;
   mutable std::vector<GLfloat> control_points;
-  mutable std::vector<GLfloat> ROI_color;
   mutable std::vector<GLfloat> control_color;
   mutable std::vector<GLfloat> normals;
   mutable std::vector<GLfloat> pos_bbox;
@@ -360,15 +359,12 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
             {
               CGAL::Color c(0,255,0);
               EPICK::Point_3 point(p.x()+offset.x, p.y()+offset.y, p.z()+offset.z);
-              spheres->add_sphere(EPICK::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), c);
+              spheres->add_sphere(EPICK::Sphere_3(point, length_of_axis/15.0*length_of_axis/15.0), 0, c);
             }
         }
 
     }
-    ROI_color.assign(ROI_points.size(),0);
-    for(std::size_t i=0; i<ROI_color.size()/3; i++)
-      ROI_color[3*i+1]=1.0;
-
+   
     for(typename std::list<Control_vertices_data<Mesh> >::const_iterator hgb_data = fs.get_ctrl_vertex_frame_map(mesh).begin(); hgb_data != fs.get_ctrl_vertex_frame_map(mesh).end(); ++hgb_data)
     {
         if(hgb_data->frame == Three::mainViewer()->manipulatedFrame())
@@ -400,7 +396,7 @@ void Scene_edit_polyhedron_item_priv::compute_normals_and_vertices(Mesh* mesh)
               EPICK::Point_3 center(p.x()+offset.x,
                                      p.y()+offset.y,
                                      p.z()+offset.z);
-              spheres_ctrl->add_sphere(EPICK::Sphere_3(center, length_of_axis/15.0*length_of_axis/15.0), c);
+              spheres_ctrl->add_sphere(EPICK::Sphere_3(center, length_of_axis/15.0*length_of_axis/15.0), 0, c);
             }
         }
     }
@@ -909,6 +905,8 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   // check state changes between old and current state
   bool ctrl_pressed_now = d->state.ctrl_pressing && !old_state.ctrl_pressing;
   bool ctrl_released_now = !d->state.ctrl_pressing && old_state.ctrl_pressing;
+  if(ctrl_released_now) //to avoid moving the control vertices next time ctrl is pressed
+    d->state.left_button_pressing = false;
   if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove)
   {// activate a handle manipulated frame
     CGAL::QGLViewer* viewer = Three::mainViewer();
@@ -1271,7 +1269,7 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
   {
     if(!d->spheres)
     {
-      d->spheres = new Scene_spheres_item(this, false);
+      d->spheres = new Scene_spheres_item(this, 0, false, false);
       d->spheres->setName("ROI spheres");
       d->spheres->setRenderingMode(Gouraud);
       connect(d->spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
@@ -1283,7 +1281,7 @@ void Scene_edit_polyhedron_item::ShowAsSphere(bool b)
     }
     if(!d->spheres_ctrl)
     {
-      d->spheres_ctrl = new Scene_spheres_item(this, false);
+      d->spheres_ctrl = new Scene_spheres_item(this, false, false);
       d->spheres_ctrl->setName("Control spheres");
       d->spheres_ctrl->setRenderingMode(Gouraud);
       connect(d->spheres_ctrl, &QObject::destroyed, this, Reset_spheres_ctrl(d) );
@@ -1776,6 +1774,10 @@ Scene_surface_mesh_item* Scene_edit_polyhedron_item::sm_item()const
 void Scene_edit_polyhedron_item::computeElements() const
 {
   d->compute_normals_and_vertices(sm_item()->face_graph());
+  if(d->spheres)
+    d->spheres->computeElements();
+  if(d->spheres_ctrl)
+    d->spheres_ctrl->computeElements();
   std::vector<GLfloat> vertices;
   std::vector<GLfloat> *vertices_ptr;
   const CGAL::qglviewer::Vec offset = Three::mainViewer()->offset();

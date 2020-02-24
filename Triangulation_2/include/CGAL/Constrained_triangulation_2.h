@@ -299,7 +299,7 @@ template <class OutputIterator>
 void
 insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
 // forces the constrained [va,vb]
-// [va,vb] will eventually be splitted into several edges
+// [va,vb] will eventually be split into several edges
 // if a vertex vc of t lies on segment ab
 // of if ab intersect some constrained edges
 {

@@ -51,8 +51,12 @@ void main(void) {
     vec3 L = light_pos.xyz - fP.xyz;
     vec3 V = -fP.xyz;
     vec3 N;
+    vec4 my_color = vec4(color.xyz, 1.0);
     if(fN ==  vec3(0.0,0.0,0.0))
-      N =  vec3(0.0,0.0,0.0);
+    {
+      out_color = my_color;
+      return;
+    }
     else
       N = normalize(fN);
     L = normalize(L);
@@ -60,7 +64,7 @@ void main(void) {
     vec3 R = reflect(-L, N);
     vec4 diffuse;
     float dot_prod = dot(N,L);
-    vec4 my_color;
+    
     if(back_front_shading)
     {
       if (dot_prod > 0)

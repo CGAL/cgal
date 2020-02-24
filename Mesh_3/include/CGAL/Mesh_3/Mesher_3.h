@@ -50,7 +50,7 @@
 #endif
 
 #ifdef CGAL_LINKED_WITH_TBB
-#  include <tbb/task_scheduler_init.h>
+#  include <thread>
 #endif
 
 #include <boost/format.hpp>
@@ -659,7 +659,7 @@ initialize()
 #  endif
       Random_points_on_sphere_3<Bare_point> random_point(radius);
       const int NUM_PSEUDO_INFINITE_VERTICES = static_cast<int>(
-        float(tbb::task_scheduler_init::default_num_threads())
+        float(std::thread::hardware_concurrency())
         * Concurrent_mesher_config::get().num_pseudo_infinite_vertices_per_core);
       for (int i = 0 ; i < NUM_PSEUDO_INFINITE_VERTICES ; ++i, ++random_point)
         r_c3t3_.add_far_point(r_c3t3_.triangulation().geom_traits().construct_weighted_point_3_object()
@@ -817,7 +817,13 @@ status() const
   if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value) {
     const WorksharingDataStructureType* ws_ds =
       this->get_worksharing_data_structure();
-    return Mesher_status(approximate_number_of_vertices(Concurrency_tag()),
+    return Mesher_status(
+#  if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
+                         approximate_number_of_vertices(Concurrency_tag()),
+#else
+                         // not thread-safe, but that is not important
+                         approximate_number_of_vertices(CGAL::Sequential_tag()),
+#endif
                          0,
                          ws_ds->approximate_number_of_enqueued_element());
   }

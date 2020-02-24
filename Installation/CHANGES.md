@@ -1,19 +1,38 @@
 Release History
 ===============
 
-Release 5.1
+[Release 5.1] (https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.1)
 -----------
 
 Release date: June 2020
+
+### Surface Mesh Topology (new package)
+
+ -   This package allows to compute some topological invariants of
+     surfaces. For now, it is possible to test if two (closed) curves
+     on a combinatorial surface are homotopic. The user can choose
+     between free homotopy and homotopy with fixed endpoints. 
+     A contractibility test is also provided.
 
 ### 3D Fast Intersection and Distance Computation
 -   **Breaking change**: the internal search tree is now lazily constructed. To disable it, one must call
     the new function `do_not_accelerate_distance_queries()` before the first distance query.
 
+### Intersecting Sequences of dD Iso-oriented Boxes 
+ -   Added parallel versions of the functions `CGAL::box_intersection_d()` and `CGAL::box_self_intersection_d()`.
+
 ### Polygon Mesh Processing
 
+-   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
+    which can be used to remove connected components whose area or volume is under a certain threshold.
+    Area and volume thresholds are either specified by the user or deduced from the bounding box of the mesh.
+-   Added a new named parameter for `keep_large_connected_components()` and `remove_connected_components_of_negligible_size`
+    that can be used to perform a dry run of the operation, meaning that the function will return the number of connected
+    components that would be removed with the specified threshold, but without actually removing them.
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
+ -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
+     and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
@@ -27,6 +46,47 @@ Release date: June 2020
     does not allow any intersection, except for the configuration of two constraints having a single
     common endpoints, for convience.
 
+### dD Spatial Searching
+
+-   Improved the performance of the kd-tree in some cases:
+    -   Not storing the points coordinates inside the tree usually
+        generates a lot of cache misses, leading to non-optimal
+        performance. This is the case for example
+        when indices are stored inside the tree, or to a lesser extent when the points
+        coordinates are stored in a dynamically allocated array (e.g., `Epick_d`
+        with dynamic dimension) &mdash; we says "to a lesser extent" because the points
+        are re-created by the kd-tree in a cache-friendly order after its construction,
+        so the coordinates are more likely to be stored in a near-optimal order
+        on the heap.
+        In these cases, the new `EnablePointsCache` template parameter of the
+        `CGAL::Kd_tree` class can be set to `CGAL::Tag_true`. The points coordinates
+        will then be cached in an optimal way. This will increase memory
+        consumption but provides better search performance. See the updated
+        `GeneralDistance` and `FuzzyQueryItem`
+        concepts for additional requirements when using such a cache.
+    -   In most cases (e.g., Euclidean distance), the distance computation
+        algorithm knows before its end that the distance will be greater
+        than or equal to some given value. This is used in the (orthogonal)
+        k-NN search to interrupt some distance computations before its end,
+        saving precious milliseconds, in particular in medium-to-high dimension.
+
+### Spatial Sorting
+ -   Added parallel versions of `hilbert_sort()` and `spatial_sort()` in 2D and 3D when the median policy is used.
+     The parallel versions use up to four threads in 2D, and up to eight threads in 3D.
+
+### dD Geometry Kernel
+-   Epick\_d and Epeck\_d gain 2 new functors: `Power_side_of_bounded_power_sphere_d` and
+    `Compute_squared_radius_smallest_orthogonal_sphere_d`. Those are
+    essential for the computation of weighted alpha-complexes.
+
+### Surface Mesh Simplification
+- Added a new simplification method based on the quadric error defined by Garland and Heckbert.
+- The concept "EdgeProfile" has been removed. This concept was not actually in use as the CGAL-provided model `CGAL::Edge_profile`
+  was imposed to the user. Other concepts have been clarified to reflect the fact that the API uses this particular class.
+
+### STL Extensions for CGAL
+ -   Added a new concurrency tag: `CGAL::Parallel_if_available_tag`. This tag is a convenience typedef to `CGAL::Parallel_tag`
+     if the third party library TBB has been found and linked with, and to `CGAL::Sequential_tag` otherwise.
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------

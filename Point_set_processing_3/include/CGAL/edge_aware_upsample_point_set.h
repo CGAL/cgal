@@ -280,8 +280,8 @@ update_new_point(
    Normals of points are required as input. For more details, please refer to \cgalCite{ear-2013}.
  
    \tparam ConcurrencyTag enables sequential versus parallel versions
-   of `compute_average_spacing()` (called internally).  Possible
-   values are `Sequential_tag` and `Parallel_tag`.
+   of `compute_average_spacing()` (called internally). Possible
+   values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
    \tparam OutputIterator Type of the output iterator. 

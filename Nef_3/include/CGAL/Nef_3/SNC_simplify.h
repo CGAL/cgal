@@ -192,7 +192,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   bool simplify_redundant_box_vertex(Vertex_handle v, bool snc_computed) {
-    CGAL_warning("altered code");
+    //CGAL_warning("altered code");
     return false;
     if(snc_computed) return false;
     if(!Infi_box::is_redundant_box_vertex(*v)) return false;

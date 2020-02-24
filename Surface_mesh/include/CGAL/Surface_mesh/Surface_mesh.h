@@ -2158,7 +2158,7 @@ private: //------------------------------------------------------- private data
     else
       os << "COFF\n" << sm.number_of_vertices() << " " << sm.number_of_faces() << " 0\n";
     std::vector<int> reindex;
-    typename Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
@@ -2287,6 +2287,9 @@ private: //------------------------------------------------------- private data
 
     os << "end_header" << std::endl;  
 
+    std::vector<int> reindex;
+    reindex.resize (sm.num_vertices());
+    int n = 0;
     for(VIndex vi : sm.vertices())
     {
       for (std::size_t i = 0; i < vprinters.size(); ++ i)
@@ -2297,22 +2300,23 @@ private: //------------------------------------------------------- private data
       }
       if (get_mode (os) == IO::ASCII)
         os << std::endl;
+      reindex[std::size_t(vi)] = n ++;
     }
 
-    std::vector<VIndex> polygon;
+    std::vector<int> polygon;
     
     for(FIndex fi : sm.faces())
     {
       // Get list of vertex indices
       polygon.clear();
-      for(HIndex hi : halfedges_around_face(halfedge(fi, sm), sm))
-        polygon.push_back (sm.target(hi));
+      for(VIndex vi : CGAL::vertices_around_face(sm.halfedge(fi),sm))
+        polygon.push_back (reindex[std::size_t(vi)]);
 
       if (get_mode (os) == IO::ASCII)
       {
         os << polygon.size() << " ";
         for (std::size_t i = 0; i < polygon.size(); ++ i)
-          os << int(polygon[i]) << " ";
+          os << polygon[i] << " ";
       }
       else
       {
@@ -2320,7 +2324,7 @@ private: //------------------------------------------------------- private data
         os.write (reinterpret_cast<char*>(&size), sizeof(size));
         for (std::size_t i = 0; i < polygon.size(); ++ i)
         {
-          int idx = int(polygon[i]);
+          int idx = polygon[i];
           os.write (reinterpret_cast<char*>(&idx), sizeof(idx));
         }
       }
@@ -2340,12 +2344,12 @@ private: //------------------------------------------------------- private data
     {
       for(EIndex ei : sm.edges())
       {
+        int v0 = reindex[std::size_t(sm.vertex(ei,0))];
+        int v1 = reindex[std::size_t(sm.vertex(ei,1))];
         if (get_mode (os) == IO::ASCII)
-          os << int(sm.vertex(ei,0)) << " " << int(sm.vertex(ei,1)) << " ";
+          os << v0 << " " << v1 << " ";
         else
         {
-          int v0 = int(sm.vertex(ei,0));
-          int v1 = int(sm.vertex(ei,1));
           os.write (reinterpret_cast<char*>(&v0), sizeof(v0));
           os.write (reinterpret_cast<char*>(&v1), sizeof(v1));
         }
@@ -2366,12 +2370,12 @@ private: //------------------------------------------------------- private data
     {
       for(HIndex hi : sm.halfedges())
       {
+        int source = reindex[std::size_t(sm.source(hi))];
+        int target = reindex[std::size_t(sm.target(hi))];
         if (get_mode (os) == IO::ASCII)
-          os << int(sm.source(hi)) << " " << int(sm.target(hi)) << " ";
+          os << source << " " << target << " ";
         else
         {
-          int source = int(sm.source(hi));
-          int target = int(sm.target(hi));
           os.write (reinterpret_cast<char*>(&source), sizeof(source));
           os.write (reinterpret_cast<char*>(&target), sizeof(target));
         }
@@ -2442,7 +2446,7 @@ private: //------------------------------------------------------- private data
    using parameters::choose_parameter;
    using parameters::get_parameter;
 
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
+    typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
         vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
                            get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
@@ -2457,6 +2461,7 @@ private: //------------------------------------------------------- private data
       is.setstate(std::ios::failbit);
       return false;
     }
+    is >> sm_skip_comments;
     is >> n >> f >> e;
     if(!is){
       return false;
@@ -2474,12 +2479,14 @@ private: //------------------------------------------------------- private data
       boost::tie(vnormal, created) = sm.template add_property_map<Vertex_index,Vector_3>("v:normal",Vector_3(0,0,0));
       v_has_normals = true;
     }
+    std::string line;
     char ci;
-
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
+      std::getline(is, line);
+      std::istringstream iss(line);
       double x, y, z;
-      is >> iformat(x) >> iformat(y) >> iformat(z);
+      iss >> iformat(x) >> iformat(y) >> iformat(z);
       
       Vertex_index vi = sm.add_vertex();
       put(vpm, vi, P(x, y, z));
@@ -2487,26 +2494,37 @@ private: //------------------------------------------------------- private data
       
       vertexmap[i] = vi;
       if(v_has_normals){
-        is >> v;
+        if(!(iss >> v))
+        {
+          std::cerr<<"This doesn't seem to be a correct NOFF file. Aborting."<<std::endl;
+          is.setstate(std::ios::failbit);          
+          return false;
+        }
         vnormal[vi] = v;
       }
 
 
       if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
         std::string col;
-        std::getline(is, col);
-        std::istringstream iss(col);
-        if(iss >> ci){
+        std::getline(iss, col);
+        std::istringstream iss2(col);
+        if(iss2 >> ci){
          bool created;
          boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
-         std::istringstream iss2(col);
-         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss2);
+         std::istringstream iss3(col);
+         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss3);
          vcolored = true;
+        }
+        else
+        {
+          std::cerr<<"This doesn't seem to be a correct COFF file. Aborting."<<std::endl;
+          is.setstate(std::ios::failbit);
+          return false;
         }
       }else{
          if(vcolored){
            //stores the RGB value
-           vcolor[vi] = File_scanner_OFF::get_color_from_line(is);
+           vcolor[vi] = File_scanner_OFF::get_color_from_line(iss);
          }
        }
     }

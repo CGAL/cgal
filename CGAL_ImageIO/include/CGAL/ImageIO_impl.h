@@ -497,14 +497,19 @@ void _openWriteImage(_image* im, const char *name)
 #endif
 	im->openMode = OM_GZ;
       }
-#if CGAL_USE_GZFWRITE
-    else 
+    else
     {
+#if CGAL_USE_GZFWRITE
       im->fd = (_ImageIO_file) gzopen(name, "wb");
       im->openMode = OM_FILE;
-    }
-#endif// CGAL_USE_GZFWRITE
 #else
+      fprintf(stderr, "_openWriteImage: error: zlib version 1.2.9 or later\n"
+                      "is required to save in non-compressed files\n");
+      return; 
+#endif// CGAL_USE_GZFWRITE
+    }
+
+#else //CGAL_USE_ZLIB
     {
       im->fd = (_ImageIO_file) fopen(name, "wb");
       im->openMode = OM_FILE;

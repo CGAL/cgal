@@ -106,9 +106,8 @@ public Q_SLOTS:
 
   void insert_mp() {
     insert_point(moving_point);
-    QString str;
-    ui->viewer->displayMessage(str.sprintf("Added point (%f, %f, %f)",
-           moving_point.x(),moving_point.y(),moving_point.z()));
+    ui->viewer->displayMessage(QString("Added point (%1, %2, %3)").arg(
+           moving_point.x()).arg(moving_point.y()).arg(moving_point.z()));
     changed();
   }
 
@@ -117,9 +116,8 @@ public Q_SLOTS:
     Point pt = *rp+Vector(0.5,0.5,0.5);
     rp++;
     insert_point(Point(pt.x(),pt.y(),(in_plane? 0.0:pt.z())));
-    QString str;
-    ui->viewer->displayMessage(str.sprintf("Added point (%f, %f, %f)",
-           pt.x(),pt.y(),(in_plane? 0.0:pt.z())));
+    ui->viewer->displayMessage(QString("Added point (%1, %2, %3)").arg(
+           pt.x()).arg(pt.y()).arg((in_plane? 0.0:pt.z())));
     changed();
   }
   void insert_point(Point p) {

@@ -5,14 +5,21 @@ namespace CGAL {
 
 The function object `Hilbert_sort_2` sorts iterator ranges of 
 `Traits::Point_2` along a Hilbert curve by recursively subdividing 
-at the median 
-or the middle depending on the `PolicyTag`. 
+at the median or the middle, depending on the `PolicyTag` (see Section \ref sechilbert_sorting
+for more information on the policies).
 
+\tparam Traits must be a model of the concept `SpatialSortingTraits_2`. 
 
-\tparam Traits must be a model for `SpatialSortingTraits`. 
+\tparam PolicyTag is used to specify the strategy policy.
+Possible values are \link CGAL::Hilbert_sort_median_policy `Hilbert_sort_median_policy` \endlink
+(the default policy) or \link CGAL::Hilbert_sort_middle_policy `Hilbert_sort_middle_policy` \endlink.
 
+\tparam ConcurrencyTag enables sequential versus parallel algorithm.
+Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+With parallelism enabled, sorting will be performed using up to four threads.
+Parallel sorting is available only when the median strategy policy (the default policy) is used.
 */
-template< typename Traits, typename PolicyTag >
+  template< typename Traits, typename PolicyTag, typename ConcurrencyTag = Sequential_tag >
 class Hilbert_sort_2 {
 public:
 
@@ -31,9 +38,10 @@ Hilbert_sort_2(const Traits &traits = Traits());
 
 /*!
 It sorts the range `[begin, end)`. 
-\tparam RandomAccessIterator must be an iterator with value type `Traits::Point_2`. 
+\tparam InputPointIterator must be a model of `RandomAccessIterator` with value type `Traits::Point_2`.
 */ 
-template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const; 
+template <class InputPointIterator>
+void operator() (InputPointIterator begin, InputPointIterator end) const;
 
 /// @}
 

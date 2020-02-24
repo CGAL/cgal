@@ -17,9 +17,6 @@ int main(int argc, char **argv) {
   const auto ymax = std::stoul(argv[6]);
   const auto zmin = std::stoul(argv[7]);
   const auto zmax = std::stoul(argv[8]);
-  assert(xmin >= 0);
-  assert(ymin >= 0);
-  assert(zmin >= 0);
   assert(xmax < image->xdim);
   assert(ymax < image->ydim);
   assert(zmax < image->zdim);

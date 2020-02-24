@@ -40,7 +40,10 @@ void main(void) {
       highp vec3 V = -fP.xyz; 
       highp vec3 N; 
       if(fN == vec3(0.0,0.0,0.0))
-          N = vec3(0.0,0.0,0.0);
+      {
+        gl_FragColor = my_color;
+        return;
+      }
       else 
           N = normalize(fN); 
       L = normalize(L); 

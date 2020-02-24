@@ -90,10 +90,8 @@ template <typename GeomTraits,
           typename PointMap,
 #if defined(DOXYGEN_RUNNING)
           typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-          typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-          typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
 #if defined(DOXYGEN_RUNNING)
           typename DiagonalizeTraits>
