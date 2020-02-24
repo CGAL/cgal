@@ -244,6 +244,43 @@ public:
         }
     }
   
+    void write (std::ostream& os)
+    {
+      os.write((char*)(&is_leaf), sizeof(bool));
+      os.write((char*)(&n_samples), sizeof(size_t));
+      os.write((char*)(&depth), sizeof(size_t));
+      splitter.write(os);
+
+      for (const float& f : node_dist)
+        os.write((char*)(&f), sizeof(float));
+
+      if (!is_leaf)
+      {
+        left->write(os);
+        right->write(os);
+      }
+    }
+
+    void read (std::istream& is)
+    {
+      is.read((char*)(&is_leaf), sizeof(bool));
+      is.read((char*)(&n_samples), sizeof(size_t));
+      is.read((char*)(&depth), sizeof(size_t));
+      splitter.read(is);
+
+      node_dist.resize(params->n_classes, 0.0f);
+      for (std::size_t i = 0; i < node_dist.size(); ++ i)
+        is.read((char*)(&node_dist[i]), sizeof(float));
+
+      if (!is_leaf)
+      {
+        left.reset(new Derived(depth + 1, params));
+        right.reset(new Derived(depth + 1, params));
+        left->read(is);
+        right->read(is);
+      }
+    }
+
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
       if (!is_leaf)
