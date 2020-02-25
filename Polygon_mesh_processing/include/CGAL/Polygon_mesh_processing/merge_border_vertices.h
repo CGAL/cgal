@@ -22,8 +22,11 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
-#include <boost/unordered_set.hpp>
-#include <boost/bind.hpp>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+#include <utility>
 
 namespace CGAL {
 
