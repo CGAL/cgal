@@ -125,11 +125,10 @@ void simplify_range(HalfedgeRange& halfedge_range,
     // @fixme what if the source vertex is not to be snapped? Tolerance cannot be obtained...
     // and where should the post-collapse vertex be since we can't move the source vertex...
     // --> simply don't collapse?
-    const FT h_sq_length = gt.compute_squared_distance_3_object()(ps, pt);
     const FT min_tol = (std::min)(get(tolerance_map, vs), get(tolerance_map, vt));
     const FT max_tol = (std::max)(get(tolerance_map, vs), get(tolerance_map, vt));
 
-    if(h_sq_length < CGAL::square(max_tol))
+    if(gt.compare_squared_distance_3_object()(ps,pt,CGAL::square(max_tol))==SMALLER)
     {
       const halfedge_descriptor prev_h = prev(h, tm);
       const halfedge_descriptor next_h = next(h, tm);
@@ -137,6 +136,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
       // check that the border has at least 4 edges not to create degenerate volumes
       if(border_size(h, tm) >= 4)
       {
+        const FT h_sq_length = gt.compute_squared_distance_3_object()(ps, pt);
         vertex_descriptor v = Euler::collapse_edge(edge(h, tm), tm);
 
         put(vpm, v, gt.construct_midpoint_3_object()(ps, pt));
@@ -504,8 +504,12 @@ void find_splittable_edge(const VertexWithTolerance& vertex_with_tolerance,
 
   // The filtering in the AABB tree checks the dist query <-> node bbox, which might be smaller than
   // the actual distance between the query <-> closest point
-  const FT sq_dist_to_closest = gt.compute_squared_distance_3_object()(query, closest_p);
-  bool is_close_enough = (sq_dist_to_closest <= sq_tolerance);
+  edge_descriptor closest_e = traversal_traits.closest_primitive_id();
+  bool is_close_enough =
+    gt.compare_squared_distance_3_object()(query,
+                                           gt.construct_segment_3_object()(get(vpm_T, source(closest_e, tm_T)),
+                                                                           get(vpm_T, target(closest_e, tm_T))),
+                                           sq_tolerance) != LARGER;
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
   std::cout << "  Closest point: (" << closest_p << ")" << std::endl
@@ -518,7 +522,7 @@ void find_splittable_edge(const VertexWithTolerance& vertex_with_tolerance,
   if(!is_close_enough)
     return;
 
-  edge_descriptor closest_e = traversal_traits.closest_primitive_id();
+
   CGAL_assertion(get(vpm_T, source(closest_e, tm_T)) != query &&
                  get(vpm_T, target(closest_e, tm_T)) != query);
 

@@ -190,8 +190,9 @@ struct Vertex_proximity_report
     CGAL_assertion(tol_a >= FT(0));
     CGAL_assertion(tol_b >= FT(0));
 
-    const FT sq_dist = m_gt.compute_squared_distance_3_object()(get(m_vpm_A, va), get(m_vpm_B, vb));
-    CGAL::Comparison_result res = CGAL::compare(sq_dist, CGAL::square(0.5*(tol_a + tol_b)));
+    const FT upper_bound_squared = CGAL::square(0.5*(tol_a + tol_b));
+    CGAL::Comparison_result res =
+      m_gt.compare_squared_distance_3_object()(get(m_vpm_A, va), get(m_vpm_B, vb), upper_bound_squared);
 
 #ifdef CGAL_PMP_SNAP_DEBUG_PP
     std::cout << "squared distance between "
@@ -204,7 +205,11 @@ struct Vertex_proximity_report
     if(res == CGAL::LARGER)
       return std::make_pair(-1, false); // ignore
     else
+    {
+      const FT sq_dist = (min)(m_gt.compute_squared_distance_3_object()(get(m_vpm_A, va), get(m_vpm_B, vb)),
+                               upper_bound_squared);
       return std::make_pair(sq_dist, true); // keep
+    }
   }
 
   // that's the sequential version
