@@ -68,6 +68,8 @@ class Handle
       return *this;
     }
 
+    friend void swap(Handle& a, Handle& b) noexcept { std::swap(a.PTR, b.PTR); }
+
     void reset()
     {
       if (PTR)
