@@ -36,7 +36,24 @@ class Label_set
   
 public:
   
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type const_iterator; ///< A random access iterator with value type `Label_handle`.
+  typedef unspecified_type iterator; ///< A random access iterator with value type `Label_handle`.
+#else
+  typedef std::vector<Label_handle>::const_iterator const_iterator;
+  typedef std::vector<Label_handle>::iterator iterator;
+#endif
+  
   Label_set() { }
+
+  /*!
+    \brief Constructs a label set from a set of label names.
+  */
+  Label_set(std::initializer_list<const char*> labels)
+  {
+    for (const char* l : labels)
+      m_labels.push_back (Label_handle(new Classification::Label(l)));
+  }
   
   /// \cond SKIP_IN_MANUAL
   virtual ~Label_set() { }
@@ -83,6 +100,11 @@ public:
     return true;
   }
 
+  const_iterator begin() const { return m_labels.begin(); }
+  iterator begin() { return m_labels.begin(); }
+  const_iterator end() const { return m_labels.end(); }
+  iterator end() { return m_labels.end(); }
+  
   /*!
     \brief Returns how many labels are defined.
   */  

@@ -59,6 +59,14 @@ class Feature_set
   
 public:
 
+#ifdef DOXYGEN_RUNNING
+  typedef unspecified_type const_iterator; ///< A random access iterator with value type `Feature_handle`.
+  typedef unspecified_type iterator; ///< A random access iterator with value type `Feature_handle`.
+#else
+  typedef std::vector<Feature_handle>::const_iterator const_iterator;
+  typedef std::vector<Feature_handle>::iterator iterator;
+#endif
+
   /// \name Constructor
   /// @{
 
@@ -190,8 +198,6 @@ public:
   /// @{
   
 
-#if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
-
   /*!
     \brief Initializes structures to compute features in parallel.
 
@@ -199,7 +205,8 @@ public:
     should be called before making several calls of `add()`. After the
     calls of `add()`, `end_parallel_additions()` should be called.
 
-    \note This function requires \ref thirdpartyTBB.
+    \note If \ref thirdpartyTBB is not available, this function does
+    nothing.
 
     \warning As arguments of `add()` are passed by reference and that new
     threads are started if `begin_parallel_additions()` is used, it is
@@ -212,7 +219,9 @@ public:
   */ 
   void begin_parallel_additions()
   {
+#ifdef CGAL_LINKED_WITH_TBB
     m_tasks = new tbb::task_group;
+#endif
   }
 
   /*!
@@ -224,12 +233,14 @@ public:
     should be called after `begin_parallel_additions()` and several
     calls of `add()`.
 
-    \note This function requires \ref thirdpartyTBB.
+    \note If \ref thirdpartyTBB is not available, this function does
+    nothing.
 
     \sa `begin_parallel_additions()`
   */ 
   void end_parallel_additions()
   {
+#ifdef CGAL_LINKED_WITH_TBB
     m_tasks->wait();
     delete m_tasks;
     m_tasks = nullptr;
@@ -237,14 +248,19 @@ public:
     for (std::size_t i = 0; i < m_adders.size(); ++ i)
       delete m_adders[i];
     m_adders.clear();
-  }
 #endif
+  }
 
   /// @}
 
 
   /// \name Access
   /// @{
+
+  const_iterator begin() const { return m_features.begin(); }
+  iterator begin() { return m_features.begin(); }
+  const_iterator end() const { return m_features.end(); }
+  iterator end() { return m_features.end(); }
   
   /*!
     \brief Returns how many features are defined.
