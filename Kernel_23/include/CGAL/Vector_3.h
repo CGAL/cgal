@@ -93,6 +93,15 @@ public:
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z, w)) {}
 
+  friend void swap(Vector_3& a, Vector_3& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Rep>)
+#endif
+  {
+    using std::swap;
+    swap(a.rep(), b.rep());
+  }
+
   Direction_3 direction() const
   {
     return R().construct_direction_3_object()(*this);

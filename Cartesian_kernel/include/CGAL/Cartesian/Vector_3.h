@@ -70,6 +70,15 @@ public:
     : base( w != FT_(1) ? CGAL::make_array<FT_>(x/w, y/w, z/w)
                        : CGAL::make_array(x, y, z) ) {}
 
+  friend void swap(VectorC3& a, VectorC3& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Base>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
+
   const FT_ & x() const
   {
       return get_pointee_or_identity(base)[0];

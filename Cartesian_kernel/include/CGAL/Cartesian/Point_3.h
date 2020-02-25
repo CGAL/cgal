@@ -47,6 +47,15 @@ public:
   PointC3(const FT &x, const FT &y, const FT &z, const FT &w)
     : base(x, y, z, w) {}
 
+  friend void swap(PointC3& a, PointC3& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Vector_3>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
+
   const FT & x() const
   {
       return base.x();
