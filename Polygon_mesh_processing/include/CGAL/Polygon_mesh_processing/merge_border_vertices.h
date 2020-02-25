@@ -108,16 +108,18 @@ void sanitize_candidates(const std::vector<std::pair<typename boost::graph_trait
             CGAL_assertion(first_candidates_range <= cycle_hedges.size());
             CGAL_assertion(second_candidates_range <= cycle_hedges.size());
 
-            std::cerr << "Incompatible ranges:\n";
-            std::cerr << "first range: " << first_left << " to " << first_right << std::endl;
-            std::cerr << "second range: " << second_left << " to " << second_right << std::endl;
-            std::cerr << "Full ranges:" << std::endl;
-            std::cerr << cycle_hedges[first_candidates.front()].second << " to " << cycle_hedges[first_candidates.back()].second;
-            std::cerr << " (" << first_candidates.size() << " halfedges)";
-            std::cerr << " at " << get(vpm, target(cycle_hedges[first_candidates.front()].first, pm)) << std::endl;
-            std::cerr << cycle_hedges[second_candidates.front()].second << " to " << cycle_hedges[second_candidates.back()].second;
-            std::cerr << " (" << second_candidates.size() << " halfedges)";
-            std::cerr << " at " << get(vpm, target(cycle_hedges[second_candidates.front()].first, pm)) << std::endl;
+#ifdef CGAL_PMP_MERGE_BORDER_VERTICES_DEBUG
+            std::cout << "Incompatible ranges:\n";
+            std::cout << "first range: " << first_left << " to " << first_right << std::endl;
+            std::cout << "second range: " << second_left << " to " << second_right << std::endl;
+            std::cout << "Full ranges:" << std::endl;
+            std::cout << cycle_hedges[first_candidates.front()].second << " to " << cycle_hedges[first_candidates.back()].second;
+            std::cout << " (" << first_candidates.size() << " halfedges)";
+            std::cout << " at " << get(vpm, target(cycle_hedges[first_candidates.front()].first, pm)) << std::endl;
+            std::cout << cycle_hedges[second_candidates.front()].second << " to " << cycle_hedges[second_candidates.back()].second;
+            std::cout << " (" << second_candidates.size() << " halfedges)";
+            std::cout << " at " << get(vpm, target(cycle_hedges[second_candidates.front()].first, pm)) << std::endl;
+#endif
 
             std::vector<std::vector<std::size_t> >::iterator to_remove_iter = candidate_hedges_with_id.begin();
             if(first_candidates_range > second_candidates_range)
