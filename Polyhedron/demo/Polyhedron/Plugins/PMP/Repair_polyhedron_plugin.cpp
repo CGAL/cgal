@@ -11,11 +11,15 @@
 #include <QMainWindow>
 #include <QObject>
 #include <QInputDialog>
-#include <limits>
 
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/repair_extra.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
+
+#include <cmath>
+#include <limits>
+#include <vector>
 
 using namespace CGAL::Three;
 class Polyhedron_demo_repair_polyhedron_plugin :
@@ -41,6 +45,7 @@ public:
     actionRemoveSelfIntersections = new QAction(tr("Remove Self-Intersections"), mw);
     actionStitchCloseBorderHalfedges = new QAction(tr("Stitch Close Border Halfedges"), mw);
     actionDuplicateNMVertices = new QAction(tr("Duplicate Non-Manifold Vertices"), mw);
+    actionMergeDuplicatedVerticesOnBoundaryCycles = new QAction(tr("Merge Duplicated Vertices on Boundary Cycles"), mw);
     actionAutorefine = new QAction(tr("Autorefine Mesh"), mw);
     actionAutorefineAndRMSelfIntersections = new QAction(tr("Autorefine and Remove Self-Intersections"), mw);
 
@@ -49,6 +54,7 @@ public:
     actionRemoveSelfIntersections->setObjectName("actionRemoveSelfIntersections");
     actionStitchCloseBorderHalfedges->setObjectName("actionStitchCloseBorderHalfedges");
     actionDuplicateNMVertices->setObjectName("actionDuplicateNMVertices");
+    actionMergeDuplicatedVerticesOnBoundaryCycles->setObjectName("actionMergeDuplicatedVerticesOnBoundaryCycles");
     actionAutorefine->setObjectName("actionAutorefine");
     actionAutorefineAndRMSelfIntersections->setObjectName("actionAutorefineAndRMSelfIntersections");
 
@@ -57,6 +63,7 @@ public:
     actionRemoveSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionRemoveIsolatedVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionDuplicateNMVertices->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
+    actionMergeDuplicatedVerticesOnBoundaryCycles->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
     actionAutorefine->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
     actionAutorefineAndRMSelfIntersections->setProperty("subMenuName", "Polygon Mesh Processing/Repair/Experimental");
 
@@ -70,6 +77,7 @@ public:
                              << actionRemoveSelfIntersections
                              << actionStitchCloseBorderHalfedges
                              << actionDuplicateNMVertices
+                             << actionMergeDuplicatedVerticesOnBoundaryCycles
                              << actionAutorefine
                              << actionAutorefineAndRMSelfIntersections;
   }
@@ -90,6 +98,8 @@ public:
   template <typename Item>
   void on_actionDuplicateNMVertices_triggered(Scene_interface::Item_id index);
   template <typename Item>
+  void on_actionMergeDuplicatedVerticesOnBoundaryCycles_triggered(Scene_interface::Item_id index);
+  template <typename Item>
   void on_actionAutorefine_triggered(Scene_interface::Item_id index);
   template <typename Item>
   void on_actionAutorefineAndRMSelfIntersections_triggered(Scene_interface::Item_id index);
@@ -100,6 +110,7 @@ public Q_SLOTS:
   void on_actionRemoveSelfIntersections_triggered();
   void on_actionStitchCloseBorderHalfedges_triggered();
   void on_actionDuplicateNMVertices_triggered();
+  void on_actionMergeDuplicatedVerticesOnBoundaryCycles_triggered();
   void on_actionAutorefine_triggered();
   void on_actionAutorefineAndRMSelfIntersections_triggered();
 
@@ -109,6 +120,7 @@ private:
   QAction* actionRemoveSelfIntersections;
   QAction* actionStitchCloseBorderHalfedges;
   QAction* actionDuplicateNMVertices;
+  QAction* actionMergeDuplicatedVerticesOnBoundaryCycles;
   QAction* actionAutorefine;
   QAction* actionAutorefineAndRMSelfIntersections;
 
@@ -305,6 +317,33 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionDuplicateNMVertices_trig
   QApplication::setOverrideCursor(Qt::WaitCursor);
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   on_actionDuplicateNMVertices_triggered<Scene_surface_mesh_item>(index);
+  QApplication::restoreOverrideCursor();
+}
+
+template <typename Item>
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionMergeDuplicatedVerticesOnBoundaryCycles_triggered(Scene_interface::Item_id index)
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
+  if(Item* poly_item = qobject_cast<Item*>(scene->item(index)))
+  {
+    const SMesh::size_type old_nv = vertices(*poly_item->polyhedron()).size();
+    PMP::merge_duplicated_vertices_in_boundary_cycles(*poly_item->polyhedron());
+    const SMesh::size_type new_nv = vertices(*poly_item->polyhedron()).size();
+    CGAL::Three::Three::information(tr(" %1 vertices merged").arg(old_nv - new_nv));
+    if(old_nv != new_nv)
+    {
+      poly_item->invalidateOpenGLBuffers();
+      Q_EMIT poly_item->itemChanged();
+    }
+  }
+}
+
+void Polyhedron_demo_repair_polyhedron_plugin::on_actionMergeDuplicatedVerticesOnBoundaryCycles_triggered()
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  on_actionMergeDuplicatedVerticesOnBoundaryCycles_triggered<Scene_surface_mesh_item>(index);
   QApplication::restoreOverrideCursor();
 }
 
