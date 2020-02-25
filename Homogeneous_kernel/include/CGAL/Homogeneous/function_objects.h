@@ -803,6 +803,15 @@ namespace HomogeneousKernelFunctors {
 
       return compare(scaled_dist_r_minus_scaled_dist_s, 0);
     }
+    
+    result_type
+    operator()(const Line_2& l, const Point_2& p, const Point_2& q) const
+    {
+      Less_signed_distance_to_line_2 less = K().less_signed_distance_to_line_2_object();
+      if (less(l, p, q)) return SMALLER;
+      if (less(l, q, p)) return LARGER;
+      return EQUAL;
+    }
   };
 
   template <typename K>

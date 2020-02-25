@@ -999,6 +999,13 @@ public:
                                const Kernel::Point_2& q,
                                const Kernel::Point_2& r,
                                const Kernel::Point_2& s);
+  
+  /*!
+    compares the signed distance of `r` and `s` to the directed line `l`. 
+  */ 
+  Comparison_result operator()(const Kernel::Line_2& l,
+                               const Kernel::Point_2& r,
+                               const Kernel::Point_2& s);
   /// @}
 }; /* end Kernel::CompareSignedDistanceToLine_2 */
 
