@@ -41,28 +41,33 @@ public:
   /// \name Constructor
   /// @{
 
+  /*!
+    \brief Instantiates an empty evaluation object.
+
+    \param labels labels used.
+  */
   Evaluation (const Label_set& labels)
     : m_labels (labels)
   {
     init();
   }
   
-/*!
+  /*!
 
-  \brief Instantiates an evaluation object and computes all
-  measurements.
+    \brief Instantiates an evaluation object and computes all
+    measurements.
 
-  \param labels labels used.
+    \param labels labels used.
 
-  \param ground_truth vector of label indices: it should contain the
-  index of the corresponding label in the `Label_set` provided in the
-  constructor. Input items that do not have a ground truth information
-  should be given the value `-1`.
+    \param ground_truth vector of label indices: it should contain the
+    index of the corresponding label in the `Label_set` provided in the
+    constructor. Input items that do not have a ground truth information
+    should be given the value `-1`.
 
-  \param result similar to `ground_truth` but contained the result of
-  a classification.
+    \param result similar to `ground_truth` but contained the result of
+    a classification.
 
-*/
+  */
   template <typename GroundTruthIndexRange, typename ResultIndexRange>
   Evaluation (const Label_set& labels,
               const GroundTruthIndexRange& ground_truth,
@@ -72,8 +77,6 @@ public:
     init();
     append(ground_truth, result);
   }
-
-  /// @}
 
   /// \cond SKIP_IN_MANUAL
   void init()
@@ -96,6 +99,18 @@ public:
   /// \endcond
 
   
+  /*!
+    \brief Append more items to the evaluation object.
+
+    \param ground_truth vector of label indices: it should contain the
+    index of the corresponding label in the `Label_set` provided in the
+    constructor. Input items that do not have a ground truth information
+    should be given the value `-1`.
+
+    \param result similar to `ground_truth` but contained the result of
+    a classification.
+
+  */
   template <typename GroundTruthIndexRange, typename ResultIndexRange>
   void append (const GroundTruthIndexRange& ground_truth,
                const ResultIndexRange& result)
@@ -111,6 +126,8 @@ public:
     }      
   }
   
+  /// @}
+
   /// \name Label Evaluation
   /// @{
 
@@ -208,7 +225,20 @@ public:
   /// \name Global Evaluation
   /// @{
 
+  /*!
+    \brief Returns the number of items whose ground truth is
+    `ground_truth` and which were classified as `result`.
+  */
+  std::size_t confusion (Label_handle ground_truth, Label_handle result)
+  {
+    std::size_t idx_gt = m_map_labels[ground_truth];
+    std::size_t idx_r = m_map_labels[result];
+    return m_confusion[idx_gt][idx_r];
+  }
   
+  /*!
+    \brief Returns the number of misclassified items.
+  */
   std::size_t number_of_misclassified_items() const
   {
     std::size_t total = 0;
@@ -219,6 +249,9 @@ public:
     return total;
   }
 
+  /*!
+    \brief Returns the total number of items used for evaluation.
+  */
   std::size_t number_of_items() const
   {
     std::size_t total = 0;
@@ -286,6 +319,12 @@ public:
 
   /// @}
 
+  /// \name Output Formatting Functions
+  /// @{
+  
+  /*!
+    \brief Outputs the evaluation in a simple ASCII format to the stream `os`.
+  */
   friend std::ostream& operator<< (std::ostream& os, const Evaluation& evaluation)
   {
     os << "Evaluation of classification:" << std::endl;
@@ -310,6 +349,9 @@ public:
     return os;
   }
 
+  /*!
+    \brief Outputs the evaluation as an HTML page to the stream `os`.
+  */
   static std::ostream& write_evaluation_to_html (std::ostream& os, const Evaluation& evaluation)
   {
     os <<  "<!DOCTYPE html>" << std::endl
@@ -415,6 +457,8 @@ Classification package</a>.</em></p>" << std::endl
     return os;
   }
   
+  /// @}
+
 };
 
   
