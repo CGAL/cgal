@@ -639,7 +639,7 @@ std::size_t split_edges(EdgesToSplitContainer& edges_to_split,
 
     // Inserting new points ordered from the source to the target of (the initial) 'h'
     bool first_split = true;
-    Point previous_split_position;
+    Point previous_split_position = get(vpm_S, *(vertices(tm_S).begin())); // dummy value to avoid "used uninitialized" warning
     for(const Vertex_with_new_position& vnp : splitters)
     {
       const halfedge_descriptor splitter_h = vnp.first;
