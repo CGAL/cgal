@@ -269,7 +269,7 @@ that.
 */ 
 void swap(TriangulationDataStructure_3 & tds1); 
 
-/*!
+/*! \ingroup PkgIOTDS3
 The tds streamed in `is`, of original type `TDS_src`, is written into the triangulation. As the vertex and cell
  types might be different and incompatible, the creation of new cells and vertices
 is made thanks to the functors `convert_vertex` and `convert_cell`, that convert
@@ -293,8 +293,8 @@ converting the source cell `c_src` into the target cell:
   - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt) const;` This operator
  is meant to be used in case heavy data should be transferred to `c_tgt`.
 
-\note It is required to know the type `Tr_src`, or one that is compatible with it, to call this function.
-\note The triangulation contained in `is` can be obtained with the `operator>>` of a `Triangulation_3`.
+\note It is required to know the type `TDS_src`, or one that is compatible with it, to call this function.
+\note The triangulation contained in `is` can be obtained with the `operator>>` of a `TriangulationDataStructure_3`.
 */
 template <typename TDS_src,
           typename ConvertVertex,
