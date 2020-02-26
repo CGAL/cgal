@@ -219,14 +219,14 @@ public:
 //  void clear() { }
 
   void add_edge_to_incident_faces_map(const Face_handle fh, int i,
-                                      boost::unordered_map<
+                                      std::unordered_map<
                                         std::set<Vertex_handle>,
                                         std::vector< // @todo array
                                           std::pair<Face_handle, int> > >& incident_faces_map)
   {
     typedef std::set<Vertex_handle>                                            Edge_vertices;
     typedef std::pair<Face_handle, int>                                        Incident_face;
-    typedef boost::unordered_map<Edge_vertices, std::vector<Incident_face> >   Incident_faces_map;
+    typedef std::unordered_map<Edge_vertices, std::vector<Incident_face> >   Incident_faces_map;
 
     // the opposite vertex of f in c is i
     Edge_vertices e;
@@ -269,7 +269,7 @@ public:
       vertex_correspondence_map[vit] = vh;
     }
 
-    typedef boost::unordered_map<
+    typedef std::unordered_map<
               std::set<Vertex_handle>,
                 std::vector<std::pair<Face_handle, int> > > Incident_faces_map;
     Incident_faces_map incident_faces_map;
@@ -622,33 +622,27 @@ public:
 
     mark_canonical_faces(vh);
 
-    for(int off_x=-3; off_x<4; ++off_x)
+    for (const std::vector<int> off : overlapping_offsets)
     {
-      for(int off_y=-3; off_y<4; ++off_y)
+      // @fixme Insert without constructions (cf P3T3)
+      const Vector off_v = gt_.construct_sum_of_vectors_2_object()(
+                             gt_.construct_scaled_vector_2_object()(
+                               lattice_.basis()[0], off[0]),
+                             gt_.construct_scaled_vector_2_object()(
+                               lattice_.basis()[1], off[1]));
+
+      const Point off_p = cp + off_v;
+
+      if(lattice_.is_in_scaled_domain(off_p, 3))
       {
-        if(off_x == 0 && off_y == 0)
-          continue;
+        Vertex_handle vh_copy = dt2.insert(off_p);
+        CGAL_assertion(vh_copy != Vertex_handle());
+        vh_copy->set_offset(Offset(off[0], off[1]));
 
-        // @fixme Insert without constructions (cf P3T3)
-        const Vector off_v = gt_.construct_sum_of_vectors_2_object()(
-                               gt_.construct_scaled_vector_2_object()(
-                                 lattice_.basis()[0], off_x),
-                               gt_.construct_scaled_vector_2_object()(
-                                 lattice_.basis()[1], off_y));
+        canonical_vertices[vh_copy] = vh;
+        periodic_vertices[vh][vh_copy->offset()] = vh_copy;
 
-        const Point off_p = cp + off_v;
-
-        if(lattice_.is_in_scaled_domain(off_p, 3))
-        {
-          Vertex_handle vh_copy = dt2.insert(off_p);
-          CGAL_assertion(vh_copy != Vertex_handle());
-          vh_copy->set_offset(Offset(off_x, off_y));
-
-          canonical_vertices[vh_copy] = vh;
-          periodic_vertices[vh][vh_copy->offset()] = vh_copy;
-
-          mark_canonical_faces(vh_copy);
-        }
+        mark_canonical_faces(vh_copy);
       }
     }
 
@@ -689,6 +683,16 @@ private:
 
   Geom_traits gt_;
   Triangulation_data_structure tds_;
+
+  // A list of those offsets such that the domain translated along the offset
+  // overlaps the scaled domain.
+  // Could be static?
+  const std::vector<std::vector<int> > overlapping_offsets = {
+      // entirely contained in scaled domains 
+      {-1, -1}, {0, 1}, {1, 0}, {-1, 0}, {0, -1}, {1, 1},  
+      // intersecting the scaled domain
+      {-1, -2}, {1, 2}, {-2, -1}, {2, 1}, {-1, 1}, {1, -1} 
+    };
 };
 
 } //namespace CGAL
