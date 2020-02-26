@@ -1566,7 +1566,7 @@ The same operations are done for cells with the functor convert_cell, except cel
 in the triangulation are created using the default constructor, and then filled with the data
 contained in the stream.
 
-If `v != Tr_src::Vertex_handle()`, a handle to the vertex created in `tr` 
+If `v != Tr_src::Vertex_handle()`, a handle to the vertex created in this triangulation
 that is the copy of `v` is returned, otherwise `Vertex_handle()` is returned.
 
  - A model of `ConvertVertex` must provide two `operator()`s that are responsible

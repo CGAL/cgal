@@ -270,6 +270,40 @@ that.
 void swap(TriangulationDataStructure_3 & tds1); 
 
 /*!
+The tds streamed in `is`, of original type `TDS_src`, is written into the triangulation. As the vertex and cell
+ types might be different and incompatible, the creation of new cells and vertices
+is made thanks to the functors `convert_vertex` and `convert_cell`, that convert
+vertex and cell types. For each vertex `v_src` in `in`, the corresponding
+vertex `v_tgt` in the triangulation is a copy of the vertex returned by `convert_vertex(v_src)`.
+The same operations are done for cells with the functor convert_cell, except cells
+in the triangulation are created using the default constructor, and then filled with the data
+contained in the stream.
+
+If `v != TDS_src::Vertex_handle()`, a handle to the vertex created in this tds
+that is the copy of `v` is returned, otherwise `Vertex_handle()` is returned.
+
+ - A model of `ConvertVertex` must provide two `operator()`s that are responsible
+ for converting the source vertex `v_src` into the target vertex:
+  - `Vertex operator()(const TDS_src::Vertex& v_src) const;` This operator is
+used to create the vertex from `v_src`.
+  - `void operator()(const TDS_src::Vertex& v_src, Vertex& v_tgt) const;` This
+ operator is meant to be used in case heavy data should be transferred to `v_tgt`.
+ - A model of ConvertCell must provide an operator() that is responsible for
+converting the source cell `c_src` into the target cell:
+  - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt) const;` This operator
+ is meant to be used in case heavy data should be transferred to `c_tgt`.
+
+\note It is required to know the type `Tr_src`, or one that is compatible with it, to call this function.
+\note The triangulation contained in `is` can be obtained with the `operator>>` of a `Triangulation_3`.
+*/
+template <typename TDS_src,
+          typename ConvertVertex,
+          typename ConvertCell>
+std::istream& file_input(std::istream& is,
+                         ConvertVertex convert_vertex,
+                         ConvertCell convert_cell);
+
+/*!
 Deletes all cells and vertices. `tds` is reset as a triangulation 
 data structure constructed by the default constructor. 
 */ 
