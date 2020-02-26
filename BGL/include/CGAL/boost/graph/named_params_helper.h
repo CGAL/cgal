@@ -156,7 +156,7 @@ namespace CGAL {
   
   //default case : don't do anything
   template<typename SimplexTag, class PMap, class Graph, typename IsWritableTag>
-  void initialize_index_map(PMap, const Graph&, const SimplexTag& t, const IsWritableTag& w)
+  void initialize_index_map(PMap, const Graph&, const SimplexTag&, const IsWritableTag&)
   {}
 
   
