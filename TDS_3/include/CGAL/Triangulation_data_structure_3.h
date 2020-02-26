@@ -51,6 +51,8 @@
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
 #include <CGAL/tss.h>
 
+#include <CGAL/IO/TDS_3_file_input.h>
+
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/scalable_allocator.h>
 #endif
@@ -189,6 +191,7 @@ public:
 
       return hf ^ 419 * hs;
     }
+
   };
 
   static const int maximal_nb_of_facets_of_small_hole = 128;
@@ -1550,6 +1553,17 @@ private:
   // counts but does not check
   bool count_cells(size_type &i, bool verbose = false, int level = 0) const;
   // counts AND checks the validity
+
+  //IO
+  template <typename Tr_src,
+            typename ConvertVertex,
+            typename ConvertCell>
+  std::istream& file_input(std::istream& is,
+                           ConvertVertex convert_vertex = ConvertVertex(),
+                           ConvertCell convert_cell = ConvertCell())
+  {
+    return CGAL::file_input<Tr_src, Tds, ConvertVertex, ConvertCell>(is, *this, convert_vertex, convert_cell);
+  }
 };
 
 #ifdef CGAL_TDS_USE_RECURSIVE_CREATE_STAR_3
