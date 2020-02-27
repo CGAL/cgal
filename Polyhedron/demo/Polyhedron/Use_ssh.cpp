@@ -77,8 +77,11 @@ bool establish_ssh_session(ssh_session &session,
     ssh_options_set( session, SSH_OPTIONS_HOST, server);
     
     ssh_connect(session);
-    
+#if LIBSSH_VERSION_MAJOR <1 && LIBSSH_VERSION_MINOR < 8
     if( ssh_is_server_known(session) != SSH_SERVER_KNOWN_OK )
+#else
+      if( ssh_session_is_known_server(session) != SSH_SERVER_KNOWN_OK )
+#endif
     {
       if(QMessageBox::warning(CGAL::Three::Three::mainWindow(), QString("Unknown Server"),
                               QString ("The server you are trying to join is not known.\n"
@@ -87,8 +90,11 @@ bool establish_ssh_session(ssh_session &session,
       {
         return false;
       }
-      
+#if LIBSSH_VERSION_MAJOR <1 && LIBSSH_VERSION_MINOR < 8
       if( ssh_write_knownhost(session) != SSH_OK )
+#else
+      if( ssh_session_update_known_hosts(session) != SSH_OK )
+#endif
       {
         std::cerr << "writeKnownHost failed" << std::endl;
         return false;
