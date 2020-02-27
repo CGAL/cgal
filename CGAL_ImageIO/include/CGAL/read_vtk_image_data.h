@@ -85,6 +85,8 @@ read_vtk_image_data(vtkImageData* vtk_image, Image_3::Own owning = Image_3::OWN_
   image->wdim = imageio_type.wdim;
   image->wordKind = imageio_type.wordKind;
   image->sign = imageio_type.sign;
+  if (!vtk_image->GetPointData() || !vtk_image->GetPointData()->GetScalars())
+    return Image_3();
   CGAL_assertion(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == dims[0]*dims[1]*dims[2]);
   if(owning == Image_3::OWN_THE_DATA) {
     image->data = ::ImageIO_alloc(dims[0]*dims[1]*dims[2]*image->wdim);
