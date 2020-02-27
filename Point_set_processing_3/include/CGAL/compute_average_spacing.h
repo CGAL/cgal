@@ -18,7 +18,7 @@
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
@@ -60,38 +60,31 @@ namespace internal {
 /// @tparam Tree KD-tree.
 ///
 /// @return average spacing (scalar).
-template < typename Kernel,
-           typename Tree >
-typename Kernel::FT
-compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
-                        const Tree& tree,                      ///< KD-tree
+template <typename NeighborQuery>
+typename NeighborQuery::Kernel::FT
+compute_average_spacing(const typename NeighborQuery::Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
+                        const NeighborQuery& neighbor_query,                      ///< KD-tree
                         unsigned int k)                        ///< number of neighbors
 {
   // basic geometric types
+  typedef typename NeighborQuery::Kernel Kernel;
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
 
-  // types for K nearest neighbors search
-  typedef Search_traits_3<Kernel> Tree_traits;
-  typedef Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::iterator Search_iterator;
 
   // performs k + 1 queries (if unique the query point is
   // output first). search may be aborted when k is greater
   // than number of input points
-  Neighbor_search search(tree,query,k+1);
-  Search_iterator search_iterator = search.begin();
   FT sum_distances = (FT)0.0;
   unsigned int i;
-  for(i=0;i<(k+1);i++)
-  {
-    if(search_iterator == search.end())
-      break; // premature ending
-
-    Point p = search_iterator->first;
-    sum_distances += std::sqrt(CGAL::squared_distance(query,p));
-    search_iterator++;
-  }
+  neighbor_query.get_points
+    (query, k, 0,
+     boost::make_function_output_iterator
+     ([&](const Point& p)
+      {
+        sum_distances += std::sqrt(CGAL::squared_distance (query,p));
+        ++ i;
+      }));
 
   // output average spacing
   return sum_distances / (FT)i;
@@ -195,6 +188,8 @@ compute_average_spacing(
   using parameters::get_parameter;
 
   // basic geometric types
+  typedef typename PointRange::iterator iterator;
+  typedef typename iterator::value_type value_type;
   typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
 
@@ -206,9 +201,7 @@ compute_average_spacing(
   
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
-  typedef Search_traits_3<Kernel> Tree_traits;
-  typedef Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -219,16 +212,13 @@ compute_average_spacing(
   CGAL_point_set_processing_precondition(k >= 2);
 
   // Instanciate a KD-tree search.
-  // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
-  for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++)
-    kd_tree_points.push_back(get(point_map, *it));
-  Tree tree(kd_tree_points.begin(), kd_tree_points.end());
+  Neighbor_query neighbor_query (points, point_map);
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
   std::size_t nb = 0;
+  std::size_t nb_points = points.size();
 
 #ifndef CGAL_LINKED_WITH_TBB
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
@@ -237,14 +227,23 @@ compute_average_spacing(
    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
    {
      Point_set_processing_3::internal::Parallel_callback
-       parallel_callback (callback, kd_tree_points.size());
+       parallel_callback (callback, nb_points);
      
-     std::vector<FT> spacings (kd_tree_points.size (), -1);
-     CGAL::internal::Compute_average_spacings<Kernel, Tree>
-       f (tree, k, kd_tree_points, spacings,
-          parallel_callback.advancement(),
-          parallel_callback.interrupted());
-     tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
+     std::vector<FT> spacings (nb_points, -1);
+     tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points),
+                       [&](const tbb::blocked_range<size_t>& r)
+                       {
+                         for( std::size_t i = r.begin(); i != r.end(); ++i)
+                         {
+                           if (parallel_callback.interrupted())
+                             break;
+        
+                           spacings[i] = CGAL::internal::compute_average_spacing<Neighbor_query>
+                             (get(point_map, *(points.begin() + i)), neighbor_query, k);
+                           ++ parallel_callback.advancement();
+                         }
+
+                       });
 
      for (unsigned int i = 0; i < spacings.size (); ++ i)
        if (spacings[i] >= 0.)
@@ -260,10 +259,10 @@ compute_average_spacing(
      {
        for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++, nb++)
        {
-         sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
+         sum_spacings += internal::compute_average_spacing<Neighbor_query>(
            get(point_map,*it),
-           tree,k);
-         if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
+           neighbor_query,k);
+         if (callback && !callback ((nb+1) / double(nb_points)))
          {
            ++ nb;
            break;

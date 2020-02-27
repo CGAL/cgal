@@ -18,9 +18,7 @@
 
 #include <CGAL/IO/trace.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -58,22 +56,20 @@ namespace internal {
 /// @tparam Tree KD-tree.
 ///
 /// @return Computed normal. Orientation is random.
-template < typename Kernel,
-           typename Tree
->
-typename Kernel::Vector_3
-pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute the normal at
-                    const Tree& tree, ///< KD-tree
+template <typename NeighborQuery>
+typename NeighborQuery::Kernel::Vector_3
+pca_estimate_normal(const typename NeighborQuery::Kernel::Point_3& query, ///< point to compute the normal at
+                    const NeighborQuery& neighbor_query, ///< KD-tree
                     unsigned int k, ///< number of neighbors
-                    typename Kernel::FT neighbor_radius)
+                    typename NeighborQuery::Kernel::FT neighbor_radius)
 {
   // basic geometric types
+  typedef typename NeighborQuery::Kernel Kernel;
   typedef typename Kernel::Point_3  Point;
   typedef typename Kernel::Plane_3  Plane;
 
   std::vector<Point> points;
-  CGAL::Point_set_processing_3::internal::neighbor_query
-    (query, tree, k, neighbor_radius, points);
+  neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points));
   
   // performs plane fitting by point-based PCA
   Plane plane;
@@ -82,48 +78,6 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   // output normal vector (already normalized by PCA)
   return plane.orthogonal_vector();
 }
-
-
-#ifdef CGAL_LINKED_WITH_TBB
-  template <typename Kernel, typename Tree>
-  class PCA_estimate_normals {
-    typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
-    const Tree& tree;
-    const unsigned int k;
-    const FT neighbor_radius;
-    const std::vector<Point>& input;
-    std::vector<Vector>& output;
-    cpp11::atomic<std::size_t>& advancement;
-    cpp11::atomic<bool>& interrupted;
-
-  public:
-    PCA_estimate_normals(Tree& tree, unsigned int k, FT neighbor_radius,
-                         std::vector<Point>& points,
-                         std::vector<Vector>& output,
-                     cpp11::atomic<std::size_t>& advancement,
-                     cpp11::atomic<bool>& interrupted)
-      : tree(tree), k (k), neighbor_radius (neighbor_radius)
-      , input (points), output (output)
-      , advancement (advancement)
-      , interrupted (interrupted)
-    { }
-    
-    void operator()(const tbb::blocked_range<std::size_t>& r) const
-    {
-      for( std::size_t i = r.begin(); i != r.end(); ++i)
-      {
-        if (interrupted)
-          break;
-        output[i] = CGAL::internal::pca_estimate_normal<Kernel,Tree>(input[i], tree, k, neighbor_radius);
-        ++ advancement;
-      }
-    }
-
-  };
-#endif // CGAL_LINKED_WITH_TBB
-  
 
 } /* namespace internal */
 /// \endcond
@@ -209,12 +163,12 @@ pca_estimate_normals(
   typedef typename Kernel::Point_3 Point;
 
   // Input points types
+  typedef typename PointRange::iterator iterator;
+  typedef typename iterator::value_type value_type;
   typedef typename boost::property_traits<NormalMap>::value_type Vector;
 
   // types for K nearest neighbors search structure
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -227,17 +181,12 @@ pca_estimate_normals(
   std::size_t memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Creates KD-tree\n");
 
-  typename PointRange::iterator it;
-
-  // Instanciate a KD-tree search.
-  // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
-  for(it = points.begin(); it != points.end(); it++)
-    kd_tree_points.push_back(get(point_map, *it));
-  Tree tree(kd_tree_points.begin(), kd_tree_points.end());
+  Neighbor_query neighbor_query (points, point_map);
 
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("  Computes normals\n");
+
+  std::size_t nb_points = points.size();
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
@@ -246,40 +195,44 @@ pca_estimate_normals(
 			     "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-    {
-      Point_set_processing_3::internal::Parallel_callback
-        parallel_callback (callback, kd_tree_points.size());
+  {
+    Point_set_processing_3::internal::Parallel_callback
+      parallel_callback (callback, nb_points);
      
-      std::vector<Vector> normals (kd_tree_points.size (),
-                                   CGAL::NULL_VECTOR);
-      CGAL::internal::PCA_estimate_normals<Kernel, Tree>
-        f (tree, k, neighbor_radius, kd_tree_points, normals,
-           parallel_callback.advancement(),
-           parallel_callback.interrupted());
-      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
-      unsigned int i = 0;
-      for(it = points.begin(); it != points.end(); ++ it, ++ i)
-        if (normals[i] != CGAL::NULL_VECTOR)
-          put (normal_map, *it, normals[i]);
+    tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points),
+                      [&](const tbb::blocked_range<size_t>& r)
+                      {
+                        for( std::size_t i = r.begin(); i != r.end(); ++i)
+                        {
+                          if (parallel_callback.interrupted())
+                            break;
+                            
+                          put (normal_map, *(points.begin() + i),
+                               CGAL::internal::pca_estimate_normal
+                               (get(point_map, *(points.begin() + i)), neighbor_query, k, neighbor_radius));
+                            
+                          ++ parallel_callback.advancement();
+                        }
+                      });
 
-      parallel_callback.join();
-    }
+    parallel_callback.join();
+  }
   else
 #endif
+  {
+    std::size_t nb = 0;
+    for (const value_type& vt : points)
     {
-      std::size_t nb = 0;
-      for(it = points.begin(); it != points.end(); it++, ++ nb)
-	{
-	  Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
-								     get(point_map,*it),
-								     tree,
-								     k, neighbor_radius);
-
-	  put(normal_map, *it, normal); // normal_map[it] = normal
-          if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
-            break;
-	}
+      put (normal_map, vt,
+           internal::pca_estimate_normal(      
+             get(point_map, vt),
+             neighbor_query,
+             k, neighbor_radius));
+      if (callback && !callback ((nb+1) / double(nb_points)))
+        break;
+      ++ nb;
     }
+  }
    
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of pca_estimate_normals()\n");
