@@ -98,34 +98,35 @@ void fix_local_self_intersections(const char* fname)
   assert(!PMP::does_self_intersect(mesh));
 }
 
-int main()
+int main(int, char**)
 {
   std::cout.precision(17);
   std::cerr.precision(17);
 
-  fix_local_self_intersections("data_repair/brain.off");
-
 #if 0
+  fix_local_self_intersections("data_repair/brain.off");
+  fix_self_intersections("data_repair/brain.off")
+
   fix_self_intersections("data_repair/flute.off");
   fix_self_intersections("data_repair/dinosaur.off");
   fix_self_intersections("data_repair/hemispheres.off");
 
   // selection is adjacent to a self-intersection but does not contain any intersection
-  fix_local_self_intersections("data_repair/brain.off", "data_repair/brain-complete.selection.txt");
+  fix_self_intersections("data_repair/brain.off", "data_repair/brain-complete.selection.txt");
 
   // selection covers nicely a self-intersection
-  fix_local_self_intersections("data_repair/brain.off", "data_repair/brain-adjacent.selection.txt");
+  fix_self_intersections("data_repair/brain.off", "data_repair/brain-adjacent.selection.txt");
 
   // selection contains part of a self intersection
-  fix_local_self_intersections("data_repair/brain.off", "data_repair/brain-partial.selection.txt");
+  fix_self_intersections("data_repair/brain.off", "data_repair/brain-partial.selection.txt");
 
   // selection contains disjoint parts of a self intersection
-  fix_local_self_intersections("data_repair/brain.off", "data_repair/brain-disjoint.selection.txt");
-#endif
+  fix_self_intersections("data_repair/brain.off", "data_repair/brain-disjoint.selection.txt");
 
   // Remove only self-intersections within a single hemisphere
-//  fix_local_self_intersections("data_repair/hemispheres.off");
-//  fix_self_intersections("data_repair/hemispheres.off", "data_repair/hemispheres-half.selection.txt");
+  fix_self_intersections("data_repair/hemispheres.off");
+  fix_self_intersections("data_repair/hemispheres.off", "data_repair/hemispheres-half.selection.txt");
+#endif
 
   return 0;
 }

@@ -1,4 +1,5 @@
-﻿#define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
+﻿#define CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
+#define CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -62,19 +63,28 @@ void read_mesh(const char* filename,
   }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
-  const char* filename = (argc > 1) ? argv[1] : "/home/mrouxell/DATA/denser_dinosaur_si.off";
-  std::ifstream input(filename);
+  if(argc != 2)
+  {
+    std::cerr << "Usage: " << argv[0] << " mesh_to_treat" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // const char* filename = (argc > 1) ? argv[1] : "/data/some_mesh.off";
 
   Mesh mesh;
-  read_mesh<K>(filename, mesh);
+  read_mesh<K>(argv[1], mesh);
   std::cout << num_vertices(mesh) << " vertices and " << num_faces(mesh) << " faces" << std::endl;
 
-  PMP::remove_degenerate_faces(mesh);
+  // Precondition of the algorithm
+  if(!PMP::remove_degenerate_faces(mesh))
+  {
+    std::cerr << "Failed to remove all degenerate faces!" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-  std::ofstream("in.off") << std::setprecision(17) << mesh;
-  PMP::experimental::remove_self_intersections(mesh);
+  PMP::experimental::remove_self_intersections(mesh, CGAL::parameters::preserve_genus(false));
   std::ofstream("out.off") << std::setprecision(17) << mesh;
 
   std::cout << "Success? " << !PMP::does_self_intersect(mesh) << std::endl;
