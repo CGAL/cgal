@@ -6,7 +6,7 @@
 /// \defgroup PkgTDS3Classes Classes
 /// \ingroup PkgTDS3Ref
 
-/// \defgroup PkgIOTDS3 Input for a Triangulation_data_structure_3
+/// \defgroup PkgIOTDS3 I/O for a Triangulation_data_structure_3
 /// \ingroup PkgTDS3Ref
 /*!
 \addtogroup PkgTDS3Ref

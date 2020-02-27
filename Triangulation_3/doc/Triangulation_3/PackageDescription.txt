@@ -21,7 +21,7 @@
 /// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
 /// \ingroup PkgTriangulation3Ref
 
-/// \defgroup PkgIOTriangulation3 Input for a Triangulation 3
+/// \defgroup PkgIOTriangulation3 I/O for a Triangulation 3
 /// \ingroup PkgTriangulation3Ref
 
 /*!

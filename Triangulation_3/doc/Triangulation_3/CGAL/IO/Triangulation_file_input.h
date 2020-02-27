@@ -1,5 +1,6 @@
 namespace CGAL {
 
+///@{
 /*!
 \ingroup PkgIOTriangulation3
 
@@ -12,8 +13,6 @@ The same operations are done for cells with the functor convert_cell, except cel
 in `tr` are created using the default constructor, and then filled with the data
 contained in the stream.
 
-If `v != Tr_src::Vertex_handle()`, a handle to the vertex created in `tr` 
-that is the copy of `v` is returned, otherwise `Tr_tgt::Vertex_handle()` is returned.
 
  - A model of `ConvertVertex` must provide two `operator()`s that are responsible
  for converting the source vertex `v_src` into the target vertex:
@@ -24,9 +23,8 @@ used to create the vertex from `v_src`.
  - A model of ConvertCell must provide an `operator()` that is responsible for 
 converting the source cell `c_src` into the target cell:
   - `void operator()(const Tr_src::Cell& c_src, Tr_tgt::Cell& c_tgt) const;` This operator
- is meant to be used in case heavy data should be transferred to `c_tgt`.
+ is meant to be used in case data should be transferred to `c_tgt`.
 
-\note It is required to know the type `Tr_src`, or one that is compatible with it, to call this function.
 \note The triangulation contained in `is` can be obtained with the `operator>>` of a `Triangulation_3`.
 */
 template <typename Tr_src, 
@@ -36,5 +34,5 @@ template <typename Tr_src,
 std::istream& file_input(std::istream& is, Tr_tgt &tr,
                          ConvertVertex convert_vertex = ConvertVertex(),
                          ConvertCell convert_cell = ConvertCell());
-
+///@}
 }
