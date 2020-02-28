@@ -484,8 +484,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
   Vpm vpm = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  auto fid_map =
-      CGAL::get_initialized_face_index_map(tm, np);
+  auto fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -591,8 +590,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   Vpm vpm = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  auto fid_map =
-    CGAL::get_initialized_face_index_map(tm, np);
+  auto fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 

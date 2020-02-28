@@ -179,8 +179,7 @@ namespace Polygon_mesh_processing {
     if (faces.empty()) return out;
 
 
-    auto fim =
-        CGAL::get_initialized_face_index_map(pmesh, np);
+    auto fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
     return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
   }

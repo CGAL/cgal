@@ -185,8 +185,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                 get_const_property_map(boost::vertex_point, tm));
 
-  auto fid_map =
-      CGAL::get_initialized_face_index_map(tm, np);
+  auto fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -1012,8 +1011,7 @@ namespace experimental {
                                 get_property_map(boost::vertex_point, tm));
 // Face index map
   typedef typename Default_face_index_map<NamedParameters, TriangleMesh>::type Fid_map;
-  Fid_map fid_map =
-      CGAL::get_initialized_face_index_map(tm, np);
+  Fid_map fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
 // Edge is-constrained maps
   typedef typename internal_np::Lookup_named_param_def <

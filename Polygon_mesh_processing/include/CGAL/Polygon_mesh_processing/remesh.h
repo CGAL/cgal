@@ -162,8 +162,7 @@ void isotropic_remeshing(const FaceRange& faces
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
 typedef typename Default_face_index_map<NamedParameters, PolygonMesh>::type FIMap;
-  FIMap fimap =
-      CGAL::get_initialized_face_index_map(pmesh, np);
+  FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
@@ -340,8 +339,7 @@ void split_long_edges(const EdgeRange& edges
                              get_property_map(vertex_point, pmesh));
 
   typedef typename Default_face_index_map<NamedParameters, PolygonMesh>::type FIMap;
-  FIMap fimap =
-    CGAL::get_initialized_face_index_map(pmesh, np);
+  FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def <
         internal_np::edge_is_constrained_t,

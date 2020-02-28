@@ -221,7 +221,6 @@ connected_components(const PolygonMesh& pmesh,
                    internal::No_constraint<PolygonMesh>());
 
   typedef typename Default_face_index_map<NamedParameters, PolygonMesh>::type FaceIndexMap;
-  
   FaceIndexMap  fimap = get_initialized_face_index_map(pmesh, np);
   
   typename boost::property_traits<FaceComponentMap>::value_type i=0;
@@ -509,8 +508,7 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
   using parameters::get_parameter;
 
   typedef typename Default_face_index_map<NamedParameters, PolygonMesh>::type FaceIndexMap;
-  FaceIndexMap fim =
-      CGAL::get_initialized_face_index_map(pmesh, np);
+  FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::face_size_map_t,
                                                  NamedParameters,
@@ -847,8 +845,7 @@ void remove_connected_components(PolygonMesh& pmesh
 
   //FaceIndexMap
   typedef typename Default_face_index_map<CGAL_PMP_NP_CLASS, PolygonMesh>::type FaceIndexMap;
-  FaceIndexMap fim =
-      CGAL::get_initialized_face_index_map(pmesh, np);
+  FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
   //vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
@@ -906,8 +903,7 @@ void keep_connected_components(PolygonMesh& pmesh
 
   //FaceIndexMap
   typedef typename Default_face_index_map<CGAL_PMP_NP_CLASS, PolygonMesh>::type FaceIndexMap;
-  FaceIndexMap fim =
-      CGAL::get_initialized_face_index_map(pmesh, np);
+  FaceIndexMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
   //vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);

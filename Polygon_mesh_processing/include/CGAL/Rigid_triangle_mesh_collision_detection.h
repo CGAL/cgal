@@ -538,8 +538,7 @@ public:
 
       // face index map
 
-      auto fid_map =
-        CGAL::get_initialized_face_index_map(tm, np);
+      auto fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
