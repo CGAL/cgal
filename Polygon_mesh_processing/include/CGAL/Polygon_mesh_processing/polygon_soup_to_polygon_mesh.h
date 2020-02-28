@@ -207,21 +207,24 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 /**
 * \ingroup PMP_repairing_grp
 * builds a polygon mesh from a soup of polygons.
+*
 * @pre the input polygon soup describes a consistently oriented
-* polygon mesh.
+* polygon mesh. This can be checked using the function
+* \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
+* CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons) \endlink.
 *
 * @tparam PolygonMesh a model of `MutableFaceGraph`
 * @tparam PointRange a model of the concept `RandomAccessContainer`
 * whose value type is the point type
 * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose
 * value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
-* @tparam NamedParameters_PS a sequence of \ref pmp_namedparameters
-* @tparam NamedParameters_PM a sequence of \ref pmp_namedparameters
+* @tparam NamedParameters_PS a sequence of \ref pmp_namedparameters "Named Parameters"
+* @tparam NamedParameters_PM a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param points points of the soup of polygons
 * @param polygons each element in the vector describes a polygon using the index of the points in `points`
 * @param out the polygon mesh to be built
-* @param np_ps optional sequence of \ref pmp_namedparameters among the ones listed below
+* @param np_ps optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamBegin{point_map}
@@ -230,18 +233,15 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 *   \cgalParamEnd
 * \cgalNamedParamsEnd
 *
-* @param np_pm optional sequence of \ref pmp_namedparameters among the ones listed below
+* @param np_pm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
 *   \cgalParamBegin{vertex_point_map}
 *     a model of `WritablePropertyMap`, the property map with the points associated to the vertices of `out`.
 *     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` must be available in `TriangleMesh`
+*     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
 *   \cgalParamEnd
 * \cgalNamedParamsEnd
-*
-* @pre \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
-*            CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons) \endlink
 *
 * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
