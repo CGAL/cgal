@@ -371,10 +371,9 @@ namespace internal
  * computing a
  * surface patch id for each face.
  *
- * If `PolygonMesh`
-  *  has an internal not writable property map
+ * If `PolygonMesh` has a non modifiable internal property map
   *  for `CGAL::face_index_t` and no `face_index_map` is given
-  *  as a named parameter, then the internal one must be initialized; else, it will be.
+  *  as a named parameter, then the internal one must be initialized; otherwise, it will be.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam FT a number type. It is

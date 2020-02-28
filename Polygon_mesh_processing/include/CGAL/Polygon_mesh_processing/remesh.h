@@ -41,10 +41,9 @@ namespace Polygon_mesh_processing {
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
-*         If `PolygonMesh`
-  *  has an internal not writable property map
-  *  for `CGAL::face_index_t` and no `face_index_map` is given
-  *  as a named parameter, then the internal one must be initialized; else, it will be.
+*         If `PolygonMesh` has a non modifiable internal property map
+*         for `CGAL::face_index_t` and no `face_index_map` is given
+*         as a named parameter, then the internal one must be initialized; otherwise, it will be.
   *
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
