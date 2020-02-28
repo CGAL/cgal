@@ -181,7 +181,7 @@ namespace Tetrahedral_remeshing
   template<typename VertexHandle>
   bool is_on_feature(const VertexHandle v)
   {
-    return (v->in_dimension() == 1);
+    return (v->in_dimension() == 1 || v->in_dimension() == 0);
   }
 
   template<typename Tr>

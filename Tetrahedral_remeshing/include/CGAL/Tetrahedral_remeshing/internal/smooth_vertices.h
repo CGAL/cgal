@@ -129,7 +129,8 @@ namespace CGAL
         Point_3 point;
         Point_3 result = CGAL::ORIGIN + gi;
 
-        CGAL::Tetrahedral_remeshing::internal::FMLS& fmls = subdomain_FMLS[subdomain_FMLS_indices[si]];
+        CGAL::Tetrahedral_remeshing::internal::FMLS&
+          fmls = subdomain_FMLS[subdomain_FMLS_indices.at(si)];
 
         int it_nb = 0;
         const int max_it_nb = 5;
@@ -178,6 +179,82 @@ namespace CGAL
         return true;
       }
 
+      template<typename C3T3>
+      void collect_vertices_subdomain_indices(
+        const C3T3& c3t3,
+        boost::unordered_map<
+          typename C3T3::Vertex_handle,
+          std::vector<typename C3T3::Subdomain_index> >& vertices_subdomain_indices)
+      {
+        typedef typename C3T3::Subdomain_index Subdomain_index;
+        typedef typename C3T3::Vertex_handle   Vertex_handle;
+
+        for (typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin();
+             cit != c3t3.cells_in_complex_end(); ++cit)
+        {
+          const Subdomain_index si = cit->subdomain_index();
+          for (int i = 0; i < 4; ++i)
+          {
+            const Vertex_handle vi = cit->vertex(i);
+            if (vertices_subdomain_indices.find(vi) == vertices_subdomain_indices.end())
+            {
+              std::vector<Subdomain_index> indices(1);
+              indices[0] = si;
+              vertices_subdomain_indices.insert(std::make_pair(vi, indices));
+            }
+            else
+            {
+              std::vector<Subdomain_index>& v_indices = vertices_subdomain_indices.at(vi);
+              if (std::find(v_indices.begin(), v_indices.end(), si) == v_indices.end())
+                v_indices.push_back(si);
+            }
+          }
+        }
+      }
+
+      template<typename C3T3>
+      void collect_vertices_surface_indices(
+        const C3T3& c3t3,
+        const boost::unordered_map<
+            typename C3T3::Vertex_handle,
+            std::vector<typename C3T3::Subdomain_index> >& vertices_subdomain_indices,
+        boost::unordered_map<
+            typename C3T3::Vertex_handle,
+            std::vector<typename C3T3::Surface_patch_index> >& vertices_surface_indices)
+      {
+        typedef typename C3T3::Surface_patch_index Surface_patch_index;
+        typedef typename C3T3::Vertex_handle       Vertex_handle;
+        typedef typename C3T3::Facet               Facet;
+
+        for (typename C3T3::Facet_iterator fit = c3t3.facets_in_complex_begin();
+             fit != c3t3.facets_in_complex_end(); ++fit)
+        {
+          const Facet& f = *fit;
+          const Surface_patch_index surface_index = c3t3.surface_patch_index(f);
+
+          for (int i = 0; i < 3; ++i)
+          {
+            const Vertex_handle vi = f.first->vertex(indices(f.second, i));
+            if (vertices_subdomain_indices.at(vi).size() > 2)
+            {
+              if (vertices_surface_indices.find(vi) == vertices_surface_indices.end())
+              {
+                std::vector<Surface_patch_index> indices(1);
+                indices[0] = surface_index;
+                vertices_surface_indices.insert(std::make_pair(vi, indices));
+              }
+              else
+              {
+                std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(vi);
+                if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index)
+                  == v_surface_indices.end())
+                  v_surface_indices.push_back(surface_index);
+              }
+            }
+          }
+        }
+      }
+
 
       template<typename C3T3, typename CellSelector>
       void smooth_vertices(C3T3& c3t3,
@@ -205,6 +282,28 @@ namespace CGAL
 
         Tr& tr = c3t3.triangulation();
 
+        //collect a map of vertices subdomain indices
+        boost::unordered_map<Vertex_handle, std::vector<Subdomain_index> > vertices_subdomain_indices;
+        collect_vertices_subdomain_indices(c3t3, vertices_subdomain_indices);
+
+        //collect a map of vertices surface indices
+        boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
+        collect_vertices_surface_indices(c3t3, vertices_subdomain_indices, vertices_surface_indices);
+
+        //collect a map of normals at surface vertices
+        boost::unordered_map<Vertex_handle,
+          boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
+        compute_vertices_normals(c3t3, vertices_normals);
+
+        // Build MLS Surfaces
+        std::vector < CGAL::Tetrahedral_remeshing::internal::FMLS > subdomain_FMLS;
+        boost::unordered_map<Surface_patch_index, unsigned int> subdomain_FMLS_indices;
+        createMLSSurfaces(subdomain_FMLS,
+                          subdomain_FMLS_indices,
+                          vertices_normals,
+                          c3t3);
+
+        //smooth()
         const std::size_t nbv = tr.number_of_vertices();
         boost::unordered_map<Vertex_handle, std::size_t> vertex_id;
         std::vector<Vector_3> smoothing_vecs(nbv, CGAL::NULL_VECTOR);
@@ -251,72 +350,6 @@ namespace CGAL
               }
             }
           }
-
-          //collect a map of vertices subdomain indices
-          boost::unordered_map<Vertex_handle, std::vector<Subdomain_index> > vertices_subdomain_indices;
-          for (typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin();
-            cit != c3t3.cells_in_complex_end(); ++cit)
-          {
-            const Subdomain_index si = cit->subdomain_index();
-            for (int i = 0; i < 4; ++i)
-            {
-              const Vertex_handle vi = cit->vertex(i);
-              if (vertices_subdomain_indices.find(vi) == vertices_subdomain_indices.end())
-              {
-                std::vector<Subdomain_index> indices(1);
-                indices[0] = si;
-                vertices_subdomain_indices.insert(std::make_pair(vi, indices));
-              }
-              else
-              {
-                std::vector<Subdomain_index>& v_indices = vertices_subdomain_indices.at(vi);
-                if (std::find(v_indices.begin(), v_indices.end(), si) == v_indices.end())
-                  v_indices.push_back(si);
-              }
-            }
-          }
-
-          //collect a map of vertices surface indices
-          boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
-          for (typename C3T3::Facet_iterator fit = c3t3.facets_in_complex_begin();
-            fit != c3t3.facets_in_complex_end(); ++fit)
-          {
-            const Facet& f = *fit;
-            Surface_patch_index surface_index = c3t3.surface_patch_index(f);
-            for (int i = 0; i < 3; ++i)
-            {
-              const Vertex_handle vi = f.first->vertex(indices(f.second, i));
-              if (vertices_subdomain_indices.at(vi).size() > 2)
-              {
-                if (vertices_surface_indices.find(vi) == vertices_surface_indices.end())
-                {
-                  std::vector<Surface_patch_index> indices(1);
-                  indices[0] = surface_index;
-                  vertices_surface_indices.insert(std::make_pair(vi, indices));
-                }
-                else
-                {
-                  std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(vi);
-                  if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index)
-                                == v_surface_indices.end())
-                    v_surface_indices.push_back(surface_index);
-                }
-              }
-            }
-          }
-
-          //collect a map of normals at surface vertices
-          boost::unordered_map<Vertex_handle,
-            boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
-          compute_vertices_normals(c3t3, vertices_normals);
-
-          // Build MLS Surfaces
-          std::vector < CGAL::Tetrahedral_remeshing::internal::FMLS > subdomain_FMLS;
-          boost::unordered_map<Surface_patch_index, unsigned int> subdomain_FMLS_indices;
-          createMLSSurfaces(subdomain_FMLS,
-                            subdomain_FMLS_indices,
-                            vertices_normals,
-                            c3t3);
 
           // Smooth
           for (Vertex_handle v : tr.finite_vertex_handles())

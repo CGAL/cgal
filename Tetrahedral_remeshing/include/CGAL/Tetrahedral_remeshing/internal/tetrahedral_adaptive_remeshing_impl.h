@@ -495,7 +495,7 @@ private:
           collapse();
         }
         flip();
-//        smooth();
+        smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << "# Iteration " << it_nb << " done : "
@@ -515,7 +515,7 @@ private:
         ++it_nb;
 
         flip();
-//        smooth();
+        smooth();
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << "# Iteration " << it_nb << " (flip and smooth only) done : "

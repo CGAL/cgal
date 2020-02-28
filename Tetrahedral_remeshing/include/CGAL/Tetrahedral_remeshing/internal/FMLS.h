@@ -592,7 +592,7 @@ namespace CGAL
                typename C3t3>
       void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
                              Subdomain__FMLS_indices& subdomain_FMLS_indices,
-                             VerticesNormalsMap& vertices_normals,
+                             const VerticesNormalsMap& vertices_normals,
                              const C3t3& c3t3,
                              int upsample = 0)
       {
@@ -619,8 +619,7 @@ namespace CGAL
         SurfaceIndexMap subdomain_sample_numbers;
 
         //Count the number of vertices for each boundary surface (i.e. one per label)
-        for (typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
-          vit != tr.finite_vertices_end(); ++vit)
+        for (const Vertex_handle vit : tr.finite_vertex_handles())
         {
           if (vit->in_dimension() == 2)
           {
@@ -658,8 +657,7 @@ namespace CGAL
         std::vector<int> point_spacing_count(count, 0);
 
         //Allocation of the PN
-        for (typename Tr::Finite_vertices_iterator vit = tr.finite_vertices_begin();
-             vit != tr.finite_vertices_end(); ++vit)
+        for (Vertex_handle vit : tr.finite_vertex_handles())
         {
           if (vit->in_dimension() == 2)
           {
@@ -673,7 +671,7 @@ namespace CGAL
             pns[fmls_id][6 * current_v_count[fmls_id] + 1] = p.y();
             pns[fmls_id][6 * current_v_count[fmls_id] + 2] = p.z();
 
-            const Vector_3& normal = vertices_normals[vit][surf_i];
+            const Vector_3& normal = vertices_normals.at(vit).at(surf_i);
 
             pns[fmls_id][6 * current_v_count[fmls_id] + 3] = normal.x();
             pns[fmls_id][6 * current_v_count[fmls_id] + 4] = normal.y();
@@ -689,8 +687,8 @@ namespace CGAL
         {
           EdgeMapIndex edgeMap;
 
-          for (typename C3t3::Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin();
-               fit != c3t3.facets_in_complex_end(); ++fit)
+          for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
+               fit != c3t3.facets_end(); ++fit)
           {
             for (int i = 0; i < 2; i++)
             {
@@ -823,7 +821,7 @@ namespace CGAL
         subdomain_FMLS.resize(nb_of_mls_to_create, FMLS());
 
         count = 0;
-        //Cretaing the actual MLS surfaces
+        //Creating the actual MLS surfaces
         for (typename SurfaceIndexMap::iterator it = current_subdomain_FMLS_indices.begin();
              it != current_subdomain_FMLS_indices.end(); ++it)
         {
