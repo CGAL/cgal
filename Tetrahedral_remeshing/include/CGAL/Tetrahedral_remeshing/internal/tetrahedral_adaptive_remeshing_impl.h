@@ -361,10 +361,10 @@ private:
            fit != tr().finite_facets_end();
            ++fit)
       {
-        Facet f = *fit;
-        Facet mf = tr().mirror_facet(f);
-        Subdomain_index s1 = f.first->subdomain_index();
-        Subdomain_index s2 = mf.first->subdomain_index();
+        const Facet f = *fit;
+        const Facet mf = tr().mirror_facet(f);
+        const Subdomain_index s1 = f.first->subdomain_index();
+        const Subdomain_index s2 = mf.first->subdomain_index();
         if (s1 != s2
           || get(fcmap, f)
           || get(fcmap, mf)
@@ -372,24 +372,17 @@ private:
         {
           m_c3t3.add_to_complex(f, 1);
 
-          if (!input_is_c3t3())
+          const int i = f.second;
+          for (int j = 0; j < 3; ++j)
           {
-            const int i = f.second;
-            for (int j = 0; j < 3; ++j)
-            {
-              Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
-              if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
-                vij->set_dimension(2);
-            }
+            Vertex_handle vij = f.first->vertex(Tr::vertex_triple_index(i, j));
+            if (vij->in_dimension() == -1 || vij->in_dimension() > 2)
+              vij->set_dimension(2);
           }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbf;
 #endif
         }
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        else if (input_is_c3t3() && m_c3t3.is_in_complex(f))
-          ++nbf;
-#endif
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       CGAL::Tetrahedral_remeshing::debug::dump_facets_in_complex(m_c3t3, "facets_in_complex.off");
@@ -402,30 +395,25 @@ private:
            eit != tr().finite_edges_end();
            ++eit)
       {
-        Edge e = *eit;
+        const Edge& e = *eit;
         if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
-          || nb_incident_subdomains(e, m_c3t3) > 2)
+          || nb_incident_subdomains(e, m_c3t3) > 2
+          || nb_incident_surface_patches(e, m_c3t3) > 1)
         {
           m_c3t3.add_to_complex(e, 1);
 
-          if (!input_is_c3t3())
-          {
-            Vertex_handle v = e.first->vertex(e.second);
-            if (v->in_dimension() == -1 || v->in_dimension() > 1)
-              v->set_dimension(1);
+          Vertex_handle v = e.first->vertex(e.second);
+          if (v->in_dimension() == -1 || v->in_dimension() > 1)
+            v->set_dimension(1);
 
-            v = e.first->vertex(e.third);
-            if (v->in_dimension() == -1 || v->in_dimension() > 1)
-              v->set_dimension(1);
-          }
+          v = e.first->vertex(e.third);
+          if (v->in_dimension() == -1 || v->in_dimension() > 1)
+            v->set_dimension(1);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbe;
 #endif
         }
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        else if (input_is_c3t3() && m_c3t3.is_in_complex(e))
-          ++nbe;
-#endif
       }
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       CGAL::Tetrahedral_remeshing::debug::dump_edges_in_complex(m_c3t3, "edges_in_complex.polylines.txt");
@@ -443,11 +431,9 @@ private:
         {
           m_c3t3.add_to_complex(vit, ++corner_id);
 
-          if (!input_is_c3t3())
-          {
-            if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
-              vit->set_dimension(0);
-          }
+          if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
+            vit->set_dimension(0);
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbv;
 #endif

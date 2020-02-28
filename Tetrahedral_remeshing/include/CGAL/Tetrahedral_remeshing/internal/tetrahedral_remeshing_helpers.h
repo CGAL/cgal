@@ -249,7 +249,7 @@ namespace Tetrahedral_remeshing
   bool is_boundary_edge(const typename C3t3::Vertex_handle& v0,
     const typename C3t3::Vertex_handle& v1,
     const C3t3& c3t3,
-    CellSelector cell_selector)
+    const CellSelector& cell_selector)
   {
     typedef typename C3t3::Edge        Edge;
     typedef typename C3t3::Cell_handle Cell_handle;
@@ -271,7 +271,7 @@ namespace Tetrahedral_remeshing
     std::vector<Facet> facets;
     c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
 
-    BOOST_FOREACH(const Facet& f, facets)
+    for(const Facet& f : facets)
     {
       if (c3t3.is_in_complex(f))
         return true;
@@ -290,7 +290,7 @@ namespace Tetrahedral_remeshing
     std::vector<Facet> facets;
     c3t3.triangulation().incident_facets(v, std::back_inserter(facets));
 
-    BOOST_FOREACH(const Facet& f, facets)
+    for(const Facet& f : facets)
     {
       if (c3t3.is_in_complex(f))
         return c3t3.surface_patch_index(f);
@@ -346,6 +346,27 @@ namespace Tetrahedral_remeshing
     return oit;
   }
 
+  template<typename C3t3, typename OutputIterator>
+  OutputIterator incident_surface_patches(const typename C3t3::Edge& e,
+                                          const C3t3& c3t3,
+                                          OutputIterator oit)
+  {
+    typedef typename C3t3::Triangulation::Facet_circulator Facet_circulator;
+    typedef typename C3t3::Triangulation::Facet Facet;
+
+    Facet_circulator circ = c3t3.triangulation().incident_facets(e);
+    Facet_circulator end = circ;
+    do
+    {
+      const Facet& f = *circ;
+      if(c3t3.is_in_complex(f))
+        *oit++ = c3t3.surface_patch_index(f);
+    }
+    while (++circ != end);
+  
+    return oit;
+  }
+
   template<typename C3t3>
   std::size_t nb_incident_subdomains(const typename C3t3::Vertex_handle v,
     const C3t3& c3t3)
@@ -366,6 +387,18 @@ namespace Tetrahedral_remeshing
 
     boost::unordered_set<Subdomain_index> indices;
     incident_subdomains(e, c3t3, std::inserter(indices, indices.begin()));
+
+    return indices.size();
+  }
+
+  template <typename C3t3>
+  std::size_t nb_incident_surface_patches(const typename C3t3::Edge& e,
+                                          const C3t3& c3t3)
+  {
+    typedef typename C3t3::Surface_patch_index Surface_patch_index;
+
+    boost::unordered_set<Surface_patch_index> indices;
+    incident_surface_patches(e, c3t3, std::inserter(indices, indices.begin()));
 
     return indices.size();
   }
@@ -509,7 +542,7 @@ namespace Tetrahedral_remeshing
     std::vector<Cell_handle> cells;
     c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
 
-    BOOST_FOREACH(Cell_handle c, cells)
+    for(Cell_handle c : cells)
     {
       if (cell_selector(c))
         return true;
@@ -589,6 +622,61 @@ namespace Tetrahedral_remeshing
   }
 
   template<typename C3t3, typename CellSelector>
+  bool topology_test(const typename C3t3::Edge& edge,
+                     const C3t3& c3t3,
+                     const CellSelector& cell_selector)
+  {
+    typedef typename C3t3::Vertex_handle Vertex_handle;
+    typedef typename C3t3::Cell_handle   Cell_handle;
+    typedef typename C3t3::Edge          Edge;
+    typedef typename C3t3::Facet         Facet;
+    typedef typename C3t3::Triangulation::Facet_circulator Facet_circulator;
+
+    const Vertex_handle v0 = edge.first->vertex(edge.second);
+    const Vertex_handle v1 = edge.first->vertex(edge.third);
+
+    // the "topology test" checks that :
+    // no incident non-boundary facet has 3 boundary edges
+    // no incident boundary facet has 3 feature edges
+
+    Facet_circulator fcirc = c3t3.triangulation().incident_facets(edge);
+    Facet_circulator fdone = fcirc;
+    do
+    {
+      if (c3t3.triangulation().is_infinite(fcirc->first))
+        continue;
+
+      const Facet& f = *fcirc;
+      if (is_boundary(c3t3, f, cell_selector))
+        //boundary : check that facet does not have 3 feature edges
+      {
+        //Get the ids of the opposite vertices
+        for (int i = 1; i < 4; i++)
+        {
+          Vertex_handle vi = f.first->vertex((f.second + i) % 4);
+          if (vi != v0 && vi != v1 && nb_incident_subdomains(vi, c3t3) > 1)
+          {
+            if (is_edge_in_complex(v0, vi, c3t3)
+              && is_edge_in_complex(v1, vi, c3t3))
+              return false;
+          }
+        }
+      }
+      else //non-boundary : check that facet does not have 3 boundary edges
+      {
+        const Cell_handle circ = f.first;
+        const int i = f.second;
+        if (is_boundary(c3t3, Edge(circ, (i + 1) % 4, (i + 2) % 4), cell_selector)
+          && is_boundary(c3t3, Edge(circ, (i + 2) % 4, (i + 3) % 4), cell_selector)
+          && is_boundary(c3t3, Edge(circ, (i + 3) % 4, (i + 1) % 4), cell_selector))
+          return false;
+      }
+    } while (++fcirc != fdone);
+
+    return true;
+  }
+
+  template<typename C3t3, typename CellSelector>
   void get_edge_info(const typename C3t3::Edge& edge,
                      bool& update_v0,
                      bool& update_v1,
@@ -634,8 +722,12 @@ namespace Tetrahedral_remeshing
       if (c3t3.is_in_complex(edge))
       {
         if (!topology_test(edge, c3t3, cell_selector))
+        {
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+          nb_topology_test++;
+#endif
           return;
-
+        }
         const std::size_t nb_si_v0 = nb_incident_subdomains(v0, c3t3);
         const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
 
@@ -1134,9 +1226,9 @@ namespace Tetrahedral_remeshing
         ofs << "OFF" << std::endl;
         ofs << vertices_di.size() << " 0 0" << std::endl << std::endl;
 
-        for (std::size_t j = 0; j < vertices_di.size(); ++j)
+        for (Vertex_handle vj : vertices_di)
         {
-          ofs << vertices_di[j]->point() << std::endl;
+          ofs << point(vj->point()) << std::endl;
         }
 
         ofs.close();

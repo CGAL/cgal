@@ -1,6 +1,7 @@
 #define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 #define CGAL_DUMP_REMESHING_STEPS
-//#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
 
 #include <QtCore/qglobal.h>
 
@@ -25,6 +26,21 @@
 #include <QMessageBox>
 
 #include "ui_Tetrahedral_remeshing_dialog.h"
+
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+std::size_t nb_topology_test = 0;
+std::size_t nb_impossible = 0;
+std::size_t nb_valid_collapse = 0;
+std::size_t nb_invalid_collapse = 0;
+std::size_t nb_invalid_lengths = 0;
+std::size_t nb_invalid_collapse_short = 0;
+std::size_t nb_orientation_v0 = 0;
+std::size_t nb_orientation_v1 = 0;
+std::size_t nb_orientation_midpoint = 0;
+std::size_t nb_test_v0 = 0;
+std::size_t nb_test_v1 = 0;
+std::size_t nb_test_midpoint = 0;
+#endif
 
 using namespace CGAL::Three;
 class Polyhedron_demo_tetrahedral_remeshing_plugin :
@@ -103,6 +119,37 @@ public Q_SLOTS:
 
       // default cursor
       QApplication::restoreOverrideCursor();
+
+#ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
+      std::cout << "nb_topology_test = " << nb_topology_test << std::endl;
+      std::cout << "nb_impossible = " << nb_impossible << std::endl;
+
+      std::cout << "nb_invalid_collapse_short = " << nb_invalid_collapse_short << std::endl;
+
+      std::cout << "nb_orientation_fail_v0 = " << nb_orientation_v0 << std::endl;
+      std::cout << "nb_orientation_fail_v1 = " << nb_orientation_v1 << std::endl;
+      std::cout << "nb_orientation_fail_midpoint = " << nb_orientation_midpoint << std::endl;
+
+      std::cout << "nb_test_v0 = " << nb_test_v0 << std::endl;
+      std::cout << "nb_test_v1 = " << nb_test_v1 << std::endl;
+      std::cout << "nb_test_midpoint = " << nb_test_midpoint << std::endl;
+      std::cout << std::endl;
+
+      if (nb_test_v0 > 0)
+        std::cout << "nb_orientation_v0 / nb_test_v0  = "
+        << ((float)nb_orientation_v0 / (float)nb_test_v0) << std::endl;
+      if (nb_test_v1 > 1)
+        std::cout << "nb_orientation_v1 / nb_test_v1  = "
+        << ((float)nb_orientation_v1 / (float)nb_test_v1) << std::endl;
+      if (nb_test_midpoint > 0)
+        std::cout << "nb_orientation_midpoint / nb_test_midpoint  = "
+        << ((float)nb_orientation_midpoint / (float)nb_test_midpoint) << std::endl;
+
+      std::cout << std::endl;
+      std::cout << "nb_valid_collapse = " << nb_valid_collapse << std::endl;
+      std::cout << "nb_invalid_collapse = " << nb_invalid_collapse << std::endl;
+      std::cout << "nb_invalid_lengths = " << nb_invalid_lengths << std::endl;
+#endif
     }
     else
     {
