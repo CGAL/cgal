@@ -45,7 +45,7 @@ struct Primitive_profiler
 
     template <class ... A>
     result_type
-    operator()(const A&& ... a) const
+    operator()(A&& ... a) const
     {
 	CGAL_KERNEL_PROFILER;
 	return P::operator()(std::forward<A>(a)...);

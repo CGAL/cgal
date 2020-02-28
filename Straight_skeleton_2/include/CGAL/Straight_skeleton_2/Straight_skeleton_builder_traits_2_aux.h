@@ -117,7 +117,7 @@ public:
 
   template <class ... A>
   result_type
-  operator()(const A&& ... a) const
+  operator()(A&& ... a) const
   {
     try
     {

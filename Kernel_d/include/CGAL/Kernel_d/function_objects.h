@@ -43,7 +43,7 @@ class Construct
 
     template <class ... A>
     ToBeConstructed
-    operator()( const A&& ... a) const
+    operator()( A&& ... a) const
     { return ToBeConstructed(std::forward<A>(a)...); }
 };
 
