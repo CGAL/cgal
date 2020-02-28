@@ -19,14 +19,14 @@ typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_tria
 struct Cells_of_subdomain
 {
 private:
-  int m_subdomain;
+  const int m_subdomain;
 
 public:
   Cells_of_subdomain(const int& subdomain)
     : m_subdomain(subdomain)
   {}
 
-  const bool operator()(Remeshing_triangulation::Cell_handle c)
+  const bool operator()(Remeshing_triangulation::Cell_handle c) const
   {
     return m_subdomain == c->subdomain_index();
   }
@@ -34,15 +34,7 @@ public:
 
 int main(int argc, char* argv[])
 {
-  const char* filename     = "data/triangulation_two_subdomains.binary.cgal";
   float target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1f;
-
-  std::ifstream input(filename, std::ios::in);
-  if (!input)
-  {
-    std::cerr << "File " << filename << " could not be found" << std::endl;
-    return EXIT_FAILURE;
-  }
 
   Remeshing_triangulation tr;
   generate_input(2, 1000, tr);
