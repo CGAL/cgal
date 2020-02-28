@@ -435,8 +435,8 @@ namespace CGAL
                   minMax[3 + j] = PN[6 * i + j];
               }
             for (unsigned int i = 0; i < 3; i++) {
-              minMax[i] -= 0.001;
-              minMax[3 + i] += 0.001;
+              minMax[i] -= 0.001f;
+              minMax[3 + i] += 0.001f;
             }
             for (unsigned int i = 0; i < 3; i++)
               res[i] = (unsigned int)ceil((minMax[3 + i] - minMax[i]) / cellSize);
