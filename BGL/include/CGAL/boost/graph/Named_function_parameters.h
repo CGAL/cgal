@@ -194,6 +194,20 @@ get_parameter(const Named_function_parameters<T, Tag, Base>& np, Query_tag tag)
   return internal_np::get_parameter_impl(static_cast<const internal_np::Named_params_impl<T, Tag, Base>&>(np), tag);
 }
 
+// single parameter so that we can avoid a default construction
+template <typename D>
+D choose_parameter(const internal_np::Param_not_found&)
+{
+  return D();
+}
+
+template <typename D, typename T>
+const T& choose_parameter(const T& t)
+{
+  return t;
+}
+
+// Two parameters, non-trivial default value
 template <typename D>
 D choose_parameter(const internal_np::Param_not_found&, const D& d)
 {
