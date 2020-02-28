@@ -60,7 +60,6 @@
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
 #include <boost/container/small_vector.hpp>
-#include <CGAL/IO/Triangulation_file_input.h>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/info_check.h>
@@ -2203,7 +2202,67 @@ public:
                            ConvertVertex convert_vertex = ConvertVertex(),
                            ConvertCell convert_cell = ConvertCell())
   {
-    return CGAL::file_input<Tr_src, Self, ConvertVertex, ConvertCell>(is, *this, convert_vertex, convert_cell);
+    // reads
+    // the dimension
+    // the number of finite vertices
+    // the non combinatorial information on vertices (point, etc)
+    // the number of cells
+    // the cells by the indices of their vertices in the preceding list
+    // of vertices, plus the non combinatorial information on each cell
+    // the neighbors of each cell by their index in the preceding list of cells
+    // when dimension < 3 : the same with faces of maximal dimension
+
+    // If this is used for a TDS, the vertices are processed from 0 to n.
+    // Else, we make V[0] the infinite vertex and work from 1 to n+1.
+
+    typedef Self Triangulation;
+    typedef typename Triangulation::Vertex_handle  Vertex_handle;
+    typedef typename Triangulation::Cell_handle    Cell_handle;
+
+    typedef typename Tr_src::Vertex Vertex1;
+    typedef typename Tr_src::Cell Cell1;
+
+    clear();
+    tds().cells().clear();
+
+    std::size_t n;
+    int d;
+    if(is_ascii(is))
+      is >> d >> n;
+    else {
+      read(is, d);
+      read(is, n);
+    }
+    if(!is) return is;
+    tds().set_dimension(d);
+
+    std::size_t V_size = n+1;
+    std::vector< Vertex_handle > V(V_size);
+
+    // the infinite vertex is numbered 0
+    V[0] = infinite_vertex();
+
+    for (std::size_t i = 1; i < V_size; ++i) {
+      Vertex1 v;
+      if(!(is >> v)) return is;
+      Vertex_handle vh=tds().create_vertex( convert_vertex(v) );
+      V[i] = vh;
+      convert_vertex(v, *V[i]);
+    }
+
+    std::vector< Cell_handle > C;
+
+    std::size_t m;
+    tds().read_cells(is, V, m, C);
+
+    for (std::size_t j=0 ; j < m; j++) {
+      Cell1 c;
+      if(!(is >> c)) return is;
+      convert_cell(c, *C[j]);
+    }
+
+    CGAL_triangulation_assertion( is_valid(false) );
+    return is;
   }
 };
 

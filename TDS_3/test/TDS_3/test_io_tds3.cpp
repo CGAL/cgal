@@ -26,8 +26,28 @@ struct Update_vertex
   {
 
   }
+
+
 }; // end struct Update_vertex
 
+template <typename T1, typename T2>
+struct Update_cell
+{
+  typedef typename T1::Cell                  C1;
+  typedef typename T2::Cell                  C2;
+
+  C2 operator()(const C1&)
+  {
+    return C2();
+  }
+
+  void operator()(const C1&, C2&)
+  {
+
+  }
+
+
+}; // end struct Update_vertex
 
 int main()
 {
@@ -52,7 +72,7 @@ int main()
   out.close();
   Tds T2;
   std::ifstream in("tr");
-  //T2.file_input<Tr1,Update_vertex<Tr1, Tr2>, Update_cell>(in);
+  T2.file_input<Tds,Update_vertex<Tds, Tds>, Update_cell<Tds, Tds> >(in);
   in.close();
   return 0;
 }
