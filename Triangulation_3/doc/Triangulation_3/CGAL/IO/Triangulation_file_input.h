@@ -7,7 +7,7 @@ namespace CGAL {
 The triangulation streamed in `is`, of original type `Tr_src`,  is written into `tr`, of type `Tr_tgt`. As the vertex and cell
  types might be different and incompatible, the creation of new cells and vertices 
 is made thanks to the functors `convert_vertex` and `convert_cell`, that convert 
-vertex and cell types. For each vertex `v_src` in `in`, the corresponding 
+vertex and cell types. For each vertex `v_src` in `is`, the corresponding
 vertex `v_tgt` in `tr` is a copy of the vertex returned by `convert_vertex(v_src)`. 
 The same operations are done for cells with the functor convert_cell, except cells
 in `tr` are created using the default constructor, and then filled with the data

@@ -1037,13 +1037,13 @@ Writes `tds` into the stream `os`
 ostream& operator<< (ostream& os, const TriangulationDataStructure_3 & tds); 
 
 /*! \ingroup PkgIOTDS3
-The tds streamed in `is`, of original type `TDS_src`, is written into the triangulation. As the vertex and cell
+The tds streamed in `is`, of original type `TDS_src`, is written into the triangulation data structure. As the vertex and cell
  types might be different and incompatible, the creation of new cells and vertices
 is made thanks to the functors `convert_vertex` and `convert_cell`, that convert
 vertex and cell types. For each vertex `v_src` in `is`, the corresponding
-vertex `v_tgt` in the triangulation is a copy of the vertex returned by `convert_vertex(v_src)`.
+vertex `v_tgt` in the triangulation data structure is a copy of the vertex returned by `convert_vertex(v_src)`.
 The same operations are done for cells with the functor convert_cell, except cells
-in the triangulation are created using the default constructor, and then filled with the data
+in the triangulation data structure are created using the default constructor, and then filled with the data
 contained in the stream.
 
  - A model of `ConvertVertex` must provide two `operator()`s that are responsible
@@ -1057,7 +1057,7 @@ converting the source cell `c_src` into the target cell:
   - `void operator()(const TDS_src::Cell& c_src, Cell& c_tgt) const;` This operator
  is meant to be used in case heavy data should be transferred to `c_tgt`.
 
-\note The triangulation contained in `is` can be obtained with the `operator>>` of a `TriangulationDataStructure_3`.
+\note The triangulation data structure contained in `is` can be obtained with the `operator>>` of a `TriangulationDataStructure_3`.
 */
 template <typename TDS_src,
           typename ConvertVertex,
