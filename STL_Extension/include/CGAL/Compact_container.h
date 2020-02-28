@@ -908,15 +908,7 @@ namespace internal {
       return *this;
     }
 
-    CC_iterator(CC_iterator&& it) noexcept
-#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      : ts(Time_stamper::time_stamp(it.operator->()))
-#endif
-    {
-      m_ptr.p = it.operator->();
-      it.m_ptr.p = nullptr;
-    }
-
+    CC_iterator(CC_iterator&& it) = default;
     ~CC_iterator() = default;
     CC_iterator& operator=(const CC_iterator&) = default;
     CC_iterator& operator=(CC_iterator&&) = default;
