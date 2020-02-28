@@ -60,9 +60,48 @@ public:
     construct_Voronoi_face_normals();
   }
 
-  // @tmp
   void reduce_basis()
   {
+    bool reduced = false;
+    while (!reduced)
+    {
+      FT c01 = gt_.compute_scalar_product_2_object()(basis_[0], basis_[1]);
+      FT c00 = gt_.compute_scalar_product_2_object()(basis_[0], basis_[0]);
+      FT c11 = gt_.compute_scalar_product_2_object()(basis_[1], basis_[1]);
+      if (c11 < c00) {
+        std::swap(basis_[0], basis_[1]);
+        std::swap(c00, c11);
+      }
+      if (4*c01*c01 <= c00*c00) {
+        // Basis is Lagrange-reduced.
+        if (c01 > 0) {
+          // Negate b1 if necessary to ensure obtuse angle between b0 and b1.
+          basis_[1] = gt_.construct_opposite_vector_2_object()(basis_[1]);
+        }
+        reduced = true;
+      } else {
+        // Basis is not Lagrange-reduced.
+        if (c01 > 0) {
+          // b1 -= b0
+          basis_[1] = gt_.construct_sum_of_vectors_2_object()(basis_[1], 
+                        gt_.construct_opposite_vector_2_object()(basis_[0]));
+        } else {
+          // b1 += b0
+          basis_[1] = gt_.construct_sum_of_vectors_2_object()(basis_[1], basis_[0]);
+        }
+      }
+    }
+    CGAL_assertion(basis_is_reduced());
+  }
+
+  // Only used in assertion check.
+  bool basis_is_reduced()
+  {
+    Vector ext = gt_.construct_opposite_vector_2_object()(
+                   gt_.construct_sum_of_vectors_2_object()(basis_[0], basis_[1]));
+    return gt_.compute_scalar_product_2_object()(basis_[0], basis_[1]) <= 0 &&
+        gt_.compute_scalar_product_2_object()(basis_[0], ext) <= 0 &&
+        gt_.compute_scalar_product_2_object()(basis_[1], ext) <= 0;
   }
 
   void construct_Voronoi_face_normals()

@@ -29,7 +29,9 @@ std::vector<Point> generate_lattice()
 int main()
 {
   CGAL::cpp11::array<Vector, 2> basis;
-  basis = CGAL::make_array(Vector(-0.5, 1), Vector(1.5, 0));
+  // the reduced version of this basis should be equivalent to
+  // CGAL::make_array(Vector(-0.5, 1), Vector(1.5, 0));
+  basis = CGAL::make_array(Vector(4, 1), Vector(-2.5, -1));
 
 #if 0
   std::vector<Point> pts { Point(0, 0), Point(-0.2, -0.6) };
