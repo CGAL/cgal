@@ -211,7 +211,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * @pre the input polygon soup describes a consistently oriented
 * polygon mesh. This can be checked using the function
 * \link CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()
-* CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons) \endlink.
+* `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)` \endlink.
 *
 * @tparam PolygonMesh a model of `MutableFaceGraph`
 * @tparam PointRange a model of the concept `RandomAccessContainer`
@@ -229,7 +229,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * \cgalNamedParamsBegin
 *   \cgalParamBegin{point_map}
 *     a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
-*     of the polygon mesh. If this parameter is omitted, `CGAL::Identity_property_map` is used.
+*     of the vertex point map associated to the polygon mesh. If this parameter is omitted, `CGAL::Identity_property_map` is used.
 *   \cgalParamEnd
 * \cgalNamedParamsEnd
 *
