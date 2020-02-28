@@ -215,8 +215,7 @@ D choose_parameter(const internal_np::Param_not_found&, const D& d)
 }
 
 template <typename T, typename D>
-const T&
-choose_parameter(const T& t, const D&)
+const T& choose_parameter(const T& t, const D&)
 {
   return t;
 }

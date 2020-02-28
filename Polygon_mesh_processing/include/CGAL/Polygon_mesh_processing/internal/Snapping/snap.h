@@ -77,7 +77,7 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& hrange,
   typedef typename GetGeomTraits<PolygonMesh, SourceNamedParameters>::type            GT;
   typedef typename GT::FT                                                             FT;
 
-  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(snp, internal_np::geom_traits));
   SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
                                get_property_map(vertex_point, mesh));
 
@@ -306,7 +306,7 @@ std::size_t snap_vertex_range_onto_vertex_range(const SourceHalfedgeRange& sourc
 
   CGAL_static_assertion((std::is_same<Point, typename GT::Point_3>::value));
 
-  GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(snp, internal_np::geom_traits));
 
   SVPM svpm = choose_parameter(get_parameter(snp, internal_np::vertex_point),
                                get_property_map(vertex_point, smesh));
@@ -805,7 +805,7 @@ std::size_t snap_vertex_range_onto_vertex_range_non_conforming(const HalfedgeRan
   VPM vpms = choose_parameter(get_parameter(nps, internal_np::vertex_point), get_property_map(vertex_point, pms));
   VPM vpmt = choose_parameter(get_parameter(npt, internal_np::vertex_point), get_property_map(vertex_point, pmt));
 
-  const GT gt = choose_parameter(get_parameter(nps, internal_np::geom_traits), GT());
+  const GT gt = choose_parameter<GT>(get_parameter(nps, internal_np::geom_traits));
 
   // start by snapping vertices together to simplify things
   snapped_n = snap_vertex_range_onto_vertex_range(source_hrange, pms, target_hrange, pmt, tol_pmap, nps, npt);

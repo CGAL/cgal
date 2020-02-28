@@ -37,8 +37,8 @@ namespace Polygon_mesh_processing {
 ///                    `BackInsertionSequence` whose value type can be constructed from
 ///                    the point type of the polygon mesh
 /// \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence` whose
-///                      `value_type` is itself a model of the concepts `RandomAccessContainer` and
-///                      `BackInsertionSequence` whose `value_type` is `std::size_t`
+///                      value type is itself a model of the concepts `RandomAccessContainer` and
+///                      `BackInsertionSequence` whose value type is `std::size_t`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters
 ///
 /// \param mesh the mesh whose faces are being put in the polygon soup
@@ -48,7 +48,7 @@ namespace Polygon_mesh_processing {
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{vertex_point_map}
-///     a model of `WritablePropertyMap`, the property map with the points associated to the vertices of `out`.
+///     a model of `ReadablePropertyMap`, the property map with the points associated to the vertices of `mesh`.
 ///     If this parameter is omitted, an internal property map for
 ///     `CGAL::vertex_point_t` must be available in `TriangleMesh`
 ///   \cgalParamEnd

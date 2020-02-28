@@ -211,10 +211,10 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * polygon mesh.
 *
 * @tparam PolygonMesh a model of `MutableFaceGraph`
-* @tparam PointRange a model of the concepts `RandomAccessContainer` and
-* `BackInsertionSequence` whose value type is the point type
+* @tparam PointRange a model of the concept `RandomAccessContainer`
+* whose value type is the point type
 * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose
-* `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
+* value type is a model of the concept `RandomAccessContainer` whose value type is `std::size_t`
 * @tparam NamedParameters_PS a sequence of \ref pmp_namedparameters
 * @tparam NamedParameters_PM a sequence of \ref pmp_namedparameters
 *
@@ -263,7 +263,7 @@ void polygon_soup_to_polygon_mesh(const PointRange& points,
   using parameters::get_parameter;
 
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters_PS>::const_type    Point_map;
-  Point_map pm = choose_parameter(get_parameter(np_ps, internal_np::point_map), Point_map());
+  Point_map pm = choose_parameter<Point_map>(get_parameter(np_ps, internal_np::point_map));
 
   typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters_PM>::type   Vertex_point_map;
   Vertex_point_map vpm = choose_parameter(get_parameter(np_pm, internal_np::vertex_point),

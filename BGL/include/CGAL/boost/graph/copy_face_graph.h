@@ -333,18 +333,19 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
   internal::copy_face_graph(sm, tm,
                             CGAL::graph_has_property<SourceMesh,boost::halfedge_index_t>(),
                             choose_parameter(get_parameter(np1, internal_np::vertex_to_vertex_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
+                                             impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
                             choose_parameter(get_parameter(np1, internal_np::halfedge_to_halfedge_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
+                                             impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
                             choose_parameter(get_parameter(np1, internal_np::face_to_face_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
+                                             impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
                             choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                         get(vertex_point, sm)),
+                                             get(vertex_point, sm)),
                             choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                         get(vertex_point, tm)));
+                                             get(vertex_point, tm)));
 }
 
 template <typename SourceMesh, typename TargetMesh>

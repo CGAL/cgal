@@ -467,7 +467,7 @@ wlop_simplify_and_regularize_point_set(
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   double select_percentage = choose_parameter(get_parameter(np, internal_np::select_percentage), 5.);
   double radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
   unsigned int iter_number = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 35);

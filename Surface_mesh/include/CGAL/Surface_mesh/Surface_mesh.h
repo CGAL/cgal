@@ -2160,7 +2160,7 @@ private: //------------------------------------------------------- private data
     std::vector<int> reindex;
     typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                           get_const_property_map(CGAL::vertex_point, sm));
+                               get_const_property_map(CGAL::vertex_point, sm));
     reindex.resize(sm.num_vertices());
     int n = 0;
     for(Vertex_index v : sm.vertices()){
@@ -2448,7 +2448,7 @@ private: //------------------------------------------------------- private data
 
     typename CGAL::GetVertexPointMap<Surface_mesh<P>, NamedParameters>::type
         vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
-                           get_property_map(CGAL::vertex_point, sm));
+                               get_property_map(CGAL::vertex_point, sm));
     int n, f, e;
     std::string off;
     is >> sm_skip_comments;

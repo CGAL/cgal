@@ -263,7 +263,7 @@ compute_vcm (const PointRange& points,
     typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
     typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
     Kernel kernel;
     
     // First, compute the VCM for each point
@@ -329,8 +329,8 @@ vcm_estimate_normals_internal (PointRange& points,
                                 typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
     
     typedef std::array<double, 6> Covariance;
     

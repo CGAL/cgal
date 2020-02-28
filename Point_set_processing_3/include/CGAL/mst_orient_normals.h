@@ -619,11 +619,11 @@ mst_orient_normals(
                                 typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
     typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
-                                                       typename Kernel::FT(0));
-    ConstrainedMap constrained_map = choose_parameter(get_parameter(np, internal_np::point_is_constrained), ConstrainedMap());
+                                                           typename Kernel::FT(0));
+    ConstrainedMap constrained_map = choose_parameter<ConstrainedMap>(get_parameter(np, internal_np::point_is_constrained));
     Kernel kernel;
 
   // Bring private stuff to scope

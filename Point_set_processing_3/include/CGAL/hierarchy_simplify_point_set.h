@@ -164,7 +164,7 @@ namespace CGAL {
     typedef typename Kernel::Vector_3 Vector;
     typedef typename Kernel::FT FT;
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
     unsigned int size = choose_parameter(get_parameter(np, internal_np::size), 10);
     double var_max = choose_parameter(get_parameter(np, internal_np::maximum_variation), 1./3.);
     const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),

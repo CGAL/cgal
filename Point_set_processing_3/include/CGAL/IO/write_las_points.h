@@ -277,8 +277,8 @@ write_las_points(
   using parameters::get_parameter;
 
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
   return write_las_points_with_properties (stream, points, make_las_point_writer(point_map));
 }
 

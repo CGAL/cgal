@@ -218,10 +218,10 @@ public:
                                 typename Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
                               "Error: no plane index map");
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-    PlaneMap plane_map = choose_parameter(get_parameter(np, internal_np::plane_map), PlaneMap());
-    PlaneIndexMap index_map = choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+    PlaneMap plane_map = choose_parameter<PlaneMap>(get_parameter(np, internal_np::plane_map));
+    PlaneIndexMap index_map = choose_parameter<PlaneIndexMap>(get_parameter(np, internal_np::plane_index_map));
     double attraction_factor = choose_parameter(get_parameter(np, internal_np::attraction_factor), 3.);
     
     m_points.reserve(points.size());

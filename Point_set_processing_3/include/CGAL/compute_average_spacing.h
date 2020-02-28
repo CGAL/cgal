@@ -200,10 +200,10 @@ compute_average_spacing(
 
   typedef typename Kernel::Point_3 Point;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
-  
+
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
   typedef Search_traits_3<Kernel> Tree_traits;

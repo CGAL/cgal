@@ -87,7 +87,7 @@ void partition_graph(const TriangleMesh& tm,
   //Vertex index map
   typedef typename CGAL::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
   Indices indices = choose_parameter(get_parameter(np, internal_np::vertex_index),
-                                 get_const_property_map(boost::vertex_index, tm));
+                                     get_const_property_map(boost::vertex_index, tm));
 
   idx_t nn = static_cast<idx_t>(num_vertices(tm));
   idx_t ne = static_cast<idx_t>(num_faces(tm));
