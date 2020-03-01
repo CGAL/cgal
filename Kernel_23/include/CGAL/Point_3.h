@@ -81,7 +81,7 @@ public:
     : Rep(typename R::Construct_point_3()(Return_base_tag(), hx, hy, hz, hw))
   {}
 
-  friend void swap(Point_3& a, Point_3& b)
+  friend void swap(Self& a, Self& b)
 #ifdef __cpp_lib_is_swappable
     noexcept(std::is_nothrow_swappable_v<Rep>)
 #endif

@@ -93,7 +93,7 @@ public:
   Vector_3(const RT& x, const RT& y, const RT& z, const RT& w)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z, w)) {}
 
-  friend void swap(Vector_3& a, Vector_3& b)
+  friend void swap(Self& a, Self& b)
 #ifdef __cpp_lib_is_swappable
     noexcept(std::is_nothrow_swappable_v<Rep>)
 #endif
