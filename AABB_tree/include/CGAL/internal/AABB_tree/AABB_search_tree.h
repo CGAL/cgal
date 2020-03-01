@@ -13,6 +13,8 @@
 #ifndef CGAL_AABB_SEARCH_TREE_H
 #define CGAL_AABB_SEARCH_TREE_H
 
+#include <memory>
+
 #include <CGAL/license/AABB_tree.h>
 
 
@@ -83,7 +85,7 @@ namespace CGAL
                 typedef typename CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
                 typedef typename Neighbor_search::Tree Tree;
         private:
-                Tree* m_p_tree;
+                std::unique_ptr<Tree> m_p_tree;
 
 
                 Point_and_primitive_id get_p_and_p(const Point_and_primitive_id& p)
@@ -104,20 +106,12 @@ namespace CGAL
                         std::vector<Decorated_point> points;
                         while(begin != beyond) {
                                 Point_and_primitive_id pp = get_p_and_p(*begin);
-                                points.push_back(Decorated_point(pp.first,pp.second));
+                                points.emplace_back(pp.first,pp.second);
                                 ++begin;
                         }
-                        m_p_tree = new Tree(points.begin(), points.end());
-                        if(m_p_tree != nullptr)
-                                m_p_tree->build();
-                        else
-                                std::cerr << "unable to build the search tree!" << std::endl;
+                        m_p_tree = std::make_unique<Tree>(points.begin(), points.end());
+                        m_p_tree->build();
                 }
-
-                ~AABB_search_tree() {
-                        delete m_p_tree;
-                }
-
 
                 Point_and_primitive_id closest_point(const Point& query) const
                 {
