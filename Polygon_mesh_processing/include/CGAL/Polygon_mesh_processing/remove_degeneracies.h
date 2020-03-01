@@ -146,7 +146,7 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
                              get_const_property_map(vertex_point, tmesh));
   Traits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
 
-/// @todo handle boundary edges
+  // @todo handle boundary edges
 
   h = opposite(h, tmesh); // Euler::collapse edge keeps the target and removes the source
 
@@ -168,7 +168,7 @@ bool is_collapse_geometrically_valid(typename boost::graph_traits<TriangleMesh>:
       Point_ref b = get(vpm, source(hi, tmesh));
 
       //ack a-b-point_remove and a-b-point_kept has a compatible orientation
-      /// @todo use a predicate
+      // @todo use a predicate
       typename Traits::Vector_3 n1 = gt.construct_cross_product_vector_3_object()(removed-a, b-a);
       typename Traits::Vector_3 n2 = gt.construct_cross_product_vector_3_object()(kept-a, b-a);
       if(gt.compute_scalar_product_3_object()(n1, n2) <= 0)
@@ -195,7 +195,7 @@ boost::optional<double> get_collapse_volume(typename boost::graph_traits<Triangl
 
   const typename Traits::Point_3 origin(ORIGIN);
 
-/// @todo handle boundary edges
+// @todo handle boundary edges
 
   h = opposite(h, tmesh); // Euler::collapse edge keeps the target and removes the source
 
@@ -220,7 +220,7 @@ boost::optional<double> get_collapse_volume(typename boost::graph_traits<Triangl
       Point_ref b = get(vpm, source(hi, tmesh));
 
       //ack a-b-point_remove and a-b-point_kept has a compatible orientation
-      /// @todo use a predicate
+      // @todo use a predicate
       Vector_3 v_ab = gt.construct_vector_3_object()(a, b);
       Vector_3 v_ar = gt.construct_vector_3_object()(a, removed);
       Vector_3 v_ak = gt.construct_vector_3_object()(a, kept);
@@ -428,7 +428,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     if(edges_to_collapse.empty() && edges_to_flip.empty())
       return true;
 
-    /// @todo maybe using a priority queue handling the more almost degenerate elements should be used
+    // @todo maybe using a priority queue handling the more almost degenerate elements should be used
     std::set<edge_descriptor> next_edges_to_collapse;
     std::set<edge_descriptor> next_edges_to_flip;
 
@@ -1138,7 +1138,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           vertex_descriptor vd = remove_a_border_edge(ed, tmesh, degenerate_edges_to_remove, face_set);
           if(vd == GT::null_vertex())
           {
-            // TODO: if some border edges are later removed, the edge might be processable later
+            // @todo: if some border edges are later removed, the edge might be processable later
             // for example if it belongs to  boundary cycle of edges where the number of non-degenerate
             // edges is 2. That's what happen with fused_vertices.off in the testsuite where the edges
             // are not processed the same way with Polyhedron and Surface_mesh. In the case of Polyhedron
@@ -1356,7 +1356,7 @@ bool remove_degenerate_edges(const EdgeRange& edge_range,
           }
           while(true);
 
-          /// \todo use the area criteria? this means maybe continue exploration of larger cc
+          // @todo use the area criteria? this means maybe continue exploration of larger cc
           // mark faces of completetly explored cc
           for(index=0; index<nb_cc; ++index)
           {
@@ -1640,7 +1640,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
   // Then, remove triangles made of 3 collinear points
 
   // start by filtering out border faces
-  // TODO: shall we avoid doing that in case a non-manifold vertex on the boundary or if a whole component disappear?
+  // @todo shall we avoid doing that in case a non-manifold vertex on the boundary or if a whole component disappear?
   std::set<face_descriptor> border_deg_faces;
   for(face_descriptor f : degenerate_face_set)
   {
@@ -1849,7 +1849,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           all_removed = false;
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
           std::cout << "  WARNING: flip is not possible\n";
-          // \todo Let p and q be the vertices opposite to `edge_to_flip`, and let
+          // @todo Let p and q be the vertices opposite to `edge_to_flip`, and let
           //       r be the vertex of `edge_to_flip` that is the furthest away from
           //       the edge `pq`. In that case I think we should remove all the triangles
           //       so that the triangle pqr is in the mesh.
@@ -1949,7 +1949,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
           (cc_faces.size()+boundary_hedges.size())/2 != 1)
       {
         //cc_faces does not define a topological disk
-        /// \todo Find to way to handle that case
+        // @todo Find to way to handle that case
 #ifdef CGAL_PMP_REMOVE_DEGENERATE_FACES_DEBUG
         std::cout << "  WARNING: Cannot remove the component of degenerate faces: not a topological disk.\n";
 #endif
@@ -2097,7 +2097,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       CGAL_assertion(get(vpmap,source(side_one.front(), tmesh)) == side_points.front());
       CGAL_assertion(get(vpmap,target(side_one.back(), tmesh)) == side_points.back());
 
-      //\todo the reordering could lead to the apparition of null edges.
+      // @todo the reordering could lead to the apparition of null edges.
       std::sort(side_points.begin(), side_points.end());
 
       CGAL_assertion(std::unique(side_points.begin(), side_points.end())==side_points.end());
@@ -2115,7 +2115,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
       CGAL_assertion(get(vpmap, source(side_two.front(), tmesh)) == side_points.front());
       CGAL_assertion(get(vpmap, target(side_two.back(), tmesh)) == side_points.back());
 
-      //\todo the reordering could lead to the apparition of null edges.
+      // @todo the reordering could lead to the apparition of null edges.
       std::sort(side_points.begin(), side_points.end());
 
       CGAL_assertion(std::unique(side_points.begin(), side_points.end())==side_points.end());
