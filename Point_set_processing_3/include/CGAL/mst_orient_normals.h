@@ -317,7 +317,7 @@ create_riemannian_graph(
 
     // Types for K nearest neighbors search structure
     typedef typename PointRange::iterator ForwardIterator;
-    typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
+    typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
     // Riemannian_graph types
     typedef internal::Riemannian_graph<ForwardIterator> Riemannian_graph;

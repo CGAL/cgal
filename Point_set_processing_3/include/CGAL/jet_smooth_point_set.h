@@ -18,6 +18,8 @@
 
 #include <CGAL/IO/trace.h>
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -28,13 +30,6 @@
 
 #include <iterator>
 #include <list>
-
-#ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
-#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 
@@ -178,7 +173,7 @@ jet_smooth_point_set(
   typedef typename Kernel::Point_3 Point;
 
   // types for K nearest neighbors search structure
-  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -196,59 +191,27 @@ jet_smooth_point_set(
 
   std::size_t nb_points = points.size();
 
-#ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
-#else
-   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-   {
-     Point_set_processing_3::internal::Parallel_callback
-       parallel_callback (callback, nb_points);
-     
-     std::vector<Point> mutated_points (nb_points, CGAL::ORIGIN);
-     tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points),
-                       [&](const tbb::blocked_range<size_t>& r)
-                       {
-                         for( std::size_t i = r.begin(); i != r.end(); ++i)
-                         {
-                           if (parallel_callback.interrupted())
-                             break;
-                           mutated_points[i] =
-                             CGAL::internal::jet_smooth_point<SvdTraits>
-                             (get (point_map, *(points.begin() + i)), neighbor_query,
-                                   k,
-                                   neighbor_radius,
-                                   degree_fitting,
-                              degree_monge);
-                           ++ parallel_callback.advancement();
-                         }
-                       });
+  Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+    callback_wrapper (callback, nb_points);
 
-     unsigned int i = 0;
-     for (const value_type& vt : points)
+  CGAL::for_each<ConcurrencyTag>
+    (points,
+     [&](value_type vt)
      {
-       if (mutated_points[i] != CGAL::ORIGIN)
-         put(point_map, vt, mutated_points[i]);
-       ++ i;
-     }
+       if (callback_wrapper.interrupted())
+         throw internal::stop_for_each();
 
-     parallel_callback.join();
+       put (point_map, vt,
+            CGAL::internal::jet_smooth_point<SvdTraits>
+            (get (point_map, vt), neighbor_query,
+             k,
+             neighbor_radius,
+             degree_fitting,
+             degree_monge));
+       ++ callback_wrapper.advancement();
+     });
 
-   }
-   else
-#endif
-   {
-     std::size_t nb = 0;
-     for (const value_type& vt : points)
-     {
-       put(point_map, vt,
-           internal::jet_smooth_point<SvdTraits>
-           (get (point_map, vt), neighbor_query,k,neighbor_radius,degree_fitting,degree_monge) );
-       if (callback && !callback ((nb+1) / double(nb_points)))
-         break;
-       ++ nb;
-     }
-   }
+  callback_wrapper.join();
 }
 
 

@@ -166,7 +166,7 @@ remove_outliers(
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
 
   // types for K nearest neighbors search structure
-  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points

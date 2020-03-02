@@ -19,6 +19,8 @@
 #include <CGAL/IO/trace.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
@@ -30,13 +32,6 @@
 
 #include <iterator>
 #include <list>
-
-#ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
-#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 
@@ -168,7 +163,7 @@ pca_estimate_normals(
   typedef typename boost::property_traits<NormalMap>::value_type Vector;
 
   // types for K nearest neighbors search structure
-  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -188,51 +183,24 @@ pca_estimate_normals(
 
   std::size_t nb_points = points.size();
 
-  // iterate over input points, compute and output normal
-  // vectors (already normalized)
-#ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
-#else
-  if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-  {
-    Point_set_processing_3::internal::Parallel_callback
-      parallel_callback (callback, nb_points);
-     
-    tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points),
-                      [&](const tbb::blocked_range<size_t>& r)
-                      {
-                        for( std::size_t i = r.begin(); i != r.end(); ++i)
-                        {
-                          if (parallel_callback.interrupted())
-                            break;
-                            
-                          put (normal_map, *(points.begin() + i),
-                               CGAL::internal::pca_estimate_normal
-                               (get(point_map, *(points.begin() + i)), neighbor_query, k, neighbor_radius));
-                            
-                          ++ parallel_callback.advancement();
-                        }
-                      });
+  Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+    callback_wrapper (callback, nb_points);
 
-    parallel_callback.join();
-  }
-  else
-#endif
-  {
-    std::size_t nb = 0;
-    for (const value_type& vt : points)
-    {
-      put (normal_map, vt,
-           internal::pca_estimate_normal(      
-             get(point_map, vt),
-             neighbor_query,
-             k, neighbor_radius));
-      if (callback && !callback ((nb+1) / double(nb_points)))
-        break;
-      ++ nb;
-    }
-  }
+  CGAL::for_each<ConcurrencyTag>
+    (points,
+     [&](const value_type& vt)
+     {
+       if (callback_wrapper.interrupted())
+         throw internal::stop_for_each();
+                            
+       put (normal_map, vt,
+            CGAL::internal::pca_estimate_normal
+            (get(point_map, vt), neighbor_query, k, neighbor_radius));
+                            
+       ++ callback_wrapper.advancement();
+     });
+
+  callback_wrapper.join();
    
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of pca_estimate_normals()\n");

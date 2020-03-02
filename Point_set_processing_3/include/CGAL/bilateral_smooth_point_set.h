@@ -18,6 +18,8 @@
 
 #include <CGAL/number_type_config.h>
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/squared_distance_3.h>
@@ -25,6 +27,8 @@
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+
+#include <boost/iterator/zip_iterator.hpp>
 
 #include <iterator>
 #include <set>
@@ -34,23 +38,6 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/property_map.h>
-
-#ifdef CGAL_LINKED_WITH_TBB
-
-#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
-#include <atomic>
-#endif // CGAL_LINKED_WITH_TBB
-
-// Default allocator: use TBB allocators if available
-#ifdef CGAL_LINKED_WITH_TBB
-# define CGAL_PSP3_DEFAULT_ALLOCATOR tbb::scalable_allocator
-#else // CGAL_LINKED_WITH_TBB
-# define CGAL_PSP3_DEFAULT_ALLOCATOR std::allocator
-#endif // CGAL_LINKED_WITH_TBB
-
 
 //#define CGAL_PSP3_VERBOSE 
 
@@ -271,7 +258,7 @@ bilateral_smooth_point_set(
   CGAL_point_set_processing_precondition(k > 1);
 
   // types for K nearest neighbors search structure
-  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
   PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
@@ -314,56 +301,38 @@ bilateral_smooth_point_set(
    task_timer.start();
 #endif
    // compute all neighbors
-   std::vector<std::vector<iterator> > pwns_neighbors;
+   typedef std::vector<iterator> iterators;
+   std::vector<iterators> pwns_neighbors;
    pwns_neighbors.resize(nb_points);
  
-#ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
-#else
-   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-   {
-     Point_set_processing_3::internal::Parallel_callback
-       parallel_callback (callback, 2 * nb_points);
+   Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+     callback_wrapper (callback, 2 * nb_points);
 
-     tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points),
-                       [&](const tbb::blocked_range<size_t>& r)
-                       {
-                         for (size_t i = r.begin(); i!=r.end(); i++)
-                         {
-                           if (parallel_callback.interrupted())
-                             break;
+   typedef boost::zip_iterator<boost::tuple<iterator, typename std::vector<iterators>::iterator> > Zip_iterator;
 
-                           neighbor_query.get_iterators (get(point_map, *(points.begin() + i)), k, neighbor_radius,
-                                                         std::back_inserter (pwns_neighbors[i]));
+   CGAL::for_each<ConcurrencyTag>
+     (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), pwns_neighbors.begin())),
+                        boost::make_zip_iterator (boost::make_tuple (points.end(), pwns_neighbors.end()))),
+      [&](const typename Zip_iterator::reference& t)
+      {
+        if (callback_wrapper.interrupted())
+          throw CGAL::internal::stop_for_each();
+
+        neighbor_query.get_iterators (get(point_map, get<0>(t)), k, neighbor_radius,
+                                      std::back_inserter (get<1>(t)));
       
-                           ++ parallel_callback.advancement();
-                         }
-                       });
+        ++ callback_wrapper.advancement();
+      });
 
-     bool interrupted = parallel_callback.interrupted();
+   bool interrupted = callback_wrapper.interrupted();
   
-     // We interrupt by hand as counter only goes halfway and won't terminate by itself
-     parallel_callback.interrupted() = true;
-     parallel_callback.join();       
+   // We interrupt by hand as counter only goes halfway and won't terminate by itself
+   callback_wrapper.interrupted() = true;
+   callback_wrapper.join();
 
-     // If interrupted during this step, nothing is computed, we return NaN
-     if (interrupted)
-       return std::numeric_limits<double>::quiet_NaN();
-   }
-   else
-#endif
-   {
-     std::size_t nb = 0;
-     for (const value_type& vt : points)
-     {
-       neighbor_query.get_iterators (get (point_map, vt), k, neighbor_radius, std::back_inserter (pwns_neighbors[nb]));
-
-       if (callback && !callback ((nb+1) / double(2. * nb_points)))
-         return std::numeric_limits<double>::quiet_NaN();
-       ++ nb;
-     }
-   }
+   // If interrupted during this step, nothing is computed, we return NaN
+   if (interrupted)
+     return std::numeric_limits<double>::quiet_NaN();
    
 #ifdef CGAL_PSP3_VERBOSE
    task_timer.stop();
@@ -378,53 +347,41 @@ bilateral_smooth_point_set(
    // update points and normals
    std::vector<std::pair<Point_3, Vector_3> > update_pwns(nb_points);
 
-#ifdef CGAL_LINKED_WITH_TBB
-   if(boost::is_convertible<ConcurrencyTag, CGAL::Parallel_tag>::value)
-   {
-     Point_set_processing_3::internal::Parallel_callback
-       parallel_callback (callback, 2 * nb_points, nb_points);
+   callback_wrapper.reset (2 * nb_points, nb_points);
+
+   typedef boost::zip_iterator
+     <boost::tuple<iterator,
+                   typename std::vector<iterators>::iterator,
+                   typename std::vector<std::pair<Point_3, Vector_3> >::iterator> > Zip_iterator_2;
+
      
-     tbb::parallel_for(tbb::blocked_range<size_t> (0, nb_points),
-                       [&](const tbb::blocked_range<size_t>& r)
-                       {
-                         for (size_t i = r.begin(); i != r.end(); ++i) 
-                         {
-                           if (parallel_callback.interrupted())
-                             break;
-                           update_pwns[i] = bilateral_smooth_point_set_internal::
-                             compute_denoise_projection<Kernel, PointRange>
-                             (*(points.begin() + i),
-                              point_map, normal_map,
-                              pwns_neighbors[i],
-                              guess_neighbor_radius,
-                              sharpness_angle);  
-                           ++ parallel_callback.advancement();
-                         }
-                       });
+   CGAL::for_each<ConcurrencyTag>
+     (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple
+                                                  (points.begin(), pwns_neighbors.begin(), update_pwns.begin())),
+                        boost::make_zip_iterator (boost::make_tuple
+                                                  (points.end(), pwns_neighbors.end(), update_pwns.end()))),
+      [&](const typename Zip_iterator_2::reference& t)
+      {
+        if (callback_wrapper.interrupted())
+          throw CGAL::internal::stop_for_each();
 
-     parallel_callback.join();
+        get<2>(t) = bilateral_smooth_point_set_internal::
+          compute_denoise_projection<Kernel, PointRange>
+          (get<0>(t),
+           point_map, normal_map,
+           get<1>(t),
+           guess_neighbor_radius,
+           sharpness_angle);
+        
+        ++ callback_wrapper.advancement();
+      });
+   
+   callback_wrapper.join();
 
-     // If interrupted during this step, nothing is computed, we return NaN
-     if (parallel_callback.interrupted())
-       return std::numeric_limits<double>::quiet_NaN();
-   }
-   else
-#endif // CGAL_LINKED_WITH_TBB
-   {
-     std::size_t nb = 0;
-     for (const value_type& vt : points)
-     {
-       update_pwns[nb] =bilateral_smooth_point_set_internal::
-         compute_denoise_projection<Kernel, PointRange>
-         (vt, point_map, normal_map,
-          pwns_neighbors[nb],
-          guess_neighbor_radius, 
-          sharpness_angle);
-       if (callback && !callback ((nb+1) / double(2. * nb_points)))
-         return std::numeric_limits<double>::quiet_NaN();
-       ++ nb;
-     }
-   }
+   // If interrupted during this step, nothing is computed, we return NaN
+   if (callback_wrapper.interrupted())
+     return std::numeric_limits<double>::quiet_NaN();
+     
 #ifdef CGAL_PSP3_VERBOSE
    task_timer.stop(); 
    memory = CGAL::Memory_sizer().virtual_size();

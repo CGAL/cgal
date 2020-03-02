@@ -19,6 +19,8 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
@@ -27,15 +29,12 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
+#include <boost/iterator/zip_iterator.hpp>
+
 #include <iterator>
 #include <list>
 
-#ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>
-#endif // CGAL_LINKED_WITH_TBB
+
 
 #ifdef DOXYGEN_RUNNING
 #define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
@@ -90,43 +89,6 @@ compute_average_spacing(const typename NeighborQuery::Kernel::Point_3& query, //
   return sum_distances / (FT)i;
 }
 
-
-#ifdef CGAL_LINKED_WITH_TBB
-  template <typename Kernel, typename Tree>
-  class Compute_average_spacings {
-    typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::FT FT;
-    const Tree& tree;
-    const unsigned int k;
-    const std::vector<Point>& input;
-    std::vector<FT>& output;
-    cpp11::atomic<std::size_t>& advancement;
-    cpp11::atomic<bool>& interrupted;
-
-  public:
-    Compute_average_spacings(Tree& tree, unsigned int k, std::vector<Point>& points,
-			     std::vector<FT>& output,
-                             cpp11::atomic<std::size_t>& advancement,
-                             cpp11::atomic<bool>& interrupted)
-      : tree(tree), k (k), input (points), output (output)
-      , advancement (advancement)
-      , interrupted (interrupted)
-    { }
-    
-    void operator()(const tbb::blocked_range<std::size_t>& r) const
-    {
-      for( std::size_t i = r.begin(); i != r.end(); ++i)
-      {
-        if (interrupted)
-          break;
-        
-	output[i] = CGAL::internal::compute_average_spacing<Kernel,Tree>(input[i], tree, k);
-        ++ advancement;
-      }
-    }
-
-  };
-#endif // CGAL_LINKED_WITH_TBB
 
 } /* namespace internal */
 /// \endcond
@@ -188,7 +150,7 @@ compute_average_spacing(
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename PointRange::iterator iterator;
+  typedef typename PointRange::const_iterator iterator;
   typedef typename iterator::value_type value_type;
   typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
@@ -201,7 +163,7 @@ compute_average_spacing(
   
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
-  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange, PointMap> Neighbor_query;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, const PointRange&, PointMap> Neighbor_query;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -218,60 +180,38 @@ compute_average_spacing(
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
   std::size_t nb = 0;
-  std::size_t nb_points = points.size();
+  std::size_t nb_points = std::distance(points.begin(), points.end());
 
-#ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
-#else
-   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
-   {
-     Point_set_processing_3::internal::Parallel_callback
-       parallel_callback (callback, nb_points);
+  Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+    callback_wrapper (callback, nb_points);
      
-     std::vector<FT> spacings (nb_points, -1);
-     tbb::parallel_for(tbb::blocked_range<size_t>(0, nb_points),
-                       [&](const tbb::blocked_range<size_t>& r)
-                       {
-                         for( std::size_t i = r.begin(); i != r.end(); ++i)
-                         {
-                           if (parallel_callback.interrupted())
-                             break;
-        
-                           spacings[i] = CGAL::internal::compute_average_spacing<Neighbor_query>
-                             (get(point_map, *(points.begin() + i)), neighbor_query, k);
-                           ++ parallel_callback.advancement();
-                         }
+  std::vector<FT> spacings (nb_points, -1);
 
-                       });
-
-     for (unsigned int i = 0; i < spacings.size (); ++ i)
-       if (spacings[i] >= 0.)
-       {
-         sum_spacings += spacings[i];
-         ++ nb;
-       }
-
-     parallel_callback.join();
-   }
-   else
-#endif
+  typedef boost::zip_iterator<boost::tuple<iterator, typename std::vector<FT>::iterator> > Zip_iterator;
+     
+  CGAL::for_each<ConcurrencyTag>
+    (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), spacings.begin())),
+                       boost::make_zip_iterator (boost::make_tuple (points.end(), spacings.end()))),
+     [&](const typename Zip_iterator::reference& t)
      {
-       for(typename PointRange::const_iterator it = points.begin(); it != points.end(); it++, nb++)
-       {
-         sum_spacings += internal::compute_average_spacing<Neighbor_query>(
-           get(point_map,*it),
-           neighbor_query,k);
-         if (callback && !callback ((nb+1) / double(nb_points)))
-         {
-           ++ nb;
-           break;
-         }
-       }
-     }
+       if (callback_wrapper.interrupted())
+         throw CGAL::internal::stop_for_each();
+        
+       get<1>(t) = CGAL::internal::compute_average_spacing<Neighbor_query>
+         (get(point_map, get<0>(t)), neighbor_query, k);
+       ++ callback_wrapper.advancement();
+     });
+
+  for (unsigned int i = 0; i < spacings.size (); ++ i)
+    if (spacings[i] >= 0.)
+    {
+      sum_spacings += spacings[i];
+      ++ nb;
+    }
+  callback_wrapper.join();
    
   // return average spacing
-   return sum_spacings / (FT)(nb);
+  return sum_spacings / (FT)(nb);
 }
 
 /// \cond SKIP_IN_MANUAL
