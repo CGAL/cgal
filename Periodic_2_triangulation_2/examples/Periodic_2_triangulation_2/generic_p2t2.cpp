@@ -2,6 +2,8 @@
 
 #include <CGAL/internal/Generic_P2T2/Periodic_2_Delaunay_triangulation_2_generic.h>
 
+#include <iostream>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K                                                   GT;
 typedef GT::Vector_2                                        Vector;
@@ -40,8 +42,9 @@ int main()
 #endif
 
   PDT T(pts.begin(), pts.end(), basis);
+  std::cout << "Is simplicial complex: " << T.is_simplicial_complex() << std::endl;
 
-//  PDT::Vertex_handle vh = T.insert(Point(12345.6, 5432.1));
+  PDT::Vertex_handle vh = T.insert(Point(12345.6, 5432.1));
 //  std::set<PDT::Face_handle> incident_faces = T.incident_faces(vh);
 
   draw(T.dt2, "Post-Insertion");

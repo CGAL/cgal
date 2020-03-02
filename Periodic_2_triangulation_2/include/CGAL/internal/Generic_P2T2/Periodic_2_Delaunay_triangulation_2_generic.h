@@ -328,6 +328,7 @@ public:
       Vertex_handle p2t2_vh2 = vertex_correspondence_map.at(canonical_vertex(fit->vertex(2)));
 
       Face_handle fh = p2t2.tds().create_face(p2t2_vh0, p2t2_vh1, p2t2_vh2);
+      // @fixme: Store these as relative offsets (i.e. relative to vertex 0)?
       fh->set_offsets(fit->vertex(0)->offset(),
                       fit->vertex(1)->offset(),
                       fit->vertex(2)->offset());
@@ -403,7 +404,46 @@ public:
 
   // @todo two versions, one using the sufficient condition, one checking for real.
   // "For real" --> P3T3 is_embeddable_in_...
-  bool is_simplicial_complex() const { }
+  // "For real" is implemented below.
+  bool is_simplicial_complex() const
+  {
+    // Ensure there is no edge between a vertex and itself.
+    typename DT2::Finite_faces_iterator fit = dt2.faces_begin(),
+                                 fend = dt2.faces_end();
+    for(; fit!=fend; ++fit) {
+      if (!is_canonical(fit))
+        continue;
+      Vertex_handle vh0 = canonical_vertex(fit->vertex(0));
+      Vertex_handle vh1 = canonical_vertex(fit->vertex(1));
+      Vertex_handle vh2 = canonical_vertex(fit->vertex(2));
+
+      if (vh0 == vh1 || vh0 == vh2 || vh1 == vh2) {
+        return false;
+      }
+    }
+
+    // Ensure there are no two edges between the same pair of vertices.
+    typename DT2::Finite_vertices_iterator vit = dt2.vertices_begin(),
+                                 vend = dt2.vertices_end();
+    for(; vit!=vend; ++vit) {
+      if (!is_canonical(vit))
+        continue;
+    
+      typename DT2::Vertex_circulator vc = dt2.incident_vertices(vit), done = vc;
+      cpp11::unordered_set<Vertex_handle> neighbours;
+      do
+      {
+        Vertex_handle cv = canonical_vertex(vc);
+        if (neighbours.find(cv) != neighbours.end())
+          return false; // Some neighbouring vertex appeared multiple times.
+        neighbours.insert(cv);
+      }
+      while(++vc != done);
+    }
+
+
+    return true;
+  }
 
   /// Constructions
   Point construct_point(const Point& /*p*/, const Offset& /*off*/) const { }
@@ -476,7 +516,7 @@ public:
 
   void reset_all_canonicity()
   {
-    typename DT2::Faces_iterator fit = dt2.faces_begin(),
+    typename DT2::Finite_faces_iterator fit = dt2.faces_begin(),
                                  fend = dt2.faces_end();
     for(; fit!=fend; ++fit)
       fit->set_canonical_flag(false);
