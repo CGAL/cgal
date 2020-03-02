@@ -695,6 +695,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
  *  the value type of the internal vertex point map of `tm`
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param tm the triangle mesh that will be sampled
  * @param out output iterator to be filled with sampled points
@@ -816,6 +817,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *                      whose value_type is itself a model of the concept `RandomAccessContainer`
  *                      whose value_type is `std::size_t`.
  * @tparam PointOutputIterator a model of `OutputIterator` holding objects of the same type as `PointRange`'s value type.
+ * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param points the points of the soup that will be sampled.
  * @param triangles a vector containing the triangles of the soup that will be sampled.
