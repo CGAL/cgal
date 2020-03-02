@@ -49,7 +49,7 @@ struct Epick_d_help1
 };
 #undef CGAL_BASE
 // determinant is only safe for use with integers with this condition, see LA_eigen/LA.h
-#if __cpp_if_constexpr >= 201606L
+#if _MSC_VER >= 1911 || __cpp_if_constexpr >= 201606L
 #define CGAL_BASE \
   Cartesian_filter_K< \
     Epick_d_help1<Dim>, \

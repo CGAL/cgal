@@ -151,7 +151,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		  m(4,0),m(4,1),m(4,2),m(4,3),m(4,4),m(4,5),
 		  m(5,0),m(5,1),m(5,2),m(5,3),m(5,4),m(5,5));
 	    default:
-#if __cpp_if_constexpr >= 201606L
+#if _MSC_VER >= 1911 || __cpp_if_constexpr >= 201606L
 	      // Avoid compiling the LU decomposition for nothing
 	      if constexpr (Mat_::MaxRowsAtCompileTime >= 1 && Mat_::MaxRowsAtCompileTime <= 6) {
 		CGAL_ASSUME(false);
