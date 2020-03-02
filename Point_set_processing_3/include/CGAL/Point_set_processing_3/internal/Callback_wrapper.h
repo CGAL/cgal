@@ -47,9 +47,9 @@ class Callback_wrapper<CGAL::Sequential_tag>
 public:
 
   Callback_wrapper (const std::function<bool(double)>& callback,
-                     std::size_t size,
-                     std::size_t advancement = 0,
-                     bool interrupted = false)
+                    std::size_t size,
+                    std::size_t advancement = 0,
+                    bool interrupted = false)
     : m_callback (callback)
     , m_advancement (advancement)
     , m_interrupted (interrupted)
@@ -78,7 +78,8 @@ public:
   
   bool& interrupted()
   {
-    m_interrupted = (m_callback(m_advancement / double(m_size)));
+    if (m_callback)
+      m_interrupted = (m_callback(m_advancement / double(m_size)));
     return m_interrupted;
   }
 
@@ -164,13 +165,14 @@ public:
   {
     while (*m_advancement != m_size)
     {
-      if (!m_callback (*m_advancement / double(m_size)))
+      if (m_callback && !m_callback (*m_advancement / double(m_size)))
         *m_interrupted = true;
       if (*m_interrupted)
         return;
       cpp11::sleep_for (0.00001);
     }
-    m_callback (1.);
+    if (m_callback)
+      m_callback (1.);
   }
 };
 #endif
