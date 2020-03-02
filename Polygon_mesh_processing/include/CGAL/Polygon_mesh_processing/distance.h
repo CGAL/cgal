@@ -235,7 +235,7 @@ struct Triangle_structure_sampler_base
     // monte carlo sampling
     if(use_ms)
     {
-      double min_edge_length = (std::numeric_limits<double>::max)();
+      double min_sq_edge_length = (std::numeric_limits<double>::max)();
 
       std::size_t nb_points_per_face =
           choose_parameter(get_parameter(np, internal_np::number_of_points_per_face), 0);
@@ -246,7 +246,7 @@ struct Triangle_structure_sampler_base
       if((nb_points_per_face == 0 && nb_pts_a_u == 0.) ||
          (nb_points_per_edge == 0 && nb_pts_l_u == 0.))
       {
-        min_edge_length = static_cast<Derived*>(this)->get_minimum_edge_length();
+        min_sq_edge_length = static_cast<Derived*>(this)->get_minimum_edge_length();
       }
 
       // sample faces
@@ -254,7 +254,7 @@ struct Triangle_structure_sampler_base
       {
         // set default value
         if(nb_points_per_face == 0 && nb_pts_a_u == 0.)
-          nb_pts_a_u = 2. / CGAL::square(min_edge_length);
+          nb_pts_a_u = 2. / min_sq_edge_length;
 
         for(const auto& tr : make_range(static_cast<Derived*>(this)->get_range()))
         {
@@ -421,7 +421,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
   typedef typename boost::graph_traits<Mesh>::face_iterator                 TriangleIterator;
 
   Vpm pmap;
-  double min_edge_length;
+  double min_sq_edge_length;
   const Mesh& tm;
 
   Triangle_structure_sampler_for_triangle_mesh(const Mesh& m,
@@ -434,7 +434,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
     pmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                             get_const_property_map(vertex_point, tm));
-    min_edge_length = (std::numeric_limits<double>::max)();
+    min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
 
   std::pair<TriangleIterator, TriangleIterator> get_range()
@@ -454,20 +454,22 @@ struct Triangle_structure_sampler_for_triangle_mesh
   {
     typedef typename boost::graph_traits<Mesh>::edge_descriptor edge_descriptor;
 
-    if(min_edge_length != (std::numeric_limits<double>::max)())
-      return min_edge_length;
+    if(min_sq_edge_length != (std::numeric_limits<double>::max)())
+      return min_sq_edge_length;
 
     for(edge_descriptor ed : edges(tm))
     {
-      double el = std::sqrt(to_double(typename GeomTraits::Compute_squared_distance_3()(
-                                        get(pmap, source(ed, tm)), get(pmap, target(ed, tm)))));
+      const double sq_el = CGAL::to_double(
+                             typename GeomTraits::Compute_squared_distance_3()(get(pmap, source(ed, tm)),
+                                                                               get(pmap, target(ed, tm))));
 
-      if(el > 0. && el < min_edge_length)
-        min_edge_length = el;
+      if(sq_el > 0. && sq_el < min_sq_edge_length)
+        min_sq_edge_length = sq_el;
     }
-    return min_edge_length;
+
+    return min_sq_edge_length;
   }
-  
+
   double get_tr_area(const typename boost::graph_traits<Mesh>::face_descriptor& tr)
   {
     return to_double(face_area(tr,tm,parameters::geom_traits(this->gt)));
@@ -492,7 +494,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
     typename GeomTraits::Compute_squared_distance_3 squared_distance = this->gt.compute_squared_distance_3_object();
 
     if(nb_points_per_edge == 0 && nb_pts_l_u == 0.)
-      nb_pts_l_u = 1. / min_edge_length;
+      nb_pts_l_u = 1. / CGAL::sqrt(min_sq_edge_length);
 
     for(edge_descriptor ed : edges(tm))
     {
@@ -589,7 +591,7 @@ struct Triangle_structure_sampler_for_triangle_soup
   typedef Random_points_in_triangle_soup<PointRange, TriangleType, Creator> Randomizer;
   typedef typename TriangleRange::const_iterator                            TriangleIterator;
 
-  double min_edge_length;
+  double min_sq_edge_length;
   const PointRange& points;
   const TriangleRange& triangles;
 
@@ -599,7 +601,7 @@ struct Triangle_structure_sampler_for_triangle_soup
                                                const NamedParameters& np)
     : Base(out, np), points(pts), triangles(trs)
   {
-    min_edge_length = (std::numeric_limits<double>::max)();
+    min_sq_edge_length = (std::numeric_limits<double>::max)();
   }
 
   std::pair<TriangleIterator, TriangleIterator> get_range()
@@ -614,8 +616,8 @@ struct Triangle_structure_sampler_for_triangle_soup
 
   double get_minimum_edge_length()
   {
-    if(min_edge_length != (std::numeric_limits<double>::max)())
-      return min_edge_length;
+    if(min_sq_edge_length != (std::numeric_limits<double>::max)())
+      return min_sq_edge_length;
 
     for(const auto& tr : triangles)
     {
@@ -624,13 +626,13 @@ struct Triangle_structure_sampler_for_triangle_soup
         const Point_3& a = points[tr[i]];
         const Point_3& b = points[tr[(i+1)%3]];
 
-        double el = std::sqrt(to_double(typename GeomTraits::Compute_squared_distance_3()(a, b)));
-        if(el > 0. && el < min_edge_length)
-          min_edge_length = el;
+        const double sq_el = CGAL::to_double(typename GeomTraits::Compute_squared_distance_3()(a, b));
+        if(sq_el > 0. && sq_el < min_sq_edge_length)
+          min_sq_edge_length = sq_el;
       }
     }
 
-    return min_edge_length;
+    return min_sq_edge_length;
   }
 
   template<typename Tr>
