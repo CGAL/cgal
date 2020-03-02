@@ -547,17 +547,16 @@ class Triangle_3_from_soup
   typedef typename Kernel_traits<Point_3>::Kernel        Kernel;
 public:
   typedef typename Kernel::Triangle_3                    result_type;
-private:
-  const PointRange& points;
-public:
-  Triangle_3_from_soup(const PointRange& pts)
-    :points(pts)
-  {}
+
+  Triangle_3_from_soup(const PointRange& pts) : points(pts) { }
 
   result_type operator()(const Triangle& t) const
   {
     return result_type(points[t[0]], points[t[1]], points[t[2]]);
   }
+
+private:
+  const PointRange& points;
 };
 
 }//end namespace internal
@@ -714,8 +713,7 @@ template <class PointRange,
           class Triangle = std::vector<std::size_t>,
           class Creator = Creator_uniform_3<
                             typename Kernel_traits< typename PointRange::value_type >::Kernel::RT,
-                            typename PointRange::value_type>
-         >
+                            typename PointRange::value_type> >
 struct Random_points_in_triangle_soup
     : public Generic_random_point_generator<Triangle,
                                             internal::Triangle_3_from_soup<Triangle, PointRange>,
@@ -738,23 +736,23 @@ struct Random_points_in_triangle_soup
                                  Random& rnd = get_default_random())
     : Base(triangles,
            internal::Triangle_3_from_soup<Triangle, PointRange>(points),
-           internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>()
-           ,rnd )
-  {
-  }
+           internal::Apply_approx_sqrt<typename Kernel_traits<Point_3>::Kernel::Compute_squared_area_3>(),
+           rnd)
+  { }
 
-  This& operator++() {
+  This& operator++()
+  {
     Base::generate_point();
     return *this;
   }
 
-  This operator++(int) {
+  This operator++(int)
+  {
     This tmp = *this;
     ++(*this);
     return tmp;
   }
 };
-
 
 } //namespace CGAL
 

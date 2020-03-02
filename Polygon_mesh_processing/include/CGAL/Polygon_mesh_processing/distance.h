@@ -40,7 +40,11 @@
 
 #include <boost/unordered_set.hpp>
 
-namespace CGAL{
+#include <algorithm>
+#include <array>
+#include <cmath>
+
+namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal{
 template <class Kernel, class OutputIterator>
@@ -58,16 +62,17 @@ triangle_grid_sampling( const typename Kernel::Point_3& p0,
   const double n = (std::max)(std::ceil( d_p0p1 / distance ),
                               std::ceil( d_p0p2 / distance ));
 
-  for (double i=1; i<n; ++i)
-    for (double j=1; j<n-i; ++j)
+  for(double i=1; i<n; ++i)
+  {
+    for(double j=1; j<n-i; ++j)
     {
       const double c0=(1-(i+j)/n), c1=i/n, c2=j/n;
-      *out++=typename Kernel::Point_3(
-              p0.x()*c0+p1.x()*c1+p2.x()*c2,
-              p0.y()*c0+p1.y()*c1+p2.y()*c2,
-              p0.z()*c0+p1.z()*c1+p2.z()*c2
-            );
+      *out++ = typename Kernel::Point_3(p0.x()*c0+p1.x()*c1+p2.x()*c2,
+                                        p0.y()*c0+p1.y()*c1+p2.y()*c2,
+                                        p0.z()*c0+p1.z()*c1+p2.z()*c2);
     }
+  }
+
   return out;
 }
 
@@ -102,7 +107,8 @@ struct Distance_computation{
       hint = tree.closest_point(*(sample_points.begin() + i), hint);
       typename Kernel_traits<Point_3>::Kernel::Compute_squared_distance_3 squared_distance;
       double d = to_double(CGAL::approximate_sqrt( squared_distance(hint,*(sample_points.begin() + i)) ));
-      if (d>hdist) hdist=d;
+      if(d > hdist)
+        hdist=d;
     }
 
     // update max value stored in distance
@@ -129,7 +135,7 @@ double approximate_Hausdorff_distance_impl(
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
                              "Parallel_tag is enabled but TBB is unavailable.");
 #else
-  if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+  if(boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
   {
     std::atomic<double> distance;
     distance=0;
@@ -169,13 +175,11 @@ struct Triangle_structure_sampler_base
 
   Triangle_structure_sampler_base(OutputIterator& out,
                                   const NamedParameters& np)
-    :np(np), out(out)
+    : np(np), out(out)
   {}
 
   void sample_points();
-
   double get_minimum_edge_length();
-
   template<typename Tr>
   double get_tr_area(const Tr&);
 
@@ -184,15 +188,11 @@ struct Triangle_structure_sampler_base
 
   void ms_edges_sample(const std::size_t& nb_points_per_edge,
                        const std::size_t& nb_pts_l_u);
-
   void ru_edges_sample();
-
-  Randomizer get_randomizer();
-
   void internal_sample_triangles(double, bool, bool);
 
-  std::pair<TriangleIterator,TriangleIterator> get_range();
-
+  Randomizer get_randomizer();
+  std::pair<TriangleIterator, TriangleIterator> get_range();
   std::size_t get_points_size();
 
   void procede()
@@ -203,62 +203,40 @@ struct Triangle_structure_sampler_base
 
     geomtraits = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
 
-
-    bool use_rs = choose_parameter
-        (get_parameter(np, internal_np::random_uniform_sampling), true);
-
-    bool use_gs = choose_parameter(
-          get_parameter(np, internal_np::grid_sampling), false);
-
+    bool use_rs = choose_parameter(get_parameter(np, internal_np::random_uniform_sampling), true);
+    bool use_gs = choose_parameter(get_parameter(np, internal_np::grid_sampling), false);
     bool use_ms = choose_parameter(get_parameter(np, internal_np::monte_carlo_sampling), false);
 
-    if (use_gs || use_ms)
-    {
-      if (is_default_parameter(get_parameter(np, internal_np::random_uniform_sampling)))
-      {
-        use_rs=false;
-      }
-    }
+    if(use_gs || use_ms)
+      if(is_default_parameter(get_parameter(np, internal_np::random_uniform_sampling)))
+        use_rs = false;
 
-    bool smpl_vrtcs
-        = choose_parameter(get_parameter(np, internal_np::do_sample_vertices), true);
-
-    bool smpl_dgs
-        = choose_parameter(get_parameter(np, internal_np::do_sample_edges), true);
-
-    bool smpl_fcs
-        = choose_parameter(get_parameter(np, internal_np::do_sample_faces), true);
-
-    double nb_pts_a_u
-        = choose_parameter(get_parameter(np, internal_np::nb_points_per_area_unit), 0.);
-
-    double nb_pts_l_u
-        = choose_parameter(get_parameter(np, internal_np::nb_points_per_distance_unit), 0.);
+    bool smpl_vrtcs = choose_parameter(get_parameter(np, internal_np::do_sample_vertices), true);
+    bool smpl_dgs = choose_parameter(get_parameter(np, internal_np::do_sample_edges), true);
+    bool smpl_fcs = choose_parameter(get_parameter(np, internal_np::do_sample_faces), true);
+    double nb_pts_a_u = choose_parameter(get_parameter(np, internal_np::nb_points_per_area_unit), 0.);
+    double nb_pts_l_u = choose_parameter(get_parameter(np, internal_np::nb_points_per_distance_unit), 0.);
 
     // sample vertices
-    if (smpl_vrtcs)
-    {
+    if(smpl_vrtcs)
       static_cast<Derived*>(this)->sample_points();
-    }
 
     // grid sampling
-    if (use_gs)
+    if(use_gs)
     {
-      double grid_spacing_
-          = choose_parameter(get_parameter(np, internal_np::grid_spacing), 0.);
+      double grid_spacing_ = choose_parameter(get_parameter(np, internal_np::grid_spacing), 0.);
       
-      if (grid_spacing_==0.)
+      if(grid_spacing_ == 0.)
       {
         // set grid spacing to the shortest edge length
         grid_spacing_ = static_cast<Derived*>(this)->get_minimum_edge_length();
       }
       
-      static_cast<Derived*>(this)->internal_sample_triangles(
-            grid_spacing_, smpl_fcs, smpl_dgs);
+      static_cast<Derived*>(this)->internal_sample_triangles(grid_spacing_, smpl_fcs, smpl_dgs);
     }
 
     // monte carlo sampling
-    if (use_ms)
+    if(use_ms)
     {
       double min_edge_length = (std::numeric_limits<double>::max)();
 
@@ -268,49 +246,45 @@ struct Triangle_structure_sampler_base
       std::size_t nb_points_per_edge =
           choose_parameter(get_parameter(np, internal_np::number_of_points_per_edge), 0);
 
-      if ((nb_points_per_face == 0 && nb_pts_a_u ==0.) 
-          || (nb_points_per_edge == 0 && nb_pts_l_u ==0.) )
+      if((nb_points_per_face == 0 && nb_pts_a_u == 0.) ||
+         (nb_points_per_edge == 0 && nb_pts_l_u == 0.))
       {
         min_edge_length = static_cast<Derived*>(this)->get_minimum_edge_length();
       }
 
       // sample faces
-      if (smpl_fcs)
+      if(smpl_fcs)
       {
         // set default value
-        if (nb_points_per_face == 0 && nb_pts_a_u ==0.)
-        {
+        if(nb_points_per_face == 0 && nb_pts_a_u == 0.)
           nb_pts_a_u = 2. / CGAL::square(min_edge_length);
-        }
 
-        for(const auto& tr: make_range(static_cast<Derived*>(this)->get_range()))
+        for(const auto& tr : make_range(static_cast<Derived*>(this)->get_range()))
         {
           std::size_t nb_points = nb_points_per_face;
-          if (nb_points == 0)
+          if(nb_points == 0)
           {
             nb_points = (std::max)(
                   static_cast<std::size_t>(
                     std::ceil(static_cast<Derived*>(this)->get_tr_area(tr))
                     *nb_pts_a_u), std::size_t(1));
           }
+
           // extract triangle face points
-          std::array<typename GeomTraits::Point_3, 3>points =
-              static_cast<Derived*>(this)->get_tr_points(tr);
-          Random_points_in_triangle_3<typename GeomTraits::Point_3, Creator>
-              g(points[0], points[1], points[2]);
-          out=CGAL::cpp11::copy_n(g, nb_points, out);
+          std::array<typename GeomTraits::Point_3, 3>points = static_cast<Derived*>(this)->get_tr_points(tr);
+
+          Random_points_in_triangle_3<typename GeomTraits::Point_3, Creator> g(points[0], points[1], points[2]);
+          out = CGAL::cpp11::copy_n(g, nb_points, out);
         }
       }
 
       // sample edges
-      if (smpl_dgs)
-      {
+      if(smpl_dgs)
         static_cast<Derived*>(this)->ms_edges_sample(nb_points_per_edge, nb_pts_l_u);
-      }
     }
 
     // random uniform sampling
-    if (use_rs)
+    if(use_rs)
     {
       // sample faces
       if(smpl_fcs)
@@ -319,33 +293,24 @@ struct Triangle_structure_sampler_base
             = choose_parameter(get_parameter(np, internal_np::number_of_points_on_faces), 0);
 
         typename Derived::Randomizer g = static_cast<Derived*>(this)->get_randomizer();
-        if (nb_points == 0)
+        if(nb_points == 0)
         {
-          if (nb_pts_a_u == 0.)
-          {
+          if(nb_pts_a_u == 0.)
             nb_points = static_cast<Derived*>(this)->get_points_size();
-          }
           else
-          {
-            nb_points = static_cast<std::size_t>(
-                  std::ceil(g.sum_of_weights()*nb_pts_a_u) );
-          }
+            nb_points = static_cast<std::size_t>(std::ceil(g.sum_of_weights()*nb_pts_a_u));
         }
         out = CGAL::cpp11::copy_n(g, nb_points, out);
       }
 
       // sample edges
-      if (smpl_dgs)
-      {
+      if(smpl_dgs)
         static_cast<Derived*>(this)->ru_edges_sample(nb_pts_l_u,nb_pts_a_u);
-      }
     }
   }
-};//end Base
+};
 
-} //end of namespace internal
-
-
+} // namespace internal
 
 template <class Kernel,
           class FaceRange,
@@ -375,46 +340,47 @@ sample_triangles(const FaceRange& triangles,
   {
     // sample edges but skip endpoints
     halfedge_descriptor hd = halfedge(fd, tm);
-    for (int i=0;i<3; ++i)
+    for(int i=0;i<3; ++i)
     {
-      if (sample_edges && sampled_edges.insert(edge(hd, tm)).second )
+      if(sample_edges && sampled_edges.insert(edge(hd, tm)).second )
       {
         Point_ref p0 = get(vpm, source(hd, tm));
         Point_ref p1 = get(vpm, target(hd, tm));
         typename Kernel::Compute_squared_distance_3 squared_distance;
-        const double d_p0p1 = to_double(approximate_sqrt( squared_distance(p0, p1) ));
+        const double d_p0p1 = to_double(approximate_sqrt(squared_distance(p0, p1)));
 
         const double nb_pts = std::ceil( d_p0p1 / distance );
         const Vector_3 step_vec =  typename Kernel::Construct_scaled_vector_3()(
           typename Kernel::Construct_vector_3()(p0, p1),
           typename Kernel::FT(1)/typename Kernel::FT(nb_pts));
-        for (double i=1; i<nb_pts; ++i)
+        for(double i=1; i<nb_pts; ++i)
         {
           *out++=typename Kernel::Construct_translated_point_3()(p0,
             typename Kernel::Construct_scaled_vector_3()(step_vec ,
               typename Kernel::FT(i)));
         }
       }
+
       //add endpoints once
-      if ( add_vertices && endpoints.insert(target(hd, tm)).second )
-        *out++=get(vpm, target(hd, tm));
-      hd=next(hd, tm);
+      if(add_vertices && endpoints.insert(target(hd, tm)).second)
+        *out++ = get(vpm, target(hd, tm));
+
+      hd = next(hd, tm);
     }
 
     // sample triangles
-    if (sample_faces)
+    if(sample_faces)
     {
       Point_ref p0 = get(vpm, source(hd, tm));
       Point_ref p1 = get(vpm, target(hd, tm));
       Point_ref p2 = get(vpm, target(next(hd, tm), tm));
-      out=internal::triangle_grid_sampling<Kernel>(p0, p1, p2, distance, out);
+      out = internal::triangle_grid_sampling<Kernel>(p0, p1, p2, distance, out);
     }
   }
   return out;
 }
 
-
-namespace internal{
+namespace internal {
 
 template<typename Mesh,
          typename OutputIterator,
@@ -463,7 +429,6 @@ struct Triangle_structure_sampler_for_triangle_mesh
   Vpm pmap;
   double min_edge_length_;
   const Mesh& tm;
-  
 
   Triangle_structure_sampler_for_triangle_mesh(const Mesh& m,
                                                OutputIterator& out,
@@ -479,19 +444,19 @@ struct Triangle_structure_sampler_for_triangle_mesh
     min_edge_length_ = (std::numeric_limits<double>::max)();
   }
 
-  std::pair<TriangleIterator,TriangleIterator> get_range()
+  std::pair<TriangleIterator, TriangleIterator> get_range()
   {
     return std::make_pair(faces(tm).begin(), faces(tm).end());
   }
-  
+
   void sample_points()
   {
     Property_map_to_unary_function<Vpm> unary(pmap);
-    this->out = std::copy(
-      boost::make_transform_iterator(boost::begin(vertices(tm)), unary),
-      boost::make_transform_iterator(boost::end(vertices(tm)), unary),
-      this->out);
+    this->out = std::copy(boost::make_transform_iterator(boost::begin(vertices(tm)), unary),
+                          boost::make_transform_iterator(boost::end(vertices(tm)), unary),
+                          this->out);
   }
+
   double get_minimum_edge_length()
   {
     if(min_edge_length_ != (std::numeric_limits<double>::max)())
@@ -526,6 +491,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
     }
     return points;
   }
+
   void ms_edges_sample(std::size_t nb_points_per_edge,
                        double nb_pts_l_u)
   {
@@ -535,18 +501,19 @@ struct Triangle_structure_sampler_for_triangle_mesh
     BOOST_FOREACH(edge_descriptor ed, edges(tm))
     {
       std::size_t nb_points = nb_points_per_edge;
-      if (nb_points == 0)
+      if(nb_points == 0)
       {
         nb_points = (std::max)(
-          static_cast<std::size_t>( std::ceil( std::sqrt( to_double(
+          static_cast<std::size_t>(std::ceil(std::sqrt(to_double(
            squared_distance(get(pmap, source(ed, tm)),
-                            get(pmap, target(ed, tm)) )) )*nb_pts_l_u ) ),
+                            get(pmap, target(ed, tm))))) * nb_pts_l_u)),
           std::size_t(1));
       }
+
       // now do the sampling of the edge
       Random_points_on_segment_3<typename GeomTraits::Point_3, Creator>
-        g(get(pmap, source(ed,tm)), get(pmap, target(ed,tm)));
-      this->out=CGAL::cpp11::copy_n(g, nb_points, this->out);
+        g(get(pmap, source(ed,tm)), get(pmap, target(ed, tm)));
+      this->out = CGAL::cpp11::copy_n(g, nb_points, this->out);
     }
   }
   void ru_edges_sample(double nb_pts_l_u,
@@ -554,27 +521,27 @@ struct Triangle_structure_sampler_for_triangle_mesh
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
-    std::size_t nb_points =
-      choose_parameter(get_parameter(this->np, internal_np::number_of_points_on_edges), 0);
+
+    std::size_t nb_points = choose_parameter(get_parameter(this->np, internal_np::number_of_points_on_edges), 0);
     Random_points_on_edge_list_graph_3<Mesh, Vpm, Creator> g(tm, pmap);
-    if (nb_points == 0)
+    if(nb_points == 0)
     {
-      if (nb_pts_l_u == 0)
+      if(nb_pts_l_u == 0)
         nb_points = num_vertices(tm);
       else
-        nb_points = static_cast<std::size_t>(
-          std::ceil( g.mesh_length()*nb_pts_a_u) );
+        nb_points = static_cast<std::size_t>(std::ceil(g.mesh_length() * nb_pts_a_u));
     }
     this->out = CGAL::cpp11::copy_n(g, nb_points, this->out);
   }
+
   Randomizer get_randomizer()
   {
     return Randomizer(tm, pmap);
   }
+
   void internal_sample_triangles(double grid_spacing_, bool smpl_fcs, bool smpl_dgs)
   {
-    this->out = sample_triangles<GeomTraits>(
-              faces(tm), tm, pmap, grid_spacing_, this->out,smpl_fcs, smpl_dgs, false);
+    this->out = sample_triangles<GeomTraits>(faces(tm), tm, pmap, grid_spacing_, this->out, smpl_fcs, smpl_dgs, false);
   }
 
   std::size_t get_points_size()
@@ -582,8 +549,6 @@ struct Triangle_structure_sampler_for_triangle_mesh
     return num_vertices(tm);
   }
 };
-
-
 
 template<typename PointRange,
          typename TriangleRange,
@@ -607,7 +572,7 @@ struct Triangle_structure_sampler_for_triangle_soup
     NamedParameters>
     >
 {
-  typedef typename TriangleRange::value_type TriangleType;
+  typedef typename TriangleRange::value_type                                TriangleType;
   typedef Triangle_structure_sampler_for_triangle_soup<PointRange,
   TriangleRange,
   OutputIterator,
@@ -644,17 +609,14 @@ struct Triangle_structure_sampler_for_triangle_soup
     min_edge_length_ = (std::numeric_limits<double>::max)();
   }
 
-  std::pair<TriangleIterator,TriangleIterator> get_range()
+  std::pair<TriangleIterator, TriangleIterator> get_range()
   {
     return std::make_pair(triangles.begin(), triangles.end());
   }
 
   void sample_points()
   {
-    this->out = std::copy(
-          points.begin(),
-          points.end(),
-          this->out);
+    this->out = std::copy(points.begin(), points.end(), this->out);
   }
 
   double get_minimum_edge_length()
@@ -683,7 +645,7 @@ struct Triangle_structure_sampler_for_triangle_soup
   {
     return to_double(approximate_sqrt(
                        this->geomtraits.compute_squared_area_3_object()(
-                         points[tr[0]],points[tr[1]], points[tr[2]])));
+                         points[tr[0]], points[tr[1]], points[tr[2]])));
   }
 
   template<typename Tr>
@@ -692,21 +654,19 @@ struct Triangle_structure_sampler_for_triangle_soup
     std::array<typename GeomTraits::Point_3, 3> points;
     for(int i=0; i<3; ++i)
     {
-      points[i] = this->points[tr[i] ];
+      points[i] = this->points[tr[i]];
     }
     return points;
   }
 
-  void ms_edges_sample(std::size_t ,
-                       double )
+  void ms_edges_sample(std::size_t, double)
   {
-    //don't sample edges in soup.
+    // don't sample edges in soup.
   }
 
-  void ru_edges_sample(double,
-                       double)
+  void ru_edges_sample(double, double)
   {
-    //don't sample edges in soup.
+    // don't sample edges in soup.
   }
 
   Randomizer get_randomizer()
@@ -730,13 +690,14 @@ struct Triangle_structure_sampler_for_triangle_soup
   {
     return points.size();
   }
-
 };
-}//end internal
+
+} // namespace internal
 
 /** \ingroup PMP_distance_grp
  * generates points taken on `tm` and outputs them to `out`, the sampling method
  * is selected using named parameters.
+ *
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam OutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
@@ -838,10 +799,9 @@ sample_triangle_mesh(const TriangleMesh& tm,
                            OutputIterator out,
                            NamedParameters np)
 {
-  typedef typename GetGeomTraits<TriangleMesh,
-          NamedParameters>::type GeomTraits;
-  typedef typename GetVertexPointMap<TriangleMesh,
-          NamedParameters>::const_type Vpm;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   Vpm;
+
   internal::Triangle_structure_sampler_for_triangle_mesh<TriangleMesh,
       OutputIterator,
       GeomTraits,
@@ -849,15 +809,15 @@ sample_triangle_mesh(const TriangleMesh& tm,
       typename GeomTraits::Point_3>,
       Vpm,
       NamedParameters> performer(tm, out, np);
-
   performer.procede();
-  return performer.out;
 
+  return performer.out;
 }
 
 /** \ingroup PMP_distance_grp
  * generates points taken on `triangles` and outputs them to `out`, the sampling method
  * is selected using named parameters.
+ *
  * @tparam PointRange  a model of the concept `RandomAccessContainer` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                      whose value_type is itself a model of the concept `RandomAccessContainer`
@@ -926,8 +886,8 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \attention Contrary to `sample_triangle_mesh()`,
- *  this method does not allow to sample edges.
+ * \attention Contrary to `sample_triangle_mesh()`, this method does not allow to sample edges.
+ *
  * @see `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
  */
 
@@ -943,6 +903,7 @@ sample_triangle_soup(const PointRange& points,
 {
   typedef typename PointRange::value_type         Point_3;
   typedef typename Kernel_traits<Point_3>::Kernel GeomTraits;
+
   static_assert(std::is_same<Point_3, typename GeomTraits::Point_3>::value, "Wrong point type.");
 
   internal::Triangle_structure_sampler_for_triangle_soup<PointRange,
@@ -1020,12 +981,10 @@ double approximate_Hausdorff_distance(
    NamedParameters np,
    VertexPointMap vpm_2)
 {
-    std::vector<typename Kernel::Point_3> sample_points;
-    sample_triangle_mesh(
-                tm1,
-                std::back_inserter(sample_points),
-                np);
-    return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, tm2, vpm_2);
+  std::vector<typename Kernel::Point_3> sample_points;
+  sample_triangle_mesh(tm1, std::back_inserter(sample_points), np);
+
+  return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, tm2, vpm_2);
 }
 
 // documented functions
@@ -1105,11 +1064,12 @@ double approximate_symmetric_Hausdorff_distance(
 
 /**
  * \ingroup PMP_distance_grp
- * returns the distance to `tm` of the point from `points`
- * that is the furthest from `tm`.
+ * returns the distance to `tm` of the point from `points` that is the furthest from `tm`.
+ *
  * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
  * @param points the range of points of interest
  * @param tm the triangle mesh to compute the distance to
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
@@ -1141,9 +1101,11 @@ double max_distance_to_triangle_mesh(const PointRange& points,
 /*!
  *\ingroup PMP_distance_grp
  * returns an approximation of the distance between `points` and the point lying on `tm` that is the farthest from `points`
+ *
  * @tparam PointRange a range of `Point_3`, model of `Range`.
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+ *
  * @param tm a triangle mesh
  * @param points a range of points
  * @param precision for each triangle of `tm`, the distance of its farthest point from `points` is bounded.
