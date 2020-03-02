@@ -688,17 +688,18 @@ struct Triangle_structure_sampler_for_triangle_soup
 } // namespace internal
 
 /** \ingroup PMP_distance_grp
- * generates points taken on `tm` and outputs them to `out`, the sampling method
+ * generates points on `tm` and outputs them to `out`; the sampling method
  * is selected using named parameters.
  *
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
+ * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
- *  the value type of the internal vertex point map of `tm`
+ *  the value type of the point type associated to the mesh `tm`, i.e. the value type of the vertex
+ *  point map property map, if provided, or the value type of the internal point property map otherwise
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * @param tm the triangle mesh that will be sampled
- * @param out output iterator to be filled with sampled points
+ * @param tm the triangle mesh to be sampled
+ * @param out output iterator to be filled with sample points
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
@@ -709,7 +710,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  *    \cgalParamEnd
  *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`. \cgalParamEnd
  *    \cgalParamBegin{use_random_uniform_sampling}
- *      if `true` is passed (the default), points are generated in a random
+ *      if `true` (default value), points are generated in a random
  *      and uniform way on the surface of `tm`, and/or on edges of `tm`.
  *      For faces, the number of sample points is the value passed to the named
  *      parameter `number_of_points_on_faces()`. If not set,
@@ -723,7 +724,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_grid_sampling}
- *      if `true` is passed, points are generated on a grid in each triangle,
+ *      if `true`, points are generated on a grid in each triangle,
  *      with a minimum of one point per triangle. The distance between
  *      two consecutive points in the grid is that of the length of the
  *      smallest non-null edge of `tm` or the value passed to
@@ -731,7 +732,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  *      same distance, if requested.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
- *      if `true` is passed, points are generated randomly in each triangle and/or
+ *      if `true`, points are generated randomly in each triangle and/or
  *      on each edge.
  *      For faces, the number of points per triangle is the value passed to the named
  *      parameter `number_of_points_per_face()`. If not set, the value passed
@@ -749,12 +750,15 @@ struct Triangle_structure_sampler_for_triangle_soup
  *      is set, 1 divided by the length of the smallest non-null edge of `tm`
  *      is used as if it was passed to `number_of_points_per_distance_unit()`.
  *    \cgalParamEnd
- *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
- *    vertices of `tm` are put into `out`.\cgalParamEnd
- *    \cgalParamBegin{sample_edges} if `true` is passed (default value),
- *    edges of `tm` are sampled.\cgalParamEnd
- *    \cgalParamBegin{sample_faces} if `true` is passed (default value),
- *    faces of `tm` are sampled.\cgalParamEnd
+ *    \cgalParamBegin{sample_vertices}
+ *      if `true` (default value), vertices of `tm` are put into `out`.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{sample_edges}
+ *      if `true` (default value), edges of `tm` are sampled.
+ *    \cgalParamEnd
+ *    \cgalParamBegin{sample_faces}
+ *      if `true` (default value), faces of `tm` are sampled.
+ *    \cgalParamEnd
  *    \cgalParamBegin{grid_spacing} a double value used as the grid spacing
  *      for the grid sampling method.
  *    \cgalParamEnd
@@ -809,25 +813,25 @@ sample_triangle_mesh(const TriangleMesh& tm,
 }
 
 /** \ingroup PMP_distance_grp
- * generates points taken on `triangles` and outputs them to `out`, the sampling method
+ * generates points on a triangle soup and outputs them to `out`; the sampling method
  * is selected using named parameters.
  *
- * @tparam PointRange  a model of the concept `RandomAccessContainer` whose value type is the point type.
+ * @tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                      whose value_type is itself a model of the concept `RandomAccessContainer`
- *                      whose value_type is `std::size_t`.
- * @tparam PointOutputIterator a model of `OutputIterator` holding objects of the same type as `PointRange`'s value type.
+ *                      whose value_type is `std::size_t`
+ * @tparam PointOutputIterator a model of `OutputIterator` holding objects of the same type as `PointRange`'s value type
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
- * @param points the points of the soup that will be sampled.
- * @param triangles a vector containing the triangles of the soup that will be sampled.
+ * @param points the points of the soup
+ * @param triangles a vector containing the triangles of the soup to be sampled
  * @param out output iterator to be filled with sample points
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`, which `Point_3` type is the same as `PointRange`'s `value_type`. \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`, whose `Point_3` type is the same as `PointRange`'s `value_type`. \cgalParamEnd
  *    \cgalParamBegin{use_random_uniform_sampling}
- *      if `true` is passed, points are generated in a random
+ *      if `true`, points are generated in a random
  *      and uniform way on the surface of the soup.
  *      The number of sample points is the value passed to the named
  *      parameter `number_of_points_on_faces()`. If not set,
@@ -838,7 +842,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      %Default is `true`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_grid_sampling}
- *      if `true` is passed, points are generated on a grid in each triangle,
+ *      if `true`, points are generated on a grid in each triangle,
  *      with a minimum of one point per triangle. The distance between
  *      two consecutive points in the grid is that of the length of the
  *      smallest non-null edge of the soup, or the value passed to
@@ -847,7 +851,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      %Default is `false`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
- *      if `true` is passed, points are generated randomly in each triangle.
+ *      if `true`, points are generated randomly in each triangle.
  *      The number of points per triangle is the value passed to the named
  *      parameter `number_of_points_per_face()`. If not set, the value passed
  *      to the named parameter `number_of_points_per_area_unit()` is
@@ -858,10 +862,10 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *
  *      %Default is `false`.
  *    \cgalParamEnd
- *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
- *    the points of `points` are put into `out`.
- * 
- *    %Default is `true`.
+ *    \cgalParamBegin{sample_vertices}
+ *      if `true`, the points of `points` are put into `out`.
+ *
+ *      %Default is `true`.
  *    \cgalParamEnd
  *    \cgalParamBegin{grid_spacing} a double value used as the grid spacing
  *      for the grid sampling method.
@@ -996,7 +1000,7 @@ double approximate_Hausdorff_distance(
  *
  * @tparam Concurrency_tag enables sequential versus parallel algorithm.
  *                         Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
+ * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam NamedParameters1 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`
  * @tparam NamedParameters2 a sequence of \ref pmp_namedparameters "Named Parameters" for `tm2`
  *
@@ -1012,8 +1016,9 @@ double approximate_Hausdorff_distance(
  *      and in all places where `vertex_point_map` is used.
  *    \cgalParamEnd
  * \cgalNamedParamsEnd
+ *
  * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values for
- * `np1` and specify custom values for `np2`
+ * `np1` and specify custom values for `np2`.
  */
 template< class Concurrency_tag,
           class TriangleMesh,
@@ -1059,7 +1064,7 @@ double approximate_symmetric_Hausdorff_distance(
  * returns the distance to `tm` of the point from `points` that is the furthest from `tm`.
  *
  * @tparam PointRange a range of `Point_3`, model of `Range`. Its iterator type is `RandomAccessIterator`.
- * @tparam TriangleMesh a model of the concept `FaceListGraph`
+ * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param points the range of points of interest
