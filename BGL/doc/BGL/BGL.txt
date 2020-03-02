@@ -659,17 +659,16 @@ as shown in \ref BGL_polyhedron_3/polyhedron_partition.cpp "this example".
 An optimal partition from a set of labels can be computed through a
 graph cut approach called Alpha Expansion
 \cgalCite{boykov2001fastapproximate}. \cgal provides
-`CGAL::alpha_expansion_graphcut()` which, or a graph \f$(V,E)\f$, this
-function seeks for the partioning `f` that minimizes the following
-energy:
+`CGAL::alpha_expansion_graphcut()` which, for a graph \f$(V,E)\f$,
+computes the partition `f` that minimizes the following cost function:
 
 \f[
-  \mathrm{E}(f) = \sum_{\{v0,v1\} \in E} W(v0,v1) + \sum_{v \in V} C(f_v)
+  \mathrm{C}(f) = \sum_{\{v0,v1\} \in E} C_E(v0,v1) + \sum_{v \in V} C_V(f_v)
   \f]
 
-where \f$W(v0,v1)\f$ is the weight associated to the edge
-\f$\{v0,v1\}\f$ and \f$C(f_v)\f$ is the cost of assigning the vertex
-\f$v\f$ to the labeling \f$f\f$.
+where \f$C_E(v0,v1)\f$ is the edge cost of assigning a different label
+to \f$v0\f$ and \f$v1\f$, and \f$C_V(f_v)\f$ is the vertex cost of
+assigning the label \f$f\f$ to the vertex \f$v\f$.
 
 Three different implementations are provided and can be selected by
 using one of the following tags:

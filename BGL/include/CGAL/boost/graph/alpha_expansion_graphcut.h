@@ -84,18 +84,18 @@ struct Alpha_expansion_old_API_wrapper_graph
 
   };
 
-  typedef CGAL::Pointer_property_map<double>::const_type Edge_weight_map;
+  typedef CGAL::Pointer_property_map<double>::const_type Edge_cost_map;
     
   const std::vector<std::pair<std::size_t, std::size_t> >& edges;
-  const std::vector<double>& edge_weights;
+  const std::vector<double>& edge_costs;
   const std::vector<std::vector<double> >& cost_matrix;
   std::vector<std::size_t>& labels;
 
   Alpha_expansion_old_API_wrapper_graph (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
-                                         const std::vector<double>& edge_weights,
+                                         const std::vector<double>& edge_costs,
                                          const std::vector<std::vector<double> >& cost_matrix,
                                          std::vector<std::size_t>& labels)
-    : edges (edges), edge_weights (edge_weights), cost_matrix (cost_matrix), labels (labels)
+    : edges (edges), edge_costs (edge_costs), cost_matrix (cost_matrix), labels (labels)
   { }
 
   friend counting_range vertices (const Alpha_expansion_old_API_wrapper_graph& graph)
@@ -121,7 +121,7 @@ struct Alpha_expansion_old_API_wrapper_graph
   Vertex_label_map vertex_label_map() { return CGAL::make_property_map(labels); }
   Vertex_label_cost_map vertex_label_cost_map() const
   { return Vertex_label_cost_map(&cost_matrix); }
-  Edge_weight_map edge_weight_map() const { return CGAL::make_property_map(edge_weights); }
+  Edge_cost_map edge_cost_map() const { return CGAL::make_property_map(edge_costs); }
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -452,20 +452,20 @@ public:
    regularizes a partition of a graph into `n` labels using the Alpha
    Expansion algorithm \cgalCite{Boykov2001FastApproximate}.
 
-   For a graph \f$(V,E)\f$, this function seeks for the partioning `f`
-   that minimizes the following energy:
+   For a graph \f$(V,E)\f$, this function computes a partition `f`
+   that minimizes the following cost function:
 
    \f[
-   \mathrm{E}(f) = \sum_{\{v0,v1\} \in E} W(v0,v1) + \sum_{v \in V} C(f_v)
+   \mathrm{C}(f) = \sum_{\{v0,v1\} \in E} C_E(v0,v1) + \sum_{v \in V} C_V(f_v)
    \f]
 
-   where \f$W(v0,v1)\f$ is the weight associated to the edge
-   \f$\{v0,v1\}\f$ and \f$C(f_v)\f$ is the cost of assigning the
-   vertex \f$v\f$ to the labeling \f$f\f$.
+   where \f$C_E(v0,v1)\f$ is the edge cost of assigning a different
+   label to \f$v0\f$ and \f$v1\f$, and \f$C_V(f_v)\f$ is the vertex
+   cost of assigning the label \f$f\f$ to the vertex \f$v\f$.
 
    \tparam InputGraph a model of `VertexAndEdgeListGraph`
 
-   \tparam EdgeWeightMap a model of `ReadablePropertyMap` with
+   \tparam EdgeCostMap a model of `ReadablePropertyMap` with
    `boost::graph_traits<InputGraph>::%edge_descriptor` as key and `double`
    as value
 
@@ -481,12 +481,12 @@ public:
 
    \param input_graph the input graph.
 
-   \param edge_weight_map a property map providing the weight of each
+   \param edge_cost_map a property map providing the weight of each
    edge.
 
    \param vertex_label_map a property map providing the label of each
    vertex. This map will be updated by the algorithm with the
-   regularized version of the partitioning.
+   regularized version of the partition.
 
    \param vertex_label_cost_map a property map providing, for each
    vertex, an `std::vector` containing the cost of this vertex to
@@ -519,12 +519,12 @@ public:
 
 */
 template <typename InputGraph,
-          typename EdgeWeightMap,
+          typename EdgeCostMap,
           typename VertexLabelCostMap,
           typename VertexLabelMap,
           typename NamedParameters>
 double alpha_expansion_graphcut (const InputGraph& input_graph,
-                                 EdgeWeightMap edge_weight_map,
+                                 EdgeCostMap edge_cost_map,
                                  VertexLabelCostMap vertex_label_cost_map,
                                  VertexLabelMap vertex_label_map,
                                  const NamedParameters& np)
@@ -603,7 +603,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
         std::size_t idx1 = get (vertex_index_map, vd1);
         std::size_t idx2 = get (vertex_index_map, vd2);
           
-        double weight = get (edge_weight_map, ed);
+        double weight = get (edge_cost_map, ed);
           
         Vertex_descriptor v1 = inserted_vertices[idx1],
           v2 = inserted_vertices[idx2];
@@ -668,28 +668,28 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename InputGraph,
-          typename EdgeWeightMap,
+          typename EdgeCostMap,
           typename VertexLabelCostMap,
           typename VertexLabelMap>
 double alpha_expansion_graphcut (const InputGraph& input_graph,
-                                 EdgeWeightMap edge_weight_map,
+                                 EdgeCostMap edge_cost_map,
                                  VertexLabelCostMap vertex_label_cost_map,
                                  VertexLabelMap vertex_label_map)
 {
-  return alpha_expansion_graphcut (input_graph, edge_weight_map,
+  return alpha_expansion_graphcut (input_graph, edge_cost_map,
                                    vertex_label_cost_map, vertex_label_map,
                                    CGAL::parameters::all_default());
 }
 
 // Old API
 inline double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
-                                        const std::vector<double>& edge_weights,
+                                        const std::vector<double>& edge_costs,
                                         const std::vector<std::vector<double> >& cost_matrix,
                                         std::vector<std::size_t>& labels)
 {
-  internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_weights, cost_matrix, labels);
+  internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_costs, cost_matrix, labels);
   return alpha_expansion_graphcut(graph,
-                                  graph.edge_weight_map(),
+                                  graph.edge_cost_map(),
                                   graph.vertex_label_cost_map(),
                                   graph.vertex_label_map(),
                                   CGAL::parameters::vertex_index_map (graph.vertex_index_map()));
@@ -697,15 +697,15 @@ inline double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t,
 
 template <typename AlphaExpansionImplementationTag>
 double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
-                                 const std::vector<double>& edge_weights,
+                                 const std::vector<double>& edge_costs,
                                  const std::vector<std::vector<double> >& cost_matrix,
                                  std::vector<std::size_t>& labels,
                                  const AlphaExpansionImplementationTag&)
 {
-  internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_weights, cost_matrix, labels);
+  internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_costs, cost_matrix, labels);
   
   return alpha_expansion_graphcut(graph,
-                                  graph.edge_weight_map(),
+                                  graph.edge_cost_map(),
                                   graph.vertex_label_cost_map(),
                                   graph.vertex_label_map(),
                                   CGAL::parameters::vertex_index_map (graph.vertex_index_map()).
