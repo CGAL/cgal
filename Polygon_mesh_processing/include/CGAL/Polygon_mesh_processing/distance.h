@@ -166,7 +166,7 @@ template<typename PointOutputIterator,
          typename Derived>
 struct Triangle_structure_sampler_base
 {
-  const NamedParameters& np;
+  const NamedParameters np;
   GeomTraits geomtraits;
   PointOutputIterator& out;
 
@@ -426,7 +426,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
   Triangle_structure_sampler_for_triangle_mesh(const Mesh& m,
                                                PointOutputIterator& out,
-                                               NamedParameters np)
+                                               const NamedParameters& np)
     : Base(out, np), tm(m)
   {
     using parameters::choose_parameter;
@@ -593,7 +593,7 @@ struct Triangle_structure_sampler_for_triangle_soup
   Triangle_structure_sampler_for_triangle_soup(const PointRange& pts,
                                                const TriangleRange& trs,
                                                PointOutputIterator& out,
-                                               NamedParameters np)
+                                               const NamedParameters& np)
     : Base(out, np), points(pts), triangles(trs)
   {
     using parameters::choose_parameter;
@@ -968,7 +968,7 @@ template <class Concurrency_tag, class Kernel, class TriangleMesh,
 double approximate_Hausdorff_distance(
    const TriangleMesh& tm1,
    const TriangleMesh& tm2,
-   NamedParameters np,
+   const NamedParameters& np,
    VertexPointMap vpm_2)
 {
   std::vector<typename Kernel::Point_3> sample_points;
