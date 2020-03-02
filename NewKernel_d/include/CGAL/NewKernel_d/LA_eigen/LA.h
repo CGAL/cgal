@@ -31,6 +31,7 @@
 #include <CGAL/NewKernel_d/LA_eigen/constructors.h>
 #include <CGAL/iterator_from_indices.h>
 #include <CGAL/determinant.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -154,7 +155,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 #if _MSC_VER >= 1911 || __cpp_if_constexpr >= 201606L
 	      // Avoid compiling the LU decomposition for nothing
 	      if constexpr (Mat_::MaxRowsAtCompileTime >= 1 && Mat_::MaxRowsAtCompileTime <= 6) {
-		CGAL_ASSUME(false);
+		CGAL_assume(false);
 	      }
 	      else
 #endif
