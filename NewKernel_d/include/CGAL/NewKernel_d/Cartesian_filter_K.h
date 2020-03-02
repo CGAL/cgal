@@ -49,7 +49,7 @@ template<> struct Functors_without_division<Dimension_tag<5> > {
 template<> struct Functors_without_division<Dimension_tag<6> > {
   typedef typeset<Orientation_of_points_tag> type;
 };
-
+  
 template < typename Base_, typename AK_, typename EK_, typename Pred_list = typeset_all >
 struct Cartesian_filter_K : public Base_,
   private Store_kernel<EK_>
