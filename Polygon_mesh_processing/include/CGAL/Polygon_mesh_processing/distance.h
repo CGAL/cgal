@@ -462,7 +462,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
       double el = std::sqrt(to_double(typename GeomTraits::Compute_squared_distance_3()(
                                         get(pmap, source(ed, tm)), get(pmap, target(ed, tm)))));
 
-      if(el > 0 && el < min_edge_length)
+      if(el > 0. && el < min_edge_length)
         min_edge_length = el;
     }
     return min_edge_length;
@@ -621,14 +621,12 @@ struct Triangle_structure_sampler_for_triangle_soup
     {
       for(std::size_t i = 0; i< 3; ++i)
       {
-        typename GeomTraits::Point_3  a(points[tr[i]]),
-            b(points[tr[(i+1)%3]]);
+        const Point_3& a = points[tr[i]];
+        const Point_3& b = points[tr[(i+1)%3]];
 
-        double el = std::sqrt(
-              to_double( typename GeomTraits::Compute_squared_distance_3()(
-                           a, b)));
-        if (el > 0 && el < min_edge_length_)
-          min_edge_length_ = el;
+        double el = std::sqrt(to_double(typename GeomTraits::Compute_squared_distance_3()(a, b)));
+        if(el > 0. && el < min_edge_length)
+          min_edge_length = el;
       }
     }
 
@@ -644,9 +642,9 @@ struct Triangle_structure_sampler_for_triangle_soup
   }
 
   template<typename Tr>
-  std::array<typename GeomTraits::Point_3, 3> get_tr_points(const Tr& tr)
+  std::array<Point_3, 3> get_tr_points(const Tr& tr)
   {
-    std::array<typename GeomTraits::Point_3, 3> points;
+    std::array<Point_3, 3> points;
     for(int i=0; i<3; ++i)
     {
       points[i] = this->points[tr[i]];
@@ -673,11 +671,11 @@ struct Triangle_structure_sampler_for_triangle_soup
   {
     for(const auto& tr : triangles)
     {
-        typename GeomTraits::Point_3 p0 = points[tr[0] ];
-        typename GeomTraits::Point_3 p1 = points[tr[1] ];
-        typename GeomTraits::Point_3 p2 = points[tr[2] ];
-        this->out=internal::triangle_grid_sampling<GeomTraits>(p0, p1, p2, distance,
-                                                           this->out);
+      const Point_3& p0 = points[tr[0]];
+      const Point_3& p1 = points[tr[1]];
+      const Point_3& p2 = points[tr[2]];
+
+      this->out = internal::triangle_grid_sampling<GeomTraits>(p0, p1, p2, distance, this->out);
     }
   }
 
