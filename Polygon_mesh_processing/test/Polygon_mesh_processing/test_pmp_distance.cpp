@@ -273,8 +273,14 @@ void test_concept()
   general_tests<CK>(m1,m2);
 }
 
-int main(int, char** argv)
+int main(int argc, char** argv)
 {
+  if(argc != 3)
+  {
+    std::cerr << "Missing input meshes" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Mesh m1,m2;
   std::ifstream input(argv[1]);
   input >> m1;
