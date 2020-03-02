@@ -42,14 +42,15 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace internal{
-template <class Kernel, class OutputIterator>
-OutputIterator
-triangle_grid_sampling( const typename Kernel::Point_3& p0,
-                        const typename Kernel::Point_3& p1,
-                        const typename Kernel::Point_3& p2,
-                        double distance,
-                        OutputIterator out)
+namespace internal {
+
+template <class Kernel, class PointOutputIterator>
+PointOutputIterator
+triangle_grid_sampling(const typename Kernel::Point_3& p0,
+                       const typename Kernel::Point_3& p1,
+                       const typename Kernel::Point_3& p2,
+                       double distance,
+                       PointOutputIterator out)
 {
   typename Kernel::Compute_squared_distance_3 squared_distance;
   const double d_p0p1 = to_double(approximate_sqrt( squared_distance(p0, p1) ));
@@ -156,7 +157,7 @@ double approximate_Hausdorff_distance_impl(
   }
 }
 
-template<typename OutputIterator,
+template<typename PointOutputIterator,
          typename GeomTraits,
          typename NamedParameters,
          typename TriangleIterator,
@@ -167,9 +168,9 @@ struct Triangle_structure_sampler_base
 {
   const NamedParameters& np;
   GeomTraits geomtraits;
-  OutputIterator& out;
+  PointOutputIterator& out;
 
-  Triangle_structure_sampler_base(OutputIterator& out,
+  Triangle_structure_sampler_base(PointOutputIterator& out,
                                   const NamedParameters& np)
     : np(np), out(out)
   {}
@@ -312,13 +313,13 @@ template <class Kernel,
           class FaceRange,
           class TriangleMesh,
           class VertexPointMap,
-          class OutputIterator>
-OutputIterator
+          class PointOutputIterator>
+PointOutputIterator
 sample_triangles(const FaceRange& triangles,
                  const TriangleMesh& tm,
                  VertexPointMap vpm,
                  double distance,
-                 OutputIterator out,
+                 PointOutputIterator out,
                  bool sample_faces,
                  bool sample_edges,
                  bool add_vertices)
@@ -379,58 +380,54 @@ sample_triangles(const FaceRange& triangles,
 namespace internal {
 
 template<typename Mesh,
-         typename OutputIterator,
+         typename PointOutputIterator,
          typename GeomTraits,
          typename Creator,
          typename Vpm,
          typename NamedParameters>
 struct Triangle_structure_sampler_for_triangle_mesh
-    : Triangle_structure_sampler_base<
-    OutputIterator,
-    GeomTraits,
-    NamedParameters,
-    typename boost::graph_traits<Mesh>::face_iterator,
-    Random_points_in_triangle_mesh_3<Mesh, Vpm,Creator>,
-    Creator,
-    Triangle_structure_sampler_for_triangle_mesh<Mesh,
-      OutputIterator,
-      GeomTraits,
-      Creator, Vpm,
-      NamedParameters>
-    >
+    : Triangle_structure_sampler_base<PointOutputIterator,
+                                      GeomTraits,
+                                      NamedParameters,
+                                      typename boost::graph_traits<Mesh>::face_iterator,
+                                      Random_points_in_triangle_mesh_3<Mesh, Vpm, Creator>,
+                                      Creator,
+                                      Triangle_structure_sampler_for_triangle_mesh<Mesh,
+                                                                                   PointOutputIterator,
+                                                                                   GeomTraits,
+                                                                                   Creator,
+                                                                                   Vpm,
+                                                                                   NamedParameters> >
 {
   typedef Triangle_structure_sampler_for_triangle_mesh<Mesh,
-  OutputIterator,
-  GeomTraits,
-  Creator, Vpm,
-  NamedParameters> This;
-  typedef Triangle_structure_sampler_base<
-  OutputIterator,
-  GeomTraits,
-  NamedParameters,
-  typename boost::graph_traits<Mesh>::face_iterator,
-  Random_points_in_triangle_mesh_3<Mesh, Vpm,Creator>,
-  Creator,
-  This> Base;
+                                                       PointOutputIterator,
+                                                       GeomTraits,
+                                                       Creator, Vpm,
+                                                       NamedParameters>     Self;
+  typedef Triangle_structure_sampler_base<PointOutputIterator,
+                                          GeomTraits,
+                                          NamedParameters,
+                                          typename boost::graph_traits<Mesh>::face_iterator,
+                                          Random_points_in_triangle_mesh_3<Mesh, Vpm, Creator>,
+                                          Creator,
+                                          Self>                             Base;
 
+  typedef boost::graph_traits<Mesh>                                         GT;
+  typedef typename GT::halfedge_descriptor                                  halfedge_descriptor;
+  typedef typename GT::edge_descriptor                                      edge_descriptor;
+  typedef typename GT::face_descriptor                                      face_descriptor;
 
-  typedef boost::graph_traits<Mesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-  typedef typename GT::halfedge_descriptor halfedge_descriptor;
-  typedef typename GT::edge_descriptor edge_descriptor;
-
-  typedef Random_points_in_triangle_mesh_3<Mesh, Vpm,Creator> Randomizer;
-  typedef typename boost::graph_traits<Mesh>::face_iterator TriangleIterator;
+  typedef Random_points_in_triangle_mesh_3<Mesh, Vpm,Creator>               Randomizer;
+  typedef typename boost::graph_traits<Mesh>::face_iterator                 TriangleIterator;
 
   Vpm pmap;
   double min_edge_length_;
   const Mesh& tm;
 
   Triangle_structure_sampler_for_triangle_mesh(const Mesh& m,
-                                               OutputIterator& out,
+                                               PointOutputIterator& out,
                                                NamedParameters np)
-    :Base(out, np),
-      tm(m)
+    : Base(out, np), tm(m)
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -548,46 +545,46 @@ struct Triangle_structure_sampler_for_triangle_mesh
 
 template<typename PointRange,
          typename TriangleRange,
-         typename OutputIterator,
+         typename PointOutputIterator,
          typename GeomTraits,
          typename Creator,
          typename NamedParameters>
 struct Triangle_structure_sampler_for_triangle_soup
-    : Triangle_structure_sampler_base<
-    OutputIterator,
-    GeomTraits,
-    NamedParameters,
-    typename TriangleRange::const_iterator,
-    Random_points_in_triangle_soup<PointRange, typename TriangleRange::value_type, Creator>,
-    Creator,
-    Triangle_structure_sampler_for_triangle_soup<PointRange,
-    TriangleRange,
-    OutputIterator,
-    GeomTraits,
-    Creator,
-    NamedParameters>
-    >
+    : Triangle_structure_sampler_base<PointOutputIterator,
+                                      GeomTraits,
+                                      NamedParameters,
+                                      typename TriangleRange::const_iterator,
+                                      Random_points_in_triangle_soup<PointRange,
+                                                                     typename TriangleRange::value_type,
+                                                                     Creator>,
+                                      Creator,
+                                      Triangle_structure_sampler_for_triangle_soup<PointRange,
+                                                                                   TriangleRange,
+                                                                                   PointOutputIterator,
+                                                                                   GeomTraits,
+                                                                                   Creator,
+                                                                                   NamedParameters> >
 {
   typedef typename TriangleRange::value_type                                TriangleType;
   typedef Triangle_structure_sampler_for_triangle_soup<PointRange,
-  TriangleRange,
-  OutputIterator,
-  GeomTraits,
-  Creator,
-  NamedParameters> This;
+                                                       TriangleRange,
+                                                       PointOutputIterator,
+                                                       GeomTraits,
+                                                       Creator,
+                                                       NamedParameters>     Self;
 
-  typedef Triangle_structure_sampler_base<
-  OutputIterator,
-  GeomTraits,
-  NamedParameters,
-  typename TriangleRange::const_iterator,
-  Random_points_in_triangle_soup<PointRange, TriangleType, Creator>,
-  Creator,
-  This>            Base;
+  typedef Triangle_structure_sampler_base<PointOutputIterator,
+                                          GeomTraits,
+                                          NamedParameters,
+                                          typename TriangleRange::const_iterator,
+                                          Random_points_in_triangle_soup<PointRange, TriangleType, Creator>,
+                                          Creator,
+                                          Self>                             Base;
 
+  typedef typename GeomTraits::Point_3                                      Point_3;
 
   typedef Random_points_in_triangle_soup<PointRange, TriangleType, Creator> Randomizer;
-  typedef typename TriangleRange::const_iterator TriangleIterator;
+  typedef typename TriangleRange::const_iterator                            TriangleIterator;
 
   double min_edge_length_;
   const PointRange& points;
@@ -595,9 +592,9 @@ struct Triangle_structure_sampler_for_triangle_soup
 
   Triangle_structure_sampler_for_triangle_soup(const PointRange& pts,
                                                const TriangleRange& trs,
-                                               OutputIterator& out,
+                                               PointOutputIterator& out,
                                                NamedParameters np)
-    :Base(out, np), points(pts), triangles(trs)
+    : Base(out, np), points(pts), triangles(trs)
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
@@ -695,7 +692,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * is selected using named parameters.
  *
  * @tparam TriangleMesh a model of the concept `FaceListGraph`
- * @tparam OutputIterator a model of `OutputIterator`
+ * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
  *  the value type of the internal vertex point map of `tm`
  *
@@ -789,17 +786,17 @@ struct Triangle_structure_sampler_for_triangle_soup
  *
  * @see `CGAL::Polygon_mesh_processing::sample_triangle_soup()`
  */
-template<class OutputIterator, class TriangleMesh, class NamedParameters>
-OutputIterator
+template<class PointOutputIterator, class TriangleMesh, class NamedParameters>
+PointOutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
-                           OutputIterator out,
-                           NamedParameters np)
+                     PointOutputIterator out,
+                     const NamedParameters& np)
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type             GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type   Vpm;
 
   internal::Triangle_structure_sampler_for_triangle_mesh<TriangleMesh,
-      OutputIterator,
+      PointOutputIterator,
       GeomTraits,
       Creator_uniform_3<typename GeomTraits::FT,
       typename GeomTraits::Point_3>,
@@ -818,8 +815,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                      whose value_type is itself a model of the concept `RandomAccessContainer`
  *                      whose value_type is `std::size_t`.
- * @tparam PointOutputIterator a model of `OutputIterator`
- *  holding objects of the same type as `PointRange`'s value type.
+ * @tparam PointOutputIterator a model of `OutputIterator` holding objects of the same type as `PointRange`'s value type.
  *
  * @param points the points of the soup that will be sampled.
  * @param triangles a vector containing the triangles of the soup that will be sampled.
@@ -909,31 +905,29 @@ sample_triangle_soup(const PointRange& points,
       Creator_uniform_3<typename GeomTraits::FT,
       typename GeomTraits::Point_3>,
       NamedParameters> performer(points, triangles, out, np);
-
   performer.procede();
+
   return performer.out;
 }
 
-
-template<class OutputIterator, class TriangleMesh>
-OutputIterator
+template<class PointOutputIterator, class TriangleMesh>
+PointOutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
-                           OutputIterator out)
+                     PointOutputIterator out)
 {
   return sample_triangle_mesh(tm, out, parameters::all_default());
 }
 
-template<class OutputIterator,
+template<class PointOutputIterator,
          class TriangleRange,
          class PointRange>
-OutputIterator
+PointOutputIterator
 sample_triangle_soup(const PointRange& points,
                      const TriangleRange& triangles,
-                     OutputIterator out)
+                     PointOutputIterator out)
 {
   return sample_triangle_soup(points, triangles, out, parameters::all_default());
 }
-
 
 template <class Concurrency_tag,
           class Kernel,
