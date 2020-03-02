@@ -690,6 +690,7 @@ struct Triangle_structure_sampler_for_triangle_soup
 } // namespace internal
 
 /** \ingroup PMP_distance_grp
+ *
  * generates points on `tm` and outputs them to `out`; the sampling method
  * is selected using named parameters.
  *
@@ -715,13 +716,13 @@ struct Triangle_structure_sampler_for_triangle_soup
  *      if `true` (default value), points are generated in a random
  *      and uniform way on the surface of `tm`, and/or on edges of `tm`.
  *      For faces, the number of sample points is the value passed to the named
- *      parameter `number_of_points_on_faces()`. If not set,
- *      the value passed to the named parameter `number_of_points_per_area_unit()`
+ *      parameter `number_of_points_on_faces`. If not set,
+ *      the value passed to the named parameter `number_of_points_per_area_unit`
  *      is multiplied by the area of `tm` to get the number of sample points.
  *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
  *      For edges, the number of the number of sample points is the value passed to the named
- *      parameter `number_of_points_on_edges()`. If not set,
- *      the value passed to the named parameter `number_of_points_per_distance_unit()`
+ *      parameter `number_of_points_on_edges`. If not set,
+ *      the value passed to the named parameter `number_of_points_per_distance_unit`
  *      is multiplied by the sum of the length of edges of `tm` to get the number of sample points.
  *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
  *    \cgalParamEnd
@@ -730,27 +731,27 @@ struct Triangle_structure_sampler_for_triangle_soup
  *      with a minimum of one point per triangle. The distance between
  *      two consecutive points in the grid is that of the length of the
  *      smallest non-null edge of `tm` or the value passed to
- *      the named parameter `grid_spacing()`. Edges are also split using the
+ *      the named parameter `grid_spacing`. Edges are also split using the
  *      same distance, if requested.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
  *      if `true`, points are generated randomly in each triangle and/or
  *      on each edge.
  *      For faces, the number of points per triangle is the value passed to the named
- *      parameter `number_of_points_per_face()`. If not set, the value passed
- *      to the named parameter `number_of_points_per_area_unit()` is
+ *      parameter `number_of_points_per_face`. If not set, the value passed
+ *      to the named parameter `number_of_points_per_area_unit` is
  *      used to pick a number of points per face proportional to the triangle
  *      area with a minimum of one point per face. If none of these parameters
  *      is set, 2 divided by the square of the length of the smallest non-null
  *      edge of `tm` is used as if it was passed to
- *      `number_of_points_per_area_unit()`.
+ *      `number_of_points_per_area_unit`.
  *      For edges, the number of points per edge is the value passed to the named
- *      parameter `number_of_points_per_edge()`. If not set, the value passed
- *      to the named parameter `number_of_points_per_distance_unit()` is
+ *      parameter `number_of_points_per_edge`. If not set, the value passed
+ *      to the named parameter `number_of_points_per_distance_unit` is
  *      used to pick a number of points per edge proportional to the length of
  *      the edge with a minimum of one point per face. If none of these parameters
  *      is set, 1 divided by the length of the smallest non-null edge of `tm`
- *      is used as if it was passed to `number_of_points_per_distance_unit()`.
+ *      is used as if it was passed to `number_of_points_per_distance_unit`.
  *    \cgalParamEnd
  *    \cgalParamBegin{sample_vertices}
  *      if `true` (default value), vertices of `tm` are put into `out`.
@@ -815,6 +816,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
 }
 
 /** \ingroup PMP_distance_grp
+ *
  * generates points on a triangle soup and outputs them to `out`; the sampling method
  * is selected using named parameters.
  *
@@ -831,13 +833,15 @@ sample_triangle_mesh(const TriangleMesh& tm,
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`, whose `Point_3` type is the same as `PointRange`'s `value_type`. \cgalParamEnd
+ *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`, whose `%Point_3` type is the same
+ *      as `PointRange`'s `value_type`.
+ *    \cgalParamEnd
  *    \cgalParamBegin{use_random_uniform_sampling}
  *      if `true`, points are generated in a random
  *      and uniform way on the surface of the soup.
  *      The number of sample points is the value passed to the named
- *      parameter `number_of_points_on_faces()`. If not set,
- *      the value passed to the named parameter `number_of_points_per_area_unit()`
+ *      parameter `number_of_points_on_faces`. If not set,
+ *      the value passed to the named parameter `number_of_points_per_area_unit`
  *      is multiplied by the area of the soup to get the number of sample points.
  *      If none of these parameters is set, the number of points sampled is `points.size()`.
  *
@@ -848,18 +852,18 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      with a minimum of one point per triangle. The distance between
  *      two consecutive points in the grid is that of the length of the
  *      smallest non-null edge of the soup, or the value passed to
- *      the named parameter `grid_spacing()`.
+ *      the named parameter `grid_spacing`.
  * 
  *      %Default is `false`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
  *      if `true`, points are generated randomly in each triangle.
  *      The number of points per triangle is the value passed to the named
- *      parameter `number_of_points_per_face()`. If not set, the value passed
- *      to the named parameter `number_of_points_per_area_unit()` is
+ *      parameter `number_of_points_per_face`. If not set, the value passed
+ *      to the named parameter `number_of_points_per_area_unit` is
  *      used to pick a number of points per face proportional to the triangle
  *      area with a minimum of one point per face. If none of these parameters
- *      is set, the number of points per area unit is set to 2/sqrt2 divided 
+ *      is set, the number of points per area unit is set to 2 divided
  *      by the square of the length of the smallest non-null edge of the soup.
  *
  *      %Default is `false`.
@@ -890,7 +894,6 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *
  * @see `CGAL::Polygon_mesh_processing::sample_triangle_mesh()`
  */
-
 template<class PointOutputIterator,
          class TriangleRange,
          class PointRange,
