@@ -15,10 +15,9 @@
 
 #include <CGAL/license/Polygon_mesh_processing/distance.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/mesh_to_point_set_hausdorff_distance.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
-#include <algorithm>
-#include <cmath>
-#include <array>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
@@ -27,11 +26,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 #include <CGAL/point_generators_3.h>
-
 #include <CGAL/spatial_sort.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/mesh_to_point_set_hausdorff_distance.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
