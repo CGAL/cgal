@@ -487,22 +487,32 @@ public:
     return (vh->offset() == Offset(0, 0));
   }
 
+  Offset compute_offset(const Edge e) const
+  {
+    Face_handle fh = e.first;
+    int i = e.second;
+    return min(fh->vertex(dt2.cw(i))->offset(), fh->vertex(dt2.ccw(i))->offset());
+  }
+
+  bool is_canonical(const Edge e) const
+  {
+    if(dt2.is_infinite(e.first))
+      return false;
+
+    return compute_offset(e) == Offset(0, 0);
+  }
+
+  Offset compute_offset(const Face_handle fh) const
+  {
+    return min(fh->vertex(0)->offset(), fh->vertex(1)->offset(), fh->vertex(2)->offset());
+  }
+
   bool is_canonical(const Face_handle fh) const
   {
     if(dt2.is_infinite(fh))
       return false;
 
-    int min_off_x = std::numeric_limits<int>::max(),
-        min_off_y = std::numeric_limits<int>::max();
-
-    for(int i=0; i<3; i++)
-    {
-      Vertex_handle vh = fh->vertex(i);
-      min_off_x = (std::min)(min_off_x, vh->offset().x());
-      min_off_y = (std::min)(min_off_y, vh->offset().y());
-    }
-
-    return (min_off_x == 0 && min_off_y == 0);
+    return compute_offset(fh) == Offset(0, 0);
   }
 
   template <typename ForwardFaceIterator>
@@ -560,8 +570,8 @@ public:
     if(is_canonical(fh->neighbor(i)))
       return fh->neighbor(i);
 
-    Vertex_handle e_vh_0 = fh->vertex((i+1)%3);
-    Vertex_handle e_vh_1 = fh->vertex((i+2)%3);
+    Vertex_handle e_vh_0 = fh->vertex((i+1)%3); // Same as dt2.ccw(i)
+    Vertex_handle e_vh_1 = fh->vertex((i+2)%3); // Same as dt2.cw(i)
 
     Offset shift_off = compute_offset_shift(e_vh_0->offset(), e_vh_1->offset());
     Offset ce_vh_0_off = e_vh_0->offset() - shift_off;
