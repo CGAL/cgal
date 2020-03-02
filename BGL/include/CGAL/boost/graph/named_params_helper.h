@@ -42,8 +42,8 @@ namespace CGAL {
   class Eigen_svd;
   class Lapack_svd;
   //
-  
-  
+
+
   //helper classes
   template<typename PolygonMesh, typename PropertyTag>
   class property_map_selector
@@ -123,20 +123,20 @@ namespace CGAL {
   {
     CGAL::helpers::init_vertex_indices(g, map);
   }
-  
+
   template< class PMap, class Graph, typename T>
   void initialize_index_map(PMap map, const Graph& g, const CGAL::dynamic_vertex_property_t<T>&, const CGAL::Tag_true&)
   {
     CGAL::helpers::init_vertex_indices(g, map);
   }
-  
+
   //cases the map is writable for halfedges
   template< class PMap, class Graph>
   void initialize_index_map(PMap map, const Graph& g, const boost::halfedge_index_t&, const CGAL::Tag_true&)
   {
     CGAL::helpers::init_halfedge_indices(g, map);
   }
-  
+
   template< class PMap, class Graph, typename T>
   void initialize_index_map(PMap map, const Graph& g, const  CGAL::dynamic_halfedge_property_t<T>&&, const CGAL::Tag_true&)
   {
@@ -153,13 +153,13 @@ namespace CGAL {
   {
     CGAL::helpers::init_face_indices(g, map);
   }
-  
+
   //default case : don't do anything
   template<typename SimplexTag, class PMap, class Graph, typename IsWritableTag>
   void initialize_index_map(PMap, const Graph&, const SimplexTag&, const IsWritableTag&)
   {}
 
-  
+
 #define CGAL_IS_PMAP_WRITABLE(TAG) template<typename IsRefConst> \
   struct Is_pmap_writable<TAG, IsRefConst>{ typedef CGAL::Tag_true result; }; \
   template<> \
@@ -196,7 +196,7 @@ namespace CGAL {
         <typename boost::property_map<Mesh, Default_tag >
         ::const_type>::category Category;
     typedef typename boost::property_traits<Map_const_type>::reference Reference;
-    
+
     Map_const_type map = get(t, m);
     typename Is_pmap_writable<Category,
         std::is_const<Reference> >::result is_writable;
@@ -216,7 +216,7 @@ namespace CGAL {
   }
 
   }//end of internal_np
-  
+
   //define types for maps :
   //struct Default_face_index_map
   //struct Default_vertex_index_map
@@ -235,13 +235,13 @@ namespace CGAL {
   typename boost::property_map<TM, Final_tag >::const_type    \
   > ::type  type;                                             \
 };
-  
+
   CGAL_DEF_MAP_TYPE(face)
   CGAL_DEF_MAP_TYPE(vertex)
   CGAL_DEF_MAP_TYPE(halfedge)
 #undef CGAL_DEF_MAP_TYPE
-  
-  
+
+
   template<typename Tag, typename Dynamic_tag, typename Mesh,
   typename NamedParameters, typename Parameter>
   class Get_index_map_from_NP {
@@ -250,13 +250,13 @@ namespace CGAL {
     const Mesh& m;
     const NamedParameters& np;
     const Parameter p;
-    
+
     public:
     //get the Default tag :
     //if Mesh has an internal property map for Tag, use Tag, else use the Dynamic_tag.
     typedef typename boost::mpl::if_c<CGAL::graph_has_property<Mesh, Tag>::value
         , Tag, Dynamic_tag>::type Final_tag;
-    
+
     //If Parameter is in NamedParameters, take the NP map.
     //Else, take the default map.
     typedef typename internal_np::Lookup_named_param_def<
@@ -264,23 +264,23 @@ namespace CGAL {
         NamedParameters,
         typename boost::property_map<Mesh, Final_tag >::const_type
         > ::type  PropertyMapType;
-    
-    
+
+
     Get_index_map_from_NP(const Tag,
                           const Dynamic_tag dtag,
                           const Mesh& m,
                           const NamedParameters& np,
                           const Parameter p)
       : dtag(dtag), m(m), np(np), p(p) {}
-    
-    
+
+
     PropertyMapType property_map()
     {
       return internal_np::get_ndi_map(parameters::get_parameter(np, p),
                                       Final_tag(), dtag, m);
     }
   };
-  
+
   //define the
   // get_initialized_face_index_map(), get_initialized_vertex_index_map(), get_initialized_halfedge_index_map()
   // functions.
@@ -302,7 +302,7 @@ namespace CGAL {
   CGAL_DEF_GET_INIT_ID_MAP(halfedge)
 
 #undef CGAL_DEF_GET_INIT_ID_MAP
-  
+
   template<typename PolygonMesh,
            typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
   class GetVertexPointMap
@@ -420,7 +420,7 @@ namespace CGAL {
       DummyNormalPmap//default
       > ::type  type;
   };
-  
+
 
   namespace Point_set_processing_3
   {
@@ -436,7 +436,7 @@ namespace CGAL {
         typedef std::random_access_iterator_tag iterator_category;
       };
     };
-    
+
     namespace parameters
     {
       template <typename PointRange>
@@ -450,7 +450,7 @@ namespace CGAL {
     namespace internal{
       BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
     }
-    
+
     template<typename PointRange, typename NamedParameters,
              bool has_nested_iterator=internal::Has_nested_type_iterator<PointRange>::value>
     class GetPointMap
@@ -572,7 +572,7 @@ namespace CGAL {
       DefaultPMap
       > ::type  const_type;
     };
-    
+
     template<typename NamedParameters>
     class GetPlaneIndexMap
     {
@@ -620,7 +620,7 @@ namespace CGAL {
     };
 
   } // namespace Point_set_processing_3
-  
+
   template<typename NamedParameters, typename DefaultSolver>
   class GetSolver
   {
@@ -653,10 +653,10 @@ namespace CGAL {
       typedef int Matrix;
       static FT solve (const Matrix&, Vector&) { return 0.; }
     };
-    
+
   public:
     typedef DummySvdTraits NoTraits;
-    
+
     typedef typename internal_np::Lookup_named_param_def <
     internal_np::svd_traits_t,
     NamedParameters,
@@ -669,7 +669,7 @@ namespace CGAL {
 #endif
     > ::type type;
   };
-  
+
 } //namespace CGAL
 
 
