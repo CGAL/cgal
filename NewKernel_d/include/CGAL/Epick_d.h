@@ -75,8 +75,8 @@ template<class Dim>
 struct Epick_d_help3
 : CGAL_BASE
 {
-  constexpr Epick_d_help3(){}
-  constexpr Epick_d_help3(int d):CGAL_BASE(d){}
+  CGAL_CONSTEXPR Epick_d_help3(){}
+  CGAL_CONSTEXPR Epick_d_help3(int d):CGAL_BASE(d){}
 };
 #undef CGAL_BASE
 #define CGAL_BASE \

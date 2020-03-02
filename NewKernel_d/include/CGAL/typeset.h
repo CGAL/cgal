@@ -88,8 +88,10 @@ namespace CGAL {
     struct typeset<H,T>::add<H,V> : typeset<H,T> {};
   struct typeset_all {
     typedef typeset_all type;
-    template<class X> struct contains : public std::true_type {};
-    template<class X> struct add : public typeset_all {};
+    template<class X> struct contains : public boost::true_type {};
+    template<class X> struct add {
+      typedef typeset_all type;
+    };
   };
 #endif
 
