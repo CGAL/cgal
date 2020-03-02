@@ -1089,15 +1089,15 @@ bool remove_degenerate_edges(TriangleMesh& tmesh)
 //         - `Compare_distance_3` to compute the distance between 2 points
 //         - `Collinear_3` to check whether 3 points are collinear
 //         - `Less_xyz_3` to compare lexicographically two points
-///        - `Equal_3` to check whether 2 points are identical.
-///       For each functor Foo, a function `Foo foo_object()` must be provided.
+//        - `Equal_3` to check whether 2 points are identical.
+//       For each functor Foo, a function `Foo foo_object()` must be provided.
 //   \cgalParamEnd
 // \cgalNamedParamsEnd
 //
 // @todo the function might not be able to remove all degenerate faces.
 //       We should probably do something with the return type.
 //
-/// \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
+// \return `true` if all degenerate faces were successfully removed, and `false` otherwise.
 template <typename FaceRange, typename TriangleMesh, typename NamedParameters>
 bool remove_degenerate_faces(const FaceRange& face_range,
                              TriangleMesh& tmesh,
