@@ -38,12 +38,12 @@ public:
   };
 
 public:
-  Periodic_2_triangulation_face_base_2_generic() : Fb(), is_canonical(false) { }
+  Periodic_2_triangulation_face_base_2_generic() : Fb(), is_canonical(false), has_color(false) { }
 
   Periodic_2_triangulation_face_base_2_generic(Vertex_handle v0,
                                                Vertex_handle v1,
                                                Vertex_handle v2)
-    : Fb(v0, v1, v2), is_canonical(false)
+    : Fb(v0, v1, v2), is_canonical(false), has_color(false)
   { }
 
   Periodic_2_triangulation_face_base_2_generic(Vertex_handle v0,
@@ -52,7 +52,7 @@ public:
                                                Face_handle n0,
                                                Face_handle n1,
                                                Face_handle n2)
-    : Fb(v0, v1, v2, n0, n1, n2), is_canonical(false)
+    : Fb(v0, v1, v2, n0, n1, n2), is_canonical(false), has_color(false)
   { }
 
   /// Periodic functions
@@ -78,6 +78,10 @@ public:
 
   void set_canonical_flag(const bool b) { is_canonical = b; }
   bool get_canonical_flag() const { return is_canonical; }
+
+  // @tmp: For testing, remove this later.
+  bool has_color;
+  CGAL::Color color;
 
 private:
   bool is_canonical;

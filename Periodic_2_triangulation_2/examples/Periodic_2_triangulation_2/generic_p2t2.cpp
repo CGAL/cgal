@@ -35,17 +35,48 @@ int main()
   // CGAL::make_array(Vector(-0.5, 1), Vector(1.5, 0));
   basis = CGAL::make_array(Vector(4, 1), Vector(-2.5, -1));
 
-#if 0
+#if 1
   std::vector<Point> pts { Point(0, 0), Point(-0.2, -0.6) };
 #else
   std::vector<Point> pts = generate_lattice();
 #endif
 
   PDT T(pts.begin(), pts.end(), basis);
+  PDT::Vertex_handle vh = T.insert(Point(12345.6, 5432.1));
+  PDT::Vertex_handle vh2 = T.insert(Point(0, 0.1));
+  PDT::Vertex_handle vh3 = T.insert(Point(0.5, -0.4));
+  PDT::Vertex_handle vh4 = T.insert(Point(0.2, -0.2));
+  PDT::Vertex_handle vh5 = T.insert(Point(0, -0.52));
+  PDT::Vertex_handle vh6 = T.insert(Point(0.6, 0));
+  std::cout << "Is simplicial complex: " << T.is_simplicial_complex() << std::endl;
+  PDT::Vertex_handle vh7 = T.insert(Point(0.8, 0.55));
   std::cout << "Is simplicial complex: " << T.is_simplicial_complex() << std::endl;
 
-  PDT::Vertex_handle vh = T.insert(Point(12345.6, 5432.1));
-//  std::set<PDT::Face_handle> incident_faces = T.incident_faces(vh);
+  // Draw everything surrounding the vertex in red.
+  PDT::Face_handle some_face = PDT::Face_handle();
+  std::set<PDT::Face_handle> incident_faces2 = T.incident_faces(vh7);
+  for (PDT::Face_handle fh : incident_faces2) {
+    fh->has_color = true;
+    fh->color = CGAL::Color(255, 0, 0);
+    some_face = fh;
+  }
+  some_face->has_color = true;
+  some_face->color = CGAL::Color(255, 0, 192);
+
+  // Make the neighbours of the cell blueish.
+  for (int i = 0; i < 3; ++i) {
+    PDT::Face_handle nbfh = T.neighbor(some_face, i);
+
+    if (nbfh->has_color) {
+      CGAL::Color c = nbfh->color;
+      nbfh->color = CGAL::Color(c.red(), c.green(), 128);
+    } else {
+      nbfh->has_color = true;
+      nbfh->color = CGAL::Color(255, 255, 128);
+    }
+  }
+
+
 
   draw(T.dt2, "Post-Insertion");
 

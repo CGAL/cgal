@@ -33,6 +33,8 @@ public:
   typedef typename GT::Vector_2                          Vector;
   typedef typename GT::Point_2                           Point;
 
+  typedef typename CGAL::Periodic_2_offset_2             Offset;
+
   typedef cpp11::array<Vector, 2>                        Basis;
   typedef cpp11::array<Vector, 3>                        Voronoi_face_normals;
 
@@ -166,6 +168,14 @@ public:
     }
 
     return cp;
+  }
+
+  Point translate_by_offset(const Point& p, const Offset o) const
+  {
+    Vector translation = gt_.construct_sum_of_vectors_2_object()(
+        gt_.construct_scaled_vector_2_object()(basis_[0], o.x()),
+        gt_.construct_scaled_vector_2_object()(basis_[1], o.y()));
+    return gt_.construct_translated_point_2_object()(p, translation);
   }
 
 private:
@@ -562,6 +572,60 @@ public:
     return shift_off;
   }
 
+  Point construct_barycenter(const Face_handle& fh) const
+  {
+    Vector v0 = Vector(CGAL::ORIGIN, fh->vertex(0)->point());
+    Vector v1 = Vector(CGAL::ORIGIN, fh->vertex(1)->point());
+    Vector v2 = Vector(CGAL::ORIGIN, fh->vertex(2)->point());
+    Vector bcv = gt_.construct_scaled_vector_2_object()(
+              gt_.construct_sum_of_vectors_2_object()(v0,
+                gt_.construct_sum_of_vectors_2_object()(v1,v2)),
+            FT(1)/3);
+    return Point(bcv.x(), bcv.y());
+  }
+
+  // Given a face having a vertex in the domain, and an offset such that
+  // at least one of the translated vertices has a vertex in the domain,
+  // return the handle of the translated face.
+  // This is done by computing the barycenter of the original face, and
+  // locating the face containing the translate of the barycenter.
+  Face_handle find_translated_face(const Face_handle& fh, const Offset& o) const
+  {
+    Point translated_barycenter = lattice_.translate_by_offset(
+        construct_barycenter(fh), o);
+    return dt2.locate(translated_barycenter);
+  // The alternative is translating one of the vertices (by looking up its
+  // canonical counterpart), and then scanning the adjacent faces for the
+  // one that is the translate of the original face, see below.
+    // Vertex_handle e_vh_0 = fh->vertex((i+1)%3); // Same as dt2.ccw(i)
+    // Vertex_handle e_vh_1 = fh->vertex((i+2)%3); // Same as dt2.cw(i)
+
+    // Offset shift_off = compute_offset_shift(e_vh_0->offset(), e_vh_1->offset());
+    // Offset ce_vh_0_off = e_vh_0->offset() - shift_off;
+
+    // Vertex_handle ce_vh_0 = periodic_vertices.at(
+    //                           canonical_vertices.at(e_vh_0)).at(ce_vh_0_off);
+    // Vertex_handle cvh_1 = canonical_vertices.at(e_vh_1);
+
+    // Face_handle adj_fh;
+    // Face_circulator fc = dt2.incident_faces(ce_vh_0), done = fc;
+    // do
+    // {
+    //   if(dt2.is_infinite(fc))
+    //     continue;
+
+    //   Vertex_handle ccw_ce_vh_0 = fc->vertex(dt2.ccw(fc->index(ce_vh_0)));
+
+    //   if(canonical_vertices.at(ccw_ce_vh_0) != cvh_1)
+    //     continue;
+
+    //   if(ccw_ce_vh_0->offset() == (e_vh_1->offset() - shift_off))
+    //     adj_fh = fc;
+    // }
+    // while(++fc != done);
+    // CGAL_assertion(adj_fh != Face_handle());
+  }
+
   // @todo something smarter, this function is core to everything else
   // How could we keep "canonical neighbors" in memory instead of having
   // to find them later...?
@@ -570,48 +634,28 @@ public:
     if(is_canonical(fh->neighbor(i)))
       return fh->neighbor(i);
 
-    Vertex_handle e_vh_0 = fh->vertex((i+1)%3); // Same as dt2.ccw(i)
-    Vertex_handle e_vh_1 = fh->vertex((i+2)%3); // Same as dt2.cw(i)
+    // Translate the face so that the corresponding edge is canonical.
+    Offset edge_off = compute_offset(std::make_pair(fh, i));
+    Face_handle fh_trans = find_translated_face(fh, -edge_off);
 
-    Offset shift_off = compute_offset_shift(e_vh_0->offset(), e_vh_1->offset());
-    Offset ce_vh_0_off = e_vh_0->offset() - shift_off;
-
-    Vertex_handle ce_vh_0 = periodic_vertices.at(
-                              canonical_vertices.at(e_vh_0)).at(ce_vh_0_off);
-
-    Vertex_handle cvh_1 = canonical_vertices.at(e_vh_1);
-
-    Face_handle adj_fh;
-
-    Face_circulator fc = dt2.incident_faces(ce_vh_0), done = fc;
-    do
-    {
-      if(dt2.is_infinite(fc))
-        continue;
-
-      Vertex_handle ccw_ce_vh_0 = fc->vertex(dt2.ccw(fc->index(ce_vh_0)));
-
-      if(canonical_vertices.at(ccw_ce_vh_0) != cvh_1)
-        continue;
-
-      if(ccw_ce_vh_0->offset() == (e_vh_1->offset() - shift_off))
-        adj_fh = fc;
+    // Find the vertex corresponding to vertex(i) in the original.
+    bool vertex_found = false;
+    int j=0;
+    for (; j<3; ++j) {
+      if (canonical_vertices.at(fh_trans->vertex(j)) == canonical_vertices.at(fh->vertex(i))
+          && fh_trans->vertex(j)->offset() == fh->vertex(i)->offset() - edge_off) {
+        vertex_found = true;
+        break;
+      }
     }
-    while(++fc != done);
+    CGAL_assertion(vertex_found); 
 
-    CGAL_assertion(adj_fh != Face_handle());
-
-    // Now, we have the correct face, but it might not be canonical
-    // @todo to find the canonical face, you can find the canonical offset
-    // of the face, and then look at the difference of offset between the offset
-    // of the vertices in the canonical face and in 'adj_fh'
-
-    // @tmp
-    Face_handle c_adj_fh = adj_fh;
-    return c_adj_fh;
-
-    CGAL_postcondition(false);
-    return Face_handle();
+    // Get the neighbour in DT2 and check if it's canonical.
+    Face_handle neighbor = fh_trans->neighbor(j);
+    if(is_canonical(neighbor))
+      return neighbor;
+    else // if not, find the canonical translate.
+      return find_translated_face(neighbor, -compute_offset(neighbor));
   }
 
   /// Iterators and Circulators
@@ -624,15 +668,11 @@ public:
     if(!is_canonical(vh))
       vh = canonical_vertices.at(vh);
 
-    Face_circulator tds_fc = dt2.incident_faces(vh);
-
-    // @todo check (when this function is switched to a Circulator if we must
-    // walk cw or ccw)
-    Face_handle fh = tds_fc->neighbor(dt2.ccw(tds_fc->index(vh))), done = fh;
+    Face_circulator tds_fc = dt2.incident_faces(vh), done = tds_fc;
 
     do
-    {
-      ifhs.insert(fh);
+    {      
+      ifhs.insert(find_translated_face(tds_fc, -compute_offset(tds_fc)));
 
       // @todo when proper periodic traits are used to construct dt2 (that is,
       // insert (p, off) instead of constructing the offsetted point,
@@ -642,28 +682,13 @@ public:
       //
       // "Real" offsetted point is then done via a 'construct_point(cp, off)' function
       // in the triangulation class
-      int vh_idx = -1;
 
-      for(int i=0; i<3; ++i)
-      {
-        Vertex_handle vhi = fh->vertex(i);
-        Vertex_handle cvhi = canonical_vertex(vhi);
-
-        if(dt2.is_infinite(vhi))
-          continue;
-
-        // @fixme this is actually not sufficient, you might have the same vertex
-        // appearing multiple times in the face. You need to look at the difference
-        // of offsets between 'fh' and 'fhn' and deduce which vertex is the correct one.
-        if(cvhi == vh)
-          vh_idx = i;
-      }
-
-      CGAL_assertion(vh_idx != -1);
-
-      fh = neighbor(fh, dt2.ccw(vh_idx));
+      // The alternative is to use the neighbourhood relation of the faces, and
+      // traverse along edges around the central vertex, in the process possibly
+      // shifting the center vertex around to stay canonical. 
+      // Incomplete code of this in a previous commit.
     }
-    while(fh != done);
+    while(++tds_fc != done);
 
     std::cout << ifhs.size() << " incident faces" << std::endl;
 
@@ -711,6 +736,7 @@ public:
 
     mark_canonical_faces(vh);
 
+    canonical_vertices[vh] = vh;
     for (const std::vector<int> off : overlapping_offsets)
     {
       // @fixme Insert without constructions (cf P3T3)
