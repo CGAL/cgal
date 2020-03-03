@@ -501,7 +501,7 @@ public:
   {
     Face_handle fh = e.first;
     int i = e.second;
-    return min(fh->vertex(dt2.cw(i))->offset(), fh->vertex(dt2.ccw(i))->offset());
+    return compute_offset(fh->vertex(dt2.cw(i)), fh->vertex(dt2.ccw(i)));
   }
 
   bool is_canonical(const Edge e) const
@@ -510,6 +510,21 @@ public:
       return false;
 
     return compute_offset(e) == Offset(0, 0);
+  }
+
+  // Offset of an edge represented by its two vertices
+  Offset compute_offset(const Vertex_handle vh1, const Vertex_handle vh2) const
+  {
+    return min(vh1->offset(), vh2->offset());
+  }
+
+  // Canonicity of an edge represented by its two vertices
+  bool is_canonical(const Vertex_handle vh1, const Vertex_handle vh2) const
+  {
+    if(dt2.is_infinite(vh1) || dt2.is_infinite(vh2))
+      return false;
+
+    return compute_offset(vh1, vh2) == Offset(0, 0);
   }
 
   Offset compute_offset(const Face_handle fh) const
@@ -564,14 +579,6 @@ public:
   }
 
   /// Low level functions to mascarade the DT2 as a periodic triangulation
-  Offset compute_offset_shift(const Offset& off_1, const Offset& off_2) const
-  {
-    Offset shift_off((std::min)(off_1.x(), off_2.x()),
-                     (std::min)(off_1.y(), off_2.y()));
-
-    return shift_off;
-  }
-
   Point construct_barycenter(const Face_handle& fh) const
   {
     Vector v0 = Vector(CGAL::ORIGIN, fh->vertex(0)->point());
@@ -591,39 +598,48 @@ public:
   // locating the face containing the translate of the barycenter.
   Face_handle find_translated_face(const Face_handle& fh, const Offset& o) const
   {
-    Point translated_barycenter = lattice_.translate_by_offset(
-        construct_barycenter(fh), o);
-    return dt2.locate(translated_barycenter);
-  // The alternative is translating one of the vertices (by looking up its
-  // canonical counterpart), and then scanning the adjacent faces for the
-  // one that is the translate of the original face, see below.
-    // Vertex_handle e_vh_0 = fh->vertex((i+1)%3); // Same as dt2.ccw(i)
-    // Vertex_handle e_vh_1 = fh->vertex((i+2)%3); // Same as dt2.cw(i)
+    // The code commented out below does the same and is simpler,
+    // but uses a construction and point location.
+    // Point translated_barycenter = lattice_.translate_by_offset(
+    //     construct_barycenter(fh), o);
+    // return dt2.locate(translated_barycenter);
 
-    // Offset shift_off = compute_offset_shift(e_vh_0->offset(), e_vh_1->offset());
-    // Offset ce_vh_0_off = e_vh_0->offset() - shift_off;
+    // Find a vertex whose translate is in the domain.
+    bool vertex_found = false;
+    int j=0;
+    for (; j<3; ++j) {
+      if (fh->vertex(j)->offset() == -o) {
+        vertex_found = true;
+        break;
+      }
+    }
+    CGAL_assertion(vertex_found);
+    Vertex_handle cv = canonical_vertices.at(fh->vertex(j));
+    Vertex_handle v_ccw = fh->vertex(dt2.ccw(j));
+    Vertex_handle v_cw = fh->vertex(dt2.cw(j));
 
-    // Vertex_handle ce_vh_0 = periodic_vertices.at(
-    //                           canonical_vertices.at(e_vh_0)).at(ce_vh_0_off);
-    // Vertex_handle cvh_1 = canonical_vertices.at(e_vh_1);
+    // Scan through the incident faces and find the one that is
+    // equivalent to fh.
+    Face_circulator fc = dt2.incident_faces(cv), done = fc;
+    do
+    {
+      if(dt2.is_infinite(fc)) // shouldn't ever happen
+        continue;
+      
+      int cj = fc->index(cv);
+      Vertex_handle cv_ccw = fc->vertex(dt2.ccw(cj));
+      Vertex_handle cv_cw = fc->vertex(dt2.cw(cj));
 
-    // Face_handle adj_fh;
-    // Face_circulator fc = dt2.incident_faces(ce_vh_0), done = fc;
-    // do
-    // {
-    //   if(dt2.is_infinite(fc))
-    //     continue;
-
-    //   Vertex_handle ccw_ce_vh_0 = fc->vertex(dt2.ccw(fc->index(ce_vh_0)));
-
-    //   if(canonical_vertices.at(ccw_ce_vh_0) != cvh_1)
-    //     continue;
-
-    //   if(ccw_ce_vh_0->offset() == (e_vh_1->offset() - shift_off))
-    //     adj_fh = fc;
-    // }
-    // while(++fc != done);
-    // CGAL_assertion(adj_fh != Face_handle());
+      if (canonical_vertices.at(cv_ccw) == canonical_vertices.at(v_ccw)
+          && cv_ccw->offset() == v_ccw->offset() + o
+          && canonical_vertices.at(cv_cw) == canonical_vertices.at(v_cw)
+          && cv_cw->offset() == v_cw->offset() + o) {
+        return Face_handle(fc);
+      }
+    }
+    while(++fc != done);
+    CGAL_assertion(false);
+    return Face_handle();
   }
 
   // @todo something smarter, this function is core to everything else
