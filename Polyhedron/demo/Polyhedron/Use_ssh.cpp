@@ -80,7 +80,7 @@ bool establish_ssh_session(ssh_session &session,
 #if LIBSSH_VERSION_MAJOR <1 && LIBSSH_VERSION_MINOR < 8
     if( ssh_is_server_known(session) != SSH_SERVER_KNOWN_OK )
 #else
-      if( ssh_session_is_known_server(session) != SSH_SERVER_KNOWN_OK )
+      if( ssh_session_is_known_server(session) != SSH_KNOWN_HOSTS_OK )
 #endif
     {
       if(QMessageBox::warning(CGAL::Three::Three::mainWindow(), QString("Unknown Server"),
