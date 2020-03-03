@@ -85,7 +85,7 @@ public:
   const Primitive& right_data() const
                      { return *static_cast<Primitive*>(m_p_right_child); }
   template <class Left, class Right>
-  void set_children(Left&& l, Right&& r)
+  void set_children(Left& l, Right& r)
   {
     m_p_left_child = static_cast<void*>(std::addressof(l));
     m_p_right_child = static_cast<void*>(std::addressof(r));
