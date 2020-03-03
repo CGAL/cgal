@@ -47,7 +47,7 @@ template<> struct Functors_without_division<Dimension_tag<5> > {
   typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
 };
 template<> struct Functors_without_division<Dimension_tag<6> > {
-  typedef typeset<Orientation_of_points_tag> type;
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
 };
   
 template < typename Base_, typename AK_, typename EK_, typename Pred_list = typeset_all >

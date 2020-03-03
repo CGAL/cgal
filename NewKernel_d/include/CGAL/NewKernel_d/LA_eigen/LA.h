@@ -115,6 +115,13 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		return (int)v.cols();
 	}
 
+    template<class Mat_> static NT determinant_aux(Mat_ const& m, Tag_true) {
+        CGAL_assume(false);
+    }
+    template<class Mat_> static NT determinant_aux(Mat_ const& m, Tag_false) {
+        return m.determinant();
+    }
+  
 	template<class Mat_> static NT determinant(Mat_ const&m,bool=false){
 	  switch(m.rows()){
 	    //case 0:
@@ -161,14 +168,8 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		  m(5,0),m(5,1),m(5,2),m(5,3),m(5,4),m(5,5),m(5,6),
 		  m(6,0),m(6,1),m(6,2),m(6,3),m(6,4),m(6,5),m(6,6));
 	    default:
-#if _MSC_VER >= 1911 || __cpp_if_constexpr >= 201606L
-	      // Avoid compiling the LU decomposition for nothing
-	      if constexpr (Mat_::MaxRowsAtCompileTime >= 1 && Mat_::MaxRowsAtCompileTime <= 6) {
-		CGAL_assume(false);
-	      }
-	      else
-#endif
-		return m.determinant();
+              return determinant_aux(m, Boolean_tag<(Mat_::MaxRowsAtCompileTime >= 1 && Mat_::MaxRowsAtCompileTime <= 7)>());
+
 	  }
 	}
 
