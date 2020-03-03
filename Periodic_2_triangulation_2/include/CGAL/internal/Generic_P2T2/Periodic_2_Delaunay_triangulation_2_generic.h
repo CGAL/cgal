@@ -706,8 +706,6 @@ public:
     }
     while(++tds_fc != done);
 
-    std::cout << ifhs.size() << " incident faces" << std::endl;
-
     return ifhs;
   }
 
@@ -771,7 +769,6 @@ public:
         vh_copy->set_offset(Offset(off[0], off[1]));
 
         canonical_vertices[vh_copy] = vh;
-        periodic_vertices[vh][vh_copy->offset()] = vh_copy;
 
         mark_canonical_faces(vh_copy);
       }
@@ -807,10 +804,6 @@ private:
   cpp11::unordered_map<Vertex_handle /*periodic copy*/,
                        Vertex_handle /*canonical*/> canonical_vertices;
 
-  // @todo hopefully don't need to use this eventually
-  cpp11::unordered_map<Vertex_handle /*canonical*/,
-                       std::map<Offset, // @todo unordered
-                                Vertex_handle /*periodic copy*/> > periodic_vertices;
 
   Geom_traits gt_;
   Triangulation_data_structure tds_;
