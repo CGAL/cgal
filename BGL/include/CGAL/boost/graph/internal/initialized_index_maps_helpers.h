@@ -43,7 +43,9 @@ bool is_index_map_valid(const IndexMap idmap,
     }
     else
     {
+#ifdef CGAL_BGL_INDEX_MAP_DEBUG
       std::cerr << "Invalid ID: " << id << " num_simplices: " << num_simplices << std::endl;
+#endif
       return false;
     }
   }
