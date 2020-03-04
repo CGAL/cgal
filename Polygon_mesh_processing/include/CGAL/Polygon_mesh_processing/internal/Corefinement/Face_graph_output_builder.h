@@ -461,8 +461,8 @@ public:
     Intersection_edge_map& intersection_edges2 = mesh_to_intersection_edges[&tm2];
 
     // this will initialize face indices if the face index map is writable.
-    helpers::init_face_indices(tm1, fids1);
-    helpers::init_face_indices(tm2, fids2);
+    BGL::internal::initialize_face_index_map(fids1, tm1);
+    BGL::internal::initialize_face_index_map(fids2, tm2);
 
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm1_coplanar_faces(num_faces(tm1), 0);
