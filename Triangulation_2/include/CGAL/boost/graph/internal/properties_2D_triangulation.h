@@ -111,7 +111,7 @@ public:
   T2_halfedge_id_map(const Tr& tr) : tr(tr) { }
 
   // Halfedge id is twice the edge id, and +0/+1 depending whether
-  // h.first is such that h.first < opposite(h).first --> different ids
+  // h.first is such that h.first < opposite(h).first
   value_type operator[](key_type h) const
   {
     const Face_handle f1 = h.first;
@@ -119,13 +119,13 @@ public:
     CGAL_assertion(!tr.is_infinite(f1) || !tr.is_infinite(f2));
 
     if(tr.is_infinite(f1))
-      return 2*(3 * f2->id() + f2->index(f1));
+      return 2*(f2->edge_id(f2->index(f1)));
     else if(tr.is_infinite(f2))
-      return 2*(3 * f1->id() + h.second) + 1;
+      return 2*(f1->edge_id(h.second)) + 1;
     else if(f1->id() < f2->id())
-      return 2*(3 * f1->id() + h.second);
+      return 2*(f1->edge_id(h.second));
     else
-      return 2*(3 * f2->id() + f2->index(f1)) + 1;
+      return 2*(f1->edge_id(h.second)) + 1;
   }
 
 private:
@@ -152,13 +152,9 @@ public:
     CGAL_assertion(!tr.is_infinite(f1) || !tr.is_infinite(f2));
 
     if(tr.is_infinite(f1))
-      return 3 * f2->id() + f2->index(f1);
-    else if(tr.is_infinite(f2))
-      return 3 * f1->id() + e.second;
-    else if(f1->id() < f2->id())
-      return 3 * f1->id() + e.second;
+      return f2->edge_id(f2->index(f1));
     else
-      return 3 * f2->id() + f2->index(f1);
+      return f1->edge_id(e.second);
   }
 
 private:
