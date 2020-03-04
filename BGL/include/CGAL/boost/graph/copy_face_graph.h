@@ -201,8 +201,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
 
   // init halfedge index map
   /// \TODO shall we keep that?
-  helpers::init_halfedge_indices(const_cast<SourceMesh&>(sm),
-                                 get(boost::halfedge_index, sm));
+  BGL::internal::initialize_halfedge_index_map(get(boost::halfedge_index, sm), const_cast<SourceMesh&>(sm));
 
   copy_face_graph_impl(sm, tm,
                        bind_property_maps(get(boost::halfedge_index, sm),
