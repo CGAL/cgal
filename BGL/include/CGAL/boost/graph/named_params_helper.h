@@ -19,17 +19,16 @@
 #ifndef CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 #define CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 
+#include <CGAL/boost/graph/internal/initialized_index_maps_helpers.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
-
 #include <CGAL/property_map.h>
-#include <CGAL/boost/graph/properties.h>
+
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <CGAL/Dynamic_property_map.h>
-
 #include <boost/type_traits/is_same.hpp>
 
 #include <type_traits>
@@ -106,202 +105,14 @@ namespace CGAL {
     property_map_selector<PolygonMesh, PropertyTag> pms;
     return pms.get_const_pmap(p, pmesh);
   }
-// shortcut for accessing the value type of the property map
+
+  // Shortcut for accessing the value type of the property map
   template <class Graph, class Property>
   class property_map_value {
     typedef typename boost::property_map<Graph, Property>::const_type PMap;
   public:
     typedef typename boost::property_traits<PMap>::value_type type;
   };
-
-  namespace internal_np
-  {
-
-  //cases the map is writable for vertices
-  template< class PMap, class Graph>
-  void initialize_index_map(PMap map, const Graph& g, const boost::vertex_index_t&, const CGAL::Tag_true&)
-  {
-    CGAL::helpers::init_vertex_indices(g, map);
-  }
-
-  template< class PMap, class Graph, typename T>
-  void initialize_index_map(PMap map, const Graph& g, const CGAL::dynamic_vertex_property_t<T>&, const CGAL::Tag_true&)
-  {
-    CGAL::helpers::init_vertex_indices(g, map);
-  }
-
-  //cases the map is writable for halfedges
-  template< class PMap, class Graph>
-  void initialize_index_map(PMap map, const Graph& g, const boost::halfedge_index_t&, const CGAL::Tag_true&)
-  {
-    CGAL::helpers::init_halfedge_indices(g, map);
-  }
-
-  template< class PMap, class Graph, typename T>
-  void initialize_index_map(PMap map, const Graph& g, const  CGAL::dynamic_halfedge_property_t<T>&&, const CGAL::Tag_true&)
-  {
-    CGAL::helpers::init_halfedge_indices(g, map);
-  }
-  //cases the map is writable for faces
-  template< class PMap, class Graph>
-  void initialize_index_map(PMap map, const Graph& g, const boost::face_index_t&, const CGAL::Tag_true&)
-  {
-    CGAL::helpers::init_face_indices(g, map);
-  }
-  template< class PMap, class Graph, typename T>
-  void initialize_index_map(PMap map, const Graph& g, const CGAL::dynamic_face_property_t<T>&, const CGAL::Tag_true&)
-  {
-    CGAL::helpers::init_face_indices(g, map);
-  }
-
-  //default case : don't do anything
-  template<typename SimplexTag, class PMap, class Graph, typename IsWritableTag>
-  void initialize_index_map(PMap, const Graph&, const SimplexTag&, const IsWritableTag&)
-  {}
-
-
-#define CGAL_IS_PMAP_WRITABLE(TAG) template<typename IsRefConst> \
-  struct Is_pmap_writable<TAG, IsRefConst>{ typedef CGAL::Tag_true result; }; \
-  template<> \
-  struct Is_pmap_writable<TAG,std::integral_constant<bool, true> >{ typedef CGAL::Tag_false result; };
-
-  //Default is false
-  template<typename PMapCategory, typename IsRefConst>
-  struct Is_pmap_writable{
-    typedef CGAL::Tag_false result;
-  };
-
-  //Pmaps with these tags will be considered writable, unless their reference is const
-  CGAL_IS_PMAP_WRITABLE(boost::read_write_property_map_tag)
-  CGAL_IS_PMAP_WRITABLE(boost::writable_property_map_tag)
-  CGAL_IS_PMAP_WRITABLE(boost::lvalue_property_map_tag)
-#undef CGAL_IS_PMAP_WRITABLE
-
-  //overloads used to select a default map:
-  // use the one passed in the named parameters (user must have initialized it)
-  template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh>
-  MapFromNP
-  get_ndi_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&)
-  {
-    return m;
-  }
-
-  // use the one internal to the mesh (it will be init if writable)
-  template <class Default_tag, class Dynamic_tag, class Mesh>
-  typename boost::property_map<Mesh, Default_tag >::const_type
-  get_ndi_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m)
-  {
-    typedef typename boost::property_map<Mesh, Default_tag >::const_type Map_const_type;
-    typedef typename boost::property_traits
-        <typename boost::property_map<Mesh, Default_tag >
-        ::const_type>::category Category;
-    typedef typename boost::property_traits<Map_const_type>::reference Reference;
-
-    Map_const_type map = get(t, m);
-    typename Is_pmap_writable<Category,
-        std::is_const<Reference> >::result is_writable;
-    initialize_index_map(map, m, t,is_writable);
-    return map;
-  }
-
-  // create a dynamic property and initialize it
-  template <class Dynamic_tag, class Mesh>
-  typename boost::property_map<Mesh, Dynamic_tag >::const_type
-  get_ndi_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m)
-  {
-    typedef typename boost::property_map<Mesh, Dynamic_tag >::const_type Map_const_type;
-    Map_const_type map = get(t,m);
-    initialize_index_map(map, m, t, CGAL::Tag_true());
-    return map;
-  }
-
-  }//end of internal_np
-
-  //define types for maps :
-  //struct Default_face_index_map
-  //struct Default_vertex_index_map
-  //struct Default_halfedge_index_map
-#define CGAL_DEF_MAP_TYPE(TYPE)                               \
-  template<typename NP, typename TM>                          \
-  struct Default_##TYPE##_index_map{                          \
-  typedef typename boost::mpl::if_c<                          \
-  CGAL::graph_has_property<TM, boost::TYPE##_index_t>::value  \
-  , boost::TYPE##_index_t                                     \
-  , CGAL::dynamic_##TYPE##_property_t<int>                    \
-  >::type Final_tag;                                          \
-  typedef typename internal_np::Lookup_named_param_def<       \
-  internal_np::TYPE##_index_t,                                \
-  NP,                                                         \
-  typename boost::property_map<TM, Final_tag >::const_type    \
-  > ::type  type;                                             \
-};
-
-  CGAL_DEF_MAP_TYPE(face)
-  CGAL_DEF_MAP_TYPE(vertex)
-  CGAL_DEF_MAP_TYPE(halfedge)
-#undef CGAL_DEF_MAP_TYPE
-
-
-  template<typename Tag, typename Dynamic_tag, typename Mesh,
-  typename NamedParameters, typename Parameter>
-  class Get_index_map_from_NP {
-    private :
-    const Dynamic_tag dtag;
-    const Mesh& m;
-    const NamedParameters& np;
-    const Parameter p;
-
-    public:
-    //get the Default tag :
-    //if Mesh has an internal property map for Tag, use Tag, else use the Dynamic_tag.
-    typedef typename boost::mpl::if_c<CGAL::graph_has_property<Mesh, Tag>::value
-        , Tag, Dynamic_tag>::type Final_tag;
-
-    //If Parameter is in NamedParameters, take the NP map.
-    //Else, take the default map.
-    typedef typename internal_np::Lookup_named_param_def<
-        Parameter,
-        NamedParameters,
-        typename boost::property_map<Mesh, Final_tag >::const_type
-        > ::type  PropertyMapType;
-
-
-    Get_index_map_from_NP(const Tag,
-                          const Dynamic_tag dtag,
-                          const Mesh& m,
-                          const NamedParameters& np,
-                          const Parameter p)
-      : dtag(dtag), m(m), np(np), p(p) {}
-
-
-    PropertyMapType property_map()
-    {
-      return internal_np::get_ndi_map(parameters::get_parameter(np, p),
-                                      Final_tag(), dtag, m);
-    }
-  };
-
-  //define the
-  // get_initialized_face_index_map(), get_initialized_vertex_index_map(), get_initialized_halfedge_index_map()
-  // functions.
-  //This comment is here to make it easier to find the definition of the functions with a grep.
-
-#define CGAL_DEF_GET_INIT_ID_MAP(TYPE) template<class PolygonMesh, class NamedParameters> \
-  typename Default_##TYPE##_index_map<NamedParameters, PolygonMesh>::type            \
-  get_initialized_##TYPE##_index_map(const PolygonMesh& pmesh, const NamedParameters& np){ \
-  typedef Get_index_map_from_NP<boost::TYPE##_index_t,                               \
-  CGAL::dynamic_##TYPE##_property_t<int>,                                            \
-  PolygonMesh, NamedParameters, internal_np::TYPE##_index_t> MapGetter;              \
-  MapGetter get_map(boost::TYPE##_index_t(),                                         \
-  CGAL::dynamic_##TYPE##_property_t<int>(),                                          \
-  pmesh, np, internal_np::TYPE##_index);                                             \
-  return get_map.property_map();                                                     \
-  }
-  CGAL_DEF_GET_INIT_ID_MAP(face)
-  CGAL_DEF_GET_INIT_ID_MAP(vertex)
-  CGAL_DEF_GET_INIT_ID_MAP(halfedge)
-
-#undef CGAL_DEF_GET_INIT_ID_MAP
 
   template<typename PolygonMesh,
            typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >

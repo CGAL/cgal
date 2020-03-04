@@ -14,15 +14,15 @@
 #define CGAL_BOOST_GRAPH_BGL_PROPERTIES_H
 
 #include <CGAL/property_map.h>
+#include <CGAL/Dynamic_property_map.h>
+#include <CGAL/basic.h>
+
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <CGAL/Dynamic_property_map.h>
 
-#include <CGAL/basic.h>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -88,156 +88,7 @@ using boost::face_external_index_t;
 using boost::face_external_index;
 } // CGAL
 
-namespace CGAL{
-namespace helpers {
-
-//check that an existing map is initialized/valid
-template <class SimplexRange, class IndexMap>
-bool is_index_map_valid( std::size_t num_simplices,
-                        const SimplexRange& range,
-                        const IndexMap& idmap)
-{
-  
-  typedef typename boost::property_traits<IndexMap>::value_type Id_type;
-  Id_type max_id = static_cast<Id_type>(num_simplices);
-  std::vector<bool> indices(max_id);
-  for(const auto& simplex : range)
-  {
-    Id_type id = get(idmap, simplex);
-    if( id >= 0 && id < max_id && ! indices[id])
-      indices[id] = true;
-    else
-      return false;
-  }
-  return true;
-}
-
-
-// matches read-write property maps
-template <class PolygonMesh, class FaceIndexMap, class Tag>
-void init_face_indices(PolygonMesh& pm,
-                       FaceIndexMap& fid,
-                       boost::read_write_property_map_tag,
-                       Tag)
-{
-  if(is_index_map_valid(num_faces(pm), faces(pm), fid))
-    return;
-  typename boost::property_traits<FaceIndexMap>::value_type i = 0;
-  for(typename boost::graph_traits<PolygonMesh>::face_descriptor fd :
-                faces(pm))
-  {
-    put(fid, fd, i);
-    ++i;
-  }
-}
-template <class PolygonMesh, class VertexIndexMap, class Tag>
-void init_vertex_indices(PolygonMesh& pm,
-                         VertexIndexMap& vid,
-                         boost::read_write_property_map_tag,
-                         Tag)
-{
-  if(is_index_map_valid(num_vertices(pm), vertices(pm), vid))
-    return;
-  typename boost::property_traits<VertexIndexMap>::value_type i = 0;
-  for(typename boost::graph_traits<PolygonMesh>::vertex_descriptor vd :
-                vertices(pm))
-  {
-    put(vid, vd, i);
-    ++i;
-  }
-}
-template <class PolygonMesh, class HalfedgeIndexMap, class Tag>
-void init_halfedge_indices(PolygonMesh& pm,
-                           HalfedgeIndexMap& hid,
-                           boost::read_write_property_map_tag,
-                           Tag)
-{
-  if(is_index_map_valid(num_halfedges(pm), halfedges(pm), hid))
-    return;
-  typename boost::property_traits<HalfedgeIndexMap>::value_type i = 0;
-  for(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd :
-                halfedges(pm))
-  {
-    put(hid, hd, i);
-    ++i;
-  }
-}
-
-// matches mutable Lvalue property maps
-template <class PolygonMesh, class FaceIndexMap>
-void init_face_indices(PolygonMesh& pm,
-                       FaceIndexMap& fid,
-                       boost::lvalue_property_map_tag,
-                       boost::false_type)
-{
-  init_face_indices(pm, fid,
-    boost::read_write_property_map_tag(), boost::false_type());
-}
-template <class PolygonMesh, class VertexIndexMap>
-void init_vertex_indices(PolygonMesh& pm,
-                         VertexIndexMap& vid,
-                         boost::lvalue_property_map_tag,
-                         boost::false_type)
-{
-  init_vertex_indices(pm, vid,
-    boost::read_write_property_map_tag(), boost::false_type());
-}
-template <class PolygonMesh, class HalfedgeIndexMap>
-void init_halfedge_indices(PolygonMesh& pm,
-                         HalfedgeIndexMap& hid,
-                         boost::lvalue_property_map_tag,
-                         boost::false_type)
-{
-  init_halfedge_indices(pm, hid,
-    boost::read_write_property_map_tag(), boost::false_type());
-}
-
-// matches all other types of property map
-template <class PolygonMesh, class FaceIndexMap, class MapTag, class Tag>
-void init_face_indices(PolygonMesh&, FaceIndexMap, MapTag, Tag)
-{}
-template <class PolygonMesh, class VertexIndexMap, class MapTag, class Tag>
-void init_vertex_indices(PolygonMesh&, VertexIndexMap, MapTag, Tag)
-{}
-template <class PolygonMesh, class HalfedgeIndexMap, class MapTag, class Tag>
-void init_halfedge_indices(PolygonMesh&, HalfedgeIndexMap, MapTag, Tag)
-{}
-
-template <class PolygonMesh, class FaceIndexMap>
-void init_face_indices(PolygonMesh& pm, FaceIndexMap fid)
-{
-  init_face_indices(pm, fid,
-                    typename boost::property_traits<FaceIndexMap>::category(),
-                    typename boost::is_const<
-                      typename boost::remove_reference<
-                        typename boost::property_traits<FaceIndexMap>::reference
-                            >::type >::type() );
-}
-
-template <class PolygonMesh, class VertexIndexMap>
-void init_vertex_indices(PolygonMesh& pm, VertexIndexMap vid)
-{
-  init_vertex_indices(pm, vid,
-                      typename boost::property_traits<VertexIndexMap>::category(),
-                      typename boost::is_const<
-                        typename boost::remove_reference<
-                          typename boost::property_traits<VertexIndexMap>::reference
-                            >::type >::type() );
-}
-
-template <class PolygonMesh, class HalfedgeIndexMap>
-void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
-{
-  init_halfedge_indices(pm, hid,
-                        typename boost::property_traits<HalfedgeIndexMap>::category(),
-                        typename boost::is_const<
-                          typename boost::remove_reference<
-                            typename boost::property_traits<HalfedgeIndexMap>::reference
-                              >::type >::type() );
-}
-
-} //namespace helpers
-
+namespace CGAL {
 namespace internal {
   
   template<typename Polyhedron, typename Handle>
@@ -265,8 +116,8 @@ struct Edge_index_accessor
 };
 
 template<typename Handle, typename ValueType, typename Reference,
-         bool is_const = boost::is_const<
-                           typename boost::remove_reference<Reference>::type >::value>
+         bool is_const = std::is_const<
+                           typename std::remove_reference<Reference>::type >::value>
 struct Point_accessor
   : boost::put_get_helper< Reference, Point_accessor<Handle, ValueType, Reference> >
 {
@@ -335,12 +186,12 @@ enum vertex_time_stamp_t        { vertex_time_stamp};
 enum halfedge_time_stamp_t      { halfedge_time_stamp};
 enum face_time_stamp_t          { face_time_stamp};
 
-template <typename ID>
+template<typename ID>
 struct vertex_incident_patches_t {
   typedef ID type;
 };
 
-template <typename ID>
+template<typename ID>
 struct face_patch_id_t {
   typedef ID type;
 };
