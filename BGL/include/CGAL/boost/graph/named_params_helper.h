@@ -232,7 +232,6 @@ namespace CGAL {
       > ::type  type;
   };
 
-
   namespace Point_set_processing_3
   {
     template <typename ValueType>

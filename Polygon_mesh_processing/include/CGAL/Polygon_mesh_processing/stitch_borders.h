@@ -186,8 +186,7 @@ collect_duplicated_stitchable_boundary_edges
   {
     cc = get(Face_property_tag(), pmesh);
 
-    auto fim = CGAL::get_initialized_face_index_map(pmesh, np);
-    num_component = num_component_wrapper(pmesh, cc, fim);
+    num_component = num_component_wrapper(pmesh, cc, CGAL::get_initialized_face_index_map(pmesh, np));
     border_edges_per_cc.resize(num_component);
   }
   

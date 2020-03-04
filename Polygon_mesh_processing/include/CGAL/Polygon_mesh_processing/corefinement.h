@@ -46,9 +46,10 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
                                          std::size_t xtrm_cc_id,
                                          bool is_parent_outward_oriented)
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
+  typedef boost::graph_traits<TriangleMesh>                 Graph_traits;
+  typedef typename Graph_traits::face_descriptor            face_descriptor;
+  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm>  Side_of_tm;
+
 // first check that the orientation of the current cc is consistant with its
 // parent cc containing it
   bool new_is_parent_outward_oriented = internal::is_outward_oriented(
@@ -170,22 +171,23 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
  * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
  */
 template <class TriangleMesh, class NamedParameters>
-bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
+bool does_bound_a_volume(const TriangleMesh& tm,
+                         const NamedParameters& np)
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::const_type Vpm;
-  typedef typename Kernel_traits<
-    typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
+  typedef boost::graph_traits<TriangleMesh>                                     Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor                              vertex_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type                      Point;
+  typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
 
   if (!is_closed(tm)) return false;
   if (!is_triangle_mesh(tm)) return false;
 
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                get_const_property_map(boost::vertex_point, tm));
+                                         get_const_property_map(boost::vertex_point, tm));
 
-  auto fid_map = CGAL::get_initialized_face_index_map(tm, np);
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::const_type Fid_map;
+  Fid_map fid_map = get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -200,11 +202,11 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   boost::dynamic_bitset<> cc_handled(nb_cc, 0);
 
   // extract a vertex with max z coordinate for each connected component
-  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
+  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
   for(vertex_descriptor vd : vertices(tm))
   {
     std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
-    if (xtrm_vertices[cc_id]==GT::null_vertex())
+    if (xtrm_vertices[cc_id] == Graph_traits::null_vertex())
       xtrm_vertices[cc_id]=vd;
     else
       if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
@@ -511,20 +513,16 @@ corefine_and_compute_boolean_operations(
   typedef std::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
                                                             Edge_mark_map_tuple;
 
-// Face index point maps
+  // Face index point maps
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap;
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters2>::type FaceIndexMap2;
 
-  typedef typename CGAL::
-      Default_face_index_map<NamedParameters1, TriangleMesh>::type Fid_map;
-  typedef typename CGAL::
-      Default_face_index_map<NamedParameters2, TriangleMesh>::type Fid_map2;
+  CGAL_static_assertion((std::is_same<FaceIndexMap, FaceIndexMap2>::value));
 
-  CGAL_USE_TYPE(Fid_map2);
-  CGAL_assertion_code(
-    static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
-  CGAL_static_assertion(same_fidmap);
-  Fid_map fid_map1 = get_initialized_face_index_map(tm1, np1);
-  Fid_map fid_map2 = get_initialized_face_index_map(tm2, np2);
-// User visitor
+  FaceIndexMap fid_map1 = get_initialized_face_index_map(tm1, np1);
+  FaceIndexMap fid_map2 = get_initialized_face_index_map(tm2, np2);
+
+  // User visitor
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters1,
@@ -537,7 +535,7 @@ corefine_and_compute_boolean_operations(
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
                                                   Vpm,
                                                   Vpm_out_tuple,
-                                                  Fid_map,
+                                                  FaceIndexMap,
                                                   Default,
                                                   Ecm_in,
                                                   Edge_mark_map_tuple,
@@ -1010,8 +1008,8 @@ namespace experimental {
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                 get_property_map(boost::vertex_point, tm));
 // Face index map
-  typedef typename Default_face_index_map<NamedParameters, TriangleMesh>::type Fid_map;
-  Fid_map fid_map = CGAL::get_initialized_face_index_map(tm, np);
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type Fid_map;
+  Fid_map fid_map = get_initialized_face_index_map(tm, np);
 
 // Edge is-constrained maps
   typedef typename internal_np::Lookup_named_param_def <

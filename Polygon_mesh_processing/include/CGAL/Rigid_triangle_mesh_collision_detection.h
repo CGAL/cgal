@@ -537,8 +537,8 @@ public:
       std::vector<std::size_t> cc_ids(num_faces(tm));
 
       // face index map
-
-      auto fid_map = CGAL::get_initialized_face_index_map(tm, np);
+      typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type FaceIndexMap;
+      FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
