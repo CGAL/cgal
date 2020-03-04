@@ -797,8 +797,14 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& tm)
     for (std::size_t i=0; i<nbh; ++i)
     {
       vertex_descriptor v1=vr[i], v2=vr[(i+1)%nbh];
-      if (v2<v1) continue;
       std::pair<edge_descriptor, bool> edge_and_bool = edge(v1, v2, tm);
+      if (v2<v1){
+        // needed in case an existing border edge won't be found
+        // because the outgoing edge from the smallest vertex is on the patch boundary
+        if (edge_and_bool.second && is_border(halfedge(edge_and_bool.first, tm), tm))
+          outgoing_hedges[v2].push_back(opposite(halfedge(edge_and_bool.first, tm), tm));
+        continue;
+      }
       if (edge_and_bool.second)
         outgoing_hedges[v1].push_back( halfedge(edge_and_bool.first, tm));
       else
