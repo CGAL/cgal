@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
@@ -590,7 +581,7 @@ private:
    * \param cache Caches the vertical tangency points and intersection points.
    * \param ipts Output: A vector of intersection points + multiplicities.
    * \param ovlp_cv Output: An overlapping subcurve (if exists).
-   * \return Whether an overlap has occured.
+   * \return Whether an overlap has occurred.
    */
   bool _intersect (const Self& cv,
                    Intersection_map& inter_map,
@@ -1488,14 +1479,14 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
 
   if ((p_gt_ps && p_lt_pt) || (p_lt_ps && p_gt_pt))
   {
-    // The point p is definately in the x-range of the subcurve, as its
+    // The point p is definitely in the x-range of the subcurve, as its
     // parameter is between the source and target parameters.
     return (true);
   }
 
   if ((p_lt_ps && p_lt_pt) || (p_gt_ps && p_gt_pt))
   {
-    // The point p is definately not in the x-range of the subcurve,
+    // The point p is definitely not in the x-range of the subcurve,
     // as its parameter is smaller than both source and target parameter
     // (or greater than both of them).
     return (false);
@@ -1562,14 +1553,14 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
 
     if ((p_gt_ps && p_lt_pt) || (p_lt_ps && p_gt_pt))
     {
-      // The point p is definately in the x-range of the subcurve, as its
+      // The point p is definitely in the x-range of the subcurve, as its
       // parameter is between the source and target parameters.
       return (true);
     }
 
     if ((p_lt_ps && p_lt_pt) || (p_gt_ps && p_gt_pt))
     {
-      // The point p is definately not in the x-range of the subcurve,
+      // The point p is definitely not in the x-range of the subcurve,
       // as its parameter is smaller than both source and target parameter
       // (or greater than both of them).
       return (false);

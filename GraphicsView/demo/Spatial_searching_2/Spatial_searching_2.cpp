@@ -1,4 +1,6 @@
 #include <fstream>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_2.h>
@@ -15,6 +17,9 @@
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/PointsInKdTreeGraphicsItem.h>
 #include <CGAL/Qt/utility.h>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
   
 // the two base classes
 #include "ui_Spatial_searching_2.h"
@@ -242,7 +247,12 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -259,8 +269,16 @@ MainWindow::open(QString fileName)
   
   K::Point_2 p;
   std::vector<K::Point_2> points;
-  while(ifs >> p) {
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    CGAL::read_multi_point_WKT(ifs, points);
+#endif
+  }
+  else{
+    while(ifs >> p) {
+      points.push_back(p);
+    }
   }
   tree.insert(points.begin(), points.end());
 

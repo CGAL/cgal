@@ -2,7 +2,6 @@
 #include "Scene_c3t3_item.h"
 #include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
@@ -12,59 +11,63 @@
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
-  public CGAL::Three::Polyhedron_demo_io_plugin_interface,
-  public CGAL::Three::Polyhedron_demo_plugin_interface
+  public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
-    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "c3t3_io_plugin.json")
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "c3t3_io_plugin.json")
 
 public:
-  void init(QMainWindow*, CGAL::Three::Scene_interface* sc, Messages_interface*)
-  {
-    this->scene = sc;
-  }
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
   QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am);;OFF files (*.off)"; }
   QString loadNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
-  QList<QAction*> actions() const
-  {
-    return QList<QAction*>();
-  }
-  bool applicable(QAction*) const
-  {
-    return false;
-  }
-  bool canLoad() const;
-  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+  bool canLoad(QFileInfo) const;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
 
   bool canSave(const CGAL::Three::Scene_item*);
-  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
 
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
-  CGAL::Three::Scene_interface* scene;
 };
 
 
-bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad() const {
-  return true;
+bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad(QFileInfo fi) const {
+  if(!fi.suffix().contains("cgal"))
+    return true;
+  std::ifstream in(fi.filePath().toUtf8(),
+                   std::ios_base::in|std::ios_base::binary);
+  if(!in) {
+    std::cerr << "Error! Cannot open file "
+              << (const char*)fi.filePath().toUtf8() << std::endl;
+    return false;
+  }
+  std::string line;
+  std::istringstream iss;
+  std::getline (in,line);
+  iss.str(line);
+  std::string keyword;
+  if (iss >> keyword)
+    if (keyword == "binary")
+      return true;
+  return false;
 }
 
-
-CGAL::Three::Scene_item*
-Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
+QList<Scene_item*>
+Polyhedron_demo_c3t3_binary_io_plugin::load(
+    QFileInfo fileinfo, bool& ok, bool add_to_scene) {
 
     // Open file
+    ok = true;
     std::ifstream in(fileinfo.filePath().toUtf8(),
                      std::ios_base::in|std::ios_base::binary);
     if(!in) {
       std::cerr << "Error! Cannot open file "
                 << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-      return NULL;
+      ok = false;
+      return QList<Scene_item*>();
     }
     Scene_c3t3_item* item = new Scene_c3t3_item();
     
@@ -72,16 +75,19 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
     {
       CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
       item->setName(fileinfo.completeBaseName());
-      return item;
+      if(add_to_scene)
+        CGAL::Three::Three::scene()->addItem(item);
+      return QList<Scene_item*>()<< item;
     }
     if(fileinfo.suffix().toLower() == "cgal")
     {
         item->setName(fileinfo.baseName());
-        item->setScene(scene);
 
 
         if(item->load_binary(in)) {
-          return item;
+          if(add_to_scene)
+            CGAL::Three::Three::scene()->addItem(item);
+          return QList<Scene_item*>() << item;
         }
 
         item->c3t3().clear();
@@ -90,7 +96,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
           item->c3t3_changed();
           item->changed();
           item->resetCutPlane();
-          return item;
+          if(add_to_scene)
+            CGAL::Three::Three::scene()->addItem(item);
+          return QList<Scene_item*>()<< item;
         }
 
         item->c3t3().clear();
@@ -99,7 +107,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
           item->c3t3_changed();
           item->changed();
           item->resetCutPlane();
-          return item;
+          if(add_to_scene)
+            CGAL::Three::Three::scene()->addItem(item);
+          return QList<Scene_item*>()<<item;
         }
     }
     else if (fileinfo.suffix().toLower() == "mesh")
@@ -110,7 +120,6 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
       Scene_c3t3_item* item = new Scene_c3t3_item();
       item->setName(fileinfo.baseName());
-      item->setScene(scene);
       item->set_valid(false);
 
       if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, item->c3t3().triangulation()))
@@ -156,7 +165,9 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
         item->c3t3_changed();
         item->resetCutPlane();
-        return item;
+        if(add_to_scene)
+          CGAL::Three::Three::scene()->addItem(item);
+        return QList<Scene_item*>()<<item;
       }
       else if(item->c3t3().triangulation().number_of_finite_cells() == 0)
       {
@@ -170,7 +181,8 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
     // if all loading failed...
     delete item;
-    return NULL;
+    ok = false;
+    return QList<Scene_item*>();
 }
 
 bool Polyhedron_demo_c3t3_binary_io_plugin::canSave(const CGAL::Three::Scene_item* item)
@@ -181,51 +193,68 @@ bool Polyhedron_demo_c3t3_binary_io_plugin::canSave(const CGAL::Three::Scene_ite
 
 bool
 Polyhedron_demo_c3t3_binary_io_plugin::
-save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+save(QFileInfo fileinfo, QList<Scene_item *> &items)
 {
-    const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item);
-    if ( NULL == c3t3_item )
-    {
-      return false;
-    }
+  Scene_item* item = items.front();
+  if(!qobject_cast<Scene_c3t3_item*>(item)->is_valid())
+  {
+    QMessageBox::warning(CGAL::Three::Three::mainWindow(), "", "The c3t3_item is not valid. You cannot save it.");
+    return false;
+  }
+  const Scene_c3t3_item* c3t3_item = qobject_cast<const Scene_c3t3_item*>(item);
+  if ( NULL == c3t3_item )
+  {
+    return false;
+  }
 
-    QString path = fileinfo.absoluteFilePath();
+  QString path = fileinfo.absoluteFilePath();
 
-    if(path.endsWith(".cgal"))
-    {
+  if(path.endsWith(".cgal"))
+  {
     std::ofstream out(fileinfo.filePath().toUtf8(),
-                     std::ios_base::out|std::ios_base::binary);
+                      std::ios_base::out|std::ios_base::binary);
 
-    return out && c3t3_item->save_binary(out);
-    }
-
-   else  if (fileinfo.suffix() == "mesh")
-    {
-      std::ofstream medit_file (qPrintable(path));
-      c3t3_item->c3t3().output_to_medit(medit_file,true,true);
-          return true;
-    }
-    else if (fileinfo.suffix() == "ma")
-    {
-      std::ofstream maya_file (qPrintable(path));
-      c3t3_item->c3t3().output_to_maya(
-        maya_file,true);
-          return true;
-    }
-    else if (fileinfo.suffix() == "am")
-    {
-      std::ofstream avizo_file (qPrintable(path));
-      CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
-      return true;
-    }
-    else if (fileinfo.suffix() == "off")
-    {
-      std::ofstream off_file(qPrintable(path));
-      c3t3_item->c3t3().output_facets_in_complex_to_off(off_file);
-      return true;
-    }
+    bool ok = out && c3t3_item->save_binary(out);
+    if(!ok)
+      return false;
     else
-        return false;
+    {
+      items.pop_front();
+      return true;
+    }
+  }
+
+  else  if (fileinfo.suffix() == "mesh")
+  {
+    std::ofstream medit_file (qPrintable(path));
+    c3t3_item->c3t3().output_to_medit(medit_file,true,true);
+    items.pop_front();
+    return true;
+  }
+  else if (fileinfo.suffix() == "ma")
+  {
+    std::ofstream maya_file (qPrintable(path));
+    c3t3_item->c3t3().output_to_maya(
+          maya_file,true);
+    items.pop_front();
+    return true;
+  }
+  else if (fileinfo.suffix() == "am")
+  {
+    std::ofstream avizo_file (qPrintable(path));
+    CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
+    items.pop_front();
+    return true;
+  }
+  else if (fileinfo.suffix() == "off")
+  {
+    std::ofstream off_file(qPrintable(path));
+    c3t3_item->c3t3().output_facets_in_complex_to_off(off_file);
+    items.pop_front();
+    return true;
+  }
+  else
+    return false;
 }
 
 struct Fake_mesh_domain {

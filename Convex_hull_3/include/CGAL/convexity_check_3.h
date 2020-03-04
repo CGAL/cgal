@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -28,7 +19,6 @@
 
 #include <CGAL/intersections.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <boost/foreach.hpp>
 #include <CGAL/boost/graph/property_maps.h>
 
 namespace CGAL {
@@ -97,7 +87,7 @@ bool is_strongly_convex_3(const Polyhedron& P, const Traits& traits)
 
   if (v_it == v_it_e) return false;
   
-  BOOST_FOREACH(face_descriptor fd , faces(P))
+  for(face_descriptor fd : faces(P))
     if (!is_locally_convex(P, vpmap, fd, traits)) 
 	return false;
 
@@ -224,7 +214,7 @@ bool all_points_inside( ForwardIterator first,
 
    for (ForwardIterator p_it = first; p_it != last; p_it++)
    {
-      BOOST_FOREACH(face_descriptor fd, faces(P))
+      for(face_descriptor fd : faces(P))
       {
 	Plane_3 plane;
 	get_plane2(P,plane, fd);

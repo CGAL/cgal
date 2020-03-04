@@ -155,7 +155,6 @@ int main()
     }     
   }
 
-  #ifndef CGAL_CFG_NO_CPP0X_TUPLE
   // same test with std::tuple
   {
     typedef std::tuple<int, Point_3, bool, Vector_3> IndexedPointWithOrientableNormalTuple;
@@ -175,6 +174,6 @@ int main()
                    CGAL::make_nth_of_tuple_property_map<2>(IndexedPointWithOrientableNormalTuple()),
                    CGAL::make_nth_of_tuple_property_map<3>(IndexedPointWithOrientableNormalTuple()));
   }
-  #endif
+
   return 0;
 }

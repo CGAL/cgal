@@ -1,6 +1,7 @@
 #include <QtCore/qglobal.h>
 
-#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Three/Scene_interface.h>
 #include "Scene_edit_box_item.h"
 #include <CGAL/Three/Viewer_interface.h>
@@ -55,6 +56,11 @@ public Q_SLOTS:
   void enableAction();
   void clipbox();
   void clip(bool);
+  void connectNewViewer(QObject* o)
+  {
+    if(item)
+      o->installEventFilter(item);
+  }
   void tab_change();
 private:
   bool eventFilter(QObject *, QEvent *);
@@ -86,6 +92,8 @@ void Clipping_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_inter
           this, SLOT(clip(bool)));
   
   item = NULL;
+  connect(mw, SIGNAL(newViewerCreated(QObject*)),
+          this, SLOT(connectNewViewer(QObject*)));
   visualizer = NULL;
   shift_pressing = false;
 }
@@ -124,6 +132,10 @@ void Clipping_box_plugin::clipbox()
           this, &Clipping_box_plugin::tab_change);
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
+  
+  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    viewer->installEventFilter(item);
+  
   scene->addItem(item);
   actionClipbox->setEnabled(false);
 
@@ -139,58 +151,63 @@ void Clipping_box_plugin::clip(bool b)
 {
   typedef CGAL::Epick Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Mesh;
-  Viewer_interface* viewer = static_cast<Viewer_interface*>(*CGAL::QGLViewer::QGLViewerPool().begin());
-  if(b)
+  
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    if(!item)
+    CGAL::Three::Viewer_interface* viewer = 
+        qobject_cast<CGAL::Three::Viewer_interface*>(v);
+    if(b)
     {
-      dock_widget->hide();
-      return;
+      if(!item)
+      {
+        dock_widget->hide();
+        return;
+      }
+      Mesh m;
+      Kernel::Point_3 points[8];
+      for(int i=0; i<8; ++i)
+      {
+        points[i] = Kernel::Point_3(item->point(i,0),item->point(i,1), item->point(i,2));
+      }
+      CGAL::make_hexahedron(
+            points[0],
+          points[3],
+          points[2],
+          points[1],
+          points[5],
+          points[4],
+          points[7],
+          points[6],
+          m);
+      QVector4D planes[6];
+      int fid=0;
+      for(Mesh::Facet_iterator f : faces(m))
+      {
+        Kernel::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f,m);
+        double norm = normal.squared_length()*normal.squared_length();
+        Kernel::Plane_3 plane(f->halfedge()->vertex()->point(), 1.1*normal/norm);
+        planes[fid++] = QVector4D(plane.a(),
+                                  plane.b(),
+                                  plane.c(),
+                                  plane.d());
+      }
+      viewer->enableClippingBox(planes);
     }
-    Mesh m;
-    Kernel::Point_3 points[8];
-    for(int i=0; i<8; ++i)
+    else
     {
-      points[i] = Kernel::Point_3(item->point(i,0),item->point(i,1), item->point(i,2));
+      viewer->disableClippingBox();
+      if(!item)
+      {
+        dock_widget->hide();
+      }
     }
-    CGAL::make_hexahedron(
-          points[0],
-        points[3],
-        points[2],
-        points[1],
-        points[5],
-        points[4],
-        points[7],
-        points[6],
-        m);
-    QVector4D planes[6];
-    int fid=0;
-    BOOST_FOREACH(Mesh::Facet_iterator f, faces(m))
-    {
-      Kernel::Vector_3 normal = CGAL::Polygon_mesh_processing::compute_face_normal(f,m);
-      double norm = normal.squared_length()*normal.squared_length();
-      Kernel::Plane_3 plane(f->halfedge()->vertex()->point(), 1.1*normal/norm);
-      planes[fid++] = QVector4D(plane.a(),
-                                plane.b(),
-                                plane.c(),
-                                plane.d());
-    }
-    viewer->enableClippingBox(planes);
+    viewer->update();
   }
-  else
-  {
-    viewer->disableClippingBox();
-    if(!item)
-    {
-      dock_widget->hide();
-    }
-  }
-  viewer->update();
 }
 
 void Clipping_box_plugin::tab_change()
 {
-  QAction* action = mw->findChild<QAction*>("actionSwitchProjection");
+  QAction* action = mw->findChild<QAction*>("actionOrtho");
   if(dock_widget->tabWidget->currentIndex() == 1)
   {
     if(item)

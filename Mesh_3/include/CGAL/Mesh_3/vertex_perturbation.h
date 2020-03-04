@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -38,7 +29,7 @@
   #include <CGAL/Timer.h>
   #ifdef CGAL_LINKED_WITH_TBB
     #include <tbb/enumerable_thread_specific.h>
-    #include <tbb/atomic.h>
+    #include <atomic>
   #endif
 #endif
 
@@ -192,8 +183,8 @@ public:
    * @brief constructor
    */
   Abstract_perturbation()
-    : p_next_(NULL)
-    , p_previous_(NULL)
+    : p_next_(nullptr)
+    , p_previous_(nullptr)
     , order_(0)
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
     , counter_(0)
@@ -201,7 +192,7 @@ public:
 #endif
   {
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
-    // Initialized here in case it's some tbb::atomic
+    // Initialized here in case it's some std::atomic
     total_counter_ = 0;
     total_time_ = 0;
 #endif
@@ -243,7 +234,7 @@ public:
              const SliverCriterion& criterion,
              const FT& sliver_bound,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const
+             bool *could_lock_zone = nullptr) const
   {
 #ifndef CGAL_MESH_3_PERTURBER_VERBOSE
     return do_perturb(v, slivers, c3t3, domain, criterion,
@@ -272,7 +263,7 @@ public:
   {
     p_next_ = next;
 
-    if ( NULL != next )
+    if ( nullptr != next )
       next->p_previous_ = this;
   }
 
@@ -320,7 +311,7 @@ protected:
              const SliverCriterion& criterion,
              const FT& sliver_bound,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const = 0;
+             bool *could_lock_zone = nullptr) const = 0;
 
   /**
    * @brief a helper function which returns the amplitude of perturbation
@@ -362,8 +353,8 @@ private:
   mutable int counter_;
 #ifdef CGAL_LINKED_WITH_TBB
   mutable tbb::enumerable_thread_specific<CGAL::Timer> timer_;
-  tbb::atomic<int> total_counter_;
-  tbb::atomic<std::size_t> total_time_;
+  std::atomic<int> total_counter_;
+  std::atomic<std::size_t> total_time_;
 #else
   mutable CGAL::Timer timer_;
   int total_counter_;
@@ -431,7 +422,7 @@ protected:
              const SliverCriterion& criterion,
              const FT& sliver_bound,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const = 0;
+             bool *could_lock_zone = nullptr) const = 0;
 
 protected:
   // -----------------------------------
@@ -449,7 +440,7 @@ protected:
                      const MeshDomain& domain,
                      const SliverCriterion& criterion,
                      std::vector<Vertex_handle>& modified_vertices,
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
 
@@ -595,7 +586,7 @@ protected:
              const SliverCriterion& criterion,
              const FT&,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const
+             bool *could_lock_zone = nullptr) const
   {
     CGAL_precondition(!slivers.empty());
 
@@ -771,7 +762,7 @@ protected:
              const SliverCriterion& criterion,
              const FT&,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const
+             bool *could_lock_zone = nullptr) const
   {
     CGAL_precondition(!slivers.empty());
 
@@ -922,7 +913,7 @@ protected:
              const SliverCriterion& criterion,
              const FT&,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const
+             bool *could_lock_zone = nullptr) const
   {
     CGAL_precondition(!slivers.empty());
 
@@ -1152,7 +1143,7 @@ protected:
              const SliverCriterion& criterion,
              const FT& sliver_bound,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const = 0;
+             bool *could_lock_zone = nullptr) const = 0;
 
 protected:
   // -----------------------------------
@@ -1292,7 +1283,7 @@ protected:
              const SliverCriterion& criterion,
              const FT& sliver_bound,
              std::vector<Vertex_handle>& modified_vertices,
-             bool *could_lock_zone = NULL) const
+             bool *could_lock_zone = nullptr) const
   {
     CGAL_precondition(!slivers.empty());
 
@@ -1317,7 +1308,7 @@ private:
                      const SliverCriterion& criterion,
                      const FT& sliver_bound,
                      std::vector<Vertex_handle>& modified_vertices,
-                     bool *could_lock_zone = NULL) const
+                     bool *could_lock_zone = nullptr) const
   {
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
 

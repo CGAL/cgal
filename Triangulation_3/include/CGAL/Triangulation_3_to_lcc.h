@@ -1,20 +1,11 @@
 // Copyright (c) 2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -31,14 +22,14 @@ namespace CGAL {
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_3.
    * @param avol_to_dart a pointer to a std::map associating to each
-   *        tetrahedron of atr a corresponding dart in alcc. Not used if NULL.
+   *        tetrahedron of atr a corresponding dart in alcc. Not used if nullptr.
    * @return A dart incident to the infinite vertex.
    */
   template < class LCC, class Triangulation >
   typename LCC::Dart_handle import_from_triangulation_3
   (LCC& alcc, const Triangulation &atr,
    std::map<typename Triangulation::Cell_handle,
-            typename LCC::Dart_handle >* avol_to_dart=NULL)
+            typename LCC::Dart_handle >* avol_to_dart=nullptr)
   {
     CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
 
@@ -70,7 +61,7 @@ namespace CGAL {
 
     std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle> TC;
     std::map<typename Triangulation::Cell_handle, typename LCC::Dart_handle>*
-      mytc = (avol_to_dart==NULL?&TC:avol_to_dart);
+      mytc = (avol_to_dart==nullptr?&TC:avol_to_dart);
 
     itmap_tcell maptcell_it;
 

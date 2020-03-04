@@ -1,19 +1,10 @@
 // Copyright (c) 2005-2008 Fernando Luis Cacciola Carballal. All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 
@@ -145,13 +136,13 @@ public :
           valid = valid && ( begin->next() != Halfedge_const_handle());
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->next() == NULL!");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->next() == nullptr!");
             break;
           }
           valid = valid && ( begin->opposite() != Halfedge_const_handle());
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->opposite() == NULL!");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->opposite() == nullptr!");
             break;
           }
           // opposite integrity.
@@ -182,7 +173,7 @@ public :
           valid = valid && begin->vertex() != Vertex_const_handle();
           if ( ! valid) 
           {
-              CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->vertex() == NULL!");
+              CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->vertex() == nullptr!");
               break;
           }
           if ( ! begin->vertex()->has_infinite_time() )
@@ -202,7 +193,7 @@ public :
           valid = valid && ( begin->is_border() || begin->face() != Face_const_handle() );
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->face() == NULL.");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: he["<<id(begin)<<"]->face() == nullptr.");
             break;
           }
           valid = valid && ( begin->face() == begin->next()->face());
@@ -242,7 +233,7 @@ public :
           valid = valid && vbegin->halfedge() != Halfedge_const_handle()  ;
           if ( ! valid) 
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: v["<< id(vbegin) <<"]->halfedge() == NULL.");
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: v["<< id(vbegin) <<"]->halfedge() == nullptr.");
             break;
           }
           
@@ -312,7 +303,7 @@ public :
           valid = valid && ( begin->is_border() || fbegin->halfedge() != Halfedge_const_handle()  );
           if ( ! valid)
           {
-            CGAL_STSKEL_VALIDITY_TRACE("ERROR: f["<<id(fbegin)<<"]->halfedge() == NULL." );
+            CGAL_STSKEL_VALIDITY_TRACE("ERROR: f["<<id(fbegin)<<"]->halfedge() == nullptr." );
             break;
           }
           

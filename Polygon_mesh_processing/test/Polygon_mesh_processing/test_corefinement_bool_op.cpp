@@ -46,7 +46,7 @@ void run_boolean_operations(
 
   typedef boost::optional<Surface_mesh*> OSM;
 
-  CGAL::cpp11::array<OSM,4> output;
+  std::array<OSM,4> output;
   
   output[CFR::UNION]=OSM( &union_ );
   output[CFR::INTERSECTION]=OSM( &inter );
@@ -56,7 +56,7 @@ void run_boolean_operations(
   std::cout << "  Vertices before " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;
 
-  CGAL::cpp11::array<bool,4> res = PMP::corefine_and_compute_boolean_operations(tm1, tm2, output);
+  std::array<bool,4> res = PMP::corefine_and_compute_boolean_operations(tm1, tm2, output);
 
   std::cout << "  Vertices after " <<  tm1.number_of_vertices()
             << " " << tm2.number_of_vertices() << std::endl;
@@ -133,7 +133,7 @@ void run(char* P_fname, char* Q_fname, int k,
          const Result_checking& rc)
 {
   TriangleMesh P, Q, W, X, Y, Z;
-  std::vector< CGAL::cpp11::array<TriangleMesh*,4> > scenarios;
+  std::vector< std::array<TriangleMesh*,4> > scenarios;
   std::vector< std::string > scenarios_str;
   scenarios.reserve(21); // 21 = An2 + 2* An1 + An0
   scenarios_str.reserve(21);

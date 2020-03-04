@@ -1,5 +1,6 @@
 #include "Scene_polylines_item.h"
 #include "Scene_spheres_item.h"
+#include "Scene_points_with_normal_item.h"
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/Three/Three.h>
@@ -9,6 +10,14 @@
 #include <QAction>
 #include <QInputDialog>
 #include <QApplication>
+#include <CGAL/Three/Edge_container.h>
+#include <CGAL/Three/Point_container.h>
+#include <CGAL/Three/Three.h>
+
+using namespace CGAL::Three;
+typedef Edge_container Ec;
+typedef Point_container Pc;
+typedef Viewer_interface Vi;
 
 struct Scene_polylines_item_private {
     typedef Scene_polylines_item::K K;
@@ -36,15 +45,6 @@ struct Scene_polylines_item_private {
       computed_stats = false;
     }
 
-    enum VAOs {
-        Edges=0,
-        NbOfVaos
-    };
-    enum VBOs {
-        Edges_Vertices = 0,
-        NbOfVbos
-    };
-
     mutable Scene_spheres_item *spheres;
     mutable std::vector<float> positions_lines;
     mutable std::size_t nb_lines;
@@ -67,7 +67,7 @@ struct Scene_polylines_item_private {
 
 
 void
-Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
+Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
 {
   float lineWidth[2];
   if(!viewer->isOpenGL_4_3())
@@ -78,35 +78,21 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
     lineWidth[1] = 10;
   }
   line_Slider->setMaximum(lineWidth[1]);
-    QOpenGLShaderProgram *program;
-   //vao for the lines
-    {
-      if(viewer->isOpenGL_4_3())
-        program = item->getShaderProgram(Scene_polylines_item::PROGRAM_SOLID_WIREFRAME, viewer);
-      else
-        program = item->getShaderProgram(Scene_polylines_item::PROGRAM_NO_SELECTION, viewer);
-      program->bind();
-      
-      item->vaos[Edges]->bind();
-      item->buffers[Edges_Vertices].bind();
-      item->buffers[Edges_Vertices].allocate(positions_lines.data(),
-                                             static_cast<int>(positions_lines.size()*sizeof(float)));
-      program->enableAttributeArray("vertex");
-      program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-      item->buffers[Edges_Vertices].release();
-      item->vaos[Edges]->release();
-      program->release();
-      
-      nb_lines = positions_lines.size();
-      positions_lines.clear();
-      positions_lines.swap(positions_lines);
-    }
-    item->are_buffers_filled = true;
+  
+  item->getEdgeContainer(0)->initializeBuffers(viewer);
+  item->getEdgeContainer(0)->setFlatDataSize(nb_lines);
+  item->getPointContainer(0)->initializeBuffers(viewer);
+  item->getPointContainer(0)->setFlatDataSize(nb_lines);  
+  
+  positions_lines.clear();
+  positions_lines.shrink_to_fit();
 }
+
 void
 Scene_polylines_item_private::computeElements() const
 {
-    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
+    const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(
+          CGAL::QGLViewer::QGLViewerPool().first())->offset();
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
     double mean = 0;
@@ -146,12 +132,10 @@ Scene_polylines_item_private::computeElements() const
             positions_lines.push_back(a.x()+offset.x);
             positions_lines.push_back(a.y()+offset.y);
             positions_lines.push_back(a.z()+offset.z);
-            positions_lines.push_back(1.0);
 
             positions_lines.push_back(b.x()+offset.x);
             positions_lines.push_back(b.y()+offset.y);
             positions_lines.push_back(b.z()+offset.z);
-            positions_lines.push_back(1.0);
         }
 
     }
@@ -160,6 +144,16 @@ Scene_polylines_item_private::computeElements() const
     if(!computed_stats)
       mean_length = mean/double(nb_edges);
     computed_stats = true;
+    
+    item->getEdgeContainer(0)->allocate(
+          Ec::Vertices, positions_lines.data(),
+          static_cast<int>(positions_lines.size()*sizeof(float)));
+    item->getPointContainer(0)->allocate(
+          Pc::Vertices, positions_lines.data(),
+          static_cast<int>(positions_lines.size()*sizeof(float)));
+    
+    item->setBuffersFilled(true);
+    nb_lines = positions_lines.size();
     QApplication::restoreOverrideCursor();
 }
 
@@ -271,18 +265,24 @@ Scene_polylines_item_private::computeSpheres()
                     "</ul></p>"
                     "<p>Tip: To erase this item, set its radius to 0 or less. </p>")
                             );
+      spheres->computeElements();
       QApplication::restoreOverrideCursor();
 }
 
 Scene_polylines_item::Scene_polylines_item() 
-    :CGAL::Three::Scene_group_item("unnamed",Scene_polylines_item_private::NbOfVbos,Scene_polylines_item_private::NbOfVaos)
+    :CGAL::Three::Scene_group_item("unnamed")
     ,d(new Scene_polylines_item_private(this))
 {
     setRenderingMode(FlatPlusEdges);
     d->nb_lines = 0;
     d->spheres = NULL;
-    invalidateOpenGLBuffers();
-
+    setEdgeContainer(0, 
+                     new Ec(Three::mainViewer()->isOpenGL_4_3() ? Vi::PROGRAM_SOLID_WIREFRAME
+                                                                : Vi::PROGRAM_NO_SELECTION
+                                                                  , false));
+    setPointContainer(0, 
+                      new Pc(Vi::PROGRAM_NO_SELECTION, false));
+    
 }
 
 Scene_polylines_item::~Scene_polylines_item()
@@ -303,7 +303,7 @@ Scene_polylines_item::compute_bbox() const {
 
     if(isEmpty())
     {
-        _bbox =Bbox();
+        setBbox(Bbox());
         return;
     }
     std::list<Point_3> boxes;
@@ -321,20 +321,17 @@ Scene_polylines_item::compute_bbox() const {
                 CGAL::bounding_box(boxes.begin(), boxes.end()) :
                 Iso_cuboid_3();
 
-    _bbox = Bbox(bbox.xmin(),
+    setBbox(Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
                 bbox.xmax(),
                 bbox.ymax(),
-                bbox.zmax());
+                bbox.zmax()));
 }
 
 Scene_item::Bbox Scene_polylines_item::bbox() const
 {
-  if(!is_bbox_computed)
-      compute_bbox();
-  is_bbox_computed = true;
-  return _bbox;
+  return Scene_item_rendering_helper::bbox();
 }
 Scene_polylines_item* 
 Scene_polylines_item::clone() const {
@@ -388,10 +385,18 @@ void
 Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
-  if(!are_buffers_filled)
+  if(!isInit(viewer))
+    initGL(viewer);
+  if ( getBuffersFilled() &&
+       ! getBuffersInit(viewer))
   {
-    d->computeElements();
-    d->initializeBuffers(viewer);
+    initializeBuffers(viewer);
+    setBuffersInit(viewer, true);
+  }
+  if(!getBuffersFilled())
+  {
+    computeElements();
+    initializeBuffers(viewer);
   }
   if(d->draw_extremities)
   {
@@ -404,39 +409,32 @@ void
 Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
+  
   if(renderingMode() == Wireframe
      || renderingMode() == FlatPlusEdges)
   {
-    if(!are_buffers_filled)
+    if(!isInit(viewer))
+      initGL(viewer);
+    if ( getBuffersFilled() &&
+         ! getBuffersInit(viewer))
     {
-      d->computeElements();
-      d->initializeBuffers(viewer);
+      initializeBuffers(viewer);
+      setBuffersInit(viewer, true);
     }
-    
-    vaos[Scene_polylines_item_private::Edges]->bind();
-    if(!viewer->isOpenGL_4_3())
+    if(!getBuffersFilled())
     {
-      attribBuffers(viewer, PROGRAM_NO_SELECTION);
+      computeElements();
+      initializeBuffers(viewer);
     }
-    else
-    {
-      attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
-    }
-    QOpenGLShaderProgram *program = viewer->isOpenGL_4_3() ? getShaderProgram(PROGRAM_SOLID_WIREFRAME)
-                                                           : getShaderProgram(PROGRAM_NO_SELECTION);
-    program->bind();
     if(viewer->isOpenGL_4_3())
     {
       QVector2D vp(viewer->width(), viewer->height());
-      program->setUniformValue("viewport", vp);
-      program->setUniformValue("near",(GLfloat)viewer->camera()->zNear());
-      program->setUniformValue("far",(GLfloat)viewer->camera()->zFar());
-      program->setUniformValue("width", GLfloat(d->line_Slider->value()));
+      
+      getEdgeContainer(0)->setViewport(vp);
+      getEdgeContainer(0)->setWidth(GLfloat(d->line_Slider->value()));
     }
-    program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->nb_lines/4));
-    program->release();
-    vaos[Scene_polylines_item_private::Edges]->release();
+    getEdgeContainer(0)->setColor(this->color());
+    getEdgeContainer(0)->draw(viewer, true);
   }
     if(d->draw_extremities)
     {
@@ -450,24 +448,25 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     return;
   if(renderingMode() == Points)
   {
-    if(!are_buffers_filled)
+    if(!isInit(viewer))
+      initGL(viewer);
+    if ( getBuffersFilled() &&
+         ! getBuffersInit(viewer))
     {
-      d->computeElements();
-      d->initializeBuffers(viewer);
+      initializeBuffers(viewer);
+      setBuffersInit(viewer, true);
     }
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
     viewer->setGlPointSize(GLfloat(5));
-    vaos[Scene_polylines_item_private::Edges]->bind();
-    attribBuffers(viewer, PROGRAM_NO_SELECTION);
-    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
-    program->bind();
-    QColor temp = this->color();
-    program->setAttributeValue("colors", temp);
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->nb_lines/4));
-    // Clean-up
-    vaos[Scene_polylines_item_private::Edges]->release();
-    program->release();
+    if(!getBuffersFilled())
+    {
+      computeElements();
+      initializeBuffers(viewer);
+    }
+    
+    getPointContainer(0)->setColor(this->color());
+    getPointContainer(0)->draw(viewer, true);
     viewer->setGlPointSize(point_size);
   }
    if(d->draw_extremities)
@@ -508,13 +507,21 @@ QMenu* Scene_polylines_item::contextMenu()
         menu->addMenu(container);
 
         menu->setProperty(prop_name, true);
+        container->menuAction()->setProperty("is_groupable", true);
+        QAction* actionCreatePointSet = 
+            menu->addAction(tr("Create Point Set from Polyline"));
+        actionCreatePointSet->setObjectName("actionCreatePointSet");
+        connect(actionCreatePointSet, &QAction::triggered,
+                this, &Scene_polylines_item::point_set_from_polyline);
     }
     return menu;
 }
 
 void Scene_polylines_item::invalidateOpenGLBuffers()
 {
-    are_buffers_filled = false;
+    setBuffersFilled(false);
+    getEdgeContainer(0)->reset_vbos(ALL);
+    getPointContainer(0)->reset_vbos(ALL);
     d->invalidate_stats();
     compute_bbox();
 
@@ -560,13 +567,22 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(d->spheres);
           scene->changeGroup(d->spheres, this);
           lockChild(d->spheres);
-          d->computeSpheres();
+          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+          {
+            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
+          }
           d->spheres->invalidateOpenGLBuffers();
+          d->computeSpheres();
+          
         }
         else if(r>0 && d->spheres)
         {
-          d->computeSpheres();
+//          Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+//          {
+//            d->spheres->gl_initialization(qobject_cast<Viewer_interface*>(v));
+//          }
           d->spheres->invalidateOpenGLBuffers();
+          d->computeSpheres();
         }
         else if (r<=0 && d->spheres!=NULL)
         {
@@ -748,4 +764,36 @@ void Scene_polylines_item::setWidth( int i)
 {
   d->line_Slider->setValue(i);
   redraw();
+}
+
+void Scene_polylines_item::initializeBuffers(Viewer_interface *v) const
+{
+  d->initializeBuffers(v);
+}
+
+void Scene_polylines_item::computeElements() const
+{
+  d->computeElements();
+}
+
+void Scene_polylines_item::point_set_from_polyline()
+{
+  Scene_points_with_normal_item* new_ps_item 
+      = new Scene_points_with_normal_item();
+  for(auto it = polylines.begin();
+      it != polylines.end();
+      ++it)
+  {
+    std::size_t length = it->size();
+    for(std::size_t id = 0; id < length; ++id)
+    {
+      if(id != length - 1
+         || it->at(id) != it->front())
+        new_ps_item->point_set()->insert(it->at(id));
+    }
+  }
+  new_ps_item->setName(tr("Points from %1").arg(name()));
+  CGAL::Three::Three::scene()->addItem(new_ps_item);
+  new_ps_item->invalidateOpenGLBuffers();
+  new_ps_item->redraw();
 }

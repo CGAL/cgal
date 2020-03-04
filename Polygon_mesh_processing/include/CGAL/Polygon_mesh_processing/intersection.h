@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime Gimeno and Sebastien Loriot
@@ -442,12 +433,12 @@ compute_face_face_intersection(const FaceRange& face_range1,
        typename boost::property_traits<VertexPointMap1>::value_type,
        typename boost::property_traits<VertexPointMap2>::value_type
        >::value) );
-  BOOST_FOREACH(face_descriptor f, face_range1)
+  for(face_descriptor f : face_range1)
   {
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm1), f));
   }
 
-  BOOST_FOREACH(face_descriptor f, face_range2)
+  for(face_descriptor f : face_range2)
   {
     boxes2.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm2), f));
   }
@@ -566,7 +557,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
         );
 
 
-  BOOST_FOREACH(face_descriptor f, face_range)
+  for(face_descriptor f : face_range)
   {
     faces.push_back(f);
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), faces.size()-1));
@@ -698,13 +689,13 @@ compute_face_polylines_intersection(const FaceRange& face_range,
         );
 
   std::size_t polylines_size = 0;
-  BOOST_FOREACH(Polyline poly, polyline_range)
+  for(Polyline poly : polyline_range)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
   }
   boxes2.reserve( polylines_size );
 
-  BOOST_FOREACH(face_descriptor f, face_range)
+  for(face_descriptor f : face_range)
   {
     faces.push_back(f);
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), std::make_pair(0, faces.size()-1)));
@@ -874,14 +865,14 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   std::vector<Box> boxes2;
   std::size_t polylines_size = 0;
   CGAL::Bbox_3 b1, b2;
-  BOOST_FOREACH(Polyline poly, polylines1)
+  for(Polyline poly : polylines1)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
     b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
   polylines_size = 0;
-  BOOST_FOREACH(Polyline poly, polylines2)
+  for(Polyline poly : polylines2)
   {
     polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
     b2 += CGAL::bbox_3(poly.begin(), poly.end());
@@ -1040,7 +1031,7 @@ void get_one_point_per_cc(TriangleMesh& tm,
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   boost::unordered_map<face_descriptor, int> fid_map;
   int id = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     fid_map.insert(std::make_pair(fd,id++));
   }
@@ -1054,7 +1045,7 @@ void get_one_point_per_cc(TriangleMesh& tm,
   std::vector<bool> is_cc_treated(nb_cc, false);
   points_of_interest.resize(nb_cc);
   int cc_treated = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     int cc=fcc_map[fd];
     if(!is_cc_treated[cc])
@@ -1075,7 +1066,7 @@ bool is_mesh2_in_mesh1_impl(const AABB_tree& tree1,
 {
   //for each CC, take a point on it and test bounded side
   Side_of_triangle_mesh<TriangleMesh, GT, VPM> sotm(tree1, gt);
-  BOOST_FOREACH(const typename GT::Point_3& p, points_of_interest2)
+  for(const typename GT::Point_3& p : points_of_interest2)
   {
     if(sotm(p) == CGAL::ON_BOUNDED_SIDE) // sufficient as we know meshes do not intersect
     {
@@ -1471,13 +1462,13 @@ struct Mesh_callback
       report_overlap(report_overlap), nps(nps), gt(gt)
   {
     std::size_t size = std::distance(meshes.begin(), meshes.end());
-    trees = std::vector<AABBTree*>(size, NULL);
+    trees = std::vector<AABBTree*>(size, nullptr);
     points_of_interest.resize(size);
   }
 
   ~Mesh_callback()
   {
-    BOOST_FOREACH(AABBTree* tree, trees)
+    for(AABBTree* tree : trees)
     {
       delete tree;
     }

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
@@ -41,15 +32,7 @@ namespace CGAL {
 
 namespace SegmentDelaunayGraphLinf_2 {
 
-#ifndef CGAL_CFG_NO_CPP0X_TUPLE
-#if (defined(_MSC_VER) && (_MSC_VER < 1700))
-#define sdg_tuple_maker cpp11::make_tuple
-#else
 #define sdg_tuple_maker std::forward_as_tuple
-#endif
-#else
-#define sdg_tuple_maker cpp11::make_tuple
-#endif
 
 template<class K>
 class Voronoi_vertex_ring_C2
@@ -1898,15 +1881,15 @@ private:
 
       // tocheck
 
-      const cpp11::tuple<
+      const std::tuple<
         const Site_2 &, const Site_2 &, const Site_2 &> sites =
          r_.is_segment() ? sdg_tuple_maker(p_, q_, r_) :
         (p_.is_segment() ? sdg_tuple_maker(q_, r_, p_) :
                            sdg_tuple_maker(r_, p_, q_) );
 
-      const Site_2 & p1 = cpp11::get<0>(sites);
-      const Site_2 & p2 = cpp11::get<1>(sites);
-      const Site_2 & s  = cpp11::get<2>(sites);
+      const Site_2 & p1 = std::get<0>(sites);
+      const Site_2 & p2 = std::get<1>(sites);
+      const Site_2 & s  = std::get<2>(sites);
 
       const RT d_fine = (CGAL::min)(CGAL::abs(scalediffdvtx),
                                     CGAL::abs(scalediffdvty));
@@ -2047,15 +2030,15 @@ private:
 
       // tocheck
 
-      const cpp11::tuple<
+      const std::tuple<
         const Site_2 &, const Site_2 &, const Site_2 &> sites =
          p_.is_point() ? sdg_tuple_maker(p_, q_, r_) :
         (q_.is_point() ? sdg_tuple_maker(q_, r_, p_) :
                          sdg_tuple_maker(r_, p_, q_) );
 
-      const Site_2 & pt_site = cpp11::get<0>(sites);
-      const Site_2 & s1 = cpp11::get<1>(sites);
-      const Site_2 & s2 = cpp11::get<2>(sites);
+      const Site_2 & pt_site = std::get<0>(sites);
+      const Site_2 & s1 = std::get<1>(sites);
+      const Site_2 & s2 = std::get<2>(sites);
 
       const bool is_s1src_s2 = is_endpoint_of(s1.source_site(), s2);
       const bool is_s1trg_s2 = is_endpoint_of(s1.target_site(), s2);
@@ -3509,10 +3492,10 @@ public:
   //--------------------------------------------------------------------------
 
   inline FT x(Integral_domain_without_division_tag) const {
-    return CGAL::to_double(hx()) / CGAL::to_double(hw());
+    return FT(CGAL::to_double(hx()) / CGAL::to_double(hw()));
   }
   inline FT y(Integral_domain_without_division_tag) const {
-    return CGAL::to_double(hy()) / CGAL::to_double(hw());
+    return FT(CGAL::to_double(hy()) / CGAL::to_double(hw()));
   }
 
   inline FT x(Field_tag) const { return hx() / hw(); }

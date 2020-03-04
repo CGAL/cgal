@@ -302,7 +302,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::apply_Partition_button_clicked(Fa
   if(!isClosed)
   {
     bool has_sdf_values = false;
-    BOOST_FOREACH(typename boost::graph_traits<Facegraph>::face_descriptor f, 
+    for(typename boost::graph_traits<Facegraph>::face_descriptor f : 
                   faces(*pair->first->face_graph()))
     {
       if(sdf_pmap[f] != -1

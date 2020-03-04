@@ -76,10 +76,10 @@ public:
   typedef EPICK::Point_3                                           value_type;
   typedef const value_type&                                         reference;
   typedef boost::read_write_property_map_tag                        category;
-  std::vector<double>* positions;
+  std::vector<float>* positions;
   Mesh* mesh;
   Id_setter* id_setter;
-  Array_based_vertex_point_map(std::vector<double>* positions, Mesh* mesh, Id_setter* id_setter) : positions(positions), mesh(mesh), id_setter(id_setter) {}
+  Array_based_vertex_point_map(std::vector<float>* positions, Mesh* mesh, Id_setter* id_setter) : positions(positions), mesh(mesh), id_setter(id_setter) {}
 
 };
 
@@ -261,6 +261,7 @@ public:
   /// Returns 0, so that one cannot clone an "edit polyhedron" item.
   Scene_edit_polyhedron_item* clone() const;
 
+  void init(CGAL::Three::Viewer_interface* viewer) const;
   // Function for displaying meta-data of the item
   QString toolTip() const;
 
@@ -272,17 +273,15 @@ public:
   
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const { 
-    return m == Gouraud; 
+    return m == GouraudPlusEdges;
   }
-  // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-  void draw() const{}
   void draw(CGAL::Three::Viewer_interface*) const;
   void drawEdges(CGAL::Three::Viewer_interface*) const;
   void drawTransparent(Viewer_interface *) const;
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
   template<typename Mesh>
-  void draw_frame_plane(CGAL::QGLViewer *, Mesh *mesh) const;
+  void draw_frame_plane(Mesh *mesh) const;
   // Get wrapped Surface_mesh
   SMesh*       surface_mesh();
   const SMesh* surface_mesh() const;
@@ -294,7 +293,7 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   void compute_bbox() const;
-  Bbox bbox() const{return Scene_item::bbox();}
+  Bbox bbox() const{return Scene_item_rendering_helper::bbox();}
 
   int get_k_ring();
   void set_k_ring(int v);
@@ -304,6 +303,8 @@ public:
   bool eventFilter(QObject *target, QEvent *event);
   void update_frame_plane();
   void ShowAsSphere(bool b);
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+  void computeElements() const;
 
 public Q_SLOTS:
   void reset_spheres();

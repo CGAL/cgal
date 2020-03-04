@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent Saboret, Pierre Alliez, Bruno Levy
 
@@ -42,7 +33,6 @@
 #include <CGAL/Eigen_solver_traits.h>
 #endif
 
-#include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/unordered_set.hpp>
@@ -249,12 +239,12 @@ public:
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
     boost::unordered_set<vertex_descriptor> main_border;
 
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(bhd,mesh)){
+    for(vertex_descriptor v : vertices_around_face(bhd,mesh)){
       main_border.insert(v);
     }
 
     int count = 0;
-    BOOST_FOREACH(vertex_descriptor v, vertices){
+    for(vertex_descriptor v : vertices){
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
         // Compute the line i of matrix A for i inner vertex
@@ -283,7 +273,7 @@ public:
     CGAL_assertion(Dv == 1.0);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-    BOOST_FOREACH(vertex_descriptor v, vertices)
+    for(vertex_descriptor v : vertices)
     {
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
@@ -334,7 +324,7 @@ protected:
                                           VertexUVmap uvmap,
                                           VertexIndexMap vimap) const
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)){
+    for(halfedge_descriptor hd : halfedges_around_face(bhd, mesh)){
       // Get vertex index in sparse linear system
       int index = get(vimap, target(hd, mesh));
       // Write a diagonal coefficient of A

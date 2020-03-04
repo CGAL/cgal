@@ -164,7 +164,7 @@ an `OutputIterator` to put anchor points in.\n
 
 \cgalNPBegin{triangles} \anchor VSA_triangles
 an `OutputIterator` to put indexed triangles in.\n
-\b Type : a class model of `OutputIterator` with `CGAL::cpp11::array<std::size_t, 3>` value type.\n
+\b Type : a class model of `OutputIterator` with `std::array<std::size_t, 3>` value type.\n
 \b Default : if this parameter is omitted, no output operation is performed
 \cgalNPEnd
 

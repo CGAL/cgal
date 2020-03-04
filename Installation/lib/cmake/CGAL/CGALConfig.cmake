@@ -143,9 +143,6 @@ foreach(cgal_lib ${CGAL_LIBRARIES})
     if(NOT TARGET CGAL::${cgal_lib})
       add_library(CGAL::${cgal_lib} ALIAS ${cgal_lib})
     endif()
-    if(${cgal_lib} STREQUAL CGAL)
-      target_compile_definitions(CGAL INTERFACE CGAL_HEADER_ONLY=1)
-    endif()
     CGAL_setup_target_dependencies(${cgal_lib} INTERFACE)
   endif()
 endforeach()
@@ -169,5 +166,10 @@ cgal_parse_version_h( "${CGAL_INSTALLATION_PACKAGE_DIR}/include/CGAL/version.h"
   "CGAL_BUGFIX_VERSION"
   "CGAL_BUILD_VERSION")
 set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUGFIX_VERSION}.${CGAL_BUILD_VERSION}")
+
+if( CGAL_DEV_MODE OR RUNNING_CGAL_AUTO_TEST )
+  # Do not use -isystem for CGAL include paths
+  set(CMAKE_NO_SYSTEM_FROM_IMPORTED TRUE)
+endif()
 
 include("${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake")

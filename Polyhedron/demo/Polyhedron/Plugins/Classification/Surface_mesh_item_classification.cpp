@@ -69,7 +69,7 @@ void Surface_mesh_item_classification::backup_existing_colors_and_add_new()
   {
     m_real_color
       = m_mesh->polyhedron()->add_property_map<face_descriptor, CGAL::Color>("f:real_color").first;
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     {
       m_real_color[fd] = m_color[fd];
       m_color[fd] = CGAL::Color(128, 128, 128);
@@ -92,17 +92,17 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
 
   if (index_color == -1) // item color
   {
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
       m_color[fd] = CGAL::Color(128,128,128);
   }
   else if (index_color == 0) // real colors
   {
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
       m_color[fd] = m_real_color[fd];
   }
   else if (index_color == 1) // classif
   {
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     {
       QColor color (128, 128, 128);
       std::size_t c = m_classif[fd];
@@ -115,7 +115,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
   }
   else if (index_color == 2) // training
   {
-    BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+    for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     {
       QColor color (128, 128, 128);
       std::size_t c = m_training[fd];
@@ -140,7 +140,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       if (m_label_probabilities.size() <= corrected_index ||
           m_label_probabilities[corrected_index].size() != num_faces(*(m_mesh->polyhedron())))
       {
-        BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+        for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
           m_color[fd] = CGAL::Color((unsigned char)(128),
                                     (unsigned char)(128),
@@ -149,7 +149,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       }
       else
       {
-        BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+        for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
           float v = std::max (0.f, std::min(1.f, m_label_probabilities[corrected_index][fd]));
           m_color[fd] = CGAL::Color((unsigned char)(ramp.r(v) * 255),
@@ -181,7 +181,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
       }
       else
       {
-        BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+        for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
         {
           if (feature->value(fd) > max)
             max = feature->value(fd);
@@ -190,7 +190,7 @@ void Surface_mesh_item_classification::change_color (int index, float* vmin, flo
         }
       }
       
-      BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+      for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
       {
         float v = (feature->value(fd) - min) / (max - min);
         if (v < 0.f) v = 0.f;
@@ -281,7 +281,7 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
   std::vector<std::size_t> nb_label (m_labels.size(), 0);
   std::size_t nb_total = 0;
   
-  BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+  for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
   {
     training[fd] = m_training[fd];
     if (training[fd] != std::size_t(-1))
@@ -376,7 +376,7 @@ void Surface_mesh_item_classification::train (int classifier, const QMultipleInp
 #endif
   }
 
-  BOOST_FOREACH(face_descriptor fd, faces(*(m_mesh->polyhedron())))
+  for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     m_classif[fd] = indices[fd];
 
   if (m_index_color == 1 || m_index_color == 2)

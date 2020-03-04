@@ -44,6 +44,8 @@ Returns the intersection of `s1` and `s2`.
 */ 
 typedef unspecified_type Intersect_2; 
 
+///@}
+
 /// \name Types required with Exact_predicates_tag
 /// When the constrained triangulation is instantiated with the intersection tag `CGAL::Exact_predicates_tag`, the used algorithm needs to be able to compare some distances between points and lines and the following types are further required.
 /// @{

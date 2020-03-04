@@ -1,19 +1,10 @@
 // Copyright (c) 2019  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -231,7 +222,6 @@ bool is_default_parameter(const T&)
 
 } //namespace CGAL
 
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
 // code added to avoid silent runtime issues in non-updated code
 namespace boost
 {
@@ -241,6 +231,5 @@ namespace boost
     CGAL_static_assertion(B && "You must use CGAL::parameters::get_parameter instead of boost::get_param");
   }
 }
-#endif
 
 #endif // CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_HPP

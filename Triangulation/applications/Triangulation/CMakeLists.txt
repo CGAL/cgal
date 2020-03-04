@@ -1,20 +1,8 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_apps )
-
-
-cmake_minimum_required(VERSION 3.1)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
-
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
- 
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )

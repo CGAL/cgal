@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Clement Jamin
 
@@ -37,7 +28,7 @@
 #include <tbb/concurrent_vector.h>
 #include <tbb/scalable_allocator.h>
 
-#include <tbb/atomic.h>
+#include <atomic>
 
 #include <vector>
 
@@ -74,8 +65,8 @@ public:
 
     m_num_cells =
       num_grid_cells_per_axis*num_grid_cells_per_axis*num_grid_cells_per_axis;
-    m_occupation_grid = new tbb::atomic<int>[m_num_cells];
-    m_num_batches_grid = new tbb::atomic<int>[m_num_cells];
+    m_occupation_grid = new std::atomic<int>[m_num_cells];
+    m_num_batches_grid = new std::atomic<int>[m_num_cells];
     // Initialize grid
     for (int i = 0 ; i < m_num_cells ; ++i)
     {
@@ -115,15 +106,15 @@ public:
 
   void add_batch(int cell_index, int to_add)
   {
-    m_num_batches_grid[cell_index].fetch_and_add(to_add);
+    m_num_batches_grid[cell_index].fetch_add(to_add);
   }
 
   void add_occupation(int cell_index, int to_add, int)
   {
-    m_occupation_grid[cell_index].fetch_and_add(to_add);
+    m_occupation_grid[cell_index].fetch_add(to_add);
 
     /*int new_occupation =
-      (m_occupation_grid[cell_index].fetch_and_add(to_add))
+      (m_occupation_grid[cell_index].fetch_add(to_add))
       + to_add;
     //m_num_batches_grid[cell_index] = num_items_in_work_queue;
 
@@ -230,7 +221,7 @@ public:
 
 
     // Rotate
-    static tbb::atomic<int> last_cell_index;
+    static std::atomic<int> last_cell_index;
     //std::cerr << "last=" << last_cell_index << std::endl;
     int i = (last_cell_index + 1) % m_num_cells;
     for ( ; i != last_cell_index ; i = (i + 1) % m_num_cells)
@@ -255,11 +246,11 @@ protected:
 
   int                                             m_num_grid_cells_per_axis;
   int                                             m_num_cells;
-  tbb::atomic<int> *                              m_occupation_grid;
-  tbb::atomic<int> *                              m_num_batches_grid;
+  std::atomic<int> *                              m_occupation_grid;
+  std::atomic<int> *                              m_num_batches_grid;
 
-  tbb::atomic<int>                                m_laziest_cell_index;
-  tbb::atomic<int>                                m_laziest_cell_occupation;
+  std::atomic<int>                                m_laziest_cell_index;
+  std::atomic<int>                                m_laziest_cell_occupation;
 };
 
 
@@ -513,7 +504,7 @@ public:
   {
     m_tls_work_buffers = new TLS_WorkBuffer[m_num_cells];
     m_work_batches = new tbb::concurrent_queue<WorkBatch>[m_num_cells];
-    m_num_batches = new tbb::atomic<int>[m_num_cells];
+    m_num_batches = new std::atomic<int>[m_num_cells];
 
     for (int i = 0 ; i < m_num_cells ; ++i)
       m_num_batches[i] = 0;
@@ -682,7 +673,7 @@ protected:
   Work_statistics                   m_stats;
   TLS_WorkBuffer                   *m_tls_work_buffers;
   tbb::concurrent_queue<WorkBatch> *m_work_batches;
-  tbb::atomic<int>                 *m_num_batches;
+  std::atomic<int>                 *m_num_batches;
 };
 
 
@@ -831,7 +822,7 @@ protected:
   }
 
   const size_t                      NUM_WORK_ITEMS_PER_BATCH;
-  tbb::atomic<int>                  m_cache_number_of_tasks;
+  std::atomic<int>                  m_cache_number_of_tasks;
   TLS_WorkBuffer                    m_tls_work_buffers;
 };
 
@@ -841,19 +832,19 @@ protected:
 inline tbb::task* TokenTask::execute()
 {
   m_worksharing_ds->run_next_work_item();
-  return NULL;
+  return nullptr;
 }
 
 inline tbb::task* WorkItemTask::execute()
 {
   m_pwi->run();
-  return NULL;
+  return nullptr;
 }
 
 inline tbb::task* WorkBatchTask::execute()
 {
   m_wb.run();
-  return NULL;
+  return nullptr;
 }
 
 } } //namespace CGAL::Mesh_3

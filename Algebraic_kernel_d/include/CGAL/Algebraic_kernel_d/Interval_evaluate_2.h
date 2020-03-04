@@ -1,20 +1,11 @@
 // Copyright (c) 2006-2010 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
@@ -41,7 +32,7 @@ namespace internal {
 
 template<typename Polynomial_2, typename Bound>
 struct Interval_evaluate_2 : public CGAL::cpp98::binary_function
-<Polynomial_2,CGAL::cpp11::array<Bound,4>,
+<Polynomial_2,std::array<Bound,4>,
       std::pair<typename CGAL::Coercion_traits<typename CGAL::Polynomial_traits_d<Polynomial_2>::Innermost_coefficient_type,Bound>::Type,
                 typename CGAL::Coercion_traits<typename CGAL::Polynomial_traits_d<Polynomial_2>::Innermost_coefficient_type,Bound>::Type> > {
   
@@ -58,7 +49,7 @@ public:
   typedef std::pair< Coercion_type, Coercion_type > result_type;
   
   result_type operator()(const Polynomial_2& p,
-                         const CGAL::cpp11::array< Bound, 4 >& b) const {
+                         const std::array< Bound, 4 >& b) const {
     
     typename CT::Cast cast;
     
@@ -87,7 +78,7 @@ public:
     Coefficient_const_iterator_range range =
       typename PT_2::Construct_coefficient_const_iterator_range()(p);
     
-    Coefficient_const_iterator it = CGAL::cpp11::prev(range.second);
+    Coefficient_const_iterator it = std::prev(range.second);
     
     Interval_result_type initial_pair = interval_evaluate_1(*it,x_pair);
     Coercion_interval res(initial_pair.first,initial_pair.second);

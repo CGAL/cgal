@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stephane Tayeb
@@ -59,7 +50,7 @@ class Domain_with_polyline_tester
   
   typedef std::vector<std::pair<Ci, Point> >        Corners_vector;
   typedef std::pair<Point, Index>                   P_and_i;
-  typedef CGAL::cpp11::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
+  typedef std::tuple<Csi,P_and_i,P_and_i>   Curve_tuple;
   typedef std::vector<Curve_tuple>                  Curves_vector;
   
 public:
@@ -202,12 +193,12 @@ private:
   
   Point get_first_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<1>(tuple).first;
+    return std::get<1>(tuple).first;
   }
   
   Point get_second_point(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<2>(tuple).first;
+    return std::get<2>(tuple).first;
   }
   
   Csi get_curve_index() const
@@ -221,7 +212,7 @@ private:
   
   Csi get_curve_index(const Curve_tuple& tuple) const
   {
-    return CGAL::cpp11::get<0>(tuple);
+    return std::get<0>(tuple);
   }
   
   bool near_equal(const double d1, const double d2) const

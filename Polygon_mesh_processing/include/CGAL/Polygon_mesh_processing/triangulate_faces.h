@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -44,7 +35,6 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 #include <boost/range/size.hpp>
-#include <boost/foreach.hpp>
 
 #include <queue>
 #include <vector>
@@ -291,7 +281,7 @@ public:
     std::vector<Point> hole_points;
     std::vector<vertex_descriptor> border_vertices;
     CGAL_assertion(CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size() > 0);
-    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
     {
       vertex_descriptor v = source(h, pmesh);
       hole_points.push_back( get(_vpmap, v) );
@@ -310,7 +300,7 @@ public:
     // triangulate the hole
     std::map< std::pair<int, int> , halfedge_descriptor > halfedge_map;
     int i=0;
-    BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
+    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh))
     {
       int j = std::size_t(i+1) == hole_points.size() ? 0 : i+1;
       halfedge_map[ std::make_pair(i, j) ] = h;
@@ -320,14 +310,14 @@ public:
     bool first = true;
     std::vector<halfedge_descriptor> hedges;
     hedges.reserve(4);
-    BOOST_FOREACH(const Face_indices& triangle, patch)
+    for(const Face_indices& triangle : patch)
     {
       if (first)
         first=false;
       else
         f=add_face(pmesh);
 
-      cpp11::array<int, 4> indices =
+      std::array<int, 4> indices =
         make_array( triangle.first,
                     triangle.second,
                     triangle.third,
@@ -370,13 +360,13 @@ public:
     facets.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
 
     //only consider non-triangular faces
-    BOOST_FOREACH(face_descriptor fit, face_range)
+    for(face_descriptor fit : face_range)
       if ( next( next( halfedge(fit, pmesh), pmesh), pmesh)
         !=       prev( halfedge(fit, pmesh), pmesh) )
         facets.push_back(fit);
 
     // Iterates on the vector of face descriptors
-    BOOST_FOREACH(face_descriptor f, facets)
+    for(face_descriptor f : facets)
     {
      if(!this->triangulate_face(f, pmesh, use_cdt))
        result = false;
@@ -394,7 +384,7 @@ public:
     CGAL_assertion(!is_border(h, pmesh));
     face_descriptor fd = face(h, pmesh);
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(h, pmesh))
+    for(halfedge_descriptor hd : halfedges_around_face(h, pmesh))
     {
       CGAL::internal::set_border(hd, pmesh);
     }

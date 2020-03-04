@@ -160,14 +160,14 @@ Classifying clusters of items instead of raw sets of items can have several adva
 - clusters are more complex objects than raw items (isolated points or triangles of a mesh) and thus provide additional information (size of cluster, spatial consistency, etc.);
 - by construction, the output classification is less noisy (if all points of a facade are in the same cluster, then they are guaranteed to all be classified in the same label).
 
-For example, when dealing with urban scenes that typically contain large planar sections, it may be more efficient to first detect planes (with `CGAL::Shape_detection_3::Region_growing` or `CGAL::Shape_detection_3::Efficient_RANSAC` for example) and then to classify each subset of points belonging to a specific plane as clusters.
+For example, when dealing with urban scenes that typically contain large planar sections, it may be more efficient to first detect planes (with `CGAL::Shape_detection::Region_growing` or `CGAL::Shape_detection::Efficient_RANSAC` for example) and then to classify each subset of points belonging to a specific plane as clusters.
 
 \cgal provides some tools to classify clusters:
 
 - the class `CGAL::Classification::Cluster` can be used to represent a cluster of items (points, for example);
 - the function `CGAL::Classification::create_clusters_from_indices()` takes indices over items as input (for example, shape indices taken from shape detection) and generates one cluster per index.
 
-The following snippet shows how to create classification clusters from a shape detection algorithm ([Region Growing](@ref CGAL::Shape_detection_3::Region_growing)):
+The following snippet shows how to create classification clusters from a shape detection algorithm ([Region Growing](@ref CGAL::Shape_detection::Region_growing)):
 
 \snippet Classification/example_cluster_classification.cpp Cluster
 
@@ -544,7 +544,7 @@ The following example:
 - reads a point set in PLY format;
 - estimates the normal vectors of the point set;
 - automatically generates pointwise features on 5 scales;
-- detects plane using the algorithm `CGAL::Shape_detection_3::Region_growing`;
+- detects plane using the algorithm `CGAL::Shape_detection::Region_growing`;
 - creates [Cluster](@ref CGAL::Classification::Cluster) objects from these detected planes;
 - computes cluster features from the pointwise features;
 - loads a configuration file for classifier [ETHZ::Random_forest_classifier](@ref CGAL::Classification::ETHZ::Random_forest_classifier);

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s):  Francisc Bungiu <fbungiu@gmail.com>
@@ -73,7 +64,7 @@ namespace CGAL {
   typedef CGAL::Tag_false                     Supports_general_polygon_category;
   typedef CGAL::Tag_true                      Supports_simple_polygon_category;
 
-  Simple_polygon_visibility_2() : p_arr(NULL), traits(NULL) {}
+  Simple_polygon_visibility_2() : p_arr(nullptr), traits(nullptr) {}
 
   /*! Constructor given an arrangement and the Regularization tag. */
   Simple_polygon_visibility_2(const Arrangement_2& arr): 
@@ -91,7 +82,7 @@ namespace CGAL {
   /*! Method to check if the visibility object is attached or not to
     an arrangement*/
   bool is_attached() const {
-    return (p_arr != NULL);
+    return (p_arr != nullptr);
   }
 
   /*! Attaches the visibility object to the 'arr' arrangement */
@@ -108,8 +99,8 @@ namespace CGAL {
     attached to*/
   void detach() {
     point_location.detach();
-    p_arr = NULL;
-    traits = NULL;
+    p_arr = nullptr;
+    traits = nullptr;
     vertices.clear();
     query_pt_is_vertex = false;
     query_pt_is_on_halfedge = false;
@@ -409,7 +400,7 @@ namespace CGAL {
 	    if (Object_2 result = Intersect_2()(seg, ray_origin) )
 	      {
 		const Point_2 * ipoint = object_cast<Point_2>(&result);
-		CGAL_assertion( ipoint != NULL );
+		CGAL_assertion( ipoint != nullptr );
 		s_t = *ipoint;
 		upcase = SCANB;
 	      }
@@ -492,7 +483,7 @@ namespace CGAL {
 	  Object_2 result = Intersect_2()( seg, seg2 );
 	  if(result) {
 	    const Point_2 * ipoint = object_cast<Point_2>(&result);
-	    CGAL_assertion( ipoint != NULL );
+	    CGAL_assertion( ipoint != nullptr );
 	    u = *ipoint;
 	    mode = 2;
 	    break;
@@ -525,7 +516,7 @@ namespace CGAL {
 	Object_2 result = Intersect_2()( seg, ray );
 	const Point_2 * ipoint = object_cast<Point_2>(&result);
 
-	CGAL_assertion( ipoint != NULL );
+	CGAL_assertion( ipoint != nullptr );
 
 	u = *ipoint;
 	if ( stack.top() != u ) {
@@ -544,7 +535,7 @@ namespace CGAL {
 	Object_2 result = Intersect_2()( seg, ray );
 	const Point_2 * ipoint = object_cast<Point_2>(&result);
 
-	CGAL_assertion( ipoint != NULL );
+	CGAL_assertion( ipoint != nullptr );
 
 	u = *ipoint;
 	if ( stack.top() != u ) {

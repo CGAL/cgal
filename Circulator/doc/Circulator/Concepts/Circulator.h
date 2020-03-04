@@ -22,9 +22,9 @@ differs from the semantic of an iterator range. For a circulator
 `c` the range `[c, c)` denotes the sequence of all
 elements in the data structure. For iterators, this range defines the
 empty sequence. A separate test for an empty sequence has been added
-to the circulator requirements: A comparison `c == NULL`
+to the circulator requirements: A comparison `c == nullptr`
 for a circulator `c` is true for an empty sequence. As for \cpp,
-we recommend the use of 0 instead of `NULL`.
+we recommend the use of 0 instead of `nullptr`.
 
 \subsection circulatorConceptsCirculators Circulators
 Similar to \stl iterators, we distinguish between forward,
@@ -44,7 +44,7 @@ anyway, there is no need to allow singular values for them. An
 un-initalized circulator does not have a singular value, but is
 supposed to refer to an empty sequence.}
 
-<B>Empty sequence:</B> The comparison `c == NULL` (or `c == 0`) 
+<B>Empty sequence:</B> The comparison `c == nullptr` (or `c == 0`) 
 for a circulator `c` is `true` if `c`
 denotes an empty sequence, and `false` otherwise.
 
@@ -109,36 +109,36 @@ In the following, we assume that <TT>a</TT> and <TT>b</TT> are
 circulators of type <TT>C</TT>, <TT>r</TT> is of type <TT>C&</TT> (is
 assignable), and <TT>T</TT> denotes the value type of <TT>C</TT>. Let
 <TT>D</TT> be the distance type of <TT>C</TT>. As for \cpp, we
-recommend the use of 0 instead of <TT>NULL</TT>.
+recommend the use of 0 instead of <TT>nullptr</TT>.
 
 <TABLE border="0"><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>C()</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-a circulator equal to `NULL` denoting an 
+a circulator equal to `nullptr` denoting an 
 empty sequence. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-<TT>a == NULL</TT> 
+<TT>a == nullptr</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 Returns <TT>true</TT> if <TT>a</TT> denotes an empty 
 sequence, <TT>false</TT> otherwise. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-For simplicity, <TT>NULL == a</TT> is not required. The 
+For simplicity, <TT>nullptr == a</TT> is not required. The 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 behavior for comparisons with pointer-like 
-values different than <TT>NULL</TT> 
+values different than <TT>nullptr</TT> 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 is undefined. A runtime assertion is 
 recommended. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-<TT>a != NULL</TT> 
+<TT>a != nullptr</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
-Returns <TT>!(a == NULL)</TT>. 
+Returns <TT>!(a == nullptr)</TT>. 
 <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP> 
 <TT>++r</TT> 
 <TD ALIGN=LEFT VALIGN=TOP NOWRAP> 

@@ -5,31 +5,17 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sylvain Pion, Michael Hemmer
 
 #ifndef CGAL_MPZ_CLASS_H
 #define CGAL_MPZ_CLASS_H
-
-#include <CGAL/number_type_basic.h>
-#include <CGAL/gmpxx_coercion_traits.h>
-#include <CGAL/Modular_traits.h>
-
 
 // This file gathers the necessary adaptors so that the following
 // C++ number types that come with GMP can be used by CGAL :
@@ -40,6 +26,15 @@
 // Reading gmpxx.h shows that ::__gmp_expr<T, T> is the mp[zqf]_class proper,
 // while ::__gmp_expr<T, U> is the others "expressions".
 
+#include <CGAL/number_type_config.h>
+#include <CGAL/functional.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
+#include <boost/type_traits/is_same.hpp>
+#include <mpfr.h>
+#include <gmpxx.h>
 
 #define CGAL_CHECK_GMP_EXPR                                             \
     CGAL_static_assertion(                                                \
@@ -52,6 +47,7 @@ namespace CGAL {
 template<>
 class Algebraic_structure_traits< mpz_class >
   :public Algebraic_structure_traits_base<  mpz_class , Euclidean_ring_tag > {
+
 public:
     typedef mpz_class           Type;
     typedef Euclidean_ring_tag  Algebraic_category;
@@ -191,6 +187,12 @@ public:
         };*/
 };
 
+} //namespace CGAL
+
+#include <CGAL/int.h> // for `sign( ::cmp(x, y) )`, below
+
+namespace CGAL {
+
 // RET for mpz_class
 template<>
 class Real_embeddable_traits< mpz_class  >
@@ -300,10 +302,20 @@ public:
     };
 };
 
+} //namespace CGAL
+
+#include <CGAL/gmpxx.h>
+#include <CGAL/gmpxx_coercion_traits.h>
+#include <CGAL/Residue.h>
+#include <CGAL/Modular_traits.h>
+
+namespace CGAL {
+
 /*! \ingroup NiX_Modular_traits_spec
  *  \brief a model of concept ModularTraits, 
  *  specialization of NiX::Modular_traits. 
  */
+ 
 template<>
 class Modular_traits< mpz_class > {
 public:
@@ -323,8 +335,11 @@ public:
     }
   };    
 };
+} //namespace CGAL
 
+#include <CGAL/Quotient.h>
 
+namespace CGAL {
 template <>
 struct Split_double<mpz_class>
 {

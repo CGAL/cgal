@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -29,7 +20,6 @@
 
 #include <CGAL/iterator.h>
 #include <CGAL/Kernel_traits.h>
-#include <CGAL/unordered.h>
 
 #include <boost/dynamic_bitset.hpp>
 #include <boost/functional/hash.hpp>
@@ -42,6 +32,8 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   #ifndef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
@@ -469,7 +461,7 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
     for(std::size_t i=0, polygon_size = polygon.size(); i<polygon_size; ++i)
     {
       polygon[i] = id_remapping[polygon[i]];
-      CGAL_postcondition(polygon[i] < points.size());
+      CGAL_postcondition(static_cast<std::size_t>(polygon[i]) < points.size());
     }
   }
 
@@ -574,7 +566,7 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
 
   const std::size_t removed_points_n = ini_points_n - points.size();
 
-#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
+#ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   std::cout << "Removed (merged) " << removed_points_n << " duplicate points" << std::endl;
 #endif
 
@@ -777,11 +769,11 @@ struct Duplicate_collector
   void dump(OutputIterator out)
   {
     typedef std::pair<const ValueType, std::vector<ValueType> > Pair_type;
-    BOOST_FOREACH(const Pair_type& p, collections)
+    for(const Pair_type& p : collections)
       *out++ = p.second;
   }
 
-  CGAL::cpp11::unordered_map<ValueType, std::vector<ValueType> > collections;
+  std::unordered_map<ValueType, std::vector<ValueType> > collections;
 };
 
 template <typename ValueType>
@@ -823,7 +815,7 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
   typedef boost::dynamic_bitset<>                                                 Reversed_markers;
   typedef internal::Polygon_equality_tester<PointRange, PolygonRange,
                                             Reversed_markers, Traits>             Equality;
-  typedef CGAL::cpp11::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
+  typedef std::unordered_set<P_ID, Hasher, Equality>                      Unique_polygons;
 
   const std::size_t polygons_n = polygons.size();
 

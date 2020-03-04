@@ -35,7 +35,5 @@ template< typename Kernel >
 class Env_plane_traits_3 : public Arr_linear_traits_2<Kernel> {
 public:
 
-/// @}
-
 }; /* end Env_plane_traits_3 */
 } /* end namespace CGAL */

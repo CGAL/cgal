@@ -18,8 +18,6 @@
   This is the test file for the class NiX::Algebraic_real_d_1. 
 */
 
-#include <CGAL/basic.h>
-
 #include <cassert>
 
 #include <CGAL/Arithmetic_kernel.h>

@@ -1,20 +1,11 @@
 // Copyright (c) 2005  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -102,7 +93,7 @@ centroid(InputIterator begin,
     points.push_back(s[0]);
     points.push_back(s[1]);
   } 
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 }// end centroid for 2D segment set with 0D tag
 
 // centroid for 2D segment set with 1D tag
@@ -166,7 +157,7 @@ centroid(InputIterator begin,
     points.push_back(triangle[1]);
     points.push_back(triangle[2]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 2D triangle set with 0D tag
 
@@ -195,7 +186,7 @@ centroid(InputIterator begin,
     segments.push_back(triangle[1],triangle[2]);
     segments.push_back(triangle[2],triangle[0]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 2D triangle set with 1D tag
 
@@ -330,7 +321,7 @@ centroid(InputIterator begin,
     points.push_back(r[2]);
     points.push_back(r[3]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 2D rectangle set with 0D tag
 
@@ -360,7 +351,7 @@ centroid(InputIterator begin,
     segments.push_back(r[2],r[3]);
     segments.push_back(r[3],r[0]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 2D rectangle set with 1D tag
 
@@ -488,7 +479,7 @@ centroid(InputIterator begin,
     points.push_back(triangle[1]);
     points.push_back(triangle[2]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 3D triangle set with 0D tag
 
@@ -517,7 +508,7 @@ centroid(InputIterator begin,
     segments.push_back(triangle[1],triangle[2]);
     segments.push_back(triangle[2],triangle[0]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 3D triangle set with 1D tag
 
@@ -656,7 +647,7 @@ centroid(InputIterator begin,
     points.push_back(cuboid[6]);
     points.push_back(cuboid[7]);
   }
-  return centroid(points.begin(),points.end(),k,(Point*)NULL,tag);
+  return centroid(points.begin(),points.end(),k,(Point*)nullptr,tag);
 
 } // end centroid of a 3D cuboid set with 0D tag
 
@@ -694,7 +685,7 @@ centroid(InputIterator begin,
     segments.push_back(cuboid[4],cuboid[7]);
     segments.push_back(cuboid[5],cuboid[6]);
   }
-  return centroid(segments.begin(),segments.end(),k,(Segment*)NULL,tag);
+  return centroid(segments.begin(),segments.end(),k,(Segment*)nullptr,tag);
 
 } // end centroid of a 3D cuboid set with 1D tag
 
@@ -823,7 +814,7 @@ struct Dispatch_centroid_3
   result_type operator()(InputIterator begin, InputIterator end, const K& k, Dim_tag tag) const
   {
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
-    return centroid(begin, end, k,(Value_type*) NULL, tag);
+    return centroid(begin, end, k,(Value_type*) nullptr, tag);
   }
 };
 
