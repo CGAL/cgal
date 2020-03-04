@@ -10,7 +10,7 @@ index faces for \sc{Bgl} algorithms.
 
 Note that the user is in charge of setting indices correctly before
 running a graph algorithm, by calling the function
-`CGAL::initialize_triangulation_IDs(Triangulation&)`.
+`CGAL::set_triangulation_ids(Triangulation&)`.
 
 \tparam TriangulationTraits_2 is the geometric traits class
 and must be a model of `TriangulationTraits_2`.
@@ -50,6 +50,6 @@ int& id();
 /// be called prior to using `tr` as a BGL graph in an algorithm that requires
 /// vertex, halfedge, edge, or face indices.
 template <typename Triangulation>
-void initialize_triangulation_IDs(Triangulation& tr);
+void set_triangulation_ids(Triangulation& tr);
 
 } /* end namespace CGAL */

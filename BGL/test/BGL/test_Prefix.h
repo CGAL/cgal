@@ -197,7 +197,7 @@ Tr build_dummy_triangulation()
   t.insert(Point(0,1));
   t.insert(Point(0,2));
 
-  CGAL::initialize_triangulation_IDs(t);
+  CGAL::set_triangulation_ids(t);
 
   return t;
 }

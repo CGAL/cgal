@@ -365,7 +365,7 @@ put(PropertyTag p, CGAL_2D_TRIANGULATION& g, const Key& key, const Value& value)
 }
 
 template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
-void initialize_triangulation_IDs(CGAL_2D_TRIANGULATION& g)
+void set_triangulation_ids(CGAL_2D_TRIANGULATION& g)
 {
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
