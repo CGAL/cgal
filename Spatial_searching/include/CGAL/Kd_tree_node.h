@@ -51,15 +51,10 @@ namespace CGAL {
     typedef typename Kdt::iterator iterator;
     typedef typename Kdt::D D;
 
-    bool leaf;
-
   public : 
-    Kd_tree_node(bool leaf_)
-      :leaf(leaf_){}
+    Kd_tree_node() { }
 
-    bool is_leaf() const{
-      return leaf;
-    }
+    virtual bool is_leaf() const = 0;
 
     std::size_t 
     num_items() const
@@ -398,13 +393,11 @@ namespace CGAL {
     Kd_tree_leaf_node() 
     {}
 
-    Kd_tree_leaf_node(bool leaf_ ) 
-      : Base(leaf_)
+    Kd_tree_leaf_node(unsigned int n_ ) 
+      : n(n_)
     {}
 
-    Kd_tree_leaf_node(bool leaf_,unsigned int n_ ) 
-      : Base(leaf_), n(n_)
-    {}
+    virtual bool is_leaf() const { return true; }
 
     // members for all nodes
    
@@ -477,10 +470,7 @@ namespace CGAL {
     Kd_tree_internal_node() 
     {}
 
-    Kd_tree_internal_node(bool leaf_) 
-      : Base(leaf_)
-    {}
-    
+    virtual bool is_leaf() const { return false; }
     
     // members for internal node and extended internal node
 
