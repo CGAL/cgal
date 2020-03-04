@@ -585,17 +585,17 @@ Methods to read and write graphs.
 
 \cgalCRPSection{%CGAL Classes Adapted for the Graph API}
 
-Different \cgal types have been adapted as graphs for the \sc{Bgl}. All
+A number of \cgal structures have been adapted as graphs for the \sc{Bgl}. All
 adapted types are listed here. The pages document which concepts they
 model, the properties they support, and any possible caveats that a
 user might encounter.
 
-- \link BGLSMGT  `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
-- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
-- \link BGLLCCGT `boost::graph_traits< CGAL::Linear_cell_complex_for_combinatorial_map<...> >` \endlink
-- \link BGLSeam_meshGT `boost::graph_traits< CGAL::Seam_mesh<T> >` \endlink
-- \link BGLT2GT `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` \endlink
-- \link BGLArgtGT `boost::graph_traits< CGAL::Arrangement_2<T,DC> >` \endlink
+- \link BGLSMGT `boost::graph_traits<CGAL::Surface_mesh<P> >` \endlink
+- \link BGLPolyGT `boost::graph_traits<CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLLCCGT `boost::graph_traits<CGAL::Linear_cell_complex_for_combinatorial_map<...> >` \endlink
+- \link BGLSeam_meshGT `boost::graph_traits<CGAL::Seam_mesh<T> >` \endlink
+- \link BGLT2GT `boost::graph_traits<CGAL::Triangulation_2<GT, TDS> >` \endlink and other 2D triangulations
+- \link BGLArgtGT `boost::graph_traits<CGAL::Arrangement_2<T, DC> >` \endlink
 - \link BGLOMPAK `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` \endlink
 - \link BGLOMTMAK `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` \endlink
 
