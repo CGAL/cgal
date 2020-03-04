@@ -298,6 +298,33 @@ struct Point_accessor<Handle, ValueType, ConstReference, true>
   reference operator[](Handle h) const { return h->point(); }
 };
 
+// @todo test this
+// this one is basically 'readable_property_map_tag'
+template <typename PropertyMap,
+          typename PropertyMapCategory = typename boost::property_traits<PropertyMap>::category>
+struct Is_writable_property_map : CGAL::Tag_false { };
+
+template <typename PropertyMap>
+struct Is_writable_property_map<PropertyMap, boost::writable_property_map_tag> : CGAL::Tag_true { };
+
+template <typename PropertyMap>
+struct Is_writable_property_map<PropertyMap, boost::read_write_property_map_tag> : CGAL::Tag_true { };
+
+// 'lvalue_pmap_tag' is annoying, because the property map is allowed to be non-mutable,
+// but boost::lvalue_property_map_tag is defined as:
+//   struct lvalue_property_map_tag : public read_write_property_map_tag
+// so we can't just check that 'writable_property_map_tag' is a base of the the lvalue tag.
+//
+// This checks if the reference is non-const, which is not completely correct: map[key] returning
+// a non-const reference doesn't mean that 'put(map, key, val)' exists, which is what a writable
+// property map must define.
+template <typename PropertyMap>
+struct Is_writable_property_map<PropertyMap, boost::lvalue_property_map_tag>
+  : boost::mpl::if_c<std::is_const<typename std::remove_reference<
+                       typename boost::property_traits<PropertyMap>::reference>::type>::value,
+                     CGAL::Tag_false, CGAL::Tag_true>::type
+{ };
+
 } // namespace internal
 
 // Needed by PMP::detec_features and Mesh_3
