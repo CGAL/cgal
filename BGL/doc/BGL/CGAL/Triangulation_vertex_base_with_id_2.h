@@ -9,7 +9,8 @@ concept `TriangulationVertexBase_2`, the base vertex of a
 index vertices for \sc{Bgl} algorithms.
 
 Note that the user is in charge of setting indices correctly before
-running a graph algorithm.
+running a graph algorithm, by calling the function
+`CGAL::initialize_triangulation_IDs(Triangulation&)`.
 
 \tparam TriangulationTraits_2 is the geometric traits class
 and must be a model of `TriangulationTraits_2`.

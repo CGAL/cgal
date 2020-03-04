@@ -642,6 +642,8 @@ user might encounter.
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
 
+- `CGAL::initialize_triangulation_IDs()`
+
 \cgalCRPSection{Iterators}
 - `CGAL::Halfedge_around_source_iterator`
 - `CGAL::Halfedge_around_target_iterator`
