@@ -574,11 +574,11 @@ Methods to read and write graphs.
 - `MutableFaceGraph`
 
 \cgalCRPSection{Properties}
-- `boost::vertex_index_t`
-- `boost::halfedge_index_t`
-- `boost::edge_index_t`
-- `boost::face_index_t`
-- `boost::vertex_point_t`
+- `CGAL::vertex_index_t`
+- `CGAL::halfedge_index_t`
+- `CGAL::edge_index_t`
+- `CGAL::face_index_t`
+- `CGAL::vertex_point_t`
 
 \cgalCRPSection{%CGAL Classes Adapted for the Graph API}
 
