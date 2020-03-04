@@ -34,6 +34,8 @@ struct Approximate_exact_pair
 {
   typedef std::pair<T1,T2> Base;
 
+  typedef T1 Approximate_type;
+  
   Approximate_exact_pair()
   {}
 
