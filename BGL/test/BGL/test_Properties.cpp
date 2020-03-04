@@ -9,8 +9,6 @@ void index_uniqueness(const G&,
                       ForwardRange range,
                       IndexPropertyMap pm)
 {
-  std::cout << "index_uniqueness" << std::endl;
-
   typename boost::range_iterator<ForwardRange>::type 
     begin = boost::begin(range),
     begin2 = boost::begin(range),
