@@ -189,8 +189,6 @@ template <typename Tr>
 Tr build_dummy_triangulation()
 {
   typedef typename Tr::Point                                       Point;
-  typedef typename boost::graph_traits<Tr>::vertex_descriptor      vertex_descriptor;
-  typedef typename boost::graph_traits<Tr>::face_descriptor        face_descriptor;
 
   Tr t;
   t.insert(Point(0.1,0));
@@ -199,13 +197,7 @@ Tr build_dummy_triangulation()
   t.insert(Point(0,1));
   t.insert(Point(0,2));
 
-  int id = 0;
-  for(vertex_descriptor vd : vertices(t))
-    vd->id() = id++;
-
-  id = 0;
-  for(face_descriptor fd : faces(t))
-    fd->id() = id++;
+  CGAL::initialize_triangulation_IDs(t);
 
   return t;
 }

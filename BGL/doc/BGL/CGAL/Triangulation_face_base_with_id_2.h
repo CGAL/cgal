@@ -1,7 +1,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup BGLGraphExternalIndices
 
 The class `Triangulation_face_base_with_id_2` is a model of the
 concept `TriangulationFaceBase_2`, the base face of a
@@ -44,7 +44,7 @@ int& id();
 
 }; /* end Triangulation_face_base_with_id_2 */
 
-/// \ingroup PkgBGLHelper
+/// \ingroup BGLGraphExternalIndices
 ///
 /// This function initializes vertex, edge, and face indices of the triangulation `tr` and must
 /// be called prior to using `tr` as a BGL graph in an algorithm that requires

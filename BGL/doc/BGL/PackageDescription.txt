@@ -443,7 +443,7 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLPropertiesDynamic Dynamic Properties
 /// \ingroup PkgBGLRef
 
-/// \defgroup PkgBGLHelper Helper Classes
+/// \defgroup PkgBGLGraphExternalIndices External Indices
 /// \ingroup PkgBGLRef
 
 /// \defgroup PkgBGLHelperFct Helper Functions
@@ -473,8 +473,11 @@ The dynamic property tags enable to associate information to simplices of a `Fac
 */
 
 /*!
-\addtogroup PkgBGLHelper
-Several classes that enable to store ids in vertices/halfedges/faces of a `CGAL::Polyhedron_3`, as well as adapters such as `CGAL::Dual`.
+\addtogroup BGLGraphExternalIndices
+A number of BGL and \cgal algorithms require the graph to have (initialized) integer-like indices
+for its vertices, edges, or faces. However, not all graphs intrinsically offer a natural way
+to attach a unique ID to each element. The following classes and functions paliate this
+by attaching and initializing external IDs to the elements of the graph.
 */
 
 /*!
