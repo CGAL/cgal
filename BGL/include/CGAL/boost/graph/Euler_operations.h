@@ -753,6 +753,151 @@ add_face(const VertexRange& vr, Graph& g)
   return f;
 }
 
+// TODO: Try to replace the handwritten flat_map implementation by Small_unordered_map
+//       - can no longer sort with v1<v2 because get also call remove (or do it the next/prev link in one pass but it will break the call to edge(v1,v2,tm))
+//       - the number of elments is bounded by the template parameter
+// TODO: vertex_index_map
+// TODO: add a visitor for new edge/vertex/face created
+// TODO: doc
+// TODO: handle and return false in case of non valid input?
+// An interesting property of this function is that in case the mesh contains non-manifold boundary vertices,
+// the connected components of faces incident to such a vertex will not be linked together around the
+// vertex (boundary edges are connected by turning around the vertex in the interior of the mesh).
+// This produce a deterministic behavior for non-manifold vertices.
+template <class PolygonMesh, class RangeofVertexRange>
+void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& tm)
+{
+  typedef typename boost::graph_traits<PolygonMesh> GT;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::edge_descriptor edge_descriptor;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+
+  typedef typename RangeofVertexRange::const_iterator VTR_const_it;
+  typedef typename std::iterator_traits<VTR_const_it>::value_type Vertex_range;
+
+  // TODO: add also this lambda as an Euler function?
+  auto add_new_edge = [&tm](vertex_descriptor v1, vertex_descriptor v2)
+  {
+    halfedge_descriptor v1v2 = halfedge(add_edge(tm), tm), v2v1=opposite(v1v2, tm);
+    if (halfedge(v1,tm)==GT::null_halfedge()) set_halfedge(v1, v2v1, tm);
+    if (halfedge(v2,tm)==GT::null_halfedge()) set_halfedge(v2, v1v2, tm);
+    set_target(v1v2, v2, tm);
+    set_target(v2v1, v1, tm);
+    set_next(v1v2,v2v1, tm);
+    set_next(v2v1,v1v2, tm);
+    return v1v2;
+  };
+
+  //TODO: use vertex index map for v -> vector
+  std::vector<std::vector<halfedge_descriptor> > outgoing_hedges(num_vertices(tm));
+  for (const Vertex_range& vr : faces_to_add)
+  {
+    std::size_t nbh=vr.size();
+    for (std::size_t i=0; i<nbh; ++i)
+    {
+      vertex_descriptor v1=vr[i], v2=vr[(i+1)%nbh];
+      if (v2<v1) continue;
+      std::pair<edge_descriptor, bool> edge_and_bool = edge(v1, v2, tm);
+      if (edge_and_bool.second)
+        outgoing_hedges[v1].push_back( halfedge(edge_and_bool.first, tm));
+      else
+        outgoing_hedges[v1].push_back(add_new_edge(v1,v2));
+      CGAL_assertion( source(outgoing_hedges[v1].back(), tm)==v1 );
+      CGAL_assertion( target(outgoing_hedges[v1].back(), tm)==v2 );
+    }
+  }
+
+  for (std::vector<halfedge_descriptor>& hedges: outgoing_hedges)
+  {
+    if (!hedges.empty())
+      std::sort(hedges.begin(), hedges.end(), [&tm](halfedge_descriptor h1, halfedge_descriptor h2)
+                                              {
+                                                return target(h1, tm) < target(h2,tm);
+                                              });
+
+  }
+  std::vector<halfedge_descriptor> new_border_halfedges;
+  auto get_hedge = [&tm, &add_new_edge, &new_border_halfedges, &outgoing_hedges](vertex_descriptor v1, vertex_descriptor v2)
+  {
+    bool return_opposite = v2 < v1;
+    if (return_opposite) std::swap(v1,v2);
+    typename std::vector<halfedge_descriptor>::iterator it_find =
+      std::lower_bound(outgoing_hedges[v1].begin(),
+                       outgoing_hedges[v1].end(),
+                       v2, [&tm](halfedge_descriptor h, vertex_descriptor v){return target(h,tm) < v;});
+    if (it_find!=outgoing_hedges[v1].end() && target(*it_find, tm)==v2)
+    {
+      return return_opposite ? opposite(*it_find, tm) : *it_find;
+    }
+
+    // fall onto a border edge
+    halfedge_descriptor v1v2=add_new_edge(v1,v2);
+    if (return_opposite)
+    {
+      new_border_halfedges.push_back(v1v2);
+      return opposite(v1v2, tm);
+    }
+    new_border_halfedges.push_back(opposite(v1v2, tm));
+    return v1v2;
+  };
+
+  // link interior halfedges
+  for (const Vertex_range& vr : faces_to_add)
+  {
+    std::size_t nbh=vr.size();
+    face_descriptor f = add_face(tm);
+    halfedge_descriptor first = get_hedge(vr[nbh-1],vr[0]), prev=first;
+    set_halfedge(f, first, tm);
+    set_face(first, f, tm);
+    for(std::size_t i=0; i<nbh-1; ++i)
+    {
+      halfedge_descriptor curr = get_hedge(vr[i], vr[i+1]);
+      set_face(curr, f, tm);
+      set_next(prev, curr, tm);
+      prev=curr;
+    }
+    set_next(prev, first, tm);
+  }
+
+  // link border halfedges by turning around the vertex in the interior of the mesh
+  for (std::vector<halfedge_descriptor>& hedges : outgoing_hedges)
+  {
+    for (halfedge_descriptor h : hedges)
+    {
+      halfedge_descriptor hopp = opposite(h, tm);
+      if (is_border(h, tm) && next(h, tm)==hopp)
+        new_border_halfedges.push_back(h);
+      if (is_border(hopp, tm) && next(hopp, tm)==h)
+        new_border_halfedges.push_back(hopp);
+    }
+  }
+  for (halfedge_descriptor h : new_border_halfedges)
+  {
+    CGAL_assertion(is_border(h, tm));
+    halfedge_descriptor hopp = opposite(h, tm);
+    // look around the target
+    if (next(h, tm)==hopp)
+    {
+      halfedge_descriptor candidate = hopp;
+      while(!is_border(candidate, tm))
+      {
+        candidate = opposite(prev(candidate, tm), tm);
+      }
+      set_next(h, candidate, tm);
+    }
+    //look around the source
+    if (prev(h, tm)==hopp)
+    {
+      halfedge_descriptor candidate = hopp;
+      while(!is_border(candidate, tm))
+      {
+        candidate = opposite(next(candidate, tm), tm);
+      }
+      set_next(candidate, h, tm);
+    }
+  }
+}
 
   /**
    * removes the incident face of `h` and changes all halfedges incident to the face into border halfedges. See `remove_face(g,h)` for a more generalized variant.
