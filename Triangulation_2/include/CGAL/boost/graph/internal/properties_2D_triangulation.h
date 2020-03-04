@@ -368,6 +368,39 @@ put(PropertyTag p, CGAL_2D_TRIANGULATION& g, const Key& key, const Value& value)
   put(pmap, key, value);
 }
 
+template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
+void initialize_triangulation_IDs(CGAL_2D_TRIANGULATION& g)
+{
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor     edge_descriptor;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor     face_descriptor;
+
+  int vid = 0;
+  for(vertex_descriptor vd : vertices(g))
+    vd->id() = vid++;
+
+  int eid = 0;
+  for(edge_descriptor ed : edges(g))
+  {
+    halfedge_descriptor hd = halfedge(ed, g);
+    face_descriptor fd = face(hd, g);
+    if(fd != boost::graph_traits< CGAL_2D_TRIANGULATION >::null_face())
+      fd->edge_id(hd.second) = eid;
+
+    halfedge_descriptor opp_hd = opposite(hd, g);
+    face_descriptor opp_fd = face(opp_hd, g);
+    if(opp_fd != boost::graph_traits< CGAL_2D_TRIANGULATION >::null_face())
+      opp_fd->edge_id(opp_hd.second) = eid;
+
+    ++eid;
+  }
+
+  int fid = 0;
+  for(face_descriptor fd : faces(g))
+    fd->id() = fid++;
+}
+
 } // namespace CGAL
 
 #undef CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS
