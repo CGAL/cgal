@@ -575,7 +575,8 @@ assemble_covariance_matrix_3(InputIterator first,
     transformation << t[0].x(), t[1].x(), 0.0, 
                       t[0].y(), t[1].y(), 0.0,
                       t[0].z(), t[1].z(), 1.0;
-    FT length = std::sqrt(t.squared_length());
+    using std::sqrt;
+    FT length = sqrt(t.squared_length());
 
     // skip zero measure primitives
     if(length == (FT)0.0)
