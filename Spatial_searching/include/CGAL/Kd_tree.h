@@ -35,9 +35,6 @@
 #include <CGAL/mutex.h>
 #endif
 
-#ifdef CGAL_LINKED_WITH_TBB
-#endif
-
 /*
   For building the KD Tree in parallel, TBB is needed. If TBB is
   linked, the internal structures `deque` will be replaced by
