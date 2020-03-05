@@ -24,6 +24,10 @@ public:
   EpicP epicp;
   typedef typename AK::FT IA;
   typedef typename FP::result_type result_type;
+
+  Static_filtered_predicate(const FP& fp = FP())
+    : fp(fp)
+  {}
   
   template <typename A1>
   result_type operator()(const A1& a1) const

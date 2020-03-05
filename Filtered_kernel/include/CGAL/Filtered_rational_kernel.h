@@ -476,8 +476,8 @@ public:
 #undef CGAL_frk_pair
 
 #define CGAL_Kernel_pred(P, Pf) \
-  typedef Filtered_rational_predicate<typename AK::P, typename EK::P> P; \
-  P Pf() const { return P(ak.Pf(), ek.Pf()); }
+  typedef Static_filtered_predicate<Approximate_kernel, Filtered_rational_predicate<typename AK::P, typename EK::P>, Exact_predicates_inexact_constructions_kernel::P> P; \
+  P Pf() const {  typedef Filtered_rational_predicate<typename AK::P, typename EK::P> FRP;  return P(FRP(ak.Pf(), ek.Pf())); }
 
 #define CGAL_Kernel_cons(C, Cf) \
   typedef Filtered_rational_construction<typename AK::C, typename EK::C, AK, EK, Kernel_> C; \
