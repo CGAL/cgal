@@ -38,6 +38,7 @@
 #include <CGAL/boost/graph/properties_Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>
 #include <CGAL/boost/graph/properties_Constrained_triangulation_plus_2.h>
+#include <CGAL/boost/graph/Seam_mesh.h>
 
 #include <CGAL/boost/graph/io.h>
 
@@ -56,6 +57,10 @@ typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper
           <2, 3, MyTraits>::type LCC;
 
 typedef CGAL::Surface_mesh<Point_3> SM;
+
+typedef SM::Property_map<SM::Edge_index, bool>                  Seam_edge_pmap;
+typedef SM::Property_map<SM::Vertex_index, bool>                Seam_vertex_pmap;
+typedef CGAL::Seam_mesh<SM, Seam_edge_pmap, Seam_vertex_pmap>   Seam_mesh;
 
 #if defined(CGAL_USE_OPENMESH)
 
