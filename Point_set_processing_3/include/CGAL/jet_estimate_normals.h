@@ -203,7 +203,7 @@ jet_estimate_normals(
 
   CGAL::for_each<ConcurrencyTag>
     (points,
-     [&](const value_type& vt)
+     [&](value_type& vt)
      {
        if (callback_wrapper.interrupted())
          throw internal::stop_for_each();
