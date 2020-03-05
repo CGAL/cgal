@@ -124,8 +124,8 @@ public:
   /// The type for the objects used to identify halfedges in the underlying mesh.
   typedef typename boost::graph_traits<TM>::halfedge_descriptor   TM_halfedge_descriptor;
 
- /// The type for the iterators that traverse through the complete halfedge set of the underlying mesh.
- typedef typename boost::graph_traits<TM>::halfedge_iterator     TM_halfedge_iterator;
+  /// The type for the iterators that traverse through the complete halfedge set of the underlying mesh.
+  typedef typename boost::graph_traits<TM>::halfedge_iterator     TM_halfedge_iterator;
 
   /// The type for the objects used to identify edges in the underlying mesh.
   typedef typename boost::graph_traits<TM>::edge_descriptor       TM_edge_descriptor;
