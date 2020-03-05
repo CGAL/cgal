@@ -236,9 +236,6 @@ public:
       intersection_edges.insert(edge(p.second.h2, tm));
     }
 
-    // this will initialize face indices if the face index map is writable.
-    BGL::internal::initialize_face_index_map(fids, tm);
-
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm_coplanar_faces(num_faces(tm), 0);
 
