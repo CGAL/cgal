@@ -115,7 +115,17 @@ at the first call to a query or removal member function. You can call
 `build()` explicitly to ensure that the next call to
 query functions will not trigger the reconstruction of the
 data structure.
+
+\tparam ConcurrencyTag enables sequential versus parallel
+algorithm. Possible values are `Sequential_tag`, `Parallel_tag`, and
+`Parallel_if_available_tag`. This template parameter is optional:
+calling `build()` without specifying the concurrency tag will result
+in `Sequential_tag` being used. If `build()` is not called by the user
+but called implicitly at the first call to a query or removal member
+function, `Sequential_tag` is also used.
+
 */
+template <typename ConcurrencyTag>
 void build();
 
 /*!
