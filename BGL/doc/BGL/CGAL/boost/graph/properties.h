@@ -1,5 +1,4 @@
-/// CGAL Namespace
-namespace CGAL {
+namespace boost {
 
 /// \ingroup PkgBGLProperties
 /// @{
