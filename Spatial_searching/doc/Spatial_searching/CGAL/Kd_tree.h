@@ -23,7 +23,7 @@ in a dynamically allocated array (e.g., `Epick_d` with dynamic
 dimension) &mdash; we says "to a lesser extent" because the points
 are re-created by the kd-tree in a cache-friendly order after its construction,
 so the coordinates are more likely to be stored in a near-optimal order on the
-heap. When EnablePointsCache` is set to `Tag_true`, the points 
+heap. When `EnablePointsCache` is set to `Tag_true`, the points 
 coordinates will be cached in an optimal way. This will 
 increase memory consumption but provide better search performance.
 See also the `GeneralDistance` and `FuzzyQueryItem` concepts for
@@ -157,14 +157,14 @@ template <class InputIterator> void insert(InputIterator first, InputIterator be
 /*!
 Removes the point `p` from the `k-d` tree. It uses `equal_to_p` to identify
 the point after locating it, which can matter in particular when 2 points are
-in the same place. `Identify_point` is a unary functor that takes a `Point_d`
+in the same place. `IdentifyPoint` is a unary functor that takes a `Point_d`
 and returns a `bool`.  This is a limited and naive implementation that does not
 rebalance the tree. On the other hand, the tree remains valid and ready for
 queries. If the internal data structure is not already built, for instance
 because the last operation was an insertion, it first calls `build()`.
 */
-template<class Identify_point>
-void remove(Point_d p, Identify_point equal_to_p);
+template<class IdentifyPoint>
+void remove(Point_d p, IdentifyPoint identify_point);
 
 /*!
 Removes point `p`, calling the 2-argument function `remove()` with a functor

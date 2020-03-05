@@ -527,9 +527,12 @@ additional requirements when using such a cache.
 
 \section Spatial_searchingImplementationHistory Implementation History
 
-The initial implementation of this package was done by Hans Tangelder and
-Andreas Fabri. It was optimized in speed and memory consumption by Markus
-Overtheil during an internship at GeometryFactory in 2014.
+The initial implementation of this package was done by Hans Tangelder
+and Andreas Fabri. It was optimized in speed and memory consumption by
+Markus Overtheil during an internship at GeometryFactory in 2014. The
+`EnablePointsCache` feature was introduced by Clément Jamin in
+2019. The parallel `kd` tree build function was introduced by Simon
+Giraudot in 2020.
 
 */
 } /* namespace CGAL */
