@@ -98,19 +98,7 @@ namespace Polygon_mesh_processing {
       typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
       typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
 
-      //make a minimal check that it's properly initialized :
-      //if the 2 first faces have the same id, we know the property map is not initialized
-      if (boost::is_same<typename GetFaceIndexMap<PM, NamedParameters>::Is_internal_map,
-                         boost::true_type>::value)
-      {
-        typename boost::range_iterator<const FaceRange>::type it = boost::const_begin(faces);
-        if (get(fmap, *it) == get(fmap, *std::next(it)))
-        {
-          std::cerr << "WARNING : the internal property map for CGAL::face_index_t" << std::endl
-                    << "          is not properly initialized." << std::endl
-                    << "          Initialize it before calling border_halfedges()" << std::endl;
-        }
-      }
+      CGAL_assertion(BGL::internal::is_index_map_valid(fmap, num_faces(pmesh), faces(pmesh)));
 
       std::vector<bool> present(num_faces(pmesh), false);
       for(face_descriptor fd : faces)
