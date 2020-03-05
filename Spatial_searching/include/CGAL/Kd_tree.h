@@ -27,7 +27,6 @@
 #include <CGAL/Splitters.h>
 #include <CGAL/internal/Get_dimension_tag.h>
 
-#include <deque>
 #include <boost/container/deque.hpp>
 #include <boost/optional.hpp>
 
@@ -108,10 +107,6 @@ private:
 #if defined(CGAL_TBB_STRUCTURE_IN_KD_TREE)
   tbb::concurrent_vector<Internal_node> internal_nodes;
   tbb::concurrent_vector<Leaf_node> leaf_nodes;
-#elif (_MSC_VER == 1800) && (BOOST_VERSION == 105500)
-  // workaround for https://svn.boost.org/trac/boost/ticket/9332
-  std::deque<Internal_node> internal_nodes;
-  std::deque<Leaf_node> leaf_nodes;
 #else
   boost::container::deque<Internal_node> internal_nodes;
   boost::container::deque<Leaf_node> leaf_nodes;
