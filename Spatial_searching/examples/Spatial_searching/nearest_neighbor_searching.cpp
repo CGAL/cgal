@@ -20,6 +20,9 @@ int main() {
 
   Tree tree(points.begin(), points.end());
 
+  // The tree can be built in parallel
+  tree.build<CGAL::Parallel_if_available_tag>();
+
   Point_d query(0,0);
 
   // Initialize the search structure, and search all N points
