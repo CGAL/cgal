@@ -78,6 +78,8 @@ typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> OMesh;
 typedef CGAL::Triangulation_vertex_base_with_id_2<Kernel>        Vbb;
 typedef CGAL::Triangulation_face_base_with_id_2<Kernel>          Fbb;
 
+typedef CGAL::Triangulation_2<Kernel>                            Triangulation_no_id_2;
+
 typedef CGAL::Triangulation_2<Kernel,
           CGAL::Triangulation_data_structure_2<Vbb, Fbb> >       Triangulation_2;
 typedef CGAL::Delaunay_triangulation_2<Kernel,
@@ -202,18 +204,25 @@ Tr build_dummy_triangulation()
   t.insert(Point(0,1));
   t.insert(Point(0,2));
 
-  CGAL::set_triangulation_ids(t);
-
   return t;
 }
 
-Triangulation_2 t2_data() { return build_dummy_triangulation<Triangulation_2>(); }
-Delaunay_triangulation_2 dt2_data() { return build_dummy_triangulation<Delaunay_triangulation_2>(); }
-Regular_triangulation_2 rt2_data() { return build_dummy_triangulation<Regular_triangulation_2>(); }
-Constrained_triangulation_2 ct2_data() { return build_dummy_triangulation<Constrained_triangulation_2>(); }
-Constrained_Delaunay_triangulation_2 cdt2_data() { return build_dummy_triangulation<Constrained_Delaunay_triangulation_2>(); }
-CDT_P2 cdtp2_data() { return build_dummy_triangulation<CDT_P2>(); }
-Triangulation_hierarchy_2 t2h_data() { return build_dummy_triangulation<Triangulation_hierarchy_2>(); }
+template <typename Tr>
+Tr build_dummy_triangulation_with_ids()
+{
+  Tr t = build_dummy_triangulation<Tr>();
+  CGAL::set_triangulation_ids(t);
+  return t;
+}
+
+Triangulation_no_id_2 t2_no_id_data() { return build_dummy_triangulation<Triangulation_no_id_2>(); }
+Triangulation_2 t2_data() { return build_dummy_triangulation_with_ids<Triangulation_2>(); }
+Delaunay_triangulation_2 dt2_data() { return build_dummy_triangulation_with_ids<Delaunay_triangulation_2>(); }
+Regular_triangulation_2 rt2_data() { return build_dummy_triangulation_with_ids<Regular_triangulation_2>(); }
+Constrained_triangulation_2 ct2_data() { return build_dummy_triangulation_with_ids<Constrained_triangulation_2>(); }
+Constrained_Delaunay_triangulation_2 cdt2_data() { return build_dummy_triangulation_with_ids<Constrained_Delaunay_triangulation_2>(); }
+CDT_P2 cdtp2_data() { return build_dummy_triangulation_with_ids<CDT_P2>(); }
+Triangulation_hierarchy_2 t2h_data() { return build_dummy_triangulation_with_ids<Triangulation_hierarchy_2>(); }
 
 template <typename Graph>
 struct Surface_fixture_1 {

@@ -4,7 +4,7 @@
 
 #include <boost/unordered_set.hpp>
 
-#define CGAL_TEST_PROPERTIES_DEBUG
+// #define CGAL_TEST_PROPERTIES_DEBUG
 
 namespace CGAL {
 
@@ -364,11 +364,6 @@ void test_all_index_maps(Graph& g)
 template <typename Graph>
 void test_graph(Graph& g)
 {
-  assert(!CGAL::is_empty(g));
-
-  // Add some garbage
-  CGAL::Euler::join_vertex(*(halfedges(g).begin()), g);
-
 #ifdef CGAL_TEST_PROPERTIES_DEBUG
   std::cout << "Graph has:" << std::endl
             << "\t" << num_vertices(g) << " vertices (actual: " << vertices(g).size() << ")" << std::endl
@@ -407,6 +402,11 @@ int main(int, char**)
   std::vector<SM> sms = sm_data();
   for(SM& sm : sms)
   {
+    assert(!CGAL::is_empty(sm));
+
+    // Add some garbage
+    CGAL::Euler::join_vertex(*(halfedges(sm).begin()), sm);
+
     test_graph(sm);
 
     // Test on a mesh with no internal index maps
@@ -425,28 +425,33 @@ int main(int, char**)
     test_graph(p);
 #endif
 
-//  std::cout << "testing Triangulations\n";
+  std::cout << "testing Triangulations\n";
 
-//  Triangulation_2 t2 = t2_data();
-//  test_graph(t2);
+  Triangulation_2 t2 = t2_data();
+  test_graph(t2);
 
-//  Delaunay_triangulatiotest_initialized_index_mapsn_2 dt2 = dt2_data();
-//  test_graph(dt2);
+  Delaunay_triangulation_2 dt2 = dt2_data();
+  test_graph(dt2);
 
-//  Regular_triangulation_2 rt2 = rt2_data();
-//  test_graph(rt2);
+  Regular_triangulation_2 rt2 = rt2_data();
+  test_graph(rt2);
 
-//  Constrained_triangulation_2 ct2 = ct2_data();
-//  test_graph(ct2);
+  Constrained_triangulation_2 ct2 = ct2_data();
+  test_graph(ct2);
 
-//  Constrained_Delaunay_triangulation_2 cdt2 = cdt2_data();
-//  test_graph(cdt2);
+  Constrained_Delaunay_triangulation_2 cdt2 = cdt2_data();
+  test_graph(cdt2);
 
-//  CDT_P2 cdtp2 = cdtp2_data();
-//  test_graph(cdtp2);
+  CDT_P2 cdtp2 = cdtp2_data();
+  test_graph(cdtp2);
 
-//  Triangulation_hierarchy_2 t2h = t2h_data();
-//  test_graph(t2h);
+  Triangulation_hierarchy_2 t2h = t2h_data();
+  test_graph(t2h);
+
+  // no dynamic pmaps in triangulations (yet)
+//  Triangulation_no_id_2 t2_no_id = t2_no_id_data();
+//  test_initialized_index_maps(t2_no_id);
+//  test_initialized_index_maps_const(t2_no_id);
 
   std::cout << "Done!" << std::endl;
 
