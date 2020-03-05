@@ -19,6 +19,7 @@
 #include <CGAL/use.h>
 
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 namespace BGL {
@@ -26,7 +27,7 @@ namespace internal {
 
 // Check that an index map has been correctly initialized
 template <typename DescriptorRange, typename IndexMap>
-bool is_index_map_valid(const IndexMap idmap,
+bool is_index_map_valid(IndexMap idmap,
                         const std::size_t num_simplices,
                         const DescriptorRange& range)
 {
@@ -132,7 +133,7 @@ struct Index_map_initializer<IndexPropertyMap, Graph, false>
   void operator()(const Parameter, IndexPropertyMap, const Graph&)
   {
     // The property map is not writable; should never be here.
-    CGAL_assertion(false);
+    CGAL_assertion_msg(false, "You are trying to initialize a non-writable property map");
   }
 };
 
@@ -159,11 +160,11 @@ CGAL_DEF_INITIALIZE_ID_MAP_FUNCTION(face)
 
 #undef CGAL_DEF_INITIALIZE_ID_FUCNTION
 
-// Using the pmap passed in named parameters
+// Using the pmap passed in named parameters -------------------------------------------------------
 template <typename IndexMap, typename Parameter, typename Tag, typename DynamicTag, typename Graph>
-IndexMap get_initialized_index_map(const IndexMap index_map,
-                                   const Parameter p, Tag, DynamicTag,
-                                   const Graph& g)
+IndexMap get_initialized_index_map_const(const IndexMap index_map,
+                                         const Parameter p, Tag, DynamicTag,
+                                         const Graph& g)
 {
   CGAL_USE(g);
   CGAL_USE(p);
@@ -172,20 +173,29 @@ IndexMap get_initialized_index_map(const IndexMap index_map,
   return index_map;
 }
 
-// Using the internal to the mesh
-template <typename Parameter, typename Tag, typename DynamicTag, typename Graph>
-typename boost::property_map<Graph, Tag>::const_type
-get_initialized_index_map(CGAL::internal_np::Param_not_found,
-                          const Parameter p, const Tag tag, DynamicTag,
-                          const Graph& g) // @todo non-const
+template <typename IndexMap, typename Parameter, typename Tag, typename DynamicTag, typename Graph>
+IndexMap get_initialized_index_map(const IndexMap index_map,
+                                   const Parameter p, Tag, DynamicTag,
+                                   Graph& g)
 {
-  typedef typename boost::property_map<Graph, Tag>::const_type          Index_map;
-  Index_map index_map = get(tag, g);
+  CGAL_USE(g);
+  CGAL_USE(p);
+  CGAL_assertion(is_index_map_valid(p, index_map, g));
 
-  if(CGAL::internal::Is_writable_property_map<Index_map>::value)
+  return index_map;
+}
+
+// Using the internal to the mesh ------------------------------------------------------------------
+template <typename InternalIndexMap, typename Parameter, typename Graph>
+InternalIndexMap
+get_initialized_internal_index_map(InternalIndexMap index_map,
+                                   const Parameter p,
+                                   const Graph& g)
+{
+  if(CGAL::internal::Is_writable_property_map<InternalIndexMap>::value)
   {
     if(!is_index_map_valid(p, index_map, g))
-      Index_map_initializer<Index_map, Graph>{}(p, index_map, g);
+      Index_map_initializer<InternalIndexMap, Graph>{}(p, index_map, g);
   }
   else // not writable
   {
@@ -195,42 +205,80 @@ get_initialized_index_map(CGAL::internal_np::Param_not_found,
   return index_map;
 }
 
-// Create a dynamic property and initialize it
-template <typename Parameter, typename DynamicTag, typename Graph>
-typename boost::property_map<Graph, DynamicTag>::const_type
-get_initialized_index_map(CGAL::internal_np::Param_not_found,
-                          const Parameter p, const DynamicTag tag, DynamicTag,
-                          const Graph& g)
+template <typename Parameter, typename Tag, typename DynamicTag, typename Graph>
+typename boost::property_map<Graph, Tag>::const_type
+get_initialized_index_map_const(CGAL::internal_np::Param_not_found,
+                                const Parameter p, const Tag tag, DynamicTag,
+                                const Graph& g)
 {
-  typedef typename boost::property_map<Graph, DynamicTag>::const_type   Index_map;
+  return get_initialized_internal_index_map(get(tag, g), p, g);
+}
 
-  Index_map index_map = get(tag, g);
-  Index_map_initializer<Index_map, Graph>{}(p, index_map, g);
+// same as above, non-const graph overload
+template <typename Parameter, typename Tag, typename DynamicTag, typename Graph>
+typename boost::property_map<Graph, Tag>::type
+get_initialized_index_map(CGAL::internal_np::Param_not_found,
+                          const Parameter p, const Tag tag, DynamicTag,
+                          Graph& g)
+{
+  // From now on the correct property map has been acquired
+  // and there is no need to distinguish between const and non-const mesh
+  return get_initialized_internal_index_map(get(tag, g), p, g);
+}
 
+// Create a dynamic property and initialize it -----------------------------------------------------
+template <typename DynamicIndexMap, typename Parameter, typename Graph>
+DynamicIndexMap
+get_initialized_dynamic_index_map(DynamicIndexMap index_map,
+                                  const Parameter p,
+                                  const Graph& g)
+{
+  Index_map_initializer<DynamicIndexMap, Graph>{}(p, index_map, g);
   return index_map;
 }
 
+template <typename Parameter, typename DynamicTag, typename Graph>
+typename boost::property_map<Graph, DynamicTag>::const_type
+get_initialized_index_map_const(CGAL::internal_np::Param_not_found,
+                                const Parameter p, const DynamicTag dtag, DynamicTag,
+                                const Graph& g)
+{
+  return get_initialized_dynamic_index_map(get(dtag, g), p, g);
+}
+
+// same as above, non-const graph overload
+template <typename Parameter, typename DynamicTag, typename Graph>
+typename boost::property_map<Graph, DynamicTag>::type
+get_initialized_index_map(CGAL::internal_np::Param_not_found,
+                          const Parameter p, const DynamicTag dtag, DynamicTag,
+                          Graph& g)
+{
+  // From now on the correct property map has been acquired
+  // and there is no need to distinguish between const and non-const mesh
+  return get_initialized_dynamic_index_map(get(dtag, g), p, g);
+}
+
 template <typename Parameter, typename Tag, typename DynamicTag,
-         typename Graph,
-         typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
+          typename Graph,
+          typename NamedParameters = Named_function_parameters<bool, internal_np::all_default_t> >
 class GetInitializedIndexMap
 {
 public:
-  // Definition of the Tag that will be used if there is no named parameter
+  // Check if there is an internal property map; if not, we must a dynamic property map
   typedef typename boost::mpl::if_c<
       CGAL::graph_has_property<Graph, Tag>::value, Tag, DynamicTag>::type    Final_tag;
 
   typedef typename internal_np::Lookup_named_param_def<
       Parameter,
       NamedParameters,
-      typename boost::property_map<Graph, Final_tag>::type>::type            type;
+      typename boost::property_map<Graph, Final_tag>::const_type>::type      const_type;
 
   typedef typename internal_np::Lookup_named_param_def<
       Parameter,
       NamedParameters,
-      typename boost::property_map<Graph, Final_tag>::const_type>::type      const_type;
+      typename boost::property_map<Graph, Final_tag>::type>::type            type;
 
-  static const_type get(const Parameter p, const Graph& g, const NamedParameters& np)
+  static const_type get_const(const Parameter p, const Graph& g, const NamedParameters& np)
   {
     return BGL::internal::get_initialized_index_map_const(parameters::get_parameter(np, p),
                                                           p, Final_tag{}, DynamicTag{}, g);
@@ -246,7 +294,7 @@ public:
 } // namespace internal
 } // namespace BGL
 
-// @todo move below to named_params_...
+// @todo move below to named_params_helper.h
 
 #define CGAL_DEF_GET_INDEX_TYPE(CTYPE, TYPE)                                                       \
 template <typename Graph,                                                                          \
@@ -294,7 +342,7 @@ get_initialized_##TYPE##_index_map(const Graph& g,                              
                                                 boost::TYPE##_index_t,                             \
                                                 CGAL::dynamic_##TYPE##_property_t<int>,            \
                                                 Graph, NamedParameters>          Index_map_getter; \
-  return Index_map_getter::get(CGAL::internal_np::TYPE##_index_t(), g, np);                        \
+  return Index_map_getter::get_const(CGAL::internal_np::TYPE##_index_t{}, g, np);                  \
 }                                                                                                  \
 template <typename Graph>                                                                          \
 typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::TYPE##_index_t,                  \
@@ -304,9 +352,37 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::TYPE##_index_t
 get_initialized_##TYPE##_index_map(const Graph& g)                                                 \
 {                                                                                                  \
   return get_initialized_##TYPE##_index_map(g, CGAL::parameters::all_default());                   \
+}                                                                                                  \
+/* same as above, non-const version*/                                                              \
+template <typename Graph,                                                                          \
+          typename NamedParameters,                                                                \
+          /*otherwise compilers will try to use 'Graph := const PM' and things will go badly*/     \
+          std::enable_if_t<                                                                        \
+            !std::is_const<typename std::remove_reference<Graph>::type>::value, int> = 0>          \
+typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::TYPE##_index_t,                  \
+                                               boost::TYPE##_index_t,                              \
+                                               CGAL::dynamic_##TYPE##_property_t<int>,             \
+                                               Graph, NamedParameters>::type                       \
+get_initialized_##TYPE##_index_map(Graph& g,                                                       \
+                                   const NamedParameters& np)                                      \
+{                                                                                                  \
+  typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::TYPE##_index_t,                 \
+                                                boost::TYPE##_index_t,                             \
+                                                CGAL::dynamic_##TYPE##_property_t<int>,            \
+                                                Graph, NamedParameters>          Index_map_getter; \
+  return Index_map_getter::get(CGAL::internal_np::TYPE##_index_t{}, g, np);                        \
+}                                                                                                  \
+template <typename Graph,                                                                          \
+          std::enable_if_t<                                                                        \
+            !std::is_const<typename std::remove_reference<Graph>::type>::value, int> = 0>          \
+typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::TYPE##_index_t,                  \
+                                               boost::TYPE##_index_t,                              \
+                                               CGAL::dynamic_##TYPE##_property_t<int>,             \
+                                               Graph>::type                                        \
+get_initialized_##TYPE##_index_map(Graph& g)                                                       \
+{                                                                                                  \
+  return get_initialized_##TYPE##_index_map(g, CGAL::parameters::all_default());                   \
 }
-
-// @todo add the non-const Graph& version
 
 CGAL_DEF_GET_INITIALIZED_INDEX_MAP(vertex)
 CGAL_DEF_GET_INITIALIZED_INDEX_MAP(halfedge)
