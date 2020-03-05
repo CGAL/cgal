@@ -191,6 +191,84 @@ Constrained points are left unaltered and are used as seeds in `mst_orient_norma
 <b>Default value</b>: a property map with only the highest point constrained.
 \cgalNPEnd
 
+\cgalNPBegin{number_of_samples} \anchor PSP_number_of_samples
+is the number of input points used for computation.\n
+\b Type: \c unsigned \c int \n
+<b>Default value</b>: `200`
+\cgalNPEnd
+
+\cgalNPBegin{accuracy} \anchor PSP_accuracy
+is the wanted output accuracy, expressed in scene units.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `5.00`
+\cgalNPEnd
+
+\cgalNPBegin{maximum_normal_deviation} \anchor PSP_maximum_normal_deviation
+is the maximum angle between the normals of a pair of points, expressed in degrees.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `90.00`
+\cgalNPEnd
+
+\cgalNPBegin{overlap} \anchor PSP_overlap
+is the expected overlap ratio (between 0 and 1) between two points sets to register.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `0.20`
+\cgalNPEnd
+
+\cgalNPBegin{maximum_running_time} \anchor PSP_maximum_running_time
+is the maximum time (in seconds) allowed to the function before ending and returning the best solution found so far.\n
+\b Type: floating scalar value\n
+<b>Default value</b>: `1000`
+\cgalNPEnd
+
+\cgalNPBegin{transformation} \anchor PSP_transformation
+is the transformation to be applied to the point set before the function starts to further process.\n
+\b Type: Aff_transformation_3\n
+No default value.
+\cgalNPEnd
+
+\cgalNPBegin{point_set_filters} \anchor PSP_point_set_filters
+is the chain of filters to be applied to the point set.\n
+\b Type: a model of `Range` with `CGAL::pointmatcher::ICP_config` as value type.\n
+No default value.
+\cgalNPEnd
+
+\cgalNPBegin{matcher} \anchor PSP_matcher
+is the method used for matching (linking) the point set to the reference point set.\n
+\b Type: a model of `CGAL::pointmatcher::ICP_config`\n
+No default value.
+\cgalNPEnd
+
+\cgalNPBegin{outlier_filters} \anchor PSP_outlier_filters
+is the chain of filters to be applied to the matched (linked) point set after each processing iteration of the registration to reject the outliers for the next iteration.\n
+\b Type: a model of `Range` with `CGAL::pointmatcher::ICP_config` as value type.\n
+No default value.
+\cgalNPEnd
+
+\cgalNPBegin{error_minimizer} \anchor PSP_error_minimizer
+is the error minimizer that computes a transformation matrix such as to minimize the error between the point sets in registration process.\n
+\b Type: a model of `CGAL::pointmatcher::ICP_config`\n
+No default value.
+\cgalNPEnd
+
+\cgalNPBegin{transformation_checkers} \anchor PSP_transformation_checkers
+is the chain of transformation checkers that can stop the iteration depending on the conditions it defines.\n
+\b Type: a model of `Range` with `CGAL::pointmatcher::ICP_config` as value type.\n
+No default value.
+\cgalNPEnd
+
+\cgalNPBegin{inspector} \anchor PSP_inspector
+is the inspector that allows to log data at different steps of the running algorithm to allow analysis.\n
+\b Type: a model of `CGAL::pointmatcher::ICP_config`\n
+No default value.
+\cgalNPEnd
+
+\cgalNPBegin{logger} \anchor PSP_logger
+is for logging information regarding the process.\n
+\b Type: a model of `CGAL::pointmatcher::ICP_config`\n
+No default value.
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */

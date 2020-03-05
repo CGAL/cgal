@@ -133,6 +133,27 @@ A package dependency over \sc{Eigen} is marked on the
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
 
+\subsection thirdpartyOpenGR OpenGR 
+
+\sc{OpenGR} is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 licence.
+
+\cgal provides wrappers for the Super4PCS algorithm of \sc{OpenGR} in the \ref PkgPointSetProcessing3Ref
+packages. In order to use \sc{OpenGR} in \cgal programs, the provided CMake function
+`CGAL_target_use_OpenGR(<target>)` should be used.
+
+The \sc{OpenGR} web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://github.com/STORM-IRIT/OpenGR`</A>.
+
+\subsection thirdpartylibpointmatcher PointMatcher 
+
+\sc{libpointmatcher} is a modular library implementing the Iterative Closest Point (ICP) algorithm for aligning point clouds, released under a permissive BSD license.
+
+\cgal provides wrappers for the ICP algorithm of \sc{libpointmatcher} in the \ref PkgPointSetProcessing3Ref
+packages. In order to use \sc{libpointmatcher} in \cgal programs, the provided CMake function
+`CGAL_target_use_pointmatcher(<target>)` should be used.
+
+The \sc{libpointmatcher} web site is <A
+HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/libpointmatcher`</A>.
+
 \subsection thirdpartyLeda LEDA
 <b>Version 6.2 or later</b>
 
