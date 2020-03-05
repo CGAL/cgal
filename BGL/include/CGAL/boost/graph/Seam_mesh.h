@@ -440,7 +440,7 @@ public:
       return ! (e1 == e2);
     }
 
-    friend std::size_t hash_value(const edge_descriptor ed)
+    friend std::size_t hash_value(const edge_descriptor& ed)
     {
       return hash_value((std::min)(ed.hd, ed.mesh_->opposite(ed.hd)));
     }
