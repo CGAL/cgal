@@ -149,7 +149,7 @@ void initialize_##TYPE##_index_map(WritableIndexPropertyMap index_map,          
                                    const Graph& g)                                                 \
 {                                                                                                  \
   Index_map_initializer<WritableIndexPropertyMap, Graph> initializer;                              \
-  initializer(CGAL::internal_np::TYPE##_index_t(), index_map, g);                                  \
+  initializer(CGAL::internal_np::TYPE##_index_t{}, index_map, g);                                  \
 }
 
 CGAL_DEF_INITIALIZE_ID_MAP_FUNCTION(vertex)
@@ -232,14 +232,14 @@ public:
 
   static const_type get(const Parameter p, const Graph& g, const NamedParameters& np)
   {
-    return BGL::internal::get_initialized_index_map(parameters::get_parameter(np, p),
-                                                    p, Final_tag(), DynamicTag(), g);
+    return BGL::internal::get_initialized_index_map_const(parameters::get_parameter(np, p),
+                                                          p, Final_tag{}, DynamicTag{}, g);
   }
 
   static type get(const Parameter p, Graph& g, const NamedParameters& np)
   {
     return BGL::internal::get_initialized_index_map(parameters::get_parameter(np, p),
-                                                    p, Final_tag(), DynamicTag(), g);
+                                                    p, Final_tag{}, DynamicTag{}, g);
   }
 };
 
