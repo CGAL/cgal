@@ -54,6 +54,8 @@ namespace CGAL {
   public : 
     Kd_tree_node() { }
 
+    virtual ~Kd_tree_node() { }
+
     virtual bool is_leaf() const = 0;
 
     std::size_t 
@@ -397,6 +399,8 @@ namespace CGAL {
       : n(n_)
     {}
 
+    virtual ~Kd_tree_leaf_node() { }
+
     virtual bool is_leaf() const { return true; }
 
     // members for all nodes
@@ -469,6 +473,8 @@ namespace CGAL {
     // default constructor
     Kd_tree_internal_node() 
     {}
+
+    virtual ~Kd_tree_internal_node() { }
 
     virtual bool is_leaf() const { return false; }
     
@@ -611,9 +617,7 @@ namespace CGAL {
     Kd_tree_internal_node() 
     {}
 
-    Kd_tree_internal_node(bool leaf_) 
-      : Base(leaf_)
-    {}
+    virtual bool is_leaf() const { return false; }
     
     
     // members for internal node and extended internal node
