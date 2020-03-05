@@ -392,7 +392,7 @@ bilateral_smooth_point_set(
    FT sum_move_error = 0;
    std::size_t nb = 0;
    typename PointRange::iterator it = points.begin();
-   for (const value_type& vt : points)
+   for (value_type& vt : points)
    {
      sum_move_error += CGAL::squared_distance(get(point_map, vt), update_pwns[nb].first);
      put (point_map, vt, update_pwns[nb].first);

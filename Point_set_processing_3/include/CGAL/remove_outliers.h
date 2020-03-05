@@ -53,9 +53,10 @@ compute_avg_knn_sq_distance_3(
   const typename NeighborQuery::Kernel::Point_3& query, ///< 3D point to project
     NeighborQuery& neighbor_query,                            ///< KD-tree
     unsigned int k,                        ///< number of neighbors
-    typename Kernel::FT neighbor_radius)
+    typename NeighborQuery::Kernel::FT neighbor_radius)
 {
     // geometric types
+    typedef typename NeighborQuery::Kernel Kernel;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
 
