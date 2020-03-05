@@ -1523,14 +1523,9 @@ private:
       // tag patch border halfedges
       BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
       {
-        if (status(h)==PATCH && status(opposite(h, mesh_))!=PATCH)
-        {
-          set_status(h, PATCH_BORDER);
-          has_border_ = true;
-        }
         if (status(h) == PATCH
-          && status(opposite(h, mesh_)) == PATCH
-          && get_patch_id(face(h, mesh_)) != get_patch_id(face(opposite(h, mesh_), mesh_)))
+          && (   status(opposite(h, mesh_)) != PATCH
+              || get_patch_id(face(h, mesh_)) != get_patch_id(face(opposite(h, mesh_), mesh_))))
         {
           set_status(h, PATCH_BORDER);
           has_border_ = true;
