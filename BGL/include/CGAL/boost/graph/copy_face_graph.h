@@ -199,12 +199,8 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   typedef typename boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
   std::vector<tm_halfedge_descriptor> hedges(num_halfedges(sm));
 
-  // init halfedge index map
-  /// \TODO shall we keep that?
-  BGL::internal::initialize_halfedge_index_map(get(boost::halfedge_index, sm), const_cast<SourceMesh&>(sm));
-
   copy_face_graph_impl(sm, tm,
-                       bind_property_maps(get(boost::halfedge_index, sm),
+                       bind_property_maps(get_initialized_halfedge_index_map(sm),
                                           make_property_map(hedges)),
                        v2v, h2h, f2f,
                        sm_vpm, tm_vpm);
