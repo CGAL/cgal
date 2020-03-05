@@ -161,9 +161,9 @@ private:
       CGAL::Real_timer t;
       t.start();
       if (lower_grid == nullptr)
-        neighborhood = new Neighborhood (input, point_map);
+        neighborhood = new Neighborhood (input, point_map, ConcurrencyTag());
       else
-        neighborhood = new Neighborhood (input, point_map, voxel_size);
+        neighborhood = new Neighborhood (input, point_map, voxel_size, ConcurrencyTag());
       t.stop();
       
       if (lower_grid == nullptr)
