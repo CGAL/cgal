@@ -633,9 +633,9 @@ public:
 	typename AABB_tree<Tr>::Self& AABB_tree<Tr>::operator=(Self&& tree) noexcept
 	{
 		m_traits = std::move(tree.traits);
-		m_primitives = std::exchange(tree.m_primitives, {});
-		m_p_nodes = std::exchange(tree.m_p_nodes, {});
-		m_p_search_tree = std::exchange(tree.m_p_search_tree, nullptr);
+		m_primitives = std::move(tree.m_primitives);
+		m_p_nodes = std::move(tree.m_p_nodes);
+		m_p_search_tree = std::move(tree.m_p_search_tree);
 		m_search_tree_constructed = std::exchange(tree.m_search_tree_constructed, false);
 		m_default_search_tree_constructed = std::exchange(tree.m_default_search_tree_constructed, true);
 		m_need_build = std::exchange(tree.m_need_build, false);
