@@ -41,9 +41,10 @@ namespace Polygon_mesh_processing {
 *         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
 *         models of `Hashable`.
-*         If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
-*         and no `face_index_map` is given
-*         as a named parameter, then the internal one must be initialized
+*         If `PolygonMesh` has a non modifiable internal property map
+*         for `CGAL::face_index_t` and no `face_index_map` is given
+*         as a named parameter, then the internal one must be initialized; otherwise, it will be.
+  *
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `ForwardIterator`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
@@ -160,9 +161,8 @@ void isotropic_remeshing(const FaceRange& faces
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
 
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                           get_property_map(face_index, pmesh));
+  typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
+  FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def <
       internal_np::edge_is_constrained_t,
@@ -338,9 +338,8 @@ void split_long_edges(const EdgeRange& edges
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(vertex_point, pmesh));
 
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FIMap;
-  FIMap fimap = choose_parameter(get_parameter(np, internal_np::face_index),
-                             get_property_map(face_index, pmesh));
+  typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
+  FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
 
   typedef typename internal_np::Lookup_named_param_def <
         internal_np::edge_is_constrained_t,

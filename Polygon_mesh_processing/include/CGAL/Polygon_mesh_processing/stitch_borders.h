@@ -185,10 +185,8 @@ collect_duplicated_stitchable_boundary_edges
   if(per_cc)
   {
     cc = get(Face_property_tag(), pmesh);
-    typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::const_type FIMap;
-    FIMap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                             get_const_property_map(face_index, pmesh));
-    num_component = num_component_wrapper(pmesh, cc, fim);
+
+    num_component = num_component_wrapper(pmesh, cc, CGAL::get_initialized_face_index_map(pmesh, np));
     border_edges_per_cc.resize(num_component);
   }
   
@@ -867,7 +865,7 @@ std::size_t stitch_borders(PolygonMesh& pmesh,
 /// `CGAL::vertex_point_t` must be available in `PolygonMesh`.\cgalParamEnd
 /// \cgalParamBegin{apply_per_connected_component}
 ///  specifies if the borders should only be stitched inside their own connected component.
-/// In that case, a property map for `CGAL::face_index_t` should be either available as an internal property map 
+/// In that case, an initialized property map for `CGAL::face_index_t` should be either available as an internal property map
 /// to `pmesh` or provided as the \ref pmp_namedparameters "Named Parameter" `face_index_map`. If this is not the case, 
 /// a default map will be created on the fly.
 /// Default value is `false`.\cgalParamEnd

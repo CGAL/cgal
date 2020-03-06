@@ -117,19 +117,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
       typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
       typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
 
-      //make a minimal check that it's properly initialized :
-      //if the 2 first faces have the same id, we know the property map is not initialized
-      if (boost::is_same<typename GetFaceIndexMap<PM, NamedParameters>::Is_internal_map,
-                         boost::true_type>::value)
-      {
-        typename boost::range_iterator<const FaceRange>::type it = boost::const_begin(faces);
-        if (get(fmap, *it) == get(fmap, *std::next(it)))
-        {
-          std::cerr << "WARNING : the internal property map for CGAL::face_index_t" << std::endl
-                    << "          is not properly initialized." << std::endl
-                    << "          Initialize it before calling border_halfedges()" << std::endl;
-        }
-      }
+      CGAL_assertion(BGL::internal::is_index_map_valid(fmap, num_faces(pmesh), faces(pmesh)));
 
       std::vector<bool> present(num_faces(pmesh), false);
       for(face_descriptor fd : faces)
@@ -162,9 +150,9 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   * but `face(h, pmesh)` does not belong to the patch.
   *
   * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh`
-  *  has an internal property map
+  *  has an internal non mutable property map
   *  for `CGAL::face_index_t` and no `face_index_map` is given
-  *  as a named parameter, then the internal one must be initialized
+  *  as a named parameter, then the internal one must be initialized; else, it will be.
   * @tparam FaceRange range of
        `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
         Its iterator type is `InputIterator`.
@@ -197,20 +185,8 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   {
     if (faces.empty()) return out;
 
-    typedef PolygonMesh PM;
-    typedef typename GetFaceIndexMap<PM, NamedParameters>::const_type     FIMap;
-    typedef typename boost::property_map<typename internal::Dummy_PM,
-                                              CGAL::face_index_t>::type   Unset_FIMap;
-
-    if (boost::is_same<FIMap, Unset_FIMap>::value || faces.size() == 1)
-    {
-      //face index map is not given in named parameters, nor as an internal property map
-      return internal::border_halfedges_impl(faces, out, pmesh);
-    }
-
-    //face index map given as a named parameter, or as an internal property map
-    FIMap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                             get_const_property_map(CGAL::face_index, pmesh));
+    typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type FIMap;
+    FIMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
     return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
   }

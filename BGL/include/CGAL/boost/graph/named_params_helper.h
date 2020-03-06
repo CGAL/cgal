@@ -19,18 +19,19 @@
 #ifndef CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 #define CGAL_BOOST_GRAPH_NAMED_PARAMETERS_HELPERS_H
 
+#include <CGAL/boost/graph/internal/initialized_index_maps_helpers.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Dynamic_property_map.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
-
 #include <CGAL/property_map.h>
-#include <CGAL/boost/graph/properties.h>
+
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
-
 #include <boost/type_traits/is_same.hpp>
 
+#include <type_traits>
 
 namespace CGAL {
 
@@ -40,8 +41,8 @@ namespace CGAL {
   class Eigen_svd;
   class Lapack_svd;
   //
-  
-  
+
+
   //helper classes
   template<typename PolygonMesh, typename PropertyTag>
   class property_map_selector
@@ -104,7 +105,8 @@ namespace CGAL {
     property_map_selector<PolygonMesh, PropertyTag> pms;
     return pms.get_const_pmap(p, pmesh);
   }
-// shortcut for accessing the value type of the property map
+
+  // Shortcut for accessing the value type of the property map
   template <class Graph, class Property>
   class property_map_value {
     typedef typename boost::property_map<Graph, Property>::const_type PMap;
@@ -244,7 +246,7 @@ namespace CGAL {
         typedef std::random_access_iterator_tag iterator_category;
       };
     };
-    
+
     namespace parameters
     {
       template <typename PointRange>
@@ -258,7 +260,7 @@ namespace CGAL {
     namespace internal{
       BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
     }
-    
+
     template<typename PointRange, typename NamedParameters,
              bool has_nested_iterator=internal::Has_nested_type_iterator<PointRange>::value>
     class GetPointMap
@@ -380,7 +382,7 @@ namespace CGAL {
       DefaultPMap
       > ::type  const_type;
     };
-    
+
     template<typename NamedParameters>
     class GetPlaneIndexMap
     {
@@ -428,7 +430,7 @@ namespace CGAL {
     };
 
   } // namespace Point_set_processing_3
-  
+
   template<typename NamedParameters, typename DefaultSolver>
   class GetSolver
   {
@@ -461,10 +463,10 @@ namespace CGAL {
       typedef int Matrix;
       static FT solve (const Matrix&, Vector&) { return 0.; }
     };
-    
+
   public:
     typedef DummySvdTraits NoTraits;
-    
+
     typedef typename internal_np::Lookup_named_param_def <
     internal_np::svd_traits_t,
     NamedParameters,
@@ -477,6 +479,7 @@ namespace CGAL {
 #endif
     > ::type type;
   };
+
 } //namespace CGAL
 
 

@@ -138,11 +138,6 @@ detect_surface_patches(PolygonMesh& p,
                        EdgeIsFeatureMap eif,
                        const NamedParameters& np)
 {
-  //extract types from NPs
-  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-          fimap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                      get_const_property_map(boost::face_index, p));
-
   int offset = static_cast<int>(
           parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index),
           1));
@@ -150,11 +145,12 @@ detect_surface_patches(PolygonMesh& p,
   internal::PatchIdMapWrapper<PatchIdMap,
                               typename boost::property_traits<PatchIdMap>::value_type>
           wrapmap(patch_id_map, offset);
+
   return connected_components(p, wrapmap,
                               parameters::edge_is_constrained_map(eif)
-                             .face_index_map(fimap));
-
+                                         .face_index_map(CGAL::get_initialized_face_index_map(p, np)));
 }
+
 template <typename PolygonMesh, typename EdgeIsFeatureMap, typename PatchIdMap>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 detect_surface_patches(PolygonMesh& p,
@@ -373,8 +369,9 @@ namespace internal
  * computing a
  * surface patch id for each face.
  *
- * A property map for `CGAL::face_index_t` must be either available
- * as an internal property map to `pmesh` or provided as one of the Named Parameters.
+ * If `PolygonMesh` has a non modifiable internal property map
+  *  for `CGAL::face_index_t` and no `face_index_map` is given
+  *  as a named parameter, then the internal one must be initialized; otherwise, it will be.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam FT a number type. It is
