@@ -1332,7 +1332,7 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 template<typename Graph>
 bool
 does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
-                            Graph& g)
+                            const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
@@ -1432,7 +1432,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
 template<typename Graph>
 bool
   satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
-                           Graph& g)
+                           const Graph& g)
 {
   return does_satisfy_link_condition(e, g);
 }
