@@ -23,9 +23,18 @@ if ( NOT Boost_FOUND )
   return()  
 endif()
 
+# google benchmark
+find_package(benchmark REQUIRED)
+if ( NOT benchmark_FOUND )
+  message(STATUS "This project requires Google benchmarks, and will not be compiled.")
+endif()
+
+message(${CMAKE_CXX_FLAGS_RELEASE})
+
 # include for local package
 include_directories( BEFORE ../../include )
 
-add_executable (test_ test.cpp)
-
+# add_executable (test_ test.cpp) // TODO: fix this benchmark
+add_executable(tree_creation tree_creation.cpp)
+target_link_libraries(tree_creation benchmark::benchmark)
 
