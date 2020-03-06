@@ -208,8 +208,11 @@ namespace Polygon_mesh {
       const FT distance_to_fitted_plane = 
       get_max_face_distance(face);
       
+      // The sign of this scalar product is important, as it indicates
+      // into which side of the plane the face's normal points.
       const FT cos_value = 
-      CGAL::abs(m_scalar_product_3(face_normal, m_normal_of_best_fit));
+      m_scalar_product_3(face_normal, m_normal_of_best_fit);
+
 
       return (( distance_to_fitted_plane <= m_distance_threshold ) && 
         ( cos_value >= m_normal_threshold ));
@@ -284,6 +287,11 @@ namespace Polygon_mesh {
 
         // The best fit plane will be a plane fitted to all vertices of all
         // region faces with its normal being perpendicular to the plane.
+        // Given that the points, and no normals, are used in estimating
+        // the plane, the estimated normal will point into an arbitray
+        // one of the two possible directions.
+        // We flip it into the correct direction (the one that the majority
+        // of faces agree with) below.
         CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(), 
           fitted_plane, fitted_centroid, 
@@ -291,18 +299,46 @@ namespace Polygon_mesh {
           Local_traits(), 
           CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
 
-        m_plane_of_best_fit = 
+        Plane_3 unoriented_plane_of_best_fit =
         Plane_3(
           static_cast<FT>(fitted_plane.a()), 
           static_cast<FT>(fitted_plane.b()), 
           static_cast<FT>(fitted_plane.c()), 
           static_cast<FT>(fitted_plane.d()));
 
-        const Vector_3 normal = m_plane_of_best_fit.orthogonal_vector();
-        const FT normal_length = m_sqrt(m_squared_length_3(normal));
+        Vector_3 unoriented_plane_normal =
+        unoriented_plane_of_best_fit.orthogonal_vector();
+
+        const FT normal_length =
+        m_sqrt(m_squared_length_3(unoriented_plane_normal));
 
         CGAL_precondition(normal_length > FT(0));
-        m_normal_of_best_fit = normal / normal_length;
+
+        unoriented_plane_normal /= normal_length;
+
+        // Compute actual direction of plane's normal sign
+        // based on faces belonging to that region.
+        // Approach:
+        // Each face gets one vote to keep or flip the current plane normal.
+        int64_t votes_to_keep_normal = 0;
+        for (std::size_t i = 0; i < region.size(); ++i) {
+          const auto face = *(m_face_range.begin() + region[i]);
+          Vector_3 n;
+          get_face_normal(face, n);
+          bool agrees = n * unoriented_plane_normal > 0;
+          votes_to_keep_normal += (agrees ? 1 : -1);
+        }
+        bool flip_normal = (votes_to_keep_normal < 0);
+
+        m_plane_of_best_fit =
+        flip_normal
+          ? unoriented_plane_of_best_fit.opposite()
+          : unoriented_plane_of_best_fit;
+
+        m_normal_of_best_fit =
+        flip_normal
+          ? (-1 * unoriented_plane_normal)
+          : unoriented_plane_normal;
       }
     }
 
