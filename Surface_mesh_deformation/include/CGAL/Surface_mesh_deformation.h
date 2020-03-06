@@ -437,8 +437,8 @@ public:
    *
    * @pre `triangle_mesh` consists of only triangular facets
    * @param triangle_mesh triangulated surface mesh to deform
-   * @param vertex_index_map property map which associates an id to each vertex, from `0` to `num_vertices(triangle_mesh)-1`.
-   * @param hedge_index_map property map which associates an id to each halfedge, from `0` to `2*num_edges(triangle_mesh)-1`.
+   * @param vertex_index_map property map which associates a unique id to each vertex, between `0` to `num_vertices(triangle_mesh)-1`.
+   * @param hedge_index_map property map which associates a unique id to each halfedge, between `0` to `2*num_edges(triangle_mesh)-1`.
    * @param vertex_point_map property map which associates a point to each vertex of the triangle mesh.
    * @param weight_calculator function object or pointer for weight calculation
    */
