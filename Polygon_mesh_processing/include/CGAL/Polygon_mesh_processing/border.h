@@ -53,7 +53,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
     template<typename PM
            , typename FaceRange
            , typename HalfedgeOutputIterator>
-    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
+    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& face_range
                                                , HalfedgeOutputIterator out
                                                , const PM& pmesh)
     {
@@ -64,7 +64,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
       // the bool is true if the halfedge stored is the one of the face,
       // false if it is its opposite
       std::map<halfedge_descriptor, bool> border;
-      for(face_descriptor f : faces)
+      for(face_descriptor f : face_range)
       {
         for(halfedge_descriptor h :
           halfedges_around_face(halfedge(f, pmesh), pmesh))
@@ -94,13 +94,13 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
            , typename FaceRange
            , typename HalfedgeOutputIterator
            , typename NamedParameters>
-    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
+    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& face_range
                                                , typename boost::cgal_no_property::type
                                                , HalfedgeOutputIterator out
                                                , const PM& pmesh
                                                , const NamedParameters& /* np */)
     {
-      return border_halfedges_impl(faces, out, pmesh);
+      return border_halfedges_impl(face_range, out, pmesh);
     }
 
     template<typename PM
@@ -108,7 +108,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
            , typename FaceIndexMap
            , typename HalfedgeOutputIterator
            , typename NamedParameters>
-    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& faces
+    HalfedgeOutputIterator border_halfedges_impl(const FaceRange& face_range
                                                , const FaceIndexMap& fmap
                                                , HalfedgeOutputIterator out
                                                , const PM& pmesh
@@ -120,10 +120,10 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
       CGAL_assertion(BGL::internal::is_index_map_valid(fmap, num_faces(pmesh), faces(pmesh)));
 
       std::vector<bool> present(num_faces(pmesh), false);
-      for(face_descriptor fd : faces)
+      for(face_descriptor fd : face_range)
         present[get(fmap, fd)] = true;
 
-      for(face_descriptor fd : faces)
+      for(face_descriptor fd : face_range)
         for(halfedge_descriptor hd :
                       halfedges_around_face(halfedge(fd, pmesh), pmesh))
        {
@@ -161,9 +161,9 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
      for patch border
   * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
   *
-  * @param pmesh the polygon mesh to which `faces` belong
-  * @param faces the range of faces defining the patch whose border halfedges
-  *              are collected
+  * @param pmesh the polygon mesh to which the faces in `face_range` belong
+  * @param face_range the range of faces defining the patch whose border halfedges
+  *                   are collected
   * @param out the output iterator that collects the border halfedges of the patch,
   *            seen from outside.
   * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
@@ -178,17 +178,18 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
          , typename FaceRange
          , typename HalfedgeOutputIterator
          , typename NamedParameters>
-  HalfedgeOutputIterator border_halfedges(const FaceRange& faces
+  HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
                                   , const PolygonMesh& pmesh
                                   , HalfedgeOutputIterator out
                                   , const NamedParameters& np)
   {
-    if (faces.empty()) return out;
+    if (face_range.empty())
+      return out;
 
     typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type FIMap;
     FIMap fim = CGAL::get_initialized_face_index_map(pmesh, np);
 
-    return internal::border_halfedges_impl(faces, fim, out, pmesh, np);
+    return internal::border_halfedges_impl(face_range, fim, out, pmesh, np);
   }
 
   template<typename PolygonMesh
@@ -207,11 +208,11 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator>
-  HalfedgeOutputIterator border_halfedges(const FaceRange& faces
+  HalfedgeOutputIterator border_halfedges(const FaceRange& face_range
                                         , const PolygonMesh& pmesh
                                         , HalfedgeOutputIterator out)
   {
-    return border_halfedges(faces, pmesh, out,
+    return border_halfedges(face_range, pmesh, out,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
@@ -220,7 +221,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   //
   // @tparam PolygonMesh model of `HalfedgeGraph`.
   //
-  // @param pmesh the polygon mesh to which `faces` belong
+  // @param pmesh the polygon mesh to which `face_range` belong
   //
   template<typename PolygonMesh>
   unsigned int number_of_borders(const PolygonMesh& pmesh)
