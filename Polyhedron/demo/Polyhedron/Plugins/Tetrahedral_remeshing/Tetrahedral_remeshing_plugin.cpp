@@ -10,7 +10,6 @@
 #include "Scene_c3t3_item.h"
 #include "C3t3_type.h"
 
-#include <CGAL/Tetrahedral_remeshing/Remeshing_triangulation_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <unordered_map>
