@@ -23,6 +23,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 
+#include <boost/range/has_range_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
 
 #include <limits>
@@ -86,6 +87,81 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 }
 
 /// \ingroup PMP_repairing_grp
+/// collects the degenerate edges within a given range of edges.
+///
+/// @tparam EdgeRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+/// @tparam TriangleMesh a model of `HalfedgeGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param edges a subset of edges of `tm`
+/// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate edges are written
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///                                The traits class must provide the nested type `Point_3`,
+///                                and the nested functor `Equal_3` to check whether two points are identical.
+///    \cgalParamEnd
+/// \cgalNamedParamsEnd
+template <typename EdgeRange, typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_edges(const EdgeRange& edges,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+
+  for(edge_descriptor ed : edges)
+    if(is_degenerate_edge(ed, tm, np))
+      *out++ = ed;
+
+  return out;
+}
+
+template <typename EdgeRange, typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_edges(const EdgeRange& edges,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                typename boost::enable_if<
+                                  typename boost::has_range_iterator<EdgeRange>
+                                >::type* = 0)
+{
+  return degenerate_edges(edges, tm, out, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_edges()` with the range: `edges(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
+template <typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_edges(const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                ,
+                                typename boost::disable_if<
+                                  boost::has_range_iterator<TriangleMesh>
+                                >::type* = 0
+#endif
+                               )
+{
+  return degenerate_edges(edges(tm), tm, out, np);
+}
+
+template <typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_edges(const TriangleMesh& tm, OutputIterator out)
+{
+  return degenerate_edges(edges(tm), tm, out, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
 /// checks whether a triangle face is degenerate.
 /// A triangle face is considered degenerate if the geometric positions of its vertices are collinear.
 ///
@@ -140,6 +216,83 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
                                  const TriangleMesh& tm)
 {
   return CGAL::Polygon_mesh_processing::is_degenerate_triangle_face(f, tm, parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// collects the degenerate faces within a given range of faces.
+///
+/// @tparam FaceRange a model of `Range` with value type `boost::graph_traits<TriangleMesh>::%face_descriptor`
+/// @tparam TriangleMesh a model of `FaceGraph`
+/// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
+///
+/// @param faces a subset of faces of `tm`
+/// @param tm a triangle mesh
+/// @param out an output iterator in which the degenerate faces are put
+/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
+///                                      The type of this map is model of `ReadWritePropertyMap`.
+///                                      If this parameter is omitted, an internal property map for
+///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
+///    \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///                                 The traits class must provide the nested functor `Collinear_3`
+///                                 to check whether three points are collinear.
+///    \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+template <typename FaceRange, typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_faces(const FaceRange& faces,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+  for(face_descriptor fd : faces)
+  {
+    if(is_degenerate_triangle_face(fd, tm, np))
+      *out++ = fd;
+  }
+  return out;
+}
+
+template <typename FaceRange, typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_faces(const FaceRange& faces,
+                                const TriangleMesh& tm,
+                                OutputIterator out,
+                                typename boost::enable_if<
+                                boost::has_range_iterator<FaceRange>
+                                >::type* = 0)
+{
+  return degenerate_faces(faces, tm, out, CGAL::parameters::all_default());
+}
+
+/// \ingroup PMP_repairing_grp
+/// calls the function `degenerate_faces()` with the range: `faces(tm)`.
+///
+/// See above for the comprehensive description of the parameters.
+///
+template <typename TriangleMesh, typename OutputIterator, typename NamedParameters>
+OutputIterator degenerate_faces(const TriangleMesh& tm,
+                                OutputIterator out,
+                                const NamedParameters& np
+#ifndef DOXYGEN_RUNNING
+                                ,
+                                typename boost::disable_if<
+                                  boost::has_range_iterator<TriangleMesh>
+                                >::type* = 0
+#endif
+                                )
+{
+  return degenerate_faces(faces(tm), tm, out, np);
+}
+
+template <typename TriangleMesh, typename OutputIterator>
+OutputIterator degenerate_faces(const TriangleMesh& tm, OutputIterator out)
+{
+  return degenerate_faces(faces(tm), tm, out, CGAL::parameters::all_default());
 }
 
 /// \ingroup PMP_repairing_grp
