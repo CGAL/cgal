@@ -63,7 +63,7 @@ clip_to_bbox(const Plane_3& plane,
                                      NamedParameters>::type Vpm;
 
   Vpm vpm_out = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                    get_property_map(boost::vertex_point, tm_out));
+                                             get_property_map(boost::vertex_point, tm_out));
 
 
   std::vector<Point_3> corners(8);

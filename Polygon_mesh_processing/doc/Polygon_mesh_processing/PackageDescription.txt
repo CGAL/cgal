@@ -150,6 +150,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::stitch_borders()`
 - `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+- `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
 - `CGAL::Polygon_mesh_processing::is_non_manifold_vertex()`
 - `CGAL::Polygon_mesh_processing::duplicate_non_manifold_vertices()`

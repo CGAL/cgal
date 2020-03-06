@@ -71,6 +71,14 @@ is the geometric traits instance used for the mesh processing operation.\n
           typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
 \cgalNPEnd
 
+\cgalNPBegin{point_map} \anchor PMP_point_map
+ is the property map containing the points associated to the elements of the point range `points`.\n
+\b Type: a class model of `ReadablePropertyMap` with
+`PointRange::iterator::value_type` as key type and
+`geom_traits::Point_3` as value type. \n
+<b>Default value</b>: \code CGAL::Identity_property_map<geom_traits::Point_3>\endcode
+\cgalNPEnd
+
 \cgalNPBegin{vertex_incident_patches_map} \anchor PMP_vertex_incident_patches_map
 is the property map containing the surface patches incident to each vertex of the input polygon mesh.\n
 <b>Type:</b> a class model of `LvaluePropertyMap` with

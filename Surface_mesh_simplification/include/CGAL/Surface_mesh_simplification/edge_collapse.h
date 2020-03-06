@@ -90,22 +90,17 @@ int edge_collapse(TM& tmesh,
   typedef typename GetGeomTraits<TM, NamedParameters>::type                   Geom_traits;
 
   return internal::edge_collapse(tmesh, should_stop,
-                                 choose_parameter(get_parameter(np, internal_np::geom_traits),
-                                                  Geom_traits()),
+                                 choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits)),
                                  choose_parameter(get_parameter(np, internal_np::vertex_index),
                                                   get_const_property_map(boost::vertex_index, tmesh)),
                                  choose_parameter(get_parameter(np, internal_np::vertex_point),
                                                   get_property_map(vertex_point, tmesh)),
                                  choose_parameter(get_parameter(np, internal_np::halfedge_index),
                                                   get_const_property_map(boost::halfedge_index, tmesh)),
-                                 choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                                  No_constrained_edge_map<TM>()),
-                                 choose_parameter(get_parameter(np, internal_np::get_cost_policy),
-                                                  LindstromTurk_cost<TM>()),
-                                 choose_parameter(get_parameter(np, internal_np::get_placement_policy),
-                                                  LindstromTurk_placement<TM>()),
-                                 choose_parameter(get_parameter(np, internal_np::graph_visitor),
-                                                  internal::Dummy_visitor()));
+                                 choose_parameter<No_constrained_edge_map<TM> >(get_parameter(np, internal_np::edge_is_constrained)),
+                                 choose_parameter<LindstromTurk_cost<TM> >(get_parameter(np, internal_np::get_cost_policy)),
+                                 choose_parameter<LindstromTurk_placement<TM> >(get_parameter(np, internal_np::get_placement_policy)),
+                                 choose_parameter<internal::Dummy_visitor>(get_parameter(np, internal_np::graph_visitor)));
 }
 
 template<class TM, class ShouldStop>

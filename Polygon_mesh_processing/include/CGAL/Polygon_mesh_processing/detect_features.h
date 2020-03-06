@@ -141,11 +141,10 @@ detect_surface_patches(PolygonMesh& p,
   //extract types from NPs
   typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
           fimap = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                      get_const_property_map(boost::face_index, p));
+                                               get_const_property_map(boost::face_index, p));
 
   int offset = static_cast<int>(
-          parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index),
-          1));
+          parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index), 1));
 
   internal::PatchIdMapWrapper<PatchIdMap,
                               typename boost::property_traits<PatchIdMap>::value_type>

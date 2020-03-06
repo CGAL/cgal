@@ -606,7 +606,7 @@ std::size_t stitch_boundary_cycle(const typename boost::graph_traits<PolygonMesh
 
   typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type   VPMap;
   VPMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                           get_const_property_map(vertex_point, pm));
+                               get_const_property_map(vertex_point, pm));
 
   std::size_t stitched_boundary_cycles_n = 0;
 
