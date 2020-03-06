@@ -324,10 +324,6 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  * By default, the size of a face is `1` (and thus the size of a connected component is the number
  * of faces it contains), but it is also possible to pass custom sizes, such as the area of the face.
  *
-* If `PolygonMesh` has a non modifiable internal property map
-*  for `CGAL::face_index_t` (resp. `CGAL::vertex_index_t`) and no `face_index_map` (resp. `vertex_index_map`) is given
-*  as a named parameter, then the internal one must be initialized. Otherwise, it will be.
- *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
@@ -454,10 +450,6 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  * of all the faces of the connected component. By default, the size of a face is `1` (and thus
  * the size of a connected component is the number of faces it contains), but it is also possible
  * to pass custom sizes, such as the area of the face.
- *
-* If `PolygonMesh` has a non modifiable internal property map
-*  for `CGAL::face_index_t` (resp. `CGAL::vertex_index_t`) and no `face_index_map` (resp. `vertex_index_map`) is given
-*  as a named parameter, then the internal one must be initialized. Otherwise, it will be.
  *
  * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam ThresholdValueType the type of the threshold value
@@ -715,10 +707,6 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* If `PolygonMesh` has a non modifiable internal property map
-*  for `CGAL::face_index_t` (resp. `CGAL::vertex_index_t`) and no `face_index_map` (resp. `vertex_index_map`) is given
-*  as a named parameter, then the internal one(s) must be initialized. Otherwise, it will be.
-*
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 * \tparam ComponentRange a range of ids convertible to `std::size`
@@ -799,10 +787,6 @@ void remove_connected_components(PolygonMesh& pmesh
 *  keeps the connected components not designated by the faces in `components_to_remove`,
 *  and removes the other connected components and all isolated vertices.
 *
-* If `PolygonMesh` has a non modifiable internal property map
-*  for `CGAL::face_index_t` (resp. `CGAL::vertex_index_t`) and no `face_index_map` (resp. `vertex_index_map`) is given
-*  as a named parameter, then the internal one must be initialized. Otherwise, it will be.
-*
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
@@ -855,10 +839,6 @@ void remove_connected_components(PolygonMesh& pmesh
 * \ingroup keep_connected_components_grp
 *  keeps the connected components designated by the faces in `components_to_keep`,
 *  and removes the other connected components and all isolated vertices.
-*
-* If `PolygonMesh` has a non modifiable internal property map
-*  for `CGAL::face_index_t` (resp. `CGAL::vertex_index_t`) and no `face_index_map` (resp.  `vertex_index_map`) is given
-*  as a named parameter, then the internal one must be initialized. Otherwise, it will be.
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
