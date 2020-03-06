@@ -102,12 +102,12 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct LA_eigen {
 		return (int)v.cols();
 	}
 
-    template<class Mat_> static NT determinant_aux(Mat_ const& m, Tag_true) {
-        CGAL_assume(false);
-    }
-    template<class Mat_> static NT determinant_aux(Mat_ const& m, Tag_false) {
-        return m.determinant();
-    }
+	template<class Mat_> static CGAL_NORETURN NT determinant_aux(Mat_ const&, Tag_true) {
+		CGAL_error();
+	}
+	template<class Mat_> static NT determinant_aux(Mat_ const& m, Tag_false) {
+		return m.determinant();
+	}
   
 	template<class Mat_> static NT determinant(Mat_ const&m,bool=false){
 	  switch(m.rows()){
