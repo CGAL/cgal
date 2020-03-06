@@ -197,8 +197,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return vp; }
-    void * & for_compact_container()
-    { return vp; }
+    void for_compact_container(void *p)
+    { vp = p; }
 
   private:
     /// Reference counting: the number of darts linked to this cell.
@@ -310,8 +310,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return mdart.for_compact_container(); }
-    void * & for_compact_container()
-    { return mdart.for_compact_container(); }
+    void for_compact_container(void *p)
+    { mdart.for_compact_container(p); }
 
   private:
     /// The dart handle associated with the cell.

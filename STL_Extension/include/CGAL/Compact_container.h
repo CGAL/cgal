@@ -149,15 +149,15 @@ public:
   Compact_container_base()
   : p(nullptr) {}
   void *   for_compact_container() const { return p; }
-  void * & for_compact_container()       { return p; }
+  void for_compact_container(void* ptr)  { p = ptr; }
 };
 
 // The traits class describes the way to access the pointer.
 // It can be specialized.
 template < class T >
 struct Compact_container_traits {
-  static void *   pointer(const T &t) { return t.for_compact_container(); }
-  static void * & pointer(T &t)       { return t.for_compact_container(); }
+  static void *   pointer(const T &t)    { return t.for_compact_container(); }
+  static void set_pointer(T &t, void* p) { t.for_compact_container(p); }
 };
 
 namespace internal {
@@ -645,8 +645,8 @@ private:
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
-    Traits::pointer(*ptr) = reinterpret_cast<void *>
-      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t);
+    Traits::set_pointer(*ptr, reinterpret_cast<void *>
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t));
   }
 
 public:
@@ -872,7 +872,7 @@ namespace internal {
       : ts(0)
 #endif
     {
-      m_ptr.p = nullptr;
+      m_ptr = nullptr;
     }
 
     CC_iterator (const CC_iterator &it)
@@ -880,7 +880,7 @@ namespace internal {
       : ts(Time_stamper::time_stamp(it.operator->()))
 #endif
     {
-      m_ptr.p = it.operator->();
+      m_ptr = it.operator->();
     }
 
     // Converting constructor from mutable to constant iterator
@@ -892,7 +892,7 @@ namespace internal {
         : ts(Time_stamper::time_stamp(const_it.operator->()))
 #endif
     {
-      m_ptr.p = const_it.operator->();
+      m_ptr = const_it.operator->();
     }
 
     // Assignment operator from mutable to constant iterator
@@ -901,7 +901,7 @@ namespace internal {
                 typename std::enable_if<(!OtherConst && Const), DSC>::type,
                 OtherConst> &const_it)
     {
-      m_ptr.p = const_it.operator->();
+      m_ptr = const_it.operator->();
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       ts = Time_stamper::time_stamp(const_it.operator->());
 #endif
@@ -920,7 +920,7 @@ namespace internal {
 #endif
     {
       CGAL_assertion (n == nullptr);
-      m_ptr.p = nullptr;
+      m_ptr = nullptr;
     }
 
   private:
@@ -929,10 +929,7 @@ namespace internal {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     std::size_t ts;
 #endif
-    union {
-      pointer      p;
-      void        *vp;
-    } m_ptr;
+    pointer m_ptr;
 
     // Only Compact_container and Concurrent_compact_container should
     // access these constructors.
@@ -948,16 +945,16 @@ namespace internal {
       : ts(0)
 #endif
     {
-      m_ptr.p = ptr;
-      if (m_ptr.p == nullptr) // empty container.
+      m_ptr = ptr;
+      if (m_ptr == nullptr) // empty container.
         return;
 
-      ++(m_ptr.p); // if not empty, p = start
-      if (DSC::type(m_ptr.p) == DSC::FREE)
+      ++(m_ptr); // if not empty, p = start
+      if (DSC::type(m_ptr) == DSC::FREE)
         increment();
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       else
-        ts = Time_stamper::time_stamp(m_ptr.p);
+        ts = Time_stamper::time_stamp(m_ptr);
 #endif // CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     }
 
@@ -967,10 +964,10 @@ namespace internal {
       : ts(0)
 #endif
     {
-      m_ptr.p = ptr;
+      m_ptr = ptr;
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       if(ptr != nullptr){
-        ts = Time_stamper::time_stamp(m_ptr.p);
+        ts = Time_stamper::time_stamp(m_ptr);
       }
 #endif // end CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     }
@@ -979,49 +976,49 @@ namespace internal {
     void increment()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != nullptr,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) != DSC::START_END,
+      CGAL_assertion_msg(DSC::type(m_ptr) != DSC::START_END,
          "Incrementing end() ?");
 
       // If it's not end(), then it's valid, we can do ++.
       do {
-        ++(m_ptr.p);
-        if (DSC::type(m_ptr.p) == DSC::USED ||
-            DSC::type(m_ptr.p) == DSC::START_END)
+        ++(m_ptr);
+        if (DSC::type(m_ptr) == DSC::USED ||
+            DSC::type(m_ptr) == DSC::START_END)
         {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-          ts = Time_stamper::time_stamp(m_ptr.p);
+          ts = Time_stamper::time_stamp(m_ptr);
 #endif
           return;
         }
-        if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
-          m_ptr.p = DSC::clean_pointee(m_ptr.p);
+        if (DSC::type(m_ptr) == DSC::BLOCK_BOUNDARY)
+          m_ptr = DSC::clean_pointee(m_ptr);
       } while (true);
     }
 
     void decrement()
     {
       // It's either pointing to end(), or valid.
-      CGAL_assertion_msg(m_ptr.p != nullptr,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p - 1) != DSC::START_END,
+      CGAL_assertion_msg(DSC::type(m_ptr - 1) != DSC::START_END,
          "Decrementing begin() ?");
 
       // If it's not begin(), then it's valid, we can do --.
       do {
-        --m_ptr.p;
-        if (DSC::type(m_ptr.p) == DSC::USED ||
-            DSC::type(m_ptr.p) == DSC::START_END)
+        --m_ptr;
+        if (DSC::type(m_ptr) == DSC::USED ||
+            DSC::type(m_ptr) == DSC::START_END)
         {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-          ts = Time_stamper::time_stamp(m_ptr.p);
+          ts = Time_stamper::time_stamp(m_ptr);
 #endif
           return;
         }
 
-        if (DSC::type(m_ptr.p) == DSC::BLOCK_BOUNDARY)
-          m_ptr.p = DSC::clean_pointee(m_ptr.p);
+        if (DSC::type(m_ptr) == DSC::BLOCK_BOUNDARY)
+          m_ptr = DSC::clean_pointee(m_ptr);
       } while (true);
     }
 
@@ -1029,9 +1026,9 @@ namespace internal {
 
     Self & operator++()
     {
-      CGAL_assertion_msg(m_ptr.p != nullptr,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Incrementing a singular iterator or an empty container iterator ?");
-      /* CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
+      /* CGAL_assertion_msg(DSC::type(m_ptr) == DSC::USED,
          "Incrementing an invalid iterator."); */
       increment();
       return *this;
@@ -1039,10 +1036,10 @@ namespace internal {
 
     Self & operator--()
     {
-      CGAL_assertion_msg(m_ptr.p != nullptr,
+      CGAL_assertion_msg(m_ptr != nullptr,
          "Decrementing a singular iterator or an empty container iterator ?");
-      /*CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
-                      || DSC::type(m_ptr.p) == DSC::START_END,
+      /*CGAL_assertion_msg(DSC::type(m_ptr) == DSC::USED
+                      || DSC::type(m_ptr) == DSC::START_END,
                       "Decrementing an invalid iterator.");*/
       decrement();
       return *this;
@@ -1054,13 +1051,13 @@ namespace internal {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
     bool is_time_stamp_valid() const
     {
-      return (ts == 0) || (ts == Time_stamper::time_stamp(m_ptr.p));
+      return (ts == 0) || (ts == Time_stamper::time_stamp(m_ptr));
     }
 #endif // CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
 
-    reference operator*() const { return *(m_ptr.p); }
+    reference operator*() const { return *(m_ptr); }
 
-    pointer   operator->() const { return (m_ptr.p); }
+    pointer   operator->() const { return (m_ptr); }
 
     // For std::less...
     bool operator<(const CC_iterator& other) const
@@ -1068,7 +1065,7 @@ namespace internal {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       assert( is_time_stamp_valid() );
 #endif
-      return Time_stamper::less(m_ptr.p, other.m_ptr.p);
+      return Time_stamper::less(m_ptr, other.m_ptr);
     }
 
     bool operator>(const CC_iterator& other) const
@@ -1076,7 +1073,7 @@ namespace internal {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       assert( is_time_stamp_valid() );
 #endif
-      return Time_stamper::less(other.m_ptr.p, m_ptr.p);
+      return Time_stamper::less(other.m_ptr, m_ptr);
     }
 
     bool operator<=(const CC_iterator& other) const
@@ -1084,7 +1081,7 @@ namespace internal {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       assert( is_time_stamp_valid() );
 #endif
-      return Time_stamper::less(m_ptr.p, other.m_ptr.p)
+      return Time_stamper::less(m_ptr, other.m_ptr)
           || (*this == other);
     }
 
@@ -1093,13 +1090,13 @@ namespace internal {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
       assert( is_time_stamp_valid() );
 #endif
-      return Time_stamper::less(other.m_ptr.p, m_ptr.p)
+      return Time_stamper::less(other.m_ptr, m_ptr)
           || (*this == other);
     }
 
     // Can itself be used for bit-squatting.
-    void *   for_compact_container() const { return (m_ptr.vp); }
-    void * & for_compact_container()       { return (m_ptr.vp); }
+    void * for_compact_container() const { return m_ptr; }
+    void for_compact_container(void* p) { m_ptr = static_cast<pointer>(p); }
   };
 
   template < class DSC, bool Const1, bool Const2 >

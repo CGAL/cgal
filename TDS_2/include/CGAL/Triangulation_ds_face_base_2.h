@@ -79,7 +79,7 @@ public:
   
    // For use by Compact_container.
   void * for_compact_container() const {return N[0].for_compact_container(); }
-  void * & for_compact_container()     { return N[0].for_compact_container();}
+  void for_compact_container(void* p) { N[0].for_compact_container(p);}
 
 
   static int ccw(int i) {return Triangulation_cw_ccw_2::ccw(i);}
