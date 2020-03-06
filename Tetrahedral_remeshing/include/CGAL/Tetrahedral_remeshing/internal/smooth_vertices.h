@@ -54,36 +54,37 @@ namespace CGAL
         {
           if (c3t3.is_in_complex(f))
           {
-            const Surface_patch_index surf_i = c3t3.surface_patch_index(f);
-            for (int i = 0; i < 3; ++i)
-            {
-              Vertex_handle v_id = f.first->vertex(indices(f.second, i));
-              normals_map[v_id][surf_i] = CGAL::NULL_VECTOR;
-            }
-          }
-        }
+            const Cell_handle ch = f.first;
+            const Cell_handle n_ch = f.first->neighbor(f.second);
 
-        for (const Facet& f : tr.finite_facets())
-        {
-          const Cell_handle ch = f.first;
-          const Cell_handle n_ch = f.first->neighbor(f.second);
+            const Subdomain_index si = ch->subdomain_index();
+            const Subdomain_index si_mirror = n_ch->subdomain_index();
 
-          const Subdomain_index si = ch->subdomain_index();
-          const Subdomain_index si_mirror = n_ch->subdomain_index();
-
-          if (c3t3.is_in_complex(f))
-          {
             const Surface_patch_index surf_i = c3t3.surface_patch_index(f);
 
             Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
 
             if (si < si_mirror || tr.is_infinite(ch)) // todo : fix this condition
               n = opp(n);
+            else if (si == si_mirror)
+            {
+              std::cout << "Check normal!" << std::endl;
+            }
 
             for (int i = 0; i < 3; ++i)
             {
-              Vector_3& v_n = normals_map[f.first->vertex(indices(f.second, i))][surf_i];
-              v_n = v_n + n;
+              const Vertex_handle vi = f.first->vertex(indices(f.second, i));
+              typename VertexNormalsMap::iterator patch_vector_it = normals_map.find(vi);
+
+              if (patch_vector_it == normals_map.end()
+                || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
+              {
+                normals_map[vi][surf_i] = CGAL::NULL_VECTOR;
+              }
+              else
+              {
+                normals_map[vi][surf_i] += n;
+              }
             }
           }
         }
