@@ -149,13 +149,8 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   * For each returned halfedge `h`, `opposite(h, pmesh)` belongs to a face of the patch,
   * but `face(h, pmesh)` does not belong to the patch.
   *
-  * @tparam PolygonMesh model of `HalfedgeGraph`. If `PolygonMesh`
-  *  has an internal non mutable property map
-  *  for `CGAL::face_index_t` and no `face_index_map` is given
-  *  as a named parameter, then the internal one must be initialized; else, it will be.
-  * @tparam FaceRange range of
-       `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
-        Its iterator type is `InputIterator`.
+  * @tparam PolygonMesh model of `HalfedgeGraph`
+  * @tparam FaceRange a model of `Range` with value type `boost::graph_traits<PolygonMesh>::%face_descriptor`.
   * @tparam HalfedgeOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
      for patch border
