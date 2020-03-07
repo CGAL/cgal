@@ -6,6 +6,9 @@ Release History
 
 Release date: June 2020
 
+### Add Move Semantics to AABB Trees
+ -   Added move constructor and assignment operator to AABB Tree class.
+
 ### Surface Mesh Topology (new package)
 
  -   This package allows to compute some topological invariants of

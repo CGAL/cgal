@@ -7,7 +7,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_transformation.h>
+#include <CGAL/Polygon_mesh_processing/internal/AABB_do_intersect_transform_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
@@ -18,7 +18,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3>             Surface_mesh;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
-typedef CGAL::Do_intersect_traversal_traits_with_transformation<K, Primitive> Traits;
+typedef CGAL::AABB_do_intersect_transform_traits<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
