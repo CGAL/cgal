@@ -36,14 +36,12 @@ static void BM_Intersections(benchmark::State& state)
   Point_3 q(-0.5, 0.04, 0.06);
 
   Tree tree{mesh.faces_begin(), mesh.faces_end(), mesh};
-  tree.build();
+  tree.accelerate_distance_queries();
 
   Segment segment_query(p, q);
-
   for (auto _ : state)
   {
     benchmark::DoNotOptimize([&]() {
-      tree.accelerate_distance_queries();
       tree.number_of_intersected_primitives(segment_query);
       Point_3 point_query(2.0, 2.0, 2.0);
       Point_3 closest = tree.closest_point(point_query);
