@@ -24,6 +24,8 @@
 namespace CGAL
 {
 
+
+/// \cond SKIP_IN_MANUAL
 namespace Point_set_processing_3
 {
 
@@ -49,7 +51,47 @@ CGAL::Emptyset_iterator get_neighborhood (const NamedParameters&, CGAL::Emptyset
 } // namespace internal
 
 } // namespace Point_set_processing_3
+/// \endcond
 
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
+/**
+   \ingroup PkgPointSetProcessing3Algorithms
+   Identifies simply connected clusters on a nearest neighbors graph.
+
+   \tparam PointRange is a model of `Range`. The value type of its
+   iterator is the key type of the named parameter `point_map`.
+   \tparam ClusterMap is a model of `ReadWritePropertyMap` with value
+   type `std::size_t`.
+
+   \param points input point range.
+   \param cluster_map maps each point to the index of the cluster it belongs to.
+   \param k number of neighbors.
+   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+
+   \cgalNamedParamsBegin
+     \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
+     If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
+     \cgalParamBegin{callback} an instance of
+      `std::function<bool(double)>`. It is called regularly when the
+      algorithm is running: the current advancement (between 0. and
+      1.) is passed as parameter. If it returns `true`, then the
+      algorithm continues its execution normally; if it returns
+      `false`, the algorithm is stopped and the number of already
+      computed clusters is returned.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
+     provided, the neighborhood of a query point is computed with a fixed spherical
+     radius instead of a fixed number of neighbors. In that case, the parameter
+     `k` is used as a limit on the number of points returned by each spherical
+     query (to avoid overly large number of points in high density areas). If no
+     limit is wanted, use `k=0`.\cgalParamEnd
+     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
+   \cgalNamedParamsEnd
+
+   \return the number of clusters identified.
+*/
 template <typename PointRange, typename ClusterMap, typename NamedParameters>
 std::size_t cluster_point_set (PointRange& points,
                                ClusterMap cluster_map,
@@ -184,6 +226,8 @@ std::size_t cluster_point_set (PointRange& points,
   return nb_clusters;
 }
 
+/// \cond SKIP_IN_MANUAL
+// overload with default NP
 template <typename PointRange, typename ClusterMap>
 std::size_t cluster_point_set (PointRange& points,
                                ClusterMap cluster_map,
@@ -192,6 +236,7 @@ std::size_t cluster_point_set (PointRange& points,
   return cluster_point_set (points, cluster_map, k,
                             CGAL::Point_set_processing_3::parameters::all_default(points));
 }
+/// \endcond
 
 } // namespace CGAL
 

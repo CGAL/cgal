@@ -52,6 +52,7 @@ format.
 - `CGAL::estimate_local_k_neighbor_scales()`
 - `CGAL::estimate_local_range_scales()`
 - `CGAL::remove_outliers()`
+- `CGAL::cluster_point_set()`
 - `CGAL::grid_simplify_point_set()`
 - `CGAL::random_simplify_point_set()`
 - `CGAL::hierarchy_simplify_point_set()`	
