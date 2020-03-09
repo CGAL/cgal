@@ -392,7 +392,7 @@ public:
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh)
     : m_triangle_mesh(triangle_mesh),
       vertex_index_map(CGAL::get_initialized_vertex_index_map(triangle_mesh)),
-      hedge_index_map(CGAL::get_halfedge_vertex_index_map(triangle_mesh)),
+      hedge_index_map(CGAL::get_initialized_halfedge_index_map(triangle_mesh)),
       ros_id_map(std::vector<std::size_t>(num_vertices(triangle_mesh), (std::numeric_limits<std::size_t>::max)() )),
       is_roi_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
       is_ctrl_map(std::vector<bool>(num_vertices(triangle_mesh), false)),
@@ -446,7 +446,7 @@ public:
    */
   Surface_mesh_deformation(Triangle_mesh& triangle_mesh,
                            Vertex_index_map vertex_index_map = unspecified_internal_vertex_index_map,
-                           Hedge_index_map hedge_index_map = unspecified_internal_face_index_map,
+                           Hedge_index_map hedge_index_map = unspecified_internal_halfedge_index_map,
                            Vertex_point_map vertex_point_map = get(boost::vertex_point, triangle_mesh),
                            Weight_calculator weight_calculator = Weight_calculator());
 /// @}
