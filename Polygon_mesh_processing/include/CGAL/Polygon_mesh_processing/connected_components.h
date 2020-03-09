@@ -171,10 +171,6 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \ingroup keep_connected_components_grp
  *  computes for each face the index of the corresponding connected component.
  *
- * If `PolygonMesh` has an internal non modifiable property map
- *  for `CGAL::face_index_t` and no `face_index_map` is given
- *  as a named parameter, then the internal one must be initialized; otherwise, it will be.
- *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam FaceComponentMap a model of `WritablePropertyMap` with
         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
@@ -745,11 +741,6 @@ void keep_connected_components(PolygonMesh& pmesh
 *
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
-*
-* If `PolygonMesh` has a non modifiable internal property map
-*  for `CGAL::face_index_t` (resp. `CGAL::vertex_index_t`) and no `face_index_map` (resp. `vertex_index_map`) is given
-*  as a named parameter, then the internal one must be initialized. Otherwise, it will be.
-*
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
