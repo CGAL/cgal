@@ -331,26 +331,6 @@ clip(      TriangleMesh& tm,
                                            np_c);
 }
 
-namespace internal{
-template <class TriangleMesh, class NamedParameters>
-bool dispatch_clip_call(TriangleMesh& tm, TriangleMesh& clipper,
-                        const NamedParameters& np, Tag_false)
-{
-  return clip(tm, clipper,
-              np.face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), tm)),
-              parameters::face_index_map(get(CGAL::dynamic_face_property_t<std::size_t>(), clipper)));
-}
-
-template <class TriangleMesh, class NamedParameters>
-bool dispatch_clip_call(TriangleMesh& tm, TriangleMesh& clipper,
-                        const NamedParameters& np, Tag_true)
-{
-  return clip(tm, clipper,
-              np.face_index_map(get(face_index, tm)),
-              parameters::face_index_map(get(face_index, clipper)));
-}
-}
-
 /**
   * \ingroup PMP_corefinement_grp
   * clips `tm` by keeping the part that is on the negative side of `plane` (side opposite to its normal vector).
@@ -423,9 +403,8 @@ bool clip(      TriangleMesh& tm,
     default:
       break;
   }
-  // dispatch is needed because face index map for tm and clipper have to be of the same time
-  return internal::dispatch_clip_call(tm, clipper,
-                                      np, CGAL::graph_has_property<TriangleMesh, CGAL::face_index_t>());
+
+  return clip(tm, clipper, np, parameters::all_default());
 }
 
 /**
@@ -485,9 +464,7 @@ bool clip(      TriangleMesh& tm,
                   clipper);
   triangulate_faces(clipper);
 
-  // dispatch is needed because face index map for tm and clipper have to be of the same time
-  return internal::dispatch_clip_call(tm, clipper,
-                                      np, CGAL::graph_has_property<TriangleMesh, CGAL::face_index_t>());
+  return clip(tm, clipper, np, parameters::all_default());
 }
 
 /// \cond SKIP_IN_MANUAL
