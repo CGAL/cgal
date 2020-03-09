@@ -289,8 +289,8 @@ clip_to_bbox(const Plane_3& plane,
   *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
   *   \cgalParamEnd
   *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` (`clipper`).
-  *     Note that if the property map is writable, the indices of the faces
-  *     of `tm` and `clipper` will be set after refining `tm` with the intersection with `clipper`.
+  *     This property map must be either writable, or be automatically updated
+  *     when new faces are added and removed in the mesh.
   *   \cgalParamEnd
   *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
   *                            that is used to track the creation of new faces.
