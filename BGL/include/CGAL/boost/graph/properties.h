@@ -149,7 +149,6 @@ struct Point_accessor<Handle, ValueType, ConstReference, true>
   reference operator[](Handle h) const { return h->point(); }
 };
 
-// @todo test this
 // this one is basically 'readable_property_map_tag'
 template <typename PropertyMap,
           typename PropertyMapCategory = typename boost::property_traits<PropertyMap>::category>
