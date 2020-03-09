@@ -60,7 +60,8 @@ namespace params=PMP::parameters;
 template <class TriangleMesh,
           class VertexPointMap,
           class VpmOutTuple,
-          class FaceIdMap,
+          class FaceIdMap1,
+          class FaceIdMap2,
           class Kernel_=Default,
           class EdgeMarkMapBind_  = Default,
           class EdgeMarkMapTuple_ = Default,
@@ -110,8 +111,10 @@ class Face_graph_output_builder
 //Data members
   TriangleMesh &tm1, &tm2;
   // property maps of input meshes
-  const VertexPointMap &vpm1, &vpm2;
-  const FaceIdMap &fids1, &fids2;
+  const VertexPointMap vpm1;
+  const VertexPointMap vpm2;
+  FaceIdMap1 fids1;
+  FaceIdMap2 fids2;
   EdgeMarkMapBind& marks_on_input_edges;
   // property maps of output meshes
   const VpmOutTuple& output_vpms;
@@ -215,7 +218,7 @@ class Face_graph_output_builder
   // detect if a polyline is incident to two patches that won't be imported
   // for the current operation (polylines skipt are always incident to a
   // coplanar patch)
-  template <class TM, class FIM>
+  template <class TM, class FIM1, class FIM2>
   static
   void fill_polylines_to_skip(
     Intersection_polylines& polylines,
@@ -223,8 +226,8 @@ class Face_graph_output_builder
     const std::vector<std::size_t>& tm2_patch_ids,
     const boost::dynamic_bitset<>& patches_of_tm1_used,
     const boost::dynamic_bitset<>& patches_of_tm2_used,
-    const FIM& fids1,
-    const FIM& fids2,
+    const FIM1 fids1,
+    const FIM2 fids2,
     const TM& tm1,
     const TM& tm2)
   {
@@ -341,18 +344,17 @@ class Face_graph_output_builder
 
 public:
 
-  Face_graph_output_builder(      TriangleMesh& tm1,
-                                  TriangleMesh& tm2,
-                            const VertexPointMap &vpm1,
-                            const VertexPointMap &vpm2,
-                            const FaceIdMap& fids1,
-                            const FaceIdMap& fids2,
-                                  EdgeMarkMapBind& marks_on_input_edges,
+  Face_graph_output_builder(TriangleMesh& tm1,
+                            TriangleMesh& tm2,
+                            const VertexPointMap vpm1,
+                            const VertexPointMap vpm2,
+                            FaceIdMap1 fids1,
+                            FaceIdMap2 fids2,
+                            EdgeMarkMapBind& marks_on_input_edges,
                             const VpmOutTuple& output_vpms,
-                                  EdgeMarkMapTuple& out_edge_mark_maps,
-                                  UserVisitor& user_visitor,
-                            const std::array<
-                              boost::optional<TriangleMesh*>, 4 >& requested_output)
+                            EdgeMarkMapTuple& out_edge_mark_maps,
+                            UserVisitor& user_visitor,
+                            const std::array<boost::optional<TriangleMesh*>, 4 >& requested_output)
     : tm1(tm1), tm2(tm2)
     , vpm1(vpm1), vpm2(vpm2)
     , fids1(fids1), fids2(fids2)
@@ -616,9 +618,8 @@ public:
     std::size_t nb_patches_tm1 =
       PMP::connected_components(tm1,
                                 bind_property_maps(fids1,make_property_map(&tm1_patch_ids[0])),
-                                params::edge_is_constrained_map(
-                                    is_marked_1)
-                                .face_index_map(fids1));
+                                params::edge_is_constrained_map(is_marked_1)
+                                       .face_index_map(fids1));
 
     std::vector <std::size_t> tm1_patch_sizes(nb_patches_tm1, 0);
     for(std::size_t i : tm1_patch_ids)
@@ -630,9 +631,8 @@ public:
     std::size_t nb_patches_tm2 =
       PMP::connected_components(tm2,
                                 bind_property_maps(fids2,make_property_map(&tm2_patch_ids[0])),
-                                params::edge_is_constrained_map(
-                                    is_marked_2)
-                                .face_index_map(fids2));
+                                params::edge_is_constrained_map(is_marked_2)
+                                       .face_index_map(fids2));
 
     std::vector <std::size_t> tm2_patch_sizes(nb_patches_tm2, 0);
     for(Node_id i : tm2_patch_ids)
@@ -1241,9 +1241,8 @@ public:
       polyline_lengths.push_back(polyline_info.second+1);
     }
 
-    typedef Patch_container<TriangleMesh,
-                            FaceIdMap,
-                            Intersection_edge_map> Patches;
+    typedef Patch_container<TriangleMesh, FaceIdMap1, Intersection_edge_map> Patches1;
+    typedef Patch_container<TriangleMesh, FaceIdMap2, Intersection_edge_map> Patches2;
 
     boost::unordered_set<vertex_descriptor> border_nm_vertices; // only used if used_to_clip_a_surface == true
     if (used_to_clip_a_surface)
@@ -1275,8 +1274,8 @@ public:
     }
 
     //store the patch description in a container to avoid recomputing it several times
-    Patches patches_of_tm1( tm1, tm1_patch_ids, fids1, intersection_edges1, nb_patches_tm1),
-            patches_of_tm2( tm2, tm2_patch_ids, fids2, intersection_edges2, nb_patches_tm2);
+    Patches1 patches_of_tm1(tm1, tm1_patch_ids, fids1, intersection_edges1, nb_patches_tm1);
+    Patches2 patches_of_tm2(tm2, tm2_patch_ids, fids2, intersection_edges2, nb_patches_tm2);
 
     // for each boolean operation, define two bitsets of patches contributing
     // to the result
@@ -1456,11 +1455,12 @@ public:
 
         // operation in tm1 with removal (and optionally inside-out) delayed
         // First backup the border edges of patches to be used
-        Patches tmp_patches_of_tm1(tm1,
-          patches_of_tm1.patch_ids,
-          patches_of_tm1.fids,
-          patches_of_tm1.is_intersection_edge,
-          patches_of_tm1.patches.size());
+        Patches1 tmp_patches_of_tm1(tm1,
+                                    patches_of_tm1.patch_ids,
+                                    patches_of_tm1.fids,
+                                    patches_of_tm1.is_intersection_edge,
+                                    patches_of_tm1.patches.size());
+
         boost::dynamic_bitset<> patches_of_tm1_removed =
             ~patches_of_tm1_used[inplace_operation_tm1];
         for (std::size_t i = patches_of_tm1_removed.find_first();

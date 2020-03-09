@@ -39,7 +39,7 @@ namespace internal {
 template <class Kernel, class TriangleMesh, class VD, class Fid_map, class Vpm>
 bool recursive_does_bound_a_volume(const TriangleMesh& tm,
                                          Vpm& vpm,
-                                         Fid_map& fid_map,
+                                         Fid_map fid_map,
                                          const std::vector<VD>& xtrm_vertices,
                                          boost::dynamic_bitset<>& cc_handled,
                                          const std::vector<std::size_t>& face_cc,
@@ -514,13 +514,11 @@ corefine_and_compute_boolean_operations(
                                                             Edge_mark_map_tuple;
 
   // Face index point maps
-  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap;
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap1;
   typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters2>::type FaceIndexMap2;
 
-  CGAL_static_assertion((std::is_same<FaceIndexMap, FaceIndexMap2>::value));
-
-  FaceIndexMap fid_map1 = get_initialized_face_index_map(tm1, np1);
-  FaceIndexMap fid_map2 = get_initialized_face_index_map(tm2, np2);
+  FaceIndexMap1 fid_map1 = get_initialized_face_index_map(tm1, np1);
+  FaceIndexMap2 fid_map2 = get_initialized_face_index_map(tm2, np2);
 
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
@@ -535,7 +533,8 @@ corefine_and_compute_boolean_operations(
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
                                                   Vpm,
                                                   Vpm_out_tuple,
-                                                  FaceIndexMap,
+                                                  FaceIndexMap1,
+                                                  FaceIndexMap2,
                                                   Default,
                                                   Ecm_in,
                                                   Edge_mark_map_tuple,
@@ -545,8 +544,7 @@ corefine_and_compute_boolean_operations(
     TriangleMesh, Vpm, Ob, Ecm_in, User_visitor> Algo_visitor;
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
-  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in,
-        vpm_out_tuple, ecms_out, uv, output);
+  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in, vpm_out_tuple, ecms_out, uv, output);
 
   // special case used for clipping open meshes
   if (  parameters::choose_parameter( parameters::get_parameter(np1, internal_np::use_bool_op_to_clip_surface),
@@ -927,8 +925,7 @@ namespace experimental {
             const NamedParameters& np)
 {
 // Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::type Vpm;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vpm;
 
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                 get_property_map(boost::vertex_point, tm));
