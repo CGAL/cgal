@@ -16,10 +16,11 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
-
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Simple_cartesian.h>
 
