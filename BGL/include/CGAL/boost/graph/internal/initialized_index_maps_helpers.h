@@ -237,6 +237,11 @@ get_initialized_dynamic_index_map(DynamicIndexMap index_map,
                                   const PropertyTag p,
                                   const Graph& g)
 {
+#ifdef CGAL_PERFORMANCE_WARNINGS
+  std::cerr << "Warning: the automatically selected index map is a dynamic property map,"
+            << " which might not have constant-time access complexity." << std::endl;
+#endif
+
   Index_map_initializer<DynamicIndexMap, Graph>{}(p, index_map, g);
   return index_map;
 }
