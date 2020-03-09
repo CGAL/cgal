@@ -177,38 +177,6 @@ namespace CGAL {
     > ::type  type;
   };
 
-  template<typename PolygonMesh, typename NamedParameters>
-  class GetFaceIndexMap
-  {
-    typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::type DefaultMap;
-    typedef typename property_map_selector<PolygonMesh, boost::face_index_t>::const_type DefaultMap_const;
-  public:
-    typedef typename internal_np::Lookup_named_param_def <
-    internal_np::face_index_t,
-    NamedParameters,
-    DefaultMap
-    > ::type  type;
-    typedef typename internal_np::Lookup_named_param_def <
-      internal_np::face_index_t,
-      NamedParameters,
-      DefaultMap_const
-      > ::type  const_type;
-    typedef typename boost::is_same<type, DefaultMap>::type Is_internal_map;
-    typedef typename boost::is_same<const_type, DefaultMap_const>::type Is_internal_map_const;
-  };
-
-  template<typename PolygonMesh, typename NamedParameters>
-  class GetVertexIndexMap
-  {
-    typedef typename property_map_selector<PolygonMesh, boost::vertex_index_t>::type DefaultMap;
-  public:
-    typedef typename internal_np::Lookup_named_param_def <
-    internal_np::vertex_index_t,
-    NamedParameters,
-    DefaultMap
-    > ::type  type;
-  };
-
 // Define the following structs:
 //
 // GetInitializedVertexIndexMap
