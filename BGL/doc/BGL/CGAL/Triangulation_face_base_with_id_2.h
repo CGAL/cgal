@@ -49,6 +49,12 @@ int& id();
 /// This function initializes vertex, edge, and face indices of the triangulation `tr` and must
 /// be called prior to using `tr` as a BGL graph in an algorithm that requires
 /// vertex, halfedge, edge, or face indices.
+///
+/// \tparam Triangulation a 2D triangulation of \cgal, whose combinatorial data structure
+///         has been initialized with the vertex and face classes `Triangulation_vertex_base_with_id_2`
+///         and `Triangulation_face_base_with_id_2`.
+///
+/// \sa the \ref PkgTriangulation2 package
 template <typename Triangulation>
 void set_triangulation_ids(Triangulation& tr);
 
