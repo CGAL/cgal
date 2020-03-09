@@ -236,6 +236,10 @@ public:
       intersection_edges.insert(edge(p.second.h2, tm));
     }
 
+    // The property map must be either writable or well-initialized
+    if(!BGL::internal::is_index_map_valid(fids, num_faces(tm), faces(tm)))
+      BGL::internal::initialize_face_index_map(fids, tm);
+
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm_coplanar_faces(num_faces(tm), 0);
 
