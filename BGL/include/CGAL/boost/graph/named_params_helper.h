@@ -23,6 +23,7 @@
 
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Origin.h>
+#include <CGAL/iterator.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
@@ -424,6 +425,18 @@ namespace CGAL {
         internal_np::point_is_constrained_t,
         NamedParameters,
         DummyConstrainedMap //default
+        > ::type  type;
+    };
+
+    template<typename PointRange, typename NamedParameters>
+    class GetNeighborhood
+    {
+    public:
+      typedef Emptyset_iterator Empty;
+      typedef typename internal_np::Lookup_named_param_def <
+        internal_np::neighborhood_t,
+        NamedParameters,
+        Empty//default
         > ::type  type;
     };
 

@@ -54,6 +54,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
   create_single_source_cgal_program( "structuring_example.cpp" )
   create_single_source_cgal_program( "callback_example.cpp" )
+  create_single_source_cgal_program( "clustering_example.cpp" )
 
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)    
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" CXX_FEATURES ${needed_cxx_features} )
@@ -66,6 +67,7 @@ if ( CGAL_FOUND )
     include_directories(${LASZIP_INCLUDE_DIR})
     create_single_source_cgal_program( "read_las_example.cpp" CXX_FEATURES ${needed_cxx_features} )
     target_link_libraries(read_las_example PRIVATE ${LASLIB_LIBRARIES})
+    target_link_libraries(clustering_example PRIVATE ${LASLIB_LIBRARIES})
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
@@ -92,7 +94,8 @@ if ( CGAL_FOUND )
       normals_example
       jet_smoothing_example
       normal_estimation
-      callback_example)
+      callback_example
+      clustering_example)
     if(TBB_FOUND AND TARGET ${target})
       CGAL_target_use_TBB(${target})
     endif()
