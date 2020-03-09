@@ -131,6 +131,9 @@ CGAL_add_named_parameter(max_number_of_proxies_t, max_number_of_proxies, max_num
 CGAL_add_named_parameter(min_error_drop_t, min_error_drop, min_error_drop)
 CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_of_relaxations)
 
+// List of named parameters used in Optimal_bounding_box package
+CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
+
 // meshing parameters
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
 CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)
