@@ -630,8 +630,7 @@ write_polys_points(std::ostream& os,
  *       `CGAL::vertex_point_t` must be available in `TriangleMesh`.
  *     \cgalParamEnd
  *    \cgalParamBegin{vertex_index_map} the property map with the indices associated to
- * the vertices of `mesh`. If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_index_t` must be available in `TriangleMesh`.
+ * the vertices of `mesh`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  */
