@@ -875,14 +875,6 @@ namespace internal {
       m_ptr = nullptr;
     }
 
-    CC_iterator (const CC_iterator &it)
-#ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      : ts(Time_stamper::time_stamp(it.operator->()))
-#endif
-    {
-      m_ptr = it.operator->();
-    }
-
     // Converting constructor from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator(const CC_iterator<
@@ -907,11 +899,6 @@ namespace internal {
 #endif
       return *this;
     }
-
-    CC_iterator(CC_iterator&& it) = default;
-    ~CC_iterator() = default;
-    CC_iterator& operator=(const CC_iterator&) = default;
-    CC_iterator& operator=(CC_iterator&&) = default;
 
     // Construction from nullptr
     CC_iterator (std::nullptr_t CGAL_assertion_code(n))
