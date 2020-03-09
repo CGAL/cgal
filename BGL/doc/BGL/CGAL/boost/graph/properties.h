@@ -1,3 +1,4 @@
+/// CGAL Namespace
 namespace CGAL {
 
 /// \ingroup PkgBGLProperties
