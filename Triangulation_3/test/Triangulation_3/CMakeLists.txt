@@ -5,7 +5,8 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 project( Triangulation_3_Tests )
 
-
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+                                               "MinSizeRel" "RelWithDebInfo")
 
 find_package(CGAL QUIET COMPONENTS Qt5)
 

@@ -4,6 +4,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
+#include <CGAL/Constrained_Delaunay_triangulation_3.h>
 #include <CGAL/draw_triangulation_3.h>
 
 #include <vector>
@@ -12,7 +13,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Triangulation_data_structure_3<
-  CGAL::Conforming_Delaunay_triangulation_vertex_base_3<K>,
+  CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>,
   CGAL::Delaunay_triangulation_cell_base_3<K> >                 Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                  Delaunay;
 typedef Delaunay::Point                                         Point;
@@ -58,7 +59,8 @@ int main()
   CGAL_USE(test1);
 
   auto test2 = []() {
-    CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
+    //    CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
+    CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt;
 
     std::ifstream input("clusters2.edg");
     if(!input) return 1;
@@ -69,28 +71,33 @@ int main()
       double x, y;
       input >> x >> y;
       auto v1 = cdt.insert({x, y, 0});
-        CGAL_assertion(cdt.is_conforming());
+      CGAL_assertion(cdt.is_conforming());
       auto v3 = cdt.insert({x, y, 1});
-        CGAL_assertion(cdt.is_conforming());
+      CGAL_assertion(cdt.is_conforming());
       input >> x >> y;
       auto v2 = cdt.insert({x, y, 0});
-        CGAL_assertion(cdt.is_conforming());
+      CGAL_assertion(cdt.is_conforming());
       auto v4 = cdt.insert({x, y, 1});
-        CGAL_assertion(cdt.is_conforming());
+      CGAL_assertion(cdt.is_conforming());
       cdt.insert_constrained_edge(v1, v2);
-        CGAL_assertion(cdt.is_conforming());
+      CGAL_assertion(cdt.is_conforming());
       cdt.insert_constrained_edge(v3, v4);
-        CGAL_assertion(cdt.is_conforming());
+      CGAL_assertion(cdt.is_conforming());
     }
     cdt.insert({11, 28, 0});
-      CGAL_assertion(cdt.is_conforming());
+    CGAL_assertion(cdt.is_conforming());
     cdt.insert({11, 33, 0});
-      CGAL_assertion(cdt.is_conforming());
+    CGAL_assertion(cdt.is_conforming());
+
+    cdt.insert_constrained_polygon(
+        std::array{Point_3{1000, 0, 0}, Point_3{1000, 100, 0},
+                   Point_3{1100, 100, 0}, Point_3{1010, 90, 0}});
+
     // assert(cdt.is_edge(vertices[0], vertices[1], ch, li, lj));
-    for(auto v: cdt.finite_vertex_handles()) {
+    for (auto v : cdt.finite_vertex_handles()) {
       std::cout << "Point ( " << v->point() << " )\n";
-      std::cout << "  on " << v->nb_of_incident_constraints << " constraint(s): "
-                << v->c_id << "\n";
+      std::cout << "  on " << v->nb_of_incident_constraints
+                << " constraint(s): " << v->c_id << "\n";
     }
     CGAL::draw(static_cast<Delaunay&>(cdt), "CDT_3", true);
     return cdt.is_conforming() ? 0 : 1;

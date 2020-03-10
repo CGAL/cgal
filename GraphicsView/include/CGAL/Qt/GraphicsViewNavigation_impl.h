@@ -24,7 +24,7 @@
 #include <CGAL/Qt/utility.h> // for mapToScene(QGraphicsView*, QRect)
 #include <cmath>
 #include <iostream>
-#include <boost/format.hpp>
+// #include <boost/format.hpp>
 
 #include <QEvent>
 #include <QMouseEvent>
@@ -304,43 +304,43 @@ namespace Qt {
 //     display_parameters();
   }
 
-  CGAL_INLINE_FUNCTION
-  void GraphicsViewNavigation::display_parameters(QGraphicsView* v)
-  {
-    std::cerr << 
-      boost::format("matrix translation=(%1%, %2%)\n"
-                    "       rotation=(%3% - %4% )\n"
-                    "                (%5% - %6% )\n")
-      % v->matrix().dx()
-      % v->matrix().dy()
-      % v->matrix().m11()
-      % v->matrix().m12()
-      % v->matrix().m21()
-      % v->matrix().m22();
+  // CGAL_INLINE_FUNCTION
+  // void GraphicsViewNavigation::display_parameters(QGraphicsView* v)
+  // {
+  //   std::cerr << 
+  //     boost::format("matrix translation=(%1%, %2%)\n"
+  //                   "       rotation=(%3% - %4% )\n"
+  //                   "                (%5% - %6% )\n")
+  //     % v->matrix().dx()
+  //     % v->matrix().dy()
+  //     % v->matrix().m11()
+  //     % v->matrix().m12()
+  //     % v->matrix().m21()
+  //     % v->matrix().m22();
 
-    QRect vp_rect = v->viewport()->rect();
-    QPoint vp_top_left = vp_rect.topLeft();
-    QPoint vp_bottom_right = vp_rect.bottomRight();
-    QPointF top_left = v->mapToScene(vp_top_left);
-    QPointF bottom_right = v->mapToScene(vp_bottom_right);
+  //   QRect vp_rect = v->viewport()->rect();
+  //   QPoint vp_top_left = vp_rect.topLeft();
+  //   QPoint vp_bottom_right = vp_rect.bottomRight();
+  //   QPointF top_left = v->mapToScene(vp_top_left);
+  //   QPointF bottom_right = v->mapToScene(vp_bottom_right);
 
-    std::cerr <<
-      boost::format("view=(%1% - %2%) x (%3% - %4%)\n")
-      % top_left.x() % bottom_right.x()
-      % top_left.y() % bottom_right.y();
-    std::cerr <<
-      boost::format("viewport=(%1% - %2%) x (%3% - %4%)\n")
-      % vp_top_left.x() % vp_bottom_right.x()
-      % vp_top_left.y() % vp_bottom_right.y();
-    std::cerr <<
-      boost::format("scrollbars=(%1% <= %2% <= %3%) x (%4% <= %5% <= %6%)\n")
-      % v->horizontalScrollBar()->minimum() 
-      % v->horizontalScrollBar()->value()
-      % v->horizontalScrollBar()->maximum()
-      % v->verticalScrollBar()->minimum() 
-      % v->verticalScrollBar()->value()
-      % v->verticalScrollBar()->maximum();
-  }
+  //   std::cerr <<
+  //     boost::format("view=(%1% - %2%) x (%3% - %4%)\n")
+  //     % top_left.x() % bottom_right.x()
+  //     % top_left.y() % bottom_right.y();
+  //   std::cerr <<
+  //     boost::format("viewport=(%1% - %2%) x (%3% - %4%)\n")
+  //     % vp_top_left.x() % vp_bottom_right.x()
+  //     % vp_top_left.y() % vp_bottom_right.y();
+  //   std::cerr <<
+  //     boost::format("scrollbars=(%1% <= %2% <= %3%) x (%4% <= %5% <= %6%)\n")
+  //     % v->horizontalScrollBar()->minimum() 
+  //     % v->horizontalScrollBar()->value()
+  //     % v->horizontalScrollBar()->maximum()
+  //     % v->verticalScrollBar()->minimum() 
+  //     % v->verticalScrollBar()->value()
+  //     % v->verticalScrollBar()->maximum();
+  // }
 
 } // namespace Qt
 } // namespace CGAL

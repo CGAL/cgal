@@ -674,6 +674,12 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #define CGAL_NOEXCEPT(x)
 #endif
 
+#if __cpp_lib_concepts >= 201806L
+#  define CGAL_CPP20_REQUIRE_CLAUSE(x) requires x
+#else
+#  define CGAL_CPP20_REQUIRE_CLAUSE(x)
+#endif
+
 // The fallthrough attribute
 // See for clang:
 //   http://clang.llvm.org/docs/AttributeReference.html#statement-attributes

@@ -129,8 +129,9 @@ protected:
     subconstraints_to_conform.push({pair, id});
   }
 
+  template <typename Visitor>
   Vertex_handle private_insert(const Point &p, Locate_type lt, Cell_handle c,
-                               int li, int lj)
+                               int li, int lj, Visitor& visitor)
   {
     Vertex_handle v1, v2;
     Vertex_handle new_vertex;
@@ -146,13 +147,13 @@ protected:
     case 3: {
       typename T_3::Conflict_tester_3 tester(p, this);
       new_vertex = tr.insert_in_conflict(p, lt, c, li, lj, tester,
-                                         insert_in_conflict_visitor);
+                                         visitor);
       break;
     } // dim 3
     case 2: {
       typename T_3::Conflict_tester_2 tester(p, this);
       new_vertex = tr.insert_in_conflict(p, lt, c, li, lj, tester,
-                                         insert_in_conflict_visitor);
+                                         visitor);
       break;
     } // dim 2
     default:
@@ -169,14 +170,10 @@ protected:
   }
 
 public:
-  Conforming_Delaunay_triangulation_3()
-      : tr(*this), comp(&tr), constraint_hierarchy(comp) {
-  }
-
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
                                int li, int lj)
   {
-    auto v = private_insert(p, lt, c, li, lj);
+    auto v = private_insert(p, lt, c, li, lj, insert_in_conflict_visitor);
     restore_Delaunay();
     return v;
   }
@@ -189,7 +186,7 @@ public:
     return insert(p, lt, c, li, lj);
   }
 
-  void insert_constrained_edge(Vertex_handle va, Vertex_handle vb) {
+  Constraint_id insert_constrained_edge(Vertex_handle va, Vertex_handle vb) {
     if(va != vb) {
       const Constraint_id c_id = constraint_hierarchy.insert_constraint(va, vb);
       va->c_id = c_id.vl_ptr();
@@ -198,7 +195,9 @@ public:
       ++vb->nb_of_incident_constraints;
       add_to_subconstraints_to_conform(va, vb, c_id);
       restore_Delaunay();
+      return c_id;
     }
+    return {};
   }
 
   bool is_conforming() const {
@@ -245,7 +244,8 @@ protected:
       Locate_type lt;
       int li, lj;
       const Cell_handle c = tr.locate(steiner_pt, lt, li, lj, hint);
-      const Vertex_handle v = this->private_insert(steiner_pt, lt, c, li, lj);
+      const Vertex_handle v = this->private_insert(steiner_pt, lt, c, li, lj,
+                                                   insert_in_conflict_visitor);
       if(lt != T_3::VERTEX) {
         v->nb_of_incident_constraints = 1;
         v->c_id = constraint.vl_ptr();
@@ -306,8 +306,8 @@ protected:
     std::cerr << "  -> vector_of_encroaching_vertices (before filter):\n";
     std::for_each(vector_of_encroaching_vertices.begin(),
                   vector_of_encroaching_vertices.end(),
-                  [=](Vertex_handle v){
-                    std::cerr << "    " << display_vert(v) << '\n';
+                  [this](Vertex_handle v){
+                    std::cerr << "    " << this->display_vert(v) << '\n';
                   });
 #endif
     auto end = std::remove_if(vector_of_encroaching_vertices.begin(),
@@ -320,8 +320,8 @@ protected:
 #ifdef CGAL_DEBUG_CDT_3
     std::cerr << "  -> vector_of_encroaching_vertices (after filter):\n";
     std::for_each(vector_of_encroaching_vertices.begin(), end,
-                  [=](Vertex_handle v){
-                    std::cerr << "    " << display_vert(v) << '\n';
+                  [this](Vertex_handle v){
+                    std::cerr << "    " << this->display_vert(v) << '\n';
                   });
 #endif
     CGAL_triangulation_assertion(vector_of_encroaching_vertices.begin() != end);
@@ -359,14 +359,15 @@ protected:
   }
 
 private:
-  T_3& tr;
-  Compare_vertex_handle comp;
-  Constraint_hierarchy constraint_hierarchy;
-  Insert_in_conflict_visitor insert_in_conflict_visitor = *this;
+  T_3& tr = *this;
+  Compare_vertex_handle comp = {this};
+  Constraint_hierarchy constraint_hierarchy = {comp};
+  Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
 
   std::stack<std::pair<Subconstraint, Constraint_id> >
     subconstraints_to_conform;
 };
-}
+
+} // end CGAL
 
 #endif // CGAL_CONFORMING_DELAUNAY_TRIANGULATION_3_H
