@@ -198,65 +198,6 @@
    <addaction name="actionSymmetric_Difference"/>
    <addaction name="actionMinkowski_Sum" />
   </widget>
-  <!--<widget class="QToolBar" name="minkToolBarDummy" >
-   <property name="windowTitle" >
-    <string>Operation Tools</string>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <addaction name="Minkowksi_Sum"/>
-  </widget>
-  <widget class="QToolBar" name="minkToolBar" >
-   <property name="Visible">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle" >
-    <string>Operation Tools</string>
-   </property>
-   <attribute name="toolBarArea" >
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak" >
-    <bool>false</bool>
-   </attribute>
-   <widget class="QRadioButton" name="p_mink">
-    <property name="Visible">
-      <bool>true</bool>
-    </property>
-    <property name="checked" >
-      <bool>true</bool>
-    </property>
-    <property name="icon" >
-     <iconset resource="boolean_operations_2.qrc" >
-      <normaloff>:/cgal/icons/resources/P.xpm</normaloff>:/cgal/icons/resources/P.xpm
-     </iconset>
-    </property>
-    <property name="toolTip" >
-     <string>First Polygon for Minkowski Sum</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="q_mink">
-    <property name="Visible">
-      <bool>true</bool>
-    </property>
-    <property name="checked" >
-      <bool>false</bool>
-    </property>
-    <property name="icon" >
-     <iconset resource="boolean_operations_2.qrc" >
-      <normaloff>:/cgal/icons/resources/Q.xpm</normaloff>:/cgal/icons/resources/Q.xpm
-     </iconset>
-    </property>
-    <property name="toolTip" >
-     <string>Second Polygon for Minkowski Sum</string>
-    </property>
-   </widget>
-   <addaction name="actionMinkowski_Sum" />
-  </widget>-->
   <widget class="QToolBar" name="viewToolBar" >
    <property name="windowTitle" >
     <string>Operation Tools</string>
@@ -282,7 +223,6 @@
    </attribute>
    <addaction name="actionDelete"/>
    <addaction name="actionDeleteAll"/>
-   <!--<addaction name="actionClearResult"/>-->
    <addaction name="actionDeleteResult"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

@@ -176,8 +176,8 @@ enum {
   OLIVE_GROUP , HOTPINK_GROUP };
 
 //A way to maintain 3 category of polygons namely linear,circular
-//enum genrates errors so, we wil use LINEAR_TYPE=1, CIRCULAR_TYPE=2and BEZIER_TPYE = 3 ConicCircle = 4 and ConicEllipse = 5
-//enum { LINEAR_TYPE, CIRCULAR_TYPE, BEZIER_TPYE,ConicCircle,ConicEllipse};
+//enum genrates errors so, we wil use LINEAR_TYPE=1, CIRCULAR_TYPE=2and BEZIER_TPYE = 3 CONIC_TYPE = 4 
+//enum { LINEAR_TYPE, CIRCULAR_TYPE, BEZIER_TYPE,CONIC_TYPE};
 
 //dawing tools
 QPen sPens[] = {
@@ -341,18 +341,6 @@ public:
     }
   }
 
-  /*virtual void minkowski_sum_2(Rep_base const& aOther)
-  {
-  	try
-  	{
-  		m_set.minkowski_sum_2(cast(aOther).m_set);
-  	}
-  	catch(...)
-  	{
-  		show_error("Exception thrown during boolean operation minkowksi sum");
-  	}
-  }*/
-
   static Self const& cast(Rep_base const& aOther)
   { return dynamic_cast<Self const&>(aOther); }
 
@@ -477,17 +465,6 @@ public:
       show_error("Exception thrown during boolean operation");
     } 
   }
-  /*virtual void minkowski_sum_2( Rep_base const& aOther ) 
-  { 
-    try
-    {
-      mSet.minkowski_sum_2( cast(aOther).mSet); 
-    } 
-    catch(...)
-    {
-      show_error("Exception thrown during boolean operation");
-    } 
-  }*/
   static Self const& cast( Rep_base const& aOther ) { return dynamic_cast<Self const&>(aOther); }
   static Self      & cast( Rep_base      & aOther ) { return dynamic_cast<Self      &>(aOther); }
   
@@ -615,15 +592,7 @@ public:
     else if (is_linear() && aOther.is_linear())
       get_linear_rep()->symmetric_difference(*aOther.get_linear_rep());
   }
-  /*void minkowski_sum_2(Curve_set const& aOther)
-  {
-  	if (is_circular() && aOther.is_circular())
-      get_circular_rep()->minkowski_sum_2(*aOther.get_circular_rep());
-    else if (is_bezier() && aOther.is_bezier())
-      get_bezier_rep()->minkowski_sum_2( *aOther.get_bezier_rep()) ;
-    else if (is_linear() && aOther.is_linear())
-      get_linear_rep()->minkowski_sum_2(*aOther.get_linear_rep());
-  }*/
+  //Minkowski Sum hanled separately
   //see its need keep it for now
   const Rep_base& rep() const { return *m_rep; }
   Rep_base& rep() { return *m_rep; }
@@ -695,9 +664,7 @@ private:
   //keep it intact for now check it out
   bool m_circular_active;
   bool m_bezier_active;
-  //bool m_mink_active;
   //which type is currently active now
-  //bool m_blue_active;
 
   size_t m_color_active;
   size_t m_color_result_active;
@@ -718,9 +685,6 @@ private:
   bool m_yellow_union;
   bool m_magenta_union;
   bool m_aqua_union;
-
-  //size_t m_color_diff_A;
-  //size_t m_color_diff_B;
 
   bool m_blue_sym_diff;
   bool m_red_sym_diff;
@@ -753,13 +717,6 @@ private:
   bool m_clear_yellow;
   bool m_clear_magenta;
   bool m_clear_aqua;
-
-  //size_t color_comp;
-  //size_t color_int;
-  //size_t color_union;
-  //size_t color_diff;
-  //size_t color_sym_diff;
-  //size_t color_mink;
 
   Polygon_with_holes_2 mink_sum_res;
   bool minkowksi_sum_operated;
@@ -822,7 +779,6 @@ private:
   CGAL::Qt::Graphics_view_linear_polygon_input<Kernel>* m_linear_input;
   CGAL::Qt::Graphics_view_circular_polygon_input<Kernel>* m_circular_input;
   CGAL::Qt::GraphicsViewBezierPolygonInput<Bezier_traits>* m_bezier_input ;
-  //CGAL::Qt::Graphics_view_minkowski_input<Kernel>* m_mink_input;
   //
 
 public:
@@ -864,8 +820,6 @@ public slots:
   void on_actionAddColor_triggered();
   void on_actionMinusColor_triggered();
 
-  //bool stop_result_operation(
-  	//size_t m_color_result_active, size_t op_number);
 
   void on_showBlue_toggled  (bool a_check);
   void on_showRed_toggled   (bool a_check);
@@ -876,14 +830,7 @@ public slots:
   void on_showAqua_toggled   (bool a_check);
   void on_showResult_toggled  (bool a_check);
 
-
-  /*void on_outputVisibleBlue_toggled  (bool a_check);
-  void on_outputVisibleRed_toggled   (bool a_check);
-  void on_outputVisibleBlack_toggled   (bool a_check);
-  void on_outputVisibleBrown_toggled   (bool a_check);
-  void on_outputVisibleYellow_toggled   (bool a_check);
-  void on_outputVisibleMagenta_toggled   (bool a_check);
-  void on_outputVisibleAqua_toggled   (bool a_check);*/
+  //To be added again in GSoC2020
 
   void on_showBlueComp_toggled(bool aCheck);
   void on_showRedComp_toggled(bool aCheck);
@@ -925,10 +872,6 @@ public slots:
   void on_showMagentaSym_Diff_toggled(bool aCheck);
   void on_showAquaSym_Diff_toggled(bool aCheck);
 
-  //void on_blueMinkPol_toggled(bool aCheck);
-  //void on_redMinkPol_toggled(bool aCheck);
-  //void on_showMinkResult_toggled(bool aCheck);
-
   void on_showBlueMink_Sum_toggled(bool aCheck);
   void on_showRedMink_Sum_toggled(bool aCheck);
   void on_showBlackMink_Sum_toggled(bool aCheck);
@@ -955,61 +898,9 @@ public slots:
   void on_showResMagenta_toggled (bool a_check);
   void on_showResAqua_toggled (bool a_check);
 
-  /*void on_showBlueClear_toggled(bool a_check);
-  void on_showRedClear_toggled(bool a_check);
-  void on_showBlackClear_toggled(bool a_check);
-  void on_showBrownClear_toggled(bool a_check);
-  void on_showYellowClear_toggled(bool a_check);
-  void on_showMagentaClear_toggled(bool a_check);
-  void on_showAquaClear_toggled(bool a_check);*/
-
-  //void on_ResultComplement_toggled(bool a_check);
-  //void on_ResultIntersection_toggled(bool a_check);
-  //void on_ResultUnion_toggled(bool a_check);
-  //void on_ResultDiff_toggled(bool a_check);
-  //void on_ResultSym_Diff_toggled(bool a_check);
-
-  /*void on_showCompResultComp_toggled(bool a_check);
-  void on_showCompResultInt_toggled(bool a_check);
-  void on_showCompResultUnion_toggled(bool a_check);
-  void on_showCompResultDiff_toggled(bool a_check);
-  void on_showCompResultSym_Diff_toggled(bool a_check);
-  //void on_showCompResultMink_Sum_toggled(bool a_check);
-
-  void on_showIntResultComp_toggled(bool a_check);
-  void on_showIntResultInt_toggled(bool a_check);
-  void on_showIntResultUnion_toggled(bool a_check);
-  void on_showIntResultDiff_toggled(bool a_check);
-  void on_showIntResultSym_Diff_toggled(bool a_check);
-  //void on_showIntResultMink_Sum_toggled(bool a_check);
-
-  void on_showUnionResultComp_toggled(bool a_check);
-  void on_showUnionResultInt_toggled(bool a_check);
-  void on_showUnionResultUnion_toggled(bool a_check);
-  void on_showUnionResultDiff_toggled(bool a_check);
-  void on_showUnionResultSym_Diff_toggled(bool a_check);
-  //void on_showUnionResultMink_Sum_toggled(bool a_check);
-
-  void on_showDiffResultComp_toggled(bool a_check);
-  void on_showDiffResultInt_toggled(bool a_check);
-  void on_showDiffResultUnion_toggled(bool a_check);
-  void on_showDiffResultDiff_toggled(bool a_check);
-  void on_showDiffResultSym_Diff_toggled(bool a_check);
-  //void on_showDiffResultMink_Sum_toggled(bool a_check);
-
-  void on_showSymDiffResultComp_toggled(bool a_check);
-  void on_showSymDiffResultInt_toggled(bool a_check);
-  void on_showSymDiffResultUnion_toggled(bool a_check);
-  void on_showSymDiffResultDiff_toggled(bool a_check);
-  void on_showSymDiffResultSym_Diff_toggled(bool a_check);
-  //void on_showSymDiffResultMink_Sum_toggled(bool a_check);*/
-
-
-  //void on_actionAdd_new_polygon_triggered();
   void on_actionDeleteResult_triggered();
   void on_actionDelete_triggered();
   void on_actionInsertResult_triggered();
-  //void on_actionClearResult_triggered();
   void on_actionDeleteAll_triggered();
   void on_actionPAN_toggled(bool aChecked);
 
@@ -1284,7 +1175,6 @@ MainWindow::MainWindow() :
   DemosMainWindow(),
   m_bezier_active(false), //default
   m_circular_active(false), //default
-  //m_mink_active(false), //default
   m_color_active(0),    //default
   m_color_result_active(2), //default
   m_color_active_mink(1), //default
@@ -1304,8 +1194,6 @@ MainWindow::MainWindow() :
   m_yellow_union(false), //default
   m_magenta_union(false), //default
   m_aqua_union(false), //default
-  //m_color_diff_A(0), //default
-  //m_color_diff_B(0), //default
   m_blue_sym_diff(true), //default
   m_red_sym_diff(true), //default
   m_black_sym_diff(false), //default
@@ -1336,46 +1224,6 @@ MainWindow::MainWindow() :
   //radiusOffIn->setValidator(new QDoubleValidator(0.0, 100.0, 2,this));
 
   // setting color rows to setVisible-> False 
-  /*showBlack->setVisible(false), //default
-  drawBlack->setVisible(false),  //default
-  showBlackComp->setVisible(false), //default
-  showBlackDiff->setVisible(false), //default
-  showBlackUnion->setVisible(false), //default
-  showBlackInt->setVisible(false), //default
-  showBlackSym_Diff->setVisible(false), //default
-  showBlackMink_Sum->setVisible(false), //default
-  showBrown->setVisible(false), //default
-  drawBrown->setVisible(false),  //default
-  showBrownComp->setVisible(false), //default
-  showBrownDiff->setVisible(false), //default
-  showBrownUnion->setVisible(false), //default
-  showBrownInt->setVisible(false), //default
-  showBrownSym_Diff->setVisible(false), //default
-  showBrownMink_Sum->setVisible(false), //default
-  showYellow->setVisible(false), //default
-  drawYellow->setVisible(false),  //default
-  showYellowComp->setVisible(false), //default
-  showYellowDiff->setVisible(false), //default
-  showYellowUnion->setVisible(false), //default
-  showYellowInt->setVisible(false), //default
-  showYellowSym_Diff->setVisible(false), //default
-  showYellowMink_Sum->setVisible(false), //default
-  showMagenta->setVisible(false), //default
-  drawMagenta->setVisible(false),  //default
-  showMagentaComp->setVisible(false), //default
-  showMagentaDiff->setVisible(false), //default
-  showMagentaUnion->setVisible(false), //default
-  showMagentaInt->setVisible(false), //default
-  showMagentaSym_Diff->setVisible(false), //default
-  showMagentaMink_Sum->setVisible(false), //default
-  showAqua->setVisible(false), //default
-  drawAqua->setVisible(false),  //default
-  showAquaComp->setVisible(false), //default
-  showAquaDiff->setVisible(false), //default
-  showAquaUnion->setVisible(false), //default
-  showAquaInt->setVisible(false), //default
-  showAquaSym_Diff->setVisible(false), //default
-  showAquaMink_Sum->setVisible(false), //default*/
   {CGAL::set_error_handler  (error_handler);
   CGAL::set_warning_handler(error_handler);
 
@@ -1505,22 +1353,6 @@ MainWindow::MainWindow() :
                    SLOT(on_showInfo_toggled(bool))); 
 
 
-  /*QObject::connect(visibleBlueRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_outputVisibleBlue_toggled(bool)));
-  QObject::connect(visibleRedRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_outputVisibleRed_toggled(bool)));
-  QObject::connect(visibleBlackRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_outputVisibleBlack_toggled(bool)));
-  QObject::connect(visibleBrownRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_outputVisibleBrown_toggled(bool)));
-  QObject::connect(visibleYellowRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_outputVisibleYellow_toggled(bool)));
-  QObject::connect(visibleMagentaRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_outputVisibleMagenta_toggled(bool)));
-  QObject::connect(visibleAquaRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_outputVisibleAqua_toggled(bool)));*/
-
-
   //for the colour buckets
 
   //complement
@@ -1608,12 +1440,6 @@ MainWindow::MainWindow() :
 
   //minkowski_sum
 
-  /*QObject::connect(p_mink, SIGNAL(toggled(bool)), this,
-                   SLOT(on_blueMinkPol_toggled(bool)));
-  QObject::connect(q_mink, SIGNAL(toggled(bool)), this,
-                   SLOT(on_redMinkPol_toggled(bool)));*/
-  //QObject::connect(showMinkResult, SIGNAL(toggled(bool)), this,
-    //               SLOT(on_showMinkResult_toggled(bool)));
   QObject::connect(showBlueMink_Sum, SIGNAL(toggled(bool)), this,
                    SLOT(on_showBlueMink_Sum_toggled(bool)));
   QObject::connect(showRedMink_Sum, SIGNAL(toggled(bool)), this,
@@ -1630,101 +1456,6 @@ MainWindow::MainWindow() :
                    SLOT(on_showAquaMink_Sum_toggled(bool)));
 
   //clear
-
-  /*QObject::connect(clearBlueRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showBlueClear_toggled(bool)));
-  QObject::connect(clearRedRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showRedClear_toggled(bool)));
-  QObject::connect(clearBlackRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showBlackClear_toggled(bool)));
-  QObject::connect(clearBrownRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showBrownClear_toggled(bool)));
-  QObject::connect(clearYellowRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showYellowClear_toggled(bool)));
-  QObject::connect(clearMagentaRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showMagentaClear_toggled(bool)));
-  QObject::connect(clearAquaRes, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showAquaClear_toggled(bool)));
-
-  QObject::connect(ResultComplement, SIGNAL(toggled(bool)), this,
-                   SLOT(on_ResultComplement_toggled(bool)));
-  QObject::connect(ResultIntersection, SIGNAL(toggled(bool)), this,
-                   SLOT(on_ResultIntersection_toggled(bool)));
-  QObject::connect(ResultUnion, SIGNAL(toggled(bool)), this,
-                   SLOT(on_ResultUnion_toggled(bool)));
-  QObject::connect(ResultDiff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_ResultDiff_toggled(bool)));
-  QObject::connect(ResultSym_Diff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_ResultSym_Diff_toggled(bool)));
-
-  QObject::connect(showCompResultComp, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showCompResultComp_toggled(bool)));
-  QObject::connect(showCompResultInt, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showCompResultInt_toggled(bool)));
-  QObject::connect(showCompResultUnion, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showCompResultUnion_toggled(bool)));
-  QObject::connect(showCompResultDiff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showCompResultDiff_toggled(bool)));
-  QObject::connect(showCompResultSym_Diff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showCompResultSym_Diff_toggled(bool)));
-  //QObject::connect(showCompResultMink_Sum, SIGNAL(toggled(bool)), this,
-  //                 SLOT(on_showCompResultMink_Sum_toggled(bool)));
-
-
-  QObject::connect(showIntResultComp, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showIntResultComp_toggled(bool)));
-  QObject::connect(showIntResultInt, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showIntResultInt_toggled(bool)));
-  QObject::connect(showIntResultUnion, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showIntResultUnion_toggled(bool)));
-  QObject::connect(showIntResultDiff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showIntResultDiff_toggled(bool)));
-  QObject::connect(showIntResultSym_Diff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showIntResultSym_Diff_toggled(bool)));
-  //QObject::connect(showIntResultMink_Sum, SIGNAL(toggled(bool)), this,
-    //               SLOT(on_showIntResultMink_Sum_toggled(bool)));
-
-
-  QObject::connect(showUnionResultComp, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showUnionResultComp_toggled(bool)));
-  QObject::connect(showUnionResultInt, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showUnionResultInt_toggled(bool)));
-  QObject::connect(showUnionResultUnion, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showUnionResultUnion_toggled(bool)));
-  QObject::connect(showUnionResultDiff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showUnionResultDiff_toggled(bool)));
-  QObject::connect(showUnionResultSym_Diff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showUnionResultSym_Diff_toggled(bool)));
-  //QObject::connect(showUnionResultMink_Sum, SIGNAL(toggled(bool)), this,
-    //               SLOT(on_showUnionResultMink_Sum_toggled(bool)));
-
-  QObject::connect(showDiffResultComp, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showDiffResultComp_toggled(bool)));
-  QObject::connect(showDiffResultInt, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showDiffResultInt_toggled(bool)));
-  QObject::connect(showDiffResultUnion, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showDiffResultUnion_toggled(bool)));
-  QObject::connect(showDiffResultDiff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showDiffResultDiff_toggled(bool)));
-  QObject::connect(showDiffResultSym_Diff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showDiffResultSym_Diff_toggled(bool)));
-  //QObject::connect(showDiffResultMink_Sum, SIGNAL(toggled(bool)), this,
-    //               SLOT(on_showDiffResultMink_Sum_toggled(bool)));
-
-  QObject::connect(showSymDiffResultComp, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showSymDiffResultComp_toggled(bool)));
-  QObject::connect(showSymDiffResultInt, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showSymDiffResultInt_toggled(bool)));
-  QObject::connect(showSymDiffResultUnion, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showSymDiffResultUnion_toggled(bool)));
-  QObject::connect(showSymDiffResultDiff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showSymDiffResultDiff_toggled(bool)));
-  QObject::connect(showSymDiffResultSym_Diff, SIGNAL(toggled(bool)), this,
-                   SLOT(on_showSymDiffResultSym_Diff_toggled(bool)));
-  //QObject::connect(showSymDiffResultMink_Sum, SIGNAL(toggled(bool)), this,
-    //               SLOT(on_showSymDiffResultMink_Sum_toggled(bool)));*/
-
-
 
 	m_linear_input -> mOngoingPieceGI -> setPen(sPens[0]);
 	m_linear_input -> mLinearGI -> setPen(sPens[0]);
@@ -1756,97 +1487,6 @@ void MainWindow::on_showResult_toggled(bool a_check)
 { ToogleView(RESULT_GROUP, a_check); }
 
 
-
-/*void MainWindow::on_outputVisibleBlue_toggled(bool a_check)
-{ 
-	ToogleView(BLUE_RESGROUP, a_check); 
-	if(!a_check)
-	{
-		if (pathItem0_exists) m_scene.removeItem(pathItem0);
-	}
-	else
-	{
-		if (pathItem0_exists) m_scene.addItem(pathItem0);
-	}
-}
-
-void MainWindow::on_outputVisibleRed_toggled(bool a_check)
-{ 
-	ToogleView(RED_RESGROUP, a_check);
-	if(!a_check)
-	{
-		if (pathItem1_exists) m_scene.removeItem(pathItem1);
-	} 
-	else
-	{
-		if (pathItem1_exists) m_scene.addItem(pathItem1);
-	}
-}
-
-void MainWindow::on_outputVisibleBlack_toggled(bool a_check)
-{ 
-	ToogleView(BLACK_RESGROUP, a_check); 
-	if(!a_check)
-	{
-		if (pathItem2_exists) m_scene.removeItem(pathItem2);
-	}
-	else
-	{
-		if (pathItem2_exists) m_scene.addItem(pathItem2);
-	}
-}
-
-void MainWindow::on_outputVisibleBrown_toggled(bool a_check)
-{ 
-	ToogleView(BROWN_RESGROUP, a_check); 
-	if(!a_check)
-	{
-		if (pathItem3_exists) m_scene.removeItem(pathItem3);
-	}
-	else
-	{
-		if (pathItem3_exists) m_scene.addItem(pathItem3);
-	}
-}
-
-void MainWindow::on_outputVisibleYellow_toggled(bool a_check)
-{ 
-	ToogleView(YELLOW_RESGROUP, a_check); 
-	if(!a_check)
-	{
-		if (pathItem4_exists) m_scene.removeItem(pathItem4);
-	}
-	else
-	{
-		if (pathItem4_exists) m_scene.addItem(pathItem4);
-	}
-}
-
-void MainWindow::on_outputVisibleMagenta_toggled(bool a_check)
-{ 
-	ToogleView(MAGENTA_RESGROUP, a_check); 
-	if(!a_check)
-	{
-		if (pathItem5_exists) m_scene.removeItem(pathItem5);
-	}
-	else
-	{
-		if (pathItem5_exists) m_scene.addItem(pathItem5);
-	}
-}
-
-void MainWindow::on_outputVisibleAqua_toggled(bool a_check)
-{ 
-	ToogleView(AQUA_RESGROUP, a_check); 
-	if(!a_check)
-	{
-		if (pathItem6_exists) m_scene.removeItem(pathItem6);
-	}
-	else
-	{
-		if (pathItem6_exists) m_scene.addItem(pathItem6);
-	}
-}*/
 
 
 void MainWindow::on_showColorBucket_toggled(bool a_check)
@@ -2001,121 +1641,6 @@ void MainWindow::on_showAquaComp_toggled(bool aCheck)
 	} 
 }
 
-/*void MainWindow::on_showCompResultComp_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_complement = 7;
-    showRedComp->setChecked(false);
-    showBlackComp->setChecked(false);
-    showBrownComp->setChecked(false);
-    showYellowComp->setChecked(false);
-    showMagentaComp->setChecked(false);
-    showAquaComp->setChecked(false);
-    showBlueComp->setChecked(false);
-  } 
-
-  else
-  {
-    showCompResultComp->setChecked(false);
-  } 
-
-}
-
-void MainWindow::on_showIntResultComp_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_complement = 8;
-    showRedComp->setChecked(false);
-    showBlackComp->setChecked(false);
-    showBrownComp->setChecked(false);
-    showYellowComp->setChecked(false);
-    showMagentaComp->setChecked(false);
-    showAquaComp->setChecked(false);
-    showBlueComp->setChecked(false);
-  } 
-
-  else
-  {
-    showIntResultComp->setChecked(false);
-  } 
-}
-
-void MainWindow::on_showUnionResultComp_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_complement = 9;
-    showRedComp->setChecked(false);
-    showBlackComp->setChecked(false);
-    showBrownComp->setChecked(false);
-    showYellowComp->setChecked(false);
-    showMagentaComp->setChecked(false);
-    showAquaComp->setChecked(false);
-    showBlueComp->setChecked(false);
-    showDiffResultComp->setChecked(false);
-    showSymDiffResultComp->setChecked(false);
-  } 
-
-  else
-  {
-    showUnionResultComp->setChecked(false);
-  } 
-}
-
-void MainWindow::on_showDiffResultComp_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_complement = 10;
-    showRedComp->setChecked(false);
-    showBlackComp->setChecked(false);
-    showBrownComp->setChecked(false);
-    showYellowComp->setChecked(false);
-    showMagentaComp->setChecked(false);
-    showAquaComp->setChecked(false);
-    showCompResultComp->setChecked(false);
-    showIntResultComp->setChecked(false);
-    showUnionResultComp->setChecked(false);
-    showBlueComp->setChecked(false);
-    showSymDiffResultComp->setChecked(false);
-  } 
-
-  else
-  {
-    showDiffResultComp->setChecked(false);
-  } 
-}
-
-
-void MainWindow::on_showSymDiffResultComp_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_color_complement = 11;
-    showRedComp->setChecked(false);
-    showBlackComp->setChecked(false);
-    showBrownComp->setChecked(false);
-    showYellowComp->setChecked(false);
-    showMagentaComp->setChecked(false);
-    showAquaComp->setChecked(false);
-    showCompResultComp->setChecked(false);
-    showIntResultComp->setChecked(false);
-    showUnionResultComp->setChecked(false);
-    showDiffResultComp->setChecked(false);
-    showBlueComp->setChecked(false);
-  } 
-
-  else
-  {
-    showSymDiffResultComp->setChecked(false);
-  } 
-}*/
-
-
-
-
 
 
 void MainWindow::on_showBlueInt_toggled(bool aCheck)
@@ -2202,63 +1727,6 @@ void MainWindow::on_showAquaInt_toggled(bool aCheck)
 	}
 }
 
-/*void MainWindow::on_showCompResultInt_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_comp_result_int = true;
-  }
-  else
-  {
-    m_comp_result_int = false;
-  }
-}
-void MainWindow::on_showIntResultInt_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_int_result_int = true;
-  }
-  else
-  {
-    m_int_result_int = false;
-  }
-}
-void MainWindow::on_showUnionResultInt_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_union_result_int = true;
-  }
-  else
-  {
-    m_union_result_int = false;
-  }
-}
-void MainWindow::on_showDiffResultInt_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_diff_result_int = true;
-  }
-  else
-  {
-    m_diff_result_int = false;
-  }
-}
-void MainWindow::on_showSymDiffResultInt_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_sym_diff_result_int = true;
-  }
-  else
-  {
-    m_sym_diff_result_int = false;
-  }
-}*/
-
-
 
 
 void MainWindow::on_showBlueUnion_toggled(bool aCheck)
@@ -2344,64 +1812,6 @@ void MainWindow::on_showAquaUnion_toggled(bool aCheck)
 		m_aqua_union = false;
 	}
 }
-
-/*void MainWindow::on_showCompResultUnion_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_comp_result_union = true;
-  }
-  else
-  {
-    m_comp_result_union = false;
-  }
-}
-void MainWindow::on_showIntResultUnion_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_int_result_union = true;
-  }
-  else
-  {
-    m_int_result_union = false;
-  }
-}
-void MainWindow::on_showUnionResultUnion_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_union_result_union = true;
-  }
-  else
-  {
-    m_union_result_union = false;
-  }
-}
-void MainWindow::on_showDiffResultUnion_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_diff_result_union = true;
-  }
-  else
-  {
-    m_diff_result_union = false;
-  }
-}
-void MainWindow::on_showSymDiffResultUnion_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_sym_diff_result_union = true;
-  }
-  else
-  {
-    m_sym_diff_result_union = false;
-  }
-}*/
-
-
 
 
 
@@ -2546,137 +1956,6 @@ void MainWindow::on_showAquaDiff_toggled(bool aCheck)
 
 }
 
-/*void MainWindow::on_showCompResultDiff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    size_t count =0 ;
-    if (showBlueDiff->isChecked()) count++;
-    if (showBlackDiff->isChecked()) count++;
-    if (showBrownDiff->isChecked()) count++;
-    if (showYellowDiff->isChecked()) count++;
-    if (showMagentaDiff->isChecked()) count++;
-    if (showAquaDiff->isChecked()) count++;
-    if (showCompResultDiff->isChecked()) count++;
-    if (showIntResultDiff->isChecked()) count++;
-    if (showUnionResultDiff->isChecked()) count++;
-    if (showDiffResultDiff->isChecked()) count++;
-    if (showSymDiffResultDiff->isChecked()) count++;
-
-    if (count > 2)
-    {
-      ask_user_ok("Difference Operation Error",
-      	"Maximum Limit of Color has reached, only 2 allowed.\n");
-      showCompResultDiff->setChecked(false); 
-    }
-  }
-}
-
-void MainWindow::on_showIntResultDiff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    size_t count =0 ;
-    if (showBlueDiff->isChecked()) count++;
-    if (showBlackDiff->isChecked()) count++;
-    if (showBrownDiff->isChecked()) count++;
-    if (showYellowDiff->isChecked()) count++;
-    if (showMagentaDiff->isChecked()) count++;
-    if (showAquaDiff->isChecked()) count++;
-    if (showCompResultDiff->isChecked()) count++;
-    if (showIntResultDiff->isChecked()) count++;
-    if (showUnionResultDiff->isChecked()) count++;
-    if (showDiffResultDiff->isChecked()) count++;
-    if (showSymDiffResultDiff->isChecked()) count++;
-
-    if (count > 2)
-    {
-      ask_user_ok("Difference Operation Error",
-      	"Maximum Limit of Color has reached, only 2 allowed.\n");
-      showIntResultDiff->setChecked(false); 
-    }
-  }
-}
-
-void MainWindow::on_showUnionResultDiff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    size_t count =0 ;
-    if (showBlueDiff->isChecked()) count++;
-    if (showBlackDiff->isChecked()) count++;
-    if (showBrownDiff->isChecked()) count++;
-    if (showYellowDiff->isChecked()) count++;
-    if (showMagentaDiff->isChecked()) count++;
-    if (showAquaDiff->isChecked()) count++;
-    if (showCompResultDiff->isChecked()) count++;
-    if (showIntResultDiff->isChecked()) count++;
-    if (showUnionResultDiff->isChecked()) count++;
-    if (showDiffResultDiff->isChecked()) count++;
-    if (showSymDiffResultDiff->isChecked()) count++;
-
-    if (count > 2)
-    {
-      ask_user_ok("Difference Operation Error",
-      	"Maximum Limit of Color has reached, only 2 allowed.\n");
-      showUnionResultDiff->setChecked(false); 
-    }
-  }
-}
-
-void MainWindow::on_showDiffResultDiff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    size_t count =0 ;
-    if (showBlueDiff->isChecked()) count++;
-    if (showBlackDiff->isChecked()) count++;
-    if (showBrownDiff->isChecked()) count++;
-    if (showYellowDiff->isChecked()) count++;
-    if (showMagentaDiff->isChecked()) count++;
-    if (showAquaDiff->isChecked()) count++;
-    if (showCompResultDiff->isChecked()) count++;
-    if (showIntResultDiff->isChecked()) count++;
-    if (showUnionResultDiff->isChecked()) count++;
-    if (showDiffResultDiff->isChecked()) count++;
-    if (showSymDiffResultDiff->isChecked()) count++;
-
-    if (count > 2)
-    {
-      ask_user_ok("Difference Operation Error",
-      	"Maximum Limit of Color has reached, only 2 allowed.\n");
-      showDiffResultDiff->setChecked(false); 
-    }
-  }
-}
-
-void MainWindow::on_showSymDiffResultDiff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    size_t count =0 ;
-    if (showBlueDiff->isChecked()) count++;
-    if (showBlackDiff->isChecked()) count++;
-    if (showBrownDiff->isChecked()) count++;
-    if (showYellowDiff->isChecked()) count++;
-    if (showMagentaDiff->isChecked()) count++;
-    if (showAquaDiff->isChecked()) count++;
-    if (showCompResultDiff->isChecked()) count++;
-    if (showIntResultDiff->isChecked()) count++;
-    if (showUnionResultDiff->isChecked()) count++;
-    if (showDiffResultDiff->isChecked()) count++;
-    if (showSymDiffResultDiff->isChecked()) count++;
-
-    if (count > 2)
-    {
-      ask_user_ok("Difference Operation Error",
-      	"Maximum Limit of Color has reached, only 2 allowed.\n");
-      showSymDiffResultDiff->setChecked(false); 
-    }
-  }
-}*/
-
-
 
 
 void MainWindow::on_showBlueSym_Diff_toggled(bool aCheck)
@@ -2761,62 +2040,6 @@ void MainWindow::on_showAquaSym_Diff_toggled(bool aCheck)
 	}
 
 }
-
-/*void MainWindow::on_showCompResultSym_Diff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_comp_result_union = true;
-  }
-  else
-  {
-    m_comp_result_union = false;
-  }
-}
-void MainWindow::on_showIntResultSym_Diff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_int_result_union = true;
-  }
-  else
-  {
-    m_int_result_union = false;
-  }
-}
-void MainWindow::on_showUnionResultSym_Diff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_union_result_union = true;
-  }
-  else
-  {
-    m_union_result_union = false;
-  }
-}
-void MainWindow::on_showDiffResultSym_Diff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_diff_result_union = true;
-  }
-  else
-  {
-    m_diff_result_union = false;
-  }
-}
-void MainWindow::on_showSymDiffResultSym_Diff_toggled(bool aCheck)
-{
-  if(aCheck)
-  {
-    m_sym_diff_result_union = true;
-  }
-  else
-  {
-    m_sym_diff_result_union = false;
-  }
-}*/
 
 
 void MainWindow::on_showBlueMink_Sum_toggled(bool aCheck)
@@ -2966,88 +2189,6 @@ void MainWindow::on_showAquaMink_Sum_toggled(bool aCheck)
 //////////###################### Add Color Plus Button ###########################////////////
 void MainWindow::on_actionAddColor_triggered()
 {
-	/*if(!m_visible_black)
-	{
-		m_visible_black = true;
-		showBlack ->setVisible(true);
-		drawBlack -> setVisible(true);
-		showBlackComp -> setVisible(true);
-		showBlackDiff -> setVisible(true);
-		showBlackUnion -> setVisible(true);
-		showBlackInt -> setVisible(true);
-		showBlackSym_Diff -> setVisible(true);
-		showBlackMink_Sum -> setVisible(true);
-
-
-		line11 -> setVisible(true);
-
-		line1 -> setGeometry(QRect(111,0,7,125));
-  		line2 -> setGeometry(QRect(155,0,7,125));
-  		line3 -> setGeometry(QRect(200,0,7,125));
-  		line4 -> setGeometry(QRect(245,0,7,125));
-  		line5 -> setGeometry(QRect(290,0,7,125));
-  		line6 -> setGeometry(QRect(335,0,7,125));
-  		line06 -> setGeometry(QRect(380,0,7,125));
-  		line006 -> setGeometry(QRect(440,0,7,125));
-
-  		line07 -> setGeometry(QRect(0,155,640,7));
-  		line08 -> setGeometry(QRect(0,185,640,7));
-  		line09 -> setGeometry(QRect(0,215,640,7));
-  		line010 -> setGeometry(QRect(0,245,640,7));
-  		line011 -> setGeometry(QRect(0,275,640,7));
-
-      ComplementHeader0->setGeometry(QRect(80,130,90,22));
-      IntersectionHeader0->setGeometry(QRect(80,160,90,22));
-      UnionHeader0->setGeometry(QRect(80,190,90,22));
-      DifferenceHeader0->setGeometry(QRect(80,220,90,22));
-      symm_diffHeader0->setGeometry(QRect(80,250,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,130,101,22));
-  		showCompResultComp->setGeometry(QRect(125,130,101,22));
-  		showCompResultInt->setGeometry(QRect(170,130,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,130,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,130,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,130,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,130,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,160,101,22));
-  		showIntResultComp->setGeometry(QRect(125,160,101,22));
-  		showIntResultInt->setGeometry(QRect(170,160,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,160,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,160,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,160,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,160,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,190,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,190,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,190,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,190,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,190,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,220,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,220,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,220,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,220,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,220,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,250,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,250,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,250,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,250,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,250,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));
-
-
-  		actionMinusColor -> setText("Remove Black");
-
-  		showResBlack ->setVisible(true);
-  		clearBlackRes -> setVisible(true);
-	}*/
 
 	if(!m_visible_brown)
 	{
@@ -3075,64 +2216,9 @@ void MainWindow::on_actionAddColor_triggered()
 
   		actionMinusColor -> setVisible(true);
 
-  		//visibleBrownRes -> setVisible(false);
-
-  		/*line07 -> setGeometry(QRect(0,185,640,7));
-  		line08 -> setGeometry(QRect(0,215,640,7));
-  		line09 -> setGeometry(QRect(0,245,640,7));
-  		line010 -> setGeometry(QRect(0,275,640,7));
-  		line011 -> setGeometry(QRect(0,305,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,160,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,190,90,22));
-      	UnionHeader0->setGeometry(QRect(80,220,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,250,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,280,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,160,101,22));
-  		showCompResultComp->setGeometry(QRect(125,160,101,22));
-  		showCompResultInt->setGeometry(QRect(170,160,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,160,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,160,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,160,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,160,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,190,101,22));
-  		showIntResultComp->setGeometry(QRect(125,190,101,22));
-  		showIntResultInt->setGeometry(QRect(170,190,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,190,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,190,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,220,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,220,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,220,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,220,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,220,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,250,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,250,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,250,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,250,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,250,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,280,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,280,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,280,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,280,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,280,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));*/
-
   		actionMinusColor -> setText("Remove Brown");
 
   		showResBrown ->setVisible(true);
-  		//clearBrownRes -> setVisible(true);
   
 	}
 
@@ -3160,66 +2246,11 @@ void MainWindow::on_actionAddColor_triggered()
   		line006 -> setGeometry(QRect(440,0,7,185));
   		line0006 -> setGeometry(QRect(485,0,7,185));
 
-  		//visibleYellowRes -> setVisible(false);
-
-  		/*line07 -> setGeometry(QRect(0,215,640,7));
-  		line08 -> setGeometry(QRect(0,245,640,7));
-  		line09 -> setGeometry(QRect(0,275,640,7));
-  		line010 -> setGeometry(QRect(0,305,640,7));
-  		line011 -> setGeometry(QRect(0,335,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,190,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,220,90,22));
-      	UnionHeader0->setGeometry(QRect(80,250,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,280,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,310,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,190,101,22));
-  		showCompResultComp->setGeometry(QRect(125,190,101,22));
-  		showCompResultInt->setGeometry(QRect(170,190,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,190,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,190,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,220,101,22));
-  		showIntResultComp->setGeometry(QRect(125,220,101,22));
-  		showIntResultInt->setGeometry(QRect(170,220,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,220,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,220,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,250,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,250,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,250,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,250,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,250,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,250,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,280,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,280,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,280,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,280,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,280,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,310,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,310,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,310,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,310,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,310,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,310,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));*/
-
+  		
   		actionMinusColor -> setText("Remove Yellow");
 
 
-  		showResYellow ->setVisible(true);
-  		//clearYellowRes -> setVisible(true);
-  		
+  		showResYellow ->setVisible(true);  		
 	}
 
 	else if(!m_visible_magenta)
@@ -3246,64 +2277,11 @@ void MainWindow::on_actionAddColor_triggered()
   		line006 -> setGeometry(QRect(440,0,7,215));
   		line0006 -> setGeometry(QRect(485,0,7,215));
 
-  		//visibleMagentaRes -> setVisible(false);
-
-  		/*line07 -> setGeometry(QRect(0,245,640,7));
-  		line08 -> setGeometry(QRect(0,275,640,7));
-  		line09 -> setGeometry(QRect(0,305,640,7));
-  		line010 -> setGeometry(QRect(0,335,640,7));
-  		line011 -> setGeometry(QRect(0,365,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,220,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,250,90,22));
-      	UnionHeader0->setGeometry(QRect(80,280,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,310,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,340,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,220,101,22));
-  		showCompResultComp->setGeometry(QRect(125,220,101,22));
-  		showCompResultInt->setGeometry(QRect(170,220,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,220,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,220,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,250,101,22));
-  		showIntResultComp->setGeometry(QRect(125,250,101,22));
-  		showIntResultInt->setGeometry(QRect(170,250,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,250,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,250,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,250,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,280,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,280,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,280,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,280,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,280,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,280,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,310,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,310,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,310,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,310,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,310,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,310,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,340,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,340,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,340,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,340,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,340,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,340,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,340,101,22));*/
+  		
 
   		actionMinusColor -> setText("Remove Magenta");
 
   		showResMagenta ->setVisible(true);
-  		//clearMagentaRes -> setVisible(true);
 	}
 
 	else if(!m_visible_aqua)
@@ -3331,65 +2309,11 @@ void MainWindow::on_actionAddColor_triggered()
   		line0006 -> setGeometry(QRect(485,0,7,245));
 
 
-  		//visibleAquaRes -> setVisible(false);
-
-
-  		/*line07 -> setGeometry(QRect(0,280,640,7));
-  		line08 -> setGeometry(QRect(0,310,640,7));
-  		line09 -> setGeometry(QRect(0,340,640,7));
-  		line010 -> setGeometry(QRect(0,370,640,7));
-  		line011 -> setGeometry(QRect(0,400,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,255,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,285,90,22));
-      	UnionHeader0->setGeometry(QRect(80,315,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,345,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,375,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,255,101,22));
-  		showCompResultComp->setGeometry(QRect(125,255,101,22));
-  		showCompResultInt->setGeometry(QRect(170,255,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,255,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,255,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,255,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,255,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,285,101,22));
-  		showIntResultComp->setGeometry(QRect(125,285,101,22));
-  		showIntResultInt->setGeometry(QRect(170,285,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,285,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,285,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,285,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,285,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,315,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,315,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,315,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,315,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,315,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,315,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,315,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,345,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,345,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,345,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,345,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,345,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,345,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,345,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,375,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,375,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,375,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,375,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,375,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,375,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,375,101,22));*/
+  		
 
   		actionMinusColor -> setText("Remove Aqua");
 
   		showResAqua ->setVisible(true);
-  		//clearAquaRes -> setVisible(true);
 	
 	}
 
@@ -3407,104 +2331,6 @@ void MainWindow::on_actionAddColor_triggered()
 
 void MainWindow::on_actionMinusColor_triggered()
 {
-	/*if (!(m_visible_brown || m_visible_yellow || m_visible_magenta || m_visible_aqua))
-	{	
-		m_curve_sets[2].clear();
-		//m_curve_sets[7].clear();
-		m_color_active = 0;
-		m_color_result_active = 0;
-
-		black_circular_sources().clear();
-		black_linear_sources().clear();
-		black_bezier_sources().clear();
-
-    	black_res_linear_sources().clear();
-    	black_res_circular_sources().clear();
-    	black_res_bezier_sources().clear();
-
-		m_visible_black = false;
-		showBlack ->setVisible(false);
-		drawBlack -> setVisible(false);
-		drawBlue -> setChecked(true);
-		showBlackComp -> setVisible(false);
-		showBlackDiff -> setVisible(false);
-		showBlackUnion -> setVisible(false);
-		showBlackInt -> setVisible(false);
-		showBlackSym_Diff -> setVisible(false);
-		showBlackMink_Sum -> setVisible(false);
-
-		line11 -> setVisible(false);
-
-		line1 -> setGeometry(QRect(111,0,7,95));
-	  	line2 -> setGeometry(QRect(155,0,7,95));
-	  	line3 -> setGeometry(QRect(200,0,7,95));
-	  	line4 -> setGeometry(QRect(245,0,7,95));
-	  	line5 -> setGeometry(QRect(290,0,7,95));
-	  	line6 -> setGeometry(QRect(335,0,7,95));
-  		line06 -> setGeometry(QRect(380,0,7,95));
-  		line006 -> setGeometry(QRect(440,0,7,95));
-
-  		line07 -> setGeometry(QRect(0,125,640,7));
-  		line08 -> setGeometry(QRect(0,155,640,7));
-  		line09 -> setGeometry(QRect(0,185,640,7));
-  		line010 -> setGeometry(QRect(0,215,640,7));
-  		line011 -> setGeometry(QRect(0,245,640,7));
-
-        ComplementHeader0->setGeometry(QRect(80,100,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,130,90,22));
-      	UnionHeader0->setGeometry(QRect(80,160,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,190,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,220,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,100,101,22));
-  		showCompResultComp->setGeometry(QRect(125,100,101,22));
-  		showCompResultInt->setGeometry(QRect(170,100,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,100,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,100,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,100,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,100,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,130,101,22));
-  		showIntResultComp->setGeometry(QRect(125,130,101,22));
-  		showIntResultInt->setGeometry(QRect(170,130,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,130,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,130,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,130,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,130,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,160,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,160,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,160,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,160,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,160,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,160,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,160,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,190,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,190,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,190,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,190,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,190,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,220,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,220,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,220,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,220,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,220,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-	  	actionMinusColor -> setText("Color Removal Not Allowed");
-
-	  	showResBlack ->setVisible(false);
-  		showResBlack->setChecked(false);
-  		result_set().clear();
-	  	clearBlackRes -> setVisible(false);
-
-	  	//modelChanged();
-	}*/
 
 	if (!(m_visible_yellow || m_visible_magenta || m_visible_aqua))
 	{	
@@ -3527,7 +2353,6 @@ void MainWindow::on_actionMinusColor_triggered()
 		showBrownSym_Diff -> setVisible(false);
 		showBrownMink_Sum -> setVisible(false);
 
-  		//visibleBrownRes -> setVisible(false);
 		
 
 		drawBlue -> setChecked(true);
@@ -3545,64 +2370,10 @@ void MainWindow::on_actionMinusColor_triggered()
   		line006 -> setGeometry(QRect(440,0,7,125));
   		line0006 -> setGeometry(QRect(485,0,7,125));
 
-  		/*line07 -> setGeometry(QRect(0,155,640,7));
-  		line08 -> setGeometry(QRect(0,185,640,7));
-  		line09 -> setGeometry(QRect(0,215,640,7));
-  		line010 -> setGeometry(QRect(0,245,640,7));
-  		line011 -> setGeometry(QRect(0,275,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,130,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,160,90,22));
-      	UnionHeader0->setGeometry(QRect(80,190,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,220,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,250,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,130,101,22));
-  		showCompResultComp->setGeometry(QRect(125,130,101,22));
-  		showCompResultInt->setGeometry(QRect(170,130,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,130,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,130,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,130,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,130,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,160,101,22));
-  		showIntResultComp->setGeometry(QRect(125,160,101,22));
-  		showIntResultInt->setGeometry(QRect(170,160,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,160,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,160,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,160,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,160,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,190,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,190,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,190,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,190,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,190,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,220,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,220,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,220,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,220,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,220,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,250,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,250,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,250,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,250,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,250,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));*/
-
 	  	actionMinusColor -> setText("Remove Black");
 
 	  	showResBrown ->setVisible(false);
   		showResBrown->setChecked(false);
-  		//result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	  	//clearBrownRes -> setVisible(false);
 
   		actionMinusColor -> setVisible(false);
 
@@ -3614,7 +2385,6 @@ void MainWindow::on_actionMinusColor_triggered()
 	else if (!(m_visible_magenta || m_visible_aqua))
 	{	
 		m_curve_sets[4].clear();
-		//m_curve_sets[7].clear();
 		m_color_active = 0;
 		m_color_result_active = 0;
 
@@ -3634,7 +2404,6 @@ void MainWindow::on_actionMinusColor_triggered()
 
 		drawBlue -> setChecked(true);
 
-  		//visibleYellowRes -> setVisible(false);
 
 
 		line9 -> setVisible(false);
@@ -3649,62 +2418,9 @@ void MainWindow::on_actionMinusColor_triggered()
   		line006 -> setGeometry(QRect(440,0,7,155));
   		line0006 -> setGeometry(QRect(485,0,7,155));
 
-  		/*line07 -> setGeometry(QRect(0,185,640,7));
-  		line08 -> setGeometry(QRect(0,215,640,7));
-  		line09 -> setGeometry(QRect(0,245,640,7));
-  		line010 -> setGeometry(QRect(0,275,640,7));
-  		line011 -> setGeometry(QRect(0,305,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,160,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,190,90,22));
-      	UnionHeader0->setGeometry(QRect(80,220,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,250,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,280,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,160,101,22));
-  		showCompResultComp->setGeometry(QRect(125,160,101,22));
-  		showCompResultInt->setGeometry(QRect(170,160,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,160,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,160,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,160,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,160,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,190,101,22));
-  		showIntResultComp->setGeometry(QRect(125,190,101,22));
-  		showIntResultInt->setGeometry(QRect(170,190,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,190,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,190,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,220,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,220,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,220,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,220,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,220,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,250,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,250,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,250,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,250,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,250,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,250,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,280,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,280,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,280,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,280,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,280,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));*/
 
 	  	showResYellow ->setVisible(false);
   		showResYellow->setChecked(false);
-  		//result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	  	//clearYellowRes -> setVisible(false);
 
 	  	actionMinusColor -> setText("Remove Brown");	
 
@@ -3714,7 +2430,6 @@ void MainWindow::on_actionMinusColor_triggered()
 	else if (! m_visible_aqua)
 	{	
 		m_curve_sets[5].clear();
-		//m_curve_sets[7].clear();
 		m_color_active = 0;
 		m_color_result_active = 0;
 
@@ -3734,7 +2449,6 @@ void MainWindow::on_actionMinusColor_triggered()
 
 		drawBlue -> setChecked(true);
 
-  		//visibleMagentaRes -> setVisible(false);
 
 		line8 -> setVisible(false);
 
@@ -3748,63 +2462,9 @@ void MainWindow::on_actionMinusColor_triggered()
   		line006 -> setGeometry(QRect(440,0,7,185));
   		line0006 -> setGeometry(QRect(485,0,7,185));
 
-  		/*line07 -> setGeometry(QRect(0,215,640,7));
-  		line08 -> setGeometry(QRect(0,245,640,7));
-  		line09 -> setGeometry(QRect(0,275,640,7));
-  		line010 -> setGeometry(QRect(0,305,640,7));
-  		line011 -> setGeometry(QRect(0,335,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,190,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,220,90,22));
-      	UnionHeader0->setGeometry(QRect(80,250,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,280,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,310,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,190,101,22));
-  		showCompResultComp->setGeometry(QRect(125,190,101,22));
-  		showCompResultInt->setGeometry(QRect(170,190,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,190,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,190,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,220,101,22));
-  		showIntResultComp->setGeometry(QRect(125,220,101,22));
-  		showIntResultInt->setGeometry(QRect(170,220,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,220,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,220,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,250,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,250,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,250,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,250,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,250,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,250,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,280,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,280,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,280,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,280,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,280,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,280,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,310,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,310,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,310,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,310,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,310,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,310,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));*/
-
-
+  		
 	  	showResMagenta ->setVisible(false);
   		showResMagenta->setChecked(false);
-  		//result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-	  	//clearMagentaRes -> setVisible(false);
 
 	  	actionMinusColor -> setText("Remove Yellow");
 
@@ -3816,7 +2476,6 @@ void MainWindow::on_actionMinusColor_triggered()
 	{
 
 		m_curve_sets[6].clear();
-		//m_curve_sets[7].clear();
 		m_color_active = 0;
 		m_color_result_active = 0;
 
@@ -3835,7 +2494,6 @@ void MainWindow::on_actionMinusColor_triggered()
 		showAquaSym_Diff -> setVisible(false);
 		showAquaMink_Sum -> setVisible(false);
 
-  		//visibleAquaRes -> setVisible(false);
 
 		drawBlue -> setChecked(true);
 
@@ -3851,62 +2509,8 @@ void MainWindow::on_actionMinusColor_triggered()
   		line006 -> setGeometry(QRect(440,0,7,215));
   		line0006 -> setGeometry(QRect(485,0,7,215));
 
-  		/*line07 -> setGeometry(QRect(0,245,640,7));
-  		line08 -> setGeometry(QRect(0,275,640,7));
-  		line09 -> setGeometry(QRect(0,305,640,7));
-  		line010 -> setGeometry(QRect(0,335,640,7));
-  		line011 -> setGeometry(QRect(0,365,640,7));
-
-      	ComplementHeader0->setGeometry(QRect(80,220,90,22));
-      	IntersectionHeader0->setGeometry(QRect(80,250,90,22));
-      	UnionHeader0->setGeometry(QRect(80,280,90,22));
-      	DifferenceHeader0->setGeometry(QRect(80,310,90,22));
-      	symm_diffHeader0->setGeometry(QRect(80,340,90,22));
-
-  		ResultComplement->setGeometry(QRect(0,220,101,22));
-  		showCompResultComp->setGeometry(QRect(125,220,101,22));
-  		showCompResultInt->setGeometry(QRect(170,220,101,22));
-  		showCompResultUnion->setGeometry(QRect(215,220,101,22));
-  		showCompResultDiff->setGeometry(QRect(260,220,101,22));
-  		showCompResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  		showCompResultMink_Sum->setGeometry(QRect(350,220,101,22));
-
-  		ResultIntersection->setGeometry(QRect(0,250,101,22));
-  		showIntResultComp->setGeometry(QRect(125,250,101,22));
-  		showIntResultInt->setGeometry(QRect(170,250,101,22));
-  		showIntResultUnion->setGeometry(QRect(215,250,101,22));
-  		showIntResultDiff->setGeometry(QRect(260,250,101,22));
-  		showIntResultSym_Diff->setGeometry(QRect(305,250,101,22));
-  		showIntResultMink_Sum->setGeometry(QRect(350,250,101,22));
-
-  		ResultUnion->setGeometry(QRect(0,280,101,22));
-  		showUnionResultComp->setGeometry(QRect(125,280,101,22));
-  		showUnionResultInt->setGeometry(QRect(170,280,101,22));
-  		showUnionResultUnion->setGeometry(QRect(215,280,101,22));
-  		showUnionResultDiff->setGeometry(QRect(260,280,101,22));
-  		showUnionResultSym_Diff->setGeometry(QRect(305,280,101,22));
-  		showUnionResultMink_Sum->setGeometry(QRect(350,280,101,22));
-
-  		ResultDiff->setGeometry(QRect(0,310,101,22));
-  		showDiffResultComp->setGeometry(QRect(125,310,101,22));
-  		showDiffResultInt->setGeometry(QRect(170,310,101,22));
-  		showDiffResultUnion->setGeometry(QRect(215,310,101,22));
-  		showDiffResultDiff->setGeometry(QRect(260,310,101,22));
-  		showDiffResultSym_Diff->setGeometry(QRect(305,310,101,22));
-  		showDiffResultMink_Sum->setGeometry(QRect(350,310,101,22));
-
-  		ResultSym_Diff->setGeometry(QRect(0,340,101,22));
-  		showSymDiffResultComp->setGeometry(QRect(125,340,101,22));
-  		showSymDiffResultInt->setGeometry(QRect(170,340,101,22));
-  		showSymDiffResultUnion->setGeometry(QRect(215,340,101,22));
-  		showSymDiffResultDiff->setGeometry(QRect(260,340,101,22));
-  		showSymDiffResultSym_Diff->setGeometry(QRect(305,340,101,22));
-  		showSymDiffResultMink_Sum->setGeometry(QRect(350,340,101,22));*/
-
   		showResAqua->setVisible(false);
   		showResAqua->setChecked(false);
-  		//result_set().clear();result_linear_sources().clear();result_circular_sources().clear();result_bezier_sources().clear();
-  		//clearAquaRes -> setVisible(false);
 
 	  	actionMinusColor->setText("Remove Magenta");
 
@@ -3926,10 +2530,6 @@ void MainWindow::on_actionInsertResult_triggered()
 	if(showResBlue->isChecked()) result_set().difference(aqua_set()); aqua_set().join(result_set());//
 
 	result_set().clear();
-	//result_linear_sources().clear();
-	//result_circular_sources().clear();
-	//result_bezier_sources().clear();
-	//result_set().assign(hotpink_set());
 }
 
 
@@ -3994,12 +2594,10 @@ void MainWindow::on_actionNew_triggered()
   
   m_circular_active = false ;
   m_bezier_active = false;
-  //m_mink_active = false;
 
   m_linear_input->Reset();
   m_circular_input->Reset();
   m_bezier_input->Reset();
-  //m_mink_input->Reset();
   
   m_color_active = 0;
   m_color_result_active = 2;
@@ -4044,8 +2642,6 @@ void MainWindow::on_actionNew_triggered()
   m_aqua_union = false; //default
 
 
-  //m_color_diff_A = 0; //default
-  //m_color_diff_B = 0; //default
   m_blue_sym_diff = true; //default
   m_red_sym_diff = true; //default
   m_black_sym_diff = false; //default
@@ -4191,57 +2787,8 @@ void MainWindow::on_actionNew_triggered()
   showResMagenta -> setVisible(false);
   showResAqua -> setVisible(false);
 
-  /*ResultComplement->setChecked(true);
-  showCompResultComp->setChecked(false);
-  showCompResultInt->setChecked(false);
-  showCompResultUnion->setChecked(false);
-  showCompResultDiff->setChecked(false);
-  showCompResultSym_Diff->setChecked(false);
-  showCompResultMink_Sum->setChecked(false);
-
-
-  ResultIntersection->setChecked(true);
-  showIntResultComp->setChecked(false);
-  showIntResultInt->setChecked(false);
-  showIntResultUnion->setChecked(false);
-  showIntResultDiff->setChecked(false);
-  showIntResultSym_Diff->setChecked(false);
-  showIntResultMink_Sum->setChecked(false);
-
-  ResultUnion->setChecked(true);
-  showUnionResultComp->setChecked(false);
-  showUnionResultInt->setChecked(false);
-  showUnionResultUnion->setChecked(false);
-  showUnionResultDiff->setChecked(false);
-  showUnionResultSym_Diff->setChecked(false);
-  showUnionResultMink_Sum->setChecked(false);
-
-  ResultDiff->setChecked(true);
-  showDiffResultComp->setChecked(false);
-  showDiffResultInt->setChecked(false);
-  showDiffResultUnion->setChecked(false);
-  showDiffResultDiff->setChecked(false);
-  showDiffResultSym_Diff->setChecked(false);
-  showDiffResultMink_Sum->setChecked(false);
-
-  ResultSym_Diff->setChecked(true);
-  showSymDiffResultComp->setChecked(false);
-  showSymDiffResultInt->setChecked(false);
-  showSymDiffResultUnion->setChecked(false);
-  showSymDiffResultDiff->setChecked(false);
-  showSymDiffResultSym_Diff->setChecked(false);
-  showSymDiffResultMink_Sum->setChecked(false);*/
-
-
-
   
   actionMinusColor -> setText("Color Removal Not Allowed");
-
-  /*ResultComplement -> setText("");
-  ResultIntersection -> setText("");
-  ResultUnion -> setText("");
-  ResultDiff -> setText("");
-  ResultSym_Diff -> setText("");*/
 
 
   line7 -> setVisible(false);
@@ -4259,58 +2806,6 @@ void MainWindow::on_actionNew_triggered()
   line06 -> setGeometry(QRect(380,0,7,125));
   line006 -> setGeometry(QRect(440,0,7,125));
   line0006 -> setGeometry(QRect(485,0,7,125));
-
-  /*line07 -> setGeometry(QRect(0,125,640,7));
-  line08 -> setGeometry(QRect(0,155,640,7));
-  line09 -> setGeometry(QRect(0,185,640,7));
-  line010 -> setGeometry(QRect(0,215,640,7));
-  line011 -> setGeometry(QRect(0,245,640,7));
-
-  ComplementHeader0->setGeometry(QRect(80,100,90,22));
-  IntersectionHeader0->setGeometry(QRect(80,130,90,22));
-  UnionHeader0->setGeometry(QRect(80,160,90,22));
-  DifferenceHeader0->setGeometry(QRect(80,190,90,22));
-  symm_diffHeader0->setGeometry(QRect(80,220,90,22));
-
-  ResultComplement->setGeometry(QRect(0,100,101,22));
-  showCompResultComp->setGeometry(QRect(125,100,101,22));
-  showCompResultInt->setGeometry(QRect(170,100,101,22));
-  showCompResultUnion->setGeometry(QRect(215,100,101,22));
-  showCompResultDiff->setGeometry(QRect(260,100,101,22));
-  showCompResultSym_Diff->setGeometry(QRect(305,100,101,22));
-  showCompResultMink_Sum->setGeometry(QRect(350,100,101,22));
-
-  ResultIntersection->setGeometry(QRect(0,130,101,22));
-  showIntResultComp->setGeometry(QRect(125,130,101,22));
-  showIntResultInt->setGeometry(QRect(170,130,101,22));
-  showIntResultUnion->setGeometry(QRect(215,130,101,22));
-  showIntResultDiff->setGeometry(QRect(260,130,101,22));
-  showIntResultSym_Diff->setGeometry(QRect(305,130,101,22));
-  showIntResultMink_Sum->setGeometry(QRect(350,130,101,22));
-
-  ResultUnion->setGeometry(QRect(0,160,101,22));
-  showUnionResultComp->setGeometry(QRect(125,160,101,22));
-  showUnionResultInt->setGeometry(QRect(170,160,101,22));
-  showUnionResultUnion->setGeometry(QRect(215,160,101,22));
-  showUnionResultDiff->setGeometry(QRect(260,160,101,22));
-  showUnionResultSym_Diff->setGeometry(QRect(305,160,101,22));
-  showUnionResultMink_Sum->setGeometry(QRect(350,160,101,22));
-
-  ResultDiff->setGeometry(QRect(0,190,101,22));
-  showDiffResultComp->setGeometry(QRect(125,190,101,22));
-  showDiffResultInt->setGeometry(QRect(170,190,101,22));
-  showDiffResultUnion->setGeometry(QRect(215,190,101,22));
-  showDiffResultDiff->setGeometry(QRect(260,190,101,22));
-  showDiffResultSym_Diff->setGeometry(QRect(305,190,101,22));
-  showDiffResultMink_Sum->setGeometry(QRect(350,190,101,22));
-
-  ResultSym_Diff->setGeometry(QRect(0,220,101,22));
-  showSymDiffResultComp->setGeometry(QRect(125,220,101,22));
-  showSymDiffResultInt->setGeometry(QRect(170,220,101,22));
-  showSymDiffResultUnion->setGeometry(QRect(215,220,101,22));
-  showSymDiffResultDiff->setGeometry(QRect(260,220,101,22));
-  showSymDiffResultSym_Diff->setGeometry(QRect(305,220,101,22));
-  showSymDiffResultMink_Sum->setGeometry(QRect(350,220,101,22));*/
 
   zoomToFit();
   modelChanged();
@@ -4364,196 +2859,7 @@ void MainWindow::on_actionDeleteAll_triggered()
   if (lDone) modelChanged();
 }
 
-/*void MainWindow::on_showBlueClear_toggled(bool aCheck)
-{
-	if(aCheck)
-	{
-		m_clear_blue = true;
-	}
-	else
-	{
-		m_clear_blue = false;
-	}
-}
 
-void MainWindow::on_showRedClear_toggled(bool aCheck)
-{
-	if(aCheck)
-	{
-		m_clear_red = true;
-	}
-	else
-	{
-		m_clear_red = false;
-	}
-}
-
-void MainWindow::on_showBlackClear_toggled(bool aCheck)
-{
-	if(aCheck)
-	{
-		m_clear_black = true;
-	}
-	else
-	{
-		m_clear_black = false;
-	}
-}
-
-void MainWindow::on_showBrownClear_toggled(bool aCheck)
-{
-	if(aCheck)
-	{
-		m_clear_brown = true;
-	}
-	else
-	{
-		m_clear_brown = false;
-	}
-}
-
-void MainWindow::on_showYellowClear_toggled(bool aCheck)
-{
-	if(aCheck)
-	{
-		m_clear_yellow = true;
-	}
-	else
-	{
-		m_clear_yellow = false;
-	}
-}
-
-void MainWindow::on_showMagentaClear_toggled(bool aCheck)
-{
-	if(aCheck)
-	{
-		m_clear_magenta = true;
-	}
-	else
-	{
-		m_clear_magenta = false;
-	}
-}
-
-void MainWindow::on_showAquaClear_toggled(bool aCheck)
-{
-	if(aCheck)
-	{
-		m_clear_aqua = true;
-	}
-	else
-	{
-		m_clear_aqua = false;
-	}
-}*/
-
-
-/*void MainWindow::on_actionClearResult_triggered()
-{
-  bool lDone = false;
-  //bool lProceed=ask_user_yesno("Store result", "Output polygons of the selected types will be deleted\n continue anyway?\n") ;
-  if (true) 
-  {
-  	if(m_clear_blue)
-    { 
-      result_set().clear();blue_res_linear_sources().clear();blue_res_circular_sources().clear();blue_res_bezier_sources().clear();
-
-
-  	  if (pathItem0_exists) m_scene.removeItem(pathItem0);
-
-      if(color_comp == 0) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
-      if(color_int == 0) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
-      if(color_union == 0) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
-      if(color_diff == 0) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
-      if(color_sym_diff == 0) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
-    }
-  	if(m_clear_red)
-    {
-      result_set().clear();red_res_linear_sources().clear();red_res_circular_sources().clear();red_res_bezier_sources().clear();
-
-
-  	  if (pathItem1_exists) m_scene.removeItem(pathItem1);
-
-      if(color_comp == 1) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
-      if(color_int == 1) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
-      if(color_union == 1) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
-      if(color_diff == 1) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
-      if(color_sym_diff == 1) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
-    }
-  	if(m_clear_black)
-      { 
-        result_set().clear();black_res_linear_sources().clear();black_res_circular_sources().clear();black_res_bezier_sources().clear();
-
-
-  	  if (pathItem2_exists) m_scene.removeItem(pathItem2);
-  	  
-      if(color_comp == 2) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
-      if(color_int == 2) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
-      if(color_union == 2) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
-      if(color_diff == 2) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
-      if(color_sym_diff == 2) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
-      }
-  	if(m_clear_brown)
-      { 
-        result_set().clear();brown_res_linear_sources().clear();brown_res_circular_sources().clear();brown_res_bezier_sources().clear();
-
-
-  	  if (pathItem3_exists) m_scene.removeItem(pathItem3);
-  	  
-      if(color_comp == 3) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
-      if(color_int == 3) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
-      if(color_union == 3) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
-      if(color_diff == 3) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
-      if(color_sym_diff == 3) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
-      }
-  	if(m_clear_yellow)
-      { 
-        result_set().clear();yellow_res_linear_sources().clear();yellow_res_circular_sources().clear();yellow_res_bezier_sources().clear();
-
-
-  	  if (pathItem4_exists) m_scene.removeItem(pathItem4);
-  	  
-      if(color_comp == 4) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
-      if(color_int == 4) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
-      if(color_union == 4) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
-      if(color_diff == 4) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
-      if(color_sym_diff == 4) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
-      }
-  	if(m_clear_magenta)
-      { 
-        result_set().clear();magenta_res_linear_sources().clear();magenta_res_circular_sources().clear();magenta_res_bezier_sources().clear();
-
-
-  	  if (pathItem5_exists) m_scene.removeItem(pathItem5);
-  	  
-      if(color_comp == 5) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
-      if(color_int == 5) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
-      if(color_union == 5) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
-      if(color_diff == 5) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
-      if(color_sym_diff == 5) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
-      }
-  	if(m_clear_aqua)
-      { 
-        result_set().clear();aqua_res_linear_sources().clear();aqua_res_circular_sources().clear();aqua_res_bezier_sources().clear();
-
-
-  	  if (pathItem6_exists) m_scene.removeItem(pathItem6);
-  	  
-      if(color_comp == 6) {color_comp = 111;ResultComplement->setText("");universal_set().clear();}
-      if(color_int == 6) {color_int = 111;ResultIntersection->setText("");universal_set1().clear();}
-      if(color_union == 6) {color_union = 111;ResultUnion->setText("");universal_set2().clear();}
-      if(color_diff == 6) {color_diff = 111;ResultDiff->setText("");universal_set3().clear();}
-      if(color_sym_diff == 6) {color_sym_diff = 111;ResultSym_Diff->setText("");universal_set4().clear();}
-      }
-    hotpink_set().clear();hotpink_linear_sources().clear();
-    olive_set().clear();olive_linear_sources().clear();
-
-
-  lDone = true;
-  }
-  if (lDone) modelChanged();
-}*/
 
 void MainWindow::on_actionDeleteResult_triggered()
 {
@@ -4748,9 +3054,6 @@ void MainWindow::on_drawAqua_toggled(bool /* a_check */)
 		m_bezier_input -> mHandle1GI -> setPen(sPens[6]);
 	}
 }
-//void MainWindow::on_blueMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 1; }
-//void MainWindow::on_redMinkPol_toggled(bool /* a_check */) { m_color_active_mink = 2; }
-
 
 void MainWindow::on_showResBlue_toggled(bool aCheck)
 {
@@ -4887,6 +3190,7 @@ void MainWindow::on_actionOpenBezier_triggered()
                                     tr("Bezier Curve files (*.bps)") ));
 }
 
+//To be done in GSoC2020
 
 //for converting linear part of circular polygon to circular part
 /*Circular_polygon linearPart_2_circ(Circular_Linear_polygon const& pgn)
@@ -5464,37 +3768,6 @@ bool MainWindow::ensure_linear_mode()
 }
 
 
-/*bool MainWindow::ensure_mink_mode()
-{
-	if (! m_mink_active )
-  {
-    bool lProceed = blue_set().is_empty() && red_set().is_empty() &&
-      black_set().is_empty() && brown_set().is_empty() &&
-      yellow_set().is_empty() && magenta_set().is_empty() &&
-      aqua_set().is_empty() && universal_set().is_empty();
-    
-    if ( ! lProceed )
-      lProceed = ask_user_yesno("Bezier mode switch"
-                               ,"You are about to load polygons for Minkowski Sum, 
-                               but there are circular/linear/bezier curves already loaded.\n" \
-                                "Both types are not interoperable. In order to proceed, 
-                                the polygons must be removed first.\n" \
-                                "Yes to remove and proceed?\n"
-                               ) ;
-      
-    if ( lProceed )
-    {
-      switch_sets_type(4);
-      m_circular_input->Reset();
-      m_bezier_input->Reset();
-      m_linear_input->Reset();
-      //m_mink_active = true;
-      m_bezier_active = false;
-      m_circular_active = false;
-    }
-  }
-  return m_mink_active;
-}*/
 //check out
 //bool read_linear(QString /* aFileName */, Linear_polygon_set& /* rSet */,
 //                 Linear_region_source_container& /* rSources */)
@@ -5620,231 +3893,6 @@ void MainWindow::on_actionInsertLinear_toggled(bool aChecked)
 	}
 }
 
-/*void MainWindow::on_actionMinkMode_toggled(bool aChecked)
-{
-  if (aChecked)
-  {
-    on_actionInsertLinear_toggled(true);
-    actionInsertBezier -> setVisible(false);
-    actionInsertCircular -> setVisible(false);
-    on_showColorBucket_toggled(false);
-    actionDelete->setVisible(false);
-    actionClearResult -> setVisible(false);
-    actionMinkowski_Sum->setVisible(true);
-    minkToolBar -> setVisible(true);
-    actionInsertLinear -> setChecked(true);
-    actionAddColor->setVisible(false);
-    actionMinusColor->setVisible(false);
-    operationsToolBar -> setVisible(false);
-  }
-  else
-  {
-    actionInsertBezier -> setVisible(true);
-    actionInsertCircular -> setVisible(true);
-    on_showColorBucket_toggled(true);
-    actionDelete->setVisible(true);
-    on_actionDeleteResult_triggered();
-    on_actionDeleteAll_triggered();
-    actionMinkowski_Sum -> setChecked(false);
-    actionClearResult -> setVisible(true);
-    actionMinkowski_Sum->setVisible(false);
-    minkToolBar -> setVisible(false);
-    actionAddColor->setVisible(true);
-    actionMinusColor->setVisible(true);
-    operationsToolBar -> setVisible(true);
-  }
-    modelChanged();
-}*/
-
-/*bool MainWindow::stop_result_operation(size_t m_color_result_active , size_t op_number)
-{
-  switch(op_number)
-  {
-    case 0:
-      if(color_int == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_union == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_sym_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_mink == m_color_result_active)
-      {
-      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-
-      else return true;
-      break;
-
-    case 1:
-      if(color_comp == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_union == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_sym_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_mink == m_color_result_active)
-      {
-      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-
-      else return true;
-      break;
-
-    case 2:
-      if(color_int == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_comp == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_sym_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_mink == m_color_result_active)
-      {
-      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-
-      else return true;
-      break;
-
-    case 3:
-      if(color_int == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_union == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_comp == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_sym_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_mink == m_color_result_active)
-      {
-      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-
-      else return true;
-      break;
-
-    case 4:
-      if(color_int == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_union == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_comp == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_mink == m_color_result_active)
-      {
-      	ask_user_ok("Output Color Warning","Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      else return true;
-      break;
-
-    case 5:
-      if(color_int == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning",
-        	"Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_union == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning",
-        	"Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_diff == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning",
-        	"Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_comp == m_color_result_active) 
-      {
-        ask_user_ok("Output Color Warning",
-        	"Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      if(color_sym_diff == m_color_result_active)
-      {
-      	ask_user_ok("Output Color Warning",
-      		"Selected output colour already in use.\nPlease select other color for the operation");
-        return false; 
-      }
-      else return true;
-      break;
-  }
-	return true;
-}*/
 
 void MainWindow::on_actionComplement_triggered()
 {
@@ -6832,35 +4880,6 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 					pathItem1 = m_scene.addPath(m_pathTrack,pen,brush);
 					pathItem1_exists =true;
 
-					/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
-
-				    if (lTotalRect) 
-				    {
-					    this->graphicsView->setSceneRect(*lTotalRect);
-					    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-					}
-
-					if (polygon.number_of_holes() >= 0)
-					{	
-						typename Polygon_with_holes_2::Hole_const_iterator hit;
-						for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-						{
-				  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-				  			 {
-				  			 	QPolygonF poly;
-						  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-				  			 }
-
-						    m_pathTrack.addPolygon(poly);
-
-							QBrush brush;
-							brush.setColor(QColor(0,0,0,150));
-							brush.setStyle(Qt::SolidPattern);
-							QPen pen(Qt::white);
-							pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-						}
-					}*/
-					//zoomToFit();
 					modelChanged(); 
 					break; //red
 
@@ -6870,35 +4889,6 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 					   pathItem2 = m_scene.addPath(m_pathTrack,pen,brush);
 					   pathItem2_exists =true;
 
-						/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
-
-					    if (lTotalRect) 
-					    {
-						    this->graphicsView->setSceneRect(*lTotalRect);
-						    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-						}
-
-						if (polygon.number_of_holes() >= 0)
-						{	
-							typename Polygon_with_holes_2::Hole_const_iterator hit;
-							for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-							{
-					  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-					  			 {
-					  			 	QPolygonF poly;
-							  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-					  			 }
-
-							    m_pathTrack.addPolygon(poly);
-
-								QBrush brush;
-								brush.setColor(QColor(0,0,0,150));
-								brush.setStyle(Qt::SolidPattern);
-								QPen pen(Qt::white);
-								pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-							}
-						}*/
-						//zoomToFit();
 						modelChanged();
 						break;	//black
 
@@ -6908,35 +4898,6 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 					pathItem3 = m_scene.addPath(m_pathTrack,pen,brush);
 					pathItem3_exists = true;
 
-						/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
-
-					    if (lTotalRect) 
-					    {
-						    this->graphicsView->setSceneRect(*lTotalRect);
-						    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-						}
-
-						if (polygon.number_of_holes() >= 0)
-						{	
-							typename Polygon_with_holes_2::Hole_const_iterator hit;
-							for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-							{
-					  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-					  			 {
-					  			 	QPolygonF poly;
-							  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-					  			 }
-
-							    m_pathTrack.addPolygon(poly);
-
-								QBrush brush;
-								brush.setColor(QColor(0,0,0,150));
-								brush.setStyle(Qt::SolidPattern);
-								QPen pen(Qt::white);
-								pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-							}
-						}*/
-						//zoomToFit();
 					modelChanged();
 					break; //brown
 
@@ -6946,35 +4907,6 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 						pathItem4 = m_scene.addPath(m_pathTrack,pen,brush);
 						pathItem4_exists =true;
 
-						/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
-
-					    if (lTotalRect) 
-					    {
-						    this->graphicsView->setSceneRect(*lTotalRect);
-						    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-						}
-
-						if (polygon.number_of_holes() >= 0)
-						{	
-							typename Polygon_with_holes_2::Hole_const_iterator hit;
-							for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-							{
-					  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-					  			 {
-					  			 	QPolygonF poly;
-							  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-					  			 }
-
-							    m_pathTrack.addPolygon(poly);
-
-								QBrush brush;
-								brush.setColor(QColor(0,0,0,150));
-								brush.setStyle(Qt::SolidPattern);
-								QPen pen(Qt::white);
-								pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-							}
-						}*/
-						//zoomToFit();
 						modelChanged();
 						break; // yellow
 
@@ -6983,36 +4915,6 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 		  			if (pathItem5_exists) m_scene.removeItem(pathItem5);
 					pathItem5 = m_scene.addPath(m_pathTrack,pen,brush);
 					pathItem5_exists =true;
-
-						/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
-
-					    if (lTotalRect) 
-					    {
-						    this->graphicsView->setSceneRect(*lTotalRect);
-						    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-						}
-
-						if (polygon.number_of_holes() >= 0)
-						{	
-							typename Polygon_with_holes_2::Hole_const_iterator hit;
-							for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-							{
-					  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-					  			 {
-					  			 	QPolygonF poly;
-							  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-					  			 }
-
-							    m_pathTrack.addPolygon(poly);
-
-								QBrush brush;
-								brush.setColor(QColor(0,0,0,150));
-								brush.setStyle(Qt::SolidPattern);
-								QPen pen(Qt::white);
-								pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-							}
-						}*/
-						//zoomToFit();
 					modelChanged();
 					break;  //magenta
 
@@ -7021,36 +4923,6 @@ void MainWindow::get_MinkowskiSum_result(Polygon_with_holes_2 polygon)
 					if (pathItem6_exists) m_scene.removeItem(pathItem6);
 					pathItem6 = m_scene.addPath(m_pathTrack,pen,brush);
 					pathItem6_exists = true;
-
-						/*boost::optional<QRectF> lTotalRect = poly.boundingRect();
-
-					    if (lTotalRect) 
-					    {
-						    this->graphicsView->setSceneRect(*lTotalRect);
-						    this->graphicsView->fitInView(*lTotalRect, Qt::KeepAspectRatio);
-						}
-
-						if (polygon.number_of_holes() >= 0)
-						{	
-							typename Polygon_with_holes_2::Hole_const_iterator hit;
-							for (hit = polygon.holes_begin(); hit != polygon.holes_end(); ++hit)
-							{
-					  			 for (vit = hit->vertices_begin(); vit != hit->vertices_end(); ++vit)
-					  			 {
-					  			 	QPolygonF poly;
-							  		poly << QPoint(CGAL::to_double(vit->x()),CGAL::to_double(vit->y()));
-					  			 }
-
-							    m_pathTrack.addPolygon(poly);
-
-								QBrush brush;
-								brush.setColor(QColor(0,0,0,150));
-								brush.setStyle(Qt::SolidPattern);
-								QPen pen(Qt::white);
-								pathItem = m_scene.addPath(m_pathTrack,pen,brush);
-							}
-						}*/
-						//zoomToFit();
 					modelChanged();
 					break;	//aqua
 		}
