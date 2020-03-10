@@ -359,6 +359,17 @@ Get_io_signature<Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt
 };
 #endif
 
+#ifdef CGAL_DELAUNAY_TRIANGULATION_CELL_BASE_3_H
+template <class Gt, class Cb>
+struct
+Get_io_signature<Delaunay_triangulation_cell_base_3<Gt, Cb> >
+{
+  std::string operator()() {
+    return "DTcb_3";
+  }
+};
+#endif
+
 } // end namespace CGAL
 
 

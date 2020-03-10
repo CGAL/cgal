@@ -127,6 +127,7 @@ class Mesh_complex_3_in_triangulation_3_base
 public:
   // Triangulation types
   typedef Tr                            Triangulation;
+  typedef typename Tr::Geom_traits      Geom_traits;
   typedef typename Tr::Vertex_handle    Vertex_handle;
   typedef typename Tr::Cell_handle      Cell_handle;
   typedef typename Tr::Facet            Facet;

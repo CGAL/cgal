@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.12...3.15)
 project( Triangulation_3_Tests )
 
 set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
@@ -34,9 +34,9 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_triangulation_3.cpp" )
 
   create_single_source_cgal_program( "cdt_3.cpp" )
-  target_compile_features(cdt_3 PRIVATE cxx_std_17) # Structured bindings
+  target_compile_features(cdt_3 PRIVATE cxx_std_20) # Structured bindings
   create_single_source_cgal_program( "cdt_3_from_off.cpp" )
-  target_compile_features(cdt_3_from_off PRIVATE cxx_std_17) # Structured bindings
+  target_compile_features(cdt_3_from_off PRIVATE cxx_std_20) # Structured bindings
   if(CGAL_Qt5_FOUND)
     target_link_libraries(cdt_3 PRIVATE CGAL::CGAL_Qt5)
     target_compile_definitions(cdt_3 PRIVATE -DCGAL_USE_BASIC_VIEWER -DQT_NO_KEYWORDS)

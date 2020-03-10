@@ -26,6 +26,8 @@
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
 
+#include <CGAL/Mesh_3/io_signature.h>
+
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp> /// @TODO Requires Boost 1.66
 
@@ -46,6 +48,9 @@ public:
 
   using Vb::Vb;
 
+  static std::string io_signature() {
+    return Get_io_signature<Vb>()();
+  }
 };
 
 
@@ -215,6 +220,9 @@ public:
   void remove_cluster() = delete;
   /// @}
 
+  static std::string io_signature() {
+    return Get_io_signature<T_3>()();
+  }
 protected:
   void restore_Delaunay() {
     while(!subconstraints_to_conform.empty()) {
