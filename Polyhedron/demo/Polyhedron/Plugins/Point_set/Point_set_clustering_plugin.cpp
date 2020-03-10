@@ -17,6 +17,7 @@
 #include <QMessageBox>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QCheckBox>
 
 #include <QMultipleInputDialog.h>
 
@@ -108,6 +109,15 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     min_nb->setRange (1, 10000000);
     min_nb->setValue (1);
 
+    QCheckBox* add_property = dialog.add<QCheckBox> ("Add a \"cluster\" property to the input item");
+    add_property->setChecked (true);
+    
+    QCheckBox* gen_color = dialog.add<QCheckBox> ("Generate one colored point set");
+    gen_color->setChecked (true);
+    
+    QCheckBox* gen_sub = dialog.add<QCheckBox> ("Generate N point subsets");
+    gen_sub->setChecked (false);
+    
     if (!dialog.exec())
       return;
     
@@ -115,7 +125,12 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     QApplication::processEvents();
     CGAL::Real_timer task_timer; task_timer.start();
 
-    Point_set::Property_map<std::size_t>
+    Point_set::Property_map<std::size_t> cluster_map;
+
+    if (add_property->isChecked())
+      cluster_map = points->add_property_map<std::size_t> ("cluster_map").first;
+    else
+      // Use long name to avoid overwriting potentially existing map
       cluster_map = points->add_property_map<std::size_t> ("cluster_point_set_property_map").first;
     
     // Computes average spacing
@@ -124,39 +139,87 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     
     std::size_t nb_clusters = *functor.result;
  
-    CGAL::Random rand(static_cast<unsigned int>(time(0)));
 
-    Scene_group_item* group = new Scene_group_item(QString("%1 (clusters)").arg(item->name()));
-    scene->addItem(group);
-    
+    Scene_group_item* group;
     std::vector<Scene_points_with_normal_item*> new_items;
-    new_items.reserve (nb_clusters);
-    for (std::size_t i = 0; i < nb_clusters; ++ i)
-    {
-      Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item;
-      new_item->point_set()->copy_properties (*points);
-      unsigned char r, g, b;
-      r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-      g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-      b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
-      new_item->setRgbColor(r, g, b);
-      new_item->setName (QString("Cluster %1 of %2").arg(i).arg(item->name()));
-      new_items.push_back (new_item);
-    }
 
-    for (Point_set::Index idx : *points)
-      new_items[cluster_map[idx]]->point_set()->insert (*points, idx);
-
-    for (Scene_points_with_normal_item* new_item : new_items)
+    if (gen_sub->isChecked())
     {
-      if (new_item->point_set()->size() >= min_nb->value())
+      group = new Scene_group_item(QString("%1 (clusters)").arg(item->name()));
+      scene->addItem(group);
+      new_items.reserve (nb_clusters);
+      for (std::size_t i = 0; i < nb_clusters; ++ i)
       {
-        scene->addItem(new_item);
-        scene->changeGroup (new_item, group);
+        Scene_points_with_normal_item* new_item = new Scene_points_with_normal_item;
+        new_item->point_set()->copy_properties (*points);
+        CGAL::Random rand(i);
+        unsigned char r, g, b;
+        r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+        g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+        b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+        new_item->setRgbColor(r, g, b);
+        new_item->setName (QString("Cluster %1 of %2").arg(i).arg(item->name()));
+        new_items.push_back (new_item);
       }
-      else
-        delete new_item;
     }
+
+    std::vector<std::size_t> cluster_size (nb_clusters, 0);
+    for (Point_set::Index idx : *points)
+    {
+      if (gen_sub->isChecked())
+        new_items[cluster_map[idx]]->point_set()->insert (*points, idx);
+      cluster_size[cluster_map[idx]] ++;
+    }
+
+    if (gen_color->isChecked())
+    {
+      Scene_points_with_normal_item* colored;
+      Point_set::Property_map<unsigned char> red, green, blue;
+      
+      colored = new Scene_points_with_normal_item;
+      colored->setName (QString("%1 (clustering)").arg(item->name()));
+      
+      red = colored->point_set()->add_property_map<unsigned char>("red", 0).first;
+      green = colored->point_set()->add_property_map<unsigned char>("green", 0).first;
+      blue = colored->point_set()->add_property_map<unsigned char>("blue", 0).first;
+      colored->point_set()->check_colors();
+      
+      colored->point_set()->reserve (points->size());
+      
+      for (Point_set::Index idx : *points)
+      {
+        Point_set::Index iidx = *(colored->point_set()->insert (points->point(idx)));
+        if (cluster_size[cluster_map[idx]] >= min_nb->value())
+        {
+          CGAL::Random rand(cluster_map[idx]);
+          unsigned char r, g, b;
+          r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+          g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+          b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+          red[iidx] = r;
+          green[iidx] = g;
+          blue[iidx] = b;
+        }
+      }
+      scene->addItem(colored);
+    }
+    
+    if (gen_sub->isChecked())
+    {
+      for (Scene_points_with_normal_item* new_item : new_items)
+      {
+        if (new_item->point_set()->size() >= min_nb->value())
+        {
+          scene->addItem(new_item);
+          scene->changeGroup (new_item, group);
+        }
+        else
+          delete new_item;
+      }
+    }
+    
+    if (!add_property->isChecked())
+      points->remove_property_map (cluster_map);
     
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "Number of clusters = " << nb_clusters << " ("
