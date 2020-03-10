@@ -29,8 +29,7 @@
 #include <boost/unordered_map.hpp>
 
 #include <CGAL/Tetrahedral_remeshing/internal/Tetrahedral_remeshing_helpers.h>
-
-#include "Vec3D.h"
+#include <CGAL/Tetrahedral_remeshing/internal/Vec3D.h>
 
 
 namespace CGAL
@@ -187,20 +186,6 @@ namespace CGAL
             throw Exception("Cannot write to file" + std::string(filename));
           fwrite(pn, SURFEL_SIZE, size, file);
           fclose(file);
-        }
-
-        template<typename K>
-        void fastProjectionCPU(const CGAL::Point_3<K>& vp,
-                               CGAL::Point_3<K>& vq,
-                               CGAL::Vector_3<K>& vn)
-        {
-          Vec3Df p(vp.x(), vp.y(), vp.z());
-          Vec3Df q(vq.x(), vq.y(), vq.z());
-          Vec3Df n(vn.x(), vn.y(), vn.z());
-          fastProjectionCPU(p, q, n);
-
-          vq = CGAL::Point_3<K>(q[0], q[1], q[2]);
-          vn = CGAL::Vector_3<K>(n[0], n[1], n[2]);
         }
 
         // Compute, according to the current point sampling stored in FMLS, the MLS projection
@@ -585,18 +570,19 @@ namespace CGAL
         Grid grid;
       };
 
-
       template<typename Subdomain__FMLS,
                typename Subdomain__FMLS_indices,
                typename VerticesNormalsMap,
+               typename VerticesSubdomainIndices,
                typename C3t3>
       void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
                              Subdomain__FMLS_indices& subdomain_FMLS_indices,
                              const VerticesNormalsMap& vertices_normals,
-                             const C3t3& c3t3,
-                             int upsample = 0)
+                             const VerticesSubdomainIndices& vertices_subdomain_indices,
+                             const C3t3& c3t3)
       {
-//        upsample = 0;
+        const int upsample = 0;
+
         typedef typename C3t3::Surface_patch_index Surface_index;
         typedef typename C3t3::Subdomain_index     Subdomain_index;
         typedef typename C3t3::Triangulation       Tr;
@@ -623,11 +609,15 @@ namespace CGAL
         {
           if (vit->in_dimension() == 2)
           {
-            const Surface_index si = surface_patch_index(vit, c3t3);
-            subdomain_sample_numbers[si]++;
+            const std::vector<Subdomain_index>& v_subdomain_indices = vertices_subdomain_indices.at(vit);
+            if (v_subdomain_indices.size() == 2)
+            {
+              const Surface_index si = surface_patch_index(vit, c3t3);
+              subdomain_sample_numbers[si]++;
+            }
           }
         }
-
+ 
         //if (upsample > 0) {
         //  std::cout << "Up sampling MLS " << upsample << std::endl;
         //  for (C3t3_with_info::Facet_iterator fit = c3t3_with_info.facets_begin(); fit != c3t3_with_info.facets_end(); ++fit) {
@@ -659,7 +649,7 @@ namespace CGAL
         //Allocation of the PN
         for (Vertex_handle vit : tr.finite_vertex_handles())
         {
-          if (vit->in_dimension() == 2)
+          if (vertices_subdomain_indices.at(vit).size() == 2)
           {
             const Surface_index surf_i = surface_patch_index(vit, c3t3);
 
@@ -699,8 +689,8 @@ namespace CGAL
                 Vertex_handle vh0 = edge.first->vertex(edge.second);
                 Vertex_handle vh1 = edge.first->vertex(edge.third);
                 Edge_vv e = make_vertex_pair(vh0, vh1);
-                if ( vh0->in_dimension() == 2
-                  && vh1->in_dimension() == 2
+                if ( vertices_subdomain_indices.at(vh0).size() == 2
+                  && vertices_subdomain_indices.at(vh1).size() == 2
                   && edgeMap.find(e) == edgeMap.end())
                 {
                   edgeMap[e] = 0;

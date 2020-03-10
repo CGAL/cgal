@@ -191,28 +191,50 @@ namespace CGAL
       {
         typedef typename C3T3::Subdomain_index Subdomain_index;
         typedef typename C3T3::Vertex_handle   Vertex_handle;
+        typedef typename C3T3::Triangulation   Tr;
 
-        for (typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin();
-             cit != c3t3.cells_in_complex_end(); ++cit)
+        for (typename Tr::Facet f : c3t3.triangulation().finite_facets())
         {
-          const Subdomain_index si = cit->subdomain_index();
-          for (int i = 0; i < 4; ++i)
+          const Subdomain_index si_0 = f.first->subdomain_index();
+          const Subdomain_index si_1 = f.first->neighbor(f.second)->subdomain_index();
+
+          for (int i = 0; i < 3; i++)
           {
-            const Vertex_handle vi = cit->vertex(i);
-            if (vertices_subdomain_indices.find(vi) == vertices_subdomain_indices.end())
-            {
-              std::vector<Subdomain_index> indices(1);
-              indices[0] = si;
-              vertices_subdomain_indices.insert(std::make_pair(vi, indices));
-            }
-            else
-            {
-              std::vector<Subdomain_index>& v_indices = vertices_subdomain_indices.at(vi);
-              if (std::find(v_indices.begin(), v_indices.end(), si) == v_indices.end())
-                v_indices.push_back(si);
-            }
+            Vertex_handle vi = f.first->vertex(indices(f.second, i));
+            std::vector<Subdomain_index>& v_subdomain_indices = vertices_subdomain_indices[vi];
+
+            if (std::find(v_subdomain_indices.begin(), v_subdomain_indices.end(), si_0) == v_subdomain_indices.end())
+              v_subdomain_indices.push_back(si_0);
+
+            if (std::find(v_subdomain_indices.begin(), v_subdomain_indices.end(), si_1) == v_subdomain_indices.end())
+              v_subdomain_indices.push_back(si_1);
           }
         }
+
+
+
+        //////////////////////////////////////////////////////////////////////
+        //for (typename C3T3::Cell_iterator cit = c3t3.cells_in_complex_begin();
+        //     cit != c3t3.cells_in_complex_end(); ++cit)
+        //{
+        //  const Subdomain_index si = cit->subdomain_index();
+        //  for (int i = 0; i < 4; ++i)
+        //  {
+        //    const Vertex_handle vi = cit->vertex(i);
+        //    if (vertices_subdomain_indices.find(vi) == vertices_subdomain_indices.end())
+        //    {
+        //      std::vector<Subdomain_index> indices(1);
+        //      indices[0] = si;
+        //      vertices_subdomain_indices.insert(std::make_pair(vi, indices));
+        //    }
+        //    else
+        //    {
+        //      std::vector<Subdomain_index>& v_indices = vertices_subdomain_indices.at(vi);
+        //      if (std::find(v_indices.begin(), v_indices.end(), si) == v_indices.end())
+        //        v_indices.push_back(si);
+        //    }
+        //  }
+        //}
       }
 
       template<typename C3T3>
@@ -229,35 +251,150 @@ namespace CGAL
         typedef typename C3T3::Vertex_handle       Vertex_handle;
         typedef typename C3T3::Facet               Facet;
 
-        for (typename C3T3::Facet_iterator fit = c3t3.facets_in_complex_begin();
-             fit != c3t3.facets_in_complex_end(); ++fit)
+        for (typename C3T3::Facet_iterator fit = c3t3.facets_begin();
+             fit != c3t3.facets_end(); ++fit)
         {
-          const Facet& f = *fit;
-          const Surface_patch_index surface_index = c3t3.surface_patch_index(f);
+          Surface_patch_index surface_index = c3t3.surface_patch_index(*fit);
 
-          for (int i = 0; i < 3; ++i)
+          for (int i = 0; i < 3; i++)
           {
-            const Vertex_handle vi = f.first->vertex(indices(f.second, i));
+            Vertex_handle vi = fit->first->vertex(indices(fit->second, i));
+
             if (vertices_subdomain_indices.at(vi).size() > 2)
             {
-              if (vertices_surface_indices.find(vi) == vertices_surface_indices.end())
-              {
-                std::vector<Surface_patch_index> indices(1);
-                indices[0] = surface_index;
-                vertices_surface_indices.insert(std::make_pair(vi, indices));
-              }
-              else
-              {
-                std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(vi);
-                if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index)
-                  == v_surface_indices.end())
-                  v_surface_indices.push_back(surface_index);
+              std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices[vi];
+
+              if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index) == v_surface_indices.end())
+                v_surface_indices.push_back(surface_index);
+            }
+          }
+        }
+
+        //for (typename C3T3::Facet_iterator fit = c3t3.facets_in_complex_begin();
+        //     fit != c3t3.facets_in_complex_end(); ++fit)
+        //{
+        //  const Facet& f = *fit;
+        //  const Surface_patch_index surface_index = c3t3.surface_patch_index(f);
+
+        //  for (int i = 0; i < 3; ++i)
+        //  {
+        //    const Vertex_handle vi = f.first->vertex(indices(f.second, i));
+        //    if (vertices_subdomain_indices.at(vi).size() > 2)
+        //    {
+        //      if (vertices_surface_indices.find(vi) == vertices_surface_indices.end())
+        //      {
+        //        std::vector<Surface_patch_index> indices(1);
+        //        indices[0] = surface_index;
+        //        vertices_surface_indices.insert(std::make_pair(vi, indices));
+        //      }
+        //      else
+        //      {
+        //        std::vector<Surface_patch_index>& v_surface_indices = vertices_surface_indices.at(vi);
+        //        if (std::find(v_surface_indices.begin(), v_surface_indices.end(), surface_index)
+        //          == v_surface_indices.end())
+        //          v_surface_indices.push_back(surface_index);
+        //      }
+        //    }
+        //  }
+        //}
+      }
+
+      template<typename C3t3, typename VerticesSubdomainsMap>
+      bool is_feature_MAD(const typename C3t3::Edge& edge,
+                          const VerticesSubdomainsMap& vertices_subdomain_indices,
+                          const C3t3& c3t3)
+      {
+        typedef typename C3t3::Vertex_handle                  Vertex_handle;
+        typedef typename C3t3::Triangulation::Cell_circulator Cell_circulator;
+        typedef typename C3t3::Subdomain_index                Subdomain_index;
+
+        const typename C3t3::Triangulation& triangulation = c3t3.triangulation();
+
+        Vertex_handle vh0 = edge.first->vertex(edge.second);
+        Vertex_handle vh1 = edge.first->vertex(edge.third);
+
+        int dim_vh0 = c3t3.in_dimension(vh0);
+        int dim_vh1 = c3t3.in_dimension(vh1);
+
+        const int nb_si_vh0 = vertices_subdomain_indices.at(vh0).size();
+        const int nb_si_vh1 = vertices_subdomain_indices.at(vh1).size();
+
+        if (nb_si_vh0 > 2 && nb_si_vh1 > 2)
+        {
+          Cell_circulator cell_circulator = triangulation.incident_cells(edge);
+          Cell_circulator done(cell_circulator);
+
+          std::vector<Subdomain_index> si;
+          do
+          {
+            Subdomain_index current_si = cell_circulator->subdomain_index();
+
+            if (std::find(si.begin(), si.end(), current_si) == si.end())
+              si.push_back(current_si);
+
+            if (si.size() > 2)
+              return true;
+
+          } while (++cell_circulator != done);
+
+        }
+        else if (c3t3.number_of_edges() > 0 && dim_vh0 == 1 && dim_vh1 == 1)
+        {
+          if(c3t3.is_in_complex(edge))
+            return true;
+        }
+        return false;
+      }
+
+      template<typename C3t3, typename VerticesSubdomainsMap>
+      bool is_feature_MAD(const typename C3t3::Vertex_handle vh0,
+                          const typename C3t3::Vertex_handle vh1,
+                          const VerticesSubdomainsMap& vertices_subdomain_indices,
+                          const C3t3& c3t3)
+      {
+        typename C3t3::Cell_handle ch;
+        int i0, i1;
+
+        if (c3t3.triangulation().is_edge(vh0, vh1, ch, i0, i1))
+        {
+          typename C3t3::Edge edge(ch, i0, i1);
+          return is_feature_MAD(edge, vertices_subdomain_indices, c3t3);
+        }
+
+        return false;
+      }
+
+      template<typename C3t3, typename VerticesSubdomainsMap>
+      bool is_feature_MAD(const typename C3t3::Vertex_handle vh,
+                          const VerticesSubdomainsMap& vertices_subdomain_indices,
+                          const C3t3& c3t3)
+      {
+        typedef typename C3t3::Vertex_handle                  Vertex_handle;
+
+        const typename C3t3::Triangulation& triangulation = c3t3.triangulation();
+
+        if (vertices_subdomain_indices.at(vh).size() > 3)
+        {
+          std::vector<Vertex_handle> neighbors;
+          triangulation.finite_incident_vertices(vh, std::back_inserter(neighbors));
+
+          int feature_count = 0;
+          for (Vertex_handle neighbor : neighbors)
+          {
+            if (is_feature_MAD(vh, neighbor, vertices_subdomain_indices, c3t3))
+            {
+              feature_count++;
+              if (feature_count >= 3) {
+                return true;
               }
             }
           }
         }
+        else if (c3t3.number_of_corners() > 0 && c3t3.in_dimension(vh)) {
+          return c3t3.is_in_complex(vh);
+        }
+        return false;
       }
-
 
       template<typename C3T3, typename CellSelector>
       void smooth_vertices(C3T3& c3t3,
@@ -276,6 +413,11 @@ namespace CGAL
         typedef typename Gt::Point_3         Point_3;
         typedef typename Gt::Vector_3        Vector_3;
         typedef typename Gt::FT              FT;
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        std::ofstream os_surf("smooth_surfaces.polylines.txt");
+        std::ofstream os_vol("smooth_volume.polylines.txt");
+#endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
         std::cout << "Smooth vertices...";
@@ -304,6 +446,7 @@ namespace CGAL
         createMLSSurfaces(subdomain_FMLS,
                           subdomain_FMLS_indices,
                           vertices_normals,
+                          vertices_subdomain_indices,
                           c3t3);
 
         //smooth()
@@ -329,11 +472,11 @@ namespace CGAL
             const std::size_t& i0 = vertex_id.at(vh0);
             const std::size_t& i1 = vertex_id.at(vh1);
 
-            if (c3t3.is_in_complex(e))
+            if (is_feature_MAD(e, vertices_subdomain_indices, c3t3))//c3t3.is_in_complex(e))
             {
-              if (!is_feature(vh0, c3t3))
+              if (!is_feature_MAD(vh0, vertices_subdomain_indices, c3t3))
                 neighbors[i0] = (std::max)(0, neighbors[i0]);
-              if (!is_feature(vh1, c3t3))
+              if (!is_feature_MAD(vh1, vertices_subdomain_indices, c3t3))
                 neighbors[i1] = (std::max)(0, neighbors[i1]);
 
               bool update_v0 = false, update_v1 = false;
@@ -389,6 +532,9 @@ namespace CGAL
               else
                 final_position = smoothed_position;
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+              os_surf << "2 " << current_pos << " " << final_position << std::endl,
+#endif
               // move vertex
               v->set_point(typename Tr::Point(
                 final_position.x(), final_position.y(), final_position.z()));
@@ -421,6 +567,9 @@ namespace CGAL
               else
                 final_position = current_pos;
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+              os_surf << "2 " << current_pos << " " << final_position << std::endl,
+#endif
               // move vertex
               v->set_point(
                 typename Tr::Point(final_position.x(), final_position.y(), final_position.z()));
@@ -444,9 +593,9 @@ namespace CGAL
             if (is_boundary(c3t3, e, cell_selector) && !c3t3.is_in_complex(e))
             {
               bool update_v0 = false, update_v1 = false;
-              if (!is_feature(vh0, c3t3))
+              if (!is_feature_MAD(vh0, vertices_subdomain_indices, c3t3))
                 neighbors[i0] = (std::max)(0, neighbors[i0]);
-              if (!is_feature(vh1, c3t3))
+              if (!is_feature_MAD(vh1, vertices_subdomain_indices, c3t3))
                 neighbors[i1] = (std::max)(0, neighbors[i1]);
 
               get_edge_info(e, update_v0, update_v1, c3t3, cell_selector);
@@ -498,6 +647,9 @@ namespace CGAL
                 // std::cout << "MLS " << final_position[0] << " - " << final_position[1] << " : " << final_position[2] << std::endl;
               }
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+              os_surf << "2 " << current_pos << " " << final_position << std::endl,
+#endif
               v->set_point(typename Tr::Point(
                 final_position.x(), final_position.y(), final_position.z()));
             }
@@ -514,11 +666,17 @@ namespace CGAL
                 {
                   const typename Tr::Point new_pos(CGAL::ORIGIN + mls_projection);
                   v->set_point(new_pos);
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+                  os_surf << "2 " << current_pos << " " << new_pos << std::endl;
+#endif
                 }
               }
             }
           }
         }
+
+        //end if(!protect_boundaries)
 
         smoothed_positions.clear();
         smoothed_positions.resize(nbv, CGAL::NULL_VECTOR);
@@ -561,9 +719,15 @@ namespace CGAL
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
               ++nb_done;
 #endif
-              const Vector_3 point = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
-              v->set_point(typename Tr::Point(point.x(), point.y(), point.z()));
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+              os_vol << "2 " << point(v->point());
+#endif
+              const Vector_3 p = smoothed_positions[vid] / static_cast<FT>(neighbors[vid]);
+              v->set_point(typename Tr::Point(p.x(), p.y(), p.z()));
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+              os_vol << " " << point(v->point()) << std::endl;
+#endif
               //Point_3 new_pos = CGAL::ORIGIN + smoothed_positions[vid] / neighbors[vid];
               //const Vector_3 move(point(v->point()), new_pos);
 
@@ -598,6 +762,8 @@ namespace CGAL
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
           c3t3.triangulation(), "c3t3_vertices_after_smoothing");
+        os_surf.close();
+        os_vol.close();
 #endif
       }
 
