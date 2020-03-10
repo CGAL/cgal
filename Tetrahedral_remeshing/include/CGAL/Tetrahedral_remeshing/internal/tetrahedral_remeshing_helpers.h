@@ -445,7 +445,7 @@ namespace Tetrahedral_remeshing
     {
       return c3t3.is_in_complex(v);
     }
-    else if (nb_incident_subdomains(v, c3t3) > 2)
+    else if (nb_incident_subdomains(v, c3t3) > 3)
     {
       std::vector<Edge> edges;
       c3t3.triangulation().finite_incident_edges(v, std::back_inserter(edges));
