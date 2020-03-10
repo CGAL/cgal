@@ -24,11 +24,10 @@
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/result_of.h>
 
-
-
 namespace CGAL {
+namespace Convex_hull_3 {
+namespace internal {
 
-namespace Convex_hull_impl{
 template <class F, class PointPropertyMap>
 struct Forward_functor
   : public F
@@ -67,10 +66,13 @@ struct Forward_functor
           get(vpm_,s));
   }
 };
-}//end Convex_hull_impl
+
+} // namespace internal
+} // namespace Convex_hull_3
+
 template<
     class PointPropertyMap,
-    class Base_traits=typename internal::Convex_hull_3::Default_traits_for_Chull_3<
+    class Base_traits = typename Convex_hull_3::internal::Default_traits_for_Chull_3<
       typename boost::property_traits<PointPropertyMap>::value_type>::type
          >
 class Extreme_points_traits_adapter_3
@@ -85,10 +87,11 @@ public:
   {}
   typedef typename boost::property_traits<PointPropertyMap>::key_type Vertex;
   typedef Vertex Point_3;
-  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Equal_3, PointPropertyMap> Equal_3;
-  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Collinear_3, PointPropertyMap> Collinear_3;
-  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Coplanar_3, PointPropertyMap> Coplanar_3;
-  typedef Convex_hull_impl::Forward_functor<typename Base_traits::Less_distance_to_point_3, PointPropertyMap> Less_distance_to_point_3; 
+  typedef Convex_hull_3::internal::Forward_functor<typename Base_traits::Equal_3, PointPropertyMap> Equal_3;
+  typedef Convex_hull_3::internal::Forward_functor<typename Base_traits::Collinear_3, PointPropertyMap> Collinear_3;
+  typedef Convex_hull_3::internal::Forward_functor<typename Base_traits::Coplanar_3, PointPropertyMap> Coplanar_3;
+  typedef Convex_hull_3::internal::Forward_functor<typename Base_traits::Less_distance_to_point_3, PointPropertyMap> Less_distance_to_point_3;
+
   class Less_signed_distance_to_plane_3
       :public Base_traits::Less_signed_distance_to_plane_3
   {  
@@ -167,11 +170,11 @@ public:
     Proj_traits_3(const PointPropertyMap& map,const Btt& base):
       Base_proj_traits(base),vpm_(map){}
     typedef Point_3 Point_2;
-    typedef Convex_hull_impl::Forward_functor<typename Btt::Equal_2, PointPropertyMap> Equal_2;
-    typedef Convex_hull_impl::Forward_functor<typename Btt::Less_xy_2, PointPropertyMap> Less_xy_2;
-    typedef Convex_hull_impl::Forward_functor<typename Btt::Less_yx_2, PointPropertyMap> Less_yx_2;
-    typedef Convex_hull_impl::Forward_functor<typename Btt::Less_signed_distance_to_line_2, PointPropertyMap> Less_signed_distance_to_line_2;
-    typedef Convex_hull_impl::Forward_functor<typename Btt::Left_turn_2, PointPropertyMap> Left_turn_2;
+    typedef Convex_hull_3::internal::Forward_functor<typename Btt::Equal_2, PointPropertyMap> Equal_2;
+    typedef Convex_hull_3::internal::Forward_functor<typename Btt::Less_xy_2, PointPropertyMap> Less_xy_2;
+    typedef Convex_hull_3::internal::Forward_functor<typename Btt::Less_yx_2, PointPropertyMap> Less_yx_2;
+    typedef Convex_hull_3::internal::Forward_functor<typename Btt::Less_signed_distance_to_line_2, PointPropertyMap> Less_signed_distance_to_line_2;
+    typedef Convex_hull_3::internal::Forward_functor<typename Btt::Left_turn_2, PointPropertyMap> Left_turn_2;
     
     class Less_rotate_ccw_2:public Btt::Less_rotate_ccw_2
     {
@@ -212,7 +215,7 @@ public:
     Orientation_2 orientation_2_object ()const{return Orientation_2(vpm_,static_cast<const Btt*>(this)->orientation_2_object() );}
   };
   
-  typedef internal::Convex_hull_3::Projection_traits<Base_traits> Base_PTraits;
+  typedef Convex_hull_3::internal::Projection_traits<Base_traits> Base_PTraits;
   typedef Proj_traits_3<typename Base_PTraits::Traits_xy_3> Traits_xy_3;
   typedef Proj_traits_3<typename Base_PTraits::Traits_yz_3> Traits_yz_3;
   typedef Proj_traits_3<typename Base_PTraits::Traits_xz_3> Traits_xz_3;
