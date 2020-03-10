@@ -493,7 +493,7 @@ for inputs consisting of more than about 1,000 sites.
 \subsection Segment_Delaunay_graph_2FirstExample First Example using the Filtered Traits
 
 The following example shows how to use the segment Delaunay graph traits
-in conjunction with filtered traits mechanism. In
+in conjunction with filtered traits mechanisms. In
 addition it shows how to use a few of the iterators provided by the
 `Segment_Delaunay_graph_2` class in order to count a few
 site-related quantities.
