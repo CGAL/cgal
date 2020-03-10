@@ -140,7 +140,7 @@ is the minimum distance for a point to be considered as outlier
 \cgalNPEnd
 
 \cgalNPBegin{attraction_factor} \anchor PSP_attraction_factor
-multiple of a tolerance `epsilon` used to connect simplices.
+multiplication factor used for adjacency computations.
 \b Type: floating scalar value\n
 <b>Default value</b>: `3`
 \cgalNPEnd
@@ -189,6 +189,13 @@ Constrained points are left unaltered and are used as seeds in `mst_orient_norma
 `PointRange::iterator::value_type` as key type and
 `bool` as value type. \n
 <b>Default value</b>: a property map with only the highest point constrained.
+\cgalNPEnd
+
+\cgalNPBegin{adjacencies} \anchor PSP_adjacencies
+is an output iterator used to store adjacencies.\n
+\b Type: a class model of `OutputIterator` that accepts objects of
+type `std::pair<std::size_t, std::size_t>`. \n
+<b>Default value</b>: `CGAL::Emptyset_iterator`.
 \cgalNPEnd
 
 \cgalNPTableEnd

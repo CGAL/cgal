@@ -429,12 +429,12 @@ namespace CGAL {
     };
 
     template<typename PointRange, typename NamedParameters>
-    class GetNeighborhood
+    class GetAdjacencies
     {
     public:
       typedef Emptyset_iterator Empty;
       typedef typename internal_np::Lookup_named_param_def <
-        internal_np::neighborhood_t,
+        internal_np::adjacencies_t,
         NamedParameters,
         Empty//default
         > ::type  type;

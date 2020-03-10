@@ -37,13 +37,13 @@ namespace internal
 // `std::back_insert_iterator`) cannot be default constructed, which
 // makes the mechanism `choose_param(get_param(...),Default())` fails.
 template <typename NamedParameters, typename OutputIterator>
-OutputIterator get_neighborhood (const NamedParameters& np, OutputIterator*)
+OutputIterator get_adjacencies (const NamedParameters& np, OutputIterator*)
 {
-  return CGAL::parameters::get_parameter(np, internal_np::neighborhood);
+  return CGAL::parameters::get_parameter(np, internal_np::adjacencies);
 }
 
 template <typename NamedParameters>
-CGAL::Emptyset_iterator get_neighborhood (const NamedParameters&, CGAL::Emptyset_iterator*)
+CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_iterator*)
 {
   return CGAL::Emptyset_iterator();
 }
@@ -87,6 +87,16 @@ CGAL::Emptyset_iterator get_neighborhood (const NamedParameters&, CGAL::Emptyset
      `k` is used as a limit on the number of points returned by each spherical
      query (to avoid overly large number of points in high density areas). If no
      limit is wanted, use `k=0`.\cgalParamEnd
+     \cgalParamBegin{attraction_factor} used to compute adjacencies
+     between clusters. Adjacencies are computed using a nearest
+     neighbor graph built similarly to the one used for clustering,
+     using `attraction_factor * k` and `attraction_factor *
+     nearest_neighbors` as parameters. %Default value is `2`.\cgalParamEnd
+     \cgalParamBegin{adjacencies} model of `OutputIterator` that
+     accepts objects of type `std::pair<std::size_t,
+     std::size_t>`. Each pair contains the indices of two adjacent
+     clusters. If this parameter is not used, adjacencies are not
+     computed at all.\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
@@ -106,7 +116,7 @@ std::size_t cluster_point_set (PointRange& points,
   typedef typename iterator::value_type value_type;
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
-  typedef typename Point_set_processing_3::GetNeighborhood<PointRange, NamedParameters>::type Neighborhood;
+  typedef typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::type Adjacencies;
   typedef typename GetSvdTraits<NamedParameters>::type SvdTraits;
 
   CGAL_static_assertion_msg(!(boost::is_same<SvdTraits,
@@ -123,8 +133,8 @@ std::size_t cluster_point_set (PointRange& points,
                                                                std::function<bool(double)>());
 
   double callback_factor = 1.;
-  if (!std::is_same<Neighborhood,
-      typename Point_set_processing_3::GetNeighborhood<PointRange, NamedParameters>::Empty>::value)
+  if (!std::is_same<Adjacencies,
+      typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::Empty>::value)
     callback_factor = 0.5;
 
   typedef typename Kernel::Point_3 Point;
@@ -185,15 +195,15 @@ std::size_t cluster_point_set (PointRange& points,
     ++ nb_clusters;
   }
 
-  if (!std::is_same<Neighborhood,
-      typename Point_set_processing_3::GetNeighborhood<PointRange, NamedParameters>::Empty>::value)
+  if (!std::is_same<Adjacencies,
+      typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::Empty>::value)
   {
-    Neighborhood neighborhood = Point_set_processing_3::internal::get_neighborhood(np, (Neighborhood*)(nullptr));
+    Adjacencies adjacencies = Point_set_processing_3::internal::get_adjacencies(np, (Adjacencies*)(nullptr));
     k *= factor;
     neighbor_radius *= factor;
 
     std::vector<iterator> neighbors;
-    std::vector<std::pair<std::size_t, std::size_t> > adjacencies;
+    std::vector<std::pair<std::size_t, std::size_t> > adj;
 
     done = 0;
     for (const value_type& p : points)
@@ -208,9 +218,9 @@ std::size_t cluster_point_set (PointRange& points,
       {
         std::size_t c1 = get (cluster_map, *it);
         if (c0 < c1)
-          adjacencies.push_back (std::make_pair (c0, c1));
+          adj.push_back (std::make_pair (c0, c1));
         else if (c0 > c1)
-          adjacencies.push_back (std::make_pair (c1, c0));
+          adj.push_back (std::make_pair (c1, c0));
         // else c0 == c1, ignore
       }
 
@@ -218,9 +228,9 @@ std::size_t cluster_point_set (PointRange& points,
       if (callback && !callback (callback_factor + callback_factor * (done + 1) / double(size)))
         return nb_clusters;
     }
-    std::sort (adjacencies.begin(), adjacencies.end());
-    auto last = std::unique (adjacencies.begin(), adjacencies.end());
-    std::copy (adjacencies.begin(), last, neighborhood);
+    std::sort (adj.begin(), adj.end());
+    auto last = std::unique (adj.begin(), adj.end());
+    std::copy (adj.begin(), last, adjacencies);
   }
   
   return nb_clusters;

@@ -314,7 +314,23 @@ points in the domain.
 
 \cgalExample{Point_set_processing_3/scale_estimation_2d_example.cpp}
 
+\section Point_set_processing_3Clustering Clustering
 
+If an input point set represents several objects which are spatially
+separated, a clustering algorithm can be applied to identify simply
+connected clusters on a nearest neighbors graph.
+
+The clustering is stored in a cluster map which associates each input
+point with the index of the cluster it belongs to: users can then use
+this map however they find it relevant to their use case, for example
+segmenting the input point set into several (one per cluster).
+
+\subsection Point_set_processing_3Example_clustering Example
+
+In the following example, clusters (and adjacencies between them) are
+computed and stored as colors in a PLY file:
+
+\cgalExample{Point_set_processing_3/clustering_example.cpp}
 
 \section Point_set_processing_3OutlierRemoval Outlier Removal
 
