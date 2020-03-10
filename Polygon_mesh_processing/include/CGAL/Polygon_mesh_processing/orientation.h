@@ -487,8 +487,9 @@ void copy_container_content(std::vector<T>& vec, boost::reference_wrapper<std::v
   vec.swap(ref_wrapper.get());
 }
 template<class T>
-inline void copy_container_content(std::vector<T>&,
-                             internal_np::Param_not_found)
+inline
+void copy_container_content(std::vector<T>&,
+                                   internal_np::Param_not_found)
 {}
 
 
@@ -512,6 +513,7 @@ void copy_nested_parents(
   }
 }
 
+inline
 void copy_nested_parents(
   std::vector< std::vector<std::size_t> >& nested_parents,
   std::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
@@ -519,7 +521,7 @@ void copy_nested_parents(
   nested_parents.swap(ref_to_vector.get());
 }
 
-
+inline
 void copy_nested_parents(
   std::vector< std::vector<std::size_t> >& nested_parents,
   boost::reference_wrapper<std::vector< std::vector<std::size_t> > > ref_to_vector)
@@ -527,7 +529,8 @@ void copy_nested_parents(
   nested_parents.swap(ref_to_vector.get());
 }
 
-inline void copy_nested_parents(
+inline
+void copy_nested_parents(
   std::vector< std::vector<std::size_t> >&,
   internal_np::Param_not_found)
 {}
@@ -559,7 +562,8 @@ void copy_cc_to_volume_id(
   ref_to_vector.get().swap( cc_volume_ids );
 }
 
-inline void copy_cc_to_volume_id(
+inline
+void copy_cc_to_volume_id(
   std::vector<std::size_t>&,
   internal_np::Param_not_found)
 {}
@@ -572,7 +576,8 @@ void copy_nesting_levels(
   ref_to_vector.get().swap( nesting_levels );
 }
 
-inline void copy_nesting_levels(
+inline
+void copy_nesting_levels(
   std::vector<std::size_t>&,
   internal_np::Param_not_found)
 {}
@@ -585,7 +590,8 @@ void copy_orientation_bitset(
   ref_to_bs.get() = is_cc_outward_oriented;
 }
 
-inline void copy_orientation_bitset(
+inline
+void copy_orientation_bitset(
   const std::vector<bool>&,
   internal_np::Param_not_found)
 {}
@@ -600,7 +606,8 @@ void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std::size_
   }
 }
 
-inline void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std::size_t> >&,
+inline
+void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std::size_t> >&,
                                       internal_np::Param_not_found)
 {}
 
