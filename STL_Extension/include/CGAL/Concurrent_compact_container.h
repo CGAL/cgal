@@ -66,7 +66,7 @@ template<typename T> class has_##X {                                          \
 template < class T >
 struct Concurrent_compact_container_traits {
   static void *   pointer(const T &t) { return t.for_compact_container(); }
-  static void * & pointer(T &t)       { return t.for_compact_container(); }
+  static void set_pointer(T &t, void* p) { t.for_compact_container(p); }
 };
 
 namespace CCC_internal {
@@ -613,8 +613,8 @@ private:
     // This out of range compare is always true and causes lots of
     // unnecessary warnings.
     // CGAL_precondition(0 <= t && t < 4);
-    Traits::pointer(*ptr) = reinterpret_cast<void *>
-      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t);
+    Traits::set_pointer(*ptr, reinterpret_cast<void *>
+      (reinterpret_cast<std::ptrdiff_t>(clean_pointer((char *) p)) + (int) t));
   }
 
   typedef tbb::queuing_mutex Mutex;

@@ -105,8 +105,8 @@ namespace CGAL {
 
     void * for_compact_container() const
     { return mf[0].for_compact_container(); }
-    void * & for_compact_container()
-    { return mf[0].for_compact_container(); }
+    void for_compact_container(void *p)
+    { mf[0].for_compact_container(p); }
 
     Dart_handle get_f(unsigned int i) const
     {
