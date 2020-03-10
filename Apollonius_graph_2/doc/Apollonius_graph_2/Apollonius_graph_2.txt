@@ -383,28 +383,18 @@ type, with `Integral_domain_without_division_tag` as tag will give exact predica
 whereas `MP_Float` with `Field_with_sqrt_tag` will give
 inexact predicates.
 
-Since using an exact number type may be too slow, the
-`Apollonius_graph_traits_2<K,Method_tag>` class is designed to
-support the dynamic filtering of \cgal through the
-`Filtered_exact<CT,ET>` mechanism. In particular if `CT`
-is an inexact number type that supports the operations denoted by the
-tag `Method_tag` and `ET` is an exact number type for these
-operations, then kernel with number type
-`Filtered_exact<CT,ET>` will yield exact predicates for the
-Apollonius graph traits. To give a concrete example,
-`CGAL::Filtered_exact<double,CGAL::MP_Float>` with 
-`Integral_domain_without_division_tag` will produce exact predicates.
-
-Another possibility for fast and exact predicate evaluation is to use
-the
-`Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
-class. This class is the analog of a filtered kernel. It takes a
+Although exact number types provide exact predicates and constructions,
+their use often result in unacceptably large runtimes.
+The class `Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+aims to paliate this shortcoming. Similar to a filtered kernel, it takes a
 constructions kernel `CK`, a filtering kernel `FK` and an
 exact kernel `EK`, as well as the corresponding tags
 (`CM`, `FM` and `EM`, respectively).
-It evaluates the predicates by first using the filtering kernel, and
-if this fails the evaluation is performed using the exact kernel. The
-constructions are done using the kernel `CK`, which means that
+Predicates are evaluated by first using the filtering kernel, and
+if this fails the evaluation is performed using the exact kernel,
+thus yielding exact predicates at a generally much cheaper cost
+than directly using an exact number type. The constructions
+are done using the kernel `CK`, which means that
 they are not necessarily exact. All template parameters except
 `CK` have default values, which are explained in the reference
 manual.
