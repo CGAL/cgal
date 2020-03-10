@@ -22,7 +22,7 @@ fills the face graph `tm` with the <A HREF="https://en.wikipedia.org/wiki/Simpli
          if `vh` is on the convex hull of the triangulation, and if `no_infinite_faces == false`.
          Otherwise, an arbitrary vertex descriptor of the triangle mesh `tm`.
 
-\sa `convex_hull_3_to_polyhedron_3()`
+\sa `convex_hull_3_to_face_graph()`
  
 */
 template <class Triangulation, class TriangleMesh>
