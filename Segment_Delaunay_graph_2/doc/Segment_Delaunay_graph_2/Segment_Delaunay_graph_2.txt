@@ -410,7 +410,7 @@ and `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,
 These two traits class employ the `Filtered_predicate<EP,FP>` mechanism,
 and the user can define up to three different kernels `CK`,
 `FK` and `EK` (default values are provided for most
-parameters). The first kernel `CK` is used only for
+parameters): the first kernel `CK` is used only for
 constructions. The second kernel `FK` is the filtering kernel:
 the traits class will attempt to compute the predicates using this
 kernel. If the filtering kernel fails to successfully compute a
