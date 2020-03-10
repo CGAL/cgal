@@ -31,21 +31,10 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
-#include <iostream>
-#include <algorithm>
-#include <utility>
-#include <memory>
-#include <list>
-#include <vector>
-#include <type_traits>
-#include <boost/bind.hpp>
-#include <boost/next_prior.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/has_xxx.hpp>
-#include <boost/graph/graph_traits.hpp>
+
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
@@ -54,12 +43,24 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/is_iterator.h>
 
-#include <boost/unordered_map.hpp>
+#include <boost/bind.hpp>
+#include <boost/next_prior.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/mpl/has_xxx.hpp>
+#include <boost/graph/graph_traits.hpp>
 
 #ifndef CGAL_CH_NO_POSTCONDITIONS
 #include <CGAL/convexity_check_3.h>
 #endif // CGAL_CH_NO_POSTCONDITIONS
 
+#include <algorithm>
+#include <iostream>
+#include <list>
+#include <memory>
+#include <vector>
+#include <type_traits>
+#include <utility>
 
 // first some internal stuff to avoid using a true Face_graph model for extreme_points_3
 namespace CGAL {
