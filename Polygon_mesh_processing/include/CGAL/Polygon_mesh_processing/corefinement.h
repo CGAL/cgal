@@ -17,11 +17,12 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Visitor.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Face_graph_output_builder.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Output_builder_for_autorefinement.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/iterator.h>
 
 namespace CGAL {
