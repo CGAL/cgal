@@ -384,7 +384,7 @@ whereas `MP_Float` with `Field_with_sqrt_tag` will give
 inexact predicates.
 
 Although exact number types provide exact predicates and constructions,
-their use often result in unacceptably large runtimes.
+their use often results in unacceptably large runtimes.
 The class `Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
 aims to paliate this shortcoming. Similar to a filtered kernel, it takes a
 constructions kernel `CK`, a filtering kernel `FK` and an
