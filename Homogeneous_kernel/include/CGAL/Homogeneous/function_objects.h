@@ -775,6 +775,8 @@ namespace HomogeneousKernelFunctors {
   {
     typedef typename K::Point_2   Point_2;
     typedef typename K::Line_2    Line_2;
+    typedef typename K::Less_signed_distance_to_line_2 Less_signed_distance_to_line_2;
+    
   public:
     typedef Comparison_result   result_type;
 
