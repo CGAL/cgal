@@ -66,8 +66,6 @@
     </property>
     <addaction name="actionDelete"/>
     <addaction name="actionDeleteAll"/>
-    <!--<addaction name="actionClearResult"/>-->
-    <addaction name="actionDeleteResult"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -144,16 +142,16 @@
     <property name="visible">
       <bool>false</bool>
     </property>
-  	<property name="windowTitle">
-  		<string>Insert Result Mode</string>
-  	</property>
-  	<attribute name="toolBarArea">
-  		<enum>TopToolBarArea</enum>
-  	</attribute>
-  	<attribute name="toolBarBreak">
-  		<bool>false</bool>
-  	</attribute>
-  	<widget class="QRadioButton" name="PlanAActive">
+    <property name="windowTitle">
+      <string>Insert Result Mode</string>
+    </property>
+    <attribute name="toolBarArea">
+      <enum>TopToolBarArea</enum>
+    </attribute>
+    <attribute name="toolBarBreak">
+      <bool>false</bool>
+    </attribute>
+    <widget class="QRadioButton" name="PlanAActive">
     <property name="checked" >
       <bool>false</bool>
     </property>
@@ -223,7 +221,6 @@
    </attribute>
    <addaction name="actionDelete"/>
    <addaction name="actionDeleteAll"/>
-   <addaction name="actionDeleteResult"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="consoleDockWidget">
@@ -2204,7 +2201,7 @@
                 </rect>
               </property>
               <property name="visible">
-              	<bool>false</bool>
+                <bool>false</bool>
               </property>
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -2592,7 +2589,7 @@
                <string>Clear</string>
               </property>
               <property name="visible">
-              	<bool>false</bool>
+                <bool>false</bool>
               </property>
             </widget>
             <widget class="QLabel" name="VisibleHeader" >
@@ -2605,7 +2602,7 @@
                 </rect>
               </property>
               <property name="visible">
-              	<bool>false</bool>
+                <bool>false</bool>
               </property>
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -3406,7 +3403,7 @@
   <action name="actionDeleteAll">
    <property name="icon">
     <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/delete.xpm</normaloff>:/cgal/icons/resources/delete.xpm</iconset>
+     <normaloff>:/cgal/icons/resources/check-off.png</normaloff>:/cgal/icons/resources/check-off.png</iconset>
    </property> 
    <property name="text">
     <string>Delete all polygons</string>
@@ -3428,15 +3425,6 @@
    </property> 
    <property name="text">
     <string>Clear Selected Outputs</string>
-   </property>
-  </action>
-  <action name="actionDeleteResult">
-   <property name="icon">
-    <iconset resource="Boolean_operations_2.qrc">
-     <normaloff>:/cgal/icons/resources/check-off.png</normaloff>:/cgal/icons/resources/check-off.png</iconset>
-   </property> 
-   <property name="text">
-    <string>Clear Result</string>
    </property>
   </action>
   <action name="actionOpenDXF" >
@@ -3500,7 +3488,7 @@
    </property>
   </action>
   <action name="actionInsertResult" >
-  	<property name="visible" >
+    <property name="visible" >
     <bool>true</bool>
    </property>
    <property name="checkable" >

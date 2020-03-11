@@ -90,11 +90,10 @@
 #include <CGAL/IO/Dxf_bsop_reader.h>
 #include <CGAL/Qt/GraphicsViewNavigation.h>
 
-#include "QT5/MinkowskiSum.h"
+#include "QT5/MinkowskiSum.h"//for future supports
 #include "QT5/Circular_polygons.h"
 #include "QT5/Linear_polygons.h"
 #include "QT5/Graphics_view_circular_polygon_input.h"
-#include "QT5/Graphics_view_linear_polygon_input.h"
 #include "QT5/Graphics_view_linear_polygon_input.h"
 #include "QT5/Graphics_view_minkowski_input.h"
 #include "QT5/General_polygon_2.h"
@@ -2853,6 +2852,8 @@ void MainWindow::on_actionDeleteAll_triggered()
     aqua_set().clear();aqua_circular_sources().clear();aqua_bezier_sources().clear();aqua_linear_sources().clear();
     olive_set().clear();olive_linear_sources().clear();
     hotpink_set().clear();hotpink_linear_sources().clear();
+
+  	on_actionDeleteResult_triggered();
   }
   lDone = true;
 
@@ -5079,7 +5080,10 @@ void MainWindow::on_actionMinkowski_Sum_triggered()
    }
 
   this->setCursor(old);
-  if (lDone) modelChanged();
+  if (lDone){ 
+  	zoomToFit();
+  	modelChanged();
+  }
 }
 
 
