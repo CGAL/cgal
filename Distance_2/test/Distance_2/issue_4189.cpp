@@ -8,9 +8,9 @@ typedef CGAL::Simple_cartesian<double> SC;
 typedef CGAL::Simple_cartesian<CGAL::Exact_rational>  EC;
 
 template <typename Kernel>
-int fct() {
+double fct() {
 
-	typedef typename Kernel::Segment_2 Segment_2;
+  typedef typename Kernel::Segment_2 Segment_2;
   const Segment_2 segi = {
     { -4.0380854964382, -1.9947196614192 },
     { 10.43442091460618, -0.5886833953492263 } };
@@ -21,13 +21,14 @@ int fct() {
   const auto dist = CGAL::squared_distance(segi, segj);
   std::cout << "#dist: " << dist << std::endl;
 
-  return 0;
+  return CGAL::to_double(dist);
 }
 
 int main()
 {
-	fct<SC>();
-	fct<CGAL::Epick>();
-	fct<EC>();
-	return 0;
+  auto approx_dist = fct<SC>();
+  fct<CGAL::Epick>();
+  auto exact_dist = fct<EC>();
+  assert(CGAL::abs(approx_dist - exact_dist) < 0.05 * CGAL::abs(exact_dist));
+  return 0;
 }
