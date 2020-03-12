@@ -323,9 +323,6 @@ create_riemannian_graph(
     typedef internal::Riemannian_graph<ForwardIterator> Riemannian_graph;
     typedef typename boost::property_map<Riemannian_graph, boost::edge_weight_t>::type Riemannian_graph_weight_map;
 
-    // Precondition: at least one element in the container.
-    CGAL_point_set_processing_precondition(first != beyond);
-
     // Precondition: at least 2 nearest neighbors
     CGAL_point_set_processing_precondition(k >= 2);
 
