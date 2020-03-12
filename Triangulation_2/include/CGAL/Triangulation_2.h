@@ -37,7 +37,6 @@
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
 #include <CGAL/double.h>
-#include <CGAL/internal/boost/function_property_map.hpp>
 
 #include <boost/utility/result_of.hpp>
 #include <boost/random/linear_congruential.hpp>
