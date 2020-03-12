@@ -43,11 +43,6 @@ create_single_source_cgal_program( "iso_rectangle_2_query.cpp" )
 
 create_single_source_cgal_program( "nearest_neighbor_searching.cpp" )
 
-find_package( TBB QUIET )
-if(TBB_FOUND)
-  cgal_target_use_TBB(nearest_neighbor_searching)
-endif()
-
 create_single_source_cgal_program( "searching_with_circular_query.cpp" )
 
 create_single_source_cgal_program( "searching_with_point_with_info.cpp" )
@@ -82,3 +77,12 @@ else()
   message(STATUS "will not be compiled as they use CGAL::Epick_d which requires the Eigen library.")
 
 endif()
+
+find_package( TBB QUIET )
+if(TBB_FOUND)
+  create_single_source_cgal_program( "parallel_kdtree.cpp" )
+  cgal_target_use_TBB(parallel_kdtree)
+else()
+  message(STATUS "parallel_kdtree.cpp requires TBB and will not be compiled")
+endif()
+

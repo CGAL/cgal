@@ -407,6 +407,23 @@ higher dimensions.
 
 \cgalExample{Spatial_searching/splitter_worst_cases.cpp}
 
+\subsection Spatial_searchingExampleParallel Example for Parallel Neighbor Search
+
+In order to speed-up the construction of the `kd` tree, the child
+branches of each internal node can be computed in parallel, by calling
+`Kd_tree::build<CGAL::Parallel_tag>()`. On a quad-core processor, the
+parallel construction is experimentally 2 to 3 times faster than the
+sequential version, depending on the point cloud. The parallel version
+requires the executable to be linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
+
+One query on the `kd` tree is purely sequential, but several queries
+can be done in parallel.
+
+The following example shows how to build the `kd` tree in parallel and
+how to perform parallel queries:
+
+\cgalExample{Spatial_searching/parallel_kdtree.cpp}
+
 \section Performance Performance
 
 \subsection OrthogonalPerfomance Performance of the Orthogonal Search
@@ -479,13 +496,6 @@ priority queue. The search stops when the distance of the query point
 to the nearest nodes exceeds the distance to the nearest point found
 with a factor 1/ (1+\f$ \epsilon\f$). Priority search supports next
 neighbor search, standard search does not.
-
-In order to speed-up the construction of the `kd` tree, the child
-branches of each internal node can be computed in parallel, by calling
-`Kd_tree::build<CGAL::Parallel_tag>()`. On a quad-core processor, the
-parallel construction is experimentally 2 to 3 times faster than the
-sequential version, depending on the point cloud. The parallel version
-requires the executable to be linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 
 In order to speed-up the internal distance computations in nearest
 neighbor searching in high dimensional space, the approximate
