@@ -14,10 +14,15 @@
 #ifndef CGAL_SQRT_EXTENSION_EIGEN_NUMTRAITS_H
 #define CGAL_SQRT_EXTENSION_EIGEN_NUMTRAITS_H
 
+#ifdef CGAL_EIGEN3_ENABLED
+
+#include <Eigen/src/Core/NumTraits.h>
+
 namespace Eigen {
   template<class> struct NumTraits;
   template <class NT,class ROOT, class ACDE_TAG, class FP_TAG>
   struct NumTraits<CGAL::Sqrt_extension<NT, ROOT, ACDE_TAG, FP_TAG> >
+    : GenericNumTraits<CGAL::Sqrt_extension<NT, ROOT, ACDE_TAG, FP_TAG> >
   {
     typedef CGAL::Sqrt_extension<NT, ROOT, ACDE_TAG, FP_TAG> Real;
     typedef Real NonInteger;
@@ -37,5 +42,7 @@ namespace Eigen {
     };
   };
 }
+
+#endif // CGAL_EIGEN3_ENABLED
 
 #endif
