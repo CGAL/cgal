@@ -22,3 +22,6 @@ else()
 endif()
 
 create_single_source_cgal_program("obb_example.cpp")
+create_single_source_cgal_program("obb_with_point_maps_example.cpp")
+create_single_source_cgal_program("rotated_aabb_tree.cpp")
+
