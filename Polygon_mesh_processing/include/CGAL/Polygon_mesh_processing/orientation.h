@@ -650,13 +650,11 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
 
 /*!
  * \ingroup PMP_orientation_grp
- * reverses connected components of `tm` having compatible boundary cycles
- * that could be merged if their orientation were reversed, and stitches them.
+ * reverses the connected components of `tm` having compatible boundary cycles
+ * that could be merged if their orientation were made compatible, and stitches them.
  * Connected components are examined by increasing number of faces.
  *
  * @tparam PolygonMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- *                     If `PolygonMesh` has an internal property map for `CGAL::face_index_t`,
- *                     as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * @param pm a surface mesh
@@ -664,7 +662,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
+ *     the property map with the points associated to the vertices of `pm`.
  *     If this parameter is omitted, an internal property map for
  *     `CGAL::vertex_point_t` must be available in `PolygonMesh`
  *   \cgalParamEnd
@@ -673,7 +671,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm)
  *   \cgalParamEnd
  *   \cgalParamBegin{maximum_number_of_faces}
  *     if not 0 (default), a connected component is considered reversible only
- *     if it has not more faces than the value given. Else, it is always considered reversible.
+ *     if it has no more faces than the value given. Otherwise, it is always considered reversible.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
  */
@@ -685,21 +683,19 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename GrT::halfedge_descriptor halfedge_descriptor;
 
-  typedef typename 
-      GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vpm;
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                                get_const_property_map(vertex_point, pm));
+                                         get_const_property_map(vertex_point, pm));
 
   typedef std::size_t F_cc_id;
   typedef std::size_t B_cc_id;
 
-  typedef typename
-      GetFaceIndexMap<PolygonMesh, NamedParameters>::type Fidmap;
+  typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type Fidmap;
 
   Fidmap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                   get_const_property_map(face_index, pm));
+                                            get_const_property_map(face_index, pm));
 
   typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
   typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
@@ -714,14 +710,14 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   std::vector<halfedge_descriptor> border_hedges;
   typedef typename boost::property_map<PolygonMesh, dynamic_halfedge_property_t<B_cc_id> >::type H_to_bcc_id;
   H_to_bcc_id h_bcc_ids = get(dynamic_halfedge_property_t<B_cc_id>(), pm);
-  const B_cc_id DV(-1);
+  const B_cc_id base_value(-1);
   const B_cc_id FILTERED_OUT(-2);
 
   // collect border halfedges
   for (halfedge_descriptor h : halfedges(pm))
     if ( is_border(h, pm) )
     {
-      put(h_bcc_ids, h, DV);
+      put(h_bcc_ids, h, base_value);
       border_hedges.push_back(h);
     }
 
@@ -729,17 +725,17 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   B_cc_id bcc_id=0;
   for (halfedge_descriptor h : border_hedges)
   {
-    if (get(h_bcc_ids,h) == DV)
+    if (get(h_bcc_ids,h) == base_value)
     {
       typedef std::map< std::pair<Point_3, Point_3>, halfedge_descriptor> Hmap;
       Hmap hmap;
       for (halfedge_descriptor hh : halfedges_around_face(h, pm))
       {
         std::pair< typename Hmap::iterator, bool > insert_res =
-          hmap.insert(
-            std::make_pair(
-              make_sorted_pair(get(vpm, source(hh, pm)),
-              get(vpm, target(hh,pm))), hh) );
+            hmap.insert(
+              std::make_pair(
+                make_sorted_pair(get(vpm, source(hh, pm)),
+                                 get(vpm, target(hh,pm))), hh) );
         if (insert_res.second)
           put(h_bcc_ids, hh, bcc_id);
         else
@@ -843,7 +839,7 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   if ( !faces_to_reverse.empty() )
   {
     reverse_face_orientations(faces_to_reverse, pm);
-    stitch_borders(pm);
+    stitch_borders(pm, np);
   }
 }
 

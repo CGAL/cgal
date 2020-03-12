@@ -45,14 +45,14 @@ namespace Polygon_mesh_processing {
  * and `BackInsertionSequence` whose `value_type` is the point type.
  * @tparam PolygonRange a model of the concept `RandomAccessContainer`
  * whose `value_type` is a model of the concept `RandomAccessContainer`
- * whose `value_type` is `std::size_t`. It is also mutable.
+ * whose `value_type` is `std::size_t`, and is also a model of `BackInsertionSequence`.
  *
  * @param points points of the soup of polygons. Some additional points might be pushed back to resolve
  *               non-manifoldness or non-orientability issues.
  * @param polygons each element in the vector describes a polygon using the indices of the points in `points`.
  *                 If needed the order of the indices of a polygon might be reversed.
- * @return `true`  if the orientation operation succeded.
  * @return `false` if some points were duplicated, thus producing a self-intersecting surface mesh.
+ * @return `true` otherwise.
  * @sa `orient_polygon_soup()`
  */
 template <class PointRange, class PolygonRange>
@@ -81,8 +81,8 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * orients each triangle of a triangle soup using the orientation of its
  * closest non degenerate triangle in `tm_ref`.
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
-                        Possible values are `Sequential_tag` (the default) and
-                        `Parallel_tag`.
+                        Possible values are `Sequential_tag` (the default),
+                        `Parallel_if_available_tag` and `Parallel_tag`.
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
@@ -97,7 +97,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
- *     the property map with the points associated to the vertices of `tm`.
+ *     the property map with the points associated to the vertices of `tm_ref`.
  *     If this parameter is omitted, an internal property map for
  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *   \cgalParamEnd
@@ -114,9 +114,9 @@ template <class Concurrency_tag, class PointRange, class TriangleRange,
           class TriangleMesh, class NamedParameters>
 void
 orient_triangle_soup_with_reference_triangle_mesh(
-  const TriangleMesh& tm_ref,
-  PointRange& points,
-  TriangleRange& triangles,
+    const TriangleMesh& tm_ref,
+    PointRange& points,
+    TriangleRange& triangles,
     const NamedParameters& np)
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
@@ -125,27 +125,27 @@ orient_triangle_soup_with_reference_triangle_mesh(
   typedef typename GrT::face_descriptor face_descriptor;
   typedef typename PointRange::value_type Point_3;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type K;
-  typedef typename 
-      GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+  typedef typename
+  GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
 
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                         get_const_property_map(CGAL::vertex_point, tm_ref));
+                                         get_const_property_map(CGAL::vertex_point, tm_ref));
 
 
   typedef std::function<bool(face_descriptor)> Face_predicate;
   Face_predicate is_not_deg =
-    [&tm_ref, np](face_descriptor f)
-    {
-      return !PMP::is_degenerate_triangle_face(f, tm_ref, np);
-    };
+      [&tm_ref, np](face_descriptor f)
+  {
+    return !PMP::is_degenerate_triangle_face(f, tm_ref, np);
+  };
 
   // build a tree filtering degenerate faces
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Vpm> Primitive;
   typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
 
   boost::filter_iterator<Face_predicate, typename GrT::face_iterator>
-    begin(is_not_deg, faces(tm_ref).begin(), faces(tm_ref).end()),
-    end(is_not_deg, faces(tm_ref).end(), faces(tm_ref).end());
+      begin(is_not_deg, faces(tm_ref).begin(), faces(tm_ref).end()),
+      end(is_not_deg, faces(tm_ref).end(), faces(tm_ref).end());
 
   CGAL::AABB_tree<Tree_traits> tree(begin, end, tm_ref, vpm);
 
@@ -153,18 +153,18 @@ orient_triangle_soup_with_reference_triangle_mesh(
   tree.build();
   tree.accelerate_distance_queries();
   auto process_facet =
-    [&points, &tree, &tm_ref, &triangles](std::size_t fid) {
-      const Point_3& p0 = points[triangles[fid][0]];
-      const Point_3& p1 = points[triangles[fid][1]];
-      const Point_3& p2 = points[triangles[fid][2]];
-      const Point_3 mid = CGAL::centroid(p0, p1, p2);
-      std::pair<Point_3, face_descriptor> pt_and_f =
+      [&points, &tree, &tm_ref, &triangles](std::size_t fid) {
+    const Point_3& p0 = points[triangles[fid][0]];
+    const Point_3& p1 = points[triangles[fid][1]];
+    const Point_3& p2 = points[triangles[fid][2]];
+    const Point_3 mid = CGAL::centroid(p0, p1, p2);
+    std::pair<Point_3, face_descriptor> pt_and_f =
         tree.closest_point_and_primitive(mid);
-      auto face_ref_normal = PMP::compute_face_normal(pt_and_f.second, tm_ref);
-      if(face_ref_normal * cross_product(p1-p0, p2-p0) < 0) {
-        std::swap(triangles[fid][1], triangles[fid][2]);
-      }
-    };
+    auto face_ref_normal = PMP::compute_face_normal(pt_and_f.second, tm_ref);
+    if(face_ref_normal * cross_product(p1-p0, p2-p0) < 0) {
+      std::swap(triangles[fid][1], triangles[fid][2]);
+    }
+  };
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, CGAL::Parallel_tag>::value),
@@ -175,9 +175,9 @@ orient_triangle_soup_with_reference_triangle_mesh(
   else
 #endif
     std::for_each(
-      boost::counting_iterator<std::size_t> (0),
-      boost::counting_iterator<std::size_t> (triangles.size()),
-      process_facet);
+          boost::counting_iterator<std::size_t> (0),
+          boost::counting_iterator<std::size_t> (triangles.size()),
+          process_facet);
 }
 
 
