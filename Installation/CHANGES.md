@@ -91,6 +91,11 @@ Release date: June 2020
 ### STL Extensions for CGAL
  -   Added a new concurrency tag: `CGAL::Parallel_if_available_tag`. This tag is a convenience typedef to `CGAL::Parallel_tag`
      if the third party library TBB has been found and linked with, and to `CGAL::Sequential_tag` otherwise.
+     
+
+### Convex_hull_3
+- A new overload for `convex_hull_3()` that takes a model of `VertexListGraph` has been added.
+
 
 [Release 5.0](https://github.com/CGAL/cgal/releases/tag/releases%2FCGAL-5.0)
 -----------

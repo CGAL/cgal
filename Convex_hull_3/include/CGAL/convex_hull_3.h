@@ -37,6 +37,7 @@
 #include <memory>
 #include <list>
 #include <vector>
+#include <type_traits>
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
@@ -49,6 +50,9 @@
 #include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/is_iterator.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -1036,13 +1040,39 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,
-                   Polyhedron_3& polyhedron)
+                   Polyhedron_3& polyhedron,
+                   typename std::enable_if<
+                     CGAL::is_iterator<InputIterator>::value
+                   >::type* =0) //workaround to avoid ambiguity with next overload.
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3, Polyhedron_3>::type Traits;
    convex_hull_3(first, beyond, polyhedron, Traits());
 }
 
+
+template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+void convex_hull_3(const VertexListGraph& g,
+                   PolygonMesh& pm, 
+                   const NamedParameters& np)
+{
+  typedef typename GetVertexPointMap<VertexListGraph, NamedParameters>::const_type Vpmap;
+  typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
+  Vpmap vpm = CGAL::parameters::choose_parameter(
+        CGAL::parameters::get_parameter(np, internal_np::vertex_point),
+        get_const_property_map(boost::vertex_point, g));
+  
+  Vpmap_fct v2p(vpm);
+  convex_hull_3(boost::make_transform_iterator(vertices(g).begin(), v2p),
+                boost::make_transform_iterator(vertices(g).end(), v2p), pm);
+}
+
+template <class VertexListGraph, class PolygonMesh>
+void convex_hull_3(const VertexListGraph& g,
+                   PolygonMesh& pm)
+{
+  convex_hull_3(g,pm,CGAL::parameters::all_default());
+}
 
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator

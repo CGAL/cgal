@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
   // Set probability to miss the largest primitive at each iteration.
   parameters.probability = 0.05;
  
-  // Detect shapes with at least 500 points.
+  // Detect shapes with at least 200 points.
   parameters.min_points = 200;
 
   // Set maximum Euclidean distance between a point and a shape.

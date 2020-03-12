@@ -567,7 +567,8 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
   const std::size_t removed_points_n = ini_points_n - points.size();
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
-  std::cout << "Removed (merged) " << removed_points_n << " duplicate points" << std::endl;
+  if(removed_points_n > 0)
+    std::cout << "Removed (merged) " << removed_points_n << " duplicate points" << std::endl;
 #endif
 
   return removed_points_n;

@@ -78,9 +78,9 @@ void PRIV::compute_diag_bbox()
 {
   const Scene_item::Bbox& b_box = item->bbox();
   _diag_bbox = CGAL::approximate_sqrt(
-          (b_box.xmax() - b_box.xmin())*(b_box.xmax() - b_box.xmin())
-        + (b_box.ymax() - b_box.ymin())*(b_box.ymax() - b_box.ymin())
-        + (b_box.zmax() - b_box.zmin())*(b_box.zmax() - b_box.zmin())
+          CGAL::square(b_box.xmax() - b_box.xmin())
+        + CGAL::square(b_box.ymax() - b_box.ymin())
+        + CGAL::square(b_box.zmax() - b_box.zmin())
         );
 }
 

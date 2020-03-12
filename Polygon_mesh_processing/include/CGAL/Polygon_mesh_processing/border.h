@@ -17,6 +17,7 @@
 
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
@@ -28,9 +29,27 @@
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
+namespace internal {
 
-  namespace internal
+template<typename PolygonMesh>
+std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
+                        const PolygonMesh& pmesh)
+{
+  // if you want to use it on a non-border halfedge, just use `degree(face, mesh)`
+  CGAL_precondition(is_border(h, pmesh));
+
+  std::size_t res = 0;
+  typename boost::graph_traits<PolygonMesh>::halfedge_descriptor done = h;
+  do
   {
+    ++res;
+    h = next(h, pmesh);
+  }
+  while(h != done);
+
+  return res;
+}
+
     template<typename PM
            , typename FaceRange
            , typename HalfedgeOutputIterator>
