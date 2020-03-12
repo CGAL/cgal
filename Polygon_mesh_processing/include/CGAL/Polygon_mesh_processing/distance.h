@@ -828,7 +828,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  * @param points the points of the soup
- * @param triangles a vector containing the triangles of the soup to be sampled
+ * @param triangles a `TriangleRange` containing the triangles of the soup to be sampled
  * @param out output iterator to be filled with sample points
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
