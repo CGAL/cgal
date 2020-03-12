@@ -7,6 +7,8 @@
 #include <CGAL/Random.h>
 #include <CGAL/Real_timer.h>
 
+#include <fstream>
+
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
 using Point_set = CGAL::Point_set_3<Point_3>;

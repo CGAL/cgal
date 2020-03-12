@@ -19,6 +19,9 @@
 #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
 #include <CGAL/for_each.h>
 
+#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+
 #include <queue>
 
 namespace CGAL
