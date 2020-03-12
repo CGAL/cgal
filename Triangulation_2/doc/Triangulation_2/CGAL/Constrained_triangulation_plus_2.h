@@ -308,10 +308,10 @@ Each computed polyline is stored as a constraint of the triangulation.
 
 \warning all existing constraints will be discarded.
 
-\param is_terminal An optional function returning true if the vertex
-`v` of degree 2 is a polyline endpoint and false otherwise. If no
-function is provided, a default function is provided that returns true
-for vertices whose degree is different from 2.
+\param is_terminal An optional function returning `true` if the vertex
+`v` of degree 2 is a polyline endpoint and `false` otherwise. If
+omitted, a function always returning `false` will be used, that is no
+degree 2 vertex will be considered as a polyline endpoint.
 
 \sa `split_graph_into_polylines()`
 */ 

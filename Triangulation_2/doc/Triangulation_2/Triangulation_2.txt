@@ -1128,13 +1128,14 @@ through the edge.
 
 The `Constrained_triangulation_plus_2` structure is initialized by a
 set of polylines. As users may only be able to provide a disconnected
-segment soup as input, a member function
-[split_subconstraint_graph_into_constraints()](@ref Constrained_triangulation_plus_2::split_subconstraint_graph_into_constraints())
-is provided: this function identifies the polylines by connecting
-segments until a vertex whose degree is different than 2 is reached.
+segment soup as input, a member function \link
+Constrained_triangulation_plus_2::split_subconstraint_graph_into_constraints()
+`split_subconstraint_graph_into_constraints()` \endlink is provided:
+this function identifies the polylines by connecting segments until a
+vertex whose degree is different from 2 is reached.
 
 The following code shows how a "blind" insertion of disconnected
-polylines can be processed into a set of well-defined polyline
+segments can be processed into a set of well-defined polyline
 constraints in a `Constrained_triangulation_plus_2`:
 
 \cgalExample{Triangulation_2/segment_soup_to_polylines.cpp}
