@@ -581,7 +581,7 @@ namespace CGAL
                              const VerticesSubdomainIndices& vertices_subdomain_indices,
                              const C3t3& c3t3)
       {
-        const int upsample = 0;
+        const int upsample = 0; // can be 0, 1 or 2
 
         typedef typename C3t3::Surface_patch_index Surface_index;
         typedef typename C3t3::Subdomain_index     Subdomain_index;
@@ -618,17 +618,19 @@ namespace CGAL
           }
         }
  
-        //if (upsample > 0) {
-        //  std::cout << "Up sampling MLS " << upsample << std::endl;
-        //  for (C3t3_with_info::Facet_iterator fit = c3t3_with_info.facets_begin(); fit != c3t3_with_info.facets_end(); ++fit) {
-        //    Surface_index surf_i = triangulated_domain.make_surface_index(fit->first->subdomain_index(),
-        //      fit->first->neighbor(fit->second)->subdomain_index());
-        //    if (upsample == 1)
-        //      subdomain_sample_numbers[surf_i] ++;
-        //    else if (upsample == 2)
-        //      subdomain_sample_numbers[surf_i] += 4;
-        //  }
-        //}
+        if (upsample > 0)
+        {
+          std::cout << "Up sampling MLS " << upsample << std::endl;
+          for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
+               fit != c3t3.facets_end(); ++fit)
+          {
+            const Surface_index surf_i = c3t3.surface_patch_index(*fit);
+            if (upsample == 1)
+              subdomain_sample_numbers[surf_i] ++;
+            else if (upsample == 2)
+              subdomain_sample_numbers[surf_i] += 4;
+          }
+        }
 
         std::vector< float* > pns;
 
@@ -653,7 +655,7 @@ namespace CGAL
           {
             const Surface_index surf_i = surface_patch_index(vit, c3t3);
 
-            int fmls_id = current_subdomain_FMLS_indices[surf_i];
+            const int fmls_id = current_subdomain_FMLS_indices[surf_i];
 
             const Point_3& p = point(vit->point());
 
@@ -706,86 +708,91 @@ namespace CGAL
           }
         }
 
-//        if (upsample > 0) {
-//
-//          for (C3t3_with_info::Facet_iterator fit = c3t3_with_info.facets_begin(); fit != c3t3_with_info.facets_end(); ++fit) {
-//
-//            Surface_index surf_i = triangulated_domain.make_surface_index(fit->first->subdomain_index(),
-//              fit->first->neighbor(fit->second)->subdomain_index());
-//
-//            int fmls_id = current_subdomain_FMLS_indices[surf_i];
-//
-//            Vertex_handle vhs[3] = { fit->first->vertex(indices[fit->second][0]),
-//                                      fit->first->vertex(indices[fit->second][1]),
-//                                      fit->first->vertex(indices[fit->second][2]) };
-//            K::Vector_3 points[3] = { PointToVector(vhs[0]->point()), PointToVector(vhs[1]->point()), PointToVector(vhs[2]->point()) };
-//            K::Vector_3 normals[3] = { vertices_normals[vhs[0]->info()][surf_i], vertices_normals[vhs[1]->info()][surf_i], vertices_normals[vhs[2]->info()][surf_i] };
-//
-//            std::vector<K::Vector_3> points_to_add;
-//            std::vector<K::Vector_3> n_points_to_add;
-//
-//            //Add the barycenter of the facet
-//            K::Vector_3 barycenter = (points[0] + points[1] + points[2]) / 3.;
-//            K::Vector_3 n_barycenter = (normals[0] + normals[1] + normals[2]);
-//
-//            barycenter = (points[0] + points[1] + points[2]) / 3.;
-//            n_barycenter = (normals[0] + normals[1] + normals[2]);
-//
-//            n_barycenter = n_barycenter / CGAL::sqrt((n_barycenter * n_barycenter));
-//
-//            points_to_add.push_back(barycenter);
-//            n_points_to_add.push_back(n_barycenter);
-//
-//            if (upsample == 1) {
-//              for (int i = 0; i < 3; i++) {
-//                K::Vector_3 space_1 = barycenter - points[i];
-//
-//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
-//                point_spacing_count[fmls_id] ++;
-//              }
-//            }
-//            else if (upsample == 2) {
-//              for (int i = 0; i < 3; i++) {
-//
-//                int i1 = (i + 1) % 3;
-//                int i2 = (i + 2) % 3;
-//
-//                K::Vector_3 p = (barycenter + points[i1] + points[i2]) / 3.;
-//                K::Vector_3 n = (n_barycenter + normals[i1] + normals[i2]);
-//
-//                n = n / CGAL::sqrt(n * n);
-//
-//                points_to_add.push_back(p);
-//                n_points_to_add.push_back(n);
-//
-//                K::Vector_3 space_1 = p - barycenter;
-//                K::Vector_3 space_2 = p - points[i1];
-//                K::Vector_3 space_3 = p - points[i2];
-//
-//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
-//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_2 * space_2));
-//                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_3 * space_3));
-//
-//                point_spacing_count[fmls_id] += 3;
-//              }
-//            }
-//            for (unsigned int i = 0; i < points_to_add.size(); i++) {
-//              K::Vector_3& point = points_to_add[i];
-//
-//              pns[fmls_id][6 * current_v_count[fmls_id]] = point.x();
-//              pns[fmls_id][6 * current_v_count[fmls_id] + 1] = point.y();
-//              pns[fmls_id][6 * current_v_count[fmls_id] + 2] = point.z();
-//
-//              K::Vector_3& normal = n_points_to_add[i];
-//
-//              pns[fmls_id][6 * current_v_count[fmls_id] + 3] = normal.x();
-//              pns[fmls_id][6 * current_v_count[fmls_id] + 4] = normal.y();
-//              pns[fmls_id][6 * current_v_count[fmls_id] + 5] = normal.z();
-//
-//              current_v_count[fmls_id]++;
-//            }
-//          }
-//        }
+        if (upsample > 0)
+        {
+          for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
+               fit != c3t3.facets_end(); ++fit)
+          {
+            const Surface_index surf_i = c3t3.surface_patch_index(*fit);
+
+            const int fmls_id = current_subdomain_FMLS_indices[surf_i];
+
+            Vertex_handle vhs[3] = { fit->first->vertex(indices(fit->second, 0)),
+                                     fit->first->vertex(indices(fit->second, 1)),
+                                     fit->first->vertex(indices(fit->second, 2)) };
+            Vector_3 points[3] = { Vector_3(CGAL::ORIGIN, point(vhs[0]->point())),
+                                   Vector_3(CGAL::ORIGIN, point(vhs[0]->point())),
+                                   Vector_3(CGAL::ORIGIN, point(vhs[0]->point())) };
+            Vector_3 normals[3] = { vertices_normals.at(vhs[0]).at(surf_i),
+                                    vertices_normals.at(vhs[1]).at(surf_i),
+                                    vertices_normals.at(vhs[2]).at(surf_i) };
+
+            std::vector<Vector_3> points_to_add;
+            std::vector<Vector_3> n_points_to_add;
+
+            //Add the barycenter of the facet
+            Vector_3 barycenter = (points[0] + points[1] + points[2]) / 3.;
+            Vector_3 n_barycenter = (normals[0] + normals[1] + normals[2]);
+
+            n_barycenter = n_barycenter / CGAL::sqrt((n_barycenter * n_barycenter));
+
+            points_to_add.push_back(barycenter);
+            n_points_to_add.push_back(n_barycenter);
+
+            if (upsample == 1)
+            {
+              for (int i = 0; i < 3; i++)
+              {
+                Vector_3 space_1 = barycenter - points[i];
+
+                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
+                point_spacing_count[fmls_id] ++;
+              }
+            }
+            else if (upsample == 2)
+            {
+              for (int i = 0; i < 3; i++)
+              {
+                int i1 = (i + 1) % 3;
+                int i2 = (i + 2) % 3;
+
+                Vector_3 p = (barycenter + points[i1] + points[i2]) / 3.;
+                Vector_3 n = (n_barycenter + normals[i1] + normals[i2]);
+
+                n = n / CGAL::sqrt(n * n);
+
+                points_to_add.push_back(p);
+                n_points_to_add.push_back(n);
+
+                Vector_3 space_1 = p - barycenter;
+                Vector_3 space_2 = p - points[i1];
+                Vector_3 space_3 = p - points[i2];
+
+                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_1 * space_1));
+                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_2 * space_2));
+                point_spacing[fmls_id] += CGAL::to_double(CGAL::sqrt(space_3 * space_3));
+
+                point_spacing_count[fmls_id] += 3;
+              }
+            }
+            for (unsigned int i = 0; i < points_to_add.size(); i++)
+            {
+              Vector_3& point = points_to_add[i];
+
+              pns[fmls_id][6 * current_v_count[fmls_id]] = point.x();
+              pns[fmls_id][6 * current_v_count[fmls_id] + 1] = point.y();
+              pns[fmls_id][6 * current_v_count[fmls_id] + 2] = point.z();
+
+              Vector_3& normal = n_points_to_add[i];
+
+              pns[fmls_id][6 * current_v_count[fmls_id] + 3] = normal.x();
+              pns[fmls_id][6 * current_v_count[fmls_id] + 4] = normal.y();
+              pns[fmls_id][6 * current_v_count[fmls_id] + 5] = normal.z();
+
+              current_v_count[fmls_id]++;
+            }
+          }
+        }
 
 
         int nb_of_mls_to_create = 0;
