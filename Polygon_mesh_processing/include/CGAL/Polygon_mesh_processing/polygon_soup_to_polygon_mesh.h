@@ -222,7 +222,7 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * @tparam NamedParameters_PM a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * @param points points of the soup of polygons
-* @param polygons each element in the vector describes a polygon using the index of the points in `points`
+* @param polygons each element in the vector describes a polygon using the indices of the points in `points`
 * @param out the polygon mesh to be built
 * @param np_ps optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
