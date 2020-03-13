@@ -14,13 +14,14 @@ namespace Surface_mesh_topology {
 namespace internal {
 
 template <class Mesh_>
-class Facewidth {
-
+class Facewidth
+{
 public:
 
   using Mesh_original = Mesh_;
 
-  struct Default_weight_functor {
+  struct Default_weight_functor
+  {
     using Weight_t = unsigned int;
     template <class T>
     Weight_t operator() (T) const { return 1; }
@@ -35,14 +36,21 @@ public:
   using Path                       = CGAL::Surface_mesh_topology::Path_on_surface<Mesh_original>;
   using SNC                        = Shortest_noncontractible_cycle<Gmap>;
   
-  Facewidth(Mesh_original& gmap)
+  Facewidth(const Mesh_original& gmap, bool display_time=false)
   {
+    CGAL::Timer t;
+    if (display_time)
+    { t.start(); }
+    
     typename Gmap_wrapper::Origin_to_copy_map origin_to_radial;
-    Gmap_wrapper::copy(m_radial_map, gmap, origin_to_radial, m_copy_to_origin);
+    Gmap_wrapper::copy(m_radial_map, const_cast<Mesh_original&>(gmap),
+                       origin_to_radial, m_copy_to_origin);
     m_copy_to_origin.clear();
-    Gmap_wrapper::copy(m_gmap, gmap, m_origin_to_copy, m_copy_to_origin);
+    Gmap_wrapper::copy(m_gmap, const_cast<Mesh_original&>(gmap),
+                       m_origin_to_copy, m_copy_to_origin);
     // Initialize 0-attributes for m_gmap
-    for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it) {
+    for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it)
+    {
       if (m_gmap.template attribute<0>(it)==NULL)
       { m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>()); }
     }
@@ -65,9 +73,7 @@ public:
     std::vector<Dart_handle> edge_list;
     for (auto it = m_radial_map.template one_dart_per_cell<1>().begin(),
               itend = m_radial_map.template one_dart_per_cell<1>().end(); it != itend; ++it)
-    {
-      edge_list.push_back(it);
-    }
+    { edge_list.push_back(it); }
 
     // m_radial_map hasn't been changed so far
 
@@ -86,27 +92,32 @@ public:
     }
 
     // Initialize 1-attributes of m_radial_map
-    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it) {
+    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it)
+    {
       if (m_radial_map.template attribute<1>(it)==NULL)
       { m_radial_map.template set_attribute<1>(it, m_radial_map.template create_attribute<1>()); }
     }
 
     // Assign values
-    for (int i = 0; i < centroids.size(); ++i) {
+    for (int i = 0; i < centroids.size(); ++i)
+    {
       auto u = centroids[i];
       bool first_run = true;
-      for (Dart_handle it = u; first_run || it != u; it = m_radial_map.next(m_radial_map.opposite2(it))) {
+      for (Dart_handle it = u; first_run || it != u; it = m_radial_map.next(m_radial_map.opposite2(it)))
+      {
         first_run = false;
         m_radial_map.template info<1>(it) = i;
       }
     }
 
     // Initialize 0-attributes of m_radial_map
-    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it) {
+    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it)
+    {
       if (m_radial_map.template attribute<0>(it)==NULL)
       { m_radial_map.template set_attribute<0>(it, m_radial_map.template create_attribute<0>()); }
     }
-    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it) {
+    for (auto it = m_radial_map.darts().begin(), itend = m_radial_map.darts().end(); it != itend; ++it)
+    {
       m_radial_map.template info<0>(it) = -1;
     }
     typedef typename Gmap::template Attribute_handle<0>::type Attribute_handle_0;
@@ -123,10 +134,20 @@ public:
       CGAL_assertion(m_radial_map.template is_removable<1>(dh));
       m_radial_map.template remove_cell<1>(dh);
     }
+
+    if (display_time)
+    {
+      t.stop();
+      std::cout<<" [TIME] Facewidth constructor: "<<t.time()<<" seconds."<<std::endl;
+    }
   }
 
-  std::vector<Dart_handle_original> compute_facewidth()
+  std::vector<Dart_handle_original> compute_facewidth(bool display_time=false)
   {
+    CGAL::Timer t;
+    if (display_time)
+    { t.start(); }
+
     m_cycle.clear();
     // Find edgewidth of the radial map
     SNC snc_to_find_facewidth(m_radial_map);
@@ -152,10 +173,17 @@ public:
       last_vertex_index = vertex_index;
       last_face_index = face_index;
     }
+
+    if (display_time)
+    {
+      t.stop();
+      std::cout<<" [TIME] compute_facewidth: "<<t.time()<<" seconds."<<std::endl;
+    }
+    
     return m_cycle;
   }
 
-private:
+protected:
   Gmap m_gmap, m_radial_map;
   std::vector<Dart_handle> m_vertex_list, m_face_list;
   std::vector<Dart_handle_original> m_cycle;
