@@ -27,8 +27,10 @@ int main(int argc, char** argv)
   CGAL::Real_timer timer;
   timer.start();
 
+  // Compute the extreme points of the mesh, and then a tightly fitted oriented bounding box
   std::array<Point, 8> obb_points;
-  CGAL::oriented_bounding_box(sm, obb_points);
+  CGAL::oriented_bounding_box(sm, obb_points,
+                              CGAL::parameters::use_convex_hull(true));
 
   std::cout << "Elapsed time: " << timer.time() << std::endl;
 
