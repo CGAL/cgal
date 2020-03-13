@@ -48,6 +48,7 @@ void bench_finding_obb(const std::string fname)
     convex_hull_3(mesh, poly);
     timer.stop();
     std::cout << "takes : " << timer.time() << " seconds to find the convex hull\n";
+    std::cout << num_vertices(poly) << " vertices on the convex hull" << std::endl;
 
     // 2) using convex hull
     timer.reset();
