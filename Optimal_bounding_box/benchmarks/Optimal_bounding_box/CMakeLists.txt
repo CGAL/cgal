@@ -25,5 +25,4 @@ endif()
 
 create_single_source_cgal_program("bench_obb.cpp")
 create_single_source_cgal_program("bench_perfomance.cpp")
-create_single_source_cgal_program("bench_custom.cpp")
 create_single_source_cgal_program("bench_fitness_function.cpp")
