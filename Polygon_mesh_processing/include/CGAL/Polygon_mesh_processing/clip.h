@@ -301,14 +301,14 @@ clip_to_bbox(const Plane_3& plane,
   *   \cgalParamBegin{throw_on_self_intersection} if `true`,
   *      the set of triangles closed to the intersection of `tm` and `clipper` will be
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.
+  *      will be thrown if at least one is found.  Default value is `false`.
   *   \cgalParamEnd
   *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e. `tm` will be kept closed).
+  *      (i.e. `tm` will be kept closed). Default value is `false`.
   *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false`, the parts of `tm` coplanar with `clipper` will not be part of the output.
-  *                                        This option has an effect only if a surface and not a volume is clipped (i.e. if `clip_volume` is `false` or if `tm` is open).
+  *   \cgalParamBegin{use_compact_clipper} if `false`, the parts of `tm` coplanar with `clipper`
+  *      will not be part of the output. Default value is `true`.
   *   \cgalParamEnd
   * \cgalNamedParamsEnd
   *
@@ -382,14 +382,14 @@ bool dispatch_clip_call(TriangleMesh& tm, TriangleMesh& clipper,
   *   \cgalParamBegin{throw_on_self_intersection} if `true`,
   *      the set of triangles closed to the intersection of `tm` and `plane` will be
   *      checked for self-intersections and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
-  *      will be thrown if at least one is found.
+  *      will be thrown if at least one is found. Default value is `false`.
   *   \cgalParamEnd
   *   \cgalParamBegin{clip_volume} if `true` and `tm` is closed, the clipping will be done on
   *      the volume \link coref_def_subsec bounded \endlink by `tm` rather than on its surface
-  *      (i.e. `tm` will be kept closed).
+  *      (i.e. `tm` will be kept closed). Default value is `false`.
   *   \cgalParamEnd
-  *   \cgalParamBegin{use_compact_clipper} if `false` and `clip_volume` is `false` and `tm` is open, the parts of `tm` coplanar with `plane`
-  *                                        will not be part of the output.
+  *   \cgalParamBegin{use_compact_clipper} if `false` the parts of `tm` coplanar with `plane`
+  *      will not be part of the output. Default value is `true`.
   * \cgalNamedParamsEnd
   *
   * @return `true` if the output surface mesh is manifold.
