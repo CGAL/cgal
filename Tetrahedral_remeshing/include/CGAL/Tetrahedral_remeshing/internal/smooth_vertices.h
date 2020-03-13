@@ -274,11 +274,11 @@ namespace CGAL
         for (typename C3T3::Facet_iterator fit = c3t3.facets_begin();
              fit != c3t3.facets_end(); ++fit)
         {
-          Surface_patch_index surface_index = c3t3.surface_patch_index(*fit);
+          const Surface_patch_index surface_index = c3t3.surface_patch_index(*fit);
 
           for (int i = 0; i < 3; i++)
           {
-            Vertex_handle vi = fit->first->vertex(indices(fit->second, i));
+            const Vertex_handle vi = fit->first->vertex(indices(fit->second, i));
 
             if (vertices_subdomain_indices.at(vi).size() > 2)
             {
