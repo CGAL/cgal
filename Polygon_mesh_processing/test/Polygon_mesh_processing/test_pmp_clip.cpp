@@ -51,6 +51,17 @@ void test()
   CGAL::clear(tm1);
   CGAL::clear(tm2);
 
+
+  // test with a iso-cuboid
+  input.open("data-coref/elephant.off");
+  input >> tm1;
+  input.close();
+  K::Iso_cuboid_3 iso_cuboid(K::Point_3(0,0,0), K::Point_3(0.4, 0.6, 0.4));
+
+  PMP::clip(tm1, iso_cuboid, params::clip_volume(true));
+  assert(CGAL::is_closed(tm1));
+  CGAL::clear(tm1);
+
   // test with a plane
   input.open("data-coref/cube.off");
   input >> tm1;
@@ -271,6 +282,49 @@ void test()
   assert(vertices(tm1).size()==0);
   CGAL::clear(tm1);
   CGAL::clear(tm2);
+
+// test combinaison of use_compact_clipper and clip_volume
+  input.open("data-coref/cube.off");
+  input >> tm1;
+  input.close();
+
+  //  -> closed mesh, true/true
+  PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(true));
+  assert(CGAL::is_closed(tm1));
+  assert(faces(tm1).size()==12);
+
+  //  -> closed mesh, false/true
+  PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(false).clip_volume(true));
+  assert(faces(tm1).size()==12);
+  assert(CGAL::is_closed(tm1));
+
+  //  -> closed mesh, true/false
+  PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(false));
+  assert(faces(tm1).size()==12);
+  assert(CGAL::is_closed(tm1));
+
+  //  -> closed mesh, false/false
+  PMP::clip(tm1, K::Plane_3(1,0,0,-1), params::use_compact_clipper(false).clip_volume(false));
+  assert(faces(tm1).size()==10);
+  assert(!CGAL::is_closed(tm1));
+
+  // -> open mesh true/true
+  PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(true));
+  assert(faces(tm1).size()==10);
+
+  // -> open mesh true/false
+  PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(false));
+  assert(faces(tm1).size()==10);
+
+  // -> open mesh false/false
+  PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(false).clip_volume(false));
+  assert(faces(tm1).size()==8);
+
+  // -> open mesh false/true
+  PMP::clip(tm1, K::Plane_3(0,-1,0,0), params::use_compact_clipper(false).clip_volume(true));
+  assert(faces(tm1).size()==6);
+  CGAL::clear(tm1);
+// done!
 
   // test special case
   input.open("data-clip/tm_1.off");

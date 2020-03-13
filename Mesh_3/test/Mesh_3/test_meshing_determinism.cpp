@@ -13,9 +13,9 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
-
 #ifdef CGAL_LINKED_WITH_TBB
-#  include <tbb/task_scheduler_init.h>
+#define TBB_PREVIEW_GLOBAL_CONTROL 1
+#  include <tbb/global_control.h>
 #endif
 
 // To avoid verbose function and named parameters call
@@ -119,7 +119,7 @@ int main(int, char*[])
 {
   test<CGAL::Sequential_tag>();
 #ifdef CGAL_LINKED_WITH_TBB
-  tbb::task_scheduler_init init(1);
+  tbb::global_control c(tbb::global_control::max_allowed_parallelism, 1);
   test<CGAL::Parallel_tag>();
 #endif
 }

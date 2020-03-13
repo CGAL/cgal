@@ -7,6 +7,7 @@
 #include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Three/exceptions.h>
 #include <CGAL/Qt/debug.h>
+#include <CGAL/double.h>
 
 #include <QJsonArray>
 #include <QtDebug>
@@ -1007,13 +1008,17 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
   
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+  double bbox_diag = CGAL::approximate_sqrt(
+        CGAL::square(xmax - xmin)
+        + CGAL::square(ymax - ymin)
+        + CGAL::square(zmax - zmin));
   
   CGAL::qglviewer::Vec offset(0,0,0);
   
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
-  if((std::log2)(l_dist) > 13.0 )
+  if((std::log2)(l_dist/bbox_diag) > 13.0 )
     for(int i=0; i<3; ++i)
     {
       offset[i] = -bbox_center[i];
@@ -1493,6 +1498,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
     }
   }
   menu->addMenu(ui->menuOperations);
+
   if(menu)
     menu->exec(global_pos);
 }
@@ -1755,6 +1761,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
         QAction* saveas = menu.addAction(tr("&Save as..."));
         connect(saveas,  SIGNAL(triggered()),
                 this, SLOT(on_actionSaveAs_triggered()));
+        menu.addMenu(ui->menuOperations);
         menu.exec(sender->mapToGlobal(p));
         return;
       }
@@ -2189,7 +2196,7 @@ void MainWindow::on_actionShowHide_triggered()
     item->redraw();
   }
   scene->setUpdatesEnabled(true);
-  updateViewersBboxes(false);
+//  updateViewersBboxes(false); //Not usable :when the scene changes scale, smaller items disappear.
 }
 
 void MainWindow::on_actionSetPolyhedronA_triggered()

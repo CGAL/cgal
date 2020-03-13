@@ -109,6 +109,12 @@ template<typename AT, typename ET, typename AC, typename EC, typename E2A, typen
 class Lazy_rep_XXX :
   public Lazy_rep< AT, ET, E2A >, private EC
 {
+  // `default_construct<T>()` is the same as `T{}`. But, this is a
+  // workaround to a MSVC-2015 bug (fixed in MSVC-2017): its parser
+  // seemed confused by `T{}` somewhere below.
+  template <typename T>
+  static T default_construct() { return T(); }
+
   // Lazy_rep_0 does not inherit from EC or take a parameter AC. It has different constructors.
   static_assert(sizeof...(L)>0, "Use Lazy_rep_0 instead");
   template <class Ei, class Ai, class E2Ai, class Ki> friend class Lazy_kernel_base;
@@ -138,7 +144,7 @@ class Lazy_rep_XXX :
   // Currently we construct the vectors, then move them into the tuple. It would be nicer to construct them in their final destination, because eventually we will also have arrays instead of vectors.
   template<class...T,class LLL,class...LL>
   Lazy_rep_XXX(Lazy_internal::typelist<T...>, const AC& ac, const EC& ec, LLL const&lll, LL const&...ll) :
-    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(Lazy_internal::do_extract(T{},lll)...)
+    Lazy_rep<AT, ET, E2A>(ac(CGAL::approx(ll)...)), EC(ec), l(Lazy_internal::do_extract(default_construct<T>(),lll)...)
   {
     //this->set_depth(std::max({ -1, (int)CGAL::depth(ll)...}) + 1);
     this->set_depth(1); // FIXME: now that we have ranges, we could actually compute the depth if we cared...

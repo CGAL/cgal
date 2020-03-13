@@ -408,7 +408,7 @@ typedef unsigned int FPU_CW_t;
 
 #elif defined __mips__
 #define CGAL_IA_SETFPCW(CW) asm volatile ("ctc1 %0,$31" : :"r" (CW))
-#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW))
+#define CGAL_IA_GETFPCW(CW) asm volatile ("cfc1 %0,$31" : "=r" (CW)); CW &= 3
 typedef unsigned int FPU_CW_t;
 #define CGAL_FE_TONEAREST    (0x0)
 #define CGAL_FE_TOWARDZERO   (0x1)
