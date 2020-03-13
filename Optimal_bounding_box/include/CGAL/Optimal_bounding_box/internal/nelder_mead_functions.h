@@ -70,10 +70,10 @@ const Matrix nm_centroid(const Matrix& S1,
 
 // It's a 3D simplex with 4 rotation matrices as vertices
 template <typename Simplex, typename PointRange, typename Traits>
-void nelder_mead(Simplex& simplex,
-                 const PointRange& points,
+void nelder_mead(const PointRange& points,
                  const std::size_t nelder_mead_iterations,
-                 const Traits& traits)
+                 const Traits& traits,
+                 Simplex& simplex)
 {
   typedef typename Traits::FT                                 FT;
   typedef typename Traits::Matrix                             Matrix;

@@ -168,7 +168,7 @@ public:
 #endif
 
       for(std::size_t s=0; s<population_size; ++s)
-        nelder_mead(m_population[s], m_points, nelder_mead_iterations, m_traits);
+        nelder_mead(m_points, nelder_mead_iterations, m_traits, m_population[s]);
 
       // stopping criteria
       Fitness_map fitness_map(m_population, m_points);
