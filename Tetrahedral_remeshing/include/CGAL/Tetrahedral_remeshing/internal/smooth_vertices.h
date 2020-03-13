@@ -69,7 +69,7 @@ namespace CGAL
               n = opp(n);
             else if (si == si_mirror)
             {
-              std::cout << "Check normal!" << std::endl;
+              std::cout << "TODO : Check normal when subdomain is the same on both sides" << std::endl;
             }
 
             for (int i = 0; i < 3; ++i)
@@ -80,7 +80,7 @@ namespace CGAL
               if (patch_vector_it == normals_map.end()
                 || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
               {
-                normals_map[vi][surf_i] = CGAL::NULL_VECTOR;
+                normals_map[vi][surf_i] = n;
               }
               else
               {
@@ -89,6 +89,11 @@ namespace CGAL
             }
           }
         }
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        std::ofstream os("dump_normals.polylines.txt");
+        std::ofstream osn("dump_normals_normalized.polylines.txt");
+#endif
 
         //normalize the computed normals
         for (typename VertexNormalsMap::iterator vnm_it = normals_map.begin();
@@ -99,9 +104,24 @@ namespace CGAL
                it != vnm_it->second.end(); ++it)
           {
             Vector_3& n = it->second;
-            n = scale(n, 1. / CGAL::approximate_sqrt(n * n));
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+            auto p = point(vnm_it->first->point());
+            os << "2 " << p << " " << (p + n) << std::endl;
+#endif
+
+            CGAL::Tetrahedral_remeshing::normalize(n, c3t3.triangulation().geom_traits());
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+            osn << "2 " << p << " " << (p + n) << std::endl;
+#endif
           }
         }
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        os.close();
+        osn.close();
+#endif
       }
 
 
@@ -417,6 +437,8 @@ namespace CGAL
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         std::ofstream os_surf("smooth_surfaces.polylines.txt");
         std::ofstream os_vol("smooth_volume.polylines.txt");
+        std::ofstream os_mls("smooth_mls_projections.txt");
+        std::ofstream os_normal("smooth_normal_projections.txt");
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
@@ -518,7 +540,6 @@ namespace CGAL
                 //Check if the mls surface exists to avoid degenrated cases
                 Vector_3 mls_projection;
                 if (project(si, normal_projection, mls_projection, subdomain_FMLS, subdomain_FMLS_indices)) {
-                  std::cout << "project OK" << std::endl;
                   final_position = final_position + mls_projection;
                 }
                 else {
