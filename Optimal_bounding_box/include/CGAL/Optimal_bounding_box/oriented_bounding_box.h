@@ -160,7 +160,6 @@ void construct_oriented_bounding_box(const PointRange& points,
                                      CGAL::Random& rng,
                                      const Traits& traits)
 {
-  typedef typename Traits::Matrix                                    Matrix;
   typedef typename Traits::Point_3                                   Point;
 
   CGAL_static_assertion((std::is_same<typename boost::range_value<PointRange>::type, Point>::value));
@@ -350,8 +349,6 @@ void oriented_bounding_box(const PolygonMesh& pmesh,
 
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
-
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
 
   typedef typename CGAL::GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type  VPM;
 
