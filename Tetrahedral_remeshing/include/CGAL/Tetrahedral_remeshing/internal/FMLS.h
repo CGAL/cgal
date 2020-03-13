@@ -581,7 +581,7 @@ namespace CGAL
                              const VerticesSubdomainIndices& vertices_subdomain_indices,
                              const C3t3& c3t3)
       {
-        const int upsample = 0; // can be 0, 1 or 2
+        const int upsample = 1; // can be 0, 1 or 2
 
         typedef typename C3t3::Surface_patch_index Surface_index;
         typedef typename C3t3::Subdomain_index     Subdomain_index;
@@ -696,8 +696,8 @@ namespace CGAL
                   && edgeMap.find(e) == edgeMap.end())
                 {
                   edgeMap[e] = 0;
-                  Surface_index surf_i = c3t3.surface_patch_index(*fit);
-                  int fmls_id = current_subdomain_FMLS_indices[surf_i];
+                  const Surface_index surf_i = c3t3.surface_patch_index(*fit);
+                  const int fmls_id = current_subdomain_FMLS_indices[surf_i];
 
                   point_spacing[fmls_id] += CGAL::approximate_sqrt(
                     CGAL::squared_distance(point(vh0->point()), point(vh1->point())));
@@ -721,8 +721,8 @@ namespace CGAL
                                      fit->first->vertex(indices(fit->second, 1)),
                                      fit->first->vertex(indices(fit->second, 2)) };
             Vector_3 points[3] = { Vector_3(CGAL::ORIGIN, point(vhs[0]->point())),
-                                   Vector_3(CGAL::ORIGIN, point(vhs[0]->point())),
-                                   Vector_3(CGAL::ORIGIN, point(vhs[0]->point())) };
+                                   Vector_3(CGAL::ORIGIN, point(vhs[1]->point())),
+                                   Vector_3(CGAL::ORIGIN, point(vhs[2]->point())) };
             Vector_3 normals[3] = { vertices_normals.at(vhs[0]).at(surf_i),
                                     vertices_normals.at(vhs[1]).at(surf_i),
                                     vertices_normals.at(vhs[2]).at(surf_i) };
