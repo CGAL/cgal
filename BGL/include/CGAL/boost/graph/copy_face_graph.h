@@ -40,7 +40,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
-  typedef typename boost::graph_traits<TargetMesh>::vertex_iterator   tm_vertex_iterator;
+  typedef typename boost::graph_traits<TargetMesh>::halfedge_iterator tm_halfedge_iterator;
 
   typedef typename boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
@@ -56,12 +56,13 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
     conv;
 
   typedef CGAL::dynamic_halfedge_property_t<tm_halfedge_descriptor> Dyn_h_tag;
-  typename boost::property_map<SourceMesh, Dyn_h_tag >::const_type hmap = get(Dyn_h_tag(), sm);
+  typename boost::property_map<SourceMesh, Dyn_h_tag >::const_type hs_to_ht = get(Dyn_h_tag(), sm);
 
   std::vector<tm_halfedge_descriptor> tm_border_halfedges;
   std::vector<sm_halfedge_descriptor> sm_border_halfedges;
 
-  tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
+  const tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
+  const tm_vertex_descriptor tm_null_vertex = boost::graph_traits<TargetMesh>::null_vertex();
 
   reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(vertices(sm).size()),
               static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(edges(sm).size()),
@@ -78,8 +79,8 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
     set_next( tm_h, tm_h, tm );
     set_next( tm_h_opp, tm_h_opp, tm );
 
-    put(hmap, sm_h, tm_h);
-    put(hmap, sm_h_opp, tm_h_opp);
+    put(hs_to_ht, sm_h, tm_h);
+    put(hs_to_ht, sm_h_opp, tm_h_opp);
     *h2h++=std::make_pair(sm_h, tm_h);
     *h2h++=std::make_pair(sm_h_opp, tm_h_opp);
 
@@ -107,6 +108,8 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
       set_target(tm_h, tm_h_tgt, tm);
       put(tm_vpm, tm_h_tgt, conv(get(sm_vpm, sm_h_tgt)));
     }
+    else
+      set_target(tm_h, tm_null_vertex, tm);
     if ( halfedge(sm_h_src,sm)==sm_h_opp )
     {
       tm_vertex_descriptor tm_h_src = add_vertex(tm);
@@ -115,6 +118,8 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
       set_target(tm_h_opp, tm_h_src, tm);
       put(tm_vpm, tm_h_src, conv(get(sm_vpm, sm_h_src)));
     }
+    else
+      set_target(tm_h_opp, tm_null_vertex, tm);
   }
   //create faces and connect halfedges
   for(sm_face_descriptor sm_f : faces(sm))
@@ -123,13 +128,13 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
     *f2f++=std::make_pair(sm_f, tm_f);
 
     sm_halfedge_descriptor sm_h_i=halfedge(sm_f, sm);
-    tm_halfedge_descriptor tm_h_prev = get(hmap, prev(sm_h_i, sm));
+    tm_halfedge_descriptor tm_h_prev = get(hs_to_ht, prev(sm_h_i, sm));
     set_halfedge(tm_f, tm_h_prev, tm);
 
     CGAL_precondition(*halfedges_around_face(sm_h_i, sm).first == sm_h_i);
     for(sm_halfedge_descriptor sm_h : halfedges_around_face(sm_h_i, sm))
     {
-      tm_halfedge_descriptor tm_h = get(hmap, sm_h);
+      tm_halfedge_descriptor tm_h = get(hs_to_ht, sm_h);
       set_next(tm_h_prev, tm_h, tm);
       set_face(tm_h, tm_f, tm);
       tm_h_prev=tm_h;
@@ -151,22 +156,48 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                   halfedges_around_face(next(sm_border_halfedges[i], sm), sm))
     {
       CGAL_assertion(next(tm_h_prev, tm) == tm_h_prev);
-      tm_h = get(hmap, sm_h);
+      tm_h = get(hs_to_ht, sm_h);
       set_next(tm_h_prev, tm_h, tm);
       tm_h_prev=tm_h;
     }
   }
   // update halfedge vertex of all but the vertex halfedge
-  for(tm_vertex_iterator vit = vertices(tm).first;
-      vit != vertices(tm).second; ++vit)
+  for(tm_vertex_descriptor v : vertices(tm))
   {
-    tm_vertex_descriptor v = *vit;
     tm_halfedge_descriptor h = halfedge(v, tm);
     tm_halfedge_descriptor next_around_vertex=h;
     do{
       next_around_vertex=opposite(next(next_around_vertex, tm), tm);
       set_target(next_around_vertex, v, tm);
     }while(h != next_around_vertex);
+  }
+
+  // detect if there are some non-manifold umbrellas and fix missing halfedge target pointers
+  for (tm_halfedge_iterator it=halfedges(tm).first; it!=halfedges(tm).second; ++it)
+  {
+    if (target(*it, tm) == tm_null_vertex)
+    {
+      // create and fill a map from target halfedge to source halfedge
+      typedef CGAL::dynamic_halfedge_property_t<sm_halfedge_descriptor> Dyn_th_tag;
+      typename boost::property_map<TargetMesh, Dyn_th_tag >::type ht_to_hs = get(Dyn_th_tag(), tm);
+      for (sm_halfedge_descriptor hs : halfedges(sm))
+        put(ht_to_hs, get(hs_to_ht, hs), hs);
+
+      for(; it!=halfedges(tm).second; ++it)
+      {
+        if (target(*it, tm) == tm_null_vertex)
+        {
+          // we recover tm_v using the halfedge associated to the target vertex of
+          // the halfedge in sm corresponding to *it. This is working because we
+          // set the vertex halfedge pointer to the "same" halfedges.
+          tm_vertex_descriptor tm_v =
+            target( get(hs_to_ht, halfedge(target(get(ht_to_hs, *it), sm), sm)), tm);
+          for(tm_halfedge_descriptor ht : halfedges_around_target(*it, tm))
+            set_target(ht, tm_v, tm);
+        }
+      }
+      break;
+    }
   }
 }
 
