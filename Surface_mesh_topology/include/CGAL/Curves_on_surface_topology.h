@@ -36,7 +36,7 @@ public:
   //using Reduced_map = typename Minimal_quadrangulation::Reduced_map;
   using Shortest_noncontractible_cycle   = typename internal::Shortest_noncontractible_cycle<Mesh>;
   using Facewidth                        = typename internal::Facewidth<Mesh>; 
-  // BUG using Dart_handle                      = typename internal::Generic_map_selector<Mesh>::Dart_handle_original;
+  using Dart_handle                      = typename internal::Generic_map_selector<Mesh>::Dart_handle_original;
 
   Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
     m_original_mesh(amesh),
