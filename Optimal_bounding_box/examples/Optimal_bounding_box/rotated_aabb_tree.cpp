@@ -22,13 +22,14 @@ typedef boost::graph_traits<Surface_mesh>::vertex_descriptor   vertex_descriptor
 
 struct Aff_tr_fct
 {
-  Aff_tr_fct(const Aff_transformation& at, const Surface_mesh& sm) : m_at(at), m_sm(sm) { }
+  Aff_tr_fct() : m_at(nullptr), m_sm(nullptr) { }
+  Aff_tr_fct(const Aff_transformation& at, const Surface_mesh& sm) : m_at(&at), m_sm(&sm) { }
 
-  Point operator()(const vertex_descriptor v) const { return m_at.transform(m_sm.point(v)); }
+  Point operator()(const vertex_descriptor v) const { return m_at->transform(m_sm->point(v)); }
 
 private:
-  const Aff_transformation& m_at;
-  const Surface_mesh& m_sm;
+  const Aff_transformation* m_at;
+  const Surface_mesh* m_sm;
 };
 
 int main(int argc, char** argv)
@@ -46,10 +47,6 @@ int main(int argc, char** argv)
   CGAL::oriented_bounding_box(sm, at);
 
   // functor to apply the affine transformation to a vertex of the mesh
-
-     // @tmp with a lambda...
-  // auto aff_tr_fct = [&at, &sm] (const vertex_descriptor v) -> Point { return at.transform(sm.point(v)); };
-     // @tmp with a struct...
   Aff_tr_fct aff_tr_fct(at, sm);
   auto aff_tr_vpm = boost::make_function_property_map<vertex_descriptor>(aff_tr_fct);
 
