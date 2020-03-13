@@ -61,11 +61,11 @@ private:
 
 public:
   /// Returns a default-constructed construction object
-  Construct_bbox_3 construct_bbox_3_object() const { return Construct_bbox_3(); }
+  static Construct_bbox_3 construct_bbox_3_object() { return Construct_bbox_3(); }
 
   /// Performs the QR-decomposition of the matrix `m` to a unitary matrix and an upper triagonal
   /// and returns the unitary matrix
-  Matrix get_Q(const Matrix& m) const
+  static Matrix get_Q(const Matrix& m)
   {
     Eigen::HouseholderQR<EigenType> qr(m.eigen_object());
     return Matrix(EigenType(qr.householderQ()));
