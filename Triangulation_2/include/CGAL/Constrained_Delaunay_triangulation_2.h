@@ -34,6 +34,7 @@
 #include <CGAL/internal/info_check.h>
 #include <CGAL/is_iterator.h>
 
+#include <boost/container/flat_set.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 
@@ -126,7 +127,7 @@ public:
   typedef typename Ctr::List_constraints List_constraints;
 
   typedef internal::Cdt_2_less_edge<CDt> Less_edge;
-  typedef std::set<Edge, Less_edge> Edge_set;
+  typedef boost::container::flat_set<Edge, Less_edge> Edge_set;
 
   //Tag to distinguish Delaunay from regular triangulations
   typedef Tag_false Weighted_tag;
