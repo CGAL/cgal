@@ -580,6 +580,15 @@ namespace Tetrahedral_remeshing
     return true;
   }
 
+  template<typename Gt>
+  void normalize(typename Gt::Vector_3& v, const Gt& gt)
+  {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
+    if (!typename Gt::Equal_3()(v, CGAL::NULL_VECTOR))
+      PMP::internal::normalize(v, gt);
+  }
+
   template<typename Facet, typename Gt>
   typename Gt::Vector_3 normal(const Facet& f, const Gt& gt)
   {
@@ -587,19 +596,30 @@ namespace Tetrahedral_remeshing
     typedef typename Gt::Vector_3 Vector;
     typedef typename Gt::Point_3  Point;
 
-    Point p0 = point(f.first->vertex((f.second + 1) % 4)->point());
-    Point p1 = point(f.first->vertex((f.second + 2) % 4)->point());
-    const Point& p2 = point(f.first->vertex((f.second + 3) % 4)->point());
+    const int i = f.second;
 
-    if (f.second % 2 == 0)//equivalent to the commented orientation test
-      std::swap(p0, p1);
+    const Point& pa = point(f.first->vertex(indices(i, 0))->point());
+    const Point& pb = point(f.first->vertex(indices(i, 1))->point());
+    const Point& pc = point(f.first->vertex(indices(i, 2))->point());
 
-    Vector n = PMP::internal::triangle_normal(p0, p1, p2, gt);
-
-    if (!typename Gt::Equal_3()(n, CGAL::NULL_VECTOR))
-      PMP::internal::normalize(n, gt);
+    Vector n = CGAL::cross_product(pb - pa, pc - pa);
+    n = n / CGAL::sqrt(n * n);
 
     return n;
+
+//    Point p0 = point(f.first->vertex((f.second + 1) % 4)->point());
+//    Point p1 = point(f.first->vertex((f.second + 2) % 4)->point());
+//    const Point& p2 = point(f.first->vertex((f.second + 3) % 4)->point());
+//
+//    //if (f.second % 2 == 0)//equivalent to the commented orientation test
+//    //  std::swap(p0, p1);
+//
+//    Vector n = PMP::internal::triangle_normal(p0, p1, p2, gt);
+//
+//    if (!typename Gt::Equal_3()(n, CGAL::NULL_VECTOR))
+//      PMP::internal::normalize(n, gt);
+
+//    return n;
   }
 
   template<typename C3t3, typename CellSelector, typename OutputIterator>
