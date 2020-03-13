@@ -49,11 +49,11 @@ public:
     // Initialize m_is_hole
     try
     {
-      m_is_hole = m_gmap.get_new_mark();
+      m_is_hole=m_gmap.get_new_mark();
     }
     catch (typename Gmap::Exception_no_more_available_mark)
     {
-      std::cerr << "No more free mark, exit." << std::endl;
+      std::cerr<<"No more free mark, exit."<<std::endl;
       exit(-1);
     }
     m_gmap.negate_mark(m_is_hole);
@@ -61,16 +61,16 @@ public:
     m_gmap.template close<2>();
     m_gmap.negate_mark(m_is_hole);
 
-    for (auto it = m_gmap.darts().begin(), itend = m_gmap.darts().end(); it != itend; ++it)
+    for (auto it=m_gmap.darts().begin(), itend=m_gmap.darts().end(); it!=itend; ++it)
     {
-      if (m_gmap.template attribute<0>(it)==NULL)
+      if (m_gmap.template attribute<0>(it)==nullptr)
       { m_gmap.template set_attribute<0>(it, m_gmap.template create_attribute<0>()); }
       // if (m_gmap.template attribute<1>(it)==NULL) // For debug purpose only
       // { m_gmap.template set_attribute<1>(it, m_gmap.template create_attribute<1>()); }
     }
     // std::cerr << '\n';
-    for (auto it = m_gmap.template one_dart_per_cell<2>().begin(), 
-           itend = m_gmap.template one_dart_per_cell<2>().end(); it != itend; ++it)
+    for (auto it=m_gmap.template one_dart_per_cell<2>().begin(), 
+           itend=m_gmap.template one_dart_per_cell<2>().end(); it!=itend; ++it)
     { m_face_list.push_back(it); }
     for (auto it = m_gmap.template one_dart_per_cell<1>().begin(), 
               itend = m_gmap.template one_dart_per_cell<1>().end(); it != itend; ++it)
@@ -140,21 +140,24 @@ public:
 
     m_cycle.clear();
     bool first_check = true;
-    typename WeightFunctor::Weight_t min_length = 0;
-    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(),
-              itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it) 
+    typename WeightFunctor::Weight_t min_length=0;
+    for (auto it=m_gmap.template one_dart_per_cell<0>().begin(),
+           itend=m_gmap.template one_dart_per_cell<0>().end(); it!=itend; ++it)
     {
       typename WeightFunctor::Weight_t temp_length;
-      if (first_check) {
+      if (first_check)
+      {
         if (!compute_cycle(it, m_cycle, &temp_length, NULL, wf)) continue;
         min_length = temp_length;
         first_check = false;
-      } else {
+      }
+      else
+      {
         if (compute_cycle(it, m_cycle, &temp_length, &min_length, wf))
-          min_length = temp_length;
+        { min_length = temp_length; }
       }
     }
-    if (length != NULL) *length = min_length;
+    if (length!=nullptr) { *length=min_length; }
 
     if (display_time)
     {
@@ -204,7 +207,7 @@ protected:
   void compute_Dijkstra_tree(Dart_handle root, Dart_container& spanning_tree,
                              std::vector<Distance_>& distance_from_root,
                              std::vector<int>& trace_index,
-                             const WeightFunctor& wf = Default_weight_functor())
+                             const WeightFunctor& wf=Default_weight_functor())
   {
     // Preparation
     Dijkstra_comparator<Distance_> dc (distance_from_root);
@@ -213,11 +216,11 @@ protected:
     size_type vertex_visited;
     try
     {
-      vertex_visited = m_gmap.get_new_mark();
+      vertex_visited=m_gmap.get_new_mark();
     }
     catch (typename Gmap::Exception_no_more_available_mark)
     {
-      std::cerr << "No more free mark, exit." << std::endl;
+      std::cerr<<"No more free mark, exit."<<std::endl;
       exit(-1);
     }
     // Begin Dijkstra
@@ -279,9 +282,7 @@ protected:
     int vertex_index = 0;
     size_type vertex_visited;
     try
-    {
-      vertex_visited = m_gmap.get_new_mark();
-    }
+    { vertex_visited=m_gmap.get_new_mark(); }
     catch (typename Gmap::Exception_no_more_available_mark)
     {
       std::cerr << "No more free mark, exit." << std::endl;
@@ -289,7 +290,7 @@ protected:
     }
     // Begin BFS
     q.push(0);
-    m_gmap.template info<0>(root) = vertex_index;
+    m_gmap.template info<0>(root)=vertex_index;
     m_gmap.template mark_cell<0>(root, vertex_visited);
     distance_from_root.push_back(0);
     while (q.size())
@@ -378,21 +379,21 @@ protected:
     // Remove the degree-1 faces
     while (degree_one_faces.size())
     {
-      Dart_handle dh_face = degree_one_faces.front();
+      Dart_handle dh_face=degree_one_faces.front();
       degree_one_faces.pop();
       if (!m_gmap.is_marked(dh_face, face_deleted))
         m_gmap.template mark_cell<2>(dh_face, face_deleted);
       if (!m_gmap.is_marked(dh_face, edge_deleted))
         m_gmap.template mark_cell<1>(dh_face, edge_deleted);
-      Dart_handle dh_adj_face = m_gmap.opposite2(dh_face);
+      Dart_handle dh_adj_face=m_gmap.opposite2(dh_face);
       if (m_gmap.is_marked(dh_adj_face, face_deleted)) continue;
-      Dart_handle dh_only_edge = NULL;
+      Dart_handle dh_only_edge=NULL;
       if (is_degree_one_face(dh_adj_face, dh_only_edge, edge_deleted))
         degree_one_faces.push(dh_only_edge);
     }
     for (Dart_handle it : m_edge_list)
     {
-      if (m_gmap.template info<0>(it) >= 0 && !m_gmap.is_marked(it, edge_deleted))
+      if (m_gmap.template info<0>(it)>=0 && !m_gmap.is_marked(it, edge_deleted))
       {
         noncon_edges.push_back(it);
       }
