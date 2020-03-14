@@ -18,9 +18,9 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Container_helper.h>
 
 #include <boost/range/value_type.hpp>
 #include <boost/range/reference.hpp>
@@ -53,6 +53,12 @@ namespace Polygon_mesh_processing {
 ///     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
+///
+/// \cgalAdvancedBegin
+/// `PolygonRange` can also be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+/// whose value type is an array, but it is the user's responsability to ensure that
+/// all faces have the same number of vertices, and that this number is equal to the size of the array.
+/// \cgalAdvancedEnd
 ///
 /// \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 /// \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
@@ -95,9 +101,15 @@ void polygon_mesh_to_polygon_soup(const PolygonMesh& mesh,
 
   for(const face_descriptor f : faces(mesh))
   {
+    CGAL::Iterator_range<CGAL::Halfedge_around_face_iterator<PolygonMesh> > incident_halfedges =
+      CGAL::halfedges_around_face(halfedge(f, mesh), mesh);
+
     Polygon polygon;
-    for(halfedge_descriptor h : CGAL::halfedges_around_face(halfedge(f, mesh), mesh))
-      polygon.push_back(get(vim, target(h, mesh)));
+    CGAL::internal::resize(polygon, incident_halfedges.size());
+
+    std::size_t pos = 0;
+    for(halfedge_descriptor h : incident_halfedges)
+      polygon[pos++] = get(vim, target(h, mesh));
 
     polygons.push_back(polygon);
   }

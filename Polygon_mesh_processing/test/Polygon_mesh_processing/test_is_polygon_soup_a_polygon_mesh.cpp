@@ -13,6 +13,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/IO/OFF_reader.h>
 
+#include <array>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -81,7 +82,7 @@ void test_polygon_soup(std::string fname, bool expected)
 
     // twice to check if adds correctly
     std::deque<Point> soup_points;
-    std::vector<std::deque<std::size_t> > soup_polygons;
+    std::vector<std::array<std::size_t, 3> > soup_polygons;
 
     CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(p, soup_points, soup_polygons);
     CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(p, soup_points, soup_polygons);
