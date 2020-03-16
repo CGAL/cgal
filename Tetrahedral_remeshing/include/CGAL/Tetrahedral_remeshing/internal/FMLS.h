@@ -25,11 +25,12 @@
 #include <cmath>
 #include <string>
 #include <vector>
-
-#include <boost/unordered_map.hpp>
+#include <unordered_set>
 
 #include <CGAL/Tetrahedral_remeshing/internal/Tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/Vec3D.h>
+
+#include <boost/functional/hash.hpp>
 
 
 namespace CGAL
@@ -574,14 +575,16 @@ namespace CGAL
                typename Subdomain__FMLS_indices,
                typename VerticesNormalsMap,
                typename VerticesSubdomainIndices,
+               typename VerticesSurfaceIndices,
                typename C3t3>
       void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
                              Subdomain__FMLS_indices& subdomain_FMLS_indices,
                              const VerticesNormalsMap& vertices_normals,
                              const VerticesSubdomainIndices& vertices_subdomain_indices,
+                             const VerticesSurfaceIndices& vertices_surface_indices,
                              const C3t3& c3t3)
       {
-        const int upsample = 1; // can be 0, 1 or 2
+        const int upsample = 2; // can be 0, 1 or 2
 
         typedef typename C3t3::Surface_patch_index Surface_index;
         typedef typename C3t3::Subdomain_index     Subdomain_index;
@@ -591,6 +594,9 @@ namespace CGAL
         typedef typename Tr::Geom_traits           Gt;
         typedef typename Gt::Point_3               Point_3;
         typedef typename Gt::Vector_3              Vector_3;
+
+        typedef typename VerticesSurfaceIndices::mapped_type    VertexSurfaces;
+        typedef typename VerticesSurfaceIndices::const_iterator VerticesSurfaceIterator;
 
         const Tr& tr = c3t3.triangulation();
 
@@ -607,14 +613,16 @@ namespace CGAL
         //Count the number of vertices for each boundary surface (i.e. one per label)
         for (const Vertex_handle vit : tr.finite_vertex_handles())
         {
-          if (vit->in_dimension() == 2)
+          VerticesSurfaceIterator sit = vertices_surface_indices.find(vit);
+          if (sit == vertices_surface_indices.end())
+            continue;
+
+          const VertexSurfaces& v_surface_indices = vertices_surface_indices.at(vit);
+          CGAL_assertion(vit->in_dimension() <= 2);
+
+          for(const Surface_index& si : v_surface_indices)
           {
-            const std::vector<Subdomain_index>& v_subdomain_indices = vertices_subdomain_indices.at(vit);
-            if (v_subdomain_indices.size() == 2)
-            {
-              const Surface_index si = surface_patch_index(vit, c3t3);
-              subdomain_sample_numbers[si]++;
-            }
+            subdomain_sample_numbers[si]++;
           }
         }
  
@@ -651,10 +659,15 @@ namespace CGAL
         //Allocation of the PN
         for (Vertex_handle vit : tr.finite_vertex_handles())
         {
-          if (vertices_subdomain_indices.at(vit).size() == 2)
-          {
-            const Surface_index surf_i = surface_patch_index(vit, c3t3);
+          VerticesSurfaceIterator sit = vertices_surface_indices.find(vit);
+          if (sit == vertices_surface_indices.end())
+            continue;
 
+          const VertexSurfaces& v_surface_indices = vertices_surface_indices.at(vit);
+          CGAL_assertion(vit->in_dimension() <= 2);
+
+          for (const Surface_index& surf_i : v_surface_indices)
+          {
             const int fmls_id = current_subdomain_FMLS_indices[surf_i];
 
             const Point_3& p = point(vit->point());
@@ -674,10 +687,9 @@ namespace CGAL
         }
 
         typedef std::pair<Vertex_handle, Vertex_handle> Edge_vv;
-        typedef boost::unordered_map<Edge_vv, unsigned int> EdgeMapIndex;
         if (upsample == 0)
         {
-          EdgeMapIndex edgeMap;
+          std::unordered_set<Edge_vv, boost::hash<Edge_vv> > edgeMap;
 
           for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
                fit != c3t3.facets_end(); ++fit)
@@ -691,11 +703,12 @@ namespace CGAL
                 Vertex_handle vh0 = edge.first->vertex(edge.second);
                 Vertex_handle vh1 = edge.first->vertex(edge.third);
                 Edge_vv e = make_vertex_pair(vh0, vh1);
-                if ( vertices_subdomain_indices.at(vh0).size() == 2
-                  && vertices_subdomain_indices.at(vh1).size() == 2
+                if ( vertices_surface_indices.find(vh0) != vertices_surface_indices.end()
+                  && vertices_surface_indices.find(vh1) != vertices_surface_indices.end()
                   && edgeMap.find(e) == edgeMap.end())
                 {
-                  edgeMap[e] = 0;
+                  edgeMap.insert(e);
+
                   const Surface_index surf_i = c3t3.surface_patch_index(*fit);
                   const int fmls_id = current_subdomain_FMLS_indices[surf_i];
 
