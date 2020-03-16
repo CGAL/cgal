@@ -843,7 +843,7 @@ protected:
                                                       false>           Wrapper;
     return Wrapper(image,
                    transform_fct,
-                   transform_fct(value_outside));
+                   value_outside) ;
   }
 
   template <typename FT, typename FT2, typename Functor>
