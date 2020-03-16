@@ -422,7 +422,7 @@ add_face_bug()
   CGAL::Euler::add_face(CGAL::make_array(vs[1], vs[3], vs[2]), g);
 
   // force vertex halfedge to not be a border halfedge
-  BOOST_FOREACH(vertex_descriptor v, vertices(g))
+  for(vertex_descriptor v : vertices(g))
   {
     halfedge_descriptor h = halfedge(v, g);
     if ( CGAL::is_border(h, g) )

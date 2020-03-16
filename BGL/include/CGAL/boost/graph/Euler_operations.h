@@ -707,7 +707,7 @@ add_face(const VertexRange& vr, Graph& g)
           halfedge_descriptor hv = halfedge(v, g);
           if (hv != boost::graph_traits<Graph>::null_halfedge() && !is_border(hv, g))
           {
-            BOOST_FOREACH(halfedge_descriptor h_around_v, halfedges_around_target(hv, g))
+            for(halfedge_descriptor h_around_v : halfedges_around_target(hv, g))
               if (is_border(h_around_v, g))
               {
                 hv = h_around_v;

@@ -32,7 +32,7 @@ void border_cases()
                                             sm,
                                             is_selected);
     int i=0;
-    BOOST_FOREACH(face_descriptor fh, sm.faces())
+    for(face_descriptor fh : sm.faces())
       if(!is_selected[fh]) ++i;
     assert(i==4);
   }
@@ -49,7 +49,7 @@ void border_cases()
                                             sm,
                                             is_selected);
     int i=0;
-    BOOST_FOREACH(face_descriptor fh, sm.faces())
+    for(face_descriptor fh : sm.faces())
       if(!is_selected[fh]) ++i;
 
     assert(i==1 || i==4); // depends on the start point
@@ -69,7 +69,7 @@ void border_cases()
                                             sm,
                                             is_selected);
     int i=0;
-    BOOST_FOREACH(face_descriptor fh, sm.faces())
+    for(face_descriptor fh : sm.faces())
       if(!is_selected[fh]) ++i;
     assert(i==4); // depends on the start point
   }
