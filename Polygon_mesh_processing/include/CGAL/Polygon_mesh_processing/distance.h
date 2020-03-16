@@ -271,7 +271,7 @@ struct Triangle_structure_sampler_base
           std::array<typename GeomTraits::Point_3, 3>points = static_cast<Derived*>(this)->get_tr_points(tr);
 
           Random_points_in_triangle_3<typename GeomTraits::Point_3, Creator> g(points[0], points[1], points[2]);
-          out = CGAL::cpp11::copy_n(g, nb_points, out);
+          out = std::copy_n(g, nb_points, out);
         }
       }
 
@@ -297,7 +297,7 @@ struct Triangle_structure_sampler_base
           else
             nb_points = static_cast<std::size_t>(std::ceil(g.sum_of_weights()*nb_pts_a_u));
         }
-        out = CGAL::cpp11::copy_n(g, nb_points, out);
+        out = std::copy_n(g, nb_points, out);
       }
 
       // sample edges
@@ -511,7 +511,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
       // now do the sampling of the edge
       Random_points_on_segment_3<typename GeomTraits::Point_3, Creator>
         g(get(pmap, source(ed,tm)), get(pmap, target(ed, tm)));
-      this->out = CGAL::cpp11::copy_n(g, nb_points, this->out);
+      this->out = std::copy_n(g, nb_points, this->out);
     }
   }
   void ru_edges_sample(double nb_pts_l_u,
@@ -529,7 +529,7 @@ struct Triangle_structure_sampler_for_triangle_mesh
       else
         nb_points = static_cast<std::size_t>(std::ceil(g.mesh_length() * nb_pts_a_u));
     }
-    this->out = CGAL::cpp11::copy_n(g, nb_points, this->out);
+    this->out = std::copy_n(g, nb_points, this->out);
   }
 
   Randomizer get_randomizer()
@@ -817,13 +817,13 @@ sample_triangle_mesh(const TriangleMesh& tm,
 
 /** \ingroup PMP_distance_grp
  *
- * generates points on a triangle soup and outputs them to `out`; the sampling method
+ * generates points on a triangle soup and puts them to `out`; the sampling method
  * is selected using named parameters.
  *
  * @tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
  *                      whose value_type is itself a model of the concept `RandomAccessContainer`
- *                      whose value_type is `std::size_t`
+ *                      whose value_type is an unsigned integral value.
  * @tparam PointOutputIterator a model of `OutputIterator` holding objects of the same type as `PointRange`'s value type
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
@@ -838,7 +838,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *    \cgalParamEnd
  *    \cgalParamBegin{use_random_uniform_sampling}
  *      if `true`, points are generated in a random
- *      and uniform way on the surface of the soup.
+ *      and uniform way over the triangles of the soup.
  *      The number of sample points is the value passed to the named
  *      parameter `number_of_points_on_faces`. If not set,
  *      the value passed to the named parameter `number_of_points_per_area_unit`
