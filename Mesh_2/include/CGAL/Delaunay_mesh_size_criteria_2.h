@@ -111,10 +111,8 @@ public:
       typedef typename Geom_traits::Compute_squared_distance_2
 	Compute_squared_distance_2;
 
-      Geom_traits traits; /** @warning traits with data!! */
-
       Compute_squared_distance_2 squared_distance = 
-	traits.compute_squared_distance_2_object();
+	this->traits.compute_squared_distance_2_object();
 
       const Point_2& pa = fh->vertex(0)->point();
       const Point_2& pb = fh->vertex(1)->point();
@@ -165,7 +163,7 @@ public:
 	    }
 	}
 
-      Compute_area_2 area_2 = traits.compute_area_2_object();
+      Compute_area_2 area_2 = this->traits.compute_area_2_object();
 
       double area = 2*CGAL::to_double(area_2(pa, pb, pc));
 

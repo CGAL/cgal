@@ -39,13 +39,15 @@ class Handle
     
     typedef std::ptrdiff_t Id_type ;
     
-    Handle()
-      : PTR{static_cast<Rep*>(0)} {}
+    Handle() noexcept
+	: PTR{static_cast<Rep*>(0)} {}
 
-    Handle(const Handle& x)
+    // FIXME: if the precondition throws in a noexcept function, the program terminates
+    Handle(const Handle& x) noexcept
     {
       CGAL_precondition( x.PTR.p != static_cast<Rep*>(0) );
       PTR.p = x.PTR.p;
+      CGAL_assume (PTR.p->count > 0);
       PTR.p->count++;
     }
 
@@ -56,7 +58,7 @@ class Handle
     }
 
     Handle&
-    operator=(const Handle& x)
+    operator=(const Handle& x) noexcept
     {
       CGAL_precondition( x.PTR.p != static_cast<Rep*>(0) );
       x.PTR.p->count++;
@@ -65,6 +67,8 @@ class Handle
       PTR.p = x.PTR.p;
       return *this;
     }
+
+    friend void swap(Handle& a, Handle& b) noexcept { std::swap(a.PTR, b.PTR); }
 
     void reset()
     {
@@ -76,12 +80,11 @@ class Handle
       }
     }
 
-    int
-    refs()  const { return PTR.p->count; }
+    int refs()  const noexcept { return PTR.p->count; }
 
-    Id_type id() const { return PTR.p - static_cast<Rep*>(0); }
+    Id_type id() const noexcept { return PTR.p - static_cast<Rep*>(0); }
 
-    bool identical(const Handle& h) const { return PTR.p == h.PTR.p; }
+    bool identical(const Handle& h) const noexcept { return PTR.p == h.PTR.p; }
 
     void*  for_compact_container() const { return PTR.vp; }
     void*& for_compact_container() { return PTR.vp; }
@@ -96,7 +99,7 @@ class Handle
 
 //inline Handle::Id_type id(const Handle& x) { return x.id() ; }
 
-inline bool identical(const Handle &h1, const Handle &h2) { return h1.identical(h2); }
+inline bool identical(const Handle &h1, const Handle &h2) noexcept { return h1.identical(h2); }
 
 } //namespace CGAL
 
