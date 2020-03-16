@@ -156,7 +156,7 @@ private:
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
     return &*(leaf_nodes.push_back(node));
 #else
-    leaf_nodes.push_back (node);
+    leaf_nodes.emplace_back (node);
     return &(leaf_nodes.back());
 #endif
   }
@@ -167,7 +167,7 @@ private:
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
     return &*(internal_nodes.push_back(Internal_node()));
 #else
-    internal_nodes.push_back (Internal_node());
+    internal_nodes.emplace_back (Internal_node());
     return &(internal_nodes.back());
 #endif
   }
