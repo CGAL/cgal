@@ -195,7 +195,7 @@ int main (int argc, char** argv)
   }
 
   ///////////////////////////////////////////////////////////////////
-  //! [Init TIN]
+  //! [Init DSM]
 
   // Read points
   std::ifstream ifile (argv[1], std::ios_base::binary);
@@ -203,25 +203,25 @@ int main (int argc, char** argv)
   ifile >> points;
   std::cerr << points.size() << " point(s) read" << std::endl;
 
-  // Create TIN
-  TIN tin (points.points().begin(), points.points().end());
+  // Create DSM
+  TIN dsm (points.points().begin(), points.points().end());
 
-  //! [Init TIN]
+  //! [Init DSM]
   ///////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////
-  //! [Save TIN]
+  //! [Save DSM]
 
   using Mesh = CGAL::Surface_mesh<Point_3>;
   
-  Mesh tin_mesh;
-  CGAL::copy_face_graph (tin, tin_mesh);
-  std::ofstream tin_ofile ("tin.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (tin_ofile);
-  CGAL::write_ply (tin_ofile, tin_mesh);
-  tin_ofile.close();
+  Mesh dsm_mesh;
+  CGAL::copy_face_graph (dsm, dsm_mesh);
+  std::ofstream dsm_ofile ("dsm.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dsm_ofile);
+  CGAL::write_ply (dsm_ofile, dsm_mesh);
+  dsm_ofile.close();
 
-  //! [Save TIN]
+  //! [Save DSM]
   ///////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////
@@ -367,14 +367,14 @@ int main (int argc, char** argv)
   //! [Hole filling]
 
   // Copy and keep track of overly large faces
-  Mesh dem_mesh;
+  Mesh dtm_mesh;
   
   std::vector<Mesh::Face_index> face_selection;
   Mesh::Property_map<Mesh::Face_index, bool> face_selection_map
-   = dem_mesh.add_property_map<Mesh::Face_index, bool>("is_selected", false).first;
+   = dtm_mesh.add_property_map<Mesh::Face_index, bool>("is_selected", false).first;
 
   double limit = CGAL::square (5 * spacing);
-  CGAL::copy_face_graph (tin_with_info, dem_mesh,
+  CGAL::copy_face_graph (tin_with_info, dtm_mesh,
                          CGAL::parameters::face_to_face_output_iterator
                          (boost::make_function_output_iterator
                           ([&](const std::pair<TIN_with_info::Face_handle, Mesh::Face_index>& ff)
@@ -413,39 +413,39 @@ int main (int argc, char** argv)
                              }
                            })));
 
-  // Save original DEM
-  std::ofstream dem_ofile ("dem.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dem_ofile);
-  CGAL::write_ply (dem_ofile, dem_mesh);
-  dem_ofile.close();
+  // Save original DTM
+  std::ofstream dtm_ofile ("dtm.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dtm_ofile);
+  CGAL::write_ply (dtm_ofile, dtm_mesh);
+  dtm_ofile.close();
 
   std::cerr << face_selection.size() << " face(s) are selected for removal" << std::endl;
 
   // Expand face selection to keep a well formed 2-manifold mesh after removal
-  CGAL::expand_face_selection_for_removal (face_selection, dem_mesh, face_selection_map);
+  CGAL::expand_face_selection_for_removal (face_selection, dtm_mesh, face_selection_map);
   face_selection.clear();
-  for (Mesh::Face_index fi : faces(dem_mesh))
+  for (Mesh::Face_index fi : faces(dtm_mesh))
     if (face_selection_map[fi])
       face_selection.push_back(fi);
 
   std::cerr << face_selection.size() << " face(s) are selected for removal after expansion" << std::endl;
   
   for (Mesh::Face_index fi : face_selection)
-    CGAL::Euler::remove_face (halfedge(fi, dem_mesh), dem_mesh);
-  dem_mesh.collect_garbage();
+    CGAL::Euler::remove_face (halfedge(fi, dtm_mesh), dtm_mesh);
+  dtm_mesh.collect_garbage();
 
-  if (!dem_mesh.is_valid())
+  if (!dtm_mesh.is_valid())
     std::cerr << "Invalid mesh!" << std::endl;
 
-  // Save filtered DEM
-  std::ofstream dem_holes_ofile ("dem_with_holes.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dem_holes_ofile);
-  CGAL::write_ply (dem_holes_ofile, dem_mesh);
-  dem_holes_ofile.close();
+  // Save filtered DTM
+  std::ofstream dtm_holes_ofile ("dtm_with_holes.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dtm_holes_ofile);
+  CGAL::write_ply (dtm_holes_ofile, dtm_mesh);
+  dtm_holes_ofile.close();
 
   // Get all holes
   std::vector<Mesh::Halfedge_index> holes;
-  CGAL::Polygon_mesh_processing::extract_boundary_cycles (dem_mesh, std::back_inserter (holes));
+  CGAL::Polygon_mesh_processing::extract_boundary_cycles (dtm_mesh, std::back_inserter (holes));
 
   std::cerr << holes.size() << " hole(s) identified" << std::endl;
 
@@ -455,9 +455,9 @@ int main (int argc, char** argv)
   for (Mesh::Halfedge_index hi : holes)
   {
     CGAL::Bbox_3 hole_bbox;
-    for (Mesh::Halfedge_index haf : CGAL::halfedges_around_face(hi, dem_mesh))
+    for (Mesh::Halfedge_index haf : CGAL::halfedges_around_face(hi, dtm_mesh))
     {
-      const Point_3& p = dem_mesh.point(target(haf, dem_mesh));
+      const Point_3& p = dtm_mesh.point(target(haf, dtm_mesh));
       hole_bbox += p.bbox();
     }
     double size = CGAL::squared_distance (Point_2(hole_bbox.xmin(), hole_bbox.ymin()),
@@ -473,13 +473,13 @@ int main (int argc, char** argv)
   for (Mesh::Halfedge_index hi : holes)
     if (hi != outer_hull)
       CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
-        (dem_mesh, hi, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator());
+        (dtm_mesh, hi, CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator());
   
-  // Save DEM with holes filled
-  std::ofstream dem_filled_ofile ("dem_filled.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dem_filled_ofile);
-  CGAL::write_ply (dem_filled_ofile, dem_mesh);
-  dem_filled_ofile.close();
+  // Save DTM with holes filled
+  std::ofstream dtm_filled_ofile ("dtm_filled.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dtm_filled_ofile);
+  CGAL::write_ply (dtm_filled_ofile, dtm_mesh);
+  dtm_filled_ofile.close();
 
   //! [Hole filling]
   ///////////////////////////////////////////////////////////////////
@@ -487,17 +487,17 @@ int main (int argc, char** argv)
   ///////////////////////////////////////////////////////////////////
   //! [Remeshing]
 
-  CGAL::Polygon_mesh_processing::isotropic_remeshing (faces(dem_mesh), spacing, dem_mesh);
+  CGAL::Polygon_mesh_processing::isotropic_remeshing (faces(dtm_mesh), spacing, dtm_mesh);
 
-  std::ofstream dem_remeshed_ofile ("dem_remeshed.ply", std::ios_base::binary);
-  CGAL::set_binary_mode (dem_remeshed_ofile);
-  CGAL::write_ply (dem_remeshed_ofile, dem_mesh);
-  dem_remeshed_ofile.close();
+  std::ofstream dtm_remeshed_ofile ("dtm_remeshed.ply", std::ios_base::binary);
+  CGAL::set_binary_mode (dtm_remeshed_ofile);
+  CGAL::write_ply (dtm_remeshed_ofile, dtm_mesh);
+  dtm_remeshed_ofile.close();
   
   //! [Remeshing]
   ///////////////////////////////////////////////////////////////////
 
-  TIN dem_clean (dem_mesh.points().begin(), dem_mesh.points().end());
+  TIN dtm_clean (dtm_mesh.points().begin(), dtm_mesh.points().end());
 
   ///////////////////////////////////////////////////////////////////
   //! [Rastering]
@@ -533,11 +533,11 @@ int main (int argc, char** argv)
                      bbox.ymin() + (height-y) * (bbox.ymax() - bbox.ymin()) / double(height),
                      0); // not relevant for location in 2D
       
-      location = dem_clean.locate (query, location);
+      location = dtm_clean.locate (query, location);
 
       // Points outside the convex hull will be colored black
       std::array<unsigned char, 3> colors { 0, 0, 0 };
-      if (!dem_clean.is_infinite(location))
+      if (!dtm_clean.is_infinite(location))
       {
         std::array<double, 3> barycentric_coordinates
           = CGAL::Polygon_mesh_processing::barycentric_coordinates
@@ -566,17 +566,17 @@ int main (int argc, char** argv)
 
   // Smooth heights with 5 successive Gaussian filters
   double gaussian_variance = 4 * spacing * spacing;
-  for (TIN::Vertex_handle vh : dem_clean.finite_vertex_handles())
+  for (TIN::Vertex_handle vh : dtm_clean.finite_vertex_handles())
   {
     double z = vh->point().z();
     double total_weight = 1;
 
-    TIN::Vertex_circulator circ = dem_clean.incident_vertices (vh),
+    TIN::Vertex_circulator circ = dtm_clean.incident_vertices (vh),
       start = circ;
 
     do
     {
-      if (!dem_clean.is_infinite(circ))
+      if (!dtm_clean.is_infinite(circ))
       {
         double sq_dist = CGAL::squared_distance (vh->point(), circ->point());
 
@@ -605,7 +605,7 @@ int main (int argc, char** argv)
   Segment_graph graph;
   using Map_p2v = std::map<Point_3, Segment_graph::vertex_descriptor>;
   Map_p2v map_p2v;
-  for (TIN::Face_handle vh : dem_clean.finite_face_handles())
+  for (TIN::Face_handle vh : dtm_clean.finite_face_handles())
     for (double iv : isovalues)
       if (face_has_isovalue (vh, iv))
       {
