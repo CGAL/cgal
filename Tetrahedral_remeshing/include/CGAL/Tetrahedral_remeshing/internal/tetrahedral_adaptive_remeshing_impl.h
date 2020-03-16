@@ -396,6 +396,15 @@ private:
            ++eit)
       {
         const Edge& e = *eit;
+
+        if (m_c3t3.is_in_complex(e))
+        {
+          CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.second)) <= 1);
+          CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.third)) <= 1);
+          ++nbe;
+          continue;
+        }
+
         if (get(ecmap, CGAL::Tetrahedral_remeshing::make_vertex_pair<Tr>(e))
           || nb_incident_subdomains(e, m_c3t3) > 2
           || nb_incident_surface_patches(e, m_c3t3) > 1)
