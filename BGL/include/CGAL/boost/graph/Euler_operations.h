@@ -702,19 +702,35 @@ add_face(const VertexRange& vr, Graph& g)
         break;
 
       case 3: // both are new
-        if (halfedge(v, g) == boost::graph_traits<Graph>::null_halfedge())
         {
-          set_halfedge(v, outer_prev, g);
-          next_cache.push_back(NextCacheEntry(outer_prev, outer_next));
+          // try to pick a border halfedge with v as target
+          halfedge_descriptor hv = halfedge(v, g);
+          if (hv != boost::graph_traits<Graph>::null_halfedge() && !is_border(hv, g))
+          {
+            BOOST_FOREACH(halfedge_descriptor h_around_v, halfedges_around_target(hv, g))
+              if (is_border(h_around_v, g))
+              {
+                hv = h_around_v;
+                break;
+              }
+            if (!is_border(hv, g))
+              hv = boost::graph_traits<Graph>::null_halfedge();
+          }
+
+          if (hv == boost::graph_traits<Graph>::null_halfedge())
+          {
+            set_halfedge(v, outer_prev, g);
+            next_cache.push_back(NextCacheEntry(outer_prev, outer_next));
+          }
+          else
+          {
+            border_prev = hv;
+            border_next = next(border_prev, g);
+            next_cache.push_back(NextCacheEntry(border_prev, outer_next));
+            next_cache.push_back(NextCacheEntry(outer_prev, border_next));
+          }
+          break;
         }
-        else
-        {
-          border_prev = halfedge(v, g);
-          border_next = next(border_prev, g);
-          next_cache.push_back(NextCacheEntry(border_prev, outer_next));
-          next_cache.push_back(NextCacheEntry(outer_prev, border_next));
-        }
-        break;
       }
 
       // set inner link
@@ -1323,7 +1339,7 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
 template<typename Graph>
 bool
 does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
-                            Graph& g)
+                            const Graph& g)
 {
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
@@ -1423,7 +1439,7 @@ does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor
 template<typename Graph>
 bool
   satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
-                           Graph& g)
+                           const Graph& g)
 {
   return does_satisfy_link_condition(e, g);
 }

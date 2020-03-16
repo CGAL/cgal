@@ -402,6 +402,44 @@ test_swap_edges()
   }
 }
 
+template <typename T>
+void
+add_face_bug()
+{
+  typedef boost::graph_traits<T> GT;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+
+  T g;
+
+  std::vector<vertex_descriptor> vs;
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(0,1,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(4,1,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(5,2,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(4,0,0)
+
+  CGAL::Euler::add_face(CGAL::make_array(vs[0], vs[1], vs[2]), g);
+  CGAL::Euler::add_face(CGAL::make_array(vs[1], vs[3], vs[2]), g);
+
+  // force vertex halfedge to not be a border halfedge
+  BOOST_FOREACH(vertex_descriptor v, vertices(g))
+  {
+    halfedge_descriptor h = halfedge(v, g);
+    if ( CGAL::is_border(h, g) )
+      set_halfedge(v, prev(opposite(h, g), g), g);
+    assert(target(halfedge(v, g), g)==v);
+  }
+
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(0,0,0)
+  vs.push_back( add_vertex(g) );  // Kernel::Point_3(1,0,0)
+  CGAL::Euler::add_face(CGAL::make_array(vs[4],vs[5],vs[0]), g);
+
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(2,0,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(3,0,0)
+  CGAL::Euler::add_face(CGAL::make_array(vs[6],vs[7],vs[1]), g);
+  CGAL::Euler::add_face(CGAL::make_array(vs[7],vs[3],vs[1]), g);
+}
+
 template <typename Graph>
 void
 test_Euler_operations()
@@ -421,6 +459,7 @@ test_Euler_operations()
   join_split_inverse<Graph>();
   does_satisfy_link_condition<Graph>();
   test_swap_edges<Graph>();
+  add_face_bug<Graph>();
 }
 
 int main()
