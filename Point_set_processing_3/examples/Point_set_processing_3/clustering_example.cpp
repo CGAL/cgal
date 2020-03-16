@@ -34,7 +34,7 @@ int main (int argc, char** argv)
   CGAL::Real_timer t;
   t.start();
   std::size_t nb_clusters
-    = CGAL::cluster_point_set (points, cluster_map, 0,
+    = CGAL::cluster_point_set (points, cluster_map,
                                points.parameters().neighbor_radius(spacing).
                                adjacencies (std::back_inserter (adjacencies)));
   t.stop();

@@ -317,8 +317,9 @@ points in the domain.
 \section Point_set_processing_3Clustering Clustering
 
 If an input point set represents several objects which are spatially
-separated, a clustering algorithm can be applied to identify simply
-connected clusters on a nearest neighbors graph.
+separated, a clustering algorithm can be applied to identify connected
+components on a nearest neighbors graph built using a query sphere of
+fixed radius centered on each point.
 
 The clustering is stored in a cluster map which associates each input
 point with the index of the cluster it belongs to: users can then use

@@ -28,20 +28,19 @@ struct Clustering_functor
 {
   Point_set* points;
   Point_set::Property_map<std::size_t> cluster_map;
-  const int nb_neighbors;
   const double neighbor_radius;
   boost::shared_ptr<std::size_t> result; 
 
-  Clustering_functor (Point_set* points, const int nb_neighbors,
+  Clustering_functor (Point_set* points, 
                       const double neighbor_radius,
                       Point_set::Property_map<std::size_t> cluster_map)
     : points (points), cluster_map (cluster_map),
-      nb_neighbors (nb_neighbors), neighbor_radius (neighbor_radius),
+      neighbor_radius (neighbor_radius),
       result (new std::size_t(0)) { }
 
   void operator()()
   {
-    *result = CGAL::cluster_point_set (*points, cluster_map, nb_neighbors,
+    *result = CGAL::cluster_point_set (*points, cluster_map,
                                        points->parameters().neighbor_radius(neighbor_radius).
                                        callback(*(this->callback())));
   }
@@ -99,10 +98,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
         return;
 
     QMultipleInputDialog dialog ("Clustering", mw);
-    QSpinBox* nb_neighbors = dialog.add<QSpinBox> ("Number of neighbors (0 = use radius):");
-    nb_neighbors->setRange (0, 10000000);
-    nb_neighbors->setValue (12);
-    QDoubleSpinBox* neighbor_radius = dialog.add<QDoubleSpinBox> ("Neighbor radius (0 = use number):");
+    QDoubleSpinBox* neighbor_radius = dialog.add<QDoubleSpinBox> ("Neighbor radius (0 = automatic):");
     neighbor_radius->setRange (0, 10000000);
     neighbor_radius->setValue (0);
     QSpinBox* min_nb = dialog.add<QSpinBox> ("Minimum number of points per cluster:");
@@ -132,13 +128,19 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
     else
       // Use long name to avoid overwriting potentially existing map
       cluster_map = points->add_property_map<std::size_t> ("cluster_point_set_property_map").first;
+
+    // Default value
+    if (neighbor_radius->value() == 0)
+    {
+      neighbor_radius->setRange (-1, 10000000);
+      neighbor_radius->setValue(-1);
+    }
     
     // Computes average spacing
-    Clustering_functor functor (points, nb_neighbors->value(), neighbor_radius->value(), cluster_map);
+    Clustering_functor functor (points, neighbor_radius->value(), cluster_map);
     run_with_qprogressdialog (functor, "Clustering...", mw);
     
     std::size_t nb_clusters = *functor.result;
- 
 
     Scene_group_item* group;
     std::vector<Scene_points_with_normal_item*> new_items;

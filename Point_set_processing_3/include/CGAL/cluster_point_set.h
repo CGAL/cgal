@@ -62,7 +62,8 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   Identifies simply connected clusters on a nearest neighbors graph.
+   Identifies connected components on a nearest neighbors graph built
+   using a query sphere of fixed radius centered on each point.
 
    \tparam PointRange is a model of `Range`. The value type of its
    iterator is the key type of the named parameter `point_map`.
@@ -71,7 +72,6 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 
    \param points input point range.
    \param cluster_map maps each point to the index of the cluster it belongs to.
-   \param k number of neighbors.
    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
@@ -84,17 +84,14 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
       algorithm continues its execution normally; if it returns
       `false`, the algorithm is stopped and the number of already
       computed clusters is returned.\cgalParamEnd
-     \cgalParamBegin{neighbor_radius} spherical neighborhood radius. If
-     provided, the neighborhood of a query point is computed with a fixed spherical
-     radius instead of a fixed number of neighbors. In that case, the parameter
-     `k` is used as a limit on the number of points returned by each spherical
-     query (to avoid overly large number of points in high density areas). If no
-     limit is wanted, use `k=0`.\cgalParamEnd
+     \cgalParamBegin{neighbor_radius} spherical neighborhood
+     radius. If no value is provided, the default value is 1% of the
+     bounding box diagonal.\cgalParamEnd
      \cgalParamBegin{attraction_factor} used to compute adjacencies
      between clusters. Adjacencies are computed using a nearest
      neighbor graph built similarly to the one used for clustering,
-     using `attraction_factor * k` and `attraction_factor *
-     nearest_neighbors` as parameters. %Default value is `2`.\cgalParamEnd
+     using `attraction_factor * neighbor_radius` as
+     parameter. %Default value is `2`.\cgalParamEnd
      \cgalParamBegin{adjacencies} model of `OutputIterator` that
      accepts objects of type `std::pair<std::size_t,
      std::size_t>`. Each pair contains the indices of two adjacent
@@ -108,7 +105,6 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 template <typename PointRange, typename ClusterMap, typename NamedParameters>
 std::size_t cluster_point_set (PointRange& points,
                                ClusterMap cluster_map,
-                               unsigned int k,
                                const NamedParameters& np)
 {
   using parameters::choose_parameter;
@@ -128,7 +124,7 @@ std::size_t cluster_point_set (PointRange& points,
 
   PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
-                                                         typename Kernel::FT(0));
+                                                         typename Kernel::FT(-1));
   typename Kernel::FT factor = choose_parameter(get_parameter(np, internal_np::attraction_factor),
                                                 typename Kernel::FT(2));
 
@@ -150,8 +146,20 @@ std::size_t cluster_point_set (PointRange& points,
   // but this is costly to check
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
-  // precondition: at least 2 nearest neighbors
-  CGAL_point_set_processing_precondition(k >= 2);
+  // If no radius is given, init with 1% of bbox diagonal
+  std::cerr << neighbor_radius << std::endl;
+  if (neighbor_radius < 0)
+  {
+    CGAL::Bbox_3 bbox = CGAL::bbox_3 (CGAL::make_transform_iterator_from_property_map (points.begin(), point_map),
+                                      CGAL::make_transform_iterator_from_property_map (points.end(), point_map));
+    
+    neighbor_radius = 0.01 * CGAL::approximate_sqrt
+      ((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
+       + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
+       + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
+
+    std::cerr << neighbor_radius << std::endl;
+  }
 
   // Init cluster map with -1
   for (const value_type& p : points)
@@ -189,7 +197,7 @@ std::size_t cluster_point_set (PointRange& points,
       if (callback && !callback (callback_factor * (done + 1) / double(size)))
         return (nb_clusters + 1);
 
-      neighbor_query.get_iterators (get (point_map, *current), k, neighbor_radius,
+      neighbor_query.get_iterators (get (point_map, *current), 0, neighbor_radius,
                                     boost::make_function_output_iterator
                                     ([&](const iterator& it) { todo.push(it); }));
 
@@ -202,7 +210,6 @@ std::size_t cluster_point_set (PointRange& points,
       typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::Empty>::value)
   {
     Adjacencies adjacencies = Point_set_processing_3::internal::get_adjacencies(np, (Adjacencies*)(nullptr));
-    k *= factor;
     neighbor_radius *= factor;
 
     std::vector<iterator> neighbors;
@@ -214,7 +221,7 @@ std::size_t cluster_point_set (PointRange& points,
       std::size_t c0 = get (cluster_map, p);
       
       neighbors.clear();
-      neighbor_query.get_iterators (get (point_map, p), k, neighbor_radius,
+      neighbor_query.get_iterators (get (point_map, p), 0, neighbor_radius,
                                     std::back_inserter (neighbors));
 
       for (const iterator& it : neighbors)
