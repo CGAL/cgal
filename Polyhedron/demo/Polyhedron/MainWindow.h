@@ -138,6 +138,8 @@ public Q_SLOTS:
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
 
+  QString write_string_to_file(const QString &str, const QString& filename);
+
   /*! Reloads an item. Expects to be called by a QAction with the
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/
@@ -352,6 +354,10 @@ protected Q_SLOTS:
   void save(QString filename, QList<CGAL::Three::Scene_item*>& to_save);
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
+#ifdef CGAL_USE_WEBSOCKETS
+  //!Starts a new WS server if none is already exist. Else, does nothing.
+  void on_action_Start_a_Session_triggered();
+#endif
   //!Opens a Dialog to choose a color and make it the background color.
   void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
@@ -447,6 +453,7 @@ public:
 #endif
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
+  void on_actionLoad_a_Scene_from_a_Script_File_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
@@ -494,4 +501,30 @@ protected:
 private:
   bool is_main;
 };
+#ifdef CGAL_USE_WEBSOCKETS
+QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
+QT_FORWARD_DECLARE_CLASS(QWebSocket)
+
+class EchoServer : public QObject
+{
+    Q_OBJECT
+public:
+    explicit EchoServer(quint16 port);
+    ~EchoServer();
+
+
+Q_SIGNALS:
+    void closed();
+
+private Q_SLOTS:
+    void onNewConnection();
+    void processTextMessage(QString message);
+    void processBinaryMessage(QByteArray message);
+    void socketDisconnected();
+
+private:
+    QWebSocketServer *m_pWebSocketServer;
+    QList<QWebSocket *> m_clients;
+};
+#endif
 #endif // ifndef MAINWINDOW_H
