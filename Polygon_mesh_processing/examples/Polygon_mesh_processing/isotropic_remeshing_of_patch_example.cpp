@@ -74,6 +74,7 @@ int main(int argc, char* argv[])
                            );
 
   std::ofstream out("out.off");
+  out.precision(17);
   out << mesh;
   std::cout << "Remeshing done." << std::endl;
 

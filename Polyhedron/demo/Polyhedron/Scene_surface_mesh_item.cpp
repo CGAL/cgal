@@ -34,6 +34,7 @@
 #include "triangulate_primitive.h"
 
 #include <CGAL/IO/OBJ.h>
+#include <CGAL/exceptions.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/statistics_helpers.h>
 
@@ -1592,7 +1593,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
     try{
       CGAL::Polygon_mesh_processing::non_manifold_vertices(*d->smesh_, OutputIterator());
     }
-    catch( CGAL::internal::Throw_at_output::Throw_at_output_exception& )
+    catch( CGAL::internal::Throw_at_output_exception& )
     {
       d->has_nm_vertices = true;
     }
@@ -1670,7 +1671,7 @@ QString Scene_surface_mesh_item::computeStats(int type)
   {
     //todo : add a test about cache validity
     if(is_triangle_mesh(*d->smesh_))
-      d->self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*(d->smesh_));
+      d->self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect<CGAL::Parallel_if_available_tag>(*(d->smesh_));
     if (d->self_intersect)
       return QString("Yes");
     else if(is_triangle_mesh(*d->smesh_))

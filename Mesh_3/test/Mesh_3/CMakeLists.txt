@@ -65,14 +65,15 @@ if ( CGAL_FOUND )
       test_meshing_verbose
       test_meshing_polyhedron_with_features
       test_meshing_utilities.h
-      test_mesh_implicit_domains
       test_meshing_implicit_function
       test_meshing_3D_image
       test_meshing_3D_gray_image
       test_meshing_unit_tetrahedron
-      test_backward_compatibility
       test_meshing_polyhedron
       test_meshing_polyhedral_complex
+      test_mesh_capsule_var_distance_bound
+      test_mesh_3_issue_1554
+      test_mesh_polyhedral_domain_with_features_deprecated
       )
     if(TBB_FOUND AND TARGET ${target})
       CGAL_target_use_TBB(${target})

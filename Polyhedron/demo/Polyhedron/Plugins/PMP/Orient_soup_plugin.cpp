@@ -223,8 +223,8 @@ void Polyhedron_demo_orient_soup_plugin::apply_shuffle( Item* root_item,
   item->load(root_item);
   item->shuffle_orientations();
   item->setColor(root_item->color());
-  scene->replaceItem(index, item);
-  delete root_item;
+  scene->replaceItem(index, item, true);
+  root_item->deleteLater();
   QApplication::restoreOverrideCursor();
 }
 

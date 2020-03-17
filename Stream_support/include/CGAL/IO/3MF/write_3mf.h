@@ -359,6 +359,10 @@ bool write_polyline_to_model(const PointRange& points,
 
 } // namespace 3MF
 } // namespace CGAL
+ * 
+ * \attention Only versions inferior to 2.0 of lib3mf are supported.
+ *
+ * \attention Only versions inferior to 2.0 of lib3mf are supported.
 
 #endif // CGAL_LINKED_WITH_3MF
 
