@@ -1108,7 +1108,7 @@ volume_connected_components(const TriangleMesh& tm,
 
       for(std::size_t ncc_id : nested_cc_per_cc[cc_id])
       {
-        if ( nesting_levels[ncc_id]==nesting_levels[cc_id]+1 )
+        if (nesting_levels[ncc_id]==nesting_levels[cc_id]+1)
         {
           cc_handled.set(ncc_id);
           if (!ignore_orientation_of_cc)
@@ -1131,20 +1131,20 @@ volume_connected_components(const TriangleMesh& tm,
           }
           if (is_involved_in_self_intersection[ncc_id])
           {
-              cc_volume_ids[ncc_id] = next_volume_id++;
-              error_codes.push_back(VOLUME_INTERSECTION);
-              for(std::size_t nncc_id : nested_cc_per_cc[ncc_id])
+            cc_volume_ids[ncc_id] = next_volume_id++;
+            error_codes.push_back(VOLUME_INTERSECTION);
+            for(std::size_t nncc_id : nested_cc_per_cc[ncc_id])
+            {
+              if (cc_handled.test(nncc_id))
               {
-                if (cc_handled.test(nncc_id))
-                {
-                  error_codes[ cc_volume_ids[nncc_id] ] = VOLUME_INTERSECTION;
-                  continue;
-                }
-                cc_handled.set(nncc_id);
-                cc_volume_ids[nncc_id] = next_volume_id++;
-                error_codes.push_back(VOLUME_INTERSECTION);
+                error_codes[ cc_volume_ids[nncc_id] ] = VOLUME_INTERSECTION;
+                continue;
               }
-              continue;
+              cc_handled.set(nncc_id);
+              cc_volume_ids[nncc_id] = next_volume_id++;
+              error_codes.push_back(VOLUME_INTERSECTION);
+            }
+            continue;
           }
           cc_volume_ids[ncc_id] = cc_volume_ids[cc_id];
         }
