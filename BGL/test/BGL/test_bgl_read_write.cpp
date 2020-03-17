@@ -123,7 +123,7 @@ bool test_gocad()
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
                          Point(2, 0, 1), Point(3, 0, 0), fg);
   std::ostringstream out;
-  CGAL::write_GOCAD(out, fg, "tetrahedron");
+  CGAL::write_GOCAD(out, "tetrahedron", fg);
   if(out.fail())
   {
     std::cerr<<"Tetrahedron writing failed."<<std::endl;
@@ -168,15 +168,15 @@ bool test_STL()
   CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
                          Point(2, 0, 1), Point(3, 0, 0), fg);
   std::ostringstream out;
-  CGAL::write_STL(fg, out);
+  CGAL::write_STL(out, fg);
   if(out.fail())
   {
     std::cerr<<"Tetrahedron writing failed."<<std::endl;
     return false;
   }
   FaceGraph fg2;
-  std::istringstream in( out.str());
-  if(!CGAL::read_STL(fg2, in)){
+  std::istringstream in(out.str());
+  if(!CGAL::read_STL(in, fg2)){
     std::cerr<<"Tetrahedron reading failed."<<std::endl;
     return false;
   }
