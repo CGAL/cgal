@@ -912,8 +912,7 @@ volume_connected_components(const TriangleMesh& tm,
     for(face_descriptor fd : faces(tm))
     {
       std::size_t cc_id = face_cc[ get(fid_map, fd) ];
-      if (!cc_handled.test(cc_id))
-        faces_per_cc[ cc_id ].push_back(fd);
+      faces_per_cc[ cc_id ].push_back(fd);
     }
 
   // init the main loop
@@ -1173,7 +1172,7 @@ volume_connected_components(const TriangleMesh& tm,
     for(std::size_t cc_id=0; cc_id<nb_cc; ++cc_id)
     {
       for(face_descriptor fd : faces_per_cc[cc_id])
-      put(volume_id_map, fd, cc_volume_ids[cc_id]);
+        put(volume_id_map, fd, cc_volume_ids[cc_id]);
     }
   }
   else
