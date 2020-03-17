@@ -922,56 +922,14 @@ void keep_connected_components(PolygonMesh& pmesh
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
-
-namespace internal{
-
-//overloads used to select a default index map:
-// use the one passed in the named parameters (user must have initialized it)
-template <class MapFromNP, class Default_tag, class Dynamic_tag, class Mesh, class Range>
-MapFromNP
-get_index_map(MapFromNP m, Default_tag, Dynamic_tag, const Mesh&, const Range&)
-{
-  return m;
-}
-
-// use the one internal to the mesh (user must have initialized it)
-template <class Default_tag, class Dynamic_tag, class Mesh, class Range>
-typename boost::property_map<Mesh, Default_tag >::const_type
-get_index_map(CGAL::internal_np::Param_not_found, Default_tag t, Dynamic_tag , const Mesh& m, const Range& )
-{
-
-  return get(t,m);
-}
-
-// create a dynamic property and initialize it
-template <class Dynamic_tag, class Mesh, class Range>
-typename boost::property_map<Mesh, Dynamic_tag >::const_type
-get_index_map(CGAL::internal_np::Param_not_found, Dynamic_tag t, Dynamic_tag , const Mesh& m, const Range& r)
-{
-  typename boost::property_map<Mesh, Dynamic_tag >::const_type map = get(t,m);
-
-  std::size_t id =0;
-  for(auto primitive : r)
-  {
-    put(map, primitive, id++);
-  }
-
-  return map;
-}
+namespace internal {
 
 template <typename G>
 struct No_mark
 {
-  friend bool get(No_mark<G>,
-                  typename boost::graph_traits<G>::edge_descriptor)
-  {
-    return false;
-  }
-  friend void put(No_mark<G>,
-                  typename boost::graph_traits<G>::edge_descriptor, bool)
-  {}
+  friend bool get(No_mark<G>, typename boost::graph_traits<G>::edge_descriptor) { return false; }
+  friend void put(No_mark<G>, typename boost::graph_traits<G>::edge_descriptor, bool) { }
 };
-
 
 template < class PolygonMesh, class PolygonMeshRange,
            class FIMap, class VIMap,
@@ -989,7 +947,7 @@ void split_connected_components_impl(FIMap fim,
 
   int nb_patches = CGAL::Polygon_mesh_processing::connected_components(
                      tm, pidmap, CGAL::parameters::face_index_map(fim)
-                                      .edge_is_constrained_map(ecm));
+                                                  .edge_is_constrained_map(ecm));
 
   for(int i=0; i<nb_patches; ++i)
   {
@@ -1022,13 +980,13 @@ void split_connected_components_impl(FIMap fim,
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pm` \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
- *     a property map containing an index for each face initialized from 0 to `num_faces(pm)`
+ *     a property map containing a unique index for each face initialized from 0 to `num_faces(pm)`
  *   \cgalParamEnd
  *   \cgalParamBegin{vertex_index_map}
- *     a property map containing an index for each vertex initialized 0 to `num_vertices(pm)`
+ *     a property map containing a unique index for each vertex initialized 0 to `num_vertices(pm)`
  *   \cgalParamEnd
  *   \cgalNPBegin{halfedge_index_map}
- *     a property map containing an index for each halfedge initialized 0 to `num_halfedges(pm)`
+ *     a property map containing a unique index for each halfedge initialized 0 to `num_halfedges(pm)`
  *   \cgalNPEnd
  * \cgalNamedParamsEnd
  *
@@ -1038,48 +996,22 @@ void split_connected_components(const PolygonMesh& pm,
                                 PolygonMeshRange& cc_meshes,
                                 const NamedParameters& np)
 {
-  typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::face_index_t>::value
-        , CGAL::face_index_t
-        , CGAL::dynamic_face_property_t<std::size_t >
-        >::type FIM_def_tag;
-
-  typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, CGAL::halfedge_index_t>::value
-        , CGAL::halfedge_index_t
-        , CGAL::dynamic_halfedge_property_t<std::size_t >
-        >::type HIM_def_tag;
-
-  typedef typename boost::mpl::if_c<CGAL::graph_has_property<PolygonMesh, boost::vertex_index_t>::value
-        , boost::vertex_index_t
-        , CGAL::dynamic_vertex_property_t<std::size_t >
-        >::type VIM_def_tag;
-
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
     internal::No_mark<PolygonMesh>//default
   > ::type Ecm;
 
-  Ecm ecm = parameters::choose_parameter( parameters::get_parameter(np, internal_np::edge_is_constrained),
-                                   internal::No_mark<PolygonMesh>() );
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  internal::split_connected_components_impl(
-        internal::get_index_map(
-          parameters::get_parameter(np, internal_np::face_index),
-          FIM_def_tag(),
-          CGAL::dynamic_face_property_t<std::size_t >(),
-          pm, faces(pm)),
-        internal::get_index_map(
-          parameters::get_parameter(np, internal_np::halfedge_index),
-          HIM_def_tag(),
-          CGAL::dynamic_halfedge_property_t<std::size_t >(),
-          pm, halfedges(pm)),
-        internal::get_index_map(
-          parameters::get_parameter(np, internal_np::vertex_index),
-          VIM_def_tag(),
-          CGAL::dynamic_vertex_property_t<std::size_t >(),
-          pm, vertices(pm)),
-        ecm,
-        cc_meshes, pm);
+  Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                             internal::No_mark<PolygonMesh>());
+
+  internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pm, np),
+                                            CGAL::get_initialized_halfedge_index_map(pm, np),
+                                            CGAL::get_initialized_vertex_index_map(pm, np),
+                                            ecm, cc_meshes, pm);
 }
 
 template <class PolygonMesh, class PolygonMeshRange>
