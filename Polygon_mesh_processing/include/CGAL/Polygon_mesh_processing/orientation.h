@@ -461,11 +461,10 @@ void orient(TriangleMesh& tm)
  * in the case of `VALID_VOLUME` or a surface connected component otherwise.
  */
 enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
-                         SURFACE_SELF_INTERSECTION, ///< The set of faces is self-intersecting
+                         SURFACE_WITH_SELF_INTERSECTIONS, ///< The set of faces is self-intersecting
                          VOLUME_INTERSECTION, ///< The set of faces intersects another surface connected component
-                         OPEN_SURFACE, ///< The set of faces does not define a close surface
-                         INCOMPATIBLE_ORIENTATION, ///< The set of faces is included in a volume but has an incompatible orientation
-                         SINGLE_CONNECTED_COMPONENT ///< The set of faces consists of all the faces of the mesh and no further test was done.
+                         SURFACE_WITH_BOUNDARIES, ///< The set of faces does not define a closed surface
+                         INCOMPATIBLE_ORIENTATION ///< The set of faces is included in a volume but has an incompatible orientation
                        };
 namespace internal {
 
@@ -630,7 +629,7 @@ void set_cc_intersecting_pairs(
 /*!
  * \ingroup PMP_orientation_grp
  * assigns to each face of `tm` an id corresponding to the volume connected component
- * it contributes to define.
+ * it contributes to.
  *
  * Using the adjacency relation of two faces along an edge, a triangle mesh can be split
  * into connected components (*surface components* in the following).
@@ -642,23 +641,20 @@ void set_cc_intersecting_pairs(
  * Each surface component `S` that is outside any volume enclosed by
  * another surface component defines the *outer boundary* of a volume component.
  * Each surface component that is inside the volume enclosed by `S`
- * defines a *hole* if it is included in no other volume enclosed by a surface components
+ * defines a *hole* if it is included in no other volume enclosed by a surface component
  * but `S`. Ignoring the identified volume component, the same procedure is recursively
  * repeated for all surface components in each hole.
  *
  * There are some special cases:
- * - a non-closed surface component is reported as an isolated volume ignoring any inclusion test
- * - a self-intersecting surface component is reported as an isolated volume ignoring any inclusion test
+ * - a non-closed surface component is reported as a volume component ignoring any inclusion test
+ * - a self-intersecting surface component is reported as a volume component ignoring any inclusion test
  * - a surface component intersecting another surface component
- *   is reported as an isolated volume, and so are all the surface components inside its
- *   enclosed volume.
- * - if `do_orientation_tests` is `true`, if the holes are not all equally oriented
+ *   is reported as a volume component, and so are all the surface components inside its
+ *   enclosed volume
+ * - if `do_orientation_tests` is set to `true`, if the holes are not all equally oriented
  *   (all inward or all outward) or if the holes and the outer boundary are equally
- *   oriented, each surface component is reported as an isolated volume,
- *   and so are all the surface components inside the corresponding enclosed volumes.
- * - If all the faces of `tm` are part of the same surface component, then
- *   no further test (open/closed, self-intersecting) is done and all faces
- *   are assigned to the same volume components.
+ *   oriented, each surface component is reported as a volume component,
+ *   and so are all the surface components inside the corresponding enclosed volumes
  * - If `do_orientation_tests` is set to `true` and the surface components that are
  *   outside all enclosed volumes are inward oriented, they are then considered as holes
  *   of the unbounded volume (that has no outer boundary)
@@ -684,11 +680,11 @@ void set_cc_intersecting_pairs(
  *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_index_map}
- *     a property map containing a unique id per face of `tm`, in the range `[0, num_faces(tm)[`.
+ *     a property map containing a unique id per face of `tm`, in the range `[0, num_faces(tm)[`
  *   \cgalParamEnd
  *   \cgalParamBegin{face_connected_component_map}
  *     a property map filled by this function and that will contain for each face the id
- *     of its surface component in the range `[0, number of surface components - 1[`.
+ *     of its surface component in the range `[0, number of surface components - 1[`
  *   \cgalParamEnd
  *   \cgalParamBegin{volume_inclusions}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
@@ -709,8 +705,8 @@ void set_cc_intersecting_pairs(
  *   \cgalParamEnd
  *   \cgalParamBegin{error_codes}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
- *     with a value_type being `Volume_error_code`.
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *     with a `value_type` being \link CGAL::Polygon_mesh_processing::Volume_error_code `Volume_error_code` \endlink.
  *     The size of the container is exactly the number of volume components.
  *     The container indicates the status of a volume assigned to a set of faces.
  *     The description of the value type is given in the documentation of the enumeration type.
@@ -722,33 +718,33 @@ void set_cc_intersecting_pairs(
  *   \cgalParamEnd
  *   \cgalParamBegin{connected_component_id_to_volume_id}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
  *     with a value_type being `std::size_t`.
  *     The size of the container is exactly the number of connected components.
  *     For each connected component identified using its id `ccid`, the id of the volume it contributes
- *     to describe is the value at the position `ccid` in the parameter container.
+ *     to describe is the value at the position `ccid` in the container.
  *   \cgalParamEnd
  *   \cgalParamBegin{nesting_levels}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
- *     with a value_type being `std::size_t`.
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *     with a `value_type` being `std::size_t`.
  *     The size of the container is exactly the number of connected components.
- *     For each connected component identified using its id `ccid`, the vector contains the number of
+ *     For each connected component identified using its id `ccid`, the container contains the number of
  *     connected components containing on its bounded side this component.
  *   \cgalParamEnd
  *   \cgalParamBegin{is_cc_outward_oriented}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
- *     a reference to an object that must be a model of the `BackInsertionSequence` concept,
- *     with a value_type being `bool`.
+ *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
+ *     with a `value_type` being `bool`.
  *     The size of the container is exactly the number of connected components.
- *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented`
- *     called on the submesh corresponding to this connected component
- *     is the value at the position `ccid` in the parameter vector.
+ *     For each connected component identified using its id `ccid`, the output of `is_outward_oriented()`
+ *     called on the triangle mesh corresponding to this connected component
+ *     is the value at the position `ccid` in the container.
  *   \cgalParamEnd
  *   \cgalParamBegin{intersecting_volume_pairs_output_iterator}
  *     Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
  *     Each pair of connected components intersecting will be reported using their ids.
- *    If `do_self_intersection_tests` named parameter is not set to `true`, nothing will be reported.
+ *    If `do_self_intersection_tests` named parameter is set to `false`, nothing will be reported.
  *   \cgalParamEnd
  *
  * \cgalNamedParamsEnd
@@ -811,26 +807,6 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector<std::size_t> cc_volume_ids(nb_cc, -1);
   std::vector < std::size_t > nesting_levels(nb_cc, 0); // indicates for each CC its nesting level
 
-  if (nb_cc == 1)
-  {
-    error_codes.push_back(SINGLE_CONNECTED_COMPONENT);
-
-    for(face_descriptor fd : faces(tm))
-      put(volume_id_map, fd, 0);
-
-    internal::copy_container_content(error_codes, parameters::get_parameter(np, internal_np::error_codes));
-    // nested_cc_per_cc is empty and used to clear the vector passed in case it was not empty
-    internal::copy_nested_parents(nested_cc_per_cc, parameters::get_parameter(np, internal_np::volume_inclusions));
-    if (!ignore_orientation_of_cc &&
-        !parameters::is_default_parameter(parameters::get_parameter(np, internal_np::is_cc_outward_oriented)))
-    {
-      is_cc_outward_oriented.push_back(is_outward_oriented(tm, np));
-      internal::copy_container_content(is_cc_outward_oriented, parameters::get_parameter(np, internal_np::is_cc_outward_oriented));
-    }
-    internal::copy_container_content(cc_volume_ids, parameters::get_parameter(np, internal_np::connected_component_id_to_volume_id));
-    return 1;
-  }
-
   boost::dynamic_bitset<> cc_handled(nb_cc, 0);
 
   std::size_t next_volume_id = 0;
@@ -845,7 +821,7 @@ volume_connected_components(const TriangleMesh& tm,
       {
         cc_handled.set(cc_id);
         cc_volume_ids[cc_id]=next_volume_id++;
-        error_codes.push_back(OPEN_SURFACE);
+        error_codes.push_back(SURFACE_WITH_BOUNDARIES);
         if (used_as_a_predicate) return 0;
       }
     }
@@ -873,7 +849,7 @@ volume_connected_components(const TriangleMesh& tm,
       {
         cc_handled.set(first_cc_id);
         cc_volume_ids[first_cc_id]=next_volume_id++;
-        error_codes.push_back(SURFACE_SELF_INTERSECTION);
+        error_codes.push_back(SURFACE_WITH_SELF_INTERSECTIONS);
       }
     }
     else

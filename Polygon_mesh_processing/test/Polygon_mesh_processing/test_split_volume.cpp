@@ -83,7 +83,7 @@ int main()
   assert(nb_vol==2);
   expected_result.clear();
   expected_result.push_back(PMP::VALID_VOLUME);
-  expected_result.push_back(PMP::SURFACE_SELF_INTERSECTION);
+  expected_result.push_back(PMP::SURFACE_WITH_SELF_INTERSECTIONS);
   std::sort(error_codes.begin(), error_codes.end());
   assert( error_codes==expected_result );
   }
@@ -101,7 +101,7 @@ int main()
 
   assert(nb_vol==1);
   expected_result.clear();
-  expected_result.push_back(PMP::SINGLE_CONNECTED_COMPONENT);
+  expected_result.push_back(PMP::VALID_VOLUME);
   assert( error_codes==expected_result );
   }
 
@@ -122,7 +122,7 @@ int main()
   assert(nb_vol==2);
   expected_result.clear();
   expected_result.push_back(PMP::VALID_VOLUME);
-  expected_result.push_back(PMP::OPEN_SURFACE);
+  expected_result.push_back(PMP::SURFACE_WITH_BOUNDARIES);
   std::sort(error_codes.begin(), error_codes.end());
   assert( error_codes==expected_result );
   }

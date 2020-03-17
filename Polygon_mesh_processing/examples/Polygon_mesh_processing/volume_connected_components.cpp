@@ -2,7 +2,6 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
-#include <boost/core/ref.hpp>
 
 #include <iostream>
 #include <fstream>
@@ -12,6 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace params = CGAL::parameters;
 
 int main(int argc, char** argv)
 {
@@ -25,8 +25,12 @@ int main(int argc, char** argv)
   Surface_mesh::Property_map<Surface_mesh::Face_index, std::size_t> vol_id_map =
     sm.add_property_map<Surface_mesh::Face_index, std::size_t>().first;
 
+  std::vector<PMP::Volume_error_code> err_codes;
   // fill the volume id map
-  std::size_t nb_vol = PMP::volume_connected_components(sm, vol_id_map);
+  std::size_t nb_vol =
+    PMP::volume_connected_components(sm,
+                                     vol_id_map,
+                                     params::error_codes(std::ref(err_codes)));
 
   std::cout << "Found " << nb_vol << " volumes\n";
 
@@ -35,6 +39,8 @@ int main(int argc, char** argv)
   Filtered_graph vol_mesh(sm, 0, vol_id_map);
   for(std::size_t id = 0; id < nb_vol; ++id)
   {
+    if (err_codes[id] != PMP::VALID_VOLUME)
+      std::cerr << "There is an issue with volume #" << id << "\n";
     if(id > 0)
       vol_mesh.set_selected_faces(id, vol_id_map);
     Surface_mesh out;

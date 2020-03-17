@@ -476,7 +476,7 @@ and directed outside the finite volume enclosed by the surface connected compone
 \b Default: None
 \cgalNPEnd
 
-\cgalParamBegin{connected_component_id_to_volume_id}
+\cgalParamBegin{connected_component_id_to_volume_id} \anchor PMP_connected_component_id_to_volume_id
 a `reference_wrapper` (either from `boost` or the standard library) containing
 a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `std::size_t`.
@@ -489,7 +489,7 @@ to is the value at the position `ccid` in the parameter container.
 \b Default: None
 \cgalParamEnd
 
-\cgalParamBegin{nesting_levels}
+\cgalParamBegin{nesting_levels} \anchor PMP_nesting_levels
 a `reference_wrapper` (either from `boost` or the standard library) containing
 a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `std::size_t`.
@@ -502,7 +502,7 @@ connected components containing on their bounded side this component.
 \b Default: None
 \cgalParamEnd
 
-\cgalParamBegin{is_cc_outward_oriented}
+\cgalParamBegin{is_cc_outward_oriented} \anchor PMP_is_cc_outward_oriented
 a `reference_wrapper` (either from `boost` or the standard library) containing
 a reference to an object that must be a model of the `BackInsertionSequence` concept,
 with a value_type being `bool`.
@@ -516,7 +516,7 @@ is the value at the position `ccid` in the parameter container.
 \b Default: None
 \cgalParamEnd
 
-\cgalParamBegin{intersecting_volume_pairs_output_iterator}
+\cgalParamBegin{intersecting_volume_pairs_output_iterator} \anchor PMP_intersecting_volume_pairs_output_iterator
 Output iterator into which pairs of ids (id must be convertible to `std::size_t`) can be put.
 Each pair of connected components intersecting will be reported using their ids.
 If `do_self_intersection_tests` named parameter is set to `false`, nothing will be reported.
