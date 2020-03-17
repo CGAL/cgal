@@ -148,13 +148,8 @@ void write_polys(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor           face_descriptor;
 
-  typedef typename CGAL::GetVertexIndexMap<FaceGraph, NamedParameters>::type VIM;
-
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  VIM V = choose_parameter(get_parameter(np, internal_np::vertex_index),
-                             get_const_property_map(boost::vertex_index, g));
+  typedef typename CGAL::GetInitializedVertexIndexMap<Mesh, NamedParameters>::const_type Vimap;
+  Vimap V = CGAL::get_initialized_vertex_index_map(mesh, np);
 
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
@@ -186,13 +181,8 @@ void write_polys_tag(std::ostream& os,
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor         vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor           face_descriptor;
 
-  typedef typename CGAL::GetVertexIndexMap<FaceGraph, NamedParameters>::type VIM;
-
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  VIM V = choose_parameter(get_parameter(np, internal_np::vertex_index),
-                           get_const_property_map(boost::vertex_index, g));
+  typedef typename CGAL::GetInitializedVertexIndexMap<Mesh, NamedParameters>::const_type Vimap;
+  Vimap V = CGAL::get_initialized_vertex_index_map(mesh, np);
 
   std::string formatattribute = binary ? " format=\"appended\"" : " format=\"ascii\"";
 
@@ -370,8 +360,7 @@ void write_polys_points(std::ostream& os,
  *       `CGAL::vertex_Point` must be available in `FaceGraph`.
  *     \cgalParamEnd
  *    \cgalParamBegin{vertex_index_map} the property map with the indices associated to
- * the vertices of `g`. If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_index_t` must be available in `FaceGraph`.
+ * the vertices of `g`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  * \see \ref IOStreamVTK

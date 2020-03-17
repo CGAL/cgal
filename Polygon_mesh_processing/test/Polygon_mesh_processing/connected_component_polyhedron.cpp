@@ -37,8 +37,8 @@ void mesh_with_id(const char* argv1, const bool save_output)
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
 
   boost::vector_property_map<int,
-    boost::property_map<Mesh_with_id, boost::face_index_t>::type>
-      fccmap(get(boost::face_index,sm));
+    boost::property_map<Mesh_with_id, CGAL::face_index_t>::type>
+      fccmap(get(CGAL::face_index,sm));
 
   std::size_t num = PMP::connected_components(sm, fccmap);
   if (strcmp(argv1, "data/blobby_3cc.off") == 0)
@@ -84,17 +84,17 @@ void mesh_no_id(const char* argv1, const bool save_output)
   PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
-  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim 
+  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim
     = get(boost::vertex_external_index,sm);
 
-  boost::property_map<Mesh,boost::face_external_index_t>::type fim 
+  boost::property_map<Mesh,boost::face_external_index_t>::type fim
     = get(boost::face_external_index,sm);
 
   boost::vector_property_map<int,
     boost::property_map<Mesh, boost::face_external_index_t>::type>
       fccmap(fim);
 
-  std::size_t num = PMP::connected_components(sm, fccmap, PMP::parameters::face_index_map(fim));
+  std::size_t num = PMP::connected_components(sm, fccmap);
 
   if (strcmp(argv1, "data/blobby_3cc.off") == 0)
     assert(num == 3);
@@ -104,8 +104,7 @@ void mesh_no_id(const char* argv1, const bool save_output)
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
-  PMP::keep_largest_connected_components(sm, 2, PMP::parameters::vertex_index_map(vim)
-                                                                .face_index_map(fim));
+  PMP::keep_largest_connected_components(sm, 2, PMP::parameters::vertex_index_map(vim));
   if (save_output)
     return;
 

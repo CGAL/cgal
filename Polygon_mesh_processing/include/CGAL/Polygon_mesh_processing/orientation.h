@@ -438,8 +438,6 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 * inward or outward oriented.
 *
 * @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph` .
-*                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
-*                      as a named parameter, then it must be initialized.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters
 *
 * @param tm a closed triangulated surface mesh
@@ -461,16 +459,15 @@ void recursive_orient_volume_ccs( TriangleMesh& tm,
 * \cgalNamedParamsEnd
 */
 template<class TriangleMesh, class NamedParameters>
-void orient(TriangleMesh& tm, const NamedParameters& np)
+void orient(TriangleMesh& tm,
+            const NamedParameters& np)
 {
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename Graph_traits::face_descriptor face_descriptor;
-  typedef typename Graph_traits::halfedge_descriptor halfedge_descriptor;
-  typedef typename GetVertexPointMap<TriangleMesh,
-      NamedParameters>::const_type Vpm;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-      NamedParameters>::const_type Fid_map;
+  typedef boost::graph_traits<TriangleMesh>                                        Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor                                 vertex_descriptor;
+  typedef typename Graph_traits::face_descriptor                                   face_descriptor;
+  typedef typename Graph_traits::halfedge_descriptor                               halfedge_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    Vpm;
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
   CGAL_assertion(is_triangle_mesh(tm));
   CGAL_assertion(is_valid_polygon_mesh(tm));
@@ -484,8 +481,7 @@ void orient(TriangleMesh& tm, const NamedParameters& np)
   Vpm vpm = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::face_index),
-                                 get_const_property_map(boost::face_index, tm));
+  FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -542,8 +538,6 @@ void orient(TriangleMesh& tm)
  * See \ref coref_def_subsec for a precise definition.
  *
  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`.
- *                      If `TriangleMesh` has an internal property map for `CGAL::face_index_t`,
- *                      as a named parameter, then it must be initialized.
  * @tparam NamedParameters a sequence of \ref pmp_namedparameters
  *
  * @param tm a closed triangulated surface mesh
@@ -569,19 +563,19 @@ void orient(TriangleMesh& tm)
  */
 template <class TriangleMesh, class NamedParameters>
 void orient_to_bound_a_volume(TriangleMesh& tm,
-                                        const NamedParameters& np)
+                              const NamedParameters& np)
 {
-  typedef boost::graph_traits<TriangleMesh> Graph_traits;
-  typedef typename Graph_traits::vertex_descriptor vertex_descriptor;
-  typedef typename GetVertexPointMap<TriangleMesh,
-      NamedParameters>::const_type Vpm;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-      NamedParameters>::const_type Fid_map;
-  typedef typename Kernel_traits<
-      typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
+  typedef boost::graph_traits<TriangleMesh>                                        Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor                                 vertex_descriptor;
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type                         Point;
+  typedef typename Kernel_traits<Point>::Kernel                                    Kernel;
+
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
+
   if (!is_closed(tm)) return;
   if (!is_triangle_mesh(tm)) return;
-
 
   using parameters::get_parameter;
 
@@ -591,8 +585,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   Vpm vpm = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = CGAL::parameters::choose_parameter(get_parameter(np, internal_np::face_index),
-                                 get_const_property_map(boost::face_index, tm));
+  FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
