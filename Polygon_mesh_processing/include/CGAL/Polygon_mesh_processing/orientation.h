@@ -706,7 +706,7 @@ void set_cc_intersecting_pairs(
  *   \cgalParamBegin{error_codes}
  *     a `reference_wrapper` (either from `boost` or the standard library) containing
  *     a reference to a container that must be a model of the `BackInsertionSequence` concept,
- *     with a `value_type` being \link CGAL::Polygon_mesh_processing::Volume_error_code `Volume_error_code` \endlink.
+ *     with a `value_type` being \link PMP_orientation_grp `Volume_error_code` \endlink
  *     The size of the container is exactly the number of volume components.
  *     The container indicates the status of a volume assigned to a set of faces.
  *     The description of the value type is given in the documentation of the enumeration type.
