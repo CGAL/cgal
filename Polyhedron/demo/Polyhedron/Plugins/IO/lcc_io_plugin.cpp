@@ -17,24 +17,24 @@ class LCC_io_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "lcc_io_plugin.json")
   
 public:
-  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
+  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const override
   { 
     if(qobject_cast<const Scene_lcc_item*>(item)) 
       return true; 
     return false;
   }
-  QString name() const { return "lcc_plugin"; }
-  QString nameFilters() const { return 
+  QString name() const override{ return "lcc_plugin"; }
+  QString nameFilters() const override{ return 
         "OFF files (*.off);;"
         "3-map files (*.3map)"; }
   
-  QString saveNameFilters() const {
+  QString saveNameFilters() const override{
     return 
         "3-map files (*.3map)"; 
   }
   
-  bool canLoad(QFileInfo) const { return true; }
-  QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true){
+  bool canLoad(QFileInfo) const override{ return true; }
+  QList<CGAL::Three::Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override{
     // Open file
     std::ifstream ifs(fileinfo.filePath().toUtf8());
     if(!ifs) {
@@ -67,8 +67,8 @@ public:
   }
   
   
-  bool canSave(const CGAL::Three::Scene_item*){return false;}
-  bool save(QFileInfo, QList<CGAL::Three::Scene_item*>& ){
+  bool canSave(const CGAL::Three::Scene_item*)override{return false;}
+  bool save(QFileInfo, QList<CGAL::Three::Scene_item*>& )override{
     return false;
   }
   

@@ -29,28 +29,28 @@ class Polyhedron_demo_off_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "off_io_plugin.json")
 
 public:
-  bool isDefaultLoader(const Scene_item *item) const
+  bool isDefaultLoader(const Scene_item *item) const override
   {
     if(qobject_cast<const Scene_surface_mesh_item*>(item)
        || qobject_cast<const Scene_polygon_soup_item*>(item))
       return true;
     return false;
   }
-  bool isDefaultLoader(const QString& name) const
+  bool isDefaultLoader(const QString& name) const override
   {
     if(name == QString("off"))
       return true;
     return false;
   }
-  QString name() const { return "off_plugin"; }
-  QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
-  bool canLoad(QFileInfo fileinfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString name() const override{ return "off_plugin"; }
+  QString nameFilters() const override { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
+  bool canLoad(QFileInfo fileinfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true) override;
   CGAL::Three::Scene_item* load_off(QFileInfo fileinfo);
   CGAL::Three::Scene_item* load_obj(QFileInfo fileinfo);
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& );
+  bool canSave(const CGAL::Three::Scene_item*) override;
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) override;
 };
 
 bool Polyhedron_demo_off_plugin::canLoad(QFileInfo) const {
@@ -136,7 +136,10 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   // Try to read .off in a surface_mesh
   SMesh *surface_mesh = new SMesh();
   try{
-    in >> *surface_mesh;
+    if(!(in >> *surface_mesh))
+    {
+      surface_mesh->clear();
+    }
   } catch(...)
   {
     surface_mesh->clear();

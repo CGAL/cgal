@@ -14,7 +14,6 @@ if ( CGAL_FOUND )
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
     # Executables that require Eigen 3.1
-    include( ${EIGEN3_USE_FILE} )
 
 # ------------------------------------------------------------------
 # Detect SuiteSparse libraries:
@@ -52,11 +51,17 @@ if ( CGAL_FOUND )
 # ------------------------------------------------------------------
 
     create_single_source_cgal_program( "discrete_authalic.cpp" )
+    CGAL_target_use_Eigen(discrete_authalic)
     create_single_source_cgal_program( "lscm.cpp" )
+    CGAL_target_use_Eigen(lscm)
     create_single_source_cgal_program( "orbifold.cpp" )
+    CGAL_target_use_Eigen(orbifold)
     create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
+    CGAL_target_use_Eigen(seam_Polyhedron_3)
     create_single_source_cgal_program( "simple_parameterization.cpp" )
+    CGAL_target_use_Eigen(simple_parameterization)
     create_single_source_cgal_program( "square_border_parameterizer.cpp" )
+    CGAL_target_use_Eigen(square_border_parameterizer)
     
     if(SuiteSparse_FOUND)
       target_link_libraries(orbifold PRIVATE ${SuiteSparse_LIBRARIES})

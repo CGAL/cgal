@@ -29,10 +29,6 @@ endif()
 
 # include for local package
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-if (EIGEN3_FOUND)
-  # Executables that require Eigen 3.2
-  include( ${EIGEN3_USE_FILE} )
-endif(EIGEN3_FOUND)
 
 # Creating entries for all .cpp/.C files with "main" routine
 # ##########################################################
@@ -41,4 +37,8 @@ create_single_source_cgal_program( "polygon_mesh_slicer.cpp" )
 
 create_single_source_cgal_program( "hole_filling.cpp" )
 
+if (EIGEN3_FOUND)
+  CGAL_target_use_Eigen(polygon_mesh_slicer)
+  CGAL_target_use_Eigen(hole_filling)
+endif()
 

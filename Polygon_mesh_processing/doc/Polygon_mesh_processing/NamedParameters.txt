@@ -32,20 +32,27 @@ is the property map with the points associated to the vertices of the polygon me
 \cgalNPEnd
 
 \cgalNPBegin{vertex_index_map} \anchor PMP_vertex_index_map
-is the property map containing the index of each vertex of the input polygon mesh.\n
+is the property map associating a unique index to each vertex of a polygon mesh,
+between `0` and `num_vertices(g)-1`.
+If this parameter is not passed, internal machinery will create and initialize a vertex index
+property map, either using the internal property map if it exists or using an external map. The latter
+might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
 <b>Type:</b> a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and the value type
 \code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::vertex_index_t>::type>::value_type \endcode
-<b>Default:</b> \code boost::get(CGAL::vertex_index, pmesh)\endcode
+<b>Default:</b> an initialized vertex index property map
 \cgalNPEnd
 
 \cgalNPBegin{face_index_map} \anchor PMP_face_index_map
-is the property map containing the index of each face of the input polygon mesh.\n
+is the property map associating a unique index to each face of a polygon mesh,
+between `0` and `num_faces(g)-1`.
+If this parameter is not passed, internal machinery will create and initialize a face index
+property map, either using the internal property map if it exists or using an external map. The latter
+might result in  - slightly - worsened performance in case of non-constant complexity for index access.\n
 <b>Type:</b> a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and the value type:
 \code typename boost::property_traits<typename boost::property_map<PolygonMesh, CGAL::face_index_t>::type>::value_type \endcode
-<b>Default:</b> \code boost::get(CGAL::face_index, pmesh)\endcode
-If this internal property map exists, its values must be initialized.
+<b>Default:</b> an initialized face index property map
 \cgalNPEnd
 
 \cgalNPBegin{edge_is_constrained_map} \anchor PMP_edge_is_constrained_map

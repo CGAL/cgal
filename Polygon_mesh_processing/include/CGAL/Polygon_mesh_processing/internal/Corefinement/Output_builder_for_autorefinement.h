@@ -214,9 +214,6 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-    // this will initialize face indices if the face index map is writable.
-    helpers::init_face_indices(tm, fids);
-
     // first build an unordered_map mapping a vertex to its node id + a set
     // of all intersection edges
     typedef boost::unordered_set<edge_descriptor> Intersection_edge_map;
@@ -239,8 +236,9 @@ public:
       intersection_edges.insert(edge(p.second.h2, tm));
     }
 
-    // this will initialize face indices if the face index map is writable.
-    helpers::init_face_indices(tm, fids);
+    // The property map must be either writable or well-initialized
+    if(!BGL::internal::is_index_map_valid(fids, num_faces(tm), faces(tm)))
+      BGL::internal::initialize_face_index_map(fids, tm);
 
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm_coplanar_faces(num_faces(tm), 0);

@@ -127,6 +127,12 @@ public:
       return res;
   }
   
+  bool isDefaultLoader(const Scene_item* item) const override{
+    if(qobject_cast<const Scene_polyhedron_selection_item*>(item))
+      return true;
+    return false;
+  }
+
   bool applicable(QAction* action) const override {
     if(action == actionSelfIntersection)
       return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));

@@ -15,9 +15,27 @@
 
 #include <CGAL/assertions.h>
 #include <map>
+#include <CGAL/Weighted_point_3.h>
 
 namespace CGAL {
 
+  namespace internal 
+  {
+    template<typename Point>
+    struct Get_point
+    {
+      static const Point& run(const Point& p)
+      { return p; }
+    };
+
+    template<typename Kernel>
+    struct Get_point<CGAL::Weighted_point_3<Kernel> >
+    {
+      static const typename Kernel::Point_3& run(const CGAL::Weighted_point_3<Kernel>& p)
+      { return p.point(); }
+    };
+  }
+  
   /** Convert a given Triangulation_3 into a 3D linear cell complex.
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_3.
@@ -52,7 +70,7 @@ namespace CGAL {
     for (TVertex_iterator itv = atr.vertices_begin();
          itv != atr.vertices_end(); ++itv)
     {
-      TV[itv] = alcc.create_vertex_attribute(itv->point());
+      TV[itv] = alcc.create_vertex_attribute(internal::Get_point<typename Triangulation::Point>::run(itv->point()));
     }
 
     // Create the tetrahedron and create a map to link Cell_iterator
