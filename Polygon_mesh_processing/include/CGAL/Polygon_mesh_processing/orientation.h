@@ -164,8 +164,9 @@ namespace internal{
  *    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- * \todo code : The following only handles polyhedron with one connected component
- *       the code, the sample example and the plugin must be updated.
+ * \note This function is only doing an orientation test for one connected component of `pmesh`.
+ *       For performance reason, it is left to the user to call the function `does_bound_a_volume()`
+ *       on a triangulated version of `pmesh` to ensure the result returned is relevant.
  *
  * \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
  */
@@ -173,7 +174,7 @@ template<typename PolygonMesh, typename NamedParameters>
 bool is_outward_oriented(const PolygonMesh& pmesh,
                          const NamedParameters& np)
 {
-  CGAL_warning(CGAL::is_closed(pmesh));
+  CGAL_warning(CGAL::does_bound_a_volume(pmesh));
   CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
 
 #ifdef CGAL_PMP_DEBUG_CODE
