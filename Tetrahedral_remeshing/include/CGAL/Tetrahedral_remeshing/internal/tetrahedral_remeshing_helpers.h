@@ -235,12 +235,8 @@ namespace Tetrahedral_remeshing
       else if (cell_selector(f.first) // XOR
         ^ cell_selector(f.first->neighbor(f.second)))
         return true;
-      else if (c3t3.triangulation().is_infinite(f) //XOR
-        ^ c3t3.triangulation().is_infinite(f.first->neighbor(f.second)))
-        return true;
 
-      ++fcirc;
-    } while (fcirc != fend);
+    } while (++fcirc != fend);
 
     return false;
   }
