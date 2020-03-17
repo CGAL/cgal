@@ -229,7 +229,7 @@ namespace Tetrahedral_remeshing
 
     do
     {
-      Facet f = *fcirc;
+      const Facet& f = *fcirc;
       if (c3t3.is_in_complex(f))
         return true;
       else if (cell_selector(f.first) // XOR
