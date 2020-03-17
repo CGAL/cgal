@@ -1,10 +1,10 @@
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_2.h>
 
 #include <boost/bind.hpp>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                     Point;
 typedef K::Segment_2                   Segment;
 
@@ -32,6 +32,7 @@ int main()
 {
   std::vector<Segment> input;
 
+  
   // Prepare point generator for the horizontal segment, length 200.
   P1 p1( Point(-100,0), Point(100,0));
 

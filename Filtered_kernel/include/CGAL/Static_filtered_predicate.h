@@ -27,7 +27,9 @@ public:
 
   Static_filtered_predicate(const FP& fp = FP())
     : fp(fp)
-  {}
+  {
+    std::cout << "In constructor: " << typeid(*this).name() << std::endl;
+  }
   
   template <typename A1>
   result_type operator()(const A1& a1) const
@@ -158,6 +160,7 @@ public:
   template <typename A1, typename A2, typename A3, typename A4, typename A5>
   result_type operator()(const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5) const
   {
+    std::cout << "In operator(): " << typeid(*this).name() << std::endl;
     CGAL::Epic_converter<AK> convert;
     typedef typename Kernel_traits<A1>::type EK;
     typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;

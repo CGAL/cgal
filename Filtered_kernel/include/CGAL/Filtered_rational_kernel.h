@@ -20,7 +20,7 @@
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_2.h>
 #include <CGAL/Filtered_kernel/Cartesian_coordinate_iterator_3.h>
 #include <CGAL/Interval_nt.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/internal/Exact_type_selector.h>
 
 #include <CGAL/Cartesian_converter.h>
 
@@ -117,13 +117,14 @@ struct Pairify <Angle, Angle, EK, FRK>
 };
 
 template <typename EK, typename FRK>
-struct Pairify <const Interval_nt<false>&,const Gmpq&, EK, FRK>
+struct Pairify <const Interval_nt<false>&,const const typename CGAL::internal::Exact_field_selector<double>::Type&, EK, FRK>
 {
-  typedef Filtered_rational<Interval_nt<false>,Gmpq> result_type;
+  typedef typename CGAL::internal::Exact_field_selector<double>::Type ET;
+  typedef Filtered_rational<Interval_nt<false>,ET> result_type;
 
-  result_type operator()(const Interval_nt<false>& a, const Gmpq& e) const
+  result_type operator()(const Interval_nt<false>& a, const ET& e) const
   {
-    return Filtered_rational<Interval_nt<false>, Gmpq>(a,e);
+    return Filtered_rational<Interval_nt<false>, ET>(a,e);
   }
 };
 
@@ -475,9 +476,14 @@ public:
 
 #undef CGAL_frk_pair
 
+      void inpf() const
+  {
+      std::cout << "In P f ()" << std::endl;
+  }
+
 #define CGAL_Kernel_pred(P, Pf) \
   typedef Static_filtered_predicate<Approximate_kernel, Filtered_rational_predicate<typename AK::P, typename EK::P>, Exact_predicates_inexact_constructions_kernel::P> P; \
-  P Pf() const {  typedef Filtered_rational_predicate<typename AK::P, typename EK::P> FRP;  return P(FRP(ak.Pf(), ek.Pf())); }
+  P Pf() const {  typedef Filtered_rational_predicate<typename AK::P, typename EK::P> FRP;  inpf(); std::cout << typeid (P).name() << std::endl << typeid(FRP).name() << std::endl; return P(FRP(ak.Pf(), ek.Pf())); }
 
 #define CGAL_Kernel_cons(C, Cf) \
   typedef Filtered_rational_construction<typename AK::C, typename EK::C, AK, EK, Kernel_> C; \
