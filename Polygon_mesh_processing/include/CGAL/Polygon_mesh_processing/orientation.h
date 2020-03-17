@@ -465,8 +465,11 @@ enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
                        };
 namespace internal {
 
+// helper function to copy data
 template<class T, class RefToContainer>
-void copy_container_content(const std::vector<T>& vec, RefToContainer ref_wrapper)
+void copy_container_content(
+  const std::vector<T>& vec,
+  RefToContainer ref_wrapper)
 {
   ref_wrapper.get().reserve(vec.size());
   for(const T& t : vec)
@@ -476,22 +479,27 @@ void copy_container_content(const std::vector<T>& vec, RefToContainer ref_wrappe
 }
 
 template<class T>
-void copy_container_content(std::vector<T>& vec, std::reference_wrapper<std::vector<T> > ref_wrapper)
+void copy_container_content(
+  std::vector<T>& vec,
+  std::reference_wrapper<std::vector<T> > ref_wrapper)
 {
   vec.swap(ref_wrapper.get());
 }
 
 template<class T>
-void copy_container_content(std::vector<T>& vec, boost::reference_wrapper<std::vector<T> > ref_wrapper)
+void copy_container_content(
+  std::vector<T>& vec,
+  boost::reference_wrapper<std::vector<T> > ref_wrapper)
 {
   vec.swap(ref_wrapper.get());
 }
+
 template<class T>
 inline
-void copy_container_content(std::vector<T>&,
-                                   internal_np::Param_not_found)
+void copy_container_content(
+  std::vector<T>&,
+  internal_np::Param_not_found)
 {}
-
 
 template <class RefToContainer>
 void copy_nested_parents(
@@ -506,10 +514,9 @@ void copy_nested_parents(
   {
     Container_value c;
     c.reserve(t.size());
-    for(const std::size_t& val : t){
+    for(const std::size_t& val : t)
       c.push_back(val);
-    }
-   ref_to_vector.get().push_back(c);
+    ref_to_vector.get().push_back(c);
   }
 }
 
@@ -535,23 +542,25 @@ void copy_nested_parents(
   internal_np::Param_not_found)
 {}
 
+
+// helper function for setting id maps
 template <class TriangleMesh, class FaceIndexMap, class FaceCCIdMap>
-void set_f_cc_id(const std::vector<std::size_t>& f_cc,
-                 FaceIndexMap face_index_map,
-                 FaceCCIdMap face_cc_map,
-                 const TriangleMesh& tm)
+void set_f_cc_id(
+  const std::vector<std::size_t>& f_cc,
+  FaceIndexMap face_index_map,
+  FaceCCIdMap face_cc_map,
+  const TriangleMesh& tm)
 {
   for(typename boost::graph_traits<TriangleMesh>::face_descriptor fd : faces(tm))
-  {
     put(face_cc_map, fd, f_cc[ get(face_index_map, fd) ]);
-  }
 }
 
 template <class TriangleMesh, class FaceIndexMap>
-void set_f_cc_id(const std::vector<std::size_t>&,
-                 FaceIndexMap,
-                 internal_np::Param_not_found,
-                 const TriangleMesh&)
+void set_f_cc_id(
+  const std::vector<std::size_t>&,
+  FaceIndexMap,
+  internal_np::Param_not_found,
+  const TriangleMesh&)
 {}
 
 template <class RefToVector>
@@ -597,18 +606,18 @@ void copy_orientation_bitset(
 {}
 
 template <class OutputIterator>
-void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std::size_t> >& self_intersecting_cc,
-                               OutputIterator out)
+void set_cc_intersecting_pairs(
+  const std::set< std::pair<std::size_t, std::size_t> >& self_intersecting_cc,
+  OutputIterator out)
 {
   for (const std::pair<std::size_t, std::size_t>& p : self_intersecting_cc)
-  {
     *out++=p;
-  }
 }
 
 inline
-void set_cc_intersecting_pairs(const std::set< std::pair<std::size_t, std::size_t> >&,
-                                      internal_np::Param_not_found)
+void set_cc_intersecting_pairs(
+  const std::set< std::pair<std::size_t, std::size_t> >&,
+  internal_np::Param_not_found)
 {}
 
 } // internal
