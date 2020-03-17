@@ -76,7 +76,7 @@ bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename)
   // extension determines reader
   if(ext == "off")
   {
-    return read_OFF(mesh, filename);
+    return read_OFF(filename, mesh);
   }
 
   // we didn't find a reader module
@@ -88,7 +88,7 @@ bool read_mesh(Surface_mesh<K>& mesh, const std::string& filename)
 /// filename determines which writer is used.
 ///
 /// Mapping from extension to writer:
-/// - off/OFF -> `read_off()`
+/// - off/OFF -> `write_off()`
 ///
 /// @param mesh The mesh to be written.
 /// @param filename The name of the file to be written.
@@ -108,7 +108,7 @@ bool write_mesh(const Surface_mesh<K>& mesh, const std::string& filename)
   // extension determines reader
   if(ext == "off")
   {
-    return write_off(mesh, filename);
+    return write_OFF(filename, mesh);
   }
 
   // we didn't find a writer module
