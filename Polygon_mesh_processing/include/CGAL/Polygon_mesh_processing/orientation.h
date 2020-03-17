@@ -1245,7 +1245,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   typedef typename GT::face_descriptor face_descriptor;
 
   if (!is_closed(tm)) return false;
-  if (!is_triangle_mesh(tm)) return false;
+  CGAL_precondition(is_triangle_mesh(tm));
 
   Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
   std::size_t res =
