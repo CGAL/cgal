@@ -13,11 +13,13 @@
 #define CGAL_DYNAMIC_PROPERTY_MAP_H
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/graph/properties.hpp>
+
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/property_map.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
-
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 
