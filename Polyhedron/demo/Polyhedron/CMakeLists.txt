@@ -73,9 +73,6 @@ if(Qt5_FOUND)
 endif(Qt5_FOUND)
 
 find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-endif(EIGEN3_FOUND)
 
 find_package( METIS )
 
@@ -286,12 +283,15 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   
   if(EIGEN3_FOUND )
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp texture.cpp)
+    CGAL_target_use_Eigen(scene_textured_item)
     qt5_wrap_ui( editionUI_FILES Plugins/Surface_mesh_deformation/Deform_mesh.ui )
     add_item(scene_edit_item Plugins/Surface_mesh_deformation/Scene_edit_polyhedron_item.cpp
       ${editionUI_FILES})
+    CGAL_target_use_Eigen(scene_edit_item)
     target_link_libraries(scene_edit_item PUBLIC scene_surface_mesh_item scene_k_ring_selection
       scene_basic_objects)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
+    CGAL_target_use_Eigen(scene_mcf_item)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp )
@@ -303,19 +303,19 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   target_link_libraries(scene_nef_polyhedron_item PUBLIC scene_surface_mesh_item)
   
+  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+  if (EIGEN3_FOUND)
+    CGAL_target_use_Eigen(scene_points_with_normal_item)
+  endif()
+  
   find_package(LASLIB)
   if (LASLIB_FOUND)
-    include(${LASLIB_USE_FILE})
-    include_directories(${LASLIB_INCLUDE_DIR})
-    include_directories(${LASZIP_INCLUDE_DIR})
-    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
+    CGAL_target_use_LASLIB(scene_points_with_normal_item)
     if (MSVC)
       target_compile_definitions( scene_points_with_normal_item PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
     endif()
-    target_link_libraries( scene_points_with_normal_item PUBLIC ${LASLIB_LIBRARIES})
-  else()
-    add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   endif()
+  
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
