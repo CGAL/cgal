@@ -76,42 +76,6 @@ int read_triangle_soups_from_3mf(const std::string& file_name,
            extract_soups<PointRange, PolygonRange, ColorRange>);
 }
 
-template<typename PointRanges, typename ColorRanges>
-int read_polylines_from_3mf(const std::string& file_name,
-                            PointRanges& all_points,
-                            ColorRanges& all_colors,
-                            std::vector<std::string>& names)
-{
-  typedef typename PointRanges::value_type PointRange;
-  typedef std::vector<std::size_t> Polygon;
-  typedef std::vector<Polygon> PolygonRange;
-  typedef std::vector<CGAL::Color> ColorRange;
-
-  std::vector<PolygonRange> all_polygons;
-  return read_from_3mf<PointRanges, std::vector<PolygonRange>,
-                       std::vector<ColorRange>, PointRange, PolygonRange, ColorRange>
-          (file_name, all_points, all_polygons, all_colors, names,
-           extract_polylines<PointRange, PolygonRange, ColorRange>);
-}
-
-template<typename PointRanges, typename ColorRanges>
-int read_point_clouds_from_3mf(const std::string& file_name,
-                               PointRanges& all_points,
-                               ColorRanges& all_colors,
-                               std::vector<std::string>& names)
-{
-  typedef typename PointRanges::value_type PointRange;
-  typedef std::vector<std::size_t> Polygon;
-  typedef std::vector<Polygon> PolygonRange;
-  typedef std::vector<CGAL::Color> ColorRange;
-
-  std::vector<PolygonRange> all_polygons;
-  return read_from_3mf<PointRanges, std::vector<PolygonRange>,
-                       std::vector<ColorRange>, PointRange, PolygonRange, ColorRange>
-          (file_name, all_points, all_polygons, all_colors, names,
-           extract_point_clouds<PointRange, PolygonRange, ColorRange>);
-}
-
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges,
          typename PointRange, typename PolygonRange, typename ColorRange>
 int read_from_3mf(const std::string& file_name,
