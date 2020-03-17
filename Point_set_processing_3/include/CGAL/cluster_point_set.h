@@ -199,7 +199,7 @@ std::size_t cluster_point_set (PointRange& points,
 
       neighbor_query.get_iterators (get (point_map, *current), 0, neighbor_radius,
                                     boost::make_function_output_iterator
-                                    ([&](const iterator& it) { todo.push(it); }));
+                                    ([&](const iterator& it) { todo.push(it); }), false);
 
     }
 
@@ -222,7 +222,7 @@ std::size_t cluster_point_set (PointRange& points,
       
       neighbors.clear();
       neighbor_query.get_iterators (get (point_map, p), 0, neighbor_radius,
-                                    std::back_inserter (neighbors));
+                                    std::back_inserter (neighbors), false);
 
       for (const iterator& it : neighbors)
       {

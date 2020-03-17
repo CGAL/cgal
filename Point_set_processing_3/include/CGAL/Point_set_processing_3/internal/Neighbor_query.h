@@ -103,7 +103,7 @@ public:
 
   template <typename OutputIterator>
   void get_iterators (const Point_3& query, unsigned int k, FT neighbor_radius,
-                      OutputIterator output) const
+                      OutputIterator output, bool fallback_k_is_sphere_empty = true) const
   {
     if (neighbor_radius != FT(0))
     {
@@ -133,13 +133,16 @@ public:
       catch (const Maximum_points_reached_exception&)
       { }
 
-      // Fallback, if less than 3 points are return, search for the 3
-      // first points
-      if (nb < 3)
-        k = 3;
-      // Else, no need to search for K nearest neighbors
-      else
+      if (fallback_k_is_sphere_empty)
+      {
+        // Fallback, if less than 3 points are return, search for the 3
+        // first points
+        if (nb < 3)
+          k = 3;
+        // Else, no need to search for K nearest neighbors
+        else
         k = 0;
+      }
     }
   
     if (k != 0)
