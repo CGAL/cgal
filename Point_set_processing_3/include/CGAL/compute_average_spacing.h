@@ -75,7 +75,7 @@ compute_average_spacing(const typename NeighborQuery::Kernel::Point_3& query, //
   // output first). search may be aborted when k is greater
   // than number of input points
   FT sum_distances = (FT)0.0;
-  unsigned int i;
+  unsigned int i = 0;
   neighbor_query.get_points
     (query, k, 0,
      boost::make_function_output_iterator
