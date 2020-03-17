@@ -147,7 +147,6 @@ std::size_t cluster_point_set (PointRange& points,
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
   // If no radius is given, init with 1% of bbox diagonal
-  std::cerr << neighbor_radius << std::endl;
   if (neighbor_radius < 0)
   {
     CGAL::Bbox_3 bbox = CGAL::bbox_3 (CGAL::make_transform_iterator_from_property_map (points.begin(), point_map),
@@ -157,8 +156,6 @@ std::size_t cluster_point_set (PointRange& points,
       ((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
        + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
        + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
-
-    std::cerr << neighbor_radius << std::endl;
   }
 
   // Init cluster map with -1
