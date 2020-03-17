@@ -589,11 +589,12 @@ an oriented polygon mesh is oriented such that the normals to all faces are orie
 outside of the domain bounded by the input polygon mesh.
 - The function `CGAL::Polygon_mesh_processing::reverse_face_orientations()` reverses the orientation
 of halfedges around faces.
+As a consequence, the normal computed for each face (see Section
+\ref PMPNormalComp) is also reversed.
 - The function `CGAL::Polygon_mesh_processing::volume_connected_component()` provides information about
 the 3D arrangement of the surface connected components in a given triangle mesh. It comes with many
 named parameter options making it also a more general version of `is_outward_oriented()`.
-As a consequence, the normal computed for each face (see Section
-\ref PMPNormalComp) is also reversed.
+
 
 \subsection PolygonSoupExample Orientation Example
 
