@@ -116,7 +116,14 @@ namespace internal
       const Point& p2 = point(cit->vertex(2)->point());
       const Point& p3 = point(cit->vertex(3)->point());
       double v = CGAL::abs(tr.tetrahedron(cit).volume());
-      double circumradius = CGAL::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
+      if (v == 0.)
+      {
+        std::cout << "degenerate cell :\n\t";
+        std::cout << p0 << "\n\t" << p1 << "\n\t" << p2 << "\n\t" << p3 << std::endl;
+      }
+      double circumradius = (v == 0.)
+        ? CGAL::sqrt(CGAL::squared_radius(p0, p1, p2))
+        : CGAL::sqrt(CGAL::squared_radius(p0, p1, p2, p3));
 
       //find shortest edge
       double edges[6];
