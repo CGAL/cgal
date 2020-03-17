@@ -324,7 +324,17 @@ fixed radius centered on each point.
 The clustering is stored in a cluster map which associates each input
 point with the index of the cluster it belongs to: users can then use
 this map however they find it relevant to their use case, for example
-segmenting the input point set into several (one per cluster).
+segmenting the input point set into several (one per
+cluster). \cgalFigureRef{Point_set_processing_3figclustering} shows different clustering
+outputs.
+
+\cgalFigureBegin{Point_set_processing_3figclustering,clustering.png}
+Point Set Clustering outputs (one color per cluster). Top: input point
+set and clustering using a neighbor radius of 1.5 (147 clusters
+extracted). Bottom: clustering with neighbor radius 3.0 (37 clusters
+extracted), and with neighbor radius 6.0 (5 clusters extracted).
+\cgalFigureEnd
+
 
 \subsection Point_set_processing_3Example_clustering Example
 

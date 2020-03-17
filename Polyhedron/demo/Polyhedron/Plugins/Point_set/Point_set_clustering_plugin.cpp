@@ -193,7 +193,7 @@ void Polyhedron_demo_point_set_clustering_plugin::on_actionCluster_triggered()
         Point_set::Index iidx = *(colored->point_set()->insert (points->point(idx)));
         if (cluster_size[cluster_map[idx]] >= min_nb->value())
         {
-          CGAL::Random rand(cluster_map[idx]);
+          CGAL::Random rand(cluster_map[idx] + 1);
           unsigned char r, g, b;
           r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
           g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
