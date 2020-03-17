@@ -18,7 +18,6 @@
 #endif
 
 #include <CGAL/boost/graph/io.h>
-#include <CGAL/IO/STL/STL_writer.h>
 
 #include <iostream>
 #include <fstream>
