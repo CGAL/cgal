@@ -165,7 +165,7 @@ namespace internal{
  * \cgalNamedParamsEnd
  *
  * \note This function is only doing an orientation test for one connected component of `pmesh`.
- *       For performance reason, it is left to the user to call the function `does_bound_a_volume()`
+ *       For performance reasons, it is left to the user to call the function `does_bound_a_volume()`
  *       on a triangulated version of `pmesh` to ensure the result returned is relevant.
  *       For advanced usages, the function `volume_connected_components()` should be used instead.
  *
