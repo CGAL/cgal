@@ -67,6 +67,15 @@ int main(int argc, char *argv[]) {
   std::ifstream in(argc > 1 ? argv[1] : "data/polygon_mesh.off");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout << 
+    "Error: cannot read the file polygon_mesh.off!" << std::endl;
+    std::cout << 
+    "You can either create a symlink to the data folder or provide this file by hand." 
+    << std::endl << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Polygon_mesh polygon_mesh;
   in >> polygon_mesh;
     

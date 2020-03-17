@@ -33,6 +33,8 @@ if(CGAL_FOUND)
       "test_region_growing_on_point_set_3_with_sorting.cpp")
     create_single_source_cgal_program(
       "test_region_growing_on_polygon_mesh_with_sorting.cpp")
+    create_single_source_cgal_program(
+      "test_region_growing_on_degenerated_mesh.cpp")
   endif()
 
   create_single_source_cgal_program(
