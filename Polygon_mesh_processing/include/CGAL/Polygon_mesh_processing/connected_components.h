@@ -976,38 +976,33 @@ struct No_mark
 template < class PolygonMesh, class PolygonMeshRange,
            class FIMap, class VIMap,
            class HIMap, class Ecm >
-void split_connected_components_impl(
-    FIMap fim,
-    HIMap him,
-    VIMap vim,
-    Ecm ecm,
-    PolygonMeshRange& range,
-    const PolygonMesh& tm
-    )
+void split_connected_components_impl(FIMap fim,
+                                     HIMap him,
+                                     VIMap vim,
+                                     Ecm ecm,
+                                     PolygonMeshRange& range,
+                                     const PolygonMesh& tm)
 {
   typename boost::template property_map<
       PolygonMesh, CGAL::dynamic_face_property_t<int > >::const_type
       pidmap = get(CGAL::dynamic_face_property_t<int>(), tm);
 
-  int nb_patches =
-      CGAL::Polygon_mesh_processing::connected_components(
-        tm,
-        pidmap,
-        CGAL::parameters::face_index_map(fim)
-        .edge_is_constrained_map(ecm));
+  int nb_patches = CGAL::Polygon_mesh_processing::connected_components(
+                     tm, pidmap, CGAL::parameters::face_index_map(fim)
+                                      .edge_is_constrained_map(ecm));
 
   for(int i=0; i<nb_patches; ++i)
   {
     CGAL::Face_filtered_graph<PolygonMesh, FIMap, VIMap, HIMap>
-        filter_graph(tm, i, pidmap,
-                     CGAL::parameters::face_index_map(fim)
-                     .halfedge_index_map(him)
-                     .vertex_index_map(vim));
+        filter_graph(tm, i, pidmap, CGAL::parameters::face_index_map(fim)
+                                                     .halfedge_index_map(him)
+                                                     .vertex_index_map(vim));
     range.push_back(PolygonMesh());
     PolygonMesh& new_graph = range.back();
     CGAL::copy_face_graph(filter_graph, new_graph);
   }
 }
+
 }//internal
 
 /*!
@@ -1085,7 +1080,6 @@ void split_connected_components(const PolygonMesh& pm,
           pm, vertices(pm)),
         ecm,
         cc_meshes, pm);
-
 }
 
 template <class PolygonMesh, class PolygonMeshRange>
@@ -1096,7 +1090,6 @@ void split_connected_components(const PolygonMesh& pm,
 }
 
 } // namespace Polygon_mesh_processing
-
 } // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
