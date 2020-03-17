@@ -577,6 +577,7 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   if (!is_closed(tm)) return;
   if (!is_triangle_mesh(tm)) return;
 
+  using parameters::choose_parameter;
   using parameters::get_parameter;
 
   bool orient_outward = choose_parameter(get_parameter(np, internal_np::outward_orientation),true);
