@@ -167,6 +167,7 @@ namespace internal{
  * \note This function is only doing an orientation test for one connected component of `pmesh`.
  *       For performance reason, it is left to the user to call the function `does_bound_a_volume()`
  *       on a triangulated version of `pmesh` to ensure the result returned is relevant.
+ *       For advanced usages, the function `volume_connected_components()` should be used instead.
  *
  * \sa `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
  */
@@ -174,7 +175,7 @@ template<typename PolygonMesh, typename NamedParameters>
 bool is_outward_oriented(const PolygonMesh& pmesh,
                          const NamedParameters& np)
 {
-  CGAL_warning(CGAL::does_bound_a_volume(pmesh));
+  CGAL_warning(CGAL::is_closed(pmesh));
   CGAL_precondition(CGAL::is_valid_polygon_mesh(pmesh));
 
 #ifdef CGAL_PMP_DEBUG_CODE
