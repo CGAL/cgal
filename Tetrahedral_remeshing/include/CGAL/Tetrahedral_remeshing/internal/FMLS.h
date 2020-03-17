@@ -574,20 +574,17 @@ namespace CGAL
       template<typename Subdomain__FMLS,
                typename Subdomain__FMLS_indices,
                typename VerticesNormalsMap,
-               typename VerticesSubdomainIndices,
                typename VerticesSurfaceIndices,
                typename C3t3>
       void createMLSSurfaces(Subdomain__FMLS& subdomain_FMLS,
                              Subdomain__FMLS_indices& subdomain_FMLS_indices,
                              const VerticesNormalsMap& vertices_normals,
-                             const VerticesSubdomainIndices& vertices_subdomain_indices,
                              const VerticesSurfaceIndices& vertices_surface_indices,
                              const C3t3& c3t3)
       {
         const int upsample = 2; // can be 0, 1 or 2
 
         typedef typename C3t3::Surface_patch_index Surface_index;
-        typedef typename C3t3::Subdomain_index     Subdomain_index;
         typedef typename C3t3::Triangulation       Tr;
         typedef typename Tr::Edge                  Edge;
         typedef typename Tr::Vertex_handle         Vertex_handle;
