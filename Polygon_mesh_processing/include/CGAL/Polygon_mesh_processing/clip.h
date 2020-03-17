@@ -430,9 +430,8 @@ void split_along_edges(TriangleMesh& tm,
   *     If this parameter is omitted, an internal property map for
   *     `CGAL::vertex_point_t` must be available in `TriangleMesh`
   *   \cgalParamEnd
-  *   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tm` (`clipper`).
-  *     This property map must be either writable, or be automatically updated
-  *     when new faces are added and removed in the mesh.
+  *   \cgalParamBegin{face_index_map}
+  *     a property map containing a unique index for each face of `tm` (`clipper`).
   *   \cgalParamEnd
   *   \cgalParamBegin{visitor} a class model of `PMPCorefinementVisitor`
   *                            that is used to track the creation of new faces.
