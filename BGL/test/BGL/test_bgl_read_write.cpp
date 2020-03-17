@@ -9,6 +9,8 @@
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/helpers.h>
 
+#include <CGAL/boost/graph/IO/PLY.h>
+
 #if defined(CGAL_USE_OPENMESH)
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
@@ -195,10 +197,31 @@ bool test_STL()
   return true;
 }
 
+
+template<class FaceGraph>
+bool test_PLY()
+{
+  FaceGraph fg;
+  CGAL::make_tetrahedron(Point(0, 0, 0), Point(1, 1, 0),
+                         Point(2, 0, 1), Point(3, 0, 0), fg);
+  std::ostringstream out;
+  CGAL::write_PLY(out, fg);
+  if(out.fail())
+  {
+    std::cerr<<"Tetrahedron writing failed."<<std::endl;
+    return false;
+  }
+  return true;
+}
+
+
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
-
+/*
+  //PLY
+  test_PLY<Polyhedron>();
+  test_PLY<SM>();
   // OFF
   test_bgl_read_write<Polyhedron>(filename);
   test_bgl_read_write<SM>(filename);
@@ -214,7 +237,7 @@ int main(int argc, char** argv)
     return 1;
   if(!test_gocad<LCC>())
     return 1;
-
+*/
   // STL
   if(!test_STL<Polyhedron>())
     return 1;

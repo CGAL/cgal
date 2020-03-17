@@ -159,7 +159,7 @@ bool parse_ASCII_STL(std::istream& is,
     return false;
   }
 
-  return !is.fail();
+  return !in_solid;
 }
 
 template <class PointRange, class TriangleRange>
