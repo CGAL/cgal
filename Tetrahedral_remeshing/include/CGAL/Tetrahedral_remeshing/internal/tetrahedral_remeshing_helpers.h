@@ -752,14 +752,18 @@ namespace Tetrahedral_remeshing
         const std::size_t nb_si_v1 = nb_incident_subdomains(v1, c3t3);
 
         if (nb_si_v0 > nb_si_v1) {
-          update_v1 = true;
+          if (!c3t3.is_in_complex(v1))
+           update_v1 = true;
         }
         else if (nb_si_v1 > nb_si_v0) {
-          update_v0 = true;
+          if (!c3t3.is_in_complex(v0))
+            update_v0 = true;
         }
         else {
-          update_v0 = true;
-          update_v1 = true;
+          if (!c3t3.is_in_complex(v0))
+            update_v0 = true;
+          if (!c3t3.is_in_complex(v1))
+            update_v1 = true;
         }
       }
       return;
