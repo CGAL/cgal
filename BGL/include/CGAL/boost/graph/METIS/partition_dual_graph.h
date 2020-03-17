@@ -42,17 +42,14 @@ void partition_dual_graph(const TriangleMesh& tm,
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
   CGAL_precondition_msg(nparts > 1, ("Partitioning requires a number of parts > 1"));
 
-  using parameters::choose_parameter;
   using parameters::get_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
 
-  // vertex index map
-  typedef typename CGAL::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
-  Indices indices = choose_parameter(get_parameter(np, internal_np::vertex_index),
-                                     get_const_property_map(boost::vertex_index, tm));
+  typedef typename CGAL::GetInitializedVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
+  Indices indices = CGAL::get_initialized_vertex_index_map(tm, np);
 
   idx_t nn = static_cast<idx_t>(num_vertices(tm));
   idx_t ne = static_cast<idx_t>(num_faces(tm));
@@ -136,9 +133,6 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 /// based on the mesh's dual graph. The resulting partition is stored in the vertex and/or face
 /// property maps that are passed as parameters using \ref bgl_namedparameters "Named Parameters".
 ///
-/// Property map for `CGAL::vertex_index_t` should be either available
-/// as an internal property map to `tm` or provided as \ref bgl_namedparameters "Named Parameters".
-///
 /// \param tm a triangle mesh
 /// \param nparts the number of parts in the final partition
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -148,7 +142,7 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{vertex_index_map}
-///     is a property map containing the index of each vertex of `tm` intialized from `0` to `num_vertices(tm)-1`.
+///     is a property map containing for each vertex of `tm` a unique index between `0` and `num_vertices(tm)-1`.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{METIS_options}
 ///     is a parameter used in to pass options to the METIS mesh

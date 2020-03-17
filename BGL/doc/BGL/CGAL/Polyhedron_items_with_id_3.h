@@ -2,7 +2,7 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup BGLGraphExternalIndices
 
 The class `Polyhedron_items_with_id_3` is a model of the `PolyhedronItems_3` 
 concept. It provides definitions for vertices with points, halfedges, 
@@ -63,7 +63,7 @@ public:
 
 
 /*!
-\ingroup PkgBGLHelper
+\ingroup BGLGraphExternalIndices
 
 Given a `CGAL::Polyhedron_3`,
 for each simplex type (vertex, halfedge, facet) associates an index from

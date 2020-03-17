@@ -49,9 +49,10 @@ namespace Polygon_mesh {
     \brief Region type based on the quality of the least squares plane 
     fit applied to faces of a polygon mesh.
 
-    This class fits a plane to chunks of faces in a polygon mesh and controls 
-    the quality of this fit. If all quality conditions are satisfied, the chunk
-    is accepted as a valid region, otherwise rejected.
+    This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA", 
+    to chunks of faces in a polygon mesh and controls the quality of this fit. 
+    If all quality conditions are satisfied, the chunk is accepted as a valid region, 
+    otherwise rejected.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -97,6 +98,7 @@ namespace Polygon_mesh {
     using Squared_length_3 = typename Traits::Compute_squared_length_3;
     using Squared_distance_3 = typename Traits::Compute_squared_distance_3;
     using Scalar_product_3 = typename Traits::Compute_scalar_product_3;
+    using Cross_product_3 = typename Traits::Construct_cross_product_vector_3;
 
     using Get_sqrt = internal::Get_sqrt<Traits>;
     using Sqrt = typename Get_sqrt::Sqrt;
@@ -160,6 +162,7 @@ namespace Polygon_mesh {
     m_squared_length_3(traits.compute_squared_length_3_object()),
     m_squared_distance_3(traits.compute_squared_distance_3_object()),
     m_scalar_product_3(traits.compute_scalar_product_3_object()),
+    m_cross_product_3(traits.construct_cross_product_vector_3_object()),
     m_sqrt(Get_sqrt::sqrt_object(traits)),
     m_to_local_converter() {
 
@@ -207,9 +210,13 @@ namespace Polygon_mesh {
 
       const FT distance_to_fitted_plane = 
       get_max_face_distance(face);
+      if (distance_to_fitted_plane < FT(0))
+        return false;
       
+      // The sign of this scalar product is important, as it indicates
+      // into which side of the plane the face's normal points.
       const FT cos_value = 
-      CGAL::abs(m_scalar_product_3(face_normal, m_normal_of_best_fit));
+      m_scalar_product_3(face_normal, m_normal_of_best_fit);
 
       return (( distance_to_fitted_plane <= m_distance_threshold ) && 
         ( cos_value >= m_normal_threshold ));
@@ -284,6 +291,13 @@ namespace Polygon_mesh {
 
         // The best fit plane will be a plane fitted to all vertices of all
         // region faces with its normal being perpendicular to the plane.
+        // Given that the points, and no normals, are used in estimating
+        // the plane, the estimated normal will point into an arbitray
+        // one of the two possible directions.
+        // We flip it into the correct direction (the one that the majority
+        // of faces agree with) below.
+        // This fix is proposed by nh2: 
+        // https://github.com/CGAL/cgal/pull/4563
         CGAL::linear_least_squares_fitting_3(
           points.begin(), points.end(), 
           fitted_plane, fitted_centroid, 
@@ -291,18 +305,49 @@ namespace Polygon_mesh {
           Local_traits(), 
           CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
 
-        m_plane_of_best_fit = 
+        const Plane_3 unoriented_plane_of_best_fit =
         Plane_3(
           static_cast<FT>(fitted_plane.a()), 
           static_cast<FT>(fitted_plane.b()), 
           static_cast<FT>(fitted_plane.c()), 
           static_cast<FT>(fitted_plane.d()));
 
-        const Vector_3 normal = m_plane_of_best_fit.orthogonal_vector();
-        const FT normal_length = m_sqrt(m_squared_length_3(normal));
+        Vector_3 unoriented_plane_normal =
+        unoriented_plane_of_best_fit.orthogonal_vector();
 
-        CGAL_precondition(normal_length > FT(0));
-        m_normal_of_best_fit = normal / normal_length;
+        const FT squared_length = m_squared_length_3(unoriented_plane_normal);
+        if (squared_length != FT(0)) {
+          const FT normal_length = m_sqrt(squared_length);
+          CGAL_precondition(normal_length > FT(0));
+          unoriented_plane_normal /= normal_length;
+        }
+
+        // Compute actual direction of plane's normal sign
+        // based on faces belonging to that region.
+        // Approach:
+        // Each face gets one vote to keep or flip the current plane normal.
+        Vector_3 face_normal;
+        long votes_to_keep_normal = 0;
+
+        for (const std::size_t face_index : region) {
+          const auto face = *(m_face_range.begin() + face_index);
+
+          get_face_normal(face, face_normal);
+          const bool agrees = 
+          m_scalar_product_3(face_normal, unoriented_plane_normal) > FT(0);
+          votes_to_keep_normal += (agrees ? 1 : -1);
+        }
+        const bool flip_normal = (votes_to_keep_normal < 0);
+
+        m_plane_of_best_fit =
+        flip_normal
+          ? unoriented_plane_of_best_fit.opposite()
+          : unoriented_plane_of_best_fit;
+
+        m_normal_of_best_fit =
+        flip_normal
+          ? (-1 * unoriented_plane_normal)
+          : unoriented_plane_normal;
       }
     }
 
@@ -359,16 +404,29 @@ namespace Polygon_mesh {
       const Point_3& point2 = get(m_vertex_to_point_map, *vertex); ++vertex;
       const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
 
-      const Vector_3 tmp_normal = CGAL::normal(point1, point2, point3);
-      const FT tmp_normal_length = m_sqrt(m_squared_length_3(tmp_normal));
+      const Vector_3 u = point2 - point1;
+      const Vector_3 v = point3 - point1; 
+      face_normal = m_cross_product_3(u, v);
+      const FT squared_length = m_squared_length_3(face_normal);
+      if (squared_length == FT(0))
+        return;
 
-      CGAL_precondition(tmp_normal_length > FT(0));
-      face_normal = tmp_normal / tmp_normal_length;
+      const FT normal_length = m_sqrt(squared_length);
+      CGAL_precondition(normal_length > FT(0));
+      face_normal /= normal_length;
     }
 
     // The maximum distance from the vertices of the face to the best fit plane.
     template<typename Face>
     FT get_max_face_distance(const Face& face) const {
+
+      const FT a = CGAL::abs(m_plane_of_best_fit.a());
+      const FT b = CGAL::abs(m_plane_of_best_fit.b());
+      const FT c = CGAL::abs(m_plane_of_best_fit.c());
+      const FT d = CGAL::abs(m_plane_of_best_fit.d());
+
+      if (a == FT(0) && b == FT(0) && c == FT(0) && d == FT(0))
+        return -FT(1);
 
       const auto hedge = halfedge(face, m_face_graph);
       const auto vertices = vertices_around_face(hedge, m_face_graph);
@@ -403,6 +461,7 @@ namespace Polygon_mesh {
     const Squared_length_3 m_squared_length_3;
     const Squared_distance_3 m_squared_distance_3;
     const Scalar_product_3 m_scalar_product_3;
+    const Cross_product_3 m_cross_product_3;
     const Sqrt m_sqrt;
 
     const To_local_converter m_to_local_converter;

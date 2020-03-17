@@ -21,6 +21,10 @@ Release date: June 2020
 ### Intersecting Sequences of dD Iso-oriented Boxes 
  -   Added parallel versions of the functions `CGAL::box_intersection_d()` and `CGAL::box_self_intersection_d()`.
 
+### CGAL and the Boost Graph Library (BGL)
+ -   Introduced the function `set_triangulation_ids(Triangulation& tr)` which must be used to initialize vertex,
+     edge, and face indices of a triangulation meant to be used with BGL algorithms.
+
 ### Polygon Mesh Processing
 
 -   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
