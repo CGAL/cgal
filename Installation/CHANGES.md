@@ -28,7 +28,9 @@ Release date: June 2020
     components that would be removed with the specified threshold, but without actually removing them.
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
-
+-   Added the function `CGAL::Polygon_mesh_processing::volume_connected_component()` that can be used to
+    get information about the nesting of the connected components of a given triangle mesh and about
+    the volumes defined.
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
     are truly allowed in constrained Delaunay triangulations, the tag `CGAL::No_intersection_tag`
