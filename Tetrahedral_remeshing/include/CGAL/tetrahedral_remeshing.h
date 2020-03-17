@@ -228,7 +228,7 @@ namespace CGAL
 #endif
 
     // perform remeshing
-    std::size_t nb_extra_iterations = 3;
+    std::size_t nb_extra_iterations = 0;// 3;
     remesher.remesh(max_it, nb_extra_iterations);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -381,7 +381,7 @@ namespace CGAL
 #endif
 
     // perform remeshing
-    std::size_t nb_extra_iterations = 3;
+    std::size_t nb_extra_iterations = 0;// 3;
     remesher.remesh(max_it, nb_extra_iterations);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG

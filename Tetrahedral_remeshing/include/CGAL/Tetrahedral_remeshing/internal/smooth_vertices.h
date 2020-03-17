@@ -441,11 +441,8 @@ namespace CGAL
             }
           }
 
-          smoothed_positions.clear();
-          smoothed_positions.resize(nbv, CGAL::NULL_VECTOR);
-
-          neighbors.clear();
-          neighbors.resize(nbv, -1);
+          smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
+          neighbors.assign(nbv, -1);
 
           /////////////// EDGES ON SURFACE, BUT NOT IN COMPLEX //////////////////
           for (const Edge& e : tr.finite_edges())
@@ -540,11 +537,8 @@ namespace CGAL
         }
 ////   end if(!protect_boundaries)
 
-        smoothed_positions.clear();
-        smoothed_positions.resize(nbv, CGAL::NULL_VECTOR);
-
-        neighbors.clear();
-        neighbors.resize(nbv, 0);
+        smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
+        neighbors.assign(nbv, 0);
 
         ////////////// INTERNAL VERTICES ///////////////////////
         for (const Edge& e : tr.finite_edges())
