@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Shihao Wu, Cl:mement Jamin, Pierre Alliez 
+// Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
 
 #ifndef CGAL_wlop_simplify_and_regularize_point_set_H
 #define CGAL_wlop_simplify_and_regularize_point_set_H
