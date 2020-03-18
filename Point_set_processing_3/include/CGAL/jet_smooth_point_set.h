@@ -170,8 +170,6 @@ jet_smooth_point_set(
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
-  typedef typename Kernel::Point_3 Point;
-
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
