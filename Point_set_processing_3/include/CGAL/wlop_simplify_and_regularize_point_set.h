@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
+// Author(s) : Shihao Wu, Cl:mement Jamin, Pierre Alliez 
 
 #ifndef CGAL_wlop_simplify_and_regularize_point_set_H
 #define CGAL_wlop_simplify_and_regularize_point_set_H
@@ -399,8 +399,6 @@ wlop_simplify_and_regularize_point_set(
   using parameters::get_parameter;
   
   // basic geometric types
-  typedef typename PointRange::iterator iterator;
-  typedef typename iterator::value_type value_type;
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
@@ -466,7 +464,6 @@ wlop_simplify_and_regularize_point_set(
 #endif
   }
 
-  FT radius2 = radius * radius;
   CGAL_point_set_processing_precondition(radius > 0);
 
   // Initiate a KD-tree search for original points

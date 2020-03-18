@@ -129,12 +129,11 @@ compute_denoise_projection(
 /// @tparam Tree KD-tree.
 ///
 /// @return max spacing.
-template <typename NeighborQuery, typename VectorMap>
+template <typename NeighborQuery>
 typename NeighborQuery::Kernel::FT
 compute_max_spacing(
   const typename NeighborQuery::value_type& vt,
   typename NeighborQuery::Point_map point_map,
-  VectorMap normal_map,
   NeighborQuery& neighbor_query,                                     ///< KD-tree
   unsigned int k)                                 ///< number of neighbors
 {
@@ -282,7 +281,7 @@ bilateral_smooth_point_set(
    for (const value_type& vt : points)
    {
      FT max_spacing = bilateral_smooth_point_set_internal::
-       compute_max_spacing (vt, point_map, normal_map, neighbor_query, k);
+       compute_max_spacing (vt, point_map, neighbor_query, k);
      guess_neighbor_radius = (CGAL::max)(max_spacing, guess_neighbor_radius); 
    }
    
@@ -391,7 +390,6 @@ bilateral_smooth_point_set(
    // save results
    FT sum_move_error = 0;
    std::size_t nb = 0;
-   typename PointRange::iterator it = points.begin();
    for (value_type& vt : points)
    {
      sum_move_error += CGAL::squared_distance(get(point_map, vt), update_pwns[nb].first);

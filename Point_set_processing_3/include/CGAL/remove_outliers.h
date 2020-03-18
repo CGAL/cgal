@@ -161,7 +161,6 @@ remove_outliers(
   // basic geometric types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
-  typedef typename Kernel::Point_3 Point;
 
   // actual type of input points
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;

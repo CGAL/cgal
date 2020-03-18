@@ -151,11 +151,8 @@ compute_average_spacing(
 
   // basic geometric types
   typedef typename PointRange::const_iterator iterator;
-  typedef typename iterator::value_type value_type;
   typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
-
-  typedef typename Kernel::Point_3 Point;
 
   PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
