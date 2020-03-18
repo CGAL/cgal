@@ -32,4 +32,10 @@ endif()
 
 create_single_source_cgal_program( "dynamic_properties.cpp" )
 
+find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+if (EIGEN3_FOUND)
+  create_single_source_cgal_program( "custom_property_map.cpp" )
+  CGAL_target_use_Eigen(custom_property_map)
+endif()
+
 
