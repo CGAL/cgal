@@ -502,12 +502,13 @@ public:
   using typename Filtered_rational_kernel_generic_base<AK,EK,Kernel_>::Cartesian_const_iterator_2;
   using typename Filtered_rational_kernel_generic_base<AK,EK,Kernel_>::Cartesian_const_iterator_3;
 
+  typedef typename Base::FT FT;
+  typedef typename Base::Point_3 Point_3;
 
   class Construct_point_3
     : public Base::Construct_point_3
   {
   public:
-    
     Point_3 operator()(Return_base_tag tag, const FT& x, const FT& y, const FT& z) const
     {
       return Base::Construct_point_3::operator()(tag,x,y,z);
@@ -519,7 +520,7 @@ public:
     }
   };
 
-  Construct_point_3 construct_point_3_object()
+  Construct_point_3 construct_point_3_object() const
   {
     return Construct_point_3();
   }
