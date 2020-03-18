@@ -172,11 +172,6 @@ jet_estimate_normals(
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
-  typedef typename Kernel::Point_3 Point;
-
-  // Input points types
-  typedef typename boost::property_traits<NormalMap>::value_type Vector;
-
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
