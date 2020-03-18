@@ -51,7 +51,7 @@ bool write_PLY(std::ostream& out,
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor            face_descriptor;
   typedef typename CGAL::GetInitializedVertexIndexMap<FaceGraph, NamedParameters>::const_type VIMap;
   typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type Vpm;
-  typedef typename Vpm::value_type Point_3;
+  typedef typename boost::property_traits<Vpm>::value_type Point_3;
 
   VIMap vim = CGAL::get_initialized_vertex_index_map(mesh, np);
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -109,13 +109,6 @@ bool write_PLY(std::ostream& out,
   return out.good();
 }
 
-template <class FaceGraph, class NamedParameters>
-bool write_PLY(std::ostream& out,
-               const FaceGraph& mesh,
-               const NamedParameters& np)
-{
-  return write_PLY(out, mesh, np, "");
-}
 
 template <class FaceGraph>
 bool write_PLY(std::ostream& out,

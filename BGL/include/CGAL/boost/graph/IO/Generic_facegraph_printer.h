@@ -42,14 +42,12 @@ public:
                   const NamedParameters& np)
   {
     typedef typename CGAL::GetVertexPointMap<FaceGraph, NamedParameters>::const_type   VPM;
-    typedef typename boost::property_traits<VPM>::reference                      Point_ref;
+    typedef typename boost::property_traits<VPM>::reference                            Point_ref;
 
     typedef typename Polygon_mesh_processing::GetK<FaceGraph, NamedParameters>::Kernel Kernel;
     typedef typename Kernel::Vector_3                                                  Vector;
     typedef typename Kernel::Point_2                                                   Texture;
     typedef CGAL::Color                                                                Color;
-
-    //typedef typename CGAL::GetVertexPointMap<FaceGraph, NamedParameters>::type         VPM;
 
     typedef typename internal_np::Lookup_named_param_def<
       internal_np::vertex_normal_map_t, NamedParameters,
