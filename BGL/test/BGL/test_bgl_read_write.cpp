@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/IO/PLY.h>
 
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Polyhedron_3.h>
@@ -218,7 +219,7 @@ bool test_PLY()
 int main(int argc, char** argv)
 {
   const char* filename=(argc>1) ? argv[1] : "data/prim.off";
-/*
+
   //PLY
   test_PLY<Polyhedron>();
   test_PLY<SM>();
@@ -237,7 +238,7 @@ int main(int argc, char** argv)
     return 1;
   if(!test_gocad<LCC>())
     return 1;
-*/
+
   // STL
   if(!test_STL<Polyhedron>())
     return 1;
