@@ -1474,7 +1474,7 @@ dispatch_or_drop_output(O... o)
 
 // Trick to select iterator or const_iterator depending on the range constness
 template <typename RangeRef>
-struct Range_iterator_type                  { typedef int                               type; }; // Should generate errors
+struct Range_iterator_type;
 template <typename RangeRef>
 struct Range_iterator_type<RangeRef&>       { typedef typename RangeRef::iterator       type; };
 template <typename RangeRef>

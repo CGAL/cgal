@@ -41,7 +41,7 @@ void for_each (RangeRef range,
     {
       functor(r);
     }
-    catch (stop_for_each)
+    catch (const stop_for_each&)
     {
       break;
     }
@@ -70,7 +70,7 @@ void for_each (RangeRef range,
                          {
                            functor (*(iterators[i]));
                          }
-                         catch (stop_for_each)
+                         catch (const stop_for_each&)
                          {
                            return;
                          }
@@ -78,7 +78,7 @@ void for_each (RangeRef range,
 }
 
 template <typename RangeRef>
-void for_each (const RangeRef range,
+void for_each (RangeRef range,
                const std::function<void(typename std::iterator_traits
                                         <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
                const Parallel_tag&,
@@ -94,7 +94,7 @@ void for_each (const RangeRef range,
                          {
                            functor (*(range.begin() + i));
                          }
-                         catch (stop_for_each)
+                         catch (const stop_for_each&)
                          {
                            return;
                          }
