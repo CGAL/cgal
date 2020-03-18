@@ -82,9 +82,6 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
                                     VectorMap1 vector_map1, VectorMap2 vector_map2,
                                     Options<Kernel>& options)
 {
-  typedef typename Kernel::Point_3 Point_3;
-  typedef typename Kernel::Vector_3 Vector_3;
-
   typedef gr::Point3D<typename Kernel::FT> PointType;
 
   namespace GR=gr;

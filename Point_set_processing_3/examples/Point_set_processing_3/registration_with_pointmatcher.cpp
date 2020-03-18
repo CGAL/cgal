@@ -133,6 +133,14 @@ int main(int argc, const char** argv)
                                 * */
      );
 
+  if (converged)
+    std::cerr << "Success" << std::endl;
+  else
+  {
+    std::cerr << "Failure" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   std::ofstream out("pwns2_aligned.ply");
   if (!out ||
       !CGAL::write_ply_points(

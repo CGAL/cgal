@@ -264,7 +264,6 @@ compute_registration_transformation(const PointRange1& range1, const PointRange2
   using PM                  = PointMatcher<Scalar>;
   using PM_cloud            = typename PM::DataPoints;
   using PM_matrix           = typename PM::Matrix;
-  using PM_labels           = typename PM_cloud::Labels;
   using PM_transform        = typename PM::Transformation;
   using PM_transform_params = typename PM::TransformationParameters;
   
