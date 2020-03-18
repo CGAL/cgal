@@ -6,6 +6,8 @@ namespace CGAL {
 
 \anchor chapterProperty_map
 
+\cgalAutoToc
+
 \authors Andreas Fabri and Laurent Saboret
 
 \section Property_mapA A Short Introduction to the Boost Property Maps Library
@@ -54,6 +56,20 @@ The following example reads a point set from an input file and writes it to a fi
 
 The following example reads a point set in the `xyz` format and computes the average spacing. %Index, position and color are stored in a tuple and accessed through property maps.
 \cgalExample{Point_set_processing_3/average_spacing_example.cpp}
+
+\section Property_mapCustom Writing Custom Property Maps
+
+Property maps are especially useful when using predefined data
+structures that are not part of the \cgal library: algorithms written
+with property maps can be called on these data structures provided the
+user writes the required property maps, without the need to create
+deep copies of potentially large data into \cgal formats.
+
+The following example shows how to write a readable point map and a
+read-write normal map to run \cgal normal estimation and orientation
+algorithm on raw `double` arrays:
+\cgalExample{Property_map/custom_property_map.cpp}
+
 
 */ 
 } /* namespace CGAL */
