@@ -476,14 +476,10 @@ public:
 
 #undef CGAL_frk_pair
 
-      void inpf() const
-  {
-      std::cout << "In P f ()" << std::endl;
-  }
 
 #define CGAL_Kernel_pred(P, Pf) \
   typedef Static_filtered_predicate<Approximate_kernel, Filtered_rational_predicate<typename AK::P, typename EK::P>, Exact_predicates_inexact_constructions_kernel::P> P; \
-  P Pf() const {  typedef Filtered_rational_predicate<typename AK::P, typename EK::P> FRP;  inpf(); std::cout << typeid (P).name() << std::endl << typeid(FRP).name() << std::endl; return P(FRP(ak.Pf(), ek.Pf())); }
+  P Pf() const {  typedef Filtered_rational_predicate<typename AK::P, typename EK::P> FRP; return P(FRP(ak.Pf(), ek.Pf())); }
 
 #define CGAL_Kernel_cons(C, Cf) \
   typedef Filtered_rational_construction<typename AK::C, typename EK::C, AK, EK, Kernel_> C; \
@@ -501,9 +497,33 @@ class Filtered_rational_kernel_base
 {
 public:
   typedef Filtered_rational_kernel_base<AK,EK,Kernel_> Self;
+  typedef Filtered_rational_kernel_generic_base<AK,EK,Kernel_> Base;
+  
   using typename Filtered_rational_kernel_generic_base<AK,EK,Kernel_>::Cartesian_const_iterator_2;
   using typename Filtered_rational_kernel_generic_base<AK,EK,Kernel_>::Cartesian_const_iterator_3;
 
+
+  class Construct_point_3
+    : public Base::Construct_point_3
+  {
+  public:
+    
+    Point_3 operator()(Return_base_tag tag, const FT& x, const FT& y, const FT& z) const
+    {
+      return Base::Construct_point_3::operator()(tag,x,y,z);
+    }
+    
+    const Point_3& operator()(const Point_3& p) const
+    {
+      return p;
+    }
+  };
+
+  Construct_point_3 construct_point_3_object()
+  {
+    return Construct_point_3();
+  }
+  
   class Construct_object_2
   {
     typedef typename Kernel_::Object_2   Object_2;
@@ -781,9 +801,11 @@ class Filtered_rational_kernel_without_type_equality
   
 template < class AK, class EK >
 class Filtered_rational_kernel
-  : public Static_filters_base_without_filtered_wrapping<
+  : public
+//Static_filters_base_without_filtered_wrapping<
              Type_equality_wrapper<Filtered_rational_kernel_base<AK,EK, Filtered_rational_kernel<AK,EK>>,
-                                   Filtered_rational_kernel<AK,EK> > >
+                                   Filtered_rational_kernel<AK,EK> >
+                                                                                                                                                   // >
 {
 };
   
