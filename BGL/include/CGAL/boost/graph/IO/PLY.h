@@ -43,8 +43,9 @@ namespace CGAL {
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(std::ostream& out,
                const FaceGraph& mesh,
-               const NamedParameters& np,
-               const std::string& comments = std::string())
+               const std::string& comments,
+               const NamedParameters& np
+               )
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor          vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor        halfedge_descriptor;
@@ -109,12 +110,27 @@ bool write_PLY(std::ostream& out,
   return out.good();
 }
 
+template <class FaceGraph>
+bool write_PLY(std::ostream& out,
+               const FaceGraph& mesh,
+               const std::string comments)
+{
+  return write_PLY(out, mesh, comments, parameters::all_default());
+}
+
+template <class FaceGraph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+bool write_PLY(std::ostream& out,
+               const FaceGraph& mesh,
+               const CGAL_BGL_NP_CLASS& np)
+{
+  return write_PLY(out, mesh, "", np);
+}
 
 template <class FaceGraph>
 bool write_PLY(std::ostream& out,
                const FaceGraph& mesh)
 {
-  return write_PLY(out, mesh, parameters::all_default(), "");
+  return write_PLY(out, mesh, "", parameters::all_default());
 }
 
 } // namespace CGAL
