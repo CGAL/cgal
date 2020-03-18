@@ -61,7 +61,7 @@ struct Less_on_point_of_target
   const VertexPointMap& vpm;
 };
 
-// Given a vector of pairs of halfedges whose target are geometrically indentical,
+// Given a container of vectors of halfedges whose target are geometrically indentical,
 // check that the intervals described by these pairs are either disjoint or nested.
 // This is done to ensure valid combinatorics when we merge the vertices.
 // If incompatible (overlapping) intervals are found, the pair representating the longest
