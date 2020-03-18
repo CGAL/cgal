@@ -260,14 +260,13 @@ Examples of contours and simplifications are given in
 
 \cgalFigureBegin{TutorialGISFigContours, contours.png}
 Contouring using 50 isovalues evenly spaced. Top: original contouring
-using 148 vertices and simplification with a tolerance equal to the
+using 148k vertices and simplification with a tolerance equal to the
 average spacing of the input point cloud (3.4\% of the original
-vertices remaining). Bottom: simplification with tolerance 4 times the
-average spaving (1.3\% of vertices remaining) and with tolerance 10
-times the average spacing (0.9\% of vertices remaining). Polylines are
-intersection-free in all cases.
+polyline vertices remaining). Bottom: simplification with tolerance 4
+times the average spacing (1.3\% of vertices remaining) and with
+tolerance 10 times the average spacing (0.9\% of vertices
+remaining). Polylines are intersection-free in all cases.
 \cgalFigureEnd
-
 
 \section TutorialGIS_Classify Classifying
 
