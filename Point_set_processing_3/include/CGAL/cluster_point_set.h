@@ -17,6 +17,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
 #include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/Point_set_processing_3/internal/bbox_diagonal.h>
 #include <CGAL/for_each.h>
 
 #include <CGAL/boost/graph/Named_function_parameters.h>
@@ -136,8 +137,6 @@ std::size_t cluster_point_set (PointRange& points,
       typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::Empty>::value)
     callback_factor = 0.5;
 
-  typedef typename Kernel::Point_3 Point;
-
   // types for K nearest neighbors search structure
   typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
@@ -148,15 +147,7 @@ std::size_t cluster_point_set (PointRange& points,
 
   // If no radius is given, init with 1% of bbox diagonal
   if (neighbor_radius < 0)
-  {
-    CGAL::Bbox_3 bbox = CGAL::bbox_3 (CGAL::make_transform_iterator_from_property_map (points.begin(), point_map),
-                                      CGAL::make_transform_iterator_from_property_map (points.end(), point_map));
-    
-    neighbor_radius = 0.01 * CGAL::approximate_sqrt
-      ((bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
-       + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
-       + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
-  }
+    neighbor_radius = 0.01 * Point_set_processing_3::internal::bbox_diagonal (points, point_map);
 
   // Init cluster map with -1
   for (const value_type& p : points)
