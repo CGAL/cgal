@@ -117,7 +117,7 @@ struct Pairify <Angle, Angle, EK, FRK>
 };
 
 template <typename EK, typename FRK>
-struct Pairify <const Interval_nt<false>&,const const typename CGAL::internal::Exact_field_selector<double>::Type&, EK, FRK>
+struct Pairify <const Interval_nt<false>&, const typename CGAL::internal::Exact_field_selector<double>::Type&, EK, FRK>
 {
   typedef typename CGAL::internal::Exact_field_selector<double>::Type ET;
   typedef Filtered_rational<Interval_nt<false>,ET> result_type;

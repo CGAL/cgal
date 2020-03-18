@@ -65,16 +65,21 @@ public:
     CGAL::Epic_converter<AK> convert;
     typedef typename Kernel_traits<A1>::type EK;
     typedef typename Type_mapper<A1,EK, Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(approx(a1));
+    std::cout << std::endl << typeid(fp).name() << std::endl;
+    std::cout << typeid(T1).name() << std::endl;
+    std::cout << typeid(a1).name() << std::endl;
+    std::cout << typeid(approx(a1)).name() << std::endl;
+    std::cout << typeid(convert(approx(a1))).name() << std::endl;
+    std::pair<T1, bool> aa1 = convert(approx(a1));
     if(! aa1.second){
       return fp(a1, a2);
     }
     typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(approx(a2));
+    std::pair<T2,bool> aa2; // AFFFFFF = convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2);
     }
-    return epicp(aa1.first, aa2.first);
+    //return epicp(aa1.first, aa2.first);
   }
 
     // We need these two specializations as in general we determine
@@ -111,21 +116,26 @@ public:
     CGAL::Epic_converter<AK> convert;
     typedef typename Kernel_traits<A1>::type EK;
     typedef typename Type_mapper<A1,EK, Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+
+    std::cout << std::endl << typeid(T1).name() << std::endl;
+    std::cout << typeid(a1).name() << std::endl;
+    std::cout << typeid(approx(a1)).name() << std::endl;
+    std::cout << typeid(convert(approx(a1))).name() << std::endl;
+    std::pair<T1,bool> aa1; // AFFFFFF = convert(a1.approx());
     if(! aa1.second){
       return fp(a1, a2, a3);
     }
     typedef typename Type_mapper<A2, EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    std::pair<T2,bool> aa2; // AFFFFFF = convert(a2.approx());
     if(! aa2.second){
       return fp(a1, a2, a3);
     }
     typedef typename Type_mapper<A3,EK, Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    std::pair<T3,bool> aa3; // AFFFFFF = convert(a3.approx());
     if(! aa3.second){
       return fp(a1, a2, a3);
     }
-    return epicp(aa1.first, aa2.first, aa3.first);
+    //return epicp(aa1.first, aa2.first, aa3.first);
   }
 
     
@@ -135,26 +145,31 @@ public:
     CGAL::Epic_converter<AK> convert;
     typedef typename Kernel_traits<A1>::type EK;
     typedef typename Type_mapper<A1,EK,Exact_predicates_inexact_constructions_kernel>::type T1;
-    std::pair<T1,bool> aa1 = convert(a1.approx());
+
+    std::cout << std::endl << typeid(T1).name() << std::endl;
+    std::cout << typeid(a1).name() << std::endl;
+    std::cout << typeid(approx(a1)).name() << std::endl;
+    std::cout << typeid(convert(approx(a1))).name() << std::endl;
+    std::pair<T1, bool> aa1; // AFFFFFF = convert(a1.approx());
     if(! aa1.second){
       return fp(a1, a2, a3, a4);
     }
     typedef typename Type_mapper<A2,EK,Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2 = convert(a2.approx());
+    std::pair<T2,bool> aa2; // AFFFFFF = convert(a2.approx());
     if(! aa2.second){
       return fp(a1, a2, a3, a4);
     }
     typedef typename Type_mapper<A3,EK,Exact_predicates_inexact_constructions_kernel>::type T3;
-    std::pair<T3,bool> aa3 = convert(a3.approx());
+    std::pair<T3,bool> aa3; // AFFFFFF = convert(a3.approx());
     if(! aa3.second){
       return fp(a1, a2, a3, a4);
     }
     typedef typename Type_mapper<A4,EK,Exact_predicates_inexact_constructions_kernel>::type T4;
-    std::pair<T4,bool> aa4 = convert(a4.approx());
+    std::pair<T4,bool> aa4; // AFFFFFF = convert(a4.approx());
     if(! aa4.second){
       return fp(a1, a2, a3, a4);
     }
-    return epicp(aa1.first, aa2.first, aa3.first, aa4.first);
+     // AFFFFFF return epicp(aa1.first, aa2.first, aa3.first, aa4.first);
   }
   
   template <typename A1, typename A2, typename A3, typename A4, typename A5>
