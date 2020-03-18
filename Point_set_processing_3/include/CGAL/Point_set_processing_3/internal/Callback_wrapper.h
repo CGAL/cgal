@@ -79,7 +79,7 @@ public:
   bool& interrupted()
   {
     if (m_callback)
-      m_interrupted = (m_callback(m_advancement / double(m_size)));
+      m_interrupted = !(m_callback(m_advancement / double(m_size)));
     return m_interrupted;
   }
 
