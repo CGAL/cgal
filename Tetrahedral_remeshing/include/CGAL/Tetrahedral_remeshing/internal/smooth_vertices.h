@@ -92,7 +92,8 @@ namespace CGAL
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         std::ofstream os("dump_normals.polylines.txt");
-        std::ofstream osn("dump_normals_normalized.polylines.txt");
+        boost::unordered_map<Surface_patch_index,
+          std::vector<typename Tr::Geom_traits::Segment_3 > > ons_map;
 #endif
 
         //normalize the computed normals
@@ -101,7 +102,7 @@ namespace CGAL
         {
           //value type is map<Surface_patch_index, Vector_3>
           for (typename VertexNormalsMap::mapped_type::iterator it = vnm_it->second.begin();
-               it != vnm_it->second.end(); ++it)
+            it != vnm_it->second.end(); ++it)
           {
             Vector_3& n = it->second;
 
@@ -113,14 +114,25 @@ namespace CGAL
             CGAL::Tetrahedral_remeshing::normalize(n, c3t3.triangulation().geom_traits());
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-            osn << "2 " << p << " " << (p + n) << std::endl;
+            const Surface_patch_index si = it->first;
+            if (ons_map.find(si) == ons_map.end())
+              ons_map[si] = std::vector<typename Tr::Geom_traits::Segment_3>();
+            ons_map[si].push_back(typename Tr::Geom_traits::Segment_3(p, p+n));
 #endif
           }
         }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         os.close();
-        osn.close();
+        for (auto& kv : ons_map)
+        {
+          std::ostringstream oss;
+          oss << "dump_normals_normalized_" << kv.first << ".polylines.txt";
+          std::ofstream ons(oss.str());
+          for(auto s : kv.second)
+            ons << "2 " << s.source() << " " << s.target() << std::endl;
+          ons.close();
+      }
 #endif
       }
 
