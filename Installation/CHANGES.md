@@ -30,6 +30,9 @@ Release date: June 2020
 -   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
     which can be used to remove connected components whose area or volume is under a certain threshold.
     Area and volume thresholds are either specified by the user or deduced from the bounding box of the mesh.
+-   Added the function `CGAL::Polygon_mesh_processing::volume_connected_component()` that can be used to
+    get information about the nesting of the connected components of a given triangle mesh and about
+    the volumes defined.
 -   Added a new named parameter for `keep_large_connected_components()` and `remove_connected_components_of_negligible_size`
     that can be used to perform a dry run of the operation, meaning that the function will return the number of connected
     components that would be removed with the specified threshold, but without actually removing them.
