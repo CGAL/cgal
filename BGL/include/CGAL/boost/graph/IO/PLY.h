@@ -21,7 +21,24 @@
 
 namespace CGAL {
 /*!
- *TODO
+ Inserts the mesh in an output stream in PLY format.
+
+ If provided, the `comments` string is included line by line in
+ the header of the PLY stream (each line will be precedeed by
+ "comment ").
+
+ The `np` is an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{vertex_point_map}
+      the property map with the points associated to the vertices of `mesh` .
+      If this parameter is omitted, an internal property map for
+      `CGAL::vertex_point_t` should be available in `FaceGraph`
+    \cgalParamEnd
+    \cgalParamBegin{vertex_index_map}
+      is a property map containing for each vertex of `mesh` a unique index between `0` and `num_vertices(mesh)-1`.
+    \cgalParamEnd
+  \cgalNamedParamsEnd
  */
 template <class FaceGraph, class NamedParameters>
 bool write_PLY(std::ostream& out,
