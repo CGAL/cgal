@@ -75,6 +75,8 @@ public:
 
   // CONSTRUCTIONS
   //--------------
+  typedef typename Kernel::Construct_point_2      Construct_point_2;
+
   // vertex and dual site
   typedef CGAL_APOLLONIUS_GRAPH_2_NS::Construct_Apollonius_vertex_2<Kernel>
   /*                                      */ Construct_Apollonius_vertex_2;
@@ -142,6 +144,10 @@ public:
     return Construct_object_2();
   }
 
+  Construct_point_2
+  construct_point_2_object() const {
+    return Construct_point_2();
+  }
 
   // CONSTRUCTIONS
   //--------------
