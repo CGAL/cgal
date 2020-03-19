@@ -584,6 +584,10 @@ struct Test {
       check_intersection (tet, L(P(0.25,0.25,0), P(0.25,0,0.25)), S(P(0.25,0,0.25), P(0.25,0.25,0)));
       //through one edge
       check_intersection (tet, L(P(0.5,-0.5,0.5), P(0.5,0.5,0.5)), P(0.5,0,0.5));
+      //in a single face through 2 edges
+      check_intersection (tet, L(P(0.0,0.5,0.0), P(0.5,0.5,0.0)), S(P(0.0,0.5,0.0), P(0.5, 0.5, 0.0) ));
+      //in a single face through 1 vertex and 1 edge
+      check_intersection (tet, L(P(0.0,0.5,0.0), P(1.0,0.0,0.0)), S(P(0.0,0.5,0.0), P(1.0, 0.0, 0.0) ));
     }
 
   }

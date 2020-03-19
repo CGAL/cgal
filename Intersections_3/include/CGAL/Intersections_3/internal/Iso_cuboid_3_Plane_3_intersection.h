@@ -302,9 +302,10 @@ intersection(
   {
     bool first_found = false;
     Point_3 first_p;
+    typename K::Has_on_3 has_on;
     for(const auto  &p : filtered_points)
     {
-      if(line.has_on(p))
+      if(has_on(line, p))
       {
         if(!first_found)
         {

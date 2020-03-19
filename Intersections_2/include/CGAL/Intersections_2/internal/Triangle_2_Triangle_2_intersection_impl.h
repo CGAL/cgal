@@ -339,7 +339,7 @@ struct Is_cw<K, Tag_true>
 {
   bool operator()(const std::vector<typename K::Point_2>& ps)
   {
-    return !CGAL::left_turn(ps[0], ps[1], ps[2]);
+    return CGAL::right_turn(ps[0], ps[1], ps[2]);
   }
 };
 

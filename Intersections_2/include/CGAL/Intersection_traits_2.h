@@ -110,9 +110,9 @@ struct Intersection_traits<K, CGAL::Bbox_2, B>  {
   typedef typename Intersection_traits<K,typename K::Iso_rectangle_2, B>::result_type result_type;
 };
 
-template<typename K, class B>
-struct Intersection_traits<K, B, CGAL::Bbox_2>  {
-  typedef typename Intersection_traits<K,typename K::Iso_rectangle_2, B>::result_type result_type;
+template<typename K, class A>
+struct Intersection_traits<K, A, CGAL::Bbox_2>  {
+  typedef typename Intersection_traits<K,typename K::Iso_rectangle_2, A>::result_type result_type;
 };
 
 template<typename K>
