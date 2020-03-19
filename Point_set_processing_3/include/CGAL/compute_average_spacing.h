@@ -195,15 +195,15 @@ compute_average_spacing(
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::const_type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, CGAL_BGL_NP_CLASS>::Kernel Kernel;
 
   typedef typename Kernel::Point_3 Point;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
-  
+
   // types for K nearest neighbors search structure
   typedef typename Kernel::FT FT;
   typedef Search_traits_3<Kernel> Tree_traits;

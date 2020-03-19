@@ -139,8 +139,7 @@ detect_surface_patches(PolygonMesh& p,
                        const NamedParameters& np)
 {
   int offset = static_cast<int>(
-          parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index),
-          1));
+          parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index), 1));
 
   internal::PatchIdMapWrapper<PatchIdMap,
                               typename boost::property_traits<PatchIdMap>::value_type>

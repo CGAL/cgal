@@ -141,14 +141,13 @@ namespace internal {
       Default_Weight_calculator;
 
     VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                get_property_map(vertex_point, tmesh));
+                                    get_property_map(vertex_point, tmesh));
 
     return internal::fair(tmesh, vertices,
-      choose_parameter(get_parameter(np, internal_np::sparse_linear_solver), Default_solver()),
+      choose_parameter<Default_solver>(get_parameter(np, internal_np::sparse_linear_solver)),
       choose_parameter(get_parameter(np, internal_np::weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
       choose_parameter(get_parameter(np, internal_np::fairing_continuity), 1),
-      vpmap_
-      );
+      vpmap_);
   }
 
   template<typename TriangleMesh, typename VertexRange>

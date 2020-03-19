@@ -97,7 +97,7 @@ void simplify_range(HalfedgeRange& halfedge_range,
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  const GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  const GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, tm));
 
   typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
@@ -794,7 +794,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
 
   VPMS vpm_S = choose_parameter(get_parameter(snp, internal_np::vertex_point), get_property_map(vertex_point, tm_S));
   VPMT vpm_T = choose_parameter(get_parameter(tnp, internal_np::vertex_point), get_property_map(vertex_point, tm_T));
-  const GT gt = choose_parameter(get_parameter(snp, internal_np::geom_traits), GT());
+  const GT gt = choose_parameter<GT>(get_parameter(snp, internal_np::geom_traits));
 
 #ifdef CGAL_PMP_SNAP_DEBUG
   std::cout << "Gather unique points in source range..." << std::endl;

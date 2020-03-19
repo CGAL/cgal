@@ -323,7 +323,7 @@ edge_aware_upsample_point_set(
   using parameters::get_parameter;
   
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
@@ -336,8 +336,8 @@ edge_aware_upsample_point_set(
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
   double sharpness_angle = choose_parameter(get_parameter(np, internal_np::sharpness_angle), 30.);
   double edge_sensitivity = choose_parameter(get_parameter(np, internal_np::edge_sensitivity), 1);
   double neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);

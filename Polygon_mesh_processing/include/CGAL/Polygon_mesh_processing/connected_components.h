@@ -136,8 +136,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                   internal::No_constraint<PolygonMesh>());
+    = choose_parameter<EdgeConstraintMap>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -218,8 +217,7 @@ connected_components(const PolygonMesh& pmesh,
   > ::type                                               EdgeConstraintMap;
   
   EdgeConstraintMap ecmap
-    = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                   internal::No_constraint<PolygonMesh>());
+    = choose_parameter<EdgeConstraintMap>(get_parameter(np, internal_np::edge_is_constrained));
 
   typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type FaceIndexMap;
   FaceIndexMap fimap = get_initialized_face_index_map(pmesh, np);
@@ -385,7 +383,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,
                                                        Emptyset_iterator>::type Output_iterator;
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fimap);
@@ -514,9 +512,9 @@ std::size_t keep_large_connected_components(PolygonMesh& pmesh,
                                                        Emptyset_iterator>::type Output_iterator;
 
   FaceSizeMap face_size_pmap = choose_parameter(get_parameter(np, internal_np::face_size_map),
-                                           Constant_property_map<face_descriptor, std::size_t>(1));
+                                                Constant_property_map<face_descriptor, std::size_t>(1));
   const bool dry_run = choose_parameter(get_parameter(np, internal_np::dry_run), false);
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   // vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);

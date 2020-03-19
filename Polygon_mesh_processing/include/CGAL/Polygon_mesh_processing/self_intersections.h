@@ -220,7 +220,7 @@ self_intersections_impl(const FaceRange& face_range,
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, face_descriptor, Box_policy> Box;
 
   typedef typename GetGeomTraits<TM, NamedParameters>::type                              GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::const_type                    VPM;
   VPM vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
