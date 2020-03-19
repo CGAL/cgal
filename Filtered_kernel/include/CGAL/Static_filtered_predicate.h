@@ -71,7 +71,7 @@ public:
       return fp(a1, a2);
     }
     typedef typename Type_mapper<A2,EK, Exact_predicates_inexact_constructions_kernel>::type T2;
-    std::pair<T2,bool> aa2; // AFFFFFF = convert(approx(a2));
+    std::pair<T2,bool> aa2= convert(approx(a2));
     if(! aa2.second){
       return fp(a1, a2);
     }
