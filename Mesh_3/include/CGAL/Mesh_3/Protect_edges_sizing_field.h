@@ -444,13 +444,14 @@ private:
       if(dim == 0) msg << "corner (";
       else msg << "point (";
       msg << p << ")";
-      CGAL_error_msg(([this, str = msg.str()](){
-        CGAL_USE(this);
 #if CGAL_MESH_3_PROTECTION_DEBUG & 4
+      CGAL_error_msg(([this, str = msg.str()](){
         dump_c3t3(this->c3t3_, "dump-bug");
-#endif
         return str.c_str();
       }()));
+#else // not CGAL_MESH_3_PROTECTION_DEBUG & 4
+      CGAL_error_msg(msg.str().c_str());
+#endif
     }
     return s;
   }
