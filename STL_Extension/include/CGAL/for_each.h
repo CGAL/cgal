@@ -20,6 +20,19 @@
 #include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
+/*
+  CGAL::for_each<ConcurrencyTag>(Range, Function) does the following:
+
+  - if Sequential_tag is used, apply Function to all elements of Range
+  - if Parallel_tag is used:
+    * static assert that TBB is available
+    * if Range has random access iterators, use a TBB parallel_for
+    loop to apply Function to all elements of Range
+    * if Range doesn't have random access iterators, first copy the
+    iterators in a vector and then use a TBB parallel_for loop to
+    apply Function to all elements of Range
+*/
+
 namespace CGAL {
 
 namespace internal {
@@ -33,7 +46,7 @@ void for_each (RangeRef range,
                const std::function<void(typename std::iterator_traits
                                         <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
                const Sequential_tag&,
-               const IteratorCategory&)
+               IteratorCategory)
 {
   for (typename std::iterator_traits
          <typename Range_iterator_type<RangeRef>::type>::reference r : range)
@@ -53,7 +66,7 @@ void for_each (RangeRef range,
                const std::function<void(typename std::iterator_traits
                                         <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
                const Parallel_tag&,
-               const IteratorCategory&)
+               IteratorCategory)
 {
   std::size_t range_size = std::distance (range.begin(), range.end());
 
@@ -82,7 +95,7 @@ void for_each (RangeRef range,
                const std::function<void(typename std::iterator_traits
                                         <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
                const Parallel_tag&,
-               const std::random_access_iterator_tag&)
+               std::random_access_iterator_tag)
 {
   std::size_t range_size = std::distance (range.begin(), range.end());
   
