@@ -35,8 +35,12 @@ Release date: June 2020
     components that would be removed with the specified threshold, but without actually removing them.
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
- -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
-     and `CGAL::Polygon_mesh_processing::self_intersections()`.
+-   New function to split meshes along a mesh or a plane:
+    `CGAL::Polygon_mesh_processing::split()` 
+-   New function to split a single mesh containing several connected components into several meshes containing one connected component:
+    `CGAL::Polygon_mesh_processing::split_connected_components()`
+ -  Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
+    and `CGAL::Polygon_mesh_processing::self_intersections()`.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections

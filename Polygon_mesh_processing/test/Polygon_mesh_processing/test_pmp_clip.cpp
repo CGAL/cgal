@@ -4,6 +4,9 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
+#include <CGAL/boost/graph/Face_filtered_graph.h>
+#include <boost/property_map/property_map.hpp>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -462,6 +465,127 @@ void test()
   }
 }
 
+template <class Mesh>
+void test_split_plane()
+{
+  // test with a clipper mesh
+  Mesh tm1;
+  std::ifstream input("data-coref/elephant.off");
+  input >> tm1;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+  input.close();
+
+  PMP::split(tm1,K::Plane_3(0,0,1,0));
+
+  std::vector<Mesh> meshes;
+  PMP::split_connected_components(tm1, meshes, params::all_default());
+  CGAL_assertion(meshes.size() == 3);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(num_vertices(meshes[2]) == 48);
+  CGAL_assertion(num_vertices(meshes[0]) == 1527);
+  CGAL_assertion(num_vertices(meshes[1]) == 1674);
+
+  CGAL::clear(tm1);
+}
+
+template <class TriangleMesh>
+void test_split()
+{
+  // test with a clipper mesh
+  TriangleMesh tm1, tm2;
+  //closed intersection curves
+  std::ifstream input("data-coref/elephant.off");
+  input >> tm1;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+
+  input.close();
+
+  input.open("data-coref/sphere.off");
+  input >> tm2;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+
+  input.close();
+
+  std::vector<TriangleMesh> meshes;
+
+  PMP::split(tm1, tm2);
+  PMP::split_connected_components(tm1,
+                                  meshes,
+                                  params::all_default());
+
+  CGAL_assertion(meshes.size() == 5);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(num_vertices(meshes[0]) == 2641);
+  CGAL_assertion(num_vertices(meshes[1]) == 159);
+  CGAL_assertion(num_vertices(meshes[2]) == 142);
+  CGAL_assertion(num_vertices(meshes[3]) == 83);
+  CGAL_assertion(num_vertices(meshes[4]) == 104);
+
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+  meshes.clear();
+
+  // open intersection curve
+  input.open("data-clip/split_A.off");
+  input >> tm1;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+
+  input.close();
+
+  input.open("data-clip/splitter.off");
+  input >> tm2;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+
+  input.close();
+
+  PMP::split(tm1, tm2);
+  PMP::split_connected_components(tm1,
+                                  meshes,
+                                  params::all_default());
+
+  CGAL_assertion(meshes.size() == 2);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(num_vertices(meshes[0]) == 588);
+  CGAL_assertion(num_vertices(meshes[1]) == 50);
+
+  CGAL::clear(tm1);
+  CGAL::clear(tm2);
+  meshes.clear();
+}
+
 int main()
 {
   std::cout << "Surface Mesh" << std::endl;
@@ -469,8 +593,22 @@ int main()
 
   std::cout << "Polyhedron" << std::endl;
   test<Polyhedron>();
+  
+  std::cout << "running test_split with Surface_mesh\n";
+  test_split<Surface_mesh>();
+  
+  std::cout << "running test_split_plane with Surface_mesh\n";
+  test_split_plane<Surface_mesh>();
+  
+  std::cout << "running test_split with Polyhedron\n";
+  test_split<Polyhedron>();
+  
+  std::cout << "running test_split_plane with Polyhedron\n";
+  test_split_plane<Polyhedron>();
 
   std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;
 }
+
+
