@@ -438,7 +438,8 @@ private:
         if ( vit->in_dimension() == 0
           || nb_incident_complex_edges(vit, m_c3t3) > 2)
         {
-          m_c3t3.add_to_complex(vit, ++corner_id);
+          if(!m_c3t3.is_in_complex(vit))
+            m_c3t3.add_to_complex(vit, ++corner_id);
 
           if (vit->in_dimension() == -1 || vit->in_dimension() > 0)
             vit->set_dimension(0);
