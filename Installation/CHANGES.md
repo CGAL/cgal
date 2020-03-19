@@ -37,6 +37,9 @@ Release date: June 2020
     of halfedge pairs that were stitched.
  -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
      and `CGAL::Polygon_mesh_processing::self_intersections()`.
+ -   The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh` now allows passing a point map (for the point range)
+     and a vertex point map (for the polygon mesh) via named parameters.
+ -   Added the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections
