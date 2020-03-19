@@ -58,7 +58,7 @@ public:
 
   using Base::operator(); // for K::Weighted_point_3 to Point_3
 
-  Point_3 operator()(const Weighted_point_3& wp) {
+  Point_3 operator()(const Weighted_point_3& wp) const {
     return std::make_pair(operator()(wp.first), wp.second /* offset */);
   }
 };
