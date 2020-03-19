@@ -106,13 +106,13 @@ struct Poisson_visitor {
 
 struct Poisson_skip_vertices { 
   double ratio;
-  Random* m_random;
-  Poisson_skip_vertices(const double ratio = 0, Random* random = nullptr)
-    : ratio(ratio), m_random(random) {}
+  Poisson_skip_vertices(const double ratio = 0)
+    : ratio(ratio) {}
 
   template <typename Iterator>
-  bool operator()(Iterator) const {
-    return m_random->get_double() < ratio;
+  bool operator()(Iterator it) const {
+    // make the result deterministic for each iterator
+    return Random((std::size_t)(&*it)).get_double() < ratio;
   }
 };
 
@@ -417,9 +417,7 @@ public:
 
       typedef Filter_iterator<typename Triangulation::Input_point_iterator,
                               Poisson_skip_vertices> Some_points_iterator;
-      //make it deterministic
-      Random random(0);
-      Poisson_skip_vertices skip(1.-approximation_ratio,&random);
+      Poisson_skip_vertices skip(1.-approximation_ratio);
       
       CGAL_TRACE_STREAM << "SPECIAL PASS that uses an approximation of the result (approximation ratio: "
                 << approximation_ratio << ")" << std::endl;
