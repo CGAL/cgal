@@ -736,6 +736,36 @@ namespace internal
       }
     }
 
+    // update complex edges
+    const std::array<std::array<int, 2>, 6> edges
+      = { 0,1, 0,2, 0,3, 1,2, 1,3, 2,3 }; //vertex indices in cells
+    const Vertex_handle vkept = vh0;
+    const Vertex_handle vdeleted = vh1;
+    for (const Cell_handle ch : cells_to_update)
+    {
+      for (const std::array<int, 2>& ei : edges)
+      {
+        Vertex_handle eiv0 = ch->vertex(ei[0]);
+        Vertex_handle eiv1 = ch->vertex(ei[1]);
+        if (eiv1 == vdeleted) //replace eiv1 by vkept
+        {
+          if (c3t3.is_in_complex(eiv0, eiv1))
+          {
+            c3t3.add_to_complex(eiv0, vkept, c3t3.curve_index(eiv0, eiv1));
+            c3t3.remove_from_complex(eiv0, eiv1);
+          }
+        }
+        else if (eiv0 == vdeleted) //replace eiv0 by vkept
+        {
+          if (c3t3.is_in_complex(eiv0, eiv1))
+          {
+            c3t3.add_to_complex(vkept, eiv1, c3t3.curve_index(eiv0, eiv1));
+            c3t3.remove_from_complex(eiv0, eiv1);
+          }
+        }
+      }
+    }
+
     //Update the vertex before removing it
     for (const Cell_handle ch : cells_to_update)
     {
@@ -763,8 +793,10 @@ namespace internal
     // Delete cells
     for (Cell_handle cell_to_remove : cells_to_remove)
     {
+      // remove cell
       if (cell_to_remove->subdomain_index() > 0)
         c3t3.remove_from_complex(cell_to_remove);
+
       c3t3.triangulation().tds().delete_cell(cell_to_remove);
     }
 
