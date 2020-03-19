@@ -151,8 +151,8 @@ intersection(
     case 2: //intersects diagonally
     {
       Poly res(4);
-      Segment_3 front(segments.front()),
-          back(segments.back());
+      Segment_3 &front(segments.front()),
+          &back(segments.back());
       res[0] = front.target();
       res[1] = back.target();
       res[2] = back.source();
@@ -311,13 +311,17 @@ intersection(
       }
     }
   }
+
   if(tmp_segs.size() < 3)
     return result_type();
+
   std::list<Point_3> tmp_pts;
   fill_points_list(tmp_segs,tmp_pts);
+
   Poly res;
   for(const auto& p : tmp_pts)
     res.push_back(p);
+
   if(res.size() == 3){
     typename K::Triangle_3 tr(res[0], res[1], res[2]);
     return result_type(std::forward<typename K::Triangle_3>(tr));

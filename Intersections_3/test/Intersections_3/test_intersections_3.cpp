@@ -720,7 +720,7 @@ struct Test {
       const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 4);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(tet.has_on_boundary(p) && tr.has_on(p));
       }
@@ -773,7 +773,7 @@ struct Test {
       std::vector<P>* inter = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(inter != nullptr);
       CGAL_assertion(inter->size() == 4);
-      for(auto p : *inter)
+      for(auto& p : *inter)
       {
         CGAL_assertion(tet.has_on_boundary(p) && tr.has_on(p));
       }
@@ -788,7 +788,7 @@ struct Test {
       inter = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(inter != nullptr);
       CGAL_assertion(inter->size() == 4);
-      for(auto p : *inter)
+      for(auto& p : *inter)
       {
         CGAL_assertion(tet.has_on_boundary(p) && tr.has_on(p));
       }
@@ -823,7 +823,7 @@ struct Test {
       CGAL_assertion(inter != nullptr);
       CGAL_assertion(inter->size() == 4);
 
-      for(auto p : *inter)
+      for(auto& p : *inter)
       {
         CGAL_assertion(
               (tet.has_on_bounded_side(p) || tet.has_on_boundary(p))
@@ -914,7 +914,7 @@ struct Test {
       const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 4);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(p.x() == 1);
       }
@@ -922,7 +922,7 @@ struct Test {
       poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 4);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(cub.has_on_boundary(p));
       }
@@ -945,7 +945,7 @@ struct Test {
       poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 4);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(pl.has_on(p) && cub.has_on_boundary(p));
       }
@@ -956,7 +956,7 @@ struct Test {
       poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 5);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(pl.has_on(p) && cub.has_on_boundary(p));
       }
@@ -1105,7 +1105,7 @@ struct Test {
       const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 4);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(p.x() == 1);
       }
@@ -1131,7 +1131,7 @@ struct Test {
       poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 5);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(pl.has_on(p));
       }
@@ -1184,7 +1184,7 @@ struct Test {
       std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 4);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
       }
@@ -1212,7 +1212,7 @@ struct Test {
       std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
       CGAL_assertion(poly != nullptr);
       CGAL_assertion(poly->size() == 4);
-      for(auto p : *poly)
+      for(auto& p : *poly)
       {
         CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
       }

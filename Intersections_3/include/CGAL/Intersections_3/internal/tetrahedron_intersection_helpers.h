@@ -66,7 +66,7 @@ void fill_segments_infos(std::vector<Segment>& segments,
 
   std::vector<Wrapped_segment> wrapped_segments;
 
-  for(const auto& s:segments)
+  for(const Segment& s:segments)
     wrapped_segments.push_back(Wrapped_segment(s));
 
   std::vector<Segment> bis = segments;

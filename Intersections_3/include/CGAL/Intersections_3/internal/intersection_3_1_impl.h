@@ -82,8 +82,8 @@ namespace internal {
 template <class K>
 typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
 intersection(const typename K::Plane_3  &plane, 
-	     const typename K::Line_3 &line, 
-	     const K& /*k*/)
+             const typename K::Line_3 &line,
+             const K& /*k*/)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -116,8 +116,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type
 intersection(const typename K::Line_3 &line, 
-	     const typename K::Plane_3  &plane, 
-	     const K& k)
+             const typename K::Plane_3  &plane,
+             const K& k)
 {
   return intersection(plane, line, k);
 }
@@ -125,8 +125,8 @@ intersection(const typename K::Line_3 &line,
 template <class K>
 typename Intersection_traits<K, typename K::Plane_3, typename K::Plane_3>::result_type
 intersection(const typename K::Plane_3 &plane1, 
-	     const typename K::Plane_3 &plane2, 
-	     const K&)
+             const typename K::Plane_3 &plane2,
+             const K&)
 {
   typedef typename K::Point_3 Point_3;
   typedef typename K::Direction_3 Direction_3;
@@ -187,9 +187,9 @@ boost::optional< boost::variant<typename K::Point_3,
                                 typename K::Line_3,
                                 typename K::Plane_3> >
 intersection(const typename K::Plane_3 &plane1,
-	     const typename K::Plane_3 &plane2,
-	     const typename K::Plane_3 &plane3,
-	     const K& k)
+             const typename K::Plane_3 &plane2,
+             const typename K::Plane_3 &plane3,
+             const K& k)
 {
     typedef 
       typename boost::optional< 
@@ -238,8 +238,8 @@ intersection(const typename K::Plane_3 &plane1,
 template <class K>
 bool
 do_intersect(const typename K::Plane_3 &plane, 
-	     const typename K::Line_3 &line,
-	     const K&)
+             const typename K::Line_3 &line,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -266,8 +266,8 @@ template <class K>
 inline
 bool
 do_intersect(const typename K::Line_3 &line, 
-	     const typename K::Plane_3 &plane, 
-	     const K& k)
+             const typename K::Plane_3 &plane,
+             const K& k)
 {
   return do_intersect(plane, line, k);
 }
@@ -275,8 +275,8 @@ do_intersect(const typename K::Line_3 &line,
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Line_3>::result_type
 intersection(const typename K::Line_3 &l1,
-	     const typename K::Line_3 &l2,
-	     const K&)
+             const typename K::Line_3 &l2,
+             const K&)
 {
   typedef typename K::FT           FT;
   typedef typename K::Point_3      Point_3;
@@ -313,8 +313,8 @@ intersection(const typename K::Line_3 &l1,
 template <class K>
 bool
 do_intersect(const typename K::Line_3 &l1,
-	     const typename K::Line_3 &l2,
-	     const K&)
+             const typename K::Line_3 &l2,
+             const K&)
 {
   typedef typename K::Point_3      Point_3;
   typedef typename K::Vector_3     Vector_3;
@@ -400,8 +400,8 @@ struct L_p_visitor : public boost::static_visitor<
 template <class K>
 typename Intersection_traits<K, typename K::Segment_3, typename K::Segment_3>::result_type
 intersection(const typename K::Segment_3 &s1,
-	     const typename K::Segment_3 &s2,
-	     const K&)
+             const typename K::Segment_3 &s2,
+             const K&)
 {
   CGAL_precondition(! s1.is_degenerate () && ! s2.is_degenerate () );
 
@@ -450,8 +450,8 @@ do_intersect(const typename K::Segment_3  &s1,
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
 intersection(const typename K::Line_3 &l,
-	     const typename K::Segment_3 &s,
-	     const K& k)
+             const typename K::Segment_3 &s,
+             const K& k)
 {
   CGAL_precondition(! l.is_degenerate () && ! s.is_degenerate () );
   
@@ -474,8 +474,8 @@ intersection(const typename K::Line_3 &l,
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Segment_3>::result_type
 intersection(const typename K::Segment_3 &s,
-	     const typename K::Line_3 &l,
-	     const K& k)
+             const typename K::Line_3 &l,
+             const K& k)
 {
   return intersection(l,s,k);
 }
@@ -519,8 +519,8 @@ template <class K>
 bool
 Ray_3_has_on_collinear_Point_3(
             const typename K::Ray_3 &r,
-	    const typename K::Point_3 &p,
-	    const K& k)
+            const typename K::Point_3 &p,
+            const K& k)
 {
   return
       k.equal_3_object()(r.source(),p)
@@ -534,8 +534,8 @@ Ray_3_has_on_collinear_Point_3(
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Ray_3>::result_type
 intersection(const typename K::Line_3 &l,
-	     const typename K::Ray_3 &r,
-	     const K& k)
+             const typename K::Ray_3 &r,
+             const K& k)
 {
   CGAL_precondition(! l.is_degenerate () && ! r.is_degenerate () );
 
@@ -556,8 +556,8 @@ intersection(const typename K::Line_3 &l,
 template <class K>
 typename Intersection_traits<K, typename K::Ray_3, typename K::Line_3>::result_type
 intersection(const typename K::Ray_3 &r,
-	     const typename K::Line_3 &l,
-	     const K& k)
+             const typename K::Line_3 &l,
+             const K& k)
 {
   return intersection(l,r,k);
 }
@@ -593,8 +593,8 @@ do_intersect(const typename K::Ray_3  &r,
 template <class K>
 typename Intersection_traits<K, typename K::Segment_3, typename K::Ray_3>::result_type
 intersection(const typename K::Segment_3 &s,
-	     const typename K::Ray_3 &r,
-	     const K& k)
+             const typename K::Ray_3 &r,
+             const K& k)
 {
   CGAL_precondition(! s.is_degenerate () && ! r.is_degenerate () );
 
@@ -638,8 +638,8 @@ intersection(const typename K::Segment_3 &s,
 template <class K>
 typename Intersection_traits<K, typename K::Ray_3, typename K::Segment_3>::result_type
 intersection(const typename K::Ray_3 &r,
-	     const typename K::Segment_3 &s,
-	     const K& k)
+             const typename K::Segment_3 &s,
+             const K& k)
 {
   return intersection(s,r,k);
 }
@@ -681,8 +681,8 @@ do_intersect(const typename K::Ray_3  &r,
 template <class K>
 typename Intersection_traits<K, typename K::Ray_3, typename K::Ray_3>::result_type
 intersection(const typename K::Ray_3 &r1,
-	     const typename K::Ray_3 &r2,
-	     const K& k)
+             const typename K::Ray_3 &r2,
+             const K& k)
 {
   CGAL_precondition(! r1.is_degenerate () && ! r2.is_degenerate () );
 
@@ -852,8 +852,8 @@ do_intersect(const typename K::Sphere_3 &s1,
 template <class K>
 typename Intersection_traits<K, typename K::Plane_3, typename K::Ray_3>::result_type
 intersection(const typename K::Plane_3 &plane, 
-	     const typename K::Ray_3 &ray, 
-	     const K& k)
+             const typename K::Ray_3 &ray,
+             const K& k)
 {
     typedef typename K::Point_3 Point_3;
 
@@ -879,8 +879,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Ray_3, typename K::Plane_3>::result_type
 intersection(const typename K::Ray_3 &ray, 
-	     const typename K::Plane_3 &plane, 
-	     const K& k)
+             const typename K::Plane_3 &plane,
+             const K& k)
 {
   return intersection(plane, ray, k);
 }
@@ -890,8 +890,8 @@ intersection(const typename K::Ray_3 &ray,
 template <class K>
 bool
 do_intersect(const typename K::Plane_3 &plane, 
-	     const typename K::Ray_3 &ray, 
-	     const K& k)
+             const typename K::Ray_3 &ray,
+             const K& k)
 {
     typedef typename K::Point_3 Point_3;
     
@@ -912,8 +912,8 @@ template <class K>
 inline
 bool
 do_intersect(const typename K::Ray_3 &ray, 
-	     const typename K::Plane_3 &plane, 
-	     const K& k)
+             const typename K::Plane_3 &plane,
+             const K& k)
 {
   return do_intersect(plane, ray, k);
 }
@@ -922,8 +922,8 @@ do_intersect(const typename K::Ray_3 &ray,
 template <class K>
 typename Intersection_traits<K, typename K::Plane_3, typename K::Segment_3>::result_type
 intersection(const typename K::Plane_3 &plane, 
-	     const typename K::Segment_3 &seg, 
-	     const K& k)
+             const typename K::Segment_3 &seg,
+             const K& k)
 {
     typedef typename K::Point_3 Point_3;
     const Point_3 &source = seg.source();
@@ -996,8 +996,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Segment_3, typename K::Plane_3>::result_type
 intersection(const typename K::Segment_3 &seg, 
-	     const typename K::Plane_3 &plane, 
-	     const K& k)
+             const typename K::Plane_3 &plane,
+             const K& k)
 {
   return intersection(plane, seg, k);
 }
@@ -1006,8 +1006,8 @@ intersection(const typename K::Segment_3 &seg,
 template <class K>
 bool
 do_intersect(const typename K::Plane_3  &plane, 
-	     const typename K::Segment_3 &seg, 
-	     const K&)
+             const typename K::Segment_3 &seg,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     const Point_3 &source = seg.source();
@@ -1028,8 +1028,8 @@ template <class K>
 inline
 bool
 do_intersect(const typename K::Segment_3 &seg, 
-	     const typename K::Plane_3  &plane, 
-	     const K& k)
+             const typename K::Plane_3  &plane,
+             const K& k)
 {
   return do_intersect(plane, seg, k);
 }
@@ -1038,8 +1038,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Plane_3, typename K::Triangle_3>::result_type
 intersection(const typename K::Plane_3 &plane, 
-	     const typename K::Triangle_3 &tri, 
-	     const K& k)
+             const typename K::Triangle_3 &tri,
+             const K& k)
 {
   typedef 
   typename Intersection_traits<K, typename K::Plane_3, typename K::Line_3>::result_type 
@@ -1139,8 +1139,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Triangle_3, typename K::Plane_3>::result_type
 intersection(const typename K::Triangle_3 &triangle,
-	     const typename K::Plane_3  &plane,
-	     const K& k)
+             const typename K::Plane_3  &plane,
+             const K& k)
 {
   return intersection(plane, triangle, k);
 }
@@ -1148,8 +1148,8 @@ intersection(const typename K::Triangle_3 &triangle,
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, Bbox_3>::result_type
 intersection(const typename K::Line_3 &line,
-	     const Bbox_3 &box, 
-	     const K&)
+             const Bbox_3 &box,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -1171,8 +1171,8 @@ template <class K>
 inline
 typename Intersection_traits<K, Bbox_3, typename K::Line_3>::result_type
 intersection(const Bbox_3 &box, 
-	     const typename K::Line_3 &line, 
-	     const K& k)
+             const typename K::Line_3 &line,
+             const K& k)
 {
   return intersection(line, box, k);
 }
@@ -1181,8 +1181,8 @@ intersection(const Bbox_3 &box,
 template <class K>
 typename Intersection_traits<K, typename K::Ray_3, Bbox_3>::result_type
 intersection(const typename K::Ray_3 &ray,
-	     const Bbox_3 &box, 
-	     const K&)
+             const Bbox_3 &box,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Direction_3 Direction_3;
@@ -1204,8 +1204,8 @@ template <class K>
 inline
 typename Intersection_traits<K, Bbox_3, typename K::Ray_3>::result_type
 intersection(const Bbox_3 &box, 
-	     const typename K::Ray_3 &ray, 
-	     const K& k)
+             const typename K::Ray_3 &ray,
+             const K& k)
 {
   return intersection(ray, box, k);
 }
@@ -1215,8 +1215,8 @@ intersection(const Bbox_3 &box,
 template <class K>
 typename Intersection_traits<K, typename K::Segment_3, Bbox_3>::result_type
 intersection(const typename K::Segment_3 &seg, 
-	     const Bbox_3 &box, 
-	     const K&)
+             const Bbox_3 &box,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -1238,8 +1238,8 @@ template <class K>
 inline
 typename Intersection_traits<K, Bbox_3, typename K::Segment_3>::result_type
 intersection(const Bbox_3 &box, 
-	     const typename K::Segment_3 &seg, 
-	     const K& k)
+             const typename K::Segment_3 &seg,
+             const K& k)
 {
   return intersection(seg, box, k);
 }
@@ -1248,8 +1248,8 @@ template <class K>
 inline
 typename Intersection_traits<K, Bbox_3, Bbox_3>::result_type
 intersection(const Bbox_3 &a,
-	     const Bbox_3 &b,
-	     const K&)
+             const Bbox_3 &b,
+             const K&)
 {
   return CGAL::intersection<K>(a, b);
 }
@@ -1257,8 +1257,8 @@ intersection(const Bbox_3 &a,
 template <class K>
 typename Intersection_traits<K, CGAL::Bbox_3, typename K::Iso_cuboid_3>::result_type
 intersection(const CGAL::Bbox_3 &box,
-	     const typename K::Iso_cuboid_3 &cub,
-	     const K&)
+             const typename K::Iso_cuboid_3 &cub,
+             const K&)
 {
   typename K::Iso_cuboid_3 iso_cub(box);
     return intersection(iso_cub, cub);
@@ -1269,8 +1269,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Iso_cuboid_3, CGAL::Bbox_3>::result_type
 intersection(const typename K::Iso_cuboid_3 &cub,
-	     const CGAL::Bbox_3 &box,
-	     const K& k)
+             const CGAL::Bbox_3 &box,
+             const K& k)
 {
   return intersection(box,cub, k);
 }
@@ -1279,8 +1279,8 @@ intersection(const typename K::Iso_cuboid_3 &cub,
 template <class K>
 typename Intersection_traits<K, typename K::Line_3, typename K::Iso_cuboid_3>::result_type
 intersection(const typename K::Line_3 &line,
-	     const typename K::Iso_cuboid_3 &box, 
-	     const K&)
+             const typename K::Iso_cuboid_3 &box,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -1341,8 +1341,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Line_3>::result_type
 intersection(const typename K::Iso_cuboid_3 &box, 
-	     const typename K::Line_3 &line, 
-	     const K& k)
+             const typename K::Line_3 &line,
+             const K& k)
 {
   return intersection(line, box, k);
 }
@@ -1352,8 +1352,8 @@ intersection(const typename K::Iso_cuboid_3 &box,
 template <class K>
 typename Intersection_traits<K, typename K::Ray_3, typename K::Iso_cuboid_3>::result_type
 intersection(const typename K::Ray_3 &ray,
-	     const typename K::Iso_cuboid_3 &box, 
-	     const K&)
+             const typename K::Iso_cuboid_3 &box,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -1413,8 +1413,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Ray_3>::result_type
 intersection(const typename K::Iso_cuboid_3 &box, 
-	     const typename K::Ray_3 &ray,
-	     const K& k)
+             const typename K::Ray_3 &ray,
+             const K& k)
 {
   return intersection(ray, box, k);
 }
@@ -1423,8 +1423,8 @@ intersection(const typename K::Iso_cuboid_3 &box,
 template <class K>
 typename Intersection_traits<K, typename K::Segment_3, typename K::Iso_cuboid_3>::result_type
 intersection(const typename K::Segment_3 &seg,
-	     const typename K::Iso_cuboid_3 &box, 
-	     const K&)
+             const typename K::Iso_cuboid_3 &box,
+             const K&)
 {
     typedef typename K::Point_3 Point_3;
     typedef typename K::Vector_3 Vector_3;
@@ -1485,8 +1485,8 @@ template <class K>
 inline
 typename Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Segment_3>::result_type
 intersection(const typename K::Iso_cuboid_3 &box, 
-	     const typename K::Segment_3 &seg,
-	     const K& k)
+             const typename K::Segment_3 &seg,
+             const K& k)
 {
   return intersection(seg, box, k);
 }

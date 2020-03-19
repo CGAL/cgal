@@ -32,7 +32,7 @@ struct Tetrahedron_segment_intersection_3
   typedef typename K::Segment_3 O;
   typedef Tetrahedron_lines_intersection_3_base<K,typename K::Segment_3,
     Tetrahedron_segment_intersection_3<K> > Base;
-  typedef typename Base::Result_type Result_type;
+  typedef typename Base::Result_type result_type;
 
   Tetrahedron_segment_intersection_3(const typename K::Tetrahedron_3& tet,
                                    const O& o):Base(tet,o) {}
@@ -43,7 +43,7 @@ struct Tetrahedron_segment_intersection_3
     if(this->tet.has_on_bounded_side(this->o.source())
        && this->tet.has_on_bounded_side(this->o.target())){
       typename K::Segment_3 result = this->o;
-      this->output = Result_type(std::forward<typename K::Segment_3>(result));
+      this->output = result_type(std::forward<typename K::Segment_3>(result));
       return true;
     }
     return false;
@@ -55,12 +55,12 @@ struct Tetrahedron_segment_intersection_3
     if(this->tet.has_on_bounded_side(this->o.source()))
     {
       typename K::Segment_3 result(this->o.source(), this->res_points.front());
-      this->output = Result_type(std::forward<typename K::Segment_3>(result));
+      this->output = result_type(std::forward<typename K::Segment_3>(result));
       return true;
     }
     else if(this->tet.has_on_bounded_side(this->o.target())){
       typename K::Segment_3 result(this->res_points.front(), this->o.target());
-      this->output = Result_type(std::forward<typename K::Segment_3>(result));
+      this->output = result_type(std::forward<typename K::Segment_3>(result));
       return true;
     }
     return false;

@@ -350,20 +350,20 @@ intersection(const typename K::Triangle_2 &tr1,
              const typename K::Triangle_2 &tr2,
              const K&)
 {
-  typedef Triangle_2_Triangle_2_pair<K> is_t;
-  is_t ispair(&tr1, &tr2);
+  typedef Triangle_2_Triangle_2_pair<K> Intersection_type;
+  Intersection_type ispair(&tr1, &tr2);
   switch (ispair.intersection_type())
   {
-    case is_t::NO_INTERSECTION:
+    case Intersection_type::NO_INTERSECTION:
     default:
       return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>();
-    case is_t::POINT:
+    case Intersection_type::POINT:
       return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_point());
-    case is_t::SEGMENT:
+    case Intersection_type::SEGMENT:
       return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_segment());
-    case is_t::TRIANGLE:
+    case Intersection_type::TRIANGLE:
       return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(ispair.intersection_triangle());
-    case is_t::POLYGON:
+    case Intersection_type::POLYGON:
     {
       typedef std::vector<typename K::Point_2> Container;
       Container points(ispair.vertex_count());
@@ -372,10 +372,7 @@ intersection(const typename K::Triangle_2 &tr1,
 
       if(Is_cw<K, typename Algebraic_structure_traits<typename K::FT>::Is_exact>()(points))
       {
-        std::size_t length = points.size();
-
-        for(std::size_t i = 0; i< length/2; ++i)
-          std::swap(points[i], points[length-i-1]);
+        std::reverse(points.begin(), points.end());
 
       }
       return intersection_return<typename K::Intersect_2, typename K::Triangle_2, typename K::Triangle_2>(points);

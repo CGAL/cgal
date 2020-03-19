@@ -110,9 +110,8 @@ intersection(
       fill_segments_infos(segments,tmp, tr);
       Poly res;
       res.reserve(4);
-      for( const auto& p : tmp){
+      for(const auto& p : tmp)
         res.push_back(p);
-      }
       return result_type(std::forward<Poly>(res));
     }
     //else it must be adjacent to an vertex, so we return the point
@@ -238,7 +237,8 @@ intersection(
         Poly res;
         res.reserve(4);
         res.push_back(inside_points.front());
-        for( const auto& p : tmp){res.push_back(p);}
+        for(const auto& p : tmp)
+          res.push_back(p);
         return result_type(std::forward<Poly>(res));
       }
       else //size 2
@@ -256,7 +256,8 @@ intersection(
           res.push_back(inside_points.front());
         }
         res.push_back(inside_points.back());
-        for( const auto& p : tmp){res.push_back(p);}
+        for(const auto& p : tmp)
+          res.push_back(p);
         return result_type(std::forward<Poly>(res));
       }
     }
