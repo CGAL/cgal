@@ -3,8 +3,6 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 
-#define NB_POINTS 1000
-
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
 using Vector_3 = Kernel::Vector_3;
@@ -66,14 +64,16 @@ struct Custom_normal_map
 
 int main()
 {
+  constexpr std::size_t nb_points = 1000;
+  
   // in this example, points are stored as separate coordinate arrays
-  double x[NB_POINTS];
-  double y[NB_POINTS];
-  double z[NB_POINTS];
+  double x[nb_points];
+  double y[nb_points];
+  double z[nb_points];
 
   // generate random points
   Generator generator;
-  for (std::size_t i = 0; i < NB_POINTS; ++ i)
+  for (std::size_t i = 0; i < nb_points; ++ i)
   {
     Point_3 p = *(generator ++ );
     x[i] = p.x();
@@ -82,12 +82,12 @@ int main()
   }
 
   // normals are stored as a contiguous double array
-  double normals[3 *NB_POINTS];
+  double normals[3 *nb_points];
 
   // we use a vector of indices to access arrays
   std::vector<std::size_t> indices;
-  indices.reserve (NB_POINTS);
-  for (std::size_t i = 0; i < NB_POINTS; ++ i)
+  indices.reserve (nb_points);
+  for (std::size_t i = 0; i < nb_points; ++ i)
     indices.push_back(i);
 
   // estimate and orient normals using directly user's data structure
