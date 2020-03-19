@@ -225,18 +225,14 @@ namespace Tetrahedral_remeshing
 
     Facet_circulator fcirc = c3t3.triangulation().incident_facets(e);
     Facet_circulator fend = fcirc;
-    std::vector<Facet> boundary_facets;
 
     do
     {
       const Facet& f = *fcirc;
-      if (c3t3.is_in_complex(f))
+      if (is_boundary(c3t3, f, cell_selector))
         return true;
-      else if (cell_selector(f.first) // XOR
-        ^ cell_selector(f.first->neighbor(f.second)))
-        return true;
-
-    } while (++fcirc != fend);
+    }
+    while (++fcirc != fend);
 
     return false;
   }
@@ -1179,8 +1175,8 @@ namespace Tetrahedral_remeshing
       {
         const typename C3T3::Edge& e = *eit;
         ofs << "2 "
-          << e.first->vertex(e.second)->point() << " "
-          << e.first->vertex(e.third)->point() << "\n";
+          << point(e.first->vertex(e.second)->point()) << " "
+          << point(e.first->vertex(e.third)->point()) << "\n";
       }
       ofs.close();
     }
