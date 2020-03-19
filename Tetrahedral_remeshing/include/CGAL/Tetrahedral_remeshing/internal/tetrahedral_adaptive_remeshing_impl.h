@@ -401,7 +401,9 @@ private:
         {
           CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.second)) <= 1);
           CGAL_assertion(m_c3t3.in_dimension(e.first->vertex(e.third)) <= 1);
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           ++nbe;
+#endif
           continue;
         }
 
