@@ -264,12 +264,12 @@ level, and also if the clipper should be considered as compact or not. This is i
 
 \cgalFigureBegin{coref_clip_close_open, clip_open_close.png}
 Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
-defining the clipping halfspace; (ii) `close_volumes=false`: clipping of the surface mesh (boundary edges
-depicted in red); (iii) `close_volumes=true`: clipping of the volume bounded by the surface mesh.
+defining the clipping halfspace; (ii) `clip_volume=false`: clipping of the surface mesh (boundary edges
+depicted in red); (iii) `clip_volume=true`: clipping of the volume bounded by the surface mesh.
 \cgalFigureEnd
 
 \cgalFigureBegin{coref_clip_compact, clip_compact.png}
-Clipping a cube with a halfspace: compacity of the clipper (`close_volumes=false` in both cases).
+Clipping a cube with a halfspace: compacity of the clipper (`clip_volume=false` in both cases).
 From left to right: (i) initial cube and the plane defining the clipping halfspace,
 note that a whole face of the cube (2 triangles) is exactly contained in the plane;
 (ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
