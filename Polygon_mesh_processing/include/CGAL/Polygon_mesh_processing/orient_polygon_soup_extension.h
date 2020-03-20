@@ -82,7 +82,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * closest non degenerate triangle in `tm_ref`.
  * \tparam Concurrency_tag enables sequential versus parallel orientation.
                         Possible values are `Sequential_tag` (the default),
-                        `Parallel_if_available_tag` and `Parallel_tag`.
+                        `Parallel_if_available_tag`, and `Parallel_tag`.
  * \tparam PointRange a model of the concepts `RandomAccessContainer`
  * and `BackInsertionSequence` whose value type is the point type.
  * @tparam TriangleRange a model of the concept `RandomAccessContainer`
@@ -110,7 +110,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  * \attention The types of points in `PointRange`, `geom_traits` and `vertex_point_map` must be the same.
  */
 
-template <class Concurrency_tag, class PointRange, class TriangleRange,
+template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange,
           class TriangleMesh, class NamedParameters>
 void
 orient_triangle_soup_with_reference_triangle_mesh(
@@ -181,7 +181,7 @@ orient_triangle_soup_with_reference_triangle_mesh(
 }
 
 
-template <class Concurrency_tag, class PointRange, class TriangleRange,
+template <class Concurrency_tag = Sequential_tag, class PointRange, class TriangleRange,
           class TriangleMesh>
 void
 orient_triangle_soup_with_reference_triangle_mesh(
@@ -192,5 +192,5 @@ orient_triangle_soup_with_reference_triangle_mesh(
   orient_triangle_soup_with_reference_triangle_mesh<Concurrency_tag>(tm_ref, points, triangles, CGAL::parameters::all_default());
 }
 
-} }//end namespace CGAL::Polygon_mesh_processing
+}}//end namespace CGAL::Polygon_mesh_processing
 #endif // CGAL_ORIENT_POLYGON_SOUP_EXTENSION_H

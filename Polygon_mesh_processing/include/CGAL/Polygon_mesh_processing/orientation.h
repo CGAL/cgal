@@ -685,10 +685,9 @@ void merge_reversible_connected_components(PolygonMesh& pm,
   typedef std::size_t F_cc_id;
   typedef std::size_t B_cc_id;
 
-  typedef typename GetFaceIndexMap<PolygonMesh, NamedParameters>::type Fidmap;
 
-  Fidmap fim = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                                            get_const_property_map(face_index, pm));
+  typedef typename CGAL::GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::const_type Fidmap;
+  Fidmap fim = CGAL::get_initialized_face_index_map(pm, np);
 
   typedef dynamic_face_property_t<F_cc_id>                   Face_property_tag;
   typedef typename boost::property_map<PolygonMesh, Face_property_tag>::type   Face_cc_map;
