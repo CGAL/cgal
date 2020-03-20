@@ -3102,9 +3102,11 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     QString path;
     path = QInputDialog::getText(this,
                                  "",
-                                 tr("Enter the destination path for your file."));
+                                 tr("Enter the name of your scene file."));
     if(path.isEmpty())
       return;
+    if(!path.contains("Polyhedron_demo_"))
+      path.prepend("Polyhedron_demo_");
     try{
       ssh_session session;
       bool res = establish_ssh_session(session,
@@ -3624,9 +3626,11 @@ void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
     QString path;
     path = QInputDialog::getText(this,
                                  "",
-                                 tr("Enter the remote path for your file."));
+                                 tr("Enter the name of the scene file."));
     if(path.isEmpty())
       return;
+    if(!path.contains("Polyhedron_demo_"))
+      path.prepend("Polyhedron_demo_");
     try{
       ssh_session session;
       bool res = establish_ssh_session(session,
