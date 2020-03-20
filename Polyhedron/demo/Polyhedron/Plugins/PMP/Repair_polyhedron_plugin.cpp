@@ -327,9 +327,9 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionMergeDuplicatedVerticesO
 
   if(Item* poly_item = qobject_cast<Item*>(scene->item(index)))
   {
-    const SMesh::size_type old_nv = vertices(*poly_item->polyhedron()).size();
+    const boost::graph_traits<SMesh>::vertices_size_type old_nv = vertices(*poly_item->polyhedron()).size();
     PMP::merge_duplicated_vertices_in_boundary_cycles(*poly_item->polyhedron());
-    const SMesh::size_type new_nv = vertices(*poly_item->polyhedron()).size();
+    const boost::graph_traits<SMesh>::vertices_size_type new_nv = vertices(*poly_item->polyhedron()).size();
     CGAL::Three::Three::information(tr(" %1 vertices merged").arg(old_nv - new_nv));
     if(old_nv != new_nv)
     {
