@@ -41,9 +41,14 @@ void Triangle_container::initGL( Viewer_interface* viewer)
   }
   else
   {
-    
     if(!getVao(viewer))
       setVao(viewer, new Vao(viewer->getShaderProgram(getProgram())));
+    //in both because of the soup item
+    if(!getVbo(VColors))
+      setVbo(VColors,
+             new Vbo("colors",
+                     Vbo::COLORS));
+    getVao(viewer)->addVbo(getVbo(VColors));
     if(isDataIndexed())
     {
       if(!getVbo(Smooth_vertices))
@@ -65,11 +70,6 @@ void Triangle_container::initGL( Viewer_interface* viewer)
                          Vbo::NORMALS));
         getVao(viewer)->addVbo(getVbo(Smooth_normals));
       }
-      if(!getVbo(VColors))
-        setVbo(VColors,
-               new Vbo("colors",
-                       Vbo::COLORS));
-      getVao(viewer)->addVbo(getVbo(VColors));
       if(viewer->getShaderProgram(getProgram())->property("hasDistanceValues").toBool())
       {
         if(!getVbo(Distances))
