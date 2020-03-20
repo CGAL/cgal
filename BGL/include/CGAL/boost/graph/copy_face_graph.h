@@ -34,9 +34,9 @@ namespace internal {
 template <typename SourceMesh, typename TargetMesh,
           typename V2V, typename H2H, typename F2F,
           typename Src_vpm, typename Tgt_vpm>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
-                     V2V v2v, H2H h2h, F2F f2f,
-                     Src_vpm sm_vpm, Tgt_vpm tm_vpm )
+void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
+                          V2V v2v, H2H h2h, F2F f2f,
+                          Src_vpm sm_vpm, Tgt_vpm tm_vpm )
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
@@ -322,17 +322,19 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  internal::copy_face_graph(sm, tm,
-                            choose_parameter(get_parameter(np1, internal_np::vertex_to_vertex_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
-                            choose_parameter(get_parameter(np1, internal_np::halfedge_to_halfedge_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
-                            choose_parameter(get_parameter(np1, internal_np::face_to_face_output_iterator),
-                                         impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
-                            choose_parameter(get_parameter(np1, internal_np::vertex_point),
-                                         get(vertex_point, sm)),
-                            choose_parameter(get_parameter(np2, internal_np::vertex_point),
-                                         get(vertex_point, tm)));
+  internal::copy_face_graph_impl(
+    sm,
+    tm,
+    choose_parameter(get_parameter(np1, internal_np::vertex_to_vertex_output_iterator),
+                 impl::make_functor(get_parameter(np1, internal_np::vertex_to_vertex_map))),
+    choose_parameter(get_parameter(np1, internal_np::halfedge_to_halfedge_output_iterator),
+                 impl::make_functor(get_parameter(np1, internal_np::halfedge_to_halfedge_map))),
+    choose_parameter(get_parameter(np1, internal_np::face_to_face_output_iterator),
+                 impl::make_functor(get_parameter(np1, internal_np::face_to_face_map))),
+    choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                 get(vertex_point, sm)),
+    choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                 get(vertex_point, tm)));
 }
 
 template <typename SourceMesh, typename TargetMesh>
@@ -349,7 +351,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   copy_face_graph(sm, tm, np, parameters::all_default());
 }
 
-#if !defined(DOXYGEN_RUNNING)
+#if !defined(DOXYGEN_RUNNING) && !defined(CGAL_NO_DEPRECATED_CODE)
 template <typename SourceMesh, typename TargetMesh,
           typename V2V, typename H2H, typename F2F,
           typename Src_vpm, typename Tgt_vpm>
@@ -357,9 +359,9 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
                      V2V v2v, H2H h2h, F2F f2f,
                      Src_vpm sm_vpm, Tgt_vpm tm_vpm )
 {
-  internal::copy_face_graph(sm, tm,
-                            v2v, h2h, f2f,
-                            sm_vpm, tm_vpm);
+  internal::copy_face_graph_impl(sm, tm,
+                                 v2v, h2h, f2f,
+                                 sm_vpm, tm_vpm);
 }
 
 
