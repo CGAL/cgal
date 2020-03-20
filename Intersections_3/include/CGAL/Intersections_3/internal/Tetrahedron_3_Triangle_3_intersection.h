@@ -279,6 +279,7 @@ intersection(
     //never happens (only 3 pts in a tr)
     break;
   }
+  return result_type();
 }
 
 template <class K>

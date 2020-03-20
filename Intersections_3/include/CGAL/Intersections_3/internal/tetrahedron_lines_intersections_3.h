@@ -143,7 +143,7 @@ struct Tetrahedron_lines_intersection_3_base
     }
 
     CGAL_assertion(res_id != -1);
-    CGAL_assertion(res_id_2 != -1);
+    CGAL_assertion(res_id_2 != static_cast<std::size_t>(-1));
     CGAL_assertion(max_dist >0 );
 
     typename K::Segment_3 res_seg(res_points[res_id], res_points[res_id_2]);

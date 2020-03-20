@@ -679,8 +679,8 @@ struct Test {
       Res res = CGAL::intersection (tet, pl);
 
       const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
     }
     else
     {
@@ -718,11 +718,11 @@ struct Test {
 
       Res res = CGAL::intersection(tet, tr);
       const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       for(auto& p : *poly)
       {
-        CGAL_assertion(tet.has_on_boundary(p) && tr.has_on(p));
+        assert(tet.has_on_boundary(p) && tr.has_on(p));
       }
 
       //only one edge intersecting
@@ -771,11 +771,11 @@ struct Test {
 
 
       std::vector<P>* inter = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(inter != nullptr);
-      CGAL_assertion(inter->size() == 4);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
       for(auto& p : *inter)
       {
-        CGAL_assertion(tet.has_on_boundary(p) && tr.has_on(p));
+        assert(tet.has_on_boundary(p) && tr.has_on(p));
       }
 
       tr = Tr(P(-2, 0.25, 0),
@@ -786,11 +786,11 @@ struct Test {
 
 
       inter = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(inter != nullptr);
-      CGAL_assertion(inter->size() == 4);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
       for(auto& p : *inter)
       {
-        CGAL_assertion(tet.has_on_boundary(p) && tr.has_on(p));
+        assert(tet.has_on_boundary(p) && tr.has_on(p));
       }
 
       tr = Tr(P(0.2, 0.15, 0.3),
@@ -799,7 +799,7 @@ struct Test {
 
       res = CGAL::intersection(tet, tr);
       Tr* res_tr = boost::get<Tr>(&*res);
-      CGAL_assertion(res_tr != nullptr);
+      assert(res_tr != nullptr);
 
       tr = Tr(P(0.2, 0.15, 0.3),
               P(-1, 0.15, -2),
@@ -809,8 +809,8 @@ struct Test {
 
 
       inter = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(inter != nullptr);
-      CGAL_assertion(inter->size() == 4);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
 
       tr = Tr(P(0.45, 0.20, 0.1),
               P(0.1, 0.20, 0.5),
@@ -820,12 +820,12 @@ struct Test {
 
 
       inter = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(inter != nullptr);
-      CGAL_assertion(inter->size() == 4);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
 
       for(auto& p : *inter)
       {
-        CGAL_assertion(
+        assert(
               (tet.has_on_bounded_side(p) || tet.has_on_boundary(p))
               && tr.has_on(p));
       }
@@ -834,14 +834,14 @@ struct Test {
       tr = Tr(P(0,1,0), P(0.1,0.1,0), P(0.9,0.1,0));
       res = CGAL::intersection(tet, tr);
       res_tr = boost::get<Tr>(&*res);
-      CGAL_assertion(res_tr != nullptr);
+      assert(res_tr != nullptr);
 
 
       tr = Tr(P(0.1, 0.5, 0.1), P(0.3,0.1,0.1), P(4,0.3,0.9));
       res = CGAL::intersection(tet, tr);
       inter = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(inter != nullptr);
-      CGAL_assertion(inter->size() == 4);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
     }
     else
     {
@@ -912,19 +912,19 @@ struct Test {
       Res res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1,2,2)));
 
       const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       for(auto& p : *poly)
       {
-        CGAL_assertion(p.x() == 1);
+        assert(p.x() == 1);
       }
       res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
       poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       for(auto& p : *poly)
       {
-        CGAL_assertion(cub.has_on_boundary(p));
+        assert(cub.has_on_boundary(p));
       }
 
       //vertex
@@ -943,22 +943,22 @@ struct Test {
       Pl pl(P(1,1,1), P(1,2,1), P(1.5, 1, 2));
       res = CGAL::intersection(cub, pl);
       poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       for(auto& p : *poly)
       {
-        CGAL_assertion(pl.has_on(p) && cub.has_on_boundary(p));
+        assert(pl.has_on(p) && cub.has_on_boundary(p));
       }
 
       //random
       pl = Pl(0.265189, 0.902464, 0.33946,  -2.47551);
       res = CGAL::intersection(cub, pl);
       poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 5);
+      assert(poly != nullptr);
+      assert(poly->size() == 5);
       for(auto& p : *poly)
       {
-        CGAL_assertion(pl.has_on(p) && cub.has_on_boundary(p));
+        assert(pl.has_on(p) && cub.has_on_boundary(p));
       }
     }
     else
@@ -1103,16 +1103,16 @@ struct Test {
       Res res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1,2,2)));
 
       const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       for(auto& p : *poly)
       {
-        CGAL_assertion(p.x() == 1);
+        assert(p.x() == 1);
       }
       res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
       poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       //vertex
       check_intersection (cub, Pl(0.5, -0.5, -0.5, 0),
                           P(2,1,1));
@@ -1129,11 +1129,11 @@ struct Test {
       Pl pl(0.265189, 0.902464, 0.33946,  -2.47551);
       res = CGAL::intersection(cub, pl);
       poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 5);
+      assert(poly != nullptr);
+      assert(poly->size() == 5);
       for(auto& p : *poly)
       {
-        CGAL_assertion(pl.has_on(p));
+        assert(pl.has_on(p));
       }
     }
     else
@@ -1182,11 +1182,11 @@ struct Test {
     if(is_exact)
     {
       std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       for(auto& p : *poly)
       {
-        CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
       }
     }
 
@@ -1210,11 +1210,11 @@ struct Test {
     if(is_exact)
     {
       std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
-      CGAL_assertion(poly != nullptr);
-      CGAL_assertion(poly->size() == 4);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
       for(auto& p : *poly)
       {
-        CGAL_assertion(tr.has_on(p) && cub.has_on_boundary(p));
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
       }
     }
   }

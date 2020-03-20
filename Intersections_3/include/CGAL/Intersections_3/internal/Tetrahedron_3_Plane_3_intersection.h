@@ -45,11 +45,10 @@ intersection(
 
   typedef typename K::Segment_3 Segment_3;
   Inter_type intersections[4];
-  std::size_t seg_id = -1,
-      p_id = -1;
+  int p_id = -1;
   std::vector<typename K::Point_3> points;
   std::vector<Segment_3> segments;
-  for(std::size_t i = 0; i < 4; ++i)
+  for(int i = 0; i < 4; ++i)
   {
     const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
                                           tet.vertex((i+2)%4),
@@ -65,7 +64,6 @@ intersection(
                = boost::get<Segment_3>(&*intersections[i]))
       {
         segments.push_back(*s);
-        seg_id = i;
       }
       else if( const typename K::Point_3* p
                = boost::get<typename K::Point_3>(&*intersections[i]))
@@ -127,6 +125,7 @@ intersection(
   }
     break;
   }
+  CGAL_assertion(false);
   return result_type();
 }
 
