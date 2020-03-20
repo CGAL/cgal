@@ -28,7 +28,5 @@ template< typename Refs >
 class Straight_skeleton_face_base_2 {
 public:
 
-/// @}
-
 }; /* end Straight_skeleton_face_base_2 */
 } /* end namespace CGAL */

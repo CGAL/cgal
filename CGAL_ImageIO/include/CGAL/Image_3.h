@@ -2,20 +2,11 @@
 //               2008 GeometryFactory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Pierre Alliez
@@ -155,6 +146,10 @@ public:
   double vy() const { return image_ptr->vy; }
   double vz() const { return image_ptr->vz; }
 
+  double tx() const { return image_ptr->tx; }
+  double ty() const { return image_ptr->ty; }
+  double tz() const { return image_ptr->tz; }
+
   float value(const std::size_t i,
               const std::size_t j,
               const std::size_t k) const
@@ -263,9 +258,9 @@ Image_3::trilinear_interpolation(const Coord_type& x,
   if ( x < 0 || y < 0 || z < 0 )
     return value_outside;
   
-  const Coord_type lx = x / image()->vx;
-  const Coord_type ly = y / image()->vy;
-  const Coord_type lz = z / image()->vz;
+  const Coord_type lx = static_cast<Coord_type>(x / image()->vx);
+  const Coord_type ly = static_cast<Coord_type>(y / image()->vy);
+  const Coord_type lz = static_cast<Coord_type>(z / image()->vz);
   const std::size_t dimx = xdim();
   const std::size_t dimy = ydim();
   const std::size_t dimz = zdim();
@@ -479,7 +474,7 @@ Image_3::labellized_trilinear_interpolation
   const int i2 = i1 + 1;
   const int j2 = j1 + 1;
 
-  CGAL::cpp11::array<std::size_t,8> index;
+  std::array<std::size_t,8> index;
   index[0] = (i1 * dimy + j1) * dimx + k1;
   index[1] = index[0] + 1;
   index[2] = (i1 * dimy + j2) * dimx + k1;
@@ -489,7 +484,7 @@ Image_3::labellized_trilinear_interpolation
   index[6] = (i2 * dimy + j2) * dimx + k1;
   index[7] = index[6] + 1;
 
-  CGAL::cpp11::array<Image_word_type,8> labels;
+  std::array<Image_word_type,8> labels;
   
   labels[0] = ((Image_word_type*)image()->data)[index[0]];
   int lc = 1;

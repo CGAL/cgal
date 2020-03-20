@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
@@ -79,7 +70,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
   for (fit = p_arr->faces_begin(); fit != p_arr->faces_end(); ++fit) {
     fh = fit;
   
-    if (top_traits->is_in_face(&(*fh), p, NULL)) {
+    if (top_traits->is_in_face(&(*fh), p, nullptr)) {
       // The current face contains p in its interior.
       if (f_inner == invalid_f ||
           f_inner->is_unbounded() ||
@@ -91,7 +82,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
       else if (! fh->is_unbounded() && fh->number_of_outer_ccbs() > 0)
       {
         // As we have already some other containing face, one face must be
-        // contained inside the other. Two check that, we select a
+        // contained inside the other. To check that, we select a
         // representative vertex of inner_f and check whether it is contained
         // in our current face.
 
@@ -102,7 +93,7 @@ Arr_naive_point_location<Arrangement>::locate(const Point_2& p) const
           fh->outer_ccbs_begin();
         Vertex_const_handle  v = (*it)->source();
 
-        if (top_traits->is_in_face(&(*f_inner), v->point(), NULL))
+        if (top_traits->is_in_face(&(*f_inner), v->point(), nullptr))
           f_inner = fh;
       }
     }

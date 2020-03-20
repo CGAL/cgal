@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Pierre Alliez, Laurent Rineau, Stephane Tayeb
@@ -83,10 +74,6 @@ namespace CGAL {
     friend class Intersect_3;
 
     class Intersect_3 {
-      #if CGAL_INTERSECTION_VERSION < 2
-      typedef boost::optional<typename Tree::Object_and_primitive_id> 
-        AABB_intersection;
-      #endif
       
       const Self& self;
 
@@ -97,11 +84,7 @@ namespace CGAL {
 
       Object operator()(const Surface_3& surface, const Segment_3& segment) const
       {
-        #if CGAL_INTERSECTION_VERSION < 2
-        AABB_intersection
-        #else
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Segment_3>::Type >
-        #endif
           intersection = surface.tree()->any_intersection(segment);
         
         if ( intersection )
@@ -112,11 +95,7 @@ namespace CGAL {
       
       Object operator()(const Surface_3& surface, const Line_3& line) const
       {
-        #if CGAL_INTERSECTION_VERSION < 2
-        AABB_intersection
-        #else
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Line_3>::Type >
-        #endif
           intersection = surface.tree()->any_intersection(line);
         
         if ( intersection )
@@ -126,11 +105,7 @@ namespace CGAL {
       }
       Object operator()(const Surface_3& surface, const Ray_3& ray) const
       {
-        #if CGAL_INTERSECTION_VERSION < 2
-        AABB_intersection
-        #else
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Ray_3>::Type >
-        #endif
           intersection = surface.tree()->any_intersection(ray);
         
         if ( intersection )

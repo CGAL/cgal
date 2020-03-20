@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -69,7 +60,10 @@ bool load_binary_file(std::istream& is, C3T3& c3t3)
     return false;
   }
   std::getline(is, s);
-  if(s != "") {
+  if(!s.empty()) {
+    if(s[s.size()-1] == '\r') { // deal with Windows EOL
+      s.resize(s.size() - 1);
+    }
     if(s != std::string(" ") + CGAL::Get_io_signature<C3T3>()()) {
       std::cerr << "load_binary_file:"
                 << "\n  expected format: " << CGAL::Get_io_signature<C3T3>()()

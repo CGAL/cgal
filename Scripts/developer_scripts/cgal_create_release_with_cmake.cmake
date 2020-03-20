@@ -8,8 +8,9 @@
 # CGAL_VERSION_NR=release string used to update version.h. Must be something like 1041200033 , or 10412009<beta number>0
 # TESTSUITE=indicate if the release is meant to be used by the testsuite, default if OFF
 # GPL_PACKAGE_LIST=path to a file containing the list of GPL packages to include in the release. If not provided all of them are.
+# GENERATE_TARBALLS=[ON/OFF] indicates if release tarballs should be created as DESTINATION
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.1...3.15)
 
 function(process_package pkg)
   if(VERBOSE)
@@ -78,7 +79,7 @@ if (NOT EXISTS ${GIT_REPO}/Installation/include/CGAL/version.h)
 endif()
 
 file(READ "${GIT_REPO}/Installation/include/CGAL/version.h" version_file_content)
-string(REGEX MATCH "define CGAL_VERSION (.*)\n#define CGAL_VERSION_NR" CGAL_VERSION_FOUND "${version_file_content}")
+string(REGEX MATCH "define CGAL_VERSION ([^\n]*)\n" CGAL_VERSION_FOUND "${version_file_content}")
 
 if (CGAL_VERSION_FOUND)
   set(CGAL_VERSION_INPUT "${CMAKE_MATCH_1}")
@@ -153,6 +154,10 @@ foreach(pkg ${files})
     process_package(${pkg})
   endif()
 endforeach()
+if(EXISTS ${GIT_REPO}/Maintenance/release_building/public_release_name)
+  file(COPY "${GIT_REPO}/Maintenance/release_building/public_release_name"
+    DESTINATION "${release_dir}/doc")
+endif()
 
 #create VERSION
 file(WRITE ${release_dir}/VERSION "${CGAL_VERSION}")
@@ -166,11 +171,12 @@ if(EXISTS ${GIT_REPO}/.git)
     RESULT_VARIABLE RESULT_VAR
     OUTPUT_VARIABLE OUT_VAR
     )
-  string(REPLACE "CGAL_GIT_HASH abcdef\n" "CGAL_GIT_HASH ${OUT_VAR}" file_content "${file_content}")
+  string(REGEX REPLACE "CGAL_GIT_HASH [^\n]*\n" "CGAL_GIT_HASH ${OUT_VAR}" file_content "${file_content}")
 endif()
 #  update CGAL_RELEASE_DATE
 string(TIMESTAMP TODAY "%Y%m%d")
-string(REPLACE "CGAL_RELEASE_DATE 20170101" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
+string(TIMESTAMP TODAY_FOR_MANPAGES "%B %Y")
+string(REGEX REPLACE "CGAL_RELEASE_DATE [^\n]*" "CGAL_RELEASE_DATE ${TODAY}" file_content "${file_content}")
 #  update CGAL_VERSION
 string(REPLACE "CGAL_VERSION ${CGAL_VERSION_INPUT}" "CGAL_VERSION ${CGAL_VERSION}" file_content "${file_content}")
 #  update CGAL_VERSION_NR
@@ -178,6 +184,15 @@ if (CGAL_VERSION_NR)
   string(REGEX REPLACE "CGAL_VERSION_NR 10[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]" "CGAL_VERSION_NR ${CGAL_VERSION_NR}" file_content "${file_content}")
 endif()
 file(WRITE ${release_dir}/include/CGAL/version.h "${file_content}")
+
+# Equivalent to
+#    # Patch the date and CGAL version in man(1) pages
+#    sed -i -e "s/@DATE@/`date '+%B %Y'`/; s/@CGAL_VERSION@/$public_release_version/" auxiliary/*.1
+set(DATE ${TODAY_FOR_MANPAGES})
+file(GLOB MANPAGES RELATIVE "${GIT_REPO}/Installation" "${GIT_REPO}/Installation/auxiliary/*.1")
+foreach(manpage ${MANPAGES})
+  configure_file(${GIT_REPO}/Installation/${manpage} ${release_dir}/${manpage} @ONLY)
+endforeach()
 
 # make an extra copy of examples and demos for the testsuite and generate
 # create_cgal_test_with_cmake for tests, demos, and examples
@@ -292,3 +307,43 @@ if(PUBLIC AND NOT TESTSUITE) # we are not creating an internal release.
     file(REMOVE ${release_dir}/${to_delete})
   endforeach()
 endif()
+
+if (GENERATE_TARBALLS)
+  # create library+examples+demos+tests
+  execute_process(
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE OUT_VAR
+  )
+
+  #create examples+demos
+  execute_process(
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-examples.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}/examples CGAL-${CGAL_VERSION}/demo
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE OUT_VAR
+  )
+
+  if(NOT PUBLIC) # we are not creating an internal release.
+    # Taken from create_new_release.
+    file(REMOVE_RECURSE ${release_dir}/test)
+    file(REMOVE_RECURSE ${release_dir}/package_info)
+    file(REMOVE_RECURSE ${release_dir}/developer_scripts)
+    file(REMOVE_RECURSE ${release_dir}/doc)
+    file(REMOVE_RECURSE ${release_dir}/include/CGAL/Test)
+    file(REMOVE_RECURSE ${release_dir}/include/CGAL/Testsuite/)
+  endif()
+  file(REMOVE_RECURSE ${release_dir}/demo)
+  file(REMOVE_RECURSE ${release_dir}/examples)
+  file(REMOVE_RECURSE ${release_dir}/scripts)
+  file(REMOVE_RECURSE ${release_dir}/doc_html)
+
+  # create library only
+  execute_process(
+  COMMAND tar cJf ${DESTINATION}/CGAL-${CGAL_VERSION}-library.tar.xz -C ${DESTINATION} CGAL-${CGAL_VERSION}
+  RESULT_VARIABLE RESULT_VAR
+  OUTPUT_VARIABLE OUT_VAR
+  )
+
+  #remove directory
+  file(REMOVE_RECURSE ${release_dir})
+endif(GENERATE_TARBALLS)

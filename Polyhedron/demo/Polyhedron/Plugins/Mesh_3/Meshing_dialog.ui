@@ -100,9 +100,23 @@
      <property name="title">
       <string>Sharp features</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0">
-      <item row="1" column="1">
-       <widget class="QComboBox" name="protectEdges"/>
+     <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,0">
+      <item row="3" column="1">
+       <widget class="DoubleEdit" name="sharpEdgesAngle">
+        <property name="text">
+         <string>60.00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="protect">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="sharpEdgesAngleLabel">
@@ -120,19 +134,6 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="edgeLabel">
-        <property name="text">
-         <string>Edge &amp;size</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>edgeSizing</cstring>
-        </property>
-       </widget>
-      </item>
       <item row="7" column="2">
        <widget class="QCheckBox" name="noEdgeSizing">
         <property name="text">
@@ -140,28 +141,8 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="1">
-       <widget class="QDoubleSpinBox" name="edgeSizing">
-        <property name="decimals">
-         <number>4</number>
-        </property>
-        <property name="minimum">
-         <double>0.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QDoubleSpinBox" name="sharpEdgesAngle">
-        <property name="maximum">
-         <double>180.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>60.000000000000000</double>
-        </property>
-       </widget>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="protectEdges"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="protectLabel">
@@ -176,13 +157,23 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="protect">
+      <item row="7" column="1">
+       <widget class="DoubleEdit" name="edgeSizing">
         <property name="text">
-         <string/>
+         <string>0.0</string>
         </property>
-        <property name="checked">
-         <bool>true</bool>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="edgeLabel">
+        <property name="text">
+         <string>Edge &amp;size</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy">
+         <cstring>edgeSizing</cstring>
         </property>
        </widget>
       </item>
@@ -234,16 +225,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="approx">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="0">
        <widget class="QLabel" name="angleLabel">
         <property name="text">
@@ -254,19 +235,6 @@
         </property>
         <property name="buddy">
          <cstring>facetAngle</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QDoubleSpinBox" name="facetSizing">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="decimals">
-         <number>4</number>
         </property>
        </widget>
       </item>
@@ -364,22 +332,27 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="1">
+       <widget class="DoubleEdit" name="facetSizing">
+        <property name="text">
+         <string>0.065</string>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="1">
-       <widget class="QDoubleSpinBox" name="facetAngle">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
+       <widget class="DoubleEdit" name="facetAngle">
+        <property name="inputMask">
+         <string>25,00</string>
         </property>
-        <property name="minimum">
-         <double>0.000000000000000</double>
+        <property name="text">
+         <string>25,00</string>
         </property>
-        <property name="maximum">
-         <double>30.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>25.000000000000000</double>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="approx">
+        <property name="text">
+         <string>0.0017</string>
         </property>
        </widget>
       </item>
@@ -418,35 +391,6 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="tetShape">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>3.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="tetSizing">
-        <property name="minimumSize">
-         <size>
-          <width>110</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="decimals">
-         <number>4</number>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
@@ -454,9 +398,6 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="buddy">
-         <cstring>tetShape</cstring>
         </property>
        </widget>
       </item>
@@ -470,6 +411,20 @@
         </property>
         <property name="buddy">
          <cstring>tetSizing</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="DoubleEdit" name="tetSizing">
+        <property name="text">
+         <string>0.00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="tetShape">
+        <property name="text">
+         <string>3.00</string>
         </property>
        </widget>
       </item>
@@ -503,22 +458,6 @@
          <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="iso_value_spinBox">
-        <property name="minimum">
-         <double>-65536.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>65536.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>3.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QDoubleSpinBox" name="value_outside_spinBox"/>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_4">
@@ -556,6 +495,20 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="DoubleEdit" name="value_outside_spinBox">
+        <property name="text">
+         <string>0.00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="DoubleEdit" name="iso_value_spinBox">
+        <property name="text">
+         <string>3.00</string>
         </property>
        </widget>
       </item>
@@ -597,16 +550,18 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header location="global">CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
-  <tabstop>approx</tabstop>
   <tabstop>noApprox</tabstop>
-  <tabstop>facetSizing</tabstop>
   <tabstop>noFacetSizing</tabstop>
-  <tabstop>facetAngle</tabstop>
   <tabstop>noAngle</tabstop>
-  <tabstop>tetSizing</tabstop>
   <tabstop>noTetSizing</tabstop>
-  <tabstop>tetShape</tabstop>
   <tabstop>noTetShape</tabstop>
   <tabstop>checkBox</tabstop>
   <tabstop>manifoldCheckBox</tabstop>

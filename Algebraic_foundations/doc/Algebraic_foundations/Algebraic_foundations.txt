@@ -145,7 +145,7 @@ but does not provide any arithmetic operations.
 
 As for algebraic structures this concept is also traits class oriented.
 The main functionality related to `RealEmbeddable` is gathered in 
-the class `Real_embeddable_traits`. In particular, it porivdes the boolean 
+the class `Real_embeddable_traits`. In particular, it provides the boolean 
 tag `Is_real_embeddable` indicating whether a type is a model of 
 `RealEmbeddable`. The comparison operators are required to be realized via 
 \cpp operator overloading. 

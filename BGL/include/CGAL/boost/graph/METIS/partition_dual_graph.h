@@ -1,20 +1,11 @@
 // Copyright (c) 2017 GeometryFactory (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -26,7 +17,7 @@
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/assertions.h>
@@ -51,17 +42,14 @@ void partition_dual_graph(const TriangleMesh& tm,
   CGAL_precondition(CGAL::is_triangle_mesh(tm));
   CGAL_precondition_msg(nparts > 1, ("Partitioning requires a number of parts > 1"));
 
-  using boost::choose_param;
-  using boost::get_param;
+  using parameters::get_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
 
-  // vertex index map
-  typedef typename CGAL::Polygon_mesh_processing::GetVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
-  Indices indices = choose_param(get_param(np, internal_np::vertex_index),
-                                 get_const_property_map(boost::vertex_index, tm));
+  typedef typename CGAL::GetInitializedVertexIndexMap<TriangleMesh, NamedParameters>::type Indices;
+  Indices indices = CGAL::get_initialized_vertex_index_map(tm, np);
 
   idx_t nn = static_cast<idx_t>(num_vertices(tm));
   idx_t ne = static_cast<idx_t>(num_faces(tm));
@@ -97,11 +85,11 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   // partition info for the nodes
   idx_t* npart = (idx_t*) calloc(num_vertices(tm), sizeof(idx_t));
-  CGAL_assertion(npart != NULL);
+  CGAL_assertion(npart != nullptr);
 
   // partition info for the elements
   idx_t* epart = (idx_t*) calloc(num_faces(tm), sizeof(idx_t));
-  CGAL_assertion(epart != NULL);
+  CGAL_assertion(epart != nullptr);
 
   // do not support Fortran-style arrays
   CGAL_assertion((*options)[METIS_OPTION_NUMBERING] == -1 || // default initialization is '-1'
@@ -109,9 +97,9 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   CGAL_assertion_code(int ret =)
     METIS_PartMeshDual(&ne, &nn, eptr, eind,
-                       NULL /* elements weights*/, NULL /*elements sizes*/,
+                       nullptr /* elements weights*/, nullptr /*elements sizes*/,
                        &ncommon, &nparts,
-                       NULL /* partitions weights */,
+                       nullptr /* partitions weights */,
                        *options,
                        &objval, epart, npart);
 
@@ -119,8 +107,8 @@ void partition_dual_graph(const TriangleMesh& tm,
 
   Output_vertex_partition_ids vo;
   Output_face_partition_ids fo;
-  vo(tm, indices, npart, get_param(np, internal_np::vertex_partition_id));
-  fo(tm, epart, get_param(np, internal_np::face_partition_id));
+  vo(tm, indices, npart, get_parameter(np, internal_np::vertex_partition_id));
+  fo(tm, epart, get_parameter(np, internal_np::face_partition_id));
 
   delete[] eptr;
   delete[] eind;
@@ -131,7 +119,7 @@ void partition_dual_graph(const TriangleMesh& tm,
 
 template<typename TriangleMesh, typename NamedParameters>
 void partition_dual_graph(const TriangleMesh& tm, int nparts,
-                          const boost::param_not_found, // no METIS options were passed
+                          const internal_np::Param_not_found, // no METIS options were passed
                           const NamedParameters& np)
 {
   idx_t options[METIS_NOPTIONS];
@@ -145,9 +133,6 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 /// based on the mesh's dual graph. The resulting partition is stored in the vertex and/or face
 /// property maps that are passed as parameters using \ref bgl_namedparameters "Named Parameters".
 ///
-/// Property map for `CGAL::vertex_index_t` should be either available
-/// as an internal property map to `tm` or provided as \ref bgl_namedparameters "Named Parameters".
-///
 /// \param tm a triangle mesh
 /// \param nparts the number of parts in the final partition
 /// \param np optional \ref bgl_namedparameters "Named Parameters" described below
@@ -157,7 +142,7 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 ///
 /// \cgalNamedParamsBegin
 ///   \cgalParamBegin{vertex_index_map}
-///     is a property map containing the index of each vertex of `tm` intialized from `0` to `num_vertices(tm)-1`.
+///     is a property map containing for each vertex of `tm` a unique index between `0` and `num_vertices(tm)-1`.
 ///   \cgalParamEnd
 ///   \cgalParamBegin{METIS_options}
 ///     is a parameter used in to pass options to the METIS mesh
@@ -180,9 +165,9 @@ void partition_dual_graph(const TriangleMesh& tm, int nparts,
 template<typename TriangleMesh, typename NamedParameters>
 void partition_dual_graph(const TriangleMesh& tm, int nparts, const NamedParameters& np)
 {
-  using boost::get_param;
+  using parameters::get_parameter;
 
-  return partition_dual_graph(tm, nparts, get_param(np, internal_np::METIS_options), np);
+  return partition_dual_graph(tm, nparts, get_parameter(np, internal_np::METIS_options), np);
 }
 
 template<typename TriangleMesh>

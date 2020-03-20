@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is a part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY, AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
@@ -51,7 +42,7 @@ namespace Barycentric_coordinates {
 /*!
  * \ingroup PkgBarycentricCoordinates2Ref
  * The class `Triangle_coordinates_2` implements barycentric coordinates ( <a href="http://mathworld.wolfram.com/BarycentricCoordinates.html" target=blanc>[1]</a>,
- * <a href="http://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
+ * <a href="https://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
  * This class is parameterized by a traits class `Traits`.
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
@@ -237,7 +228,7 @@ private:
 */
 
 template<class Traits>
-    inline CGAL::cpp11::array<typename Traits::FT,3> compute_triangle_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &third_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
+    inline std::array<typename Traits::FT,3> compute_triangle_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &third_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
 {
     // Some predefined functions.
     typename Traits::Compute_area_2 area_2 = barycentric_traits.compute_area_2_object();
@@ -256,7 +247,7 @@ template<class Traits>
     const FT b_first  = area_second * inverted_total_area;
     const FT b_second = area_third  * inverted_total_area;
 
-    // Return the CGAL::cpp11::array<FT,3> type of coordinates.
+    // Return the std::array<FT,3> type of coordinates.
     return CGAL::make_array(b_first, b_second, FT(1) - b_first - b_second);
 }
 

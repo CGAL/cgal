@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann, Sylvain Pion
@@ -49,7 +40,7 @@ CGAL_INLINE_FUNCTION
 Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
 				 const char *machine,
 				 const char *login)
-    : bb(bbox), vertex_color(BLACK), edge_color(BLACK), face_color(BLACK),
+  : bb(bbox), vertex_color(black()), edge_color(black()), face_color(black()),
       wired_flag(false), echo_flag(true), raw_flag(false),
       trace_flag(false), binary_flag(false),
       line_width(1)
@@ -100,10 +91,10 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
 	    s += machine;
 	    s += ":0.0";
             execlp("rsh", "rsh", machine, "-l", login, s.data(),
-                   static_cast<void *>(NULL)); // cast to stop gcc warning
+                   static_cast<void *>(nullptr)); // cast to stop gcc warning
         } else {
             execlp("geomview", "geomview", "-c", "-",
-                   static_cast<void *>(NULL)); // cast to stop gcc warning
+                   static_cast<void *>(nullptr)); // cast to stop gcc warning
         }
 
         // if we get to this point something went wrong.

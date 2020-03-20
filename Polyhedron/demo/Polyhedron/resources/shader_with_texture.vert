@@ -1,6 +1,6 @@
 #version 150
 in vec4 vertex;
-in vec3 normal;
+in vec3 normals;
 in vec2 v_texCoord; 
 
 uniform mat4 mvp_matrix;
@@ -24,7 +24,7 @@ void main(void)
    mv_matrix_3[0] = mv_matrix[0].xyz;   
    mv_matrix_3[1] = mv_matrix[1].xyz;   
    mv_matrix_3[2] = mv_matrix[2].xyz;   
-   vec3 N = mv_matrix_3* normal; 
+   vec3 N = mv_matrix_3* normals; 
    vec3 L = light_pos.xyz - P.xyz; 
    N = normalize(N); 
    L = normalize(L); 

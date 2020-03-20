@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author        : Andreas Fabri
@@ -36,6 +27,7 @@ template < class R_ >
 class VectorC3
 {
 // https://doc.cgal.org/latest/Manual/devman_code_format.html#secprogramming_conventions
+  typedef VectorC3<R_>                      Self;
   typedef typename R_::FT                   FT_;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
@@ -44,7 +36,7 @@ class VectorC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef cpp11::array<FT_, 3>               Rep;
+  typedef std::array<FT_, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -78,6 +70,15 @@ public:
   VectorC3(const FT_ &x, const FT_ &y, const FT_ &z, const FT_ &w)
     : base( w != FT_(1) ? CGAL::make_array<FT_>(x/w, y/w, z/w)
                        : CGAL::make_array(x, y, z) ) {}
+
+  friend void swap(Self& a, Self& b)
+#ifdef __cpp_lib_is_swappable
+    noexcept(std::is_nothrow_swappable_v<Base>)
+#endif
+  {
+    using std::swap;
+    swap(a.base, b.base);
+  }
 
   const FT_ & x() const
   {

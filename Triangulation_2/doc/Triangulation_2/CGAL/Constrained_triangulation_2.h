@@ -6,9 +6,33 @@ namespace CGAL {
 \ingroup PkgTriangulation2TriangulationClasses
 
 Intersection tag for constrained triangulations, when input constraints do not intersect.
+
+\deprecated This class is deprecated since \cgal 5.1 as it was ambiguous. Users should instead
+use the tags `No_constraint_intersection_tag` and `No_constraint_intersection_requiring_constructions_tag`,
+depending on their needs.
 */
 struct No_intersection_tag{};
 
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Intersection tag for constrained triangulations, when input constraints are not allowed to intersect
+except at a single common extremity.
+*/
+struct No_constraint_intersection_tag{};
+
+/*!
+\ingroup PkgTriangulation2TriangulationClasses
+
+Intersection tag for constrained triangulations, when input constraints are not allowed to intersect
+except if the intersection does not require any new point construction.
+
+This for example allows configurations such as two segments intersecting in a 'T', or overlapping (and
+even identical) segments.
+
+This is the default tag.
+*/
+struct No_constraint_intersection_requiring_constructions_tag{};
 
 /*!
 \ingroup PkgTriangulation2TriangulationClasses
@@ -81,7 +105,6 @@ as it avoids the cascading of intersection computations.
 \image html constraints.png
 \image latex constraints.png
 
-
 \tparam Traits is a geometric traits class and must be a model 
 of the concept `TriangulationTraits_2`. 
 When intersection of input constraints are supported, 
@@ -91,46 +114,33 @@ to compute the intersection of two segments.
 It has then to be a model of the concept 
 `ConstrainedTriangulationTraits_2`. 
 
+\tparam Tds must be a model of the concept `TriangulationDataStructure_2` or `Default`.
+The information about constrained edges is stored in the faces of the triangulation. Thus the nested `Face`
+type of a constrained triangulation offers additional functionalities to deal with this information.
+These additional functionalities induce additional requirements on the face base class
+plugged into the triangulation data structure of a constrained Delaunay triangulation.
+The face base of a constrained Delaunay triangulation has to be a model of the concept
+`ConstrainedTriangulationFaceBase_2`.
 
-\tparam Tds must be a model 
-of the concept `TriangulationDataStructure_2` or `Default`.
+\tparam Itag is the intersection tag
+which serves to choose between the different
+strategies to deal with constraints intersections.
+\cgal provides three valid types for this parameter:
+- `No_constraint_intersection_tag` disallows intersections of input constraints
+except for the case of a single common extremity;
+- `No_constraint_intersection_requiring_constructions_tag` (default value) disallows intersections
+of input constraints except for configurations where the intersection can be represented
+without requiring the construction of a new point such as overlapping constraints;
+- `Exact_predicates_tag` is to be used when the traits class
+provides exact predicates but approximate constructions of the
+intersection points;
+- `Exact_intersections_tag` is to be used in conjunction
+with an exact arithmetic type.
 
-\tparam Itag is the intersection tag 
-which serves to choose between the different 
-strategies to deal with constraints intersections. 
-\cgal provides three valid types for this parameter: 
-- `No_intersection_tag` disallows intersections of 
-input constraints, 
-- `Exact_predicates_tag` is to be used when the traits 
-class 
-provides exact predicates but approximate constructions of the 
-intersection points. 
-- `Exact_intersections_tag` is to be used in conjunction 
-with an exact arithmetic type. 
-
-The information about constrained edges is stored in the 
-faces of the triangulation. Thus the nested `Face` 
-type of a constrained triangulation offers 
-additional functionalities to deal with this information. 
-These additional functionalities 
-induce additional requirements on the face base class 
-plugged into the triangulation data structure of 
-a constrained Delaunay triangulation. 
-The face base of a constrained Delaunay triangulation 
-has to be a model of the concept 
-`ConstrainedTriangulationFaceBase_2`. 
-
-\cgal provides default instantiations for the template parameters 
-`Tds` and `Itag`, and for the `ConstrainedTriangulationFaceBase_2`. 
-If `Gt` is the geometric traits class 
-parameter, 
-the default for 
-`ConstrainedTriangulationFaceBase_2` is the class 
-`Constrained_triangulation_face_base_2<Gt>` 
-and the default for the 
-triangulation data structure parameter is the class 
-`Triangulation_data_structure_2 < Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`. 
-The default intersection tag is `No_intersection_tag`.
+\cgal provides default instantiations for the template parameters `Tds` and `Itag`.
+If `Gt` is the geometric traits class parameter, the default triangulation data structure
+is the class is the class `Triangulation_data_structure_2<Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`.
+The default intersection tag is `No_constraint_intersection_requiring_constructions_tag`.
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 \sa `TriangulationDataStructure_2`
@@ -165,6 +175,10 @@ The value type of this iterator is `Edge`.
 */ 
 typedef unspecified_type Constrained_edges_iterator; 
 
+/*!
+A range type to iterate over the constrained edges.
+*/
+typedef Iterator_range<Constrained_edges_iterator> Constrained_edges;
 
 /*!
 The intersection tag which decides how 
@@ -197,18 +211,18 @@ Constrained_triangulation_2& ct1);
 /// @{
 
 /*!
-Returns `true` if edge `e` is a constrained edge. 
+returns `true` if edge `e` is a constrained edge. 
 */ 
 bool is_constrained(Edge e) const; 
 
 /*!
-Returns `true` if at least one of the edges incident to vertex `v` 
+returns `true` if at least one of the edges incident to vertex `v` 
 is constrained. 
 */ 
 bool are_there_incident_constraints(Vertex_handle v) const; 
 
 /*!
-Outputs the constrained edges incident to `v` 
+outputs the constrained edges incident to `v` 
 into the output iterator `out` and returns the resulting 
 output iterator. 
 \tparam OutputItEdges is an `OutputIterator` with `Edge` as value 
@@ -229,6 +243,11 @@ returns the past-the-end iterator.
 */ 
 Constrained_edges_iterator constrained_edges_end() const;
 
+/*!
+returns a range of constrained edges.
+*/
+Constrained_edges constrained_edges() const;
+  
 /// @} 
 
 /// \name Insertion and Removal 
@@ -236,14 +255,14 @@ Constrained_edges_iterator constrained_edges_end() const;
 /// @{
 
 /*!
-Inserts point `p` and restores the status (constrained or not) of all 
+inserts point `p` and restores the status (constrained or not) of all 
 the touched edges. If present, `f` is used as an hint 
 for the location of `p`. 
 */ 
 Vertex_handle insert(Point p, Face_handle f = Face_handle() ); 
 
 /*!
-Inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
+inserts point `p` in the triangulation at the location given by `(lt,loc,i)`. 
 \sa `Triangulation_2::locate()`
 */ 
 Vertex_handle 
@@ -258,7 +277,7 @@ Vertex_handle push_back(const Point& p);
 
 
 /*!
-Inserts points `a` and `b` in this order, and inserts the line segment `ab` as a 
+inserts points `a` and `b` in this order, and inserts the line segment `ab` as a 
 constraint. Removes the faces crossed by segment `ab` and creates new 
 faces instead. If a vertex `c` lies on segment `ab`, constraint `ab` is 
 replaced by the two constraints `ac` and `cb`. Apart from the insertion of 
@@ -273,7 +292,7 @@ Equivalent to `insert(c.first, c.second)`.
   void push_back(const std::pair<Point,Point>& c); 
 
 /*!
-Inserts the line segment `s` whose endpoints are the vertices 
+inserts the line segment `s` whose endpoints are the vertices 
 `va` and 
 `vb` as a constraint. The triangles intersected by `s` 
 are removed and new ones are created. 
@@ -281,7 +300,7 @@ are removed and new ones are created.
 void insert_constraint(const Vertex_handle & va, const Vertex_handle & vb); 
 
 /*!
-Inserts a polyline defined by the points in the range `[first,last)`.
+inserts a polyline defined by the points in the range `[first,last)`.
 The polyline is considered as a polygon if the first and last point are equal or if  `close = true`. This enables for example passing the vertex range of a `Polygon_2`.
 \tparam PointIterator must be an `InputIterator` with the value type `Point`. 
 */
@@ -291,23 +310,23 @@ void insert_constraint(PointIterator first, PointIterator last, bool close=false
 
 
 /*! 
-Removes a vertex `v`. 
+removes a vertex `v`. 
 \pre Vertex `v` is not incident to a constrained edge. 
 */ 
 void remove(Vertex_handle v); 
 
 /*!
-Make the edges incident to vertex `v` unconstrained edges. 
+makes the edges incident to vertex `v` unconstrained edges. 
 */ 
 void remove_incident_constraints(Vertex_handle v); 
 
 /*!
-Make edge `(f,i)` unconstrained. 
+makes edge `(f,i)` unconstrained. 
 */ 
 void remove_constrained_edge(Face_handle f, int i); 
 
 /*!
-Checks the validity of the triangulation and the consistency
+checks the validity of the triangulation and the consistency
 of the constrained marks in edges.
 */ 
 bool 
@@ -318,23 +337,25 @@ is_valid(bool verbose = false, int level = 0) const;
 }; /* end Constrained_triangulation_2 */
 
 /*!
-Writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face `f`, and integers `i=0,1,2`, 
+writes the triangulation as for `Triangulation_2<Traits,Tds>` and, for each face `f`, and integers `i=0,1,2`, 
 writes "C" or "N" depending whether edge 
 `(f,i)` is constrained or not. 
 \relates Constrained_triangulation_2 
-*/ 
-ostream & operator<<(ostream& os, const Constrained_triangulation_2<Traits,Tds> &Ct); 
+*/
+template <typename  Traits, typename Tds, typename Itag>
+std::ostream & operator<<(std::ostream& os, const Constrained_triangulation_2<Traits,Tds,Itag> &ct); 
 
 /*!
-Reads a triangulation from stream `is` and assigns it to `t`. Data in the stream must have the same format `operator<<` uses. 
-Note that `t` is first cleared. 
+reads a triangulation from stream `is` and assigns it to c`t`. Data in the stream must have the same format `operator<<` uses. 
+Note that `ct` is first cleared. 
 \relates Constrained_triangulation_2 
-*/ 
-istream& operator>>(istream& is,Constrained_triangulation_2<Traits,Tds> Ct& t); 
+*/
+template <typename  Traits, typename Tds, typename Itag>
+std::istream& operator>>(std::istream& is,Constrained_triangulation_2<Traits,Tds,Itag> Ct& ct); 
 
 /*! Exception used by constrained triangulations configured with
-the tag `No_intersection_tag`. It is thrown upon insertion of a constraint
-that is intersecting an already inserted constraint in its interior.
+the tags `No_constraint_intersection_tag` or `No_constraint_intersection_requiring_constructions_tag`
+when the insertion of a new constraint would break the respective conditions associated to each tag.
 */
 class Intersection_of_constraints_exception;
 } /* end namespace CGAL */

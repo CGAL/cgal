@@ -4,19 +4,10 @@
 // Copyright (C) 2014 GeometryFactory
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 
 
@@ -143,7 +134,7 @@ public: // virtual interface of Base_property_array
     bool transfer(const Base_property_array& other)
     {
       const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
-      if(pa != NULL){
+      if(pa != nullptr){
         std::copy((*pa).data_.begin(), (*pa).data_.end(), data_.end()-(*pa).data_.size());
         return true;
       } 
@@ -153,7 +144,7 @@ public: // virtual interface of Base_property_array
     bool transfer(const Base_property_array& other, std::size_t from, std::size_t to)
     {
       const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
-      if (pa != NULL)
+      if (pa != nullptr)
       {
         data_[to] = (*pa)[from];
         return true;
@@ -245,7 +236,7 @@ class Property_container
 public:
 
     // default constructor
-    Property_container() : size_(0) {}
+    Property_container() : size_(0), capacity_(0) {}
 
     // destructor (deletes all property arrays)
     virtual ~Property_container() { clear(); }
@@ -261,6 +252,7 @@ public:
             clear();
             parrays_.resize(_rhs.n_properties());
             size_ = _rhs.size();
+            capacity_ = _rhs.capacity();
             for (std::size_t i=0; i<parrays_.size(); ++i)
                 parrays_[i] = _rhs.parrays_[i]->clone();
         }
@@ -296,6 +288,7 @@ public:
           continue;
 
         parrays_.push_back (_rhs.parrays_[i]->empty_clone());
+        parrays_.back()->reserve(capacity_);
         parrays_.back()->resize(size_);
       }
     }
@@ -313,6 +306,9 @@ public:
 
     // returns the current size of the property arrays
     size_t size() const { return size_; }
+
+    // returns the current capacity of the property arrays
+    size_t capacity() const { return capacity_; }
 
     // returns the number of property arrays
     size_t n_properties() const { return parrays_.size(); }
@@ -362,6 +358,7 @@ public:
 
         // otherwise add the property
         Property_array<T>* p = new Property_array<T>(name, t);
+        p->reserve(capacity_);
         p->resize(size_);
         parrays_.push_back(p);
         return std::make_pair(Pmap(p), true);
@@ -439,10 +436,11 @@ public:
 
 
     // reserve memory for n entries in all arrays
-    void reserve(size_t n) const
+    void reserve(size_t n)
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->reserve(n);
+        capacity_ = std::max(n, capacity_);
     }
 
     // resize all arrays to size n
@@ -454,10 +452,11 @@ public:
     }
 
     // free unused space in all arrays
-    void shrink_to_fit() const
+    void shrink_to_fit()
     {
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->shrink_to_fit();
+        capacity_ = size_;
     }
 
     // add a new element to each vector
@@ -466,6 +465,7 @@ public:
         for (std::size_t i=0; i<parrays_.size(); ++i)
             parrays_[i]->push_back();
         ++size_;
+        capacity_ = (std::max(size_, capacity_));
     }
 
     // reset element to its default property values
@@ -486,11 +486,13 @@ public:
     void swap (Property_container& other)
     {
       this->parrays_.swap (other.parrays_);
+      std::swap(this->size_, other.size_);
     }
   
 private:
     std::vector<Base_property_array*>  parrays_;
     size_t  size_;
+    size_t  capacity_;
 };
 
   /// @endcond
@@ -542,11 +544,11 @@ public:
 
 public:
 /// @cond CGAL_DOCUMENT_INTERNALS
-    Property_map_base(Property_array<T>* p=NULL) : parray_(p) {}
+    Property_map_base(Property_array<T>* p=nullptr) : parray_(p) {}
 
     void reset()
     {
-        parray_ = NULL;
+        parray_ = nullptr;
     }
   /// @endcond 
 
@@ -559,21 +561,21 @@ public:
   operator bool () const;
 #else
     operator bool_type() const {
-        return parray_ != NULL ?
+        return parray_ != nullptr ?
             &Property_map_base::this_type_does_not_support_comparisons : 0;
     }
 #endif
     /// Access the property associated with the key \c i.
     reference operator[](const I& i)
     {
-      CGAL_assertion(parray_ != NULL);
+      CGAL_assertion(parray_ != nullptr);
       return (*parray_)[i];
     }
 
     /// Access the property associated with the key \c i.
     reference operator[](const I& i) const
     {
-      CGAL_assertion(parray_ != NULL);
+      CGAL_assertion(parray_ != nullptr);
       return (*parray_)[i];
     }
 
@@ -600,7 +602,7 @@ public:
     /// \returns a pointer to the underlying storage of the property.
     const T* data() const
     {
-      CGAL_assertion(parray_ != NULL);
+      CGAL_assertion(parray_ != nullptr);
       return parray_->data();
     }
 
@@ -609,13 +611,13 @@ private:
 
     Property_array<T>& array()
     {
-        CGAL_assertion(parray_ != NULL);
+        CGAL_assertion(parray_ != nullptr);
         return *parray_;
     }
 
     const Property_array<T>& array() const
     {
-        CGAL_assertion(parray_ != NULL);
+        CGAL_assertion(parray_ != nullptr);
         return *parray_;
     }
 

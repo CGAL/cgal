@@ -387,6 +387,17 @@ struct Test_c3t3_io {
       // skip 32bits architectures as well
       return true;
     }
+    {
+      std::string filename(prefix);
+      filename += "_new";
+      if(binary) filename += ".binary";
+      filename += ".cgal";
+      std::ofstream output(filename.c_str(),
+                           binary ? (std::ios_base::out | std::ios_base::binary)
+                           : std::ios_base::out);
+      CGAL::Mesh_3::save_binary_file(output, c3t3_bis, binary);
+    }
+
     c3t3_bis.clear();
     {
       std::ifstream input(filename.c_str(),

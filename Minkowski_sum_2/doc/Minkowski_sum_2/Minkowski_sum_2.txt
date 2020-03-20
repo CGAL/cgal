@@ -363,9 +363,9 @@ Decomposition methods that handle polygons with holes are typically
 more costly than decomposition methods that handle only simple
 polygons. The hole filtration (see \ref mink_ssec_hole_filter) is
 applied before the actual construction starts (be it convolution
-based or decomposition based). The filteration may result with a
+based or decomposition based). The filtration may result with a
 polygon that does not have holes, or even a convex polygon, but this
-is unkown at the time of the call. To this end, we introduce the
+is unknown at the time of the call. To this end, we introduce the
 overloaded function template \link minkowski_sum_by_decomposition_2()
 `minkowski_sum_by_decomposition_2(P, Q, no_holes_decomp, with_holes_decomp)`\endlink,
 where `no_holes_decomp` and `with_holes_decomp` are objects that model
@@ -478,7 +478,7 @@ rational number. Therefore, the line segments that compose the offset
 boundaries cannot be represented as segments of lines with rational
 coefficients.
 In Section \ref mink_ssec_exact_offset we use the line-pair representation
-to construct the offset polygonin an exact manner using the traits class
+to construct the offset polygon in an exact manner using the traits class
 for conic arcs.
 </UL>
 
@@ -601,10 +601,10 @@ handles polygons with holes, such as the
 An operation closely related to the (outer) offset computation, is
 computing the <I>inner offset</I> of a polygon, or <I>insetting</I> it
 by a given radius. The inset of a polygon \f$ P\f$ with radius
-\f$ r\f$ is the set of points iside \f$ P\f$ the distance of which
+\f$ r\f$ is the set of points inside \f$ P\f$ the distance of which
 from the polygon boundary, denoted \f$ \partial P\f$, is at least \f$ r\f$,
 namely: \f$ \{ p \in P \;|\; {\rm dist}(p, \partial P) \geq r \}\f$.
-Note that the resulting point set may be dicconnected when \f$ P\f$ is a
+Note that the resulting point set may be disconnected when \f$ P\f$ is a
 non-convex polygon that has some narrow components. In such a case the
 resulting set is characterized by a (possibly empty) set of polygons the
 edges of which are line segments and circular arcs of radius \f$ r\f$.
@@ -659,7 +659,7 @@ millennium with his research work about Minkowski sum construction using the
 decomposition approach. However, it was only a few years later when Ron Wein
 developed the first version of this package, which was introduced with
 release 3.3. The first version of the package contained functionality for
-computeing the Minkowski sum of two polygons, computing the offset of
+computing the Minkowski sum of two polygons, computing the offset of
 a polygon by a disk, and approximating the offset of a polygon by a disk.
 Release 3.4 contained an enhancement of the offset computation, which allowed
 for polygon with holes as operands. Release 3.4 also featured new functionality

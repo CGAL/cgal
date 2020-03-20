@@ -56,10 +56,13 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     endif()
   endif()
 
-  # set minimal version of some optional libraries:
-  set( Eigen3_FIND_VERSION "3.1.0")
-  # set use-file for Eigen3 (needed to have default solvers)
-  set(EIGEN3_USE_FILE "UseEigen3")
-
-
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_Boost_IOStreams.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_Boost_Serialization.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_Eigen.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_GLPK.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_LASLIB.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_OpenCV.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_SCIP.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_TBB.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/CGAL_target_use_TensorFlow.cmake)
 endif()

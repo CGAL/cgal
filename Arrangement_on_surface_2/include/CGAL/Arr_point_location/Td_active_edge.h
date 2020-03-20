@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may uactivese this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
 //               updated by: Michal Balas <balasmic@post.tau.ac.il>
@@ -98,6 +89,7 @@ public:
   //friend class declarations:
 
   friend class Trapezoidal_decomposition_2<Traits>;
+  friend struct internal::Non_recursive_td_map_item_destructor<Traits>;
   
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
@@ -114,7 +106,10 @@ public:
   friend class In_face_iterator;
 #endif
 #endif
-  
+  ~Td_active_edge(){
+    if (this->refs()==1)
+      internal::Non_recursive_td_map_item_destructor<Traits>(*this);
+  }
    /*! \class
    * Inner class Data derived from Rep class
    */
@@ -200,8 +195,8 @@ public:
   {
     
     PTR = new Data
-      (Traits::empty_he_handle(), Td_map_item(0), NULL);
-    //m_dag_node = NULL;
+      (Traits::empty_he_handle(), Td_map_item(0), nullptr);
+    //m_dag_node = nullptr;
   }
    /*! Constructor given Vertex & Halfedge handles. */
   Td_active_edge (Halfedge_const_handle he ,
@@ -281,6 +276,10 @@ public:
   /*! Access DAG node. */
   Dag_node* dag_node() const            {return ptr()->p_node; } //m_dag_node;}
   
+  bool is_last_reference() const
+  {
+    return this->refs()==1;
+  }
   
   //@}
   

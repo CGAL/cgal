@@ -100,11 +100,13 @@ for label, tests in tests_per_label.items():
                                                               tester=tester_name,
                                                               platform=platform_name), 'w') as label_report:
             print("""
+{scm_branch}
 ------------------------------------------------------------------
 - Error output from platform {platform}
 ------------------------------------------------------------------
 {error_txt}
-"""               .format(platform=platform_name,
+"""               .format(scm_branch=open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r').read(),
+                         platform=platform_name,
                          error_txt=open("{}/error.txt".format(label), 'r').read()), file=label_report)
             for t in tests:
                 filename="{}/ProgramOutput.{}".format(label, t['Name'])

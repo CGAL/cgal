@@ -1,19 +1,10 @@
 // Copyright (c) 2013  GeometryFactory (France). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Xiang Gao <gaox@ethz.ch>
 //
@@ -162,7 +153,7 @@ public:
       vertex_desc vd = id_to_vd[i];
 
       /// code that is not working
-      BOOST_FOREACH(int vid, record[orig_id])
+      for(int vid : record[orig_id])
       {
         vertex_descriptor ovd = id_to_descriptor[vid];
         curve[vd].vertices.insert(
@@ -194,7 +185,7 @@ public:
       }
     }
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
+    for(vertex_descriptor vd : vertices(hg))
     {
       int id = static_cast<int>(get(vertex_id_pmap, vd));
       int new_id = new_vertex_id[id];
@@ -246,7 +237,7 @@ private:
     // assign vertex id
     surface_vertex_id.resize(nb_vertices);
     int idx = 0;
-    BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
+    for(vertex_descriptor vd : vertices(hg))
     {
       surface_vertex_id[idx] = static_cast<int>(get(vertex_id_pmap, vd));
       put(vertex_id_pmap, vd, idx++);
@@ -255,7 +246,7 @@ private:
     // assign edge id
     // the two halfedges representing the same edge get the same id
     idx = 0;
-    BOOST_FOREACH(edge_descriptor ed, edges(hg))
+    for(edge_descriptor ed : edges(hg))
     {
       halfedge_descriptor hd = halfedge(ed, hg);
       put(hedge_id_pmap, hd, idx);
@@ -274,9 +265,9 @@ private:
 
     // assign face id and compute edge-face connectivity
     int face_id = 0;
-    BOOST_FOREACH(face_descriptor fd, faces(hg))
+    for(face_descriptor fd : faces(hg))
     {
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd,hg), hg))
+      for(halfedge_descriptor hd : halfedges_around_face(halfedge(fd,hg), hg))
       {
         int id = static_cast<int>(get(hedge_id_pmap, hd));
         face_to_edge[face_id].push_back(id);
@@ -286,10 +277,10 @@ private:
     }
 
     // compute vertex-edge connectivity
-    BOOST_FOREACH(vertex_descriptor vd, vertices(hg))
+    for(vertex_descriptor vd : vertices(hg))
     {
       int vid = static_cast<int>(get(vertex_id_pmap, vd));
-      BOOST_FOREACH(edge_descriptor ed, in_edges(vd, hg))
+      for(edge_descriptor ed : in_edges(vd, hg))
       {
         halfedge_descriptor hd = halfedge(ed, hg);
         int eid = static_cast<int>(get(hedge_id_pmap, hd));
@@ -306,7 +297,7 @@ private:
   {
     // put all the edges into a priority queue
     // shorter edge has higher priority
-    BOOST_FOREACH(edge_descriptor ed, edges(hg))
+    for(edge_descriptor ed : edges(hg))
     {
       int id = static_cast<int>(get(hedge_id_pmap, halfedge(ed, hg)));
       queue.insert(id);
@@ -412,7 +403,7 @@ private:
 
   void remove_incident_faces(int eid)
   {
-    BOOST_FOREACH(int fid, edge_to_face[eid])
+    for(int fid : edge_to_face[eid])
     {
       is_face_deleted[fid] = true;
       // remove the face from the container of the other incident edges
@@ -566,7 +557,7 @@ private:
 
   void check_edge()
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(hg))
+    for(halfedge_descriptor hd : halfedges(hg))
     {
       int id = get(hedge_id_pmap, hd);
       if (!is_edge_deleted[id])

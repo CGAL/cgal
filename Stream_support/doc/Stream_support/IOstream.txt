@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_operator_for_IO_streams
 \cgalAutoToc
 
-\authors Andreas Fabri, Geert-Jan Giezeman, and Lutz Kettner
+\authors Andreas Fabri, Geert-Jan Giezeman, Lutz Kettner, and Maxime Gimeno
 
 All classes in the \cgal kernel provide input and output operators for
 IO streams. Classes external to \cgal are also supported, by means of `oformat()` (Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
@@ -245,6 +245,37 @@ output is active or not. If the state is active, the stream output
 operator `<<` uses the internal stream to output its argument. If
 the state is inactive, nothing happens.
 
+
+\section IOstreamWKT WKT Support
+
+WKT stands for <em>Well Known Text</em> and it is a text markup language for representing
+vector geometry objects on a geographical map. See the
+<A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
+CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon. 
+Free functions are provided for reading and writing several \cgal types
+in those WKT types, namely:
+- `CGAL::Point_2`
+- `CGAL::Point_3`
+- `CGAL::Polygon_with_holes_2`
+- random access range of the above types.
+
+\section IOstreamXML Reading Adhoc XML
+
+In case you have to read data in a simple xml file with a simple structure, without existing I/O libraries
+the <a href="https://www.boost.org/doc/libs/release/libs/property_tree/">`boost::property_tree`</a> comes in handy.
+The following small example shows how to parse a file
+looking like this:
+
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <PolySet>
+    	<Polygon>
+		<Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
+		<Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
+		<Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
+        </Polygon>
+    </PolySet>
+
+\cgalExample{Stream_support/read_xml.cpp}
 */ 
 } /* namespace CGAL */
 

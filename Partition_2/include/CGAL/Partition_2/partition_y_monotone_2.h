@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -45,8 +36,6 @@
 
 #include <CGAL/Partition_2/Indirect_not_less_yx_2.h>
 #include <CGAL/Partition_2/Indirect_edge_compare.h>
-#include <CGAL/Intersections_2/Ray_2_Segment_2.h>
-#include <CGAL/Object.h>
 #include <CGAL/Partition_2/Partitioned_polygon_2.h>
 #include <CGAL/ch_selected_extreme_points_2.h> 
 #include <CGAL/IO/Tee_for_output_iterator.h>
@@ -436,7 +425,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    Tee_for_output_iterator<OutputIterator, Polygon_2>      res(result);
 #endif // no postcondition
 
-   P_Polygon_2 polygon(first, beyond);
+   P_Polygon_2 polygon(first, beyond, traits);
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
@@ -457,9 +446,10 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    std::cout << std::endl;
 #endif
 
-   typedef std::map<Circulator, Circulator, 
-                    Indirect_edge_compare<Circulator, Traits> > Tree;
-   Tree tree;
+   typedef Indirect_edge_compare<Circulator, Traits> Cmp;
+   typedef std::map<Circulator, Circulator, Cmp> Tree;
+   Cmp cmp(traits);
+   Tree tree(cmp);
 
    typename std::vector<Circulator>::iterator it = circulators.begin();
    for (; it != circulators.end(); it++) {

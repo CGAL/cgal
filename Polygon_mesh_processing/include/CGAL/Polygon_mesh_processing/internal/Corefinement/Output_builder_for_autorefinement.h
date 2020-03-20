@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -141,7 +132,7 @@ class Output_builder_for_autorefinement
     if ( is_node_of_degree_one.test(src_id) )
     {
       bool res=true;
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_source(hedge, tm))
+      for(halfedge_descriptor h : halfedges_around_source(hedge, tm))
         if (is_border(h, tm))
         {
           res = false;
@@ -151,7 +142,7 @@ class Output_builder_for_autorefinement
     }
     if ( is_node_of_degree_one.test(tgt_id) )
     {
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(hedge, tm))
+      for(halfedge_descriptor h : halfedges_around_target(hedge, tm))
         if (is_border(h, tm))
           return false;
       return true;
@@ -223,16 +214,13 @@ public:
     const boost::dynamic_bitset<>& is_node_of_degree_one,
     const Mesh_to_map_node&)
   {
-    // this will initialize face indices if the face index map is writable.
-    helpers::init_face_indices(tm, fids);
-
     // first build an unordered_map mapping a vertex to its node id + a set
     // of all intersection edges
     typedef boost::unordered_set<edge_descriptor> Intersection_edge_map;
     Intersection_edge_map intersection_edges;
 
     typedef std::pair<const Node_id_pair, Shared_halfedges> Pair_type;
-    BOOST_FOREACH(const Pair_type& p, all_intersection_edges_map)
+    for(const Pair_type& p : all_intersection_edges_map)
     {
       CGAL_assertion(p.second.h1!=boost::graph_traits<TriangleMesh>::null_halfedge());
     // p.second.h2 might be the null halfedge in case two faces sharing an edge
@@ -248,8 +236,9 @@ public:
       intersection_edges.insert(edge(p.second.h2, tm));
     }
 
-    // this will initialize face indices if the face index map is writable.
-    helpers::init_face_indices(tm, fids);
+    // The property map must be either writable or well-initialized
+    if(!BGL::internal::is_index_map_valid(fids, num_faces(tm), faces(tm)))
+      BGL::internal::initialize_face_index_map(fids, tm);
 
     // bitset to identify coplanar faces
     boost::dynamic_bitset<> tm_coplanar_faces(num_faces(tm), 0);
@@ -353,7 +342,7 @@ public:
         ++epp_it;
     }
 
-    BOOST_FOREACH(edge_descriptor ed, inter_edges_to_remove)
+    for(edge_descriptor ed : inter_edges_to_remove)
       intersection_edges.erase(ed);
 
     // (1) Assign a patch id to each face indicating in which connected
@@ -900,7 +889,7 @@ public:
     std::vector<edge_descriptor> edges_no_longer_on_intersection;
     std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
     hedge_pairs_to_stitch.reserve(all_intersection_edges_map.size());
-    BOOST_FOREACH(const Pair_type& p, all_intersection_edges_map)
+    for(const Pair_type& p : all_intersection_edges_map)
     {
       halfedge_descriptor h1 = p.second.h1;
       halfedge_descriptor h2 = p.second.h2;
@@ -996,7 +985,7 @@ public:
 
     // Merge patches to keep only 2: one we keep (1) and one we remove (0)
     const std::size_t PATCH_ID_KEPT = 1;
-    BOOST_FOREACH(std::size_t& patch_id, patch_ids)
+    for(std::size_t& patch_id : patch_ids)
       if (patch_id != NID)
         patch_id = patches_to_keep.test(patch_id) ? 1 : 0;
     nb_patches=2;
@@ -1005,7 +994,7 @@ public:
 
     // remove from the set of intersection edges if the patches on both side have
     // the same status.
-    BOOST_FOREACH(edge_descriptor e, edges_no_longer_on_intersection)
+    for(edge_descriptor e : edges_no_longer_on_intersection)
       intersection_edges.erase(e);
 
     //store the patch description in a container to avoid recomputing it several times

@@ -94,7 +94,6 @@ private Q_SLOTS:
         delete col_det;
       col_det = nullptr;
       group_item = nullptr;});
-    group_item->setScene(scene);
     
     scene->addItem(group_item);
     Q_FOREACH(Scene::Item_id i, scene->selectionIndices())

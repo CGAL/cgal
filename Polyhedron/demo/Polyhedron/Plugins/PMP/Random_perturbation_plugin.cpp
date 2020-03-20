@@ -16,7 +16,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -34,7 +34,7 @@ class Polyhedron_demo_random_perturbation_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "random_perturbation_plugin.json")
 
 public:
   void init(QMainWindow* mainWindow,
@@ -94,7 +94,7 @@ public Q_SLOTS:
 
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    QTime time;
+    QElapsedTimer time;
     time.start();
 
     std::cout << "Perturbation..." << std::endl;
@@ -196,12 +196,8 @@ public Q_SLOTS:
     double diago_length = CGAL::sqrt((bbox.xmax() - bbox.xmin())*(bbox.xmax() - bbox.xmin())
       + (bbox.ymax() - bbox.ymin())*(bbox.ymax() - bbox.ymin())
       + (bbox.zmax() - bbox.zmin())*(bbox.zmax() - bbox.zmin()));
-    double log = std::log10(diago_length);
-    unsigned int nb_decimals = (log > 0) ? 5 : (std::ceil(-log) + 3);
 
     //parameters
-    ui.moveSize_dspinbox->setDecimals(nb_decimals);
-    ui.moveSize_dspinbox->setSingleStep(1e-3);
     ui.moveSize_dspinbox->setRange(0., diago_length);
     ui.moveSize_dspinbox->setValue(0.05 * diago_length);
 

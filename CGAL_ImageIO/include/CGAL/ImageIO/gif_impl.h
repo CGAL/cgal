@@ -1,21 +1,11 @@
 // Copyright (c) 2005-2008 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of the ImageIO Library, and as been adapted for
-// CGAL (www.cgal.org).
-// You can redistribute it and/or  modify it under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 //
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
@@ -88,11 +78,11 @@ static int  ReadCode();
 static void DoInterlace(byte);
 static int GifError(const char *);
 
-CGAL_GLOBAL_STATE_VAR(byte *, Raster, NULL) /* The raster data stream, unblocked */
-CGAL_GLOBAL_STATE_VAR(byte *, RawGIF, NULL)
-CGAL_GLOBAL_STATE_VAR(byte *, r, NULL)
-CGAL_GLOBAL_STATE_VAR(byte *, g, NULL)
-CGAL_GLOBAL_STATE_VAR(byte *, b, NULL)     /* The colormap */
+CGAL_GLOBAL_STATE_VAR(byte *, Raster, nullptr) /* The raster data stream, unblocked */
+CGAL_GLOBAL_STATE_VAR(byte *, RawGIF, nullptr)
+CGAL_GLOBAL_STATE_VAR(byte *, r, nullptr)
+CGAL_GLOBAL_STATE_VAR(byte *, g, nullptr)
+CGAL_GLOBAL_STATE_VAR(byte *, b, nullptr)     /* The colormap */
 CGAL_GLOBAL_STATE_VAR(int, BitOffset, 0)    /* Bit Offset of next code */
 CGAL_GLOBAL_STATE_VAR(int, XC, 0)
 CGAL_GLOBAL_STATE_VAR(int, YC, 0)	    /* Output X and Y coords of current pixel */
@@ -101,8 +91,8 @@ CGAL_GLOBAL_STATE_VAR(int, ReadMask, 0)     /* Code AND mask for current code si
 CGAL_GLOBAL_STATE_VAR(int, Pass, 0)	    /* Used by output routine if interlaced pic */
 CGAL_GLOBAL_STATE_VAR(int, Width, 0)
 CGAL_GLOBAL_STATE_VAR(int, Height, 0)       /* image dimensions */
-CGAL_GLOBAL_STATE_VAR(unsigned char *, org, NULL)
-CGAL_GLOBAL_STATE_VAR(unsigned char *, buf, NULL)
+CGAL_GLOBAL_STATE_VAR(unsigned char *, org, nullptr)
+CGAL_GLOBAL_STATE_VAR(unsigned char *, buf, nullptr)
 
 CGAL_INLINE_FUNCTION
 int testGifHeader(char *magic,const char *) {
@@ -173,7 +163,7 @@ int   gif89 = 0;
     OutCount =
     npixels =
     maxpixels = 0;
-  get_static_RawGIF() = get_static_Raster() = NULL;
+  get_static_RawGIF() = get_static_Raster() = nullptr;
   gif89 = 0;
 
 #ifdef WIN32
@@ -465,7 +455,7 @@ int   gif89 = 0;
       break;
     }
   } while(ch1);
-  ImageIO_free(get_static_RawGIF());  get_static_RawGIF() = NULL;
+  ImageIO_free(get_static_RawGIF());  get_static_RawGIF() = nullptr;
 
 
   if (DEBUG) {
@@ -597,7 +587,7 @@ int   gif89 = 0;
     Code = ReadCode();
     if (npixels >= maxpixels) break;
   }
-  ImageIO_free(get_static_Raster());  get_static_Raster() = NULL;
+  ImageIO_free(get_static_Raster());  get_static_Raster() = nullptr;
 
   if (npixels != maxpixels) {
     /*    SetISTR(ISTR_WARNING,"This GIF file seems to be truncated.  Winging it.");*/
@@ -637,7 +627,7 @@ static int ReadCode()
 /***************************/
 CGAL_INLINE_FUNCTION
 static void DoInterlace(byte Index) {
-  static byte *ptr = NULL;
+  static byte *ptr = nullptr;
   static int   oldYC = -1;
   
   if (oldYC != get_static_YC()) {
@@ -693,8 +683,8 @@ CGAL_INLINE_FUNCTION
 static int GifError(const char *st) {
   fprintf(stderr,"readGifImage: error: %s\n",st);
 
-  if (get_static_RawGIF() != NULL) ImageIO_free(get_static_RawGIF());
-  if (get_static_Raster() != NULL) ImageIO_free(get_static_Raster());
+  if (get_static_RawGIF() != nullptr) ImageIO_free(get_static_RawGIF());
+  if (get_static_Raster() != nullptr) ImageIO_free(get_static_Raster());
   
   return -1;
 }

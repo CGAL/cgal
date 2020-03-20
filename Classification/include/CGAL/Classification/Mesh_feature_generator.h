@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -45,7 +36,6 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -55,7 +45,7 @@
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/task_group.h>
-#include <tbb/mutex.h>
+#include <mutex>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -89,7 +79,7 @@ namespace Classification {
   is `GeomTraits::Point_3`.
   \tparam ConcurrencyTag enables sequential versus parallel
   computation of `CGAL::Classification::Local_eigen_analysis`
-  objects. Possible values are `Parallel_tag` (default value is %CGAL
+  objects. Possible values are `Parallel_tag` (default value if %CGAL
   is linked with TBB) or `Sequential_tag` (default value otherwise).
   \tparam DiagonalizeTraits model of `DiagonalizeTraits` used for
   matrix diagonalization. It can be omitted: if Eigen 3 (or greater)
@@ -103,10 +93,8 @@ template <typename GeomTraits,
           typename PointMap,
 #if defined(DOXYGEN_RUNNING)
           typename ConcurrencyTag,
-#elif defined(CGAL_LINKED_WITH_TBB)
-          typename ConcurrencyTag = CGAL::Parallel_tag,
 #else
-          typename ConcurrencyTag = CGAL::Sequential_tag,
+          typename ConcurrencyTag = CGAL::Parallel_if_available_tag,
 #endif
           typename DiagonalizeTraits = CGAL::Default_diagonalize_traits<float,3> >
 class Mesh_feature_generator
@@ -153,8 +141,6 @@ public:
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
   typedef Classification::Feature::Eigenvalue           Eigenvalue;
-
-  typedef typename Classification::RGB_Color RGB_Color;
   /// \endcond
     
 private:
@@ -171,7 +157,7 @@ private:
            PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
            std::size_t nb_scale,
-           Planimetric_grid* lower_grid = NULL)
+           Planimetric_grid* lower_grid = nullptr)
       : voxel_size (voxel_size)
     {
       CGAL::Real_timer t;
@@ -197,7 +183,7 @@ private:
       t.reset();
       t.start();
 
-      if (lower_grid == NULL)
+      if (lower_grid == nullptr)
         grid = new Planimetric_grid (range, point_map, bbox, this->voxel_size);
       else
         grid = new Planimetric_grid(lower_grid);
@@ -207,9 +193,9 @@ private:
     }
     ~Scale()
     {
-      if (neighborhood != NULL)
+      if (neighborhood != nullptr)
         delete neighborhood;
-      if (grid != NULL)
+      if (grid != nullptr)
         delete grid;
       delete eigen;
     }
@@ -217,11 +203,11 @@ private:
     void reduce_memory_footprint(bool delete_neighborhood)
     {
       delete grid;
-      grid = NULL;
+      grid = nullptr;
       if (delete_neighborhood)
       {
         delete neighborhood;
-        neighborhood = NULL;
+        neighborhood = nullptr;
       }
     }
 

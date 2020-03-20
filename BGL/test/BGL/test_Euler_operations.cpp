@@ -152,7 +152,7 @@ add_vertex_and_face_to_border_test()
   assert(dist == 2);
 
   int blength = 0;
-  BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(h1,m)){
+  for(halfedge_descriptor hd : CGAL::halfedges_around_face(h1,m)){
     CGAL_USE(hd);
     blength++;
   }
@@ -163,7 +163,7 @@ add_vertex_and_face_to_border_test()
   assert(! CGAL::is_border(res,m));
   assert(CGAL::is_border(opposite(res,m),m));
   res = opposite(res,m);
-  BOOST_FOREACH(halfedge_descriptor hd, CGAL::halfedges_around_face(res,m)){
+  for(halfedge_descriptor hd : CGAL::halfedges_around_face(res,m)){
     CGAL_USE(hd);
     blength--;
   }
@@ -394,12 +394,50 @@ test_swap_edges()
     {
       Graph g;
       CGAL::make_tetrahedron(pt,pt,pt,pt,g);
-      halfedge_descriptor h1 = *CGAL::cpp11::next(boost::begin(halfedges(g)), i);
-      halfedge_descriptor h2 = *CGAL::cpp11::next(boost::begin(halfedges(g)), j);
+      halfedge_descriptor h1 = *std::next(boost::begin(halfedges(g)), i);
+      halfedge_descriptor h2 = *std::next(boost::begin(halfedges(g)), j);
       CGAL::internal::swap_edges(h1, h2, g);
       CGAL_assertion(CGAL::is_valid_polygon_mesh(g));
     }
   }
+}
+
+template <typename T>
+void
+add_face_bug()
+{
+  typedef boost::graph_traits<T> GT;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+
+  T g;
+
+  std::vector<vertex_descriptor> vs;
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(0,1,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(4,1,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(5,2,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(4,0,0)
+
+  CGAL::Euler::add_face(CGAL::make_array(vs[0], vs[1], vs[2]), g);
+  CGAL::Euler::add_face(CGAL::make_array(vs[1], vs[3], vs[2]), g);
+
+  // force vertex halfedge to not be a border halfedge
+  for(vertex_descriptor v : vertices(g))
+  {
+    halfedge_descriptor h = halfedge(v, g);
+    if ( CGAL::is_border(h, g) )
+      set_halfedge(v, prev(opposite(h, g), g), g);
+    assert(target(halfedge(v, g), g)==v);
+  }
+
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(0,0,0)
+  vs.push_back( add_vertex(g) );  // Kernel::Point_3(1,0,0)
+  CGAL::Euler::add_face(CGAL::make_array(vs[4],vs[5],vs[0]), g);
+
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(2,0,0)
+  vs.push_back( add_vertex(g) ); // Kernel::Point_3(3,0,0)
+  CGAL::Euler::add_face(CGAL::make_array(vs[6],vs[7],vs[1]), g);
+  CGAL::Euler::add_face(CGAL::make_array(vs[7],vs[3],vs[1]), g);
 }
 
 template <typename Graph>
@@ -421,6 +459,7 @@ test_Euler_operations()
   join_split_inverse<Graph>();
   does_satisfy_link_condition<Graph>();
   test_swap_edges<Graph>();
+  add_face_bug<Graph>();
 }
 
 int main()

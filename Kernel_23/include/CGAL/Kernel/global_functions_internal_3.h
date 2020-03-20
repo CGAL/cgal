@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // Copyright (c) 2010 GeometryFactory Sarl (France) 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Sylvain Pion
@@ -83,6 +74,25 @@ angle(const typename K::Point_3 &p,
   return k.angle_3_object()(p, q, r, v);
 }
 
+template < class K >
+inline
+typename K::FT
+approximate_angle(const typename K::Vector_3 &u,
+                  const typename K::Vector_3 &v , const K& k)
+{
+  return k.compute_approximate_angle_3_object()(u, v);
+}
+  
+template < class K >
+inline
+typename K::FT
+approximate_angle(const typename K::Point_3 &p,
+                  const typename K::Point_3 &q,
+                  const typename K::Point_3 &r, const K& k)
+{
+  return k.compute_approximate_angle_3_object()(p, q, r);
+}
+  
 template < class K >
 inline
 typename K::FT

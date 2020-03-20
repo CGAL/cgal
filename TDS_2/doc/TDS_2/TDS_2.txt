@@ -317,7 +317,7 @@ and `TriangulationFaceBase_2`.
 
 See Section \ref Section_2D_Triangulations_Flexibility "Flexibility"
 of the chapter on 2D triangulations
-for examples which make use of the flexilibity of the triangulation data structure.
+for examples which make use of the flexibility of the triangulation data structure.
 
 */ 
 } /* namespace CGAL */

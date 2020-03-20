@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
@@ -25,14 +16,12 @@
 
 #include <CGAL/license/Box_intersection_d.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/variate_generator.hpp>
-
 
 #include <algorithm>
 #include <iterator>
@@ -102,6 +91,8 @@ void one_way_scan( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    bool in_order = true )
 {
     typedef typename Traits::Compare Compare;
+
+    // Putting a parallel sort here slows down the overall parallel algorithm
     std::sort( p_begin, p_end, Compare( 0 ) );
     std::sort( i_begin, i_end, Compare( 0 ) );
 
@@ -332,7 +323,7 @@ void segment_tree( RandomAccessIter1 p_begin, RandomAccessIter1 p_end,
                    RandomAccessIter2 i_begin, RandomAccessIter2 i_end,
                    T lo, T hi,
                    Callback callback, Predicate_traits traits,
-                   std::ptrdiff_t cutoff, int dim, bool in_order )
+                   std::ptrdiff_t cutoff, int dim, bool in_order)
 {
     typedef typename Predicate_traits::Spanning   Spanning;
     typedef typename Predicate_traits::Lo_less    Lo_less;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -27,7 +18,6 @@
 #include <CGAL/license/Triangulation_3.h>
 
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 #include <CGAL/array.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -55,12 +45,12 @@ link_to_face_graph(const Triangulation_3& t,
   Vertex_map vertex_map;
   std::vector<Cell_handle>  cells;
   t.incident_cells(t.infinite_vertex(),std::back_inserter(cells));
-  CGAL::cpp11::array<vertex_descriptor,3> face;
+  std::array<vertex_descriptor,3> face;
 
   typename boost::property_map<FG, CGAL::vertex_point_t>::type vpm
     = get(CGAL::vertex_point, fg);
 
-  BOOST_FOREACH(Cell_handle ch, cells){
+  for(Cell_handle ch : cells){
     bool infinite_face = false;
     int vhi = ch->index(vh);
     for(int i=0; i<3; i++){

@@ -14,7 +14,7 @@
 // It seems that this does not matter. However, I keep it for further testing 
 // #define  CGAL_GMPFR_NO_REFCOUNT 
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_MPFI
 

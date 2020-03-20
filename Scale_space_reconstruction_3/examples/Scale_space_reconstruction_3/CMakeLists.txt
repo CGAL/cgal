@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Scale_space_reconstruction_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package( CGAL QUIET)
 
@@ -20,11 +20,14 @@ if ( CGAL_FOUND )
 
   find_package( Eigen3 3.1.0 )
   if( EIGEN3_FOUND )
-    include( ${EIGEN3_USE_FILE} )
     create_single_source_cgal_program( "scale_space.cpp" )
+    CGAL_target_use_Eigen(scale_space)
     create_single_source_cgal_program( "scale_space_incremental.cpp" )
+    CGAL_target_use_Eigen(scale_space_incremental)
     create_single_source_cgal_program( "scale_space_manifold.cpp" )
+    CGAL_target_use_Eigen(scale_space_manifold)
     create_single_source_cgal_program( "scale_space_advancing_front.cpp" )
+    CGAL_target_use_Eigen(scale_space_advancing_front)
     if(ACTIVATE_CONCURRENCY AND TBB_FOUND)
       CGAL_target_use_TBB(scale_space)
       CGAL_target_use_TBB(scale_space_incremental)

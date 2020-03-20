@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Simon Giraudot
 
@@ -24,9 +15,6 @@
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/config.h>
-#if defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) || defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-#error CGAL LAS writer requires a C++11 compiler
-#endif
 
 #include <tuple>
 
@@ -92,41 +80,41 @@ namespace internal {
 
   namespace LAS {
 
-  void output_value(LASpoint& r, const unsigned short& v, LAS_property::Intensity&)
+  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::Intensity&)
   { r.set_intensity(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Return_number&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Return_number&)
   { r.set_return_number(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Number_of_returns&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Number_of_returns&)
   { r.set_number_of_returns(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Scan_direction_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Scan_direction_flag&)
   { r.set_scan_direction_flag(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Edge_of_flight_line&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Edge_of_flight_line&)
   { r.set_edge_of_flight_line(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Classification&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Classification&)
   { r.set_classification(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Synthetic_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Synthetic_flag&)
   { r.set_synthetic_flag(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Keypoint_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Keypoint_flag&)
   { r.set_keypoint_flag(v); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::Withheld_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Withheld_flag&)
   { r.set_withheld_flag(v); }
-  void output_value(LASpoint& r, const float& v, LAS_property::Scan_angle&)
+  inline void output_value(LASpoint& r, const float& v, LAS_property::Scan_angle&)
   { r.set_scan_angle_rank(char(v)); }
-  void output_value(LASpoint& r, const unsigned char& v, LAS_property::User_data&)
+  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::User_data&)
   { r.set_user_data(v); }
-  void output_value(LASpoint& r, const unsigned short& v, LAS_property::Point_source_ID&)
+  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::Point_source_ID&)
   { r.set_point_source_ID(v); }
-  void output_value(LASpoint& r, const unsigned int& v, LAS_property::Deleted_flag&)
+  inline void output_value(LASpoint& r, const unsigned int& v, LAS_property::Deleted_flag&)
   { r.set_deleted_flag(v); }
-  void output_value(LASpoint& r, const double& v, LAS_property::GPS_time&)
+  inline void output_value(LASpoint& r, const double& v, LAS_property::GPS_time&)
   { r.set_gps_time(v); }
-  void output_value(LASpoint& r, const unsigned short& v, LAS_property::R&)
+  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::R&)
   { r.set_R(v); }
-  void output_value(LASpoint& r, const unsigned short& v, LAS_property::G&)
+  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::G&)
   { r.set_G(v); }
-  void output_value(LASpoint& r, const unsigned short& v, LAS_property::B&)
+  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::B&)
   { r.set_B(v); }
-  void output_value(LASpoint& r, const unsigned short& v, LAS_property::I&)
+  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::I&)
   { r.set_I(v); }
   
   template <typename ForwardIterator>
@@ -285,11 +273,12 @@ write_las_points(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+
   return write_las_points_with_properties (stream, points, make_las_point_writer(point_map));
 }
 

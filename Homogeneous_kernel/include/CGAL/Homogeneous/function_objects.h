@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion, Michael Hoffmann
@@ -3098,12 +3089,21 @@ namespace HomogeneousKernelFunctors {
     }
 
     Point_2
-    operator()(const Line_2& l, int i) const
+    operator()(const Line_2& l, const RT& i) const
     {
       Point_2 p = K().construct_point_2_object()(l);
       Vector_2 v = K().construct_vector_2_object()(l);
       return K().construct_translated_point_2_object()
-                 (p, K().construct_scaled_vector_2_object()(v, RT(i)));
+                 (p, K().construct_scaled_vector_2_object()(v, i));
+    }
+
+    Point_2
+    operator()(const Line_2& l, const FT& i) const
+    {
+      Point_2 p = K().construct_point_2_object()(l);
+      Vector_2 v = K().construct_vector_2_object()(l);
+      return K().construct_translated_point_2_object()
+                 (p, K().construct_scaled_vector_2_object()(v, i));
     }
 
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -26,11 +17,12 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/intersection.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Visitor.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Face_graph_output_builder.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Output_builder_for_autorefinement.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/iterator.h>
 
 namespace CGAL {
@@ -48,16 +40,17 @@ namespace internal {
 template <class Kernel, class TriangleMesh, class VD, class Fid_map, class Vpm>
 bool recursive_does_bound_a_volume(const TriangleMesh& tm,
                                          Vpm& vpm,
-                                         Fid_map& fid_map,
+                                         Fid_map fid_map,
                                          const std::vector<VD>& xtrm_vertices,
                                          boost::dynamic_bitset<>& cc_handled,
                                          const std::vector<std::size_t>& face_cc,
                                          std::size_t xtrm_cc_id,
                                          bool is_parent_outward_oriented)
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
-  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm> Side_of_tm;
+  typedef boost::graph_traits<TriangleMesh>                 Graph_traits;
+  typedef typename Graph_traits::face_descriptor            face_descriptor;
+  typedef Side_of_triangle_mesh<TriangleMesh, Kernel, Vpm>  Side_of_tm;
+
 // first check that the orientation of the current cc is consistant with its
 // parent cc containing it
   bool new_is_parent_outward_oriented = internal::is_outward_oriented(
@@ -70,7 +63,7 @@ bool recursive_does_bound_a_volume(const TriangleMesh& tm,
 
 // get all cc that are inside xtrm_cc_id
   std::vector<face_descriptor> cc_faces;
-  BOOST_FOREACH(face_descriptor fd, faces(tm))
+  for(face_descriptor fd : faces(tm))
   {
     if(face_cc[get(fid_map, fd)]==xtrm_cc_id)
       cc_faces.push_back(fd);
@@ -179,25 +172,23 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
  * \see `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
  */
 template <class TriangleMesh, class NamedParameters>
-bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
+bool does_bound_a_volume(const TriangleMesh& tm,
+                         const NamedParameters& np)
 {
-  typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::vertex_descriptor vertex_descriptor;
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::const_type Vpm;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters>::const_type Fid_map;
-  typedef typename Kernel_traits<
-    typename boost::property_traits<Vpm>::value_type >::Kernel Kernel;
+  typedef boost::graph_traits<TriangleMesh>                                     Graph_traits;
+  typedef typename Graph_traits::vertex_descriptor                              vertex_descriptor;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vpm;
+  typedef typename boost::property_traits<Vpm>::value_type                      Point;
+  typedef typename Kernel_traits<Point>::Kernel                                 Kernel;
 
   if (!is_closed(tm)) return false;
   if (!is_triangle_mesh(tm)) return false;
 
-  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                get_const_property_map(boost::vertex_point, tm));
+  Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                         get_const_property_map(boost::vertex_point, tm));
 
-  Fid_map fid_map = boost::choose_param(boost::get_param(np, internal_np::face_index),
-                                        get_const_property_map(boost::face_index, tm));
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::const_type Fid_map;
+  Fid_map fid_map = get_initialized_face_index_map(tm, np);
 
   std::vector<std::size_t> face_cc(num_faces(tm), std::size_t(-1));
 
@@ -212,11 +203,11 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   boost::dynamic_bitset<> cc_handled(nb_cc, 0);
 
   // extract a vertex with max z coordinate for each connected component
-  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, GT::null_vertex());
-  BOOST_FOREACH(vertex_descriptor vd, vertices(tm))
+  std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
+  for(vertex_descriptor vd : vertices(tm))
   {
     std::size_t cc_id = face_cc[get(fid_map, face(halfedge(vd, tm), tm))];
-    if (xtrm_vertices[cc_id]==GT::null_vertex())
+    if (xtrm_vertices[cc_id] == Graph_traits::null_vertex())
       xtrm_vertices[cc_id]=vd;
     else
       if (get(vpm, vd).z()>get(vpm,xtrm_vertices[cc_id]).z())
@@ -249,15 +240,13 @@ bool does_bound_a_volume(const TriangleMesh& tm)
 /// \endcond
 
 #define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
-  typedef typename boost::lookup_named_param_def < \
+  typedef typename internal_np::Lookup_named_param_def < \
     internal_np::edge_is_constrained_t, \
     NamedParametersOut##I, \
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
-      boost::choose_param( boost::get_param(cpp11::get<I>(nps_out), internal_np::edge_is_constrained),  \
-                           Corefinement::No_mark<TriangleMesh>() );
-
+      parameters::choose_parameter<Ecm_out_##I>(parameters::get_parameter(std::get<I>(nps_out), internal_np::edge_is_constrained));
 
 /**
   * \ingroup PMP_corefinement_grp
@@ -348,20 +337,23 @@ template <class TriangleMesh,
           class NamedParametersOut1,
           class NamedParametersOut2,
           class NamedParametersOut3>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1,
   const NamedParameters2& np2,
-  const cpp11::tuple<NamedParametersOut0,
+  const std::tuple<NamedParametersOut0,
                      NamedParametersOut1,
                      NamedParametersOut2,
                      NamedParametersOut3>& nps_out)
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   const bool throw_on_self_intersection =
-    boost::choose_param(boost::get_param(np1, internal_np::throw_on_self_intersection), false);
+    choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
 
 // Vertex point maps
   //for input meshes
@@ -374,11 +366,11 @@ corefine_and_compute_boolean_operations(
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value); )
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = boost::choose_param(boost::get_param(np1, internal_np::vertex_point),
-                                 get_property_map(boost::vertex_point, tm1));
+  Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                              get_property_map(boost::vertex_point, tm1));
 
-  Vpm vpm2 = boost::choose_param(boost::get_param(np2, internal_np::vertex_point),
-                                 get_property_map(boost::vertex_point, tm2));
+  Vpm vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                              get_property_map(boost::vertex_point, tm2));
 
   typedef typename boost::property_traits<Vpm>::value_type Point_3;
 
@@ -386,29 +378,29 @@ corefine_and_compute_boolean_operations(
   // that is not requested, the default vpm does not have the same value type as the
   // input map, a dummy default vpm is used so that calls to get/put can be compiled
   // (even if not used).
-  typedef cpp11::tuple<
+  typedef std::tuple<
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut0, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut1, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut2, TriangleMesh>,
     Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut3, TriangleMesh>
   > Vpm_out_tuple_helper;
 
-  typedef cpp11::tuple<
-    boost::optional< typename cpp11::tuple_element<0, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename cpp11::tuple_element<1, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename cpp11::tuple_element<2, Vpm_out_tuple_helper>::type::type >,
-    boost::optional< typename cpp11::tuple_element<3, Vpm_out_tuple_helper>::type::type >
+  typedef std::tuple<
+    boost::optional< typename std::tuple_element<0, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<1, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<2, Vpm_out_tuple_helper>::type::type >,
+    boost::optional< typename std::tuple_element<3, Vpm_out_tuple_helper>::type::type >
   > Vpm_out_tuple;
 
   Vpm_out_tuple vpm_out_tuple(
-    Corefinement::get_vpm<Point_3>(cpp11::get<0>(nps_out), output[0],
-                                   typename cpp11::tuple_element<0, Vpm_out_tuple_helper>::type::Use_default_tag()),
-    Corefinement::get_vpm<Point_3>(cpp11::get<1>(nps_out), output[1],
-                                   typename cpp11::tuple_element<1, Vpm_out_tuple_helper>::type::Use_default_tag()),
-    Corefinement::get_vpm<Point_3>(cpp11::get<2>(nps_out), output[2],
-                                   typename cpp11::tuple_element<2, Vpm_out_tuple_helper>::type::Use_default_tag()),
-    Corefinement::get_vpm<Point_3>(cpp11::get<3>(nps_out), output[3],
-                                   typename cpp11::tuple_element<3, Vpm_out_tuple_helper>::type::Use_default_tag())
+    Corefinement::get_vpm<Point_3>(std::get<0>(nps_out), output[0],
+                                   typename std::tuple_element<0, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(std::get<1>(nps_out), output[1],
+                                   typename std::tuple_element<1, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(std::get<2>(nps_out), output[2],
+                                   typename std::tuple_element<2, Vpm_out_tuple_helper>::type::Use_default_tag()),
+    Corefinement::get_vpm<Point_3>(std::get<3>(nps_out), output[3],
+                                   typename std::tuple_element<3, Vpm_out_tuple_helper>::type::Use_default_tag())
   );
 
   if (&tm1==&tm2)
@@ -421,13 +413,13 @@ corefine_and_compute_boolean_operations(
         copy_face_graph(tm1,
             *(*output[Corefinement::UNION]),
                         parameters::vertex_point_map(vpm1),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
     if (output[Corefinement::INTERSECTION] != boost::none)
       if (&tm1 != *output[Corefinement::INTERSECTION])
         copy_face_graph(tm1,
                         *(*output[Corefinement::INTERSECTION]),
                         parameters::vertex_point_map(vpm1),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::INTERSECTION>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::INTERSECTION>(vpm_out_tuple)));
 
     if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
       if (&tm1 == *output[Corefinement::TM1_MINUS_TM2])
@@ -456,7 +448,7 @@ corefine_and_compute_boolean_operations(
         copy_face_graph(tm2,
                         *(*output[Corefinement::UNION]),
                         parameters::vertex_point_map(vpm2),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
     if (output[Corefinement::INTERSECTION] != boost::none)
       clear(*(*output[Corefinement::INTERSECTION]));
     if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
@@ -466,7 +458,7 @@ corefine_and_compute_boolean_operations(
         copy_face_graph(tm2,
                         *(*output[Corefinement::TM2_MINUS_TM1]),
                         parameters::vertex_point_map(vpm2),
-                        parameters::vertex_point_map(*cpp11::get<Corefinement::TM2_MINUS_TM1>(vpm_out_tuple)));
+                        parameters::vertex_point_map(*std::get<Corefinement::TM2_MINUS_TM1>(vpm_out_tuple)));
     return CGAL::make_array(true, true, true, true);
   }
   else
@@ -478,7 +470,7 @@ corefine_and_compute_boolean_operations(
           copy_face_graph(tm1,
                           *(*output[Corefinement::UNION]),
                           parameters::vertex_point_map(vpm1),
-                          parameters::vertex_point_map(*cpp11::get<Corefinement::UNION>(vpm_out_tuple)));
+                          parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
       if (output[Corefinement::INTERSECTION] != boost::none)
         clear(*(*output[Corefinement::INTERSECTION]));
       if (output[Corefinement::TM2_MINUS_TM1] != boost::none)
@@ -488,28 +480,26 @@ corefine_and_compute_boolean_operations(
           copy_face_graph(tm1,
                           *(*output[Corefinement::TM1_MINUS_TM2]),
                           parameters::vertex_point_map(vpm1),
-                          parameters::vertex_point_map(*cpp11::get<Corefinement::TM1_MINUS_TM2>(vpm_out_tuple)));
+                          parameters::vertex_point_map(*std::get<Corefinement::TM1_MINUS_TM2>(vpm_out_tuple)));
       return CGAL::make_array(true, true, true, true);
     }
 
 // Edge is-constrained maps
   //for input meshes
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm1;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters2,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = boost::choose_param( boost::get_param(np1, internal_np::edge_is_constrained),
-                                   Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = boost::choose_param( boost::get_param(np2, internal_np::edge_is_constrained),
-                                   Corefinement::No_mark<TriangleMesh>() );
+  Ecm1 ecm1 = choose_parameter<Ecm1>(get_parameter(np1, internal_np::edge_is_constrained));
+  Ecm2 ecm2 = choose_parameter<Ecm2>(get_parameter(np2, internal_np::edge_is_constrained));
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm_in;
 
@@ -520,37 +510,31 @@ corefine_and_compute_boolean_operations(
   CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(3)
 
   // In the current version all types must be the same so an array would be fine
-  typedef cpp11::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
+  typedef std::tuple<Ecm_out_0, Ecm_out_1, Ecm_out_2, Ecm_out_3>
                                                             Edge_mark_map_tuple;
 
-// Face index point maps
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters1>::type Fid_map;
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters2>::type Fid_map2;
-  CGAL_USE_TYPE(Fid_map2);
-  CGAL_assertion_code(
-    static const bool same_fidmap = (boost::is_same<Fid_map,Fid_map2>::value);)
-  CGAL_static_assertion(same_fidmap);
+  // Face index point maps
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap1;
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters2>::type FaceIndexMap2;
 
-  Fid_map fid_map1 = boost::choose_param(boost::get_param(np1, internal_np::face_index),
-                                        get_property_map(boost::face_index, tm1));
-  Fid_map fid_map2 = boost::choose_param(boost::get_param(np2, internal_np::face_index),
-                                         get_property_map(boost::face_index, tm2));
-// User visitor
-  typedef typename boost::lookup_named_param_def <
+  FaceIndexMap1 fid_map1 = get_initialized_face_index_map(tm1, np1);
+  FaceIndexMap2 fid_map2 = get_initialized_face_index_map(tm2, np2);
+
+
+  // User visitor
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
-                   Corefinement::Default_visitor<TriangleMesh>() ) );
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
 
   // surface intersection algorithm call
   typedef Corefinement::Face_graph_output_builder<TriangleMesh,
                                                   Vpm,
                                                   Vpm_out_tuple,
-                                                  Fid_map,
+                                                  FaceIndexMap1,
+                                                  FaceIndexMap2,
                                                   Default,
                                                   Ecm_in,
                                                   Edge_mark_map_tuple,
@@ -560,20 +544,17 @@ corefine_and_compute_boolean_operations(
     TriangleMesh, Vpm, Ob, Ecm_in, User_visitor> Algo_visitor;
   Ecm_in ecm_in(tm1,tm2,ecm1,ecm2);
   Edge_mark_map_tuple ecms_out(ecm_out_0, ecm_out_1, ecm_out_2, ecm_out_3);
-  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in,
-        vpm_out_tuple, ecms_out, uv, output);
+  Ob ob(tm1, tm2, vpm1, vpm2, fid_map1, fid_map2, ecm_in, vpm_out_tuple, ecms_out, uv, output);
 
   // special case used for clipping open meshes
-  if (  boost::choose_param( boost::get_param(np1, internal_np::use_bool_op_to_clip_surface),
-                             false) )
+  if (choose_parameter(get_parameter(np1, internal_np::use_bool_op_to_clip_surface), false))
   {
     CGAL_assertion(output[Corefinement::INTERSECTION] != boost::none);
     CGAL_assertion(output[Corefinement::UNION] == boost::none);
     CGAL_assertion(output[Corefinement::TM1_MINUS_TM2] == boost::none);
     CGAL_assertion(output[Corefinement::TM2_MINUS_TM1] == boost::none);
     const bool use_compact_clipper =
-      boost::choose_param( boost::get_param(np1, internal_np::use_compact_clipper),
-                           true);
+      choose_parameter(get_parameter(np1, internal_np::use_compact_clipper), true);
     ob.setup_for_clipping_a_surface(use_compact_clipper);
   }
 
@@ -589,47 +570,47 @@ corefine_and_compute_boolean_operations(
 }
 
 template <class TriangleMesh>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output)
+  const std::array< boost::optional<TriangleMesh*>,4>& output)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
                                                  all_default(), all_default(),
-                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                 std::make_tuple(all_default(), all_default(),
                                                                    all_default(), all_default()));
 }
 
 template <class TriangleMesh, class NamedParameters1>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
                                                  np1, all_default(),
-                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                 std::make_tuple(all_default(), all_default(),
                                                                    all_default(), all_default()));
 }
 
 template <class TriangleMesh, class NamedParameters1, class NamedParameters2>
-cpp11::array<bool,4>
+std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const cpp11::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1,
   const NamedParameters2& np2)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   return corefine_and_compute_boolean_operations(tm1, tm2, output,
                                                  np1, np2,
-                                                 cpp11::make_tuple(all_default(), all_default(),
+                                                 std::make_tuple(all_default(), all_default(),
                                                                    all_default(), all_default()));
 }
 
@@ -715,12 +696,12 @@ corefine_and_compute_union(      TriangleMesh& tm1,
                            const NamedParametersOut& np_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::UNION]=&tm_out;
 
   return
    corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                           cpp11::make_tuple(np_out,
+                                           std::make_tuple(np_out,
                                                              all_default(),
                                                              all_default(),
                                                              all_default()))
@@ -747,12 +728,12 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
                                   const NamedParametersOut& np_out)
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[Corefinement::INTERSECTION]=&tm_out;
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            cpp11::make_tuple(all_default(),
+                                            std::make_tuple(all_default(),
                                                               np_out,
                                                               all_default(),
                                                               all_default()))
@@ -780,12 +761,12 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 {
   using namespace CGAL::Polygon_mesh_processing::parameters;
   using namespace CGAL::Polygon_mesh_processing::Corefinement;
-  cpp11::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< boost::optional<TriangleMesh*>,4> output;
   output[TM1_MINUS_TM2]=&tm_out;
 
   return
     corefine_and_compute_boolean_operations(tm1, tm2, output, np1, np2,
-                                            cpp11::make_tuple(all_default(),
+                                            std::make_tuple(all_default(),
                                                               all_default(),
                                                               np_out,
                                                               all_default()))
@@ -831,17 +812,20 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * \cgalNamedParamsEnd
  *
  */
- template <class TriangleMesh,
-           class NamedParameters1,
-           class NamedParameters2>
- void
- corefine(      TriangleMesh& tm1,
-                TriangleMesh& tm2,
-          const NamedParameters1& np1,
-          const NamedParameters2& np2)
+template <class TriangleMesh,
+          class NamedParameters1,
+          class NamedParameters2>
+void
+corefine(      TriangleMesh& tm1,
+               TriangleMesh& tm2,
+         const NamedParameters1& np1,
+         const NamedParameters2& np2)
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   const bool throw_on_self_intersection =
-    boost::choose_param(boost::get_param(np1, internal_np::throw_on_self_intersection), false);
+    choose_parameter(get_parameter(np1, internal_np::throw_on_self_intersection), false);
 
 // Vertex point maps
   typedef typename GetVertexPointMap<TriangleMesh,
@@ -853,29 +837,27 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
     static const bool same_vpm = (boost::is_same<Vpm,Vpm2>::value);)
   CGAL_static_assertion(same_vpm);
 
-  Vpm vpm1 = boost::choose_param(boost::get_param(np1, internal_np::vertex_point),
-                                 get_property_map(boost::vertex_point, tm1));
+  Vpm vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
+                              get_property_map(boost::vertex_point, tm1));
 
-  Vpm vpm2 = boost::choose_param(boost::get_param(np2, internal_np::vertex_point),
-                                 get_property_map(boost::vertex_point, tm2));
+  Vpm vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
+                              get_property_map(boost::vertex_point, tm2));
 
 // Edge is-constrained maps
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm1;
 
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters2,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
-  Ecm1 ecm1 = boost::choose_param( boost::get_param(np1, internal_np::edge_is_constrained),
-                                   Corefinement::No_mark<TriangleMesh>() );
-  Ecm2 ecm2 = boost::choose_param( boost::get_param(np2, internal_np::edge_is_constrained),
-                                   Corefinement::No_mark<TriangleMesh>() );
+  Ecm1 ecm1 = choose_parameter<Ecm1>(get_parameter(np1, internal_np::edge_is_constrained));
+  Ecm2 ecm2 = choose_parameter<Ecm2>(get_parameter(np2, internal_np::edge_is_constrained));
 
   typedef Corefinement::Ecm_bind<TriangleMesh, Ecm1, Ecm2> Ecm;
 
@@ -887,13 +869,12 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
   }
 
   // User visitor
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv( boost::choose_param( boost::get_param(np1, internal_np::graph_visitor),
-                   Corefinement::Default_visitor<TriangleMesh>() ) );
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::graph_visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
@@ -935,38 +916,36 @@ namespace experimental {
  * \cgalNamedParamsEnd
  *
  */
- template <class TriangleMesh,
-           class NamedParameters>
- void
- autorefine(      TriangleMesh& tm,
-            const NamedParameters& np)
+template <class TriangleMesh,
+          class NamedParameters>
+void
+autorefine(      TriangleMesh& tm,
+           const NamedParameters& np)
 {
-// Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::type Vpm;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                get_property_map(boost::vertex_point, tm));
+// Vertex point maps
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vpm;
+
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_property_map(boost::vertex_point, tm));
 
 // Edge is-constrained maps
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm;
-
-
-  Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
-                                 Corefinement::No_mark<TriangleMesh>() );
+  Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
 
 // User visitor
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
-                   Corefinement::Default_visitor<TriangleMesh>() ) );
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
 
 
 // surface intersection algorithm call
@@ -1011,38 +990,40 @@ namespace experimental {
  * \cgalNamedParamsEnd
  *
  */
- template <class TriangleMesh,
-           class NamedParameters>
- bool
- autorefine_and_remove_self_intersections(      TriangleMesh& tm,
-                                          const NamedParameters& np)
+template <class TriangleMesh,
+          class NamedParameters>
+bool
+autorefine_and_remove_self_intersections(      TriangleMesh& tm,
+                                         const NamedParameters& np)
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
 // Vertex point maps
-  typedef typename GetVertexPointMap<TriangleMesh,
-                                     NamedParameters>::type Vpm;
-  Vpm vpm = boost::choose_param(boost::get_param(np, internal_np::vertex_point),
-                                get_property_map(boost::vertex_point, tm));
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::type Vpm;
+  Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_property_map(boost::vertex_point, tm));
+
 // Face index map
-  typedef typename GetFaceIndexMap<TriangleMesh,
-                                   NamedParameters>::type Fid_map;
-  Fid_map fid_map = boost::choose_param(boost::get_param(np, internal_np::face_index),
-                                        get_property_map(boost::face_index, tm));
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type Fid_map;
+  Fid_map fid_map = get_initialized_face_index_map(tm, np);
+
+
 // Edge is-constrained maps
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
     NamedParameters,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm;
-  Ecm ecm = boost::choose_param( boost::get_param(np, internal_np::edge_is_constrained),
-                                 Corefinement::No_mark<TriangleMesh>() );
+  Ecm ecm = choose_parameter<Ecm>(get_parameter(np, internal_np::edge_is_constrained));
+
 // User visitor
-  typedef typename boost::lookup_named_param_def <
+  typedef typename internal_np::Lookup_named_param_def <
     internal_np::graph_visitor_t,
     NamedParameters,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
-  User_visitor uv( boost::choose_param( boost::get_param(np, internal_np::graph_visitor),
-                   Corefinement::Default_visitor<TriangleMesh>() ) );
+  User_visitor uv(choose_parameter<User_visitor>(get_parameter(np, internal_np::graph_visitor)));
 
 // surface intersection algorithm call
   typedef Corefinement::Output_builder_for_autorefinement<TriangleMesh,

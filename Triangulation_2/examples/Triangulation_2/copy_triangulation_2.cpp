@@ -36,7 +36,7 @@ int main()
 {
   std::vector< EPIC::Point_2> points;
   CGAL::Random_points_in_disc_2<EPIC::Point_2,Creator> g(1.0);
-  CGAL::cpp11::copy_n( g, 600, std::back_inserter(points) );
+  std::copy_n( g, 600, std::back_inserter(points) );
 
   DT2_epic dt2_epic;
   dt2_epic.insert(points.begin(), points.end());

@@ -1,6 +1,6 @@
 #ifndef SCENE_TEXTURED_SURFACE_MESH_ITEM_H
 #define SCENE_TEXTURED_SURFACE_MESH_ITEM_H
-#include  <CGAL/Three/Scene_item.h>
+#include  <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include "SMesh_type.h"
 #include <iostream>
@@ -15,9 +15,10 @@
 struct Scene_textured_surface_mesh_item_priv;
 // This class represents a textured polyhedron in the OpenGL scene
 class SCENE_TEXTURED_SURFACE_MESH_ITEM_EXPORT Scene_textured_surface_mesh_item
-    : public CGAL::Three::Scene_item {
+    : public CGAL::Three::Scene_item_rendering_helper {
   Q_OBJECT
 public:
+  void common_constructor();
   Scene_textured_surface_mesh_item();
   //   Scene_textured_surface_mesh_item(const Scene_textured_surface_mesh_item&);
   Scene_textured_surface_mesh_item(const SMesh& p);
@@ -49,9 +50,11 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   void compute_bbox() const;
-  virtual void invalidateOpenGLBuffers();
+  void invalidateOpenGLBuffers();
   virtual void selection_changed(bool);
-  void add_border_edges(std::vector<float> border_edges, bool is_opengl_4_3);
+  void add_border_edges(std::vector<float> border_edges);
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+  void computeElements() const;
 
 Q_SIGNALS:
   void selectionChanged();

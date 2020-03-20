@@ -16,13 +16,7 @@
 
 #include <iostream>
 
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
-
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // This class represents a point set in the OpenGL scene
 class Point_set_item_classification : public Item_classification_base
@@ -30,7 +24,6 @@ class Point_set_item_classification : public Item_classification_base
  public:
   typedef Kernel::Point_3 Point_3;
   typedef Kernel::Vector_3 Vector_3;
-  typedef CGAL::Classification::RGB_Color Color;
   
   typedef Point_set::Point_map Point_map;
   typedef Point_set::Vector_map Vector_map;
@@ -332,6 +325,10 @@ class Point_set_item_classification : public Item_classification_base
     std::vector<int> indices (m_points->point_set()->size(), -1);
 
     m_label_probabilities.clear();
+    m_label_probabilities.resize (m_labels.size());
+    for (std::size_t i = 0; i < m_label_probabilities.size(); ++ i)
+      m_label_probabilities[i].resize (m_points->point_set()->size(), -1);
+    
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (*(m_points->point_set()),
                                                        m_labels, classifier,
@@ -398,9 +395,12 @@ class Point_set_item_classification : public Item_classification_base
 
   std::vector<Cluster> m_clusters;
 
+  Point_set::Property_map<unsigned char> m_red;
+  Point_set::Property_map<unsigned char> m_green;
+  Point_set::Property_map<unsigned char> m_blue;
+  Point_set::Property_map<CGAL::Color> m_color;
   std::vector<std::vector<float> > m_label_probabilities;
 
-  Point_set::Property_map<Color> m_color;
   Point_set::Property_map<int> m_training;
   Point_set::Property_map<int> m_classif;
 

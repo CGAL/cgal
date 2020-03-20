@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -41,7 +32,6 @@
 
 #include <CGAL/Default.h>
 
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <vector>
@@ -99,7 +89,6 @@ public:
       Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                       Eigen::IncompleteLUT<double> > >
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;
@@ -138,17 +127,16 @@ private:
 
   // Types used for the convexification of the mesh
     // Each triangulation vertex is associated its corresponding vertex_descriptor
-  typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor,
-                                                      Kernel>       Vb;
-    // Each triangultaion face is associated a color (inside/outside information)
-  typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>    Fb;
-  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>   Cfb;
-  typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>             TDS;
-  typedef CGAL::No_intersection_tag                                 Itag;
+  typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor, Kernel>  Vb;
+    // Each triangulation face is associated a color (inside/outside information)
+  typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>                  Fb;
+  typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>                 Cfb;
+  typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>                           TDS;
+  typedef CGAL::No_constraint_intersection_requiring_constructions_tag            Itag;
 
     // Can choose either a triangulation or a Delaunay triangulation
-  typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>                CT;
-//    typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>   CT;
+  typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>                    CT;
+//  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>           CT;
 
 // Private fields
 private:
@@ -190,7 +178,7 @@ private:
                        VertexUVMap uvmap,
                        const VertexIndexMap vimap) const
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       int index = get(vimap, vd);
       NT u = Xu(index);
       NT v = Xv(index);
@@ -221,8 +209,8 @@ private:
   {
     // @fixme unefficient: use sweep line algorithms instead of brute force
 
-    BOOST_FOREACH(halfedge_descriptor hd_1, halfedges_around_face(bhd, mesh)) {
-      BOOST_FOREACH(halfedge_descriptor hd_2, halfedges_around_face(bhd, mesh)) {
+    for(halfedge_descriptor hd_1 : halfedges_around_face(bhd, mesh)) {
+      for(halfedge_descriptor hd_2 : halfedges_around_face(bhd, mesh)) {
         if(hd_1 == hd_2 || // equality
            next(hd_1, mesh) == hd_2 || next(hd_2, mesh) == hd_1) // adjacency
           continue;
@@ -231,11 +219,13 @@ private:
                                         get(uvmap, target(hd_1, mesh))),
                               Segment_2(get(uvmap, source(hd_2, mesh)),
                                         get(uvmap, target(hd_2, mesh))))) {
+#ifdef CGAL_SMP_ARAP_DEBUG
           std::ofstream out("non-simple.txt"); // polygon lines
           out << "2 " << get(uvmap, source(hd_1, mesh)) << " 0 "
                       << get(uvmap, target(hd_1, mesh)) << " 0" << std::endl;
           out << "2 " << get(uvmap, source(hd_2, mesh)) << " 0 "
                       << get(uvmap, target(hd_2, mesh)) << " 0" << std::endl;
+#endif
           return false;
         }
       }
@@ -290,9 +280,9 @@ private:
   {
     // Build the constrained triangulation
 
-    // Since the border is closed and we are interest in triangles that are outside
+    // Since the border is closed and we are interested in triangles that are outside
     // of the border, we actually only need to insert points on the border
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
+    for(halfedge_descriptor hd : halfedges_around_face(bhd, mesh)) {
       vertex_descriptor s = source(hd, mesh);
       const Point_2& sp = get(uvmap, s);
 
@@ -301,15 +291,17 @@ private:
     }
 
     // Insert constraints (the border)
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd, mesh)) {
+    for(halfedge_descriptor hd : halfedges_around_face(bhd, mesh)) {
       vertex_descriptor s = source(hd, mesh), t = target(hd, mesh);
       const Point_2& sp = get(uvmap, s), tp = get(uvmap, t);
 
       ct.insert_constraint(sp, tp);
     }
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     std::ofstream out("constrained_triangulation.cgal");
     out << ct;
+#endif
 
     return OK;
   }
@@ -349,8 +341,10 @@ private:
       }
     } while(++fc != done);
 
+#ifdef CGAL_SMP_ARAP_DEBUG
     // Output the exterior faces of the constrained triangulation
     output_ct_exterior_faces(ct);
+#endif
 
     return OK;
   }
@@ -597,7 +591,7 @@ private:
     }
 
     // Loop over the faces of 'mesh'
-    BOOST_FOREACH(face_descriptor fd, faces) {
+    for(face_descriptor fd : faces) {
       fill_linear_system_matrix_mvc_from_mesh_face(mesh, fd, uvmap, vimap, vpmap, A);
     }
 
@@ -614,7 +608,7 @@ private:
                        const VertexParameterizedMap vpmap,
                        Vector& Bu, Vector& Bv) const
   {
-    BOOST_FOREACH(vertex_descriptor vd, vertices) {
+    for(vertex_descriptor vd : vertices) {
       int index = get(vimap, vd);
       const Point_2& uv = get(uvmap, vd);
       if(!get(vpmap, vd)) { // not yet parameterized
@@ -695,7 +689,7 @@ private:
     CGAL_postcondition_code
     (
       // make sure that the constrained vertices have not been moved
-      BOOST_FOREACH(vertex_descriptor vd, vertices) {
+      for(vertex_descriptor vd : vertices) {
         if(get(vpmap, vd)) {
           int index = get(vimap, vd);
           CGAL_postcondition(std::abs(Xu[index] - Bu[index] ) < 1e-10);

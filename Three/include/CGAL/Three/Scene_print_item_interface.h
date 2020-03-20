@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime GIMENO
 
@@ -41,18 +32,18 @@ public:
   //! Prints all the vertices ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   //! \returns `false` if the number of ids is too high to be displayed.
-  virtual bool printVertexIds(CGAL::Three::Viewer_interface*) const= 0;
+  virtual bool printVertexIds() const= 0;
   //! Prints all the edges ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   //! \returns `false` if the number of ids is too high to be displayed.
-  virtual bool printEdgeIds(CGAL::Three::Viewer_interface*) const= 0;
+  virtual bool printEdgeIds() const= 0;
   //! Prints all the faces ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
   //! \returns `false` if the number of ids is too high to be displayed.
-  virtual bool printFaceIds(CGAL::Three::Viewer_interface*) const= 0;
+  virtual bool printFaceIds() const= 0;
   //! Prints all the primitive ids if their number is not too high. The limit is
   //! editable in the View menu of the application.
-  virtual void printAllIds(CGAL::Three::Viewer_interface*) = 0;
+  virtual void printAllIds() = 0;
   //! \brief Tests if an id should be displayed or not.
   //!
   //! \returns true if the Id should be displayed

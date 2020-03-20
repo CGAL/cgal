@@ -1,20 +1,11 @@
 // Copyright (c) 1997  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Michael Hemmer
@@ -252,7 +243,7 @@ inline int square_free_factorize_for_regular_polynomial_
        year = {1976},
        pages = {26--35},
        location = {Yorktown Heights, New York, United States},
-       doi = {http://doi.acm.org/10.1145/800205.806320},
+       doi = {https://dl.acm.org/citation.cfm?doid=800205.806320},
        publisher = {ACM Press},
        address = {New York, NY, USA},
        }

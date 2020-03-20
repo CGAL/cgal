@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
@@ -343,14 +334,14 @@ class Vertex_base {
 	verr << "begin CGAL::SNC_items<...>::Vertex_base::is_valid( verb=true, "
 	  "level = " << level << "):" << std::endl;
       
-	bool valid = (sncp_ != NULL);
-	valid = valid && (svertices_begin_ != NULL && svertices_begin_ != SVertex_iterator());
-	valid = valid && (svertices_last_  != NULL && svertices_last_  != SVertex_iterator());
-	valid = valid && (shalfedges_begin_ != NULL && shalfedges_begin_ != SHalfedge_iterator());
-	valid = valid && (shalfedges_last_  != NULL && shalfedges_last_  != SHalfedge_iterator());
-	valid = valid && (sfaces_begin_ != NULL && sfaces_begin_ != SFace_iterator());
-	valid = valid && (sfaces_last_  != NULL && sfaces_last_  != SFace_iterator());
-	valid = valid && (shalfloop_ != NULL && shalfloop_ != SHalfloop_iterator());
+	bool valid = (sncp_ != nullptr);
+	valid = valid && (svertices_begin_ != nullptr && svertices_begin_ != SVertex_iterator());
+	valid = valid && (svertices_last_  != nullptr && svertices_last_  != SVertex_iterator());
+	valid = valid && (shalfedges_begin_ != nullptr && shalfedges_begin_ != SHalfedge_iterator());
+	valid = valid && (shalfedges_last_  != nullptr && shalfedges_last_  != SHalfedge_iterator());
+	valid = valid && (sfaces_begin_ != nullptr && sfaces_begin_ != SFace_iterator());
+	valid = valid && (sfaces_last_  != nullptr && sfaces_last_  != SFace_iterator());
+	valid = valid && (shalfloop_ != nullptr && shalfloop_ != SHalfloop_iterator());
 
 	if(shalfedges_begin_ == sncp()->shalfedges_end()) {         // point in volume or on plane, which is either isolated or has one outgoing edge
 	  if(shalfloop_ != sncp()->shalfloops_end())
