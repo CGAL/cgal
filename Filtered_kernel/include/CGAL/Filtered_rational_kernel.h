@@ -28,10 +28,21 @@
 
 namespace CGAL {
 
+  struct Infimum_to_double
+    : public CGAL::cpp98::unary_function< Interval_nt<false>, double >
+  {
+    double
+    operator()(const Interval_nt<false>& i) const
+    {
+      return i.sup();
+    }
+  };
+
 template <typename T1, typename T2>
 struct Approximate_exact_pair
   : public std::pair<T1,T2>
 {
+  typedef Approximate_exact_pair<T1, T2> Self;
   typedef std::pair<T1,T2> Base;
 
   typedef T1 Approximate_type;
@@ -39,12 +50,16 @@ struct Approximate_exact_pair
   Approximate_exact_pair()
   {}
 
+  Approximate_exact_pair(const T1& t1)
+    : Base(t1,T2())
+  {}
+
   Approximate_exact_pair(const T1& t1, const T2& t2)
-    : Base(t1,t2)
+    : Base(t1,t2), eii(true)
   {}
 
   Approximate_exact_pair(const std::pair<T1,T2>& p)
-    : Base(p)
+    : Base(p), eii(true)
   {}
   
   const T1& approx() const
@@ -54,10 +69,27 @@ struct Approximate_exact_pair
 
   const T2& exact() const
   {
+    if(!eii){
+      typedef typename Kernel_traits<T1>::Kernel K1;
+      typedef typename Kernel_traits<T2>::Kernel K2;
+      
+      Cartesian_converter<K1,K2,Infimum_to_double> convert;
+      const_cast<Self*>(this)->second = convert(this->first);
+      eii = true;
+    }
     return this->second;
   }
+
+private:
+  bool eii = false; // exact is initialized
 };
 
+template <typename T1, typename T2>
+const T2& exact(const Approximate_exact_pair <T1,T2>& p)
+{ 
+  return p.exact();
+}
+  
 namespace mpl {
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(first_type)
@@ -340,7 +372,6 @@ struct Approx_converter
 {
   typedef K1         Source_kernel;
   typedef K2         Target_kernel;
-  //typedef Converter  Number_type_converter;
 
   template < typename T >
   const typename Getter<T>::first_type&
@@ -366,7 +397,6 @@ struct Exact_converter
 {
   typedef K1         Source_kernel;
   typedef K2         Target_kernel;
-  //typedef Converter  Number_type_converter;
 
   template < typename T >
   const typename Getter<T>::second_type&
@@ -528,8 +558,7 @@ public:
 
     Point_3 operator()(Return_base_tag tag, double x, double y, double z) const
     {
-      return std::make_pair(typename AK::Point_3(AK().construct_point_3_object()(tag, x, y, z)),
-                            typename EK::Point_3(EK().construct_point_3_object()(tag,x,y,z)));
+      return Point_3(typename AK::Point_3(AK().construct_point_3_object()(tag, x, y, z)));
     }
   };
 

@@ -7,6 +7,7 @@
 //#define CGAL_MSVC_USE_STD_FABS  // use this one with precise 
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -24,13 +25,6 @@
 typedef CGAL::Exact_predicates_exact_constructions_kernel  K;
 typedef K::Point_3 Point_3;
 
-struct X {
-  Point_3 x[4];
-};
-
-typedef CGAL::Triangulation_vertex_base_with_info_3<X, K>    Vb;
-typedef CGAL::Delaunay_triangulation_cell_base_3<K>                 Cb;
-typedef CGAL::Triangulation_data_structure_3<Vb, Cb>                Tds;
 
 typedef CGAL::Delaunay_triangulation_3<K> DT;
 /*
@@ -44,7 +38,18 @@ typedef CGAL::Real_timer Real_timer;
 
 int main(int argc, char* argv[])
 {
+#if 0
+  std::cout.precision(17);
+  Point_3 p(0.4324235, 0.3256236, 0.6532346), q(45634.3564, 3256.34577, 43633.34678);
 
+  Point_3 m = CGAL::midpoint(p,q);
+
+  std::cout << m.approx() << std::endl;
+  std::cout << m.approx().x().is_point() << std::endl;
+
+  bool b = CGAL::collinear(p,q,m);
+  
+#else  
   CGAL::get_default_random() = CGAL::Random(0);
   std::cout << "seed:  " << CGAL::get_default_random().get_seed() << std::endl; 
 
@@ -96,8 +101,6 @@ int main(int argc, char* argv[])
 	  << "ms" << std::endl;
 
   std::cerr << "|V| = " <<  V << " |C| = " << C  << std::endl << timer.time() << " sec"  << rtimer.time() << " sec" << std::endl;
-
- 
-
+#endif
   return 0;
 }

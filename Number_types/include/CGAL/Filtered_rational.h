@@ -36,7 +36,8 @@ template < typename NT1 = Interval_nt<false>, typename NT2=Gmpq>
 class Filtered_rational
 {
   NT1 _n1;
-  NT2 _n2;
+  mutable NT2 _n2;
+  bool eii = false; // eii means "exact is initialized"
 public:
 
   typedef Filtered_rational<NT1, NT2> Self;
@@ -44,30 +45,31 @@ public:
   Filtered_rational() {}
   
   Filtered_rational(int i)
-    : _n1(i), _n2(i)
+    : _n1(i)
   { CGAL_assertion(is_valid()); }
 
   Filtered_rational(double d)
-    : _n1(d), _n2(d)
+    : _n1(d),
   {
     CGAL_assertion(is_valid()); }
   
   Filtered_rational(const NT1 &_n1, const NT2 &_n2)
-    : _n1(_n1), _n2(_n2)
+    : _n1(_n1), _n2(_n2), eii(true)
   { CGAL_assertion(is_valid()); }
 
   Filtered_rational(const std::pair<NT1,NT2> &np)
-    : _n1(np.first), _n2(np.second)
+    : _n1(np.first), _n2(np.second), eii(true)
   { CGAL_assertion(is_valid()); }
 
   Filtered_rational(const NT2 &_n2)
-    : _n1(to_interval(_n2)), _n2(_n2)
+    : _n1(to_interval(_n2)), _n2(_n2), eii(true)
   { CGAL_assertion(is_valid()); }
 
   Self& operator=(const std::pair<NT1,NT2> &np)
   {
     _n1 = np.first;
     _n2 = np.second;
+    eii = true;
   }
   
   // The following need to be dependant on NT1 != {NT2,int,double} ...
@@ -88,10 +90,27 @@ public:
 
   // Accessors and setters.
   const NT1& n1() const { return _n1; }
-  const NT2& n2() const { return _n2; }
+  
+  const NT2& n2() const
+  {
+    if(!eii){
+      assert(_n1.is_point());
+      _n2 = NT2(_n1.inf());
+      eii = true;
+    }
+    return _n2;
+  }
 
   NT1& n1() { return _n1; }
-  NT2& n2() { return _n2; }
+  
+  NT2& n2() { 
+    if(!eii){
+      assert(_n1.is_point());
+      _n2 = NT2(_n1.inf());
+      eii = true;
+    }
+    return _n2;
+  }
   
   const NT1& approx() const { return _n1; }
   
