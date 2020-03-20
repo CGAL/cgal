@@ -165,6 +165,7 @@ public:
   //---------------------------------
   typedef typename CK_traits::Construct_object_2     Construct_object_2;
   typedef typename CK_traits::Assign_2               Assign_2;
+  typedef typename CK_traits::Construct_point_2      Construct_point_2;
 
   // CONSTRUCTIONS
   //--------------
@@ -329,6 +330,10 @@ public:
     return Construct_object_2();
   }
 
+  Construct_point_2
+  construct_point_2_object() const {
+    return Construct_point_2();
+  }
 
   // CONSTRUCTIONS
   //--------------

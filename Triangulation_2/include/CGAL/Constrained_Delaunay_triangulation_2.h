@@ -25,6 +25,7 @@
 #include <CGAL/internal/info_check.h>
 #include <CGAL/is_iterator.h>
 
+#include <boost/container/flat_set.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 
@@ -45,10 +46,46 @@ struct Get_iterator_value_type<T,true>{
 } } //namespace CGAL::internal
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
-
-
 namespace CGAL {
+namespace internal {
 
+// Compare geometry to ensure deterministic flips
+template <class Tr>
+class Cdt_2_less_edge
+  : public CGAL::cpp98::binary_function<typename Tr::Edge, typename Tr::Edge, bool>
+{
+  const Tr* tr_ptr;
+
+  typedef typename Tr::Point  Point;
+  typedef typename Tr::Edge   Edge;
+
+public:
+  Cdt_2_less_edge(const Tr* tr_ptr) : tr_ptr(tr_ptr) { }
+
+  // just a manual lexicographical_compare
+  bool operator() (const Edge& e1, const Edge& e2) const
+  {
+    const Point& e1p1 = tr_ptr->point(e1.first, Tr::ccw(e1.second));
+    const Point& e2p1 = tr_ptr->point(e2.first, Tr::ccw(e2.second));
+
+    CGAL::Comparison_result res1 = tr_ptr->compare_xy(e1p1, e2p1);
+    if(res1 == CGAL::SMALLER)
+      return true;
+    if(res1 == CGAL::LARGER)
+      return false;
+
+    const Point& e1p2 = tr_ptr->point(e1.first, Tr::cw(e1.second));
+    const Point& e2p2 = tr_ptr->point(e2.first, Tr::cw(e2.second));
+
+    CGAL::Comparison_result res2 = tr_ptr->compare_xy(e1p2, e2p2);
+    if(res2 == CGAL::SMALLER)
+      return true;
+
+    return false;
+  }
+};
+
+} // namespace internal
 
 template <class Gt,
           class Tds_ = Default ,
@@ -74,13 +111,14 @@ public:
   typedef typename Ctr::Face_circulator       Face_circulator;
   typedef typename Ctr::size_type             size_type;
   typedef typename Ctr::Locate_type           Locate_type;
- 
+
   typedef typename Ctr::List_edges List_edges;  
   typedef typename Ctr::List_faces List_faces;
   typedef typename Ctr::List_vertices  List_vertices;
   typedef typename Ctr::List_constraints List_constraints;
-  typedef typename Ctr::Less_edge less_edge;
-  typedef typename Ctr::Edge_set Edge_set;
+
+  typedef internal::Cdt_2_less_edge<CDt> Less_edge;
+  typedef boost::container::flat_set<Edge, Less_edge> Edge_set;
 
   //Tag to distinguish Delaunay from regular triangulations
   typedef Tag_false Weighted_tag;
@@ -530,8 +568,10 @@ public:
   int i, ii, indf, indn;
   Face_handle ni, f,ff;
   Edge ei,eni; 
-  typename Ctr::Edge_set edge_set;
-  typename Ctr::Less_edge less_edge;
+
+  Less_edge less_edge(this);
+  Edge_set edge_set(less_edge);
+
   Edge e[4];
   typename List_edges::iterator itedge=edges.begin();
 

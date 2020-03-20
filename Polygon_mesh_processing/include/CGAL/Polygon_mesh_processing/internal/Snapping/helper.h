@@ -58,7 +58,7 @@ void assign_tolerance_with_local_edge_length_bound(const HalfedgeRange& halfedge
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(vertex_point, mesh));
 

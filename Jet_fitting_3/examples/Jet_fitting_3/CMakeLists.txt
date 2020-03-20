@@ -14,7 +14,6 @@ if ( CGAL_FOUND )
   # use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
     # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
     if(Boost_PROGRAM_OPTIONS_FOUND)
@@ -30,9 +29,11 @@ if ( CGAL_FOUND )
       list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
    endif()
 
-    create_single_source_cgal_program( "Mesh_estimation.cpp" )
-    create_single_source_cgal_program( "Single_estimation.cpp" )
-    
+   create_single_source_cgal_program( "Mesh_estimation.cpp" )
+   CGAL_target_use_Eigen(Mesh_estimation)
+   create_single_source_cgal_program( "Single_estimation.cpp" )
+   CGAL_target_use_Eigen(Single_estimation)
+   
   else()
     message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
   endif()

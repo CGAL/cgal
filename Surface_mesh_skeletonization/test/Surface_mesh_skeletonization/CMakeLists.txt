@@ -14,10 +14,10 @@ if ( CGAL_FOUND )
   find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
   if(EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-
     create_single_source_cgal_program( "MCF_Skeleton_test.cpp" )
+    CGAL_target_use_Eigen(MCF_Skeleton_test)
     create_single_source_cgal_program( "skeleton_connectivity_test.cpp" )
+    CGAL_target_use_Eigen(skeleton_connectivity_test)
   else()
     message(STATUS "These tests require the Eigen library (3.2 or greater), and will not be compiled.")
   endif()

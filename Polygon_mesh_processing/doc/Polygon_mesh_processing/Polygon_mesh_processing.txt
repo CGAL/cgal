@@ -312,18 +312,19 @@ the limited precision of floating point numbers.
 As a natural extension, some clipping functionalities with a volume bounded by a closed mesh
 and a halfspace (defined by the negative side of a plane to be consistent with
 the outward normal convention) are offered. The functions `CGAL::Polygon_mesh_processing::clip()`
+and `CGAL::Polygon_mesh_processing::split()`
 have some options to select whether the clipping should be done at the volume or surface
 level, and also if the clipper should be considered as compact or not. This is illustrated on
 \cgalFigureRef{coref_clip_close_open} and \cgalFigureRef{coref_clip_compact}.
 
 \cgalFigureBegin{coref_clip_close_open, clip_open_close.png}
 Clipping a cube with a halfspace. From left to right: (i) initial cube and the plane
-defining the clipping halfspace; (ii) `close_volumes=false`: clipping of the surface mesh (boundary edges
-depicted in red); (iii) `close_volumes=true`: clipping of the volume bounded by the surface mesh.
+defining the clipping halfspace; (ii) `clip_volume=false`: clipping of the surface mesh (boundary edges
+depicted in red); (iii) `clip_volume=true`: clipping of the volume bounded by the surface mesh.
 \cgalFigureEnd
 
 \cgalFigureBegin{coref_clip_compact, clip_compact.png}
-Clipping a cube with a halfspace: compacity of the clipper (`close_volumes=false` in both cases).
+Clipping a cube with a halfspace: compacity of the clipper (`clip_volume=false` in both cases).
 From left to right: (i) initial cube and the plane defining the clipping halfspace,
 note that a whole face of the cube (2 triangles) is exactly contained in the plane;
 (ii) `use_compact_clipper=true`: clipping of the surface mesh with a compact halfspace: coplanar faces are part of the output;
@@ -578,6 +579,9 @@ to build a valid polygon mesh.
 The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 performs this mesh construction step.
 
+Inversely, a polygon soup can be constructed from a polygon mesh,
+using the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
+
 \subsection OrientingPolygonMeshes Polygon Meshes
 
 This package provides functions dealing with the orientation of faces in a closed polygon mesh.
@@ -797,6 +801,11 @@ is its area, for example.
 Similarly to the previous function, the function
 `CGAL::Polygon_mesh_processing::keep_large_connected_components()` can be used to discard all connected
 components whose size is below a user-defined threshold.
+
+Also, the function `CGAL::Polygon_mesh_processing::split_connected_components()`
+enables the user to split the connected components of a polygon mesh in as many
+polygon meshes.
+
 
 \subsection CCExample Connected Components Example
 

@@ -381,8 +381,8 @@ void constrain_sharp_and_border_edges(const FaceRange& faces,
   }
 
 #if 0 // Until detect_features++ is integrated
-  CGAL::Polygon_mesh_processing::detect_sharp_edges_pp(faces, tmesh, dihedral_angle, eif,
-                                                       parameters::weak_dihedral_angle(weak_DA));
+  CGAL::Polygon_mesh_processing::experimental::detect_sharp_edges_pp(faces, tmesh, dihedral_angle, eif,
+                                                                     parameters::weak_dihedral_angle(weak_DA));
 
   // borders are also constrained
   for(const auto& ep : is_border_of_selection)
@@ -1750,7 +1750,7 @@ bool remove_self_intersections(const FaceRange& face_range,
                                         get_property_map(vertex_point, tmesh));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       GeomTraits;
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
 
   bool preserve_genus = choose_parameter(get_parameter(np, internal_np::preserve_genus), true);
   const bool only_treat_self_intersections_locally = choose_parameter(get_parameter(np, internal_np::apply_per_connected_component), false);

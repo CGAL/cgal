@@ -14,11 +14,13 @@
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <CGAL/IO/reader_helpers.h>
 
-#include <vector>
-#include <iostream>
 #include <CGAL/array.h>
 #include <CGAL/assertions.h>
+#include <CGAL/Container_helper.h>
 #include <CGAL/use.h>
+
+#include <vector>
+#include <iostream>
 
 namespace CGAL {
 
@@ -47,7 +49,7 @@ namespace CGAL {
       std::size_t no;
 
       scanner.scan_facet( no, i);
-      IO::internal::resize(polygons[i], no);
+      CGAL::internal::resize(polygons[i], no);
       for(std::size_t j = 0; j < no; ++j) {
         std::size_t id;
         scanner.scan_facet_vertex_index(id, i);
@@ -114,7 +116,7 @@ namespace CGAL {
       scanner.scan_facet( no, i);
       if(!in)
         return false;
-      IO::internal::resize(polygons[i], no);
+      CGAL::internal::resize(polygons[i], no);
       for(std::size_t j = 0; j < no; ++j) {
         std::size_t id;
         scanner.scan_facet_vertex_index(id, i);

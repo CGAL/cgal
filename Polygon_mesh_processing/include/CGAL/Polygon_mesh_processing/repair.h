@@ -77,10 +77,6 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// As a consequence of the last sentence, the area or volume criteria can be disabled
 /// by passing zero (`0`) as threshold value.
 ///
-/// Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-/// must be either available as internal property maps
-/// to `tmesh` or provided as \ref pmp_namedparameters "Named Parameters".
-///
 /// \tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
@@ -95,8 +91,6 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 ///   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
 ///   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tmesh` \cgalParamEnd
 ///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
-///                                     If this parameter is omitted, an internal property map for
-///                                     `CGAL::vertex_point_t` should be available in `TriangleMesh` \cgalParamEnd
 ///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
 ///    \cgalParamBegin{dry_run} a Boolean parameter. If set to `true`, the mesh will not be altered,
 ///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
@@ -121,16 +115,15 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GT::FT                                                          FT;
-  const GT traits = choose_parameter(get_parameter(np, internal_np::vertex_point), GT());
+  const GT traits = choose_parameter<GT>(get_parameter(np, internal_np::vertex_point));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point_3;
   const VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                    get_const_property_map(CGAL::vertex_point, tmesh));
 
-  typedef typename GetFaceIndexMap<TriangleMesh, NamedParameters>::type            FaceIndexMap;
-  FaceIndexMap fim = choose_parameter(get_parameter(np, internal_np::face_index),
-                                      get_property_map(boost::face_index, tmesh));
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
+  FaceIndexMap fim = CGAL::get_initialized_face_index_map(tmesh, np);
 
   FT area_threshold = choose_parameter(get_parameter(np, internal_np::area_threshold), FT(-1));
   FT volume_threshold = choose_parameter(get_parameter(np, internal_np::volume_threshold), FT(-1));
@@ -144,7 +137,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,
                                                        Emptyset_iterator>::type Output_iterator;
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "default threshold? " << is_default_area_threshold << " " << is_default_volume_threshold << std::endl;

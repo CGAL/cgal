@@ -35,14 +35,16 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 find_package( TBB )
 
 if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-
   # Creating entries for all .cpp/.C files with "main" routine
   # ##########################################################
   create_single_source_cgal_program("fairing_test.cpp")
+  CGAL_target_use_Eigen(fairing_test)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
+  CGAL_target_use_Eigen(triangulate_hole_Polyhedron_3_no_delaunay_test)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
+  CGAL_target_use_Eigen(triangulate_hole_Polyhedron_3_test)
   create_single_source_cgal_program("test_shape_smoothing.cpp")
+  CGAL_target_use_Eigen(test_shape_smoothing)
 
 endif(EIGEN3_FOUND)
 

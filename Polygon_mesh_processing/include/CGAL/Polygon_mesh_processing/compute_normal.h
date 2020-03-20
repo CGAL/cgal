@@ -152,11 +152,11 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   using parameters::get_parameter;
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type               GT;
-  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type     VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(vertex_point, pmesh));
+                                 get_const_property_map(vertex_point, pmesh));
 
   typedef typename GT::Point_3                                                     Point;
   typedef typename GT::Vector_3                                                    Vector_3;
@@ -630,11 +630,11 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type          GT;
   typedef typename GT::Vector_3                                               Vector_3;
-  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_const_property_map(vertex_point, pmesh));
+                                 get_const_property_map(vertex_point, pmesh));
 
   typedef std::map<face_descriptor, Vector_3>                                 Face_vector_map;
   typedef boost::associative_property_map<Face_vector_map>                    Default_map;
@@ -743,7 +743,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   typedef typename boost::property_map<PolygonMesh, Face_normal_tag>::const_type Face_normal_dmap;
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
-  GT traits = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type   VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),

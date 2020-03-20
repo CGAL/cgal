@@ -1,6 +1,3 @@
-#include <vector>
-#include <queue>
-
 #include "Scene_polygon_soup_item.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Viewer_interface.h>
@@ -13,9 +10,6 @@
 #include <QApplication>
 #include <QtDebug>
 
-#include <set>
-#include <stack>
-#include <algorithm>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/IO/OFF_reader.h>
@@ -23,6 +17,7 @@
 #include <CGAL/version.h> 
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
@@ -43,9 +38,14 @@
 #include <boost/accumulators/statistics/max.hpp>
 #include <boost/accumulators/statistics/median.hpp>
 
+#include <algorithm>
 #include <iostream>
 #include <map>
+#include <queue>
+#include <set>
+#include <stack>
 #include <streambuf>
+#include <vector>
 
 using namespace CGAL::Three;
 typedef Viewer_interface Vi;
@@ -371,10 +371,9 @@ template<class PolygonMesh>
 void polygon_mesh_to_soup(PolygonMesh& mesh, Polygon_soup& soup)
 {
   soup.clear();
-  CGAL::Polygon_mesh_processing::internal::polygon_mesh_to_polygon_soup(mesh, soup.points, soup.polygons);
+  CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup(mesh, soup.points, soup.polygons);
   soup.fill_edges();
 }
-
 
 void Scene_polygon_soup_item::load(Scene_surface_mesh_item* sm_item) {
   if(!sm_item) return;
