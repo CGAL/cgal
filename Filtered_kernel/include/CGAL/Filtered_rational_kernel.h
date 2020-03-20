@@ -525,6 +525,12 @@ public:
     {
       return p;
     }
+
+    Point_3 operator()(Return_base_tag tag, double x, double y, double z) const
+    {
+      return std::make_pair(typename AK::Point_3(AK().construct_point_3_object()(tag, x, y, z)),
+                            typename EK::Point_3(EK().construct_point_3_object()(tag,x,y,z)));
+    }
   };
 
   Construct_point_3 construct_point_3_object() const
