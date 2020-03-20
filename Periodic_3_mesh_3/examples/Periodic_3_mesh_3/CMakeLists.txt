@@ -26,8 +26,6 @@ find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
-else()
-  include( ${EIGEN3_USE_FILE} )
 endif()
 
 # Boost and its components
@@ -46,3 +44,13 @@ create_single_source_cgal_program( "mesh_implicit_multi_domain.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape_with_subdomains.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape_with_optimizers.cpp" )
 create_single_source_cgal_program( "mesh_implicit_shape_with_features.cpp" )
+
+
+foreach(target
+    mesh_implicit_shape
+    mesh_implicit_multi_domain
+    mesh_implicit_shape_with_subdomains
+    mesh_implicit_shape_with_optimizers
+    mesh_implicit_shape_with_features)
+  CGAL_target_use_Eigen(${target})
+endforeach()

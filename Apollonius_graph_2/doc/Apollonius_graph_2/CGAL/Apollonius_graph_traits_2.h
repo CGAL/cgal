@@ -10,13 +10,13 @@ This class has two template parameters. The first template parameter
 must be a model of the `Kernel` concept. The second template 
 parameter corresponds to how predicates are evaluated. There are two 
 predefined possible values for `Method_tag`, namely 
-`CGAL::Sqrt_field_tag` and `CGAL::Ring_tag`. The first one 
+`CGAL::Field_with_sqrt_tag` and `CGAL::Integral_domain_without_division_tag`. The first one
 must be used when the number type used in the representation supports 
 the exact evaluation of signs of expressions involving all four basic 
 operations and square roots, whereas the second one requires the exact 
 evaluation of signs of ring-type expressions, i.e., expressions 
 involving only additions, subtractions and multiplications. The 
-default value for `Method_tag` is `CGAL::Ring_tag`. 
+default value for `Method_tag` is `CGAL::Integral_domain_without_division_tag`.
 The way the predicates are evaluated is discussed in 
 \cgalCite{cgal:ke-ppawv-02}, \cgalCite{cgal:ke-rctac-03}. 
 
@@ -24,8 +24,8 @@ The way the predicates are evaluated is discussed in
 
 \sa `Kernel` 
 \sa `ApolloniusGraphTraits_2` 
-\sa `CGAL::Ring_tag` 
-\sa `CGAL::Sqrt_field_tag` 
+\sa `CGAL::Integral_domain_without_division_tag`
+\sa `CGAL::Field_with_sqrt_tag`
 \sa `CGAL::Apollonius_graph_2<Gt,Agds>` 
 \sa `CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` 
 

@@ -96,6 +96,7 @@ public:
   //-------------------------------
   typedef typename Kernel::Construct_object_2     Construct_object_2;
   typedef typename Kernel::Assign_2               Assign_2;
+  typedef typename Kernel::Construct_point_2      Construct_point_2;
 
   // CONSTRUCTIONS
   //--------------
@@ -184,6 +185,11 @@ public:
   Construct_object_2
   construct_object_2_object() const { 
     return Construct_object_2();
+  }
+
+  Construct_point_2
+  construct_point_2_object() const {
+    return Construct_point_2();
   }
 
   // CONSTRUCTIONS

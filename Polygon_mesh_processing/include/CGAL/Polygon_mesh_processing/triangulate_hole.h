@@ -89,6 +89,8 @@ namespace Polygon_mesh_processing {
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
+    typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type         GeomTraits;
+
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
       false;
@@ -103,8 +105,7 @@ namespace Polygon_mesh_processing {
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter(get_parameter(np, internal_np::geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
-      .first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits))).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -363,11 +364,11 @@ namespace Polygon_mesh_processing {
     
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
+    typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
     triangulate_hole_polyline(points, third_points, tracer, WC(),
-      use_dt3,
-      choose_parameter(get_parameter(np, internal_np::geom_traits),
-        typename CGAL::Kernel_traits<Point>::Kernel()));
+                              use_dt3,
+                              choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
 
     CGAL_assertion(holes.empty());
     return tracer.out;

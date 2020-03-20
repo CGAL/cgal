@@ -161,11 +161,49 @@ namespace CGAL {
         , cluster_epsilon(-1)
       {}
 
-      FT probability;         ///< Probability to control search endurance. %Default value: 5%.
-      std::size_t min_points; ///< Minimum number of points of a shape. %Default value: 1% of total number of input points.
-      FT epsilon;             ///< Maximum tolerance Euclidean distance from a point and a shape. %Default value: 1% of bounding box diagonal.
-      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on a shape at the projected point. %Default value: 0.9 (around 25 degrees).
-      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. %Default value: 1% of bounding box diagonal.
+      /*! 
+        Probability to control search endurance. 
+        %Default value is 0.05.
+
+        A lower probability provides a higher reliability and determinism at the cost 
+        of longer running time due to a higher search endurance.
+
+        It must belong to the interval [0, 1].
+      */
+      FT probability;
+
+      /*! 
+        Minimum number of points in a shape. 
+        %Default value is 1% of total number of input points.
+
+        It must belong to the interval [0, +inf).
+      */
+      std::size_t min_points;
+
+      /*! 
+        Maximum acceptable Euclidean distance between a point and a shape.
+        %Default value is 1% of the bounding box diagonal.
+
+        It must belong to the interval [0, +inf).
+      */
+      FT epsilon;
+
+      /*! 
+        Maximum threshold on the dot product between the estimated 
+        shape's normal and the point's normal, that is the cosine of the angle (cos(25°) = 0.9).
+        %Default value is 0.9 (around 25 degrees).
+
+        It must belong to the interval [0, 1].
+      */
+      FT normal_threshold;
+
+      /*! 
+        Maximum acceptable Euclidean distance between points, which are assumed to be neighbors.
+        %Default value is 1% of the bounding box diagonal.
+
+        It must belong to the interval [0, +inf).
+      */
+      FT cluster_epsilon;
     };
     /// @}
 

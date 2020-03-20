@@ -417,13 +417,9 @@ write_polys(std::ostream& os,
 {
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
-  typedef typename CGAL::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
 
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  Vimap V = choose_parameter(get_parameter(np, internal_np::vertex_index),
-                             get_const_property_map(boost::vertex_index, mesh));
+  typedef typename CGAL::GetInitializedVertexIndexMap<Mesh, NamedParameters>::const_type Vimap;
+  Vimap V = CGAL::get_initialized_vertex_index_map(mesh, np);
 
   std::vector<std::size_t> connectivity_table;
   std::vector<std::size_t> offsets;
@@ -456,13 +452,9 @@ write_polys_tag(std::ostream& os,
 {
   typedef typename boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Mesh>::face_iterator face_iterator;
-  typedef typename CGAL::GetVertexIndexMap<Mesh, NamedParameters>::type Vimap;
 
-  using parameters::get_parameter;
-  using parameters::choose_parameter;
-
-  Vimap V = choose_parameter(get_parameter(np, internal_np::vertex_index),
-                             get_const_property_map(boost::vertex_index, mesh));
+  typedef typename CGAL::GetInitializedVertexIndexMap<Mesh, NamedParameters>::const_type Vimap;
+  Vimap V = CGAL::get_initialized_vertex_index_map(mesh, np);
 
   std::string formatattribute =
     binary ? " format=\"appended\"" : " format=\"ascii\"";
@@ -638,8 +630,7 @@ write_polys_points(std::ostream& os,
  *       `CGAL::vertex_point_t` must be available in `TriangleMesh`.
  *     \cgalParamEnd
  *    \cgalParamBegin{vertex_index_map} the property map with the indices associated to
- * the vertices of `mesh`. If this parameter is omitted, an internal property map for
- *       `CGAL::vertex_index_t` must be available in `TriangleMesh`.
+ * the vertices of `mesh`.
  *     \cgalParamEnd
  * \cgalNamedParamsEnd
  */

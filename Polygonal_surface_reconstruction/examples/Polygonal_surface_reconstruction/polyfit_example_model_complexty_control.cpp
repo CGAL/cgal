@@ -5,10 +5,10 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygonal_surface_reconstruction.h>
 
-#ifdef CGAL_USE_SCIP
+#ifdef CGAL_USE_SCIP // defined (or not) by CMake scripts, do not define by hand
 #include <CGAL/SCIP_mixed_integer_program_traits.h>
 typedef CGAL::SCIP_mixed_integer_program_traits<double>			MIP_Solver;
-#elif defined(CGAL_USE_GLPK)
+#elif defined(CGAL_USE_GLPK) // defined (or not) by CMake scripts, do not define by hand
 #include <CGAL/GLPK_mixed_integer_program_traits.h>
 typedef CGAL::GLPK_mixed_integer_program_traits<double>			MIP_Solver;
 #endif
