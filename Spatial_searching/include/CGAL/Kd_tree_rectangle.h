@@ -105,6 +105,7 @@ namespace CGAL {
     }
 
     Kd_tree_rectangle() 
+      : max_span_coord_(-1)
     {}
     
     
