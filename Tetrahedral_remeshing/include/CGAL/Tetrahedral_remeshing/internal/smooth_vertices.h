@@ -539,7 +539,7 @@ namespace CGAL
 ////   end if(!protect_boundaries)
 
         smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
-        neighbors.assign(nbv, -1);
+        neighbors.assign(nbv, 0/*for dim 3 vertices, start counting directly from 0*/);
 
         ////////////// INTERNAL VERTICES ///////////////////////
         for (const Edge& e : tr.finite_edges())
