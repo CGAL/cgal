@@ -10,6 +10,9 @@
 //
 // Author(s)     : Aymeric PELLE (aymeric.pelle@inria.fr)
 
+
+#include <iostream>
+
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>

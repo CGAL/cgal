@@ -24,6 +24,9 @@
 #ifndef _CORE_MEMORYPOOL_H_
 #define _CORE_MEMORYPOOL_H_
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 #include <CGAL/tss.h>
 #include <boost/config.hpp>

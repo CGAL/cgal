@@ -19,6 +19,9 @@
  * non x-monotone arc of a generic curve
  */
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 #include <CGAL/Handle_with_policy.h>
 

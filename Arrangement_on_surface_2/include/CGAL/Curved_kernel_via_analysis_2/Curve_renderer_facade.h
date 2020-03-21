@@ -57,6 +57,9 @@
 // I still breathe !!!
 #define STILL_ALIVE std::cout << __LINE__ << "\n";
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/tss.h>
 #include <CGAL/Bbox_2.h>

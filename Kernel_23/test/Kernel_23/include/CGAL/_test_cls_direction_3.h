@@ -18,6 +18,9 @@
 #ifndef CGAL__TEST_CLS_DIRECTION_3_H
 #define CGAL__TEST_CLS_DIRECTION_3_H
 
+
+#include <iostream>
+
 #include <CGAL/use.h>
 
 template <class R>

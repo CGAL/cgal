@@ -17,6 +17,9 @@
 #ifndef CGAL_NUMBER_TYPE_CHECKER_H
 #define CGAL_NUMBER_TYPE_CHECKER_H
 
+
+#include <iostream>
+
 #include <CGAL/number_type_basic.h>
 #include <sstream>
 

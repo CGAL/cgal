@@ -13,6 +13,9 @@
 #ifndef CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
 #define CGAL_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Scale_space_reconstruction_3.h>
 
 #include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_smoother.h>

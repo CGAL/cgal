@@ -15,6 +15,9 @@
 #ifndef CGAL_POINT_CONTAINER_H
 #define CGAL_POINT_CONTAINER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Spatial_searching.h>
 
 

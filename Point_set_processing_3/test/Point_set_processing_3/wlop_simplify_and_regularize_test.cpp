@@ -8,6 +8,9 @@
 // wlop_simplify_and_regularize_test points1.xyz points2.xyz...
 
 // CGAL
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>

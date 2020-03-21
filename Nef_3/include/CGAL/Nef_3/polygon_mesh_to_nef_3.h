@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYGON_MESH_TO_NEF_3_H
 #define CGAL_POLYGON_MESH_TO_NEF_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

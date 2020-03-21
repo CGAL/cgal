@@ -13,6 +13,9 @@
 #ifndef CGAL_MESH_SKIN_SURFACE_3_H
 #define CGAL_MESH_SKIN_SURFACE_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Skin_surface_3.h>
 
 #include <CGAL/Cartesian_converter.h>

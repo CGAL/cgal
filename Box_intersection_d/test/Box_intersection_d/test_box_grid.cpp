@@ -2,6 +2,9 @@
 // similar to examples/Box_intersection_d/box_grid.C but stricter in checking
 // and more extensive in what is tested.
 
+
+#include <iostream>
+
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/tags.h>
 

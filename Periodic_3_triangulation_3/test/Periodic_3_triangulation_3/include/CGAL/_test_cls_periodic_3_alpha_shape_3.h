@@ -11,6 +11,9 @@
 #ifndef CGAL_TEST_CLS_ALPHA_SHAPE_3_H
 #define CGAL_TEST_CLS_ALPHA_SHAPE_3_H
 
+
+#include <iostream>
+
 #include <list>
 #include <fstream>
 #include "_count_alpha_periodic_3.h"

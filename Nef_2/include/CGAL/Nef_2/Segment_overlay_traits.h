@@ -12,6 +12,9 @@
 #ifndef CGAL_SEGMENT_OVERLAY_TRAITS_H
 #define CGAL_SEGMENT_OVERLAY_TRAITS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_2.h>
 
 

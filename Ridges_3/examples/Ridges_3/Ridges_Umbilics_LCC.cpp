@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>

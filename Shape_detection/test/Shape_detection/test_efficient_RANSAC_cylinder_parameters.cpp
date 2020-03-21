@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include "include/test_efficient_RANSAC_generators.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

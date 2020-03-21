@@ -1,6 +1,9 @@
 #ifndef EXTRACT_BALLS_FROM_PDB_H
 #define EXTRACT_BALLS_FROM_PDB_H
 
+
+#include <iostream>
+
 #include <ESBTL/atom_classifier.h>
 #include <ESBTL/weighted_atom_iterator.h>
 

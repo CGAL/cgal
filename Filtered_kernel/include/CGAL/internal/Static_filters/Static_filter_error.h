@@ -26,6 +26,9 @@
 // - Remove the degree stuff, it's only meant for debug (?).
 // - Add __attribute__((const)) for optimizing ?
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 #include <CGAL/FPU.h>
 

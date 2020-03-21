@@ -13,6 +13,9 @@
 #ifndef CGAL_POINT_SET_3_H
 #define CGAL_POINT_SET_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Point_set_3.h>
 
 

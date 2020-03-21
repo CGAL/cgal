@@ -1,5 +1,8 @@
 // test program for Compact_container.
 
+
+#include <iostream>
+
 #include <cassert>
 #include <cstddef>
 #include <list>

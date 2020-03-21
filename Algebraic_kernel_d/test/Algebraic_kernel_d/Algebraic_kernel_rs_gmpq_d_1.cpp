@@ -8,6 +8,9 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 
 #if defined(CGAL_USE_GMP) && defined(CGAL_USE_MPFI) && defined(CGAL_USE_RS)

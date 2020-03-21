@@ -17,6 +17,9 @@
 #ifndef CGAL_MAKE_MESH_3_H
 #define CGAL_MAKE_MESH_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>

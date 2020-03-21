@@ -12,6 +12,9 @@
 #ifndef CGAL_CLASSIFICATION_TENSORFLOW_NEURAL_NETWORK_CLASSIFIER_H
 #define CGAL_CLASSIFICATION_TENSORFLOW_NEURAL_NETWORK_CLASSIFIER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Classification.h>
 
 #include <CGAL/Classification/Feature_set.h>

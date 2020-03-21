@@ -18,6 +18,9 @@
 #ifndef CGAL__TEST_CLS_ISO_RECTANGLE_2_H
 #define CGAL__TEST_CLS_ISO_RECTANGLE_2_H
 
+
+#include <iostream>
+
 #include <CGAL/Bbox_2.h>
 #include <cassert>
 #include <CGAL/use.h>

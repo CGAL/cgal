@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>

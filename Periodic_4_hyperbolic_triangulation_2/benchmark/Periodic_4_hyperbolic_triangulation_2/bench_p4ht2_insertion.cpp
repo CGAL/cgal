@@ -1,5 +1,8 @@
 #define PROFILING_MODE
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>

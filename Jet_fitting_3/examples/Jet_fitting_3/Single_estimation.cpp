@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Monge_via_jet_fitting.h>
 

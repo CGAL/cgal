@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_spherical_kernel_3.h>
 
 typedef CGAL::Exact_spherical_kernel_3         Spherical_k;

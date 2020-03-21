@@ -15,6 +15,9 @@
 #ifndef CGAL_POLYHEDRON_CUT_PLANE_3_H
 #define CGAL_POLYHEDRON_CUT_PLANE_3_H 1
 
+
+#include <iostream>
+
 #include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/disable_warnings.h>

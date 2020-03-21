@@ -14,6 +14,9 @@
 #ifndef CGAL_NEF_2_GEN_POINT_LOCATION_H
 #define CGAL_NEF_2_GEN_POINT_LOCATION_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_2.h>
 
 

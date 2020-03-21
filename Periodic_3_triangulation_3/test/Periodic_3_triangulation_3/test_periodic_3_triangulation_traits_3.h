@@ -12,6 +12,9 @@
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
 
+
+#include <iostream>
+
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 
 #include <cassert>

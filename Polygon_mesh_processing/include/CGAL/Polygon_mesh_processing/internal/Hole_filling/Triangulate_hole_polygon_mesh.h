@@ -13,6 +13,9 @@
 #ifndef CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 #define CGAL_HOLE_FILLING_TRIANGULATE_HOLE_POLYHEDRON_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 

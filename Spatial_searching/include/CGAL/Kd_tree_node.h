@@ -13,6 +13,9 @@
 #ifndef CGAL_KD_TREE_NODE_H
 #define CGAL_KD_TREE_NODE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Spatial_searching.h>
 
 

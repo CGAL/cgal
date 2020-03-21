@@ -17,6 +17,9 @@
 #ifndef CGAL_FUNCTION_OBJECTSCD_H
 #define CGAL_FUNCTION_OBJECTSCD_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
 #include <CGAL/use.h>

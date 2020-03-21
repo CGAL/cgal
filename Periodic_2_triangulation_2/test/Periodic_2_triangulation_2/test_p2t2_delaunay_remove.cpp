@@ -2,6 +2,9 @@
 
 #define CGAL_USE_DELAUNAY 1
 
+
+#include <iostream>
+
 #include "./types.h"
 
 const int N_PTS = 75;

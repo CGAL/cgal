@@ -2,6 +2,9 @@
 #define CGAL_BOX_INTERSECTION_D_UTIL_H
 
 
+
+#include <iostream>
+
 #include <vector>
 #include <algorithm> // for pair
 #include <cmath>

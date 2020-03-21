@@ -15,6 +15,9 @@
 // Author(s)     : Sylvain Pion
  
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Quotient.h>
 #include <cassert>

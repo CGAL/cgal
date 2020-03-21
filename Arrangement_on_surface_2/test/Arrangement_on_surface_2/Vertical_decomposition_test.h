@@ -1,6 +1,9 @@
 #ifndef CGAL_BATCHED_POINT_LOCATION_TEST_H
 #define CGAL_BATCHED_POINT_LOCATION_TEST_H
 
+
+#include <iostream>
+
 #include <vector>
 #include <list>
 #include <utility>

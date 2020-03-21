@@ -1,4 +1,7 @@
 
+
+#include <iostream>
+
 #include <CGAL/internal/Surface_mesh_segmentation/Expectation_maximization.h>
 
 #include <boost/random.hpp>

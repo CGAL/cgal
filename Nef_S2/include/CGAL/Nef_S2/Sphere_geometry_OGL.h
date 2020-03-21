@@ -13,6 +13,9 @@
 #ifndef CGAL_SPHERE_GEOMETRY_OGL_H
 #define CGAL_SPHERE_GEOMETRY_OGL_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_S2.h>
 
 

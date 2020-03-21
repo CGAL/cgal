@@ -14,6 +14,9 @@
 #ifndef CGAL_NEF_K3_TREE_H
 #define CGAL_NEF_K3_TREE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

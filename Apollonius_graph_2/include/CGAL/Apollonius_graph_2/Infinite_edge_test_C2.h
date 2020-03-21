@@ -15,6 +15,9 @@
 #ifndef CGAL_APOLLONIUS_GRAPH_2_INFINITE_EDGE_TEST_C2_H
 #define CGAL_APOLLONIUS_GRAPH_2_INFINITE_EDGE_TEST_C2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Apollonius_graph_2.h>
 
 

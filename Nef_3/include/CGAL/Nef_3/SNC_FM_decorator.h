@@ -13,6 +13,9 @@
 #ifndef CGAL_SNC_FM_DECORATOR_H
 #define CGAL_SNC_FM_DECORATOR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO

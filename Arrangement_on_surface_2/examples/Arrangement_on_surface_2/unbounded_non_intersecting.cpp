@@ -2,6 +2,9 @@
 // Constructing an arrangement of unbounded linear objects using the insertion
 // function for non-intersecting curves.
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>

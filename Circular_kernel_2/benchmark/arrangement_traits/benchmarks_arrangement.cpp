@@ -1,5 +1,8 @@
 #define CGAL_CAST_INT
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include<CGAL/Handle_for.h>
 #include <CGAL/Cartesian.h>

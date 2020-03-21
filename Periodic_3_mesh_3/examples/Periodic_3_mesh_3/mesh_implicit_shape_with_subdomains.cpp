@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Periodic_3_mesh_3/config.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

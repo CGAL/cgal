@@ -14,6 +14,9 @@
 #ifndef CGAL_INTRINSIC_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_INTRINSIC_DELAUNAY_TRIANGULATION_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Heat_method_3.h>
 
 #include <CGAL/disable_warnings.h>

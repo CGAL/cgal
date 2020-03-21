@@ -7,6 +7,9 @@
 
 // Does not work with inexact kernel! Get inconsistency when comparing difference with zero.
 
+
+#include <iostream>
+
 #include <cmath>
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

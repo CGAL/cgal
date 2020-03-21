@@ -12,6 +12,9 @@
 #ifndef CGAL_CD3_SINGLE_WALL_CREATOR2_H
 #define CGAL_CD3_SINGLE_WALL_CREATOR2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Convex_decomposition_3.h>
 
 

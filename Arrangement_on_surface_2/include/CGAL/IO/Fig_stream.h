@@ -12,6 +12,9 @@
 #ifndef CGAL_FIG_STREAM_H
 #define CGAL_FIG_STREAM_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 

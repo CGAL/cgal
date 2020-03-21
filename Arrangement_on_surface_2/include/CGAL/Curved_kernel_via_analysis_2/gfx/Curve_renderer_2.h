@@ -23,6 +23,9 @@
 #define CGAL_AK_ENABLE_DEPRECATED_INTERFACE 1
 #endif
 
+
+#include <iostream>
+
 #include <vector>
 #include <stack>
 #include <cmath>

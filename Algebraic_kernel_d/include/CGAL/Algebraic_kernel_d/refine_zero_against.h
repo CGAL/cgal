@@ -18,6 +18,9 @@
 #ifndef CGAL_REFINE_ZERO_AGAINST_H
 #define CGAL_REFINE_ZERO_AGAINST_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Polynomial.h>

@@ -11,6 +11,9 @@
 //
 // ============================================================================
 
+
+#include <iostream>
+
 #include <CGAL/Algebraic_kernel_d/flags.h>
 
 #include <vector>

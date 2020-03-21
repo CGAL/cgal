@@ -11,6 +11,9 @@
 #ifndef CGAL_RS_RS3_REFINER_1_H
 #define CGAL_RS_RS3_REFINER_1_H
 
+
+#include <iostream>
+
 #include <CGAL/Polynomial_traits_d.h>
 #include "rs2_calls.h"
 #include <rs3_fncts.h>

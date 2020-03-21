@@ -14,6 +14,9 @@
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
 //         they may be wrong now.
 
+
+#include <iostream>
+
 #include <cassert>
 #include <vector>
 

@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/internal/Surface_mesh_segmentation/Disk_samplers.h>
 
 #include <boost/tuple/tuple.hpp>

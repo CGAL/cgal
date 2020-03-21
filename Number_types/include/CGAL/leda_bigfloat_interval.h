@@ -15,6 +15,9 @@
 #ifndef CGAL_LEDA_BIGFLOAT_INTERVAL_H
 #define CGAL_LEDA_BIGFLOAT_INTERVAL_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 #include <CGAL/LEDA_basic.h>

@@ -1,4 +1,7 @@
 //
+
+#include <iostream>
+
 #include <CGAL/internal/Surface_mesh_segmentation/K_means_clustering.h>
 
 #include <boost/random.hpp>

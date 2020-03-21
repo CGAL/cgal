@@ -13,6 +13,9 @@
 #ifndef CGAL_MESH_3_POLYLINES_TO_PROTECT_H
 #define CGAL_MESH_3_POLYLINES_TO_PROTECT_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 

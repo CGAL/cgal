@@ -20,6 +20,9 @@
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
+
+#include <iostream>
+
 #include <utility>
 
 #include <CGAL/_test_types.h>

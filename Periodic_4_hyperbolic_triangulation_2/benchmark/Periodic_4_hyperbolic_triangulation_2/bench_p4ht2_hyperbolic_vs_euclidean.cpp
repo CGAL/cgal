@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>

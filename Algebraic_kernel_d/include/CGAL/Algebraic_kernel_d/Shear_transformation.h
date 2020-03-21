@@ -15,6 +15,9 @@
 #ifndef CGAL_ACK_SHEAR_TRANSFORMATION
 #define CGAL_ACK_SHEAR_TRANSFORMATION 1
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 #include <vector>

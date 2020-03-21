@@ -3,6 +3,9 @@
 #ifndef CGAL_TEST_MODULAR_GCD_H
 #define CGAL_TEST_MODULAR_GCD_H
 
+
+#include <iostream>
+
 #include <CGAL/Polynomial.h>
 #include <CGAL/gen_polynomials.h> 
 #include <CGAL/Sqrt_extension.h> 

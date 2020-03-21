@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/pca_estimate_normals.h>

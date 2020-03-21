@@ -14,6 +14,9 @@
 //
 // Author(s)     : Stefan Schirra
  
+
+#include <iostream>
+
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Simple_homogeneous.h>

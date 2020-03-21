@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/circles.cpp
 // Constructing an arrangement of circles using the conic-arc traits.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>

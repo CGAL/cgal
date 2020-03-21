@@ -12,6 +12,9 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_2_H
 #define CGAL_REGULAR_TRIANGULATION_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Triangulation_2.h>
 
 #include <CGAL/Triangulation_2.h>

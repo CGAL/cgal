@@ -16,6 +16,9 @@
 #ifndef CGAL_NEF_HALFEDGE_H
 #define CGAL_NEF_HALFEDGE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

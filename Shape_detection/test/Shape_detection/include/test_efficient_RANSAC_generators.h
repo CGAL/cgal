@@ -14,6 +14,9 @@
 #ifndef CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_GENERATORS_H
 #define CGAL_SHAPE_DETECTION_EFFICIENT_RANSAC_GENERATORS_H
 
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/Kernel/global_functions.h>

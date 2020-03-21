@@ -5,6 +5,9 @@
 
 // Works with an exact kernel, too.
 
+
+#include <iostream>
+
 #include <cmath>
 #include <cassert>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

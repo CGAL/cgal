@@ -11,6 +11,9 @@
 // Author(s)     : Sylvain Pion
 
 
+
+#include <iostream>
+
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
 #include <CGAL/internal/Static_filters/tools.h>

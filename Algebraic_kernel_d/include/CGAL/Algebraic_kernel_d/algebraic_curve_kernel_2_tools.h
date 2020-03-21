@@ -16,6 +16,9 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_2_TOOLS
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_2_TOOLS 1
 
+
+#include <iostream>
+
 #include <iterator>
 
 #include <CGAL/basic.h>

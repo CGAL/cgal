@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYGON_WITH_HOLES_2_H
 #define CGAL_POLYGON_WITH_HOLES_2_H
 
+
+#include <iostream>
+
 #include <CGAL/Polygon_2.h>
 #include <CGAL/General_polygon_with_holes_2.h>
 #include <vector>

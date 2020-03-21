@@ -11,6 +11,9 @@
 #ifndef CGAL_STRAIGHT_SKELETON_TEST_H
 #define CGAL_STRAIGHT_SKELETON_TEST_H 1
 
+
+#include <iostream>
+
 #include <CGAL/license/Straight_skeleton_2.h>
 
 

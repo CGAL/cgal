@@ -12,6 +12,9 @@
 #ifndef CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H
 #define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Advancing_front_surface_reconstruction.h>
 
 #include <CGAL/disable_warnings.h>

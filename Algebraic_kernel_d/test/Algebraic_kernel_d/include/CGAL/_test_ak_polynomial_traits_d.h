@@ -8,6 +8,9 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
+
+#include <iostream>
+
 #include <CGAL/Test/_test_polynomial_traits_d.h>
 
 namespace CGAL{

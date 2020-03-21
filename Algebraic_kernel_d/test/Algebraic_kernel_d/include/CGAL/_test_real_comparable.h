@@ -22,6 +22,9 @@
 #ifndef CGAL_TEST_REAL_COMPARABLE_H
 #define CGAL_TEST_REAL_COMPARABLE_H
 
+
+#include <iostream>
+
 #include <cassert>
 #include <CGAL/tags.h>
 #include <cstddef>

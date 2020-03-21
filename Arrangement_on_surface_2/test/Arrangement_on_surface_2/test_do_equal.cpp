@@ -1,5 +1,8 @@
 // Testing the do_equal function
 
+
+#include <iostream>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>

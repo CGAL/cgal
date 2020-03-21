@@ -12,6 +12,9 @@
 #ifndef CGAL_TRIANGULATION_H
 #define CGAL_TRIANGULATION_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Triangulation.h>
 
 #include <CGAL/disable_warnings.h>

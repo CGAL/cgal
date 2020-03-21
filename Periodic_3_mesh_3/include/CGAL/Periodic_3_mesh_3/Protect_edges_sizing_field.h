@@ -29,6 +29,9 @@
 //   (unordered sets, improving 'unchecked_vertices', etc.)
 // - No wonky indentation :)
 
+
+#include <iostream>
+
 #include <CGAL/license/Periodic_3_mesh_3.h>
 
 #include <CGAL/Mesh_3/io_signature.h>

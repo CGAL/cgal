@@ -21,6 +21,9 @@
 #ifndef CGAL_CONVEX_HULL_D_H
 #define CGAL_CONVEX_HULL_D_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Convex_hull_d.h>
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Convex_hull_d.h>"

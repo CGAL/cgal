@@ -1,4 +1,7 @@
 // examples/Skin_surface_3/skin_surface_simple.C
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>

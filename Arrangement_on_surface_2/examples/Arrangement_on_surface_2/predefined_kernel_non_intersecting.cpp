@@ -2,6 +2,9 @@
 // Constructing an arrangement of non-intersecting line segments using the
 // predefined kernel with exact predicates.
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Arr_non_caching_segment_basic_traits_2.h>
 #include <CGAL/Arrangement_2.h>

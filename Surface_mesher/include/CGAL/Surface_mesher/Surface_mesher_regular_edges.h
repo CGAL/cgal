@@ -13,6 +13,9 @@
 #ifndef CGAL_SURFACE_MESHER_REGULAR_EDGES_H
 #define CGAL_SURFACE_MESHER_REGULAR_EDGES_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_mesher.h>
 
 #include <CGAL/disable_warnings.h>

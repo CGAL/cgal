@@ -17,6 +17,9 @@
 #ifndef CGAL_DIRECTION_2_H
 #define CGAL_DIRECTION_2_H
 
+
+#include <iostream>
+
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/kernel_assertions.h>

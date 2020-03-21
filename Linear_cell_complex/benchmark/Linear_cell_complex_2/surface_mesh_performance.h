@@ -1,6 +1,9 @@
 //== INCLUDES =================================================================
 
 
+
+#include <iostream>
+
 #include "performance_2.h"
 #include "surface_mesh/Surface_mesh.h"
 

@@ -1,5 +1,8 @@
 // test program for Compact_container.
 
+
+#include <iostream>
+
 #include <CGAL/Compact_container.h>
 
 class Node_1

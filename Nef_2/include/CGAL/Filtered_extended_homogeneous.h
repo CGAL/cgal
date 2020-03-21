@@ -12,6 +12,9 @@
 #ifndef CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 #define CGAL_FILTERED_EXTENDED_HOMOGENEOUS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_2.h>
 
 #include <CGAL/disable_warnings.h>

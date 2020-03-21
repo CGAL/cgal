@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Eigen_matrix.h>
 

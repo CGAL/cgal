@@ -17,6 +17,9 @@
 #ifndef CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
 #define CGAL_CARTESIAN_AFF_TRANSFORMATION_REP_3_H
 
+
+#include <iostream>
+
 #include <ostream>
 #include <CGAL/determinant.h>
 

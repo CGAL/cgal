@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include "Surface_mesh_deformation_test_commons.h"
 #include <algorithm>
 #include <sstream>

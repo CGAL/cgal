@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/curve_history.cpp
 // Constructing an arrangement with curve history.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>

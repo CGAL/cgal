@@ -14,6 +14,9 @@
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
 #define CGAL_INTERNAL_STATIC_FILTERS_PERIODIC_3_ORIENTATION_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 #include <CGAL/Profile_counter.h>

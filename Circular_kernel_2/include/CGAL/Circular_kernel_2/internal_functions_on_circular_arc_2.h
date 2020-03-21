@@ -18,6 +18,9 @@
 #ifndef CGAL_CIRCULAR_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 #define CGAL_CIRCULAR_KERNEL_PREDICATES_ON_CIRCULAR_ARC_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Circular_kernel_2.h>
 
 

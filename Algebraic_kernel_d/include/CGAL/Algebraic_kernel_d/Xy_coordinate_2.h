@@ -16,6 +16,9 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_XY_COORDINATE_2_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_XY_COORDINATE_2_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <boost/numeric/interval.hpp>
 

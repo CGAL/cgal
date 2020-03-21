@@ -1,6 +1,9 @@
 #ifndef ECG_BENCH_H
 #define ECG_BENCH_H
 
+
+#include <iostream>
+
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Memory_sizer.h>
 

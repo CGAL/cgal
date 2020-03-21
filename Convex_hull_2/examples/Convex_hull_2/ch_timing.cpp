@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/convex_hull_traits_2.h>
 #include <CGAL/ch_akl_toussaint.h>

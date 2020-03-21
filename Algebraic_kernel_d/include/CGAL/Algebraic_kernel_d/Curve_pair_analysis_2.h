@@ -17,6 +17,9 @@
 #ifndef CGAL_ACK_CURVE_PAIR_ANALYSIS_H
 #define CGAL_ACK_CURVE_PAIR_ANALYSIS_H 1
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <vector>

@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/polylines.cpp
 // Constructing an arrangement of polylines.
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_directional_non_caching_segment_basic_traits_2.h>
 #include <CGAL/Arr_polycurve_basic_traits_2.h>

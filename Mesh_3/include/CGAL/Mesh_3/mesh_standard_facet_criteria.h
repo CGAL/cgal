@@ -19,6 +19,9 @@
 #ifndef CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H
 #define CGAL_MESH_3_MESH_STANDARD_FACET_CRITERIA_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 

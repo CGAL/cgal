@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_spherical_kernel_3.h>
 #include <CGAL/Random.h>
 

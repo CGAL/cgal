@@ -12,6 +12,9 @@
 #ifndef CGAL_BASIC_VIEWER_H
 #define CGAL_BASIC_VIEWER_H
 
+
+#include <iostream>
+
 #include <QApplication>
 #include <QKeyEvent>
 

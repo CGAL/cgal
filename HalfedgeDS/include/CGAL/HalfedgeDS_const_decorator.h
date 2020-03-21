@@ -17,6 +17,9 @@
 #ifndef CGAL_HALFEDGEDS_CONST_DECORATOR_H
 #define CGAL_HALFEDGEDS_CONST_DECORATOR_H 1
 
+
+#include <iostream>
+
 #include <CGAL/HalfedgeDS_items_decorator.h>
 #include <vector>
 #include <CGAL/IO/Verbose_ostream.h>

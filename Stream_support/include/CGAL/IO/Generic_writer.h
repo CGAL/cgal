@@ -17,6 +17,9 @@
 #ifndef CGAL_IO_GENERIC_WRITER_H
 #define CGAL_IO_GENERIC_WRITER_H 1
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <iterator>
 

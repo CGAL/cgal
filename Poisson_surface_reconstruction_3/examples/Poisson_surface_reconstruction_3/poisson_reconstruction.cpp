@@ -9,6 +9,9 @@
 // poisson_reconstruction file_in file_out [options]
 
 // CGAL
+
+#include <iostream>
+
 #include <CGAL/AABB_tree.h> // must be included before kernel
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>

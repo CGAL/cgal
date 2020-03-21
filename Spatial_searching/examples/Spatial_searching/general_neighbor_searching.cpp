@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Manhattan_distance_iso_box_point.h>

@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/plane_sweep.cpp
 // Computing intersection points among curves using the surface-sweep alg.
 
+
+#include <iostream>
+
 #include <list>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

@@ -19,6 +19,9 @@
 #ifndef CGAL__TEST_NEW_2_H
 #define CGAL__TEST_NEW_2_H
 
+
+#include <iostream>
+
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/use.h>
 

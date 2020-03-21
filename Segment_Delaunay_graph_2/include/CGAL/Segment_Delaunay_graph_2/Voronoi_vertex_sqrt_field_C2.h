@@ -16,6 +16,9 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VERTEX_SQRT_FIELD_C2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_VORONOI_VERTEX_SQRT_FIELD_C2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Segment_Delaunay_graph_2.h>
 
 

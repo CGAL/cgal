@@ -1,6 +1,9 @@
 #ifndef CGAL_POLYHEDRALSURF_H_
 #define CGAL_POLYHEDRALSURF_H_
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/helpers.h>

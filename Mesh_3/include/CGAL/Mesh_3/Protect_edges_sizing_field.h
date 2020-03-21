@@ -23,6 +23,9 @@
 #ifndef CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 #define CGAL_MESH_3_PROTECT_EDGES_SIZING_FIELD_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>

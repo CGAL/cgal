@@ -13,6 +13,9 @@
 #ifndef CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
 #define CGAL_MESH_3_SIZING_FIELD_WITH_AABB_TREE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/Profile_counter.h>

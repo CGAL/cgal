@@ -1,4 +1,7 @@
 //== INCLUDES =================================================================
+
+#include <iostream>
+
 #include "cgogn_performance_3.h"
 #include "lcc_performance_3.h"
 #include "openvolumemesh_performance.h"

@@ -16,6 +16,9 @@
 #ifndef CGAL_SNC_EXTERNAL_STRUCTURE_H
 #define CGAL_SNC_EXTERNAL_STRUCTURE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

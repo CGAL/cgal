@@ -14,6 +14,9 @@
 #ifndef CGAL_QT_DEBUG_H
 #define CGAL_QT_DEBUG_H
 
+
+#include <iostream>
+
 #include <CGAL/license/GraphicsView.h>
 
 

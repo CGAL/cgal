@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cassert>
 #include <CGAL/range_search_delaunay_2.h>

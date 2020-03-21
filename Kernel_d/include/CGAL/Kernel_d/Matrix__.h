@@ -17,6 +17,9 @@
 #ifndef CGAL_MATRIX___H
 #define CGAL_MATRIX___H
 
+
+#include <iostream>
+
 #include <CGAL/Kernel_d/Vector__.h>
 #include <CGAL/use.h>
 #include <CGAL/tss.h>

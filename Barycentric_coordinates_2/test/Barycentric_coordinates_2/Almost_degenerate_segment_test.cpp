@@ -7,6 +7,9 @@
 
 // Does not work with inexact kernel! Get division by zero during the normalization step.
 
+
+#include <iostream>
+
 #include <cmath>
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

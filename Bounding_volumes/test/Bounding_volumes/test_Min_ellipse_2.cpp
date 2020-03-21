@@ -25,6 +25,9 @@
 // implementation: test program for 2D Smallest Enclosing Ellipse
 // ============================================================================
 
+
+#include <iostream>
+
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Homogeneous.h>

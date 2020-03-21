@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 // Example program for the linear_least_square_fitting function

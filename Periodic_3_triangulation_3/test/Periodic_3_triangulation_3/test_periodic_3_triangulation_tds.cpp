@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>

@@ -24,6 +24,9 @@
 #endif 
 
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
 

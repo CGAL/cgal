@@ -1,6 +1,9 @@
 #ifndef CGAL_SDG_TEST_H
 #define CGAL_SDG_TEST_H 1
 
+
+#include <iostream>
+
 #include "IO/io_aux.h"
 #include "test_types.h"
 

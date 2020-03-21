@@ -1,5 +1,8 @@
 #define CGAL_POLYGON_DEBUG 1
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
 

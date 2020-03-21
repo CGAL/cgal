@@ -13,6 +13,9 @@
 // STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
+
+#include <iostream>
+
 #include <set>
 
 template <class SK>

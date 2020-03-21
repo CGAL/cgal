@@ -12,6 +12,9 @@
 #ifndef CGAL_COMBINATORIAL_MAP_INTERNAL_FUNCTORS_H
 #define CGAL_COMBINATORIAL_MAP_INTERNAL_FUNCTORS_H
 
+
+#include <iostream>
+
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
 #include <CGAL/Dimension.h>

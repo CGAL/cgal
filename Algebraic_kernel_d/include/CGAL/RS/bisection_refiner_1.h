@@ -14,6 +14,9 @@
 #ifndef CGAL_RS_BISECTION_REFINER_1_H
 #define CGAL_RS_BISECTION_REFINER_1_H
 
+
+#include <iostream>
+
 #include <CGAL/Polynomial_traits_d.h>
 #include "signat_1.h"
 #include "Gmpfr_make_unique.h"

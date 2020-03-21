@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Stream_lines_2.h>
 #include <CGAL/Euler_integrator_2.h>

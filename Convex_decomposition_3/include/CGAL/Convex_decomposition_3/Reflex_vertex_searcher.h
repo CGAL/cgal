@@ -12,6 +12,9 @@
 #ifndef CGAL_CD3_REFLEX_VERTEX_SEARCHER_H
 #define CGAL_CD3_REFLEX_VERTEX_SEARCHER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Convex_decomposition_3.h>
 
 

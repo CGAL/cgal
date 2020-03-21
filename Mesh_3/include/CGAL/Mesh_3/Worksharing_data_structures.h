@@ -12,6 +12,9 @@
 #ifndef CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 #define CGAL_MESH_3_WORKSHARING_DATA_STRUCTURES_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>

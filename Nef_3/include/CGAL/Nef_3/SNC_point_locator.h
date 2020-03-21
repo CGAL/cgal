@@ -13,6 +13,9 @@
 #ifndef CGAL_NEF_SNC_POINT_LOCATOR_H
 #define CGAL_NEF_SNC_POINT_LOCATOR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

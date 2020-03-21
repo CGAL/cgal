@@ -1,6 +1,9 @@
 // Test file for the Interval_nt<bool> class.
 // Sylvain Pion, 1997-2005.
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/exceptions.h>

@@ -14,6 +14,9 @@
 #ifndef CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
 #define CGAL_MESH_2_MESH_GLOBAL_OPTIMIZER_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_2.h>
 
 

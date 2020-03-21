@@ -19,6 +19,9 @@
 #ifndef CGAL_ALGEBRAIC_REAL_QUADRATIC_REFINEMENT_REP_BFI_H
 #define CGAL_ALGEBRAIC_REAL_QUADRATIC_REFINEMENT_REP_BFI_H
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>

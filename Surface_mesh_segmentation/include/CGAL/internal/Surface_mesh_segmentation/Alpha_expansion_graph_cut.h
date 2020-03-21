@@ -12,6 +12,9 @@
 
 #define CGAL_SURFACE_MESH_SEGMENTATION_ALPHA_EXPANSION_GRAPH_CUT_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
 

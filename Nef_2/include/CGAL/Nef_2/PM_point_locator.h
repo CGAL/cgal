@@ -12,6 +12,9 @@
 #ifndef CGAL_PM_POINT_LOCATOR_H
 #define CGAL_PM_POINT_LOCATOR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_2.h>
 
 

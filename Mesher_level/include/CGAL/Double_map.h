@@ -13,6 +13,9 @@
 #ifndef CGAL_DOUBLE_MAP_H
 #define CGAL_DOUBLE_MAP_H
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <map>

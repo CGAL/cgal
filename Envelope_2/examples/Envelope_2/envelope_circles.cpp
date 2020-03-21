@@ -2,6 +2,9 @@
 // Constructing the envelopes of a set of circles using the circle-segment
 // traits.
 
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>

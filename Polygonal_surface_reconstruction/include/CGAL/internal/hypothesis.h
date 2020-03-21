@@ -11,6 +11,9 @@
 #ifndef CGAL_POLYGONAL_SURFACE_RECONSTRUCTION_HYPOTHESIS_H
 #define CGAL_POLYGONAL_SURFACE_RECONSTRUCTION_HYPOTHESIS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Polygonal_surface_reconstruction.h>
 
 #include <CGAL/Surface_mesh.h>

@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Segment_2.h>
 #include <CGAL/Iso_rectangle_2.h>

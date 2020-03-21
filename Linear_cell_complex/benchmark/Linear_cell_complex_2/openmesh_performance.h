@@ -1,6 +1,9 @@
 //== INCLUDES =================================================================
 
 
+
+#include <iostream>
+
 #include "performance_2.h"
 #include "OpenMesh/Core/IO/MeshIO.hh"
 #include "OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh"

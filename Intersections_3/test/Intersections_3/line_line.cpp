@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>

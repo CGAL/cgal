@@ -10,6 +10,9 @@
 //
 // Author(s)     : Francois Rebufat
 
+
+#include <iostream>
+
 #include <CGAL/Triangulation_3.h>
 #include <cassert>
 

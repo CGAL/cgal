@@ -21,6 +21,9 @@
 
 #warning this file is considered obsolete
 
+
+#include <iostream>
+
 #include <vector>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Interval_nt.h>

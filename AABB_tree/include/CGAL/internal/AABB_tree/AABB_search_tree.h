@@ -13,6 +13,9 @@
 #ifndef CGAL_AABB_SEARCH_TREE_H
 #define CGAL_AABB_SEARCH_TREE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/AABB_tree.h>
 
 

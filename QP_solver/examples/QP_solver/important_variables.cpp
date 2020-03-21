@@ -1,4 +1,7 @@
 // Example: find the points that contribute to a convex combination
+
+#include <iostream>
+
 #include <cassert>
 #include <vector>
 #include <CGAL/Cartesian_d.h>

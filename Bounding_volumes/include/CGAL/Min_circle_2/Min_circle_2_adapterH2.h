@@ -13,6 +13,9 @@
 #ifndef CGAL_MIN_CIRCLE_2_ADAPTERH2_H
 #define CGAL_MIN_CIRCLE_2_ADAPTERH2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Bounding_volumes.h>
 
 

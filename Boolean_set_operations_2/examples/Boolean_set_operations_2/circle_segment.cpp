@@ -2,6 +2,9 @@
  * Handling circles and linear segments concurrently.
  */
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/General_polygon_set_2.h>

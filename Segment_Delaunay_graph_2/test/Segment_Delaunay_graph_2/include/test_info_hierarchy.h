@@ -1,6 +1,9 @@
 #ifndef CGAL_TEST_INFO_HIERARCHY_H
 #define CGAL_TEST_INFO_HIERARCHY_H 1
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Random.h>
 #include "IO/io_aux.h"

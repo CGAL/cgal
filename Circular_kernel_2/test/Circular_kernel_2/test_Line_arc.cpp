@@ -15,6 +15,9 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <cassert>
 #include <CGAL/Circular_kernel_2.h>

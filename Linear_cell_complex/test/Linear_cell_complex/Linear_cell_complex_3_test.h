@@ -12,6 +12,9 @@
 #ifndef CGAL_LCC_3_TEST_H
 #define CGAL_LCC_3_TEST_H
 
+
+#include <iostream>
+
 #include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>

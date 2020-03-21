@@ -10,6 +10,9 @@
 //
 // Author(s)     : Rebufat Francois (Francois.Rebufat@sophia.inria.fr)
 
+
+#include <iostream>
+
 #include <cassert>
 
 template <class Tds>

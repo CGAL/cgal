@@ -1,5 +1,8 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>

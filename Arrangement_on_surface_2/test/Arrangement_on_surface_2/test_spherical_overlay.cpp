@@ -1,6 +1,9 @@
 // #define CGAL_IDENTIFICATION_XY  2
 // #define CGAL_SS_VERBOSE 1
 
+
+#include <iostream>
+
 #include <string>
 #include <cstring>
 #include <vector>

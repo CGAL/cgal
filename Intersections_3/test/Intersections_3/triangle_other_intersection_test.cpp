@@ -10,6 +10,9 @@
 //
 // Author(s)     : Stephane Tayeb
 
+
+#include <iostream>
+
 #include <string>
 
 #include <CGAL/Cartesian.h>

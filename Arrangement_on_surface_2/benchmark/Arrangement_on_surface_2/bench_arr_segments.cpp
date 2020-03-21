@@ -44,6 +44,9 @@ typedef Kernel::FT                                           Number_type;
 
 #endif
 
+
+#include <iostream>
+
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_naive_point_location.h>

@@ -1,4 +1,7 @@
 //== INCLUDES =================================================================
+
+#include <iostream>
+
 #include "polyhedron_performance.h"
 #include "lcc_performance_2.h"
 #include "surface_mesh_performance.h"

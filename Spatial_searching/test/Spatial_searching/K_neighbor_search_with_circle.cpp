@@ -1,4 +1,7 @@
 // file: K_neighbor_search_with_circle.cpp
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <CGAL/Kd_tree.h>

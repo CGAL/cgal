@@ -13,6 +13,9 @@
 #ifndef CGAL_ARR_LANDMARKS_MIDDLE_EDGES_GENERATOR_H
 #define CGAL_ARR_LANDMARKS_MIDDLE_EDGES_GENERATOR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 

@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Interpolation_traits_2.h>
 #include <CGAL/Projection_traits_xy_3.h>

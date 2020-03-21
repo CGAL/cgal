@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/global_removal.cpp
 // Using the global removal functions.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>

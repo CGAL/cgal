@@ -1,5 +1,8 @@
 //#define CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/Simple_cartesian.h>

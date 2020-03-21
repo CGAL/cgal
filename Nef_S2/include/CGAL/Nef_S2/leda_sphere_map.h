@@ -13,6 +13,9 @@
 #ifndef CGAL_LEDA_SPHERE_MAP_H
 #define CGAL_LEDA_SPHERE_MAP_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_S2.h>
 
 

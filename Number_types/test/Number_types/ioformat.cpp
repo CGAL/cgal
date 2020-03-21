@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/config.h>
 
 #include <CGAL/Quotient.h>

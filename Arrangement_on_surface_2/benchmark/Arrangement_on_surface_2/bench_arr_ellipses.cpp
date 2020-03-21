@@ -1,6 +1,9 @@
 // file: examples/Arrangement_on_surface_2/old_example2.C
 // Benchmark for arrangements of ellipses.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_conic_traits_2.h>

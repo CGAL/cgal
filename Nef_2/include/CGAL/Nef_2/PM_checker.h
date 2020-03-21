@@ -13,6 +13,9 @@
 #ifndef CGAL_PM_CHECKER_H
 #define CGAL_PM_CHECKER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_2.h>
 
 

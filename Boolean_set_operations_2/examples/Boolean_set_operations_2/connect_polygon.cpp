@@ -2,6 +2,9 @@
  * Connecting a polygon with holes.
  */
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/connect_holes.h>
 #include <list>

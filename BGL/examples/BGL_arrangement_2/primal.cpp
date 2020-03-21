@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/bgl_primal_adapter.cpp
 // Adapting an arrangement to a BGL graph.
 
+
+#include <iostream>
+
 #include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>

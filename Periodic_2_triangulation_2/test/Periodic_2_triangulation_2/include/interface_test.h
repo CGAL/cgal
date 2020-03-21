@@ -4,6 +4,9 @@
 #ifndef P2T2_INTERFACE_TEST_H
 #define P2T2_INTERFACE_TEST_H
 
+
+#include <iostream>
+
 #include <CGAL/point_generators_2.h>
 #include <CGAL/use.h>
 

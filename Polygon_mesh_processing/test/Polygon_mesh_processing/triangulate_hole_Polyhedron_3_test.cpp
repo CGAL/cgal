@@ -1,5 +1,8 @@
 //#define POLY 
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #ifdef POLY
 #include <CGAL/Polyhedron_3.h>

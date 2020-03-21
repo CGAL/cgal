@@ -13,6 +13,9 @@
 #ifndef CGAL_LAZY_H
 #define CGAL_LAZY_H
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>

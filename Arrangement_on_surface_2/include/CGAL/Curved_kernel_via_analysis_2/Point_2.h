@@ -19,6 +19,9 @@
  * be analyzed.
  */
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 
 #include <boost/optional.hpp>

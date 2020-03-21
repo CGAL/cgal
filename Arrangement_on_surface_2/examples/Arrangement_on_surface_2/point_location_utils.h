@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Arr_point_location_result.h>
 
 //-----------------------------------------------------------------------------

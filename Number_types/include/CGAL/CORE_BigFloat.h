@@ -14,6 +14,9 @@
 #ifndef CGAL_CORE_BIGFLOAT_H
 #define CGAL_CORE_BIGFLOAT_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/CORE/BigFloat.h>

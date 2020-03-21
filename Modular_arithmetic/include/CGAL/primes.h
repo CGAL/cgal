@@ -15,6 +15,9 @@
 #ifndef CGAL_PRIMES_H
 #define CGAL_PRIMES_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 namespace CGAL { 

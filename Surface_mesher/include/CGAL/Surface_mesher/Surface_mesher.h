@@ -20,6 +20,9 @@
 #ifndef CGAL_SURFACE_MESHER_SURFACE_MESHER_H
 #define CGAL_SURFACE_MESHER_SURFACE_MESHER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_mesher.h>
 
 #include <CGAL/disable_warnings.h>

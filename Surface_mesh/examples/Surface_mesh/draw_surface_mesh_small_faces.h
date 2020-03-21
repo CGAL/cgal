@@ -12,6 +12,9 @@
 #ifndef CGAL_DRAW_SURFACE_MESH_SMALL_FACES_H
 #define CGAL_DRAW_SURFACE_MESH_SMALL_FACES_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 

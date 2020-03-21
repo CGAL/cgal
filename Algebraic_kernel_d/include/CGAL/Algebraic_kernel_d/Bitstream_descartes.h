@@ -15,6 +15,9 @@
 #ifndef CGAL_GENERIC_DESCARTES
 #define CGAL_GENERIC_DESCARTES 1
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/basic.h>

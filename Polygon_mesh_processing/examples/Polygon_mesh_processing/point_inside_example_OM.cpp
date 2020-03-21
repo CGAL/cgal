@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>

@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Nef_polyhedron_S2.h>

@@ -12,6 +12,9 @@
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_TRIANGLES_2_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_TRIANGLES_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Principal_component_analysis.h>
 
 

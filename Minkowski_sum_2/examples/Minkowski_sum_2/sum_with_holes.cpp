@@ -1,6 +1,9 @@
 //! \file examples/Minkowski_sum_2/sum_with_holes.cpp
 // Computing the Minkowski sum of two non-convex polygons read from a file.
 
+
+#include <iostream>
+
 #include <fstream>
 
 #include <CGAL/minkowski_sum_2.h>

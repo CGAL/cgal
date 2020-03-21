@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/IO/io.h>
 

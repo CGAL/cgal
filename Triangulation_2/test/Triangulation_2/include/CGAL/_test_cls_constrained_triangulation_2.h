@@ -22,6 +22,9 @@
 // coordinator   : INRIA Sophia-Antipolis Mariette.Yvinec@sophia.inria.fr
 // ============================================================================
 
+
+#include <iostream>
+
 #include <list>
 #include <CGAL/_test_cls_triangulation_short_2.h>
 #include <boost/type_traits/is_same.hpp>

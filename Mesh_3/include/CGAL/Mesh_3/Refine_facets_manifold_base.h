@@ -13,6 +13,9 @@
 #ifndef CGAL_MESH_3_REFINE_FACETS_MANIFOLD_BASE_H
 #define CGAL_MESH_3_REFINE_FACETS_MANIFOLD_BASE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/disable_warnings.h>

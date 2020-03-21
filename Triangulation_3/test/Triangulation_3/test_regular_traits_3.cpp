@@ -11,6 +11,9 @@
 //
 // Author(s)     : Mariette Yvinec
 
+
+#include <iostream>
+
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <cassert>

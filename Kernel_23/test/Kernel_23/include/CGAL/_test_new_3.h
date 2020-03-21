@@ -19,6 +19,9 @@
 #ifndef CGAL_TEST_NEW_3_H
 #define CGAL_TEST_NEW_3_H
 
+
+#include <iostream>
+
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>

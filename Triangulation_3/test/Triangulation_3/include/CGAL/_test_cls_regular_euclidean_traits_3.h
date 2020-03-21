@@ -11,6 +11,9 @@
 // Author(s)     :  Mariette Yvinec
 //                  Mael Rouxel-Labbé
 
+
+#include <iostream>
+
 #include <CGAL/use.h>
 
 #include <cassert>

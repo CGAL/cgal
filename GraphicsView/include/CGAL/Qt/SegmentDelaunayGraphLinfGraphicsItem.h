@@ -14,6 +14,9 @@
 #ifndef CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
 #define CGAL_QT_SEGMENT_DELAUNAY_GRAPH_LINF_GRAPHICS_ITEM_H
 
+
+#include <iostream>
+
 #include <CGAL/license/GraphicsView.h>
 
 

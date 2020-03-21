@@ -14,6 +14,9 @@
 #ifndef CGAL_SM_OVERLAYER_H
 #define CGAL_SM_OVERLAYER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_S2.h>
 
 

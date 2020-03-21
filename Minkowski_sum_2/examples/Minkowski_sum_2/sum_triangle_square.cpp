@@ -1,6 +1,9 @@
 //! \file examples/Minkowski_sum_2/sum_triangle_square.cpp
 // Computing the Minkowski sum of a triangle and a square.
 
+
+#include <iostream>
+
 #include <CGAL/minkowski_sum_2.h>
 
 #include "bops_linear.h"

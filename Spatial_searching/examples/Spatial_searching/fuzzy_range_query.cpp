@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Kd_tree.h>

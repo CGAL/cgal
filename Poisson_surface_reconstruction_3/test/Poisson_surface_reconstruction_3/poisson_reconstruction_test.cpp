@@ -8,6 +8,9 @@
 // poisson_reconstruction_test mesh1.off point_set2.xyz...
 
 // CGAL
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>

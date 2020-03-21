@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/overlay_unbounded.cpp
 // A face overlay of two arrangements with unbounded faces.
 
+
+#include <iostream>
+
 #include <string>
 #include <boost/lexical_cast.hpp>
 

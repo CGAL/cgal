@@ -13,6 +13,9 @@
 #ifndef CGAL_SURFACE_SWEEP_2_DEBUG_H
 #define CGAL_SURFACE_SWEEP_2_DEBUG_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_sweep_2.h>
 
 #include <CGAL/No_intersection_surface_sweep_2.h>

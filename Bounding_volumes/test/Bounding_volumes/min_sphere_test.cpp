@@ -29,6 +29,9 @@
 #define __SGI_STL_INTERNAL_RELOPS
 
 
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_d.h>

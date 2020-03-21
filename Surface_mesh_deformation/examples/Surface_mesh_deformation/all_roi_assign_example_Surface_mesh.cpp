@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <fstream>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

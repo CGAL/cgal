@@ -19,6 +19,9 @@
 #ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H
 #define CGAL_POLYNOMIAL_MODULAR_GCD_UTILS_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <vector>
 #include <CGAL/Polynomial.h>

@@ -12,6 +12,9 @@
 #ifndef CGAL_MCFSKEL_CURVE_SKELETON_H
 #define CGAL_MCFSKEL_CURVE_SKELETON_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_mesh_skeletonization.h>
 
 

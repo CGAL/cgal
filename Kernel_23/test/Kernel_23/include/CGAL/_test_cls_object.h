@@ -18,6 +18,9 @@
 #ifndef CGAL__TEST_CLS_OBJECT_H
 #define CGAL__TEST_CLS_OBJECT_H
 
+
+#include <iostream>
+
 #include <CGAL/Testsuite/use.h>
 #include <cassert>
 

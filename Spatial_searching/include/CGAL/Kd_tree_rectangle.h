@@ -13,6 +13,9 @@
 #ifndef CGAL_KD_TREE_RECTANGLE_H
 #define CGAL_KD_TREE_RECTANGLE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Spatial_searching.h>
 
 

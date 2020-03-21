@@ -2,6 +2,9 @@
 #undef CGAL_NO_STATIC_FILTERS
 
 
+
+#include <iostream>
+
 #include <CGAL/FPU.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Simple_cartesian.h>

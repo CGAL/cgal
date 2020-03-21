@@ -31,6 +31,9 @@
 #ifndef __OPENNL_CONJUGATE_GRADIENT__
 #define __OPENNL_CONJUGATE_GRADIENT__
 
+
+#include <iostream>
+
 #include <CGAL/OpenNL/blas.h>
 #include <CGAL/assertions.h>
 

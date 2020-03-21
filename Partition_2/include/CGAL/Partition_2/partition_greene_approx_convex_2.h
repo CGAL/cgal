@@ -13,6 +13,9 @@
 #ifndef CGAL_GREENE_APPROX_H
 #define CGAL_GREENE_APPROX_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Partition_2.h>
 
 

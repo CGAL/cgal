@@ -2,6 +2,9 @@
 
 #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_DETAILS 1
 
+
+#include <iostream>
+
 #include <string>
 #include <vector>
 #include <fstream>

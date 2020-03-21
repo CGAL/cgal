@@ -18,6 +18,9 @@
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_H
 #define CGAL__TEST_FURTHER_FCT_POINT_2_H
 
+
+#include <iostream>
+
 #include "_approx_equal.h"
 #include <boost/type_traits/is_same.hpp>
 

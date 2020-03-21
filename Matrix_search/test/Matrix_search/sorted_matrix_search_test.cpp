@@ -10,6 +10,9 @@
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <CGAL/Cartesian_matrix.h>
 #include <CGAL/sorted_matrix_search.h>

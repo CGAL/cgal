@@ -14,6 +14,9 @@
 #  pragma warning(disable:4503) // decorated name length exceeded, name was truncated
 #endif
 
+
+#include <iostream>
+
 #include "basics.h"
 #include "test_self_intersection.h"
 

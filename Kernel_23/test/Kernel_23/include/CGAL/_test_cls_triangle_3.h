@@ -18,6 +18,9 @@
 #ifndef CGAL__TEST_CLS_TRIANGLE_3_H
 #define CGAL__TEST_CLS_TRIANGLE_3_H
 
+
+#include <iostream>
+
 #include <CGAL/Bbox_3.h>
 #include <cassert>
 

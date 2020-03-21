@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/edge_aware_upsample_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>

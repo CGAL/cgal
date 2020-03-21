@@ -21,6 +21,9 @@
 // implementation: test program for Random Numbers Generator
 // ============================================================================
 
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <CGAL/algorithm.h>
 #include <cassert>

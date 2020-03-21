@@ -20,6 +20,9 @@
 #ifndef CGAL_KHACHIYAN_APPROXIMATION_H
 #define CGAL_KHACHIYAN_APPROXIMATION_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Bounding_volumes.h>
 
 

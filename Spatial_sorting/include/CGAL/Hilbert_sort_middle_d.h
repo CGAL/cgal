@@ -12,6 +12,9 @@
 #ifndef CGAL_HILBERT_SORT_MIDDLE_d_H
 #define CGAL_HILBERT_SORT_MIDDLE_d_H
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 #include <functional>
 #include <cstddef>

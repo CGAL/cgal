@@ -13,6 +13,9 @@
 #ifndef CGAL_PARTITIONED_POLYGON_2_H
 #define CGAL_PARTITIONED_POLYGON_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Partition_2.h>
 
 

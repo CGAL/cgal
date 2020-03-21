@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/draw_linear_cell_complex.h>
 

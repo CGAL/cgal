@@ -18,6 +18,9 @@
 #ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_DFAI_H
 #define CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_DFAI_H 1
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Scalar_factor_traits.h>
 #include <CGAL/Chinese_remainder_traits.h>

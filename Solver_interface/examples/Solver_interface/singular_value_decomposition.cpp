@@ -1,4 +1,7 @@
 #ifdef CGAL_EIGEN3_ENABLED
+
+#include <iostream>
+
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <CGAL/Eigen_svd.h>

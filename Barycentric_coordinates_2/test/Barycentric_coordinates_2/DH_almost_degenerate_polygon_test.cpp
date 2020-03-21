@@ -7,6 +7,9 @@
 
 // Does not work with inexact kernel. We get division by zero due to W = 0.
 
+
+#include <iostream>
+
 #include <cmath>
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

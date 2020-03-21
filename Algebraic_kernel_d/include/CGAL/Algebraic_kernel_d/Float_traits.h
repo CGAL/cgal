@@ -20,6 +20,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_FLOAT_TRAITS_H
 #define CGAL_ALGEBRAIC_KERNEL_D_FLOAT_TRAITS_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 #if CGAL_USE_LEDA

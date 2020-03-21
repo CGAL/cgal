@@ -16,6 +16,9 @@
 #ifndef CGAL_QP_PRICING_STRATEGY_H
 #define CGAL_QP_PRICING_STRATEGY_H
 
+
+#include <iostream>
+
 #include <CGAL/license/QP_solver.h>
 
 

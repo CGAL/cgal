@@ -15,6 +15,9 @@
 #ifndef CGAL_POLYNOMIAL_STURM_HABICHT
 #define CGAL_POLYNOMIAL_STURM_HABICHT 1
 
+
+#include <iostream>
+
 #include <vector>
 #include <algorithm>
 #include <CGAL/Polynomial/bezout_matrix.h>

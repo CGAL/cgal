@@ -13,6 +13,9 @@
 #ifndef CGAL_THREE_EXCEPTIONS_H
 #define CGAL_THREE_EXCEPTIONS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Three.h>
 
 

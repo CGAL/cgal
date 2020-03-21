@@ -2,6 +2,9 @@
 // We test speed of discrete harmonic coordinates on a set of automatically generated
 // points inside a regular polygon with 100 vertices. We use inexact kernel.
 
+
+#include <iostream>
+
 #include <CGAL/number_type_config.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

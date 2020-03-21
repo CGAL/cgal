@@ -13,6 +13,9 @@
 #ifndef CGAL_SORTED_MATRIX_SEARCH_H
 #define CGAL_SORTED_MATRIX_SEARCH_H 1
 
+
+#include <iostream>
+
 #include <CGAL/license/Matrix_search.h>
 
 

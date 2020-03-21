@@ -1,4 +1,7 @@
 
+
+#include <iostream>
+
 #include <CGAL/CORE_Expr.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Delaunay_triangulation_2.h>

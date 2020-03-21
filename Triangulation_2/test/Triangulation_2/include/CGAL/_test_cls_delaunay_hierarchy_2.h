@@ -20,6 +20,9 @@
 // coordinator   : INRIA Sophia-Antipolis <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
 
+
+#include <iostream>
+
 #include <CGAL/_test_cls_delaunay_triangulation_2.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/algorithm.h>

@@ -2,6 +2,9 @@
 // Compute the convex hull of set of points using the lower envelope and upper
 // envelopes of their dual line.
 
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_linear_traits_2.h>

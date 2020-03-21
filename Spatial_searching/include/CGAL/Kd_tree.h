@@ -14,6 +14,9 @@
 #ifndef CGAL_KD_TREE_H
 #define CGAL_KD_TREE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Spatial_searching.h>
 
 #include <CGAL/disable_warnings.h>

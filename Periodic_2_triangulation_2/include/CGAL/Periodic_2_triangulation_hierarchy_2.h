@@ -14,6 +14,9 @@
 #ifndef CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_2_H
 #define CGAL_PERIODIC_2_TRIANGULATION_HIERARCHY_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Periodic_2_triangulation_2.h>
 
 

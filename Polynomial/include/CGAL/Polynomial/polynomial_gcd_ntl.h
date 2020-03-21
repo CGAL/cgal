@@ -21,6 +21,9 @@
 #ifndef CGAL_POLYNOMIAL_GCD_NTL_H
 #define CGAL_POLYNOMIAL_GCD_NTL_H
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 
 #ifndef CGAL_USE_NTL

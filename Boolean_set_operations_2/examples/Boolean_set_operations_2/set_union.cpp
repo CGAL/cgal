@@ -2,6 +2,9 @@
  * Computing the union of a set of circles.
  */
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Gps_circle_segment_traits_2.h>
 #include <CGAL/Boolean_set_operations_2.h>

@@ -13,6 +13,9 @@
 #ifndef CGAL_ALBERAIC_POINT_D_1_H
 #define CGAL_ALBERAIC_POINT_D_1_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 

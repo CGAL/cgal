@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/config.h>
 
 // TODO: solve conflict of CORE with GMPXX

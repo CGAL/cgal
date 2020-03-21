@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include "test_Prefix.h"
 
 #include <CGAL/use.h>

@@ -12,6 +12,9 @@
 #ifndef CGAL_GMAP_4_TEST_H
 #define CGAL_GMAP_4_TEST_H
 
+
+#include <iostream>
+
 #include <CGAL/Generalized_map_operations.h>
 #include "Generalized_map_2_test.h"
 

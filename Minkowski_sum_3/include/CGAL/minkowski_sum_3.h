@@ -12,6 +12,9 @@
 #ifndef CGAL_MINKOWSKI_SUM_3_H
 #define CGAL_MINKOWSKI_SUM_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Minkowski_sum_3.h>
 
 

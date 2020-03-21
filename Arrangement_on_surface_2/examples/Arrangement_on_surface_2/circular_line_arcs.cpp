@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/circular_line_arc.cpp
 // Using the circular line arc traits.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/MP_Float.h>

@@ -15,6 +15,9 @@
 //    \brief provides test functions for the \c RealEmbeddable concept of
 //    number types.
 
+
+#include <iostream>
+
 #include <cstddef>
 #include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>

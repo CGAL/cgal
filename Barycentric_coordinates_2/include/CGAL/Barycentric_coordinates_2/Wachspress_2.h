@@ -16,6 +16,9 @@
 #ifndef CGAL_WACHSPRESS_2_H
 #define CGAL_WACHSPRESS_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
 #include <CGAL/disable_warnings.h>

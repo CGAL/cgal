@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <cstdlib>
 
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>

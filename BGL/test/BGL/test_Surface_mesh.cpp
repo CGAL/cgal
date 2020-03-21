@@ -1,4 +1,7 @@
 #define BOOST_TEST_MODULE graph_traits test
+
+#include <iostream>
+
 #include <boost/test/unit_test.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 

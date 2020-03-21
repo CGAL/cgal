@@ -12,6 +12,9 @@
 #ifndef CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H
 #define CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H
 
+
+#include <iostream>
+
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Uncertain.h>

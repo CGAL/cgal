@@ -12,6 +12,9 @@
 #ifndef CGAL_BOOST_GRAPH_HELPERS_H
 #define CGAL_BOOST_GRAPH_HELPERS_H
 
+
+#include <iostream>
+
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/internal/Has_member_clear.h>

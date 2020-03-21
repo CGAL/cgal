@@ -13,6 +13,9 @@
 #ifndef CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_2_H
 #define CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_2_H
 
+
+#include <iostream>
+
 #include <list>
 #include <CGAL/Mesher_level.h>
 

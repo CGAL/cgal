@@ -17,6 +17,9 @@
 #ifndef CGAL_NEF_POLYHEDRON_3_H
 #define CGAL_NEF_POLYHEDRON_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 #include <CGAL/disable_warnings.h>

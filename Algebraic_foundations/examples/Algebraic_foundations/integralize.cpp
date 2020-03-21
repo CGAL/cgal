@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/IO/io.h>
 #include <vector>

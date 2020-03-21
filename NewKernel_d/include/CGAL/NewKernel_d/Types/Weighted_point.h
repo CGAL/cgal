@@ -11,6 +11,9 @@
 
 #ifndef CGAL_KD_TYPE_WP_H
 #define CGAL_KD_TYPE_WP_H
+
+#include <iostream>
+
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 namespace CGAL {

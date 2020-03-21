@@ -20,6 +20,9 @@
 
 
 // include these traits here by 'hand', since not in release 3.3
+
+#include <iostream>
+
 #include <CGAL/Algebraic_extension_traits.h>
 #include <CGAL/Scalar_factor_traits.h>
 

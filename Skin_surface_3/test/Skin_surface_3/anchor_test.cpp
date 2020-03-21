@@ -3,6 +3,9 @@
 // *********************
 // Regular triangulation
 // *********************
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cassert>
 #include <CGAL/Regular_triangulation_3.h>

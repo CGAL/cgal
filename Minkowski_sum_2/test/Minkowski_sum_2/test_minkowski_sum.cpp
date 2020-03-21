@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/minkowski_sum_2.h>
 #include <CGAL/Small_side_angle_bisector_decomposition_2.h>
 #include <CGAL/Polygon_triangulation_decomposition_2.h>

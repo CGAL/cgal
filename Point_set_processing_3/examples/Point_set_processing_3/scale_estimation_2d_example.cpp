@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/estimate_scale.h>
 #include <CGAL/IO/read_xyz_points.h>

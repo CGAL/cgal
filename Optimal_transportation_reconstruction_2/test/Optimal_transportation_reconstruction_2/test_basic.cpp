@@ -4,6 +4,9 @@
 // Test the cgal environment for Optimal_transportation_reconstruction_2
 //----------------------------------------------------------
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Optimal_transportation_reconstruction_2.h>
 #include "testing_tools.h"

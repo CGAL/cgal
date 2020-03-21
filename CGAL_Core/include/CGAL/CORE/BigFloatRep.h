@@ -25,6 +25,9 @@
 #ifndef _CORE_BIGFLOATREP_H_
 #define _CORE_BIGFLOATREP_H_
 
+
+#include <iostream>
+
 #include <CGAL/CORE/BigRat.h>
 #include <CGAL/CORE/CoreAux.h>
 #include <CGAL/CORE/CoreDefs.h>

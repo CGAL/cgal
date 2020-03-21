@@ -13,6 +13,9 @@
 #ifndef CGAL_ARR_TRIANGULATION_POINT_LOCATION_FUNCTIONS_H
 #define CGAL_ARR_TRIANGULATION_POINT_LOCATION_FUNCTIONS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 

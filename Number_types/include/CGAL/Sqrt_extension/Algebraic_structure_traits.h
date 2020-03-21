@@ -14,6 +14,9 @@
 #ifndef CGAL_SQRT_EXTENSION_ALGEBRAIC_STRUCTURE_TRAITS_H
 #define CGAL_SQRT_EXTENSION_ALGEBRAIC_STRUCTURE_TRAITS_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 namespace CGAL {

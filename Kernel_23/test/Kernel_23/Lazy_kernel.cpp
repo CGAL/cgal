@@ -15,6 +15,9 @@
 // Author(s)     : Sylvain Pion
 
 
+
+#include <iostream>
+
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>

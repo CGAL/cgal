@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/spatial_sort.h>
 
 struct MyPoint {

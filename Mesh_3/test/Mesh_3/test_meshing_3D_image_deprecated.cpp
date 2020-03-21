@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 #include "test_meshing_utilities.h"

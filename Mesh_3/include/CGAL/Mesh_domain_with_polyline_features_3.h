@@ -18,6 +18,9 @@
 #ifndef CGAL_MESH_DOMAIN_WITH_POLYLINE_FEATURES_3_H
 #define CGAL_MESH_DOMAIN_WITH_POLYLINE_FEATURES_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 

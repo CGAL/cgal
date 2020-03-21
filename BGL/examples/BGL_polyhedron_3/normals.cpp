@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <fstream>
 
 #include <boost/graph/graph_traits.hpp>

@@ -15,6 +15,9 @@
 // Author(s)     : Sylvain Pion
  
 
+
+#include <iostream>
+
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Quotient.h>

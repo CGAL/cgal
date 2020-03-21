@@ -23,6 +23,9 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_D_2_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_D_2_H
 
+
+#include <iostream>
+
 #include <limits>
 #include <CGAL/iterator.h>
 #include <CGAL/assertions.h>

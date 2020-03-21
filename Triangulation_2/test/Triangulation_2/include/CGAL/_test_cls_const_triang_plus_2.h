@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/_test_cls_const_Del_triangulation_2.h>
 #include <CGAL/use.h>
 template <class TrP>

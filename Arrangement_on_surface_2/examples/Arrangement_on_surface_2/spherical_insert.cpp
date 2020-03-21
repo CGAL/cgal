@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/aggregated_insertion.cpp
 // Using the global aggregated insertion functions.
 
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_on_surface_2.h>

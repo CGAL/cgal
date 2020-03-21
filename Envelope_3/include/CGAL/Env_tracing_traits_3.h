@@ -22,6 +22,9 @@
 #ifndef CGAL_ENV_TRACE_TRAITS_H
 #define CGAL_ENV_TRACE_TRAITS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Envelope_3.h>
 
 

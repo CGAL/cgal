@@ -12,6 +12,9 @@
 #ifndef CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
 #define CGAL_BOOST_GRAPH_TRAITS_LINEAR_CELL_COMPLEX_FOR_COMBINATORIAL_MAP_H
 
+
+#include <iostream>
+
 #include <utility>
 #include <iterator>
 

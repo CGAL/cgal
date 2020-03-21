@@ -1,5 +1,8 @@
 // Compares the result of several interpolation methods
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Random.h>

@@ -17,6 +17,9 @@
 #ifndef CGAL_WEIGHTED_POINT_3_H
 #define CGAL_WEIGHTED_POINT_3_H
 
+
+#include <iostream>
+
 #include <CGAL/Origin.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/assertions.h>

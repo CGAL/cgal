@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <fstream>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

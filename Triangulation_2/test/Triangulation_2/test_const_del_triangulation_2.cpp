@@ -20,6 +20,9 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+
+#include <iostream>
+
 #include <CGAL/_test_types.h>
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>

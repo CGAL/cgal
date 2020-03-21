@@ -16,6 +16,9 @@
 #ifndef CGAL_QP_EXACT_BLAND_PRICING_H
 #define CGAL_QP_EXACT_BLAND_PRICING_H
 
+
+#include <iostream>
+
 #include <CGAL/license/QP_solver.h>
 
 

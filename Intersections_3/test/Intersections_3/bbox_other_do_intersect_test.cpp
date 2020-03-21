@@ -11,6 +11,9 @@
 // Author(s)     : Stephane Tayeb
 //
 
+
+#include <iostream>
+
 #include <string>
 
 #include <CGAL/config.h>

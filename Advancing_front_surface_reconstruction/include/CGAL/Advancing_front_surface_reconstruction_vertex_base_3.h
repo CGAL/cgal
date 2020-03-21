@@ -12,6 +12,9 @@
 #ifndef CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_WITH_ID_3_H
 #define CGAL_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_VERTEX_BASE_WITH_ID_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Advancing_front_surface_reconstruction.h>
 
 

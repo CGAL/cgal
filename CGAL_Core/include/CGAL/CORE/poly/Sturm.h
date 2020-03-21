@@ -49,6 +49,9 @@
 #ifndef CORE_STURM_H
 #define CORE_STURM_H
 
+
+#include <iostream>
+
 #include <CGAL/assertions.h>
 #include "CGAL/CORE/BigFloat.h"
 #include "CGAL/CORE/Expr.h"

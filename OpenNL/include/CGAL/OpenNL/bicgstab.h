@@ -31,6 +31,9 @@
 #ifndef __OPENNL_BICGSTAB__
 #define __OPENNL_BICGSTAB__
 
+
+#include <iostream>
+
 #include <CGAL/OpenNL/blas.h>
 #include <CGAL/assertions.h>
 

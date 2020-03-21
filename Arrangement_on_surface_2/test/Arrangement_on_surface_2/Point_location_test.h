@@ -14,6 +14,9 @@
 #define TRAPEZOID_RIC_PL_ENABLED 1
 #define TRAPEZOID_RIC_NO_GUARANTEE_PL_ENABLED 1
 
+
+#include <iostream>
+
 #include <vector>
 
 #include <CGAL/Timer.h>

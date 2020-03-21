@@ -1,4 +1,7 @@
 //== INCLUDES =================================================================
+
+#include <iostream>
+
 #include "openvolumemesh_performance.h"
 //=============================================================================
 int main(int argc, char** argv)

@@ -1,4 +1,7 @@
 
+
+#include <iostream>
+
 #include <CGAL/circulator.h>
 
 #include "SM_common.h"

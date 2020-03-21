@@ -13,6 +13,9 @@
 #ifndef CGAL_SURFACE_MESHER_EDGES_LEVEL_H
 #define CGAL_SURFACE_MESHER_EDGES_LEVEL_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_mesher.h>
 
 

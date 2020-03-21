@@ -13,6 +13,9 @@
 #ifndef CGAL_INFIMAXIMAL_BOX_H
 #define CGAL_INFIMAXIMAL_BOX_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

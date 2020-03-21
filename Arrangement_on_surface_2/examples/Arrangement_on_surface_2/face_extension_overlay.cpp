@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/face_extension_overlay.cpp
 // A face overlay of two arrangements with extended face records.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>

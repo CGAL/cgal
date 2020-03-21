@@ -15,6 +15,9 @@
 #ifndef CGAL_ACK_EVENT_LINE_BUILDER
 #define CGAL_ACK_EVENT_LINE_BUILDER 1
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 #include <CGAL/Algebraic_structure_traits.h>

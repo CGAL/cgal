@@ -13,6 +13,9 @@
 #ifndef CGAL_PMP_WEIGHTS_H
 #define CGAL_PMP_WEIGHTS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Polygon_mesh_processing/core.h>
 
 /// @cond CGAL_DOCUMENT_INTERNAL

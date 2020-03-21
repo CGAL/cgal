@@ -14,6 +14,9 @@
 #ifndef CGAL_COUNT_ALPHA_H
 #define CGAL_COUNT_ALPHA_H
 
+
+#include <iostream>
+
 #include <list>
 
 

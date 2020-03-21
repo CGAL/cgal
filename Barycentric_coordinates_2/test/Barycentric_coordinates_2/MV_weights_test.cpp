@@ -5,6 +5,9 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing coordinates and expected_coordinates.
 
+
+#include <iostream>
+
 #include <cmath>
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

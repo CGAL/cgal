@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_d.h>

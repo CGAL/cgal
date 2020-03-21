@@ -5,6 +5,9 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing difference with zero.
 
+
+#include <iostream>
+
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_2.h>

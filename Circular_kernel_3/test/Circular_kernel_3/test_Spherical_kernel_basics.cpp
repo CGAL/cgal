@@ -13,6 +13,9 @@
 //
 // Author(s)     : Sylvain Pion
  
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Algebraic_kernel_for_spheres_2_3.h>
 #include <CGAL/Spherical_kernel_3.h>

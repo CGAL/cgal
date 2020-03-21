@@ -13,6 +13,9 @@
 #ifndef CGAL_QP_MODELS_H
 #define CGAL_QP_MODELS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/QP_solver.h>
 
 #include <CGAL/disable_warnings.h>

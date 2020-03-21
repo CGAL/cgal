@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
 

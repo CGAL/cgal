@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <cassert>
 

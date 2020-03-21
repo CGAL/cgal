@@ -12,6 +12,9 @@
 #ifndef CGAL_COMBINATORIAL_MAP_H
 #define CGAL_COMBINATORIAL_MAP_H 1
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>

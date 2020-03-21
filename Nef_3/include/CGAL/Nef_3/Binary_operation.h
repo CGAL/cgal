@@ -16,6 +16,9 @@
 #ifndef CGAL_NEF3_BINARY_OPERATION_H
 #define CGAL_NEF3_BINARY_OPERATION_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

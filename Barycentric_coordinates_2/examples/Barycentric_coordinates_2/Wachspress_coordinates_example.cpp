@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>

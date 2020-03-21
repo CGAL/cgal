@@ -14,6 +14,9 @@
 // File Description :
 //******************************************************************************
 
+
+#include <iostream>
+
 #include "test_meshing_utilities.h"
 #include <CGAL/Image_3.h>
 #include <CGAL/Labeled_mesh_domain_3.h>

@@ -2,6 +2,9 @@
 // Computing the Minkowski sum of two non-convex polygons read from a file
 // using the small-side angle-bisector decomposition strategy.
 
+
+#include <iostream>
+
 #include <fstream>
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

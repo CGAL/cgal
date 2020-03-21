@@ -1,5 +1,8 @@
 //#include <CGAL/point_generators_2.h>
 //#include <CGAL/iterator.h>
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/_test_cls_regular_triangulation_2.h>

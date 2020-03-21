@@ -5,6 +5,9 @@
 #ifndef CURVE_PARSER_VISITOR_HPP
 #define CURVE_PARSER_VISITOR_HPP
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Bbox_2.h>
 #include <string>

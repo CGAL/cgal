@@ -25,6 +25,9 @@
  *  Each line should contain information about just one segment.
 */
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>

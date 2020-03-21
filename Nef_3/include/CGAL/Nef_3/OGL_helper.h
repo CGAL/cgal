@@ -13,6 +13,9 @@
 #ifndef CGAL_NEF_OPENGL_HELPER_H
 #define CGAL_NEF_OPENGL_HELPER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

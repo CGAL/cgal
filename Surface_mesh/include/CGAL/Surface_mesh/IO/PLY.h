@@ -13,6 +13,9 @@
 #ifndef CGAL_SURFACE_MESH_IO_PLY
 #define CGAL_SURFACE_MESH_IO_PLY
 
+
+#include <iostream>
+
 #include <CGAL/IO/PLY.h>
 
 namespace CGAL {

@@ -13,6 +13,9 @@
 #ifndef CGAL_PARTITION_APPROX_CONVEX_H
 #define CGAL_PARTITION_APPROX_CONVEX_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Partition_2.h>
 
 

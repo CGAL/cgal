@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/bgl_dual_adapter.cpp
 // Adapting the dual of an arrangement to a BGL graph.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>

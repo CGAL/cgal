@@ -9,6 +9,9 @@
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifdef CGAL_USE_MPFI
+
+#include <iostream>
+
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Gmpzf.h>

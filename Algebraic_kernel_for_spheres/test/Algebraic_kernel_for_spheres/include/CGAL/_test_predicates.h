@@ -17,6 +17,9 @@
 //             Sylvain Pion
 //             Pedro Machado
 
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <cassert>
 #include <CGAL/Polynomials_1_3.h>

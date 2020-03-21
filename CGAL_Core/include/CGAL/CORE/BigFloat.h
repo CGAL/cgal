@@ -25,6 +25,9 @@
 #ifndef _CORE_BIGFLOAT_H_
 #define _CORE_BIGFLOAT_H_
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/CORE/BigFloatRep.h>

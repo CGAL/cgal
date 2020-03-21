@@ -10,6 +10,9 @@
 //== INCLUDES =================================================================
 
 
+
+#include <iostream>
+
 #include "Surface_mesh.h"
 #include "IO.h"
 

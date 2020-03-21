@@ -10,6 +10,9 @@
 //
 // ============================================================================
 
+
+#include <iostream>
+
 #include <CGAL/polynomial_utils.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Arithmetic_kernel.h>

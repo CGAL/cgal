@@ -26,6 +26,9 @@
 
 #define CGAL_NEF3_SORT_OUTPUT 1
 
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Lazy_kernel.h>

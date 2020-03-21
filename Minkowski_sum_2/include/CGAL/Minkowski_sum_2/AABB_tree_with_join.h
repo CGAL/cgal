@@ -13,6 +13,9 @@
 #ifndef CGAL_AABB_TREE_WITH_JOIN_H
 #define CGAL_AABB_TREE_WITH_JOIN_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Minkowski_sum_2.h>
 
 

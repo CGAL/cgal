@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/edge_manipulation_curve_history.cpp
 // Removing curves and manipulating edges in an arrangement with history.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>

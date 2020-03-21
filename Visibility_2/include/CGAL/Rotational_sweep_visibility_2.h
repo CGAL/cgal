@@ -14,6 +14,9 @@
 #ifndef CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 #define CGAL_ROTATIONAL_SWEEP_VISIBILITY_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Visibility_2.h>
 
 

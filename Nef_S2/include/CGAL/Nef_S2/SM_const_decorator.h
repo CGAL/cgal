@@ -16,6 +16,9 @@
 #ifndef CGAL_SM_CONST_DECORATOR_H 
 #define CGAL_SM_CONST_DECORATOR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_S2.h>
 
 

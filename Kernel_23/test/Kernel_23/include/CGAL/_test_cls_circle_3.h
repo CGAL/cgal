@@ -17,6 +17,9 @@
 #ifndef CGAL__TEST_CLS_CIRCLE_3_H
 #define CGAL__TEST_CLS_CIRCLE_3_H
 
+
+#include <iostream>
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Random.h>
 #include <cassert>

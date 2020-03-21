@@ -18,6 +18,9 @@
 #ifndef CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_2_H
 
+
+#include <iostream>
+
 #include <CGAL/use.h>
 #include <boost/type_traits/is_same.hpp>
 

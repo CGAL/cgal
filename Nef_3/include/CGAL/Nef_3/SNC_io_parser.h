@@ -16,6 +16,9 @@
 #ifndef CGAL_SNC_IO_PARSER_H
 #define CGAL_SNC_IO_PARSER_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

@@ -1,5 +1,8 @@
 //== INCLUDES =================================================================
 
+
+#include <iostream>
+
 #include <fstream>
 #include "performance_2.h"
 #include <CGAL/Surface_mesh.h>

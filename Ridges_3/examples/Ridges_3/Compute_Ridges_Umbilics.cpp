@@ -1,5 +1,8 @@
 
 //this is an enriched Polyhedron with facet normals
+
+#include <iostream>
+
 #include "PolyhedralSurf.h"
 #include "PolyhedralSurf_rings.h"
 #include "compute_normals.h"

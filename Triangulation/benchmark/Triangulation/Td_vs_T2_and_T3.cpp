@@ -1,6 +1,9 @@
 // To deactivate statics filters in the 2D/3D case
 //#define CGAL_NO_STATIC_FILTERS
 
+
+#include <iostream>
+
 #include <CGAL/Epick_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/Regular_triangulation.h>

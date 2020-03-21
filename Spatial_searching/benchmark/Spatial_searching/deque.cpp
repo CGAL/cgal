@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <vector>
 #include <deque>
 #include <CGAL/Memory_sizer.h>

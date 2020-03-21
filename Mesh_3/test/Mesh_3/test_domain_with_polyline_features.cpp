@@ -14,6 +14,9 @@
 // File Description : 
 //******************************************************************************
 
+
+#include <iostream>
+
 #include <CGAL/Mesh_domain_with_polyline_features_3.h>
 #include "test_utilities.h"
 

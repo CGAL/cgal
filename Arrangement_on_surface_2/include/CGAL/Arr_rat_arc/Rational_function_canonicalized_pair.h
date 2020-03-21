@@ -13,6 +13,9 @@
 #ifndef CGAL_RATIONAL_FUNCTION_CANONICALIZED_PAIR_H
 #define CGAL_RATIONAL_FUNCTION_CANONICALIZED_PAIR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
 

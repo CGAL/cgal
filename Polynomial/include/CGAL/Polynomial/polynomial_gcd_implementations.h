@@ -14,6 +14,9 @@
 #define CGAL_POLYNOMIAL_GCD_IMPLEMENTATIONS_H
 
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial.h>
 #include <CGAL/Real_timer.h>

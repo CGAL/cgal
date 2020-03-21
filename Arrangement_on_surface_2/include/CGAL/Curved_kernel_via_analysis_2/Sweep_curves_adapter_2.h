@@ -20,6 +20,9 @@
  * \c Curved_kernel_via_analysis_2 with \c SoX::sweep_curves
  */
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 
 #include <boost/optional.hpp>

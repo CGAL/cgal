@@ -12,6 +12,9 @@
 #ifndef CGAL_MS3_GAUSSIAN_MAP
 #define CGAL_MS3_GAUSSIAN_MAP
 
+
+#include <iostream>
+
 #include <CGAL/license/Minkowski_sum_3.h>
 
 

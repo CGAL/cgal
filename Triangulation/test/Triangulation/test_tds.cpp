@@ -1,4 +1,7 @@
 
+
+#include <iostream>
+
 #include <CGAL/Triangulation_data_structure.h>
 #include <vector>
 #include <string>

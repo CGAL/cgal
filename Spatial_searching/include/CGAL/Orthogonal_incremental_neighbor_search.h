@@ -14,6 +14,9 @@
 #ifndef CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
 #define CGAL_ORTHOGONAL_INCREMENTAL_NEIGHBOR_SEARCH
 
+
+#include <iostream>
+
 #include <CGAL/license/Spatial_searching.h>
 
 #include <CGAL/disable_warnings.h>

@@ -6,6 +6,9 @@
 //----------------------------------------------------------
 // Usage: no parameters
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>

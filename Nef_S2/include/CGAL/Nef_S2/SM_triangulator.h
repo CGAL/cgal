@@ -13,6 +13,9 @@
 #ifndef CGAL_SM_TRIANGULATOR_H
 #define CGAL_SM_TRIANGULATOR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_S2.h>
 
 

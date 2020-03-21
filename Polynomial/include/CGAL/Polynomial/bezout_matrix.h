@@ -17,6 +17,9 @@
 #ifndef CGAL_POLYNOMIAL_BEZOUT_MATRIX_H
 #define CGAL_POLYNOMIAL_BEZOUT_MATRIX_H
 
+
+#include <iostream>
+
 #include <algorithm>
 
 #include <CGAL/basic.h>

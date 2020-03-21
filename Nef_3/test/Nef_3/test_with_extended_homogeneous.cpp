@@ -26,6 +26,9 @@
 
 #define CGAL_NEF3_SORT_OUTPUT 1
 
+
+#include <iostream>
+
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Extended_homogeneous.h>
 #include <CGAL/Timer.h>

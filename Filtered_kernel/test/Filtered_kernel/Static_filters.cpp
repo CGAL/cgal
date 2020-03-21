@@ -1,5 +1,8 @@
 #define CGAL_PROFILE
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Kernel_checker.h>

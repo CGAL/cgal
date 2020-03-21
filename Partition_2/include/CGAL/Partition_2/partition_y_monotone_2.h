@@ -31,6 +31,9 @@
 #ifndef CGAL_PARTITION_Y_MONOTONE_H
 #define CGAL_PARTITION_Y_MONOTONE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Partition_2.h>
 
 

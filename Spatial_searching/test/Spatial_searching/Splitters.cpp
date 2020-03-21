@@ -1,4 +1,7 @@
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <CGAL/point_generators_2.h>

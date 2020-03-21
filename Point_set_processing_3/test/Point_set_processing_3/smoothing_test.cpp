@@ -9,6 +9,9 @@
 // smoothing_test points1.xyz points2.xyz...
 
 // CGAL
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>

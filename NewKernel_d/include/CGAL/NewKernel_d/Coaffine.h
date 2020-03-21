@@ -11,6 +11,9 @@
 
 #ifndef CGAL_KD_COAFFINE_H
 #define CGAL_KD_COAFFINE_H
+
+#include <iostream>
+
 #include <vector>
 #include <algorithm>
 #include <iterator>

@@ -1,6 +1,9 @@
 #ifndef POLYFIT_TEST_FRAMEWORK_H_
 #define POLYFIT_TEST_FRAMEWORK_H_
 
+
+#include <iostream>
+
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/read_ply_points.h>
 #include <CGAL/property_map.h>

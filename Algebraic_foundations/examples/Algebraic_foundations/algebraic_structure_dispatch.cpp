@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/IO/io.h>
 #include <CGAL/Algebraic_structure_traits.h>
 #include <CGAL/number_utils.h>

@@ -15,6 +15,9 @@
 #ifndef CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 #define CGAL_ALGEBRAIC_CURVE_KERNEL_CURVE_ANALYSIS_2_ALCIX_H
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <vector>

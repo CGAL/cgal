@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <CGAL/IO/Dxf_variant_reader.h>
 

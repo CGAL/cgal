@@ -13,6 +13,9 @@
 #ifndef CGAL_EDGE_EDGE_OVERLAY_H
 #define CGAL_EDGE_EDGE_OVERLAY_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

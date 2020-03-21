@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Simple_cartesian.h>

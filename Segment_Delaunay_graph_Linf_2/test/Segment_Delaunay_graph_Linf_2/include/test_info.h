@@ -1,6 +1,9 @@
 #ifndef CGAL_TEST_INFO_H
 #define CGAL_TEST_INFO_H 1
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/Random.h>

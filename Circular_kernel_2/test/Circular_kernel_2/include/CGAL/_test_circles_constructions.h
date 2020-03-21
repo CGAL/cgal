@@ -15,6 +15,9 @@
 // and a STREP (FET Open) Project under Contract No  IST-006413 
 // (ACS -- Algorithms for Complex Shapes)
 
+
+#include <iostream>
+
 #include <CGAL/Random.h>
 #include <cassert>
 #include <CGAL/use.h>

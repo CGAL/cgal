@@ -18,6 +18,9 @@
 #ifndef CGAL_RANDOM_POLYGON_2_SWEEP_H
 #define CGAL_RANDOM_POLYGON_2_SWEEP_H
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/enum.h>

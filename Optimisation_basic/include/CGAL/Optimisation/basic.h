@@ -18,6 +18,9 @@
 #define CGAL_OPTIMISATION_BASIC_H
 
 // includes
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Optimisation/assertions.h>
 #include <CGAL/Optimisation/debug.h>

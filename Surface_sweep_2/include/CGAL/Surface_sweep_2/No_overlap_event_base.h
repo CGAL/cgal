@@ -15,6 +15,9 @@
 #ifndef CGAL_SURFACE_SWEEP_2_NO_OVERLAP_EVENT_BASE_H
 #define CGAL_SURFACE_SWEEP_2_NO_OVERLAP_EVENT_BASE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_sweep_2.h>
 
 /*! \file

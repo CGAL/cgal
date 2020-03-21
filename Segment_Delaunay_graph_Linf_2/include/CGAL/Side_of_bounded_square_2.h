@@ -18,6 +18,9 @@
 #ifndef CGAL_SIDE_OF_BOUNDED_SQUARE_2_H
 #define CGAL_SIDE_OF_BOUNDED_SQUARE_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Segment_Delaunay_graph_Linf_2.h>
 
 

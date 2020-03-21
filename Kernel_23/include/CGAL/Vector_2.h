@@ -17,6 +17,9 @@
 #ifndef CGAL_VECTOR_2_H
 #define CGAL_VECTOR_2_H
 
+
+#include <iostream>
+
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/assertions.h>

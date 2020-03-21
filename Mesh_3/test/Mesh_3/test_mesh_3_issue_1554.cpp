@@ -2,6 +2,9 @@
 //
 //   https://github.com/CGAL/cgal/issues/1554
 //
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>

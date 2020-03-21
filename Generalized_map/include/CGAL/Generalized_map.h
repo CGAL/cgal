@@ -12,6 +12,9 @@
 #ifndef CGAL_GENERALIZED_MAP_H
 #define CGAL_GENERALIZED_MAP_H 1
 
+
+#include <iostream>
+
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Generalized_map_group_functors.h>
 #include <CGAL/internal/Combinatorial_map_copy_functors.h>

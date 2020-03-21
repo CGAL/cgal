@@ -16,6 +16,9 @@
 #ifndef CGAL_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_DELAUNAY_TRIANGULATION_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>

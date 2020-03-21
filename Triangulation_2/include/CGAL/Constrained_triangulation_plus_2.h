@@ -13,6 +13,9 @@
 #ifndef CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 #define CGAL_CONSTRAINED_TRIANGULATION_PLUS_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Triangulation_2.h>
 
 #include <CGAL/disable_warnings.h>

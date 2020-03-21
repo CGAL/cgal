@@ -20,6 +20,9 @@
 #ifndef CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_ALGORITHM_M_H
 #define CGAL_POLYNOMIAL_MODULAR_GCD_UTCF_ALGORITHM_M_H 1
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Residue.h>
 #include <CGAL/Polynomial/modular_gcd.h>

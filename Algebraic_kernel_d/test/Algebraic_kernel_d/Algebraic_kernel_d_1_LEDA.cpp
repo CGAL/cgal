@@ -16,6 +16,9 @@
 
 #define CGAL_TEST_ALL_AK_VARIANTS 1
 
+
+#include <iostream>
+
 #include "Algebraic_kernel_d_1.h"
 
 int main() {

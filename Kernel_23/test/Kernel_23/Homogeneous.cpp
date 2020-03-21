@@ -15,6 +15,9 @@
 // Author(s)     : Stefan Schirra, Sylvain Pion
 
 
+
+#include <iostream>
+
 #include <CGAL/Homogeneous.h>
 #include <cassert>
 #include <CGAL/intersection_3.h>

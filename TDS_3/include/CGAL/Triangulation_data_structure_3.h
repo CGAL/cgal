@@ -17,6 +17,9 @@
 #ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 #define CGAL_TRIANGULATION_DATA_STRUCTURE_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/TDS_3.h>
 
 #include <CGAL/disable_warnings.h>

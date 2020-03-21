@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/batched_point_location.cpp
 // Answering a batched point-location query.
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>

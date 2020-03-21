@@ -2,6 +2,9 @@
 // Checking whether there are three collinear points in a given input set
 // using the arrangement of the dual lines.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_linear_traits_2.h>

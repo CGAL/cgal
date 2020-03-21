@@ -17,6 +17,9 @@
 #ifndef CGAL_SPHERE_3_H
 #define CGAL_SPHERE_3_H
 
+
+#include <iostream>
+
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>

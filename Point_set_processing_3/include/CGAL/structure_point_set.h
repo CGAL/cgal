@@ -14,6 +14,9 @@
 #ifndef CGAL_STRUCTURE_POINT_SET_3_H
 #define CGAL_STRUCTURE_POINT_SET_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Point_set_processing_3.h>
 
 #include <CGAL/disable_warnings.h>

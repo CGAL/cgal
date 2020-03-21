@@ -9,6 +9,9 @@
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
+
+#include <iostream>
+
 #include<boost/format.hpp>
 #include<string>
 

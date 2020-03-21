@@ -29,6 +29,9 @@
 #ifndef _CORE_EXPRREP_H_
 #define _CORE_EXPRREP_H_
 
+
+#include <iostream>
+
 #include <CGAL/CORE/Real.h>
 #include <CGAL/CORE/Filter.h>
 #include <CGAL/CORE/poly/Sturm.h>

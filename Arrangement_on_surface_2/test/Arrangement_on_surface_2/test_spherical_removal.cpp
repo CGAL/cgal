@@ -1,5 +1,8 @@
 // #define CGAL_IDENTIFICATION_XY  2
 
+
+#include <iostream>
+
 #include <string>
 #include <cstring>
 #include <vector>

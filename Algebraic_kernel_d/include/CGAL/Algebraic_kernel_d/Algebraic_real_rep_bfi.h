@@ -24,6 +24,9 @@
 #ifndef CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_REP_BFI_H
 #define CGAL_ALGEBRAIC_KERNEL_D_ALGEBRAIC_REAL_REP_BFI_H
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Polynomial_type_generator.h>

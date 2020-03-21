@@ -11,6 +11,9 @@
 #ifndef CGAL_UMBILIC_H_
 #define CGAL_UMBILIC_H_
 
+
+#include <iostream>
+
 #include <CGAL/license/Ridges_3.h>
 
 #include <CGAL/basic.h>

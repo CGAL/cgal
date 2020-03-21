@@ -14,6 +14,9 @@
 // File Description :
 //******************************************************************************
 
+
+#include <iostream>
+
 #include "test_meshing_utilities.h"
 
 #include <CGAL/Polyhedral_complex_mesh_domain_3.h>

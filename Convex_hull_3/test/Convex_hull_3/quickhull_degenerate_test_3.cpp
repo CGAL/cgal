@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>

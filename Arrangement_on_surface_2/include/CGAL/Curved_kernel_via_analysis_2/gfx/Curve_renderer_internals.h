@@ -24,6 +24,9 @@
 #ifndef CGAL_CKVA_CURVE_RENDERER_INTERNALS_H
 #define CGAL_CKVA_CURVE_RENDERER_INTERNALS_H 1
 
+
+#include <iostream>
+
 #include <vector>
 #include <stack>
 // #include <boost/multi_index_container.hpp>

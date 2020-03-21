@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/tracing_counting.cpp
 // Trace all traits operations and count them.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>

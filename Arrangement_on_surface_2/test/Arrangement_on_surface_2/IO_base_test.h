@@ -1506,6 +1506,9 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
 // Algebraic
 #elif TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
 
+
+#include <iostream>
+
 #include <CGAL/IO/io.h>
 
 template <>

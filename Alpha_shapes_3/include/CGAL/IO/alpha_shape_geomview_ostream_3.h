@@ -13,6 +13,9 @@
 #ifndef CGAL_IO_ALPHA_SHAPE_GEOMVIEW_OSTREAM_3_H
 #define CGAL_IO_ALPHA_SHAPE_GEOMVIEW_OSTREAM_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Alpha_shapes_3.h>
 
 #include <CGAL/IO/Geomview_stream.h>

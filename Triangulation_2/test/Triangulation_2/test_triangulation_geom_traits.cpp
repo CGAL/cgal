@@ -20,6 +20,9 @@
 // coordinator   : INRIA Sophia-Antipolis
 // ============================================================================
 
+
+#include <iostream>
+
 #include <CGAL/_test_types.h>
 
 #include <CGAL/internal/Projection_traits_3.h>

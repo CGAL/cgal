@@ -2,6 +2,9 @@
 #define CGAL_POINT_LOCATION_DYNAMIC_TEST_H
 
 
+
+#include <iostream>
+
 #include "Point_location_test.h"
 
 /*! Point location test */

@@ -13,6 +13,9 @@
 #ifndef CGAL_NEF_3_ID_SUPPORT_HANDLER
 #define CGAL_NEF_3_ID_SUPPORT_HANDLER
 
+
+#include <iostream>
+
 #include <CGAL/license/Nef_3.h>
 
 

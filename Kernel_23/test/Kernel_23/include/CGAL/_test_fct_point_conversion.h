@@ -19,6 +19,9 @@
 #ifndef CGAL__TEST_FCT_POINT_CONVERSION_H
 #define CGAL__TEST_FCT_POINT_CONVERSION_H
 
+
+#include <iostream>
+
 #include <CGAL/Homogeneous.h>
 #include <cassert>
 #include <CGAL/Cartesian.h>

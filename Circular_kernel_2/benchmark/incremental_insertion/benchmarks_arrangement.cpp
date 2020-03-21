@@ -1,4 +1,7 @@
 #define CGAL_CAST_INT
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Handle_for.h>
 #include <CGAL/point_generators_2.h>

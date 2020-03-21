@@ -14,6 +14,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_STITCH_BORDERS_H
 #define CGAL_POLYGON_MESH_PROCESSING_STITCH_BORDERS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/disable_warnings.h>

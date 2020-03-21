@@ -16,6 +16,9 @@
  
 
 
+
+#include <iostream>
+
 #include <CGAL/Simple_homogeneous.h>
 #include <CGAL/Quotient.h>
 #include <cassert>

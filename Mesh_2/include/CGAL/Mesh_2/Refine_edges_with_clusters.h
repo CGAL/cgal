@@ -13,6 +13,9 @@
 #ifndef CGAL_MESH_2_REFINE_EDGES_WITH_CLUSTERS_H
 #define CGAL_MESH_2_REFINE_EDGES_WITH_CLUSTERS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_2.h>
 
 

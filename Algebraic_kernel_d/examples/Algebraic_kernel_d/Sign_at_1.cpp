@@ -1,6 +1,9 @@
 // $URL$
 // $Id$
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 #ifdef CGAL_USE_MPFI 
 #include <CGAL/Algebraic_kernel_d_1.h>

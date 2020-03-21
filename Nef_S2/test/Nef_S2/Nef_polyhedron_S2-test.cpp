@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Homogeneous.h>
 #include <CGAL/Nef_polyhedron_S2.h>
 #include <CGAL/test_macros.h>

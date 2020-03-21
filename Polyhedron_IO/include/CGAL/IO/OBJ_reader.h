@@ -11,6 +11,9 @@
 #ifndef CGAL_IO_OBJ_READER_H
 #define CGAL_IO_OBJ_READER_H
 
+
+#include <iostream>
+
 #include <istream>
 #include <sstream>
 #include <vector>

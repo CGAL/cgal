@@ -1,4 +1,7 @@
 
+
+#include <iostream>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Simple_polygon_visibility_2.h>
 #include <CGAL/Arrangement_2.h>

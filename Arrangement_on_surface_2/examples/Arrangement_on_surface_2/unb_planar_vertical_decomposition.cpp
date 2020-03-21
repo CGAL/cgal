@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/vertical_decomposition.cpp
 // Performing vertical decomposition of an arrangement.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Arr_linear_traits_2.h>

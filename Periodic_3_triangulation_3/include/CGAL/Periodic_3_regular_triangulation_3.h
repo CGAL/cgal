@@ -14,6 +14,9 @@
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Periodic_3_triangulation_3.h>
 
 // Needed by remove to fill the hole.

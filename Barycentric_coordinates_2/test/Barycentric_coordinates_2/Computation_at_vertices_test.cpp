@@ -6,6 +6,9 @@
 
 // Works with inexact kernel, too.
 
+
+#include <iostream>
+
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>

@@ -17,6 +17,9 @@
 #ifndef CGAL_POINT_2_H
 #define CGAL_POINT_2_H
 
+
+#include <iostream>
+
 #include <CGAL/Origin.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/assertions.h>

@@ -17,6 +17,9 @@
 #ifndef CGAL_BOUND_BETWEEN_1_H
 #define CGAL_BOUND_BETWEEN_1_H 1
 
+
+#include <iostream>
+
 #include <iterator>
 
 #include <CGAL/basic.h>

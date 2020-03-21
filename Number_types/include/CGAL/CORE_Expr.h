@@ -17,6 +17,9 @@
 #ifndef CGAL_CORE_EXPR_H
 #define CGAL_CORE_EXPR_H
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/number_type_basic.h>

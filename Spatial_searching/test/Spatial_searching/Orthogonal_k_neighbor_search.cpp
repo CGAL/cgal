@@ -1,5 +1,8 @@
 // file          : test/Spatial_searching/Orthogonal_k_neighbor_search.C
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Search_traits_2.h>

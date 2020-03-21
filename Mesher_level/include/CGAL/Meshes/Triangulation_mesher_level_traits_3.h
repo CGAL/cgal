@@ -12,6 +12,9 @@
 #ifndef CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
 #define CGAL_MESH_2_TRIANGULATION_MESHER_LEVEL_TRAITS_3_H
 
+
+#include <iostream>
+
 #include <CGAL/disable_warnings.h>
 
 #include <vector>

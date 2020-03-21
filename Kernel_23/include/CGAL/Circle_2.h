@@ -18,6 +18,9 @@
 #ifndef CGAL_CIRCLE_2_H
 #define CGAL_CIRCLE_2_H
 
+
+#include <iostream>
+
 #include <CGAL/assertions.h>
 #include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>

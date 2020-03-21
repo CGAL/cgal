@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/circular_arc.cpp
 // Constructing an arrangement of various circular arcs and line segments.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>

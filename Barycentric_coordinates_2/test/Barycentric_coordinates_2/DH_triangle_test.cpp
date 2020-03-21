@@ -5,6 +5,9 @@
 
 // Does not work with inexact kernel. We get inconsistency when comparing triangle and discrete harmonic coordinates.
 
+
+#include <iostream>
+
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>

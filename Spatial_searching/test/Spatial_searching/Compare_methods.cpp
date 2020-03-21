@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Incremental_neighbor_search.h>

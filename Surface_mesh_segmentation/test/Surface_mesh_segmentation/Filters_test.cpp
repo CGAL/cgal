@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/internal/Surface_mesh_segmentation/Filters.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

@@ -18,6 +18,9 @@
  * \brief defines Curved_kernel_via_analysis_2 function objects + class
  */
 
+
+#include <iostream>
+
 #include <CGAL/config.h>
 #include <CGAL/Curved_kernel_via_analysis_2/Make_x_monotone_2.h>
 #include <CGAL/iterator.h>

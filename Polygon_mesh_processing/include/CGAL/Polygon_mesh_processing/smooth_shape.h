@@ -14,6 +14,9 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_SMOOTH_SHAPE_H
 #define CGAL_POLYGON_MESH_PROCESSING_SMOOTH_SHAPE_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Polygon_mesh_processing/meshing_hole_filling.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)

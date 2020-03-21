@@ -11,6 +11,9 @@
 #ifndef CGAL_IO_PLY_WRITER_H
 #define CGAL_IO_PLY_WRITER_H
 
+
+#include <iostream>
+
 #include <CGAL/IO/PLY.h>
 
 namespace CGAL{

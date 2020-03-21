@@ -12,6 +12,9 @@
 #ifndef CGAL_CD3_SM_WALLS_H
 #define CGAL_CD3_SM_WALLS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Convex_decomposition_3.h>
 
 

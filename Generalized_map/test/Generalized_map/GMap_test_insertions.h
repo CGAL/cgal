@@ -12,6 +12,9 @@
 #ifndef GMAP_TEST_INSERTIONS_H
 #define GMAP_TEST_INSERTIONS_H
 
+
+#include <iostream>
+
 #include <CGAL/Generalized_map_operations.h>
 
 template<typename GMAP>

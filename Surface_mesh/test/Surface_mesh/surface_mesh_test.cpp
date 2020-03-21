@@ -1,4 +1,7 @@
 
+
+#include <iostream>
+
 #include "SM_common.h"
 
 #include <CGAL/Surface_mesh.h>

@@ -19,6 +19,9 @@
 
 // within this file AS ^= Type
 
+
+#include <iostream>
+
 #include <CGAL/Algebraic_structure_traits.h>
 //#include <CGAL/Real_embeddable_traits.h>
 

@@ -1,6 +1,9 @@
 //! \file examples/Minkowski_sum_2/approx_offset.cpp
 // Computing the approximated offset of a polygon.
 
+
+#include <iostream>
+
 #include <fstream>
 #include <boost/timer.hpp>
 

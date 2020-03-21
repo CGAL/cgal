@@ -1,5 +1,8 @@
 // file: test/Spatial_searching/K_neighbor_search_manhattan_distance_isobox_point.C
 
+
+#include <iostream>
+
 #include <CGAL/Simple_cartesian.h>
 #include <cassert>
 #include <CGAL/Manhattan_distance_iso_box_point.h>

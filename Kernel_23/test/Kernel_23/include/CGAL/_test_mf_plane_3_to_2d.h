@@ -18,6 +18,9 @@
 #ifndef CGAL__TEST_MF_PLANE_3_TO_2D_H
 #define CGAL__TEST_MF_PLANE_3_TO_2D_H
 
+
+#include <iostream>
+
 #include <boost/type_traits/is_same.hpp>
 
 template <class R>

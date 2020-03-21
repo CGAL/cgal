@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/global_insertion.cpp
 // Using the global insertion functions (incremental and aggregated).
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/MP_Float.h>

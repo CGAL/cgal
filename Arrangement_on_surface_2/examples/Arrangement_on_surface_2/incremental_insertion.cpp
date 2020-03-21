@@ -1,6 +1,9 @@
 //! \file examples/Arrangement_on_surface_2/incremental_insertion.cpp
 // Using the global incremental insertion functions.
 
+
+#include <iostream>
+
 #include <CGAL/Cartesian.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Arr_segment_traits_2.h>

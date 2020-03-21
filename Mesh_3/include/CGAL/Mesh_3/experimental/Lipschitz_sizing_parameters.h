@@ -14,6 +14,9 @@
 #ifndef CGAL_LIP_SIZING_PARAMETERS_H
 #define CGAL_LIP_SIZING_PARAMETERS_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_3.h>
 
 #include <map>

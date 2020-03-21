@@ -13,6 +13,9 @@
 #ifndef CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H
 #define CGAL_POLYHEDRON_INCREMENTAL_BUILDER_3_H 1
 
+
+#include <iostream>
+
 #include <CGAL/license/Polyhedron.h>
 
 #include <CGAL/disable_warnings.h>

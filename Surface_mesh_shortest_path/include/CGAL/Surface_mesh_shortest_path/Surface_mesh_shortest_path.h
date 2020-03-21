@@ -12,6 +12,9 @@
 #ifndef CGAL_SURFACE_MESH_SHORTEST_PATH_SURFACE_MESH_SHORTEST_PATH_H
 #define CGAL_SURFACE_MESH_SHORTEST_PATH_SURFACE_MESH_SHORTEST_PATH_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Surface_mesh_shortest_path.h>
 
 #include <CGAL/disable_warnings.h>

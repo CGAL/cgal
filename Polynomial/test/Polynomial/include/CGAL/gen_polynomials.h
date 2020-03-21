@@ -25,6 +25,9 @@
 #ifndef CGAL_GEN_POLYNOMIALS_H
 #define CGAL_GEN_POLYNOMIALS_H
 
+
+#include <iostream>
+
 #include <vector>
 #include <CGAL/Random.h>
 #include <CGAL/Polynomial.h>

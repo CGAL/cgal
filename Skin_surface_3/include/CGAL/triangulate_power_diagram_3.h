@@ -13,6 +13,9 @@
 #ifndef CGAL_TRIANGULATE_POWER_DIAGRAM_3_H
 #define CGAL_TRIANGULATE_POWER_DIAGRAM_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Skin_surface_3.h>
 
 

@@ -12,6 +12,9 @@
 #ifndef CGAL_LCC_4_TEST_H
 #define CGAL_LCC_4_TEST_H
 
+
+#include <iostream>
+
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Combinatorial_map_operations.h>
 #include "Linear_cell_complex_2_test.h"

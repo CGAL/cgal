@@ -13,6 +13,9 @@
 #ifndef CGAL_POLYLINE_CONSTRAINT_HIERARCHY_2_H
 #define CGAL_POLYLINE_CONSTRAINT_HIERARCHY_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Triangulation_2.h>
 
 

@@ -5,6 +5,9 @@
 
 // Does not work with inexact kernel. Because weights cannot be computed with a distance 1.0e-300 away from the boundary.
 
+
+#include <iostream>
+
 #include <cmath>
 #include <cassert>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>

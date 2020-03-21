@@ -11,6 +11,9 @@
 #ifndef CGAL_MONGE_VIA_JET_FITTING_H_
 #define CGAL_MONGE_VIA_JET_FITTING_H_
 
+
+#include <iostream>
+
 #include <CGAL/license/Jet_fitting_3.h>
 
 

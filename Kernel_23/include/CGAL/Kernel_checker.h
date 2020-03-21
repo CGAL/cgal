@@ -20,6 +20,9 @@
 
 // This file contains the definition of a kernel traits checker.
 
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 #include <CGAL/result_of.h>
 #include <CGAL/use.h>

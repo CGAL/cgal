@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/basic.h>
 
 #include <CGAL/point_generators_2.h>

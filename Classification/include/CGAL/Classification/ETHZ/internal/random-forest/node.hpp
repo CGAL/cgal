@@ -19,6 +19,9 @@
 
 #ifndef CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
 #define CGAL_INTERNAL_LIBLEARNING_RANDOMFORESTS_NODE_H
+
+#include <iostream>
+
 #include "../dataview.h"
 #include "common-libraries.hpp"
 #include <boost/serialization/scoped_ptr.hpp>

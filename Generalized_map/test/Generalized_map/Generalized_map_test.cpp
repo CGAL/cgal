@@ -1,3 +1,6 @@
+
+#include <iostream>
+
 #include <CGAL/Generalized_map.h>
 #include <CGAL/Cell_attribute.h>
 

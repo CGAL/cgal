@@ -13,6 +13,9 @@
 #ifndef CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
 #define CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
 

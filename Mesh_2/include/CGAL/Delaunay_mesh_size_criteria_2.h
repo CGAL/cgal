@@ -13,6 +13,9 @@
 #ifndef CGAL_DELAUNAY_MESH_SIZE_CRITERIA_2_H
 #define CGAL_DELAUNAY_MESH_SIZE_CRITERIA_2_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Mesh_2.h>
 
 #include <CGAL/disable_warnings.h>

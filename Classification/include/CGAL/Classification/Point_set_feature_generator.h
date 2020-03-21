@@ -12,6 +12,9 @@
 #ifndef CGAL_CLASSIFICATION_POINT_SET_FEATURE_GENERATOR_H
 #define CGAL_CLASSIFICATION_POINT_SET_FEATURE_GENERATOR_H
 
+
+#include <iostream>
+
 #include <CGAL/license/Classification.h>
 
 #include <CGAL/property_map.h>
