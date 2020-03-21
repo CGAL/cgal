@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb, Maxime Gimeno
@@ -147,23 +138,18 @@ detect_surface_patches(PolygonMesh& p,
                        EdgeIsFeatureMap eif,
                        const NamedParameters& np)
 {
-  //extract types from NPs
-  typename GetFaceIndexMap<PolygonMesh, NamedParameters>::const_type
-          fimap = boost::choose_param(get_param(np, internal_np::face_index),
-                                      get_const_property_map(boost::face_index, p));
-
   int offset = static_cast<int>(
-          boost::choose_param(get_param(np, internal_np::first_index),
-          1));
+          parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index), 1));
 
   internal::PatchIdMapWrapper<PatchIdMap,
                               typename boost::property_traits<PatchIdMap>::value_type>
           wrapmap(patch_id_map, offset);
+
   return connected_components(p, wrapmap,
                               parameters::edge_is_constrained_map(eif)
-                             .face_index_map(fimap));
-
+                                         .face_index_map(CGAL::get_initialized_face_index_map(p, np)));
 }
+
 template <typename PolygonMesh, typename EdgeIsFeatureMap, typename PatchIdMap>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 detect_surface_patches(PolygonMesh& p,
@@ -216,7 +202,7 @@ template<typename GT,
  void sharp_call(PolygonMesh& pmesh,
                  FT& angle_in_deg,
                  EIFMap edge_is_feature_map,
-                 const boost::param_not_found&)
+                 const internal_np::Param_not_found&)
 {
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor     edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -286,10 +272,10 @@ void detect_sharp_edges(PolygonMesh& pmesh,
 {
   //extract types from NPs
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename GetGeomTraits<PolygonMesh, GT>::type::FT          FT;
+  typedef typename GT::FT          FT;
 
   internal::sharp_call<GT, FT>(pmesh, angle_in_deg, edge_is_feature_map,
-                               get_param(np, internal_np::vertex_feature_degree));
+                               parameters::get_parameter(np, internal_np::vertex_feature_degree));
 }
 
 
@@ -299,7 +285,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
  * collects the surface patches of the faces incident to each vertex of the input polygon mesh.
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
- * \tparam PatchIdMap a model of `ReadPropertyMap` with
+ * \tparam PatchIdMap a model of `ReadablePropertyMap` with
    `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
    and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam VertexIncidentPatchesMap a model of mutable `LvaluePropertyMap` with
@@ -307,7 +293,7 @@ void detect_sharp_edges(PolygonMesh& pmesh,
    must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
    A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
    inserted several times.
- * \tparam EdgeIsFeatureMap a model of `ReadPropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ * \tparam EdgeIsFeatureMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type.
  * \param pmesh the polygon mesh
  * \param patch_id_map the property map containing the surface patch ids for the faces of `pmesh`. It must be already filled.
@@ -365,7 +351,7 @@ namespace internal
   template<typename PolygonMesh,
            typename PIDMap,
            typename EIFMap>
-  void vip_call(PolygonMesh&, PIDMap, const boost::param_not_found&, EIFMap)
+  void vip_call(PolygonMesh&, PIDMap, const internal_np::Param_not_found&, EIFMap)
   {
     //do nothing when the parameter is not given
   }
@@ -382,8 +368,6 @@ namespace internal
  * computing a
  * surface patch id for each face.
  *
- * A property map for `CGAL::face_index_t` must be either available
- * as an internal property map to `pmesh` or provided as one of the Named Parameters.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
  * \tparam FT a number type. It is
@@ -440,7 +424,7 @@ sharp_edges_segmentation(PolygonMesh& pmesh,
       internal::detect_surface_patches(pmesh, patch_id_map, edge_is_feature_map, np);
 
     internal::vip_call(pmesh, patch_id_map,
-      get_param(np, internal_np::vertex_incident_patches), edge_is_feature_map);
+      parameters::get_parameter(np, internal_np::vertex_incident_patches), edge_is_feature_map);
 
     return result;
 }

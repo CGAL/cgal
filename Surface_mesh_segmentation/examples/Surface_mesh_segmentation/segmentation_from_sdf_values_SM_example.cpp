@@ -13,7 +13,6 @@ typedef CGAL::Surface_mesh<Point_3> Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Mesh>::face_iterator face_iterator;
 
 int main(int argc, char** argv )
 {
@@ -49,7 +48,7 @@ int main(int argc, char** argv )
 
   std::cout << "Number of segments: " << number_of_segments << std::endl;
   // print segment-ids
-  face_iterator facet_it, fend;
+
   for(face_descriptor fd : faces(mesh)){
       // ids are between [0, number_of_segments -1]
       std::cout << segment_property_map[fd] << " ";

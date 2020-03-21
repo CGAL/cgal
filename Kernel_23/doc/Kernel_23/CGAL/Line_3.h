@@ -71,7 +71,7 @@ Point_3<Kernel> projection(const Point_3<Kernel> &p) const;
 returns an arbitrary point on `l`. It holds 
 `point(i) = point(j)`, iff `i=j`. 
 */ 
-Point_3<Kernel> point(int i) const; 
+Point_3<Kernel> point(const Kernel::FT i) const;
 
 /// @} 
 

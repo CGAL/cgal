@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -32,8 +23,8 @@ template < typename Base_, typename FT_, typename LA_=CGAL::LA_eigen<FT_,typenam
 struct Cartesian_change_FT_base : public
 	Base_
 {
-    CGAL_CONSTEXPR Cartesian_change_FT_base(){}
-    CGAL_CONSTEXPR Cartesian_change_FT_base(int d):Base_(d){}
+    constexpr Cartesian_change_FT_base(){}
+    constexpr Cartesian_change_FT_base(int d):Base_(d){}
 
     typedef Cartesian_change_FT_base Self;
     typedef Base_ Kernel_base;
@@ -48,7 +39,7 @@ struct Cartesian_change_FT_base : public
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
     //FIXME: use Iterator_list!
     /*
-    template<class T,bool=CGAL_BOOSTD is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
+    template<class T,bool= std::is_same<typename iterator_tag_traits<T>::value_tag,FT_tag>::value>
     struct Iterator : Get_type<Kernel_base,T> {};
     template<class T> struct Iterator<T,true> {
       typedef transforming_iterator<FT_converter,typename Get_type<Kernel_base,T>::type> type;
@@ -109,8 +100,8 @@ template < typename Base_, typename FT_>
 struct Cartesian_change_FT : public
 	Cartesian_change_FT_base<Base_,FT_>
 {
-    CGAL_CONSTEXPR Cartesian_change_FT(){}
-    CGAL_CONSTEXPR Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}
+    constexpr Cartesian_change_FT(){}
+    constexpr Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}
 };
 
 } //namespace CGAL

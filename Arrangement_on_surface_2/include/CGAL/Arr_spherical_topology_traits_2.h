@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Eric Berberich    <ericb@post.tau.ac.il>
@@ -139,7 +130,7 @@ private:
   //! A container of boundary vertices.
   struct Vertex_key_comparer {
     /*! Construct default */
-    Vertex_key_comparer() : m_geom_traits(NULL) {}
+    Vertex_key_comparer() : m_geom_traits(nullptr) {}
 
     /*! Construct */
     Vertex_key_comparer(const Gt_adaptor_2* geom_traits) :
@@ -297,7 +288,7 @@ public:
   Vertex* north_pole() { return m_north_pole; }
 
   /*! Obtain a vertex on the line of discontinuity that corresponds to
-   *  the given curve-end (or return NULL if no such vertex exists).
+   *  the given curve-end (or return nullptr if no such vertex exists).
    */
   Vertex* discontinuity_vertex(const X_monotone_curve_2 xc, Arr_curve_end ind)
   {
@@ -305,7 +296,7 @@ public:
       m_geom_traits->construct_min_vertex_2_object()(xc) :
       m_geom_traits->construct_max_vertex_2_object()(xc);
     typename Vertex_map::iterator it = m_boundary_vertices.find(key);
-    return (it != m_boundary_vertices.end()) ? it->second : NULL;
+    return (it != m_boundary_vertices.end()) ? it->second : nullptr;
   }
   //@}
 
@@ -546,7 +537,7 @@ public:
   {
     // There are no fictitious halfedges:
     CGAL_error();
-    return NULL;
+    return nullptr;
   }
 
   /*! Determine whether the given face is unbounded.

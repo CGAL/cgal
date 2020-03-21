@@ -95,10 +95,33 @@ function(cgal_add_compilation_test exe_name)
     return()
   endif()
   add_test(NAME "compilation_of__${exe_name}"
-    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}")
+    COMMAND ${TIME_COMMAND} "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "${exe_name}" --config "$<CONFIG>")
   set_property(TEST "compilation_of__${exe_name}"
     APPEND PROPERTY LABELS "${PROJECT_NAME}")
+  if(NOT TARGET ALL_CGAL_TARGETS)
+    add_custom_target( ALL_CGAL_TARGETS )
+  endif()
+  if(NOT TARGET cgal_check_build_system)
+    add_custom_target(cgal_check_build_system)
+    add_dependencies( ALL_CGAL_TARGETS cgal_check_build_system )
+  endif()
+  if(NOT TEST check_build_system)
+    add_test(NAME "check_build_system"
+      COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
+    set_property(TEST "check_build_system"
+      APPEND PROPERTY LABELS "Installation")
+    if(POLICY CMP0066) # cmake 3.7 or later
+      set_property(TEST "check_build_system"
+        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
+    endif()
+  endif()
+  if(POLICY CMP0066) # cmake 3.7 or later
+    set_property(TEST "compilation_of__${exe_name}"
+      APPEND PROPERTY FIXTURES_REQUIRED "check_build_system_SetupFixture")
+  endif()
 endfunction(cgal_add_compilation_test)
+
+option(CGAL_TEST_DRAW_FUNCTIONS "If set, the ctest command will not skip the tests of the draw functions.")
 
 function(cgal_setup_test_properties test_name)
   if(ARGC GREATER 1)
@@ -109,12 +132,22 @@ function(cgal_setup_test_properties test_name)
   #      message(STATUS "  working dir: ${CMAKE_CURRENT_SOURCE_DIR}")
   set_property(TEST "${test_name}"
     PROPERTY WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if(NOT CGAL_TEST_DRAW_FUNCTIONS)
+    set_property(TEST "${test_name}"
+      APPEND PROPERTY ENVIRONMENT CGAL_TEST_SUITE=1)
+  endif()
+
   if(exe_name)
     set_property(TEST "${test_name}"
       APPEND PROPERTY DEPENDS "compilation_of__${exe_name}")
   endif()
 
-  if(POLICY CMP0066) # CMake 3.7 or later
+  get_filename_component(_source_dir_abs ${CMAKE_CURRENT_SOURCE_DIR} ABSOLUTE)
+  get_filename_component(_binary_dir_abs ${CMAKE_CURRENT_BINARY_DIR} ABSOLUTE)
+  string(FIND "${_binary_dir_abs}" "${_source_dir_abs}" _search_binary_in_source)
+
+  if(_search_binary_in_source EQUAL "-1"
+     AND POLICY CMP0066) # CMake 3.7 or later
     if(NOT TEST ${PROJECT_NAME}_SetupFixture)
       if(ANDROID)
         add_test(NAME ${PROJECT_NAME}_SetupFixture

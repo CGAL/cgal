@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -1187,7 +1178,7 @@ public:
    */
   template <class OutputIterator>
   OutputIterator intersect (const Self& cv, OutputIterator oi,
-                            Intersection_map *inter_map = NULL) const
+                            Intersection_map *inter_map = nullptr) const
   {
     // First check whether the two arcs have the same supporting curve.
     if (has_same_supporting_curve (cv))
@@ -1232,7 +1223,7 @@ public:
     Intersection_list            inter_list;
     bool                         invalid_ids = false;
 
-    if (inter_map != NULL && _index() != 0 && cv._index() != 0)
+    if (inter_map != nullptr && _index() != 0 && cv._index() != 0)
     {
       if (_index() < cv._index())
         id_pair = Curve_id_pair (_index(), cv._index());
@@ -1245,12 +1236,12 @@ public:
     {
       // In case one of the IDs is invalid, we do not look in the map neither
       // we cache the results.
-      if (inter_map != NULL)
+      if (inter_map != nullptr)
         map_iter = inter_map->end();
       invalid_ids = true;
     }
 
-    if (inter_map == NULL || map_iter == inter_map->end())
+    if (inter_map == nullptr || map_iter == inter_map->end())
     {
       // Compute the intersections points between the two supporting curves.
       if (is_linear())

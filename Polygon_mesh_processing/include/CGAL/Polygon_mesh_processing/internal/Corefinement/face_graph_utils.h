@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sebastien Loriot
@@ -206,8 +197,8 @@ boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
 get_vpm(const NP& np, boost::optional<PM*> opm, boost::true_type)
 {
   if (boost::none == opm) return boost::none;
-  return boost::choose_param(
-           boost::get_param(np, internal_np::vertex_point),
+  return parameters::choose_parameter(
+           parameters::get_parameter(np, internal_np::vertex_point),
            get_property_map(boost::vertex_point, *(*opm)) );
 }
 
@@ -433,7 +424,7 @@ template <class PolygonMesh, class FaceIndexMap, class IsIntersectionEdge>
 void extract_patch_simplices(
   std::size_t patch_id,
   PolygonMesh& pm,
-  const FaceIndexMap& fids,
+  const FaceIndexMap fids,
   const std::vector<std::size_t>& patch_ids,
   std::vector<typename boost::graph_traits<PolygonMesh>::face_descriptor>& patch_faces,
   std::set<typename boost::graph_traits<PolygonMesh>::vertex_descriptor>& interior_vertices,
@@ -489,13 +480,13 @@ struct Patch_container{
 // external data members
   PolygonMesh& pm;
   const std::vector<std::size_t>& patch_ids;
-  const FaceIndexMap& fids;
+  const FaceIndexMap fids;
   const IsIntersectionEdge& is_intersection_edge;
 // constructor
   Patch_container(
     PolygonMesh& pm,
     const std::vector<std::size_t>& patch_ids,
-    const FaceIndexMap& fids,
+    const FaceIndexMap fids,
     const IsIntersectionEdge& is_intersection_edge,
     std::size_t nb_patches
   ) : patches(nb_patches)
@@ -1019,14 +1010,15 @@ template < class TriangleMesh,
            class EdgeMarkMap2,
            class EdgeMarkMapOut,
            class IntersectionPolylines,
-           class PatchContainer,
+           class PatchContainer1,
+           class PatchContainer2,
            class UserVisitor>
 void fill_new_triangle_mesh(
   TriangleMesh& output,
   const boost::dynamic_bitset<>& patches_of_tm1_to_import,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_orientation_of_patches_from_tm1,
   bool reverse_orientation_of_patches_from_tm2,
   const IntersectionPolylines& polylines,
@@ -1265,7 +1257,8 @@ void disconnect_patches(
 }
 
 template <class TriangleMesh,
-          class PatchContainer,
+          class PatchContainer1,
+          class PatchContainer2,
           class IntersectionPolylines,
           class EdgeMap,
           class VertexPointMap,
@@ -1278,8 +1271,8 @@ void compute_inplace_operation_delay_removal_and_insideout(
   TriangleMesh& tm2,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm2,
   const IntersectionPolylines& polylines,
   const VertexPointMap& vpm1,
@@ -1425,7 +1418,8 @@ remove_patches(TriangleMesh& tm,
 }
 
 template <class TriangleMesh,
-          class PatchContainer,
+          class PatchContainer1,
+          class PatchContainer2,
           class VertexPointMap,
           class EdgeMarkMapIn1,
           class EdgeMarkMapIn2,
@@ -1436,8 +1430,8 @@ void compute_inplace_operation(
   const TriangleMesh& /*tm2*/,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm1,
   bool reverse_patch_orientation_tm2,
   const VertexPointMap& vpm1,
@@ -1494,14 +1488,15 @@ void compute_inplace_operation(
 
 template <class TriangleMesh,
           class IntersectionPolylines,
-          class PatchContainer,
+          class PatchContainer1,
+          class PatchContainer2,
           class EdgeMap>
 void compute_border_edge_map(
   const TriangleMesh& tm1,
   const TriangleMesh& tm2,
   const IntersectionPolylines& polylines,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   EdgeMap& tm2_edge_to_tm1_edge)
 {
   typedef boost::graph_traits<TriangleMesh> GT;
@@ -1529,7 +1524,8 @@ void compute_border_edge_map(
 
 
 template <class TriangleMesh,
-          class PatchContainer,
+          class PatchContainer1,
+          class PatchContainer2,
           class IntersectionPolylines,
           class VertexPointMap,
           class EdgeMarkMapIn1,
@@ -1541,8 +1537,8 @@ void compute_inplace_operation(
   const TriangleMesh& tm2,
   const boost::dynamic_bitset<>& patches_of_tm1_to_keep,
   const boost::dynamic_bitset<>& patches_of_tm2_to_import,
-  PatchContainer& patches_of_tm1,
-  PatchContainer& patches_of_tm2,
+  PatchContainer1& patches_of_tm1,
+  PatchContainer2& patches_of_tm2,
   bool reverse_patch_orientation_tm1,
   bool reverse_patch_orientation_tm2,
   const VertexPointMap& vpm1,
@@ -1615,6 +1611,7 @@ void remove_unused_polylines(
     }
   }
 
+  std::vector<vertex_descriptor> vertices_kept;
   for(vertex_descriptor v : vertices_to_remove)
   {
     bool to_remove=true;
@@ -1629,7 +1626,44 @@ void remove_unused_polylines(
       }
     if (to_remove)
       remove_vertex(v,tm);
+    else
+      vertices_kept.push_back(v);
   }
+
+  // update next/prev pointers around vertices in vertices_kept
+  for(vertex_descriptor v: vertices_kept)
+  {
+    halfedge_descriptor h = halfedge(v, tm), start=GT::null_halfedge();
+
+    do{
+
+      halfedge_descriptor tmp_start = h;
+      while ( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
+      {
+        h = opposite(next(h, tm), tm);
+        if (tmp_start==h) break;
+      }
+      if( !is_border(h, tm) )
+      {
+        // nothing to do: the vertex has already been updated and is now in the middle of a patch kept.
+        // This function can be called after the stitching of the patches kept, the vertex halfedge
+        // can have been updated and no border halfedge might be found
+        break;
+      }
+      halfedge_descriptor in = h;
+
+      if (start==GT::null_halfedge())
+        start=in;
+      else
+        if (start==in)
+          break;
+      while ( is_border(h, tm) )
+        h = opposite(next(h, tm), tm);
+      set_next(in, opposite(h, tm), tm);
+    }
+    while(true);//this loop handles non-manifold vertices
+  }
+
   for(edge_descriptor e : edges_to_remove)
     remove_edge(e,tm);
 }

@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Geert-Jan Giezeman
@@ -157,7 +148,7 @@ intersection(const typename K::Ray_2 &ray,
     default:
         return intersection_return<typename K::Intersect_2, typename K::Ray_2, typename K::Triangle_2>();
     case is_t::POINT:
-        return intersection_return<typename K::Intersect_2, typename K::Ray_2, typename K::Triangle_2>(ispair.intersection_segment());
+        return intersection_return<typename K::Intersect_2, typename K::Ray_2, typename K::Triangle_2>(ispair.intersection_point());
     case is_t::SEGMENT:
         return intersection_return<typename K::Intersect_2, typename K::Ray_2, typename K::Triangle_2>(ispair.intersection_segment());
     }

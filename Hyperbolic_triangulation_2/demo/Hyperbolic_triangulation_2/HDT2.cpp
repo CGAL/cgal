@@ -10,7 +10,6 @@
   #include <internal/Qt/HyperbolicPainterOstreamCK.h>
 #else
   #include <CGAL/Cartesian.h>
-  #include <CGAL/CORE_Expr.h>
   #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
   #include <internal/Qt/HyperbolicPainterOstream.h>
 #endif

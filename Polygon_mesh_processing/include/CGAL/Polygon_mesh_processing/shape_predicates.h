@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Konstantinos Katrioplas,
@@ -74,15 +65,15 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
                         const PolygonMesh& pm,
                         const NamedParameters& np)
 {
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, pm));
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(vertex_point, pm));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   return traits.equal_3_object()(get(vpmap, source(e, pm)), get(vpmap, target(e, pm)));
 }
@@ -127,15 +118,15 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 {
   CGAL_precondition(CGAL::is_triangle(halfedge(f, tm), tm));
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tm);
 
@@ -186,17 +177,17 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 {
   CGAL_precondition(threshold >= 1.);
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::FT                                               FT;
 
@@ -288,18 +279,18 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
   CGAL_precondition(threshold >= -1.);
   CGAL_precondition(threshold <= 0.);
 
-  using boost::get_param;
-  using boost::choose_param;
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor     vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor   halfedge_descriptor;
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-  VertexPointMap vpmap = choose_param(get_param(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+  VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
-  Traits traits = choose_param(get_param(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::FT                                               FT;
   typedef typename Traits::Vector_3                                         Vector_3;

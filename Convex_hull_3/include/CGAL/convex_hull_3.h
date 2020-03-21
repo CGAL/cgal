@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
@@ -43,8 +34,10 @@
 #include <iostream>
 #include <algorithm>
 #include <utility>
+#include <memory>
 #include <list>
 #include <vector>
+#include <type_traits>
 #include <boost/bind.hpp>
 #include <boost/next_prior.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
@@ -54,8 +47,12 @@
 #include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
+#include <CGAL/boost/graph/properties_Triangulation_data_structure_2.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/iterator/transform_iterator.hpp>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/is_iterator.h>
 
 #include <boost/unordered_map.hpp>
 
@@ -236,17 +233,23 @@ public:
 //and in case of failure, exact arithmetic is used.
 template <class Kernel, class P>
 class Is_on_positive_side_of_plane_3<Convex_hull_traits_3<Kernel, P, Tag_true>, boost::true_type >{
-  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  PK;
-  typedef Simple_cartesian<Interval_nt_advanced >                               CK;
+  typedef Simple_cartesian<CGAL::internal::Exact_field_selector<double>::Type>  Exact_K;
+  typedef Simple_cartesian<Interval_nt_advanced >                               Approx_K;
   typedef Convex_hull_traits_3<Kernel, P, Tag_true>                             Traits;
   typedef typename Traits::Point_3                                              Point_3;
 
-  Cartesian_converter<Kernel,CK>                        to_CK;
-  Cartesian_converter<Kernel,PK>                        to_PK;
+  Cartesian_converter<Kernel,Approx_K>                  to_AK;
+  Cartesian_converter<Kernel,Exact_K>                   to_EK;
+
+  template <typename K>
+  struct Vector_plus_point {
+    typename K::Vector_3 vector;
+    typename K::Point_3  point;
+  };
 
   const Point_3& p,q,r;
-  mutable typename CK::Plane_3* ck_plane;
-  mutable typename PK::Plane_3* pk_plane;
+  mutable Vector_plus_point<Approx_K> ak_plane;
+  mutable Vector_plus_point<Exact_K>* ek_plane_ptr;
 
   double m10,m20,m21,Maxx,Maxy,Maxz;
 
@@ -292,8 +295,13 @@ public:
   typedef typename Interval_nt_advanced::Protector           Protector;
 
   Is_on_positive_side_of_plane_3(const Traits&,const Point_3& p_,const Point_3& q_,const Point_3& r_)
-  :p(p_),q(q_),r(r_),ck_plane(NULL),pk_plane(NULL)
+    : p(p_),q(q_),r(r_)
+    , ak_plane()
+    , ek_plane_ptr(nullptr)
   {
+    ak_plane.vector =
+      typename Approx_K::Vector_3(Interval_nt_advanced(0., std::numeric_limits<double>::infinity()),
+                                  0., 0.);
     double pqx = q.x() - p.x();
     double pqy = q.y() - p.y();
     double pqz = q.z() - p.z();
@@ -319,8 +327,7 @@ public:
   }
 
   ~Is_on_positive_side_of_plane_3(){
-    if (ck_plane!=NULL) delete ck_plane;
-    if (pk_plane!=NULL) delete pk_plane;
+    if (ek_plane_ptr!=nullptr) delete ek_plane_ptr;
   }
 
   bool operator() (const Point_3& s) const
@@ -334,15 +341,29 @@ public:
       return static_res == 1;
 
     try{
-      if (ck_plane==NULL)
-        ck_plane=new typename CK::Plane_3(to_CK(p),to_CK(q),to_CK(r));
-      return ck_plane->has_on_positive_side(to_CK(s));
+      // infinity() is the sentinel for uninitialized `ak_plane`
+      if (ak_plane.vector.x().sup() == std::numeric_limits<double>::infinity())
+      {
+        const typename Approx_K::Point_3 ap = to_AK(p);
+        ak_plane.vector = cross_product(to_AK(q)-ap, to_AK(r)-ap);
+        ak_plane.point = ap;
+      }
+      Uncertain<Sign> res =
+        sign(scalar_product(to_AK(s) - ak_plane.point,
+                            ak_plane.vector));
+      if(is_certain(res)) {
+        return (get_certain(res) == POSITIVE);
+      }
     }
-    catch (Uncertain_conversion_exception&){
-      if (pk_plane==NULL)
-        pk_plane=new typename PK::Plane_3(to_PK(p),to_PK(q),to_PK(r));
-      return pk_plane->has_on_positive_side(to_PK(s));
+    catch (Uncertain_conversion_exception&){}
+    if (ek_plane_ptr==nullptr) {
+      const typename Exact_K::Point_3 ep = to_EK(p);
+      ek_plane_ptr = new Vector_plus_point<Exact_K>;
+      ek_plane_ptr->vector = cross_product(to_EK(q)-ep, to_EK(r)-ep);
+      ek_plane_ptr->point = ep;
     }
+    return sign(scalar_product(to_EK(s) - ek_plane_ptr->point,
+                               ek_plane_ptr->vector)) == POSITIVE;
   }
 };
 
@@ -1019,13 +1040,39 @@ void convex_hull_3(InputIterator first, InputIterator beyond,
 
 template <class InputIterator, class Polyhedron_3>
 void convex_hull_3(InputIterator first, InputIterator beyond,
-                   Polyhedron_3& polyhedron)
+                   Polyhedron_3& polyhedron,
+                   typename std::enable_if<
+                     CGAL::is_iterator<InputIterator>::value
+                   >::type* =0) //workaround to avoid ambiguity with next overload.
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
    typedef typename internal::Convex_hull_3::Default_traits_for_Chull_3<Point_3, Polyhedron_3>::type Traits;
    convex_hull_3(first, beyond, polyhedron, Traits());
 }
 
+
+template <class VertexListGraph, class PolygonMesh, class NamedParameters>
+void convex_hull_3(const VertexListGraph& g,
+                   PolygonMesh& pm, 
+                   const NamedParameters& np)
+{
+  typedef typename GetVertexPointMap<VertexListGraph, NamedParameters>::const_type Vpmap;
+  typedef CGAL::Property_map_to_unary_function<Vpmap> Vpmap_fct;
+  Vpmap vpm = CGAL::parameters::choose_parameter(
+        CGAL::parameters::get_parameter(np, internal_np::vertex_point),
+        get_const_property_map(boost::vertex_point, g));
+  
+  Vpmap_fct v2p(vpm);
+  convex_hull_3(boost::make_transform_iterator(vertices(g).begin(), v2p),
+                boost::make_transform_iterator(vertices(g).end(), v2p), pm);
+}
+
+template <class VertexListGraph, class PolygonMesh>
+void convex_hull_3(const VertexListGraph& g,
+                   PolygonMesh& pm)
+{
+  convex_hull_3(g,pm,CGAL::parameters::all_default());
+}
 
 template <class InputRange, class OutputIterator, class Traits>
 OutputIterator

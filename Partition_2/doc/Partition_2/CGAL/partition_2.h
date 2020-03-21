@@ -88,8 +88,7 @@ the resulting sequence of polygons is returned.
 \cgalHeading{Requirements}
 
 <OL> 
-<LI>`Traits` is a model of the concepts `PartitionTraits_2` 
-and `YMonotonePartitionTraits_2`. 
+<LI>`Traits` is a model of the concepts `PartitionTraits_2`.
 For the purpose of 
 checking the validity of the \f$ y\f$-monotone partition produced as 
 a preprocessing step for the convex partitioning, it must also 
@@ -232,8 +231,7 @@ the resulting sequence of polygons is returned.
 \cgalHeading{Requirements}
 
 <OL> 
-<LI>`Traits` is a model of the concept 
-`YMonotonePartitionTraits_2` 
+<LI>`Traits` is a model of the concept `PartitionTraits_2` 
 and, for the purposes 
 of checking the postcondition that the partition is valid, it should 
 also be a model of `YMonotonePartitionIsValidTraits_2`. 

@@ -1,20 +1,11 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
@@ -71,7 +62,7 @@ namespace CGAL{
   
   
     Ipelet_base(const std::string NameS,const std::string SubLabS[],const std::string HMsgS[])
-      :SubLab(&SubLabS[0]),HMsg(&HMsgS[0]),Name(NameS),_page(NULL),_helper(NULL){};
+      :SubLab(&SubLabS[0]),HMsg(&HMsgS[0]),Name(NameS),_page(nullptr),_helper(nullptr){};
     
     
     IpePage* get_IpePage() const {return _page;}
@@ -89,7 +80,7 @@ namespace CGAL{
         protected_run(i);
       }
       catch(...){
-        helper->MessageBox("Error : Save your page in a file and submit it to \n https://www.cgal.org/bug_report.html","OK",NULL,NULL);
+        helper->MessageBox("Error : Save your page in a file and submit it to \n https://www.cgal.org/bug_report.html","OK",nullptr,nullptr);
       }
     };
 
@@ -112,7 +103,7 @@ namespace CGAL{
           hmsg=hmsg+"<li><i>"+SubLab[i]+"</i>: "+HMsg[i]+"</li>";
       else
         hmsg=hmsg+"<li>"+HMsg[0]+"</li>";
-      _helper->MessageBox(&hmsg[0],"OK",NULL,NULL);
+      _helper->MessageBox(&hmsg[0],"OK",nullptr,nullptr);
       return;
     }
 
@@ -338,7 +329,7 @@ public:
           SSP_ipe->SetClosed(true);
         return SSP_ipe;
       }
-      return NULL;
+      return nullptr;
     }
     
     
@@ -352,10 +343,10 @@ public:
                                       typename std::iterator_traits<iterator>::value_type,
                                       Point_2
                                     > 
-                                  >::type* =NULL) const 
+                                  >::type* =nullptr) const 
     {
       IpeSegmentSubPath* SSP_ipe=create_polyline(first,last,setclose);
-      if (SSP_ipe!=NULL){
+      if (SSP_ipe!=nullptr){
         IpePath* obj_ipe = new IpePath(_helper->Attributes());
         obj_ipe->AddSubPath(SSP_ipe);
         if (blackfill)
@@ -364,7 +355,7 @@ public:
         if (deselect_all) (--_page->end())->SetSelect(IpePgObject::ENone);
         return obj_ipe;
       }
-      return NULL;  
+      return nullptr;  
     }
     
     void draw_in_ipe(const Circle_2& C,bool deselect_all=false) const {
@@ -651,7 +642,7 @@ public:
                                  boost::mpl::or_< boost::is_same<typename std::iterator_traits<iterator>::value_type,Circular_arc_2> ,
                                                   boost::is_same<typename std::iterator_traits<iterator>::value_type,Polygon_2>
                                                 > > > >
-                    >::type* = NULL) const
+                    >::type* = nullptr) const
     {
       for (iterator it=begin;it!=end;++it)
         draw_in_ipe(*it,bbox);

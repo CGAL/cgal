@@ -93,7 +93,7 @@ along sharp features. The range of possible values is `[0, 1]`.  \n
 \cgalNPBegin{neighbor_radius} \anchor PSP_neighbor_radius
 is the spherical neighborhood radius.\n
 \b Type: floating scalar value\n
-<b>Default value</b>: `-1`, in which case the functions that use it will compute an adapted value automatically.
+<b>Default value</b>: `-1`, in which case it is not used.
 \cgalNPEnd
 
 \cgalNPBegin{number_of_output_points} \anchor PSP_number_of_output_points

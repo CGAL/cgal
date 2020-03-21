@@ -1,4 +1,6 @@
 #include <fstream>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -21,6 +23,9 @@
 #include "TriangulationPointInputAndConflictZone.h"
 #include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
@@ -315,7 +320,12 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.WKT *.wkt);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -331,11 +341,18 @@ MainWindow::open(QString fileName)
   
   K::Point_2 p;
   std::vector<K::Point_2> points;
-  while(ifs >> p) {
-    // ignore whatever comes after x and y
-    ifs.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); 
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    CGAL::read_multi_point_WKT(ifs, points);
+#endif
   }
+  else
+    while(ifs >> p) {
+      // ignore whatever comes after x and y
+      ifs.ignore((std::numeric_limits<std::streamsize>::max)(), '\n'); 
+      points.push_back(p);
+    }
   dt.insert(points.begin(), points.end());
 
   // default cursor
@@ -350,17 +367,38 @@ void
 MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
-						  ".");
+                                                  tr("Save points"),
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.WKT *.wkt);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Delaunay::Finite_vertices_iterator 
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      std::vector<K::Point_2> points;
+      points.reserve(dt.number_of_vertices());
+      for(Delaunay::Finite_vertices_iterator 
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
-        vit!= end; ++vit)
-    {
-      ofs << vit->point() << std::endl;
+          vit!= end; ++vit)
+      {
+        points.push_back(vit->point());
+      }
+      CGAL::write_multi_point_WKT(ofs, points);
+#endif
     }
+    else
+      for(Delaunay::Finite_vertices_iterator 
+          vit = dt.finite_vertices_begin(),
+          end = dt.finite_vertices_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point() << std::endl;
+      }
   }
 }
 

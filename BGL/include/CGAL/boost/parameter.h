@@ -1,19 +1,10 @@
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri
@@ -111,6 +102,7 @@ BOOST_PARAMETER_NAME( (dump_after_perturb_prefix, tag ) dump_after_perturb_prefi
 BOOST_PARAMETER_NAME( (dump_after_exude_prefix, tag ) dump_after_exude_prefix_)
 BOOST_PARAMETER_NAME( (number_of_initial_points, tag) number_of_initial_points_)
 BOOST_PARAMETER_NAME( (maximal_number_of_vertices, tag ) maximal_number_of_vertices_)
+BOOST_PARAMETER_NAME( (nonlinear_growth_of_balls, tag ) nonlinear_growth_of_balls_)
 BOOST_PARAMETER_NAME( (pointer_to_error_code, tag ) pointer_to_error_code_)
 BOOST_PARAMETER_NAME( (pointer_to_stop_atomic_boolean, tag ) pointer_to_stop_atomic_boolean_)
 

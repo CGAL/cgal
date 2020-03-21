@@ -7,12 +7,12 @@
 #include <QSlider>
 #include <QWidgetAction>
 #include <CGAL/Qt/qglviewer.h>
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <iostream>
 #include <CGAL/Qt/manipulatedFrame.h>
 using namespace CGAL::Three;
-class Volume_plane_interface : public Scene_item {
+class Volume_plane_interface : public Scene_item_rendering_helper {
 Q_OBJECT
 public:
   Volume_plane_interface(CGAL::qglviewer::ManipulatedFrame* f) : mFrame_(f) { 

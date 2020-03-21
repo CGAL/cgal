@@ -18,8 +18,11 @@ namespace params = CGAL::parameters;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       EPECK;
 
-void test_stitch_boundary_cycles(const char* fname)
+void test_stitch_boundary_cycles(const char* fname,
+                                 const std::size_t expected_n)
 {
+  std::cout << "Testing boundary cycles " << fname << "..." << std::flush;
+
   typedef CGAL::Surface_mesh<EPICK::Point_3>                    Mesh;
 
   std::ifstream input(fname);
@@ -29,13 +32,16 @@ void test_stitch_boundary_cycles(const char* fname)
     return;
   }
 
-  std::size_t res = PMP::internal::stitch_boundary_cycles(mesh);
-  assert(res > 0);
+  std::size_t res = PMP::stitch_boundary_cycles(mesh);
+  std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
+
+  assert(res == expected_n);
   assert(is_valid(mesh));
 }
 
 template <typename K>
-void test_polyhedron(const char* fname)
+void test_polyhedron(const char* fname,
+                     const std::size_t expected_n)
 {
   std::cout << "Testing Polyhedron_3 " << fname << "..." << std::flush;
 
@@ -50,15 +56,19 @@ void test_polyhedron(const char* fname)
 
   assert(poly.size_of_vertices() > 0);
 
-  PMP::stitch_borders(poly);
+  std::size_t res = PMP::stitch_borders(poly);
   poly.normalize_border();
 
+  std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
   assert(poly.is_valid(false, 5));
+  assert(res == expected_n);
+
   std::cout << "OK\n";
 }
 
 template <typename K>
-void test_polyhedron_cc(const char* fname)
+void test_polyhedron_cc(const char* fname,
+                        const std::size_t expected_n)
 {
   std::cout << "Testing Polyhedron_3 " << fname << "..." << std::flush;
 
@@ -73,14 +83,18 @@ void test_polyhedron_cc(const char* fname)
 
   assert(poly.size_of_vertices() > 0);
 
-  PMP::stitch_borders(poly, params::apply_per_connected_component(true));
+  std::size_t res = PMP::stitch_borders(poly, params::apply_per_connected_component(true));
   poly.normalize_border();
 
+  std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
   assert(poly.is_valid(false, 5));
+  assert(res == expected_n);
+
   std::cout << "OK\n";
 }
 
-void test_surface_mesh(const char* fname)
+void test_surface_mesh(const char* fname,
+                       const std::size_t expected_n)
 {
   std::cout << "Testing Surface_mesh " << fname << "..." << std::flush;
 
@@ -93,13 +107,17 @@ void test_surface_mesh(const char* fname)
     return;
   }
 
-  PMP::stitch_borders(mesh);
+  std::size_t res = PMP::stitch_borders(mesh);
+  std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
+
+  assert(res == expected_n);
   assert(is_valid_polygon_mesh(mesh));
 
   std::cout << "OK\n";
 }
 
-void test_surface_mesh_cc(const char* fname)
+void test_surface_mesh_cc(const char* fname,
+                          const std::size_t expected_n)
 {
   std::cout << "Testing Surface_mesh " << fname << "..." << std::flush;
 
@@ -112,7 +130,10 @@ void test_surface_mesh_cc(const char* fname)
     return;
   }
   
-  PMP::stitch_borders(mesh, params::apply_per_connected_component(true));
+  std::size_t res = PMP::stitch_borders(mesh, params::apply_per_connected_component(true));
+  std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
+
+  assert(res == expected_n);
   assert(is_valid(mesh));
 
   std::cout << "OK\n";
@@ -134,35 +155,35 @@ void bug_test()
 
 int main()
 {
-  test_stitch_boundary_cycles("data_stitching/boundary_cycle.off");
-  test_stitch_boundary_cycles("data_stitching/boundary_cycle_2.off");
+  test_stitch_boundary_cycles("data_stitching/boundary_cycle.off", 4);
+  test_stitch_boundary_cycles("data_stitching/boundary_cycle_2.off", 2);
 
-  test_polyhedron<EPECK>("data_stitching/full_border.off");
-  test_polyhedron<EPICK>("data_stitching/full_border.off");
-  test_polyhedron<EPICK>("data_stitching/full_border_quads.off");
-  test_polyhedron<EPICK>("data_stitching/half_border.off");
-  test_polyhedron<EPICK>("data_stitching/mid_border.off");
-  test_polyhedron<EPICK>("data_stitching/multiple_incidence.off");
-  test_polyhedron<EPICK>("data_stitching/incidence_3.off");
-  test_polyhedron<EPICK>("data_stitching/incoherent_patch_orientation.off");
-  test_polyhedron<EPICK>("data_stitching/non_stitchable.off");
-  test_polyhedron<EPICK>("data_stitching/deg_border.off");
-  test_polyhedron<EPICK>("data_stitching/two_patches.off");
-  test_polyhedron<EPICK>("data_stitching/non_manifold.off");
-  test_polyhedron<EPICK>("data_stitching/non_manifold2.off");
-  test_polyhedron_cc<EPICK>("data_stitching/nm_cubes.off");
+  test_polyhedron<EPICK>("data_stitching/deg_border.off", 2);
+  test_polyhedron<EPECK>("data_stitching/full_border.off", 4);
+  test_polyhedron<EPICK>("data_stitching/full_border.off", 4);
+  test_polyhedron<EPICK>("data_stitching/full_border_quads.off", 4);
+  test_polyhedron<EPICK>("data_stitching/half_border.off", 2);
+  test_polyhedron<EPICK>("data_stitching/incidence_3.off", 3);
+  test_polyhedron<EPICK>("data_stitching/incoherent_patch_orientation.off", 1);
+  test_polyhedron<EPICK>("data_stitching/mid_border.off", 2);
+  test_polyhedron<EPICK>("data_stitching/multiple_incidence.off", 10);
+  test_polyhedron<EPICK>("data_stitching/non_stitchable.off", 0);
+  test_polyhedron<EPICK>("data_stitching/non_manifold.off", 0);
+  test_polyhedron<EPICK>("data_stitching/non_manifold2.off", 0);
+  test_polyhedron<EPICK>("data_stitching/two_patches.off", 3);
+  test_polyhedron_cc<EPICK>("data_stitching/nm_cubes.off", 4);
 
-  test_surface_mesh("data_stitching/full_border.off");
-  test_surface_mesh("data_stitching/full_border_quads.off");
-  test_surface_mesh("data_stitching/half_border.off");
-  test_surface_mesh("data_stitching/mid_border.off");
-  test_surface_mesh("data_stitching/multiple_incidence.off");
-  test_surface_mesh("data_stitching/incidence_3.off");
-  test_surface_mesh("data_stitching/incoherent_patch_orientation.off");
-  test_surface_mesh("data_stitching/non_stitchable.off");
-  test_surface_mesh("data_stitching/deg_border.off");
-  test_surface_mesh("data_stitching/non_manifold.off");
-  test_surface_mesh_cc("data_stitching/nm_cubes.off");
+  test_surface_mesh("data_stitching/deg_border.off", 2);
+  test_surface_mesh("data_stitching/full_border.off", 4);
+  test_surface_mesh("data_stitching/full_border_quads.off", 4);
+  test_surface_mesh("data_stitching/half_border.off", 2);
+  test_surface_mesh("data_stitching/incidence_3.off", 3);
+  test_surface_mesh("data_stitching/incoherent_patch_orientation.off", 1);
+  test_surface_mesh("data_stitching/mid_border.off", 2);
+  test_surface_mesh("data_stitching/multiple_incidence.off", 10);
+  test_surface_mesh("data_stitching/non_stitchable.off", 0);
+  test_surface_mesh("data_stitching/non_manifold.off", 0);
+  test_surface_mesh_cc("data_stitching/nm_cubes.off", 4);
 
   bug_test();
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ophir Setter <ophirset@post.tau.ac.il>
 //                 
@@ -31,6 +22,11 @@
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QInputDialog>
+#include <boost/config.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 #include <fstream>
 
@@ -277,7 +273,12 @@ MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
 						  tr("Open Points file"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -292,10 +293,18 @@ MainWindow::open(QString fileName)
   m_sites.clear();
   
   std::ifstream ifs(qPrintable(fileName));
-  
-  Kernel::Point_2 p;
-  while(ifs >> p) {
-    m_sites.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    CGAL::read_multi_point_WKT(ifs, m_sites);
+#endif
+  }
+  else
+  {
+    Kernel::Point_2 p;
+    while(ifs >> p) {
+      m_sites.push_back(p);
+    }
   }
   calculate_envelope();
 
@@ -311,11 +320,21 @@ MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
 						  tr("Save points"),
-						  ".");
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()) {
     std::ofstream ofs(qPrintable(fileName));
-    for(Points::iterator it = m_sites.begin();
-        it != m_sites.end(); ++it)
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive)){
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      CGAL::write_multi_point_WKT(ofs, m_sites);
+#endif
+    }else
+      for(Points::iterator it = m_sites.begin();
+          it != m_sites.end(); ++it)
       {
         ofs << *it << std::endl;
       }

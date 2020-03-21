@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -22,10 +13,8 @@
 #define CGAL_FUNCTOR_TAGS_H
 #include <CGAL/tags.h> // for Null_tag
 #include <CGAL/NewKernel_d/utils.h>
-#ifdef CGAL_CXX11
 #include <type_traits>
 #include <utility>
-#endif
 #include <boost/type_traits.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/mpl/not.hpp>
@@ -42,10 +31,8 @@ namespace CGAL {
     : K::template Type<T> {};
   template <class K, class F, class O=void, class=void> struct Get_functor
     : K::template Functor<F, O> {};
-#ifdef CGAL_CXX11
   template <class K, class T> using Type = typename Get_type<K, T>::type;
   template <class K, class T> using Functor = typename Get_functor<K, T>::type;
-#endif
 
   class Null_type {~Null_type();}; // no such object should be created
 
@@ -203,7 +190,11 @@ namespace CGAL {
 	  typedef Null_tag value_tag;
 	};
 
+	template<class>struct map_result_tag{typedef Null_type type;};
+	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
+
 #define CGAL_DECL_COMPUTE(X) struct X##_tag {}; \
+	template<>struct map_result_tag<X##_tag>{typedef FT_tag type;}; \
 	template<class A,class B,class C>struct Get_functor_category<A,X##_tag,B,C>{typedef Compute_tag type;}
 	CGAL_DECL_COMPUTE(Compute_point_cartesian_coordinate);
 	CGAL_DECL_COMPUTE(Compute_vector_cartesian_coordinate);
@@ -240,9 +231,6 @@ namespace CGAL {
 	CGAL_DECL_ITER_OBJ(Vector_cartesian_const_iterator, FT, Compute_vector_cartesian_coordinate, Vector);
 	CGAL_DECL_ITER_OBJ(Point_cartesian_const_iterator, FT, Compute_point_cartesian_coordinate, Point);
 #undef CGAL_DECL_ITER_OBJ
-
-	template<class>struct map_result_tag{typedef Null_type type;};
-	template<class T>struct map_result_tag<Construct_ttag<T> >{typedef T type;};
 
 	template<class A,class T,class B,class C>struct Get_functor_category<A,Construct_ttag<T>,B,C> :
 	  boost::mpl::if_c<iterator_tag_traits<T>::is_iterator,
@@ -315,6 +303,7 @@ namespace CGAL {
 	CGAL_DECL_PREDICATE(Contained_in_simplex);
 	CGAL_DECL_PREDICATE(Power_side_of_power_sphere_raw);
 	CGAL_DECL_PREDICATE(Power_side_of_power_sphere);
+        CGAL_DECL_PREDICATE(Power_side_of_bounded_power_circumsphere);
 	CGAL_DECL_PREDICATE(In_flat_power_side_of_power_sphere_raw);
 	CGAL_DECL_PREDICATE(In_flat_power_side_of_power_sphere);
 #undef CGAL_DECL_PREDICATE

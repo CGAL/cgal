@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>292</width>
-    <height>489</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,51 +26,32 @@
       </item>
       <item>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="1" column="1">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Ramp Extrema</string>
+        <item row="4" column="1">
+         <widget class="QPushButton" name="colorizeButton">
+          <property name="text">
+           <string>Colorize</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>Zoom </string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QDoubleSpinBox" name="minBox"/>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="maxBox">
-             <property name="value">
-              <double>2.000000000000000</double>
+            <widget class="QPushButton" name="zoomToMinButton">
+             <property name="text">
+              <string>Zoom to min</string>
              </property>
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="resetButton">
-               <property name="toolTip">
-                <string>Compute Ramp Extremas</string>
-               </property>
-               <property name="text">
-                <string>Reset</string>
-               </property>
-               <property name="autoRepeat">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QPushButton" name="zoomToMaxButton">
+             <property name="text">
+              <string>Zoom to max</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -98,47 +79,10 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Zoom </string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QPushButton" name="zoomToMinButton">
-             <property name="text">
-              <string>Zoom to min</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="zoomToMaxButton">
-             <property name="text">
-              <string>Zoom to max</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="4" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
            <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QPushButton" name="colorizeButton">
-          <property name="text">
-           <string>Colorize</string>
           </property>
          </widget>
         </item>
@@ -149,6 +93,46 @@
           </property>
           <property name="checkable">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Ramp Extrema</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="DoubleEdit" name="minBox">
+             <property name="text">
+              <string>0.00</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="DoubleEdit" name="maxBox">
+             <property name="text">
+              <string>2.00</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QPushButton" name="deleteButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Delete Group</string>
           </property>
          </widget>
         </item>
@@ -213,6 +197,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

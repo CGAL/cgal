@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -69,14 +60,14 @@ template <class Base_,class R_> struct Orientation_of_points_2 : private Store_k
 
 template <class Dim_ /* should be implicit */, class R_, class Derived_=Default>
 struct Cartesian_static_filters : public R_ {
-  CGAL_CONSTEXPR Cartesian_static_filters(){}
-  CGAL_CONSTEXPR Cartesian_static_filters(int d):R_(d){}
+  constexpr Cartesian_static_filters(){}
+  constexpr Cartesian_static_filters(int d):R_(d){}
 };
 
 template <class R_, class Derived_>
 struct Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> : public R_ {
-  CGAL_CONSTEXPR Cartesian_static_filters(){}
-  CGAL_CONSTEXPR Cartesian_static_filters(int d):R_(d){}
+  constexpr Cartesian_static_filters(){}
+  constexpr Cartesian_static_filters(int d):R_(d){}
 	typedef Cartesian_static_filters<Dimension_tag<2>, R_, Derived_> Self;
 	typedef typename Default::Get<Derived_,Self>::type Derived;
 	template <class T, class=void> struct Functor : Inherit_functor<R_, T> {};

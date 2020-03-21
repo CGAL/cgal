@@ -143,8 +143,8 @@ void Scene_movable_sm_item::computeElements() const
 }
 void Scene_movable_sm_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit() && viewer->context()->isValid())
-    initGL();
+  if(!isInit(viewer) && viewer->context()->isValid())
+    initGL(viewer);
   if(!are_buffers_filled)
     d->initialize_buffers(viewer);
   getTriangleContainer(0)->setColor(color());
@@ -156,8 +156,8 @@ void Scene_movable_sm_item::draw(CGAL::Three::Viewer_interface* viewer) const
 
 void Scene_movable_sm_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(!isInit() && viewer->context()->isValid())
-    initGL();
+  if(!isInit(viewer) && viewer->context()->isValid())
+    initGL(viewer);
   if(!are_buffers_filled)
     d->initialize_buffers(viewer);
   getEdgeContainer(0)->setColor(color());

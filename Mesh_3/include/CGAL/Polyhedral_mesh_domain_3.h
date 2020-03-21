@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -114,47 +105,6 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 }  // end namespace details
 }  // end namespace Mesh_3
 
-namespace Mesh_3 {
-namespace internal {
-
-template <typename Polyhedron_type,
-          bool = CGAL::graph_has_property<Polyhedron_type,
-                                           CGAL::face_index_t>::value>
-class Get_face_index_pmap {
-public:
-  typedef typename boost::property_map<Polyhedron_type,
-                                       CGAL::face_index_t>::const_type Pmap;
-  Get_face_index_pmap(const Polyhedron_type&) {}
-  Pmap operator()(const Polyhedron_type& polyhedron) {
-    return get(CGAL::face_index, polyhedron);
-  }
-};
-
-template <typename Polyhedron_type>
-class Get_face_index_pmap<Polyhedron_type, false> {
-  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
-                                                              face_descriptor;
-  typedef std::map<face_descriptor, int> Map;
-public:
-  Get_face_index_pmap(const Polyhedron_type& polyhedron) {
-    int id = 0;
-    for(face_descriptor f : faces(polyhedron))
-    {
-      face_ids[f] = id++;
-    }
-  }
-  typedef boost::associative_property_map<Map> Pmap;
-
-  Pmap operator()(const Polyhedron_type&) {
-    return Pmap(face_ids);
-  }
-private:
-  Map face_ids;
-};
-
-} // end namespace internal
-} // end namespace Mesh_3
-
 /**
  * @class Polyhedral_mesh_domain_3
  *
@@ -215,7 +165,7 @@ public:
   struct Primitive_type {
       //setting OneFaceGraphPerTree to false transforms the id type into 
       //std::pair<FD, const FaceGraph*>.
-    typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::type, CGAL::Tag_false> type;
+    typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::const_type, CGAL::Tag_false> type;
 
     static
     typename IGT_::Triangle_3 datum(const typename type::Id primitive_id) {
@@ -250,7 +200,7 @@ public:
 public:
 
   /// Default constructor
-  Polyhedral_mesh_domain_3(CGAL::Random* p_rng = NULL)
+  Polyhedral_mesh_domain_3(CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_)
     , p_rng_(p_rng)
@@ -262,7 +212,7 @@ public:
    * @param polyhedron the polyhedron describing the polyhedral surface
    */
   Polyhedral_mesh_domain_3(const Polyhedron& p,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(&tree_) // the bounding tree is tree_
     , p_rng_(p_rng)
@@ -277,7 +227,7 @@ public:
 
   Polyhedral_mesh_domain_3(const Polyhedron& p,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : tree_()
     , bounding_tree_(new AABB_tree_)
     , p_rng_(p_rng)
@@ -307,7 +257,7 @@ public:
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
                            const Polyhedron& bounding_polyhedron,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : p_rng_(p_rng)
     , delete_rng_(false)
   {
@@ -338,7 +288,7 @@ public:
   template <typename InputPolyhedraPtrIterator>
   Polyhedral_mesh_domain_3(InputPolyhedraPtrIterator begin,
                            InputPolyhedraPtrIterator end,
-                           CGAL::Random* p_rng = NULL)
+                           CGAL::Random* p_rng = nullptr)
     : p_rng_(p_rng)
   {
     if(begin != end) {

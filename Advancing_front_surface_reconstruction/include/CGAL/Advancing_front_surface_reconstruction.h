@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Frank Da, David Cohen-Steiner, Andreas Fabri
 
@@ -88,7 +79,7 @@ namespace CGAL {
     }
 
     Advancing_front_surface_reconstruction_boundary_iterator(const Surface& S_)
-      : S(S_), pos(NULL)
+      : S(S_), pos(nullptr)
     {}
 
     Advancing_front_surface_reconstruction_boundary_iterator(const Self& s)
@@ -108,7 +99,7 @@ namespace CGAL {
 
     Self operator++()
     {
-      if(pos == NULL) {
+      if(pos == nullptr) {
         return *this;
       }
       if(first){
@@ -134,7 +125,7 @@ namespace CGAL {
 
     void advance_on_boundary()
     {
-      if(pos == NULL) {
+      if(pos == nullptr) {
         return;
       }
       pos = pos->first_incident()->first;
@@ -143,7 +134,7 @@ namespace CGAL {
 
     void advance_to_next_boundary()
     {
-      if(pos == NULL) {
+      if(pos == nullptr) {
         return;
       }
       do {
@@ -157,7 +148,7 @@ namespace CGAL {
         CGAL_assertion(pos->is_on_border());
 
       } else {
-        pos = NULL;
+        pos = nullptr;
       }
     }
   };
@@ -400,18 +391,18 @@ namespace CGAL {
 
       Intern_successors_type* ret = &ist_pool.back();
 
-      ret->first->first = NULL;
-      ret->second->first = NULL;
+      ret->first->first = nullptr;
+      ret->second->first = nullptr;
       return ret;
     }
 
 
     inline bool is_on_border(Vertex_handle vh, const int& i) const
     {
-      if (vh->m_incident_border == NULL) return false; //vh is interior
-      if (vh->m_incident_border->first->first != NULL)
+      if (vh->m_incident_border == nullptr) return false; //vh is interior
+      if (vh->m_incident_border->first->first != nullptr)
 	{
-	  if (vh->m_incident_border->second->first != NULL)
+	  if (vh->m_incident_border->second->first != nullptr)
 	    return ((vh->m_incident_border->first->second.second == i)||
 		    (vh->m_incident_border->second->second.second == i));
 	  return (vh->m_incident_border->first->second.second == i);
@@ -422,28 +413,28 @@ namespace CGAL {
 
     void remove_border_edge(Vertex_handle w, Vertex_handle v)
     {
-      if (w->m_incident_border != NULL)
+      if (w->m_incident_border != nullptr)
 	{
 	  if (w->m_incident_border->second->first == v)
 	    {
-	      w->m_incident_border->second->first = NULL;
+	      w->m_incident_border->second->first = nullptr;
 	      set_interior_edge(w,v);
 	      return;
 	    }
 	  if (w->m_incident_border->first->first == v)
 	    {
-	      if (w->m_incident_border->second->first != NULL)
+	      if (w->m_incident_border->second->first != nullptr)
 		{
 		  Next_border_elt* tmp = w->m_incident_border->first;
 		  w->m_incident_border->first = w->m_incident_border->second;
 		  w->m_incident_border->second = tmp;
-		  w->m_incident_border->second->first = NULL;
+		  w->m_incident_border->second->first = nullptr;
 		  set_interior_edge(w,v);
 		  return;
 		}
 	      else
 		{
-		  w->m_incident_border->first->first = NULL;
+		  w->m_incident_border->first->first = nullptr;
 		  set_interior_edge(w,v);
 		  return;
 		}
@@ -571,7 +562,7 @@ namespace CGAL {
 
     void re_init(Vertex_handle w)
     {
-      if (w->m_incident_border != NULL)
+      if (w->m_incident_border != nullptr)
 	{
 	  w->delete_border();
 	}
@@ -629,7 +620,7 @@ namespace CGAL {
 
     void clear_vertex(Vertex_handle w)
     {
-      if (w->m_incident_border != NULL)
+      if (w->m_incident_border != nullptr)
 	{
 	  w->delete_border();
 	}
@@ -956,14 +947,14 @@ namespace CGAL {
     bool is_border_elt(Edge_like& key, Border_elt& result) const
     {
       Next_border_elt* it12 = border_elt(key.first, key.second);
-      if (it12 != NULL)
+      if (it12 != nullptr)
         {
           result = it12->second;
           return true;
         }
 
       Next_border_elt* it21 =  border_elt(key.second, key.first);
-      if (it21 != NULL)
+      if (it21 != nullptr)
         {
           result = it21->second;
           std::swap(key.first, key.second);
@@ -975,13 +966,13 @@ namespace CGAL {
     //---------------------------------------------------------------------
     bool is_border_elt(Edge_like& key) const {
       Next_border_elt* it12 =  border_elt(key.first, key.second);
-      if (it12 != NULL)
+      if (it12 != nullptr)
         {
           return true;
         }
 
       Next_border_elt* it21 =  border_elt(key.second, key.first);
-      if (it21 != NULL)
+      if (it21 != nullptr)
         {
           std::swap(key.first, key.second);
           return true;
@@ -993,7 +984,7 @@ namespace CGAL {
     bool is_ordered_border_elt(const Edge_like& key, Border_elt& result) const
     {
       Next_border_elt* it12 =  border_elt(key.first, key.second);
-      if (it12 != NULL)
+      if (it12 != nullptr)
         {
           result = it12->second;
           return true;
@@ -1015,7 +1006,7 @@ namespace CGAL {
       Vertex_handle v1 = e.first;
 
       Next_border_elt* it12 =  border_elt(v1, e.second);
-      if (it12 != NULL)
+      if (it12 != nullptr)
         {
           ptr = &it12->second.first.second;
           return true;
@@ -1047,7 +1038,7 @@ namespace CGAL {
 
     coord_type lazy_squared_radius(const Cell_handle& c)
     {
-      if (c->lazy_squared_radius() != NULL)
+      if (c->lazy_squared_radius() != nullptr)
         return *(c->lazy_squared_radius());
 
       c->set_lazy_squared_radius
@@ -1060,7 +1051,7 @@ namespace CGAL {
 
     Point lazy_circumcenter(const Cell_handle& c)
     {
-      if (c->lazy_circumcenter() != NULL)
+      if (c->lazy_circumcenter() != nullptr)
         return *(c->lazy_circumcenter());
 
       c->set_lazy_circumcenter
@@ -2005,6 +1996,7 @@ namespace CGAL {
     {
       // initilisation de la variable globale K: qualite d'echantillonnage requise
       K = K_init; // valeur d'initialisation de K pour commencer prudemment...
+      coord_type K_prev = K;
 
       Vertex_handle v1, v2;
       if (_ordered_border.empty()){
@@ -2069,12 +2061,12 @@ namespace CGAL {
             }
           while((!_ordered_border.empty())&&
                 (_ordered_border.begin()->first < STANDBY_CANDIDATE_BIS));
-
+          K_prev = K;
           K += (std::max)(K_step, min_K - K + eps);
           // on augmente progressivement le K mais on a deja rempli sans
           // faire des betises auparavant...
         }
-      while((!_ordered_border.empty())&&(K <= K)&&(min_K != infinity()));
+      while((!_ordered_border.empty())&&(K <= K)&&(min_K != infinity())&&(K!=K_prev));
 
 #ifdef VERBOSE
       if ((min_K < infinity())&&(!_ordered_border.empty())) {

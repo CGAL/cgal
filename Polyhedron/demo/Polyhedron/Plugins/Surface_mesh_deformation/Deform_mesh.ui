@@ -199,7 +199,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
+             <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0">
               <item>
                <widget class="QCheckBox" name="remeshingEdgeLengthInput_checkBox">
                 <property name="toolTip">
@@ -214,7 +214,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="remeshing_edge_length_spinbox"/>
+               <widget class="DoubleEdit" name="remeshing_edge_length_spinbox">
+                <property name="text">
+                 <string>0.00</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -435,6 +439,13 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DoubleEdit</class>
+   <extends>QLineEdit</extends>
+   <header>CGAL_double_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

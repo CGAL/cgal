@@ -1,6 +1,6 @@
 #ifndef POINT_SET_ITEM_H
 #define POINT_SET_ITEM_H
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_item_with_properties.h>
 #include <CGAL/Three/Scene_zoomable_item_interface.h>
 #include "Scene_points_with_normal_item_config.h"
@@ -20,7 +20,7 @@ class QAction;
 
 // This class represents a point set in the OpenGL scene
 class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
-  : public CGAL::Three::Scene_item,
+  : public CGAL::Three::Scene_item_rendering_helper,
     public CGAL::Three::Scene_item_with_properties,
     public CGAL::Three::Scene_zoomable_item_interface
 {
@@ -86,6 +86,8 @@ public:
   void copyProperties(Scene_item *) Q_DECL_OVERRIDE;
   int getNormalSliderValue();
   int getPointSliderValue();
+  void computeElements() const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
 
 public Q_SLOTS:
   // Delete selection

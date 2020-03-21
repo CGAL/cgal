@@ -3,6 +3,7 @@
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/TextRenderer.h>
+#include <CGAL/Three/Three.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <vector>
@@ -401,8 +402,7 @@ void compute_displayed_ids(Mesh& mesh,
 
 template<class Mesh>
 bool printVertexIds(const Mesh& mesh,
-                    TextListItem* vitems,
-                    CGAL::Three::Viewer_interface *viewer)
+                    TextListItem* vitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point;
@@ -410,8 +410,7 @@ bool printVertexIds(const Mesh& mesh,
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::vertex_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const CGAL::qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
   font.setPointSize(POINT_SIZE);
@@ -427,18 +426,23 @@ bool printVertexIds(const Mesh& mesh,
 
   }
   //add the QList to the render's pool
-  renderer->addTextList(vitems);
-  if(vitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(vitems);
+    v->update();
+    if(vitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh>
 bool printEdgeIds(const Mesh& mesh,
-                  TextListItem* eitems,
-                  CGAL::Three::Viewer_interface *viewer)
+                  TextListItem* eitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_traits<Ppmap>::value_type Point;
@@ -446,8 +450,7 @@ bool printEdgeIds(const Mesh& mesh,
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::halfedge_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const CGAL::qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
   font.setPointSize(POINT_SIZE);
@@ -462,26 +465,30 @@ bool printEdgeIds(const Mesh& mesh,
                                 QString("%1").arg(get(idmap, halfedge(e, mesh)) / 2), true, font, Qt::green));
   }
   //add the QList to the render's pool
-  renderer->addTextList(eitems);
-  if(eitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(eitems);
+    v->update();
+    if(eitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh>
 bool printFaceIds(const Mesh& mesh,
-                  TextListItem* fitems,
-                  CGAL::Three::Viewer_interface *viewer)
+                  TextListItem* fitems)
 {
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type Ppmap;
   typedef typename boost::property_map<Mesh, boost::face_index_t>::type IDmap;
 
   Ppmap ppmap = get(boost::vertex_point, mesh);
   IDmap idmap = get(boost::face_index, mesh);
-  TextRenderer *renderer = viewer->textRenderer();
-  const CGAL::qglviewer::Vec offset = viewer->offset();
+  const CGAL::qglviewer::Vec offset = CGAL::Three::Three::mainViewer()->offset();
   QFont font;
   font.setBold(true);
   font.setPointSize(POINT_SIZE);
@@ -503,12 +510,18 @@ bool printFaceIds(const Mesh& mesh,
                                 QString("%1").arg(get(idmap, fh)), true, font, Qt::blue));
   }
   //add the QList to the render's pool
-  renderer->addTextList(fitems);
-  if(fitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+  bool res = true;
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
   {
-    return false;
+    TextRenderer *renderer = static_cast<CGAL::Three::Viewer_interface*>(v)->textRenderer();
+    renderer->addTextList(fitems);
+    v->update();
+    if(fitems->size() > static_cast<std::size_t>(renderer->getMax_textItems()))
+    {
+      res = false;
+    }
   }
-  return true;
+  return res;
 }
 
 template<class Mesh, typename Point>
@@ -549,12 +562,18 @@ int zoomToId(const Mesh& mesh,
     bool found = false;
     for(vertex_descriptor vh : vertices(mesh))
     {
-      if(get(vidmap, vh) == id)
+      std::size_t cur_id = get(vidmap, vh);
+      if( cur_id == id)
       {
         p = Point(get(ppmap, vh).x() + offset.x,
                   get(ppmap, vh).y() + offset.y,
                   get(ppmap, vh).z() + offset.z);
-        selected_fh = face(halfedge(vh, mesh), mesh);
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(vh, mesh);
+        if(CGAL::is_border_edge(hf, mesh))
+        {
+          hf = opposite(hf, mesh);
+        }
+        selected_fh = face(hf, mesh);
         normal = CGAL::Polygon_mesh_processing::compute_vertex_normal(vh, mesh);
         found = true;
         break;
@@ -572,17 +591,27 @@ int zoomToId(const Mesh& mesh,
     {
       if(get(eidmap, halfedge(e, mesh))/2 == id)
       {
+        typename boost::graph_traits<Mesh>::halfedge_descriptor hf = halfedge(e, mesh);
         const Point& p1 = get(ppmap, source(e, mesh));
         const Point& p2 = get(ppmap, target(e, mesh));
         p = Point((float)(p1.x() + p2.x()) / 2 + offset.x,
                   (float)(p1.y() + p2.y()) / 2 + offset.y,
                   (float)(p1.z() + p2.z()) / 2 + offset.z );
-        typename Traits::Vector_3 normal1 = CGAL::Polygon_mesh_processing::compute_face_normal(face(halfedge(e, mesh),mesh),
-                                                                                               mesh);
-        typename Traits::Vector_3 normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(halfedge(e, mesh), mesh), mesh),
-                                                                                               mesh);
+        typename Traits::Vector_3 normal1(0,0,0);
+        if(!is_border(hf, mesh))
+        {
+          normal1= CGAL::Polygon_mesh_processing::compute_face_normal(face(hf,mesh),
+                                                                      mesh);
+          selected_fh = face(hf, mesh);
+        }
+        typename Traits::Vector_3 normal2(0,0,0);
+        if(!is_border(opposite(hf, mesh), mesh))
+        {
+          normal2 = CGAL::Polygon_mesh_processing::compute_face_normal(face(opposite(hf, mesh), mesh),
+                                                                       mesh);
+          selected_fh = face(hf, mesh);
+        }
         normal = 0.5*normal1+0.5*normal2;
-        selected_fh = face(halfedge(e, mesh), mesh);
         found = true;
         break;
       }

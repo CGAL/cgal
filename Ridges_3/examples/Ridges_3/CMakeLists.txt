@@ -1,28 +1,22 @@
 # This is the CMake script for compiling a CGAL application.
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Ridges_3_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET )
 
 if ( CGAL_FOUND )
 
-  # use either Eigen or BLAS/LAPACK
+  # use either Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
-  if (NOT EIGEN3_FOUND)
-    find_package(LAPACK)
-    if(LAPACK_FOUND)
-      include( ${LAPACK_USE_FILE} )
-    endif(LAPACK_FOUND)
-  else()
-    include( ${EIGEN3_USE_FILE} )
-  endif()
-  
-  
-  if(EIGEN3_FOUND OR LAPACK_FOUND)
+  if (EIGEN3_FOUND)
+    
     # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
+    if(TARGET Boost::program_options)
+      set(Boost_PROGRAM_OPTIONS_LIBRARY Boost::program_options)
+    endif()
     if(Boost_PROGRAM_OPTIONS_FOUND)
       if( CGAL_AUTO_LINK_ENABLED )
         message( STATUS "Boost.ProgramOptions library: found" )
@@ -34,14 +28,17 @@ if ( CGAL_FOUND )
    endif()
 
    create_single_source_cgal_program( Compute_Ridges_Umbilics.cpp)
+   CGAL_target_use_Eigen(Compute_Ridges_Umbilics)
    create_single_source_cgal_program( Ridges_Umbilics_SM.cpp)
+   CGAL_target_use_Eigen(Ridges_Umbilics_SM)
    create_single_source_cgal_program( Ridges_Umbilics_LCC.cpp)
+   CGAL_target_use_Eigen(Ridges_Umbilics_LCC)
+   
+  else()
 
-  else(EIGEN3_FOUND OR LAPACK_FOUND)
+    message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
 
-    message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
-
-  endif(EIGEN3_FOUND OR LAPACK_FOUND)
+  endif()
 
 else()
   

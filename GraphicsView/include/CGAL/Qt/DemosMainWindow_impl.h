@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
@@ -204,7 +195,6 @@ void
 DemosMainWindow::setUseAntialiasing(bool checked)
 {
   view->setRenderHint(QPainter::Antialiasing, checked);
-  view->setRenderHint(QPainter::HighQualityAntialiasing, checked);
 
   statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-"),
                            1000);
@@ -239,7 +229,7 @@ CGAL_INLINE_FUNCTION
 QMenu* 
 DemosMainWindow::getMenu(QString objectName, QString title)
 {
-  QMenu* menu = NULL;
+  QMenu* menu = nullptr;
 
   QString title2 = title;
   title2.remove('&');
@@ -257,7 +247,7 @@ DemosMainWindow::getMenu(QString objectName, QString title)
       }
     }
   }
-  return NULL;
+  return nullptr;
 }
 
 CGAL_INLINE_FUNCTION
@@ -458,9 +448,14 @@ void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
   settings.beginGroup(groupname);
   resize(settings.value("size", this->size()).toSize());
 
-  QDesktopWidget* desktop = qApp->desktop();
   QPoint pos = settings.value("pos", this->pos()).toPoint();
-  if(desktop->availableGeometry(pos).contains(pos)) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
+  if(QGuiApplication::screenAt(pos)) {
+#else
+   QDesktopWidget* desktop = qApp->desktop();
+     if(desktop->availableGeometry(pos).contains(pos)) {
+#endif
+
     move(pos);
   }
   QByteArray mainWindowState = settings.value("state").toByteArray();

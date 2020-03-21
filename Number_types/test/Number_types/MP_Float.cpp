@@ -1,7 +1,7 @@
 // Test program for the MP_Float class.
 // Sylvain Pion.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <CGAL/exceptions.h>
 #include <iostream>
 #include <cassert>

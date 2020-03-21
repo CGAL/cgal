@@ -117,7 +117,7 @@ returns an arbitrary point on `l`. It holds
 Furthermore, `l` is directed from `point(i)` 
 to `point(j)`, for all `i` \f$ <\f$ `j`. 
 */ 
-Point_2<Kernel> point(int i) const; 
+Point_2<Kernel> point(const Kernel::FT i) const;
 
 /*!
 returns the orthogonal projection of `p` onto `l`. 

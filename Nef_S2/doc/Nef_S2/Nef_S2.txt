@@ -129,7 +129,7 @@ Afterwards the iterator can be casted to the proper handle type.
 
 \subsection Nef_S2PointLocation Point Location
 
-Using the `locate` function, it is possible to retrive an item at a
+Using the `locate` function, it is possible to retrieve an item at a
 certain location on the sphere. In the following example, the item at 
 location `Sphere_point(1,0,0)` in a random `Nef_polyhedron_S2` is 
 retrieved. `locate` returns an instance of type `Nef_polyhedron_S2::Object_handle`, which

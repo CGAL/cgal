@@ -60,9 +60,7 @@ std::size_t VSA_wrapper::add_one_proxy() {
       break;
   }
   if (nb_added == 1) {
-    const std::size_t c = rand_0_255();
-    m_proxy_colors.push_back(QColor::fromRgb(
-      Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+    m_proxy_colors.push_back(generate_random_color());
   }
 
   return nb_added;
@@ -95,9 +93,7 @@ bool VSA_wrapper::split(const std::size_t px_idx, const std::size_t n, const std
   }
   if (splitted) {
     for (std::size_t i = m_proxy_colors.size(); i < number_of_proxies(); ++i) {
-      const std::size_t c = rand_0_255();
-      m_proxy_colors.push_back(QColor::fromRgb(
-        Color_cheat_sheet::r(c), Color_cheat_sheet::g(c), Color_cheat_sheet::b(c)));
+      m_proxy_colors.push_back(generate_random_color());
     }
   }
 

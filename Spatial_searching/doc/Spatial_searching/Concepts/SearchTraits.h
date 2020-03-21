@@ -8,6 +8,7 @@ parameter of the search classes.
 \cgalHasModel `CGAL::Cartesian_d<FT>` 
 \cgalHasModel `CGAL::Homogeneous_d<RT>`
 \cgalHasModel `CGAL::Epick_d<DimensionTag>`
+\cgalHasModel `CGAL::Epeck_d<DimensionTag>`
 \cgalHasModel `CGAL::Search_traits_2<Kernel>` 
 \cgalHasModel `CGAL::Search_traits_3<Kernel>`
 \cgalHasModel `CGAL::Search_traits_d<Kernel,Dim>`

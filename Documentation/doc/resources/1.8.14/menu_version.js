@@ -3,22 +3,23 @@
 
   var url_re =  /(cgal\.geometryfactory\.com\/CGAL\/doc\/|doc\.cgal\.org\/)(master|latest|(\d\.\d+|\d\.\d+\.\d+))\//;
   var url_local =  /.*\/doc_output\//;
-  var current_version_local = '4.14-beta1'
+  var current_version_local = '5.1-dev'
   var all_versions = [
-    'master',
-    'latest',
-    '4.14',
-    '4.13.1',
-    '4.12.2',
-    '4.11.3',
-    '4.10.2',
-    '4.9.1',
-    '4.8.2',
-    '4.7',
-    '4.6.3',
-    '4.5.2',
-    '4.4',
-    '4.3'
+      'master',
+      'latest',
+      '5.0.2',
+      '4.14.3',
+      '4.13.2',
+      '4.12.2',
+      '4.11.3',
+      '4.10.2',
+      '4.9.1',
+      '4.8.2',
+      '4.7',
+      '4.6.3',
+      '4.5.2',
+      '4.4',
+      '4.3'
   ];
 
   function build_select(current_version) {

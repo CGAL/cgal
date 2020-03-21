@@ -14,7 +14,7 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 #include <CGAL/Polygon_mesh_processing/fair.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -37,7 +37,7 @@ class Polyhedron_demo_fairing_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "fairing_plugin.json")
 public:
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
@@ -64,6 +64,7 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
+    ui_widget.Density_control_factor_spin_box->setMaximum(96.989999999999995);
     addDockWidget(dock_widget);
     dock_widget->setWindowTitle(tr(
                                   "Fairing "

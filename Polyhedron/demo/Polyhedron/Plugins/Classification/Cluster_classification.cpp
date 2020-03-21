@@ -276,8 +276,8 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
   for (std::set<std::pair<int, int> >::iterator it = adjacencies.begin();
        it != adjacencies.end(); ++ it)
   {
-    m_clusters[std::size_t(it->first)].neighbors.push_back (std::size_t(it->second));
-    m_clusters[std::size_t(it->second)].neighbors.push_back (std::size_t(it->first));
+    m_clusters[std::size_t(it->first)].neighbors->push_back (std::size_t(it->second));
+    m_clusters[std::size_t(it->second)].neighbors->push_back (std::size_t(it->first));
   }
 
 }
@@ -910,7 +910,7 @@ void Cluster_classification::train(int classifier, const QMultipleInputDialog& d
     m_neural_network->train (training,
                              dialog.get<QCheckBox>("restart")->isChecked(),
                              dialog.get<QSpinBox>("trials")->value(),
-                             dialog.get<QDoubleSpinBox>("learning_rate")->value(),
+                             dialog.get<DoubleEdit>("learning_rate")->value(),
                              dialog.get<QSpinBox>("batch_size")->value(),
                              hidden_layers);
       

@@ -404,34 +404,20 @@ classes:
 
 As mentioned above, performing computations with exact arithmetic
 can be very costly. For this reason we have devoted considerable
-effort in implementing different kinds of arithmetic filtering
-mechanisms. Presently, there two ways of performing arithmetic
-filtering for the predicates involved in the computation of
-segment Delaunay graphs:
-<OL>
-<LI>The user can define his/her kernel using as number type, a
-number type of the form `Filtered_exact<CT,ET>`. Then this
-kernel can be entered as the first template parameter in the
-`Segment_Delaunay_graph_2<K,MTag>`.
-<LI>The user can define up to three different kernels `CK`,
+effort in implementing arithmetic filtering mechanisms
+through special traits classes, `Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>`
+and `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`.
+These two traits class employ the `Filtered_predicate<EP,FP>` mechanism,
+and the user can define up to three different kernels `CK`,
 `FK` and `EK` (default values are provided for most
-parameters). The first kernel `CK` is used only for
+parameters): the first kernel `CK` is used only for
 constructions. The second kernel `FK` is the filtering kernel:
 the traits class will attempt to compute the predicates using this
 kernel. If the filtering kernel fails to successfully compute a
-predicate, the exact kernel `EK` will be used. These three
-kernels are then used in the 
-`Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>` and
-`Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
-classes, which have been implemented using the
-`Filtered_predicate<EP,FP>` mechanism.
-</OL>
-Our experience so far has shown that for all reasonable and valid
-values of the template parameters, the second method for arithmetic
-filtering is more efficient among the two.
+predicate, the exact kernel `EK` will be used.
 
 Let's consider once more the class
-`Segment_Delaunay_graph_2<K,MTag>`.
+`Segment_Delaunay_graph_traits_2<K,MTag>`.
 The template parameter `MTag` provides another degree of freedom
 to the user, who can indicate the type of arithmetic operations to
 be used in the evaluation of the predicates. More specifically,
@@ -507,7 +493,7 @@ for inputs consisting of more than about 1,000 sites.
 \subsection Segment_Delaunay_graph_2FirstExample First Example using the Filtered Traits
 
 The following example shows how to use the segment Delaunay graph traits
-in conjunction with the `Filtered_exact<CT,ET>` mechanism. In
+in conjunction with filtered traits mechanisms. In
 addition it shows how to use a few of the iterators provided by the
 `Segment_Delaunay_graph_2` class in order to count a few
 site-related quantities.
@@ -518,8 +504,8 @@ site-related quantities.
 
 If you have a rather large input, you better use an insertion function that uses
 the spatial sorting of your input (end) points. Note that the functions
-\link CGAL::Segment_Delaunay_graph_2::insert_points `insert_points` \endlink or
-\link CGAL::Segment_Delaunay_graph_2::insert_segments `insert_segments` \endlink
+\link CGAL::Segment_Delaunay_graph_2::insert_points `insert_points()` \endlink or
+\link CGAL::Segment_Delaunay_graph_2::insert_segments `insert_segments()` \endlink
 can be used if your input is only composed of points or segments.
 
 \cgalExample{Segment_Delaunay_graph_2/sdg-fast-sp.cpp}

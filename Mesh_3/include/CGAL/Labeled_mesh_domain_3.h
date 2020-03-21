@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stéphane Tayeb, Aymeric PELLE
@@ -88,10 +79,10 @@ namespace internal {
   /// Returns a box enclosing image \c im
   inline Bbox_3 compute_bounding_box(const Image_3& im)
   {
-    return Bbox_3(-1,-1,-1,
-                  double(im.xdim())*im.vx()+1,
-                  double(im.ydim())*im.vy()+1,
-                  double(im.zdim())*im.vz()+1);
+    return Bbox_3(-1+im.tx(),-1+im.ty(),-1+im.tz(),
+                  double(im.xdim())*im.vx()+im.tx()+1,
+                  double(im.ydim())*im.vy()+im.ty()+1,
+                  double(im.zdim())*im.vz()+im.tz()+1);
   }
 
   template <typename Image_values_to_subdom_indices>
@@ -346,7 +337,7 @@ public:
                         const Sphere_3& bounding_sphere,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bounding_sphere,
                    error_bound,
                    construct_pair_functor(),
@@ -356,7 +347,7 @@ public:
                         const Bbox_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox,
                    error_bound,
                    construct_pair_functor(),
@@ -366,7 +357,7 @@ public:
                         const Iso_cuboid_3& bbox,
                         const FT& error_bound = FT(1e-3),
                         Null null = Null_subdomain_index(),
-                        CGAL::Random* p_rng = NULL)
+                        CGAL::Random* p_rng = nullptr)
     : Impl_details(f, bbox, error_bound,
                    construct_pair_functor(),
                    null, p_rng)
@@ -833,7 +824,7 @@ protected:
                                                       false>           Wrapper;
     return Wrapper(image,
                    transform_fct,
-                   transform_fct(value_outside));
+                   value_outside) ;
   }
 
   template <typename FT, typename FT2, typename Functor>

@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Surface_mesh_deformation_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET)
@@ -13,8 +13,6 @@ if ( CGAL_FOUND )
 
   find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-
     create_single_source_cgal_program( "all_roi_assign_example.cpp" )
     create_single_source_cgal_program( "all_roi_assign_example_custom_polyhedron.cpp" )
     create_single_source_cgal_program( "all_roi_assign_example_Surface_mesh.cpp" )
@@ -24,11 +22,24 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "k_ring_roi_translate_rotate_Surface_mesh.cpp" )
     create_single_source_cgal_program( "deform_mesh_for_botsch08_format_sre_arap.cpp" )
 
+    foreach(target
+        all_roi_assign_example
+        all_roi_assign_example_custom_polyhedron
+        all_roi_assign_example_Surface_mesh
+        custom_weight_for_edges_example
+        deform_polyhedron_with_custom_pmap_example
+        k_ring_roi_translate_rotate_example
+        k_ring_roi_translate_rotate_Surface_mesh
+        deform_mesh_for_botsch08_format_sre_arap)
+      CGAL_target_use_Eigen(${target})
+    endforeach()
+    
     find_package( OpenMesh QUIET )
     if ( OpenMesh_FOUND )
     include( UseOpenMesh )
       create_single_source_cgal_program( "all_roi_assign_example_with_OpenMesh.cpp" )
       target_link_libraries( all_roi_assign_example_with_OpenMesh PRIVATE ${OPENMESH_LIBRARIES} )
+      CGAL_target_use_Eigen(all_roi_assign_example_with_OpenMesh)
     else()
       message(STATUS "Example that use OpenMesh will not be compiled.")
     endif()

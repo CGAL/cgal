@@ -175,7 +175,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionDeformation_triggered()
 // what they do is simply transmitting required 'action' to selected scene_edit_polyhedron_item object
 void Polyhedron_demo_edit_polyhedron_plugin::on_AddCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -183,7 +184,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_AddCtrlVertPushButton_clicked()
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_PrevCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+ int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -193,7 +194,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_PrevCtrlVertPushButton_clicked()
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_NextCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -203,7 +204,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_NextCtrlVertPushButton_clicked()
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_SelectAllVerticesPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -213,7 +214,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_SelectAllVerticesPushButton_clic
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -224,7 +225,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ClearROIPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -238,7 +239,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ApplyAndClosePushButton_clicked(
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_DiscardChangesPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if (!edit_item) return;                             // the selected item is not of the right type
 
@@ -297,14 +298,14 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivateFixedPlaneCheckBox_state
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_OverwritePushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->overwrite_deform_object();
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_button_clicked() {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -316,7 +317,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Select_isolated_components_butto
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;                             // the selected item is not of the right type
 
@@ -328,7 +329,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_Get_minimum_button_clicked() {
 
 void Polyhedron_demo_edit_polyhedron_plugin::on_SaveROIPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;  
 
@@ -340,7 +341,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_SaveROIPushButton_clicked()
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ReadROIPushButton_clicked()
 {
-  int item_id = scene->mainSelectionIndex();
+  int item_id = scene->selectionIndices().front();
   Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
   if(!edit_item) return;  
 
@@ -565,8 +566,13 @@ void Polyhedron_demo_edit_polyhedron_plugin::importSelection(Scene_polyhedron_se
     edit_item->insert_roi_vertex(vh);
   }
   edit_item->invalidateOpenGLBuffers();
+  if(selection_item->property("is_highlighting").toBool()){
+    selection_item->setProperty("need_hl_restore", true);
+    selection_item->set_highlighting(false);
+  }
   selection_item->setVisible(false);
-  (*CGAL::QGLViewer::QGLViewerPool().begin())->update();
+  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    v->update();
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegraph_item* target)
@@ -578,14 +584,19 @@ void Polyhedron_demo_edit_polyhedron_plugin::updateSelectionItems(Scene_facegrap
        && sel_item->polyhedron() == target->polyhedron())
     {
       sel_item->invalidateOpenGLBuffers();
-      if(!ui_widget.RemeshingCheckBox->isChecked())
+      if(!ui_widget.RemeshingCheckBox->isChecked()){
         sel_item->setVisible(true);
+        if(sel_item->property("need_hl_restore").toBool()){
+          sel_item->set_highlighting(true);
+          sel_item->setProperty("need_hl_restore", false);
+        }
+      }
       else
         scene->erase(scene->item_id(sel_item));
     }
-
   }
 }
+
 void Polyhedron_demo_edit_polyhedron_plugin::dispatchAction()
 {
  if(applicable(actionDeformation))

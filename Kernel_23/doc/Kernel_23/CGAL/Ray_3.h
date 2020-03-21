@@ -67,7 +67,7 @@ returns a point on `r`. `point(0)` is the source.
 `point(i)`, with `i>0`, is different from the 
 source. \pre \f$ i \geq0\f$. 
 */ 
-Point_3<Kernel> point(int i) const; 
+Point_3<Kernel> point(const Kernel::FT i) const;
 
 /*!
 returns the direction of `r`. 

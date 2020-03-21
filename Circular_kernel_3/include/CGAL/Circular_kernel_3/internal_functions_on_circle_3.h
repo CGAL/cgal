@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
@@ -129,11 +120,11 @@ namespace CGAL {
       
       intersect_3<SK>(circle,plane,std::back_inserter(inters));      
       CGAL_kernel_precondition(inters.size()==2);
-      const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={NULL,NULL};
+      const std::pair<typename SK::Circular_arc_point_3,unsigned>* pt[2]={nullptr,nullptr};
       pt[0]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[0]);
       pt[1]=CGAL::Intersections::internal::intersect_get<std::pair<typename SK::Circular_arc_point_3,unsigned> >(inters[1]);
-      CGAL_kernel_precondition(pt[0]!=NULL);
-      CGAL_kernel_precondition(pt[1]!=NULL);
+      CGAL_kernel_precondition(pt[0]!=nullptr);
+      CGAL_kernel_precondition(pt[1]!=nullptr);
       
       if ( compare_theta_of_pts<SK>(pt[0]->first,pt[1]->first,sphere) == SMALLER){
         *out_it++=pt[0]->first;
@@ -188,7 +179,7 @@ namespace CGAL {
         }
         break;
         case BIPOLAR:
-          CGAL_kernel_precondition(!"This function does not accept bipolar circle as input.");
+          CGAL_kernel_precondition_msg(false, "This function does not accept bipolar circle as input.");
       }
       return out_it;
     }

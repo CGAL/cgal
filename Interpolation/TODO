@@ -1,4 +1,4 @@
-Here follows 3 reviews which have been recieved following the submission
+Here follows 3 reviews which have been received following the submission
 of the Interpolation package to the editorial board.
 They have not been completely implemented or replied, so we keep them
 here in order for the next one who will work on the package to know
@@ -96,7 +96,7 @@ method to use under which circumstance.
 The examples need explanation.
 The indentation needs work.
 At the end of the second example, there is a branch that warns if the
-interpolation was not succesful due to missing function gradients. Can
+interpolation was not successful due to missing function gradients. Can
 this really occur, given the rest of the program? If not, I would
 remove it. If it can occur, I would draw more attention to this fact.
 

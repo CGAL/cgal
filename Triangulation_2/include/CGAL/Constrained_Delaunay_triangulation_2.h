@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Mariette Yvinec, Jean Daniel Boissonnat
@@ -34,6 +25,7 @@
 #include <CGAL/internal/info_check.h>
 #include <CGAL/is_iterator.h>
 
+#include <boost/container/flat_set.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 
@@ -54,10 +46,46 @@ struct Get_iterator_value_type<T,true>{
 } } //namespace CGAL::internal
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
-
-
 namespace CGAL {
+namespace internal {
 
+// Compare geometry to ensure deterministic flips
+template <class Tr>
+class Cdt_2_less_edge
+  : public CGAL::cpp98::binary_function<typename Tr::Edge, typename Tr::Edge, bool>
+{
+  const Tr* tr_ptr;
+
+  typedef typename Tr::Point  Point;
+  typedef typename Tr::Edge   Edge;
+
+public:
+  Cdt_2_less_edge(const Tr* tr_ptr) : tr_ptr(tr_ptr) { }
+
+  // just a manual lexicographical_compare
+  bool operator() (const Edge& e1, const Edge& e2) const
+  {
+    const Point& e1p1 = tr_ptr->point(e1.first, Tr::ccw(e1.second));
+    const Point& e2p1 = tr_ptr->point(e2.first, Tr::ccw(e2.second));
+
+    CGAL::Comparison_result res1 = tr_ptr->compare_xy(e1p1, e2p1);
+    if(res1 == CGAL::SMALLER)
+      return true;
+    if(res1 == CGAL::LARGER)
+      return false;
+
+    const Point& e1p2 = tr_ptr->point(e1.first, Tr::cw(e1.second));
+    const Point& e2p2 = tr_ptr->point(e2.first, Tr::cw(e2.second));
+
+    CGAL::Comparison_result res2 = tr_ptr->compare_xy(e1p2, e2p2);
+    if(res2 == CGAL::SMALLER)
+      return true;
+
+    return false;
+  }
+};
+
+} // namespace internal
 
 template <class Gt,
           class Tds_ = Default ,
@@ -83,13 +111,14 @@ public:
   typedef typename Ctr::Face_circulator       Face_circulator;
   typedef typename Ctr::size_type             size_type;
   typedef typename Ctr::Locate_type           Locate_type;
- 
+
   typedef typename Ctr::List_edges List_edges;  
   typedef typename Ctr::List_faces List_faces;
   typedef typename Ctr::List_vertices  List_vertices;
   typedef typename Ctr::List_constraints List_constraints;
-  typedef typename Ctr::Less_edge less_edge;
-  typedef typename Ctr::Edge_set Edge_set;
+
+  typedef internal::Cdt_2_less_edge<CDt> Less_edge;
+  typedef boost::container::flat_set<Edge, Less_edge> Edge_set;
 
   //Tag to distinguish Delaunay from regular triangulations
   typedef Tag_false Weighted_tag;
@@ -121,6 +150,7 @@ public:
   using Ctr::update_constraints;
   using Ctr::delete_vertex;
   using Ctr::push_back;
+  using Ctr::mirror_index;
 #endif
 
   typedef typename Geom_traits::Point_2  Point;
@@ -275,7 +305,7 @@ public:
                 typename internal::Get_iterator_value_type< InputIterator >::type,
                 Point
             >
-          >::type* = NULL
+          >::type* = nullptr
   )
 #else
 #if defined(_MSC_VER)
@@ -312,7 +342,7 @@ private:
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
-    size_type n = this->number_of_vertices();
+    size_type n = number_of_vertices();
     std::vector<std::size_t> indices;
     std::vector<Point> points;
     std::vector<typename Tds::Vertex::Info> infos;
@@ -343,7 +373,7 @@ private:
       }
     }
 
-    return this->number_of_vertices() - n;
+    return number_of_vertices() - n;
   }
 
 public:
@@ -357,7 +387,7 @@ public:
               typename internal::Get_iterator_value_type< InputIterator >::type,
               std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
             >
-          >::type* =NULL
+          >::type* =nullptr
   )
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -372,7 +402,7 @@ public:
               boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
               boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
             >
-          >::type* =NULL
+          >::type* =nullptr
   )
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -538,8 +568,10 @@ public:
   int i, ii, indf, indn;
   Face_handle ni, f,ff;
   Edge ei,eni; 
-  typename Ctr::Edge_set edge_set;
-  typename Ctr::Less_edge less_edge;
+
+  Less_edge less_edge(this);
+  Edge_set edge_set(less_edge);
+
   Edge e[4];
   typename List_edges::iterator itedge=edges.begin();
 
@@ -548,7 +580,7 @@ public:
     f=(*itedge).first;
     i=(*itedge).second;
     if (is_flipable(f,i)) {
-      eni=Edge(f->neighbor(i),this->mirror_index(f,i));
+      eni=Edge(f->neighbor(i),mirror_index(f,i));
       if (less_edge(*itedge,eni)) edge_set.insert(*itedge);
       else edge_set.insert(eni);
     }
@@ -565,7 +597,7 @@ public:
     // f->neighbor(indf) that are distinct from the edge to be flipped
 
     ni = f->neighbor(indf); 
-    indn=this->mirror_index(f,indf);
+    indn=mirror_index(f,indf);
     ei= Edge(f,indf);
     edge_set.erase(ei);
     e[0]= Edge(f,cw(indf));
@@ -576,7 +608,7 @@ public:
     for(i=0;i<4;i++) { 
       ff=e[i].first;
       ii=e[i].second;
-      eni=Edge(ff->neighbor(ii),this->mirror_index(ff,ii));
+      eni=Edge(ff->neighbor(ii),mirror_index(ff,ii));
       if (less_edge(e[i],eni)) {edge_set.erase(e[i]);}
       else { edge_set.erase(eni);} 
     } 
@@ -598,7 +630,7 @@ public:
       ff=e[i].first;
       ii=e[i].second;
       if (is_flipable(ff,ii)) {
-	eni=Edge(ff->neighbor(ii),this->mirror_index(ff,ii));
+	eni=Edge(ff->neighbor(ii),mirror_index(ff,ii));
 	if (less_edge(e[i],eni)) { 
 	  edge_set.insert(e[i]);}
 	else {
@@ -643,17 +675,17 @@ Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>::
 flip (Face_handle& f, int i)
 {
   Face_handle g = f->neighbor(i);
-  int j = this->mirror_index(f,i);
+  int j = mirror_index(f,i);
 
   // save wings neighbors to be able to restore contraint status
   Face_handle f1 = f->neighbor(cw(i));
-  int i1 = this->mirror_index(f,cw(i));
+  int i1 = mirror_index(f,cw(i));
   Face_handle f2 = f->neighbor(ccw(i));
-  int i2 = this->mirror_index(f,ccw(i));
+  int i2 = mirror_index(f,ccw(i));
   Face_handle f3 = g->neighbor(cw(j));
-  int i3 = this->mirror_index(g,cw(j));
+  int i3 = mirror_index(g,cw(j));
   Face_handle f4 = g->neighbor(ccw(j));
-  int i4 = this->mirror_index(g,ccw(j));
+  int i4 = mirror_index(g,ccw(j));
 
   // The following precondition prevents the test suit 
   // of triangulation to work on constrained Delaunay triangulation
@@ -663,13 +695,13 @@ flip (Face_handle& f, int i)
   // restore constraint status
   f->set_constraint(f->index(g), false);
   g->set_constraint(g->index(f), false);
-  f1->neighbor(i1)->set_constraint(this->mirror_index(f1,i1),
+  f1->neighbor(i1)->set_constraint(mirror_index(f1,i1),
 				   f1->is_constrained(i1));
-  f2->neighbor(i2)->set_constraint(this->mirror_index(f2,i2),
+  f2->neighbor(i2)->set_constraint(mirror_index(f2,i2),
 				   f2->is_constrained(i2));
-  f3->neighbor(i3)->set_constraint(this->mirror_index(f3,i3),
+  f3->neighbor(i3)->set_constraint(mirror_index(f3,i3),
 				   f3->is_constrained(i3));
-  f4->neighbor(i4)->set_constraint(this->mirror_index(f4,i4),
+  f4->neighbor(i4)->set_constraint(mirror_index(f4,i4),
 				   f4->is_constrained(i4));
   return;
 }

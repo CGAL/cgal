@@ -8,6 +8,8 @@
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene.h"
 
+#include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
 #include "ui_Hole_filling_widget.h"
@@ -16,7 +18,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/iterator.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -41,6 +43,8 @@
 #include <QMap>
 #include <QVector>
 
+using namespace CGAL::Three;
+
 typedef Scene_surface_mesh_item Scene_face_graph_item;
 
 void normalize_border(Scene_face_graph_item::Face_graph&)
@@ -56,7 +60,7 @@ typedef Kernel::Point_3 Point_3;
 
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
-class Q_DECL_EXPORT Scene_hole_visualizer : public CGAL::Three::Scene_item
+class Q_DECL_EXPORT Scene_hole_visualizer : public CGAL::Three::Scene_item_rendering_helper
 {
   Q_OBJECT
 public:
@@ -86,8 +90,10 @@ public:
     get_holes();
     active_hole = polyline_data_list.end();
 
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
-    viewer->installEventFilter(this);
+    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    {
+      viewer->installEventFilter(this);
+    }
     mainWindow->installEventFilter(this);
 
     connect(poly_item, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed()));
@@ -100,12 +106,12 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const { return polyline_data_list.empty(); }
   void compute_bbox() const {
-    if(polyline_data_list.empty()) { _bbox = Bbox(); return;}
+    if(polyline_data_list.empty()) { setBbox(Bbox()); return;}
     Bbox bbox = polyline_data_list.begin()->polyline->bbox();
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
       bbox = bbox + it->polyline->bbox();
     }
-    _bbox = bbox;
+    setBbox(bbox);
   }
 
   Scene_hole_visualizer* clone() const {
@@ -118,7 +124,6 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe);
   }
-  void draw() const {}
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
@@ -144,10 +149,24 @@ public:
     }
     Q_EMIT itemChanged();
   }
-
+void newViewer(Viewer_interface *viewer)
+{
+  for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
+    it->polyline->newViewer(viewer);
+  }
+  Scene_item_rendering_helper::newViewer(viewer);
+}
+void removeViewer(Viewer_interface *viewer)
+{
+  for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
+    it->polyline->removeViewer(viewer);
+  }
+  Scene_item_rendering_helper::removeViewer(viewer);
+}
   // filter events for selecting / activating holes with mouse input
-  bool eventFilter(QObject* /*target*/, QEvent *event)
+  bool eventFilter(QObject* , QEvent *event)
   {
+    Viewer_interface* viewer = CGAL::Three::Three::activeViewer();
     // This filter is both filtering events from 'viewer' and 'main window'
     Mouse_keyboard_state old_state = state;
     // key events
@@ -170,7 +189,6 @@ public:
     // activate closest hole
     if(event->type() == QEvent::HoverMove)
     {
-      CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
       const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
       bool need_repaint = activate_closest_hole(p.x(), p.y());
       if(need_repaint) { Q_EMIT itemChanged(); }
@@ -244,7 +262,7 @@ private:
 
     Face_graph& poly = *poly_item->polyhedron();
 
-    CGAL::QGLViewer* viewer = *CGAL::QGLViewer::QGLViewerPool().begin();
+    CGAL::QGLViewer* viewer = Three::currentViewer();
     CGAL::qglviewer::Camera* camera = viewer->camera();
 
     Polyline_data_list::const_iterator min_it;
@@ -252,15 +270,6 @@ private:
     Kernel::Point_2 xy(x,y);
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it)
     {
-#if 0
-      /* use center of polyline to measure distance - performance wise */
-      const CGAL::qglviewer::Vec& pos_it = camera->projectedCoordinatesOf(it->position);
-      float dist = std::pow(pos_it.x - x, 2) + std::pow(pos_it.y - y, 2);
-      if(dist < min_dist) {
-        min_dist = dist;
-        min_it = it;
-      }
-#else
       boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,poly);
       /* use polyline points to measure distance - might hurt performance for large holes */
       for(fg_halfedge_descriptor hf_around_facet : halfedges_around_face(it->halfedge,poly)){
@@ -269,14 +278,12 @@ private:
         const Point_3& p_2 = get(vpm,target(opposite(hf_around_facet,poly),poly));
         const CGAL::qglviewer::Vec& pos_it_2 = camera->projectedCoordinatesOf(CGAL::qglviewer::Vec(p_2.x(), p_2.y(), p_2.z()));
         Kernel::Segment_2 s(Kernel::Point_2(pos_it_1.x, pos_it_1.y), Kernel::Point_2(pos_it_2.x, pos_it_2.y));
-
         double dist = CGAL::squared_distance(s, xy);
         if(dist < min_dist) {
           min_dist = dist;
           min_it = it;
         }
       }
-#endif
     }
 
     if(min_it == active_hole) {
@@ -319,7 +326,7 @@ class Polyhedron_demo_hole_filling_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "hole_filling_plugin.json")
 public:
   bool applicable(QAction*) const { return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex())) ||
         qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())); }
@@ -436,6 +443,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   dock_widget->installEventFilter(this);
 
   ui_widget.setupUi(dock_widget);
+  ui_widget.Density_control_factor_spin_box->setMaximum(96.989999999999995);
   ui_widget.Accept_button->setVisible(false);
   ui_widget.Reject_button->setVisible(false);
 

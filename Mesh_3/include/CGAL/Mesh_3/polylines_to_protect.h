@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau
@@ -185,7 +176,14 @@ private:
                     Vector vy)
   {
 #ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
-    std::cerr << "New curve:\n";
+    std::cerr << "New curve:\n"
+              << "  base("
+              << p00 << " , "
+              << p00+vx << " , "
+              << p00+vy << ")\n"
+              << "  vectors: "
+              << "( " << vx << " ) "
+              << " ( " << vy << " )\n";
 #endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
     const double step = (end - start)/prec;
     const double stop = end-step/2;
@@ -198,12 +196,15 @@ private:
     {
       const double y = (equation.*f)(x);
 #ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
-      std::cerr << "  (" << x << ", " << y << ")\n";
+      std::cerr << "  (" << x << ", " << y << ") -> ";
 #endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
       const Point inter_p =
         translate(translate(p00,
                             scale(vx, x)),
                   scale(vy, y));
+#ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
+      std::cerr << "( " << inter_p << ")\n";
+#endif // CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT
       v_int = g_manip.get_vertex(inter_p, false);
       g_manip.try_add_edge(old, v_int);
 
@@ -665,6 +666,7 @@ case_4:
               // Diagonal, but the wrong one.
               // Vertical swap
               std::swap(square[0][1], square[0][0]);
+              std::swap(square[1][1], square[1][0]);
             }
             if(square[0][1].domain == square[1][0].domain) {
               // diagonal case 1-2-1

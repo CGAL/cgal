@@ -1,20 +1,11 @@
 // Copyright (c) 2005,2006  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Sylvain Pion
@@ -164,7 +155,7 @@ public:
   typedef CGAL::Object Object_3;
 
 #define CGAL_Kernel_obj(X) \
-  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, typename Exact_kernel::FT, E2A>  X;
+  typedef Lazy<typename Approximate_kernel::X, typename Exact_kernel::X, E2A>  X;
 
   CGAL_Kernel_obj(Data_accessor_2)
   CGAL_Kernel_obj(Conic_2)
@@ -325,7 +316,7 @@ public:
     FT operator()(const Weighted_point_2& p) const
     {
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -338,7 +329,7 @@ public:
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l2;
+        return std::get<2>(lr->l);
       }
       return BaseClass().compute_weight_2_object()(p);
     }
@@ -355,7 +346,7 @@ public:
     FT operator()(const Weighted_point_3& p) const
     {
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -368,7 +359,7 @@ public:
             
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l2;
+        return std::get<2>(lr->l);
       }
       return BaseClass().compute_weight_3_object()(p);
     }
@@ -403,7 +394,7 @@ public:
     
     Point_2 operator()(const Weighted_point_2& p) const
     {
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -413,7 +404,7 @@ public:
                          FT
                          > LR;
 
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_2,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_2,
                          typename Exact_kernel::Weighted_point_2,
                          typename Approximate_kernel::Construct_weighted_point_2,
                          typename Exact_kernel::Construct_weighted_point_2,
@@ -425,11 +416,11 @@ public:
 
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l1;
+        return std::get<1>(lr->l);
       } else {
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
         if(lrint && (! lrint->et)){
-          return lrint->l1;
+          return std::get<1>(lrint->l);
         }
       }
 
@@ -465,7 +456,7 @@ public:
     
     Point_3 operator()(const Weighted_point_3& p) const
     {
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -475,7 +466,7 @@ public:
                          FT
                          > LR;
       
-      typedef Lazy_rep_3<typename Approximate_kernel::Weighted_point_3,
+      typedef Lazy_rep_n<typename Approximate_kernel::Weighted_point_3,
                          typename Exact_kernel::Weighted_point_3,
                          typename Approximate_kernel::Construct_weighted_point_3,
                          typename Exact_kernel::Construct_weighted_point_3,
@@ -488,11 +479,11 @@ public:
       
       LR * lr = dynamic_cast<LR*>(p.ptr());
       if(lr && (! lr->et)){
-        return lr->l1;
+        return std::get<1>(lr->l);
       }else{
         LRint* lrint = dynamic_cast<LRint*>(p.ptr());
         if(lrint && (! lrint->et)){
-          return lrint->l1;
+          return std::get<1>(lrint->l);
         }
       }
       return BaseClass().construct_point_3_object()(p);

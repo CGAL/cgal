@@ -1,13 +1,13 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Mean_curvature_skeleton )
 
 #SET(CMAKE_BUILD_TYPE "Debug")
 #SET(GCC_COVERAGE_COMPILE_FLAGS "-fprofile-arcs -ftest-coverage")
 #SET( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS}" )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 # CGAL and its components
@@ -38,8 +38,6 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 
 if(NOT EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.2 (or greater) is not found.")
-else()
-  include( ${EIGEN3_USE_FILE} )
 endif(NOT EIGEN3_FOUND)
 
 
@@ -47,5 +45,7 @@ endif(NOT EIGEN3_FOUND)
 # ##########################################################
 
 create_single_source_cgal_program( "solver_benchmark.cpp" )
+CGAL_target_use_Eigen(solver_benchmark)
 create_single_source_cgal_program( "mcf_scale_invariance.cpp" )
+CGAL_target_use_Eigen(mcf_scale_invariance)
 

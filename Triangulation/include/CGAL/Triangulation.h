@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)    : Samuel Hornus
 
@@ -121,7 +112,7 @@ protected:
     {
       if (current_dimension() == preset_flat_orientation_.first)
       {
-        CGAL_assertion(preset_flat_orientation_.second != NULL);
+        CGAL_assertion(preset_flat_orientation_.second != nullptr);
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
@@ -274,7 +265,7 @@ public:
         , kernel_(k)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(),
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_((long)0)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
@@ -309,14 +300,14 @@ public:
         , kernel_(t2.kernel_)
         , infinity_()
         , preset_flat_orientation_((std::numeric_limits<int>::max)(), 
-                                   (Flat_orientation_d*) NULL)
+                                   (Flat_orientation_d*) nullptr)
         , rng_(t2.rng_)
 #ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(t2.walk_size_)
 #endif
     {
         // We find the vertex at infinity by scanning the vertices of both
-        // triangulations. This works because Compact_container garantees that
+        // triangulations. This works because Compact_container guarantees that
         // the vertices in the copy (*this) are stored in the same order as in
         // the original triangulation (t2)
         infinity_ = vertices_begin();

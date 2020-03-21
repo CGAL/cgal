@@ -38,9 +38,7 @@ the dimension of the triangulation is lower than 3
 (see Section \ref TDS3secintro). 
 
 Thus, a 3D-triangulation data structure can store a triangulation of a 
-topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR> 
-
- 
+topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.<BR>
 
 The second template parameter of the basic triangulation class 
 (see Chapter \ref chapterTriangulation3 "3D Triangulations") 
@@ -67,7 +65,7 @@ neighbors of each cell, where the index corresponds to the preceding
 list of cells. When dimension < 3, the same information is stored 
 for faces of maximal dimension instead of cells. 
 
-\cgalHasModel `CGAL::Triangulation_data_structure_3` 
+\cgalHasModel `CGAL::Triangulation_data_structure_3<Vb, Cb>`
 
 \sa `TriangulationDataStructure_3::Vertex` 
 \sa `TriangulationDataStructure_3::Cell` 
@@ -91,6 +89,11 @@ typedef unspecified_type Vertex;
 typedef unspecified_type Cell;
 
 /*!
+  %Cell data type, requirements are described in `TriangulationDataStructure_3::Cell_data`.
+*/
+typedef unspecified_type Cell_data;
+
+/*!
 Size type (unsigned integral type) 
 */ 
 typedef unspecified_type size_type; 
@@ -111,7 +114,7 @@ typedef unspecified_type Vertex_handle;
 typedef unspecified_type Cell_handle; 
 
 /*!
-Can be `CGAL::Sequential_tag` or `CGAL::Parallel_tag`. If it is 
+Can be `CGAL::Sequential_tag`, `CGAL::Parallel_tag`, or `Parallel_if_available_tag`. If it is
 `CGAL::Parallel_tag`, the following functions can be called concurrently:
 `create_vertex`, `create_cell`, `delete_vertex`, `delete_cell`.
 */
@@ -386,7 +389,7 @@ and `l` of the vertices `u`, `v`, `w` and `t` in
 */ 
 bool is_cell(Vertex_handle u, Vertex_handle v, Vertex_handle w, Vertex_handle t, 
 Cell_handle & c, int & i, int & j, int & k, int & l) const; 
-
+/// @}
 /// \name has_vertex
 /// There is a method `has_vertex` in the cell class. The analogous methods for facets are defined here. 
 /// @{
@@ -1161,6 +1164,7 @@ In order to obtain new cells or destruct unused cells, the user must call the
 structure. 
 
 \sa `TriangulationDataStructure_3::Vertex`
+\sa `TriangulationDataStructure_3::Cell_data`
 
 */
 
@@ -1184,6 +1188,11 @@ typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;
 
 */ 
 typedef TriangulationDataStructure_3::Cell_handle Cell_handle; 
+
+/*!
+
+*/
+typedef TriangulationDataStructure_3::Cell_data TDS_data;
 
 /// @} 
 
@@ -1272,6 +1281,26 @@ Cell_handle n3);
 
 /// @} 
 
+/// \name Internal
+/// \cgalAdvancedBegin
+/// These functions are used internally by the triangulation data
+/// structure. The user is not encouraged to use them directly as they
+/// may change in the future.
+/// \cgalAdvancedEnd
+/// @{
+
+/*!
+
+*/
+TDS_data& tds_data();
+
+/*!
+
+*/
+const TDS_data& tds_data() const;
+
+/// @}
+
 /// \name Checking 
 /// @{
 
@@ -1286,3 +1315,67 @@ bool is_valid(bool verbose = false, int level = 0) const;
 /// @}
 
 }; /* end Cell */
+
+
+/*!
+\ingroup PkgTDS3Concepts
+\cgalConcept
+
+Various algorithms using a triangulation data structure, such as Delaunay triangulations
+or Alpha Shapes, must be able to associate a state to a cell elemental.
+For efficiency, this information must be stored directly within the cell.
+
+This class is only meant to store a state (Boolean). Consequently, the state must be the default
+value (i.e. `false`) unless a setting function (`mark_in_conflict()`, etc.) has been called.
+
+The three states are "in conflict", "on boundary", and "processed".
+By default, a cell is not in conflict, not on boundary, and not processed.
+
+\sa `TriangulationDataStructure_3::Cell`
+
+*/
+
+class TriangulationDataStructure_3::Cell_data
+{
+public:
+  /// \name Setting
+  /// @{
+
+  /// Clears all flags: the cell is neither in conflict, nor on the boundary, nor processed.
+  void clear();
+
+  /// Sets the "in conflict" state to `true`.
+  ///
+  /// \post `is_in_conflict()` returns `true`
+  void mark_in_conflict();
+
+  /// Sets the "on boundary" state to `true`.
+  ///
+  /// \post `is_on_boundary()` returns `true`
+  void mark_on_boundary();
+
+  /// Sets the "processed" state to `true`.
+  ///
+  /// \post `processed()` returns `true`
+  void mark_processed();
+
+  /// @}
+
+  /// \name Access Functions
+  /// @{
+
+  /// Checks whether the cell has default state (not in conflict, not on boundary, not processed).
+  bool is_clear();
+
+  /// Returns whether the cell has been marked as "in conflict".
+  bool is_in_conflict();
+
+  /// Returns whether the cell has been marked as "on boundary".
+  bool is_on_boundary();
+
+  /// Returns whether the cell has been marked as "processed".
+  bool processed();
+
+  /// @}
+
+}; /* end Cell_data */

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Ilker O. Yaz
@@ -172,7 +163,7 @@ triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend,
       if(new_facets.empty()) {
         // if no patch facets created and also we are using brute force approach, then there is nothing to do,
         // leave `out` intact and return
-        CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+        CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
         return out;
       }
     }
@@ -221,7 +212,7 @@ triangulate_hole_Polyhedron_incomplete(Polyhedron& polyhedron,
       if(patch_facets_before == patch_facets.size()) {
         // if no patch facets created and also we are using brute force approach, then there is nothing to do,
         // leave `out` intact and return
-        CGAL_warning(!"Returning no output. Filling hole with incomplete patches is not successful!");
+        CGAL_warning_msg(false, "Returning no output. Filling hole with incomplete patches is not successful!");
         return std::make_pair(out, Weight_min_max_dihedral_and_area::NOT_VALID());
       }
     }

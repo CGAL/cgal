@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent RINEAU, Maxime Gimeno
@@ -74,9 +65,11 @@ public:
    PROGRAM_C3T3_EDGES,          //! Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
    PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
    PROGRAM_SPHERES,             //! Used to render one or several spheres.
+   PROGRAM_DARK_SPHERES,        //! Used to render one or several spheres without light (for picking for example).
    PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
    PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
    PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
+   PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
    PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
    NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
@@ -108,6 +101,15 @@ public:
   //! Creates a valid context for OpenGL ES 2.0.
   //! \param parent the parent widget. It usually is the MainWindow.
   Viewer_interface(QWidget* parent) : CGAL::QGLViewer(parent) {}
+  //!
+  //! \brief Constructor for the secondary viewers.
+  //!
+  //! \param parent the parent widget. It usually is the MainWindow.
+  //! \param shared_widget the main viewer of the Application. This will share the
+  //!  context and allow synchronized rendering of multiple views.
+  //!
+  Viewer_interface(QWidget* parent, QOpenGLWidget* shared_widget) 
+    : QGLViewer(shared_widget->context(),parent){}
   virtual ~Viewer_interface() {}
 
   //! \brief Sets the scene for the viewer.
@@ -236,6 +238,9 @@ public Q_SLOTS:
   //! If b is true, faces will be ligted from both internal and external side.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   virtual void setTwoSides(bool b) = 0;
+  //! If b is true, then a special color mask is applied to points and meshes to differenciate
+  //! front-faced and back-faced elements.
+  virtual void setBackFrontShading(bool b) =0;
   //! \brief Sets the fast drawing mode
   //! @see inFastDrawing()
   virtual void setFastDrawing(bool b) = 0;
@@ -263,7 +268,7 @@ public:
   //! Gives acces to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
-  //! @returns NULL if `isOpenGL_4_3()` is `false`
+  //! @returns nullptr if `isOpenGL_4_3()` is `false`
   virtual QOpenGLFunctions_4_3_Core* openGL_4_3_functions() = 0;
   //! getter for point size under old openGL context;
   virtual const GLfloat& getGlPointSize()const = 0;
@@ -276,6 +281,7 @@ public:
   virtual int currentPass()const = 0;
   virtual bool isDepthWriting()const = 0;
   virtual QOpenGLFramebufferObject* depthPeelingFbo() = 0;
+  virtual void makeCurrent() = 0;
   virtual QVector4D* clipBox() const =0;
   virtual bool isClipping() const = 0;
 }; // end class Viewer_interface

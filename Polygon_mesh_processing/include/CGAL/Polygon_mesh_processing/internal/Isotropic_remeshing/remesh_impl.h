@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jane Tournois
@@ -108,7 +99,7 @@ namespace internal {
 
     Border_constraint_pmap()
       : border_edges_ptr(new std::set<edge_descriptor>() )
-      , pmesh_ptr_(NULL)
+      , pmesh_ptr_(nullptr)
     {}
 
     template <class FaceRange>
@@ -129,7 +120,7 @@ namespace internal {
     friend bool get(const Border_constraint_pmap<PM, FIMap>& map,
                     const edge_descriptor& e)
     {
-      CGAL_assertion(map.pmesh_ptr_!=NULL);
+      CGAL_assertion(map.pmesh_ptr_!=nullptr);
       return map.border_edges_ptr->count(e)!=0;
     }
 
@@ -137,7 +128,7 @@ namespace internal {
                     const edge_descriptor& e,
                     const bool is)
     {
-      CGAL_assertion(map.pmesh_ptr_ != NULL);
+      CGAL_assertion(map.pmesh_ptr_ != nullptr);
       if (is)
         map.border_edges_ptr->insert(e);
       else
@@ -381,7 +372,6 @@ namespace internal {
       }
       for(std::size_t i=0; i < trees.size(); ++i){
         trees[i]->build();
-        trees[i]->accelerate_distance_queries();
       }
     }
 
@@ -787,19 +777,20 @@ namespace internal {
           //fix constrained case
           CGAL_assertion((is_constrained(vkept) || is_corner(vkept) || is_on_patch_border(vkept)) ==
                          (is_va_constrained || is_vb_constrained || is_va_on_constrained_polyline || is_vb_on_constrained_polyline));
-          fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints);
-
+          if (fix_degenerate_faces(vkept, short_edges, sq_low, collapse_constraints))
+          {
 #ifdef CGAL_PMP_REMESHING_DEBUG
-          debug_status_map();
-          CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
+            debug_status_map();
+            CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
 #endif
 
-          //insert new/remaining short edges
-          for(halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
-          {
-            double sqlen = sqlength(ht);
-            if ((sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
-              short_edges.insert(short_edge(ht, sqlen));
+            //insert new/remaining short edges
+            for (halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
+            {
+              double sqlen = sqlength(ht);
+              if ((sqlen < sq_low) && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
+                short_edges.insert(short_edge(ht, sqlen));
+            }
           }
         }//end if(collapse_ok)
       }
@@ -1059,7 +1050,7 @@ namespace internal {
 
     // PMP book :
     // "maps the vertices back to the surface"
-    void project_to_surface(boost::param_not_found)
+    void project_to_surface(internal_np::Param_not_found)
     {
       //todo : handle the case of boundary vertices
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -1142,7 +1133,7 @@ private:
     const Self* remesher_ptr_;
 
     Patch_id_property_map()
-      : remesher_ptr_(NULL) {}
+      : remesher_ptr_(nullptr) {}
     Patch_id_property_map(const Self& remesher)
       : remesher_ptr_(&remesher) {}
 
@@ -1522,7 +1513,9 @@ private:
       // tag patch border halfedges
       for(halfedge_descriptor h : halfedges(mesh_))
       {
-        if (status(h)==PATCH && status(opposite(h, mesh_))!=PATCH)
+        if (status(h) == PATCH
+          && (   status(opposite(h, mesh_)) != PATCH
+              || get_patch_id(face(h, mesh_)) != get_patch_id(face(opposite(h, mesh_), mesh_))))
         {
           set_status(h, PATCH_BORDER);
           has_border_ = true;
@@ -1599,7 +1592,7 @@ private:
     }
 
     template<typename Bimap>
-    void fix_degenerate_faces(const vertex_descriptor& v,
+    bool fix_degenerate_faces(const vertex_descriptor& v,
                               Bimap& short_edges,
                               const double& sq_low,
                               const bool collapse_constraints)
@@ -1617,6 +1610,10 @@ private:
           degenerate_faces.insert(h);
       }
 
+      if(degenerate_faces.empty())
+        return true;
+
+      bool done = false;
       while(!degenerate_faces.empty())
       {
         halfedge_descriptor h = *(degenerate_faces.begin());
@@ -1637,6 +1634,9 @@ private:
         for(halfedge_descriptor hf :
             halfedges_around_face(h, mesh_))
         {
+          if(face(opposite(hf, mesh_), mesh_) == boost::graph_traits<PM>::null_face())
+            continue;
+
           vertex_descriptor vc = target(hf, mesh_);
           vertex_descriptor va = target(next(hf, mesh_), mesh_);
           vertex_descriptor vb = target(next(next(hf, mesh_), mesh_), mesh_);
@@ -1650,10 +1650,15 @@ private:
 
             short_edges.left.erase(hf);
             short_edges.left.erase(hfo);
-            CGAL_assertion( is_flip_topologically_allowed(edge(hf, mesh_)) );
+
             CGAL_assertion( !get(ecmap_, edge(hf, mesh_)) );
+
+            if (!is_flip_topologically_allowed(edge(hf, mesh_)))
+              continue;
+
             CGAL::Euler::flip_edge(hf, mesh_);
             CGAL_assertion_code(++nb_done);
+            done = true;
 
             //update status
             set_status(h_ab, merge_status(h_ab, hf, hfo));
@@ -1693,6 +1698,7 @@ private:
 #ifdef CGAL_PMP_REMESHING_DEBUG
       debug_status_map();
 #endif
+      return done;
     }
 
     bool incident_to_degenerate(const halfedge_descriptor& he)

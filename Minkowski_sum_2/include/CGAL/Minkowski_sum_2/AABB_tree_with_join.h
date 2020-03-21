@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Camille Wormser, Pierre Alliez, Stephane Tayeb
@@ -429,7 +420,7 @@ public:
 			if( size() > 1 ) {
 				delete [] m_p_root_node;
 			}
-			m_p_root_node = NULL;
+			m_p_root_node = nullptr;
     }
 
 		// clears internal KD tree
@@ -437,9 +428,9 @@ public:
 		{
 			if ( m_search_tree_constructed )
 			{
-				CGAL_assertion( m_p_search_tree!=NULL );
+				CGAL_assertion( m_p_search_tree!=nullptr );
 				delete m_p_search_tree;
-				m_p_search_tree = NULL;
+				m_p_search_tree = nullptr;
 				m_search_tree_constructed = false;
 				m_default_search_tree_constructed = false;
                         }
@@ -554,8 +545,8 @@ public:
   AABB_tree_with_join<Tr>::AABB_tree_with_join(const Tr& traits)
     : m_traits(traits)
     , m_primitives()
-    , m_p_root_node(NULL)
-    , m_p_search_tree(NULL)
+    , m_p_root_node(nullptr)
+    , m_p_search_tree(nullptr)
     , m_search_tree_constructed(false)
     , m_default_search_tree_constructed(false)
     , m_need_build(false)
@@ -568,8 +559,8 @@ public:
                            T ... t)
 		: m_traits()
     , m_primitives()
-		, m_p_root_node(NULL)
-		, m_p_search_tree(NULL)
+		, m_p_root_node(nullptr)
+		, m_p_search_tree(nullptr)
 		, m_search_tree_constructed(false)
     , m_default_search_tree_constructed(false)
     , m_need_build(false)
@@ -626,10 +617,10 @@ public:
 
 			// allocates tree nodes
 			m_p_root_node = new Node[m_primitives.size()-1]();
-			if(m_p_root_node == NULL)
+			if(m_p_root_node == nullptr)
 			{
 				std::cerr << "Unable to allocate memory for AABB tree" << std::endl;
-				CGAL_assertion(m_p_root_node != NULL);
+				CGAL_assertion(m_p_root_node != nullptr);
 				m_primitives.clear();
 				clear();
 			}
@@ -657,7 +648,7 @@ public:
 		ConstPointIterator beyond) const
 	{
 		m_p_search_tree = new Search_tree(first, beyond);
-		if(m_p_search_tree != NULL)
+		if(m_p_search_tree != nullptr)
 		{
 			m_search_tree_constructed = true;
 			return true;

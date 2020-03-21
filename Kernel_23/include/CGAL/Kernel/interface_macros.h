@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 // 
 //
 // Author(s)     : Herve Bronnimann, Sylvain Pion, Susan Hert
@@ -119,8 +110,8 @@ CGAL_Kernel_pred(Compare_dihedral_angle_3,
 		 compare_dihedral_angle_3_object)
 CGAL_Kernel_pred(Compare_distance_2,
 		 compare_distance_2_object)
-CGAL_Kernel_pred_RT(Compare_distance_3,
-                    compare_distance_3_object)
+CGAL_Kernel_pred(Compare_distance_3,
+                 compare_distance_3_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_2,
                     compare_power_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
@@ -173,6 +164,8 @@ CGAL_Kernel_cons(Compute_c_3,
 		 compute_c_3_object)
 CGAL_Kernel_cons(Compute_d_3,
 		 compute_d_3_object)
+CGAL_Kernel_cons(Compute_approximate_angle_3,
+		 compute_approximate_angle_3_object)
 CGAL_Kernel_cons(Compute_approximate_dihedral_angle_3,
 		 compute_approximate_dihedral_angle_3_object)
 CGAL_Kernel_cons(Compute_approximate_area_3,
@@ -495,7 +488,7 @@ CGAL_Kernel_pred_RT(Coplanar_orientation_3,
                     coplanar_orientation_3_object)
 CGAL_Kernel_pred_RT(Coplanar_side_of_bounded_circle_3,
                     coplanar_side_of_bounded_circle_3_object)
-CGAL_Kernel_pred(Coplanar_3,
+CGAL_Kernel_pred_RT(Coplanar_3,
 		 coplanar_3_object)
 CGAL_Kernel_pred(Counterclockwise_in_between_2,
 		 counterclockwise_in_between_2_object)

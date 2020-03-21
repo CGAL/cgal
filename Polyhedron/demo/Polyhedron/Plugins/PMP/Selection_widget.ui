@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>613</width>
-    <height>336</height>
+    <height>365</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,6 +37,33 @@
         </property>
         <property name="text">
          <string>Clear Selection</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="hl_checkBox">
+        <property name="text">
+         <string>Highlight</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -620,7 +647,7 @@
              <item>
               <widget class="QLabel" name="label_4">
                <property name="text">
-                <string>Ctrl+Z to cancel the temporary selection.</string>
+                <string>Ctrl+Z to cancel the temporary selection. Ctrl+U to undo last operation (if applicable).</string>
                </property>
               </widget>
              </item>

@@ -1,19 +1,17 @@
 // This header file is a copy of "boost/config/auto_link.hpp" 
 // from boost version 1.44.0
-// but slightly modified to accomodate CGAL libraries.
-
+// but slightly modified to accommodate CGAL libraries.
+//
 // Before CGAL-4.7-beta1, it has been synchronized with
 // libs/config/ version boost-1.58.0-39-g15d56c9, file
 // include/boost/config/auto_link.hpp
-
+//
 //  (C) Copyright John Maddock 2003.
-//  Use, modification and distribution are subject to the
-//  Boost Software License, Version 1.0. (See accompanying file
-//  LICENSE_1_0.txt or copy at https://www.boost.org/LICENSE_1_0.txt)
+//
 //
 // $URL$
 // $Id$
-//  SPDX-License-Identifier: BSL-1.0
+// SPDX-License-Identifier: BSL-1.0
 //
  /*
   *   LOCATION:    see https://www.boost.org for most recent version.
@@ -173,13 +171,20 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 
 #  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1900)
 
+
      // vc12:
 #    define CGAL_LIB_TOOLSET "vc120"
 
-# elif defined(BOOST_MSVC)
-
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1910)
    // vc14:
 #  define CGAL_LIB_TOOLSET "vc140"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1920)
+// vc141:
+#  define CGAL_LIB_TOOLSET "vc141"
+#  elif defined(BOOST_MSVC)
+// vc142:
+#  define CGAL_LIB_TOOLSET "vc142"
 
 #  elif defined(__BORLANDC__)
 

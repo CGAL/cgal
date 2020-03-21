@@ -5,17 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved. 
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 // 
 //
 // Author(s)     : Michael Seel
@@ -29,7 +23,7 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/_test_compare_dihedral_angle_3.h>
 
-#include <CGAL/Testsuite/use.h>
+#include <CGAL/use.h>
 
 using CGAL::internal::use;
 
@@ -157,8 +151,8 @@ test_new_3(const R& rep)
 
   typename R::Construct_segment_3 construct_segment
         = rep.construct_segment_3_object();
-  Segment_3 s1;
-  Segment_3 s2 = construct_segment(p2,p3);
+  Segment_3 s0; CGAL_USE(s0); // test default-construction
+  Segment_3 s2 = construct_segment(p2,p3), s1 = s2;
 
   typename R::Construct_ray_3 construct_ray =
         rep.construct_ray_3_object();
@@ -214,16 +208,15 @@ test_new_3(const R& rep)
   Sphere_3 sp8 = construct_sphere(p3);
   Sphere_3 sp9 = construct_sphere(p3,CLOCKWISE);
 
-
+  Triangle_3 t0; CGAL_USE(t0); // test the default-construction
   typename R::Construct_triangle_3 construct_triangle
         = rep.construct_triangle_3_object();
-  Triangle_3 t1;
-  Triangle_3 t2 = construct_triangle(p2,p3,p4);
+  Triangle_3 t1 = construct_triangle(p2,p3,p4), t2 = t1;
 
   typename R::Construct_tetrahedron_3 construct_tetrahedron
         = rep.construct_tetrahedron_3_object();
-  Tetrahedron_3 th1;
-  Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5);
+  Tetrahedron_3 th0; // test default-constructor
+  Tetrahedron_3 th2 = construct_tetrahedron(p2,p3,p4,p5), th1 = th2;
 
   typename R::Construct_iso_cuboid_3 construct_iso_cuboid
         = rep.construct_iso_cuboid_3_object();

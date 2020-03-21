@@ -61,16 +61,16 @@ struct TestMeshProgramInstance
   typedef typename Graph_traits::face_iterator face_iterator;
   typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
   typedef typename Surface_mesh_shortest_path::Face_location Face_location;
-  typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::type VPM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::type VIM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::edge_index_t>::type EIM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::type HIM;
-  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::type FIM;
+  typedef typename boost::property_map<Polyhedron_3, CGAL::vertex_point_t>::const_type VPM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::vertex_index_t>::const_type VIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::edge_index_t>::const_type EIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::halfedge_index_t>::const_type HIM;
+  typedef typename boost::property_map<typename Traits::Triangle_mesh, boost::face_index_t>::const_type FIM;
 
   TestMeshProgramInstance()
   {
     debugMode = false;
-    randomizer = NULL;
+    randomizer = nullptr;
     numVertices = 0;
     numIterations = 1;
   }

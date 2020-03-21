@@ -183,7 +183,7 @@ void Scene::savePointsOFF(const char* filename)
   ofstream fout;
   fout.open( filename );
   if( !fout ) {
-    showError( QObject::tr("Error: cannot open file %1 for writting.").arg(filename) );
+    showError( QObject::tr("Error: cannot open file %1 for writing.").arg(filename) );
     return;
   }
 
@@ -221,7 +221,7 @@ void Scene::savePointsXYZ(const char* filename)
   fout.open( filename );
   // Check whether the file is opened properly
   if( !fout ) {
-    showError( QObject::tr("Error: cannot open file %1 for writting.").arg(filename) );
+    showError( QObject::tr("Error: cannot open file %1 for writing.").arg(filename) );
     return;
   }
 

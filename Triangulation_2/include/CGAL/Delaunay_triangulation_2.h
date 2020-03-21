@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mariette Yvinec
 //               : Olivier Devillers  (remove)
@@ -31,9 +22,9 @@
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
-#include <CGAL/internal/info_check.h>
+
 #include <CGAL/tss.h>
-#include <boost/iterator/zip_iterator.hpp>
+
 #include <boost/mpl/and.hpp>
 
 #endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -309,7 +300,7 @@ public:
          typename std::iterator_traits<InputIterator>::value_type,
          Point
          >
-         >::type* = NULL)
+         >::type* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -329,17 +320,12 @@ public:
   }
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-private:
-  //top stands for tuple-or-pair
-  template <class Info>
-  const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
-  template <class Info>
-  const Info& top_get_second(const std::pair<Point,Info>& pair) const { return pair.second; }
-  template <class Info>
-  const Point& top_get_first(const boost::tuple<Point,Info>& tuple) const { return boost::get<0>(tuple); }
-  template <class Info>
-  const Info& top_get_second(const boost::tuple<Point,Info>& tuple) const { return boost::get<1>(tuple); }
 
+private:
+ 
+  using Triangulation::top_get_first;
+  using Triangulation::top_get_second;
+  
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
@@ -386,7 +372,7 @@ public:
            boost::is_convertible<
              typename std::iterator_traits<InputIterator>::value_type,
              std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type>
-           > >::type* = NULL)
+           > >::type* = nullptr)
   {
     return insert_with_info< std::pair<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }
@@ -400,7 +386,7 @@ public:
              boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
              boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
            >
-         >::type* = NULL)
+         >::type* = nullptr)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
   }

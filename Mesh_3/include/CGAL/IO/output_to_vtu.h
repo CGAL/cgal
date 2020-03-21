@@ -4,19 +4,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb, Maxime Gimeno
 
@@ -283,7 +274,7 @@ typedef boost::variant<const std::vector<double>*, const std::vector<uint8_t>*, 
 template <class C3T3>
 void output_to_vtu_with_attributes(std::ostream& os,
                                    const C3T3& c3t3,
-                                   std::vector<std::pair<const char*, const Vtu_attributes> >&attributes,
+                                   std::vector<std::pair<const char*, Vtu_attributes> >&attributes,
                                    IO::Mode mode = IO::BINARY)
 {
   //CGAL_assertion(attributes.size() == attribute_types.size());
@@ -372,7 +363,7 @@ void output_to_vtu(std::ostream& os,
     mids.push_back(v);
   }
   
-  std::vector<std::pair<const char*, const Vtu_attributes > > atts;
+  std::vector<std::pair<const char*, Vtu_attributes > > atts;
   Vtu_attributes v = &mids;
   atts.push_back(std::make_pair("MeshDomain", v));
   output_to_vtu_with_attributes(os, c3t3, atts, mode);
