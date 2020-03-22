@@ -182,7 +182,7 @@ bool push_file(ssh_session &session,
     return false;
   }
   //push a file to /tmp
-  res = ssh_scp_push_directory(scp, ".", 0777);
+  res = ssh_scp_push_directory(scp, ".", 0755);
   if (res != SSH_OK)
   {
     std::cerr<<"Can't create remote directory: %s\n"
@@ -191,7 +191,7 @@ bool push_file(ssh_session &session,
     return false;
   }
   res = ssh_scp_push_file
-      (scp, dest_path, size, 0777);
+      (scp, dest_path, size, 0644);
   if (res != SSH_OK)
   {
     std::cerr<< "Can't open remote file: %s\n"
