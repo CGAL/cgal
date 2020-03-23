@@ -52,11 +52,7 @@ best suited to each problem:
 </center>
 
 \cgalFigureBegin{TutorialsReconstructionFigComparisons, compare_reconstructions.png}
-
-__Comparison of reconstruction methods applied to the same input (full shape and close-up).__
-
-From left to right: original point cloud; Poisson; advancing front; scale space.
-
+Comparison of reconstruction methods applied to the same input (full shape and close-up). From left to right: original point cloud; Poisson; advancing front; scale space.
 \cgalFigureEnd
 
 More information on these different methods can be found on their
@@ -70,8 +66,9 @@ surface reconstruction purposes. The following diagram shows an
 overview (not exhaustive) of common reconstruction steps using \cgal
 tools.
 
-
-\image html reconstruction.svg "Pipeline Overview" 
+\cgalFigureBegin{TutorialsReconstructionFigPipeline, reconstruction.svg}
+Pipeline Overview
+\cgalFigureEnd
 
 We now review some of these steps in more details.
 
@@ -115,11 +112,9 @@ without any preprocessing.
 
 
 \cgalFigureBegin{TutorialsReconstructionFigPreprocessing, reconstruction_preproc.png}
-
-__Comparison of advancing front reconstruction output using different
+Comparison of advancing front reconstruction output using different
 preprocessing on the same input. Smooth point cloud was generated
-using _jet smoothing_; simplified point cloud was generated using _grid simplification_.__
-
+using _jet smoothing_; simplified point cloud was generated using _grid simplification_.
 \cgalFigureEnd
 
 
@@ -291,9 +286,7 @@ algorithms (hole filling and isotropic remeshing) are also applied
 for more information).
 
 \cgalFigureBegin{TutorialsReconstructionFigPipeline, reconstruction_pipeline.png}
-
-__Full reconstruction pipeline (with close-ups).__
-
+Full reconstruction pipeline (with close-ups).
 \cgalFigureEnd
 
 
