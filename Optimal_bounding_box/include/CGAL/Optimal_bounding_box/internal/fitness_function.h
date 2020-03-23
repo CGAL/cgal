@@ -28,7 +28,8 @@ namespace internal {
 template <typename Traits, typename PointRange>
 typename Traits::FT
 compute_fitness(const typename Traits::Matrix& R, // rotation matrix
-                const PointRange& points)
+                const PointRange& points,
+                const Traits& /*traits*/)
 {
   typedef typename Traits::FT                                   FT;
   typedef typename Traits::Point_3                              Point;
@@ -60,51 +61,32 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
   return ((xmax - xmin) * (ymax - ymin) * (zmax - zmin));
 }
 
-template <typename Population, typename PointRange, typename Traits>
-struct Fitness_map
+template <typename Population, typename PointRange>
+const typename Population::Vertex& get_best_vertex(const Population& population,
+                                                   const PointRange& points)
 {
-  typedef typename Traits::FT                               FT;
-  typedef typename Population::Vertex                       Vertex;
+  typedef typename Population::FT                               FT;
+  typedef typename Population::Vertex                           Vertex;
 
-  Fitness_map(const Population& population,
-              const PointRange& points)
-    :
-      m_pop(population),
-      m_points(points)
-  { }
-
-  const Vertex& get_best() const // @todo any point caching this?
+  std::size_t simplex_id, vertex_id;
+  FT best_fitness = std::numeric_limits<double>::max();
+  for(std::size_t i=0, ps=population.size(); i<ps; ++i)
   {
-    std::size_t simplex_id, vertex_id;
-    FT best_fitness = std::numeric_limits<double>::max();
-    for(std::size_t i=0, ps=m_pop.size(); i<ps; ++i)
+    for(std::size_t j=0; j<4; ++j)
     {
-      for(std::size_t j=0; j<4; ++j)
+      const Vertex& vertex = population[i][j];
+      const FT fitness = vertex.fitness_value();
+      if(fitness < best_fitness)
       {
-        const Vertex& vertex = m_pop[i][j];
-        const FT fitness = compute_fitness<Traits>(vertex, m_points);
-        if(fitness < best_fitness)
-        {
-          simplex_id = i;
-          vertex_id = j;
-          best_fitness = fitness;
-        }
+        simplex_id = i;
+        vertex_id = j;
+        best_fitness = fitness;
       }
     }
-
-    return m_pop[simplex_id][vertex_id];
   }
 
-  FT get_best_fitness_value() const
-  {
-    const Vertex& best_mat = get_best();
-    return compute_fitness<Traits>(best_mat, m_points);
-  }
-
-private:
-  const Population& m_pop;
-  const PointRange& m_points;
-};
+  return population[simplex_id][vertex_id];
+}
 
 } // namespace internal
 } // namespace Optimal_bounding_box

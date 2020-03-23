@@ -147,7 +147,7 @@ void test_nelder_mead(const Traits& traits)
   simplex[3] = v3;
 
   std::size_t nm_iterations = 19;
-  CGAL::Optimal_bounding_box::internal::nelder_mead(points, nm_iterations, traits, simplex);
+  CGAL::Optimal_bounding_box::internal::nelder_mead(simplex, nm_iterations, points, traits);
 
   const Matrix& v0_new = simplex[0];
   check_equality(v0_new(0,0), -0.288975);

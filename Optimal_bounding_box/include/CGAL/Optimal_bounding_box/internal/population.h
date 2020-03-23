@@ -16,6 +16,8 @@
 
 #include <CGAL/license/Optimal_bounding_box.h>
 
+#include <CGAL/Optimal_bounding_box/internal/fitness_function.h>
+
 #include <CGAL/assertions.h>
 #include <CGAL/Random.h>
 
@@ -27,48 +29,85 @@ namespace Optimal_bounding_box {
 namespace internal {
 
 template<typename Traits>
+struct Vertex_with_fitness_value
+{
+  typedef typename Traits::FT                                 FT;
+  typedef typename Traits::Matrix                             Matrix;
+
+  Vertex_with_fitness_value() { CGAL_assertion_code(m_is_val_initialized = false;) }
+  Vertex_with_fitness_value(const Matrix m, const FT v) : m_mat(std::move(m)), m_val(v)
+  {
+    CGAL_assertion_code(m_is_val_initialized = true;)
+  }
+
+  template <typename PointRange>
+  Vertex_with_fitness_value(const Matrix m,
+                            const PointRange& points,
+                            const Traits& traits)
+    :
+      m_mat(std::move(m))
+  {
+    m_val = compute_fitness(m, points, traits);
+    CGAL_assertion_code(m_is_val_initialized = true;)
+  }
+
+  const Matrix& matrix() const { return m_mat; }
+  FT fitness_value() const { CGAL_assertion(m_is_val_initialized); return m_val; }
+
+private:
+  Matrix m_mat;
+  FT m_val;
+  CGAL_assertion_code(bool m_is_val_initialized;)
+};
+
+template<typename Traits>
 class Population
 {
 public:
   typedef typename Traits::FT                                 FT;
   typedef typename Traits::Matrix                             Matrix;
-  typedef Matrix                                              Vertex;
 
-  typedef std::array<Matrix, 4>                               Simplex;
+  typedef Vertex_with_fitness_value<Traits>                   Vertex;
+  typedef std::array<Vertex, 4>                               Simplex;
   typedef std::vector<Simplex>                                Simplex_container;
-
-private:
-  Matrix create_vertex(CGAL::Random& rng) const
-  {
-    Matrix R;
-
-    for(std::size_t i=0; i<3; ++i)
-      for(std::size_t j=0; j<3; ++j)
-        R.set(i, j, FT(rng.get_double()));
-
-    return R;
-  }
-
-  // create random population
-  Simplex create_simplex(CGAL::Random& rng) const
-  {
-    Simplex simplex;
-    for(std::size_t i=0; i<4; ++i)
-      simplex[i] = m_traits.get_Q(create_vertex(rng));
-
-    return simplex;
-  }
 
 public:
   Population(const Traits& traits) : m_traits(traits) { }
 
-  void initialize(std::size_t population_size,
+private:
+  Matrix create_random_matrix(CGAL::Random& rng) const
+  {
+    Matrix m;
+
+    for(std::size_t i=0; i<3; ++i)
+      for(std::size_t j=0; j<3; ++j)
+        m.set(i, j, FT(rng.get_double()));
+
+    return m;
+  }
+
+  // create random population
+  template <typename PointRange>
+  Simplex create_simplex(const PointRange& points,
+                         CGAL::Random& rng) const
+  {
+    Simplex s;
+    for(std::size_t i=0; i<4; ++i)
+      s[i] = Vertex(m_traits.get_Q(create_random_matrix(rng)), points, m_traits);
+
+    return s;
+  }
+
+public:
+  template <typename PointRange>
+  void initialize(const std::size_t population_size,
+                  const PointRange& points,
                   CGAL::Random& rng)
   {
     m_pop.clear();
     m_pop.reserve(population_size);
     for(std::size_t i=0; i<population_size; ++i)
-      m_pop.emplace_back(create_simplex(rng));
+      m_pop.emplace_back(create_simplex(points, rng));
   }
 
   // Access
@@ -79,28 +118,24 @@ public:
 
   // Debug
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-  void show_population();
+  void show_population() const
+  {
+    std::size_t id = 0;
+    for(const Simplex& s : m_pop)
+    {
+      std::cout << "Simplex: " << id++ << std::endl;
+      for(const Matrix& m : s)
+        std::cout << m << "\n\n";
+      std:: cout << std:: endl;
+    }
+  }
 #endif
 
 private:
   std::vector<Simplex> m_pop;
+
   const Traits& m_traits;
 };
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-template <typename Matrix>
-void Population<Matrix>::show_population()
-{
-  std::size_t id = 0;
-  for(const Simplex& simplex : m_pop)
-  {
-    std::cout << "Simplex: " << id++ << std::endl;
-    for(const Matrix& R : simplex)
-      std::cout << R << "\n\n";
-    std:: cout << std:: endl;
-  }
-}
-#endif
 
 } // namespace internal
 } // namespace Optimal_bounding_box

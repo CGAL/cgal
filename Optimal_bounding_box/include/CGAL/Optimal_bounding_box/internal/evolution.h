@@ -40,15 +40,15 @@ public:
   typedef typename Traits::FT                                               FT;
   typedef typename Traits::Matrix                                           Matrix;
 
-  typedef Population<Traits>                                                Population;
+  typedef internal::Population<Traits>                                      Population;
   typedef typename Population::Simplex                                      Simplex;
-
-  typedef Fitness_map<Population, PointRange, Traits>                       Fitness_map;
+  typedef typename Population::Vertex                                       Vertex;
 
   Evolution(const PointRange& points,
             CGAL::Random& rng,
             const Traits& traits)
     :
+      m_best_v(nullptr),
       m_population(traits),
       m_rng(rng),
       m_points(points),
@@ -58,7 +58,7 @@ public:
   void genetic_algorithm(const std::size_t population_size = 50)
   {
     // random permutations
-    m_population.initialize(population_size, m_rng);
+    m_population.initialize(population_size, m_points, m_rng);
 
     //groups 1,2 : size m/2  groups 3,4 : size (m - m/2).   m/2 is floored
     const std::size_t m = population_size;
@@ -74,19 +74,19 @@ public:
     std::generate(group3.begin(), group3.end(), [&]{ return m_rng.get_int(0, im); });
     std::generate(group4.begin(), group4.end(), [&]{ return m_rng.get_int(0, im); });
 
-    // crossover I
+    // crossover I, pick A or B
     FT bias = FT(0.1);
 
     std::vector<Simplex> new_simplices(m);
 
     for(std::size_t i=0; i<first_group_size; ++i)
     {
-      std::array<Matrix, 4> offspring;
+      Simplex offspring;
       for(int j=0; j<4; ++j)
       {
         const FT r = FT(m_rng.get_double());
-        const FT fitnessA = compute_fitness<Traits>(m_population[group1[i]][j], m_points);
-        const FT fitnessB = compute_fitness<Traits>(m_population[group2[i]][j], m_points);
+        const FT fitnessA = m_population[group1[i]][j].fitness_value();
+        const FT fitnessB = m_population[group2[i]][j].fitness_value();
         const FT threshold = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
 
         if(r < threshold)
@@ -98,39 +98,23 @@ public:
       new_simplices[i] = std::move(offspring);
     }
 
-    // crossover II
+    // crossover II, combine information from A and B
     bias = 0.1; // @fixme should the bias change? What should be the initial value?
 
     for(std::size_t i=0; i<second_group_size; ++i)
     {
-      std::array<Matrix, 4> offspring;
+      Simplex offspring;
       for(int j=0; j<4; ++j)
       {
-        const FT fitnessA = compute_fitness<Traits>(m_population[group3[i]][j], m_points);
-        const FT fitnessB = compute_fitness<Traits>(m_population[group4[i]][j], m_points);
+        const FT fitnessA = m_population[group3[i]][j].fitness_value();
+        const FT fitnessB = m_population[group4[i]][j].fitness_value();
         const FT lambda = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
-        const FT rambda = 1 - lambda; // the 'l' in 'lambda' stands for left
+        const FT rambda = 1 - lambda; // because the 'l' in 'lambda' stands for left
 
-        // combine information from A and B
-        Matrix new_vertex(3, 3);
+        const Matrix& lm = m_population[group3[i]][j].matrix();
+        const Matrix& rm = m_population[group4[i]][j].matrix();
 
-        const Matrix& lm = m_population[group3[i]][j];
-        const Matrix& rm = m_population[group4[i]][j];
-
-        // just avoiding having to add matrix sums and scalar multiplications to the concept
-        new_vertex.set(0, 0, lambda * lm(0, 0) + rambda * rm(0, 0));
-        new_vertex.set(0, 1, lambda * lm(0, 1) + rambda * rm(0, 1));
-        new_vertex.set(0, 2, lambda * lm(0, 2) + rambda * rm(0, 2));
-
-        new_vertex.set(1, 0, lambda * lm(1, 0) + rambda * rm(1, 0));
-        new_vertex.set(1, 1, lambda * lm(1, 1) + rambda * rm(1, 1));
-        new_vertex.set(1, 2, lambda * lm(1, 2) + rambda * rm(1, 2));
-
-        new_vertex.set(2, 0, lambda * lm(2, 0) + rambda * rm(2, 0));
-        new_vertex.set(2, 1, lambda * lm(2, 1) + rambda * rm(2, 1));
-        new_vertex.set(2, 2, lambda * lm(2, 2) + rambda * rm(2, 2));
-
-        offspring[j] = m_traits.get_Q(new_vertex);
+        offspring[j] = Vertex(m_traits.get_Q(lambda*lm + rambda*rm), m_points, m_traits);
       }
 
       new_simplices[first_group_size + i] = std::move(offspring);
@@ -139,56 +123,51 @@ public:
     m_population.simplices() = std::move(new_simplices);
   }
 
-  void evolve(const std::size_t generations)
+  void evolve(const std::size_t generations,
+              const std::size_t population_size = 50,
+              const std::size_t nelder_mead_iterations = 150)
   {
-    // hardcoded population size
-    const std::size_t population_size = 50;
-
-    // hardcoded nelder_mead_iterations
-    const std::size_t nelder_mead_iterations = 150;
-
     // stopping criteria prameters
-    FT prev_fit_value = 0.;
-    FT new_fit_value = 0.;
+    FT prev_fit_value = 0;
+    FT new_fit_value = 0;
     const FT tolerance = 1e-9;
     int stale = 0;
 
     for(std::size_t t=0; t<generations; ++t)
     {
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      std::cout << "generation = " << t << "\n";
+      std::cout << "generation #" << t << "\n";
 #endif
 
       genetic_algorithm(population_size);
 
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      //std::cout << "pop after genetic" << std::endl;
-      //pop.show_population();
-      //std::cout << std::endl;
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
+      std::cout << "population after genetic" << std::endl;
+      pop.show_population();
+      std::cout << std::endl;
 #endif
 
       for(std::size_t s=0; s<population_size; ++s)
-        nelder_mead(m_points, nelder_mead_iterations, m_traits, m_population[s]);
+        nelder_mead(m_population[s], nelder_mead_iterations, m_points, m_traits);
 
-      // stopping criteria
-      Fitness_map fitness_map(m_population, m_points);
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      //std::cout << "pop after nelder mead: " << std::endl;
-      //pop.show_population();
-      //std::cout << std::endl;
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
+      std::cout << "population after nelder mead: " << std::endl;
+      pop.show_population();
+      std::cout << std::endl;
 #endif
 
-      new_fit_value = fitness_map.get_best_fitness_value();
+      // stopping criteria
+      m_best_v = &(get_best_vertex(m_population, m_points));
+      const FT new_fit_value = m_best_v->fitness_value();
       const FT difference = new_fit_value - prev_fit_value;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      const Matrix& R_now = fitness_map.get_best();
-      std::cout << "new best: " << R_now << std::endl;
+      const Matrix& best_m = m_best_v->matrix();
+      std::cout << "new best matrix: " << best_m << std::endl;
       std::cout << "value difference with previous: " << difference << std::endl;
 #endif
 
-      if(CGAL::abs(difference) < tolerance * new_fit_value) // @todo should depend on input bbox diag
+      if(CGAL::abs(difference) < tolerance * new_fit_value)
         ++stale;
 
       if(stale == 5)
@@ -198,15 +177,17 @@ public:
     }
   }
 
-  const Matrix& get_best()
+  const Vertex& get_best()
   {
-    Fitness_map fitness_map(m_population, m_points);
-    return fitness_map.get_best();
+    CGAL_assertion(m_best_v != nullptr);
+    return *m_best_v;
   }
 
 private:
+  const Vertex* m_best_v;
   Population m_population;
-  CGAL::Random m_rng;
+
+  CGAL::Random& m_rng;
   const PointRange& m_points;
   const Traits& m_traits;
 };

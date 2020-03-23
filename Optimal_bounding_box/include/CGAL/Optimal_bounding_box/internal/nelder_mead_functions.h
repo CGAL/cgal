@@ -50,7 +50,8 @@ Matrix mean(const Matrix& m1,
 {
   typedef typename Traits::FT                                 FT;
 
-  const Matrix reduction = FT(0.5) * (m1 + m2);
+  constexpr half = FT(1) / FT(2);
+  const Matrix reduction = half * (m1 + m2);
 
   return traits.get_Q(reduction);
 }
@@ -63,86 +64,74 @@ const Matrix nm_centroid(const Matrix& S1,
 {
   typedef typename Traits::FT                                 FT;
 
-  const Matrix mean = (FT(1) / FT(3)) * (S1 + S2 + S3);
+  constexpr FT third = FT(1) / FT(3);
+  const Matrix mean = third * (S1 + S2 + S3);
 
   return traits.get_Q(mean);
 }
 
 // It's a 3D simplex with 4 rotation matrices as vertices
 template <typename Simplex, typename PointRange, typename Traits>
-void nelder_mead(const PointRange& points,
+void nelder_mead(Simplex& simplex,
                  const std::size_t nelder_mead_iterations,
-                 const Traits& traits,
-                 Simplex& simplex)
+                 const PointRange& points,
+                 const Traits& traits)
 {
+  typedef typename Simplex::value_type                        Vertex;
   typedef typename Traits::FT                                 FT;
   typedef typename Traits::Matrix                             Matrix;
 
-  std::array<FT, 4> fitness;
-  std::array<std::size_t, 4> indices = {{ 0, 1, 2, 3 }};
-
   for(std::size_t t=0; t<nelder_mead_iterations; ++t)
   {
-    for(std::size_t i=0; i<4; ++i)
-      fitness[i] = compute_fitness<Traits>(simplex[i], points);
-
-    // get indices of sorted sequence
-    std::sort(indices.begin(), indices.end(),
-              [&fitness](const std::size_t i, const std::size_t j) -> bool
-                        { return fitness[i] < fitness[j]; });
-
-    // new sorted simplex & fitness
-    Simplex s_simplex;
-    std::array<FT, 4> s_fitness;
-    for(int i=0; i<4; ++i)
-    {
-      s_simplex[i] = simplex[indices[i]];
-      s_fitness[i] = fitness[indices[i]];
-    }
-
-    simplex = std::move(s_simplex);
-    fitness = std::move(s_fitness);
+    std::sort(simplex.begin(), simplex.end(),
+              [](const Vertex& vi, const Vertex& vj) -> bool
+              { return vi.fitness_value() < vj.fitness_value(); });
 
     // centroid
-    const Matrix v_centroid = nm_centroid(simplex[0], simplex[1], simplex[2], traits);
+    const Matrix centroid_m = nm_centroid(simplex[0].matrix(),
+                                          simplex[1].matrix(),
+                                          simplex[2].matrix(), traits);
 
     // find worst's vertex reflection
-    const Matrix& v_worst = simplex[3];
-    const Matrix v_refl = reflection(v_centroid, v_worst);
-    const FT f_refl = compute_fitness<Traits>(v_refl, points);
+    const Matrix& worst_m = simplex[3].matrix();
+    const Matrix refl_m = reflection(centroid_m, worst_m);
+    const FT refl_f = compute_fitness(refl_m, points, traits);
 
-    if(f_refl < fitness[2])
+    // if reflected point is better than the second worst
+    if(refl_f < simplex[2].fitness_value())
     {
-      if(f_refl >= fitness[0]) // if reflected point is not better than the best
+      // if reflected point is not better than the best
+      if(refl_f >= simplex[0].fitness_value())
       {
         // reflection
-        simplex[3] = std::move(v_refl);
+        simplex[3] = Vertex(refl_m, refl_f);
       }
       else
       {
         // expansion
-        const Matrix v_expand = expansion(v_centroid, v_worst, v_refl);
-        const FT f_expand = compute_fitness<Traits>(v_expand, points);
-        if(f_expand < f_refl)
-          simplex[3] = std::move(v_expand);
+        const Matrix expand_m = expansion(centroid_m, worst_m, refl_m);
+        const FT expand_f = compute_fitness(expand_m, points, traits);
+        if(expand_f < refl_f)
+          simplex[3] = Vertex(expand_m, expand_f);
         else
-          simplex[3] = std::move(v_refl);
+          simplex[3] = Vertex(refl_m, refl_f);
       }
     }
-    else // if reflected vertex is not better
+    else // reflected vertex is worse
     {
-      const Matrix v_mean = mean(v_centroid, v_worst, traits);
-      const FT f_mean = compute_fitness<Traits>(v_mean, points);
-      if(f_mean <= fitness[3])
+      const Matrix mean_m = mean(centroid_m, worst_m, traits);
+      const FT mean_f = compute_fitness(mean_m, points, traits);
+
+      if(mean_f <= simplex[3].fitness_value())
       {
         // contraction of worst
-        simplex[3] = std::move(v_mean);
+        simplex[3] = Vertex(mean_m, mean_f);
       }
       else
       {
         // reduction: move all vertices towards the best
         for(std::size_t i=1; i<4; ++i)
-          simplex[i] = mean(simplex[i], simplex[0], traits);
+          simplex[i] = Vertex(mean(simplex[i].matrix(), simplex[0].matrix(), traits), points, traits);
       }
     }
   } // nelder mead iterations
