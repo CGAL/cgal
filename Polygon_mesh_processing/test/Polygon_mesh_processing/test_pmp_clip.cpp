@@ -528,9 +528,15 @@ void test_split()
   std::vector<TriangleMesh> meshes;
 
   PMP::split(tm1, tm2);
+  //try with np
+  typename boost::template property_map<
+  TriangleMesh, CGAL::dynamic_face_property_t<int > >::type
+      pidmap = get(CGAL::dynamic_face_property_t<int>(), tm1);
+  CGAL::Polygon_mesh_processing::connected_components(
+        tm1, pidmap, CGAL::parameters::all_default());
   PMP::split_connected_components(tm1,
                                   meshes,
-                                  params::all_default());
+                                  params::face_patch_map(pidmap));
 
   CGAL_assertion(meshes.size() == 5);
   //if the order is not deterministc, put the num_vertices in a list and check
