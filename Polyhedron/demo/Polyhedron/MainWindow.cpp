@@ -1,3 +1,6 @@
+#ifdef CGAL_USE_SSH
+#  include "CGAL/Use_ssh.h"
+#endif
 #include <cmath>
 
 #include "config.h"
@@ -43,6 +46,7 @@
 #include <QWidgetAction>
 #include <QJsonArray>
 #include <QSequentialIterable>
+#include <QDir>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -59,6 +63,7 @@
 #include "ui_Preferences.h"
 #include "ui_Details.h"
 #include "ui_Statistics_on_item_dialog.h"
+#include "ui_SSH_dialog.h"
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 #include "Viewer.h"
@@ -70,6 +75,14 @@
 #  include <QScriptEngine>
 #  include <QScriptValue>
 #include "Color_map.h"
+
+
+#ifdef CGAL_USE_WEBSOCKETS
+#include <QWebSocketServer>
+#include <QWebSocket>
+#include <QNetworkInterface>
+#endif
+
 using namespace CGAL::Three;
 QScriptValue
 myScene_itemToScriptValue(QScriptEngine *engine,
@@ -151,6 +164,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoadScript);
+  ui->menuBar->removeAction(ui->on_actionLoad_a_Scene_from_a_Script_File);
 #endif
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
@@ -159,9 +173,9 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   CGAL::Three::Three::s_mainviewer = viewer;
   viewer->setObjectName("mainViewer");
   viewer_window->showMaximized();
-  viewer_window->setWindowFlags( 
+  viewer_window->setWindowFlags(
         Qt::SubWindow
-        | Qt::CustomizeWindowHint 
+        | Qt::CustomizeWindowHint
         | Qt::WindowMaximizeButtonHint
         | Qt::WindowSystemMenuHint
         | Qt::WindowTitleHint
@@ -354,7 +368,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
   // Load plugins, and re-enable actions that need it.
   operationSearchBar.setPlaceholderText("Filter...");
-  searchAction->setDefaultWidget(&operationSearchBar);  
+  searchAction->setDefaultWidget(&operationSearchBar);
   connect(&operationSearchBar, &QLineEdit::textChanged,
           this, [=](){filterOperations(true);});
   loadPlugins();
@@ -690,7 +704,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     else{
       //qdebug << "error: " << qPrintable(loader.errorString());
       pluginsStatus_map[name] = loader.errorString();
-      
+
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
     return true;
@@ -934,7 +948,7 @@ void MainWindow::viewerShow(float xmin,
 }
 
 void MainWindow::viewerShow(Viewer_interface* vi, float x, float y, float z) {
-  
+
   CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*vi->camera()->frame());
   vi->camera()->fitSphere(CGAL::qglviewer::Vec(x, y, z),
                           vi->camera()->sceneRadius()/100);
@@ -1001,20 +1015,21 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   const double xmax = bbox.xmax();
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
-  
-  
-  
+
+
+
   min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
   max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
-  
+
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
+  
   double bbox_diag = CGAL::approximate_sqrt(
         CGAL::square(xmax - xmin)
         + CGAL::square(ymax - ymin)
         + CGAL::square(zmax - zmin));
   
   CGAL::qglviewer::Vec offset(0,0,0);
-  
+
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
@@ -1240,7 +1255,7 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
   loadItem(fileinfo, findLoader(load_pair.first), ok);
- 
+
   if(!ok)
     return;
   this->addToRecentFiles(fileinfo.absoluteFilePath());
@@ -1427,7 +1442,7 @@ void MainWindow::selectionChanged()
   {
     if(vi == NULL)
       continue;
-    
+
     if(item != NULL && item->manipulatable()) {
       vi->setManipulatedFrame(item->manipulatedFrame());
     } else {
@@ -1562,7 +1577,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
               menu_actions["line width"] = action->menu()->actions().last();
             }
           }
-          
+
         }
         Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
         {
@@ -1595,7 +1610,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1630,7 +1645,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1665,7 +1680,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1708,7 +1723,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1832,6 +1847,7 @@ void MainWindow::readSettings()
     this->default_point_size = settings.value("points_size").toInt();
     this->default_normal_length = settings.value("normals_length").toInt();
     this->default_lines_width = settings.value("lines_width").toInt();
+    setProperty("ws_url", settings.value("ws_server_url").toString());
 }
 
 void MainWindow::writeSettings()
@@ -1906,14 +1922,7 @@ void MainWindow::throw_exception() {
 void MainWindow::on_actionLoadScript_triggered()
 {
 #if defined(QT_SCRIPT_LIB)
-  QString filename = QFileDialog::getOpenFileName(
-        this,
-        tr("Select a script to run..."),
-        ".",
-        "QTScripts (*.js);;All Files (*)");
-  if(filename.isEmpty())
-    return;
-  loadScript(QFileInfo(filename));
+
 #endif
 }
 
@@ -1943,7 +1952,7 @@ void MainWindow::on_actionLoad_triggered()
       filters << filter;
     }
   }
-  
+
   QString directory = settings.value("OFF open directory",
                                      QDir::current().dirName()).toString();
 
@@ -1971,7 +1980,7 @@ void MainWindow::on_actionLoad_triggered()
                     static_cast<unsigned>(nb_files),
                     std::back_inserter(colors_));
   std::size_t nb_item = -1;
-  
+
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
 
     CGAL::Three::Scene_item* item = NULL;
@@ -2216,7 +2225,6 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  
   float lineWidth[2];
   if(!viewer->isOpenGL_4_3())
     viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
@@ -2227,22 +2235,22 @@ void MainWindow::on_actionPreferences_triggered()
   }
   prefdiag.linesHorizontalSlider->setMinimum(lineWidth[0]);
   prefdiag.linesHorizontalSlider->setMaximum(lineWidth[1]);
-  
+
   prefdiag.offset_updateCheckBox->setChecked(
         settings.value("offset_update", false).toBool());
   connect(prefdiag.offset_updateCheckBox, SIGNAL(toggled(bool)),
           scene, SLOT(enableVisibilityRecentering(bool)));
-  
+
   prefdiag.antialiasingCheckBox->setChecked(settings.value("antialiasing", false).toBool());
   connect(prefdiag.antialiasingCheckBox, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
-  
+
   prefdiag.quick_cameraCheckBox->setChecked(
         settings.value("quick_camera_mode", true).toBool());
   connect(prefdiag.quick_cameraCheckBox, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
   prefdiag.max_itemsSpinBox->setValue(viewer->textRenderer()->getMax_textItems());
-  
+
   connect(prefdiag.max_itemsSpinBox,static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, [this](int i){
     setMaxTextItemsDisplayed(i);
@@ -2273,20 +2281,20 @@ void MainWindow::on_actionPreferences_triggered()
   });
   connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
           this, &MainWindow::setBackgroundColor);
-  
+
   connect(prefdiag.default_save_asPushButton, &QPushButton::clicked,
           this, &MainWindow::setDefaultSaveDir);
-  
+
   connect(prefdiag.lightingPushButton, &QPushButton::clicked,
           this, &MainWindow::setLighting_triggered);
-  
+
   prefdiag.surface_meshComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                   CGAL::Three::Three::s_defaultSMRM));
   connect(prefdiag.surface_meshComboBox, &QComboBox::currentTextChanged,
           this, [this](const QString& text){
     this->s_defaultSMRM = CGAL::Three::Three::modeFromName(text);
   });
-  
+
   prefdiag.point_setComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                CGAL::Three::Three::s_defaultPSRM));
   connect(prefdiag.point_setComboBox, &QComboBox::currentTextChanged,
@@ -2360,6 +2368,70 @@ void MainWindow::on_actionPreferences_triggered()
     });
     dialog.exec();
   });
+  connect(prefdiag.sshButton, &QPushButton::clicked,
+          this, [this](){
+    QDialog dialog(this);
+    Ui::SSHDialog sshdiag;
+    sshdiag.setupUi(&dialog);
+
+#ifdef CGAL_USE_SSH
+    sshdiag.userBox->setEnabled(true);
+    sshdiag.serverBox->setEnabled(true);
+    sshdiag.pkBox->setEnabled(true);
+    sshdiag.privkBox->setEnabled(true);
+    sshdiag.userEdit->setText(settings.value("ssh_user", QString()).toString());
+    sshdiag.serverEdit->setText(settings.value("ssh_server", QString()).toString());
+    sshdiag.publicEdit->setText(settings.value("ssh_public_key", QString()).toString());
+    sshdiag.privkEdit->setText(settings.value("ssh_priv_key", QString()).toString());
+    connect(sshdiag.pubButton, &QPushButton::clicked,
+            this, [this, sshdiag](){
+      QFileDialog diag(this,
+                       "Public Key",
+                       "",
+                       "All Files (*)");
+      diag.setFilter(QDir::Hidden|QDir::Files|QDir::Dirs|QDir::NoDotAndDotDot);
+      if(!diag.exec())
+        return;
+      sshdiag.publicEdit->setText(diag.selectedFiles().front());
+    });
+    connect(sshdiag.privButton, &QPushButton::clicked,
+            this, [this, sshdiag](){
+      QFileDialog diag(this,
+                       "Private Key",
+                       "",
+                       "All Files (*)");
+      diag.setFilter(QDir::Hidden|QDir::Files|QDir::Dirs|QDir::NoDotAndDotDot);
+      if(!diag.exec())
+        return;
+      sshdiag.privkEdit->setText(diag.selectedFiles().front());
+    });
+#else
+    sshdiag.userBox->setEnabled(false);
+    sshdiag.serverBox->setEnabled(false);
+    sshdiag.pkBox->setEnabled(false);
+    sshdiag.privkBox->setEnabled(false);
+#endif
+    sshdiag.wsEdit->setText(settings.value("ws_server_url", QString()).toString());
+
+    dialog.exec();
+    if ( dialog.result() )
+    {
+#ifdef CGAL_USE_SSH
+      settings.setValue("ssh_user",
+                        sshdiag.userEdit->text());
+      settings.setValue("ssh_server",
+                        sshdiag.serverEdit->text());
+      settings.setValue("ssh_public_key",
+                        sshdiag.publicEdit->text());
+      settings.setValue("ssh_priv_key",
+                        sshdiag.privkEdit->text());
+#endif
+      settings.setValue("ws_server_url",
+                        sshdiag.wsEdit->text());
+      setProperty("ws_url", sshdiag.wsEdit->text());
+    }
+  });
+
   dialog.exec();
 
   if ( dialog.result() )
@@ -2372,7 +2444,7 @@ void MainWindow::on_actionPreferences_triggered()
       if (item->checkState(0)==Qt::Unchecked)
         plugin_blacklist.insert(item->text(1));
     }
-    
+
     //write settings
     settings.setValue("antialiasing",
                       prefdiag.antialiasingCheckBox->isChecked());
@@ -2392,7 +2464,7 @@ void MainWindow::on_actionPreferences_triggered()
     settings.setValue("points_size", this->default_point_size);
     settings.setValue("normals_length", this->default_normal_length);
     settings.setValue("lines_width", this->default_lines_width);
-    
+
   }
   else
   {
@@ -2412,7 +2484,7 @@ void MainWindow::setBackgroundColor()
       v->update();
     }
   }
-  
+
 }
 
 void MainWindow::setLighting_triggered()
@@ -2574,7 +2646,7 @@ QString MainWindow::get_item_stats()
   Q_FOREACH(int id, scene->selectionIndices())
   {
     Scene_item* item = scene->item(id);
-    QString classname = item->property("classname").toString(); 
+    QString classname = item->property("classname").toString();
     if(classname.isEmpty())
        classname = item->metaObject()->className();
     if(!classnames.contains(classname))
@@ -2801,53 +2873,183 @@ void MainWindow::propagate_action()
   }
 }
 
+QString make_fullpath(const QString& filename, bool duplicate = false)
+{
+  QString fullpath = QString("%1/%2").arg(QDir::tempPath()).arg(filename);
+  QString tmp_fullpath = fullpath;
+  if(duplicate)
+  {
+    int i=0;
+    while(QFileInfo(tmp_fullpath).exists())
+    {
+      QString basename = QFileInfo(tmp_fullpath).baseName();
+      QString dir = QFileInfo(tmp_fullpath).dir().path();
+      QString suffix= QFileInfo(fullpath).completeSuffix();
+      tmp_fullpath=QString("%1/%2%3.%4").arg(dir).arg(basename).arg(++i).arg(suffix);
+    }
+  }
+  return tmp_fullpath;
+}
+/*
+ The two following functions allow to create files from string and strings from files.
+ This is used as a workaround of the absence of stream management in our IO system.
+ The whole to/from Base64 is used to avoid problems with binary formats. Everything is written
+ as a base64 binary string, and converted back to what it was.
+*/
+QByteArray file_to_string(const char* filename)
+{
+  std::ifstream f(filename, std::ifstream::binary);
+  // get size of file
+  f.seekg (0,f.end);
+  long size = f.tellg();
+  f.seekg (0);
+  std::ostringstream ss;
+  // allocate memory for file content
+    char* buffer = new char[size];
+
+    // read content of infile
+    f.read(buffer,size);
+
+    // write to outfile
+    ss.write(buffer,size);
+    // release dynamically-allocated memory
+    delete[] buffer;
+  //ss.write( << f.rdbuf(); // reading data
+  f.close();
+  std::string st = ss.str();
+  QByteArray ba(st.c_str(), static_cast<int>(st.size()));
+  return ba;
+}
+
+QString MainWindow::write_string_to_file(const QString& str, const QString &filename)
+{
+  QString fullpath = make_fullpath(filename);
+  std::ofstream f(fullpath.toStdString().c_str(), std::ofstream::binary);
+  QByteArray compressed_item(str.toStdString().c_str());
+  QByteArray item = qUncompress(QByteArray::fromBase64(compressed_item));
+  QByteArray bb = item;
+  f.write(bb.constData(),bb.toStdString().size());
+  f.close();
+  return fullpath;
+}
+
 void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
 {
-  QString filename =
-      QFileDialog::getSaveFileName(this,
-                                   "Save the Scene as a Script File",
-                                   last_saved_dir,
-                                   "Qt Script files (*.js)");
-  std::ofstream os(filename.toUtf8());
+  if(scene->numberOfEntries() == 0)
+    return;
+  bool do_upload = false;
+#ifdef CGAL_USE_SSH
+  QString user = settings.value("ssh_user", QString()).toString();
+  QString pass;
+  if(!user.isEmpty())
+  {
+    QMessageBox::StandardButton doyou =
+        QMessageBox::question(this, tr("Upload ?"), tr("Do you wish to upload the scene"
+                                                       " using the SSH preferences ?"));
+    bool ok;
+    do_upload = (doyou == QMessageBox::Yes);
+    if(do_upload)
+    {
+      pass = QInputDialog::getText(this, "SSH Password",
+                                   "Enter ssh key password:",
+                                   QLineEdit::Password,
+                                   tr(""),
+                                   &ok);
+      if(!ok)
+        return;
+      pass = pass.trimmed();
+    }
+  }
+#endif
+
+  QString filename;
+
+  if(do_upload){
+    filename = QString("%1/save_scene.js").arg(QDir::tempPath());
+  }else{
+    filename = QFileDialog::getSaveFileName(this,
+                                            "Save the Scene as a Script File",
+                                            last_saved_dir,
+                                            "Qt Script files (*.js)");
+  }
+  std::ofstream os(filename.toUtf8(), std::ofstream::binary);
   if(!os)
     return;
-  std::vector<QString> names;
-  std::vector<QString> loaders;
+  CGAL::Three::Three::CursorScopeGuard cs(Qt::WaitCursor);
+  std::vector<std::pair<QString, QString> > names;
+  std::vector<std::pair<QString, QString> > loaders;
   std::vector<QColor> colors;
   std::vector<int> rendering_modes;
   QStringList not_saved;
   for(int i = 0; i < scene->numberOfEntries(); ++i)
   {
     Scene_item* item = scene->item(i);
-    QString loader = item->property("loader_name").toString();
-    QString source = item->property("source filename").toString();
+    QString loader;// = item->property("loader_name").toString();
+    QString ext;
+    for(Polyhedron_demo_io_plugin_interface* iop : io_plugins)
+    {
+      if(iop->isDefaultLoader(item))
+      {
+        QString sf = iop->saveNameFilters().split(";;").first();
+        //OFF Files (*.off)
+        QRegularExpression re("\\(\\*\\.(.*)\\)");
+        QRegularExpressionMatch rem = re.match(sf);
+        if(!rem.hasMatch())
+          continue;
+        ext = rem.captured(1);
+        QList<Scene_item*>to_save;
+        to_save.append(item);
+        QString savename(tr("%1.%2").arg(item->name()).arg(ext));
+        QString fullpath = make_fullpath(savename, true);
+        savename = QFileInfo(fullpath).fileName();
+        iop->save(QFileInfo(fullpath), to_save);
+        names.push_back(std::make_pair(savename, item->name()));
+        loader=iop->name();
+        break;
+      }
+    }
     if(loader.isEmpty())
     {
-      not_saved.push_back(item->name());
+      QMessageBox::warning(this, "", tr("No plugin found for %1. Not saved.").arg(item->name()));
       continue;
     }
-    names.push_back(source);
-    loaders.push_back(loader);
+    loaders.push_back(std::make_pair(loader, ext));
     colors.push_back(item->color());
     rendering_modes.push_back(item->renderingMode());
   }
+  if(loaders.empty())
+    return;
   //path
   os << "var camera = \""<<viewer->dumpCameraCoordinates().toStdString()<<"\";\n";
   os << "var items = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
   {
-    os << "\'" << names[i].toStdString() << "\', ";
+    QString fullpath = make_fullpath(names[i].first);
+
+    QByteArray item = file_to_string(fullpath.toStdString().c_str());
+    os<<"[\'";
+    os<<qCompress(item, 9).toBase64().toStdString().c_str();
+    os << "\', \'"<<names[i].second.toStdString().c_str()<<"\']," ;
+    //delete temp file
+    QFile tmp_file(fullpath);
+    tmp_file.remove();
   }
-  os<<"\'"<<names.back().toStdString()<<"\'];\n";
-  
+  QString fullpath = make_fullpath(names.back().first);
+  QByteArray item = file_to_string(fullpath.toStdString().c_str());
+  os<<"[\'";
+  os<<qCompress(item, 9).toBase64().toStdString().c_str();
+  os << "\', \'"<<names.back().second.toStdString().c_str()<<"\']];\n";
+  //delete temp file
+  QFile tmp_file(fullpath);
+  tmp_file.remove();
   //plugin
   os << "var loaders = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
   {
-    os << "\'" << loaders[i].toStdString() << "\', ";
+    os << "[\'" << loaders[i].first.toStdString() << "\', \'"<<loaders[i].second.toStdString()<< "\'],";
   }
-  os<<"\'"<<loaders.back().toStdString()<<"\'];\n";
-  
+  os << "[\'" << loaders.back().first.toStdString() << "\', \'"<<loaders.back().second.toStdString()<< "\']];\n";
+
   //color
   os << "var colors = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -2855,7 +3057,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << "[" << colors[i].red() <<", "<< colors[i].green() <<", "<< colors[i].blue() <<"], ";
   }
   os<<"[" << colors.back().red() <<", "<< colors.back().green() <<", "<< colors.back().blue() <<"]];\n";
-  
+
   //rendering mode
   os << "var rendering_modes = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -2863,10 +3065,13 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << rendering_modes[i] << ", ";
   }
   os << rendering_modes.back()<<"];\n";
-  os <<"var initial_scene_size = scene.numberOfEntries;\n";
   os << "items.forEach(function(item, index, array){\n";
-  os << "        main_window.open(item, loaders[index]);\n";
-  os << "        var it = scene.item(initial_scene_size+index);\n";
+  os<<"          var path=items[index][1];\n";
+  os<<"          path+='.';\n";
+  os<<"          path+=loaders[index][1];\n";
+  os<<"          var fullpath = main_window.write_string_to_file(item[0], path);\n";
+  os<<"          main_window.open(fullpath,loaders[index][0]);\n";
+  os << "        var it = scene.item(scene.numberOfEntries-1);\n";
   os << "        var r = colors[index][0];\n";
   os << "        var g = colors[index][1];\n";
   os << "        var b = colors[index][2];\n";
@@ -2880,6 +3085,62 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
                          "Items Not  Saved",
                          QString("The following items could not be saved: %1").arg(
                            not_saved.join(", ")));
+#ifdef CGAL_USE_SSH
+  using namespace CGAL::ssh_internal;
+  if(do_upload)
+  {
+    QString server = settings.value("ssh_server", QString()).toString();
+    QString pk = settings.value("ssh_public_key", QString()).toString();
+    QString privK = settings.value("ssh_priv_key", QString()).toString();
+    user = user.trimmed();
+    server = server.trimmed();
+    pk = pk.trimmed();
+    privK=privK.trimmed();
+    if(user.isEmpty()){
+      return;
+    }
+    QString path;
+    path = QInputDialog::getText(this,
+                                 "",
+                                 tr("Enter the name of your scene file."));
+    if(path.isEmpty())
+      return;
+    if(!path.contains("Polyhedron_demo_"))
+      path.prepend("Polyhedron_demo_");
+    try{
+      ssh_session session;
+      bool res = establish_ssh_session(session,
+                            user.toStdString().c_str(),
+                            server.toStdString().c_str(),
+                            pk.toStdString().c_str(),
+                            privK.toStdString().c_str(),
+                            pass.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The SSH session could not be started.");
+        return;
+      }
+      res = push_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The file could not be uploaded. Check your console for more information.");
+        close_connection(session);
+        return;
+      }
+      close_connection(session);
+      QFile tmp_file(filename);
+      tmp_file.remove();
+    } catch( ssh::SshException e )
+    {
+      std::cout << "Error during connection : ";
+      std::cout << e.getError() << std::endl;
+    }
+  }
+#endif
 }
 void MainWindow::setTransparencyPasses(int val)
 {
@@ -2907,7 +3168,7 @@ void MainWindow::toggleFullScreen()
       dock->show();
     }
     visibleDockWidgets.clear();
-    
+
   }
 }
 
@@ -2930,7 +3191,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
           viewer, SLOT(update()));
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
-  
+
   QAction* action = subviewer->findChild<QAction*>("actionRecenter");
   connect(action, SIGNAL(triggered()),
           viewer, SLOT(update()));
@@ -2992,16 +3253,43 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
           this, SLOT(selectSceneItem(int)));
   connect(viewer, SIGNAL(selectedPoint(double, double, double)),
           this, SLOT(showSelectedPoint(double, double, double)));
-  
+
   connect(viewer, SIGNAL(selectionRay(double, double, double,
                                       double, double, double)),
           scene, SIGNAL(selectionRay(double, double, double,
                                      double, double, double)));
-  
+
   connect(viewer, &Viewer::sendMessage,
           this, [](QString s){
     information(s);
   });
+
+#ifdef CGAL_USE_WEBSOCKETS
+  action= subviewer->viewer->findChild<QAction*>("actionShareCamera");
+  connect(action, &QAction::toggled,
+          this, [this, viewer](bool b)
+  {
+    if(!viewer){
+      return;
+    }
+    QString session;
+    if(b){
+      bool ok;
+      session = QInputDialog::getText(
+            this,"Session",
+            "Please enter the session name.\n"
+            "Only the machines that enter the same session name will be connected.\n"
+            "Several sessions can run simultaneously on a same server. ",
+            QLineEdit::Normal, QString(), &ok);
+      if(session.isEmpty() || !ok)
+      {
+        viewer->setShareCam(false, session);
+        return;
+      }
+    }
+    viewer->setShareCam(b, session);
+  });
+#endif
   
 }
 
@@ -3021,7 +3309,7 @@ void MainWindow::on_actionAdd_Viewer_triggered()
     scene->removeViewer(viewer2);
     viewerDestroyed(viewer2);
   });
-  
+
   setupViewer(viewer2, subviewer);
   viewer2->camera()->interpolateToFitScene();
   subviewer->show();
@@ -3154,11 +3442,20 @@ SubViewer::SubViewer(QWidget *parent, MainWindow* mw, Viewer* mainviewer)
   QAction* actionTotalPass = new QAction("Set Transparency Pass &Number...",this);
   actionTotalPass->setObjectName("actionTotalPass");
   viewMenu->addAction(actionTotalPass);
+#ifdef CGAL_USE_WEBSOCKETS
+  QAction* actionShareCamera= new QAction("Join &WS Server",viewer);
+  actionShareCamera->setObjectName("actionShareCamera");
+  actionShareCamera->setCheckable(true);
+  actionShareCamera->setChecked(false);
+  viewMenu->addAction(actionShareCamera);
+#endif
+
   QAction* actionBackFrontShading = new QAction("Activate Back/Front shading.",this);
   actionBackFrontShading->setObjectName("actionBackFrontShading");
   actionBackFrontShading->setCheckable(true);
   actionBackFrontShading->setChecked(false);
   viewMenu->addAction(actionBackFrontShading);
+
   if(mainviewer)
     setAttribute(Qt::WA_DeleteOnClose);
   setWindowIcon(QIcon(":/cgal/icons/resources/menu.png"));
@@ -3206,7 +3503,7 @@ void SubViewer::color()
 
 void SubViewer::closeEvent(QCloseEvent *closeEvent)
 {
-  
+
   if(is_main)
   {
     QMessageBox::information(mw, "", "This is the main viewer. It cannot be closed.");
@@ -3227,9 +3524,9 @@ void SubViewer::changeEvent(QEvent *event)
       {
         menu->addAction(action);
       }
-      setWindowFlags( 
+      setWindowFlags(
               Qt::SubWindow
-              | Qt::CustomizeWindowHint 
+              | Qt::CustomizeWindowHint
               | Qt::WindowMaximizeButtonHint
               //| Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
@@ -3245,9 +3542,9 @@ void SubViewer::changeEvent(QEvent *event)
       {
         menu->removeAction(action);
       }
-      setWindowFlags( 
+      setWindowFlags(
               Qt::SubWindow
-              | Qt::CustomizeWindowHint 
+              | Qt::CustomizeWindowHint
               | Qt::WindowMaximizeButtonHint
               | Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
@@ -3269,7 +3566,7 @@ void MainWindow::invalidate_bbox(bool do_recenter)
 
 void MainWindow::on_action_Save_triggered()
 {
-  if(QMessageBox::question(this, "Save", "Are you sure you want to override these files ?") 
+  if(QMessageBox::question(this, "Save", "Are you sure you want to override these files ?")
      == QMessageBox::No)
     return;
   QList<Scene_item*> to_save;
@@ -3285,3 +3582,189 @@ void MainWindow::on_action_Save_triggered()
     }
   }
 }
+
+void MainWindow::on_actionLoad_a_Scene_from_a_Script_File_triggered()
+{
+  bool do_download = false;
+  QString filename;
+
+#ifdef CGAL_USE_SSH
+  QString user = settings.value("ssh_user", QString()).toString();
+  QString pass;
+  if(!user.isEmpty())
+  {
+    QMessageBox::StandardButton doyou =
+        QMessageBox::question(this, tr("Download ?"), tr("Do you wish to download the scene"
+                                                         " using the SSH preferences ?"));
+    bool ok;
+    do_download= (doyou == QMessageBox::Yes);
+    if(do_download)
+    {
+      pass = QInputDialog::getText(this, "SSH Password",
+                                   "Enter ssh key password:",
+                                   QLineEdit::Password,
+                                   tr(""),
+                                   &ok);
+      if(!ok)
+        return;
+      pass = pass.trimmed();
+    }
+  }
+#endif
+
+  if(do_download)
+  {
+    #ifdef CGAL_USE_SSH
+    using namespace CGAL::ssh_internal;
+    QString server = settings.value("ssh_server", QString()).toString();
+    QString pk = settings.value("ssh_public_key", QString()).toString();
+    QString privK = settings.value("ssh_priv_key", QString()).toString();
+    user = user.trimmed();
+    server = server.trimmed();
+    pk = pk.trimmed();
+    privK=privK.trimmed();
+    QString path;
+    path = QInputDialog::getText(this,
+                                 "",
+                                 tr("Enter the name of the scene file."));
+    if(path.isEmpty())
+      return;
+    if(!path.contains("Polyhedron_demo_"))
+      path.prepend("Polyhedron_demo_");
+    try{
+      ssh_session session;
+      bool res = establish_ssh_session(session,
+                            user.toStdString().c_str(),
+                            server.toStdString().c_str(),
+                            pk.toStdString().c_str(),
+                            privK.toStdString().c_str(),
+                            pass.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The SSH session could not be started.");
+        return;
+      }
+      filename = QString("%1/load_scene.js").arg(QDir::tempPath());
+      path = tr("/tmp/%2").arg(path);
+      res = pull_file(session,path.toStdString().c_str(), filename.toStdString().c_str());
+      if(!res)
+      {
+        QMessageBox::warning(this,
+                             "Error",
+                             "The file could not be fetched. Check your console for more info.");
+        close_connection(session);
+        return;
+      }
+      close_connection(session);
+    } catch( ssh::SshException e )
+    {
+      std::cout << "Error during connection : ";
+      std::cout << e.getError() << std::endl;
+    }
+    #endif
+  }
+  else
+  {
+    filename =  QFileDialog::getOpenFileName(
+          this,
+          tr("Select a Whole Scene file..."),
+          ".",
+          "Whole Scene files (*.js)");
+    if(filename.isEmpty())
+      return;
+  }
+  loadScript(QFileInfo(filename));
+  if(do_download){
+    QFile tmp_file(filename);
+    tmp_file.remove();
+  }
+}
+
+#ifdef CGAL_USE_WEBSOCKETS
+void MainWindow::on_action_Start_a_Session_triggered()
+{
+  QAction * action= findChild<QAction*>("action_Start_a_Session");
+  static EchoServer *server =nullptr;
+  if(action->isChecked()){
+     server = new EchoServer(1234);
+    QObject::connect(server, &EchoServer::closed, server,&EchoServer::deleteLater);
+  }
+  else
+  {
+    server->deleteLater();
+  }
+}
+
+EchoServer::EchoServer(quint16 port) :
+    QObject(CGAL::Three::Three::mainWindow()),
+    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("Echo Server"),
+                                            QWebSocketServer::NonSecureMode, this))
+{
+    if (m_pWebSocketServer->listen(QHostAddress::Any, port)) {
+        connect(m_pWebSocketServer, &QWebSocketServer::newConnection,
+                this, &EchoServer::onNewConnection);
+        connect(m_pWebSocketServer, &QWebSocketServer::closed, this, &EchoServer::closed);
+    }
+    QHostAddress local_host("0.0.0.0");
+
+    //to avoid printing 127.0.0.1. Not realy sure it won't ever print the external ipv4 though.
+    const QHostAddress &localhost = QHostAddress(QHostAddress::LocalHost);
+    for (const QHostAddress &address: QNetworkInterface::allAddresses()) {
+      if (address.protocol() == QAbstractSocket::IPv4Protocol && address != localhost)
+      {
+        local_host= address;
+        break;
+      }
+    }
+    QMessageBox mb(QMessageBox::NoIcon, "WS Server",
+                   tr("WebSockets Server started.\nEnter the following address in\nyour Network Preferences to be able to join it :\n"
+                      "ws://%1:%2").arg(local_host.toString()).arg(port), QMessageBox::Ok, CGAL::Three::Three::mainWindow());
+    mb.setTextInteractionFlags(Qt::TextSelectableByMouse);
+    mb.exec();
+}
+
+EchoServer::~EchoServer()
+{
+    m_pWebSocketServer->close();
+    qDeleteAll(m_clients.begin(), m_clients.end());
+}
+
+void EchoServer::onNewConnection()
+{
+    QWebSocket *pSocket = m_pWebSocketServer->nextPendingConnection();
+
+    connect(pSocket, &QWebSocket::textMessageReceived, this, &EchoServer::processTextMessage);
+    connect(pSocket, &QWebSocket::binaryMessageReceived, this, &EchoServer::processBinaryMessage);
+    connect(pSocket, &QWebSocket::disconnected, this, &EchoServer::socketDisconnected);
+
+    m_clients << pSocket;
+}
+
+void EchoServer::processTextMessage(QString message)
+{
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    for(auto *client : m_clients) {
+      if(client != pClient)
+        client->sendTextMessage(message);
+    }
+}
+
+void EchoServer::processBinaryMessage(QByteArray message)
+{
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    if (pClient) {
+        pClient->sendBinaryMessage(message);
+    }
+}
+
+void EchoServer::socketDisconnected()
+{
+    QWebSocket *pClient = qobject_cast<QWebSocket *>(sender());
+    if (pClient) {
+        m_clients.removeAll(pClient);
+        pClient->deleteLater();
+    }
+}
+#endif

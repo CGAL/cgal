@@ -436,6 +436,8 @@ public:
   
   typedef typename Tds::Simplex                Simplex;
 
+  typedef typename GT::Construct_point_3       Construct_point_3;
+
 private:
   // This class is used to generate the Finite_*_iterators.
   class Infinite_tester
@@ -565,7 +567,8 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  Point_3 construct_point(const P& p) const
+  typename boost::result_of<const Construct_point_3(const P&)>::type
+  construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
   }

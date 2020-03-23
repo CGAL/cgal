@@ -860,6 +860,12 @@ public:
     return ok;
   }
 
+  bool isDefaultLoader(const Scene_item* item) const Q_DECL_OVERRIDE{
+    if(qobject_cast<const Scene_edges_item*>(item))
+      return true;
+    return false;
+  }
+
   using Polyhedron_demo_io_plugin_interface::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m) override;

@@ -400,7 +400,7 @@ bilateral_smooth_point_set(
   using parameters::get_parameter;
   
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
@@ -426,8 +426,8 @@ bilateral_smooth_point_set(
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
   typedef typename Neighbor_search::Tree Tree;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
   FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
   
   // copy points and normals

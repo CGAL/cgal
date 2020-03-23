@@ -17,6 +17,8 @@ CGAL_add_named_parameter(face_index_t, face_index, face_index_map)
 CGAL_add_named_parameter(vertex_index_t, vertex_index, vertex_index_map)
 CGAL_add_named_parameter(graph_visitor_t, graph_visitor, visitor)
 
+CGAL_add_named_parameter(point_t, point_map, point_map)
+
 CGAL_add_named_parameter(edge_is_constrained_t, edge_is_constrained, edge_is_constrained_map)
 CGAL_add_named_parameter(first_index_t, first_index, first_index)
 CGAL_add_named_parameter(number_of_iterations_t, number_of_iterations, number_of_iterations)
@@ -101,7 +103,6 @@ CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculat
 CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
 
 // List of named parameters used in the Point Set Processing package
-CGAL_add_named_parameter(point_t, point_map, point_map)
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
 CGAL_add_named_parameter(normal_t, normal_map, normal_map)
 CGAL_add_named_parameter(diagonalize_traits_t, diagonalize_traits, diagonalize_traits)

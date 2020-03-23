@@ -122,6 +122,8 @@ public:
   typedef typename Tds::Edge_iterator          All_edges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
 
+  typedef typename Gt::Construct_point_2       Construct_point_2;
+
   class Perturbation_order
   {
     const Self *t;
@@ -294,7 +296,9 @@ public:
                Face_handle &fr) const;
 
   // GEOMETRIC FEATURES AND CONSTRUCTION
-  Point_2 construct_point(const Point& p) const;
+  typename boost::result_of<const Construct_point_2(const Point&)>::type
+  construct_point(const Point& p) const { return geom_traits().construct_point_2_object()(p); }
+
   const Point& point(Face_handle c, int i) const;
   const Point& point(Vertex_handle v) const;
   Segment segment(Face_handle f, int i) const;
@@ -1061,14 +1065,6 @@ is_face(Vertex_handle v1,
         Face_handle &fr) const
 {
   return _tds.is_face(v1, v2, v3, fr);
-}
-
-template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::Point_2
-Triangulation_2<Gt, Tds>::
-construct_point(const Point& p) const
-{
-  return geom_traits().construct_point_2_object()(p);
 }
 
 template <class Gt, class Tds >

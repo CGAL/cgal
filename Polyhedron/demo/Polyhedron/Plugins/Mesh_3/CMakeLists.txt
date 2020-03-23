@@ -51,7 +51,14 @@ polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
   ${meshingUI_FILES} KEYWORDS IO Mesh_3)
 target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_surface_mesh_item scene_image_item scene_implicit_function_item )
 
-
+# Use Eigen
+ find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+ 
+ if (EIGEN3_FOUND)
+   CGAL_target_use_Eigen(mesh_3_optimization_plugin)
+ else() #eigen
+   message(STATUS "The Mesh_3_optimization_plugin requires Eigen, which was not found, and will use a deprecated class to replace it. Warnings are to be expected.")
+ endif()#eigen
 
 polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin KEYWORDS IO Mesh_3)
 target_link_libraries(c3t3_io_plugin PUBLIC scene_c3t3_item)
