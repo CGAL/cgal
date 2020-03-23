@@ -261,7 +261,7 @@ void oriented_bounding_box(const PointRange& points,
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type               PointMap;
 
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef typename boost::property_traits<PointMap>::value_type                         Point;
