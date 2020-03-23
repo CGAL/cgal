@@ -952,7 +952,7 @@ void split_connected_components_impl(FIMap fim,
   using parameters::is_default_parameter;
 
   Fpm pidmap = choose_parameter(get_parameter(np, internal_np::face_patch),
-                                get(CGAL::dynamic_face_property_t<std::size_t>(), tm));
+                                get(CGAL::dynamic_face_property_t<int>(), tm));
 
   std::size_t nb_patches = 0;
   if(is_default_parameter(get_parameter(np, internal_np::face_patch)))
