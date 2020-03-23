@@ -14,7 +14,7 @@
 
 #include <CGAL/license/Point_set_processing_3.h>
 
-#ifdef CGAL_LINKED_WITH_OPENGR
+#if defined(CGAL_LINKED_WITH_OPENGR) || defined(DOXYGEN_RUNNING)
 
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
