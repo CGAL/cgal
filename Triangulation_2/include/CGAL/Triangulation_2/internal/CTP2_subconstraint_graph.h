@@ -66,12 +66,12 @@ public:
                        boost::make_transform_iterator(g.ctp2.subconstraints_end(), Subconstr_uf(Subconstr_map())));
   }
   
-  friend vertex_descriptor source (edge_descriptor ed, const CTP2_subconstraint_graph& g)
+  friend vertex_descriptor source (edge_descriptor ed, const CTP2_subconstraint_graph&)
   {
     return ed.first;
   }
   
-  friend vertex_descriptor target (edge_descriptor ed, const CTP2_subconstraint_graph& g)
+  friend vertex_descriptor target (edge_descriptor ed, const CTP2_subconstraint_graph&)
   {
     return ed.second;
   }
