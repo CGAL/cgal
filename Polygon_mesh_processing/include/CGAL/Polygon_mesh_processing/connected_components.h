@@ -952,9 +952,9 @@ void split_connected_components_impl(FIMap fim,
   using parameters::is_default_parameter;
 
   Fpm pidmap = choose_parameter(get_parameter(np, internal_np::face_patch),
-                                get(CGAL::dynamic_face_property_t<int>(), tm));
+                                get(CGAL::dynamic_face_property_t<std::size_t>(), tm));
 
-  int nb_patches = 0;
+  std::size_t nb_patches = 0;
   if(is_default_parameter(get_parameter(np, internal_np::face_patch)))
   {
     nb_patches = CGAL::Polygon_mesh_processing::connected_components(
@@ -972,7 +972,7 @@ void split_connected_components_impl(FIMap fim,
     nb_patches+=1;
   }
 
-  for(int i=0; i<nb_patches; ++i)
+  for(std::size_t i=0; i<nb_patches; ++i)
   {
     CGAL::Face_filtered_graph<PolygonMesh, FIMap, VIMap, HIMap>
         filter_graph(tm, i, pidmap, CGAL::parameters::face_index_map(fim)
@@ -1013,6 +1013,8 @@ void split_connected_components_impl(FIMap fim,
  *   \cgalNPEnd
  *  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
      faces of `pm`. Instance of a class model of `ReadPropertyMap`.
+     If not provided, an internal map will be filled with a call to
+    `connected_components()` with `edge_is_constrained_map()` (if provided).
 *  \cgalParamEnd
  * \cgalNamedParamsEnd
  *
