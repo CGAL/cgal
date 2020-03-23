@@ -60,7 +60,7 @@ struct Tetrahedron_lines_intersection_3_base
     int res_id = -1;
 
     Inter_type tr_seg[4];
-    for(std::size_t i = 0; i < 4; ++i)
+    for(int i = 0; i < 4; ++i)
     {
       const typename K::Triangle_3 triangle(tet.vertex((i+1)%4),
                                             tet.vertex((i+2)%4),
@@ -87,7 +87,7 @@ struct Tetrahedron_lines_intersection_3_base
     res_points.reserve(4);
     res_id = -1;
 
-    for(std::size_t i = 0; i< 4; ++i)
+    for(int i = 0; i< 4; ++i)
     {
       if(tr_seg[i])
       {
@@ -135,7 +135,7 @@ struct Tetrahedron_lines_intersection_3_base
         sq_distances[i].push_back(CGAL::squared_distance(p1, p2));
         if(sq_distances[i].back() > max_dist)
         {
-          res_id = i;
+          res_id = static_cast<int>(i);
           res_id_2 = sq_distances[i].size()-1;
           max_dist = sq_distances[i].back();
         }

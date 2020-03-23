@@ -127,7 +127,7 @@ intersection(
             }
           }
         }
-
+        CGAL_USE(p2_found);
         CGAL_assertion(p1_found && p2_found);
         res[0] = entry_seg.target();
         res[1] = p2;
