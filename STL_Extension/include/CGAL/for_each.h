@@ -31,39 +31,32 @@
     * if Range doesn't have random access iterators, first copy the
     iterators in a vector and then use a TBB parallel_for loop to
     apply Function to all elements of Range
+
+  The loop is interrupted if `functor` returns false (it carries on
+  until the end otherwise).
 */
 
 namespace CGAL {
 
 namespace internal {
 
-// To emulate either a "break" in sequential and a "return" in
-// parallel, we use an interal throw/catch mechanism
-struct stop_for_each : public std::exception { };
-
 template <typename RangeRef, typename IteratorCategory>
 void for_each (RangeRef range,
-               const std::function<void(typename std::iterator_traits
+               const std::function<bool(typename std::iterator_traits
                                         <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
                const Sequential_tag&,
                IteratorCategory)
 {
   for (typename std::iterator_traits
          <typename Range_iterator_type<RangeRef>::type>::reference r : range)
-    try
-    {
-      functor(r);
-    }
-    catch (const stop_for_each&)
-    {
+    if (!functor(r))
       break;
-    }
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
 template <typename RangeRef, typename IteratorCategory>
 void for_each (RangeRef range,
-               const std::function<void(typename std::iterator_traits
+               const std::function<bool(typename std::iterator_traits
                                         <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
                const Parallel_tag&,
                IteratorCategory)
@@ -79,20 +72,14 @@ void for_each (RangeRef range,
                      [&](const tbb::blocked_range<std::size_t>& r)
                      {
                        for (std::size_t i = r.begin(); i != r.end(); ++ i)
-                         try
-                         {
-                           functor (*(iterators[i]));
-                         }
-                         catch (const stop_for_each&)
-                         {
-                           return;
-                         }
+                         if (!functor (*(iterators[i])))
+                           break;
                      });
 }
 
 template <typename RangeRef>
 void for_each (RangeRef range,
-               const std::function<void(typename std::iterator_traits
+               const std::function<bool(typename std::iterator_traits
                                         <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
                const Parallel_tag&,
                std::random_access_iterator_tag)
@@ -103,14 +90,8 @@ void for_each (RangeRef range,
                      [&](const tbb::blocked_range<std::size_t>& r)
                      {
                        for (std::size_t i = r.begin(); i != r.end(); ++ i)
-                         try
-                         {
-                           functor (*(range.begin() + i));
-                         }
-                         catch (const stop_for_each&)
-                         {
-                           return;
-                         }
+                         if (!functor (*(range.begin() + i)))
+                           break;
                      });
 }
 #endif
@@ -119,7 +100,7 @@ void for_each (RangeRef range,
 
 template <typename ConcurrencyTag, typename Range>
 void for_each (const Range& range,
-               const std::function<void(typename std::iterator_traits
+               const std::function<bool(typename std::iterator_traits
                                         <typename Range::const_iterator>::reference)>& functor)
 {
 #ifndef CGAL_LINKED_WITH_TBB
@@ -135,7 +116,7 @@ void for_each (const Range& range,
 
 template <typename ConcurrencyTag, typename Range>
 void for_each (Range& range,
-               const std::function<void(typename std::iterator_traits
+               const std::function<bool(typename std::iterator_traits
                                         <typename Range::iterator>::reference)>& functor)
 {
 #ifndef CGAL_LINKED_WITH_TBB

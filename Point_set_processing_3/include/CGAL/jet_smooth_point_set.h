@@ -197,7 +197,7 @@ jet_smooth_point_set(
      [&](value_type vt)
      {
        if (callback_wrapper.interrupted())
-         throw internal::stop_for_each();
+         return false;
 
        put (point_map, vt,
             CGAL::internal::jet_smooth_point<SvdTraits>
@@ -207,6 +207,8 @@ jet_smooth_point_set(
              degree_fitting,
              degree_monge));
        ++ callback_wrapper.advancement();
+       
+       return true;
      });
 
   callback_wrapper.join();

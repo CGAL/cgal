@@ -188,13 +188,15 @@ pca_estimate_normals(
      [&](value_type& vt)
      {
        if (callback_wrapper.interrupted())
-         throw internal::stop_for_each();
+         return false;
                             
        put (normal_map, vt,
             CGAL::internal::pca_estimate_normal
             (get(point_map, vt), neighbor_query, k, neighbor_radius));
                             
        ++ callback_wrapper.advancement();
+
+       return true;
      });
 
   callback_wrapper.join();

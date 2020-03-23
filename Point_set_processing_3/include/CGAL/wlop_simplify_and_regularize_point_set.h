@@ -534,7 +534,7 @@ wlop_simplify_and_regularize_point_set(
        [&](const typename Zip_iterator::reference& t)
        {
          if (callback_wrapper.interrupted())
-           throw internal::stop_for_each();
+           return false;
 
          get<1>(t) = simplify_and_regularize_internal::
            compute_update_sample_point<Kernel, Kd_Tree, typename PointRange::iterator>(
@@ -545,6 +545,8 @@ wlop_simplify_and_regularize_point_set(
              original_density_weights,
              sample_density_weights);
          ++ callback_wrapper.advancement();
+
+         return true;
        });
 
     bool interrupted = callback_wrapper.interrupted();

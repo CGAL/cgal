@@ -192,11 +192,13 @@ compute_average_spacing(
      [&](const typename Zip_iterator::reference& t)
      {
        if (callback_wrapper.interrupted())
-         throw CGAL::internal::stop_for_each();
+         return false;
         
        get<1>(t) = CGAL::internal::compute_average_spacing<Neighbor_query>
          (get(point_map, get<0>(t)), neighbor_query, k);
        ++ callback_wrapper.advancement();
+
+       return true;
      });
 
   for (unsigned int i = 0; i < spacings.size (); ++ i)

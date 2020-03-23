@@ -315,12 +315,14 @@ bilateral_smooth_point_set(
       [&](const typename Zip_iterator::reference& t)
       {
         if (callback_wrapper.interrupted())
-          throw CGAL::internal::stop_for_each();
+          return false;
 
         neighbor_query.get_iterators (get(point_map, get<0>(t)), k, neighbor_radius,
                                       std::back_inserter (get<1>(t)));
       
         ++ callback_wrapper.advancement();
+
+        return true;
       });
 
    bool interrupted = callback_wrapper.interrupted();
@@ -362,7 +364,7 @@ bilateral_smooth_point_set(
       [&](const typename Zip_iterator_2::reference& t)
       {
         if (callback_wrapper.interrupted())
-          throw CGAL::internal::stop_for_each();
+          return false;
 
         get<2>(t) = bilateral_smooth_point_set_internal::
           compute_denoise_projection<Kernel, PointRange>
@@ -373,6 +375,8 @@ bilateral_smooth_point_set(
            sharpness_angle);
         
         ++ callback_wrapper.advancement();
+        
+        return true;
       });
    
    callback_wrapper.join();
