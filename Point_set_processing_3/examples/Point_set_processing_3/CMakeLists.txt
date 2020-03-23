@@ -70,6 +70,37 @@ if ( CGAL_FOUND )
     CGAL_target_use_Eigen(normal_estimation)
     
     create_single_source_cgal_program( "edges_example.cpp" )
+
+    # Executables that require libpointmatcher
+    find_package(libpointmatcher QUIET)
+    if (libpointmatcher_FOUND)
+      create_single_source_cgal_program( "registration_with_pointmatcher.cpp" )
+      CGAL_target_use_pointmatcher(registration_with_pointmatcher)
+      CGAL_target_use_Eigen(registration_with_pointmatcher)
+    else()
+      message(STATUS "NOTICE : the registration_with_pointmatcher test requires libpointmatcher and will not be compiled.")
+    endif()
+    
+    # Executables that require OpenGR
+    find_package(OpenGR QUIET)
+    if (OpenGR_FOUND)
+      create_single_source_cgal_program( "registration_with_OpenGR.cpp" )
+      CGAL_target_use_OpenGR(registration_with_OpenGR)
+      CGAL_target_use_Eigen(registration_with_OpenGR)
+    else()
+      message(STATUS "NOTICE : registration_with_OpenGR requires OpenGR, and will not be compiled.")
+    endif()
+
+    # Executables that require both libpointmatcher and OpenGR
+    if (libpointmatcher_FOUND AND OpenGR_FOUND)
+      create_single_source_cgal_program( "registration_with_opengr_pointmatcher_pipeline.cpp" )
+      CGAL_target_use_OpenGR(registration_with_opengr_pointmatcher_pipeline)
+      CGAL_target_use_pointmatcher(registration_with_opengr_pointmatcher_pipeline)
+      CGAL_target_use_Eigen(registration_with_opengr_pointmatcher_pipeline)
+    else()
+      message(STATUS "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled.")
+    endif()
+
     CGAL_target_use_Eigen(edges_example)
     
     create_single_source_cgal_program( "callback_example.cpp" )
