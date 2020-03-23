@@ -10,7 +10,7 @@ int main()
 
   std::cerr << "Testing sequential random access" << std::endl;
   CGAL::for_each<CGAL::Sequential_tag>
-    (vec, [](int& i) { i *= 2; });
+    (vec, [](int& i) -> bool { i *= 2; return true; });
 
   for (const int& i : vec)
     std::cerr << i << " ";
@@ -19,7 +19,7 @@ int main()
 #ifdef CGAL_LINKED_WITH_TBB
   std::cerr << "Testing parallel random access" << std::endl;
   CGAL::for_each<CGAL::Parallel_tag>
-    (vec, [](int& i) { i *= 2; });
+    (vec, [](int& i) -> bool { i *= 2; return true; });
   
   for (const int& i : vec)
     std::cerr << i << " ";
@@ -28,7 +28,7 @@ int main()
   
   std::cerr << "Testing sequential non-random access" << std::endl;
   CGAL::for_each<CGAL::Sequential_tag>
-    (list, [](int& i) { i *= 2; });
+    (list, [](int& i) -> bool { i *= 2; return true; });
   
   for (const int& i : list)
     std::cerr << i << " ";
@@ -37,7 +37,7 @@ int main()
 #ifdef CGAL_LINKED_WITH_TBB
   std::cerr << "Testing parallel non-random access" << std::endl;
   CGAL::for_each<CGAL::Parallel_tag>
-    (list, [](int& i) { i *= 2; });
+    (list, [](int& i) -> bool { i *= 2; return true; });
 
   for (const int& i : list)
     std::cerr << i << " ";
