@@ -75,7 +75,7 @@ public:
     std::generate(group4.begin(), group4.end(), [&]{ return m_rng.get_int(0, im); });
 
     // crossover I, pick A or B
-    FT bias = FT(0.1);
+    constexpr FT lweight = 0.4, uweight = 0.6;
 
     std::vector<Simplex> new_simplices(m);
 
@@ -87,7 +87,7 @@ public:
         const FT r{m_rng.get_double()};
         const FT fitnessA = m_population[group1[i]][j].fitness_value();
         const FT fitnessB = m_population[group2[i]][j].fitness_value();
-        const FT threshold = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
+        const FT threshold = (fitnessA < fitnessB) ? uweight : lweight;
 
         if(r < threshold)
           offspring[j] = m_population[group1[i]][j];
@@ -99,8 +99,6 @@ public:
     }
 
     // crossover II, combine information from A and B
-    bias = 0.1; // @fixme should the bias change? What should be the initial value?
-
     for(std::size_t i=0; i<second_group_size; ++i)
     {
       Simplex offspring;
@@ -108,7 +106,7 @@ public:
       {
         const FT fitnessA = m_population[group3[i]][j].fitness_value();
         const FT fitnessB = m_population[group4[i]][j].fitness_value();
-        const FT lambda = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
+        const FT lambda = (fitnessA < fitnessB) ? uweight : lweight;
         const FT rambda = 1 - lambda; // because the 'l' in 'lambda' stands for left
 
         const Matrix& lm = m_population[group3[i]][j].matrix();
