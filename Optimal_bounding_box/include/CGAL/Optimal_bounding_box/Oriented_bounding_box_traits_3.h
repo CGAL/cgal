@@ -39,19 +39,14 @@ namespace CGAL {
 ///
 template <typename K>
 class Oriented_bounding_box_traits_3
+  : public K
 {
 public:
   /// The field number type
   typedef typename K::FT                               FT;
 
-  /// The point type
-  typedef typename K::Point_3                          Point_3;
-
   /// The affine transformation type
   typedef typename CGAL::Aff_transformation_3<K>       Aff_transformation_3;
-
-  /// The axis-aligned bounding box construction object
-  typedef typename K::Construct_bbox_3                 Construct_bbox_3;
 
   /// The matrix type
   typedef CGAL::Eigen_matrix<FT, 3, 3>                 Matrix;
@@ -60,9 +55,6 @@ private:
   typedef typename Matrix::EigenType                   EigenType;
 
 public:
-  /// Returns a default-constructed construction object
-  static Construct_bbox_3 construct_bbox_3_object() { return Construct_bbox_3(); }
-
   /// Performs the QR-decomposition of the matrix `m` to a unitary matrix and an upper triagonal
   /// and returns the unitary matrix
   static Matrix get_Q(const Matrix& m)
