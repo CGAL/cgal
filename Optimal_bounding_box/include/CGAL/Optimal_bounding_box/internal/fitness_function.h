@@ -38,8 +38,8 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
   CGAL_assertion(points.size() >= 3);
 
   FT xmin, ymin, zmin, xmax, ymax, zmax;
-  xmin = ymin = zmin = FT(std::numeric_limits<double>::max());
-  xmax = ymax = zmax = FT(std::numeric_limits<double>::lowest());
+  xmin = ymin = zmin = FT{std::numeric_limits<double>::max()};
+  xmax = ymax = zmax = FT{std::numeric_limits<double>::lowest()};
 
   for(const Point& pt : points)
   {
@@ -61,9 +61,8 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
   return ((xmax - xmin) * (ymax - ymin) * (zmax - zmin));
 }
 
-template <typename Population, typename PointRange>
-const typename Population::Vertex& get_best_vertex(const Population& population,
-                                                   const PointRange& points)
+template <typename Population>
+const typename Population::Vertex& get_best_vertex(const Population& population)
 {
   typedef typename Population::FT                               FT;
   typedef typename Population::Vertex                           Vertex;

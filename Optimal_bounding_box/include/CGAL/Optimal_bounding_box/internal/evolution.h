@@ -65,8 +65,8 @@ public:
     const std::size_t first_group_size = m / 2;
     const std::size_t second_group_size = m - first_group_size;
 
-    std::vector<std::size_t> group1(first_group_size), group2(first_group_size);
-    std::vector<std::size_t> group3(second_group_size), group4(second_group_size);
+    std::vector<std::size_t> group1{first_group_size}, group2{first_group_size};
+    std::vector<std::size_t> group3{second_group_size}, group4{second_group_size};
 
     int im = static_cast<int>(m);
     std::generate(group1.begin(), group1.end(), [&]{ return m_rng.get_int(0, im); });
@@ -84,7 +84,7 @@ public:
       Simplex offspring;
       for(int j=0; j<4; ++j)
       {
-        const FT r = FT(m_rng.get_double());
+        const FT r{m_rng.get_double()};
         const FT fitnessA = m_population[group1[i]][j].fitness_value();
         const FT fitnessB = m_population[group2[i]][j].fitness_value();
         const FT threshold = (fitnessA < fitnessB) ? (0.5 + bias) : (0.5 - bias);
@@ -114,7 +114,7 @@ public:
         const Matrix& lm = m_population[group3[i]][j].matrix();
         const Matrix& rm = m_population[group4[i]][j].matrix();
 
-        offspring[j] = Vertex(m_traits.get_Q(lambda*lm + rambda*rm), m_points, m_traits);
+        offspring[j] = Vertex{m_traits.get_Q(lambda*lm + rambda*rm), m_points, m_traits};
       }
 
       new_simplices[first_group_size + i] = std::move(offspring);
@@ -135,7 +135,7 @@ public:
     for(std::size_t t=0; t<generations; ++t)
     {
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      std::cout << "generation #" << t << "\n";
+      std::cout << "- - - - generation #" << t << "\n";
 #endif
 
       genetic_algorithm(population_size);
@@ -156,13 +156,13 @@ public:
 #endif
 
       // stopping criteria
-      m_best_v = &(get_best_vertex(m_population, m_points));
+      m_best_v = &(get_best_vertex(m_population));
       const FT new_fit_value = m_best_v->fitness_value();
       const FT difference = new_fit_value - prev_fit_value;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
       const Matrix& best_m = m_best_v->matrix();
-      std::cout << "new best matrix: " << best_m << std::endl;
+      std::cout << "new best matrix: " << std::endl << best_m << std::endl;
       std::cout << "value difference with previous: " << difference << std::endl;
 #endif
 

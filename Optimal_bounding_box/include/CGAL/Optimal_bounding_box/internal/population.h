@@ -93,7 +93,7 @@ private:
   {
     Simplex s;
     for(std::size_t i=0; i<4; ++i)
-      s[i] = Vertex(m_traits.get_Q(create_random_matrix(rng)), points, m_traits);
+      s[i] = Vertex{m_traits.get_Q(create_random_matrix(rng)), points, m_traits};
 
     return s;
   }

@@ -98,6 +98,8 @@ void compute_best_transformation(const PointRange& points,
   typedef typename Traits::Matrix                                    Matrix;
   typedef typename Traits::Aff_transformation_3                      Aff_transformation_3;
 
+  CGAL_assertion(points.size() >= 3);
+
   const std::size_t max_generations = 50; // @todo hidden NP
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
@@ -168,6 +170,11 @@ void construct_oriented_bounding_box(const PointRange& points,
   {
     std::vector<Point> ch_points;
     extreme_points_3(points, std::back_inserter(ch_points));
+
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+    std::cout << ch_points.size() << " points on the convex hull" << std::endl;
+#endif
+
     return construct_oriented_bounding_box(ch_points, output, rng, traits);
   }
   else
@@ -176,8 +183,8 @@ void construct_oriented_bounding_box(const PointRange& points,
   }
 }
 
-} // namespace Optimal_bounding_box
 } // namespace internal
+} // namespace Optimal_bounding_box
 
 /// \addtogroup PkgOptimalBoundingBox_Oriented_bounding_box
 ///
@@ -287,10 +294,9 @@ void oriented_bounding_box(const PointRange& points,
   CGAL::Random rng(seed);
 
   // @todo handle those cases instead
-  CGAL_assertion(points.size() >= 3);
   if(points.size() <= 3)
   {
-    std::cerr << "The oriented bounding box cannot YET be computed for a mesh with fewer than 4 vertices!\n";
+    std::cerr << "The oriented bounding box cannot (yet) be computed for a mesh with fewer than 4 vertices!\n";
     return;
   }
 
@@ -364,11 +370,10 @@ void oriented_bounding_box(const PolygonMesh& pmesh,
 /// Convenience overloads
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename InputData /*range or mesh*/, typename OutputType /*array or transformation*/>
-void oriented_bounding_box(const InputData& data,
-                           OutputType& out)
+template <typename Input /*range or mesh*/, typename Output /*array or transformation*/>
+void oriented_bounding_box(const Input& in, Output& out)
 {
-  return oriented_bounding_box(data, out, CGAL::parameters::all_default());
+  return oriented_bounding_box(in, out, CGAL::parameters::all_default());
 }
 
 /// \endcond

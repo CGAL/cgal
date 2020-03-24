@@ -50,7 +50,7 @@ Matrix mean(const Matrix& m1,
 {
   typedef typename Traits::FT                                 FT;
 
-  constexpr half = FT(1) / FT(2);
+  constexpr FT half = FT(1) / FT(2);
   const Matrix reduction = half * (m1 + m2);
 
   return traits.get_Q(reduction);
@@ -104,7 +104,7 @@ void nelder_mead(Simplex& simplex,
       if(refl_f >= simplex[0].fitness_value())
       {
         // reflection
-        simplex[3] = Vertex(refl_m, refl_f);
+        simplex[3] = Vertex{refl_m, refl_f};
       }
       else
       {
@@ -112,9 +112,9 @@ void nelder_mead(Simplex& simplex,
         const Matrix expand_m = expansion(centroid_m, worst_m, refl_m);
         const FT expand_f = compute_fitness(expand_m, points, traits);
         if(expand_f < refl_f)
-          simplex[3] = Vertex(expand_m, expand_f);
+          simplex[3] = Vertex{expand_m, expand_f};
         else
-          simplex[3] = Vertex(refl_m, refl_f);
+          simplex[3] = Vertex{refl_m, refl_f};
       }
     }
     else // reflected vertex is worse
@@ -125,13 +125,13 @@ void nelder_mead(Simplex& simplex,
       if(mean_f <= simplex[3].fitness_value())
       {
         // contraction of worst
-        simplex[3] = Vertex(mean_m, mean_f);
+        simplex[3] = Vertex{mean_m, mean_f};
       }
       else
       {
         // reduction: move all vertices towards the best
         for(std::size_t i=1; i<4; ++i)
-          simplex[i] = Vertex(mean(simplex[i].matrix(), simplex[0].matrix(), traits), points, traits);
+          simplex[i] = Vertex{mean(simplex[i].matrix(), simplex[0].matrix(), traits), points, traits};
       }
     }
   } // nelder mead iterations
