@@ -1268,6 +1268,8 @@ public:
   : nodes(tm1, tm2, vpm1, vpm2)
   , visitor(v)
   {
+    CGAL_precondition(is_triangle_mesh(tm1));
+    CGAL_precondition(is_triangle_mesh(tm2));
     CGAL_assertion_code( doing_autorefinement=false; )
   }
 
@@ -1278,6 +1280,7 @@ public:
   : nodes(tm, tm, vpm, vpm)
   , visitor(v)
   {
+    CGAL_precondition(is_triangle_mesh(tm));
     CGAL_assertion_code( doing_autorefinement=true; )
   }
 
