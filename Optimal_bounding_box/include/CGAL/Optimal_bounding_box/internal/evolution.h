@@ -123,7 +123,8 @@ public:
 
   void evolve(const std::size_t generations,
               const std::size_t population_size,
-              const std::size_t nelder_mead_iterations)
+              const std::size_t nelder_mead_iterations,
+              const int max_random_mutations = 5)
   {
     // stopping criteria prameters
     FT prev_fit_value = 0;
@@ -171,6 +172,18 @@ public:
         break;
 
       prev_fit_value = new_fit_value;
+
+      // random mutations, swap #random_mutations random simplices with a new, random simplex
+      if(max_random_mutations <= 0)
+        continue;
+
+      CGAL_warning(max_random_mutations <= population_size);
+      const int random_mutations = m_rng.get_int(0, max_random_mutations+1);
+      for(std::size_t i=0; i<random_mutations; ++i)
+      {
+        const int random_pos = m_rng.get_int(0, population_size);
+        m_population[random_pos] = m_population.create_simplex(m_points, m_rng);
+      }
     }
   }
 
