@@ -758,7 +758,7 @@ add_face(const VertexRange& vr, Graph& g)
 //       - can no longer sort with v1<v2 because get also call remove (or do it the next/prev link in one pass but it will break the call to edge(v1,v2,tm))
 //       - the number of elments is bounded by the template parameter
 // TODO: add a visitor for new edge/vertex/face created
-// TODO: doc
+// TODO: doc (VertexRange is random access for now, making a copy to a vector as an noticeable impact on the runtime)
 // TODO: handle and return false in case of non valid input?
 // An interesting property of this function is that in case the mesh contains non-manifold boundary vertices,
 // the connected components of faces incident to such a vertex will not be linked together around the
