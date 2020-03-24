@@ -21,6 +21,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/internal/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 namespace CGAL {
 
@@ -756,7 +757,6 @@ add_face(const VertexRange& vr, Graph& g)
 // TODO: Try to replace the handwritten flat_map implementation by Small_unordered_map
 //       - can no longer sort with v1<v2 because get also call remove (or do it the next/prev link in one pass but it will break the call to edge(v1,v2,tm))
 //       - the number of elments is bounded by the template parameter
-// TODO: vertex_index_map
 // TODO: add a visitor for new edge/vertex/face created
 // TODO: doc
 // TODO: handle and return false in case of non valid input?
@@ -775,6 +775,10 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
 
   typedef typename RangeofVertexRange::const_iterator VTR_const_it;
   typedef typename std::iterator_traits<VTR_const_it>::value_type Vertex_range;
+
+  typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh>::type Vid_map;
+  Vid_map vid = CGAL::get_initialized_vertex_index_map(pm);
+  typedef typename boost::property_traits<Vid_map>::value_type Vid;
 
   // TODO: add also this lambda as an Euler function?
   auto add_new_edge = [&pm](vertex_descriptor v1, vertex_descriptor v2)
@@ -808,7 +812,7 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
         // because the outgoing edge from the smallest vertex is on the patch boundary
         if (edge_and_bool.second && is_border(halfedge(edge_and_bool.first, pm), pm))
         {
-          outgoing_hedges[v2].push_back(opposite(halfedge(edge_and_bool.first, pm), pm));
+          outgoing_hedges[get(vid,v2)].push_back(opposite(halfedge(edge_and_bool.first, pm), pm));
           former_border_hedges.push_back(halfedge(edge_and_bool.first, pm));
         }
         continue;
@@ -816,14 +820,14 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
       if (edge_and_bool.second)
       {
         halfedge_descriptor h = halfedge(edge_and_bool.first, pm);
-        outgoing_hedges[v1].push_back(h);
+        outgoing_hedges[get(vid,v1)].push_back(h);
         if (is_border(h, pm))
           former_border_hedges.push_back(h);
       }
       else
-        outgoing_hedges[v1].push_back(add_new_edge(v1,v2));
-      CGAL_assertion( source(outgoing_hedges[v1].back(), pm)==v1 );
-      CGAL_assertion( target(outgoing_hedges[v1].back(), pm)==v2 );
+        outgoing_hedges[get(vid,v1)].push_back(add_new_edge(v1,v2));
+      CGAL_assertion( source(outgoing_hedges[get(vid,v1)].back(), pm)==v1 );
+      CGAL_assertion( target(outgoing_hedges[get(vid,v1)].back(), pm)==v2 );
     }
   }
 
@@ -896,15 +900,16 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
                                               });
   }
   std::vector<halfedge_descriptor> new_border_halfedges;
-  auto get_hedge = [&pm, &add_new_edge, &new_border_halfedges, &outgoing_hedges](vertex_descriptor v1, vertex_descriptor v2)
+  auto get_hedge = [&pm, &add_new_edge, &new_border_halfedges, &outgoing_hedges,&vid](vertex_descriptor v1, vertex_descriptor v2)
   {
     bool return_opposite = v2 < v1;
     if (return_opposite) std::swap(v1,v2);
-    typename std::vector<halfedge_descriptor>::iterator it_find =
-      std::lower_bound(outgoing_hedges[v1].begin(),
-                       outgoing_hedges[v1].end(),
+    const std::vector<halfedge_descriptor>& v1_outgoing_hedges = outgoing_hedges[get(vid,v1)];
+    typename std::vector<halfedge_descriptor>::const_iterator it_find =
+      std::lower_bound(v1_outgoing_hedges.begin(),
+                       v1_outgoing_hedges.end(),
                        v2, [&pm](halfedge_descriptor h, vertex_descriptor v){return target(h,pm) < v;});
-    if (it_find!=outgoing_hedges[v1].end() && target(*it_find, pm)==v2)
+    if (it_find!=v1_outgoing_hedges.end() && target(*it_find, pm)==v2)
     {
       return return_opposite ? opposite(*it_find, pm) : *it_find;
     }
