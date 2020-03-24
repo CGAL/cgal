@@ -19,6 +19,10 @@
 #include <QMainWindow>
 #include <QApplication>
 
+#include <QMultipleInputDialog.h>
+#include <QDoubleSpinBox>
+#include <QCheckBox>
+
 #include <map>
 
 #include <boost/graph/adjacency_list.hpp>
@@ -379,14 +383,17 @@ public Q_SLOTS:
       return; 
     }
 
-    bool ok = false;
-    double weight = QInputDialog::getDouble((QWidget*)mw,
-                                            tr("Regularize Selection border"),
-                                            tr("Weight (higher values regularize more,\n 1.0 deactivates graphcut and does simple local regularization):"),
-                                            0.5, 0.0, 1.0, 5, &ok);
-    if (!ok)
-      return;
 
+    QMultipleInputDialog dialog ("Regularize Selection Border", mw);
+    QDoubleSpinBox* weight = dialog.add<QDoubleSpinBox> ("Weight:");
+    weight->setDecimals (6);
+    weight->setRange (0., 0.999999); // [0;1[
+    weight->setValue (0.5);
+
+    QCheckBox* prevent_unselection = dialog.add<QCheckBox> ("Prevent unselection");
+
+    if (dialog.exec() != QDialog::Accepted)
+      return;
     
     boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
     std::size_t index = 0;
@@ -424,23 +431,14 @@ public Q_SLOTS:
         return out;
       };
 
-    if (weight == 1.0)
-      std::cerr << "[Selection Regularization] Using simple local algorithm" << std::endl;
-    else
-      std::cerr << "[Selection Regularization] Using global solve (graphcut) with weight = " << weight << std::endl;
+    std::cerr << "[Selection Regularization] Weight = " << weight->value() << std::endl;
 
     std::cerr << "Length of border before regularization = " << border_length() << std::endl;
 
-    if (weight == 1.0)
-      CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
-                                               boost::make_assoc_property_map(is_selected_map),
-                                               get(CGAL::vertex_point,*selection_item->polyhedron()));
-    else
-      CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
-                                               CGAL::Identity_property_map<fg_face_descriptor>(),
-                                               boost::make_assoc_property_map(is_selected_map),
-                                               get(CGAL::vertex_point,*selection_item->polyhedron()),
-                                               weight, true);
+    CGAL::regularize_face_selection_borders (*selection_item->polyhedron(),
+                                             boost::make_assoc_property_map(is_selected_map),
+                                             weight->value(),
+                                             CGAL::parameters::prevent_unselection (prevent_unselection->isChecked()));
 
     std::cerr << "Length of border after regularization = " << border_length() << std::endl;
     

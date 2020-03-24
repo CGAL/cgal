@@ -471,16 +471,17 @@ reduce_face_selection(
   \param prevent_deselection if `true` only new faces can be selected,
   if `false` some faces can unselected
 */
-template <class FaceGraph, class FaceIndexMap, class IsSelectedMap, class VertexPointMap>
+template <typename FaceGraph, typename IsSelectedMap, typename NamedParameters> 
 void
 regularize_face_selection_borders(
   FaceGraph& fg,
-  FaceIndexMap face_index_map,
   IsSelectedMap is_selected,
-  VertexPointMap vertex_point_map,
-  double weight = 0.5,
-  bool prevent_deselection = true)
+  double weight,
+  const NamedParameters& np)
 {
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  
   CGAL_precondition (0.0 <= weight && weight < 1.0);
   
   typedef boost::graph_traits<FaceGraph> GT;
@@ -489,13 +490,24 @@ regularize_face_selection_borders(
   typedef typename GT::edge_descriptor fg_edge_descriptor;
   typedef typename GT::vertex_descriptor fg_vertex_descriptor;
 
+  typedef typename GetInitializedFaceIndexMap<FaceGraph, NamedParameters>::type FaceIndexMap;
+  FaceIndexMap face_index_map = CGAL::get_initialized_face_index_map(fg, np);
+
+  typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type VertexPointMap;
+  VertexPointMap vertex_point_map
+    = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                       get_const_property_map(vertex_point, fg));
+
+  bool prevent_unselection = choose_parameter(get_parameter(np, internal_np::prevent_unselection),
+                                              false);
+
   internal::Regularization_graph<FaceGraph, IsSelectedMap, FaceIndexMap,
                                  VertexPointMap>
     graph (fg, is_selected,
            face_index_map,
            vertex_point_map,
            weight,
-           prevent_deselection);
+           prevent_unselection);
     
   alpha_expansion_graphcut (graph,
                             graph.edge_cost_map(),
@@ -507,6 +519,20 @@ regularize_face_selection_borders(
   for (fg_face_descriptor fd : faces(fg))
     put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
 }
+
+/// \cond SKIP_IN_MANUAL
+// variant with default np
+template <typename FaceGraph, typename IsSelectedMap>
+void
+regularize_face_selection_borders(
+  FaceGraph& fg,
+  IsSelectedMap is_selected,
+  double weight)
+{
+  regularize_face_selection_borders (fg, is_selected, weight,
+                                     CGAL::parameters::all_default());
+}
+/// \endcond
 
 // TODO: document me
 template <class FaceGraph, class IsSelectedMap, class VertexPointMap>
