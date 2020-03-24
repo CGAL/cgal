@@ -137,7 +137,7 @@ struct Regularization_graph
       std::vector<double> out(2);
       if (get(pmap.rg->is_selected_map, fd))
       {
-        if (pmap.rg->prevent_deselection)
+        if (pmap.rg->prevent_unselection)
           out[0] = std::numeric_limits<double>::max();
         else
           out[0] = value;
@@ -184,7 +184,7 @@ struct Regularization_graph
   double total_length;
   double total_area;
   double weight;
-  bool prevent_deselection;
+  bool prevent_unselection;
   std::vector<std::size_t> labels;
 
   Regularization_graph (FaceGraph& fg,
@@ -192,7 +192,7 @@ struct Regularization_graph
                         FaceIndexMap face_index_map,
                         VertexPointMap vertex_point_map,
                         double weight,
-                        bool prevent_deselection)
+                        bool prevent_unselection)
     : fg (fg),
       is_selected_map (is_selected_map),
       face_index_map (face_index_map),
@@ -200,7 +200,7 @@ struct Regularization_graph
       total_length(0),
       total_area(0),
       weight (weight),
-      prevent_deselection (prevent_deselection)
+      prevent_unselection (prevent_unselection)
   {
     labels.reserve(num_faces(fg));
     std::size_t nb_selected = 0;
@@ -427,49 +427,53 @@ reduce_face_selection(
 /*!
   \ingroup PkgBGLSelectionFct
 
-  Regularizes a selection in order to minimize the length of the
+  regularizes a selection in order to minimize the length of the
   border of the selection.
 
-  A graphcut formulation is used (see
+  The Alpha Epansion algorithm is used (see
   `CGAL::alpha_expansion_graphcut()`) using the length of the edge
   between two faces as the edge cost and the initial
   selected/unselected property of a face as the face cost.
 
-  If `prevent_deselection` is `true` (default), the cost of
-  deselecting a face is set to infinity, which forces the
-  regularization to only select new facets and ensures that the
-  regularization keeps all selected faces.
+  If `prevent_unselection` is set to `true`, the cost of unselecting a
+  face is set to infinity, which forces the regularization to only
+  select new facets and ensures that the regularization keeps all
+  selected faces.
 
   \tparam FaceGraph a model of `FaceGraph`
 
-  \tparam FaceIndexMap a model of `ReadablePropertyMap` with
-        `boost::graph_traits<FaceGraph>::%face_descriptor` as key type
-        and `std::size_t` as value type
+  \tparam IsSelectedMap a model of `ReadWritePropertyMap` with
+  `boost::graph_traits<FaceGraph>::%face_descriptor` as key type and
+  `bool` as value type
 
-  \tparam IsFaceSelectedPMap a model of `ReadWritePropertyMap` with
-        `boost::graph_traits<FaceGraph>::%face_descriptor` as key type
-        and `bool` as value type
-
-  \tparam VertexPointMap a model of `ReadablePropertyMap` with
-        `boost::graph_traits<FaceGraph>::%vertex_descriptor` as key type
-        and `CGAL::Point_3` as value type
+  \tparam NamedParameters a sequence of named parameters
 
   \param fg the graph containing the selected faces.
 
-  \param face_index_map associates each face to its index
-
-  \param is_selected indicates if a face is part of the selection and
-  is updated by the function
-
-  \param vertex_point_map indices the point associated to the vertex
+  \param is_selected is_selected indicates if a face is part of the
+  selection. It is updated by the function to accommodate faces added
+  or removed from the selection.
 
   \param weight sets the tradeoff between data fidelity and
   regularity, ranging from 0 (no regularization at all, selection is
-  left unaltered) to 1 (maximum regularization, usually selects
-  everything so that the length of the border of the selection is 0)
+  left unaltered) to 1 (maximum regularization, usually selects or
+  unselects everything so that the length of the border of the
+  selection is 0)
 
-  \param prevent_deselection if `true` only new faces can be selected,
-  if `false` some faces can unselected
+  \param np optional sequence of named parameters among the ones listed below
+
+  \cgalNamedParamsBegin
+    \cgalParamBegin{face_index_map}
+      the property map with the indices associated to the faces of `fg`
+    \cgalParamEnd
+    \cgalParamBegin{vertex_point_map}
+      the property map with the points associated to the vertices of `fg`
+    \cgalParamEnd
+    \cgalParamBegin{prevent_unselection}
+      if `true` only new faces can be selected, if `false` (default) some
+      faces can unselected
+    \cgalParamEnd
+  \cgalNamedParamsEnd
 */
 template <typename FaceGraph, typename IsSelectedMap, typename NamedParameters> 
 void
@@ -534,7 +538,12 @@ regularize_face_selection_borders(
 }
 /// \endcond
 
-// TODO: document me
+/// \cond SKIP_IN_MANUAL
+// TODO: improve and document if useful
+//
+// Variant of regularization without graphcut but with brut-force
+// local expansions. Can be interesting in some cases but too
+// experimental/messy so far to be officially integrated.
 template <class FaceGraph, class IsSelectedMap, class VertexPointMap>
 void
 regularize_face_selection_borders(
@@ -672,6 +681,7 @@ regularize_face_selection_borders(
       put(is_selected, fd, true);
   }
 }
+/// \endcond
 
 
 /*!

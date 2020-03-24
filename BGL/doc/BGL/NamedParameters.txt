@@ -199,6 +199,12 @@ tag used to select the implementation to be used among an algorithm-specific lis
 <b>Default:</b> algorithm-specific.
 \cgalNPEnd
 
+\cgalNPBegin{prevent_unselection} \anchor BGL_prevent_unselection
+boolean used to indicate if selection can be only extended or if it can also be shrinked.\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `false`.
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */
