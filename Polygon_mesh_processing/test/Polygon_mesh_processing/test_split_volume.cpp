@@ -178,7 +178,7 @@ int main()
            nested_cc_per_cc[i].size()==3 ||
            nested_cc_per_cc[i].size()==0);
   }
-  assert(sum = 0+3*1+3);
+  assert(sum == 0+3*1+3);
   }
 
   // test level 0 orientation
