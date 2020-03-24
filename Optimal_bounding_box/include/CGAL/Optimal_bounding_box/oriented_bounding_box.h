@@ -171,7 +171,7 @@ void construct_oriented_bounding_box(const PointRange& points,
   if(use_ch) // construct the convex hull to reduce the number of points
   {
     std::vector<Point> ch_points;
-    extreme_points_3(points, std::back_inserter(ch_points));
+    extreme_points_3(points, std::back_inserter(ch_points), traits);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
     std::cout << ch_points.size() << " points on the convex hull" << std::endl;
