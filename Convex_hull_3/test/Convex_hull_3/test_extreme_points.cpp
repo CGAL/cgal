@@ -52,7 +52,7 @@ void test_triangulated_cube(const char* fname)
   std::ifstream input(fname);
   SurfaceMesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     exit(1);
   }
 
@@ -206,7 +206,7 @@ void test_extreme_vertices(const char* fname)
   std::ifstream input(fname);
   Polyhedron_3 P;
   if (!input || !(input >> P) || P.is_empty()) {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     exit(1);
   }  
   /*CGAL::Extreme_points_traits_adapter_3<

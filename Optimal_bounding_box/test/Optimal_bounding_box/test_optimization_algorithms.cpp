@@ -89,7 +89,7 @@ void test_reference_tetrahedron(const char* fname)
   CGAL::Surface_mesh<Point_3> mesh;
   if(!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 
@@ -112,7 +112,7 @@ void test_long_tetrahedron(const std::string fname)
   CGAL::Surface_mesh<Point_3> mesh;
   if(!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 
@@ -145,7 +145,7 @@ void test_compute_obb_evolution(const std::string fname)
   SMesh mesh;
   if(!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 
@@ -174,7 +174,7 @@ void test_compute_obb_mesh(const std::string fname)
   CGAL::Surface_mesh<Point_3> mesh;
   if(!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 
@@ -194,7 +194,7 @@ void test_function_defaults_traits(const std::string fname1)
   CGAL::Surface_mesh<Point_3> mesh1;
   if(!input1 || !(input1 >> mesh1) || mesh1.is_empty())
   {
-    std::cerr << fname1 << " is not a valid off file.\n";
+    std::cerr << fname1 << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 

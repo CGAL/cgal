@@ -30,7 +30,7 @@ void bench_finding_obb(const std::string fname)
   Surface_mesh mesh;
   if (!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file.\n";
+    std::cerr << fname << " is not a valid off file." << std::endl;
     std::exit(1);
   }
 
