@@ -1254,15 +1254,17 @@ insert_balls(const Vertex_handle& vp,
     norm_step_size = step_size;
   } else {
     CGAL_assertion_code(using boost::math::float_prior);
+#if CGAL_MESH_3_PROTECTION_DEBUG & 4
     CGAL_assertion_msg(n==0 ||
                        dleft_frac >= float_prior(float_prior(1.)),
                        ([this](){
                          CGAL_USE(this);
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
                          dump_c3t3(this->c3t3_, "dump-bug");
-#endif
                          return "the sampling of protecting balls is not possible";
                        }()));
+#else
+    CGAL_assertion(n==0 || dleft_frac >= float_prior(float_prior(1.)));
+#endif
   }
 
   // Launch balls
