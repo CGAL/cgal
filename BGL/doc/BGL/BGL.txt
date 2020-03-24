@@ -657,7 +657,7 @@ as shown in \ref BGL_polyhedron_3/polyhedron_partition.cpp "this example".
 \section BGLGraphcut Graph Cut
 
 An optimal partition from a set of labels can be computed through a
-graph cut approach called Alpha Expansion
+graph cut approach called alpha expansion
 \cgalCite{Boykov2001FastApproximate}. \cgal provides
 `CGAL::alpha_expansion_graphcut()` which, for a graph \f$(V,E)\f$,
 computes the partition `f` that minimizes the following cost function:
@@ -690,11 +690,11 @@ list_ version provides a good compromise and is therefore the default
 implementation.
 
 \cgalFigureBegin{alpha_exp, alpha_expansion.png}
-Comparison of time and memory consumed by the different Alpha
-Expansion implementation.
+Comparison of time and memory consumed by the different alpha
+expansion implementation.
 \cgalFigureEnd
 
-The following example shows how to apply the Alpha Expansion algorithm
+The following example shows how to apply the alpha expansion algorithm
 to a `boost::adjacency_list` describing a 2D array with 3 labels "X",
 " " and "O":
 

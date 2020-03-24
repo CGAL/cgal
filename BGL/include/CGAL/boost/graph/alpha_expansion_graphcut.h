@@ -449,8 +449,8 @@ public:
 /**
    \ingroup PkgBGLPartition
 
-   regularizes a partition of a graph into `n` labels using the Alpha
-   Expansion algorithm \cgalCite{Boykov2001FastApproximate}.
+   regularizes a partition of a graph into `n` labels using the alpha
+   expansion algorithm \cgalCite{Boykov2001FastApproximate}.
 
    For a graph \f$(V,E)\f$, this function computes a partition `f`
    that minimizes the following cost function:
@@ -504,7 +504,7 @@ public:
      \cgalParamEnd
      \cgalParamBegin{implementation_tag}
        tag used to select
-       which implementation of the Alpha Expansion should be
+       which implementation of the alpha expansion should be
        used. Available implementation tags are:
        - `CGAL::Alpha_expansion_boost_adjacency_list` (default)
        - `CGAL::Alpha_expansion_boost_compressed_sparse_row_tag`
