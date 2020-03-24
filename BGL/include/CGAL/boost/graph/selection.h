@@ -233,7 +233,7 @@ struct Regularization_graph
   double area (fg_face_descriptor fd) const
   {
     fg_halfedge_descriptor hd = halfedge (fd, fg);
-    halfedge_descriptor nhd = next (hd, fg);
+    fg_halfedge_descriptor nhd = next (hd, fg);
     
     return approximate_sqrt (squared_area (get (vertex_point_map, source (hd, fg)),
                                            get (vertex_point_map, target (hd, fg)),
