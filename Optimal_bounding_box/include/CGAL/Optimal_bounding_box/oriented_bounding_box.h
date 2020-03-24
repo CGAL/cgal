@@ -117,7 +117,7 @@ void compute_best_transformation(const PointRange& points,
   timer.reset();
 #endif
 
-  const Matrix& rot = search_solution.get_best().matrix();
+  const Matrix& rot = search_solution.get_best_vertex().matrix();
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   std::cout << "get best: " << timer.time() << std::endl;

@@ -61,32 +61,6 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
   return ((xmax - xmin) * (ymax - ymin) * (zmax - zmin));
 }
 
-template <typename Population>
-const typename Population::Vertex& get_best_vertex(const Population& population)
-{
-  typedef typename Population::FT                               FT;
-  typedef typename Population::Vertex                           Vertex;
-
-  std::size_t simplex_id, vertex_id;
-  FT best_fitness = std::numeric_limits<double>::max();
-  for(std::size_t i=0, ps=population.size(); i<ps; ++i)
-  {
-    for(std::size_t j=0; j<4; ++j)
-    {
-      const Vertex& vertex = population[i][j];
-      const FT fitness = vertex.fitness_value();
-      if(fitness < best_fitness)
-      {
-        simplex_id = i;
-        vertex_id = j;
-        best_fitness = fitness;
-      }
-    }
-  }
-
-  return population[simplex_id][vertex_id];
-}
-
 } // namespace internal
 } // namespace Optimal_bounding_box
 } // namespace CGAL

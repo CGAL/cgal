@@ -107,7 +107,7 @@ public:
         const FT fitnessA = m_population[group3[i]][j].fitness_value();
         const FT fitnessB = m_population[group4[i]][j].fitness_value();
         const FT lambda = (fitnessA < fitnessB) ? uweight : lweight;
-        const FT rambda = 1 - lambda; // because the 'l' in 'lambda' stands for left
+        const FT rambda = FT(1) - lambda; // because the 'l' in 'lambda' stands for left
 
         const Matrix& lm = m_population[group3[i]][j].matrix();
         const Matrix& rm = m_population[group4[i]][j].matrix();
@@ -121,7 +121,7 @@ public:
     m_population.simplices() = std::move(new_simplices);
   }
 
-  void evolve(const std::size_t generations,
+  void evolve(const std::size_t max_generations,
               const std::size_t population_size,
               const std::size_t nelder_mead_iterations,
               const int max_random_mutations = 5)
@@ -131,10 +131,11 @@ public:
     const FT tolerance = 1e-9;
     int stale = 0;
 
-    for(std::size_t t=0; t<generations; ++t)
+    std::size_t gen_iter = 0;
+    for(;;)
     {
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      std::cout << "- - - - generation #" << t << "\n";
+      std::cout << "- - - - generation #" << gen_iter << "\n";
 #endif
 
       genetic_algorithm(population_size);
@@ -168,7 +169,7 @@ public:
       if(CGAL::abs(difference) < tolerance * new_fit_value)
         ++stale;
 
-      if(stale == 5)
+      if(stale == 5 || gen_iter++ > max_generations)
         break;
 
       prev_fit_value = new_fit_value;
@@ -187,14 +188,14 @@ public:
     }
   }
 
-  const Vertex& get_best()
+  const Vertex& get_best_vertex() const
   {
     CGAL_assertion(m_best_v != nullptr);
     return *m_best_v;
   }
 
 private:
-  const Vertex* m_best_v;
+  Vertex* m_best_v;
   Population m_population;
 
   CGAL::Random& m_rng;

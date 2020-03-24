@@ -51,7 +51,9 @@ struct Vertex_with_fitness_value
     CGAL_assertion_code(m_is_val_initialized = true;)
   }
 
+  Matrix& matrix() { return m_mat; }
   const Matrix& matrix() const { return m_mat; }
+  FT& fitness_value() { return m_val; }
   FT fitness_value() const { CGAL_assertion(m_is_val_initialized); return m_val; }
 
 private:
@@ -74,6 +76,12 @@ public:
 public:
   Population(const Traits& traits) : m_traits(traits) { }
 
+  // Access
+  std::size_t size() const { return m_simplices.size(); }
+  Simplex& operator[](const std::size_t i) { CGAL_assertion(i < m_simplices.size()); return m_simplices[i]; }
+  const Simplex& operator[](const std::size_t i) const { CGAL_assertion(i < m_simplices.size()); return m_simplices[i]; }
+  Simplex_container& simplices() { return m_simplices; }
+
 private:
   Matrix create_random_matrix(CGAL::Random& rng) const
   {
@@ -86,7 +94,7 @@ private:
     return m;
   }
 
-  // create random population
+public:
   template <typename PointRange>
   Simplex create_simplex(const PointRange& points,
                          CGAL::Random& rng) const
@@ -98,30 +106,46 @@ private:
     return s;
   }
 
-public:
+  // create random population
   template <typename PointRange>
   void initialize(const std::size_t population_size,
                   const PointRange& points,
                   CGAL::Random& rng)
   {
-    m_pop.clear();
-    m_pop.reserve(population_size);
+    m_simplices.clear();
+    m_simplices.reserve(population_size);
     for(std::size_t i=0; i<population_size; ++i)
-      m_pop.emplace_back(create_simplex(points, rng));
+      m_simplices.emplace_back(create_simplex(points, rng));
   }
 
-  // Access
-  std::size_t size() const { return m_pop.size(); }
-  Simplex& operator[](const std::size_t i) { CGAL_assertion(i < m_pop.size()); return m_pop[i]; }
-  const Simplex& operator[](const std::size_t i) const { CGAL_assertion(i < m_pop.size()); return m_pop[i]; }
-  Simplex_container& simplices() { return m_pop; }
+  Vertex& get_best_vertex()
+  {
+    std::size_t simplex_id, vertex_id;
+    FT best_fitness = FT{std::numeric_limits<double>::max()};
+    for(std::size_t i=0, ps=m_simplices.size(); i<ps; ++i)
+    {
+      for(std::size_t j=0; j<4; ++j)
+      {
+        const Vertex& vertex = m_simplices[i][j];
+        const FT fitness = vertex.fitness_value();
+        if(fitness < best_fitness)
+        {
+          simplex_id = i;
+          vertex_id = j;
+          best_fitness = fitness;
+        }
+      }
+    }
+
+    return m_simplices[simplex_id][vertex_id];
+  }
 
   // Debug
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
   void show_population() const
   {
     std::size_t id = 0;
-    for(const Simplex& s : m_pop)
+    for(const Simplex& s : m_simplices)
     {
       std::cout << "Simplex: " << id++ << std::endl;
       for(const Matrix& m : s)
@@ -132,7 +156,7 @@ public:
 #endif
 
 private:
-  std::vector<Simplex> m_pop;
+  std::vector<Simplex> m_simplices;
 
   const Traits& m_traits;
 };
