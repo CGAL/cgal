@@ -289,9 +289,9 @@ void oriented_bounding_box(const PointRange& points,
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   const bool use_ch = choose_parameter(get_parameter(np, internal_np::use_convex_hull), true);
-  const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), 0); // undocumented
+  const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), -1); // undocumented
 
-  CGAL::Random rng(seed);
+  CGAL::Random rng = (seed == unsigned(-1)) ? CGAL::get_default_random() : CGAL::Random(seed);
 
   // @todo handle those cases instead
   if(points.size() <= 3)
