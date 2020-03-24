@@ -208,7 +208,7 @@ public:
       { }
 
     public:
-      bool operator()(Point_2 e, Point_2 p,Point_2 q) const
+      bool operator()(const Point_2& e, const Point_2& p, const Point_2& q) const
       {
         return base(get(vpm_, e), get(vpm_, p), get(vpm_, q));
       }
@@ -239,7 +239,7 @@ public:
         : Btt::Orientation_2(base), vpm_(map), base(base)
       { }
 
-      typename CGAL::Orientation operator()(Point_2 e, Point_2 p, Point_2 q) const
+      typename CGAL::Orientation operator()(const Point_2& e, const Point_2& p, const Point_2& q) const
       {
         return base(get(vpm_, e), get(vpm_, p), get(vpm_, q));
       }
