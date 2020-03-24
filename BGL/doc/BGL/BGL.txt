@@ -658,7 +658,7 @@ as shown in \ref BGL_polyhedron_3/polyhedron_partition.cpp "this example".
 
 An optimal partition from a set of labels can be computed through a
 graph cut approach called Alpha Expansion
-\cgalCite{boykov2001fastapproximate}. \cgal provides
+\cgalCite{Boykov2001FastApproximate}. \cgal provides
 `CGAL::alpha_expansion_graphcut()` which, for a graph \f$(V,E)\f$,
 computes the partition `f` that minimizes the following cost function:
 
