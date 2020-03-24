@@ -61,7 +61,8 @@ void fill_segments_infos(std::vector<Segment>& segments,
     std::size_t t_neighbor;
     Wrapped_segment(const Segment& s)
       :segment(s), s_dangling(true),
-        t_dangling(true){}
+        t_dangling(true), s_neighbor(0),
+        t_neighbor(0){}
   };
 
   std::vector<Wrapped_segment> wrapped_segments;
@@ -117,7 +118,7 @@ void fill_segments_infos(std::vector<Segment>& segments,
     //fill dangling extremities using triangle edges
     if(w_s.s_dangling)
     {
-      for(std::size_t e_id = 0; e_id < 3; ++e_id)
+      for(int e_id = 0; e_id < 3; ++e_id)
       {
         Segment edge(input_tr.vertex(e_id), input_tr.vertex(e_id+1));
         if(!edge.has_on(s.source()))
@@ -148,7 +149,7 @@ void fill_segments_infos(std::vector<Segment>& segments,
     }
     if(w_s.t_dangling)
     {
-      for(std::size_t e_id = 0; e_id < 3; ++e_id)
+      for(int e_id = 0; e_id < 3; ++e_id)
       {
         Segment edge(input_tr.vertex(e_id), input_tr.vertex(e_id+1));
         if(!edge.has_on(s.target()))
