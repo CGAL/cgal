@@ -361,6 +361,8 @@ void reverse_face_orientations(const FaceRange& face_range, PolygonMesh& pmesh)
 * @param tm a closed triangulated surface mesh
 * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
 *
+* \pre `CGAL::is_closed(tm)`
+*
 * \cgalNamedParamsBegin
 *   \cgalParamBegin{vertex_point_map}
 *     the property map with the points associated to the vertices of `tm`.
@@ -459,7 +461,6 @@ void orient(TriangleMesh& tm)
 enum Volume_error_code { VALID_VOLUME, ///< The set of faces bounds a volume
                          SURFACE_WITH_SELF_INTERSECTIONS, ///< The set of faces is self-intersecting
                          VOLUME_INTERSECTION, ///< The set of faces intersects another surface connected component
-                         SURFACE_WITH_BOUNDARIES, ///< The set of faces does not define a closed surface
                          INCOMPATIBLE_ORIENTATION ///< The set of faces is included in a volume but has an incompatible orientation
                        };
 namespace internal {
@@ -668,6 +669,8 @@ void set_cc_intersecting_pairs(
  * @param volume_id_map the property map filled by this function with indices of volume components associated to the faces of `tm`
  * @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
+ * @pre `CGAL::is_closed(tm)`
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
@@ -752,7 +755,8 @@ volume_connected_components(const TriangleMesh& tm,
                                   VolumeFaceIndexMap volume_id_map,
                             const NamedParameters& np)
 {
-  CGAL_precondition( is_triangle_mesh(tm) );
+  CGAL_precondition(is_triangle_mesh(tm));
+  CGAL_precondition(is_closed(tm));
 
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::vertex_descriptor vertex_descriptor;
@@ -803,24 +807,7 @@ volume_connected_components(const TriangleMesh& tm,
   std::vector < std::size_t > nesting_levels(nb_cc, 0); // indicates for each CC its nesting level
 
   boost::dynamic_bitset<> cc_handled(nb_cc, 0);
-
   std::size_t next_volume_id = 0;
-// Handle open connected components
-  for(halfedge_descriptor h : halfedges(tm))
-  {
-    if (is_border(h, tm))
-    {
-      face_descriptor fd = face( opposite(h, tm), tm );
-      std::size_t cc_id = face_cc[ get(fid_map, fd) ];
-      if ( !cc_handled.test(cc_id) )
-      {
-        cc_handled.set(cc_id);
-        cc_volume_ids[cc_id]=next_volume_id++;
-        error_codes.push_back(SURFACE_WITH_BOUNDARIES);
-        if (used_as_a_predicate) return 0;
-      }
-    }
-  }
 
 // Handle self-intersecting connected components
   typedef std::pair<face_descriptor, face_descriptor> Face_pair;
@@ -1221,7 +1208,7 @@ bool does_bound_a_volume(const TriangleMesh& tm, const NamedParameters& np)
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::face_descriptor face_descriptor;
 
-  if (!is_closed(tm)) return false;
+  CGAL_precondition(is_closed(tm));
   CGAL_precondition(is_triangle_mesh(tm));
 
   Static_property_map<face_descriptor, std::size_t> vidmap(0); // dummy map not used
@@ -1259,6 +1246,8 @@ std::size_t volume_connected_components(const TriangleMesh& tm, VolumeFaceIndexM
  * @param tm a closed triangulated surface mesh
  * @param np optional sequence of \ref pmp_namedparameters among the ones listed below
  *
+ * @pre `CGAL::is_closed(tm)`
+ *
  * \cgalNamedParamsBegin
  *   \cgalParamBegin{vertex_point_map}
  *     the property map with the points associated to the vertices of `tm`.
@@ -1287,8 +1276,8 @@ void orient_to_bound_a_volume(TriangleMesh& tm,
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    Vpm;
   typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
 
-  if (!is_closed(tm)) return;
-  if (!is_triangle_mesh(tm)) return;
+  CGAL_assertion(is_closed(tm));
+  CGAL_assertion(is_triangle_mesh(tm));
 
   using parameters::get_parameter;
 
