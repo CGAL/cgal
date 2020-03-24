@@ -139,6 +139,7 @@ namespace CGAL {
     
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
     Kd_tree_rectangle(int,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
+      : max_span_coord_(-1)
     {
       update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
@@ -289,7 +290,7 @@ namespace CGAL {
     }
 
     Kd_tree_rectangle() 
-      : coords_(0), dim(0)
+      : coords_(0), dim(0), max_span_coord_(-1)
     {
 }
     
@@ -324,7 +325,7 @@ namespace CGAL {
     
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
     Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
-      : coords_(new FT[2*d]), dim(d)
+      : coords_(new FT[2*d]), dim(d), max_span_coord_(-1)
     {
       update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
