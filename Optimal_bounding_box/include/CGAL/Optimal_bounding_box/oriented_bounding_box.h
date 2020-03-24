@@ -291,7 +291,12 @@ void oriented_bounding_box(const PointRange& points,
   const bool use_ch = choose_parameter(get_parameter(np, internal_np::use_convex_hull), true);
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), -1); // undocumented
 
-  CGAL::Random rng = (seed == unsigned(-1)) ? CGAL::get_default_random() : CGAL::Random(seed);
+  CGAL::Random fixed_seed_rng(seed);
+  CGAL::Random& rng = (seed == unsigned(-1)) ? CGAL::get_default_random() : fixed_seed_rng;
+
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+  std::cout << "Random seed: " << rng.get_seed() << std::endl;
+#endif
 
   // @todo handle those cases instead
   if(points.size() <= 3)
