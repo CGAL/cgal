@@ -153,7 +153,7 @@ struct Regularization_graph
     }
   };
 
-  struct Edge_weight_map
+  struct Edge_cost_map
   {
     typedef edge_descriptor key_type;
     typedef double value_type;
@@ -162,15 +162,15 @@ struct Regularization_graph
 
     const Regularization_graph* rg;
 
-    Edge_weight_map (const Regularization_graph* rg)
+    Edge_cost_map (const Regularization_graph* rg)
       : rg (rg) { }
 
-    friend reference get (const Edge_weight_map& pmap, key_type ed)
+    friend reference get (const Edge_cost_map& pmap, key_type ed)
     {
       fg_vertex_descriptor esource = source(ed, pmap.rg->fg);
       fg_vertex_descriptor etarget = target(ed, pmap.rg->fg);
 
-      // Weight
+      // Cost
       double edge_length = std::sqrt(CGAL::squared_distance (get (pmap.rg->vertex_point_map, esource),
                                                              get (pmap.rg->vertex_point_map, etarget)));
       return pmap.rg->weight * edge_length / pmap.rg->total_length;
@@ -272,8 +272,8 @@ struct Regularization_graph
   Vertex_label_map vertex_label_map() { return Vertex_label_map(this); }
   Vertex_label_probability_map vertex_label_probability_map() const
   { return Vertex_label_probability_map(this); }
-  Edge_weight_map edge_weight_map() const
-  { return Edge_weight_map(this); }
+  Edge_cost_map edge_cost_map() const
+  { return Edge_cost_map(this); }
 };
 
 
@@ -432,14 +432,13 @@ reduce_face_selection(
 
   A graphcut formulation is used (see
   `CGAL::alpha_expansion_graphcut()`) using the length of the edge
-  between two faces as a weight and the initial selected/unselected
-  property of a face as a cost.
+  between two faces as the edge cost and the initial
+  selected/unselected property of a face as the face cost.
 
   If `prevent_deselection` is `true` (default), the cost of
   deselecting a face is set to infinity, which forces the
   regularization to only select new facets and ensures that the
   regularization keeps all selected faces.
-
 
   \tparam FaceGraph a model of `FaceGraph`
 
@@ -499,10 +498,11 @@ regularize_face_selection_borders(
            prevent_deselection);
     
   alpha_expansion_graphcut (graph,
-                            graph.edge_weight_map(),
-                            face_index_map,
+                            graph.edge_cost_map(),
                             graph.vertex_label_probability_map(),
-                            graph.vertex_label_map());
+                            graph.vertex_label_map(),
+                            CGAL::parameters::vertex_index_map
+                            (face_index_map));
     
   for (fg_face_descriptor fd : faces(fg))
     put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
