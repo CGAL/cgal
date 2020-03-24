@@ -34,11 +34,11 @@ private:
 
 int main(int argc, char** argv)
 {
-  std::ifstream input(argv[1]);
+  std::ifstream input((argc > 1) ? argv[1] : "data/pig.off");
   Surface_mesh sm;
   if (!input || !(input >> sm) || sm.is_empty())
   {
-    std::cerr << argv[1] << " is not a valid off file.\n";
+    std::cerr << "Invalid input file." << std::endl;
     return EXIT_FAILURE;
   }
 
