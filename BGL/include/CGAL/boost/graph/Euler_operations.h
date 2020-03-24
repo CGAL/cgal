@@ -760,6 +760,7 @@ add_face(const VertexRange& vr, Graph& g)
 // TODO: add a visitor for new edge/vertex/face created
 // TODO: doc
 // TODO: handle and return false in case of non valid input?
+// TODO: tm -> pm
 // An interesting property of this function is that in case the mesh contains non-manifold boundary vertices,
 // the connected components of faces incident to such a vertex will not be linked together around the
 // vertex (boundary edges are connected by turning around the vertex in the interior of the mesh).
@@ -789,6 +790,11 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& tm)
     return v1v2;
   };
 
+  // used to collect existing border halfedges that will no longer be on the border.
+  // Some update is needed in case of non-manifold vertex at the source/target of those
+  // edges are present.
+  std::vector<halfedge_descriptor> former_border_hedges;
+
   //TODO: use vertex index map for v -> vector
   std::vector<std::vector<halfedge_descriptor> > outgoing_hedges(num_vertices(tm));
   for (const Vertex_range& vr : faces_to_add)
@@ -802,15 +808,83 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& tm)
         // needed in case an existing border edge won't be found
         // because the outgoing edge from the smallest vertex is on the patch boundary
         if (edge_and_bool.second && is_border(halfedge(edge_and_bool.first, tm), tm))
+        {
           outgoing_hedges[v2].push_back(opposite(halfedge(edge_and_bool.first, tm), tm));
+          former_border_hedges.push_back(halfedge(edge_and_bool.first, tm));
+        }
         continue;
       }
       if (edge_and_bool.second)
-        outgoing_hedges[v1].push_back( halfedge(edge_and_bool.first, tm));
+      {
+        halfedge_descriptor h = halfedge(edge_and_bool.first, tm);
+        outgoing_hedges[v1].push_back(h);
+        if (is_border(h, tm))
+          former_border_hedges.push_back(h);
+      }
       else
         outgoing_hedges[v1].push_back(add_new_edge(v1,v2));
       CGAL_assertion( source(outgoing_hedges[v1].back(), tm)==v1 );
       CGAL_assertion( target(outgoing_hedges[v1].back(), tm)==v2 );
+    }
+  }
+
+  // disconnect hand-fans (umbrellas being not affected) at non-manifold vertices
+  // in case the location on the boundary of the mesh where they are attached is closed.
+  // Note that we link the boundary of the hand fans together, making them
+  // independant boundary cycles (even if the non-manifold vertex is not duplicated)
+  if ( !former_border_hedges.empty() )
+  {
+    std::sort(former_border_hedges.begin(), former_border_hedges.end()); // TODO: is it better to use a dynamic pmap?
+    for (halfedge_descriptor h : former_border_hedges)
+    {
+    // update link around target vertex
+      halfedge_descriptor nh = next(h, tm);
+      if ( !std::binary_search(former_border_hedges.begin(), former_border_hedges.end(), nh) )
+      {
+        do
+        {
+          // look for a new prev for h
+          halfedge_descriptor candidate = opposite(next(opposite(nh, tm), tm), tm);
+          while (!is_border(candidate, tm))
+            candidate = opposite(next(candidate, tm), tm);
+          halfedge_descriptor for_next_iteration = next(candidate, tm);
+          set_next(candidate, nh, tm);
+          nh = for_next_iteration;
+          if (candidate==h) break; // stop condition for a vertex that will stay on the boundary after the operation
+          if ( std::binary_search(former_border_hedges.begin(), former_border_hedges.end(), nh) )
+          {
+            // linking halfedges that will no longer be on the boundary
+            set_next(h, nh, tm);
+            break;
+          }
+        }
+        while(true);
+      }
+
+
+    // update link around source vertex
+      halfedge_descriptor ph = prev(h, tm);
+      if ( !std::binary_search(former_border_hedges.begin(), former_border_hedges.end(), ph) )
+      {
+        do
+        {
+          // look for a new next for h
+          halfedge_descriptor candidate = opposite(prev(opposite(ph, tm), tm), tm);
+          while (!is_border(candidate, tm))
+            candidate = opposite(prev(candidate, tm), tm);
+          halfedge_descriptor for_next_iteration = prev(candidate, tm);
+          set_next(ph, candidate, tm);
+          ph = for_next_iteration;
+          if (candidate==h) break;; // stop condition for a vertex that will stay on the boundary after the operation
+          if( std::binary_search(former_border_hedges.begin(), former_border_hedges.end(), ph) )
+          {
+            // linking halfedges that will no longer be on the boundary
+            set_next(ph, h, tm);
+            break;
+          }
+        }
+        while(true);
+      }
     }
   }
 
@@ -821,7 +895,6 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& tm)
                                               {
                                                 return target(h1, tm) < target(h2,tm);
                                               });
-
   }
   std::vector<halfedge_descriptor> new_border_halfedges;
   auto get_hedge = [&tm, &add_new_edge, &new_border_halfedges, &outgoing_hedges](vertex_descriptor v1, vertex_descriptor v2)
