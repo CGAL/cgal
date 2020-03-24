@@ -65,8 +65,8 @@ public:
     const std::size_t first_group_size = m / 2;
     const std::size_t second_group_size = m - first_group_size;
 
-    std::vector<std::size_t> group1{first_group_size}, group2{first_group_size};
-    std::vector<std::size_t> group3{second_group_size}, group4{second_group_size};
+    std::vector<std::size_t> group1(first_group_size), group2(first_group_size);
+    std::vector<std::size_t> group3(second_group_size), group4(second_group_size);
 
     int im = static_cast<int>(m);
     std::generate(group1.begin(), group1.end(), [&]{ return m_rng.get_int(0, im); });
