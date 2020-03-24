@@ -23,7 +23,7 @@
 #include <boost/unordered_set.hpp>
 #include <CGAL/property_map.h>
 
-#include <QTime>
+#include <QElapsedTimer>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -341,7 +341,7 @@ public Q_SLOTS:
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       typedef boost::graph_traits<FaceGraph>::edge_descriptor edge_descriptor;
@@ -612,7 +612,6 @@ public Q_SLOTS:
         }
         if (fpmap_valid)
         {
-          PMP::connected_components(pmesh, fpmap, PMP::parameters::edge_is_constrained_map(eif));
           poly_item->setItemIsMulticolor(true);
           poly_item->show_feature_edges(true);
         }
@@ -699,7 +698,7 @@ public Q_SLOTS:
       detect_and_split_duplicates(selection, edges_to_protect, target_length);
 
 #ifdef CGAL_LINKED_WITH_TBB
-    QTime time;
+    QElapsedTimer time;
     time.start();
 
       tbb::parallel_for(
@@ -715,7 +714,7 @@ public Q_SLOTS:
       target_length, nb_iter, protect, smooth_features);
     for(Scene_facegraph_item* poly_item : selection)
     {
-      QTime time;
+      QElapsedTimer time;
       time.start();
 
       remesher(poly_item, edges_to_protect[poly_item->polyhedron()]);

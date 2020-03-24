@@ -208,12 +208,29 @@ In this example program, the sorted sequence of points is retrieved
 using the indices of the points in a vector of pairs of points and integers.
 \cgalExample{Spatial_sorting/sp_sort_using_property_map_d.cpp}
 
+\section Spatial_sortingParallel Parallel Spatial Sorting
+
+In 2D (3D), Hilbert or spatial sorting recursively subdivides the input range in four (eight) subranges.
+Therefore, a natural way to parallelize the sorting algorithm is to split the initial range in four (eight) subranges,
+and let a single thread handle any further subdivision and sorting for a given subrange.
+This parallel algorithm is only available when the median strategy policy is being used (this is the case
+by default), as this policy ensures balance between all subranges. This is not necessarily
+the case with the middle strategy, where the subrange sizes can greatly vary.
+
+The parallel version of the algorithm is enabled by specifying the template parameter `CGAL::Parallel_tag`.
+In case it is not sure whether TBB is available and linked with \cgal,
+`CGAL::Parallel_if_available_tag` can be used. By default, the sequential version is used.
+
+\cgalExample{Spatial_sorting/parallel_spatial_sort_3.cpp}
+
 \section Spatial_sortingDesign Design and Implementation History
 
-The first implementation of Hilbert and spatial sorting (2D and 3D) in CGAL was done by Cristophe Delage. Then, Olivier Devillers improved its design,
-and implemented its multidimensional version. Finally, Pedro Machado Manhaes de Castro and Olivier Devillers added Hilbert sorting
-on the sphere as well.
+The first implementation of Hilbert and spatial sorting (2D and 3D) in \cgal was done by Cristophe Delage.
+Olivier Devillers improved its design, and implemented its multidimensional version.
 
+Pedro Machado Manhaes de Castro and Olivier Devillers added Hilbert sorting on the sphere.
+
+Andreas Fabri added a parallel version of Hilbert and spatial sorting.
 
 */ 
 } /* namespace CGAL */

@@ -150,7 +150,7 @@ public:
     boost::tie(min_sdf, max_sdf) = min_max_value(mesh, sdf_values);
 
     if(min_sdf == max_sdf) {
-      CGAL_warning(min_sdf == max_sdf && !"Linear normalization is not applicable!");
+      CGAL_warning_msg(min_sdf == max_sdf, "Linear normalization is not applicable!");
       return std::make_pair(min_sdf, max_sdf);
     }
 

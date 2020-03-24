@@ -578,32 +578,44 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
       next_around_vertex = opposite( next(hd, tm), tm);
       if (hd==start) break;
     }
-    if ( get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
+    if ( is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
 
     while( true )
     {
       // collect non-selected faces
       std::vector<halfedge_descriptor> faces_traversed;
+      bool non_selected_face_range_has_boundary = false; // handle non-manifold situations when crossing a border
       do
       {
         faces_traversed.push_back(next_around_vertex);
         next_around_vertex = opposite( next(next_around_vertex, tm), tm);
         if (is_border(next_around_vertex,tm))
+        {
           next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+          if (!get(is_selected, face(next_around_vertex, tm) ))
+          {
+            non_selected_face_range_has_boundary=true; // always non-manifold after removal of the selection
+            break;
+          }
+        }
         CGAL_assertion(!is_border(next_around_vertex,tm));
       }
       while( !get(is_selected, face(next_around_vertex, tm) ) );
 
-      // go over the connected components of faces to remove
-      do{
+      if (!non_selected_face_range_has_boundary)
+      {
+        // go over the connected components of faces to remove
+        do{
+          if (next_around_vertex==start)
+            break;
+          next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+        }
+        while(is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) );
+
         if (next_around_vertex==start)
           break;
-        next_around_vertex = opposite( next(next_around_vertex, tm), tm);
       }
-      while( get(is_selected, face(next_around_vertex, tm) ) );
-
-      if (next_around_vertex==start)
-        break;
+      // else we simply mark the range of traversed faces and start a new range after the border
 
       for(halfedge_descriptor f_hd : faces_traversed)
       {

@@ -23,19 +23,19 @@ class Polyhedron_demo_ply_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.90" FILE "ply_io_plugin.json")
 
 public:
-  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
+  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const override
   { 
     if(qobject_cast<const Scene_points_with_normal_item*>(item)) 
       return true; 
     return false;
   }
-  QString name() const { return "ply_plugin"; }
-  QString nameFilters() const { return "PLY files (*.ply)"; }
-  bool canLoad(QFileInfo fileinfo) const;
-  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true);
+  QString name() const override{ return "ply_plugin"; }
+  QString nameFilters() const override{ return "PLY files (*.ply)"; }
+  bool canLoad(QFileInfo fileinfo) const override;
+  QList<Scene_item*> load(QFileInfo fileinfo, bool& ok, bool add_to_scene=true)override;
 
-  bool canSave(const CGAL::Three::Scene_item*);
-  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&);
+  bool canSave(const CGAL::Three::Scene_item*)override;
+  bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>&)override;
 
 };
 

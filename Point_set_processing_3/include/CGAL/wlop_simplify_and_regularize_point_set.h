@@ -411,9 +411,8 @@ public:
    See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
-   \tparam ConcurrencyTag enables sequential versus parallel algorithm.
-   Possible values are `Sequential_tag`
-   and `Parallel_tag`.
+   \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
+                          `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
    \tparam OutputIterator Type of the output iterator. 
@@ -465,10 +464,10 @@ wlop_simplify_and_regularize_point_set(
   using parameters::get_parameter;
   
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
   double select_percentage = choose_parameter(get_parameter(np, internal_np::select_percentage), 5.);
   double radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
   unsigned int iter_number = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 35);

@@ -71,8 +71,9 @@ else()
   
   if (LASLIB_FOUND)
     polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS IO PointSetProcessing Classification)
-    target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item ${LASLIB_LIBRARIES})
+    target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item)
     target_compile_features(las_plugin PRIVATE ${needed_cxx_features})
+    CGAL_target_use_LASLIB(las_plugin)
   else()
     message(STATUS "NOTICE : the LAS IO plugin needs LAS libraries and will not be compiled.")
   endif()
@@ -80,14 +81,15 @@ endif()
 
 find_path(3MF_INCLUDE_DIR
   NAMES Model/COM/NMR_DLLInterfaces.h
+  PATH_SUFFIXES lib3mf
   DOC "Path to lib3MF headers"
   )
 find_library(3MF_LIBRARIES NAMES 3MF DOC "Path to the lib3MF library")
 
-if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR)
+if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/NMR_DLLInterfaces.h")
   include_directories(${3MF_INCLUDE_DIR})
   polyhedron_demo_plugin(3mf_io_plugin 3mf_io_plugin KEYWORDS IO PMP)
   target_link_libraries(3mf_io_plugin PRIVATE scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item ${3MF_LIBRARIES})
 else()
-  message(STATUS "NOTICE : The 3mf_io_plugin requires the lib3MF library, and will not be compiled.")
+  message(STATUS "NOTICE : The 3mf_io_plugin requires the lib3MF library in a version < 2.0, and will not be compiled.")
 endif()

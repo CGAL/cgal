@@ -42,11 +42,15 @@ public:
     : Fb(v0, v1, v2, n0, n1, n2)
   { }
 
-  int& id() { return _id; }
-  int id() const { return _id; }
+  int& id() { return face_id; }
+  int id() const { return face_id; }
+
+  int& edge_id(const std::size_t i) { return edge_ids[i]; }
+  int edge_id(const std::size_t i) const { return edge_ids[i]; }
 
 private:
-  int _id;
+  int face_id;
+  std::array<int, 3> edge_ids;
 };
 
 } //namespace CGAL

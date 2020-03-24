@@ -92,7 +92,6 @@ class Discrete_conformal_map_parameterizer_3
           Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                           Eigen::IncompleteLUT<double> > > >::type >
   #else
-    #pragma message("Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library")
          SolverTraits_>::type > // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
 {

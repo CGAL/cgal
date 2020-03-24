@@ -304,10 +304,10 @@ typedef Triangulation_vertex_base_3<GT, Vb2> Other;
 \subsection tds3parallel Parallel Operations
 
 The third template parameter of `Triangulation_data_structure_3` is 
-`Concurrency_tag`. It enables the use of a concurrent
+`ConcurrencyTag`. It enables the use of a concurrent
 container (`Concurrent_compact_container`) to store vertices and cells. 
-If it is `Parallel_tag`, then `create_vertex`, `create_cell`, `delete_vertex` 
-and `delete_cell` can be called concurrently.
+If it is `Parallel_tag`, then `create_vertex()`, `create_cell()`, `delete_vertex()` 
+and `delete_cell()` can be called concurrently.
 
 \section TDS3secexamples Examples 
 

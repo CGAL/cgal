@@ -185,7 +185,19 @@ public:
                              "warning condition failed") {}
 };
 
+namespace internal {
 
+// The following classes are useful to create output iterators (with the help
+// of boost::function_output_iterator) that will throw as soon as something is being written.
+class Throw_at_output_exception : public std::exception { };
+
+struct Throw_at_output
+{
+  template<class T>
+  void operator()(const T& /* t */) const { throw Throw_at_output_exception(); }
+};
+
+} // namespace internal
 } //namespace CGAL
 
 #endif // CGAL_EXCEPTIONS_H

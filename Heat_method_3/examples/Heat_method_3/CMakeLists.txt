@@ -34,11 +34,8 @@ endif()
 
 find_package(Eigen3 3.3.0)
 
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-else()
+if (NOT EIGEN3_FOUND)
   message(STATUS "This project requires the Eigen library (3.3 or greater), and will not be compiled.")
-
   return()
 endif()
 
@@ -54,6 +51,10 @@ include_directories( BEFORE include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "heat_method.cpp" )
+CGAL_target_use_Eigen(heat_method)
 create_single_source_cgal_program( "heat_method_polyhedron.cpp" )
+CGAL_target_use_Eigen(heat_method_polyhedron)
 create_single_source_cgal_program( "heat_method_surface_mesh.cpp" )
+CGAL_target_use_Eigen(heat_method_surface_mesh)
 create_single_source_cgal_program( "heat_method_surface_mesh_direct.cpp" )
+CGAL_target_use_Eigen(heat_method_surface_mesh_direct)

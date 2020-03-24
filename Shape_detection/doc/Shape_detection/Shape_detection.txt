@@ -306,9 +306,9 @@ The `RegionType` class defines the three necessary functions:
 - `RegionType::update()` - updates the internal flag from the default `false` to `true`.
 
 We also define a `SeedMap`, such that the second object is handled first, while the first object follows.
-Moreover, the last object is always skipped. Notice that in this example, the container with objects is `std::list`,
-which is not a random access. In general, it is much slower, but illustrates that the 
-generic region growing algorithm can be applied to any type of a container.
+Moreover, the last object is always skipped. Notice that in this example, the container with objects is `std::vector`,
+which is random access. However, the generic region growing algorithm can be applied 
+to any other type of container, e.g. `std::list`.
 
 The result of using these classes with the region growing main class is that the first two objects form the first region, 
 the third object forms the second region, and the last object is skipped.
