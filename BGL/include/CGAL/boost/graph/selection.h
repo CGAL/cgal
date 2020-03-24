@@ -437,7 +437,7 @@ reduce_face_selection(
 
   If `prevent_unselection` is set to `true`, the cost of unselecting a
   face is set to infinity, which forces the regularization to only
-  select new facets and ensures that the regularization keeps all
+  select new faces and ensures that the regularization keeps all
   selected faces.
 
   \tparam FaceGraph a model of `FaceGraph`
