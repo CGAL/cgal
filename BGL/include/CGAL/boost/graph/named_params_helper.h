@@ -222,7 +222,7 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::const_type                 \
 get_initialized_##DTYPE##_index_map(const Graph& g,                                                \
-                                   const NamedParameters& np)                                      \
+                                    const NamedParameters& np)                                     \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
@@ -250,7 +250,7 @@ typename BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_
                                                CGAL::dynamic_##DTYPE##_property_t<STYPE>,          \
                                                Graph, NamedParameters>::type                       \
 get_initialized_##DTYPE##_index_map(Graph& g,                                                      \
-                                   const NamedParameters& np)                                      \
+                                    const NamedParameters& np)                                     \
 {                                                                                                  \
   typedef BGL::internal::GetInitializedIndexMap<CGAL::internal_np::DTYPE##_index_t,                \
                                                 boost::DTYPE##_index_t,                            \
