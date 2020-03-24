@@ -24,6 +24,21 @@ int main()
   boost::unordered_map<face_descriptor, bool> is_selected_map;
 
   const int selection_indices[30] = {652,18,328,698,322,212,808,353,706,869,646,352,788,696,714,796,937,2892,374,697,227,501,786,794,345,16,21,581,347,723};
+  std::set<int> index_set(&selection_indices[0], &selection_indices[0]+30);
+
+  std::vector<face_descriptor> faces_to_remove;
+  int index = 0;
+  for(face_descriptor fh : faces(sm))
+  {
+    if(index_set.count(index)==0)
+      is_selected_map[fh]=false;
+    else
+    {
+      faces_to_remove.push_back(fh);
+      is_selected_map[fh]=true;
+    }
+    ++index;
+  }
 
   CGAL::regularize_face_selection_borders (sm, boost::make_assoc_property_map(is_selected_map), 0.5);
 
