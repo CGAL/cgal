@@ -259,7 +259,7 @@ public:
   {
     boost::default_color_type color = boost::get(boost::vertex_color, graph,
                                                  inserted_vertices[vertex_i]);
-    if(get (vertex_label_map, vd) != alpha
+    if(std::size_t(get (vertex_label_map, vd)) != alpha
        && color == ColorTraits::white()) //new comers (expansion occurs)
       put (vertex_label_map, vd, alpha);
   }
@@ -582,7 +582,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
         double source_weight = get(vertex_label_cost_map, vd)[alpha];
         // since it is expansion move, current alpha labeled vertices will be assigned to alpha again,
         // making sink_weight 'infinity' guarantee this.
-        double sink_weight = (get(vertex_label_map, vd) == alpha ?
+        double sink_weight = (std::size_t(get(vertex_label_map, vd)) == alpha ?
                               (std::numeric_limits<double>::max)()
                               : get(vertex_label_cost_map, vd)[get(vertex_label_map, vd)]);
 
