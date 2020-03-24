@@ -17,12 +17,15 @@ find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
-else()
-  include(${EIGEN3_USE_FILE})
 endif()
 
-create_single_source_cgal_program("test_nelder_mead.cpp")
 create_single_source_cgal_program("test_OBB_traits.cpp")
+create_single_source_cgal_program("test_nelder_mead.cpp")
 create_single_source_cgal_program("test_optimization_algorithms.cpp")
 
-
+foreach(target
+        test_OBB_traits
+        test_nelder_mead
+        test_optimization_algorithms)
+  CGAL_target_use_Eigen(${target})
+endforeach()

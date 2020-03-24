@@ -17,11 +17,15 @@ find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 if (NOT EIGEN3_FOUND)
   message(STATUS "This project requires the Eigen library, and will not be compiled.")
   return()
-else()
-  include(${EIGEN3_USE_FILE})
 endif()
 
 create_single_source_cgal_program("obb_example.cpp")
 create_single_source_cgal_program("obb_with_point_maps_example.cpp")
 create_single_source_cgal_program("rotated_aabb_tree_example.cpp")
 
+foreach(target
+        obb_example
+        obb_with_point_maps_example
+        rotated_aabb_tree_example)
+  CGAL_target_use_Eigen(${target})
+endforeach()
