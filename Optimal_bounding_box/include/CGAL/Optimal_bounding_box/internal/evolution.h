@@ -122,8 +122,8 @@ public:
   }
 
   void evolve(const std::size_t generations,
-              const std::size_t population_size = 50,
-              const std::size_t nelder_mead_iterations = 150)
+              const std::size_t population_size,
+              const std::size_t nelder_mead_iterations)
   {
     // stopping criteria prameters
     FT prev_fit_value = 0;

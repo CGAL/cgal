@@ -101,6 +101,8 @@ void compute_best_transformation(const PointRange& points,
   CGAL_assertion(points.size() >= 3);
 
   const std::size_t max_generations = 50; // @todo hidden NP
+  const std::size_t population_size = 50;
+  const std::size_t nelder_mead_iterations = 150;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   CGAL::Real_timer timer;
@@ -108,7 +110,7 @@ void compute_best_transformation(const PointRange& points,
 #endif
 
   Evolution<PointRange, Traits> search_solution(points, rng, traits);
-  search_solution.evolve(max_generations);
+  search_solution.evolve(max_generations, population_size, nelder_mead_iterations);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_BENCHMARKS
   std::cout << "evolve: " << timer.time() << std::endl;
