@@ -40,7 +40,7 @@ namespace CGAL {
   class Default_diagonalize_traits;
   class Eigen_svd;
   class Lapack_svd;
-  struct Alpha_expansion_boost_adjacency_list_tag;
+  class Alpha_expansion_boost_adjacency_list_tag;
   //
 
 
