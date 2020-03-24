@@ -105,28 +105,6 @@ int main()
   assert( error_codes==expected_result );
   }
 
-  // test open cc
-  {
-  Surface_mesh tmp = input_mesh;
-  Surface_mesh::Property_map<Surface_mesh::Face_index, std::size_t> tmp_vol_id_map =
-    tmp.add_property_map<Surface_mesh::Face_index, std::size_t>().first;
-  // create a self-intersection
-  Surface_mesh::Halfedge_index h = *tmp.halfedges().begin();
-  CGAL::Euler::remove_face(h, tmp);
-
-  nb_vol = PMP::volume_connected_components(tmp, tmp_vol_id_map,
-                                            params::do_orientation_tests(false)
-                                            .error_codes(boost::ref(error_codes))
-                                            .do_self_intersection_tests(true));
-
-  assert(nb_vol==2);
-  expected_result.clear();
-  expected_result.push_back(PMP::VALID_VOLUME);
-  expected_result.push_back(PMP::SURFACE_WITH_BOUNDARIES);
-  std::sort(error_codes.begin(), error_codes.end());
-  assert( error_codes==expected_result );
-  }
-
   // test intersection between cc
   {
   Surface_mesh tmp = input_mesh;
