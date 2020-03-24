@@ -536,9 +536,8 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
   typedef typename GT::edge_descriptor input_edge_descriptor;
   typedef typename GT::vertex_descriptor input_vertex_descriptor;
 
-  typedef typename GetVertexIndexMap<InputGraph, NamedParameters>::type VertexIndexMap;
-  VertexIndexMap vertex_index_map = choose_parameter (get_parameter (np, internal_np::vertex_index),
-                                                      get_const_property_map(boost::vertex_index, input_graph));
+  typedef typename GetInitializedVertexIndexMap<InputGraph, NamedParameters>::type VertexIndexMap;
+  VertexIndexMap vertex_index_map = CGAL::get_initialized_vertex_index_map(input_graph, np);
 
   typedef typename GetImplementationTag<NamedParameters, Alpha_expansion_boost_adjacency_list_tag>::type Alpha_expansion;
   typedef typename Alpha_expansion::Vertex_descriptor Vertex_descriptor;
