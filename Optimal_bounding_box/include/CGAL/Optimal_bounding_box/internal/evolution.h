@@ -129,7 +129,6 @@ public:
   {
     // stopping criteria prameters
     FT prev_fit_value = 0;
-    FT new_fit_value = 0;
     const FT tolerance = 1e-9;
     int stale = 0;
 
