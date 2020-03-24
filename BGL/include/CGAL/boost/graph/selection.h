@@ -430,7 +430,7 @@ reduce_face_selection(
   regularizes a selection in order to minimize the length of the
   border of the selection.
 
-  The Alpha Epansion algorithm is used (see
+  The Alpha Expansion algorithm is used (see
   `CGAL::alpha_expansion_graphcut()`) using the length of the edge
   between two faces as the edge cost and the initial
   selected/unselected property of a face as the face cost.
