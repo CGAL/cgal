@@ -383,7 +383,6 @@ public Q_SLOTS:
       return; 
     }
 
-
     QMultipleInputDialog dialog ("Regularize Selection Border", mw);
     QDoubleSpinBox* weight = dialog.add<QDoubleSpinBox> ("Weight:");
     weight->setDecimals (6);
