@@ -471,7 +471,7 @@ reduce_face_selection(
     \cgalParamEnd
     \cgalParamBegin{prevent_unselection}
       if `true` only new faces can be selected, if `false` (default) some
-      faces can unselected
+      faces can be unselected
     \cgalParamEnd
   \cgalNamedParamsEnd
 */
