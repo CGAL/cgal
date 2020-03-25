@@ -163,7 +163,7 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
   auto it = std::min_element(volumes.begin(), volumes.end());
   typename std::iterator_traits<decltype(it)>::difference_type d = std::distance(volumes.begin(), it);
 
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
   std::cout << "volumes: " << volumes[0] << " " << volumes[1] << " " << volumes[2] << std::endl;
   std::cout << "angles: " << angles[0] << " " << angles[1] << " " << angles[2] << std::endl;
   std::cout << "min at " << d << std::endl;

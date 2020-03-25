@@ -139,7 +139,7 @@ public:
     std::size_t gen_iter = 0;
     for(;;)
     {
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
       std::cout << "- - - - generation #" << gen_iter << "\n";
 #endif
 
@@ -165,7 +165,7 @@ public:
       m_best_v = &(m_population.get_best_vertex());
       Matrix& best_m = m_best_v->matrix();
 
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
       std::cout << "new best matrix: " << std::endl << best_m << std::endl;
       std::cout << "fitness: " << m_best_v->fitness() << std::endl;
 #endif
@@ -177,7 +177,7 @@ public:
       const FT new_fit_value = m_best_v->fitness();
       const FT difference = new_fit_value - prev_fit_value;
 
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
       std::cout << "post 2D optimization matrix: " << std::endl << best_m << std::endl;
       std::cout << "new fit value: " << new_fit_value << std::endl;
       std::cout << "difference: " << difference << std::endl;

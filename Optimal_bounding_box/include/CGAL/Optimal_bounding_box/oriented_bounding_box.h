@@ -86,7 +86,12 @@ void construct_oriented_bounding_box(const PointRange& points,
 
   // Apply the inverse rotation to the rotated axis aligned bounding box
   for(std::size_t i=0; i<8; ++i)
+  {
     obb_points[i] = inverse_transformation.transform(obb_points[i]);
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+    std::cout << "  OBB[" << i << "] = " << obb_points[i] << std::endl;
+#endif
+  }
 }
 
 template <typename PointRange, typename Traits>
