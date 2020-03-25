@@ -31,17 +31,99 @@ namespace CGAL
         return gi + (normal * diff) * normal;
       }
 
-      template<typename C3t3, typename VertexNormalsMap>
+      template<typename C3t3, typename CellSelector>
+      bool find_adjacent_facet_on_surface(const typename C3t3::Facet& f,
+                                          const typename C3t3::Edge& edge,
+                                          typename C3t3::Facet& neighbor,
+                                          const C3t3& c3t3,
+                                          const CellSelector& cell_selector)
+      {
+        CGAL_assertion(is_boundary(c3t3, f, cell_selector));
+
+        typedef typename C3t3::Facet                           Facet;
+        typedef typename C3t3::Triangulation::Facet_circulator Facet_circulator;
+
+        if (c3t3.is_in_complex(edge))
+          return false; //do not "cross" complex edges
+              //they are likely to be sharp and not to follow the > 0 dot product criterion
+
+        const typename C3t3::Surface_patch_index& patch = c3t3.surface_patch_index(f);
+        const typename C3t3::Facet& mf = c3t3.triangulation().mirror_facet(f);
+
+        Facet_circulator fcirc = c3t3.triangulation().incident_facets(edge);
+        Facet_circulator fend  = fcirc;
+        do
+        {
+          const Facet fi = *fcirc;
+          if ( f != fi
+            && mf != fi
+            && is_boundary(c3t3, fi, cell_selector)
+            && patch == c3t3.surface_patch_index(fi))
+          {
+            neighbor = fi;
+            return true;
+          }
+        } while (++fcirc != fend);
+
+        return false;
+      }
+
+      template<typename FacetNormalsMap, typename C3t3, typename CellSelector>
+      void compute_neighbors_normals(const typename C3t3::Facet& f,
+            const typename FacetNormalsMap::mapped_type& reference_normal,
+            FacetNormalsMap& fnormals,
+            const C3t3& c3t3,
+            const CellSelector& cell_selector)
+      {
+        typedef typename C3t3::Triangulation           Tr;
+        typedef typename C3t3::Facet                   Facet;
+        typedef typename C3t3::Edge                    Edge;
+        typedef typename FacetNormalsMap::mapped_type  Vector_3;
+
+        typename Tr::Geom_traits::Construct_opposite_vector_3
+          opp = c3t3.triangulation().geom_traits().construct_opposite_vector_3_object();
+        typename Tr::Geom_traits::Compute_scalar_product_3
+          scalar_product = c3t3.triangulation().geom_traits().compute_scalar_product_3_object();
+
+        if ( fnormals.find(f) != fnormals.end()
+          || fnormals.find(c3t3.triangulation().mirror_facet(f)) != fnormals.end())
+          return;
+
+        Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, c3t3.triangulation().geom_traits());
+        if (scalar_product(n, reference_normal) < 0.)
+          n = opp(n);
+        fnormals[f] = n;
+
+        // update complex edges
+        const typename C3t3::Cell_handle ch = f.first;
+        const std::array<std::array<int, 2>, 3> edges
+          = { (f.second + 1) % 4, (f.second + 2) % 4, //edge 1-2
+              (f.second + 2) % 4, (f.second + 3) % 4, //edge 2-3
+              (f.second + 3) % 4, (f.second + 1) % 4  //edge 3-1
+        }; //vertex indices in cells
+
+        for (const std::array<int, 2>& ei : edges)
+        {
+          Facet neighbor;
+          Edge edge(ch, ei[0], ei[1]);
+          if (find_adjacent_facet_on_surface(f, edge, neighbor, c3t3, cell_selector))
+            compute_neighbors_normals(neighbor, n, fnormals, c3t3, cell_selector);
+        }
+      }
+
+      template<typename C3t3, typename VertexNormalsMap, typename CellSelector>
       void compute_vertices_normals(const C3t3& c3t3,
-                                    VertexNormalsMap& normals_map)
+                                    VertexNormalsMap& normals_map,
+                                    const CellSelector& cell_selector)
       {
         typedef typename C3t3::Triangulation        Tr;
         typedef typename C3t3::Cell_handle          Cell_handle;
         typedef typename C3t3::Vertex_handle        Vertex_handle;
         typedef typename C3t3::Subdomain_index      Subdomain_index;
         typedef typename C3t3::Surface_patch_index  Surface_patch_index;
-        typedef typename Tr::Finite_facets_iterator Finite_facets_iterator;
+        typedef typename Tr::Facet_circulator       Facet_circulator;
         typedef typename Tr::Facet                  Facet;
+        typedef typename Tr::Edge                   Edge;
         typedef typename Tr::Geom_traits::Vector_3  Vector_3;
 
         typename Tr::Geom_traits::Construct_opposite_vector_3
@@ -51,46 +133,77 @@ namespace CGAL
 
         const Tr& tr = c3t3.triangulation();
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        std::ofstream os1("dump_start_facets.polylines.txt");
+#endif
+        //collect all normals
+        boost::unordered_map<Facet, Vector_3> fnormals;
         for (const Facet& f : tr.finite_facets())
         {
-          if (c3t3.is_in_complex(f))
+          if (fnormals.size() == tr.number_of_finite_facets())
+            break;
+          CGAL_assertion(fnormals.size() < tr.number_of_finite_facets());
+
+          if (!is_boundary(c3t3, f, cell_selector))
+            continue;
+
+          const Facet& mf = tr.mirror_facet(f);
+          if ( fnormals.find(f) != fnormals.end()
+            || fnormals.find(mf) != fnormals.end())
+            continue;// already computed
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+          os1 << "4 " << point(f.first->vertex((f.second + 1) % 4)->point())
+            << " " << point(f.first->vertex((f.second + 2) % 4)->point())
+            << " " << point(f.first->vertex((f.second + 3) % 4)->point())
+            << " " << point(f.first->vertex((f.second + 1) % 4)->point()) << std::endl;
+#endif
+
+          Vector_3 ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
+          if ( c3t3.triangulation().is_infinite(f.first)
+            || c3t3.subdomain_index(f.first) < c3t3.subdomain_index(mf.first))
+            ref = opp(ref);
+
+          compute_neighbors_normals(f, ref, fnormals, c3t3, cell_selector);
+        }
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        os1.close();
+        std::ofstream osf("dump_facet_normals.polylines.txt");
+#endif
+        for (const auto& fn : fnormals)
+        {
+          const Facet& f = fn.first;
+          const Vector_3& n = fn.second;
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+          typename Tr::Geom_traits::Point_3 fc
+            = CGAL::centroid(point(f.first->vertex(indices(f.second, 0))->point()),
+                             point(f.first->vertex(indices(f.second, 1))->point()),
+                             point(f.first->vertex(indices(f.second, 2))->point()));
+          osf << "2 " << fc << " " << (fc + n) << std::endl;
+#endif
+          const Surface_patch_index& surf_i = c3t3.surface_patch_index(f);
+
+          for (int i = 0; i < 3; ++i)
           {
-            const Cell_handle ch = f.first;
-            const Cell_handle n_ch = f.first->neighbor(f.second);
+            const Vertex_handle vi = f.first->vertex(indices(f.second, i));
+            typename VertexNormalsMap::iterator patch_vector_it = normals_map.find(vi);
 
-            const Subdomain_index si = ch->subdomain_index();
-            const Subdomain_index si_mirror = n_ch->subdomain_index();
-
-            const Surface_patch_index surf_i = c3t3.surface_patch_index(f);
-
-            Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
-
-            if (si < si_mirror || tr.is_infinite(ch)) // todo : fix this condition
-              n = opp(n);
-            else if (si == si_mirror)
+            if (patch_vector_it == normals_map.end()
+              || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
             {
-              std::cout << "TODO : Check normal when subdomain is the same on both sides" << std::endl;
+              normals_map[vi][surf_i] = n;
             }
-
-            for (int i = 0; i < 3; ++i)
+            else
             {
-              const Vertex_handle vi = f.first->vertex(indices(f.second, i));
-              typename VertexNormalsMap::iterator patch_vector_it = normals_map.find(vi);
-
-              if (patch_vector_it == normals_map.end()
-                || patch_vector_it->second.find(surf_i) == patch_vector_it->second.end())
-              {
-                normals_map[vi][surf_i] = n;
-              }
-              else
-              {
-                normals_map[vi][surf_i] += n;
-              }
+              normals_map[vi][surf_i] += n;
             }
           }
         }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+        osf.close();
         std::ofstream os("dump_normals.polylines.txt");
         boost::unordered_map<Surface_patch_index,
           std::vector<typename Tr::Geom_traits::Segment_3 > > ons_map;
@@ -313,7 +426,7 @@ namespace CGAL
         //collect a map of normals at surface vertices
         boost::unordered_map<Vertex_handle,
           boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
-        compute_vertices_normals(c3t3, vertices_normals);
+        compute_vertices_normals(c3t3, vertices_normals, cell_selector);
 
         // Build MLS Surfaces
         std::vector < CGAL::Tetrahedral_remeshing::internal::FMLS > subdomain_FMLS;
