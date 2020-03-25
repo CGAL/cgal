@@ -140,9 +140,9 @@ void compute_best_transformation(const PointRange& points,
 }
 
 // Following two functions are overloads to dispatch depending on return type
-template <typename PointRange, typename Traits>
+template <typename PointRange, typename K, typename Traits>
 void construct_oriented_bounding_box(const PointRange& points,
-                                     typename Traits::Aff_transformation_3& transformation,
+                                     CGAL::Aff_transformation_3<K>& transformation,
                                      CGAL::Random& rng,
                                      const Traits& traits)
 {
@@ -150,16 +150,38 @@ void construct_oriented_bounding_box(const PointRange& points,
   compute_best_transformation(points, transformation, inverse_transformation, rng, traits);
 }
 
-template <typename PointRange, typename Traits>
+template <typename PointRange, typename Array, typename Traits>
 void construct_oriented_bounding_box(const PointRange& points,
-                                     std::array<typename Traits::Point_3, 8>& obb_points,
+                                     Array& obb_points,
                                      CGAL::Random& rng,
-                                     const Traits& traits)
+                                     const Traits& traits,
+                                     typename boost::enable_if<
+                                       typename boost::has_range_iterator<Array>
+                                     >::type* = 0)
 {
   typename Traits::Aff_transformation_3 transformation, inverse_transformation;
   compute_best_transformation(points, transformation, inverse_transformation, rng, traits);
 
   construct_oriented_bounding_box(points, transformation, inverse_transformation, obb_points, traits);
+}
+
+template <typename PointRange, typename PolygonMesh, typename Traits>
+void construct_oriented_bounding_box(const PointRange& points,
+                                     PolygonMesh& pm,
+                                     CGAL::Random& rng,
+                                     const Traits& traits,
+                                     typename boost::disable_if<
+                                       typename boost::has_range_iterator<PolygonMesh>
+                                     >::type* = 0)
+{
+  typename Traits::Aff_transformation_3 transformation, inverse_transformation;
+  compute_best_transformation(points, transformation, inverse_transformation, rng, traits);
+
+  std::array<typename Traits::Point_3, 8> obb_points;
+  construct_oriented_bounding_box(points, transformation, inverse_transformation, obb_points, traits);
+
+  CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3],
+                        obb_points[4], obb_points[5], obb_points[6], obb_points[7], pm);
 }
 
 // Entry point, decide whether to compute the CH_3 or not
@@ -237,7 +259,8 @@ void construct_oriented_bounding_box(const PointRange& points,
 /// \tparam PointRange a model of `Range`. The value type may not be equal to the type `%Point_3` of the traits class
 ///                    if a point map is provided via named parameters (see below) to access points.
 /// \tparam Output either the type `Aff_transformation_3` of the traits class,
-///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class
+///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class,
+///                or a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param points the input range
@@ -327,7 +350,8 @@ void oriented_bounding_box(const PointRange& points,
 ///
 /// \tparam PolygonMesh a model of `VertexListGraph`
 /// \tparam Output either the type `Aff_transformation_3` of the traits class,
-///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class
+///                or `std::array<Point, 8>` with `Point` being equivalent to the type `%Point_3` of the traits class,
+///                or a model of `MutableFaceGraph`
 /// \tparam NamedParameters a sequence of \ref obb_namedparameters "Named Parameters"
 ///
 /// \param pmesh the input mesh
@@ -384,7 +408,7 @@ void oriented_bounding_box(const PolygonMesh& pmesh,
 /// Convenience overloads
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-template <typename Input /*range or mesh*/, typename Output /*array or transformation*/>
+template <typename Input /*range or mesh*/, typename Output /*transformation, array, or mesh*/>
 void oriented_bounding_box(const Input& in, Output& out)
 {
   return oriented_bounding_box(in, out, CGAL::parameters::all_default());
