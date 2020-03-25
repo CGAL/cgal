@@ -723,7 +723,7 @@ X  OOO
   OOOO
 ```
 
-\subsection BGLGraphcutRegularizeSelection Application to Face Selection Border Regularization
+\subsection BGLGraphcutRegularizeSelection Application to Regularization of the Borders of a Face Selection
 
 Manually selecting faces on a triangle mesh may create irregular
 borders (sawtooth) because of the shape of the triangles. Such borders
@@ -735,11 +735,10 @@ to apply this algorithm to the borders of a face selection on a
 function affects a selection depending on the parameters.
 
 \cgalFigureBegin{regularization_fig, regularize_selection.png}
-Regularization of Face Selection Borders using alpha
+Regularization of the borders of a face selection using alpha
 expansion. Different outputs are shown for different weight
 parameters, with and without preventing unselection.
 \cgalFigureEnd
-
 
 The following example shows how to apply this alpha expansion
 regularization to the borders of a face selection of a
