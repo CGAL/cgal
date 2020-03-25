@@ -551,14 +551,14 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
     > ::type type;
   };
 
-  template<typename NamedParameters, typename DefaultImplementation>
+  template<typename NamedParameters>
   class GetImplementationTag
   {
   public:
     typedef typename internal_np::Lookup_named_param_def <
     internal_np::implementation_tag_t,
     NamedParameters,
-    DefaultImplementation
+    Alpha_expansion_boost_adjacency_list_tag
     >::type type;
   };
 } //namespace CGAL
