@@ -408,7 +408,7 @@ public:
 
   template <typename VertexLabelMap, typename InputVertexDescriptor>
   void update(VertexLabelMap vertex_label_map,
-              const std::vector<Vertex_descriptor>& inserted_vertices,
+              const std::vector<Vertex_descriptor>&,
               InputVertexDescriptor vd,
               std::size_t vertex_i,
               std::size_t alpha)
