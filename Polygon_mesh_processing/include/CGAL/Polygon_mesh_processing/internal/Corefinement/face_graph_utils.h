@@ -521,28 +521,38 @@ struct Patch_container{
     typedef typename GT::face_descriptor face_descriptor;
 
     Patch_description<PolygonMesh>& patch=this->operator[](i);
-    out << "OFF\n" << patch.interior_vertices.size() +
-                      patch.shared_edges.size();
-    out << " " << patch.faces.size() << " 0\n";
+
+    std::stringstream ss;
     std::map<vertex_descriptor, int> vertexid;
     int id=0;
     for(vertex_descriptor vh : patch.interior_vertices)
     {
       vertexid[vh]=id++;
-      out << get(vertex_point, pm, vh) << "\n";
+      ss << get(vertex_point, pm, vh) << "\n";
     }
 
     for(halfedge_descriptor hh : patch.shared_edges)
     {
-      vertexid[target(hh, pm)]=id++;
-      out << get(vertex_point, pm, target(hh, pm)) << "\n";
+      if( vertexid.insert( std::make_pair(target(hh,pm), id) ).second )
+      {
+        ss << get(vertex_point, pm, target(hh, pm)) << "\n";
+        ++id;
+      }
+      if( vertexid.insert( std::make_pair(source(hh,pm), id) ).second )
+      {
+        ss << get(vertex_point, pm, source(hh, pm)) << "\n";
+        ++id;
+      }
     }
+
+    out << "OFF\n" << id << " " << patch.faces.size() << " 0\n";
+    out << ss.str();
 
     for(face_descriptor f : patch.faces)
     {
-      out << "3 " << vertexid[source(halfedge(f,pm),pm)] <<
-             " "  << vertexid[target(halfedge(f,pm),pm)] <<
-             " "  << vertexid[target(next(halfedge(f,pm),pm),pm)] << "\n";
+      out << "3 " << vertexid.at(source(halfedge(f,pm),pm)) <<
+             " "  << vertexid.at(target(halfedge(f,pm),pm)) <<
+             " "  << vertexid.at(target(next(halfedge(f,pm),pm),pm)) << "\n";
     }
 
     return out;
@@ -552,6 +562,16 @@ struct Patch_container{
   {
     for (std::size_t i=selection.find_first();
                      i < selection.npos; i = selection.find_next(i))
+    {
+      std::stringstream ss;
+      ss << prefix << "-" << i << ".off";
+      std::ofstream output(ss.str().c_str());
+      dump_patch(i, output);
+    }
+  }
+  void dump_patches(std::string prefix)
+  {
+    for (std::size_t i=0;i <patches.size() ; ++i)
     {
       std::stringstream ss;
       ss << prefix << "-" << i << ".off";
