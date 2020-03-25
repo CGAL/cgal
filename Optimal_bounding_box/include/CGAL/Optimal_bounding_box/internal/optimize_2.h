@@ -73,8 +73,8 @@ compute_2D_deviation(const PointRange& points,
   CGAL::Min_quadrilateral_default_traits_2<Traits> mrt;
   CGAL::min_rectangle_2(extreme_points.begin(), extreme_points.end(), std::back_inserter(pol), mrt);
 
-  CGAL_assertion(pol.size() == 4);
-  CGAL_assertion(pol.is_counterclockwise_oriented());
+  if(pol.size() == 4 || !pol.is_simple() || pol.is_clockwise_oriented())
+    return std::make_pair(0., 0.);
 
   // Compute the angle between the angle necessary to rotate the rectangle onto the reference frame
   auto bot_pos = pol.bottom_vertex();
@@ -88,7 +88,9 @@ compute_2D_deviation(const PointRange& points,
 
   const Vector_2 pq = traits.construct_vector_2_object()(p, q);
   double n = sqrt(to_double(traits.compute_squared_length_2_object()(pq)));
-  CGAL_assertion(n != 0.);
+
+  if(n == 0.) // degenerate input, maybe? Let's just not do anything
+    return std::make_pair(pol.area(), 0.);
 
   const double dot = pq.x(); // that's the scalar product of PQ with V(1, 0) (Ox)
   double cosine = dot / n;
