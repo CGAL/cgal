@@ -26,6 +26,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Iso_cuboid_3.h>
 #include <CGAL/Iterator_range.h>
@@ -171,7 +172,8 @@ void construct_oriented_bounding_box(const PointRange& points,
   if(use_ch) // construct the convex hull to reduce the number of points
   {
     std::vector<Point> ch_points;
-    extreme_points_3(points, std::back_inserter(ch_points), traits);
+    CGAL::Convex_hull_traits_3<Traits> CH_traits;
+    extreme_points_3(points, std::back_inserter(ch_points), CH_traits);
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
     std::cout << ch_points.size() << " points on the convex hull" << std::endl;

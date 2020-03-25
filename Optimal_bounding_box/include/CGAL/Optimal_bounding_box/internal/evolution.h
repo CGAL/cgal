@@ -19,6 +19,7 @@
 #include <CGAL/Optimal_bounding_box/internal/fitness_function.h>
 #include <CGAL/Optimal_bounding_box/internal/helper.h>
 #include <CGAL/Optimal_bounding_box/internal/nelder_mead_functions.h>
+#include <CGAL/Optimal_bounding_box/internal/optimize_2.h>
 #include <CGAL/Optimal_bounding_box/internal/population.h>
 
 #include <CGAL/Random.h>
@@ -157,15 +158,27 @@ public:
       std::cout << std::endl;
 #endif
 
+      // optimize the current best rotation by using the exact OBB 2D algorithm
+      // along the axes of the current best OBB
+      m_best_v = &(m_population.get_best_vertex());
+      Matrix& best_m = m_best_v->matrix();
+
+#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+      std::cout << "new best matrix: " << std::endl << best_m << std::endl;
+      std::cout << "fitness: " << m_best_v->fitness() << std::endl;
+#endif
+
+      optimize_along_OBB_axes(best_m, m_points, m_traits);
+      m_best_v->fitness() = compute_fitness(best_m, m_points, m_traits);
+
       // stopping criteria
-      m_best_v = &(get_best_vertex(m_population));
-      const FT new_fit_value = m_best_v->fitness_value();
+      const FT new_fit_value = m_best_v->fitness();
       const FT difference = new_fit_value - prev_fit_value;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
-      const Matrix& best_m = m_best_v->matrix();
-      std::cout << "new best matrix: " << std::endl << best_m << std::endl;
-      std::cout << "value difference with previous: " << difference << std::endl;
+      std::cout << "post 2D optimization matrix: " << std::endl << best_m << std::endl;
+      std::cout << "new fit value: " << new_fit_value << std::endl;
+      std::cout << "difference: " << difference << std::endl;
 #endif
 
       if(CGAL::abs(difference) < tolerance * new_fit_value)
