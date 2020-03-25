@@ -49,7 +49,7 @@ public:
   { CGAL_assertion(is_valid()); }
 
   Filtered_rational(double d)
-    : _n1(d),
+    : _n1(d)
   {
     CGAL_assertion(is_valid()); }
   
