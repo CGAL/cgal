@@ -1,8 +1,14 @@
+#define CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/optimal_bounding_box.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <array>
 #include <iostream>
@@ -10,211 +16,121 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef K::FT                                                       FT;
-typedef K::Point_3                                                  Point_3;
+typedef K::Point_3                                                  Point;
 
-typedef CGAL::Surface_mesh<Point>                                   Mesh;
+typedef CGAL::Polyhedron_3<K>                                       Mesh;
 
 typedef CGAL::Oriented_bounding_box_traits_3<K>                     Traits;
 typedef Traits::Matrix                                              Matrix;
 
-void check_equality(const FT d1, const FT d2)
+bool is_equal(const FT d1, const FT d2)
 {
   const FT epsilon = 1e-3;
 
   bool ok;
   if(std::is_floating_point<FT>::value)
-    ok = CGAL::abs(d1 - d2) < epsilon * CGAL::abs(d2);
+    ok = CGAL::abs(d1 - d2) < std::max(epsilon * d1, epsilon);
   else
     ok = (d1 == d2);
 
   if(!ok)
   {
     std::cout << "Error: got " << d1 << " but expected: " << d2 << std::endl;
-    assert(false);
+    return false;
   }
+
+  return true;
 }
 
-void test_genetic_algorithm()
+template <typename PointRange>
+void test_OBB_data(const PointRange& points,
+                   const double expected_vol,
+                   const bool with_convex_hull = true)
 {
-  std::array<Point_3, 4> points;
-  points[0] = Point_3(0.866802, 0.740808, 0.895304);
-  points[1] = Point_3(0.912651, 0.761565, 0.160330);
-  points[2] = Point_3(0.093661, 0.892578, 0.737412);
-  points[3] = Point_3(0.166461, 0.149912, 0.364944);
+  namespace PMP = CGAL::Polygon_mesh_processing;
 
-  CGAL::Optimal_bounding_box::internal::Population<Traits> pop(5);
-  CGAL::Optimal_bounding_box::internal::Evolution<Traits> evolution(pop, data_points);
-  evolution.genetic_algorithm();
-  assert(pop.size() == 5);
+  // the algorithm is allowed to fail, but not too often
+  int failure_count = 0;
+  for(int i=0; i<100; ++i)
+  {
+    CGAL::Surface_mesh<Point> obb_mesh;
+    CGAL::oriented_bounding_box(points, obb_mesh, CGAL::parameters::use_convex_hull(with_convex_hull));
+    PMP::triangulate_faces(obb_mesh);
+
+    // the triangulate algorithm might fail if the algorithm manages
+    // to fit perfectly the box to have a true 0 volume
+    if(CGAL::is_triangle_mesh(obb_mesh))
+    {
+      double vol = PMP::volume(obb_mesh);
+      std::cout << "  volume is: " << vol << ", expected: " << expected_vol << std::endl;
+      if(!is_equal(vol, expected_vol))
+      {
+        std::cout << "Failure!" << std::endl;
+        ++failure_count;
+      }
+    }
+  }
+
+  std::cout << "failures: " << failure_count << std::endl;
+  assert(failure_count < 5); // 5% failure
 }
 
-void test_random_unit_tetra()
+void test_OBB_of_mesh(const std::string fname,
+                      const double expected_vol)
 {
-  std::array<Point_3, 4> points;
-  points[0] = Point_3(0.866802, 0.740808, 0.895304);
-  points[1] = Point_3(0.912651, 0.761565, 0.160330);
-  points[2] = Point_3(0.093661, 0.892578, 0.737412);
-  points[3] = Point_3(0.166461, 0.149912, 0.364944);
+  std::cout << "Test: " << fname << std::endl;
 
+  std::ifstream input(fname);
   Mesh mesh;
-  CGAL::make_tetrahedron(points[0], points[1], points[2], points[3], mesh);
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
-  std::ofstream out("data/random_unit_tetra.off");
-  out << mesh;
-  out.close();
-#endif
-
-  std::size_t generations = 10;
-  CGAL::Optimal_bounding_box::internal::Population<Traits> pop(50);
-  CGAL::Optimal_bounding_box::internal::Evolution<Traits> evolution(pop, data_points);
-  evolution.evolve(generations);
-
-  Matrix R = evolution.get_best();
-  check_equality(Traits::compute_determinant(R), 1);
-  check_equality(R(0,0), -0.25791);
-  check_equality(R(0,1), 0.796512);
-  check_equality(R(0,2), -0.546855);
-  check_equality(R(1,0), -0.947128);
-  check_equality(R(1,1), -0.320242);
-  check_equality(R(1,2), -0.0197553);
-  check_equality(R(2,0), -0.190861);
-  check_equality(R(2,1), 0.512847);
-  check_equality(R(2,2), 0.836992);
-}
-
-void test_reference_tetrahedron(const char* fname)
-{
-  std::ifstream input(fname);
-  CGAL::Surface_mesh<Point_3> mesh;
   if(!input || !(input >> mesh) || mesh.is_empty())
   {
-    std::cerr << fname << " is not a valid off file." << std::endl;
+    std::cerr << fname << " is not a valid input file." << std::endl;
     std::exit(1);
   }
 
-  // points in a matrix
-  Matrix points;
-  CGAL::Optimal_bounding_box::sm_to_matrix(mesh, points);
+  std::vector<Point> points;
+  for(const auto v : vertices(mesh))
+    points.push_back(v->point());
 
-  std::size_t generations = 10;
-  CGAL::Optimal_bounding_box::internal::Population<Traits> pop(50);
-  CGAL::Optimal_bounding_box::internal::Evolution<Traits> experiment(pop, points);
-  experiment.evolve(generations);
-
-  Matrix R = experiment.get_best();
-  check_equality(Traits::compute_determinant(R), 1);
+  test_OBB_data(points, expected_vol);
 }
 
-void test_long_tetrahedron(const std::string fname)
+void test_OBB_of_point_set(const std::string fname,
+                           const double expected_vol)
 {
+  std::cout << "Test: " << fname << std::endl;
+
   std::ifstream input(fname);
-  CGAL::Surface_mesh<Point_3> mesh;
-  if(!input || !(input >> mesh) || mesh.is_empty())
+  if(!input)
   {
-    std::cerr << fname << " is not a valid off file." << std::endl;
+    std::cerr << fname << " is not a valid input file." << std::endl;
     std::exit(1);
   }
 
-  // points in a matrix
-  Matrix points;
-  CGAL::Optimal_bounding_box::sm_to_matrix(mesh, points);
+  std::deque<Point> points;
+  double x, y, z;
+  while(input >> x >> y >> z)
+    points.emplace_back(x, y, z);
 
-  std::size_t max_generations = 10;
-  CGAL::Optimal_bounding_box::internal::Population<Traits> pop(50);
-  CGAL::Optimal_bounding_box::internal::Evolution<Traits> experiment(pop, points);
-  experiment.evolve(max_generations);
-
-  Matrix R = experiment.get_best();
-  check_equality(Traits::compute_determinant(R), 1);
-  check_equality(R(0,0), -1);
-  check_equality(R(0,1), 0);
-  check_equality(R(0,2), 0);
-  check_equality(R(1,0), 0);
-  check_equality(R(1,1), -0.707107);
-  check_equality(R(1,2), 0.707106) || assert_doubles(R(1,2), -0.707106);
-  check_equality(R(2,0), 0);
-  check_equality(R(2,1), 0.707106) || assert_doubles(R(1,2), -0.707106);
-  check_equality(R(2,2), 0.707107);
-}
-
-void test_compute_obb_evolution(const std::string fname)
-{
-  std::ifstream input(fname);
-  typedef CGAL::Surface_mesh<Point_3> SMesh;
-  SMesh mesh;
-  if(!input || !(input >> mesh) || mesh.is_empty())
-  {
-    std::cerr << fname << " is not a valid off file." << std::endl;
-    std::exit(1);
-  }
-
-  Traits traits;
-  std::array<Point_3, 8> obb_points;
-  CGAL::oriented_bounding_box(sm, obb_points, CGAL::parameters::use_convex_hull(true)
-                                                               .geom_traits(traits));
-
-  FT vol = CGAL::Optimal_bounding_box::calculate_volume(obb_points);
-  check_equality(vol, 0.883371);
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
-  CGAL::Surface_mesh<Point_3> result_mesh;
-  CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3],
-                        obb_points[4], obb_points[5], obb_points[6], obb_points[7], result_mesh);
-
-  std::ofstream out("data/obb_result.off");
-  out << result_mesh;
-  out.close();
-#endif
-}
-
-void test_compute_obb_mesh(const std::string fname)
-{
-  std::ifstream input(fname);
-  CGAL::Surface_mesh<Point_3> mesh;
-  if(!input || !(input >> mesh) || mesh.is_empty())
-  {
-    std::cerr << fname << " is not a valid off file." << std::endl;
-    std::exit(1);
-  }
-
-  CGAL::Surface_mesh<Point_3> obbmesh;
-  CGAL::oriented_bounding_box(mesh, obbmesh);
-
-#ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_TEST
-  std::ofstream out("/tmp/result_elephant.off");
-  out << obbmesh;
-  out.close();
-#endif
-}
-
-void test_function_defaults_traits(const std::string fname1)
-{
-  std::ifstream input1(fname1);
-  CGAL::Surface_mesh<Point_3> mesh1;
-  if(!input1 || !(input1 >> mesh1) || mesh1.is_empty())
-  {
-    std::cerr << fname1 << " is not a valid off file." << std::endl;
-    std::exit(1);
-  }
-
-  std::array<Point_3, 8> obb_points;
-  CGAL::oriented_bounding_box(sm_points, obb_points, CGAL::parameters::use_convex_hull(true));
-
-  const FT vol = CGAL::Optimal_bounding_box::calculate_volume(obb_points);
-  check_equality(vol, 0.883371);
+  test_OBB_data(points, expected_vol, false /*no convex hull due to degenerate data*/);
 }
 
 int main()
 {
-  test_genetic_algorithm();
+  std::cout.precision(17);
 
-  test_random_unit_tetra();
-  test_reference_tetrahedron("data/reference_tetrahedron.off");
-  test_long_tetrahedron("data/long_tetrahedron.off");
-  test_compute_obb_evolution("data/random_unit_tetra.off");
-  test_compute_obb_mesh("data/elephant.off");
-  test_function_defaults_traits("data/random_unit_tetra.off");
+  test_OBB_of_mesh("data/elephant.off", 0.294296);
+  test_OBB_of_mesh("data/long_tetrahedron.off", 0.04);
+  test_OBB_of_mesh("data/reference_tetrahedron.off", 1);
+
+  // degenerate cases
+  test_OBB_of_mesh("data/triangles.off", 0); // 2D data set
+  test_OBB_of_mesh("data/flat_mesh.off", 0); // 2D data set
+  test_OBB_of_point_set("data/points_2D.xyz", 0); // 2D data set
+  test_OBB_of_point_set("data/points_1D.xyz", 0); // 1D data set
+  test_OBB_of_point_set("data/points_0D.xyz", 0); // 0D data set
+
+  std::cout << "Done!" << std::endl;
 
   return 0;
 }

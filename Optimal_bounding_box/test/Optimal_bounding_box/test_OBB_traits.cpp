@@ -31,7 +31,7 @@ void check_equality(const FT d1, const FT d2)
   }
 }
 
-void test_fitness_function()
+void test_fitness_function(const Traits& traits)
 {
   std::array<Point_3, 4> points;
   points[0] = Point_3(0.866802, 0.740808, 0.895304);
@@ -50,7 +50,7 @@ void test_fitness_function()
   rotation.set(2, 1, -0.991602);
   rotation.set(2, 2, 0.042528);
 
-  const double fitness = CGAL::Optimal_bounding_box::internal::compute_fitness<Traits>(rotation, points);
+  const double fitness = CGAL::Optimal_bounding_box::internal::compute_fitness(rotation, points, traits);
   check_equality(fitness, 0.58606);
 }
 
@@ -95,44 +95,13 @@ void test_eigen_matrix_interface()
   check_equality(Q(2,0), -0.006573);
   check_equality(Q(2,1), 0.024478);
   check_equality(Q(2,2), 0.999679);
-
-  Matrix D;
-  D.set(0, 0, -0.809204);
-  D.set(0, 1, 0.124296);
-  D.set(0, 2, 0.574230);
-  D.set(1, 0, -0.574694);
-  D.set(1, 1, 0.035719);
-  D.set(1, 2, -0.817589);
-  D.set(2, 0, -0.122134);
-  D.set(2, 1, -0.991602);
-  D.set(2, 2, 0.042528);
-
-  Matrix E;
-  E.set(0, 0, -0.45070);
-  E.set(0, 1, -0.32769);
-  E.set(0, 2, -0.83035);
-  E.set(1, 0, -0.13619);
-  E.set(1, 1, -0.89406);
-  E.set(1, 2, 0.42675);
-  E.set(2, 0, -0.88222);
-  E.set(2, 1, 0.30543);
-  E.set(2, 2, 0.35833);
-
-  Matrix Sr = CGAL::Optimal_bounding_box::internal::reflection(D, E);
-  check_equality(Sr(0,0), -0.13359);
-  check_equality(Sr(0,1), -0.95986);
-  check_equality(Sr(0,2), -0.24664);
-  check_equality(Sr(1,0), -0.60307);
-  check_equality(Sr(1,1), -0.11875);
-  check_equality(Sr(1,2), 0.78880);
-  check_equality(Sr(2,0), -0.78642);
-  check_equality(Sr(2,1), 0.25411);
-  check_equality(Sr(2,2), -0.56300);
 }
 
 int main(int, char**)
 {
-  test_fitness_function();
+  Traits traits;
+
+  test_fitness_function(traits);
   test_eigen_matrix_interface();
 
   std::cout << "Done!" << std::endl;

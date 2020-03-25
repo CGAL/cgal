@@ -10,6 +10,7 @@ typedef K::Point_3                                                  Point_3;
 
 typedef CGAL::Oriented_bounding_box_traits_3<K>                     Traits;
 typedef Traits::Matrix                                              Matrix;
+typedef CGAL::Optimal_bounding_box::internal::Population<Traits>::Vertex Vertex;
 
 void check_equality(const FT d1, const FT d2)
 {
@@ -122,7 +123,7 @@ void test_nelder_mead(const Traits& traits)
   points[3] = Point_3(0.166461, 0.149912, 0.364944);
 
   // one simplex
-  std::array<Matrix, 4> simplex;
+  std::array<Vertex, 4> simplex;
 
   Matrix v0, v1, v2, v3;
   v0.set(0, 0, -0.2192721); v0.set(0, 1, 0.2792986); v0.set(0, 2, -0.9348326);
@@ -141,15 +142,15 @@ void test_nelder_mead(const Traits& traits)
   v3.set(1, 0, -0.20022); v3.set(1, 1, -0.71110); v3.set(1, 2, 0.67398);
   v3.set(2, 0, -0.92372); v3.set(2, 1, 0.36630); v3.set(2, 2, 0.11207);
 
-  simplex[0] = v0;
-  simplex[1] = v1;
-  simplex[2] = v2;
-  simplex[3] = v3;
+  simplex[0] = Vertex{v0, points, traits};
+  simplex[1] = Vertex{v1, points, traits};
+  simplex[2] = Vertex{v2, points, traits};
+  simplex[3] = Vertex{v3, points, traits};
 
   std::size_t nm_iterations = 19;
   CGAL::Optimal_bounding_box::internal::nelder_mead(simplex, nm_iterations, points, traits);
 
-  const Matrix& v0_new = simplex[0];
+  const Matrix& v0_new = simplex[0].matrix();
   check_equality(v0_new(0,0), -0.288975);
   check_equality(v0_new(0,1), 0.7897657);
   check_equality(v0_new(0,2), -0.541076);
@@ -160,7 +161,7 @@ void test_nelder_mead(const Traits& traits)
   check_equality(v0_new(2,1), 0.5111260);
   check_equality(v0_new(2,2), 0.84094);
 
-  const Matrix& v1_new = simplex[1];
+  const Matrix& v1_new = simplex[1].matrix();
   check_equality(v1_new(0,0), -0.458749);
   check_equality(v1_new(0,1), 0.823283);
   check_equality(v1_new(0,2), -0.334296);
@@ -171,7 +172,7 @@ void test_nelder_mead(const Traits& traits)
   check_equality(v1_new(2,1), 0.338040);
   check_equality(v1_new(2,2), 0.937987);
 
-  const Matrix& v2_new = simplex[2];
+  const Matrix& v2_new = simplex[2].matrix();
   check_equality(v2_new(0,0), -0.346582);
   check_equality(v2_new(0,1), 0.878534);
   check_equality(v2_new(0,2), -0.328724);
@@ -182,7 +183,7 @@ void test_nelder_mead(const Traits& traits)
   check_equality(v2_new(2,1), 0.334057);
   check_equality(v2_new(2,2), 0.941423);
 
-  const Matrix& v3_new = simplex[3];
+  const Matrix& v3_new = simplex[3].matrix();
   check_equality(v3_new(0,0), -0.394713);
   check_equality(v3_new(0,1), 0.791782);
   check_equality(v3_new(0,2), -0.466136);
