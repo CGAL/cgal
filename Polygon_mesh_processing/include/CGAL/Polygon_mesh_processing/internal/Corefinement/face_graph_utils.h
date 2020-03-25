@@ -1649,10 +1649,15 @@ void remove_unused_polylines(
   for(vertex_descriptor v: vertices_kept)
   {
     halfedge_descriptor h = halfedge(v, tm), start=GT::null_halfedge();
-
+    halfedge_descriptor starter=h;
     do{
       while ( !is_border(h, tm) || is_border(opposite(h, tm), tm) )
+      {
         h = opposite(next(h, tm), tm);
+        if(h==starter) // it might happen that no update is required because it is already closed thanks to another patch from tm' (usually incident to coplanar patches)
+          break;
+      }
+      if( !is_border(h, tm) || is_border(opposite(h, tm), tm) ) break;
       halfedge_descriptor in = h;
       if (start==GT::null_halfedge())
         start=in;
