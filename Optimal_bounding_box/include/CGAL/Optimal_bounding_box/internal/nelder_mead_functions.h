@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Konstantinos Katrioplas
-//                 Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas
 //
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_NEALDER_MEAD_FUNCTIONS_H
@@ -85,7 +85,7 @@ void nelder_mead(Simplex& simplex,
   {
     std::sort(simplex.begin(), simplex.end(),
               [](const Vertex& vi, const Vertex& vj) -> bool
-              { return vi.fitness_value() < vj.fitness_value(); });
+              { return vi.fitness() < vj.fitness(); });
 
     // centroid
     const Matrix centroid_m = nm_centroid(simplex[0].matrix(),
@@ -98,10 +98,10 @@ void nelder_mead(Simplex& simplex,
     const FT refl_f = compute_fitness(refl_m, points, traits);
 
     // if reflected point is better than the second worst
-    if(refl_f < simplex[2].fitness_value())
+    if(refl_f < simplex[2].fitness())
     {
       // if reflected point is not better than the best
-      if(refl_f >= simplex[0].fitness_value())
+      if(refl_f >= simplex[0].fitness())
       {
         // reflection
         simplex[3] = Vertex{refl_m, refl_f};
@@ -122,7 +122,7 @@ void nelder_mead(Simplex& simplex,
       const Matrix mean_m = mean(centroid_m, worst_m, traits);
       const FT mean_f = compute_fitness(mean_m, points, traits);
 
-      if(mean_f <= simplex[3].fitness_value())
+      if(mean_f <= simplex[3].fitness())
       {
         // contraction of worst
         simplex[3] = Vertex{mean_m, mean_f};

@@ -102,7 +102,7 @@ compute_2D_deviation(const PointRange& points,
   if(theta > 0.25 * CGAL_PI) // @todo is there a point to this
     theta = 0.5 * CGAL_PI - theta;
 
-  return std::make_pair(pol.area(), theta);
+  return std::make_pair(pol.area(), FT{theta});
 }
 
 template <typename PointRange, typename Traits>

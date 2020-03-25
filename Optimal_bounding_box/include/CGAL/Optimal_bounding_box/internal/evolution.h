@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Konstantinos Katrioplas
-//                 Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas
 //
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_EVOLUTION_H
@@ -59,7 +59,7 @@ public:
   void genetic_algorithm()
   {
     // This evolves an existing population
-    CGAL_precondition(m_population.empty());
+    CGAL_precondition(m_population.size() != 0);
 
     //groups 1,2 : size = floor(m/2) groups 3,4 : size = ceil(m/2).
     const std::size_t m = m_population.size();
@@ -86,8 +86,8 @@ public:
       for(int j=0; j<4; ++j)
       {
         const FT r{m_rng.get_double()};
-        const FT fitnessA = m_population[group1[i]][j].fitness_value();
-        const FT fitnessB = m_population[group2[i]][j].fitness_value();
+        const FT fitnessA = m_population[group1[i]][j].fitness();
+        const FT fitnessB = m_population[group2[i]][j].fitness();
         const FT threshold = (fitnessA < fitnessB) ? uweight : lweight;
 
         if(r < threshold)
@@ -105,8 +105,8 @@ public:
       Simplex offspring;
       for(int j=0; j<4; ++j)
       {
-        const FT fitnessA = m_population[group3[i]][j].fitness_value();
-        const FT fitnessB = m_population[group4[i]][j].fitness_value();
+        const FT fitnessA = m_population[group3[i]][j].fitness();
+        const FT fitnessB = m_population[group4[i]][j].fitness();
         const FT lambda = (fitnessA < fitnessB) ? uweight : lweight;
         const FT rambda = FT(1) - lambda; // because the 'l' in 'lambda' stands for left
 
@@ -122,14 +122,16 @@ public:
     m_population.simplices() = std::move(new_simplices);
   }
 
+  // @todo re-enable random mutations as it is -on theory- useful, but don't allow them to override
+  // the best (current) candidates
   void evolve(const std::size_t max_generations,
               const std::size_t population_size,
               const std::size_t nelder_mead_iterations,
-              const int max_random_mutations = 5)
+              const std::size_t max_random_mutations = 0)
   {
     // stopping criteria prameters
     FT prev_fit_value = 0;
-    const FT tolerance = 1e-9;
+    const FT tolerance = 1e-10;
     int stale = 0;
 
     m_population.initialize(population_size, m_points, m_rng);
@@ -184,7 +186,7 @@ public:
       if(CGAL::abs(difference) < tolerance * new_fit_value)
         ++stale;
 
-      if(stale == 5 || gen_iter++ > max_generations)
+      if(stale == 5 || gen_iter++ >= max_generations)
         break;
 
       prev_fit_value = new_fit_value;
@@ -194,10 +196,10 @@ public:
         continue;
 
       CGAL_warning(max_random_mutations <= population_size);
-      const int random_mutations = m_rng.get_int(0, max_random_mutations+1);
-      for(std::size_t i=0; i<random_mutations; ++i)
+      const int random_mutations = m_rng.get_int(0, static_cast<int>(max_random_mutations+1));
+      for(int i=0; i<random_mutations; ++i)
       {
-        const int random_pos = m_rng.get_int(0, population_size);
+        const int random_pos = m_rng.get_int(0, static_cast<int>(population_size));
         m_population[random_pos] = m_population.create_simplex(m_points, m_rng);
       }
     }

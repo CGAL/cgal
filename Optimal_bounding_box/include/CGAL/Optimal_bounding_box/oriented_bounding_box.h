@@ -134,7 +134,7 @@ void compute_best_transformation(const PointRange& points,
                                                 rot(0, 2), rot(1, 2), rot(2, 2));
 }
 
-// Following two functions are overload to dispatch depending on return type
+// Following two functions are overloads to dispatch depending on return type
 template <typename PointRange, typename Traits>
 void construct_oriented_bounding_box(const PointRange& points,
                                      typename Traits::Aff_transformation_3& transformation,
@@ -302,7 +302,7 @@ void oriented_bounding_box(const PointRange& points,
   std::cout << "Random seed: " << rng.get_seed() << std::endl;
 #endif
 
-  // @todo handle those cases instead
+  // @todo handle those cases (or call min_rectangle_2 with a projection)
   if(points.size() <= 3)
   {
     std::cerr << "The oriented bounding box cannot (yet) be computed for a mesh with fewer than 4 vertices!\n";

@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Konstantinos Katrioplas
-//                 Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas
 //
 #ifndef CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H
 #define CGAL_OPTIMAL_BOUNDING_FITNESS_FUNCTION_H

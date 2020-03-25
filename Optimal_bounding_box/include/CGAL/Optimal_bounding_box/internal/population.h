@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Konstantinos Katrioplas
-//                 Mael Rouxel-Labbé
+// Author(s)     : Mael Rouxel-Labbé
+//                 Konstantinos Katrioplas
 //
 #ifndef CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H
 #define CGAL_OPTIMAL_BOUNDING_BOX_POPULATION_H
@@ -29,21 +29,21 @@ namespace Optimal_bounding_box {
 namespace internal {
 
 template<typename Traits>
-struct Vertex_with_fitness_value
+struct Vertex_with_fitness
 {
   typedef typename Traits::FT                                 FT;
   typedef typename Traits::Matrix                             Matrix;
 
-  Vertex_with_fitness_value() { CGAL_assertion_code(m_is_val_initialized = false;) }
-  Vertex_with_fitness_value(const Matrix m, const FT v) : m_mat(std::move(m)), m_val(v)
+  Vertex_with_fitness() { CGAL_assertion_code(m_is_val_initialized = false;) }
+  Vertex_with_fitness(const Matrix m, const FT v) : m_mat(std::move(m)), m_val(v)
   {
     CGAL_assertion_code(m_is_val_initialized = true;)
   }
 
   template <typename PointRange>
-  Vertex_with_fitness_value(const Matrix m,
-                            const PointRange& points,
-                            const Traits& traits)
+  Vertex_with_fitness(const Matrix m,
+                      const PointRange& points,
+                      const Traits& traits)
     :
       m_mat(std::move(m))
   {
@@ -53,8 +53,8 @@ struct Vertex_with_fitness_value
 
   Matrix& matrix() { return m_mat; }
   const Matrix& matrix() const { return m_mat; }
-  FT& fitness_value() { return m_val; }
-  FT fitness_value() const { CGAL_assertion(m_is_val_initialized); return m_val; }
+  FT& fitness() { return m_val; }
+  FT fitness() const { CGAL_assertion(m_is_val_initialized); return m_val; }
 
 private:
   Matrix m_mat;
@@ -69,7 +69,7 @@ public:
   typedef typename Traits::FT                                 FT;
   typedef typename Traits::Matrix                             Matrix;
 
-  typedef Vertex_with_fitness_value<Traits>                   Vertex;
+  typedef Vertex_with_fitness<Traits>                         Vertex;
   typedef std::array<Vertex, 4>                               Simplex;
   typedef std::vector<Simplex>                                Simplex_container;
 
@@ -127,7 +127,7 @@ public:
       for(std::size_t j=0; j<4; ++j)
       {
         const Vertex& vertex = m_simplices[i][j];
-        const FT fitness = vertex.fitness_value();
+        const FT fitness = vertex.fitness();
         if(fitness < best_fitness)
         {
           simplex_id = i;
