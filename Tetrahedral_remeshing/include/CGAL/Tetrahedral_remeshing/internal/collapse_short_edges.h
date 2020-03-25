@@ -747,7 +747,7 @@ namespace internal
       {
         Vertex_handle eiv0 = ch->vertex(ei[0]);
         Vertex_handle eiv1 = ch->vertex(ei[1]);
-        if (eiv1 == vdeleted) //replace eiv1 by vkept
+        if (eiv1 == vdeleted && eiv0 != vkept) //replace eiv1 by vkept
         {
           if (c3t3.is_in_complex(eiv0, eiv1))
           {
@@ -755,7 +755,7 @@ namespace internal
             c3t3.remove_from_complex(eiv0, eiv1);
           }
         }
-        else if (eiv0 == vdeleted) //replace eiv0 by vkept
+        else if (eiv0 == vdeleted && eiv1 != vkept) //replace eiv0 by vkept
         {
           if (c3t3.is_in_complex(eiv0, eiv1))
           {
