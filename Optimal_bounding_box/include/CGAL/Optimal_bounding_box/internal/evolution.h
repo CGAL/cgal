@@ -55,13 +55,13 @@ public:
       m_traits(traits)
   { }
 
-  void genetic_algorithm(const std::size_t population_size = 50)
+  void genetic_algorithm()
   {
-    // random permutations
-    m_population.initialize(population_size, m_points, m_rng);
+    // This evolves an existing population
+    CGAL_precondition(m_population.empty());
 
-    //groups 1,2 : size m/2  groups 3,4 : size (m - m/2).   m/2 is floored
-    const std::size_t m = population_size;
+    //groups 1,2 : size = floor(m/2) groups 3,4 : size = ceil(m/2).
+    const std::size_t m = m_population.size();
     const std::size_t first_group_size = m / 2;
     const std::size_t second_group_size = m - first_group_size;
 
@@ -131,6 +131,8 @@ public:
     const FT tolerance = 1e-9;
     int stale = 0;
 
+    m_population.initialize(population_size, m_points, m_rng);
+
     std::size_t gen_iter = 0;
     for(;;)
     {
@@ -138,7 +140,7 @@ public:
       std::cout << "- - - - generation #" << gen_iter << "\n";
 #endif
 
-      genetic_algorithm(population_size);
+      genetic_algorithm();
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG_PP
       std::cout << "population after genetic" << std::endl;
