@@ -11,6 +11,7 @@
 #include <CGAL/Tetrahedral_remeshing/internal/Vec3D.h>
 
 #include <boost/unordered_map.hpp>
+#include <boost/optional.hpp>
 
 #include <vector>
 #include <cmath>
@@ -32,11 +33,11 @@ namespace CGAL
       }
 
       template<typename C3t3, typename CellSelector>
-      bool find_adjacent_facet_on_surface(const typename C3t3::Facet& f,
-                                          const typename C3t3::Edge& edge,
-                                          typename C3t3::Facet& neighbor,
-                                          const C3t3& c3t3,
-                                          const CellSelector& cell_selector)
+      boost::optional<typename C3t3::Facet>
+      find_adjacent_facet_on_surface(const typename C3t3::Facet& f,
+                                     const typename C3t3::Edge& edge,
+                                     const C3t3& c3t3,
+                                     const CellSelector& cell_selector)
       {
         CGAL_assertion(is_boundary(c3t3, f, cell_selector));
 
@@ -44,7 +45,7 @@ namespace CGAL
         typedef typename C3t3::Triangulation::Facet_circulator Facet_circulator;
 
         if (c3t3.is_in_complex(edge))
-          return false; //do not "cross" complex edges
+          return {}; //do not "cross" complex edges
               //they are likely to be sharp and not to follow the > 0 dot product criterion
 
         const typename C3t3::Surface_patch_index& patch = c3t3.surface_patch_index(f);
@@ -60,12 +61,11 @@ namespace CGAL
             && is_boundary(c3t3, fi, cell_selector)
             && patch == c3t3.surface_patch_index(fi))
           {
-            neighbor = fi;
-            return true;
+            return fi;
           }
         } while (++fcirc != fend);
 
-        return false;
+        return {};
       }
 
       template<typename FacetNormalsMap, typename C3t3, typename CellSelector>
@@ -104,10 +104,10 @@ namespace CGAL
 
         for (const std::array<int, 2>& ei : edges)
         {
-          Facet neighbor;
           Edge edge(ch, ei[0], ei[1]);
-          if (find_adjacent_facet_on_surface(f, edge, neighbor, c3t3, cell_selector))
-            compute_neighbors_normals(neighbor, n, fnormals, c3t3, cell_selector);
+          if (boost::optional<Facet> neighbor
+            = find_adjacent_facet_on_surface(f, edge, c3t3, cell_selector))
+            compute_neighbors_normals(*neighbor, n, fnormals, c3t3, cell_selector);
         }
       }
 
