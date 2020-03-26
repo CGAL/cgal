@@ -129,7 +129,7 @@ public:
   };
 
 private:
-  Data* ptr() const { return (Data*)(PTR); }
+  Data* ptr() const { return (Data*)(PTR.p); }
 
   Curve_end vtx_to_ce(Vertex_const_handle v) const
   {
@@ -180,14 +180,14 @@ public:
 
   Td_active_fictitious_vertex()
   {
-    PTR = new Data(Traits::empty_vtx_handle(), Traits::empty_he_handle(), nullptr);
+    PTR.p = new Data(Traits::empty_vtx_handle(), Traits::empty_he_handle(), nullptr);
   }
 
   /*! Constructor given Vertex & Halfedge handles. */
   Td_active_fictitious_vertex(Vertex_const_handle v,
                               Halfedge_const_handle cw_he,
                               Dag_node* node = 0)
-  { PTR = new Data(v, cw_he, node); }
+  { PTR.p = new Data(v, cw_he, node); }
 
 
   /*! Copy constructor. */
@@ -224,7 +224,7 @@ public:
   inline const Self& self() const { return *this; }
 
   /*! Access the trapezoid id (PTR). */
-  inline unsigned long id() const { return (unsigned long) PTR; }
+  inline unsigned long id() const { return (unsigned long) PTR.p; }
 
   /*! Access trapezoid left.
    *   filters out the infinite case which returns predefined dummy values
