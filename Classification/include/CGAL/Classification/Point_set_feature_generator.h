@@ -100,7 +100,7 @@ template <typename GeomTraits,
 #endif
 class Point_set_feature_generator
 {
-  
+
 public:
   typedef typename GeomTraits::Iso_cuboid_3             Iso_cuboid_3;
 
@@ -108,7 +108,7 @@ public:
   typedef typename PointRange::const_iterator Iterator;
   typedef typename PointMap::value_type       Point;
   /// \endcond
-  
+
   typedef Classification::Planimetric_grid
   <GeomTraits, PointRange, PointMap>                    Planimetric_grid;
   typedef Classification::Point_set_neighborhood
@@ -135,7 +135,7 @@ public:
   typedef Classification::Feature::Verticality
   <GeomTraits>                                          Verticality;
   typedef Classification::Feature::Eigenvalue           Eigenvalue;
-  
+
   typedef typename Neighborhood::K_neighbor_query       Neighbor_query;
 
 #ifdef CGAL_CLASSIFICATION_USE_GRADIENT_OF_FEATURE
@@ -143,7 +143,7 @@ public:
   <PointRange, PointMap, Neighbor_query>                Gradient_of_feature;
 #endif
   /// \endcond
-    
+
 private:
 
   struct Scale
@@ -152,7 +152,7 @@ private:
     Planimetric_grid* grid;
     Local_eigen_analysis* eigen;
     float voxel_size;
-    
+
     Scale (const PointRange& input, PointMap point_map,
            const Iso_cuboid_3& bbox, float voxel_size,
            Planimetric_grid* lower_grid = nullptr)
@@ -165,7 +165,7 @@ private:
       else
         neighborhood = new Neighborhood (input, point_map, voxel_size, ConcurrencyTag());
       t.stop();
-      
+
       if (lower_grid == nullptr)
         CGAL_CLASSIFICATION_CERR << "Neighborhood computed in " << t.time() << " second(s)" << std::endl;
       else
@@ -173,11 +173,11 @@ private:
                                  << " computed in " << t.time() << " second(s)" << std::endl;
       t.reset();
       t.start();
-      
+
       eigen = new Local_eigen_analysis
         (Local_eigen_analysis::create_from_point_set
          (input, point_map, neighborhood->k_neighbor_query(12), ConcurrencyTag(), DiagonalizeTraits()));
-      
+
       float range = eigen->mean_range();
       if (this->voxel_size < 0)
         this->voxel_size = range;
@@ -218,7 +218,7 @@ private:
     float grid_resolution() const { return voxel_size; }
     float radius_neighbors() const { return voxel_size * 3; }
     float radius_dtm() const { return voxel_size * 10; }
-    
+
   };
 
   Iso_cuboid_3 m_bbox;
@@ -226,12 +226,12 @@ private:
 
   const PointRange& m_input;
   PointMap m_point_map;
-  
+
 public:
-  
+
   /// \name Constructor
   /// @{
-  
+
   /*!
     \brief Initializes a feature generator from an input range.
 
@@ -240,7 +240,7 @@ public:
     `CGAL::compute_average_spacing()` using 6 neighbors. The data
     structures needed (`Neighborhood`, `Planimetric_grid` and
     `Local_eigen_analysis`) are computed at `nb_scales` recursively
-    larger scales. 
+    larger scales.
 
     \param input point range.
     \param point_map property map to access the input points.
@@ -260,14 +260,14 @@ public:
        boost::make_transform_iterator (m_input.end(), CGAL::Property_map_to_unary_function<PointMap>(m_point_map)));
 
     CGAL::Real_timer t; t.start();
-    
+
     m_scales.reserve (nb_scales);
-    
+
     m_scales.push_back (new Scale (m_input, m_point_map, m_bbox, voxel_size));
 
     if (voxel_size == -1.f)
       voxel_size = m_scales[0]->grid_resolution();
-    
+
     for (std::size_t i = 1; i < nb_scales; ++ i)
     {
       voxel_size *= 2;
@@ -279,7 +279,7 @@ public:
   }
 
   /// @}
-  
+
   /// \cond SKIP_IN_MANUAL
   virtual ~Point_set_feature_generator()
   {
@@ -422,12 +422,12 @@ public:
 
   /// \name Parameters
   /// @{
-  
+
   /*!
     \brief Returns the number of scales that were computed.
   */
   std::size_t number_of_scales() const { return m_scales.size(); }
-  
+
   /*!
     \brief Returns the grid resolution at scale `scale`. This
     resolution is the length and width of a cell of the
@@ -451,7 +451,7 @@ public:
 
   /// @}
 
-    
+
 private:
 
   void clear()
@@ -500,7 +500,7 @@ private:
 
 
 } // namespace Classification
-  
+
 } // namespace CGAL
 
 

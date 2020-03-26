@@ -100,7 +100,7 @@ public:
   typedef EnablePointsCache Enable_points_cache;
 
 private:
-  
+
   SearchTraits traits_;
   Splitter split;
 
@@ -192,7 +192,7 @@ private:
 
     if (try_parallel_internal_node_creation (nh, c, c_low, tag))
       return;
-    
+
     if (c_low.size() > split.bucket_size())
     {
       nh->lower_ch = new_internal_node();
@@ -241,7 +241,7 @@ private:
   {
     return false;
   }
-  
+
 #ifdef CGAL_TBB_STRUCTURE_IN_KD_TREE
 
   inline bool try_parallel_internal_node_creation (Internal_node_handle nh, Point_container& c,
@@ -266,10 +266,10 @@ private:
                             std::bind (&Self::create_internal_node<Parallel_tag>, this, nh->upper_ch, std::ref(c), std::cref(tag)));
       return true;
     }
-    
+
     return false;
   }
-  
+
 #endif
 
 public:
@@ -280,7 +280,7 @@ public:
 
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
-	  Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
+          Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
     : traits_(traits),split(s), built_(false), removed_(false)
   {
     pts.insert(pts.end(), first, beyond);
@@ -346,7 +346,7 @@ public:
        tree_root = new_internal_node();
        create_internal_node (tree_root, c, ConcurrencyTag());
     }
-   
+
     //Reorder vector for spatial locality
     std::vector<Point_d> ptstmp;
     ptstmp.resize(pts.size());
@@ -492,11 +492,11 @@ private:
       Internal_node_handle newparent = static_cast<Internal_node_handle>(node);
       // FIXME: This should be if(x<y) remove low; else remove up;
       if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] <= newparent->cutting_value()) {
-	if (remove_(p, parent, islower, newparent, true, newparent->lower(), equal_to_p))
-	  return true;
+        if (remove_(p, parent, islower, newparent, true, newparent->lower(), equal_to_p))
+          return true;
       }
       //if (traits().construct_cartesian_const_iterator_d_object()(p)[newparent->cutting_dimension()] >= newparent->cutting_value())
-	return remove_(p, parent, islower, newparent, false, newparent->upper(), equal_to_p);
+        return remove_(p, parent, islower, newparent, false, newparent->upper(), equal_to_p);
 
     }
 
@@ -508,8 +508,8 @@ private:
       if (pi == lnode->end()) return false;
       iterator lasti = lnode->end() - 1;
       if (pi != lasti) {
-	// Hack to get a non-const iterator
-	std::iter_swap(pts.begin()+(pi-pts.begin()), pts.begin()+(lasti-pts.begin()));
+        // Hack to get a non-const iterator
+        std::iter_swap(pts.begin()+(pi-pts.begin()), pts.begin()+(lasti-pts.begin()));
       }
       lnode->drop_last_point();
     } else if (!equal_to_p(*lnode->begin())) {
@@ -518,9 +518,9 @@ private:
     } else if (grandparent) {
       Node_handle brother = islower ? parent->upper() : parent->lower();
       if (parent_islower)
-	grandparent->set_lower(brother);
+        grandparent->set_lower(brother);
       else
-	grandparent->set_upper(brother);
+        grandparent->set_upper(brother);
     } else if (parent) {
       tree_root = islower ? parent->upper() : parent->lower();
     } else {
@@ -550,7 +550,7 @@ public:
     if(! pts.empty()){
 
       if(! is_built()){
-	const_build();
+        const_build();
       }
       Kd_tree_rectangle<FT,D> b(*bbox);
       return tree_root->search(it,q,b,begin(),cache_begin(),dim_);
@@ -566,7 +566,7 @@ public:
     if(! pts.empty()){
 
       if(! is_built()){
-	const_build();
+        const_build();
       }
       Kd_tree_rectangle<FT,D> b(*bbox);
       return tree_root->search_any_point(q,b,begin(),cache_begin(),dim_);
@@ -611,7 +611,7 @@ public:
   {
     if(! pts.empty()){
       if(! is_built()){
-	const_build();
+        const_build();
       }
       root()->print();
     }else{

@@ -440,12 +440,12 @@ The values are the average of ten tests each. We show timings in seconds for bot
 <center>
 k | bucket size | Surface Build | Random Build | Surface/Surface  | Surface/Random | Random/Random
 --|------------:|--------------:|-------------:|-----------------:|---------------:|----------------:
-10|     10      |     0.17      |     0.31     |       1.13       |     15.35      |       3.40       
-10|     20      |     0.14      |     0.28     |       1.09       |     12.28      |       3.00       
-20|     10      |  (see above)  |  (see above) |       1.88       |     18.25      |       5.39       
-20|     20      |  (see above)  |  (see above) |       1.81       |     14.99      |       4.51       
-30|     10      |  (see above)  |  (see above) |       2.87       |     22.62      |       7.07       
-30|     20      |  (see above)  |  (see above) |       2.66       |     18.39      |       5.68       
+10|     10      |     0.17      |     0.31     |       1.13       |     15.35      |       3.40
+10|     20      |     0.14      |     0.28     |       1.09       |     12.28      |       3.00
+20|     10      |  (see above)  |  (see above) |       1.88       |     18.25      |       5.39
+20|     20      |  (see above)  |  (see above) |       1.81       |     14.99      |       4.51
+30|     10      |  (see above)  |  (see above) |       2.87       |     22.62      |       7.07
+30|     20      |  (see above)  |  (see above) |       2.66       |     18.39      |       5.68
 </center>
 
 The same experiment is done using the parallel version of the tree building algorithm, and performing the queries in parallel too:
@@ -453,12 +453,12 @@ The same experiment is done using the parallel version of the tree building algo
 <center>
 k | bucket size | Surface Build | Random Build | Surface/Surface  | Surface/Random | Random/Random
 --|------------:|--------------:|-------------:|-----------------:|---------------:|----------------:
-10|     10      |     0.07      |     0.12     |       0.24       |      3.52      |       0.66       
-10|     20      |     0.06      |     0.12     |       0.22       |      2.87      |       0.57       
-20|     10      |  (see above)  |  (see above) |       0.41       |      4.28      |       1.02       
-20|     20      |  (see above)  |  (see above) |       0.38       |      3.43      |       0.88       
-30|     10      |  (see above)  |  (see above) |       0.58       |      4.90      |       1.44       
-30|     20      |  (see above)  |  (see above) |       0.60       |      4.28      |       1.28       
+10|     10      |     0.07      |     0.12     |       0.24       |      3.52      |       0.66
+10|     20      |     0.06      |     0.12     |       0.22       |      2.87      |       0.57
+20|     10      |  (see above)  |  (see above) |       0.41       |      4.28      |       1.02
+20|     20      |  (see above)  |  (see above) |       0.38       |      3.43      |       0.88
+30|     10      |  (see above)  |  (see above) |       0.58       |      4.90      |       1.44
+30|     20      |  (see above)  |  (see above) |       0.60       |      4.28      |       1.28
 </center>
 
 \cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
