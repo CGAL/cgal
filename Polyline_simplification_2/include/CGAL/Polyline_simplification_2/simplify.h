@@ -264,7 +264,7 @@ operator()()
 
     if((*u)->is_removable()){
       boost::optional<FT> dist = cost(pct, u);
-      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_u = 
+      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_u =
           h.find(u.base()->id);
       if(! dist){
         // cost is undefined
@@ -288,7 +288,7 @@ operator()()
 
     if((*w)->is_removable()){
       boost::optional<FT> dist = cost(pct, w);
-      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_w = 
+      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_w =
           h.find(w.base()->id);
       if(! dist){
         // cost is undefined

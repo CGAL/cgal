@@ -1232,7 +1232,7 @@ int
 Sliver_perturber<C3T3,Md,Sc,V_>::
 update_priority_queue(const PVertex& pv, PQueue& pqueue) const
 {
-  typename Handle_map::iterator pvh = 
+  typename Handle_map::iterator pvh =
       h.find(pv.id());
   if ( pvh != h.end() )
   {
