@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -44,7 +44,7 @@
 
 namespace CGAL {
 
-template <class _Key, class _Data, class _Direct_compare = std::less<_Key>, 
+template <class _Key, class _Data, class _Direct_compare = std::less<_Key>,
           class _Reverse_compare = std::less<_Data> >
 class Double_map
 {
@@ -55,10 +55,10 @@ public:
   typedef _Reverse_compare Reverse_compare;
 
   typedef Double_map<Key, Data, Direct_compare, Reverse_compare> Self;
-  
+
 #ifdef CGAL_USE_BOOST_BIMAP
   typedef ::boost::bimap< ::boost::bimaps::set_of<Key, Direct_compare>,
-				 ::boost::bimaps::multiset_of<Data, Reverse_compare> > Boost_bimap;
+                                 ::boost::bimaps::multiset_of<Data, Reverse_compare> > Boost_bimap;
 
   typedef typename Boost_bimap::left_map Direct_func;
   typedef typename Boost_bimap::right_map Reverse_func;
@@ -78,7 +78,7 @@ public:
   typedef typename Self::Reverse_func::value_type right_value_type;
 #endif
   typedef typename Direct_func::value_type Direct_entry;
-               // std::pair<Key, reverse_iterator> 
+               // std::pair<Key, reverse_iterator>
   typedef typename Reverse_func::value_type Reverse_entry;
                // std::pair<Data, Key> ;
 
@@ -136,7 +136,7 @@ public :
   {
     return(direct_func().size()==reverse_func().size());
   }
-  
+
   void clear()
   {
 #ifdef CGAL_USE_BOOST_BIMAP
@@ -145,7 +145,7 @@ public :
     direct_func().clear();
     reverse_func().clear();
 #endif
-    
+
   }
 
   Self& operator=(const Self& dm)
@@ -161,14 +161,14 @@ public :
 
 #ifdef CGAL_USE_BOOST_BIMAP
     for(direct_const_iterator rit = dm.direct_func().begin();
-	rit != dm.direct_func().end();
+        rit != dm.direct_func().end();
         ++rit)
     {
       direct_func().insert(*rit);
     }
 #else
     reverse_func() = dm.reverse_func();
-    
+
     for(reverse_iterator rit = reverse_func().begin();
         rit != reverse_func().end();
         ++rit)
@@ -190,7 +190,7 @@ public :
       direct_iterator hint = boost_bimap.left.lower_bound(k);
 
       if(hint != boost_bimap.left.end() && hint->first == k)
-	return false;
+        return false;
 
       boost_bimap.left.insert(hint, Direct_entry(k, d));
       return true;
@@ -198,11 +198,11 @@ public :
       direct_iterator direct_hint = direct_func().lower_bound(k);
 
       if(direct_hint != direct_func().end() &&
-	 direct_hint->first == k)
+         direct_hint->first == k)
         return false;
-      
+
       reverse_iterator reverse_it = reverse_func().insert(Reverse_entry(d, k));
-      
+
       direct_func().insert(direct_hint, Direct_entry(k, reverse_it));
 
       CGAL_assertion(is_valid());
@@ -229,7 +229,7 @@ public :
       direct_iterator pos = direct_func().find(rit->second);
       CGAL_assertion(pos != direct_func().end());
       CGAL_assertion(pos->second == rit);
-      
+
       direct_func().erase(pos);
       reverse_func().erase(rit);
       CGAL_assertion(is_valid());
@@ -240,7 +240,7 @@ public :
   {
     return direct_func().begin();
   }
-    
+
   const_iterator end() const
   {
     return direct_func().end();
@@ -248,20 +248,20 @@ public :
 
   template <typename Func_key, typename Func_data>
   void dump_direct_func(std::ostream& out,
-			Func_key func_key,
-			Func_data func_data)
+                        Func_key func_key,
+                        Func_data func_data)
   {
     for(typename Direct_func::iterator it = direct_func().begin();
-	it != direct_func().end();
-	++it)
+        it != direct_func().end();
+        ++it)
     {
       out << func_key(it->first) << " -> "
 #ifdef CGAL_USE_BOOST_BIMAP
-	  << func_data(it->second)
+          << func_data(it->second)
 #else
-	  << func_data(it->second->first)
+          << func_data(it->second->first)
 #endif
-	  << std::endl;
+          << std::endl;
     }
   }
 
@@ -272,25 +272,25 @@ public :
 
   template <typename Func_key, typename Func_data>
   void dump_reverse_func(std::ostream& out,
-			 Func_key func_key,
-			 Func_data func_data)
+                         Func_key func_key,
+                         Func_data func_data)
   {
     for(typename Reverse_func::iterator it = reverse_func().begin();
-	it != reverse_func().end();
-	++it)
+        it != reverse_func().end();
+        ++it)
     {
       out << func_data(it->first) << " "
-	  << func_key(it->second) << std::endl;
+          << func_key(it->second) << std::endl;
     }
   }
 
-  void dump_reverse_func(std::ostream& out) 
+  void dump_reverse_func(std::ostream& out)
   {
     dump_reverse_func(out, CGAL::Identity<Data>(), CGAL::Identity<Key>());
   }
 };
 
-template <class _Key, class _Data, class _Direct_compare, 
+template <class _Key, class _Data, class _Direct_compare,
   class _Reverse_compare>
 bool
 Double_map<_Key, _Data, _Direct_compare, _Reverse_compare>::

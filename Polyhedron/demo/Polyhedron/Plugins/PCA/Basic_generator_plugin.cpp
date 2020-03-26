@@ -55,7 +55,7 @@ public :
 
 
     QMenu* menuFile = mw->findChild<QMenu*>("menuFile");
-    
+
     QMenu* menu = menuFile->findChild<QMenu*>("menuGenerateObject");
     if(!menu){
       QAction* actionLoad = mw->findChild<QAction*>("actionLoadPlugin");
