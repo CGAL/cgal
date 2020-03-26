@@ -136,13 +136,21 @@ namespace CGAL
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
         std::ofstream os1("dump_start_facets.polylines.txt");
 #endif
-        //collect all normals
+
+        std::size_t nb_of_boundary_facets = 0;
+        for (const Facet& f : tr.finite_facets())
+        {
+          if (is_boundary(c3t3, f, cell_selector))
+            ++nb_of_boundary_facets;
+        }
+
+        //collect all facet normals
         boost::unordered_map<Facet, Vector_3> fnormals;
         for (const Facet& f : tr.finite_facets())
         {
-          if (fnormals.size() == tr.number_of_finite_facets())
+          if (fnormals.size() == nb_of_boundary_facets)
             break;
-          CGAL_assertion(fnormals.size() < tr.number_of_finite_facets());
+          CGAL_assertion(fnormals.size() < nb_of_boundary_facets);
 
           if (!is_boundary(c3t3, f, cell_selector))
             continue;
