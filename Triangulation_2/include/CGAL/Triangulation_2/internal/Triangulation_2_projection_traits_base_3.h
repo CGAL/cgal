@@ -47,8 +47,8 @@ public:
   }
 
   Orientation operator()(const Point& p,
-			 const Point& q,
-			 const Point& r) const
+                         const Point& q,
+                         const Point& r) const
   {
     CGAL_PROFILER("Projected_orientation_with_normal_3::operator()");
     CGAL_TIME_PROFILER("Projected_orientation_with_normal_3::operator()");
@@ -82,9 +82,9 @@ public:
   }
 
   Oriented_side operator()(const Point& p,
-			   const Point& q,
-			   const Point& r,
-			   const Point& t) const
+                           const Point& q,
+                           const Point& r,
+                           const Point& t) const
   {
     CGAL_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
     CGAL_TIME_PROFILER("Projected_side_of_oriented_circle_with_normal_3::operator()")
@@ -104,10 +104,10 @@ public:
     const FT k_r = tr * u;
 
     return sign_of_determinant<FT>(
-	tp.x(), tp.y(), tp.z(), (tp2 + k_p) * u2 - k_p * k_p,
-	tr.x(), tr.y(), tr.z(), (tr2 + k_r) * u2 - k_r * k_r,
-	tq.x(), tq.y(), tq.z(), (tq2 + k_q) * u2 - k_q * k_q,
-	 u.x(),  u.y(),  u.z(), u2 * u2);
+        tp.x(), tp.y(), tp.z(), (tp2 + k_p) * u2 - k_p * k_p,
+        tr.x(), tr.y(), tr.z(), (tr2 + k_r) * u2 - k_r * k_r,
+        tq.x(), tq.y(), tq.z(), (tq2 + k_q) * u2 - k_q * k_q,
+         u.x(),  u.y(),  u.z(), u2 * u2);
     // Note that q and r have been swapped in the determinant above, to
     // inverse its sign.
   }

@@ -34,37 +34,37 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Point_set {
 
-  /*! 
+  /*!
     \ingroup PkgShapeDetectionRGOnPoints
 
-    \brief Region type based on the quality of the least squares line 
+    \brief Region type based on the quality of the least squares line
     fit applied to 2D points.
 
-    This class fits a line, using \ref PkgPrincipalComponentAnalysisDRef "PCA", 
-    to chunks of points in a 2D point set and controls the quality of this fit. 
-    If all quality conditions are satisfied, the chunk is accepted as a valid region, 
+    This class fits a line, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
+    to chunks of points in a 2D point set and controls the quality of this fit.
+    If all quality conditions are satisfied, the chunk is accepted as a valid region,
     otherwise rejected.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam PointMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_2`.
 
-    \tparam NormalMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    \tparam NormalMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Vector_2`.
-    
+
     \cgalModels `RegionType`
   */
   template<
-  typename GeomTraits, 
-  typename InputRange, 
-  typename PointMap, 
+  typename GeomTraits,
+  typename InputRange,
+  typename PointMap,
   typename NormalMap>
   class Least_squares_line_fit_region {
 
@@ -72,7 +72,7 @@ namespace Point_set {
 
     /// \name Types
     /// @{
-    
+
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
@@ -110,26 +110,26 @@ namespace Point_set {
     /*!
       \brief initializes all internal data structures.
 
-      \param input_range 
-      an instance of `InputRange` with 2D points and 
+      \param input_range
+      an instance of `InputRange` with 2D points and
       corresponding 2D normal vectors
 
-      \param distance_threshold 
+      \param distance_threshold
       the maximum distance from a point to a line. %Default is 1.
 
-      \param angle_threshold 
-      the maximum accepted angle in degrees between the normal of a point and 
+      \param angle_threshold
+      the maximum accepted angle in degrees between the normal of a point and
       the normal of a line. %Default is 25 degrees.
 
-      \param min_region_size 
+      \param min_region_size
       the minimum number of 2D points a region must have. %Default is 2.
 
       \param point_map
-      an instance of `PointMap` that maps an item from `input_range` 
+      an instance of `PointMap` that maps an item from `input_range`
       to `Kernel::Point_2`
 
       \param normal_map
-      an instance of `NormalMap` that maps an item from `input_range` 
+      an instance of `NormalMap` that maps an item from `input_range`
       to `Kernel::Vector_2`
 
       \param traits
@@ -141,12 +141,12 @@ namespace Point_set {
       \pre `min_region_size > 0`
     */
     Least_squares_line_fit_region(
-      const InputRange& input_range, 
-      const FT distance_threshold = FT(1), 
-      const FT angle_threshold = FT(25), 
-      const std::size_t min_region_size = 2, 
-      const PointMap point_map = PointMap(), 
-      const NormalMap normal_map = NormalMap(), 
+      const InputRange& input_range,
+      const FT distance_threshold = FT(1),
+      const FT angle_threshold = FT(25),
+      const std::size_t min_region_size = 2,
+      const PointMap point_map = PointMap(),
+      const NormalMap normal_map = NormalMap(),
       const GeomTraits traits = GeomTraits()) :
     m_input_range(input_range),
     m_distance_threshold(distance_threshold),
@@ -173,7 +173,7 @@ namespace Point_set {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.
@@ -194,7 +194,7 @@ namespace Point_set {
     */
     bool is_part_of_region(
       const std::size_t,
-      const std::size_t query_index, 
+      const std::size_t query_index,
       const std::vector<std::size_t>&) const {
 
       CGAL_precondition(query_index >= 0);
@@ -208,13 +208,13 @@ namespace Point_set {
       CGAL_precondition(normal_length > FT(0));
       const Vector_2 query_normal = normal / normal_length;
 
-      const FT distance_to_fitted_line = 
+      const FT distance_to_fitted_line =
       m_sqrt(m_squared_distance_2(query_point, m_line_of_best_fit));
-      
-      const FT cos_value = 
+
+      const FT cos_value =
       CGAL::abs(m_scalar_product_2(query_normal, m_normal_of_best_fit));
 
-      return (( distance_to_fitted_line <= m_distance_threshold ) && 
+      return (( distance_to_fitted_line <= m_distance_threshold ) &&
         ( cos_value >= m_normal_threshold ));
     }
 
@@ -246,24 +246,24 @@ namespace Point_set {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference line and normal
-                    
+
         CGAL_precondition(region[0] >= 0);
         CGAL_precondition(region[0] < m_input_range.size());
 
-        // The best fit line will be a line through this point with 
+        // The best fit line will be a line through this point with
         // its normal being the point's normal.
         const auto& key = *(m_input_range.begin() + region[0]);
 
         const Point_2& point = get(m_point_map, key);
         const Vector_2& normal = get(m_normal_map, key);
-                    
+
         const FT normal_length = m_sqrt(m_squared_length_2(normal));
-        
+
         CGAL_precondition(normal_length > FT(0));
-        m_normal_of_best_fit = 
+        m_normal_of_best_fit =
         normal / normal_length;
-        
-        m_line_of_best_fit = 
+
+        m_line_of_best_fit =
         Line_2(point, m_normal_of_best_fit).perpendicular(point);
 
       } else { // update reference line and normal
@@ -284,22 +284,22 @@ namespace Point_set {
         Local_line_2 fitted_line;
         Local_point_2 fitted_centroid;
 
-        // The best fit line will be a line fitted to all region points with 
+        // The best fit line will be a line fitted to all region points with
         // its normal being perpendicular to the line.
         CGAL::linear_least_squares_fitting_2(
-          points.begin(), points.end(), 
-          fitted_line, fitted_centroid, 
-          CGAL::Dimension_tag<0>(), 
-          Local_traits(), 
+          points.begin(), points.end(),
+          fitted_line, fitted_centroid,
+          CGAL::Dimension_tag<0>(),
+          Local_traits(),
           CGAL::Eigen_diagonalize_traits<Local_FT, 2>());
-                    
-        m_line_of_best_fit = 
+
+        m_line_of_best_fit =
         Line_2(
-          static_cast<FT>(fitted_line.a()), 
-          static_cast<FT>(fitted_line.b()), 
+          static_cast<FT>(fitted_line.a()),
+          static_cast<FT>(fitted_line.b()),
           static_cast<FT>(fitted_line.c()));
-                    
-        const Vector_2 normal = 
+
+        const Vector_2 normal =
         m_line_of_best_fit.perpendicular(m_line_of_best_fit.point(0)).to_vector();
         const FT normal_length = m_sqrt(m_squared_length_2(normal));
 
@@ -311,17 +311,17 @@ namespace Point_set {
     /// @}
 
   private:
-        
+
     // Fields.
     const Input_range& m_input_range;
-            
+
     const FT m_distance_threshold;
     const FT m_normal_threshold;
     const std::size_t m_min_region_size;
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;
-            
+
     const Squared_length_2 m_squared_length_2;
     const Squared_distance_2 m_squared_distance_2;
     const Scalar_product_2 m_scalar_product_2;

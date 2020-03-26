@@ -47,7 +47,7 @@ void run_boolean_operations(
   typedef boost::optional<Surface_mesh*> OSM;
 
   std::array<OSM,4> output;
-  
+
   output[CFR::UNION]=OSM( &union_ );
   output[CFR::INTERSECTION]=OSM( &inter );
   output[CFR::TM1_MINUS_TM2]=OSM( &tm1_minus_tm2 );

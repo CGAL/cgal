@@ -61,7 +61,7 @@ public:
 
   // BASIC TYPES
   //------------
-  
+
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Kernel_wrapper_2<R,ITag>  Kernel;
   typedef Kernel                                              K;
@@ -183,7 +183,7 @@ public:
   }
 
   Construct_object_2
-  construct_object_2_object() const { 
+  construct_object_2_object() const {
     return Construct_object_2();
   }
 
@@ -195,7 +195,7 @@ public:
   // CONSTRUCTIONS
   //--------------
   Construct_svd_vertex_2
-  construct_svd_vertex_2_object() const { 
+  construct_svd_vertex_2_object() const {
     return Construct_svd_vertex_2();
   }
 

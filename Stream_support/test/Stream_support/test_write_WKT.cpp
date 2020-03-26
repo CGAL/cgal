@@ -13,7 +13,7 @@
 
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel; 
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Point_2<Kernel> Point;
 typedef std::vector<Point> Linestring;
 typedef CGAL::Polygon_with_holes_2<Kernel> Polygon;
@@ -49,7 +49,7 @@ Polygon generate_polygon()
   br = generate_point(5,10,-10,-5);
   t = generate_point(-4.99,4.99,5,10);
   br = Point(br.x(), bl.y());
-  
+
   double xmax(br.x()),
       ymax(t.y()),
       xmin(bl.x()),
@@ -101,7 +101,7 @@ MultiPolygon generate_multipolygon()
 
 int main()
 {
-  
+
   srand( unsigned(time(NULL) ));
   Point p = generate_point(0,6,0,6);
   {
@@ -117,7 +117,7 @@ int main()
     is.close();
   }
   CGAL_assertion(p == test_p);
-  
+
   Linestring ls = generate_linestring();
   {
     std::ofstream os("test.wkt");
@@ -132,8 +132,8 @@ int main()
     is.close();
   }
   CGAL_assertion(ls == test_ls);
-  
-  
+
+
   Polygon poly = generate_polygon();
   {
     std::ofstream os("test.wkt");
@@ -149,7 +149,7 @@ int main()
   }
 
   CGAL_assertion(poly == test_poly);
-  
+
   MultiPoint pees = generate_multipoint();
   {
     std::ofstream os("test.wkt");
@@ -164,7 +164,7 @@ int main()
     is.close();
   }
   CGAL_assertion(pees== test_pees);
-  
+
   MultiLinestring mls = generate_multilinestring();
   {
     std::ofstream os("test.wkt");
@@ -182,7 +182,7 @@ int main()
   for(size_t i=0; i<mls.size(); ++i)
     ok &= mls[i] == test_mls[i];
   CGAL_assertion(ok);
-  
+
   MultiPolygon polies = generate_multipolygon();
   {
     std::ofstream os("test.wkt");
@@ -197,7 +197,7 @@ int main()
     is.close();
   }
   CGAL_assertion(polies == test_polies);
-  
+
   std::cout<<"WKT writing test passed."<<std::endl;
   return 0;
 }

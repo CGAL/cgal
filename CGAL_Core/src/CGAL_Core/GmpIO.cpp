@@ -6,7 +6,7 @@
  * This file is part of CGAL (www.cgal.org).
  *
  * file: GmpIO.cpp
- * 		Adapted from multi-files under /cxx in GMP's source distribution
+ *                 Adapted from multi-files under /cxx in GMP's source distribution
  *
  * Zilin Du, 2003
  *

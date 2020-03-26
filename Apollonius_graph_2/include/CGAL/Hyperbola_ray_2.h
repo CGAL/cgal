@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -75,8 +75,8 @@ public:
 
 
   Hyperbola_ray_2(const Site_2 &f1, const Site_2 &f2,
-		  const Point_2 &p,
-		  const Hyperbola_direction& direction) :
+                  const Point_2 &p,
+                  const Hyperbola_direction& direction) :
     Hyperbola_segment_2< Gt >(f1, f2, p, p),
     _f1(f1), _f2(f2), _p(p), _dir(direction)
   {
@@ -112,7 +112,7 @@ public:
     } else {
       this->p2 = f(t1 - this->STEP * OFFSET());
     }
-    
+
     Hyperbola_segment_2< Gt >::draw(s);
   }
 
@@ -127,7 +127,7 @@ public:
 
     Hyperbola_segment_2< Gt >::draw(s);
   }
-  
+
 };
 
 

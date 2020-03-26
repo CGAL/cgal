@@ -18,13 +18,13 @@ public:
   typedef Point_3 value_type;
   typedef const value_type& reference;
   typedef std::size_t key_type;
-  typedef boost::lvalue_property_map_tag category;  
+  typedef boost::lvalue_property_map_tag category;
 
   My_point_property_map(const std::vector<Point_3>& pts):points(pts){}
 
   reference operator[](key_type k) const {return points[k];}
 
-  friend reference get(const My_point_property_map& ppmap,key_type i) 
+  friend reference get(const My_point_property_map& ppmap,key_type i)
   {return ppmap[i];}
 };
 
@@ -44,7 +44,7 @@ int main() {
   // generator for random data points in the cube ( (-1,-1,-1), (1,1,1) )
   Random_points_iterator rpit( 1.0);
   std::vector<Point_3> points;
-  
+
   points.push_back(Point_3(*rpit++));
   points.push_back(Point_3(*rpit++));
   points.push_back(Point_3(*rpit++));
@@ -69,7 +69,7 @@ int main() {
   K_neighbor_search search(tree, query, K,0,true,tr_dist);
   for(K_neighbor_search::iterator it = search.begin(); it != search.end(); it++){
     std::cout << " d(q, nearest neighbor)=  "
-	      << tr_dist.inverse_of_transformed_distance(it->second) << " " 
+              << tr_dist.inverse_of_transformed_distance(it->second) << " "
               << points[it->first] << " " << it->first << std::endl;
   }
   return 0;

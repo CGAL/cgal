@@ -38,11 +38,11 @@ typedef CGAL::Polyhedral_surface_3<Poly_kernel,
 class Polyhedral_surface : public Surface
 {
   Q_OBJECT;
-  
+
 public:
   Polyhedral_surface(QObject* parent,
-		     double sharp_edges_angle_lower_bound = 90,
-		     double sharp_edges_angle_upper_bound = 120);
+                     double sharp_edges_angle_lower_bound = 90,
+                     double sharp_edges_angle_upper_bound = 120);
 
   ~Polyhedral_surface();
 public Q_SLOTS:
@@ -72,7 +72,7 @@ public:
   void postSelection(const QPoint&);
   void draw(bool with_names);
   void get_bbox(float& xmin, float& ymin, float& zmin,
-		float& xmax, float& ymax, float& zmax);
+                float& xmax, float& ymax, float& zmax);
 
 public Q_SLOTS:
   void set_inverse_normals(const bool b);

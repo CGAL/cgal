@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -47,7 +47,7 @@ public:
     typedef Alloc                                      Allocator;
     typedef Alloc                                      allocator_type;
 
-    typedef typename Items::template Vertex_wrapper<Self,Traits>   
+    typedef typename Items::template Vertex_wrapper<Self,Traits>
                                                        Vertex_wrapper;
     typedef typename Items::template Halfedge_wrapper<Self,Traits>
                                                        Halfedge_wrapper;
@@ -79,7 +79,7 @@ public:
                                                        Edge_iterator;
     typedef N_step_adaptor_derived<Halfedge_const_iterator, 2>
                                                        Edge_const_iterator;
-  
+
     typedef internal::vector<Face, Face_allocator>     Face_vector;
     typedef typename Face_vector::iterator             Face_I;
     typedef typename Face_vector::const_iterator       Face_CI;
@@ -137,7 +137,7 @@ public:
 };
 
 
-template < class Traits_, class HalfedgeDSItems, 
+template < class Traits_, class HalfedgeDSItems,
            class Alloc = CGAL_ALLOCATOR(int)>
 class HalfedgeDS_vector
     : public HalfedgeDS_vector_types<Traits_, HalfedgeDSItems, Alloc> {
@@ -539,7 +539,7 @@ public:
                               // Elements in [begin..ll) <  pivot (non border)
         while (ll < rr) {
                               // Pivot is in *ll, ll <= rr.
-            while ( rr > ll && (rr->is_border() 
+            while ( rr > ll && (rr->is_border()
                               || rr->opposite()->is_border())) {
                 if ( ! rr->opposite()->is_border()) {
                     CGAL_assertion( rr + 1 == get_h_iter(rr->opposite()));

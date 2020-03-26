@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 
   Mesh mesh;
   OpenMesh::IO::read_mesh(mesh, filename);
- 
+
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh,
      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
                                                    geom_traits(Kernel()));

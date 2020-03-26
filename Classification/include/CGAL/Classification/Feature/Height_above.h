@@ -59,7 +59,7 @@ class Height_above : public Feature_base
   const Grid& grid;
   Image_float dtm;
   std::vector<float> values;
-  
+
 public:
   /*!
     \brief Constructs the feature.
@@ -116,7 +116,7 @@ public:
       std::size_t J = grid.y(pt_index);
       return dtm(I,J) - float(get (point_map, *(input.begin() + pt_index)).z());
     }
-    
+
     return values[pt_index];
   }
 

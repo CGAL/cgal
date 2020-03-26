@@ -20,9 +20,9 @@ bool test_info_hierarchy(SDG& sdg, const char* fname)
   for (int i = 0; i <= 4; ++i) {
     std::cout << "\tSITES FOR LEVEL " << i << std::endl;
     for (FVIT it = sdg.diagram(i).finite_vertices_begin();
-	 it != sdg.diagram(i).finite_vertices_end(); ++it) {
+         it != sdg.diagram(i).finite_vertices_end(); ++it) {
       std::cout << "\t\t" << it->site() << " "
-		<< it->storage_site().info() << std::endl;
+                << it->storage_site().info() << std::endl;
     }
   }
   std::cout << std::endl;

@@ -80,11 +80,11 @@ class VisitorBase
 public:
 
   typedef void (*CheckTimeoutCallbackType) () ;
-  
+
   VisitorBase( CheckTimeoutCallbackType aCheckTimeoutCallback ) : check_timeout(aCheckTimeoutCallback) {}
-  
-protected:  
-  
+
+protected:
+
   CheckTimeoutCallbackType check_timeout ;
 } ;
 
@@ -93,7 +93,7 @@ class ISlsBuilderVisitor : public VisitorBase
 public:
 
   ISlsBuilderVisitor( CheckTimeoutCallbackType aCheckTimeoutCallback ) : VisitorBase(aCheckTimeoutCallback) {}
-  
+
   void on_contour_edge_entered ( Halfedge_const_handle const& ) const {}
 
   void on_initialization_started( int /*size_of_vertices*/ ) const {}
@@ -132,25 +132,25 @@ public:
 
 } ;
 
-  
+
 class IOffsetBuilderVisitor : public VisitorBase
 {
 public:
 
   IOffsetBuilderVisitor( CheckTimeoutCallbackType aCheckTimeoutCallback ) : VisitorBase(aCheckTimeoutCallback) {}
-  
+
   void on_construction_started ( IFT ) const {}
-  
+
   void on_offset_contour_started() const { check_timeout(); }
-  
+
   void on_offset_point ( IPoint const& ) const { check_timeout(); }
 
   IPoint on_offset_point_overflowed( Halfedge_const_handle ) const { return CGAL::ORIGIN ; }
-  
+
   void on_offset_contour_finished ( bool ) const { check_timeout(); }
-  
+
   void on_construction_finished () const {}
-  
+
   void on_error( char const* ) const { check_timeout(); }
 
 } ;

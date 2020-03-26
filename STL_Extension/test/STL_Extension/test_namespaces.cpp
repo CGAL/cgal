@@ -26,7 +26,7 @@ int main()
 
   CGAL::cpp0x::copy_n(arr.begin(), 3, arr2.begin());
   std::copy_n(arr.begin(), 3, arr2.begin());
-  
+
   CGAL::cpp0x::prev(arr.end());
   std::prev(arr.end());
   CGAL::cpp0x::next(arr.begin());

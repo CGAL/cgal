@@ -1,9 +1,9 @@
-// Copyright (c) 1999-2004  
+// Copyright (c) 1999-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -46,7 +46,7 @@ namespace HomogeneousKernelFunctors {
   using CartesianKernelFunctors::Compute_area_divided_by_pi_3;
   using CartesianKernelFunctors::Compute_squared_length_divided_by_pi_square_3;
   using CartesianKernelFunctors::Construct_radical_plane_3;
-	
+
   template <typename K>
   class Angle_2
   {
@@ -65,7 +65,7 @@ namespace HomogeneousKernelFunctors {
     { return operator()(c(q,p), c(q,r)); }
 
     result_type
-    operator()(const Point_2& p, const Point_2& q, 
+    operator()(const Point_2& p, const Point_2& q,
                const Point_2& r, const Point_2& s) const
     { return operator()(c(q,p), c(s,r)); }
 
@@ -136,23 +136,23 @@ namespace HomogeneousKernelFunctors {
     operator()( const Triangle_2& t, const Point_2& p) const
     {
       typename K::Collinear_are_ordered_along_line_2
-	collinear_are_ordered_along_line;
+        collinear_are_ordered_along_line;
       typename K::Orientation_2 orientation;
       typename K::Orientation o1 = orientation(t.vertex(0), t.vertex(1), p),
-	                      o2 = orientation(t.vertex(1), t.vertex(2), p),
-	                      o3 = orientation(t.vertex(2), t.vertex(3), p);
+                              o2 = orientation(t.vertex(1), t.vertex(2), p),
+                              o3 = orientation(t.vertex(2), t.vertex(3), p);
 
       if (o2 == o1 && o3 == o1)
-	return ON_BOUNDED_SIDE;
+        return ON_BOUNDED_SIDE;
       return
-	(o1 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
-	(o2 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
-	(o3 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
-	? ON_BOUNDARY
-	: ON_UNBOUNDED_SIDE;
+        (o1 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
+        (o2 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
+        (o3 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
+        ? ON_BOUNDARY
+        : ON_UNBOUNDED_SIDE;
     }
 
     result_type
@@ -289,21 +289,21 @@ namespace HomogeneousKernelFunctors {
       const RT& rhw = r.hw();
 
       if ( !(phx * rhw == rhx * phw ) )          // non-vertical ?
-	{
-	  return !( (  ( phx * qhw < qhx * phw)
-		       &&( rhx * qhw < qhx * rhw))
-		    ||(  ( qhx * phw < phx * qhw)
-			 &&( qhx * rhw < rhx * qhw)) );
-	}
+        {
+          return !( (  ( phx * qhw < qhx * phw)
+                       &&( rhx * qhw < qhx * rhw))
+                    ||(  ( qhx * phw < phx * qhw)
+                         &&( qhx * rhw < rhx * qhw)) );
+        }
       else if ( !(phy * rhw == rhy * phw ) )
-	{
-	  return !( (  ( phy * qhw < qhy * phw)
-		       &&( rhy * qhw < qhy * rhw))
-		    ||(  ( qhy * phw < phy * qhw)
-			 &&( qhy * rhw < rhy * qhw)) );
-	}
+        {
+          return !( (  ( phy * qhw < qhy * phw)
+                       &&( rhy * qhw < qhy * rhw))
+                    ||(  ( qhy * phw < phy * qhw)
+                         &&( qhy * rhw < rhy * qhw)) );
+        }
       else
-	return (( phx*qhw == qhx*phw) && ( phy*qhw == qhy*phw));
+        return (( phx*qhw == qhx*phw) && ( phy*qhw == qhy*phw));
     }
   };
 
@@ -343,12 +343,12 @@ namespace HomogeneousKernelFunctors {
       const RT rpx = rhx*phw;
 
       if ( prx != rpx )   // px != rx
-	{
-	  //    (px <= qx)&&(qx <= rx) || (px >= qx)&&(qx >= rx)
-	  // !(((qx <  px)||(rx <  qx))&&((px <  qx)||(qx <  rx)))
-	  return ! (   ((qpx < pqx) || (rqx < qrx))
-		       && ((pqx < qpx) || (qrx < rqx))  );
-	}
+        {
+          //    (px <= qx)&&(qx <= rx) || (px >= qx)&&(qx >= rx)
+          // !(((qx <  px)||(rx <  qx))&&((px <  qx)||(qx <  rx)))
+          return ! (   ((qpx < pqx) || (rqx < qrx))
+                       && ((pqx < qpx) || (qrx < rqx))  );
+        }
 
       const RT & phy = p.hy();
       const RT & qhy = q.hy();
@@ -362,10 +362,10 @@ namespace HomogeneousKernelFunctors {
       const RT rpy = rhy*phw;
 
       if ( pry != rpy )
-	{
-	  return ! (   ((qpy < pqy) || (rqy < qry))
-		       && ((pqy < qpy) || (qry < rqy))  );
-	}
+        {
+          return ! (   ((qpy < pqy) || (rqy < qry))
+                       && ((pqy < qpy) || (qry < rqy))  );
+        }
 
       const RT & phz = p.hz();
       const RT & qhz = q.hz();
@@ -379,10 +379,10 @@ namespace HomogeneousKernelFunctors {
       const RT rpz = rhz*phw;
 
       if ( prz != rpz )
-	{
-	  return ! (   ((qpz < pqz) || (rqz < qrz))
-		       && ((pqz < qpz) || (qrz < rqz))  );
-	}
+        {
+          return ! (   ((qpz < pqz) || (rqz < qrz))
+                       && ((pqz < qpz) || (qrz < rqz))  );
+        }
       // p == r
       return  ((rqx == qrx) && (rqy == qry) && (rqz == qrz));
     }
@@ -422,19 +422,19 @@ namespace HomogeneousKernelFunctors {
       const RT& rhw = r.hw();
 
       if ( !(phx * rhw == rhx * phw ) )
-	{
-	  return (   ( phx * qhw < qhx * phw)
-		     &&( qhx * rhw < rhx * qhw))
-	    ||(   ( qhx * phw < phx * qhw)    // ( phx * qhw > qhx * phw)
-		  &&( rhx * qhw < qhx * rhw));  // ( qhx * rhw > rhx * qhw)
-	}
+        {
+          return (   ( phx * qhw < qhx * phw)
+                     &&( qhx * rhw < rhx * qhw))
+            ||(   ( qhx * phw < phx * qhw)    // ( phx * qhw > qhx * phw)
+                  &&( rhx * qhw < qhx * rhw));  // ( qhx * rhw > rhx * qhw)
+        }
       else
-	{
-	  return (   ( phy * qhw < qhy * phw)
-		     &&( qhy * rhw < rhy * qhw))
-	    ||(   ( qhy * phw < phy * qhw)    // ( phy * qhw > qhy * phw)
-		  &&( rhy * qhw < qhy * rhw));  // ( qhy * rhw > rhy * qhw)
-	}
+        {
+          return (   ( phy * qhw < qhy * phw)
+                     &&( qhy * rhw < rhy * qhw))
+            ||(   ( qhy * phw < phy * qhw)    // ( phy * qhw > qhy * phw)
+                  &&( rhy * qhw < qhy * rhw));  // ( qhy * rhw > rhy * qhw)
+        }
     }
   };
 
@@ -486,7 +486,7 @@ namespace HomogeneousKernelFunctors {
 
     Collinear_has_on_2() {}
     Collinear_has_on_2(const Construct_point_on_2& cp_,
-		       const Compare_xy_2& cxy_)
+                       const Compare_xy_2& cxy_)
       : cp(cp_), cxy(cxy_)
     {}
 
@@ -542,14 +542,14 @@ namespace HomogeneousKernelFunctors {
       RT  det =  A*D - B*C;
 
       /*
-	RT det_old =   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
-	+ p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
-	+ p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
-	
-	if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
-	{
-	std::cerr << "det: " << det << " det_old: " << det_old << flush;
-	}
+        RT det_old =   p.hx() * (q.hy()*r.hw() - q.hw()*r.hy() )
+        + p.hy() * (q.hw()*r.hx() - q.hx()*r.hw() )
+        + p.hw() * (q.hx()*r.hy() - q.hy()*r.hx() );
+
+        if ( !(CGAL_NTS sign(det) == CGAL_NTS sign(det_old)) )
+        {
+        std::cerr << "det: " << det << " det_old: " << det_old << flush;
+        }
       */
 
       return CGAL_NTS is_zero(det);
@@ -592,21 +592,21 @@ namespace HomogeneousKernelFunctors {
       int       y_sign2 = static_cast<int>(CGAL_NTS sign( p2.hy() ));
 
       if ( y_sign1 * y_sign2 < 0)
-	{
-	  return (0 < y_sign1 ) ? SMALLER : LARGER;
-	}
+        {
+          return (0 < y_sign1 ) ? SMALLER : LARGER;
+        }
 
       Point_2   origin( RT0  , RT0   );
 
       if ( 0 < y_sign1 * y_sign2 )
-	{
-	  return orientation(origin, p2, p1);
+        {
+          return orientation(origin, p2, p1);
 
-	  // Precondition on the enums:
-	  // COUNTERCLOCKWISE == LARGER   ( ==  1 )
-	  // COLLINEAR        == EQUAL    ( ==  0 )
-	  // CLOCKWISE        == SMALLER  ( == -1 )
-	}
+          // Precondition on the enums:
+          // COUNTERCLOCKWISE == LARGER   ( ==  1 )
+          // COLLINEAR        == EQUAL    ( ==  0 )
+          // CLOCKWISE        == SMALLER  ( == -1 )
+        }
 
       // ( y_sign1 * y_sign2 == 0 )
 
@@ -616,10 +616,10 @@ namespace HomogeneousKernelFunctors {
       if ( b1 ) { return  b2 ? EQUAL : SMALLER; }
       if ( b2 ) { return  b1 ? EQUAL : LARGER; }
       if ( y_sign1 == y_sign2 )  // == 0
-	  return EQUAL;
+          return EQUAL;
       else
-	  return (orientation(origin, p1, p2) == COUNTERCLOCKWISE) ?
-	    SMALLER : LARGER;
+          return (orientation(origin, p1, p2) == COUNTERCLOCKWISE) ?
+            SMALLER : LARGER;
     }
   };
 
@@ -647,28 +647,28 @@ namespace HomogeneousKernelFunctors {
 
       RT dosd =   // difference of squared distances
 
-	//            phx * phx   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phx * qhx   *   phw * qhw * rhw * rhw
-	//   +        qhx * qhx   *   phw * phw * rhw * rhw
-	//
-	//   +        phy * phy   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phy * qhy   *   phw * qhw * rhw * rhw
-	//   +        qhy * qhy   *   phw * phw * rhw * rhw
-	//
-	// - (        phx * phx   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phx * rhx   *   phw * qhw * qhw * rhw
-	//   +        rhx * rhx   *   phw * phw * qhw * qhw
-	//
-	//   +        phy * phy   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phy * rhy   *   phw * qhw * qhw * rhw
-	//   +        rhy * rhy   *   phw * phw * qhw * qhw
-	
-	rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy )
-			    - 2 * qhw * ( phx*qhx + phy*qhy )
-			    )
-	- qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy )
-			      - 2 * rhw * ( phx*rhx + phy*rhy )
-			      );
+        //            phx * phx   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phx * qhx   *   phw * qhw * rhw * rhw
+        //   +        qhx * qhx   *   phw * phw * rhw * rhw
+        //
+        //   +        phy * phy   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phy * qhy   *   phw * qhw * rhw * rhw
+        //   +        qhy * qhy   *   phw * phw * rhw * rhw
+        //
+        // - (        phx * phx   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phx * rhx   *   phw * qhw * qhw * rhw
+        //   +        rhx * rhx   *   phw * phw * qhw * qhw
+        //
+        //   +        phy * phy   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phy * rhy   *   phw * qhw * qhw * rhw
+        //   +        rhy * rhy   *   phw * phw * qhw * qhw
+
+        rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy )
+                            - 2 * qhw * ( phx*qhx + phy*qhy )
+                            )
+        - qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy )
+                              - 2 * rhw * ( phx*rhx + phy*rhy )
+                              );
 
       return CGAL_NTS sign(dosd);
     }
@@ -715,12 +715,12 @@ namespace HomogeneousKernelFunctors {
 
       RT dosd =   // difference of squared distances
 
-	rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy + qhz*qhz )
-			    - 2 * qhw * ( phx*qhx + phy*qhy + phz*qhz )
-			    )
-	- qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy + rhz*rhz )
-			      - 2 * rhw * ( phx*rhx + phy*rhy + phz*rhz )
-			      );
+        rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy + qhz*qhz )
+                            - 2 * qhw * ( phx*qhx + phy*qhy + phz*qhz )
+                            )
+        - qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy + rhz*rhz )
+                              - 2 * rhw * ( phx*rhx + phy*rhy + phz*rhz )
+                              );
 
       return CGAL_NTS sign(dosd);
     }
@@ -748,9 +748,9 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Weighted_point_2         Weighted_point_2;
     typedef typename K::Point_2                  Point_2;
     typedef typename K::Comparison_result        Comparison_result;
-    
+
     typedef Comparison_result   result_type;
-    
+
     Comparison_result operator()(const Point_2& r,
                                  const Weighted_point_2& p,
                                  const Weighted_point_2& q) const
@@ -773,11 +773,11 @@ namespace HomogeneousKernelFunctors {
     operator()(const Line_2& l1, const Line_2& l2) const
     {
       if (l1.is_horizontal())
-	return l2.is_vertical() ?
-	  SMALLER : CGAL_NTS sign(l2.a()) * CGAL_NTS sign(l2.b());
+        return l2.is_vertical() ?
+          SMALLER : CGAL_NTS sign(l2.a()) * CGAL_NTS sign(l2.b());
       if (l2.is_horizontal())
-	return l1.is_vertical() ?
-	  LARGER : - CGAL_NTS sign(l1.a()) * CGAL_NTS sign(l1.b());
+        return l1.is_vertical() ?
+          LARGER : - CGAL_NTS sign(l1.a()) * CGAL_NTS sign(l1.b());
       if (l1.is_vertical()) return l2.is_vertical() ? EQUAL : LARGER;
       if (l2.is_vertical()) return SMALLER;
       int l1_sign = CGAL_NTS sign(-l1.a() * l1.b());
@@ -787,7 +787,7 @@ namespace HomogeneousKernelFunctors {
       if (l1_sign > l2_sign) return LARGER;
 
       if (l1_sign > 0)
-	return CGAL::compare( CGAL::abs(l1.a() * l2.b()),
+        return CGAL::compare( CGAL::abs(l1.a() * l2.b()),
                               CGAL::abs(l2.a() * l1.b()) );
 
       return CGAL::compare( CGAL::abs(l2.a() * l1.b()),
@@ -801,32 +801,32 @@ namespace HomogeneousKernelFunctors {
 
       typename K::Comparison_result cmp_y1 = compare_y(s1.source(), s1.target());
       if (cmp_y1 == EQUAL) // horizontal
-	{
-	  typename K::Comparison_result cmp_x2 = compare_x(s2.source(), s2.target());
+        {
+          typename K::Comparison_result cmp_x2 = compare_x(s2.source(), s2.target());
 
-	  if (cmp_x2 == EQUAL) return SMALLER;
-	  FT s_hw = s2.source().hw();
-	  FT t_hw = s2.target().hw();
-	  return - CGAL_NTS sign(s2.source().hy()*t_hw - s2.target().hy()*s_hw) *
-		   CGAL_NTS sign(s2.source().hx()*t_hw - s2.target().hx()*s_hw);
-	}
+          if (cmp_x2 == EQUAL) return SMALLER;
+          FT s_hw = s2.source().hw();
+          FT t_hw = s2.target().hw();
+          return - CGAL_NTS sign(s2.source().hy()*t_hw - s2.target().hy()*s_hw) *
+                   CGAL_NTS sign(s2.source().hx()*t_hw - s2.target().hx()*s_hw);
+        }
 
       typename K::Comparison_result cmp_y2 = compare_y(s2.source(), s2.target());
       if (cmp_y2 == EQUAL)
-	{
-	  typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
+        {
+          typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
 
-	  if (cmp_x1 == EQUAL) return LARGER;
-	  FT s_hw = s1.source().hw();
-	  FT t_hw = s1.target().hw();
-	  return CGAL_NTS sign(s1.source().hy()*t_hw - s1.target().hy()*s_hw) *
-		 CGAL_NTS sign(s1.source().hx()*t_hw - s1.target().hx()*s_hw);
-	}
+          if (cmp_x1 == EQUAL) return LARGER;
+          FT s_hw = s1.source().hw();
+          FT t_hw = s1.target().hw();
+          return CGAL_NTS sign(s1.source().hy()*t_hw - s1.target().hy()*s_hw) *
+                 CGAL_NTS sign(s1.source().hx()*t_hw - s1.target().hx()*s_hw);
+        }
 
       typename K::Comparison_result cmp_x1 = compare_x(s1.source(), s1.target());
       typename K::Comparison_result cmp_x2 = compare_x(s2.source(), s2.target());
       if (cmp_x1 == EQUAL)
-	return cmp_x2 == EQUAL ? EQUAL : LARGER;
+        return cmp_x2 == EQUAL ? EQUAL : LARGER;
 
       if (cmp_x2 == EQUAL) return SMALLER;
 
@@ -845,11 +845,11 @@ namespace HomogeneousKernelFunctors {
       if (s1_sign > s2_sign) return LARGER;
 
       if (s1_sign > 0)
-	return CGAL_NTS sign(CGAL_NTS abs(s1_ydiff * s2_xdiff) -
-			     CGAL_NTS abs(s2_ydiff * s1_xdiff));
+        return CGAL_NTS sign(CGAL_NTS abs(s1_ydiff * s2_xdiff) -
+                             CGAL_NTS abs(s2_ydiff * s1_xdiff));
 
       return CGAL_NTS sign(CGAL_NTS abs(s2_ydiff * s1_xdiff) -
-		           CGAL_NTS abs(s1_ydiff * s2_xdiff));
+                           CGAL_NTS abs(s1_ydiff * s2_xdiff));
     }
   };
 
@@ -868,9 +868,9 @@ namespace HomogeneousKernelFunctors {
       CGAL_kernel_precondition( ! h.is_horizontal() );
       typename K::Oriented_side ors = h.oriented_side( p );
       if ( h.a() < RT(0) )
-	  ors = -ors;
+          ors = -ors;
       if ( ors == ON_POSITIVE_SIDE )
-	  return LARGER;
+          return LARGER;
       return ( ors == ON_NEGATIVE_SIDE ) ? SMALLER : EQUAL;
     } // FIXME
 
@@ -886,7 +886,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     { return compare_x_at_y( gp_linear_intersection( l1, l2 ), h1, h2 ); }
     // FIXME
   };
@@ -905,24 +905,24 @@ namespace HomogeneousKernelFunctors {
       RT pV = p.hx()*q.hw();
       RT qV = q.hx()*p.hw();
       if ( pV < qV )
-	{
-	  return SMALLER;
-	}
+        {
+          return SMALLER;
+        }
       if ( qV < pV )    //   ( pV > qV )
-	{
-	  return LARGER;
-	}
+        {
+          return LARGER;
+        }
       // same x
       pV = p.hy()*q.hw();
       qV = q.hy()*p.hw();
       if ( pV < qV )
-	{
-	  return SMALLER;
-	}
+        {
+          return SMALLER;
+        }
       if ( qV < pV )    //   ( pV > qV )
-	{
-	  return LARGER;
-	}
+        {
+          return LARGER;
+        }
       // same x and y
       pV = p.hz()*q.hw();
       qV = q.hz()*p.hw();
@@ -952,10 +952,10 @@ namespace HomogeneousKernelFunctors {
       RT pV = phx*qhw;
       RT qV = qhx*phw;
       if ( pV == qV )
-	{
-	  pV = phy*qhw;
-	  qV = qhy*phw;
-	}
+        {
+          pV = phy*qhw;
+          qV = qhy*phw;
+        }
       return CGAL::compare(pV, qV);
     }
   };
@@ -982,10 +982,10 @@ namespace HomogeneousKernelFunctors {
       RT pV = phy*qhw;
       RT qV = qhy*phw;
       if ( pV == qV )
-	{
-	  pV = phx*qhw;
-	  qV = qhx*phw;
-	}
+        {
+          pV = phx*qhw;
+          qV = qhx*phw;
+        }
       return CGAL::compare(pV, qV);
     }
   };
@@ -1004,13 +1004,13 @@ namespace HomogeneousKernelFunctors {
       RT pV = p.hx()*q.hw();
       RT qV = q.hx()*p.hw();
       if ( pV < qV )
-	{
-	  return SMALLER;
-	}
+        {
+          return SMALLER;
+        }
       if ( qV < pV )    //   ( pV > qV )
-	{
-	  return LARGER;
-	}
+        {
+          return LARGER;
+        }
       // same x
       pV = p.hy()*q.hw();
       qV = q.hy()*p.hw();
@@ -1047,7 +1047,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     {
       Point_2 lip = gp_linear_intersection( l1, l2 );
       Point_2 hip = gp_linear_intersection( h1, h2 );
@@ -1082,7 +1082,7 @@ namespace HomogeneousKernelFunctors {
       CGAL_kernel_precondition( ! h.is_vertical() );
       typename K::Oriented_side ors = h.oriented_side( p );
       if ( h.b() < 0 )
-	  ors = -ors;
+          ors = -ors;
       return ors;
     } // FIXME
 
@@ -1098,7 +1098,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     { return compare_y_at_x( gp_linear_intersection( l1, l2 ), h1, h2 ); }
     // FIXME
 
@@ -1110,29 +1110,29 @@ namespace HomogeneousKernelFunctors {
 
       if (compare_x(s.source(), s.target()) == SMALLER) {
         CGAL_kernel_precondition(compare_x(s.source(), p) != LARGER
-				 && compare_x(p, s.target()) != LARGER);
+                                 && compare_x(p, s.target()) != LARGER);
         return (Comparison_result) orientation(p, s.source(), s.target());
       }
       else if (compare_x(s.source(), s.target()) == LARGER) {
         CGAL_kernel_precondition(compare_x(s.target(), p) != LARGER
-				 && compare_x(p, s.source()) != LARGER);
+                                 && compare_x(p, s.source()) != LARGER);
         return (Comparison_result) orientation(p, s.target(), s.source());
       }
       else {
         CGAL_kernel_precondition(compare_x(s.target(), p) == EQUAL);
-	if (compare_y(p, s.source()) == SMALLER &&
-	    compare_y(p, s.target()) == SMALLER)
-	  return SMALLER;
-	if (compare_y(p, s.source()) == LARGER &&
-	    compare_y(p, s.target()) == LARGER)
-	  return LARGER;
-	return EQUAL;
+        if (compare_y(p, s.source()) == SMALLER &&
+            compare_y(p, s.target()) == SMALLER)
+          return SMALLER;
+        if (compare_y(p, s.source()) == LARGER &&
+            compare_y(p, s.target()) == LARGER)
+          return LARGER;
+        return EQUAL;
       }
     } // FIXME
 
     result_type
     operator()( const Point_2& p,
-	        const Segment_2& s1, const Segment_2& s2) const
+                const Segment_2& s1, const Segment_2& s2) const
     {
       // compares the y-coordinates of the vertical projections
       //   of p on s1 and s2
@@ -1153,36 +1153,36 @@ namespace HomogeneousKernelFunctors {
       FT s2ty = s2.target().y();
 
       CGAL_kernel_precondition(px >= (CGAL::min)(s1sx, s1tx) &&
-	                       px <= (CGAL::max)(s1sx, s1tx));
+                               px <= (CGAL::max)(s1sx, s1tx));
       CGAL_kernel_precondition(px >= (CGAL::min)(s2sx, s2tx) &&
-	                       px <= (CGAL::max)(s2sx, s2tx));
+                               px <= (CGAL::max)(s2sx, s2tx));
 
       if (s1sx != s1tx && s2sx != s2tx) {
-	FT s1stx = s1sx-s1tx;
-	FT s2stx = s2sx-s2tx;
+        FT s1stx = s1sx-s1tx;
+        FT s2stx = s2sx-s2tx;
 
-	return CGAL::compare(s1sx, s1tx) *
+        return CGAL::compare(s1sx, s1tx) *
           CGAL::compare(s2sx, s2tx) *
           CGAL::compare(-(s1sx-px)*(s1sy-s1ty)*s2stx,
                         (s2sy-s1sy)*s2stx*s1stx
                         -(s2sx-px)*(s2sy-s2ty)*s1stx);
       }
       else {
-	if (s1sx == s1tx) { // s1 is vertical
-	  typename K::Comparison_result c1, c2;
-	  c1 = compare_y_at_x(s1.source(), s2);
-	  c2 = compare_y_at_x(s1.target(), s2);
-	  if (c1 == c2)
-	    return c1;
-	  return EQUAL;
-	}
-	// s2 is vertical
-	typename K::Comparison_result c3, c4;
-	c3 = compare_y_at_x(s2.source(), s1);
-	c4 = compare_y_at_x(s2.target(), s1);
-	if (c3 == c4)
-	  return -c3;
-	return EQUAL;
+        if (s1sx == s1tx) { // s1 is vertical
+          typename K::Comparison_result c1, c2;
+          c1 = compare_y_at_x(s1.source(), s2);
+          c2 = compare_y_at_x(s1.target(), s2);
+          if (c1 == c2)
+            return c1;
+          return EQUAL;
+        }
+        // s2 is vertical
+        typename K::Comparison_result c3, c4;
+        c3 = compare_y_at_x(s2.source(), s1);
+        c4 = compare_y_at_x(s2.target(), s1);
+        if (c3 == c4)
+          return -c3;
+        return EQUAL;
       }
     } // FIXME
   };
@@ -1222,7 +1222,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Line_2& l1, const Line_2& l2,
-	        const Line_2& h1, const Line_2& h2) const
+                const Line_2& h1, const Line_2& h2) const
     {
       Point_2 lip = gp_linear_intersection( l1, l2 );
       Point_2 hip = gp_linear_intersection( h1, h2 );
@@ -1299,7 +1299,7 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Vector_2& v, const Vector_2& w) const
     {
-	return determinant(v.hx(), v.hy(),
+        return determinant(v.hx(), v.hy(),
                                  w.hx(), w.hy()) / FT(v.hw() * w.hw());
     }
   };
@@ -1315,7 +1315,7 @@ namespace HomogeneousKernelFunctors {
     result_type
     operator()(const Vector_3& v, const Vector_3& w, const Vector_3& t) const
     {
-	return determinant(v.hx(), v.hy(), v.hz(),
+        return determinant(v.hx(), v.hy(), v.hz(),
                                  w.hx(), w.hy(), w.hz(),
                                  t.hx(), t.hy(), t.hz())
                               / FT(v.hw() * w.hw() * t.hw());
@@ -1403,7 +1403,7 @@ namespace HomogeneousKernelFunctors {
     FT
     operator()( const Point_3& /*p*/) const
     { return FT(0); }
-      
+
     FT
     operator()( const Point_3& p, const Point_3& q) const
     {
@@ -1419,7 +1419,7 @@ namespace HomogeneousKernelFunctors {
 
     FT
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     {
       return squared_distance(p, circumcenter(p, q, r, s));
     } // FIXME
@@ -1438,7 +1438,7 @@ namespace HomogeneousKernelFunctors {
 
     FT
     operator()(const Point_3& p0, const Point_3& p1,
-	       const Point_3& p2, const Point_3& p3) const
+               const Point_3& p2, const Point_3& p3) const
     {
       Vector_3 vec1 = p1 - p0;
       Vector_3 vec2 = p2 - p0;
@@ -1466,7 +1466,7 @@ namespace HomogeneousKernelFunctors {
     operator()( const Tetrahedron_3& t ) const
     {
       return this->operator()(t.vertex(0), t.vertex(1),
-		              t.vertex(2), t.vertex(3));
+                              t.vertex(2), t.vertex(3));
     }
 
     FT
@@ -1859,33 +1859,33 @@ namespace HomogeneousKernelFunctors {
     operator()( const Plane_3& h, int index ) const
     {
       if (index == 1) {
-	// point():
-	// a() != RT0 : Point_3( -d(), RT0, RT0, a() );
-	// b() != RT0 : Point_3( RT0, -d(), RT0, b() );
-	//            : Point_3( RT0, RT0, -d(), c() );
-	// point1():
-	// a() != RT0 : Point_3( -b()-d(), a(), RT0, a() );
-	// b() != RT0 : Point_3( RT0, -c()-d(), b(), b() );
-	//            : Point_3( c(), RT0, -a()-d(), c() );
-	
-	const RT RT0(0);
-	if ( h.a() != RT0 )
-	  {
-	    return Vector_3( -h.b(), h.a(), RT0, h.a() );
-	  }
-	if ( h.b() != RT0 )
-	  {
-	    return Vector_3( RT0, -h.c(), h.b(), h.b() );
-	  }
-	CGAL_kernel_assertion ( h.c() != RT(0) );
-	return Vector_3( h.c(), RT0, -h.a(), h.c() );
+        // point():
+        // a() != RT0 : Point_3( -d(), RT0, RT0, a() );
+        // b() != RT0 : Point_3( RT0, -d(), RT0, b() );
+        //            : Point_3( RT0, RT0, -d(), c() );
+        // point1():
+        // a() != RT0 : Point_3( -b()-d(), a(), RT0, a() );
+        // b() != RT0 : Point_3( RT0, -c()-d(), b(), b() );
+        //            : Point_3( c(), RT0, -a()-d(), c() );
+
+        const RT RT0(0);
+        if ( h.a() != RT0 )
+          {
+            return Vector_3( -h.b(), h.a(), RT0, h.a() );
+          }
+        if ( h.b() != RT0 )
+          {
+            return Vector_3( RT0, -h.c(), h.b(), h.b() );
+          }
+        CGAL_kernel_assertion ( h.c() != RT(0) );
+        return Vector_3( h.c(), RT0, -h.a(), h.c() );
       } else {
-	Vector_3 a = co(h);
-	Vector_3 b = this->operator()(h, 1);
-	return Vector_3(a.hy()*b.hz() - a.hz()*b.hy(),
-			a.hz()*b.hx() - a.hx()*b.hz(),
-			a.hx()*b.hy() - a.hy()*b.hx(),
-			a.hw()*b.hw() );
+        Vector_3 a = co(h);
+        Vector_3 b = this->operator()(h, 1);
+        return Vector_3(a.hy()*b.hz() - a.hz()*b.hy(),
+                        a.hz()*b.hx() - a.hx()*b.hz(),
+                        a.hx()*b.hy() - a.hy()*b.hx(),
+                        a.hw()*b.hw() );
       }
     }
   };
@@ -1923,8 +1923,8 @@ namespace HomogeneousKernelFunctors {
     {
       typename K::Construct_bbox_2 construct_bbox_2;
       return construct_bbox_2(t.vertex(0))
-	+ construct_bbox_2(t.vertex(1))
-	+ construct_bbox_2(t.vertex(2));
+        + construct_bbox_2(t.vertex(1))
+        + construct_bbox_2(t.vertex(2));
     }
 
     Bbox_2
@@ -1991,8 +1991,8 @@ namespace HomogeneousKernelFunctors {
     {
       typename K::Construct_bbox_3 construct_bbox;
       return construct_bbox(t.vertex(0))
-	   + construct_bbox(t.vertex(1))
-	   + construct_bbox(t.vertex(2));
+           + construct_bbox(t.vertex(1))
+           + construct_bbox(t.vertex(2));
     }
 
     Bbox_3
@@ -2029,7 +2029,7 @@ namespace HomogeneousKernelFunctors {
       Interval_nt<> maxz = z+r;
 
       return Bbox_3(minx.inf(), miny.inf(), minz.inf(),
-		    maxx.sup(), maxy.sup(), maxz.sup());
+                    maxx.sup(), maxy.sup(), maxz.sup());
     }
   };
 
@@ -2061,7 +2061,7 @@ namespace HomogeneousKernelFunctors {
       RT a = RT(2) * ( phx*phw*qhw*qhw - qhx*qhw*phw*phw );
       RT b = RT(2) * ( phy*phw*qhw*qhw - qhy*qhw*phw*phw );
       RT c = qhx*qhx*phw*phw + qhy*qhy*phw*phw
-	   - phx*phx*qhw*qhw - phy*phy*qhw*qhw;
+           - phx*phx*qhw*qhw - phy*phy*qhw*qhw;
 
       return Line_2( a, b, c );
     }
@@ -2107,7 +2107,7 @@ namespace HomogeneousKernelFunctors {
       RT b = RT(2) * ( phy*phw*qhw*qhw - qhy*qhw*phw*phw );
       RT c = RT(2) * ( phz*phw*qhw*qhw - qhz*qhw*phw*phw );
       RT d = qhx*qhx*phw*phw + qhy*qhy*phw*phw + qhz*qhz*phw*phw
-	   - phx*phx*qhw*qhw - phy*phy*qhw*qhw - phz*phz*qhw*qhw;
+           - phx*phx*qhw*qhw - phy*phy*qhw*qhw - phz*phz*qhw*qhw;
 
       return Plane_3( a, b, c, d );
     }
@@ -2117,8 +2117,8 @@ namespace HomogeneousKernelFunctors {
     {
       RT a, b, c, d;
       bisector_of_planesC3(p.a(), p.b(), p.c(), p.d(),
-	                   q.a(), q.b(), q.c(), q.d(),
-			   a, b, c, d);
+                           q.a(), q.b(), q.c(), q.d(),
+                           a, b, c, d);
       return Plane_3(a, b, c, d);
     }
   };
@@ -2162,9 +2162,9 @@ namespace HomogeneousKernelFunctors {
       const RT rhw(r.hw());
       const RT shw(s.hw());
       RT hx(p.hx()*qhw*rhw*shw + q.hx()*phw*rhw*shw + r.hx()*phw*qhw*shw
-	    + s.hx()*phw*qhw*rhw);
+            + s.hx()*phw*qhw*rhw);
       RT hy(p.hy()*qhw*rhw*shw + q.hy()*phw*rhw*shw + r.hy()*phw*qhw*shw
-	    + s.hy()*phw*qhw*rhw);
+            + s.hy()*phw*qhw*rhw);
       RT hw( phw*qhw*rhw*shw * 4);
       return Point_2(hx, hy, hw);
     }
@@ -2202,11 +2202,11 @@ namespace HomogeneousKernelFunctors {
       const RT& rhw = r.hw();
       const RT& shw = s.hw();
       RT hx(p.hx()*qhw*rhw*shw + q.hx()*phw*rhw*shw + r.hx()*phw*qhw*shw
-	    + s.hx()*phw*qhw*rhw);
+            + s.hx()*phw*qhw*rhw);
       RT hy(p.hy()*qhw*rhw*shw + q.hy()*phw*rhw*shw + r.hy()*phw*qhw*shw
-	    + s.hy()*phw*qhw*rhw);
+            + s.hy()*phw*qhw*rhw);
       RT hz(p.hz()*qhw*rhw*shw + q.hz()*phw*rhw*shw + r.hz()*phw*qhw*shw
-	    + s.hz()*phw*qhw*rhw);
+            + s.hz()*phw*qhw*rhw);
       RT hw( phw*qhw*rhw*shw * RT(4));
       return Point_3(hx, hy, hz, hw);
     }
@@ -2257,26 +2257,26 @@ namespace HomogeneousKernelFunctors {
 
 #ifdef CGAL_EXPANDED_CIRCUMCENTER_COMPUTATION
       RT vvx =
-	( qhy*qhw*phw*phw - phy*phw*qhw*qhw )
-	*( phx*phx*rhw*rhw + phy*phy*rhw*rhw -
-	   rhx*rhx*phw*phw - rhy*rhy*phw*phw )
-	-  ( rhy*rhw*phw*phw - phy*phw*rhw*rhw )
-	*( phx*phx*qhw*qhw + phy*phy*qhw*qhw -
-	   qhx*qhx*phw*phw - qhy*qhy*phw*phw );
+        ( qhy*qhw*phw*phw - phy*phw*qhw*qhw )
+        *( phx*phx*rhw*rhw + phy*phy*rhw*rhw -
+           rhx*rhx*phw*phw - rhy*rhy*phw*phw )
+        -  ( rhy*rhw*phw*phw - phy*phw*rhw*rhw )
+        *( phx*phx*qhw*qhw + phy*phy*qhw*qhw -
+           qhx*qhx*phw*phw - qhy*qhy*phw*phw );
 
       RT vvy =
-	-  ( qhx*qhw*phw*phw - phx*phw*qhw*qhw )
-	*( phx*phx*rhw*rhw + phy*phy*rhw*rhw -
-	   rhx*rhx*phw*phw - rhy*rhy*phw*phw )
-	+  ( rhx*rhw*phw*phw - phx*phw*rhw*rhw )
-	*( phx*phx*qhw*qhw + phy*phy*qhw*qhw -
-	   qhx*qhx*phw*phw - qhy*qhy*phw*phw );
+        -  ( qhx*qhw*phw*phw - phx*phw*qhw*qhw )
+        *( phx*phx*rhw*rhw + phy*phy*rhw*rhw -
+           rhx*rhx*phw*phw - rhy*rhy*phw*phw )
+        +  ( rhx*rhw*phw*phw - phx*phw*rhw*rhw )
+        *( phx*phx*qhw*qhw + phy*phy*qhw*qhw -
+           qhx*qhx*phw*phw - qhy*qhy*phw*phw );
 
       RT vvw = RT(2) *
-	(  ( qhx*qhw*phw*phw - phx*phw*qhw*qhw )
-	   *( rhy*rhw*phw*phw - phy*phw*rhw*rhw )
-	   -  ( rhx*rhw*phw*phw - phx*phw*rhw*rhw )
-	   *( qhy*qhw*phw*phw - phy*phw*qhw*qhw ) );
+        (  ( qhx*qhw*phw*phw - phx*phw*qhw*qhw )
+           *( rhy*rhw*phw*phw - phy*phw*rhw*rhw )
+           -  ( rhx*rhw*phw*phw - phx*phw*rhw*rhw )
+           *( qhy*qhw*phw*phw - phy*phw*qhw*qhw ) );
 #endif // CGAL_EXPANDED_CIRCUMCENTER_COMPUTATION
 
       RT qy_py = ( qhy*qhw*phw*phw - phy*phw*qhw*qhw );
@@ -2285,11 +2285,11 @@ namespace HomogeneousKernelFunctors {
       RT ry_py = ( rhy*rhw*phw*phw - phy*phw*rhw*rhw );
 
       RT px2_py2_rx2_ry_2 =
-	phx*phx*rhw*rhw + phy*phy*rhw*rhw -
-	rhx*rhx*phw*phw - rhy*rhy*phw*phw ;
+        phx*phx*rhw*rhw + phy*phy*rhw*rhw -
+        rhx*rhx*phw*phw - rhy*rhy*phw*phw ;
       RT px2_py2_qx2_qy_2 =
-	phx*phx*qhw*qhw + phy*phy*qhw*qhw -
-	qhx*qhx*phw*phw - qhy*qhy*phw*phw ;
+        phx*phx*qhw*qhw + phy*phy*qhw*qhw -
+        qhx*qhx*phw*phw - qhy*qhy*phw*phw ;
 
       RT vvx = qy_py * px2_py2_rx2_ry_2 - ry_py * px2_py2_qx2_qy_2;
       RT vvy = rx_px * px2_py2_qx2_qy_2 - qx_px * px2_py2_rx2_ry_2;
@@ -2327,8 +2327,8 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return gp_linear_intersection( Plane_3(p,q,r),
-				     bisector(p,q),
-				     bisector(p,r));
+                                     bisector(p,q),
+                                     bisector(p,r));
     } // FIXME
 
     Point_3
@@ -2339,7 +2339,7 @@ namespace HomogeneousKernelFunctors {
 
     Point_3
     operator()(const Point_3& p, const Point_3& q,
-	       const Point_3& r, const Point_3& s) const
+               const Point_3& r, const Point_3& s) const
     {
       typedef typename K::RT RT;
 
@@ -2384,21 +2384,21 @@ namespace HomogeneousKernelFunctors {
       shw *= shw;
 
       RT chx =  determinant(phy, phz, pssq, phw,
-				  qhy, qhz, qssq, qhw,
-				  rhy, rhz, rssq, rhw,
-				  shy, shz, sssq, shw );
+                                  qhy, qhz, qssq, qhw,
+                                  rhy, rhz, rssq, rhw,
+                                  shy, shz, sssq, shw );
       RT chy =  determinant(phx, phz, pssq, phw,
-				  qhx, qhz, qssq, qhw,
-				  rhx, rhz, rssq, rhw,
-				  shx, shz, sssq, shw );
+                                  qhx, qhz, qssq, qhw,
+                                  rhx, rhz, rssq, rhw,
+                                  shx, shz, sssq, shw );
       RT chz =  determinant(phx, phy, pssq, phw,
-				  qhx, qhy, qssq, qhw,
-				  rhx, rhy, rssq, rhw,
-				  shx, shy, sssq, shw );
+                                  qhx, qhy, qssq, qhw,
+                                  rhx, rhy, rssq, rhw,
+                                  shx, shy, sssq, shw );
       RT chw =  determinant(phx, phy, phz, phw,
-				  qhx, qhy, qhz, qhw,
-				  rhx, rhy, rhz, rhw,
-				  shx, shy, shz, shw );
+                                  qhx, qhy, qhz, qhw,
+                                  rhx, rhy, rhz, rhw,
+                                  shx, shy, shz, shw );
 
       return Point_3( chx, -chy, chz, RT(2)*chw);
     }
@@ -2422,9 +2422,9 @@ namespace HomogeneousKernelFunctors {
     operator()(const Vector_3& a, const Vector_3& b) const
     {
       return Vector_3(a.hy()*b.hz() - a.hz()*b.hy(),
-		      a.hz()*b.hx() - a.hx()*b.hz(),
-		      a.hx()*b.hy() - a.hy()*b.hx(),
-		      a.hw()*b.hw() );
+                      a.hz()*b.hx() - a.hx()*b.hz(),
+                      a.hx()*b.hy() - a.hy()*b.hx(),
+                      a.hw()*b.hw() );
     }
   };
 
@@ -2501,7 +2501,7 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, const Point_2& q, const Point_2& p) const
     {
       return Rep( p.hx()*q.hw() - q.hx()*p.hw(),
-		  p.hy()*q.hw() - q.hy()*p.hw() );
+                  p.hy()*q.hw() - q.hy()*p.hw() );
     }
 
 
@@ -2635,7 +2635,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Vector_2& v, const FT& f ) const
     {
       return Vector_2( v.hx()*f.denominator(), v.hy()*f.denominator(),
-		       v.hw()*f.numerator() );
+                       v.hw()*f.numerator() );
     }
 
     Vector_2
@@ -2658,7 +2658,7 @@ namespace HomogeneousKernelFunctors {
     operator()(const Vector_3& v, const FT& f ) const
     {
       return Vector_3( v.hx()*f.denominator(), v.hy()*f.denominator(),
-		       v.hz()*f.denominator(), v.hw()*f.numerator() );
+                       v.hz()*f.denominator(), v.hw()*f.numerator() );
     }
 
     Vector_3
@@ -2726,33 +2726,33 @@ namespace HomogeneousKernelFunctors {
                const Point_2 &bottom, const Point_2 &top) const
     {
         CGAL_kernel_assertion_code(typename K::Less_x_2 less_x;)
-	CGAL_kernel_assertion_code(typename K::Less_y_2 less_y;)
-	CGAL_kernel_assertion(!less_x(right, left));
+        CGAL_kernel_assertion_code(typename K::Less_y_2 less_y;)
+        CGAL_kernel_assertion(!less_x(right, left));
         CGAL_kernel_assertion(!less_y(top, bottom));
         return Rep(Point_2(left.hx()   * bottom.hw(),
-			   bottom.hy() * left.hw(),
-			   left.hw()   * bottom.hw()),
-		   Point_2(right.hx()  * top.hw(),
-			   top.hy()    * right.hw(),
-			   right.hw()  * top.hw()), 0);
+                           bottom.hy() * left.hw(),
+                           left.hw()   * bottom.hw()),
+                   Point_2(right.hx()  * top.hw(),
+                           top.hy()    * right.hw(),
+                           right.hw()  * top.hw()), 0);
     }
 
     Rep // Iso_rectangle_2
     operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy) const
+               const RT& max_hx, const RT& max_hy) const
     {
       CGAL_kernel_precondition(min_hx <= max_hx);
       CGAL_kernel_precondition(min_hy <= max_hy);
       return Rep(Point_2(min_hx, min_hy),
-		 Point_2(max_hx, max_hy), 0);
+                 Point_2(max_hx, max_hy), 0);
     }
 
     Rep // Iso_rectangle_2
     operator()(Return_base_tag, const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy, const RT& hw) const
+               const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
-	return Rep(Point_2(min_hx, min_hy, hw),
-		   Point_2(max_hx, max_hy, hw), 0);
+        return Rep(Point_2(min_hx, min_hy, hw),
+                   Point_2(max_hx, max_hy, hw), 0);
     }
 
 
@@ -2777,14 +2777,14 @@ namespace HomogeneousKernelFunctors {
 
     Iso_rectangle_2
     operator()(const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy) const
+               const RT& max_hx, const RT& max_hy) const
     {
       return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy);
     }
 
     Iso_rectangle_2
     operator()(const RT& min_hx, const RT& min_hy,
-	       const RT& max_hx, const RT& max_hy, const RT& hw) const
+               const RT& max_hx, const RT& max_hy, const RT& hw) const
     {
       return this->operator()(Return_base_tag(), min_hx, min_hy, max_hx, max_hy, hw);
     }
@@ -2837,14 +2837,14 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {
       return Rep(
-		    //  a() * X + b() * Y + c() * W() == 0
-		    //      |    X        Y       W     |
-		    //      |  p.hx()   p.hy()  p.hw()  |
-		    //      |  q.hx()   q.hy()  q.hw()  |
-		
-		    p.hy()*q.hw() - p.hw()*q.hy(),
-		    p.hw()*q.hx() - p.hx()*q.hw(),
-		    p.hx()*q.hy() - p.hy()*q.hx() );
+                    //  a() * X + b() * Y + c() * W() == 0
+                    //      |    X        Y       W     |
+                    //      |  p.hx()   p.hy()  p.hw()  |
+                    //      |  q.hx()   q.hy()  q.hw()  |
+
+                    p.hy()*q.hw() - p.hw()*q.hy(),
+                    p.hw()*q.hx() - p.hx()*q.hw(),
+                    p.hx()*q.hy() - p.hy()*q.hx() );
     }
 
     Rep // Line_2
@@ -2852,8 +2852,8 @@ namespace HomogeneousKernelFunctors {
     {
       Point_2 q = p + v;
       return Rep( p.hy()*q.hw() - p.hw()*q.hy(),
-		     p.hw()*q.hx() - p.hx()*q.hw(),
-		     p.hx()*q.hy() - p.hy()*q.hx() );
+                     p.hw()*q.hx() - p.hx()*q.hw(),
+                     p.hx()*q.hy() - p.hy()*q.hx() );
     }
 
     Rep // Line_2
@@ -2861,8 +2861,8 @@ namespace HomogeneousKernelFunctors {
     {
       Point_2 q = p + d.to_vector();
       return Rep( p.hy()*q.hw() - p.hw()*q.hy(),
-		     p.hw()*q.hx() - p.hx()*q.hw(),
-		     p.hx()*q.hy() - p.hy()*q.hx() );
+                     p.hw()*q.hx() - p.hx()*q.hw(),
+                     p.hx()*q.hy() - p.hy()*q.hx() );
     }
 
     Rep // Line_2
@@ -2914,8 +2914,8 @@ namespace HomogeneousKernelFunctors {
       const RT& phw = p.hw();
       const RT& qhw = q.hw();
       return Point_2( p.hx()*qhw + q.hx()*phw,
-		      p.hy()*qhw + q.hy()*phw,
-		      phw * qhw * RT( 2));
+                      p.hy()*qhw + q.hy()*phw,
+                      phw * qhw * RT( 2));
     }
   };
 
@@ -2934,9 +2934,9 @@ namespace HomogeneousKernelFunctors {
       RT phw = p.hw();
       RT qhw = q.hw();
       return Point_3( p.hx()*qhw + q.hx()*phw,
-		      p.hy()*qhw + q.hy()*phw,
-		      p.hz()*qhw + q.hz()*phw,
-		      RT(2) * phw * qhw );
+                      p.hy()*qhw + q.hy()*phw,
+                      p.hz()*qhw + q.hz()*phw,
+                      RT(2) * phw * qhw );
     }
   };
 
@@ -2997,9 +2997,9 @@ namespace HomogeneousKernelFunctors {
     {
       CGAL_kernel_precondition( o != COLLINEAR );
       if (o == COUNTERCLOCKWISE)
-	return K().construct_vector_2_object()(-v.hy(), v.hx(), v.hw());
+        return K().construct_vector_2_object()(-v.hy(), v.hx(), v.hw());
       else
-	return K().construct_vector_2_object()(v.hy(), -v.hx(), v.hw());
+        return K().construct_vector_2_object()(v.hy(), -v.hx(), v.hw());
     }
   };
 
@@ -3015,10 +3015,10 @@ namespace HomogeneousKernelFunctors {
     {
       CGAL_kernel_precondition(o != COLLINEAR);
       if (o == COUNTERCLOCKWISE) {
-	  return Direction_2(-d.dy(), d.dx());
-	} else {
-	  return Direction_2(d.dy(), -d.dx());
-	}
+          return Direction_2(-d.dy(), d.dx());
+        } else {
+          return Direction_2(d.dy(), -d.dx());
+        }
     }
   };
 
@@ -3081,11 +3081,11 @@ namespace HomogeneousKernelFunctors {
     {
       CGAL_kernel_precondition( ! l.is_degenerate() );
       if (l.is_vertical() )
-	{
-	  return Rep(-l.c(), RT(0)  , l.a() );
-	} else {
-	  return Rep(RT(0)  , -l.c(), l.b() );
-	}
+        {
+          return Rep(-l.c(), RT(0)  , l.a() );
+        } else {
+          return Rep(RT(0)  , -l.c(), l.b() );
+        }
     }
 
     Point_2
@@ -3107,11 +3107,11 @@ namespace HomogeneousKernelFunctors {
     }
 
 
-    const Point_2& 
+    const Point_2&
     operator()(const Point_2 & p) const
     { return p; }
 
-    const Point_2& 
+    const Point_2&
     operator()(const Weighted_point_2 & p) const
     { return p.rep().point(); }
 
@@ -3172,11 +3172,11 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
 
-    const Point_3& 
+    const Point_3&
     operator()(const Point_3 & p) const
     { return p; }
 
-    const Point_3& 
+    const Point_3&
     operator()(const Weighted_point_3 & p) const
     { return p.rep().point(); }
 
@@ -3300,8 +3300,8 @@ namespace HomogeneousKernelFunctors {
       CGAL_kernel_precondition( ! l.is_degenerate() );
       Line_2  l2( p, Direction_2( l.a(), l.b() ));
       return Point_2( l.b()*l2.c() - l2.b()*l.c(),
-		      l2.a()*l.c() - l.a()*l2.c(),
-		      l.a()*l2.b() - l2.a()*l.b() );
+                      l2.a()*l.c() - l.a()*l2.c(),
+                      l.a()*l2.b() - l2.a()*l.b() );
     }
   };
 
@@ -3352,13 +3352,13 @@ namespace HomogeneousKernelFunctors {
     Point_3
     operator()( const Segment_3& s, const Point_3& p ) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,s,K()); }
-    
+
     Point_3
     operator()( const Ray_3& r, const Point_3& p ) const
     { return CommonKernelFunctors::Construct_projected_point_3<K>()(p,r,K()); }
   };
 
-  template <class K> 
+  template <class K>
   class Construct_radical_line_2
   {
     typedef typename K::Line_2            Line_2;
@@ -3370,20 +3370,20 @@ namespace HomogeneousKernelFunctors {
 
     typedef Line_2 result_type;
 
-    result_type 
+    result_type
     operator() (const Circle_2 & c1, const Circle_2 & c2) const
-	  {
+          {
       // Concentric Circles don't have radical line
       CGAL_kernel_precondition (c1.center() != c2.center());
       const FT a = 2*(c2.center().x() - c1.center().x());
       const FT b = 2*(c2.center().y() - c1.center().y());
-      const FT c = CGAL::square(c1.center().x()) + 
+      const FT c = CGAL::square(c1.center().x()) +
         CGAL::square(c1.center().y()) - c1.squared_radius() -
         CGAL::square(c2.center().x()) -
         CGAL::square(c2.center().y()) + c2.squared_radius();
-			const RT aa = a.numerator() * b.denominator() * c.denominator();
-			const RT bb = a.denominator() * b.numerator() * c.denominator();
-			const RT cc = a.denominator() * b.denominator() * c.numerator();
+                        const RT aa = a.numerator() * b.denominator() * c.denominator();
+                        const RT bb = a.denominator() * b.numerator() * c.denominator();
+                        const RT cc = a.denominator() * b.denominator() * c.numerator();
       return Line_2(aa, bb, cc);
     }
   };
@@ -3408,7 +3408,7 @@ namespace HomogeneousKernelFunctors {
     operator()( const Vector_2& v, const FT& c) const
     {
       return Vector_2( v.hx()*c.numerator(), v.hy()*c.numerator(),
-	               v.hw()*c.denominator() ); }
+                       v.hw()*c.denominator() ); }
   };
 
   template <typename K>
@@ -3445,8 +3445,8 @@ namespace HomogeneousKernelFunctors {
     operator()( const Point_2& p, const Vector_2& v) const
     {
       return Point_2( p.hx()*v.hw() + v.hx()*p.hw(),
-		      p.hy()*v.hw() + v.hy()*p.hw(),
-		      p.hw()*v.hw() );
+                      p.hy()*v.hw() + v.hy()*p.hw(),
+                      p.hw()*v.hw() );
     }
 
     Point_2
@@ -3468,9 +3468,9 @@ namespace HomogeneousKernelFunctors {
     operator()( const Point_3& p, const Vector_3& v) const
     {
       return Point_3(p.hx()*v.hw() + v.hx()*p.hw(),
-		     p.hy()*v.hw() + v.hy()*p.hw(),
-		     p.hz()*v.hw() + v.hz()*p.hw(),
-		     p.hw()*v.hw() );
+                     p.hy()*v.hw() + v.hy()*p.hw(),
+                     p.hz()*v.hw() + v.hz()*p.hw(),
+                     p.hw()*v.hw() );
     }
 
     Point_3
@@ -3499,8 +3499,8 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, const Point_2& p, const Point_2& q) const
     {
       return Rep( q.hx()*p.hw() - p.hx()*q.hw(),
-		       q.hy()*p.hw() - p.hy()*q.hw(),
-		       p.hw()*q.hw() );
+                       q.hy()*p.hw() - p.hy()*q.hw(),
+                       p.hw()*q.hw() );
     }
 
     Rep // Vector_2
@@ -3606,9 +3606,9 @@ namespace HomogeneousKernelFunctors {
     operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     {
       return Rep(q.hx()*p.hw() - p.hx()*q.hw(),
-		 q.hy()*p.hw() - p.hy()*q.hw(),
-		 q.hz()*p.hw() - p.hz()*q.hw(),
-		 q.hw()*p.hw() );
+                 q.hy()*p.hw() - p.hy()*q.hw(),
+                 q.hz()*p.hw() - p.hz()*q.hw(),
+                 q.hw()*p.hw() );
     }
 
     Rep // Vector_3
@@ -3728,7 +3728,7 @@ namespace HomogeneousKernelFunctors {
       switch (i%4) {
       case 0: return (r.min)();
       case 1:
-	return Point_2( (r.max)().hx()*(r.min)().hw(),
+        return Point_2( (r.max)().hx()*(r.min)().hw(),
                            (r.min)().hy()*(r.max)().hw(),
                            (r.min)().hw()*(r.max)().hw() );
       case 2: return (r.max)();
@@ -3767,25 +3767,25 @@ namespace HomogeneousKernelFunctors {
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       Orientation oxy_pqr = sign_of_determinant(p.hx(), p.hy(), p.hw(),
-					           q.hx(), q.hy(), q.hw(),
-					           r.hx(), r.hy(), r.hw());
+                                                   q.hx(), q.hy(), q.hw(),
+                                                   r.hx(), r.hy(), r.hw());
       if (oxy_pqr != COLLINEAR)
-	return oxy_pqr;
+        return oxy_pqr;
 
       Orientation oyz_pqr = sign_of_determinant(p.hy(), p.hz(), p.hw(),
-					           q.hy(), q.hz(), q.hw(),
-					           r.hy(), r.hz(), r.hw());
+                                                   q.hy(), q.hz(), q.hw(),
+                                                   r.hy(), r.hz(), r.hw());
       if (oyz_pqr != COLLINEAR)
-	return oyz_pqr;
+        return oyz_pqr;
 
       return sign_of_determinant(p.hx(), p.hz(), p.hw(),
-			            q.hx(), q.hz(), q.hw(),
-			            r.hx(), r.hz(), r.hw());
+                                    q.hx(), q.hz(), q.hw(),
+                                    r.hx(), r.hz(), r.hw());
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     {
       // p,q,r,s supposed to be coplanar
       // p,q,r supposed to be non collinear
@@ -3800,26 +3800,26 @@ namespace HomogeneousKernelFunctors {
       // compute orientation of p,q,s in this plane P:
       Orientation save;
       if ( (save = sign_of_determinant(p.hy(), p.hz(), p.hw(),
-				          q.hy(), q.hz(), q.hw(),
-				          r.hy(), r.hz(), r.hw())) != COLLINEAR)
-	{ return save * sign_of_determinant(p.hy(), p.hz(), p.hw(),
-					       q.hy(), q.hz(), q.hw(),
-					       s.hy(), s.hz(), s.hw());
-	}
+                                          q.hy(), q.hz(), q.hw(),
+                                          r.hy(), r.hz(), r.hw())) != COLLINEAR)
+        { return save * sign_of_determinant(p.hy(), p.hz(), p.hw(),
+                                               q.hy(), q.hz(), q.hw(),
+                                               s.hy(), s.hz(), s.hw());
+        }
       if ( (save = sign_of_determinant(p.hx(), p.hz(), p.hw(),
-				          q.hx(), q.hz(), q.hw(),
-				          r.hx(), r.hz(), r.hw())) != COLLINEAR)
-	{ return save * sign_of_determinant(p.hx(), p.hz(), p.hw(),
-					       q.hx(), q.hz(), q.hw(),
-					       s.hx(), s.hz(), s.hw());
-	}
+                                          q.hx(), q.hz(), q.hw(),
+                                          r.hx(), r.hz(), r.hw())) != COLLINEAR)
+        { return save * sign_of_determinant(p.hx(), p.hz(), p.hw(),
+                                               q.hx(), q.hz(), q.hw(),
+                                               s.hx(), s.hz(), s.hw());
+        }
       if ( (save = sign_of_determinant(p.hx(), p.hy(), p.hw(),
-				          q.hx(), q.hy(), q.hw(),
-				          r.hx(), r.hy(), r.hw())) != COLLINEAR)
-	{ return save * sign_of_determinant( p.hx(), p.hy(), p.hw(),
-						q.hx(), q.hy(), q.hw(),
-						s.hx(), s.hy(), s.hw());
-	}
+                                          q.hx(), q.hy(), q.hw(),
+                                          r.hx(), r.hy(), r.hw())) != COLLINEAR)
+        { return save * sign_of_determinant( p.hx(), p.hy(), p.hw(),
+                                                q.hx(), q.hy(), q.hw(),
+                                                s.hx(), s.hy(), s.hw());
+        }
       CGAL_kernel_assertion( false);
       return COLLINEAR;
     }
@@ -3841,13 +3841,13 @@ namespace HomogeneousKernelFunctors {
 #ifdef CGAL_kernel_exactness_preconditions
     Coplanar_side_of_bounded_circle_3() {}
     Coplanar_side_of_bounded_circle_3(const Coplanar_3& cp_,
-				      const Collinear_3& cl_)
+                                      const Collinear_3& cl_)
       : cp(cp_), cl(cl_) {}
 #endif // CGAL_kernel_exactness_preconditions
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& t) const
+                const Point_3& r, const Point_3& t) const
     {
       // p,q,r,t are supposed to be coplanar.
       // p,q,r determine an orientation of this plane (not collinear).
@@ -3856,7 +3856,7 @@ namespace HomogeneousKernelFunctors {
       CGAL_kernel_exactness_precondition( cp(p,q,r,t) );
       CGAL_kernel_exactness_precondition( !cl(p,q,r) );
       return enum_cast<Bounded_side>(
-	side_of_oriented_sphere(p, q, r, t+cross_product(q-p, r-p), t));
+        side_of_oriented_sphere(p, q, r, t+cross_product(q-p, r-p), t));
     } // FIXME
   };
 
@@ -4032,28 +4032,28 @@ namespace HomogeneousKernelFunctors {
 
       RT dosd =   // difference of squared distances
 
-	//            phx * phx   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phx * qhx   *   phw * qhw * rhw * rhw
-	//   +        qhx * qhx   *   phw * phw * rhw * rhw
-	//
-	//   +        phy * phy   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phy * qhy   *   phw * qhw * rhw * rhw
-	//   +        qhy * qhy   *   phw * phw * rhw * rhw
-	//
-	// - (        phx * phx   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phx * rhx   *   phw * qhw * qhw * rhw
-	//   +        rhx * rhx   *   phw * phw * qhw * qhw
-	//
-	//   +        phy * phy   *   qhw * qhw * rhw * rhw
-	//   -RT(2) * phy * rhy   *   phw * qhw * qhw * rhw
-	//   +        rhy * rhy   *   phw * phw * qhw * qhw
-	
-	rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy )
-			    - 2 * qhw * ( phx*qhx + phy*qhy )
-			    )
-	- qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy )
-			      - 2 * rhw * ( phx*rhx + phy*rhy )
-			      );
+        //            phx * phx   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phx * qhx   *   phw * qhw * rhw * rhw
+        //   +        qhx * qhx   *   phw * phw * rhw * rhw
+        //
+        //   +        phy * phy   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phy * qhy   *   phw * qhw * rhw * rhw
+        //   +        qhy * qhy   *   phw * phw * rhw * rhw
+        //
+        // - (        phx * phx   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phx * rhx   *   phw * qhw * qhw * rhw
+        //   +        rhx * rhx   *   phw * phw * qhw * qhw
+        //
+        //   +        phy * phy   *   qhw * qhw * rhw * rhw
+        //   -RT(2) * phy * rhy   *   phw * qhw * qhw * rhw
+        //   +        rhy * rhy   *   phw * phw * qhw * qhw
+
+        rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy )
+                            - 2 * qhw * ( phx*qhx + phy*qhy )
+                            )
+        - qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy )
+                              - 2 * rhw * ( phx*rhx + phy*rhy )
+                              );
 
 
       return dosd < 0;
@@ -4086,12 +4086,12 @@ namespace HomogeneousKernelFunctors {
       const RT & rhw = r.hw();
 
       RT dosd =   // difference of squared distances
-	rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy + qhz*qhz )
-			    - 2 * qhw * ( phx*qhx + phy*qhy + phz*qhz )
-			    )
-	- qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy + rhz*rhz )
-			      - 2 * rhw * ( phx*rhx + phy*rhy + phz*rhz )
-			      );
+        rhw*rhw * (         phw * ( qhx*qhx + qhy*qhy + qhz*qhz )
+                            - 2 * qhw * ( phx*qhx + phy*qhy + phz*qhz )
+                            )
+        - qhw*qhw * (         phw * ( rhx*rhx + rhy*rhy + rhz*rhz )
+                              - 2 * rhw * ( phx*rhx + phy*rhy + phz*rhz )
+                              );
 
       return dosd < 0;
     }
@@ -4125,8 +4125,8 @@ namespace HomogeneousKernelFunctors {
       const RT & shw= s.hw();
 
       RT  scaled_dist_r_minus_scaled_dist_s =
-	( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
-	- ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
+        ( rhx*shw - shx*rhw ) * (phy*qhw - qhy*phw)
+        - ( rhy*shw - shy*rhw ) * (phx*qhw - qhx*phw);
 
       return scaled_dist_r_minus_scaled_dist_s < 0;
     }
@@ -4147,8 +4147,8 @@ namespace HomogeneousKernelFunctors {
       const RT & qhw= q.hw();
 
       RT scaled_dist_p_minus_scaled_dist_q =
-	la*( phx*qhw - qhx*phw )
-	+ lb*( phy*qhw - qhy*phw );
+        la*( phx*qhw - qhx*phw )
+        + lb*( phy*qhw - qhy*phw );
 
       return scaled_dist_p_minus_scaled_dist_q < 0;
     }
@@ -4180,16 +4180,16 @@ namespace HomogeneousKernelFunctors {
       const RT & qhw = q.hw();
 
       RT scaled_dist_p_minus_scaled_dist_q =
-	pla*( phx*qhw - qhx*phw )
-	+ plb*( phy*qhw - qhy*phw )
-	+ plc*( phz*qhw - qhz*phw );
+        pla*( phx*qhw - qhx*phw )
+        + plb*( phy*qhw - qhy*phw )
+        + plc*( phz*qhw - qhz*phw );
 
       return scaled_dist_p_minus_scaled_dist_q < 0;
     }
 
     result_type
     operator()(const Point_3& plp, const Point_3& plq, const Point_3& plr,
-	       const Point_3& p, const Point_3& q) const
+               const Point_3& p, const Point_3& q) const
     {
       Construct_plane_3 construct_plane_3;
       return operator()(construct_plane_3(plp, plq, plr), p, q);
@@ -4293,13 +4293,13 @@ namespace HomogeneousKernelFunctors {
       RT pV = phy * qhw;
       RT qV = qhy * phw;
       if ( qV < pV )
-	{
-	  return false;
-	}
+        {
+          return false;
+        }
       else if ( pV < qV )
-	{
-	  return true;
-	}
+        {
+          return true;
+        }
       pV = phx * qhw;
       qV = qhx * phw;
       return ( pV < qV );
@@ -4403,21 +4403,21 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     {
       // Two rows are switched, because of the homogeneous column.
       return sign_of_determinant( p.hx(), p.hy(), p.hz(), p.hw(),
-				     r.hx(), r.hy(), r.hz(), r.hw(),
-				     q.hx(), q.hy(), q.hz(), q.hw(),
-				     s.hx(), s.hy(), s.hz(), s.hw());
+                                     r.hx(), r.hy(), r.hz(), r.hw(),
+                                     q.hx(), q.hy(), q.hz(), q.hw(),
+                                     s.hx(), s.hy(), s.hz(), s.hw());
     }
 
     result_type
     operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
     {
       return sign_of_determinant( u.hx(), u.hy(), u.hz(),
-				     v.hx(), v.hy(), v.hz(),
-				     w.hx(), w.hy(), w.hz());
+                                     v.hx(), v.hy(), v.hz(),
+                                     w.hx(), w.hy(), w.hz());
     }
 
     result_type
@@ -4589,25 +4589,25 @@ namespace HomogeneousKernelFunctors {
     operator()( const Triangle_2& t, const Point_2& p) const
     {
       typename K::Collinear_are_ordered_along_line_2
-	collinear_are_ordered_along_line;
+        collinear_are_ordered_along_line;
       typename K::Orientation_2 orientation;
       // depends on the orientation of the vertices
       Orientation o1 = orientation(t.vertex(0), t.vertex(1), p),
-	o2 = orientation(t.vertex(1), t.vertex(2), p),
-	o3 = orientation(t.vertex(2), t.vertex(3), p),
-	ot = orientation(t.vertex(0), t.vertex(1), t.vertex(2));
+        o2 = orientation(t.vertex(1), t.vertex(2), p),
+        o3 = orientation(t.vertex(2), t.vertex(3), p),
+        ot = orientation(t.vertex(0), t.vertex(1), t.vertex(2));
 
       if (o1 == ot && o2 == ot && o3 == ot) // ot cannot be COLLINEAR
-	return ot;
+        return ot;
       return
-	(o1 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
-	(o2 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
-	(o3 == COLLINEAR
-	 && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
-	? ON_ORIENTED_BOUNDARY
-	: -ot;
+        (o1 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(0), p, t.vertex(1))) ||
+        (o2 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(1), p, t.vertex(2))) ||
+        (o3 == COLLINEAR
+         && collinear_are_ordered_along_line(t.vertex(2), p, t.vertex(3)))
+        ? ON_ORIENTED_BOUNDARY
+        : -ot;
     }
   };
 
@@ -4641,7 +4641,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_2& q, const Point_2& r,
-	        const Point_2& s, const Point_2& t) const
+                const Point_2& s, const Point_2& t) const
     {
       typedef typename K::RT RT;
 
@@ -4687,18 +4687,18 @@ namespace HomogeneousKernelFunctors {
       RT p = thw*thw;
 
       RT det =   a * ( f*(k*p - l*o) + j*(h*o - g*p) + n*(g*l - h*k) )
-	- e * ( b*(k*p - l*o) + j*(d*o - c*p) + n*(c*l - d*k) )
-	+ i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
-	- m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
+        - e * ( b*(k*p - l*o) + j*(d*o - c*p) + n*(c*l - d*k) )
+        + i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
+        - m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
 
       if ( det == 0 )
-	  return ON_BOUNDARY;
+          return ON_BOUNDARY;
       else
-	{
-	  if (orientation(q,r,s) == CLOCKWISE)
-	      det = -det;
-	  return (0 < det ) ? ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
-	}
+        {
+          if (orientation(q,r,s) == CLOCKWISE)
+              det = -det;
+          return (0 < det ) ? ON_BOUNDED_SIDE : ON_UNBOUNDED_SIDE;
+        }
     }
   };
 
@@ -4728,14 +4728,14 @@ namespace HomogeneousKernelFunctors {
       const RT& thw = t.hw();
 
       return enum_cast<Bounded_side>(
-	       CGAL_NTS sign((thx*phw-phx*thw)*(qhx*thw-thx*qhw)
-			    + (thy*phw-phy*thw)*(qhy*thw-thy*qhw)
-			    + (thz*phw-phz*thw)*(qhz*thw-thz*qhw)));
+               CGAL_NTS sign((thx*phw-phx*thw)*(qhx*thw-thx*qhw)
+                            + (thy*phw-phy*thw)*(qhy*thw-thy*qhw)
+                            + (thz*phw-phz*thw)*(qhz*thw-thz*qhw)));
     }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& t) const
+                const Point_3& r, const Point_3& t) const
     {
       Point_3 center = circumcenter(p, q, r);
       return enum_cast<Bounded_side>( compare_distance_to_point(center, p, t) );
@@ -4743,27 +4743,27 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        const Point_3& s, const Point_3& test) const
+                const Point_3& s, const Point_3& test) const
     {
       Oriented_side  oside = side_of_oriented_sphere(p,q,r,s,test);
       if ( are_positive_oriented( p,q,r,s) )
-	{
-	  switch (oside)
-	    {
-	    case ON_POSITIVE_SIDE    :   return ON_BOUNDED_SIDE;
-	    case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
-	    case ON_NEGATIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
-	    }
-	}
+        {
+          switch (oside)
+            {
+            case ON_POSITIVE_SIDE    :   return ON_BOUNDED_SIDE;
+            case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
+            case ON_NEGATIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
+            }
+        }
       else
-	{
-	  switch (oside)
-	    {
-	    case ON_POSITIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
-	    case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
-	    case ON_NEGATIVE_SIDE    :   return ON_BOUNDED_SIDE;
-	    }
-	}
+        {
+          switch (oside)
+            {
+            case ON_POSITIVE_SIDE    :   return ON_UNBOUNDED_SIDE;
+            case ON_ORIENTED_BOUNDARY:   return ON_BOUNDARY;
+            case ON_NEGATIVE_SIDE    :   return ON_BOUNDED_SIDE;
+            }
+        }
       return ON_BOUNDARY;  // Pls, no warnings anylonger
     } // FIXME
   };
@@ -4777,7 +4777,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_2& q, const Point_2& r,
-	        const Point_2& s, const Point_2& t) const
+                const Point_2& s, const Point_2& t) const
     {
       typedef typename K::RT RT;
 
@@ -4821,9 +4821,9 @@ namespace HomogeneousKernelFunctors {
       RT p = thw*thw;
 
       RT det =   a * ( f*(k*p - l*o) + j*(h*o - g*p) + n*(g*l - h*k) )
-	- e * ( b*(k*p - l*o) + j*(d*o - c*p) + n*(c*l - d*k) )
-	+ i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
-	- m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
+        - e * ( b*(k*p - l*o) + j*(d*o - c*p) + n*(c*l - d*k) )
+        + i * ( b*(g*p - h*o) + f*(d*o - c*p) + n*(c*h - d*g) )
+        - m * ( b*(g*l - h*k) + f*(d*k - c*l) + j*(c*h - d*g) );
 
       return CGAL_NTS sign(det);
     }
@@ -4838,7 +4838,7 @@ namespace HomogeneousKernelFunctors {
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        const Point_3& s, const Point_3& t) const
+                const Point_3& s, const Point_3& t) const
     {
       typedef typename K::RT RT;
 
@@ -4873,11 +4873,11 @@ namespace HomogeneousKernelFunctors {
       const RT thw2 = thw*thw;
 
       const RT det = determinant<RT>(
-	   phx*phw, phy*phw, phz*phw, phx*phx + phy*phy + phz*phz, phw2,
-	   qhx*qhw, qhy*qhw, qhz*qhw, qhx*qhx + qhy*qhy + qhz*qhz, qhw2,
-	   rhx*rhw, rhy*rhw, rhz*rhw, rhx*rhx + rhy*rhy + rhz*rhz, rhw2,
-	   shx*shw, shy*shw, shz*shw, shx*shx + shy*shy + shz*shz, shw2,
-	   thx*thw, thy*thw, thz*thw, thx*thx + thy*thy + thz*thz, thw2);
+           phx*phw, phy*phw, phz*phw, phx*phx + phy*phy + phz*phz, phw2,
+           qhx*qhw, qhy*qhw, qhz*qhw, qhx*qhx + qhy*qhy + qhz*qhz, qhw2,
+           rhx*rhw, rhy*rhw, rhz*rhw, rhx*rhx + rhy*rhy + rhz*rhz, rhw2,
+           shx*shw, shy*shw, shz*shw, shx*shx + shy*shy + shz*shz, shw2,
+           thx*thw, thy*thw, thz*thw, thx*thx + thy*thy + thz*thz, thw2);
       return - CGAL_NTS sign(det);
     }
   };
@@ -4891,10 +4891,10 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::RT RT;
 
     typedef Line_2                                      result_type;
-    
+
     Line_2
     operator()(const Weighted_point_2 & p, const Weighted_point_2 & q) const
-    { 
+    {
       typedef typename K::RT RT;
       RT a,b,c;
       radical_axisH2(p.hx(), p.hy(), p.hw(), p.weight(),

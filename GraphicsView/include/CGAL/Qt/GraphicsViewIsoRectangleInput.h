@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -21,7 +21,7 @@
 #include <QRectF>
 #include <QPointF>
 #include <QGraphicsItem>
-#include <QGraphicsRectItem> 
+#include <QGraphicsRectItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -40,19 +40,19 @@ template <typename K>
 class GraphicsViewIsoRectangleInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewIsoRectangleInput(QObject *parent, QGraphicsScene* s); 
+  GraphicsViewIsoRectangleInput(QObject *parent, QGraphicsScene* s);
   ~GraphicsViewIsoRectangleInput();
 
 protected:
-    
+
   virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
   virtual void keyPressEvent(QKeyEvent *event);
-  
-  bool eventFilter(QObject *obj, QEvent *event);
-  
 
-  
+  bool eventFilter(QObject *obj, QEvent *event);
+
+
+
 
 private:
 
@@ -61,7 +61,7 @@ private:
   Point_2 p, q, r;
   QGraphicsRectItem *rectItem;
   QPointF rect_first_point;
-  QGraphicsScene *scene_;  
+  QGraphicsScene *scene_;
   Converter<K> convert;
 };
 
@@ -84,9 +84,9 @@ GraphicsViewIsoRectangleInput<K>::~GraphicsViewIsoRectangleInput()
 
 
 template <typename K>
-void 
+void
 GraphicsViewIsoRectangleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{  
+{
   if(event->modifiers()  & ::Qt::ShiftModifier){
     return;
   }
@@ -95,7 +95,7 @@ GraphicsViewIsoRectangleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *even
       // we have clicked twice
       Q_EMIT generate(CGAL::make_object(convert(rectItem->rect())));
       rectItem->hide();
-    } else { 
+    } else {
       // we enter a first point
       rect_first_point = event->scenePos();
       rectItem->setRect(QRectF(rect_first_point, rect_first_point));
@@ -106,27 +106,27 @@ GraphicsViewIsoRectangleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *even
 
 
 template <typename K>
-void 
+void
 GraphicsViewIsoRectangleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   // todo: only do this if no modifiers are pressed at the same time
   if(rectItem->isVisible()) {
     rectItem->setRect(QRectF(rect_first_point,
-			     event->scenePos()));
+                             event->scenePos()));
   }
 }
 
 
 template <typename K>
-void 
-GraphicsViewIsoRectangleInput<K>::keyPressEvent ( QKeyEvent * event ) 
+void
+GraphicsViewIsoRectangleInput<K>::keyPressEvent ( QKeyEvent * event )
 {
 }
 
 
 
 template <typename K>
-bool 
+bool
 GraphicsViewIsoRectangleInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -145,7 +145,7 @@ GraphicsViewIsoRectangleInput<K>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 } // namespace Qt
 

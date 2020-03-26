@@ -10,7 +10,7 @@
 // Author(s)     : Marc Glisse
 
 //| If a compiler wants us to remove the template keyword in default
-//| parameters, CGAL_CFG_TEMPLATE_IN_DEFAULT_PARAMETER_BUG is set. 
+//| parameters, CGAL_CFG_TEMPLATE_IN_DEFAULT_PARAMETER_BUG is set.
 //| Bug found in sunCC 5.11.
 
 template < typename A, typename B, typename C =

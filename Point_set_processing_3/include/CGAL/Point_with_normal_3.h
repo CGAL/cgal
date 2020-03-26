@@ -26,7 +26,7 @@
 namespace CGAL {
 
 /// \cond SKIP_IN_MANUAL
-  
+
 /// The Point_with_normal_3 class represents a 3D point with:
 /// - a position,
 /// - a normal (oriented).

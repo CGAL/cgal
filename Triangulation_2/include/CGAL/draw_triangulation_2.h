@@ -22,7 +22,7 @@
 
 namespace CGAL
 {
-  
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorT2
 {
@@ -35,7 +35,7 @@ struct DefaultColorFunctorT2
   }
 };
 
-// Viewer class for T2 
+// Viewer class for T2
 template<class T2, class ColorFunctor>
 class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
 {
@@ -44,7 +44,7 @@ class SimpleTriangulation2ViewerQt : public Basic_viewer_qt
   typedef typename T2::Finite_edges_iterator Edge_const_handle;
   typedef typename T2::Finite_faces_iterator Facet_const_handle;
   typedef typename T2::Point                 Point;
- 
+
 public:
   /// Construct the viewer.
   /// @param at2 the t2 to view
@@ -56,7 +56,7 @@ public:
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false), 
+    Base(parent, title, true, true, true, false, false),
     t2(at2),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -73,7 +73,7 @@ protected:
     add_point_in_face(fh->vertex(0)->point());
     add_point_in_face(fh->vertex(1)->point());
     add_point_in_face(fh->vertex(2)->point());
-    
+
     face_end();
   }
 
@@ -94,16 +94,16 @@ protected:
     {
       for (typename T2::Finite_faces_iterator it=t2.finite_faces_begin();
            it!=t2.finite_faces_end(); ++it)
-      { compute_face(it); } 
+      { compute_face(it); }
     }
-    
+
     for (typename T2::Finite_edges_iterator it=t2.finite_edges_begin();
          it!=t2.finite_edges_end(); ++it)
-    { compute_edge(it); } 
+    { compute_edge(it); }
 
     for (typename T2::Finite_vertices_iterator it=t2.finite_vertices_begin();
          it!=t2.finite_vertices_end(); ++it)
-    { compute_vertex(it); } 
+    { compute_vertex(it); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -111,7 +111,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -130,7 +130,7 @@ protected:
 
 // Specialization of draw function.
 #define CGAL_T2_TYPE CGAL::Triangulation_2<Gt, Tds>
-  
+
 template<class Gt, class Tds>
 void draw(const CGAL_T2_TYPE& at2,
           const char* title="Triangulation_2 Basic Viewer",
@@ -141,7 +141,7 @@ void draw(const CGAL_T2_TYPE& at2,
 #else
   bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
-  
+
   if (!cgal_test_suite)
   {
     int argc=1;

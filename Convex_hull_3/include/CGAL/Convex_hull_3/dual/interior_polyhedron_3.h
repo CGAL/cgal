@@ -31,10 +31,10 @@
 // If you do not know an interior point for the halfspaces, use linear programming
 // to find one. Assume, n halfspaces defined by: aj*x1+bj*x2+cj*x3+dj>=0, j=1..n.
 // Perform the following linear program:
-//		max(x5) aj*x1+bj*x2+cj*x3+dj*x4-x5>=0, j=1..n
+//                max(x5) aj*x1+bj*x2+cj*x3+dj*x4-x5>=0, j=1..n
 
 // Then, if [x1,x2,x3,x4,x5] is an optimal m_solution with x4,x5>0 we get:
-//		aj*(x1/x4)+bj*(x2/x4)+cj*(x3/x4)+dj>=(x5/x4)>0, j=1..n
+//                aj*(x1/x4)+bj*(x2/x4)+cj*(x3/x4)+dj>=(x5/x4)>0, j=1..n
 // and conclude that the point [x1/x4,x2/x4,x3/x4] is in the interior of all
 // the halfspaces. Note that x5 is optimal, so this point is "way in" the
 // interior (good for precision errors).

@@ -50,7 +50,7 @@ public:
       computeElements();
       initializeBuffers(viewer);
     }
-    
+
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
       f_matrix.data()[i] = (float)frame->matrix()[i];
@@ -96,10 +96,10 @@ public :
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra With Plane", mw);
     actionClipPolyhedra->setProperty("subMenuName","Polygon Mesh Processing/Corefinement");
-    
+
     actionStartClippingWithPoly = new QAction("Clip Polyhedra With Polyhedron", mw);
     actionStartClippingWithPoly->setProperty("subMenuName", "Polygon Mesh Processing/Corefinement");
-    
+
     dock_widget = new QDockWidget("Polyhedra Clipping", mw);
     dock_widget->setVisible(false); // do not show at the beginning
     ui_widget.setupUi(dock_widget);
@@ -113,10 +113,10 @@ public :
             this, SLOT(pop_widget()));
     connect(ui_widget.clipButton, &QPushButton::clicked,
             this, &Clip_polyhedron_plugin::clip);
-    
+
     connect(actionStartClippingWithPoly, &QAction::triggered,
             this, &Clip_polyhedron_plugin::start_clipping_with_poly);
-    
+
   }
   bool applicable(QAction*) const
   {
@@ -281,7 +281,7 @@ public Q_SLOTS:
     }
     QApplication::restoreOverrideCursor();
   }
-  
+
   void start_clipping_with_poly()
   {
     if(plane)
@@ -314,12 +314,12 @@ public Q_SLOTS:
     dock_widget->show();
     dock_widget->raise();
   }
-      
+
   void clip_with_poly()
   {
     if(!clipper_item)
       return;
-    
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CGAL::QGLViewer* viewer = Three::mainViewer();
     QList<Scene_item*> polyhedra;
@@ -339,19 +339,19 @@ public Q_SLOTS:
           matrix[0], matrix[4], matrix[8],matrix[12],
         matrix[1], matrix[5], matrix[9],matrix[13],
         matrix[2], matrix[6], matrix[10],matrix[14]);
-    EPICK::Aff_transformation_3 transfo = 
+    EPICK::Aff_transformation_3 transfo =
         rota*translation;
     CGAL::Polygon_mesh_processing::transform(transfo, clipper);
-    
+
     //Fills the list of target polyhedra and the cutting plane
     for(int id = 0; id<scene->numberOfEntries(); ++id)
     {
       if(id == scene->item_id(clipper_item))
         continue;
       Scene_surface_mesh_item *sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(id));
-      
+
       //todo if tms intersect
-      
+
       if(sm_item && CGAL::is_triangle_mesh(*sm_item->polyhedron()))
       {
         polyhedra << sm_item;
@@ -381,7 +381,7 @@ public Q_SLOTS:
       }
       else
       {
-        
+
         SMesh* neg_side = new SMesh(*sm_item->face_graph());
         CGAL::Polygon_mesh_processing::clip(*neg_side,
                                             clipper,
@@ -406,7 +406,7 @@ public Q_SLOTS:
                                             throw_on_self_intersection(true).
                                             use_compact_clipper(
                                               !ui_widget.coplanarCheckBox->isChecked()));
-        
+
         new_item = new Scene_surface_mesh_item(pos_side);
         new_item->setName(QString("%1 on %2").arg(sm_item->name()).arg("positive side"));
         new_item->setColor(sm_item->color());

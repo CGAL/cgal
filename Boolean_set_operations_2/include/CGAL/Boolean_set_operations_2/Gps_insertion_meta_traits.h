@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -23,7 +23,7 @@
 namespace CGAL {
 
 template <class Arrangement_>
-class Gps_insertion_meta_traits : 
+class Gps_insertion_meta_traits :
   public Gps_traits_decorator<typename Arrangement_::Traits_2,
                               Curve_with_halfedge<Arrangement_>,
                               Point_with_vertex<Arrangement_> >
@@ -34,8 +34,8 @@ public:
                                Curve_with_halfedge<Arrangement_>,
                                Point_with_vertex<Arrangement_> >
                                                             Base;
-  typedef typename Base::Point_2                            Point_2; 
-  typedef typename Base::X_monotone_curve_2                 X_monotone_curve_2; 
+  typedef typename Base::Point_2                            Point_2;
+  typedef typename Base::X_monotone_curve_2                 X_monotone_curve_2;
   typedef typename Base::Curve_data                         Curve_data;
   typedef typename Base::Point_data                         Point_data;
   typedef typename Base_traits::Construct_min_vertex_2

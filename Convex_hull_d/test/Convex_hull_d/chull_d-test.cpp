@@ -24,7 +24,7 @@ typedef double RT;
 
 int main()
 {
-  CGAL_KD_SETDTHREAD(11);  
+  CGAL_KD_SETDTHREAD(11);
   CGAL::set_pretty_mode ( std::cerr );
   CGAL_TEST_START;
   {
@@ -36,7 +36,7 @@ int main()
     typedef Convex_hull_d::Facet_handle Facet_handle;
     typedef Convex_hull_d::Vertex_handle Vertex_handle;
 
-    Convex_hull_d T1(2);  
+    Convex_hull_d T1(2);
     const Convex_hull_d* pT1 = &T1;
     Point p1(0,0,1);
     Point p2(1,0,1);
@@ -73,7 +73,7 @@ int main()
     CGAL_TEST(h.has_on(pf0)&&h.has_on(pf1));
     std::list<Facet_handle> G = T1.facets_visible_from(p4);
     CGAL_TEST(G.size()==1);
-    CGAL_TEST(T1.bounded_side(p4)==CGAL::ON_UNBOUNDED_SIDE && 
+    CGAL_TEST(T1.bounded_side(p4)==CGAL::ON_UNBOUNDED_SIDE &&
               T1.bounded_side(Point(1,1,10))==CGAL::ON_BOUNDED_SIDE);
 
     Convex_hull_d::Point_const_iterator   pit;
@@ -97,17 +97,17 @@ int main()
 #ifndef _MSC_VER // truncation due to name length exceeded
     Convex_hull_d::Hull_vertex_iterator hvit;
     int vnum(0);
-    for (hvit = T1.hull_vertices_begin(); 
-         hvit != T1.hull_vertices_end(); ++vnum, ++hvit) *hvit; 
+    for (hvit = T1.hull_vertices_begin();
+         hvit != T1.hull_vertices_end(); ++vnum, ++hvit) *hvit;
     CGAL_TEST(vnum==4);
 
-    Convex_hull_d::Facet_const_iterator fcit; 
+    Convex_hull_d::Facet_const_iterator fcit;
     for (fcit = pT1->facets_begin(); fcit != pT1->facets_end(); ++fcit) *fcit;
-    Convex_hull_d::Hull_vertex_const_iterator hvcit; 
-    for (hvcit = pT1->hull_vertices_begin(); 
+    Convex_hull_d::Hull_vertex_const_iterator hvcit;
+    for (hvcit = pT1->hull_vertices_begin();
          hvcit != pT1->hull_vertices_end(); ++hvcit) *hvcit;
-    Convex_hull_d::Hull_point_const_iterator hpcit; 
-    for (hpcit = pT1->hull_points_begin(); 
+    Convex_hull_d::Hull_point_const_iterator hpcit;
+    for (hpcit = pT1->hull_points_begin();
          hpcit != pT1->hull_points_end(); ++hpcit) *hpcit;
 #endif
   }
@@ -122,7 +122,7 @@ int main()
     typedef Convex_hull_d::Simplex_handle Simplex_handle;
     typedef Convex_hull_d::Facet_handle Facet_handle;
     typedef Convex_hull_d::Vertex_handle Vertex_handle;
-    Convex_hull_d T2(3);  
+    Convex_hull_d T2(3);
     Point p1(0,0,0,1);
     Point p2(1,0,0,1);
     Point p3(0,1,0,1);
@@ -167,7 +167,7 @@ int main()
 
     std::list<Facet_handle> G = T2.facets_visible_from(p5);
     CGAL_TEST(G.size()==1);
-    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE && 
+    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE &&
               T2.bounded_side(Point(1,1,1,10))==CGAL::ON_BOUNDED_SIDE);
     T2.is_valid();
     T2.clear(3);
@@ -185,7 +185,7 @@ int main()
     typedef Convex_hull_d::Simplex_handle Simplex_handle;
     typedef Convex_hull_d::Facet_handle Facet_handle;
     typedef Convex_hull_d::Vertex_handle Vertex_handle;
-    Convex_hull_d T2(3);  
+    Convex_hull_d T2(3);
     Point p1(0,0,0,1);
     Point p2(1,0,0,1);
     Point p3(0,1,0,1);
@@ -230,7 +230,7 @@ int main()
 
     std::list<Facet_handle> G = T2.facets_visible_from(p5);
     CGAL_TEST(G.size()==1);
-    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE && 
+    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE &&
               T2.bounded_side(Point(1,1,1,10))==CGAL::ON_BOUNDED_SIDE);
     T2.is_valid();
     T2.clear(3);
@@ -245,7 +245,7 @@ int main()
     typedef Convex_hull_d::Simplex_handle Simplex_handle;
     typedef Convex_hull_d::Facet_handle Facet_handle;
     typedef Convex_hull_d::Vertex_handle Vertex_handle;
-    Convex_hull_d T2(3);  
+    Convex_hull_d T2(3);
     Point p1(0,0,0,1);
     Point p2(1,0,0,1);
     Point p3(0,1,0,1);
@@ -290,7 +290,7 @@ int main()
 
     std::list<Facet_handle> G = T2.facets_visible_from(p5);
     CGAL_TEST(G.size()==1);
-    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE && 
+    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE &&
               T2.bounded_side(Point(1,1,1,10))==CGAL::ON_BOUNDED_SIDE);
     T2.is_valid();
     T2.clear(3);
@@ -305,7 +305,7 @@ int main()
     typedef Convex_hull_d::Simplex_handle Simplex_handle;
     typedef Convex_hull_d::Facet_handle Facet_handle;
     typedef Convex_hull_d::Vertex_handle Vertex_handle;
-    Convex_hull_d T2(3);  
+    Convex_hull_d T2(3);
     Point p1(0,0,0,1);
     Point p2(1,0,0,1);
     Point p3(0,1,0,1);
@@ -350,7 +350,7 @@ int main()
 
     std::list<Facet_handle> G = T2.facets_visible_from(p5);
     CGAL_TEST(G.size()==1);
-    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE && 
+    CGAL_TEST(T2.bounded_side(p5)==CGAL::ON_UNBOUNDED_SIDE &&
               T2.bounded_side(Point(1,1,1,10))==CGAL::ON_BOUNDED_SIDE);
     T2.is_valid();
     T2.clear(3);

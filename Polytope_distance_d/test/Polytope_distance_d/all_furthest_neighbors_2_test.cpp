@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -71,7 +71,7 @@ int main()
     Index_cont neighbors2;
     afn_brute_force(p.vertices_begin(), p.vertices_end(),
                     back_inserter(neighbors2));
-    
+
     // and compare both results:
     assert( equal( neighbors.begin(),
                            neighbors.end(),

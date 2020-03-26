@@ -93,11 +93,11 @@ public:
           return new Lazy_exact_ro2<NT>(a, b, c, smaller);
         };
     };
-  
+
 private:
   typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
 public:
-  typedef typename AST::Square  Square; 
+  typedef typename AST::Square  Square;
   typedef typename AST::Inverse Inverse;
 
   struct Make_sqrt{

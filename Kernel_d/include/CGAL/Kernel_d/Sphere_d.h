@@ -1,16 +1,16 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel
 
@@ -43,13 +43,13 @@ class  Sphere_d_rep  {
   std::vector< Point_d > P; // d+1 defining points, index range 0-d
   Orientation orient;       // orientation(P)
   Point_d* cp;              // pointer to center (lazy calculated)
-  
+
 public:
   Sphere_d_rep() : cp(0) {}
   Sphere_d_rep(int d)  : P(d), cp(0) {}
 
   template <class ForwardIterator>
-  Sphere_d_rep(int d, ForwardIterator first, ForwardIterator last) : 
+  Sphere_d_rep(int d, ForwardIterator first, ForwardIterator last) :
      P(first,last), cp(0)
   { TUPLE_DIM_CHECK(P.begin(),P.end(),Sphere_d);
     CGAL_assertion(d+1==int(P.size()));
@@ -61,12 +61,12 @@ public:
 
 };  // Sphere_d_rep<R>
 
-/*{\Manpage {Sphere_d}{R}{Simple Spheres}{S}}*/ 
+/*{\Manpage {Sphere_d}{R}{Simple Spheres}{S}}*/
 
 template <class R_>
 class Sphere_d : public Handle_for< Sphere_d_rep<R_> > {
 
-/*{\Mdefinition 
+/*{\Mdefinition
 An instance $S$ of the data type |Sphere_d| is an oriented sphere in
 some $d$-dimensional space. A sphere is defined by $d+1$ points with
 rational coordinates (class |Point_d<R>|). We use $A$ to denote the
@@ -77,7 +77,7 @@ the geometric sense and hence many operations on spheres require the
 set of defining points to be legal.  The orientation of $S$ is equal
 to the orientation of the defining points, i.e., |orientation(A)|. }*/
 
-public: 
+public:
   typedef CGAL::Dynamic_dimension_tag Ambient_dimension;
   typedef CGAL::Dynamic_dimension_tag Feature_dimension;
 
@@ -107,38 +107,38 @@ typedef typename R::LA LA;
 typedef typename std::vector< Point_d >::const_iterator point_iterator;
 /*{\Mtypemember a read-only iterator for points defining the sphere.}*/
 
-/*{\Mcreation 4}*/ 
+/*{\Mcreation 4}*/
 
-Sphere_d(int d = 0) : Base( Rep(d+1) ) 
+Sphere_d(int d = 0) : Base( Rep(d+1) )
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname|. |\Mvar|
 is initialized to the empty sphere centered at the origin of
 $d$-dimensional space. }*/
-{ 
+{
   Point_d p(d);
   for (int i = 0; i <= d; i++) ptr()->P[i] = p;
   ptr()->orient = ZERO;
-  ptr()->cp = new Point_d(p); 
+  ptr()->cp = new Point_d(p);
 }
 
 template <class ForwardIterator>
 Sphere_d(int d, ForwardIterator first, ForwardIterator last) :
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname|. |\Mvar| is
-initialized to the sphere through the points in |A = set [first,last)|. 
+initialized to the sphere through the points in |A = set [first,last)|.
 \precond $A$ consists of $d+1$ $d$-dimensional points.}*/
   Base( Rep(d,first,last) ) {}
 
 
 /*{\Moperations 4 3}*/
 
-int dimension() const 
+int dimension() const
 /*{\Mop returns the dimension of |\Mvar|.}*/
   { return static_cast<int>(ptr()->P.size()) - 1; }
 
 Point_d point(int i) const
 /*{\Mop returns the $i$-th defining point. \precond $0 \le i \le |dim|$.}*/
-{ CGAL_assertion_msg((0<=i && i<=dimension()), 
+{ CGAL_assertion_msg((0<=i && i<=dimension()),
     "Sphere_d::point(): index out of range.");
-  return ptr()->P[i]; 
+  return ptr()->P[i];
 }
 
 point_iterator points_begin() const { return ptr()->P.begin(); }
@@ -157,27 +157,27 @@ non-zero or if they are all equal.}*/
 { if (ptr()->orient != ZERO ) return true;
   const std::vector< Point_d >& A = ptr()->P;
   Point_d po = A[0];
-  for (int i = 1; i < int(A.size()); ++i) 
+  for (int i = 1; i < int(A.size()); ++i)
     if (A[i] != po) return false;
   return true;
 }
 
 Point_d center() const
-/*{\Mop  returns the center of |\Mvar|. \precond The orientation 
+/*{\Mop  returns the center of |\Mvar|. \precond The orientation
 of |\Mvar| is non-zero. }*/
-{ 
+{
   if (ptr()->cp == 0) {
     if (ptr()->orient == 0) {
       const std::vector< Point_d >& A = ptr()->P;
       Point_d po = A[0];
-      for (int i = 1; i < int(A.size()); ++i) 
+      for (int i = 1; i < int(A.size()); ++i)
         if (A[i] != po)
           CGAL_error_msg("Sphere_d::center(): points are illegal.");
       const_cast<Self&>(*this).ptr()->cp = new Point_d(A[0]);
       return *(ptr()->cp);
     }
     typename R::Center_of_sphere_d center_of_sphere_;
-    const_cast<Self&>(*this).ptr()->cp = 
+    const_cast<Self&>(*this).ptr()->cp =
       new Point_d(center_of_sphere_(points_begin(),points_end()));
   }
   return *(ptr()->cp);
@@ -198,8 +198,8 @@ Oriented_side oriented_side(const Point_d& p) const
 /*{\Mop returns either the constant |ON_ORIENTED_BOUNDARY|,
 |ON_POSITIVE_SIDE|, or |ON_NEGATIVE_SIDE|, iff p lies on the boundary,
 properly on the positive side, or properly on the negative side of
-circle, resp.}*/ 
-{ typename R::Side_of_oriented_sphere_d side; 
+circle, resp.}*/
+{ typename R::Side_of_oriented_sphere_d side;
   return side(points_begin(),points_end(),p); }
 
 Bounded_side bounded_side(const Point_d& p) const
@@ -241,7 +241,7 @@ Sphere_d<R> opposite() const
 }
 
 Sphere_d<R> transform(const Aff_transformation_d<R>& t) const
-/*{\Mopl returns $t(s)$. }*/ 
+/*{\Mopl returns $t(s)$. }*/
 { std::vector< Point_d > B(points_begin(),points_end());
   typename std::vector< Point_d >::iterator it;
   for (it = B.begin(); it != B.end(); ++it)
@@ -250,7 +250,7 @@ Sphere_d<R> transform(const Aff_transformation_d<R>& t) const
 }
 
 Sphere_d<R> operator+(const Vector_d<R>& v) const
-/*{\Mbinop returns the sphere translated by |v|. }*/ 
+/*{\Mbinop returns the sphere translated by |v|. }*/
 { std::vector< Point_d > B(points_begin(),points_end());
   typename std::vector< Point_d >::iterator it;
   for (it = B.begin(); it != B.end(); ++it) it->operator+=(v);
@@ -265,7 +265,7 @@ bool operator==(const Sphere_d<R>& D) const
           orientation() == D.orientation());
 }
 
-bool operator!=(const Sphere_d<R>& D) const 
+bool operator!=(const Sphere_d<R>& D) const
 { return !operator==(D); }
 
 
@@ -285,26 +285,26 @@ bool weak_equality(const Sphere_d<R>& s1, const Sphere_d<R>& s2)
 an item type.  All operations like creation, initialization, tests,
 input and output of a sphere $s$ take time
 $O(|s.dimension()|)$. |dimension()|, point access take constant time.
-The space requirement for spheres is $O(|s.dimension()|)$ 
+The space requirement for spheres is $O(|s.dimension()|)$
 neglecting the storage room of the points.}*/
 
 template <class R>
-std::ostream& operator<<(std::ostream& os, const CGAL::Sphere_d<R>& s) 
+std::ostream& operator<<(std::ostream& os, const CGAL::Sphere_d<R>& s)
 { typedef typename Sphere_d<R>::point_iterator iterator;
   os << s.dimension()+1 << " ";
   for (iterator it=s.points_begin(); it!=s.points_end(); ++it)
     os << *it << " ";
   return os;
-} 
+}
 
-template <class R> std::istream&  
-operator>>(std::istream& is, CGAL::Sphere_d<R>& s) 
+template <class R> std::istream&
+operator>>(std::istream& is, CGAL::Sphere_d<R>& s)
 { int d; is >> d;
   std::vector< Point_d<R> > V(d);
   Point_d<R> p;
-  while ( d-- ) { 
+  while ( d-- ) {
     if (!(is >> p)) return is;
-    V[d] = p; 
+    V[d] = p;
   }
   s = Sphere_d<R>(static_cast<int>(V.size())-1, V.begin(), V.end() );
   return is;

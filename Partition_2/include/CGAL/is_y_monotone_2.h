@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -24,7 +24,7 @@
 namespace CGAL {
 
 template<class InputIterator, class Traits>
-bool 
+bool
 is_y_monotone_2(InputIterator first, InputIterator last,
                 const Traits& traits)
 {
@@ -67,7 +67,7 @@ is_y_monotone_2(InputIterator first, InputIterator last,
 }
 
 template<class InputIterator>
-bool 
+bool
 is_y_monotone_2(InputIterator first, InputIterator last)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
