@@ -191,7 +191,7 @@ int main()
   assert(test_orient<Epic>(false) == 0);
   assert(test_orient<Epec>(false) == 0);
 
-  bool res = test_pipeline<Epic, CGAL::Sequential_tag>();
+  int res = test_pipeline<Epic, CGAL::Sequential_tag>();
   assert(res == 0);
   res = test_pipeline<Epec, CGAL::Sequential_tag>();
   assert(res == 0);
