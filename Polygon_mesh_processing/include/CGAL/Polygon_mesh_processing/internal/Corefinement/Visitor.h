@@ -130,7 +130,7 @@ private:
   typedef typename Graph_traits::halfedge_descriptor        halfedge_descriptor;
    typedef std::vector<Node_id>                                        Node_ids;
    typedef boost::unordered_map<face_descriptor,Node_ids>           On_face_map;
-#ifdef CGAL_FORCE_DETERMINISTIC_COREFINEMENT 
+#ifdef CGAL_FORCE_DETERMINISTIC_COREFINEMENT
    typedef std::map<edge_descriptor,Node_ids>           On_edge_map;
 #else
    typedef boost::unordered_map<edge_descriptor,Node_ids>           On_edge_map;
