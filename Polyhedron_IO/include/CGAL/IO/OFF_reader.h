@@ -55,7 +55,7 @@ namespace CGAL {
         scanner.scan_facet_vertex_index(id, i);
         if(id < scanner.size_of_vertices())
         {
-          polygons[i][j] = id;
+          polygons[i][j] = typename std::remove_cv<typename std::iterator_traits<typename Polygon_3::const_iterator>::value_type>::type(id);
         }
         else
           return false;
@@ -106,7 +106,7 @@ namespace CGAL {
             vcolors[i] = scanner.get_color_from_line(iss);
           }
         }
-
+        
         if(!in)
           return false;
     }

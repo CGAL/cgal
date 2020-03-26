@@ -14,7 +14,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
+  return()  
 
 endif()
 
@@ -23,7 +23,7 @@ find_package( Boost )
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
+  return()  
 endif()
 
 find_package( OpenMesh QUIET )
@@ -98,6 +98,8 @@ create_single_source_cgal_program( "test_graph_traits.cpp" )
 create_single_source_cgal_program( "test_Properties.cpp" )
 
 create_single_source_cgal_program( "test_wrl.cpp" )
+
+create_single_source_cgal_program( "bench_read_from_stream_vs_add_face_and_add_faces.cpp" )
 
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})
