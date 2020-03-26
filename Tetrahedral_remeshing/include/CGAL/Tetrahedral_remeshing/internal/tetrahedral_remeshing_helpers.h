@@ -178,6 +178,15 @@ namespace Tetrahedral_remeshing
     return ft;
   }
 
+  template<typename Facet>
+  Facet canonical_facet(const Facet& f)
+  {
+    const typename Facet::first_type c = f.first;
+    const int i = f.second;
+    const typename Facet::first_type c2 = c->neighbor(i);
+    return (c2 < c) ? std::make_pair(c2, c2->index(c)) : std::make_pair(c, i);
+  }
+
   template<typename VertexHandle>
   bool is_on_feature(const VertexHandle v)
   {

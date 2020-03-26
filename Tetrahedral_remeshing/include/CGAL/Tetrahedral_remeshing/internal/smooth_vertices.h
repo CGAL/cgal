@@ -61,7 +61,7 @@ namespace CGAL
             && is_boundary(c3t3, fi, cell_selector)
             && patch == c3t3.surface_patch_index(fi))
           {
-            return fi;
+            return canonical_facet(fi); //"canonical" is important
           }
         } while (++fcirc != fend);
 
@@ -85,8 +85,9 @@ namespace CGAL
         typename Tr::Geom_traits::Compute_scalar_product_3
           scalar_product = c3t3.triangulation().geom_traits().compute_scalar_product_3_object();
 
-        if ( fnormals.find(f) != fnormals.end()
-          || fnormals.find(c3t3.triangulation().mirror_facet(f)) != fnormals.end())
+        CGAL_assertion(is_boundary(c3t3, f, cell_selector));
+
+        if (fnormals[f] != CGAL::NULL_VECTOR)
           return;
 
         Vector_3 n = CGAL::Tetrahedral_remeshing::normal(f, c3t3.triangulation().geom_traits());
@@ -117,13 +118,9 @@ namespace CGAL
                                     const CellSelector& cell_selector)
       {
         typedef typename C3t3::Triangulation        Tr;
-        typedef typename C3t3::Cell_handle          Cell_handle;
         typedef typename C3t3::Vertex_handle        Vertex_handle;
-        typedef typename C3t3::Subdomain_index      Subdomain_index;
         typedef typename C3t3::Surface_patch_index  Surface_patch_index;
-        typedef typename Tr::Facet_circulator       Facet_circulator;
         typedef typename Tr::Facet                  Facet;
-        typedef typename Tr::Edge                   Edge;
         typedef typename Tr::Geom_traits::Vector_3  Vector_3;
 
         typename Tr::Geom_traits::Construct_opposite_vector_3
@@ -133,30 +130,26 @@ namespace CGAL
 
         const Tr& tr = c3t3.triangulation();
 
-        std::size_t nb_of_boundary_facets = 0;
-        for (const Facet& f : tr.finite_facets())
-        {
-          if (is_boundary(c3t3, f, cell_selector))
-            ++nb_of_boundary_facets;
-        }
-
         //collect all facet normals
         boost::unordered_map<Facet, Vector_3> fnormals;
         for (const Facet& f : tr.finite_facets())
         {
-          if (fnormals.size() == nb_of_boundary_facets)
-            break;
-          CGAL_assertion(fnormals.size() < nb_of_boundary_facets);
-
-          if (!is_boundary(c3t3, f, cell_selector))
-            continue;
-
-          const Facet& mf = tr.mirror_facet(f);
-          if ( fnormals.find(f) != fnormals.end()
-            || fnormals.find(mf) != fnormals.end())
+          if (is_boundary(c3t3, f, cell_selector))
           {
-            continue;// already computed
+            const Facet cf = canonical_facet(f);
+            fnormals[cf] = CGAL::NULL_VECTOR;
           }
+        }
+
+        for (const auto& fn : fnormals)
+        {
+          const Vector_3& n = fn.second;
+          if (n != CGAL::NULL_VECTOR)
+            continue; //already computed
+
+          const Facet& f = fn.first;
+          const Facet& mf = tr.mirror_facet(f);
+          CGAL_assertion(is_boundary(c3t3, f, cell_selector));
 
           Vector_3 ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
           if ( c3t3.triangulation().is_infinite(f.first)
