@@ -380,7 +380,7 @@ public Q_SLOTS:
     Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
-      return; 
+      return;
     }
 
     QMultipleInputDialog dialog ("Regularize Selection Border", mw);
@@ -393,7 +393,7 @@ public Q_SLOTS:
 
     if (dialog.exec() != QDialog::Accepted)
       return;
-    
+
     boost::unordered_map<fg_face_descriptor, bool> is_selected_map;
     std::size_t index = 0;
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
@@ -420,7 +420,7 @@ public Q_SLOTS:
                                         *selection_item->polyhedron());
           if (is_selected_map[f0] == is_selected_map[f1])
             continue;
-          
+
           fg_vertex_descriptor esource = source(ed, *selection_item->polyhedron());
           fg_vertex_descriptor etarget = target(ed, *selection_item->polyhedron());
 
@@ -440,9 +440,9 @@ public Q_SLOTS:
                                              CGAL::parameters::prevent_unselection (prevent_unselection->isChecked()));
 
     std::cerr << "Length of border after regularization = " << border_length() << std::endl;
-    
+
     selection_item->selected_facets.clear();
-    
+
     for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
     {
       if (is_selected_map[fh])

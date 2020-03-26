@@ -36,7 +36,7 @@ int main(int argc, char** argv)
   }
 
   std::cerr << nb_selected_before << " selected before regularization" << std::endl;
-  
+
   CGAL::regularize_face_selection_borders (mesh,
                                            boost::make_assoc_property_map(is_selected_map),
                                            0.5); // using weight = 0.5
@@ -47,6 +47,6 @@ int main(int argc, char** argv)
       ++ nb_selected_after;
 
   std::cerr << nb_selected_after << " selected after regularization" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

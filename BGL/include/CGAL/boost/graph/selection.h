@@ -75,14 +75,14 @@ struct Regularization_graph
   typedef typename GT::edge_descriptor fg_edge_descriptor;
   typedef typename GT::edge_iterator fg_edge_iterator;
   typedef typename GT::vertex_descriptor fg_vertex_descriptor;
-  
+
   typedef fg_face_descriptor vertex_descriptor;
   typedef fg_face_iterator vertex_iterator;
   typedef fg_edge_descriptor edge_descriptor;
   typedef boost::undirected_tag directed_category;
   typedef boost::disallow_parallel_edge_tag edge_parallel_category;
   typedef boost::edge_list_graph_tag traversal_category;
-  
+
   struct Filter_border_edges
   {
     FaceGraph* fg;
@@ -133,7 +133,7 @@ struct Regularization_graph
     friend reference get (const Vertex_label_probability_map& pmap, key_type fd)
     {
       double value = (1. - pmap.rg->weight) * pmap.rg->area (fd) / pmap.rg->total_area;
-      
+
       std::vector<double> out(2);
       if (get(pmap.rg->is_selected_map, fd))
       {
@@ -214,7 +214,7 @@ struct Regularization_graph
       else
         labels.push_back(0);
     }
-    
+
     // Compute normalization factors
     for (fg_edge_descriptor ed : edges(fg))
       total_length += length (ed);
@@ -234,7 +234,7 @@ struct Regularization_graph
   {
     fg_halfedge_descriptor hd = halfedge (fd, fg);
     fg_halfedge_descriptor nhd = next (hd, fg);
-    
+
     return approximate_sqrt (squared_area (get (vertex_point_map, source (hd, fg)),
                                            get (vertex_point_map, target (hd, fg)),
                                            get (vertex_point_map, target (nhd, fg))));
@@ -263,7 +263,7 @@ struct Regularization_graph
   {
     return face (halfedge (ed, graph.fg), graph.fg);
   }
-                  
+
   friend vertex_descriptor target (edge_descriptor ed, const Regularization_graph& graph)
   {
     return face (opposite(halfedge (ed, graph.fg), graph.fg), graph.fg);
@@ -475,7 +475,7 @@ reduce_face_selection(
     \cgalParamEnd
   \cgalNamedParamsEnd
 */
-template <typename FaceGraph, typename IsSelectedMap, typename NamedParameters> 
+template <typename FaceGraph, typename IsSelectedMap, typename NamedParameters>
 void
 regularize_face_selection_borders(
   FaceGraph& fg,
@@ -485,9 +485,9 @@ regularize_face_selection_borders(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   CGAL_precondition (0.0 <= weight && weight < 1.0);
-  
+
   typedef boost::graph_traits<FaceGraph> GT;
   typedef typename GT::face_descriptor fg_face_descriptor;
   typedef typename GT::halfedge_descriptor fg_halfedge_descriptor;
@@ -512,14 +512,14 @@ regularize_face_selection_borders(
            vertex_point_map,
            weight,
            prevent_unselection);
-    
+
   alpha_expansion_graphcut (graph,
                             graph.edge_cost_map(),
                             graph.vertex_label_probability_map(),
                             graph.vertex_label_map(),
                             CGAL::parameters::vertex_index_map
                             (face_index_map));
-    
+
   for (fg_face_descriptor fd : faces(fg))
     put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
 }
@@ -560,7 +560,7 @@ regularize_face_selection_borders(
   // TODO: this is a quick and dirty version, the complexity is
   // crazy and it should be easy to do better (with priority queues,
   // for example)
-    
+
   auto border_length =
     [&]() -> double
     {
@@ -571,7 +571,7 @@ regularize_face_selection_borders(
         fg_face_descriptor f1 = face (opposite(halfedge (ed, fg), fg), fg);
         if (get(is_selected,f0) == get(is_selected,f1))
           continue;
-          
+
         fg_vertex_descriptor esource = source(ed, fg);
         fg_vertex_descriptor etarget = target(ed, fg);
 
@@ -587,7 +587,7 @@ regularize_face_selection_borders(
     fg_edge_descriptor chosen;
     double length_before = border_length();
     double shortest_length = length_before;
-      
+
     for (fg_edge_descriptor ed : edges(fg))
     {
       fg_face_descriptor selected = face (halfedge (ed, fg), fg);
@@ -631,7 +631,7 @@ regularize_face_selection_borders(
     fg_vertex_descriptor chosen;
     double length_before = border_length();
     double shortest_length = length_before;
-      
+
     for (fg_vertex_descriptor vd : vertices(fg))
     {
       fg_halfedge_descriptor hd = halfedge(vd, fg);
@@ -676,7 +676,7 @@ regularize_face_selection_borders(
       break;
 
     fg_halfedge_descriptor hd = halfedge (chosen, fg);
-      
+
     for (fg_face_descriptor fd : faces_around_target (hd, fg))
       put(is_selected, fd, true);
   }

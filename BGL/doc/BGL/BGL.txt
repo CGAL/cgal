@@ -743,7 +743,7 @@ parameters, with and without preventing unselection.
 The following example shows how to apply this alpha expansion
 regularization to the borders of a face selection of a
 `CGAL::Surface_mesh` object:
-  
+
 \cgalExample{BGL_graphcut/face_selection_borders_regularization_example.cpp}
 
 
