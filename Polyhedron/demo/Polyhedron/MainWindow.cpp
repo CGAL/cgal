@@ -2504,8 +2504,8 @@ void MainWindow::viewerShowObject()
     CGAL::qglviewer::Vec min((float)bbox.xmin()+viewer->offset().x, (float)bbox.ymin()+viewer->offset().y, (float)bbox.zmin()+viewer->offset().z),
         max((float)bbox.xmax()+viewer->offset().x, (float)bbox.ymax()+viewer->offset().y, (float)bbox.zmax()+viewer->offset().z);
     viewer->setSceneBoundingBox(min, max);
-    viewerShow(min.x, min.y, min.z,
-               max.x, max.y, max.z);
+    viewerShow((float)min.x, (float)min.y, (float)min.z,
+               (float)max.x, (float)max.y, (float)max.z);
   }
 }
 /* to check
