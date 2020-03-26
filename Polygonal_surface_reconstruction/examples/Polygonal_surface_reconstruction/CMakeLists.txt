@@ -12,7 +12,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "NOTICE: This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -27,7 +27,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "NOTICE: This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -54,7 +54,7 @@ if(EIGEN3_FOUND)
         message( STATUS "NOTICE: This project requires either SCIP or GLPK, and will not be compiled. "
                         "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
       else()
-        
+
 
           include_directories( BEFORE ${GLPK_INCLUDE_DIR} )
 

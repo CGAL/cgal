@@ -81,7 +81,7 @@ public :
     for (int i=0; i<16; ++i)
       mv_mat.data()[i] = GLfloat(d_mat[i]);
     mv_mat = mv_mat*f_matrix;
-    
+
     Tc* tc = getTriangleContainer(0);
     tc->setMvMatrix(mv_mat);
     tc->setFrameMatrix(f_matrix);
@@ -93,7 +93,7 @@ public :
   {
     Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
     {
-      CGAL::Three::Viewer_interface* viewer = 
+      CGAL::Three::Viewer_interface* viewer =
           static_cast<CGAL::Three::Viewer_interface*>(v);
       if(viewer == NULL)
         continue;
@@ -129,8 +129,8 @@ public :
   }
   double length()const { return length_; }
 private:
-  //make an arrow showing the length and direction of the transformation for the extrusion. 
-  void initializeBuffers(Viewer_interface *viewer)const Q_DECL_OVERRIDE 
+  //make an arrow showing the length and direction of the transformation for the extrusion.
+  void initializeBuffers(Viewer_interface *viewer)const Q_DECL_OVERRIDE
   {
     std::vector<float> vertices;
     std::vector<float> normals;
@@ -143,7 +143,7 @@ private:
       float a = (float) std::atan(Rf / 0.33);
       QVector4D pR(0., 1.*length_, 0, 1.);
       QVector4D nR(Rf*2.*sin(D), sin(a), Rf*2.*cos(D), 1.);
-      
+
       //point A1
       vertices.push_back(pR.x());
       vertices.push_back(pR.y());
@@ -151,7 +151,7 @@ private:
       normals.push_back(nR.x());
       normals.push_back(nR.y());
       normals.push_back(nR.z());
-      
+
       //point B1
       pR = QVector4D(Rf*2.*sin(D), 0.66f*length_, Rf*2.* cos(D), 1.f);
       nR = QVector4D(sin(D), sin(a), cos(D), 1.);
@@ -165,7 +165,7 @@ private:
       D = (d+360/prec)*CGAL_PI/180.0;
       pR = QVector4D(Rf*2.* sin(D), 0.66f*length_, Rf *2.* cos(D), 1.f);
       nR = QVector4D(sin(D), sin(a), cos(D), 1.0);
-      
+
       vertices.push_back(pR.x());
       vertices.push_back(pR.y());
       vertices.push_back(pR.z());
@@ -173,7 +173,7 @@ private:
       normals.push_back(nR.y());
       normals.push_back(nR.z());
     }
-    
+
     //cylinder
     //body of the cylinder
     for(int d = 0; d<360; d+= 360/prec)
@@ -182,7 +182,7 @@ private:
       double D = d*CGAL_PI/180.0;
       QVector4D pR(Rf*sin(D), 0.66f*length_, Rf*cos(D), 1.f);
       QVector4D nR(sin(D), 0.f, cos(D), 1.f);
-      
+
       vertices.push_back(pR.x());
       vertices.push_back(pR.y());
       vertices.push_back(pR.z());
@@ -192,7 +192,7 @@ private:
       //point B1
       pR = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
       nR = QVector4D(sin(D), 0, cos(D), 1.0);
-      
+
       vertices.push_back(pR.x());
       vertices.push_back(pR.y());
       vertices.push_back(pR.z());
@@ -211,7 +211,7 @@ private:
       normals.push_back(nR.z());
       //point A2
       D = (d+360/prec)*CGAL_PI/180.0;
-      
+
       pR = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
       nR = QVector4D(sin(D), 0, cos(D), 1.0);
 
@@ -224,7 +224,7 @@ private:
       //point B2
       pR = QVector4D(Rf * sin(D), 0.66f*length_, Rf*cos(D), 1.f);
       nR = QVector4D(sin(D), 0, cos(D), 1.0);
-      
+
       vertices.push_back(pR.x());
       vertices.push_back(pR.y());
       vertices.push_back(pR.z());
@@ -235,7 +235,7 @@ private:
       D = d*CGAL_PI/180.0;
       pR = QVector4D(Rf * sin(D), 0.66f*length_, Rf*cos(D), 1.f);
       nR = QVector4D(sin(D), 0.f, cos(D), 1.f);
-      
+
       vertices.push_back(pR.x());
       vertices.push_back(pR.y());
       vertices.push_back(pR.z());
@@ -243,20 +243,20 @@ private:
       normals.push_back(nR.y());
       normals.push_back(nR.z());
     }
-    
+
     //fill buffers
     //vao containing the data for the facets
     Tc* tc = getTriangleContainer(0);
     tc->allocate(Tc::Flat_vertices,
                  vertices.data(),
                  static_cast<GLsizei>(vertices.size()*sizeof(float)));
- 
+
     tc->allocate(Tc::Flat_normals,
                  normals.data(),
                  static_cast<GLsizei>(normals.size()*sizeof(float)));
     tc->initializeBuffers(viewer);
     tc->setFlatDataSize(vertices.size());
-    
+
     _bbox = Bbox(0,0,0,0,0,0);
     for(std::size_t i = 0; i< vertices.size(); i+=3)
     {
@@ -267,7 +267,7 @@ private:
     setBbox(_bbox);
     setBuffersInit(viewer, true);
   }
-  
+
   Vec center_;
   double length_;
   double tick;
@@ -298,7 +298,7 @@ CGAL::Bbox_3 triangles(const TriangleMesh& mesh,
 Vector estimate_normals(const std::vector<Triangle>& tris)
 {
   Vector moy(0,0,0);
-  
+
   for(const Triangle& tri : tris)
   {
     Vector norm = CGAL::Polygon_mesh_processing::internal::triangle_normal(
@@ -318,12 +318,12 @@ class ExtrudePlugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "extrude_plugin.json")
 public:
- 
+
   bool applicable(QAction* action) const Q_DECL_OVERRIDE
   {
     if(action == actionCreateItem)
     {
-      return !oliver_queen && 
+      return !oliver_queen &&
           (qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
            || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex())));
     }
@@ -331,7 +331,7 @@ public:
       return true;
     return false;
   }
- 
+
   QList<QAction*> actions() const Q_DECL_OVERRIDE
   {
     return _actions;
@@ -378,8 +378,8 @@ private Q_SLOTS:
       if(!sel_item->export_selected_facets_as_polyhedron(pMesh))
       {
         CGAL::Three::Three::error("Face selection is not valid. Aborting.");
-        
-        return; 
+
+        return;
       }
       fg_item = new Scene_facegraph_item(pMesh);
       fg_item->setName(QString("%1 selection").arg(sel_item->polyhedron_item()->name()));
@@ -400,18 +400,18 @@ private Q_SLOTS:
     ::triangles(*pMesh,std::back_inserter(triangles));
     Plane plane;
     CGAL::linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,CGAL::Dimension_tag<2>());
-    
+
     // compute centroid
     Point c = CGAL::centroid(triangles.begin(),triangles.end());
-    
-    oliver_queen = new Scene_arrow_item(Vec(c.x(),c.y(),c.z()), fg_item->diagonalBbox() / 50.0f, 
+
+    oliver_queen = new Scene_arrow_item(Vec(c.x(),c.y(),c.z()), fg_item->diagonalBbox() / 50.0f,
                                         fg_item->diagonalBbox()/3.0f);
     Vec dir(plane.orthogonal_vector().x(),
-            plane.orthogonal_vector().y(), 
+            plane.orthogonal_vector().y(),
             plane.orthogonal_vector().z());
     if(CGAL::scalar_product(Vector(dir.x, dir.y, dir.z), estimate_normals(triangles)) > 0)
       dir = -dir;
-    
+
     CGAL::qglviewer::Quaternion orientation(CGAL::qglviewer::Vec(0,1,0), dir);
     oliver_queen->manipulatedFrame()->setOrientation(orientation);
     constraint.setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FREE);
@@ -424,12 +424,12 @@ private Q_SLOTS:
     mw->installEventFilter(oliver_queen);
     scene->addItem(oliver_queen);
     target = fg_item;
-    
+
     connect(oliver_queen, &Scene_arrow_item::aboutToBeDestroyed,
             [this](){
       oliver_queen = NULL;
     });
-    
+
     //!@todo : add a way to track scene's bbox recomputation and reset frame's position when triggered.
   }
   void do_extrude()
@@ -450,7 +450,7 @@ private Q_SLOTS:
     QVector3D dir = rotate_matrix * QVector3D(0,1,0);
     dir.normalize();
     dir = length * dir;
-    
+
     CGAL::Polygon_mesh_processing::extrude_mesh(pMesh, *target->face_graph(),
                                                 Kernel::Vector_3(dir.x(), dir.y(), dir.z()));
     scene->erase(scene->item_id(oliver_queen));
@@ -460,9 +460,9 @@ private Q_SLOTS:
     target->itemChanged();
     target = NULL;
   }
-  
+
 private:
-  
+
   QList<QAction*> _actions;
   Messages_interface* messageInterface;
   Scene_interface* scene;

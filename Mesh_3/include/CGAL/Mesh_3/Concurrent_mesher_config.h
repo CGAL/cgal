@@ -120,7 +120,7 @@ protected:
     }
     catch (std::exception &e)
     {
-      std::cerr << "Concurrency configuration file error: " 
+      std::cerr << "Concurrency configuration file error: "
         << e.what() << std::endl;
       return false;
     }
@@ -164,7 +164,7 @@ protected:
       return OptionType();
   }
 #endif
-  
+
 #ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
   po::variables_map m_variables_map;
 #endif

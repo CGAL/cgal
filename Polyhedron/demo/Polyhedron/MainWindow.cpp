@@ -158,9 +158,9 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   CGAL::Three::Three::s_mainviewer = viewer;
   viewer->setObjectName("mainViewer");
   viewer_window->showMaximized();
-  viewer_window->setWindowFlags( 
+  viewer_window->setWindowFlags(
         Qt::SubWindow
-        | Qt::CustomizeWindowHint 
+        | Qt::CustomizeWindowHint
         | Qt::WindowMaximizeButtonHint
         | Qt::WindowSystemMenuHint
         | Qt::WindowTitleHint
@@ -353,7 +353,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
 
   // Load plugins, and re-enable actions that need it.
   operationSearchBar.setPlaceholderText("Filter...");
-  searchAction->setDefaultWidget(&operationSearchBar);  
+  searchAction->setDefaultWidget(&operationSearchBar);
   connect(&operationSearchBar, &QLineEdit::textChanged,
           this, [=](){filterOperations(true);});
   loadPlugins();
@@ -689,7 +689,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     else{
       //qdebug << "error: " << qPrintable(loader.errorString());
       pluginsStatus_map[name] = loader.errorString();
-      
+
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
     return true;
@@ -933,7 +933,7 @@ void MainWindow::viewerShow(float xmin,
 }
 
 void MainWindow::viewerShow(Viewer_interface* vi, float x, float y, float z) {
-  
+
   CGAL::qglviewer::ManipulatedCameraFrame backup_frame(*vi->camera()->frame());
   vi->camera()->fitSphere(CGAL::qglviewer::Vec(x, y, z),
                           vi->camera()->sceneRadius()/100);
@@ -1000,16 +1000,16 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   const double xmax = bbox.xmax();
   const double ymax = bbox.ymax();
   const double zmax = bbox.zmax();
-  
-  
-  
+
+
+
   min = CGAL::qglviewer::Vec(xmin, ymin, zmin);
   max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
-  
+
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-  
+
   CGAL::qglviewer::Vec offset(0,0,0);
-  
+
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
                              (std::max)((std::abs)(bbox_center.y - viewer->offset().y),
                                         (std::abs)(bbox_center.z - viewer->offset().z)));
@@ -1235,7 +1235,7 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
   loadItem(fileinfo, findLoader(load_pair.first), ok);
- 
+
   if(!ok)
     return;
   this->addToRecentFiles(fileinfo.absoluteFilePath());
@@ -1422,7 +1422,7 @@ void MainWindow::selectionChanged()
   {
     if(vi == NULL)
       continue;
-    
+
     if(item != NULL && item->manipulatable()) {
       vi->setManipulatedFrame(item->manipulatedFrame());
     } else {
@@ -1557,7 +1557,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
               menu_actions["line width"] = action->menu()->actions().last();
             }
           }
-          
+
         }
         Q_FOREACH(Scene::Item_id index, scene->selectionIndices())
         {
@@ -1590,7 +1590,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1625,7 +1625,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1660,7 +1660,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1703,7 +1703,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
                   )->value());
             slider->setOrientation(Qt::Horizontal);
             sliderAction->setDefaultWidget(slider);
-            
+
             connect(slider, &QSlider::valueChanged, [this, slider]()
             {
               Q_FOREACH(Scene::Item_id id, scene->selectionIndices())
@@ -1938,7 +1938,7 @@ void MainWindow::on_actionLoad_triggered()
       filters << filter;
     }
   }
-  
+
   QString directory = settings.value("OFF open directory",
                                      QDir::current().dirName()).toString();
 
@@ -1966,7 +1966,7 @@ void MainWindow::on_actionLoad_triggered()
                     static_cast<unsigned>(nb_files),
                     std::back_inserter(colors_));
   std::size_t nb_item = -1;
-  
+
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
 
     CGAL::Three::Scene_item* item = NULL;
@@ -2211,7 +2211,7 @@ void MainWindow::on_actionPreferences_triggered()
   QDialog dialog(this);
   Ui::PreferencesDialog prefdiag;
   prefdiag.setupUi(&dialog);
-  
+
   float lineWidth[2];
   if(!viewer->isOpenGL_4_3())
     viewer->glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
@@ -2222,22 +2222,22 @@ void MainWindow::on_actionPreferences_triggered()
   }
   prefdiag.linesHorizontalSlider->setMinimum(lineWidth[0]);
   prefdiag.linesHorizontalSlider->setMaximum(lineWidth[1]);
-  
+
   prefdiag.offset_updateCheckBox->setChecked(
         settings.value("offset_update", false).toBool());
   connect(prefdiag.offset_updateCheckBox, SIGNAL(toggled(bool)),
           scene, SLOT(enableVisibilityRecentering(bool)));
-  
+
   prefdiag.antialiasingCheckBox->setChecked(settings.value("antialiasing", false).toBool());
   connect(prefdiag.antialiasingCheckBox, SIGNAL(toggled(bool)),
           viewer, SLOT(setAntiAliasing(bool)));
-  
+
   prefdiag.quick_cameraCheckBox->setChecked(
         settings.value("quick_camera_mode", true).toBool());
   connect(prefdiag.quick_cameraCheckBox, SIGNAL(toggled(bool)),
           viewer, SLOT(setFastDrawing(bool)));
   prefdiag.max_itemsSpinBox->setValue(viewer->textRenderer()->getMax_textItems());
-  
+
   connect(prefdiag.max_itemsSpinBox,static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
           this, [this](int i){
     setMaxTextItemsDisplayed(i);
@@ -2268,27 +2268,27 @@ void MainWindow::on_actionPreferences_triggered()
   });
   connect(prefdiag.background_colorPushButton, &QPushButton::clicked,
           this, &MainWindow::setBackgroundColor);
-  
+
   connect(prefdiag.default_save_asPushButton, &QPushButton::clicked,
           this, &MainWindow::setDefaultSaveDir);
-  
+
   connect(prefdiag.lightingPushButton, &QPushButton::clicked,
           this, &MainWindow::setLighting_triggered);
-  
+
   prefdiag.surface_meshComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                   CGAL::Three::Three::s_defaultSMRM));
   connect(prefdiag.surface_meshComboBox, &QComboBox::currentTextChanged,
           this, [this](const QString& text){
     this->s_defaultSMRM = CGAL::Three::Three::modeFromName(text);
   });
-  
+
   prefdiag.point_setComboBox->setCurrentText(CGAL::Three::Three::modeName(
                                                CGAL::Three::Three::s_defaultPSRM));
   connect(prefdiag.point_setComboBox, &QComboBox::currentTextChanged,
           this, [this](const QString& text){
     this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
-  
+
   std::vector<QTreeWidgetItem*> items;
   QBrush successBrush(Qt::green),
       errorBrush(Qt::red),
@@ -2362,7 +2362,7 @@ void MainWindow::on_actionPreferences_triggered()
       if (item->checkState(0)==Qt::Unchecked)
         plugin_blacklist.insert(item->text(1));
     }
-    
+
     //write settings
     settings.setValue("antialiasing",
                       prefdiag.antialiasingCheckBox->isChecked());
@@ -2382,7 +2382,7 @@ void MainWindow::on_actionPreferences_triggered()
     settings.setValue("points_size", this->default_point_size);
     settings.setValue("normals_length", this->default_normal_length);
     settings.setValue("lines_width", this->default_lines_width);
-    
+
   }
   else
   {
@@ -2402,7 +2402,7 @@ void MainWindow::setBackgroundColor()
       v->update();
     }
   }
-  
+
 }
 
 void MainWindow::setLighting_triggered()
@@ -2564,7 +2564,7 @@ QString MainWindow::get_item_stats()
   Q_FOREACH(int id, scene->selectionIndices())
   {
     Scene_item* item = scene->item(id);
-    QString classname = item->property("classname").toString(); 
+    QString classname = item->property("classname").toString();
     if(classname.isEmpty())
        classname = item->metaObject()->className();
     if(!classnames.contains(classname))
@@ -2829,7 +2829,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << "\'" << names[i].toStdString() << "\', ";
   }
   os<<"\'"<<names.back().toStdString()<<"\'];\n";
-  
+
   //plugin
   os << "var loaders = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -2837,7 +2837,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << "\'" << loaders[i].toStdString() << "\', ";
   }
   os<<"\'"<<loaders.back().toStdString()<<"\'];\n";
-  
+
   //color
   os << "var colors = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -2845,7 +2845,7 @@ void MainWindow::on_actionSa_ve_Scene_as_Script_triggered()
     os << "[" << colors[i].red() <<", "<< colors[i].green() <<", "<< colors[i].blue() <<"], ";
   }
   os<<"[" << colors.back().red() <<", "<< colors.back().green() <<", "<< colors.back().blue() <<"]];\n";
-  
+
   //rendering mode
   os << "var rendering_modes = [";
   for(std::size_t i = 0; i< names.size() -1; ++i)
@@ -2897,7 +2897,7 @@ void MainWindow::toggleFullScreen()
       dock->show();
     }
     visibleDockWidgets.clear();
-    
+
   }
 }
 
@@ -2920,7 +2920,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
           viewer, SLOT(update()));
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
-  
+
   QAction* action = subviewer->findChild<QAction*>("actionRecenter");
   connect(action, SIGNAL(triggered()),
           viewer, SLOT(update()));
@@ -2979,17 +2979,17 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
           this, SLOT(selectSceneItem(int)));
   connect(viewer, SIGNAL(selectedPoint(double, double, double)),
           this, SLOT(showSelectedPoint(double, double, double)));
-  
+
   connect(viewer, SIGNAL(selectionRay(double, double, double,
                                       double, double, double)),
           scene, SIGNAL(selectionRay(double, double, double,
                                      double, double, double)));
-  
+
   connect(viewer, &Viewer::sendMessage,
           this, [](QString s){
     information(s);
   });
-  
+
 }
 
 void MainWindow::on_actionAdd_Viewer_triggered()
@@ -3008,7 +3008,7 @@ void MainWindow::on_actionAdd_Viewer_triggered()
     scene->removeViewer(viewer2);
     viewerDestroyed(viewer2);
   });
-  
+
   setupViewer(viewer2, subviewer);
   viewer2->camera()->interpolateToFitScene();
   subviewer->show();
@@ -3188,7 +3188,7 @@ void SubViewer::color()
 
 void SubViewer::closeEvent(QCloseEvent *closeEvent)
 {
-  
+
   if(is_main)
   {
     QMessageBox::information(mw, "", "This is the main viewer. It cannot be closed.");
@@ -3209,9 +3209,9 @@ void SubViewer::changeEvent(QEvent *event)
       {
         menu->addAction(action);
       }
-      setWindowFlags( 
+      setWindowFlags(
               Qt::SubWindow
-              | Qt::CustomizeWindowHint 
+              | Qt::CustomizeWindowHint
               | Qt::WindowMaximizeButtonHint
               //| Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
@@ -3227,9 +3227,9 @@ void SubViewer::changeEvent(QEvent *event)
       {
         menu->removeAction(action);
       }
-      setWindowFlags( 
+      setWindowFlags(
               Qt::SubWindow
-              | Qt::CustomizeWindowHint 
+              | Qt::CustomizeWindowHint
               | Qt::WindowMaximizeButtonHint
               | Qt::WindowSystemMenuHint
               | Qt::WindowTitleHint
@@ -3251,7 +3251,7 @@ void MainWindow::invalidate_bbox(bool do_recenter)
 
 void MainWindow::on_action_Save_triggered()
 {
-  if(QMessageBox::question(this, "Save", "Are you sure you want to override these files ?") 
+  if(QMessageBox::question(this, "Save", "Are you sure you want to override these files ?")
      == QMessageBox::No)
     return;
   QList<Scene_item*> to_save;

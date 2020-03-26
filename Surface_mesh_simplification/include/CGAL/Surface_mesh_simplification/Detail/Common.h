@@ -41,7 +41,7 @@
 
 namespace CGAL {
 
-namespace Surface_mesh_simplification 
+namespace Surface_mesh_simplification
 {
 
 using boost::num_edges ;
@@ -93,13 +93,13 @@ struct No_constrained_edge_map{
 template<class N>
 inline std::string n_to_string( N const& n )
 {
-  return boost::str( boost::format("%|5.19g|") % n ) ;   
+  return boost::str( boost::format("%|5.19g|") % n ) ;
 }
 
 template<class XYZ>
 inline std::string xyz_to_string( XYZ const& xyz )
 {
-  return boost::str( boost::format("(%|5.19g|,%|5.19g|,%|5.19g|)") % xyz.x() % xyz.y() % xyz.z() ) ;   
+  return boost::str( boost::format("(%|5.19g|,%|5.19g|,%|5.19g|)") % xyz.x() % xyz.y() % xyz.z() ) ;
 }
 
 template<class Matrix>
@@ -112,15 +112,15 @@ template<class T>
 inline std::string optional_to_string( boost::optional<T> const& o )
 {
   if ( o )
-       return boost::str( boost::format("%1%") % *o ) ;   
-  else return std::string("NONE");  
+       return boost::str( boost::format("%1%") % *o ) ;
+  else return std::string("NONE");
 }
 
 
 } //namespace CGAL
 
 #if   defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_TRACE)    \
-   || defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE) 
+   || defined(CGAL_SURFACE_SIMPLIFICATION_ENABLE_LT_TRACE)
 #define CGAL_SMS_ENABLE_TRACE
 #endif
 
@@ -135,8 +135,8 @@ namespace internal { namespace  { bool cgal_enable_sms_trace = true ; } }
        std::ostringstream ss ; ss << m ; std::string s = ss.str(); \
        /*Surface_simplification_external_trace(s)*/ std::cerr << s << std::endl; \
      }
-     
-#  define CGAL_SMS_DEBUG_CODE(code) code     
+
+#  define CGAL_SMS_DEBUG_CODE(code) code
 
 #else
 
@@ -162,15 +162,15 @@ namespace internal { namespace  { bool cgal_enable_sms_trace = true ; } }
 
 #ifdef CGAL_TESTING_SURFACE_MESH_SIMPLIFICATION
 #  define CGAL_SURF_SIMPL_TEST_assertion(EX)         CGAL_assertion(EX)
-#  define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG) CGAL_assertion_msg(EX,MSG) 
+#  define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG) CGAL_assertion_msg(EX,MSG)
 #  define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)  CGAL_assertion_code(CODE)
 #else
-#  define CGAL_SURF_SIMPL_TEST_assertion(EX) 
-#  define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG) 
-#  define CGAL_SURF_SIMPL_TEST_assertion_code(CODE) 
+#  define CGAL_SURF_SIMPL_TEST_assertion(EX)
+#  define CGAL_SURF_SIMPL_TEST_assertion_msg(EX,MSG)
+#  define CGAL_SURF_SIMPL_TEST_assertion_code(CODE)
 #endif
 
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_COMMON_H //
 // EOF //
- 
+

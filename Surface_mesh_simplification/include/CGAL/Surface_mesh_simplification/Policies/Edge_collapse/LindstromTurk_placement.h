@@ -19,30 +19,30 @@
 
 namespace CGAL {
 
-namespace Surface_mesh_simplification  
+namespace Surface_mesh_simplification
 {
 
   template<class TM_>
 class LindstromTurk_placement
 {
 public:
-    
+
   typedef TM_ TM ;
-  
+
 public:
 
   LindstromTurk_placement( LindstromTurk_params const& aParams = LindstromTurk_params() ) : mParams(aParams) {}
-     
-  template <typename Profile> 
+
+  template <typename Profile>
   optional<typename Profile::Point>
   operator()( Profile const& aProfile) const
   {
     return LindstromTurkCore<TM,Profile>(mParams,aProfile).compute_placement() ;
   }
-  
+
 private:
 
-  LindstromTurk_params mParams ;    
+  LindstromTurk_params mParams ;
 
 };
 
@@ -53,4 +53,4 @@ private:
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_PLACEMENT_H //
 // EOF //
- 
+

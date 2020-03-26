@@ -68,6 +68,6 @@ if(CGAL_FOUND)
     "test_efficient_RANSAC_regularization.cpp")
 
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

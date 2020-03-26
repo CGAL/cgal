@@ -125,7 +125,7 @@ public:
     return (m == Wireframe);
   }
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
-    
+
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
       if(it == active_hole) { it->polyline->setWidth(7); }
       else                  { it->polyline->setWidth(3); }
@@ -218,7 +218,7 @@ private:
     }
 
     clear();
-  
+
     Face_graph& poly = *poly_item->polyhedron();
 
     boost::unordered_set<fg_halfedge_descriptor> visited;
@@ -301,7 +301,7 @@ private:
     selected_holes.clear();
     active_hole = polyline_data_list.end();
   }
-  
+
   Polyline_data_list::const_iterator active_hole;
   Mouse_keyboard_state state;
 public:
@@ -450,7 +450,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   dock_widget->setWindowTitle(tr(
                                   "Hole Filling"
                                 ));
-  
+
   connect(ui_widget.Fill_from_selection_button,  SIGNAL(clicked()), this, SLOT(on_Fill_from_selection_button()));
   connect(ui_widget.Visualize_holes_button,  SIGNAL(clicked()), this, SLOT(on_Visualize_holes_button()));
   connect(ui_widget.Fill_selected_holes_button,  SIGNAL(clicked()), this, SLOT(on_Fill_selected_holes_button()));

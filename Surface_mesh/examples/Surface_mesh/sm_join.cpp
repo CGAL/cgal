@@ -10,12 +10,12 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   Mesh sm1, sm2;
   std::ifstream in1((argc>1)?argv[1]:"data/triangle.off");
   in1 >> sm1;
- 
+
   std::ifstream in2((argc>2)?argv[2]:"data/quad.off");
 
   Mesh::Property_map<vertex_descriptor,std::string> name1, name2;
@@ -28,11 +28,11 @@ int main(int argc, char* argv[])
 
   sm1 += sm2;
 
- 
+
   for(vertex_descriptor vd : vertices(sm1)){
     std::cerr << vd << " " <<  name1[vd] <<std::endl;
   }
-  
-  
+
+
   std::cout << sm1 << std::endl;
 }

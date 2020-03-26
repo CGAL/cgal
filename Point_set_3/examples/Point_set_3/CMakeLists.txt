@@ -12,7 +12,7 @@ find_package( CGAL QUIET COMPONENTS Qt5 )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -27,7 +27,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -40,7 +40,7 @@ create_single_source_cgal_program( "point_set_property.cpp" )
 create_single_source_cgal_program( "point_set_read_xyz.cpp" )
 create_single_source_cgal_program( "point_set_advanced.cpp" )
 
-set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)    
+set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
 create_single_source_cgal_program( "point_set_read_ply.cpp" CXX_FEATURES ${needed_cxx_features} )
 
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)

@@ -57,10 +57,10 @@ namespace CGAL {
 
   } // end Surface_mesher
 
-  typedef Surface_mesher::Surface_mesh_default_triangulation_3_generator<>::Type 
+  typedef Surface_mesher::Surface_mesh_default_triangulation_3_generator<>::Type
      Surface_mesh_default_triangulation_3;
 
-} // end namespace CGAL  
+} // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

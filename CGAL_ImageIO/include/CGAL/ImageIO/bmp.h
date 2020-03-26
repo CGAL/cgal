@@ -19,8 +19,8 @@
  *
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)
- * 
- * CREATION DATE: 
+ *
+ * CREATION DATE:
  * Wed Oct  6 17:03:48 MET DST 1999
  *
  * ADDITIONS, CHANGES

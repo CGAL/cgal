@@ -54,29 +54,29 @@ void spatial_sort_on_sphere (
 template <class RandomAccessIterator, class Policy, class Kernel>
 void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end,
                    const Kernel &k,
-		   Policy policy,
-		   double sq_r=1.0,
-		   const typename Kernel::Point_3 &p = typename Kernel::Point_3(0,0,0),
-		   std::ptrdiff_t threshold_hilbert=0,
-		   std::ptrdiff_t threshold_multiscale=0,
-		   double ratio=0.0)
+                   Policy policy,
+                   double sq_r=1.0,
+                   const typename Kernel::Point_3 &p = typename Kernel::Point_3(0,0,0),
+                   std::ptrdiff_t threshold_hilbert=0,
+                   std::ptrdiff_t threshold_multiscale=0,
+                   double ratio=0.0)
 {
     typedef std::iterator_traits<RandomAccessIterator> ITraits;
     typedef typename ITraits::value_type               value_type;
 
     internal::spatial_sort_on_sphere(begin, end, k, policy, static_cast<value_type *> (0),
-			   sq_r,p, threshold_hilbert,threshold_multiscale,ratio);
+                           sq_r,p, threshold_hilbert,threshold_multiscale,ratio);
 }
 
 template <class RandomAccessIterator>
 void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end,
-		   Hilbert_sort_median_policy policy,
-		   double sq_r=1.0,
-		   const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
-		     typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0),
-		   std::ptrdiff_t threshold_hilbert=0,
-		   std::ptrdiff_t threshold_multiscale=0,
-		   double ratio=0.0)
+                   Hilbert_sort_median_policy policy,
+                   double sq_r=1.0,
+                   const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
+                     typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0),
+                   std::ptrdiff_t threshold_hilbert=0,
+                   std::ptrdiff_t threshold_multiscale=0,
+                   double ratio=0.0)
 {
     typedef std::iterator_traits<RandomAccessIterator> ITraits;
     typedef typename ITraits::value_type               value_type;
@@ -84,17 +84,17 @@ void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator en
     typedef typename KTraits::Kernel                   Kernel;
 
     spatial_sort_on_sphere (begin, end, Kernel(), policy, sq_r, p,
-		  threshold_hilbert,threshold_multiscale,ratio);
+                  threshold_hilbert,threshold_multiscale,ratio);
 }
 template <class RandomAccessIterator>
 void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end,
-		   Hilbert_sort_middle_policy policy,
-		   double sq_r=1.0,
-		   const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
-		     typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0),
-		   std::ptrdiff_t threshold_hilbert=0,
-		   std::ptrdiff_t threshold_multiscale=0,
-		   double ratio=0.0)
+                   Hilbert_sort_middle_policy policy,
+                   double sq_r=1.0,
+                   const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
+                     typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0),
+                   std::ptrdiff_t threshold_hilbert=0,
+                   std::ptrdiff_t threshold_multiscale=0,
+                   double ratio=0.0)
 {
     typedef std::iterator_traits<RandomAccessIterator> ITraits;
     typedef typename ITraits::value_type               value_type;
@@ -102,36 +102,36 @@ void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator en
     typedef typename KTraits::Kernel                   Kernel;
 
     spatial_sort_on_sphere (begin, end, Kernel(), policy, sq_r,p,
-		  threshold_hilbert,threshold_multiscale,ratio);
+                  threshold_hilbert,threshold_multiscale,ratio);
 }
 
 
 template <class RandomAccessIterator, class Kernel>
 void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end,
-		   const Kernel &k,
-		   double sq_r = 1.0,
+                   const Kernel &k,
+                   double sq_r = 1.0,
            const typename Kernel::Point_3 &p = typename Kernel::Point_3(0,0,0),
            std::ptrdiff_t threshold_hilbert=0,
-		   std::ptrdiff_t threshold_multiscale=0,
-		   double ratio=0.0)
+                   std::ptrdiff_t threshold_multiscale=0,
+                   double ratio=0.0)
 {
     spatial_sort_on_sphere (begin, end, k,
-		  Hilbert_sort_median_policy(), sq_r, p,
-		  threshold_hilbert,threshold_multiscale,ratio);
+                  Hilbert_sort_median_policy(), sq_r, p,
+                  threshold_hilbert,threshold_multiscale,ratio);
 }
 
 template <class RandomAccessIterator>
 void spatial_sort_on_sphere (RandomAccessIterator begin, RandomAccessIterator end,
            double sq_r = 1.0,
-		   const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
-	       typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0),
-		   std::ptrdiff_t threshold_hilbert=0,
-		   std::ptrdiff_t threshold_multiscale=0,
-		   double ratio=0.0)
+                   const typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3 &p =
+               typename CGAL::Kernel_traits<typename std::iterator_traits<RandomAccessIterator>::value_type>::Kernel::Point_3(0,0,0),
+                   std::ptrdiff_t threshold_hilbert=0,
+                   std::ptrdiff_t threshold_multiscale=0,
+                   double ratio=0.0)
 {
     spatial_sort_on_sphere (begin, end,
-		  Hilbert_sort_median_policy(), sq_r,p,
-		  threshold_hilbert,threshold_multiscale,ratio);
+                  Hilbert_sort_median_policy(), sq_r,p,
+                  threshold_hilbert,threshold_multiscale,ratio);
 }
 
 } // end of namespace CGAL

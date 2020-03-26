@@ -13,7 +13,7 @@
 #include "ui_Polyhedron_slicer_widget.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/bounding_box.h> 
+#include <CGAL/bounding_box.h>
 #include <CGAL/Polygon_mesh_slicer.h>
 
 #include <QElapsedTimer>
@@ -37,8 +37,8 @@ class Polyhedron_demo_polyhedron_slicer_plugin :
 
 public:
   bool applicable(QAction*) const
-  { 
-    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex())); 
+  {
+    return qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
   void print_message(QString message) { CGAL::Three::Three::information(message);}
@@ -86,9 +86,9 @@ private:
 
   QDockWidget* dock_widget;
   Ui::Polyhedron_slicer ui_widget;
-  
+
   template <typename TriangleMesh>
-  void intersection_of_plane_Polyhedra_3_using_AABB_wrapper(TriangleMesh& mesh, 
+  void intersection_of_plane_Polyhedra_3_using_AABB_wrapper(TriangleMesh& mesh,
     const std::vector<Epic_kernel::Plane_3>& planes,
     const std::vector<CGAL::qglviewer::Vec>& plane_positions,
     std::list<std::vector<Epic_kernel::Point_3> >& polylines);
@@ -115,8 +115,8 @@ void Polyhedron_demo_polyhedron_slicer_plugin::init(QMainWindow* mainWindow,
 
   addDockWidget(dock_widget);
 
-  connect(ui_widget.Generate_button,  SIGNAL(clicked()), this, SLOT(on_Generate_button_clicked()));   
-  connect(ui_widget.Update_plane_button,  SIGNAL(clicked()), this, SLOT(on_Update_plane_button_clicked())); 
+  connect(ui_widget.Generate_button,  SIGNAL(clicked()), this, SLOT(on_Generate_button_clicked()));
+  connect(ui_widget.Update_plane_button,  SIGNAL(clicked()), this, SLOT(on_Update_plane_button_clicked()));
 }
 
 QList<QAction*> Polyhedron_demo_polyhedron_slicer_plugin::actions() const {
@@ -125,7 +125,7 @@ QList<QAction*> Polyhedron_demo_polyhedron_slicer_plugin::actions() const {
 
 void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
   if(dock_widget->isVisible()) { return; }
-  dock_widget->show(); 
+  dock_widget->show();
   dock_widget->raise();
   ///// from cut plugin /////
   CGAL_assertion(plane_item == NULL);
@@ -143,7 +143,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
   connect(plane_item->manipulatedFrame(), SIGNAL(modified()),
     this, SLOT(plane_manipulated_frame_modified()));
 
-  if(Scene* scene_casted = dynamic_cast<Scene*>(scene)) 
+  if(Scene* scene_casted = dynamic_cast<Scene*>(scene))
   { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*))); }
   scene->addItem(plane_item);
 
@@ -183,7 +183,7 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
   double center_x = ui_widget.Center_x->text().toDouble(&ok_1);
   double center_y = ui_widget.Center_y->text().toDouble(&ok_2);
   double center_z = ui_widget.Center_z->text().toDouble(&ok_3);
-  if(!ok_1 || !ok_2 || !ok_3) 
+  if(!ok_1 || !ok_2 || !ok_3)
   { print_message("Error: center coordinates not convertible to double."); return false; }
 
   // set center
@@ -193,7 +193,7 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
 
   // get base 1 and base 2
   double bases[6];
-  if(!get_base_1_2(bases)) 
+  if(!get_base_1_2(bases))
   { print_message("Error: Base-1, Base-2 coordinates not convertible to double."); return false; }
 
   // compute other axis
@@ -201,7 +201,7 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
   CGAL::qglviewer::Vec base_2(bases[3], bases[4], bases[5]);
   CGAL::qglviewer::Vec other = cross(base_1, base_2);
   if(other.norm() == 0.0) { print_message("Error: collinear base vectors are not accepted!"); return false; }
-  
+
   // set orientation
   CGAL::qglviewer::Quaternion orientation_from_bases;
   orientation_from_bases.setFromRotatedBasis(base_1, base_2, other);
@@ -218,9 +218,9 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
 void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 {
   Scene_surface_mesh_item* sm_item = getSelectedItem<Scene_surface_mesh_item>();
-  if(! sm_item) { 
+  if(! sm_item) {
     print_message("Error: There is no selected Scene_surface_mesh_item!");
-    return; 
+    return;
   }
   QString item_name = sm_item->name();
 
@@ -245,10 +245,10 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   // get distance between planes
   bool to_double_ok = true;
   double distance_with_planes = ui_widget.Distance_with_planes->text().toDouble(&to_double_ok);
-  if(!to_double_ok) { 
+  if(!to_double_ok) {
     print_message("Error: Set Distance_with_planes text box!");
     QApplication::restoreOverrideCursor();
-    return; 
+    return;
   }
 
   // construct a bbox for selected polyhedron
@@ -261,7 +261,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   std::vector<Epic_kernel::Plane_3> planes;
   std::vector<CGAL::qglviewer::Vec> plane_positions;
 
-  for(int dir = 1, step = 0; /* */ ; ++step) 
+  for(int dir = 1, step = 0; /* */ ; ++step)
   {
     double distance_norm = (dir * step) * distance_with_planes;
     CGAL::qglviewer::Vec new_pos = pos + (n*distance_norm);
@@ -270,7 +270,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
     Epic_kernel::Point_3 new_pos_cgal(new_pos[0], new_pos[1], new_pos[2]);
     Epic_kernel::Plane_3 plane(new_pos_cgal, normal);
 
-    if(!CGAL::do_intersect(cgal_bbox, plane)) { 
+    if(!CGAL::do_intersect(cgal_bbox, plane)) {
       if(dir == -1) { break; }
       std::reverse(planes.begin(), planes.end());
       std::reverse(plane_positions.begin(), plane_positions.end());
@@ -279,12 +279,12 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
       continue;
     }
     planes.push_back(plane);
-    plane_positions.push_back(new_pos); 
+    plane_positions.push_back(new_pos);
   }
   print_message(QString("Created %1 cuts inside bbox...").arg(planes.size()));
 
   bool new_polyline_item_for_polylines = ui_widget.newPolylineItemCheckBox->checkState() == Qt::Checked;
-  if(!new_polyline_item_for_polylines) 
+  if(!new_polyline_item_for_polylines)
   {
     Scene_polylines_item* new_polylines_item = new Scene_polylines_item();
     QElapsedTimer time; time.start();
@@ -342,14 +342,14 @@ void Polyhedron_demo_polyhedron_slicer_plugin::dock_widget_closed() {
 // this function assumes 'planes' are parallel
 template <typename TriangleMesh>
 void Polyhedron_demo_polyhedron_slicer_plugin::intersection_of_plane_Polyhedra_3_using_AABB_wrapper(
-  TriangleMesh& poly, 
+  TriangleMesh& poly,
   const std::vector<Epic_kernel::Plane_3>& planes,
   const std::vector<CGAL::qglviewer::Vec>& plane_positions,
-  std::list<std::vector<Epic_kernel::Point_3> >& polylines) 
+  std::list<std::vector<Epic_kernel::Point_3> >& polylines)
 {
   CGAL::Polygon_mesh_slicer<TriangleMesh, Epic_kernel> slicer(poly);
   std::vector<CGAL::qglviewer::Vec>::const_iterator plane_position_it = plane_positions.begin();
-  for(std::vector<Epic_kernel::Plane_3>::const_iterator plane_it = planes.begin(); plane_it != planes.end(); ++plane_it, ++plane_position_it) 
+  for(std::vector<Epic_kernel::Plane_3>::const_iterator plane_it = planes.begin(); plane_it != planes.end(); ++plane_it, ++plane_position_it)
     slicer(*plane_it, std::front_inserter(polylines));
 
 }

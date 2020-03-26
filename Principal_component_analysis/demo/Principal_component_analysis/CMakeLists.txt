@@ -68,7 +68,7 @@ else (CGAL_Qt5_FOUND AND Qt5_FOUND )
     set(PCA_MISSING_DEPS "Qt5, ${PCA_MISSING_DEPS}")
   endif()
 
-  
+
   message(STATUS "NOTICE: This demo requires ${PCA_MISSING_DEPS} and will not be compiled.")
 
 endif (CGAL_Qt5_FOUND AND Qt5_FOUND )

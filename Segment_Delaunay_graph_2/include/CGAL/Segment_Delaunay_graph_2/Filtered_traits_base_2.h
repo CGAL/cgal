@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -43,17 +43,17 @@ namespace CGAL {
 //-----------------------------------------------------------------------
 
 template<class CK_t, class CK_MTag, class EK_t, class EK_MTag,
-	 class FK_t, class FK_MTag, class C2E_t, class C2F_t,
-	 class ITag>
+         class FK_t, class FK_MTag, class C2E_t, class C2F_t,
+         class ITag>
 class Segment_Delaunay_graph_filtered_traits_base_2
 {
 private:
   typedef
   Segment_Delaunay_graph_filtered_traits_base_2<CK_t, CK_MTag,
-						EK_t, EK_MTag,
-						FK_t, FK_MTag,
-						C2E_t, C2F_t,
-						ITag>  Self;
+                                                EK_t, EK_MTag,
+                                                FK_t, FK_MTag,
+                                                C2E_t, C2F_t,
+                                                ITag>  Self;
 
   typedef Segment_Delaunay_graph_traits_base_2<CK_t,CK_MTag,ITag> CK_traits;
   typedef Segment_Delaunay_graph_traits_base_2<FK_t,FK_MTag,ITag> FK_traits;
@@ -77,7 +77,7 @@ private:
   Cartesian_converter<EK, CK, To_double<typename EK::RT> >  E2C_t;
   typedef
   CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Cartesian_converter<EK,CK,E2C_t>   E2C;
-  
+
   // Types for the construction kernel
   typedef typename CK::Point_2                CK_Point_2;
   typedef typename CK::Line_2                 CK_Line_2;
@@ -175,9 +175,9 @@ public:
   // vertex and Voronoi circle
   typedef
   Filtered_construction<CK_Construct_svd_vertex_2,
-			EK_Construct_svd_vertex_2,
-			FK_Construct_svd_vertex_2,
-			C2E, C2F, E2C, F2C>
+                        EK_Construct_svd_vertex_2,
+                        FK_Construct_svd_vertex_2,
+                        C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
 
   // L2 traits do not contain bisector constructions
@@ -306,32 +306,32 @@ public:
   Equal_2;
 
   typedef
-  Filtered_predicate<EK_Are_parallel_2,	FK_Are_parallel_2, C2E, C2F>
+  Filtered_predicate<EK_Are_parallel_2,        FK_Are_parallel_2, C2E, C2F>
   Are_parallel_2;
 
   typedef
   Filtered_predicate<EK_Oriented_side_of_bisector_2,
-		     FK_Oriented_side_of_bisector_2, C2E, C2F>
+                     FK_Oriented_side_of_bisector_2, C2E, C2F>
   Oriented_side_of_bisector_2;
 
   typedef
   Filtered_predicate<EK_Vertex_conflict_2,
-		     FK_Vertex_conflict_2, C2E, C2F>
+                     FK_Vertex_conflict_2, C2E, C2F>
   Vertex_conflict_2;
 
   typedef
   Filtered_predicate<EK_Finite_edge_interior_conflict_2,
-		     FK_Finite_edge_interior_conflict_2, C2E, C2F>
+                     FK_Finite_edge_interior_conflict_2, C2E, C2F>
   Finite_edge_interior_conflict_2;
 
   typedef
   Filtered_predicate<EK_Infinite_edge_interior_conflict_2,
-		     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
+                     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
   Infinite_edge_interior_conflict_2;
 
   typedef
   Filtered_predicate<EK_Is_degenerate_edge_2,
-		     FK_Is_degenerate_edge_2, C2E, C2F>
+                     FK_Is_degenerate_edge_2, C2E, C2F>
   Is_degenerate_edge_2;
 
   typedef typename CK::Less_x_2 Less_x_2;
@@ -364,7 +364,7 @@ public:
   }
 
   Construct_object_2
-  construct_object_2_object() const { 
+  construct_object_2_object() const {
     return Construct_object_2();
   }
 
@@ -376,13 +376,13 @@ public:
   // CONSTRUCTIONS
   //--------------
   Construct_svd_vertex_2
-  construct_svd_vertex_2_object() const { 
+  construct_svd_vertex_2_object() const {
     return Construct_svd_vertex_2();
   }
 
   /*
   Construct_site_2
-  construct_site_2_object() const { 
+  construct_site_2_object() const {
     return Construct_site_2();
   }
   */

@@ -39,9 +39,9 @@ class Polyhedron_demo_fairing_plugin :
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "fairing_plugin.json")
 public:
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()))
-    || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));  
+    || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
   }
   void print_message(QString message) { CGAL::Three::Three::information(message);}
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
@@ -68,8 +68,8 @@ public:
     dock_widget->setWindowTitle(tr(
                                   "Fairing "
                                   ));
-    
-    connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
+
+    connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
   virtual void closure()

@@ -36,7 +36,7 @@ namespace CGAL {
   // Storage of darts with compact container, beta with handles
   template<unsigned int d_, class Items_, class Alloc_ >
   class Combinatorial_map_storage_1
-  {  
+  {
   public:
     typedef Combinatorial_map_storage_1<d_, Items_, Alloc_> Self;
     typedef CGAL::Tag_false Use_index;
@@ -226,7 +226,7 @@ namespace CGAL {
       CGAL_assertion( ah!=nullptr );
       return ah->is_valid();
     }
-    
+
     // accessors and modifiers to the attribute ref counting given its handle
     template<unsigned int i>
     std::size_t get_attribute_ref_counting

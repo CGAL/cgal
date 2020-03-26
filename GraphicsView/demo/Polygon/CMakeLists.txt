@@ -43,7 +43,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   # qrc files (resources files, that contain icons, at least)
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES ./Polygon_2.qrc )
 
-#  add_library( CGAL SHARED IMPORTED ) 
+#  add_library( CGAL SHARED IMPORTED )
 #  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
 
   # The executable itself.

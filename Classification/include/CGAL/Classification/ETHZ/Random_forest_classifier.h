@@ -68,16 +68,16 @@ class Random_forest_classifier
   typedef CGAL::internal::liblearning::RandomForest::RandomForest
   < CGAL::internal::liblearning::RandomForest::NodeGini
     < CGAL::internal::liblearning::RandomForest::AxisAlignedSplitter> > Forest;
-  
+
   const Label_set& m_labels;
   const Feature_set& m_features;
   Forest* m_rfc;
 
 public:
-  
+
   /// \name Constructor
   /// @{
-  
+
   /*!
     \brief Instantiates the classifier using the sets of `labels` and `features`.
 
@@ -86,7 +86,7 @@ public:
                             const Feature_set& features)
     : m_labels (labels), m_features (features), m_rfc (nullptr)
   { }
-  
+
   /*!
     \brief Copies the `other` classifier's configuration using another
     set of `features`.
@@ -106,7 +106,7 @@ public:
     other.save_configuration(stream);
     this->load_configuration(stream);
   }
-  
+
   /// \cond SKIP_IN_MANUAL
   ~Random_forest_classifier ()
   {
@@ -114,7 +114,7 @@ public:
       delete m_rfc;
   }
   /// \endcond
-  
+
   /// @}
 
   /// \name Training
@@ -134,7 +134,7 @@ public:
 #endif
   }
   /// \endcond
-    
+
   /*!
     \brief Runs the training algorithm.
 
@@ -183,7 +183,7 @@ public:
 
     std::vector<int> gt;
     std::vector<float> ft;
-    
+
     for (std::size_t i = 0; i < ground_truth.size(); ++ i)
     {
       int g = int(ground_truth[i]);
@@ -197,7 +197,7 @@ public:
 
     CGAL_CLASSIFICATION_CERR << "Using " << gt.size() << " inliers" << std::endl;
 
-    CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);    
+    CGAL::internal::liblearning::DataView2D<int> label_vector (&(gt[0]), gt.size(), 1);
     CGAL::internal::liblearning::DataView2D<float> feature_vector(&(ft[0]), gt.size(), ft.size() / gt.size());
 
     if (m_rfc != nullptr && reset_trees)
@@ -205,12 +205,12 @@ public:
       delete m_rfc;
       m_rfc = nullptr;
     }
-    
+
     if (m_rfc == nullptr)
       m_rfc = new Forest (params);
 
     CGAL::internal::liblearning::RandomForest::AxisAlignedRandomSplitGenerator generator;
-    
+
     m_rfc->train<ConcurrencyTag>
       (feature_vector, label_vector, CGAL::internal::liblearning::DataView2D<int>(), generator, 0, reset_trees, m_labels.size());
   }
@@ -219,7 +219,7 @@ public:
   void operator() (std::size_t item_index, std::vector<float>& out) const
   {
     out.resize (m_labels.size(), 0.);
-    
+
     std::vector<float> ft;
     ft.reserve (m_features.size());
     for (std::size_t f = 0; f < m_features.size(); ++ f)
@@ -228,18 +228,18 @@ public:
     std::vector<float> prob (m_labels.size());
 
     m_rfc->evaluate (ft.data(), prob.data());
-    
+
     for (std::size_t i = 0; i < out.size(); ++ i)
       out[i] = (std::min) (1.f, (std::max) (0.f, prob[i]));
   }
 
   /// \endcond
-  
+
   /// @}
 
   /// \name Miscellaneous
   /// @{
-  
+
   /*!
     \brief Computes, for each feature, how many nodes in the forest
     uses it as a split criterion.
@@ -269,12 +269,12 @@ public:
     count.resize(m_features.size(), 0);
     return m_rfc->get_feature_usage(count);
   }
-  
+
   /// @}
 
   /// \name Input/Output
   /// @{
-  
+
   /*!
     \brief Saves the current configuration in the stream `output`.
 
@@ -308,7 +308,7 @@ public:
     if (m_rfc != nullptr)
       delete m_rfc;
     m_rfc = new Forest (params);
-    
+
     boost::iostreams::filtering_istream ins;
     ins.push(boost::iostreams::gzip_decompressor());
     ins.push(input);

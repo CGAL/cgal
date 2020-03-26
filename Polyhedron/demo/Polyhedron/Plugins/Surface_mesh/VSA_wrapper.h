@@ -96,7 +96,7 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
     Compact_metric, EPICK> Compact_approx;
 #endif
-  
+
 
 public:
   enum Metric { L21, L2, Compact };
@@ -154,7 +154,7 @@ public:
     // generate proxy colors
     m_proxy_colors.clear();
     m_proxy_colors.reserve(number_of_proxies());
-    
+
     for (std::size_t i = 0; i < number_of_proxies(); ++i) {
       m_proxy_colors.push_back(generate_random_color());
     }

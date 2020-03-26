@@ -26,18 +26,18 @@ template< typename TriangulationTraits_2, typename TriangulationFaceBase_2 >
 class Triangulation_face_base_with_id_2 : public TriangulationFaceBase_2 {
 public:
 
-/// \name Access Functions 
+/// \name Access Functions
 /// @{
 
 /*!
-Returns the index. 
-*/ 
-int id() const; 
+Returns the index.
+*/
+int id() const;
 
 /*!
 Returns a reference to the index stored in the face.
-*/ 
-int& id(); 
+*/
+int& id();
 
 /// @}
 

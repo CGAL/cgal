@@ -81,7 +81,7 @@ public:
                                         const char* v_shader,
                                         const char* f_shader)const;
   QPainter* getPainter()Q_DECL_OVERRIDE;
-  
+
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
@@ -110,7 +110,7 @@ public Q_SLOTS:
   //! @returns a QString containing the position and orientation of the camera.
   QString dumpCameraCoordinates() Q_DECL_OVERRIDE;
   //!Moves the camera to the new coordinates (position and orientation) through an animation.
-  bool moveCameraToCoordinates(QString, 
+  bool moveCameraToCoordinates(QString,
                                float animation_duration = 0.5f) Q_DECL_OVERRIDE;
   //!Makes the Viewer display a message
   void printMessage(QString message, int ms_delay );

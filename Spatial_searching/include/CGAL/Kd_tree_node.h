@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Authors       : Hans Tangelder (<hanst@cs.uu.nl>)
 
@@ -23,10 +23,10 @@
 
 namespace CGAL {
 
-  template <class SearchTraits, class Splitter, class UseExtendedNode> 
+  template <class SearchTraits, class Splitter, class UseExtendedNode>
   class Kd_tree;
 
-  template < class TreeTraits, class Splitter, class UseExtendedNode > 
+  template < class TreeTraits, class Splitter, class UseExtendedNode >
   class Kd_tree_node {
 
      friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
@@ -47,7 +47,7 @@ namespace CGAL {
 
     bool leaf;
 
-  public : 
+  public :
     Kd_tree_node(bool leaf_)
       :leaf(leaf_){}
 
@@ -55,18 +55,18 @@ namespace CGAL {
       return leaf;
     }
 
-    std::size_t 
+    std::size_t
     num_items() const
     {
       if (is_leaf()){
-        Leaf_node_const_handle node = 
+        Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
         return node->size();
       }
       else {
-        Internal_node_const_handle node = 
+        Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-	return node->lower()->num_items() + node->upper()->num_items();
+        return node->lower()->num_items() + node->upper()->num_items();
       }
     }
 
@@ -75,48 +75,48 @@ namespace CGAL {
     {
       if (is_leaf()) return 1;
       else {
-        Internal_node_const_handle node = 
+        Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-	return node->lower()->num_nodes() + node->upper()->num_nodes();
+        return node->lower()->num_nodes() + node->upper()->num_nodes();
       }
     }
 
-    int 
+    int
     depth(const int current_max_depth) const
     {
       if (is_leaf()){
-	return current_max_depth;
+        return current_max_depth;
       }
       else {
-        Internal_node_const_handle node = 
+        Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-        return 
-	     (std::max)( node->lower()->depth(current_max_depth + 1),
-			 node->upper()->depth(current_max_depth + 1));
+        return
+             (std::max)( node->lower()->depth(current_max_depth + 1),
+                         node->upper()->depth(current_max_depth + 1));
       }
     }
 
-    int 
+    int
     depth() const
     {
-      return depth(1); 
+      return depth(1);
     }
 
     template <class OutputIterator>
-    OutputIterator 
+    OutputIterator
     tree_items(OutputIterator it) const {
       if (is_leaf()) {
-         Leaf_node_const_handle node = 
+         Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
-	 if (node->size()>0) 
-	    for (iterator i=node->begin(); i != node->end(); i++) 
-	      {*it=*i; ++it;} 
-	}
+         if (node->size()>0)
+            for (iterator i=node->begin(); i != node->end(); i++)
+              {*it=*i; ++it;}
+        }
       else {
-         Internal_node_const_handle node = 
+         Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-	  it=node->lower()->tree_items(it);  
-	  it=node->upper()->tree_items(it); 
+          it=node->lower()->tree_items(it);
+          it=node->upper()->tree_items(it);
       }
       return it;
     }
@@ -128,14 +128,14 @@ namespace CGAL {
       if (is_leaf()) {
          Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
-	 if (node->size()>0){
+         if (node->size()>0){
            return boost::make_optional(*(node->begin()));
          }
-	}
+        }
       else {
          Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-	  result = node->lower()->any_tree_item();
+          result = node->lower()->any_tree_item();
           if(! result){
             result = node->upper()->any_tree_item();
           }
@@ -144,74 +144,74 @@ namespace CGAL {
     }
 
 
-     void 
+     void
     indent(int d) const
     {
       for(int i = 0; i < d; i++){
-	std::cout << " ";
+        std::cout << " ";
       }
     }
 
 
-    void 
-    print(int d = 0) const 
+    void
+    print(int d = 0) const
     {
       if (is_leaf()) {
-        Leaf_node_const_handle node = 
+        Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
-	indent(d);
-	std::cout << "leaf" << std::endl;
-	if (node->size()>0)
-	  for (iterator i=node->begin(); i != node->end(); i++)
-	  {indent(d);std::cout << *i << std::endl;}
+        indent(d);
+        std::cout << "leaf" << std::endl;
+        if (node->size()>0)
+          for (iterator i=node->begin(); i != node->end(); i++)
+          {indent(d);std::cout << *i << std::endl;}
       }
       else {
-        Internal_node_const_handle node = 
+        Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-	indent(d);
-	std::cout << "lower tree" << std::endl;
-	node->lower()->print(d+1);
-	indent(d);
-	std::cout << "separator: dim = " << node->cutting_dimension() << "  val = " << node->cutting_value() << std::endl;
-	indent(d);
-	std::cout << "upper tree" << std::endl;
-	node->upper()->print(d+1); 
+        indent(d);
+        std::cout << "lower tree" << std::endl;
+        node->lower()->print(d+1);
+        indent(d);
+        std::cout << "separator: dim = " << node->cutting_dimension() << "  val = " << node->cutting_value() << std::endl;
+        indent(d);
+        std::cout << "upper tree" << std::endl;
+        node->upper()->print(d+1);
       }
     }
 
 
     template <class OutputIterator, class FuzzyQueryItem>
-    OutputIterator 
+    OutputIterator
     search(OutputIterator it, const FuzzyQueryItem& q,
-	   Kd_tree_rectangle<FT,D>& b) const
+           Kd_tree_rectangle<FT,D>& b) const
     {
-      if (is_leaf()) { 
-        Leaf_node_const_handle node = 
+      if (is_leaf()) {
+        Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
-	if (node->size()>0) 
-	  for (iterator i=node->begin(); i != node->end(); i++) 
-	    if (q.contains(*i)) 
-	      {*it++=*i;}
+        if (node->size()>0)
+          for (iterator i=node->begin(); i != node->end(); i++)
+            if (q.contains(*i))
+              {*it++=*i;}
       }
       else {
-         Internal_node_const_handle node = 
+         Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-	// after splitting b denotes the lower part of b
-	Kd_tree_rectangle<FT,D> b_upper(b);
-	node->split_bbox(b, b_upper);
+        // after splitting b denotes the lower part of b
+        Kd_tree_rectangle<FT,D> b_upper(b);
+        node->split_bbox(b, b_upper);
 
-	if (q.outer_range_contains(b)) 	
-	  it=node->lower()->tree_items(it);
-	else
-	  if (q.inner_range_intersects(b)) 
-	    it=node->lower()->search(it,q,b);
-	if  (q.outer_range_contains(b_upper))     
-	  it=node->upper()->tree_items(it);
-	else
-	  if (q.inner_range_intersects(b_upper)) 
-	    it=node->upper()->search(it,q,b_upper);
+        if (q.outer_range_contains(b))
+          it=node->lower()->tree_items(it);
+        else
+          if (q.inner_range_intersects(b))
+            it=node->lower()->search(it,q,b);
+        if  (q.outer_range_contains(b_upper))
+          it=node->upper()->tree_items(it);
+        else
+          if (q.inner_range_intersects(b_upper))
+            it=node->upper()->search(it,q,b_upper);
       };
-      return it;				
+      return it;
     }
 
 
@@ -221,89 +221,89 @@ namespace CGAL {
                      Kd_tree_rectangle<FT,D>& b) const
     {
       boost::optional<Point_d> result = boost::none;
-      if (is_leaf()) { 
-        Leaf_node_const_handle node = 
+      if (is_leaf()) {
+        Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
-	if (node->size()>0) 
-	  for (iterator i=node->begin(); i != node->end(); i++) 
-	    if (q.contains(*i)) 
-	      { result = *i; break; }
+        if (node->size()>0)
+          for (iterator i=node->begin(); i != node->end(); i++)
+            if (q.contains(*i))
+              { result = *i; break; }
       }
       else {
-         Internal_node_const_handle node = 
+         Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
-	// after splitting b denotes the lower part of b
-	Kd_tree_rectangle<FT,D> b_upper(b);
-	node->split_bbox(b, b_upper);
+        // after splitting b denotes the lower part of b
+        Kd_tree_rectangle<FT,D> b_upper(b);
+        node->split_bbox(b, b_upper);
 
-	if (q.inner_range_intersects(b)) {
-	  result = node->lower()->search_any_point(q,b);
-	  if(result)
-	    return result;
-	}
-	if (q.inner_range_intersects(b_upper))
-	  result = node->upper()->search_any_point(q,b_upper);
+        if (q.inner_range_intersects(b)) {
+          result = node->lower()->search_any_point(q,b);
+          if(result)
+            return result;
+        }
+        if (q.inner_range_intersects(b_upper))
+          result = node->upper()->search_any_point(q,b_upper);
       }
-      return result;				
+      return result;
     }
 
   };
 
 
-  template < class TreeTraits, class Splitter, class UseExtendedNode > 
+  template < class TreeTraits, class Splitter, class UseExtendedNode >
   class Kd_tree_leaf_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
-    
+
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::iterator iterator;
     typedef Kd_tree_node< TreeTraits, Splitter, UseExtendedNode> Base;
     typedef typename TreeTraits::Point_d Point_d;
 
   private:
-    
+
     // private variables for leaf nodes
     boost::int32_t n; // denotes number of items in a leaf node
     iterator data; // iterator to data in leaf node
 
-                    
+
   public:
-		
+
     // default constructor
-    Kd_tree_leaf_node() 
+    Kd_tree_leaf_node()
     {}
 
-    Kd_tree_leaf_node(bool leaf_ ) 
+    Kd_tree_leaf_node(bool leaf_ )
       : Base(leaf_)
     {}
 
-    Kd_tree_leaf_node(bool leaf_,unsigned int n_ ) 
+    Kd_tree_leaf_node(bool leaf_,unsigned int n_ )
       : Base(leaf_), n(n_)
     {}
 
     // members for all nodes
-   
+
     // members for leaf nodes only
-    inline 
-    unsigned int 
-    size() const 
-    { 
+    inline
+    unsigned int
+    size() const
+    {
       return n;
     }
-  
-    inline 
+
+    inline
     iterator
-    begin() const  
+    begin() const
     {
       return data;
     }
 
-    inline 
-    iterator 
-    end() const 
+    inline
+    iterator
+    end() const
     {
       return data + n;
     }
- 
+
     inline
     void
     drop_last_point()
@@ -315,7 +315,7 @@ namespace CGAL {
 
 
 
-  template < class TreeTraits, class Splitter, class UseExtendedNode> 
+  template < class TreeTraits, class Splitter, class UseExtendedNode>
   class Kd_tree_internal_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
 
     friend class Kd_tree<TreeTraits,Splitter,UseExtendedNode>;
@@ -329,7 +329,7 @@ namespace CGAL {
     typedef typename Kd_tree<TreeTraits,Splitter,UseExtendedNode>::D D;
 
   private:
-    
+
        // private variables for internal nodes
     boost::int32_t cut_dim;
     FT cut_val;
@@ -342,48 +342,48 @@ namespace CGAL {
     FT lower_low_val;
     FT lower_high_val;
 
-                
+
   public:
 
     // default constructor
-    Kd_tree_internal_node() 
+    Kd_tree_internal_node()
     {}
 
-    Kd_tree_internal_node(bool leaf_) 
+    Kd_tree_internal_node(bool leaf_)
       : Base(leaf_)
     {}
-    
-    
+
+
     // members for internal node and extended internal node
 
-    inline 
-    Node_const_handle 
-    lower() const 
+    inline
+    Node_const_handle
+    lower() const
     {
-      return lower_ch; 
+      return lower_ch;
     }
 
-    inline 
-    Node_const_handle 
-    upper() const 
+    inline
+    Node_const_handle
+    upper() const
     {
-      return upper_ch; 
+      return upper_ch;
     }
 
-    inline 
-    Node_handle 
+    inline
+    Node_handle
     lower()
     {
-      return lower_ch; 
+      return lower_ch;
     }
 
-    inline 
-    Node_handle 
+    inline
+    Node_handle
     upper()
     {
-      return upper_ch; 
+      return upper_ch;
     }
-  	
+
     inline
     void
     set_lower(Node_handle nh)
@@ -405,23 +405,23 @@ namespace CGAL {
       cut_dim = sep.cutting_dimension();
       cut_val = sep.cutting_value();
     }
-  	
-    inline 
-    FT 
-    cutting_value() const 
+
+    inline
+    FT
+    cutting_value() const
     {
       return cut_val;
     }
-  	
-    inline 
-    int 
-    cutting_dimension() const 
+
+    inline
+    int
+    cutting_dimension() const
     {
       return cut_dim;
     }
 
     // members for extended internal node only
-    inline 
+    inline
     FT
     upper_low_value() const
     {
@@ -449,8 +449,8 @@ namespace CGAL {
       return lower_high_val;
     }
 
-    /*Separator& 
-    separator() 
+    /*Separator&
+    separator()
     {
       return Separator(cutting_dimension,cutting_value);
     }*/
@@ -463,7 +463,7 @@ namespace CGAL {
     }
   };//internal node
 
- template < class TreeTraits, class Splitter> 
+ template < class TreeTraits, class Splitter>
  class Kd_tree_internal_node<TreeTraits,Splitter,Tag_false> : public Kd_tree_node< TreeTraits, Splitter, Tag_false >{
 
     friend class Kd_tree<TreeTraits,Splitter,Tag_false>;
@@ -477,54 +477,54 @@ namespace CGAL {
     typedef typename Kd_tree<TreeTraits,Splitter,Tag_false>::D D;
 
   private:
-    
+
        // private variables for internal nodes
     boost::uint8_t cut_dim;
     FT cut_val;
 
     Node_handle lower_ch, upper_ch;
-                
+
   public:
 
     // default constructor
-    Kd_tree_internal_node() 
+    Kd_tree_internal_node()
     {}
 
-    Kd_tree_internal_node(bool leaf_) 
+    Kd_tree_internal_node(bool leaf_)
       : Base(leaf_)
     {}
-    
-    
+
+
     // members for internal node and extended internal node
 
-    inline 
-    Node_const_handle 
-    lower() const 
+    inline
+    Node_const_handle
+    lower() const
     {
-      return lower_ch; 
+      return lower_ch;
     }
 
-    inline 
-    Node_const_handle 
-    upper() const 
+    inline
+    Node_const_handle
+    upper() const
     {
-      return upper_ch; 
+      return upper_ch;
     }
 
-    inline 
-    Node_handle 
+    inline
+    Node_handle
     lower()
     {
-      return lower_ch; 
+      return lower_ch;
     }
 
-    inline 
-    Node_handle 
+    inline
+    Node_handle
     upper()
     {
-      return upper_ch; 
+      return upper_ch;
     }
-  	
+
     inline
     void
     set_lower(Node_handle nh)
@@ -547,23 +547,23 @@ namespace CGAL {
       cut_dim = static_cast<boost::uint8_t>(sep.cutting_dimension());
       cut_val = sep.cutting_value();
     }
-  	
-    inline 
-    FT 
-    cutting_value() const 
+
+    inline
+    FT
+    cutting_value() const
     {
       return cut_val;
     }
-  	
-    inline 
-    int 
-    cutting_dimension() const 
+
+    inline
+    int
+    cutting_dimension() const
     {
       return cut_dim;
     }
 
-   /* Separator& 
-    separator() 
+   /* Separator&
+    separator()
     {
       return Separator(cutting_dimension,cutting_value);
     }*/

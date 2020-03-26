@@ -44,22 +44,22 @@ using PLY_Color_map    = CGAL::Second_of_pair_property_map<Point_with_color>;
 
 // Define how a color should be stored.
 namespace CGAL {
-    
+
   template<class F>
   struct Output_rep< ::Color, F > {
-        
+
     const ::Color& c;
     static const bool is_specialized = true;
-    
+
     Output_rep(const ::Color& c) : c(c) { }
 
     std::ostream& operator()(std::ostream& out) const {
-            
-      if (is_ascii(out)) 
+
+      if (is_ascii(out))
         out << int(c[0]) << " " << int(c[1]) << " " << int(c[2]);
-      else 
+      else
         out.write(reinterpret_cast<const char*>(&c), sizeof(c));
-            
+
       return out;
     }
   };
@@ -67,13 +67,13 @@ namespace CGAL {
 } // namespace CGAL
 
 int main(int argc, char *argv[]) {
-    
-  std::cout << std::endl << 
-    "region_growing_on_point_set_2 example started" 
+
+  std::cout << std::endl <<
+    "region_growing_on_point_set_2 example started"
   << std::endl << std::endl;
-    
-  std::cout << 
-    "Note: if 0 points are loaded, please specify the path to the file data/point_set_2.xyz by hand!" 
+
+  std::cout <<
+    "Note: if 0 points are loaded, please specify the path to the file data/point_set_2.xyz by hand!"
   << std::endl << std::endl;
 
   // Load xyz data either from a local folder or a user-provided file.
@@ -81,10 +81,10 @@ int main(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
 
   if (!in) {
-    std::cout << 
+    std::cout <<
     "Error: cannot read the file point_set_2.xyz!" << std::endl;
-    std::cout << 
-    "You can either create a symlink to the data folder or provide this file by hand." 
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
     << std::endl << std::endl;
     return EXIT_FAILURE;
   }
@@ -95,12 +95,12 @@ int main(int argc, char *argv[]) {
   while (in >> a >> b >> c >> d >> e >> f)
     input_range.push_back(
       std::make_pair(Point_2(a, b), Vector_2(d, e)));
-    
+
   in.close();
-  std::cout << 
-    "* loaded " 
-  << input_range.size() << 
-    " points with normals" 
+  std::cout <<
+    "* loaded "
+  << input_range.size() <<
+    " points with normals"
   << std::endl;
 
   // Default parameter values for the data file point_set_2.xyz.
@@ -111,13 +111,13 @@ int main(int argc, char *argv[]) {
 
   // Create instances of the classes Neighbor_query and Region_type.
   Neighbor_query neighbor_query(
-    input_range, 
+    input_range,
     search_sphere_radius);
 
   Region_type region_type(
-    input_range, 
+    input_range,
     max_distance_to_line, max_accepted_angle, min_region_size);
-    
+
   // Create an instance of the region growing class.
   Region_growing region_growing(
     input_range, neighbor_query, region_type);
@@ -127,18 +127,18 @@ int main(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
 
   // Print the number of found regions.
-  std::cout << "* " << regions.size() << 
-    " regions have been found" 
+  std::cout << "* " << regions.size() <<
+    " regions have been found"
   << std::endl;
 
   Pwc_vector pwc;
   srand(static_cast<unsigned int>(time(NULL)));
-  
+
   // Iterate through all regions.
   for (const auto& region : regions) {
-        
+
     // Generate a random color.
-    const Color color = 
+    const Color color =
       CGAL::make_array(
         static_cast<unsigned char>(rand() % 256),
         static_cast<unsigned char>(rand() % 256),
@@ -155,7 +155,7 @@ int main(int argc, char *argv[]) {
 
   // Save the result to a file in the user-provided path if any.
   if (argc > 2) {
-        
+
     const std::string path     = argv[2];
     const std::string fullpath = path + "regions_point_set_2.ply";
 
@@ -166,20 +166,20 @@ int main(int argc, char *argv[]) {
       out, pwc,
       CGAL::make_ply_point_writer(PLY_Point_map()),
         std::make_tuple(
-          PLY_Color_map(), 
+          PLY_Color_map(),
           CGAL::PLY_property<unsigned char>("red"),
           CGAL::PLY_property<unsigned char>("green"),
           CGAL::PLY_property<unsigned char>("blue")));
 
-    std::cout << 
-      "* found regions are saved in " 
+    std::cout <<
+      "* found regions are saved in "
     << fullpath << std::endl;
     out.close();
   }
 
-  std::cout << std::endl << 
-    "region_growing_on_point_set_2 example finished" 
+  std::cout << std::endl <<
+    "region_growing_on_point_set_2 example finished"
   << std::endl << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

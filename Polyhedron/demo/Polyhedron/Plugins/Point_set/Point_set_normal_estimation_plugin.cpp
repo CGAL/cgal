@@ -79,7 +79,7 @@ struct Vector_to_pmap
   typedef Point_set::Index                     key_type;
   typedef bool                                 value_type;
   typedef value_type                           reference;
-  
+
   std::vector<bool>* vec;
 
   Vector_to_pmap (std::vector<bool>* vec = NULL) : vec (vec) { }
@@ -187,7 +187,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversio
     Point_set* points = item->point_set();
     if(points == NULL)
         return;
-  
+
     for(Point_set::iterator it = points->begin_or_selection_begin(); it != points->end(); ++it){
       points->normal(*it) = -1 * points->normal(*it);
     }
@@ -216,7 +216,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     Point_set_demo_normal_estimation_dialog dialog;
     if(!dialog.exec())
       return;
-      
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
 
@@ -325,10 +325,10 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
       orient_selection = dialog.add<QRadioButton> ("Orient selection");
       orient_selection->setChecked(false);
     }
-    
+
     if(!dialog.exec())
       return;
-      
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
     QApplication::processEvents();
 
@@ -349,7 +349,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalOrientat
 
       for (Point_set::iterator it = points->first_selected(); it != points->end(); ++ it)
         constrained_map[*it] = true;
-              
+
       first_unoriented_point =
         CGAL::mst_orient_normals(*points,
                                  std::size_t(neighborhood->value()),

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -38,7 +38,7 @@ write_off( std::ostream& out, const Polyhedron_3<Traits,Items,HDS,Alloc>& P, con
   // writes P to `out' in PRETTY, ASCII or BINARY format
     // as the stream indicates.
     File_header_OFF header( is_binary( out), ! is_pretty( out), false);
-    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::const_type 
+    typename CGAL::Polygon_mesh_processing::GetVertexPointMap<Polyhedron_3<Traits,Items,HDS,Alloc>, NamedParameters>::const_type
         vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                            get_const_property_map(CGAL::vertex_point, P));
     CGAL::print_polyhedron_with_header_OFF( out, P, header, vpm);
@@ -59,7 +59,7 @@ template < class Traits,
            template < class T, class I, class A>
            class HDS, class Alloc,
            class NamedParameters>
-bool 
+bool
 read_off(std::istream& in,
          Polyhedron_3<Traits,Items,HDS,Alloc>& P,
          NamedParameters np) {
@@ -88,9 +88,9 @@ template < class Traits,
            class Items,
            template < class T, class I, class A>
            class HDS, class Alloc>
-bool 
+bool
 read_off(std::istream& in,
-         Polyhedron_3<Traits,Items,HDS,Alloc>& P) 
+         Polyhedron_3<Traits,Items,HDS,Alloc>& P)
 {
   return read_off(in, P, parameters::all_default());
 }

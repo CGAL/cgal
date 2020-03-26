@@ -21,7 +21,7 @@
 
 
 namespace CGAL{
-  
+
 using ::get;
 
 template<class Base_traits,class PointPropertyMap>
@@ -57,7 +57,7 @@ public:
 
   Less_x_2 less_x_2_object () const {return Less_x_2(ppmap_,static_cast<const Gt*>(this)->less_x_2_object() );}
   Less_y_2 less_y_2_object () const {return Less_y_2(ppmap_,static_cast<const Gt*>(this)->less_y_2_object() );}
-  
+
   const PointPropertyMap& point_property_map() const {return ppmap_;}
 
 };

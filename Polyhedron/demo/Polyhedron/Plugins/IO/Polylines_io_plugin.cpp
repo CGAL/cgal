@@ -123,7 +123,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
       CGAL::Three::Three::scene()->addItem(item);
     return QList<Scene_item*>()<<item;
   }
-  
+
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   QStringList polylines_metadata;
 

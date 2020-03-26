@@ -25,7 +25,7 @@ if ( CGAL_FOUND )
   else()
     include( ${EIGEN3_USE_FILE} )
   endif()
-  
+
   create_single_source_cgal_program( "test_boost_has_xxx.cpp" )
   create_single_source_cgal_program( "test_c3t3.cpp" )
   create_single_source_cgal_program( "test_mesh_capsule_var_distance_bound.cpp" )
@@ -81,8 +81,8 @@ if ( CGAL_FOUND )
   endforeach()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

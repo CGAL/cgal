@@ -42,7 +42,7 @@ public:
   typedef Diagram_                                 Envelope_diagram_1;
 
 protected:
-  
+
   typedef Envelope_divide_and_conquer_2<Traits_2, Envelope_diagram_1>  Self;
 
   enum Envelope_type
@@ -104,7 +104,7 @@ public:
 
   /*!
    * Construct the lower (or upper) envelope to the given range of curves.
-   * \param begin An iterator pointing at the beginning of the curves range. 
+   * \param begin An iterator pointing at the beginning of the curves range.
    * \param end A past-the-end iterator for the curves range.
    * \param type The envelope type (true for lower, false of upper).
    * \param diagram Output: The minimization (or maximization) diagram.
@@ -144,7 +144,7 @@ public:
   /*!
    * Construct the lower (or upper) envelope to the given range of
    * x-monotone curves.
-   * \param begin An iterator pointing at the beginning of the curves range. 
+   * \param begin An iterator pointing at the beginning of the curves range.
    * \param end A past-the-end iterator for the curves range.
    * \param type The envelope type (true for lower, false for upper).
    * \param diagram Output: The minimization (or maximization) diagram.
@@ -158,7 +158,7 @@ public:
     env_type = (type ? LOWER : UPPER);
 
     // Separate the regular curves from the vertical ones.
-    typename Traits_2::Is_vertical_2  is_vertical = 
+    typename Traits_2::Is_vertical_2  is_vertical =
                                               traits->is_vertical_2_object();
 
     Curve_pointer_vector  reg_vec;
@@ -217,7 +217,7 @@ protected:
 
   /*
    * Merge two minimization (or maximization) diagrams.
-   * \param d1 The first diagram, 
+   * \param d1 The first diagram,
    *           representing the envelope of the curve set C1.
    * \param d1 The first diagram,
    *           representing the envelope of the curve set C1.
@@ -252,29 +252,29 @@ protected:
    * \param other_edge The empty edge.
    * \param v The next vertex to the right.
    * \param v_exists Whether the next vertex exists.
-   * \param origin_of_v The origin of v: SMALLER if it is from e, 
-   *                    LARGER if it is from other_edge. 
-   *                    EQUAL result means that both edges have vertex at 
+   * \param origin_of_v The origin of v: SMALLER if it is from e,
+   *                    LARGER if it is from other_edge.
+   *                    EQUAL result means that both edges have vertex at
    *                    the same place.
    * \param out_d The merged diagram.
    */
-  void _merge_single_interval (Edge_const_handle e, 
+  void _merge_single_interval (Edge_const_handle e,
                                Edge_const_handle other_edge,
                                Vertex_const_handle v, bool v_exists,
                                Comparison_result origin_of_v,
                                Envelope_diagram_1& out_d);
-  
-  
+
+
   //! Compare the $y$-coordinates of two curves at their endpoints
-  /*! The function compares the $y$ values of two curves with a joint 
+  /*! The function compares the $y$ values of two curves with a joint
     range of $x$ values, at the end of the joint range.
     \param xcv1 The first curve
     \param xcv2 The second curve
-    \param curve_end ARR_MIN_END - compare the $y$ value of the smaller 
+    \param curve_end ARR_MIN_END - compare the $y$ value of the smaller
     endpoint, ARR_MAX_END - compare the $y$ value of the larger endpoint.
-    \pre The two $x$-monotone curves need to have a partially overlapping 
+    \pre The two $x$-monotone curves need to have a partially overlapping
     $x$-ranges.
-    \return 
+    \return
     \todo Move it to Arr_traits_adaptor ?
   */
   Comparison_result compare_y_at_end(const X_monotone_curve_2& xcv1,
@@ -291,7 +291,7 @@ protected:
    * \param is_leftmost2 Is it the leftmost edge in its diagram.
    * \param v The next vertex.
    * \param v_exists Whether such a vertex exists.
-   * \param origin_of_v The origin of v: SMALLER if it is from e1, 
+   * \param origin_of_v The origin of v: SMALLER if it is from e1,
    *                    otherwise it is from e2. EQUAL result means that
    *                    both diagram have vertex at the same place (but v
    *                    is still taken from e2.
@@ -304,9 +304,9 @@ protected:
                              Envelope_diagram_1& out_d);
 
   /*!
-   * Append a vertex to the given diagram: The new vertex that represents the 
-   * given point as the new rightmost vertex of the diagram. The edge 
-   * between the current rightmost vertex and the new one contains the same 
+   * Append a vertex to the given diagram: The new vertex that represents the
+   * given point as the new rightmost vertex of the diagram. The edge
+   * between the current rightmost vertex and the new one contains the same
    * curves as the input edge.
    * \param diag The diagram.
    * \param p The point that the new vertex is associated with.
@@ -321,7 +321,7 @@ protected:
    */
   class Less_vertical_segment
   {
-  private:    
+  private:
 
     typename Traits_2::Compare_x_2             comp_x;
     typename Traits_2::Construct_min_vertex_2  min_vertex;

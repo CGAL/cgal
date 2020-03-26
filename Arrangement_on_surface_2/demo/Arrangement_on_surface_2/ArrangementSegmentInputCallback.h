@@ -80,7 +80,7 @@ processInput( CGAL::Object o )
     Curve_2 curve = this->construct_x_monotone_curve_2( p1, p2 );
     CGAL::insert( *( this->arrangement ), curve );
   }
-    
+
   Q_EMIT CGAL::Qt::GraphicsViewInput::modelChanged( );
 }
 

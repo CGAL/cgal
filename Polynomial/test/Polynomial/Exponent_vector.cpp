@@ -4,8 +4,8 @@
 #include <CGAL/Exponent_vector.h>
 #include <boost/concept_check.hpp>
 
-int main() {   
-  typedef CGAL::Exponent_vector T; 
+int main() {
+  typedef CGAL::Exponent_vector T;
 
   boost::function_requires< boost::DefaultConstructibleConcept<T> >();
   boost::function_requires< boost::AssignableConcept<T> >();
@@ -20,30 +20,30 @@ int main() {
   assert(!(ev1!=ev2));
   assert(!(ev1<ev2));
   assert(!(ev1>ev2));
-    
-  ev1.push_back(1); 
-  ev1.push_back(0); 
+
+  ev1.push_back(1);
   ev1.push_back(0);
- 
-  ev2.push_back(0); 
-  ev2.push_back(1); 
-  ev2.push_back(0); 
- 
-  assert(!(ev2 == ev1)) ; 
-  assert( (ev2 != ev1)) ; 
-  assert(!(ev2 < ev1)) ; 
-  assert( (ev2 > ev1)) ;  
-    
+  ev1.push_back(0);
+
+  ev2.push_back(0);
+  ev2.push_back(1);
+  ev2.push_back(0);
+
+  assert(!(ev2 == ev1)) ;
+  assert( (ev2 != ev1)) ;
+  assert(!(ev2 < ev1)) ;
+  assert( (ev2 > ev1)) ;
+
   assert(CGAL::is_valid(ev1));
 
   std::vector<int> vec;
-  vec.push_back(0); vec.push_back(1); vec.push_back(5); 
-    
+  vec.push_back(0); vec.push_back(1); vec.push_back(5);
+
   ev1 = CGAL::Exponent_vector(vec.begin(),vec.end());
-  assert(ev1[0] == 0);  
-  assert(ev1[1] == 1);  
+  assert(ev1[0] == 0);
+  assert(ev1[1] == 1);
   assert(ev1[2] == 5);
-   
+
   // new constructors
   // univariate
   {
@@ -71,9 +71,9 @@ int main() {
     assert(CGAL::is_valid(ev));
     assert(ev[0] == 2);
     assert(ev[1] == 1);
-        
+
   }
-    
+
 
   // trivariate
   {
@@ -101,7 +101,7 @@ int main() {
     assert(ev[2] == 2);
     assert(ev[3] == 1);
   }
-  
+
   using std::swap; swap(ev1,ev2);
 
   return 0;

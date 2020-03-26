@@ -35,9 +35,9 @@ private:
 
 public:
 
-  /*! 
+  /*!
     \param name name of the classification label (e.g. vegetation).
-  */ 
+  */
   Label (std::string name) : m_name (name) { }
 
   const std::string& name() const { return m_name; }

@@ -21,7 +21,7 @@ namespace CGAL {
 template <class K,  class Hilbert_policy >
   class Hilbert_sort_2;
 
-template <class K>  
+template <class K>
   class Hilbert_sort_2<K, Hilbert_sort_median_policy >
   : public Hilbert_sort_median_2<K>
 {

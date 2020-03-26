@@ -45,6 +45,6 @@ if(CGAL_FOUND)
     "efficient_RANSAC_with_point_access.cpp")
 
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

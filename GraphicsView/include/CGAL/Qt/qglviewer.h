@@ -70,7 +70,7 @@ implementation.
 class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
-public:  
+public:
   //todo check if this is used. If not remove it
   explicit QGLViewer(QGLContext* context, QWidget *parent = 0,
                      ::Qt::WindowFlags flags = 0);
@@ -117,9 +117,9 @@ public:
   qglviewer::Camera::drawAllPaths(). Actual camera and path edition will be
   implemented in the future. */
   bool cameraIsEdited() const { return cameraIsEdited_; }
-  
+
   /*!
-   * \brief isSharing returns true if the viewer was created from an existing one, 
+   * \brief isSharing returns true if the viewer was created from an existing one,
    * and therefore is sharing its context with it.
    */
   bool isSharing() const;
@@ -378,21 +378,21 @@ public:
   Note that if the QGLViewer is embedded in an other QWidget, it returns \c true
   when the top level widget is in full screen mode. */
   bool isFullScreen() const { return fullScreen_; }
-  
+
   /*! Returns the recommended size for the QGLViewer. Default value is 600x400
    * pixels. */
   virtual QSize sizeHint() const { return QSize(600, 400); }
   /*!
-   * Sets the offset of the scene. The offset is the difference between the origin 
+   * Sets the offset of the scene. The offset is the difference between the origin
    * of the world and the origin of the scene. It is relevant when the whole scene is translated
    * of a big number, because there is a useless loss of precision when drawing.
-   * 
-   * The offset must be added to the drawn coordinates, and substracted from the computation 
+   *
+   * The offset must be added to the drawn coordinates, and substracted from the computation
    * \attention  the result of pointUnderPixel is the real item translated by the offset.
-   * 
+   *
    */
   void setOffset(qglviewer::Vec offset);
-  
+
   /*!
    * returns the offset of the scene.
    * \see `setOffset()`
@@ -428,7 +428,7 @@ protected:
 
 protected:
   void displayFPS();
-  
+
 
 //@}
 
@@ -1167,13 +1167,13 @@ protected:
   QMap<WheelBindingPrivate, MouseActionPrivate> wheelBinding_;
   QMap<ClickBindingPrivate, qglviewer::ClickAction> clickBinding_;
   ::Qt::Key currentlyPressedKey_;
-  
+
   // S t a t e   F i l e
   QString stateFileName_;
 
   // H e l p   w i n d o w
   QTabWidget *helpWidget_;
-  
+
   //internal drawing buffers
   enum VBO
   {
@@ -1200,11 +1200,11 @@ protected:
   std::size_t axis_size;
   QOpenGLFramebufferObject* stored_fbo;
   //S n a p s h o t
-  QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color, 
+  QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color,
                        QSize finalSize, double oversampling, bool expand);
-  
+
   //Internal Projection Matrix
-  
+
   // O f f s e t
   qglviewer::Vec _offset;
   //C o n t e x t
@@ -1215,9 +1215,9 @@ protected:
 public:
   //! Is used to know if the openGL context is 4.3 or ES 2.0.
   //! @returns `true` if the context is 4.3.
-  //! @returns `false` if the context is ES 2.0.  
+  //! @returns `false` if the context is ES 2.0.
   bool isOpenGL_4_3()const {return is_ogl_4_3; }
-  
+
 };
 
 } //end CGAL

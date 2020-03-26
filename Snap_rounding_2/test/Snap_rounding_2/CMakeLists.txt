@@ -37,8 +37,8 @@ if ( CGAL_FOUND )
     add_Snap_rounding_tests( test_snap_rounding_2 )
   endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
@@ -24,35 +24,35 @@
 
 
 namespace CGAL {
-	template <class SearchTraits, class Distance,class Splitter,class Tree>
+        template <class SearchTraits, class Distance,class Splitter,class Tree>
 class K_neighbor_search;
 
-template <class SearchTraits, 
+template <class SearchTraits,
           class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
           class Tree= Kd_tree<SearchTraits, Splitter, Tag_true> >
 class K_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> {
   typedef  internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> Base;
-  
+
 public:
-  typedef typename Base::FT FT;  
+  typedef typename Base::FT FT;
   typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
 
-  K_neighbor_search(const Tree& tree, const typename Base::Query_item& q,  
+  K_neighbor_search(const Tree& tree, const typename Base::Query_item& q,
     unsigned int k=1, FT Eps=FT(0.0), bool Search_nearest=true, const Distance& d=Distance(),bool sorted=true)
-    : Base(q,k,Eps,Search_nearest,d) 
+    : Base(q,k,Eps,Search_nearest,d)
   {
     if (tree.empty()) return;
     compute_neighbors_general(tree.root(),tree.bounding_box());
-    if (sorted) this->queue.sort();    
+    if (sorted) this->queue.sort();
   };
 
-private:  
-  typedef typename Base::Node_const_handle Node_const_handle; 
+private:
+  typedef typename Base::Node_const_handle Node_const_handle;
   using Base::branch;
 
-  void 
-  compute_neighbors_general(typename Base::Node_const_handle N, const Kd_tree_rectangle<FT,D>& r) 
+  void
+  compute_neighbors_general(typename Base::Node_const_handle N, const Kd_tree_rectangle<FT,D>& r)
   {
     if (!(N->is_leaf())) {
        typename Tree::Internal_node_const_handle node =
@@ -70,46 +70,46 @@ private:
       FT distance_to_lower_half;
       FT distance_to_upper_half;
 
-      if (this->search_nearest) { 
+      if (this->search_nearest) {
 
-        distance_to_lower_half = 
-          this->distance_instance. min_distance_to_rectangle(this->query_object, 
+        distance_to_lower_half =
+          this->distance_instance. min_distance_to_rectangle(this->query_object,
                                                        r_lower);
-                              
-        distance_to_upper_half = 
-          this->distance_instance.min_distance_to_rectangle(this->query_object, 
+
+        distance_to_upper_half =
+          this->distance_instance.min_distance_to_rectangle(this->query_object,
                                                       r_upper);
-                      
 
-      } 
+
+      }
       else
-        { 
+        {
 
-          distance_to_lower_half = 
-            this->distance_instance.max_distance_to_rectangle(this->query_object, 
+          distance_to_lower_half =
+            this->distance_instance.max_distance_to_rectangle(this->query_object,
                                                         r_lower);
 
-          distance_to_upper_half = 
-            this->distance_instance.max_distance_to_rectangle(this->query_object, 
+          distance_to_upper_half =
+            this->distance_instance.max_distance_to_rectangle(this->query_object,
                                                         r_upper);
 
         }
 
-      if ( (( this->search_nearest) && 
-            (distance_to_lower_half < distance_to_upper_half)) 
+      if ( (( this->search_nearest) &&
+            (distance_to_lower_half < distance_to_upper_half))
            ||
-           ((!this->search_nearest) && 
-            (distance_to_lower_half >= 
+           ((!this->search_nearest) &&
+            (distance_to_lower_half >=
              distance_to_upper_half))  )
         {
           compute_neighbors_general(node->lower(), r_lower);
-          if (branch(distance_to_upper_half)) 
+          if (branch(distance_to_upper_half))
             compute_neighbors_general (node->upper(), r_upper);
-        }  
+        }
       else
-        {	compute_neighbors_general(node->upper(), r_upper);
-        if (branch(distance_to_lower_half)) 
-          compute_neighbors_general (node->lower(), 
+        {        compute_neighbors_general(node->upper(), r_upper);
+        if (branch(distance_to_lower_half))
+          compute_neighbors_general (node->lower(),
                                      r_lower);
         }
 
@@ -129,8 +129,8 @@ private:
           }
       }
   }
-  
-}; // class 
+
+}; // class
 
 } // namespace CGAL
 

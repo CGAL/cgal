@@ -11,7 +11,7 @@ find_package( CGAL QUIET COMPONENTS  )
 
 if ( NOT CGAL_FOUND )
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 endif()
 
 # Boost and its components
@@ -19,13 +19,13 @@ find_package( Boost REQUIRED )
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
+  return()
 endif()
 
 find_package( Boost OPTIONAL_COMPONENTS serialization iostreams )
 
 if( WIN32 )
-# to avoid a warning with old cmake 
+# to avoid a warning with old cmake
   set(_Boost_BZIP2_HEADERS             "boost/iostreams/filter/bzip2.hpp")
   set(_Boost_ZLIB_HEADERS              "boost/iostreams/filter/zlib.hpp")
   find_package( Boost OPTIONAL_COMPONENTS bzip2 zlib)

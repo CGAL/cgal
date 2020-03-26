@@ -26,7 +26,7 @@ template <typename Polyhedron,
           typename Polyline_and_context,
           typename Polylines_output_iterator>
 Polylines_output_iterator
-detect_polylines(Polyhedron* pMesh, 
+detect_polylines(Polyhedron* pMesh,
                  Polylines_output_iterator out_it);
 
 } // end namespace CGAL::Mesh_3

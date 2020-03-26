@@ -192,11 +192,11 @@ public:
   * @pre the input polygon soup describes a consistently oriented
   * polygon mesh.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point 
+  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point
   * property map
-  * @tparam PointRange a model of the concepts `RandomAccessContainer` and 
+  * @tparam PointRange a model of the concepts `RandomAccessContainer` and
   * `BackInsertionSequence` whose value type is the point type
-  * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose 
+  * @tparam PolygonRange a model of the concept `RandomAccessContainer` whose
   * `value_type` is a model of the concept `RandomAccessContainer` whose `value_type` is `std::size_t`.
 
   *

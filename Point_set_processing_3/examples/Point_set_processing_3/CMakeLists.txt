@@ -16,7 +16,7 @@ if ( CGAL_FOUND )
   if (MSVC)
     # Quit warning in the lasreader
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
-    
+
     if ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
       # Allow Windows 32bit applications to use up to 3GB of RAM
       SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
@@ -32,7 +32,7 @@ if ( CGAL_FOUND )
   option(CGAL_ACTIVATE_CONCURRENT_PSP3
          "Enable concurrency"
          OFF)
-     
+
   if( CGAL_ACTIVATE_CONCURRENT_PSP3 OR ENV{CGAL_ACTIVATE_CONCURRENT_PSP3} )
     find_package( TBB REQUIRED )
   endif()
@@ -55,10 +55,10 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "structuring_example.cpp" )
   create_single_source_cgal_program( "callback_example.cpp" )
 
-  set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)    
+  set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" CXX_FEATURES ${needed_cxx_features} )
   create_single_source_cgal_program( "write_ply_points_example.cpp" CXX_FEATURES ${needed_cxx_features} )
-    
+
   find_package(LASLIB)
   if (LASLIB_FOUND)
     include(${LASLIB_USE_FILE})
@@ -69,7 +69,7 @@ if ( CGAL_FOUND )
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
-  
+
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)

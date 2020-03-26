@@ -57,7 +57,7 @@ namespace internal {
     }
   };
 
-    // A property map 
+    // A property map
     template <typename G>
     struct No_constraint {
       friend bool get(No_constraint<G>, typename boost::graph_traits<G>::edge_descriptor)
@@ -173,7 +173,7 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
  * \ingroup keep_connected_components_grp
  *  computes for each face the index of the corresponding connected component.
  *
- *  A property map for `CGAL::face_index_t` must be either available as an internal property map 
+ *  A property map for `CGAL::face_index_t` must be either available as an internal property map
  *  to `pmesh` or provided as one of the \ref pmp_namedparameters "Named Parameters".
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`

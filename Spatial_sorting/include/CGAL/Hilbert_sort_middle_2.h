@@ -16,7 +16,7 @@
 #include <functional>
 #include <cstddef>
 #include <CGAL/Hilbert_sort_middle_base.h>
-#include <CGAL/Polygon_2_algorithms.h> 
+#include <CGAL/Polygon_2_algorithms.h>
 
 namespace CGAL {
 
@@ -30,14 +30,14 @@ namespace internal {
     {
         typedef typename K::Point_2 Point;
         K k;
-	double value;
+        double value;
         Fixed_hilbert_cmp_2 (double v, const K &_k = K()) : k(_k),value(v) {}
         bool operator() (const Point &p) const
-        { 
-	  return ! Fixed_hilbert_cmp_2<K,x,false> (value, k) (p);
+        {
+          return ! Fixed_hilbert_cmp_2<K,x,false> (value, k) (p);
         }
     };
-    
+
     template <class K>
     struct Fixed_hilbert_cmp_2<K,0,false>
         : public CGAL::cpp98::binary_function<typename K::Point_2,
@@ -45,14 +45,14 @@ namespace internal {
     {
         typedef typename K::Point_2 Point;
         K k;
-	double value;
+        double value;
         Fixed_hilbert_cmp_2 (double v, const K &_k = K()) : k(_k),value(v) {}
         bool operator() (const Point &p) const
-        { 
-	  return to_double(k.compute_x_2_object()(p)) < value;
+        {
+          return to_double(k.compute_x_2_object()(p)) < value;
         }
     };
-    
+
     template <class K>
     struct Fixed_hilbert_cmp_2<K,1,false>
         : public CGAL::cpp98::binary_function<typename K::Point_2,
@@ -60,11 +60,11 @@ namespace internal {
     {
         typedef typename K::Point_2 Point;
         K k;
-	double value;
+        double value;
         Fixed_hilbert_cmp_2 (double v, const K &_k = K()) : k(_k),value(v) {}
         bool operator() (const Point &p) const
-        { 
-	  return to_double(k.compute_y_2_object()(p)) < value;
+        {
+          return to_double(k.compute_y_2_object()(p)) < value;
         }
     };
 }
@@ -76,7 +76,7 @@ class Hilbert_sort_middle_2
 public:
     typedef K Kernel;
     typedef typename Kernel::Point_2 Point;
-    
+
 private:
     Kernel _k;
     std::ptrdiff_t _limit;
@@ -91,22 +91,22 @@ public:
 
     template <int x, bool upx, bool upy, class RandomAccessIterator>
     void sort (RandomAccessIterator begin, RandomAccessIterator end,
-	       double xmin, double ymin, double xmax, double ymax) const
+               double xmin, double ymin, double xmax, double ymax) const
     {
         const int y = (x + 1) % 2;
         if (end - begin <= _limit) return;
 
-	double xmed= (xmin+xmax)/2;
-	double ymed= (ymin+ymax)/2;
+        double xmed= (xmin+xmax)/2;
+        double ymed= (ymin+ymax)/2;
 
         RandomAccessIterator m0 = begin, m4 = end;
 
-        RandomAccessIterator m2 = 
-	  internal::fixed_hilbert_split (m0, m4, Cmp< x,  upx> (xmed,_k));
-        RandomAccessIterator m1 = 
-	  internal::fixed_hilbert_split (m0, m2, Cmp< y,  upy> (ymed,_k));
-        RandomAccessIterator m3 = 
-	  internal::fixed_hilbert_split (m2, m4, Cmp< y, !upy> (ymed,_k));
+        RandomAccessIterator m2 =
+          internal::fixed_hilbert_split (m0, m4, Cmp< x,  upx> (xmed,_k));
+        RandomAccessIterator m1 =
+          internal::fixed_hilbert_split (m0, m2, Cmp< y,  upy> (ymed,_k));
+        RandomAccessIterator m3 =
+          internal::fixed_hilbert_split (m2, m4, Cmp< y, !upy> (ymed,_k));
 
         if (m1!=m4)
           sort<y, upy, upx> (m0, m1, ymin, xmin, ymed, xmed);
@@ -123,22 +123,22 @@ public:
     {
       //Bbox_2 box=bbox_2(begin, end); BUG: WE NEED TO FIX THIS
 
-		K k;
-	    double xmin=to_double(k.compute_x_2_object()(*begin)),
-		     ymin=to_double(k.compute_y_2_object()(*begin)),
-	  	     xmax=xmin,
-		     ymax=ymin;
-		
-	    for(RandomAccessIterator it=begin+1; it<end; ++it){
-			if ( to_double(k.compute_x_2_object()(*it)) < xmin) 
-		  		xmin = to_double(k.compute_x_2_object()(*it));
-			if ( to_double(k.compute_y_2_object()(*it)) < ymin) 
-		  		ymin = to_double(k.compute_y_2_object()(*it));
-			if ( to_double(k.compute_x_2_object()(*it)) > xmax) 
-		  		xmax = to_double(k.compute_x_2_object()(*it));
-			if ( to_double(k.compute_y_2_object()(*it)) > ymax) 
-		  		ymax = to_double(k.compute_y_2_object()(*it));
-	    }
+                K k;
+            double xmin=to_double(k.compute_x_2_object()(*begin)),
+                     ymin=to_double(k.compute_y_2_object()(*begin)),
+                       xmax=xmin,
+                     ymax=ymin;
+
+            for(RandomAccessIterator it=begin+1; it<end; ++it){
+                        if ( to_double(k.compute_x_2_object()(*it)) < xmin)
+                                  xmin = to_double(k.compute_x_2_object()(*it));
+                        if ( to_double(k.compute_y_2_object()(*it)) < ymin)
+                                  ymin = to_double(k.compute_y_2_object()(*it));
+                        if ( to_double(k.compute_x_2_object()(*it)) > xmax)
+                                  xmax = to_double(k.compute_x_2_object()(*it));
+                        if ( to_double(k.compute_y_2_object()(*it)) > ymax)
+                                  ymax = to_double(k.compute_y_2_object()(*it));
+            }
 
         sort <0, false, false> (begin, end, xmin, ymin, xmax, ymax);
     }

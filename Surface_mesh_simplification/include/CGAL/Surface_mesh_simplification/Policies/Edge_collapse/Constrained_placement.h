@@ -37,7 +37,7 @@ public:
   , Edge_is_constrained_map(map)
   {}
 
-  template <typename Profile> 
+  template <typename Profile>
   optional<typename Profile::Point> operator()( Profile const& aProfile ) const
   {
     typedef typename Profile::TM                                TM;

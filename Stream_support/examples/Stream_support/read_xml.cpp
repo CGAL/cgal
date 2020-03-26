@@ -15,11 +15,11 @@ int main(int argc, char* argv[]){
   std::vector<Point_3> points;
 
   for(boost::property_tree::ptree::value_type& node : tree.get_child("PolySet.Polygon")){
-    boost::property_tree::ptree subtree = node.second;         
+    boost::property_tree::ptree subtree = node.second;
     if( node.first == "Point" ){
       for( boost::property_tree::ptree::value_type const& v : subtree.get_child( "" ) ) {
         std::string label = v.first;
-        
+
         if ( label == "<xmlattr>" ) {
           Point_3 p(subtree.get<double>( label+".X"),
                     subtree.get<double>( label+".Y"),
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]){
         }
       }
     }
-  }    
+  }
 
   std::cout << points.size() << " points read"<< std::endl;
   return 0;

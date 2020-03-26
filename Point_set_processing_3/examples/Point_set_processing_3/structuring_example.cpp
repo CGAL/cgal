@@ -29,10 +29,10 @@ int main (int argc, char** argv)
   // Points with normals.
   Pwn_vector points;
 
-  // Loading point set from a file. 
+  // Loading point set from a file.
   std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
@@ -43,15 +43,15 @@ int main (int argc, char** argv)
   }
 
   std::cerr << points.size() << " point(s) read." << std::endl;
-  
+
   // Shape detection
   Efficient_ransac ransac;
   ransac.set_input(points);
   ransac.add_shape_factory<Plane>();
   ransac.detect();
-  
+
   Efficient_ransac::Plane_range planes = ransac.planes();
-  
+
   Pwn_vector structured_pts;
 
   CGAL::structure_point_set (points,
@@ -70,6 +70,6 @@ int main (int argc, char** argv)
   CGAL::write_xyz_points (out, structured_pts,
                           CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
   out.close();
-  
+
   return EXIT_SUCCESS;
 }

@@ -21,7 +21,7 @@ if(EIGEN3_FOUND)
 
     polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin )
     target_link_libraries(hole_filling_polyline_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
-    
+
     qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
     polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
     target_link_libraries(mean_curvature_flow_skeleton_plugin

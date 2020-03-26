@@ -59,11 +59,11 @@ Scene_spheres_item::Scene_spheres_item(Scene_group_item* parent, bool planed)
 {
   setParent(parent);
   d = new Scene_spheres_item_priv(planed, this);
-  setTriangleContainer(0, 
+  setTriangleContainer(0,
                        new Tc(planed ? Vi::PROGRAM_CUTPLANE_SPHERES
                                      : Vi::PROGRAM_SPHERES
                                        ,false));
-  setEdgeContainer(0, 
+  setEdgeContainer(0,
                    new Ec(planed ? Vi::PROGRAM_CUTPLANE_SPHERES
                                  : Vi::PROGRAM_SPHERES
                                    ,false));
@@ -137,14 +137,14 @@ void Scene_spheres_item::drawEdges(Viewer_interface *viewer) const
     setBuffersFilled(true);
     setBuffersInit(viewer, true);
   }
-  
+
   if(d->has_plane)
   {
     QVector4D cp(d->plane.a(),d->plane.b(),d->plane.c(),d->plane.d());
     getEdgeContainer(0)->setPlane(cp);
   }
   getEdgeContainer(0)->draw(viewer, false);
-  
+
 }
 void Scene_spheres_item::add_sphere(const CGAL::Sphere_3<Kernel>& sphere, CGAL::Color color)
 {
@@ -206,40 +206,40 @@ void Scene_spheres_item::computeElements() const
   {
     getTriangleContainer(0)->allocate(Tc::Flat_vertices, d->vertices.data(),
                                       static_cast<int>(d->vertices.size()*sizeof(float)));
-    
+
     getTriangleContainer(0)->allocate(Tc::Flat_normals, d->normals.data(),
                                       static_cast<int>(d->normals.size()*sizeof(float)));
     d->nb_vertices = d->vertices.size();
-    
+
   }
   getTriangleContainer(0)->allocate(Tc::FColors, d->colors.data(),
                                     static_cast<int>(d->colors.size()*sizeof(float)));
   getTriangleContainer(0)->allocate(Tc::Radius, d->radius.data(),
                                     static_cast<int>(d->radius.size()*sizeof(float)));
-  
+
   getTriangleContainer(0)->allocate(Tc::Facet_centers, d->centers.data(),
                                     static_cast<int>(d->centers.size()*sizeof(float)));
   if(!d->model_sphere_is_up)
   {
     getEdgeContainer(0)->allocate(Ec::Vertices, d->edges.data(),
                                   static_cast<int>(d->edges.size()*sizeof(float)));
-    
-    getEdgeContainer(0)->allocate(Ec::Normals, d->normals.data(), 
+
+    getEdgeContainer(0)->allocate(Ec::Normals, d->normals.data(),
                                   static_cast<int>(d->normals.size()*sizeof(float)));
     d->model_sphere_is_up = true;
     d->nb_edges = d->edges.size();
   }
   getEdgeContainer(0)->allocate(Ec::Colors, d->edges_colors.data(),
                                 static_cast<int>(d->edges_colors.size()*sizeof(float)));
-  
+
   getEdgeContainer(0)->allocate(Ec::Radius, d->radius.data(),
                                 static_cast<int>(d->radius.size()*sizeof(float)));
-  
+
   getEdgeContainer(0)->allocate(Ec::Centers, d->centers.data(),
                                 static_cast<int>(d->centers.size()*sizeof(float)));
-  
+
   d->nb_centers = d->centers.size();
-  
+
 }
 
 void Scene_spheres_item::gl_initialization(Vi* viewer)

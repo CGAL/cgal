@@ -332,7 +332,7 @@ Parameter used in `isotropic_remeshing()` to specify an alternative vertex proje
 \cgalNPEnd
 
 \cgalNPBegin{apply_per_connected_component} \anchor PMP_apply_per_connected_component
-Parameter used to indicate whether an algorithm should consider each connected component 
+Parameter used to indicate whether an algorithm should consider each connected component
 of a mesh independently.\n
 <b>Type:</b> `bool` \n
 <b>Default:</b> `false`

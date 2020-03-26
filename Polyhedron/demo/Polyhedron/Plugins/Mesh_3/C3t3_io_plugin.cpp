@@ -70,7 +70,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(
       return QList<Scene_item*>();
     }
     Scene_c3t3_item* item = new Scene_c3t3_item();
-    
+
     if(fileinfo.size() == 0)
     {
       CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
@@ -316,10 +316,10 @@ operator>>( std::istream& is, Fake_CDT_3_vertex_base<Vb>& v)
     }
     else {
       // if(s != '.') {
-      // 	std::cerr << "v.point()=" << v.point() << std::endl;
-      // 	std::cerr << "s=" << s << " (" << (int)s
-      // 		  << "), just before position "
-      // 		  << is.tellg() << " !\n";
+      //         std::cerr << "v.point()=" << v.point() << std::endl;
+      //         std::cerr << "s=" << s << " (" << (int)s
+      //                   << "), just before position "
+      //                   << is.tellg() << " !\n";
       // }
       CGAL_assertion(s == '.' || s== 'F');
       v.steiner = false;
@@ -379,7 +379,7 @@ operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
           std::cerr << "\n";
           std::cerr << "s=" << s << " (" << (int)s
                     << "), just before position "
-                    << is.tellg() << " !\n";	}
+                    << is.tellg() << " !\n";        }
         CGAL_assertion(s == '.');
         c._restoring[c.to_edge_index(li, lj)] = false;
       }
@@ -481,7 +481,7 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
   }
   if (s != "CGAL" ||
       !(is >> s) ||
-      s != "c3t3") 
+      s != "c3t3")
   {
     return false;
   }

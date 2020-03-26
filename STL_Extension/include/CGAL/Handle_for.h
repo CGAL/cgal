@@ -1,19 +1,19 @@
-// Copyright (c) 1999,2001,2003  
+// Copyright (c) 1999,2001,2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
- 
+
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
 
@@ -54,7 +54,7 @@ class Handle_for
 public:
 
     typedef T element_type;
-    
+
     typedef std::ptrdiff_t Id_type ;
 
     Handle_for()
@@ -105,7 +105,7 @@ public:
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
     {
-	CGAL_assume (ptr_->count > 0);
+        CGAL_assume (ptr_->count > 0);
         ++(ptr_->count);
     }
 
@@ -165,7 +165,7 @@ public:
     }
 
     Id_type id() const { return Ptr() - static_cast<T const*>(0); }
-    
+
     bool identical(const Handle_for& h) const { return Ptr() == h.Ptr(); }
 
 
@@ -190,19 +190,19 @@ public:
     bool
     is_shared() const
     {
-	return ptr_->count > 1;
+        return ptr_->count > 1;
     }
 
     bool
     unique() const
     {
-	return !is_shared();
+        return !is_shared();
     }
 
     long
     use_count() const
     {
-	return ptr_->count;
+        return ptr_->count;
     }
 
     void

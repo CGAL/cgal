@@ -88,11 +88,11 @@ struct Less_for_halfedge
   const VertexPointMap& vpmap;
 };
 
-//add a pair of border halfedges to be stitched. 
+//add a pair of border halfedges to be stitched.
 //Specifies if they are manifold or not in the map.
 template<typename Halfedge,
-         typename Border_halfedge_map,  
-         typename Halfedge_pair,        
+         typename Border_halfedge_map,
+         typename Halfedge_pair,
          typename Manifold_halfedge_pair,
          typename VPMAP,
          typename Mesh>
@@ -107,7 +107,7 @@ void fill_pairs(const Halfedge& he,
   bool insertion_ok;
   std::tie(set_it, insertion_ok)
       = border_halfedge_map.insert(std::make_pair(he,std::make_pair(1,0)));
-  
+
   if ( !insertion_ok ){ // we found already a halfedge with the points
     ++set_it->second.first; // increase the multiplicity
     if(set_it->second.first == 2)
@@ -133,29 +133,29 @@ void fill_pairs(const Halfedge& he,
 template<typename Mesh,
          typename CCMap,
          typename FIMap>
-std::size_t num_component_wrapper(const Mesh& pmesh, 
-                      CCMap cc, 
+std::size_t num_component_wrapper(const Mesh& pmesh,
+                      CCMap cc,
                       FIMap fim)
 {
-  return CGAL::Polygon_mesh_processing::connected_components(pmesh, cc, 
+  return CGAL::Polygon_mesh_processing::connected_components(pmesh, cc,
                                                              CGAL::Polygon_mesh_processing::parameters::face_index_map(fim));
 }
 
 //specialization if there is no default FIMap, create one
 template<typename Mesh,
          typename CCMap>
-std::size_t num_component_wrapper(Mesh& pmesh, 
-                      CCMap cc, 
+std::size_t num_component_wrapper(Mesh& pmesh,
+                      CCMap cc,
                       boost::cgal_no_property::type)
 {
-  
+
      boost::unordered_map<typename boost::graph_traits<Mesh>::face_descriptor, std::size_t> fim;
- 
+
    //init the map
    std::size_t i=-1;
    for(typename boost::graph_traits<Mesh>::face_descriptor f : faces(pmesh))
      fim[f]=++i;
- 
+
    return CGAL::Polygon_mesh_processing::connected_components(pmesh,
                                                               cc,
                                                               parameters::face_index_map(boost::make_assoc_property_map(fim)));
@@ -165,7 +165,7 @@ template <typename PM, typename OutputIterator, typename LessHedge, typename Ver
           , class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
 OutputIterator
 collect_duplicated_stitchable_boundary_edges
-(PM& pmesh, OutputIterator out, LessHedge less_hedge, 
+(PM& pmesh, OutputIterator out, LessHedge less_hedge,
  const VertexPointMap& vpmap, const CGAL_PMP_NP_CLASS& np)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -191,7 +191,7 @@ collect_duplicated_stitchable_boundary_edges
     num_component = num_component_wrapper(pmesh, cc, fim);
     border_edges_per_cc.resize(num_component);
   }
-  
+
   for(halfedge_descriptor he : halfedges(pmesh))
   {
     if ( !CGAL::is_border(he, pmesh) )
@@ -202,7 +202,7 @@ collect_duplicated_stitchable_boundary_edges
     }
     else
     {
-      fill_pairs(he, border_halfedge_map, halfedge_pairs, 
+      fill_pairs(he, border_halfedge_map, halfedge_pairs,
                  manifold_halfedge_pairs, vpmap, pmesh);
     }
   }
@@ -216,7 +216,7 @@ collect_duplicated_stitchable_boundary_edges
       for(int j = 0; j < static_cast<int>(border_edges_per_cc[i].size()); ++j)
       {
         halfedge_descriptor he = border_edges_per_cc[i][j];
-        fill_pairs(he, border_halfedge_map_in_cc, halfedge_pairs, 
+        fill_pairs(he, border_halfedge_map_in_cc, halfedge_pairs,
                    manifold_halfedge_pairs, vpmap, pmesh);
       }
       // put in `out` only manifold edges from the set of edges to stitch.
@@ -862,8 +862,8 @@ void stitch_borders(PolygonMesh& pmesh,
 /// `CGAL::vertex_point_t` must be available in `PolygonMesh`.\cgalParamEnd
 /// \cgalParamBegin{apply_per_connected_component}
 ///  specifies if the borders should only be stitched inside their own connected component.
-/// In that case, a property map for `CGAL::face_index_t` should be either available as an internal property map 
-/// to `pmesh` or provided as the \ref pmp_namedparameters "Named Parameter" `face_index_map`. If this is not the case, 
+/// In that case, a property map for `CGAL::face_index_t` should be either available as an internal property map
+/// to `pmesh` or provided as the \ref pmp_namedparameters "Named Parameter" `face_index_map`. If this is not the case,
 /// a default map will be created on the fly.
 /// Default value is `false`.\cgalParamEnd
 /// \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd

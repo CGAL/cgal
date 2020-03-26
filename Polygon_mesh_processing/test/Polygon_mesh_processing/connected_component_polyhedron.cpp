@@ -71,10 +71,10 @@ void mesh_no_id(const char* argv1, const bool save_output)
   PMP::connected_component(fd, sm, std::back_inserter(cc));
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
-  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim 
+  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim
     = get(boost::vertex_external_index,sm);
 
-  boost::property_map<Mesh,boost::face_external_index_t>::type fim 
+  boost::property_map<Mesh,boost::face_external_index_t>::type fim
     = get(boost::face_external_index,sm);
 
   boost::vector_property_map<int,
@@ -173,7 +173,7 @@ void keep_nothing(const char* argv1)
   assert(num_faces(sm) == 0);
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   const bool save_output = (argc > 2) ? true : false;

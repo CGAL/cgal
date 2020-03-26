@@ -104,10 +104,10 @@ namespace CGAL {
       Linear_cell_complex_for_combinatorial_map(const Self& alcc) : Base(alcc)
       {}
 #endif
-      
+
       template < class LCC2 >
       Linear_cell_complex_for_combinatorial_map(const LCC2& alcc) : Base(alcc)
-      {}      
+      {}
 
       template < class LCC2, typename Converters >
       Linear_cell_complex_for_combinatorial_map(const LCC2& alcc,

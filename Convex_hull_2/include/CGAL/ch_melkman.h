@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner
 
@@ -31,12 +31,12 @@ ch_melkman( InputIterator first, InputIterator last,
 template <class InputIterator, class OutputIterator>
 OutputIterator
 ch_melkman( InputIterator first, InputIterator last,  OutputIterator result)
-{ 
+{
     typedef std::iterator_traits<InputIterator>   ITraits;
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return ch_melkman( first, last, result, Kernel()); 
+    return ch_melkman( first, last, result, Kernel());
 }
 
 } //namespace CGAL

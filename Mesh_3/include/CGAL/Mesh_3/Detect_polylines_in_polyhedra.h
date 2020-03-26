@@ -58,20 +58,20 @@ struct Detect_polylines
   typedef typename Polyhedron_vertex::Set_of_indices Set_of_indices;
 
   template <typename T>
-  static 
+  static
   void display_index(std::ostream& stream, const T& x)
   {
     stream << x;
   }
 
   template <typename T, typename U>
-  static 
+  static
   void display_index(std::ostream& stream, const std::pair<T,U>& p)
   {
     stream << p.first << "+" << p.second;
   }
 
-  static 
+  static
   void display_set(std::ostream& stream, Set_of_indices set) {
     stream << "( ";
     for(typename Set_of_indices::value_type i : set) {
@@ -84,9 +84,9 @@ struct Detect_polylines
   static Set_of_indices
   edge_indices(const Halfedge_handle he) {
     Set_of_indices set_of_indices;
-    const Set_of_indices& source_set = 
+    const Set_of_indices& source_set =
       he->opposite()->vertex()->incident_patches_ids_set();
-    const Set_of_indices& target_set = 
+    const Set_of_indices& target_set =
       he->vertex()->incident_patches_ids_set();
     std::set_intersection(source_set.begin(), source_set.end(),
                           target_set.begin(), target_set.end(),
@@ -111,12 +111,12 @@ struct Detect_polylines
     const Halfedge_handle& op = he->opposite();
     if(Compare_handles()(he, op))
       return he;
-    else 
+    else
       return op;
   }
 
   static bool is_feature(const Halfedge_handle he) {
-    return 
+    return
       he->is_feature_edge() || he->opposite()->is_feature_edge();
   }
 
@@ -124,10 +124,10 @@ struct Detect_polylines
   template <typename Polyline_and_context, typename Polylines_output_iterator>
   Polylines_output_iterator
   follow_half_edge(const Halfedge_handle he,
-                   Polylines_output_iterator polylines_out, 
+                   Polylines_output_iterator polylines_out,
                    Polyline_and_context = Polyline_and_context())
   {
-    typename Feature_edges_set::iterator it = 
+    typename Feature_edges_set::iterator it =
       edges_to_consider.find(canonical(he));
     if(it == edges_to_consider.end()) {
       return polylines_out;
@@ -151,7 +151,7 @@ struct Detect_polylines
       polyline.polyline_content.push_back(v->point());
       // std::cerr << v->point() << std::endl;
       if(corner_vertices.count(v) > 0) break;
-      typename Polyhedron::Halfedge_around_vertex_circulator 
+      typename Polyhedron::Halfedge_around_vertex_circulator
         loop_he = v->vertex_begin();
       ++loop_he;
       // CGAL_assertion((&*loop_he) != (&*current_he) );
@@ -161,15 +161,15 @@ struct Detect_polylines
         // CGAL_assertion((&*loop_he) != (&*current_he) );
       }
 
-      Set_of_indices set_of_indices_of_next_edge = 
+      Set_of_indices set_of_indices_of_next_edge =
         edge_indices(loop_he);
 
-      if(! (set_of_indices_of_next_edge.size() == 
-            set_of_indices_of_current_edge.size() 
+      if(! (set_of_indices_of_next_edge.size() ==
+            set_of_indices_of_current_edge.size()
             &&
             std::equal(set_of_indices_of_next_edge.begin(),
                        set_of_indices_of_next_edge.end(),
-                       set_of_indices_of_current_edge.begin())) ) 
+                       set_of_indices_of_current_edge.begin())) )
       {
         // the vertex is a special vertex, a new corner
 #ifdef CGAL_MESH_3_PROTECTION_DEBUG
@@ -206,17 +206,17 @@ struct Detect_polylines
   /** Loop around a corner vertex, and try to follow a polyline of feature
       edges, from each incident edge. */
   template <typename Polyline_and_context, typename Polylines_output_iterator>
-  Polylines_output_iterator 
+  Polylines_output_iterator
   loop_around_corner(const Vertex_handle v,
-                     Polylines_output_iterator polylines_out, 
-                     Polyline_and_context empty_polyline = 
+                     Polylines_output_iterator polylines_out,
+                     Polyline_and_context empty_polyline =
                      Polyline_and_context() )
   {
-    typename Polyhedron::Halfedge_around_vertex_circulator 
+    typename Polyhedron::Halfedge_around_vertex_circulator
       he = v->vertex_begin(), end(he);
     do {
       CGAL_assertion(he->vertex() == v);
-      polylines_out = follow_half_edge(he->opposite(), 
+      polylines_out = follow_half_edge(he->opposite(),
                                        polylines_out,
                                        empty_polyline);
       ++he;
@@ -273,7 +273,7 @@ struct Detect_polylines
     const typename Geom_traits::Vector_3 bv = pv - pb;
     const typename Geom_traits::FT sc_prod = av * bv;
     if( sc_prod >= 0 ||
-        (sc_prod < 0 && 
+        (sc_prod < 0 &&
          CGAL::square(sc_prod) < (av * av) * (bv * bv) / 4 ) )
     {
       // std::cerr << "Corner (" << pa << ", " << pv
@@ -285,11 +285,11 @@ struct Detect_polylines
     }
   }
 
-  template <typename Polyline_and_context, 
+  template <typename Polyline_and_context,
             typename Polylines_output_iterator>
   Polylines_output_iterator
-  operator()(Polyhedron* pMesh, 
-             Polylines_output_iterator out_it, 
+  operator()(Polyhedron* pMesh,
+             Polylines_output_iterator out_it,
              Polyline_and_context empty_polyline)
   {
     // That call orders the set of edges of the polyhedron, so that the
@@ -299,7 +299,7 @@ struct Detect_polylines
 
     // Iterate over all edges, and find out which vertices are corner
     // vertices (more than two incident feature edges).
-    for(typename Polyhedron::Edge_iterator 
+    for(typename Polyhedron::Edge_iterator
           eit = pMesh->edges_begin (),
           end = pMesh->edges_end();
         eit != end; ++eit)
@@ -314,12 +314,12 @@ struct Detect_polylines
       }
     }
 
-    for(typename Polyhedron::Vertex_iterator 
+    for(typename Polyhedron::Vertex_iterator
           vit = pMesh->vertices_begin (),
           end = pMesh->vertices_end();
         vit != end; ++vit)
     {
-      if(feature_vertices.count(vit) !=0 && 
+      if(feature_vertices.count(vit) !=0 &&
          feature_vertices[vit] == 1) {
         corner_vertices.insert(vit);
       }
@@ -329,7 +329,7 @@ struct Detect_polylines
     std::cerr << "Corner vertices: " << corner_vertices.size() << std::endl;
     std::cerr << "Feature vertices: " << feature_vertices.size() << std::endl;
 #endif
-    
+
     // // Iterate over non-corner feature vertices, and measure the angle.
     for(typename Vertices_counter::iterator it = feature_vertices.begin(),
         end = feature_vertices.end(); it != end; ++it)
@@ -365,11 +365,11 @@ struct Detect_polylines
   }
 };
 
-template <typename Polyhedron, 
-          typename Polyline_and_context, 
+template <typename Polyhedron,
+          typename Polyline_and_context,
           typename Polylines_output_iterator>
 Polylines_output_iterator
-detect_polylines(Polyhedron* pMesh, 
+detect_polylines(Polyhedron* pMesh,
                  Polylines_output_iterator out_it) {
 
   Detect_polylines<Polyhedron> go;

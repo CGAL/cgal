@@ -100,7 +100,7 @@ void Edit_box_plugin::bbox()
   item->setRenderingMode(FlatPlusEdges);
   Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(item);
-  
+
   scene->addItem(item);
   actionBbox->setEnabled(false);
 

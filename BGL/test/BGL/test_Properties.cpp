@@ -6,12 +6,12 @@ template< typename G,
           typename ForwardRange,
           typename IndexPropertyMap
           >
-void index_uniqueness(const G&, 
+void index_uniqueness(const G&,
                       ForwardRange range,
                       IndexPropertyMap pm)
 {
-  typename boost::range_iterator<ForwardRange>::type 
-    begin = boost::begin(range), 
+  typename boost::range_iterator<ForwardRange>::type
+    begin = boost::begin(range),
     begin2 = boost::begin(range),
     end = boost::end(range);
 

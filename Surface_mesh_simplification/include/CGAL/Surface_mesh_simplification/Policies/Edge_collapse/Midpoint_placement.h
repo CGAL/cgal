@@ -28,10 +28,10 @@ class Midpoint_placement
 public:
 
   typedef TM_ TM;
-  
+
   Midpoint_placement()
   {}
-  
+
   template <typename Profile>
   optional<typename Profile::Point> operator()( Profile const& aProfile ) const
   {
@@ -46,4 +46,4 @@ public:
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_MIDPOINT_PLACEMENT_H //
 // EOF //
- 
+

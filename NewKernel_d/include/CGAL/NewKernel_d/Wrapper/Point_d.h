@@ -27,13 +27,13 @@ namespace Wrap {
 
 template <class R_>
 class Point_d : public Get_type<typename R_::Kernel_base, Point_tag>::type
-		// Deriving won't work if the point is just a __m256d.
-		// Test boost/std::is_class for instance
+                // Deriving won't work if the point is just a __m256d.
+                // Test boost/std::is_class for instance
 {
-  typedef typename Get_type<R_, RT_tag>::type		RT_;
-  typedef typename Get_type<R_, FT_tag>::type		FT_;
-  typedef typename R_::Kernel_base		Kbase;
-  typedef typename Get_type<R_, Vector_tag>::type	Vector_;
+  typedef typename Get_type<R_, RT_tag>::type                RT_;
+  typedef typename Get_type<R_, FT_tag>::type                FT_;
+  typedef typename R_::Kernel_base                Kbase;
+  typedef typename Get_type<R_, Vector_tag>::type        Vector_;
   typedef typename Get_functor<Kbase, Construct_ttag<Point_tag> >::type CPBase;
   typedef typename Get_functor<Kbase, Compute_point_cartesian_coordinate_tag>::type CCBase;
   typedef typename Get_functor<Kbase, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CPI;
@@ -67,19 +67,19 @@ public:
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
 #endif
-  
+
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Point_d> >::value>::type> explicit Point_d(U&&...u)
-	  : Rep(CPBase()(std::forward<U>(u)...)){}
+          : Rep(CPBase()(std::forward<U>(u)...)){}
 
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(pop)
 #endif
-  
+
 //  // called from Construct_point_d
 //  template<class...U> explicit Point_d(Eval_functor&&,U&&...u)
-//	  : Rep(Eval_functor(), std::forward<U>(u)...){}
+//          : Rep(Eval_functor(), std::forward<U>(u)...){}
   template<class F,class...U> explicit Point_d(Eval_functor&&,F&&f,U&&...u)
-	  : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
+          : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
 
 #if 0
   // the new standard may make this necessary
@@ -103,18 +103,18 @@ public:
 
 
   decltype(auto) cartesian(int i)const{
-	  return CCBase()(rep(),i);
+          return CCBase()(rep(),i);
   }
   decltype(auto) operator[](int i)const{
-	  return CCBase()(rep(),i);
+          return CCBase()(rep(),i);
   }
 
   decltype(auto) cartesian_begin()const{
-	  return CPI()(rep(),Begin_tag());
+          return CPI()(rep(),Begin_tag());
   }
 
   decltype(auto) cartesian_end()const{
-	  return CPI()(rep(),End_tag());
+          return CPI()(rep(),End_tag());
   }
 
   int dimension() const {
@@ -137,14 +137,14 @@ public:
     {
       os << p.dimension();
       for(; b != e; ++b){
-	os << " " << *b;
+        os << " " << *b;
       }
     }
     else
     {
       write(os, p.dimension());
       for(; b != e; ++b){
-	write(os, *b);
+        write(os, *b);
       }
     }
     return os;
@@ -166,12 +166,12 @@ public:
     if(is_ascii(is))
     {
       for(int i=0;i<dim;++i)
-	is >> iformat(coords[i]);
+        is >> iformat(coords[i]);
     }
     else
     {
       for(int i=0;i<dim;++i)
-	read(is, coords[i]);
+        read(is, coords[i]);
     }
 
     // FIXME: with Epeck_d, currently, this stores pointers to coords which will soon be dead.
@@ -188,13 +188,13 @@ template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 //template <class R_>
 //Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const
 //{
-//	return typename R::template Construct<Sum_of_vectors_tag>::type()(v,w);
+//        return typename R::template Construct<Sum_of_vectors_tag>::type()(v,w);
 //}
 //
 //template <class R_>
 //Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w) const
 //{
-//	return typename R::template Construct<Difference_of_vectors_tag>::type()(v,w);
+//        return typename R::template Construct<Difference_of_vectors_tag>::type()(v,w);
 //}
 
 } //namespace Wrap

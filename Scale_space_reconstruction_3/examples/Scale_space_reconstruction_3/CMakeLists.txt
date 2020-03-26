@@ -10,7 +10,7 @@ if ( CGAL_FOUND )
   option(ACTIVATE_CONCURRENCY
          "Enable concurrency"
          ON)
- 
+
   if( ACTIVATE_CONCURRENCY )
     find_package( TBB )
     if( NOT TBB_FOUND )
@@ -35,7 +35,7 @@ if ( CGAL_FOUND )
     message( STATUS "NOTICE: The example needs Eigen 3.1 (or greater) and will not be compiled." )
   endif()
 else()
-  
+
   message( STATUS "This program requires the CGAL library, and will not be compiled." )
-  
+
 endif()

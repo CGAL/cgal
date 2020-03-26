@@ -37,8 +37,8 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: These examples require the Eigen library, version 3.2 or later and will not be compiled.")
   endif()
 else()
-  
+
     message(STATUS "NOTICE: These exmaples require the CGAL library, and will not be compiled.")
-  
+
 endif()
 

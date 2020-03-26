@@ -114,7 +114,7 @@ void test_surface_mesh_cc(const char* fname)
     std::cerr << "Error: can not read file.";
     return;
   }
-  
+
   PMP::stitch_borders(mesh, params::apply_per_connected_component(true));
   assert(is_valid(mesh));
 

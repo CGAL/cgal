@@ -161,7 +161,7 @@ public:
   typedef std::allocator_traits<Allocator> Allocator_traits;
   typedef typename Allocator_traits::template rebind_alloc<Event> Event_alloc;
   typedef typename Allocator_traits::template rebind_alloc<Subcurve> Subcurve_alloc;
-  
+
 protected:
   /*! \struct
    * An auxiliary functor for comparing event pointers.

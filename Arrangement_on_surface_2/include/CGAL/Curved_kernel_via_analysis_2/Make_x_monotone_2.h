@@ -288,7 +288,7 @@ private:
                     *oi++ = CGAL::make_object(construct_arc_2(pts[j], pts[j+1],
                                                               _m_curve));
                 // the last vertical ray
-                *oi++ = CGAL::make_object(construct_arc_2(pts[n-1], 
+                *oi++ = CGAL::make_object(construct_arc_2(pts[n-1],
                     CGAL::ARR_MAX_END, _m_curve));
             } else // unbounded vertical line
                 *oi++ = CGAL::make_object(construct_arc_2(x, _m_curve));

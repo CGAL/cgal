@@ -30,14 +30,14 @@ namespace internal {
     {
         typedef typename K::Point_d Point;
         K k;
-	int axe;
-	bool orient;
-        Hilbert_cmp_d (int a, bool o, const K &_k = K()) 
-	  : k(_k), axe(a),  orient(o) {}
+        int axe;
+        bool orient;
+        Hilbert_cmp_d (int a, bool o, const K &_k = K())
+          : k(_k), axe(a),  orient(o) {}
         bool operator() (const Point &p, const Point &q) const
         {
-	  return (orient  ? (k.less_coordinate_d_object() (q,p,axe) )
-	        	  : (k.less_coordinate_d_object() (p,q,axe) ));
+          return (orient  ? (k.less_coordinate_d_object() (q,p,axe) )
+                          : (k.less_coordinate_d_object() (p,q,axe) ));
         }
     };
 
@@ -58,8 +58,8 @@ private:
     mutable int two_to_dim;
 
     struct Cmp : public internal::Hilbert_cmp_d<Kernel>
-    { Cmp (int a, bool dir, const Kernel &k) 
-	  : internal::Hilbert_cmp_d<Kernel> (a,dir,k) {} };
+    { Cmp (int a, bool dir, const Kernel &k)
+          : internal::Hilbert_cmp_d<Kernel> (a,dir,k) {} };
 
 public:
     Hilbert_sort_median_d(const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
@@ -68,7 +68,7 @@ public:
 
     template <class RandomAccessIterator>
     void sort (RandomAccessIterator begin, RandomAccessIterator end,
-	       Starting_position start, int direction) const
+               Starting_position start, int direction) const
    {
      if (end - begin <= _limit) return;
 
@@ -79,8 +79,8 @@ public:
        nb_splits = 1;
        nb_directions = 0;
        while ( (end-begin) > nb_splits) {
-	 ++nb_directions;
-	 nb_splits *= 2;        // compute 2^nb_directions
+         ++nb_directions;
+         nb_splits *= 2;        // compute 2^nb_directions
        }
      }
 
@@ -99,13 +99,13 @@ public:
        int right=current_level_step;
        bool orient = start[current_dir];
        do{
-	 dir[middle]    = current_dir; 
-	 places[middle] = internal::hilbert_split 
-	   (places[left], places[right], Cmp (current_dir,orient,_k));
-	 left =right;
-	 right+=current_level_step;
-	 middle+=current_level_step;
-	 orient = ! orient;
+         dir[middle]    = current_dir;
+         places[middle] = internal::hilbert_split
+           (places[left], places[right], Cmp (current_dir,orient,_k));
+         left =right;
+         right+=current_level_step;
+         middle+=current_level_step;
+         orient = ! orient;
        }while( left< nb_splits);
        current_level_step = half_step;
        current_dir = (current_dir +1) % _dimension;
@@ -139,11 +139,11 @@ public:
 
       typename std::iterator_traits<RandomAccessIterator>::difference_type N=end-begin;
       N*=2;
-      for (int i=0; i<_dimension; ++i) 	start[i]=false; 	// we start below in all coordinates
+      for (int i=0; i<_dimension; ++i)         start[i]=false;         // we start below in all coordinates
       for (int i=0; i<_dimension; ++i) {
-	two_to_dim *= 2;        // compute 2^_dimension
-	N/=2;
-	if (N==0) break;  // not many points, this number of dimension is enough
+        two_to_dim *= 2;        // compute 2^_dimension
+        N/=2;
+        if (N==0) break;  // not many points, this number of dimension is enough
       }
 
 

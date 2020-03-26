@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
 
   std::cout << std::endl;
   std::cout << nb_holes << " holes have been filled" << std::endl;
-  
+
   std::ofstream out("filled_LCC.off");
   out.precision(17);
   CGAL::write_off(out, mesh);

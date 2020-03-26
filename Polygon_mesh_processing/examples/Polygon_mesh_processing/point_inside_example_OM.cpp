@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
- 
+
   CGAL::Side_of_triangle_mesh<Mesh, K> inside(mesh);
 
   double size = max_coordinate(mesh);

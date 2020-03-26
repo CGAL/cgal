@@ -4,7 +4,7 @@
 #include <CGAL/box_intersection_d.h>
 
 
-template <typename Polyline> 
+template <typename Polyline>
 class Polylines_do_intersect
 {
   typedef typename Polyline::const_iterator Iterator;
@@ -13,31 +13,31 @@ class Polylines_do_intersect
   typedef CGAL::Bbox_2 Bbox_2;
 
   const Polyline& pA, &pB;
-  
+
   struct Box : public CGAL::Box_intersection_d::Box_with_handle_d<double,2,Iterator> {
-    
+
     typedef CGAL::Box_intersection_d::Box_with_handle_d<double,2,Iterator> Base;
-    
+
     Box( const Bbox_2& b, Iterator it)
       : Base(b,it)
     {}
-    
+
   };
 
-  
+
   class FirstIntersection
   {};
 
-  
+
   class Overlap {
-    
+
     const Polyline& pA, &pB;
   public:
     Overlap(const Polyline& pA, const Polyline& pB)
       : pA(pA), pB(pB)
     {}
-    
-    
+
+
     void operator()(const Box& a, const Box& b) {
       Segment_2 sa(*(a.handle()), *(++(a.handle())));
       Segment_2 sb(*(b.handle()), *(++(b.handle())));
@@ -48,7 +48,7 @@ class Polylines_do_intersect
   };
 
 public:
-  
+
   Polylines_do_intersect(const Polyline& pA, const Polyline& pB)
     : pA(pA), pB(pB)
   {}
@@ -58,7 +58,7 @@ public:
     std::vector<Box> bA, bB;
     bA.reserve(pA.size() - 1 );
     bB.reserve(pB.size() - 1 );
-    
+
     Iterator begin = pA.begin();
     for(std::size_t j=0; j < pA.size()-1; j++){
       Bbox_2 bb = pA[j].bbox() + pA[j+1].bbox();
@@ -69,7 +69,7 @@ public:
       Bbox_2 bb = pB[j].bbox() + pB[j+1].bbox();
       bB.push_back(Box(bb, begin+j));
     }
-    
+
     Overlap overlap(pA,pB);
 
     try {
@@ -81,7 +81,7 @@ public:
   }
 
 };
-  
+
 
 template <typename Polyline>
 bool polylines_do_intersect(const Polyline& pA,const Polyline& pB)

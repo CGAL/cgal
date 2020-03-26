@@ -348,7 +348,7 @@ private:
                        constant_coordinate);
     scene->addItem(poly_item);
     poly_item->invalidateOpenGLBuffers();
-    
+
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
     // default cursor
     QApplication::restoreOverrideCursor();

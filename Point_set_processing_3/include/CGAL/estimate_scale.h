@@ -51,7 +51,7 @@ class Quick_multiscale_approximate_knn_distance
 
 };
 
-  
+
 template <class Kernel>
 class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_3>
 {
@@ -69,7 +69,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_3
     typename boost::property_traits<PointMap>::reference
     operator() (const ValueType& v) const { return get(point_map, v); }
   };
-  
+
   std::size_t m_cluster_size;
   std::vector<Tree*> m_trees;
   std::vector<FT> m_weights;
@@ -86,18 +86,18 @@ public:
   {
     typedef Pmap_unary_function<typename std::iterator_traits<InputIterator>::value_type,
                                 PointMap> Unary_f;
-    
+
     // Avoid moving points of input as the range is const
     std::vector<typename Kernel::Point_3> kd_tree_points;
     std::copy (boost::make_transform_iterator (first, Unary_f(point_map)),
                boost::make_transform_iterator (beyond, Unary_f(point_map)),
                std::back_inserter (kd_tree_points));
-    
+
 
     m_trees.push_back (new Tree (kd_tree_points.begin(), kd_tree_points.end()));
     m_weights.push_back (1.);
     std::size_t nb_pts = m_trees[0]->size();
-    
+
     std::size_t nb_trees = 0;
     while (nb_pts > m_cluster_size)
       {
@@ -167,15 +167,15 @@ public:
           }
       }
   }
-  
-  
+
+
   template <typename InputIterator, typename PointMap>
   void compute_scale (InputIterator query, PointMap point_map,
                       std::size_t& k, FT& d)
   {
     if (m_precomputed_factor.empty())
       precompute_factors();
-    
+
     k = 0;
     d = 0.;
 
@@ -190,7 +190,7 @@ public:
                                                            ? m_trees[t]->size()
                                                            : m_weights[t+1] / m_weights[t])));
         Iterator it = search.begin();
-        
+
         if (t != 0) // Skip first point except on first scale
           ++ it;
 
@@ -201,11 +201,11 @@ public:
 
             if (nb < 6.) // do not consider values under 6
               continue;
-            
+
             // sqrt(sum_sq_distances / nb) / nb^(5/12)
             // Computed in log space with precomputed factor for time optimization
             FT dist = 0.5 * std::log (sum_sq_distances) - m_precomputed_factor[index ++];
-            
+
             if (dist < dist_min)
               {
                 dist_min = dist;
@@ -218,7 +218,7 @@ public:
 
 };
 
-  
+
 template <class Kernel>
 class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2>
 {
@@ -248,7 +248,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
     Pmap_to_3d (PointMap point_map)
       : point_map (point_map) { }
 
-    friend inline value_type get (const Pmap_to_3d& pmap, key_type p) 
+    friend inline value_type get (const Pmap_to_3d& pmap, key_type p)
     {
       typename boost::property_traits<PointMap>::reference
         p2 = get(pmap.point_map, p);
@@ -273,7 +273,7 @@ class Quick_multiscale_approximate_knn_distance<Kernel, typename Kernel::Point_2
   std::vector<Point_set*> m_point_sets;
   std::vector<FT> m_weights;
   std::vector<FT> m_precomputed_factor;
-  
+
 public:
 
   template <typename InputIterator, typename PointMap>
@@ -295,7 +295,7 @@ public:
 
     m_point_sets.push_back (new Point_set (search_points.begin(), search_points.end()));
     m_weights.push_back (1.);
-    
+
     std::size_t nb_pts = m_point_sets[0]->number_of_vertices();
     std::size_t nb_trees = 0;
     while (nb_pts > m_cluster_size)
@@ -369,7 +369,7 @@ public:
           }
       }
   }
-  
+
   template <typename InputIterator, typename PointMap>
   void compute_scale (InputIterator query, PointMap point_map,
                       std::size_t& k, FT& d)
@@ -384,7 +384,7 @@ public:
     FT sum_sq_distances = 0.;
     FT nb = 0.;
     std::size_t index = 0;
-    
+
     typename boost::property_traits<PointMap>::reference
       pquery = get(point_map, *query);
     for (std::size_t t = 0; t < m_point_sets.size(); ++ t)
@@ -411,7 +411,7 @@ public:
             // sqrt(sum_sq_distances / nb) / nb^(3/4)
             // Computed in log space with precomputed factor for time optimization
             FT dist = 0.5 * std::log (sum_sq_distances) - m_precomputed_factor[index ++];
-            
+
             if (dist < dist_min)
               {
                 dist_min = dist;
@@ -433,7 +433,7 @@ public:
 // Public section
 // ----------------------------------------------------------------------------
 
-/**  
+/**
    \ingroup PkgPointSetProcessing3Algorithms
 
    Estimates the local scale in a K nearest neighbors sense on a set
@@ -527,7 +527,7 @@ estimate_local_k_neighbor_scales(
 }
 /// \endcond
 
-/**  
+/**
    \ingroup PkgPointSetProcessing3Algorithms
 
    Estimates the global scale in a K nearest neighbors sense. The
@@ -583,9 +583,9 @@ estimate_global_k_neighbor_scale(const PointRange& points)
   return estimate_global_k_neighbor_scale
     (points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-/// \endcond  
+/// \endcond
 
-/**  
+/**
    \ingroup PkgPointSetProcessing3Algorithms
 
    Estimates the local scale in a range sense on a set of
@@ -640,7 +640,7 @@ estimate_local_range_scales(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   typedef typename Point_set_processing_3::GetQueryPointMap<QueryPointRange, NamedParameters>::const_type QueryPointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
@@ -663,7 +663,7 @@ estimate_local_range_scales(
 }
 
 /// \cond SKIP_IN_MANUAL
-// variant with default NP  
+// variant with default NP
 template <typename PointRange,
           typename QueryPointRange,
           typename OutputIterator
@@ -679,7 +679,7 @@ estimate_local_range_scales(
 }
 /// \endcond
 
-/**  
+/**
    \ingroup PkgPointSetProcessing3Algorithms
 
    Estimates the global scale in a range sense. The computed scale
@@ -743,7 +743,7 @@ estimate_global_range_scale(const PointRange& points)
   return estimate_global_range_scale
     (points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
-/// \endcond  
+/// \endcond
 
 } //namespace CGAL
 

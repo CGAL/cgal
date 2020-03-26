@@ -30,10 +30,10 @@ namespace Surface_mesh_simplification
 //
 //*******************************************************************************************************************
 
-// 
+//
 // Stops when the number of edges left falls below a given number.
 //
-template<class TM_>    
+template<class TM_>
 class Count_stop_predicate
 {
 public:
@@ -41,29 +41,29 @@ public:
   typedef TM_ TM ;
 
   //  typedef Edge_profile<TM> Profile ;
-  
+
   typedef typename boost::graph_traits<TM>::edges_size_type size_type ;
-  
+
   // typedef typename Kernel::FT FT ;
 
 public :
-  
+
   Count_stop_predicate( std::size_t aThres ) : mThres(aThres) {}
-  
-  template <typename F, typename Profile> 
+
+  template <typename F, typename Profile>
   bool operator()( F const&         // aCurrentCost
                  , Profile const& // aEdgeProfile
                  , std::size_t    // aInitialCount
                  , std::size_t       aCurrentCount
-                 ) const 
+                 ) const
   {
     return aCurrentCount < mThres ;
   }
-  
+
 private:
-  
+
   std::size_t mThres ;
-};    
+};
 
 } // namespace Surface_mesh_simplification
 
@@ -71,4 +71,4 @@ private:
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_COUNT_STOP_PREDICATE_H //
 // EOF //
- 
+

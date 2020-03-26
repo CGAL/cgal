@@ -20,7 +20,7 @@ namespace CGAL {
 template<typename K>
 class Surface_mesh;
 
-  
+
 } // CGAL
 #endif
 
