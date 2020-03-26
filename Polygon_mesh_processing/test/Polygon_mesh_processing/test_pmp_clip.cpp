@@ -645,19 +645,19 @@ int main()
 
   std::cout << "Polyhedron" << std::endl;
   test<Polyhedron>();
-  
+
   std::cout << "running test_split with Surface_mesh\n";
   test_split<Surface_mesh>();
-  
+
   std::cout << "running test_iso_cuboid with Surface_mesh\n";
   test_isocuboid<Surface_mesh>();
 
   std::cout << "running test_split_plane with Surface_mesh\n";
   test_split_plane<Surface_mesh>();
-  
+
   std::cout << "running test_split with Polyhedron\n";
   test_split<Polyhedron>();
-  
+
   std::cout << "running test_split_plane with Polyhedron\n";
   test_split_plane<Polyhedron>();
 
