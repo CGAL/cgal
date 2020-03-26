@@ -31,11 +31,13 @@ if ( CGAL_FOUND )
     CGAL_target_use_Eigen(poisson_reconstruction)
     create_single_source_cgal_program( "poisson_reconstruction_function.cpp" )
     CGAL_target_use_Eigen(poisson_reconstruction_function)
+    create_single_source_cgal_program( "tutorial_example.cpp" )
+    CGAL_target_use_Eigen(tutorial_example)
   else()
     message(STATUS "NOTICE: The examples need Eigen 3.1 (or greater) will not be compiled.")
   endif()
 
-
+  
 else()
 
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
