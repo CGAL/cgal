@@ -16,9 +16,7 @@
 
 #include <CGAL/disable_warnings.h>
 
-#include <CGAL/Search_traits_3.h>
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Point_set_processing_3/internal/neighbor_query.h>
+#include <CGAL/Point_set_processing_3/internal/Neighbor_query.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <functional>
@@ -49,22 +47,21 @@ namespace internal {
 /// @tparam Tree KD-tree.
 ///
 /// @return computed distance.
-template < typename Kernel,
-           typename Tree >
-typename Kernel::FT
+template <typename NeighborQuery>
+typename NeighborQuery::Kernel::FT
 compute_avg_knn_sq_distance_3(
-    const typename Kernel::Point_3& query, ///< 3D point to project
-    Tree& tree,                            ///< KD-tree
+  const typename NeighborQuery::Kernel::Point_3& query, ///< 3D point to project
+    NeighborQuery& neighbor_query,                            ///< KD-tree
     unsigned int k,                        ///< number of neighbors
-    typename Kernel::FT neighbor_radius)
+    typename NeighborQuery::Kernel::FT neighbor_radius)
 {
     // geometric types
+    typedef typename NeighborQuery::Kernel Kernel;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
 
     std::vector<Point> points;
-    CGAL::Point_set_processing_3::internal::neighbor_query
-      (query, tree, k, neighbor_radius, points);
+    neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points));
 
     // compute average squared distance
     typename Kernel::Compute_squared_distance_3 sqd;
@@ -146,7 +143,7 @@ remove_outliers(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-
+  
   // geometric types
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
@@ -158,19 +155,18 @@ remove_outliers(
   double threshold_distance = choose_parameter(get_parameter(np, internal_np::threshold_distance), 0.);
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
-
+  
   typedef typename Kernel::FT FT;
-
+  
   // basic geometric types
-  typedef typename Kernel::Point_3 Point;
+  typedef typename PointRange::iterator iterator;
+  typedef typename iterator::value_type value_type;
 
   // actual type of input points
   typedef typename std::iterator_traits<typename PointRange::iterator>::value_type Enriched_point;
 
   // types for K nearest neighbors search structure
-  typedef typename CGAL::Search_traits_3<Kernel> Tree_traits;
-  typedef typename CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
+  typedef Point_set_processing_3::internal::Neighbor_query<Kernel, PointRange&, PointMap> Neighbor_query;
 
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
@@ -182,26 +178,22 @@ remove_outliers(
 
   CGAL_point_set_processing_precondition(threshold_percent >= 0 && threshold_percent <= 100);
 
-  typename PointRange::iterator it;
+  Neighbor_query neighbor_query (points, point_map);
 
-  // Instanciate a KD-tree search.
-  // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points;
-  for(it = points.begin(); it != points.end(); it++)
-    kd_tree_points.push_back( get(point_map, *it) );
-  Tree tree(kd_tree_points.begin(), kd_tree_points.end());
+  std::size_t nb_points = points.size();
 
   // iterate over input points and add them to multimap sorted by distance to k
   std::multimap<FT,Enriched_point> sorted_points;
   std::size_t nb = 0;
-  for(it = points.begin(); it != points.end(); it++, ++ nb)
+  for(const value_type& vt : points)
   {
-    FT sq_distance = internal::compute_avg_knn_sq_distance_3<Kernel>(
-      get(point_map,*it),
-      tree, k, neighbor_radius);
-    sorted_points.insert( std::make_pair(sq_distance, *it) );
-    if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
+    FT sq_distance = internal::compute_avg_knn_sq_distance_3(
+      get(point_map, vt),
+      neighbor_query, k, neighbor_radius);
+    sorted_points.insert( std::make_pair(sq_distance, vt) );
+    if (callback && !callback ((nb+1) / double(nb_points)))
       return points.end();
+    ++ nb;
   }
 
   // Replaces [points.begin(), points.end()) range by the multimap content.

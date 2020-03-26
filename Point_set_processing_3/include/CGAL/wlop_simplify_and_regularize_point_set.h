@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez
+// Author(s) : Shihao Wu, Clement Jamin, Pierre Alliez 
 
 #ifndef CGAL_wlop_simplify_and_regularize_point_set_H
 #define CGAL_wlop_simplify_and_regularize_point_set_H
@@ -32,12 +32,8 @@
 #include <cmath>
 #include <ctime>
 
-#ifdef CGAL_LINKED_WITH_TBB
-#include <CGAL/Point_set_processing_3/internal/Parallel_callback.h>
-#include <tbb/parallel_for.h>
-#include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>
-#endif // CGAL_LINKED_WITH_TBB
+#include <CGAL/Point_set_processing_3/internal/Callback_wrapper.h>
+#include <CGAL/for_each.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Fuzzy_sphere.h>
@@ -87,9 +83,9 @@ public:
   typedef typename Kernel::Point_3 PointType;
 };
 
-/// Compute average and repulsion term, then
+/// Compute average and repulsion term, then 
 /// compute and update sample point locations
-///
+/// 
 /// \pre `radius > 0`
 ///
 /// @tparam Kernel Geometric traits class.
@@ -105,8 +101,8 @@ compute_update_sample_point(
   const Tree& original_kd_tree,          ///< original Kd-tree
   const Tree& sample_kd_tree,            ///< sample Kd-tree
   const typename Kernel::FT radius,      ///< neighborhood radius square
-  const std::vector<typename Kernel::FT>& original_densities, ///<
-  const std::vector<typename Kernel::FT>& sample_densities ///<
+  const std::vector<typename Kernel::FT>& original_densities, ///<  
+  const std::vector<typename Kernel::FT>& sample_densities ///< 
 )
 {
   CGAL_point_set_processing_precondition(radius > 0);
@@ -130,7 +126,7 @@ compute_update_sample_point(
 
   //Compute average term
   FT radius2 = radius * radius;
-  Vector average = CGAL::NULL_VECTOR;
+  Vector average = CGAL::NULL_VECTOR; 
   FT weight = (FT)0.0, average_weight_sum = (FT)0.0;
   FT iradius16 = -(FT)4.0 / radius2;
 
@@ -162,10 +158,10 @@ compute_update_sample_point(
   }
   else
   {
-    average = average / average_weight_sum;
+    average = average / average_weight_sum; 
   }
   neighbor_original_points.clear();
-
+  
 
   //Compute repulsion term
 
@@ -175,7 +171,7 @@ compute_update_sample_point(
 
   weight = (FT)0.0;
   FT repulsion_weight_sum = (FT)0.0;
-  Vector repulsion = CGAL::NULL_VECTOR;
+  Vector repulsion = CGAL::NULL_VECTOR; 
 
   iter = neighbor_sample_points.begin();
   for(; iter != neighbor_sample_points.end(); ++iter)
@@ -188,9 +184,9 @@ compute_update_sample_point(
     FT dist2 = CGAL::squared_distance(query, np);
     if (dist2 < 1e-10) continue;
     FT dist = std::sqrt(dist2);
-
+    
     weight = std::exp(dist2 * iradius16) * std::pow(FT(1.0) / dist, 2); // L1
-
+   
     if (!is_sample_densities_empty)
     {
       weight *= sample_densities[sample_index];
@@ -208,7 +204,7 @@ compute_update_sample_point(
   }
   else
   {
-    repulsion = repulsion / repulsion_weight_sum;
+    repulsion = repulsion / repulsion_weight_sum; 
   }
   neighbor_sample_points.clear();
 
@@ -220,7 +216,7 @@ compute_update_sample_point(
 
 /// Compute density weight for each original points,
 /// according to their neighbor original points
-///
+/// 
 /// \pre `k >= 2`, radius > 0
 ///
 /// @tparam Kernel Geometric traits class.
@@ -240,7 +236,7 @@ compute_density_weight_for_original_point(
   // basic geometric types
   typedef typename Kernel::Point_3                         Point;
   typedef typename Kernel::FT                              FT;
-
+                                                          
   //types for range search
   typedef simplify_and_regularize_internal::Kd_tree_element<Kernel> Kd_tree_point;
   typedef simplify_and_regularize_internal::Kd_tree_traits<Kernel> Traits;
@@ -266,7 +262,7 @@ compute_density_weight_for_original_point(
 
     FT dist2 = CGAL::squared_distance(query, np);
     if (dist2 < 1e-8) continue;
-
+    
     density_weight += std::exp(dist2 * iradius16);
   }
 
@@ -277,7 +273,7 @@ compute_density_weight_for_original_point(
 
 /// Compute density weight for sample point,
 /// according to their neighbor sample points
-///
+/// 
 /// \pre `k >= 2`, radius > 0
 ///
 /// @tparam Kernel Geometric traits class.
@@ -321,74 +317,13 @@ compute_density_weight_for_sample_point(
     FT dist2 = CGAL::squared_distance(query, np);
     density_weight += std::exp(dist2 * iradius16);
   }
-
+  
   return density_weight;
 }
 
 } // namespace simplify_and_regularize_internal
 
 /// \endcond
-
-#ifdef CGAL_LINKED_WITH_TBB
-/// \cond SKIP_IN_MANUAL
-/// This is for parallelization of function: compute_denoise_projection()
-template <typename Kernel, typename Tree, typename RandomAccessIterator>
-class Sample_point_updater
-{
-  typedef typename Kernel::Point_3   Point;
-  typedef typename Kernel::FT        FT;
-
-  std::vector<Point> &update_sample_points;
-  std::vector<Point> &sample_points;
-  const Tree &original_kd_tree;
-  const Tree &sample_kd_tree;
-  const typename Kernel::FT radius;
-  const std::vector<typename Kernel::FT> &original_densities;
-  const std::vector<typename Kernel::FT> &sample_densities;
-  cpp11::atomic<std::size_t>& advancement;
-  cpp11::atomic<bool>& interrupted;
-
-public:
-  Sample_point_updater(
-    std::vector<Point> &out,
-    std::vector<Point> &in,
-    const Tree &_original_kd_tree,
-    const Tree &_sample_kd_tree,
-    const typename Kernel::FT _radius,
-    const std::vector<typename Kernel::FT> &_original_densities,
-    const std::vector<typename Kernel::FT> &_sample_densities,
-    cpp11::atomic<std::size_t>& advancement,
-    cpp11::atomic<bool>& interrupted):
-  update_sample_points(out),
-    sample_points(in),
-    original_kd_tree(_original_kd_tree),
-    sample_kd_tree(_sample_kd_tree),
-    radius(_radius),
-    original_densities(_original_densities),
-    sample_densities(_sample_densities),
-    advancement (advancement),
-    interrupted (interrupted) {}
-
-  void operator() ( const tbb::blocked_range<size_t>& r ) const
-  {
-    for (size_t i = r.begin(); i != r.end(); ++i)
-    {
-      if (interrupted)
-        break;
-      update_sample_points[i] = simplify_and_regularize_internal::
-        compute_update_sample_point<Kernel, Tree, RandomAccessIterator>(
-        sample_points[i],
-        original_kd_tree,
-        sample_kd_tree,
-        radius,
-        original_densities,
-        sample_densities);
-      ++ advancement;
-    }
-  }
-};
-/// \endcond
-#endif // CGAL_LINKED_WITH_TBB
 
 
 // ----------------------------------------------------------------------------
@@ -398,24 +333,24 @@ public:
 /**
    \ingroup PkgPointSetProcessing3Algorithms
    This is an implementation of the Weighted Locally Optimal Projection (WLOP) simplification algorithm.
-   The WLOP simplification algorithm can produce a set of
-   denoised, outlier-free and evenly distributed particles over the original
-   dense point cloud.
+   The WLOP simplification algorithm can produce a set of 
+   denoised, outlier-free and evenly distributed particles over the original 
+   dense point cloud. 
    The core of the algorithm is a Weighted Locally Optimal Projection operator
-   with a density uniformization term.
+   with a density uniformization term. 
    For more details, please refer to \cgalCite{wlop-2009}.
 
-   A parallel version of WLOP is provided and requires the executable to be
+   A parallel version of WLOP is provided and requires the executable to be 
    linked against the <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
    To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
+   See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
    for more details.
 
    \tparam ConcurrencyTag enables sequential versus parallel algorithm. Possible values are `Sequential_tag`,
                           `Parallel_tag`, and `Parallel_if_available_tag`.
    \tparam PointRange is a model of `Range`. The value type of
    its iterator is the key type of the named parameter `point_map`.
-   \tparam OutputIterator Type of the output iterator.
+   \tparam OutputIterator Type of the output iterator. 
    It must accept objects of type `geom_traits::Point_3`.
 
    \param points input point range.
@@ -427,11 +362,11 @@ public:
      If this parameter is omitted, `CGAL::Identity_property_map<geom_traits::Point_3>` is used.\cgalParamEnd
      \cgalParamBegin{normal_map} a model of `ReadWritePropertyMap` with value type
      `geom_traits::Vector_3`.\cgalParamEnd
-     \cgalParamBegin{select_percentage} percentage of points to retain. The default value is set to
+     \cgalParamBegin{select_percentage} percentage of points to retain. The default value is set to 
      5 (\%).\cgalParamEnd
      \cgalParamBegin{neighbor_radius} spherical neighborhood radius. This is a key parameter that needs to be
-     finely tuned. The result will be irregular if too small, but a larger value will impact the runtime. In
-     practice, choosing a radius such that the neighborhood of each sample point includes at least two rings
+     finely tuned. The result will be irregular if too small, but a larger value will impact the runtime. In 
+     practice, choosing a radius such that the neighborhood of each sample point includes at least two rings 
      of neighboring sample points gives satisfactory result. If this parameter is not provided, it is
      automatically set to 8 times the average spacing of the point set.\cgalParamEnd
      \cgalParamBegin{number_of_iterations} number of iterations to solve the optimsation problem. The default
@@ -462,7 +397,7 @@ wlop_simplify_and_regularize_point_set(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-
+  
   // basic geometric types
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
@@ -488,15 +423,15 @@ wlop_simplify_and_regularize_point_set(
   // to fix: should have at least three distinct points
   // but this is costly to check
   CGAL_point_set_processing_precondition(points.begin() != points.end());
-  CGAL_point_set_processing_precondition(select_percentage >= 0
+  CGAL_point_set_processing_precondition(select_percentage >= 0 
                                          && select_percentage <= 100);
 
   // Random shuffle
   CGAL::cpp98::random_shuffle (points.begin(), points.end());
 
-  // Computes original(input) and sample points size
+  // Computes original(input) and sample points size 
   std::size_t number_of_original = std::distance(points.begin(), points.end());
-  std::size_t number_of_sample = (std::size_t)(FT(number_of_original) *
+  std::size_t number_of_sample = (std::size_t)(FT(number_of_original) * 
                                  (select_percentage / FT(100.0)));
   std::size_t first_index_to_sample = number_of_original - number_of_sample;
 
@@ -509,13 +444,13 @@ wlop_simplify_and_regularize_point_set(
   //Copy sample points
   std::vector<Point> sample_points;
   sample_points.reserve(number_of_sample);
-  unsigned int i;
+  unsigned int i;                                     
 
   for(it = first_sample_iter; it != points.end(); ++it)
   {
     sample_points.push_back(get(point_map, *it));
   }
-
+  
   //compute default neighbor_radius, if no radius in
   if (radius < 0)
   {
@@ -529,20 +464,19 @@ wlop_simplify_and_regularize_point_set(
 #endif
   }
 
-  FT radius2 = radius * radius;
   CGAL_point_set_processing_precondition(radius > 0);
 
   // Initiate a KD-tree search for original points
   std::vector<Kd_tree_element> original_treeElements;
   for (it = first_original_iter, i=0 ; it != points.end() ; ++it, ++i)
     original_treeElements.push_back( Kd_tree_element(get(point_map, *it), i) );
-  Kd_Tree original_kd_tree(original_treeElements.begin(),
+  Kd_Tree original_kd_tree(original_treeElements.begin(), 
                            original_treeElements.end());
 
 
   std::vector<Point> update_sample_points(number_of_sample);
   typename std::vector<Point>::iterator sample_iter;
-
+  
   // Compute original density weight for original points if user needed
   std::vector<FT> original_density_weights;
 
@@ -555,7 +489,7 @@ wlop_simplify_and_regularize_point_set(
                    compute_density_weight_for_original_point<Kernel, Kd_Tree>
                                          (
                                            get(point_map, *it),
-                                           original_kd_tree,
+                                           original_kd_tree, 
                                            radius);
 
       original_density_weights.push_back(density);
@@ -581,86 +515,57 @@ wlop_simplify_and_regularize_point_set(
     {
       FT density = simplify_and_regularize_internal::
                    compute_density_weight_for_sample_point<Kernel, Kd_Tree>
-                   (*sample_iter,
-                    sample_kd_tree,
+                   (*sample_iter, 
+                    sample_kd_tree, 
                     radius);
 
       sample_density_weights.push_back(density);
     }
 
+    typedef boost::zip_iterator<boost::tuple<typename std::vector<Point>::iterator,
+                                             typename std::vector<Point>::iterator> > Zip_iterator;
 
-    typename std::vector<Point>::iterator update_iter = update_sample_points.begin();
-#ifndef CGAL_LINKED_WITH_TBB
-  CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-                             "Parallel_tag is enabled but TBB is unavailable.");
-#else
-    //parallel
-    if (boost::is_convertible<ConcurrencyTag, Parallel_tag>::value)
-    {
-      Point_set_processing_3::internal::Parallel_callback
-        parallel_callback (callback, iter_number * number_of_sample, iter_n * number_of_sample);
+    Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
+      callback_wrapper (callback, iter_number * number_of_sample, iter_n * number_of_sample);
 
-      tbb::blocked_range<size_t> block(0, number_of_sample);
-      Sample_point_updater<Kernel, Kd_Tree, typename PointRange::iterator> sample_updater(
-                           update_sample_points,
-                           sample_points,
-                           original_kd_tree,
-                           sample_kd_tree,
-                           radius2,
-                           original_density_weights,
-                           sample_density_weights,
-                           parallel_callback.advancement(),
-                           parallel_callback.interrupted());
+    CGAL::for_each<ConcurrencyTag>
+      (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (sample_points.begin(), update_sample_points.begin())),
+                         boost::make_zip_iterator (boost::make_tuple (sample_points.end(), update_sample_points.end()))),
+       [&](const typename Zip_iterator::reference& t)
+       {
+         if (callback_wrapper.interrupted())
+           return false;
 
-       tbb::parallel_for(block, sample_updater);
+         get<1>(t) = simplify_and_regularize_internal::
+           compute_update_sample_point<Kernel, Kd_Tree, typename PointRange::iterator>(
+             get<0>(t),
+             original_kd_tree,
+             sample_kd_tree,
+             radius, 
+             original_density_weights,
+             sample_density_weights);
+         ++ callback_wrapper.advancement();
 
-       bool interrupted = parallel_callback.interrupted();
+         return true;
+       });
 
-       // We interrupt by hand as counter only goes halfway and won't terminate by itself
-       parallel_callback.interrupted() = true;
-       parallel_callback.join();
+    bool interrupted = callback_wrapper.interrupted();
+  
+    // We interrupt by hand as counter only goes halfway and won't terminate by itself
+    callback_wrapper.interrupted() = true;
+    callback_wrapper.join();       
 
-       // If interrupted during this step, nothing is computed, we return NaN
-       if (interrupted)
-         return output;
-    }else
-#endif
-    {
-      //sequential
-      std::size_t nb = iter_n * number_of_sample;
-      for (sample_iter = sample_points.begin();
-           sample_iter != sample_points.end(); ++sample_iter, ++update_iter, ++ nb)
-      {
-        *update_iter = simplify_and_regularize_internal::
-          compute_update_sample_point<Kernel,
-                                      Kd_Tree,
-                                      typename PointRange::iterator>
-                                      (*sample_iter,
-                                       original_kd_tree,
-                                       sample_kd_tree,
-                                       radius2,
-                                       original_density_weights,
-                                       sample_density_weights);
-        if (callback && !callback ((nb+1) / double(iter_number * number_of_sample)))
-          return output;
-      }
-    }
-
+    // If interrupted during this step, nothing is computed, we return NaN
+    if (interrupted)
+      return output;
+    
     sample_iter = sample_points.begin();
-    for (update_iter = update_sample_points.begin();
-         update_iter != update_sample_points.end();
-         ++update_iter, ++sample_iter)
-    {
-      *sample_iter = *update_iter;
-    }
+    for (std::size_t i = 0; i < sample_points.size(); ++ i)
+      sample_points[i] = update_sample_points[i];
   }
 
   // final output
-  for(sample_iter = sample_points.begin();
-      sample_iter != sample_points.end(); ++sample_iter)
-  {
-    *output++ = *sample_iter;
-  }
+  std::copy (sample_points.begin(), sample_points.end(), output);
 
   return output;
 }
