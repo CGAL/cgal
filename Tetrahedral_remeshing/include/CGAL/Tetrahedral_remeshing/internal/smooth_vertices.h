@@ -294,29 +294,6 @@ namespace CGAL
         return true;
       }
 
-      template<typename K, typename CellVector, typename Tr>
-      bool check_inversion_and_move(const typename Tr::Vertex_handle v,
-                                    const CGAL::Vector_3<K>& move,
-                                    const CellVector& cells,
-                                    const Tr& tr)
-      {
-        const typename Tr::Point backup = v->point(); //backup v's position
-        const typename Tr::Point new_pos(point(backup) + move);
-        v->set_point(new_pos);
-
-        for(const typename CellVector::value_type& ci : cells)
-        {
-          if (CGAL::POSITIVE != CGAL::orientation(point(ci->vertex(0)->point()),
-                                                  point(ci->vertex(1)->point()),
-                                                  point(ci->vertex(2)->point()),
-                                                  point(ci->vertex(3)->point())))
-          {
-            v->set_point(backup);
-            return false;
-          }
-        }
-        return true;
-      }
 
       template<typename C3T3>
       void collect_vertices_subdomain_indices(
