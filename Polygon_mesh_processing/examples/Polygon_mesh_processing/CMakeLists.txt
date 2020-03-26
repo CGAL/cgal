@@ -10,7 +10,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
+  return()  
 
 endif()
 
@@ -21,7 +21,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()
+  return()  
 
 endif()
 
@@ -83,12 +83,14 @@ create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
 create_single_source_cgal_program( "random_perturbation_SM_example.cpp" )
 create_single_source_cgal_program( "corefinement_LCC.cpp")
 create_single_source_cgal_program( "detect_features_example.cpp" )
+create_single_source_cgal_program( "volume_connected_components.cpp" )
 create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
 create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
 create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 create_single_source_cgal_program( "locate_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
+
 
 if(OpenMesh_FOUND)
 

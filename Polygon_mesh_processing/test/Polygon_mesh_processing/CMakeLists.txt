@@ -10,7 +10,7 @@ find_package( CGAL QUIET COMPONENTS Core)
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
+  return()  
 
 endif()
 
@@ -23,7 +23,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()
+  return()  
 
 endif()
 
@@ -89,6 +89,7 @@ endif()
   create_single_source_cgal_program("test_orient_cc.cpp")
   create_single_source_cgal_program("test_pmp_transform.cpp")
   create_single_source_cgal_program("extrude_test.cpp")
+  create_single_source_cgal_program("test_split_volume.cpp")
   create_single_source_cgal_program("test_merging_border_vertices.cpp")
   create_single_source_cgal_program("test_repair_polygon_soup.cpp")
   create_single_source_cgal_program("test_shape_predicates.cpp")
