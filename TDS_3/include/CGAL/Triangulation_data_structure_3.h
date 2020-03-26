@@ -95,24 +95,76 @@ public:
 
   class Cell_data {
     unsigned char conflict_state;
+
   public:
-    Cell_data() : conflict_state(0) {}
+    Cell_data() : conflict_state(0)
+    {}
 
-    void clear()            { conflict_state = 0; }
-    void mark_in_conflict() { conflict_state = 1; }
-    void mark_on_boundary() { conflict_state = 2; }
-    void mark_processed()   { conflict_state = 1; }
+    void clear()
+    {
+      conflict_state &= 0B11111100 ;
+    }
 
-    bool is_clear()       const { return conflict_state == 0; }
-    bool is_in_conflict() const { return conflict_state == 1; }
-    bool is_on_boundary() const { return conflict_state == 2; }
-    bool processed() const { return conflict_state == 1; }
+    void mark_in_conflict()
+    {
+      conflict_state |= 0B00000001 ;
+      conflict_state &= 0B11111101 ;
+    }
+
+    void mark_on_boundary()
+    {
+      conflict_state &= 0B11111110 ;
+      conflict_state |= 0B00000010 ;
+
+    }
+
+    void mark_processed()
+    {
+      conflict_state |= 0B00000001 ;
+      conflict_state &= 0B11111101 ;
+    }
+
+    bool is_clear() const
+    {
+      return (conflict_state & 3) == 0;
+    }
+
+    bool is_in_conflict() const
+    {
+      return (conflict_state & 3) == 1;
+    }
+
+    bool is_on_boundary() const
+    {
+      return (conflict_state & 3)  == 2;
+    }
+
+    bool processed() const
+    {
+      return (conflict_state & 3) == 1;
+    }
+
+    void set_edge(int i)
+    {
+      conflict_state |= (1 << (i+2));
+    }
+
+    bool edge(int i)
+    {
+      return (conflict_state >> (i+2)) & 0B00000001;
+    }
+
+    void clear_edges()
+    {
+      conflict_state &= 0B00000011;
+    }
   };
 
 private:
 
   friend class internal::Triangulation_ds_facet_iterator_3<Tds>;
   friend class internal::Triangulation_ds_edge_iterator_3<Tds>;
+  friend class internal::Triangulation_ds_marking_edge_iterator_3<Tds>;
 
   friend class internal::Triangulation_ds_cell_circulator_3<Tds>;
   friend class internal::Triangulation_ds_facet_circulator_3<Tds>;
@@ -156,6 +208,7 @@ public:
 
   typedef internal::Triangulation_ds_facet_iterator_3<Tds>   Facet_iterator;
   typedef internal::Triangulation_ds_edge_iterator_3<Tds>    Edge_iterator;
+  typedef internal::Triangulation_ds_marking_edge_iterator_3<Tds>    Marking_edge_iterator;
 
   typedef internal::Triangulation_ds_cell_circulator_3<Tds>  Cell_circulator;
   typedef internal::Triangulation_ds_facet_circulator_3<Tds> Facet_circulator;
@@ -676,6 +729,25 @@ public:
   Edge_iterator edges_end() const
   {
     return Edge_iterator(this,1);
+  }
+
+  Marking_edge_iterator marking_edges_begin() const
+  {
+    if ( dimension() < 1 )
+        return marking_edges_end();
+    return Marking_edge_iterator(this);
+  }
+
+  Marking_edge_iterator marking_edges_end() const
+  {
+    return Marking_edge_iterator(this,1);
+  }
+
+  void clear_marked_edges()
+  {
+    for(Cell_handle ch : cell_handles()){
+      ch->tds_data().clear_edges();
+    }
   }
 
   Edges edges() const
@@ -4084,6 +4156,10 @@ count_edges(size_type & i, bool verbose, int level) const
       if (verbose)
           std::cerr << "invalid edge" << std::endl;
       CGAL_triangulation_assertion(false);
+
+      for(Cell_iterator aci = cells_begin(); aci != cells_end(); ++aci){
+        aci->tds_data().clear_edges();
+      }
       return false;
     }
     ++i;

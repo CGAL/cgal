@@ -72,6 +72,7 @@ public:
   typedef typename Base::Cell_iterator                        Finite_cells_iterator;
   typedef typename Base::Facet_iterator                       Finite_facets_iterator;
   typedef typename Base::Edge_iterator                        Finite_edges_iterator;
+  typedef typename Base::Marking_edge_iterator                Finite_marking_edges_iterator;
   typedef typename Base::Vertex_iterator                      Finite_vertices_iterator;
 
   typedef typename Base::Vertex_handle                        Vertex_handle;
