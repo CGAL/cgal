@@ -53,7 +53,7 @@ struct Alpha_expansion_old_API_wrapper_graph
   typedef boost::directed_tag directed_category;
   typedef boost::disallow_parallel_edge_tag edge_parallel_category;
   typedef boost::edge_list_graph_tag traversal_category;
-    
+
   typedef boost::counting_iterator<std::size_t> counting_iterator;
   typedef CGAL::Iterator_range<counting_iterator> counting_range;
 
@@ -66,7 +66,7 @@ struct Alpha_expansion_old_API_wrapper_graph
     typedef std::vector<double> value_type;
     typedef value_type reference;
     typedef boost::readable_property_map_tag category;
-      
+
     const std::vector<std::vector<double> >* cost_matrix;
 
     Vertex_label_cost_map (const std::vector<std::vector<double> >* cost_matrix)
@@ -85,7 +85,7 @@ struct Alpha_expansion_old_API_wrapper_graph
   };
 
   typedef CGAL::Pointer_property_map<double>::const_type Edge_cost_map;
-    
+
   const std::vector<std::pair<std::size_t, std::size_t> >& edges;
   const std::vector<double>& edge_costs;
   const std::vector<std::vector<double> >& cost_matrix;
@@ -209,7 +209,7 @@ private:
   Graph graph;
   Vertex_descriptor cluster_source;
   Vertex_descriptor cluster_sink;
-  
+
 public:
 
   void clear_graph()
@@ -263,7 +263,7 @@ public:
        && color == ColorTraits::white()) //new comers (expansion occurs)
       put (vertex_label_map, vd, alpha);
   }
-  
+
   void add_edge (Vertex_descriptor& v1, Vertex_descriptor& v2, double w1, double w2)
   {
     Edge_descriptor v1_v2, v2_v1;
@@ -314,7 +314,7 @@ private:
   typedef boost::color_traits<boost::default_color_type> ColorTraits;
 
 public:
-  
+
   typedef Traits::vertex_descriptor Vertex_descriptor;
   typedef Traits::vertex_iterator   Vertex_iterator;
   typedef Traits::edge_descriptor   Edge_descriptor;
@@ -418,7 +418,7 @@ public:
        && color == ColorTraits::white()) //new comers (expansion occurs)
       put(vertex_label_map, vd, alpha);
   }
-  
+
   void add_edge(Vertex_descriptor v1, Vertex_descriptor v2, double w1, double w2)
   {
     edge_map.push_back(std::make_pair(v1, v2));
@@ -431,7 +431,7 @@ public:
     p2.edge_capacity = w2;
     edge_map_weights.push_back(p2);
   }
-  
+
 
 };
 
@@ -481,7 +481,7 @@ class Alpha_expansion_MaxFlow_impl;
    with `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
    `std::vector<double>` as value
 
-   \tparam VertexLabelMap a model of `ReadWritePropertyMap` with 
+   \tparam VertexLabelMap a model of `ReadWritePropertyMap` with
    `boost::graph_traits<InputGraph>::%vertex_descriptor` as key and
    `std::size_t` as value
 
@@ -539,7 +539,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   typedef boost::graph_traits<InputGraph> GT;
   typedef typename GT::edge_descriptor input_edge_descriptor;
   typedef typename GT::vertex_descriptor input_vertex_descriptor;
@@ -620,12 +620,12 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
         input_vertex_descriptor vd2 = target(ed, input_graph);
         std::size_t idx1 = get (vertex_index_map, vd1);
         std::size_t idx2 = get (vertex_index_map, vd2);
-          
+
         double weight = get (edge_cost_map, ed);
-          
+
         Vertex_descriptor v1 = inserted_vertices[idx1],
           v2 = inserted_vertices[idx2];
-          
+
         std::size_t label_1 = get (vertex_label_map, vd1);
         std::size_t label_2 = get (vertex_label_map, vd2);
         if(label_1 == label_2) {
@@ -651,9 +651,9 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
       timer.reset();
 #endif
-      
+
       double flow = alpha_expansion.max_flow();
-      
+
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
       cut_time += timer.time();
 #endif
@@ -721,7 +721,7 @@ double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::s
                                  const AlphaExpansionImplementationTag&)
 {
   internal::Alpha_expansion_old_API_wrapper_graph graph (edges, edge_costs, cost_matrix, labels);
-  
+
   return alpha_expansion_graphcut(graph,
                                   graph.edge_cost_map(),
                                   graph.vertex_label_cost_map(),

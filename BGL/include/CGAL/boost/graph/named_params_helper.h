@@ -352,7 +352,7 @@ CGAL_DEF_GET_INITIALIZED_INDEX_MAP(face, typename boost::graph_traits<Graph>::fa
         typedef std::random_access_iterator_tag iterator_category;
       };
     };
-    
+
     namespace parameters
     {
       template <typename PointRange>

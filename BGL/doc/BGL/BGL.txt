@@ -705,7 +705,7 @@ regularized spatially:
 
 ```
 Input:
-XOX   
+XOX
 XX X O
 OX  OO
 X  OOX
@@ -714,7 +714,7 @@ X  OOX
 Alpha expansion...
 
 Output:
-XXX   
+XXX
 XX   O
 XX  OO
 X  OOO

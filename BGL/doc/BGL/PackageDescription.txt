@@ -22,7 +22,7 @@ digraph example {
   FaceGraph [ URL="\ref FaceGraph"];
   FaceListGraph [ URL="\ref FaceListGraph"];
   MutableFaceGraph [ URL="\ref MutableFaceGraph"];
-  
+
   MutableHalfedgeGraph -> HalfedgeGraph -> "boost Graph" [ arrowhead="open", label="refines" ];
   FaceListGraph -> FaceGraph -> HalfedgeGraph [ arrowhead="open", label="refines" ];
   MutableFaceGraph -> MutableHalfedgeGraph [ arrowhead="open", label="refines" ];
@@ -34,12 +34,12 @@ digraph example {
  \cgalHeading{Notations}
 
  <dl>
- <dt>`G`</dt> 	<dd>A type that is a model of a graph concept.</dd>
- <dt>`g`</dt> 	<dd>An object of type `G`.</dd>
- <dt>`u`, `v`</dt> 	<dd>Objects of type `boost::graph_traits<G>::%vertex_descriptor`.</dd>
- <dt>`h`</dt> 	<dd>An object of type `boost::graph_traits<G>::%halfedge_descriptor`.</dd>
- <dt>`e`</dt> 	<dd>An object of type `boost::graph_traits<G>::%edge_descriptor`.</dd>
- <dt>`f`</dt> 	<dd>An object of type `boost::graph_traits<G>::%face_descriptor`.</dd>
+ <dt>`G`</dt>         <dd>A type that is a model of a graph concept.</dd>
+ <dt>`g`</dt>         <dd>An object of type `G`.</dd>
+ <dt>`u`, `v`</dt>         <dd>Objects of type `boost::graph_traits<G>::%vertex_descriptor`.</dd>
+ <dt>`h`</dt>         <dd>An object of type `boost::graph_traits<G>::%halfedge_descriptor`.</dd>
+ <dt>`e`</dt>         <dd>An object of type `boost::graph_traits<G>::%edge_descriptor`.</dd>
+ <dt>`f`</dt>         <dd>An object of type `boost::graph_traits<G>::%face_descriptor`.</dd>
  </dl>
 
 \cgalHeading{%VertexListGraph}

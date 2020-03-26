@@ -38,9 +38,9 @@ class Alpha_expansion_MaxFlow_impl
 public:
 
   typedef MaxFlow::Graph::node_id Vertex_descriptor;
-  
+
 private:
-  
+
   MaxFlow::Graph graph;
 
 public:
@@ -80,7 +80,7 @@ public:
        && graph.what_segment(inserted_vertices[vertex_i]) == MaxFlow::Graph::SINK)
       put(vertex_label_map, vd, alpha);
   }
-  
+
   void add_edge (Vertex_descriptor& v1, Vertex_descriptor& v2, double w1, double w2)
   {
     graph.add_edge(v1, v2, w1, w2);

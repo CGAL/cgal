@@ -24,7 +24,7 @@ using edge_descriptor = GT::edge_descriptor;
 int main()
 {
   std::array<char, 3> labels = { 'X', ' ', 'O' };
-  
+
   std::array<std::array<int, 6>, 5> input
     = { { { 0, 2, 0, 1, 1, 1 },
           { 0, 0, 1, 0, 1, 2 },
@@ -91,6 +91,6 @@ int main()
       std::cerr << labels[std::size_t(g[vertices[i][j]].label)];
     std::cerr << std::endl;
   }
-      
+
   return 0;
 }
