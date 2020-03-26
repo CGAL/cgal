@@ -1,4 +1,4 @@
-//#define POLY 
+//#define POLY
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
@@ -58,32 +58,32 @@ triangulate_hole_with_cdt_2(PolygonMesh& pmesh,
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   Vpm vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                          get_const_property_map(boost::vertex_point, pmesh));
-  
+
   std::vector<Point_3> pts;
-  
+
   Hedge_around_face_circulator circ(border_halfedge,pmesh), done(circ);
   face_descriptor new_face = add_face(pmesh);
   set_halfedge(new_face, border_halfedge, pmesh);
-  
+
   do{
     pts.push_back(get(vpm, target(*circ, pmesh)));
     set_face(*circ, new_face, pmesh);
   } while (++circ != done);
-  
+
   typename Kernel::Plane_3 plane;
   linear_least_squares_fitting_3(pts.begin(),pts.end(),plane,CGAL::Dimension_tag<0>());
-  
+
   //Project on plane
   std::vector<Point_2> polyline_2d;
   polyline_2d.reserve(pts.size());
-  
+
   for(const auto& p : pts)
   {
     polyline_2d.push_back(plane.to_2d(p));
   }
   if(!CGAL::is_simple_2(polyline_2d.begin(), polyline_2d.end(), Kernel()))
     return false;
-  
+
   return triangulate_face(new_face, pmesh, np);
 }
 
@@ -94,7 +94,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
 template <class Polyhedron>
 void read_poly(const char* file_name, Polyhedron& poly) {
   poly.clear();
-  
+
   std::ifstream input(file_name);
   if ( !input || !(input >> poly)  || (num_vertices(poly) == 0)){
     std::cerr << "  Error: can not read file." << std::endl;
@@ -121,7 +121,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 }
 
 template <class Polyhedron, class Halfedge_handle>
-void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps) 
+void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 {
   read_poly(file_name, poly);
   detect_borders(poly, border_reps);
@@ -132,15 +132,15 @@ template <class Polyhedron>
 void test_triangulate_hole_with_cdt_2(const char* file_name) {
   typedef typename boost::graph_traits<Polyhedron>::face_descriptor Facet_handle;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
-  
+
   std::cout << "test_triangulate_hole:" << std::endl;
   std::cout << "  File: "<< file_name  << std::endl;
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
   read_poly_with_borders(file_name, poly, border_reps);
-  
+
   for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
-    std::vector<Facet_handle> patch;  
+    std::vector<Facet_handle> patch;
     if(!CGAL::Polygon_mesh_processing::triangulate_hole_with_cdt_2(poly, *it, CGAL::parameters::output_iterator(std::back_inserter(patch))))
     {
       std::cerr << " Error: border is not simple." << std::endl;
@@ -152,22 +152,22 @@ void test_triangulate_hole_with_cdt_2(const char* file_name) {
       assert(false);
     }
   }
-  
+
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
     assert(false);
   }
-  
+
   std::ofstream out("out.off");
   out << poly;
-  out.close();         
+  out.close();
   std::cout << "  Done!" << std::endl;
 }
 
 template <class Kernel>
 void test_hole_filling() {
   typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
-  
+
   std::vector<std::string> input_files;
   input_files.push_back("data/w.off");
   //for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
@@ -176,7 +176,7 @@ void test_hole_filling() {
   //}
 }
 
-int main() 
+int main()
 {
   test_hole_filling<Epic>();
   std::cout << "All Done!" << std::endl;

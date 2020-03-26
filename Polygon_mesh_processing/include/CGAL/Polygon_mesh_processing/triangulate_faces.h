@@ -463,11 +463,11 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
-  
+
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,
                                                        Emptyset_iterator>::type Output_iterator;
-  
+
   Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
 
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap, traits);
