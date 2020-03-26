@@ -528,9 +528,15 @@ void test_split()
   std::vector<TriangleMesh> meshes;
 
   PMP::split(tm1, tm2);
+  //try with np
+  typename boost::template property_map<
+  TriangleMesh, CGAL::dynamic_face_property_t<int > >::type
+      pidmap = get(CGAL::dynamic_face_property_t<int>(), tm1);
+  CGAL::Polygon_mesh_processing::connected_components(
+        tm1, pidmap, CGAL::parameters::all_default());
   PMP::split_connected_components(tm1,
                                   meshes,
-                                  params::all_default());
+                                  params::face_patch_map(pidmap));
 
   CGAL_assertion(meshes.size() == 5);
   //if the order is not deterministc, put the num_vertices in a list and check
@@ -540,6 +546,7 @@ void test_split()
   CGAL_assertion(num_vertices(meshes[2]) == 142);
   CGAL_assertion(num_vertices(meshes[3]) == 83);
   CGAL_assertion(num_vertices(meshes[4]) == 104);
+  CGAL_assertion(tm1.is_valid());
 
   CGAL::clear(tm1);
   CGAL::clear(tm2);
@@ -580,32 +587,82 @@ void test_split()
   //if the list does contain all those numbers.
   CGAL_assertion(num_vertices(meshes[0]) == 588);
   CGAL_assertion(num_vertices(meshes[1]) == 50);
+  CGAL_assertion(tm1.is_valid());
 
   CGAL::clear(tm1);
   CGAL::clear(tm2);
   meshes.clear();
 }
 
+template <class TriangleMesh>
+void test_isocuboid()
+{
+  TriangleMesh tm;
+  //closed intersection curves
+  std::ifstream input("data-coref/elephant.off");
+  input >> tm;
+
+  if(!input)
+  {
+    std::cerr<<"File not found. Aborting."<<std::endl;
+    CGAL_assertion(false);
+    return ;
+  }
+
+  input.close();
+
+  std::vector<TriangleMesh> meshes;
+  K::Iso_cuboid_3 splitter(K::Point_3(-0.3, -0.45, -0.25),
+                           K::Point_3( 0.3, 0.45, 0.25));
+  PMP::split(tm, splitter);
+
+  PMP::split_connected_components(tm,
+                                  meshes);
+
+  CGAL_assertion(meshes.size() == 10);
+  //if the order is not deterministc, put the num_vertices in a list and check
+  //if the list does contain all those numbers.
+  CGAL_assertion(num_vertices(meshes[0]) == 2657);
+  CGAL_assertion(num_vertices(meshes[1]) == 131 );
+  CGAL_assertion(num_vertices(meshes[2]) == 32  );
+  CGAL_assertion(num_vertices(meshes[3]) == 123 );
+  CGAL_assertion(num_vertices(meshes[4]) == 220 );
+  CGAL_assertion(num_vertices(meshes[5]) == 107 );
+  CGAL_assertion(num_vertices(meshes[6]) == 121 );
+  CGAL_assertion(num_vertices(meshes[7]) == 56  );
+  CGAL_assertion(num_vertices(meshes[8]) == 49  );
+  CGAL_assertion(num_vertices(meshes[9]) == 13  );
+  CGAL_assertion(tm.is_valid());
+
+  CGAL::clear(tm);
+  meshes.clear();
+}
 int main()
 {
+
   std::cout << "Surface Mesh" << std::endl;
   test<Surface_mesh>();
 
   std::cout << "Polyhedron" << std::endl;
   test<Polyhedron>();
-
+  
   std::cout << "running test_split with Surface_mesh\n";
   test_split<Surface_mesh>();
+  
+  std::cout << "running test_iso_cuboid with Surface_mesh\n";
+  test_isocuboid<Surface_mesh>();
 
   std::cout << "running test_split_plane with Surface_mesh\n";
   test_split_plane<Surface_mesh>();
-
+  
   std::cout << "running test_split with Polyhedron\n";
   test_split<Polyhedron>();
-
+  
   std::cout << "running test_split_plane with Polyhedron\n";
   test_split_plane<Polyhedron>();
 
+  std::cout << "running test_iso_cuboid with Polyhedron\n";
+  test_isocuboid<Polyhedron>();
   std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;
