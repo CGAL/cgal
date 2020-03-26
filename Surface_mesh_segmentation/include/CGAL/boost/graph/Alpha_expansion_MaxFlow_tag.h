@@ -1,4 +1,4 @@
-#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_H
+#ifndef CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_IMPL_H
 // Copyright (c) 2014  GeometryFactory Sarl (France).
 // All rights reserved.
 //
@@ -10,7 +10,7 @@
 //
 // Author(s)     : Ilker O. Yaz, Simon Giraudot
 
-#define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_GRAPHCUT_MAXFLOW_H
+#define CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_IMPL_H
 
 #include <CGAL/license/Surface_mesh_segmentation.h>
 
@@ -33,7 +33,7 @@ namespace CGAL
  * For underlying max-flow algorithm, it uses the MAXFLOW software implemented by Boykov & Kolmogorov.
  *  Also no pre-allocation is made.
  */
-class Alpha_expansion_MaxFlow_tag
+class Alpha_expansion_MaxFlow_impl
 {
 public:
 
@@ -91,4 +91,4 @@ public:
 
 /// \endcond
 
-#endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_TAG_H
+#endif //CGAL_BOOST_GRAPH_ALPHA_EXPANSION_MAXFLOW_IMPL_H

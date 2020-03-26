@@ -175,7 +175,7 @@ struct Alpha_expansion_old_API_wrapper_graph
  * For representing graph, it uses adjacency_list with OutEdgeList = vecS, VertexList = listS.
  * Also no pre-allocation is made for vertex-list.
  */
-class Alpha_expansion_boost_adjacency_list_tag
+class Alpha_expansion_boost_adjacency_list_impl
 {
 private:
   typedef boost::adjacency_list_traits<boost::vecS, boost::listS, boost::directedS>
@@ -287,7 +287,7 @@ public:
 // another implementation using compressed_sparse_row_graph
 // for now there is a performance problem while setting reverse edges
 // if that can be solved, it is faster than Alpha_expansion_graph_cut_boost
-class Alpha_expansion_boost_compressed_sparse_row_tag
+class Alpha_expansion_boost_compressed_sparse_row_impl
 {
 private:
   // CSR only accepts bundled props
@@ -435,6 +435,14 @@ public:
 
 };
 
+// tags
+struct Alpha_expansion_boost_adjacency_list_tag { };
+struct Alpha_expansion_boost_compressed_sparse_row_tag { };
+struct Alpha_expansion_MaxFlow_tag { };
+
+// forward declaration
+class Alpha_expansion_MaxFlow_impl;
+
 /// \endcond
 
 // NOTE: latest performances check (2019-07-22)
@@ -539,7 +547,18 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
   typedef typename GetInitializedVertexIndexMap<InputGraph, NamedParameters>::type VertexIndexMap;
   VertexIndexMap vertex_index_map = CGAL::get_initialized_vertex_index_map(input_graph, np);
 
-  typedef typename GetImplementationTag<NamedParameters>::type Alpha_expansion;
+  typedef typename GetImplementationTag<NamedParameters>::type Impl_tag;
+
+  // select implementation
+  typedef typename std::conditional
+    <std::is_same<Impl_tag, Alpha_expansion_boost_adjacency_list_tag>::value,
+     Alpha_expansion_boost_adjacency_list_impl,
+     typename std::conditional
+     <std::is_same<Impl_tag, Alpha_expansion_boost_compressed_sparse_row_tag>::value,
+      Alpha_expansion_boost_compressed_sparse_row_impl,
+      Alpha_expansion_MaxFlow_impl>::type>::type
+    Alpha_expansion;
+
   typedef typename Alpha_expansion::Vertex_descriptor Vertex_descriptor;
 
   Alpha_expansion alpha_expansion;
