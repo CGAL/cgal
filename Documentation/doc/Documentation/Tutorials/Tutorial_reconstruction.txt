@@ -285,7 +285,7 @@ algorithms (hole filling and isotropic remeshing) are also applied
 (refer to the chapter \ref Chapter_PolygonMeshProcessing "Polygon Mesh Processing"
 for more information).
 
-\cgalFigureBegin{TutorialsReconstructionFigPipeline, reconstruction_pipeline.png}
+\cgalFigureBegin{TutorialsReconstructionFigFull, reconstruction_pipeline.png}
 Full reconstruction pipeline (with close-ups).
 \cgalFigureEnd
 
