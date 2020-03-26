@@ -199,7 +199,7 @@ namespace internal {
       return internal::squared_distance(seg1.source(), seg2, k);
     if (seg2.source() == seg2.target())
       return internal::squared_distance(seg2.source(), seg1, k);
-    
+
     Orientation o1s = orientation(seg2.source(), seg2.target(), seg1.source());
     Orientation o1e = orientation(seg2.source(), seg2.target(), seg1.target());
     if (o1s == RIGHT_TURN) {
@@ -231,7 +231,7 @@ namespace internal {
     if (crossing1) {
       if (crossing2)
         return (FT)0;
-      
+
       c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
       c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
       Comparison_result dm = compare(c2s,c2e);
@@ -269,11 +269,11 @@ namespace internal {
         min1 = (dm == SMALLER) ?
                  internal::squared_distance(seg1.source(), seg2, k):
                  internal::squared_distance(seg1.target(), seg2, k);
-        
+
         c2s = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.source(), k));
         c2e = CGAL::abs(wcross(seg1.source(), seg1.target(), seg2.target(), k));
         dm = compare(c2s,c2e);
-        
+
         if (dm == EQUAL)  // should not happen.
           return internal::squared_distance_parallel(seg1, seg2, k);
         min2 = (dm == SMALLER) ?
@@ -378,7 +378,7 @@ namespace internal {
     }
   }
 
-  
+
   template <class K>
   inline typename K::RT
   _distance_measure_sub(const typename K::RT &startwcross,

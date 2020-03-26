@@ -533,7 +533,7 @@ namespace CartesianKernelFunctors {
     typedef typename K::Line_2    Line_2;
     typedef typename K::Equal_2   Equal_2;
     typedef typename K::Less_signed_distance_to_line_2 Less_signed_distance_to_line_2;
-    
+
   public:
     typedef typename K::Comparison_result     result_type;
 

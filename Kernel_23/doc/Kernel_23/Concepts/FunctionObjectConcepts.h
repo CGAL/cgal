@@ -978,7 +978,7 @@ public:
 
 
 
-  
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
@@ -993,23 +993,23 @@ public:
   /// @{
 
   /*!
-    compares the signed distance of `r` and `s` to the directed line through `p` and `q`. 
-  */ 
+    compares the signed distance of `r` and `s` to the directed line through `p` and `q`.
+  */
   Comparison_result operator()(const Kernel::Point_2& p,
                                const Kernel::Point_2& q,
                                const Kernel::Point_2& r,
                                const Kernel::Point_2& s);
-  
+
   /*!
-    compares the signed distance of `r` and `s` to the directed line `l`. 
-  */ 
+    compares the signed distance of `r` and `s` to the directed line `l`.
+  */
   Comparison_result operator()(const Kernel::Line_2& l,
                                const Kernel::Point_2& r,
                                const Kernel::Point_2& s);
   /// @}
 }; /* end Kernel::CompareSignedDistanceToLine_2 */
 
-  
+
 /*!
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept

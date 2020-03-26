@@ -767,7 +767,7 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_2   Point_2;
     typedef typename K::Line_2    Line_2;
     typedef typename K::Less_signed_distance_to_line_2 Less_signed_distance_to_line_2;
-    
+
   public:
     typedef Comparison_result   result_type;
 
@@ -796,7 +796,7 @@ namespace HomogeneousKernelFunctors {
 
       return compare(scaled_dist_r_minus_scaled_dist_s, 0);
     }
-    
+
     result_type
     operator()(const Line_2& l, const Point_2& p, const Point_2& q) const
     {
