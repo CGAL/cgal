@@ -25,14 +25,19 @@ namespace CGAL {
 template < class T = void >
 struct Triangulation_utils_base_3
 {
+  static const int tab_edge_index[4][4];
   static const char tab_next_around_edge[4][4];
   static const int tab_vertex_triple_index[4][3];
-
+  
   // copied from Triangulation_utils_2.h to avoid package dependency
   static const int ccw_map[3];
   static const int cw_map[3];
 };
 
+template < class T >
+const int Triangulation_utils_base_3<T>::tab_edge_index[4][4] = {
+  { -1, 0, 2, 3 }, { 0, -1, 1, 4}, {2, 1, -1, 5}, {3, 4, 5, -1} };
+  
 template < class T >
 const char Triangulation_utils_base_3<T>::tab_next_around_edge[4][4] = {
       {5, 2, 3, 1},
@@ -61,7 +66,7 @@ const int Triangulation_utils_base_3<T>::cw_map[3] = {2, 0, 1};
 struct Triangulation_utils_3
   : public Triangulation_utils_base_3<>
 {
-  static int ccw(const int i)
+  static int ccw(const int i) 
     {
       CGAL_triangulation_precondition( i >= 0 && i < 3);
       return ccw_map[i];
@@ -78,8 +83,8 @@ struct Triangulation_utils_3
     // index of the next cell when turning around the
     // oriented edge vertex(i) vertex(j) in 3d
     CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
-                                     ( j >= 0 && j < 4 ) &&
-                                     ( i != j ) );
+		                     ( j >= 0 && j < 4 ) &&
+		                     ( i != j ) );
     return tab_next_around_edge[i][j];
   }
 
@@ -89,10 +94,14 @@ struct Triangulation_utils_3
     // indexes of the  jth vertex  of the facet of a cell
     // opposite to vertx i
       CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
-                                     ( j >= 0 && j < 3 ) );
+		                     ( j >= 0 && j < 3 ) );
     return tab_vertex_triple_index[i][j];
   }
 
+  static int edge_index(const int i, const int j)
+  {
+    return tab_edge_index[i][j];
+  }
 };
 
 } //namespace CGAL

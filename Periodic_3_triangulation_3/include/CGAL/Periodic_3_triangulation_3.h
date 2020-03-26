@@ -158,6 +158,7 @@ public:
   typedef typename TDS::Cell_iterator          Cell_iterator;
   typedef typename TDS::Facet_iterator         Facet_iterator;
   typedef typename TDS::Edge_iterator          Edge_iterator;
+  typedef typename TDS::Marking_edge_iterator  Marking_edge_iterator;
   typedef typename TDS::Vertex_iterator        Vertex_iterator;
 
   typedef typename TDS::Cell_circulator        Cell_circulator;
@@ -225,6 +226,7 @@ public:
   typedef Cell_iterator                        Finite_cells_iterator;
   typedef Facet_iterator                       Finite_facets_iterator;
   typedef Edge_iterator                        Finite_edges_iterator;
+  typedef Marking_edge_iterator                Finite_marking_edges_iterator;
   typedef Vertex_iterator                      Finite_vertices_iterator;
 
   int dimension() const { return (number_of_vertices() == 0) ? -2 : 3; }
@@ -1501,6 +1503,14 @@ public:
     return _tds.vertices_end();
   }
 
+  Finite_marking_edges_iterator finite_marking_edges_begin() const { return _tds.marking_edges_begin(); }
+  Finite_marking_edges_iterator finite_marking_edges_end() const { return _tds.marking_edges_end(); }
+
+  void clear_marked_edges()
+  {
+    _tds.clear_marked_edges();
+  }
+  
   All_edges_iterator all_edges_begin() const {
     return _tds.edges_begin();
   }
