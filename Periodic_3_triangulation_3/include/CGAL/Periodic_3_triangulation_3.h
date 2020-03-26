@@ -1510,7 +1510,7 @@ public:
   {
     _tds.clear_marked_edges();
   }
-  
+
   All_edges_iterator all_edges_begin() const {
     return _tds.edges_begin();
   }

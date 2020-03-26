@@ -476,7 +476,7 @@ private:
     {
       return t->is_infinite(*e);
     }
-    
+
     bool operator()(const Facet_iterator& f) const
     {
       return t->is_infinite(*f);
@@ -1844,12 +1844,12 @@ public:
 
     return CGAL::filter_iterator(marking_edges_end(), Infinite_tester(this), marking_edges_begin());
   }
-  
+
   Finite_marking_edges_iterator finite_marking_edges_end() const
   {
     return CGAL::filter_iterator(marking_edges_end(), Infinite_tester(this));
   }
-  
+
   Finite_edges finite_edges() const
   {
     return Finite_edges(finite_edges_begin(),finite_edges_end());

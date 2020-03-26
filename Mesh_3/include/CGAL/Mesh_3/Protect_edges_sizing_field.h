@@ -1387,7 +1387,7 @@ refine_balls()
 
     tr.clear_marked_edges();
 
-    
+
     if(forced_stop()) new_sizes.clear();
 
     // The std::map with Vertex_handle as the key is not robust, because

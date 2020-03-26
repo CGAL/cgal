@@ -104,18 +104,18 @@ public:
     {
       conflict_state &= 0B11111100 ;
     }
-    
+
     void mark_in_conflict()
     {
       conflict_state |= 0B00000001 ;
       conflict_state &= 0B11111101 ;
     }
-    
+
     void mark_on_boundary()
     {
       conflict_state &= 0B11111110 ;
       conflict_state |= 0B00000010 ;
-      
+
     }
 
     void mark_processed()
@@ -128,12 +128,12 @@ public:
     {
       return (conflict_state & 3) == 0;
     }
-    
+
     bool is_in_conflict() const
     {
       return (conflict_state & 3) == 1;
     }
-    
+
     bool is_on_boundary() const
     {
       return (conflict_state & 3)  == 2;
@@ -749,7 +749,7 @@ public:
       ch->tds_data().clear_edges();
     }
   }
-  
+
   Edges edges() const
   {
     return Edges(edges_begin(), edges_end());
@@ -4156,7 +4156,7 @@ count_edges(size_type & i, bool verbose, int level) const
       if (verbose)
           std::cerr << "invalid edge" << std::endl;
       CGAL_triangulation_assertion(false);
-      
+
       for(Cell_iterator aci = cells_begin(); aci != cells_end(); ++aci){
         aci->tds_data().clear_edges();
       }
