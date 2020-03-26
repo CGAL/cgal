@@ -133,10 +133,6 @@ namespace CGAL
 
         const Tr& tr = c3t3.triangulation();
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        std::ofstream os1("dump_start_facets.polylines.txt");
-#endif
-
         std::size_t nb_of_boundary_facets = 0;
         for (const Facet& f : tr.finite_facets())
         {
@@ -158,14 +154,9 @@ namespace CGAL
           const Facet& mf = tr.mirror_facet(f);
           if ( fnormals.find(f) != fnormals.end()
             || fnormals.find(mf) != fnormals.end())
+          {
             continue;// already computed
-
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-          os1 << "4 " << point(f.first->vertex((f.second + 1) % 4)->point())
-            << " " << point(f.first->vertex((f.second + 2) % 4)->point())
-            << " " << point(f.first->vertex((f.second + 3) % 4)->point())
-            << " " << point(f.first->vertex((f.second + 1) % 4)->point()) << std::endl;
-#endif
+          }
 
           Vector_3 ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
           if ( c3t3.triangulation().is_infinite(f.first)
@@ -176,7 +167,6 @@ namespace CGAL
         }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        os1.close();
         std::ofstream osf("dump_facet_normals.polylines.txt");
 #endif
         for (const auto& fn : fnormals)
