@@ -208,7 +208,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-
+   
     while (!bits_.compare_exchange_weak(current_bits, current_bits | char(1 << facet)))
     {
       current_bits = bits_;
@@ -262,6 +262,7 @@ protected:
 // Adds information to Cb about the cell of the input complex containing it
 template< class GT,
           class MD,
+          class CurveIndex = int,
           class TDS = void >
 class Compact_mesh_cell_base_3
   : public Compact_mesh_cell_base_3_base<GT, typename TDS::Concurrency_tag>
@@ -281,7 +282,7 @@ public:
 
   template <typename TDS2>
   struct Rebind_TDS {
-    typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other;
+    typedef Compact_mesh_cell_base_3<GT, MD, CurveIndex, TDS2> Other;
   };
 
 
@@ -319,7 +320,7 @@ public:
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_()
+    , subdomain_index_()  
     , sliver_cache_validity_(false)
   {}
 
@@ -656,14 +657,14 @@ public:
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
   void set_next_intrusive(Cell_handle c)
-  {
-    next_intrusive_ = c;
+  { 
+    next_intrusive_ = c; 
   }
 
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
   void set_previous_intrusive(Cell_handle c)
-  {
-    previous_intrusive_ = c;
+  { 
+    previous_intrusive_ = c; 
   }
 #endif // CGAL_INTRUSIVE_LIST
 
@@ -679,6 +680,77 @@ public:
   }
   ///@}
 
+  /// Store the curve index of the edges inside the cell for I/O
+  /// @{
+  //indices in cis:
+  //i\j 0 1 2 3
+  // |---------
+  //0|  - 0 1 2
+  //1|  0 - 3 4
+  //2|  1 3 - 5
+  //3|  2 4 5 -
+  //
+  void set_curve_index(std::size_t i, std::size_t j, CurveIndex c)
+  {
+    CGAL_assertion(i != j);
+    if(i<j)
+      cis[i==0 ? j-1 : j+i] = c;
+    else 
+      cis[j==0 ? i-1 : i+j] = c;
+  }
+
+  CurveIndex get_curve_index(std::size_t i, std::size_t j)const
+  {
+    CGAL_assertion(i != j);
+    if(i<j)
+      return cis[i==0 ? j-1 : j+i];
+    else                         
+      return cis[j==0 ? i-1 : i+j];
+  }
+
+  ///save extra data per cell 
+  std::ostream& write_data(std::ostream& os,
+                           const CGAL::Unique_hash_map<Vertex_handle, std::size_t > &
+                           )const
+  {
+    for (std::size_t i =0; i< 3; ++i)
+      for (std::size_t j =i+1; j< 4; ++j)
+      {
+        if(is_ascii(os))
+        {
+          os << get_curve_index(i,j);
+          if(i == 2 && j == 3 )
+            os<<"\n";
+          else
+            os<<" ";
+        }
+        else
+        {
+          write(os, get_curve_index(i,j));
+        }
+      }
+    return os;
+  }
+
+  ///load extra data per cell 
+  std::istream& read_data(std::istream& is,
+                          std::vector<Cell_handle>&,
+                          std::vector<Vertex_handle>&)
+  {
+    int c =0;
+    for (std::size_t i =0; i< 3; ++i)
+      for (std::size_t j =i+1; j< 4; ++j)
+      {
+        if(is_ascii(is))
+          is >> c;
+        else
+          read(is, c);
+        set_curve_index(i,j,c);
+      }
+    return is;
+  }
+  
+  ///@}
 private:
 
 
@@ -708,16 +780,17 @@ private:
 
   TDS_data      _tds_data;
   mutable bool sliver_cache_validity_;
+  CurveIndex cis[6];
 
 
 };  // end class Compact_mesh_cell_base_3
 
-template < class GT, class MT, class Cb >
+template < class GT, class MT, class Ci, class Cb >
 std::istream&
 operator>>(std::istream &is,
-           Compact_mesh_cell_base_3<GT, MT, Cb> &c)
+           Compact_mesh_cell_base_3<GT, MT, Ci, Cb> &c)
 {
-  typename Compact_mesh_cell_base_3<GT, MT, Cb>::Subdomain_index index;
+  typename Compact_mesh_cell_base_3<GT, MT, Ci, Cb>::Subdomain_index index;
   if(is_ascii(is))
     is >> index;
   else
@@ -726,7 +799,7 @@ operator>>(std::istream &is,
     c.set_subdomain_index(index);
     for(int i = 0; i < 4; ++i)
     {
-      typename Compact_mesh_cell_base_3<GT, MT, Cb>::Surface_patch_index i2;
+      typename Compact_mesh_cell_base_3<GT, MT, Ci, Cb>::Surface_patch_index i2;
       if(is_ascii(is))
         is >> iformat(i2);
       else
@@ -739,10 +812,10 @@ operator>>(std::istream &is,
   return is;
 }
 
-template < class GT, class MT, class Cb >
+template < class GT, class MT, class Ci, class Cb >
 std::ostream&
 operator<<(std::ostream &os,
-           const Compact_mesh_cell_base_3<GT, MT, Cb> &c)
+           const Compact_mesh_cell_base_3<GT, MT, Ci, Cb> &c)
 {
   if(is_ascii(os))
      os << c.subdomain_index();
@@ -760,16 +833,17 @@ operator<<(std::ostream &os,
 
 
 // Specialization for void.
-template <typename GT, typename MD>
-class Compact_mesh_cell_base_3<GT, MD, void>
+template <typename GT, typename MD, typename CurveIndex>
+class Compact_mesh_cell_base_3<GT, MD, CurveIndex, void>
 {
 public:
   typedef internal::Dummy_tds_3                         Triangulation_data_structure;
   typedef Triangulation_data_structure::Vertex_handle   Vertex_handle;
   typedef Triangulation_data_structure::Cell_handle     Cell_handle;
   template <typename TDS2>
-  struct Rebind_TDS { typedef Compact_mesh_cell_base_3<GT, MD, TDS2> Other; };
+  struct Rebind_TDS { typedef Compact_mesh_cell_base_3<GT, MD, CurveIndex, TDS2> Other; };
 };
+
 
 }  // end namespace CGAL
 

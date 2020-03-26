@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 //
 // Define two fake Mesh_domain, with index types
-//
+// 
 
 // One with all types equal to int.
 struct MD_homogeneous_types {
@@ -69,11 +69,11 @@ struct MD_heterogeneous_types {
 
 //
 // Define I/O for MD_heterogeneous_types::Subdomain_index (then enum)
-//
-
+// 
+ 
 // First, new technique: specialization of Output_rep and Input_rep (from
 // CGAL/IO/io.h). That works for CGAL::read and CGAL::write, and ease the
-// overload of << and >>
+// overload of << and >> 
 namespace CGAL {
 
 template <>
@@ -84,7 +84,7 @@ public:
   //! initialize with a const reference to \a t.
   Output_rep( const T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& out) const {
+  std::ostream& operator()( std::ostream& out) const { 
     if(is_ascii(out)) {
       out << (int)t;
     } else {
@@ -102,7 +102,7 @@ public:
   //! initialize with a const reference to \a t.
   Input_rep( T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
-  std::istream& operator()( std::istream& in) const {
+  std::istream& operator()( std::istream& in) const { 
     int i;
     if(is_ascii(in)) {
       in >> i;
@@ -115,13 +115,13 @@ public:
 };
 } // end namespace CGAL
 
-// Second: operator<< and >>
+// Second: operator<< and >> 
 namespace std {
-std::ostream& operator<<(std::ostream& out,
+std::ostream& operator<<(std::ostream& out, 
                          MD_heterogeneous_types::Subdomain_index index) {
   return out << CGAL::oformat(index);
 }
-std::istream& operator>>(std::istream& in,
+std::istream& operator>>(std::istream& in, 
                          MD_heterogeneous_types::Subdomain_index& index) {
   return in >> CGAL::iformat(index);
 }
@@ -140,10 +140,10 @@ struct Get_io_signature<MD_heterogeneous_types::Subdomain_index> {
 //
 // Define I/O for MD_heterogeneous_types::Surface_patch_index (pair of int)
 //
-
+ 
 // First, new technique: specialization of Output_rep and Input_rep (from
 // CGAL/IO/io.h). That works for CGAL::read and CGAL::write, and ease the
-// overload of << and >>
+// overload of << and >> 
 template <>
 class Output_rep<MD_heterogeneous_types::Surface_patch_index> {
   typedef MD_heterogeneous_types::Surface_patch_index T;
@@ -152,7 +152,7 @@ public:
   //! initialize with a const reference to \a t.
   Output_rep( const T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& out) const {
+  std::ostream& operator()( std::ostream& out) const { 
     if(is_ascii(out)) {
       out << t.first << " " << t.second;
     } else {
@@ -171,7 +171,7 @@ public:
   //! initialize with a const reference to \a t.
   Input_rep( T& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
-  std::istream& operator()( std::istream& in) const {
+  std::istream& operator()( std::istream& in) const { 
     if(is_ascii(in)) {
       in >> t.first >> t.second;
     } else {
@@ -183,22 +183,22 @@ public:
 };
 } // end namespace CGAL
 
-// Second: operator<< and >>
+// Second: operator<< and >> 
 namespace std {
-std::ostream& operator<<(std::ostream& out,
+std::ostream& operator<<(std::ostream& out, 
                          MD_heterogeneous_types::Surface_patch_index index) {
   return out << CGAL::oformat(index);
 }
-std::istream& operator>>(std::istream& in,
+std::istream& operator>>(std::istream& in, 
                          MD_heterogeneous_types::Surface_patch_index& index) {
   return in >> CGAL::iformat(index);
 }
 } // end namespace std
 
 
-//
+// 
 // Class to test I/O of Mesh_complex_3_in_triangulation_3<Mesh_domain,K>
-//
+// 
 template <typename Mesh_domain>
 struct Test_c3t3_io {
   typedef typename Mesh_domain::Subdomain_index Subdomain_index;
@@ -224,6 +224,7 @@ struct Test_c3t3_io {
     const Tr& t1 = c1.triangulation();
     const Tr& t2 = c2.triangulation();
     if(t1.number_of_vertices() != t2.number_of_vertices()) {
+      std::cout<<t1.number_of_vertices()<<" != "<<t2.number_of_vertices()<<std::endl;
       assert(false);
       return false;
     }
@@ -239,7 +240,7 @@ struct Test_c3t3_io {
       assert(false);
       return false;
     }
-    for(typename Tr::Finite_vertices_iterator
+    for(typename Tr::Finite_vertices_iterator 
           vit1 = t1.finite_vertices_begin(),
           vit2 = t2.finite_vertices_begin(),
           end1 = t1.finite_vertices_end();
@@ -257,7 +258,7 @@ struct Test_c3t3_io {
     }
 #if 0
     // Note: The Triangulation_3 facets iterator order changes after a reload
-    for(typename Tr::Finite_facets_iterator
+    for(typename Tr::Finite_facets_iterator 
           fit1 = t1.finite_facets_begin(),
           fit2 = t2.finite_facets_begin(),
           end1 = t1.finite_facets_end();
@@ -267,17 +268,17 @@ struct Test_c3t3_io {
       typename Tr::Cell_handle c2 = fit2->first;
       int i1 = fit1->second;
       int i2 = fit2->second;
-      // CJ: this may cause an assertion because the 2 C3T3s may have
+      // CJ: this may cause an assertion because the 2 C3T3s may have 
       // facets in different orders.
       // This is because the Finite_facets_iterator compares the
-      // addresses of cells to ensure parsing unique facets. The
-      // facets are stored in a Compact_container, which doesn't
+      // addresses of cells to ensure parsing unique facets. The 
+      // facets are stored in a Compact_container, which doesn't 
       /// guarantee any order in memory (and even in the container itself)
       assert(i1 == i2);
-      if( c1->surface_patch_index(i1) !=
+      if( c1->surface_patch_index(i1) != 
           c2->surface_patch_index(i2) )
       {
-        std::cerr << "Error: facets #" << i1
+        std::cerr << "Error: facets #" << i1 
                   << "of the following cells are different:\n";
         std::cerr << *c1 << "\n"
                   << *c2 << std::endl;
@@ -286,7 +287,7 @@ struct Test_c3t3_io {
       }
     }
 #endif // not WIN32
-    for(typename Tr::Finite_cells_iterator
+    for(typename Tr::Finite_cells_iterator 
           cit1 = t1.finite_cells_begin(),
           cit2 = t2.finite_cells_begin(),
           end1 = t1.finite_cells_end();
@@ -342,13 +343,17 @@ struct Test_c3t3_io {
                 << "\n******end******" << std::endl;
     }
     stream.seekg(0);
+    
     assert(stream);
     C3t3 c3t3_bis;
     stream >> c3t3_bis;
-    std::cout << "Content of c3t3_bis:\n"
-              << "*****begin*****\n"
-              << c3t3_bis
-              << "\n******end******" << std::endl;
+    
+    if(!binary) {
+      std::cout << "Content of c3t3_bis:\n"
+                << "*****begin*****\n"
+                << c3t3_bis
+                << "\n******end******" << std::endl;
+    }
     assert(stream);
 
     {
@@ -373,7 +378,6 @@ struct Test_c3t3_io {
       assert(ss);
     }
     if(!check_equality(c3t3, c3t3_bis)) return false;
-
 #ifndef CGAL_LITTLE_ENDIAN
     // skip binary I/O with the existing file for big endian
     return true;
@@ -383,7 +387,6 @@ struct Test_c3t3_io {
       // skip 32bits architectures as well
       return true;
     }
-
     {
       std::string filename(prefix);
       filename += "_new";
@@ -453,6 +456,13 @@ struct Test_c3t3_io {
     v5->set_index(Mesh_domain::get_surface_patch_index_1());
     v6->set_dimension(3);
     v6->set_index(Mesh_domain::get_sub_domain_index_1());
+    for (auto cit = c3t3.triangulation().cells_begin();
+         cit != c3t3.triangulation().cells_end(); ++cit)
+    {
+      for(std::size_t i =0; i<3; ++i)
+        for(std::size_t j =i+1; j<4; ++j)
+          cit->set_curve_index(i,j,c3t3.curve_index(cit->vertex(i), cit->vertex(j)));
+    }
 
     // then test I/O
     return test_io(c3t3, prefix, false) && test_io(c3t3, prefix, true);

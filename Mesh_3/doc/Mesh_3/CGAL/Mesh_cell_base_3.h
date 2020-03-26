@@ -8,7 +8,7 @@ namespace CGAL {
 Compact_mesh_cell_base_3, because the later has a different API.
 -- Laurent Rineau, 2013/10/16
 \deprecated This class is deprecated since \cgal 4.3. Use
-`CGAL::Compact_mesh_cell_base_3<Gt,MD,Tds>` instead.
+`CGAL::Compact_mesh_cell_base_3<Gt,MD,CurveIndex,Tds>` instead.
 -->
 
 The class `Mesh_cell_base_3<Gt, MD, Cb>` is a model of the concept `MeshCellBase_3`.
@@ -29,7 +29,7 @@ of the concept `RegularTriangulationCellBaseWithWeightedCircumcenter_3` and defa
 \cgalModels `MeshCellBase_3`
 
 \sa `CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveIndex>`
-\sa `CGAL::Compact_mesh_cell_base_3<Gt, MD, Tds>`
+\sa `CGAL::Compact_mesh_cell_base_3<Gt, MD, CurveIndex,Tds>`
 
 */
 template< typename Gt,  typename MD, typename Cb >
