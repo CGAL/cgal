@@ -147,7 +147,6 @@ test_directory()
     echo "- Error output from platform $PLATFORM"                             >> "$ERROR_OUTPUT"
     echo "------------------------------------------------------------------" >> "$ERROR_OUTPUT"
     echo                                                                      >> "$ERROR_OUTPUT"
-
     if [ -f cgal_test_with_cmake -a -x cgal_test_with_cmake ] ; then
       export PLATFORM TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
       rm -f error.txt
@@ -160,15 +159,15 @@ test_directory()
       fi
       if wait_for_process "$!" "$TIME_PERIOD" "5"
       then
-	if [ -f test_failure  ] ; then
-            exit_failure=`cat test_failure`
-	    rm -f test_failure
-	    echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERRORFILE"
-	    echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERROR_OUTPUT"
-	fi
+	    if [ -f test_failure  ] ; then
+          exit_failure=`cat test_failure`
+	      rm -f test_failure
+          echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERRORFILE"
+	      echo "ERROR: cgal_test_with_cmake exited with error condition $exit_value" >> "$ERROR_OUTPUT"
+	    fi
       else
-	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
-	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
+	    echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERRORFILE"
+    	echo "ERROR: cgal_test_with_cmake did not finish within the time bound set" >> "$ERROR_OUTPUT"
       fi
       STOP=`date +%s`
       DURATION=`expr "$STOP" - "$START"`
@@ -199,6 +198,52 @@ test_directory()
   echo
 }
 
+#setup sfcgal as a package to be tested
+install_sfcgal()
+{
+  #get SFCGAL
+  git clone https://github.com/Oslandia/SFCGAL.git xternal_SFCGAL
+  #add a test script
+  cd xternal_SFCGAL
+  cat > cgal_test_with_cmake<<EOF
+  #! /bin/sh
+  if [ -z "${MAKE_CMD}" ]; then
+    MAKE_CMD=make
+  fi
+
+  echo "copying patch..."
+   for file in \$PWD/CGAL_patches/CGAL/*; do
+    cp -r \$file \$PWD/../../../../../include/CGAL/
+  done
+  echo "done"
+  mkdir build
+  cd build
+  echo "configuring cmake..."
+  cmake -DCGAL_DIR="\$PWD/../../build" -DSFCGAL_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS_RELEASE="-O3" ..
+  echo "done."
+  echo "building..."
+  "${MAKE_CMD}" all
+  echo "done. Testing.."
+  if ctest -VV --output-on-failure; then
+    echo "done. Cleaning up..."
+  else
+    exit 1
+  fi
+  cd ..
+  cd CGAL_patches
+  for file in CGAL/internal/*/*; do
+    rm \$PWD/../../../../../../include/\$file
+  done
+  for file in CGAL/*; do
+    if [ -f \$file ]; then
+      rm \$PWD/../../../../../../include/\$file
+    fi
+  done
+  echo "done."
+EOF
+  chmod +x cgal_test_with_cmake
+}
+
 run_testsuite()
 {
   
@@ -217,19 +262,21 @@ run_testsuite()
           PATH=`cygpath "$CGAL_DIR"`/bin:`cygpath "$CGAL_DIR"`/lib:$PATH
           export PATH
   esac
-
   for DIR in $TEST_DIRECTORIES ; do
     test_directory "$DIR"
   done
 }
-
 [ x"$1" = x"icons" -o x"$1" = x"resources" ] && exit 0
-
 if [ -z "$1" ] ; then
   TEST_DIRECTORIES=`ls | egrep -v 'icons|resources'`
 else
   TEST_DIRECTORIES="$*"
 fi
+if [ -n "$TEST_XTERNAL" ]; then
+  TEST_DIRECTORIES="$TEST_DIRECTORIES xternal_SFCGAL"
+install_sfcgal
 
+fi
+echo "$TEST_DIRECTORIES"
 run_testsuite
 
