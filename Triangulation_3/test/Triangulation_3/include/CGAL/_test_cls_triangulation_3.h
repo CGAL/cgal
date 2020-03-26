@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
+// 
 //
 // Author(s)     : Francois Rebufat
 
@@ -15,6 +15,7 @@
 #include <fstream>
 #include <list>
 #include <vector>
+#include <type_traits>
 
 #include "_test_cls_iterator.h"
 #include "_test_cls_circulator.h"
@@ -24,7 +25,7 @@
 #include <CGAL/use.h>
 
 template <class Triangulation, class Container>
-bool check_all_are_finite(Triangulation* tr, const Container& cont)
+bool check_all_are_finite(Triangulation* tr, const Container& cont) 
 {
   for(typename Container::const_iterator it = cont.begin(), end = cont.end();
       it != end; ++it)
@@ -37,7 +38,7 @@ bool check_all_are_finite(Triangulation* tr, const Container& cont)
 template <class Triangulation>
 void
 _test_cls_triangulation_3_input_output(const Triangulation & T,
-                                       const char* filename)
+				       const char* filename)
 {
   const int dim = T.dimension();
   const typename Triangulation::size_type n = T.number_of_vertices();
@@ -79,6 +80,11 @@ _test_cls_triangulation_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
 
+  static_assert(std::is_nothrow_move_constructible<Cls>::value,
+                "move cstr is missing");
+  static_assert(std::is_nothrow_move_assignable<Cls>::value,
+                "move assignment is missing");
+
   // We assume the traits class has been tested already
   // actually, any traits is good if it has been tested
 
@@ -96,7 +102,7 @@ _test_cls_triangulation_3(const Triangulation &)
   typedef typename Cls::difference_type      difference_type;
 
   typedef typename Cls::Vertex_handle        Vertex_handle;
-  typedef typename Cls::Cell_handle          Cell_handle;
+  typedef typename Cls::Cell_handle          Cell_handle; 
   typedef typename Cls::Vertex_iterator      Vertex_iterator;
   typedef typename Cls::Cell_iterator        Cell_iterator;
   //  typedef typename Cls::Point_iterator       Point_iterator;
@@ -136,22 +142,22 @@ _test_cls_triangulation_3(const Triangulation &)
     l3.push_back(ppp[i]);
 
 // Points for T2_0 :
-  Point p1=Point(5,5,0);
+  Point p1=Point(5,5,0); 
   Point p2=Point(4,4,0);
   Point p3=Point(6,6,0); // 1- dimensional until this point
   Point p4=Point(5,3,0); // 2-dimensional
-  Point p5=Point(5,7,0);
-  Point p6=Point(5,4,0);
-  Point p7=Point(5,6,0);
-  Point p8=Point(0,0,0);
-  Point p9=Point(5,5,0);
+  Point p5=Point(5,7,0); 
+  Point p6=Point(5,4,0); 
+  Point p7=Point(5,6,0); 
+  Point p8=Point(0,0,0); 
+  Point p9=Point(5,5,0); 
 
   // Points for T3_1 :
-  Point q[22] =
+  Point q[22] = 
   {
     Point(0,0,0), Point(4,4,0), Point(0,4,0), Point(4,0,0),
     Point(1,3,1), Point(3,1,1), Point(3,3,1), Point(1,1,1), Point(2,2,2),
-    Point(1,3,3), Point(3,1,3), Point(3,3,3), Point(1,1,3),
+    Point(1,3,3), Point(3,1,3), Point(3,3,3), Point(1,1,3), 
     Point(0,0,4), Point(4,4,4), Point(0,4,4), Point(4,0,4),
     Point(1,3,5), Point(3,1,5), Point(3,3,5), Point(1,1,5), Point(2,2,6)};
 
@@ -162,14 +168,14 @@ _test_cls_triangulation_3(const Triangulation &)
 //   for (a=0;a!=10;a++)
 //     for (b=0;b!=10;b++)
 //       for (d=0;d!=10;d++)
-//         lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
-//                            a*a-d*d+b));
+// 	lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
+// 			   a*a-d*d+b));
 
   for (a=0;a!=10;a++)
     for (b=0;b!=10;b++)
       for (d=0;d!=5;d++)
-        lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
-                           a*a-d*d+b));
+	lp.push_back(Point(a*b-d*a + (a-b)*10 +a ,a-b+d +5*b,
+			   a*a-d*d+b));
 
   // Points for T3_2 :
 
@@ -177,8 +183,8 @@ _test_cls_triangulation_3(const Triangulation &)
   for (a=0;a!=4;a++)
     for (b=0;b!=4;b++)
       for (d=0;d!=4;d++)
-        lp2.push_back(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
-                            a*a-d*d-b));
+	lp2.push_back(Point((a*b-d*a)*10 +a ,(a-b+d +5*b)*100,
+			    a*a-d*d-b));
 
   //########################################################################
 
@@ -189,13 +195,13 @@ _test_cls_triangulation_3(const Triangulation &)
   std::cout << "    Constructor " << std::endl;
   // Beginning with an empty triangulation and adding points until reaching
   // 3-dimensional triangulation.
-  Cls T0;
+  Cls T0; 
   assert(T0.dimension() == -1);
   assert(T0.number_of_vertices() == 0);
   assert(T0.is_valid());
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T0, "Test1_triangulation_IO_3");
     }
@@ -208,7 +214,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.is_valid());
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T0, "Test2_triangulation_IO_3");
     }
@@ -222,7 +228,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.is_valid());
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T0, "Test3_triangulation_IO_3");
     }
@@ -236,7 +242,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.is_valid());
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T0, "Test4_triangulation_IO_3");
     }
@@ -250,7 +256,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.is_valid());
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T0, "Test5_triangulation_IO_3");
     }
@@ -262,7 +268,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
-
+  
   // copy constructor
   Cls T1(T0);
   assert(T1.dimension() == 3);
@@ -274,7 +280,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0 == T1);
   assert(T1 == T0);
   assert(T1 == T1);
-
+   
   T1.clear();
   assert(T1.dimension() == -1);
   assert(T1.number_of_vertices() == 0);
@@ -283,7 +289,7 @@ _test_cls_triangulation_3(const Triangulation &)
 
 
    // Assignment
-  T1=T0;
+  T1=T0;  
   assert(T1.dimension() == 3);
   assert(T1.number_of_vertices() == 4);
   assert(T1.is_valid());
@@ -298,7 +304,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.number_of_vertices() == 0);
   assert(T0.is_valid());
   T0.swap(T1);
-
+  
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
@@ -338,13 +344,13 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T1_2.is_valid());
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T1_2, "Test6_triangulation_IO_3");
     }
 
   std::cout << "    Constructor9 " << std::endl;
-  // 2-dimensional triangulations
+  // 2-dimensional triangulations 
 
   Cls T2_0;
   v0=T2_0.insert(p1);
@@ -375,7 +381,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T2_0.number_of_vertices()==8);
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T2_0, "Test7_triangulation_IO_3");
     }
@@ -390,8 +396,8 @@ _test_cls_triangulation_3(const Triangulation &)
   for (m=0; m<20; m++)
     for (n=0; n<20; n++)
       {
-        qq[m+20*n] = Point(m*px+(int)n*qx, m*py+(int)n*qy, 1);
-        T2_1.insert( qq[m+20*n] );
+	qq[m+20*n] = Point(m*px+(int)n*qx, m*py+(int)n*qy, 1);
+	T2_1.insert( qq[m+20*n] );
       }
   assert( T2_1.number_of_vertices() == m*n );
   assert( T2_1.dimension()==2 );
@@ -405,11 +411,11 @@ _test_cls_triangulation_3(const Triangulation &)
   Point r[225];
   for (z=0 ; z<5 ; z++)
     for (y=0 ; y<5 ; y++)
-      for (x=0 ; x<5 ; x++)
-        {
-          r[x+5*y+25*z] = Point(x,y,z);
-          v0=T3_0.insert(r[x+5*y+25*z]);
-        }
+      for (x=0 ; x<5 ; x++) 
+	{
+	  r[x+5*y+25*z] = Point(x,y,z);
+	  v0=T3_0.insert(r[x+5*y+25*z]);
+	}
   assert(T3_0.is_valid());
   assert(T3_0.number_of_vertices()==125);
   assert(T3_0.dimension()==3);
@@ -424,7 +430,7 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T3_1.dimension()==3);
 
   if (! del) // to avoid doing the following tests for both Delaunay
-    // and non Delaunay triangulations
+    // and non Delaunay triangulations 
     {
       _test_cls_triangulation_3_input_output(T3_1, "Test8_triangulation_IO_3");
     }
@@ -464,19 +470,19 @@ _test_cls_triangulation_3(const Triangulation &)
     else
       if (count < 100)
         std::cout << count << '\b' << '\b' ;
-      else
+      else 
         if (count < 1000)
           std::cout << count << '\b' << '\b' << '\b' ;
         else
-          std::cout << count << std::endl;
+	  std::cout << count << std::endl;
     std::cout.flush();
   }
   std::cout << std::endl;
   assert(T3_2.is_valid());
   assert(T3_2.dimension()==3);
   assert(T3_2.number_of_vertices()==500);
-
-
+ 
+ 
 
   Point p110(-5,5,0), p111(-2,-5,2), p112(-2,-9,6), p113(4,8,9), p114(5,-6,0),
     p115(3,0,5), p116(-9,0,-10), p117(1,6,-2), p118(-3,2,-4), p119(3,-3,-1);
@@ -491,7 +497,7 @@ _test_cls_triangulation_3(const Triangulation &)
   v0=T3_5.insert(p117);
   v0=T3_5.insert(p118, v0->cell()); // testing with the hint
   v0=T3_5.insert(p119, v0);         // testing with the hint
-
+  
   assert(T3_5.is_valid());
   assert(T3_5.number_of_vertices()==10);
 
@@ -513,18 +519,18 @@ _test_cls_triangulation_3(const Triangulation &)
 //   bool success(true);
 //   if (del) {
 //     std::cout << "    deletion in a Delaunay of "
-//               << T3_4.number_of_vertices() << " random points";
+// 	      << T3_4.number_of_vertices() << " random points";
 //     Vertex_handle v;
 //     while ( T3_4.number_of_vertices() >= 1 ) {
 //       if ( T3_4.dimension() > 1 )
-//         v = T3_4.infinite_cell()->vertex
-//           ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )&3 );
+// 	v = T3_4.infinite_cell()->vertex
+// 	  ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )&3 );
 //       else
-//         if ( T3_4.dimension() == 1 )
-//           v = T3_4.infinite_cell()->vertex
-//             ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )%2 );
-//         else
-//           v = T3_4.infinite_cell()->neighbor(0)->vertex(0);
+// 	if ( T3_4.dimension() == 1 )
+// 	  v = T3_4.infinite_cell()->vertex
+// 	    ( (T3_4.infinite_cell()->index( T3_4.infinite_vertex() ) +1 )%2 );
+// 	else
+// 	  v = T3_4.infinite_cell()->neighbor(0)->vertex(0);
 
 //       success = T3_4.remove( v );
 //     }
@@ -588,10 +594,10 @@ _test_cls_triangulation_3(const Triangulation &)
   assert(T0.dimension() == 3);
   assert(T0.number_of_vertices() == 4);
   assert(T0.is_valid());
-
+       
 
   c= Ti.locate(Point(50,50,50),lt,li,lj);
-
+      
   Point p24(50,50,50);
   v0= Ti.insert_outside_convex_hull(p24,c);
   assert(Ti.is_valid());
@@ -615,7 +621,7 @@ _test_cls_triangulation_3(const Triangulation &)
 
   // ################## Operations + newly created cells ################
   // Small test for inserting and returning the newly created cells
-  // (the code is mainly the usual insert + incident_{edges,facets,cells}
+  // (the code is mainly the usual insert + incident_{edges,facets,cells} 
   // depending on the dimension)
 
   std::cout << " Test insertion + newly created cells: " << std::endl;
@@ -624,7 +630,7 @@ _test_cls_triangulation_3(const Triangulation &)
   // dimension 1
   Cls TAI1;
   for(int i=0; i<50; i++)
-  {
+  {	
     double x = (double) (2*i);
     TAI1.insert(Point(x, x, x));
   }
@@ -633,9 +639,9 @@ _test_cls_triangulation_3(const Triangulation &)
   {
     lis_tai1.clear();
     double x = (double) (2*i - 1);
-    Vertex_handle taiv =
+    Vertex_handle taiv = 
       TAI1.insert_and_give_new_cells(
-                                     Point(x, x, x),
+                                     Point(x, x, x), 
                                      std::back_inserter(lis_tai1));
     CGAL_USE(taiv);
     assert(TAI1.is_valid());
@@ -646,16 +652,16 @@ _test_cls_triangulation_3(const Triangulation &)
       Cell_handle c = lis_tai1.front();
       lis_tai1.pop_front();
       assert(TAI1.tds().is_simplex(c));
-    }
+    }	
   }
   TAI1.clear();
 
-  std::cout << " 2 dimensions" << std::endl;
+  std::cout << " 2 dimensions" << std::endl;	
   CGAL::Random grand;
   for(int i=0; i<50; i++)
-  {
+  {	
     double x = grand.get_double();
-    double y = grand.get_double();
+    double y = grand.get_double();		  
     TAI1.insert(Point(x, y, 0));
   }
   for(int i=0; i<50; i++)
@@ -663,9 +669,9 @@ _test_cls_triangulation_3(const Triangulation &)
     lis_tai1.clear();
     double x = grand.get_double();
     double y = grand.get_double();
-    Vertex_handle taiv =
+    Vertex_handle taiv = 
       TAI1.insert_and_give_new_cells(
-                                     Point(x, y, 0),
+                                     Point(x, y, 0), 
                                      std::back_inserter(lis_tai1));
     CGAL_USE(taiv);
     assert(TAI1.is_valid());
@@ -675,16 +681,16 @@ _test_cls_triangulation_3(const Triangulation &)
       Cell_handle c = lis_tai1.front();
       lis_tai1.pop_front();
       assert(TAI1.tds().is_simplex(c));
-    }
-  }
+    }	
+  } 
   TAI1.clear();
 
-  std::cout << " 3 dimensions" << std::endl;
+  std::cout << " 3 dimensions" << std::endl;	
   for(int i=0; i<50; i++)
-  {
+  {	
     double x = grand.get_double();
-    double y = grand.get_double();
-    double z = grand.get_double();
+    double y = grand.get_double();	
+    double z = grand.get_double();			  
     TAI1.insert(Point(x, y, z));
   }
   for(int i=0; i<50; i++)
@@ -692,10 +698,10 @@ _test_cls_triangulation_3(const Triangulation &)
     lis_tai1.clear();
     double x = grand.get_double();
     double y = grand.get_double();
-    double z = grand.get_double();
-    Vertex_handle taiv =
+    double z = grand.get_double();	
+    Vertex_handle taiv = 
       TAI1.insert_and_give_new_cells(
-                                     Point(x, y, z),
+                                     Point(x, y, z), 
                                      std::back_inserter(lis_tai1));
     CGAL_USE(taiv);
     assert(TAI1.is_valid());
@@ -705,20 +711,20 @@ _test_cls_triangulation_3(const Triangulation &)
       Cell_handle c = lis_tai1.front();
       lis_tai1.pop_front();
       assert(TAI1.tds().is_simplex(c));
-    }
-  }
-  TAI1.clear();
+    }	
+  } 
+  TAI1.clear(); 
 
   // the other two insertion methods is exactly the same
   // with different version of the basic insert method
   // Vertex_handle insert_and_give_new_cells(const Point& p,
   //       OutputItCells fit,
-  //       Vertex_handle hint)
+  //       Vertex_handle hint)	
   // Vertex_handle insert_and_give_new_cells(const Point& p,
-  //       Locate_type lt, Cell_handle c, int li, int lj,
+  //       Locate_type lt, Cell_handle c, int li, int lj, 
   //       OutputItCells fit
-
-
+	
+	
   // ##################################################################
 
 
@@ -728,9 +734,9 @@ _test_cls_triangulation_3(const Triangulation &)
   c=T0.infinite_cell();
   assert(T0.is_infinite(c));
   int ind=c->index(T0.infinite_vertex());
-
-  Facet f ;
-  for (i=0;i<4;i++)
+       
+  Facet f ; 
+  for (i=0;i<4;i++) 
     if (i!=ind) {
       assert(T0.is_infinite(c,i));
       f=Facet(c,i);
@@ -738,11 +744,11 @@ _test_cls_triangulation_3(const Triangulation &)
     }
   int j;
 
-  for (i=0;i<4;i++)
-    for (j=0;i<4;i++)
+  for (i=0;i<4;i++) 
+    for (j=0;i<4;i++) 
       if ((i!=j) && ((i==ind) || (j==ind))) {
-        assert(T0.is_infinite(c,i,j));
-        assert(T0.is_infinite(Edge(c,i,j)));
+	assert(T0.is_infinite(c,i,j));
+	assert(T0.is_infinite(Edge(c,i,j)));
       }
 
 
@@ -762,9 +768,9 @@ _test_cls_triangulation_3(const Triangulation &)
     assert(d->vertex(j) == T0.mirror_vertex(c,i));
     assert(Facet(d,j) == T0.mirror_facet(Facet(c,i)));
   }
-
-
-
+	   
+    
+         
        // geometric functions
   std::cout << "Geometric functions " << std::endl;
   c= T0.locate(Point(50,0,1),lt,li,lj);
@@ -790,7 +796,7 @@ _test_cls_triangulation_3(const Triangulation &)
   c= T0.locate(Point(20,0,2),lt,li,lj);
   Point pt3 = c->vertex(0)->point();
   assert(pt2==pt3);
-
+     
   if (! del) { // Delaunay should not be flipped
     // or it will not be Delaunay any longer --> not valid
     std::cout << "  Test flip " << std::endl;
@@ -806,15 +812,15 @@ _test_cls_triangulation_3(const Triangulation &)
       flipped = false; i=0; j=1;
       next_cell = ++cit; --cit;
       while ( (! flipped) && (i<4) ) {
-        if ( (i!=j) ) {
-          flipped = T3_1.flip( cit, i, j ) ;
-          if (flipped) {
-            nbflips++;
-            assert(T3_1.is_valid());
-          }
-        }
-        if ( j==3 ) { i++; j=0; }
-        else j++;
+	if ( (i!=j) ) {
+	  flipped = T3_1.flip( cit, i, j ) ;
+	  if (flipped) {
+	    nbflips++;
+	    assert(T3_1.is_valid());
+	  }
+	}
+	if ( j==3 ) { i++; j=0; }
+	else j++;
       }
       cit = next_cell;
     }
@@ -825,22 +831,22 @@ _test_cls_triangulation_3(const Triangulation &)
       // NOTE : the triangulation is modified during loop
       // --> the cell_iterator does not mean a lot
       for ( i=0; i<4; i++ ) {
-        flipped = T3_1.flip( cit, i );
-        if (flipped) {
-          nbflips++;
-          assert(T3_1.is_valid());
-        }
+	flipped = T3_1.flip( cit, i );
+	if (flipped) {
+	  nbflips++;
+	  assert(T3_1.is_valid());
+	}
       }
     }
     std::cout << nbflips << " flips 2-3" << std::endl;
   }
-
+  
   // Finite incident_* in dimension 2 test
   std::cout << "    Testing finite_incident_* in dim 2  "<< std::endl;
   Cls* T2[2];
   T2[0] = &T2_0;
   T2[1] = &T2_1;
-
+  
     for(int k = 0; k < 2; ++k) {
     std::cout << "      with triangulation " << k + 1 << ": ";
 
@@ -854,13 +860,13 @@ _test_cls_triangulation_3(const Triangulation &)
     f_edges.clear();
     f_facets.clear();
     f_cells.clear();
-
+    
     for(Finite_vertices_iterator i = T2[k]->finite_vertices_begin();
-        i != T2[k]->finite_vertices_end(); ++i) {
+	i != T2[k]->finite_vertices_end(); ++i) {
       // old name (up to CGAL 3.4)
       // kept for backwards compatibility but not documented
       T2[k]->finite_incident_vertices(i, std::back_inserter(f_vertices_old));
-      // correct name
+      // correct name 
       T2[k]->finite_adjacent_vertices(i, std::back_inserter(f_vertices));
       assert(check_all_are_finite(T2[k], f_vertices));
       T2[k]->finite_incident_edges(i, std::back_inserter(f_edges));
@@ -890,14 +896,14 @@ _test_cls_triangulation_3(const Triangulation &)
     assert(2*nb_f_edges == f_edges.size());
     assert(3*nb_f_facets == f_facets.size());
     assert(3*nb_f_facets == f_cells.size());
-
+    
     typename Cls::size_type nb_f_vertices = T2[k]->number_of_vertices();
-
+    
     // Euler relation
     assert(nb_f_vertices - nb_f_edges + nb_f_facets == 1);
     std::cout << "ok\n";
   }
-
+  
        // Finite incident_* to vertex test
   std::cout << "    Testing finite_incident_* in dim 3  "<< std::endl;
 
@@ -922,13 +928,13 @@ _test_cls_triangulation_3(const Triangulation &)
     f_edges.clear();
     f_facets.clear();
     f_cells.clear();
-
+    
     for(Finite_vertices_iterator i = T3[k]->finite_vertices_begin();
-        i != T3[k]->finite_vertices_end(); ++i) {
+	i != T3[k]->finite_vertices_end(); ++i) {
       // old name (up to CGAL 3.4)
       // kept for backwards compatibility but not documented
       T3[k]->finite_incident_vertices(i, std::back_inserter(f_vertices_old));
-      // correct name
+      // correct name 
       T3[k]->finite_adjacent_vertices(i, std::back_inserter(f_vertices));
       assert(check_all_are_finite(T3[k], f_vertices));
       T3[k]->finite_incident_edges(i, std::back_inserter(f_edges));
@@ -957,16 +963,16 @@ _test_cls_triangulation_3(const Triangulation &)
       ++nb_f_cells;
       ++fcit;
     }
-
+    
     // incidences
     assert(f_edges.size() == f_vertices_old.size());
     assert(f_edges.size() == f_vertices.size());
     assert(2*nb_f_edges == f_edges.size());
     assert(3*nb_f_facets == f_facets.size());
     assert(4*nb_f_cells == f_cells.size());
-
+    
     typename Cls::size_type nb_f_vertices = T3[k]->number_of_vertices();
-
+    
     // Euler relation
     assert(nb_f_vertices - nb_f_edges + nb_f_facets - nb_f_cells == 1);
     std::cout << "ok\n";
@@ -989,11 +995,11 @@ _test_cls_triangulation_3(const Triangulation &)
   _test_vertex_iterator(T3_1);
   _test_triangulation_iterator(T3_1);
   _test_vertex_iterator(T3_0);
-  _test_triangulation_iterator(T3_0);
-  _test_vertex_iterator(T3_2);
-  _test_triangulation_iterator(T3_2);
+  _test_triangulation_iterator(T3_0); 
+  _test_vertex_iterator(T3_2);        
+  _test_triangulation_iterator(T3_2); 
   _test_vertex_iterator(T3_3);
-  _test_triangulation_iterator(T3_3);
+  _test_triangulation_iterator(T3_3); 
 
   std::cout << "    Testing Circulator  "<< std::endl;
   _test_circulator(T0);

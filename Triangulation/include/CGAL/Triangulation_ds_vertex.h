@@ -26,7 +26,7 @@ namespace CGAL {
  * 'Triangulation_ds_vertex<TDS>'
  */
 template< class TDS = void >
-class Triangulation_ds_vertex
+class Triangulation_ds_vertex 
 {
     typedef Triangulation_ds_vertex<TDS>    Self;
 
@@ -102,7 +102,7 @@ public:
 public: // FOR MEMORY MANAGEMENT
 
     void*   for_compact_container() const { return full_cell_.for_compact_container(); }
-    void* & for_compact_container()       { return full_cell_.for_compact_container(); }
+    void    for_compact_container(void *p){ full_cell_.for_compact_container(p); }
 
 };  // end of Triangulation_ds_vertex
 
