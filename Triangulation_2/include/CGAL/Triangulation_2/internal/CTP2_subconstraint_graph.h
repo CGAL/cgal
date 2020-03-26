@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Simon Giraudot
 
@@ -53,24 +53,24 @@ public:
   typedef boost::transform_iterator<Subconstr_uf, typename CTP2::Subconstraint_iterator> edge_iterator;
 
   CTP2_subconstraint_graph (CTP2& ctp2) : ctp2(ctp2) { }
-  
+
   friend Iterator_range<vertex_iterator> vertices (const CTP2_subconstraint_graph& g)
   {
     return make_range (vertex_iterator(g.ctp2.finite_vertices_begin()),
                        vertex_iterator(g.ctp2.finite_vertices_end()));
   }
-  
+
   friend Iterator_range<edge_iterator> edges (const CTP2_subconstraint_graph& g)
   {
     return make_range (boost::make_transform_iterator(g.ctp2.subconstraints_begin(), Subconstr_uf(Subconstr_map())),
                        boost::make_transform_iterator(g.ctp2.subconstraints_end(), Subconstr_uf(Subconstr_map())));
   }
-  
+
   friend vertex_descriptor source (edge_descriptor ed, const CTP2_subconstraint_graph&)
   {
     return ed.first;
   }
-  
+
   friend vertex_descriptor target (edge_descriptor ed, const CTP2_subconstraint_graph&)
   {
     return ed.second;
@@ -90,13 +90,13 @@ private:
 public:
 
   CTP2_graph_visitor (CTP2& ctp2) : ctp2 (ctp2) { }
-  
+
   void start_new_polyline()
   {
     latest_vertex = typename CTP2::Vertex_handle();
     current = typename CTP2::Constraint_id();
   }
-  
+
   void add_node (typename CTP2::Vertex_handle vh)
   {
     if (latest_vertex != typename CTP2::Vertex_handle())
@@ -110,7 +110,7 @@ public:
     }
     latest_vertex = vh;
   }
-  
+
   void end_polyline()
   {
     for (typename CTP2::Constraint_id id : to_remove)
