@@ -21,7 +21,7 @@ This component implements the algorithm described in \cgalCite{cgal:lm-clscm-12}
 - a set of labels (for example: _ground_, _building_, _vegetation_) is defined by the user;
 - a classifier is defined and trained: from the set of values taken by the features at an input item, it measures the likelihood of this item to belong to one label or another;
 - classification is computed itemwise using the classifier;
-- additional regularization can be used by smoothing either locally or globally through a _Graph Cut_ \cgalCite{Boykov2001FastApproximate} approach.
+- additional regularization can be used by smoothing either locally or globally through a _graph cut_ \cgalCite{Boykov2001FastApproximate} approach.
 
 \cgalFigureBegin{Classification_organization_fig,organization.svg}
 Organization of the package.
@@ -51,7 +51,7 @@ The computation of features and their addition to the feature set is done in a s
 
 \snippet Classification/example_classification.cpp Features
 
-Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from [Feature_base](@ref CGAL::Classification::Feature_base) and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associates a scalar value to each input item.
+Users may want to define their own features, especially if the input data set comes with additional properties that were not anticipated by \cgal. A user-defined feature must inherit from [Feature_base](@ref CGAL::Classification::Feature_base) and provide a method [value()](@ref CGAL::Classification::Feature_base::value) that associates a scalar value to each input item. 
 
 The following example shows how to define a feature that discriminates
 points that lie inside a 2D box from the others:
@@ -107,7 +107,7 @@ Users commonly want to use all predefined features to get the best result possib
 - it generates all needed analysis structures and provides access to them;
 - it generates all possible features (among all the \cgal predefined ones) based on which property maps are available (they use colors if available, etc.).
 
-Multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}.
+Multiple scales that are sequentially larger can be used to increase the quality of the results \cgalCite{cgal:hws-fsso3-16}. 
 
 Note that using this class in order to generate features is not mandatory, as features and data structures can all be handled by hand. It is mainly provided to make the specific case of point sets simpler to handle. Users can still add their own features within their feature set.
 
@@ -118,7 +118,7 @@ The following snippet shows how to use the point set feature generator:
 \snippet Classification/example_generation_and_training.cpp Generator
 
 \cgalFigureBegin{Classification_point_set_fig,point_set.png}
-Example of point set classification (left: input, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green.
+Example of point set classification (left: input, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green. 
 \cgalFigureEnd
 
 \subsection Classification_meshes Mesh Classification
@@ -149,7 +149,7 @@ The following snippet shows how to use the mesh feature generator:
 The [full example](@ref Classification_example_mesh) is given at the end of the manual.
 
 \cgalFigureBegin{Classification_mesh_fig,mesh.png}
-Example of mesh classification (left: input, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green.
+Example of mesh classification (left: input, right: output). _Ground_ is grey, _roofs_ are orange, _vegetation_ is green. 
 \cgalFigureEnd
 
 \subsection Classification_clusters Cluster Classification
@@ -351,7 +351,7 @@ Example of classification on a point set with medium noise and outliers (left: i
 
 %Classification is performed by minimizing an energy over the input data set that may include regularization. \cgal provides three different methods for classification, ranging from high speed / low quality to low speed / high quality:
 
-- `CGAL::Classification::classify()`
+- `CGAL::Classification::classify()` 
 - `CGAL::Classification::classify_with_local_smoothing()`
 - `CGAL::Classification::classify_with_graphcut()`
 
@@ -431,7 +431,7 @@ quantifies the strengh of the regularization, \f$i \sim j\f$
 represents the pairs of neighboring items and
 \f$\mathbf{1}_{\{.\}}\f$ the characteristic function.
 
-A _Graph Cut_ based algorithm (Alpha Expansion) is used to quickly reach
+A _graph cut_ based algorithm (alpha expansion) is used to quickly reach
 an approximate solution close to the global optimum of this energy.
 
 This method allows to consistently segment the input data set in
