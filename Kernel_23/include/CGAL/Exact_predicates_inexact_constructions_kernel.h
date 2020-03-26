@@ -36,7 +36,29 @@ class Epick
 #endif
 {};
 
-typedef Epick Exact_predicates_inexact_constructions_kernel;
+template < typename CK >
+struct Static_filters_without_intervals_base
+  : public internal::Static_filters< CK >
+{
+    template < typename Kernel2 >
+    struct Base {
+        typedef typename CK::template Base<Kernel2>::Type  CK2;
+        typedef Static_filters_without_intervals_base<CK2> Type;
+    };
+};
+
+class Epick_without_intervals
+  : public Static_filters_without_intervals_base<
+      Type_equality_wrapper< Simple_cartesian<double>::Base<Epick_without_intervals>::Type,
+                             Epick_without_intervals > >
+{};
+
+template <>
+struct Triangulation_structural_filtering_traits<Epick_without_intervals> {
+  typedef Tag_true Use_structural_filtering_tag;
+};
+
+typedef Epick_without_intervals Exact_predicates_inexact_constructions_kernel;
 
 template <>
 struct Triangulation_structural_filtering_traits<Epick> {

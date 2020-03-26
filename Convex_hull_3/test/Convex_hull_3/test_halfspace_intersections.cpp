@@ -14,7 +14,7 @@ void test()
 {
   typedef typename K::Plane_3                                            Plane;
   typedef typename K::Point_3                                            Point;
-
+ 
   // generates supporting planes of the facets of a cube
   std::vector<Plane> planes;
 
@@ -73,7 +73,7 @@ void test()
 
 
 int main()
-{
+{ 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic;
   typedef CGAL::Exact_predicates_exact_constructions_kernel Epec;
 
@@ -81,4 +81,6 @@ int main()
   test<Epec,CGAL::Polyhedron_3<Epec> >();
   test<Epic,CGAL::Surface_mesh<Epic::Point_3> >();
   test<Epec,CGAL::Surface_mesh<Epec::Point_3> >();
+  test<CGAL::Epick_without_intervals,
+       CGAL::Surface_mesh<CGAL::Epick_without_intervals::Point_3> >();
 }
