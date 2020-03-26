@@ -26,6 +26,7 @@
 #include <CGAL/Polyline_simplification_2/Stop_below_count_threshold.h>
 #include <CGAL/Polyline_simplification_2/Stop_above_cost_threshold.h>
 #include <CGAL/Modifiable_priority_queue.h>
+#include <boost/unordered_map.hpp>
 #include <CGAL/algorithm.h>
 
 // Needed for Polygon_2
@@ -80,7 +81,6 @@ public:
       return (*x)->cost() < (*y)->cost();
     }
   } ;
-
   struct Id_map : public boost::put_get_helper<std::size_t, Id_map>
   {
     typedef boost::readable_property_map_tag category;
@@ -94,7 +94,7 @@ public:
   typedef CGAL::Modifiable_priority_queue<Vertices_in_constraint_iterator,Compare_cost,Id_map> MPQ ;
 
   MPQ* mpq;
-
+  boost::unordered_map<int,typename MPQ::handle> h;
   Polyline_simplification_2(PCT& pct, CostFunction cost, StopFunction stop)
     : pct(pct), cost(cost), stop(stop), pct_initial_number_of_vertices(pct.number_of_vertices()), number_of_unremovable_vertices(0)
   {
@@ -156,7 +156,7 @@ public:
         boost::optional<FT> dist = cost(pct, it);
         if(dist){
           (*it)->set_cost(*dist);
-          (*mpq).push(it);
+          h[it.base()->id]= mpq->push(it);
           ++n;
         } else {
           // no need to set the costs as this vertex is not in the priority queue
@@ -254,6 +254,7 @@ operator()()
     }
   Vertices_in_constraint_iterator v = (*mpq).top();
   (*mpq).pop();
+  h.erase(v.base()->id);
   if(stop(pct, *v, (*v)->cost(), pct_initial_number_of_vertices, pct.number_of_vertices())){
     return false;
   }
@@ -263,36 +264,48 @@ operator()()
 
     if((*u)->is_removable()){
       boost::optional<FT> dist = cost(pct, u);
+      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_u = 
+          h.find(u.base()->id);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(u) ){
-          mpq->erase(u);
+        if( find_result_u != h.end()){
+          mpq->erase(u, find_result_u->second);
+          h.erase(u.base()->id);
         }
       } else {
+        if(find_result_u != h.end()){
+          typename MPQ::handle ex_h = find_result_u->second;
         (*u)->set_cost(*dist);
-        if(mpq->contains(u)){
-          mpq->update(u, true);
+          mpq->update(u, ex_h);
+          find_result_u->second = ex_h;
         }
         else{
-          mpq->push(u);
+          (*u)->set_cost(*dist);
+          h[u.base()->id]=mpq->push(u);
         }
       }
     }
 
     if((*w)->is_removable()){
       boost::optional<FT> dist = cost(pct, w);
+      typename boost::unordered_map<int,typename MPQ::handle>::iterator find_result_w = 
+          h.find(w.base()->id);
       if(! dist){
         // cost is undefined
-        if( mpq->contains(w) ){
-          mpq->erase(w);
+        if(find_result_w != h.end()){
+          mpq->erase(w, find_result_w->second);
+          h.erase(w.base()->id);
         }
       } else {
+        if(find_result_w != h.end()){
+          typename MPQ::handle ex_h = find_result_w->second;
         (*w)->set_cost(*dist);
-        if(mpq->contains(w)){
-          mpq->update(w, true);
+          mpq->update(w, ex_h);
+          find_result_w->second=ex_h;
         }
         else{
-          mpq->push(w);
+          (*w)->set_cost(*dist);
+          h[w.base()->id]=mpq->push(w);
         }
 
       }

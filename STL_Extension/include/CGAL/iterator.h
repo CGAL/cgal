@@ -1369,6 +1369,7 @@ public:
 
   Dispatch_output_iterator(const Dispatch_output_iterator&)=default;
 
+
   Self& operator=(const Self& s)
   {
     static_cast<Iterator_tuple&>(*this) = static_cast<const Iterator_tuple&>(s);
@@ -1450,6 +1451,7 @@ public:
 
   Dispatch_or_drop_output_iterator(const Dispatch_or_drop_output_iterator&)=default;
   Dispatch_or_drop_output_iterator& operator=(const Dispatch_or_drop_output_iterator&)=default;
+
 
   using Base::operator=;
 

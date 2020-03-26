@@ -503,8 +503,9 @@ private:
   #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
   typedef boost::relaxed_heap<PVertex, less_PVertex, PVertex_id> PQueue;
   #else
-  typedef ::CGAL::internal::mutable_queue_with_remove<PVertex,std::vector<PVertex>, less_PVertex, PVertex_id> PQueue;
+  typedef CGAL::Modifiable_priority_queue<PVertex,less_PVertex,PVertex_id> PQueue;
   #endif //CGAL_MESH_3_USE_RELAXED_HEAP
+  typedef typename boost::unordered_map<std::size_t,typename PQueue::handle> Handle_map;
 
 public:
   /**
@@ -718,6 +719,7 @@ private:
   SliverCriterion sliver_criterion_;
   Perturbation_vector perturbation_vector_;
   C3T3_helpers helper_;
+  mutable Handle_map h;
 
   // Internal perturbation ordering
   int next_perturbation_order_;
@@ -778,8 +780,7 @@ operator()(Visitor visitor)
 #endif
 
   // Build priority queue (we use one queue for all steps)
-  PQueue pqueue(tr_.number_of_vertices());
-
+  PQueue pqueue(0,less_PVertex(),PVertex_id());
   // Initialize vertices ids
   initialize_vertices_id();
 
@@ -935,10 +936,11 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
   {
     this->create_root_task();
 
-    while (pqueue.size() > 0)
+    while (! pqueue.empty() )
     {
       PVertex pv = pqueue.top();
       pqueue.pop();
+      h.erase(pv.id());
       enqueue_task(pv, sliver_bound,
                    visitor, bad_vertices);
     }
@@ -972,6 +974,7 @@ perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
       // Get pqueue head
       PVertex pv = pqueue.top();
       pqueue.pop();
+      h.erase(pv.id());
       --pqueue_size;
 
       CGAL_assertion(pv.is_perturbable());
@@ -1229,16 +1232,21 @@ int
 Sliver_perturber<C3T3,Md,Sc,V_>::
 update_priority_queue(const PVertex& pv, PQueue& pqueue) const
 {
-  if ( pqueue.contains(pv) )
+  typename Handle_map::iterator pvh = 
+      h.find(pv.id());
+  if ( pvh != h.end() )
   {
     if ( pv.is_perturbable() )
     {
-      pqueue.update(pv);
+      typename PQueue::handle ex_h = pvh->second;
+      pqueue.update(pv, ex_h);
+      pvh->second = ex_h;
       return 0;
     }
     else
     {
-      pqueue.remove(pv);
+      pqueue.erase(pv, pvh->second);
+      h.erase(pv.id());
       return -1;
     }
   }
@@ -1246,7 +1254,7 @@ update_priority_queue(const PVertex& pv, PQueue& pqueue) const
   {
     if ( pv.is_perturbable() )
     {
-      pqueue.push(pv);
+      h[pv.id()] = pqueue.push(pv);
       return 1;
     }
   }
