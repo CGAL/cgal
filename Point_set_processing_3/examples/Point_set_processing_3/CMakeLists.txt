@@ -14,7 +14,7 @@ if ( CGAL_FOUND )
   if (MSVC)
     # Quit warning in the lasreader
     add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
-    
+
     if ( CMAKE_SIZEOF_VOID_P EQUAL 4 )
       # Allow Windows 32bit applications to use up to 3GB of RAM
       SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
@@ -30,7 +30,7 @@ if ( CGAL_FOUND )
   option(CGAL_ACTIVATE_CONCURRENT_PSP3
          "Enable concurrency"
          OFF)
-     
+
   if( CGAL_ACTIVATE_CONCURRENT_PSP3 OR ENV{CGAL_ACTIVATE_CONCURRENT_PSP3} )
     find_package( TBB REQUIRED )
   endif()
@@ -50,7 +50,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "read_ply_points_with_colors_example.cpp" )
   create_single_source_cgal_program( "write_ply_points_example.cpp" )
-    
+
   find_package(LASLIB)
   if (LASLIB_FOUND)
     create_single_source_cgal_program( "read_las_example.cpp" )
@@ -58,17 +58,17 @@ if ( CGAL_FOUND )
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
-  
+
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
     # Executables that require Eigen
     create_single_source_cgal_program( "jet_smoothing_example.cpp" )
     CGAL_target_use_Eigen(jet_smoothing_example)
-    
+
     create_single_source_cgal_program( "normal_estimation.cpp" )
     CGAL_target_use_Eigen(normal_estimation)
-    
+
     create_single_source_cgal_program( "edges_example.cpp" )
 
     # Executables that require libpointmatcher
@@ -80,7 +80,7 @@ if ( CGAL_FOUND )
     else()
       message(STATUS "NOTICE : the registration_with_pointmatcher test requires libpointmatcher and will not be compiled.")
     endif()
-    
+
     # Executables that require OpenGR
     find_package(OpenGR QUIET)
     if (OpenGR_FOUND)
@@ -102,13 +102,13 @@ if ( CGAL_FOUND )
     endif()
 
     CGAL_target_use_Eigen(edges_example)
-    
+
     create_single_source_cgal_program( "callback_example.cpp" )
     CGAL_target_use_Eigen(callback_example)
-    
+
     create_single_source_cgal_program( "scale_estimation_example.cpp" )
     CGAL_target_use_Eigen(scale_estimation_example)
-    
+
     create_single_source_cgal_program( "scale_estimation_2d_example.cpp" )
     CGAL_target_use_Eigen(scale_estimation_2d_example)
 

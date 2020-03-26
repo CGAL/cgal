@@ -42,11 +42,11 @@ int main()
   create_path_1(p1);
   create_path_2(p2);
   create_path_3(p3);
-  
+
   bool res1=cst.is_contractible(p1);
   std::cout<<"Path p1 (pink) "<<(res1?"IS":"IS NOT")
            <<" contractible."<<std::endl;
-  
+
   bool res2=cst.are_freely_homotopic(p1, p2);
   std::cout<<"Path p1 (pink) "<<(res2?"IS":"IS NOT")
            <<" homotopic with path p2 (green)."<<std::endl;
@@ -59,7 +59,7 @@ int main()
   std::vector<Path_on_surface<LCC_3_cmap> > paths={p1, p2, p3};
   CGAL::draw(lcc, paths); // Enable only if CGAL was compiled with Qt5
 #endif // CGAL_USE_BASIC_VIEWER
-  
+
   return EXIT_SUCCESS;
 }
 ///////////////////////////////////////////////////////////////////////////////

@@ -43,7 +43,7 @@ public:
                                  QWidget* /*parent*/ = 0)
   {
     setupUi(this);
-    
+
     for (std::size_t i = 0; i < items.size(); ++ i)
     {
       QRadioButton* button = new QRadioButton(items[i]->name().toStdString().c_str(), this);
@@ -103,7 +103,7 @@ class Polyhedron_demo_register_point_sets_plugin :
 
 private:
   QAction* actionRegisterPointSets;
-  
+
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
@@ -116,7 +116,7 @@ public:
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionRegisterPointSets;
   }
-  
+
   bool applicable(QAction*) const {
     return get_point_set_items().size() >= 2;
   }
@@ -132,7 +132,7 @@ public:
       if(item && item->point_set()->has_normal_map())
         items.push_back (item);
     }
-    
+
     return items;
   }
 
@@ -158,7 +158,7 @@ void Polyhedron_demo_register_point_sets_plugin::on_actionRegisterPointSets_trig
   {
     if (i == ref)
       continue;
-    
+
     std::cerr << "Registering " << items[i]->name().toStdString() << " with " << items[ref]->name().toStdString() << std::endl;
 
     Point_set& ps1 = *(items[ref]->point_set());
@@ -179,7 +179,7 @@ void Polyhedron_demo_register_point_sets_plugin::on_actionRegisterPointSets_trig
                                           .overlap(dialog.overlap()),
                                           CGAL::parameters::point_map(ps2.point_map())
                                           .normal_map(ps2.normal_map()));
-    
+
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << " -> Registration score = " << score << " ("
                 << task_timer.time() << " seconds, "
@@ -193,7 +193,7 @@ void Polyhedron_demo_register_point_sets_plugin::on_actionRegisterPointSets_trig
       std::cerr << "* Fine registration: " << std::endl;
 
       std::istringstream ss (dialog.pointmatcher_config());
-      
+
       CGAL::Timer task_timer; task_timer.start();
       if (CGAL::pointmatcher::register_point_sets(ps1, ps2,
                                             CGAL::parameters::point_map(ps1.point_map())
@@ -204,7 +204,7 @@ void Polyhedron_demo_register_point_sets_plugin::on_actionRegisterPointSets_trig
         std::cerr << " -> Success";
       else
         std::cerr << " -> Failure";
-    
+
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << " ("
                 << task_timer.time() << " seconds, "
@@ -212,9 +212,9 @@ void Polyhedron_demo_register_point_sets_plugin::on_actionRegisterPointSets_trig
                 << std::endl;
     }
 #endif
-    
+
   }
-  
+
   for (std::size_t i = 0; i < items.size(); ++ i)
   {
     items[i]->invalidateOpenGLBuffers();

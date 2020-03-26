@@ -745,7 +745,7 @@ private:
     default:
       break;
     }
-    
+
     Tc* tc = getTriangleContainer(0);
     tc->allocate(Tc::Flat_vertices,
                  positions_quad.data(),
@@ -755,8 +755,8 @@ private:
           tex_map.data(),
           static_cast<int>(tex_map.size()*sizeof(float)));
     tc->getTexture()->setData(texture->getData());
-    
-    
+
+
     tc = getTriangleContainer(1);
     tc->allocate(Tc::Flat_vertices,
                  positions_quad.data(),
@@ -767,7 +767,7 @@ private:
           positions_lines.data(),
           static_cast<int>(positions_lines.size()*sizeof(float)));
     setBuffersFilled(true);
-    
+
   }
 
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const Q_DECL_OVERRIDE

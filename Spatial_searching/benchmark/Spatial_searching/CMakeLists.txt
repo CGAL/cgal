@@ -49,8 +49,8 @@ find_package(Eigen3 3.1.91) #(requires 3.2.0 or greater)
   endforeach()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

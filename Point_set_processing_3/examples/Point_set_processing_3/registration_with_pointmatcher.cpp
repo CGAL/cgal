@@ -49,7 +49,7 @@ int main(int argc, const char** argv)
     return EXIT_FAILURE;
   }
   input.close();
-  
+
   //
   // Prepare ICP config
   //
@@ -68,7 +68,7 @@ int main(int argc, const char** argv)
   point_set_2_filters.push_back( ICP_config { /*.name=*/"MinDistDataPointsFilter"       , /*.params=*/{ {"minDist", "0.5" }}  } );
   point_set_2_filters.push_back( ICP_config { /*.name=*/"RandomSamplingDataPointsFilter", /*.params=*/{ {"prob"   , "0.05"}}  } );
 
-	// Prepare matcher function
+        // Prepare matcher function
   ICP_config matcher { /*.name=*/"KDTreeMatcher", /*.params=*/{ {"knn", "1"}, {"epsilon", "3.16"} } };
 
   // Prepare outlier filters
@@ -83,7 +83,7 @@ int main(int argc, const char** argv)
   transformation_checkers.push_back( ICP_config { /*.name=*/"CounterTransformationChecker", /*.params=*/{ {"maxIterationCount", "150" }}  } );
   transformation_checkers.push_back( ICP_config { /*.name=*/"DifferentialTransformationChecker", /*.params=*/{ {"minDiffRotErr"  , "0.001" },
                                                                                                        {"minDiffTransErr", "0.01"  },
-                                                                                                       {"smoothLength"   , "4"     } }  
+                                                                                                       {"smoothLength"   , "4"     } }
                                                 } );
   // Prepare inspector
   ICP_config inspector { /*.name=*/"NullInspector" };
@@ -96,7 +96,7 @@ int main(int argc, const char** argv)
   // EITHER call the ICP registration method pointmatcher to get the transformation to apply to pwns2
   std::pair<K::Aff_transformation_3, bool> res =
   CGAL::pointmatcher::compute_registration_transformation
-    (pwns1, pwns2, 
+    (pwns1, pwns2,
      params::point_map(Point_map()).normal_map(Normal_map())
      .point_set_filters(point_set_1_filters)
      .matcher(matcher)
@@ -110,14 +110,14 @@ int main(int argc, const char** argv)
      .transformation(identity_transform) /* initial transform for pwns2.
                                           * default value is already identity transform.
                                           * a proper initial transform could be given, for example,
-                                          * a transform returned from a coarse registration algorithm. 
+                                          * a transform returned from a coarse registration algorithm.
                                           * */
      );
 
   // OR call the ICP registration method from pointmatcher and apply the transformation to pwn2
   bool converged =
   CGAL::pointmatcher::register_point_sets
-    (pwns1, pwns2, 
+    (pwns1, pwns2,
      params::point_map(Point_map()).normal_map(Normal_map())
      .point_set_filters(point_set_1_filters)
      .matcher(matcher)

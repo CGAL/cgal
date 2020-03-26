@@ -145,7 +145,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   
+
    Computes the registration of `point_set_2` with respect to `point_set_1` and
    returns the corresponding affine transformation along with the registration
    score.

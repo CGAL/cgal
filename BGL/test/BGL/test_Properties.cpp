@@ -67,7 +67,7 @@ void test_uniqueness(const Graph&,
   std::cout << "Element type: " << typeid(typename boost::range_value<ForwardRange>::type).name() << std::endl;
 #endif
 
-  typename boost::range_iterator<ForwardRange>::type 
+  typename boost::range_iterator<ForwardRange>::type
     begin = boost::begin(range),
     begin2 = boost::begin(range),
     end = boost::end(range);

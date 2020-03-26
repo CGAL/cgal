@@ -661,7 +661,7 @@ Polygon construct_canonical_polygon(const PointRange& points,
     reversed = false;
     return polygon;
   }
-  
+
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Input polygon:";

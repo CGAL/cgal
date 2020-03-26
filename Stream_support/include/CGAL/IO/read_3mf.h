@@ -438,7 +438,7 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
  * \param names will contain the name of each mesh in `file_name` if any.
  *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
  * \return the number of soups read.
- * 
+ *
  * \attention Only versions inferior to 2.0 of lib3mf are supported.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>

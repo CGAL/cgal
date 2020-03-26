@@ -33,7 +33,7 @@ namespace Surface_mesh_topology {
     {
       struct Info_for_darts
       { std::string m_label; };
-      
+
       typedef Info_for_darts Dart_info;
     };
   };

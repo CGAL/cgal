@@ -129,7 +129,7 @@ void test_surface_mesh_cc(const char* fname,
     std::cerr << "Error: can not read file.";
     return;
   }
-  
+
   std::size_t res = PMP::stitch_borders(mesh, params::apply_per_connected_component(true));
   std::cout << "res: " << res << " (expected: " << expected_n << ")" << std::endl;
 

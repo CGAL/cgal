@@ -33,7 +33,7 @@ if(CGAL_FOUND)
 
     create_single_source_cgal_program(
       "shape_detection_basic_deprecated.cpp")
-    
+
     foreach(target
         efficient_RANSAC_basic
         efficient_RANSAC_with_callback
@@ -45,7 +45,7 @@ if(CGAL_FOUND)
         shape_detection_basic_deprecated)
       CGAL_target_use_Eigen(${target})
     endforeach()
-    
+
   endif()
 
   create_single_source_cgal_program(
@@ -56,6 +56,6 @@ if(CGAL_FOUND)
     "efficient_RANSAC_with_point_access.cpp")
 
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

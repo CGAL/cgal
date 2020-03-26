@@ -42,8 +42,8 @@ CGAL::Cartesian_static_filters<CGAL::Dimension_tag<2>, // Yes, it is silly to pu
  >, RC
 >
 {
-	RC(){}
-	RC(int){}
+        RC(){}
+        RC(int){}
 };
 
 struct K0 : RC {};
