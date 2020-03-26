@@ -133,10 +133,10 @@ intersection(
         res[1] = p2;
         res[2] = p1;
         res[3] = entry_seg.source();
-        
-        typename K::Coplanar_orientation_3 coplanar_orientation = 
+
+        typename K::Coplanar_orientation_3 coplanar_orientation =
           k.coplanar_orientation_3_object();
-        
+
         if( coplanar_orientation(res[0], res[1], res[2])
             != coplanar_orientation(res[0], res[1], res[3]))
         {
@@ -157,9 +157,9 @@ intersection(
       res[1] = back.target();
       res[2] = back.source();
       res[3] = front.source();
-      typename K::Coplanar_orientation_3 coplanar_orientation = 
+      typename K::Coplanar_orientation_3 coplanar_orientation =
         k.coplanar_orientation_3_object();
-      
+
       if( coplanar_orientation(res[0], res[1], res[2])
           != coplanar_orientation(res[0], res[1], res[3]))
       {
@@ -191,7 +191,7 @@ intersection(
       res.push_back(cub.vertex(1));
       res.push_back(cub.vertex(6));
       res.push_back(cub.vertex(5));
-      
+
     }
     else if(has_on(pl, cub.vertex(1))
             && has_on(pl, cub.vertex(2))
@@ -235,7 +235,7 @@ intersection(
   default:
     break;
   }
-  
+
   Poly filtered_points;
   filter_points(points, filtered_points);
 

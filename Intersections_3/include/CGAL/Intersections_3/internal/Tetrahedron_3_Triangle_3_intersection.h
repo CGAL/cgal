@@ -245,11 +245,11 @@ intersection(
       {
         Poly res;
         res.reserve(5);
-        typename K::Compute_scalar_product_3 scalar = 
+        typename K::Compute_scalar_product_3 scalar =
           k.compute_scalar_product_3_object();
-        typename K::Construct_vector_3 construct_vector = 
+        typename K::Construct_vector_3 construct_vector =
           k.construct_vector_3_object();
-        
+
         if(scalar(construct_vector(inside_points.front(), inside_points.back()),
            construct_vector(tmp.front(), tmp.back())) > 0)
         {

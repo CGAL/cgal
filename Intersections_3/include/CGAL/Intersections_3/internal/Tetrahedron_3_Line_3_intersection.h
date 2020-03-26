@@ -35,17 +35,17 @@ struct Tetrahedron_Line_intersection_3
       const typename K::Tetrahedron_3& tet,
       const typename K::Line_3& o):Base(tet,o)
   {}
-  
+
   bool all_inside_test()
   {
     return false;
   }
-  
+
   bool are_extremities_inside_test()
   {
     return false;
   }
-  
+
 };
 
 //Tetrahedron_3 Line_3

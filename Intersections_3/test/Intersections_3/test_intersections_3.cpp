@@ -20,7 +20,7 @@ const double epsilon = 0.001;
 
 struct randomint {
   randomint() ;
-  int	get() const { return sequence[cur]; }
+  int        get() const { return sequence[cur]; }
   int next() { cur = (cur+1)%11; return get();}
 private:
   int sequence[11];
@@ -1262,7 +1262,7 @@ int main()
 {
   std::cout << " |||||||| Test Simple_cartesian<double> ||||||||" << std::endl;
   Test< CGAL::Simple_cartesian<double> >().run();
-  
+
   std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::MP_Float> ||||||||" << std::endl;
   Test< CGAL::Homogeneous<CGAL::MP_Float> >().run();
 

@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Philipp Möller
 
@@ -72,7 +72,7 @@ CGAL_INTERSECTION_TRAITS_3(Sphere_3, Sphere_3, Point_3, Circle_3, Sphere_3)
 
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_3, typename K::Triangle_3>  {
-  typedef typename 
+  typedef typename
   boost::variant< typename K::Point_3, typename K::Segment_3, typename K::Triangle_3,
                   typename std::vector< typename K::Point_3 > > variant_type;
   typedef typename boost::optional< variant_type > result_type;
@@ -96,7 +96,7 @@ CGAL_INTERSECTION_TRAITS_2(Iso_cuboid_3, Ray_3, Point_3, Segment_3)
 // Iso_cuboid_3 Iso_cuboid_3, variant of one
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Iso_cuboid_3>  {
-  typedef typename 
+  typedef typename
   boost::variant< typename K::Iso_cuboid_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
@@ -106,31 +106,31 @@ struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Iso_cuboid_3
 // Bbox_3 Line_3
 template<typename K>
 struct Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3>  {
-  typedef typename 
+  typedef typename
   boost::variant< typename K::Segment_3, typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
 
 template<typename K>
-struct Intersection_traits<K, typename K::Line_3, CGAL::Bbox_3> : 
+struct Intersection_traits<K, typename K::Line_3, CGAL::Bbox_3> :
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
 // Bbox_3 Segment_3
 template<typename K>
-struct Intersection_traits<K, typename K::Segment_3, CGAL::Bbox_3> : 
+struct Intersection_traits<K, typename K::Segment_3, CGAL::Bbox_3> :
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
 template<typename K>
-struct Intersection_traits<K, CGAL::Bbox_3, typename K::Segment_3> : 
+struct Intersection_traits<K, CGAL::Bbox_3, typename K::Segment_3> :
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
 // Bbox_3 Ray_3
 template<typename K>
-struct Intersection_traits<K, typename K::Ray_3, CGAL::Bbox_3> : 
+struct Intersection_traits<K, typename K::Ray_3, CGAL::Bbox_3> :
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
 template<typename K>
-struct Intersection_traits<K, CGAL::Bbox_3, typename K::Ray_3> : 
+struct Intersection_traits<K, CGAL::Bbox_3, typename K::Ray_3> :
     public Intersection_traits<K, CGAL::Bbox_3, typename K::Line_3> {};
 
 // Point_3 Iso_cuboid_3, variant of one
@@ -140,7 +140,7 @@ struct Intersection_traits<K, typename K::Point_3, typename K::Iso_cuboid_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
-  
+
 // Bbox_3 Point_3, variant of one
 template<typename K>
 struct Intersection_traits<K, Bbox_3, typename K::Point_3>  {
@@ -155,7 +155,7 @@ struct Intersection_traits<K, typename K::Point_3, Bbox_3>  {
   boost::variant< typename K::Point_3 > variant_type;
   typedef typename boost::optional< variant_type > result_type;
 };
-  
+
 
 // Bbox_3 Iso_cuboid_3, variant of 1
 template<typename K>
@@ -176,7 +176,7 @@ struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Point_3>  {
     boost::variant< typename K::Point_3 > variant_type;
     typedef typename boost::optional< variant_type > result_type;
 };
-  
+
 // Iso_cuboid_3 Plane_3, variant of 4
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_cuboid_3, typename K::Plane_3>  {
