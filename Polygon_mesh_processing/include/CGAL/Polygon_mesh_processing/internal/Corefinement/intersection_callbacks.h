@@ -107,6 +107,10 @@ public:
   void operator()( const Box& face_box, const Box& edge_box) const {
     halfedge_descriptor fh = face_box.info();
     halfedge_descriptor eh = edge_box.info();
+#ifdef CGAL_FORCE_DETERMINISTIC_COREFINEMENT
+    if (tm_edges.opposite(eh) < eh)
+      eh = tm_edges.opposite(eh);
+#endif
     if(is_border(eh,tm_edges)) eh = opposite(eh, tm_edges);
 
     //check if the segment intersects the plane of the facet or if it is included in the plane
