@@ -27,14 +27,14 @@ extern int scoreTime;
 
 namespace CGAL {
   namespace Shape_detection {
-
-    template<class Traits>
+  
+    template<class Traits> 
     class Efficient_RANSAC;
-
+    
   namespace internal {
 
     const std::size_t size_t_max = (std::numeric_limits<std::size_t>::max)();
-
+  
     template<class Sdt>
     class DirectPointAccessor {
     public:
@@ -43,7 +43,7 @@ namespace CGAL {
 
       DirectPointAccessor() {}
       DirectPointAccessor(const Input_iterator &begin,
-                          const Input_iterator &beyond,
+                          const Input_iterator &beyond, 
                           std::size_t offset) : m_first(begin), m_offset(offset) {
         m_beyond = (beyond == begin) ? begin : beyond - 1;
       }
@@ -204,7 +204,7 @@ namespace CGAL {
       FT get_z(const Point_3& p){ return m_traits.compute_z_3_object()(p); }
       FT get_coord(const Point_3& p, unsigned int d)
       {
-        CGAL_assertion(d >= 0 && d < 3);
+        CGAL_assertion(d < 3);
         switch (d)
         {
           case 0: return get_x(p);
@@ -221,9 +221,9 @@ namespace CGAL {
 
       Point_3 transl(const Point_3& p, const Vector_3 &v)
       { return m_traits.construct_translated_point_3_object()(p, v); }
-
+        
     public:
-      Octree(Sd_traits const& traits)
+      Octree(Sd_traits const& traits) 
         : m_traits(traits), m_bucket_size(20), m_set_max_level(10), m_root(nullptr) {}
       Octree(Sd_traits const& traits,
              const Input_iterator &first,
@@ -231,7 +231,7 @@ namespace CGAL {
              Point_map& point_pmap,
              Normal_map& normal_pmap,
              std::size_t offset = 0,
-             std::size_t bucketSize = 20,
+             std::size_t bucketSize = 20, 
              std::size_t maxLevel = 10)
              : PointAccessor(first, beyond, offset),
                m_traits(traits),
@@ -276,7 +276,7 @@ namespace CGAL {
         {
           FT bbox_diagonal = (FT) CGAL::sqrt(
             (m_bBox.xmax() - m_bBox.xmin()) * (m_bBox.xmax() - m_bBox.xmin())
-            + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin())
+            + (m_bBox.ymax() - m_bBox.ymin()) * (m_bBox.ymax() - m_bBox.ymin()) 
             + (m_bBox.zmax() - m_bBox.zmin()) * (m_bBox.zmax() - m_bBox.zmin()));
 
           m_set_max_level = std::size_t (std::log (bbox_diagonal
@@ -294,7 +294,7 @@ namespace CGAL {
           m_max_level = std::max<std::size_t>(m_max_level, cell->level);
           if (cell->level == m_set_max_level)
             continue;
-
+          
           std::size_t zLowYHighXSplit, zLowYLowXSplit, zLowYSplit;
           std::size_t zHighYSplit, zHighYHighXSplit, zHighYLowXSplit;
 
@@ -307,14 +307,14 @@ namespace CGAL {
               zLowYLowXSplit = split(cell->first,
                                      zLowYSplit, 0, get_x(cell->center));
               zLowYHighXSplit = split(zLowYSplit + 1,
-                                      zSplit, 0, get_x(cell->center));
+                                      zSplit, 0, get_x(cell->center)); 
             }
             else {
               zLowYLowXSplit = size_t_max;
               zLowYHighXSplit = split(cell->first, zSplit, 0, get_x(cell->center));
             }
 
-            zHighYSplit = split(zSplit + 1, cell->last, 1, get_y(cell->center));
+            zHighYSplit = split(zSplit + 1, cell->last, 1, get_y(cell->center));  
 
             if (zHighYSplit != size_t_max) {
               zHighYHighXSplit = split(zHighYSplit + 1,
@@ -336,23 +336,23 @@ namespace CGAL {
             zHighYSplit = split(cell->first,
                                 cell->last,
                                 1,
-                                get_y(cell->center));
+                                get_y(cell->center)); 
 
             if (zHighYSplit != size_t_max) {
-              zHighYHighXSplit = split(zHighYSplit + 1,
-                                       cell->last,
-                                       0,
+              zHighYHighXSplit = split(zHighYSplit + 1, 
+                                       cell->last, 
+                                       0, 
                                        get_x(cell->center));
 
-              zHighYLowXSplit = split(cell->first,
+              zHighYLowXSplit = split(cell->first, 
                                       zHighYSplit,
-                                      0,
-                                      get_x(cell->center));
+                                      0, 
+                                      get_x(cell->center)); 
             }
             else {
               zHighYLowXSplit = size_t_max;
               zHighYHighXSplit = split(cell->first,
-                                       cell->last,
+                                       cell->last, 
                                        0,
                                        get_x(cell->center));
             }
@@ -367,7 +367,7 @@ namespace CGAL {
                 if (cell->first <= zLowYLowXSplit) {
                   //---
                   cell->child[7] = new Cell(cell->first,
-                                            zLowYLowXSplit,
+                                            zLowYLowXSplit, 
                                             transl(cell->center, constr_vec(
                                               ORIGIN, constr_pt(-width,-width,-width))),
                                             cell->level + 1);
@@ -381,7 +381,7 @@ namespace CGAL {
               if (zLowYLowXSplit < zLowYSplit || zLowYLowXSplit == size_t_max) {
                 //+--
                 cell->child[6] = new Cell(zLowYLowXSplit + 1,
-                                          zLowYSplit,
+                                          zLowYSplit, 
                                           transl(cell->center, constr_vec(
                                             ORIGIN, constr_pt(width,-width,-width))),
                                           cell->level + 1);
@@ -396,8 +396,8 @@ namespace CGAL {
 
               if (zLowYSplit < zLowYHighXSplit || zLowYSplit == size_t_max) {
                 //-+-
-                cell->child[5] = new Cell(zLowYSplit + 1,
-                                          zLowYHighXSplit,
+                cell->child[5] = new Cell(zLowYSplit + 1, 
+                                          zLowYHighXSplit, 
                                           transl(cell->center, constr_vec(
                                             ORIGIN, constr_pt(-width, width,-width))),
                                           cell->level + 1);
@@ -411,7 +411,7 @@ namespace CGAL {
             if (zLowYHighXSplit < zSplit || zLowYHighXSplit == size_t_max) {
               //++-
               cell->child[4] = new Cell(zLowYHighXSplit + 1,
-                                        zSplit,
+                                        zSplit, 
                                         transl(cell->center, constr_vec(
                                           ORIGIN, constr_pt(width, width,-width))),
                                         cell->level + 1);
@@ -442,7 +442,7 @@ namespace CGAL {
             if (zHighYLowXSplit < zHighYSplit || zHighYLowXSplit == size_t_max) {
               //+-+
               cell->child[2] = new Cell(zHighYLowXSplit + 1,
-                                        zHighYSplit,
+                                        zHighYSplit, 
                                         transl(cell->center, constr_vec(
                                           ORIGIN, constr_pt(width,-width, width))),
                                         cell->level + 1);
@@ -458,9 +458,9 @@ namespace CGAL {
             if (zHighYSplit < zHighYHighXSplit || zHighYSplit == size_t_max) {
               //-++
               cell->child[1] = new Cell(zHighYSplit + 1,
-                                        zHighYHighXSplit,
+                                        zHighYHighXSplit, 
                                         transl(cell->center, constr_vec(
-                                          ORIGIN, constr_pt(-width, width, width))),
+                                          ORIGIN, constr_pt(-width, width, width))), 
                                         cell->level + 1);
 
               if (cell->child[1]->size() > m_bucket_size)
@@ -472,7 +472,7 @@ namespace CGAL {
           if (zHighYHighXSplit <= cell->last || zHighYHighXSplit == size_t_max) {
             if (zHighYHighXSplit < cell->last || zHighYHighXSplit == size_t_max) {
               //+++
-              cell->child[0] = new Cell(zHighYHighXSplit + 1,
+              cell->child[0] = new Cell(zHighYHighXSplit + 1, 
                                         cell->last,
                                         transl(cell->center, constr_vec(
                                           ORIGIN, constr_pt(width, width, width))),
@@ -549,25 +549,25 @@ namespace CGAL {
 
       std::size_t fullScore(Shape *candidate,
                        std::vector<int> &shapeIndex,
-                       FT epsilon,
+                       FT epsilon, 
                        FT normal_threshold) {
 
         std::vector<std::size_t> indices(m_root->size());
         for (std::size_t i = 0;i<m_root->size();i++) {
           indices[i] = index(m_root->first + i);
         }
-
-        candidate->cost_function(this->begin() + m_root->first,
+        
+        candidate->cost_function(this->begin() + m_root->first, 
                                  this->begin() + m_root->last,
                                  shapeIndex,
-                                 epsilon,
-                                 normal_threshold,
+                                 epsilon, 
+                                 normal_threshold, 
                                  indices);
 
         return candidate->m_indices.size();
       }
 
-      std::size_t score(Shape *candidate,
+      std::size_t score(Shape *candidate, 
                    std::vector<int> &shapeIndex,
                    FT epsilon,
                    FT normal_threshold) {
@@ -599,8 +599,8 @@ namespace CGAL {
               }
             }
 
-            candidate->cost_function(epsilon,
-                                     normal_threshold,
+            candidate->cost_function(epsilon, 
+                                     normal_threshold, 
                                      indices);
           }
           else {
@@ -621,7 +621,7 @@ namespace CGAL {
       const Bbox_3 &boundingBox() {
         return m_bBox;
       }
-
+        
       const Bbox_3 &buildBoundingCube() {
         FT min[] = {std::numeric_limits<FT>::infinity(),
                     std::numeric_limits<FT>::infinity(),
@@ -642,7 +642,7 @@ namespace CGAL {
 
         m_bBox = Bbox_3(min[0], min[1], min[2], max[0], max[1], max[2]);
 
-        m_width = (std::max)(max[0] - min[0],
+        m_width = (std::max)(max[0] - min[0], 
           (std::max)(max[1] - min[1], max[2] - min[2])) * (FT) 0.5;
         m_center = constr_pt((min[0] + max[0]) * (FT) 0.5,
                              (min[1] + max[1]) * (FT) 0.5,
@@ -653,7 +653,7 @@ namespace CGAL {
 
       // returns index of last point below threshold
       std::size_t split(std::size_t first, std::size_t last, std::size_t dimension, FT threshold) {
-        if (last == size_t_max || first == size_t_max)
+        if (last == size_t_max || first == size_t_max) 
           return size_t_max;
 
         if (first > last)
@@ -718,7 +718,7 @@ namespace CGAL {
     };
   }
   }
-
+  
 }
 
 #endif
