@@ -71,7 +71,7 @@ struct Concurrent_compact_container_traits {
 
 namespace CCC_internal {
   CGAL_GENERATE_MEMBER_DETECTOR(increment_erase_counter);
-  
+
   // A basic "no erase counter" strategy
   template <bool Has_erase_counter_tag>
   class Erase_counter_strategy {

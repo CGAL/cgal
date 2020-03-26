@@ -208,7 +208,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-   
+
     while (!bits_.compare_exchange_weak(current_bits, current_bits | char(1 << facet)))
     {
       current_bits = bits_;
@@ -319,7 +319,7 @@ public:
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_()  
+    , subdomain_index_()
     , sliver_cache_validity_(false)
   {}
 
@@ -656,14 +656,14 @@ public:
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
   void set_next_intrusive(Cell_handle c)
-  { 
-    next_intrusive_ = c; 
+  {
+    next_intrusive_ = c;
   }
 
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
   void set_previous_intrusive(Cell_handle c)
-  { 
-    previous_intrusive_ = c; 
+  {
+    previous_intrusive_ = c;
   }
 #endif // CGAL_INTRUSIVE_LIST
 
