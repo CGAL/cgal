@@ -2,7 +2,7 @@
   \ingroup PkgSolverInterfaceConcepts
   \cgalConcept
 
-  The concept `SvdTraits` describes the linear algebra types and algorithms needed
+  The concept `SvdTraits` describes the linear algebra types and algorithms needed 
   to solve in the least square sense a linear system with a singular value decomposition
 
   \cgalHasModel `CGAL::Eigen_svd`
@@ -28,10 +28,10 @@ public:
     The matrix type,  model of the concept `SvdTraits::Matrix`.
   */
   typedef unspecified_type Matrix;
+  
+  /// @} 
 
-  /// @}
-
-  /// \name Operations
+  /// \name Operations 
   /// The concept `SvdTraits` has a linear solver using a
   /// singular value decomposition algorithm.
   /// @{
@@ -85,6 +85,9 @@ public:
 /*!
 \cgalConcept
 Concept of matrix type used by the concept `SvdTraits`.
+
+\cgalRefines `DefaultConstructible`
+\cgalRefines `Assignable`
 
 \cgalHasModel `CGAL::Eigen_matrix<T>`
 */
