@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -35,14 +35,14 @@ class Iterator_list : public std::list<Iterator> {
 public:
   Iterator_list() {}
 
-  Iterator_list(Iterator first, Iterator beyond) 
+  Iterator_list(Iterator first, Iterator beyond)
   {
       if (first == beyond) return;
 
       for (Iterator current = first; current != beyond; current++)
       {
          this->push_back(current);
-      } 
+      }
   }
 };
 

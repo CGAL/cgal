@@ -40,7 +40,7 @@ class Scene_interface;
   /*!
    * This virtual class provides the basic functions used for making a plugin.
    */
-class Polyhedron_demo_plugin_interface 
+class Polyhedron_demo_plugin_interface
 {
 public:
   //! \brief Initializes the plugin

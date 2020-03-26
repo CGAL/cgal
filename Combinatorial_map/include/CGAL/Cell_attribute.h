@@ -95,8 +95,8 @@ namespace CGAL {
   protected:
     void set_id(std::size_t id)
     { m_id=id; }
-    
-  protected:    
+
+  protected:
     /// id of the cell
     std::size_t m_id;
   };
@@ -105,7 +105,7 @@ namespace CGAL {
   template <>
   class Add_id<Tag_false>
   {};
-  
+
   /// Cell_attribute_without_info
   template <class Refs, class Tag=Tag_true, class OnMerge=Null_functor,
             class OnSplit=Null_functor, class WithID=Tag_false>

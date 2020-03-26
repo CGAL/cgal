@@ -17,18 +17,18 @@ typedef CDTP::Constraint_id                                               Constr
 int main()
 {
   CDTP cdtp;
-  
+
   Vertex_handle handle1 = cdtp.insert(Point(0,0));
   cdtp.insert(Point(0,10));
   Vertex_handle handle3 = cdtp.insert(Point(10,10));
   cdtp.insert(Point(10,0));
-  
+
   cdtp.insert_constraint(handle1,handle3);
-  
+
   cdtp.remove_constraint(handle1,handle3);
-  
+
   Constraint_id lastConstraintId = cdtp.insert_constraint(handle1,handle3);
-  
+
   if (lastConstraintId == Constraint_id()){
     std::cout << "problem" << std::endl;
     assert(false);

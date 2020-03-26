@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -84,16 +84,16 @@ public:
                const RT& max_hx, const RT& max_hy, const RT& max_hz,
                const RT& hw)
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
-				     max_hx, max_hy, max_hz, hw)) {}
+                                     max_hx, max_hy, max_hz, hw)) {}
 
   Iso_cuboid_3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
                const RT& max_hx, const RT& max_hy, const RT& max_hz)
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), min_hx, min_hy, min_hz,
-					     max_hx, max_hy, max_hz)) {}
+                                             max_hx, max_hy, max_hz)) {}
 
   Iso_cuboid_3(const Bbox_3& bbox)
    : Rep(typename R::Construct_iso_cuboid_3()(Return_base_tag(), bbox.xmin(), bbox.ymin(), bbox.zmin(),
-				                                 bbox.xmax(), bbox.ymax(), bbox.zmax())) {}
+                                                                 bbox.xmax(), bbox.ymax(), bbox.zmax())) {}
 
   typename cpp11::result_of<typename R::Construct_min_vertex_3( Iso_cuboid_3 )>::type
   min BOOST_PREVENT_MACRO_SUBSTITUTION () const

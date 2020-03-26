@@ -47,10 +47,10 @@ int main()
     tree.insert(segments.begin(), segments.end());
     tree.build();
     assert(tree.closest_point(Point(-0.1, -0.1, -0.1)) == Point(0, 0, 0));
-    assert(tree.closest_point(Point(-0.1, -0.1, -0.1), Point(0, 0, 0)) == 
-	   Point(0, 0, 0));
+    assert(tree.closest_point(Point(-0.1, -0.1, -0.1), Point(0, 0, 0)) ==
+     Point(0, 0, 0));
     assert(tree.closest_point_and_primitive(Point(-0.1, -0.1, -0.1)).second ==
-	   segments.begin());
+     segments.begin());
     // Too lazy to call closest_point_and_primitive with a hint. The API is
     // strange. --Laurent Rineau, 2013/01/16
     assert(tree.do_intersect(plane_query) == true);

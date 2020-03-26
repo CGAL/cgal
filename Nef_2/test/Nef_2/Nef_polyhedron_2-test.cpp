@@ -13,7 +13,7 @@ typedef CGAL::Exact_rational Rational;
 int main()
 {
 #ifdef CGAL_CFG_ISTREAM_INT_BUG
-  std::locale::global(std::locale("C")); 
+  std::locale::global(std::locale("C"));
 #endif
 
   CGAL_NEF_SETDTHREAD(911); // 911
@@ -21,7 +21,7 @@ int main()
   std::cerr << "using " << CGAL::pointlocationversion << std::endl;
   std::cerr << "using " << CGAL::sweepversion << std::endl;
   CGAL_TEST_START;
-  
+
 {
   typedef  CGAL::Extended_homogeneous<Integer> EKernel;
   typedef  CGAL::Nef_polyhedron_2<EKernel> Nef_polyhedron;
@@ -50,7 +50,7 @@ int main()
 
   Nef_polyhedron N3 = N1.intersection(N2);
   // N3 is the first quadrant including the positive y-axis
-   //  but excluding the origin and the positive x-axis 
+   //  but excluding the origin and the positive x-axis
 
   CGAL_TEST(N3 < N1 && N3 < N2);
   CGAL_TEST(N3 <= N1 && N3 <= N2);
@@ -58,7 +58,7 @@ int main()
   CGAL_TEST(N1 >= N3 && N2 >= N3);
 
   Explorer E = N3.explorer();
-  Vertex_const_iterator v = E.vertices_begin(); 
+  Vertex_const_iterator v = E.vertices_begin();
   CGAL_TEST( !E.is_standard(v) && E.ray(v) == Ray(p1,p4) );
   Halfedge_const_handle e = E.first_out_edge(v);
   CGAL_TEST( E.is_frame_edge(e) );
@@ -79,12 +79,12 @@ int main()
   CGAL_TEST( (e1==e2 || e1==E.twin(e2)) && E.mark(e1) );
   h1 = N3.locate(p4);
   h2 = N3.locate(p4,Nef_polyhedron::NAIVE);
-  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) && 
+  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) &&
                f1 == f2 && !E.mark(f1) );
   // shooting along angular bisector:
   h1 = N3.ray_shoot(p4,Direction(1,1));
   h2 = N3.ray_shoot(p4,Direction(1,1),Nef_polyhedron::NAIVE);
-  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) && 
+  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) &&
              f1 == f2 && E.mark(f1) );
   // shooting along x-axis:
   h1 = N3.ray_shoot(p6,Direction(1,0));
@@ -94,7 +94,7 @@ int main()
   h1 = N3.ray_shoot(p5,Direction(0,1));
   h2 = N3.ray_shoot(p5,Direction(0,1),Nef_polyhedron::NAIVE);
   e = e1;
-  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) && 
+  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) &&
              (e1==e2||e1==E.twin(e2)) && E.mark(e1) );
   h1 = N3.ray_shoot_to_boundary(p5,Direction(0,1));
   h2 = N3.ray_shoot_to_boundary(p5,Direction(0,1),Nef_polyhedron::NAIVE);
@@ -103,7 +103,7 @@ int main()
   h1 = N3.ray_shoot_to_boundary(p7,Direction(0,-1));
   h2 = N3.ray_shoot_to_boundary(p7,Direction(0,-1),Nef_polyhedron::NAIVE);
   CGAL_TEST( N3.contained_in_boundary(h1) && N3.contained_in_boundary(h2) );
-  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) && 
+  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) &&
              (e1==e2 || e1==E.twin(e2)) );
 
   std::list<Point> L;
@@ -114,7 +114,7 @@ int main()
   h2 = N3.locate(p2);
   CGAL_TEST( CGAL::assign(v1,h1) && E.point(v1)==p1 && E.mark(v1) );
   CGAL_TEST( CGAL::assign(f1,h2) && !E.mark(f1) );
-   
+
   L.push_back(p2);
   N3 = Nef_polyhedron(L.begin(), L.end(), Nef_polyhedron::INCLUDED);
   E = N3.explorer();
@@ -124,7 +124,7 @@ int main()
   CGAL_TEST( CGAL::assign(v1,h1) && E.point(v1)==p1 && E.mark(v1) );
   CGAL_TEST( CGAL::assign(e1,h2) && E.mark(e1) );
   CGAL_TEST( CGAL::assign(f1,h3) && !E.mark(f1) );
-    
+
   L.push_back(p3);
   N3 = Nef_polyhedron(L.begin(), L.end(), Nef_polyhedron::INCLUDED);
   E = N3.explorer();
@@ -173,7 +173,7 @@ int main()
 
   Nef_polyhedron N3 = N1.intersection(N2);
   // N3 is the first quadrant including the positive y-axis
-   //  but excluding the origin and the positive x-axis 
+   //  but excluding the origin and the positive x-axis
 
   CGAL_TEST(N3 < N1 && N3 < N2);
   CGAL_TEST(N3 <= N1 && N3 <= N2);
@@ -181,7 +181,7 @@ int main()
   CGAL_TEST(N1 >= N3 && N2 >= N3);
 
   Explorer E = N3.explorer();
-  Vertex_const_iterator v = E.vertices_begin(); 
+  Vertex_const_iterator v = E.vertices_begin();
   CGAL_TEST( !E.is_standard(v) && E.ray(v) == Ray(p1,p4) );
   Halfedge_const_handle e = E.first_out_edge(v);
   CGAL_TEST( E.is_frame_edge(e) );
@@ -202,12 +202,12 @@ int main()
   CGAL_TEST( (e1==e2 || e1==E.twin(e2)) && E.mark(e1) );
   h1 = N3.locate(p4);
   h2 = N3.locate(p4,Nef_polyhedron::NAIVE);
-  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) && 
+  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) &&
                f1 == f2 && !E.mark(f1) );
   // shooting along angular bisector:
   h1 = N3.ray_shoot(p4,Direction(1,1));
   h2 = N3.ray_shoot(p4,Direction(1,1),Nef_polyhedron::NAIVE);
-  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) && 
+  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) &&
              f1 == f2 && E.mark(f1) );
   // shooting along x-axis:
   h1 = N3.ray_shoot(p6,Direction(1,0));
@@ -217,7 +217,7 @@ int main()
   h1 = N3.ray_shoot(p5,Direction(0,1));
   h2 = N3.ray_shoot(p5,Direction(0,1),Nef_polyhedron::NAIVE);
   e = e1;
-  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) && 
+  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) &&
              (e1==e2||e1==E.twin(e2)) && E.mark(e1) );
   h1 = N3.ray_shoot_to_boundary(p5,Direction(0,1));
   h2 = N3.ray_shoot_to_boundary(p5,Direction(0,1),Nef_polyhedron::NAIVE);
@@ -226,7 +226,7 @@ int main()
   h1 = N3.ray_shoot_to_boundary(p7,Direction(0,-1));
   h2 = N3.ray_shoot_to_boundary(p7,Direction(0,-1),Nef_polyhedron::NAIVE);
   CGAL_TEST( N3.contained_in_boundary(h1) && N3.contained_in_boundary(h2) );
-  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) && 
+  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) &&
              (e1==e2 || e1==E.twin(e2)) );
 
   std::list<Point> L;
@@ -237,7 +237,7 @@ int main()
   h2 = N3.locate(p2);
   CGAL_TEST( CGAL::assign(v1,h1) && E.point(v1)==p1 && E.mark(v1) );
   CGAL_TEST( CGAL::assign(f1,h2) && !E.mark(f1) );
-   
+
   L.push_back(p2);
   N3 = Nef_polyhedron(L.begin(), L.end(), Nef_polyhedron::INCLUDED);
   E = N3.explorer();
@@ -247,7 +247,7 @@ int main()
   CGAL_TEST( CGAL::assign(v1,h1) && E.point(v1)==p1 && E.mark(v1) );
   CGAL_TEST( CGAL::assign(e1,h2) && E.mark(e1) );
   CGAL_TEST( CGAL::assign(f1,h3) && !E.mark(f1) );
-    
+
   L.push_back(p3);
   N3 = Nef_polyhedron(L.begin(), L.end(), Nef_polyhedron::INCLUDED);
   E = N3.explorer();
@@ -292,7 +292,7 @@ int main()
   CGAL_TEST((N1*N1) == N1);
   CGAL_TEST((N1*!N1) == EMPTY);
   Nef_polyhedron  negN1 = ! N1;
-  Nef_polyhedron  N1pnegN1 = N1 + negN1; 
+  Nef_polyhedron  N1pnegN1 = N1 + negN1;
   CGAL_TEST(N1pnegN1 == PLANE);
   CGAL_TEST((N1^N2) == ((N1-N2)+(N2-N1)));
   Nef_polyhedron N1tN2 = N1 * N2;
@@ -302,7 +302,7 @@ int main()
 
   Nef_polyhedron N3 = N1.intersection(N2);
   // N3 is the first quadrant including the positive y-axis
-   //  but excluding the origin and the positive x-axis 
+   //  but excluding the origin and the positive x-axis
 
   CGAL_TEST(N3 < N1 && N3 < N2);
   CGAL_TEST(N3 <= N1 && N3 <= N2);
@@ -310,7 +310,7 @@ int main()
   CGAL_TEST(N1 >= N3 && N2 >= N3);
 
   Explorer E = N3.explorer();
-  Vertex_const_iterator v = E.vertices_begin(); 
+  Vertex_const_iterator v = E.vertices_begin();
   CGAL_TEST( !E.is_standard(v) && E.ray(v) == Ray(p1,p4) );
   Halfedge_const_handle e = E.first_out_edge(v);
   CGAL_TEST( E.is_frame_edge(e) );
@@ -331,12 +331,12 @@ int main()
   CGAL_TEST( (e1==e2 || e1==E.twin(e2)) && E.mark(e1) );
   h1 = N3.locate(p4);
   h2 = N3.locate(p4,Nef_polyhedron::NAIVE);
-  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) && 
+  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) &&
                f1 == f2 && !E.mark(f1) );
   // shooting along angular bisector:
   h1 = N3.ray_shoot(p4,Direction(1,1));
   h2 = N3.ray_shoot(p4,Direction(1,1),Nef_polyhedron::NAIVE);
-  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) && 
+  CGAL_TEST( CGAL::assign(f1,h1) && CGAL::assign(f2,h2) &&
              f1 == f2 && E.mark(f1) );
   // shooting along x-axis:
   h1 = N3.ray_shoot(p6,Direction(1,0));
@@ -346,7 +346,7 @@ int main()
   h1 = N3.ray_shoot(p5,Direction(0,1));
   h2 = N3.ray_shoot(p5,Direction(0,1),Nef_polyhedron::NAIVE);
   e = e1;
-  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) && 
+  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) &&
              (e1==e2||e1==E.twin(e2)) && E.mark(e1) );
   h1 = N3.ray_shoot_to_boundary(p5,Direction(0,1));
   h2 = N3.ray_shoot_to_boundary(p5,Direction(0,1),Nef_polyhedron::NAIVE);
@@ -355,7 +355,7 @@ int main()
   h1 = N3.ray_shoot_to_boundary(p7,Direction(0,-1));
   h2 = N3.ray_shoot_to_boundary(p7,Direction(0,-1),Nef_polyhedron::NAIVE);
   CGAL_TEST( N3.contained_in_boundary(h1) && N3.contained_in_boundary(h2) );
-  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) && 
+  CGAL_TEST( CGAL::assign(e1,h1) && CGAL::assign(e2,h2) &&
              (e1==e2 || e1==E.twin(e2)) );
 
   std::list<Point> L;
@@ -366,7 +366,7 @@ int main()
   h2 = N3.locate(p2);
   CGAL_TEST( CGAL::assign(v1,h1) && E.point(v1)==p1 && E.mark(v1) );
   CGAL_TEST( CGAL::assign(f1,h2) && !E.mark(f1) );
-   
+
   L.push_back(p2);
   N3 = Nef_polyhedron(L.begin(), L.end(), Nef_polyhedron::INCLUDED);
   E = N3.explorer();
@@ -376,7 +376,7 @@ int main()
   CGAL_TEST( CGAL::assign(v1,h1) && E.point(v1)==p1 && E.mark(v1) );
   CGAL_TEST( CGAL::assign(e1,h2) && E.mark(e1) );
   CGAL_TEST( CGAL::assign(f1,h3) && !E.mark(f1) );
-    
+
   L.push_back(p3);
   N3 = Nef_polyhedron(L.begin(), L.end(), Nef_polyhedron::INCLUDED);
   E = N3.explorer();

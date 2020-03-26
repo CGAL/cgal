@@ -105,7 +105,7 @@ class AABB_face_graph_triangle_primitive
   {
     return std::make_pair(fd, &fg);
   }
-  
+
 public:
   #ifdef DOXYGEN_RUNNING
   /// \name Types
@@ -124,7 +124,7 @@ public:
   - `std::pair<boost::graph_traits<FaceGraph>::%face_descriptor, FaceGraph>` if `OneFaceGraphPerTree` is `CGAL::Tag_false`
   */
   unspecified_type Id;
-  
+
   /// @}
 
   /*!

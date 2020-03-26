@@ -63,15 +63,15 @@ using boost::tuple;
 using boost::make_tuple;
 using boost::tie;
 using boost::get;
-  
+
 //tuple_size
 template <class T>
 struct tuple_size:public boost::tuples::length<T> {};
-  
+
 //tuple_element
 template <int N,class T>
 struct tuple_element: public boost::tuples::element<N,T>{};
-  
+
 #endif
 
 
@@ -108,7 +108,7 @@ get(std::pair<T1, T2>& pair) {
 
 template <std::size_t N, typename T1, typename T2>
 inline const typename boost::tuples::element<N, boost::tuple<T1, T2> >::type&
-get(const std::pair<T1, T2>& pair) { 
+get(const std::pair<T1, T2>& pair) {
   return pair_get<N, T1, T2>::get(pair);
 }
 
@@ -238,7 +238,7 @@ struct Is_in_tuple <V,cpp11::tuple<V,T1,T2,T3,T4,T5,T6> >
 };
 
 
-#endif 
+#endif
 
 } //namespace CGAL
 

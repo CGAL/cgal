@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 //                 Stefan Schirra
@@ -105,19 +105,19 @@ public:
     return R().construct_direction_3_object()(*this);
   }
 
-  bool has_on(const Point_3 &p) const 
-  { 
+  bool has_on(const Point_3 &p) const
+  {
     return R().has_on_3_object()(*this, p);
-    //return has_on_boundary(p); 
+    //return has_on_boundary(p);
   }
 
   Point_3 point() const
-  { 
+  {
     return R().construct_point_on_3_object()(*this, 0);
   }
 
   Point_3 point(const FT i) const
-  { 
+  {
     return R().construct_point_on_3_object()(*this, i);
   }
 
@@ -140,7 +140,7 @@ public:
   {
     return R().is_degenerate_3_object()(*this);
   }
-  
+
 };
 
 template < class R >

@@ -442,7 +442,7 @@ public:
 
     friend bool operator==(edge_descriptor e1, edge_descriptor e2)
     {
-      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd)); 
+      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd));
     }
 
     friend bool operator!=(edge_descriptor e1, edge_descriptor e2)

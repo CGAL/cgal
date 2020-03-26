@@ -5,7 +5,7 @@
 In this package, all functions optional parameters are implemented as BGL optional named parameters (see \ref BGLNamedParameters for more information on how to use them).
 
 Since the parameters of the various point set processing functions defined in this
-package are redundant, their long descriptions are centralized below. 
+package are redundant, their long descriptions are centralized below.
 
 In the following, we assume that the following types are provided as template parameters of point set processing functions and classes. Note that, for some of these functions, the type is more specific.
 

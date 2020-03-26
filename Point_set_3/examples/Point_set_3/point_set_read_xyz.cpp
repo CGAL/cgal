@@ -35,7 +35,7 @@ int main (int argc, char** argv)
           point_set.normal(*it) = n;
         }
     }
-  
+
   // Writing result in OFF format
   std::ofstream out("normalized_normals.off");
   out.precision(17);
@@ -43,6 +43,6 @@ int main (int argc, char** argv)
     {
       return EXIT_FAILURE;
     }
-    
+
   return EXIT_SUCCESS;
 }

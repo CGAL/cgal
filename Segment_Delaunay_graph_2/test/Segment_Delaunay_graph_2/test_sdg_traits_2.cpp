@@ -210,7 +210,7 @@ bool test_traits(const char* title)
   std::cout << "====================================" << std::endl;
   std::cout << title << std::endl;
   std::cout << "------------------------------------" << std::endl
-	    << std::endl;
+            << std::endl;
   std::cout << "Sites: " << std::endl;
   for (unsigned int i = 0; i < svec.size(); i++) {
     std::cout << "   " << svec[i] << std::endl;
@@ -218,8 +218,8 @@ bool test_traits(const char* title)
   CGAL::Sign s = incircle(svec[0], svec[1], svec[2], svec[3]);
   std::cout << "    incircle: " << s << std::endl;
   std::cout << "====================================" << std::endl;
-  
-  std::cout << std::endl;  
+
+  std::cout << std::endl;
 
   assert( s == CGAL::ZERO );
   return s == CGAL::ZERO;
@@ -237,7 +237,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
   test_traits<IT_Ring_Gtwi>("IT Ring WI");
@@ -248,7 +248,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
   test_traits<IF_Ring_Gtwi>("IF Ring WI");
@@ -259,7 +259,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 #endif
 
@@ -280,7 +280,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
 #ifdef CGAL_USE_CORE
@@ -300,7 +300,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
 

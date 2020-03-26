@@ -3,9 +3,9 @@ namespace ArrTraits {
 \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
 \cgalConcept
 
-\cgalRefines AdaptableUnaryFunction 
+\cgalRefines AdaptableUnaryFunction
 
-\cgalHasModel ArrangementBasicTraits_2::Is_vertical_2 
+\cgalHasModel ArrangementBasicTraits_2::Is_vertical_2
 
 */
 
@@ -17,9 +17,9 @@ public:
 /// @{
 
 /*!
-determines whether `xc` is a vertical segment. 
-*/ 
-bool operator()(ArrTraits::X_monotone_curve_2 xc); 
+determines whether `xc` is a vertical segment.
+*/
+bool operator()(ArrTraits::X_monotone_curve_2 xc);
 
 /// @}
 

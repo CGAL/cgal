@@ -21,7 +21,7 @@ struct Clamp_to_one_zero_range {
 };
 
 class Volume_plane_thread : public QThread {
-Q_OBJECT  
+Q_OBJECT
 public:
   Volume_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
     : img(img), clamper(clamp), item(NULL), name(name) { _type = 'n';}

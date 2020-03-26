@@ -39,16 +39,16 @@ template<class K>
 struct Construct_ss_trisegment_2 : Functor_base_2<K>
 {
   typedef Functor_base_2<K> Base ;
-  
+
   typedef typename Base::Segment_2        Segment_2 ;
   typedef typename Base::Trisegment_2     Trisegment_2 ;
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
-  
+
   typedef Trisegment_2_ptr result_type ;
-  
+
 
   result_type operator() () const { return cgal_make_optional( Trisegment_2::null() ) ; }
-  
+
   result_type operator() ( Segment_2 const& aS0, Segment_2 const& aS1, Segment_2 const& aS2 ) const
   {
     return construct_trisegment(aS0,aS1,aS2);
@@ -131,7 +131,7 @@ struct Oriented_side_of_event_point_wrt_bisector_2 : Functor_base_2<K>
                                       , Segment_2        const& aE0
                                       , Segment_2        const& aE1
                                       , Trisegment_2_ptr const& aE01Event
-                                      , bool                    aE0isPrimary 
+                                      , bool                    aE0isPrimary
                                       ) const
   {
     Uncertain<Oriented_side> rResult = oriented_side_of_event_point_wrt_bisectorC2(aEvent,aE0,aE1,aE01Event,aE0isPrimary) ;
@@ -212,24 +212,24 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
   typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
 
   typedef boost::tuple<FT,Point_2> rtype ;
-  
+
   typedef boost::optional<rtype> result_type ;
-  
+
 
   result_type operator() ( Trisegment_2_ptr const& aTrisegment ) const
   {
     typename Has_inexact_constructions<K>::type has_inexact_constructions
     CGAL_SUNPRO_INITIALIZE( = typename Has_inexact_constructions<K>::type()) ;
-    
+
     return calc(aTrisegment, has_inexact_constructions);
   }
- 
+
   result_type calc ( Trisegment_2_ptr const& aTrisegment
                    , Tag_false               // kernel already has exact constructions
                    ) const
   {
     bool lOK = false ;
-    
+
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
@@ -238,27 +238,27 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
-      
+
       optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
       if ( oi )
       {
         i = *oi ;
         CGAL_stskel_intrinsic_test_assertion(!is_point_calculation_clearly_wrong(t,i,aTrisegment));
         lOK = true ;
-      } 
+      }
     }
-    
+
     CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",aTrisegment);
 
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
-  
+
   result_type calc ( Trisegment_2_ptr const& aTrisegment
                    , Tag_true         // kernel does not provides exact constructions
                    ) const
   {
     bool lOK = false ;
-    
+
     FT      t(0) ;
     Point_2 i = ORIGIN ;
 
@@ -267,22 +267,22 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
     if ( !!ot && certainly( CGAL_NTS certified_is_not_zero(ot->d()) ) )
     {
       t = ot->n() / ot->d();
-      
+
       optional<Point_2> oi = construct_offset_lines_isecC2(aTrisegment);
       if ( oi )
       {
-        if ( is_point_calculation_clearly_wrong(t,*oi,aTrisegment)) 
+        if ( is_point_calculation_clearly_wrong(t,*oi,aTrisegment))
         {
           typedef Exact_predicates_exact_constructions_kernel EK ;
-    
+
           typedef Cartesian_converter<K,EK> BaseC2E;
           typedef Cartesian_converter<EK,K> BaseE2C;
-    
-          SS_converter<BaseC2E> C2E ;  
-          SS_converter<BaseE2C> E2C ;  
-    
+
+          SS_converter<BaseC2E> C2E ;
+          SS_converter<BaseE2C> E2C ;
+
           oi = E2C(construct_offset_lines_isecC2(C2E(aTrisegment)));
-          
+
           if ( oi )
           {
             i   = *oi ;
@@ -296,64 +296,64 @@ struct Construct_ss_event_time_and_point_2 : Functor_base_2<K>
           lOK = true ;
         }
       }
-      
+
     }
-    
+
     CGAL_STSKEL_ASSERT_CONSTRUCTION_RESULT(lOK,K,"Construct_ss_event_time_and_point_2",aTrisegment);
 
     return cgal_make_optional(lOK,boost::make_tuple(t,i)) ;
   }
-  
-  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Trisegment_2_ptr const& aTrisegment ) const 
+
+  bool is_point_calculation_clearly_wrong( FT const& t, Point_2 const& p, Trisegment_2_ptr const& aTrisegment ) const
   {
     bool rR = false ;
-    
+
     if ( is_possibly_inexact_time_clearly_not_zero(t) )
     {
-      Segment_2 const& e0 = aTrisegment->e0() ; 
+      Segment_2 const& e0 = aTrisegment->e0() ;
       Segment_2 const& e1 = aTrisegment->e1() ;
       Segment_2 const& e2 = aTrisegment->e2() ;
-      
+
       Point_2 const& e0s = e0.source();
       Point_2 const& e0t = e0.target();
-      
+
       Point_2 const& e1s = e1.source();
       Point_2 const& e1t = e1.target();
-      
+
       Point_2 const& e2s = e2.source();
       Point_2 const& e2t = e2.target();
-    
+
       FT const very_short(0.1);
       FT const very_short_squared = CGAL_NTS square(very_short);
-      
+
       FT l0 = squared_distance(e0s,e0t) ;
       FT l1 = squared_distance(e1s,e1t) ;
       FT l2 = squared_distance(e2s,e2t) ;
-      
+
       bool e0_is_not_very_short = l0 > very_short_squared ;
       bool e1_is_not_very_short = l1 > very_short_squared ;
       bool e2_is_not_very_short = l2 > very_short_squared ;
-      
+
       FT d0 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e0s.x(),e0s.y(),e0t.x(),e0t.y()).to_nt();
       FT d1 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e1s.x(),e1s.y(),e1t.x(),e1t.y()).to_nt();
       FT d2 = squared_distance_from_point_to_lineC2(p.x(),p.y(),e2s.x(),e2s.y(),e2t.x(),e2t.y()).to_nt();
-    
+
       FT tt = CGAL_NTS square(t);
-      
+
       bool e0_is_clearly_wrong = e0_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d0,tt) ;
       bool e1_is_clearly_wrong = e1_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d1,tt) ;
       bool e2_is_clearly_wrong = e2_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d2,tt) ;
-    
+
       rR = e0_is_clearly_wrong || e1_is_clearly_wrong || e2_is_clearly_wrong ;
-      
+
       CGAL_stskel_intrinsic_test_trace_if(rR
                                         , "\nSkeleton node point calculation is clearly wrong:"
                                           << "\ntime=" << t << " p=" << p2str(p) << " e0=" << s2str(e0) << " e1=" << s2str(e1) << " e2=" << s2str(e2)
                                           << "\nl0=" << inexact_sqrt(l0) << " l1=" << inexact_sqrt(l1) << " l2=" << inexact_sqrt(l2)
-                                          << "\nd0=" << d0 << " d1=" << d1 << " d2=" << d2 << " tt=" << tt 
+                                          << "\nd0=" << d0 << " d1=" << d1 << " d2=" << d2 << " tt=" << tt
                                         ) ;
     }
-    
+
     return rR ;
   }
 };
@@ -378,19 +378,19 @@ template<class K>
 struct Straight_skeleton_builder_traits_2_base
 {
   typedef K Kernel ;
-  
+
   typedef typename K::FT          FT ;
   typedef typename K::Point_2     Point_2 ;
   typedef typename K::Vector_2    Vector_2 ;
   typedef typename K::Direction_2 Direction_2 ;
   typedef typename K::Segment_2   Segment_2 ;
-  
+
   typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
-  
+
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 
   template<class F> F get( F const* = 0 ) const { return F(); }
-  
+
 } ;
 
 
@@ -417,13 +417,13 @@ public:
 
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_events_simultaneous_2>
     Are_ss_events_simultaneous_2 ;
-    
+
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_edges_parallel_2>
     Are_ss_edges_parallel_2 ;
-    
+
   typedef Unfiltered_predicate_adaptor<typename Unfiltering::Are_ss_edges_collinear_2>
     Are_ss_edges_collinear_2 ;
-    
+
   typedef typename Unfiltering::Construct_ss_event_time_and_point_2 Construct_ss_event_time_and_point_2 ;
   typedef typename Unfiltering::Construct_ss_trisegment_2           Construct_ss_trisegment_2 ;
 } ;
@@ -443,7 +443,7 @@ class Straight_skeleton_builder_traits_2_impl<Tag_true,K> : public Straight_skel
   typedef Cartesian_converter<EK,K> BaseE2C;
   typedef Cartesian_converter<FK,K> BaseF2C;
   typedef Cartesian_converter<K,K>  BaseC2C;
-  
+
   typedef CGAL_SS_i::SS_converter<BaseC2E> C2E ;
   typedef CGAL_SS_i::SS_converter<BaseC2F> C2F ;
   typedef CGAL_SS_i::SS_converter<BaseE2C> E2C ;
@@ -472,8 +472,8 @@ public:
                             , C2F
                             >
                             Is_edge_facing_ss_node_2 ;
-  
-  typedef Filtered_predicate< typename Exact    ::Oriented_side_of_event_point_wrt_bisector_2 
+
+  typedef Filtered_predicate< typename Exact    ::Oriented_side_of_event_point_wrt_bisector_2
                             , typename Filtering::Oriented_side_of_event_point_wrt_bisector_2
                             , C2E
                             , C2F
@@ -493,31 +493,31 @@ public:
                             , C2F
                             >
                             Are_ss_edges_parallel_2 ;
-                            
+
   typedef Filtered_predicate< typename Exact    ::Are_ss_edges_collinear_2
                             , typename Filtering::Are_ss_edges_collinear_2
                             , C2E
                             , C2F
                             >
                             Are_ss_edges_collinear_2 ;
-                            
+
   typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , typename Exact      ::Construct_ss_event_time_and_point_2
-                                                        , typename Unfiltering::Construct_ss_event_time_and_point_2 
+                                                        , typename Unfiltering::Construct_ss_event_time_and_point_2
                                                         , C2E
-                                                        , C2C 
+                                                        , C2C
                                                         , E2C
-                                                        , C2C 
+                                                        , C2C
                                                         >
                                                         Construct_ss_event_time_and_point_2 ;
 
-  typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_trisegment_2 
-                                                        , typename Exact      ::Construct_ss_trisegment_2 
-                                                        , typename Unfiltering::Construct_ss_trisegment_2 
+  typedef CGAL_SS_i::Exceptionless_filtered_construction< typename Unfiltering::Construct_ss_trisegment_2
+                                                        , typename Exact      ::Construct_ss_trisegment_2
+                                                        , typename Unfiltering::Construct_ss_trisegment_2
                                                         , C2E
-                                                        , C2C 
+                                                        , C2C
                                                         , E2C
-                                                        , C2C 
+                                                        , C2C
                                                         >
                                                         Construct_ss_trisegment_2 ;
 } ;

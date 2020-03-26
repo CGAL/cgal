@@ -60,7 +60,7 @@ namespace CGAL {
 //           CGAL_MESHES_OUTPUT_STREAM << "?";
 //           v->point().set_surface_index(1);
 //         }
-// 	CGAL_MESHES_OUTPUT_STREAM << v->point().surface_index();
+//         CGAL_MESHES_OUTPUT_STREAM << v->point().surface_index();
       }
 
       template <typename E, typename P, typename Z>

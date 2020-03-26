@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
@@ -54,14 +54,14 @@ namespace CGAL {
   private:
     typedef std::vector<Point>                        Point_list;
     typedef typename Traits::Cartesian_const_iterator C_it;
-    
+
   protected: // member variables:
     Traits tco;                           // traits class object
     const Point_list P;                   // the input points in R^d
     int d;                                // dimension of the input points
     const double eps;                     // the desired epsilon
     double e_eps;                         // (see below)
-    
+
     // We obtain our eps-approximating ellipsoid by embedding the input
     // points P into R^{d+1} by mapping p to (p,1).  Then we compute in
     // R^{d+1} an (1+e_eps)-approximating centrally symmetric ellipsoid E for
@@ -100,15 +100,15 @@ namespace CGAL {
 
     template<typename InputIterator>
     Approximate_min_ellipsoid_d(double eps,
-			    InputIterator first,InputIterator last,
-			    const Traits& traits = Traits())
+                            InputIterator first,InputIterator last,
+                            const Traits& traits = Traits())
     // Given a range [first,last) of n points P, constructs an
     // (1+eps)-approximation of the smallest enclosing ellipsoid of P.
       : tco(traits), P(first,last), eps(eps),
-	has_center(false), has_axes(false)
+        has_center(false), has_axes(false)
     {
       CGAL_APPEL_LOG("appel",
-		     "Entering Approximate_min_ellpsoid_d." << std::endl);
+                     "Entering Approximate_min_ellpsoid_d." << std::endl);
 
       // fetch ambient dimension:
       d = tco.dimension(P[0]);
@@ -138,8 +138,8 @@ namespace CGAL {
       FPU_CW_t old = FPU_get_and_set_cw(CGAL_FE_TOWARDZERO); // round to zero
       e_eps = std::exp(2.0/(d+1)*std::log(1.0+eps))-1.0;
       FPU_set_cw(old);                                       // restore
-							     // rounding mode
-      
+                                                             // rounding mode
+
       // Find e (1+e_eps)-approximation for the embedded points.  This
       // only works when the points affinely span R^{d+1}.
       E = new Khachiyan_approximation<true,Traits>(d, static_cast<int>(P.size()),tco);
@@ -148,21 +148,21 @@ namespace CGAL {
       // debugging:
       CGAL_APPEL_ASSERT(is_deg == E->is_degenerate());
       CGAL_APPEL_LOG("appel",
-		     "  Input points are " << (is_deg? "" : "not ") <<
-		     "degnerate." << std::endl);
+                     "  Input points are " << (is_deg? "" : "not ") <<
+                     "degnerate." << std::endl);
 
       if (is_deg)
-	find_lower_dimensional_approximation();
+        find_lower_dimensional_approximation();
 
       CGAL_APPEL_LOG("appel",
-		     "Leaving Approximate_min_ellipsoid_d." << std::endl);
+                     "Leaving Approximate_min_ellipsoid_d." << std::endl);
     }
-    
+
     ~Approximate_min_ellipsoid_d()
     {
       // dispose of approximation:
       if (E != static_cast<Khachiyan_approximation<true,Traits> *>(0))
-	delete E;
+        delete E;
     }
 
   public: // access:
@@ -172,7 +172,7 @@ namespace CGAL {
     {
       return P.size();
     }
-    
+
     bool is_empty() const
     // Returns true iff the approximate ellipsoid is empty (which
     // implies degeneracy).  This is the case iff the number of input
@@ -180,7 +180,7 @@ namespace CGAL {
     {
       return P.size() == 0;
     }
-    
+
   private: // access:
     bool is_degenerate() const
     // Returns true iff the approximate ellipsoid is degenerate, i.e.,
@@ -198,7 +198,7 @@ namespace CGAL {
     //
     //  (a) encloses all embedded points (p,1), p in P,
     //  (b) has defining matrix M/alpha, i.e.,
-    // 
+    //
     //        E' = { x | x^T M/alpha x <= 1 },
     //
     //      where alpha = (1+a_eps)(d+1) with a_eps the return value
@@ -215,7 +215,7 @@ namespace CGAL {
     //   x^T M/alpha x = y^T y alpha/M + 2/alpha y^Tm + nu/alpha.
     //
     // It follows
-    // 
+    //
     //   E* = { y | y^T M'/alpha y + 2/alpha y^Tm + (nu/alpha-1) <= 0 }. (****)
     //
     // This is what the routines defining_matrix(), defining_vector(),
@@ -238,7 +238,7 @@ namespace CGAL {
     //
     // Precondition: !is_degenerate() && 0<=i<d && 0<=j<d
     {
-      
+
       CGAL_APPEL_ASSERT(!is_degenerate() && 0<=i && i<d && 0<=j && j<d);
       return E->matrix(i,j);
     }
@@ -255,9 +255,9 @@ namespace CGAL {
     {
       CGAL_APPEL_ASSERT(!is_degenerate() && 0<=i && i<d);
       return FT(2)*E->matrix(d,i); // Note: if FT is double, the
-				   // multiplication by 2.0 is exact.
+                                   // multiplication by 2.0 is exact.
     }
-    
+
     FT defining_scalar() const
     // Returns the number mu in the representation
     //
@@ -280,7 +280,7 @@ namespace CGAL {
     // Precondition: !is_degenerate()
     {
       CGAL_APPEL_ASSERT(!is_degenerate());
-      
+
       // From (*) we known that Khachian's algorithm produces a
       // centrally-symmetric ellipsoid in R^{d+1} fulfilling
       //
@@ -302,7 +302,7 @@ namespace CGAL {
       const double sum = 1.0 + k_eps;
       double tmp = sum;
       for (int i=0; i<d; ++i)
-	tmp *= sum;
+        tmp *= sum;
       const double eps = std::sqrt(tmp)-1.0;
       FPU_set_cw(old);                                   // restore
 
@@ -322,16 +322,16 @@ namespace CGAL {
     }
 
   public: // miscellaneous:
-    
+
     bool is_valid(bool verbose) const
     // Returns true if and only if the computed ellipsoid is indeed an
     // approximate ellipsoid, that is ... Todo.
     {
       return E->is_valid(verbose);
     }
-      
+
   public: // miscellaneous 2D/3D support:
-    
+
     typedef std::vector<double>::const_iterator Center_coordinate_iterator;
     typedef std::vector<double>::const_iterator Axes_lengths_iterator;
     typedef std::vector<double>::const_iterator
@@ -348,7 +348,7 @@ namespace CGAL {
     {
       CGAL_APPEL_ASSERT(!is_degenerate());
       if (!has_center)
-	compute_center();
+        compute_center();
 
       return center_.begin();
     }
@@ -361,7 +361,7 @@ namespace CGAL {
     {
       CGAL_APPEL_ASSERT(!is_degenerate());
       if (!has_center)
-	compute_center();
+        compute_center();
 
       return center_.end();
     }
@@ -378,7 +378,7 @@ namespace CGAL {
     {
       CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3));
       if (!has_axes)
-	compute_axes_2_3();
+        compute_axes_2_3();
 
       return lengths_.begin();
     }
@@ -391,11 +391,11 @@ namespace CGAL {
     {
       CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3));
       if (!has_axes)
-	compute_axes_2_3();
-      
+        compute_axes_2_3();
+
       return lengths_.end();
     }
-    
+
     Axes_direction_coordinate_iterator axis_direction_cartesian_begin(int i)
     // Returns a STL random-access iterator pointing to the first of the d
     // Cartesian coordinates of the computed ellipsoid's i-th axis direction
@@ -408,13 +408,13 @@ namespace CGAL {
     // Precondition: !is_degenerate() && (d==2 || d==3) && (0 <= i < d)
     {
       CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3) &&
-			0 <= i && i < d);
+                        0 <= i && i < d);
       if (!has_axes)
-	compute_axes_2_3();
-      
+        compute_axes_2_3();
+
       return directions_[i].begin();
     }
-    
+
     Axes_direction_coordinate_iterator axis_direction_cartesian_end(int i)
     // Returns the past-the-end iterator corresponding to
     // axis_direction_cartesian_begin().
@@ -422,31 +422,31 @@ namespace CGAL {
     // Precondition: !is_degenerate() && (d==2 || d==3) && (0 <= i < d)
     {
       CGAL_APPEL_ASSERT(!is_degenerate() && (d==2 || d==3) &&
-			0 <= i && i < d);
+                        0 <= i && i < d);
       if (!has_axes)
-	compute_axes_2_3();
-      
+        compute_axes_2_3();
+
       return directions_[i].end();
     }
 
   public: // internal members for 2D/3D axis/center computation:
 
     bool has_center, has_axes; // true iff the center or axes-directions and
-			       // -lengths, respectively, have already been
-			       // computed
+                               // -lengths, respectively, have already been
+                               // computed
     std::vector<double>                center_;
     std::vector<double>                lengths_;
     std::vector< std::vector<double> > directions_;
     std::vector<double>                mi; // contains M^{-1} (see (*****)
-					   // above) iff has_center is true;
-					   // mi[i+d*j] is entry (i,j) of
-					   // M^{-1}
+                                           // above) iff has_center is true;
+                                           // mi[i+d*j] is entry (i,j) of
+                                           // M^{-1}
 
     void compute_center();
     void compute_axes_2_3();
     void compute_axes_2(const double alpha, const double factor);
     void compute_axes_3(const double alpha, const double factor);
-    
+
   public: // "debugging" routines:
 
     void write_eps(const std::string& name);
@@ -459,7 +459,7 @@ namespace CGAL {
 
     void find_lower_dimensional_approximation(); // (does nothing right now)
   };
-  
+
 }
 
 #include <CGAL/Approximate_min_ellipsoid_d/Approximate_min_ellipsoid_d_impl.h>

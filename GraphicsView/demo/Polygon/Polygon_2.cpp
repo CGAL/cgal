@@ -24,7 +24,7 @@
 #include <CGAL/Qt/PolygonGraphicsItem.h>
 #include <CGAL/Qt/PolygonWithHolesGraphicsItem.h>
 #include <CGAL/Qt/LineGraphicsItem.h>
-  
+
 // the two base classes
 #include "ui_Polygon_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -50,16 +50,16 @@ class MainWindow :
   public Ui::Polygon_2
 {
   Q_OBJECT
-  
+
 private:
 
   enum PartitionAlgorithm {YMonotone, ApproximateConvex, OptimalConvex} ;
 
 
   CGAL::Qt::Converter<K> convert;
-  Polygon2 poly, kgon; 
+  Polygon2 poly, kgon;
   Polygon_with_holes_2 selfmink;
-  QGraphicsScene scene;  
+  QGraphicsScene scene;
 
   CGAL::Qt::PolygonGraphicsItem<Polygon2> * pgi;
 
@@ -125,7 +125,7 @@ MainWindow::MainWindow()
   pgi = new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&poly);
 
   QObject::connect(this, SIGNAL(changed()),
-		   pgi, SLOT(modelChanged()));
+                   pgi, SLOT(modelChanged()));
 
   scene.addItem(pgi);
 
@@ -133,8 +133,8 @@ MainWindow::MainWindow()
   kgongi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   kgongi->hide();
   scene.addItem(kgongi);
-  
-  
+
+
   lgi = new CGAL::Qt::LineGraphicsItem<K>();
   lgi->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   lgi->hide();
@@ -145,15 +145,15 @@ MainWindow::MainWindow()
 
   this->actionCreateInputPolygon->setChecked(true);
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+                   this, SLOT(processInput(CGAL::Object)));
 
-  // 
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
- 
+
   //
   // Setup the scene and the view
   //
@@ -167,7 +167,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -180,7 +180,7 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
@@ -191,11 +191,11 @@ MainWindow::processInput(CGAL::Object o)
   std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if((points.size() == 1)&& poly.size()>0){
-    
+
     } else {
       poly.clear();
       if(points.front() == points.back()){
-	points.pop_back();
+        points.pop_back();
       }
       poly.insert(poly.vertices_begin(), points.begin(), points.end());
     }
@@ -203,10 +203,10 @@ MainWindow::processInput(CGAL::Object o)
   }
 }
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -225,9 +225,9 @@ void
 MainWindow::on_actionLoadPolygon_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Polygon File"),
-						  ".",
-						  tr( "Any file (*.*)"));
+                                                  tr("Open Polygon File"),
+                                                  ".",
+                                                  tr( "Any file (*.*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -251,9 +251,9 @@ void
 MainWindow::on_actionSavePolygon_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save Polygon"),
-						  ".",
-						  tr("Any files (*.*)"));
+                                                  tr("Save Polygon"),
+                                                  ".",
+                                                  tr("Any files (*.*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
     ofs << poly;
@@ -278,7 +278,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(pgi->boundingRect());
-  this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(pgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 void
@@ -290,9 +290,9 @@ MainWindow::on_actionSelfMinkowskiSum_triggered()
     }
 
     selfmink = minkowski_sum_2 (poly, poly);
-    
+
     minkgi = new CGAL::Qt::PolygonWithHolesGraphicsItem<Polygon_with_holes_2>(&selfmink);
-    
+
     minkgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     scene.addItem(minkgi);
     minkgi->setEdgesPen(QPen(Qt::darkRed, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -320,20 +320,20 @@ MainWindow::on_actionInnerSkeleton_triggered()
     typedef Ss::Vertex_const_handle     Vertex_const_handle ;
     typedef Ss::Halfedge_const_handle   Halfedge_const_handle ;
     typedef Ss::Halfedge_const_iterator Halfedge_const_iterator ;
-  
+
     Halfedge_const_handle null_halfedge ;
     Vertex_const_handle   null_vertex ;
 
     for ( Halfedge_const_iterator i = ss.halfedges_begin(); i != ss.halfedges_end(); ++i )
       {
-	if ( i->is_bisector() ){
-	  Segment_2 s(i->opposite()->vertex()->point(), i->vertex()->point());
-	  skeletonGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
-	  scene.addItem(skeletonGraphicsItems.back());
-	  skeletonGraphicsItems.back()->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-	}
+        if ( i->is_bisector() ){
+          Segment_2 s(i->opposite()->vertex()->point(), i->vertex()->point());
+          skeletonGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
+          scene.addItem(skeletonGraphicsItems.back());
+          skeletonGraphicsItems.back()->setPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        }
       }
-      
+
   }
 
 }
@@ -344,15 +344,15 @@ MainWindow::on_actionOuterOffset_triggered()
   if(poly.size()>0 && poly.is_simple())
   {
     clear();
-    
+
     if(! poly.is_counterclockwise_oriented())
       poly.reverse_orientation();
-    
+
     double w = poly.bbox().xmax() - poly.bbox().xmin() ;
     double h = poly.bbox().ymax() - poly.bbox().ymin() ;
     double s = (std::max)(w,h);
     double def_offset = s * 0.05 ;
-    
+
     bool ok;
     const double off = QInputDialog::getDouble( this
                                               , tr("Offset distance")
@@ -362,15 +362,15 @@ MainWindow::on_actionOuterOffset_triggered()
                                               , s
                                               , 2
                                               , &ok
-                                              );  
+                                              );
     if ( ok )
     {
       PolygonPtr_vector lContours = create_exterior_skeleton_and_offset_polygons_2(off,poly) ;
-      
+
       PolygonPtr_vector::const_iterator frame ;
-      
+
       double max_area = 0.0 ;
-      
+
       for( PolygonPtr_vector::const_iterator cit = lContours.begin(); cit != lContours.end(); ++ cit )
       {
         double area = (*cit)->area();
@@ -380,7 +380,7 @@ MainWindow::on_actionOuterOffset_triggered()
           frame = cit ;
         }
       }
-      
+
       for( PolygonPtr_vector::const_iterator cit = lContours.begin(); cit != lContours.end(); ++ cit )
       {
         if ( cit != frame )
@@ -393,11 +393,11 @@ MainWindow::on_actionOuterOffset_triggered()
             offsetGraphicsItems.push_back(new QGraphicsLineItem(convert(s)));
             scene.addItem(offsetGraphicsItems.back());
             offsetGraphicsItems.back()->setPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-          } 
+          }
         }
       }
     }
-  }  
+  }
 }
 
 void
@@ -405,15 +405,15 @@ MainWindow::on_actionMaximumAreaKGon_triggered()
 {
   if( (poly.size()>2) && poly.is_convex()){
     clear();
-    
+
     kgon.clear();
     std::vector<Point_2> points(poly.vertices_begin(),
                                 poly.vertices_end());
     CGAL::maximum_area_inscribed_k_gon_2(points.begin(),
                                          points.end(),
-					 3,
+                                         3,
                                          std::back_inserter(kgon));
-  
+
     kgongi->modelChanged();
     kgongi->show();
   } else {
@@ -426,13 +426,13 @@ MainWindow::on_actionLinearLeastSquaresFitting_triggered()
 {
   if(poly.size()>2){
     clear();
-    
+
     Line_2 line;
     CGAL::linear_least_squares_fitting_2(poly.vertices_begin(),
-					 poly.vertices_end(),
-					 line,
-					 CGAL::Dimension_tag<0>());
-  
+                                         poly.vertices_end(),
+                                         line,
+                                         CGAL::Dimension_tag<0>());
+
     lgi->setLine(line);
     lgi->show();
   }
@@ -443,12 +443,12 @@ MainWindow::on_actionLinearLeastSquaresFittingOfSegments_triggered()
 {
   if(poly.size()>2){
     clear();
-    
+
     Line_2 line;
     CGAL::linear_least_squares_fitting_2(poly.edges_begin(),
-					 poly.edges_end(),
-					 line,
-					 CGAL::Dimension_tag<1>());
+                                         poly.edges_end(),
+                                         line,
+                                         CGAL::Dimension_tag<1>());
 
 
     lgi->setLine(line);
@@ -477,7 +477,7 @@ MainWindow::on_actionApproximateConvexPartition_triggered()
 }
 
 
-void 
+void
 MainWindow::partition(PartitionAlgorithm pa)
 {
   if(poly.size()>0){
@@ -497,8 +497,8 @@ MainWindow::partition(PartitionAlgorithm pa)
       break;
     }
     for(std::list<Polygon2>::iterator it = partitionPolygons.begin();
-	it != partitionPolygons.end();
-	++it){
+        it != partitionPolygons.end();
+        ++it){
       partitionGraphicsItems.push_back(new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&(*it)));
       scene.addItem(partitionGraphicsItems.back());
       partitionGraphicsItems.back()->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));

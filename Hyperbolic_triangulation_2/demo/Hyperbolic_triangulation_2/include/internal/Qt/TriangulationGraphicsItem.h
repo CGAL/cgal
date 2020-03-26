@@ -14,7 +14,7 @@
 //
 // $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/next/GraphicsView/include/CGAL/Qt/TriangulationGraphicsItem.h $
 // $Id: TriangulationGraphicsItem.h 67117 2012-01-13 18:14:48Z lrineau $
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -47,9 +47,9 @@ public:
 public:
 
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
   virtual void operator()(typename T::Face_handle fh);
 
   void setVerticesPen(const QPen& pen)
@@ -96,7 +96,7 @@ protected:
 
   typename T::Vertex_handle vh;
   typename T::Point p;
-  CGAL::Bbox_2 bb;  
+  CGAL::Bbox_2 bb;
   bool bb_initialized;
   QRectF bounding_rect;
 
@@ -121,7 +121,7 @@ TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
 }
 
 template <typename T>
-QRectF 
+QRectF
 TriangulationGraphicsItem<T>::boundingRect() const
 {
   return bounding_rect;
@@ -129,7 +129,7 @@ TriangulationGraphicsItem<T>::boundingRect() const
 
 
 template <typename T>
-void 
+void
 TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visible_edges) {
@@ -147,7 +147,7 @@ TriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 }
 
 template <typename T>
-void 
+void
 TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   QPen pen;
@@ -155,7 +155,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   pen.setBrush(::Qt::black);
   painter->setPen(edges_pen);
   painterostream = PainterOstream<Geom_traits>(painter);
- 
+
   if(visibleEdges()) {
     for(typename T::All_edges_iterator eit = t->all_edges_begin();
         eit != t->all_edges_end();
@@ -167,7 +167,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 }
 
 template <typename T>
-void 
+void
 TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 {
   if(visibleVertices()) {
@@ -186,7 +186,7 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 }
 
 template <typename T>
-void 
+void
 TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
 {
   Converter<Geom_traits> convert;
@@ -198,8 +198,8 @@ TriangulationGraphicsItem<T>::paintVertex(typename T::Vertex_handle vh)
 }
 
 template <typename T>
-void 
-TriangulationGraphicsItem<T>::paint(QPainter *painter, 
+void
+TriangulationGraphicsItem<T>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {
@@ -208,11 +208,11 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
   } else {
     m_painter = painter;
     painterostream = PainterOstream<Geom_traits>(painter);
-    CGAL::apply_to_range (*t, 
+    CGAL::apply_to_range (*t,
                           typename T::Point(option->exposedRect.left(),
-                                            option->exposedRect.bottom()), 
+                                            option->exposedRect.bottom()),
                           typename T::Point(option->exposedRect.right(),
-                                            option->exposedRect.top()), 
+                                            option->exposedRect.top()),
                           *this);
   }
 }
@@ -220,7 +220,7 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename T>
-void 
+void
 TriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
@@ -229,7 +229,7 @@ TriangulationGraphicsItem<T>::updateBoundingBox()
 
 
 template <typename T>
-void 
+void
 TriangulationGraphicsItem<T>::modelChanged()
 {
   if((t->number_of_vertices() == 0)){

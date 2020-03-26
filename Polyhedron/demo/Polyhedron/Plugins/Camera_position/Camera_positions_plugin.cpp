@@ -8,7 +8,7 @@
 
 #include <QMainWindow>
 using namespace CGAL::Three;
-class Polyhedron_demo_camera_positions_plugin : 
+class Polyhedron_demo_camera_positions_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface,
   public CGAL::Three::Polyhedron_demo_io_plugin_interface
@@ -43,7 +43,7 @@ void Polyhedron_demo_camera_positions_plugin::init(QMainWindow* mainWindow, Scen
   mainWindow->addDockWidget(Qt::LeftDockWidgetArea, cpl);
 }
 
-QList<QAction*> 
+QList<QAction*>
 Polyhedron_demo_camera_positions_plugin::actions() const
 {
   return QList<QAction*>();

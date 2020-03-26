@@ -15,12 +15,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
-// This file's name must begin with a lower-case letter for backward 
-// compatability.  Unfortunately, you can't have a file that differs only 
+// This file's name must begin with a lower-case letter for backward
+// compatability.  Unfortunately, you can't have a file that differs only
 // in capitalization on the Windows platforms.
 
 #ifndef CGAL_CONVEX_HULL_TRAITS_2_H

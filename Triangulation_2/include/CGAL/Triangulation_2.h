@@ -150,7 +150,7 @@ public:
     const Triangulation_2 *t;
   public:
     Infinite_tester() {}
-    Infinite_tester(const Triangulation_2 *tr)	  : t(tr) {}
+    Infinite_tester(const Triangulation_2 *tr)          : t(tr) {}
 
     bool operator()(const All_vertices_iterator & vit) const  {
       return t->is_infinite(vit);

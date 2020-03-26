@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -75,7 +75,7 @@ public:
 public:
   /** \name CONSTRUCTORS */
 
-  Poisson_refine_tets_base(Tr& t, Criteria crit) 
+  Poisson_refine_tets_base(Tr& t, Criteria crit)
     : Triangulation_mesher_level_traits_3<Tr>(t), criteria(crit) {}
 
 protected:
@@ -102,8 +102,8 @@ protected:
     Cell_quality q;
     if( c->is_in_domain() && should_be_refined(c, q) )
       {
-	this->add_bad_element(c, q);
-	return true;
+        this->add_bad_element(c, q);
+        return true;
       }
     return false;
   }
@@ -113,8 +113,8 @@ public:
 
   void scan_triangulation_impl()
   {
-    for(typename Tr::Finite_cells_iterator cit = 
-	  triangulation_ref_impl().finite_cells_begin(),
+    for(typename Tr::Finite_cells_iterator cit =
+          triangulation_ref_impl().finite_cells_begin(),
         eit = triangulation_ref_impl().finite_cells_end();
         cit != eit;
         ++cit)
@@ -131,8 +131,8 @@ public:
     const Point result = triangulation_ref_impl().dual(c);
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
 #  ifdef CGAL_MESH_3_DIRTY_DEBUG_SPHERES
-    std::cerr << " \t\tdistance: " 
-              << CGAL::sqrt(CGAL::squared_distance(result, 
+    std::cerr << " \t\tdistance: "
+              << CGAL::sqrt(CGAL::squared_distance(result,
                          typename Tr::Geom_traits::Point_3(CGAL::ORIGIN)));
 #  endif
 #endif
@@ -149,16 +149,16 @@ public:
   void before_conflicts_impl(const Cell_handle&, const Point&)
   {
   }
-#endif  
+#endif
 
   void after_no_insertion_impl(const Cell_handle&, const Point&,
-			       const Zone& )
+                               const Zone& )
   {
 #if CGAL_MESH_3_DEBUG_AFTER_NO_INSERTION
     std::cerr << "  REJECTED!" << std::endl;
 #endif
   }
-}; // end Poisson_refine_tets_base  
+}; // end Poisson_refine_tets_base
 
 template <class Tr,
           class Criteria,
@@ -168,27 +168,27 @@ template <class Tr,
             typename Tr::Cell_handle,
             typename Criteria::Cell_quality>
 >
-class Poisson_refine_tets_with_oracle_base 
+class Poisson_refine_tets_with_oracle_base
   : public Poisson_refine_tets_base<Tr,
                             Criteria,
                             Container>
 {
 public:
   typedef Poisson_refine_tets_base<Tr, Criteria, Container> Base;
-  typedef Poisson_refine_tets_with_oracle_base<Tr, 
+  typedef Poisson_refine_tets_with_oracle_base<Tr,
                                        Criteria,
                                        Surface,
                                        Oracle,
                                        Container> Self;
-  
+
   typedef typename Base::Vertex_handle Vertex_handle;
   typedef typename Base::Cell_handle Cell_handle;
   typedef typename Base::Point Point;
   typedef typename Base::Zone Zone;
 
   using Base::triangulation_ref_impl;
-  
-  
+
+
 
   /** \name CONSTRUCTORS */
 
@@ -219,7 +219,7 @@ public:
   }
 
   void before_insertion_impl(const Cell_handle&, const Point& ,
-			     Zone& zone)
+                             Zone& zone)
   {
     remove_star_from_cells_queue(zone); // FIXME: name
   }
@@ -227,9 +227,9 @@ public:
   void remove_star_from_cells_queue(Zone& zone)
   {
     for(typename Zone::Cells_iterator cit = zone.cells.begin();
-	cit != zone.cells.end();
-	++cit)
-	  this->remove_element(*cit);
+        cit != zone.cells.end();
+        ++cit)
+          this->remove_element(*cit);
   }
 
   void after_insertion_impl(const Vertex_handle& v)
@@ -255,13 +255,13 @@ public:
         cit != incident_cells.end();
         ++cit)
       if( ! triangulation_ref_impl().is_infinite(*cit) )
-	{
+        {
           // tr.dual() is optimized when the cell base class has
           // circumcenter().
-	  (*cit)->set_in_domain(oracle.is_in_volume(surface, 
+          (*cit)->set_in_domain(oracle.is_in_volume(surface,
                                                     triangulation_ref_impl().dual(*cit)));
-	  test_if_cell_is_bad(*cit);
-	}
+          test_if_cell_is_bad(*cit);
+        }
   }
 
 protected:
@@ -279,8 +279,8 @@ template <typename Tr,
              Poisson_refine_tets_with_oracle_base<Tr, Criteria, Surface, Oracle>,
           typename Facets_level = Refine_facets<Tr>
  >
-class Poisson_refine_tets : 
-  public BaseP, 
+class Poisson_refine_tets :
+  public BaseP,
   public CGAL::Mesher_level <   // qualified with CGAL:: as CGAL::Mesh_3::Mesher_level also exists
     Tr,
     Poisson_refine_tets<Tr, Criteria, Surface, Oracle, BaseP, Facets_level>,
@@ -301,7 +301,7 @@ public:
     Facets_level,
     Triangulation_mesher_level_traits_3<Tr>
   > Mesher;
-  
+
   Poisson_refine_tets(Tr& t, Criteria crit, Surface& surface, Oracle& oracle, Facets_level& facets_level)
     : Base(t, crit, surface, oracle), Mesher(facets_level), facets_level(facets_level)
   {} // here VC7 complain about default constructor of Base, if the

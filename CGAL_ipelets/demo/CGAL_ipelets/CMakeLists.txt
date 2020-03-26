@@ -70,9 +70,9 @@ if ( CGAL_FOUND )
     if (WITH_IPE_7)
       add_definitions(-DCGAL_USE_IPE_7)
     endif()
-    
-    message("-- Using IPE version ${IPE_VERSION} compatibility.") 
-    
+
+    message("-- Using IPE version ${IPE_VERSION} compatibility.")
+
     #setting installation directory
     get_filename_component(IPE_LIBRARY_DIR ${IPE_LIBRARIES} PATH)
     if (IPE_FOUND AND NOT IPELET_INSTALL_DIR)
@@ -80,7 +80,7 @@ if ( CGAL_FOUND )
         remove_leading_zero(IPE_MINOR_VERSION_1)
         remove_leading_zero(IPE_MINOR_VERSION_2)
         set(INSTALL_PATHS "${IPE_LIBRARY_DIR}/ipe/7.${IPE_MINOR_VERSION_1}.${IPE_MINOR_VERSION_2}/ipelets/")
-        find_path(IPELET_INSTALL_DIR 
+        find_path(IPELET_INSTALL_DIR
                       NAMES libgoodies.lua goodies.lua
                       PATHS ${INSTALL_PATHS}
                       DOC "The folder where ipelets will be installed"
@@ -96,14 +96,14 @@ if ( CGAL_FOUND )
         set(INSTALL_PATHS ${INSTALL_PATHS} /usr/lib/ipe/6.0/ipelets)
 
 
-        find_library(IPELET_INSTALL_DIR_FILES 
+        find_library(IPELET_INSTALL_DIR_FILES
                       NAMES align
                       PATHS ${INSTALL_PATHS}
                             ENV IPELETPATH
                     )
         if (IPELET_INSTALL_DIR_FILES)
           get_filename_component(IPELET_INSTALL_DIR ${IPELET_INSTALL_DIR_FILES} PATH)
-        endif()                
+        endif()
       endif()
     endif()
 
@@ -121,7 +121,7 @@ if ( CGAL_FOUND )
     set(CGAL_IPELETS ${CGAL_IPELETS} multi_delaunay)
     set(CGAL_IPELETS ${CGAL_IPELETS} multi_regular)
     set(CGAL_IPELETS ${CGAL_IPELETS} partition)
-    set(CGAL_IPELETS ${CGAL_IPELETS} pca)    
+    set(CGAL_IPELETS ${CGAL_IPELETS} pca)
     set(CGAL_IPELETS ${CGAL_IPELETS} skeleton)
     set(CGAL_IPELETS ${CGAL_IPELETS} svdlinf)
     set(CGAL_IPELETS ${CGAL_IPELETS} triangulation)

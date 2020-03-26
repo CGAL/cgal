@@ -32,7 +32,7 @@
 #ifdef CGAL_LINKED_WITH_TBB
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
+#include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 const std::size_t limit_fast_drawing = 300000; //arbitraty large value
@@ -143,7 +143,7 @@ class Fill_buffers {
   double length;
   std::size_t size_p;
   std::size_t offset_normal_indices;
-  
+
 public:
   Fill_buffers(Point_set* point_set,
                std::vector<Point_set::Index>& indices,
@@ -180,11 +180,11 @@ public:
   {
     const Point_set::Index& idx = indices[i];
     const Kernel::Point_3& p = point_set->point(idx);
-    
+
     positions_lines[i * size_p    ] = p.x() + offset.x;
     positions_lines[i * size_p + 1] = p.y() + offset.y;
     positions_lines[i * size_p + 2] = p.z() + offset.z;
-    
+
     if(has_normals)
     {
       const Kernel::Vector_3& n = point_set->normal(idx);
@@ -420,7 +420,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     std::vector<Point_set::Index> indices;
     indices.reserve (m_points->size());
     std::copy (m_points->begin(), m_points->end(), std::back_inserter(indices));
-    
+
     CGAL::cpp98::random_shuffle (indices.begin(), indices.end() - m_points->nb_selected_points());
     if (m_points->nb_selected_points() != 0)
       CGAL::cpp98::random_shuffle (indices.end() - m_points->nb_selected_points(), indices.end());
@@ -437,9 +437,9 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
       positions_lines.resize(m_points->size() * 6);
       positions_normals.resize((m_points->size() - m_points->nb_selected_points()) * 3);
       positions_selected_normals.resize(m_points->nb_selected_points() * 3);
-      
+
       // we can't afford computing real average spacing just for display, 0.5% of bbox will do
-      average_spacing = 0.005 * item->diagonalBbox(); 
+      average_spacing = 0.005 * item->diagonalBbox();
       normal_length = (std::min)(average_spacing, std::sqrt(region_of_interest.squared_radius() / 1000.));
       length_factor = 10.0/100*normal_Slider->value();
     }
@@ -453,7 +453,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     Fill_buffers fill_buffers_2 (m_points, indices, positions_lines, positions_selected_normals,
                                  item->has_normals(), offset, normal_length * length_factor,
                                  m_points->first_selected() - m_points->begin());
-     
+
 #ifdef CGAL_LINKED_WITH_TBB
     tbb::parallel_for(tbb::blocked_range<size_t>(0,
                                                  m_points->size() - m_points->nb_selected_points()),
@@ -467,7 +467,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
     for (std::size_t i = indices.size() - m_points->nb_selected_points(); i < indices.size(); ++ i)
       fill_buffers_2.apply (i);
 #endif
-    
+
     //The colors
     if (m_points->has_colors())
     {
@@ -483,7 +483,7 @@ void Scene_points_with_normal_item_priv::compute_normals_and_vertices() const
           colors_points.push_back (m_points->blue(indices[i]));
         }
     }
-        
+
     QApplication::restoreOverrideCursor();
 }
 
@@ -550,7 +550,7 @@ void Scene_points_with_normal_item::selectDuplicates()
       selected.push_back (*ptit);
     else
       unselected.push_back (*ptit);
-  
+
   for (std::size_t i = 0; i < unselected.size(); ++ i)
     *(d->m_points->begin() + i) = unselected[i];
   for (std::size_t i = 0; i < selected.size(); ++ i)
@@ -564,7 +564,7 @@ void Scene_points_with_normal_item::selectDuplicates()
   {
     d->m_points->set_first_selected
       (d->m_points->begin() + unselected.size());
-  } 
+  }
 
   invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
@@ -594,7 +594,7 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
   }
   if (d->m_points->check_colors())
     std::cerr << "-> Point set has colors" << std::endl;
-  
+
   invalidateOpenGLBuffers();
   return ok;
 }
@@ -603,9 +603,9 @@ bool Scene_points_with_normal_item::read_las_point_set(std::istream& stream)
 bool Scene_points_with_normal_item::write_las_point_set(std::ostream& stream) const
 {
   Q_ASSERT(d->m_points != NULL);
-  
+
   d->m_points->reset_indices();
-  
+
   return stream &&
     CGAL::write_las_point_set (stream, *(d->m_points));
 }
@@ -647,7 +647,7 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream, bo
   Q_ASSERT(d->m_points != NULL);
 
   d->m_points->reset_indices();
-  
+
   if (!stream)
     return false;
 
@@ -725,7 +725,7 @@ Scene_points_with_normal_item::toolTip() const
     .arg(color().name());
 }
 
-bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const 
+bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
 {
   switch ( m )
   {

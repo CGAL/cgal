@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert, Sylvain Pion
- 
+
 
 #ifndef CGAL__TEST_FCT_LINE_2_H
 #define CGAL__TEST_FCT_LINE_2_H
@@ -186,8 +186,8 @@ _test_fct_line_2(const R& )
 
  // More tests, that require sqrt().
  {
-     typedef ::CGAL::Algebraic_structure_traits<FT> AST; 
-     static const bool has_sqrt = 
+     typedef ::CGAL::Algebraic_structure_traits<FT> AST;
+     static const bool has_sqrt =
          ! ::boost::is_same< ::CGAL::Null_functor, typename AST::Sqrt >::value;
      _test_fct_line_sqrt_2(R(), ::CGAL::Boolean_tag<has_sqrt>());
  }

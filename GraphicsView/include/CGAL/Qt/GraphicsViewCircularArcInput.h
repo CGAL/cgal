@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -30,8 +30,8 @@
 #include <QRectF>
 #include <QPointF>
 #include <QGraphicsItem>
-#include <QGraphicsEllipseItem> 
-#include <QGraphicsLineItem> 
+#include <QGraphicsEllipseItem>
+#include <QGraphicsLineItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -51,19 +51,19 @@ template <typename K>
 class GraphicsViewCircularArcInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewCircularArcInput(QObject *parent, QGraphicsScene* s); 
+  GraphicsViewCircularArcInput(QObject *parent, QGraphicsScene* s);
   ~GraphicsViewCircularArcInput();
 
 protected:
-    
+
   virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
   virtual void keyPressEvent(QKeyEvent *event);
-  
-  bool eventFilter(QObject *obj, QEvent *event);
-  
 
-  
+  bool eventFilter(QObject *obj, QEvent *event);
+
+
+
 
 private:
   typedef typename K::Circular_arc_2 Circular_arc_2;
@@ -76,7 +76,7 @@ private:
   CircularArcGraphicsItem<K> *qcarc;
   QPointF qp, qq, qr;
   Point_2 p, q, r, ap, aq, ar;
-  QGraphicsScene *scene_;  
+  QGraphicsScene *scene_;
   Converter<K> convert;
 };
 
@@ -102,9 +102,9 @@ GraphicsViewCircularArcInput<K>::~GraphicsViewCircularArcInput()
 
 
 template <typename K>
-void 
+void
 GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{  
+{
   if(event->modifiers()  & ::Qt::ShiftModifier){
     return;
   }
@@ -139,7 +139,7 @@ GraphicsViewCircularArcInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event
 
 
 template <typename K>
-void 
+void
 GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(count == 0){
@@ -162,11 +162,11 @@ GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       return;
     } else {
       if(CGAL::orientation(p, q, r) == CGAL::RIGHT_TURN) {
-	ap = p; ar = r; aq = q;
-	qcarc->setArc(Circular_arc_2(p,r,q));
+        ap = p; ar = r; aq = q;
+        qcarc->setArc(Circular_arc_2(p,r,q));
       } else {
-	ap = q; ar = r; aq = p;
-	qcarc->setArc(Circular_arc_2(q,r,p));
+        ap = q; ar = r; aq = p;
+        qcarc->setArc(Circular_arc_2(q,r,p));
       }
       qcarc->show();
     }
@@ -175,15 +175,15 @@ GraphicsViewCircularArcInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void 
-GraphicsViewCircularArcInput<K>::keyPressEvent ( QKeyEvent * event ) 
+void
+GraphicsViewCircularArcInput<K>::keyPressEvent ( QKeyEvent * event )
 {
   if(event->key() == ::Qt::Key_Delete){
     if(count>0){
       --count;
     }
   }
-  
+
   if(event->key() == ::Qt::Key_Escape){
     count = 0;
   }
@@ -192,7 +192,7 @@ GraphicsViewCircularArcInput<K>::keyPressEvent ( QKeyEvent * event )
 
 
 template <typename K>
-bool 
+bool
 GraphicsViewCircularArcInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -211,7 +211,7 @@ GraphicsViewCircularArcInput<K>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 } // namespace Qt
 } // namespace CGAL

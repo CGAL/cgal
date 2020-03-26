@@ -4,7 +4,7 @@
 
 The goal of the \cgal Open Source Project is to provide easy access to
 efficient and reliable geometric algorithms in the form of a C++
-library. 
+library.
 
 The Computational Geometry Algorithms Library offers data structures
 and algorithms like \ref PartTriangulationsAndDelaunayTriangulations "triangulations", \ref PartVoronoiDiagrams "Voronoi diagrams",  \ref PartPolygons,  \ref PartPolyhedra, \ref PartArrangements "arrangements of curves", \ref PartMeshing "mesh generation", \ref PartGeometryProcessing "geometry processing", \ref PartConvexHullAlgorithms "convex hull algorithms", to name just
@@ -24,9 +24,9 @@ Demos and Examples
 ==================
 
 In the distribution of the library  you find the two directories *demo*
-and *examples*. They contain subdirectories for the \cgal packages.  
-The demos use third party libraries for the graphical user interface. The 
-examples don't have this dependency and most examples are refered to in the 
+and *examples*. They contain subdirectories for the \cgal packages.
+The demos use third party libraries for the graphical user interface. The
+examples don't have this dependency and most examples are refered to in the
 user manual.
 
 License

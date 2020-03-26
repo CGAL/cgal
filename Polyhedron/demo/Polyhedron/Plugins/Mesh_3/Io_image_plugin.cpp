@@ -74,7 +74,7 @@
 // 0..1 and min_max is the range it came from.
 struct IntConverter {
   std::pair<int, int> min_max;
-  
+
   int operator()(float f) {
     float s = f * float((min_max.second - min_max.first));
     //approximate instead of just floor.

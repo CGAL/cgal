@@ -80,8 +80,8 @@ main(int argc,char* argv[])
   std::cout << "\nStart dijkstra_shortest_paths at " << source->point() << std::endl;
 
   boost::dijkstra_shortest_paths(ft, source ,
-				 distance_map(distance_pmap)
-				 .predecessor_map(predecessor_pmap));
+                                 distance_map(distance_pmap)
+                                 .predecessor_map(predecessor_pmap));
 
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor vd = *vit;

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
@@ -81,15 +81,15 @@ int main(const int argNr,const char **args) {
   // get solution:
   if (s.status() == CGAL::QP_OPTIMAL) {
     // output solution:
-    cout << "Objective function value: " << 
-      s.objective_value() << endl;     
-     
+    cout << "Objective function value: " <<
+      s.objective_value() << endl;
+
     cout << "Variable values:" << endl;
-    Solution::Variable_value_iterator it 
+    Solution::Variable_value_iterator it
       = s.variable_values_begin() ;
     for (int i=0; i < qp.get_n(); it++, ++i)
       cout << "  " << qp.variable_name_by_index(i) << " = "
-	   << CGAL::to_double(*it) << endl;
+           << CGAL::to_double(*it) << endl;
     return 0;
   }
   if  (s.status() == CGAL::QP_INFEASIBLE)

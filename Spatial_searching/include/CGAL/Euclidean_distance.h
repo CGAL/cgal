@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
@@ -36,7 +36,7 @@ namespace CGAL {
   template <class SearchTraits>
   class Euclidean_distance;
 
-    
+
   namespace internal{
     template <class SearchTraits>
     struct Spatial_searching_default_distance{
@@ -46,9 +46,9 @@ namespace CGAL {
 
   template <class SearchTraits>
   class Euclidean_distance {
-    
+
     SearchTraits traits;
-    
+
     public:
 
     typedef typename SearchTraits::FT    FT;
@@ -56,12 +56,12 @@ namespace CGAL {
     typedef Point_d Query_item;
 
     typedef typename internal::Get_dimension_tag<SearchTraits>::Dimension D;
-	
+
 
     // default constructor
     Euclidean_distance(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 
-    
+
     inline FT transformed_distance(const Query_item& q, const Point_d& p) const {
         return transformed_distance(q,p, D());
     }
@@ -69,12 +69,12 @@ namespace CGAL {
     //Dynamic version for runtime dimension
     inline FT transformed_distance(const Query_item& q, const Point_d& p, Dynamic_dimension_tag) const {
         FT distance = FT(0);
-	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+        typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
         typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-	qe = construct_it(q,1), pit = construct_it(p);
-	for(; qit != qe; qit++, pit++){
-	    distance += ((*qit)-(*pit))*((*qit)-(*pit));
-	}
+        qe = construct_it(q,1), pit = construct_it(p);
+        for(; qit != qe; qit++, pit++){
+            distance += ((*qit)-(*pit))*((*qit)-(*pit));
+        }
         return distance;
     }
 
@@ -86,7 +86,7 @@ namespace CGAL {
         typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
           qe = construct_it(q,1), pit = construct_it(p);
         for(; qit != qe; qit++, pit++){
-	  distance += ((*qit)-(*pit))*((*qit)-(*pit));
+          distance += ((*qit)-(*pit))*((*qit)-(*pit));
         }
         return distance;
     }
@@ -113,95 +113,95 @@ namespace CGAL {
         return distance;
     }
 
- 
 
 
-	inline FT min_distance_to_rectangle(const Query_item& q,
-					    const Kd_tree_rectangle<FT,D>& r) const {
-		FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
-                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-		  qe = construct_it(q,1);
-		for(unsigned int i = 0;qit != qe; i++, qit++){
-		  if((*qit) < r.min_coord(i))
-				distance += 
-				(r.min_coord(i)-(*qit))*(r.min_coord(i)-(*qit));
-		  else if ((*qit) > r.max_coord(i))
-				distance +=  
-				((*qit)-r.max_coord(i))*((*qit)-r.max_coord(i));
-			
-		}
-		return distance;
-	}
 
         inline FT min_distance_to_rectangle(const Query_item& q,
-					    const Kd_tree_rectangle<FT,D>& r,std::vector<FT>& dists) const {
-		FT distance = FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                                            const Kd_tree_rectangle<FT,D>& r) const {
+                FT distance = FT(0);
+                typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-		  qe = construct_it(q,1);
-		for(unsigned int i = 0;qit != qe; i++, qit++){
-		  if((*qit) < r.min_coord(i)){
-                                dists[i] = (r.min_coord(i)-(*qit));
-				distance += dists[i] * dists[i];
-                  }
-		  else if ((*qit) > r.max_coord(i)){
-                                dists[i] = ((*qit)-r.max_coord(i));
-				distance +=  dists[i] * dists[i];
-                  }
-			
-		}
-		return distance;
-	}
+                  qe = construct_it(q,1);
+                for(unsigned int i = 0;qit != qe; i++, qit++){
+                  if((*qit) < r.min_coord(i))
+                                distance +=
+                                (r.min_coord(i)-(*qit))*(r.min_coord(i)-(*qit));
+                  else if ((*qit) > r.max_coord(i))
+                                distance +=
+                                ((*qit)-r.max_coord(i))*((*qit)-r.max_coord(i));
 
-	inline FT max_distance_to_rectangle(const Query_item& q,
-					     const Kd_tree_rectangle<FT,D>& r) const {
-		FT distance=FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                }
+                return distance;
+        }
+
+        inline FT min_distance_to_rectangle(const Query_item& q,
+                                            const Kd_tree_rectangle<FT,D>& r,std::vector<FT>& dists) const {
+                FT distance = FT(0);
+                typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-		  qe = construct_it(q,1);
-		for(unsigned int i = 0;qit != qe; i++, qit++){
-				if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
-					distance += (r.max_coord(i)-(*qit))*(r.max_coord(i)-(*qit));
-				else
-					distance += ((*qit)-r.min_coord(i))*((*qit)-r.min_coord(i));
-		};
-		return distance;
-	}
+                  qe = construct_it(q,1);
+                for(unsigned int i = 0;qit != qe; i++, qit++){
+                  if((*qit) < r.min_coord(i)){
+                                dists[i] = (r.min_coord(i)-(*qit));
+                                distance += dists[i] * dists[i];
+                  }
+                  else if ((*qit) > r.max_coord(i)){
+                                dists[i] = ((*qit)-r.max_coord(i));
+                                distance +=  dists[i] * dists[i];
+                  }
+
+                }
+                return distance;
+        }
 
         inline FT max_distance_to_rectangle(const Query_item& q,
-					     const Kd_tree_rectangle<FT,D>& r,std::vector<FT>& dists ) const {
-		FT distance=FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                                             const Kd_tree_rectangle<FT,D>& r) const {
+                FT distance=FT(0);
+                typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
-		  qe = construct_it(q,1);
-		for(unsigned int i = 0;qit != qe; i++, qit++){
-				if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0)){
-                                        dists[i] = (r.max_coord(i)-(*qit));
-					distance += dists[i] * dists[i];
-                                }
-				else{
-                                        dists[i] = ((*qit)-r.min_coord(i));
-					distance += dists[i] * dists[i];
-                                }
-		};
-		return distance;
-	}
+                  qe = construct_it(q,1);
+                for(unsigned int i = 0;qit != qe; i++, qit++){
+                                if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
+                                        distance += (r.max_coord(i)-(*qit))*(r.max_coord(i)-(*qit));
+                                else
+                                        distance += ((*qit)-r.min_coord(i))*((*qit)-r.min_coord(i));
+                };
+                return distance;
+        }
 
-	inline FT new_distance(FT dist, FT old_off, FT new_off,
-			       int /* cutting_dimension */)  const {
-		
-		FT new_dist = dist + (new_off*new_off - old_off*old_off);
+        inline FT max_distance_to_rectangle(const Query_item& q,
+                                             const Kd_tree_rectangle<FT,D>& r,std::vector<FT>& dists ) const {
+                FT distance=FT(0);
+                typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+                typename SearchTraits::Cartesian_const_iterator_d qit = construct_it(q),
+                  qe = construct_it(q,1);
+                for(unsigned int i = 0;qit != qe; i++, qit++){
+                                if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0)){
+                                        dists[i] = (r.max_coord(i)-(*qit));
+                                        distance += dists[i] * dists[i];
+                                }
+                                else{
+                                        dists[i] = ((*qit)-r.min_coord(i));
+                                        distance += dists[i] * dists[i];
+                                }
+                };
+                return distance;
+        }
+
+        inline FT new_distance(FT dist, FT old_off, FT new_off,
+                               int /* cutting_dimension */)  const {
+
+                FT new_dist = dist + (new_off*new_off - old_off*old_off);
                 return new_dist;
-	}
+        }
 
   inline FT transformed_distance(FT d) const {
-		return d*d;
-	}
+                return d*d;
+        }
 
   inline FT inverse_of_transformed_distance(FT d) const {
-		return CGAL::sqrt(d);
-	}
+                return CGAL::sqrt(d);
+        }
 
   }; // class Euclidean_distance
 

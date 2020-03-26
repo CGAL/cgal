@@ -15,11 +15,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //                 Michael Seel <seel@mpi-inf.mpg.de>
-//                 Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+//                 Michael Hemmer <hemmer@informatik.uni-mainz.de>
 // ============================================================================
 
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
@@ -27,7 +27,7 @@
 
 /*! \file CGAL/Polynomial.h
  *  \brief Defines class CGAL::Polynomial.
- *  
+ *
  *  Polynomials in one variable (or more, by recursion)
  */
 

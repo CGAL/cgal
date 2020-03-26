@@ -33,14 +33,14 @@ namespace Polyline_simplification_2
 
 /// \ingroup PkgPolylineSimplification2Classes
 
-/// This class is a stop predicate returning `true` when the percentage 
+/// This class is a stop predicate returning `true` when the percentage
 /// of remaning vertices is smaller than a certain threshold.
 ///
 /// \cgalModels `PolylineSimplificationStopPredicate`.
 class Stop_below_count_ratio_threshold
 {
 public :
-  
+
   /// Initializes it with the given threshold value.
   Stop_below_count_ratio_threshold( double threshold ) : mThres(threshold) {}
 
@@ -48,21 +48,21 @@ public :
   /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
   /// is model of  `PolylineSimplificationVertexBase_2`.
 
-  template<class CDT>  
-  bool operator()(const Constrained_triangulation_plus_2<CDT> & 
+  template<class CDT>
+  bool operator()(const Constrained_triangulation_plus_2<CDT> &
                   , typename Constrained_triangulation_plus_2<CDT>::Vertex_handle
                   , typename CDT::Geom_traits::FT
                  , std::size_t                             initial_count
                  , std::size_t                             current_count
-                 ) const 
+                 ) const
   {
     return ( (double)current_count / (double)initial_count ) <= mThres ;
   }
-  
+
 private:
-  
+
   double mThres ;
-};    
+};
 
 
 } // namespace Polyline_simplification_2
@@ -70,4 +70,4 @@ private:
 } //namespace CGAL
 
 #endif // CGAL_POLYLINE_SIMPLIFICATION_2_STOP_BELOW_COUNT_RATIO_THRESHOLD_H
- 
+

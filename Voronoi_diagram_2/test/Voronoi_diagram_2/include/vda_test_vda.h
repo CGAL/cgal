@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -38,7 +38,7 @@ void test_vd_face_concept(const typename VDA::Face_handle& f, int dim)
 {
   typedef typename VDA::Face                 Face;
 
-  // types  
+  // types
   CGAL_USE_TYPE(typename Face::Halfedge);
   CGAL_USE_TYPE(typename Face::Vertex);
   typedef typename Face::Halfedge_handle     Halfedge_handle;
@@ -85,7 +85,7 @@ void test_vd_vertex_concept(const typename VDA::Vertex_handle& v)
 {
   typedef typename VDA::Vertex              Vertex;
 
-  // types  
+  // types
   CGAL_USE_TYPE(typename Vertex::Halfedge);
   CGAL_USE_TYPE(typename Vertex::Face);
   typedef typename Vertex::Halfedge_handle  Halfedge_handle;
@@ -147,7 +147,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
 {
   typedef typename VDA::Halfedge              Halfedge;
 
-  // types  
+  // types
   typedef typename Halfedge::Halfedge_handle  Halfedge_handle;
   typedef typename Halfedge::Vertex_handle    Vertex_handle;
   typedef typename Halfedge::Face_handle      Face_handle;
@@ -203,7 +203,7 @@ void test_vd_halfedge_concept(const typename VDA::Halfedge_handle& e)
   bool br = e->is_ray();
   bool bb = e->is_bisector();
   assert( (bs && (b1 && b2)) || (bb && (!b1 && !b2)) ||
-		  (br && ((!b1 && b2) || (b1 && !b2))) );
+                  (br && ((!b1 && b2) || (b1 && !b2))) );
 
   assert( e->is_valid() );
   kill_warning( b1 && b2 && bu && bs && br && bb );
@@ -236,7 +236,7 @@ void test_vdqr_concept(const VDA& vda, const CGAL::Tag_true&)
     kill_warning(v);
   } else if ( Halfedge_handle* ee = boost::get<Halfedge_handle>(&lr) ) {
     Halfedge_handle e = *ee;
-    kill_warning(e);    
+    kill_warning(e);
   } else if ( Face_handle* ff = boost::get<Face_handle>(&lr) ) {
     Face_handle f = *ff;
     kill_warning(f);
@@ -298,7 +298,7 @@ void test_vda(const VDA& vda)
   typedef typename VDA::Ccb_halfedge_circulator            CCBHC;
 
   typedef typename VDA::Site_iterator                 Site_iterator;
-  
+
   // testing access methods
   //-----------------------
   const DG& dg = vda.dual();
@@ -375,7 +375,7 @@ void test_vda(const VDA& vda)
   test_iterator(vda.edges_begin(), vda.edges_end());
   test_iterator(vda.halfedges_begin(), vda.halfedges_end());
   test_iterator(vda.unbounded_halfedges_begin(),
-		vda.unbounded_halfedges_end());
+                vda.unbounded_halfedges_end());
   test_iterator(vda.bounded_halfedges_begin(), vda.bounded_halfedges_end());
   if ( vda.edges_begin() != vda.edges_end() ) {
     test_is_convertible_to<Halfedge_handle>(vda.edges_begin());
@@ -457,7 +457,7 @@ void test_vda(const VDA& vda)
 
     std::vector<typename AT::Site_2> vs;
     for (Site_iterator sit = vda.sites_begin();
-	 sit != vda.sites_end(); ++sit) {
+         sit != vda.sites_end(); ++sit) {
       vs.push_back(*sit);
     }
 
@@ -485,7 +485,7 @@ void test_vda(const VDA& vda)
   assert( vda_copy.number_of_vertices() == nv );
   assert( vda_copy.number_of_halfedges() == ne );
   assert( vda_copy.number_of_faces() == nf );
-  assert( vda_copy.is_valid() );  
+  assert( vda_copy.is_valid() );
 
   // testing clear
   vda_copy_2.clear();
@@ -556,7 +556,7 @@ void test_vda(const VDA& vda)
 
   if ( vda.unbounded_faces_begin() != vda.unbounded_faces_end() ) {
     for (ufit = --vda.unbounded_faces_end();
-	 ufit != vda.unbounded_faces_begin(); --ufit) {
+         ufit != vda.unbounded_faces_begin(); --ufit) {
       assert( ufit->is_unbounded() );
     }
     assert( ufit->is_unbounded() );
@@ -570,7 +570,7 @@ void test_vda(const VDA& vda)
 
   if ( vda.bounded_faces_begin() != vda.bounded_faces_end() ) {
     for (bfit = --vda.bounded_faces_end();
-	 bfit != vda.bounded_faces_begin(); --bfit) {
+         bfit != vda.bounded_faces_begin(); --bfit) {
       assert( !bfit->is_unbounded() );
     }
     assert( !bfit->is_unbounded() );
@@ -585,7 +585,7 @@ void test_vda(const VDA& vda)
 
   if ( vda.unbounded_halfedges_begin() != vda.unbounded_halfedges_end() ) {
     for (ueit = --vda.unbounded_halfedges_end();
-	 ueit != vda.unbounded_halfedges_begin(); --ueit) {
+         ueit != vda.unbounded_halfedges_begin(); --ueit) {
       assert( !ueit->has_source() || !ueit->has_target() );
     }
     assert( !ueit->has_source() || !ueit->has_target() );
@@ -600,7 +600,7 @@ void test_vda(const VDA& vda)
 
   if ( vda.bounded_halfedges_begin() != vda.bounded_halfedges_end() ) {
     for (beit = --vda.bounded_halfedges_end();
-	 beit != vda.bounded_halfedges_begin(); --beit) {
+         beit != vda.bounded_halfedges_begin(); --beit) {
       assert( beit->has_source() && beit->has_target() );
     }
     assert( beit->has_source() && beit->has_target() );

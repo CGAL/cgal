@@ -29,20 +29,20 @@
 
 namespace CGAL {
 
-  template < class GT, class Vb = Triangulation_vertex_base_3 <GT> > 
-  class Surface_mesh_vertex_base_3 
-    : public Complex_2_in_triangulation_vertex_base_3<GT, Vb> {    
-    
+  template < class GT, class Vb = Triangulation_vertex_base_3 <GT> >
+  class Surface_mesh_vertex_base_3
+    : public Complex_2_in_triangulation_vertex_base_3<GT, Vb> {
+
   public:
     typedef Surface_mesh_vertex_base_3 <GT, Vb> Self;
-    
+
     template < class TDS3 >
     struct Rebind_TDS {
       typedef typename Vb::template Rebind_TDS<TDS3>::Other  Vb3;
       typedef Surface_mesh_vertex_base_3 <GT, Vb3> Other;
     };
-    
-  public:  
+
+  public:
     Surface_mesh_vertex_base_3()
       : Complex_2_in_triangulation_vertex_base_3<GT, Vb>()
     {}

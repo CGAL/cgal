@@ -5,107 +5,107 @@ namespace CGAL {
 \ingroup PkgSTLExtensionUtilities
 
 
-The `Fourtuple` class stores a homogeneous (same type) 
-fourtuple of objects of type `T`. A `Fourtuple` is much like a 
-container, in that it "owns" its elements. It is not actually a model of 
-container, though, because it does not support the standard methods (such as 
-iterators) for accessing the elements of a container. 
+The `Fourtuple` class stores a homogeneous (same type)
+fourtuple of objects of type `T`. A `Fourtuple` is much like a
+container, in that it "owns" its elements. It is not actually a model of
+container, though, because it does not support the standard methods (such as
+iterators) for accessing the elements of a container.
 
-\deprecated This class is deprecated, and will be removed in some future \cgal release. 
-Please use CGAL::cpp11::array instead. 
+\deprecated This class is deprecated, and will be removed in some future \cgal release.
+Please use CGAL::cpp11::array instead.
 
-\tparam T must be `Assignable`. 
+\tparam T must be `Assignable`.
 
 */
 template< typename T >
 class Fourtuple {
 public:
 
-/// \name Types 
-/// @{ 
+/// \name Types
+/// @{
 /*!
 
-*/ 
-typedef T value_type; 
+*/
+typedef T value_type;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-first element 
-*/ 
-T e0; 
+first element
+*/
+T e0;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-second element 
-*/ 
-T e1; 
+second element
+*/
+T e1;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-third element 
-*/ 
-T e2; 
+third element
+*/
+T e2;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Variables 
-/// @{ 
+/// \name Variables
+/// @{
 /*!
-fourth element 
-*/ 
-T e3; 
+fourth element
+*/
+T e3;
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-introduces a `Fourtuple` using the default 
-constructor of the elements. 
-*/ 
-Fourtuple(); 
+introduces a `Fourtuple` using the default
+constructor of the elements.
+*/
+Fourtuple();
 
 
 
-/// @} 
+/// @}
 
 
-/// \name Creation 
-/// @{ 
+/// \name Creation
+/// @{
 /*!
-constructs a `Fourtuple` such 
-that `e0` is constructed from `x`, `e1` from `y`, 
-`e2` from `z` and `e3` from `t`. 
-*/ 
-Fourtuple(T x, T y, T z, T t); 
+constructs a `Fourtuple` such
+that `e0` is constructed from `x`, `e1` from `y`,
+`e2` from `z` and `e3` from `t`.
+*/
+Fourtuple(T x, T y, T z, T t);
 
 
 
-/// @} 
+/// @}
 
 
 

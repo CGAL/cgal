@@ -1,5 +1,5 @@
 // Copyright (c) 2008 ETH Zurich (Switzerland)
-// Copyright (c) 2008-2009  INRIA Sophia-Antipolis (France) 
+// Copyright (c) 2008-2009  INRIA Sophia-Antipolis (France)
 // Copyright (c) 2009  GeometryFactory (France)
 // All rights reserved.
 //

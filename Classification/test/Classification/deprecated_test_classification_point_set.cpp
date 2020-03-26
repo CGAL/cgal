@@ -45,7 +45,7 @@ int main (int, char**)
   Point_set pts;
 
   pts.add_normal_map();
-  
+
   bool map_added = false;
   Size_t_map echo_map;
   Color_map color_map;
@@ -92,16 +92,16 @@ int main (int, char**)
       training_set[std::size_t(CGAL::get_default_random().get_int(0, int(training_set.size())))] = int(i);
   }
   assert (labels.size() == 20);
-  
+
   Classifier classifier (labels, features);
-  
+
   classifier.train<CGAL::Sequential_tag> (training_set, 800);
 #ifdef CGAL_LINKED_WITH_TBB
   classifier.train<CGAL::Parallel_tag> (training_set, 800);
 #endif
 
   std::vector<int> label_indices(pts.size(), -1);
-  
+
   Classification::classify<CGAL::Sequential_tag>
     (pts, labels, classifier, label_indices);
 
@@ -131,6 +131,6 @@ int main (int, char**)
 #endif
 
   Classification::Evaluation evaluation (labels, training_set, label_indices);
-  
+
   return EXIT_SUCCESS;
 }

@@ -19,9 +19,9 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCULAR_KERNEL_LINE_ARC_TRAITS_2_H
@@ -47,7 +47,7 @@
 
 namespace CGAL {
 
-// Traits class for CGAL::Arrangement_2 (and similar) based on a 
+// Traits class for CGAL::Arrangement_2 (and similar) based on a
 // CircularKernel.
 
 template < typename CircularKernel >
@@ -60,13 +60,13 @@ public:
   typedef CircularKernel Kernel;
   typedef typename CircularKernel::Line_arc_2  Curve_2;
   typedef typename CircularKernel::Line_arc_2  X_monotone_curve_2;
-  typedef unsigned int                         Multiplicity; 
+  typedef unsigned int                         Multiplicity;
 
   typedef typename CircularKernel::Circular_arc_point_2      Point;
   typedef typename CircularKernel::Circular_arc_point_2      Point_2;
 
   typedef CGAL::Tag_false                        Has_left_category;
-  typedef CGAL::Tag_false 			 Has_merge_category;
+  typedef CGAL::Tag_false                          Has_merge_category;
   typedef CGAL::Tag_false                        Has_do_intersect_category;
 
   typedef Arr_oblivious_side_tag                 Left_side_category;
@@ -84,9 +84,9 @@ public:
   typedef typename CircularKernel::Equal_2              Equal_2;
   typedef typename CircularKernel::Make_x_monotone_2    Make_x_monotone_2;
   typedef typename CircularKernel::Split_2              Split_2;
-  typedef typename CircularKernel::Construct_circular_min_vertex_2  
+  typedef typename CircularKernel::Construct_circular_min_vertex_2
                                                         Construct_min_vertex_2;
-  typedef typename CircularKernel::Construct_circular_max_vertex_2  
+  typedef typename CircularKernel::Construct_circular_max_vertex_2
                                                         Construct_max_vertex_2;
   typedef typename CircularKernel::Is_vertical_2        Is_vertical_2;
   typedef typename CircularKernel::Intersect_2          Intersect_2;
@@ -97,10 +97,10 @@ public:
   Compare_xy_2 compare_xy_2_object() const
   { return ck.compare_xy_2_object(); }
 
-  Compare_y_at_x_2 compare_y_at_x_2_object() const 
+  Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return ck.compare_y_at_x_2_object(); }
 
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const 
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return ck.compare_y_to_right_2_object(); }
 
   Equal_2 equal_2_object() const

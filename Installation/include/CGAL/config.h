@@ -550,7 +550,7 @@ using std::max;
 #  define CGAL_NORETURN  __attribute__ ((__noreturn__))
 #elif defined (_MSC_VER)
 #  define CGAL_NORETURN __declspec(noreturn)
-#else  
+#else
 #  define CGAL_NORETURN
 #endif
 

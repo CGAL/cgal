@@ -16,7 +16,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s) : Jane Tournois, Pierre Alliez
 //
@@ -32,16 +32,16 @@
 namespace CGAL {
 
 namespace Mesh_2 {
-  
+
 template <typename Tr>
 class Uniform_sizing_field_2
   : public virtual Sizing_field_2<Tr>
 {
   typedef typename Tr::Geom_traits::Point_2       Point_2;
   typedef typename Tr::Geom_traits::FT            FT;
-  
+
 public:
-  // Vertices of mesh triangulation do not need to be updated 
+  // Vertices of mesh triangulation do not need to be updated
   static const bool is_vertex_update_needed = false;
 
 public:
@@ -50,8 +50,8 @@ public:
 public:
   FT operator()(const Point_2&) const { return FT(1); }
 };
-  
-  
+
+
 } // end namespace Mesh_2
 
 } //namespace CGAL

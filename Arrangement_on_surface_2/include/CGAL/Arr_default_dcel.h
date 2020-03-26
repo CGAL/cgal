@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein        <wein@post.tau.ac.il>
 //                 Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -37,14 +37,14 @@ namespace CGAL {
 
 /*! \class
  * The default arrangement DCEL class.
- * The Traits parameters corresponds to a geometric traits class, which 
+ * The Traits parameters corresponds to a geometric traits class, which
  * defines the Point_2 and X_monotone_curve_2 types.
  */
 template <class Traits_>
 class Arr_default_dcel :
   public Arr_dcel_base<Arr_vertex_base<typename Traits_::Point_2>,
-		       Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
-		       Arr_face_base>
+                       Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
+                       Arr_face_base>
 {
 public:
 
@@ -70,4 +70,4 @@ public:
 
 #include <CGAL/enable_warnings.h>
 
-#endif 
+#endif

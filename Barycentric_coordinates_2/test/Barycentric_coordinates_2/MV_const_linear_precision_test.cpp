@@ -106,6 +106,6 @@ int main()
     }
 
     cout << endl << "MV_const_linear_precision_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

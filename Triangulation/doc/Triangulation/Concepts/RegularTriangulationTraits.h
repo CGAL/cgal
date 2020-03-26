@@ -4,7 +4,7 @@
 \cgalConcept
 
 This concept describes the geometric types and predicates required to build
-a regular triangulation. It corresponds to the first template parameter of the class 
+a regular triangulation. It corresponds to the first template parameter of the class
 `CGAL::Regular_triangulation<RegularTriangulationTraits_, TriangulationDataStructure_>`.
 
 \cgalRefines `TriangulationTraits`
@@ -95,7 +95,7 @@ typedef unspecified_type In_flat_power_side_of_power_sphere_d;
 /// @{
 
 /*!
-The default constructor (optional). 
+The default constructor (optional).
 This is not required when an instance of the traits is provided
 to the constructor of `CGAL::Regular_triangulation`.
 */

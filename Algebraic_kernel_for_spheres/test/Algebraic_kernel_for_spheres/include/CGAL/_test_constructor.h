@@ -13,9 +13,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -44,11 +44,11 @@ void _test_constuctor(AK ak)
     ak.construct_polynomial_1_3_object();
   typename AK::Construct_polynomials_for_line_3 theConstruct_line_3 =
     ak.construct_polynomials_for_line_3_object();
-  
+
   for(int i = 0; i < 20 ; i++){
     int x = theRandom.get_int(random_min,random_max);
     int y = theRandom.get_int(random_min,random_max);
-    int z = theRandom.get_int(random_min,random_max); 
+    int z = theRandom.get_int(random_min,random_max);
     int r_sq = theRandom.get_int(random_min,random_max);
     int a = theRandom.get_int(random_min,random_max);
     int b = theRandom.get_int(random_min,random_max);
@@ -78,5 +78,5 @@ void _test_constuctor(AK ak)
     assert(p_line_3.a3() == a3);
     assert(p_line_3.b3() == b3);
   }
-  
+
 }

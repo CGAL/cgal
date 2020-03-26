@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
@@ -35,13 +35,13 @@
 namespace CGAL {
 
 template <typename Map_>
-class SM_BooleColor 
+class SM_BooleColor
 {
-  typedef typename Map_::SVertex_const_handle   SVertex_const_handle;   
-  typedef typename Map_::SHalfedge_const_handle SHalfedge_const_handle;   
-  typedef typename Map_::SHalfloop_const_handle SHalfloop_const_handle;   
-  typedef typename Map_::SFace_const_handle     SFace_const_handle;   
-  typedef typename Map_::Mark Mark;   
+  typedef typename Map_::SVertex_const_handle   SVertex_const_handle;
+  typedef typename Map_::SHalfedge_const_handle SHalfedge_const_handle;
+  typedef typename Map_::SHalfloop_const_handle SHalfloop_const_handle;
+  typedef typename Map_::SFace_const_handle     SFace_const_handle;
+  typedef typename Map_::Mark Mark;
 public:
   Color color(SVertex_const_handle, Mark m) const
   { return ( m ? CGAL::BLACK : CGAL::WHITE ); }
@@ -63,7 +63,7 @@ class SM_visualizor : public SM_triangulator< SM_decorator<typename SM_explorer:
 {
 /*{\Mdefinition An instance |\Mvar| of the data type |\Mname| is a
 decorator to draw the structure of a sphere map into the surface
-of a OpenGL sphere. It is generic with respect to the template 
+of a OpenGL sphere. It is generic with respect to the template
 concept.}*/
 
 /*{\Mgeneralization SM_decorator}*/
@@ -76,9 +76,9 @@ public:
   typedef SM_decorator<Sphere_map>                  Decorator;
   typedef SM_triangulator<Decorator>                Base;
 
-  typedef typename Sphere_map::SVertex_const_handle SVertex_const_handle;   
-  typedef typename Sphere_map::SHalfedge_const_handle SHalfedge_const_handle; 
-  typedef typename Sphere_map::SFace_const_handle SFace_const_handle;     
+  typedef typename Sphere_map::SVertex_const_handle SVertex_const_handle;
+  typedef typename Sphere_map::SHalfedge_const_handle SHalfedge_const_handle;
+  typedef typename Sphere_map::SFace_const_handle SFace_const_handle;
   typedef typename Sphere_map::SVertex_const_iterator SVertex_const_iterator;
   typedef typename Sphere_map::SHalfedge_const_iterator SHalfedge_const_iterator;
   typedef typename Sphere_map::SFace_const_iterator SFace_const_iterator;
@@ -100,7 +100,7 @@ public:
 
 /*{\Mcreation 4}*/
 SM_visualizor(const SM_explorer* M, CGAL::OGL::Unit_sphere& S,
-	      const Color_objects& C = Color_objects())
+              const Color_objects& C = Color_objects())
 /*{\Mcreate creates an instance |\Mvar| of type |\Mname| to visualize
     the vertices, edges, and faces of |D| in an open GL window.}*/
   : Base(&MT_,M), E_(M), CO_(C), MT_(true), S_(S)
@@ -119,11 +119,11 @@ void draw_map() const
   SHalfedge_const_iterator e;
   CGAL_forall_sedges(e,*E_) {
     if ( source(e) == target(e) ) {
-      S_.push_back(E_->circle(e), CO_.color(e,E_->mark(e))); 
+      S_.push_back(E_->circle(e), CO_.color(e,E_->mark(e)));
     } else {
       S_.push_back(Sphere_segment(E_->point(E_->source(e)),
-				  E_->point(E_->target(e)),
-				  E_->circle(e)),CO_.color(e,E_->mark(e)));
+                                  E_->point(E_->target(e)),
+                                  E_->circle(e)),CO_.color(e,E_->mark(e)));
     }
   }
   // draw sphere circles underlying loops of E_:
@@ -145,7 +145,7 @@ void draw_map() const
     CGAL_NEF_TRACEV(Base::incident_triangle(e));
     CGAL_NEF_TRACEN(incident_mark(e)<<incident_mark(en)<<incident_mark(enn));
     CGAL_assertion(Base::incident_mark(e)==Base::incident_mark(en) &&
-		   Base::incident_mark(en)==Base::incident_mark(enn));
+                   Base::incident_mark(en)==Base::incident_mark(enn));
     Mark m = Base::incident_mark(e);
     Sphere_triangle t = Base::incident_triangle(e);
     S_.push_back(t, (m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY) );
@@ -156,8 +156,8 @@ void draw_map() const
   CGAL_forall_shalfedges(e,*this) {
     if ( Done[e] ) continue;
     S_.push_back_triangle_edge(Sphere_segment(E_->point(E_->source(e)),
-					      E_->point(E_->target(e)),
-					      E_->circle(e)));
+                                              E_->point(E_->target(e)),
+                                              E_->circle(e)));
     Done[e]=Done[twin(e)]=true;
   }
 
@@ -168,12 +168,12 @@ void draw_map() const
    2) faces are drawn via the calculated triangulation in MT_  */
 
 void draw_triangulation() const
-{ 
+{
   // draw sphere segments underlying edges of triangulation:
   SHalfedge_const_iterator e;
   CGAL_forall_sedges(e,*this) {
     S_.push_back(Sphere_segment(point(source(e)),point(target(e)),
-				circle(e)),CO_.color(e,mark(e)));
+                                circle(e)),CO_.color(e,mark(e)));
   }
 
   // draw points underlying vertices of triangulation:
@@ -186,7 +186,7 @@ void draw_triangulation() const
     if ( Done[e] ) continue;
     SHalfedge_const_handle en(next(e)),enn(next(en));
     CGAL_assertion(incident_mark(e)==incident_mark(en)&&
-		   incident_mark(en)==incident_mark(enn));
+                   incident_mark(en)==incident_mark(enn));
     Mark m = incident_mark(e);
     Sphere_triangle t = incident_triangle(e);
     S_.push_back(t, (m ? CGAL_NEF_DGREY : CGAL_NEF_LGREY) );
@@ -196,7 +196,7 @@ void draw_triangulation() const
 
 }
 
-}; // end of SM_visualizor 
+}; // end of SM_visualizor
 
 
 

@@ -36,7 +36,7 @@ namespace Polyline_simplification_2 {
 /// \tparam Vb must be a model of the concept `TriangulationVertexBase_2`
 /// \cgalModels `PolylineSimplificationVertexBase_2`.
   template<class K, class Vb = CGAL::Triangulation_vertex_base_2<K> >
-class Vertex_base_2 
+class Vertex_base_2
   : public Vb
 {
   typedef typename K::FT FT;
@@ -54,10 +54,10 @@ public:
     typedef Vertex_base_2<K,Vb2>         Other;
   };
 
-  Vertex_base_2() 
-    : Base(), m_removable(true), m_cost(-1.0) 
+  Vertex_base_2()
+    : Base(), m_removable(true), m_cost(-1.0)
   {}
-  
+
 
   bool is_removable() const
   {

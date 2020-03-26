@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -58,7 +58,7 @@ struct Identity_edge_rejector
   typedef typename Delaunay_graph::Finite_edges_iterator  Finite_edges_iterator;
 
   bool operator()(const Delaunay_graph& ,
-		  const Face_handle& , int ) const {
+                  const Face_handle& , int ) const {
     return false;
   }
 
@@ -67,17 +67,17 @@ struct Identity_edge_rejector
   }
 
   bool operator()(const Delaunay_graph& ,
-		  const All_edges_iterator& ) const {
+                  const All_edges_iterator& ) const {
     return false;
   }
 
   bool operator()(const Delaunay_graph& ,
-		  const Finite_edges_iterator& ) const {
+                  const Finite_edges_iterator& ) const {
     return false;
   }
 
   bool operator()(const Delaunay_graph& ,
-		  const Edge_circulator& ) const {
+                  const Edge_circulator& ) const {
     return false;
   }
 };

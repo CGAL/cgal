@@ -56,7 +56,7 @@ public:
 
 /// @{
   /// polygon without hole type
-  typedef Polygon_							General_polygon_2;
+  typedef Polygon_                                                        General_polygon_2;
 /// @}
 
   typedef std::list<Polygon_>                         Holes_container;

@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ophir Setter <ophirset@post.tau.ac.il>
-//                 
+//
 
 #ifndef CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
 #define CGAL_QT_ARRANGEMENT_GRAPHICS_ITEM_H
@@ -44,18 +44,18 @@ class ArrangementGraphicsItem : public GraphicsItem
 {
 public:
   ArrangementGraphicsItem(const Arr *arr);
-  
+
   void setArrangement(const Arr *arr);
 
-  QRectF 
+  QRectF
   boundingRect() const;
-  
-  void 
-  paint(QPainter *painter, 
-        const QStyleOptionGraphicsItem *option, 
+
+  void
+  paint(QPainter *painter,
+        const QStyleOptionGraphicsItem *option,
         QWidget *widget);
-  
-  void 
+
+  void
   modelChanged();
 
   const QPen& edgesPen() const
@@ -98,7 +98,7 @@ void ArrangementGraphicsItem<Arr>::setArrangement(const Arr *arr) {
 
 
 template <typename Arr>
-QRectF 
+QRectF
 ArrangementGraphicsItem<Arr>::boundingRect() const
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene());
@@ -106,7 +106,7 @@ ArrangementGraphicsItem<Arr>::boundingRect() const
 }
 
 template <typename Arr>
-void 
+void
 ArrangementGraphicsItem<Arr>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget* )
@@ -116,7 +116,7 @@ ArrangementGraphicsItem<Arr>::paint(QPainter *painter,
 
   QRectF rect = option->exposedRect;
   PainterOstream<typename Arr::Geometry_traits_2> pos(painter, rect);
-  
+
   painter->setPen(edgesPen());
   for(typename Arr::Edge_const_iterator eit = m_arr->edges_begin();
       eit != m_arr->edges_end(); eit++) {
@@ -132,7 +132,7 @@ ArrangementGraphicsItem<Arr>::paint(QPainter *painter,
 
 
 template <typename T>
-void 
+void
 ArrangementGraphicsItem<T>::modelChanged()
 {
   update();

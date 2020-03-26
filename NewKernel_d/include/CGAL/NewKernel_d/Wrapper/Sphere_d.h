@@ -37,12 +37,12 @@ namespace Wrap {
 template <class R_>
 class Sphere_d : public Get_type<typename R_::Kernel_base, Sphere_tag>::type
 {
-  typedef typename Get_type<R_, FT_tag>::type		FT_;
-  typedef typename R_::Kernel_base		Kbase;
-  typedef typename Get_type<R_, Point_tag>::type	Point_;
-  typedef typename Get_functor<Kbase, Construct_ttag<Sphere_tag> >::type	CSBase;
-  typedef typename Get_functor<Kbase, Center_of_sphere_tag>::type		COSBase;
-  typedef typename Get_functor<Kbase, Squared_radius_tag>::type			SRBase;
+  typedef typename Get_type<R_, FT_tag>::type                FT_;
+  typedef typename R_::Kernel_base                Kbase;
+  typedef typename Get_type<R_, Point_tag>::type        Point_;
+  typedef typename Get_functor<Kbase, Construct_ttag<Sphere_tag> >::type        CSBase;
+  typedef typename Get_functor<Kbase, Center_of_sphere_tag>::type                COSBase;
+  typedef typename Get_functor<Kbase, Squared_radius_tag>::type                        SRBase;
 
   typedef Sphere_d                            Self;
   CGAL_static_assertion((boost::is_same<Self, typename Get_type<R_, Sphere_tag>::type>::value));
@@ -53,7 +53,7 @@ public:
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   typedef typename Increment_dimension<Ambient_dimension,-1>::type Feature_dimension;
 
-  typedef typename Get_type<Kbase, Sphere_tag>::type	Rep;
+  typedef typename Get_type<Kbase, Sphere_tag>::type        Rep;
 
   const Rep& rep() const
   {
@@ -69,13 +69,13 @@ public:
 
 #ifdef CGAL_CXX11
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Sphere_d> >::value>::type> explicit Sphere_d(U&&...u)
-	  : Rep(CSBase()(std::forward<U>(u)...)){}
+          : Rep(CSBase()(std::forward<U>(u)...)){}
 
 //  // called from Construct_point_d
 //  template<class...U> explicit Point_d(Eval_functor&&,U&&...u)
-//	  : Rep(Eval_functor(), std::forward<U>(u)...){}
+//          : Rep(Eval_functor(), std::forward<U>(u)...){}
   template<class F,class...U> explicit Sphere_d(Eval_functor&&,F&&f,U&&...u)
-	  : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
+          : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
 
 #if 0
   // the new standard may make this necessary
@@ -98,7 +98,7 @@ public:
 #define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
   explicit Sphere_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
   : Rep(CSBase()( \
-	BOOST_PP_ENUM_PARAMS(N,t))) {} \
+        BOOST_PP_ENUM_PARAMS(N,t))) {} \
   \
   template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
   Sphere_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \

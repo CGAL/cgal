@@ -194,7 +194,7 @@ protected:
 
         // Rotational transformation of cw 90 degree
         CGAL_STATIC_THREAD_LOCAL_VARIABLE_4(Transformation, cw90, 0, 1, -1,  0);
-        
+
         // Ordering
         // here D1 is the reverse of D1 in the book, we find this is easier to implement
         const Less_by_direction  orderD1 (g, ccwBound);

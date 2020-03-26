@@ -199,7 +199,7 @@ public:
 /// @param Sizing_field A sizing field functor type
 /// @param Second_sizing_field A sizing field functor type
 ///
-/// @commentheading Sizing fields 
+/// @commentheading Sizing fields
 /// - The first sizing field is the real sizing field that is targeted by
 /// the refinement process. It may be costly to use.
 /// - The second sizing field is supposed to be a sizing field that is less
@@ -236,7 +236,7 @@ unsigned int poisson_refine_triangulation(
   std::size_t nb_vertices = tr.number_of_vertices(); // get former #vertices
 
   // Delaunay refinement
-  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound, 
+  Tets_criteria tets_criteria(radius_edge_ratio_bound*radius_edge_ratio_bound,
                               sizing_field,
                               second_sizing_field);
   Oracle oracle;

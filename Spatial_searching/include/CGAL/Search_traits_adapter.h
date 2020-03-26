@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Sebastien Loriot
 
@@ -38,13 +38,13 @@
 namespace CGAL{
 
 using ::get;
-  
+
 template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter;
-  
+
 template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter;
-  
+
 namespace internal{
 
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_typedef_Iso_box_d,Iso_box_d,false)
@@ -63,7 +63,7 @@ struct Get_iso_box_d<T,true>
 {
   typedef typename T::Iso_box_d type;
 };
-  
+
   template <class Point_with_info,class PointPropertyMap,class Base_traits>
   struct Spatial_searching_default_distance< ::CGAL::Search_traits_adapter<Point_with_info,PointPropertyMap,Base_traits> >{
     typedef ::CGAL::Distance_adapter<Point_with_info,
@@ -72,8 +72,8 @@ struct Get_iso_box_d<T,true>
   };
 
 } //namespace internal
-  
-  
+
+
 template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter : public Base_traits{
   PointPropertyMap ppmap;
@@ -93,15 +93,15 @@ public:
   typedef Point_with_info                                       Point_d;
   typedef typename Base_traits::FT                              FT;
   typedef typename Base_traits::Dimension                       Dimension;
-  
+
 
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
     PointPropertyMap ppmap;
     typedef typename Base_traits::Construct_cartesian_const_iterator_d Base;
-    
+
     Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
       :Base_traits::Construct_cartesian_const_iterator_d(base), ppmap(ppmap_){}
-    
+
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p) const
     { return Base::operator() (get(ppmap,p)); }
 
@@ -109,9 +109,9 @@ public:
     { return Base::operator() (get(ppmap,p),0); }
 
     // These 2 additional operators forward the call to Base_traits.
-    // This is needed because of an undocumented requirement of 
-    // Orthogonal_k_neighbor_search and Orthogonal_incremental_neighbor_search: 
-    // Traits::Construct_cartesian_const_iterator should be callable 
+    // This is needed because of an undocumented requirement of
+    // Orthogonal_k_neighbor_search and Orthogonal_incremental_neighbor_search:
+    // Traits::Construct_cartesian_const_iterator should be callable
     // on the query point type. If the query point type is the same as
     // Point_with_info, we disable it.
 
@@ -131,7 +131,7 @@ public:
       ) const
     { return Base::operator() (p,0); }
   };
-  
+
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
     PointPropertyMap ppmap;
     typedef typename Base_traits::FT  FT; // needed for VC++, because otherwise it is taken from the private typedef of the base class
@@ -145,9 +145,9 @@ public:
       return Base_functor::operator() (get(ppmap,p),get(ppmap,q));
     }
   };
-  
+
   const PointPropertyMap& point_property_map() const {return ppmap;}
-  
+
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
     return Construct_cartesian_const_iterator_d(
       Base::construct_cartesian_const_iterator_d_object(),
@@ -164,17 +164,17 @@ class Distance_adapter : public Base_distance {
                            typename boost::property_traits<PointPropertyMap>::category
                          >::value ) );
 public:
-    
+
   Distance_adapter( const PointPropertyMap& ppmap_=PointPropertyMap(),
                          const Base_distance& distance=Base_distance()
   ):Base_distance(distance),ppmap(ppmap_){}
 
   using Base_distance::transformed_distance;
-  
+
   typedef Point_with_info Point_d;
   typedef typename Base_distance::Query_item Query_item;
 
-  const PointPropertyMap& point_property_map() const {return ppmap;}    
+  const PointPropertyMap& point_property_map() const {return ppmap;}
 
   FT transformed_distance(const Query_item& p1, const Point_with_info& p2) const
   {
@@ -197,12 +197,12 @@ public:
   FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT,Dimension>& b) const
   {
     return Base_distance::max_distance_to_rectangle(p,b);
-  }  
+  }
   template <class FT,class Dimension>
   FT max_distance_to_rectangle(const Query_item& p,const CGAL::Kd_tree_rectangle<FT,Dimension>& b,std::vector<FT>& dists) const
   {
     return Base_distance::max_distance_to_rectangle(p,b,dists);
-  }  
+  }
 };
 
 }//namespace CGAL

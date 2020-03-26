@@ -13,7 +13,7 @@ typedef CGAL::Surface_mesh<Point>                            Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   Mesh sm;
   std::ifstream in((argc>1)?argv[1]:"data/prim.off");
@@ -27,6 +27,6 @@ int main(int argc, char* argv[])
   BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
     std::cout  << v << " is in component " << ccmap[v] << std::endl;
   }
-  
+
   return 0;
 }

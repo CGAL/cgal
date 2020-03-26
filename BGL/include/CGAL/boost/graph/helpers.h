@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 // Author(s) : Andreas Fabri
 
 #ifndef CGAL_BOOST_GRAPH_HELPERS_H
@@ -47,7 +47,7 @@ namespace CGAL {
 
 /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if the halfedge `hd` is on a border. 
+    returns `true` if the halfedge `hd` is on a border.
   */
 template <typename FaceGraph>
 bool is_border(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
@@ -57,7 +57,7 @@ bool is_border(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, 
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if the halfedge `hd` or the opposite halfedge is on a border. 
+    returns `true` if the halfedge `hd` or the opposite halfedge is on a border.
   */
 template <typename FaceGraph>
 bool is_border_edge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
@@ -67,7 +67,7 @@ bool is_border_edge(typename boost::graph_traits<FaceGraph>::halfedge_descriptor
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if the edge `e` is on a border. 
+    returns `true` if the edge `e` is on a border.
   */
 template <typename FaceGraph>
 bool is_border(typename boost::graph_traits<FaceGraph>::edge_descriptor ed, const FaceGraph& g)
@@ -77,7 +77,7 @@ bool is_border(typename boost::graph_traits<FaceGraph>::edge_descriptor ed, cons
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns a halfedge which is on a border and whose target vertex is `vd`, if such a halfedge exists. 
+    returns a halfedge which is on a border and whose target vertex is `vd`, if such a halfedge exists.
   */
 template <typename FaceGraph>
 boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>
@@ -98,7 +98,7 @@ is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if there are no border edges. 
+    returns `true` if there are no border edges.
   */
 template <typename FaceGraph>
 bool is_closed(const FaceGraph& g)
@@ -114,8 +114,8 @@ bool is_closed(const FaceGraph& g)
 
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if the target of `hd` has exactly two incident edges. 
-  */ 
+    returns `true` if the target of `hd` has exactly two incident edges.
+  */
 template <typename FaceGraph>
 bool is_bivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
@@ -124,10 +124,10 @@ bool is_bivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd
 
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if all vertices have exactly two incident edges. 
-  */ 
+    returns `true` if all vertices have exactly two incident edges.
+  */
 template <typename FaceGraph>
-  bool is_bivalent_mesh(const FaceGraph& g)  
+  bool is_bivalent_mesh(const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
@@ -143,21 +143,21 @@ template <typename FaceGraph>
 
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if the target of `hd` has exactly three incident edges. 
-  */ 
+    returns `true` if the target of `hd` has exactly three incident edges.
+  */
 template <typename FaceGraph>
 bool is_trivalent(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
   return hd == opposite(next(opposite(next(opposite(next(hd,g),g),g),g),g),g);
 }
-	
+
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if all 
-    vertices have exactly three incident edges. 
-  */ 
+    returns `true` if all
+    vertices have exactly three incident edges.
+  */
 template <typename FaceGraph>
-  bool is_trivalent_mesh(const FaceGraph& g)  
+  bool is_trivalent_mesh(const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
@@ -173,12 +173,12 @@ template <typename FaceGraph>
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `hd` is a triangle. 
+    returns `true` iff the connected component denoted by `hd` is a triangle.
     \pre `g` must be valid.
-  */ 
+  */
 template <typename FaceGraph>
-  bool is_isolated_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)  
-{ 
+  bool is_isolated_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
+{
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor beg = hd;
   if(is_border(hd,g)) return false;
@@ -191,7 +191,7 @@ template <typename FaceGraph>
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the face denoted by `hd` is a triangle, that is it has three incident halfedges. 
+    returns `true` iff the face denoted by `hd` is a triangle, that is it has three incident halfedges.
  */
 template <typename FaceGraph>
 bool is_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
@@ -201,10 +201,10 @@ bool is_triangle(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd
 
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if all faces are triangles. 
-  */ 
+    returns `true` if all faces are triangles.
+  */
 template <typename FaceGraph>
-  bool is_triangle_mesh(const FaceGraph& g)  
+  bool is_triangle_mesh(const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(g)){
@@ -217,7 +217,7 @@ template <typename FaceGraph>
 
 /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `hd` is a quadrilateral. 
+    returns `true` iff the connected component denoted by `hd` is a quadrilateral.
   */
 template <typename FaceGraph>
 bool is_isolated_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
@@ -235,7 +235,7 @@ bool is_isolated_quad(typename boost::graph_traits<FaceGraph>::halfedge_descript
 
  /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the face denoted by `hd` is a quad, that is it has four incident halfedges. 
+    returns `true` iff the face denoted by `hd` is a quad, that is it has four incident halfedges.
  */
 template <typename FaceGraph>
 bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
@@ -245,10 +245,10 @@ bool is_quad(typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, co
 
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` if all faces are quadrilaterals. 
-  */ 
+    returns `true` if all faces are quadrilaterals.
+  */
 template <typename FaceGraph>
-  bool is_quad_mesh(const FaceGraph& g)  
+  bool is_quad_mesh(const FaceGraph& g)
 {
     typedef typename boost::graph_traits<FaceGraph>::face_descriptor face_descriptor;
   BOOST_FOREACH(face_descriptor fd, faces(g)){
@@ -258,13 +258,13 @@ template <typename FaceGraph>
   }
   return true;
 }
- 
+
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `hd` is a tetrahedron. 
-  */ 
+    returns `true` iff the connected component denoted by `hd` is a tetrahedron.
+  */
 template <typename FaceGraph>
-bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)   
+bool is_tetrahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
@@ -718,10 +718,10 @@ bool is_valid_polygon_mesh(const Mesh& g, bool verb = false)
 
   /*!
    \ingroup PkgBGLHelperFct
-    returns `true` iff the connected component denoted by `hd` is a hexahedron. 
-  */ 
+    returns `true` iff the connected component denoted by `hd` is a hexahedron.
+  */
 template <typename FaceGraph>
-bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)   
+bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor hd, const FaceGraph& g)
 {
   typedef typename boost::graph_traits<FaceGraph>::halfedge_descriptor halfedge_descriptor;
 
@@ -759,12 +759,12 @@ bool is_hexahedron( typename boost::graph_traits<FaceGraph>::halfedge_descriptor
 
 
 
-/** 
+/**
  * \ingroup PkgBGLHelperFct
  * \brief Creates an isolated triangle
  * with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`.
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
- **/ 
+ **/
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_triangle(const P& p0, const P& p1, const P& p2, Graph& g)
@@ -820,10 +820,10 @@ namespace internal {
 template<typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_quad(typename boost::graph_traits<Graph>::vertex_descriptor v0,
-          typename boost::graph_traits<Graph>::vertex_descriptor v1, 
+          typename boost::graph_traits<Graph>::vertex_descriptor v1,
           typename boost::graph_traits<Graph>::vertex_descriptor v2,
           typename boost::graph_traits<Graph>::vertex_descriptor v3, Graph& g)
-{ 
+{
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor face_descriptor;
   halfedge_descriptor h0 = halfedge(add_edge(g),g);
@@ -872,19 +872,19 @@ template<typename Size_type, typename Point>
 struct Default_grid_maker
     : public CGAL::Creator_uniform_3<Size_type, Point>
 {
-  Point operator()(const Size_type& i, const Size_type& j)const 
+  Point operator()(const Size_type& i, const Size_type& j)const
   {
     return CGAL::Creator_uniform_3<Size_type, Point>::operator ()(i,j,0);
   }
 };
 } // namespace internal
 
-/** 
+/**
  * \ingroup PkgBGLHelperFct
  * \brief Creates an isolated quad with
  * its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \returns the non-border halfedge that has the target vertex associated with `p0`.
- **/ 
+ **/
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
@@ -906,14 +906,14 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   return internal::make_quad(v0, v1, v2, v3, g);
 }
 
-/** 
+/**
  * \ingroup PkgBGLHelperFct
  * \brief Creates an isolated hexahedron
  * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
  * \image html hexahedron.png
  * \image latex hexahedron.png
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
- **/ 
+ **/
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
@@ -960,17 +960,17 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   for(int i=0; i <4; i++){
     Euler::fill_hole(opposite(hb,g),g);
     hb = next(hb,g);
-  } 
+  }
   return next(next(hb,g),g);
 }
-/** 
+/**
  * \ingroup PkgBGLHelperFct
  * \brief Creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \image html tetrahedron.png
  * \image latex tetrahedron.png
  * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, and `p2`.
- **/ 
+ **/
 template<typename Graph, typename P>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
@@ -1025,7 +1025,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   set_target(h4, v3, g);
   set_target(h5, v3, g);
   set_halfedge(v3, h3, g);
-  
+
   set_next(h0, h3, g);
   set_next(h1, h4, g);
   set_next(h2, h5, g);
@@ -1056,7 +1056,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   set_face(h2, f, g);
   set_face(h5, f, g);
   set_face(opposite(h3,g), f, g);
-  
+
   return opposite(h2,g);
 }
 
@@ -1306,24 +1306,24 @@ make_icosahedron(
   Euler::add_face(face, g);
 
   face[1] = v_vertices[3] ; face[0] = v_vertices[4] ; face[2] = v_vertices[9];
-  Euler::add_face(face, g);                                                  
+  Euler::add_face(face, g);
   face[1] = v_vertices[3] ; face[0] = v_vertices[2] ; face[2] = v_vertices[4];
-  Euler::add_face(face, g);                                                  
+  Euler::add_face(face, g);
   face[1] = v_vertices[3] ; face[0] = v_vertices[6] ; face[2] = v_vertices[2];
-  Euler::add_face(face, g);                                                  
+  Euler::add_face(face, g);
   face[1] = v_vertices[3] ; face[0] = v_vertices[8] ; face[2] = v_vertices[6];
-  Euler::add_face(face, g);                                                  
+  Euler::add_face(face, g);
   face[1] = v_vertices[3] ; face[0] = v_vertices[9] ; face[2] = v_vertices[8];
-  Euler::add_face(face, g);                                                  
-                                                                             
+  Euler::add_face(face, g);
+
   face[1] = v_vertices[4] ; face[0] = v_vertices[5] ; face[2] = v_vertices[9] ;
-  Euler::add_face(face, g);                                                  
+  Euler::add_face(face, g);
   face[1] = v_vertices[2] ; face[0] = v_vertices[11] ; face[2] = v_vertices[4];
-  Euler::add_face(face, g);                                                   
+  Euler::add_face(face, g);
   face[1] = v_vertices[6] ; face[0] = v_vertices[10] ; face[2] = v_vertices[2];
-  Euler::add_face(face, g);                                                  
+  Euler::add_face(face, g);
   face[1] = v_vertices[8] ; face[0] = v_vertices[7] ; face[2] = v_vertices[6] ;
-  Euler::add_face(face, g);                                                  
+  Euler::add_face(face, g);
   face[1] = v_vertices[9] ; face[0] = v_vertices[1] ; face[2] = v_vertices[8] ;
   Euler::add_face(face, g);
 
@@ -1345,7 +1345,7 @@ make_icosahedron(
  * \param triangulated decides if a cell is composed of one quad or two triangles.
  * If `triangulated` is `true`, the diagonal of each cell is oriented from (0,0) to (1,1)
  * in the cell coordinates.
- *\tparam CoordinateFunctor a function object providing `Point_3 operator()(size_type I, size_type J)` with `Point_3` being 
+ *\tparam CoordinateFunctor a function object providing `Point_3 operator()(size_type I, size_type J)` with `Point_3` being
  * the value_type of the internal property_map for `CGAL::vertex_point_t`.
  * and outputs a `boost::property_traits<boost::property_map<Graph,CGAL::vertex_point_t>::%type>::%value_type`.
  *  It will be called with arguments (`w`, `h`), with `w` in [0..`i`] and `h` in [0..`j`].
@@ -1552,7 +1552,7 @@ void swap_edges(
  *
  * If the graph has a member function `clear()`, it will be called
  * instead.
- * 
+ *
  * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
  *
  * @param g the graph to clear
@@ -1560,7 +1560,7 @@ void swap_edges(
  **/
 template<typename FaceGraph>
 void clear(FaceGraph& g)
-{ 
+{
   internal::clear_impl(g);
   CGAL_postcondition(std::distance(boost::begin(edges(g)),boost::end(edges(g))) == 0);
   CGAL_postcondition(std::distance(boost::begin(vertices(g)),boost::end(vertices(g))) == 0);

@@ -19,14 +19,14 @@ void test_normals(const char* file_name)
   typedef CGAL::Surface_mesh<Point> Surface_mesh;
   typedef typename boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
-  
+
   Surface_mesh mesh;
   std::ifstream input(file_name);
   if (!(input >> mesh)){
     std::cerr << "Error: cannot read Surface_mesh : " << file_name << "\n";
     assert(false);
   }
-  
+
   typename Surface_mesh::template Property_map<face_descriptor, Vector> fnormals;
   bool created;
   boost::tie(fnormals, created) = mesh.template add_property_map<face_descriptor,Vector>("f:normals",Vector(0,0,0));
@@ -41,7 +41,7 @@ void test_normals(const char* file_name)
   boost::tie(vnormals, created) = mesh.template add_property_map<vertex_descriptor,Vector>("v:normals",Vector(0,0,0));
   CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals);
   CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals,
-    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points())); 
+    CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()));
   CGAL::Polygon_mesh_processing::compute_vertex_normals(mesh, vnormals,
     CGAL::Polygon_mesh_processing::parameters::vertex_point_map(mesh.points()).geom_traits(K()));
 

@@ -8,7 +8,7 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
-template<typename Primal> 
+template<typename Primal>
 void concept_check_dual() {
   typedef CGAL::Dual<Primal>          Graph;
   typedef boost::graph_traits<Graph>  Traits;

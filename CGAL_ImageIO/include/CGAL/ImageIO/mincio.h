@@ -43,9 +43,9 @@
     @param Zcosine 3 dimensional array containing Z axis cosine directions
     @return a negative value in case of failure */
 int readMincHeader(_image *im, const char* name,
-		   double *startx, double *starty, double *startz,
-		   double *stepx, double *stepy, double *stepz,
-		   double *Xcosine, double *Ycosine, double *Zcosine);
+                   double *startx, double *starty, double *startz,
+                   double *stepx, double *stepy, double *stepz,
+                   double *Xcosine, double *Ycosine, double *Zcosine);
 
 /** write an image in a minc file
     @param im image structure
@@ -63,10 +63,10 @@ int readMincHeader(_image *im, const char* name,
     @param range 2 dimensional array containing min an max image intensity
     @return a negative value in case of failure */
 int writeMincFile( const _image* im, const char *name, const char *sourceName,
-		   double startx, double starty, double startz,
-		   double stepx, double stepy, double stepz,
-		   const double *Xcosine, const double *Ycosine,
-		   const double *Zcosine, const double *range );
+                   double startx, double starty, double startz,
+                   double stepx, double stepy, double stepz,
+                   const double *Xcosine, const double *Ycosine,
+                   const double *Zcosine, const double *range );
 
 
 #endif

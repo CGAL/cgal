@@ -44,7 +44,7 @@ protected:
 #else
   const Classification::Local_eigen_analysis& eigen;
 #endif
-  
+
 public:
   template <typename InputRange>
   Eigen_feature (const InputRange&,
@@ -67,7 +67,7 @@ public:
   {
   }
 #endif
-  
+
   virtual float get_value (const Classification::Local_eigen_analysis& eigen, std::size_t i) = 0;
   virtual float value (std::size_t pt_index)
   {
@@ -79,7 +79,7 @@ public:
   }
 
 };
-  
+
   /*!
     \ingroup PkgClassificationFeatures
 
@@ -173,7 +173,7 @@ public:
     else
       return ((ev[1] - ev[0]) / ev[2]);
   }
- 
+
 };
 
   /*!
@@ -279,7 +279,7 @@ public:
     \f[
     \frac{\lambda_1 - \lambda_3}{\lambda_1}
     \f]
-    
+
     Its default name is "anisotropy".
   */
 CGAL_DEPRECATED_MSG("you are using the deprecated feature Anisotropy, please update your code with Eigenvalue instead")
@@ -327,7 +327,7 @@ public:
     \f[
     - \sum_{i=1}^3 \lambda_i \times \log{\lambda_i}
     \f]
-    
+
     Its default name is "eigentropy".
   */
 CGAL_DEPRECATED_MSG("you are using the deprecated feature Eigentropy, please update your code with Eigenvalue instead")

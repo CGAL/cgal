@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 (based on old version by Oren Nechushtan
@@ -114,7 +114,7 @@ Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
           // Shoot up.
           closest_he = _first_around_vertex(closest_he->target(), true);
         }
-        
+
         // Move inside the faces that constitute the hole, the first one
         // being incident face of the twin of closest halfedge found so far.
         CGAL_assertion (face != closest_he->twin()->face());
@@ -448,7 +448,7 @@ _is_in_connected_component (const Point_2& p,
   // As far as we know, we are not on an edge.
   is_on_edge = false;
   closest_to_target = false;
-  
+
   // Set the results for comparison acording to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
   const Comparison_result curve_above_under = (shoot_up ? LARGER : SMALLER);
@@ -518,11 +518,11 @@ _is_in_connected_component (const Point_2& p,
       {
         // Check if the current vertical curve contains the query point in its
         // iterior.
-        const Comparison_result  res1 = 
+        const Comparison_result  res1 =
           top_traits->compare_xy(p, &(*(first->source())));
         const Comparison_result  res2 =
           top_traits->compare_xy(p, &(*(first->target())));
-        
+
         if (res1 != res2) {
           if (! ((res1 == EQUAL && res2 == curve_above_under) ||
                  (res1 == curve_above_under && res2 == EQUAL)))
@@ -651,12 +651,12 @@ _is_in_connected_component (const Point_2& p,
           {
             if (closest_he->direction() == ARR_LEFT_TO_RIGHT) {
               // Both curves extend to the right from a common point.
-              y_res = compare_y_at_x_right(closest_he->curve(), curr->curve(), 
+              y_res = compare_y_at_x_right(closest_he->curve(), curr->curve(),
                                            closest_he->source()->point());
             }
             else {
               // Both curves extend to the left from a common point.
-              y_res = compare_y_at_x_left(closest_he->curve(), curr->curve(), 
+              y_res = compare_y_at_x_left(closest_he->curve(), curr->curve(),
                                           closest_he->source()->point());
             }
           }
@@ -668,12 +668,12 @@ _is_in_connected_component (const Point_2& p,
           {
             if (closest_he->direction() == ARR_LEFT_TO_RIGHT) {
               // Both curves extend to the left from a common point.
-              y_res = compare_y_at_x_left(closest_he->curve(), curr->curve(), 
+              y_res = compare_y_at_x_left(closest_he->curve(), curr->curve(),
                                           closest_he->target()->point());
             }
             else {
               // Both curves extend to the right from a common point.
-              y_res = compare_y_at_x_right(closest_he->curve(), curr->curve(), 
+              y_res = compare_y_at_x_right(closest_he->curve(), curr->curve(),
                                            closest_he->target()->point());
             }
           }
@@ -715,7 +715,7 @@ _is_in_connected_component (const Point_2& p,
           while ((! next_non_vert->is_fictitious() &&
                   is_vertical(next_non_vert->curve())) ||
                  (next_non_vert->is_fictitious() &&
-                  next_non_vert->source()->parameter_space_in_x() != 
+                  next_non_vert->source()->parameter_space_in_x() !=
                   next_non_vert->target()->parameter_space_in_x()));
 
           // In case the source of the current curve and the target of
@@ -764,7 +764,7 @@ _is_in_connected_component (const Point_2& p,
       {
         closest_he = curr;
         closest_in_ccb = true;
-        closest_to_target = 
+        closest_to_target =
               ((shoot_up && curr->direction() == ARR_RIGHT_TO_LEFT) ||
                (! shoot_up && curr->direction() == ARR_LEFT_TO_RIGHT));
       }
@@ -802,7 +802,7 @@ _first_around_vertex (Vertex_const_handle v, bool shoot_up) const
   Halfedge_const_handle   lowest_left;
   Halfedge_const_handle   top_right;
 
-  typename Arrangement_2::Halfedge_around_vertex_const_circulator first = 
+  typename Arrangement_2::Halfedge_around_vertex_const_circulator first =
     v->incident_halfedges();
   typename Arrangement_2::Halfedge_around_vertex_const_circulator curr = first;
 
@@ -816,7 +816,7 @@ _first_around_vertex (Vertex_const_handle v, bool shoot_up) const
           (! curr->is_fictitious() &&
            (lowest_left->is_fictitious() ||
             compare_y_at_x_left (curr->curve(),
-                                 lowest_left->curve(), 
+                                 lowest_left->curve(),
                                  v->point()) == SMALLER)))
       {
         lowest_left = curr;
@@ -829,7 +829,7 @@ _first_around_vertex (Vertex_const_handle v, bool shoot_up) const
           (! curr->is_fictitious() &&
            (top_right->is_fictitious() ||
             compare_y_at_x_right (curr->curve(),
-                                  top_right->curve(), 
+                                  top_right->curve(),
                                   v->point()) == LARGER)))
       {
         top_right = curr;

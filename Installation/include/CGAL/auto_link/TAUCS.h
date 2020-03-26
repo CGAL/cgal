@@ -1,9 +1,9 @@
-// Copyright (c) 1997-2004  
+// Copyright (c) 1997-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -30,7 +30,7 @@
 // Skip the whole file if auto-link is off
 #if !defined(CGAL_NO_AUTOLINK_TAUCS) && !defined(CGAL_NO_AUTOLINK)
 
-#  if defined(_WIN32) || defined(_WIN64) 
+#  if defined(_WIN32) || defined(_WIN64)
 
 #    define CGAL_LIB_NAME libtaucs
 #    define CGAL_AUTO_LINK_NOMANGLE

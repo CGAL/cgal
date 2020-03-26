@@ -105,7 +105,7 @@ bool test_one_file(std::ifstream& inp)
   timer.start();
   bool test = lu_alg_test.compare_diagrams(test_result, result);
   timer.stop();
-  
+
   return (test);
 }
 
@@ -143,7 +143,7 @@ int main(int argc, char* argv[])
     }
     inp.close();
   }
-  
+
   return success;
 }
 

@@ -48,7 +48,7 @@ namespace CGAL {
     struct Dart_wrapper
     {
       typedef CGAL::Dart<d, LCC> Dart;
-      
+
       typedef CGAL::Cell_attribute_with_point<LCC> Vertex_attrib;
       typedef CGAL::cpp11::tuple<Vertex_attrib>    Attributes;
     };

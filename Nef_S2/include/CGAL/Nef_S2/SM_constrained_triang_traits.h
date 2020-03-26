@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 #ifndef CGAL_SM_CONSTRAINED_TRIANG_TRAITS_H
@@ -37,7 +37,7 @@
 
 namespace CGAL {
 
-/* For a detailed documentation see the MPI research report 2001-1-003 
+/* For a detailed documentation see the MPI research report 2001-1-003
    which documents the planar flavor of this baby; only minor deviations
    are included in this code */
 
@@ -81,13 +81,13 @@ public:
      const SHalfedge_handle& e_top;
      const Kernel_& K;
   public:
-  lt_edges_in_sweepline(const Point& pi, 
-     const SHalfedge_handle& e1, const SHalfedge_handle& e2, 
-     const Decorator_& D, const Kernel_& k) : 
+  lt_edges_in_sweepline(const Point& pi,
+     const SHalfedge_handle& e1, const SHalfedge_handle& e2,
+     const Decorator_& D, const Kernel_& k) :
        Decorator_(D), p(pi), e_bottom(e1), e_top(e2), K(k) {}
 
-  lt_edges_in_sweepline(const lt_edges_in_sweepline& lt) : 
-     Decorator_(lt), p(lt.p), 
+  lt_edges_in_sweepline(const lt_edges_in_sweepline& lt) :
+     Decorator_(lt), p(lt.p),
      e_bottom(lt.e_bottom), e_top(lt.e_top), K(lt.K) {}
 
   Segment seg(const SHalfedge_handle& e) const
@@ -98,18 +98,18 @@ public:
 
   bool operator()(const SHalfedge_handle& e1, const SHalfedge_handle& e2) const
   { // Precondition:
-    // [[p]] is identical to the source of either [[e1]] or [[e2]]. 
+    // [[p]] is identical to the source of either [[e1]] or [[e2]].
     if (e1 == e_bottom || e2 == e_top) return true;
     if (e2 == e_bottom || e1 == e_top) return false;
     if ( e1 == e2 ) return 0;
     int s = 0;
     if ( p == e1->source()->point() )
       s =   orientation(e2,p);
-    else if ( p == e2->source()->point() ) 
+    else if ( p == e2->source()->point() )
       s = - orientation(e1,p);
     else CGAL_error_msg("compare error in sweep.");
-    if ( s || e1->source() == e1->twin()->source() || 
-	 e2->source() == e2->twin()->source()) 
+    if ( s || e1->source() == e1->twin()->source() ||
+         e2->source() == e2->twin()->source())
       return ( s < 0 );
     s = orientation(e2,e1->twin()->source()->point());
     if (s==0) CGAL_error_msg("parallel edges not allowed.");
@@ -129,8 +129,8 @@ public:
   }; // lt_pnts_xy
 
 
-  typedef std::map<SHalfedge_handle, SHalfedge_handle, lt_edges_in_sweepline> 
-          Sweep_status_structure; 
+  typedef std::map<SHalfedge_handle, SHalfedge_handle, lt_edges_in_sweepline>
+          Sweep_status_structure;
   typedef typename Sweep_status_structure::iterator   ss_iterator;
   typedef typename Sweep_status_structure::value_type ss_pair;
   typedef std::set<SVertex_iterator,lt_pnts_xy> Event_Q;
@@ -138,7 +138,7 @@ public:
 
   const GEOMETRY&         K;
   Event_Q                 event_Q;
-  event_iterator          event_it;         
+  event_iterator          event_it;
   SVertex_handle           event;
   Point                   p_sweep;
   Sweep_status_structure  SL;
@@ -147,9 +147,9 @@ public:
   SHalfedge_handle         e_search;
   SVertex_iterator         v_first, v_beyond;
 
-  SM_constrained_triang_traits(const INPUT& in, OUTPUT& out, 
-			       const GEOMETRY& k) 
-      : Base(out), K(k), event_Q(lt_pnts_xy(*this,K)), 
+  SM_constrained_triang_traits(const INPUT& in, OUTPUT& out,
+                               const GEOMETRY& k)
+      : Base(out), K(k), event_Q(lt_pnts_xy(*this,K)),
         SL(lt_edges_in_sweepline(p_sweep,e_low,e_high,*this,K)),
         SLItem(SL.end()), v_first(in.first), v_beyond(in.second)
     { CGAL_NEF_TRACEN("Constrained Triangulation Sweep"); }
@@ -161,7 +161,7 @@ public:
      |*this| */
   void treat_new_edge(SHalfedge_handle e)
   { assoc_info(e);
-    e->mark() = incident_mark(e) = incident_mark(e->twin()) = 
+    e->mark() = incident_mark(e) = incident_mark(e->twin()) =
       incident_mark(e->snext());
     CGAL_NEF_TRACEN(" treat_new_edge "<<PH(e));
   }
@@ -174,8 +174,8 @@ public:
   }
 
   SHalfedge_handle new_bi_edge(SHalfedge_handle e_bf, SHalfedge_handle e_af)
-  { // ccw before e_bf and after e_af 
-    SHalfedge_handle e = 
+  { // ccw before e_bf and after e_af
+    SHalfedge_handle e =
       Base::new_shalfedge_pair(e_bf,e_af,Base::BEFORE, Base::AFTER);
     treat_new_edge(e);
     return e;
@@ -208,7 +208,7 @@ public:
     SVertex_handle v_apex = e_apex->source();
     while (true) {
       SHalfedge_handle e_vis = e_apex->twin()->sprev();
-      bool in_sweep_line = (SLItem[e_vis] != SL.end()); 
+      bool in_sweep_line = (SLItem[e_vis] != SL.end());
       bool not_visible = !edge_is_visible_from(v_apex,e_vis);
         CGAL_NEF_TRACEN(" checking "<<in_sweep_line<<not_visible<<" "<<segment(e_vis));
       if ( in_sweep_line || not_visible) {
@@ -255,10 +255,10 @@ public:
       if (en_vis == e_end) return;
       e_upper = new_bi_edge(e_vis->twin(),e_upper)->twin();
       CGAL_NEF_TRACEN(" produced " << segment(e_upper));
-    } 
+    }
   }
 
-  void process_event() 
+  void process_event()
   {
       CGAL_NEF_TRACEN("\nPROCESS_EVENT " << p_sweep);
     SHalfedge_handle e, ep, eb_low, eb_high, e_end;
@@ -286,7 +286,7 @@ public:
 
     bool ending_edges(0), starting_edges(0);
     while ( e != SHalfedge_handle() ) { // walk adjacency list clockwise
-      if ( SLItem[e] != SL.end() ) 
+      if ( SLItem[e] != SL.end() )
       {
         CGAL_NEF_TRACEN("ending " << segment(e));
         if (ending_edges) triangulate_between(e,cyclic_adj_succ(e));
@@ -307,13 +307,13 @@ public:
       if (e == e_end) break;
       e = cyclic_adj_pred(e);
     }
-    if (!ending_edges) 
+    if (!ending_edges)
     {
       SHalfedge_handle e_vis = sit_pred->second;
       SHalfedge_handle e_vis_n = cyclic_adj_succ(e_vis);
-      eb_low = eb_high = new_bi_edge(event,e_vis_n); 
+      eb_low = eb_high = new_bi_edge(event,e_vis_n);
       CGAL_NEF_TRACEN(" producing link "<<segment(eb_low)<<
-	     "\n    before "<<segment(e_vis_n));
+             "\n    before "<<segment(e_vis_n));
     }
 
     triangulate_up(eb_high);
@@ -321,36 +321,36 @@ public:
     sit_pred->second = eb_low;
   }
 
-  bool event_exists() 
+  bool event_exists()
   { if ( event_it != event_Q.end() ) {
       // event is set at end of loop and in init
       event = *event_it;
       p_sweep = event->point();
       return true;
     }
-    return false; 
+    return false;
   }
 
-  void procede_to_next_event() 
+  void procede_to_next_event()
   { ++event_it; }
 
   void link_bi_edge_to(SHalfedge_handle e, ss_iterator sit) {
-    SLItem[e] = SLItem[e->twin()] = sit; 
+    SLItem[e] = SLItem[e->twin()] = sit;
   }
 
   void initialize_structures()
   {
       CGAL_NEF_TRACEN("initialize_structures ");
-    
+
     for ( event = v_first; event != v_beyond; ++event )
       event_Q.insert(event); // sorted order of vertices
 
     event_it = event_Q.begin();
     if ( event_Q.empty() ) return;
     event = *event_it;
-    p_sweep = event->point(); 
+    p_sweep = event->point();
     if ( !is_isolated(event) ) {
-      SHalfedge_around_svertex_circulator 
+      SHalfedge_around_svertex_circulator
         e(first_out_edge(event)), eend(e);
       CGAL_For_all(e,eend) {
         CGAL_NEF_TRACEN("init with "<<PH(e));
@@ -373,7 +373,7 @@ public:
     // inserting sentinels into SL
     link_bi_edge_to(e_high, sit_high);
     link_bi_edge_to(e_low , sit_low);
-    // we mark them being in the sweepline, which they will never leave 
+    // we mark them being in the sweepline, which they will never leave
 
 
     // we move to the second vertex:
@@ -382,7 +382,7 @@ public:
     CGAL_NEF_TRACEN("EOF initialization");
   }
 
-  void complete_structures() 
+  void complete_structures()
   {
     if (e_low != SHalfedge_handle()) {
       delete_vertex(e_search->twin()->source());
@@ -391,9 +391,9 @@ public:
 
 
   void check_ccw_local_embedding() const
-  { 
+  {
 #ifdef CGAL_CHECK_EXPENSIVEXXX
-    PM_checker<Decorator_,Kernel_> C(*this,K); 
+    PM_checker<Decorator_,Kernel_> C(*this,K);
     C.check_order_preserving_embedding(event);
 #endif
   }

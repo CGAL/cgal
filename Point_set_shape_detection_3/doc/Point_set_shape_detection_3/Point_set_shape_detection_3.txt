@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Point_Set_Shape_Detection
 \cgalAutoToc
 
@@ -20,7 +20,7 @@ From an unstructured point set with unoriented normals, these algorithms detect 
 Note that at the moment, region growing only detects planes.
 
 \cgalFigureBegin{Point_set_shape_detection_3_overview,overview2.png}
-(a) Input point set. (b) Point set depicted with one color per detected shape. 
+(a) Input point set. (b) Point set depicted with one color per detected shape.
 \cgalFigureEnd
 
 \section Point_set_shape_detection_3Method Methods
@@ -29,7 +29,7 @@ Both methods take as input a point set with unoriented normals and provide as ou
 
 \subsection Point_set_shape_detection_3Method_RANSAC Efficient RANSAC
 
-The shapes are detected via a RANSAC-type approach, i.e., a random sample consensus. The basic RANSAC approach repeats the following steps: (1) Randomly select samples from the input points. (2) Fit a shape to the selected samples. (3) Count the number of inliers to the shape, inliers being within a user-specified error tolerance to the shape. Steps 1-3 are repeated for a prescribed number of iterations and the shape with highest number of inliers, referred to as largest shape, is kept. 
+The shapes are detected via a RANSAC-type approach, i.e., a random sample consensus. The basic RANSAC approach repeats the following steps: (1) Randomly select samples from the input points. (2) Fit a shape to the selected samples. (3) Count the number of inliers to the shape, inliers being within a user-specified error tolerance to the shape. Steps 1-3 are repeated for a prescribed number of iterations and the shape with highest number of inliers, referred to as largest shape, is kept.
 
 In our context, the error between a point and a shape is defined by its distance and normal deviation to the shape. A random subset corresponds to the minimal number of points (with normals) required to uniquely define a primitive.
 
@@ -66,7 +66,7 @@ Impact of epsilon over level of details of the detection. (a) Input point set. (
 \cgalFigureEnd
 
 - `cluster_epsilon`:
-The region growing algorithm uses `cluster_epsilon` to compute the neighborhood around points when growing the regions while the efficient RANSAC uses this parameter to cluster the points into connected components covered by a detected shape. For developable shapes that admit a trivial planar parameterization (plane, cylinder, cone) the points covered by a shape are mapped to a 2D parameter space chosen to minimize distortion and best preserve arc-length distances. This 2D parameter space is discretized using a regular grid, and a connected component search is performed to identify the largest cluster. Parameter `cluster_epsilon` defines the spacing between two cells of the regular grid, so that two points separated by a distance of at most \f$2\sqrt{2}\f$, `cluster_epsilon` are considered adjacent. For non-developable shapes 
+The region growing algorithm uses `cluster_epsilon` to compute the neighborhood around points when growing the regions while the efficient RANSAC uses this parameter to cluster the points into connected components covered by a detected shape. For developable shapes that admit a trivial planar parameterization (plane, cylinder, cone) the points covered by a shape are mapped to a 2D parameter space chosen to minimize distortion and best preserve arc-length distances. This 2D parameter space is discretized using a regular grid, and a connected component search is performed to identify the largest cluster. Parameter `cluster_epsilon` defines the spacing between two cells of the regular grid, so that two points separated by a distance of at most \f$2\sqrt{2}\f$, `cluster_epsilon` are considered adjacent. For non-developable shapes
 the connected components are identified by computing a neighboring graph in 3D and walking in the graph. The impact of parameter cluster_epsilon is depicted by Figure \cgalFigureRef{Point_set_shape_detection_3_parameter_connectivity}.
 
 \cgalFigureBegin{Point_set_shape_detection_3_parameter_connectivity,varying_connectivity.png}
@@ -79,7 +79,7 @@ This minimum number of points controls the termination of the algorithm. The sha
 In addition, the efficient RANSAC has a fifth parameter:
 
 - `probability`:
-This parameter defines the probability to miss the largest candidate shape. A lower probability provides a higher reliability and determinism at the cost of longer running times due to higher search endurance. 
+This parameter defines the probability to miss the largest candidate shape. A lower probability provides a higher reliability and determinism at the cost of longer running times due to higher search endurance.
 
 
 \section Point_set_shape_detection_3Usage Examples
@@ -89,7 +89,7 @@ Typical usage consists of five steps:
 
 -# Provide input data via a range iterator
 -# Register shape factories
--# Choose parameters 
+-# Choose parameters
 -# Detect
 -# Retrieve detected shapes
 
@@ -133,12 +133,12 @@ More specifically, the functions to be implemented are defined in the base class
 - `Shape_detection_3::Shape_base::create_shape(const std::vector<size_t> &indices)`: The randomly generated samples are provided via a vector of indices. `Shape_detection_3::Shape_base::point``(size_t i)` and `Shape_detection_3::Shape_base::normal``(size_t i)` are used to retrieve the actual points and normals (see example below). The provided number of samples might actually be larger than the set minimal number of required samples, depending on the other types of shape types. If the provided samples are not sufficient to define a unique shape, e.g., in a degenerated case the shape is considered invalid.
 
 - `Shape_detection_3::Shape_base::squared_distance``(const Point &p)` const: This function computes the squared distance from a query point to the shape. It is used for traversing the hierarchical spatial data structure.
-- `Shape_detection_3::Shape_base::squared_distance(std::vector<FT> &dists, const std::vector<size_t> &indices)` 
-- `Shape_detection_3::Shape_base::cos_to_normal``(const std::vector<size_t> &indice, sstd::vector<FT> &angles)` const: 
+- `Shape_detection_3::Shape_base::squared_distance(std::vector<FT> &dists, const std::vector<size_t> &indices)`
+- `Shape_detection_3::Shape_base::cos_to_normal``(const std::vector<size_t> &indice, sstd::vector<FT> &angles)` const:
 These functions are used to determine the number of inlier points to the shape. They compute respectively the squared distance from a set of points to the shape, and the dot product between the point's normals and the normals at the shape for the closest points on the shape. The access to the actual point and normal data is carried out via `Shape_detection_3::Shape_base::point``(size_t i)` and `Shape_detection_3::Shape_base::normal``(size_t i)` (see example below). The resulting squared distance/dot product is stored in the vector provided as the first argument.
 
 By default the connected component is detected via the neighbor graph as mentioned above. However, for shapes that admit a faster approach to detect a connected component, the user can provide his/her own implementation to extract the connected component via:
-- `Shape_detection_3::Shape_base::connected_component``(std::vector<std::size_t>& indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`. All points not belonging to the largest cluster of points are removed from the vector `indices`. 
+- `Shape_detection_3::Shape_base::connected_component``(std::vector<std::size_t>& indices, FT cluster_epsilon)`: The indices of all supporting points are stored in the vector `indices`. All points not belonging to the largest cluster of points are removed from the vector `indices`.
 
 Another optional method can be implemented to provide a helper function providing the shape parameters written to a string:
 - `Shape_detection_3::Shape_base::info``()`: This function returns a string suitable for printing the shape parameters into a log/console. The default solution provides an empty string.
@@ -167,7 +167,7 @@ The user can choose to only regularize one or several of these 4 properties (see
 \section Point_set_shape_detection_3Performance Performances
 
 \subsection Point_set_shape_detection_3PerformanceRANSAC Efficient RANSAC
- 
+
 The running time and detection performance of the efficient RANSAC depend on the chosen parameters. A selective error tolerance parameter leads to higher running times and smaller shapes, as many shape candidates are generated to find the largest shape. We plot the detection performance against the epsilon error tolerance parameter for detecting planes in a complex scene with 5M points, see \cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. The probability parameter controls the endurance when searching for the largest candidate at each iteration. It barely impacts the number of detected shapes, has a moderate impact on the size of the detected shapes and increases the running times. We plot the performance against the probability parameter, see \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.
 
 \cgalFigureBegin{Point_set_shape_detection_3_performace_epsilon,epsilon_graph.png}
@@ -193,6 +193,6 @@ The graph depicts the number of detected shapes (purple) and the coverage (green
 The efficient RANSAC implementation was developed by Sven Oesau based on a prototype version by Yannick Verdie, with the help of Clément Jamin and under the supervision of Pierre Alliez. Plane regularization and region growing were added by Simon Giraudot based on prototype versions developed by Florent Lafarge.
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

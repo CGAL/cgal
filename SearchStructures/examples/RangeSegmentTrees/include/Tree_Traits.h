@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Gabriele Neyer
 
@@ -109,7 +109,7 @@ class Tree_traits_2{
     Key_2 operator()(const Key& k)
     { return k.second;}
   };
-  
+
   class C_Compare_1{
   public:
     bool operator()(Key_1 k1, Key_1 k2)
@@ -120,7 +120,7 @@ class Tree_traits_2{
 
   class C_Compare_2{
   public:
-    
+
     bool operator()(Key_2 k1, Key_2 k2)
     {
       return std::less<double>()(k1,k2);
@@ -208,10 +208,10 @@ class Tree_traits_3{
     Key_3 operator()(const Key& k)
     { return k.key_3;}
   };
-  
+
   class C_Compare_1{
   public:
-    
+
     bool operator()(Key_1 k1, Key_1 k2)
     {
       return std::less<int>()(k1,k2);
@@ -220,7 +220,7 @@ class Tree_traits_3{
 
   class C_Compare_2{
   public:
-    
+
     bool operator()(Key_2 k1, Key_2 k2)
     {
       return std::less<double>()(k1,k2);
@@ -229,7 +229,7 @@ class Tree_traits_3{
 
   class C_Compare_3{
   public:
-    
+
     bool operator()(Key_3 k1, Key_3 k2)
     {
       return std::less<long>()(k1,k2);
@@ -342,10 +342,10 @@ class Tree_traits_4{
     Key_4 operator()(const Key& k)
     { return k.key_4;}
   };
-  
+
   class C_Compare_1{
   public:
-    
+
     bool operator()(Key_1 k1, Key_1 k2)
     {
       return std::less<int>()(k1,k2);
@@ -354,7 +354,7 @@ class Tree_traits_4{
 
   class C_Compare_2{
   public:
-    
+
     bool operator()(Key_2 k1, Key_2 k2)
     {
       return std::less<double>()(k1,k2);
@@ -363,7 +363,7 @@ class Tree_traits_4{
 
   class C_Compare_3{
   public:
-    
+
     bool operator()(Key_3 k1, Key_3 k2)
     {
       return std::less<long>()(k1,k2);
@@ -372,7 +372,7 @@ class Tree_traits_4{
 
   class C_Compare_4{
   public:
-    
+
     bool operator()(Key_4 k1, Key_4 k2)
     {
       return std::less<double>()(k1,k2);

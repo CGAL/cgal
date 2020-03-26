@@ -8,15 +8,15 @@ cmake_minimum_required(VERSION 3.1)
 
 
 macro(create_link_to_program COMPONENT )
-  
+
   add_executable(link_to_${COMPONENT} link_to_${COMPONENT}.cpp )
-  
-  include_directories ( ${${COMPONENT}_3RD_PARTY_INCLUDE_DIRS} )     
-        
+
+  include_directories ( ${${COMPONENT}_3RD_PARTY_INCLUDE_DIRS} )
+
   add_definitions( ${${COMPONENT}_3RD_PARTY_DEFINITIONS} )
 
   link_directories(  ${${COMPONENT}_3RD_PARTY_LIBRARIES_DIRS})
-  
+
   # Link the executable to CGAL and third-party libraries
   if ( CGAL_AUTO_LINK_ENABLED OR CGAL_HEADER_ONLY)
     target_link_libraries(link_to_${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )
@@ -54,11 +54,11 @@ if ( CGAL_FOUND )
   endif()
 
   create_link_to_program(CGAL)
- 
+
   if ( WITH_CGAL_Core )
     create_link_to_program(CGAL_Core)
   endif()
-  
+
   if ( WITH_CGAL_ImageIO )
     create_link_to_program(CGAL_ImageIO)
   endif()
@@ -68,7 +68,7 @@ if ( CGAL_FOUND )
     if( QT4_FOUND )
       include(${QT_USE_FILE})
       create_link_to_program(CGAL_Qt4)
-    endif()  
+    endif()
   endif()
 
   if ( WITH_CGAL_Qt5 )
@@ -98,7 +98,7 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
+
   message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()

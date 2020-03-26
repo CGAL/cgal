@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ilker O. Yaz
 
@@ -26,10 +26,10 @@
 
 // It can produce a patch from both complete and incomplete lambda
 // WARNING: Not working good for all cases
-// For holes, this code first close them then erase them. 
+// For holes, this code first close them then erase them.
 // However the algorithm might produce holes which are invalid to close (closing them breaks edge manifoldness, so erasing doesn't work)
 template<class Polyhedron, class OutputIteratorPatch, class OutputIteratorHole>
-struct Tracer_polyhedron_incomplete 
+struct Tracer_polyhedron_incomplete
 {
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;
   typedef typename Polyhedron::Facet_handle    Facet_handle;
@@ -42,12 +42,12 @@ struct Tracer_polyhedron_incomplete
   { }
 
   template <class LookupTable>
-  void 
+  void
   operator()(const LookupTable& lambda, int i, int k)
   {
     std::vector<Facet_handle> facets_to_delete;
     (*this)(lambda, i, k, facets_to_delete, true);
-    for(typename std::vector<Facet_handle>::iterator it = facets_to_delete.begin(); 
+    for(typename std::vector<Facet_handle>::iterator it = facets_to_delete.begin();
         it != facets_to_delete.end(); ++it)
     {
       *out_hole++=(*it)->halfedge(); // each deleted facet corresponds to a new hole
@@ -57,8 +57,8 @@ struct Tracer_polyhedron_incomplete
 
 private:
   template <class LookupTable>
-  Halfedge_handle 
-  operator()(const LookupTable& lambda, 
+  Halfedge_handle
+  operator()(const LookupTable& lambda,
              int i, int k,
              std::vector<Facet_handle>& facets_to_delete,
              bool last)
@@ -70,7 +70,7 @@ private:
 
       if(last)
       { h = polyhedron.fill_hole(P[i+1]); }
-      else 
+      else
       { h = polyhedron.add_facet_to_border(P[i+1]->prev(), P[i+2/*k*/]); }
 
       CGAL_assertion(h->facet() != Facet_handle());
@@ -83,14 +83,14 @@ private:
         *out++ = h->facet();
       }
       return h->opposite();
-    } 
-    else 
+    }
+    else
     {
       int la = lambda.get(i, k);
       if(la == -1) {
         if(last)
         { h = polyhedron.fill_hole(P[i+1]); }
-        else 
+        else
         { h = polyhedron.add_facet_to_border(P[i+1]->prev(), P[i+2/*k*/]); }
         facets_to_delete.push_back(h->facet());
         return h->opposite();
@@ -101,7 +101,7 @@ private:
 
         if(last)
         { h = polyhedron.fill_hole(g); }
-        else 
+        else
         { h = polyhedron.add_facet_to_border(h->prev(), g); }
 
         CGAL_assertion(h->facet() != Facet_handle());
@@ -121,11 +121,11 @@ public:
 // Try closing holes by gathering incomplete patches together (an external approach)
 template <typename OutputIteratorValueType, typename InputIterator, typename OutputIterator>
 OutputIterator
-triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend, 
-                                     InputIterator qbegin, InputIterator qend, 
+triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend,
+                                     InputIterator qbegin, InputIterator qend,
                                      OutputIterator out)
 {
-  
+
   typedef typename std::iterator_traits<InputIterator>::value_type Point_3;
   typedef Weight_incomplete<Weight_min_max_dihedral_and_area>      Weight;
   typedef Weight_calculator<Weight, Is_valid_degenerate_triangle>  WC;
@@ -134,7 +134,7 @@ triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend,
   typedef std::back_insert_iterator<Facet_vector>                     OutIt;
   typedef Tracer_polyline_incomplete<Facet_vector::value_type, OutIt> Tracer;
   typedef std::pair<int, int> Range;
-   
+
   std::vector<Point_3> P(pbegin, pend);
   std::vector<Point_3> Q(qbegin, qend);
 
@@ -144,7 +144,7 @@ triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend,
       Q.push_back(Q.front());
     }
   }
-  
+
   std::vector<OutputIteratorValueType>   patch_facets;
   std::stack<Range>                      remaining_holes;
 
@@ -193,8 +193,8 @@ triangulate_hole_polyline_incomplete(InputIterator pbegin, InputIterator pend,
 // (for Polyhedron_3) Try closing holes by gathering incomplete patches together (an external approach)
 template<class Polyhedron, class OutputIterator>
 std::pair<OutputIterator, Weight_min_max_dihedral_and_area>
-triangulate_hole_Polyhedron_incomplete(Polyhedron& polyhedron, 
-                                       typename Polyhedron::Halfedge_handle border_halfedge, 
+triangulate_hole_Polyhedron_incomplete(Polyhedron& polyhedron,
+                                       typename Polyhedron::Halfedge_handle border_halfedge,
                                        OutputIterator out)
 {
   typedef typename Polyhedron::Halfedge_handle Halfedge_handle;

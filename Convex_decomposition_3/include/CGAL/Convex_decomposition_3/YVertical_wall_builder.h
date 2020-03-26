@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_YVERTICAL_WALL_BUILDER_H
@@ -69,41 +69,41 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_and_PL> {
 
  public:
   YVertical_wall_builder() {}
-    
+
   void operator()(SNC_and_PL& sncpl) {
     SNC_structure* sncp(sncpl.sncp);
 
     SFace_iterator sfi;
     CGAL_forall_sfaces(sfi, *sncp)
       if(sncp->is_boundary_object(sfi))
-	sncp->undef_boundary_item(sfi);
+        sncp->undef_boundary_item(sfi);
 
     Halfedge_iterator ei;
     CGAL_forall_halfedges(ei, *sncp) {
       if(ei->point() != Sphere_point(1,0,0)) continue;
-      SHalfedge_around_svertex_circulator 
-	svc(ei->out_sedge()), send(svc);
+      SHalfedge_around_svertex_circulator
+        svc(ei->out_sedge()), send(svc);
       CGAL_For_all(svc, send) {
-	if(!svc->incident_sface()->mark()) continue;
-	if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
-	  continue;
-	redges.push_back(ei);
-	break;
+        if(!svc->incident_sface()->mark()) continue;
+        if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
+          continue;
+        redges.push_back(ei);
+        break;
       }
     }
-    
+
     Vertical_redge_iterator vri;
     for(vri = redges_begin(); vri != redges_end(); ++vri) {
       Halfedge_handle ei(*vri);
-      SHalfedge_around_svertex_circulator 
-	svc(ei->out_sedge()), send(svc);
+      SHalfedge_around_svertex_circulator
+        svc(ei->out_sedge()), send(svc);
       CGAL_For_all(svc, send) {
-	if(!svc->incident_sface()->mark()) continue;
-	if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
-	  continue;
-	Single_wall3 W(svc);
-	W(sncpl);
-	break;
+        if(!svc->incident_sface()->mark()) continue;
+        if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
+          continue;
+        Single_wall3 W(svc);
+        W(sncpl);
+        break;
       }
     }
 

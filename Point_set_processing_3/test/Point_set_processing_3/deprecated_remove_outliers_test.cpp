@@ -52,7 +52,7 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
             << nb_neighbors_remove_outliers << ")...\n";
 
   // Removes outliers using erase-remove idiom
-  points.erase(CGAL::remove_outliers(points.begin(), points.end(), 
+  points.erase(CGAL::remove_outliers(points.begin(), points.end(),
                                      nb_neighbors_remove_outliers, removed_percentage),
                points.end());
 

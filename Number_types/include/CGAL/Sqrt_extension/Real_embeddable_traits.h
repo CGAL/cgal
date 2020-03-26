@@ -42,24 +42,24 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
             return x.sign();
         }
     };
-    
+
     class Compare
         : public CGAL::cpp98::binary_function< Type, Type, Comparison_result > {
     public:
         Comparison_result operator()( const Type& x, const Type& y) const {
-            // must be from the same extension 
+            // must be from the same extension
             return x.compare(y);
         }
         Comparison_result operator()( const Type& x, const COEFF& y) const {
-            // must be from the same extension 
+            // must be from the same extension
             return x.compare(y);
         }
         Comparison_result operator()( const COEFF& x, const Type& y) const {
-            // must be from the same extension 
+            // must be from the same extension
             return CGAL::opposite( y.compare(x) );
         }
-        
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type, 
+
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                 Comparison_result )
     };
 

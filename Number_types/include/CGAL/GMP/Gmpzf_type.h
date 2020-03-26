@@ -170,7 +170,7 @@ public:
     int exp;
     double x = std::frexp(d, &exp); // x in [1/2, 1], x*2^exp = d
     mpz_init_set_d (man(), // to the following integer:
-		    std::ldexp( x, p));
+                    std::ldexp( x, p));
     e = exp - p;
     canonicalize();
   }
@@ -202,7 +202,7 @@ private:
   void canonicalize();
   bool is_canonical() const;
   static void align ( const mpz_t*& a_aligned, const mpz_t*& b_aligned,
-		     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);
+                     Exponent& rexp, const Gmpzf& a, const Gmpzf& b);
 };
 
 
@@ -483,9 +483,9 @@ bool Gmpzf::is_canonical() const
 // it uses the static s to store the shifted number
 inline
 void Gmpzf::align ( const mpz_t*& a_aligned,
-			   const mpz_t*& b_aligned,
-			   Exponent& rexp,
-			   const Gmpzf& a, const Gmpzf& b) {
+                           const mpz_t*& b_aligned,
+                           Exponent& rexp,
+                           const Gmpzf& a, const Gmpzf& b) {
   CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Gmpz, s);
 
   switch (CGAL_NTS compare (b.exp(), a.exp())) {
@@ -583,10 +583,10 @@ bool operator>(const Gmpzf &a, int b)
 }
 
 inline Gmpzf min BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpzf& x,const Gmpzf& y){
-  return (x<=y)?x:y; 
+  return (x<=y)?x:y;
 }
 inline Gmpzf max BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpzf& x,const Gmpzf& y){
-  return (x>=y)?x:y; 
+  return (x>=y)?x:y;
 }
 
 } //namespace CGAL

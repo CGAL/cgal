@@ -16,7 +16,7 @@
 
 #include <CGAL/IO/OFF_reader.h>
 #include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/version.h> 
+#include <CGAL/version.h>
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
@@ -206,7 +206,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
 {
   const CGAL::qglviewer::Vec off = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
-  
+
     //Computes the normal of the facet
     Traits::Vector_3 normal = CGAL::NULL_VECTOR;
 
@@ -221,7 +221,7 @@ Scene_polygon_soup_item_priv::triangulate_polygon(Polygons_iterator pit, int pol
     }
     if (normal == CGAL::NULL_VECTOR) // No normal could be computed, return
       return;
-    
+
     typedef FacetTriangulator<SMesh, EPICK, std::size_t> FT;
 
     std::size_t it = 0;
@@ -420,7 +420,7 @@ Scene_polygon_soup_item::~Scene_polygon_soup_item()
   delete d;
 }
 
-Scene_polygon_soup_item* 
+Scene_polygon_soup_item*
 Scene_polygon_soup_item::clone() const {
   Scene_polygon_soup_item* new_soup = new Scene_polygon_soup_item();
   new_soup->d->soup = d->soup->clone();
@@ -528,7 +528,7 @@ void Scene_polygon_soup_item::inside_out()
   invalidateOpenGLBuffers();
 }
 
-bool 
+bool
 Scene_polygon_soup_item::orient()
 {
 
@@ -566,7 +566,7 @@ Scene_polygon_soup_item::orient()
 }
 
 
-bool 
+bool
 Scene_polygon_soup_item::save(std::ostream& out) const
 {
 
@@ -615,7 +615,7 @@ Scene_polygon_soup_item::exportAsSurfaceMesh(SMesh *out_surface_mesh)
   }
   return false;
 }
-QString 
+QString
 Scene_polygon_soup_item::toolTip() const
 {
 
@@ -753,7 +753,7 @@ void Scene_polygon_soup_item::compute_bbox() const {
               bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 
-void 
+void
 Scene_polygon_soup_item::new_vertex(const double& x,
                                     const double& y,
                                     const double& z)
@@ -761,8 +761,8 @@ Scene_polygon_soup_item::new_vertex(const double& x,
 
     d->soup->points.push_back(Point_3(x, y, z));
 }
-                               
-void 
+
+void
 Scene_polygon_soup_item::new_triangle(const std::size_t i,
                                       const std::size_t j,
                                       const std::size_t k)
@@ -808,7 +808,7 @@ void Scene_polygon_soup_item::load(const std::vector<Point>& points, const std::
 
     d->soup->fcolors.reserve (fcolors.size());
     std::copy (fcolors.begin(), fcolors.end(), std::back_inserter (d->soup->fcolors));
-    
+
     d->soup->vcolors.reserve (vcolors.size());
     std::copy (vcolors.begin(), vcolors.end(), std::back_inserter (d->soup->vcolors));
 }
@@ -846,7 +846,7 @@ void Scene_polygon_soup_item::itemAboutToBeDestroyed(Scene_item *item)
   }
 }
 
-const Polygon_soup::Edges& 
+const Polygon_soup::Edges&
 Scene_polygon_soup_item::non_manifold_edges() const
 {
   return d->soup->non_manifold_edges;

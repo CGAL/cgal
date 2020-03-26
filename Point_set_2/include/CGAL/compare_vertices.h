@@ -1,4 +1,4 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Max-Planck-Institute Saarbruecken (Germany). All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Matthias Baesken
 
@@ -35,9 +35,9 @@ class compare_vertices {
  public:
   //std::map<VP,NT,std::less<VP> > *pmap;
   MAP_TYPE* pmap;
-  
+
   compare_vertices(MAP_TYPE *p){ pmap=p; }
-  
+
   bool operator()(VP e1, VP e2)
   // get the priorities from the map and return result of comparison ...
   { NT& v1 = (*pmap)[e1];

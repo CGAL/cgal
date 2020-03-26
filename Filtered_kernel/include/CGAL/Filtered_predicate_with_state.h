@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion, Andreas Fabri, Sebastien Loriot
 
@@ -83,18 +83,18 @@ public:
   template <class A1, class A2, class A3, class A4, class A5>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5) const;
+             const A5 &a5) const;
 
   template <class A1, class A2, class A3, class A4, class A5, class A6>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6) const;
+             const A5 &a5, const A6 &a6) const;
 
   template <class A1, class A2, class A3, class A4, class A5, class A6,
             class A7>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7) const;
+             const A5 &a5, const A6 &a6, const A7 &a7) const;
 
   template <class A1, class A2, class A3, class A4, class A5, class A6,
             class A7, class A8>
@@ -133,11 +133,11 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -164,12 +164,12 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  
-	  Ares res = ap(c2a(a1));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+
+          Ares res = ap(c2a(a1));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -188,11 +188,11 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -211,11 +211,11 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -234,11 +234,11 @@ Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -252,17 +252,17 @@ template <class EP, class AP, class C2E, class C2A, class O1, bool Protection>
 typename Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::result_type
 Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5) const
+             const A5 &a5) const
 {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -276,17 +276,17 @@ template <class EP, class AP, class C2E, class C2A, class O1, bool Protection>
 typename Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::result_type
 Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6) const
+             const A5 &a5, const A6 &a6) const
 {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -301,18 +301,18 @@ template <class EP, class AP, class C2E, class C2A, class O1, bool Protection>
 typename Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::result_type
 Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7) const
+             const A5 &a5, const A6 &a6, const A7 &a7) const
 {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
+                        c2a(a7));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -326,18 +326,18 @@ template <class EP, class AP, class C2E, class C2A, class O1, bool Protection>
 typename Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::result_type
 Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8) const
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8) const
 {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7), c2a(a8));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
+                        c2a(a7), c2a(a8));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -353,19 +353,19 @@ template <class EP, class AP, class C2E, class C2A, class O1, bool Protection>
 typename Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::result_type
 Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
              const A9 &a9) const
 {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7), c2a(a8), c2a(a9));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
+                        c2a(a7), c2a(a8), c2a(a9));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -381,19 +381,19 @@ template <class EP, class AP, class C2E, class C2A, class O1, bool Protection>
 typename Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::result_type
 Filtered_predicate_with_state<EP,AP,C2E,C2A,O1,Protection>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
              const A9 &a9, const A10 &a10) const
 {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
-			c2a(a7), c2a(a8), c2a(a9), c2a(a10));
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          Ares res = ap(c2a(a1), c2a(a2), c2a(a3), c2a(a4), c2a(a5), c2a(a6),
+                        c2a(a7), c2a(a8), c2a(a9), c2a(a10));
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);

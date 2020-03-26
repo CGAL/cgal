@@ -40,7 +40,7 @@ template <class Refs, class T, class P, class Norm>
 class Enriched_facet : public CGAL::HalfedgeDS_face_base<Refs, T>
 {
   // tag
-  int m_tag; 
+  int m_tag;
 
   // normal
   Norm m_normal;
@@ -58,7 +58,7 @@ public:
   // tag
   const int& tag() const { return m_tag; }
   int& tag() { return m_tag; }
-	void tag(const int& i) { m_tag = i; }
+        void tag(const int& i) { m_tag = i; }
 
   // normal
   typedef Norm Normal_3;
@@ -66,8 +66,8 @@ public:
   const Normal_3& normal() const { return m_normal; }
 };
 
-// a refined halfedge with a general tag and 
-// a binary tag to indicate wether it belongs 
+// a refined halfedge with a general tag and
+// a binary tag to indicate wether it belongs
 // to the control mesh or not
 template <class Refs, class Tprev, class Tvertex, class Tface, class Norm>
 class Enriched_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
@@ -75,10 +75,10 @@ class Enriched_halfedge : public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvert
 private:
 
   // general purpose tag
-  int m_tag; 
+  int m_tag;
 
   // option for edge superimposing
-  bool m_control_edge; 
+  bool m_control_edge;
   bool m_sharp;
 
 public:
@@ -95,7 +95,7 @@ public:
   int& tag() { return m_tag;  }
   void tag(const int& t)  { m_tag = t; }
 
-  // control edge 
+  // control edge
   bool& control_edge()  { return m_control_edge; }
   const bool& control_edge()  const { return m_control_edge; }
 
@@ -111,7 +111,7 @@ template <class Refs, class T, class P, class Norm>
 class Enriched_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P>
 {
   // tag
-  int m_tag; 
+  int m_tag;
 
   // normal
   Norm m_normal;
@@ -136,12 +136,12 @@ public:
   void tag(const int& t)  { m_tag = t; }
 };
 
-// A redefined items class for the Polyhedron_3 
-// with a refined vertex class that contains a 
+// A redefined items class for the Polyhedron_3
+// with a refined vertex class that contains a
 // member for the normal vector and a refined
-// facet with a normal vector instead of the 
-// plane equation (this is an alternative 
-// solution instead of using 
+// facet with a normal vector instead of the
+// plane equation (this is an alternative
+// solution instead of using
 // Polyhedron_traits_with_normals_3).
 
 struct Enriched_items : public CGAL::Polyhedron_items_3
@@ -182,7 +182,7 @@ struct Enriched_items : public CGAL::Polyhedron_items_3
 
 static const double PI = 3.1415926535897932384626;
 
-// compute facet normal 
+// compute facet normal
 struct Facet_normal // (functor)
 {
   template<class Facet> void operator()(Facet& f)
@@ -208,7 +208,7 @@ struct Facet_normal // (functor)
   }
 };
 
-// compute vertex normal 
+// compute vertex normal
 struct Vertex_normal // (functor)
 {
   template<class Vertex> void operator()(Vertex& v)
@@ -242,7 +242,7 @@ public :
   typedef typename kernel::Vector_3 Vector;
   typedef typename kernel::Iso_cuboid_3 Iso_cuboid;
   typedef CGAL::Polyhedron_3<kernel,items,HDS> Base;
-  
+
   typedef typename Base::Vertex_handle Vertex_handle;
   typedef typename Base::Vertex_iterator Vertex_iterator;
   typedef typename Base::Halfedge_handle Halfedge_handle;
@@ -253,7 +253,7 @@ public :
   typedef typename Base::Facet_iterator Facet_iterator;
   typedef typename Base::Facet_handle Facet_handle;
   typedef typename Base::Facet Facet;
-  
+
   using Base::vertices_begin;
   using Base::vertices_end;
   using Base::edges_begin;
@@ -276,7 +276,7 @@ private :
 
 public :
   enum Vertex_type { SMOOTH,           // 0 sharp edge
-                     DART,             // 1 
+                     DART,             // 1
                      CREASE_REGULAR,   // 2 - with two non-sharp edges on each side
                      CREASE_IRREGULAR, // 2
                      CORNER };         // 3 and more
@@ -284,12 +284,12 @@ public :
 public :
 
   // life cycle
-  Enriched_polyhedron() 
+  Enriched_polyhedron()
   {
     m_pure_quad = false;
     m_pure_triangle = false;
   }
-  virtual ~Enriched_polyhedron() 
+  virtual ~Enriched_polyhedron()
   {
   }
 
@@ -371,7 +371,7 @@ public :
   // degree of a face
   static unsigned int degree(Facet_handle pFace)
   {
-    return CGAL::circulator_size(pFace->facet_begin());    
+    return CGAL::circulator_size(pFace->facet_begin());
   }
 
   // valence of a vertex
@@ -529,7 +529,7 @@ public :
       return CREASE_IRREGULAR;
 
     // valence = 6 - let us check regularity
-    
+
     // pick first sharp edge
     Halfedge_around_vertex_circulator he = v->vertex_begin();
     Halfedge_around_vertex_circulator end = he;
@@ -605,8 +605,8 @@ public :
     return conv * angle_rad(u,v);
   }
 
-  static FT len(const Vector &v) 
-  { 
+  static FT len(const Vector &v)
+  {
     return (FT)std::sqrt(CGAL_NTS to_double(v*v));
   }
 
@@ -691,7 +691,7 @@ public :
     return nb;
   }
 
-  // tag component 
+  // tag component
   void tag_component(Facet_handle pSeedFacet,
                      const int tag_free,
                      const int tag_done)

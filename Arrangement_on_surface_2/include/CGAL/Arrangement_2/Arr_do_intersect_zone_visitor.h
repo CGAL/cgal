@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ophir Setter      <ophirset@post.tau.ac.il>
 //
@@ -93,7 +93,7 @@ public:
                          Face_handle,
                          Vertex_handle left_v, Halfedge_handle left_he,
                          Vertex_handle right_v, Halfedge_handle right_he)
-  { 
+  {
     if ((left_v == invalid_v) && (right_v == invalid_v) &&
         (left_he == invalid_he) && (right_he == invalid_he))
     {

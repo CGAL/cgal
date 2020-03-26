@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Thomas Herrmann
 
@@ -31,7 +31,7 @@
 
 #ifdef DEBUG
 
-//Turn assertion output on/off 
+//Turn assertion output on/off
 #define ASSERTION_OUTPUT 0
 #define EXPENSIVE_CHECKS_OUTPUT 0
 

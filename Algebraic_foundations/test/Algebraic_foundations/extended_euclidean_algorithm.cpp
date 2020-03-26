@@ -30,7 +30,7 @@
 
 template<class Integer>
 void test_extended_euclidean_algorithm() {
-    Integer a, b, e, u, v;  
+    Integer a, b, e, u, v;
 
     // common factor is 2
     a = Integer(1008);
@@ -64,15 +64,15 @@ void test_extended_euclidean_algorithm() {
     assert(Integer(1) == e);
     assert(e == a*u + b*v);
 
-    // special cases 
+    // special cases
     // common factor is 1
     a = Integer(17);
     b = Integer(13);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
     assert(Integer(1) == e);
     assert(e == a*u + b*v);
- 
-    // one number is 0 
+
+    // one number is 0
     a = Integer(0);
     b = Integer(13);
     e = CGAL::extended_euclidean_algorithm(a, b,u ,v );
@@ -94,7 +94,7 @@ void test_extended_euclidean_algorithm() {
 }
 
 int main(){
-    test_extended_euclidean_algorithm<long>();     
+    test_extended_euclidean_algorithm<long>();
     return 0;
 }
 

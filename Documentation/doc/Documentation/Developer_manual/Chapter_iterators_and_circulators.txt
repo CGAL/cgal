@@ -1,14 +1,14 @@
 /*!
 
-\page devman_iterators_and_circulators Iterators, Circulators and Handles 
+\page devman_iterators_and_circulators Iterators, Circulators and Handles
 
 \author Mariette Yvinec (<TT>yvinec@sophia.inria.fr</TT>)
 
-Iterators are a generalization of pointers that allow a programmer to work 
-with different data structures (containers) in a uniform manner. 
-An iterator is the glue that allows one to write a single implementation of 
-an algorithm that will work for data contained in an array, a list or some 
-other container - even a container that did not yet exist when the algorithm 
+Iterators are a generalization of pointers that allow a programmer to work
+with different data structures (containers) in a uniform manner.
+An iterator is the glue that allows one to write a single implementation of
+an algorithm that will work for data contained in an array, a list or some
+other container - even a container that did not yet exist when the algorithm
 was implemented.
 
 The concept of an iterator is one of the major tools of the genericity
@@ -26,13 +26,13 @@ Note that circulators are NOT part of the \stl, but of \cgal.
 In \cgal, we also define the concept of \ref PkgHandlesAndCirculators "handle",
 which behaves roughly
 like a pointer to an object without an increment or decrement operation.
-More details about handles and their requirements can be found in 
+More details about handles and their requirements can be found in
 the \ref PkgHandlesAndCirculators "chapter Circulators and Handles"
-of the Support Library part of \cgal manual. 
+of the Support Library part of \cgal manual.
 Section  \ref sechandle_vs_it_vs_circ  below discusses when handles
 should be used in your code.
 
-The concepts of iterators is relatively well described in textbooks such as 
+The concepts of iterators is relatively well described in textbooks such as
 Stroustrup's book (<I>The C++ Programming Language</I> \cgalCite{cgal:s-cpl-97})
 and Austern's book (<I>Generic Programming and the \stl</I> \cgalCite{cgal:a-gps-98})
 and in chapter \ref PkgHandlesAndCirculators "Handles and Circulators"
@@ -40,29 +40,29 @@ of the <I>Support Library</I> part of the \cgal manual.
 which also presents the concepts of handles and circulators.
 Thus we will not give a full description of these concept here
 but only a few hints about how to use and write handle, iterators and circulators in \cgal.  Developers should consult the above-mentioned references to become
-familiar with the iterator, circulator and handle concepts. In 
+familiar with the iterator, circulator and handle concepts. In
 particular,  the notions of iterator and circulator ranges,
 dereferencable and past-the-end values,
- mutable and constant iterators and circulators, 
-and the different categories (forward, bidirectional, random-access, etc.) 
+ mutable and constant iterators and circulators,
+and the different categories (forward, bidirectional, random-access, etc.)
 of iterators and circulators, are fundamental.
 
-\section seciterator_traits Iterator and circulator traits 
+\section seciterator_traits Iterator and circulator traits
 
-Iterators and/or circulators are required to provide a set 
+Iterators and/or circulators are required to provide a set
 of types such as the `value_type` for the type of objects referred to by the iterator and circulator or the `difference_type`
  for the distance between two iterators or circulators.
-These types are usually declared in the iterator or circulator classes. 
+These types are usually declared in the iterator or circulator classes.
 The iterator traits have been introduced to attach such types to pointer classes, thus enabling the  use of pointer classes as models of  iterator
-and circulator concepts.  
-Therefore, an algorithm using an iterator of the type `Iter` will find the 
-relevant types in an instantiation of a small templated class 
+and circulator concepts.
+Therefore, an algorithm using an iterator of the type `Iter` will find the
+relevant types in an instantiation of a small templated class
 `iterator_traits`.
 
 There is a  general templated version
 of `iterator_traits` that looks like:
 \code{.cpp}
-template <class Iter> 
+template <class Iter>
 struct iterator_traits {
   typedef typename Iter::iterator_category  iterator_category ;
   typedef typename Iter::value_type         value_type;
@@ -74,7 +74,7 @@ struct iterator_traits {
 and a partial specialization of `iterator_traits` classes for pointers:
 
 \code{.cpp}
-template <class T> 
+template <class T>
 struct iterator_traits<T*> {
   typedef random_access_iterator            iterator_category ;
   typedef T                                 value_type;
@@ -84,33 +84,33 @@ struct iterator_traits<T*> {
 };
 \endcode
 
-\section secinput_and_output_iterators Input and output iterators 
+\section secinput_and_output_iterators Input and output iterators
 
 <B>Operator * for input and output iterators</B>
 
 The operator * of input and output iterators has a restricted semantics.
 Input iterators are designed for input operations, and it is not
-required that the value type `T`  
-of  an input iterator `it` be assignable. 
+required that the value type `T`
+of  an input iterator `it` be assignable.
 Thus, while assignments of the type `t = *it` are the usual way
 to get values from the input iterators,
 statements like `*it = ...` are likely to be illegal.
 On the other hand, output iterators are designed for write operations,
 and  the only legal use of the operator * of an output iterator
 `it` is in the assignment ` *it = ....`.
-The code of a standard copy function of the \stl 
+The code of a standard copy function of the \stl
 provides an example of both of these operations:
 
 <A NAME="copy_function">
 \code{.cpp}
 template< class InputIterator, class OutputIterator>
-OutputIterator copy(InputIterator first, 
+OutputIterator copy(InputIterator first,
                     InputIterator last,
                     OutputIterator result) {
     while (first != last)
     {
        *result = *first;
-       ++first; 
+       ++first;
        ++result;
     }
     return result;
@@ -118,18 +118,18 @@ OutputIterator copy(InputIterator first,
 \endcode
 </A>
 
-The first two arguments of `copy` are of type `InputIterator` 
+The first two arguments of `copy` are of type `InputIterator`
 (meaning any type that fulfills the requirements for an input iterator)
-while the third one is of type `OutputIterator`. If these types 
+while the third one is of type `OutputIterator`. If these types
 were  exchanged, then the statement `*result = *first;`
 might not be valid.
 
 <B>Stream iterators</B>
 
 \stl  provides a special type of input iterator called `istream_iterator`,
-which is designed to be bound to an object of the class `istream` and 
-provides a way to read a sequence of values from the input stream to which 
-it is bound.  For example, the following code reads numbers of type 
+which is designed to be bound to an object of the class `istream` and
+provides a way to read a sequence of values from the input stream to which
+it is bound.  For example, the following code reads numbers of type
 `double` from the standard input stream `cin` and computes their sum.
 \code{.cpp}
 istream_iterator<double> it(cin);
@@ -143,18 +143,18 @@ while(it != end) {
 cout << sum << endl;
 \endcode
 
-In a similar fashion, \stl provides the type `ostream_iterator`, 
-which is designed to be bound to an object of the class `ostream`  
+In a similar fashion, \stl provides the type `ostream_iterator`,
+which is designed to be bound to an object of the class `ostream`
 and used to output values to the output stream to which it is bound.
 
 \cgal provides extensions of the classes `istream_iterator`
-and `ostream_iterator`. The class `CGAL::Ostream_iterator<T,Stream>` 
-is an output iterator adaptor for the stream class `Stream` and value 
+and `ostream_iterator`. The class `CGAL::Ostream_iterator<T,Stream>`
+is an output iterator adaptor for the stream class `Stream` and value
 
-type `T`.  It provides output iterators that can be used to output values 
+type `T`.  It provides output iterators that can be used to output values
 of type `T` to objects of the class `Stream`.
 For example, the following code fragment inserts a list of segments into
-a window stream (<I>i.e.</I>, it draws the segments in the window) using the 
+a window stream (<I>i.e.</I>, it draws the segments in the window) using the
 standard copy function:
 
 \code{.cpp}
@@ -174,53 +174,53 @@ int main (int argc, char** argv)
 \endcode
 
 Likewise, the class `CGAL::Istream_iterator<T,Stream>` is an input
-iterator adaptor for the stream class `Stream` and value type `T`. 
+iterator adaptor for the stream class `Stream` and value type `T`.
 These adaptors are particularly useful for stream classes that are similar to
-but not derived from `std::istream` and `std::ostream`. The only 
-requirements of the stream classes are that they define `operator>>`  
+but not derived from `std::istream` and `std::ostream`. The only
+requirements of the stream classes are that they define `operator>>`
 (for `Istream_iterator::value_type`) and `operator<<`
 (for `Ostream_iterator::value_type`).
 
 <B>Insert iterators</B>
 
-Insert iterators are output iterators that can be used to insert items 
+Insert iterators are output iterators that can be used to insert items
 into containers.
 With regular iterator classes, the code given above
-for the `copy` function of \stl, 
-causes the range `[first,last)` to be copied into an existing range 
+for the `copy` function of \stl,
+causes the range `[first,last)` to be copied into an existing range
 starting with `result`. No memory allocation is involved and the
-existing range is overwritten. With an 
-insert iterator supplied as the third argument, the same code will 
+existing range is overwritten. With an
+insert iterator supplied as the third argument, the same code will
 cause elements to be inserted into the container with which the output
 iterator is associated.  That is, new memory may be allocated for these
 inserted elements.
 
 The \stl provides three kinds of insert iterators: `insert_iterator`s,
 `back_insert_iterator`s and `front_insert_iterator`s.
-The `back_inserter_iterator`s are used to insert elements at the end of 
+The `back_inserter_iterator`s are used to insert elements at the end of
 a container by using the `push_back` member function of the container.
 Similarly, `front_insert_iterator`s are used to insert elements at the
 beginning of a container by using the container's `push_front`
 function.  The general `insert_iterator` is used to insert elements
-at any point in a container, by using the container's `insert` 
+at any point in a container, by using the container's `insert`
 member function and a provided location of the insertion.
 
 For convenience, \stl  provides the templated
-functions (or adaptors) 
-`front_inserter`, 
+functions (or adaptors)
+`front_inserter`,
 `back_inserter`
 and `inserter` to get insert iterators, also called inserters,
  from containers.
 
 \code{.cpp}
-template<class Container, class Iterator> 
-insert_iterators<Container> inserter(Container& c, Iterator it); 
+template<class Container, class Iterator>
+insert_iterators<Container> inserter(Container& c, Iterator it);
 
-template<class Container> 
-back_insert_iterators<Container> back_inserter(Container& c); 
+template<class Container>
+back_insert_iterators<Container> back_inserter(Container& c);
 
-template<class Container> 
-front_insert_iterators<Container> front_inserter(Container& c); 
+template<class Container>
+front_insert_iterators<Container> front_inserter(Container& c);
 \endcode
 
 Thus, the `inserter` adaptor can be called for any container that
@@ -260,9 +260,9 @@ into a Delaunay triangulation data structure:
 \section Developer_manualWritingcodewithandforiterators Writing code with and for iterators, circulators, and handles
 
 Because you should write generic code for \cgal, algorithms that require
-a sequence of data for input should be written to take an iterator 
+a sequence of data for input should be written to take an iterator
 (or circulator) range as input instead of, say, a particular container.
-Similarly, algorithms that compute a sequence of data as output should 
+Similarly, algorithms that compute a sequence of data as output should
 place the output data into an output iterator range.  Both of these
 points are illustrated by the prototype of the following function that
 computes the convex hull of a set of points in two dimensions:
@@ -289,22 +289,22 @@ so they can be used with generic algorithms from the \stl and other
 \cgal algorithm.  Here we give a few more details about how to accomplish
 these goals.
 
-\subsection sechandle_vs_it_vs_circ Handle, iterator, or circulator? 
+\subsection sechandle_vs_it_vs_circ Handle, iterator, or circulator?
 
 Handles are indirect references that do not move, so whenever you need a
 pointer-like reference to a single element of a data structure, and it is
 not necessary to iterate (or circulate), use a handle.
-In contrast, iterators should be used when you want to move (that is, 
+In contrast, iterators should be used when you want to move (that is,
 iterate) over a linear sequences of elements.
 When the sequence is circular, prefer a circulator over an iterator.
 
-\subsection secit_and_circ_code Writing functions for iterators AND circulators 
+\subsection secit_and_circ_code Writing functions for iterators AND circulators
 
 To make your code as generic as possible, you should, where appropriate,
 write functions that can accept either a circulator range or an iterator
 range to delimit the input values.  Since empty circulator ranges are
 represented differently than empty iterator ranges, the following function
-is defined in <TT><CGAL/circulator.h></TT> so the test for an empty range 
+is defined in <TT><CGAL/circulator.h></TT> so the test for an empty range
 can be done generically:
 
 One would use this function in conjunction with a `do-while` loop
@@ -314,7 +314,7 @@ as follows:
 if ( ! CGAL::is_empty_range( i, j) )
 {
   do
-  { 
+  {
     // ...
   } while ( ++i != j )
 }
@@ -326,23 +326,23 @@ over either a linear or circular sequence:
 - `CGAL_For_all_backwards( ic1, ic2)`.
 
 See the chapter \ref PkgHandlesAndCirculators "Handles and Circulators"
- in the <I>Support Library</I> part of \cgal manual 
+ in the <I>Support Library</I> part of \cgal manual
 for more information and examples.
 
-\subsection secclass_iterator Writing an iterator for your container 
+\subsection secclass_iterator Writing an iterator for your container
 
 Every container class in \cgal should strive to be a model for the
-\stl concept of a container.  As for all concepts, this means that 
-certain types and functions are provided, as detailed, for example 
+\stl concept of a container.  As for all concepts, this means that
+certain types and functions are provided, as detailed, for example
 in \cgalCite{cgal:a-gps-98}.  For the purposes of this discussion, the relevant
 types are:
 
 <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-`iterator` 
+`iterator`
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
- type of iterator 
+ type of iterator
     <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-`const_iterator` 
+`const_iterator`
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
  iterator type for container with constant elements
 </TABLE>
@@ -357,11 +357,11 @@ const_iterator end(); // past-the-end value for container with constant elements
 \endcode
 
 Variations on the above names are possible when, for example, the container
-contains more than one thing that can be iterated over.  See 
+contains more than one thing that can be iterated over.  See
 Section  \ref secnaming_scheme  for more details about the naming conventions
 for iterators and their access functions.
 
-\subsection secclass_circulator Writing a circulator for your container 
+\subsection secclass_circulator Writing a circulator for your container
 
 When a container represents a circular data structure (<I>i.e.</I>, one without a
 defined beginning or end), one should provide circulators for the data
@@ -369,11 +369,11 @@ elements in addition to (or, where appropriate, instead of) the iterators.
 This means that the following types should be defined:
 
 <TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-`circulator` 
+`circulator`
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
- type of circulator 
+ type of circulator
     <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
-`const_circulator` 
+`const_circulator`
         <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
  circulator type for container with constant elements
 </TABLE>
@@ -381,7 +381,7 @@ This means that the following types should be defined:
 as well as two access functions, one for each of the two types, with names
 that end in the suffix `_circulator` (Section  \ref secnaming_scheme ).
 
-\section it_and_circit_and_circ_req_and_rec Requirements and recommendations 
+\section it_and_circit_and_circ_req_and_rec Requirements and recommendations
 
 Requirements:
 <UL>
@@ -391,10 +391,10 @@ Requirements:
       provide circulator types and access functions.
 
 <LI>Take care that decrement of the past-the-end value
-      is, in accordance with the standard, a legal operation for a 
+      is, in accordance with the standard, a legal operation for a
       bidirectional iterator.
 
-      This can, for example, be used to get the last element of 
+      This can, for example, be used to get the last element of
       a sequence.
 </UL>
 
@@ -404,13 +404,13 @@ Recommendations:
       expensive than preincrement (predecrement) since the iterator or
       circulator value must be copied in the former case.
 
-<LI>Remember that iterators and circulators are intended to be lightweight 
+<LI>Remember that iterators and circulators are intended to be lightweight
       objects.  That is, copying them should require only constant time.
 
-<LI>When writing a container-like structure, provide `push_back`, 
+<LI>When writing a container-like structure, provide `push_back`,
       `push_front`, and `insert` member functions
       so all insert iterators can be used with your container.
-      
+
 </UL>
 
 */

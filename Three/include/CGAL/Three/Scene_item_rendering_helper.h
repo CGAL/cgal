@@ -81,14 +81,14 @@ public:
   QMenu* contextMenu() Q_DECL_OVERRIDE;
 
   /*!
-     * \brief processData calls `computeElements()` 
-     * 
+     * \brief processData calls `computeElements()`
+     *
      * @todo in a dedicated thread so the
      * application does not get stuck while the processing is performed.
      * Emits `dataProcessed()`.
      */
    virtual void processData(Gl_data_names name) const;
-   
+
   //!
   //! \brief setAlpha sets the integer value of the alpha channel of this item.
   //! Also updates the slider value.
@@ -134,7 +134,7 @@ public:
   //!
   void setEdgeContainer(std::size_t id,
                         Edge_container* tc);
-  
+
   //!
   //! \brief setPointContainer sets the `id`th `Point_container` to `tc`.
   //!
@@ -176,7 +176,7 @@ public:
   //! This function should be called in the drawing functions, when `getBuffersFilled()` is `true`.
   //!
   void setBuffersInit(Viewer_interface *viewer, bool val) const;
-  
+
   //! \brief the item's bounding box's diagonal length.
   //!
   //! If the diagonal's length has never been computed, computes it and
@@ -212,7 +212,7 @@ protected:
   //! \param b
   //!
   void setBbox(Bbox b);
-  
+
   virtual void computeElements()const{}
 private:
   friend struct PRIV;

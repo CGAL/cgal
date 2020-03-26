@@ -15,12 +15,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 //
 // ============================================================================
 //
-//    \brief provide class LEDA_arithmetic_kernel, a collection of number types. 
+//    \brief provide class LEDA_arithmetic_kernel, a collection of number types.
 //
 
 
@@ -31,7 +31,7 @@
 
 #ifdef CGAL_USE_LEDA
 
-#define CGAL_HAS_LEDA_ARITHMETIC_KERNEL 
+#define CGAL_HAS_LEDA_ARITHMETIC_KERNEL
 
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>

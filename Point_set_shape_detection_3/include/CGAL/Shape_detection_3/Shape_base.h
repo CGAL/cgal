@@ -54,7 +54,7 @@ namespace CGAL {
     template<class PointAccessor>
     class Octree;
   }
-    
+
     /*!
      \ingroup PkgPointSetShapeDetection3Shapes
      \brief Base class for shape types defining an interface to construct a
@@ -101,14 +101,14 @@ namespace CGAL {
     }
 
     virtual ~Shape_base() {}
-      
+
     /*!
       returns the indices of the points in the input range assigned to this shape.
      */
     const std::vector<std::size_t> & indices_of_assigned_points() const {
       return m_indices;
     }
-      
+
     /*!
       returns a string containing the shape type
       and the numerical parameters.
@@ -123,13 +123,13 @@ namespace CGAL {
     virtual FT squared_distance(const Point_3 &p) const = 0;
 
   protected:
-      
+
     /*!
       Constructs the shape based on a minimal set of samples from the
       input data.
      */
     virtual void create_shape(const std::vector<std::size_t> &indices) = 0;
-    
+
     /*!
       Determines the largest cluster of inlier points. A point belongs to a cluster
       if there is a point in the cluster closer than `cluster_epsilon` distance.
@@ -141,7 +141,7 @@ namespace CGAL {
 
       if (!this->supports_connected_component())
         return connected_component_kdTree(indices, cluster_epsilon);
-      
+
       // Fetching parameters
       FT min[] = {0,0}, max[] = {0,0};
 
@@ -206,7 +206,7 @@ namespace CGAL {
           curLabel = (nw != 0) ?
             (std::min<unsigned int>)(curLabel, nw) : curLabel;
 
-          curLabel = (ne != 0) ? 
+          curLabel = (ne != 0) ?
             (std::min<unsigned int>)(curLabel, ne) : curLabel;
 
           // Update merge map.
@@ -248,7 +248,7 @@ namespace CGAL {
       for (std::size_t i = 0;i<parameter_space.size();i++) {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
-        
+
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
@@ -268,7 +268,7 @@ namespace CGAL {
       for (std::size_t i = 0;i<parameter_space.size();i++) {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
-        
+
         u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
         v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
@@ -280,7 +280,7 @@ namespace CGAL {
 
       return m_score = indices.size();
     }
-    
+
     /*!
       Determines the largest cluster with a point-to-point
       distance not larger than `cluster_epsilon`. This general version performs
@@ -307,7 +307,7 @@ namespace CGAL {
 
       // construct kd tree
       Kd_Tree tree(pts.begin(), pts.end());
-      
+
       std::stack<std::size_t> stack;
       std::size_t unlabeled = pts.size();
       std::size_t label = 1;
@@ -342,7 +342,7 @@ namespace CGAL {
             }
           }
         }
-        
+
         // Track most prominent label and remaining points
         unlabeled -= assigned;
         if (assigned > best_size) {
@@ -365,7 +365,7 @@ namespace CGAL {
       }
 
       indices = tmp_indices;
-      
+
       return indices.size();
     }
 
@@ -396,7 +396,7 @@ namespace CGAL {
     point(std::size_t i) const {
       return get(this->m_point_pmap, *(this->m_first + i));
     }
-    
+
     /*!
       Retrieves the normal vector from its index.
      */
@@ -420,7 +420,7 @@ namespace CGAL {
             return a->max_bound() < b->max_bound();
         }
     };
-      
+
     FT expected_value() const {
       return (m_lower_bound + m_upper_bound) / 2.f;
     }
@@ -447,7 +447,7 @@ namespace CGAL {
     // return last computed score, or -1 if no score yet
     FT inline score() const {
       return FT(m_score);
-    } 
+    }
 
     int inline subsets() const {
       return m_nb_subset_used;
@@ -509,7 +509,7 @@ namespace CGAL {
       std::vector<std::size_t> indices(num);
       for (std::size_t i = 0;i<num;i++)
         indices[i] = m_indices[get_default_random()(m_indices.size())];
-      
+
       std::vector<FT> dists(num), angles(num);
       other->squared_distance(indices, dists);
       other->cos_to_normal(indices, angles);
@@ -566,7 +566,7 @@ namespace CGAL {
 
       create_shape(indices);
     }
-    
+
     void compute(const std::set<std::size_t>& indices,
                  Input_iterator first,
                  Traits traits,
@@ -614,7 +614,7 @@ namespace CGAL {
     }
 
     template<typename T> bool is_finite(T arg) {
-      return arg == arg && 
+      return arg == arg &&
         arg != std::numeric_limits<T>::infinity() &&
         arg != -std::numeric_limits<T>::infinity();
     }
@@ -630,11 +630,11 @@ namespace CGAL {
       m_upper_bound = -1 - m_upper_bound;
     }
 
-    void hypergeometrical_dist(const std::ptrdiff_t UN, 
+    void hypergeometrical_dist(const std::ptrdiff_t UN,
                                const std::ptrdiff_t x,
-                               const std::ptrdiff_t n, 
+                               const std::ptrdiff_t n,
                                FT &low,
-                               FT &high) {                           
+                               FT &high) {
       const FT q = FT(x * n * double(UN - x) * (UN - n) / (UN - 1));
       const FT sq = CGAL::sqrt(q);
       low  = (x * n - sq) / UN;
@@ -650,7 +650,7 @@ namespace CGAL {
       return false;
     };
 
-    
+
     // ------------------------------------------------------------------------
     // Utilities
     // ------------------------------------------------------------------------
@@ -660,7 +660,7 @@ namespace CGAL {
     FT get_x(const Point_3& p) const { return m_traits.compute_x_3_object()(p); }
     FT get_y(const Point_3& p) const { return m_traits.compute_y_3_object()(p); }
     FT get_z(const Point_3& p) const { return m_traits.compute_z_3_object()(p); }
-    
+
     Point_3 constr_pt() const
     { return m_traits.construct_point_3_object()(ORIGIN); }
     Point_3 constr_pt(FT x, FT y, FT z) const
@@ -685,7 +685,7 @@ namespace CGAL {
 
   protected:
     /// \endcond
-    // 
+    //
     /// \cond SKIP_IN_MANUAL
     /*!
       Contains indices of the inliers of the candidate, access
@@ -716,7 +716,7 @@ namespace CGAL {
     Point_map m_point_pmap;
     Normal_map m_normal_pmap;
     /// \endcond
-  };  
+  };
 }
 }
 #endif

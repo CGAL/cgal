@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel        <seel@mpi-sb.mpg.de>
 //                 Miguel Granados     <granados@mpi-sb.mpg.de>
@@ -66,22 +66,22 @@ class Volume_base  {
 
     Volume_base(const Volume_base<Refs>& v)
       { mark_ = v.mark_;
-	shell_entry_objects_ = v.shell_entry_objects_;
+        shell_entry_objects_ = v.shell_entry_objects_;
       }
 
     Volume_base<Refs>& operator=(const Volume_base<Refs>& v)
       { if (this == &v) return *this;
-	mark_ = v.mark_;
-	shell_entry_objects_ = v.shell_entry_objects_;
-	return *this;
+        mark_ = v.mark_;
+        shell_entry_objects_ = v.shell_entry_objects_;
+        return *this;
       }
 
     Mark& mark() { return mark_; }
     const Mark& mark() const { return mark_; }
 
     Object_list& shell_entry_objects() { return shell_entry_objects_; }
-    const Object_list& shell_entry_objects() const { 
-      return shell_entry_objects_; 
+    const Object_list& shell_entry_objects() const {
+      return shell_entry_objects_;
     }
 
     Shell_entry_iterator shells_begin()
@@ -94,15 +94,15 @@ class Volume_base  {
     { return shell_entry_objects_.end(); }
 
     bool is_valid( bool verb = false, int level = 0) const {
-      
+
       Verbose_ostream verr(verb);
       verr << "begin CGAL::SNC_items<...>::Volume_base::is_valid( verb=true, "
-	"level = " << level << "):" << std::endl;
+        "level = " << level << "):" << std::endl;
 
       bool valid = (!shell_entry_objects_.empty());
 
       verr << "end of CGAL::SNC_items<...>::Volume_base::is_valid(): structure is "
-	   << ( valid ? "valid." : "NOT VALID.") << std::endl;
+           << ( valid ? "valid." : "NOT VALID.") << std::endl;
 
       return valid;
     }

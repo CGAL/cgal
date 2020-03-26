@@ -143,9 +143,9 @@ bool overflow_test()
          b.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
          c.is_same(IA_nt::largest()) &&
          d.is_same(IA_nt::largest()) &&
-	 e.is_same(IA_nt::largest()) &&
-	 f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
-	 g.is_same(-f);
+         e.is_same(IA_nt::largest()) &&
+         f.is_same(IA_nt(CGAL_IA_MAX_DOUBLE, std::numeric_limits<double>::infinity())) &&
+         g.is_same(-f);
 }
 
 
@@ -244,9 +244,9 @@ bool utility_test()
   tmpflag = CGAL_NTS abs(a).is_same(IA_nt(0,1)) &&
             CGAL_NTS abs(b).is_same(IA_nt(0,1)) &&
             CGAL_NTS abs(c).is_same(IA_nt(0,0)) &&
-	    CGAL_NTS abs(d).is_same(IA_nt(0,1)) &&
+            CGAL_NTS abs(d).is_same(IA_nt(0,1)) &&
             CGAL_NTS abs(e).is_same(IA_nt(1,2)) &&
-	    CGAL_NTS abs(f).is_same(IA_nt(1,2)) &&
+            CGAL_NTS abs(f).is_same(IA_nt(1,2)) &&
             CGAL_NTS abs(g).is_same(g) ;
   DEBUG( std::cout << "abs test :\t" << tmpflag << std::endl; )
   flag = flag && tmpflag;

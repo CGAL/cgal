@@ -63,7 +63,7 @@ class Arr_default_overlay_traits :
  * Overlay_face_data.
  */
 template <typename ArrangementA, typename ArrangementB, typename ArrangementR,
-	  typename OverlayFaceData_>
+          typename OverlayFaceData_>
 class Arr_face_overlay_traits :
   public _Arr_default_overlay_traits_base<ArrangementA, ArrangementB,
                                           ArrangementR>

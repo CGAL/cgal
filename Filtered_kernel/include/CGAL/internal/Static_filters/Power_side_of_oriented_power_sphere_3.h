@@ -27,7 +27,7 @@
 
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
-  
+
   template <typename K_base>
   class Power_side_of_oriented_power_sphere_3:
     public K_base::Power_side_of_oriented_power_sphere_3
@@ -37,24 +37,24 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     typedef typename K_base::Power_side_of_oriented_power_sphere_3 Base;
   public:
     typedef typename Base::result_type result_type;
-  
+
     #ifndef CGAL_CFG_MATCHING_BUG_6
     using Base::operator();
-    #else 
+    #else
     result_type
     operator()(const Weighted_point_3& p, const Weighted_point_3& q) const
-    { 
+    {
       return Base::operator()(p,q);
     }
     #endif
 
 
     void
-    msvc_workaround(double& max1, double& max2, double& max3, double& max4, double& max5, double&  RT_tmp_result, 
-                    double px, double  py, double  pz, double  pwt, 
-                    double qx, double  qy, double  qz, double  qwt, 
-                    double  rx, double  ry, double  rz, double  rwt, 
-                    double  sx, double  sy, double  sz, double  swt, 
+    msvc_workaround(double& max1, double& max2, double& max3, double& max4, double& max5, double&  RT_tmp_result,
+                    double px, double  py, double  pz, double  pwt,
+                    double qx, double  qy, double  qz, double  qwt,
+                    double  rx, double  ry, double  rz, double  rwt,
+                    double  sx, double  sy, double  sz, double  swt,
                     double  tx, double  ty, double  tz, double  twt) const
     {
       double dpx = (px - tx);
@@ -78,12 +78,12 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       double twt_swt = (twt - swt);
       double dst = (((square( dsx ) + square( dsy )) + square( dsz )) + twt_swt);
 
-      //        double 
+      //        double
       RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dpt, dqx, dqy, dqz, dqt, drx, dry, drz, drt, dsx, dsy, dsz, dst );
 
       //        double
       max2 = CGAL::abs(dpx);
-     
+
 
       double adqx = CGAL::abs(dqx);
       double adqy = CGAL::abs(dqy);
@@ -104,7 +104,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       if( (max2 < adqx) ) max2 = adqx;
       if( (max2 < adrx) ) max2 = adrx;
       if( (max2 < adsx) ) max2 = adsx;
-      max1 = max2; 
+      max1 = max2;
       max3 = CGAL::abs(dpy);
       if( (max3 < adqy) ) max3 = adqy;
       if( (max3 < adry) ) max3 = adry;
@@ -119,9 +119,9 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       if( (max5 < atwt_qwt) ) max5 = atwt_qwt;
       if( (max5 < atwt_rwt) ) max5 = atwt_rwt;
       if( (max5 < atwt_swt) ) max5 = atwt_swt;
-    }    
+    }
 
-    
+
     result_type operator() ( const Weighted_point_3 & p,
                              const Weighted_point_3 & q,
                              const Weighted_point_3 & r,
@@ -134,29 +134,29 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       init_double(px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, (FT*)(0));
       init_double(sx, sy, sz, swt, tx, ty, tz, twt, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
-          fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) && 
+          fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) &&
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)       &&
           fit_in_double(q.z(), qz) && fit_in_double(q.weight(), qwt) &&
           fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry)       &&
           fit_in_double(r.z(), rz) && fit_in_double(r.weight(), rwt) &&
           fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy)       &&
-          fit_in_double(s.z(), sz) && fit_in_double(s.weight(), swt) && 
+          fit_in_double(s.z(), sz) && fit_in_double(s.weight(), swt) &&
           fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty)       &&
-          fit_in_double(t.z(), tz) && fit_in_double(t.weight(), twt) 
+          fit_in_double(t.z(), tz) && fit_in_double(t.weight(), twt)
         )
       {
-        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);        
+        CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-        // We split the operator as we get an ICE with VC9 and VC10 
-        // when we compile 64 bit code 
+        // We split the operator as we get an ICE with VC9 and VC10
+        // when we compile 64 bit code
 #if defined (BOOST_MSVC) && defined ( _WIN64)
         double max1,max2,max3,max4,max5;
         double RT_tmp_result;
         msvc_workaround(max1,max2,max3,max4,max5, RT_tmp_result,
-                        px, py, pz, pwt, 
-                        qx, qy, qz, qwt, 
-                        rx, ry, rz, rwt, 
-                        sx, sy, sz, swt, 
+                        px, py, pz, pwt,
+                        qx, qy, qz, qwt,
+                        rx, ry, rz, rwt,
+                        sx, sy, sz, swt,
                         tx, ty, tz, twt);
 
 #else
@@ -183,7 +183,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
         double RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dpt, dqx, dqy, dqz, dqt, drx, dry, drz, drt, dsx, dsy, dsz, dst );
 
-        
+
         double max2 = CGAL::abs(dpx);
         double adqx = CGAL::abs(dqx);
         double adqy = CGAL::abs(dqy);
@@ -204,7 +204,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         if( (max2 < adqx) ) max2 = adqx;
         if( (max2 < adrx) ) max2 = adrx;
         if( (max2 < adsx) ) max2 = adsx;
-        double max1 = max2; 
+        double max1 = max2;
         double max3 = CGAL::abs(dpy);
         if( (max3 < adqy) ) max3 = adqy;
         if( (max3 < adry) ) max3 = adry;
@@ -231,14 +231,14 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(p,q,r,s,t);
-        } 
-        else 
+        }
+        else
         {
             if( ((upper_bound_1 > 3.21387608851797948065e+60) || (max5 > 1.03289995123476274781e+121)) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,s,t);
-            } 
+            }
 
             result_type int_tmp_result;
 
@@ -248,21 +248,21 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
             if( (RT_tmp_result > eps) )
             {
                 int_tmp_result = NEGATIVE;
-            } 
-            else 
+            }
+            else
             {
                 if( (RT_tmp_result < -eps) )
                 {
                     int_tmp_result = POSITIVE;
-                } 
-                else 
+                }
+                else
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,s,t);
-                } 
-            } 
+                }
+            }
             return int_tmp_result;
-        } 
+        }
       }
       else
         return Base::operator()(p,q,r,s,t);
@@ -280,17 +280,17 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       init_double(px, py, pz, pwt, qx, qy, qz, qwt, (FT*)(0));
       init_double( rx, ry, rz, rwt, tx, ty, tz, twt, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
-          fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) && 
+          fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) &&
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)       &&
           fit_in_double(q.z(), qz) && fit_in_double(q.weight(), qwt) &&
           fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry)       &&
           fit_in_double(r.z(), rz) && fit_in_double(r.weight(), rwt) &&
           fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty)       &&
-          fit_in_double(t.z(), tz) && fit_in_double(t.weight(), twt) 
+          fit_in_double(t.z(), tz) && fit_in_double(t.weight(), twt)
         )
       {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-        
+
         double dpx = (px - tx);
         double dpy = (py - ty);
         double dpz = (pz - tz);
@@ -343,38 +343,38 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         upper_bound_1 = max1;
         if( (max2 < lower_bound_1) ) lower_bound_1 = max2;
         if( (max3 < lower_bound_1) ) lower_bound_1 = max3;
-        //handwritten workaround to handle case where all weights are equal        
+        //handwritten workaround to handle case where all weights are equal
         //if( ((lower_bound_1 < 2.92391967062015793913e-74) || (max4 < 8.54930624023949352313e-148)) )
         if( ((lower_bound_1 < 2.92391967062015793913e-74) || (max4 < 8.54930624023949352313e-148 && max4!=0)) )
         {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(p,q,r,t);
-        } 
-        else 
+        }
+        else
         {
             if( ((upper_bound_1 > 7.23700557733225980357e+75) || (max4 > 5.23742497263382350320e+151)) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
-            } 
+            }
             double eps = (3.04426660386257731823e-14 * ((max2 * max3) * (CGAL::max)( max4, (max1 * max1) )));
             if( (RT_tmp_result > eps) )
             {
                 int_tmp_result = 1;
-            } 
-            else 
+            }
+            else
             {
                 if( (RT_tmp_result < -eps) )
                 {
                     int_tmp_result = -1;
-                } 
-                else 
+                }
+                else
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,t);
-                } 
-            } 
-        } 
+                }
+            }
+        }
         cmp = int_tmp_result;
         double px_rx = (px - rx);
         double qy_ry = (qy - ry);
@@ -394,39 +394,39 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
             lower_bound_1 = max5;
             upper_bound_1 = max5;
             if( (max6 < lower_bound_1) ) lower_bound_1 = max6;
-            else 
+            else
             {
                 if( (max6 > upper_bound_1) ) upper_bound_1 = max6;
-            } 
+            }
             if( (lower_bound_1 < 5.00368081960964690982e-147) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
-            } 
-            else 
+            }
+            else
             {
                 if( (upper_bound_1 > 7.23700557733225980357e+75) )
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,t);
-                } 
+                }
                 double eps = (8.88720573725927976811e-16 * (max5 * max6));
                 if( (double_tmp_result > eps) ) int_tmp_result_FFWKCAA = 1;
-                else 
+                else
                 {
                     if( (double_tmp_result < -eps) )
                     {
                         int_tmp_result_FFWKCAA = -1;
-                    } 
-                    else 
+                    }
+                    else
                     {
                       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                       return Base::operator()(p,q,r,t);
-                    } 
-                } 
-            } 
+                    }
+                }
+            }
             return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
-        } 
+        }
         int int_tmp_result_k60Ocge;
         double RT_tmp_result_3SPBwDj = CGAL::determinant( dpx, dpz, dpt, dqx, dqz, dqt, drx, drz, drt );
         lower_bound_1 = max1;
@@ -439,32 +439,32 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(p,q,r,t);
-        } 
-        else 
+        }
+        else
         {
             if( ((upper_bound_1 > 7.23700557733225980357e+75) || (max4 > 5.23742497263382350320e+151)) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
-            } 
+            }
             eps = (3.04426660386257731823e-14 * ((max2 * max7) * (CGAL::max)( max4, (max1 * max1) )));
             if( (RT_tmp_result_3SPBwDj > eps) )
             {
                 int_tmp_result_k60Ocge = 1;
-            } 
-            else 
+            }
+            else
             {
                 if( (RT_tmp_result_3SPBwDj < -eps) )
                 {
                     int_tmp_result_k60Ocge = -1;
-                } 
-                else 
+                }
+                else
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,t);
-                } 
-            } 
-        } 
+                }
+            }
+        }
         cmp = int_tmp_result_k60Ocge;
         double qz_rz = (qz - rz);
         double pz_rz = (pz - rz);
@@ -479,42 +479,42 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
             lower_bound_1 = max5;
             upper_bound_1 = max5;
             if( (max8 < lower_bound_1) ) lower_bound_1 = max8;
-            else 
+            else
             {
                 if( (max8 > upper_bound_1) ) upper_bound_1 = max8;
-            } 
+            }
             if( (lower_bound_1 < 5.00368081960964690982e-147) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
-            } 
-            else 
+            }
+            else
             {
                 if( (upper_bound_1 > 7.23700557733225980357e+75) )
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,t);
-                } 
+                }
                 eps = (8.88720573725927976811e-16 * (max5 * max8));
                 if( (double_tmp_result_Gx4H > eps) )
                 {
                     int_tmp_result_k3Lzf6g = 1;
-                } 
-                else 
+                }
+                else
                 {
                     if( (double_tmp_result_Gx4H < -eps) )
                     {
                         int_tmp_result_k3Lzf6g = -1;
-                    } 
-                    else 
+                    }
+                    else
                     {
                       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                       return Base::operator()(p,q,r,t);
-                    } 
-                } 
-            } 
+                    }
+                }
+            }
             return static_cast<result_type>(cmp * int_tmp_result_k3Lzf6g);
-        } 
+        }
         int int_tmp_result_AvrrXBP;
         double RT_tmp_result_feLwnHn = CGAL::determinant( dpy, dpz, dpt, dqy, dqz, dqt, dry, drz, drt );
         lower_bound_1 = max1;
@@ -527,32 +527,32 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(p,q,r,t);
-        } 
-        else 
+        }
+        else
         {
             if( ((upper_bound_1 > 7.23700557733225980357e+75) || (max4 > 5.23742497263382350320e+151)) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
-            } 
+            }
             eps = (3.04426660386257731823e-14 * ((max3 * max7) * (CGAL::max)( max4, (max1 * max1) )));
             if( (RT_tmp_result_feLwnHn > eps) )
             {
                 int_tmp_result_AvrrXBP = 1;
-            } 
-            else 
+            }
+            else
             {
                 if( (RT_tmp_result_feLwnHn < -eps) )
                 {
                     int_tmp_result_AvrrXBP = -1;
-                } 
-                else 
+                }
+                else
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,t);
-                } 
-            } 
-        } 
+                }
+            }
+        }
         cmp = int_tmp_result_AvrrXBP;
         int int_tmp_result_agX3WsT;
         double double_tmp_result_Dw20Kqh = ((py_ry * qz_rz) - (qy_ry * pz_rz));
@@ -561,42 +561,42 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         if( (max6 < lower_bound_1) )
         {
             lower_bound_1 = max6;
-        } 
-        else 
+        }
+        else
         {
             if( (max6 > upper_bound_1) ) upper_bound_1 = max6;
-        } 
+        }
         if( (lower_bound_1 < 5.00368081960964690982e-147) )
         {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(p,q,r,t);
-        } 
-        else 
+        }
+        else
         {
             if( (upper_bound_1 > 7.23700557733225980357e+75) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,r,t);
-            } 
+            }
             eps = (8.88720573725927976811e-16 * (max6 * max8));
             if( (double_tmp_result_Dw20Kqh > eps) )
             {
                 int_tmp_result_agX3WsT = 1;
-            } 
-            else 
+            }
+            else
             {
                 if( (double_tmp_result_Dw20Kqh < -eps) )
                 {
                     int_tmp_result_agX3WsT = -1;
-                } 
-                else 
+                }
+                else
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,r,t);
-                } 
-            } 
-        } 
-        return static_cast<result_type>(cmp * int_tmp_result_agX3WsT);        
+                }
+            }
+        }
+        return static_cast<result_type>(cmp * int_tmp_result_agX3WsT);
       }
       else
         return Base::operator()(p,q,r,t);
@@ -608,19 +608,19 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_side_of_oriented_power_sphere_3 with 2+1 wpoints", tmp);
-      
+
       double px, py, pz, pwt, qx, qy, qz, qwt, tx, ty, tz, twt;
       init_double(px, py, pz, pwt, qx, qy, qz, qwt, tx, ty, tz, twt, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
-          fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) && 
+          fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) &&
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)       &&
           fit_in_double(q.z(), qz) && fit_in_double(q.weight(), qwt) &&
           fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty)       &&
-          fit_in_double(t.z(), tz) && fit_in_double(t.weight(), twt) 
+          fit_in_double(t.z(), tz) && fit_in_double(t.weight(), twt)
         )
       {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-          
+
         double dpx = (px - tx);
         double dpy = (py - ty);
         double dpz = (pz - tz);
@@ -644,7 +644,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
         if( max4 < adqy ) max4 = adqy;
         max1 = max4;
-        double max5 = CGAL::abs(dpz); 
+        double max5 = CGAL::abs(dpz);
         if( max5 < adqz ) max5 = adqz;
         if( max1 < max5 ) max1 = max5;
         double max2 = CGAL::abs(dpx);
@@ -668,34 +668,34 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,t);
-            } 
-            else 
+            }
+            else
             {
                 if( ((upper_bound_1 > 5.59936185544450928309e+101) || (max3 > 3.13528531882069776730e+203)) )
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,t);
-                } 
+                }
                 eps = (6.88858782307641768480e-15 * (max2 * (CGAL::max)( max3, (max1 * max1) )));
                 if( (double_tmp_result > eps) )
                 {
                     int_tmp_result = 1;
-                } 
-                else 
+                }
+                else
                 {
                     if( (double_tmp_result < -eps) )
                     {
                         int_tmp_result = -1;
-                    } 
-                    else 
+                    }
+                    else
                     {
                       CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                       return Base::operator()(p,q,t);
-                    } 
-                } 
-            } 
+                    }
+                }
+            }
             return static_cast<result_type>(cmp * int_tmp_result);
-        } 
+        }
         cmp = ((py > qy) ? 1 : ((py < qy) ? -1 : 0));
         if( (cmp != 0) )
         {
@@ -711,34 +711,34 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
           {
             CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
             return Base::operator()(p,q,t);
-          } 
-          else 
+          }
+          else
           {
               if( ((upper_bound_1 > 5.59936185544450928309e+101) || (max3 > 3.13528531882069776730e+203)) )
               {
                 CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                 return Base::operator()(p,q,t);
-              } 
+              }
               eps = (6.88858782307641768480e-15 * (max4 * (CGAL::max)( max3, (max1 * max1) )));
               if( (double_tmp_result_k60Ocge > eps) )
               {
                   int_tmp_result_FFWKCAA = 1;
-              } 
-              else 
+              }
+              else
               {
                   if( (double_tmp_result_k60Ocge < -eps) )
                   {
                       int_tmp_result_FFWKCAA = -1;
-                  } 
-                  else 
+                  }
+                  else
                   {
                     CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                     return Base::operator()(p,q,t);
-                  } 
-              } 
-          } 
+                  }
+              }
+          }
           return static_cast<result_type>(cmp * int_tmp_result_FFWKCAA);
-        } 
+        }
         cmp = ((pz > qz) ? 1 : ((pz < qz) ? -1 : 0));
         int int_tmp_result_3SPBwDj;
         double double_tmp_result_k3Lzf6g = ((dpz * dqt) - (dqz * dpt));
@@ -747,47 +747,47 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         if( (max5 < lower_bound_1) )
         {
             lower_bound_1 = max5;
-        } 
+        }
         //handwritten workaround to handle case where all weights are equal
         //if( ((lower_bound_1 < 4.89808663633813414271e-98) || (max3 < 2.39912526970742181620e-195)) )
         if( ((lower_bound_1 < 4.89808663633813414271e-98) || (max3 < 2.39912526970742181620e-195 && max3!=0)) )
         {
           CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
           return Base::operator()(p,q,t);
-        } 
-        else 
+        }
+        else
         {
             if( ((upper_bound_1 > 5.59936185544450928309e+101) || (max3 > 3.13528531882069776730e+203)) )
             {
               CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
               return Base::operator()(p,q,t);
-            } 
+            }
             eps = (6.88858782307641768480e-15 * (max5 * (CGAL::max)( max3, (max1 * max1) )));
             if( (double_tmp_result_k3Lzf6g > eps) )
             {
                 int_tmp_result_3SPBwDj = 1;
-            } 
-            else 
+            }
+            else
             {
                 if( (double_tmp_result_k3Lzf6g < -eps) )
                 {
                     int_tmp_result_3SPBwDj = -1;
-                } 
-                else 
+                }
+                else
                 {
                   CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
                   return Base::operator()(p,q,t);
-                } 
-            } 
-        } 
-        return static_cast<result_type>(cmp * int_tmp_result_3SPBwDj);           
+                }
+            }
+        }
+        return static_cast<result_type>(cmp * int_tmp_result_3SPBwDj);
       }
       else
         return Base::operator()(p,q,t);
     }
-  
+
       };
-  
+
 } } }//namespace CGAL::internal::Static_filters_predicates
 
 #endif //CGAL_INTERNAL_STATIC_FILTERS_POWER_TEST_3_H

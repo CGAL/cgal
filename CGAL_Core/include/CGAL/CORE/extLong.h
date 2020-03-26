@@ -17,10 +17,10 @@
  *
  *
  * File: extLong.h
- * Synopsis: 
- * 		An extended class for long
+ * Synopsis:
+ *                 An extended class for long
  *
- * Written by 
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Igor Pechtchanski <pechtcha@cs.nyu.edu>,
@@ -42,7 +42,7 @@
 #include <CGAL/CORE/Impl.h>
 #include <CGAL/CORE/CoreAux.h>
 
-namespace CORE { 
+namespace CORE {
 
 #ifndef LONG_MAX
 #error "haven't define LONG_MAX"
@@ -113,7 +113,7 @@ public:
     std::stringstream st;
     st << (*this);
     return st.str();
-  }    
+  }
   long toLong() const;
   //@}
 

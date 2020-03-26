@@ -61,11 +61,11 @@ class Feature_set
       return a->name() < b->name();
     }
   };
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   tbb::task_group* m_tasks;
 #endif // CGAL_LINKED_WITH_TBB
-  
+
 public:
 
   /// \name Constructor
@@ -81,7 +81,7 @@ public:
   { }
 
   /// @}
-  
+
   /// \cond SKIP_IN_MANUAL
   virtual ~Feature_set()
   {
@@ -96,7 +96,7 @@ public:
 
   /// \name Modifications
   /// @{
-  
+
   /*!
     \brief Instantiates a new feature and adds it to the set.
 
@@ -125,10 +125,10 @@ public:
     if (m_tasks != NULL)
     {
       m_features.push_back (Feature_handle());
-    
+
       Parallel_feature_adder<Feature, T...>* adder
         = new Parallel_feature_adder<Feature, T...>(m_features.back(), std::forward<T>(t)...);
-      
+
       m_adders.push_back (adder);
       m_tasks->run (*adder);
     }
@@ -148,10 +148,10 @@ public:
     if (m_tasks != NULL)
     {
       m_features.push_back (Feature_handle());
-    
+
       Parallel_feature_adder<Feature, T...>* adder
         = new Parallel_feature_adder<Feature, T...>(i, m_features.back(), std::forward<T>(t)...);
-      
+
       m_adders.push_back (adder);
       m_tasks->run (*adder);
     }
@@ -165,7 +165,7 @@ public:
   }
   /// \endcond
 
-    
+
   /*!
     \brief Removes a feature.
 
@@ -173,7 +173,7 @@ public:
 
     \return `true` if the feature was correctly removed, `false` if
     its handle was not found.
-  */ 
+  */
   bool remove (Feature_handle feature)
   {
     for (std::size_t i = 0; i < m_features.size(); ++ i)
@@ -197,7 +197,7 @@ public:
 
   /// \name Parallel Processing
   /// @{
-  
+
 
 #if defined(CGAL_LINKED_WITH_TBB) || defined(DOXYGEN_RUNNING)
 
@@ -218,7 +218,7 @@ public:
     deleted before the thread has terminated.
 
     \sa `end_parallel_additions()`
-  */ 
+  */
   void begin_parallel_additions()
   {
     m_tasks = new tbb::task_group;
@@ -236,13 +236,13 @@ public:
     \note This function requires \ref thirdpartyTBB.
 
     \sa `begin_parallel_additions()`
-  */ 
+  */
   void end_parallel_additions()
   {
     m_tasks->wait();
     delete m_tasks;
     m_tasks = NULL;
-    
+
     for (std::size_t i = 0; i < m_adders.size(); ++ i)
       delete m_adders[i];
     m_adders.clear();
@@ -254,10 +254,10 @@ public:
 
   /// \name Access
   /// @{
-  
+
   /*!
     \brief Returns how many features are defined.
-  */  
+  */
   std::size_t size() const
   {
     return m_features.size();
@@ -266,7 +266,7 @@ public:
 
   /*!
     \brief Returns the \f$i^{th}\f$ feature.
-  */  
+  */
   Feature_handle operator[](std::size_t i) const
   {
     return m_features[i];
@@ -283,7 +283,7 @@ public:
   void sort_features_by_name()
   {
     std::sort (m_features.begin(), m_features.end(),
-               Compare_name());               
+               Compare_name());
   }
   /// \endcond
 
@@ -296,20 +296,20 @@ private:
     virtual ~Abstract_parallel_feature_adder() { }
     virtual void operator()() const = 0;
   };
-  
+
   template <typename Feature, typename ... T>
   struct Parallel_feature_adder : Abstract_parallel_feature_adder
   {
     std::size_t scale;
     mutable Feature_handle fh;
     boost::shared_ptr<std::tuple<T...> > args;
-    
+
     Parallel_feature_adder (Feature_handle fh, T&& ... t)
       : scale (std::size_t(-1)), fh (fh)
     {
       args = boost::make_shared<std::tuple<T...> >(std::forward<T>(t)...);
     }
-    
+
     Parallel_feature_adder (std::size_t scale, Feature_handle fh, T&& ... t)
       : scale(scale), fh (fh)
     {
@@ -330,7 +330,7 @@ private:
     template <typename Type>
     const Type& remove_ref_of_simple_type (const Type& t) const { return t; }
 
-    
+
     template <typename Tuple, int ... S>
     void add_feature (Tuple& t, seq<S...>) const
     {

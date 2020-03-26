@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch> and
 //                 Emo Welzl <emo@inf.ethz.ch>
@@ -85,7 +85,7 @@ int main()
 
 
   return 0;
-} 
+}
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

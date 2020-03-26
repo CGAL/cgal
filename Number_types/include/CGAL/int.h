@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -75,29 +75,29 @@ template <> class Real_embeddable_traits< int >
 
 /*! \ingroup CGAL_Modular_traits_spec
   \brief Specialization of CGAL::Modular_traits for \c int.
-  
-  A model of concept ModularTraits, supports \c int. 
+
+  A model of concept ModularTraits, supports \c int.
 */
   template <typename T>
   class Modular_traits;
 
 template<>
 class Modular_traits<int>{
-public: 
+public:
     typedef int NT;
     typedef ::CGAL::Tag_true Is_modularizable;
     typedef Residue Residue_type;
- 
+
     struct Modular_image{
         Residue_type operator()(int i){
             return Residue_type(i);
         }
-    };    
+    };
     struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return x.get_value();
         }
-    };    
+    };
 };
 
 // long
@@ -133,26 +133,26 @@ public:
 
 /*! \ingroup CGAL_Modular_traits_spec
   \brief Specialization of CGAL::Modular_traits for \c long.
-  
-  A model of concept ModularTraits, supports \c long. 
+
+  A model of concept ModularTraits, supports \c long.
 */
 template<>
 class Modular_traits<long>{
-public: 
+public:
     typedef long NT;
     typedef ::CGAL::Tag_true Is_modularizable;
     typedef Residue Residue_type;
- 
+
     struct Modular_image{
         Residue_type operator()(long i){
             return Residue_type(i);
         }
-    };   
+    };
     struct Modular_image_representative{
         NT operator()(const Residue_type& x){
             return NT(x.get_value());
         }
-    };    
+    };
 };
 
 // short

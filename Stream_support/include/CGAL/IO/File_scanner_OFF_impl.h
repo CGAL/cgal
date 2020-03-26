@@ -55,7 +55,7 @@ skip_to_next_vertex( std::size_t current_vertex) {
             // It is not well stated in the Geomview manual
             // how color is coded following a vertex. It is
             // parsed similar to the optional color for facets.
-	    boost::int32_t k;
+            boost::int32_t k;
             I_Binary_read_big_endian_integer32( m_in, k);
             if (k<0 || k>4) {
                 m_in.clear( std::ios::badbit);

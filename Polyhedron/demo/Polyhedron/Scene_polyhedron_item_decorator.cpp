@@ -7,16 +7,16 @@ Scene_polyhedron_item_decorator::Scene_polyhedron_item_decorator
 { }
 
 Scene_polyhedron_item_decorator::~Scene_polyhedron_item_decorator()
-{ 
+{
   if(delete_poly_item) { delete poly_item; }
 }
 
-Scene_polyhedron_item_decorator* 
+Scene_polyhedron_item_decorator*
 Scene_polyhedron_item_decorator::clone() const {
   return 0;
 }
 
-QString 
+QString
 Scene_polyhedron_item_decorator::toolTip() const
 {
   if(!poly_item->polyhedron())
@@ -34,12 +34,12 @@ Scene_polyhedron_item_decorator::toolTip() const
     .arg(this->color().name());
 }
 
-Face_graph* 
-Scene_polyhedron_item_decorator::polyhedron()       
+Face_graph*
+Scene_polyhedron_item_decorator::polyhedron()
 { return poly_item->polyhedron(); }
 
-const Face_graph* 
-Scene_polyhedron_item_decorator::polyhedron() const 
+const Face_graph*
+Scene_polyhedron_item_decorator::polyhedron() const
 { return poly_item->polyhedron(); }
 
 bool
@@ -62,7 +62,7 @@ invalidateOpenGLBuffers()
   compute_bbox();
 }
 
-void 
+void
 Scene_polyhedron_item_decorator::select(double orig_x,
                                    double orig_y,
                                    double orig_z,

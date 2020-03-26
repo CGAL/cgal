@@ -29,7 +29,7 @@
 
 PropertyValueDelegate::PropertyValueDelegate( QObject* parent ):
   QItemDelegate( parent )
-{ 
+{
   QItemEditorFactory* factory = new QItemEditorFactory;
   QItemEditorCreatorBase* creator =
     new QStandardItemEditorCreator< PositiveSpinBox >( );

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0
-// 
+//
 //
 // Author(s)     : Laurent Rineau and Maxime Gimeno
 #ifndef CGAL_QT_CREATE_OPENGL_CONTEXT_H

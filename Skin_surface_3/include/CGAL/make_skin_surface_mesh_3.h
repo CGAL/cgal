@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Nico Kruithof <Nico@cs.rug.nl>
 
@@ -35,8 +35,8 @@
 namespace CGAL {
 
 template <class WP_iterator,
-	  class Polyhedron_3>
-void make_skin_surface_mesh_3(Polyhedron_3 &p, 
+          class Polyhedron_3>
+void make_skin_surface_mesh_3(Polyhedron_3 &p,
                               WP_iterator begin, WP_iterator end,
                               double shrink_factor=.5,
                               int nSubdivisions=0,
@@ -48,10 +48,10 @@ void make_skin_surface_mesh_3(Polyhedron_3 &p,
 
   typedef typename WP_iterator::value_type               Weighted_point;
   typedef typename Kernel_traits<Weighted_point>::Kernel K;
-  
+
   typedef Skin_surface_traits_3<K>                       Traits;
   typedef Skin_surface_3<Traits>                         Skin_surface;
-  
+
   Skin_surface skin_surface(begin, end, shrink_factor, grow_balls);
 
   mesh_skin_surface_3(skin_surface, p);

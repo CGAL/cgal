@@ -7,12 +7,12 @@ template< typename G,
           typename ForwardRange,
           typename IndexPropertyMap
           >
-void index_uniqueness(const G&, 
+void index_uniqueness(const G&,
                       ForwardRange range,
                       IndexPropertyMap pm)
 {
-  typename boost::range_iterator<ForwardRange>::type 
-    begin = boost::begin(range), 
+  typename boost::range_iterator<ForwardRange>::type
+    begin = boost::begin(range),
     begin2 = boost::begin(range),
     end = boost::end(range);
 
@@ -95,7 +95,7 @@ main()
   BOOST_FOREACH(SM p, sms){
     index_uniqueness_sm(p);
   }
-#endif 
+#endif
 
 #if defined(CGAL_USE_OPENMESH)
   std::vector<OMesh> omeshs = omesh_data();

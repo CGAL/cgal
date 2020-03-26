@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -47,7 +47,7 @@ private:
 
   typedef Basic_predicates_C2<K>              Base;
   typedef Voronoi_vertex_C2<K,Method_tag>     Voronoi_vertex_2;
-  
+
   typedef typename Base::Point_2              Point_2;
   typedef typename Base::Segment_2            Segment_2;
   typedef typename Base::Line_2               Line_2;
@@ -69,7 +69,7 @@ public:
   // is the direction of the supporting line of s, rotated by 90
   // degrees counterclockwise.
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
-			   const Site_2& s, const Site_2& p) const
+                           const Site_2& s, const Site_2& p) const
   {
     CGAL_precondition(s1.is_point() || s2.is_point());
     CGAL_precondition(s1.is_segment() || s2.is_segment());
@@ -81,8 +81,8 @@ public:
   // wrt the line that is passes through the point p and its direction
   // is the direction of the supporting line of s, rotated by 90
   // degrees counterclockwise.
-  Oriented_side operator()(const Site_2& q, 
-			   const Site_2& s, const Site_2& p) const
+  Oriented_side operator()(const Site_2& q,
+                           const Site_2& s, const Site_2& p) const
   {
     CGAL_precondition( q.is_point() );
     CGAL_precondition( s.is_segment() && p.is_point() );
@@ -98,8 +98,8 @@ public:
   // is the direction of the supporting line of s, rotated by 90
   // degrees counterclockwise.
   Oriented_side operator()(const Site_2& s1, const Site_2& s2,
-			   const Site_2& s3,
-			   const Site_2& s, const Site_2& p) const
+                           const Site_2& s3,
+                           const Site_2& s, const Site_2& p) const
   {
     CGAL_precondition( s.is_segment() && p.is_point() );
 

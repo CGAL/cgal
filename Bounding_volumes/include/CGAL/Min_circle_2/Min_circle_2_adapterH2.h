@@ -1,4 +1,4 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // ETH Zurich (Switzerland).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
@@ -70,7 +70,7 @@ class Min_circle_2_adapterH2 {
     orientation( const Point& p, const Point& q, const Point& r) const
     {
         typedef  typename DA_::RT  RT;
-    
+
         RT  phx;
         RT  phy;
         RT  phw;
@@ -80,11 +80,11 @@ class Min_circle_2_adapterH2 {
         RT  rhx;
         RT  rhy;
         RT  rhw;
-    
+
         dao.get( p, phx, phy, phw);
         dao.get( q, qhx, qhy, qhw);
         dao.get( r, rhx, rhy, rhw);
-    
+
         return( static_cast< CGAL::Orientation>(
                  CGAL_NTS sign( ( phx*rhw - rhx*phw) * ( qhy*rhw - rhy*qhw)
                               - ( phy*rhw - rhy*phw) * ( qhx*rhw - rhx*qhw))));
@@ -356,8 +356,8 @@ operator >> ( std::istream& is,
     switch ( CGAL::get_mode( is)) {
 
       case CGAL::IO::PRETTY:
-	std::cerr << std::endl;
-	std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+        std::cerr << std::endl;
+        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
         break;
 
       case CGAL::IO::ASCII:

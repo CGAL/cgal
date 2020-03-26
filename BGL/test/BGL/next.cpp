@@ -20,7 +20,7 @@ namespace Toto {
   {
     return d;
   }
- 
+
 }
 
 namespace std {
@@ -28,17 +28,17 @@ namespace std {
   template <>
   struct iterator_traits<Toto::Descriptor> {
 
-  }; 
+  };
 };
 
 
 namespace Nested {
-  void 
+  void
   gnu()
   {
     SM sm;
     CGAL::make_triangle(Point_3(0,0,0), Point_3(1,0,0), Point_3(1,1,0),sm);
-    
+
     halfedge_descriptor hd = *(halfedges(sm).first);
     hd = next(hd,sm);
     std::cout << hd;
@@ -51,7 +51,7 @@ namespace Nested {
     Toto::Descriptor d;
     d = next(d,g);
   }
-  
+
 }
 
 int main()
@@ -59,6 +59,6 @@ int main()
   Nested::gnu();
 
   Nested::gnats();
-  
+
   return 0;
 }

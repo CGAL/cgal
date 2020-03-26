@@ -4,7 +4,7 @@ if(EIGEN3_FOUND)
 
   set(classification_linked_libraries)
   set(classification_compile_definitions)
-  
+
   find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
 
   if( WIN32 )
@@ -59,7 +59,7 @@ if(EIGEN3_FOUND)
     else()
       message(STATUS "NOTICE: TensorFlow not found, Neural Network predicate for classification won't be available.")
     endif()
-    
+
     target_link_libraries(classification_plugin PUBLIC scene_points_with_normal_item
       scene_polylines_item scene_polygon_soup_item scene_surface_mesh_item scene_selection_item scene_color_ramp ${classification_linked_libraries})
     add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)

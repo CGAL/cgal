@@ -6,7 +6,7 @@
 #include <boost/foreach.hpp>
 
 template <typename TriangleMesh, typename FaceVectorMap, typename Kernel>
-const typename Kernel::Vector_3 
+const typename Kernel::Vector_3
 computeFacetsAverageUnitNormal(const TriangleMesh& tm,
                                typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
                                FaceVectorMap fvm,
@@ -22,10 +22,10 @@ computeFacetsAverageUnitNormal(const TriangleMesh& tm,
     {
       h = *hedgeb;
       if (is_border_edge(h,tm))
-	{
-	  hedgeb++;
-	  continue;
-	}
+        {
+          hedgeb++;
+          continue;
+        }
 
       f =  face(h,tm);
       n = get(fvm,f);
@@ -48,11 +48,11 @@ void compute_facets_normals(const TriangleMesh& tm,
   VPM vpm = get(CGAL::vertex_point,tm);
   BOOST_FOREACH(typename boost::graph_traits<TriangleMesh>::face_descriptor f, faces(tm)){
     typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f,tm);
-    Vector_3 normal = 
+    Vector_3 normal =
       CGAL::cross_product(get(vpm, target(h,tm)) -
-			    get(vpm, target(opposite(h,tm),tm)),
+                            get(vpm, target(opposite(h,tm),tm)),
                           get(vpm, target(next(h,tm),tm)) -
-			    get(vpm, target(opposite(h,tm),tm)));
+                            get(vpm, target(opposite(h,tm),tm)));
       put(fvm, f, normal / CGAL::sqrt(normal * normal));
   }
 }

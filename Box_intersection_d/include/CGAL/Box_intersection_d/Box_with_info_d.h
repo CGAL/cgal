@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -33,7 +33,7 @@ namespace CGAL {
 
 namespace Box_intersection_d {
 
-template<class NT_, int N, class Info_> 
+template<class NT_, int N, class Info_>
 class Box_with_info_d : public Box_d< NT_, N, ID_FROM_BOX_ADDRESS> {
 protected:
     Info_ m_info;

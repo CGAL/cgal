@@ -189,7 +189,7 @@ struct Selection_traits<typename SelectionItem::fg_edge_descriptor, SelectionIte
 
 //////////////////////////////////////////////////////////////////////////
 struct Scene_polyhedron_selection_item_priv;
-class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item 
+class SCENE_POLYHEDRON_SELECTION_ITEM_EXPORT Scene_polyhedron_selection_item
   : public Scene_polyhedron_item_decorator,
     public CGAL::Three::Scene_print_item_interface
 {
@@ -220,19 +220,19 @@ public:
   void printAllIds(CGAL::Three::Viewer_interface*);
   bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)const;
   bool shouldDisplayIds(CGAL::Three::Scene_item *current_item) const;
-  QString defaultSaveName() const 
-  { 
+  QString defaultSaveName() const
+  {
     QString res = name();
     res.remove(" (selection)");
-    return res;      
+    return res;
   }
 
-protected: 
+protected:
   void init(Scene_face_graph_item* poly_item, QMainWindow* mw);
 
-  Active_handle::Type get_active_handle_type() 
+  Active_handle::Type get_active_handle_type()
   { return k_ring_selector.active_handle_type; }
-  void set_active_handle_type(Active_handle::Type aht) 
+  void set_active_handle_type(Active_handle::Type aht)
   { k_ring_selector.active_handle_type = aht; }
   void set_lasso_mode(bool b)
   { k_ring_selector.set_lasso_mode(b); }
@@ -241,7 +241,7 @@ protected:
 
   bool get_is_insert() { return is_insert; }
   void set_is_insert(bool i) { is_insert = i; }
-  
+
 public:
   typedef boost::unordered_set<fg_vertex_descriptor, CGAL::Handle_hash_function>    Selection_set_vertex;
   typedef boost::unordered_set<fg_face_descriptor, CGAL::Handle_hash_function>      Selection_set_facet;
@@ -288,28 +288,28 @@ public:
       = boost::make_optional(false, CGAL::Bbox_3());
 
 
-    for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin(); 
+    for(Selection_set_vertex::const_iterator v_it = selected_vertices.begin();
         v_it != selected_vertices.end(); ++v_it) {
 
       if(item_bbox) { *item_bbox = *item_bbox + get(vpm,*v_it).bbox(); }
       else          {  item_bbox = get(vpm,*v_it).bbox(); }
     }
 
-    for(Selection_set_edge::const_iterator e_it = selected_edges.begin(); 
+    for(Selection_set_edge::const_iterator e_it = selected_edges.begin();
         e_it != selected_edges.end(); ++e_it) {
       CGAL::Bbox_3 e_bbox = get(vpm,target(halfedge(*e_it,*polyhedron()),*polyhedron())).bbox();
       e_bbox = e_bbox + get(vpm,target(opposite(halfedge(*e_it,*polyhedron()),*polyhedron()),*polyhedron())).bbox();
         if(item_bbox) { *item_bbox = *item_bbox + e_bbox; }
         else          {  item_bbox = e_bbox; }
     }
-  
-    for(Selection_set_facet::const_iterator f_it = selected_facets.begin(); 
+
+    for(Selection_set_facet::const_iterator f_it = selected_facets.begin();
         f_it != selected_facets.end(); ++f_it) {
       fg_face_descriptor fd = *f_it;
       BOOST_FOREACH(fg_halfedge_descriptor he, halfedges_around_face(halfedge(fd,*polyhedron()),*polyhedron())){
         if(item_bbox) { *item_bbox = *item_bbox + get(vpm,target(he,*polyhedron())).bbox(); }
         else          {  item_bbox = get(vpm,target(he,*polyhedron())).bbox(); }
-    
+
       }
     }
 
@@ -332,18 +332,18 @@ public:
     std::ofstream out(file_name.c_str());
     if(!out) { return false; }
 
-    for(Selection_set_vertex::const_iterator it = selected_vertices.begin(); it != selected_vertices.end(); ++it) 
+    for(Selection_set_vertex::const_iterator it = selected_vertices.begin(); it != selected_vertices.end(); ++it)
       { out << get(boost::vertex_index, *polyhedron(), *it) << " "; }
     out << "\n";
 
-    for(Selection_set_facet::const_iterator it = selected_facets.begin(); it != selected_facets.end(); ++it) 
+    for(Selection_set_facet::const_iterator it = selected_facets.begin(); it != selected_facets.end(); ++it)
       { out << get(boost::face_index, *polyhedron(), *it) << " "; }
     out << "\n";
 
-    for(Selection_set_edge::const_iterator it = selected_edges.begin(); it != selected_edges.end(); ++it) 
+    for(Selection_set_edge::const_iterator it = selected_edges.begin(); it != selected_edges.end(); ++it)
     {
       fg_edge_descriptor ed = *it;
-      out << get(boost::vertex_index, *polyhedron(), source(ed,*polyhedron())) << " " 
+      out << get(boost::vertex_index, *polyhedron(), source(ed,*polyhedron())) << " "
           << get(boost::vertex_index, *polyhedron(),target(ed,*polyhedron())) << " ";
     }
 
@@ -358,9 +358,9 @@ public:
   }
 
 
-  // this function is called by selection_plugin, since at the time of the call of load(...) 
+  // this function is called by selection_plugin, since at the time of the call of load(...)
   // we do not have access to selected polyhedron item
-  bool actual_load(Scene_face_graph_item* poly_item, QMainWindow* mw) 
+  bool actual_load(Scene_face_graph_item* poly_item, QMainWindow* mw)
   {
 
     init(poly_item, mw);
@@ -370,7 +370,7 @@ public:
 
     BOOST_FOREACH(fg_vertex_descriptor vb, vertices(*polyhedron()))
       { all_vertices.push_back(vb); }
-    
+
     std::vector<fg_face_descriptor> all_facets;
     all_facets.reserve(num_faces(*polyhedron()));
     BOOST_FOREACH(fg_face_descriptor fb, faces(*polyhedron()))
@@ -693,7 +693,7 @@ public:
 
   void erase_selected_facets() {
     if(selected_facets.empty()) {return;}
-    // no-longer-valid vertices and edges will be handled when item_about_to_be_changed() 
+    // no-longer-valid vertices and edges will be handled when item_about_to_be_changed()
 
     for (Selection_set_edge::iterator eit = selected_edges.begin(); eit != selected_edges.end();)
     {
@@ -750,7 +750,7 @@ public:
     for(Selection_set_facet::iterator fb = selected_facets.begin(); fb != selected_facets.end(); ++fb) {
       BOOST_FOREACH(fg_halfedge_descriptor hb, halfedges_around_face(halfedge(*fb,*polyhedron()),*polyhedron())){
         if(get(vertex_selection_map(), target(hb,*polyhedron())) == 0) {
-          put(vertex_selection_map(),target(hb,*polyhedron()), counter++); 
+          put(vertex_selection_map(),target(hb,*polyhedron()), counter++);
           points.push_back(get(vpm,target(hb,*polyhedron())));
         }
       }
@@ -996,7 +996,7 @@ public:
 protected :
   friend struct Scene_polyhedron_selection_item_priv;
   Scene_polyhedron_selection_item_priv *d;
-  
+
 public:
   //statistics
   enum STATS {

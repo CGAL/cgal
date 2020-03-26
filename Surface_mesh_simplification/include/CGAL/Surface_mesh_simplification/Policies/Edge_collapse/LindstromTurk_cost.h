@@ -28,27 +28,27 @@
 
 namespace CGAL {
 
-namespace Surface_mesh_simplification  
+namespace Surface_mesh_simplification
 {
 
   template<class TM_>
 class LindstromTurk_cost
 {
 public:
-    
+
   typedef TM_ TM ;
   /*
 
   typedef Edge_profile<TM> Profile ;
   typedef typename Traits::Point_3 Point;
   typedef typename Traits::FT FT ;
-  
+
   typedef optional<FT> result_type ;
   */
 public:
 
   LindstromTurk_cost( LindstromTurk_params const& aParams = LindstromTurk_params() ) : mParams(aParams) {}
-     
+
   template <typename Profile>
   optional<typename Profile::FT>
   operator()( Profile const& aProfile, optional<typename Profile::Point> const& aPlacement ) const
@@ -58,7 +58,7 @@ public:
 
 private:
 
-  LindstromTurk_params mParams ;    
+  LindstromTurk_params mParams ;
 };
 
 } // namespace Surface_mesh_simplification
@@ -67,4 +67,4 @@ private:
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_LINDSTROMTURK_COST_H //
 // EOF //
- 
+

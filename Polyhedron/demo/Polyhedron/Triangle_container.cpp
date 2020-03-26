@@ -133,12 +133,12 @@ QOpenGLFramebufferObject* fbo = viewer->depthPeelingFbo();
     if(getVao(viewer)->program->property("hasTransparency").toBool())
     {
       getVao(viewer)->program->setUniformValue("comparing", viewer->currentPass() > 0);;
-      getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);         
-      getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);       
-      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());     
-      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());       
-      getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());   
-      getVao(viewer)->program->setUniformValue("alpha", d->alpha);                     
+      getVao(viewer)->program->setUniformValue("width", viewer->width()*1.0f);
+      getVao(viewer)->program->setUniformValue("height", viewer->height()*1.0f);
+      getVao(viewer)->program->setUniformValue("near", (float)viewer->camera()->zNear());
+      getVao(viewer)->program->setUniformValue("far", (float)viewer->camera()->zFar());
+      getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
+      getVao(viewer)->program->setUniformValue("alpha", d->alpha);
       if( fbo)
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     }

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Simon Giraudot
 
@@ -46,7 +46,7 @@ class Collinear_3
 public:
 
   typedef typename Base::result_type  result_type;
-  result_type 
+  result_type
   operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r) const
   {
     CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Collinear_3", tmp);
@@ -88,7 +88,7 @@ public:
       int int_tmp_result;
       if (lower_bound_1 < 5.00368081960964635413e-147)
         return Base::operator()(p, q, r);
-      else 
+      else
       {
         if (upper_bound_1 > 1.67597599124282407923e+153)
           return Base::operator()(p, q, r);
@@ -96,14 +96,14 @@ public:
         double eps = (8.88720573725927976811e-16 * (max1 * max2));
         if (double_tmp_result > eps)
           int_tmp_result = 1;
-        else 
+        else
         {
           if (double_tmp_result < -eps)
             int_tmp_result = -1;
-          else 
+          else
             return Base::operator()(p, q, r);
-        } 
-      } 
+        }
+      }
 
       int sign_of_determinant_return_value = int_tmp_result;
       if (sign_of_determinant_return_value != 0)
@@ -113,14 +113,14 @@ public:
       double dqz = (qz - rz);
       int int_tmp_result_3SPBwDj;
       double double_tmp_result_k3Lzf6g = ((dpx * dqz) - (dpz * dqx));
-  
+
       double max3 = CGAL::abs(dpz);
       if (max3 < CGAL::abs(dqz))
         max3 = CGAL::abs(dqz);
 
       lower_bound_1 = max1;
       upper_bound_1 = max1;
-  
+
       if (max3 < lower_bound_1)
         lower_bound_1 = max3;
       else if (max3 > upper_bound_1)
@@ -128,7 +128,7 @@ public:
 
       if (lower_bound_1 < 5.00368081960964635413e-147)
         return Base::operator()(p, q, r);
-      else 
+      else
       {
         if (upper_bound_1 > 1.67597599124282407923e+153)
           return Base::operator()(p, q, r);
@@ -136,14 +136,14 @@ public:
         double eps = (8.88720573725927976811e-16 * (max1 * max3));
         if (double_tmp_result_k3Lzf6g > eps)
           int_tmp_result_3SPBwDj = 1;
-        else 
+        else
         {
           if (double_tmp_result_k3Lzf6g < -eps)
             int_tmp_result_3SPBwDj = -1;
-          else 
+          else
             return Base::operator()(p, q, r);
-        } 
-      } 
+        }
+      }
 
       int sign_of_determinant_return_value_FFWKCAA = int_tmp_result_3SPBwDj;
 
@@ -152,7 +152,7 @@ public:
 
       lower_bound_1 = max2;
       upper_bound_1 = max2;
-  
+
       if (max3 < lower_bound_1)
         lower_bound_1 = max3;
       else if (max3 > upper_bound_1)
@@ -160,7 +160,7 @@ public:
 
       if (lower_bound_1 < 5.00368081960964635413e-147)
         return Base::operator()(p, q, r);
-      else 
+      else
       {
         if (upper_bound_1 > 1.67597599124282407923e+153)
           return Base::operator()(p, q, r);
@@ -168,14 +168,14 @@ public:
         double eps = (8.88720573725927976811e-16 * (max2 * max3));
         if (double_tmp_result_AvrrXBP > eps)
           int_tmp_result_Gx4H = 1;
-        else 
+        else
         {
           if (double_tmp_result_AvrrXBP < -eps)
             int_tmp_result_Gx4H = -1;
-          else 
+          else
             return Base::operator()(p, q, r);
-        } 
-      } 
+        }
+      }
       int sign_of_determinant_return_value_k60Ocge = int_tmp_result_Gx4H;
       return ((sign_of_determinant_return_value_FFWKCAA == 0) && (sign_of_determinant_return_value_k60Ocge == 0));
     }

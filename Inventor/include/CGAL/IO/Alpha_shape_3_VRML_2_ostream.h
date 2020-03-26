@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -81,7 +81,7 @@ operator<<(VRML_2_ostream& os,
     os << Indent << "  ";
       for (int i=0; i<4; i++)
         if (i != (*Flist_it).second){
-	        os << V[(*Flist_it).first->vertex(i)];
+                os << V[(*Flist_it).first->vertex(i)];
           os << ", ";
         }
     if (Flist_it != Flist_end)

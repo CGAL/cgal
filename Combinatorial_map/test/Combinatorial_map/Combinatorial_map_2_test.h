@@ -35,7 +35,7 @@ void drawAllPoints( Map&amap )
 {
   amap.display_characteristics(std::cout);
   /*  for ( typename Map::Dart_range::iterator it=amap.darts().begin();
-	 it!=amap.darts().end(); ++it )
+         it!=amap.darts().end(); ++it )
     cout << &*it<< ",  ";
     cout<<endl;*/
 }
@@ -83,14 +83,14 @@ bool test2D()
     map.display_darts(std::cout, true);
     std::cout<<"Faces:"<<std::endl;
     map.template display_cells<2>(std::cout);
-    
+
     cout << "Parcours de CC : ";
     for ( typename Map::template Dart_of_orbit_range<1,2>::iterator it ( map, dh );
             it.cont();++it )
     {
         if ( it.prev_operation() != CGAL::OP_BETAI &&
                 it.prev_operation() != CGAL::OP_BETAI_INV )  cout << "\nNew facet : ";
-	//        cout << &*it << ", ";
+        //        cout << &*it << ", ";
     }
     cout << endl;
 
@@ -164,13 +164,13 @@ bool test2D()
     mark = map.get_new_mark();
     nbc = 0;
     for ( typename Map::Dart_range::iterator it1=map.darts().begin();
-	  it1!=map.darts().end(); ++it1 )
+          it1!=map.darts().end(); ++it1 )
     {
         if ( !map.is_marked ( it1, mark ) )
         {
             ++nbc;
             for ( typename Map::template Dart_of_orbit_range<1,2>::iterator
-		    it2 ( map, it1 ); it2.cont(); ++it2 )
+                    it2 ( map, it1 ); it2.cont(); ++it2 )
             {
                 map.mark ( it2, mark );
             }
@@ -187,7 +187,7 @@ bool test2D()
     {
         cout << "Parcours orbite " << Map::ORBIT_NAME[i] << " : #cellules=" << flush;
         nbc = 0, nb2 = 0;
-	for ( typename Map::Dart_iterator it1=map.darts_begin();it1!=map.darts_end(); ++for )
+        for ( typename Map::Dart_iterator it1=map.darts_begin();it1!=map.darts_end(); ++for )
         {
             ++nb2;
             if ( !map.is_marked ( *it1, mark ) )
@@ -197,27 +197,27 @@ bool test2D()
                 for ( ;it2.cont(); ++it2 )
                     {}
             }
-	    }
+            }
         cout << nbc << "." << ", #brins=" << nb2 << "." << endl
              << "All the darts marked ? " << map.is_whole_map_marked ( mark )
              << endl;
-	     map.unmark_all ( mark );
+             map.unmark_all ( mark );
     }*/
 
     // Iterator stl like
-    { 
+    {
       nbc = 0; nb2 = 0;
       cout << "Iterator stl like: #cellules=" << flush;
       for ( typename Map::Dart_range::iterator it1= map.darts().begin();
-	    it1!=map.darts().end(); ++it1 )
+            it1!=map.darts().end(); ++it1 )
         {
-	  ++nb2;
-	  if ( !map.is_marked ( it1, mark ) )
+          ++nb2;
+          if ( !map.is_marked ( it1, mark ) )
             {
                 ++nbc;
                 for ( typename Map::template Dart_of_orbit_range<2>::iterator
                         it2 ( map.template darts_of_orbit<2>(it1).begin() );
-		      it2 != map.template darts_of_orbit<2>(it1).end(); ++it2 )
+                      it2 != map.template darts_of_orbit<2>(it1).end(); ++it2 )
                 {
                     map.mark ( it2, mark );
                 }
@@ -245,11 +245,11 @@ bool test2D()
     // Un parcours de cellule.
     {
       CGAL::mark_orbit<Map,CGAL::CMap_dart_const_iterator_basic_of_orbit<Map,1> >
-	( map, map.first_dart(), mark);
+        ( map, map.first_dart(), mark);
 
         nbc = 0;
-        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator 
-		it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
+        for ( typename Map::template One_dart_per_incident_cell_range<0,3, Map::dimension>::iterator
+                it1 ( map, map.first_dart() ); it1.cont(); ++it1 )
         {
             ++nbc;
         }
@@ -428,8 +428,8 @@ bool test2D()
     std::vector<Dart_handle> V;
     {
       for ( typename Map::template Dart_of_cell_range<0, Map::dimension>::iterator it =
-	      map.template darts_of_cell<0>( d1 ).begin();
-	    it != map.template darts_of_cell<0>( d1 ).end(); ++it )
+              map.template darts_of_cell<0>( d1 ).begin();
+            it != map.template darts_of_cell<0>( d1 ).end(); ++it )
             V.push_back ( it );
     }
 
@@ -462,7 +462,7 @@ bool test2D()
     d2 = map.make_combinatorial_polygon(4);
     map.template sew<2> ( d1, d2 );
     map.display_characteristics ( cout ) << ", valid=" << map.is_valid()
-				  << endl;
+                                  << endl;
     cout << "insert edge4: "
          << flush;
     map.insert_cell_1_in_cell_2 ( d1, map.beta(d1,1,1) );

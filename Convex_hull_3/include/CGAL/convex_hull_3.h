@@ -387,7 +387,7 @@ struct Projection_traits{
   typedef CGAL::Projection_traits_xy_3<K> Traits_xy_3;
   typedef CGAL::Projection_traits_yz_3<K> Traits_yz_3;
   typedef CGAL::Projection_traits_xz_3<K> Traits_xz_3;
-    
+
     Traits_xy_3 construct_traits_xy_3_object()const
     {return Traits_xy_3();}
     Traits_yz_3 construct_traits_yz_3_object()const
@@ -448,7 +448,7 @@ void coplanar_3_hull(InputIterator first, InputIterator beyond,
   typedef typename PTraits::Traits_xy_3 Traits_xy_3;
   typedef typename PTraits::Traits_yz_3 Traits_yz_3;
   typedef typename PTraits::Traits_xz_3 Traits_xz_3;
-  
+
   PTraits ptraits(traits);
 
   std::list<Point_3> CH_2;
@@ -566,7 +566,7 @@ farthest_outside_point(Face_handle f, std::list<Point>& outside_set,
    typedef typename std::list<Point>::iterator Outside_set_iterator;
    CGAL_ch_assertion(!outside_set.empty());
 
-   typename Traits::Plane_3 plane = 
+   typename Traits::Plane_3 plane =
        traits.construct_plane_3_object()(f->vertex(0)->point(),
                                          f->vertex(1)->point(),
                                          f->vertex(2)->point());
@@ -633,7 +633,7 @@ ch_quickhull_3_scan(TDS_2& tds,
   typedef typename TDS_2::Edge                            Edge;
   typedef typename TDS_2::Face_handle                     Face_handle;
   typedef typename TDS_2::Vertex_handle                   Vertex_handle;
-  typedef typename Traits::Point_3			  Point_3;
+  typedef typename Traits::Point_3                          Point_3;
   typedef std::list<Point_3>                              Outside_set;
   typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
   typedef std::map<typename TDS_2::Vertex_handle, typename TDS_2::Edge> Border_edges;
@@ -769,8 +769,8 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
                           InputIterator point3_it, Polyhedron_3& P,
                           const Traits& traits)
 {
-  typedef typename Traits::Point_3	  		  Point_3;
-  typedef typename Traits::Plane_3		      	  Plane_3;
+  typedef typename Traits::Point_3                            Point_3;
+  typedef typename Traits::Plane_3                                Plane_3;
   typedef typename std::list<Point_3>::iterator           P3_iterator;
 
   typedef Triangulation_data_structure_2<
@@ -859,7 +859,7 @@ void
 convex_hull_3(InputIterator first, InputIterator beyond,
               Object& ch_object, const Traits& traits)
 {
-  typedef typename Traits::Point_3	  		  Point_3;
+  typedef typename Traits::Point_3                            Point_3;
   typedef std::list<Point_3>                              Point_3_list;
   typedef typename Point_3_list::iterator                 P3_iterator;
   typedef std::pair<P3_iterator,P3_iterator>              P3_iterator_pair;

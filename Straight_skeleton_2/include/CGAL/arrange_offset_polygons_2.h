@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar> 
+// Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_ARRANGE_OFFSET_POLYGONS_2_H
 #define CGAL_ARRANGE_OFFSET_POLYGONS_2_H
@@ -46,46 +46,46 @@ void arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
                                )
 {
   typedef typename std::iterator_traits<InputPolygonPtrIterator>::difference_type difference_type ;
-  
+
   typedef Polygon_2<K>            Polygon ;
   typedef Polygon_with_holes_2<K> PolygonWithHoles ;
-  
+
   typedef boost::shared_ptr<Polygon>          PolygonPtr ;
   typedef boost::shared_ptr<PolygonWithHoles> PolygonWithHolesPtr ;
-  
+
   typedef typename Polygon::Vertex_const_iterator Vertex_const_iterator ;
-  
+
   difference_type lSize = std::distance(aBegin,aEnd);
-  
+
   std::vector<PolygonWithHolesPtr> lTable(lSize);
-  
+
   for ( InputPolygonPtrIterator it = aBegin ; it != aEnd ; ++ it )
   {
     difference_type lIdx = std::distance(aBegin,it);
-    
+
     PolygonPtr lPoly = *it ;
     Orientation lOrient = lPoly->orientation();
-    
+
     // It's an outer boundary
     if ( lOrient == COUNTERCLOCKWISE )
     {
       PolygonWithHolesPtr lOuter( new PolygonWithHoles(*lPoly) );
-      *rOut ++ = lOuter ; 
+      *rOut ++ = lOuter ;
       lTable[lIdx] = lOuter ;
-    }  
-  }  
-  
+    }
+  }
+
   for ( InputPolygonPtrIterator it = aBegin ; it != aEnd ; ++ it )
   {
     PolygonPtr lPoly = *it ;
-    
+
     difference_type lIdx = std::distance(aBegin,it);
-    
+
     // Is a hole?
     if ( !lTable[lIdx] )
     {
       PolygonWithHolesPtr lParent ;
-      
+
       for ( difference_type j = 0 ; j < lSize && !lParent ; ++ j )
       {
         PolygonWithHolesPtr lOuter = lTable[j];
@@ -94,12 +94,12 @@ void arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
             if ( lOuter->outer_boundary().bounded_side(*v) == ON_BOUNDED_SIDE )
               lParent = lOuter ;
       }
-      
+
       CGAL_assertion(lParent != NULL);
-      
+
       lParent->add_hole(*lPoly);
     }
-  }  
+  }
 }
 
 template<class K, class C>
@@ -108,14 +108,14 @@ inline
 arrange_offset_polygons_2 ( std::vector< boost::shared_ptr< Polygon_2<K,C> > > const& aPolygons )
 {
   std::vector< boost::shared_ptr< Polygon_with_holes_2<K,C> > > rResult ;
-  
+
   arrange_offset_polygons_2(aPolygons.begin(), aPolygons.end(), std::back_inserter(rResult), K() ) ;
-  
+
   return rResult ;
 }
 
 } // end namespace CGAL
 
 
-#endif 
+#endif
 // EOF //

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -48,10 +48,10 @@ dihedral_angle(const typename K::Point_3& a,
   return k.compute_approximate_dihedral_angle_3_object()(a, b, c, d);
 }
 
-  
+
 /**
  * Computes dihedral angle of planes (a,b,c) and (a,b,d)
- */  
+ */
 template <typename Point_3>
 typename Kernel_traits<Point_3>::Kernel::FT
 dihedral_angle(const Point_3& a, const Point_3& b,
@@ -61,7 +61,7 @@ dihedral_angle(const Point_3& a, const Point_3& b,
     CGAL::Mesh_3::dihedral_angle(a, b, c, d,
                                  typename Kernel_traits<Point_3>::Kernel());
 }
-  
+
 } // end namespace Mesh_3
 } // end namespace CGAL
 

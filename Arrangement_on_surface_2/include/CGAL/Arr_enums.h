@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 //            Efi Fogel         <efif@post.tau.ac.il>
@@ -51,7 +51,7 @@ inline
 OutputStream& operator<<(
         OutputStream& os,
         const Arr_curve_end& ce) {
-    
+
     switch(ce) {
     case CGAL::ARR_MIN_END:
         os << "ARR_MIN_END";
@@ -83,7 +83,7 @@ inline
 OutputStream& operator<<(
         OutputStream& os,
         const Arr_halfedge_direction& dir) {
-    
+
     switch(dir) {
     case CGAL::ARR_LEFT_TO_RIGHT:
         os << "ARR_LEFT_TO_RIGHT";
@@ -116,7 +116,7 @@ inline
 OutputStream& operator<<(
         OutputStream& os,
         const Arr_boundary_type& bt) {
-    
+
     switch(bt) {
     case CGAL::ARR_OPEN:
         os << "ARR_OPEN";
@@ -163,7 +163,7 @@ inline
 OutputStream& operator<<(
         OutputStream& os,
         const Arr_parameter_space& ps) {
-  
+
   switch (::CGAL::get_mode(os)) {
   case ::CGAL::IO::PRETTY:
     switch(ps) {
@@ -192,7 +192,7 @@ OutputStream& operator<<(
   default:
     os << static_cast< int >(ps);
   }
-  
+
   return os;
 }
 
@@ -209,9 +209,9 @@ InputStream& operator>>(
   int i;
   is >> i;
   ps = static_cast< Arr_parameter_space >(i);
-  
+
   return is;
-  
+
 }
 
 

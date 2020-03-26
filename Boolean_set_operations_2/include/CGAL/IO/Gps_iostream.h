@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Efi Fogel <efif@post.tau.ac.il>
 
@@ -48,7 +48,7 @@ std::ostream & operator<< (std::ostream& os,
   std::cout << pgn_set.number_of_polygons_with_holes() << std::endl;
   std::copy(res.begin(), res.end(),
             std::ostream_iterator<Polygon_with_holes_2>(std::cout, "\n"));
-  
+
   return os;
 }
 

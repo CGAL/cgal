@@ -173,7 +173,7 @@ std::ostream& operator<<(std::ostream& os, typename Surface_mesh_shortest_path_t
 }
 
 #ifdef CGAL_SMSP_USE_ROBUST_TRAITS_CODE
-#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE) 
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #ifndef DOXYGEN_RUNNING // needed due to a bug in doxygen
 /*!
 \ingroup PkgSurfaceMeshShortestPathTraitsClasses

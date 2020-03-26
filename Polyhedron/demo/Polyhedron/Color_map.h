@@ -18,14 +18,14 @@ compute_color_map(QColor base_color,
   v = v<90 ? v+90 : v;
   float sf=s/256.0f,
       vf=v/256.0f;
-  
+
   qreal h = hue==-1 ? 0
                     :hue;
   for(unsigned i = 0; i < nb_of_colors; ++i) {
     if (h!=-1) h += step;
     if ( h > 1 ) { h -= 1; }
 //avoid S and V near 0 to avoid having all the same colors
-    *out++ = QColor::fromHsvF(h, 
+    *out++ = QColor::fromHsvF(h,
                               sf,
                               vf);
   }

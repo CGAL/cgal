@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -46,13 +46,13 @@ public:
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else 
+#else
   result_type
   operator()(const Vector_2& u, const Vector_2& v) const
-  { 
+  {
     return Base::operator()(u,v);
   }
-  
+
   result_type
   operator()(const Circle_2& c) const
   {

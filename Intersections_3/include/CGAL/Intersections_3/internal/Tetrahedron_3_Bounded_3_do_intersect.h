@@ -43,8 +43,8 @@ namespace internal {
 template <class K>
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Triangle_3 &tr,
-	     const K & k);
+             const typename K::Triangle_3 &tr,
+             const K & k);
 
 // This code is not optimized:
   template <class K, class Bounded>
@@ -82,8 +82,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Triangle_3 &tr,
-	     const K & k)
+             const typename K::Triangle_3 &tr,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(tr, tet, tr[0], k);
 }
@@ -93,7 +93,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Triangle_3 &tr,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(tr, tet, tr[0], k);
 }
@@ -103,8 +103,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Segment_3 &seg,
-	     const K & k)
+             const typename K::Segment_3 &seg,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
 }
@@ -114,7 +114,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Segment_3 &seg,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(seg, tet, seg.source(), k);
 }
@@ -124,7 +124,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
              const typename K::Iso_cuboid_3 &ic,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(ic, tet, ic[0], k);
 }
@@ -134,7 +134,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Iso_cuboid_3 &ic,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(ic, tet, ic[0], k);
 }
@@ -144,7 +144,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
              const typename K::Sphere_3 &sp,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(sp, tet, sp.center(), k);
 }
@@ -154,7 +154,7 @@ inline
 typename K::Boolean
 do_intersect(const typename K::Sphere_3 &sp,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(sp, tet, sp.center(), k);
 }
@@ -163,8 +163,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const typename K::Tetrahedron_3 &sp,
-	     const K & k)
+             const typename K::Tetrahedron_3 &sp,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(sp, tet, tet[0], k);
 }
@@ -173,8 +173,8 @@ template <class K>
 inline
 typename K::Boolean
 do_intersect(const typename K::Tetrahedron_3 &tet,
-	     const CGAL::Bbox_3 &bb,
-	     const K & k)
+             const CGAL::Bbox_3 &bb,
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
 }
@@ -184,7 +184,7 @@ inline
 typename K::Boolean
 do_intersect(const CGAL::Bbox_3 &bb,
              const typename K::Tetrahedron_3 &tet,
-	     const K & k)
+             const K & k)
 {
   return do_intersect_tetrahedron_bounded(bb, tet, typename K::Point_3(bb.xmin(), bb.ymin(), bb.zmin()), k);
 }

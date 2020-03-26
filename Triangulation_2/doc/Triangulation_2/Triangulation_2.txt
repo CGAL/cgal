@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Triangulations
 
 \cgalAutoToc
@@ -11,16 +11,16 @@ namespace CGAL {
 \image latex tr1dt1.png
 
 This chapter describes the two dimensional triangulations
-of \cgal. 
+of \cgal.
 Section \ref Section_2D_Triangulations_Definitions recalls the
 main definitions about triangulations.
 Section \ref Section_2D_Triangulations_Representation discusses
 the way two-dimensional triangulations are represented in \cgal.
 Section \ref Section_2D_Triangulations_Software_Design presents
 the overall software
-design of the 2D triangulations package. 
+design of the 2D triangulations package.
 The next sections present the different two dimensional triangulations classes
-available in \cgal: 
+available in \cgal:
 basic triangulations (Section \ref Section_2D_Triangulations_Basic),
 Delaunay triangulations
 (Section \ref Section_2D_Triangulations_Delaunay),
@@ -33,18 +33,18 @@ and constrained Delaunay triangulations
 Section \ref Section_2D_Triangulations_Constrained_Plus
 describes a class which implements a constrained or
 constrained Delaunay triangulation with
-an additional data structure 
-to describe how the constraints are refined 
+an additional data structure
+to describe how the constraints are refined
 by the edges of the triangulations.
 Section \ref Section_2D_Triangulations_Hierarchy
 describes a hierarchical data structure for
 fast point location queries.
-At last, Section \ref Section_2D_Triangulations_Flexibility 
-explains how the user can benefit from the flexibility 
+At last, Section \ref Section_2D_Triangulations_Flexibility
+explains how the user can benefit from the flexibility
 of \cgal triangulations using customized classes for faces
 and vertices.
 
-\section Section_2D_Triangulations_Definitions Definitions 
+\section Section_2D_Triangulations_Definitions Definitions
 
 A two dimensional triangulation can be roughly described as a set \f$ T\f$
 of triangular facets such that:
@@ -52,40 +52,40 @@ of triangular facets such that:
 - two facets either are disjoint or share a lower dimensional
 face (edge or vertex).
 
-- the set of facets in \f$ T\f$ is connected for the adjacency relation. 
+- the set of facets in \f$ T\f$ is connected for the adjacency relation.
 
 - the domain \f$ U_T\f$ which is the union
 of facets in \f$ T\f$ has no singularity.
 
-More precisely, a triangulation can be described 
+More precisely, a triangulation can be described
 as a simplicial complex.
 Let us first record a few definitions.
 
-A simplicial complex is a set \f$ T\f$ of simplices such that 
+A simplicial complex is a set \f$ T\f$ of simplices such that
 
-- any face of a simplex in \f$ T\f$ is a simplex in \f$ T\f$ 
+- any face of a simplex in \f$ T\f$ is a simplex in \f$ T\f$
 
 - two simplices in \f$ T\f$ either are disjoint or share
 a common sub-face.
 
-The dimension \f$ d\f$ of a simplicial complex is the 
-maximal dimension of its simplices. 
+The dimension \f$ d\f$ of a simplicial complex is the
+maximal dimension of its simplices.
 
 A simplicial complex \f$ T\f$ is pure if any simplex of \f$ T\f$
-is included in a simplex of \f$ T\f$ with maximal dimension. 
+is included in a simplex of \f$ T\f$ with maximal dimension.
 
 Two simplexes in \f$ T\f$ with maximal dimension \f$ d\f$ are said to be
 adjacent if they share a \f$ d-1\f$ dimensional sub-face.
 A simplicial complex is connected if the adjacency relation
-defines a connected graph 
-over the set of simplices of \f$ T\f$ with maximal dimension. 
+defines a connected graph
+over the set of simplices of \f$ T\f$ with maximal dimension.
 
 The union \f$ U_T\f$ of all simplices in \f$ T\f$ is called the domain of \f$ T\f$.
-A point \f$ p\f$ in the domain of \f$ T\f$ is said to singular 
+A point \f$ p\f$ in the domain of \f$ T\f$ is said to singular
 if its surrounding in \f$ U_T\f$
 is neither a topological ball nor a topological disc.
 
-Then, a two dimensional triangulation can be described as a 
+Then, a two dimensional triangulation can be described as a
 two dimensional simplicial complex that is pure,
 connected and without singularity.
 
@@ -94,14 +94,14 @@ which in turn induces an orientation
 on the edges incident to that facet. The orientation of two adjacent
 facets are said to be consistent if they induce
 opposite orientations on their common incident edge.
-A triangulation is said to be orientable if 
+A triangulation is said to be orientable if
 the orientation of each facet can be chosen in such a way
 that all pairs of incident facets have consistent orientations.
 
 The data structure underlying \cgal triangulations
-allows the user to represent the combinatorics of 
+allows the user to represent the combinatorics of
 any orientable two dimensional triangulations
-without boundaries. 
+without boundaries.
 On top of this data structure, the 2D triangulations classes
 take care of the geometric embedding of the triangulation
 and are designed to handle planar triangulations.
@@ -114,32 +114,32 @@ convex hull of their vertices.
 Because any planar triangulation
 can be completed, this is not a real restriction.
 For instance, a triangulation of a polygonal region can be
-constructed and represented as a subset of a constrained triangulation 
-in which the region boundary edges have been input as 
+constructed and represented as a subset of a constrained triangulation
+in which the region boundary edges have been input as
 constrained edges (see
 Section \ref Section_2D_Triangulations_Constrained,
-\ref Section_2D_Triangulations_Constrained_Delaunay and 
+\ref Section_2D_Triangulations_Constrained_Delaunay and
 \ref Section_2D_Triangulations_Constrained_Plus).
 
 Strictly speaking, the term <I>face</I> should be used
 to design a face of any dimension,
-and the two-dimensional faces of a triangulation 
+and the two-dimensional faces of a triangulation
 should be properly called <I>facets</I>.
 However, following a common usage, we hereafter often call <I>faces</I>, the facets
 of a two dimensional triangulation.
 
-\section Section_2D_Triangulations_Representation Representation 
+\section Section_2D_Triangulations_Representation Representation
 
 \subsection Triangulation_2TheSetofFaces The Set of Faces
 
-A 2D triangulation of \cgal can be viewed as a planar partition 
+A 2D triangulation of \cgal can be viewed as a planar partition
 whose bounded faces are triangular and cover
-the convex hull of the set of vertices. 
+the convex hull of the set of vertices.
 The single unbounded face of this partition
-is the complementary of the convex hull. 
+is the complementary of the convex hull.
 In many applications, such as Kirkpatrick's hierarchy
 or incremental Delaunay construction, it is convenient to
-deal with only triangular faces. Therefore, 
+deal with only triangular faces. Therefore,
 a fictitious vertex, called the *infinite vertex*
 is added to the triangulation as well as
 *infinite edges* and *infinite faces* incident to it.
@@ -155,7 +155,7 @@ equivalent to a two-dimensional sphere.
 This extends to lower dimensional triangulations
 arising in degenerate cases or when the triangulations
 as less than three vertices.
-Including the infinite faces, 
+Including the infinite faces,
 a one dimensional triangulation
 is a ring of edges and vertices
 topologically equivalent to a \f$ 1\f$-sphere.
@@ -185,16 +185,16 @@ saves storage space and results in faster
 algorithms \cgalCite{bdty-tcgal-00}.
 
 The basic elements of the representation are vertices and faces.
-Each triangular face gives access to its three incident vertices 
-and to its three adjacent faces. 
+Each triangular face gives access to its three incident vertices
+and to its three adjacent faces.
 Each vertex gives access to one of its incident faces
 and through that face to the circular list of its incident faces.
 
 The three vertices of a face are indexed with 0, 1 and 2
-in counterclockwise order. The neighbors of a face are also 
+in counterclockwise order. The neighbors of a face are also
 indexed with 0,1,2 in such a way that the neighbor indexed by `i`
 is opposite to the vertex with the same index.
-See \cgalFigureRef{Triangulation_2D_Fig_neighbors1}, 
+See \cgalFigureRef{Triangulation_2D_Fig_neighbors1},
 the functions `ccw(i)`
 and `cw(i)` shown on this figure
 compute respectively \f$ i+1\f$ and \f$ i-1\f$ modulo 3.
@@ -203,21 +203,21 @@ The edges are not explicitly represented, they are only implicitly
 represented through the adjacency relations of two faces.
 Each edge has two implicit representations: the edge
 of a face `f` which is opposed to the vertex indexed `i`,
-can be represented as well as an edge of the `neighbor(i)` of 
+can be represented as well as an edge of the `neighbor(i)` of
 `f`.
 
 \cgalFigureBegin{Triangulation_2D_Fig_neighbors1,rep_bis.png}
 Vertices and neighbors.
 \cgalFigureEnd
 
-\section Section_2D_Triangulations_Software_Design Software Design 
+\section Section_2D_Triangulations_Software_Design Software Design
 
-The triangulations classes of \cgal 
+The triangulations classes of \cgal
 provide high-level geometric functionalities
 such as location of a point in the triangulation, insertion, removal, or displacement of a point.
 They are build as a layer on top of a data structure
 called the triangulation data structure.
-The triangulation data structure can be thought 
+The triangulation data structure can be thought
 of as a container for the faces and vertices of the triangulation.
 This data structure also takes care
 of all the combinatorial aspects of the triangulation.
@@ -229,8 +229,8 @@ that the triangulation classes have two template parameters:
 
 <UL>
 <LI> the first parameter stands for a
-<B>geometric traits</B> class providing 
-the geometric primitives (points, segments and triangles) 
+<B>geometric traits</B> class providing
+the geometric primitives (points, segments and triangles)
 of the triangulation and the elementary
 operations (predicate or constructions) on those objects.
 
@@ -249,14 +249,14 @@ as a default model of triangulation data structure.
 The class `Triangulation_data_structure_2<Vb,Fb>`
 has two template parameters standing for
 a vertex class and a face class.
-\cgal defines concepts 
+\cgal defines concepts
 for these template parameters
 and provide default models for these concepts.
 The vertex and base classes are templated by the geometric
 traits class which enables them to obtain some knowledge of the geometric
-primitives of the triangulation. 
+primitives of the triangulation.
 Those default vertex and face base classes
-can be replaced by 
+can be replaced by
 user customized base classes in order, for example, to deal
 with additional properties attached to the vertices or faces
 of a triangulation. See Section \ref Section_2D_Triangulations_Flexibility
@@ -272,58 +272,58 @@ forming this design.
 The triangulations software design.
 \cgalFigureEnd
 
-The top triangulation level, responsible for the geometric 
-embedding of the triangulation comes in different flavors 
+The top triangulation level, responsible for the geometric
+embedding of the triangulation comes in different flavors
 according to the different kind of triangulations:
 basic, Delaunay, regular, constrained or constrained Delaunay.
 Each kind of triangulations correspond to a different
-class. 
+class.
 \cgalFigureRef{Triangulation_2D_Fig_derivation_tree} summarizes the derivation dependencies
 of \cgal 2D triangulations classes.
 Any 2D triangulation class is parametrized by
 a geometric traits class and a triangulation data structure.
 While a unique concept `TriangulationDataStructure_2`
 describes the triangulation data structure requirements
-for any triangulation class, 
+for any triangulation class,
 the requirements on the geometric traits class actually depend
 on the triangulation class.
-In general, the requirements for the vertex and face base classes 
+In general, the requirements for the vertex and face base classes
 are described by the basic concepts `TriangulationVertexBase_2`
 and `TriangulationFaceBase_2`. However, some triangulation
 classes require base classes implementing
-refinements 
+refinements
 of the basic concepts.
 
 \cgalFigureBegin{Triangulation_2D_Fig_derivation_tree,derivation_tree.png}
 The derivation tree of 2D triangulations.
 \cgalFigureEnd
 
-\section Section_2D_Triangulations_Basic Basic Triangulations 
+\section Section_2D_Triangulations_Basic Basic Triangulations
 
-\subsection Subsection_2D_Triangulations_Basic_Description Description 
+\subsection Subsection_2D_Triangulations_Basic_Description Description
 
 The class `Triangulation_2<Traits,Tds>`
 serves as a base class for the other
 2D triangulations classes
-and 
+and
 implements the user
 interface to a triangulation.
 
-The vertices and faces of the triangulations are accessed through 
+The vertices and faces of the triangulations are accessed through
 `handles`,
 `iterators` and `circulators`.
 A handle is a model of the concept `Handle` which basically
 offers the two dereference operators `*` and `->`.
 A circulator is a type devoted to visit circular sequences.
-Handles are used whenever the accessed element 
+Handles are used whenever the accessed element
 is not part of a sequence.
 Iterators and circulators are used
 to visit all or parts of the triangulation.
 
 The iterators and circulators
 are all bidirectional and non mutable.
-The circulators and iterators are convertible to the 
-handles with the same value type, so that 
+The circulators and iterators are convertible to the
+handles with the same value type, so that
 when calling a member function,
 any handle type argument can be replaced
 by an iterator or a circulator
@@ -332,18 +332,18 @@ with the same value type.
 The triangulation class provides a function to visit the vertices
 and neighbors of a face in clockwise or counterclockwise order.
 
-There are circulators 
-to visit the edges or faces 
-incident to a given vertex or the vertices 
+There are circulators
+to visit the edges or faces
+incident to a given vertex or the vertices
 adjacent to it.
 Another circulator type enables the visit of all the faces
 traversed by a given line.
-Circulators step through infinite features as well as 
+Circulators step through infinite features as well as
 through finite ones.
 
-The triangulation class offers 
-some iterators to visit all the 
-faces, edges or vertices and also iterators to visit 
+The triangulation class offers
+some iterators to visit all the
+faces, edges or vertices and also iterators to visit
 selectively the finite
 faces, edges or vertices.
 
@@ -356,7 +356,7 @@ The triangulation class provides a method to locate
 a given point with respect to a triangulation.
 In particular, this method reports whether the point
 coincides with a vertex of the triangulation, lies on an edge,
-in a face or outside of the convex hull. In case of a degenerate 
+in a face or outside of the convex hull. In case of a degenerate
 lower dimensional triangulation, the query point may also lie
 outside the triangulation affine hull.
 
@@ -364,7 +364,7 @@ The triangulation class also provides
 methods to locate a point with respect to
 a given finite face of the triangulation or with respect to its
 circumcircle.
-The faces of the triangulation and their circumcircles 
+The faces of the triangulation and their circumcircles
 have the counterclockwise orientation.
 
 The triangulation can be modified by several functions:
@@ -387,7 +387,7 @@ if no optional argument is given. It takes
 time \f$ O(n)\f$ in the worst case for Delaunay Triangulations, but only \f$ O(\sqrt{n})\f$
 on average if the vertices are distributed uniformly at random.
 The class `Triangulation_hierarchy_2<Traits,Tds>`,
-described in section \ref Section_2D_Triangulations_Hierarchy, 
+described in section \ref Section_2D_Triangulations_Hierarchy,
 implements a data structure designed to
 offer an alternate more efficient point location algorithm.
 
@@ -405,7 +405,7 @@ re-triangulating the hole. Removal takes a time at most proportional to
 which is \f$ O(1)\f$ for a random vertex.
 
 Displacement of a vertex is done by: first, verifying if the triangulation embedding
-remains planar after the displacement; if yes the vertex is directly placed at the new location; otherwise, a point is inserted at the new location 
+remains planar after the displacement; if yes the vertex is directly placed at the new location; otherwise, a point is inserted at the new location
 and the vertex at the obsolete location is removed.
 
 The face, edge, and vertex iterators on finite features
@@ -413,36 +413,36 @@ are derived from their counterparts visiting all (finite and infinite)
 features which are themselves derived from the corresponding iterators
 of the triangulation data structure.
 
-\subsection Subsubsection_2D_Triangulation_Basic_Geometric_Traits Geometric Traits 
+\subsection Subsubsection_2D_Triangulation_Basic_Geometric_Traits Geometric Traits
 
-The geometric traits class of a triangulation 
+The geometric traits class of a triangulation
 is required to provide
 the geometric objects (points, segments and triangles)
 building up the triangulation
 together with the geometric predicates on those objects.
-The required predicates are: 
+The required predicates are:
 
 - comparison of the `x` or `y` coordinates of two points.
 
-- the orientation test which computes 
+- the orientation test which computes
 the order type of three given point.
 
 The concept
-`TriangulationTraits_2` describes the requirements for the 
+`TriangulationTraits_2` describes the requirements for the
 geometric traits class of a triangulation.
-The \cgal kernel classes 
+The \cgal kernel classes
 are models for this concept.
 The \cgal library also provides dedicated models
-of `TriangulationTraits_2` 
+of `TriangulationTraits_2`
 using the kernel geometric objects and predicates.
 These classes are themselves templated with a \cgal kernel
 and extract the required types and predicates from the kernel.
-The class `Projection_traits_xy_3<R>` 
+The class `Projection_traits_xy_3<R>`
 is a geometric traits class to build the triangulation
 of a terrain. Such a triangulation is a two-dimensional
 triangulation embedded in three dimensional space.
 The data points are three-dimensional points.
-The triangulation is 
+The triangulation is
 build according to the projections of those points
 on the \f$ xy\f$ plane and then lifted up to the original
 three-dimensional data points.
@@ -461,15 +461,15 @@ deal with projections on the
 `yz` plane and `xz`-plane,
 respectively.
 
-\subsection Subsection_2D_Triangulations_Basic_Example Example of a Basic Triangulation 
+\subsection Subsection_2D_Triangulations_Basic_Example Example of a Basic Triangulation
 
 The following program creates a triangulation of 2D points
-using the default kernel 
+using the default kernel
 `Exact_predicate_inexact_constructions_kernel`
 as geometric traits class and the default triangulation data structure.
-The input points are read from a file 
+The input points are read from a file
 and inserted in the triangulation.
-Finally points on the convex hull are written to <TT>cout</TT>. 
+Finally points on the convex hull are written to <TT>cout</TT>.
 \cgalExample{Triangulation_2/triangulation_prog1.cpp}
 
 \subsection Triangulation2Draw Draw a 2D Triangulation
@@ -485,17 +485,17 @@ This function requires CGAL_Qt5, and is only available if the flag CGAL_USE_BASI
 Result of the run of the draw_triangulation_2 program. A window shows the 2D triangulation and allows to navigate through the scene.
 \cgalFigureEnd
 
-\section Section_2D_Triangulations_Delaunay Delaunay Triangulations 
+\section Section_2D_Triangulations_Delaunay Delaunay Triangulations
 
-\subsection Subsection_2D_Triangulations_Delaunay_Description Description 
+\subsection Subsection_2D_Triangulations_Delaunay_Description Description
 
 The class `Delaunay_triangulation_2<Traits,Tds>` is designed to represent
 the Delaunay triangulation of a set of data points in the plane.
 A Delaunay triangulation
 fulfills
-the following <I>empty circle property</I> 
+the following <I>empty circle property</I>
 (also called <I>Delaunay property</I>): the circumscribing
-circle of any facet of the triangulation 
+circle of any facet of the triangulation
 contains no data point in its interior.
 For a point set with no subset of four co-circular points
 the Delaunay triangulation is unique, it is dual
@@ -505,7 +505,7 @@ The class `Delaunay_triangulation_2<Traits,Tds>` derives
 from the class `Triangulation_2<Traits,Tds>`.
 
 The class `Delaunay_triangulation_2<Traits,Tds>`
-inherits the types defined by the 
+inherits the types defined by the
 basic class `Triangulation_2<Traits,Tds>`.
 Additional types, provided by the traits class,
 are defined to represent the dual Voronoi diagram.
@@ -518,7 +518,7 @@ to answer nearest neighbor queries
 and member functions to construct the elements (vertices and edges)
 of the dual Voronoi diagram.
 
-Geometric Traits 
+Geometric Traits
 --------------
 
 The geometric traits class has to be a model of the concept
@@ -528,43 +528,43 @@ In particular this concept provides
 the `side_of_oriented_circle` predicate
 which, given four points `p,q,r,s`
 decides the position of the point \f$ s\f$ with respect to the circle
-passing through \f$ p\f$, \f$ q\f$ and \f$ r\f$. 
+passing through \f$ p\f$, \f$ q\f$ and \f$ r\f$.
 The `side_of_oriented_circle`
 predicate actually defines the Delaunay triangulation.
-Changing this predicate 
+Changing this predicate
 allows the user to build variant of Delaunay triangulations for different metrics
 such that \f$ L_1\f$ or \f$ L_{\infty}\f$ metric or any metric defined by a
 convex object. However, the user of an exotic metric
-must be careful that the constructed triangulation 
+must be careful that the constructed triangulation
 has to be a triangulation of the convex hull
 which means that convex hull edges have to be Delaunay edges.
 This is granted for any smooth convex metric (like \f$ L_2\f$)
 and can be ensured for other metrics (like \f$ L_{\infty}\f$)
 by the addition to the point set of well chosen sentinel points.
 
-The \cgal kernel classes 
+The \cgal kernel classes
 are models of the concept `DelaunayTriangulationTraits_2`
 for the Euclidean metric.
 The traits class for terrains,
 `Projection_traits_xy_3<R>`,
 `Projection_traits_yz_3<R>`, and
-`Projection_traits_xz_3<R>` 
+`Projection_traits_xz_3<R>`
 are also models of `DelaunayTriangulationTraits_2`
 except that they do not fulfill
 the requirements for the duality functions and nearest vertex
 queries.
 
-Implementation 
+Implementation
 --------------
 
 The insertion of a new point in the Delaunay triangulation
 is performed using first the insertion member function
-of the basic triangulation and second 
-performing a sequence of flips to restore the Delaunay property. 
+of the basic triangulation and second
+performing a sequence of flips to restore the Delaunay property.
 The number of flips that have to be performed is \f$ O(d)\f$
 if the new vertex has degree \f$ d\f$ in the updated
 Delaunay triangulation. For
-points distributed uniformly at random, 
+points distributed uniformly at random,
 each insertion takes time \f$ O(1)\f$ on
 average, once the point has been located in the triangulation.
 
@@ -580,9 +580,9 @@ for random points \cgalCite{d-vrtdd-09}.
 
 The displacement of a vertex \f$ v\f$ at a point \f$ p\f$ to a new location \f$ p'\f$, first checks whether the triangulation embedding remains
 planar or not after moving \f$ v\f$ to \f$ p'\f$. If yes, it moves \f$ v\f$ to \f$ p'\f$ and simply performs a sequence of flips
-to restore the Delaunay property, which is \f$ O(d)\f$ where \f$ d\f$ is the degree of the vertex after the displacement. 
+to restore the Delaunay property, which is \f$ O(d)\f$ where \f$ d\f$ is the degree of the vertex after the displacement.
 Otherwise, the displacement is done by inserting a vertex at the new location,
-and removing the obsolete vertex. 
+and removing the obsolete vertex.
 The complexity is \f$ O(n)\f$ in the worst case, but only \f$ O(1 + \delta \sqrt{n})\f$ for evenly distributed vertices in the unit square, where \f$ \delta\f$ is the Euclidean distance between the new and old locations.
 
 After having performed a point location, the
@@ -590,20 +590,20 @@ nearest neighbor of a point is found in time \f$ O(n)\f$ in the
 worst case, but in time \f$ O(1)\f$
 for vertices distributed uniformly at random and any query point.
 
-\subsection Subsection_2D_Triangulations_Delaunay_Terrain Example: a Delaunay Terrain 
+\subsection Subsection_2D_Triangulations_Delaunay_Terrain Example: a Delaunay Terrain
 
-The following code creates a Delaunay triangulation with 
-the usual Euclidean metric for the vertical projection of a 
+The following code creates a Delaunay triangulation with
+the usual Euclidean metric for the vertical projection of a
 terrain model. The points have elevation, that is they are 3D points,
 but the predicates used to build the Delaunay triangulation
-are computed using only the \f$ x\f$ and \f$ y\f$ coordinates 
+are computed using only the \f$ x\f$ and \f$ y\f$ coordinates
 of these points.
 
 The class `Projection_traits_xy_3<K>` is part of the 2D and 3D Linear Geometric Kernel.
 
 \cgalExample{Triangulation_2/terrain.cpp}
 
-\subsection Subsection_2D_Triangulations_Voronoi Example: Voronoi Diagram 
+\subsection Subsection_2D_Triangulations_Voronoi Example: Voronoi Diagram
 
 The following code computes the edges of Voronoi diagram
 of a set of data points
@@ -611,9 +611,9 @@ and counts the number of finite edges and the number of rays
 of this diagram
 \cgalExample{Triangulation_2/voronoi.cpp}
 
-\subsection Subsection_2D_Triangulations_Cropped_Voronoi Example: Print Voronoi Diagram Edges Restricted to a Rectangle 
+\subsection Subsection_2D_Triangulations_Cropped_Voronoi Example: Print Voronoi Diagram Edges Restricted to a Rectangle
 
-The following code computes the Delaunay triangulation of a set of points and prints the Voronoi edges 
+The following code computes the Delaunay triangulation of a set of points and prints the Voronoi edges
 restricted to a given rectangle.
 
 \cgalFigureBegin{figurecropped_voronoi,cropped_voronoi.png}
@@ -622,11 +622,11 @@ Voronoi diagram (in red) of the black points restricted to the blue rectangle.
 
 \cgalExample{Triangulation_2/print_cropped_voronoi.cpp}
 
-\section Section_2D_Triangulations_Regular Regular Triangulations 
+\section Section_2D_Triangulations_Regular Regular Triangulations
 
-\subsection Subsection_2D_Triangulations_Regular_Description Description 
+\subsection Subsection_2D_Triangulations_Regular_Description Description
 
-Let \f$ { PW} = \{(p_i, w_i) | i = 1, \ldots , n \}\f$ be a set of 
+Let \f$ { PW} = \{(p_i, w_i) | i = 1, \ldots , n \}\f$ be a set of
 weighted points where each \f$ p_i\f$ is a point and each \f$ w_i\f$
 is a scalar called the weight of point \f$ p_i\f$.
 Alternatively, each weighted point \f$ (p_i, w_i)\f$ can be regarded
@@ -636,18 +636,18 @@ of \f$ p_i\f$) with center \f$ p_i\f$ and radius \f$ r_i=\sqrt{w_i}\f$.
 The power diagram of the set \f$ { PW}\f$ is a space partition in which
 each cell corresponds to a sphere \f$ (p_i, w_i)\f$ of \f$ { PW}\f$
 and is the locus of points \f$ p\f$ whose power with respect to \f$ (p_i, w_i)\f$
-is less than its power with respect to any other sphere 
+is less than its power with respect to any other sphere
 in \f$ { PW}\f$. In the two-dimensional space,
-the dual of this diagram is a triangulation 
-whose domain covers the convex hull of the set 
+the dual of this diagram is a triangulation
+whose domain covers the convex hull of the set
 \f$ { P}= \{ p_i | i = 1, \ldots , n \}\f$ of center points
 and whose vertices form a subset of \f$ { P}\f$.
 Such a triangulation is called a regular triangulation.
 Three points \f$ p_i, p_j\f$ and \f$ p_k\f$ of \f$ { P}\f$
 form a triangle in the regular triangulation of \f$ { PW}\f$
-iff there is a point \f$ p\f$ of the plane with equal 
+iff there is a point \f$ p\f$ of the plane with equal
 powers with respect to \f$ (p_i, w_i)\f$, \f$ (p_j, w_j)\f$
-and \f$ (p_k, w_k)\f$ and such that this power 
+and \f$ (p_k, w_k)\f$ and such that this power
 is less than the power of \f$ p\f$
 with respect to any other sphere in \f$ { PW}\f$.
 
@@ -655,7 +655,7 @@ Let us defined the power product of two weighted points
 \f$ (p_i, w_i)\f$ and \f$ (p_j, w_j)\f$ as:
 \f[ \Pi(p_i, w_i, p_j, w_j) = p_ip_j ^2 - w_i - w_j . \f]
 \f$ \Pi(p_i, w_i, p_j, 0)\f$ is simply the power of point \f$ p_j\f$
-with respect to the sphere \f$ (p_i, w_i)\f$, and two weighted points 
+with respect to the sphere \f$ (p_i, w_i)\f$, and two weighted points
 are said to be orthogonal if their power product is null.
 The power circle of three weighted points
 \f$ (p_i, w_i)\f$, \f$ (p_j, w_j)\f$
@@ -665,7 +665,7 @@ and \f$ (p_k, w_k)\f$ is defined as the unique circle
 and \f$ (p_k, w_k)\f$.
 
 The regular triangulation of the sets \f$ { PW}\f$
-satisfies the following <I>regular property</I> (which just reduces to the 
+satisfies the following <I>regular property</I> (which just reduces to the
 Delaunay property when all the weights are null):
 a triangle \f$ p_ip_jp_k\f$ is a face of the regular triangulation
 of \f$ { PW}\f$ iff the power product of any weighted point
@@ -673,7 +673,7 @@ of \f$ { PW}\f$ iff the power product of any weighted point
 \f$ (p_i, w_i)\f$, \f$ (p_j, w_j)\f$ and \f$ (p_k, w_k)\f$ is positive or null.
 We call power test of \f$ (p_i, w_i)\f$, \f$ (p_j, w_j)\f$, \f$ (p_k, w_k)\f$,
 and \f$ (p_l, w_l)\f$, the predicates which amount to compute
-the sign of 
+the sign of
 the power product of \f$ (p_l, w_l)\f$ with respect to
 the power circle of
 \f$ (p_i, w_i)\f$, \f$ (p_j, w_j)\f$ and \f$ (p_k, w_k)\f$.
@@ -704,18 +704,18 @@ Alternatively, the regular triangulation
 of the weighted points set \f$ { PW}\f$
 can be obtained as the projection
 on the two dimensional plane of the convex hull of the set of three
-dimensional points 
+dimensional points
 \f$ { P'}= \{ (p_i,p_i ^2 - w_i ) | i = 1, \ldots , n \}\f$.
 
 The class `Regular_triangulation_2<Traits, Tds>`
 is designed to maintain the
 regular triangulation of a set of \f$ 2d\f$ weighted points.
 It derives from the class `Triangulation_2<Traits, Tds>`.
-The functions `insert` and 
+The functions `insert` and
 `remove` are overwritten to handle weighted points
 and maintain the regular
 property.
-The function `move()` is not 
+The function `move()` is not
 overwritten and thus does not preserve the regular property.
 The vertices of the regular triangulation
 of a set of weighted points \f$ {PW}\f$ correspond only to a subset
@@ -727,14 +727,14 @@ triangulation.
 Such a point is called a hidden point.
 Because hidden points can reappear later on as vertices
 when some other point is removed,
-they have to be stored somewhere. 
+they have to be stored somewhere.
 The regular triangulation store those points in special vertices, called
-hidden vertices. 
+hidden vertices.
 A hidden point can reappear as vertex of the triangulation
 only when the two dimensional face that hides it
 is removed from the triangulation. To deal with this feature,
 each face of a regular triangulation stores a list of hidden vertices.
-The points in those vertices 
+The points in those vertices
 are reinserted in the triangulation when the face
 is removed.
 
@@ -746,7 +746,7 @@ the vertices and edges of the dual power diagrams.
 The geometric traits class of a regular triangulation
 must provide a weighted point type
 and a power test on these weighted points.
-The concept 
+The concept
 `RegularTriangulationTraits_2`,
 is a refinement of the concept
 `TriangulationTraits_2`. All \cgal kernels are a model for the traits concept
@@ -760,31 +760,31 @@ includes a Boolean data member to mark the hidden state of the vertex.
 Therefore \cgal defines the concept
 `RegularTriangulationVertexBase_2` which refine
 the concept `TriangulationVertexBase_2`
-and provides a default model 
+and provides a default model
 for this concept.
 
 The face base type of a regular triangulation
 is required to provide a list of hidden vertices,
 designed to store the points hidden by the face. It has to be a model
 of the concept `RegularTriangulationFaceBase_2`.
-\cgal provides the templated class 
+\cgal provides the templated class
 `Regular_triangulation_face_base_2<Traits>`
 as a default base class for faces of regular triangulations.
 
-\subsection Subsection_2D_Triangulations_Regular_Example Example: a Regular Triangulation 
+\subsection Subsection_2D_Triangulations_Regular_Example Example: a Regular Triangulation
 
-The following code creates a regular triangulation 
+The following code creates a regular triangulation
 of a set of weighted points and output the number
 of vertices and the number of hidden vertices.
 
 \cgalExample{Triangulation_2/regular.cpp}
 
-\section Section_2D_Triangulations_Constrained Constrained Triangulations 
+\section Section_2D_Triangulations_Constrained Constrained Triangulations
 
 A constrained triangulation is a triangulation of a set of points
-that has to include among its edges 
+that has to include among its edges
 a given set of polylines joining the points. The
-polylines are called *constraints*. The corresponding 
+polylines are called *constraints*. The corresponding
 edges are called *constrained edges*.
 
 The endpoints of constrained edges are of course vertices of the
@@ -792,8 +792,8 @@ triangulation. However, the triangulation may
 include other vertices as well.
 There are three versions of constrained triangulations.
 <UL>
-<LI>In the basic version, the constrained triangulation 
-does not handle intersecting constraints, and the set of input 
+<LI>In the basic version, the constrained triangulation
+does not handle intersecting constraints, and the set of input
 constraints is required to be a set of segments that do not intersect,
 except possibly at their endpoints. Any number of constrained edges
 may share the same endpoint. Constrained edges may be vertical or
@@ -802,7 +802,7 @@ have zero length.
 In those versions, input constraints may consist of intersecting,
 overlapping or partially overlapping segments.
 The triangulation introduces additional vertices at each point that
-is the proper intersection point of two 
+is the proper intersection point of two
 constraints. A single constraint intersecting other
 constraints will then appear as several constrained edges in the triangulation.
 There are two ways to deal with intersecting constraints.
@@ -825,9 +825,9 @@ which serves to choose how intersecting constraints
 are dealt with. This parameter has to be instantiated
 by one of the following classes:
 - `No_intersection_tag` when input constraints do not
-intersect 
+intersect
 - `Exact_predicates_tag` if the geometric traits class provides
-exact predicates but approximate constructions 
+exact predicates but approximate constructions
 - `Exact_intersections_tag` when exact predicates
 and exact constructions are provided.
 
@@ -838,10 +838,10 @@ from a list of pairs of points which represent the constraints.
 
 The class `Constrained_triangulation_2<Traits,Tds,Itag>`
 overrides the insertion and removal of a point to take care of the
-information about constrained edges. The class also allows the user 
+information about constrained edges. The class also allows the user
 online insertion of a new constraint, given as sequence of points,
 or the removal of a constraint.
-In the current version, the function `move()` is not 
+In the current version, the function `move()` is not
 overwritten and thus does not handle vertices of constraints.
 
 In order to retrieve the constrained edges of a constraint, or
@@ -857,8 +857,8 @@ as it avoids the cascading of intersection computations.
 The geometric traits class of a constraint triangulation
 has to be a model
 of the concept `TriangulationTraits_2`.
-When intersections of input constraints are supported, 
-the geometric traits class has to be a model 
+When intersections of input constraints are supported,
+the geometric traits class has to be a model
 of the concept `ConstrainedTriangulationTraits_2`,
 which refines the concept `TriangulationTraits_2`
 providing additional function object types
@@ -866,7 +866,7 @@ to compute the intersection of two segments.
 
 \subsection Triangulation_2TheFaceBaseClassofaConstrained The Face Base Class of a Constrained Triangulation
 
-The information about constrained edges is stored in the 
+The information about constrained edges is stored in the
 faces of the triangulation. The face base of a Constrained Triangulation
 has to be a model for the concept `ConstrainedTriangulationFaceBase_2`
 which refines the concept `TriangulationFaceBase_2`.
@@ -886,7 +886,7 @@ Constrained and Constrained Delaunay triangulation: the constraining edges are t
 \cgalFigureEnd
 
 
-\section Section_2D_Triangulations_Constrained_Delaunay Constrained Delaunay Triangulations 
+\section Section_2D_Triangulations_Constrained_Delaunay Constrained Delaunay Triangulations
 
 A constrained Delaunay triangulation is a triangulation with
 constrained edges which try to be as much Delaunay as possible.
@@ -896,16 +896,16 @@ necessarily fulfill the empty circle property
 but they fulfill a weaker *constrained empty circle property*.
 To state this property,
 it is convenient to think of constrained
-edges as blocking the view. Then, a triangulation is 
+edges as blocking the view. Then, a triangulation is
 constrained Delaunay iff
 the circumscribing circle
-of any facet encloses 
+of any facet encloses
 no vertex visible
 from the interior of the facet.
 As in the case of constrained triangulations, three different versions
 of Delaunay constrained triangulations are provided. The first version
 handles a set of constraints which do not intersect except possibly
-at the endpoints. The two other versions 
+at the endpoints. The two other versions
 handle intersecting input constraints. One of them
 is designed to be robust
 when used in conjunction with a geometric traits class
@@ -919,13 +919,13 @@ The \cgal class
 is designed to represent
 constrained Delaunay triangulations.
 
-As in the case of constrained triangulations, the third parameter 
+As in the case of constrained triangulations, the third parameter
 `Itag` is the intersection tag
 and serves to choose how intersecting constraints
 are dealt with. It can be instantiated with one of the following
 classes: `No_intersection_tag`,
 `Exact_predicates_tag`,
-`Exact_intersections_tag` 
+`Exact_intersections_tag`
 (see Section \ref Section_2D_Triangulations_Constrained).
 
 A constrained Delaunay triangulation is not a Delaunay
@@ -936,7 +936,7 @@ derives from
 the class `Constrained_triangulation_2<Traits,Tds,Itag>`.
 
 The constrained Delaunay triangulation
-has member functions to override the 
+has member functions to override the
 insertion and removal of a point or of a constraint.
 Each of those member functions takes care
 to restore
@@ -945,13 +945,13 @@ property.
 
 \subsection Triangulation_2TheGeometricTraits_2 The Geometric Traits
 
-The geometric traits class 
+The geometric traits class
 of a constrained Delaunay triangulation is required
 to provide the `side_of_oriented_circle` predicate as the geometric traits
 class of a Delaunay triangulation, and has to be a model of the concept
 `DelaunayTriangulationTraits_2`. When intersecting input
 constraints
-is supported, the geometric traits class is further required 
+is supported, the geometric traits class is further required
 to provide function objects to compute constraints intersections.
 Then, the geometric traits class has to be at the same time a model
 of the concept `ConstrainedTriangulationTraits_2`.
@@ -965,19 +965,19 @@ and the face base class
 of a constrained Delaunay triangulation has to be a model
 of `ConstrainedTriangulationFaceBase_2`.
 
-\subsection Subsection_2D_Triangulations_Constrained_Delaunay_Example Example: a Constrained Delaunay Triangulation 
+\subsection Subsection_2D_Triangulations_Constrained_Delaunay_Example Example: a Constrained Delaunay Triangulation
 
 The following code inserts a set of intersecting constraint segments
-into a triangulation 
+into a triangulation
 and counts the number of constrained edges of the
 resulting triangulation.
 
 \cgalExample{Triangulation_2/constrained.cpp}
 
-\subsection Subsection_2D_Triangulations_Polygon_triangulation Example: Triangulating a Polygonal Domain 
+\subsection Subsection_2D_Triangulations_Polygon_triangulation Example: Triangulating a Polygonal Domain
 
 The following code inserts two nested polygons into a constrained Delaunay triangulation and counts the number of facets that
-are inside the domain delimited by these polygons. Note that the following code does not work if the 
+are inside the domain delimited by these polygons. Note that the following code does not work if the
 boundaries of the polygons intersect.
 
 \cgalFigureBegin{figuretri_domain,tri_domain.png}
@@ -990,7 +990,7 @@ Triangulation (in blue) of the domain delimited by the red polygons.
 
 The class `Constrained_triangulation_plus_2<Tr>`
 provides a constrained triangulation with an additional data
-structure 
+structure
 that keeps track of the input constraints and of their refinement
 in the triangulation.
 The class `Constrained_triangulation_plus_2<Tr>`
@@ -1025,7 +1025,7 @@ For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `
 A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e)` returns `true`.
 
 A <em>constraint</em> is a polyline which is given as input (in the simplest case just a segment), and
-which is split into constrained edges in the triangulation. 
+which is split into constrained edges in the triangulation.
 
 The type `Subconstraint` is defined as `typedef std::pair<Vertex_handle,Vertex_handle> Subconstraint`.  The two vertex handles must
 be the vertices of a constrained edge.
@@ -1039,7 +1039,7 @@ and offer a `Constrained_edges_iterator`.
 The class `Constrained_triangulation_plus_2` additionally provides the means to
 - traverse all the constraints of the triangulation using an iterator of type `Constraint_iterator` the value type of which is `Constraint_id`,
 - obtain all constraints that induce a constrained edge or a subconstraint,
-- traverse the sequence of vertices of a constraint  using an iterator of type `Vertices_in_constraint_iterator`, the value type of which is `Vertex_handle` 
+- traverse the sequence of vertices of a constraint  using an iterator of type `Vertices_in_constraint_iterator`, the value type of which is `Vertex_handle`
 - traverse the subconstraints in the triangulation  using an iterator of type `Subconstraint_iterator`,the value type of which is `Subconstraint`.
 
 Note that the `Constrained_edges_iterator` and the `Subconstraint_iterator` are quite similar.
@@ -1086,8 +1086,8 @@ define an input segment that induce `e`.
 The following code inserts two polyline constraints into a triangulation.
 Note that if the triangulation supports intersections we can have
 arbitrary complicated overlapping polylines.  They can share
-any number of edges, and a polyline may pass several times through 
-the same edge.  
+any number of edges, and a polyline may pass several times through
+the same edge.
 
 
 
@@ -1095,21 +1095,21 @@ For an edge we can further find out how many and which polyline
 constraints pass through it. For an edge we can obtain an iterator
 range with value type `Constrained_triangulation_plus_2::Context`.
 From a context we can obtain the `Constrained_triangulation_plus_2::Constraint_id`, and an iterator
-pointing at the vertex in the polyline constraint that passes 
+pointing at the vertex in the polyline constraint that passes
 through the edge.
 
 
 
 \cgalExample{Triangulation_2/polylines_triangulation.cpp}
 
-\section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy 
+\section Section_2D_Triangulations_Hierarchy The Triangulation Hierarchy
 
 The class `Triangulation_hierarchy_2<Tr>`
 implements a triangulation augmented with
 a data structure to efficiently answer point location queries.
-The data structure is a hierarchy 
+The data structure is a hierarchy
 of triangulations. The triangulation at the lowest level is
-the original triangulation where operations and point location are to 
+the original triangulation where operations and point location are to
 be performed.
 Then at each succeeding level, the data structure
 stores a triangulation of a small random sample of the vertices
@@ -1122,7 +1122,7 @@ is found through a linear walk performed from
 the nearest neighbor found at the preceding level.
 Because the number of vertices in each triangulation is only a small
 fraction of the number of vertices of the preceding triangulation,
-the data structure remains small and achieves fast point location 
+the data structure remains small and achieves fast point location
 queries on real
 data. As proved in \cgalCite{d-iirdt-98}, this structure has an optimal behavior
 when it is built for Delaunay triangulations.
@@ -1132,7 +1132,7 @@ which is to be instantiated by one of the \cgal triangulation
 classes.
 
 The class `Triangulation_hierarchy_2<Tr>` inherits from the
-triangulation type passed as template parameter `Tr`. 
+triangulation type passed as template parameter `Tr`.
 The `insert`, `move`, and `remove` member functions
 are overwritten to update the data structure at each operation.
 The locate queries are also overwritten to take advantage of the data
@@ -1140,30 +1140,30 @@ structure for a fast processing.
 
 \subsection Triangulation_2TheVertexofaTriangulation The Vertex of a Triangulation Hierarchy
 
-The base vertex class of a triangulation hierarchy 
+The base vertex class of a triangulation hierarchy
 has to be a model of the
 concept
 `TriangulationHierarchyVertexBase_2` which extends
 the concept `TriangulationVertexBase_2`.
 This extension adds
-access and setting member functions 
-for two pointers to the corresponding vertices in the 
+access and setting member functions
+for two pointers to the corresponding vertices in the
 triangulations of the next and preceding levels.
 
 \cgal provides the class `Triangulation_hierarchy_vertex_base_2<Vb>`
-which is a model for the concept 
+which is a model for the concept
 `TriangulationHierarchyVertexBase_2`.
 This class is templated by a parameter `Vb`
 which is to be instantiated by a model of the concept
 `TriangulationVertexBase_2`.
 The class `Triangulation_hierarchy_vertex_base_2<Vb>` inherits
 from its template parameter `Vb`.
-This design enables the usage of 
+This design enables the usage of
 either the default
 vertex class or a user customized
 vertex class with additional functionalities  for `Vb`.
 
-\subsection Subsection_2D_Triangulations_Hierarchy_Examples Examples For the Use of a Triangulation Hierarchy 
+\subsection Subsection_2D_Triangulations_Hierarchy_Examples Examples For the Use of a Triangulation Hierarchy
 
 The following program is an example
 for the standard use of a triangulation hierarchy
@@ -1180,7 +1180,7 @@ a triangulation hierarchy in conjunction with a constrained triangulation with a
 
 
 
-\section Section_2D_Triangulations_Flexibility Flexibility 
+\section Section_2D_Triangulations_Flexibility Flexibility
 
 \subsection Triangulation_2UsingCustomizedVerticesand Using Customized Vertices and Faces
 
@@ -1194,7 +1194,7 @@ which the user can instantiate with his own customized classes.
 
 The most useful flexibility however comes from the fact
 that the triangulation data structure itself has two template
-parameters to be instantiated by 
+parameters to be instantiated by
 classes for the vertices and faces of the triangulation.
 Using his own customized classes to instantiate these
 parameters, the user can easily build up a triangulation with additional
@@ -1214,23 +1214,23 @@ structure, and there is a cyclic dependency on template parameter.
 The cyclic dependency in triangulations software design.
 \cgalFigureEnd
 
-Previously, this cyclic dependency was avoided by 
+Previously, this cyclic dependency was avoided by
 using only `void*` pointers in the interface of base classes.
 These `void*` were converted to appropriate types at the
 triangulation data structure levels. This solution had some drawbacks
-: mainly the user could not add in the vertices or faces of the 
-triangulation a functionality related to types defined by 
+: mainly the user could not add in the vertices or faces of the
+triangulation a functionality related to types defined by
 the triangulation data structure, for instance a handle to a vertex,
-and he was lead to use himself 
+and he was lead to use himself
 `void*` pointers).
 The new solution to resolve the template dependency
-is based on a rebind mechanism similar to the mechanism used in the 
+is based on a rebind mechanism similar to the mechanism used in the
 standard allocator class std::allocator. The rebind mechanism
-is described in Section \ref TDS_2D_default "The Default Triangulation Data Structure" 
+is described in Section \ref TDS_2D_default "The Default Triangulation Data Structure"
 of Chapter \ref Chapter_2D_Triangulation_Data_Structure "2D Triangulation Data Structure".
 For now, we will just notice that the design
 requires
-the existence in the vertex and face base classes 
+the existence in the vertex and face base classes
 of a nested template class
 `Rebind_TDS` defining a type `Other` used by
 the rebinding mechanism.
@@ -1241,17 +1241,17 @@ base classes parameters.
 
 \subsection Triangulation_2AddingColors Adding Colors
 
-The first example corresponds to a case where the user wishes to add in 
+The first example corresponds to a case where the user wishes to add in
 the vertices or faces of the triangulation an additional information
 that does not depend on types provided
-by the triangulation data structure. 
+by the triangulation data structure.
 In that case, predefined classes
 `Triangulation_vertex_base_with_info_2<Info,Traits,Vb>`
 or `Triangulation_face_base_with_info_2<Info,Traits,Vb>`
 can be used. Those classes have
 a template parameter `Info` devoted to
 handle additional information.
-The following example shows how to add a 
+The following example shows how to add a
 `Color` in the triangulation faces.
 
 \cgalExample{Triangulation_2/colored_face.cpp}
@@ -1265,8 +1265,8 @@ The second example adds a `std::string` in the vertices of a terrain.
 \subsection Triangulation_2AddingHandles Adding Handles
 
 This example shows how the user can still
-derive and plug in his own vertex 
-or face class when he would like to have 
+derive and plug in his own vertex
+or face class when he would like to have
 additional functionalities depending on types provided by the triangulation
 data structure.
 
@@ -1278,10 +1278,10 @@ The most efficient method to insert (weighted) points in a
 Delaunay (or regular) triangulation is to provide an iterator
 range over (weighted) points to the insert function. However, an iterator range of
 (weighted) points does not allow the user to set different information to each vertex.
-To solve this problem, in the case the vertex type of the triangulation 
+To solve this problem, in the case the vertex type of the triangulation
 is a model of the concept `TriangulationVertexBaseWithInfo_2`
-(such as `Triangulation_vertex_base_with_info_2`), we provide three examples 
-doing the same operation: set an unsigned integer as the information 
+(such as `Triangulation_vertex_base_with_info_2`), we provide three examples
+doing the same operation: set an unsigned integer as the information
 of each vertex. The value of this unsigned integer is the initial order
 of the corresponding point given in the range.
 
@@ -1311,10 +1311,10 @@ is dereferenced only once per point during the insertion.
 The code of this package is the result of a long development
 process. Here follows a tentative list of people
 who added their stone to this package:
-Jean-Daniel Boissonnat, Herv&eacute; Br&ouml;nnimann, 
+Jean-Daniel Boissonnat, Herv&eacute; Br&ouml;nnimann,
 Olivier Devillers, Andreas Fabri, Fr&eacute;d&eacute;ric Fichel,
 Julia Fl&ouml;totto, Monique Teillaud and Mariette Yvinec.
 
-*/ 
+*/
 } /* namespace CGAL */
 

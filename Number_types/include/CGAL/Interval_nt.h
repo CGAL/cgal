@@ -1,9 +1,9 @@
-// Copyright (c) 1998-2005,2007  
+// Copyright (c) 1998-2005,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -37,7 +37,7 @@
 // towards -infinity, it's enough to take the opposite of some of the operand,
 // and the opposite of the result (see operator+, operator*,...).
 
-// TODO : 
+// TODO :
 // - test whether stopping constant propagation only in functions taking
 //   double as arguments, improves performance.
 
@@ -137,7 +137,7 @@ public:
     // But MSVC++ 2012 optimizes the test "!(i>s)" to "i<=s", even with
     // /fp:strict. If 'i' or 's' is a NaN, that makes a difference.
     CGAL_assertion_msg( (!is_valid(i)) || (!is_valid(s)) || (!(i>s)),
-	      " Variable used before being initialized (or CGAL bug)");
+              " Variable used before being initialized (or CGAL bug)");
 #ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
     CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
 #endif
@@ -562,7 +562,7 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
-  if (a.inf() >= 0.0)					// a>=0
+  if (a.inf() >= 0.0)                                        // a>=0
   {
     // b>=0     [a.inf()*b.inf(); a.sup()*b.sup()]
     // b<=0     [a.sup()*b.inf(); a.inf()*b.sup()]
@@ -570,13 +570,13 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
     double aa = a.inf(), bb = a.sup();
     if (b.inf() < 0.0)
     {
-	aa = bb;
-	if (b.sup() < 0.0)
-	    bb = a.inf();
+        aa = bb;
+        if (b.sup() < 0.0)
+            bb = a.inf();
     }
     return IA(-CGAL_IA_MUL(aa, -b.inf()), CGAL_IA_MUL(bb, b.sup()));
   }
-  else if (a.sup()<=0.0)				// a<=0
+  else if (a.sup()<=0.0)                                // a<=0
   {
     // b>=0     [a.inf()*b.sup(); a.sup()*b.inf()]
     // b<=0     [a.sup()*b.sup(); a.inf()*b.inf()]
@@ -584,21 +584,21 @@ operator* (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
     double aa = a.sup(), bb = a.inf();
     if (b.inf() < 0.0)
     {
-	aa=bb;
-	if (b.sup() < 0.0)
-	    bb=a.sup();
+        aa=bb;
+        if (b.sup() < 0.0)
+            bb=a.sup();
     }
     return IA(-CGAL_IA_MUL(bb, -b.sup()), CGAL_IA_MUL(aa, b.inf()));
   }
-  else						// 0 \in a
+  else                                                // 0 \in a
   {
-    if (b.inf()>=0.0)				// b>=0
+    if (b.inf()>=0.0)                                // b>=0
       return IA(-CGAL_IA_MUL(a.inf(), -b.sup()),
                  CGAL_IA_MUL(a.sup(), b.sup()));
-    if (b.sup()<=0.0)				// b<=0
+    if (b.sup()<=0.0)                                // b<=0
       return IA(-CGAL_IA_MUL(a.sup(), -b.inf()),
                  CGAL_IA_MUL(a.inf(), b.inf()));
-        					// 0 \in b
+                                                // 0 \in b
     double tmp1 = CGAL_IA_MUL(a.inf(), -b.sup());
     double tmp2 = CGAL_IA_MUL(a.sup(), -b.inf());
     double tmp3 = CGAL_IA_MUL(a.inf(),  b.inf());
@@ -630,38 +630,38 @@ operator/ (const Interval_nt<Protected> &a, const Interval_nt<Protected> & b)
 {
   typedef Interval_nt<Protected> IA;
   typename Interval_nt<Protected>::Internal_protector P;
-  if (b.inf() > 0.0)				// b>0
+  if (b.inf() > 0.0)                                // b>0
   {
-    // e>=0	[a.inf()/b.sup(); a.sup()/b.inf()]
-    // e<=0	[a.inf()/b.inf(); a.sup()/b.sup()]
-    // e~=0	[a.inf()/b.inf(); a.sup()/b.inf()]
+    // e>=0        [a.inf()/b.sup(); a.sup()/b.inf()]
+    // e<=0        [a.inf()/b.inf(); a.sup()/b.sup()]
+    // e~=0        [a.inf()/b.inf(); a.sup()/b.inf()]
     double aa = b.sup(), bb = b.inf();
     if (a.inf() < 0.0)
     {
-	aa = bb;
-	if (a.sup() < 0.0)
-	    bb = b.sup();
+        aa = bb;
+        if (a.sup() < 0.0)
+            bb = b.sup();
     }
     return IA(-CGAL_IA_DIV(a.inf(), -aa), CGAL_IA_DIV(a.sup(), bb));
   }
-  else if (b.sup()<0.0)			// b<0
+  else if (b.sup()<0.0)                        // b<0
   {
-    // e>=0	[a.sup()/b.sup(); a.inf()/b.inf()]
-    // e<=0	[a.sup()/b.inf(); a.inf()/b.sup()]
-    // e~=0	[a.sup()/b.sup(); a.inf()/b.sup()]
+    // e>=0        [a.sup()/b.sup(); a.inf()/b.inf()]
+    // e<=0        [a.sup()/b.inf(); a.inf()/b.sup()]
+    // e~=0        [a.sup()/b.sup(); a.inf()/b.sup()]
     double aa = b.sup(), bb = b.inf();
     if (a.inf() < 0.0)
     {
-	bb = aa;
-	if (a.sup() < 0.0)
-	    aa = b.inf();
+        bb = aa;
+        if (a.sup() < 0.0)
+            aa = b.inf();
     }
     return IA(-CGAL_IA_DIV(a.sup(), -aa), CGAL_IA_DIV(a.inf(), bb));
   }
-  else					// b~0
+  else                                        // b~0
     return IA::largest();
-	   // We could do slightly better -> [0;infinity] when b.sup()==0,
-	   // but is this worth ?
+           // We could do slightly better -> [0;infinity] when b.sup()==0,
+           // but is this worth ?
 }
 
 template <bool Protected>
@@ -711,13 +711,13 @@ struct Max <Interval_nt<Protected> >
     }
 };
 
-template<bool Protected> inline 
+template<bool Protected> inline
 Interval_nt<Protected> min BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Interval_nt<Protected> & x,
 const Interval_nt<Protected> & y){
   return CGAL::Min<Interval_nt<Protected> > ()(x,y);
 }
-template<bool Protected> inline 
+template<bool Protected> inline
 Interval_nt<Protected> max BOOST_PREVENT_MACRO_SUBSTITUTION(
 const Interval_nt<Protected> & x,
 const Interval_nt<Protected> & y){
@@ -940,7 +940,7 @@ template< bool B > class Real_embeddable_traits< Interval_nt<B> >
     typedef Interval_nt<B>  Type;
   typedef Uncertain<CGAL::Sign> Sign;
   typedef Uncertain<bool> Boolean;
-  typedef Uncertain<CGAL::Comparison_result> Comparison_result; 
+  typedef Uncertain<CGAL::Comparison_result> Comparison_result;
 
     class Abs
       : public CGAL::cpp98::unary_function< Type, Type > {
@@ -1019,7 +1019,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
     typedef Interval_nt<B>      Type;
     typedef Tag_false           Is_exact;
     typedef Tag_true            Is_numerical_sensitive;
-    typedef Uncertain<bool>     Boolean; 
+    typedef Uncertain<bool>     Boolean;
 
     class Is_zero
       : public CGAL::cpp98::unary_function< Type, Boolean > {
@@ -1081,7 +1081,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
   public:
     Boolean operator()( const Type& x, const Type&) const {
       return ! Is_zero()(x);
-    } 
+    }
     // second operator computing q
     Boolean operator()( const Type& x, const Type& y, Type& q) const {
       if (! Is_zero()(x) )
@@ -1089,7 +1089,7 @@ class Algebraic_structure_traits< Interval_nt<B> >
       return Boolean(true);
     }
   };
-  
+
 };
 
 
@@ -1131,16 +1131,16 @@ struct Coercion_traits_interval_nt<A, Interval_nt<P>, Tag_true>{
 template< bool B >
 class Interval_traits< Interval_nt<B> >
   : public internal::Interval_traits_base< Interval_nt<B> >  {
-public: 
-  typedef Interval_traits<Interval_nt<B> > Self; 
-  typedef Interval_nt<B> Interval; 
-  typedef double Bound; 
-  typedef CGAL::Tag_false With_empty_interval; 
-  typedef CGAL::Tag_true  Is_interval; 
+public:
+  typedef Interval_traits<Interval_nt<B> > Self;
+  typedef Interval_nt<B> Interval;
+  typedef double Bound;
+  typedef CGAL::Tag_false With_empty_interval;
+  typedef CGAL::Tag_true  Is_interval;
 
  struct Construct :public CGAL::cpp98::binary_function<Bound,Bound,Interval>{
     Interval operator()( const Bound& l,const Bound& r) const {
-      CGAL_precondition( l < r ); 
+      CGAL_precondition( l < r );
       return Interval(l,r);
     }
   };
@@ -1159,7 +1159,7 @@ public:
 
   struct Width :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
-      return width(a); 
+      return width(a);
     }
   };
 
@@ -1168,7 +1168,7 @@ public:
       return (Lower()(a)+Upper()(a))/2.0;
     }
   };
-    
+
   struct Norm :public CGAL::cpp98::unary_function<Interval,Bound>{
     Bound operator()( const Interval& a ) const {
       return magnitude(a);
@@ -1198,39 +1198,39 @@ public:
       return a.is_same(b);
     }
   };
-    
+
   struct Overlap :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
       return a.do_overlap(b);
     }
   };
-    
+
   struct Subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
-      return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b) ;  
+      return Lower()(b) <= Lower()(a) && Upper()(a) <= Upper()(b) ;
     }
   };
-    
+
   struct Proper_subset :public CGAL::cpp98::binary_function<Interval,Interval,bool>{
     bool operator()( const Interval& a, const Interval& b ) const {
-      return Subset()(a,b) && ! Equal()(a,b); 
+      return Subset()(a,b) && ! Equal()(a,b);
     }
   };
-    
+
   struct Hull :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();
       BOOST_USING_STD_MIN();
-      return Interval( 
+      return Interval(
           std::make_pair(
-              min BOOST_PREVENT_MACRO_SUBSTITUTION (Lower()(a),b.inf()), 
+              min BOOST_PREVENT_MACRO_SUBSTITUTION (Lower()(a),b.inf()),
               max BOOST_PREVENT_MACRO_SUBSTITUTION (Upper()(a),b.sup())));
     }
   };
-    
-  
-//  struct Empty is Null_functor 
-  
+
+
+//  struct Empty is Null_functor
+
   struct Intersection :public CGAL::cpp98::binary_function<Interval,Interval,Interval>{
     Interval operator()( const Interval& a, const Interval& b ) const {
       BOOST_USING_STD_MAX();

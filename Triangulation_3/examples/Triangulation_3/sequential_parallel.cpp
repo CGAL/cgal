@@ -19,13 +19,13 @@ int main()
 {
   CGAL::Random_points_in_cube_3<Point> rnd(1.);
 
-  std::cerr << "Construction of a 3D Delaunay triangulation from a vector of " 
+  std::cerr << "Construction of a 3D Delaunay triangulation from a vector of "
             << NUM_INSERTED_POINTS << " random points in a cube" << std::endl;
   std::vector<Point> V;
   V.reserve(NUM_INSERTED_POINTS);
   for (int i = 0; i != NUM_INSERTED_POINTS; ++i)
     V.push_back(*rnd++);
-  
+
   // Sequential Delaunay T3
   typedef CGAL::Delaunay_triangulation_3<K> SequentialTriangulation;
 
@@ -34,7 +34,7 @@ int main()
   SequentialTriangulation S(V.begin(), V.end());
   t.stop();
   std::cerr << "Sequential construction takes " << t.time() << " sec." << std::endl;
-  
+
 // Parallel Delaunay T3
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Triangulation_data_structure_3<

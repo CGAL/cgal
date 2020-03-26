@@ -1,9 +1,9 @@
-// Copyright (c) 2005-2007  
+// Copyright (c) 2005-2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -424,7 +424,7 @@ class NTC_AST_base
 template < typename NT1, typename NT2, typename Cmp >
 class NTC_AST_base
 < Number_type_checker<NT1, NT2, Cmp> , Integral_domain_without_division_tag>
-:public Algebraic_structure_traits_base<Number_type_checker<NT1, NT2, Cmp>, 
+:public Algebraic_structure_traits_base<Number_type_checker<NT1, NT2, Cmp>,
 Integral_domain_without_division_tag>
 {
 private:
@@ -515,8 +515,8 @@ public:
                     typename AST1::Integral_division()(a.n1(),b.n1()),
                     typename AST2::Integral_division()(a.n2(),b.n2()));
         }
-    }; 
-  
+    };
+
   class Divides
     : public CGAL::cpp98::binary_function< Type, Type, bool > {
   public:
@@ -528,9 +528,9 @@ public:
     }
     bool operator()( const Type& a, const Type& b, Type& q) const {
       CGAL_NT_CHECK_DEBUG("AST::Divides");
-      NT1 q1; 
+      NT1 q1;
       bool result1 =  typename AST1::Divides()(a.n1(),b.n1(),q1);
-      NT2 q2; 
+      NT2 q2;
       CGAL_assertion_code( bool result2 = ) // needed for CGAL_assert only
         typename AST2::Divides()(a.n2(),b.n2(),q2);
       q = Type(q1,q2);
@@ -648,14 +648,14 @@ private:
   typedef Algebraic_structure_traits<NT1> AST1;
   typedef Algebraic_structure_traits<NT2> AST2;
   typedef Number_type_checker<NT1, NT2, Cmp> Type;
-public:  
+public:
   class Inverse
     : public CGAL::cpp98::unary_function< Type, Type > {
   public:
     Type operator()( const Type& a ) const {
       NT1 r1 = typename AST1::Inverse()(a.n1());
       NT2 r2 = typename AST2::Inverse()(a.n2());
-      return Type(r1,r2); 
+      return Type(r1,r2);
     }
   };
 

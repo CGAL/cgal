@@ -17,7 +17,7 @@
 //
 //
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
-//                 
+//
 // ============================================================================
 
 #ifndef CGAL_POLYNOMIAL_CACHED_EXTENDED_EUCLIDEAN_ALGORITHM_H
@@ -30,21 +30,21 @@
 namespace CGAL {
 namespace internal{
 
-template <class UFD, int i = 0 > 
+template <class UFD, int i = 0 >
 struct Cached_extended_euclidean_algorithm{
 
   struct Extended_euclidean_algorithm{
     typedef std::pair<UFD,UFD> result_type;
-    typedef std::pair<UFD,UFD> first_argument_type; 
+    typedef std::pair<UFD,UFD> first_argument_type;
     result_type operator()(const first_argument_type& pq){
-      result_type result; 
+      result_type result;
       CGAL::extended_euclidean_algorithm(
           pq.first, pq.second, result.first, result.second);
       return result;
     }
   };
-  
-  typedef std::pair<UFD,UFD> PAIR; 
+
+  typedef std::pair<UFD,UFD> PAIR;
   typedef Extended_euclidean_algorithm FUNC;
   typedef CGAL::Cache<PAIR,PAIR,FUNC> CACHE;
   static CACHE& get_cache()

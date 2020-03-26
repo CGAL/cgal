@@ -14,7 +14,7 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
 endif()
 
 set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
- 
+
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -22,7 +22,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -33,13 +33,13 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
-find_package(Eigen3 3.1.0) 
-if (EIGEN3_FOUND) 
-  include( ${EIGEN3_USE_FILE} ) 
+find_package(Eigen3 3.1.0)
+if (EIGEN3_FOUND)
+  include( ${EIGEN3_USE_FILE} )
 endif()
 
 # include for local directory

@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 // $Date$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 

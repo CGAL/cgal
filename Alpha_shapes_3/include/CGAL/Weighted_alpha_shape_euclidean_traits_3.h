@@ -19,7 +19,7 @@
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 
 #ifndef CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
-#define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
+#define CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H
 
 #include <CGAL/license/Alpha_shapes_3.h>
 

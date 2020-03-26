@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
@@ -52,7 +52,7 @@ struct move_edge_around_sface {
 
 template < class SVertex>
 class SNC_in_place_list_svertex
-    : public SVertex, 
+    : public SVertex,
       public In_place_list_base<SNC_in_place_list_svertex<SVertex> > {
 public:
     typedef SNC_in_place_list_svertex<SVertex> Self;
@@ -74,7 +74,7 @@ public:
 
 template < class SHalfedge>
 class SNC_in_place_list_shalfedge
-    : public SHalfedge, 
+    : public SHalfedge,
       public In_place_list_base<SNC_in_place_list_shalfedge<SHalfedge> > {
 public:
     typedef SNC_in_place_list_shalfedge<SHalfedge> Self;
@@ -96,7 +96,7 @@ public:
 
 template < class SFace>
 class SNC_in_place_list_sface
-    : public SFace, 
+    : public SFace,
       public In_place_list_base<SNC_in_place_list_sface<SFace> > {
 public:
     typedef SNC_in_place_list_sface<SFace> Self;

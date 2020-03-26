@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
 
@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-  
+
 template <class Gt,
           class Fb_ = Default,
           class ExactAlphaComparisonTag = Tag_false,
@@ -63,15 +63,15 @@ public:
 private:
   Interval_3 vec_edge[3];
   Type_of_alpha A;
- 
+
 public:
   Alpha_shape_face_base_2()  : Fb()     {}
-  
+
   Alpha_shape_face_base_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2)
     : Fb(v0, v1, v2)     {}
-  
+
   Alpha_shape_face_base_2(Vertex_handle v0, Vertex_handle v1, Vertex_handle v2,
-			  Face_handle n0, Face_handle n1, Face_handle n2)
+                          Face_handle n0, Face_handle n1, Face_handle n2)
     : Fb(v0, v1, v2, n0, n1, n2)
     {}
 

@@ -32,7 +32,7 @@
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -50,7 +50,7 @@ namespace internal {
 
     return do_intersect_bbox_segment_aux
       <FT,
-       true,  // bounded at t=0 
+       true,  // bounded at t=0
        false, // not bounded at t=1
        false> // do not use static filters
       (
@@ -66,7 +66,7 @@ namespace internal {
                     const K&) {
     return do_intersect(ray, bbox, K());
   }
-  
+
 } // namespace internal
 } // namespace Intersections
 } //namespace CGAL

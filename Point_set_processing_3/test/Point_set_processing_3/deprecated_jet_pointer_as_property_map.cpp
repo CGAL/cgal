@@ -20,7 +20,7 @@ typedef Kernel::Vector_3 Vector_3;
 
 
 int main()
-{  
+{
   std::vector<Point_3> points;
   std::vector<size_t> indices(100);
 
@@ -41,8 +41,8 @@ int main()
                                                    CGAL::make_property_map(points),
                                                    CGAL::make_property_map(normals),
                                                    12);
-  
-  
+
+
   return 0;
 }
 

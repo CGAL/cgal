@@ -44,7 +44,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
                                                          Polyhedron,
                                                          CGAL::Default,
                                                          short> Mesh_domain;
-    
+
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
       typename CGAL::Kernel_traits<Mesh_domain>::Kernel,
@@ -91,7 +91,7 @@ struct Polyhedron_with_features_tester : public Tester<K>
                                         CGAL::parameters::manifold(),
                                         CGAL::parameters::no_exude(),
                                         CGAL::parameters::no_perturb());
-    
+
     CGAL::remove_far_points_in_mesh_3(c3t3);
 
     // Verify
@@ -119,7 +119,7 @@ int main()
   Polyhedron_with_features_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from a polyhedron with edges:\n";
   test_epic();
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   Polyhedron_with_features_tester<K_e_i, CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation from a polyhedron with edges:\n";

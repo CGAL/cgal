@@ -18,8 +18,8 @@
 //
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_EXACT_SPHERICAL_3_KERNEL_H

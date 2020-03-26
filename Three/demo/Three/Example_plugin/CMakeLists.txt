@@ -16,18 +16,18 @@ find_package(Qt5
              QUIET
              COMPONENTS            OpenGL Script Svg Xml
              OPTIONAL_COMPONENTS   ScriptTools)
-             
-if(Qt5_FOUND AND CGAL_FOUND)  
+
+if(Qt5_FOUND AND CGAL_FOUND)
   find_package(CGAL_polyhedron_demo)
 
 include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
 
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-           
+
 
   polyhedron_demo_plugin(example_plugin Example_plugin)
-  
+
   qt5_wrap_ui( basicUI_FILES Basic_dialog.ui  )
   polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 

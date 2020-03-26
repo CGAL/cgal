@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -67,7 +67,7 @@ public:
   typedef bool               result_type;
 
   bool operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& p3, const Site_2& p4) const
+                  const Site_2& p3, const Site_2& p4) const
   {
     Method_tag tag;
 

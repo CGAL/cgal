@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
 
@@ -37,11 +37,11 @@ template<class R, class Tag> struct Exact_intersect_yz_2;
 template <class R>
 struct Exact_intersect_yz_2 <R,Cartesian_tag>
 {
-   typedef typename R::Point_2     Point_2; 
-   typedef typename R::Segment_2   Segment_2; 
+   typedef typename R::Point_2     Point_2;
+   typedef typename R::Segment_2   Segment_2;
 
-   typedef typename R::Point_3     Point_3; 
-   typedef typename R::Segment_3   Segment_3; 
+   typedef typename R::Point_3     Point_3;
+   typedef typename R::Segment_3   Segment_3;
 
    CGAL::Object operator() (Segment_3 s3, Segment_3 t3)
    {  Point_2 p2, q2;
@@ -65,9 +65,9 @@ struct Exact_intersect_yz_2 <R,Cartesian_tag>
       }
       else if ( CGAL::assign(s2, obj) )
       {  p2 = s2.source();
-	 q2 = s2.target();
-	 obj = make_object( Segment_3(
-	       Point_3(0,p2.x(),p2.y()), Point_3(0,q2.x(),q2.y()) ) );
+         q2 = s2.target();
+         obj = make_object( Segment_3(
+               Point_3(0,p2.x(),p2.y()), Point_3(0,q2.x(),q2.y()) ) );
       }
       return obj;
    }
@@ -76,11 +76,11 @@ struct Exact_intersect_yz_2 <R,Cartesian_tag>
 template <class R>
 struct Exact_intersect_yz_2 <R,Homogeneous_tag>
 {  // Homogeneous
-   typedef typename R::Point_2     Point_2; 
-   typedef typename R::Segment_2   Segment_2; 
+   typedef typename R::Point_2     Point_2;
+   typedef typename R::Segment_2   Segment_2;
 
-   typedef typename R::Point_3     Point_3; 
-   typedef typename R::Segment_3   Segment_3; 
+   typedef typename R::Point_3     Point_3;
+   typedef typename R::Segment_3   Segment_3;
 
    CGAL::Object operator() (Segment_3 s3, Segment_3 t3)
    {  Point_2 p2, q2;
@@ -106,10 +106,10 @@ struct Exact_intersect_yz_2 <R,Homogeneous_tag>
       }
       else if ( CGAL::assign(s2, obj) )
       {  p2 = s2.source();
-	 q2 = s2.target();
-	 obj = make_object( Segment_3(
-	    Point_3 (0,p2.hx(),p2.hy(),p2.hw()),
-	    Point_3 (0,q2.hx(),q2.hy(),q2.hw()) ) );
+         q2 = s2.target();
+         obj = make_object( Segment_3(
+            Point_3 (0,p2.hx(),p2.hy(),p2.hw()),
+            Point_3 (0,q2.hx(),q2.hy(),q2.hw()) ) );
       }
       return obj;
    }

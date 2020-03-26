@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -26,7 +26,7 @@
 #include <CGAL/license/Triangulation_2.h>
 
 
-// no longer needed 
+// no longer needed
 // maintained for backwards compatibility
 
 #endif //CGAL_TRIANGULATION_DATA_STRUCTURE_USING_LIST_2_H

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Peter Hachenberger    <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_DECOMPOSITION_MARK_H
@@ -26,7 +26,7 @@ namespace CGAL {
 class Decomposition_mark {
 
   bool mark;
-  
+
   friend std::ostream& operator<<(std::ostream& out, const Decomposition_mark& m);
   friend std::istream& operator>>(std::istream& in, Decomposition_mark& m);
 

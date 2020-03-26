@@ -164,12 +164,12 @@ public :
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved
     program->setUniformValue("comparing", viewer->currentPass() > 0);;
-    program->setUniformValue("width", viewer->width()*1.0f);         
-    program->setUniformValue("height", viewer->height()*1.0f);       
-    program->setUniformValue("near", (float)viewer->camera()->zNear());     
-    program->setUniformValue("far", (float)viewer->camera()->zFar());       
-    program->setUniformValue("writing", viewer->isDepthWriting());   
-    program->setUniformValue("alpha", alpha());                     
+    program->setUniformValue("width", viewer->width()*1.0f);
+    program->setUniformValue("height", viewer->height()*1.0f);
+    program->setUniformValue("near", (float)viewer->camera()->zNear());
+    program->setUniformValue("far", (float)viewer->camera()->zFar());
+    program->setUniformValue("writing", viewer->isDepthWriting());
+    program->setUniformValue("alpha", alpha());
     if( fbo)
       viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices->size() / 3));
@@ -180,7 +180,7 @@ public :
   {
     if(is_fast)
       return;
-    
+
     vaos[Lines]->bind();
     program = getShaderProgram(PROGRAM_C3T3_EDGES);
     attribBuffers(viewer, PROGRAM_C3T3_EDGES);
@@ -266,10 +266,10 @@ public :
   QMenu* contextMenu()
   {
     QMenu* menu = Scene_item::contextMenu();
-  
+
     const char* prop_name = "Menu modified by Scene_surface_mesh_item.";
     bool menuChanged = menu->property(prop_name).toBool();
-  
+
     if(!menuChanged) {
       menu->addSeparator();
       QMenu *container = new QMenu(tr("Alpha value"));
@@ -281,7 +281,7 @@ public :
         setAlpha(alphaSlider->value());
         redraw();
       });
-      
+
       container->addAction(sliderAction);
       menu->addMenu(container);
       setProperty("menu_changed", true);
@@ -293,10 +293,10 @@ public :
   {
     return m_alpha ;
   }
-  
+
   void setAlpha(int a)
   {
-    m_alpha = a / 255.0f;    
+    m_alpha = a / 255.0f;
     redraw();
   }
 private:
@@ -988,26 +988,26 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     // positions_poly_size is the number of total facets in the C3T3
     // it is only computed once and positions_poly is emptied at the end
     d->program->setUniformValue("comparing", viewer->currentPass() > 0);;
-    d->program->setUniformValue("width", viewer->width()*1.0f);         
-    d->program->setUniformValue("height", viewer->height()*1.0f);       
-    d->program->setUniformValue("near", (float)viewer->camera()->zNear());     
-    d->program->setUniformValue("far", (float)viewer->camera()->zFar());       
-    d->program->setUniformValue("writing", viewer->isDepthWriting());   
-    d->program->setUniformValue("alpha", alpha());                     
+    d->program->setUniformValue("width", viewer->width()*1.0f);
+    d->program->setUniformValue("height", viewer->height()*1.0f);
+    d->program->setUniformValue("near", (float)viewer->camera()->zNear());
+    d->program->setUniformValue("far", (float)viewer->camera()->zFar());
+    d->program->setUniformValue("writing", viewer->isDepthWriting());
+    d->program->setUniformValue("alpha", alpha());
     d->program->setUniformValue("is_surface", d->is_surface);
     if( fbo)
       viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->positions_poly_size / 3));
     d->program->release();
     vaos[Scene_c3t3_item_priv::Facets]->release();
-    
+
     if(d->show_tetrahedra){
       ncthis->show_intersection(true);
       if(!d->frame->isManipulated())
         d->intersection->setFast(false);
       else
         d->intersection->setFast(true);
-      
+
       if(!d->frame->isManipulated() && !d->are_intersection_buffers_filled)
       {
         ncthis->d->computeIntersections();
@@ -1016,7 +1016,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         ncthis->show_intersection(true);
       }
     }
-    
+
     if(d->spheres_are_shown)
     {
       d->spheres->setPlane(this->plane());
@@ -1057,11 +1057,11 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
       ncthis->d->computeElements();
       ncthis->d->initializeBuffers(viewer);
     }
-    
+
     if(renderingMode() == Wireframe && d->is_grid_shown)
     {
       vaos[Scene_c3t3_item_priv::Grid]->bind();
-      
+
       d->program = getShaderProgram(PROGRAM_NO_SELECTION);
       attribBuffers(viewer, PROGRAM_NO_SELECTION);
       d->program->bind();
@@ -1085,7 +1085,7 @@ void Scene_c3t3_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(d->positions_lines_size / 3));
     d->program->release();
     vaos[Scene_c3t3_item_priv::Edges]->release();
-    
+
     if(d->show_tetrahedra){
       if(!d->frame->isManipulated())
         d->intersection->setFast(false);
@@ -1139,7 +1139,7 @@ void Scene_c3t3_item::drawPoints(CGAL::Three::Viewer_interface * viewer) const
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(d->positions_lines.size() / 3));
     vaos[Scene_c3t3_item_priv::Edges]->release();
     d->program->release();
-    
+
     if(d->is_grid_shown)
     {
       vaos[Scene_c3t3_item_priv::Grid]->bind();
@@ -1294,7 +1294,7 @@ QMenu* Scene_c3t3_item::contextMenu()
   bool menuChanged = menu->property(prop_name).toBool();
 
   if (!menuChanged) {
-    
+
     QMenu *container = new QMenu(tr("Alpha value"));
     container->menuAction()->setProperty("is_groupable", true);
     QWidgetAction *sliderAction = new QWidgetAction(0);
@@ -1309,7 +1309,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     );
     container->addAction(sliderAction);
     menu->addMenu(container);
-    
+
     container = new QMenu(tr("Tetrahedra's Shrink Factor"));
     sliderAction = new QWidgetAction(0);
     connect(d->tet_Slider, &QSlider::valueChanged, this, &Scene_c3t3_item::itemChanged);
@@ -1353,7 +1353,7 @@ QMenu* Scene_c3t3_item::contextMenu()
     connect(actionShowGrid, SIGNAL(toggled(bool)),
             this, SLOT(show_grid(bool)));
 
-    
+
     menu->setProperty(prop_name, true);
   }
   return menu;
@@ -1587,7 +1587,7 @@ void Scene_c3t3_item_priv::computeSpheres()
 void Scene_c3t3_item_priv::computeElements()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  
+
   if(!alphaSlider)
    {
      alphaSlider = new QSlider(::Qt::Horizontal);
@@ -1595,7 +1595,7 @@ void Scene_c3t3_item_priv::computeElements()
      alphaSlider->setMaximum(255);
      alphaSlider->setValue(255);
    }
-  
+
   positions_poly.clear();
   normals.clear();
   f_colors.clear();

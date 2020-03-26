@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -76,7 +76,7 @@ protected:
   {
     std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[0];
-    return p[1]; 
+    return p[1];
   }
 
   inline
@@ -122,19 +122,19 @@ protected:
       if ( CGAL::is_negative(d) ) return p;
 
       if ( CGAL::is_zero(df.x()) ) {
-	FT y = (d1 - d2 + norm2(f2) - norm2(f1)) / (FT(2) * df.y());
+        FT y = (d1 - d2 + norm2(f2) - norm2(f1)) / (FT(2) * df.y());
 
-	FT D = d1 - CGAL::square(y - f1.y());
+        FT D = d1 - CGAL::square(y - f1.y());
 
-	D = CGAL::abs(D);
+        D = CGAL::abs(D);
 
-	FT x1 = CGAL::sqrt(D) + f1.x();
-	FT x2 = -CGAL::sqrt(D) + f1.x();
+        FT x1 = CGAL::sqrt(D) + f1.x();
+        FT x2 = -CGAL::sqrt(D) + f1.x();
 
-	p.push_back(Point_2(x1, y));
-	p.push_back(Point_2(x2, y));
+        p.push_back(Point_2(x1, y));
+        p.push_back(Point_2(x2, y));
 
-	return p;
+        return p;
       }
 
       FT gamma = (d1 - d2 + norm2(f2) - norm2(f1)) / (FT(2) * df.x());
@@ -165,8 +165,8 @@ protected:
   {
     return
       CGAL::is_negative( determinant<FT>(f1.x(), f1.y(), 1,
-					       f2.x(), f2.y(), 1,
-					       p.x(),   p.y(), 1) );
+                                               f2.x(), f2.y(), 1,
+                                               p.x(),   p.y(), 1) );
   }
 
   inline
@@ -200,7 +200,7 @@ public:
   {
     STEP = FT(2);
     this->r = ff1.weight() - ff2.weight();
-    
+
     this->f1 = ff1.point();
     this->f2 = ff2.point();
 
@@ -219,8 +219,8 @@ public:
 
   template<class QTWIDGET>
   void generate_points_qt(const QTWIDGET& W,
-			  std::vector<Point_2>& pleft,
-			  std::vector<Point_2>& pright) const
+                          std::vector<Point_2>& pleft,
+                          std::vector<Point_2>& pright) const
     {
       std::vector< Point_2 > p;
 
@@ -232,23 +232,23 @@ public:
 
       FT STEP;
       if ( width < height ) {
-	STEP = width / 500.0;
+        STEP = width / 500.0;
       } else {
-	STEP = height / 500.0;
+        STEP = height / 500.0;
       }
       //    double mind = distance(o, f1) - r1;
       for (int i = 1; i <= 100; i++) {
-	p = compute_points(FT(i * i) * STEP);
-	
-	if ( p.size() > 0 ) {
-	  if ( right(p[0]) ) {
-	    pright.push_back(p[0]);
-	    pleft.push_back(p[1]);
-	  } else {
-	    pright.push_back(p[1]);
-	    pleft.push_back(p[0]);
-	  }
-	}
+        p = compute_points(FT(i * i) * STEP);
+
+        if ( p.size() > 0 ) {
+          if ( right(p[0]) ) {
+            pright.push_back(p[0]);
+            pleft.push_back(p[1]);
+          } else {
+            pright.push_back(p[1]);
+            pleft.push_back(p[0]);
+          }
+        }
       }
     }
 
@@ -259,16 +259,16 @@ public:
       generate_points_qt(pleft, pright);
 
       for (unsigned int i = 0; i < pleft.size() - 1; i++) {
-	W << Segment_2(pleft[i], pleft[i+1]);
+        W << Segment_2(pleft[i], pleft[i+1]);
       }
-      
+
       for (unsigned int i = 0; i < pright.size() - 1; i++) {
-	W << Segment_2(pright[i], pright[i+1]);
+        W << Segment_2(pright[i], pright[i+1]);
       }
     }
 
   void generate_points(std::vector<Point_2>& pleft,
-		       std::vector<Point_2>& pright) const
+                       std::vector<Point_2>& pright) const
   {
     std::vector< Point_2 > p;
 
@@ -280,13 +280,13 @@ public:
       p = compute_points(FT(i * i) * STEP);
 
       if ( p.size() > 0 ) {
-	if ( right(p[0]) ) {
-	  pright.push_back(p[0]);
-	  pleft.push_back(p[1]);
-	} else {
-	  pright.push_back(p[1]);
-	  pleft.push_back(p[0]);
-	}
+        if ( right(p[0]) ) {
+          pright.push_back(p[0]);
+          pleft.push_back(p[1]);
+        } else {
+          pright.push_back(p[1]);
+          pleft.push_back(p[0]);
+        }
       }
     }
   }
@@ -300,7 +300,7 @@ public:
     for (unsigned int i = 0; i < pleft.size() - 1; i++) {
       W << Segment_2(pleft[i], pleft[i+1]);
     }
-      
+
     for (unsigned int i = 0; i < pright.size() - 1; i++) {
       W << Segment_2(pright[i], pright[i+1]);
     }

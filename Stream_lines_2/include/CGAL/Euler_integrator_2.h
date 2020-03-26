@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
@@ -47,17 +47,17 @@ public:
   Euler_integrator_2(const FT & integration_step);
 
   inline Point_2 operator()(const Point_2 & p, const Vector_field_2 &
-			    vector_field_2, const bool & index) const;
+                            vector_field_2, const bool & index) const;
 
   inline Point_2 operator()(const Point_2 & p, const Vector_field_2 &
-			    vector_field_2, const FT &
-			    integration_step, const bool & index)
+                            vector_field_2, const FT &
+                            integration_step, const bool & index)
     const;
 
   inline Point_2 operator()(const Point_2 & p, const Vector_field_2 &
-			    vector_field_2, const FT &
-			    integration_step, Vector_2 v, const bool &
-			    index) const;
+                            vector_field_2, const FT &
+                            integration_step, Vector_2 v, const bool &
+                            index) const;
 
   inline FT get_default_integration_step()
     {
@@ -82,7 +82,7 @@ Euler_integrator_2<Vector_field>::Euler_integrator_2(const FT & integration_step
 {}
 
 template <class Vector_field>
-inline typename Euler_integrator_2<Vector_field>::Point_2 
+inline typename Euler_integrator_2<Vector_field>::Point_2
 Euler_integrator_2<Vector_field>::operator()
   (const Point_2 & p, const Vector_field_2 & , const FT & integration_step, Vector_2 v, const bool & index) const
 {
@@ -97,7 +97,7 @@ Euler_integrator_2<Vector_field>::operator()
 }
 
 template <class Vector_field>
-inline typename Euler_integrator_2<Vector_field>::Point_2 
+inline typename Euler_integrator_2<Vector_field>::Point_2
 Euler_integrator_2<Vector_field>::operator()
   (const Point_2 & p, const Vector_field_2 & vector_field_2, const FT & integration_step, const bool & index) const
 {
@@ -107,7 +107,7 @@ Euler_integrator_2<Vector_field>::operator()
 }
 
 template <class Vector_field>
-inline typename Euler_integrator_2<Vector_field>::Point_2 
+inline typename Euler_integrator_2<Vector_field>::Point_2
 Euler_integrator_2<Vector_field>::operator()
   (const Point_2 & p, const Vector_field_2 & vector_field_2, const bool & index) const
 {

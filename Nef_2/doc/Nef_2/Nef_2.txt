@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_Boolean_Operations_on_Nef_Polygons
 \anchor chapnef2
 \cgalAutoToc
@@ -17,15 +17,15 @@ Topological simpler models that are contained in the domain of
 Nef polyhedra are:
 <UL>
 <LI><I>convex polytopes</I> normally defined as the convex hull
-of a nonempty finite set of points. Convex polytopes are 
-compact closed and manifold sets. 
+of a nonempty finite set of points. Convex polytopes are
+compact closed and manifold sets.
 <LI><I>elementary polyhedra</I> normally defined as the union
-of a finite number of convex polytopes. 
+of a finite number of convex polytopes.
 <LI><I>polyhedral sets</I> nomally defined as the intersection
 of a finite number of closed halfspaces. Such sets are closed and
-convex but need not to be compact. 
+convex but need not to be compact.
 <LI><I>linear polyhedra</I> normally defined as the set of all
-points belonging to the simplices of a <I>simplicial complex</I>. 
+points belonging to the simplices of a <I>simplicial complex</I>.
 </UL>
 
 A planar <I>Nef polyhedron</I> is any set that can be obtained from a
@@ -137,9 +137,9 @@ typedef Nef_polyhedron::Explorer Explorer;
 Explorer E = N4.explorer();
 Explorer::Vertex_const_iterator v;
 for (v = E.vertices_begin(); v != E.vertices_end(); ++v)
-  if ( E.is_standard(v) ) 
+  if ( E.is_standard(v) )
     Explorer::Point p = E.point(v) // affine embedding of v
-  else /* non-standard */ 
+  else /* non-standard */
     Explorer::Ray r = E.ray(v) // extended embedding of v
 
 \endcode
@@ -197,6 +197,6 @@ the inputs plus the size of the output times a logarithmic factor. The
 algorithm is complete in the sense that it can handle all inputs and
 requires no general position assumption.
 
-*/ 
+*/
 } /* namespace CGAL */
 

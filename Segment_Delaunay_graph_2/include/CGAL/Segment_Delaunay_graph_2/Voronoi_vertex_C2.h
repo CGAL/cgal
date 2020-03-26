@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -75,7 +75,7 @@ protected:
   typedef typename Base::Site_2   Site_2;
 public:
   Voronoi_vertex_C2(const Site_2& p, const Site_2& q,
-		    const Site_2& r)
+                    const Site_2& r)
     : Base(p, q, r) {}
 };
 

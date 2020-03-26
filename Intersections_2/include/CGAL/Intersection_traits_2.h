@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Philipp Möller
 
@@ -58,7 +58,7 @@ CGAL_INTERSECTION_TRAITS_2(Ray_2, Triangle_2, Point_2, Segment_2)
 
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_2, typename K::Triangle_2>  {
-  typedef typename 
+  typedef typename
   boost::variant< typename K::Point_2, typename K::Segment_2,
                   typename K::Triangle_2, typename std::vector< typename K::Point_2 > > variant_type;
   typedef typename boost::optional< variant_type > result_type;
@@ -106,11 +106,11 @@ struct Intersection_traits<K, typename K::Point_2, typename K::Point_2> {
 template<typename K>
 struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Triangle_2>
 {
-  typedef typename boost::variant<typename K::Segment_2, typename K::Triangle_2, 
-                                  typename K::Point_2, 
+  typedef typename boost::variant<typename K::Segment_2, typename K::Triangle_2,
+                                  typename K::Point_2,
                                   typename std::vector< typename K::Point_2 > > variant_type;
   typedef typename boost::optional < variant_type > result_type;
-};  
+};
 
 template<typename K>
 struct Intersection_traits<K, typename K::Triangle_2, typename K::Iso_rectangle_2>

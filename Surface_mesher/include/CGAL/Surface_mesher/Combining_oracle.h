@@ -63,7 +63,7 @@ namespace CGAL {
     CGAL_static_assertion((::boost::is_same<
                          Intersection_point,
                          typename Oracle_b::Intersection_point>::value));
-                        
+
 
     typedef ::CGAL::Multi_surface_3<typename Oracle_a::Surface_3,
       typename Oracle_b::Surface_3> Surface_3;
@@ -77,7 +77,7 @@ namespace CGAL {
     {
     }
 
-    class Intersect_3 
+    class Intersect_3
     {
       Oracle_a& oracle_a;
       Oracle_b& oracle_b;
@@ -86,7 +86,7 @@ namespace CGAL {
         : oracle_a(oracle_a), oracle_b(oracle_b)
       {
       }
-      
+
       Object operator()(const Surface_3& surface, Segment_3 s) const
       {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), s);
@@ -99,14 +99,14 @@ namespace CGAL {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), r);
         if( obj.is_empty() )
           return oracle_b.intersect_3_object()(surface.surface_b(), r);
-        return obj;  
+        return obj;
       }
-      
+
       Object operator()(const Surface_3& surface, const Line_3& l) const {
         const Object obj = oracle_a.intersect_3_object()(surface.surface_a(), l);
         if( obj.is_empty() )
           return oracle_b.intersect_3_object()(surface.surface_b(), l);
-        return obj;  
+        return obj;
       }
     }; // end nested class Intersect_3
 
@@ -122,11 +122,11 @@ namespace CGAL {
 
       // Random points
       template <typename OutputIteratorPoints>
-      OutputIteratorPoints operator() (const Surface_3& surface, 
-                                       OutputIteratorPoints out, 
+      OutputIteratorPoints operator() (const Surface_3& surface,
+                                       OutputIteratorPoints out,
                                        int n = 20) // WARNING: why 20?
       {
-        OutputIteratorPoints out2 = 
+        OutputIteratorPoints out2 =
           oracle_a.construct_initial_points_object()(surface.surface_a(),
                                                      out,
                                                      n);
@@ -135,7 +135,7 @@ namespace CGAL {
                                                           n);
       }
     }; // end nested class Construct_initial_points
-     
+
     Intersect_3 intersect_3_object() const
     {
       return Intersect_3(oracle_a, oracle_b);
@@ -148,7 +148,7 @@ namespace CGAL {
 
     bool is_in_volume(const Surface_3& surface, const Point_3& p) const
     {
-      return( oracle_a.is_in_volume(surface.surface_a(), p) || 
+      return( oracle_a.is_in_volume(surface.surface_a(), p) ||
               oracle_b.is_in_volume(surface.surface_b(), p) );
     }
   };  // end Combining_oracle

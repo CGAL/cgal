@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     :  Sebastien Loriot
 //
@@ -47,30 +47,30 @@ public:
   };
 
   typedef typename Vb::Point Point;
-  
+
 private:
-  typedef internal::Classification_type Classification_type;  
+  typedef internal::Classification_type Classification_type;
   Classification_type status_;
 
   bool is_on_chull_;
 
 public:
 
-  Fixed_alpha_shape_vertex_base_3()    
+  Fixed_alpha_shape_vertex_base_3()
     : Vb(),is_on_chull_(false) {}
-  
+
   Fixed_alpha_shape_vertex_base_3(const Point& p)
     : Vb(p),is_on_chull_(false) {}
-  
+
   Fixed_alpha_shape_vertex_base_3(const Point& p, Cell_handle c)
     : Vb(p, c),is_on_chull_(false) {}
 
   Classification_type get_classification_type() { return status_;}
   void set_classification_type(Classification_type status) {status_=status;}
-  
+
   void is_on_chull(bool b){is_on_chull_=b;};
   bool is_on_chull(){return is_on_chull_;}
-    
+
 };
 
 } //namespace CGAL

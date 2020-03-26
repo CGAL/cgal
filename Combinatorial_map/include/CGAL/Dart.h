@@ -122,7 +122,7 @@ namespace CGAL {
       assert(i<=dimension);
       return mf[i];
     }
-    
+
   protected:
     /** Default constructor: no real initialisation,
      *  because this is done in the combinatorial map class.

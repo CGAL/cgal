@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -46,7 +46,7 @@ struct Dummy_tds_2 {
   struct Facet_circulator {};
   struct Face_circulator {};
   struct Vertex_circulator {};
-  
+
   typedef std::size_t size_type;
 };
 

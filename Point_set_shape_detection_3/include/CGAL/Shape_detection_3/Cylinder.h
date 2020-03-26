@@ -40,7 +40,7 @@ namespace CGAL {
      \brief Cylinder implements Shape_base. The cylinder is represented
      by the axis, i.e. a point and direction, and the radius. The cylinder is
      unbounded, thus caps are not modelled.
-     \tparam Traits a model of `EfficientRANSACTraits` with the additional 
+     \tparam Traits a model of `EfficientRANSACTraits` with the additional
              requirement for cylinders (see `EfficientRANSACTraits` documentation).
      \ingroup PkgPointSetShapeDetection3Shapes
      */
@@ -96,7 +96,7 @@ namespace CGAL {
 
     /*!
       Computes squared Euclidean distance from query point to the shape.
-      */ 
+      */
     FT squared_distance(const Point_3 &p) const {
       Vector_3 a = this->constr_vec(m_axis);
       a = this->scale(a, (FT)1.0 / CGAL::sqrt(this->sqlen(a)));
@@ -111,7 +111,7 @@ namespace CGAL {
 
   protected:
       /// \cond SKIP_IN_MANUAL
-    
+
     // ------------------------------------------------------------------------
     // Utilities
     // ------------------------------------------------------------------------
@@ -135,7 +135,7 @@ namespace CGAL {
       }
       axis = this->scale(axis, FT(1.0) / axisL);
 
-      // establish two directions in the plane axis * x = 0, 
+      // establish two directions in the plane axis * x = 0,
       // whereas xDir is the projected n1
       Vector_3 xDir = this->sum_vectors(
         n1, this->scale(axis, -this->scalar_pdct(n1, axis)));
@@ -256,7 +256,7 @@ namespace CGAL {
       }
       else m_wrap_u = false;
     }
-    
+
     // The u coordinate corresponds to the rotation around the axis and
     // therefore needs to be wrapped around.
     virtual void post_wrap(const std::vector<unsigned int> &bitmap,
@@ -293,7 +293,7 @@ namespace CGAL {
             update_label(labels, (std::max<unsigned int>)(w, l), l);
           }
         }
-        
+
         // handle mid indices
         for (std::size_t y = 1;y<v_extent - 1;y++) {
           l = bitmap[y * u_extent];
@@ -349,7 +349,7 @@ namespace CGAL {
         }
       }
 
-    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                               std::vector<FT> &angles) const {
       Vector_3 a = this->constr_vec(m_axis);
       a = this->scale(a, (FT)1.0 / CGAL::sqrt(this->sqlen(a)));
@@ -395,7 +395,7 @@ namespace CGAL {
     Line_3 m_axis;
     Point_3 m_point_on_axis;
     mutable bool m_wrap_u;
-      
+
     /// \endcond
   };
 }

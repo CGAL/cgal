@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -88,9 +88,9 @@ private:
         return false;
     return true;
   }
-  
+
 public:  /** \name ACCESS TO CLUSTERS */
-  typedef typename Mesh_2::Clusters<Tr>::Cluster_vertices_iterator 
+  typedef typename Mesh_2::Clusters<Tr>::Cluster_vertices_iterator
     Cluster_vertices_iterator;
   typedef typename Mesh_2::Clusters<Tr>::Vertices_in_cluster_iterator
     Vertices_in_cluster_iterator;
@@ -212,7 +212,7 @@ public:
   bool is_conforming_done()
     // This function cannot be "const" because, as edges_to_be_conformed is
     // filtred, its empty() method is not const.
-  { return ( edges_level_Gabriel.no_longer_element_to_refine() 
+  { return ( edges_level_Gabriel.no_longer_element_to_refine()
              && edges_level_Delaunay.no_longer_element_to_refine() );
   }
 
@@ -224,9 +224,9 @@ public:
   {
     return edges_level_Delaunay.one_step(null_visitor);
   }
-  
+
   bool try_one_step_conforming_Gabriel()
-  {  
+  {
     return edges_level_Gabriel.one_step(null_visitor);
   }
 

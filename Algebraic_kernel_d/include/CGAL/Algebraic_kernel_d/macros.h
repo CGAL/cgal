@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Michael Kerber <mkerber@mpi-inf.mpg.de>

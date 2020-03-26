@@ -1,7 +1,7 @@
 ﻿namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Point_Set_Processing
 \anchor chappoint_set_processing_3
 
@@ -22,12 +22,12 @@ Point set processing. Left: 275K points sampled on the statue of an elephant wit
 In the context of surface reconstruction we can position the elements
 of this component along the common surface reconstruction pipeline
 (\cgalFigureRef{Point_set_processing_3figpipeline}) which involves the
-following steps: 
+following steps:
 -# Scanning and scan alignment to produce a set of
 points or points with normals (alignment is not covered in \cgal);
 -# Outlier removal;
--# Simplification to reduce the number of input points; 
--# Smoothing to reduce noise in the input data; 
+-# Simplification to reduce the number of input points;
+-# Smoothing to reduce noise in the input data;
 -# Normal estimation and orientation when the normals are not already provided
 by the acquisition device; and
 -# Surface reconstruction. Chapter \ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
@@ -84,9 +84,9 @@ The following classes described in Chapter \ref PkgPropertyMap
 provide property maps for the implementations of points with normals
 listed above:
 
-- `Identity_property_map<T>`  
-- `First_of_pair_property_map<Pair>` and `Second_of_pair_property_map<Pair>` 
-- `Nth_of_tuple_property_map<N, Tuple>` 
+- `Identity_property_map<T>`
+- `First_of_pair_property_map<Pair>` and `Second_of_pair_property_map<Pair>`
+- `Nth_of_tuple_property_map<N, Tuple>`
 
 `Identity_property_map<Point_3>` is the default value of the
 position property map expected by all functions in this component.
@@ -96,7 +96,7 @@ See below examples using pair and tuple property maps.
 Users of this package may use other types to represent positions and
 normals if they implement the corresponding property maps.
 
-Points and normals can even be stored in separate containers 
+Points and normals can even be stored in separate containers
 and accessed by their index, as any built-in vector is also
 a property map.
 
@@ -131,7 +131,7 @@ parameters (than can be deduced automatically in simple cases) are
 moved to the end of the function in a single named parameter object
 (see \ref BGLNamedParameters). The code translated to the new API
 becomes:
-   
+
 \code
 std::vector<PointVectorPair> points;
 
@@ -299,7 +299,7 @@ The 4 functions presented here work both with 2D points and 3D points
 and they shouldn't be used if the point sets do not sample a curve in
 2D or a surface in 3D.
 
-\subsection Point_set_processing_3Example_scale_estimation_global Global Scale Example 
+\subsection Point_set_processing_3Example_scale_estimation_global Global Scale Example
 
 The following example reads a 3D point set in the `xyz` format and:
 
@@ -356,7 +356,7 @@ simplification of the point set through local clusters
 directly selected by the user or it automatically adapts to the local
 variation of the point set.
 
-Function `wlop_simplify_and_regularize_point_set()` not only simplifies, 
+Function `wlop_simplify_and_regularize_point_set()` not only simplifies,
 but also regularizes downsampled points. This is an implementation of
 the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
@@ -418,7 +418,7 @@ Computing density weights for each point is an optional preprocessing. For examp
 
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parameter_density, WLOP_parameter_density.jpg}
-Comparison between with and without density: Left: input. Middle: `require_uniform_sampling = false`. Right: `require_uniform_sampling=true`. 
+Comparison between with and without density: Left: input. Middle: `require_uniform_sampling = false`. Right: `require_uniform_sampling=true`.
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3WLOP_parameter_neighborhood_size Parameter: neighbor_radius
@@ -429,14 +429,14 @@ Comparison between different sizes of neighbor radius.
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3WLOP_parallel_performance Parallel Performance
-A parallel version of WLOP is provided and requires the executable to be linked against the 
+A parallel version of WLOP is provided and requires the executable to be linked against the
 <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 To control the number of threads used, the user may use the tbb::task_scheduler_init class.
-See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> 
+See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a>
 for more details. We provide below a speed-up chart generated using the parallel version of the WLOP algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
-Parallel WLOP speed-up, compared to the sequential version of the algorithm. 
+Parallel WLOP speed-up, compared to the sequential version of the algorithm.
 \cgalFigureEnd
 
 
@@ -450,12 +450,12 @@ projecting each point onto a smooth parametric surface patch
 
 Function `bilateral_smooth_point_set()` smooths the input point set by
 iteratively projecting each point onto the implicit surface patch fitted over its `k` nearest neighbors.
-Bilateral projection preserves sharp features according to the normal (gradient) information. 
+Bilateral projection preserves sharp features according to the normal (gradient) information.
 Normals are thus required as input. For more details, see section 4 of \cgalCite{ear-2013}.
 
 \subsection Point_set_processing_3Example_jet_smoothing Jet Smoothing Example
 
-The following example generates a set of 9 points close to the `xy` 
+The following example generates a set of 9 points close to the `xy`
 plane and smooths them using 8 nearest neighbors:
 \cgalExample{Point_set_processing_3/jet_smoothing_example.cpp}
 
@@ -470,14 +470,14 @@ Comparison for two smoothing methods: Left: Input, 250K points, normal-color map
 
 \subsubsection Point_set_processing_3Bilateral_smoothing_parallel_performance Parallel
 
-Performance: 
-A parallel version of bilateral smoothing is provided and requires the executable to be linked against the 
+Performance:
+A parallel version of bilateral smoothing is provided and requires the executable to be linked against the
 <a href="https://www.threadingbuildingblocks.org">Intel TBB library</a>.
 The number of threads used is controlled through the tbb::task_scheduler_init class.
 See the <a href="https://www.threadingbuildingblocks.org/documentation">TBB documentation</a> for more details. We provide below a speed-up chart generated using the parallel version of the bilateral smoothing algorithm. The machine used is a PC running Windows 7 64-bits with a 4-core i7-4700HQ@2.40GHz CPU with 8GB of RAM.
 
 \cgalFigureBegin{Point_set_processing_3Bilateral_smoothing_parallel_performance, parallel_bilateral_smooth_point_set_performance.jpg}
-Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm. 
+Parallel bilateral smoothing speed-up, compared to the sequential version of the algorithm.
 \cgalFigureEnd
 
 \section Point_set_processing_3NormalEstimation Normal Estimation
@@ -506,7 +506,7 @@ article \cgalCite{cgal:mog-vbcfe-11}.
 
 Function `mst_orient_normals()` orients the normals of a set of
 points with unoriented normals using the method described by Hoppe et
-al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}. 
+al. in <I>Surface reconstruction from unorganized points</I> \cgalCite{cgal:hddms-srup-92}.
 More specifically, this method constructs a
 Riemannian graph over the input points (the graph of the `k`
 nearest neighbor points) and propagates a seed normal orientation
@@ -541,7 +541,7 @@ The following example reads a point set from a file, upsamples it to get a dense
 
 \subsubsection Point_set_processing_3Upsample_Parameter1 Parameter: edge_sensitivity
 This parameter controls where the new points are inserted. Larger values of edge-sensitivity give higher priority to inserting points along the sharp features.
-For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when edge_sensitivity is set to 0. The range of possible value is [0, 1]. 
+For example, as shown in the following figure, high value is preferable when one wants to insert more points on sharp features, where the local gradient is high, e.g., darts, cusps, creases and corners. In contrast, points are evenly inserted when edge_sensitivity is set to 0. The range of possible value is [0, 1].
 
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_edge_sensitivity, upsample_edge_sensitivity.jpg}
@@ -552,14 +552,14 @@ Upsampling for different edge-sensitivity parameter values. The input containing
 This parameter controls the preservation of sharp features.
 
 \cgalFigureBegin{Point_set_processing_3figUpsample_sharpness_angle, upsample_sharpness_angle.jpg}
-Upsampling for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted. 
+Upsampling for different sharpness_angle parameter values. The input containing 850 points is upsampled to 425K points in all cases depicted.
 \cgalFigureEnd
 
 \subsubsection Point_set_processing_3upsample_neighborhood_size Parameter: neighbor_radius
 Usually, the neighborhood of sample points should include at least one ring of neighboring sample points. Using small neighborhood size may not be able to insert new points. Using big neighborhood size can fill small holes, but points inserted on the edges could be irregular. The function will use a neigbhorhood size estimation if this parameter value is set to default or smaller than zero.
 
 \cgalFigureBegin{Point_set_processing_3figupsample_neighborhood_size, upsample_neighborhood_size.jpg}
-Comparison between different sizes of neighbor radius. 
+Comparison between different sizes of neighbor radius.
 \cgalFigureEnd
 
 \section Point_set_processing_3FeaturesEstimation Feature Edges Estimation
@@ -661,6 +661,6 @@ Started from GSoC'2014, Jocelyn Meyron with the help of Quentin Mérigot introdu
 as well as the normal and feature edge estimation functions based on it.
 Florent Lafarge with the help of Simon Giraudot contributed the point set structuring algorithm.
 
-*/ 
+*/
 } /* namespace CGAL */
 

@@ -66,15 +66,15 @@ main(int,char*[])
     face_descriptor fd = *fit;
     halfedge_descriptor hd = halfedge(fd,t);
     halfedge_descriptor n = next(hd,t);
-    
+
     halfedge_descriptor nn = next(n,t);
     if(next(nn,t) != hd){
       std::cerr << "the face is not a triangle" << std::endl;
     }
-    
+
     ++index;
   }
-  
+
   std::cerr << index << " faces" << std::endl;
   index = 0;
 
@@ -102,7 +102,7 @@ main(int,char*[])
 
   typedef boost::property_map<Triangulation, boost::vertex_point_t>::type Ppmap;
   Ppmap ppmap = get(boost::vertex_point, t);
- 
+
 
   BOOST_FOREACH(vertex_descriptor vd, vertices_around_target(*vertices(t).first, t)){
     std::cout <<  ppmap[vd] << std::endl;

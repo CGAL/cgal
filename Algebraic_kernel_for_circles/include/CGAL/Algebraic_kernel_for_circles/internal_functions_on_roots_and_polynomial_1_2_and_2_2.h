@@ -19,9 +19,9 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_FUNCTIONS_ON_ROOTS_AND_POLYNOMIAL_1_2_AND_2_2_H
@@ -36,63 +36,63 @@ namespace CGAL {
 
 
   template < class AK, class OutputIterator >
-  inline 
+  inline
   OutputIterator
   solve( const typename AK::Polynomial_1_2 & e1,
-	 const typename AK::Polynomial_for_circles_2_2 & e2,
-	 OutputIterator res )
+         const typename AK::Polynomial_for_circles_2_2 & e2,
+         OutputIterator res )
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
     if (is_zero(e1.a())){//horizontal line
-      
+
       const FT hy = -e1.c()/e1.b();
       const FT hdisc = e2.r_sq() - CGAL::square(hy - e2.b());
       CGAL::Sign sign_hdisc = CGAL::sign(hdisc);
-    
+
       if(sign_hdisc == NEGATIVE) return res;
-      if(sign_hdisc == ZERO) {	
-	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(Root_of_2(e2.a()), 
+      if(sign_hdisc == ZERO) {
+        *res++ = std::make_pair
+          ( Root_for_circles_2_2(Root_of_2(e2.a()),
                                  Root_of_2(hy)), 2u);
-	return res;
+        return res;
       }
       const Root_of_2 x_res1 = make_root_of_2(e2.a(),FT(-1),hdisc);
       const Root_of_2 x_res2 = make_root_of_2(e2.a(),FT(1),hdisc);
-      const Root_of_2 y_res = Root_of_2(hy);  
+      const Root_of_2 y_res = Root_of_2(hy);
       *res++ = std::make_pair
-	( Root_for_circles_2_2(x_res1, y_res), 1u);
+        ( Root_for_circles_2_2(x_res1, y_res), 1u);
       *res++ = std::make_pair
-	( Root_for_circles_2_2(x_res2, y_res), 1u);
+        ( Root_for_circles_2_2(x_res2, y_res), 1u);
       return res;
     }
     else if(is_zero(e1.b())){//vertical line
-      
+
       const FT vx = -e1.c()/e1.a();
       const FT vdisc = e2.r_sq() - CGAL::square(vx - e2.a());
       CGAL::Sign sign_vdisc = CGAL::sign(vdisc);
 
       if(sign_vdisc == NEGATIVE) return res;
       if(sign_vdisc == ZERO) {
-	*res++ = std::make_pair
-	  ( Root_for_circles_2_2(Root_of_2(vx), 
+        *res++ = std::make_pair
+          ( Root_for_circles_2_2(Root_of_2(vx),
                                  Root_of_2(e2.b())), 2u);
-	return res;
+        return res;
       }
-      
-      const Root_of_2 x_res = Root_of_2(vx); 
+
+      const Root_of_2 x_res = Root_of_2(vx);
       const Root_of_2 y_res1 = make_root_of_2(e2.b(),FT(-1),vdisc);
       const Root_of_2 y_res2 = make_root_of_2(e2.b(),FT(1),vdisc);
 
       *res++ = std::make_pair
-	( Root_for_circles_2_2(x_res, y_res1), 1u);
+        ( Root_for_circles_2_2(x_res, y_res1), 1u);
       *res++ = std::make_pair
-	( Root_for_circles_2_2(x_res, y_res2), 1u);
+        ( Root_for_circles_2_2(x_res, y_res2), 1u);
       return res;
     }
     else {
-      
+
       const FT line_factor = CGAL::square(e1.a()) + CGAL::square(e1.b());
       const FT disc = line_factor*e2.r_sq() -
                       CGAL::square(e1.a()*e2.a() + e1.b()*e2.b() + e1.c());
@@ -106,28 +106,28 @@ namespace CGAL {
 
       if (sign_disc == ZERO) {
         *res++ = std::make_pair
-	  ( Root_for_circles_2_2(Root_of_2(x_base), 
+          ( Root_for_circles_2_2(Root_of_2(x_base),
                                  Root_of_2(y_base)), 2u);
-	return res;
+        return res;
       }
 
-      // We have two intersection points, whose coordinates are one-root numbers. 
+      // We have two intersection points, whose coordinates are one-root numbers.
       const FT x_root_coeff = e1.b() / line_factor;
       const FT y_root_coeff = e1.a() / line_factor;
 
       if (CGAL::sign(e1.b()) == POSITIVE) {
         *res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc), 
+        ( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
                                make_root_of_2(y_base, y_root_coeff, disc)), 1u);
         *res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc), 
+        ( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
                                make_root_of_2(y_base, -y_root_coeff, disc)), 1u);
       } else {
         *res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc), 
+        ( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
                                make_root_of_2(y_base, -y_root_coeff, disc)), 1u);
         *res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc), 
+        ( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
                                make_root_of_2(y_base, y_root_coeff, disc)), 1u);
       }
       return res;
@@ -135,21 +135,21 @@ namespace CGAL {
   }
 
   template < class AK, class OutputIterator >
-  inline 
+  inline
   OutputIterator
   solve( const typename AK::Polynomial_for_circles_2_2 & e1,
-	 const typename AK::Polynomial_1_2 & e2,
-	 OutputIterator res )
+         const typename AK::Polynomial_1_2 & e2,
+         OutputIterator res )
   {
     return solve<AK> (e2, e1, res);
   }
 
   template < class AK, class OutputIterator >
-  inline 
+  inline
   OutputIterator
   solve( const typename AK::Polynomial_1_2 & e1,
-	 const typename AK::Polynomial_1_2 & e2,
-	 OutputIterator res )
+         const typename AK::Polynomial_1_2 & e2,
+         OutputIterator res )
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_of_2 Root_of_2;
@@ -161,24 +161,24 @@ namespace CGAL {
     if(is_zero(e2.a())){
       const FT sol = -e2.c()/e2.b();
       *res++ = std::make_pair
-	  ( Root_for_circles_2_2(Root_of_2(-(e1.b()*sol + e1.c())/e1.a()),
+          ( Root_for_circles_2_2(Root_of_2(-(e1.b()*sol + e1.c())/e1.a()),
                                  Root_of_2(sol)), 1u);
       return res;
     }
     //general case
-    const FT sol = (e2.a()*e1.c() - e2.c()*e1.a()) / delta; 
+    const FT sol = (e2.a()*e1.c() - e2.c()*e1.a()) / delta;
     *res++ = std::make_pair
-	  ( Root_for_circles_2_2(Root_of_2(-(e2.b()*sol + e2.c())/e2.a()),
+          ( Root_for_circles_2_2(Root_of_2(-(e2.b()*sol + e2.c())/e2.a()),
                                  Root_of_2(sol)), 1u);
     return res;
   }
 
     template < class AK >
-    inline 
+    inline
     Sign sign_at( const typename AK::Polynomial_1_2 & equation,
-		  const typename AK::Root_for_circles_2_2 & r)
+                  const typename AK::Root_for_circles_2_2 & r)
     {
-      Comparison_result c = compare(r.x()*equation.a(), 
+      Comparison_result c = compare(r.x()*equation.a(),
                                     -equation.c() - r.y()*equation.b());
       if(c == EQUAL) return ZERO;
       if(c == LARGER) return POSITIVE;
@@ -186,7 +186,7 @@ namespace CGAL {
     }
 
 
-  
+
   } // namespace AlgebraicFunctors
 } // namespace CGAL
 

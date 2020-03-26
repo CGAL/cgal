@@ -457,7 +457,7 @@ struct Polygon_soup_orienter
  * amounts to duplicate the polygon to which it belongs.
  *
  * These points are either an endpoint of an edge incident to more
- * than two polygons, an endpoint of an edge between 
+ * than two polygons, an endpoint of an edge between
  * two polygons with incompatible orientations (during the re-orientation process),
  * or more generally a point \a p at which the intersection
  * of an infinitesimally small ball centered at \a p

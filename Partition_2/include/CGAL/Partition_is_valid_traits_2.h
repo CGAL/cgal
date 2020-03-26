@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -38,7 +38,7 @@ public:
    typedef typename Traits::Orientation_2   Orientation_2;
 
    typedef PolygonIsValid                   Is_valid;
-   
+
    Is_valid
    is_valid_object(const Traits& traits) const
    {  return Is_valid(traits); }

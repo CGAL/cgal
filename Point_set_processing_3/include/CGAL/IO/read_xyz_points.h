@@ -39,7 +39,7 @@
 
 namespace CGAL {
 
-/** 
+/**
    \ingroup PkgPointSetProcessing3IO
    Reads points (positions + normals, if available) from a .xyz ASCII stream.
    The function expects for each point a line with the x y z position,
@@ -88,7 +88,7 @@ read_xyz_points(
   using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
-  
+
   // basic geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
@@ -99,11 +99,11 @@ read_xyz_points(
 
   PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
-  
+
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   //typedef typename value_type_traits<OutputIterator>::type Enriched_point;
   typedef OutputIteratorValueType Enriched_point;
-  
+
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
@@ -158,14 +158,14 @@ read_xyz_points(
             }
           Enriched_point pwn;
           put(point_map,  pwn, point);  // point_map[pwn] = point
-          
+
           if (has_normals)
             put(normal_map, pwn, normal); // normal_map[pwn] = normal
-          
+
           *output++ = pwn;
           continue;
-        } 
-      
+        }
+
     }
     // ...or skips number of points on first line (optional)
     if (lineNumber == 1 && std::istringstream(line) >> pointsCount)
@@ -220,7 +220,7 @@ read_xyz_points(
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap,
@@ -285,7 +285,7 @@ read_xyz_points_and_normals(
      normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename PointPMap,
           typename NormalPMap
@@ -321,7 +321,7 @@ read_xyz_points_and_normals(
      CGAL::parameters::normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename NormalPMap
 >
@@ -337,7 +337,7 @@ read_xyz_points_and_normals(
      CGAL::parameters::normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap,
@@ -357,7 +357,7 @@ read_xyz_points(
      geom_traits (kernel));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename PointPMap,
           typename Kernel
@@ -376,7 +376,7 @@ read_xyz_points(
      geom_traits (kernel));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap
@@ -393,7 +393,7 @@ read_xyz_points(
      CGAL::parameters::point_map (point_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename OutputIterator,
           typename PointPMap
 >

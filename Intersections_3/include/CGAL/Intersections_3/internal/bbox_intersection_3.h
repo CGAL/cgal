@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
 
@@ -35,16 +35,16 @@ namespace CGAL {
 namespace Intersections {
 
   namespace internal {
-// This function intersects a bbox with a ray, line or segment 
+// This function intersects a bbox with a ray, line or segment
 // Its essentially a copy of the function that was in Bbox_3_intersections.cpp
-// But it must be a template function since the original kernel must be 
+// But it must be a template function since the original kernel must be
 // taken into account. (Michael.Hemmer@sophia.inria.fr)
-template <class K> 
+template <class K>
 #if CGAL_INTERSECTION_VERSION < 2
 CGAL::Object
 #else
-typename boost::optional< boost::variant< 
-                            typename K::Segment_3, 
+typename boost::optional< boost::variant<
+                            typename K::Segment_3,
                             typename K::Point_3 > >
 #endif
 intersection_bl(const Bbox_3 &box,
@@ -52,20 +52,20 @@ intersection_bl(const Bbox_3 &box,
         double ldx, double ldy, double ldz,
         bool min_infinite, bool max_infinite)
 {
-  typedef 
+  typedef
 #if CGAL_INTERSECTION_VERSION < 2
     CGAL::Object
 #else
-    typename 
-    boost::optional< 
-      boost::variant< typename K::Segment_3, 
+    typename
+    boost::optional<
+      boost::variant< typename K::Segment_3,
                       typename K::Point_3 > >
 #endif
     result_type;
 
   double seg_min = 0.0, seg_max = 1.0;
   // first on x value
-  if (ldx == 0.0) { 
+  if (ldx == 0.0) {
     if (lpx < box.xmin())
       return result_type();
     if (lpx > box.xmax())
@@ -167,20 +167,20 @@ intersection_bl(const Bbox_3 &box,
   }
 
   typedef typename K::FT FT;
-  typedef typename K::Point_3 Point_3;   
-  typedef typename K::Vector_3  Vector_3; 
-  typedef typename K::Segment_3 Segment_3; 
-  
+  typedef typename K::Point_3 Point_3;
+  typedef typename K::Vector_3  Vector_3;
+  typedef typename K::Segment_3 Segment_3;
+
   Point_3 ref_point = Point_3( FT(lpx), FT(lpy), FT(lpz));
   Vector_3 dir = Vector_3( FT(ldx), FT(ldy), FT(ldz));
-  
+
   if (seg_max == seg_min) {
 #if CGAL_INTERSECTION_VERSION < 2
     return make_object(ref_point + dir * FT(seg_max));
 #else
     return result_type(ref_point + dir * FT(seg_max));
 #endif
-  } 
+  }
 #if CGAL_INTERSECTION_VERSION < 2
   return make_object(
       Segment_3(ref_point + dir*FT(seg_min), ref_point + dir*FT(seg_max)));

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -37,7 +37,7 @@ public:
 
   typedef typename Arrangement_2::Face_const_handle       Face_const_handle;
   typedef typename Arrangement_2::Face_handle             Face_handle;
- 
+
 
 
   void create_face (Face_const_handle f1,

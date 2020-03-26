@@ -66,7 +66,7 @@ class PolyhedralSurf;
 namespace boost {
   template <>
   struct graph_traits<PolyhedralSurf> : public boost::graph_traits<Polyhedron>
-  {};  
+  {};
 
   template <>
   struct graph_traits<PolyhedralSurf const> : public boost::graph_traits<Polyhedron>

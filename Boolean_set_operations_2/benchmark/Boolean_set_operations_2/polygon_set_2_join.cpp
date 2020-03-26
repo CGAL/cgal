@@ -111,7 +111,7 @@ int main( int  argc , char ** argv )
 {
   double scale_factor = argc>1 ? atof(argv[1]):1;
   double sqrt_scale_factor = std::sqrt(scale_factor);
-  
+
   //testing grid rectangle intersection
   numLines  = 100 * sqrt_scale_factor;
   numArrays = 2;
@@ -214,9 +214,9 @@ int main( int  argc , char ** argv )
   std::ofstream out("polygons_disjoint.cgal");
   std::vector<Polygon_2> polygons;
   polygons.reserve(grid_size*grid_size);
-  
+
   double epsilon = 1./(2* grid_size);
-  
+
   for (int i=0;i<grid_size;++i)
     for (int j=0;j<grid_size; ++j)
     {

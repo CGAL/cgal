@@ -108,7 +108,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
     item->setName(fileinfo.completeBaseName());
     return item;
   }
-  
+
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   QStringList polylines_metadata;
 

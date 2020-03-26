@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -29,7 +29,7 @@ namespace CGAL {
   namespace Mesh_3 {
 
     template <typename Elt>
-    class Simple_queue_container 
+    class Simple_queue_container
     {
     public:
       typedef Elt Element;
@@ -63,10 +63,10 @@ namespace CGAL {
 
       size_type size() const
       {
-	return q.size();
+        return q.size();
       }
     }; // end Simple_queue_container
-    
+
   } // end namespace Mesh_3
 } // end namespace CGAL
 

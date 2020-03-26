@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CONVEX_DECOMPOSITION_3_H
@@ -35,8 +35,8 @@
 #include <CGAL/Convex_decomposition_3/Edge_sorter.h>
 #include <CGAL/Convex_decomposition_3/is_reflex_sedge.h>
 
-/*! 
-  \file convex_decomposition_3.h 
+/*!
+  \file convex_decomposition_3.h
 */
 
 
@@ -46,30 +46,30 @@ namespace CGAL {
 /*!
 \ingroup PkgConvexDecomposition3Ref
 
-The function `convex_decomposition_3()` inserts additional facets 
-into the given `Nef_polyhedron_3` `N`, such that each bounded 
-marked volume (the outer volume is unbounded) is subdivided into convex 
-pieces. The modified polyhedron represents a decomposition into 
-\f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges that have two 
-adjacent facets that span an angle of more than 180 degrees with 
-respect to the interior of the polyhedron. 
+The function `convex_decomposition_3()` inserts additional facets
+into the given `Nef_polyhedron_3` `N`, such that each bounded
+marked volume (the outer volume is unbounded) is subdivided into convex
+pieces. The modified polyhedron represents a decomposition into
+\f$ O(r^2)\f$ convex pieces, where \f$ r\f$ is the number of edges that have two
+adjacent facets that span an angle of more than 180 degrees with
+respect to the interior of the polyhedron.
 
-The worst-case running time of our implementation is 
-\f$ O(n^2r^4\sqrt[3]{nr^2}\log{(nr)})\f$, where \f$ n\f$ is the complexity of 
-the polyhedron (the complexity of a `Nef_polyhedron_3` is the sum 
-of its `Vertices`, `Halfedges` and `SHalfedges`) and \f$ r\f$ 
-is the number of reflex edges. 
+The worst-case running time of our implementation is
+\f$ O(n^2r^4\sqrt[3]{nr^2}\log{(nr)})\f$, where \f$ n\f$ is the complexity of
+the polyhedron (the complexity of a `Nef_polyhedron_3` is the sum
+of its `Vertices`, `Halfedges` and `SHalfedges`) and \f$ r\f$
+is the number of reflex edges.
 
-\pre The polyhedron `N` is bounded. Otherwise, the outer volume is ignored. 
+\pre The polyhedron `N` is bounded. Otherwise, the outer volume is ignored.
 
-\post If the polyhedron `N` is non-convex, it is modified to represent the 
-convex decomposition. If `N` is convex, it is not modified. 
+\post If the polyhedron `N` is non-convex, it is modified to represent the
+convex decomposition. If `N` is convex, it is not modified.
 
-\sa `CGAL::Nef_polyhedron_3<Traits>` 
+\sa `CGAL::Nef_polyhedron_3<Traits>`
 
 */
 template<typename Nef_polyhedron>
-void convex_decomposition_3(Nef_polyhedron& N) 
+void convex_decomposition_3(Nef_polyhedron& N)
 {
   typedef typename Nef_polyhedron::SNC_structure  SNC_structure;
   typedef typename SNC_structure::Halfedge_handle Halfedge_handle;
@@ -86,9 +86,9 @@ void convex_decomposition_3(Nef_polyhedron& N)
   typedef typename CGAL::SFace_separator<Nef_polyhedron> SFace_separator;
 
   typedef Compare_halfedges_in_reflex_edge_sorter<Halfedge_handle, std::less<Point_3> >
-	  Less_edges;
+          Less_edges;
   typedef Compare_halfedges_in_reflex_edge_sorter<Halfedge_handle, std::greater<Point_3> >
-	  Greater_edges;
+          Greater_edges;
 
   typedef typename std::multiset<Halfedge_handle, Less_edges> Negatively_sorted_set;
   typedef typename std::multiset<Halfedge_handle, Greater_edges> Positively_sorted_set;
@@ -96,7 +96,7 @@ void convex_decomposition_3(Nef_polyhedron& N)
   typedef typename Negatively_sorted_set::const_iterator  Negative_reflex_edge_iterator;
 
   typedef typename CGAL::Reflex_edge_searcher<Nef_polyhedron, Positively_sorted_set, Negatively_sorted_set>
-	  Reflex_edge_searcher;
+          Reflex_edge_searcher;
 
   typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::less<FT>, Negatively_sorted_set> Edge_sorter;
   typedef typename CGAL::Edge_sorter<Nef_polyhedron, std::greater<FT>, Positively_sorted_set> Edge_sorter2;
@@ -107,17 +107,17 @@ void convex_decomposition_3(Nef_polyhedron& N)
 
   Reflex_edge_searcher res(Sphere_point(1,0,0));
   N.delegate(res,false,false);
-  
+
   Edge_sorter es(res.get_negative_redges());
   N.delegate(es);
-  
+
   Negative_reflex_edge_iterator nrei;
   for(nrei=res.negative_redges_begin(); nrei!=res.negative_redges_end(); ++nrei) {
     Halfedge_handle e = (*nrei);
-    
+
     Single_wall W(e,Vector_3(-1,0,0));
     if(!W.need_to_create_wall()) continue;
-    
+
     Reflex_vertex_searcher rvs(Sphere_point(1,0,0));
     if(rvs.need_to_shoot(e, true)) {
       Ray_hit2 rh2a(Vector_3(-1,0,0), e->source());
@@ -126,38 +126,38 @@ void convex_decomposition_3(Nef_polyhedron& N)
     if(rvs.need_to_shoot(e->twin(), true)) {
       Ray_hit2 rh2a(Vector_3(-1,0,0), e->twin()->source());
       N.delegate(rh2a);
-    }  
+    }
   }
-  
+
   // int i=0;
   for(nrei=res.negative_redges_begin(); nrei!=res.negative_redges_end(); ++nrei) {
     Halfedge_handle e = (*nrei);
     if(e->point().hx() > 0)
       e = e->twin();
     Single_wall W(e,Vector_3(-1,0,0));
-    if(!W.need_to_create_wall()) continue;    
+    if(!W.need_to_create_wall()) continue;
     N.delegate(W);
   }
-  
+
   N.delegate(esb);
   N.delegate(res, false, false);
-  
+
   CGAL_assertion(N.is_valid(0,0));
-  
+
   Reflex_edge_searcher& res2 = res;
-  
+
   Edge_sorter2 es2(res2.get_positive_redges());
   N.delegate(es2);
-  
+
   Positive_reflex_edge_iterator prei;
   for(prei=res2.positive_redges_begin(); prei!=res2.positive_redges_end(); ++prei) {
     Halfedge_handle e = (*prei);
-    
+
     CGAL_assertion(e->source()->point() >
-		   e->twin()->source()->point());
+                   e->twin()->source()->point());
     Single_wall W(e,Vector_3(1,0,0));
     if(!W.need_to_create_wall()) continue;
-    
+
     Reflex_vertex_searcher rvs(Sphere_point(1,0,0));
     if(rvs.need_to_shoot(e, false)) {
       Ray_hit2 rh2a(Vector_3(1,0,0), e->source());
@@ -168,7 +168,7 @@ void convex_decomposition_3(Nef_polyhedron& N)
       N.delegate(rh2a);
     }
   }
-  
+
   // i=0;
   for(prei=res2.positive_redges_begin(); prei!=res2.positive_redges_end(); ++prei) {
     Halfedge_handle e = (*prei);
@@ -176,13 +176,13 @@ void convex_decomposition_3(Nef_polyhedron& N)
     if(!W.need_to_create_wall()) continue;
     N.delegate(W);
   }
-  
-  N.delegate(esb);    
+
+  N.delegate(esb);
   CGAL_assertion(N.is_valid(0,0));
-  
+
   YVertical_wall_builder Y;
   N.delegate(Y,false,false);
-  
+
   N.delegate(esb);
 
   CGAL_assertion_code(typename Nef_polyhedron::SHalfedge_const_iterator cse);

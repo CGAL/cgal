@@ -1,9 +1,9 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas, Sylvain Pion
 
@@ -64,7 +64,7 @@ class Epeck
   : public Type_equality_wrapper<
              Lazy_kernel_base< Simple_cartesian<Epeck_ft>,
                                Simple_cartesian<Interval_nt_advanced>,
-	                       Cartesian_converter< Simple_cartesian<Epeck_ft>,
+                               Cartesian_converter< Simple_cartesian<Epeck_ft>,
                                                     Simple_cartesian<Interval_nt_advanced> >,
                                Epeck>,
              Epeck >

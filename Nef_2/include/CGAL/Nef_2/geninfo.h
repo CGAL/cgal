@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -34,7 +34,7 @@
 
 /*{\Moptions outfile=geninfo.man}*/
 /*{\Moptions constref=yes}*/
-/*{\Manpage {geninfo} {T} {Information association via GenPtr} {}}*/    
+/*{\Manpage {geninfo} {T} {Information association via GenPtr} {}}*/
 
 template <typename T>
 struct geninfo {
@@ -52,8 +52,8 @@ misuse memory problems occur.}*/
 /*{\Moperations 2 1}*/
 
   #ifdef CGAL_USE_FORMER_GENINFO
-  static void create(GenPtr& p) 
-  /*{\Mstatic create a slot for an object of type |T| referenced 
+  static void create(GenPtr& p)
+  /*{\Mstatic create a slot for an object of type |T| referenced
     via |p|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) new((void*)(&p)) T;
     if (sizeof(T) >  sizeof(GenPtr)) p = (GenPtr) new T;
@@ -61,21 +61,21 @@ misuse memory problems occur.}*/
 
   static T& access(GenPtr& p)
   /*{\Mstatic access an object of type |T| via |p|.
-    \precond |p| was initialized via |create| and was not cleared 
+    \precond |p| was initialized via |create| and was not cleared
     via |clear|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) return *(T*)(&p);
     else                             return *(T*)p;
   }
 
-  static const T& const_access(const GenPtr& p) 
+  static const T& const_access(const GenPtr& p)
   /*{\Mstatic read-only access of an object of type |T| via |p|.
-    \precond |p| was initialized via |create| and was not cleared 
+    \precond |p| was initialized via |create| and was not cleared
     via |clear|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) return *(const T*)(&p);
-    else                             return *(const T*)p; 
+    else                             return *(const T*)p;
   }
 
-  static void clear(GenPtr& p) 
+  static void clear(GenPtr& p)
   /*{\Mstatic clear the memory used for the object of type |T| via
      |p|. \precond |p| was initialized via |create|.}*/
   { if (sizeof(T) <= sizeof(GenPtr)) ((T*)(&p))->~T();
@@ -85,9 +85,9 @@ misuse memory problems occur.}*/
   #else //CGAL_USE_FORMER_GENINFO
   static void create(GenPtr& p)  { p = (GenPtr) new T; }
   static T& access(GenPtr& p)  { return *(T*)p;  }
-  static const T& const_access(const GenPtr& p) 
+  static const T& const_access(const GenPtr& p)
   { return *(const T*)p;   }
-  static void clear(GenPtr& p){ 
+  static void clear(GenPtr& p){
     delete (T*) p;
     p=0;
   }

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -33,7 +33,7 @@ class Curve_with_halfedge
 protected:
   typedef typename Arrangement_::Halfedge_handle        Halfedge_handle;
   typedef typename Arrangement_::Halfedge_const_handle  Halfedge_const_handle;
-  
+
 public:
   Halfedge_handle  m_he;
 

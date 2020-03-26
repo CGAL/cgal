@@ -15,7 +15,7 @@ if ( CGAL_FOUND )
   if (EIGEN3_FOUND)
     include( ${EIGEN3_USE_FILE} )
   endif()
-  
+
   # create a target per cppfile
   file(GLOB cppfiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
   foreach(cppfile ${cppfiles})
@@ -27,8 +27,8 @@ if ( CGAL_FOUND )
   endforeach()
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

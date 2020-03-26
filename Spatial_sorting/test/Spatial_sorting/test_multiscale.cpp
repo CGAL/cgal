@@ -96,7 +96,7 @@ int main ()
         std::cout << "no points lost." << std::endl;
     }
 
-	{
+        {
         std::cout << "Testing Spherical: Generating points... " << std::flush;
 
         std::vector<Point_3> v;

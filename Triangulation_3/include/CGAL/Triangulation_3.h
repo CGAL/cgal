@@ -3215,7 +3215,7 @@ side_of_facet(const Point& p,
   {
     // The following precondition is useless because it is written
     // in side_of_facet
-    // 	CGAL_triangulation_precondition(coplanar (p,
+    //         CGAL_triangulation_precondition(coplanar (p,
     //                                             c->vertex(0)->point,
     //                                             c->vertex(1)->point,
     //                                             c->vertex(2)->point));
@@ -3242,7 +3242,7 @@ side_of_facet(const Point& p,
   int inf = c->index(infinite);
   // The following precondition is useless because it is written
   // in side_of_facet
-  // 	CGAL_triangulation_precondition(coplanar (p,
+  //         CGAL_triangulation_precondition(coplanar (p,
   //                                     c->neighbor(inf)->vertex(0)->point(),
   //                                     c->neighbor(inf)->vertex(1)->point(),
   //                                     c->neighbor(inf)->vertex(2)->point()));
@@ -3888,9 +3888,9 @@ insert_outside_convex_hull(const Point& p, Cell_handle c)
   {
     case 1:
     {
-      // 	// p lies in the infinite edge neighboring c
-      // 	// on the other side of li
-      // 	return insert_in_edge(p,c->neighbor(1-li),0,1);
+      //         // p lies in the infinite edge neighboring c
+      //         // on the other side of li
+      //         return insert_in_edge(p,c->neighbor(1-li),0,1);
       return insert_in_edge(p,c,0,1);
     }
     case 2:

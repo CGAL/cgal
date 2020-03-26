@@ -85,7 +85,7 @@ struct Input_points_for_lazy_alpha_nt_3
   const T* p3;
 };
 
-//non-weighted case  
+//non-weighted case
 template <class Weighted_tag,class Input_traits,class Kernel_input,class Kernel_approx,class Kernel_exact>
 struct Types_for_alpha_nt_3
 {
@@ -96,12 +96,12 @@ struct Types_for_alpha_nt_3
   typedef typename Kernel_approx::Point_3                          Approx_point;
   typedef typename Kernel_exact::Point_3                           Exact_point;
   typedef typename Input_traits::Point_3                           Input_point;
-//Constructions 
+//Constructions
   typedef typename Kernel_approx::Compute_squared_radius_3         Approx_squared_radius;
   typedef typename Kernel_exact::Compute_squared_radius_3          Exact_squared_radius;
 };
-  
-  
+
+
 //weighted case
 template <class Input_traits,class Kernel_input,class Kernel_approx,class Kernel_exact>
 struct Types_for_alpha_nt_3< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_approx,Kernel_exact>
@@ -113,7 +113,7 @@ struct Types_for_alpha_nt_3< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_a
   typedef typename Kernel_approx::Weighted_point_3 Approx_point;
   typedef typename Kernel_exact::Weighted_point_3  Exact_point;
   typedef typename Input_traits::Weighted_point_3  Input_point;
-//Constructions 
+//Constructions
   typedef typename Kernel_approx::Compute_squared_radius_smallest_orthogonal_sphere_3           Approx_squared_radius;
   typedef typename Kernel_exact::Compute_squared_radius_smallest_orthogonal_sphere_3            Exact_squared_radius;
 };
@@ -129,17 +129,17 @@ class Lazy_alpha_nt_3{
   typedef CGAL::Simple_cartesian<NT_exact>                                                      Kernel_exact;
   typedef typename Kernel_traits<typename Input_traits::Point_3>::Kernel   Kernel_input;
 
-//Helper class for weighted and non-weighted case  
-  typedef Types_for_alpha_nt_3<Weighted_tag,Input_traits,Kernel_input,Kernel_approx,Kernel_exact> Types;  
-  
+//Helper class for weighted and non-weighted case
+  typedef Types_for_alpha_nt_3<Weighted_tag,Input_traits,Kernel_input,Kernel_approx,Kernel_exact> Types;
+
 //Converters
   typedef typename Types::To_approx                                                             To_approx;
   typedef typename Types::To_exact                                                              To_exact;
- 
+
 //Constructions class
   typedef typename Types::Approx_squared_radius                                                 Approx_squared_radius;
   typedef typename Types::Exact_squared_radius                                                  Exact_squared_radius;
-  
+
 //Point
   typedef typename Types::Approx_point                                                          Approx_point;
   typedef typename Types::Exact_point                                                           Exact_point;
@@ -154,7 +154,7 @@ class Lazy_alpha_nt_3{
     To_approx converter;
     return converter(wp);
   }
-  
+
   Exact_point to_exact(const Input_point& wp) const
   {
     // The traits class' Point_3 must be convertible using the Cartesian converter
@@ -165,7 +165,7 @@ class Lazy_alpha_nt_3{
     return converter(wp);
   }
 
-//members  
+//members
   //the members can be updated when calling method exact()
   mutable boost::optional<NT_exact> exact_;
   mutable NT_approx approx_;
@@ -217,7 +217,7 @@ public:
         CGAL_assertion(false);
     }
   }
-  
+
   void set_approx(){
     switch (data().nbpts){
       case 1:
@@ -234,7 +234,7 @@ public:
       break;
       default:
         CGAL_assertion(false);
-    }    
+    }
   }
 
   const NT_exact& exact() const {
@@ -248,7 +248,7 @@ public:
   const NT_approx& approx() const{
     return approx_;
   }
-//Constructors  
+//Constructors
   Lazy_alpha_nt_3()
    : exact_(Exact_nt(0)),approx_(0)
   {
@@ -258,7 +258,7 @@ public:
     data().p2=NULL;
     data().p3=NULL;
   }
-  
+
   Lazy_alpha_nt_3(double d)
    : exact_(Exact_nt(d)),approx_(d)
   {
@@ -268,7 +268,7 @@ public:
     data().p2=NULL;
     data().p3=NULL;
   }
-  
+
   Lazy_alpha_nt_3(const Input_point& wp1)
   {
     data().nbpts=1;
@@ -314,7 +314,7 @@ public:
     data().p3=&wp4;
     set_approx();
   }
-    
+
   #define CGAL_LANT_COMPARE_FUNCTIONS(CMP) \
   bool \
   operator CMP (const Lazy_alpha_nt_3<Input_traits,mode,Weighted_tag> &other) const \
@@ -333,7 +333,7 @@ public:
   CGAL_LANT_COMPARE_FUNCTIONS(==)
   CGAL_LANT_COMPARE_FUNCTIONS(!=)
 
-  #undef CGAL_LANT_COMPARE_FUNCTIONS  
+  #undef CGAL_LANT_COMPARE_FUNCTIONS
 };
 
 template<class Input_traits, bool mode, class Weighted_tag>
@@ -341,7 +341,7 @@ std::ostream&
 operator<< (std::ostream& os,const Lazy_alpha_nt_3<Input_traits,mode,Weighted_tag>& a){
   return os << ::CGAL::to_double(a.approx());
 }
-  
+
 //small class to select predicate in weighted and unweighted case
 template <class GeomTraits,class Weighted_tag>
 struct iCompute_squared_radius_3;
@@ -368,22 +368,22 @@ struct iCompute_squared_radius_3<GeomTraits,Tag_true>
 
 template <class Type_of_alpha,class Point>
 struct Lazy_compute_squared_radius_3 {
-  Type_of_alpha operator() (const Point& p, 
-                 const Point& q , 
-                 const Point& r, 
+  Type_of_alpha operator() (const Point& p,
+                 const Point& q ,
+                 const Point& r,
                  const Point& s)
   {return Type_of_alpha(p,q,r,s);}
 
-  Type_of_alpha operator() ( const Point& p, 
-                  const Point& q , 
+  Type_of_alpha operator() ( const Point& p,
+                  const Point& q ,
                   const Point& r)
   {return Type_of_alpha(p,q,r); }
 
-  Type_of_alpha operator() (const Point& p, 
+  Type_of_alpha operator() (const Point& p,
                  const Point& q )
   {return Type_of_alpha(p,q); }
 
-  Type_of_alpha operator() (const Point& p) 
+  Type_of_alpha operator() (const Point& p)
   {return Type_of_alpha(p);}
 };
 
@@ -405,7 +405,7 @@ struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Weighted_tag>
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Point_3> Functor;
   struct Compute_squared_radius_3{
     template<class As>
-    Functor operator()(const As&){return Functor();}    
+    Functor operator()(const As&){return Functor();}
   };
 };
 
@@ -416,7 +416,7 @@ struct Alpha_nt_selector_impl_3<GeomTraits,Tag_true,Tag_true>
   typedef Lazy_compute_squared_radius_3<Type_of_alpha,typename GeomTraits::Weighted_point_3> Functor;
   struct Compute_squared_radius_3{
     template<class As>
-    Functor operator()(const As&){return Functor();}    
+    Functor operator()(const As&){return Functor();}
   };
 };
 

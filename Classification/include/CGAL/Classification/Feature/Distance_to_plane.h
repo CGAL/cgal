@@ -44,7 +44,7 @@ namespace Feature {
     plane.
 
     Its default name is "distance_to_plane".
-    
+
     \tparam PointRange model of `ConstRange`. Its iterator type
     is `RandomAccessIterator` and its value type is the key type of
     `PointMap`.
@@ -57,7 +57,7 @@ class Distance_to_plane : public Feature_base
 {
 
   typedef typename CGAL::Kernel_traits<typename PointMap::value_type>::Kernel Kernel;
-  
+
 #ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
   std::vector<float> distance_to_plane_feature;
 #else
@@ -65,7 +65,7 @@ class Distance_to_plane : public Feature_base
   PointMap point_map;
   const Local_eigen_analysis& eigen;
 #endif
-  
+
 public:
   /*!
     \brief Constructs the feature.
@@ -82,7 +82,7 @@ public:
 #endif
   {
     this->set_name ("distance_to_plane");
-#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES    
+#ifdef CGAL_CLASSIFICATION_PRECOMPUTE_FEATURES
     for(std::size_t i = 0; i < input.size(); i++)
       distance_to_plane_feature.push_back
         (CGAL::sqrt (CGAL::squared_distance (get(point_map, *(input.begin()+i)), eigen.plane<Kernel>(i))));
@@ -106,7 +106,7 @@ public:
 } // namespace Feature
 
 } // namespace Classification
-  
+
 } // namespace CGAL
 
 #endif // CGAL_CLASSIFICATION_FEATURE_DISTANCE_TO_PLANE_H

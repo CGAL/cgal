@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -86,7 +86,7 @@ protected: // --- PROTECTED TYPES ---
       return false;
     }
   };
-  
+
   typedef CGAL::Double_map<Face_handle, Quality, Face_compare> Bad_faces;
 
 protected:
@@ -103,7 +103,7 @@ protected:
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_faces_base(Tr& t, Criteria& criteria_, Previous& prev) 
+  Refine_faces_base(Tr& t, Criteria& criteria_, Previous& prev)
     : Triangulation_traits(t), criteria(criteria_), previous(prev)
   {
   }
@@ -120,17 +120,17 @@ public:
 #endif // CGAL_MESH_2_DEBUG_BAD_FACES
 
     for(typename Tr::Finite_faces_iterator fit =
-	  triangulation_ref_impl().finite_faces_begin();
+          triangulation_ref_impl().finite_faces_begin();
         fit != triangulation_ref_impl().finite_faces_end();
         ++fit)
     {
       if( fit->is_in_domain() )
-	{
-	  Quality q;
-	  Mesh_2::Face_badness badness = is_bad(fit, q);
-	  if( badness != Mesh_2::NOT_BAD )
-	    push_in_bad_faces(fit, q);
-	}
+        {
+          Quality q;
+          Mesh_2::Face_badness badness = is_bad(fit, q);
+          if( badness != Mesh_2::NOT_BAD )
+            push_in_bad_faces(fit, q);
+        }
     }
   }
 
@@ -146,7 +146,7 @@ public:
       get_conflicts_and_boundary(p,
                                  std::back_inserter(zone.faces),
                                  std::back_inserter(zone.boundary_edges),
-				 fh
+                                 fh
                                  );
 #ifdef CGAL_MESH_2_DEBUG_CONFLICTS_ZONE
     std::cerr << "get_conflicts_and_boundary(" << p << "):" << std::endl
@@ -193,13 +193,13 @@ public:
   /** \todo ?? */
   void before_conflicts_impl(const Face_handle&, const Point&)
   { /// @todo modularize
-    previous.set_imperative_refinement(current_badness == 
-				       Mesh_2::IMPERATIVELY_BAD);
+    previous.set_imperative_refinement(current_badness ==
+                                       Mesh_2::IMPERATIVELY_BAD);
   }
 
   /** Remove the conflicting faces from the bad faces map. */
   void before_insertion_impl(const Face_handle&, const Point&,
-			     Zone& zone)
+                             Zone& zone)
   {
     /** @todo Perhaps this function is useless. */
     for(typename Zone::Faces_iterator fh_it = zone.faces.begin();
@@ -218,7 +218,7 @@ public:
 #ifdef CGAL_MESH_2_VERBOSE
     std::cerr << "*";
 #endif
-    typename Tr::Face_circulator fc = 
+    typename Tr::Face_circulator fc =
       triangulation_ref_impl().incident_faces(v), fcbegin(fc);
     do {
       fc->set_in_domain(true);
@@ -272,7 +272,7 @@ public:
   }
 
 }; // end class Refine_faces_base
-  
+
 // --- PRIVATE MEMBER FUNCTIONS ---
 
 template <typename Tr, typename Criteria, typename Previous>
@@ -319,12 +319,12 @@ compute_new_bad_faces(Vertex_handle v)
   do {
     if(!triangulation_ref_impl().is_infinite(fc))
       if( fc->is_in_domain() )
-	{
-	  Quality q;
-	  Mesh_2::Face_badness badness = is_bad(fc, q);
-	  if( badness != Mesh_2::NOT_BAD )
-	    push_in_bad_faces(fc, q);
-	}
+        {
+          Quality q;
+          Mesh_2::Face_badness badness = is_bad(fc, q);
+          if( badness != Mesh_2::NOT_BAD )
+            push_in_bad_faces(fc, q);
+        }
     fc++;
   } while(fc!=fcbegin);
 }
@@ -362,12 +362,12 @@ is_bad(Quality q) const
     struct Refine_faces_types
     {
       typedef Mesher_level <
-	Tr,
+        Tr,
         Self,
         typename Tr::Face_handle,
         Previous,
-	Triangulation_mesher_level_traits_2<Tr>
-	>
+        Triangulation_mesher_level_traits_2<Tr>
+        >
       Faces_mesher_level;
     }; // end Refine_faces_types
   } // end namespace details
@@ -376,9 +376,9 @@ template <typename Tr,
           typename Criteria,
           typename Previous,
           typename Base = Refine_faces_base<Tr, Criteria, Previous> >
-class Refine_faces : 
-  public Base, 
-  public details::Refine_faces_types<Tr, 
+class Refine_faces :
+  public Base,
+  public details::Refine_faces_types<Tr,
     Refine_faces<Tr, Criteria, Previous, Base>,
     Previous>::Faces_mesher_level
 {
@@ -432,14 +432,14 @@ public:
     struct Output_bad_face {
       std::string operator()(typename Tr::Face_handle fh)
       {
-	std::stringstream str;
-	
-	str << "("
-	    << fh->vertex(0)->point() << ", "
+        std::stringstream str;
+
+        str << "("
+            << fh->vertex(0)->point() << ", "
             << fh->vertex(1)->point() << ", "
             << fh->vertex(2)->point()
-	    << ")";
-	return str.str();
+            << ")";
+        return str.str();
       }
     };
 
@@ -464,7 +464,7 @@ public:
 
           return false;
         }
-    return true;  
+    return true;
   }
 
 }; // end Refine_faces

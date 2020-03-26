@@ -106,7 +106,7 @@ boost::totally_ordered<Algebraic_1<Polynomial_,
         }
         // XXX: This implementation assumes that the bound type is Gmpfr
         // and that T can be exactly converted to Gmpq. This constructor
-        // can handle types such as int, unsigned and long. 
+        // can handle types such as int, unsigned and long.
         template <class T>
         Algebraic_1(const T &t){
                 typedef typename Ptraits::Shift         shift;

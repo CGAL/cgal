@@ -133,7 +133,7 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
   CGAL::pca_estimate_normals<Concurrency_tag>
     (points, nb_neighbors_pca_normals,
      CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
-                             
+
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -157,8 +157,8 @@ bool run_jet_estimate_normals(PointList& points, // input points + output normal
 
   CGAL::jet_estimate_normals<Concurrency_tag>
     (points, nb_neighbors_jet_fitting_normals,
-     CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type()))); 
-                             
+     CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
+
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -244,10 +244,10 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
   std::cerr << "Orients Normals with a Minimum Spanning Tree (k="<< nb_neighbors_mst << ")...\n";
   CGAL::Timer task_timer; task_timer.start();
 
-  PointList::iterator unoriented_points_begin = 
+  PointList::iterator unoriented_points_begin =
     CGAL::mst_orient_normals(points, nb_neighbors_mst,
       CGAL::parameters::normal_map(CGAL::make_normal_of_point_with_normal_map(PointList::value_type())));
-                             
+
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
@@ -315,7 +315,7 @@ int main(int argc, char * argv[])
     if (extension == ".off" || extension == ".OFF")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && 
+      success = stream &&
                 CGAL::read_off_points(stream,
                                       std::back_inserter(points),
                                       CGAL::parameters::normal_map
@@ -327,7 +327,7 @@ int main(int argc, char * argv[])
              extension == ".pwn" || extension == ".PWN")
     {
       std::ifstream stream(input_filename.c_str());
-      success = stream && 
+      success = stream &&
                 CGAL::read_xyz_points(stream,
                                       std::back_inserter(points),
                                       CGAL::parameters::normal_map
@@ -360,7 +360,7 @@ int main(int argc, char * argv[])
     // Copy original normals
     //***************************************
 
-    std::vector<Vector> original_normals; 
+    std::vector<Vector> original_normals;
     bool points_have_original_normals = (points.begin()->normal() != CGAL::NULL_VECTOR);
     if ( points_have_original_normals )
     {

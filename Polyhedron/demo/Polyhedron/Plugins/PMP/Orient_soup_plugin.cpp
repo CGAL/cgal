@@ -17,7 +17,7 @@
 #include <CGAL/Three/Three.h>
 #include "Messages_interface.h"
 using namespace CGAL::Three;
-class Polyhedron_demo_orient_soup_plugin : 
+class Polyhedron_demo_orient_soup_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
@@ -34,7 +34,7 @@ public:
       if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;
       else
-        if (action==actionShuffle && 
+        if (action==actionShuffle &&
             qobject_cast<Scene_surface_mesh_item*>(scene->item(index))
             )
           return true;
@@ -56,7 +56,7 @@ private:
                      const CGAL::Three::Scene_interface::Item_id& index);
   void getNMPoints(std::set<std::size_t> &vertices_to_duplicate,
       Scene_polygon_soup_item* item);
-  
+
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QMainWindow* mw;
@@ -222,7 +222,7 @@ void Polyhedron_demo_orient_soup_plugin::apply_shuffle( Item* root_item,
 void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
+
   Scene_polygon_soup_item* item =
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
@@ -236,9 +236,9 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 }
 void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
 {
-  
+
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  
+
   Scene_polygon_soup_item* item =
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
@@ -263,13 +263,13 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
       }
       points->setName(QString("Non Manifold Vertices of %1").arg(item->name()));
           points->setColor(QColor(Qt::red));
-          
+
           scene->addItem(points);
     }
     Polygon_soup::Edges nm_edges = item->non_manifold_edges();
     if(!nm_edges.empty())
     {
-      Scene_polylines_item* poly = 
+      Scene_polylines_item* poly =
           new Scene_polylines_item();
       BOOST_FOREACH(Polygon_soup::Edge edge, nm_edges)
       {
@@ -281,7 +281,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
       }
       poly->setName(QString("Non Manifold Edges of %1").arg(item->name()));
       poly->setColor(QColor(Qt::red));
-      
+
       scene->addItem(poly);
       items_created = true;
     }
@@ -292,7 +292,7 @@ void Polyhedron_demo_orient_soup_plugin::createPointsAndPolyline()
     QApplication::restoreOverrideCursor();
     if(!items_created)
       QMessageBox::information(mw, "Nothing Non-manifold", "No non-manifold edge nor vertex was found.");
-  }  
+  }
 }
 
 void Polyhedron_demo_orient_soup_plugin::getNMPoints(
@@ -300,15 +300,15 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
     Scene_polygon_soup_item* item)
 {
   typedef std::pair<std::size_t, std::size_t>                              V_ID_pair;
-  typedef CGAL::Polygon_mesh_processing::internal::Polygon_soup_orienter<Polygon_soup::Points, 
+  typedef CGAL::Polygon_mesh_processing::internal::Polygon_soup_orienter<Polygon_soup::Points,
       Polygon_soup::Polygons> PSO;
   typedef PSO::Edge_map Edge_map;
   typedef std::set<V_ID_pair>                                              Marked_edges;
-      
+
   Edge_map edges;
   Marked_edges m_edges;
   PSO::fill_edge_map(edges, m_edges, item->polygons());
-  
+
   // for each vertex, indicates the list of polygon containing it
   std::vector< std::vector<std::size_t> > incident_polygons_per_vertex(item->points().size());
   std::size_t nb_polygons=item->polygons().size();
@@ -319,7 +319,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
   }
 
   std::size_t nbv = item->points().size();
-  
+
   for (std::size_t v_id = 0; v_id < nbv; ++v_id)
   {
     const std::vector< std::size_t >& incident_polygons = incident_polygons_per_vertex[v_id];
@@ -337,7 +337,7 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
         vertices_to_duplicate.insert(v_id);
       }
 
-      
+
       std::size_t nbv = item->polygons()[p_id].size(), pvid=0;
       for (; pvid!=nbv; ++pvid)
         if (v_id==item->polygons()[p_id][pvid]) break;
@@ -370,9 +370,9 @@ void Polyhedron_demo_orient_soup_plugin::getNMPoints(
       first_pass=false;
     }
   }
-  
+
   //remove vertices already in NM edges
-  //check edges of p_id. 
+  //check edges of p_id.
   BOOST_FOREACH(Scene_polygon_soup_item::Edge edge, item->non_manifold_edges())
   {
     vertices_to_duplicate.erase(edge[0]);

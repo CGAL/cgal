@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
@@ -43,7 +43,7 @@ namespace Qt {
 
 template <typename T>
 class SegmentDelaunayGraphGraphicsItem : public GraphicsItem
-{ 
+{
   typedef typename T::Geom_traits Geom_traits;
   typedef typename T::Point_2 Point_2;
   typedef typename Kernel_traits<Point_2> ::Kernel Kern;
@@ -63,7 +63,7 @@ public:
       voronoi_pen(::Qt::blue, 0)
   {
   }
-  
+
 
   void updateBoundingBox();
 
@@ -71,9 +71,9 @@ public:
 
 
   QRectF boundingRect() const;
- 
+
  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
- 
+
   const QPen& verticesPen() const
   {
     return vertices_pen;
@@ -117,7 +117,7 @@ protected:
 };
 
 template <typename T>
-void 
+void
 SegmentDelaunayGraphGraphicsItem<T>::drawDualEdge(QPainter * /*painter*/, typename T::Edge e)
 {
    CGAL_precondition( ! t->is_infinite(e) );
@@ -141,7 +141,7 @@ SegmentDelaunayGraphGraphicsItem<T>::drawDualEdge(QPainter * /*painter*/, typena
 
 
 template <typename T>
-void 
+void
 SegmentDelaunayGraphGraphicsItem<T>::drawAll(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
   QRectF rect = option->exposedRect;
@@ -156,11 +156,11 @@ SegmentDelaunayGraphGraphicsItem<T>::drawAll(QPainter *painter, const QStyleOpti
     m_painter->setPen(this->segmentPen());
       typename T::Finite_vertices_iterator vit;
       for (vit = t->finite_vertices_begin();
-	   vit != t->finite_vertices_end(); ++vit) {
-	typename T::Site_2 s = vit->site();
-	if ( s.is_segment() ) {
-	  painterostream << s.segment();
-	}
+           vit != t->finite_vertices_end(); ++vit) {
+        typename T::Site_2 s = vit->site();
+        if ( s.is_segment() ) {
+          painterostream << s.segment();
+        }
       }
     }
     {
@@ -170,17 +170,17 @@ SegmentDelaunayGraphGraphicsItem<T>::drawAll(QPainter *painter, const QStyleOpti
     Converter<Kern> convert;
       typename T::Finite_vertices_iterator vit;
       for (vit = t->finite_vertices_begin();
-	   vit != t->finite_vertices_end(); ++vit) {
-	typename T::Site_2 s = vit->site();
-	if ( s.is_input() ) {
-	  //*widget << CGAL::RED;
-	} else {
-	  //*widget << CGAL::YELLOW;
-	}
-	if ( s.is_point() ) {
+           vit != t->finite_vertices_end(); ++vit) {
+        typename T::Site_2 s = vit->site();
+        if ( s.is_input() ) {
+          //*widget << CGAL::RED;
+        } else {
+          //*widget << CGAL::YELLOW;
+        }
+        if ( s.is_point() ) {
           QPointF point = matrix.map(convert(s.point()));
           m_painter->drawPoint(point);
-	}
+        }
       }
     }
 
@@ -188,7 +188,7 @@ SegmentDelaunayGraphGraphicsItem<T>::drawAll(QPainter *painter, const QStyleOpti
 
 /*
 template <typename T>
-void 
+void
 SegmentDelaunayGraphGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
   if(visibleFacesInDomain()) {
@@ -205,7 +205,7 @@ SegmentDelaunayGraphGraphicsItem<T>::operator()(typename T::Face_handle fh)
 
 
 template <typename T>
-QRectF 
+QRectF
 SegmentDelaunayGraphGraphicsItem<T>::boundingRect() const
 {
 
@@ -215,7 +215,7 @@ SegmentDelaunayGraphGraphicsItem<T>::boundingRect() const
 
 
 template <typename T>
-void 
+void
 SegmentDelaunayGraphGraphicsItem<T>::modelChanged()
 {
   if((t->number_of_vertices() == 0) ){
@@ -227,7 +227,7 @@ SegmentDelaunayGraphGraphicsItem<T>::modelChanged()
 }
 
 template <typename T>
-void 
+void
 SegmentDelaunayGraphGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
@@ -242,8 +242,8 @@ SegmentDelaunayGraphGraphicsItem<T>::updateBoundingBox()
   /*
   if(t->dimension() <2){
     for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-	it != t->finite_vertices_end();
-	++it){
+        it != t->finite_vertices_end();
+        ++it){
       bb = bb + it->point().bbox();
     }
   } else {
@@ -264,8 +264,8 @@ SegmentDelaunayGraphGraphicsItem<T>::updateBoundingBox()
 
 
 template <typename T>
-void 
-SegmentDelaunayGraphGraphicsItem<T>::paint(QPainter *painter, 
+void
+SegmentDelaunayGraphGraphicsItem<T>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * /*widget*/)
 {

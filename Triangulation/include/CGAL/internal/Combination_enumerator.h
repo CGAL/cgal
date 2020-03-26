@@ -53,7 +53,7 @@ public:
         CGAL_assertion_msg( 1 <= k && k <= ( max - min + 1 ), "wrong value of k");
         init();
     }
-    
+
     Combination_enumerator(const Combination_enumerator & c)
     : combi_(c.combi_), k_(c.k_), min_(c.min_), max_(c.max_), max_at_pos_0_(c.max_at_pos_0_)
     {}

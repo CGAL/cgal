@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -58,26 +58,26 @@ public:
   Orientation operator()(const Point_3 &p, const Point_3 &q, const Point_3 &r) const
   {
       return opti_coplanar_orientationC3(
-	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
-	    to_double(q.x()), to_double(q.y()), to_double(q.z()),
-	    to_double(r.x()), to_double(r.y()), to_double(r.z()));
+            to_double(p.x()), to_double(p.y()), to_double(p.z()),
+            to_double(q.x()), to_double(q.y()), to_double(q.z()),
+            to_double(r.x()), to_double(r.y()), to_double(r.z()));
   }
 
   Orientation operator()(const Point_3 &p, const Point_3 &q,
                          const Point_3 &r, const Point_3 &s) const
   {
       return opti_coplanar_orientationC3(
-	    to_double(p.x()), to_double(p.y()), to_double(p.z()),
-	    to_double(q.x()), to_double(q.y()), to_double(q.z()),
-	    to_double(r.x()), to_double(r.y()), to_double(r.z()),
-	    to_double(s.x()), to_double(s.y()), to_double(s.z()));
+            to_double(p.x()), to_double(p.y()), to_double(p.z()),
+            to_double(q.x()), to_double(q.y()), to_double(q.z()),
+            to_double(r.x()), to_double(r.y()), to_double(r.z()),
+            to_double(s.x()), to_double(s.y()), to_double(s.z()));
   }
 
 private:
   Orientation
   opti_coplanar_orientationC3(double px, double py, double pz,
                               double qx, double qy, double qz,
-		              double rx, double ry, double rz) const
+                              double rx, double ry, double rz) const
   {
       CGAL_PROFILER("Coplanar_orientation_3 #1 calls");
 
@@ -100,22 +100,22 @@ private:
   Orientation
   opti_coplanar_orientationC3(double px, double py, double pz,
                               double qx, double qy, double qz,
-		              double rx, double ry, double rz,
-		              double sx, double sy, double sz) const
+                              double rx, double ry, double rz,
+                              double sx, double sy, double sz) const
   {
       CGAL_PROFILER("Coplanar_orientation_3 #2 calls");
 
       Orientation oxy_pqr = orient_2d(px,py,qx,qy,rx,ry);
       if (oxy_pqr != COLLINEAR)
           return Orientation( oxy_pqr *
-		              orient_2d(px,py,qx,qy,sx,sy));
+                              orient_2d(px,py,qx,qy,sx,sy));
 
       CGAL_PROFILER("Coplanar_orientation_3 #2 step2");
 
       Orientation oyz_pqr = orient_2d(py,pz,qy,qz,ry,rz);
       if (oyz_pqr != COLLINEAR)
           return Orientation( oyz_pqr *
-		              orient_2d(py,pz,qy,qz,sy,sz));
+                              orient_2d(py,pz,qy,qz,sy,sz));
 
       CGAL_PROFILER("Coplanar_orientation_3 #2 step3");
 

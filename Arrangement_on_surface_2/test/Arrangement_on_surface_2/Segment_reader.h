@@ -27,15 +27,15 @@ public:
     }
     int count = 0;
     inp >> count;
-	//std::cout << "count ="<<count <<std::endl;    
+        //std::cout << "count ="<<count <<std::endl;
 
     NT    x1, y1, x2, y2;
     int   i;
 
     for (i = 0; i < count; i++) {
       inp >> x1 >> y1 >> x2 >> y2;
-	  //std::cout << "x1 ="<<x1<< "x2 ="<<x2<< "y1 ="<<y1<< "y2 ="<<y2<<std::endl;
-       
+          //std::cout << "x1 ="<<x1<< "x2 ="<<x2<< "y1 ="<<y1<< "y2 ="<<y2<<std::endl;
+
       Point_2 p1(x1, y1);
       Point_2 p2(x2, y2);
 
@@ -47,7 +47,7 @@ public:
 
       if (i == 0)
         bbox = curve_bbox;
-      else 
+      else
         bbox = bbox + curve_bbox;
     }
     inp.close();

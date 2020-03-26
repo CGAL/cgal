@@ -75,7 +75,7 @@ struct Counter {
       std::cerr << "Counter reached " << N << std::endl;
     }
   }
-  
+
 };
 
 struct InsertVisitor {
@@ -117,7 +117,7 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-      
+
       return EXIT_FAILURE;
     }
 
@@ -234,10 +234,10 @@ int main(int argc, char * argv[])
 
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
 
-    
+
     Counter counter(std::distance(points.begin(), points.end()));
     InsertVisitor visitor(counter) ;
-    
+
 
     //***************************************
     // Computes implicit function
@@ -260,14 +260,14 @@ int main(int argc, char * argv[])
       {
         std::cerr << "Use Eigen 3\n";
         CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_symmetric_matrix<double>::EigenType> > solver;
-        if ( ! function.compute_implicit_function(solver, visitor, 
+        if ( ! function.compute_implicit_function(solver, visitor,
                                                 approximation_ratio,
                                                 average_spacing_ratio) )
         {
           std::cerr << "Error: cannot compute implicit function" << std::endl;
           return EXIT_FAILURE;
         }
-      }    
+      }
       else
       {
         std::cerr << "Error: invalid solver " << solver_name << "\n";
@@ -311,7 +311,7 @@ int main(int argc, char * argv[])
     FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines the implicit surface: requires defining a
-  	// conservative bounding sphere centered at inner point.
+          // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,

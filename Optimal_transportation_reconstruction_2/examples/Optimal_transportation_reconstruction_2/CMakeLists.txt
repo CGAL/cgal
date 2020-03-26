@@ -20,8 +20,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "otr2_mass_example.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

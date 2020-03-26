@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -123,7 +123,7 @@ namespace Internal {
 
     Site operator()(const Node& x) const {
       if ( boost::tuples::get<2>(x) /*x.third*/ ) { // it is a point
-	return Site::construct_site_2( *boost::tuples::get<0>(x) );
+        return Site::construct_site_2( *boost::tuples::get<0>(x) );
       }
       return Site::construct_site_2
         (*boost::tuples::get<0>(x), *boost::tuples::get<1>(x));
@@ -137,7 +137,7 @@ namespace Internal {
     Check_type_equality_for_info()
     {
       ERROR__INFO_TYPES_OF_insert_AND_Storage_traits_with_info_2_MUST_MATCH
-	(T(), U());
+        (T(), U());
     }
   };
 
@@ -159,11 +159,11 @@ class Segment_Delaunay_graph_Linf_2;
 
 
 template<class Gt,
-	 class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
-	 class D_S = Triangulation_data_structure_2 < 
+         class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
+         class D_S = Triangulation_data_structure_2 <
                 Segment_Delaunay_graph_vertex_base_2<ST>,
                 Segment_Delaunay_graph_face_base_2<Gt> >,
-	 class LTag = Tag_false >
+         class LTag = Tag_false >
 class Segment_Delaunay_graph_2
   : private Triangulation_2<
           Segment_Delaunay_graph_traits_wrapper_2<Gt>, D_S >
@@ -261,7 +261,7 @@ protected:
   struct Point_handle_less_than {
     // less than
     bool operator()(const const_Point_handle& x,
-		    const const_Point_handle& y) const {
+                    const const_Point_handle& y) const {
       return &(*x) < &(*y);
     }
   };
@@ -274,7 +274,7 @@ protected:
 public:
   typedef boost::transform_iterator<Proj_input_to_site, All_inputs_iterator>
   Input_sites_iterator;
-  
+
   typedef boost::transform_iterator<Proj_site, Finite_vertices_iterator>
   Output_sites_iterator;
 protected:
@@ -311,7 +311,7 @@ protected:
 
   // the edge list
   typedef typename
-  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Which_list<Edge,List_tag>::List 
+  CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::Which_list<Edge,List_tag>::List
   List;
 
 
@@ -329,11 +329,11 @@ protected:
 
   Vertex_triple
   insert_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-			  Vertex_handle v, const Tag_true&);
+                          Vertex_handle v, const Tag_true&);
 
   Vertex_triple
   insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-				Vertex_handle v);
+                                Vertex_handle v);
 
 private:
   // CREATION helper
@@ -361,7 +361,7 @@ public:
   // CREATION
   //---------
   Segment_Delaunay_graph_2(const Geom_traits& gt = Geom_traits(),
-			   const Storage_traits& st = Storage_traits())
+                           const Storage_traits& st = Storage_traits())
     : DG(gt), st_(st)
   {
     setup_insert_on_pointers_l2();
@@ -369,8 +369,8 @@ public:
 
   template< class Input_iterator >
   Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond,
-			   const Geom_traits& gt = Geom_traits(),
-			   const Storage_traits& st = Storage_traits())
+                           const Geom_traits& gt = Geom_traits(),
+                           const Storage_traits& st = Storage_traits())
     : DG(gt), st_(st)
   {
     setup_insert_on_pointers_l2();
@@ -447,11 +447,11 @@ public:
   }
 
   inline Finite_edges_iterator finite_edges_begin() const {
-    return DG::finite_edges_begin();    
+    return DG::finite_edges_begin();
   }
 
   inline Finite_edges_iterator finite_edges_end() const {
-    return DG::finite_edges_end();    
+    return DG::finite_edges_end();
   }
 
   inline All_faces_iterator all_faces_begin() const {
@@ -491,7 +491,7 @@ public:
   }
 
   inline Output_sites_iterator output_sites_end() const {
-    return Output_sites_iterator(finite_vertices_end());    
+    return Output_sites_iterator(finite_vertices_end());
   }
 
 public:
@@ -499,22 +499,22 @@ public:
   //------------
   inline Face_circulator
   incident_faces(Vertex_handle v,
-		 Face_handle f = Face_handle()) const {
+                 Face_handle f = Face_handle()) const {
     return DG::incident_faces(v, f);
   }
 
   inline Vertex_circulator
   incident_vertices(Vertex_handle v,
-		    Face_handle f = Face_handle()) const { 
+                    Face_handle f = Face_handle()) const {
     return DG::incident_vertices(v, f);
   }
 
   inline Edge_circulator
   incident_edges(Vertex_handle v,
-		 Face_handle f = Face_handle()) const {
+                 Face_handle f = Face_handle()) const {
     return DG::incident_edges(v, f);
   }
- 
+
 public:
   // PREDICATES
   //-----------
@@ -547,7 +547,7 @@ public:
   }
 
   template<class Input_iterator>
-  size_type insert(Input_iterator first, Input_iterator beyond,	Tag_false)
+  size_type insert(Input_iterator first, Input_iterator beyond,        Tag_false)
   {
     // do it the obvious way: insert them as they come;
     // one might think though that it might be better to first insert
@@ -755,8 +755,8 @@ protected:
   // insert a point without registering it in the input sites
   // container: useful for the hierarchy
   inline Vertex_handle insert_no_register(const Storage_site_2& ss,
-					  const Point_2& p,
-					  Vertex_handle vnear) {
+                                          const Point_2& p,
+                                          Vertex_handle vnear) {
     return insert_point(ss, p, vnear);
   }
 
@@ -768,7 +768,7 @@ public:
     Storage_site_2 ss =
       st_.construct_storage_site_2_object()(php.first, php.second);
     Vertex_handle v = insert_segment(ss, Site_2::construct_site_2(p0, p1),
-				     Vertex_handle());
+                                     Vertex_handle());
     if ( v == Vertex_handle() ) {
       unregister_input_site(php.first, php.second);
     }
@@ -778,9 +778,9 @@ public:
   // inserting a segment whose endpoints have already been inserted
   // update input site container
   inline Vertex_handle insert(const Vertex_handle& v0,
-			      const Vertex_handle& v1) {
+                              const Vertex_handle& v1) {
     CGAL_precondition( v0->storage_site().is_point() &&
-		       v1->storage_site().is_point() );
+                       v1->storage_site().is_point() );
 
     Point_handle h0 = v0->storage_site().point();
     Point_handle h1 = v1->storage_site().point();
@@ -800,8 +800,8 @@ public:
     return v;
   }
 
-  inline Vertex_handle insert(const Point_2& p0, const Point_2& p1, 
-			      Vertex_handle vnear) {
+  inline Vertex_handle insert(const Point_2& p0, const Point_2& p1,
+                              Vertex_handle vnear) {
     // update input site container
     Point_handle_pair php = register_input_site(p0, p1);
     Storage_site_2 ss =
@@ -821,20 +821,20 @@ public:
   Vertex_handle insert(const Site_2& t, Vertex_handle vnear)
   {
     // the intended use is to unify the calls to insert(...);
-    // thus the site must be an exact one; 
+    // thus the site must be an exact one;
     CGAL_precondition( t.is_input() );
 
     // update input site container
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-	register_input_site( t.source_of_supporting_site(),
-			     t.target_of_supporting_site() );
+        register_input_site( t.source_of_supporting_site(),
+                             t.target_of_supporting_site() );
       Storage_site_2 ss =
-	st_.construct_storage_site_2_object()(php.first, php.second);
+        st_.construct_storage_site_2_object()(php.first, php.second);
       Vertex_handle v = insert_segment(ss, t, vnear);
       if ( v == Vertex_handle() ) {
-	unregister_input_site( php.first, php.second );
+        unregister_input_site( php.first, php.second );
       }
       return v;
     } else if ( t.is_point() ) {
@@ -850,8 +850,8 @@ public:
 protected:
   template<class SSite>
   inline void convert_info1(SSite& ss_trg, const SSite& ss_src,
-			    bool is_src, int,
-			    typename SSite::Has_info_tag const* = 0) const
+                            bool is_src, int,
+                            typename SSite::Has_info_tag const* = 0) const
   {
     //    std::cerr << "converting info..." << std::flush;
     typename Storage_traits::Convert_info convert = st_.convert_info_object();
@@ -862,23 +862,23 @@ protected:
 
   template<class SSite>
   inline void convert_info1(SSite& /*  ss_trg */,
-			    const SSite& /* ss_src */, bool, char) const
+                            const SSite& /* ss_src */, bool, char) const
   {
   }
 
   void convert_info(Storage_site_2& ss_trg,
-		    const Storage_site_2& ss_src, bool is_src) const {
+                    const Storage_site_2& ss_src, bool is_src) const {
     CGAL_precondition( ss_src.is_segment() && ss_trg.is_point() );
     CGAL_precondition( ss_src.is_input() && ss_trg.is_input() );
     CGAL_assertion( (is_src && same_points(ss_src.source_site(), ss_trg)) ||
-		    (!is_src && same_points(ss_src.target_site(), ss_trg))
-		    );
+                    (!is_src && same_points(ss_src.target_site(), ss_trg))
+                    );
     convert_info1(ss_trg, ss_src, is_src, 0);
   }
 
   template<class SSite>
   inline void merge_info1(Vertex_handle v, const SSite& ss, int,
-			  typename SSite::Has_info_tag const* = 0)
+                          typename SSite::Has_info_tag const* = 0)
   {
     //    std::cerr << "merging info..." << std::flush;
     Storage_site_2 ss_v = v->storage_site();
@@ -900,47 +900,47 @@ protected:
   // site with the new info
   inline void merge_info(Vertex_handle v, const Storage_site_2& ss)  {
     CGAL_precondition( (v->storage_site().is_segment() &&
-			ss.is_segment() &&
-			same_segments(v->site(), ss.site())) ||
-		       (v->storage_site().is_point() &&
-			ss.is_point() &&
-			same_points(v->site(), ss.site())) ||
-    		       (v->storage_site().is_point() &&	ss.is_segment())
-    		       );
+                        ss.is_segment() &&
+                        same_segments(v->site(), ss.site())) ||
+                       (v->storage_site().is_point() &&
+                        ss.is_point() &&
+                        same_points(v->site(), ss.site())) ||
+                           (v->storage_site().is_point() &&        ss.is_segment())
+                           );
     merge_info1(v, ss, 0);
   }
 
 public:
   template<typename Info_t>
   inline Vertex_handle insert(const Site_2& t,
-			      const Info_t& info) {
+                              const Info_t& info) {
     return insert(t, info, Vertex_handle());
   }
 
   template<typename Info_t>
   Vertex_handle insert(const Site_2& t,
-		       const Info_t& info,
-		       Vertex_handle vnear)
+                       const Info_t& info,
+                       Vertex_handle vnear)
   {
     typedef typename Storage_traits::Info Info;
     CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::
       Check_type_equality_for_info<Info_t, Info>();
     // the intended use is to unify the calls to insert(...);
-    // thus the site must be an exact one; 
+    // thus the site must be an exact one;
     CGAL_precondition( t.is_input() );
 
     // update input site container
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-	register_input_site( t.source_of_supporting_site(),
-			     t.target_of_supporting_site() );
+        register_input_site( t.source_of_supporting_site(),
+                             t.target_of_supporting_site() );
       Storage_site_2 ss =
-	st_.construct_storage_site_2_object()(php.first, php.second);
+        st_.construct_storage_site_2_object()(php.first, php.second);
       ss.set_info(info);
       Vertex_handle v = insert_segment(ss, t, vnear);
       if ( v == Vertex_handle() ) {
-	unregister_input_site( php.first, php.second );
+        unregister_input_site( php.first, php.second );
       }
       return v;
     } else if ( t.is_point() ) {
@@ -959,15 +959,15 @@ public:
 protected:
   bool is_star(const Vertex_handle& v) const;
   bool is_linear_chain(const Vertex_handle& v0, const Vertex_handle& v1,
-		       const Vertex_handle& v2) const;
+                       const Vertex_handle& v2) const;
   bool is_flippable(const Face_handle& f, int i) const;
 
   void minimize_degree(const Vertex_handle& v);
 
   // this method does not really do the job as intended, i.e., for removal
   void equalize_degrees(const Vertex_handle& v, Self& small_d,
-			std::map<Vertex_handle,Vertex_handle>& vmap,
-			List& l) const;
+                        std::map<Vertex_handle,Vertex_handle>& vmap,
+                        List& l) const;
 
   void expand_conflict_region_remove(const Face_handle& in_f,
                                      const Site_2& t,
@@ -976,8 +976,8 @@ protected:
                                      Sign_map& sign_map);
 
   void find_conflict_region_remove(const Vertex_handle& v,
-				   const Vertex_handle& vnearest,
-				   List& l, Face_map& fm, Sign_map& vm);
+                                   const Vertex_handle& vnearest,
+                                   List& l, Face_map& fm, Sign_map& vm);
 
   template<class OutputItFaces>
   OutputItFaces get_faces(const List& l, OutputItFaces fit) const
@@ -995,8 +995,8 @@ protected:
 
   template<class OutputItFaces>
   OutputItFaces get_faces(const List& l, Face_handle f,
-			  std::map<Face_handle,bool>& fmap,
-			  OutputItFaces fit) const
+                          std::map<Face_handle,bool>& fmap,
+                          OutputItFaces fit) const
   {
     // if the face has been visited return
     if ( fmap.find(f) != fmap.end() ) { return fit; }
@@ -1012,7 +1012,7 @@ protected:
       Face_handle n = f->neighbor(i);
       Edge ee(n, n->index( this->_tds.mirror_vertex(f,i) ));
       if ( !l.is_in_list(ee) ) {
-	fit = get_faces(l, n, fmap, fit);
+        fit = get_faces(l, n, fmap, fit);
       }
     }
     return fit;
@@ -1021,7 +1021,7 @@ protected:
   size_type count_faces(const List& l) const;
 
   void fill_hole(const Self& small_d, const Vertex_handle& v, const List& l,
-		 std::map<Vertex_handle,Vertex_handle>& vmap);
+                 std::map<Vertex_handle,Vertex_handle>& vmap);
 
   bool remove_first(const Vertex_handle& v);
   bool remove_second(const Vertex_handle& v);
@@ -1029,7 +1029,7 @@ protected:
 
   void compute_small_diagram(const Vertex_handle& v, Self& small_d) const;
   void compute_vertex_map(const Vertex_handle& v, const Self& small_d,
-			  std::map<Vertex_handle,Vertex_handle>& vmap) const;
+                          std::map<Vertex_handle,Vertex_handle>& vmap) const;
   void remove_degree_d_vertex(const Vertex_handle& v);
 
   bool remove_base(const Vertex_handle& v);
@@ -1049,11 +1049,11 @@ protected:
   }
 
   inline void unregister_input_site(const Point_handle& h1,
-				    const Point_handle& h2)
-  {   
+                                    const Point_handle& h2)
+  {
     Site_rep_2 rep(h1, h2, false);
     typename Input_sites_container::iterator it = isc_.find(rep);
-    
+
     Site_rep_2 sym_rep(h2, h1, false);
     typename Input_sites_container::iterator sym_it = isc_.find(sym_rep);
 
@@ -1089,7 +1089,7 @@ protected:
 
   inline
   Point_handle_pair register_input_site(const Point_handle& h0,
-					const Point_handle& h1)
+                                        const Point_handle& h1)
   {
     CGAL_precondition( h0 != h1 );
     Site_rep_2 rep(h0, h1, false);
@@ -1102,40 +1102,40 @@ protected:
   Vertex_handle  insert_third(const Storage_site_2& ss, const Point_2& p);
   Vertex_handle  insert_third(const Site_2& t, const Storage_site_2& ss);
   Vertex_handle  insert_third(const Storage_site_2& ss, Vertex_handle v0,
-			      Vertex_handle v1);
+                              Vertex_handle v1);
 
   Vertex_handle insert_point(const Storage_site_2& ss, const Point_2& p,
-			     Vertex_handle vnear);
+                             Vertex_handle vnear);
   Vertex_handle insert_point(const Storage_site_2& ss,
-			     const Site_2& t, Vertex_handle vnear);
+                             const Site_2& t, Vertex_handle vnear);
   Vertex_handle insert_point2(const Storage_site_2& ss,
-			      const Site_2& t, Vertex_handle vnear);
+                              const Site_2& t, Vertex_handle vnear);
 
   Vertex_handle insert_segment(const Storage_site_2& ss, const Site_2& t,
-			       Vertex_handle vnear);
+                               Vertex_handle vnear);
 
   Vertex_handle insert_segment_interior(const Site_2& t,
-					const Storage_site_2& ss,
-					Vertex_handle vnear);
+                                        const Storage_site_2& ss,
+                                        Vertex_handle vnear);
 
   template<class ITag>
   inline
   Vertex_handle insert_intersecting_segment(const Storage_site_2& ss,
-					    const Site_2& t,
-					    Vertex_handle v,
-					    ITag tag) {
+                                            const Site_2& t,
+                                            Vertex_handle v,
+                                            ITag tag) {
     return insert_intersecting_segment_with_tag(ss, t, v, tag);
   }
 
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v, Tag_false);
+                                       const Site_2& t,
+                                       Vertex_handle v, Tag_false);
 
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v, Tag_true);
+                                       const Site_2& t,
+                                       Vertex_handle v, Tag_true);
 
 
 
@@ -1147,13 +1147,13 @@ public:
   }
 
   inline Vertex_handle nearest_neighbor(const Point_2& p,
-					Vertex_handle vnear) const {
+                                        Vertex_handle vnear) const {
     return nearest_neighbor(Site_2::construct_site_2(p), vnear);
   }
 
 protected:
   Vertex_handle nearest_neighbor(const Site_2& p,
-				 Vertex_handle vnear) const;
+                                 Vertex_handle vnear) const;
 
 
 protected:
@@ -1165,17 +1165,17 @@ protected:
   typedef std::vector<Point_handle> Point_handle_vector;
 
   void file_output(std::ostream&, const Storage_site_2&,
-		   Point_handle_mapper&) const;
+                   Point_handle_mapper&) const;
 
   void file_output(std::ostream&, Point_handle_mapper&,
-		   bool print_point_container) const;
+                   bool print_point_container) const;
 
   void file_input(std::istream&, Storage_site_2&,
-		  const Point_handle_vector&, const Tag_true&) const;
+                  const Point_handle_vector&, const Tag_true&) const;
   void file_input(std::istream&, Storage_site_2&,
-		  const Point_handle_vector&, const Tag_false&) const;
+                  const Point_handle_vector&, const Tag_false&) const;
   void file_input(std::istream&, bool read_handle_vector,
-		  Point_handle_vector&);
+                  Point_handle_vector&);
 
 public:
   void file_input(std::istream& is) {
@@ -1202,7 +1202,7 @@ public:
     return str;
   }
 
-  template < class Stream > 
+  template < class Stream >
   Stream& draw_skeleton(Stream& str) const
   {
     Finite_edges_iterator eit = finite_edges_begin();
@@ -1211,13 +1211,13 @@ public:
       Site_2 q = eit->first->vertex( ccw(eit->second) )->site();
 
       bool is_endpoint_of_seg =
-	( p.is_segment() && q.is_point() &&
-	  is_endpoint_of_segment(q, p) ) ||
-	( p.is_point() && q.is_segment() &&
-	  is_endpoint_of_segment(p, q) );
+        ( p.is_segment() && q.is_point() &&
+          is_endpoint_of_segment(q, p) ) ||
+        ( p.is_point() && q.is_segment() &&
+          is_endpoint_of_segment(p, q) );
 
       if ( !is_endpoint_of_seg ) {
-	draw_dual_edge(*eit, str);
+        draw_dual_edge(*eit, str);
       }
     }
     return str;
@@ -1238,7 +1238,7 @@ public:
     Object o = primal(e);
 
     if (CGAL::assign(l, o))   str << l;
-    if (CGAL::assign(s, o))   str << s; 
+    if (CGAL::assign(s, o))   str << s;
     if (CGAL::assign(r, o))   str << r;
     if (CGAL::assign(ps, o))  ps.draw(str);
 
@@ -1288,11 +1288,11 @@ protected:
 
   Storage_site_2
   copy_storage_site(const Storage_site_2& ss_other,
-		    Handle_map& hm, const Tag_false&);
+                    Handle_map& hm, const Tag_false&);
 
   Storage_site_2
   copy_storage_site(const Storage_site_2& ss_other,
-		    Handle_map& hm, const Tag_true&);
+                    Handle_map& hm, const Tag_true&);
 
   void copy(Segment_Delaunay_graph_2& other);
   void copy(Segment_Delaunay_graph_2& other, Handle_map& hm);
@@ -1337,7 +1337,7 @@ protected:
   Edge flip(Face_handle& f, int i) {
     CGAL_precondition ( f != Face_handle() );
     CGAL_precondition (i == 0 || i == 1 || i == 2);
-    CGAL_precondition( this->dimension()==2 ); 
+    CGAL_precondition( this->dimension()==2 );
 
     CGAL_precondition( f->vertex(i) != this->_tds.mirror_vertex(f, i) );
 
@@ -1394,8 +1394,8 @@ protected:
   //------------------------------------------
   inline
   Storage_site_2 split_storage_site(const Storage_site_2& ss0,
-				    const Storage_site_2& ss1,
-				    bool first)
+                                    const Storage_site_2& ss1,
+                                    bool first)
   {
     // Split the first storage site which is a segment using the
     // second storage site which is an exact point
@@ -1416,7 +1416,7 @@ public:
   Object primal(const Edge e) const;
 
   inline Object primal(const Edge_circulator& ec) const {
-    return primal(*ec); 
+    return primal(*ec);
   }
 
   inline Object primal(const Finite_edges_iterator& ei) const {
@@ -1431,12 +1431,12 @@ public:
   inline Point_2 circumcenter(const Face_handle& f) const {
     CGAL_precondition( this->dimension()==2 || !is_infinite(f) );
     return circumcenter(f->vertex(0)->site(),
-			f->vertex(1)->site(),
-			f->vertex(2)->site());
+                        f->vertex(1)->site(),
+                        f->vertex(2)->site());
   }
 
-  inline Point_2 circumcenter(const Site_2& t0, const Site_2& t1, 
-			      const Site_2& t2) const {
+  inline Point_2 circumcenter(const Site_2& t0, const Site_2& t1,
+                              const Site_2& t2) const {
     return
     geom_traits().construct_svd_vertex_2_object()(t0, t1, t2);
   }
@@ -1474,7 +1474,7 @@ protected:
   void retriangulate_conflict_region(Vertex_handle v, List& l);
 #else
   void retriangulate_conflict_region(Vertex_handle v, List& l,
-				     Face_map& fm);
+                                     Face_map& fm);
 #endif
 
 
@@ -1564,8 +1564,8 @@ protected:
   }
 
   inline Construct_sdg_bisector_segment_2
-  construct_sdg_bisector_segment_2_object() const { 
-    return Construct_sdg_bisector_segment_2(); 
+  construct_sdg_bisector_segment_2_object() const {
+    return Construct_sdg_bisector_segment_2();
   }
 
 protected:
@@ -1585,11 +1585,11 @@ protected:
 
   inline
   bool is_endpoint_of_segment(const Storage_site_2& p,
-			      const Storage_site_2& s) const
+                              const Storage_site_2& s) const
   {
     CGAL_precondition( p.is_point() && s.is_segment() );
     return ( same_points(p, s.source_site()) ||
-	     same_points(p, s.target_site()) );
+             same_points(p, s.target_site()) );
   }
 
   inline
@@ -1604,17 +1604,17 @@ protected:
   //   ON_ORIENTED_BOUNDARY if q is on the bisector of t1 and t2
   inline
   Oriented_side side_of_bisector(const Storage_site_2 &t1,
-				 const Storage_site_2 &t2,
-				 const Storage_site_2 &q) const {
+                                 const Storage_site_2 &t2,
+                                 const Storage_site_2 &q) const {
     return
       geom_traits().oriented_side_of_bisector_2_object()(t1.site(),
-							 t2.site(),
-							 q.site());
+                                                         t2.site(),
+                                                         q.site());
   }
 
   inline
   Sign incircle(const Storage_site_2 &t1, const Storage_site_2 &t2,
-		const Storage_site_2 &t3, const Storage_site_2 &q) const {
+                const Storage_site_2 &t3, const Storage_site_2 &q) const {
 #ifdef CGAL_PROFILE_SDG_DUMP_INCIRCLE
     typedef typename Geom_traits::FT  FT;
     if ( !Algebraic_structure_traits<FT>::Is_exact::value ) {
@@ -1628,17 +1628,17 @@ protected:
     }
 #endif
     return geom_traits().vertex_conflict_2_object()(t1.site(),
-						    t2.site(),
-						    t3.site(),
-						    q.site());
+                                                    t2.site(),
+                                                    t3.site(),
+                                                    q.site());
   }
 
   inline
   Sign incircle(const Storage_site_2 &t1, const Storage_site_2 &t2,
-		const Storage_site_2 &q) const {
+                const Storage_site_2 &q) const {
     return geom_traits().vertex_conflict_2_object()(t1.site(),
-						    t2.site(),
-						    q.site());
+                                                    t2.site(),
+                                                    q.site());
   }
 
   inline
@@ -1648,10 +1648,10 @@ protected:
 
   inline
   bool finite_edge_interior(const Storage_site_2& t1,
-			    const Storage_site_2& t2,
-			    const Storage_site_2& t3,
-			    const Storage_site_2& t4,
-			    const Storage_site_2& q, Sign sgn) const {
+                            const Storage_site_2& t2,
+                            const Storage_site_2& t3,
+                            const Storage_site_2& t4,
+                            const Storage_site_2& q, Sign sgn) const {
     return
       geom_traits().finite_edge_interior_conflict_2_object()
       (t1.site(), t2.site(), t3.site(), t4.site(), q.site(), sgn);
@@ -1659,52 +1659,52 @@ protected:
 
   inline
   bool finite_edge_interior(const Face_handle& f, int i,
-			    const Storage_site_2& q, Sign sgn) const {
+                            const Storage_site_2& q, Sign sgn) const {
     CGAL_precondition( !is_infinite(f) &&
-		       !is_infinite(f->neighbor(i)) );
+                       !is_infinite(f->neighbor(i)) );
     return finite_edge_interior( f->vertex( ccw(i) )->site(),
-				 f->vertex(  cw(i) )->site(),
-				 f->vertex(     i  )->site(),
-				 this->_tds.mirror_vertex(f, i)->site(),
-				 q.site(), sgn);
+                                 f->vertex(  cw(i) )->site(),
+                                 f->vertex(     i  )->site(),
+                                 this->_tds.mirror_vertex(f, i)->site(),
+                                 q.site(), sgn);
   }
 
   inline
   bool finite_edge_interior(const Storage_site_2& t1,
-			    const Storage_site_2& t2,
-			    const Storage_site_2& t3,
-			    const Storage_site_2& q,
-			    Sign sgn) const {
+                            const Storage_site_2& t2,
+                            const Storage_site_2& t3,
+                            const Storage_site_2& q,
+                            Sign sgn) const {
     return geom_traits().finite_edge_interior_conflict_2_object()(t1.site(),
-								  t2.site(),
-								  t3.site(),
-								  q.site(),
-								  sgn);
+                                                                  t2.site(),
+                                                                  t3.site(),
+                                                                  q.site(),
+                                                                  sgn);
   }
 
   inline
   bool finite_edge_interior(const Storage_site_2& t1,
-			    const Storage_site_2& t2,
-			    const Storage_site_2& q,
-			    Sign sgn) const {
+                            const Storage_site_2& t2,
+                            const Storage_site_2& q,
+                            Sign sgn) const {
     return
       geom_traits().finite_edge_interior_conflict_2_object()(t1.site(),
-							     t2.site(),
-							     q.site(),
-							     sgn);
+                                                             t2.site(),
+                                                             q.site(),
+                                                             sgn);
   }
 
   bool finite_edge_interior(const Face_handle& f, int i,
-			    const Storage_site_2& p, Sign sgn,
-			    int j) const {
+                            const Storage_site_2& p, Sign sgn,
+                            int j) const {
     return finite_edge_interior(f, i, p.site(), sgn, j);
   }
 
   inline
   bool infinite_edge_interior(const Storage_site_2& t2,
-			      const Storage_site_2& t3,
-			      const Storage_site_2& t4,
-			      const Storage_site_2& q, Sign sgn) const {
+                              const Storage_site_2& t3,
+                              const Storage_site_2& t4,
+                              const Storage_site_2& q, Sign sgn) const {
     return
       geom_traits().infinite_edge_interior_conflict_2_object()
       (t2.site(), t3.site(), t4.site(), q.site(), sgn);
@@ -1712,20 +1712,20 @@ protected:
 
   inline
   bool infinite_edge_interior(const Face_handle& f, int i,
-			      const Storage_site_2& q, Sign sgn) const
+                              const Storage_site_2& q, Sign sgn) const
   {
     return infinite_edge_interior(f, i, q, sgn);
   }
 
   inline
   bool edge_interior(const Face_handle& f, int i,
-		     const Storage_site_2& t, Sign sgn) const {
+                     const Storage_site_2& t, Sign sgn) const {
     return edge_interior(f, i, t.site(), sgn);
   }
 
   inline
   bool edge_interior(const Edge& e,
-		     const Storage_site_2& t, Sign sgn) const {
+                     const Storage_site_2& t, Sign sgn) const {
     return edge_interior(e.first, e.second, t, sgn);
   }
 
@@ -1737,7 +1737,7 @@ protected:
 
   inline
   Arrangement_type arrangement_type(const Storage_site_2& p,
-				    const Storage_site_2& q) const {
+                                    const Storage_site_2& q) const {
     return arrangement_type(p.site(), q.site());
   }
 
@@ -1749,7 +1749,7 @@ protected:
   inline Oriented_side
   oriented_side(const Storage_site_2& s1, const Storage_site_2& s2,
                 const Storage_site_2& supp,
-		const Storage_site_2& p) const
+                const Storage_site_2& p) const
   {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return
@@ -1759,13 +1759,13 @@ protected:
 
   inline Oriented_side
   oriented_side(const Storage_site_2& s1, const Storage_site_2& s2,
-		const Storage_site_2& s3, const Storage_site_2& supp,
-		const Storage_site_2& p) const {
+                const Storage_site_2& s3, const Storage_site_2& supp,
+                const Storage_site_2& p) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return geom_traits().oriented_side_2_object()(s1.site(),
-						  s2.site(),
-						  s3.site(),
-						  supp.site(), p.site());
+                                                  s2.site(),
+                                                  s3.site(),
+                                                  supp.site(), p.site());
   }
 
 
@@ -1799,7 +1799,7 @@ protected:
   {
     CGAL_precondition( p.is_point() && s.is_segment() );
     return ( same_points(p, s.source_site()) ||
-	     same_points(p, s.target_site()) );
+             same_points(p, s.target_site()) );
   }
 
   inline
@@ -1814,13 +1814,13 @@ protected:
   //   ON_ORIENTED_BOUNDARY if q is on the bisector of t1 and t2
   inline
   Oriented_side side_of_bisector(const Site_2 &t1, const Site_2 &t2,
-				 const Site_2 &q) const {
+                                 const Site_2 &q) const {
     return geom_traits().oriented_side_of_bisector_2_object()(t1, t2, q);
   }
 
   inline
   Sign incircle(const Site_2 &t1, const Site_2 &t2,
-		const Site_2 &t3, const Site_2 &q) const {
+                const Site_2 &t3, const Site_2 &q) const {
 #ifdef CGAL_PROFILE_SDG_DUMP_INCIRCLE
     typedef typename Geom_traits::FT  FT;
     if ( !Algebraic_structure_traits<FT>::Is_exact::value ) {
@@ -1838,7 +1838,7 @@ protected:
 
   inline
   Sign incircle(const Site_2 &t1, const Site_2 &t2,
-		const Site_2 &q) const {
+                const Site_2 &q) const {
     return geom_traits().vertex_conflict_2_object()(t1, t2, q);
   }
 
@@ -1847,20 +1847,20 @@ protected:
 
   inline
   Sign incircle(const Vertex_handle& v0, const Vertex_handle& v1,
-		const Vertex_handle& v) const {
+                const Vertex_handle& v) const {
     CGAL_precondition( !is_infinite(v0) && !is_infinite(v1)
-		       && !is_infinite(v) );
+                       && !is_infinite(v) );
 
     return incircle( v0->site(), v1->site(), v->site());
   }
 
   Sign incircle(const Vertex_handle& v0, const Vertex_handle& v1,
-		const Vertex_handle& v2, const Vertex_handle& v) const;
+                const Vertex_handle& v2, const Vertex_handle& v) const;
 
   inline
   bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
-			    const Site_2& t3, const Site_2& t4,
-			    const Site_2& q,  Sign sgn) const {
+                            const Site_2& t3, const Site_2& t4,
+                            const Site_2& q,  Sign sgn) const {
     return
       geom_traits().finite_edge_interior_conflict_2_object()
       (t1,t2,t3,t4,q,sgn);
@@ -1868,54 +1868,54 @@ protected:
 
   inline
   bool finite_edge_interior(const Face_handle& f, int i,
-			    const Site_2& q, Sign sgn) const {
+                            const Site_2& q, Sign sgn) const {
     CGAL_precondition( !is_infinite(f) &&
-		       !is_infinite(f->neighbor(i)) );
+                       !is_infinite(f->neighbor(i)) );
     return finite_edge_interior( f->vertex( ccw(i) )->site(),
-				 f->vertex(  cw(i) )->site(),
-				 f->vertex(     i  )->site(),
-				 this->_tds.mirror_vertex(f, i)->site(),
-				 q, sgn);
+                                 f->vertex(  cw(i) )->site(),
+                                 f->vertex(     i  )->site(),
+                                 this->_tds.mirror_vertex(f, i)->site(),
+                                 q, sgn);
   }
 
   inline
   bool finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
-			    const Vertex_handle& v3, const Vertex_handle& v4,
-			    const Vertex_handle& v, Sign sgn) const {
+                            const Vertex_handle& v3, const Vertex_handle& v4,
+                            const Vertex_handle& v, Sign sgn) const {
     CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
-		       !is_infinite(v3) && !is_infinite(v4) &&
-		       !is_infinite(v) );
+                       !is_infinite(v3) && !is_infinite(v4) &&
+                       !is_infinite(v) );
     return finite_edge_interior( v1->site(), v2->site(),
-				 v3->site(), v4->site(),
-				 v->site(), sgn);
+                                 v3->site(), v4->site(),
+                                 v->site(), sgn);
   }
 
   inline
   bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
-			    const Site_2& t3, const Site_2& q,
-			    Sign sgn) const {
+                            const Site_2& t3, const Site_2& q,
+                            Sign sgn) const {
     return
     geom_traits().finite_edge_interior_conflict_2_object()(t1,t2,t3,q,sgn);
   }
 
   inline
   bool finite_edge_interior(const Site_2& t1, const Site_2& t2,
-			    const Site_2& q,  Sign sgn) const {
+                            const Site_2& q,  Sign sgn) const {
     return
     geom_traits().finite_edge_interior_conflict_2_object()(t1,t2,q,sgn);
   }
 
   bool finite_edge_interior(const Face_handle& f, int i,
-			    const Site_2& p, Sign sgn, int) const;
+                            const Site_2& p, Sign sgn, int) const;
 
   bool finite_edge_interior(const Vertex_handle& v1, const Vertex_handle& v2,
-			    const Vertex_handle& v3, const Vertex_handle& v4,
-			    const Vertex_handle& v, Sign, int) const;
+                            const Vertex_handle& v3, const Vertex_handle& v4,
+                            const Vertex_handle& v, Sign, int) const;
 
   inline
   bool infinite_edge_interior(const Site_2& t2, const Site_2& t3,
-			      const Site_2& t4, const Site_2& q,
-			      Sign sgn) const {
+                              const Site_2& t4, const Site_2& q,
+                              Sign sgn) const {
     return
       geom_traits().infinite_edge_interior_conflict_2_object()
       (t2,t3,t4,q,sgn);
@@ -1923,29 +1923,29 @@ protected:
 
 
   bool infinite_edge_interior(const Face_handle& f, int i,
-			      const Site_2& q, Sign sgn) const;
+                              const Site_2& q, Sign sgn) const;
 
   bool infinite_edge_interior(const Vertex_handle& v1,
-			      const Vertex_handle& v2,
-			      const Vertex_handle& v3,
-			      const Vertex_handle& v4,
-			      const Vertex_handle& v,
-			      Sign sgn) const;
+                              const Vertex_handle& v2,
+                              const Vertex_handle& v3,
+                              const Vertex_handle& v4,
+                              const Vertex_handle& v,
+                              Sign sgn) const;
 
   bool edge_interior(const Face_handle& f, int i,
-		     const Site_2& t, Sign sgn) const;
+                     const Site_2& t, Sign sgn) const;
 
   bool edge_interior(const Edge& e,
-		     const Site_2& t, Sign sgn) const {
+                     const Site_2& t, Sign sgn) const {
     return edge_interior(e.first, e.second, t, sgn);
   }
 
   bool edge_interior(const Vertex_handle& v1,
-		     const Vertex_handle& v2,
-		     const Vertex_handle& v3,
-		     const Vertex_handle& v4,
-		     const Vertex_handle& v,
-		     Sign sgn) const;
+                     const Vertex_handle& v2,
+                     const Vertex_handle& v3,
+                     const Vertex_handle& v4,
+                     const Vertex_handle& v,
+                     Sign sgn) const;
 
   inline Arrangement_type
   arrangement_type(const Site_2& t, const Vertex_handle& v) const {
@@ -1970,28 +1970,28 @@ protected:
 
   inline Oriented_side
   oriented_side(const Site_2& s1, const Site_2& s2, const Site_2& s3,
-		const Site_2& supp, const Site_2& p) const {
+                const Site_2& supp, const Site_2& p) const {
     CGAL_precondition( supp.is_segment() && p.is_point() );
     return geom_traits().oriented_side_2_object()(s1, s2, s3, supp, p);
   }
 
   bool is_degenerate_edge(const Site_2& p1,
-			  const Site_2& p2,
-			  const Site_2& p3,
-			  const Site_2& p4) const {
+                          const Site_2& p2,
+                          const Site_2& p3,
+                          const Site_2& p4) const {
     return geom_traits().is_degenerate_edge_2_object()
       (p1, p2, p3, p4);
   }
 
   bool is_degenerate_edge(const Vertex_handle& v1,
-			  const Vertex_handle& v2,
-			  const Vertex_handle& v3,
-			  const Vertex_handle& v4) const {
+                          const Vertex_handle& v2,
+                          const Vertex_handle& v3,
+                          const Vertex_handle& v4) const {
     CGAL_precondition( !is_infinite(v1) && !is_infinite(v2) &&
-		       !is_infinite(v3) && !is_infinite(v4) );
+                       !is_infinite(v3) && !is_infinite(v4) );
 
     return is_degenerate_edge(v1->site(), v2->site(),
-			      v3->site(), v4->site());
+                              v3->site(), v4->site());
   }
 
   bool is_degenerate_edge(const Face_handle& f, int i) const {
@@ -2015,7 +2015,7 @@ protected:
 
 template<class Gt, class D_S, class LTag>
 std::istream& operator>>(std::istream& is,
-			 Segment_Delaunay_graph_2<Gt,D_S,LTag>& sdg)
+                         Segment_Delaunay_graph_2<Gt,D_S,LTag>& sdg)
 {
   sdg.file_input(is);
   return is;
@@ -2023,7 +2023,7 @@ std::istream& operator>>(std::istream& is,
 
 template<class Gt, class D_S, class LTag>
 std::ostream& operator<<(std::ostream& os,
-			 const Segment_Delaunay_graph_2<Gt,D_S,LTag>& sdg)
+                         const Segment_Delaunay_graph_2<Gt,D_S,LTag>& sdg)
 {
   sdg.file_output(os);
   return os;

@@ -32,8 +32,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "deprecated_test_scene.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

@@ -29,9 +29,9 @@
 // The following lines only for MS Visual C++
 #ifdef _MSC_VER
   #pragma warning(disable: 4291) // no matching operator delete found
-  #pragma warning(disable: 4146) 
+  #pragma warning(disable: 4146)
   #pragma warning(disable: 4267)
-  #pragma warning(disable: 4244) 
+  #pragma warning(disable: 4244)
 #endif
 
 // condition preprocessor for inline function

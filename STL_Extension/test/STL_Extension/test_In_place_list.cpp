@@ -183,7 +183,7 @@ struct item : public In_place_list_base<item> {
   item( int i) : key(i) {}
   item( const item& i)
   : In_place_list_base<item>(i), key(i.key) {}
-  
+
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   item& operator=(const item& rhs)=default;
 #endif
@@ -248,18 +248,18 @@ void test_In_place_list() {
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -277,7 +277,7 @@ void test_In_place_list() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -308,7 +308,7 @@ void test_In_place_list() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -321,7 +321,7 @@ void test_In_place_list() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -341,18 +341,18 @@ void test_In_place_list() {
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -370,7 +370,7 @@ void test_In_place_list() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -408,7 +408,7 @@ void test_In_place_list() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -446,18 +446,18 @@ void test_In_place_list() {
         typedef std::iterator_traits< Const_iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Const_iterator z = Const_iterator();
         z = Const_iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -475,7 +475,7 @@ void test_In_place_list() {
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -513,7 +513,7 @@ void test_In_place_list() {
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -578,18 +578,18 @@ void test_In_place_list() {
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -607,7 +607,7 @@ void test_In_place_list() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -638,7 +638,7 @@ void test_In_place_list() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -651,7 +651,7 @@ void test_In_place_list() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -671,18 +671,18 @@ void test_In_place_list() {
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z = Iterator();
         z = Iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -700,7 +700,7 @@ void test_In_place_list() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -738,7 +738,7 @@ void test_In_place_list() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -775,18 +775,18 @@ void test_In_place_list() {
         typedef std::iterator_traits< Const_iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Const_iterator z = Const_iterator();
         z = Const_iterator(); // avoids warning with NDEBUG
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Const_iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -804,7 +804,7 @@ void test_In_place_list() {
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -842,7 +842,7 @@ void test_In_place_list() {
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -893,7 +893,7 @@ void test_In_place_list() {
     typedef CGAL::In_place_list<Cont,false> ContList;
     typedef CGAL::In_place_list<Cont,false>::iterator Iterator;
     typedef CGAL::In_place_list<Cont,false>::const_iterator Const_iterator;
-  
+
     ContList L;
     L.push_back(* new Cont(3));
     L.push_back(* new Cont(5));

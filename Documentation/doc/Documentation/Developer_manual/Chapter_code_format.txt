@@ -1,4 +1,4 @@
-/*! 
+/*!
 
 \page devman_code_format Coding Conventions
 
@@ -12,7 +12,7 @@ rules for the code format
 (Section  \ref seccode_format ), and a mandatory heading for each
 source file (Section  \ref secfile_header )
 
-\section secnaming_scheme Naming scheme 
+\section secnaming_scheme Naming scheme
 
 The \cgal naming scheme is intended to help the user
 use the library and the developer develop the
@@ -54,7 +54,7 @@ there are <I>convincing</I> reasons.
       `is_empty` instead of simply `empty` and
       `has_on_bounded_side` instead of `on_bounded_side`.
 <LI>Names of macros should begin with the prefix `CGAL_`.
-      
+
 </UL>
 
 \subsection Developer_manualGeometricobjects Geometric objects
@@ -211,7 +211,7 @@ functor followed by the suffix `_object`.For example, the function that returns 
       <TT>CGAL/Package/internal/predicates/my_pred.h</TT>.
 </UL>
 
-\section secprogramming_conventions Programming conventions 
+\section secprogramming_conventions Programming conventions
 
 The first list of items are meant as rules, <I>i.e.</I>, you should follow them.
 
@@ -300,7 +300,7 @@ in contrast to the rules of previous paragraph.
   private type can break overloading for other classes).
 </UL>
 
-\section seccode_format Code format 
+\section seccode_format Code format
 
 <UL>
 <LI>Use indentation with at least two spaces extra per level.
@@ -308,7 +308,7 @@ in contrast to the rules of previous paragraph.
 <LI>Use \cpp-style comments, <I>e.g.</I>, `//` some comment.
 </UL>
 
-\section secfile_header File header 
+\section secfile_header File header
 
 Each \cgal source file must start with a heading that allows for an easy
 identification of the file.  The file header contains:
@@ -398,14 +398,14 @@ Here follows what this gives for a file under the LGPL :
 // Author(s)     : Herve Bronnimann, Sylvain Pion
 \endcode
 
-\section seccode_format_doc_req_and_rec Requirements and recommendations 
+\section seccode_format_doc_req_and_rec Requirements and recommendations
 
 Requirements:
 <UL>
    <LI>Follow the naming schemes outlined above.
    <LI>Provide typedefs of template arguments as necessary to make the
          template parameters accessible elsewhere.
-   <LI>Label member function and parameters with `const` where 
+   <LI>Label member function and parameters with `const` where
          appropriate
    <LI>Use \cpp-style type casts.
    <LI>Protect header files from multiple inclusions.

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -90,7 +90,7 @@ private:
 
   Comparison_result
   compare_distances_pp(const Site_2& p1, const Site_2& p2,
-		       const Site_2& q) const
+                       const Site_2& q) const
   {
     CGAL_precondition( p1.is_point() && p2.is_point() );
     CGAL_precondition( !same_points(p1,p2) );
@@ -108,7 +108,7 @@ private:
 
   Comparison_result
   compare_distances_sp(const Site_2& s, const Site_2& p,
-		       const Site_2& q) const
+                       const Site_2& q) const
   {
 
     //CGAL_SDG_DEBUG(std::cout << "debug compare_distances_sp entering "
@@ -131,7 +131,7 @@ private:
       Line_2 lp = compute_linf_perpendicular(ls, p.point());
 
       if ( is_trg ) {
-	lp = opposite_line(lp);
+        lp = opposite_line(lp);
       }
 
       const Oriented_side os = oriented_side_of_line(lp, q.point());
@@ -141,9 +141,9 @@ private:
           << " has os=" << os << std::endl;);
 
       if ( os == ON_POSITIVE_SIDE ) {
-	return LARGER;
+        return LARGER;
       } else if ( os == ON_NEGATIVE_SIDE) {
-	return SMALLER;
+        return SMALLER;
       } else {
         // philaris: here, point is closer, not interior of segment
         //return LARGER;
@@ -177,7 +177,7 @@ private:
 
   Comparison_result
   compare_distances_ss(const Site_2& s1, const Site_2& s2,
-		       const Site_2& q) const
+                       const Site_2& q) const
   {
     CGAL_precondition( s1.is_segment() && s2.is_segment() );
     CGAL_precondition( !is_degenerate(s1) );
@@ -232,7 +232,7 @@ private:
     } else {
       os_trg1 = oriented_side_of_line(ltrg1, qq);
       if ( os_trg1 != ON_POSITIVE_SIDE ) {
-	idx1 = 1;
+        idx1 = 1;
       }
     }
 
@@ -244,7 +244,7 @@ private:
     } else {
       os_trg2 = oriented_side_of_line(ltrg2, qq);
       if ( os_trg2 != ON_POSITIVE_SIDE ) {
-	idx2 = 1;
+        idx2 = 1;
       }
     }
 
@@ -260,15 +260,15 @@ private:
 
     if ( idx1 == -1 ) {
       if ( idx2 == -1 ) {
-	if ( same_points(s1.source_site(), s2.source_site()) ) {
-	  return EQUAL;
-	}
-	return compare_distance_to_point_linf(qq, ssrc1, ssrc2);
+        if ( same_points(s1.source_site(), s2.source_site()) ) {
+          return EQUAL;
+        }
+        return compare_distance_to_point_linf(qq, ssrc1, ssrc2);
       } else if ( idx2 == 1 ) {
-	if ( same_points(s1.source_site(), s2.target_site()) ) {
-	  return EQUAL;
-	}
-	return compare_distance_to_point_linf(qq, ssrc1, strg2);
+        if ( same_points(s1.source_site(), s2.target_site()) ) {
+          return EQUAL;
+        }
+        return compare_distance_to_point_linf(qq, ssrc1, strg2);
       } else {
         const RT d2_s1 = compute_linf_distance(ssrc1, qq);
         const std::pair<RT,RT> d2_s2 = compute_linf_distance(qq, ls2);
@@ -276,15 +276,15 @@ private:
       }
     } else if ( idx1 == 1 ) {
       if ( idx2 == -1 ) {
-	if ( same_points(s1.target_site(), s2.source_site()) ) {
-	  return EQUAL;
-	}
-	return compare_distance_to_point_linf(qq, strg1, ssrc2);
+        if ( same_points(s1.target_site(), s2.source_site()) ) {
+          return EQUAL;
+        }
+        return compare_distance_to_point_linf(qq, strg1, ssrc2);
       } else if ( idx2 == 1 ) {
-	if ( same_points(s1.target_site(), s2.target_site()) ) {
-	  return EQUAL;
-	}
-	return compare_distance_to_point_linf(qq, strg1, strg2);
+        if ( same_points(s1.target_site(), s2.target_site()) ) {
+          return EQUAL;
+        }
+        return compare_distance_to_point_linf(qq, strg1, strg2);
       } else {
         // here closest2 is inside segment s2
         const RT d2_s1 = compute_linf_distance(strg1, qq);
@@ -317,7 +317,7 @@ private:
 
   Oriented_side
   compare_distances(const Site_2& t1, const Site_2& t2,
-		    const Site_2& q) const
+                    const Site_2& q) const
   {
     Comparison_result r;
 

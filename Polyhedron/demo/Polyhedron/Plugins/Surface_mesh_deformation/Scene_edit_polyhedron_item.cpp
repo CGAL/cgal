@@ -175,7 +175,7 @@ struct Facegraph_selector
   }
 
   ////ctrl_groups/////
-  
+
   Ctrl_vertices_sm_group_data_list::iterator& get_active_group(SMesh*)
   {
     return d->sm_active_group;
@@ -198,7 +198,7 @@ struct Facegraph_selector
     return d->sm_ctrl_vertex_frame_map;
   }
 
-  
+
   Ctrl_vertices_sm_group_data_list::iterator& get_active_group(SMesh*, Scene_edit_polyhedron_item_priv* d)const
   {
     return d->sm_active_group;
@@ -246,7 +246,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
         "   gl_Position = mvp_matrix * (rotations *(vec4(translation_2,0.0)+vec4(vertex,1.0) )+ vec4(translation,0.0)) ; \n"
         "} \n"
     };
-    
+
     const char vertex_shader_source_comp_bbox[] =
     {
         "attribute highp vec3 vertex; \n"
@@ -335,7 +335,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
       "   gl_Position = mvp_matrix * f_matrix * vertex; \n"
       "}                                                \n"
     };
-    
+
     const char vertex_source_comp[] =
     {
       "attribute highp vec4 vertex;                     \n"
@@ -382,7 +382,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
       "in float dist[6]; \n"
       "uniform bool is_clipbox_on;  \n"
       "out vec4 out_color; \n"
-      
+
       "void main(void)              \n"
       "{                            \n"
       "if(is_clipbox_on)            \n"
@@ -416,7 +416,7 @@ void Scene_edit_polyhedron_item_priv::init_values()
       "}                            \n"
       "                             \n"
     };
-    
+
     if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
     {
       transparent_plane_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
@@ -798,7 +798,7 @@ void Scene_edit_polyhedron_item::deform()
 {
 
   if(!is_there_any_ctrl_vertices()) { return; }
-  
+
   d->deform(d->sm_item->polyhedron());
   d->sm_item->invalidate_aabb_tree();
   Q_EMIT itemChanged();
@@ -1525,17 +1525,17 @@ void Scene_edit_polyhedron_item_priv::compute_bbox(const CGAL::Three::Scene_inte
     pos_bbox[3]=bb.xmax(); pos_bbox[4]=bb.ymin(); pos_bbox[5]=bb.zmin();
     pos_bbox[6]=bb.xmin(); pos_bbox[7]=bb.ymin(); pos_bbox[8]=bb.zmin();
     pos_bbox[9]=bb.xmin(); pos_bbox[10]=bb.ymax(); pos_bbox[11]=bb.zmin();
-    
+
     pos_bbox[12]=bb.xmin(); pos_bbox[13]=bb.ymin(); pos_bbox[14]=bb.zmin();
     pos_bbox[15]=bb.xmin(); pos_bbox[16]=bb.ymin(); pos_bbox[17]=bb.zmax();
     pos_bbox[18]= bb.xmax(); pos_bbox[19]=bb.ymin(); pos_bbox[20]=bb.zmin();
     pos_bbox[21]= bb.xmax(); pos_bbox[22]=bb.ymax(); pos_bbox[23]=bb.zmin();
-    
+
     pos_bbox[24]= bb.xmax(); pos_bbox[25]=bb.ymin(); pos_bbox[26]=bb.zmin();
     pos_bbox[27]= bb.xmax(); pos_bbox[28]=bb.ymin(); pos_bbox[29]=bb.zmax();
     pos_bbox[30]=bb.xmin(); pos_bbox[31]=bb.ymax(); pos_bbox[32]=bb.zmin();
     pos_bbox[33]=bb.xmax(); pos_bbox[34]=bb.ymax(); pos_bbox[35]=bb.zmin();
-    
+
     pos_bbox[36]=bb.xmin(); pos_bbox[37]=bb.ymax(); pos_bbox[38]=bb.zmin();
     pos_bbox[39]=bb.xmin(); pos_bbox[40]=bb.ymax(); pos_bbox[41]=bb.zmax();
     pos_bbox[42]=bb.xmin(); pos_bbox[43]=bb.ymin(); pos_bbox[44]=bb.zmax();
@@ -1550,7 +1550,7 @@ void Scene_edit_polyhedron_item_priv::compute_bbox(const CGAL::Three::Scene_inte
     pos_bbox[63]=bb.xmax(); pos_bbox[64]=bb.ymin(); pos_bbox[65]=bb.zmax();
     pos_bbox[66]=bb.xmax(); pos_bbox[67]=bb.ymax(); pos_bbox[68]=bb.zmax();
     pos_bbox[69]=bb.xmax(); pos_bbox[70]=bb.ymax(); pos_bbox[71]=bb.zmin();
-    
+
 }
 
 void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
@@ -1585,7 +1585,7 @@ QString Scene_edit_polyhedron_item::toolTip() const
 {
   if(!d->sm_item->polyhedron())
     return QString();
-  
+
   return QObject::tr("<p>Surface Mesh <b>%1</b> (mode: %5, color: %6)</p>"
                      "<p>Number of vertices: %2<br />"
                      "Number of edges: %3<br />"
@@ -1669,7 +1669,7 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
 
 void Scene_edit_polyhedron_item::update_frame_plane()
 {
-  
+
   for(Ctrl_vertices_sm_group_data_list::iterator hgb_data = d->sm_ctrl_vertex_frame_map.begin();
       hgb_data != d->sm_ctrl_vertex_frame_map.end(); ++hgb_data)
   {
@@ -1839,7 +1839,7 @@ void Scene_edit_polyhedron_item::create_ctrl_vertices_group()
   Control_vertices_data<SMesh> hgd(d->deform_sm_mesh, new_frame);
   d->sm_ctrl_vertex_frame_map.push_back(hgd);
   hgd.refresh(surface_mesh());
-  
+
   d->sm_active_group = --d->sm_ctrl_vertex_frame_map.end();
 
   invalidateOpenGLBuffers();
@@ -1966,7 +1966,7 @@ void Scene_edit_polyhedron_item::save_roi(const char* file_name) const
   // save control vertices
   out << d->sm_ctrl_vertex_frame_map.size() << std::endl; // control vertices count
   for(Ctrl_vertices_sm_group_data_list::const_iterator hgb = d->sm_ctrl_vertex_frame_map.begin(); hgb != d->sm_ctrl_vertex_frame_map.end(); ++hgb) {
-    
+
     out << hgb->ctrl_vertices_group.size() << std::endl;
     for(std::vector<sm_vertex_descriptor>::const_iterator hb = hgb->ctrl_vertices_group.begin(); hb != hgb->ctrl_vertices_group.end(); ++hb)
     {
@@ -2073,7 +2073,7 @@ bool Scene_edit_polyhedron_item::is_there_any_ctrl_vertices()
 {
   Ctrl_vertices_sm_group_data_list::iterator hgb, hge;
   if(!is_there_any_ctrl_vertices_group(hgb, hge)) { return false; } // there isn't any group of control vertices
-  
+
   for(; hgb != hge; ++hgb) // check inside groups of control vertices
   {
     if(!hgb->ctrl_vertices_group.empty()) { return true; }
@@ -2161,7 +2161,7 @@ void Scene_edit_polyhedron_item::update_normals() {
     d->normals[id*3] = n.x();
     d->normals[id*3+1] = n.y();
     d->normals[id*3+2] = n.z();
-    
+
   }
 }
 

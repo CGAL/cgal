@@ -193,7 +193,7 @@ struct Dereference_property_map
 
 /// Free function to create a `Dereference_property_map` property map.
 ///
-/// \relates Dereference_property_map 
+/// \relates Dereference_property_map
 template <class Iter> // Type convertible to `key_type`
 Dereference_property_map<typename CGAL::value_type_traits<Iter>::type>
 make_dereference_property_map(Iter)
@@ -227,7 +227,7 @@ struct Identity_property_map
 
 /// Free function to create a `Identity_property_map` property map.
 ///
-/// \relates Identity_property_map 
+/// \relates Identity_property_map
 template <class T> // Key and value type
 Identity_property_map<T>
   make_identity_property_map(T)
@@ -237,8 +237,8 @@ Identity_property_map<T>
 
 
 /// \ingroup PkgPropertyMapRef
-/// Property map that accesses the first item of a `std::pair`. 
-/// \tparam Pair Instance of `std::pair`. 
+/// Property map that accesses the first item of a `std::pair`.
+/// \tparam Pair Instance of `std::pair`.
 /// \cgalModels `LvaluePropertyMap`
 ///
 /// \sa `CGAL::Second_of_pair_property_map<Pair>`
@@ -262,9 +262,9 @@ struct First_of_pair_property_map
   /// @}
 };
 
-/// Free function to create a `First_of_pair_property_map` property map. 
+/// Free function to create a `First_of_pair_property_map` property map.
 ///
-/// \relates First_of_pair_property_map 
+/// \relates First_of_pair_property_map
 template <class Pair> // Pair type
 First_of_pair_property_map<Pair>
   make_first_of_pair_property_map(Pair)
@@ -273,13 +273,13 @@ First_of_pair_property_map<Pair>
 }
 
 /// \ingroup PkgPropertyMapRef
-/// 
-/// Property map that accesses the second item of a `std::pair`. 
-/// 
-/// \tparam Pair Instance of `std::pair`. 
-/// 
+///
+/// Property map that accesses the second item of a `std::pair`.
+///
+/// \tparam Pair Instance of `std::pair`.
+///
 /// \cgalModels `LvaluePropertyMap`
-/// 
+///
 /// \sa `CGAL::First_of_pair_property_map<Pair>`
 template <typename Pair>
 struct Second_of_pair_property_map
@@ -303,7 +303,7 @@ struct Second_of_pair_property_map
 
 /// Free function to create a Second_of_pair_property_map property map.
 ///
-/// \relates Second_of_pair_property_map 
+/// \relates Second_of_pair_property_map
 template <class Pair> // Pair type
 Second_of_pair_property_map<Pair>
   make_second_of_pair_property_map(Pair)
@@ -312,12 +312,12 @@ Second_of_pair_property_map<Pair>
 }
 
 /// \ingroup PkgPropertyMapRef
-/// 
+///
 /// Property map that accesses the Nth item of a `boost::tuple` or a `std::tuple`.
-/// 
+///
 /// \tparam N %Index of the item to access.
 /// \tparam Tuple Instance of `boost::tuple` or `std::tuple`.
-/// 
+///
 /// \cgalModels `LvaluePropertyMap`
 template <int N, typename Tuple>
 struct Nth_of_tuple_property_map

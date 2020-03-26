@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -32,7 +32,7 @@
 #include <CGAL/Kernel/global_functions_internal_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -266,8 +266,8 @@ bool Straight_2_<K>::operator==(const Straight_2_<K>& s) const
 template <class K>
 int
 sign_of_cross(typename K::Direction_2 const &dir1,
-	      typename K::Direction_2 const &dir2,
-	      const K&)
+              typename K::Direction_2 const &dir2,
+              const K&)
 {
   return static_cast<int>(CGAL::internal::orientation(dir1.to_vector(),
                                                       dir2.to_vector(), K()));

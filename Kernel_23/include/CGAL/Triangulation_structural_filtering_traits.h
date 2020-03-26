@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau__CGAL@normalesup.org>
-// 
+//
 
 #ifndef CGAL_TRIANGULATION_STRUCTURAL_FILTERING_TRAITS_H
 #define CGAL_TRIANGULATION_STRUCTURAL_FILTERING_TRAITS_H

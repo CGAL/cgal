@@ -4,8 +4,8 @@
 
 /// \defgroup keep_connected_components_grp Connected Components
 ///
-/// Two faces are in the same <em>connected component</em> if there is a path 
-/// of adjacent faces such that all edges between two consecutive faces of the 
+/// Two faces are in the same <em>connected component</em> if there is a path
+/// of adjacent faces such that all edges between two consecutive faces of the
 /// path are not marked as constrained.
 ///
 /// \ingroup PkgPolygonMeshProcessingRef
@@ -61,10 +61,10 @@
 /// \ingroup PkgPolygonMeshProcessingRef
 /*!
 \addtogroup PkgPolygonMeshProcessingRef
- 
+
 \cgalPkgDescriptionBegin{Polygon Mesh Processing, PkgPolygonMeshProcessing}
 \cgalPkgPicture{hole_filling_ico.png}
- 
+
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Sébastien Loriot, Jane Tournois, Ilker %O. Yaz}
 \cgalPkgDesc{This package provides
@@ -72,7 +72,7 @@ a collection of methods and classes for polygon mesh processing,
 ranging from basic operations on simplices, to complex geometry processing algorithms.}
 \cgalPkgManuals{Chapter_PolygonMeshProcessing,PkgPolygonMeshProcessingRef}
 \cgalPkgSummaryEnd
- 
+
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
 \cgalPkgDependsOn{documented for each function; \ref PkgSolverInterface}
@@ -80,7 +80,7 @@ ranging from basic operations on simplices, to complex geometry processing algor
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
- 
+
 \cgalPkgDescriptionEnd
 
 

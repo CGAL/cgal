@@ -30,8 +30,8 @@ namespace CGAL {
 
 namespace internal{
 
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_typedef_Info,Info,false)  
- 
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_typedef_Info,Info,false)
+
 template <class T,bool has_info=Has_typedef_Info<T>::value>
  struct Info_check{
  struct type{};

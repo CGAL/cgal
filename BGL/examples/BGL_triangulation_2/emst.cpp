@@ -79,8 +79,8 @@ main(int argc,char* argv[])
   // In the function call you can see a named parameter: vertex_index_map
    std::list<edge_descriptor> mst;
    boost::kruskal_minimum_spanning_tree(ft,
-					std::back_inserter(mst),
-					vertex_index_map(vertex_index_pmap));
+                                        std::back_inserter(mst),
+                                        vertex_index_map(vertex_index_pmap));
 
 
    std::cout << "The edges of the Euclidean mimimum spanning tree:" << std::endl;

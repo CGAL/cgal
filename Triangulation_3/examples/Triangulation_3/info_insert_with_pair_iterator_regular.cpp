@@ -23,7 +23,7 @@ int main()
   points.push_back( std::make_pair(Wpoint(Point(0,0,1),2),3) );
   points.push_back( std::make_pair(Wpoint(Point(2,2,2),2),4) );
   points.push_back( std::make_pair(Wpoint(Point(-1,0,1),2),5) );
-  
+
   Regular rt( points.begin(),points.end() );
 
   CGAL_assertion( rt.number_of_vertices() == 6 );

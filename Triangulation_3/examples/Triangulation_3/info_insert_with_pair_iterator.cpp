@@ -23,7 +23,7 @@ int main()
   points.push_back( std::make_pair(Point(2,2,2),4) );
   points.push_back( std::make_pair(Point(-1,0,1),5) );
 
-  
+
   Delaunay T( points.begin(),points.end() );
 
   CGAL_assertion( T.number_of_vertices() == 6 );

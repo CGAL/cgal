@@ -19,7 +19,7 @@
 //Author(s) : Michael Hemmer <mhemmer@uni-mainz.de>
 
 /*! \file CGAL/Polynomial/modular_gcd.h
-  provides gcd for Polynomials, based on Modular arithmetic. 
+  provides gcd for Polynomials, based on Modular arithmetic.
 */
 
 
@@ -37,14 +37,14 @@
 namespace CGAL {
 namespace internal {
 
-template <class NT> 
+template <class NT>
 Polynomial<NT> modular_gcd_utcf(
         const Polynomial<NT>& FF1 ,
         const Polynomial<NT>& FF2 , Integral_domain_tag){
     return modular_gcd_utcf_dfai(FF1, FF2);
 }
 
-template <class NT> 
+template <class NT>
 Polynomial<NT> modular_gcd_utcf(
         const Polynomial<NT>& FF1 ,
         const Polynomial<NT>& FF2 , Unique_factorization_domain_tag){
@@ -55,4 +55,4 @@ Polynomial<NT> modular_gcd_utcf(
 }///namespace CGAL
 
 #endif //#ifndef CGAL_POLYNOMIAL_MODULAR_GCD_H 1
- 
+

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 
@@ -34,17 +34,17 @@
 
 namespace CGAL {
 
-enum Quadratic_program_pricing_strategy 
-{ 
+enum Quadratic_program_pricing_strategy
+{
   QP_CHOOSE_DEFAULT,
-  QP_DANTZIG, 
-  QP_FILTERED_DANTZIG, 
-  QP_PARTIAL_DANTZIG, 
+  QP_DANTZIG,
+  QP_FILTERED_DANTZIG,
+  QP_PARTIAL_DANTZIG,
   QP_PARTIAL_FILTERED_DANTZIG,
   QP_BLAND
 };
 
-class Quadratic_program_options 
+class Quadratic_program_options
 {
 public:
   // default constructor
@@ -56,11 +56,11 @@ public:
 
   // set/get verbosity
   // -----------------
-  int get_verbosity () const 
+  int get_verbosity () const
   {
     return verbosity_;
   }
-  void set_verbosity (int verbosity) 
+  void set_verbosity (int verbosity)
   {
     CGAL_qpe_assertion ( 0 <= verbosity && verbosity <= 5);
     verbosity_ = verbosity;
@@ -96,8 +96,8 @@ private:
   // ---------
   //    0: silent
   //    1: short iteration summary (recommened for the user)
-  // >= 2: output of internal details (not recommend for the user) 
-  int verbosity_;   
+  // >= 2: output of internal details (not recommend for the user)
+  int verbosity_;
 
   // pricing_strategy
   // ----------------
@@ -110,9 +110,9 @@ private:
 
 // output
 // ------
-inline 
-std::ostream& operator<< (std::ostream& o, 
-			  const Quadratic_program_options& options)
+inline
+std::ostream& operator<< (std::ostream& o,
+                          const Quadratic_program_options& options)
 {
   o << "   Verbosity:        " << options.get_verbosity() << "\n";
   o << "   Pricing strategy: ";
@@ -126,7 +126,7 @@ std::ostream& operator<< (std::ostream& o,
   case QP_FILTERED_DANTZIG:
     o << "QP_FILTERED_DANTZIG";
     break;
-  case QP_PARTIAL_DANTZIG: 
+  case QP_PARTIAL_DANTZIG:
     o << "QP_PARTIAL_FILTERED_DANTZIG";
     break;
   case QP_PARTIAL_FILTERED_DANTZIG:

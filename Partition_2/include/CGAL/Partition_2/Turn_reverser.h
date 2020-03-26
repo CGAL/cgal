@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -28,14 +28,14 @@
 namespace CGAL {
 
 template <class Point_2, class TurnPredicate>
-class Turn_reverser 
+class Turn_reverser
 {
 public:
    Turn_reverser() {}
    Turn_reverser( const TurnPredicate& t ): turn(t) {}
 
-   bool operator() (const Point_2& p1, 
-                    const Point_2& p2, 
+   bool operator() (const Point_2& p1,
+                    const Point_2& p2,
                     const Point_2& p3) const
    {   return turn(p2, p1, p3); }
 

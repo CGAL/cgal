@@ -38,16 +38,16 @@ void run(std::list<Point_d> points)
 
   Distance tr_dist;
   K_search N1(tree, query, K); // eps=10.0, nearest=false
-  
-  for (typename K_search::iterator it = N1.begin();it != N1.end();it++) { 
+
+  for (typename K_search::iterator it = N1.begin();it != N1.end();it++) {
     assert( get_point(it->first) == points.front());
     points.pop_front();
-  } 
-  std::cout << "done" << std::endl;  
+  }
+  std::cout << "done" << std::endl;
 }
 
 int  main() {
-  
+
 
   std::list<Point_d> points;
   points.push_back(Point_d(3,4));

@@ -45,7 +45,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   # use the Qt MOC preprocessor on classes that derives from QObject
   qt5_generate_moc( Polygon_2.cpp "${CMAKE_CURRENT_BINARY_DIR}/Polygon_2.moc" )
 
-#  add_library( CGAL SHARED IMPORTED ) 
+#  add_library( CGAL SHARED IMPORTED )
 #  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
 
   # The executable itself.

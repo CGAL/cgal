@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Herve.Bronnimann@sophia.inria.fr
 
@@ -49,28 +49,28 @@ public:
   typedef Linear_Algebra::Matrix_<FT,AL>  Matrix;
   typedef const FT*               const_iterator;
   typedef FT*                     iterator;
-  
+
   Linear_algebraCd() {}
 
 protected:
   // Major routines for Linear_algebra_d
-  static 
+  static
   void   Gaussian_elimination(const Matrix &M,
             Matrix &L, Matrix &U,
             std::vector<int> &row_permutation,
             std::vector<int> &column_permutation,
             FT &det, int &rank, Vector &c);
-  static 
-  bool Triangular_system_solver(const Matrix &U, const Matrix &L, 
+  static
+  bool Triangular_system_solver(const Matrix &U, const Matrix &L,
             const Vector &b, int rank, Vector &x, FT &det);
-  static 
+  static
   void   Triangular_left_inverse(const Matrix &U, Matrix &Uinv);
 
 public:
   static
   std::pair<int,int> transpose(std::pair<int,int> dim)
   { std::swap(dim.first,dim.second); return dim; }
-  static 
+  static
   Matrix transpose(const Matrix &M);
 
   static
@@ -90,7 +90,7 @@ public:
 
   static
   bool   verify_determinant(const Matrix &M, const RT &D,
-             const Matrix &L, const Matrix &U, 
+             const Matrix &L, const Matrix &U,
              const std::vector<int> &q, const Vector &c);
   static
   bool   linear_solver(const Matrix &M, const Vector &b,
@@ -112,8 +112,8 @@ public:
   static
   int rank(const Matrix &M);
 
-  static 
-  int independent_columns(const Matrix& M, std::vector<int>& columns); 
+  static
+  int independent_columns(const Matrix& M, std::vector<int>& columns);
 
 };
 

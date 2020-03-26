@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 //                 Andreas Meyer <ameyer@mpi-sb.mpg.de>
@@ -82,12 +82,12 @@ test_n( unsigned int n, std::ostream& outfile )
     for( unsigned int i = repetitions; i; --i ) {
         CGAL::Box_intersection_d::one_way_scan( boxes1.begin(), boxes1.end(),
                                                 boxes2.begin(), boxes2.end(),
-                                                callback1, 
+                                                callback1,
                                                 typename Uti1::Traits(),
                                                 DIM - 1 );
         CGAL::Box_intersection_d::one_way_scan( boxes2.begin(), boxes2.end(),
                                                 boxes1.begin(), boxes1.end(),
-                                                callback1, 
+                                                callback1,
                                                 typename Uti1::Traits(),
                                                 DIM - 1 );
     }
@@ -156,7 +156,7 @@ void operator()() {
     outfile << "# problemsize streamingtime scanningtime" << std::endl;
     outfile.precision(9);
     // correct for >= g++3.0 , but g++2.95 does not conform to the standard
-    //outfile << std::fixed; 
+    //outfile << std::fixed;
     // workaround for g++2.95: (does not work for >= 3.0)
     //outfile << setiosflags( ios::fixed );
     for( unsigned int n = 1024; n < 200000; n = (int)(n * 4)) {
@@ -201,7 +201,7 @@ int main() {
     c();
 
     if( failed != 0 ) {
-        std::cout << "a total number of " << failed << " tests failed!" 
+        std::cout << "a total number of " << failed << " tests failed!"
                   << std::endl;
         return 1;
     }

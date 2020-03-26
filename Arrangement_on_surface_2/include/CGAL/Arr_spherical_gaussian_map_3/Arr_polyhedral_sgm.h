@@ -717,7 +717,7 @@ public:
  // template <typename SgmIterator>
  // void minkowski_sum(SgmIterator begin, SgmIterator end)
  // {
-	//typename SgmIterator::value_type* sgm1 = *begin++;
+        //typename SgmIterator::value_type* sgm1 = *begin++;
  //   typename SgmIterator::value_type* sgm2 = *begin;
  //   minkowski_sum(sgm1, sgm2);
  // }

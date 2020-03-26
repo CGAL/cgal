@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 //                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
@@ -51,37 +51,37 @@ public:
   typedef bool                                     result_type;
 
     inline
-    bool operator()(const Site_2& p1, const Site_2& p2, 
-		    const Site_2& q, bool b) const
+    bool operator()(const Site_2& p1, const Site_2& p2,
+                    const Site_2& q, bool b) const
     {
       Weighted_point_inverter inverter(p1);
       Point_2 origin(0,0);
       Site_2 origin_site(origin,0);
       return edge_conflict_test(inverter(p2),
-				Inverted_weighted_point(origin_site,1),
-				Inverted_weighted_point(origin_site,1),
-				inverter(q), b, 2, 2);
+                                Inverted_weighted_point(origin_site,1),
+                                Inverted_weighted_point(origin_site,1),
+                                inverter(q), b, 2, 2);
     }
 
     inline
-    bool operator()(const Site_2& p1, const Site_2& p2, 
-		    const Site_2& p3, const Site_2& q, bool b) const
+    bool operator()(const Site_2& p1, const Site_2& p2,
+                    const Site_2& p3, const Site_2& q, bool b) const
     {
       Weighted_point_inverter inverter(p2);
       Point_2 origin(0,0);
       Site_2 origin_site(origin,0);
-      return edge_conflict_test(inverter(p1), 
-				Inverted_weighted_point(origin_site,1),
-				inverter(p3), inverter(q), b, 2, 1);
+      return edge_conflict_test(inverter(p1),
+                                Inverted_weighted_point(origin_site,1),
+                                inverter(p3), inverter(q), b, 2, 1);
     }
 
     inline
-    bool operator()(const Site_2& p1, const Site_2& p2,	const Site_2& p3,
-		    const Site_2& p4, const Site_2& q, bool b) const
+    bool operator()(const Site_2& p1, const Site_2& p2,        const Site_2& p3,
+                    const Site_2& p4, const Site_2& q, bool b) const
     {
       Weighted_point_inverter inverter(p2);
-      return edge_conflict_test(inverter(p1), inverter(p4), inverter(p3), 
-				inverter(q), b, 1, 1);
+      return edge_conflict_test(inverter(p1), inverter(p4), inverter(p3),
+                                inverter(q), b, 1, 1);
     }
 };
 

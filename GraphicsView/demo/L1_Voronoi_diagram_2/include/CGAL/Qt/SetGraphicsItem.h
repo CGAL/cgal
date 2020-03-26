@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Ophir Setter <ophirset@post.tau.ac.il>
-//                 
+//
 
 #ifndef CGAL_QT_SET_GRAPHICS_ITEM_H
 #define CGAL_QT_SET_GRAPHICS_ITEM_H
@@ -44,16 +44,16 @@ class SetGraphicsItem : public GraphicsItem
 {
 public:
   SetGraphicsItem(const Set *arr);
-  
-  QRectF 
+
+  QRectF
   boundingRect() const;
 
-  void 
-  paint(QPainter *painter, 
-        const QStyleOptionGraphicsItem *option, 
+  void
+  paint(QPainter *painter,
+        const QStyleOptionGraphicsItem *option,
         QWidget *widget);
-  
-  void 
+
+  void
   modelChanged();
 
   const QPen& pen() const {
@@ -77,7 +77,7 @@ SetGraphicsItem<Set>::SetGraphicsItem(const Set *set)
 }
 
 template <typename Set>
-QRectF 
+QRectF
 SetGraphicsItem<Set>::boundingRect() const
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene());
@@ -86,7 +86,7 @@ SetGraphicsItem<Set>::boundingRect() const
 
 
 template <typename Set>
-void 
+void
 SetGraphicsItem<Set>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget* )
@@ -96,9 +96,9 @@ SetGraphicsItem<Set>::paint(QPainter *painter,
 
   QRectF rect = option->exposedRect;
   // R is the kernel. Move it to a template parameter.
-  PainterOstream<typename std::iterator_traits<typename Set::const_iterator>::value_type::R> 
+  PainterOstream<typename std::iterator_traits<typename Set::const_iterator>::value_type::R>
     pos(painter, rect);
-  
+
   painter->setPen(this->pen());
   for(typename Set::const_iterator it = m_set->begin();
       it != m_set->end(); it++) {
@@ -108,7 +108,7 @@ SetGraphicsItem<Set>::paint(QPainter *painter,
 
 
 template <typename T>
-void 
+void
 SetGraphicsItem<T>::modelChanged()
 {
   update();

@@ -71,7 +71,7 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    _index == label._index);
+      _index == label._index);
   }
 
   /*! Get the component. */
@@ -177,7 +177,7 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    _index == label._index);
+      _index == label._index);
   }
 
   /*! Check whether the given label is the predecessor of this label. */
@@ -187,8 +187,8 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    (label._index + 1 == _index ||
-	     (label._is_last && _index == 0)));
+      (label._index + 1 == _index ||
+       (label._is_last && _index == 0)));
   }
 
   /*! Check whether the given label is the succcessor of this label. */
@@ -198,8 +198,8 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    (_index + 1 == label._index ||
-	     (_is_last && label._index == 0)));
+      (_index + 1 == label._index ||
+       (_is_last && label._index == 0)));
   }
 
   /*!

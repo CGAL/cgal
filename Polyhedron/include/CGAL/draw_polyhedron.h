@@ -30,7 +30,7 @@
 
 namespace CGAL
 {
-  
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorPolyhedron
 {
@@ -55,7 +55,7 @@ class SimplePolyhedronViewerQt : public Basic_viewer_qt
   typedef typename Polyhedron::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Polyhedron::Vertex_const_handle Vertex_const_handle;
   typedef typename Polyhedron::Facet_const_handle Facet_const_handle;
-  
+
 public:
   /// Construct the viewer.
   /// @param apoly the polyhedron to view
@@ -97,7 +97,7 @@ protected:
     add_segment(he->vertex()->point(),
                 he->opposite()->vertex()->point());
     // We can use add_segment(p1, p2, c) with c a CGAL::Color to add a colored segment
-  } 
+  }
 
   void compute_vertex(Vertex_const_handle vh)
   {
@@ -136,7 +136,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -166,7 +166,7 @@ protected:
     assert(nb>0);
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
-  
+
   Local_vector get_vertex_normal(Halfedge_const_handle he)
   {
     Local_vector normal=CGAL::NULL_VECTOR;
@@ -181,11 +181,11 @@ protected:
       he=he->next()->opposite();
     }
     while (he!=end);
-    
+
     if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
     { normal=(typename Local_kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
-    
+
     return normal;
   }
 
@@ -194,13 +194,13 @@ protected:
   bool m_nofaces;
   const ColorFunctor& m_fcolor;
 };
-  
+
 template<class Polyhedron, class ColorFunctor>
 void draw(const Polyhedron& apoly,
           const char* title,
           bool nofill,
           const ColorFunctor& fcolor)
-{  
+{
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else

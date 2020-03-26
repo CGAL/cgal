@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Sebastien Loriot and Ilker O. Yaz
 
@@ -36,7 +36,7 @@
 
 namespace CGAL {
 
-/** 
+/**
  * \ingroup PkgPolygonMeshProcessingRef
  * This class provides an efficient point location functionality with respect to a domain bounded
  * by one or several disjoint closed triangle meshes.
@@ -188,7 +188,7 @@ public:
    * returns the location of a query point
    * @param point the query point to be located with respect to the input
             polyhedral surface
-   * @return 
+   * @return
    *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the volume bounded by the input triangle mesh
    *   - `CGAL::ON_BOUNDARY` if the point is on triangle mesh
    *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside triangle mesh

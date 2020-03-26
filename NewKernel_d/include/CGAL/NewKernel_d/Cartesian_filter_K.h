@@ -70,7 +70,7 @@ struct Cartesian_filter_K : public Base_,
     };
 // TODO:
 //    template<class T> struct Functor<T,No_filter_tag,Predicate_tag> :
-//	    Kernel_base::template Functor<T,No_filter_tag> {};
+//            Kernel_base::template Functor<T,No_filter_tag> {};
 // TODO:
 // detect when Less_cartesian_coordinate doesn't need filtering
 };

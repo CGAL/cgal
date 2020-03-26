@@ -46,7 +46,7 @@ namespace CGAL{
           rtag = "red"; gtag = "green"; btag = "blue";
         }
       }
-      
+
       for (std::size_t j = 0; j < element.number_of_items(); ++ j)
       {
         for (std::size_t k = 0; k < element.number_of_properties(); ++ k)
@@ -58,7 +58,7 @@ namespace CGAL{
             return false;
         }
 
-        cpp11::tuple<std::vector<Integer>, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_face; 
+        cpp11::tuple<std::vector<Integer>, boost::uint8_t, boost::uint8_t, boost::uint8_t> new_face;
 
         if (has_colors)
         {
@@ -104,13 +104,13 @@ namespace CGAL{
     }
 
     internal::PLY::PLY_reader reader;
-  
+
     if (!(reader.init (in)))
     {
       in.setstate(std::ios::failbit);
       return false;
     }
-  
+
     for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
     {
       internal::PLY::PLY_element& element = reader.element(i);
@@ -132,7 +132,7 @@ namespace CGAL{
 
           internal::PLY::process_properties (element, new_vertex,
                                              make_ply_point_reader (CGAL::Identity_property_map<Point_3>()));
-      
+
           points.push_back (get<0>(new_vertex));
         }
       }
@@ -188,7 +188,7 @@ namespace CGAL{
       return false;
     }
     internal::PLY::PLY_reader reader;
-  
+
     if (!(reader.init (in)))
     {
       in.setstate(std::ios::failbit);

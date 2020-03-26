@@ -25,25 +25,25 @@
 namespace CGAL {
 namespace KerD {
 template <class R_> class Weighted_point {
-	typedef typename Get_type<R_, FT_tag>::type FT_;
-	typedef typename Get_type<R_, Point_tag>::type	Point_;
-	Point_ c_;
-	FT_ w_;
+        typedef typename Get_type<R_, FT_tag>::type FT_;
+        typedef typename Get_type<R_, Point_tag>::type        Point_;
+        Point_ c_;
+        FT_ w_;
 
-	public:
-	Weighted_point(Point_ const&p, FT_ const&w): c_(p), w_(w) {}
-	// TODO: Add a piecewise constructor?
+        public:
+        Weighted_point(Point_ const&p, FT_ const&w): c_(p), w_(w) {}
+        // TODO: Add a piecewise constructor?
 
-	Point_ const& point()const{return c_;}
-	FT_ const& weight()const{return w_;}
+        Point_ const& point()const{return c_;}
+        FT_ const& weight()const{return w_;}
 };
 }
 
 namespace CartesianDKernelFunctors {
 template <class R_> struct Construct_weighted_point : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Construct_weighted_point)
-  typedef typename Get_type<R_, Weighted_point_tag>::type	result_type;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
+  typedef typename Get_type<R_, Weighted_point_tag>::type        result_type;
+  typedef typename Get_type<R_, Point_tag>::type        Point;
   typedef typename Get_type<R_, FT_tag>::type FT;
   result_type operator()(Point const&a, FT const&b)const{
     return result_type(a,b);
@@ -54,7 +54,7 @@ template <class R_> struct Construct_weighted_point : Store_kernel<R_> {
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
-#endif    
+#endif
     return result_type(cp(),0);
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(pop)
@@ -64,8 +64,8 @@ template <class R_> struct Construct_weighted_point : Store_kernel<R_> {
 
 template <class R_> struct Point_drop_weight {
   CGAL_FUNCTOR_INIT_IGNORE(Point_drop_weight)
-  typedef typename Get_type<R_, Weighted_point_tag>::type	argument_type;
-  typedef typename Get_type<R_, Point_tag>::type const&		result_type;
+  typedef typename Get_type<R_, Weighted_point_tag>::type        argument_type;
+  typedef typename Get_type<R_, Point_tag>::type const&                result_type;
   // Returning a reference is fragile
 
   result_type operator()(argument_type const&s)const{
@@ -75,8 +75,8 @@ template <class R_> struct Point_drop_weight {
 
 template <class R_> struct Point_weight {
   CGAL_FUNCTOR_INIT_IGNORE(Point_weight)
-  typedef typename Get_type<R_, Weighted_point_tag>::type	argument_type;
-  typedef typename Get_type<R_, FT_tag>::type			result_type;
+  typedef typename Get_type<R_, Weighted_point_tag>::type        argument_type;
+  typedef typename Get_type<R_, FT_tag>::type                        result_type;
 
   result_type operator()(argument_type const&s)const{
     return s.weight();
@@ -85,9 +85,9 @@ template <class R_> struct Point_weight {
 
 template <class R_> struct Power_distance : private Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Power_distance)
-  typedef typename Get_type<R_, Weighted_point_tag>::type	first_argument_type;
-  typedef first_argument_type					second_argument_type;
-  typedef typename Get_type<R_, FT_tag>::type			result_type;
+  typedef typename Get_type<R_, Weighted_point_tag>::type        first_argument_type;
+  typedef first_argument_type                                        second_argument_type;
+  typedef typename Get_type<R_, FT_tag>::type                        result_type;
 
   result_type operator()(first_argument_type const&a, second_argument_type const&b)const{
     typename Get_functor<R_, Point_drop_weight_tag>::type pdw(this->kernel());
@@ -98,9 +98,9 @@ template <class R_> struct Power_distance : private Store_kernel<R_> {
 };
 template <class R_> struct Power_distance_to_point : private Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Power_distance_to_point)
-  typedef typename Get_type<R_, Weighted_point_tag>::type	first_argument_type;
-  typedef typename Get_type<R_, Point_tag>::type		second_argument_type;
-  typedef typename Get_type<R_, FT_tag>::type			result_type;
+  typedef typename Get_type<R_, Weighted_point_tag>::type        first_argument_type;
+  typedef typename Get_type<R_, Point_tag>::type                second_argument_type;
+  typedef typename Get_type<R_, FT_tag>::type                        result_type;
 
   result_type operator()(first_argument_type const&a, second_argument_type const&b)const{
     typename Get_functor<R_, Point_drop_weight_tag>::type pdw(this->kernel());
@@ -121,11 +121,11 @@ template<class R_> struct Power_side_of_power_sphere : private Store_kernel<R_> 
       typename Get_functor<R, Point_drop_weight_tag>::type pdw(this->kernel());
       typename Get_functor<R, Point_weight_tag>::type pw(this->kernel());
       return ptr (
-	  make_transforming_iterator (f, pdw),
-	  make_transforming_iterator (e, pdw),
-	  make_transforming_iterator (f, pw),
-	  pdw (p0),
-	  pw (p0));
+          make_transforming_iterator (f, pdw),
+          make_transforming_iterator (e, pdw),
+          make_transforming_iterator (f, pw),
+          pdw (p0),
+          pw (p0));
     }
 };
 
@@ -140,21 +140,21 @@ template<class R_> struct In_flat_power_side_of_power_sphere : private Store_ker
       typename Get_functor<R, Point_drop_weight_tag>::type pdw(this->kernel());
       typename Get_functor<R, Point_weight_tag>::type pw(this->kernel());
       return ptr (
-	  fo,
-	  make_transforming_iterator (f, pdw),
-	  make_transforming_iterator (e, pdw),
-	  make_transforming_iterator (f, pw),
-	  pdw (p0),
-	  pw (p0));
+          fo,
+          make_transforming_iterator (f, pdw),
+          make_transforming_iterator (e, pdw),
+          make_transforming_iterator (f, pw),
+          pdw (p0),
+          pw (p0));
     }
 };
 
 // Construct a point at (weighted) distance 0 from all the input
 template <class R_> struct Power_center : Store_kernel<R_> {
   CGAL_FUNCTOR_INIT_STORE(Power_center)
-  typedef typename Get_type<R_, Weighted_point_tag>::type	WPoint;
+  typedef typename Get_type<R_, Weighted_point_tag>::type        WPoint;
   typedef WPoint result_type;
-  typedef typename Get_type<R_, Point_tag>::type	Point;
+  typedef typename Get_type<R_, Point_tag>::type        Point;
   typedef typename Get_type<R_, FT_tag>::type FT;
   template <class Iter>
   result_type operator()(Iter f, Iter e)const{
@@ -185,8 +185,8 @@ template <class R_> struct Power_center : Store_kernel<R_> {
       Point const& p=pdw(wp);
       FT const& np = sdo(p) - pw(wp);
       for(int j=0;j<d;++j) {
-	m(i,j)=2*(c(p,j)-c(p0,j));
-	b[i] = np - n0;
+        m(i,j)=2*(c(p,j)-c(p0,j));
+        b[i] = np - n0;
       }
     }
     CGAL_assertion (i == d);

@@ -51,7 +51,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #if BOOST_VERSION >= 104700
 #  include <boost/random/uniform_int_distribution.hpp>
-#else 
+#else
 #  include <boost/random/uniform_int.hpp>
 #endif
 #include <boost/random/uniform_01.hpp>
@@ -83,14 +83,14 @@ typedef boost::random::uniform_int_distribution<> UniformIntDist;
 typedef boost::random::normal_distribution<> NormalDist;
 typedef boost::random::mt19937 RandomGen;
 typedef boost::random::uniform_01<> UnitDist;
-#else 
+#else
 typedef boost::uniform_int<> UniformIntDist;
 typedef boost::normal_distribution<> NormalDist;
 typedef boost::uniform_01<> UnitDist;
 typedef boost::mt19937 RandomGen;
 #endif
 
-struct ForestParams { 
+struct ForestParams {
     size_t n_classes;
     size_t n_features;
     size_t n_samples;
@@ -198,7 +198,7 @@ struct LinearSplitter {
         for (int i_sample = 0; i_sample < n_samples; ++i_sample) {
             int sample_idx    = sample_idxes[i_sample];
             int sample_class  = labels(sample_idx, 0);
-            FeatureType sample_fval = std::inner_product(w.begin(), w.end(), 
+            FeatureType sample_fval = std::inner_product(w.begin(), w.end(),
                                                    samples.row_pointer(sample_idx), 0.0f);
             data_points[i_sample] = std::make_pair(sample_fval, sample_class);
         }
@@ -217,8 +217,8 @@ struct AxisAlignedSplitter {
     int feature;
     FeatureType threshold;
     AxisAlignedSplitter() : feature(-1) {}
-    AxisAlignedSplitter(int feature) : 
-        feature(feature) 
+    AxisAlignedSplitter(int feature) :
+        feature(feature)
     {}
     void set_threshold(FeatureType new_threshold) {
         threshold = new_threshold;
@@ -235,7 +235,7 @@ struct AxisAlignedSplitter {
       std::size_t size = (std::min)(std::size_t(5000), std::size_t(n_samples));
       data_points.clear();
       data_points.reserve(size);
-      
+
       std::size_t step = n_samples / size;
 
       for (int i_sample = 0; i_sample < n_samples; i_sample += step) {
@@ -294,7 +294,7 @@ struct LinearSplitGenerator {
     typedef float FeatureType;
     size_t n_features;
     size_t n_proposals;
-    LinearSplitGenerator(size_t n_proposals = 5) : 
+    LinearSplitGenerator(size_t n_proposals = 5) :
         n_proposals(n_proposals)
     {}
     void init(DataView2D<FeatureType> samples,
@@ -323,7 +323,7 @@ struct QuadraticSplitGenerator {
     typedef float FeatureType;
     size_t n_features;
     size_t n_proposals;
-    QuadraticSplitGenerator(size_t n_proposals = 5) : 
+    QuadraticSplitGenerator(size_t n_proposals = 5) :
         n_proposals(n_proposals)
     {}
     void init(DataView2D<FeatureType> samples,
@@ -352,5 +352,5 @@ struct QuadraticSplitGenerator {
 }
 
 }} // namespace CGAL::internal::
-    
+
 #endif

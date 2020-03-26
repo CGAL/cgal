@@ -28,7 +28,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 
-// This is the test file for the new design. Skip new design test for 
+// This is the test file for the new design. Skip new design test for
 // disabled compilers.
 #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
 
@@ -124,7 +124,7 @@ void test_file_IO_VRML_2() {}
 #endif // CGAL_USE_POLYHEDRON_DESIGN_ONE //
 
 int main(){
-// This is the test file for the new design. Skip new design test for 
+// This is the test file for the new design. Skip new design test for
 // disabled compilers.
 #ifndef CGAL_USE_POLYHEDRON_DESIGN_ONE
     test_file_IO_OFF();

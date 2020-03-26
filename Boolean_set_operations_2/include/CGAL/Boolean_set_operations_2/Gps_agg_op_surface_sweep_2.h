@@ -207,7 +207,7 @@ public:
       typedef decltype(this->m_subCurveAlloc) Subcurve_alloc;
       std::allocator_traits<Subcurve_alloc>::construct(this->m_subCurveAlloc, this->m_subCurves + index,
                                       this->m_masterSubcurve);
-#else                                                    
+#else
       this->m_subCurveAlloc.construct(this->m_subCurves + index,
                                       this->m_masterSubcurve);
 #endif

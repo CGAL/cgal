@@ -55,7 +55,7 @@ bool Polyhedron_demo_las_plugin::save(const CGAL::Three::Scene_item* item, QFile
   std::string extension = fileinfo.suffix().toUtf8().data();
   if (extension != "las" && extension != "LAS")
     return false;
-  
+
   // This plugin supports point sets
   const Scene_points_with_normal_item* point_set_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);

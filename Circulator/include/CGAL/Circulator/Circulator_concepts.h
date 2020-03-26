@@ -48,9 +48,9 @@ void deref(T*) {
 
 // N.B.: there is no such concept as Circulator as it is immaterial
 template <typename C>
-struct ForwardCirculator 
+struct ForwardCirculator
   : boost::Assignable<C>, boost::DefaultConstructible<C>
-  , boost::CopyConstructible<C> 
+  , boost::CopyConstructible<C>
 {
   // for some odd reason circulators have no associated traits
   typedef typename C::value_type value_type;
@@ -71,7 +71,7 @@ struct ForwardCirculator
     // [-Wunused-local-typedefs]"
     BOOST_CONCEPT_ASSERT((boost::SignedInteger<difference_type>)) CGAL_UNUSED;
     BOOST_CONCEPT_ASSERT((boost::Convertible<iterator_category, CGAL::Forward_circulator_tag>)) CGAL_UNUSED;
-    
+
     boost::require_boolean_expr(a == NULL);
     boost::require_boolean_expr(a != NULL);
     ++a;
@@ -109,7 +109,7 @@ struct RandomAccessCirculator
     c += n; // addition
     c = c + n; c = n + c;
     c -= n; // subtraction
-    c = c - n; 
+    c = c - n;
     n = c - b; // difference
     (void)c[n]; // operator[]
 

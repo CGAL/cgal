@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau__CGAL@normalesup.org>
-// 
+//
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>

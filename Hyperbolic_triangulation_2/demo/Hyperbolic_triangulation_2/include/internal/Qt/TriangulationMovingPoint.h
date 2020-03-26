@@ -60,13 +60,13 @@ protected:
 
 template <typename T>
 TriangulationMovingPoint<T>::TriangulationMovingPoint(T * dt_,
-							  QObject* parent)
+                                                          QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), vh(), movePointToInsert(false), insertedPoint(false)
 {}
 
 
 template <typename T>
-void 
+void
 TriangulationMovingPoint<T>::localize_and_insert_point(QPointF qt_point)
 {
   Point p(qt_point.x(), qt_point.y());
@@ -86,7 +86,7 @@ TriangulationMovingPoint<T>::localize_and_insert_point(QPointF qt_point)
 
 
 template <typename T>
-void 
+void
 TriangulationMovingPoint<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->number_of_vertices() == 0 ||
@@ -100,7 +100,7 @@ TriangulationMovingPoint<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-void 
+void
 TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
 
@@ -119,7 +119,7 @@ TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-void 
+void
 TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
   if(! movePointToInsert ||
@@ -131,16 +131,16 @@ TriangulationMovingPoint<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     dt->remove(vh);
   }
   vh = Vertex_handle();
-  
+
   emit(modelChanged());
- 
+
   movePointToInsert = false;
 }
 
 
 
 template <typename T>
-bool 
+bool
 TriangulationMovingPoint<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if(event->type() == QEvent::GraphicsSceneMousePress) {
@@ -159,7 +159,7 @@ TriangulationMovingPoint<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

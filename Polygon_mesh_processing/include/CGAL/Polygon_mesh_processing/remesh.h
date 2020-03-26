@@ -358,7 +358,7 @@ void split_long_edges(const EdgeRange& edges
       > ::type ECMap;
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Constant_property_map<edge_descriptor, bool>(false));
-  
+
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
     Constant_property_map<vertex_descriptor, bool>, // no constraint pmap
     internal::Connected_components_pmap<PM, FIMap>,

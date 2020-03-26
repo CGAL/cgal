@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
@@ -36,7 +36,7 @@
 namespace CGAL {
 
 /*! \class
- * A visitor class for Arrangement_zone_2, which performs incremental 
+ * A visitor class for Arrangement_zone_2, which performs incremental
  * insertion of an x-monotone curve into an arrangement.
  * The class should be templated by an Arrangement_2 class (that is, an
  * Arrangement_on_surface_2<GeomTraits, TopTraits> class, with the TopTraits
@@ -89,7 +89,7 @@ public:
   void init (Arrangement_2 *arr)
   {
     p_arr = arr;
-    geom_traits = const_cast<Traits_adaptor_2*> 
+    geom_traits = const_cast<Traits_adaptor_2*>
       (static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits()));
   }
 
@@ -162,10 +162,10 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
     geom_traits->parameter_space_in_x_2_object();
   typename Traits_adaptor_2::Parameter_space_in_y_2 ps_in_y =
     geom_traits->parameter_space_in_y_2_object();
-    
+
   // Create an arrangement accessor.
   Arr_accessor<Arrangement_2>    arr_access (*p_arr);
-  
+
   // Get the boundary conditions of the curve ends.
   const Arr_parameter_space bx_l = ps_in_x (cv, ARR_MIN_END);
   const Arr_parameter_space by_l = ps_in_y (cv, ARR_MIN_END);
@@ -241,12 +241,12 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
       prev_he_right = right_he;
     else if (! right_v->is_isolated())
       prev_he_right = arr_access.locate_around_vertex (right_v, cv);
-    
+
     // In case the vertex does not exist, split right_he at cv's right
     // endpoint and create the vertex.
     if (right_v == invalid_v) {
       _split_edge (right_he, max_vertex (cv), arr_access);
-      
+
       // Check whether we have just split the halfedge that left_he refers to.
       // If so, prev_he_right's target is now the new vertex, and we have to
       // proceed to the next halfedge (whose target is right_v).
@@ -255,7 +255,7 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
     }
   }
   else {
-    // Check whether the right end of cv is bounded or not.    
+    // Check whether the right end of cv is bounded or not.
     if ((bx_r == ARR_RIGHT_BOUNDARY) || (by_r != ARR_INTERIOR)) {
       // Use the arrangement accessor and obtain a vertex associated with
       // the unbounded right end (possibly with a predecessor halfedge).
@@ -299,15 +299,15 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
           arr_access.create_vertex (max_vertex (cv)) :
           arr_access.create_boundary_vertex (cv, ARR_MAX_END, bx_r, by_r);
       }
-     
+
       // We should insert the curve in the interior of the face.
-      inserted_he = arr_access.insert_in_face_interior_ex (face, cv, ARR_LEFT_TO_RIGHT, 
+      inserted_he = arr_access.insert_in_face_interior_ex (face, cv, ARR_LEFT_TO_RIGHT,
                                                            left_v, right_v);
     }
     else {
       // The right endpoint is associated with an arrangement vertex, and
       // we have the predecessor halfedge for the insertion.
-      inserted_he = arr_access.insert_from_vertex_ex (prev_he_right, cv, ARR_RIGHT_TO_LEFT, 
+      inserted_he = arr_access.insert_from_vertex_ex (prev_he_right, cv, ARR_RIGHT_TO_LEFT,
                                                       left_v);
 
       // The returned halfedge is directed to the newly created vertex
@@ -327,7 +327,7 @@ found_subcurve (const X_monotone_curve_2& cv, Face_handle face,
           arr_access.create_vertex (max_vertex (cv)) :
           arr_access.create_boundary_vertex (cv, ARR_MAX_END, bx_r, by_r);
       }
-     
+
       // Use the left predecessor for the insertion.
       inserted_he = arr_access.insert_from_vertex_ex (prev_he_left, cv, ARR_LEFT_TO_RIGHT,
                                                       right_v);

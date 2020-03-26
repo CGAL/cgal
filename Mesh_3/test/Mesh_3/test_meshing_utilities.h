@@ -149,10 +149,10 @@ struct Tester
     }
 
     f = c3t3.number_of_facets_in_complex();
-    c = c3t3.number_of_cells_in_complex(); 
+    c = c3t3.number_of_cells_in_complex();
     assert ( n < 11 );
 #endif
-    
+
     verify_c3t3(c3t3,domain,domain_type,v,v,f,f,c,c);
     verify_c3t3_hausdorff_distance(c3t3, domain, domain_type, hdist);
 
@@ -167,7 +167,7 @@ struct Tester
     verify_c3t3_quality(c3t3,exude_c3t3);
     verify_c3t3_volume(exude_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(exude_c3t3, domain, domain_type, hdist);
-    
+
     // Perturb.
     // Vertex number should not change (obvious)
     // Quality should increase
@@ -188,7 +188,7 @@ struct Tester
     verify_c3t3(odt_c3t3,domain,domain_type,v,v);
     verify_c3t3_volume(odt_c3t3, volume*0.95, volume*1.05);
     verify_c3t3_hausdorff_distance(odt_c3t3, domain, domain_type, hdist);
-    
+
     // Lloyd-smoothing
     // Vertex number should not change (obvious)
     C3t3 lloyd_c3t3(c3t3);
@@ -218,10 +218,10 @@ struct Tester
     std::cerr << "\tNumber of cells: " << c3t3.number_of_cells_in_complex() << "\n";
     std::cerr << "\tNumber of facets: " << c3t3.number_of_facets_in_complex() << "\n";
     std::cerr << "\tNumber of vertices: " << c3t3.triangulation().number_of_vertices() << "\n";
-        
-    std::size_t dist_facets ( std::distance(c3t3.facets_in_complex_begin(), 
+
+    std::size_t dist_facets ( std::distance(c3t3.facets_in_complex_begin(),
                                             c3t3.facets_in_complex_end()) );
-    std::size_t dist_cells ( std::distance(c3t3.cells_in_complex_begin(), 
+    std::size_t dist_cells ( std::distance(c3t3.cells_in_complex_begin(),
                                             c3t3.cells_in_complex_end()) );
 
     assert(min_vertices_expected <= c3t3.triangulation().number_of_vertices());
@@ -230,42 +230,42 @@ struct Tester
     assert(min_facets_expected <= c3t3.number_of_facets_in_complex());
     assert(max_facets_expected >= c3t3.number_of_facets_in_complex());
     assert(dist_facets == c3t3.number_of_facets_in_complex());
-    
+
     assert(min_cells_expected <= c3t3.number_of_cells_in_complex());
     assert(max_cells_expected >= c3t3.number_of_cells_in_complex());
     assert(dist_cells == c3t3.number_of_cells_in_complex());
     verify_c3t3_combinatorics(c3t3, domain, domain_type);
   }
-  
+
   template<typename C3t3>
   void verify_c3t3_quality(const C3t3& original_c3t3,
                            const C3t3& modified_c3t3) const
   {
     double original = min_value(original_c3t3);
     double modified = min_value(modified_c3t3);
-    
+
     std::cout << "\tQuality before optimization: " << original
               << " - Quality after optimization: " << modified << std::endl;
-    
+
     assert(original <= modified * (1. + 1e-15) /*precision of double*/ );
   }
-  
+
   template<typename C3t3>
   double min_value(const C3t3& c3t3) const
   {
     typedef typename C3t3::Triangulation                              Tr;
     typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Tr>   Criterion;
     typedef typename C3t3::Cells_in_complex_iterator                  Cell_iterator;
-    
+
     double min_value = (std::numeric_limits<double>::max)();
     Criterion criterion(min_value, c3t3.triangulation());
-    
+
     for ( Cell_iterator cit = c3t3.cells_in_complex_begin(),
          end = c3t3.cells_in_complex_end() ; cit != end ; ++cit )
     {
       min_value = (std::min)(min_value, criterion(c3t3.triangulation().tetrahedron(cit)));
     }
-    
+
     return min_value;
   }
 
@@ -366,7 +366,7 @@ struct Tester
     return 0.;
   }
 
-  // For polyhedral domains, compute the distance to polyhedron 
+  // For polyhedral domains, compute the distance to polyhedron
   // using the domain's AABBtree
   template<typename C3t3, typename MeshDomain>
   double compute_hausdorff_distance(const C3t3& c3t3,
@@ -389,7 +389,7 @@ struct Tester
       if(!c3t3.is_in_complex(f))
         continue;
 
-      max_sqd = (std::max)(max_sqd, 
+      max_sqd = (std::max)(max_sqd,
         aabb_tree.squared_distance(CGAL::centroid(tr.triangle(f))));
     }
     double hdist = std::sqrt(max_sqd);

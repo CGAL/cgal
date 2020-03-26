@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 //                 Menelaos Karavelas <mkaravel@cse.nd.edu>
@@ -36,13 +36,13 @@ struct Triangulation_iterator_handle_adaptor
 {
   typedef Triangulation_iterator_handle_adaptor<Base, Handle>  Self;
   Triangulation_iterator_handle_adaptor() : Base() {}
-   
-  Triangulation_iterator_handle_adaptor(const Base & b) 
+
+  Triangulation_iterator_handle_adaptor(const Base & b)
     : Base(b) {}
 
   // MK: added this to satisfy the mips_CC-7.40 compiler
   Self& operator=(const Self& other) {
-    static_cast<Base &>(*this) = static_cast<const Base&>(other); 
+    static_cast<Base &>(*this) = static_cast<const Base&>(other);
     return *this;
   }
 

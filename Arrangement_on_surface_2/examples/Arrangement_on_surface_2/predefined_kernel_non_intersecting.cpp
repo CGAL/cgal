@@ -55,7 +55,7 @@ int main (int argc, char *argv[])
   Arrangement_2                  arr;
   CGAL::Timer                    timer;
 
-  std::cout << "Performing aggregated insertion of " 
+  std::cout << "Performing aggregated insertion of "
             << n << " segments." << std::endl;
 
   timer.start();
@@ -64,11 +64,11 @@ int main (int argc, char *argv[])
 
   // Print the arrangement dimensions.
   std::cout << "V = " << arr.number_of_vertices()
-	    << ",  E = " << arr.number_of_edges() 
-	    << ",  F = " << arr.number_of_faces() << std::endl;
+            << ",  E = " << arr.number_of_edges()
+            << ",  F = " << arr.number_of_faces() << std::endl;
 
-  std::cout << "Construction took " << timer.time() 
-	    << " seconds." << std::endl;
-  
+  std::cout << "Construction took " << timer.time()
+            << " seconds." << std::endl;
+
   return 0;
 }

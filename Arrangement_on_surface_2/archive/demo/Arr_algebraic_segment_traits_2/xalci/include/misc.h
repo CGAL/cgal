@@ -86,7 +86,7 @@ public:
 class Graphic_layer : public CGAL::Qt_widget_layer
 {
 Q_OBJECT
- 
+
 public:
     Graphic_layer(CGAL::Qt_widget *attach_to, int index_,
         int color_index_, int fst_ind = -1,
@@ -94,7 +94,7 @@ public:
          Qt_widget_layer(parent, name),
           erase(false), index(index_), color_index(color_index_),
           first_curve_index(fst_ind), second_curve_index(snd_ind)
-    { 
+    {
         attach_to->attach(this);
     }
 
@@ -108,7 +108,7 @@ protected:
 
     int index, color_index;
     int first_curve_index, second_curve_index;
-        
+
 };
 
 typedef std::vector<Graphic_layer *> Layers;

@@ -48,8 +48,8 @@ void test_ipower() {
 }
 
 int main(){
-    test_ipower<long>();     
+    test_ipower<long>();
     return 0;
 }
 
-// EOF 
+// EOF

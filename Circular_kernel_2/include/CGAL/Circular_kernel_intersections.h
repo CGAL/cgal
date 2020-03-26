@@ -19,13 +19,13 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H
-#define CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H 
+#define CGAL_CIRCULAR_KERNEL_INTERSECTIONS_H
 
 #include <CGAL/license/Circular_kernel_2.h>
 
@@ -57,7 +57,7 @@ namespace Intersections { \
   { \
     std::vector< typename CK2_Intersection_traits<K, typename K::A, typename K::B>::type > res; \
     typename K::Intersect_2()(c1,c2,std::back_inserter(res)); \
-		return !res.empty(); \
+                return !res.empty(); \
   } \
 } \
   } \

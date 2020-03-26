@@ -59,31 +59,31 @@ public:
   }
 #endif // CGAL_CFG_MATCHING_BUG_6
 
-  // The internal::do_intersect(..) function 
+  // The internal::do_intersect(..) function
   // only performs orientation tests on the vertices
   // of the segment
   // By calling the do_intersect function with
   // the  statically filtered kernel we avoid
   // that doubles are put into Interval_nt
   // to get taken out again with fit_in_double
-  result_type 
+  result_type
   operator()(const Segment_2 &s, const Segment_2& t) const
   {
     return Intersections::internal::do_intersect(s,t, SFK());
   }
 
-  result_type 
+  result_type
   operator()(const Point_2 &p, const Segment_2& t) const
   {
     return Intersections::internal::do_intersect(p,t, SFK());
   }
-  
-  result_type 
+
+  result_type
   operator()(const Segment_2& t, const Point_2 &p) const
   {
     return Intersections::internal::do_intersect(p,t, SFK());
   }
-  
+
 };
 } // Static_filters_predicates
 } // internal

@@ -313,7 +313,7 @@ protected:
               }
               else
               {
-		// In case of overflow of denom
+    // In case of overflow of denom
                 numer = 1;
                 denom = max_int;
               }

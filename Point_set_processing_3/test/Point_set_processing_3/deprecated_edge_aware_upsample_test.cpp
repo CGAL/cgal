@@ -49,7 +49,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 // Tests
 // ----------------------------------------------------------------------------
 
-void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input point set                            
+void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input point set
                               double sharpness_sigma, //control sharpness
                               double edge_sensitivity,// more points will up-sample on edge
                               double neighbor_radius,  // initial neighbors size.
@@ -61,14 +61,14 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
             << sharpness_sigma << "%, number_of_output_points="
             << points.size() * times_of_output_points << ")...\n";
 
-   //Run algorithm 
+   //Run algorithm
   CGAL::edge_aware_upsample_point_set<Concurrency_tag>(
-            points.begin(), 
-            points.end(), 
+            points.begin(),
+            points.end(),
             std::back_inserter(points),
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
-            sharpness_sigma, 
+            sharpness_sigma,
             edge_sensitivity,
             neighbor_radius,
             points.size() * times_of_output_points);
@@ -133,7 +133,7 @@ int main(int argc, char * argv[])
     std::ifstream stream(input_filename.c_str());
    if(stream &&
        CGAL::read_xyz_points_and_normals
-       (stream,                                     
+       (stream,
         std::back_inserter(points),
         CGAL::First_of_pair_property_map<PointVectorPair>(),
         CGAL::Second_of_pair_property_map<PointVectorPair>()))
@@ -151,7 +151,7 @@ int main(int argc, char * argv[])
     // Test
     //***************************************
 
-    test_edge_aware_upsample(points, 
+    test_edge_aware_upsample(points,
                              sharpness_sigma,
                              edge_sensitivity,
                              neighbor_radius,

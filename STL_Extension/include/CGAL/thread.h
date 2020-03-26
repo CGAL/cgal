@@ -65,7 +65,7 @@ namespace CGAL {
 namespace cpp11 {
 
 #if CGAL_USE_TBB_THREADS
-  
+
   using std::thread; // std::thread is declared by TBB if TBB_IMPLEMENT_CPP0X == 1
 
   inline void sleep_for (double seconds)
@@ -74,7 +74,7 @@ namespace cpp11 {
     // It takes interval_t types as argument (!= from the std norm)
     std::this_thread::sleep_for(tbb::tick_count::interval_t(seconds));
   }
-  
+
 #else // C++11 implementation
 
   using std::thread;

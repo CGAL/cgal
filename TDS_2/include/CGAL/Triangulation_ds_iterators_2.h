@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-  // with Once set to false, the Edge is reported twice, seen from the two adjacentfaces 
+  // with Once set to false, the Edge is reported twice, seen from the two adjacentfaces
   template <class Tds, bool Once = true>
 class Triangulation_ds_edge_iterator_2
 {
@@ -39,7 +39,7 @@ public:
   typedef typename Tds::Edge           Edge;
   typedef typename Tds::Face_iterator  Face_iterator;
   typedef typename Tds::Face_handle    Face_handle;
-    
+
   typedef Edge            value_type;
   typedef Edge*           pointer;
   typedef Edge&           reference;
@@ -48,7 +48,7 @@ public:
   typedef std::bidirectional_iterator_tag        iterator_category;
 
   typedef Triangulation_ds_edge_iterator_2<Tds,Once> Edge_iterator;
-  
+
 private:
 const Tds* _tds;
 Face_iterator pos;
@@ -68,7 +68,7 @@ public:
   Edge*     operator->() const;
   Edge&     operator*() const ;
 
-private: 
+private:
   void increment();
   void decrement();
   bool associated_edge(CGAL::Tag_true);
@@ -81,7 +81,7 @@ private:
 template<class Tds, bool Once>
 Triangulation_ds_edge_iterator_2<Tds,Once> ::
 Triangulation_ds_edge_iterator_2(const Tds * tds)
- :  _tds(tds) 
+ :  _tds(tds)
 {
   edge.second = 0;
   if (_tds->dimension()<= 0) {
@@ -90,14 +90,14 @@ Triangulation_ds_edge_iterator_2(const Tds * tds)
   }
   pos = _tds->faces().begin();
   if (_tds->dimension() == 1) edge.second = 2;
-    while ( pos != _tds->faces().end()  
+    while ( pos != _tds->faces().end()
             && !associated_edge(Boolean_tag<Once>()) ) increment();
 }
 
 template<class Tds, bool Once>
 Triangulation_ds_edge_iterator_2<Tds,Once> ::
 Triangulation_ds_edge_iterator_2(const Tds * tds, int )
-  : _tds(tds) 
+  : _tds(tds)
 {
   pos = tds->faces().end();
   edge.second = 0;
@@ -165,13 +165,13 @@ Triangulation_ds_edge_iterator_2<Tds,Once>&
 Triangulation_ds_edge_iterator_2<Tds,Once> ::
 operator++()
 {
-  //CGAL_triangulation_precondition(pos != Iterator_base() && 
-  //			       pos != _tds->faces().end());
+  //CGAL_triangulation_precondition(pos != Iterator_base() &&
+  //                               pos != _tds->faces().end());
   do     increment();
   while( pos != _tds->faces().end() && !associated_edge(Boolean_tag<Once>()));
   return *this;
 }
-    
+
 
 template<class Tds, bool Once>
 inline
@@ -179,40 +179,40 @@ Triangulation_ds_edge_iterator_2<Tds,Once>&
 Triangulation_ds_edge_iterator_2<Tds,Once> ::
 operator--()
 {
-  // CGAL_triangulation_precondition(pos != Iterator_base() 
+  // CGAL_triangulation_precondition(pos != Iterator_base()
   //                          && *this != Edge_iterator(_tds));
   do      decrement();
-  while ( !associated_edge(Boolean_tag<Once>()) && *this != Edge_iterator(_tds) ); 
+  while ( !associated_edge(Boolean_tag<Once>()) && *this != Edge_iterator(_tds) );
   return *this;
 }
 
-    
+
 template<class Tds, bool Once>
 inline
 Triangulation_ds_edge_iterator_2<Tds,Once>
-Triangulation_ds_edge_iterator_2<Tds,Once> ::    
+Triangulation_ds_edge_iterator_2<Tds,Once> ::
 operator++(int)
 {
   Edge_iterator tmp(*this);
   ++(*this);
   return tmp;
 }
-    
+
 template<class Tds, bool Once>
 inline
 Triangulation_ds_edge_iterator_2<Tds,Once>
-Triangulation_ds_edge_iterator_2<Tds,Once> ::     
+Triangulation_ds_edge_iterator_2<Tds,Once> ::
 operator--(int)
 {
   Edge_iterator tmp(*this);
   --(*this);
   return tmp;
 }
-    
+
 template<class Tds, bool Once>
 inline
 typename Triangulation_ds_edge_iterator_2<Tds,Once>::Edge*
-Triangulation_ds_edge_iterator_2<Tds,Once> ::    
+Triangulation_ds_edge_iterator_2<Tds,Once> ::
 operator->() const
 {
   edge.first = pos;
@@ -222,8 +222,8 @@ operator->() const
 template<class Tds, bool Once>
 inline
 typename Triangulation_ds_edge_iterator_2<Tds,Once>::Edge&
-Triangulation_ds_edge_iterator_2<Tds,Once> ::    
-operator*() const 
+Triangulation_ds_edge_iterator_2<Tds,Once> ::
+operator*() const
 {
   edge.first = pos;
   return edge;

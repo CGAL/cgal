@@ -91,12 +91,12 @@ public:
     {
       Protect_FPU_rounding<Protection> p;
       try
-	{
-	  // No forward here, the arguments may still be needed
-	  Ares res = ap(c2a(args)...);
-	  if (is_certain(res))
-	    return get_certain(res);
-	}
+        {
+          // No forward here, the arguments may still be needed
+          Ares res = ap(c2a(args)...);
+          if (is_certain(res))
+            return get_certain(res);
+        }
       catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
@@ -115,11 +115,11 @@ public:
     { \
       Protect_FPU_rounding<Protection> p; \
       try \
-	{ \
-	  Ares res = ap(BOOST_PP_ENUM(N,CGAL_VAR,c2a)); \
-	  if (is_certain(res)) \
-	    return get_certain(res); \
-	} \
+        { \
+          Ares res = ap(BOOST_PP_ENUM(N,CGAL_VAR,c2a)); \
+          if (is_certain(res)) \
+            return get_certain(res); \
+        } \
       catch (Uncertain_conversion_exception&) {} \
     } \
     CGAL_BRANCH_PROFILER_BRANCH(tmp); \

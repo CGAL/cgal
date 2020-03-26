@@ -78,9 +78,9 @@ namespace CGAL {
       bool
       >
     class Polyhedral_oracle;
-    
+
   } // end namespace Surface_mesher
-  
+
   template <class Polyhedron>
   struct Polyhedral_surface_3_type_helper {
     typedef typename Polyhedron::Vertex_handle Vertex_handle;
@@ -94,14 +94,14 @@ namespace CGAL {
       typedef std::set<int> Incident_edges; // set of edge id
       Incident_edges incident_edges;
     };
-    
+
     struct Edge_node {
       typedef std::vector<Edge_handle> Sub_edges;
       typedef std::set<int> Incident_facets; // set of facet id
       Sub_edges sub_edges;
       Incident_facets incident_facets;
     };
-    
+
     struct Facet_node {
       typedef std::vector<Facet_handle> Sub_facets;
       Sub_facets sub_facets;
@@ -144,7 +144,7 @@ namespace CGAL {
       {
         ::glBegin(GL_LINES);
         typedef typename Edge_node::Sub_edges Sub_edges;
-        for(typename Sub_edges::iterator 
+        for(typename Sub_edges::iterator
               eit = edges[edge_index].sub_edges.begin(),
               end = edges[edge_index].sub_edges.end();
             eit != end;
@@ -153,7 +153,7 @@ namespace CGAL {
           const Point_3& p1 = (*eit)->opposite()->vertex()->point();
           const Point_3& p2 = (*eit)->vertex()->point();
           ::glVertex3f(p1[0],p1[1],p1[2]);
-          ::glVertex3f(p2[0],p2[1],p2[2]);       
+          ::glVertex3f(p2[0],p2[1],p2[2]);
         }
         ::glEnd();
       } // end gl_draw_edge(...)
@@ -166,7 +166,7 @@ namespace CGAL {
         // draw triangles
         ::glBegin(GL_TRIANGLES);
         typedef typename Facet_node::Sub_facets Sub_facets;
-        for(typename Sub_facets::iterator 
+        for(typename Sub_facets::iterator
               fit = facets[facet_index].sub_facets.begin(),
               end_fit = facets[facet_index].sub_facets.end();
             fit != end_fit;
@@ -182,7 +182,7 @@ namespace CGAL {
             else
               ::glNormal3f(normal[0],normal[1],normal[2]);
           }
-          typename Polyhedron::Halfedge_around_facet_circulator 
+          typename Polyhedron::Halfedge_around_facet_circulator
             he = (*fit)->facet_begin(),
             end_he = he;
           do
@@ -193,7 +193,7 @@ namespace CGAL {
               const typename Polyhedron::Facet::Normal_3& normal = he->vertex()->normal();
               if(inverse_normals)
                 ::glNormal3f(-normal[0],-normal[1],-normal[2]);
-              else      
+              else
                 ::glNormal3f(normal[0],normal[1],normal[2]);
             }
             // polygon assembly is performed per vertex
@@ -212,7 +212,7 @@ template <class GT,
           class Has_edges_tag_ = Surface_mesher::Has_no_edges,
           class Polyhedron_3 = Enriched_polyhedron<GT,
                                                    Enriched_items> >
-class Polyhedral_surface_3 : 
+class Polyhedral_surface_3 :
   public Has_edges_tag_,
   public Polyhedron_3
 {
@@ -250,7 +250,7 @@ public:
   using Polyhedron::edges_end;
   using Polyhedron::facets_begin;
   using Polyhedron::facets_end;
-  
+
 
   typedef Polyhedral_surface_3_type_helper<Polyhedron> Type_helper;
   typedef typename Type_helper::Vertex_node Graph_vertex_node;
@@ -258,10 +258,10 @@ public:
   typedef typename Type_helper::Facet_node Graph_facet_node;
   typedef typename Type_helper::Incidence_graph Incidence_graph;
 
-  class Normalized_geom_traits : public Geom_traits 
+  class Normalized_geom_traits : public Geom_traits
   {
   public:
-    typedef typename 
+    typedef typename
     Kernel_traits<typename Geom_traits::Point_3>::Kernel::Point_3 Point_3;
   };
 
@@ -278,10 +278,10 @@ public:
   typedef Data_structure_using_octree_3<Normalized_geom_traits> Subsegments_tree;
 #endif
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
-  typedef Intersection_data_structure_3<Normalized_geom_traits, 
-					Triangle_3> Subfacets_tree;
   typedef Intersection_data_structure_3<Normalized_geom_traits,
-					Segment_3> Subsegments_tree;
+                                        Triangle_3> Subfacets_tree;
+  typedef Intersection_data_structure_3<Normalized_geom_traits,
+                                        Segment_3> Subsegments_tree;
 #endif
   typedef boost::shared_ptr<Subfacets_tree> Subfacets_tree_ptr;
   typedef boost::shared_ptr<Subsegments_tree> Subsegments_tree_ptr;
@@ -299,7 +299,7 @@ public:
   typedef Surface_mesher::Polyhedral_oracle<Self> Surface_mesher_traits_3;
 
   Polyhedral_surface_3(const double sharp_edges_angle_lower_bound = 60.,
-		       const double sharp_edges_angle_upper_bound = 180.,
+                       const double sharp_edges_angle_upper_bound = 180.,
                        const double sharp_vertices_angle_lower_bound = 30.,
                        const double sharp_vertices_angle_upper_bound = 180.) :
     subfacets_tree_ptr(new Subfacets_tree()),
@@ -320,8 +320,8 @@ public:
   }
 
   Polyhedral_surface_3(std::istream& input_file,
-		       const double sharp_edges_angle_lower_bound = 60.,
-		       const double sharp_edges_angle_upper_bound = 180.,
+                       const double sharp_edges_angle_lower_bound = 60.,
+                       const double sharp_edges_angle_upper_bound = 180.,
                        bool auto_construct_octree = true) :
     subfacets_tree_ptr(new Subfacets_tree()),
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
@@ -357,7 +357,7 @@ public:
 
     bounding_box_sq_radius = bounding_box.xmax()-bounding_box.xmin();
     bounding_box_sq_radius =
-      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION 
+      CGAL_NTS max BOOST_PREVENT_MACRO_SUBSTITUTION
       (bounding_box_sq_radius,
        FT(bounding_box.ymax()-bounding_box.ymin()));
     bounding_box_sq_radius =
@@ -370,11 +370,11 @@ public:
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     timer.stop();
-    std::cerr << 
+    std::cerr <<
       ::boost::format("done (%1%s)\n"
-		      "  number of vertices: %2%\n"
-		      "  number of edges:    %3%\n"
-		      "  number of facets:   %4%\n")
+                      "  number of vertices: %2%\n"
+                      "  number of edges:    %3%\n"
+                      "  number of facets:   %4%\n")
       % timer.time()
       % this->size_of_vertices()
       % ( this->size_of_halfedges() / 2 )
@@ -391,11 +391,11 @@ public:
   {
 #if 0
     GT gt = GT();
-    typename GT::Construct_orthogonal_vector_3 orthogonal_vector = 
+    typename GT::Construct_orthogonal_vector_3 orthogonal_vector =
       gt.construct_orthogonal_vector_3_object();
     typename GT::Compute_squared_length_3 squared_length =
       gt.compute_squared_length_3_object();
-    typename GT::Compute_scalar_product_3 scalar_product = 
+    typename GT::Compute_scalar_product_3 scalar_product =
       gt.compute_scalar_product_3_object();
 
 //    typedef CGAL::Polyhedron_3<GT> Polyhedron_3;
@@ -406,21 +406,21 @@ public:
     public:
       Facet_ortho_vector(GT gt) : gt(gt) {}
 
-      typename GT::Vector_3 
+      typename GT::Vector_3
       operator()(const typename Polyhedron_3::Facet& f) {
-	typename Polyhedron_3::Halfedge_around_facet_const_circulator 
-	  edges_circ = f.facet_begin();
-	const Point_3& p1 = edges_circ++->vertex()->point();
-	const Point_3& p2 = edges_circ++->vertex()->point();
-	const Point_3& p3 = edges_circ++->vertex()->point();
-	return gt.construct_orthogonal_vector_3_object()(p1, p2, p3);
+        typename Polyhedron_3::Halfedge_around_facet_const_circulator
+          edges_circ = f.facet_begin();
+        const Point_3& p1 = edges_circ++->vertex()->point();
+        const Point_3& p2 = edges_circ++->vertex()->point();
+        const Point_3& p3 = edges_circ++->vertex()->point();
+        return gt.construct_orthogonal_vector_3_object()(p1, p2, p3);
       }
     };
     Facet_ortho_vector facet_ortho_vector(gt);
 
-    const double cosine_bound = 
+    const double cosine_bound =
       std::cos(CGAL_PI * sharp_edges_angle_lower_bound / 360. );
-    
+
     const FT cosine_squared_bound = cosine_bound * cosine_bound;
 #endif // if 0
     typedef typename Polyhedron_3::Vertex_const_iterator Vertex_const_it;
@@ -429,7 +429,7 @@ public:
     double (*vertices_array)[3] =
       (double (*)[3])new double [3*this->size_of_vertices()];
 //       static_cast<double(*)[3]>(new double [3*this->size_of_vertices()]);
-    int (*facets_array)[3] = 
+    int (*facets_array)[3] =
       (int (*)[3])new int [3*this->size_of_facets()];
     int i = 0;
     typedef Inverse_index<Vertex_const_it> Index;
@@ -454,13 +454,13 @@ public:
     }
 
     typename Polyhedron_3::size_type facet_index = 0;
-    for(typename Polyhedron_3::Facet_const_iterator fit = 
+    for(typename Polyhedron_3::Facet_const_iterator fit =
           this->facets_begin();
         fit != this->facets_end();
         ++fit, ++facet_index)
     {
       CGAL_assertion(fit->is_triangle());
-      typename Polyhedron_3::Halfedge_around_facet_const_circulator 
+      typename Polyhedron_3::Halfedge_around_facet_const_circulator
         edges_circ = fit->facet_begin();
 
       const Point_3& p1 = edges_circ++->vertex()->point();
@@ -481,10 +481,10 @@ public:
 #endif
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
       subfacets_tree_ptr->add_element(Triangle_3(p1, p2, p3));
-#endif     
+#endif
 #ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	std::cerr << ::boost::format("new facet: #%4% (%1%, %2%, %3%)\n")
-	  % p1 %  p2 % p3 % facet_index;
+        std::cerr << ::boost::format("new facet: #%4% (%1%, %2%, %3%)\n")
+          % p1 %  p2 % p3 % facet_index;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
     }
 
@@ -494,11 +494,11 @@ public:
     timer.reset();
     timer.start();
 # endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-    pinpolyhedron_ptr = 
+    pinpolyhedron_ptr =
       PointInPolyhedron_ptr(new PointInPolyhedron(vertices_array,
-						  this->size_of_vertices(),
-						  facets_array,
-						  this->size_of_facets()));
+                                                  this->size_of_vertices(),
+                                                  facets_array,
+                                                  this->size_of_facets()));
     delete [] vertices_array;
     delete [] facets_array;
 # ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
@@ -517,8 +517,8 @@ public:
 # ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
     std::cerr <<
       ::boost::format("done (%1%s)\n"
-		      "  number of facets:      %3%\n"
-		      "  number of constraints: %4% (in subfacets_tree)\n")
+                      "  number of facets:      %3%\n"
+                      "  number of constraints: %4% (in subfacets_tree)\n")
       % timer.time()
       % subfacets_tree_ptr->number_of_vertices()
       % subfacets_tree_ptr->number_of_facets()
@@ -527,55 +527,55 @@ public:
 # ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
     std::cerr <<
       ::boost::format("done (%1%s)\n"
-		      "  number of facets:      %2%\n")
+                      "  number of facets:      %2%\n")
       % timer.time()
       % subfacets_tree_ptr->number_of_elements();
 # endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     if( this->has_edges() ) {
 
-      for(typename Polyhedron_3::Edge_const_iterator eit = 
-	    this->edges_begin();
-	  eit != this->edges_end();
-	  ++eit)
+      for(typename Polyhedron_3::Edge_const_iterator eit =
+            this->edges_begin();
+          eit != this->edges_end();
+          ++eit)
       {
         if(eit->tag() >= 0)
         {
-	  const Point_3 pa = eit->vertex()->point();
-	  const Point_3 pb = eit->opposite()->vertex()->point();
+          const Point_3 pa = eit->vertex()->point();
+          const Point_3 pb = eit->opposite()->vertex()->point();
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-	  subsegments_tree_ptr->add_constrained_edge(pa, pb, eit->tag());
+          subsegments_tree_ptr->add_constrained_edge(pa, pb, eit->tag());
 #endif
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
-	  subsegments_tree_ptr->add_element(Segment_3(pa,  pb));
+          subsegments_tree_ptr->add_element(Segment_3(pa,  pb));
 # ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  std::cerr << 
-	    ::boost::format("new edge: (%1%, %2%)")
-	    % pa %  pb;
-	  if(eit->is_border_edge())
-	    std:: cerr << " (on border)\n";
-	  else
-	  {
-	    struct Triangle {
-	      typename GT::Triangle_3 operator()(typename Polyhedron_3::Facet facet) {
-		CGAL_assertion(facet.is_triangle());
-		typename Polyhedron_3::Halfedge_around_facet_const_circulator 
-		  edges_circ = facet.facet_begin();
-		const Point_3& p1 = edges_circ++->vertex()->point();
-		const Point_3& p2 = edges_circ++->vertex()->point();
-		const Point_3& p3 = edges_circ++->vertex()->point();
-		return typename GT::Triangle_3(p1, p2, p3);
-	      }
-	    };
-	    std:: cerr << " (not on border) ";
-	    std::cerr << 
-	      ::boost::format("facets=(%1%, %2%)")
-	      % Triangle()(*(eit->facet()))
-	      % Triangle()(*(eit->opposite()->facet()));
-	  }
+          std::cerr <<
+            ::boost::format("new edge: (%1%, %2%)")
+            % pa %  pb;
+          if(eit->is_border_edge())
+            std:: cerr << " (on border)\n";
+          else
+          {
+            struct Triangle {
+              typename GT::Triangle_3 operator()(typename Polyhedron_3::Facet facet) {
+                CGAL_assertion(facet.is_triangle());
+                typename Polyhedron_3::Halfedge_around_facet_const_circulator
+                  edges_circ = facet.facet_begin();
+                const Point_3& p1 = edges_circ++->vertex()->point();
+                const Point_3& p2 = edges_circ++->vertex()->point();
+                const Point_3& p3 = edges_circ++->vertex()->point();
+                return typename GT::Triangle_3(p1, p2, p3);
+              }
+            };
+            std:: cerr << " (not on border) ";
+            std::cerr <<
+              ::boost::format("facets=(%1%, %2%)")
+              % Triangle()(*(eit->facet()))
+              % Triangle()(*(eit->opposite()->facet()));
+          }
 # endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
 #endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-          
+
         }
       }
 
@@ -583,109 +583,109 @@ public:
       typedef std::map<Point_3, int> Edges_vertex_counter;
       Edges_vertex_counter edges_vertex_counter;
 
-      for(typename Polyhedron_3::Edge_const_iterator eit = 
-	    this->edges_begin();
-	  eit != this->edges_end();
-	  ++eit)
+      for(typename Polyhedron_3::Edge_const_iterator eit =
+            this->edges_begin();
+          eit != this->edges_end();
+          ++eit)
       {
-	typename Polyhedron_3::Halfedge_const_handle opposite = eit->opposite();
+        typename Polyhedron_3::Halfedge_const_handle opposite = eit->opposite();
 
-	bool insert_that_edge = false;
-	if( eit->is_border_edge() ) 
-	  insert_that_edge = true;
-	else	
-	{
-	  //       CGAL_assertion(eit->is_triangle());
-	  //       CGAL_assertion(opposite->is_triangle());
-	  if(eit->facet()->facet_degree() != 3)
-	    std::cerr << "warning: degree=" << eit->facet_degree() << "\n";
-	  if(opposite->facet()->facet_degree() != 3)
-	    std::cerr << "warning: degree(opposite)=" << opposite->facet_degree() << "\n";
+        bool insert_that_edge = false;
+        if( eit->is_border_edge() )
+          insert_that_edge = true;
+        else
+        {
+          //       CGAL_assertion(eit->is_triangle());
+          //       CGAL_assertion(opposite->is_triangle());
+          if(eit->facet()->facet_degree() != 3)
+            std::cerr << "warning: degree=" << eit->facet_degree() << "\n";
+          if(opposite->facet()->facet_degree() != 3)
+            std::cerr << "warning: degree(opposite)=" << opposite->facet_degree() << "\n";
 
-	  const Vector_3 v1 = facet_ortho_vector(*eit->facet());
-	  const Vector_3 v2 = facet_ortho_vector(*eit->opposite()->facet());
+          const Vector_3 v1 = facet_ortho_vector(*eit->facet());
+          const Vector_3 v2 = facet_ortho_vector(*eit->opposite()->facet());
 
-	  const FT product = scalar_product(v1, v2);
+          const FT product = scalar_product(v1, v2);
 
-	  insert_that_edge = product < FT(0) ||
-	    product * product < 
-	    cosine_squared_bound * squared_length(v1) * squared_length(v2);
-	}
-	if(insert_that_edge)
-	{ 
+          insert_that_edge = product < FT(0) ||
+            product * product <
+            cosine_squared_bound * squared_length(v1) * squared_length(v2);
+        }
+        if(insert_that_edge)
+        {
 
 
-	  const Point_3 pa = eit->vertex()->point();
-	  const Point_3 pb = opposite->vertex()->point();
-	  ++edges_vertex_counter[pa];
-	  ++edges_vertex_counter[pb];
+          const Point_3 pa = eit->vertex()->point();
+          const Point_3 pb = opposite->vertex()->point();
+          ++edges_vertex_counter[pa];
+          ++edges_vertex_counter[pb];
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-	  subsegments_tree_ptr->add_constrained_edge(pa, pb);
+          subsegments_tree_ptr->add_constrained_edge(pa, pb);
 #endif
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
-	  subsegments_tree_ptr->add_element(Segment_3(pa,  pb));
+          subsegments_tree_ptr->add_element(Segment_3(pa,  pb));
 # ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  std::cerr << 
-	    ::boost::format("new edge: (%1%, %2%)")
-	    % pa %  pb;
-	  if(eit->is_border_edge())
-	    std:: cerr << " (on border)\n";
-	  else
-	  {
-	    struct Triangle {
-	      typename GT::Triangle_3 operator()(typename Polyhedron_3::Facet facet) {
-		CGAL_assertion(facet.is_triangle());
-		typename Polyhedron_3::Halfedge_around_facet_const_circulator 
-		  edges_circ = facet.facet_begin();
-		const Point_3& p1 = edges_circ++->vertex()->point();
-		const Point_3& p2 = edges_circ++->vertex()->point();
-		const Point_3& p3 = edges_circ++->vertex()->point();
-		return typename GT::Triangle_3(p1, p2, p3);
-	      }
-	    };
-	    std:: cerr << " (not on border) ";
-	    std::cerr << 
-	      ::boost::format("facets=(%3%, %4%) normals=(%1%, %2%)\n")
-	      % facet_ortho_vector(*eit->facet())
-	      % facet_ortho_vector(*eit->opposite()->facet())
-	      % Triangle()(*(eit->facet()))
-	      % Triangle()(*(eit->opposite()->facet()));
-	  }
+          std::cerr <<
+            ::boost::format("new edge: (%1%, %2%)")
+            % pa %  pb;
+          if(eit->is_border_edge())
+            std:: cerr << " (on border)\n";
+          else
+          {
+            struct Triangle {
+              typename GT::Triangle_3 operator()(typename Polyhedron_3::Facet facet) {
+                CGAL_assertion(facet.is_triangle());
+                typename Polyhedron_3::Halfedge_around_facet_const_circulator
+                  edges_circ = facet.facet_begin();
+                const Point_3& p1 = edges_circ++->vertex()->point();
+                const Point_3& p2 = edges_circ++->vertex()->point();
+                const Point_3& p3 = edges_circ++->vertex()->point();
+                return typename GT::Triangle_3(p1, p2, p3);
+              }
+            };
+            std:: cerr << " (not on border) ";
+            std::cerr <<
+              ::boost::format("facets=(%3%, %4%) normals=(%1%, %2%)\n")
+              % facet_ortho_vector(*eit->facet())
+              % facet_ortho_vector(*eit->opposite()->facet())
+              % Triangle()(*(eit->facet()))
+              % Triangle()(*(eit->opposite()->facet()));
+          }
 # endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
 #endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
-	}
+        }
       }
 
-      for(typename Edges_vertex_counter::const_iterator it = 
-	    edges_vertex_counter.begin();
-	  it != edges_vertex_counter.end();
-	  ++it)
+      for(typename Edges_vertex_counter::const_iterator it =
+            edges_vertex_counter.begin();
+          it != edges_vertex_counter.end();
+          ++it)
       {
-	input_vertices_ptr->erase(it->first);
-	if(it->second != 2)
-	{
+        input_vertices_ptr->erase(it->first);
+        if(it->second != 2)
+        {
 #ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  std::cerr << ::boost::format("corner point: (%1%)\n")
-	    % it->first;
+          std::cerr << ::boost::format("corner point: (%1%)\n")
+            % it->first;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  corner_vertices_ptr->push_back(it->first);
-	}
-	else
-	{
+          corner_vertices_ptr->push_back(it->first);
+        }
+        else
+        {
 #ifdef CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  std::cerr << ::boost::format("edge point: (%1%)\n")
-	    % it->first;
+          std::cerr << ::boost::format("edge point: (%1%)\n")
+            % it->first;
 #endif // CGAL_POLYHEDRAL_SURFACE_VERBOSE_CONSTRUCTION
-	  edges_vertices_ptr->push_back(it->first);
-	}
+          edges_vertices_ptr->push_back(it->first);
+        }
       }
 //       if(!corner_vertices_ptr->empty() && edges_vertices_ptr->empty())
 //       {
 // #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
-// 	std::cerr << "Incorrect input data. "
-// 		  << "Swap corner vertices and edges vertices...\n";
+//         std::cerr << "Incorrect input data. "
+//                   << "Swap corner vertices and edges vertices...\n";
 // #endif
-// 	std::swap(corner_vertices, edges_vertices);
+//         std::swap(corner_vertices, edges_vertices);
 //       }
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
@@ -698,10 +698,10 @@ public:
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
       std::cerr <<
-	::boost::format("number of corner vertices: %1%\n"
-			"number of edges vertices:  %2%\n")
-	% corner_vertices_ptr->size()
-	% edges_vertices_ptr->size();
+        ::boost::format("number of corner vertices: %1%\n"
+                        "number of edges vertices:  %2%\n")
+        % corner_vertices_ptr->size()
+        % edges_vertices_ptr->size();
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
 
 
@@ -719,20 +719,20 @@ public:
 
 # ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       std::cerr <<
-	::boost::format("done (%1%s)\n"
-			"  number of edges:       %3%\n"
-			"  number of constraints: %4% (in subsegments_tree)\n")
-	% timer.time()
-	% subsegments_tree_ptr->number_of_vertices()
-	% subsegments_tree_ptr->number_of_edges()
-	% subsegments_tree_ptr->number_of_constraints();
+        ::boost::format("done (%1%s)\n"
+                        "  number of edges:       %3%\n"
+                        "  number of constraints: %4% (in subsegments_tree)\n")
+        % timer.time()
+        % subsegments_tree_ptr->number_of_vertices()
+        % subsegments_tree_ptr->number_of_edges()
+        % subsegments_tree_ptr->number_of_constraints();
 # endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
 # ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
       std::cerr <<
-	::boost::format("done (%1%s)\n"
-			"  number of edges:       %2%\n")
-	% timer.time()
-	% subsegments_tree_ptr->number_of_elements();
+        ::boost::format("done (%1%s)\n"
+                        "  number of edges:       %2%\n")
+        % timer.time()
+        % subsegments_tree_ptr->number_of_elements();
 # endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_INTERSECTION_DATA_STRUCTURE
 #endif // CGAL_SURFACE_MESHER_DEBUG_POLYHEDRAL_SURFACE_CONSTRUCTION
     } // end "if(this->has_edges())"
@@ -908,39 +908,39 @@ public:
             end = incidence_graph.vertices[i].incident_edges.end();
           sub_edge_id_it != end; ++sub_edge_id_it)
       {
-        std::cerr << 
+        std::cerr <<
           boost::format("%1% ") % *sub_edge_id_it;
       }
-      std::cerr << std::endl;      
+      std::cerr << std::endl;
     }
     std::cerr << "EDGES\n";
     for(int i = 0, end_i = incidence_graph.edges.size(); i < end_i; ++i)
     {
-      std::cerr << 
+      std::cerr <<
         boost::format("Edge #%1% number of sub-edges: %2%\n")
         % i % incidence_graph.edges[i].sub_edges.size();
-      std::cerr << 
+      std::cerr <<
         boost::format("Edge #%1% incident_facets: ") % i;
       for(typename Graph_edge_node::Incident_facets::iterator
             facet_id_it = incidence_graph.edges[i].incident_facets.begin(),
             end = incidence_graph.edges[i].incident_facets.end();
           facet_id_it != end; ++facet_id_it)
       {
-        std::cerr << 
+        std::cerr <<
           boost::format("%1% ") % *facet_id_it;
       }
-      std::cerr << std::endl;      
+      std::cerr << std::endl;
     }
     std::cerr << "FACETS\n";
     for(int i = 0, end_i = incidence_graph.facets.size(); i < end_i; ++i)
     {
-      std::cerr << 
+      std::cerr <<
         boost::format("Facet #%1% number of sub-facets: %2%\n")
         % i % incidence_graph.facets[i].sub_facets.size();
     }
 
 
-    for(typename Polyhedron_3::Vertex_iterator 
+    for(typename Polyhedron_3::Vertex_iterator
           vit = this->vertices_begin(),
           end = this->vertices_end();
         vit != end;
@@ -970,7 +970,7 @@ public:
   {
     typedef std::queue<Facet_handle> Facets_queue;
     Facets_queue facets_queue;
-    
+
     facets_queue.push(seed_facet);
 
     while(!facets_queue.empty())
@@ -981,7 +981,7 @@ public:
       {
         fh->tag(facet_index);
         facet_node.sub_facets.push_back(fh);
-          
+
         Halfedge_around_facet_circulator fit = fh->facet_begin();
         Halfedge_around_facet_circulator end = fit;
         CGAL_For_all(fit,end)
@@ -1022,7 +1022,7 @@ public:
       if(other_he->sharp())
       {
         ++nb_sharp_edges;
-        if(he != other_he) 
+        if(he != other_he)
           result = other_he;
       }
     }
@@ -1038,7 +1038,7 @@ public:
                result->opposite()->vertex()->point());
       return std::make_pair(true, result->opposite());
     }
-    else 
+    else
       return std::make_pair(false, Halfedge_handle());
   }
 
@@ -1120,7 +1120,7 @@ public:
     struct Display_curves_indices {
       void operator()(const std::set<int>& container) const {
         std::cerr << "(";
-        for(std::set<int>::const_iterator 
+        for(std::set<int>::const_iterator
               it = container.begin(),
               end = container.end();
             it != end;)
@@ -1210,7 +1210,7 @@ public:
     case 1:
       *out_it++ = v->point().element_index();
       break;
-    default: 
+    default:
       // if dimension=2, nothing to output
       // if dimension=-1 (point in volume, nothing to output)
       break;

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -28,7 +28,7 @@
 #include <iterator>
 #include <CGAL/iterator.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 // TODO :
 // - comparison operators should be global, but it causes problems...
@@ -106,18 +106,18 @@ public:
   reference operator*() const { return *base_;  }
   pointer operator->() const  { return &*base_; }
 
-  bool operator==(const Trivial_comparable_iterator &b) const 
+  bool operator==(const Trivial_comparable_iterator &b) const
     { return base()==b.base(); }
-  bool operator!=(const Trivial_comparable_iterator &b) const  
+  bool operator!=(const Trivial_comparable_iterator &b) const
     { return base()!=b.base(); }
 
-  bool operator< (const Trivial_comparable_iterator &b) const  
+  bool operator< (const Trivial_comparable_iterator &b) const
     { return base()< b.base(); }
-  bool operator> (const Trivial_comparable_iterator &b) const  
+  bool operator> (const Trivial_comparable_iterator &b) const
     { return base()> b.base(); }
-  bool operator<=(const Trivial_comparable_iterator &b) const  
+  bool operator<=(const Trivial_comparable_iterator &b) const
     { return base()<=b.base(); }
-  bool operator>=(const Trivial_comparable_iterator &b) const  
+  bool operator>=(const Trivial_comparable_iterator &b) const
     { return base()>=b.base(); }
 
 private:

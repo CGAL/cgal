@@ -61,27 +61,27 @@ struct Polyline_visitor
 {
   typedef std::vector<Point> Polyline;
   typedef std::vector<std::size_t> Polyline_of_ids;
-  
+
   std::list<Polyline>& polylines;
   Skeleton& skeleton;
-  
+
   Polyline_visitor(std::list<Polyline>& lines, Skeleton& skeleton)
     : polylines(lines),
       skeleton(skeleton)
   {}
-  
+
   void start_new_polyline()
   {
     Polyline V;
     polylines.push_back(V);
   }
-  
+
   void add_node(boost::graph_traits<Skeleton>::vertex_descriptor vd)
   {
     Polyline& polyline = polylines.back();
     polyline.push_back(skeleton[vd].point);
   }
-  
+
   void end_polyline(){}
 };
 
@@ -102,7 +102,7 @@ public:
   {
     delete ui;
   }
-  
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
 
     this->mw = mainWindow;
@@ -243,7 +243,7 @@ public:
 
     // the algorithm is only applicable on a mesh
     // that has only one connected component
-    
+
     boost::unordered_map<boost::graph_traits<Face_graph>::face_descriptor,int> cc(num_faces(*pMesh));
     std::size_t num_component = PMP::connected_components(*pMesh, boost::make_assoc_property_map(cc));
 
@@ -373,12 +373,12 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
     // init the polyhedron simplex indices
   CGAL::set_halfedgeds_items_id(*item->input_triangle_mesh);
-  boost::property_map<Face_graph, boost::vertex_index_t>::type 
+  boost::property_map<Face_graph, boost::vertex_index_t>::type
     vimap = get(boost::vertex_index, *item->input_triangle_mesh);
 
   //for each input vertex compute its distance to the skeleton
   std::vector<double> distances(num_vertices(*item->input_triangle_mesh));
-  
+
   Face_graph *smesh = item->input_triangle_mesh;
 
   boost::property_map<Face_graph,CGAL::vertex_point_t>::type vpm
@@ -431,7 +431,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
     if(segment > nb_segment)
       nb_segment = segment + 1;
     put(fpim, fd, segment);
-    
+
   }
   item_segmentation->setItemIsMulticolor(true);
   item_segmentation->computeItemColorVectorAutomatically(true);
@@ -660,7 +660,7 @@ if(!contracted_item)
     ps->insert(point);
   }
   ps->select_all();
-  
+
   if (item->fixedPointsItemIndex == -1)
   {
     item->fixedPointsItemIndex = scene->addItem(fixedPointsItem);
@@ -832,7 +832,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     ps->insert(point);
   }
   ps->select_all();
-  
+
   if (item->fixedPointsItemIndex == -1)
   {
     item->fixedPointsItemIndex = scene->addItem(fixedPointsItem);

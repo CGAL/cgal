@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -55,7 +55,7 @@
  std::cerr<<" "<<t; \
  std::cerr.flush()
 #else
-#define CGAL_NEF_TRACE(t) 
+#define CGAL_NEF_TRACE(t)
 #endif
 
 #ifndef NDEBUG
@@ -63,7 +63,7 @@
  std::cerr<<" "<<#t<<" = "<<(t)<<std::endl; \
  std::cerr.flush()
 #else
-#define CGAL_NEF_TRACEV(t) 
+#define CGAL_NEF_TRACEV(t)
 #endif
 
 #ifndef NDEBUG
@@ -77,13 +77,13 @@
 #ifndef NDEBUG
 #define CGAL_NEF_CTRACE(b,t) if(b) std::cerr<<" "<<t; else std::cerr<<" 0"
 #else
-#define CGAL_NEF_CTRACE(b,t) 
+#define CGAL_NEF_CTRACE(b,t)
 #endif
 
 #ifndef NDEBUG
 #define CGAL_NEF_CTRACEN(b,t) if(b) std::cerr<<" "<<t<<"\n"; else std::cerr<<" 0\n"
 #else
-#define CGAL_NEF_CTRACEN(b,t) 
+#define CGAL_NEF_CTRACEN(b,t)
 #endif
 
 #endif // CGAL_NEF_2_DEBUG_H

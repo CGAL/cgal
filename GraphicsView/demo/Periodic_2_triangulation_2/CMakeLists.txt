@@ -41,9 +41,9 @@ SOURCE_GROUP("P2T2" FILES ${P2T2_headers})
 SOURCE_GROUP("QT" FILES ${QT_headers})
 
 # The executable itself.
-add_executable  ( Periodic_2_Delaunay_triangulation_2 
+add_executable  ( Periodic_2_Delaunay_triangulation_2
   Periodic_2_Delaunay_triangulation_2.cpp
-  Periodic_2_triangulation_2.moc 
+  Periodic_2_triangulation_2.moc
   ${DT_UI_FILES}  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
   ${headers} ${QT_headers} ${P2T2_headers})
 

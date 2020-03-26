@@ -96,12 +96,12 @@ struct Triangulation_mesher_level_traits_3 :
 
   Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
-    if( zone.locate_type == Tr::VERTEX 
-	) return zone.cell->vertex(zone.i);
+    if( zone.locate_type == Tr::VERTEX
+        ) return zone.cell->vertex(zone.i);
 
     const Facet& f = *(zone.boundary_facets.begin());
 
-    const Vertex_handle v = 
+    const Vertex_handle v =
       triangulation_ref_impl().insert_in_hole(p,
                                               zone.cells.begin(),
                                               zone.cells.end(),
@@ -114,7 +114,7 @@ struct Triangulation_mesher_level_traits_3 :
     std::vector<Vertex_handle> vertices;
 
     triangulation_ref_impl().incident_vertices(v, std::back_inserter(vertices));
-    
+
     typedef typename Tr::Geom_traits::FT FT;
 
     FT sq_insertion_radius = std::numeric_limits<FT>::infinity();
@@ -123,13 +123,13 @@ struct Triangulation_mesher_level_traits_3 :
           vertices.begin();
         vit != vertices.end();
         ++vit)
-      sq_insertion_radius = (CGAL::min)(sq_insertion_radius, 
-					CGAL::squared_distance(v->point(),
-							       (*vit)->point()) );
+      sq_insertion_radius = (CGAL::min)(sq_insertion_radius,
+                                        CGAL::squared_distance(v->point(),
+                                                               (*vit)->point()) );
     std::cerr << "insertion radius: " << CGAL::sqrt(sq_insertion_radius);
 #ifdef CGAL_MESH_3_DIRTY_DEBUG_SPHERES
-      std::cerr << " \t\tdistance: " 
-                << CGAL::sqrt(CGAL::squared_distance(v->point(), 
+      std::cerr << " \t\tdistance: "
+                << CGAL::sqrt(CGAL::squared_distance(v->point(),
                                       typename Tr::Geom_traits::Point_3(CGAL::ORIGIN)));
 #endif
     std::cerr << std::endl;

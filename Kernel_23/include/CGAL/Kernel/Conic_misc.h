@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Bernd Gaertner, Sven Schoenherr <sven@inf.ethz.ch>
 
@@ -65,12 +65,12 @@ NT best_value (NT *values, int nr_values,
         d = (a2*x+a1)*x+a0;
         q = ((b3*x+b2)*x+b1)*x+b0;
         det = d*d*d/(q*q);
-	// if q==0, this root value doesn't qualify for the
-	// best value. Under roundoff errors, q might be very
-	// small but nonzero, so that the value is erroneously 
-	// being considered; however, d should be very small
-	// in this case as well, so that det won't compete
-	// for max_det below.
+        // if q==0, this root value doesn't qualify for the
+        // best value. Under roundoff errors, q might be very
+        // small but nonzero, so that the value is erroneously
+        // being considered; however, d should be very small
+        // in this case as well, so that det won't compete
+        // for max_det below.
         if (CGAL_NTS is_positive(det) && !CGAL_NTS is_zero(q))
             if (!det_positive || (det > max_det)) {
                 max_det = det;

@@ -16,7 +16,7 @@ be provided to extract the points and the normals from the input.
 */
 class ShapeDetectionTraits{
 public:
-  
+
 /// \name Types
 /// @{
 
@@ -43,12 +43,12 @@ public:
   /// A model of the concept `Range` with random access iterators, providing input points and normals
   /// through the two property maps `Point_map` and `Normal_map`.
   typedef unspecified_type Input_range;
-  /// A model of `ReadablePropertyMap` with 
-  /// `std::iterator_traits<Input_range::iterator>::%value_type` 
+  /// A model of `ReadablePropertyMap` with
+  /// `std::iterator_traits<Input_range::iterator>::%value_type`
   /// as key type and `Point_3` as value type.
   typedef unspecified_type Point_map;
-  /// A model of `ReadablePropertyMap` with 
-  /// `std::iterator_traits<Input_range::iterator>::%value_type` 
+  /// A model of `ReadablePropertyMap` with
+  /// `std::iterator_traits<Input_range::iterator>::%value_type`
   /// as key type and `Vector_3` as value type.
   typedef unspecified_type Normal_map;
 
@@ -57,7 +57,7 @@ public:
   /// `SearchTraits::Dimension` is ` CGAL::Dimension_tag<3>`,
   /// and `SearchTraits::FT` is ` FT`,
   typedef unspecified_type Search_traits;
-  
+
   /*!
    * Function object type that provides
    * `Point_3 operator()(Origin p)`
@@ -68,39 +68,39 @@ public:
   typedef unspecified_type Construct_point_3;
 
   /*!
-   * Function object type that provides 
-   * `Vector_3 operator()(Point_3 p1, Point_3 p2)` and 
+   * Function object type that provides
+   * `Vector_3 operator()(Point_3 p1, Point_3 p2)` and
    * `Vector_3 operator()(Origin p1, Point_3 p2)`
-   * returning the vector `p1p2`, `Vector_3 operator()(NULL_VECTOR)` returning 
-   * the null vector, and `Vector_3 operator()(Line_3 l)` returning 
-   * a vector having the same direction as `l` 
+   * returning the vector `p1p2`, `Vector_3 operator()(NULL_VECTOR)` returning
+   * the null vector, and `Vector_3 operator()(Line_3 l)` returning
+   * a vector having the same direction as `l`
    * (this last one is only required if you want to detect cylinders).
    */
   typedef unspecified_type Construct_vector_3;
-  
+
   /*!
    * Function object type that provides `Sphere_3 operator()(Point_3 c, FT r)`
    * returning the sphere of center `p` and radius `r`.
    * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Construct_sphere_3;
-  
+
   /*!
    * Function object type that provides `Line_3 operator()(Point_3 p, Vector_3 d)`
    * returning the line going through  `p` in the direction of `d`.
    * Only required if you want to detect cylinders.
    */
   typedef unspecified_type Construct_line_3;
-  
+
   /*!
    * Function object type that provides
    * `Point_3 operator()(Line_3 l, int i)`
-   * returning an arbitrary point on `l`. `i` is not used and can vbe of 
+   * returning an arbitrary point on `l`. `i` is not used and can vbe of
    * any value.
    * Only required if you want to detect cylinders.
    */
   typedef unspecified_type Construct_point_on_3;
-  
+
   /*!
    * Function object type that provides
    * `Point_2 operator()(FT x, FT y)`
@@ -108,18 +108,18 @@ public:
    * Only required if you want to detect tori.
    */
   typedef unspecified_type Construct_point_2;
-  
+
   /*!
-   * Function object type that provides 
+   * Function object type that provides
    * `Vector_2 operator()(Point_2 p1, Point_2 p2)`
-   * returning the vector `p1p2`, `Vector_2 operator()(NULL_VECTOR)` returning 
+   * returning the vector `p1p2`, `Vector_2 operator()(NULL_VECTOR)` returning
    * the null vector.
    * Only required if you want to detect tori.
    */
   typedef unspecified_type Construct_vector_2;
-  
+
   /*!
-   * Function object type that provides 
+   * Function object type that provides
    * `Circle_2 operator()(Point_2 p1, Point_2 p2, Point_2 p3)`
    * returning the circle going through `p1`, `p2` and `p3`.
    * Only required if you want to detect tori.
@@ -146,7 +146,7 @@ public:
    * returning the `z` coordinate of a point and a vector respectively.
    */
   typedef unspecified_type Compute_z_3;
-  
+
   /*!
    * Function object type that provides
    * `FT operator()(Point_2 p)` and `FT operator()(Vector_2 v)`
@@ -169,7 +169,7 @@ public:
    * returning the squared length of `v`.
    */
   typedef unspecified_type Compute_squared_length_3;
-  
+
   /*!
    * Function object type that provides
    * `FT operator()(Vector_2 v)`
@@ -184,7 +184,7 @@ public:
    * returning the vector `t * v`.
    */
   typedef unspecified_type Construct_scaled_vector_3;
-  
+
   /*!
    * Function object type that provides
    * `Vector_3 operator()(Vector_3 v1, Vector_3 v2)`
@@ -195,9 +195,9 @@ public:
   /*!
   * Function object type that provides:
   * `Point_3 operator()(Point_3 p, Vector_3 v)`
-  * returning  the point obtained by translating `p` by the vector `v`. 
-  */ 
-  typedef unspecified_type Construct_translated_point_3; 
+  * returning  the point obtained by translating `p` by the vector `v`.
+  */
+  typedef unspecified_type Construct_translated_point_3;
 
   /*!
    * Function object type that provides
@@ -205,14 +205,14 @@ public:
    * returning the scalar product of `v1` and `v2`.
    */
   typedef unspecified_type Compute_scalar_product_3;
- 
+
   /*!
    * Function object type that provides
    * `Vector_3 operator()(Vector_3 v1, Vector_3 v2)`
    * returning the cross-product vector of `v1` and `v2`.
    */
   typedef unspecified_type Construct_cross_product_vector_3;
-  
+
   /*!
    * Function object type that provides
    * `Point_3 operator()(Sphere_3 s)`
@@ -220,7 +220,7 @@ public:
    * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Construct_center_3;
-  
+
   /*!
    * Function object type that provides
    * `Point_2 operator()(Circle_2 c)`
@@ -236,7 +236,7 @@ public:
    * Only required if you want to detect spheres or tori.
    */
   typedef unspecified_type Compute_squared_radius_3;
-  
+
   /*!
    * Function object type that provides
    * `FT operator()(Circle_2 c)`
@@ -244,21 +244,21 @@ public:
    * Only required if you want to detect tori.
    */
   typedef unspecified_type Compute_squared_radius_2;
-  
+
   /*!
    * Function object type that provides
    * `bool operator(Point_2 p, Point_2 q, Point_2 r)`
    * returning true if the points `p`, `q`, and `r` are collinear and
    * false otherwise.
    * Only required if you want to detect tori.
-  */ 
-  typedef unspecified_type Collinear_2; 
+  */
+  typedef unspecified_type Collinear_2;
 
 /// @}
 
 /// \name Access to Function Objects
 /// @{
-  
+
   Construct_point_3
   construct_point_3_object();
 
@@ -268,25 +268,25 @@ public:
   /// Only required if you want to detect spheres or tori.
   Construct_sphere_3
   construct_sphere_3_object();
-  
+
   /// Only required if you want to detect cylinders.
   Construct_line_3
   construct_line_3_object();
-  
+
   /// Only required if you want to detect cylinders.
   Construct_point_on_3
   construct_point_on_3_object();
-  
+
   /// Only required if you want to detect tori.
-  Construct_point_2 
+  Construct_point_2
   construct_point_2_object();
 
   /// Only required if you want to detect tori.
-  Construct_vector_2 
+  Construct_vector_2
   construct_vector_2_object();
 
   /// Only required if you want to detect tori.
-  Construct_circle_2 
+  Construct_circle_2
   construct_circle_2_object();
 
   Compute_x_3
@@ -297,7 +297,7 @@ public:
 
   Compute_z_3
   compute_z_3_object();
-  
+
   /// Only required if you want to detect tori.
   Compute_x_2
   compute_x_2_object();
@@ -310,7 +310,7 @@ public:
   compute_squared_length_3_object();
 
   /// Only required if you want to detect tori.
-  Compute_squared_length_2 
+  Compute_squared_length_2
   compute_squared_length_2_object();
 
   Construct_scaled_vector_3
@@ -321,31 +321,31 @@ public:
 
   Compute_scalar_product_3
   compute_scalar_product_3_object();
-  
+
   Construct_cross_product_vector_3
   construct_cross_product_vector_3_object();
 
-  Construct_translated_point_3 
+  Construct_translated_point_3
   construct_translated_point_3_object();
-  
+
   /// Only required if you want to detect spheres.
   Construct_center_3
   construct_center_3_object();
 
   /// Only required if you want to detect tori.
-  Construct_center_2 
+  Construct_center_2
   construct_center_2_object();
-  
+
   /// Only required if you want to detect spheres or tori.
   Compute_squared_radius_3
   compute_squared_radius_3_object();
 
   /// Only required if you want to detect tori.
-  Compute_squared_radius_2 
+  Compute_squared_radius_2
   compute_squared_radius_2_object();
-  
+
   /// Only required if you want to detect tori.
-  Collinear_2 
+  Collinear_2
   collinear_2_object();
 
 /// @}

@@ -13,7 +13,7 @@ template <class K>
 bool test_sphere_parameters() {
   const int NB_ROUNDS = 10;
   const int NB_POINTS = 1000;
-  
+
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef CGAL::Point_3<K>                                    Point;
@@ -42,7 +42,7 @@ bool test_sphere_parameters() {
 
     // add outliers in second half of rounds
     if (i >= NB_ROUNDS / 2)
-      for (std::size_t j = 0; j < NB_POINTS / 2; j++) 
+      for (std::size_t j = 0; j < NB_POINTS / 2; j++)
         points.push_back(random_pwn_in<K>(bbox));
 
     Efficient_ransac ransac;
@@ -109,7 +109,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_sphere_parameters<CGAL::Simple_cartesian<float>> ";
-  if (!test_sphere_parameters<CGAL::Simple_cartesian<float> >()) 
+  if (!test_sphere_parameters<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_sphere_parameters<CGAL::Simple_cartesian<double>> ";
@@ -117,7 +117,7 @@ int main() {
     success = false;
 
   std::cout << "test_sphere_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_sphere_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_sphere_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

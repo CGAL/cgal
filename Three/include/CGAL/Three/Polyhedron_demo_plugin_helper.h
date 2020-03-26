@@ -19,7 +19,7 @@
 //
 // Author(s)     : Laurent RINEAU
 
-//! \file Polyhedron_demo_plugin_helper.h 
+//! \file Polyhedron_demo_plugin_helper.h
 #ifndef POLYHEDRON_DEMO_OPERATION_HELPER_H
 #define POLYHEDRON_DEMO_OPERATION_HELPER_H
 

@@ -38,11 +38,11 @@ namespace Surface_mesh_simplification
 class Edge_length_cost
 {
 public:
-  /*  
+  /*
   typedef TM_ TM ;
-  
+
   typedef Edge_profile<TM> Profile ;
-  typedef typename Profile::Point Point;  
+  typedef typename Profile::Point Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel ;
   typedef typename Kernel::FT FT ;
   typedef optional<FT> result_type ;
@@ -52,13 +52,13 @@ public:
   Edge_length_cost()
   {}
 
-  template <typename Profile, typename T> 
+  template <typename Profile, typename T>
   optional<typename Profile::FT> operator()( Profile const& aProfile, T const& /*aPlacement*/ ) const
   {
     typedef optional<typename Profile::FT> result_type;
     return result_type(squared_distance(aProfile.p0(),aProfile.p1()));
   }
-  
+
 };
 
 
@@ -69,4 +69,4 @@ public:
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_POLICIES_EDGE_COLLAPSE_EDGE_LENGHT_COST_H
 // EOF //
- 
+

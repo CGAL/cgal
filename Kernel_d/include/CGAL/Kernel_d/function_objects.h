@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -45,53 +45,53 @@ class Construct
     operator()() const
     { return ToBeConstructed(); }
 
-    template <class A1> 
+    template <class A1>
     ToBeConstructed
     operator()( const A1& a1) const
     { return ToBeConstructed(a1); }
 
-    template <class A1, class A2> 
+    template <class A1, class A2>
     ToBeConstructed
     operator()( const A1& a1, const A2& a2) const
     { return ToBeConstructed(a1,a2); }
 
-    template <class A1, class A2, class A3> 
+    template <class A1, class A2, class A3>
     ToBeConstructed
     operator()( const A1& a1, const A2& a2, const A3& a3) const
     { return ToBeConstructed(a1,a2,a3); }
 
-    template <class A1, class A2, class A3, class A4> 
+    template <class A1, class A2, class A3, class A4>
     ToBeConstructed
     operator()( const A1& a1, const A2& a2, const A3& a3, const A4& a4) const
     { return ToBeConstructed(a1,a2,a3,a4); }
 
-    template <class A1, class A2, class A3, class A4, class A5> 
+    template <class A1, class A2, class A3, class A4, class A5>
     ToBeConstructed
     operator()( const A1& a1, const A2& a2, const A3& a3, const A4& a4,
-	    const A5& a5) const
+            const A5& a5) const
     { return ToBeConstructed(a1,a2,a3,a4,a5); }
 
-    template <class A> 
+    template <class A>
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6 ) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6); }
 
-    template <class A> 
+    template <class A>
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
                 const A& a7 ) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7); }
 
-    template <class A> 
+    template <class A>
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
                 const A& a7, const A& a8, const A& a9) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7,a8,a9); }
 
-    template <class A> 
+    template <class A>
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
@@ -99,7 +99,7 @@ class Construct
                 const A& a10) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10); }
 
-    template <class A> 
+    template <class A>
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
@@ -107,7 +107,7 @@ class Construct
                 const A& a10,const A& a11,const A& a12) const
     { return ToBeConstructed(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12); }
 
-    template <class A> 
+    template <class A>
     ToBeConstructed
     operator()( const A& a1, const A& a2, const A& a3,
                 const A& a4, const A& a5, const A& a6,
@@ -160,29 +160,29 @@ public:
   operator()(const T1& t1, const T2& t2) const
   { return internal::intersection(t1, t2, R()); }
 #else
-  template <typename> 
+  template <typename>
   struct result;
 
   template <typename F>
-  struct result<F(Line_d, Line_d)> 
+  struct result<F(Line_d, Line_d)>
   { typedef boost::optional< boost::variant< Point_d, Line_d > > type; };
 
   template <typename F>
   struct result<F(Segment_d, Line_d)>
   { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
-  template <typename F> 
+  template <typename F>
   struct result<F(Line_d, Segment_d)> : result<F(Segment_d, Line_d)>
   { };
 
   template <typename F>
-  struct result<F(Segment_d, Segment_d)> 
+  struct result<F(Segment_d, Segment_d)>
   { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
 
   template <typename F>
   struct result<F(Ray_d, Line_d)>
   { typedef boost::optional< boost::variant< Point_d, Ray_d > > type; };
 
-  template <typename F> 
+  template <typename F>
   struct result<F(Line_d, Ray_d)> : result<F(Ray_d, Line_d)>
   { };
 
@@ -195,25 +195,25 @@ public:
   { };
 
   template <typename F>
-  struct result<F(Ray_d, Ray_d)> 
+  struct result<F(Ray_d, Ray_d)>
   { typedef boost::optional< boost::variant< Point_d, Segment_d, Ray_d > > type; };
 
   template <typename F>
-  struct result<F(Hyperplane_d, Line_d)> 
+  struct result<F(Hyperplane_d, Line_d)>
   { typedef boost::optional< boost::variant< Point_d, Line_d > > type; };
   template <typename F>
   struct result<F(Line_d, Hyperplane_d)> : result<F(Hyperplane_d, Line_d)>
   { };
 
   template <typename F>
-  struct result<F(Hyperplane_d, Ray_d)> 
+  struct result<F(Hyperplane_d, Ray_d)>
   { typedef boost::optional< boost::variant< Point_d, Ray_d > > type; };
   template <typename F>
-  struct result<F(Ray_d, Hyperplane_d)> : result<F(Hyperplane_d, Ray_d)> 
+  struct result<F(Ray_d, Hyperplane_d)> : result<F(Hyperplane_d, Ray_d)>
   { };
 
   template <typename F>
-  struct result<F(Hyperplane_d, Segment_d)> 
+  struct result<F(Hyperplane_d, Segment_d)>
   { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
   template <typename F>
   struct result<F(Segment_d, Hyperplane_d)> : result<F(Hyperplane_d, Segment_d)>

@@ -20,7 +20,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_NULL_EXUDER_VISITOR_H
@@ -39,7 +39,7 @@ class Null_exuder_visitor
 {
   typedef typename C3T3::Triangulation    Tr;
   typedef typename Tr::Geom_traits::FT    FT;
-  
+
 public:
   void after_cell_pumped(std::size_t) {}
 };

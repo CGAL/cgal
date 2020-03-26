@@ -44,7 +44,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
       assert(false);
       return false;
     }
-  
+
   std::vector<unsigned int> nbc;
   nbc=lcc.count_all_cells();
 
@@ -71,7 +71,7 @@ bool check_number_of_cells_4(LCC& lcc, unsigned int nbv, unsigned int nbe,
     }
 
   trace_test_end();
-  
+
   return true;
 }
 
@@ -101,7 +101,7 @@ bool test_LCC_4()
   Dart_handle dh3=lcc.make_segment(apoint<LCC>(2,2,0,0),apoint<LCC>(3,1,0,0), true);
   if ( !check_number_of_cells_4(lcc, 6, 3, 6, 3, 3, 3) )
     return false;
-  
+
   trace_test_begin();
   lcc.template sew<1>(dh1,dh2);
   lcc.template sew<1>(lcc.other_orientation(dh2),dh3);
@@ -110,7 +110,7 @@ bool test_LCC_4()
 
   trace_test_begin();
   Dart_handle dh5=lcc.make_triangle(apoint<LCC>(5,5,3,0),apoint<LCC>(7,5,3,0),apoint<LCC>(6,6,3,0));
-  Dart_handle dh6=lcc.make_triangle(apoint<LCC>(5,4,3,0),apoint<LCC>(7,4,3,0),apoint<LCC>(6,3,3,0));    
+  Dart_handle dh6=lcc.make_triangle(apoint<LCC>(5,4,3,0),apoint<LCC>(7,4,3,0),apoint<LCC>(6,3,3,0));
   if ( !check_number_of_cells_4(lcc, 10, 9, 6, 3, 3, 3) )
     return false;
 
@@ -171,7 +171,7 @@ bool test_LCC_4()
   lcc.template sew<4>(dh12, dh13);
   if ( !check_number_of_cells_4(lcc, 19, 27, 16, 3, 3, 3) )
     return false;
-  
+
   trace_test_begin();
   Dart_handle dh16=lcc.template insert_barycenter_in_cell<1>(dh15);
   if ( !check_number_of_cells_4(lcc, 20, 28, 16, 3, 3, 3) )
@@ -181,7 +181,7 @@ bool test_LCC_4()
   Dart_handle dh17=lcc.template insert_barycenter_in_cell<2>(dh16);
   if ( !check_number_of_cells_4(lcc, 21, 33, 20, 3, 3, 3) )
     return false;
-  
+
   // Removal operations
   trace_test_begin();
   std::stack<Dart_handle> toremove;
@@ -189,7 +189,7 @@ bool test_LCC_4()
           it=lcc.template darts_of_cell<0,2>(dh17).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh17).end();
           it!=itend; ++it )
-    toremove.push( it );  
+    toremove.push( it );
   while ( !toremove.empty() )
   {
     if (lcc.is_dart_used(toremove.top()))
@@ -197,18 +197,18 @@ bool test_LCC_4()
     toremove.pop();
   }
   if ( !check_number_of_cells_4(lcc, 20, 28, 16, 3, 3, 3) )
-    return false;  
+    return false;
 
   trace_test_begin();
   lcc.template remove_cell<0>(dh16);
   if ( !check_number_of_cells_4(lcc, 19, 27, 16, 3, 3, 3) )
     return false;
-  
+
   trace_test_begin();
   lcc.template unsew<4>(dh12);
   if ( !check_number_of_cells_4(lcc, 20, 30, 19, 4, 3, 3) )
     return false;
-  
+
   trace_test_begin();
   lcc.template remove_cell<0>(dh15);
   if ( !check_number_of_cells_4(lcc, 19, 29, 19, 4, 3, 3) )
@@ -220,7 +220,7 @@ bool test_LCC_4()
   lcc.template remove_cell<1>(dh14);
   if ( !check_number_of_cells_4(lcc, 18, 26, 17, 4, 3, 3) )
     return false;
-  
+
   trace_test_begin();
   lcc.template unsew<3>(dh12);
   if ( !check_number_of_cells_4(lcc, 21, 29, 18, 4, 4, 4) )
@@ -231,7 +231,7 @@ bool test_LCC_4()
   lcc.template remove_cell<3>(dh12);
   if ( !check_number_of_cells_4(lcc, 13, 17, 10, 2, 2, 2) )
     return false;
-  
+
   trace_test_begin();
   lcc.template remove_cell<1>(dh11);
   if ( !check_number_of_cells_4(lcc, 12, 16, 10, 2, 2, 2) )
@@ -242,7 +242,7 @@ bool test_LCC_4()
           it=lcc.template darts_of_cell<0,2>(dh10).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh10).end();
           it!=itend; ++it )
-    toremove.push( it );  
+    toremove.push( it );
   while ( !toremove.empty() )
   {
     if (lcc.is_dart_used(toremove.top()))
@@ -251,7 +251,7 @@ bool test_LCC_4()
   }
   if ( !check_number_of_cells_4(lcc, 11, 13, 8, 2, 2, 2) )
     return false;
-  
+
   trace_test_begin();
   lcc.template remove_cell<0>(dh9);
   if ( !check_number_of_cells_4(lcc, 10, 12, 8, 2, 2, 2) )
@@ -262,7 +262,7 @@ bool test_LCC_4()
           it=lcc.template darts_of_cell<0,2>(dh8).begin(),
           itend=lcc.template darts_of_cell<0,2>(dh8).end();
         it!=itend; ++it )
-    toremove.push( it );  
+    toremove.push( it );
   while ( !toremove.empty() )
   {
     if (lcc.is_dart_used(toremove.top()))
@@ -271,7 +271,7 @@ bool test_LCC_4()
   }
   if ( !check_number_of_cells_4(lcc, 9, 9, 6, 2, 2, 2) )
     return false;
-  
+
   trace_test_begin();
   lcc.template remove_cell<0>(dh7);
   if ( !check_number_of_cells_4(lcc, 8, 8, 6, 2, 2, 2) )
@@ -301,7 +301,7 @@ bool test_LCC_4()
   trace_test_begin();
   lcc.template remove_cell<1>(dh1);
   lcc.template remove_cell<1>(dh2);
-  lcc.template remove_cell<1>(dh3);  
+  lcc.template remove_cell<1>(dh3);
   if ( !check_number_of_cells_4(lcc, 0, 0, 0, 0, 0, 0) )
     return false;
 

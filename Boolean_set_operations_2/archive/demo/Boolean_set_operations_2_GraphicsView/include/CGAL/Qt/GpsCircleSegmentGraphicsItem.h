@@ -42,16 +42,16 @@ class GpsCircleSegmentGraphicsItem : public GraphicsItem
   typedef Qt::Converter< Simple_cartesian<double> > Converter ;
 
     public:
-      
+
   GpsCircleSegmentGraphicsItem();
 
   void modelChanged();
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -72,7 +72,7 @@ public:
   {
     edges_pen = pen;
   }
-  
+
   void setCircleSegment(const Circle_segment_2& cs);
 
   Circle_segment_2 circleSegment() const
@@ -92,7 +92,7 @@ protected:
 
 
 template <typename CS>
-void 
+void
 GpsCircleSegmentGraphicsItem<CS>::setCircleSegment(const Circle_segment_2& cs)
 {
   cs_ = cs;
@@ -108,15 +108,15 @@ GpsCircleSegmentGraphicsItem<CS>::GpsCircleSegmentGraphicsItem()
 }
 
 template <typename CS>
-QRectF 
+QRectF
 GpsCircleSegmentGraphicsItem<CS>::boundingRect() const
 {
   return bounding_rect;
 }
 
 template <typename CS>
-void 
-GpsCircleSegmentGraphicsItem<CS>::paint(QPainter *painter, 
+void
+GpsCircleSegmentGraphicsItem<CS>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem *option,
                                     QWidget * widget)
 {
@@ -144,14 +144,14 @@ GpsCircleSegmentGraphicsItem<CS>::paint(QPainter *painter,
         x0 = sx ;
         y0 = sy ;
         x1 = tx ;
-        y1 = ty ; 
+        y1 = ty ;
       }
       else
       {
         x0 = tx ;
         y0 = ty ;
         x1 = sx ;
-        y1 = sy ; 
+        y1 = sy ;
       }
       double rad = std::sqrt(CGAL::to_double(cs_.supporting_circle().squared_radius()));
 
@@ -180,15 +180,15 @@ GpsCircleSegmentGraphicsItem<CS>::paint(QPainter *painter,
   }
 
 
-      
+
 }
 
 template <typename CS>
-void 
+void
 GpsCircleSegmentGraphicsItem<CS>::updateBoundingBox()
 {
   Converter convert;
-      
+
   prepareGeometryChange();
 
   if(cs_.is_circular())
@@ -198,10 +198,10 @@ GpsCircleSegmentGraphicsItem<CS>::updateBoundingBox()
   else
   {
     double x_min = to_double(cs_.source().x());
-    double y_min = to_double(cs_.source().y()); 
-    double x_max = to_double(cs_.target().x());   
+    double y_min = to_double(cs_.source().y());
+    double x_max = to_double(cs_.target().x());
     double y_max = to_double(cs_.target().y());
-        
+
     if(x_min > x_max)
     {
       std::swap(x_min, x_max);
@@ -210,14 +210,14 @@ GpsCircleSegmentGraphicsItem<CS>::updateBoundingBox()
 
     if(y_min > y_max)
       std::swap(y_min, y_max);
-        
+
     bounding_rect = QRectF(x_min,y_min,x_max,y_max) ;
    }
 }
 
 
 template <typename CS>
-void 
+void
 GpsCircleSegmentGraphicsItem<CS>::modelChanged()
 {
   updateBoundingBox();

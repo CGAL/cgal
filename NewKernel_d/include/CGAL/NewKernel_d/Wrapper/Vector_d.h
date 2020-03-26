@@ -42,10 +42,10 @@ namespace Wrap {
 template <class R_>
 class Vector_d : public Get_type<typename R_::Kernel_base, Vector_tag>::type
 {
-  typedef typename Get_type<R_, RT_tag>::type		RT_;
-  typedef typename Get_type<R_, FT_tag>::type		FT_;
+  typedef typename Get_type<R_, RT_tag>::type                RT_;
+  typedef typename Get_type<R_, FT_tag>::type                FT_;
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename Get_type<R_, Point_tag>::type	Point_;
+  typedef typename Get_type<R_, Point_tag>::type        Point_;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_tag> >::type CVBase;
   typedef typename Get_functor<Kbase, Compute_vector_cartesian_coordinate_tag>::type CCBase;
   typedef typename Get_functor<Kbase, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type CVI;
@@ -61,7 +61,7 @@ public:
   typedef Dimension_tag<0>  Feature_dimension;
 
   //typedef typename R_::Vector_cartesian_const_iterator Cartesian_const_iterator;
-  typedef typename Get_type<Kbase, Vector_tag>::type	Rep;
+  typedef typename Get_type<Kbase, Vector_tag>::type        Rep;
 
   const Rep& rep() const
   {
@@ -76,22 +76,22 @@ public:
   typedef          R_                       R;
 
 #ifdef CGAL_CXX11
-#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)  
+#if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(push)
 #  pragma warning(disable: 4309)
 #endif
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>::type> explicit Vector_d(U&&...u)
-	  : Rep(CVBase()(std::forward<U>(u)...)){}
+          : Rep(CVBase()(std::forward<U>(u)...)){}
 
 #if defined(BOOST_MSVC) && (BOOST_MSVC == 1900)
 #  pragma warning(pop)
 #endif
-  
+
 //  // called from Construct_vector_d
 //  template<class...U> explicit Vector_d(Eval_functor&&,U&&...u)
-//	  : Rep(Eval_functor(), std::forward<U>(u)...){}
+//          : Rep(Eval_functor(), std::forward<U>(u)...){}
   template<class F,class...U> explicit Vector_d(Eval_functor&&,F&&f,U&&...u)
-	  : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
+          : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
 
 #if 0
   // the new standard may make this necessary
@@ -122,7 +122,7 @@ public:
 #define CGAL_CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
   explicit Vector_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
   : Rep(CVBase()( \
-	BOOST_PP_ENUM_PARAMS(N,t))) {} \
+        BOOST_PP_ENUM_PARAMS(N,t))) {} \
   \
   template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
   Vector_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
@@ -143,19 +143,19 @@ public:
 #endif
 
   typename boost::result_of<CCBase(Rep,int)>::type cartesian(int i)const{
-	  return CCBase()(rep(),i);
+          return CCBase()(rep(),i);
   }
 
   typename boost::result_of<CCBase(Rep,int)>::type operator[](int i)const{
-	  return CCBase()(rep(),i);
+          return CCBase()(rep(),i);
   }
 
   typename boost::result_of<CVI(Rep,Begin_tag)>::type cartesian_begin()const{
-	  return CVI()(rep(),Begin_tag());
+          return CVI()(rep(),Begin_tag());
   }
 
   typename boost::result_of<CVI(Rep,End_tag)>::type cartesian_end()const{
-	  return CVI()(rep(),End_tag());
+          return CVI()(rep(),End_tag());
   }
 
   Vector_d operator-() const
@@ -256,7 +256,7 @@ public:
   }
 
   typename boost::result_of<SLBase(Rep)>::type squared_length()const{
-	  return SLBase()(rep());
+          return SLBase()(rep());
   }
 };
 #if 0
@@ -288,7 +288,7 @@ std::ostream& operator <<(std::ostream& os, const Vector_d<R_>& v)
       write(os, *b);
     }
   }
-  
+
   return os;
 }
 
@@ -329,13 +329,13 @@ operator>>(std::istream &is, Vector_d<K> & v)
 template <class R_>
 Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w)
 {
-	return typename Get_functor<R_, Sum_of_vectors_tag>::type()(v,w);
+        return typename Get_functor<R_, Sum_of_vectors_tag>::type()(v,w);
 }
 
 template <class R_>
 Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w)
 {
-	return typename Get_functor<R_, Difference_of_vectors_tag>::type()(v,w);
+        return typename Get_functor<R_, Difference_of_vectors_tag>::type()(v,w);
 }
 
 } //namespace Wrap

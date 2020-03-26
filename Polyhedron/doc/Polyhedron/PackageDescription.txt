@@ -69,7 +69,7 @@ surface can be used without knowing the halfedge data structure.
 \cgalCRPSection{Functions}
 - \link PkgPolyhedronIOFunc `CGAL::operator<<()` \endlink
 - \link PkgPolyhedronIOFunc `CGAL::operator>>()` \endlink
-- \link PkgPolyhedronIOFunc `write_off()` \endlink   
+- \link PkgPolyhedronIOFunc `write_off()` \endlink
 - \link PkgPolyhedronIOFunc `read_off()` \endlink
 
 \cgalCRPSection{Draw a Polyhedron 3}

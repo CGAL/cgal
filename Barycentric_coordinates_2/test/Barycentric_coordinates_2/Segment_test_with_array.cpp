@@ -17,7 +17,7 @@ typedef Kernel::Point_2 Point;
 typedef CGAL::cpp11::array<Scalar,2> Pair;
 
 using std::cout; using std::endl; using std::string;
- 
+
 int main()
 {
     const Point first_vertex  = Point(0, 0);
@@ -38,6 +38,6 @@ int main()
     }
 
     cout << endl << "Segment_test_with_array: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

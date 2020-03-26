@@ -16,8 +16,8 @@
 //== CLASS DEFINITION =========================================================
 
 typedef CGAL::Simple_cartesian<double>  Kernel;
-typedef Kernel::Point_3			Point_3;
-typedef CGAL::Vector_3<Kernel>		Vector_3;
+typedef Kernel::Point_3                        Point_3;
+typedef CGAL::Vector_3<Kernel>                Vector_3;
 
 struct Info_for_vertex
 {
@@ -53,7 +53,7 @@ struct MyItem
   };
 };
 
-typedef CGAL::Linear_cell_complex<3,3,CGAL::Linear_cell_complex_traits<3,Kernel>, MyItem>	LCC_3;
+typedef CGAL::Linear_cell_complex<3,3,CGAL::Linear_cell_complex_traits<3,Kernel>, MyItem>        LCC_3;
 
 #else
 
@@ -72,16 +72,16 @@ struct MyItem
   };
 };
 
-typedef CGAL::Linear_cell_complex_for_index<3,3,CGAL::Linear_cell_complex_traits<3,Kernel>, MyItem>	LCC_3;
+typedef CGAL::Linear_cell_complex_for_index<3,3,CGAL::Linear_cell_complex_traits<3,Kernel>, MyItem>        LCC_3;
 
 #endif
 
-typedef LCC_3::Dart_handle		 Dart_handle;
+typedef LCC_3::Dart_handle                 Dart_handle;
 typedef LCC_3::Vertex_attribute_handle   Vertex_handle;
 typedef LCC_3::Attribute_handle<3>::type Volume_handle;
-typedef LCC_3::Point			 Point;
-typedef LCC_3::Vector			 Vector;
-typedef LCC_3::FT			 FT;
+typedef LCC_3::Point                         Point;
+typedef LCC_3::Vector                         Vector;
+typedef LCC_3::FT                         FT;
 
 
 //== CLASS DEFINITION =========================================================

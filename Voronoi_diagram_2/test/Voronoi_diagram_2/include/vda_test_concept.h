@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -119,7 +119,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
     // constructors that take an iterator range
     std::vector<typename AT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
-	 vit != dg.finite_vertices_end(); ++vit) {
+         vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(at.access_site_2_object()(vit));
     }
     DG dg4(v.begin(), v.end());
@@ -144,7 +144,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
 
   if ( dg.tds().number_of_edges() > 0 ) {
     test_is_convertible_to<Edge>(*dg.all_edges_begin());
-    test_is_convertible_to<Edge>(*dg.finite_edges_begin());    
+    test_is_convertible_to<Edge>(*dg.finite_edges_begin());
   }
 
   if ( dg.dimension() == 2 ) {
@@ -226,7 +226,7 @@ void test_dual_graph_concept(const DG& dg, const AT& at)
     DG dg1;
     std::vector<typename AT::Site_2> v;
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
-	 vit != dg.finite_vertices_end(); ++vit) {
+         vit != dg.finite_vertices_end(); ++vit) {
       v.push_back(at.access_site_2_object()(vit));
     }
     assert( v.size() > 0 );
@@ -519,7 +519,7 @@ void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
   typedef typename Site_inserter::result_type      result_type;
 
   Site_inserter si = ap.site_inserter_object();
-  
+
   if ( dg.number_of_vertices() == 0 ) { return; }
 
   DG dg2;
@@ -546,7 +546,7 @@ void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true)
   oit = si(dg2, t, oit);
 
   assert( v_list.size() == 1 );
-  assert( dg2.number_of_vertices() == 1 );  
+  assert( dg2.number_of_vertices() == 1 );
 }
 
 //============================================================================

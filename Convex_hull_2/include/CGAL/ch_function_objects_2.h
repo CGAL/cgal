@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert
 
@@ -75,4 +75,4 @@ private:
 
 } //namespace CGAL
 
-#endif // CGAL_CH_FUNCTION_OBJECTS_2_H	
+#endif // CGAL_CH_FUNCTION_OBJECTS_2_H

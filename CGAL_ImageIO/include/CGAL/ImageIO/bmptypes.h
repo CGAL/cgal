@@ -58,7 +58,7 @@ typedef boost::uint32_t CGAL_UINT32;
 *
 * Constants.  Each set corresponds to a field in a structure.  Note that some
 * sets only have one value.  Default values for all fields are the value
-* corresponding to 0. 
+* corresponding to 0.
 */
 
 /*
@@ -72,7 +72,7 @@ typedef boost::uint32_t CGAL_UINT32;
 #define TYPE_ICO_COLOR  (0x4943)   /* 'CI' */
 #define TYPE_PTR_COLOR  (0x5043)   /* 'CP' */
 #define TYPE_ARRAY      (0x4142)   /* 'BA' */
-   
+
 /*
  * Compression schemes.  Note that BITFIELDS (from NT) uses the same number as
  * HUFFMAN1D (from OS/2)
@@ -84,7 +84,7 @@ typedef boost::uint32_t CGAL_UINT32;
 #define COMPRESSION_BITFIELDS  (3)
 #define COMPRESSION_RLE_24     (4)
 #define COMPRESSION_LAST       (4)
-   
+
 /*
  * units of resolution
  */
@@ -93,19 +93,19 @@ typedef boost::uint32_t CGAL_UINT32;
 
 /*
  * origin of coordinate space
- */   
+ */
 #define ORIGIN_LOWER_LEFT  (0)
 #define ORIGIN_LAST        (0)
 
 /*
  * halftoning algorithms
- */   
+ */
 #define HALFTONING_NONE             (0)
 #define HALFTONING_ERROR_DIFFUSION  (1)
 #define HALFTONING_PANDA            (2)
 #define HALFTONING_SUPER_CIRCLE     (3)
 #define HALFTONING_LAST             (3)
-   
+
 /*
  * color table encoding
  */
@@ -116,7 +116,7 @@ typedef boost::uint32_t CGAL_UINT32;
 *
 * Structures.
 */
-   
+
 /*
  * Bitmapfileheader defines a single bitmap image.  Its analogue in the
  * Windows SDK is the Bitmapfileheader.  Its analogues in the OS/2 Toolkit are
@@ -152,7 +152,7 @@ typedef struct BITMAPARRAYHEADER
     CGAL_UINT16    screenWidth;
     CGAL_UINT16    screenHeight;
 } BITMAPARRAYHEADER;
-   
+
 
 /*
  * BITMAPHEADER defines the properties of a bitmap.  Its analogues in the
@@ -200,7 +200,7 @@ typedef struct BITMAPHEADER
 /*
  * RGB defines a single color palette entry.  Its analogues in the Windows SDK
  * are the RGBTRIPLE and RGBQUAD structures.  Its analogues in the OS/2
- * Toolkit are the RGB and RGB2 structure. 
+ * Toolkit are the RGB and RGB2 structure.
  */
 typedef struct RGB
 {

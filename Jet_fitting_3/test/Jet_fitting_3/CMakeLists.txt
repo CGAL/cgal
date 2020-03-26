@@ -21,7 +21,7 @@ if ( CGAL_FOUND )
   else()
     include( ${EIGEN3_USE_FILE} )
   endif()
-    
+
 
   if(EIGEN3_FOUND OR LAPACK_FOUND)
 

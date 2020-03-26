@@ -442,7 +442,7 @@ namespace CGAL {
     {}
     /// Constructor with a dart in parameter (for end iterator).
     CMap_one_dart_per_cell_iterator(Map& amap, Dart_handle adart):
-	     Base(amap, adart)
+             Base(amap, adart)
     {}
   };
 //****************************************************************************

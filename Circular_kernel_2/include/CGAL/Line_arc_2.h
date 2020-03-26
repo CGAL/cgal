@@ -19,9 +19,9 @@
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_LINE_ARC_2_H
@@ -35,8 +35,8 @@
 
 namespace CGAL {
 
-template <class CircularKernel> 
-class Line_arc_2 
+template <class CircularKernel>
+class Line_arc_2
   : public CircularKernel::Kernel_base::Line_arc_2
 {
   typedef typename CircularKernel::FT                        FT;
@@ -51,7 +51,7 @@ class Line_arc_2
   typedef typename CircularKernel::Kernel_base::Line_arc_2 RLine_arc_2;
 public:
   typedef  RLine_arc_2 Rep;
-  typedef  CircularKernel   R; 
+  typedef  CircularKernel   R;
 
  const Rep& rep() const
   {
@@ -69,30 +69,30 @@ public:
 
    // Not Documented
    Line_arc_2(const Line_2 &support,
-	      const Circle_2 &c1,const bool b1,
-	      const Circle_2 &c2,const bool b2)
+              const Circle_2 &c1,const bool b1,
+              const Circle_2 &c2,const bool b2)
      : RLine_arc_2(typename R::Construct_line_arc_2()(support, c1, b1, c2, b2))
    {}
 
    // Not Documented
    Line_arc_2(const Line_2 &support,
-	       const Line_2 &l1,
-	       const Line_2 &l2)
+               const Line_2 &l1,
+               const Line_2 &l2)
      : RLine_arc_2(typename R::Construct_line_arc_2()(support, l1, l2))
    {}
 
    Line_arc_2(const Line_2 &support,
-	       const Circular_arc_point_2 &p1,
-	       const Circular_arc_point_2 &p2)
+               const Circular_arc_point_2 &p1,
+               const Circular_arc_point_2 &p2)
      : RLine_arc_2(typename R::Construct_line_arc_2()(support, p1, p2))
    {}
 
    Line_arc_2(const Segment_2 &s)
      : RLine_arc_2(typename R::Construct_line_arc_2()(s))
    {}
-   
+
     Line_arc_2(const Point_2 &p1,
-	       const Point_2 &p2)
+               const Point_2 &p2)
       : RLine_arc_2(typename R::Construct_line_arc_2()(p1, p2))
    {}
 
@@ -124,18 +124,18 @@ public:
         return typename R::Construct_circular_max_vertex_2()(*this);
   }
 
-  Line_2 
+  Line_2
   supporting_line() const
   {
         return typename R::Construct_line_2()(*this);
   }
-  
+
 
   bool is_vertical() const
   {
       return typename R::Is_vertical_2()(*this);
   }
-    
+
   Bbox_2  bbox() const
   {
         return typename R::Construct_bbox_2()(*this);
@@ -166,10 +166,10 @@ operator!=(const Line_arc_2<CircularKernel> &p,
     std::ostream &
     operator<<(std::ostream & os, const Line_arc_2<CK> &a)
     {
-      
+
       return os << a.supporting_line() << " "
-		<< a.source() << " "
-		<< a.target() << " ";
+                << a.source() << " "
+                << a.target() << " ";
     }
 
   template < typename CK >
@@ -190,4 +190,4 @@ operator!=(const Line_arc_2<CircularKernel> &p,
 
 #endif // CGAL_LINE_ARC_2_H
 
-   
+

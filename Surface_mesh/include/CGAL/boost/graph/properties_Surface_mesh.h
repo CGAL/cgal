@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Philipp Möller
 
@@ -40,7 +40,7 @@
 namespace CGAL {
 
 template <typename Point>
-class SM_edge_weight_pmap 
+class SM_edge_weight_pmap
   : public boost::put_get_helper<typename CGAL::Kernel_traits<Point>::type::FT, SM_edge_weight_pmap<Point> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
@@ -214,7 +214,7 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_point_t >
     SM::template Property_map< typename SM::Vertex_index,
                                P
                                > type;
-  
+
   typedef type const_type;
 
 };

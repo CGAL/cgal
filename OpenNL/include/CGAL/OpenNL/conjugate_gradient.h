@@ -2,12 +2,12 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation, either version 3
  * of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -65,7 +65,7 @@ namespace OpenNL {
  *
  * @param A generic square matrix; a function
  *   mult(const MATRIX& M, const double* x, double* y)
- * and a member function 
+ * and a member function
  *   int dimension() const
  * must to be defined.
  * @param b right hand side of the system.
@@ -93,7 +93,7 @@ public:
 
     // Solve the sparse linear system "A*x = b" for A symmetric positive definite
     // Return true on success
-    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x) 
+    bool solve(const MATRIX &A, const VECTOR& b, VECTOR& x)
     {
 #ifdef DEBUG_TRACE
         std::cerr << "  Call Conjugate Gradient" << std::endl;
@@ -160,7 +160,7 @@ private:
  *
  * @param A generic square matrix; a function
  *   mult(const MATRIX& M, const double* x, double* y)
- * and a member function 
+ * and a member function
  *   int dimension() const
  * must to be defined.
  * @param C preconditioner; a function
@@ -172,8 +172,8 @@ private:
  * @param max_iter maximum number of iterations.
  */
 
-template< class MATRIX, class PC_MATRIX, class VECTOR > 
-class Solver_preconditioned_CG 
+template< class MATRIX, class PC_MATRIX, class VECTOR >
+class Solver_preconditioned_CG
 {
 public:
     typedef MATRIX Matrix ;
@@ -194,7 +194,7 @@ public:
 
     // Solve the sparse linear system "A*x = b" for A symmetric positive definite
     // Return true on success
-    bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x) 
+    bool solve(const MATRIX &A, const PC_MATRIX &C, const VECTOR& b, VECTOR& x)
     {
 #ifdef DEBUG_TRACE
         std::cerr << "  Call Conjugate Gradient with preconditioner" << std::endl;

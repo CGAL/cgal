@@ -17,7 +17,7 @@ typedef Kernel::Point_2 Point;
 typedef CGAL::cpp11::array<Scalar,3> Triple;
 
 using std::cout; using std::endl; using std::string;
- 
+
 int main()
 {
     const Point first_vertex  = Point(0, 0);
@@ -27,7 +27,7 @@ int main()
 
     const Triple p = CGAL::Barycentric_coordinates::compute_triangle_coordinates_2(first_vertex, second_vertex, third_vertex, center, Kernel());
 
-    assert(p[0] - (Scalar(1) / Scalar(4)) == Scalar(0) && 
+    assert(p[0] - (Scalar(1) / Scalar(4)) == Scalar(0) &&
            p[1] - (Scalar(1) / Scalar(4)) == Scalar(0) &&
            p[2] - (Scalar(1) / Scalar(2)) == Scalar(0) );
 

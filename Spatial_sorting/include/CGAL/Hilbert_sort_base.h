@@ -38,13 +38,13 @@ namespace internal {
       #if defined(CGAL_HILBERT_SORT_WITH_MEDIAN_POLICY_CROSS_PLATFORM_BEHAVIOR)
         RandomAccessIterator middle = begin + (end - begin) / 2;
         CGAL::nth_element (begin, middle, end, cmp);
-        return middle;      
+        return middle;
       #else
         RandomAccessIterator middle = begin + (end - begin) / 2;
         std::nth_element (begin, middle, end, cmp);
         return middle;
-      #endif	
-      
+      #endif
+
     }
 }
 

@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel
 
@@ -37,16 +37,16 @@ namespace CGAL {
 
 template <class R>
 Point_d<R> lift_to_paraboloid(const Point_d<R>& p)
-/*{\Mfunc returns $p = (x_0,\ldots,x_{d-1})$ lifted to the paraboloid 
+/*{\Mfunc returns $p = (x_0,\ldots,x_{d-1})$ lifted to the paraboloid
 of revolution . }*/
-{ typename R::Lift_to_paraboloid_d lift; 
+{ typename R::Lift_to_paraboloid_d lift;
   return lift(p); }
 
 template <class R>
 Point_d<R> project_along_d_axis(const Point_d<R>& p)
 /*{\Mfunc returns |p| projected along the $d$-axis onto the hyperspace
 spanned by the first $d-1$ standard base vectors.}*/
-{ typename R::Project_along_d_axis_d proj; 
+{ typename R::Project_along_d_axis_d proj;
   return proj(p); }
 
 template <class R>
@@ -67,16 +67,16 @@ squared_distance(const Point_d<R>& p, const Point_d<R>& q)
 template <class ForwardIterator, class OutputIterator>
 OutputIterator linear_base(
   ForwardIterator first, ForwardIterator last, OutputIterator result)
-/*{\Mfunc computes a basis of the linear space spanned by the vectors 
+/*{\Mfunc computes a basis of the linear space spanned by the vectors
 in |set [first,last)| and returns it via an iterator range starting
 in |result|. The returned iterator marks the end of the output.
-\precond value type of |ForwardIterator| and |OutputIterator| is 
+\precond value type of |ForwardIterator| and |OutputIterator| is
 |Vector_d<R>|.}*/
 { typedef typename std::iterator_traits<ForwardIterator>::
     value_type value_type;
   typedef typename value_type::R R;
-  typename R::Linear_base_d base; 
-  return base(first,last,result); 
+  typename R::Linear_base_d base;
+  return base(first,last,result);
 }
 
 

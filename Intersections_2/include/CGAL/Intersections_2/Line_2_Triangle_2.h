@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -37,7 +37,7 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -47,7 +47,7 @@ class Line_2_Triangle_2_pair {
 public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Line_2_Triangle_2_pair(typename K::Line_2 const *line,
-			   typename K::Triangle_2 const *trian)
+                           typename K::Triangle_2 const *trian)
         : _line(line), _trian(trian), _known(false) {}
 
     Intersection_results intersection_type() const;
@@ -64,11 +64,11 @@ protected:
 };
 
 template <class K>
-inline 
-bool 
+inline
+bool
 do_intersect(const typename K::Line_2 &p1,
-	     const typename K::Triangle_2 &p2,
-	     const K&)
+             const typename K::Triangle_2 &p2,
+             const K&)
 {
     typedef Line_2_Triangle_2_pair<K> pair_t;
     pair_t pair(&p1, &p2);
@@ -76,11 +76,11 @@ do_intersect(const typename K::Line_2 &p1,
 }
 
 template <class K>
-inline 
-bool 
+inline
+bool
 do_intersect(const typename K::Triangle_2 &p2,
-	     const typename K::Line_2 &p1,
-	     const K& k)
+             const typename K::Line_2 &p1,
+             const K& k)
 {
   return internal::do_intersect(p1, p2, k);
 }
@@ -166,9 +166,9 @@ intersection_segment() const
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Triangle_2>::result_type
-intersection(const typename K::Line_2 &line, 
-	     const typename K::Triangle_2 &tr,
-	     const K&)
+intersection(const typename K::Line_2 &line,
+             const typename K::Triangle_2 &tr,
+             const K&)
 {
     typedef Line_2_Triangle_2_pair<K> is_t;
     is_t ispair(&line, &tr);
@@ -189,8 +189,8 @@ inline
 typename CGAL::Intersection_traits
 <K, typename K::Line_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Triangle_2 &tr,
-	     const typename K::Line_2 &line,
-	     const K& k)
+             const typename K::Line_2 &line,
+             const K& k)
 {
   return internal::intersection(line, tr, k);
 }

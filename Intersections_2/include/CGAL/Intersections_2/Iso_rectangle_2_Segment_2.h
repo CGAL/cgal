@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -37,9 +37,9 @@
 
 
 namespace CGAL {
-  
+
 namespace Intersections {
-  
+
 namespace internal {
 
 template <class K>
@@ -105,8 +105,8 @@ inline
 typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
-	     const typename K::Segment_2 &seg,
-	     const K& k)
+             const typename K::Segment_2 &seg,
+             const K& k)
 {
   return internal::intersection(seg, iso, k);
 }
@@ -163,7 +163,7 @@ Segment_2_Iso_rectangle_2_pair<K>::intersection_type() const
             FT newmin, newmax;
             if (_dir.homogeneous(i) > RT(0)) {
                 newmin = ( *(isomin_it) - (*ref_point_it)) /
-		  _dir.cartesian(i);
+                  _dir.cartesian(i);
                 newmax = ( *(isomax_it) - (*ref_point_it)) /
                     _dir.cartesian(i);
             } else {

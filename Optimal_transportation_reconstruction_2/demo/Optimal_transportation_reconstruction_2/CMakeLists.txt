@@ -41,27 +41,27 @@ endif()
 if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   set(
-  SRCS 
-  glviewer.cpp 
+  SRCS
+  glviewer.cpp
   scene.cpp
-  Otr2_demo.cpp 
-  window.cpp 
-  render.cpp 
+  Otr2_demo.cpp
+  window.cpp
+  render.cpp
   )
 
-  set( 
-  CGAL_Qt5_MOC_FILES 
-  moc_dialog_options.cxx 
-  moc_glviewer.cxx 
-  moc_window.cxx 
+  set(
+  CGAL_Qt5_MOC_FILES
+  moc_dialog_options.cxx
+  moc_glviewer.cxx
+  moc_window.cxx
   )
 
   set(
   UIS
-  pwsrec.ui 
+  pwsrec.ui
   options.ui
   )
-  
+
   qt5_wrap_ui( UI_FILES ${UIS} )
 
   include(AddFileDependencies)
@@ -78,10 +78,10 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
   qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES pwsrec.qrc )
 
   add_executable  ( Otr2_demo ${SRCS} ${CGAL_Qt5_MOC_FILES} ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES})
-  
+
   target_link_libraries( Otr2_demo PRIVATE
     CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Gui Qt5::OpenGL )
-  
+
   # Link with pthread if necessary
   if (CIMG_INCLUDE_DIR)
     target_compile_definitions( Otr2_demo PRIVATE -DCGAL_USE_CIMG )
@@ -93,7 +93,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND)
       target_link_libraries( Otr2_demo PRIVATE ${CMAKE_THREAD_LIBS_INIT} )
     endif()
   endif()
-    
+
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Otr2_demo )
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

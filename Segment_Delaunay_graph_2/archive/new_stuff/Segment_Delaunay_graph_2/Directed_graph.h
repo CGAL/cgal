@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -49,7 +49,7 @@ private:
 
 public:
   Directed_graph_node(const Data& data = Data(),
-		      unsigned long id = 0)
+                      unsigned long id = 0)
     : data_(data), id_(id) {}
 
 public:

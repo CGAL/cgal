@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -56,7 +56,7 @@ public:
   typedef R_                                R;
 
   VectorC2() {}
- 
+
   VectorC2(const FT &x, const FT &y)
     : base(CGAL::make_array(x, y)) {}
 
@@ -103,7 +103,7 @@ public:
 
 template < class R >
 CGAL_KERNEL_INLINE
-bool 
+bool
 operator==(const VectorC2<R> &v, const VectorC2<R> &w)
 {
   return w.x() == v.x() && w.y() == v.y();
@@ -111,7 +111,7 @@ operator==(const VectorC2<R> &v, const VectorC2<R> &w)
 
 template < class R >
 inline
-bool 
+bool
 operator!=(const VectorC2<R> &v, const VectorC2<R> &w)
 {
   return !(v == w);

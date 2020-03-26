@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_2D_and_3D_Geometry_Kernel
 \anchor chapterkernel23
 
@@ -10,35 +10,35 @@ namespace CGAL {
 
 \section kernel_intro Introduction
 
-\cgal, the *Computational Geometry Algorithms Library*, is written in 
+\cgal, the *Computational Geometry Algorithms Library*, is written in
 \cpp and consists of three major parts.
-The first part is the kernel, which consists of constant-size non-modifiable 
-geometric primitive objects and operations on these objects. 
+The first part is the kernel, which consists of constant-size non-modifiable
+geometric primitive objects and operations on these objects.
 The objects are represented both as stand-alone classes that are
 parameterized by a representation class, which specifies
 the underlying number types used for calculations and as members of the
-kernel classes, which allows for more flexibility and adaptability of the 
+kernel classes, which allows for more flexibility and adaptability of the
 kernel.
 The second part is a collection of basic geometric data structures and
-algorithms, which are parameterized by traits classes that define the 
+algorithms, which are parameterized by traits classes that define the
 interface between the data structure or algorithm and the primitives they use.
 In many cases, the kernel classes provided in \cgal can be used as traits
 classes for these data structures and algorithms.
-The third part of the library consists of non-geometric support facilities, 
-such as circulators, random sources, I/O support for debugging and for 
-interfacing \cgal to various visualization tools. 
+The third part of the library consists of non-geometric support facilities,
+such as circulators, random sources, I/O support for debugging and for
+interfacing \cgal to various visualization tools.
 
 This part of the reference manual covers the kernel.
-The kernel contains objects of constant size, such as point, vector, 
-direction, line, ray, segment, triangle, iso-oriented rectangle and 
-tetrahedron. 
-With each type comes a set of functions which can be applied to an object 
-of this type. 
-You will typically find access functions (e.g. to the coordinates of a point), 
-tests of the position of a point relative to the object, a function returning 
+The kernel contains objects of constant size, such as point, vector,
+direction, line, ray, segment, triangle, iso-oriented rectangle and
+tetrahedron.
+With each type comes a set of functions which can be applied to an object
+of this type.
+You will typically find access functions (e.g. to the coordinates of a point),
+tests of the position of a point relative to the object, a function returning
 the bounding box, the length, or the area of an object, and so on.
 The \cgal kernel further contains basic operations such as affine
-transformations, detection and computation of intersections, and distance 
+transformations, detection and computation of intersections, and distance
 computations.
 
 \subsection Kernel_23Robustness Robustness
@@ -47,46 +47,46 @@ The correctness proof of nearly all geometric algorithms presented
 in theory papers assumes exact computation with real numbers.
 This leads to a fundamental problem with the implementation of geometric
 algorithms.
-Naively, often the exact real arithmetic is replaced by inexact floating-point 
+Naively, often the exact real arithmetic is replaced by inexact floating-point
 arithmetic in the implementation.
 This often leads to acceptable results for many input data.
-However, even for the implementation of the simplest geometric 
+However, even for the implementation of the simplest geometric
 algorithms this simplification occasionally does not work.
-Rounding errors introduced by an inaccurate arithmetic may lead to 
-inconsistent decisions, causing unexpected failures for some correct 
+Rounding errors introduced by an inaccurate arithmetic may lead to
+inconsistent decisions, causing unexpected failures for some correct
 input data.
 There are many approaches to this problem, one of them is to compute
 exactly (compute so accurate that all decisions made by the algorithm
 are exact) which is possible in many cases but more expensive
 than standard floating-point arithmetic.
-C. M. Hoffmann \cgalCite{h-gsm-89}, \cgalCite{h-pargc-89} illustrates some 
+C. M. Hoffmann \cgalCite{h-gsm-89}, \cgalCite{h-pargc-89} illustrates some
 of the problems arising in the implementation of geometric algorithms
-and discusses some approaches to solve them. 
+and discusses some approaches to solve them.
 A more recent overview is given in \cgalCite{s-rpigc-00}.
-The exact computation paradigm is discussed by Yap and Dub&eacute; 
+The exact computation paradigm is discussed by Yap and Dub&eacute;
 \cgalCite{yd-ecp-95} and Yap \cgalCite{y-tegc-97}.
 
-In \cgal you can choose the underlying number types and arithmetic. 
-You can use different types of arithmetic simultaneously and the choice can 
-be easily changed, e.g. for testing. 
-So you can choose between implementations with fast but occasionally inexact 
-arithmetic and implementations guaranteeing exact computation and exact 
-results. 
-Of course you have to pay for the exactness in terms of execution time 
-and storage space. 
+In \cgal you can choose the underlying number types and arithmetic.
+You can use different types of arithmetic simultaneously and the choice can
+be easily changed, e.g. for testing.
+So you can choose between implementations with fast but occasionally inexact
+arithmetic and implementations guaranteeing exact computation and exact
+results.
+Of course you have to pay for the exactness in terms of execution time
+and storage space.
 See the dedicated chapter
 for more details on number types and their capabilities and performance.
 
 \section kernel_rep Kernel Representations
 
-Our object of study is the \f$ d\f$-dimensional affine Euclidean space. 
+Our object of study is the \f$ d\f$-dimensional affine Euclidean space.
 Here we are mainly concerned with cases \f$ d=2\f$ and \f$ d=3\f$.
-Objects in that space are sets of points. A common way to represent 
+Objects in that space are sets of points. A common way to represent
 the points is the use of %Cartesian coordinates,
 which assumes a reference frame (an origin and \f$ d\f$ orthogonal axes).
 In that framework, a point is represented by a \f$ d\f$-tuple
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$,
-and so are vectors in the underlying linear space. Each point is 
+and so are vectors in the underlying linear space. Each point is
 represented uniquely by such %Cartesian coordinates.
 Another way to represent points is by homogeneous coordinates. In that
 framework, a point is represented by a \f$ (d+1)\f$-tuple
@@ -94,16 +94,16 @@ framework, a point is represented by a \f$ (d+1)\f$-tuple
 Via the formulae \f$ c_i = h_i/h_d\f$,
 the corresponding point with %Cartesian coordinates
 \f$ (c_0,c_1,\ldots,c_{d-1})\f$
-can be computed. Note that homogeneous coordinates are not unique. 
-For \f$ \lambda\ne 0\f$, the tuples \f$ (h_0,h_1,\ldots,h_d)\f$ and 
+can be computed. Note that homogeneous coordinates are not unique.
+For \f$ \lambda\ne 0\f$, the tuples \f$ (h_0,h_1,\ldots,h_d)\f$ and
 \f$ (\lambda\cdot h_0,\lambda\cdot h_1,\ldots,\lambda\cdot h_d)\f$
 represent the same point.
 For a point with %Cartesian coordinates \f$ (c_0,c_1,\ldots,c_{d-1})\f$ a
 possible homogeneous representation is \f$ (c_0,c_1,\ldots,c_{d-1},1)\f$.
-%Homogeneous coordinates in fact allow to represent 
+%Homogeneous coordinates in fact allow to represent
 objects in a more general space, the projective space
 \f$ \mathbb{P}^d\f$.
-In \cgal we do not compute in projective geometry. Rather, we use 
+In \cgal we do not compute in projective geometry. Rather, we use
 homogeneous coordinates to avoid division operations,
 since the additional coordinate can serve as a common denominator.
 
@@ -115,7 +115,7 @@ representation of the kernel objects. A type that is used as an
 argument for this parameter must fulfill certain requirements on
 syntax and semantics. The list of requirements defines an abstract
 kernel concept. For all kernel objects types, the types
-`CGAL::Type<Kernel>` and 
+`CGAL::Type<Kernel>` and
 `Kernel::Type` are identical.
 
 \cgal offers four families of concrete models for the concept Kernel,
@@ -145,7 +145,7 @@ weaker. This type must fulfill the requirements on what is called a
 `RingNumberType` in \cgal. This roughly means that
 `Kernel::RT` is a type for which operations \f$ +\f$, \f$ -\f$, \f$ *\f$ are
 defined with semantics (approximately) corresponding to those of a
-ring in a mathematical sense. 
+ring in a mathematical sense.
 
 \subsection Kernel_23CartesianKernels Cartesian Kernels
 
@@ -224,10 +224,10 @@ The use of kernel classes not only avoids problems, it also makes all
 \cgal classes very uniform. They always consist of:
 <OL>
 
-<LI>The *capitalized base name* of the geometric object, such as 
+<LI>The *capitalized base name* of the geometric object, such as
 `Point`, `Segment`, or `Triangle`.
 
-<LI>An *underscore* followed by the *dimension* of the object, 
+<LI>An *underscore* followed by the *dimension* of the object,
 for example \f$ \_2\f$, \f$ \_3\f$, or \f$ \_d\f$.
 
 <LI>A *kernel class* as parameter, which itself is
@@ -308,15 +308,15 @@ faster than the kernels with exact constructions below.
 geometric constructions, in addition to exact geometric predicates.
 <LI>`Exact_predicates_exact_constructions_kernel_with_sqrt`:
 same as `Exact_predicates_exact_constructions_kernel`, but the
-number type is a model of concept `FieldWithSqrt`. 
+number type is a model of concept `FieldWithSqrt`.
 \cgalFootnote{Currently it requires having either LEDA or CORE installed.}.
 <LI>`Exact_predicates_exact_constructions_kernel_with_kth_root`
 same as `Exact_predicates_exact_constructions_kernel`, but the
-number type is a model of concept `FieldWithKthRoot`. 
+number type is a model of concept `FieldWithKthRoot`.
 \cgalFootnote{Currently it requires having either LEDA or CORE installed.}.
 <LI>`Exact_predicates_exact_constructions_kernel_with_root_of`:
 same as `Exact_predicates_exact_constructions_kernel`, but the
-number type is a model of concept `FieldWithRootOf`. 
+number type is a model of concept `FieldWithRootOf`.
 \cgalFootnote{Currently it requires having either LEDA or CORE installed.}.
 </UL>
 </UL>
@@ -339,27 +339,27 @@ compiler which avoids ambiguous expressions. Hence, it pays twice to
 make this distinction.
 
 \cgal defines a symbolic constant \ref ORIGIN of type `Origin`
-which denotes the point at the origin. This constant is used in the conversion 
-between points and vectors. Subtracting it from a point \f$ p\f$ results in the 
+which denotes the point at the origin. This constant is used in the conversion
+between points and vectors. Subtracting it from a point \f$ p\f$ results in the
 locus vector of \f$ p\f$.
 
 \code{.cpp}
 Cartesian<double>::Point_2 p(1.0, 1.0), q;
 Cartesian<double>::Vector_2 v;
 v = p - ORIGIN;
-q = ORIGIN + v; 
+q = ORIGIN + v;
 assert( p == q );
 \endcode
 
 In order to obtain the point corresponding to a vector \f$ v\f$ you simply
-have to add \f$ v\f$ to \ref ORIGIN. If you want to determine 
+have to add \f$ v\f$ to \ref ORIGIN. If you want to determine
 the point \f$ q\f$ in the middle between two points \f$ p_1\f$ and \f$ p_2\f$, you can write\cgalFootnote{you might call `midpoint(p_1,p_2)` instead.}
 
 \code{.cpp}
 q = p_1 + (p_2 - p_1) / 2.0;
 \endcode
 
-Note that these constructions do not involve any performance overhead for 
+Note that these constructions do not involve any performance overhead for
 the conversion with the currently available representation classes.
 
 \subsection Kernel_23KernelObjects Kernel Objects
@@ -372,31 +372,31 @@ triangles, tetrahedra, iso-rectangles, iso-cuboids, circles and spheres.
 
 Lines (`Kernel::Line_2`, `Kernel::Line_3`) in \cgal are oriented. In
 two-dimensional space, they induce a partition of the plane
-into a positive side and a negative side. 
+into a positive side and a negative side.
 Any two points on a line induce an orientation
-of this line. 
+of this line.
 A ray (`Kernel::Ray_2`, `Kernel::Ray_3`) is semi-infinite interval on a line,
-and this line is oriented from the finite endpoint of this interval towards 
+and this line is oriented from the finite endpoint of this interval towards
 any other point in this interval. A segment (`Kernel::Segment_2`,
 `Kernel::Segment_3`) is a bounded interval on a directed line,
-and the endpoints are ordered so that they induce the same direction 
+and the endpoints are ordered so that they induce the same direction
 as that of the line.
 
-Planes are affine subspaces of dimension two in \f$ \E^3\f$, passing through 
-three points, or a point and a line, ray, or segment. 
-\cgal provides a correspondence between any plane in the ambient 
+Planes are affine subspaces of dimension two in \f$ \E^3\f$, passing through
+three points, or a point and a line, ray, or segment.
+\cgal provides a correspondence between any plane in the ambient
 space \f$ \E^3\f$ and the embedding of \f$ \E^2\f$ in that space.
-Just like lines, planes are oriented and partition space into a positive side 
+Just like lines, planes are oriented and partition space into a positive side
 and a negative side.
 In \cgal, there are no special classes for half-spaces. Half-spaces in 2D and
 3D are supposed to be represented by oriented lines and planes, respectively.
 
 Concerning polygons and polyhedra, the kernel provides triangles,
-iso-oriented rectangles, iso-oriented cuboids and tetrahedra. 
+iso-oriented rectangles, iso-oriented cuboids and tetrahedra.
 More complex polygons\cgalFootnote{Any sequence of points can be seen as a (not necessary simple) polygon or polyline. This view is used frequently in the basic library as well.}
-and polyhedra or polyhedral surfaces can be obtained 
-from the basic library (`Polygon_2`, `Polyhedron_3`), 
-so they are not part of the kernel. 
+and polyhedra or polyhedral surfaces can be obtained
+from the basic library (`Polygon_2`, `Polyhedron_3`),
+so they are not part of the kernel.
 As with any Jordan curves, triangles, iso-oriented rectangles and circles
 separate the plane into two regions, one bounded and one unbounded.
 
@@ -404,10 +404,10 @@ separate the plane into two regions, one bounded and one unbounded.
 
 Geometric objects in \cgal have member functions that test the
 position of a point relative to the object. Full dimensional objects
-and their boundaries are represented by the same type, 
+and their boundaries are represented by the same type,
 e.g. half-spaces and hyperplanes are not distinguished, neither are balls and
 spheres and discs and circles. Such objects split the ambient space into two
-full-dimensional parts, a bounded part and an unbounded part 
+full-dimensional parts, a bounded part and an unbounded part
 (e.g. circles), or two unbounded parts (e.g. hyperplanes). By default these
 objects are oriented, i.e., one of the resulting parts is called the
 positive side, the other one is called the negative side. Both of
@@ -424,7 +424,7 @@ a member function `bounded_side()` with return type
 
 If an object is lower dimensional, e.g. a triangle in three-dimensional
 space or a segment in two-dimensional space, there is only a test whether a
-point belongs to the object or not. This member function, which takes a 
+point belongs to the object or not. This member function, which takes a
 point as an argument and returns a Boolean value, is called `%has_on()`.
 
 \section Kernel_23Predicates Predicates and Constructions
@@ -432,41 +432,41 @@ point as an argument and returns a Boolean value, is called `%has_on()`.
 \subsection Kernel_23Predicates_1 Predicates
 
 Predicates are at the heart of a geometry kernel. They are basic units
-for the composition of geometric algorithms and encapsulate decisions. 
+for the composition of geometric algorithms and encapsulate decisions.
 Hence their correctness is crucial for the control flow and hence for
 the correctness of an implementation of a geometric algorithm. \cgal uses
 the term predicate in a generalized sense. Not only components returning a
-Boolean value are called predicates but also components returning an 
+Boolean value are called predicates but also components returning an
 enumeration type like a `Comparison_result` or an `Orientation`.
-We say components, because predicates are implemented both as functions and 
+We say components, because predicates are implemented both as functions and
 function objects (provided by a kernel class).
 
-\cgal provides predicates for the orientation of point 
+\cgal provides predicates for the orientation of point
 sets (`orientation()`, `left_turn()`, `right_turn()`, `collinear()`,
-`coplanar()`), for comparing points according to some given order, 
+`coplanar()`), for comparing points according to some given order,
 especially for comparing %Cartesian coordinates
 (e.g. `lexicographically_xy_smaller()`), in-circle and in-sphere tests,
 and predicates to compare distances.
 
 \subsection Kernel_23Constructions Constructions
 
-Functions and function objects that generate objects that are neither 
+Functions and function objects that generate objects that are neither
 of type `bool` nor enum types are called constructions.
 Constructions involve computation of new numerical values and may be
-imprecise due to rounding errors unless a kernel with an exact number type is 
+imprecise due to rounding errors unless a kernel with an exact number type is
 used.
 
 Affine transformations (`Kernel::Aff_transformation_2`,
 `Kernel::Aff_transformation_3`) allow to generate new object instances under
 arbitrary affine transformations. These transformations include translations,
 rotations (in 2D only) and scaling. Most of the geometric objects in a
-kernel have a member function `transform(Aff_transformation t)` 
+kernel have a member function `transform(Aff_transformation t)`
 which applies the transformation to the object instance.
 
-\cgal also provides a set of functions that detect or compute the 
+\cgal also provides a set of functions that detect or compute the
 intersection
 between objects of the 2D kernel, and many objects in the 3D kernel,
-and functions to calculate their 
+and functions to calculate their
 squared distance.
 Moreover, some member functions of kernel objects are constructions.
 
@@ -505,7 +505,7 @@ intersection computation.
 
 
 
-Example 
+Example
 -------
 
 In the following example, `result_of` is used to query the type of the
@@ -520,13 +520,13 @@ Segment_2 segment_1, segment_2;
 
 std::cin >> segment_1 >> segment_2;
 
- 
+
 /* C++11 */
 // auto v = intersection(segment_1, segment_2);
 
 /* C++03 */
 cpp11::result_of<K::Intersect_2(Segment_2, Segment_2)>::type
-v = intersection(segment_1, segment_2); 
+v = intersection(segment_1, segment_2);
 if(v) {
   /* not empty */
   if (const Point_2 *p = boost::get<Point_2>(&*v) ) {
@@ -545,15 +545,15 @@ if(v) {
 For testing where a point `p` lies with respect to a plane defined by three
 points `q`, `r` and `s`, one may be tempted to construct the plane
 `Kernel::Plane_3(q,r,s)` and use the method `oriented_side(p)`.
-This may pay off if many tests with respect to the plane are made. 
-Nevertheless, unless the number type is exact, the constructed plane 
-is only approximated, and round-off errors may lead 
-`oriented_side(p)` to return an orientation 
+This may pay off if many tests with respect to the plane are made.
+Nevertheless, unless the number type is exact, the constructed plane
+is only approximated, and round-off errors may lead
+`oriented_side(p)` to return an orientation
 which is different from the real orientation of `p`, `q`, `r`, and `s`.
 
 In \cgal, we provide predicates in which such
 geometric decisions are made directly with a reference to the input points
-`p`, `q`, `r`, `s`, without an intermediary object like a plane. 
+`p`, `q`, `r`, `s`, without an intermediary object like a plane.
 For the above test, the recommended way to get the result is to use
 `orientation(p,q,r,s)`. For exact number types, the situation is different.
 If several tests are to be made with the same
@@ -586,7 +586,7 @@ stored in an array of `doubles`, where we have another data member
 
 As said earlier the class is pretty minimalistic, for
 example it has no `bbox()` method. One
-might assume that a basic library algorithm which computes 
+might assume that a basic library algorithm which computes
 a bounding box (e.g, to compute the bounding box of a polygon),
 will not compile. Luckily it will, because it does not
 use of member functions of geometric objects, but it makes
@@ -605,8 +605,8 @@ random access iterator.
 \cgalExample{Kernel_23/MyConstruct_coord_iterator.h}
 
 The last functor we have to provide is the one which constructs
-points. That is you are not forced to add the constructor 
-with the `Origin` as parameter to your class, nor the constructor with 
+points. That is you are not forced to add the constructor
+with the `Origin` as parameter to your class, nor the constructor with
 homogeneous coordinates.
 The functor is a kind of glue layer between the \cgal algorithms
 and your class.
@@ -644,14 +644,14 @@ the constructor with the color as third argument is not available.
 
 It is sometimes useful to apply 2D algorithms to the projection of 3D points on
 a plane. Examples are
-triangulated terrains, which are points with elevation, or surface 
+triangulated terrains, which are points with elevation, or surface
 reconstruction from parallel slices, where one wants to check the simplicity
 or orientation of polygons.
 
 For this purpose \cgal provides several projection traits classes,
 which are a model of traits class concepts of 2D triangulations,
-2D polygon and 2D convex hull traits classes. The projection traits classes 
-are listed in the "Is Model Of" sections of the concepts. 
+2D polygon and 2D convex hull traits classes. The projection traits classes
+are listed in the "Is Model Of" sections of the concepts.
 
 \section Kernel_23Design Design and Implementation History
 
@@ -660,30 +660,30 @@ Olivier Devillers, Andreas Fabri, Wolfgang Freiseisen,
 Geert-Jan Giezeman, Mark Overmars, Stefan Schirra, Otfried Schwarzkopf
 (now Otfried Cheong), and Sven Sch&ouml;nherr
 discussed the foundations of the \cgal kernel.
-Many design and software engineering issues were addressed, 
-e.g. naming conventions, coupling of classes 
-(flat versus deep class hierarchy), 
-memory allocation, programming conventions, mutability of 
-atomic objects, points and vectors, storing additional information, 
+Many design and software engineering issues were addressed,
+e.g. naming conventions, coupling of classes
+(flat versus deep class hierarchy),
+memory allocation, programming conventions, mutability of
+atomic objects, points and vectors, storing additional information,
 orthogonality of operations on the kernel objects,
-viewing non-constant-size objects like polygons as 
+viewing non-constant-size objects like polygons as
 dynamic data structures (and hence not as part of the (innermost) kernel).
 
-The people attending the meeting delegated the compilation of 
+The people attending the meeting delegated the compilation of
 a draft specification to Stefan Schirra.
-The resulting draft specification was intentionally modeled on \cgal's 
+The resulting draft specification was intentionally modeled on \cgal's
 precursors \protocgal and \plageo as well as on the geometric part of \leda.
-The specification already featured coexistence of 
-%Cartesian and 
-homogeneous representation of point/vector data and parameterization 
+The specification already featured coexistence of
+%Cartesian and
+homogeneous representation of point/vector data and parameterization
 by number type(s).
-During the discussion of the draft a kernel design group was formed. 
+During the discussion of the draft a kernel design group was formed.
 The members of this group were Andreas Fabri, Geert-Jan Giezeman,
 Lutz Kettner, Stefan Schirra, and Sven Sch&ouml;nherr.
 The work of the kernel design group led to significant changes and
 improvements of the original design, e.g. the strong separation between
-points and vectors. Probably the most important enhancement was the design 
-of a common superstructure for the previously uncoupled 
+points and vectors. Probably the most important enhancement was the design
+of a common superstructure for the previously uncoupled
 %Cartesian and
 homogeneous representations. One can say, that the kernel was designed
 by this group.
@@ -694,8 +694,8 @@ A first version of the kernel was internally made available at the beginning
 of the \cgal-project (<span class="textsc">esprit ltr iv</span> project number 21957).
 Since then many more people contributed to the evolution of the kernel
 through discussions on the \cgal mailing lists.
-The implementation based on 
-%Cartesian representation was (initially) provided 
+The implementation based on
+%Cartesian representation was (initially) provided
 by Andreas Fabri, the homogeneous representation (initially) by Stefan Schirra.
 Intersection and distance computations were implemented by Geert-Jan Giezeman.
 Further work has been done by Susan Hert on the overall maintenance of the
@@ -704,7 +704,7 @@ Philippe Guigue has provided efficient intersection tests for 3D triangles.
 Andreas Fabri, Michael Hoffmann and Sylvain Pion have improved the support for
 the extensibility and adaptability of the kernel. Pedro Machado
 Manh&atilde;es de Castro and Monique Teillaud introduced 3D circles. In 2010,
-Pierre Alliez, St&eacute;phane Tayeb and Camille Wormser added intersection constructions 
+Pierre Alliez, St&eacute;phane Tayeb and Camille Wormser added intersection constructions
 for 3D triangles and efficient intersection tests for bounding boxes.
 
 \subsection Kernel_23Acknowledgment Acknowledgment
@@ -715,7 +715,7 @@ under grant DFG We 1265/2-1,
 and by ESPRIT IV Long Term Research Projects No. 21957 (%CGAL)
 and No. 28155 (GALIA).
 
-*/ 
+*/
 } /* namespace CGAL */
 
 /*!
@@ -729,11 +729,11 @@ Code can be upgraded by using either `boost::get` or the
 
 template<typename R>
 struct Intersection_visitor : public boost::static_visitor<> {
-  void operator()(const Point_2& p) const 
-  { // Point_2  
+  void operator()(const Point_2& p) const
+  { // Point_2
   }
-  void operator()(const Segment_2& s) const 
-  { // Segment_2 
+  void operator()(const Segment_2& s) const
+  { // Segment_2
   }
 };
 
@@ -742,9 +742,9 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
 {
   CGAL::Object obj = intersection(seg, lin);
   if(const Point_2* foo = object_cast<Point_2>(&obj)) {
-    // Point_2 
+    // Point_2
   } else if(const Segment_2* foo = object_cast<Segment_2>(&obj)) {
-    // Segment_2 
+    // Segment_2
   } else {
     // empty
   }
@@ -753,17 +753,17 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
   auto result = intersection(seg, lin);
   if(result) {
     if(const Point_2* foo = boost::get<Point_2>(&*result)) {
-      // Point_2 
+      // Point_2
     } else if(const Segment_2* foo = boost::get<Segment_2>(&*result)) {
-      // Segment_2 
+      // Segment_2
     }
   } else {
     // empty
   }
 
   // or with boost::static_visitor<T>
-  if(result) { boost::apply_visitor(Intersection_visitor(), *result); } 
-  else { // empty  
+  if(result) { boost::apply_visitor(Intersection_visitor(), *result); }
+  else { // empty
   }
 }
 \endcode

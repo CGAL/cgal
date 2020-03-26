@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Monique Teillaud (Monique.Teillaud@sophia.inria.fr)
 //               : Mariette Yvinec (Mariette.Yvinec@sophia.inria.fr)
@@ -47,10 +47,10 @@ void test_RT()
   typedef typename RT::Weighted_point                Weighted_point;
 
   typedef typename Cls::Vertex_handle                Vertex_handle;
-  typedef typename Cls::Cell_handle                  Cell_handle; 
+  typedef typename Cls::Cell_handle                  Cell_handle;
   typedef typename Cls::Facet                        Facet;
   typedef typename Cls::Edge                         Edge;
-  
+
   typedef std::list<Weighted_point>                  list_point;
   typedef typename Cls::Finite_cells_iterator        Finite_cells_iterator;
 
@@ -75,9 +75,9 @@ void test_RT()
   std::cout << " number of inserted points : " ;
   Weighted_point p[5];
   for ( m=0; m<5; m++) {
-    if ( (m%2)== 0 ) 
+    if ( (m%2)== 0 )
       p[m] = Weighted_point( Point( 2*m,0,0 ), 2 );
-    else 
+    else
       p[m] = Weighted_point( Point( -2*m+1,0,0 ), 2 );
     T1.insert( p[m] );
     count++;
@@ -85,13 +85,13 @@ void test_RT()
       std::cout << count << '\b' ;
     else
       if (count < 100)
-	std::cout << count << '\b' << '\b' ;
+        std::cout << count << '\b' << '\b' ;
       else
-	std::cout << count << '\b' << '\b' << '\b' ;
+        std::cout << count << '\b' << '\b' << '\b' ;
     std::cout.flush();
   }
   assert( T1.is_valid() );
-  std::cout << std::endl << " number of vertices : " 
+  std::cout << std::endl << " number of vertices : "
       << T1.number_of_vertices() << std::endl;
 
   std::cout << " number of inserted points : " ;
@@ -99,7 +99,7 @@ void test_RT()
   for ( m=0; m<5; m++) {
     if ( (m%2)== 0 )
       q[m] = Weighted_point( Point( 2*m+1,0,0 ), 5 );
-    else 
+    else
       q[m] = Weighted_point( Point( -2*m+1,0,0 ), 5 );
     T1.insert( q[m] );
     count++;
@@ -110,18 +110,18 @@ void test_RT()
   std::cout << count << '\b' << '\b' ;
       else
   std::cout << count << '\b' << '\b' << '\b' ;
-    std::cout.flush();  
+    std::cout.flush();
   }
   assert( T1.is_valid() );
-  std::cout << std::endl << " number of vertices : " 
+  std::cout << std::endl << " number of vertices : "
       << T1.number_of_vertices() << std::endl;
 
   std::cout << " number of inserted points : " ;
   Weighted_point r[10];
   for ( m=0; m<10; m++) {
-    if ( (m%2)== 0 ) 
+    if ( (m%2)== 0 )
       r[m] = Weighted_point( Point( m,0,0 ), 1 );
-    else 
+    else
       r[m] = Weighted_point( Point( -m,0,0 ), 1 );
     T1.insert( r[m] );
     count++;
@@ -132,10 +132,10 @@ void test_RT()
   std::cout << count << '\b' << '\b' ;
       else
   std::cout << count << '\b' << '\b' << '\b' ;
-    std::cout.flush();  
+    std::cout.flush();
   }
   assert( T1.is_valid() );
-  std::cout << std::endl << " number of vertices : " 
+  std::cout << std::endl << " number of vertices : "
       << T1.number_of_vertices() << std::endl;
   assert( T1.dimension()==1 );
 
@@ -273,8 +273,8 @@ void test_RT()
     std::cout << count << '\b' << '\b' << '\b' ;
       std::cout.flush();
     }
- 
-  std::cout << std::endl << " number of vertices : " 
+
+  std::cout << std::endl << " number of vertices : "
       << T2.number_of_vertices() << std::endl;
   assert( T2.dimension()==2 );
   assert( T2.is_valid() );
@@ -305,7 +305,7 @@ void test_RT()
     else
       if (count < 100)
         std::cout << count << '\b' << '\b' ;
-      else 
+      else
         if (count < 1000)
           std::cout << count << '\b' << '\b' << '\b' ;
         else
@@ -314,7 +314,7 @@ void test_RT()
   }
   std::cout << std::endl;
 
-  std::cout << " number of vertices : " 
+  std::cout << " number of vertices : "
       << T.number_of_vertices() << std::endl;
   assert(T.is_valid());
   assert(T.dimension()==3);
@@ -323,7 +323,7 @@ void test_RT()
   std::cout << " test iterator range insert" << std::endl;
   T.insert (lp.begin(), lp.end());
 
-  std::cout << " number of vertices : " 
+  std::cout << " number of vertices : "
       << T.number_of_vertices() << std::endl;
   assert(T.is_valid());
   assert(T.dimension()==3);
@@ -356,7 +356,7 @@ void test_RT()
   T3.insert(wpp1);
   Vertex_handle v2 = T3.insert(wpp2);
   assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v2);
-  
+
   T3.insert(wpp3);
   Vertex_handle v4 = T3.insert(wpp4);
   assert( T3.nearest_power_vertex(Point(0.5,0.5,0.5)) == v4);
@@ -368,7 +368,7 @@ void test_RT()
   Vertex_handle v8 = T3.insert(wpp8);
   Point query(0.5,0.5,0.5);
   assert(T3.nearest_power_vertex(query) == v8);
-  assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8); 
+  assert(T3.nearest_power_vertex_in_cell(query ,v8->cell()) == v8);
 
   Vertex_handle v9 = T3.insert(wpp9);
   assert(v9 == Vertex_handle()); // hidden point
@@ -394,7 +394,7 @@ void test_RT()
   Weighted_point wq2(q2,0.);
   Weighted_point wq3(q3,0.);
   Weighted_point wq01(q0,2.);
-  
+
   Cls T4;
   Vertex_handle v0 = T4.insert(wq0);
   Vertex_handle v1 = T4.insert(wq1);
@@ -416,7 +416,7 @@ void test_RT()
   assert(T4.is_Gabriel(e));
   assert(T4.is_edge(v2,v3,c,i,j));
   assert(T4.is_Gabriel(c,i,j));
-  
+
   Vertex_handle v01 = T4.insert(wq01);
   (void) v01; // kill warning
   assert(T4.is_edge(v2,v3,c,i,j));
@@ -440,14 +440,14 @@ void test_RT()
 int main()
 {
   test_RT<CGAL::Regular_triangulation_3<traits> >();
-  
+
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                      Lock_ds;
-  typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Regular_triangulation_vertex_base_3<traits>, 
-    CGAL::Regular_triangulation_cell_base_3<traits>, 
-    CGAL::Parallel_tag >	                            Tds_parallel;
+  typedef CGAL::Triangulation_data_structure_3<
+    CGAL::Regular_triangulation_vertex_base_3<traits>,
+    CGAL::Regular_triangulation_cell_base_3<traits>,
+    CGAL::Parallel_tag >                                    Tds_parallel;
   typedef CGAL::Regular_triangulation_3<
     traits, Tds_parallel, Lock_ds>                    RT_parallel;
 

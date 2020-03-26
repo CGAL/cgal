@@ -115,7 +115,7 @@ namespace internal {
 *
 * @tparam VertexRange model of `Range`, holding
 *         vertices of type `boost::graph_traits<TriangleMesh>::%vertex_descriptor`.
-*         Its iterator type is `ForwardIterator`. 
+*         Its iterator type is `ForwardIterator`.
 * @tparam TriangleMesh model of `MutableFaceGraph`.
 * @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *

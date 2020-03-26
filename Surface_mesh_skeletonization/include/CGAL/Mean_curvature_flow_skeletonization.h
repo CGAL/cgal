@@ -483,7 +483,7 @@ public:
   {
     return m_is_medially_centered;
   }
-  
+
   /// \cgalAdvancedFunction
   /// \cgalAdvancedBegin
   /// Controls the smoothness of the medial approximation:
@@ -849,7 +849,7 @@ private:
   {
     typedef std::pair<Input_vertex_descriptor, vertex_descriptor> Vertex_pair;
     std::vector<Vertex_pair> v2v;
-    copy_face_graph(tmesh, m_tmesh, 
+    copy_face_graph(tmesh, m_tmesh,
                     CGAL::parameters::vertex_to_vertex_output_iterator(std::back_inserter(v2v)));
 
     // copy input vertices to keep correspondence

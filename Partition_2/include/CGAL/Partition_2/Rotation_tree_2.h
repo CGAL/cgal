@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -80,23 +80,23 @@ public:
       Greater greater (Traits().less_xy_2_object());
       std::sort(this->begin(), this->end(), greater);
       std::unique(this->begin(), this->end());
-   
+
       // front() is the point with the largest x coordinate
-   
+
       // push the point p_minus_infinity; the coordinates should never be used
       push_back(Point_2( 1, -1));
 
       // push the point p_infinity; the coordinates should never be used
       push_back(Point_2(1, 1));
-   
+
       _p_inf = this->end();  // record the iterators to these extreme points
       _p_inf--;
       _p_minus_inf = _p_inf;
       _p_minus_inf--;
-   
+
       Self_iterator child;
       // make p_minus_inf a child of p_inf
-      set_rightmost_child(_p_minus_inf, _p_inf); 
+      set_rightmost_child(_p_minus_inf, _p_inf);
       child = this->begin();               // now points to p_0
       while (child != _p_minus_inf)  // make all points children of p_minus_inf
       {
@@ -108,41 +108,41 @@ public:
 
    // the point that comes first in the right-to-left ordering is first
    // in the ordering, after the auxilliary points p_minus_inf and p_inf
-   Self_iterator rightmost_point_ref() 
+   Self_iterator rightmost_point_ref()
    {
       return this->begin();
    }
 
-   Self_iterator right_sibling(Self_iterator p) 
+   Self_iterator right_sibling(Self_iterator p)
    {
       if (!(*p).has_right_sibling()) return this->end();
       return (*p).right_sibling();
    }
 
-   Self_iterator left_sibling(Self_iterator p) 
+   Self_iterator left_sibling(Self_iterator p)
    {
       if (!(*p).has_left_sibling()) return this->end();
       return (*p).left_sibling();
    }
 
-   Self_iterator rightmost_child(Self_iterator p) 
+   Self_iterator rightmost_child(Self_iterator p)
    {
       if (!(*p).has_children()) return this->end();
       return (*p).rightmost_child();
    }
 
-   Self_iterator parent(Self_iterator p) 
+   Self_iterator parent(Self_iterator p)
    {
       if (!(*p).has_parent()) return this->end();
       return (*p).parent();
    }
 
-   bool parent_is_p_infinity(Self_iterator p) 
+   bool parent_is_p_infinity(Self_iterator p)
    {
       return parent(p) == _p_inf;
    }
 
-   bool parent_is_p_minus_infinity(Self_iterator p) 
+   bool parent_is_p_minus_infinity(Self_iterator p)
    {
       return parent(p) == _p_minus_inf;
    }

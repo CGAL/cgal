@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Nico Kruithof
 
@@ -79,14 +79,14 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
   {  // Check vertices:
     Finite_vertices_iterator vit = t.finite_vertices_begin();
     Vertex_handle vh = vit;
-    
+
     Simplex s1 = vh;
 
     Simplex s2(vit);
     Simplex s3(vh);
 
     Simplex s4(s1);
-    
+
     assert(s1.dimension() == 0);
     assert(s1 == s2);
     assert(s1 == s3);
@@ -98,7 +98,7 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
   {  // Check edges
     Finite_edges_iterator eit = t.finite_edges_begin();
     Edge e = *eit;
-    
+
     Simplex s1 = *eit;
     Simplex s2 = e;
 
@@ -106,7 +106,7 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
     Simplex s4(e);
 
     Simplex s5(s1);
-    
+
     assert(s1.dimension() == 1);
     assert(s1 == s2);
     assert(s1 == s3);
@@ -119,7 +119,7 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
   {  // Check facets
     Finite_facets_iterator fit = t.finite_facets_begin();
     Facet f = *fit;
-    
+
     Simplex s1 = *fit;
     Simplex s2 = f;
 
@@ -127,7 +127,7 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
     Simplex s4(f);
 
     Simplex s5(s1);
-    
+
     assert(s1.dimension() == 2);
     assert(s1 == s2);
     assert(s1 == s3);
@@ -140,7 +140,7 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
   {  // Check cells
     Finite_cells_iterator cit = t.finite_cells_begin();
     Cell_handle ch = cit;
-    
+
     Simplex s1 = Simplex(cit);
     Simplex s2 = ch;
 
@@ -148,7 +148,7 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
     Simplex s4(ch);
 
     Simplex s5(s1);
-    
+
     assert(s1.dimension() == 3);
     assert(s1 == s2);
     assert(s1 == s3);

@@ -35,7 +35,7 @@ format.
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgSolverInterface} 
+\cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:ass-psp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
@@ -54,7 +54,7 @@ format.
 - `CGAL::remove_outliers()`
 - `CGAL::grid_simplify_point_set()`
 - `CGAL::random_simplify_point_set()`
-- `CGAL::hierarchy_simplify_point_set()`	
+- `CGAL::hierarchy_simplify_point_set()`
 - `CGAL::wlop_simplify_and_regularize_point_set()`
 - `CGAL::jet_smooth_point_set()`
 - `CGAL::bilateral_smooth_point_set()`

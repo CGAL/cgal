@@ -45,7 +45,7 @@
 #include <CGAL/internal/Parallel_callback.h>
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
-#include <tbb/scalable_allocator.h>  
+#include <tbb/scalable_allocator.h>
 #endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
@@ -124,28 +124,28 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 
   public:
     PCA_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
-			 std::vector<Vector>& output,
+                         std::vector<Vector>& output,
                      cpp11::atomic<std::size_t>& advancement,
                      cpp11::atomic<bool>& interrupted)
       : tree(tree), k (k), input (points), output (output)
       , advancement (advancement)
       , interrupted (interrupted)
     { }
-    
+
     void operator()(const tbb::blocked_range<std::size_t>& r) const
     {
       for( std::size_t i = r.begin(); i != r.end(); ++i)
       {
         if (interrupted)
           break;
-	output[i] = CGAL::internal::pca_estimate_normal<Kernel,Tree>(input[i], tree, k);
+        output[i] = CGAL::internal::pca_estimate_normal<Kernel,Tree>(input[i], tree, k);
         ++ advancement;
       }
     }
 
   };
 #endif // CGAL_LINKED_WITH_TBB
-  
+
 
 } /* namespace internal */
 /// \endcond
@@ -190,7 +190,7 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
    \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename NamedParameters
 >
 void
@@ -243,7 +243,7 @@ pca_estimate_normals(
 
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
+  std::vector<Point> kd_tree_points;
   for(it = points.begin(); it != points.end(); it++)
     kd_tree_points.push_back(get(point_map, *it));
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -255,17 +255,17 @@ pca_estimate_normals(
   // vectors (already normalized)
 #ifndef CGAL_LINKED_WITH_TBB
   CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
-			     "Parallel_tag is enabled but TBB is unavailable.");
+                             "Parallel_tag is enabled but TBB is unavailable.");
 #else
   if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
     {
       internal::Point_set_processing_3::Parallel_callback
         parallel_callback (callback, kd_tree_points.size());
-     
+
       std::vector<Vector> normals (kd_tree_points.size (),
                                    CGAL::NULL_VECTOR);
       CGAL::internal::PCA_estimate_normals<Kernel, Tree>
-	f (tree, k, kd_tree_points, normals,
+        f (tree, k, kd_tree_points, normals,
            parallel_callback.advancement(),
            parallel_callback.interrupted());
       tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
@@ -281,18 +281,18 @@ pca_estimate_normals(
     {
       std::size_t nb = 0;
       for(it = points.begin(); it != points.end(); it++, ++ nb)
-	{
-	  Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
-								     get(point_map,*it),
-								     tree,
-								     k);
+        {
+          Vector normal = internal::pca_estimate_normal<Kernel,Tree>(
+                                                                     get(point_map,*it),
+                                                                     tree,
+                                                                     k);
 
-	  put(normal_map, *it, normal); // normal_map[it] = normal
+          put(normal_map, *it, normal); // normal_map[it] = normal
           if (callback && !callback ((nb+1) / double(kd_tree_points.size())))
             break;
-	}
+        }
     }
-   
+
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of pca_estimate_normals()\n");
 }
@@ -300,7 +300,7 @@ pca_estimate_normals(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename ConcurrencyTag,
-	  typename PointRange
+          typename PointRange
 >
 void
 pca_estimate_normals(
@@ -314,7 +314,7 @@ pca_estimate_normals(
 #ifndef CGAL_NO_DEPRECATED_CODE
 // deprecated API
 template <typename ConcurrencyTag,
-	  typename ForwardIterator,
+          typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
           typename Kernel
@@ -337,10 +337,10 @@ pca_estimate_normals(
      normal_map (normal_map).
      geom_traits(Kernel()));
 }
-  
+
 // deprecated API
 template <typename ConcurrencyTag,
-	  typename ForwardIterator,
+          typename ForwardIterator,
           typename PointMap,
           typename NormalMap
 >
@@ -363,7 +363,7 @@ pca_estimate_normals(
 
 // deprecated API
 template <typename ConcurrencyTag,
-	  typename ForwardIterator,
+          typename ForwardIterator,
           typename NormalMap
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::pca_estimate_normals(), please update your code")

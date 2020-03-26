@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_CGAL_and_Solvers
 \anchor chapterSolvers
 \cgalAutoToc
@@ -67,17 +67,17 @@ specific solver to be used must be given as template parameter.
 Each \cgal package using a sparse solver specifies which type of matrix
 and solver is required:
 
-\code{.cpp} 
+\code{.cpp}
 
 typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
 
-//iterative general solver 
+//iterative general solver
 typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver;
 
-//iterative symmetric solver 
+//iterative symmetric solver
 typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver;
 
-//direct symmetric solver 
+//direct symmetric solver
 typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver;
 
 \endcode
@@ -101,6 +101,6 @@ extended the existing concepts.
 Simon Giraudot was responsible for gathering all concepts and classes, and also wrote this user manual
 with the help of Andreas Fabri.
 
-*/ 
+*/
 } /* namespace CGAL */
 

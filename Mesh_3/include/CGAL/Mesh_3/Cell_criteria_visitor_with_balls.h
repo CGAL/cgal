@@ -46,7 +46,7 @@ public:
   typedef Abstract_criterion<Tr, Self> Criterion;
   typedef Mesh_3::Cell_radius_criterion<Tr, Self> Cell_radius_criterion;
   typedef Mesh_3::Cell_radius_edge_criterion<Tr, Self> Cell_radius_edge_criterion;
-        
+
   typedef typename Base::Quality Cell_quality;
   typedef typename Base::Is_bad  Is_cell_bad;
   typedef typename Base::Handle  Handle;
@@ -60,7 +60,7 @@ public:
   int nb_weighted_points;
   std::vector<Weighted_point> points;
   double radius_ortho_shpere;
-        
+
   typedef typename Tr::Cell::Surface_patch_index Surface_patch_index;
   typedef typename Tr::Vertex_handle Vertex_handle;
 
@@ -113,7 +113,7 @@ public:
       Base::do_visit(criterion);
     else
       Base::do_visit(criterion);
-                                
+
   }
 
   void visit(const Cell_radius_edge_criterion& criterion)
@@ -132,7 +132,7 @@ public:
 
 };  // end class Cell_criterion_visitor
 
-} // end namespace Mesh_3 
+} // end namespace Mesh_3
 } // end namespace CGAL
 
 #endif // CGAL_MESH_3_CELL_CRITERIA_VISITOR_WITH_BALLS_H

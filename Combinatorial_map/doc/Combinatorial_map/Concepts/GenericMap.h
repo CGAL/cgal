@@ -333,7 +333,7 @@ Dart_handle next(Dart_handle dh);
 Returns a const handle to a dart belonging to the next edge after `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
 Dart_const_handle next(Dart_const_handle dh) const;
-  
+
 /*!
 Returns a handle to a dart belonging to the previous edge begore `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
@@ -343,7 +343,7 @@ Dart_handle previous(Dart_handle dh);
 Returns a const handle to a dart belonging to the previous edge begore `*dh`, that does not belong to the same <I>0</I>-cell than `*dh` and that belongs to the same <I>i</I>-cell than `*dh`for each <I>i</I>, 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
 */
 Dart_const_handle previous(Dart_const_handle dh) const;
-  
+
 /*!
 Returns a handle to a dart belonging to the opposite <I>i</I>-cell than `*dh`. This dart does not belong to the same <I>0</I>-cell than `*dh`, nor to the same <I>i</I>-cell, but belongs to the same <I>i</I>-cell than `*dh`for each <I>j</I>, 2\f$ \leq \f$ <I>j</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, <I>j</I> \f$ \neq \f$ <I>i</I>.
 \pre 2\f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink.
@@ -357,7 +357,7 @@ Returns a const handle to a dart belonging to the opposite <I>i</I>-cell than `*
 */
 template<unsigned int i>
 Dart_const_handle opposite(Dart_const_handle dh) const;
-  
+
 /*!
 Displays on `os` the number of elements of the generic map.
 Its number of darts,
@@ -382,12 +382,12 @@ Returns the information associated to dart `*dh`.
 \pre `Dart_info` is not `void`.
 */
 Dart_info& info(Dart_handle dh);
-/*!  
+/*!
 Returns the information associated to dart `*dh`, when the dart is const.
 \pre `Dart_info` is not `void`.
 */
 const Dart_info& info(Dart_const_handle dh) const;
-  
+
 /*!
 Returns a handle to the <I>i</I>-attribute associated to dart `*dh`.
 \pre 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ \link GenericMap::dimension `dimension`\endlink, and <I>i</I>-attributes are non `void`.
@@ -884,7 +884,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `insert_cell_2_in_cell_3<InputIterator>`
 \sa `remove_cell<i>`
 */
-Dart_handle insert_cell_0_in_cell_2(Dart_handle dh); 
+Dart_handle insert_cell_0_in_cell_2(Dart_handle dh);
 
 /*!
 Inserts a 1-cell in the 2-cell containing `dh1` and `dh2`. Returns `previous(dh1)`, a handle on one dart belonging to the new 1-cell.
@@ -927,7 +927,7 @@ If \link GenericMap::are_attributes_automatically_managed `are_attributes_automa
 \sa `remove_cell<i>`
 */
 template <class InputIterator>
-Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);  
+Dart_handle insert_cell_2_in_cell_3(InputIterator afirst, InputIterator alast);
 
 /*!
 Inserts a 1-cell in a the 2-cell containing `dh`, the 1-cell being attached only by one of its extremity to the 0-cell containing `dh`. Returns `previous(dh)`, a handle on the dart belonging to the new 1-cell and to the new 0-cell.

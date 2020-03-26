@@ -18,9 +18,9 @@
  *
  * File: CoreDefs.cpp
  * Synopsis:
- *	 Useful parameters for Core Library which users may change
+ *         Useful parameters for Core Library which users may change
  *
- * Written by 
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -35,7 +35,7 @@
 
 #include "CGAL/CORE/CoreDefs.h"
 
-namespace CORE { 
+namespace CORE {
 
 //  Default Values
 
@@ -49,7 +49,7 @@ namespace CORE {
  *  User's responsibility to check and reset value to 0. */
 // This is currently used in geom2d/points2d.cpp for I/O of points
 
-// Note from 2014: does not seem to be used anywhere, and it is not declared 
+// Note from 2014: does not seem to be used anywhere, and it is not declared
 // in CoreDefs.h so it is not accessible
 // Left here for compatibilty when CGAL_HEADER_ONLY is not defined
 
@@ -76,7 +76,7 @@ CGAL::cpp11::atomic<int> InvalidFlag(0);
 #endif
 
 /* ************************************************************
- * PRECISION PARAMETERS 
+ * PRECISION PARAMETERS
  * ************************************************************ */
 
 /**
@@ -94,7 +94,7 @@ extLong defBFdivRelPrec = 54;
 extLong defBFsqrtAbsPrec = 54;
 
 /**
- * Escape Precision 
+ * Escape Precision
  *   -- we will not compare a number to precision higher than this
  *   -- if this is infinity, there there is no escape precision */
 extLong EscapePrec  = CORE_posInfty;
@@ -112,7 +112,7 @@ CGAL::cpp11::atomic<bool> EscapePrecWarning(true);
 #endif
 
 /** The Composite Precision [defAbsPrec, defRelPrec]
- *  determines the precision to which an Expr evaluates its 
+ *  determines the precision to which an Expr evaluates its
  *  (exact, implicit) constant value. */
 
 /**  absolute precision  = 2^31 - 1 */
@@ -143,8 +143,8 @@ CGAL::cpp11::atomic<long> defOutputDigits(10); // == defBigFloatOutputDigits;
 
 /** Set this to 16 if you want machine precision. This controls the
  *  absolute error in string decimal inputs to Real or Expr.
- *  If defInputDigits is finite, then the absolute error will be 
- *  at most 10^{-defInputDigits}.  Otherwise, the input is exactly 
+ *  If defInputDigits is finite, then the absolute error will be
+ *  at most 10^{-defInputDigits}.  Otherwise, the input is exactly
  *  represented by some BigFloat or BigRat value. */
 extLong defInputDigits = CORE_posInfty;
 

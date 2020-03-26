@@ -64,7 +64,7 @@ public:
   Eigen_sparse_matrix()  :
       m_is_already_built(false)
   {}
-  
+
   /// Create a square matrix initialized with zeros.
   Eigen_sparse_matrix(std::size_t  dim,           ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
@@ -120,7 +120,7 @@ public:
     m_triplets.swap(other.m_triplets);
   }
 
-  
+
   /// Delete this object and the wrapped matrix.
   ~Eigen_sparse_matrix() { }
 
@@ -202,7 +202,7 @@ public:
     if(m_is_symmetric && (j > i))
       return;
 
-    if(m_is_already_built){      
+    if(m_is_already_built){
       CGAL_precondition(i < row_dimension());
       CGAL_precondition(j < column_dimension());
       m_matrix.coeffRef(i,j) += val;
@@ -279,7 +279,7 @@ public:
     m_matrix.makeCompressed();
     return m_matrix;
   }
-  
+
 
 public:
 
@@ -289,8 +289,8 @@ public:
   {
     return Eigen_sparse_matrix(c* M.eigen_object());
   }
-  
-  
+
+
   friend Eigen_sparse_matrix
   operator+(const Eigen_sparse_matrix& M0, const Eigen_sparse_matrix& M1)
   {
@@ -298,7 +298,7 @@ public:
   }
   /// \endcond
 
-  
+
   // Fields
 private:
   mutable bool m_is_already_built;
@@ -312,7 +312,7 @@ private:
   bool m_is_symmetric;
 }; // Eigen_sparse_matrix
 
-  
+
 /*!
 \ingroup PkgSolverInterfaceRef
 
@@ -355,7 +355,7 @@ struct Eigen_sparse_symmetric_matrix
 The class `Eigen_matrix` is a wrapper around `Eigen` matrix type
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>.
 
-\cgalModels `SvdTraits::Matrix` 
+\cgalModels `SvdTraits::Matrix`
 
 \tparam T Number type.
 

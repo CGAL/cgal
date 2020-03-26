@@ -58,6 +58,6 @@ int main(int argc, char*argv[])
                 << "), color (" << int(c[0]) << " " << int(c[1]) << " " << int(c[2])
                 << ") and intensity " << I << std::endl;
     }
-  
+
   return EXIT_SUCCESS;
 }

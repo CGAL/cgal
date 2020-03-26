@@ -12,9 +12,9 @@ typedef CGAL::Exact_rational FT_;
 
 
 int main()
-{ 
+{
   CGAL_TEST_START;
-{ 
+{
   typedef CGAL::Homogeneous_d<RT_> Kernel;
   typedef Kernel::RT             RT;
   typedef Kernel::FT             FT;
@@ -31,18 +31,18 @@ int main()
   typedef LA::Matrix                  IMatrix;
   typedef CGAL::Aff_transformation_d<Kernel> Afftrafo;
 
-  { 
+  {
     Vector e1 = Vector(3,Vector::Base_vector(),0);
     int IV1[]={1,0,1,1};
     int IV2[]={0,0,1};
     IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
-    Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()), 
+    Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()),
           p3(3,iv2.begin(),iv2.end(),1), p4(3);
-    std::vector<Point> V = 
+    std::vector<Point> V =
       make_vector(Point(-1,-1,-1,1),Point(1,-1,-1,1),
                   Point(-1,1,-1,1),Point(-1,-1,1,1));
     Sphere S(3,V.begin(),V.end());
-    Line l1(p0,p1), l2(p0,Point(1,1,0,1)); 
+    Line l1(p0,p1), l2(p0,Point(1,1,0,1));
     Ray r(p0,p1); Segment s(p0,p1);
     CGAL_TEST(CGAL::reflect(p1,p0)==Point(-1,0,0,1)){}
     CGAL_TEST(CGAL::reflect(p2,l1)==Point(1,0,-1,1)){}
@@ -56,16 +56,16 @@ int main()
     CGAL_TEST(CGAL::reflect(s,l2)==Segment(p0,Point(0,1,0,1))){}
   }
 
-  { 
+  {
     int IV[]={2,3,1};
-    IVector iv(IV,IV+3); 
-    IMatrix M1(3),M2(3); 
+    IVector iv(IV,IV+3);
+    IMatrix M1(3),M2(3);
     M1(0,0) = -1; M1(1,1) = -1; M1(2,2) = 1; // rot pi
     M2(0,0) = 0; M2(0,1) = -1; M2(0,2) = 1;
     M2(1,0) = 1; M2(1,1) = 0; M2(1,2) = 1;  M2(2,2) = 1;
     Vector rv(5,0);
     Direction rd(1,1);
-   
+
     Afftrafo at0(2); // whole zero in 2d
     Afftrafo at1(M1); // rot(pi) in 2d
     Afftrafo at2(CGAL::SCALING,iv.begin(),iv.end()); // scale by (2,3) in 2d
@@ -85,8 +85,8 @@ int main()
     CGAL_IO_TEST(at4,at0,CGAL::IO::ASCII);
 
     Afftrafo at12 = at2 * at2.inverse();
-    Point p(1,1); 
-    CGAL_TEST(p.transform(at12)==p){} 
+    Point p(1,1);
+    CGAL_TEST(p.transform(at12)==p){}
     CGAL_TEST(p.transform(at1)==Point(-1,-1)){}
     CGAL_TEST(p.transform(at2)==Point(2,3)){}
     CGAL_TEST(p.transform(at3)==Point(6,1)){}
@@ -96,16 +96,16 @@ int main()
     CGAL_TEST(p.transform(at9)==Point(3,3)){}
     CGAL_TEST(p.transform(at10)==Point(-1,1)){}
 
-    Vector v_approx = 
+    Vector v_approx =
       Point(1,0).transform(at11) - CGAL::ORIGIN;
     /* we have v_approx = (x,y) building an angle alpha with
        the x-axis then sin alpha = y/length(v_approx) and we
-       want to know that sin alpha <= num/den of at11. 
+       want to know that sin alpha <= num/den of at11.
        we started with a direction rd(1,1) with angle pi/4
        and thus sin pi/4 = 1/ sqrt(2)
        Thus we check that the squared difference of the sine
        values is bounded by sqr(num/den):
-       
+
        sqr(y/sqrt((sqr(x) + sqr(y))) - 1/sqrt(2)) < sqr(num/den)
 
            sqr(a - b) < sqr(c)
@@ -113,7 +113,7 @@ int main()
        <=> sqr( sqr(a) + sqr(b) - sqr(c) ) < 4 sqr(a) sqr(b)
            where sqr(b) = 1/2
        <=> sqr( sqr(a) + sqr(b) - sqr(c) ) < 2 sqr(a)
-       
+
        in at11 we had num = 1 and den = 1000
     */
     FT sqr_sin_alpha = CGAL_NTS square(v_approx.y())/
@@ -121,7 +121,7 @@ int main()
     // sqr(a)
     FT sqr_sin_piforth(1,2);
     // sqr(b)
-    FT sqr_bound = Kernel::make_FT(RT(1),CGAL_NTS square(RT(1000)));  
+    FT sqr_bound = Kernel::make_FT(RT(1),CGAL_NTS square(RT(1000)));
     // sqr(c)
     FT sqr_sum = sqr_sin_alpha + sqr_sin_piforth - sqr_bound;
     CGAL_TEST( (sqr_sum*sqr_sum) < (FT(2)*sqr_sin_alpha) ){}
@@ -138,7 +138,7 @@ int main()
     CGAL_TEST(v.transform(at3)==v){}
     CGAL_TEST(v.transform(at1)==-v){}
 
-    Direction dir(5,1); 
+    Direction dir(5,1);
     CGAL_TEST(dir.transform(at9)==dir){}
     CGAL_TEST(dir.transform(at3)==dir){}
     CGAL_TEST(dir.transform(at1)==-dir){}
@@ -199,18 +199,18 @@ int main()
   typedef CGAL::Aff_transformation_d<Kernel> Afftrafo;
 
 
-  { 
+  {
     Vector e1 = Vector(3,Vector::Base_vector(),0);
     int IV1[]={1,0,1,1};
     int IV2[]={0,0,1};
     IVector iv1(IV1,IV1+4), iv2(IV2,IV2+3);
-    Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()), 
+    Point p0(3), p1(p0 + e1), p2(3,iv1.begin(),iv1.end()),
           p3(3,iv2.begin(),iv2.end(),1), p4(3);
-    std::vector<Point> V = 
+    std::vector<Point> V =
       make_vector(Point(-1,-1,-1,1),Point(1,-1,-1,1),
                   Point(-1,1,-1,1),Point(-1,-1,1,1));
     Sphere S(3,V.begin(),V.end());
-    Line l1(p0,p1), l2(p0,Point(1,1,0,1)); 
+    Line l1(p0,p1), l2(p0,Point(1,1,0,1));
     Ray r(p0,p1); Segment s(p0,p1);
     CGAL_TEST(CGAL::reflect(p1,p0)==Point(-1,0,0,1)){}
     CGAL_TEST(CGAL::reflect(p2,l1)==Point(1,0,-1,1)){}
@@ -224,16 +224,16 @@ int main()
     CGAL_TEST(CGAL::reflect(s,l2)==Segment(p0,Point(0,1,0,1))){}
   }
 
-  { 
+  {
     int IV[]={2,3,1};
-    IVector iv(IV,IV+3); 
-    IMatrix M1(3),M2(3); 
+    IVector iv(IV,IV+3);
+    IMatrix M1(3),M2(3);
     M1(0,0) = -1; M1(1,1) = -1; M1(2,2) = 1; // rot pi
     M2(0,0) = 0; M2(0,1) = -1; M2(0,2) = 1;
     M2(1,0) = 1; M2(1,1) = 0; M2(1,2) = 1;  M2(2,2) = 1;
     Vector rv(5,0);
     Direction rd(1,1);
-   
+
     Afftrafo at0(2); // whole zero in 2d
     Afftrafo at1(M1); // rot(pi) in 2d
     Afftrafo at2(CGAL::SCALING,iv.begin(),iv.end()); // scale by (2,3) in 2d
@@ -253,8 +253,8 @@ int main()
     CGAL_IO_TEST(at4,at0,CGAL::IO::ASCII);
 
     Afftrafo at12 = at2 * at2.inverse();
-    Point p(1,1); 
-    CGAL_TEST(p.transform(at12)==p){} 
+    Point p(1,1);
+    CGAL_TEST(p.transform(at12)==p){}
     CGAL_TEST(p.transform(at1)==Point(-1,-1)){}
     CGAL_TEST(p.transform(at2)==Point(2,3)){}
     CGAL_TEST(p.transform(at3)==Point(6,1)){}
@@ -264,16 +264,16 @@ int main()
     CGAL_TEST(p.transform(at9)==Point(3,3)){}
     CGAL_TEST(p.transform(at10)==Point(-1,1)){}
 
-    Vector v_approx = 
+    Vector v_approx =
       Point(1,0).transform(at11) - CGAL::ORIGIN;
     /* we have v_approx = (x,y) building an angle alpha with
        the x-axis then sin alpha = y/length(v_approx) and we
-       want to know that sin alpha <= num/den of at11. 
+       want to know that sin alpha <= num/den of at11.
        we started with a direction rd(1,1) with angle pi/4
        and thus sin pi/4 = 1/ sqrt(2)
        Thus we check that the squared difference of the sine
        values is bounded by sqr(num/den):
-       
+
        sqr(y/sqrt((sqr(x) + sqr(y))) - 1/sqrt(2)) < sqr(num/den)
 
            sqr(a - b) < sqr(c)
@@ -281,7 +281,7 @@ int main()
        <=> sqr( sqr(a) + sqr(b) - sqr(c) ) < 4 sqr(a) sqr(b)
            where sqr(b) = 1/2
        <=> sqr( sqr(a) + sqr(b) - sqr(c) ) < 2 sqr(a)
-       
+
        in at11 we had num = 1 and den = 1000
     */
     FT sqr_sin_alpha = CGAL_NTS square(v_approx.y())/
@@ -289,7 +289,7 @@ int main()
     // sqr(a)
     FT sqr_sin_piforth(1,2);
     // sqr(b)
-    FT sqr_bound = Kernel::make_FT(RT(1),CGAL_NTS square(RT(1000)));  
+    FT sqr_bound = Kernel::make_FT(RT(1),CGAL_NTS square(RT(1000)));
     // sqr(c)
     FT sqr_sum = sqr_sin_alpha + sqr_sin_piforth - sqr_bound;
     CGAL_TEST( (sqr_sum*sqr_sum) < (FT(2)*sqr_sin_alpha) ){}
@@ -306,7 +306,7 @@ int main()
     CGAL_TEST(v.transform(at3)==v){}
     CGAL_TEST(v.transform(at1)==-v){}
 
-    Direction dir(5,1); 
+    Direction dir(5,1);
     CGAL_TEST(dir.transform(at9)==dir){}
     CGAL_TEST(dir.transform(at3)==dir){}
     CGAL_TEST(dir.transform(at1)==-dir){}

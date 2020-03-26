@@ -24,12 +24,12 @@ typedef CGAL::Shape_detection_3::Shape_detection_traits
 typedef CGAL::Shape_detection_3::Region_growing<Traits>      Region_growing;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
   Pwn_vector points;
   std::ifstream stream(argc > 1 ? argv[1] : "data/cube.pwn");
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
@@ -57,6 +57,6 @@ int main(int argc, char** argv)
                            false, // Do not regularize coplanarity
                            true, // Regularize Z-symmetry (default)
                            10); // 10 degrees of tolerance for parallelism/orthogonality
-  
+
   return EXIT_SUCCESS;
 }

@@ -16,19 +16,19 @@ class Nary_union_by_queue {
   void add_polyhedron(const Polyhedron& P) {
     queue.push_back(P);
     if(queue.size()%100 == 0)
-	std::cerr << "queue size: " << queue.size() << std::endl;
+        std::cerr << "queue size: " << queue.size() << std::endl;
   }
 
   Polyhedron get_union() {
 
     while(queue.size() > 1) {
-      if(queue.size()%100 == 0 || queue.size()<30)     
-	std::cerr << queue.size() << " polyhedra in the queue" << std::endl;
-      
+      if(queue.size()%100 == 0 || queue.size()<30)
+        std::cerr << queue.size() << " polyhedra in the queue" << std::endl;
+
       pit i1(queue.begin()), i2(i1);
       ++i2;
       Polyhedron tmp(*i1 + *i2);
-      
+
       queue.pop_front();
       queue.pop_front();
       queue.push_back(tmp);

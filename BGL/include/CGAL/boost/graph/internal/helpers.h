@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 // Author(s) : Andread Fabri
 
 #ifndef CGAL_BOOST_GRAPH_INTERNAL_HELPERS_H
@@ -104,16 +104,16 @@ template <typename Graph>
 void
 remove_tip(typename boost::graph_traits<Graph>::halfedge_descriptor const& h
            , Graph& g)
-{ 
+{
   set_next(h, next(opposite(next(h, g), g), g), g);
 }
 
 
 template <typename Graph>
-void 
-set_face_in_face_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h, 
-                      typename boost::graph_traits<Graph>::face_descriptor f, 
-                      Graph& g) 
+void
+set_face_in_face_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h,
+                      typename boost::graph_traits<Graph>::face_descriptor f,
+                      Graph& g)
 {
   typename boost::graph_traits<Graph>::halfedge_descriptor end = h;
   do {
@@ -121,7 +121,7 @@ set_face_in_face_loop(typename boost::graph_traits<Graph>::halfedge_descriptor h
     h = next(h, g);
   } while ( h != end);
 }
-    
+
 
 template <typename Graph>
 void insert_halfedge(typename boost::graph_traits<Graph>::halfedge_descriptor const& h
@@ -136,7 +136,7 @@ void insert_halfedge(typename boost::graph_traits<Graph>::halfedge_descriptor co
 template <typename Graph>
 std::size_t
 exact_num_vertices(const Graph& g)
-{ 
+{
   typename boost::graph_traits<Graph>::vertex_iterator beg, end;
   boost::tie(beg,end) = vertices(g);
   return std::distance(beg,end);
@@ -145,7 +145,7 @@ exact_num_vertices(const Graph& g)
 template <typename Graph>
 std::size_t
 exact_num_halfedges(const Graph& g)
-{ 
+{
   typename boost::graph_traits<Graph>::halfedge_iterator beg, end;
   boost::tie(beg,end) = halfedges(g);
   return std::distance(beg,end);
@@ -154,7 +154,7 @@ exact_num_halfedges(const Graph& g)
 template <typename Graph>
 std::size_t
 exact_num_edges(const Graph& g)
-{ 
+{
   typename boost::graph_traits<Graph>::edge_iterator beg, end;
   boost::tie(beg,end) = edges(g);
   return std::distance(beg,end);
@@ -163,7 +163,7 @@ exact_num_edges(const Graph& g)
 template <typename Graph>
 std::size_t
 exact_num_faces(const Graph& g)
-{ 
+{
   typename boost::graph_traits<Graph>::face_iterator beg, end;
   boost::tie(beg,end) = faces(g);
   return std::distance(beg,end);

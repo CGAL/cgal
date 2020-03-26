@@ -53,7 +53,7 @@ public:
   typedef cpp11::array<FT, dim>                         Vector;
   typedef cpp11::array<FT, dim*dim>                     Matrix;
   typedef cpp11::array<FT, (dim * (dim+1) / 2)>         Covariance_matrix;
-  
+
   /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.

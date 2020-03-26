@@ -1,9 +1,9 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Sylvain Pion, Andreas Fabri
 
@@ -47,24 +47,24 @@
 
 namespace CGAL {
 
-  namespace internal { 
+  namespace internal {
     struct Random_print_seed{};
   }
 
 class Random {
 public:
   // types
-  
+
   struct State {
     std::string rng;
     unsigned int random_value, val, seed;
-    
+
     State()
     {}
-    
-    State(std::string rng, 
-          unsigned int random_value, 
-          unsigned int val, 
+
+    State(std::string rng,
+          unsigned int random_value,
+          unsigned int val,
           unsigned int seed)
       : rng(rng), random_value(random_value), val(val), seed(seed)
     {}
@@ -73,10 +73,10 @@ public:
   CGAL_EXPORT Random( );
   CGAL_EXPORT Random( internal::Random_print_seed );
   CGAL_EXPORT Random( unsigned int  seed );
-  
+
   // seed
   CGAL_EXPORT unsigned int get_seed ( ) const;
-    
+
   // operations
   bool get_bool( )
   {
@@ -94,11 +94,11 @@ public:
     boost::uniform_smallint<result_type> dist(static_cast<result_type>(lower),
                                               static_cast<result_type>(upper-1));
     boost::variate_generator<boost::rand48&, boost::uniform_smallint<result_type> > generator(rng,dist);
-    
+
     return generator();
   }
 
-  
+
   template <typename IntType>
   IntType
   uniform_smallint(IntType lower)
@@ -120,7 +120,7 @@ public:
     // uniform_int has a closed interval, CGAL a halfopen
     boost::uniform_int<IntType> dist(lower,upper);
     boost::variate_generator<boost::rand48&, boost::uniform_int<IntType> > generator(rng,dist);
-    
+
     return generator();
   }
 
@@ -138,16 +138,16 @@ public:
   {
     return uniform_int<IntType>(0,9);
   }
- 
 
-  
+
+
   template <typename IntType>
   IntType
   operator () (IntType upper)
   {
     return uniform_int<IntType>(0, upper-1);
   }
- 
+
   int
   get_int(int lower, int upper)
   {
@@ -162,7 +162,7 @@ public:
     // uniform_real as well as CGAL have a halfopen interval
     boost::uniform_real<RealType> dist(lower,upper);
     boost::variate_generator<boost::rand48&, boost::uniform_real<RealType> > generator(rng,dist);
-    
+
     return generator();
   }
 
@@ -190,7 +190,7 @@ public:
     // uniform_01 as well as CGAL have a halfopen interval
     boost::uniform_01<RealType> dist;
     boost::variate_generator<boost::rand48&, boost::uniform_01<RealType> > generator(rng,dist);
-    
+
     return generator();
   }
 
@@ -201,7 +201,7 @@ public:
     return uniform_real<double>(lower, upper);
   }
 
-    // state 
+    // state
     CGAL_EXPORT void save_state( State& state) const;
     CGAL_EXPORT void restore_state( const State& state);
 
@@ -212,7 +212,7 @@ public:
     template <int b>
     int get_bits()
     {
-	CGAL_assertion(0<b && b<16);
+        CGAL_assertion(0<b && b<16);
         if (val == 0) {
             random_value = (421U * random_value + 2073U) % 32749U;
             val = random_value;
@@ -222,10 +222,10 @@ public:
         return ret;
     }
 
-    
+
   bool    operator==(Random rd) const
   {
-    return (rng == rd.rng) 
+    return (rng == rd.rng)
       && (random_value == rd.random_value)
       && (val == rd.val)
       && (seed == rd.seed);
@@ -235,7 +235,7 @@ public:
     // data members
     unsigned int random_value; // Current 15 bits random value.
     unsigned int val; // random_value shifted by used bits.
-    unsigned int seed; 
+    unsigned int seed;
     boost::rand48 rng;
 };
 

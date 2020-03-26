@@ -29,7 +29,7 @@
 namespace CGAL{
 
 using ::get;
-  
+
 template<class Base_traits,class PointPropertyMap>
 class Spatial_sort_traits_adapter_d:public Base_traits{
   PointPropertyMap ppmap_;
@@ -43,8 +43,8 @@ public:
   typedef typename boost::property_traits<PointPropertyMap>::key_type Point_d;
   typedef typename boost::call_traits<Point_d>::param_type Arg_type;
 
-    
-    
+
+
   struct Point_dimension_d: public Base_traits::Point_dimension_d{
     Point_dimension_d(const PointPropertyMap& ppmap,const typename Base_traits::Point_dimension_d& base):
       Base_traits::Point_dimension_d(base),ppmap_(ppmap){}
@@ -72,15 +72,15 @@ public:
       return static_cast<const typename Base_traits::Compute_coordinate_d*>(this)->operator()(get(ppmap_,p),i);
     }
   };
- 
- 
+
+
 
   Point_dimension_d point_dimension_d_object () const {return Point_dimension_d(ppmap_,static_cast<const Gt*>(this)->point_dimension_d_object() );}
   Less_coordinate_d less_coordinate_d_object () const {return Less_coordinate_d(ppmap_,static_cast<const Gt*>(this)->less_coordinate_d_object() );}
   Compute_coordinate_d compute_coordinate_d_object () const {return Compute_coordinate_d(ppmap_,static_cast<const Gt*>(this)->compute_coordinate_d_object() );}
-  
+
   const PointPropertyMap& point_property_map() const {return ppmap_;}
-  
+
 };
 
 } //namespace CGAL

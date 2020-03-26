@@ -164,7 +164,7 @@ remove_outliers(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   // geometric types
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
@@ -174,9 +174,9 @@ remove_outliers(
   double threshold_distance = choose_parameter(get_parameter(np, internal_np::threshold_distance), 0.);
   const cpp11::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                cpp11::function<bool(double)>());
-  
+
   typedef typename Kernel::FT FT;
-  
+
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
 
@@ -202,7 +202,7 @@ remove_outliers(
 
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
-  std::vector<Point> kd_tree_points; 
+  std::vector<Point> kd_tree_points;
   for(it = points.begin(); it != points.end(); it++)
     kd_tree_points.push_back( get(point_map, *it) );
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
@@ -277,10 +277,10 @@ remove_outliers(
      k,
      CGAL::parameters::point_map (point_map).
      threshold_percent (threshold_percent).
-     threshold_distance (threshold_distance). 
+     threshold_distance (threshold_distance).
      geom_traits(Kernel()));
 }
-  
+
 // deprecated API
 template <typename InputIterator,
           typename PointMap

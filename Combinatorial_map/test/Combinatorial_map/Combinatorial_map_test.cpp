@@ -68,7 +68,7 @@ struct Map_3_dart_max_items_3
 
 struct MonInfo
 {
-  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))  
+  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
   {}
   int mnb;
   std::string s;
@@ -182,7 +182,7 @@ bool test_get_new_mark()
       map.free_mark(mark); // This is never supposed to occur.
       return false;
   }
-  
+
   for (Map1::size_type i=0; i<Map1::NB_MARKS; ++i)
   {
     map.free_mark(marks[i]);

@@ -6,7 +6,7 @@
  This file is part of a fork of the QGLViewer library version 2.7.0.
  http://www.libqglviewer.com - contact@libqglviewer.com
 
- This file may be used under the terms of the GNU General Public License 
+ This file may be used under the terms of the GNU General Public License
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
@@ -92,7 +92,7 @@ See the project main page for details on the project and installation steps. */
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::defaultConstructor() {
-  
+
   int poolIndex = CGAL::QGLViewer::QGLViewerPool().indexOf(NULL);
   setFocusPolicy(::Qt::StrongFocus);
 
@@ -205,7 +205,7 @@ This method is automatically called once, before the first call to paintGL().
 
 Overload init() instead of this method to modify viewer specific OpenGL state.
 
-If a 4.3 context could not be set, a ES 2.0 context will be used instead. 
+If a 4.3 context could not be set, a ES 2.0 context will be used instead.
  \see `isOpenGL_4_3()`
 */
 CGAL_INLINE_FUNCTION
@@ -224,7 +224,7 @@ void CGAL::QGLViewer::initializeGL() {
     format.setSamples(0);
     format.setOption(QSurfaceFormat::DebugContext);
     QSurfaceFormat::setDefaultFormat(format);
-              
+
     needNewContext();
     qDebug()<<"GL 4.3 context initialization failed. ";
     is_ogl_4_3 = false;
@@ -249,7 +249,7 @@ void CGAL::QGLViewer::initializeGL() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   // Calls user defined method. Default emits a signal.
   init();
-  
+
   //OpenGL buffers and programs initialization
   for(int i=0; i<VAO_size; ++i)
   {
@@ -303,11 +303,11 @@ void CGAL::QGLViewer::initializeGL() {
       "} \n"
       "\n"
     };
-    
-    //It is said in the doc that a QOpenGLShader is 
-    // only destroyed with the QOpenGLShaderProgram 
+
+    //It is said in the doc that a QOpenGLShader is
+    // only destroyed with the QOpenGLShaderProgram
     //it has been linked with.
-    
+
     QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
     QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
     if(is_ogl_4_3)
@@ -316,7 +316,7 @@ void CGAL::QGLViewer::initializeGL() {
       {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
       }
-      
+
       if(!fragment_shader.compileSourceCode(f_s))
       {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -328,7 +328,7 @@ void CGAL::QGLViewer::initializeGL() {
       {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
       }
-      
+
       if(!fragment_shader.compileSourceCode(f_source_comp))
       {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -401,7 +401,7 @@ void CGAL::QGLViewer::initializeGL() {
       "#version 150 \n"
       "in vec4 color; \n"
       "in vec4 fP; \n"
-      "in vec3 fN; \n"  
+      "in vec3 fN; \n"
       " out vec4 out_color; \n"
       "void main(void) { \n"
       "   vec4 light_pos = vec4(0.0f, 0.0f, 1.0f, 1.0f);  \n"
@@ -421,18 +421,18 @@ void CGAL::QGLViewer::initializeGL() {
       "   vec3 R = reflect(-L, N); \n"
       "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
       "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-      
+
       "out_color = color*light_amb + diffuse + specular; \n"
       "out_color = vec4(out_color.xyz, 1.0f); \n"
       "} \n"
       "\n"
     };
-    
+
     const char fragment_source_comp[] =
     {
       "varying highp vec4 color; \n"
       "varying highp vec4 fP; \n"
-      "varying highp vec3 fN; \n"  
+      "varying highp vec3 fN; \n"
       "void main(void) { \n"
       "   highp vec4 light_pos = vec4(0.0, 0.0, 1.0, 1.0);  \n"
       "   highp vec4 light_diff = vec4(1.0, 1.0, 1.0, 1.0); \n"
@@ -451,15 +451,15 @@ void CGAL::QGLViewer::initializeGL() {
       "   vec3 R = reflect(-L, N); \n"
       "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
       "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
-      
+
       "gl_FragColor = color*light_amb + diffuse + specular; \n"
       "gl_FragColor = vec4(gl_FragColor.xyz, 1.0); \n"
       "} \n"
       "\n"
     };
-    
-    //It is said in the doc that a QOpenGLShader is 
-    // only destroyed with the QOpenGLShaderProgram 
+
+    //It is said in the doc that a QOpenGLShader is
+    // only destroyed with the QOpenGLShaderProgram
     //it has been linked with.
     QOpenGLShader vertex_shader(QOpenGLShader::Vertex);
     QOpenGLShader fragment_shader(QOpenGLShader::Fragment);
@@ -469,7 +469,7 @@ void CGAL::QGLViewer::initializeGL() {
       {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
       }
-      
+
       if(!fragment_shader.compileSourceCode(fragment_source))
       {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -481,7 +481,7 @@ void CGAL::QGLViewer::initializeGL() {
       {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
       }
-      
+
       if(!fragment_shader.compileSourceCode(fragment_source_comp))
       {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -574,7 +574,7 @@ void CGAL::QGLViewer::postDraw() {
   if (axisIsDrawn()) {
     drawAxis(1.0);
   }
-  
+
 
   drawVisualHints();
   // FPS computation
@@ -586,7 +586,7 @@ void CGAL::QGLViewer::postDraw() {
     fpsCounter_ = 0;
   }
 
-  
+
   glDisable(GL_DEPTH_TEST);
 
   if (FPSIsDisplayed())
@@ -689,7 +689,7 @@ void CGAL::QGLViewer::setDefaultShortcuts() {
       tr("Increases fly speed", "INCREASE_FLYSPEED action description");
   keyboardActionDescription_[qglviewer::DECREASE_FLYSPEED] =
       tr("Decreases fly speed", "DECREASE_FLYSPEED action description");
-  
+
   // K e y f r a m e s   s h o r t c u t   k e y s
   setPathKey(::Qt::Key_F1, 1);
   setPathKey(::Qt::Key_F2, 2);
@@ -1063,11 +1063,11 @@ void CGAL::QGLViewer::closeEvent(QCloseEvent *e) {
   C : closeEvent called
   D : destructor called
 
-  E	N	C	D
-  y	y
-  y	n		y
-  n	y	y
-  n	n	y	y
+  E        N        C        D
+  y        y
+  y        n                y
+  n        y        y
+  n        n        y        y
 
   closeEvent is called iif the widget is NOT embedded.
 
@@ -1170,7 +1170,7 @@ void CGAL::QGLViewer::select(const QPoint &point) {
 drawWithNames().
 */
 CGAL_INLINE_FUNCTION
-void CGAL::QGLViewer::beginSelection(const QPoint &point) 
+void CGAL::QGLViewer::beginSelection(const QPoint &point)
 {
   makeCurrent();
   glEnable(GL_SCISSOR_TEST);
@@ -1178,7 +1178,7 @@ void CGAL::QGLViewer::beginSelection(const QPoint &point)
 }
 
 /*! This method is called by select() after scene elements were drawn by
-drawWithNames(). 
+drawWithNames().
  It clears the OpenGL state set by beginSelection*/
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::endSelection(const QPoint &point) {
@@ -3128,10 +3128,10 @@ void CGAL::QGLViewer::drawVisualHints() {
   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(grid_size));
   vaos[GRID].release();
   rendering_program.release();
-  
+
   rendering_program_light.bind();
   vaos[GRID_AXIS].bind();
-  
+
   rendering_program_light.setUniformValue("mvp_matrix", mvpMatrix);
   rendering_program_light.setUniformValue("mv_matrix", mvMatrix);
   glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(g_axis_size/9));
@@ -3155,12 +3155,12 @@ void CGAL::QGLViewer::drawVisualHints() {
   vaos[AXIS].bind();
   int viewport[4];
   int scissor[4];
-  
+
   // The viewport and the scissor are changed to fit the upper right
   // corner. Original values are saved.
   glGetIntegerv(GL_VIEWPORT, viewport);
   glGetIntegerv(GL_SCISSOR_BOX, scissor);
-  
+
   // Axis viewport size, in pixels
   int size = 100;
   glViewport(width()*devicePixelRatio()-size, height()*devicePixelRatio()-size, size, size);
@@ -3171,8 +3171,8 @@ void CGAL::QGLViewer::drawVisualHints() {
   glViewport(viewport[0],viewport[1],viewport[2],viewport[3]);
   vaos[AXIS].release();
   rendering_program_light.release();
-  
-  //P i v o t - P o i n t 
+
+  //P i v o t - P o i n t
   if (visualHint_ & 1)
   {
     std::vector<float> vertices;
@@ -3211,7 +3211,7 @@ void CGAL::QGLViewer::drawVisualHints() {
     vaos[PIVOT_POINT].release();
     rendering_program.release();
   }
-  
+
 }
 
 /*! Defines the mask that will be used to drawVisualHints(). The only available
@@ -3234,13 +3234,13 @@ void CGAL::QGLViewer::resetVisualHints() { visualHint_ = 0; }
 //       A x i s   a n d   G r i d   d i s p l a y   l i s t s                //
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! Draws a 3D arrow between the 3D point \p from and the 3D point \p to. 
+/*! Draws a 3D arrow between the 3D point \p from and the 3D point \p to.
 \p data is filled with the three components of a point, then its normal, and then its color, which makes it filled like this:
 [P1.x-P1.y-P1.z-N1.x-N1.y-N1.z-C1.r-C1.g-C1.b|P2.x-P2.y-P2.z-N2.x-N2.y-N2.z-C2.r-C2.g-C2.b|...]
 */
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Vec from,
-                          CGAL::qglviewer::Vec to, CGAL::qglviewer::Vec color, 
+                          CGAL::qglviewer::Vec to, CGAL::qglviewer::Vec color,
                           std::vector<float> &data) {
   using std::cos;
   using std::sin;
@@ -3422,7 +3422,7 @@ void CGAL::QGLViewer::drawArrow(double r,double R, int prec, CGAL::qglviewer::Ve
 
 The axis orientation matches the current modelView matrix state:
 three arrows (red, green and blue) of length \p length are drawn along the
-positive X, Y and Z directions in the top right corner of the screen. 
+positive X, Y and Z directions in the top right corner of the screen.
 X arrow is red, Y arrow is green and Z arrow is blue.*/
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawAxis(qreal length) {
@@ -3438,11 +3438,11 @@ void CGAL::QGLViewer::drawAxis(qreal length) {
   rendering_program_light.enableAttributeArray("vertex");
   rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
                                              static_cast<int>(9*sizeof(float)));
-  
+
   rendering_program_light.enableAttributeArray("normal");
   rendering_program_light.setAttributeBuffer("normal",GL_FLOAT,3*sizeof(float),3,
                                              static_cast<int>(9*sizeof(float)));
-  
+
   rendering_program_light.enableAttributeArray("colors");
   rendering_program_light.setAttributeBuffer("colors",GL_FLOAT,6*sizeof(float),3,
                                              static_cast<int>(9*sizeof(float)));
@@ -3458,7 +3458,7 @@ coordinate system).
 \p size (OpenGL units) and \p nbSubdivisions define its geometry.*/
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
-  
+
   //The Grid
   std::vector<float> v_Grid;
   for (int i=0; i<=nbSubdivisions; ++i)
@@ -3490,7 +3490,7 @@ void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
   vaos[GRID].release();
   rendering_program.release();
   grid_size = v_Grid.size();
-  
+
   //The Axis
   std::vector<float> d_axis;
   d_axis.resize(0);
@@ -3506,11 +3506,11 @@ void CGAL::QGLViewer::drawGrid(qreal size, int nbSubdivisions) {
   rendering_program_light.enableAttributeArray("vertex");
   rendering_program_light.setAttributeBuffer("vertex",GL_FLOAT,0,3,
                                              static_cast<int>(9*sizeof(float)));
-  
+
   rendering_program_light.enableAttributeArray("normal");
   rendering_program_light.setAttributeBuffer("normal",GL_FLOAT,3*sizeof(float),3,
                                              static_cast<int>(9*sizeof(float)));
-  
+
   rendering_program_light.enableAttributeArray("colors");
   rendering_program_light.setAttributeBuffer("colors",GL_FLOAT,6*sizeof(float),3,
                                              static_cast<int>(9*sizeof(float)));
@@ -3819,7 +3819,7 @@ void CGAL::QGLViewer::initFromDOMElement(const QDomElement &element) {
       // #CONNECTION# default values from defaultConstructor()
       // setMouseTracking(DomUtils::boolFromDom(child, "mouseTracking", false));
       // if ((child.attribute("cameraMode", "revolve") == "fly") &&
-      // (cameraIsInRevolveMode())) 	toggleCameraMode();
+      // (cameraIsInRevolveMode()))         toggleCameraMode();
 
       QDomElement ch = child.firstChild().toElement();
       while (!ch.isNull()) {
@@ -3905,14 +3905,14 @@ GLuint CGAL::QGLViewer::bufferTextureId() const {
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::setOffset(CGAL::qglviewer::Vec offset)
-{ 
-  this->_offset = offset; 
+{
+  this->_offset = offset;
 }
 
 CGAL_INLINE_FUNCTION
-CGAL::qglviewer::Vec CGAL::QGLViewer::offset()const 
-{ 
-  return _offset; 
+CGAL::qglviewer::Vec CGAL::QGLViewer::offset()const
+{
+  return _offset;
 }
 
 CGAL_INLINE_FUNCTION
@@ -4035,7 +4035,7 @@ QImage* CGAL::QGLViewer::takeSnapshot( CGAL::qglviewer::SnapShotBackground  back
     nbX++;
   if (nbY * subSize.height() < finalSize.height())
     nbY++;
-  GLdouble frustum[6]; 
+  GLdouble frustum[6];
   camera()->getFrustum(frustum);
   QOpenGLFramebufferObject fbo(size,QOpenGLFramebufferObject::CombinedDepthStencil, GL_TEXTURE_2D, GL_RGBA32F);
   stored_fbo = &fbo;

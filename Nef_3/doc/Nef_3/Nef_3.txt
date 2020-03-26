@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Boolean_Operations_on_Nef_Polyhedra
 \anchor chapterNef3
 
@@ -56,7 +56,7 @@ structure that is closed under Boolean operations and with all their
 generality. Starting from halfspaces (and also directly from oriented
 2-manifolds), we can work with set union, set intersection, set
 difference, set complement, interior, exterior, boundary, closure, and
-regularization operations (see Section \ref sectoinRegularized 
+regularization operations (see Section \ref sectoinRegularized
 for an explaination of regularized
 set operations). In essence, we can evaluate a CSG-tree with
 halfspaces as primitives and convert it into a B-rep representation.
@@ -95,16 +95,16 @@ if \f$ K = \mathbb{R}^{+} K\f$ (i.e., \f$ \forall p \in K, \forall \lambda > 0: 
 if \f$ K = x + \mathbb{R}^{+} (K - x)\f$. A cone \f$ K\f$ is called a <I>pyramid</I>
 if \f$ K\f$ is a polyhedron.
 
-Now let \f$ P \in \mathbb{R}^d\f$ be a polyhedron and \f$ x \in \mathbb{R}^d\f$. There is a 
-neighborhood \f$ U_0(x)\f$ of \f$ x\f$ such that the pyramid \f$ Q := x + \mathbb{R}^{+} 
+Now let \f$ P \in \mathbb{R}^d\f$ be a polyhedron and \f$ x \in \mathbb{R}^d\f$. There is a
+neighborhood \f$ U_0(x)\f$ of \f$ x\f$ such that the pyramid \f$ Q := x + \mathbb{R}^{+}
 ((P \cap U(x)) - x)\f$ is the same for all neighborhoods \f$ U(x) \subseteq
 U_0(x)\f$. \f$ Q\f$ is called the <I>local pyramid</I> of \f$ P\f$ in \f$ x\f$ and
-denoted \f$ \pyr_P(x)\f$. 
+denoted \f$ \pyr_P(x)\f$.
 
 <B>Definition:</B> Let \f$ P \in \mathbb{R}^d\f$ be a polyhedron and \f$ x, y \in \mathbb{R}^d\f$ be two points.
 We define an equivalence relation \f$ x \sim y\f$ iff
-\f$ \pyr_P(x) = \pyr_P(y)\f$. The equivalence classes of \f$ \sim\f$ 
-are the <I>faces</I> of \f$ P\f$. The dimension of a face \f$ s\f$ is the 
+\f$ \pyr_P(x) = \pyr_P(y)\f$. The equivalence classes of \f$ \sim\f$
+are the <I>faces</I> of \f$ P\f$. The dimension of a face \f$ s\f$ is the
 dimension of its affine hull, \f$ \dim s := \dim \aff s\f$.
 
 In other words, a <I>face</I> \f$ s\f$ of \f$ P\f$ is a maximal non-empty subset
@@ -125,13 +125,13 @@ open</I> sets, e.g., an edge does not contain its end-vertices.
 
 We illustrate the definitions with an example in the plane.
 Given the closed halfspaces
-\f[ 
+\f[
 \begin{array}{lllll}
 h_1: y \ge 0,\ \ \ &
 h_2: x - y \ge 0,\ \ \ &
 h_3: x + y \le 3,\ \ \ &
 h_4: x - y \ge 1,\ \ \ &
-h_5: x + y \le 2, 
+h_5: x + y \le 2,
 \end{array}
 \f]
 we define our polyhedron \f$ P := ( h_1 \cap h_2 \cap h_3) - ( h_4 \cap h_5)\f$.
@@ -152,18 +152,18 @@ we define our polyhedron \f$ P := ( h_1 \cap h_2 \cap h_3) - ( h_4 \cap h_5)\f$.
 </center>
 
 The left figure illustrates the polyhedron with
-its partially closed and partially open boundary, i.e., vertex 
+its partially closed and partially open boundary, i.e., vertex
 \f$ v_4, v_5, v_6\f$, and edges \f$ e_4\f$ and \f$ e_5\f$ are not part of \f$ P\f$.
 The local pyramids for the faces are \f$ \pyr_P(f_1) = \emptyset\f$
 and \f$ \pyr_P(f_2) = \mathbb{R}^2\f$. Examples for the local pyramids of edges
 are the closed halfspace \f$ h_2\f$ for the edge \f$ e_1\f$, \f$ \pyr_P(e_1) = h_2\f$,
-and the open halfspace that is the complement of \f$ h_4\f$ for the 
+and the open halfspace that is the complement of \f$ h_4\f$ for the
 edge \f$ e_5\f$, \f$ \pyr_P(e_5) =
 \{(x,y) | x - y < 1\}\f$. The edge \f$ e_3\f$ consists actually of two
 disconnected parts, both with the same local pyramid \f$ \pyr_P(e_3) = h_1\f$.
 In our data structure, we will represent the two connected
 components of the edge \f$ e_3\f$ separately.
-The figure on the right 
+The figure on the right
 lists all local pyramids for this example.
 
 The local pyramids of each vertex are represented by
@@ -173,9 +173,9 @@ sphere (see next two figures), which together with the set-selection
 mark for each item (i.e.\ vertices, edges, loops and faces)
 forms a two-dimensional Nef polyhedron embedded in
 the sphere. We add the set-selection mark for the vertex and call the
-resulting structure the <I>sphere map</I> of the vertex. 
+resulting structure the <I>sphere map</I> of the vertex.
 We use the prefix \f$ s\f$ to distinguish the elements of the sphere map
-from the three-dimensional elements. See Chapter 
+from the three-dimensional elements. See Chapter
 \ref Chapter_2D_Boolean_Operations_on_Nef_Polygons_Embedded_on_the_Sphere
 for further details.
 
@@ -187,8 +187,8 @@ but not easily accessible representation of the polyhedron. We enrich
 the data structure with more explicit representations of all the faces
 and incidences between them.
 
-\image html snc.png 
-\image latex snc.png 
+\image html snc.png
+\image latex snc.png
 
 We depart slightly from the definition of faces in a Nef polyhedron;
 we represent the connected components of a face individually and do
@@ -198,7 +198,7 @@ pyramid) as this is not needed in our algorithms. We discuss features
 in the increasing order of dimension.
 
 <DL>
-<DT><B>edges:</B><DD> 
+<DT><B>edges:</B><DD>
 We store two oppositely oriented edges for each edge
 and have a pointer from one oriented edge to its opposite edge.
 Such an oriented edge can be identified with an <I>svertex</I>
@@ -207,24 +207,24 @@ the corresponding opposite <I>svertex</I> in the other sphere map.
 <DT><B>edge uses:</B><DD>
 An edge can have many incident facets (non-manifold situation).
 We introduce two oppositely oriented edge-uses for each incident
-facet; one for each orientation of the facet. An edge-use points 
-to its corresponding oriented edge and to its oriented facet. 
-We can identify an edge-use with an oriented <I>sedge</I> in the 
+facet; one for each orientation of the facet. An edge-use points
+to its corresponding oriented edge and to its oriented facet.
+We can identify an edge-use with an oriented <I>sedge</I> in the
 sphere map, or, in the special case also with an
 <I>sloop</I>. Without mentioning it explicitly in the
 remainder, all references to <I>sedge</I> can also refer to
 <I>sloop</I>.
 <DT><B>facets:</B><DD>
-We store oriented facets as boundary cycles of oriented 
-edge-uses. We have a distinguished outer boundary cycle and 
+We store oriented facets as boundary cycles of oriented
+edge-uses. We have a distinguished outer boundary cycle and
 several (or maybe none) inner boundary cycles representing holes
-in the facet. Boundary cycles are linked in one direction. We can 
+in the facet. Boundary cycles are linked in one direction. We can
 access the other traversal direction when we switch to the oppositely
 oriented facet, i.e., by using the opposite edge-use.
 <DT><B>shells:</B><DD>
 The volume boundary decomposes into different connected
 components, the <I>shells</I>. A shell consists of a connected set
-of facets, edges, and vertices incident to this volume. Facets 
+of facets, edges, and vertices incident to this volume. Facets
 around an edge form a radial order that is captured in the
 radial order of <I>sedges</I> around an <I>svertex</I> in the
 sphere map. Using this information, we can trace a shell from
@@ -243,7 +243,7 @@ Complex</I>, <I>SNC</I> for short \cgalCite{cgal:ghhkm-bosnc-03}. However, in
 \cgal we identify the names and call the <I>SNC</I> data structure
 `Nef_polyhedron_3`.
 
-\section sectionNef_3InfiBox Infimaximal Box 
+\section sectionNef_3InfiBox Infimaximal Box
 
 We call a Nef polyhedron <I>bounded</I> if its boundary is bounded,
 i.e., finite, and <I>unbounded</I> otherwise. Note that unbounded
@@ -278,20 +278,20 @@ kernels - `Extended_cartesian` and
 with a polynomial type as coordinate number type.
 
 As long as an extended kernel is used, the full functionality provided
-by the `Nef_polyhedron_3` class is available. If a kernel that 
-does not use polynomials to represent coordinates is used, it is not 
+by the `Nef_polyhedron_3` class is available. If a kernel that
+does not use polynomials to represent coordinates is used, it is not
 possible to create or load unbounded Nef
 polyhedra, but all other operations work as expected. We provided both
 possibilities, since the restriction to bounded Nef polyhedra improves
 considerably space requirements (plain number type instead of
 polynomial), and runtime performance.
 
-\section sectoinRegularized Regularized Set Operations 
+\section sectoinRegularized Regularized Set Operations
 
 Since manifolds are not closed under Boolean operations, Requicha
 proposes to use <I>regularized set operations</I> \cgalCite{cgal:km-st-76},
 cgal:r-rrstm-80. A set is <I>regular</I>, if it equals the closure
-of its interior. A regularized set operation is defined as the 
+of its interior. A regularized set operation is defined as the
 standard set operation followed by a regularization of the result.
 Regularized sets are closed under regularized set operations.
 
@@ -372,7 +372,7 @@ one selects all boundary items.
 
 \subsection Nef_3Transformation Transformation
 
-Using the `std::transform` function, a Nef polyhedron can be translated, 
+Using the `std::transform` function, a Nef polyhedron can be translated,
 rotated and scaled. The usage is shown in the following example:
 
 \cgalExample{Nef_3/transformation.cpp}
@@ -419,7 +419,7 @@ kernel type, but by a `Nef_polynomial` parametrized by that number
 type.
 
 The example iterates all vertices of a given Nef polyhedron and decides whether
-it is an standard vertex or a vertex on the infimaximal box. Furthermore, it 
+it is an standard vertex or a vertex on the infimaximal box. Furthermore, it
 tests whether any of the vertices is at \f$ (R,R,R)\f$. Recall that \f$ R\f$ was
 the symbolical value, large but finite, for the size of the infimaximal box.
 
@@ -437,7 +437,7 @@ traits class, and on the output operators of the used number type.
 Therefore, it is necessary to use the same kernel and the same number
 type for input and output operations.
 
-We recommend the use of the \cgal kernels `Homogeneous`, 
+We recommend the use of the \cgal kernels `Homogeneous`,
 `Exact_predicates_exact_constructions_kernel`, or `Extended_homogeneous`.
 The homogeneous kernel provides reliable fast performance. In combination with
 `leda_integer` it is the fastest kernel for `Nef_polyhedron_3`. The
@@ -468,17 +468,17 @@ standard kernel.
 
 \subsection Nef_3ExploringaSphereMap Exploring a Sphere Map
 
-A sphere map is explored by using the function `get_sphere_map()`, which 
+A sphere map is explored by using the function `get_sphere_map()`, which
 returns the sphere map of the specified vertex as a `Nef_polyhedron_S2`.
 `Nef_polyhedron_S2` provides the functionality necessary for the
 exploration.
 Note, that one has to use
-the type `Nef_polyhedron_S2` as specified in `Nef_polyhedron_3` as 
+the type `Nef_polyhedron_S2` as specified in `Nef_polyhedron_3` as
 is shown in the following example.
 
 \cgalExample{Nef_3/exploration_SM.cpp}
 
-\subsection subsectionNef_3ShellExploration Exploring Shells 
+\subsection subsectionNef_3ShellExploration Exploring Shells
 
 A <I>shell</I> of a Nef polyhedron is the connected part of the
 surface incident to a certain volume. Each halffacet, sface and
@@ -509,11 +509,11 @@ We discuss how sfaces, shalfedges, and sloops belong to the shells
 with a closeup view of the situation at the antenna foot. As you can
 see, there are three items on the sphere map - a shalfloop for each
 halffacet which intersects the sphere, and an svertex where the
-antenna intersects the sphere. The upper shalfloop lies on the 
-halffacet which is oriented outwards and is therefore also 
+antenna intersects the sphere. The upper shalfloop lies on the
+halffacet which is oriented outwards and is therefore also
 oriented outwards. This shalfloop and the svertex belong to the
 second shell.
-The other shalfloop lies on the inwards oriented halffacet and is 
+The other shalfloop lies on the inwards oriented halffacet and is
 oriented inwards, too. This shalfloop belongs to the third shell.
 
 `Nef_polyhedron_3` offers a visitor interface to explore a shell
@@ -535,12 +535,12 @@ once. There are no further requirements on that class.
 
 In the example, the class `Shell_explorer` is passed as second argument
 to `visit_shell_objects`. Its task is to find the lexicographically
-smallest vertex of a shell. Its internal state consists of three variables. 
+smallest vertex of a shell. Its internal state consists of three variables.
 The first one is a reference to the explored Nef polyhedron. This reference
 is often necessary to retrieve information from the Nef polyhedron. The
 second variable `v_min` stores the smallest vertex found so far, and
 the third variable `first` is initialized to `false` to signal that no
-vertex has been visited so far. After the first vertex has been visited 
+vertex has been visited so far. After the first vertex has been visited
 `first` is changed to `true`.
 
 `Shell_explorer` provides further member functions. After the
@@ -572,6 +572,6 @@ the `Object_handle` can represent a `Vertex_const_handle`, a
 \cgalExample{Nef_3/nef_3_point_location.cpp}
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

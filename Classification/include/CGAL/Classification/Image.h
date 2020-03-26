@@ -32,17 +32,17 @@ namespace CGAL {
 namespace Classification {
 
   /// \cond SKIP_IN_MANUAL
-  
+
 template <typename Type>
 class Image
 {
   typedef std::vector<Type> Vector;
   typedef std::map<std::size_t, Type> Map;
-  
+
   std::size_t m_width;
   std::size_t m_height;
   std::size_t m_depth;
-  
+
   boost::shared_ptr<Vector> m_raw;
   boost::shared_ptr<Map> m_sparse;
   Type m_default;
@@ -51,13 +51,13 @@ class Image
   Image (const Image&)
   {
   }
-  
+
 public:
 
   Image () : m_width(0), m_height(0), m_depth(0), m_raw (NULL)
   {
   }
-  
+
   Image (std::size_t width, std::size_t height, std::size_t depth = 1)
     : m_width (width)
     , m_height (height)
@@ -71,7 +71,7 @@ public:
         m_sparse = boost::shared_ptr<Map> (new Map());
     }
   }
-  
+
   ~Image ()
   {
   }
@@ -91,7 +91,7 @@ public:
     m_depth = other.depth();
     return *this;
   }
-  
+
   std::size_t width() const { return m_width; }
   std::size_t height() const { return m_height; }
   std::size_t depth() const { return m_depth; }
@@ -124,7 +124,7 @@ public:
 
     return (*m_raw)[coord(x,y,z)];
   }
-  
+
 
 };
 

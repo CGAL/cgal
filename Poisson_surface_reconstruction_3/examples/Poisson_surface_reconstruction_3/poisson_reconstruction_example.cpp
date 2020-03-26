@@ -64,7 +64,7 @@ int main(void)
 
     // Computes the Poisson indicator function f()
     // at each vertex of the triangulation.
-    if ( ! function.compute_implicit_function() ) 
+    if ( ! function.compute_implicit_function() )
       return EXIT_FAILURE;
 
     // Computes average spacing

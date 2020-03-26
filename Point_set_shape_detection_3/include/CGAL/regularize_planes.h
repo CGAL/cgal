@@ -41,7 +41,7 @@
 
 
 namespace CGAL {
-  
+
 // ----------------------------------------------------------------------------
 // Private section
 // ----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ struct Plane_cluster
   { }
 };
 
-  
+
 template <typename Traits>
 typename Traits::Vector_3 regularize_normal
   (const typename Traits::Vector_3& n,
@@ -116,7 +116,7 @@ typename Traits::Vector_3 regularize_normal
     return n;
 }
 
-template <typename Traits>  
+template <typename Traits>
 typename Traits::Vector_3 regularize_normals_from_prior
   (const typename Traits::Vector_3& np,
    const typename Traits::Vector_3& n,
@@ -133,7 +133,7 @@ typename Traits::Vector_3 regularize_normals_from_prior
   Point pt_symmetry = CGAL::ORIGIN + cos_symmetry* symmetry_direction;
 
   Plane plane_symmetry (pt_symmetry, symmetry_direction);
-		
+
   Line line;
   CGAL::Object ob_1 = CGAL::intersection (plane_orthogonality, plane_symmetry);
   if (!assign(line, ob_1))
@@ -145,11 +145,11 @@ typename Traits::Vector_3 regularize_normals_from_prior
   if (R <= 1)  // 2 (or 1) possible points intersecting the unit sphere and line
     {
       FT delta = std::sqrt ((FT)1. - R);
-      Vector line_vector(line); 
+      Vector line_vector(line);
       line_vector = line_vector / std::sqrt (line_vector * line_vector);
       Point pt1 = projected_origin + delta * line_vector;
       Point pt2 = projected_origin - delta * line_vector;
-			
+
       Point pt_n = CGAL::ORIGIN + n;
       if (CGAL::squared_distance (pt_n, pt1) <= CGAL::squared_distance (pt_n, pt2))
         return Vector (CGAL::ORIGIN, pt1);
@@ -207,14 +207,14 @@ void compute_parallel_clusters (PlaneRange& planes,
 
   typedef typename Traits::FT FT;
   typedef typename Traits::Vector_3 Vector;
-  
+
   // find pairs of epsilon-parallel primitives and store them in parallel_planes
   std::vector<std::vector<std::size_t> > parallel_planes (planes.size ());
   for (std::size_t i = 0; i < std::size_t(planes.size ()); ++ i)
     {
       typename PlaneRange::iterator it = planes.begin() + i;
       Vector v1 = get(plane_map, *it).orthogonal_vector();
-          
+
       for (std::size_t j = 0; j < std::size_t(planes.size()); ++ j)
         {
           if (i == j)
@@ -230,14 +230,14 @@ void compute_parallel_clusters (PlaneRange& planes,
 
 
   std::vector<bool> is_available (planes.size (), true);
-      
+
   for (std::size_t i = 0; i < std::size_t(planes.size()); ++ i)
     {
 
       if(is_available[i])
         {
           const typename Traits::Plane_3& plane = get(plane_map, *(planes.begin() + i));
-          
+
           is_available[i] = false;
 
           clusters.push_back (Plane_cluster<Traits>());
@@ -245,17 +245,17 @@ void compute_parallel_clusters (PlaneRange& planes,
 
           //initialization containers
           clu.planes.push_back (i);
-              
+
           std::vector<std::size_t> index_container_former_ring_parallel;
           index_container_former_ring_parallel.push_back(i);
-              
+
           std::list<std::size_t> index_container_current_ring_parallel;
 
           //propagation over the pairs of epsilon-parallel primitives
           bool propagation=true;
           clu.normal = plane.orthogonal_vector ();
           clu.area = areas[i];
-			
+
           do
             {
               propagation = false;
@@ -268,25 +268,25 @@ void compute_parallel_clusters (PlaneRange& planes,
                   for (std::size_t l = 0; l < parallel_planes[plane_index].size(); ++ l)
                     {
                       std::size_t it = parallel_planes[plane_index][l];
-                      
+
                       Vector normal_it = get(plane_map, *(planes.begin() + it)).orthogonal_vector ();
 
                       if(is_available[it]
                          && std::fabs (normal_it*clu.normal) > 1. - tolerance_cosangle )
-                        {	
+                        {
                           propagation = true;
                           index_container_current_ring_parallel.push_back(it);
                           is_available[it]=false;
-                              
+
                           if(clu.normal * normal_it <0)
                             normal_it = -normal_it;
 
                           clu.normal = (FT)clu.area * clu.normal
                             + (FT)areas[it] * normal_it;
-                          FT norm = (FT)1. / std::sqrt (clu.normal.squared_length()); 
+                          FT norm = (FT)1. / std::sqrt (clu.normal.squared_length());
                           clu.normal = norm * clu.normal;
                           clu.area += areas[it];
-                        }	
+                        }
                     }
                 }
 
@@ -324,12 +324,12 @@ void cluster_symmetric_cosangles (std::vector<Plane_cluster<Traits> >& clusters,
                                   typename Traits::FT tolerance_cosangle_ortho)
 {
   typedef typename Traits::FT FT;
-  
+
   std::vector < FT > cosangle_centroids;
   std::vector < std::size_t> list_cluster_index;
   for( std::size_t i = 0; i < clusters.size(); ++ i)
     list_cluster_index.push_back(static_cast<std::size_t>(-1));
-      
+
   std::size_t mean_index = 0;
   for (std::size_t i = 0; i < clusters.size(); ++ i)
     {
@@ -338,7 +338,7 @@ void cluster_symmetric_cosangles (std::vector<Plane_cluster<Traits> >& clusters,
           list_cluster_index[i] = mean_index;
           FT mean = clusters[i].area * clusters[i].cosangle_symmetry;
           FT mean_area = clusters[i].area;
-              
+
           for (std::size_t j = i+1; j < clusters.size(); ++ j)
             {
               if (list_cluster_index[j] == static_cast<std::size_t>(-1)
@@ -374,7 +374,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 {
   typedef typename Traits::FT FT;
   typedef typename Traits::Vector_3 Vector;
-  
+
   std::vector < std::vector < std::size_t> > subgraph_clusters;
   std::vector < std::size_t> subgraph_clusters_max_area_index;
 
@@ -422,7 +422,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
                               max_area = clusters[cluster_index_2].area;
                               index_max_area = cluster_index_2;
                             }
-                        }	
+                        }
                     }
                 }
 
@@ -468,7 +468,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 
   for (std::size_t i = 0; i < subgraph_clusters_prop.size(); ++ i)
     {
-	
+
       std::size_t index_current=subgraph_clusters_max_area_index[i];
 
       Vector vec_current=regularize_normal<Traits>
@@ -499,7 +499,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 
               for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
                 {
-                  std::size_t cluster_index_2 = clusters[cluster_index].orthogonal_clusters[j];						
+                  std::size_t cluster_index_2 = clusters[cluster_index].orthogonal_clusters[j];
                   if(clusters[cluster_index_2].is_free)
                     {
                       propagation = true;
@@ -513,9 +513,9 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
                          clusters[cluster_index_2].cosangle_symmetry);
                       clusters[cluster_index_2].normal = new_vect;
                     }
-                }	
+                }
             }
-			
+
           //update containers
           index_container_former_ring.clear();
           for(std::list < std::size_t>::iterator it = index_container_current_ring.begin();
@@ -528,7 +528,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
         }while(propagation);
     }
 }
-                                    
+
 
 
 } // namespace PlaneRegularization
@@ -541,11 +541,11 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 // ----------------------------------------------------------------------------
 
 /// \ingroup PkgPointSetShapeDetection3Ref
-  
-  /*! 
+
+  /*!
 
     Given a set of detected planes with their respective inlier sets,
-    this function enables to regularize the planes: 
+    this function enables to regularize the planes:
 
     - Planes near parallel can be made exactly parallel.
 
@@ -600,7 +600,7 @@ void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster<Traits> >&
 
     \param symmetry_direction Chosen axis for symmetry
     regularization. Default value is the Z axis.
-*/ 
+*/
 
 // This variant requires all parameters
 template <typename PointRange,
@@ -643,7 +643,7 @@ void regularize_planes (const PointRange& points,
   tolerance_angle = tolerance_angle * (FT)CGAL_PI / (FT)(180);
   FT tolerance_cosangle = (FT)(1. - std::cos (tolerance_angle));
   FT tolerance_cosangle_ortho = (FT)(std::cos ((FT)0.5 * (FT)CGAL_PI - (FT)tolerance_angle));
-      
+
   // clustering the parallel primitives and store them in clusters
   // & compute the normal, size and cos angle to the symmetry
   // direction of each cluster
@@ -655,7 +655,7 @@ void regularize_planes (const PointRange& points,
 
   if (regularize_orthogonality)
     {
-      //discovery orthogonal relationship between clusters 
+      //discovery orthogonal relationship between clusters
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
           for (std::size_t j = i + 1; j < clusters.size(); ++ j)
@@ -668,7 +668,7 @@ void regularize_planes (const PointRange& points,
             }
         }
     }
-      
+
   if (regularize_axis_symmetry)
     {
       //clustering the symmetry cosangle and store their centroids in
@@ -677,14 +677,14 @@ void regularize_planes (const PointRange& points,
       internal::PlaneRegularization::cluster_symmetric_cosangles<Kernel>
         (clusters, tolerance_cosangle, tolerance_cosangle_ortho);
     }
-  
+
   //find subgraphs of mutually orthogonal clusters (store index of
   //clusters in subgraph_clusters), and select the cluster of
   //largest area
   if (regularize_orthogonality || regularize_axis_symmetry)
     internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<Kernel>
       (clusters, (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
-      
+
   //recompute optimal plane for each primitive after normal regularization
   for (std::size_t i=0; i < clusters.size(); ++ i)
     {
@@ -723,9 +723,9 @@ void regularize_planes (const PointRange& points,
               if (clusters[i].coplanar_group[j] == static_cast<std::size_t>(-1))
                 {
                   const Plane& plane = get(plane_map, *(planes.begin() + index_prim));
-                  
+
                   clusters[i].coplanar_group[j] = cop_index;
-                  
+
                   Point pt_reg = plane.projection(centroids[index_prim]);
                   Plane plan_reg(pt_reg,vec_reg);
 
@@ -743,21 +743,21 @@ void regularize_planes (const PointRange& points,
                             clusters[i].coplanar_group[k] = cop_index;
                         }
                     }
-                  cop_index++; 
+                  cop_index++;
                 }
             }
           //regularize primitive position by computing barycenter of cplanar planes
           std::vector<Point> pt_bary (cop_index, Point ((FT)0., (FT)0., (FT)0.));
           std::vector<FT> area (cop_index, 0.);
-      
+
           for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
             {
               std::size_t index_prim = clusters[i].planes[j];
               std::size_t group = clusters[i].coplanar_group[j];
-              
+
               Point pt_reg = get(plane_map, *(planes.begin()+index_prim)).projection(centroids[index_prim]);
 
-              pt_bary[group] = CGAL::barycenter (pt_bary[group], area[group], pt_reg, areas[index_prim]); 
+              pt_bary[group] = CGAL::barycenter (pt_bary[group], area[group], pt_reg, areas[index_prim]);
               area[group] += areas[index_prim];
             }
 
@@ -775,7 +775,7 @@ void regularize_planes (const PointRange& points,
                 put(plane_map, *(planes.begin() + index_prim), plane_reg);
             }
         }
-    } 
+    }
 }
 
 

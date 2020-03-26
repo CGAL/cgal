@@ -30,7 +30,7 @@ int main()
   // Points with normals.
   Pwn_vector points;
 
-  // Loads point set from a file. 
+  // Loads point set from a file.
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
   std::ifstream stream("data/cube.pwn");
@@ -89,12 +89,12 @@ int main()
     std::cout << "time: " << time.time() * 1000 << "ms" << std::endl;
     std::cout << ransac.shapes().end() - ransac.shapes().begin() << " primitives, "
       << coverage << " coverage" << std::endl;
-    
+
     // Choose result with highest coverage.
     if (coverage > best_coverage) {
       best_coverage = coverage;
       // Efficient_ransac::shapes() provides
-      // an iterator range to the detected shapes. 
+      // an iterator range to the detected shapes.
       shapes = ransac.shapes();
     }
   }
@@ -103,7 +103,7 @@ int main()
 
   while (it != shapes.end()) {
     boost::shared_ptr<Efficient_ransac::Shape> shape = *it;
-    // Using Shape_base::info() for printing 
+    // Using Shape_base::info() for printing
     // the parameters of the detected shape.
     std::cout << (*it)->info();
 
@@ -115,7 +115,7 @@ int main()
       index_it = (*it)->indices_of_assigned_points().begin();
 
     while (index_it != (*it)->indices_of_assigned_points().end()) {
-      
+
       // Retrieves point
       const Point_with_normal &p = *(points.begin() + (*index_it));
 

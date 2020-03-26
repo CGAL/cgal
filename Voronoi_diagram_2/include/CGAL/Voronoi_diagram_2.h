@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -92,7 +92,7 @@ class Voronoi_diagram_2
   typedef typename Delaunay_graph::Vertex_circulator  Dual_vertex_circulator;
   typedef typename Delaunay_graph::Face_circulator    Dual_face_circulator;
 
-  typedef typename Delaunay_graph::Finite_vertices_iterator 
+  typedef typename Delaunay_graph::Finite_vertices_iterator
   Dual_vertices_iterator;
 
   typedef typename Delaunay_graph::Finite_faces_iterator
@@ -289,13 +289,13 @@ public:
   // CONSTRUCTORS
   //--------------
   Voronoi_diagram_2(const Adaptation_traits& at = Adaptation_traits(),
-		    const Adaptation_policy& ap = Adaptation_policy(),
-		    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
+                    const Adaptation_policy& ap = Adaptation_policy(),
+                    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
     : dual_(gt), ap_(ap), at_(at) {}
 
   Voronoi_diagram_2(const Delaunay_graph& dg, bool swap_dg = false,
-		    const Adaptation_traits& at = Adaptation_traits(),
-		    const Adaptation_policy& ap = Adaptation_policy())
+                    const Adaptation_traits& at = Adaptation_traits(),
+                    const Adaptation_policy& ap = Adaptation_policy())
     : dual_(), ap_(ap), at_(at) {
     if ( swap_dg ) {
       dual_.swap(const_cast<Delaunay_graph&>(dg));
@@ -306,9 +306,9 @@ public:
 
   template<class Iterator>
   Voronoi_diagram_2(Iterator first, Iterator beyond,
-		    const Adaptation_traits& at = Adaptation_traits(),
-		    const Adaptation_policy& ap = Adaptation_policy(),
-		    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
+                    const Adaptation_traits& at = Adaptation_traits(),
+                    const Adaptation_policy& ap = Adaptation_policy(),
+                    const Delaunay_geom_traits& gt = Delaunay_geom_traits())
     : dual_(first, beyond, gt), ap_(ap), at_(at) {}
 
   Voronoi_diagram_2(const Voronoi_diagram_2& other)
@@ -351,22 +351,22 @@ public:
   // SIZE RELATED METHODS
   size_type number_of_vertices() const {
     size_type num_v = 0;
-    for (Vertex_iterator it = vertices_begin();	it != vertices_end();
-	 ++it, ++num_v) {}
+    for (Vertex_iterator it = vertices_begin();        it != vertices_end();
+         ++it, ++num_v) {}
     return num_v;
   }
 
   size_type number_of_faces() const {
     size_type num_f = 0;
     for (Face_iterator it = faces_begin(); it != faces_end();
-	 ++it, ++num_f) {}
+         ++it, ++num_f) {}
     return num_f;
   }
 
   size_type number_of_halfedges() const {
     size_type num_h = 0;
     for (Halfedge_iterator it = halfedges_begin(); it != halfedges_end();
-	 ++it, ++num_h) {}
+         ++it, ++num_h) {}
     return num_h;
   }
 
@@ -420,13 +420,13 @@ public:
  private:
   Non_degenerate_faces_iterator non_degenerate_faces_begin() const {
     return CGAL::filter_iterator( dual_.finite_vertices_end(),
-				  Face_rejector_binder(this),
-				  dual_.finite_vertices_begin() );
+                                  Face_rejector_binder(this),
+                                  dual_.finite_vertices_begin() );
   }
 
   Non_degenerate_faces_iterator non_degenerate_faces_end() const {
     return CGAL::filter_iterator( dual_.finite_vertices_end(),
-				  Face_rejector_binder(this) );
+                                  Face_rejector_binder(this) );
   }
 
  public:
@@ -441,24 +441,24 @@ public:
  private:
   Unbounded_faces_iterator_base unbounded_faces_base_begin() const {
     return CGAL::filter_iterator( non_degenerate_faces_end(),
-				  Bounded_face_tester(this),
-				  non_degenerate_faces_begin() );
+                                  Bounded_face_tester(this),
+                                  non_degenerate_faces_begin() );
   }
 
   Unbounded_faces_iterator_base unbounded_faces_base_end() const {
     return CGAL::filter_iterator( non_degenerate_faces_end(),
-				  Bounded_face_tester(this) );
+                                  Bounded_face_tester(this) );
   }
 
   Bounded_faces_iterator_base bounded_faces_base_begin() const {
     return CGAL::filter_iterator( non_degenerate_faces_end(),
-				  Unbounded_face_tester(this),
-				  non_degenerate_faces_begin() );
+                                  Unbounded_face_tester(this),
+                                  non_degenerate_faces_begin() );
   }
 
   Bounded_faces_iterator_base bounded_faces_base_end() const {
     return CGAL::filter_iterator( non_degenerate_faces_end(),
-				  Unbounded_face_tester(this) );
+                                  Unbounded_face_tester(this) );
   }
 
  public:
@@ -482,13 +482,13 @@ public:
  private:
   Non_degenerate_edges_iterator non_degenerate_edges_begin() const {
     return CGAL::filter_iterator( dual_.finite_edges_end(),
-				  Edge_rejector_binder(this),
-				  dual_.finite_edges_begin() );
+                                  Edge_rejector_binder(this),
+                                  dual_.finite_edges_begin() );
   }
 
   Non_degenerate_edges_iterator non_degenerate_edges_end() const {
     return CGAL::filter_iterator( dual_.finite_edges_end(),
-				  Edge_rejector_binder(this) );
+                                  Edge_rejector_binder(this) );
   }
 
 
@@ -502,13 +502,13 @@ public:
 
   Valid_edges_iterator valid_edges_begin() const {
     return CGAL::filter_iterator( edges_base_end(),
-				  Edge_validity_tester(this),
-				  edges_base_begin() );
+                                  Edge_validity_tester(this),
+                                  edges_base_begin() );
   }
 
   Valid_edges_iterator valid_edges_end() const {
     return CGAL::filter_iterator( edges_base_end(),
-				  Edge_validity_tester(this) );
+                                  Edge_validity_tester(this) );
   }
 
  public:
@@ -531,24 +531,24 @@ public:
  protected:
   Unbounded_edges_iterator_base unbounded_edges_base_begin() const {
     return CGAL::filter_iterator( edges_end(),
-				  Bounded_edge_tester(this),
-				  edges_begin() );
+                                  Bounded_edge_tester(this),
+                                  edges_begin() );
   }
 
   Unbounded_edges_iterator_base unbounded_edges_base_end() const {
     return CGAL::filter_iterator( edges_end(),
-				  Bounded_edge_tester(this) );
+                                  Bounded_edge_tester(this) );
   }
 
   Bounded_edges_iterator_base bounded_edges_base_begin() const {
     return CGAL::filter_iterator( edges_end(),
-				  Unbounded_edge_tester(this),
-				  edges_begin() );
+                                  Unbounded_edge_tester(this),
+                                  edges_begin() );
   }
 
   Bounded_edges_iterator_base bounded_edges_base_end() const {
     return CGAL::filter_iterator( edges_end(),
-				  Unbounded_edge_tester(this) );
+                                  Unbounded_edge_tester(this) );
   }
 
  public:
@@ -572,13 +572,13 @@ public:
  private:
   Non_degenerate_vertices_iterator non_degenerate_vertices_begin() const {
     return CGAL::filter_iterator( dual_.finite_faces_end(),
-				  Vertex_validity_tester(this),
-				  dual_.finite_faces_begin() );
+                                  Vertex_validity_tester(this),
+                                  dual_.finite_faces_begin() );
   }
 
   Non_degenerate_vertices_iterator non_degenerate_vertices_end() const {
     return CGAL::filter_iterator( dual_.finite_faces_end(),
-				  Vertex_validity_tester(this) );
+                                  Vertex_validity_tester(this) );
   }
 
  public:
@@ -592,7 +592,7 @@ public:
 
   // SITE ITERATOR
   Site_iterator sites_begin() const {
-    return Site_iterator(faces_begin());    
+    return Site_iterator(faces_begin());
   }
 
   Site_iterator sites_end() const {
@@ -605,7 +605,7 @@ public:
   }
 
   Ccb_halfedge_circulator ccb_halfedges(const Face_handle& f,
-					const Halfedge_handle& he) const {
+                                        const Halfedge_handle& he) const {
     CGAL_precondition( he->face() == f );
     CGAL_USE(f);
     return Ccb_halfedge_circulator(*he);
@@ -643,22 +643,22 @@ public:
     Query_result ns_qr = nearest_site(dual_, p);
 
     if ( const Delaunay_vertex_handle* dv =
-	 boost::get<Delaunay_vertex_handle>(&ns_qr) ) {
+         boost::get<Delaunay_vertex_handle>(&ns_qr) ) {
       return Face_handle( Face(this, *dv) );
     } else if ( const Delaunay_face_handle *df =
-		boost::get<Delaunay_face_handle>(&ns_qr) ) {
+                boost::get<Delaunay_face_handle>(&ns_qr) ) {
       Find_valid_vertex vertex_finder;
       Delaunay_face_handle dfvalid = vertex_finder(this, *df);
       return Vertex_handle( Vertex(this, dfvalid) );
     } else if ( const Delaunay_edge* de =
-		boost::get<Delaunay_edge>(&ns_qr) ) {
+                boost::get<Delaunay_edge>(&ns_qr) ) {
       CGAL_assertion(  !edge_rejector()(dual_, *de)  );
       if ( dual_.dimension() == 1 ) {
-	Delaunay_vertex_handle v1 =
-	  de->first->vertex(CW_CCW_2::ccw(de->second));
-	Delaunay_vertex_handle v2 =
-	  de->first->vertex(CW_CCW_2::cw(de->second) );
-	return Halfedge_handle( Halfedge(this, v1, v2) );
+        Delaunay_vertex_handle v1 =
+          de->first->vertex(CW_CCW_2::ccw(de->second));
+        Delaunay_vertex_handle v2 =
+          de->first->vertex(CW_CCW_2::cw(de->second) );
+        return Halfedge_handle( Halfedge(this, v1, v2) );
       }
       return Halfedge_handle( Halfedge(this, de->first, de->second) );
     }
@@ -690,13 +690,13 @@ public:
     }
 
     for (Halfedge_iterator it = halfedges_begin(); it != halfedges_end();
-	 ++it) {
+         ++it) {
       valid = valid && it->is_valid();
     }
 
     return valid;
   }
-  
+
   // I/O
   //----
  public:
@@ -806,7 +806,7 @@ public:
 //--------------
 template<class DG, class AT, class AP>
 std::ostream& operator<<(std::ostream& os,
-			 const Voronoi_diagram_2<DG,AT,AP>& vd)
+                         const Voronoi_diagram_2<DG,AT,AP>& vd)
 {
   vd.file_output(os);
   return os;
@@ -815,7 +815,7 @@ std::ostream& operator<<(std::ostream& os,
 
 template<class DG, class AT, class AP>
 std::istream& operator>>(std::istream& is,
-			 Voronoi_diagram_2<DG,AT,AP>& vd)
+                         Voronoi_diagram_2<DG,AT,AP>& vd)
 {
   vd.file_input(is);
   return is;

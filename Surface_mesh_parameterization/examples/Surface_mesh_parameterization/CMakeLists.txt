@@ -57,7 +57,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "seam_Polyhedron_3.cpp" )
     create_single_source_cgal_program( "simple_parameterization.cpp" )
     create_single_source_cgal_program( "square_border_parameterizer.cpp" )
-    
+
     if(SuiteSparse_FOUND)
       target_link_libraries(orbifold PRIVATE ${SuiteSparse_LIBRARIES})
     endif()

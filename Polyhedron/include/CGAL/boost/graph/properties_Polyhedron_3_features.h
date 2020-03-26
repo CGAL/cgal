@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-  
+
 namespace internal{
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Plane_3)
 

@@ -17,10 +17,10 @@
  *
  *
  * File: BigFloatRep.h
- * Synopsis: 
- * 		Internal Representation BigFloat.
- * 
- * Written by 
+ * Synopsis:
+ *                 Internal Representation BigFloat.
+ *
+ * Written by
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
@@ -41,7 +41,7 @@
 #include <CGAL/CORE/CoreDefs.h>
 #include <CGAL/CORE/extLong.h>
 
-namespace CORE { 
+namespace CORE {
 
 //  forward reference
 class BigFloat;
@@ -182,11 +182,11 @@ struct BigFloatRep::DecimalOutput {
 };//DecimalOutput
 
 // constants used by BigFloatRep
-//	NOTES:  CHUNK_BIT is the number of bits in each Chunk
-//	Since LONG_BIT = 32 or 64, then CHUNK_BIT = 14 or 30.
-//	We have:  0 <= err < 4 * 2^{CHUNK_BIT}
+//        NOTES:  CHUNK_BIT is the number of bits in each Chunk
+//        Since LONG_BIT = 32 or 64, then CHUNK_BIT = 14 or 30.
+//        We have:  0 <= err < 4 * 2^{CHUNK_BIT}
 
-const long CHUNK_BIT = (long)(LONG_BIT / 2 - 2); 	//  chunks
+const long CHUNK_BIT = (long)(LONG_BIT / 2 - 2);         //  chunks
 const long HALF_CHUNK_BIT = (CHUNK_BIT + 1) / 2;
 const long DBL_MAX_CHUNK = (DBL_MAX_EXP - 1) / CHUNK_BIT + 1;
 const double lgTenM = 3.321928094887362;
@@ -261,7 +261,7 @@ inline BigFloatRep::BigFloatRep(long n)
 /* This turns out to be an alternative implementation of the
  * original one in BigFloat.cpp!!
 inline BigFloatRep::BigFloatRep(double d)
-	    : m(IntMantissa(d)), err(0), exp(0) {
+            : m(IntMantissa(d)), err(0), exp(0) {
      BigFloatRep * bfr = exp2(IntExponent(d));  // take care of the exponent
      m *= bfr->m;
      exp = bfr->exp;
@@ -334,8 +334,8 @@ inline extLong BigFloatRep::lMSB() const {
 }
 
 /// uMSB() returns an upper bound on log_2(abs(*this)).
-/** Returns -1 if (*this)=0.  
- * Not well-defined if zero is in the interval. 
+/** Returns -1 if (*this)=0.
+ * Not well-defined if zero is in the interval.
  */
 inline extLong BigFloatRep::uMSB() const {
   return extLong(floorLg(abs(m) + err)) + bits(exp);
@@ -366,7 +366,7 @@ inline extLong BigFloatRep::clLgErr() const {
 // isZero() = true iff zero is inside the interval of BigFloat:
 inline bool BigFloatRep::isZeroIn() const {
   if (err == 0){
-    return (m == 0);	//Nov 6, 2002: bug fix!
+    return (m == 0);        //Nov 6, 2002: bug fix!
   }
   long lm = bitLength(m);
   if (lm > CHUNK_BIT+2) {

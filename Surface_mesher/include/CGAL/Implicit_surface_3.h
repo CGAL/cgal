@@ -39,7 +39,7 @@ namespace CGAL {
     // The type of the argument `Function` will be ignored anyway.
     // The parameter is here only for backward-compatibility.
     >
-  class Implicit_surface_3 
+  class Implicit_surface_3
   {
   public:
     typedef GT Geom_traits;
@@ -56,15 +56,15 @@ namespace CGAL {
       Self> Surface_mesher_traits_3;
 
     Implicit_surface_3(Function f,
-		       const Sphere_3 bounding_sphere,
-		       const FT error_bound = FT(1e-3),
-		       Geom_traits gt = Geom_traits())
+                       const Sphere_3 bounding_sphere,
+                       const FT error_bound = FT(1e-3),
+                       Geom_traits gt = Geom_traits())
       : func(f),
-	sphere(bounding_sphere),
-	gt(gt)
+        sphere(bounding_sphere),
+        gt(gt)
     {
       squared_error = error_bound * error_bound;
-      squared_error = squared_error * 
+      squared_error = squared_error *
         gt.compute_squared_radius_3_object()(bounding_sphere);
     }
 
@@ -114,8 +114,8 @@ namespace CGAL {
   template <typename GT, typename Function>
   Implicit_surface_3<GT, Function>
   make_implicit_surface_3(GT, Function f,
-			  typename GT::Sphere_3 sphere,
-			  typename GT::FT error_bound)
+                          typename GT::Sphere_3 sphere,
+                          typename GT::FT error_bound)
   {
     typedef Implicit_surface_3<GT> surface;
     return surface(f, sphere, error_bound);
@@ -126,7 +126,7 @@ namespace CGAL {
 //   {
 //     typedef Implicit_surface_3<GT, Function> Surface_type;
 //     typedef typename Surface_mesher::Implicit_surface_oracle_3<GT,
-// 							     Surface_type> Type;
+//                                                              Surface_type> Type;
 //     typedef Type type; // Boost meta-programming compatibility
 //   };
 

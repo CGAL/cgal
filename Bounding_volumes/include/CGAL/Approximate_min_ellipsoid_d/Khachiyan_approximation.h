@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
@@ -53,12 +53,12 @@ namespace CGAL {
     struct Selector {
       typedef Tag_true Is_exact;
     };
-    
+
     template<>
     struct Selector<float> {
       typedef Tag_false Is_exact;
     };
-  
+
     template<>
     struct Selector<double> {
       typedef Tag_false Is_exact;
@@ -74,7 +74,7 @@ namespace CGAL {
     typedef typename Traits::Point Point;
     typedef typename Traits::Cartesian_const_iterator C_it;
     typedef typename Appel_impl::Selector<FT>::Is_exact Exact_flag;
-    
+
   private: // member variables and invariants for them:
     Traits& tco;                    // traits class object
     std::vector<const Point *> P;   // input points
@@ -125,7 +125,7 @@ namespace CGAL {
     // value in eps_exact is correct.
     double eps_exact;
     bool is_exact_eps_uptodate;
-    
+
     // Khachian's algorithm is only guaranteed to work when the input
     // points linearly span the whole space (i.e., if dim(span(P)) =
     // d, or, equivalently, when the smallest enclosing ellipsoid has
@@ -139,7 +139,7 @@ namespace CGAL {
     // If is_deg is true, the variable x has no meaning.
     std::vector<FT> x;
     #endif // CGAL_APPEL_ASSERTION_MODE
-    
+
     // The inverse of the (d x d)-matrix M(x) is stored in the
     // variable mi.  The element (M(x)^{-1})_{ij} is stored in
     // mi[i+j*d].  (It would actually be enough to only store the
@@ -148,7 +148,7 @@ namespace CGAL {
     //
     // Todo: optimize by only storing one half of mi.
     std::vector<FT> mi;
-    
+
     // The following variable sum is used to build, during the
     // initialization phase, the (d x d)-matrix M(x).  The variable is
     // only defined if is_deg is true; once is_deg becomes false, the
@@ -182,7 +182,7 @@ namespace CGAL {
     //
     //    ex_max = argmax_{0 <= i < n} ex[i].
     //
-    int ex_max; 
+    int ex_max;
 
     // We sometimes need temporary storage.  We allocate this once at
     // instance construction time:
@@ -204,7 +204,7 @@ namespace CGAL {
     #endif // CGAL_APPEL_STATS_MODE
 
   private: // internal helper routines:
-    
+
     template<typename NumberType, typename InputIterator>
     NumberType excess(InputIterator p)
       // Computes p^T M(x)^{-1} p, where x is the current solution.
@@ -221,23 +221,23 @@ namespace CGAL {
       typedef NumberType NT;
       NT result(0);
       InputIterator qi(p);
-      
+
       for (int i=0; i<d; ++i) {
 
-	// compute i-th entry of the vector M(x)^{-1} p into tmp:
-	NT tmp(0);
-	InputIterator q(p);
-	for (int j=0; j<d_P; ++j, ++q)
-	  tmp += NT(*q) * NT(mi[i+j*d]);
-	if (Embed)
-	  tmp += NT(mi[i+d_P*d]);
+        // compute i-th entry of the vector M(x)^{-1} p into tmp:
+        NT tmp(0);
+        InputIterator q(p);
+        for (int j=0; j<d_P; ++j, ++q)
+          tmp += NT(*q) * NT(mi[i+j*d]);
+        if (Embed)
+          tmp += NT(mi[i+d_P*d]);
 
-	// add tmp*p_i to result:
-	if (!Embed || i < d_P) {
-	  result += NT(*qi) * NT(tmp);
-	  ++qi;
-	} else
-	  result += NT(tmp);
+        // add tmp*p_i to result:
+        if (!Embed || i < d_P) {
+          result += NT(*qi) * NT(tmp);
+          ++qi;
+        } else
+          result += NT(tmp);
       }
 
       return result;
@@ -253,21 +253,21 @@ namespace CGAL {
       // <https://en.wikipedia.org/wiki/Kahan_Summation_Algorithm>.
     {
       for (int k=start; k<n; ++k) {
-	C_it pi = tco.cartesian_begin(*P[k]);
-	for (int i=0; i<d_P; ++i, ++pi) {
-	  C_it pj = tco.cartesian_begin(*P[k]);
-	  for (int j=0; j<d_P; ++j, ++pj)
-	    sum[i+j*d] += (*pi) * (*pj);
-	  if (Embed)
-	    sum[i+d_P*d] += (*pi);
-	}
+        C_it pi = tco.cartesian_begin(*P[k]);
+        for (int i=0; i<d_P; ++i, ++pi) {
+          C_it pj = tco.cartesian_begin(*P[k]);
+          for (int j=0; j<d_P; ++j, ++pj)
+            sum[i+j*d] += (*pi) * (*pj);
+          if (Embed)
+            sum[i+d_P*d] += (*pi);
+        }
 
-	if (Embed) {
-	  C_it pj = tco.cartesian_begin(*P[k]);
-	  for (int j=0; j<d_P; ++j, ++pj)
-	    sum[d_P+j*d] += (*pj);
-	  sum[d_P+d_P*d] += 1;
-	}
+        if (Embed) {
+          C_it pj = tco.cartesian_begin(*P[k]);
+          for (int j=0; j<d_P; ++j, ++pj)
+            sum[d_P+j*d] += (*pj);
+          sum[d_P+d_P*d] += 1;
+        }
       }
     }
 
@@ -294,22 +294,22 @@ namespace CGAL {
       // gives a hint on how much storage is needed.
       tco(tco), n(0),
       d_P(dim), d(Embed? d_P+1 : d_P), is_deg(true),
-      #ifdef CGAL_APPEL_ASSERTION_MODE 
+      #ifdef CGAL_APPEL_ASSERTION_MODE
       x(n_est),
       #endif // CGAL_APPEL_ASSERTION_MODE
       mi(d*d), sum(d*d), ex(n_est), tmp(d), t(d*d)
     {
       CGAL_APPEL_LOG("appel","Entering Khachiyan with d=" << d << " (" <<
-		(Embed? "" : "not ") << "embedded)." << std::endl);
+                (Embed? "" : "not ") << "embedded)." << std::endl);
       CGAL_APPEL_TIMER_START("khachiyan");
 
       // In order to satisfy the invariant on m, we have to initalize
       // m with the zero matrix:
       for (int i=0; i<d; ++i)
-	for (int j=0; j<d; ++j)
-	  sum[i+j*d] = FT(0);
+        for (int j=0; j<d; ++j)
+          sum[i+j*d] = FT(0);
     }
-    
+
     ~Khachiyan_approximation();
 
     template<typename InputIterator>
@@ -335,65 +335,65 @@ namespace CGAL {
       // so far (not including the points we are about to add) by
       // P_old.
       CGAL_APPEL_LOG("appel","  add() called with desired_eps=" <<
-		desired_eps << std::endl);
+                desired_eps << std::endl);
 
       // We first add the new points:
       const int n_old = n;
       for (; first != last; first++)
-	P.push_back(&*first);
+        P.push_back(&*first);
       n = static_cast<int>(P.size());
 
       // debugging output:
       CGAL_APPEL_LOG("appel","  Add()'ing " << n-n_old << " points to a " <<
-		(is_deg? "" : "not ") << "degenerate set of " <<
-		n_old << " points." << std::endl);
+                (is_deg? "" : "not ") << "degenerate set of " <<
+                n_old << " points." << std::endl);
       #ifdef CGAL_APPEL_ASSERTION_MODE
       x.resize(n);
       #endif // CGAL_APPEL_ASSERTION_MODE
       ex.resize(n);
 
       if (is_deg) {
-	// Here, we are still collecting points until is_deg gets true.
+        // Here, we are still collecting points until is_deg gets true.
 
-	// update variable sum:
-	update_sum(n_old);
+        // update variable sum:
+        update_sum(n_old);
 
-	// Next, we need to check whether the matrix M(x)^{-1} for
-	// x=(1/n,...,1/n) exists (in which case we could start
-	// Khachiyan's algorithm): compute_initial_inverse() computes
-	// from the matrix sum the inverse of M(x), if possible:
-	is_deg = !compute_initial_inverse_from_sum();
+        // Next, we need to check whether the matrix M(x)^{-1} for
+        // x=(1/n,...,1/n) exists (in which case we could start
+        // Khachiyan's algorithm): compute_initial_inverse() computes
+        // from the matrix sum the inverse of M(x), if possible:
+        is_deg = !compute_initial_inverse_from_sum();
       }
 
       else {
-	// Here, is_deg is false, i.e., the points P_old already span
-	// the whole space (and by our invariants the variable x
-	// therefore already represents a solution to the program (D)
-	// for the points P_old).
+        // Here, is_deg is false, i.e., the points P_old already span
+        // the whole space (and by our invariants the variable x
+        // therefore already represents a solution to the program (D)
+        // for the points P_old).
 
-	// The only thing we need to update is the array ex and ex_max:
-	for (int i=n_old; i<n; ++i)
-	  if ((ex[i] = excess<FT>(tco.cartesian_begin(*P[i]))) > ex[ex_max])
-	      ex_max = i;
-	CGAL_APPEL_LOG("appel","  Maximal excess is " << to_double(ex[ex_max])
-		  << "." << std::endl);
+        // The only thing we need to update is the array ex and ex_max:
+        for (int i=n_old; i<n; ++i)
+          if ((ex[i] = excess<FT>(tco.cartesian_begin(*P[i]))) > ex[ex_max])
+              ex_max = i;
+        CGAL_APPEL_LOG("appel","  Maximal excess is " << to_double(ex[ex_max])
+                  << "." << std::endl);
 
-	// (Here, we could restart with x = (1/n,...,1/n).  But this
-	// is probably a bad idea because (i) computing the initial
-	// inverse of M(x) is expensive and (ii) because our current
-	// ellipsoid is, hopefully, quite good already.)
+        // (Here, we could restart with x = (1/n,...,1/n).  But this
+        // is probably a bad idea because (i) computing the initial
+        // inverse of M(x) is expensive and (ii) because our current
+        // ellipsoid is, hopefully, quite good already.)
 
-	// Todo: If the needed eps is larger than n-1, then
-	// restarting with x = (1/n,...,1/n) is better, probably (at
-	// least, we have a better bound then).
+        // Todo: If the needed eps is larger than n-1, then
+        // restarting with x = (1/n,...,1/n) is better, probably (at
+        // least, we have a better bound then).
       }
 
       // Finally, if all points are non-degenerate now, we run
       // Khachiyan's algorithm:
       CGAL_APPEL_LOG("appel","  The points are " << (is_deg? "" : "not ") <<
-		"degenerate." << std::endl);
+                "degenerate." << std::endl);
       if (!is_deg)
-	run(desired_eps);
+        run(desired_eps);
 
       return !is_deg;
     }
@@ -423,7 +423,7 @@ namespace CGAL {
       // implementation DOES meet the specification, but its sort of
       // clumsy.
       const int max_iterations = static_cast<int>(2*d/desired_eps/
-					 (std::log(1.5)-1.0/3.0));
+                                         (std::log(1.5)-1.0/3.0));
 
       // run Khachiyan's algorithm until we find a good enough eps:
       //
@@ -431,25 +431,25 @@ namespace CGAL {
       int iterations = 1;
       bool counting = eps <= 1.0;
       while (!improve(desired_eps) &&        // not good enough and ...
-	     (!counting ||                   // ... (eps not yet <= 1 or ...
-	      iterations <= max_iterations)) // ... not yet enough iterations)
-	if (counting)
-	  ++iterations;
-	else if (eps <= 1.0)
-	  counting = true;
-      
+             (!counting ||                   // ... (eps not yet <= 1 or ...
+              iterations <= max_iterations)) // ... not yet enough iterations)
+        if (counting)
+          ++iterations;
+        else if (eps <= 1.0)
+          counting = true;
+
       // output stats:
       CGAL_APPEL_LOG("appel",
-		"  Took " << iterations << " iterations (upper " <<
-		"bound was " << max_iterations << "." << std::endl);
+                "  Took " << iterations << " iterations (upper " <<
+                "bound was " << max_iterations << "." << std::endl);
       CGAL_APPEL_TIMER_PRINT("appel","khachiyan","  Time at end: ");
       CGAL_APPEL_IF_STATS(CGAL_APPEL_LOG("appel",
-		  "  The overall represenation error in m is:   " <<
-   		  max_error_m_all << "." << std::endl);)
+                  "  The overall represenation error in m is:   " <<
+                     max_error_m_all << "." << std::endl);)
     }
 
   public: // access:
-    
+
     bool is_degenerate() const
     // Returns true if and only if dim(span(P)) < d, with P being the
     // input points (i.e., the points added so far) and d the
@@ -535,7 +535,7 @@ namespace CGAL {
     //
     // Complexity: O(n d^2)
     bool is_valid(bool verbose);
-    
+
   private: // internal assertion routines (only avalable in debug mode):
 
     #ifdef CGAL_APPEL_ASSERTION_MODE
@@ -605,11 +605,11 @@ namespace CGAL {
 
     void rank_1_update(int k,const FT& tau);
     // Efficiently computes into mi the inverse of M(x'), where
-    // 
+    //
     //   x' = (1 - tau) x + tau e_k
     //
     // with tau = eps/((1+eps)d-1) and where eps satisfies
-    // 
+    //
     //   p_k^T M(x)^{-1} p_k = (1+eps) d.                       (**)
     //
     // In addition, the routine efficiently updates the array ex to

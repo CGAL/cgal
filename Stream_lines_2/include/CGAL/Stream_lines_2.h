@@ -15,11 +15,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
-#ifndef CGAL_STREAM_LINES_2_H_ 
+#ifndef CGAL_STREAM_LINES_2_H_
 #define CGAL_STREAM_LINES_2_H_
 
 #include <CGAL/license/Stream_lines_2.h>
@@ -114,7 +114,7 @@ public:
   FT get_separating_distance() const
   {
     return separating_distance;
-  } 
+  }
 
   FT get_saturation_ratio() const
   {
@@ -149,7 +149,7 @@ public:
   }
       _number_of_lines = 0;
       place_stream_lines(*vf_2, *int_2,
-       samp_step);     
+       samp_step);
     }
 protected:
   void place_stream_lines(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator,
@@ -164,7 +164,7 @@ protected:
   void integrate_forward(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator,
        Point_container_2& stl,Point_2&  seed_point,
        Vertex_container_2& stl_vertices, const int & sampling_step);
-  void integrate_backward(const Vector_field_2 & vector_field_2,  const Integrator_2 & integrator, Point_container_2& 
+  void integrate_backward(const Vector_field_2 & vector_field_2,  const Integrator_2 & integrator, Point_container_2&
         stl, Vertex_container_2& stl_vertices, const int & sampling_step);
   void insert_streamline(const Vector_field_2 & vector_field_2, Point_container_2 stl,
        Vertex_container_2 stl_vertices);
@@ -173,7 +173,7 @@ protected:
   void make_iterator();
 public:
   Stream_lines_2(const Vector_field_2 & m_vector_field_2, const Integrator_2 & m_integrator, const FT
-     & m_separating_distance, const FT & m_saturation_ratio, const int & sampling_insertion = 0, const bool & 
+     & m_separating_distance, const FT & m_saturation_ratio, const int & sampling_insertion = 0, const bool &
      step_by_step = false);
   bool continue_next(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator, const int & sampling_step);
   Stream_line_iterator_2 begin();
@@ -194,7 +194,7 @@ public:
     _list.push_front(std::pair<Point_2, Point_2>(p1, p2));
   }
       return _list;
-    } 
+    }
   std::pair<Point_2, FT> get_biggest_circle()
     {
       Pq_element m_Pq = Biggest_circle;
@@ -208,7 +208,7 @@ protected:
   FT min_y;
 protected:
   Stream_line_iterator_2 begin_iterator;
-  Stream_line_iterator_2 end_iterator;  
+  Stream_line_iterator_2 end_iterator;
 private:
   int number_of_points;
 };
@@ -264,13 +264,13 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
   seed_point = Point_2((max_x+min_x)/2.0,(max_y+min_y)/2.0);
   // the first chosen point can be not valid
 
-  boost::rand48 rng;               
+  boost::rand48 rng;
 
   boost::uniform_real<> ur_x(min_x, max_x);
   boost::uniform_real<> ur_y(min_y, max_y);
   boost::variate_generator<boost::rand48&, boost::uniform_real<> > die_x(rng, ur_x);
   boost::variate_generator<boost::rand48&, boost::uniform_real<> > die_y(rng, ur_y);
-  
+
   while(!vector_field_2.is_in_domain(seed_point))
     {
       // std::cout << "searching valid seed point..\n";
@@ -302,7 +302,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
     }
   make_iterator();
 }
-  
+
 template <class VectorField_2, class Integrator_2>
 bool Stream_lines_2<VectorField_2, Integrator_2>::continue_next(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator, const int & sampling_step)
 {
@@ -318,7 +318,7 @@ bool Stream_lines_2<VectorField_2, Integrator_2>::continue_next(const Vector_fie
 
 // get the next seed point
 template <class VectorField_2, class Integrator_2>
-void 
+void
 Stream_lines_2<VectorField_2,Integrator_2>::integrate_streamline(const Vector_field_2 & vector_field_2, const Integrator_2 & integrator, Point_container_2& stl, Point_2&
 seed_point_, Vertex_container_2& stl_vertices, const int & sampling_step)
 {
@@ -328,7 +328,7 @@ seed_point_, Vertex_container_2& stl_vertices, const int & sampling_step)
 
 template <class VectorField_2, class Integrator_2>
 inline
-typename Stream_lines_2<VectorField_2, Integrator_2>::FT 
+typename Stream_lines_2<VectorField_2, Integrator_2>::FT
 Stream_lines_2<VectorField_2, Integrator_2>::find_smallest_circle(const Vertex_handle & pVertex_handle)
 {
   Face_circulator pFace_handle = m_DT.incident_faces(pVertex_handle);
@@ -351,8 +351,8 @@ Stream_lines_2<VectorField_2, Integrator_2>::find_smallest_circle(const Vertex_h
 }
 
 template <class VectorField_2, class Integrator_2>
-inline 
-typename Stream_lines_2<VectorField_2, Integrator_2>::Vertex_handle 
+inline
+typename Stream_lines_2<VectorField_2, Integrator_2>::Vertex_handle
 Stream_lines_2<VectorField_2, Integrator_2>::insert_point(const Point_2 & pPoint, FT& fDist,bool bDistanceCalculation)
 {
   Vertex_handle pVertex_handle = m_DT.insert(pPoint);
@@ -421,7 +421,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
       {
         if (insertion != insertion_step)
     {
-      stl.push_front(new_point); 
+      stl.push_front(new_point);
       number_of_points++;
       insertion++;
       list_of_point.push_front(new_point);
@@ -485,7 +485,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::integrate_forward(const Vector_fiel
       list_of_point.pop_front();
       m_Vertex_handle = insert_point(new_point, stl_vertices.front()->face(), dist, true);
     }
-        insertion_step =  (int) (((dist)-fSepStl_seed) / 
+        insertion_step =  (int) (((dist)-fSepStl_seed) /
                (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
         if (insertion_step < 0) insertion_step = 0;
         (bEnd) = (((bEnd))||(dist<separating_distance));
@@ -534,7 +534,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
       new_point = integrator(old_point,vector_field_2,false);
       bEnd = !vector_field_2.is_in_domain(new_point);
       FT dist_ = distance(ex_old_point,new_point);
-      bEnd = bEnd || dist_ < 0.9*vector_field_2.get_integration_step() || (new_point == old_point);/* to review */ 
+      bEnd = bEnd || dist_ < 0.9*vector_field_2.get_integration_step() || (new_point == old_point);/* to review */
       if(number_of_points > 30)
   bEnd = bEnd || ((distance(stl.front(), stl.back()))<vector_field_2.get_integration_step());
       //    bEnd = bEnd || (number_of_points > 3000);
@@ -550,7 +550,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
       {
         if (insertion != insertion_step)
     {
-      stl.push_back(new_point); 
+      stl.push_back(new_point);
       number_of_points++;
       insertion++;
       list_of_point.push_back(new_point);
@@ -575,7 +575,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
           m_Vertex_handle = insert_point(new_point, stl_vertices.back()->face(), dist,true);
         }
       // adaptive insertion order coefficient
-      insertion_step =  (int) (((dist)-fSepStl_seed) / 
+      insertion_step =  (int) (((dist)-fSepStl_seed) /
                  (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
       if (insertion_step < 0) insertion_step = 0;
       list_of_vertex.push_back(m_Vertex_handle);
@@ -617,7 +617,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::integrate_backward(const Vecto
       m_Vertex_handle = insert_point(new_point, stl_vertices.back()->face(), dist, true);
     }
         // adaptive insertion order coefficient
-        insertion_step =  (int) (((dist)-fSepStl_seed) / 
+        insertion_step =  (int) (((dist)-fSepStl_seed) /
                (std::max)((FT) sampling_step,vector_field_2.get_integration_step()));
         if (insertion_step < 0) insertion_step = 0;
         //        list_of_vertex.push_front(m_Vertex_handle);
@@ -736,7 +736,7 @@ pq_elements(const Vector_field_2 & vector_field_2, Vertex_container_2 stl_vertic
       else
         {
     Pq_next_l = m_Pq_element;
-    if (Pq_element_max_l.template get<3>().second <= Pq_next_l.template get<3>().second) 
+    if (Pq_element_max_l.template get<3>().second <= Pq_next_l.template get<3>().second)
       Pq_element_max_l = Pq_next_l;
     if ((Pq_current_l.template get<3>().second>=Pq_previous_l.template get<3>().second)
         &&(Pq_current_l.template get<3>().second>=Pq_next_l.template get<3>().second))
@@ -783,12 +783,12 @@ pq_elements(const Vector_field_2 & vector_field_2, Vertex_container_2 stl_vertic
 
 // get the next seed point
 template <class VectorField_2, class Integrator_2>
-inline 
+inline
 bool
 Stream_lines_2<VectorField_2, Integrator_2>::get_next_seed_point(FT &
                  distance, Point_2 & seed_point_)
 {
-  Vertex_handle v0, v1, v2; 
+  Vertex_handle v0, v1, v2;
   Face_handle fr;
   bool b0,b;
   Pq_element m_Pq_element;
@@ -808,7 +808,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::get_next_seed_point(FT &
   Biggest_circle = m_Pq_element;
   return b;
 }
-  
+
 template <class VectorField_2, class Integrator_2>
 typename Stream_lines_2<VectorField_2, Integrator_2>::Stream_line_iterator_2
 Stream_lines_2<VectorField_2, Integrator_2>::begin()
@@ -854,12 +854,12 @@ Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(std::ofstrea
   fw << "/L {moveto lineto stroke} bind def\n";
   fw << 0.5 << " setlinewidth\n";
   fw << 0.0 << " " << 0.0 << " " << 0.0 << " setrgbcolor\n";
-  
+
   for(it=stl_container_temp.begin(); it!=stl_container_temp.end(); ++it)
     {
       typename Point_container_2::iterator begin_point_iterator = (*it).begin();
       typename Point_container_2::iterator end_point_iterator = (*it).end();
-    
+
       FT i_prec = (*begin_point_iterator).x() - min_x;
       FT j_prec = (*begin_point_iterator).y() - min_y;
       begin_point_iterator++;
@@ -882,7 +882,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines_eps(std::ofstrea
 
 // output an stl file
 template <class VectorField_2, class Integrator_2>
-void 
+void
 Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(std::ofstream & fw)
 {
   typename Stream_line_container_2::iterator it;
@@ -906,7 +906,7 @@ Stream_lines_2<VectorField_2, Integrator_2>::print_stream_lines(std::ofstream & 
 }
 
 template <class VectorField_2, class Integrator_2>
-std::list<typename Stream_lines_2<VectorField_2, Integrator_2>::Point_2> 
+std::list<typename Stream_lines_2<VectorField_2, Integrator_2>::Point_2>
 Stream_lines_2<VectorField_2, Integrator_2>::get_pq()
 {
   std::list<Point_2> _list;

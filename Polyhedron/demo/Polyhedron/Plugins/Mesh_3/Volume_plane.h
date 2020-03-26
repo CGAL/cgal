@@ -59,7 +59,7 @@ struct z_tag {};
 
 template<typename Tag>
 class Volume_plane : public Volume_plane_interface, public Tag {
-private : 
+private :
   float tx, ty, tz;
 public:
  Volume_plane(float tx, float ty, float tz);
@@ -102,7 +102,7 @@ public:
 
   virtual RenderingMode renderingMode() const { return Flat; }
   bool supportsRenderingMode(RenderingMode m) const { return m == Flat; }
-  
+
   QString toolTip() const { return "Plane through a volume"; }
   QString name() const { return name(*this); }
 
@@ -138,7 +138,7 @@ private:
   static const char* vertexShader_bordures_source;
 
   static const char* fragmentShader_bordures_source;
-  
+
   static const char* vertexShader_source_comp;
 
   static const char* fragmentShader_source_comp;
@@ -212,7 +212,7 @@ private:
   }
   void drawRectangle(x_tag, bool is_loop) const {
 
-    
+
       v_rec.push_back(0.0f); v_rec.push_back(0.0f); v_rec.push_back(0.0f);
       v_rec.push_back(0.0f); v_rec.push_back((adim_ - 1) * yscale_); v_rec.push_back(0.0f);
       if(!is_loop){
@@ -309,7 +309,7 @@ private:
     c->setTranslationConstraint(CGAL::qglviewer::AxisPlaneConstraint::AXIS, CGAL::qglviewer::Vec(1.0f, 0.0f, 0.0f));
     return c;
   }
-  
+
   CGAL::qglviewer::Constraint* setConstraint(y_tag) {
     CGAL::qglviewer::AxisPlaneConstraint* c = new Length_constraint<1>(cdim_ * yscale_);
     c->setRotationConstraintType(CGAL::qglviewer::AxisPlaneConstraint::FORBIDDEN);
@@ -431,7 +431,7 @@ const char* Volume_plane<T>::fragmentShader_bordures_source =
 template<typename T>
 Volume_plane<T>::Volume_plane(float tx, float ty, float tz)
   : Volume_plane_interface(new CGAL::qglviewer::ManipulatedFrame),
-    tx(tx), ty(ty), tz(tz)    
+    tx(tx), ty(ty), tz(tz)
  {
     const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
     mFrame_->setPosition(offset.x, offset.y, offset.z);
@@ -461,7 +461,7 @@ void Volume_plane<T>::setData(unsigned int adim, unsigned int bdim, unsigned int
 template<typename T>
 Volume_plane<T>::~Volume_plane() {
   for(std::vector< std::pair< QOpenGLBuffer, unsigned int> >::iterator it = ebos.begin();
-      it != ebos.end(); ++it) { 
+      it != ebos.end(); ++it) {
       it->first.destroy();
   }
   program.release();
@@ -494,7 +494,7 @@ void Volume_plane<T>::draw(Viewer_interface *viewer) const {
       program_bordures = new QOpenGLShaderProgram(viewer);
       program_bordures->addShaderFromSourceCode(QOpenGLShader::Vertex,vertexShader_bordures_source);
       program_bordures->addShaderFromSourceCode(QOpenGLShader::Fragment,fragmentShader_bordures_source);
-      
+
       program_bordures->link();
     }
   }
@@ -606,14 +606,14 @@ void Volume_plane<T>::init(Viewer_interface* viewer) {
   // for each vertex
   std::vector< float > vertices;
   vertices.reserve(bdim_ * adim_ * 3);
-  for(unsigned int i = 0; i < adim_; ++i) 
+  for(unsigned int i = 0; i < adim_; ++i)
   {
     for(unsigned int j = 0; j < bdim_; ++j)
     {
       buildVertex(vertices, i, j);
     }
   }
-    
+
   assert(vertices.size() == (3 * adim_ * bdim_));
 
   vVBO.create();

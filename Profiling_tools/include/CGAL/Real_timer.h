@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,9 +19,9 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
 //
-// Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>  
+//
+// Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Matthias Baesken <baesken@informatik.uni-halle.de>
 
 #ifndef CGAL_REAL_TIMER_H
@@ -36,9 +36,9 @@ namespace CGAL {
 
 // SECTION: A Timer Measuring Real-Time
 // ========================================================================
-// 
+//
 // DEFINITION
-// 
+//
 // A timer `t' of type Real_timer is an object with a state. It is either
 // running or it is stopped. The state is controlled with `t.start()'
 // and `t.stop()'. The timer counts the time elapsed since its creation
@@ -79,7 +79,7 @@ public:
     double   precision()  const;
     // Returns timer precison. Computes it dynamically at first call.
     // Returns -1.0 if timer system call fails, which, for a proper coded
-    // test towards precision leads to an immediate stop of an otherwise 
+    // test towards precision leads to an immediate stop of an otherwise
     // infinite loop (fixed tolerance * total time >= precision).
     double   max BOOST_PREVENT_MACRO_SUBSTITUTION ()        const { return DBL_MAX; }
 };
@@ -109,8 +109,8 @@ inline void Real_timer::reset() {
     interv  = 0;
     elapsed = 0.0;
     if (running) {
-	started = get_real_time();
-	++ interv;
+        started = get_real_time();
+        ++ interv;
     } else {
         started = 0.0;
     }
@@ -119,7 +119,7 @@ inline void Real_timer::reset() {
 inline double Real_timer::time() const {
     if (running) {
         double t = get_real_time();
-	return elapsed + (t - started);
+        return elapsed + (t - started);
     }
     return elapsed;
 }

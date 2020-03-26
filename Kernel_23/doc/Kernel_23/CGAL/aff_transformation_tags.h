@@ -4,14 +4,14 @@ namespace CGAL {
 /*!
 \ingroup kernel_affine
 
-Tag class for affine transformations. 
+Tag class for affine transformations.
 
-\sa `CGAL::Aff_transformation_2<Kernel>` 
-\sa `CGAL::Aff_transformation_3<Kernel>` 
-\sa `CGAL::Reflection` 
-\sa `CGAL::Rotation` 
-\sa `CGAL::Scaling` 
-\sa `CGAL::Translation` 
+\sa `CGAL::Aff_transformation_2<Kernel>`
+\sa `CGAL::Aff_transformation_3<Kernel>`
+\sa `CGAL::Reflection`
+\sa `CGAL::Rotation`
+\sa `CGAL::Scaling`
+\sa `CGAL::Translation`
 
 */
 
@@ -28,14 +28,14 @@ namespace CGAL {
 /*!
 \ingroup kernel_affine
 
-Tag class for affine transformations. 
+Tag class for affine transformations.
 
-\sa `CGAL::Aff_transformation_2<Kernel>` 
-\sa `CGAL::Aff_transformation_3<Kernel>` 
-\sa `CGAL::Identity_transformation` 
-\sa `CGAL::Rotation` 
-\sa `CGAL::Scaling` 
-\sa `CGAL::Translation` 
+\sa `CGAL::Aff_transformation_2<Kernel>`
+\sa `CGAL::Aff_transformation_3<Kernel>`
+\sa `CGAL::Identity_transformation`
+\sa `CGAL::Rotation`
+\sa `CGAL::Scaling`
+\sa `CGAL::Translation`
 
 */
 
@@ -52,14 +52,14 @@ namespace CGAL {
 /*!
 \ingroup kernel_affine
 
-Tag class for affine transformations. 
+Tag class for affine transformations.
 
-\sa `CGAL::Aff_transformation_2<Kernel>` 
-\sa `CGAL::Aff_transformation_3<Kernel>` 
-\sa `CGAL::Identity_transformation` 
-\sa `CGAL::Rotation` 
-\sa `CGAL::Scaling` 
-\sa `CGAL::Translation` 
+\sa `CGAL::Aff_transformation_2<Kernel>`
+\sa `CGAL::Aff_transformation_3<Kernel>`
+\sa `CGAL::Identity_transformation`
+\sa `CGAL::Rotation`
+\sa `CGAL::Scaling`
+\sa `CGAL::Translation`
 
 */
 
@@ -76,14 +76,14 @@ namespace CGAL {
 /*!
 \ingroup kernel_affine
 
-Tag class for affine transformations. 
+Tag class for affine transformations.
 
-\sa `CGAL::Aff_transformation_2<Kernel>` 
-\sa `CGAL::Aff_transformation_3<Kernel>` 
-\sa `CGAL::Identity_transformation` 
-\sa `CGAL::Reflection` 
-\sa `CGAL::Rotation` 
-\sa `CGAL::Translation` 
+\sa `CGAL::Aff_transformation_2<Kernel>`
+\sa `CGAL::Aff_transformation_3<Kernel>`
+\sa `CGAL::Identity_transformation`
+\sa `CGAL::Reflection`
+\sa `CGAL::Rotation`
+\sa `CGAL::Translation`
 
 */
 
@@ -100,14 +100,14 @@ namespace CGAL {
 /*!
 \ingroup kernel_affine
 
-Tag class for affine transformations. 
+Tag class for affine transformations.
 
-\sa `CGAL::Aff_transformation_2<Kernel>` 
-\sa `CGAL::Aff_transformation_3<Kernel>` 
-\sa `CGAL::Identity_transformation` 
-\sa `CGAL::Reflection` 
-\sa `CGAL::Rotation` 
-\sa `CGAL::Scaling` 
+\sa `CGAL::Aff_transformation_2<Kernel>`
+\sa `CGAL::Aff_transformation_3<Kernel>`
+\sa `CGAL::Identity_transformation`
+\sa `CGAL::Reflection`
+\sa `CGAL::Rotation`
+\sa `CGAL::Scaling`
 
 */
 

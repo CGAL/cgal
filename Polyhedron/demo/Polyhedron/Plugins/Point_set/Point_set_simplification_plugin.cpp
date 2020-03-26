@@ -151,7 +151,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
   double maximumSurfaceVariation() const { return m_maximumSurfaceVariation->value(); }
 
 public Q_SLOTS:
-  
+
   void on_Random_toggled (bool toggled)
   {
     m_randomSimplificationPercentage->setEnabled (toggled);
@@ -224,23 +224,23 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
 
       Grid_simplify_functor functor (points, dialog.gridCellSize() * average_spacing);
       run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Grid simplyfing...", mw);
-      
+
       // Computes points to remove by Grid Clustering
       first_point_to_remove = *functor.result;
-        
+
     }
     else
     {
       std::cerr << "Point set hierarchy simplification (cluster size = " << dialog.maximumClusterSize()
-		<< ", maximum variation = " << dialog.maximumSurfaceVariation() << ")...\n";
+                << ", maximum variation = " << dialog.maximumSurfaceVariation() << ")...\n";
 
       // Computes points to remove by Hierarchy
       Hierarchy_simplify_functor functor (points, dialog.maximumClusterSize(),
                                           dialog.maximumSurfaceVariation());
       run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Hierarchy simplyfing...", mw);
-      
+
       first_point_to_remove = *functor.result;
-        
+
     }
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());

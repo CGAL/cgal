@@ -44,7 +44,7 @@ int testAnalyzeHeader(char *magic,const char *name);
 /** creates an return the file format structure associated with the Analyze file format */
 PTRIMAGE_FORMAT createAnalyzeFormat();
 
-/* 
+/*
    return:
    -1: error
     1: success
@@ -52,7 +52,7 @@ PTRIMAGE_FORMAT createAnalyzeFormat();
 int writeAnalyze( char *basename, _image* im ) ;
 
 
-/* 
+/*
    return:
    -1: error
     1: success
@@ -61,7 +61,7 @@ int writeAnalyzeHeader( const _image* im ) ;
 
 
 
-/* 
+/*
    return:
    -1: error
     1: success

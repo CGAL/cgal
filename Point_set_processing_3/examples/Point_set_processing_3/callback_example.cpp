@@ -41,7 +41,7 @@ struct Progress_to_std_cerr_callback
     t_start = timer.time();
     t_latest = t_start;
   }
-  
+
   bool operator()(double advancement) const
   {
     // Avoid calling time() at every single iteration, which could
@@ -55,7 +55,7 @@ struct Progress_to_std_cerr_callback
     {
       std::cerr << "\r" // Return at the beginning of same line and overwrite
                 << name << ": " << int(advancement * 100) << "%";
-      
+
       if (advancement == 1)
         std::cerr << std::endl;
       t_latest = t;
@@ -69,7 +69,7 @@ struct Progress_to_std_cerr_callback
 int main (int argc, char* argv[])
 {
   int N = (argc > 1) ? boost::lexical_cast<int>(argv[1]) : 1000;
-  
+
   // Generate N points on a sphere of radius 100.
   std::vector<Point> points;
   points.reserve (N);

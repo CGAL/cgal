@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert
- 
+
 
 #ifndef CGAL__TEST_FCT_SEGMENT_2_H
 #define CGAL__TEST_FCT_SEGMENT_2_H
@@ -102,7 +102,7 @@ _test_fct_segment_2(const R& )
  assert( CGAL::compare_slope(l9, l10) == CGAL::SMALLER );
  assert( CGAL::compare_slope(l10, l9) == CGAL::LARGER );
  assert( CGAL::compare_slope(l11, l10) == CGAL::LARGER );
- 
+
  // vertical and negative slope
  assert( CGAL::compare_slope(l2, l9) == CGAL::LARGER );
  assert( CGAL::compare_slope(l9, l2) == CGAL::SMALLER );

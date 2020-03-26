@@ -155,7 +155,7 @@ protected:
   void updateEnvelope(bool lower,
                       CGAL::Arr_algebraic_segment_traits_2<Coefficient_>
                       traits);
-  
+
   Construct_x_monotone_subcurve_2< Traits > construct_x_monotone_subcurve_2;
   Arrangement* arr;
   CGAL::Qt::CurveGraphicsItem< Traits >* lowerEnvelope;

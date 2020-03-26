@@ -28,12 +28,12 @@ typedef CGAL::Shape_detection_3::Sphere<Traits>           Sphere;
 typedef CGAL::Shape_detection_3::Torus<Traits>            Torus;
 
 
-int main() 
+int main()
 {
   // Points with normals.
   Pwn_vector points;
 
-  // Loads point set from a file. 
+  // Loads point set from a file.
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
   std::ifstream stream("data/cube.pwn");
@@ -55,7 +55,7 @@ int main()
 
   // Provides the input data.
   ransac.set_input(points);
-    
+
   // Register shapes for detection
   ransac.add_shape_factory<Plane>();
   ransac.add_shape_factory<Sphere>();
@@ -68,20 +68,20 @@ int main()
 
   // Sets probability to miss the largest primitive at each iteration.
   parameters.probability = 0.05;
- 
+
   // Detect shapes with at least 500 points.
   parameters.min_points = 200;
 
   // Sets maximum Euclidean distance between a point and a shape.
   parameters.epsilon = 0.002;
- 
+
   // Sets maximum Euclidean distance between points to be clustered.
   parameters.cluster_epsilon = 0.01;
- 
+
   // Sets maximum normal deviation.
-  // 0.9 < dot(surface_normal, point_normal); 
-  parameters.normal_threshold = 0.9;   
-  
+  // 0.9 < dot(surface_normal, point_normal);
+  parameters.normal_threshold = 0.9;
+
   // Detects shapes
   ransac.detect(parameters);
 
@@ -89,21 +89,21 @@ int main()
    std::cout << ransac.shapes().end() - ransac.shapes().begin() << " detected shapes, "
      << ransac.number_of_unassigned_points()
      << " unassigned points." << std::endl;
-  
+
   // Efficient_ransac::shapes() provides
   // an iterator range to the detected shapes.
   Efficient_ransac::Shape_range shapes = ransac.shapes();
   Efficient_ransac::Shape_range::iterator it = shapes.begin();
 
   while (it != shapes.end()) {
-    
+
     // Get specific parameters depending on detected shape.
     if (Plane* plane = dynamic_cast<Plane*>(it->get()))
       {
         Kernel::Vector_3 normal = plane->plane_normal();
         std::cout << "Plane with normal " << normal
                 << std::endl;
-        
+
         // Plane shape can also be converted to Kernel::Plane_3
         std::cout << "Kernel::Plane_3: " << static_cast<Kernel::Plane_3>(*plane) << std::endl;
       }
@@ -121,7 +121,7 @@ int main()
         // This function is available for any type of shape.
         std::cout << (*it)->info() << std::endl;
       }
-    
+
     // Proceeds with next detected shape.
     it++;
   }

@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
   option(CGAL_ACTIVATE_CONCURRENT_MESH_3
     "Activate parallelism in Mesh_3"
     OFF)
-    
+
   # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
   if( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
     add_definitions( -DCGAL_CONCURRENT_MESH_3 )
@@ -42,7 +42,7 @@ if ( CGAL_FOUND )
       find_package( TBB )
     endif( LINK_WITH_TBB )
   endif()
-  
+
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
   if (NOT EIGEN3_FOUND)
@@ -51,7 +51,7 @@ if ( CGAL_FOUND )
   else()
     include( ${EIGEN3_USE_FILE} )
   endif()
-  
+
   find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
   if(VTK_FOUND)
     if(VTK_USE_FILE)
@@ -96,7 +96,7 @@ if ( CGAL_FOUND )
         cgal_add_test( mesh_3D_gray_vtk_image )
         add_to_cached_list( CGAL_EXECUTABLE_TARGETS mesh_3D_gray_vtk_image )
       endif()
- 
+
       create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
       create_single_source_cgal_program( "mesh_3D_gray_image_multiple_values.cpp" )
       create_single_source_cgal_program( "mesh_3D_image_with_features.cpp" )

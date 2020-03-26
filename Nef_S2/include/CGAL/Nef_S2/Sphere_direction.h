@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
@@ -55,30 +55,30 @@ typedef Sphere_direction<R_> Self;
 Sphere_direction() : Base() {}
 /*{\Mcreate creates some direction.}*/
 
-Sphere_direction(const Sphere_circle<R>& c) 
+Sphere_direction(const Sphere_circle<R>& c)
 /*{\Mcreate creates the direction corresponding to the circle |c|.}*/
-  : Base(c) {} 
+  : Base(c) {}
 
-Sphere_direction(const Sphere_point<R>& p, const Sphere_point<R>&q) 
-  : Base(Point_3(0,0,0),p,q) 
+Sphere_direction(const Sphere_point<R>& p, const Sphere_point<R>&q)
+  : Base(Point_3(0,0,0),p,q)
 /*{\Mcreate creates a direction that describes the orientation of
 the great circle through $p$ and $q$ (oriented such that the segment
 $pq$ is the shorter one of the two possible ones. \precond $p$ and $q$
-are not opposite on $S_2$.}*/ 
-{ CGAL_assertion(p!=q.opposite()); 
+are not opposite on $S_2$.}*/
+{ CGAL_assertion(p!=q.opposite());
   Point_3 p1(0,0,0), p4 = CGAL::ORIGIN + ((Base*) this)->orthogonal_vector();
   if ( CGAL::orientation(p1,p,q,p4) != CGAL::POSITIVE )
     *this = Sphere_direction(opposite());
 }
 
-Sphere_direction(const typename R::Plane_3& h) 
+Sphere_direction(const typename R::Plane_3& h)
 /*{\Xcreate creates the direction corresponding to the plane |h|.
 \precond |h| contains the origin.}*/
- : Base(h) { CGAL_assertion(h.d() == 0); } 
+ : Base(h) { CGAL_assertion(h.d() == 0); }
 
 /*{\Moperations 4 2}*/
 
-Sphere_direction<R> opposite() const 
+Sphere_direction<R> opposite() const
 /*{\Mop returns the opposite of |\Mvar|.}*/
 { return Base::opposite(); }
 
@@ -89,12 +89,12 @@ Plane_3 plane() const { return Base(*this); }
 
 
 /* We have:
-   1) all directions fixed at p 
+   1) all directions fixed at p
    2) d1==d3 possible
    return true iff d1,d2,d3 are stricly ccw ordered around p
    Note: Sphere_directions are Plane_3
          we therefore compare the normal vectors of the planes
-         that underly the directions d1,d2,d3 in the plane 
+         that underly the directions d1,d2,d3 in the plane
          through 0 and orthogonal to the vector p-0
  */
 
@@ -104,10 +104,10 @@ bool strictly_ordered_ccw_at(const Sphere_point<R>& p,
   const Sphere_direction<R>& d2,
   const Sphere_direction<R>& d3)
 { CGAL_assertion(d1.has_on(p) && d2.has_on(p) && d3.has_on(p));
-  typename R::Point_3 p0(0,0,0); 
-  typename R::Point_3 p1(CGAL::ORIGIN + d1.orthogonal_vector()); 
-  typename R::Point_3 p2(CGAL::ORIGIN + d2.orthogonal_vector()); 
-  typename R::Point_3 p3(CGAL::ORIGIN + d3.orthogonal_vector()); 
+  typename R::Point_3 p0(0,0,0);
+  typename R::Point_3 p1(CGAL::ORIGIN + d1.orthogonal_vector());
+  typename R::Point_3 p2(CGAL::ORIGIN + d2.orthogonal_vector());
+  typename R::Point_3 p3(CGAL::ORIGIN + d3.orthogonal_vector());
 
   if ( d1 == d3 ) return false;
   if ( CGAL::orientation(p0,p,p1,p3) == CGAL::POSITIVE ) {

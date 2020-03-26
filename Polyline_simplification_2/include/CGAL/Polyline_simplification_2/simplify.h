@@ -73,34 +73,34 @@ public:
   typedef typename PCT::Vertex_circulator Vertex_circulator;
 
   typedef typename PCT::Geom_traits::FT FT;
-  
+
   PCT& pct;
   CostFunction cost;
   StopFunction stop;
   std::size_t pct_initial_number_of_vertices, number_of_unremovable_vertices;
 
-  
-  struct Compare_cost 
-  { 
-    bool operator() ( Vertices_in_constraint_iterator const& x, 
-                      Vertices_in_constraint_iterator const& y ) const 
-    { 
-      return (*x)->cost() < (*y)->cost(); 
+
+  struct Compare_cost
+  {
+    bool operator() ( Vertices_in_constraint_iterator const& x,
+                      Vertices_in_constraint_iterator const& y ) const
+    {
+      return (*x)->cost() < (*y)->cost();
     }
   } ;
-  
+
   struct Id_map : public boost::put_get_helper<std::size_t, Id_map>
-  { 
+  {
     typedef boost::readable_property_map_tag category;
     typedef std::size_t                      value_type;
     typedef value_type                       reference;
     typedef Vertices_in_constraint_iterator  key_type;
-    
+
     reference operator[] ( key_type const& x ) const { return x.base()->id ; }
   } ;
-  
+
   typedef CGAL::Modifiable_priority_queue<Vertices_in_constraint_iterator,Compare_cost,Id_map> MPQ ;
-  
+
   MPQ* mpq;
 
   Polyline_simplification_2(PCT& pct, CostFunction cost, StopFunction stop)
@@ -168,12 +168,12 @@ public:
           ++n;
         } else {
           // no need to set the costs as this vertex is not in the priority queue
-        } 
+        }
       }
     }
     return n;
-  }  
-  
+  }
+
   void
   initialize_costs()
   {
@@ -191,13 +191,13 @@ public:
     if(! (*it)->is_removable()) {
       return false;
     }
-    
+
     Vertex_handle vh = *it;
     Vertices_in_constraint_iterator u = boost::prior(it);
     Vertex_handle uh = *u;
     Vertices_in_constraint_iterator w = boost::next(it);
     Vertex_handle wh = *w;
-    
+
     typename Geom_traits::Orientation_2 orientation_2 = pct.geom_traits().orientation_2_object();
     CGAL::Orientation o = orientation_2(uh->point(), vh->point(), wh->point());
     if(o == CGAL::COLLINEAR){
@@ -206,8 +206,8 @@ public:
     if(o == CGAL::LEFT_TURN){
       std::swap(uh,wh);
     }
-    
-    // uh, vh, wh perform a right turn 
+
+    // uh, vh, wh perform a right turn
     const Point& up = uh->point();
     const Point& wp = wh->point();
     Vertex_circulator circ = pct.incident_vertices(vh);
@@ -242,7 +242,7 @@ public:
     }
     return id;
   }
-  
+
   int
   initialize_indices()
   {
@@ -253,7 +253,7 @@ public:
     }
     return id;
   }
-  
+
 bool
 operator()()
 {
@@ -268,7 +268,7 @@ operator()()
   if(is_removable(v)){
     Vertices_in_constraint_iterator u = boost::prior(v), w = boost::next(v);
     pct.simplify(v);
-    
+
     if((*u)->is_removable()){
       boost::optional<FT> dist = cost(pct, u);
       if(! dist){
@@ -286,7 +286,7 @@ operator()()
         }
       }
     }
-    
+
     if((*w)->is_removable()){
       boost::optional<FT> dist = cost(pct, w);
       if(! dist){
@@ -420,7 +420,7 @@ Simplifies an open or closed polyline given as an iterator range of 2D \cgal poi
 /*!
 \ingroup  PkgPolylineSimplification2Functions
 
-Simplifies a single polyline in a triangulation with polylines as constraints. 
+Simplifies a single polyline in a triangulation with polylines as constraints.
 
 \param ct The underlying constrained Delaunay triangulation which embeds the polyline constraints
 \param cid The constraint identifier of the polyline constraint to simplify
@@ -485,7 +485,7 @@ simplify(CGAL::Constrained_triangulation_plus_2<CDT>& ct,
 
 
 } // namespace polyline_simplification_2
-} // namespace CGAL 
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

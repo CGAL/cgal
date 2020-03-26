@@ -30,14 +30,14 @@
 
 namespace CGAL {
 
-template <class Traits_, class HalfedgeDSItems, 
+template <class Traits_, class HalfedgeDSItems,
           class Alloc>
 class HalfedgeDS_default;
 } // namespace CGAL
 
 namespace boost {
 
-  
+
 
 template<class T, class I, class A>
 struct graph_traits< CGAL::HalfedgeDS_default<T,I,A> >
@@ -54,7 +54,7 @@ struct graph_traits< CGAL::HalfedgeDS_default<T,I,A> const >
 } // namespace boost
 
 namespace CGAL {
-  
+
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::vertices_size_type
 num_vertices(const HalfedgeDS_default<T,I,A>& p)
@@ -183,7 +183,7 @@ out_edges( typename boost::graph_traits< HalfedgeDS_default<T,I,A> const>::verte
 
 //
 // MutableHalfedgeGraph
-// 
+//
 
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::vertex_descriptor
@@ -212,9 +212,9 @@ remove_vertex(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::vertex_
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::edge_descriptor
 add_edge(HalfedgeDS_default<T,I,A>& g)
-{ 
+{
   return typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::edge_descriptor(
-    g.edges_push_back(typename HalfedgeDS_default<T,I,A>::Halfedge(), 
+    g.edges_push_back(typename HalfedgeDS_default<T,I,A>::Halfedge(),
                             typename HalfedgeDS_default<T,I,A>::Halfedge()));
 }
 
@@ -254,7 +254,7 @@ set_next(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_des
 }
 
 //
-// MutableFaceGraph 
+// MutableFaceGraph
 //
 
 template<class T, class I, class A>
@@ -274,7 +274,7 @@ add_face(InputIterator begin, InputIterator end, HalfedgeDS_default<T,I,A>& g)
 template<class T, class I, class A>
 void
 remove_face(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::face_descriptor f
-            , HalfedgeDS_default<T,I,A>& g) 
+            , HalfedgeDS_default<T,I,A>& g)
 {
   g.faces_erase(f);
 }
@@ -323,7 +323,7 @@ template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::edge_descriptor
 edge(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_descriptor h
      , const HalfedgeDS_default<T,I,A>&)
-{ 
+{
   return typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::edge_descriptor(h);
 }
 
@@ -331,7 +331,7 @@ template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_descriptor
 halfedge(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::edge_descriptor e
          , const HalfedgeDS_default<T,I,A>&)
-{ 
+{
   return e.halfedge();
 }
 
@@ -339,7 +339,7 @@ template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_descriptor
 halfedge(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::vertex_descriptor v
          , const HalfedgeDS_default<T,I,A>&)
-{ 
+{
   return v->halfedge();
 }
 
@@ -349,7 +349,7 @@ std::pair< typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_d
 halfedge(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::vertex_descriptor u
          , typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::vertex_descriptor v
          , const HalfedgeDS_default<T,I,A>& g)
-{ 
+{
   std::pair< typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::edge_descriptor
              , bool> e = edge(u, v, g);
   return std::make_pair(e.first.halfedge(), e.second);
@@ -420,7 +420,7 @@ num_halfedges(const HalfedgeDS_default<T,I,A>& p)
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::face_descriptor
 face(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_descriptor h
-     , const HalfedgeDS_default<T,I,A>&) 
+     , const HalfedgeDS_default<T,I,A>&)
 {
   return h->face();
 }
@@ -428,7 +428,7 @@ face(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_descrip
 template<class T, class I, class A>
 typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::halfedge_descriptor
 halfedge(typename boost::graph_traits< HalfedgeDS_default<T,I,A> >::face_descriptor f
-         , const HalfedgeDS_default<T,I,A>&) 
+         , const HalfedgeDS_default<T,I,A>&)
 {
   return f->halfedge();
 }
@@ -451,7 +451,7 @@ num_faces(const HalfedgeDS_default<T,I,A>& p)
 
 template <class T>
 struct HDS_property_map;
-  
+
 template <>
 struct HDS_property_map<vertex_point_t>
 {

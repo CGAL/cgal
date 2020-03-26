@@ -88,13 +88,13 @@ namespace CGAL {
     GMap_dart_const_iterator_of_orbit
     (const GMap_dart_iterator_of_orbit<Map_,Alpha...>& it):
       Base(*const_cast<const Map_*>(it.get_combinatorial_map()),
-	   it.get_first_dart())
+           it.get_first_dart())
     {}
   };
 #else
   //****************************************************************************
   template<typename Map_,int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-	   int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+           int B6=-1,int B7=-1,int B8=-1,int B9=-1>
     class GMap_dart_const_iterator_basic_of_orbit:
     public GMap_dart_iterator_basic_of_orbit_generic<Map_,true,B1,B2,B3,B4,
                                                      B5,B6,B7,B8,B9>
@@ -130,7 +130,7 @@ namespace CGAL {
     };
   //****************************************************************************
   template<typename Map_,int B1=-1,int B2=-1,int B3=-1,int B4=-1,int B5=-1,
-	   int B6=-1,int B7=-1,int B8=-1,int B9=-1>
+           int B6=-1,int B7=-1,int B8=-1,int B9=-1>
     class GMap_dart_const_iterator_of_orbit:
     public GMap_dart_iterator_of_orbit_generic<Map_,true,B1,B2,B3,B4,
                                                B5,B6,B7,B8,B9>
@@ -201,7 +201,7 @@ namespace CGAL {
     {}
     /* Main constructor. */
     GMap_dart_const_iterator_basic_of_cell(const Map_& amap,
-                                           Dart_const_handle adart, 
+                                           Dart_const_handle adart,
                                            size_type amark):
       Base(amap,adart,amark)
     {}
@@ -223,14 +223,14 @@ namespace CGAL {
 
     /* Main constructor. */
     GMap_dart_const_iterator_of_cell(const Map_& amap,
-				     Dart_const_handle adart):
+                                     Dart_const_handle adart):
       Base(amap,adart)
     {}
     /// Constructor from non const version.
     GMap_dart_const_iterator_of_cell
     (const GMap_dart_iterator_of_cell<Map_,i,d,false>& it):
       Base(*const_cast<const Map_*>(it.get_combinatorial_map()),
-	   it.get_first_dart())
+           it.get_first_dart())
     {}
   };
   //****************************************************************************
@@ -245,20 +245,20 @@ namespace CGAL {
 
     /* Main constructor. */
     GMap_dart_const_iterator_basic_of_involution(const Map_& amap,
-						 Dart_const_handle adart):
+                                                 Dart_const_handle adart):
       Base(amap,adart)
     {}
     /* Main constructor. */
     GMap_dart_const_iterator_basic_of_involution(const Map_& amap,
-						 Dart_const_handle adart,
-						 size_type amark):
+                                                 Dart_const_handle adart,
+                                                 size_type amark):
       Base(amap,adart,amark)
     {}
     /// Constructor from non const version.
     GMap_dart_const_iterator_basic_of_involution
     (const GMap_dart_iterator_basic_of_involution<Map_,i,d,false>& it):
       Base(*const_cast<const Map_*>(it.get_combinatorial_map()),
-	   it.get_first_dart(), it.mmark_number)
+           it.get_first_dart(), it.mmark_number)
     {}
   };
   //****************************************************************************
@@ -273,14 +273,14 @@ namespace CGAL {
 
     /* Main constructor. */
     GMap_dart_const_iterator_of_involution(const Map_& amap,
-					   Dart_const_handle adart):
+                                           Dart_const_handle adart):
       Base(amap,adart)
     {}
     /// Constructor from non const version.
     GMap_dart_const_iterator_of_involution
     (const GMap_dart_iterator_of_involution<Map_,i,d,false>& it):
       Base(*const_cast<const Map_*>(it.get_combinatorial_map()),
-	   it.get_first_dart())
+           it.get_first_dart())
     {}
   };
   //****************************************************************************

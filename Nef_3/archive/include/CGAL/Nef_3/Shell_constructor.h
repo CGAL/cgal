@@ -12,10 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
+// $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
@@ -45,17 +45,17 @@ class Shell_constructor : public Modifier_base<typename Nef3::SNC_structure> {
 
 
   bool SNC_io_parser<EW>::check_sep(const char* sep) const {
-    char c; 
+    char c;
     do in.get(c); while (isspace(c));
-    while (*sep != '\0') { 
+    while (*sep != '\0') {
       if (*sep != c) {
-	in.putback(c);
-	return false;
+        in.putback(c);
+        return false;
       }
       ++sep; in.get(c);
     }
     in.putback(c);
-    return true;  
+    return true;
   }
 
   void add_sedge(SNC_structure& snc, int prev, int cur, int next) {
@@ -69,10 +69,10 @@ class Shell_constructor : public Modifier_base<typename Nef3::SNC_structure> {
     SVertex_handle sv1, sv2;
     for(sv = v->svertices_begin(); sv != v->svertices_end(); ++sv)
       if(sv->point() == sp1)
-	sv1 = sv;
+        sv1 = sv;
       else if(sv->point() == sp2)
-	sv2 = sv;
-	
+        sv2 = sv;
+
     SM_decorator(&*v);
     if(sv1 == SVertex_handle())
       sv1 = SM.new_svertex(sp1);
@@ -85,11 +85,11 @@ class Shell_constructor : public Modifier_base<typename Nef3::SNC_structure> {
   Vertex_handle read_vertex(SNC_structure& snc) {
     RT hx, hy, hz;
     in >> hx >> hy >> hz;;
-    return v(snc.new_vertex(Point_3(hx,hy,hz,1),true));  
+    return v(snc.new_vertex(Point_3(hx,hy,hz,1),true));
   }
-  
+
   void read_facet(SNC_structure& snc) {
-    int n, prev, cur, next, first, second; 
+    int n, prev, cur, next, first, second;
     in >> n;
     CGAL_assertion(n > 2);
     in >> first;
@@ -110,19 +110,19 @@ class Shell_constructor : public Modifier_base<typename Nef3::SNC_structure> {
  public:
   Shell_constructor(std::istream& instr) :
     in(instr) {}
-    
+
     void operator()(SNC_structure& snc) {
-      if (!check_sep("OFF"))  
-	CGAL_error_msg("OFF header is missing!");
+      if (!check_sep("OFF"))
+        CGAL_error_msg("OFF header is missing!");
       int nv, nf, x;
       in >> nv;
       in >> nf;
       in >> x;
       Vertex_of.reserve(vn);
       for(x=0; x<nv; ++nv)
-	Vertex_of[nv] = read_vertex(snc);
+        Vertex_of[nv] = read_vertex(snc);
       for(x=0; x<vf; ++nf)
-	read_facet(snc);
+        read_facet(snc);
     }
 };
 

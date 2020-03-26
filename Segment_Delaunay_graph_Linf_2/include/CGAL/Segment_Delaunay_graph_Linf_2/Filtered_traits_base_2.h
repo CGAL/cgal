@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -55,8 +55,8 @@ namespace CGAL {
 //-----------------------------------------------------------------------
 
 template<class CK_t, class CK_MTag, class EK_t, class EK_MTag,
-	 class FK_t, class FK_MTag, class C2E_t, class C2F_t,
-	 class ITag>
+         class FK_t, class FK_MTag, class C2E_t, class C2F_t,
+         class ITag>
 class Segment_Delaunay_graph_Linf_filtered_traits_base_2
  : public Segment_Delaunay_graph_filtered_traits_base_2
             <CK_t, CK_MTag, EK_t, EK_MTag,
@@ -65,10 +65,10 @@ class Segment_Delaunay_graph_Linf_filtered_traits_base_2
 private:
   typedef
   Segment_Delaunay_graph_Linf_filtered_traits_base_2<CK_t, CK_MTag,
-						EK_t, EK_MTag,
-						FK_t, FK_MTag,
-						C2E_t, C2F_t,
-						ITag>  Self;
+                                                EK_t, EK_MTag,
+                                                FK_t, FK_MTag,
+                                                C2E_t, C2F_t,
+                                                ITag>  Self;
 
   typedef
   Segment_Delaunay_graph_filtered_traits_base_2
@@ -215,16 +215,16 @@ public:
   // vertex, bisector, and Voronoi circle
   typedef
   Filtered_construction<CK_Construct_svd_vertex_2,
-			EK_Construct_svd_vertex_2,
-			FK_Construct_svd_vertex_2,
-			C2E, C2F, E2C, F2C>
+                        EK_Construct_svd_vertex_2,
+                        FK_Construct_svd_vertex_2,
+                        C2E, C2F, E2C, F2C>
   Construct_svd_vertex_2;
 
   //typedef
   //Filtered_construction<CK_Construct_sdg_bisector_2,
-  //			EK_Construct_sdg_bisector_2,
-  //			FK_Construct_sdg_bisector_2,
-  //			C2E, C2F, E2C, F2C>
+  //                        EK_Construct_sdg_bisector_2,
+  //                        FK_Construct_sdg_bisector_2,
+  //                        C2E, C2F, E2C, F2C>
   //Construct_sdg_bisector_2;
 
   // Linf traits contain bisector constructions
@@ -376,27 +376,27 @@ public:
 
   typedef
   Filtered_predicate<EK_Oriented_side_of_bisector_2,
-		     FK_Oriented_side_of_bisector_2, C2E, C2F>
+                     FK_Oriented_side_of_bisector_2, C2E, C2F>
   Oriented_side_of_bisector_2;
 
   typedef
   Filtered_predicate<EK_Vertex_conflict_2,
-		     FK_Vertex_conflict_2, C2E, C2F>
+                     FK_Vertex_conflict_2, C2E, C2F>
   Vertex_conflict_2;
 
   typedef
   Filtered_predicate<EK_Finite_edge_interior_conflict_2,
-		     FK_Finite_edge_interior_conflict_2, C2E, C2F>
+                     FK_Finite_edge_interior_conflict_2, C2E, C2F>
   Finite_edge_interior_conflict_2;
 
   typedef
   Filtered_predicate<EK_Infinite_edge_interior_conflict_2,
-		     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
+                     FK_Infinite_edge_interior_conflict_2, C2E, C2F>
   Infinite_edge_interior_conflict_2;
 
   //typedef
   //Filtered_predicate<EK_Is_degenerate_edge_2,
-  //		     FK_Is_degenerate_edge_2, C2E, C2F>
+  //                     FK_Is_degenerate_edge_2, C2E, C2F>
   //Is_degenerate_edge_2;
 
 private:

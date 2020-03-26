@@ -1,4 +1,4 @@
-// Copyright (c) 2007 
+// Copyright (c) 2007
 // GeometryFactory (France),
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
@@ -20,12 +20,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //                 Lutz Kettner <kettner@mpi-sb.mpg.de>
 //                 Sylvain Pion
-//                 Fernando Cacciola <fernando.cacciola@geometryfactory.com> 
+//                 Fernando Cacciola <fernando.cacciola@geometryfactory.com>
 
 #ifndef CGAL_ITERATOR_TRANSFORM_H
 #define CGAL_ITERATOR_TRANSFORM_H 1
@@ -83,7 +83,7 @@ public:
   Iterator  current_iterator() const { return nt;}
   bool      operator==( const Self& i) const { return ( nt == i.nt); }
   bool      operator!=( const Self& i) const { return !(*this == i); }
-  
+
   struct Proxy
   {
       Proxy(const reference r) : ref(r) {}
@@ -95,13 +95,13 @@ public:
   {
       return Proxy(Fct()(*nt));
   }
-  
-  reference operator* () const 
+
+  reference operator* () const
   {
     Fct fct;
     return fct(*nt);
   }
-  
+
   Self&     operator++() {
     ++nt;
     return *this;

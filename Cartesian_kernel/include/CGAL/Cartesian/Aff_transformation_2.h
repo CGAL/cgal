@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Lutz Kettner
 
@@ -64,7 +64,7 @@ class Aff_transformationC2
 
 public:
   typedef R_                                R;
-   
+
   Aff_transformationC2()
   {
     initialize_with(Aff_transformation_repC2<R>(FT(1), FT(0), FT(0), FT(1)));
@@ -130,15 +130,15 @@ public:
   }
 
   Point_2
-  transform(const Point_2 &p) const 
-  { return this->Ptr()->transform(p); } 
+  transform(const Point_2 &p) const
+  { return this->Ptr()->transform(p); }
 
   Point_2
   operator()(const Point_2 &p) const
   { return transform(p); }
 
   Vector_2
-  transform(const Vector_2 &v) const 
+  transform(const Vector_2 &v) const
   { return this->Ptr()->transform(v); }
 
   Vector_2
@@ -178,7 +178,7 @@ public:
 
   std::ostream &
   print(std::ostream &os) const;
-  
+
   bool operator==(const Aff_transformationC2 &t)const
   {
     for(int i=0; i<3; ++i)
@@ -187,12 +187,12 @@ public:
           return false;
     return true;
   }
-  
+
   bool operator!=(const Aff_transformationC2 &t)const
   {
     return !(*this == t);
   }
-  
+
 };
 
 template < class R >

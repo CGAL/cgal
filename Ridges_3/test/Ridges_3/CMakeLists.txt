@@ -21,21 +21,21 @@ if ( CGAL_FOUND )
   else()
     include( ${EIGEN3_USE_FILE} )
   endif()
-  
-  
+
+
   if(EIGEN3_FOUND OR LAPACK_FOUND)
 
     create_single_source_cgal_program( "ridge_test.cpp" )
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)
-  
+
     message(STATUS "NOTICE: This program requires either Eigen 3.1 (or greater) or LAPACK, and will not be compiled.")
 
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
 else()
-  
+
   message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

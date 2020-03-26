@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -133,7 +133,7 @@ private:
     std::map<Vertex_handle,Node_handle> v2n_map;
 
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
-	 vit != dg.finite_vertices_end(); ++vit) {
+         vit != dg.finite_vertices_end(); ++vit) {
       Vertex_handle v(vit);
       Node_handle n = this->add_node(v);
       v2n_map[v] = n;
@@ -146,7 +146,7 @@ private:
       tr_.access_site_2_object();
 
     for (Finite_vertices_iterator vit = dg.finite_vertices_begin();
-	 vit != dg.finite_vertices_end(); ++vit) {
+         vit != dg.finite_vertices_end(); ++vit) {
       Vertex_handle v(vit);
       typename Traits::Site_2 t = accessor(v);
 
@@ -163,24 +163,24 @@ private:
       nearest_neighbors.insert(nn);
       ++vc;
       do {
-	if ( !dg.is_infinite(vc) ) {
-	  CGAL::Comparison_result cr =
-	    comparator(t, accessor(nn), accessor(vc));
-	  if ( cr == CGAL::EQUAL ) {
-	    nearest_neighbors.insert(vc);
-	  } else if ( cr == CGAL::LARGER ) {
-	    nn = vc;
-	    nearest_neighbors.clear();
-	    nearest_neighbors.insert(nn);
-	  }
-	}
-	++vc;
+        if ( !dg.is_infinite(vc) ) {
+          CGAL::Comparison_result cr =
+            comparator(t, accessor(nn), accessor(vc));
+          if ( cr == CGAL::EQUAL ) {
+            nearest_neighbors.insert(vc);
+          } else if ( cr == CGAL::LARGER ) {
+            nn = vc;
+            nearest_neighbors.clear();
+            nearest_neighbors.insert(nn);
+          }
+        }
+        ++vc;
       } while (vc != vc_start);
 
       for (typename std::set<Vertex_handle>::iterator
-	     it = nearest_neighbors.begin();
-	   it != nearest_neighbors.end(); ++it) {
-	this->add_directed_edge(v2n_map[v], v2n_map[*it]);
+             it = nearest_neighbors.begin();
+           it != nearest_neighbors.end(); ++it) {
+        this->add_directed_edge(v2n_map[v], v2n_map[*it]);
       }
       // end of while-loop for incident vertices
     } // end of for-loop for all vertices

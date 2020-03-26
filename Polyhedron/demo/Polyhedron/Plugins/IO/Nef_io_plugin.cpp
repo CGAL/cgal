@@ -37,14 +37,14 @@ CGAL::Three::Scene_item*
 Polyhedron_demo_io_nef_plugin::load(QFileInfo fileinfo) {
   //do not try file with extension different from nef3
   if (fileinfo.suffix() != "nef3") return 0;
-  
+
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
   }
-    
+
   // Try to read .nef3 in a polyhedron
   Scene_nef_polyhedron_item* item = new Scene_nef_polyhedron_item();
   item->setName(fileinfo.baseName());
@@ -71,7 +71,7 @@ bool Polyhedron_demo_io_nef_plugin::canSave(const CGAL::Three::Scene_item* item)
 bool Polyhedron_demo_io_nef_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
   // This plugin supports polyhedrons and polygon soups
-  const Scene_nef_polyhedron_item* nef_item = 
+  const Scene_nef_polyhedron_item* nef_item =
     qobject_cast<const Scene_nef_polyhedron_item*>(item);
 
   if(!nef_item)

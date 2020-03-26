@@ -21,7 +21,7 @@
 // Author(s)     :  ASCLEPIOS Project (INRIA Sophia-Antipolis), Laurent Rineau
 
 /*************************************************************************
- * typedefs.h - 
+ * typedefs.h -
  *
  * $Id$
  *
@@ -30,8 +30,8 @@
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)
  * http://www.inria.fr/epidaure/personnel/malandain/
- * 
- * CREATION DATE: 
+ *
+ * CREATION DATE:
  * June, 9 1998
  *
  *

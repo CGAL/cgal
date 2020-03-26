@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -28,7 +28,7 @@
 namespace CGAL {
 
 template <class Arrangement_>
-class Gps_do_intersect_functor 
+class Gps_do_intersect_functor
 {
 public:
 
@@ -54,7 +54,7 @@ public:
   {
     if(f1->contained() && f2->contained())
       // found intersection
-      m_found_reg_intersection = true;    
+      m_found_reg_intersection = true;
   }
 
 

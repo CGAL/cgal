@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel
 
@@ -36,12 +36,12 @@ namespace internal {
 template <class R>
 typename cpp11::result_of<typename R::Intersect_d(typename R::Line_d, typename R::Line_d)>::type
 intersection(const typename R::Line_d& l1, const typename R::Line_d& l2, const R&)
-{ 
+{
   typedef typename R::Line_d_Line_d_pair ll_pair;
   ll_pair LL(l1, l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
-    default: 
+    default:
       return intersection_return<typename R::Intersect_d, typename R::Line_d, typename R::Line_d>();
     case ll_pair::POINT: {
       typename R::Point_d pt;
@@ -57,12 +57,12 @@ intersection(const typename R::Line_d& l1, const typename R::Line_d& l2, const R
 template <class R>
 typename cpp11::result_of<typename R::Intersect_d(typename R::Ray_d, typename R::Ray_d)>::type
 intersection(const typename R::Ray_d& l1, const typename R::Ray_d& l2, const R&)
-{ 
+{
   typedef typename R::Ray_d_Ray_d_pair ll_pair;
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
-    default: 
+    default:
       return intersection_return<typename R::Intersect_d, typename R::Ray_d, typename R::Ray_d>();
     case ll_pair::POINT: {
       typename R::Point_d p;
@@ -91,7 +91,7 @@ intersection(const typename R::Segment_d& l1, const typename R::Segment_d& l2, c
   ll_pair LL(l1,l2);
   switch (LL.intersection_type()) {
     case ll_pair::NO_INTERSECTION:
-    default: 
+    default:
       return intersection_return<typename R::Intersect_d, typename R::Segment_d, typename R::Segment_d>();
     case ll_pair::POINT: {
       typename R::Point_d p;
@@ -262,7 +262,7 @@ intersection(const typename R::Segment_d& s, const typename R::Hyperplane_d& h, 
     case sh_pair::SEGMENT:
         return intersection_return<typename R::Intersect_d, typename R::Segment_d, typename R::Hyperplane_d>(s);
   }
-  return intersection_return<typename R::Intersect_d, typename R::Segment_d, 
+  return intersection_return<typename R::Intersect_d, typename R::Segment_d,
                              typename R::Hyperplane_d>(); // never reached
 }
 

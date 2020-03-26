@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -27,7 +27,7 @@ template<class Gt, class ST, class D_S, class LTag>
 void
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 face_output(const char *before, Face_handle f,
-	    const char *after) const
+            const char *after) const
 {
   std::cout << before;
   if (is_infinite(f->vertex(0))) {
@@ -297,7 +297,7 @@ find_faces_to_split(const Vertex_handle& v, const Site_2& t,
     // before it was:
     //   os1 == ON_POSITIVE_SIDE && os2 != ON_POSITIVE_SIDE
     if ( !found_f2 &&
-	 os1 != ON_NEGATIVE_SIDE && os2 == ON_NEGATIVE_SIDE ) {
+         os1 != ON_NEGATIVE_SIDE && os2 == ON_NEGATIVE_SIDE ) {
       f2 = ff2;
       found_f2 = true;
       count_pon_zeros = count_zeros;
@@ -485,7 +485,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Vertex_triple
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 insert_exact_point_on_segment(const Storage_site_2& ss, const Site_2& t,
-			      Vertex_handle v)
+                              Vertex_handle v)
 {
   // splits the segment site v->site() in two and inserts represented by t
   // on return the three vertices are, respectively, the vertex
@@ -624,7 +624,7 @@ template<class Gt, class ST, class D_S, class LTag>
 typename Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::Vertex_triple
 Segment_Delaunay_graph_Linf_2<Gt,ST,D_S,LTag>::
 insert_point_on_segment(const Storage_site_2& ss, const Site_2& ,
-			Vertex_handle v, const Tag_true&)
+                        Vertex_handle v, const Tag_true&)
 {
   // splits the segment site v->site() in two and inserts the point of
   // intersection of t and v->site()

@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany). 
+// Copyright (c) 2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -38,13 +38,13 @@
 // whether to use exact rational arithmetic
 #define CGAL_CKVA_USE_RATIONAL_ARITHMETIC
 
-// this turns on a signleton curve renderer 
+// this turns on a signleton curve renderer
 // (not recommended for multi-threaded applications)
 //#define CGAL_CKVA_USE_STATIC_RENDERER
 
-// prints out detailed info of the rendering process 
+// prints out detailed info of the rendering process
 // (only for internal debugging)
-#ifndef Gfx_DETAILED_OUT 
+#ifndef Gfx_DETAILED_OUT
 //#define Gfx_USE_DETAILED_OUT
 #ifdef Gfx_USE_DETAILED_OUT
 #define Gfx_DETAILED_OUT(x) std::cerr << x
@@ -80,17 +80,17 @@ namespace CGAL {
 template <class CurvedKernelViaAnalysis_2, class Float_>
 class Curve_renderer_interface;
 
-/*!\brief 
+/*!\brief
  * represents a single curve renderer instance with usual parameter set to
  * speed up rendering of several objects supported by the same curve
- * 
+ *
  * @warning not recommended to use in multi-threaded applications
  */
 template <class CurvedKernelViaAnalysis_2>
 class Curve_renderer_facade
 {
     Curve_renderer_facade() { // private constructor
-        
+
     }
 
 public:
@@ -116,20 +116,20 @@ public:
     }
 };
 
-/*! \brief 
+/*! \brief
  * CKvA interface to the curve renderer. Provides three levels of increasing
  * arithmetic precision
- * 
+ *
  * the curve renderer is instantiated with the base \c Float_ which can be
  * either integral or user-defined floating-point number type, and optionally
  * with multi-precision \c Bigfloat and exact rational number types as
- * provided by the currently used \c Arithmetic_kernel 
+ * provided by the currently used \c Arithmetic_kernel
  */
 template <class CurvedKernelViaAnalysis_2, class Float_>
 class Curve_renderer_interface
 {
 public:
-    //! \name Public typedefs 
+    //! \name Public typedefs
     //!@{
 
     //! this instance's first argument
@@ -137,7 +137,7 @@ public:
 
     //! base floating-point number type
     typedef Float_ Float;
-    
+
     //! type of a curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
         Curve_kernel_2;
@@ -149,15 +149,15 @@ public:
 
     //! multi-precision float NT
     typedef typename Arithmetic_kernel::Bigfloat_interval BFI;
-    typedef typename CGAL::Bigfloat_interval_traits<BFI>::Bound 
-        Bigfloat; 
+    typedef typename CGAL::Bigfloat_interval_traits<BFI>::Bound
+        Bigfloat;
 
     //! rational NT
     typedef typename Arithmetic_kernel::Rational Rational;
-    
+
     //! an arc of generic curve
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
-    
+
     //! a point on curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
 
@@ -223,18 +223,18 @@ public:
     //!@{
 
     //!@note pass null-pointer for \c pbox parameter if you don't need
-    //! the drawing window 
-    inline void get_setup_parameters(CGAL::Bbox_2 *pbox, int& res_w, 
+    //! the drawing window
+    inline void get_setup_parameters(CGAL::Bbox_2 *pbox, int& res_w,
                 int& res_h) {
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         return renderer().get_setup_parameters(pbox, res_w, res_h);
 #endif
     }
-    
+
     /*!\brief
      * initializes renderer with drawing window dimensions
      * and pixel resolution
-     * 
+     *
      * <tt>[x_min; y_min]x[x_max; y_max]</tt> - drawing window
      * \c res_w and \c res_h - h/v pixel resolution
      */
@@ -242,7 +242,7 @@ public:
     {
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         renderer().setup(bbox, res_w, res_h);
-#endif 
+#endif
     }
 
     /*!\brief
@@ -253,16 +253,16 @@ public:
      * clear operations
      *
      * \c Coord_2 must be constructible from a pair of integers / doubles
-     * depending on the renderer type 
+     * depending on the renderer type
      *
      * computes optionaly end-point coordinates (even if they lie outside the
      * window)
      */
     template < class Coord_2, template < class, class > class Container,
         class Allocator >
-    inline void draw(const Arc_2& arc, 
+    inline void draw(const Arc_2& arc,
             Container< std::vector< Coord_2 >, Allocator >& pts,
-            boost::optional< Coord_2 > *end_pt1 = NULL, 
+            boost::optional< Coord_2 > *end_pt1 = NULL,
             boost::optional< Coord_2 > *end_pt2 = NULL) {
 
 #ifndef CGAL_CKVA_DUMMY_RENDERER
@@ -272,26 +272,26 @@ public:
 #endif
 
         renderer().set_IA_method(0); // start with QF
-Lrestart:        
+Lrestart:
         try {
             renderer().draw(arc, pts, end_pt1, end_pt2);
-        } 
+        }
         catch(internal::Insufficient_rasterize_precision_exception) {
 
             int prev = renderer().set_IA_method(1);
             if(prev == 0) {
                 std::cerr << "Restarting with MAA\n";
                 pts.clear();
-                goto Lrestart;   
+                goto Lrestart;
             }
 
-            std::cerr << "Switching to multi-precision arithmetic" << 
+            std::cerr << "Switching to multi-precision arithmetic" <<
                 std::endl;
 #ifdef CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
             if(::boost::is_same<typename Algebraic_structure_traits< Float >::
                     Is_exact, CGAL::Tag_true>::value)
                 goto Lexit;
-         
+
             get_setup_parameters(&bbox, res_w, res_h);
             exact_renderer().setup(bbox, res_w, res_h);
             exact_renderer().set_IA_method(1); // always use MAA
@@ -306,7 +306,7 @@ Lrestart:
                 goto Lexit;
                 std::cerr << "Switching to exact arithmetic" << std::endl;
 #ifdef CGAL_CKVA_USE_RATIONAL_ARITHMETIC
-                
+
                 if(::boost::is_same<
                     typename Algebraic_structure_traits< Float >::Is_exact,
                          CGAL::Tag_true>::value)
@@ -330,29 +330,29 @@ Lexit:  std::cerr << "Sorry, this does not work even with exact "
                     "arithmetic, bailing out..." << std::endl;
         std::cerr << "polynomial: " << renderer().curve().polynomial_2() <<
             std::endl;
-        
+
         renderer().get_setup_parameters(&bbox, res_w, res_h);
         std::cerr << "window: " << bbox << "; resolution: " <<
             res_w << " x " << res_h << std::endl;
-        
+
 #endif  // CGAL_CKVA_USE_MULTIPREC_ARITHMETIC
         }
 #endif // !CGAL_CKVA_DUMMY_RENDERER
     }
-    
+
     /*!\brief
-     * rasterizes a point on curve, returns point coordinates as objects of 
+     * rasterizes a point on curve, returns point coordinates as objects of
      * type \c Coord_2 which are constructible from a pair of ints / doubles
      *
-     * retunrs \c false if point lies outside the window or cannot be 
+     * retunrs \c false if point lies outside the window or cannot be
      * rasterized due to precision problems
-     */  
+     */
     template < class Coord_2 >
     bool draw(const Point_2& point, Coord_2& coord) {
 #ifndef CGAL_CKVA_DUMMY_RENDERER
         try {
             return renderer().draw(point, coord);
-        }    
+        }
         catch(internal::Insufficient_rasterize_precision_exception) {
             std::cerr << "Unable to rasterize point..\n";
             return false;

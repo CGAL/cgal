@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgArrangementOnSurface2Read
 
-Reads the arrangement-with-history object `arr` from the given 
+Reads the arrangement-with-history object `arr` from the given
 input stream `is` using a specific input format defined by
 \"formatter\".
 
@@ -25,7 +25,7 @@ template<typename Traits, typename Dcel,
 std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
                      std::ostream& os,
                      WithHistoryFormatter& formatter);
- 
+
 /*!
 \ingroup PkgArrangementOnSurface2op_left_shift
 Inserts the arrangement-with-history object `arr` into the output

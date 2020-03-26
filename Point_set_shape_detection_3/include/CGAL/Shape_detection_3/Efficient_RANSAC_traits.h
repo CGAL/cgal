@@ -45,7 +45,7 @@ namespace CGAL {
 
       \tparam Gt a model of the concept `#Kernel` with `Gt::FT` being `float` or `double`.
 
-      \tparam InputRange is a model of `Range` with random access iterators, 
+      \tparam InputRange is a model of `Range` with random access iterators,
               providing input points and normals through the following two property maps.
 
       \tparam InputPointMap is a model of `ReadablePropertyMap` with `std::iterator_traits<Input_range::iterator>::%value_type` as key type and `Geom_traits::Point_3` as value type.
@@ -91,7 +91,7 @@ namespace CGAL {
       : m_gt(gt) {}
 
     typedef typename Gt::Construct_point_3 Construct_point_3;
-    Construct_point_3 construct_point_3_object() const 
+    Construct_point_3 construct_point_3_object() const
     { return m_gt.construct_point_3_object(); }
 
     typedef typename Gt::Construct_vector_3 Construct_vector_3;
@@ -99,7 +99,7 @@ namespace CGAL {
     { return m_gt.construct_vector_3_object(); }
 
     typedef typename Gt::Construct_point_2 Construct_point_2;
-    Construct_point_2 construct_point_2_object() const 
+    Construct_point_2 construct_point_2_object() const
     { return m_gt.construct_point_2_object(); }
 
     typedef typename Gt::Construct_vector_2 Construct_vector_2;
@@ -109,7 +109,7 @@ namespace CGAL {
     typedef typename Gt::Construct_sphere_3 Construct_sphere_3;
     Construct_sphere_3 construct_sphere_3_object() const
     { return m_gt.construct_sphere_3_object(); }
-    
+
     typedef typename Gt::Construct_line_3 Construct_line_3;
     Construct_line_3 construct_line_3_object() const
     { return m_gt.construct_line_3_object(); }
@@ -117,7 +117,7 @@ namespace CGAL {
     typedef typename Gt::Construct_circle_2 Construct_circle_2;
     Construct_circle_2 construct_circle_2_object() const
     { return m_gt.construct_circle_2_object(); }
-    
+
     typedef typename Gt::Construct_point_on_3 Construct_point_on_3;
     Construct_point_on_3 construct_point_on_3_object() const
     { return m_gt.construct_point_on_3_object(); }
@@ -133,11 +133,11 @@ namespace CGAL {
     typedef typename Gt::Compute_x_3 Compute_x_3;
     Compute_x_3 compute_x_3_object() const
     { return m_gt.compute_x_3_object(); }
-    
+
     typedef typename Gt::Compute_y_3 Compute_y_3;
     Compute_y_3 compute_y_3_object() const
     { return m_gt.compute_y_3_object(); }
-    
+
     typedef typename Gt::Compute_z_3 Compute_z_3;
     Compute_z_3 compute_z_3_object() const
     { return m_gt.compute_z_3_object(); }
@@ -149,11 +149,11 @@ namespace CGAL {
     typedef typename Gt::Compute_squared_length_2 Compute_squared_length_2;
     Compute_squared_length_2 compute_squared_length_2_object() const
     { return m_gt.compute_squared_length_2_object(); }
-    
+
     typedef typename Gt::Construct_scaled_vector_3 Construct_scaled_vector_3;
     Construct_scaled_vector_3 construct_scaled_vector_3_object() const
     { return m_gt.construct_scaled_vector_3_object(); }
-    
+
     typedef typename Gt::Construct_sum_of_vectors_3 Construct_sum_of_vectors_3;
     Construct_sum_of_vectors_3 construct_sum_of_vectors_3_object() const
     { return m_gt.construct_sum_of_vectors_3_object(); }
@@ -161,11 +161,11 @@ namespace CGAL {
     typedef typename Gt::Construct_translated_point_3 Construct_translated_point_3;
     Construct_translated_point_3 construct_translated_point_3_object() const
     { return m_gt.construct_translated_point_3_object(); }
-    
+
     typedef typename Gt::Compute_scalar_product_3 Compute_scalar_product_3;
     Compute_scalar_product_3 compute_scalar_product_3_object() const
     { return m_gt.compute_scalar_product_3_object(); }
-    
+
     typedef typename Gt::Construct_cross_product_vector_3 Construct_cross_product_vector_3;
     Construct_cross_product_vector_3 construct_cross_product_vector_3_object() const
     { return m_gt.construct_cross_product_vector_3_object(); }
@@ -185,7 +185,7 @@ namespace CGAL {
     typedef typename Gt::Compute_squared_radius_2 Compute_squared_radius_2;
     Compute_squared_radius_2 compute_squared_radius_2_object() const
     { return m_gt.compute_squared_radius_2_object(); }
-    
+
     typedef typename Gt::Collinear_2 Collinear_2;
     Collinear_2 collinear_2_object() const
     { return m_gt.collinear_2_object(); }
@@ -195,7 +195,7 @@ namespace CGAL {
     ///
     Intersect_3 intersection_3_object() const
     { return m_gt.intersection_3_object(); }
-    
+
   private:
     Gt m_gt;
   };

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -24,13 +24,13 @@
 
 #include <CGAL/internal/Projection_traits_3.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template < class R >
 class Projection_traits_xy_3
   : public internal::Projection_traits_3<R,2>
 {};
-  
-} //namespace CGAL 
+
+} //namespace CGAL
 
 #endif // CGAL_PROJECTION_TRAITS_XY_3_H

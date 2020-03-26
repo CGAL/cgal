@@ -218,7 +218,7 @@ struct Euclidean_distance_vertex_handle_3
 
     h=p.z();
     dists[2] = (h >= (b.min_coord(2)+b.max_coord(2))/2.0)? h-b.min_coord(2) : b.max_coord(2)-h;
-    
+
     double d2 = dists[2]*dists[2];
 
     return d0 + d1 + d2;

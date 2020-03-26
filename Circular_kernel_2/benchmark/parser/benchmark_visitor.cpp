@@ -13,7 +13,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s) : Lutz Kettner
 **************************************************************************/
@@ -53,28 +53,28 @@ void Benchmark_visitor::parse_error( std::string s) {
 }
 
 void Benchmark_visitor::unknown_token( std::string s) {
-    error_handler( std::string("unknown token '") + s 
+    error_handler( std::string("unknown token '") + s
                    + std::string("' found."));
 }
 
 void Benchmark_visitor::token_not_handled( std::string s) {
-    error_handler( std::string("known token '") + s 
+    error_handler( std::string("known token '") + s
                    + std::string("' found but not handled by visitor."));
 }
 
-void Benchmark_visitor::reset_header() { 
+void Benchmark_visitor::reset_header() {
     m_major = -1;
     m_minor = -1;
     m_format_options = std::string("");
     m_benchmark_name = std::string("");
 }
 
-void Benchmark_visitor::accept_file_format( 
+void Benchmark_visitor::accept_file_format(
     std::string s, int major, int minor, std::string options)
 {
     reset_header();
     if ( s != BENCHMARK_FORMAT_NAME) {
-        error_handler( std::string( "wrong file format '") + s + 
+        error_handler( std::string( "wrong file format '") + s +
                        std::string("', must be '") + BENCHMARK_FORMAT_NAME
                        + std::string("'."));
         return;
@@ -98,7 +98,7 @@ void Benchmark_visitor::accept_benchmark_name( std::string s) {
 }
 
 void Benchmark_visitor::accept_classification( std::string problem,
-                                               std::string geom, 
+                                               std::string geom,
                                                std::string clas,
                                                std::string family,
                                                std::string instance,

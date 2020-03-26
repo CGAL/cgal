@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
@@ -194,7 +194,7 @@ typename InputIterator::value_type de_Casteljau_2
 
   // The first control point goes to the (front of) the right subcurve,
   // while the last control point goes to the (back of) the left subcurve.
-  const _NT              comp_t0 = _NT(1) - t0; 
+  const _NT              comp_t0 = _NT(1) - t0;
   unsigned int           last_index = n_pts - 1;
 
   *left_ctrl_pts = vec[0];

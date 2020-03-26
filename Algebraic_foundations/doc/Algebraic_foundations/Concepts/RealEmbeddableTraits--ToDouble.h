@@ -5,13 +5,13 @@ namespace RealEmbeddableTraits_ {
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableUnaryFunction` computes a double approximation of a real 
-embeddable number. 
+`AdaptableUnaryFunction` computes a double approximation of a real
+embeddable number.
 
-Remark: In order to control the quality of approximation one has to resort 
-to methods that are specific to NT. There are no general guarantees whatsoever. 
+Remark: In order to control the quality of approximation one has to resort
+to methods that are specific to NT. There are no general guarantees whatsoever.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction`
 
 \sa `RealEmbeddableTraits`
 
@@ -20,28 +20,28 @@ to methods that are specific to NT. There are no general guarantees whatsoever.
 class ToDouble {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-The result type. 
-*/ 
+The result type.
+*/
 typedef double result_type;
 
 /*!
-Is `RealEmbeddableTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `RealEmbeddableTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-computes a double approximation of a real embeddable number. 
-*/ 
-result_type operator()(argument_type x); 
+computes a double approximation of a real embeddable number.
+*/
+result_type operator()(argument_type x);
 
 /// @}
 

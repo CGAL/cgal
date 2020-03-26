@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -30,19 +30,19 @@
 
 namespace CGAL {
 
-class Partition_opt_cvx_stack_record 
+class Partition_opt_cvx_stack_record
 {
 public:
 
    Partition_opt_cvx_stack_record() {}
 
-   Partition_opt_cvx_stack_record(unsigned int old,  int value) : 
-       _old(old), _value(value), _solution(Partition_opt_cvx_diagonal_list()) 
+   Partition_opt_cvx_stack_record(unsigned int old,  int value) :
+       _old(old), _value(value), _solution(Partition_opt_cvx_diagonal_list())
    {}
 
-   Partition_opt_cvx_stack_record(unsigned int old,  int value, 
-                            const Partition_opt_cvx_diagonal_list& solution) : 
-       _old(old), _value(value), _solution(solution) 
+   Partition_opt_cvx_stack_record(unsigned int old,  int value,
+                            const Partition_opt_cvx_diagonal_list& solution) :
+       _old(old), _value(value), _solution(solution)
    {}
 
    unsigned int vertex_num() { return _old; }
@@ -57,21 +57,21 @@ private:
    Partition_opt_cvx_diagonal_list _solution;
 };
 
-class Partition_opt_cvx_vertex 
+class Partition_opt_cvx_vertex
 {
 public:
 
    Partition_opt_cvx_vertex() {}
 
-   Partition_opt_cvx_vertex(unsigned int v_num): _v_num(v_num), 
+   Partition_opt_cvx_vertex(unsigned int v_num): _v_num(v_num),
                       _stack(std::list<Partition_opt_cvx_stack_record>()),
                       _best_so_far(Partition_opt_cvx_stack_record(0, 0))
    {}
 
    unsigned int vertex_num( ) { return _v_num; }
 
-   Partition_opt_cvx_stack_record best_so_far( ) 
-   { 
+   Partition_opt_cvx_stack_record best_so_far( )
+   {
       return _best_so_far;
    }
 
@@ -83,15 +83,15 @@ public:
       return _stack.back();
    }
 
-   void stack_push(unsigned int vertex, int value, 
-                   const Partition_opt_cvx_diagonal_list& diag_list) 
+   void stack_push(unsigned int vertex, int value,
+                   const Partition_opt_cvx_diagonal_list& diag_list)
    {
       _best_so_far = Partition_opt_cvx_stack_record(vertex, value, diag_list);
       _stack.push_back(_best_so_far);
    }
-   
+
    // Pre:  stack is not empty
-   void stack_pop() 
+   void stack_pop()
    {
        _best_so_far = _stack.back();
        _stack.pop_back();

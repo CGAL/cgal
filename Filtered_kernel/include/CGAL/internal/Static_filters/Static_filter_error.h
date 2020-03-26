@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -25,7 +25,7 @@
 // This file contains the description of the class Static_filter_error.
 // The goal of this class is to be run by some overloaded predicates,
 // to compute error bound done in these functions.
-// 
+//
 // The original idea is from Olivier Devillers.
 
 // It is still EXPERIMENTAL.
@@ -81,7 +81,7 @@ struct Static_filter_error
   Sfe operator+ (const Sfe &f) const
   {
       CGAL_warning_msg( _d == f._d ,
-	      "you are adding variables of different homogeneous degree");
+              "you are adding variables of different homogeneous degree");
       // We have to add an ulp, since the homogeneization could induce such
       // an error.
       FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
@@ -148,7 +148,7 @@ Static_filter_error
 sqrt(const Static_filter_error &f)
 {
   CGAL_warning_msg( (f.degree() & 1) == 0,
-	            "Do you really want a non integral degree ???");
+                    "Do you really want a non integral degree ???");
   // We have to add an ulp, since the homogeneization could induce such
   // an error.
   FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);

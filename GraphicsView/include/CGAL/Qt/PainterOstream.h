@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -81,13 +81,13 @@ private:
   typedef typename K::Triangle_2 Triangle_2;
   typedef typename K::Iso_rectangle_2 Iso_rectangle_2;
   typedef typename K::Circle_2 Circle_2;
-  typedef typename internal::Circular_kernel_2_types<K>::Circular_arc_point_2 
+  typedef typename internal::Circular_kernel_2_types<K>::Circular_arc_point_2
     Circular_arc_point_2;
-  typedef typename internal::Circular_kernel_2_types<K>::Circular_arc_2 
+  typedef typename internal::Circular_kernel_2_types<K>::Circular_arc_2
     Circular_arc_2;
-  typedef typename internal::Circular_kernel_2_types<K>::Line_arc_2 
+  typedef typename internal::Circular_kernel_2_types<K>::Line_arc_2
     Line_arc_2;
-  
+
 public:
   PainterOstream(QPainter* p, QRectF rect = QRectF())
     : qp(p), convert(rect)
@@ -98,21 +98,21 @@ public:
     qp->drawPoint(convert(p));
     return *this;
   }
-  
+
   PainterOstream& operator<<(const Segment_2& s)
   {
     qp->drawLine(convert(s.source()), convert(s.target()));
     return *this;
   }
-  
-  
+
+
   PainterOstream& operator<<(const Ray_2& r)
   {
     qp->drawLine(convert(r));
     return *this;
   }
 
-  
+
   PainterOstream& operator<<(const Line_2& l)
   {
     qp->drawLine(convert(l));
@@ -161,9 +161,9 @@ public:
     const typename K::Circular_arc_point_2 & target = arc.target();
 
     double asource = std::atan2( -to_double(source.y() - center.y()),
-				 to_double(source.x() - center.x())); 
+                                 to_double(source.x() - center.x()));
     double atarget = std::atan2( -to_double(target.y() - center.y()),
-				 to_double(target.x() - center.x()));
+                                 to_double(target.x() - center.x()));
 
     std::swap(asource, atarget);
     double aspan = atarget - asource;
@@ -172,28 +172,28 @@ public:
       aspan += 2 * CGAL_PI;
 
     const double coeff = 180*16/CGAL_PI;
-    qp->drawArc(convert(circ.bbox()), 
-		(int)(asource * coeff), 
-	         (int)(aspan * coeff));
+    qp->drawArc(convert(circ.bbox()),
+                (int)(asource * coeff),
+                 (int)(aspan * coeff));
     return *this;
   }
 
   PainterOstream& operator<<(const Line_arc_2& arc)
   {
     (*this) << Segment_2(Point_2(to_double(arc.source().x()), to_double(arc.source().y())),
-			 Point_2(to_double(arc.target().x()), to_double(arc.target().y())));
+                         Point_2(to_double(arc.target().x()), to_double(arc.target().y())));
      return *this;
   }
 
-  void draw_parabola_segment(const  Point_2& center, const Line_2& line, 
-			     const  Point_2& source, const Point_2& target)
+  void draw_parabola_segment(const  Point_2& center, const Line_2& line,
+                             const  Point_2& source, const Point_2& target)
   {
     if (CGAL::collinear(source,target,center))
-      qp->drawLine(convert(source), convert(target));      
+      qp->drawLine(convert(source), convert(target));
     else
     {
       const Point_2 proj_source = line.projection(source);
-      const Point_2 proj_target = line.projection(target);      
+      const Point_2 proj_target = line.projection(target);
       const Point_2 intersection = circumcenter(proj_source,
                                                 proj_target,
                                                 center);

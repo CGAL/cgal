@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 //---------------------------------------------------------------------
@@ -38,7 +38,7 @@
 #include <CGAL/internal/deprecation_warning.h>
 
 /*{\Manpage {Delaunay_d}{R,Lifted_R}{Delaunay Triangulations}{DT}}*/
-/*{\Mdefinition 
+/*{\Mdefinition
 
 An instance |\Mvar| of type |\Mname| is the nearest and furthest
 site Delaunay triangulation of a set |S| of points in some
@@ -98,7 +98,7 @@ namespace CGAL {
 
 template <typename R_, typename Lifted_R_ = R_>
 class Delaunay_d : public Convex_hull_d<Lifted_R_>
-{ 
+{
 typedef Delaunay_d<R_,Lifted_R_> Self;
 typedef Convex_hull_d<Lifted_R_> Base;
 
@@ -157,7 +157,7 @@ scope after instantiation of the class. We use |Vertex_handle| instead
 of |\Mname::Vertex_handle| from now on. Similarly we use
 |Simplex_handle|.}*/
 private:
-  enum type_of_S { unknown, non_cocircular, cocircular };  
+  enum type_of_S { unknown, non_cocircular, cocircular };
   type_of_S ts;
 
   const R& Delaunay_kernel_;
@@ -171,7 +171,7 @@ private:
     Lifted_vector_d normal = ortho(hyperplane_supporting(f));
     typename Lifted_R::Component_accessor_d access =
       lifted_kernel().component_accessor_d_object();
-    int d = CGAL_NTS sign( 
+    int d = CGAL_NTS sign(
       access.homogeneous(normal,access.dimension(normal)-1));
     if (d > 0) return upper_hull;
     if (d < 0) return lower_hull;
@@ -185,7 +185,7 @@ private:
   bool incident_simplex_search(Vertex_handle v, Simplex_handle s) const;
 
 public:
-  
+
   typedef typename Base::Point_const_iterator Point_const_iterator;
   /*{\Mtypemember the iterator for points.}*/
 
@@ -195,9 +195,9 @@ public:
   typedef typename Base::Simplex_iterator CH_simplex_iterator;
   typedef typename Base::Simplex_const_iterator CH_simplex_const_iterator;
 
-  class Simplex_iterator 
-  /*{\Mtypemember the iterator for simplices.}*/ 
-    : public CH_simplex_iterator 
+  class Simplex_iterator
+  /*{\Mtypemember the iterator for simplices.}*/
+    : public CH_simplex_iterator
   {
     typedef Delaunay_d<R,Lifted_R> Delaunay;
     typedef CH_simplex_iterator Base_iterator;
@@ -206,23 +206,23 @@ public:
     type_of_facet tf;
     Base_iterator base() { return Base_iterator(*this); }
   public:
-    Simplex_iterator(Base_iterator y = Base_iterator()) : 
+    Simplex_iterator(Base_iterator y = Base_iterator()) :
       Base_iterator(y) {}
 
-    Simplex_iterator(Delaunay* x,  Base_iterator y, 
-      Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x) 
+    Simplex_iterator(Delaunay* x,  Base_iterator y,
+      Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x)
     /* if the facet is not nil we set the current marker to
        the facet and insert all it's neighbors into the
        candidates stack */
     { CGAL_assertion(base() != Base_iterator());
-      tf = (z == NEAREST ? lower_hull : upper_hull); 
+      tf = (z == NEAREST ? lower_hull : upper_hull);
       bool cocirc = DT->is_S_cocircular();
       // Note [Sylvain,2007-03-08] : I added some parentheses to fix a warning,
       // I hope I got the logic right.
       // Note: I have add a new pair of parentheses. Laurent Rineau, 2010/08/20
       while ( base() != DT->simplices_end() &&
               !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
-                ( ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
+                ( ( !cocirc && DT->is_unbounded_simplex(base()) ) &&
                   DT->type_of(base()) == tf ) ) ) {
          Base_iterator::operator++();
       }
@@ -232,7 +232,7 @@ public:
     Simplex_iterator& operator++()
     /* here we get a new candidate from the stack
        and insert all its not-visited neighbors */
-    { 
+    {
       bool cocirc = DT->is_S_cocircular();
       do {
         Base_iterator::operator++();
@@ -241,11 +241,11 @@ public:
       // Note: I have add a new pair of parentheses. Laurent Rineau, 2010/08/20
       } while ( base() != DT->simplices_end() &&
                 !( ( cocirc && DT->is_bounded_simplex(base()) ) ||
-                   ( ( !cocirc && DT->is_unbounded_simplex(base()) ) && 
+                   ( ( !cocirc && DT->is_unbounded_simplex(base()) ) &&
                    DT->type_of(base()) == tf ) ) );
-      return *this; 
+      return *this;
     }
-    Simplex_iterator  operator++(int) 
+    Simplex_iterator  operator++(int)
     { Simplex_iterator tmp = *this; ++(*this); return tmp; }
 
     // change modus:
@@ -265,42 +265,42 @@ public:
     type_of_facet tf;
     Base_iterator base() { return Base_iterator(*this); }
   public:
-    Simplex_const_iterator(Base_iterator y = Base_iterator()) : 
+    Simplex_const_iterator(Base_iterator y = Base_iterator()) :
       Base_iterator(y) {}
 
-    Simplex_const_iterator(const Delaunay* x,  Base_iterator y, 
-      Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x) 
+    Simplex_const_iterator(const Delaunay* x,  Base_iterator y,
+      Delaunay_voronoi_kind z = NEAREST) : Base_iterator(y), DT(x)
     /* if the facet is not nil we set the current marker to
        the facet and insert all it's neighbors into the
        candidates stack */
     { CGAL_assertion(base() != Base_iterator());
-      tf = (z == NEAREST ? lower_hull : upper_hull); 
+      tf = (z == NEAREST ? lower_hull : upper_hull);
       bool cocirc = const_cast<Delaunay*>(DT)->is_S_cocircular();
       while ( (base() != DT->simplices_end()) &&
               !( (cocirc && DT->is_bounded_simplex(base())) ||
-                 (!cocirc && DT->is_unbounded_simplex(base()) && 
+                 (!cocirc && DT->is_unbounded_simplex(base()) &&
                   DT->type_of(base()) == tf ) ) ) {
          Base_iterator::operator++();
       }
     }
 
-    Simplex_const_iterator(const Simplex_const_iterator& it) : 
+    Simplex_const_iterator(const Simplex_const_iterator& it) :
       Base_iterator(it) {}
 
     Simplex_const_iterator& operator++()
     /* here we get a new candidate from the stack
        and insert all its not-visited neighbors */
-    { 
+    {
       bool cocirc = const_cast<Delaunay*>(DT)->is_S_cocircular();
       do {
         Base_iterator::operator++();
       } while ( (base() != DT->simplices_end()) &&
                 !( (cocirc && DT->is_bounded_simplex(base())) ||
-                   (!cocirc && DT->is_unbounded_simplex(base()) && 
-                    DT->type_of(base()) == tf ) ) ); 
-      return *this; 
+                   (!cocirc && DT->is_unbounded_simplex(base()) &&
+                    DT->type_of(base()) == tf ) ) );
+      return *this;
     }
-    Simplex_const_iterator  operator++(int) 
+    Simplex_const_iterator  operator++(int)
     { Simplex_iterator tmp = *this; ++(*this); return tmp; }
 
     // change modus:
@@ -318,7 +318,7 @@ public:
   /*{\Xop projects the upper (|which = 1|) or lower (|which = -1|) hull
   into regular complex |RC|. }*/
 
-    
+
   bool is_S_cocircular();
   /*{\Xop returns |true| if the points of |S| are cocircular and returns
   |false| otherwise}*/
@@ -346,7 +346,7 @@ public:
   private:
   /*{\Mtext The data type |\Mtype| offers neither copy constructor nor
   assignment operator.}*/
-  Delaunay_d(const Self&); 
+  Delaunay_d(const Self&);
   Self& operator=(const Self&);
   public:
 
@@ -355,9 +355,9 @@ public:
   /*{\Mtext All operations below that take a point |x| as an argument
   have the common precondition that $|x.dimension()| = |\Mvar.dimension()|$.}*/
 
-  int dimension() const 
+  int dimension() const
   /*{\Mop returns the dimension of ambient space}*/
-  { return (Base::dimension() - 1); } 
+  { return (Base::dimension() - 1); }
 
   int current_dimension() const
   /*{\Mop returns the affine dimension of the current point set, i.e.,
@@ -369,18 +369,18 @@ public:
   }
 
   bool is_simplex_of_nearest(Simplex_handle s) const
-  /*{\Mop returns true if |s| is a simplex of the nearest site 
+  /*{\Mop returns true if |s| is a simplex of the nearest site
   triangulation.}*/
   { if ( const_cast<Self*>(this)->is_S_cocircular() ) return true;
     return ( type_of(s) == lower_hull );
   }
 
   bool is_simplex_of_furthest(Simplex_handle s) const
-  /*{\Mop returns true if |s| is a simplex of the furthest site 
+  /*{\Mop returns true if |s| is a simplex of the furthest site
   triangulation.}*/
   { if ( const_cast<Self*>(this)->is_S_cocircular() ) return true;
     return (type_of(s) == upper_hull);
-  }  
+  }
 
   bool is_simplex_of_nearest(Simplex_const_handle s) const
   { if ( const_cast<Self*>(this)->is_S_cocircular() ) return true;
@@ -389,23 +389,23 @@ public:
   bool is_simplex_of_furthest(Simplex_const_handle s) const
   { if ( const_cast<Self*>(this)->is_S_cocircular() ) return true;
     return (type_of(s) == upper_hull);
-  }  
+  }
 
-     
+
   Vertex_handle vertex_of_simplex(Simplex_handle s, int i) const
   /*{\Mop returns the vertex associated with the $i$-th node of $s$.
   \precond $0 \leq i \leq |dcur|$. }*/
   { if ( const_cast<Self*>(this)->is_S_cocircular() )
       return Base::vertex_of_simplex(s,i);
-    else 
+    else
      return Base::vertex_of_simplex(s,i+1);
   }
 
-  Vertex_const_handle vertex_of_simplex(Simplex_const_handle s, 
+  Vertex_const_handle vertex_of_simplex(Simplex_const_handle s,
                                         int i) const
   { if ( const_cast<Self*>(this)->is_S_cocircular() )
       return Base::vertex_of_simplex(s,i);
-    else 
+    else
       return Base::vertex_of_simplex(s,i+1);
   }
 
@@ -433,51 +433,51 @@ public:
   /*{\Mop returns the simplex opposite to the $i$-th vertex of $s$
   (|Simplex_handle()| if there is no such simplex).
   \precond $0 \leq i \leq |dcur|$. }*/
-  { 
+  {
     if ( const_cast<Self*>(this)->is_S_cocircular() ) {
       Simplex_handle f = Base::opposite_simplex(s,i);
-      return ( Base::is_unbounded_simplex(f) ? 
-	       Simplex_handle() : f );    
+      return ( Base::is_unbounded_simplex(f) ?
+               Simplex_handle() : f );
     } else {
       Simplex_handle f = Base::opposite_simplex(s,i+1);
       return ( type_of(f) == type_of(s) ? f : Simplex_handle() );
     }
-  }  
+  }
 
-  Simplex_const_handle opposite_simplex(Simplex_const_handle s, 
+  Simplex_const_handle opposite_simplex(Simplex_const_handle s,
                                         int i) const
-  { 
+  {
     if ( const_cast<Self*>(this)->is_S_cocircular() ) {
       Simplex_const_handle f = Base::opposite_simplex(s,i);
-      return ( Base::is_unbounded_simplex(f) ? 
-	       Simplex_const_handle() : f );    
+      return ( Base::is_unbounded_simplex(f) ?
+               Simplex_const_handle() : f );
     } else {
       Simplex_const_handle f = Base::opposite_simplex(s,i+1);
       return ( type_of(f) == type_of(s) ? f : Simplex_const_handle() );
     }
-  }  
-   
+  }
+
   int index_of_vertex_in_opposite_simplex(Simplex_handle s,int i) const
-  /*{\Mop returns the index of the vertex opposite to the $i$-th vertex 
+  /*{\Mop returns the index of the vertex opposite to the $i$-th vertex
   of $s$. \precond $0 \leq i \leq |dcur|$.}*/
-  { 
-    if ( const_cast<Self*>(this)->is_S_cocircular() ) 
+  {
+    if ( const_cast<Self*>(this)->is_S_cocircular() )
       return Base::index_of_vertex_in_opposite_simplex(s,i);
     else
-      return Base::index_of_vertex_in_opposite_simplex(s,i+1) - 1; 
-  }  
+      return Base::index_of_vertex_in_opposite_simplex(s,i+1) - 1;
+  }
 
   int index_of_vertex_in_opposite_simplex(Simplex_const_handle s,
                                           int i) const
-  { 
-    if ( const_cast<Self*>(this)->is_S_cocircular() ) 
+  {
+    if ( const_cast<Self*>(this)->is_S_cocircular() )
       return Base::index_of_vertex_in_opposite_simplex(s,i);
     else
-      return Base::index_of_vertex_in_opposite_simplex(s,i+1) - 1; 
-  }  
+      return Base::index_of_vertex_in_opposite_simplex(s,i+1) - 1;
+  }
 
   Simplex_handle simplex(Vertex_handle v) const;
-  /*{\Mop returns a simplex of the nearest site triangulation incident 
+  /*{\Mop returns a simplex of the nearest site triangulation incident
   to $v$.}*/
 
   int index(Vertex_handle v) const;
@@ -514,14 +514,14 @@ public:
 
   Simplex_handle locate(const Point_d& x) const;
   /*{\Mop returns a simplex of the nearest site triangulation
-  containing |x| in its closure (returns |Simplex_handle()| if |x| lies 
+  containing |x| in its closure (returns |Simplex_handle()| if |x| lies
   outside the convex hull of $S$).}*/
 
 
   Vertex_handle lookup(const Point_d& x) const
-  /*{\Mop if |\Mvar| contains a vertex $v$ with |associated_point(v) = x| 
+  /*{\Mop if |\Mvar| contains a vertex $v$ with |associated_point(v) = x|
   the result is $v$ otherwise the result is |Vertex_handle()|. }*/
-  { 
+  {
     Simplex_handle s = locate(x);
     if ( s == Simplex_handle() ) return Vertex_handle();
     for (int i = 0; i <= current_dimension(); i++) {
@@ -534,13 +534,13 @@ public:
 
   Vertex_handle nearest_neighbor(const Point_d& x) const;
   /*{\Mop computes a vertex $v$ of |\Mvar| that is closest to $x$,
-  i.e.,\\ $|dist(x,associated_point(v))| = \min \{ 
+  i.e.,\\ $|dist(x,associated_point(v))| = \min \{
   |dist(x, associated_point(u))| \mid u \in S\ \}$.}*/
 
   /*{\Mtext \setopdims{5cm}{1cm}}*/
-  std::list<Vertex_handle> 
+  std::list<Vertex_handle>
   range_search(const Sphere_d& C) const;
-  /*{\Mop returns the list of all vertices contained in the closure of 
+  /*{\Mop returns the list of all vertices contained in the closure of
   sphere $C$.}*/
 
   std::list<Vertex_handle>
@@ -551,20 +551,20 @@ public:
   in base space.}*/
 
 
-  void all_vertices_below(const Lifted_hyperplane_d& h, 
-                          Simplex_handle s, 
+  void all_vertices_below(const Lifted_hyperplane_d& h,
+                          Simplex_handle s,
                           std::list<Vertex_handle>& result,
                           Unique_hash_map<Vertex_handle,bool>& is_new,
                           bool is_cocircular) const;
 
 
-  std::list<Simplex_handle> 
+  std::list<Simplex_handle>
   all_simplices(Delaunay_voronoi_kind k = NEAREST) const;
   /*{\Mop returns a list of all simplices of either the nearest or the
           furthest site Delaunay triangulation of |S|.}*/
 
 
-  std::list<Vertex_handle> 
+  std::list<Vertex_handle>
   all_vertices(Delaunay_voronoi_kind k = NEAREST) const;
   /*{\Mop returns a list of all vertices of either the nearest or the
   furthest site Delaunay triangulation of |S|.}*/
@@ -590,7 +590,7 @@ public:
   { return Simplex_iterator(Base::simplices_end()); }
 
 
-  Simplex_const_iterator 
+  Simplex_const_iterator
   simplices_begin(Delaunay_voronoi_kind k = NEAREST) const
   { return Simplex_const_iterator(this,Base::simplices_begin(),k); }
 
@@ -612,7 +612,7 @@ public:
   requirement for an insert is the time to insert the lifted point
   into the convex hull of the lifted points.}*/
 
-  /*{\Mexample 
+  /*{\Mexample
 
   The abstract data type |Delaunay_d| has a default instantiation by
   means of the $d$-dimensional geometric kernel.
@@ -642,7 +642,7 @@ public:
 
   |\Mname| requires the following types from the kernel traits |Lifted_R|:
   \begin{Mverb}
-    RT Point_d Vector_d Ray_d Hyperplane_d 
+    RT Point_d Vector_d Ray_d Hyperplane_d
   \end{Mverb}
   and uses the following function objects from the kernel traits:
   \begin{Mverb}
@@ -661,7 +661,7 @@ public:
   \end{Mverb}
   |\Mname| requires the following types from the kernel traits |R|:
   \begin{Mverb}
-    FT Point_d Sphere_d 
+    FT Point_d Sphere_d
   \end{Mverb}
   and uses the following function objects from the kernel traits |R|:
   \begin{Mverb}
@@ -710,7 +710,7 @@ void Delaunay_d<R,Lifted_R>::project(Regular_complex_d<R>& RC, int which) const
         t = project_simps[opposite_simplex(f,i)];
         if ( dc > 0 && t != Simplex_handle() ) {
           RC.set_neighbor(s,i,t,
-                          index_of_vertex_in_opposite_simplex(f,i)); 
+                          index_of_vertex_in_opposite_simplex(f,i));
         }
       }
     }
@@ -719,8 +719,8 @@ void Delaunay_d<R,Lifted_R>::project(Regular_complex_d<R>& RC, int which) const
 
 
 template <typename R, typename Lifted_R>
-bool Delaunay_d<R,Lifted_R>::is_S_cocircular() 
-{ 
+bool Delaunay_d<R,Lifted_R>::is_S_cocircular()
+{
   if (ts == unknown) {
     int d = Base::current_dimension();
     std::vector<Lifted_point_d> A(d + 1);
@@ -731,7 +731,7 @@ bool Delaunay_d<R,Lifted_R>::is_S_cocircular()
 
     typename Lifted_R::Affinely_independent_d affinely_independent =
       lifted_kernel().affinely_independent_d_object();
-    ts = ( affinely_independent(A.begin(),A.end()) ? 
+    ts = ( affinely_independent(A.begin(),A.end()) ?
            cocircular : non_cocircular );
     if ( d == -1 && ts != cocircular )
       CGAL_error_msg(        "affinely independent works incorrectly for empty set");
@@ -740,18 +740,18 @@ bool Delaunay_d<R,Lifted_R>::is_S_cocircular()
 }
 
 
-template <typename R, typename Lifted_R> 
+template <typename R, typename Lifted_R>
 bool Delaunay_d<R,Lifted_R>::
 incident_simplex_search(Vertex_handle v, Simplex_handle s) const
-{ 
+{
   visited_mark(s) = true;
-  if ( const_cast<Self*>(this)->is_S_cocircular() == 
+  if ( const_cast<Self*>(this)->is_S_cocircular() ==
        is_bounded_simplex(s) ) {
-    // we have found a simplex of the desired kind 
+    // we have found a simplex of the desired kind
     int low = ( is_unbounded_simplex(s) ? 1 : 0 );
     for ( int i = low; i <= Base::current_dimension(); i++) {
       if ( v == Base::vertex_of_simplex(s,i) ) {
-        const_cast<Self*>(this)->associate_vertex_with_simplex(s,i,v); 
+        const_cast<Self*>(this)->associate_vertex_with_simplex(s,i,v);
         return true;
       }
     }
@@ -765,22 +765,22 @@ incident_simplex_search(Vertex_handle v, Simplex_handle s) const
   int j;
   for (j = 0; j <= dcur; j++)
     if ( Base::vertex_of_simplex(s,j) == v ) incident = true;
-  if ( !incident ) 
+  if ( !incident )
     CGAL_error_msg("reached a simplex that is not incident to v");
 
   for (j = 0; j <= Base::current_dimension(); j++) {
     Simplex_handle t = Base::opposite_simplex(s,j);
     if ( Base::vertex_of_simplex(s,j) != v && !visited_mark(t)  &&
-         incident_simplex_search(v,t) ) 
-      return true;    
+         incident_simplex_search(v,t) )
+      return true;
   }
   return false;
 }
 
-template <typename R, typename Lifted_R> 
-typename Delaunay_d<R,Lifted_R>::Simplex_handle 
+template <typename R, typename Lifted_R>
+typename Delaunay_d<R,Lifted_R>::Simplex_handle
 Delaunay_d<R,Lifted_R>::simplex(Vertex_handle v) const
-{ 
+{
   Simplex_handle s = Base::simplex(v);
   if ( Base::vertex_of_simplex(s,Base::index(v)) != v )
     CGAL_error_msg("Delaunay_d::simplex: s is not incident to v.");
@@ -803,7 +803,7 @@ contains(Simplex_handle s, const Point_d& x) const
   if (d < 0) return false;
   std::vector<Point_d> A;
   A.reserve(d + 1);
-  for (int i = 0; i <= d; i++){ 
+  for (int i = 0; i <= d; i++){
     Vertex_handle vh = vertex_of_simplex(s,i);
     if (vh!=this->anti_origin_)
       A.push_back( associated_point(vh) );
@@ -818,7 +818,7 @@ template <typename R, typename Lifted_R>
 typename Delaunay_d<R,Lifted_R>::Simplex_handle
 Delaunay_d<R,Lifted_R>::
 locate(const Point_d& x) const
-{ 
+{
   int d = current_dimension();
   if (d < 0) return Simplex_handle();
   if ( d == 0 ) {
@@ -832,14 +832,14 @@ locate(const Point_d& x) const
   Lifted_point_d lp = lift(x);
   if ( is_dimension_jump(lp) ) {
     Simplex_iterator s;
-    for (s = const_cast<Self*>(this)->simplices_begin(NEAREST); 
-         s != const_cast<Self*>(this)->simplices_end(); ++s) 
+    for (s = const_cast<Self*>(this)->simplices_begin(NEAREST);
+         s != const_cast<Self*>(this)->simplices_end(); ++s)
       if ( contains(s,x) ) return s;
     return Simplex_handle();
   }
   // lift(p) is not a dimension jump
   std::list<Simplex_handle> candidates;
-  std::size_t dummy1 = 0; 
+  std::size_t dummy1 = 0;
   int loc = -1; // intialization is important
   Simplex_handle f;
   this -> visibility_search(origin_simplex_,lp,candidates,dummy1,loc,f);
@@ -858,25 +858,25 @@ locate(const Point_d& x) const
 
 
 template <typename R, typename Lifted_R>
-typename Delaunay_d<R,Lifted_R>::Vertex_handle 
+typename Delaunay_d<R,Lifted_R>::Vertex_handle
 Delaunay_d<R,Lifted_R>::
 nearest_neighbor(const Point_d& x) const
-{ 
+{
   int d = current_dimension();
   if (d < 0) return Vertex_handle();
-  if (d == 0) 
+  if (d == 0)
     return Base::vertex_of_simplex(origin_simplex_,0);
-  
+
   typename Lifted_R::Lift_to_paraboloid_d lift =
     lifted_kernel().lift_to_paraboloid_d_object();;
   Lifted_point_d lp = lift(x);
   std::list<Simplex_handle> candidates;
- 
+
   if ( is_dimension_jump(lp) )
     candidates = all_simplices(NEAREST);
   else {
     // lift(x) is not a dimension jump
-    std::size_t dummy1 = 0; 
+    std::size_t dummy1 = 0;
     int location = -1;
     typename Base::Facet_handle f;
     this -> visibility_search(origin_simplex_,lp,candidates,dummy1,location,f);
@@ -886,7 +886,7 @@ nearest_neighbor(const Point_d& x) const
     if (location == 0) {
       // x must be one of the corners of f
       for (int i = 0; i < Base::current_dimension(); i++) {
-        if ( point_of_facet(f,i) == lp )  
+        if ( point_of_facet(f,i) == lp )
           return vertex_of_facet(f,i);
       }
       CGAL_error_msg("Delaunay_d::nearest_neighbor: \
@@ -895,9 +895,9 @@ nearest_neighbor(const Point_d& x) const
   }
 
   /* search through the vertices of the candidate simplices */
-  if ( candidates.empty() ) 
+  if ( candidates.empty() )
     CGAL_error_msg("Delaunay_d::nearest_neighbor: candidates is empty");
-  Vertex_handle nearest_v = 
+  Vertex_handle nearest_v =
     vertex_of_simplex(*candidates.begin(),0);
   typename R::Squared_distance_d sqr_dist =
     kernel().squared_distance_d_object();
@@ -920,12 +920,12 @@ nearest_neighbor(const Point_d& x) const
 
 template <typename R, typename Lifted_R>
 void Delaunay_d<R,Lifted_R>::
-all_vertices_below(const Lifted_hyperplane_d& h, 
-                   Simplex_handle s, 
+all_vertices_below(const Lifted_hyperplane_d& h,
+                   Simplex_handle s,
                    std::list< Vertex_handle >& result,
                    Unique_hash_map<Vertex_handle,bool>& is_new,
                    bool is_cocircular) const
-{ 
+{
   visited_mark(s) = true;
   bool some_vertex_on_or_below_h = false;
   int i;
@@ -942,29 +942,29 @@ all_vertices_below(const Lifted_hyperplane_d& h,
       }
     }
   }
-        
+
   if ( !some_vertex_on_or_below_h ) return;
   for (i = low; i <= Base::current_dimension(); i++) {
     Simplex_handle t = Base::opposite_simplex(s,i);
-    if ( !visited_mark(t) && 
+    if ( !visited_mark(t) &&
          (!is_cocircular || is_bounded_simplex(t)) )
       all_vertices_below(h,t,result,is_new,is_cocircular);
   }
 }
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle > 
+std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle >
 Delaunay_d<R,Lifted_R>::
 range_search(const Sphere_d& C) const
-{ 
+{
   std::list<Vertex_handle> result;
   int dc = current_dimension();
-  if ( dc < 0 ) 
+  if ( dc < 0 )
     return result;
   Point_d c = C.center();
   Vertex_handle v = nearest_neighbor(c);
   if ( dc == 0 ) {
-    if ( C.has_on_bounded_side(associated_point(v)) ) 
+    if ( C.has_on_bounded_side(associated_point(v)) )
       result.push_back(v);
     return result;
   }
@@ -977,27 +977,27 @@ range_search(const Sphere_d& C) const
     lifted_kernel().lift_to_paraboloid_d_object();
   typename R::Point_of_sphere_d point_of_sphere =
     kernel().point_of_sphere_d_object();
-  for (int i = 0; i <= d; i++)  
+  for (int i = 0; i <= d; i++)
     P[i] = lift(point_of_sphere(C,i));
   typedef typename Lifted_vector_d::Base_vector Base_vector;
-  Lifted_point_d o = P[0] - 
+  Lifted_point_d o = P[0] -
     Lifted_vector_d(d+1,Base_vector(),d);
   typename Lifted_R::Construct_hyperplane_d hyperplane_trough =
     lifted_kernel().construct_hyperplane_d_object();
-  Lifted_hyperplane_d h = 
-    hyperplane_trough(P.begin(),P.end(),o,ON_NEGATIVE_SIDE);  
+  Lifted_hyperplane_d h =
+    hyperplane_trough(P.begin(),P.end(),o,ON_NEGATIVE_SIDE);
   // below is negative
   all_vertices_below(h,s,result,is_new,is_cocircular);
   clear_visited_marks(s);
   return result;
 }
-  
+
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle > 
+std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle >
 Delaunay_d<R,Lifted_R>::
 range_search(const std::vector<Point_d>& A) const
-{ 
+{
   CGAL_assertion_code( typename R::Affinely_independent_d affinely_independent =
                        kernel().affinely_independent_d_object());
   CGAL_assertion_msg( affinely_independent(A.begin(),A.end()),
@@ -1020,25 +1020,25 @@ range_search(const std::vector<Point_d>& A) const
 
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Simplex_handle > 
+std::list< typename Delaunay_d<R,Lifted_R>::Simplex_handle >
 Delaunay_d<R,Lifted_R>::
 all_simplices(Delaunay_voronoi_kind k) const
-{ 
+{
   std::list<Simplex_handle> result;
   if ( dcur < 0 ) return result;
   Simplex_iterator s;
-  for (s = const_cast<Self*>(this)->simplices_begin(k); 
+  for (s = const_cast<Self*>(this)->simplices_begin(k);
        s != const_cast<Self*>(this)->simplices_end(); ++s) {
-    result.push_back(s); 
+    result.push_back(s);
   }
   return result;
 }
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle > 
+std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle >
 Delaunay_d<R,Lifted_R>::
 all_vertices(Delaunay_voronoi_kind k) const
-{ 
+{
   Unique_hash_map<Vertex_handle,bool> is_new_vertex(true);
   std::list<Vertex_handle> result;
   std::list<Simplex_handle> hull_simplices = all_simplices(k);
@@ -1057,16 +1057,16 @@ all_vertices(Delaunay_voronoi_kind k) const
 
 
 template <typename R, typename Lifted_R>
-std::list< typename Delaunay_d<R,Lifted_R>::Point_d > 
+std::list< typename Delaunay_d<R,Lifted_R>::Point_d >
 Delaunay_d<R,Lifted_R>::
 all_points() const
-{ 
+{
   std::list<Point_d> result;
   std::list<Vertex_handle> all_nearest_verts = all_vertices(NEAREST);
   typename std::list<Vertex_handle>::iterator it;
-  for(it = all_nearest_verts.begin(); 
+  for(it = all_nearest_verts.begin();
       it != all_nearest_verts.end();
-      ++it) 
+      ++it)
     result.push_back(associated_point(*it));
   return result;
 }

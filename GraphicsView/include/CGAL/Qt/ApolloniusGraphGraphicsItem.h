@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -50,13 +50,13 @@ public:
   ApolloniusGraphGraphicsItem(AG* ag);
 
 
-  QRectF 
+  QRectF
   boundingRect() const;
-  
-  void 
+
+  void
   paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
-  void 
+
+  void
   modelChanged();
 
   const QPen& edgesPen() const
@@ -94,7 +94,7 @@ ApolloniusGraphGraphicsItem<AG,K>::ApolloniusGraphGraphicsItem(AG * ag)
 }
 
 template <typename AG, typename K>
-QRectF 
+QRectF
 ApolloniusGraphGraphicsItem<AG,K>::boundingRect() const
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene());
@@ -103,7 +103,7 @@ ApolloniusGraphGraphicsItem<AG,K>::boundingRect() const
 
 
 template <typename AG, typename K>
-void 
+void
 ApolloniusGraphGraphicsItem<AG,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
 {
 
@@ -111,7 +111,7 @@ ApolloniusGraphGraphicsItem<AG,K>::paint(QPainter *painter, const QStyleOptionGr
   QRectF rect = option->exposedRect;
   PainterOstream<K> pos(painter, rect);
   for(typename AG::Sites_iterator it = ag->sites_begin();
-	 it != ag->sites_end(); it++ ) {
+         it != ag->sites_end(); it++ ) {
     pos << typename K::Circle_2(it->point(), square( it->weight()));
   }
 
@@ -121,7 +121,7 @@ ApolloniusGraphGraphicsItem<AG,K>::paint(QPainter *painter, const QStyleOptionGr
 
 
   template <typename AG, typename K>
-void 
+void
   ApolloniusGraphGraphicsItem<AG,K>::modelChanged()
 {
   update();

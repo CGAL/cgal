@@ -21,8 +21,8 @@ _test_cls_const_triang_plus_2( const TrP & )
   _test_cls_const_Del_triangulation( TrP() );
 
   Point pt[12] = {
-     Point(0,0), Point(0,4), 
-     Point(1,0), Point(1,4), 
+     Point(0,0), Point(0,4),
+     Point(1,0), Point(1,4),
      Point(2,0), Point(2,4),
      Point(-1,1), Point(3,1),
      Point(-1,2), Point(3,2),
@@ -63,20 +63,20 @@ _test_cls_const_triang_plus_2( const TrP & )
   Vertices_in_constraint currentin2 = cit2->current();
   if ( cit1->number_of_vertices() == 4) {
     assert( (*firstin1 == vh[10] &&  *lastin1 == vh[11]) ||
-	    (*firstin1 == vh[11] &&  *lastin1 == vh[10]));
+            (*firstin1 == vh[11] &&  *lastin1 == vh[10]));
     assert( (*firstin2 == vh[6] &&  *lastin2 == vh[7]) ||
-	    (*firstin2 == vh[7] &&  *lastin2 == vh[6]));
+            (*firstin2 == vh[7] &&  *lastin2 == vh[6]));
   }
   else {
     assert( (*firstin1 == vh[6] &&  *lastin1 == vh[7]) ||
-	    (*firstin1 == vh[7] &&  *lastin1 == vh[6]));
+            (*firstin1 == vh[7] &&  *lastin1 == vh[6]));
     assert( (*firstin2 == vh[10] &&  *lastin2 == vh[11]) ||
-	    (*firstin2 == vh[11] &&  *lastin2 == vh[10]));
+            (*firstin2 == vh[11] &&  *lastin2 == vh[10]));
   }
   assert( (*currentin1 == va &&  *++currentin1 == vb) ||
-	  (*currentin1 == vb &&  *++currentin1 == va));
+          (*currentin1 == vb &&  *++currentin1 == va));
   assert( (*currentin2 == va &&  *++currentin2 == vb) ||
-	  (*currentin2 == vb &&  *++currentin2 == va));
+          (*currentin2 == vb &&  *++currentin2 == va));
 
   //test copy and swap
   std::cout << "test copy and swap" << std::endl;

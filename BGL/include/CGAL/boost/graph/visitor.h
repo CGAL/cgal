@@ -131,7 +131,7 @@ inline void out_edges(typename boost::graph_traits<Graph>::vertex_descriptor u
 
 //
 // MutableHalfedgeGraph
-// 
+//
 template <class Graph>
 void add_vertex(Visitor_base<Graph> & w)
 {}
@@ -162,7 +162,7 @@ void set_next(typename boost::graph_traits< Graph >::halfedge_descriptor h1
 {}
 
 //
-// MutableFaceGraph 
+// MutableFaceGraph
 //
 template <class Graph>
 void add_face(Visitor_base<Graph> & w)
@@ -386,7 +386,7 @@ out_edges(typename boost::graph_traits<Graph>::vertex_descriptor u
 
 //
 // MutableHalfedgeGraph
-// 
+//
 
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::vertex_descriptor
@@ -459,7 +459,7 @@ set_next(typename boost::graph_traits< Graph >::halfedge_descriptor h1
 }
 
 //
-// MutableFaceGraph 
+// MutableFaceGraph
 //
 template <class Graph, class Visitor>
 typename boost::graph_traits< Graph >::face_descriptor

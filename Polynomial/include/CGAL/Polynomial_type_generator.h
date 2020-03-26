@@ -15,9 +15,9 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
 //
-// Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+//
+// Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de>
 //
 // ========================================================================
 
@@ -35,7 +35,7 @@ template <class T, int d>
 struct Polynomial_type_generator
 {
 private:
-  typedef typename Polynomial_type_generator<T,d-1>::Type Coeff; 
+  typedef typename Polynomial_type_generator<T,d-1>::Type Coeff;
 public:
   typedef CGAL::Polynomial<Coeff> Type;
 };

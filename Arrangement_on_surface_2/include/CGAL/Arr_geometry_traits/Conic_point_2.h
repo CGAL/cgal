@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
@@ -35,7 +35,7 @@
 namespace CGAL {
 
 /*!
- * \class A class that stores additional information with the point's 
+ * \class A class that stores additional information with the point's
  * coordinates, namely the conic IDs of the generating curves.
  */
 template <class Alg_kernel_>
@@ -46,7 +46,7 @@ public:
   typedef Alg_kernel_                       Alg_kernel;
   typedef typename Alg_kernel::Point_2      Base;
   typedef _Conic_point_2<Alg_kernel>        Self;
-    
+
   typedef typename Alg_kernel::FT           Algebraic;
 
   /*! \class
@@ -77,7 +77,7 @@ public:
     {
       return (index != 0);
     }
-    
+
     /*! Equality operator. */
     bool operator== (const Conic_id& id) const
     {
@@ -102,7 +102,7 @@ public:
       return (index > id.index);
     }
   };
-        
+
 private:
 
   typedef std::list<Conic_id>                          Ids_container;
@@ -126,9 +126,9 @@ private:
   {}
 
   /*! Constructor with homegeneous coordinates. */
-  _Conic_point_2 (const Algebraic& hx, 
-		  const Algebraic& hy,
-		  const Algebraic& hz) :
+  _Conic_point_2 (const Algebraic& hx,
+                  const Algebraic& hy,
+                  const Algebraic& hz) :
     Base (hx, hy, hz)
   {}
 

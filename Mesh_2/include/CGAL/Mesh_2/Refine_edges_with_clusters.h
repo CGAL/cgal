@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -47,10 +47,10 @@ namespace Mesh_2 {
 template <
   class Tr,
   class Is_locally_conform = Is_locally_conforming_Gabriel<Tr>,
-  class Container = 
+  class Container =
     typename details::Refine_edges_base_types<Tr>::Default_container
 >
-class Refine_edges_base_with_clusters : 
+class Refine_edges_base_with_clusters :
     public Refine_edges_base<Tr, Is_locally_conform, Container>
 {
   typedef Refine_edges_base<Tr, Is_locally_conform, Container> Super;
@@ -65,7 +65,7 @@ class Refine_edges_base_with_clusters :
 
   typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Tr::Face_circulator Face_circulator;
-  
+
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
   typedef typename Clusters<Tr>::Cluster Cluster;
@@ -85,7 +85,7 @@ class Refine_edges_base_with_clusters :
 public:
   /** \name CONSTRUCTORS */
 
-  Refine_edges_base_with_clusters(Tr& tr_, Clusters<Tr>& c_) 
+  Refine_edges_base_with_clusters(Tr& tr_, Clusters<Tr>& c_)
     : Super(tr_), clusters(c_)
   {
   }
@@ -107,7 +107,7 @@ public:
     va_has_a_cluster = false;
     vb_has_a_cluster = false;
     cluster_splitted = false;
-    
+
     // true bellow to remove ca and cb because they will
     // be restored by update_cluster(...).
     if( clusters.get_cluster(this->va,this->vb,ca,ca_it) ) {
@@ -152,13 +152,13 @@ public:
     std::cerr << "clusters.size()=" << clusters.size() << std::endl;
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
     Super::after_insertion_impl(v);
-    if( va_has_a_cluster ) 
+    if( va_has_a_cluster )
       clusters.update_cluster(ca,ca_it,this->va,this->vb,v,cluster_splitted);
     if( vb_has_a_cluster )
       clusters.update_cluster(cb,cb_it,this->vb,this->va,v,cluster_splitted);
 #ifdef CGAL_MESH_2_DEBUG_CLUSTERS
-    std::cerr << "clusters.size() after update_cluster=" 
-	      << clusters.size() << std::endl;
+    std::cerr << "clusters.size() after update_cluster="
+              << clusters.size() << std::endl;
 #endif // CGAL_MESH_2_DEBUG_CLUSTERS
   }
 
@@ -168,7 +168,7 @@ public:
    */
   Mesher_level_conflict_status
   test_point_conflict_from_superior_impl(const Point& p,
-					 Zone& z)
+                                         Zone& z)
   {
     Mesher_level_conflict_status status = NO_CONFLICT;
 
@@ -181,13 +181,13 @@ public:
         const Face_handle& fh = eit->first;
         const int& i = eit->second;
 
-        if(fh->is_constrained(i) && 
+        if(fh->is_constrained(i) &&
            !this->is_locally_conform(this->tr, fh, i, p))
           {
-	    const Vertex_handle& v1 = fh->vertex( this->tr.cw (i));
-	    const Vertex_handle& v2 = fh->vertex( this->tr.ccw(i));
+            const Vertex_handle& v1 = fh->vertex( this->tr.cw (i));
+            const Vertex_handle& v2 = fh->vertex( this->tr.ccw(i));
 
-	    status = CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
+            status = CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
 
             bool v1_has_a_cluster = clusters.get_cluster(v1,v2,ca,ca_it);
             bool v2_has_a_cluster = clusters.get_cluster(v2,v1,cb,cb_it);
@@ -197,7 +197,7 @@ public:
             {
               // two clusters or no cluster
               this->add_constrained_edge_to_be_conformed(v1, v2);
-	      //	      status = CONF//CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
+              //              status = CONF//CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
             }
           else
             {
@@ -214,9 +214,9 @@ public:
 
               if( this->imperatively || !ca.is_reduced() ||
                   ca.rmin >=  sq_r_of_p_parent)
-		this->add_constrained_edge_to_be_conformed(v1,v2);
-	      else
-		status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
+                this->add_constrained_edge_to_be_conformed(v1,v2);
+              else
+                status = CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
             }
           }
       }  // after here edges encroached by p are in the list of edges to
@@ -259,7 +259,7 @@ private:
       this->tr.geom_traits().construct_translated_point_2_object();
 
     typedef typename Geom_traits::FT FT;
-    
+
 
     cluster_splitted = true;
 
@@ -308,18 +308,18 @@ protected:
 template <
   typename Tr,
   typename Is_locally_conform = Is_locally_conforming_Gabriel<Tr>,
-  typename Base = Refine_edges_base_with_clusters<Tr, 
+  typename Base = Refine_edges_base_with_clusters<Tr,
                                                   Is_locally_conform>
 >
-struct Refine_edges_with_clusters : 
-  public Base, 
-  public details::Refine_edges_types<Tr, 
+struct Refine_edges_with_clusters :
+  public Base,
+  public details::Refine_edges_types<Tr,
     Refine_edges_with_clusters<Tr, Is_locally_conform, Base>
     >::Edges_mesher_level
 {
   typedef Refine_edges_with_clusters<Tr, Is_locally_conform, Base> Self;
   typedef typename details::Refine_edges_types<Tr,
-					       Self>::Edges_mesher_level
+                                               Self>::Edges_mesher_level
                                  Mesher;
 public:
   Refine_edges_with_clusters(Tr& t,

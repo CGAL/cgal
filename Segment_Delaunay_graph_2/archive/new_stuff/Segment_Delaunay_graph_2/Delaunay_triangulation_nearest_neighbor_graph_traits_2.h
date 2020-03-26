@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -51,13 +51,13 @@ public:
     typedef CGAL::Comparison_result  result_type;
 
     result_type operator()(const Site_2& q, const Site_2& p1,
-			   const Site_2& p2) const
+                           const Site_2& p2) const
     {
       // return SMALLER if p1 is closer to q than p2, EQUAL if p1 and p2
       // are at equal distance from q and LARGER is p2 is closer to q
       // than p1.
       typename Geom_traits::Compare_distance_2 comparator =
-	Geom_traits().compare_distance_2_object();
+        Geom_traits().compare_distance_2_object();
 
       return comparator(q, p1, p2);
     }

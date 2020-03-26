@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -56,7 +56,7 @@ public:
 
   template<class ApolloniusSite>
   Parabola_segment_2(const ApolloniusSite &p, const Line_2 &l,
-		     const Point_2 &p1, const Point_2 &p2)
+                     const Point_2 &p1, const Point_2 &p2)
     : Parabola_2< Gt >(p, l)
   {
     this->p1 = p1;
@@ -64,7 +64,7 @@ public:
   }
 
   Parabola_segment_2(const Point_2 &p, const Line_2 &l,
-		     const Point_2 &p1, const Point_2 &p2)
+                     const Point_2 &p1, const Point_2 &p2)
     : Parabola_2< Gt >(p, l)
   {
     this->p1 = p1;

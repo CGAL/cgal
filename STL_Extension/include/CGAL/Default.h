@@ -16,7 +16,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_DEFAULT_H
 #define CGAL_DEFAULT_H
 

@@ -268,7 +268,7 @@ public:
     insert(first, last);
   }
 
-  
+
 private:
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
   std::vector<Vertex_handle>

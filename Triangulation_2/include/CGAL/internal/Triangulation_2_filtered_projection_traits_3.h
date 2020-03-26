@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -71,17 +71,17 @@ public:
                                                side_of_oriented_circle_2_object,
                                                normal)
   CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Less_x_2,
-					       less_x_2_object,
-					       base1)
+                                               less_x_2_object,
+                                               base1)
   CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Less_y_2,
-					       less_y_2_object,
-					       base2)
+                                               less_y_2_object,
+                                               base2)
   CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Compare_x_2,
-					       compare_x_2_object,
-					       base1)
+                                               compare_x_2_object,
+                                               base1)
   CGAL_TRIANGULATION_2_PROJ_TRAITS_FILTER_PRED(Compare_y_2,
-					       compare_y_2_object,
-					       base2)
+                                               compare_y_2_object,
+                                               base2)
 }; // end class Triangulation_2_projection_traits_base_3<Filtered_kernel>
 
 } // end namespace CGAL

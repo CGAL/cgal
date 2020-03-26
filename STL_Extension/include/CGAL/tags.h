@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL_TAGS_H
 #define CGAL_TAGS_H
@@ -50,7 +50,7 @@ using Boolean_tag = std::integral_constant<bool, b>;
 */
 
 typedef Boolean_tag<true>   Tag_true;
-typedef Boolean_tag<false>  Tag_false; 
+typedef Boolean_tag<false>  Tag_false;
 
 // the function check_tag is deprecated since CGAL 3.3
 inline bool check_tag( Tag_true)  {return true;}
@@ -60,7 +60,7 @@ struct Null_tag {};
 
 struct Null_functor {
   typedef Null_tag result_type;
-  typedef Null_tag second_argument_type; 
+  typedef Null_tag second_argument_type;
 };
 
 // For concurrency

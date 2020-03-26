@@ -359,7 +359,7 @@ namespace internal {
         Patch_id pid = get_patch_id(f);
         input_triangles_.push_back(triangle(f));
         input_patch_ids_.push_back(pid);
-        std::pair<typename Patch_id_to_index_map::iterator, bool> 
+        std::pair<typename Patch_id_to_index_map::iterator, bool>
           res = patch_id_to_index_map.insert(std::make_pair(pid,0));
         if(res.second){
           res.first->second =  patch_id_to_index_map.size()-1;
@@ -1371,7 +1371,7 @@ private:
       do
       {
         if (is_on_patch_border(nxt))
-        { 
+        {
           CGAL_assertion(get_patch_id(face(nxt, mesh_)) == pid);
           return nxt;
         }

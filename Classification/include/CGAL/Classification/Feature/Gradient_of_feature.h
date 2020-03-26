@@ -47,7 +47,7 @@ class Gradient_of_feature : public Feature_base
   ItemMap m_map;
   Feature_handle m_feature;
   boost::shared_ptr<NeighborQuery> m_query;
-  
+
 public:
   /*!
     TODO
@@ -70,7 +70,7 @@ public:
 
     if (neighborhood.empty())
       return 0.f;
-    
+
     float mean = 0.f;
 
     for (std::size_t i = 0; i < neighborhood.size(); ++ i)

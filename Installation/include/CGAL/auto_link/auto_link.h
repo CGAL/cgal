@@ -1,4 +1,4 @@
-// This header file is a copy of "boost/config/auto_link.hpp" 
+// This header file is a copy of "boost/config/auto_link.hpp"
 // from boost version 1.44.0
 // but slightly modified to accomodate CGAL libraries.
 
@@ -435,7 +435,7 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 #if defined(CGAL_LIB_NAME)
 #  undef CGAL_LIB_NAME
 #endif
-// Don't undef this one: it can be set by the user and should be the 
+// Don't undef this one: it can be set by the user and should be the
 // same for all libraries:
 //#if defined(CGAL_LIB_TOOLSET)
 //#  undef CGAL_LIB_TOOLSET

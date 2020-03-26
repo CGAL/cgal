@@ -91,7 +91,7 @@ _standard_error_handler(
          << "Line       : " << line << std::endl
          << "Explanation: " << msg << std::endl
          << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
-	 << std::endl;
+         << std::endl;
 }
 
 
@@ -116,7 +116,7 @@ _standard_warning_handler( const char *,
          << "Line       : " << line << std::endl
          << "Explanation: " << msg << std::endl
          << "Refer to the bug-reporting instructions at https://www.cgal.org/bug_report.html"
-	 << std::endl;
+         << std::endl;
 }
 
 #ifdef CGAL_HEADER_ONLY
