@@ -80,7 +80,9 @@ public:
     return fh->info().is_external;
   }
 
-  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt)
+  //default for out is Emptyset_iterator(), and is only used for triangulate_with_cdt
+  template<typename OutputIterator>
+  bool triangulate_face(face_descriptor f, PM& pmesh, bool use_cdt, OutputIterator out)
   {
     typedef typename Traits::FT FT;
 
@@ -118,11 +120,29 @@ public:
       FT p0p2 = CGAL::cross_product(p1-p0,p1-p2) * CGAL::cross_product(p3-p2,p3-p0);
       if(p0p2>p1p3)
       {
-        CGAL::Euler::split_face(v0, v2, pmesh);
+        //CGAL::Euler::split_face(v0, v2, pmesh);
+        halfedge_descriptor hnew = halfedge(add_edge(pmesh), pmesh);
+        face_descriptor fnew = add_face(pmesh);
+        CGAL::internal::insert_tip( hnew, v2, pmesh);
+        CGAL::internal::insert_tip( opposite(hnew, pmesh), v0, pmesh);
+        set_face( hnew, face(v0,pmesh), pmesh);
+        CGAL::internal::set_face_in_face_loop(opposite(hnew,pmesh), fnew, pmesh);
+        set_halfedge(face(hnew,pmesh), hnew, pmesh);
+        set_halfedge(face(opposite(hnew,pmesh),pmesh), opposite(hnew,pmesh), pmesh);
+        *out++=fnew;
       }
       else
       {
-        CGAL::Euler::split_face(v1, v3, pmesh);
+        //CGAL::Euler::split_face(v1, v3, pmesh);
+        halfedge_descriptor hnew = halfedge(add_edge(pmesh), pmesh);
+        face_descriptor fnew = add_face(pmesh);
+        CGAL::internal::insert_tip( hnew, v3, pmesh);
+        CGAL::internal::insert_tip( opposite(hnew, pmesh), v1, pmesh);
+        set_face( hnew, face(v1,pmesh), pmesh);
+        CGAL::internal::set_face_in_face_loop(opposite(hnew,pmesh), fnew, pmesh);
+        set_halfedge(face(hnew,pmesh), hnew, pmesh);
+        set_halfedge(face(opposite(hnew,pmesh),pmesh), opposite(hnew,pmesh), pmesh);
+        *out++=fnew;
       }
     }
     else
@@ -143,18 +163,19 @@ public:
                                                            Itag>             CDT;
         P_traits cdt_traits(normal);
         CDT cdt(cdt_traits);
-        return triangulate_face_with_CDT(f, pmesh, cdt);
+        return triangulate_face_with_CDT(f, pmesh, cdt, out);
       }
 #else
       CGAL_USE(use_cdt);
 #endif
+      //don't use out if no cdt.
       return triangulate_face_with_hole_filling(f, pmesh);
     }
     return true;
   }
 
-  template<class CDT>
-  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt)
+  template<class CDT, typename OutputIterator>
+  bool triangulate_face_with_CDT(face_descriptor f, PM& pmesh, CDT& cdt, OutputIterator out)
   {
     std::size_t original_size = CGAL::halfedges_around_face(halfedge(f, pmesh), pmesh).size();
 
@@ -267,7 +288,13 @@ public:
         set_next(h1, h2, pmesh);
         set_next(h2, h0, pmesh);
 
-        Euler::fill_hole(h0, pmesh);
+        //Euler::fill_hole(h0, pmesh);
+        face_descriptor new_face = add_face(pmesh);
+        for(halfedge_descriptor hd : halfedges_around_face(h0,pmesh)){
+          set_face(hd, new_face,pmesh);
+        }
+        set_halfedge(new_face,h0,pmesh);
+        *out++=new_face;
       }
     }
     return true;
@@ -368,7 +395,7 @@ public:
     // Iterates on the vector of face descriptors
     for(face_descriptor f : facets)
     {
-     if(!this->triangulate_face(f, pmesh, use_cdt))
+     if(!this->triangulate_face(f, pmesh, use_cdt, Emptyset_iterator()))
        result = false;
     }
     return result;
@@ -436,8 +463,15 @@ bool triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
   //Option
   bool use_cdt = choose_parameter(get_parameter(np, internal_np::use_delaunay_triangulation), true);
 
+  
+  typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
+                                                       NamedParameters,
+                                                       Emptyset_iterator>::type Output_iterator;
+  
+  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+
   internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap, traits);
-  return modifier.triangulate_face(f, pmesh, use_cdt);
+  return modifier.triangulate_face(f, pmesh, use_cdt, out);
 }
 
 template<typename PolygonMesh>
