@@ -10,7 +10,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
+  return()  
 
 endif()
 
@@ -21,7 +21,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()
+  return()  
 
 endif()
 
@@ -89,6 +89,7 @@ create_single_source_cgal_program( "mesh_smoothing_example.cpp")
 create_single_source_cgal_program( "locate_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
+#create_single_source_cgal_program( "mesh_self_intersection_removal_example.cpp")
 
 if(OpenMesh_FOUND)
 
@@ -107,8 +108,8 @@ target_link_libraries( point_inside_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 create_single_source_cgal_program( "stitch_borders_example_OM.cpp" )
 target_link_libraries( stitch_borders_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
 
-#create_single_source_cgal_program( "remove_degeneracies_example_OM.cpp")
-#target_link_libraries( remove_degeneracies_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
+#create_single_source_cgal_program( "remove_degeneracies_example.cpp")
+#target_link_libraries( remove_degeneracies_example PRIVATE ${OPENMESH_LIBRARIES} )
 
 create_single_source_cgal_program( "triangulate_faces_example_OM.cpp")
 target_link_libraries( triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES} )
@@ -128,5 +129,8 @@ find_package(Ceres QUIET)
 if(TARGET ceres)
   target_compile_definitions( mesh_smoothing_example PRIVATE CGAL_PMP_USE_CERES_SOLVER )
   target_link_libraries( mesh_smoothing_example PRIVATE ceres )
+
+#  target_compile_definitions( mesh_self_intersection_removal_example PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+#  target_link_libraries( mesh_self_intersection_removal_example PRIVATE ceres )
 endif(TARGET ceres)
 

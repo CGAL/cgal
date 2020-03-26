@@ -74,7 +74,7 @@ triangle_grid_sampling( const typename Kernel::Point_3& p0,
 template <class AABB_tree, class PointRange>
 struct Distance_computation{
   typedef typename PointRange::const_iterator::value_type Point_3;
-
+  
   const AABB_tree& tree;
   const PointRange& sample_points;
   Point_3 initial_hint;
@@ -565,10 +565,8 @@ double approximate_Hausdorff_distance(
    VertexPointMap vpm_2)
 {
     std::vector<typename Kernel::Point_3> sample_points;
-    sample_triangle_mesh(
-                tm1,
-                std::back_inserter(sample_points),
-                np);
+    sample_triangle_mesh(tm1,std::back_inserter(sample_points),np);
+
     return approximate_Hausdorff_distance<Concurrency_tag, Kernel>(sample_points, tm2, vpm_2);
 }
 

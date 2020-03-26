@@ -16,7 +16,7 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/internal/repair_extra.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
-#include <CGAL/Polygon_mesh_processing/internal/remove_degeneracies.h>
+#include <CGAL/Polygon_mesh_processing/remove_degeneracies.h>
 
 #include "ui_RemoveNeedlesDialog.h"
 
@@ -209,7 +209,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveSelfIntersections_
   if (poly_item)
   {
     bool solved =
-      CGAL::Polygon_mesh_processing::remove_self_intersections(
+      CGAL::Polygon_mesh_processing::experimental::remove_self_intersections(
       *poly_item->polyhedron());
     if (!solved)
       CGAL::Three::Three::information(tr("Some self-intersection could not be fixed"));
@@ -261,7 +261,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
   if (poly_item)
   {
     try{
-      bool solved =
+      bool solved = 
         CGAL::Polygon_mesh_processing::experimental::
           autorefine_and_remove_self_intersections(*poly_item->polyhedron());
       if (!solved)

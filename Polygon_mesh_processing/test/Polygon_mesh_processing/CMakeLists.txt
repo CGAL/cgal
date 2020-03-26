@@ -10,7 +10,7 @@ find_package( CGAL QUIET COMPONENTS Core)
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
+  return()  
 
 endif()
 
@@ -23,7 +23,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()
+  return()  
 
 endif()
 
@@ -100,6 +100,7 @@ endif()
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
   create_single_source_cgal_program("test_remove_caps_needles.cpp")
+#  create_single_source_cgal_program("test_pmp_remove_self_intersections.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
@@ -117,6 +118,9 @@ find_package(Ceres QUIET)
 if(TARGET ceres)
   target_compile_definitions( test_mesh_smoothing PRIVATE CGAL_PMP_USE_CERES_SOLVER )
   target_link_libraries( test_mesh_smoothing PRIVATE ceres )
+
+#  target_compile_definitions( test_pmp_remove_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+#  target_link_libraries( test_pmp_remove_self_intersections PRIVATE ceres )
 endif(TARGET ceres)
 
 if(BUILD_TESTING)
