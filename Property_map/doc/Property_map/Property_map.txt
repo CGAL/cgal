@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_CGAL_and_Boost_Property_Maps
 
 \anchor chapterProperty_map
@@ -27,15 +27,15 @@ Property maps in the Boost manuals: <A HREF="https://www.boost.org/libs/property
 
 Some algorithms in \cgal take as input parameters iterator ranges and property maps to access information attached to elements of the sequence.
 
-For example, the algorithms of chapters \ref Chapter_Point_Set_Processing "Point Set Processing" and 
-\ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction" 
+For example, the algorithms of chapters \ref Chapter_Point_Set_Processing "Point Set Processing" and
+\ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
 take as input parameters iterator ranges and property
 maps to access each point's position and normal.  Position and normal
 might be represented in various ways, e.g., as a class derived from
 the \cgal point class, or as a `std::pair<Point_3<K>, Vector_3<K> >`,
 or as a `boost::tuple<..,Point_3<K>, ..., Vector_3<K> >`.
 
-This component provides property maps to support these cases: 
+This component provides property maps to support these cases:
 
 - `Identity_property_map<T>`
 - `First_of_pair_property_map<Pair>` and `Second_of_pair_property_map<Pair>`
@@ -71,6 +71,6 @@ algorithm on raw `double` arrays:
 \cgalExample{Property_map/custom_property_map.cpp}
 
 
-*/ 
+*/
 } /* namespace CGAL */
 

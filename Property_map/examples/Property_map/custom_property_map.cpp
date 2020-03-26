@@ -16,7 +16,7 @@ struct Custom_point_map
   using value_type = Point_3;   // The object manipulated by the algorithm is a Point_3
   using reference = Point_3;    // The object does not exist in memory, so there's no reference
   using category = boost::readable_property_map_tag; // The property map is only used for reading
-    
+
   double *x, *y, *z;
 
   Custom_point_map (double* x = nullptr, double* y = nullptr, double* z = nullptr)
@@ -65,7 +65,7 @@ struct Custom_normal_map
 int main()
 {
   constexpr std::size_t nb_points = 1000;
-  
+
   // in this example, points are stored as separate coordinate arrays
   double x[nb_points];
   double y[nb_points];
@@ -96,7 +96,7 @@ int main()
     (indices, 12,
      CGAL::parameters::point_map (Custom_point_map(x,y,z)).
      normal_map (Custom_normal_map(normals)));
-  
+
   CGAL::mst_orient_normals
     (indices, 12,
      CGAL::parameters::point_map (Custom_point_map(x,y,z)).
@@ -107,6 +107,6 @@ int main()
     std::cerr << "Point(" << i << ") = " << x[i] << " " << y[i] << " " << z[i]
               << "\tNormal(" << i << ") = "
               << normals[3*i] << " " << normals[3*i+1] << " " << normals[3*i+2] << std::endl;
-  
+
   return EXIT_SUCCESS;
 }
