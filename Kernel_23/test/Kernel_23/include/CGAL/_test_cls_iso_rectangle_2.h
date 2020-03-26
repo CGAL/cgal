@@ -1,9 +1,9 @@
-// Copyright (c) 1999
+// Copyright (c) 1999  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -89,6 +89,7 @@ _test_cls_iso_rectangle_2(const R& )
  assert( r9 == r10 );
 
  std::cout << '.';
+
 
  assert( r1.vertex(0) == p1 );
  assert( r1.vertex(1) == p5 );

@@ -32,6 +32,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "regular_with_info_3.cpp" )
   create_single_source_cgal_program( "simple_triangulation_3.cpp" )
   create_single_source_cgal_program( "simplex.cpp" )
+  create_single_source_cgal_program( "simple.cpp" )
 
   create_single_source_cgal_program("draw_triangulation_3.cpp")
   if(CGAL_Qt5_FOUND)
@@ -54,8 +55,8 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-
+  
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-
+  
 endif()
 

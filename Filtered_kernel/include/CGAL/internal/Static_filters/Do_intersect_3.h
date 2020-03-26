@@ -70,55 +70,53 @@ public:
   }
 
 
-  // The internal::do_intersect(..) function
+  // The internal::do_intersect(..) function 
   // only performs orientation tests on the vertices
   // of the triangle and the segment
   // By calling the do_intersect function with
   // the  statically filtered kernel we avoid
   // that doubles are put into Interval_nt
   // to get taken out again with fit_in_double
-  result_type
+  result_type 
   operator()(const Segment_3 &s, const Triangle_3& t) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type
+  result_type 
   operator()(const Triangle_3& t, const Segment_3 &s) const
   {
     return Intersections::internal::do_intersect(t,s, SFK());
   }
 
-  result_type
+  result_type 
   operator()(const Bbox_3& b, const Segment_3 &s) const
   {
     return this->operator()(s, b);
   }
 
-  result_type
+  result_type 
   operator()(const Segment_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Point_3> get_approx; // Identity functor for all points
-                                    // but lazy points
-    const Point_3& p = s.source();
-    const Point_3& q = s.target();
+    const Point_3& p = s.source(); 
+    const Point_3& q = s.target(); 
 
     double px, py, pz, qx, qy, qz;
-    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-        fit_in_double(get_approx(p).z(), pz) &&
-        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(p.z(), pz) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(q.z(), qz) )   
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub =
+      const Uncertain<result_type> ub = 
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
-         true, // bounded at t=0
-         true, // bounded at t=1
+         true, // bounded at t=0 
+         true, // bounded at t=1 
          true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
@@ -132,36 +130,34 @@ public:
 
 
 
-  result_type
+  result_type 
   operator()(const Bbox_3& b, const Ray_3 &r) const
   {
     return this->operator()(r, b);
   }
 
-  result_type
+  result_type 
   operator()(const Ray_3 &r, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Point_3> get_approx; // Identity functor for all points
-    // but lazy points.
-    const Point_3& p = r.source();
-    const Point_3& q = r.second_point();
+    const Point_3& p = r.source(); 
+    const Point_3& q = r.second_point(); 
 
     double px, py, pz, qx, qy, qz;
-    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
-        fit_in_double(get_approx(p).z(), pz) &&
-        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
-        fit_in_double(get_approx(q).z(), qz) )
+    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
+        fit_in_double(p.z(), pz) &&
+        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
+        fit_in_double(q.z(), qz) )   
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
-      const Uncertain<result_type> ub =
+      const Uncertain<result_type> ub = 
         Intersections::internal::do_intersect_bbox_segment_aux
         <double,
-         true, // bounded at t=0
-         false,// not bounded at t=1
+         true, // bounded at t=0 
+         false,// not bounded at t=1 
          true> // do use static filters
         (px, py, pz,
          qx, qy, qz,
@@ -173,26 +169,25 @@ public:
     return Base::operator()(r,b);
   }
 
-  result_type
+  result_type 
   operator()(const Bbox_3& b, const Sphere_3 &s) const
   {
     return this->operator()(s, b);
   }
 
-  result_type
+  result_type 
   operator()(const Sphere_3 &s, const Bbox_3& b) const
   {
     CGAL_BRANCH_PROFILER_3(std::string("semi-static failures/attempts/calls to   : ") +
                            std::string(CGAL_PRETTY_FUNCTION), tmp);
-
-    Get_approx<Point_3> get_approx; // Identity functor for all points
+    
     const Point_3& c = s.center();
-
+    
     double scx, scy, scz, ssr, bxmin, bymin, bzmin, bxmax, bymax, bzmax;
 
-    if (fit_in_double(get_approx(c).x(), scx) &&
-        fit_in_double(get_approx(c).y(), scy) &&
-        fit_in_double(get_approx(c).z(), scz) &&
+    if (fit_in_double(c.x(), scx) &&
+        fit_in_double(c.y(), scy) &&
+        fit_in_double(c.z(), scz) &&
         fit_in_double(s.squared_radius(), ssr) &&
         fit_in_double(b.xmin(), bxmin) &&
         fit_in_double(b.ymin(), bymin) &&
@@ -202,15 +197,15 @@ public:
         fit_in_double(b.zmax(), bzmax))
     {
       CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-
+      
       double distance = 0;
       double max1 = 0;
-
+  
       if(scx < bxmin)
       {
         double bxmin_scx = bxmin - scx;
         max1 = bxmin_scx;
-
+    
         distance = square(bxmin_scx);
       }
       else if(scx > bxmax)
@@ -257,7 +252,7 @@ public:
 
       double double_tmp_result = (distance - ssr);
       double max2 = CGAL::abs(ssr);
-
+  
       if ((max1 < 3.33558365626356687717e-147) || (max2 < 1.11261183279326254436e-293)){
         CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
         return Base::operator()(s,b);
@@ -268,10 +263,10 @@ public:
       }
 
       double eps = 1.99986535548615598560e-15 * (std::max) (max2, (max1 * max1));
-
+  
       if (double_tmp_result > eps)
         return false;
-      else
+      else 
       {
         if (double_tmp_result < -eps)
           return true;
@@ -302,14 +297,14 @@ public:
               << "  degre " << f1bis.degree() << ": " <<  f1bis.error() << "\n"
               << "  degre " << f2.degree() << ": " <<  f2.error() << "\n"
               << "  degre " << f3.degree() << ": " <<  f3.error() << "\n";
-
+      
     double err = f.error();
     err += err * 2 *  F::ulp(); // Correction due to "eps * m * m".  Do we need 2 ?
     std::cerr << "*** epsilon for Do_intersect_3(Bbox_3, Segment_3) = "
               << err << std::endl;
     std::cerr << "\n"
               << "Now for underflow/overflows...\n"
-              << "        min_double/eps = "
+              << "        min_double/eps = " 
               << (std::numeric_limits<double>::min)() / err << std::endl
               << "  sqrt(min_double/eps) = "
               << CGAL::sqrt((std::numeric_limits<double>::min)() / err) << std::endl;

@@ -51,31 +51,29 @@ public:
 #endif // end CGAL_CFG_MATCHING_BUG_6
 
 
-  result_type
+  result_type 
   operator()(const Segment_3& s) const
   {
     return Equal_3()(Construct_source_3()(s), Construct_target_3()(s));
   }
 
 
-  result_type
+  result_type 
   operator()(const Ray_3& r) const
   {
     return Equal_3()(Construct_source_3()(r), Construct_second_point_3()(r));
   }
 
-  result_type
+  result_type 
   operator()(const Plane_3& p) const
   {
     CGAL_BRANCH_PROFILER(std::string("semi-static attempts/calls to   : ") +
                          std::string(CGAL_PRETTY_FUNCTION), tmp);
 
-    Get_approx<Plane_3> get_approx; // Identity functor for all planes
-                                    // but lazy planes
     double a, b, c;
 
-    if (fit_in_double(get_approx(p).a(), a) && fit_in_double(get_approx(p).b(), b) &&
-        fit_in_double(get_approx(p).c(), c) )
+    if (fit_in_double(p.a(), a) && fit_in_double(p.b(), b) &&
+        fit_in_double(p.c(), c) )
     {
       CGAL_BRANCH_PROFILER_BRANCH(tmp);
       return a == 0 && b == 0 && c == 0;
