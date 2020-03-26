@@ -71,7 +71,7 @@ jet_smooth_point(
                                  Simple_cartesian<double>,
                                  SvdTraits> Monge_jet_fitting;
   typedef typename Monge_jet_fitting::Monge_form Monge_form;
-  
+
   std::vector<Point> points;
   neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points));
 
@@ -139,7 +139,7 @@ jet_smooth_point(
 
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename NamedParameters
 >
 void
@@ -150,7 +150,7 @@ jet_smooth_point_set(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   // basic geometric types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
@@ -207,7 +207,7 @@ jet_smooth_point_set(
              degree_fitting,
              degree_monge));
        ++ callback_wrapper.advancement();
-       
+
        return true;
      });
 
@@ -218,7 +218,7 @@ jet_smooth_point_set(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename ConcurrencyTag,
-	  typename PointRange>
+          typename PointRange>
 void
 jet_smooth_point_set(
   PointRange& points,
@@ -228,7 +228,7 @@ jet_smooth_point_set(
     (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 /// \endcond
-  
+
 
 } //namespace CGAL
 

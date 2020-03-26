@@ -67,7 +67,7 @@ void for_each (RangeRef range,
   iterators.reserve (range_size);
   for (typename Range_iterator_type<RangeRef>::type it = range.begin(); it != range.end(); ++ it)
     iterators.push_back (it);
-    
+
   tbb::parallel_for (tbb::blocked_range<std::size_t>(0, range_size),
                      [&](const tbb::blocked_range<std::size_t>& r)
                      {
@@ -85,7 +85,7 @@ void for_each (RangeRef range,
                std::random_access_iterator_tag)
 {
   std::size_t range_size = std::distance (range.begin(), range.end());
-  
+
   tbb::parallel_for (tbb::blocked_range<std::size_t>(0, range_size),
                      [&](const tbb::blocked_range<std::size_t>& r)
                      {

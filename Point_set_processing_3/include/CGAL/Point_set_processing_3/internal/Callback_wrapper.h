@@ -75,7 +75,7 @@ public:
   {
     return m_advancement;
   }
-  
+
   bool& interrupted()
   {
     if (m_callback)
@@ -102,7 +102,7 @@ class Callback_wrapper<CGAL::Parallel_tag>
   {
     return *this;
   }
-  
+
 public:
   Callback_wrapper (const std::function<bool(double)>& callback,
                      std::size_t size,

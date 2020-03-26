@@ -33,14 +33,14 @@ template <typename Kernel_, typename PointRangeRef, typename PointMap>
 class Neighbor_query
 {
 public:
-  
+
   typedef Kernel_ Kernel;
   typedef PointRangeRef Point_range;
   typedef PointMap Point_map;
 
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point_3;
-  
+
   typedef typename Range_iterator_type<PointRangeRef>::type input_iterator;
   typedef typename input_iterator::value_type value_type;
 
@@ -70,10 +70,10 @@ public:
   typedef CGAL::Distance_adapter<input_iterator, Deref_point_map, CGAL::Euclidean_distance<Tree_traits_base> > Distance;
   typedef CGAL::Kd_tree<Tree_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true> Tree;
   typedef CGAL::Fuzzy_sphere<Tree_traits> Sphere;
-  
+
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits, Distance, Splitter, Tree> Neighbor_search;
   typedef typename Neighbor_search::iterator Search_iterator;
-  
+
 private:
 
   PointRangeRef m_points;
@@ -112,9 +112,9 @@ public:
       // if k=0, no limit on the number of neighbors returned
       if (k == 0)
         k = (std::numeric_limits<unsigned int>::max)();
-    
+
       unsigned int nb = 0;
-        
+
       try
       {
         std::function<void(const input_iterator&)> output_iterator_with_limit
@@ -124,7 +124,7 @@ public:
             if (++ nb == k)
               throw Maximum_points_reached_exception();
           };
-      
+
         auto function_output_iterator
           = boost::make_function_output_iterator (output_iterator_with_limit);
 
@@ -141,7 +141,7 @@ public:
       else
         k = 0;
     }
-  
+
     if (k != 0)
     {
       // Gather set of (k+1) neighboring points.

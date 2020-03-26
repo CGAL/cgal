@@ -133,7 +133,7 @@ compute_average_spacing(const typename NeighborQuery::Kernel::Point_3& query, //
    of `points`.
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
 >
 #ifdef DOXYGEN_RUNNING
@@ -181,11 +181,11 @@ compute_average_spacing(
 
   Point_set_processing_3::internal::Callback_wrapper<ConcurrencyTag>
     callback_wrapper (callback, nb_points);
-     
+
   std::vector<FT> spacings (nb_points, -1);
 
   typedef boost::zip_iterator<boost::tuple<iterator, typename std::vector<FT>::iterator> > Zip_iterator;
-     
+
   CGAL::for_each<ConcurrencyTag>
     (CGAL::make_range (boost::make_zip_iterator (boost::make_tuple (points.begin(), spacings.begin())),
                        boost::make_zip_iterator (boost::make_tuple (points.end(), spacings.end()))),
@@ -193,7 +193,7 @@ compute_average_spacing(
      {
        if (callback_wrapper.interrupted())
          return false;
-        
+
        get<1>(t) = CGAL::internal::compute_average_spacing<Neighbor_query>
          (get(point_map, get<0>(t)), neighbor_query, k);
        ++ callback_wrapper.advancement();
@@ -208,7 +208,7 @@ compute_average_spacing(
       ++ nb;
     }
   callback_wrapper.join();
-   
+
   // return average spacing
   return sum_spacings / (FT)(nb);
 }

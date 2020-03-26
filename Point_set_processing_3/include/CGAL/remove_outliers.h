@@ -143,7 +143,7 @@ remove_outliers(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   // geometric types
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
@@ -155,9 +155,9 @@ remove_outliers(
   double threshold_distance = choose_parameter(get_parameter(np, internal_np::threshold_distance), 0.);
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                  std::function<bool(double)>());
-  
+
   typedef typename Kernel::FT FT;
-  
+
   // basic geometric types
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;

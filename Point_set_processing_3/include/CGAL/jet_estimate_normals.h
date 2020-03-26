@@ -71,7 +71,7 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
 
   std::vector<Point> points;
   neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points));
-  
+
   // performs jet fitting
   Monge_jet_fitting monge_fit;
   const unsigned int degree_monge = 1; // we seek for normal and not more.
@@ -134,7 +134,7 @@ jet_estimate_normal(const typename NeighborQuery::Point_3& query, ///< point to 
    \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename NamedParameters
 >
 void
@@ -145,7 +145,7 @@ jet_estimate_normals(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   CGAL_TRACE("Calls jet_estimate_normals()\n");
 
   // basic geometric types
@@ -168,7 +168,7 @@ jet_estimate_normals(
   NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
   unsigned int degree_fitting = choose_parameter(get_parameter(np, internal_np::degree_fitting), 2);
   FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), FT(0));
-  
+
   const std::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
                                                                std::function<bool(double)>());
 
@@ -202,7 +202,7 @@ jet_estimate_normals(
      {
        if (callback_wrapper.interrupted())
          return false;
-         
+
        put (normal_map, vt,
             CGAL::internal::jet_estimate_normal<SvdTraits>
             (get(point_map, vt), neighbor_query, k, neighbor_radius, degree_fitting));
@@ -221,7 +221,7 @@ jet_estimate_normals(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename ConcurrencyTag,
-	  typename PointRange>
+          typename PointRange>
 void
 jet_estimate_normals(
   PointRange& points,

@@ -47,8 +47,8 @@ if ( CGAL_FOUND )
     CGAL_target_use_TBB(test_for_each)
   endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

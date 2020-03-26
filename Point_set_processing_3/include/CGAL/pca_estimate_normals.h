@@ -65,7 +65,7 @@ pca_estimate_normal(const typename NeighborQuery::Kernel::Point_3& query, ///< p
 
   std::vector<Point> points;
   neighbor_query.get_points (query, k, neighbor_radius, std::back_inserter(points));
-  
+
   // performs plane fitting by point-based PCA
   Plane plane;
   linear_least_squares_fitting_3(points.begin(),points.end(),plane,Dimension_tag<0>());
@@ -125,7 +125,7 @@ pca_estimate_normal(const typename NeighborQuery::Kernel::Point_3& query, ///< p
      \cgalNamedParamsEnd
 */
 template <typename ConcurrencyTag,
-	  typename PointRange,
+          typename PointRange,
           typename NamedParameters
 >
 void
@@ -189,18 +189,18 @@ pca_estimate_normals(
      {
        if (callback_wrapper.interrupted())
          return false;
-                            
+
        put (normal_map, vt,
             CGAL::internal::pca_estimate_normal
             (get(point_map, vt), neighbor_query, k, neighbor_radius));
-                            
+
        ++ callback_wrapper.advancement();
 
        return true;
      });
 
   callback_wrapper.join();
-   
+
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of pca_estimate_normals()\n");
 }
@@ -208,7 +208,7 @@ pca_estimate_normals(
 /// \cond SKIP_IN_MANUAL
 // variant with default NP
 template <typename ConcurrencyTag,
-	  typename PointRange
+          typename PointRange
 >
 void
 pca_estimate_normals(
