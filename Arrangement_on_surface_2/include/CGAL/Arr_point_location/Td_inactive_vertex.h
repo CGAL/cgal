@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)	 : Oren Nechushtan <theoren@math.tau.ac.il>
+// Author(s)         : Oren Nechushtan <theoren@math.tau.ac.il>
 //               updated by: Michal Balas <balasmic@post.tau.ac.il>
 
 #ifndef CGAL_TD_INACTIVE_VERTEX_H
@@ -36,25 +36,25 @@ namespace CGAL {
  * Implementation of a pseudo-trapezoid as two halfedges(top,bottom)
  * and two curve-ends(left,right).
  * Trapezoids are represented as two curve-ends called right and left and
- * two halfedges called top and bottom. The curve-ends (points) lie on the 
- * right and left boundaries of the trapezoid respectively and the halfedges 
+ * two halfedges called top and bottom. The curve-ends (points) lie on the
+ * right and left boundaries of the trapezoid respectively and the halfedges
  * bound the trapezoid from above and below.
- * There exist degenerate trapezoids called infinite trapezoid; this happens 
+ * There exist degenerate trapezoids called infinite trapezoid; this happens
  * when one of the four sides is on the parameter space boundary.
  * Trapezoids are created as active and become inactive when Remove() member
  * function called.
  * Each trapezoid has at most four neighbouring trapezoids.
- * X_trapezoid structure can represent a real trapezoid, a Td-edge or an 
+ * X_trapezoid structure can represent a real trapezoid, a Td-edge or an
  * edge-end (end point).
  */
 template <class Td_traits_>
 class Td_inactive_vertex : public Handle
 {
 public:
-  
+
   //type of traits class
   typedef Td_traits_                                   Traits;
-  
+
   //type of point (Point_2)
   typedef typename Traits::Point                       Point;
 
@@ -66,18 +66,18 @@ public:
 
   //type of Halfedge_const_handle (trapezoid edge)
   typedef typename Traits::Halfedge_const_handle  Halfedge_const_handle;
-  
+
   //type of Vertex_const_handle (trapezoid vertex)
   typedef typename Traits::Vertex_const_handle    Vertex_const_handle;
 
   //type of Td_inactive_vertex (Self)
   typedef typename Traits::Td_inactive_vertex            Self;
-  
+
   typedef typename Traits::Td_map_item            Td_map_item;
 
   //type of Trapezoidal decomposition
   typedef Trapezoidal_decomposition_2<Traits>          TD;
-  
+
   //type of In face iterator
   typedef typename TD::In_face_iterator                In_face_iterator;
 
@@ -88,7 +88,7 @@ public:
   //friend class declarations:
 
   friend class Trapezoidal_decomposition_2<Traits>;
-  
+
 #ifdef CGAL_PM_FRIEND_CLASS
 #if defined(__SUNPRO_CC) || defined(__PGI) || defined(__INTEL_COMPILER)
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
@@ -99,12 +99,12 @@ public:
 #else
   friend class Trapezoidal_decomposition_2<Traits>::In_face_iterator;
 #endif
-  
+
 #else
   friend class In_face_iterator;
 #endif
 #endif
-  
+
    /*! \class
    * Inner class Data derived from Rep class
    */
@@ -116,20 +116,20 @@ public:
     //c'tors
     Data (Point _p, Dag_node* _p_node): p(_p),p_node(_p_node)
     { }
-    
+
     ~Data() { }
 
   protected:
-    Point p; 
+    Point p;
     Dag_node* p_node;
   };
-  
-  
+
+
  private:
-  
+
   Data* ptr() const { return (Data*)(PTR.p);  }
-	
-	
+
+
 #ifndef CGAL_TD_DEBUG
 #ifdef CGAL_PM_FRIEND_CLASS
  protected:
@@ -139,15 +139,15 @@ public:
 #else //CGAL_TD_DEBUG
  public:
 #endif //CGAL_TD_DEBUG
-	
+
 
   /*! Set the DAG node. */
-  inline void set_dag_node(Dag_node* p) 
+  inline void set_dag_node(Dag_node* p)
   {
     ptr()->p_node = p;
   }
-  
-  
+
+
   inline void set_point(Vertex_const_handle v_before_rem)
   {
     ptr()->p = v_before_rem->point();
@@ -155,7 +155,7 @@ public:
 
 
  public:
-  
+
   /// \name Constructors.
   //@{
 
@@ -164,26 +164,26 @@ public:
   {
     PTR.p = new Data(v_before_rem->point(), node);
   }
-  
-  
+
+
   /*! Copy constructor. */
   Td_inactive_vertex (const Self& tr) : Handle(tr)
   {
   }
-  
+
   //@}
-  
+
   /// \name Operator overloading.
   //@{
 
-  /*! Assignment operator. 
-  *   operator= should not copy m_dag_node (or otherwise update 
+  /*! Assignment operator.
+  *   operator= should not copy m_dag_node (or otherwise update
   *     Dag_node::replace)
     */
   inline Self& operator= (const Self& t2)
   {
-	  Handle::operator=(t2);
-	  return *this;
+          Handle::operator=(t2);
+          return *this;
   }
 
   /*! Operator==. */
@@ -204,12 +204,12 @@ public:
   /// \name Access methods.
   //@{
 
-  inline Self& self() 
+  inline Self& self()
   {
     return *this;
   }
-  
-  inline const Self& self() const 
+
+  inline const Self& self() const
   {
     return *this;
   }
@@ -220,21 +220,21 @@ public:
     return (unsigned long) PTR.p;
   }
 
-  inline Point& point() const  
+  inline Point& point() const
   {
     return ptr()->p;
   }
-  
+
   /*! Access DAG node. */
-  Dag_node* dag_node() const  
+  Dag_node* dag_node() const
   {
-    return ptr()->p_node; 
+    return ptr()->p_node;
   }
-  
-  
+
+
   //@}
-  
-	
+
+
 
 };
 
