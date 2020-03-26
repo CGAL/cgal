@@ -208,7 +208,7 @@ public:
   {
     CGAL_precondition(facet>=0 && facet<4);
     char current_bits = bits_;
-   
+
     while (!bits_.compare_exchange_weak(current_bits, current_bits | char(1 << facet)))
     {
       current_bits = bits_;
@@ -320,7 +320,7 @@ public:
 #endif
     , surface_center_index_table_()
     , sliver_value_(FT(0.))
-    , subdomain_index_()  
+    , subdomain_index_()
     , sliver_cache_validity_(false)
   {}
 
@@ -657,14 +657,14 @@ public:
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
   void set_next_intrusive(Cell_handle c)
-  { 
-    next_intrusive_ = c; 
+  {
+    next_intrusive_ = c;
   }
 
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
   void set_previous_intrusive(Cell_handle c)
-  { 
-    previous_intrusive_ = c; 
+  {
+    previous_intrusive_ = c;
   }
 #endif // CGAL_INTRUSIVE_LIST
 
@@ -695,7 +695,7 @@ public:
     CGAL_assertion(i != j);
     if(i<j)
       cis[i==0 ? j-1 : j+i] = c;
-    else 
+    else
       cis[j==0 ? i-1 : i+j] = c;
   }
 
@@ -704,11 +704,11 @@ public:
     CGAL_assertion(i != j);
     if(i<j)
       return cis[i==0 ? j-1 : j+i];
-    else                         
+    else
       return cis[j==0 ? i-1 : i+j];
   }
 
-  ///save extra data per cell 
+  ///save extra data per cell
   std::ostream& write_data(std::ostream& os,
                            const CGAL::Unique_hash_map<Vertex_handle, std::size_t > &
                            )const
@@ -732,7 +732,7 @@ public:
     return os;
   }
 
-  ///load extra data per cell 
+  ///load extra data per cell
   std::istream& read_data(std::istream& is,
                           std::vector<Cell_handle>&,
                           std::vector<Vertex_handle>&)
@@ -749,7 +749,7 @@ public:
       }
     return is;
   }
-  
+
   ///@}
 private:
 

@@ -1,5 +1,5 @@
 // Copyright (c) 2019
-// GeometryFactory.  All rights reserved. 
+// GeometryFactory.  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as

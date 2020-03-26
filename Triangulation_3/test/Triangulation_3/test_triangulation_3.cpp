@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Francois Rebufat
 
@@ -32,15 +32,15 @@ struct Custom_vertex_base : public Vb
     typedef typename Vb::template Rebind_TDS<TDS2>::Other  Vb2;
     typedef Custom_vertex_base<Vb2>           Other;
   };
-  
+
   std::ostream& write_data(std::ostream& os,
                            const CGAL::Unique_hash_map<typename Vb::Vertex_handle, std::size_t > &
-                           )const 
+                           )const
   {
     os << this->info() << std::endl;
     return os;
   }
-  
+
   std::istream& read_data(std::istream& is,
                           std::vector<typename Vb::Cell_handle>&,
                           std::vector<typename Vb::Vertex_handle>&)
@@ -61,7 +61,7 @@ struct Custom_cell_base : public Cb
 
   Custom_cell_base():Cb(){}
   Custom_cell_base(typename Cb::Vertex_handle v0, typename Cb::Vertex_handle v1, typename Cb::Vertex_handle v2, typename Cb::Vertex_handle v3):Cb(v0, v1, v2, v3){}
-  
+
   std::ostream& write_data(std::ostream& os,
                            const CGAL::Unique_hash_map<typename Cb::Vertex_handle, std::size_t > &
                            )const
@@ -69,7 +69,7 @@ struct Custom_cell_base : public Cb
     os << this->info() << std::endl;
     return os;
   }
-  
+
   std::istream& read_data(std::istream& is,
                           std::vector<typename Cb::Cell_handle>&,
                           std::vector<typename Cb::Vertex_handle>&)
@@ -93,10 +93,10 @@ int main()
   typedef CGAL::Triangulation_3<K, CGAL::Triangulation_data_structure_3<Vertex_base, Cell_base > > Cls3_2;
 
   assert(Cls3() == Cls3_2());
-  
+
   typedef Cls3_2::Vertex_handle                                      Vertex_handle;
   typedef Cls3_2::Point                                              Point;
-  
+
   Cls3_2 T;
   Vertex_handle v0 = T.insert(Point(0,0,0));
   Vertex_handle v1 = T.insert(Point(1,0,0));
@@ -110,15 +110,15 @@ int main()
   v3->info() = 3;
   v4->info() = 4;
   v5->info() = 5;
-  
+
   int i=0;
   for(auto it = T.cells_begin();
       it != T.cells_end(); ++it)
   {
     it->info() = i++;
   }
-  
-  
+
+
   std::ofstream ofs("triangulation_output");
   ofs << T;
   Cls3_2 T2;
@@ -142,6 +142,6 @@ int main()
     CGAL_assertion(it2->info() == cit->info());
     ++cit;
   }
-  
+
   return 0;
 }
