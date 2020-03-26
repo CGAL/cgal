@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -35,7 +26,7 @@ template<class SM>
 void draw(const SM& asm);
 
 #else // DOXYGEN_RUNNING
-  
+
 #include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
@@ -112,7 +103,7 @@ protected:
   {
     add_segment(sm.point(sm.source(sm.halfedge(e))),
                 sm.point(sm.target(sm.halfedge(e))));
-  } 
+  }
 
   void compute_vertex(vertex_descriptor vh)
   { add_point(sm.point(vh)); }
@@ -130,7 +121,7 @@ protected:
         { compute_face(*f); }
       }
     }
-    
+
     for (typename SM::Edge_range::iterator e=sm.edges().begin();
          e!=sm.edges().end(); ++e)
     { compute_edge(*e); }
@@ -145,7 +136,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -174,7 +165,7 @@ protected:
     assert(nb>0);
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
-  
+
   Local_vector get_vertex_normal(halfedge_descriptor he)
   {
     Local_vector normal=CGAL::NULL_VECTOR;
@@ -189,11 +180,11 @@ protected:
       he=sm.next(sm.opposite(he));
     }
     while (he!=end);
-    
+
     if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
     { normal=(typename Local_kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
-    
+
     return normal;
   }
 

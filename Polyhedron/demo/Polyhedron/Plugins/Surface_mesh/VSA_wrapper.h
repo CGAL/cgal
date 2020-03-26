@@ -38,23 +38,13 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
   typedef boost::property_map<SMesh, Face_center_tag>::type Face_center_map;
   typedef boost::property_map<SMesh, Face_area_tag>::type Face_area_map;
 
-#ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
-    CGAL::Default, EPICK, CGAL::Parallel_tag> L21_approx;
-#else
-  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
-    CGAL::Default, EPICK> L21_approx;
-#endif
+            CGAL::Default, EPICK, CGAL::Parallel_if_available_tag> L21_approx;
   typedef L21_approx::Error_metric L21_metric;
 
   typedef VSA::L2_metric_plane_proxy<SMesh> L2_metric;
-#ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
-    L2_metric, EPICK, CGAL::Parallel_tag> L2_approx;
-#else
-  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
-    L2_metric, EPICK> L2_approx;
-#endif
+            L2_metric, EPICK, CGAL::Parallel_if_available_tag> L2_approx;
 
   // user defined point-wise compact metric
   struct Compact_metric_point_proxy {
@@ -89,14 +79,8 @@ class VSA_WRAPPER_EXPORT VSA_wrapper {
   };
   typedef Compact_metric_point_proxy Compact_metric;
 
-#ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
-    Compact_metric, EPICK, CGAL::Parallel_tag> Compact_approx;
-#else
-  typedef CGAL::Variational_shape_approximation<SMesh, Vertex_point_map,
-    Compact_metric, EPICK> Compact_approx;
-#endif
-  
+            Compact_metric, EPICK, CGAL::Parallel_if_available_tag> Compact_approx;
 
 public:
   enum Metric { L21, L2, Compact };
@@ -154,7 +138,7 @@ public:
     // generate proxy colors
     m_proxy_colors.clear();
     m_proxy_colors.reserve(number_of_proxies());
-    
+
     for (std::size_t i = 0; i < number_of_proxies(); ++i) {
       m_proxy_colors.push_back(generate_random_color());
     }

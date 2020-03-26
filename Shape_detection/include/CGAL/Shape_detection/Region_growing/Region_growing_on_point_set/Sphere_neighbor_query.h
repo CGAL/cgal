@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
@@ -51,32 +42,32 @@ namespace Point_set {
   /*!
     \ingroup PkgShapeDetectionRGOnPoints
 
-    \brief Fuzzy sphere neighbors search in a set of `Kernel::Point_2` 
+    \brief Fuzzy sphere neighbors search in a set of `Kernel::Point_2`
     or `Kernel::Point_3`.
 
     This class returns all neighbors of a query point, which fall in a sphere of
     the fixed radius centered at this point.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam PointMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_2` or `Kernel::Point_3`.
 
     \cgalModels `NeighborQuery`
   */
   template<
-  typename GeomTraits, 
-  typename InputRange, 
+  typename GeomTraits,
+  typename InputRange,
   typename PointMap>
   class Sphere_neighbor_query {
 
   public:
-            
+
     /// \name Types
     /// @{
 
@@ -92,27 +83,27 @@ namespace Point_set {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Index_to_point_map = 
+    using Index_to_point_map =
     internal::Item_property_map<Input_range, Point_map>;
 
     using Search_base = typename std::conditional<
-      std::is_same<typename Traits::Point_2, Point>::value, 
-      CGAL::Search_traits_2<Traits>, 
+      std::is_same<typename Traits::Point_2, Point>::value,
+      CGAL::Search_traits_2<Traits>,
       CGAL::Search_traits_3<Traits> >::type;
-                    
-    using Search_traits = 
+
+    using Search_traits =
     CGAL::Search_traits_adapter<std::size_t, Index_to_point_map, Search_base>;
-      
-    using Splitter = 
+
+    using Splitter =
     CGAL::Sliding_midpoint<Search_traits>;
-      
-    using Fuzzy_sphere 
+
+    using Fuzzy_sphere
     = CGAL::Fuzzy_sphere<Search_traits>;
-      
-    using Tree 
-    = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true>;
+
+    using Tree
+    = CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
     /// \endcond
-                
+
     /// @}
 
     /// \name Initialization
@@ -121,23 +112,23 @@ namespace Point_set {
     /*!
       \brief initializes a Kd-tree with input points.
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 2D or 3D points
 
-      \param sphere_radius 
-      the fixed radius of the fuzzy sphere used for searching neighbors 
+      \param sphere_radius
+      the fixed radius of the fuzzy sphere used for searching neighbors
       of a query point. %Default is 1.
 
       \param point_map
-      an instance of `PointMap` that maps an item from `input_range` 
+      an instance of `PointMap` that maps an item from `input_range`
       to `Kernel::Point_2` or to `Kernel::Point_3`
 
       \pre `input_range.size() > 0`
       \pre `sphere_radius > 0`
     */
     Sphere_neighbor_query(
-      const InputRange& input_range, 
-      const FT sphere_radius = FT(1), 
+      const InputRange& input_range,
+      const FT sphere_radius = FT(1),
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
     m_sphere_radius(sphere_radius),
@@ -147,7 +138,7 @@ namespace Point_set {
       boost::counting_iterator<std::size_t>(0),
       boost::counting_iterator<std::size_t>(m_input_range.size()),
       Splitter(),
-      Search_traits(m_index_to_point_map)) { 
+      Search_traits(m_index_to_point_map)) {
 
       CGAL_precondition(input_range.size() > 0);
       CGAL_precondition(sphere_radius > FT(0));
@@ -158,7 +149,7 @@ namespace Point_set {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `NeighborQuery::operator()()`.
@@ -176,18 +167,18 @@ namespace Point_set {
       \pre `query_index >= 0 && query_index < input_range.size()`
     */
     void operator()(
-      const std::size_t query_index, 
+      const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
-                
+
       CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_input_range.size());
-      
+
       const std::size_t sphere_center = query_index;
-      
+
       const Fuzzy_sphere sphere(
-        sphere_center, 
-        m_sphere_radius, 
-        FT(0), 
+        sphere_center,
+        m_sphere_radius,
+        FT(0),
         m_tree.traits());
 
       neighbors.clear();
@@ -200,7 +191,7 @@ namespace Point_set {
 
     // Fields.
     const Input_range& m_input_range;
-    
+
     const FT m_sphere_radius;
 
     const Point_map m_point_map;

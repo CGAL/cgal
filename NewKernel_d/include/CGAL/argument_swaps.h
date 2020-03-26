@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -31,33 +22,33 @@ template<int,class...> struct Apply_to_last_then_rest_;
 
 template<int d,class F,class T,class... U>
 struct Apply_to_last_then_rest_<d,F,T,U...> {
-	typedef typename Apply_to_last_then_rest_<d-1,F,U...,T>::result_type result_type;
-	inline result_type operator()(F&&f,T&&t,U&&...u)const{
-		return Apply_to_last_then_rest_<d-1,F,U...,T>()(
-				std::forward<F>(f),
-				std::forward<U>(u)...,
-				std::forward<T>(t));
-	}
+        typedef typename Apply_to_last_then_rest_<d-1,F,U...,T>::result_type result_type;
+        inline result_type operator()(F&&f,T&&t,U&&...u)const{
+                return Apply_to_last_then_rest_<d-1,F,U...,T>()(
+                                std::forward<F>(f),
+                                std::forward<U>(u)...,
+                                std::forward<T>(t));
+        }
 };
 
 template<class F,class T,class... U>
 struct Apply_to_last_then_rest_<0,F,T,U...> {
-	typedef decltype(std::declval<F>()(std::declval<T>(), std::declval<U>()...)) result_type;
-	inline result_type operator()(F&&f,T&&t,U&&...u)const{
-	return std::forward<F>(f)(std::forward<T>(t), std::forward<U>(u)...);
-	}
+        typedef decltype(std::declval<F>()(std::declval<T>(), std::declval<U>()...)) result_type;
+        inline result_type operator()(F&&f,T&&t,U&&...u)const{
+        return std::forward<F>(f)(std::forward<T>(t), std::forward<U>(u)...);
+        }
 };
 } // namespace internal
 
 struct Apply_to_last_then_rest {
-	template<class F,class T,class...U> inline
-	typename internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>::result_type
-	operator()(F&&f,T&&t,U&&...u)const{
-	return internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>()(
-			std::forward<F>(f),
-			std::forward<T>(t),
-			std::forward<U>(u)...);
-	}
+        template<class F,class T,class...U> inline
+        typename internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>::result_type
+        operator()(F&&f,T&&t,U&&...u)const{
+        return internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>()(
+                        std::forward<F>(f),
+                        std::forward<T>(t),
+                        std::forward<U>(u)...);
+        }
 };
 
 } // namespace CGAL

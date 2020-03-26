@@ -43,17 +43,17 @@ int main(void)
     std::cout << "error reading bunny" << std::endl;
     return 1;
   }
-  
+
   Tree t1(faces(m).begin(), faces(m).end(), m);
   Tree2 t2(faces(m).begin(), faces(m).end(), m);
   Tree3 t3(faces(m).begin(), faces(m).end(), m);
   Tree4 t4(faces(m).begin(), faces(m).end(), m);
-  
+
   t1.build();
   t2.build();
   t3.build();
   t4.build();
-  
+
   Primitive p1(faces(m).begin(), m);
   Primitive2 p2(faces(m).begin(), m);
   Primitive3 p3(faces(m).begin(), m);

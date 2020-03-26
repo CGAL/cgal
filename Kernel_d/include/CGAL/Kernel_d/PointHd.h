@@ -1,35 +1,26 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Michael Seel
 
 #ifndef CGAL_POINTHDXXX_H
-#define CGAL_POINTHDXXX_H 
+#define CGAL_POINTHDXXX_H
 
 #include <CGAL/basic.h>
 #include <CGAL/Origin.h>
 #include <CGAL/Quotient.h>
 #include <CGAL/Kernel_d/Tuple_d.h>
-#include <CGAL/Kernel_d/VectorHd.h> 
+#include <CGAL/Kernel_d/VectorHd.h>
 #include <CGAL/Kernel_d/Aff_transformationHd.h>
 
 
@@ -45,21 +36,21 @@ std::ostream& operator<<(std::ostream&, const PointHd<RT,LA>&);
 
 /*{\Moptions outfile=Point_d.man}*/
 /*{\Manpage {Point_d} {R} {Points in d-space} {p}}*/
-/*{\Msubst 
+/*{\Msubst
 Hd<RT,LA>#_d<R>
 PointHd#Point_d
 Quotient<RT>#FT
 }*/
 
-template <class _RT, class _LA > 
-class PointHd : public Handle_for< Tuple_d<_RT,_LA> > { 
+template <class _RT, class _LA >
+class PointHd : public Handle_for< Tuple_d<_RT,_LA> > {
   typedef Tuple_d<_RT,_LA> Tuple;
   typedef Handle_for<Tuple> Base;
   typedef PointHd<_RT,_LA> Self;
 
   using Base::ptr;
 
-/*{\Mdefinition 
+/*{\Mdefinition
 An instance of data type |\Mname| is a point of Euclidean space in
 dimension $d$. A point $p = (p_0,\ldots,p_{ d - 1 })$ in
 $d$-dimensional space can be represented by homogeneous coordinates
@@ -76,7 +67,7 @@ const _RT& entry(int i) const { return ptr()->v[i]; }
 void invert_rep() { ptr()->invert(); }
 PointHd(const Base& b) : Base(b) {}
 
-public: 
+public:
 /*{\Mtypes 4}*/
 
 typedef _RT RT;
@@ -95,20 +86,20 @@ friend class HyperplaneHd<RT,LA>;
 
 /*{\Mcreation 4}*/
 
-PointHd(int d = 0) 
-/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
+PointHd(int d = 0)
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
 $d$-dimensional space.}*/
-  : Base( Tuple(d+1) ) 
+  : Base( Tuple(d+1) )
 { if ( d > 0 ) entry(d) = 1; }
 
-PointHd(int d, const Origin&) 
-/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
+PointHd(int d, const Origin&)
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
 $d$-dimensional space, initialized to the origin.}*/
   : Base( Tuple(d+1) )
 { entry(d) = 1; }
 
 template <class InputIterator>
-PointHd(int d, InputIterator first, InputIterator last) 
+PointHd(int d, InputIterator first, InputIterator last)
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
 dimension |d|.  If |size [first,last) == d| this creates a point with
 Cartesian coordinates |set [first,last)|. If |size [first,last) ==
@@ -124,8 +115,8 @@ non-zero, and the value type of |InputIterator| is |RT|.}*/
 }
 
 template <class InputIterator>
-PointHd (int d, InputIterator first, InputIterator last, 
-         const RT& D) 
+PointHd (int d, InputIterator first, InputIterator last,
+         const RT& D)
 /*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
 dimension |d| initialized to the point with homogeneous coordinates as
 defined by |H = set [first,last)| and |D|: $(\pm |H[0]|, \pm|H[1]|,
@@ -143,28 +134,28 @@ PointHd(int x, int y, int w = 1) : Base( Tuple((RT)x,(RT)y,(RT)w) )
 }
 
 PointHd(const RT& x, const RT& y, const RT& w = 1)
-/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
-$2$-dimensional space.}*/ 
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
+$2$-dimensional space.}*/
   : Base( Tuple(x,y,w,MatchHelper()) )
 { CGAL_assertion_msg((w!=0),"PointHd::construction: w == 0.");
   if (w < 0) invert_rep();
 }
 
-PointHd(int x, int y, int z, int w) : 
+PointHd(int x, int y, int z, int w) :
   Base( Tuple((RT)x,(RT)y,(RT)z,(RT)w) )
 { CGAL_assertion_msg((w!=0),"PointHd::construction: w == 0.");
   if (w < 0) invert_rep();
 }
 
-PointHd(const RT& x, const RT& y, const RT& z, const RT& w) 
-/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in 
+PointHd(const RT& x, const RT& y, const RT& z, const RT& w)
+/*{\Mcreate introduces a variable |\Mvar| of type |\Mname| in
 $3$-dimensional space.}*/
   : Base( Tuple(x,y,z,w) )
 { CGAL_assertion_msg((w!=0),"PointHd::construction: w == 0.");
   if (w < 0) invert_rep();
 }
 
-~PointHd() {}     
+~PointHd() {}
 
 /*{\Moperations 4 3}*/
 
@@ -172,71 +163,71 @@ int dimension() const  { return ptr()->size()-1; }
 /*{\Mop  returns the dimension of |\Mvar|. }*/
 
 Quotient<RT> cartesian(int i) const
-/*{\Mop returns the $i$-th Cartesian coordinate of |\Mvar|. 
+/*{\Mop returns the $i$-th Cartesian coordinate of |\Mvar|.
    \precond $0 \leq i < d$.}*/
 { CGAL_assertion_msg((0<=i && i<dimension()),"PointHd::cartesian():\
   index out of range.");
-  return Quotient<RT>(entry(i), entry(dimension())); 
+  return Quotient<RT>(entry(i), entry(dimension()));
 }
 
 Quotient<RT> operator[](int i) const  { return cartesian(i); }
 /*{\Marrop returns the $i$-th Cartesian coordinate of |\Mvar|.
    \precond $0 \leq i < d$.}*/
 
-RT homogeneous(int i) const 
+RT homogeneous(int i) const
 /*{\Mop  returns the $i$-th homogeneous coordinate of |\Mvar|.
    \precond $0 \leq i \leq d$.}*/
-{ CGAL_assertion_msg((0<=i && i<=(dimension())), 
+{ CGAL_assertion_msg((0<=i && i<=(dimension())),
     "PointHd::homogeneous():index out of range.");
   return entry(i);
 }
 
-Cartesian_const_iterator cartesian_begin() const 
-/*{\Mop returns an iterator pointing to the zeroth Cartesian coordinate 
+Cartesian_const_iterator cartesian_begin() const
+/*{\Mop returns an iterator pointing to the zeroth Cartesian coordinate
 $p_0$ of |\Mvar|. }*/
 { return Cartesian_const_iterator(ptr()->begin(),ptr()->last()); }
 
-Cartesian_const_iterator cartesian_end() const 
-/*{\Mop returns an iterator pointing beyond the last Cartesian coordinate 
+Cartesian_const_iterator cartesian_end() const
+/*{\Mop returns an iterator pointing beyond the last Cartesian coordinate
 of |\Mvar|. }*/
 { return Cartesian_const_iterator(ptr()->last(),ptr()->last()); }
 
-Homogeneous_const_iterator homogeneous_begin() const 
-/*{\Mop returns an iterator pointing to the zeroth homogeneous coordinate 
+Homogeneous_const_iterator homogeneous_begin() const
+/*{\Mop returns an iterator pointing to the zeroth homogeneous coordinate
 $h_0$ of |\Mvar|. }*/
 { return ptr()->begin(); }
 
-Homogeneous_const_iterator homogeneous_end() const 
-/*{\Mop returns an iterator pointing beyond the last homogeneous coordinate 
+Homogeneous_const_iterator homogeneous_end() const
+/*{\Mop returns an iterator pointing beyond the last homogeneous coordinate
 of |\Mvar|. }*/
 { return ptr()->end(); }
 
-PointHd<RT,LA> transform(const Aff_transformationHd<RT,LA>& t) const; 
+PointHd<RT,LA> transform(const Aff_transformationHd<RT,LA>& t) const;
 /*{\Mop returns $t(p)$. }*/
 
 /*{\Mtext \headerline{Arithmetic Operators, Tests and IO}}*/
 
-inline VectorHd<RT,LA> operator-(const Origin& o) const; 
+inline VectorHd<RT,LA> operator-(const Origin& o) const;
 /*{\Mbinop  returns the vector $\vec{0p}$.}*/
 
-VectorHd<RT,LA> operator-(const PointHd<RT,LA>& q) const 
+VectorHd<RT,LA> operator-(const PointHd<RT,LA>& q) const
 /*{\Mbinop  returns $p - q$. \precond |p.dimension() == q.dimension()|.}*/
-{ VectorHd<RT,LA> res(dimension()); 
+{ VectorHd<RT,LA> res(dimension());
   res.ptr()->homogeneous_sub(ptr(),q.ptr());
-  return res; 
+  return res;
 }
 
-PointHd<RT,LA> operator+(const VectorHd<RT,LA>& v) const; 
+PointHd<RT,LA> operator+(const VectorHd<RT,LA>& v) const;
 /*{\Mbinop  returns $p + v$. \precond |p.dimension() == v.dimension()|.}*/
 
-PointHd<RT,LA> operator-(const VectorHd<RT,LA>& v) const; 
+PointHd<RT,LA> operator-(const VectorHd<RT,LA>& v) const;
 /*{\Mbinop  returns $p - v$. \precond |p.dimension() == v.dimension()|.}*/
 
-PointHd<RT,LA>& operator+=(const VectorHd<RT,LA>& v); 
+PointHd<RT,LA>& operator+=(const VectorHd<RT,LA>& v);
 /*{\Mbinop  adds |v| to |p|.\\
 \precond |p.dimension() == v.dimension()|. }*/
 
-PointHd<RT,LA>& operator-=(const VectorHd<RT,LA>& v); 
+PointHd<RT,LA>& operator-=(const VectorHd<RT,LA>& v);
 /*{\Mbinop  subtracts |v| from |p|.\\
 \precond |p.dimension() == v.dimension()|. }*/
 
@@ -249,7 +240,7 @@ static Comparison_result cmp(
 bool operator==(const PointHd<RT,LA>& q) const
 { if (this->identical(q)) return true;
   if (dimension()!=q.dimension()) return false;
-  return cmp(*this,q) == EQUAL; 
+  return cmp(*this,q) == EQUAL;
 }
 
 bool operator!=(const PointHd<RT,LA>& q) const
@@ -264,7 +255,7 @@ bool operator==(const Origin&) const
 
 friend std::istream& operator>> <>
   (std::istream&, PointHd<RT,LA>&);
-friend std::ostream& operator<< <> 
+friend std::ostream& operator<< <>
   (std::ostream&, const PointHd<RT,LA>&);
 /*{\Mtext \headerline{Downward compatibility}
 We provide operations of the lower dimensional interface |x()|, |y()|,
@@ -282,14 +273,14 @@ Quotient<RT> z()  const { return Quotient<RT>(hz(),hw()); }
 }; // PointHd
 
 
-/*{\Mimplementation 
+/*{\Mimplementation
 Points are implemented by arrays of |RT| items.  All operations like
 creation, initialization, tests, point - vector arithmetic, input and
 output on a point $p$ take time $O(|p.dimension()|)$. |dimension()|,
 coordinate access and conversions take constant time.  The space
 requirement for points is $O(|p.dimension()|)$.}*/
 
-#undef PointHd 
+#undef PointHd
 } //namespace CGAL
-#endif // CGAL_POINTHD_H 
+#endif // CGAL_POINTHD_H
 //----------------------- end of file ----------------------------------

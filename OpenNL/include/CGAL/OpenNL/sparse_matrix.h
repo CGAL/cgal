@@ -2,20 +2,8 @@
 /*
  * author:  Bruno Levy, INRIA, project ALICE
  * website: http://www.loria.fr/~levy/software
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation, either version 3
- * of the License, or (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This file is part of CGAL (www.cgal.org)
  *
  * Scientific work that use this software can reference the website and
  * the following publication:
@@ -34,7 +22,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
 */
 
 #ifndef __OPENNL_SPARSE_MATRIX__
@@ -102,7 +90,7 @@ public:
         //
         // Optimization:
         // - Caller can optimize this call by setting 'new_coef' to true
-        //   if the coefficient does not already exists in the matrix. 
+        //   if the coefficient does not already exists in the matrix.
         void set_coef(unsigned int index, T val, bool new_coef)
         {
             if (!new_coef)
@@ -215,7 +203,7 @@ public:
     //
     // Optimization:
     // - Caller can optimize this call by setting 'new_coef' to true
-    //   if the coefficient does not already exists in the matrix. 
+    //   if the coefficient does not already exists in the matrix.
     //
     // Preconditions:
     // - 0 <= i < row_dimension().
@@ -247,7 +235,7 @@ private:
 } ;
 
 /** y <- M*x */
-template <class T> 
+template <class T>
 void mult(const SparseMatrix<T>& M, const FullVector<T>& x, FullVector<T>& y) {
     unsigned int N = M.dimension() ;
     CGAL_assertion(x.dimension() == N) ;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 
@@ -385,21 +376,21 @@ public:
     std::allocator_traits<Edge_allocator>::construct(edge_alloc, e);
     return (e);
   }
-   
+
   /*! Delete an existing vertex. */
   void delete_vertex (Vertex_handle v)
   {
     std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
     vertex_alloc.deallocate (v, 1);
   }
-  
+
   /*! Delete an existing edge. */
   void delete_edge (Edge_handle e)
   {
     std::allocator_traits<Edge_allocator>::destroy(edge_alloc, e);
     edge_alloc.deallocate (e, 1);
   }
-  
+
 private:
   /*!
    * Free all diagram elements.
@@ -427,7 +418,7 @@ private:
         e = nullptr;
       }
     }
-     
+
     _leftmostP = nullptr;
     _rightmostP = nullptr;
   }

@@ -44,10 +44,10 @@ if ( CGAL_FOUND )
     target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt5)
     target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Qt5)
   endif()
-  
+
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

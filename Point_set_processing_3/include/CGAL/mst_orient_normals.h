@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Laurent Saboret and Andreas Fabri
 
@@ -134,7 +125,7 @@ public:
   typedef value_type                           reference;
 
 private:
-  
+
   ForwardIterator m_source_point;
 
 public:
@@ -197,7 +188,7 @@ struct Propagate_normal_orientation
         // Gets target
         vertex_descriptor target_vertex = target(edge, mst_graph);
         bool& target_normal_is_oriented = ((MST_graph&)mst_graph)[target_vertex].is_oriented;
-        
+
         // special case if vertex is source vertex (and thus has no related point/normal)
         if (source_vertex == m_source)
         {
@@ -211,7 +202,7 @@ struct Propagate_normal_orientation
 
         // Gets target
         Vector_ref target_normal = get( mst_graph.m_normal_map, *(mst_graph[target_vertex].input_point) );
-        
+
         if ( ! target_normal_is_oriented )
         {
           //             ->                        ->
@@ -270,10 +261,10 @@ mst_find_source(
     ForwardIterator top_point = first;
     for (ForwardIterator v = ++first; v != beyond; v++)
     {
-      
+
       double top_z = get(point_map,*top_point).z(); // top_point's Z coordinate
       double z = get(point_map,*v).z();
-      
+
       if (top_z < z)
         top_point = v;
     }
@@ -357,7 +348,7 @@ create_riemannian_graph(
     std::vector<Point_vertex_handle_3> kd_tree_points; kd_tree_points.reserve(num_input_points);
     for (ForwardIterator it = first; it != beyond; it++)
     {
-        
+
         Point_ref point = get(point_map, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         kd_tree_points.push_back(point_wrapper);
@@ -396,7 +387,7 @@ create_riemannian_graph(
     {
         std::size_t it_index = get(index_map,it);
         Vector_ref it_normal_vector = get(normal_map,*it);
-        
+
         Point_ref point = get(point_map, *it);
         Point_vertex_handle_3 point_wrapper(point.x(), point.y(), point.z(), it);
         std::vector<Point_vertex_handle_3> neighbor_points;
@@ -420,7 +411,7 @@ create_riemannian_graph(
                 //                               ->        ->
                 // Computes edge weight = 1 - | normal1 * normal2 |
                 // where normal1 and normal2 are the normal at the edge extremities.
-                
+
                 Vector_ref neighbor_normal_vector = get(normal_map,*neighbor);
                 double weight = 1.0 - std::abs(it_normal_vector * neighbor_normal_vector);
                 if (weight < 0)
@@ -441,7 +432,7 @@ create_riemannian_graph(
 
           riemannian_graph_weight_map[e] = 0.;
         }
-            
+
     }
 
     return riemannian_graph;
@@ -505,7 +496,7 @@ create_mst_graph(
 
     // Computes Minimum Spanning Tree.
     std::size_t source_point_index = num_input_points;
-    
+
     Riemannian_graph_weight_map riemannian_graph_weight_map = get(boost::edge_weight, riemannian_graph);
     typedef std::vector<typename Riemannian_graph::vertex_descriptor> PredecessorMap;
     PredecessorMap predecessor(num_input_points + 1);
@@ -533,11 +524,11 @@ create_mst_graph(
         mst_graph[v].input_point = it;
         mst_graph[v].is_oriented = false;
     }
-    
+
     typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
     CGAL_point_set_processing_assertion(v == source_point_index);
     mst_graph[v].is_oriented = true;
-    
+
     // add edges
     for (std::size_t i=0; i < predecessor.size(); i++) // add edges
     {
@@ -562,7 +553,7 @@ create_mst_graph(
 // Public section
 // ----------------------------------------------------------------------------
 
-/**  
+/**
    \ingroup PkgPointSetProcessing3Algorithms
    Orients the normals of the range of `points` using the propagation
    of a seed orientation through a minimum spanning tree of the Riemannian graph.
@@ -597,7 +588,7 @@ create_mst_graph(
      limit is wanted, use `k=0`.\cgalParamEnd
      \cgalParamBegin{point_is_constrained_map} a model of `ReadablePropertyMap` with value type
      `bool`. Points with a `true` value will be used as seed points: their normal will be considered as already
-     oriented, it won't be altered and it will be propagated to its neighbors. If this parameter is omitted, 
+     oriented, it won't be altered and it will be propagated to its neighbors. If this parameter is omitted,
      the highest point (highest Z coordinate) will be used as the unique seed with an upward oriented
      normal\cgalParamEnd
      \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
@@ -619,7 +610,7 @@ mst_orient_normals(
 
     CGAL_TRACE("Calls mst_orient_normals()\n");
 
-    typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
     typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
     typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
     typedef typename Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::type ConstrainedMap;
@@ -628,11 +619,11 @@ mst_orient_normals(
                                 typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
                               "Error: no normal map");
 
-    PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
-    NormalMap normal_map = choose_parameter(get_parameter(np, internal_np::normal_map), NormalMap());
+    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
     typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
-                                                       typename Kernel::FT(0));
-    ConstrainedMap constrained_map = choose_parameter(get_parameter(np, internal_np::point_is_constrained), ConstrainedMap());
+                                                           typename Kernel::FT(0));
+    ConstrainedMap constrained_map = choose_parameter<ConstrainedMap>(get_parameter(np, internal_np::point_is_constrained));
     Kernel kernel;
 
   // Bring private stuff to scope
@@ -703,7 +694,7 @@ mst_orient_normals(
 
     const std::size_t num_input_points = distance(points.begin(), points.end());
     std::size_t source_point_index = num_input_points;
-    
+
     // Traverse the point set along the MST to propagate source_point's orientation
     Propagate_normal_orientation<typename PointRange::iterator, NormalMap, Kernel> orienter(source_point_index);
 

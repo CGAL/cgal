@@ -1,24 +1,15 @@
-// Copyright (c) 1999-2004  
+// Copyright (c) 1999-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann, Sylvain Pion
@@ -47,8 +38,8 @@ namespace CGAL {
 
 CGAL_INLINE_FUNCTION
 Geomview_stream::Geomview_stream(const Bbox_3 &bbox,
-				 const char *machine,
-				 const char *login)
+                                 const char *machine,
+                                 const char *login)
   : bb(bbox), vertex_color(black()), edge_color(black()), face_color(black()),
       wired_flag(false), echo_flag(true), raw_flag(false),
       trace_flag(false), binary_flag(false),
@@ -90,15 +81,15 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         close(pipe_out[1]); // does not write to the out pipe,
         close(pipe_in[0]);  // does not read from the in pipe.
 
-	if (dup2(pipe_out[0], 0) != 0)
-	    std::cerr << "Connect pipe to stdin failed." << std::endl;
-	if (dup2(pipe_in[1], 1) != 1)
-	    std::cerr << "Connect pipe to stdout failed." << std::endl;
+        if (dup2(pipe_out[0], 0) != 0)
+            std::cerr << "Connect pipe to stdin failed." << std::endl;
+        if (dup2(pipe_in[1], 1) != 1)
+            std::cerr << "Connect pipe to stdout failed." << std::endl;
 
         if (machine && (std::strlen(machine)>0)) {
-	    std::string s (" rgeomview ");
-	    s += machine;
-	    s += ":0.0";
+            std::string s (" rgeomview ");
+            s += machine;
+            s += ":0.0";
             execlp("rsh", "rsh", machine, "-l", login, s.data(),
                    static_cast<void *>(nullptr)); // cast to stop gcc warning
         } else {
@@ -111,9 +102,9 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         switch(errno) {
         case EACCES:
             std::cerr << "please check your environment variable PATH"
-		      << std::endl;
+                      << std::endl;
             std::cerr << "make sure the file `geomview' is contained in it"
-		      << std::endl;
+                      << std::endl;
             std::cerr << "and is executable" << std::endl;
             break;
         case ELOOP:
@@ -121,7 +112,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
             break;
         default:
             std::cerr << "error number " << errno << " (check `man execlp')"
-		      << std::endl;
+                      << std::endl;
         };
         CGAL_error();
     default:              // The parent process
@@ -131,15 +122,15 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         in = pipe_in[0];
         out = pipe_out[1];
 
-	// Necessary to wait a little bit for Geomview,
+        // Necessary to wait a little bit for Geomview,
         // otherwise you won't be able to ask for points...
         sleep(1);
 
 #if 1
         // We want to get rid of the requirement in the CGAL doc about
-	// (echo "started").  But we want to be backward compatible, that is,
-	// people who have this echo in their .geomview must still have CGAL
-	// working, at least for a few public releases.
+        // (echo "started").  But we want to be backward compatible, that is,
+        // people who have this echo in their .geomview must still have CGAL
+        // working, at least for a few public releases.
         // So the plan is to send, from CGAL, the command : (echo "CGAL-3D")
         // It's the same length as "started", 7.
         // Then we read 7 chars from Geomview, and test which string it is.
@@ -147,7 +138,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         // the back-compatible echo command.
         // In the very long run, we'll be able to get rid of all this code as
         // well.
-	// Maybe we should simply read the pipe, till we find "CGAL-3D" ?
+        // Maybe we should simply read the pipe, till we find "CGAL-3D" ?
 
         *this << "(echo \"CGAL-3D\")";
 
@@ -579,7 +570,7 @@ Geomview_stream::nth(char* s, int count)
 CGAL_INLINE_FUNCTION
 void
 Geomview_stream::parse_point(const char* pickpoint,
-		     double &x, double &y, double &z, double &w)
+                     double &x, double &y, double &z, double &w)
 {
     std::stringstream ss;
     ss << pickpoint << std::ends;

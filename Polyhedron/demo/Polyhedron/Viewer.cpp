@@ -16,6 +16,11 @@
 #include <QApplication>
 #include <QOpenGLDebugLogger>
 #include <QStyleFactory>
+#include <QAction>
+#include <QRegularExpressionMatch>
+#ifdef CGAL_USE_WEBSOCKETS
+#include <QtWebSockets/QWebSocket>
+#endif
 
 #include <CGAL/Three/Three.h>
 
@@ -40,6 +45,7 @@ public:
   bool inDrawWithNames;
   bool clipping;
   bool projection_is_ortho;
+  bool cam_sharing;
   GLfloat gl_point_size;
   QVector4D clipbox[6];
   QPainter *painter;
@@ -50,7 +56,11 @@ public:
   QVector4D diffuse;
   QVector4D specular;
   float spec_power;
-  
+
+  //Back and Front Colors
+  QColor front_color;
+  QColor back_color;
+
   // M e s s a g e s
   QString message;
   bool _displayMessage;
@@ -107,6 +117,12 @@ public:
   {
     return shader_programs;
   }
+#ifdef CGAL_USE_WEBSOCKETS
+  QWebSocket m_webSocket;
+#endif
+  bool is_connected;
+  QString session;
+  QUrl m_url;
 };
 
 class LightingDialog :
@@ -114,7 +130,7 @@ class LightingDialog :
     public Ui::LightingDialog
 {
   Q_OBJECT
-public: 
+public:
   QColor ambient, diffuse, specular;
   LightingDialog(Viewer_impl* d)
   {
@@ -122,35 +138,35 @@ public:
     position_lineEdit->setText(QString("%1,%2,%3")
                                .arg(d->position.x())
                                .arg(d->position.y())
-                               .arg(d->position.z()));    
+                               .arg(d->position.z()));
     QPalette palette;
-    ambient=QColor(255*d->ambient.x(), 
-                   255*d->ambient.y(), 
+    ambient=QColor(255*d->ambient.x(),
+                   255*d->ambient.y(),
                    255*d->ambient.z());
     palette.setColor(QPalette::Button,ambient);
     ambientButton->setPalette(palette);
     ambientButton->setStyle(QStyleFactory::create("Fusion"));
-    
-    diffuse=QColor(255*d->diffuse.x(), 
-                   255*d->diffuse.y(), 
+
+    diffuse=QColor(255*d->diffuse.x(),
+                   255*d->diffuse.y(),
                    255*d->diffuse.z());
     palette.setColor(QPalette::Button,diffuse);
     diffuseButton->setPalette(palette);
     diffuseButton->setStyle(QStyleFactory::create("Fusion"));
-    
-    specular=QColor(255*d->specular.x(), 
-                    255*d->specular.y(), 
+
+    specular=QColor(255*d->specular.x(),
+                    255*d->specular.y(),
                     255*d->specular.z());
     palette.setColor(QPalette::Button,specular);
     specularButton->setPalette(palette);
     specularButton->setStyle(QStyleFactory::create("Fusion"));
     spec_powrSlider->setValue(static_cast<int>(d->spec_power));
-    
+
     connect(&ambient_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::ambient_changed );
     connect(&diffuse_dial, &QColorDialog::currentColorChanged, this, &LightingDialog::diffuse_changed );
     connect(&spec_dial, &QColorDialog::currentColorChanged, this,    &LightingDialog::specular_changed);
-    
-    connect(ambientButton, &QPushButton::clicked, 
+
+    connect(ambientButton, &QPushButton::clicked,
             [this](){
       ambient_dial.setCurrentColor(ambient);
       ambient_dial.exec();
@@ -159,7 +175,7 @@ public:
       palette.setColor(QPalette::Button, ambient);
       ambientButton->setPalette(palette);
     });
-    connect(diffuseButton, &QPushButton::clicked, 
+    connect(diffuseButton, &QPushButton::clicked,
             [this](){
       diffuse_dial.setCurrentColor(diffuse);
       diffuse_dial.exec();
@@ -168,7 +184,7 @@ public:
       palette.setColor(QPalette::Button, diffuse);
       diffuseButton->setPalette(palette);
     });
-    connect(specularButton, &QPushButton::clicked, 
+    connect(specularButton, &QPushButton::clicked,
             [this](){
       spec_dial.setCurrentColor(specular);
       spec_dial.exec();
@@ -177,7 +193,7 @@ public:
       palette.setColor(QPalette::Button, specular);
       specularButton->setPalette(palette);
     });
-    
+
     //D e f a u l t - S e t t i n g s
     connect(buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
             [this](){
@@ -199,12 +215,12 @@ private Q_SLOTS:
   void diffuse_changed()
   {
     diffuse = diffuse_dial.currentColor();
-    s_diffuse_changed(); 
+    s_diffuse_changed();
   }
   void ambient_changed()
   {
     ambient = ambient_dial.currentColor();
-    s_ambient_changed(); 
+    s_ambient_changed();
   }
   void specular_changed()
   {
@@ -221,7 +237,7 @@ private:
   QColorDialog spec_dial;
 };
 
-std::vector<QOpenGLShaderProgram*> Viewer_impl::shader_programs = 
+std::vector<QOpenGLShaderProgram*> Viewer_impl::shader_programs =
     std::vector<QOpenGLShaderProgram*>(Viewer::NB_OF_PROGRAMS);
 void Viewer::doBindings()
 {
@@ -232,30 +248,42 @@ void Viewer::doBindings()
                           cam_pos.split(",").at(1).toFloat(),
                           cam_pos.split(",").at(2).toFloat(),
                           1.0f);
-  
+
   QString ambient = viewer_settings.value("ambient", QString("0.4,0.4,0.4")).toString();
   d->ambient = QVector4D(ambient.split(",").at(0).toFloat(),
                          ambient.split(",").at(1).toFloat(),
                          ambient.split(",").at(2).toFloat(),
                          1.0f);
-  
+
   QString diffuse = viewer_settings.value("diffuse", QString("1.0,1.0,1.0")).toString();
   d->diffuse = QVector4D(diffuse.split(",").at(0).toFloat(),
                          diffuse.split(",").at(1).toFloat(),
                          diffuse.split(",").at(2).toFloat(),
                          1.0f);
-  
+
   QString specular = viewer_settings.value("specular", QString("0.0,0.0,0.0")).toString();
   d->specular = QVector4D(specular.split(",").at(0).toFloat(),
                           specular.split(",").at(1).toFloat(),
                           specular.split(",").at(2).toFloat(),
                           1.0f);
-  
+
+  QString front_color = viewer_settings.value("front_color", QString("1.0,0.0,0.0")).toString();
+  d->front_color= QColor(255*front_color.split(",").at(0).toFloat(),
+                         255*front_color.split(",").at(1).toFloat(),
+                         255*front_color.split(",").at(2).toFloat(),
+                         1.0f);
+  QString back_color = viewer_settings.value("back_color", QString("0.0,0.0,1.0")).toString();
+  d->back_color= QColor( 255*back_color.split(",").at(0).toFloat(),
+                         255*back_color.split(",").at(1).toFloat(),
+                         255*back_color.split(",").at(2).toFloat(),
+                         1.0f);
   d->spec_power = viewer_settings.value("spec_power", 51.8).toFloat();
   d->scene = 0;
   d->projection_is_ortho = false;
+  d->cam_sharing = false;
   d->twosides = false;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("back_front_shading", false);
   d->macro_mode = false;
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
@@ -263,7 +291,8 @@ void Viewer::doBindings()
   d->shader_programs.resize(NB_OF_PROGRAMS);
   d->textRenderer = new TextRenderer();
   d->is_2d_selection_mode = false;
-  
+  d->is_connected = false;
+
   connect( d->textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
   connect(&d->messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
@@ -333,6 +362,7 @@ Viewer::Viewer(QWidget* parent,
   is_sharing = true;
   d->antialiasing = antialiasing;
   this->setProperty("draw_two_sides", false);
+  this->setProperty("back_front_shading", false);
   this->setProperty("helpText", QString("This is a sub-viewer. It displays the scene "
                                         "from another point of view. \n "));
   is_ogl_4_3 = sharedWidget->is_ogl_4_3;
@@ -367,6 +397,17 @@ Viewer::~Viewer()
                              .arg(d->specular.z()));
     viewer_settings.setValue("spec_power",
                              d->spec_power);
+    viewer_settings.setValue("front_color",
+                             QString("%1,%2,%3")
+                             .arg(d->front_color.redF())
+                             .arg(d->front_color.greenF())
+                             .arg(d->front_color.blueF()));
+    viewer_settings.setValue("back_color",
+                             QString("%1,%2,%3")
+                             .arg(d->back_color.redF())
+                             .arg(d->back_color.greenF())
+                             .arg(d->back_color.blueF()));
+
     if(d->_recentFunctions)
       delete d->_recentFunctions;
     if(d->painter)
@@ -384,7 +425,7 @@ void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
 
 bool Viewer::antiAliasing() const
 {
-  return d->antialiasing; 
+  return d->antialiasing;
 }
 
 void Viewer::setAntiAliasing(bool b)
@@ -397,6 +438,13 @@ void Viewer::setTwoSides(bool b)
 {
   this->setProperty("draw_two_sides", b);
   d->twosides = b;
+  update();
+}
+
+
+void Viewer::setBackFrontShading(bool b)
+{
+  this->setProperty("back_front_shading", b);
   update();
 }
 
@@ -415,7 +463,7 @@ bool Viewer::inFastDrawing() const
 }
 
 void Viewer::draw()
-{ 
+{
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -469,7 +517,7 @@ void Viewer::init()
   setBackgroundColor(bc);
   d->vao.create();
   d->buffer.create();
-  
+
   //setting the program used for the distance
   if(!is_linked)
   {
@@ -564,7 +612,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
 {
   makeCurrent();
   if(event->button() == Qt::RightButton &&
-     event->modifiers().testFlag(Qt::ShiftModifier)) 
+     event->modifiers().testFlag(Qt::ShiftModifier))
   {
     select(event->pos());
     requestContextMenu(event->globalPos());
@@ -589,14 +637,14 @@ void Viewer::mousePressEvent(QMouseEvent* event)
       d->showDistance(event->pos());
       event->accept();
   }
-  else {
+  else{
     makeCurrent();
     CGAL::QGLViewer::mousePressEvent(event);
   }
 }
 void Viewer::mouseDoubleClickEvent(QMouseEvent* event)
 {
-  makeCurrent(); 
+  makeCurrent();
   CGAL::QGLViewer::mouseDoubleClickEvent(event);
 }
 
@@ -848,7 +896,7 @@ QString CGAL::Three::Viewer_interface::dumpFrame(const CGAL::qglviewer::Frame& f
 bool Viewer::moveCameraToCoordinates(QString s, float animation_duration) {
   CGAL::qglviewer::Frame new_frame;
   if(readFrame(s, new_frame)) {
-    camera()->interpolateTo(new_frame, animation_duration); 
+    camera()->interpolateTo(new_frame, animation_duration);
     return true;
   }
   else
@@ -882,7 +930,7 @@ void Viewer::attribBuffers(int program_name) const {
     this->camera()->getModelViewProjectionMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mvp_mat.data()[i] = GLfloat(d_mat[i]);
-   
+
     QOpenGLShaderProgram* program = getShaderProgram(program_name);
     program->bind();
     program->setUniformValue("point_size", getGlPointSize());
@@ -915,20 +963,20 @@ void Viewer::attribBuffers(int program_name) const {
     case PROGRAM_NO_SELECTION:
     case PROGRAM_HEAT_INTENSITY:
       program->setUniformValue("alpha", 1.0f); //overriden in item draw() if necessary
-    default: 
+    default:
       break;
     }
     switch(program_name)
     {
     case PROGRAM_SPHERES:
     case PROGRAM_DARK_SPHERES:
-    case PROGRAM_WITH_LIGHT: 
-    case PROGRAM_OLD_FLAT: 
+    case PROGRAM_WITH_LIGHT:
+    case PROGRAM_OLD_FLAT:
       program->setUniformValue("f_matrix",f_mat);
-    default: 
+    default:
       break;
     }
-    
+
     switch(program_name)
     {
     case PROGRAM_WITH_LIGHT:
@@ -947,7 +995,10 @@ void Viewer::attribBuffers(int program_name) const {
         program->setUniformValue("light_spec", d->specular);
         program->setUniformValue("light_amb", d->ambient);
         program->setUniformValue("spec_power", d->spec_power);
+        program->setUniformValue("front_color", d->front_color);
+        program->setUniformValue("back_color", d->back_color);
         program->setUniformValue("is_two_side", d->twosides);
+        program->setUniformValue("back_front_shading", this->property("back_front_shading").toBool());
         break;
     }
     switch(program_name)
@@ -1024,7 +1075,7 @@ void Viewer::drawVisualHints()
           glEnable(GL_DEPTH_TEST);
         }
         else
-        {          
+        {
           QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_SOLID_WIREFRAME);
           program->bind();
           QVector2D vp(width(), height());
@@ -1041,7 +1092,7 @@ void Viewer::drawVisualHints()
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(2));
           d->vao.release();
           program->release();
-          
+
           program = getShaderProgram(PROGRAM_NO_SELECTION);
           program->bind();
           program->setAttributeValue("colors", QColor(Qt::black));
@@ -1079,7 +1130,7 @@ void Viewer::drawVisualHints()
       d->textRenderer->addText(message_text);
     }
     d->textRenderer->draw(this);
-    
+
     if (d->_displayMessage)
       d->textRenderer->removeText(message_text);
     delete message_text;
@@ -1145,9 +1196,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   {
   case PROGRAM_C3T3:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3.vert" , ":/cgal/Polyhedron_3/resources/shader_c3t3.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3.frag");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
@@ -1159,9 +1210,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_C3T3_EDGES:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.vert" , ":/cgal/Polyhedron_3/resources/shader_c3t3_edges.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_edges.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_edges.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_edges.frag");
     program->setProperty("hasCutPlane", true);
     program->setProperty("hasSurfaceMode", true);
@@ -1169,9 +1220,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_WITH_LIGHT:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.vert" , ":/cgal/Polyhedron_3/resources/shader_with_light.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_light.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_light.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_light.frag");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
@@ -1181,9 +1232,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_HEAT_INTENSITY:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/heat_intensity_shader.vert" , ":/cgal/Polyhedron_3/resources/heat_intensity_shader.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/heat_intensity_shader.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/heat_intensity_shader.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/heat_intensity_shader.frag");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
@@ -1193,18 +1244,18 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_WITHOUT_LIGHT:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.vert" , ":/cgal/Polyhedron_3/resources/shader_without_light.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.frag");
     program->setProperty("hasFMatrix", true);
     return program;
   }
   case PROGRAM_NO_SELECTION:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.vert" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_no_light_no_selection.frag");
     program->setProperty("hasFMatrix", true);
     program->setProperty("hasTransparency", true);
@@ -1212,7 +1263,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_WITH_TEXTURE:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_texture.vert" , ":/cgal/Polyhedron_3/resources/shader_with_texture.frag")
         : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_texture.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_texture.frag");
@@ -1224,7 +1275,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_PLANE_TWO_FACES:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ?declare_program(name, ":/cgal/Polyhedron_3/resources/shader_without_light.vert" , ":/cgal/Polyhedron_3/resources/shader_plane_two_faces.frag")
        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.vert" ,
                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_plane_two_faces.frag");
@@ -1235,9 +1286,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_WITH_TEXTURED_EDGES:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.vert" , ":/cgal/Polyhedron_3/resources/shader_with_textured_edges.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_textured_edges.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_textured_edges.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_textured_edges.frag");
     program->setProperty("hasFMatrix", true);
     program->setProperty("hasTexture", true);
@@ -1245,11 +1296,11 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_INSTANCED:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.vert" , ":/cgal/Polyhedron_3/resources/shader_with_light.frag")
         : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_instanced.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_light.frag");
-    
+
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
     program->setProperty("isInstanced", true);
@@ -1257,7 +1308,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_INSTANCED_WIRE:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_instanced.vert" , ":/cgal/Polyhedron_3/resources/shader_without_light.frag")
         : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_instanced.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_without_light.frag");
@@ -1269,9 +1320,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_CUTPLANE_SPHERES:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.vert" , ":/cgal/Polyhedron_3/resources/shader_c3t3.frag")
-        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_spheres.vert" , 
+        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3_spheres.vert" ,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_c3t3.frag");
     program->setProperty("hasLight", true);
     program->setProperty("hasNormals", true);
@@ -1283,7 +1334,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_SPHERES:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ?declare_program(name, ":/cgal/Polyhedron_3/resources/shader_spheres.vert" , ":/cgal/Polyhedron_3/resources/shader_with_light.frag")
        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_spheres.vert" ,
                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_light.frag");
@@ -1298,7 +1349,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_DARK_SPHERES:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ?declare_program(name, ":/cgal/Polyhedron_3/resources/shader_dark_spheres.vert" , ":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.frag")
        : declare_program(name, ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_dark_spheres.vert" ,
                          ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_no_light_no_selection.frag");
@@ -1322,9 +1373,9 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
   }
   case PROGRAM_OLD_FLAT:
   {
-    QOpenGLShaderProgram* program = isOpenGL_4_3() 
+    QOpenGLShaderProgram* program = isOpenGL_4_3()
         ? declare_program(name, ":/cgal/Polyhedron_3/resources/shader_with_light.vert", ":/cgal/Polyhedron_3/resources/shader_old_flat.frag")
-        : declare_program(name, 
+        : declare_program(name,
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_with_light.vert",
                           ":/cgal/Polyhedron_3/resources/compatibility_shaders/shader_old_flat.frag");
     program->setProperty("hasLight", true);
@@ -1339,7 +1390,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
       return 0;
     }
     QOpenGLShaderProgram* program = declare_program(name,
-                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.vert", 
+                                                    ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.vert",
                                                     ":/cgal/Polyhedron_3/resources/solid_wireframe_shader.frag");
     program->setProperty("hasViewport", true);
     program->setProperty("hasWidth", true);
@@ -1492,7 +1543,7 @@ void Viewer_impl::showDistance(QPoint pixel)
         v.resize(6);
         v[0] = float(APoint.x); v[1] = float(APoint.y); v[2] = float(APoint.z);
         v[3] = float(BPoint.x); v[4] = float(BPoint.y); v[5] = float(BPoint.z);
-       
+
         vao.bind();
         buffer.bind();
         buffer.allocate(v.data(),6*sizeof(float));
@@ -1500,7 +1551,7 @@ void Viewer_impl::showDistance(QPoint pixel)
         rendering_program_dist.setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffer.release();
         vao.release();
-        
+
         distance_is_displayed = true;
         double dist = std::sqrt((BPoint.x-APoint.x)*(BPoint.x-APoint.x) + (BPoint.y-APoint.y)*(BPoint.y-APoint.y) + (BPoint.z-APoint.z)*(BPoint.z-APoint.z));
         QFont font;
@@ -1704,7 +1755,7 @@ void Viewer::messageLogged(QOpenGLDebugMessage msg)
 
 void Viewer::setLighting()
 {
-  
+
   //save current settings;
   float prev_spec = d->spec_power;
   QVector4D prev_pos = d->position;
@@ -1750,38 +1801,38 @@ void Viewer::setLighting()
     d->position = QVector4D(coords[0], coords[1], coords[2], 1.0f);
     update();
   });
-  
+
 
   //set ambient
   connect(dialog, &LightingDialog::s_ambient_changed,
           [this, dialog](){
-    d->ambient=QVector4D(dialog->ambient.redF(), 
-                         dialog->ambient.greenF(), 
-                         dialog->ambient.blueF(), 
+    d->ambient=QVector4D(dialog->ambient.redF(),
+                         dialog->ambient.greenF(),
+                         dialog->ambient.blueF(),
                          1.0f);
     update();
   });
-          
+
   //set diffuse
   connect(dialog, &LightingDialog::s_diffuse_changed,
           [this, dialog](){
-    d->diffuse=QVector4D(dialog->diffuse.redF(), 
-                         dialog->diffuse.greenF(), 
-                         dialog->diffuse.blueF(), 
+    d->diffuse=QVector4D(dialog->diffuse.redF(),
+                         dialog->diffuse.greenF(),
+                         dialog->diffuse.blueF(),
                          1.0f);
     update();
   });
   //set specular
   connect(dialog, &LightingDialog::s_specular_changed,
           [this, dialog](){
-    d->specular=QVector4D(dialog->specular.redF() , 
-                         dialog->specular.greenF(), 
-                         dialog->specular.blueF() , 
+    d->specular=QVector4D(dialog->specular.redF() ,
+                         dialog->specular.greenF(),
+                         dialog->specular.blueF() ,
                          1.0f);
     update();
-    
+
   });
-  
+
   //reset default
   connect(dialog->buttonBox->button(QDialogButtonBox::StandardButton::RestoreDefaults), &QPushButton::clicked,
           [this](){
@@ -1789,9 +1840,9 @@ void Viewer::setLighting()
     d->ambient=QVector4D(77.0/255,77.0/255,77.0/255, 1.0);
     d->diffuse=QVector4D(204.0/255,204.0/255,204.0/255,1.0);
     d->specular=QVector4D(0,0,0,1.0);
-    d->spec_power = 51;    
+    d->spec_power = 51;
     update();
-    
+
   });
   if(!dialog->exec())
   {
@@ -1801,6 +1852,65 @@ void Viewer::setLighting()
     d->ambient = prev_ambient;
     d->diffuse = prev_diffuse;
     d->specular = prev_spec_color;
+    return;
+  }
+}
+
+void Viewer::setBackFrontColors()
+{
+
+  //save current settings;
+
+  QColor prev_front_color = d->front_color;
+  QColor prev_back_color = d->back_color;
+  QDialog *dialog = new QDialog(this);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                   | QDialogButtonBox::Cancel, dialog);
+
+  connect(buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
+  connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+
+  QGridLayout* layout = new QGridLayout(dialog);
+  layout->addWidget(new QLabel("Front color: ",dialog),0,0);
+  QPalette front_palette;
+  front_palette.setColor(QPalette::Button, d->front_color);
+  QPushButton* frontButton = new QPushButton(dialog);
+  frontButton->setPalette(front_palette);
+  QPalette back_palette;
+  back_palette.setColor(QPalette::Button, d->back_color);
+  QPushButton* backButton = new QPushButton(dialog);
+  backButton->setPalette(back_palette);
+  layout->addWidget(frontButton,0,1);
+  layout->addWidget(new QLabel("Back color: ",dialog),1,0);
+  layout->addWidget(backButton,1,1);
+  layout->addWidget(buttonBox);
+  dialog->setLayout(layout);
+  connect(frontButton, &QPushButton::clicked,
+          [this, dialog, frontButton](){
+    QColorDialog *color_dial = new QColorDialog(dialog);
+    color_dial->exec();
+    QColor front_color = color_dial->selectedColor();
+    QPalette palette;
+    palette.setColor(QPalette::Button, front_color);
+    frontButton->setPalette(palette);
+    d->front_color= front_color;
+  });
+  connect(backButton, &QPushButton::clicked,
+          [this, dialog, backButton](){
+    QColorDialog *color_dial = new QColorDialog(dialog);
+    color_dial->exec();
+    QColor back_color = color_dial->selectedColor();
+    QPalette palette;
+    palette.setColor(QPalette::Button, back_color);
+    backButton->setPalette(palette);
+    d->back_color= back_color;
+
+  });
+  if(!dialog->exec())
+  {
+    //restore previous settings
+    d->front_color= prev_front_color;
+    d->back_color= prev_back_color;
     return;
   }
 }
@@ -1835,6 +1945,79 @@ bool Viewer::isClipping() const
 {
   return d->clipping;
 }
+#ifdef CGAL_USE_WEBSOCKETS
+void Viewer::setShareCam(bool b, QString session)
+{
+  static bool init = false;
+  if(b)
+  {
+    d->cam_sharing = b;
+    d->session = session;
+    QString ws_url
+        = CGAL::Three::Three::mainWindow()->property("ws_url").toString();
+    if(ws_url.isEmpty())
+    {
+      QMessageBox::warning(this, "Error", "No Server configured. Please go to Edit->Preferences->Network Settings and fill the \"Camera Synchronization Server\" Field.");
+    }
+    else{
+      if(!init)
+      {
+        connect(&d->m_webSocket, &QWebSocket::connected, this, &Viewer::onSocketConnected);
+        connect(&d->m_webSocket, &QWebSocket::disconnected, this,[this]()
+        {
+          d->is_connected = false;
+          Viewer::socketClosed();
+        });
+        init = true;
+      }
+      d->m_webSocket.open(QUrl(ws_url));
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      QTimer::singleShot(1000, this, [this](){
+        QApplication::restoreOverrideCursor();
+        if(!d->is_connected){
+          QMessageBox::warning(CGAL::Three::Three::mainWindow(),
+                               "Connection failure",
+                               "The requested server was not found.");
+          setShareCam(false, "");
+        }
+      });
+    }
+  }
+  else
+  {
+    QAction* action = findChild<QAction*>("actionShareCamera");
+    action->setChecked(false);
+    d->m_webSocket.close();
+  }
+}
 
+void Viewer::onSocketConnected()
+{
+  connect(&d->m_webSocket, &QWebSocket::textMessageReceived,
+          this, &Viewer::onTextMessageSocketReceived);
+  connect(camera()->frame(), &CGAL::qglviewer::ManipulatedCameraFrame::manipulated,
+          this, [this](){
+    if(d->cam_sharing){
+      QString cam_state = QString("[%1] %2").arg(d->session).arg(dumpCameraCoordinates());
+      //send to server
+      d->m_webSocket.sendTextMessage(cam_state);
+    }
+  });
+  d->is_connected = true;
+}
+
+void Viewer::onTextMessageSocketReceived(QString message)
+{
+  QString session;
+  QString position;
+  QRegularExpression re("\\[(.*)\\] (.*)");
+  QRegularExpressionMatch match = re.match(message);
+  session = match.captured(1);
+  position = match.captured(2);
+  if(session != d->session){
+    return;
+  }
+  moveCameraToCoordinates(position, 0.05f);
+}
+#endif
 #include "Viewer.moc"
-

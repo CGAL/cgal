@@ -1,20 +1,11 @@
 // Copyright (c) 2019  Geometry Factory
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Maxime Gimeno
 
@@ -74,12 +65,6 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
     pBuffer.resize(nNeededChars + 1);
     hResult = NMR::lib3mf_object_getnameutf8(pMeshObject, &pBuffer[0], nNeededChars + 1, NULL);
     pBuffer[nNeededChars] = 0;
-    std::string temp(&pBuffer[0]);
-    if(temp.find("_cgal_pc") != std::string::npos
-       || temp.find("_cgal_pl")!= std::string::npos) //ignore point clouds and polylines
-    {
-      return false;
-    }
     name = std::string(&pBuffer[0]);
   }
   else
@@ -126,151 +111,6 @@ bool extract_soups (NMR::PLib3MFModelMeshObject *pMeshObject,
     colors[pid]=CGAL::Color(mColor.m_Red, mColor.m_Green,
                             mColor.m_Blue, mColor.m_Alpha);
   }
-  return true;
-}
-
-template<typename PointRange,
-         typename PolygonRange,
-         typename ColorRange>
-bool extract_polylines (NMR::PLib3MFModelMeshObject *pMeshObject,
-                        const NMR::MODELTRANSFORM& ,
-                        PointRange& points,
-                        PolygonRange&,
-                        ColorRange& colors,
-                        std::string& name) {
-  typedef typename PointRange::value_type Point_3;
-
-  HRESULT hResult;
-  DWORD nNeededChars;
-  std::vector<char> pBuffer;
-  // Retrieve Mesh Name Length
-  hResult = NMR::lib3mf_object_getnameutf8(pMeshObject, NULL, 0, &nNeededChars);
-  if (hResult != LIB3MF_OK)
-  {
-    points.resize(0);
-    std::cerr<<"Error during name extraction.";
-    return false;
-  }
-
-  // Retrieve Mesh Name
-  if (nNeededChars > 0) {
-    pBuffer.resize(nNeededChars + 1);
-    hResult = NMR::lib3mf_object_getnameutf8(pMeshObject, &pBuffer[0], nNeededChars + 1, NULL);
-    pBuffer[nNeededChars] = 0;
-    std::string temp(&pBuffer[0]);
-    if(temp.find("_cgal_pl")== std::string::npos) //ignore not polylines
-    {
-      points.resize(0);
-      return false;
-    }
-    name = std::string(&pBuffer[0]);
-  }
-  else
-  {
-    points.resize(0);
-    return false;
-  }
-
-  NMR::PLib3MFPropertyHandler * pPropertyHandler;
-  hResult = NMR::lib3mf_meshobject_createpropertyhandler(pMeshObject, &pPropertyHandler);
-  if (hResult != LIB3MF_OK) {
-    DWORD nErrorMessage;
-    LPCSTR pszErrorMessage;
-    std::cerr << "could not create property handler: " << std::hex << hResult << std::endl;
-    NMR::lib3mf_getlasterror(pMeshObject, &nErrorMessage, &pszErrorMessage);
-    std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
-    NMR::lib3mf_release(pMeshObject);
-    return false;
-  }
-
-  points.resize(points.size()-3);//ignore dummy_vertices
-  for(DWORD vid = 0; vid < points.size(); ++vid)
-  {
-    NMR::MODELMESHVERTEX pVertex;
-    NMR::lib3mf_meshobject_getvertex(pMeshObject, vid+3, &pVertex);
-    points[vid] =
-        Point_3(pVertex.m_fPosition[0],
-        pVertex.m_fPosition[1],
-        pVertex.m_fPosition[2]);
-  }
-
-  NMR::MODELMESH_TRIANGLECOLOR_SRGB pColor;
-  NMR::lib3mf_propertyhandler_getcolor(pPropertyHandler, 0, &pColor);//get color of the dummy triangle
-  NMR::MODELMESHCOLOR_SRGB mColor = pColor.m_Colors[0];
-  colors[0]=CGAL::Color(mColor.m_Red, mColor.m_Green,
-                        mColor.m_Blue, mColor.m_Alpha);
-  return true;
-}
-
-template<typename PointRange,
-         typename PolygonRange,
-         typename ColorRange>
-bool extract_point_clouds (NMR::PLib3MFModelMeshObject *pMeshObject,
-                           const NMR::MODELTRANSFORM&,
-                           PointRange& points,
-                           PolygonRange&,
-                           ColorRange& colors,
-                           std::string& name) {
-  typedef typename PointRange::value_type Point_3;
-
-  HRESULT hResult;
-  DWORD nNeededChars;
-  std::vector<char> pBuffer;
-  // Retrieve Mesh Name Length
-  hResult = NMR::lib3mf_object_getnameutf8(pMeshObject, NULL, 0, &nNeededChars);
-  if (hResult != LIB3MF_OK)
-  {
-    std::cerr<<"Error during name extraction.";
-    points.resize(0);
-    return false;
-  }
-
-  // Retrieve Mesh Name
-  if (nNeededChars > 0) {
-    pBuffer.resize(nNeededChars + 1);
-    hResult = NMR::lib3mf_object_getnameutf8(pMeshObject, &pBuffer[0], nNeededChars + 1, NULL);
-    pBuffer[nNeededChars] = 0;
-    std::string temp(&pBuffer[0]);
-    if(temp.find("_cgal_pc")== std::string::npos) //ignore not point_cloud
-    {
-      points.resize(0);
-      return false;
-    }
-    name = std::string(&pBuffer[0]);
-  }
-  else{
-    points.resize(0);
-    return false;
-  }
-
-  NMR::PLib3MFPropertyHandler * pPropertyHandler;
-  hResult = NMR::lib3mf_meshobject_createpropertyhandler(pMeshObject, &pPropertyHandler);
-  if (hResult != LIB3MF_OK) {
-    DWORD nErrorMessage;
-    LPCSTR pszErrorMessage;
-    std::cerr << "could not create property handler: " << std::hex << hResult << std::endl;
-    NMR::lib3mf_getlasterror(pMeshObject, &nErrorMessage, &pszErrorMessage);
-    std::cerr << "error #" << std::hex << nErrorMessage << ": " << pszErrorMessage << std::endl;
-    NMR::lib3mf_release(pMeshObject);
-    return -1;
-  }
-
-  points.resize(points.size()-3);//ignore dummy_vertices
-  for(DWORD vid = 0; vid < points.size(); ++vid)
-  {
-    NMR::MODELMESHVERTEX pVertex;
-    NMR::lib3mf_meshobject_getvertex(pMeshObject, vid+3, &pVertex);
-    points[vid] =
-        Point_3(pVertex.m_fPosition[0],
-        pVertex.m_fPosition[1],
-        pVertex.m_fPosition[2]);
-  }
-
-  NMR::MODELMESH_TRIANGLECOLOR_SRGB pColor;
-  NMR::lib3mf_propertyhandler_getcolor(pPropertyHandler, 0, &pColor);//get color of the dummy triangle
-  NMR::MODELMESHCOLOR_SRGB mColor = pColor.m_Colors[0];
-  colors[0]=CGAL::Color(mColor.m_Red, mColor.m_Green,
-                        mColor.m_Blue, mColor.m_Alpha);
   return true;
 }
 
@@ -598,6 +438,8 @@ int read_from_3mf(const std::string& file_name, PointRanges& all_points,
  * \param names will contain the name of each mesh in `file_name` if any.
  *  If the i'th mesh has no name, it will be called "Unknown Mesh" in names.
  * \return the number of soups read.
+ *
+ * \attention Only versions inferior to 2.0 of lib3mf are supported.
  */
 template<typename PointRanges, typename PolygonRanges, typename ColorRanges>
 int read_triangle_soups_from_3mf(const std::string& file_name, PointRanges& all_points,
@@ -614,43 +456,6 @@ int read_triangle_soups_from_3mf(const std::string& file_name, PointRanges& all_
        all_colors, names, extract_soups<PointRange, PolygonRange, ColorRange>);
 }
 
-
-template<typename PointRanges, typename ColorRanges>
-int read_polylines_from_3mf(const std::string& file_name,
-                            PointRanges& all_points,
-                            ColorRanges& all_colors,
-                            std::vector<std::string>& names
-                            )
-{
-  typedef typename PointRanges::value_type PointRange;
-  typedef std::vector<std::size_t> Polygon;
-  typedef std::vector<Polygon> PolygonRange;
-  typedef std::vector<CGAL::Color> ColorRange;
-  std::vector<PolygonRange> all_polygons;
-  return read_from_3mf<PointRanges,std::vector<PolygonRange>,
-      std::vector<ColorRange>, PointRange, PolygonRange, ColorRange>
-      (file_name, all_points, all_polygons, all_colors, names,
-       extract_polylines<PointRange, PolygonRange, ColorRange>);
-}
-
-
-template<typename PointRanges, typename ColorRanges>
-int read_point_clouds_from_3mf(const std::string& file_name,
-                               PointRanges& all_points,
-                               ColorRanges& all_colors,
-                               std::vector<std::string>& names
-                               )
-{
-  typedef typename PointRanges::value_type PointRange;
-  typedef std::vector<std::size_t> Polygon;
-  typedef std::vector<Polygon> PolygonRange;
-  typedef std::vector<CGAL::Color> ColorRange;
-  std::vector<PolygonRange> all_polygons;
-  return read_from_3mf<PointRanges,std::vector<PolygonRange>,
-      std::vector<ColorRange>, PointRange, PolygonRange, ColorRange>
-      (file_name, all_points, all_polygons, all_colors, names,
-       extract_point_clouds<PointRange, PolygonRange, ColorRange>);
-}
 }//end CGAL
 
 #endif // CGAL_IO_READ_3MF_H

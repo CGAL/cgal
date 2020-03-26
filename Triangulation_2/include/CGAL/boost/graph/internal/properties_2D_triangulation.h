@@ -1,19 +1,10 @@
 // Copyright (c) 2019 GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -120,7 +111,7 @@ public:
   T2_halfedge_id_map(const Tr& tr) : tr(tr) { }
 
   // Halfedge id is twice the edge id, and +0/+1 depending whether
-  // h.first is such that h.first < opposite(h).first --> different ids
+  // h.first is such that h.first < opposite(h).first
   value_type operator[](key_type h) const
   {
     const Face_handle f1 = h.first;
@@ -128,13 +119,13 @@ public:
     CGAL_assertion(!tr.is_infinite(f1) || !tr.is_infinite(f2));
 
     if(tr.is_infinite(f1))
-      return 2*(3 * f2->id() + f2->index(f1));
+      return 2*(f2->edge_id(f2->index(f1)));
     else if(tr.is_infinite(f2))
-      return 2*(3 * f1->id() + h.second) + 1;
+      return 2*(f1->edge_id(h.second)) + 1;
     else if(f1->id() < f2->id())
-      return 2*(3 * f1->id() + h.second);
+      return 2*(f1->edge_id(h.second));
     else
-      return 2*(3 * f2->id() + f2->index(f1)) + 1;
+      return 2*(f1->edge_id(h.second)) + 1;
   }
 
 private:
@@ -161,13 +152,9 @@ public:
     CGAL_assertion(!tr.is_infinite(f1) || !tr.is_infinite(f2));
 
     if(tr.is_infinite(f1))
-      return 3 * f2->id() + f2->index(f1);
-    else if(tr.is_infinite(f2))
-      return 3 * f1->id() + e.second;
-    else if(f1->id() < f2->id())
-      return 3 * f1->id() + e.second;
+      return f2->edge_id(f2->index(f1));
     else
-      return 3 * f2->id() + f2->index(f1);
+      return f1->edge_id(e.second);
   }
 
 private:
@@ -375,6 +362,39 @@ put(PropertyTag p, CGAL_2D_TRIANGULATION& g, const Key& key, const Value& value)
   typedef typename boost::property_map<CGAL_2D_TRIANGULATION, PropertyTag>::type Map;
   Map pmap = get(p, g);
   put(pmap, key, value);
+}
+
+template < CGAL_2D_TRIANGULATION_TEMPLATE_PARAMETERS >
+void set_triangulation_ids(CGAL_2D_TRIANGULATION& g)
+{
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::edge_descriptor     edge_descriptor;
+  typedef typename boost::graph_traits< CGAL_2D_TRIANGULATION >::face_descriptor     face_descriptor;
+
+  int vid = 0;
+  for(vertex_descriptor vd : vertices(g))
+    vd->id() = vid++;
+
+  int eid = 0;
+  for(edge_descriptor ed : edges(g))
+  {
+    halfedge_descriptor hd = halfedge(ed, g);
+    face_descriptor fd = face(hd, g);
+    if(fd != boost::graph_traits< CGAL_2D_TRIANGULATION >::null_face())
+      fd->edge_id(hd.second) = eid;
+
+    halfedge_descriptor opp_hd = opposite(hd, g);
+    face_descriptor opp_fd = face(opp_hd, g);
+    if(opp_fd != boost::graph_traits< CGAL_2D_TRIANGULATION >::null_face())
+      opp_fd->edge_id(opp_hd.second) = eid;
+
+    ++eid;
+  }
+
+  int fid = 0;
+  for(face_descriptor fd : faces(g))
+    fd->id() = fid++;
 }
 
 } // namespace CGAL

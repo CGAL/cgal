@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Sven Oesau, Yannick Verdie, Clément Jamin, Pierre Alliez
@@ -32,10 +23,10 @@ namespace CGAL {
   namespace Shape_detection {
   /*!
     \ingroup PkgShapeDetectionRANSACShapes
-    
+
     \brief Plane implements Shape_base. The plane is represented by the normal vector and the distance to the origin.
-    
-    \tparam Traits must be a model of `EfficientRANSACTraits` with the additional 
+
+    \tparam Traits must be a model of `EfficientRANSACTraits` with the additional
     requirement for planes (see `EfficientRANSACTraits` documentation).
   */
   template <class Traits>
@@ -63,21 +54,21 @@ namespace CGAL {
     operator Plane_3() const {
       return Plane_3(this->get_x(m_normal), this->get_y(m_normal), this->get_z(m_normal), m_d);
     }
-            
+
     /*!
       Normal vector of the plane.
      */
     Vector_3 plane_normal() const {
       return m_normal;
     }
-            
+
     /*!
       Signed distance from the origin.
      */
     FT d() const {
       return m_d;
     }
-    
+
     /// \cond SKIP_IN_MANUAL
     /*!
       Computes squared Euclidean distance from query point to the shape.
@@ -111,7 +102,7 @@ namespace CGAL {
       m_base1 = p.base1 () / std::sqrt (p.base1() * p.base1 ());
       m_base2 = p.base2 () / std::sqrt (p.base2() * p.base2 ());
       m_normal = p.orthogonal_vector () / std::sqrt (p.orthogonal_vector () * p.orthogonal_vector ());
-      
+
       m_d = p.d();
 
     }
@@ -122,7 +113,7 @@ namespace CGAL {
      */
     std::string info() const {
       std::stringstream sstr;
-      sstr << "Type: plane (" << this->get_x(m_normal) << ", " << this->get_y(m_normal) 
+      sstr << "Type: plane (" << this->get_x(m_normal) << ", " << this->get_y(m_normal)
         << ", " << this->get_z(m_normal) << ")x - " << m_d << "= 0"
         << " #Pts: " << this->m_indices.size();
 
@@ -148,8 +139,8 @@ namespace CGAL {
       }
 
       m_normal = this->scale(m_normal, (FT)1.0 / length);
-      m_d = -(this->get_x(p1) * this->get_x(m_normal) 
-        + this->get_y(p1) * this->get_y(m_normal) 
+      m_d = -(this->get_x(p1) * this->get_x(m_normal)
+        + this->get_y(p1) * this->get_y(m_normal)
         + this->get_z(p1) * this->get_z(m_normal));
 
       //check deviation of the 3 normal
@@ -176,7 +167,7 @@ namespace CGAL {
 
     virtual void parameters(const std::vector<std::size_t> &indices,
                             std::vector<std::pair<FT, FT> > &parameterSpace,
-                            FT &,                    
+                            FT &,
                             FT min[2],
                             FT max[2]) const {
       // Transform first point before to initialize min/max
@@ -199,18 +190,18 @@ namespace CGAL {
         parameterSpace[i] = std::pair<FT, FT>(u, v);
       }
     }
-    
+
     virtual void squared_distance(const std::vector<std::size_t> &indices,
                                   std::vector<FT> &dists) const {
       for (std::size_t i = 0;i<indices.size();i++) {
         const FT d = this->scalar_pdct(
-          this->constr_vec(m_point_on_primitive, this->point(indices[i])), 
+          this->constr_vec(m_point_on_primitive, this->point(indices[i])),
           m_normal);
         dists[i] = d * d;
       }
     }
 
-    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
         angles[i] = CGAL::abs(
@@ -220,8 +211,8 @@ namespace CGAL {
 
     FT cos_to_normal(const Point_3 &, const Vector_3 &n) const{
       return CGAL::abs(this->scalar_pdct(n, m_normal));
-    } 
-    
+    }
+
     virtual std::size_t minimum_sample_size() const {
       return 3;
     }

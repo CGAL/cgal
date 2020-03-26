@@ -34,12 +34,11 @@ int main()
     // Test calls to all functions but those who have `!empty()` as
     // precondition.
     CGAL::Emptyset_iterator devnull;
-    tree.accelerate_distance_queries();
     tree.all_intersections(triangle_query, devnull);
     tree.all_intersected_primitives(triangle_query, devnull);
     assert(!tree.any_intersected_primitive(triangle_query));
     assert(!tree.any_intersection(triangle_query));
-    //Cannot call tree.bbox(); 
+    //Cannot call tree.bbox();
     tree.build();
     tree.clear();
     //Cannot call tree.closest_*(...)

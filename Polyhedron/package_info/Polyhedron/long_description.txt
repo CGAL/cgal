@@ -17,12 +17,12 @@ Three Package
 
 -  CGAL/Polyhedron_traits_with_normals_3.h
 
-     A traits class replacing the plane equation per facet with a 
+     A traits class replacing the plane equation per facet with a
      normal vector per facet.
 
 -  CGAL/Polyhedron_incremental_builder_3.h
 
-     An incremental builder useful when creating polyhedral surfaces 
+     An incremental builder useful when creating polyhedral surfaces
      from file formats.
 
 -  CGAL/Polyhedron_copy_3.h

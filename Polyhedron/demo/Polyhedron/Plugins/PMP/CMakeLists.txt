@@ -3,10 +3,14 @@ if(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(jet_fitting_plugin Jet_fitting_plugin)
   target_link_libraries(jet_fitting_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
+  CGAL_target_use_Eigen(jet_fitting_plugin)
 
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif(EIGEN3_FOUND)
+
+polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
+target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
 
 if(EIGEN3_FOUND)
   if("${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
@@ -14,14 +18,17 @@ if(EIGEN3_FOUND)
     qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
     polyhedron_demo_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES} KEYWORDS PMP)
     target_link_libraries(hole_filling_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_selection_item)
+    CGAL_target_use_Eigen(hole_filling_plugin)
 
     qt5_wrap_ui( fairingUI_FILES Fairing_widget.ui)
     polyhedron_demo_plugin(fairing_plugin Fairing_plugin ${fairingUI_FILES} KEYWORDS PMP)
     target_link_libraries(fairing_plugin PUBLIC scene_selection_item)
+    CGAL_target_use_Eigen(fairing_plugin)
 
     polyhedron_demo_plugin(hole_filling_polyline_plugin Hole_filling_polyline_plugin )
     target_link_libraries(hole_filling_polyline_plugin PUBLIC scene_surface_mesh_item scene_polylines_item)
-    
+    CGAL_target_use_Eigen(hole_filling_polyline_plugin)
+
     qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
     polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
     target_link_libraries(mean_curvature_flow_skeleton_plugin
@@ -31,6 +38,19 @@ if(EIGEN3_FOUND)
         scene_polylines_item
         scene_mcf_item
         demo_framework)
+      CGAL_target_use_Eigen(mean_curvature_flow_skeleton_plugin)
+      # The smoothing plugin can still do some things, even if Ceres is not found
+      qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
+      polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
+      target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
+      CGAL_target_use_Eigen(smoothing_plugin)
+      find_package(Ceres QUIET)
+      if(TARGET ceres)
+        target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
+        target_link_libraries(smoothing_plugin PUBLIC ceres)
+      endif()
+
+      CGAL_target_use_Eigen(extrude_plugin)
   else()
     message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
   endif()
@@ -78,7 +98,8 @@ target_link_libraries(corefinement_plugin PUBLIC scene_surface_mesh_item)
 polyhedron_demo_plugin(surface_intersection_plugin Surface_intersection_plugin KEYWORDS PMP)
 target_link_libraries(surface_intersection_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_points_with_normal_item)
 
-polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin KEYWORDS PMP)
+qt5_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui)
+polyhedron_demo_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
 target_link_libraries(repair_polyhedron_plugin PUBLIC scene_surface_mesh_item)
 
 qt5_wrap_ui( isotropicRemeshingUI_FILES Isotropic_remeshing_dialog.ui)
@@ -110,16 +131,3 @@ qt5_wrap_ui( engravUI_FILES Engrave_dock_widget.ui )
 polyhedron_demo_plugin(engrave_text_plugin Engrave_text_plugin ${engravUI_FILES})
 target_link_libraries(engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item scene_polylines_item)
 
-polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
-target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
-
-# The smoothing plugin can still do some things, even if Ceres is not found
-qt5_wrap_ui( smoothingUI_FILES Smoothing_plugin.ui)
-polyhedron_demo_plugin(smoothing_plugin Smoothing_plugin ${smoothingUI_FILES})
-target_link_libraries(smoothing_plugin PUBLIC scene_surface_mesh_item scene_selection_item)
-
-find_package(Ceres QUIET)
-if(TARGET ceres)
-  target_compile_definitions( smoothing_plugin PRIVATE CGAL_PMP_USE_CERES_SOLVER )
-  target_link_libraries(smoothing_plugin PUBLIC ceres)
-endif()

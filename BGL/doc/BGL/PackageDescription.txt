@@ -22,7 +22,7 @@ digraph example {
   FaceGraph [ URL="\ref FaceGraph"];
   FaceListGraph [ URL="\ref FaceListGraph"];
   MutableFaceGraph [ URL="\ref MutableFaceGraph"];
-  
+
   MutableHalfedgeGraph -> HalfedgeGraph -> "boost Graph" [ arrowhead="open", label="refines" ];
   FaceListGraph -> FaceGraph -> HalfedgeGraph [ arrowhead="open", label="refines" ];
   MutableFaceGraph -> MutableHalfedgeGraph [ arrowhead="open", label="refines" ];
@@ -34,12 +34,12 @@ digraph example {
  \cgalHeading{Notations}
 
  <dl>
- <dt>`G`</dt> 	<dd>A type that is a model of a graph concept.</dd>
- <dt>`g`</dt> 	<dd>An object of type `G`.</dd>
- <dt>`u`, `v`</dt> 	<dd>Objects of type `boost::graph_traits<G>::%vertex_descriptor`.</dd>
- <dt>`h`</dt> 	<dd>An object of type `boost::graph_traits<G>::%halfedge_descriptor`.</dd>
- <dt>`e`</dt> 	<dd>An object of type `boost::graph_traits<G>::%edge_descriptor`.</dd>
- <dt>`f`</dt> 	<dd>An object of type `boost::graph_traits<G>::%face_descriptor`.</dd>
+ <dt>`G`</dt>         <dd>A type that is a model of a graph concept.</dd>
+ <dt>`g`</dt>         <dd>An object of type `G`.</dd>
+ <dt>`u`, `v`</dt>         <dd>Objects of type `boost::graph_traits<G>::%vertex_descriptor`.</dd>
+ <dt>`h`</dt>         <dd>An object of type `boost::graph_traits<G>::%halfedge_descriptor`.</dd>
+ <dt>`e`</dt>         <dd>An object of type `boost::graph_traits<G>::%edge_descriptor`.</dd>
+ <dt>`f`</dt>         <dd>An object of type `boost::graph_traits<G>::%face_descriptor`.</dd>
  </dl>
 
 \cgalHeading{%VertexListGraph}
@@ -443,7 +443,7 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLPropertiesDynamic Dynamic Properties
 /// \ingroup PkgBGLRef
 
-/// \defgroup PkgBGLHelper Helper Classes
+/// \defgroup PkgBGLGraphExternalIndices External Indices
 /// \ingroup PkgBGLRef
 
 /// \defgroup PkgBGLHelperFct Helper Functions
@@ -473,8 +473,11 @@ The dynamic property tags enable to associate information to simplices of a `Fac
 */
 
 /*!
-\addtogroup PkgBGLHelper
-Several classes that enable to store ids in vertices/halfedges/faces of a `CGAL::Polyhedron_3`, as well as adapters such as `CGAL::Dual`.
+\addtogroup BGLGraphExternalIndices
+A number of BGL and \cgal algorithms require the graph to have (initialized) integer-like indices
+for its vertices, edges, or faces. However, not all graphs intrinsically offer a natural way
+to attach a unique ID to each element. The following classes and functions paliate this
+by attaching and initializing external IDs to the elements of the graph.
 */
 
 /*!
@@ -574,25 +577,25 @@ Methods to read and write graphs.
 - `MutableFaceGraph`
 
 \cgalCRPSection{Properties}
-- `boost::vertex_index_t`
-- `boost::halfedge_index_t`
-- `boost::edge_index_t`
-- `boost::face_index_t`
-- `boost::vertex_point_t`
+- `CGAL::vertex_index_t`
+- `CGAL::halfedge_index_t`
+- `CGAL::edge_index_t`
+- `CGAL::face_index_t`
+- `CGAL::vertex_point_t`
 
 \cgalCRPSection{%CGAL Classes Adapted for the Graph API}
 
-Different \cgal types have been adapted as graphs for the \sc{Bgl}. All
+A number of \cgal structures have been adapted as graphs for the \sc{Bgl}. All
 adapted types are listed here. The pages document which concepts they
 model, the properties they support, and any possible caveats that a
 user might encounter.
 
-- \link BGLSMGT  `boost::graph_traits< CGAL::Surface_mesh<P> >` \endlink
-- \link BGLPolyGT  `boost::graph_traits< CGAL::Polyhedron_3<T> >` \endlink
-- \link BGLLCCGT `boost::graph_traits< CGAL::Linear_cell_complex_for_combinatorial_map<...> >` \endlink
-- \link BGLSeam_meshGT `boost::graph_traits< CGAL::Seam_mesh<T> >` \endlink
-- \link BGLT2GT `boost::graph_traits< CGAL::Triangulation_2<GT, TDS> >` \endlink
-- \link BGLArgtGT `boost::graph_traits< CGAL::Arrangement_2<T,DC> >` \endlink
+- \link BGLSMGT `boost::graph_traits<CGAL::Surface_mesh<P> >` \endlink
+- \link BGLPolyGT `boost::graph_traits<CGAL::Polyhedron_3<T> >` \endlink
+- \link BGLLCCGT `boost::graph_traits<CGAL::Linear_cell_complex_for_combinatorial_map<...> >` \endlink
+- \link BGLSeam_meshGT `boost::graph_traits<CGAL::Seam_mesh<T> >` \endlink
+- \link BGLT2GT `boost::graph_traits<CGAL::Triangulation_2<GT, TDS> >` \endlink and other 2D triangulations
+- \link BGLArgtGT `boost::graph_traits<CGAL::Arrangement_2<T, DC> >` \endlink
 - \link BGLOMPAK `boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >` \endlink
 - \link BGLOMTMAK `boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >` \endlink
 
@@ -641,6 +644,8 @@ user might encounter.
 
 - `CGAL::clear()`
 - `CGAL::copy_face_graph()`
+
+- `CGAL::set_triangulation_ids()`
 
 \cgalCRPSection{Iterators}
 - `CGAL::Halfedge_around_source_iterator`

@@ -48,6 +48,7 @@ int main(int argc, char** argv)
                                          .edge_is_constrained_map(eif));
 
   std::ofstream output("mesh_smoothed.off");
+  output.precision(17);
   output << mesh;
 
   std::cout << "Done!" << std::endl;

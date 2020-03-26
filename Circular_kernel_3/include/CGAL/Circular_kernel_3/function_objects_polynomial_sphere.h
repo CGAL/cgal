@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SPHERICAL_KERNEL_FUNCTION_OBJECTS_POLYNOMIAL_SPHERE_H
@@ -46,7 +37,7 @@
 #include <CGAL/Circular_kernel_3/Intersection_traits.h>
 
 namespace CGAL {
-	
+
 namespace SphericalFunctors {
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
@@ -71,8 +62,8 @@ template < class SK > \
                 const Circular_arc_point_3 &p1) const\
     { return SphericalFunctors::compare_ ##V <SK>(p0, p1); }\
   };\
-  
-#else 
+
+#else
 #define CGAL_SPHERICAL_KERNEL_MACRO_FUNCTOR_COMPARE_(V)\
 template < class SK > \
   class Compare_ ##V## _3 {\
@@ -180,11 +171,11 @@ template < class SK > \
 
   public:
 
-    typedef typename SK::Linear_kernel::Equal_3::result_type result_type;    
+    typedef typename SK::Linear_kernel::Equal_3::result_type result_type;
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Equal_3::operator();
-#else  
+#else
 
     result_type
     operator() (const Point_3 &p0,
@@ -253,7 +244,7 @@ template < class SK > \
     operator() (const Circular_arc_point_3 &c0,
                 const Circular_arc_point_3 &c1) const
     { return SphericalFunctors::equal<SK>(c0, c1); }
-    
+
     result_type
     operator() (const Circular_arc_point_3 &c0,
                 const Point_3 &c1) const
@@ -262,7 +253,7 @@ template < class SK > \
     result_type
     operator() (const Point_3 &c0,
                 const Circular_arc_point_3 &c1) const
-    { return SphericalFunctors::equal<SK>(Circular_arc_point_3(c0), c1); }    
+    { return SphericalFunctors::equal<SK>(Circular_arc_point_3(c0), c1); }
 
     // Our Line_arc_3 dont have orientation
     result_type
@@ -275,7 +266,7 @@ template < class SK > \
     operator() (const Circular_arc_3 &c0,
                 const Circular_arc_3 &c1) const
     { return SphericalFunctors::equal<SK>(c0, c1); }
-    
+
   };
 
   template < class SK >
@@ -296,16 +287,16 @@ template < class SK > \
     typedef  Circular_arc_point_3 result_type;
 
     result_type
-    operator()(void) 
+    operator()(void)
     { return Rep(); }
 
     result_type
       operator()(const Root_of_2 & x,
-		 const Root_of_2 & y,
-		 const Root_of_2 & z
-		 ) const
+                 const Root_of_2 & y,
+                 const Root_of_2 & z
+                 ) const
     { return Rep(x,y,z); }
-    
+
     result_type
     operator()(const Root_for_spheres_2_3 & np) const
     { return Rep(np); }
@@ -424,34 +415,34 @@ template < class SK > \
     typedef typename LK::Sphere_3 Sphere_3;
     typedef typename LK::Construct_sphere_3 LK_Construct_sphere_3;
     typedef typename LK::FT FT;
-	
+
   public:
-    
-    typedef typename SK::Linear_kernel::Construct_sphere_3::result_type result_type; 
+
+    typedef typename SK::Linear_kernel::Construct_sphere_3::result_type result_type;
 
     result_type
     operator()( Return_base_tag tag, const Point_3& center, const FT& squared_radius,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+                Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, center, squared_radius, orientation); }
 
     result_type
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     { return LK_Construct_sphere_3()(tag, p, q, r, s); }
 
     result_type
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q, const Point_3& r,
-	        Orientation orientation  = COUNTERCLOCKWISE) const
+                Orientation orientation  = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, p, q, r, orientation); }
 
     result_type
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+                Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, p, q, orientation); }
 
     result_type
     operator()( Return_base_tag tag, const Point_3& center,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+                Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, center, orientation); }
 
     result_type
@@ -463,27 +454,27 @@ template < class SK > \
 
     result_type
     operator()( const Point_3& center, const FT& squared_radius,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+                Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(center, squared_radius, orientation); }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        const Point_3& r, const Point_3& s) const
+                const Point_3& r, const Point_3& s) const
     { return LK_Construct_sphere_3()(p, q, r, s); }
 
     result_type
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+                Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(p, q, r, orientation); }
 
     result_type
     operator()( const Point_3& p, const Point_3& q,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+                Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(p, q, orientation); }
 
     result_type
     operator()( const Point_3& center,
-	        Orientation orientation = COUNTERCLOCKWISE) const
+                Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(center, orientation); }
 
     result_type
@@ -516,7 +507,7 @@ template < class SK > \
     typedef typename LK::Circle_3     Circle_3;
 
   public:
-    
+
     typedef typename SK::Linear_kernel::Construct_plane_3::result_type result_type;
 
   public:
@@ -608,7 +599,7 @@ template < class SK > \
   public:
     typedef typename SK::Linear_kernel::Construct_line_3 LK_Construct_line_3;
     typedef typename LK_Construct_line_3::result_type result_type;
-    
+
     result_type
     operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     { return LK_Construct_line_3()(p, Vector_3(p, q)); }
@@ -650,7 +641,7 @@ template < class SK > \
     operator()(const Ray_3& r) const
     { return this->operator()(Return_base_tag(), r); }
 
-    const result_type& 
+    const result_type&
     operator() (const Line_arc_3 & a) const
     { return (a.rep().supporting_line()); }
 
@@ -680,7 +671,7 @@ template < class SK > \
     struct result {
       typedef forwarded_result_type type;
     };
-    
+
     template<typename F>
     struct result<F(Circular_arc_3)> {
       typedef const forwarded_result_type& type;
@@ -722,7 +713,7 @@ template < class SK > \
     { return Extended()(p, s, a); }
 
     forwarded_result_type
-    operator()(	const Point_3& p1, const Point_3& p2, const Point_3& p3) const
+    operator()(        const Point_3& p1, const Point_3& p2, const Point_3& p3) const
     { return Extended()(p1, p2, p3); }
 
     forwarded_result_type
@@ -758,13 +749,13 @@ template < class SK > \
 
     result_type
     operator()(const Line_3 &l,
-	       const Circular_arc_point_3 &s,
-	       const Circular_arc_point_3 &t) const
+               const Circular_arc_point_3 &s,
+               const Circular_arc_point_3 &t) const
     { return Rep(l,s,t); }
 
     result_type
     operator()(const Point_3 &s,
-	             const Point_3 &t) const
+                     const Point_3 &t) const
     { return Rep(s,t); }
 
     result_type
@@ -787,7 +778,7 @@ template < class SK > \
 
     // Not Documented
     result_type
-    operator()(const Line_3 &l, 
+    operator()(const Line_3 &l,
                const Sphere_3 &s1, bool less_xyz_s1,
                const Sphere_3 &s2, bool less_xyz_s2) const
     { return Rep(l,s1,less_xyz_s1,
@@ -804,14 +795,14 @@ template < class SK > \
     // Not Documented
     result_type
     operator()(const Line_3 &l,
-	       const Plane_3 &p1,
-	       const Plane_3 &p2) const
+               const Plane_3 &p1,
+               const Plane_3 &p2) const
     { return Rep(l,p1,p2); }
 
     // Not Documented
     result_type
     operator()(const Plane_3 &p1,
-	       const Plane_3 &p2,
+               const Plane_3 &p2,
                const Line_3 &l) const
     { return Rep(l,p1,p2); }
 
@@ -827,7 +818,7 @@ template < class SK > \
     typedef typename SK::Sphere_3                      Sphere_3;
     typedef typename SK::Plane_3                       Plane_3;
     typedef typename SK::Line_arc_3                    Line_arc_3;
-    
+
     typedef typename SK::Circular_arc_point_3          Circular_arc_point_3;
     typedef typename SK::Circle_3                      Circle_3;
     typedef typename SK::Circular_arc_3                Circular_arc_3;
@@ -846,17 +837,17 @@ template < class SK > \
 
     result_type
     operator()(const Circle_3 &c,const Circular_arc_point_3& pt) const
-    { return Rep(c,pt); }    
-    
+    { return Rep(c,pt); }
+
     result_type
     operator()(const Circle_3 &l,
-	       const Circular_arc_point_3 &s,
-	       const Circular_arc_point_3 &t) const
+               const Circular_arc_point_3 &s,
+               const Circular_arc_point_3 &t) const
     { return Rep(l,s,t); }
 
     // Not Documented
     result_type
-    operator()(const Circle_3 &c, 
+    operator()(const Circle_3 &c,
                const Sphere_3 &s1, bool less_xyz_s1,
                const Sphere_3 &s2, bool less_xyz_s2) const
     { return Rep(c,s1,less_xyz_s1,s2,less_xyz_s2); }
@@ -870,7 +861,7 @@ template < class SK > \
 
     // Not Documented
     result_type
-    operator()(const Circle_3 &c, 
+    operator()(const Circle_3 &c,
                const Plane_3 &p1, bool less_xyz_p1,
                const Plane_3 &p2, bool less_xyz_p2) const
     { return Rep(c,p1,less_xyz_p1,p2,less_xyz_p2); }
@@ -884,9 +875,9 @@ template < class SK > \
 
     result_type
     operator()(const Point_3 &begin,
-               const Point_3 &middle, 
+               const Point_3 &middle,
                const Point_3 &end) const
-    { return Rep(begin,middle,end); }   
+    { return Rep(begin,middle,end); }
 
   };
 
@@ -959,7 +950,7 @@ template < class SK > \
   };
 
   template < class SK >
-  class Has_on_3 
+  class Has_on_3
 #ifndef CGAL_CFG_MATCHING_BUG_6
     : public SK::Linear_kernel::Has_on_3
 #endif
@@ -975,14 +966,14 @@ template < class SK > \
     typedef typename SK::Circular_arc_point_3    Circular_arc_point_3;
     typedef typename SK::Circular_arc_3          Circular_arc_3;
     typedef typename SK::Circle_3                Circle_3;
-    
+
 
   public:
     typedef typename SK::Linear_kernel::Has_on_3::result_type result_type;
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Has_on_3::operator();
-#else 
+#else
     typedef typename SK::Linear_kernel::Has_on_3 LK_Has_on_3;
 
     result_type
@@ -1088,14 +1079,14 @@ template < class SK > \
     result_type
     operator()(const Circular_arc_3 &p, const Circle_3 &a) const
     { return SphericalFunctors::has_on<SK>(p, a); }
-    
+
   };
 
   template < class SK >
   class Do_intersect_3
     : public SK::Linear_kernel::Do_intersect_3
   {
-  
+
     typedef typename SK::Sphere_3                 Sphere_3;
     typedef typename SK::Line_3                   Line_3;
     typedef typename SK::Line_arc_3               Line_arc_3;
@@ -1103,10 +1094,10 @@ template < class SK > \
     typedef typename SK::Plane_3                  Plane_3;
     typedef typename SK::Circle_3                 Circle_3;
     typedef typename SK::Circle_3                 Circular_arc_point_3;
-  
+
   public:
     typedef typename SK::Linear_kernel::Do_intersect_3::result_type result_type;
-  
+
     using SK::Linear_kernel::Do_intersect_3::operator();
 
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(A,B)            \
@@ -1115,7 +1106,7 @@ template < class SK > \
     { std::vector< typename SK3_Intersection_traits<SK, A, B>::type > res; \
       typename SK::Intersect_3()(c1,c2,std::back_inserter(res));        \
       return !res.empty(); }
-	
+
 #define CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(A,B,C)          \
     result_type                                                         \
     operator()(const A & c1, const B & c2, const C & c3) const          \
@@ -1123,40 +1114,40 @@ template < class SK > \
       typename SK::Intersect_3()(c1,c2,c3,std::back_inserter(res));     \
       return !res.empty(); }
 
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Sphere_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Sphere_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Plane_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Sphere_3, Sphere_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Plane_3, Sphere_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Plane_3, Plane_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Plane_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Circle_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Sphere_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Circle_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Circle_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Line_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Circle_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Line_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Line_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Line_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Line_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Circle_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Sphere_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Line_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Plane_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Circular_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Circular_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Line_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Circular_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Circle_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Circular_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Sphere_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Circular_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Plane_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Line_arc_3)
-	CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Circular_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Sphere_3, Plane_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Sphere_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Plane_3, Plane_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_3(Sphere_3, Plane_3, Plane_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Plane_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Circle_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Circle_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Circle_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Line_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Circle_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Line_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Line_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Line_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Line_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Circle_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Line_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Line_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Plane_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Circular_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_3, Circular_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Line_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circle_3, Circular_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Circle_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Sphere_3, Circular_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Sphere_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Plane_3, Circular_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Plane_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Circular_arc_3, Line_arc_3)
+        CGAL_SPHERICAL_KERNEL_MACRO_DO_INTERSECTION_3_2(Line_arc_3, Circular_arc_3)
 
   };
 
@@ -1198,9 +1189,9 @@ template < class SK > \
     //only ternary from the linear kernel
     template<typename F>
     struct result<F(Plane_3, Plane_3, Plane_3)> {
-      typedef boost::optional< 
-        boost::variant< Point_3, 
-                        Line_3, 
+      typedef boost::optional<
+        boost::variant< Point_3,
+                        Line_3,
                         Plane_3 > > type;
     };
 
@@ -1222,208 +1213,208 @@ template < class SK > \
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Sphere_3 & s, const Line_3 & l, 
-	       OutputIterator res) const
-    { return SphericalFunctors::intersect_3<SK> (s,l,res); }
-    
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Line_3 & l,const Sphere_3 & s, 
+    operator()(const Sphere_3 & s, const Line_3 & l,
                OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Sphere_3 & s1, const Sphere_3 & s2, 
-	       const Sphere_3 & s3, OutputIterator res) const
+    operator()(const Line_3 & l,const Sphere_3 & s,
+               OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (s,l,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Sphere_3 & s1, const Sphere_3 & s2,
+               const Sphere_3 & s3, OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s1,s2,s3,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Sphere_3 & s1, const Sphere_3 & s2, 
-	       const Plane_3 & p, OutputIterator res) const
+    operator()(const Sphere_3 & s1, const Sphere_3 & s2,
+               const Plane_3 & p, OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p,s1,s2,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Plane_3 & p, const Sphere_3 & s1,  
-	       const Sphere_3 & s2, OutputIterator res) const
+    operator()(const Plane_3 & p, const Sphere_3 & s1,
+               const Sphere_3 & s2, OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p,s1,s2,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Plane_3 & p1, const Plane_3 & p2,  
-	       const Sphere_3 & s, OutputIterator res) const
+    operator()(const Plane_3 & p1, const Plane_3 & p2,
+               const Sphere_3 & s, OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p1,p2,s,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Sphere_3 & s, const Plane_3 & p1, 
-	       const Plane_3 & p2, OutputIterator res) const
+    operator()(const Sphere_3 & s, const Plane_3 & p1,
+               const Plane_3 & p2, OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p1,p2,s,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circle_3 & c, const Plane_3 & p, 
-	       OutputIterator res) const
+    operator()(const Circle_3 & c, const Plane_3 & p,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,p,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Plane_3 & p, const Circle_3 & c, 
-	       OutputIterator res) const
+    operator()(const Plane_3 & p, const Circle_3 & c,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,p,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circle_3 & c, const Sphere_3 & s, 
-	       OutputIterator res) const
+    operator()(const Circle_3 & c, const Sphere_3 & s,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,s,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Sphere_3 & s, const Circle_3 & c, 
-	       OutputIterator res) const
+    operator()(const Sphere_3 & s, const Circle_3 & c,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,s,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circle_3 & c1, const Circle_3 & c2, 
-	       OutputIterator res) const
+    operator()(const Circle_3 & c1, const Circle_3 & c2,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circle_3 & c, const Line_3 & l, 
-	       OutputIterator res) const
+    operator()(const Circle_3 & c, const Line_3 & l,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_3 & l, const Circle_3 & c,
-	       OutputIterator res) const
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,l,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_arc_3 & l1, const Line_arc_3 & l2, 
-	       OutputIterator res) const
+    operator()(const Line_arc_3 & l1, const Line_arc_3 & l2,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (l1,l2,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_3 & l, const Line_arc_3 & la, 
-	       OutputIterator res) const
+    operator()(const Line_3 & l, const Line_arc_3 & la,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (l,la,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_arc_3 & la, const Line_3 & l, 
-	       OutputIterator res) const
+    operator()(const Line_arc_3 & la, const Line_3 & l,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (l,la,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circle_3 & c, const Line_arc_3 & l, 
-	       OutputIterator res) const
+    operator()(const Circle_3 & c, const Line_arc_3 & l,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,l,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & l, const Circle_3 & c,
-	       OutputIterator res) const
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,l,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Sphere_3 & s, const Line_arc_3 & l, 
-	       OutputIterator res) const
-    { return SphericalFunctors::intersect_3<SK> (s,l,res); }
-    
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Line_arc_3 & l,const Sphere_3 & s, 
-	       OutputIterator res) const
+    operator()(const Sphere_3 & s, const Line_arc_3 & l,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Plane_3 & s, const Line_arc_3 & l, 
-	       OutputIterator res) const
+    operator()(const Line_arc_3 & l,const Sphere_3 & s,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_arc_3 & l,const Plane_3 & s, 
-	       OutputIterator res) const
+    operator()(const Plane_3 & s, const Line_arc_3 & l,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,l,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circular_arc_3 & c1, const Circular_arc_3 & c2, 
-	       OutputIterator res) const
+    operator()(const Line_arc_3 & l,const Plane_3 & s,
+               OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (s,l,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Circular_arc_3 & c1, const Circular_arc_3 & c2,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c1,c2,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Line_3 & l, const Circular_arc_3 & ca, 
-	       OutputIterator res) const
+    operator()(const Line_3 & l, const Circular_arc_3 & ca,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (l,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circular_arc_3 & ca, const Line_3 & l, 
-	       OutputIterator res) const
+    operator()(const Circular_arc_3 & ca, const Line_3 & l,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (l,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circle_3 & c, const Circular_arc_3 & ca, 
-	       OutputIterator res) const
+    operator()(const Circle_3 & c, const Circular_arc_3 & ca,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Circular_arc_3 & ca, const Circle_3 & c,
-	       OutputIterator res) const
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (c,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Sphere_3 & s, const Circular_arc_3 & ca, 
-	       OutputIterator res) const
-    { return SphericalFunctors::intersect_3<SK> (s,ca,res); }
-    
-    template < class OutputIterator >
-    OutputIterator
-    operator()(const Circular_arc_3 & ca,const Sphere_3 & s, 
-	       OutputIterator res) const
+    operator()(const Sphere_3 & s, const Circular_arc_3 & ca,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (s,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Plane_3 & p, const Circular_arc_3 & ca, 
-	       OutputIterator res) const
+    operator()(const Circular_arc_3 & ca,const Sphere_3 & s,
+               OutputIterator res) const
+    { return SphericalFunctors::intersect_3<SK> (s,ca,res); }
+
+    template < class OutputIterator >
+    OutputIterator
+    operator()(const Plane_3 & p, const Circular_arc_3 & ca,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circular_arc_3 & ca, const Plane_3 & p, 
-	       OutputIterator res) const
+    operator()(const Circular_arc_3 & ca, const Plane_3 & p,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (p,ca,res); }
 
     template < class OutputIterator >
     OutputIterator
-    operator()(const Circular_arc_3 & ca, const Line_arc_3 & la, 
-	       OutputIterator res) const
+    operator()(const Circular_arc_3 & ca, const Line_arc_3 & la,
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (ca,la,res); }
 
     template < class OutputIterator >
     OutputIterator
     operator()(const Line_arc_3 & la, const Circular_arc_3 & ca,
-	       OutputIterator res) const
+               OutputIterator res) const
     { return SphericalFunctors::intersect_3<SK> (ca,la,res); }
-    
+
   };
 
 // If 2 line_arc have the same supporting line
@@ -1462,15 +1453,15 @@ template < class SK > \
     typedef void         result_type;
 
     result_type
-    operator()(const Line_arc_3 &l, 
-	       const Circular_arc_point_3 &p,
-	       Line_arc_3 &ca1, Line_arc_3 &ca2) const
+    operator()(const Line_arc_3 &l,
+               const Circular_arc_point_3 &p,
+               Line_arc_3 &ca1, Line_arc_3 &ca2) const
     { return SphericalFunctors::split<SK>(l, p, ca1, ca2); }
 
     result_type
-    operator()(const Circular_arc_3 &c, 
-	       const Circular_arc_point_3 &p,
-	       Circular_arc_3 &ca1, Circular_arc_3 &ca2) const
+    operator()(const Circular_arc_3 &c,
+               const Circular_arc_point_3 &p,
+               Circular_arc_3 &ca1, Circular_arc_3 &ca2) const
     { return SphericalFunctors::split<SK>(c, p, ca1, ca2); }
 
   };
@@ -1498,7 +1489,7 @@ template < class SK > \
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Construct_bbox_3::operator();
-#else 
+#else
     typedef typename SK::Linear_kernel LK;
     typedef typename LK::Construct_bbox_3 LK_Construct_bbox_3;
 
@@ -1575,11 +1566,11 @@ template < class SK > \
 #ifndef CGAL_CFG_MATCHING_BUG_6
     using SK::Linear_kernel::Compute_approximate_squared_length_3::operator();
 #else
-    result_type 
+    result_type
     operator() (const Circle_3 & c) const
     { return CGAL_PI * CGAL_PI * 4.0 * to_double(c.squared_radius()); }
-#endif  
-  
+#endif
+
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_squared_length(); }
 
@@ -1604,18 +1595,18 @@ template < class SK > \
     using SK::Linear_kernel::Compute_approximate_angle_3::operator();
 #else
     typedef typename SK::Linear_kernel::Compute_approximate_angle_3 LK_Compute_approximate_angle_3;
-    
+
     FT operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       return LK_Compute_approximate_angle_3()(p,q,r);
     }
-    
+
     FT operator()(const Vector_3& u, const Vector_3& v) const
     {
       return LK_Compute_approximate_angle_3()(u,v);
     }
-    
-#endif    
+
+#endif
     result_type operator() (const Circular_arc_3 & c) const
     { return c.rep().approximate_angle(); }
 
@@ -1770,38 +1761,38 @@ template < class SK > \
     // We can maybe optimize it doing the operator() for point_3 too
 
   };
-  
+
   template <class SK>
   class Is_theta_monotone_3{
     typename SK::Sphere_3 sphere_;
   public:
     typedef bool result_type;
-  
+
     Is_theta_monotone_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
-  
-    result_type 
+
+    result_type
     operator()(const typename SK::Circular_arc_3& arc) const {
       return SphericalFunctors::is_theta_monotone_3<SK>(arc,sphere_);
     }
   };
 
-  template < class SK > 
+  template < class SK >
   class Compare_theta_3{
     typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
     typedef typename SK::Vector_3 Vector_3;
-    
+
     typename SK::Sphere_3 sphere_;
-    
+
   public:
     typedef  CGAL::Comparison_result result_type;
-  
+
     Compare_theta_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
-  
+
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Circular_arc_point_3 &p1) const
     { return SphericalFunctors::compare_theta_of_pts<SK>(p0, p1,sphere_); }
-    
+
     result_type
     operator() (const Circular_arc_point_3 &p,
                 const Vector_3 &v) const
@@ -1811,58 +1802,58 @@ template < class SK > \
     operator() (const Vector_3 &m1,
                 const Vector_3 &m2) const
     { return SphericalFunctors::compare_theta_vectors<SK>(m1,m2); }
-    
+
     result_type
     operator() (const Vector_3 &v,const Circular_arc_point_3 &p0) const
     { return CGAL::opposite( SphericalFunctors::compare_theta_pt_vector<SK>(p0, v,sphere_) ); }
   };
-  
-  template < class SK > 
+
+  template < class SK >
   class Compare_theta_z_3{
     typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
     typename SK::Sphere_3 sphere_;
-    
+
   public:
     typedef  CGAL::Comparison_result result_type;
-  
+
     Compare_theta_z_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
-  
+
     result_type
     operator() (const Circular_arc_point_3 &p0,
                 const Circular_arc_point_3 &p1,bool decreasing_z=false) const
     { return SphericalFunctors::compare_theta_z<SK>(p0, p1,sphere_,decreasing_z); }
-    
+
   };
 
-  template < class SK > 
+  template < class SK >
   class Make_theta_monotone_3{
     typename SK::Sphere_3 sphere_;
-    
+
   public:
     Make_theta_monotone_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
-  
+
     template <class OutputIterator>
     OutputIterator
     operator() (const typename SK::Circle_3 &circle,OutputIterator out_it) const
     { return SphericalFunctors::make_circle_theta_monotone<SK>(circle,sphere_,out_it); }
-    
+
     template <class OutputIterator>
     OutputIterator
     operator() (const typename SK::Circular_arc_3 &arc,OutputIterator out_it) const
-    { return SphericalFunctors::make_circular_arc_theta_monotone<SK>(arc,sphere_,out_it); }    
-    
+    { return SphericalFunctors::make_circular_arc_theta_monotone<SK>(arc,sphere_,out_it); }
+
   };
-  
+
   template <class SK>
   class Compare_z_to_right_3{
     typedef typename SK::Circular_arc_point_3 Circular_arc_point_3;
     typedef typename SK::Circular_arc_3 Circular_arc_3;
     typename SK::Sphere_3 sphere_;
-    
+
   public:
     typedef  CGAL::Comparison_result result_type;
     Compare_z_to_right_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
-      
+
     result_type
     operator()(const Circular_arc_3& arc1,const Circular_arc_3& arc2,const Circular_arc_point_3& pt,bool do_to_the_left=false){
       CGAL_kernel_precondition(SK().has_on_3_object()(sphere_,arc1));
@@ -1873,9 +1864,9 @@ template < class SK > \
       CGAL_kernel_precondition(SK().has_on_3_object()(arc2,pt));
       CGAL_kernel_precondition(classify_circle_3<SK>(arc1.supporting_circle(),sphere_)!=NORMAL || pt.z()!=extremal_points_z_coordinate<SK>(arc1.supporting_circle(),sphere_));
       CGAL_kernel_precondition(classify_circle_3<SK>(arc2.supporting_circle(),sphere_)!=NORMAL || pt.z()!=extremal_points_z_coordinate<SK>(arc2.supporting_circle(),sphere_));
-      
+
       if (pt.y() == sphere_.center().y() && pt.x() > sphere_.center().x()) //case theta = 0
-        return 
+        return
           Compare_to_right_of_arcs<SK,Trait_for_cmp_tgt_theta_0<SK> >( Trait_for_cmp_tgt_theta_0<SK>(pt.coordinates(),sphere_),sphere_ )
             (arc1,arc2,do_to_the_left);
       else //general case
@@ -1884,15 +1875,15 @@ template < class SK > \
             (arc1,arc2,do_to_the_left);
     }
   };
-  
+
   template <class SK>
   class Compare_z_at_theta_3{
-     typename SK::Sphere_3 sphere_;   
-    
+     typename SK::Sphere_3 sphere_;
+
   public:
     typedef  CGAL::Comparison_result result_type;
     Compare_z_at_theta_3(const typename SK::Sphere_3& sphere):sphere_(sphere){}
-     
+
     result_type
     operator()( const typename SK::Circular_arc_3& arc1,
                 const typename SK::Circular_arc_3& arc2,
@@ -1908,7 +1899,7 @@ template < class SK > \
       return SphericalFunctors::compare_z_at_theta_pt_arc<SK>(point,arc,sphere_);
     }
   };
-  
+
 
 } // namespace SphericalFunctors
 

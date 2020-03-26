@@ -15,15 +15,15 @@ if(CGAL_FOUND)
   # Use Eigen.
   find_package(Eigen3 3.1.0 QUIET) # (3.1.0 or greater)
   if(EIGEN3_FOUND)
-    include(${EIGEN3_USE_FILE})
-
     create_single_source_cgal_program(
       "benchmark_region_growing_on_point_set_2.cpp")
+    CGAL_target_use_Eigen(benchmark_region_growing_on_point_set_2)
     create_single_source_cgal_program(
       "benchmark_region_growing_on_point_set_3.cpp")
+    CGAL_target_use_Eigen(benchmark_region_growing_on_point_set_3)
   endif()
 
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

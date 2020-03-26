@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
@@ -57,28 +48,28 @@ namespace Polygon_mesh {
 
     \brief Sorting of polygon mesh faces with respect to the local plane fit quality.
 
-    Indices of faces in a polygon mesh are sorted with respect to the quality of the 
+    Indices of faces in a polygon mesh are sorted with respect to the quality of the
     least squares plane fit applied to the vertices of neighboring faces of each face.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam PolygonMesh 
+    \tparam PolygonMesh
     must be a model of `FaceListGraph`.
 
-    \tparam NeighborQuery 
+    \tparam NeighborQuery
     must be a model of `NeighborQuery`.
 
-    \tparam FaceRange 
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and 
+    \tparam FaceRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
     value type is the face type of a polygon mesh.
 
-    \tparam VertexToPointMap 
+    \tparam VertexToPointMap
     must be an `LvaluePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`.
   */
   template<
-  typename GeomTraits, 
+  typename GeomTraits,
   typename PolygonMesh,
   typename NeighborQuery,
   typename FaceRange = typename PolygonMesh::Face_range,
@@ -100,7 +91,7 @@ namespace Polygon_mesh {
     /// \endcond
 
     #ifdef DOXYGEN_RUNNING
-      /*! 
+      /*!
         an `LvaluePropertyMap` whose key and value type is `std::size_t`.
         This map provides an access to the ordered indices of polygon mesh faces.
       */
@@ -115,15 +106,15 @@ namespace Polygon_mesh {
     /*!
       \brief initializes all internal data structures.
 
-      \param pmesh 
+      \param pmesh
       an instance of `PolygonMesh` that represents a polygon mesh
 
-      \param neighbor_query 
-      an instance of `NeighborQuery` that is used internally to 
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
       access face's neighbors
 
-      \param vertex_to_point_map 
-      an instance of `VertexToPointMap` that maps a polygon mesh 
+      \param vertex_to_point_map
+      an instance of `VertexToPointMap` that maps a polygon mesh
       vertex to `Kernel::Point_3`
 
       \pre `faces(pmesh).size() > 0`
@@ -155,7 +146,7 @@ namespace Polygon_mesh {
       \brief sorts indices of polygon mesh faces.
     */
     void sort() {
-      
+
       compute_scores();
       CGAL_postcondition(m_scores.size() > 0);
 
@@ -195,12 +186,12 @@ namespace Polygon_mesh {
       std::vector<Local_point_3> points;
 
       for (std::size_t i = 0; i < m_face_range.size(); ++i) {
-        
+
         neighbors.clear();
         m_neighbor_query(i, neighbors);
         neighbors.push_back(i);
 
-        points.clear();  
+        points.clear();
         for (std::size_t j = 0; j < neighbors.size(); ++j) {
 
           CGAL_precondition(neighbors[j] >= 0);
@@ -211,7 +202,7 @@ namespace Polygon_mesh {
 
           const auto vertices = vertices_around_face(hedge, m_face_graph);
           for (const auto vertex : vertices) {
-                            
+
             const auto& tmp_point = get(m_vertex_to_point_map, vertex);
             points.push_back(m_to_local_converter(tmp_point));
           }
@@ -222,10 +213,10 @@ namespace Polygon_mesh {
         Local_point_3 fitted_centroid;
 
         m_scores[i] = CGAL::linear_least_squares_fitting_3(
-          points.begin(), points.end(), 
-          fitted_plane, fitted_centroid, 
-          CGAL::Dimension_tag<0>(), 
-          Local_traits(), 
+          points.begin(), points.end(),
+          fitted_plane, fitted_centroid,
+          CGAL::Dimension_tag<0>(),
+          Local_traits(),
           CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
       }
     }

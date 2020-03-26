@@ -43,7 +43,7 @@ int main(int argc, char*argv[])
     return EXIT_FAILURE;
   }
   input.close();
-  
+
   if (!CGAL::is_triangle_mesh(polyhedron)){
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
@@ -51,11 +51,11 @@ int main(int argc, char*argv[])
 
   // Create domain
   Mesh_domain domain(polyhedron);
-  
+
   // Mesh criteria (no cell_size set)
   Mesh_criteria criteria(facet_angle=25, facet_size=0.15, facet_distance=0.008,
                          cell_radius_edge_ratio=3);
-  
+
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 

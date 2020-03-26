@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
@@ -43,36 +34,37 @@ namespace CGAL {
 namespace Shape_detection {
 namespace Point_set {
 
-  /*! 
+  /*!
     \ingroup PkgShapeDetectionRGOnPoints
 
-    \brief Region type based on the quality of the least squares plane 
+    \brief Region type based on the quality of the least squares plane
     fit applied to 3D points.
 
-    This class fits a plane to chunks of points in a 3D point set and controls 
-    the quality of this fit. If all quality conditions are satisfied, the chunk
-    is accepted as a valid region, otherwise rejected.
+    This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
+    to chunks of points in a 3D point set and controls the quality of this fit.
+    If all quality conditions are satisfied, the chunk is accepted as a valid region,
+    otherwise rejected.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam PointMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_3`.
 
-    \tparam NormalMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    \tparam NormalMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Vector_3`.
-    
+
     \cgalModels `RegionType`
   */
   template<
-  typename GeomTraits, 
-  typename InputRange, 
-  typename PointMap, 
+  typename GeomTraits,
+  typename InputRange,
+  typename PointMap,
   typename NormalMap>
   class Least_squares_plane_fit_region {
 
@@ -118,26 +110,26 @@ namespace Point_set {
     /*!
       \brief initializes all internal data structures.
 
-      \param input_range 
-      an instance of `InputRange` with 3D points and 
+      \param input_range
+      an instance of `InputRange` with 3D points and
       corresponding 3D normal vectors
 
-      \param distance_threshold 
+      \param distance_threshold
       the maximum distance from a point to a plane. %Default is 1.
 
-      \param angle_threshold 
-      the maximum accepted angle in degrees between the normal of a point and 
+      \param angle_threshold
+      the maximum accepted angle in degrees between the normal of a point and
       the normal of a plane. %Default is 25 degrees.
 
-      \param min_region_size 
+      \param min_region_size
       the minimum number of 3D points a region must have. %Default is 3.
 
       \param point_map
-      an instance of `PointMap` that maps an item from `input_range` 
+      an instance of `PointMap` that maps an item from `input_range`
       to `Kernel::Point_3`
 
       \param normal_map
-      an instance of `NormalMap` that maps an item from `input_range` 
+      an instance of `NormalMap` that maps an item from `input_range`
       to `Kernel::Vector_3`
 
       \param traits
@@ -149,13 +141,13 @@ namespace Point_set {
       \pre `min_region_size > 0`
     */
     Least_squares_plane_fit_region(
-      const InputRange& input_range, 
-      const FT distance_threshold = FT(1), 
-      const FT angle_threshold = FT(25), 
-      const std::size_t min_region_size = 3, 
-      const PointMap point_map = PointMap(), 
-      const NormalMap normal_map = NormalMap(), 
-      const GeomTraits traits = GeomTraits()) : 
+      const InputRange& input_range,
+      const FT distance_threshold = FT(1),
+      const FT angle_threshold = FT(25),
+      const std::size_t min_region_size = 3,
+      const PointMap point_map = PointMap(),
+      const NormalMap normal_map = NormalMap(),
+      const GeomTraits traits = GeomTraits()) :
     m_input_range(input_range),
     m_distance_threshold(distance_threshold),
     m_normal_threshold(static_cast<FT>(
@@ -181,7 +173,7 @@ namespace Point_set {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.
@@ -202,7 +194,7 @@ namespace Point_set {
     */
     bool is_part_of_region(
       const std::size_t,
-      const std::size_t query_index, 
+      const std::size_t query_index,
       const std::vector<std::size_t>&) const {
 
       CGAL_precondition(query_index >= 0);
@@ -210,19 +202,19 @@ namespace Point_set {
 
       const auto& key = *(m_input_range.begin() + query_index);
       const Point_3& query_point = get(m_point_map, key);
-      
+
       const Vector_3& normal = get(m_normal_map, key);
       const FT normal_length = m_sqrt(m_squared_length_3(normal));
       CGAL_precondition(normal_length > FT(0));
       const Vector_3 query_normal = normal / normal_length;
 
-      const FT distance_to_fitted_plane = 
+      const FT distance_to_fitted_plane =
       m_sqrt(m_squared_distance_3(query_point, m_plane_of_best_fit));
-      
-      const FT cos_value = 
+
+      const FT cos_value =
       CGAL::abs(m_scalar_product_3(query_normal, m_normal_of_best_fit));
 
-      return (( distance_to_fitted_plane <= m_distance_threshold ) && 
+      return (( distance_to_fitted_plane <= m_distance_threshold ) &&
         ( cos_value >= m_normal_threshold ));
     }
 
@@ -254,24 +246,24 @@ namespace Point_set {
 
       CGAL_precondition(region.size() > 0);
       if (region.size() == 1) { // create new reference plane and normal
-                    
+
         CGAL_precondition(region[0] >= 0);
         CGAL_precondition(region[0] < m_input_range.size());
 
-        // The best fit plane will be a plane through this point with 
+        // The best fit plane will be a plane through this point with
         // its normal being the point's normal.
         const auto& key = *(m_input_range.begin() + region[0]);
 
         const Point_3& point = get(m_point_map, key);
         const Vector_3& normal = get(m_normal_map, key);
-                    
+
         const FT normal_length = m_sqrt(m_squared_length_3(normal));
-        
+
         CGAL_precondition(normal_length > FT(0));
-        m_normal_of_best_fit = 
+        m_normal_of_best_fit =
         normal / normal_length;
-        
-        m_plane_of_best_fit = 
+
+        m_plane_of_best_fit =
         Plane_3(point, m_normal_of_best_fit);
 
       } else { // update reference plane and normal
@@ -292,22 +284,22 @@ namespace Point_set {
         Local_plane_3 fitted_plane;
         Local_point_3 fitted_centroid;
 
-        // The best fit plane will be a plane fitted to all region points with 
+        // The best fit plane will be a plane fitted to all region points with
         // its normal being perpendicular to the plane.
         CGAL::linear_least_squares_fitting_3(
-          points.begin(), points.end(), 
-          fitted_plane, fitted_centroid, 
-          CGAL::Dimension_tag<0>(), 
-          Local_traits(), 
+          points.begin(), points.end(),
+          fitted_plane, fitted_centroid,
+          CGAL::Dimension_tag<0>(),
+          Local_traits(),
           CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
-                    
-        m_plane_of_best_fit = 
+
+        m_plane_of_best_fit =
         Plane_3(
-          static_cast<FT>(fitted_plane.a()), 
-          static_cast<FT>(fitted_plane.b()), 
-          static_cast<FT>(fitted_plane.c()), 
+          static_cast<FT>(fitted_plane.a()),
+          static_cast<FT>(fitted_plane.b()),
+          static_cast<FT>(fitted_plane.c()),
           static_cast<FT>(fitted_plane.d()));
-                    
+
         const Vector_3 normal = m_plane_of_best_fit.orthogonal_vector();
         const FT normal_length = m_sqrt(m_squared_length_3(normal));
 
@@ -319,7 +311,7 @@ namespace Point_set {
     /// @}
 
   private:
-        
+
     // Fields.
     const Input_range& m_input_range;
 
@@ -329,7 +321,7 @@ namespace Point_set {
 
     const Point_map m_point_map;
     const Normal_map m_normal_map;
-            
+
     const Squared_length_3 m_squared_length_3;
     const Squared_distance_3 m_squared_distance_3;
     const Scalar_product_3 m_scalar_product_3;

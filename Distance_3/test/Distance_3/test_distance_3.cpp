@@ -15,7 +15,7 @@ const double epsilon = 0.001;
 
 struct randomint {
   randomint() ;
-  int	get() const { return sequence[cur]; }
+  int        get() const { return sequence[cur]; }
   int next() { cur = (cur+1)%11; return get();}
 private:
   int sequence[11];
@@ -61,19 +61,19 @@ struct Test {
   template < typename Type >
   bool approx_equal_nt(const Type &t1, const Type &t2)
   {
-	if (t1 == t2)
-		return true;
-	if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
-		return true;
-	std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
-	return false;
+        if (t1 == t2)
+                return true;
+        if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
+                return true;
+        std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
+        return false;
   }
 
   template < typename O1, typename O2 >
   void check_squared_distance(const O1& o1, const O2& o2, const FT& result)
   {
-	assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
-	assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
+        assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
+        assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
   }
 
 
@@ -221,6 +221,17 @@ struct Test {
     check_squared_distance (L(p(2, -4,  3), p( 3,-8, 4)), Pl(0, 1, 0, 0), 0);
   }
 
+  void Pl_Pl()
+  {
+    std::cout << "Plane - Plane\n";
+    Pl p1(0, 1, 0, 0);
+    typename K::Vector_3 v = -p1.orthogonal_vector();
+    v /= CGAL::sqrt(v.squared_length());
+    Pl p2 = Pl(0,-1,0,6);
+    check_squared_distance (p1,p2, 36);
+    check_squared_distance (Pl(-2, 1, 1, 0), Pl(2, 1, 3, 0), 0);
+  }
+
   void run()
   {
     std::cout << "3D Distance tests\n";
@@ -239,13 +250,14 @@ struct Test {
     S_Pl();
     R_Pl();
     L_Pl();
+    Pl_Pl();
   }
 
 };
 
 int main()
 {
-	Test< CGAL::Simple_cartesian<double>   >().run();
-	Test< CGAL::Simple_homogeneous<double> >().run();
-	// TODO : test more kernels.
+        Test< CGAL::Simple_cartesian<double>   >().run();
+        Test< CGAL::Simple_homogeneous<double> >().run();
+        // TODO : test more kernels.
 }

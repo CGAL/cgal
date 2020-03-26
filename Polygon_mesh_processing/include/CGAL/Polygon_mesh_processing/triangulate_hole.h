@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 // Author(s)     : Ilker O. Yaz
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H
@@ -85,7 +76,7 @@ namespace Polygon_mesh_processing {
   @todo Then, insert the holes vertices in the set of possibilities
         for connecting vertices together
   @todo handle the case where an island is reduced to a point
-  */  
+  */
   template<typename PolygonMesh,
            typename OutputIterator,
            typename NamedParameters>
@@ -97,6 +88,8 @@ namespace Polygon_mesh_processing {
   {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+
+    typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type         GeomTraits;
 
     bool use_dt3 =
 #ifdef CGAL_HOLE_FILLING_DO_NOT_USE_DT3
@@ -112,8 +105,7 @@ namespace Polygon_mesh_processing {
       out,
       choose_parameter(get_parameter(np, internal_np::vertex_point), get_property_map(vertex_point, pmesh)),
       use_dt3,
-      choose_parameter(get_parameter(np, internal_np::geom_traits), typename GetGeomTraits<PolygonMesh,NamedParameters>::type()))
-      .first;
+      choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits))).first;
   }
 
   template<typename PolygonMesh, typename OutputIterator>
@@ -369,14 +361,14 @@ namespace Polygon_mesh_processing {
     typedef typename value_type_traits<OutputIterator>::type OutputIteratorValueType;
     CGAL::internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
       tracer(out, Holes_out(holes));
-    
+
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
+    typedef typename CGAL::Kernel_traits<Point>::Kernel Kernel;
 
     triangulate_hole_polyline(points, third_points, tracer, WC(),
-      use_dt3,
-      choose_parameter(get_parameter(np, internal_np::geom_traits),
-        typename CGAL::Kernel_traits<Point>::Kernel()));
+                              use_dt3,
+                              choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits)));
 
     CGAL_assertion(holes.empty());
     return tracer.out;
@@ -397,7 +389,7 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup  hole_filling_grp
   same as above but the range of third points is omitted. They are not
-  taken into account in the cost computation that leads the hole filling. 
+  taken into account in the cost computation that leads the hole filling.
 */
   template <typename PointRange,
             typename OutputIterator,

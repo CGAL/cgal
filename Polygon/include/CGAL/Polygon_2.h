@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
@@ -141,7 +132,7 @@ class Polygon_2 {
     typedef Polygon_2_edge_iterator<Traits_P,Container_P> Edge_const_iterator;
     typedef Polygon_2_const_edge_circulator<Traits_P,
                                             Container_P> Edge_const_circulator;
-#endif // DOXYGEN_RUNNING    
+#endif // DOXYGEN_RUNNING
     /// @}
 
     /// \name Creation
@@ -149,7 +140,7 @@ class Polygon_2 {
 
     /// Creates an empty polygon.
     Polygon_2() : traits() {}
-  
+
     /// Creates an empty polygon.
     Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
@@ -168,11 +159,11 @@ class Polygon_2 {
       // Sun STL switches off member templates for binary backward compat.
       std::copy(first, last, std::back_inserter(d_container));
     }
-  
+
 #ifndef DOXYGEN_RUNNING
   Polygon_2& operator=(const Polygon_2&)=default;
 #endif
-  
+
     /// @}
 
     /// \name Modifiers
@@ -454,7 +445,7 @@ class Polygon_2 {
     Point_2& vertex(std::size_t i)
       {
         CGAL_precondition( i < d_container.size() );
-        return *(cpp11::next(d_container.begin(), i));
+        return *(std::next(d_container.begin(), i));
       }
     /// Returns a reference to the `i`-th vertex.
     Point_2& operator[](std::size_t i)

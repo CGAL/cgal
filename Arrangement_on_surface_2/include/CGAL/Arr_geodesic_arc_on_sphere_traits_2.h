@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 
@@ -119,7 +110,7 @@ protected:
 
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_8_Y_6)
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -8, 6);
-    
+
 #elif (CGAL_IDENTIFICATION_XY == CGAL_X_MINUS_11_Y_7)
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -11, 7);
 #else
@@ -2881,14 +2872,14 @@ public:
   /*! Copy constructor
    * \param other the other arc
    */
-#ifdef DOXYGEN_RUNNING  
+#ifdef DOXYGEN_RUNNING
   Arr_geodesic_arc_on_sphere_3
   (const Arr_geodesic_arc_on_sphere_3& other) : Base(other)
   {
     m_is_x_monotone = other.m_is_x_monotone;
   }
 #endif
-  
+
   /*! Constructor
    * \param src the source point of the arc
    * \param trg the target point of the arc

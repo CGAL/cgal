@@ -5,14 +5,16 @@ cmake_minimum_required(VERSION 3.1...3.15)
 project( Polygon_mesh_processing_Tests )
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL QUIET COMPONENTS Core)
 
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
+
+include(${CGAL_USE_FILE})
 
 # Boost and its components
 find_package( Boost REQUIRED )
@@ -21,7 +23,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
@@ -33,14 +35,16 @@ find_package(Eigen3 3.2.0) #(requires 3.2.0 or greater)
 find_package( TBB )
 
 if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-
   # Creating entries for all .cpp/.C files with "main" routine
   # ##########################################################
   create_single_source_cgal_program("fairing_test.cpp")
+  CGAL_target_use_Eigen(fairing_test)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
+  CGAL_target_use_Eigen(triangulate_hole_Polyhedron_3_no_delaunay_test)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
+  CGAL_target_use_Eigen(triangulate_hole_Polyhedron_3_test)
   create_single_source_cgal_program("test_shape_smoothing.cpp")
+  CGAL_target_use_Eigen(test_shape_smoothing)
 
 endif(EIGEN3_FOUND)
 
@@ -95,9 +99,11 @@ endif()
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_manifoldness.cpp")
   create_single_source_cgal_program("test_mesh_smoothing.cpp")
+  create_single_source_cgal_program("test_remove_caps_needles.cpp")
 
   if( TBB_FOUND )
     CGAL_target_use_TBB(test_pmp_distance)
+    CGAL_target_use_TBB(self_intersection_surface_mesh_test)
   else()
     message( STATUS "NOTICE: Intel TBB was not found. test_pmp_distance will use sequential code." )
   endif()

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     :  Konstantinos Katrioplas,
@@ -79,10 +70,10 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, pm));
+                                          get_const_property_map(vertex_point, pm));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   return traits.equal_3_object()(get(vpmap, source(e, pm)), get(vpmap, target(e, pm)));
 }
@@ -132,10 +123,10 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typename boost::graph_traits<TriangleMesh>::halfedge_descriptor h = halfedge(f, tm);
 
@@ -193,10 +184,10 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::FT                                               FT;
 
@@ -296,10 +287,10 @@ is_cap_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descriptor
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_const_property_map(vertex_point, tm));
+                                          get_const_property_map(vertex_point, tm));
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type       Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::FT                                               FT;
   typedef typename Traits::Vector_3                                         Vector_3;

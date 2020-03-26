@@ -1,25 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_TETRAHEDRON_3_H
 #define CGAL__TEST_CLS_TETRAHEDRON_3_H
@@ -158,9 +152,9 @@ _test_cls_tetrahedron_3(const R& )
 
  // Same things, but on points directly.
  assert( CGAL::volume(t7.vertex(0), t7.vertex(1), t7.vertex(2), t7.vertex(3))
-	  == FT(0) );
+          == FT(0) );
  assert( CGAL::volume(t8.vertex(0), t8.vertex(1), t8.vertex(2), t8.vertex(3))
-	  == FT(0) );
+          == FT(0) );
  assert( CGAL::volume(t1.vertex(0), t1.vertex(1), t1.vertex(2), t1.vertex(3))
       == -CGAL::volume(t2.vertex(0), t2.vertex(1), t2.vertex(2), t2.vertex(3)));
  assert( CGAL::volume(t3.vertex(0), t3.vertex(1), t3.vertex(2), t3.vertex(3))

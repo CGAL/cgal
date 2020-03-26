@@ -35,11 +35,11 @@ int main()
     Vertex_handle vh = *b; // you must dereference the iterator to get a handle
     std::cout << vh->point() << std::endl;
   }
-  
+
   std::cout << "and you can use a C++11 for loop\n";
   for(Vertex_handle vh : T.finite_vertex_handles()){
     std::cout << vh->point() << std::endl;
   }
-  
+
   return 0;
 }

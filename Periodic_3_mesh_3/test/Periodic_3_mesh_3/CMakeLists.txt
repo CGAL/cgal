@@ -19,13 +19,14 @@ if ( CGAL_FOUND )
   if (NOT EIGEN3_FOUND)
     message(STATUS "This project requires the Eigen library, and will not be compiled.")
     return()
-  else()
-    include( ${EIGEN3_USE_FILE} )
   endif()
 
   create_single_source_cgal_program( "test_implicit_shapes_bunch.cpp" )
+  CGAL_target_use_Eigen(test_implicit_shapes_bunch)
   create_single_source_cgal_program( "test_implicit_shapes_with_features.cpp" )
+  CGAL_target_use_Eigen(test_implicit_shapes_with_features)
   create_single_source_cgal_program( "test_triply_periodic_minimal_surfaces.cpp" )
+  CGAL_target_use_Eigen(test_triply_periodic_minimal_surfaces)
 
 else()
 

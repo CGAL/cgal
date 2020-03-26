@@ -38,7 +38,7 @@ int main( )
     Circle_2 circle( p1, p2, p3 );
     Circular_arc_2 arc( circle );
     Traits::Curve_2 curveBox = arc;
-    
+
     std::vector< Circular_arc_2 > arcs;
     arcs.push_back( arc );
     CGAL::insert( arr2, arcs.begin( ), arcs.end( ) );

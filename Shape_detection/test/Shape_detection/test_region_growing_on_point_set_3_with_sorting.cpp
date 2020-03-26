@@ -41,6 +41,16 @@ int main(int argc, char *argv[]) {
   std::ifstream in(argc > 1 ? argv[1] : "data/point_set_3.xyz");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout <<
+    "Error: cannot read the file point_set_3.xyz!" << std::endl;
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
+    << std::endl << std::endl;
+    assert(false);
+    return EXIT_FAILURE;
+  }
+
   const bool with_normal_map = true;
   Input_range input_range(with_normal_map);
 
@@ -55,13 +65,13 @@ int main(int argc, char *argv[]) {
 
   // Create parameter classes.
   Neighbor_query neighbor_query(
-    input_range, 
-    k, 
+    input_range,
+    k,
     input_range.point_map());
-    
+
   Region_type region_type(
-    input_range, 
-    distance_threshold, angle_threshold, min_region_size, 
+    input_range,
+    distance_threshold, angle_threshold, min_region_size,
     input_range.point_map(), input_range.normal_map());
 
   // Sort indices.
@@ -72,7 +82,7 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    input_range, neighbor_query, region_type, 
+    input_range, neighbor_query, region_type,
     sorting.seed_map());
 
   // Run the algorithm.

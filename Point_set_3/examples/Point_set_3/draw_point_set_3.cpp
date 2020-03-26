@@ -24,6 +24,6 @@ int main (int argc, char** argv)
   }
 
   CGAL::draw(point_set);
-  
+
   return EXIT_SUCCESS;
 }

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -159,7 +150,7 @@ public:
   //!
   //! \name Setters for the shaders parameters.
   //!@{
-  
+
   //! Setter for the "selected" uniform parameter.
   void setSelected(bool);
   //! Setter for the "color" parameter.
@@ -172,7 +163,7 @@ public:
   void setTupleSize(int ts);
   //!setter for the clipping. If `b` is `false`, then the clipping box will have no effect.
   void setClipping(bool b);
-  
+
   //!@}
 
   //!
@@ -245,10 +236,10 @@ public:
   //! \brief getCenterSize returns the number of instances of
   //! the item in this container.
   std::size_t getCenterSize()const;
-  
+
   //! \name Getters for the shaders parameters.
   //!@{
-  
+
   //! getter for the "selected" parameter
   bool isSelected()const;
   //! getter for the "color" parameter

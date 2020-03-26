@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -65,14 +56,14 @@ namespace Classification {
 template <typename GeomTraits, typename PointRange, typename PointMap>
 class Point_set_neighborhood
 {
-  
+
   typedef typename GeomTraits::FT FT;
   typedef typename GeomTraits::Point_3 Point;
-  
+
   class My_point_property_map{
     const PointRange* input;
     PointMap point_map;
-    
+
   public:
     typedef Point value_type;
     typedef const value_type& reference;
@@ -90,14 +81,14 @@ class Point_set_neighborhood
   typedef Search_traits_adapter <boost::uint32_t, My_point_property_map, SearchTraits_3> Search_traits;
   typedef Sliding_midpoint<Search_traits> Splitter;
   typedef Distance_adapter<boost::uint32_t, My_point_property_map, Euclidean_distance<SearchTraits_3> > Distance;
-  typedef Kd_tree<Search_traits, Splitter, Tag_true> Tree;
+  typedef Kd_tree<Search_traits, Splitter, Tag_true, Tag_true> Tree;
   typedef Fuzzy_sphere<Search_traits> Sphere;
   typedef Orthogonal_k_neighbor_search<Search_traits, Distance, Splitter, Tree> Knn;
 
 
   Tree* m_tree;
   Distance m_distance;
-  
+
 public:
 
   /*!
@@ -219,7 +210,7 @@ public:
     std::vector<boost::uint32_t> indices;
     My_point_property_map pmap (&input, point_map);
     voxelize_point_set(input.size(), indices, pmap, voxel_size);
-    
+
     m_tree = new Tree (indices.begin(), indices.end(),
                        Splitter(),
                        Search_traits (pmap));
@@ -228,7 +219,7 @@ public:
   }
 
   /// @}
-  
+
   /// \cond SKIP_IN_MANUAL
   ~Point_set_neighborhood ()
   {
@@ -320,10 +311,10 @@ private:
     }
   }
 };
-  
+
 
 }
-  
+
 }
 
 

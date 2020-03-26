@@ -1,19 +1,10 @@
 // Copyright (c) 2016  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Mael Rouxel-Labbé
@@ -133,8 +124,8 @@ public:
   /// The type for the objects used to identify halfedges in the underlying mesh.
   typedef typename boost::graph_traits<TM>::halfedge_descriptor   TM_halfedge_descriptor;
 
- /// The type for the iterators that traverse through the complete halfedge set of the underlying mesh.
- typedef typename boost::graph_traits<TM>::halfedge_iterator     TM_halfedge_iterator;
+  /// The type for the iterators that traverse through the complete halfedge set of the underlying mesh.
+  typedef typename boost::graph_traits<TM>::halfedge_iterator     TM_halfedge_iterator;
 
   /// The type for the objects used to identify edges in the underlying mesh.
   typedef typename boost::graph_traits<TM>::edge_descriptor       TM_edge_descriptor;
@@ -441,12 +432,17 @@ public:
 
     friend bool operator==(edge_descriptor e1, edge_descriptor e2)
     {
-      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd)); 
+      return (e1.hd == e2.hd) || (e1.hd == e2.mesh_->opposite(e2.hd));
     }
 
     friend bool operator!=(edge_descriptor e1, edge_descriptor e2)
     {
       return ! (e1 == e2);
+    }
+
+    friend std::size_t hash_value(const edge_descriptor& ed)
+    {
+      return hash_value((std::min)(ed.hd, ed.mesh_->opposite(ed.hd)));
     }
   };
 

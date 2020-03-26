@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
@@ -25,7 +16,7 @@ template < class GT, class TDS >
 inline std::vector<typename Periodic_3_triangulation_3<GT,TDS>::Vertex_handle >
 Periodic_3_triangulation_3<GT,TDS>::insert_dummy_points() {
 
-    
+
 static const unsigned V[216][4] = {
   { 3, 9, 4, 12 },
   { 28, 8, 3, 6 },
@@ -245,7 +236,7 @@ static const unsigned V[216][4] = {
   { 35, 0, 34, 32 }
 };
 
-  
+
 static const unsigned N[216][4] = {
    { 48, 7, 76, 55 },
    { 69, 118, 79, 149 },
@@ -683,7 +674,7 @@ static const int O[216][4] = {
   { 0,5,5,4 },
   { 6,7,2,4 }
 };
- 
+
   clear();
 
   Vertex_handle vertices[36];

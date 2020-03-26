@@ -4,7 +4,7 @@
 #include "ui_raw_image.h"
 #include <CGAL/ImageIO.h>
 
-class Raw_image_dialog : public QDialog, public Ui::Raw_image_dialog 
+class Raw_image_dialog : public QDialog, public Ui::Raw_image_dialog
 {
   Q_OBJECT
 

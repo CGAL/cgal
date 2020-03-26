@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -42,97 +33,97 @@ namespace CGAL {
 // In that case, we should store the real dim next to the array.
 template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
         typedef NT_ NT;
-	typedef Dim_ Dimension;
-	typedef Max_dim_ Max_dimension;
-	template< class D2, class D3=D2 >
-	struct Rebind_dimension {
-	  typedef Array_vector< NT, D2, D3 > Other;
-	};
-	template<class> struct Property : boost::false_type {};
+        typedef Dim_ Dimension;
+        typedef Max_dim_ Max_dimension;
+        template< class D2, class D3=D2 >
+        struct Rebind_dimension {
+          typedef Array_vector< NT, D2, D3 > Other;
+        };
+        template<class> struct Property : boost::false_type {};
 
-	static const unsigned d_=Max_dim_::value;
-	CGAL_static_assertion(d_ != (unsigned)UNKNOWN_DIMENSION);
+        static const unsigned d_=Max_dim_::value;
+        CGAL_static_assertion(d_ != (unsigned)UNKNOWN_DIMENSION);
 
-	typedef std::array<NT,d_> Vector;
-	struct Construct_vector {
-		struct Dimension {
-			// Initialize with NaN if possible?
+        typedef std::array<NT,d_> Vector;
+        struct Construct_vector {
+                struct Dimension {
+                        // Initialize with NaN if possible?
                   Vector operator()(unsigned CGAL_assertion_code(d)) const {
-				CGAL_assertion(d<=d_);
-				return Vector();
-			}
-		};
+                                CGAL_assertion(d<=d_);
+                                return Vector();
+                        }
+                };
 
-		struct Iterator {
-			template<typename Iter>
-				Vector operator()(unsigned CGAL_assertion_code(d),Iter const& f,Iter const& e) const {
-					CGAL_assertion(d==(unsigned) std::distance(f,e));
-					CGAL_assertion(d<=d_);
-					//TODO: optimize for forward iterators
-					Vector a;
-					CGAL_assume(f!=e);
-					std::copy(f,e,a.begin());
-					return a;
-				}
-		};
+                struct Iterator {
+                        template<typename Iter>
+                                Vector operator()(unsigned CGAL_assertion_code(d),Iter const& f,Iter const& e) const {
+                                        CGAL_assertion(d==(unsigned) std::distance(f,e));
+                                        CGAL_assertion(d<=d_);
+                                        //TODO: optimize for forward iterators
+                                        Vector a;
+                                        CGAL_assume(f!=e);
+                                        std::copy(f,e,a.begin());
+                                        return a;
+                                }
+                };
 
 #if 0
-		struct Iterator_add_one {
-			template<typename Iter>
-				Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
-					CGAL_assertion(d==std::distance(f,e)+1);
-					CGAL_assertion(d<=d_);
-					//TODO: optimize
-					Vector a;
-					std::copy(f,e,a.begin());
-					a.back()=1;
-					return a;
-				}
-		};
+                struct Iterator_add_one {
+                        template<typename Iter>
+                                Vector operator()(unsigned d,Iter const& f,Iter const& e) const {
+                                        CGAL_assertion(d==std::distance(f,e)+1);
+                                        CGAL_assertion(d<=d_);
+                                        //TODO: optimize
+                                        Vector a;
+                                        std::copy(f,e,a.begin());
+                                        a.back()=1;
+                                        return a;
+                                }
+                };
 #endif
 
-		struct Iterator_and_last {
-			template<typename Iter,typename T>
+                struct Iterator_and_last {
+                        template<typename Iter,typename T>
                         Vector operator()(unsigned  CGAL_assertion_code(d),Iter const& f,Iter const& e,T&& t) const {
-					CGAL_assertion(d==std::distance(f,e)+1);
-					CGAL_assertion(d<=d_);
-					//TODO: optimize for forward iterators
-					Vector a;
-					std::copy(f,e,a.begin());
-					a.back()=std::forward<T>(t);
-					return a;
-				}
-		};
+                                        CGAL_assertion(d==std::distance(f,e)+1);
+                                        CGAL_assertion(d<=d_);
+                                        //TODO: optimize for forward iterators
+                                        Vector a;
+                                        std::copy(f,e,a.begin());
+                                        a.back()=std::forward<T>(t);
+                                        return a;
+                                }
+                };
 
-		struct Values {
-			template<class...U>
-				Vector operator()(U&&...u) const {
-					static_assert(sizeof...(U)<=d_,"too many arguments");
-					Vector a={{forward_safe<NT,U>(u)...}};
-					return a;
-				}
-		};
+                struct Values {
+                        template<class...U>
+                                Vector operator()(U&&...u) const {
+                                        static_assert(sizeof...(U)<=d_,"too many arguments");
+                                        Vector a={{forward_safe<NT,U>(u)...}};
+                                        return a;
+                                }
+                };
 
-		struct Values_divide {
-			template<class H,class...U>
-				Vector operator()(H const& h,U&&...u) const {
-					static_assert(sizeof...(U)<=d_,"too many arguments");
-					Vector a={{Rational_traits<NT>().make_rational(std::forward<U>(u),h)...}};
-					return a;
-				}
-		};
-	};
+                struct Values_divide {
+                        template<class H,class...U>
+                                Vector operator()(H const& h,U&&...u) const {
+                                        static_assert(sizeof...(U)<=d_,"too many arguments");
+                                        Vector a={{Rational_traits<NT>().make_rational(std::forward<U>(u),h)...}};
+                                        return a;
+                                }
+                };
+        };
 
-	typedef NT const* Vector_const_iterator;
-	static Vector_const_iterator vector_begin(Vector const&a){
-		return &a[0];
-	}
-	static Vector_const_iterator vector_end(Vector const&a){
-		return &a[0]+d_; // Don't know the real size
-	}
-	static unsigned size_of_vector(Vector const&){
-		return d_; // Don't know the real size
-	}
+        typedef NT const* Vector_const_iterator;
+        static Vector_const_iterator vector_begin(Vector const&a){
+                return &a[0];
+        }
+        static Vector_const_iterator vector_end(Vector const&a){
+                return &a[0]+d_; // Don't know the real size
+        }
+        static unsigned size_of_vector(Vector const&){
+                return d_; // Don't know the real size
+        }
 
 };
 // Do not try to instantiate the above

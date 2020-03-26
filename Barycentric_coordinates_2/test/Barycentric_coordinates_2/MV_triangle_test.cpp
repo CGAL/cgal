@@ -77,6 +77,6 @@ int main()
     }
 
     cout << endl << "MV_triangle_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

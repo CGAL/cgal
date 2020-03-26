@@ -1,25 +1,16 @@
-// Copyright (c) 1998-2004  
+// Copyright (c) 1998-2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 //                 Michel Hoffmann <hoffmann@inf.ethz.ch>
@@ -41,12 +32,12 @@
 namespace CGAL {
 
 namespace internal {
-  
+
   template <class K>
   inline typename K::FT
   squared_distance(const typename K::Point_2 & pt1,
-		   const typename K::Point_2 & pt2,
-		   const K& k)
+                   const typename K::Point_2 & pt2,
+                   const K& k)
   {
     typename K::Vector_2 vec = k.construct_vector_2_object()(pt2, pt1);
     return (typename K::FT)k.compute_squared_length_2_object()(vec);
@@ -55,9 +46,9 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance(const typename K::Point_2 &pt,
-		   const typename K::Line_2 &line,
-		   const K&,
-		   const Homogeneous_tag&)
+                   const typename K::Line_2 &line,
+                   const K&,
+                   const Homogeneous_tag&)
   {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
@@ -72,9 +63,9 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance(const typename K::Point_2 &pt,
-		   const typename K::Line_2 &line,
-		   const K&,
-		   const Cartesian_tag&)
+                   const typename K::Line_2 &line,
+                   const K&,
+                   const Cartesian_tag&)
   {
     typedef typename K::FT FT;
     const FT & a = line.a();
@@ -88,9 +79,9 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance(const typename K::Point_2 &pt,
-		   const typename K::Line_2 &line,
-		   const K& k)
-  {  
+                   const typename K::Line_2 &line,
+                   const K& k)
+  {
     typedef typename K::Kernel_tag Tag;
     Tag tag;
     return squared_distance(pt, line, k, tag);
@@ -98,18 +89,18 @@ namespace internal {
 
   template <class K>
   inline typename K::FT
-  squared_distance(const typename K::Line_2 &line, 
-		   const typename K::Point_2 &pt,
-		   const K& k)
+  squared_distance(const typename K::Line_2 &line,
+                   const typename K::Point_2 &pt,
+                   const K& k)
   {
     return internal::squared_distance(pt, line, k);
   }
-  
+
   template <class K>
   typename K::FT
   squared_distance(const typename K::Point_2 &pt,
-		   const typename K::Ray_2 &ray,
-		   const K& k)
+                   const typename K::Ray_2 &ray,
+                   const K& k)
   {
     typedef typename K::Vector_2 Vector_2;
     typename K::Construct_vector_2 construct_vector;
@@ -123,8 +114,8 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance(const typename K::Ray_2 &ray,
-		   const typename K::Point_2 &pt,
-		   const K& k)
+                   const typename K::Point_2 &pt,
+                   const K& k)
   {
     return internal::squared_distance(pt, ray, k);
   }
@@ -132,8 +123,8 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance(const typename K::Point_2 &pt,
-		   const typename K::Segment_2 &seg,
-		   const K& k)
+                   const typename K::Segment_2 &seg,
+                   const K& k)
   {
     typename K::Construct_vector_2 construct_vector;
     typedef typename K::Vector_2 Vector_2;
@@ -153,8 +144,8 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance(const typename K::Segment_2 &seg,
-		   const typename K::Point_2 &pt,
-		   const K& k)
+                   const typename K::Point_2 &pt,
+                   const K& k)
   {
     return internal::squared_distance(pt, seg, k);
   }
@@ -162,32 +153,32 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance_parallel(const typename K::Segment_2 &seg1,
-			    const typename K::Segment_2 &seg2,
-			    const K& k)
+                            const typename K::Segment_2 &seg2,
+                            const K& k)
   {
     typedef typename K::Vector_2 Vector_2;
     const Vector_2 &dir1 = seg1.direction().vector();
     const Vector_2 &dir2 = seg2.direction().vector();
     if (same_direction(dir1, dir2, k)) {
       if (!is_acute_angle(seg1.source(), seg1.target(), seg2.source(), k))
-	return internal::squared_distance(seg1.target(), seg2.source(), k);
+        return internal::squared_distance(seg1.target(), seg2.source(), k);
       if (!is_acute_angle(seg1.target(), seg1.source(), seg2.target(), k))
-	return internal::squared_distance(seg1.source(), seg2.target(), k);
+        return internal::squared_distance(seg1.source(), seg2.target(), k);
     } else {
       if (!is_acute_angle(seg1.source(), seg1.target(), seg2.target(), k))
-	return internal::squared_distance(seg1.target(), seg2.target(), k);
+        return internal::squared_distance(seg1.target(), seg2.target(), k);
       if (!is_acute_angle(seg1.target(), seg1.source(), seg2.source(), k))
-	return internal::squared_distance(seg1.source(), seg2.source(), k);
+        return internal::squared_distance(seg1.source(), seg2.source(), k);
     }
     return internal::squared_distance(seg2.source(), seg1.supporting_line(), k);
   }
 
   template <class K>
-  inline typename K::RT 
-  _distance_measure_sub(const typename K::RT &startwcross, 
-			const typename K::RT &endwcross,
-			const typename K::Point_2 &start, 
-			const typename K::Point_2 &end)
+  inline typename K::RT
+  _distance_measure_sub(const typename K::RT &startwcross,
+                        const typename K::RT &endwcross,
+                        const typename K::Point_2 &start,
+                        const typename K::Point_2 &end)
   {
     return  CGAL_NTS abs(wmult((K*)0, startwcross, end.hw())) -
       CGAL_NTS abs(wmult((K*)0, endwcross, start.hw()));
@@ -196,8 +187,8 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance(const typename K::Segment_2 &seg1,
-		   const typename K::Segment_2 &seg2,
-		   const K& k)
+                   const typename K::Segment_2 &seg2,
+                   const K& k)
   {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
@@ -215,83 +206,83 @@ namespace internal {
       crossing1 = (c1e >= RT(0));
     } else {
       if (c1e <= RT(0)) {
-	if (c1s == RT(0) && c1e == RT(0))
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	crossing1 = true;
+        if (c1s == RT(0) && c1e == RT(0))
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        crossing1 = true;
       } else {
-	crossing1 = (c1s == RT(0));
+        crossing1 = (c1s == RT(0));
       }
     }
     if (c2s < RT(0)) {
       crossing2 = (c2e >= RT(0));
     } else {
       if (c2e <= RT(0)) {
-	if (c2s == RT(0) && c2e == RT(0))
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	crossing2 = true;
+        if (c2s == RT(0) && c2e == RT(0))
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        crossing2 = true;
       } else {
-	crossing2 = (c2s == RT(0));
+        crossing2 = (c2s == RT(0));
       }
     }
 
     if (crossing1) {
       if (crossing2)
-	return (FT)0;
+        return (FT)0;
       RT dm;
       dm = _distance_measure_sub<K>(c2s,c2e, seg2.source(), seg2.target());
       if (dm < RT(0)) {
-	return internal::squared_distance(seg2.source(), seg1, k);
+        return internal::squared_distance(seg2.source(), seg1, k);
       } else {
-	if (dm > RT(0)) {
-	  return internal::squared_distance(seg2.target(), seg1, k);
-	} else {
-	  // parallel, should not happen (no crossing)
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	}
+        if (dm > RT(0)) {
+          return internal::squared_distance(seg2.target(), seg1, k);
+        } else {
+          // parallel, should not happen (no crossing)
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        }
       }
     } else {
       if (crossing2) {
-	RT dm;
-	dm =
-	  _distance_measure_sub<K>(c1s, c1e,seg1.source(),seg1.target());
-	if (dm < RT(0)) {
-	  return internal::squared_distance(seg1.source(), seg2, k);
-	} else {
-	  if (dm > RT(0)) {
-	    return internal::squared_distance(seg1.target(), seg2, k);
-	  } else {
-	    // parallel, should not happen (no crossing)
-	    return internal::squared_distance_parallel(seg1, seg2, k);
-	  }
-	}
+        RT dm;
+        dm =
+          _distance_measure_sub<K>(c1s, c1e,seg1.source(),seg1.target());
+        if (dm < RT(0)) {
+          return internal::squared_distance(seg1.source(), seg2, k);
+        } else {
+          if (dm > RT(0)) {
+            return internal::squared_distance(seg1.target(), seg2, k);
+          } else {
+            // parallel, should not happen (no crossing)
+            return internal::squared_distance_parallel(seg1, seg2, k);
+          }
+        }
       } else {
 
-	FT min1, min2;
-	RT dm = _distance_measure_sub<K>(
-				      c1s, c1e, seg1.source(), seg1.target());
-	if (dm == RT(0))
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	min1 = (dm < RT(0)) ?
-	  internal::squared_distance(seg1.source(), seg2, k):
-	  internal::squared_distance(seg1.target(), seg2, k);
-	dm = _distance_measure_sub<K>(
-				   c2s, c2e, seg2.source(), seg2.target());
-	if (dm == RT(0))  // should not happen.
-	  return internal::squared_distance_parallel(seg1, seg2, k);
-	min2 = (dm < RT(0)) ?
-	  internal::squared_distance(seg2.source(), seg1, k):
-	  internal::squared_distance(seg2.target(), seg1, k);
-	return (min1 < min2) ? min1 : min2;
+        FT min1, min2;
+        RT dm = _distance_measure_sub<K>(
+                                      c1s, c1e, seg1.source(), seg1.target());
+        if (dm == RT(0))
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        min1 = (dm < RT(0)) ?
+          internal::squared_distance(seg1.source(), seg2, k):
+          internal::squared_distance(seg1.target(), seg2, k);
+        dm = _distance_measure_sub<K>(
+                                   c2s, c2e, seg2.source(), seg2.target());
+        if (dm == RT(0))  // should not happen.
+          return internal::squared_distance_parallel(seg1, seg2, k);
+        min2 = (dm < RT(0)) ?
+          internal::squared_distance(seg2.source(), seg1, k):
+          internal::squared_distance(seg2.target(), seg1, k);
+        return (min1 < min2) ? min1 : min2;
       }
     }
   }
 
   template <class K>
-  inline typename K::RT 
-  _distance_measure_sub(const typename K::RT &startwcross, 
-			const typename K::RT &endwcross,
-			const typename K::Vector_2 &start, 
-			const typename K::Vector_2 &end)
+  inline typename K::RT
+  _distance_measure_sub(const typename K::RT &startwcross,
+                        const typename K::RT &endwcross,
+                        const typename K::Vector_2 &start,
+                        const typename K::Vector_2 &end)
   {
     return  CGAL_NTS abs(wmult((K*)0, startwcross, end.hw())) -
       CGAL_NTS abs(wmult((K*)0, endwcross, start.hw()));
@@ -300,8 +291,8 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance_parallel(const typename K::Segment_2 &seg,
-			    const typename K::Ray_2 &ray,
-			    const K& k)
+                            const typename K::Ray_2 &ray,
+                            const K& k)
   {
     typedef typename K::Vector_2 Vector_2;
     const Vector_2 &dir1 = seg.direction().vector();
@@ -309,10 +300,10 @@ namespace internal {
 
     if (same_direction(dir1, dir2, k)) {
       if (!is_acute_angle(seg.source(), seg.target(), ray.source(), k))
-	return internal::squared_distance(seg.target(), ray.source(), k);
+        return internal::squared_distance(seg.target(), ray.source(), k);
     } else {
       if (!is_acute_angle(seg.target(), seg.source(), ray.source(), k))
-	return internal::squared_distance(seg.source(), ray.source(), k);
+        return internal::squared_distance(seg.source(), ray.source(), k);
     }
     return internal::squared_distance(ray.source(), seg.supporting_line(), k);
   }
@@ -320,8 +311,8 @@ namespace internal {
   template <class K>
   typename K::FT
   squared_distance(const typename K::Segment_2 &seg,
-		   const typename K::Ray_2 &ray,
-		   const K& k)
+                   const typename K::Ray_2 &ray,
+                   const K& k)
   {
     typename K::Construct_vector_2 construct_vector;
     typedef typename K::RT RT;
@@ -342,11 +333,11 @@ namespace internal {
       crossing1 = (c1e >= RT(0));
     } else {
       if (c1e <= RT(0)) {
-	if (c1s == RT(0) && c1e == RT(0))
-	  return internal::squared_distance_parallel(seg, ray, k);
-	crossing1 = true;
+        if (c1s == RT(0) && c1e == RT(0))
+          return internal::squared_distance_parallel(seg, ray, k);
+        crossing1 = true;
       } else {
-	crossing1 = (c1s == RT(0));
+        crossing1 = (c1s == RT(0));
       }
     }
     switch (orientation(seg.source(), seg.target(), ray.source())) {
@@ -363,32 +354,32 @@ namespace internal {
 
     if (crossing1) {
       if (crossing2)
-	return FT(0);
+        return FT(0);
       return internal::squared_distance(ray.source(), seg, k);
     } else {
       if (crossing2) {
-	RT dm;
-	dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
-	if (dm < RT(0)) {
-	  return internal::squared_distance(seg.source(), ray, k);
-	} else {
-	  if (dm > RT(0)) {
-	    return internal::squared_distance(seg.target(), ray, k);
-	  } else {
-	    // parallel, should not happen (no crossing)
-	    return internal::squared_distance_parallel(seg, ray, k);
-	  }
-	}
+        RT dm;
+        dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
+        if (dm < RT(0)) {
+          return internal::squared_distance(seg.source(), ray, k);
+        } else {
+          if (dm > RT(0)) {
+            return internal::squared_distance(seg.target(), ray, k);
+          } else {
+            // parallel, should not happen (no crossing)
+            return internal::squared_distance_parallel(seg, ray, k);
+          }
+        }
       } else {
-	FT min1, min2;
-	RT dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
-	if (dm == RT(0))
-	  return internal::squared_distance_parallel(seg, ray, k);
-	min1 = (dm < RT(0))
-	  ? internal::squared_distance(seg.source(), ray, k)
-	  : internal::squared_distance(seg.target(), ray, k);
-	min2 = internal::squared_distance(ray.source(), seg, k);
-	return (min1 < min2) ? min1 : min2;
+        FT min1, min2;
+        RT dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
+        if (dm == RT(0))
+          return internal::squared_distance_parallel(seg, ray, k);
+        min1 = (dm < RT(0))
+          ? internal::squared_distance(seg.source(), ray, k)
+          : internal::squared_distance(seg.target(), ray, k);
+        min2 = internal::squared_distance(ray.source(), seg, k);
+        return (min1 < min2) ? min1 : min2;
       }
     }
   }
@@ -396,8 +387,8 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance(const typename K::Ray_2 &ray,
-		   const typename K::Segment_2 &seg,
-		   const K& k)
+                   const typename K::Segment_2 &seg,
+                   const K& k)
   {
     return internal::squared_distance(seg, ray, k);
   }
@@ -405,22 +396,22 @@ namespace internal {
   template <class K>
   typename K::FT
   _sqd_to_line(const typename K::Vector_2 &diff,
-	       const typename K::RT & wcross, 
-	       const typename K::Vector_2 &dir )
+               const typename K::RT & wcross,
+               const typename K::Vector_2 &dir )
   {
     typedef typename K::RT RT;
     typedef typename K::FT FT;
     RT numerator = CGAL_NTS square(wcross);
     RT denominator = wmult((K*)0, RT(wdot(dir,dir, K())),
-			   diff.hw(), diff.hw());
+                           diff.hw(), diff.hw());
     return Rational_traits<FT>().make_rational(numerator, denominator);
   }
 
   template <class K>
   typename K::FT
   squared_distance(const typename K::Segment_2 &seg,
-		   const typename K::Line_2 &line,
-		   const K& k)
+                   const typename K::Line_2 &line,
+                   const K& k)
   {
     typename K::Construct_vector_2 construct_vector;
     typedef typename K::RT RT;
@@ -442,9 +433,9 @@ namespace internal {
       crossing1 = (c1e >= RT(0));
     } else {
       if (c1e <= RT(0)) {
-	crossing1 = true;
+        crossing1 = true;
       } else {
-	crossing1 = (c1s == RT(0));
+        crossing1 = (c1s == RT(0));
       }
     }
 
@@ -454,9 +445,9 @@ namespace internal {
       RT dm;
       dm = _distance_measure_sub<K>(c1s, c1e, startvec, endvec);
       if (dm <= RT(0)) {
-	return _sqd_to_line<K>(startvec, c1s, linedir);
+        return _sqd_to_line<K>(startvec, c1s, linedir);
       } else {
-	return _sqd_to_line<K>(endvec, c1e, linedir);
+        return _sqd_to_line<K>(endvec, c1e, linedir);
       }
     }
   }
@@ -464,8 +455,8 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance(const typename K::Line_2 &line,
-		   const typename K::Segment_2 &seg,
-		   const K& k)
+                   const typename K::Segment_2 &seg,
+                   const K& k)
   {
     return internal::squared_distance(seg, line, k);
   }
@@ -482,20 +473,20 @@ namespace internal {
     typedef typename K::FT FT;
     if (!is_acute_angle(ray1dir, from1to2, k)) {
       if (!same_direction(ray1dir, ray2dir, k))
-	return (typename K::FT)k.compute_squared_length_2_object()(from1to2);
+        return (typename K::FT)k.compute_squared_length_2_object()(from1to2);
     }
     RT wcr, w;
     wcr = wcross(ray1dir, from1to2, k);
     w = from1to2.hw();
     return (typename K::FT)(FT(wcr*wcr)
-			    / FT(wmult((K*)0, RT(wdot(ray1dir, ray1dir, k)), w, w)));
+                            / FT(wmult((K*)0, RT(wdot(ray1dir, ray1dir, k)), w, w)));
   }
 
   template <class K>
   typename K::FT
   squared_distance(const typename K::Ray_2 &ray1,
-		   const typename K::Ray_2 &ray2,
-		   const K& k)
+                   const typename K::Ray_2 &ray2,
+                   const K& k)
   {
     typename K::Construct_vector_2 construct_vector;
     typedef typename K::Vector_2 Vector_2;
@@ -520,26 +511,26 @@ namespace internal {
 
     if (crossing1) {
       if (crossing2)
-	return (FT)0;
+        return (FT)0;
       return internal::squared_distance(ray2.source(), ray1, k);
     } else {
       if (crossing2) {
-	return internal::squared_distance(ray1.source(), ray2, k);
+        return internal::squared_distance(ray1.source(), ray2, k);
       } else {
 
-	FT min1, min2;
-	min1 = internal::squared_distance(ray1.source(), ray2, k);
-	min2 = internal::squared_distance(ray2.source(), ray1, k);
-	return (min1 < min2) ? min1 : min2;
+        FT min1, min2;
+        min1 = internal::squared_distance(ray1.source(), ray2, k);
+        min2 = internal::squared_distance(ray2.source(), ray1, k);
+        return (min1 < min2) ? min1 : min2;
       }
     }
   }
-  
+
   template <class K>
   typename K::FT
   squared_distance(const typename K::Line_2 &line,
-		   const typename K::Ray_2 &ray,
-		   const K& k)
+                   const typename K::Ray_2 &ray,
+                   const K& k)
   {
     typename K::Construct_vector_2 construct_vector;
     typedef typename K::FT FT;
@@ -549,10 +540,10 @@ namespace internal {
     FT sign_dist = k.compute_scalar_product_2_object()(diff,normalvec);
     if (sign_dist < FT(0)) {
       if (is_acute_angle(normalvec, ray.direction().vector(), k) )
-	return (FT)0;
+        return (FT)0;
     } else {
       if (is_obtuse_angle(normalvec, ray.direction().vector(), k) )
-	return (FT)0;
+        return (FT)0;
     }
     return (typename K::FT)((sign_dist*sign_dist)/k.compute_squared_length_2_object()(normalvec));
   }
@@ -560,8 +551,8 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance(const typename K::Ray_2 &ray,
-		   const typename K::Line_2 &line,
-		   const K& k)
+                   const typename K::Line_2 &line,
+                   const K& k)
   {
     return internal::squared_distance(line, ray, k);
   }
@@ -569,8 +560,8 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance(const typename K::Line_2 &line1,
-		   const typename K::Line_2 &line2,
-		   const K& k)
+                   const typename K::Line_2 &line2,
+                   const K& k)
   {
     typedef typename K::FT FT;
     if (internal::parallel(line1, line2, k))
@@ -582,9 +573,9 @@ namespace internal {
   template <class K>
   void
   distance_index(int &ind,
-		 const typename K::Point_2 &pt,
-		 const typename K::Ray_2 &ray,
-		 const K& k)
+                 const typename K::Point_2 &pt,
+                 const typename K::Ray_2 &ray,
+                 const K& k)
   {
     typename K::Construct_vector_2 construct_vector;
     if (!is_acute_angle(ray.direction().vector(), construct_vector(ray.source(), pt), k)) {
@@ -597,9 +588,9 @@ namespace internal {
   template <class K>
   void
   distance_index(int &ind,
-		 const typename K::Point_2 &pt,
-		 const typename K::Segment_2 &seg,
-		 const K& k)
+                 const typename K::Point_2 &pt,
+                 const typename K::Segment_2 &seg,
+                 const K& k)
   {
     if (!is_acute_angle(seg.target(),seg.source(),pt, k)) {
       ind = 0;
@@ -615,9 +606,9 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance_indexed(const typename K::Point_2 &pt,
-			   const typename K::Ray_2 &ray, 
-			   int ind,
-			   const K& k)
+                           const typename K::Ray_2 &ray,
+                           int ind,
+                           const K& k)
   {
     if (ind == 0)
       return internal::squared_distance(pt, ray.source(), k);
@@ -627,9 +618,9 @@ namespace internal {
   template <class K>
   inline typename K::FT
   squared_distance_indexed(const typename K::Point_2 &pt,
-			   const typename K::Segment_2 &seg, 
-			   int ind,
-			   const K& k)
+                           const typename K::Segment_2 &seg,
+                           int ind,
+                           const K& k)
   {
     if (ind == 0)
       return internal::squared_distance(pt, seg.source(), k);
@@ -637,7 +628,7 @@ namespace internal {
       return internal::squared_distance(pt, seg.target(), k);
     return internal::squared_distance(pt, seg.supporting_line(), k);
   }
-  
+
 } // namespace internal
 
 template <class K>

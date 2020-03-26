@@ -204,8 +204,9 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
             f != end; ++f)
         {
             if(f->is_twin()) continue;
+            bool incident_volume_marked = f->incident_volume()->mark();
             count++;
-            Nef_polyhedron::Vector_3 v = f->plane().orthogonal_vector();
+            Nef_polyhedron::Vector_3 v = (incident_volume_marked? -1:1) * f->plane().orthogonal_vector();
             P_traits cdt_traits(v);
             CDT cdt(cdt_traits);
 
@@ -283,17 +284,6 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
 
                 }
 
-
-
-                Nef_polyhedron::Vector_3 v = f->plane().orthogonal_vector();
-                if(f->plane().a() != 0)
-                  v /= f->plane().a();
-                else if(f->plane().b() != 0)
-                  v /= f->plane().b();
-                else if(f->plane().c() != 0)
-                  v /= f->plane().c();
-                else if(f->plane().d() != 0)
-                  v /= f->plane().d();
                 GLfloat normal[3];
                 normal[0] = CGAL::to_double(v.x());
                 normal[1] = CGAL::to_double(v.y());
@@ -372,7 +362,7 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
     } //end points
     QApplication::restoreOverrideCursor();
 }
-Scene_nef_polyhedron_item* 
+Scene_nef_polyhedron_item*
 Scene_nef_polyhedron_item::clone() const {
     return new Scene_nef_polyhedron_item(*d->nef_poly);
 }
@@ -394,7 +384,7 @@ Scene_nef_polyhedron_item::load_from_off(std::istream& in)
     return (bool) in;
 }
 
-QFont 
+QFont
 Scene_nef_polyhedron_item::font() const {
     QFont font;
     font.setItalic(!font.italic());
@@ -416,7 +406,7 @@ Scene_nef_polyhedron_item::save(std::ostream& in) const
     return (bool) in;
 }
 
-QString 
+QString
 Scene_nef_polyhedron_item::toolTip() const
 {
     if(!d->nef_poly)
@@ -452,7 +442,7 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
     computeElements();
     initializeBuffers(viewer);
   }
-  
+
   Tc* tc = getTriangleContainer(0);
   tc->setColor(this->color());
   tc->getVao(viewer)->bind();
@@ -624,7 +614,7 @@ operator-=(const Scene_nef_polyhedron_item& other)
 
 Scene_nef_polyhedron_item*
 Scene_nef_polyhedron_item::
-sum(const Scene_nef_polyhedron_item& a, 
+sum(const Scene_nef_polyhedron_item& a,
     const Scene_nef_polyhedron_item& b)
 {
     return new Scene_nef_polyhedron_item(CGAL::minkowski_sum_3(*a.d->nef_poly,
@@ -678,27 +668,27 @@ Scene_nef_polyhedron_item::selection_changed(bool p_is_selected)
 void Scene_nef_polyhedron_item::computeElements() const
 {
   d->compute_normals_and_vertices();
-  
+
   Tc* tc = getTriangleContainer(0);
   tc->allocate(
         Tc::Flat_vertices,
         d->positions_facets.data(),
         static_cast<int>(d->positions_facets.size()*sizeof(float)));
-  
+
   tc->allocate(
         Tc::Flat_normals,
         d->normals.data(),
         static_cast<int>(d->normals.size()*sizeof(float)));
-  
+
   d->nb_facets = d->positions_facets.size();
-  
+
   getEdgeContainer(0)->allocate(
         Ec::Vertices,
         d->positions_lines.data(),
         static_cast<int>(d->positions_lines.size()*sizeof(float)));
   d->nb_lines = d->positions_lines.size();
-  
-  
+
+
   getPointContainer(0)->allocate(
         Pc::Vertices,
         d->positions_points.data(),

@@ -29,7 +29,7 @@ int main()
   vertex_descriptor x = m.add_vertex(K::Point_3(1,1,0));
 
   face_descriptor f = m.add_face(u,v,w,x);
- 
+
   {
     std::cout << "vertices around vertex " << v << std::endl;
     CGAL::Vertex_around_target_circulator<Mesh> vbegin(m.halfedge(v),m), done(vbegin);
@@ -38,12 +38,12 @@ int main()
       std::cout << *vbegin++ << std::endl;
     } while(vbegin != done);
   }
-   
-  { 
+
+  {
     std::cout << "vertices around face " << f << std::endl;
     CGAL::Vertex_around_face_iterator<Mesh> vbegin, vend;
     for(boost::tie(vbegin, vend) = vertices_around_face(m.halfedge(f), m);
-        vbegin != vend; 
+        vbegin != vend;
         ++vbegin){
       std::cout << *vbegin << std::endl;
     }
@@ -52,8 +52,8 @@ int main()
   // or the same again, but directly with a range based loop
   for(vertex_descriptor vd : vertices_around_face(m.halfedge(f), m)){
     std::cout << vd << std::endl;
-  } 
-    
+  }
+
 
   return 0;
 }

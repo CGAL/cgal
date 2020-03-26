@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -64,13 +55,13 @@ const unsigned int sdg_hierarchy_2__maxlevel = 5;
 //--------------------------------------------------------------------
 
 template < class Gt,
-	   class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
-	   class STag = Tag_false,
-	   class D_S = Triangulation_data_structure_2<
+           class ST = Segment_Delaunay_graph_storage_traits_2<Gt>,
+           class STag = Tag_false,
+           class D_S = Triangulation_data_structure_2<
               Segment_Delaunay_graph_hierarchy_vertex_base_2<
-		Segment_Delaunay_graph_vertex_base_2<ST> >,
+                Segment_Delaunay_graph_vertex_base_2<ST> >,
               Segment_Delaunay_graph_face_base_2<Gt> >,
-	   class LTag = Tag_false,
+           class LTag = Tag_false,
            class SDGLx = Segment_Delaunay_graph_2<Gt,ST,D_S,LTag> >
 class Segment_Delaunay_graph_hierarchy_2
   : public SDGLx
@@ -156,8 +147,8 @@ public:
 
   template<class Input_iterator>
   Segment_Delaunay_graph_hierarchy_2(Input_iterator first,
-				     Input_iterator beyond,
-				     const Gt& gt=Gt())
+                                     Input_iterator beyond,
+                                     const Gt& gt=Gt())
     : Base(gt)
   {
     init_hierarchy(gt);
@@ -188,7 +179,7 @@ public:
   }
 
   template<class Input_iterator>
-  size_type insert(Input_iterator first, Input_iterator beyond,	Tag_true)
+  size_type insert(Input_iterator first, Input_iterator beyond,        Tag_true)
   {
     std::vector<Site_2> site_vec;
     for (Input_iterator it = first; it != beyond; ++it) {
@@ -204,7 +195,7 @@ public:
   }
 
   template<class Input_iterator>
-  size_type insert(Input_iterator first, Input_iterator beyond,	Tag_false)
+  size_type insert(Input_iterator first, Input_iterator beyond,        Tag_false)
   {
     // do it the obvious way: insert them as they come;
     // one might think though that it might be better to first insert
@@ -219,7 +210,7 @@ public:
 
   Vertex_handle  insert(const Point_2& p) {
     Point_handle ph = this->register_input_site(p);
-    Storage_site_2 ss = 
+    Storage_site_2 ss =
       this->st_.construct_storage_site_2_object()(ph);
     return insert_point(p, ss, UNDEFINED_LEVEL);
   }
@@ -244,24 +235,24 @@ public:
   }
 
   Vertex_handle insert(const Point_2& p0, const Point_2& p1,
-		       Vertex_handle) {
+                       Vertex_handle) {
     return insert(p0, p1);
   }
 
   Vertex_handle  insert(const Site_2& t) {
     // the intended use is to unify the calls to insert(...);
-    // thus the site must be an exact one; 
+    // thus the site must be an exact one;
     CGAL_precondition( t.is_input() );
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-	this->register_input_site(t.source(), t.target());
+        this->register_input_site(t.source(), t.target());
       Storage_site_2 ss =
-	this->st_.construct_storage_site_2_object()(php.first, php.second);
+        this->st_.construct_storage_site_2_object()(php.first, php.second);
       Vertex_handle v =
-	insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+        insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
       if ( v == Vertex_handle() ) {
-	this->unregister_input_site( php.first, php.second );
+        this->unregister_input_site( php.first, php.second );
       }
       return v;
     } else if ( t.is_point() ) {
@@ -286,19 +277,19 @@ public:
     CGAL_SEGMENT_DELAUNAY_GRAPH_2_NS::Internal::
       Check_type_equality_for_info<Info_t, Info>();
     // the intended use is to unify the calls to insert(...);
-    // thus the site must be an exact one; 
+    // thus the site must be an exact one;
     CGAL_precondition( t.is_input() );
 
     if ( t.is_segment() ) {
       Point_handle_pair php =
-	this->register_input_site(t.source(), t.target());
+        this->register_input_site(t.source(), t.target());
       Storage_site_2 ss =
-	this->st_.construct_storage_site_2_object()(php.first, php.second);
+        this->st_.construct_storage_site_2_object()(php.first, php.second);
       ss.set_info(info);
       Vertex_handle v =
-	insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
+        insert_segment(t.source(), t.target(), ss, UNDEFINED_LEVEL);
       if ( v == Vertex_handle() ) {
-	this->unregister_input_site( php.first, php.second );
+        this->unregister_input_site( php.first, php.second );
       }
       return v;
     } else if ( t.is_point() ) {
@@ -321,13 +312,13 @@ public:
 
 protected:
   Vertex_handle insert_point(const Point_2& p, const Storage_site_2& ss,
-			     int level) {
+                             int level) {
     if ( level == UNDEFINED_LEVEL ) {
       level = random_level();
     }
 
     Vertex_handle vertices[sdg_hierarchy_2__maxlevel];
-  
+
     insert_point(p, ss, level, vertices);
 
     return vertices[0];
@@ -336,59 +327,59 @@ protected:
   //  std::pair<bool,Vertex_triple>
   std::pair<bool,int>
                 insert_point(const Point_2& p, const Storage_site_2& ss,
-			     int level, Vertex_handle* vertices);
+                             int level, Vertex_handle* vertices);
 
   void          insert_point(const Site_2& t, const Storage_site_2& ss,
-			     int low, int high, Vertex_handle vbelow,
-			     Vertex_handle* vertices);
+                             int low, int high, Vertex_handle vbelow,
+                             Vertex_handle* vertices);
 
   Vertex_handle insert_segment(const Point_2& p0, const Point_2& p1,
-			       const Storage_site_2& ss, int level); 
+                               const Storage_site_2& ss, int level);
 
   Vertex_handle insert_segment_interior(const Site_2& t,
-					const Storage_site_2& ss,
-					const Vertex_handle* vertices0,
-					int level);
+                                        const Storage_site_2& ss,
+                                        const Vertex_handle* vertices0,
+                                        int level);
 
   void insert_segment_in_upper_levels(const Site_2& t,
-				      const Storage_site_2& ss,
-				      Vertex_handle vbelow,
-				      const Vertex_handle* vertices0,
-				      int level, Tag_true);
+                                      const Storage_site_2& ss,
+                                      Vertex_handle vbelow,
+                                      const Vertex_handle* vertices0,
+                                      int level, Tag_true);
 
   void insert_segment_in_upper_levels(const Site_2& ,
-				      const Storage_site_2& ,
-				      Vertex_handle ,
-				      const Vertex_handle* ,
-				      int , Tag_false) {}
+                                      const Storage_site_2& ,
+                                      Vertex_handle ,
+                                      const Vertex_handle* ,
+                                      int , Tag_false) {}
 
   Vertex_handle insert_segment_on_point(const Storage_site_2& ss,
-					const Vertex_handle& v,
-					int level, int which);
+                                        const Vertex_handle& v,
+                                        int level, int which);
 
   template<class Tag>
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2&,
-				       const Site_2& ,
-				       Vertex_handle ,
-				       int , Tag_false /* itag */, Tag) {
+                                       const Site_2& ,
+                                       Vertex_handle ,
+                                       int , Tag_false /* itag */, Tag) {
     print_error_message();
     return Vertex_handle();
   }
 
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v,
-				       int level,
-				       Tag_true itag, Tag_false stag);
+                                       const Site_2& t,
+                                       Vertex_handle v,
+                                       int level,
+                                       Tag_true itag, Tag_false stag);
 
   Vertex_handle
   insert_intersecting_segment_with_tag(const Storage_site_2& ss,
-				       const Site_2& t,
-				       Vertex_handle v,
-				       int level,
-				       Tag_true itag, Tag_true stag);
+                                       const Site_2& t,
+                                       Vertex_handle v,
+                                       int level,
+                                       Tag_true itag, Tag_true stag);
 
 public:
   // REMOVAL METHODS
@@ -399,7 +390,7 @@ public:
   // NEAREST NEIGHBOR LOCATION
   //--------------------------
   Vertex_handle  nearest_neighbor(const Point_2& p,
-				  bool force_point = false) const;
+                                  bool force_point = false) const;
 
   Vertex_handle  nearest_neighbor(const Point_2& p, Vertex_handle) const
   {
@@ -408,8 +399,8 @@ public:
 
 protected:
   void nearest_neighbor(const Site_2& p,
-			Vertex_handle vnear[sdg_hierarchy_2__maxlevel],
-			bool force_point) const; 
+                        Vertex_handle vnear[sdg_hierarchy_2__maxlevel],
+                        bool force_point) const;
 
 public:
   // MISCELLANEOUS
@@ -475,8 +466,8 @@ protected:
 
 template<class Gt, class STag, class D_S, class LTag>
 std::istream& operator>>(std::istream& is,
-			 Segment_Delaunay_graph_hierarchy_2<Gt,STag,D_S,LTag>&
-			 sdgh)
+                         Segment_Delaunay_graph_hierarchy_2<Gt,STag,D_S,LTag>&
+                         sdgh)
 {
   sdgh.file_input(is);
   return is;
@@ -484,14 +475,14 @@ std::istream& operator>>(std::istream& is,
 
 template<class Gt, class STag, class D_S, class LTag>
 std::ostream& operator<<(std::ostream& os,
-			 const
-			 Segment_Delaunay_graph_hierarchy_2<Gt,STag,D_S,LTag>&
-			 sdgh)
+                         const
+                         Segment_Delaunay_graph_hierarchy_2<Gt,STag,D_S,LTag>&
+                         sdgh)
 {
   sdgh.file_output(os);
   return os;
 }
-			 
+
 
 } //namespace CGAL
 

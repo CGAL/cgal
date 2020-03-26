@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
@@ -67,22 +58,22 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Arrangement_2*    p_arr;        // The associated arrangement.  
+  const Arrangement_2*    p_arr;        // The associated arrangement.
   const Traits_adaptor_2* geom_traits;  // Its associated geometry traits.
   const Topology_traits*  top_traits;   // Its associated topology traits.
 
   template<typename T>
   Result_type make_result(T t) const { return Result::make_result(t); }
   inline Result_type default_result() const { return Result::default_result(); }
-                            
+
 public:
   /*! Default constructor. */
-  Arr_naive_point_location() : 
+  Arr_naive_point_location() :
     p_arr(nullptr),
     geom_traits(nullptr),
     top_traits(nullptr)
   {}
-        
+
   /*! Constructor given an arrangement. */
   Arr_naive_point_location(const Arrangement_2& arr) : p_arr(&arr)
   {
@@ -91,7 +82,7 @@ public:
   }
 
   /*! Attach an arrangement object. */
-  void attach(const Arrangement_2& arr) 
+  void attach(const Arrangement_2& arr)
   {
     p_arr = &arr;
     geom_traits = static_cast<const Traits_adaptor_2*>(p_arr->geometry_traits());
@@ -105,7 +96,7 @@ public:
     geom_traits = nullptr;
     top_traits = nullptr;
   }
- 
+
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.

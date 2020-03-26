@@ -19,24 +19,24 @@ namespace Custom {
   // A range of objects.
   using Objects = std::vector<Object>;
 
-  // The Neighbor_query functor that accesses neighbors stored in 
+  // The Neighbor_query functor that accesses neighbors stored in
   // the object struct above.
   class Neighbor_query {
     const Objects& m_objects;
 
   public:
-    Neighbor_query(const Objects& objects) : 
-    m_objects(objects) 
+    Neighbor_query(const Objects& objects) :
+    m_objects(objects)
     { }
 
     void operator()(
-      const std::size_t query_index, 
+      const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
-      
+
       std::size_t i = 0;
       for (const auto& object : m_objects) {
         if (i == query_index) {
-          
+
           neighbors = object.neighbors;
           return;
         } ++i;
@@ -46,7 +46,7 @@ namespace Custom {
 
   // The Region_type class, where the function is_part_of_region() verifies
   // a very specific condition that the first and second objects in the
-  // range are in fact neighbors; is_valid_region() function always 
+  // range are in fact neighbors; is_valid_region() function always
   // returns true after the first call to the update() function.
   // These are the only functions that have to be defined.
   class Region_type {
@@ -60,14 +60,14 @@ namespace Custom {
       const std::size_t query_index,
       const std::vector<std::size_t>& region) const {
 
-      if (region.size() == 0) 
+      if (region.size() == 0)
         return false;
 
-      const std::size_t index = region[0]; 
+      const std::size_t index = region[0];
 
       if (index == 0 && query_index == 1) return true;
       if (query_index == 0 && index == 1) return true;
-      
+
       return false;
     }
 
@@ -80,27 +80,27 @@ namespace Custom {
     }
   };
 
-  // The SeedMap class that uses the m_objects_map to define 
+  // The SeedMap class that uses the m_objects_map to define
   // the seeding order of objects.
   class Seed_map {
-                        
+
   public:
     using key_type   = std::size_t;
     using value_type = std::size_t;
     using category   = boost::lvalue_property_map_tag;
 
-    Seed_map(const std::map<std::size_t, std::size_t>& objects_map) : 
-    m_objects_map(objects_map) 
+    Seed_map(const std::map<std::size_t, std::size_t>& objects_map) :
+    m_objects_map(objects_map)
     { }
 
-    value_type operator[](const key_type key) const { 
+    value_type operator[](const key_type key) const {
       return m_objects_map.find(key)->second;
     }
 
     friend value_type get(
-      const Seed_map& seed_map, 
-      const key_type key) { 
-      
+      const Seed_map& seed_map,
+      const key_type key) {
+
       return seed_map[key];
     }
 
@@ -120,13 +120,13 @@ using Seed_map       = Custom::Seed_map;
 using Region  = std::vector<std::size_t>;
 using Regions = std::vector<Region>;
 
-using Region_growing = 
+using Region_growing =
 CGAL::Shape_detection::Region_growing<Objects, Neighbor_query, Region_type, Seed_map>;
 
-int main() { 
-  
-  std::cout << std::endl << 
-    "region_growing_with_custom_classes example started" 
+int main() {
+
+  std::cout << std::endl <<
+    "region_growing_with_custom_classes example started"
   << std::endl << std::endl;
 
   // Define a range of objects, where the first two objects form
@@ -137,11 +137,11 @@ int main() {
 
   // Region 1.
   Object object1;
-  object1.neighbors.resize(1, 1); 
+  object1.neighbors.resize(1, 1);
   objects.push_back(object1);
-  
+
   Object object2;
-  object2.neighbors.resize(1, 0); 
+  object2.neighbors.resize(1, 0);
   objects.push_back(object2);
 
   // Region 2.
@@ -173,12 +173,12 @@ int main() {
   region_growing.detect(std::back_inserter(regions));
 
   // Print the number of found regions. It must be two regions.
-  std::cout << "* " << regions.size() << 
-    " regions have been found among " << objects.size() <<  " objects" 
+  std::cout << "* " << regions.size() <<
+    " regions have been found among " << objects.size() <<  " objects"
   << std::endl;
 
-  std::cout << std::endl << 
-    "region_growing_with_custom_classes example finished" 
+  std::cout << std::endl <<
+    "region_growing_with_custom_classes example finished"
   << std::endl << std::endl;
 
   return EXIT_SUCCESS;

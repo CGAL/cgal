@@ -1,20 +1,11 @@
 // Copyright (c) 2017 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -244,7 +235,7 @@ get(boost::halfedge_external_index_t, CGAL_LCC_TYPE const&)
 {
   CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
   return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t>::
-    const_type(halfedges(ncmap).begin(), halfedges(ncmap).end(), num_halfedges(ncmap)); 
+    const_type(halfedges(ncmap).begin(), halfedges(ncmap).end(), num_halfedges(ncmap));
 }
 
 template<CGAL_LCC_ARGS>
@@ -253,7 +244,7 @@ get(boost::vertex_external_index_t, CGAL_LCC_TYPE const&)
 {
  CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
   return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t>::
-    const_type(vertices(ncmap).begin(), vertices(ncmap).end(), num_vertices(ncmap)); 
+    const_type(vertices(ncmap).begin(), vertices(ncmap).end(), num_vertices(ncmap));
 }
 
 template<CGAL_LCC_ARGS>

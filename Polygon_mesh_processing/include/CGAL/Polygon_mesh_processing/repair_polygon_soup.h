@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -522,7 +513,7 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
   using parameters::choose_parameter;
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename Traits::Less_xyz_3                                             Less_xyz_3;
 
@@ -576,7 +567,8 @@ std::size_t merge_duplicate_points_in_polygon_soup(PointRange& points,
   const std::size_t removed_points_n = ini_points_n - points.size();
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
-  std::cout << "Removed (merged) " << removed_points_n << " duplicate points" << std::endl;
+  if(removed_points_n > 0)
+    std::cout << "Removed (merged) " << removed_points_n << " duplicate points" << std::endl;
 #endif
 
   return removed_points_n;
@@ -669,7 +661,7 @@ Polygon construct_canonical_polygon(const PointRange& points,
     reversed = false;
     return polygon;
   }
-  
+
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
   std::cout << "Input polygon:";
@@ -923,7 +915,7 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(const PointRange& points,
 #endif
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   std::vector<std::vector<P_ID> > all_duplicate_polygons;
   internal::collect_duplicate_polygons(points, polygons, std::back_inserter(all_duplicate_polygons), traits, same_orientation);
@@ -1070,7 +1062,7 @@ void repair_polygon_soup(PointRange& points,
   using parameters::choose_parameter;
 
   typedef typename internal::GetPolygonGeomTraits<PointRange, PolygonRange, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
 #ifdef CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE
   std::cout << "Repairing soup with " << points.size() << " points and " << polygons.size() << " polygons" << std::endl;

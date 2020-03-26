@@ -85,11 +85,11 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
       info = *random_red_blue;
     }
     std::cout << "SITE TO BE INSERTED: "
-	      << site << " " << info << std::endl;
+              << site << " " << info << std::endl;
     sdg.insert(site, info);
 #else
     std::cout << "SITE TO BE INSERTED: "
-	      << site << std::endl;
+              << site << std::endl;
     sdg.insert(site);
 #endif
   }
@@ -99,7 +99,7 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
        it != sdg.finite_vertices_end(); ++it) {
 #ifdef WITH_INFO
     std::cout << it->site() << " "
-	      << it->storage_site().info() << std::endl;
+              << it->storage_site().info() << std::endl;
 #else
     std::cout << it->site() << std::endl;
 #endif
@@ -111,10 +111,10 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
   for (int i = 0; i <= 4; ++i) {
     std::cout << "\tSITES FOR LEVEL " << i << std::endl;
     for (FVIT it = sdg.diagram(i).finite_vertices_begin();
-	 it != sdg.diagram(i).finite_vertices_end(); ++it) {
+         it != sdg.diagram(i).finite_vertices_end(); ++it) {
 #ifdef WITH_INFO
       std::cout << "\t\t" << it->site() << " "
-		<< it->storage_site().info() << std::endl;
+                << it->storage_site().info() << std::endl;
 #else
       std::cout << "\t\t" << it->site() << std::endl;
 #endif
@@ -153,7 +153,7 @@ int main()
 
   print_separator();
   b = test(sdg, "data/bizarre.cin");
-  assert( b );  
+  assert( b );
 #endif
   print_separator();
 #ifdef WITH_INFO

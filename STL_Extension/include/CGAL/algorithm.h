@@ -1,24 +1,15 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
@@ -286,10 +277,10 @@ lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last
     produces \c (1):(2):(3)
  */
 template <class InputIterator>
-std::ostream& 
+std::ostream&
 output_range(std::ostream& os,
              InputIterator first, InputIterator beyond,
-             const char* sep = ", ", const char* pre = "", const char* post = "") 
+             const char* sep = ", ", const char* pre = "", const char* post = "")
 {
     InputIterator it = first;
     if (it != beyond) {
@@ -375,12 +366,12 @@ void nth_element(RandomAccessIterator left,
   if(left == right) return; // exit if there is only one element
   while(true) {
     RandomAccessIterator pivot_it = left + ((right - left) / 2);
-    RandomAccessIterator new_pivot_it = 
-      internal::algorithm::partition(left, right, pivot_it, comp);    
+    RandomAccessIterator new_pivot_it =
+      internal::algorithm::partition(left, right, pivot_it, comp);
     if(new_pivot_it == nth) return;
-    if(nth < new_pivot_it) 
+    if(nth < new_pivot_it)
       right = new_pivot_it - 1;
-    else 
+    else
       left = new_pivot_it + 1;
   } // end while(true)
 }

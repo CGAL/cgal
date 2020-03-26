@@ -19,11 +19,21 @@
 # bash tag_pr_per_release.sh 4.14 4.14.2
 #
 
+set -e # Exit the script on first error, for safety
 
 PREVIOUS_MAJOR_RELEASE=$1
 CURRENT_RELEASE=$2
 
-PR_LIST=`git log releases/CGAL-${PREVIOUS_MAJOR_RELEASE}..releases/CGAL-${CURRENT_RELEASE} --merges | grep "Merge pull request" | sort -u | awk '{print $4}' | sed 's/#//'`
+REMOTE=`git config branch.releases/CGAL-${PREVIOUS_MAJOR_RELEASE}-branch.remote`
+# $REMOTE should be the "cgal" remote, but a CGAL developer may have keep the
+# name "origin", or set to another one.
+
+# Call git-fetch to refresh the branch, and fetch the references
+# refs/pull/*/head as well.
+git fetch --tags "${REMOTE}" `git config "remote.${REMOTE}.fetch"` 'refs/pull/*/head:refs/pull/*/head'
+
+PR_LIST=`git log --pretty='%D' releases/CGAL-${PREVIOUS_MAJOR_RELEASE}..releases/CGAL-${CURRENT_RELEASE} | awk 'match($0, /refs\/pull\/([0-9]+)\/head/, a) {print a[1]}' | sort -u`
+
 for i in ${PR_LIST}; do
   echo ghi label $i -a Merged_in_${CURRENT_RELEASE} -- CGAL/cgal
 done

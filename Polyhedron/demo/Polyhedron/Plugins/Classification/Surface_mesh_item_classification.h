@@ -16,11 +16,7 @@
 
 #include <iostream>
 
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 class Surface_mesh_item_classification : public Item_classification_base
 {
@@ -41,7 +37,7 @@ public:
   typedef CGAL::Classification::Mesh_feature_generator<Kernel, Mesh, Face_center_map> Generator;
 
 public:
-  
+
   Surface_mesh_item_classification(Scene_surface_mesh_item* mesh);
   ~Surface_mesh_item_classification();
 
@@ -51,12 +47,12 @@ public:
   void erase_item() { m_mesh = NULL; }
 
   void compute_features (std::size_t nb_scales, float voxel_size);
-  
+
   void add_selection_to_training_set (std::size_t label)
   {
     if (m_selection == NULL)
       return;
-    
+
     for (Selection::iterator it = m_selection->selected_facets.begin();
          it != m_selection->selected_facets.end(); ++ it)
     {
@@ -76,7 +72,7 @@ public:
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  
+
   void reset_training_set_of_selection ()
   {
     for (Selection::iterator it = m_selection->selected_facets.begin();
@@ -86,11 +82,11 @@ public:
       m_classif[*it] = -1;
     }
     m_selection->clear_all();
-    
+
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
-  
+
   void reset_training_sets()
   {
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
@@ -107,12 +103,12 @@ public:
   {
     if (m_selection == NULL)
       return;
-    
+
     for (Selection::iterator it = m_selection->selected_facets.begin();
          it != m_selection->selected_facets.end(); ++ it)
       m_training[*it] = m_classif[*it];
     m_selection->clear_all();
-    
+
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
   }
@@ -148,7 +144,7 @@ protected:
   {
     std::vector<std::size_t> indices(m_mesh->polyhedron()->faces().size(), -1);
     Face_center_map fc_map (m_mesh->polyhedron());
-    
+
     if (method == 0)
       CGAL::Classification::classify<Concurrency_tag> (m_mesh->polyhedron()->faces(),
                                                        m_labels, classifier,
@@ -161,28 +157,28 @@ protected:
     else if (method == 2)
     {
       // Fix: need bbox of face
-      
+
       CGAL::Classification::classify_with_graphcut<Concurrency_tag>
         (m_mesh->polyhedron()->faces(), Face_descriptor_with_bbox_map(m_mesh->polyhedron()),
          m_labels, classifier,
          m_generator->neighborhood().n_ring_neighbor_query(1),
          smoothing, subdivisions, indices);
     }
-    
+
     std::vector<std::size_t> ground_truth(num_faces(*(m_mesh->polyhedron())), std::size_t(-1));
     for(face_descriptor fd : faces(*(m_mesh->polyhedron())))
     {
       m_classif[fd] = indices[fd];
       ground_truth[fd] = m_training[fd];
     }
-  
+
     if (m_index_color == 1 || m_index_color == 2)
       change_color (m_index_color);
 
     std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-    
+
     CGAL::Classification::Evaluation eval (m_labels, ground_truth, indices);
-  
+
     for (std::size_t i = 0; i < m_labels.size(); ++ i)
       {
         std::cerr << " * " << m_labels[i]->name() << ": "
@@ -199,7 +195,7 @@ protected:
 
     return true;
   }
-  
+
   Scene_surface_mesh_item* m_mesh;
   Scene_polyhedron_selection_item* m_selection;
   Mesh::Property_map<face_descriptor, std::size_t> m_training;

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mikhail Bogdanov
 //                 Monique Teillaud <Monique.Teillaud@inria.fr>
@@ -200,7 +191,7 @@ public:
       _iv = pos->index(_v);
 
       bool ok = false;
-      do 
+      do
       {
         _ri = cw(_iv);
         if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
@@ -211,7 +202,7 @@ public:
             pos = pos->neighbor(cw(_iv));
             _iv = pos->index(_v);
           }
-          else 
+          else
           {
             ok = true;
           }
@@ -227,9 +218,9 @@ public:
     {
       pos = pos->neighbor(cw(_iv));
       _iv = pos->index(_v);
-      
+
       bool ok = false;
-      do 
+      do
       {
         _ri = cw(_iv);
         if (_tri.is_finite_non_hyperbolic(pos, ccw(_iv)))
@@ -240,7 +231,7 @@ public:
             pos = pos->neighbor(cw(_iv));
             _iv = pos->index(_v);
           }
-          else 
+          else
           {
             ok = true;
           }
@@ -258,9 +249,9 @@ public:
     {
       pos = pos->neighbor(ccw(_iv));
       _iv = pos->index(_v);
-      
+
       bool ok = false;
-      do 
+      do
       {
         _ri = ccw(_iv);
         if (_tri.is_finite_non_hyperbolic(pos, cw(_iv)))
@@ -271,7 +262,7 @@ public:
             pos = pos->neighbor(ccw(_iv));
             _iv = pos->index(_v);
           }
-          else 
+          else
           {
             ok = true;
           }
@@ -337,7 +328,7 @@ public:
     return _gt;
   }
 
-  const Geom_traits& geom_traits() const 
+  const Geom_traits& geom_traits() const
   {
     return _gt;
   }
@@ -352,13 +343,13 @@ public:
 
     this->mark_finite_non_hyperbolic_faces();
     tr.mark_finite_non_hyperbolic_faces();
-  } 
+  }
 
 
   Self& operator=(const Self &tr)
   {
 
-    Self newone = Self(tr); 
+    Self newone = Self(tr);
     this->swap(newone);
 
     return *this;
@@ -465,7 +456,7 @@ public:
 
 
 
-  void remove(Vertex_handle v) 
+  void remove(Vertex_handle v)
   {
     CGAL_triangulation_precondition(tds().is_vertex(v));
     std::vector<Vertex_handle> nbr;
@@ -474,32 +465,32 @@ public:
     {
       dim_was_2 = true;
       typename Base::Vertex_circulator nbv = Base::incident_vertices(v), done(nbv);
-      do 
+      do
       {
         nbr.push_back(nbv);
-      } while (++nbv != done);  
+      } while (++nbv != done);
     }
-    
+
     Base::remove(v);
 
-    if (dim_was_2) 
+    if (dim_was_2)
     {
-      for (unsigned int i = 0; i < nbr.size(); ++i) 
+      for (unsigned int i = 0; i < nbr.size(); ++i)
       {
         mark_star_faces(nbr[i]);
         ensure_hyperbolic_face_handle(nbr[i]);
-      }  
+      }
     }
-  } 
+  }
 
 
   template <class VertexRemoveIterator>
   void remove(VertexRemoveIterator first, VertexRemoveIterator last)
   {
-    for (VertexRemoveIterator vit = first; vit != last; ++vit) 
+    for (VertexRemoveIterator vit = first; vit != last; ++vit)
     {
       remove(*vit);
-    } 
+    }
   }
 
 
@@ -958,7 +949,7 @@ public:
     return vh->point();
   }
 
-  Point point(const Face_handle fh, const int i) 
+  Point point(const Face_handle fh, const int i)
   {
     CGAL_triangulation_precondition(0 <= i);
     CGAL_triangulation_precondition(i <= 2);
@@ -967,20 +958,20 @@ public:
 
 
 
-  bool is_valid() 
+  bool is_valid()
   {
-    if (Base::is_valid()) 
+    if (Base::is_valid())
     {
-      for (Hyperbolic_faces_iterator fit = hyperbolic_faces_begin(); fit != hyperbolic_faces_end(); fit++) 
+      for (Hyperbolic_faces_iterator fit = hyperbolic_faces_begin(); fit != hyperbolic_faces_end(); fit++)
       {
-        if (!is_Delaunay_hyperbolic(fit)) 
+        if (!is_Delaunay_hyperbolic(fit))
         {
           return false;
         }
       }
-      for (Hyperbolic_edges_iterator eit = hyperbolic_edges_begin(); eit != hyperbolic_edges_end(); eit++) 
+      for (Hyperbolic_edges_iterator eit = hyperbolic_edges_begin(); eit != hyperbolic_edges_end(); eit++)
       {
-        if (!is_Delaunay_hyperbolic(eit)) 
+        if (!is_Delaunay_hyperbolic(eit))
         {
           return false;
         }
@@ -1051,7 +1042,7 @@ public:
       }
 
       p = point(fh, ccw(li));
-      q = point(Base::mirror_vertex(fh, li)); 
+      q = point(Base::mirror_vertex(fh, li));
       r = point(fh, cw(li));
 
       if(geom_traits().is_Delaunay_hyperbolic_2_object()(p, q, r))

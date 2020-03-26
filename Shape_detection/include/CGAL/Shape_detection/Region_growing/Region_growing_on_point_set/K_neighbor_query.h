@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot, Thien Hoang, Dmitry Anisimov
@@ -51,26 +42,26 @@ namespace Point_set {
   /*!
     \ingroup PkgShapeDetectionRGOnPoints
 
-    \brief K nearest neighbors search in a set of `Kernel::Point_2` or 
+    \brief K nearest neighbors search in a set of `Kernel::Point_2` or
     `Kernel::Point_3`.
 
     This class returns the K nearest neighbors of a query point in a point set.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam PointMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_2` or `Kernel::Point_3`.
 
     \cgalModels `NeighborQuery`
   */
   template<
-  typename GeomTraits, 
-  typename InputRange, 
+  typename GeomTraits,
+  typename InputRange,
   typename PointMap>
   class K_neighbor_query {
 
@@ -82,38 +73,38 @@ namespace Point_set {
     using Point_map = PointMap;
 
     using Point = typename Point_map::value_type;
-    
-    using Index_to_point_map = 
+
+    using Index_to_point_map =
     internal::Item_property_map<Input_range, Point_map>;
 
     using Search_base = typename std::conditional<
-      std::is_same<typename Traits::Point_2, Point>::value, 
-      CGAL::Search_traits_2<Traits>, 
+      std::is_same<typename Traits::Point_2, Point>::value,
+      CGAL::Search_traits_2<Traits>,
       CGAL::Search_traits_3<Traits> >::type;
 
-    using Search_traits = 
+    using Search_traits =
     CGAL::Search_traits_adapter<std::size_t, Index_to_point_map, Search_base>;
 
-    using Distance = 
+    using Distance =
     CGAL::Distance_adapter<
-      std::size_t, 
-      Index_to_point_map, 
+      std::size_t,
+      Index_to_point_map,
       CGAL::Euclidean_distance<Search_base> >;
 
-    using Splitter = 
+    using Splitter =
     CGAL::Sliding_midpoint<Search_traits>;
 
-    using Search_tree = 
-    CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true>;
+    using Search_tree =
+      CGAL::Kd_tree<Search_traits, Splitter, CGAL::Tag_true, CGAL::Tag_true>;
 
-    using Neighbor_search = 
+    using Neighbor_search =
     CGAL::Orthogonal_k_neighbor_search<
-      Search_traits, 
-      Distance, 
-      Splitter, 
+      Search_traits,
+      Distance,
+      Splitter,
       Search_tree>;
 
-    using Tree = 
+    using Tree =
     typename Neighbor_search::Tree;
     /// \endcond
 
@@ -123,22 +114,22 @@ namespace Point_set {
     /*!
       \brief initializes a Kd-tree with input points.
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 2D or 3D points
 
-      \param k 
+      \param k
       the number of returned neighbors per each query point. %Default is 12.
 
       \param point_map
-      an instance of `PointMap` that maps an item from `input_range` 
+      an instance of `PointMap` that maps an item from `input_range`
       to `Kernel::Point_2` or to `Kernel::Point_3`
 
       \pre `input_range.size() > 0`
       \pre `k > 0`
     */
     K_neighbor_query(
-      const InputRange& input_range, 
-      const std::size_t k = 12, 
+      const InputRange& input_range,
+      const std::size_t k = 12,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
     m_number_of_neighbors(k),
@@ -149,7 +140,7 @@ namespace Point_set {
       boost::counting_iterator<std::size_t>(0),
       boost::counting_iterator<std::size_t>(m_input_range.size()),
       Splitter(),
-      Search_traits(m_index_to_point_map)) { 
+      Search_traits(m_index_to_point_map)) {
 
       CGAL_precondition(input_range.size() > 0);
       CGAL_precondition(k > 0);
@@ -160,12 +151,12 @@ namespace Point_set {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator finds indices of the `k` closest points to the point with 
+      This operator finds indices of the `k` closest points to the point with
       the index `query_index` using a Kd-tree. These indices are returned in `neighbors`.
 
       \param query_index
@@ -177,18 +168,18 @@ namespace Point_set {
       \pre `query_index >= 0 && query_index < input_range.size()`
     */
     void operator()(
-      const std::size_t query_index, 
+      const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
 
       CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_input_range.size());
 
       Neighbor_search neighbor_search(
-        m_tree, 
-        get(m_index_to_point_map, query_index), 
-        static_cast<unsigned int>(m_number_of_neighbors), 
-        0, 
-        true, 
+        m_tree,
+        get(m_index_to_point_map, query_index),
+        static_cast<unsigned int>(m_number_of_neighbors),
+        0,
+        true,
         m_distance);
 
       neighbors.clear();
@@ -202,7 +193,7 @@ namespace Point_set {
 
     // Fields.
     const Input_range& m_input_range;
-    
+
     const std::size_t m_number_of_neighbors;
 
     const Point_map m_point_map;

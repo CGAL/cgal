@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s) : Steve Oudot,
@@ -92,8 +83,8 @@ namespace CGAL {
     typedef Double_map<Facet, Quality> Bad_facets;
 
     // Constructor
-    Surface_mesher_base (C2T3& co, 
-                         const Surface& s, 
+    Surface_mesher_base (C2T3& co,
+                         const Surface& s,
                          const Surface_mesh_traits& mesh_traits,
                          const Criteria& c) :
       Triangulation_mesher_level_traits_3<Tr>(co.triangulation()),
@@ -152,13 +143,13 @@ namespace CGAL {
     // Remains unchanged
     Tr& triangulation_ref_impl()
       {
-	return tr;
+        return tr;
       }
 
     // Remains unchanged
     const Tr& triangulation_ref_impl() const
       {
-	return tr;
+        return tr;
       }
 
     // Initialization function
@@ -170,36 +161,36 @@ namespace CGAL {
       std::cout << "scanning facets..." << std::endl;
 #endif
       for (Finite_facets_iterator fit = tr.finite_facets_begin(); fit !=
-	     tr.finite_facets_end(); ++fit) {
-	if (tr.dimension() == 3) {
+             tr.finite_facets_end(); ++fit) {
+        if (tr.dimension() == 3) {
           new_facet<true>(*fit);
           // see definition of
           // template <bool> new_facet()
-	}
-	else {
-	  CGAL_assertion (tr.dimension() == 2);
-	  if (is_facet_on_surface(*fit, center)) {
-	    //Cell_handle c;
-	    c2t3.set_in_complex(*fit);
-	    set_facet_surface_center((*fit),center);
-	    //c=(*fit).first;
-	    //c->set_facet_on_surface((*fit).second,true);
-	    //c->set_facet_surface_center((*fit).second,center);
+        }
+        else {
+          CGAL_assertion (tr.dimension() == 2);
+          if (is_facet_on_surface(*fit, center)) {
+            //Cell_handle c;
+            c2t3.set_in_complex(*fit);
+            set_facet_surface_center((*fit),center);
+            //c=(*fit).first;
+            //c->set_facet_on_surface((*fit).second,true);
+            //c->set_facet_surface_center((*fit).second,center);
 
             Quality a_r;
-	    if (criteria.is_bad (*fit, a_r)) {
+            if (criteria.is_bad (*fit, a_r)) {
 #ifdef CGAL_SURFACE_MESHER_TAG_BAD
               fit->first->set_bad(fit->second);
               const Facet mirror_facet = tr.mirror_facet(*fit);
               mirror_facet.first->set_bad(mirror_facet.second);
 #endif // CGAL_SURFACE_MESHER_TAG_BAD
-	      facets_to_refine.insert(*fit,a_r);
-	    }
-	  }
-	  else
-	    c2t3.remove_from_complex(*fit);
-	  //	    (*fit).first->set_facet_on_surface((*fit).second,false);
-	}
+              facets_to_refine.insert(*fit,a_r);
+            }
+          }
+          else
+            c2t3.remove_from_complex(*fit);
+          //            (*fit).first->set_facet_on_surface((*fit).second,false);
+        }
       }
     } // scan_triangulation_impl end
 
@@ -226,16 +217,16 @@ namespace CGAL {
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
         std::cerr << "point from Surface_mesher: ";
 #endif
-	CGAL_assertion (c2t3.face_status(f) == C2T3::REGULAR);
-	//CGAL_assertion (f.first->is_facet_on_surface (f.second));
-	return get_facet_surface_center (f);
-	//return f.first->get_facet_surface_center (f.second);
+        CGAL_assertion (c2t3.face_status(f) == C2T3::REGULAR);
+        //CGAL_assertion (f.first->is_facet_on_surface (f.second));
+        return get_facet_surface_center (f);
+        //return f.first->get_facet_surface_center (f.second);
       }
 
     // Useless here
     void before_conflicts_impl(const Facet&, const Point&
 #ifdef CGAL_SURFACE_MESHER_DEBUG_BEFORE_CONFLICTS
-			                                s)
+                                                        s)
     {
       std::cerr << "Refine_facets: before conflicts of " << s << " ";
 #else
@@ -246,17 +237,17 @@ namespace CGAL {
 
   // Useless here
     Mesher_level_conflict_status private_test_point_conflict_impl(const Point& p,
-								  Zone& zone)
+                                                                  Zone& zone)
     {
       if( zone.locate_type == Tr::VERTEX )
       {
         std::stringstream sstr;
         sstr << "(" << p << ") is already inserted on surface.\n";
         CGAL_error_msg(sstr.str().c_str());
-	return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
+        return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
       }
       else
-	return NO_CONFLICT;
+        return NO_CONFLICT;
     }
 
     // Useless here
@@ -270,40 +261,40 @@ namespace CGAL {
 
     Mesher_level_conflict_status
     test_point_conflict_from_superior_impl(const Point& p,
-					   Zone& zone)
+                                           Zone& zone)
       {
-	for (typename Zone::Facets_iterator fit =
-	       zone.internal_facets.begin();
-	     fit != zone.internal_facets.end();
-	     ++fit)
-	  if( test_if_facet_is_encroached(*fit, p) )
-	    return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
+        for (typename Zone::Facets_iterator fit =
+               zone.internal_facets.begin();
+             fit != zone.internal_facets.end();
+             ++fit)
+          if( test_if_facet_is_encroached(*fit, p) )
+            return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
 
-	for (typename Zone::Facets_iterator fit =
-	       zone.boundary_facets.begin();
-	     fit != zone.boundary_facets.end();
-	     ++fit)
-	  if( test_if_facet_is_encroached(*fit, p) )
-	    return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
+        for (typename Zone::Facets_iterator fit =
+               zone.boundary_facets.begin();
+             fit != zone.boundary_facets.end();
+             ++fit)
+          if( test_if_facet_is_encroached(*fit, p) )
+            return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
 
-	return NO_CONFLICT;
+        return NO_CONFLICT;
       }
 
     bool test_if_facet_is_encroached(const Facet f, const Point& p)
     {
       if( tr.is_infinite(f.first) )
-	return false;
+        return false;
 
       if (c2t3.face_status(f) == C2T3::REGULAR)
-	{
-	  const Cell_handle& c = f.first;
-	  const int& index = f.second;
+        {
+          const Cell_handle& c = f.first;
+          const int& index = f.second;
 
-	  typename GT::Compute_squared_distance_3 distance =
-	    tr.geom_traits().compute_squared_distance_3_object();
+          typename GT::Compute_squared_distance_3 distance =
+            tr.geom_traits().compute_squared_distance_3_object();
 
-	  // test Delaunay surfacique
-	  Point center = get_facet_surface_center(f);
+          // test Delaunay surfacique
+          Point center = get_facet_surface_center(f);
 
           for(bool exit = false; ; exit = true)
           {
@@ -313,7 +304,7 @@ namespace CGAL {
 
             if( distance(center, p) <
                 distance(center, c->vertex((index+1)&3)->point()) )
-	    {
+            {
               Quality q;
               criteria.is_bad(f, q); // to get q (passed as reference)
               Facet other_side = mirror_facet(f);
@@ -325,8 +316,8 @@ namespace CGAL {
                 facets_to_refine.insert(f, q);
               else
                 facets_to_refine.insert(other_side, q);
-	      return true;
-	    }
+              return true;
+            }
 
 //             if(exit)
               return false;
@@ -337,25 +328,25 @@ namespace CGAL {
                c->vertex((index+2)&3)->point(),
                c->vertex((index+3)&3)->point());
           }
-	}
+        }
       return false;
     }
 
 
   /* returns the conflicts zone */
     Zone conflicts_zone_impl(const Point& p, Facet f) const {
-	Zone zone;
+        Zone zone;
 
-       	// TODO may be avoid the locate here
-	zone.cell =
-	  tr.locate(p, zone.locate_type, zone.i, zone.j, f.first);
+               // TODO may be avoid the locate here
+        zone.cell =
+          tr.locate(p, zone.locate_type, zone.i, zone.j, f.first);
 
         if(zone.locate_type != Tr::VERTEX)
           tr.find_conflicts(p, zone.cell,
                             std::back_inserter(zone.boundary_facets),
                             std::back_inserter(zone.cells),
                             std::back_inserter(zone.internal_facets));
-	return zone;
+        return zone;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -366,19 +357,19 @@ namespace CGAL {
                                Zone& zone) {
       if (tr.dimension() == 3) {
         bool source_facet_is_in_conflict = false;
-	// On s'occupe des facettes de la zone de conflit
-	for (typename Zone::Facets_iterator fit =
-	       zone.internal_facets.begin();
-	     fit != zone.internal_facets.end();
-	     ++fit) {
+        // On s'occupe des facettes de la zone de conflit
+        for (typename Zone::Facets_iterator fit =
+               zone.internal_facets.begin();
+             fit != zone.internal_facets.end();
+             ++fit) {
           if(before_insertion_handle_facet_inside_conflict_zone (*fit,
                                                                  source_facet))
             source_facet_is_in_conflict = true;
         }
 
-	for (typename Zone::Facets_iterator fit =
-	       zone.boundary_facets.begin(); fit !=
-	       zone.boundary_facets.end(); ++fit) {
+        for (typename Zone::Facets_iterator fit =
+               zone.boundary_facets.begin(); fit !=
+               zone.boundary_facets.end(); ++fit) {
           if(before_insertion_handle_facet_on_boundary_of_conflict_zone (*fit,
                                                                          source_facet))
             source_facet_is_in_conflict = true;
@@ -390,7 +381,7 @@ namespace CGAL {
         {
           const Facet source_other_side = mirror_facet(source_facet);
           std::stringstream error_msg;
-          error_msg << 
+          error_msg <<
             boost::format("Surface_mesher ERROR: "
                           "A facet is not in conflict with its refinement point!\n"
                           "Debugging informations:\n"
@@ -411,8 +402,8 @@ namespace CGAL {
       // If dim < 3, then the triangulation has only one facet and the
       // complex has no facet, generically
       else {
-	CGAL_assertion (tr.dimension() == 2);
-	facets_to_refine.clear();
+        CGAL_assertion (tr.dimension() == 2);
+        facets_to_refine.clear();
       }
 //       CGAL_assertion_code(const Facet& source_other_side = mirror_facet(source_facet));
 //       CGAL_assertion(
@@ -441,17 +432,17 @@ namespace CGAL {
       tr.incident_cells (v, std::back_inserter(cellules));
 
       for(typename std::vector<Cell_handle>::iterator cellule =
-	    cellules.begin();
-	  cellule != cellules.end();
-	  ++cellule) 
+            cellules.begin();
+          cellule != cellules.end();
+          ++cellule)
       {
-	// Look at all four facets of the cell, starting with the
-	// facet opposite to the new vertex
-	int indice = (*cellule)->index (v);
-	after_insertion_handle_opposite_facet (Facet (*cellule, indice));
+        // Look at all four facets of the cell, starting with the
+        // facet opposite to the new vertex
+        int indice = (*cellule)->index (v);
+        after_insertion_handle_opposite_facet (Facet (*cellule, indice));
 
-	for (int i = 1; i <= 3; ++i)
-	  after_insertion_handle_incident_facet (Facet (*cellule, (indice+i)&3));
+        for (int i = 1; i <= 3; ++i)
+          after_insertion_handle_incident_facet (Facet (*cellule, (indice+i)&3));
       }
 
 
@@ -478,7 +469,7 @@ namespace CGAL {
 
     // Actions to perform on a facet inside the conflict zone
     bool before_insertion_handle_facet_inside_conflict_zone (const Facet& f,
-                                                             const Facet& source_facet) 
+                                                             const Facet& source_facet)
     {
       const Facet other_side = mirror_facet(f);
 
@@ -521,14 +512,14 @@ namespace CGAL {
       // If the facet is infinite or has been already visited,
       // then there is nothing to do as for it or its edges
       if (tr.is_infinite(f) || is_facet_visited(f))
-	return;
+        return;
 
       new_facet<false>(f);
     }
 
     // Action to perform on any new facet
     template <bool remove_from_complex_if_not_in_restricted_Delaunay>
-    void new_facet (const Facet& f) 
+    void new_facet (const Facet& f)
     {
       const Facet other_side = mirror_facet(f);
 
@@ -545,19 +536,19 @@ namespace CGAL {
       Point center;
       if (is_facet_on_surface(f, center)) {
 
-	// NB: set_in_complex() is implementation independent and
-	// consider both sides of the facet at once
-	c2t3.set_in_complex(f);
+        // NB: set_in_complex() is implementation independent and
+        // consider both sides of the facet at once
+        c2t3.set_in_complex(f);
 
-	// NB: set_facet_surface_center() is implementation dependent
-	// and each side of the real facet has to be considered
-	// separately
-	set_facet_surface_center(f, center);
-	set_facet_surface_center(other_side, center);
+        // NB: set_facet_surface_center() is implementation dependent
+        // and each side of the real facet has to be considered
+        // separately
+        set_facet_surface_center(f, center);
+        set_facet_surface_center(other_side, center);
 
-	// On regarde alors si la facette est bonne
+        // On regarde alors si la facette est bonne
         Quality a_r;
-	if (criteria.is_bad (f, a_r)) {
+        if (criteria.is_bad (f, a_r)) {
 #ifdef CGAL_SURFACE_MESHER_TAG_BAD
           f.first->set_bad(f.second);
           other_side.first->set_bad(other_side.second);
@@ -567,7 +558,7 @@ namespace CGAL {
             facets_to_refine.insert (f, a_r);
           else
             facets_to_refine.insert (other_side, a_r);
-	}
+        }
       }
       else
         if( remove_from_complex_if_not_in_restricted_Delaunay )
@@ -592,13 +583,13 @@ namespace CGAL {
       typedef typename Surface_mesh_traits::Intersect_3 Intersect_3;
       Intersect_3 intersect = meshtraits.intersect_3_object();
       typename GT::Is_degenerate_3 is_degenerate;
-        
+
       Object dual = tr.dual(f);
 
       Object intersection;
       // If the dual is a segment
       if (const typename GT::Segment_3* segment_ptr=object_cast<typename GT::Segment_3>(&dual)) {
-	if(is_degenerate(*segment_ptr)) return false;
+        if(is_degenerate(*segment_ptr)) return false;
         intersection = intersect(surf, *segment_ptr);
       }
       // If the dual is a ray
@@ -611,17 +602,17 @@ namespace CGAL {
         // point(0) plus a vector whose coordinates are espilon).
         if(is_degenerate(*ray_ptr)) return false;
 
-	intersection = intersect(surf, *ray_ptr);
+        intersection = intersect(surf, *ray_ptr);
       }
       // If the dual is a line
       else if(const typename GT::Line_3* line_ptr = object_cast<typename GT::Line_3>(&dual)) {
-	intersection = intersect(surf, *line_ptr);
+        intersection = intersect(surf, *line_ptr);
       }
       // Else there is a problem with the dual
       else {
-	std::cerr << "In is_facet_on_surface(const Facet& f, Point& center)\n"
-		  << "file " << __FILE__ << ", line " << __LINE__ << "\n";
-	std::cerr << "Incorrect object type: " << dual.type().name() << "\n";
+        std::cerr << "In is_facet_on_surface(const Facet& f, Point& center)\n"
+                  << "file " << __FILE__ << ", line " << __LINE__ << "\n";
+        std::cerr << "Incorrect object type: " << dual.type().name() << "\n";
         CGAL_error();
       }
 
@@ -696,7 +687,7 @@ namespace CGAL {
                    const Surface& surface,
                    const Surface_mesh_traits& mesh_traits,
                    const Criteria& criteria)
-      : Base(c2t3, surface, mesh_traits, criteria), 
+      : Base(c2t3, surface, mesh_traits, criteria),
         Mesher_lvl(null_mesher_level),
         initialized(false)
     {
@@ -709,8 +700,8 @@ namespace CGAL {
                    const Surface& surface,
                    const Surface_mesh_traits& mesh_traits,
                    const Criteria& criteria,
-		   PreviousLevel& previous)
-      : Base(c2t3, surface, mesh_traits, criteria), 
+                   PreviousLevel& previous)
+      : Base(c2t3, surface, mesh_traits, criteria),
         Mesher_lvl(previous),
         initialized(false)
     {
@@ -722,8 +713,8 @@ namespace CGAL {
     std::string debug_info() const
     {
       std::stringstream s;
-      s << Base::debug_info() 
-	<< "," << Mesher_lvl::previous().debug_info();
+      s << Base::debug_info()
+        << "," << Mesher_lvl::previous().debug_info();
       return s.str();
     }
 
@@ -731,15 +722,15 @@ namespace CGAL {
     {
       std::stringstream s;
       s << Base::debug_info_header()
-	<< "," << Mesher_lvl::previous().debug_info_header();
+        << "," << Mesher_lvl::previous().debug_info_header();
       return s.str();
     }
 
     // Initialization
     void init()
       {
-	scan_triangulation();
-	initialized = true;
+        scan_triangulation();
+        initialized = true;
       }
 
     void refine_mesh () {
@@ -751,39 +742,39 @@ namespace CGAL {
       Tr& tr = this->triangulation_ref_impl();
 
       if(!initialized)
-	init();
+        init();
 
       if (verbose == NOT_VERBOSE)
-	refine (visitor);
+        refine (visitor);
       else {
-	std::cerr << "Refining...\n";
-	int nbsteps = 0;
-	CGAL::Timer timer;
+        std::cerr << "Refining...\n";
+        int nbsteps = 0;
+        CGAL::Timer timer;
         std::cerr << "Legende of the following line: "
                   << "(#vertices,#steps," << this->debug_info_header()
                   << ")\n";
-	std::cerr 
-	  << boost::format("\r             \r"
-			   "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-	  % tr.number_of_vertices()
-	  % nbsteps % this->debug_info()
-	  % (nbsteps / timer.time());
-	++nbsteps;
-	timer.start();
-	while (!is_algorithm_done()) {
-	  {
-	    CGAL_SURFACE_MESHER_TIME_PROFILER("Surface_mesher::one_step()");
-	    one_step (visitor);
-	  }
-	  std::cerr 
-	    << boost::format("\r             \r"
-			     "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-	    % tr.number_of_vertices()
-	    % nbsteps % this->debug_info()
-	    % (nbsteps / timer.time());
-	  ++nbsteps;
-	}
-	std::cerr << "\ndone.\n";
+        std::cerr
+          << boost::format("\r             \r"
+                           "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+          % tr.number_of_vertices()
+          % nbsteps % this->debug_info()
+          % (nbsteps / timer.time());
+        ++nbsteps;
+        timer.start();
+        while (!is_algorithm_done()) {
+          {
+            CGAL_SURFACE_MESHER_TIME_PROFILER("Surface_mesher::one_step()");
+            one_step (visitor);
+          }
+          std::cerr
+            << boost::format("\r             \r"
+                             "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+            % tr.number_of_vertices()
+            % nbsteps % this->debug_info()
+            % (nbsteps / timer.time());
+          ++nbsteps;
+        }
+        std::cerr << "\ndone.\n";
       }
 
       initialized = false;

@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
   }
-  
+
    //property map for the distance values to the source set
   Vertex_distance_map vertex_distance = tm.add_property_map<vertex_descriptor,double>("v:distance",0).first;
 

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Stephen Kiazyk
 
@@ -65,13 +56,18 @@ Refer to those respective papers for the details of the implementation.
 
 \tparam Traits a model of `SurfaceMeshShortestPathTraits`.
 \tparam VIM a model of `ReadablePropertyMap` with `vertex_descriptor` as key and `unsigned int` as value type.
-            The default is `boost::property_map<HG, boost::%vertex_index_t>::%type`.
+            The default is `boost::property_map<HG, boost::%vertex_index_t>::%const_type`.
 \tparam HIM a model of `ReadablePropertyMap` with `halfedge_descriptor` as key and `unsigned int` as value type.
-            The default is `boost::property_map<HG, boost::%halfedge_index_t>::%type`.
+            The default is `boost::property_map<HG, boost::%halfedge_index_t>::%const_type`.
 \tparam FIM a model of `ReadablePropertyMap` with `face_descriptor` as key and `unsigned int` as value type.
-            The default is `boost::property_map<HG, boost::%face_index_t>::%type`.
+            The default is `boost::property_map<HG, boost::%face_index_t>::%const_type`.
 \tparam VPM a model of `ReadablePropertyMap` with `vertex_descriptor` as key and `Traits::Point_3` as value type.
-            The default is `boost::property_map<HG, CGAL::vertex_point_t>::%type`.
+            The default is `boost::property_map<HG, CGAL::vertex_point_t>::%const_type`.
+
+If index property maps are not provided through the constructor of the class, internal property maps must
+be available and initialized.
+
+\sa \link BGLGraphExternalIndices `CGAL::set_halfedgeds_items_id()`\endlink
 */
 
 template<class Traits,
@@ -104,22 +100,22 @@ public:
 
   typedef typename Default::Get<
     VIM,
-    typename boost::property_map<Triangle_mesh, boost::vertex_index_t>::type
+    typename boost::property_map<Triangle_mesh, boost::vertex_index_t>::const_type
       >::type Vertex_index_map;
 
   typedef typename Default::Get<
     HIM,
-    typename boost::property_map<Triangle_mesh, boost::halfedge_index_t>::type
+    typename boost::property_map<Triangle_mesh, boost::halfedge_index_t>::const_type
       >::type Halfedge_index_map;
 
   typedef typename Default::Get<
     FIM,
-    typename boost::property_map<Triangle_mesh, boost::face_index_t>::type
+    typename boost::property_map<Triangle_mesh, boost::face_index_t>::const_type
       >::type Face_index_map;
 
   typedef typename Default::Get<
     VPM,
-    typename boost::property_map<Triangle_mesh, CGAL::vertex_point_t>::type
+    typename boost::property_map<Triangle_mesh, CGAL::vertex_point_t>::const_type
       >::type Vertex_point_map;
 
 #else
@@ -336,7 +332,7 @@ private:
 
 private:
   const Traits& m_traits;
-  Triangle_mesh& m_graph;
+  const Triangle_mesh& m_graph;
 
   Vertex_index_map m_vertexIndexMap;
   Halfedge_index_map m_halfedgeIndexMap;
@@ -1996,7 +1992,8 @@ private:
 
       for (boost::tie(current,end) = vertices(m_graph); current != end; ++current)
       {
-        std::cout << "Vertex#" << numVertices << ": p = " << get(m_vertexPointMap,*current)
+        std::cout << "Vertex#" << numVertices
+                  << ": p = " << get(m_vertexPointMap,*current)
                   << " , Saddle Vertex: " << (is_saddle_vertex(*current) ? "yes" : "no")
                   << " , Boundary Vertex: " << (is_boundary_vertex(*current) ? "yes" : "no") << std::endl;
         ++numVertices;
@@ -2109,7 +2106,8 @@ private:
             {
               std::cout << "PseudoSource Expansion: Parent = " << parent
                         << " , Vertex = " << get(m_vertexIndexMap, event->m_parent->target_vertex())
-                        << " , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << " , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_pseudo_source(parent);
@@ -2120,7 +2118,8 @@ private:
               std::cout << "Left Expansion: Parent = " << parent
                         << " Edge = (" << get(m_vertexIndexMap, source(event->m_parent->left_child_edge(), m_graph))
                         << "," << get(m_vertexIndexMap, target(event->m_parent->left_child_edge(), m_graph))
-                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << ") , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_left_child(parent, event->m_windowSegment);
@@ -2131,7 +2130,8 @@ private:
               std::cout << "Right Expansion: Parent = " << parent
                         << " , Edge = (" << get(m_vertexIndexMap, source(event->m_parent->right_child_edge(), m_graph))
                         << "," << get(m_vertexIndexMap, target(event->m_parent->right_child_edge(), m_graph))
-                        << ") , Distance = " << event->m_distanceEstimate << " , Level = " << event->m_parent->level() + 1 << std::endl;
+                        << ") , Distance = " << event->m_distanceEstimate
+                        << " , Level = " << event->m_parent->level() + 1 << std::endl;
             }
 
             expand_right_child(parent, event->m_windowSegment);
@@ -2196,11 +2196,15 @@ public:
 
   Equivalent to `Surface_mesh_shortest_path(tm, get(boost::vertex_index, tm), get(boost::halfedge_index, tm),
                                             get(boost::face_index, tm), get(CGAL::vertex_point, tm), traits)`.
+
+  Internal property maps must be available and initialized.
+
+  \sa \link BGLGraphExternalIndices `CGAL::set_halfedgeds_items_id()`\endlink
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm,
+  Surface_mesh_shortest_path(const Triangle_mesh& tm,
                              const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(const_cast<Triangle_mesh&>(tm))
+    , m_graph(tm)
     , m_vertexIndexMap(get(boost::vertex_index, tm))
     , m_halfedgeIndexMap(get(boost::halfedge_index, tm))
     , m_faceIndexMap(get(boost::face_index, tm))
@@ -2227,14 +2231,14 @@ public:
 
   \param traits Optional instance of the traits class to use.
   */
-  Surface_mesh_shortest_path(Triangle_mesh& tm,
+  Surface_mesh_shortest_path(const Triangle_mesh& tm,
                              Vertex_index_map vertexIndexMap,
                              Halfedge_index_map halfedgeIndexMap,
                              Face_index_map faceIndexMap,
                              Vertex_point_map vertexPointMap,
                              const Traits& traits = Traits())
     : m_traits(traits)
-    , m_graph(const_cast<Triangle_mesh&>(tm))
+    , m_graph(tm)
     , m_vertexIndexMap(vertexIndexMap)
     , m_halfedgeIndexMap(halfedgeIndexMap)
     , m_faceIndexMap(faceIndexMap)
@@ -2833,8 +2837,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
 
   \details The following static overload is also available:
-    - `static Face_location locate(const Point_3& p, const Triangle_mesh& tm,
-                                   Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const %Point_3& p, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2865,8 +2868,7 @@ public:
   \brief Returns the face location nearest to the given point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
-                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const %Point_3& p, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -2907,7 +2909,7 @@ public:
     that accept a reference to an `AABB_tree` as input.
 
   \details The following static overload is also available:
-    - `static Face_location locate(const Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
+    - `static Face_location locate(const %Ray_3& ray, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())`
 
   \tparam AABBTraits A model of `AABBTraits` used to define an `AABB_tree`.
 
@@ -2939,8 +2941,7 @@ public:
     its source point.
 
   \details The following static overload is also available:
-    - static Face_location locate(const Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm,
-                                  Vertex_point_map vertexPointMap, const Traits& traits = Traits())
+    - static Face_location locate(const %Ray_3& ray, const AABB_tree<AABBTraits>& tree, const Triangle_mesh& tm, Vertex_point_map vertexPointMap, const Traits& traits = Traits())
 
   \tparam AABBTraits A model of `AABBTraits` used to define a \cgal `AABB_tree`.
 
@@ -3013,9 +3014,7 @@ public:
 
   /// \endcond
 
-  /// @}
-
-  /*
+  /*!
   \brief Creates an `AABB_tree` suitable for use with `locate`.
 
   \details The following static overload is also available:
@@ -3031,14 +3030,14 @@ public:
     build_aabb_tree(m_graph, outTree, m_vertexPointMap);
   }
 
+  /// \cond
+
   template <class AABBTraits>
   void build_aabb_tree(AABB_tree<AABBTraits>& outTree,
                        Vertex_point_map vertexPointMap) const
   {
     build_aabb_tree(m_graph, outTree, vertexPointMap);
   }
-
-  /// \cond
 
   template <class AABBTraits>
   static void build_aabb_tree(const Triangle_mesh& tm,
@@ -3052,6 +3051,7 @@ public:
   }
   /// \endcond
 
+  /// @}
 };
 
 } // namespace CGAL

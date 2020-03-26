@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -120,7 +111,7 @@ public:
     Gps_traits_adaptor<Traits_2>  tr;
     return (tr.orientation_2_object()(m_xcurves.begin(), m_xcurves.end()));
   }
-  
+
   void reverse_orientation()
   {
     m_xcurves.reverse();
@@ -158,7 +149,7 @@ public:
     {
       result = result + first->bbox();
     }
-      
+
     return result;
   }
 };
@@ -174,7 +165,7 @@ std::istream &operator>>(std::istream &is, General_polygon_2<Traits>& p)
   int n; // number of edges
   is >> n;
   typename Traits::X_monotone_curve_2 cv;
- 
+
   if (is) {
       p.clear();
       for (int i=0; i<n; i++) {
@@ -182,7 +173,7 @@ std::istream &operator>>(std::istream &is, General_polygon_2<Traits>& p)
         p.push_back(cv);
       }
   }
- 
+
   return is;
 }
 

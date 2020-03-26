@@ -1,19 +1,10 @@
 // Copyright (c) 2015  GeometryFactory (France). All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Sebastien Loriot
 //
@@ -587,32 +578,44 @@ void expand_face_selection_for_removal(const FaceRange& faces_to_be_deleted,
       next_around_vertex = opposite( next(hd, tm), tm);
       if (hd==start) break;
     }
-    if ( get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
+    if ( is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) ) continue; //all incident faces will be removed
 
     while( true )
     {
       // collect non-selected faces
       std::vector<halfedge_descriptor> faces_traversed;
+      bool non_selected_face_range_has_boundary = false; // handle non-manifold situations when crossing a border
       do
       {
         faces_traversed.push_back(next_around_vertex);
         next_around_vertex = opposite( next(next_around_vertex, tm), tm);
         if (is_border(next_around_vertex,tm))
+        {
           next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+          if (!get(is_selected, face(next_around_vertex, tm) ))
+          {
+            non_selected_face_range_has_boundary=true; // always non-manifold after removal of the selection
+            break;
+          }
+        }
         CGAL_assertion(!is_border(next_around_vertex,tm));
       }
       while( !get(is_selected, face(next_around_vertex, tm) ) );
 
-      // go over the connected components of faces to remove
-      do{
+      if (!non_selected_face_range_has_boundary)
+      {
+        // go over the connected components of faces to remove
+        do{
+          if (next_around_vertex==start)
+            break;
+          next_around_vertex = opposite( next(next_around_vertex, tm), tm);
+        }
+        while(is_border(next_around_vertex,tm) || get(is_selected, face(next_around_vertex, tm) ) );
+
         if (next_around_vertex==start)
           break;
-        next_around_vertex = opposite( next(next_around_vertex, tm), tm);
       }
-      while( get(is_selected, face(next_around_vertex, tm) ) );
-
-      if (next_around_vertex==start)
-        break;
+      // else we simply mark the range of traversed faces and start a new range after the border
 
       for(halfedge_descriptor f_hd : faces_traversed)
       {

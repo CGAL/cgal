@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -56,10 +47,10 @@ private:
 public:
   bool
   operator()(const Site_2& p1,
-	     const Site_2& p2,
-	     const Site_2& p3,
-	     const Site_2& p4,
-	     const Site_2& q, bool b, const Method_tag& tag) const
+             const Site_2& p2,
+             const Site_2& p3,
+             const Site_2& p4,
+             const Site_2& q, bool b, const Method_tag& tag) const
   {
 #if 1
     Constructive_orientation_2 orientation123(p1, p2, p3, true);
@@ -84,47 +75,47 @@ public:
 
     if ( b ) {
       if ( o123_s != o142_s ) {
-	Orientation o123_1 = orientation123(p1, q);
-	Orientation o123_2 = orientation123(p2, q);
-	if ( o123_1 == POSITIVE && o123_2 == NEGATIVE ) { return true; }
+        Orientation o123_1 = orientation123(p1, q);
+        Orientation o123_2 = orientation123(p2, q);
+        if ( o123_1 == POSITIVE && o123_2 == NEGATIVE ) { return true; }
 
-	Orientation o142_1 = orientation142(p1, q);
-	Orientation o142_2 = orientation142(p2, q);
-	return (o142_1 == NEGATIVE && o142_2 == POSITIVE);
+        Orientation o142_1 = orientation142(p1, q);
+        Orientation o142_2 = orientation142(p2, q);
+        return (o142_1 == NEGATIVE && o142_2 == POSITIVE);
       }
 
       Oriented_side os = Side_of_bisector_2()(p1, p2, q.point());
 
       if ( o123_s == POSITIVE ) {
-	if ( os == ON_POSITIVE_SIDE ) {
-	  Orientation o142_1 = orientation142(p1, q);
-	  if ( o142_1 == NEGATIVE ) { return true; }
+        if ( os == ON_POSITIVE_SIDE ) {
+          Orientation o142_1 = orientation142(p1, q);
+          if ( o142_1 == NEGATIVE ) { return true; }
 
-	  Orientation o123_1 = orientation123(p1, q);
-	  return o123_1 == POSITIVE;
-	}
+          Orientation o123_1 = orientation123(p1, q);
+          return o123_1 == POSITIVE;
+        }
 
-	Orientation o142_2 = orientation142(p2, q);
-	if ( o142_2 == POSITIVE ) { return true; }
+        Orientation o142_2 = orientation142(p2, q);
+        if ( o142_2 == POSITIVE ) { return true; }
 
-	Orientation o123_2 = orientation123(p2, q);
-	return o123_2 == NEGATIVE;
+        Orientation o123_2 = orientation123(p2, q);
+        return o123_2 == NEGATIVE;
       }
 
       if ( o123_s == NEGATIVE ) {
-	if ( os == ON_POSITIVE_SIDE ) {
-	  Orientation o123_1 = orientation123(p1, q);
-	  if ( o123_1 == POSITIVE ) { return true; }
+        if ( os == ON_POSITIVE_SIDE ) {
+          Orientation o123_1 = orientation123(p1, q);
+          if ( o123_1 == POSITIVE ) { return true; }
 
-	  Orientation o142_1 = orientation142(p1, q);
-	  return o142_1 == NEGATIVE;
-	}
+          Orientation o142_1 = orientation142(p1, q);
+          return o142_1 == NEGATIVE;
+        }
 
-	Orientation o123_2 = orientation123(p2, q);	
-	if ( o123_2 == NEGATIVE ) { return true; }
+        Orientation o123_2 = orientation123(p2, q);
+        if ( o123_2 == NEGATIVE ) { return true; }
 
-	Orientation o142_2 = orientation142(p2, q);
-	return o142_2 == POSITIVE;
+        Orientation o142_2 = orientation142(p2, q);
+        return o142_2 == POSITIVE;
       }
 
       CGAL_assertion( o123_s == ZERO );
@@ -141,7 +132,7 @@ public:
 
       Orientation o123_2 = orientation123(p2, q);
       if ( o123_2 != NEGATIVE ) { return false; }
-      
+
       Orientation o142_1 = orientation142(p1, q);
       if ( o142_1 != NEGATIVE ) { return false; }
 
@@ -153,11 +144,11 @@ public:
 
     if ( o123_s == POSITIVE ) {
       if ( os == ON_POSITIVE_SIDE ) {
-	Orientation o123_1 = orientation123(p1, q);
-	if ( o123_1 != POSITIVE ) { return false; }
+        Orientation o123_1 = orientation123(p1, q);
+        if ( o123_1 != POSITIVE ) { return false; }
 
-	Orientation o142_1 = orientation142(p1, q);
-	return o142_1 == NEGATIVE;
+        Orientation o142_1 = orientation142(p1, q);
+        return o142_1 == NEGATIVE;
       }
 
       Orientation o123_2 = orientation123(p2, q);
@@ -169,11 +160,11 @@ public:
 
     if ( o123_s == NEGATIVE ) {
       if ( os == ON_POSITIVE_SIDE ) {
-	Orientation o142_1 = orientation142(p1, q);
-	if ( o142_1 != NEGATIVE ) { return false; }
+        Orientation o142_1 = orientation142(p1, q);
+        if ( o142_1 != NEGATIVE ) { return false; }
 
-	Orientation o123_1 = orientation123(p1, q);
-	return o123_1 == POSITIVE;
+        Orientation o123_1 = orientation123(p1, q);
+        return o123_1 == POSITIVE;
       }
       Orientation o142_2 = orientation142(p2, q);
       if ( o142_2 != POSITIVE ) { return false; }
@@ -193,7 +184,7 @@ public:
       //      std::cerr << "o142_1: " << o142_1 << std::endl;
 
       if ( b ) {
-	return !(o123_1 == NEGATIVE && o142_1 == POSITIVE);
+        return !(o123_1 == NEGATIVE && o142_1 == POSITIVE);
       }
       return o123_1 == POSITIVE && o142_1 == NEGATIVE;
     }
@@ -221,41 +212,41 @@ public:
 
     if ( b ) {
       if ( o123_s != o142_s ) {
-	Orientation o123_1 = orientation123(p1, q);
-	Orientation o123_2 = orientation123(p2, q);
-	if ( o123_1 == POSITIVE && o123_2 == NEGATIVE ) { return true; }
+        Orientation o123_1 = orientation123(p1, q);
+        Orientation o123_2 = orientation123(p2, q);
+        if ( o123_1 == POSITIVE && o123_2 == NEGATIVE ) { return true; }
 
-	Orientation o142_1 = orientation142(p1, q);
-	Orientation o142_2 = orientation142(p2, q);
-	return (o142_1 == NEGATIVE && o142_2 == POSITIVE);
+        Orientation o142_1 = orientation142(p1, q);
+        Orientation o142_2 = orientation142(p2, q);
+        return (o142_1 == NEGATIVE && o142_2 == POSITIVE);
       }
 
       if ( o123_s == POSITIVE ) {
-	Orientation o142_1 = orientation142(p1, q);
-	if ( o142_1 == NEGATIVE ) { return true; }
+        Orientation o142_1 = orientation142(p1, q);
+        if ( o142_1 == NEGATIVE ) { return true; }
 
-	Orientation o142_2 = orientation142(p2, q);
-	if ( o142_2 == POSITIVE ) { return true; }
+        Orientation o142_2 = orientation142(p2, q);
+        if ( o142_2 == POSITIVE ) { return true; }
 
-	Orientation o123_1 = orientation123(p1, q);
-	if ( o123_1 != POSITIVE ) { return false; }
+        Orientation o123_1 = orientation123(p1, q);
+        if ( o123_1 != POSITIVE ) { return false; }
 
-	Orientation o123_2 = orientation123(p2, q);
-	return o123_2 == NEGATIVE;
+        Orientation o123_2 = orientation123(p2, q);
+        return o123_2 == NEGATIVE;
       }
 
       if ( o123_s == NEGATIVE ) {
-	Orientation o123_1 = orientation123(p1, q);
-	if ( o123_1 == POSITIVE ) { return true; }
+        Orientation o123_1 = orientation123(p1, q);
+        if ( o123_1 == POSITIVE ) { return true; }
 
-	Orientation o123_2 = orientation123(p2, q);
-	if ( o123_2 == NEGATIVE ) { return true; }
+        Orientation o123_2 = orientation123(p2, q);
+        if ( o123_2 == NEGATIVE ) { return true; }
 
-	Orientation o142_1 = orientation142(p1, q);
-	if ( o142_1 != NEGATIVE ) { return false; }
+        Orientation o142_1 = orientation142(p1, q);
+        if ( o142_1 != NEGATIVE ) { return false; }
 
-	Orientation o142_2 = orientation142(p2, q);
-	return o142_2 == POSITIVE;
+        Orientation o142_2 = orientation142(p2, q);
+        return o142_2 == POSITIVE;
       }
 
       CGAL_assertion( o123_s == ZERO );
@@ -272,7 +263,7 @@ public:
 
       Orientation o123_2 = orientation123(p2, q);
       if ( o123_2 != NEGATIVE ) { return false; }
-      
+
       Orientation o142_1 = orientation142(p1, q);
       if ( o142_1 != NEGATIVE ) { return false; }
 
@@ -344,10 +335,10 @@ public:
 public:
   bool
   operator()(const Site_2& p1,
-	     const Site_2& p2,
-	     const Site_2& p3,
-	     const Site_2& p4,
-	     const Site_2& q, bool b, const Method_tag& tag) const
+             const Site_2& p2,
+             const Site_2& p3,
+             const Site_2& p4,
+             const Site_2& q, bool b, const Method_tag& tag) const
   {
     typedef Inside_Voronoi_quadrilateral8<K,Method_tag> Inside_quadrilateral;
 
@@ -408,7 +399,7 @@ public:
 
 
       Comparison_result r =
-	Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
+        Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
 
       if ( r != SMALLER ) { return false; }
 
@@ -488,7 +479,7 @@ public:
   template<class Method_tag>
   bool
   operator()(const Site_2& p1, const Site_2& p2, const Site_2& p3,
-	     const Site_2& q, bool b, const Method_tag& tag) const
+             const Site_2& q, bool b, const Method_tag& tag) const
   {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::shadow_region_type_counter++;
@@ -544,7 +535,7 @@ public:
       Voronoi_circle vc_12q(vr_12q);
 
       Comparison_result r =
-	Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
+        Order_on_finite_bisector()(vc_123, vc_12q, p1, p2, tag);
 
       return ( r == SMALLER );
     }
@@ -562,9 +553,9 @@ public:
 
   inline
   Sign sqrt_ext_sign(const FT& A1, const FT& Dr, const FT& B,
-		     const FT& Dx1, const FT& Dy1, 
-		     const FT& Dx2, const FT& Dy2, 
-		     const Field_with_sqrt_tag&) const
+                     const FT& Dx1, const FT& Dy1,
+                     const FT& Dx2, const FT& Dy2,
+                     const Field_with_sqrt_tag&) const
   {
     FT D = CGAL::square(Dx1) + CGAL::square(Dy1) - CGAL::square(Dr);
     return CGAL::sign(A1 * Dr + B * CGAL::sqrt(D));
@@ -572,9 +563,9 @@ public:
 
   inline
   Sign sqrt_ext_sign(const FT& A1, const FT& Dr, const FT& B,
-		     const FT& Dx1, const FT& Dy1, 
-		     const FT& Dx2, const FT& Dy2,
-		     const Integral_domain_without_division_tag&) const
+                     const FT& Dx1, const FT& Dy1,
+                     const FT& Dx2, const FT& Dy2,
+                     const Integral_domain_without_division_tag&) const
   {
     Sign sA = CGAL::sign(A1) * CGAL::sign(Dr);
     Sign sB = CGAL::sign(B);
@@ -590,8 +581,8 @@ public:
   template<class Method_tag>
   Orientation
   orientation_wrt_bitangent_perp(const Site_2& p1, const Site_2& p2,
-				 const Site_2& q1, const Site_2& q2,
-				 const Method_tag& tag) const
+                                 const Site_2& q1, const Site_2& q2,
+                                 const Method_tag& tag) const
   {
     // computes the orientation predicate of the line perpendicular to
     // the bitangent of p1 and p2, passing through the center of q1,
@@ -615,7 +606,7 @@ public:
   template<class Method_tag>
   bool
   operator()(const Site_2& p1, const Site_2& p2,
-	     const Site_2& q, bool b, const Method_tag& tag) const
+             const Site_2& q, bool b, const Method_tag& tag) const
   {
 #if 0
     Side_of_bisector_2 side_of_bisector;
@@ -625,8 +616,8 @@ public:
 
     if ( o12_sym == CGAL::POSITIVE ) {
       if ( os == ON_POSITIVE_SIDE ) {
-	Orientation o21_1 = orientation_wrt_bitangent_perp(p2, p1, p1, q, tag);
-	return o21_1 == NEGATIVE;
+        Orientation o21_1 = orientation_wrt_bitangent_perp(p2, p1, p1, q, tag);
+        return o21_1 == NEGATIVE;
       }
 
       Orientation o21_2 = orientation_wrt_bitangent_perp(p2, p1, p2, q, tag);
@@ -634,8 +625,8 @@ public:
 
     } else {
       if ( os == ON_POSITIVE_SIDE ) {
-	Orientation o12_1 = orientation_wrt_bitangent_perp(p1, p2, p1, q, tag);
-	return o12_1 == POSITIVE;
+        Orientation o12_1 = orientation_wrt_bitangent_perp(p1, p2, p1, q, tag);
+        return o12_1 == POSITIVE;
       }
 
       Orientation o12_2 = orientation_wrt_bitangent_perp(p1, p2, p2, q, tag);
@@ -690,10 +681,10 @@ public:
 
   inline
   bool operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& q, bool b) const
+                  const Site_2& q, bool b) const
   {
     typedef Finite_edge_interior_conflict_2<K,MTag> Old_Test;
-    bool t = Test_degenerated()(p1, p2, q, b, Method_tag());    
+    bool t = Test_degenerated()(p1, p2, q, b, Method_tag());
     //    bool t = Old_Test()(p1, p2, q, b);
 #ifndef NDEBUG
     bool t_old = Old_Test()(p1, p2, q, b);
@@ -701,7 +692,7 @@ public:
     if ( t != t_old ) {
       std::cerr << std::endl;
       std::cerr << "b: " << b << "; t: " << t
-		<< "; t_old: " << t_old << std::endl;
+                << "; t_old: " << t_old << std::endl;
       std::cerr << "p1: " << p1 << std::endl;
       std::cerr << "p2: " << p2 << std::endl;
       std::cerr << "q: " << q << std::endl;
@@ -714,18 +705,18 @@ public:
 
   inline
   bool operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& p3, const Site_2& q, bool b) const
+                  const Site_2& p3, const Site_2& q, bool b) const
   {
-    return Test_degenerated()(p1, p2, p3, q, b, Method_tag());    
+    return Test_degenerated()(p1, p2, p3, q, b, Method_tag());
   }
 
   inline
   bool operator()(const Site_2& p1, const Site_2& p2,
-		  const Site_2& p3, const Site_2& p4,
-		  const Site_2& q, bool b) const
+                  const Site_2& p3, const Site_2& p4,
+                  const Site_2& q, bool b) const
   {
     typedef Finite_edge_interior_conflict_2<K,MTag> Old_Test;
-    bool t = Test()(p1, p2, p3, p4, q, b, Method_tag());    
+    bool t = Test()(p1, p2, p3, p4, q, b, Method_tag());
     //    bool t = Old_Test()(p1, p2, p3, p4, q, b);
 #ifndef NDEBUG
     bool t_old = Old_Test()(p1, p2, p3, p4, q, b);
@@ -747,7 +738,7 @@ public:
 
     CGAL_assertion( t == t_old );
 #endif
-    return t; //Test()(p1, p2, p3, p4, q, b, Method_tag());    
+    return t; //Test()(p1, p2, p3, p4, q, b, Method_tag());
   }
 };
 

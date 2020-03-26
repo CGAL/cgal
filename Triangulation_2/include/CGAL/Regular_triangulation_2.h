@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Frederic Fichel, Mariette Yvinec, Julia Floetotto
 
@@ -176,7 +167,7 @@ public:
   };
 
   typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertex_handles;
-  
+
   class Finite_vertices_iterator :
     public Filter_iterator<Finite_vib, Hidden_tester>
   {
@@ -193,7 +184,7 @@ public:
  };
 
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
-  
+
   class Hidden_vertices_iterator :
     public Filter_iterator<Finite_vib, Unhidden_tester>
   {
@@ -210,7 +201,7 @@ public:
  };
 
   typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator> > Hidden_vertex_handles;
-  
+
  //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;
   typedef Finite_edges_iterator                Edge_iterator;
@@ -348,17 +339,17 @@ public:
   All_vertices_iterator all_vertices_begin() const;
   All_vertices_iterator all_vertices_end() const;
   All_vertex_handles all_vertex_handles() const;
-  
+
   Finite_vertices_iterator finite_vertices_begin() const;
   Finite_vertices_iterator finite_vertices_end() const;
   Finite_vertex_handles finite_vertex_handles() const;
-  
+
   Vertex_handle finite_vertex() const;
 
   Hidden_vertices_iterator hidden_vertices_begin() const;
   Hidden_vertices_iterator hidden_vertices_end() const;
   Hidden_vertex_handles hidden_vertex_handles() const;
-  
+
 //  Vertex_handle file_input(std::istream& is);
 //  void file_output(std::ostream& os) const;
 
@@ -2201,7 +2192,7 @@ all_vertices_end() const
   return CGAL::filter_iterator(Base::all_vertices_end(),
                                Hidden_tester());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::All_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
@@ -2209,7 +2200,7 @@ all_vertex_handles() const
 {
   return make_prevent_deref_range(all_vertices_begin(),all_vertices_end());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Finite_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
@@ -2220,7 +2211,7 @@ finite_vertices_begin() const
                                Base::finite_vertices_begin());
 }
 
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::
@@ -2247,7 +2238,7 @@ finite_vertex_handles() const
 {
   return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
 }
- 
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Hidden_vertices_iterator
 Regular_triangulation_2<Gt,Tds>::
@@ -2266,7 +2257,7 @@ hidden_vertices_end() const
   return CGAL::filter_iterator(Base::finite_vertices_end(),
                                Unhidden_tester());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Hidden_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
@@ -2274,7 +2265,7 @@ hidden_vertex_handles() const
 {
   return make_prevent_deref_range(hidden_vertices_begin(),hidden_vertices_end());
 }
-  
+
 template < class Gt, class Tds >
 typename Regular_triangulation_2<Gt,Tds>::Vertex_handle
 Regular_triangulation_2<Gt,Tds>::

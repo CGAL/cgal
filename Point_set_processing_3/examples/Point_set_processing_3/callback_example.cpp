@@ -18,12 +18,7 @@ typedef Kernel::Point_3 Point;
 typedef CGAL::Random_points_on_sphere_3<Point> Generator;
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // instance of std::function<bool(double)>
 struct Progress_to_std_cerr_callback
@@ -41,7 +36,7 @@ struct Progress_to_std_cerr_callback
     t_start = timer.time();
     t_latest = t_start;
   }
-  
+
   bool operator()(double advancement) const
   {
     // Avoid calling time() at every single iteration, which could
@@ -55,7 +50,7 @@ struct Progress_to_std_cerr_callback
     {
       std::cerr << "\r" // Return at the beginning of same line and overwrite
                 << name << ": " << int(advancement * 100) << "%";
-      
+
       if (advancement == 1)
         std::cerr << std::endl;
       t_latest = t;
@@ -69,7 +64,7 @@ struct Progress_to_std_cerr_callback
 int main (int argc, char* argv[])
 {
   int N = (argc > 1) ? boost::lexical_cast<int>(argv[1]) : 1000;
-  
+
   // Generate N points on a sphere of radius 100.
   std::vector<Point> points;
   points.reserve (N);
