@@ -10,7 +10,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-//
+// 
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -29,7 +29,7 @@ namespace internal {
 
 template <class K>
 bool
-do_intersect(const typename K::Circle_2 & c,
+do_intersect(const typename K::Circle_2 & c, 
              const typename K::Line_2& l,
              const K&)
 {
@@ -38,7 +38,7 @@ do_intersect(const typename K::Circle_2 & c,
 
 template <class K>
 bool
-do_intersect(const typename K::Line_2& l,
+do_intersect(const typename K::Line_2& l, 
              const typename K::Circle_2 & c,
              const K&)
 {
