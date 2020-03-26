@@ -98,7 +98,7 @@ std::size_t Scene::nb_digits(std::size_t value)
 }
 
 // bench memory against number of facets in the tree
-// the tree is reconstructed each timer in the mesh 
+// the tree is reconstructed each timer in the mesh
 // refinement loop
 void Scene::bench_memory()
 {
@@ -168,8 +168,8 @@ void Scene::bench_construction()
         tree2.accelerate_distance_queries();
         double duration_construction_and_kdtree = time2.time();
 
-        std::cout << m_pPolyhedron->size_of_facets() << "\t" 
-            << duration_construction_alone     << "\t" 
+        std::cout << m_pPolyhedron->size_of_facets() << "\t"
+            << duration_construction_alone     << "\t"
             << duration_construction_and_kdtree << std::endl;
     }
 }

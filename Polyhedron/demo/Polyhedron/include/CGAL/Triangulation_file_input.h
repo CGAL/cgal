@@ -28,7 +28,7 @@
 
 namespace CGAL {
 
-template <typename Tr1, 
+template <typename Tr1,
           typename Tr2,
           typename Update_vertex,
           typename Update_cell>

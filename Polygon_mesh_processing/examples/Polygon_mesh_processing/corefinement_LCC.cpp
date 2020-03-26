@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   CGAL::write_off(output, mesh1);
   output.close();
   output.open("mesh2_refined.off");
-  CGAL::write_off(output, mesh2);  
+  CGAL::write_off(output, mesh2);
   output.close();
 
   return 0;

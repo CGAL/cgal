@@ -11,11 +11,11 @@
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh; 
+typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 
 namespace SMS = CGAL::Surface_mesh_simplification;
 
-int main( int argc, char** argv ) 
+int main( int argc, char** argv )
 {
   Surface_mesh surface_mesh;
 
@@ -26,7 +26,7 @@ int main( int argc, char** argv )
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
   SMS::Count_stop_predicate<Surface_mesh> stop(num_halfedges(surface_mesh)/2 - 1);
-     
+
   typedef SMS::Bounded_normal_change_placement<SMS::LindstromTurk_placement<Surface_mesh> > Placement;
 
 
@@ -44,5 +44,5 @@ int main( int argc, char** argv )
   os.precision(17);
   os << surface_mesh;
 
-  return EXIT_SUCCESS;      
+  return EXIT_SUCCESS;
 }

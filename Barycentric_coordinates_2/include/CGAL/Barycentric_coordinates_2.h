@@ -28,4 +28,3 @@
 #include <CGAL/Barycentric_coordinates_2/Mean_value_2.h>    
 
 #endif // CGAL_BARYCENTRIC_COORDINATES_2_H
-  

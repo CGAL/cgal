@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_3D_Skin_Surface_Meshing
 \anchor chapterSkinSurface
 \htmlonly
@@ -17,7 +17,7 @@ namespace CGAL {
 \image html molecule.png ""
 \image latex molecule.png ""
 
-\section sectionSkinSurfaceIntro Introduction 
+\section sectionSkinSurfaceIntro Introduction
 
 Skin surfaces, introduced by Edelsbrunner in \cgalCite{cgal:e-dssd-99},
 have a rich and simple combinatorial and geometric structure that
@@ -35,12 +35,12 @@ hyperboloids connecting the balls.
 
 This package constructs a mesh isotopic to the skin surface defined by
 a set of balls and a shrink factor using the algorithm described in
-\cgalCite{cgal:kv-mssct-05}. 
+\cgalCite{cgal:kv-mssct-05}.
 
 An optimized algorithm is implemented for meshing the union of a set
 of balls.
 
-\section secskindefinition Definition of a Skin Surface 
+\section secskindefinition Definition of a Skin Surface
 
 \cgalFigureBegin{figtwoPoints,convexTwoPoints.png}
 Left: Convex combinations of two weighted points (the two dashed circles).  Right: The skin curve of the weighted points. The smaller circles form a subset of the weighted points whose boundary is the skin curve.
@@ -59,7 +59,7 @@ unweighted point.
 
 A pseudo distance between a weighted point \f$ \ssWpoint{p} =
 (p,\ssWeight{P})\f$ and an unweighted point \f$ x\f$ is defined as
-\f[ 
+\f[
 \pi(\ssWpoint{p},x) = \dabs{p-x}^2 - \ssWeight{p},
 \f]
 where \f$ \dabs{p-x}\f$ is the Euclidean distance between \f$ p\f$ and \f$ x\f$. The
@@ -99,7 +99,7 @@ this set of weighted points:
 \anchor eqdefskin
 \f{eqnarray}{
 \mbox{skn}^{s}(\ssWpoint{P})
-&=& \partial\;{\bigcup\{\ssWpoint{p}^s\mid 
+&=& \partial\;{\bigcup\{\ssWpoint{p}^s\mid
 \ssWpoint{p}\in \mbox{conv} (\ssWpoint{P})\}}.
 \f}
 
@@ -140,9 +140,9 @@ of weighted points, a shrink factor and the number of subdivision
 steps and outputs a mesh in a `Polyhedron_3`:
 
 \code{.cpp}
-template <class WP_iterator, class Polyhedron_3> 
+template <class WP_iterator, class Polyhedron_3>
 void make_skin_surface_mesh_3(Polyhedron_3 &p,
-                              WP_iterator begin, WP_iterator end, 
+                              WP_iterator begin, WP_iterator end,
                               FT shrink_factor=.5,
                               int nSubdiv=0,
                               bool grow_balls = true);
@@ -158,8 +158,8 @@ points should be grown in such a way that the skin surface wraps
 around the input balls instead of the shrunk input balls.
 
 \code{.cpp}
-template <class SkinSurfaceTraits_3> 
-Skin_surface_3(WP_iterator begin, WP_iterator end, 
+template <class SkinSurfaceTraits_3>
+Skin_surface_3(WP_iterator begin, WP_iterator end,
                FT shrink_factor,
                bool grow_balls = true);
 \endcode
@@ -177,8 +177,8 @@ the union of balls class is similar, except for the missing shrink
 factor:
 
 \code{.cpp}
-template <class SkinSurfaceTraits_3> 
-Union_of_balls_3(WP_iterator begin, WP_iterator end, 
+template <class SkinSurfaceTraits_3>
+Union_of_balls_3(WP_iterator begin, WP_iterator end,
                  bool grow_balls = true);
 \endcode
 
@@ -216,11 +216,11 @@ GHz, with 1 Gb of memory.
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=4><HR>
 <TR>
 <TD ALIGN=LEFT NOWRAP>
-Data set 
+Data set
 <TD ALIGN=CENTER NOWRAP>
-Number of weighted points 
+Number of weighted points
 <TD ALIGN=CENTER NOWRAP>
-Coarse mesh 
+Coarse mesh
 <TD ALIGN=CENTER NOWRAP>
 first subdivision step
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=4><HR>
@@ -228,18 +228,18 @@ first subdivision step
 <TD ALIGN=LEFT NOWRAP>
 Caffeine
 <TD ALIGN=CENTER NOWRAP>
-23 
+23
 <TD ALIGN=CENTER NOWRAP>
-0.2 sec. 
+0.2 sec.
 <TD ALIGN=CENTER NOWRAP>
 0.05 sec.
 <TR>
 <TD ALIGN=LEFT NOWRAP>
 Gramicidin A
 <TD ALIGN=CENTER NOWRAP>
-318 
+318
 <TD ALIGN=CENTER NOWRAP>
-5 sec. 
+5 sec.
 <TD ALIGN=CENTER NOWRAP>
 2 sec.
 <TR><TD ALIGN=LEFT NOWRAP COLSPAN=4><HR>
@@ -271,6 +271,6 @@ the `Polyhedron_3` is not necessary, but gives the subdivision
 a significant speedup.
 \cgalExample{Skin_surface_3/skin_surface_subdiv.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

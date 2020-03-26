@@ -63,7 +63,7 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
     Multi_info<int> info = info_id;
     info_id++;
     std::cout << "SITE TO BE INSERTED: "
-	      << site << " " << info << std::endl;
+              << site << " " << info << std::endl;
     sdg.insert(site, info);
   }
   std::cout << std::endl;
@@ -72,7 +72,7 @@ bool test(SDG& sdg, char* fname, bool read_info = false)
   for (FVIT it = sdg.finite_vertices_begin();
        it != sdg.finite_vertices_end(); ++it) {
     std::cout << it->site() << " "
-	      << it->storage_site().info() << std::endl;
+              << it->storage_site().info() << std::endl;
   }
 
   // validate the segment Delaunay graph
@@ -105,7 +105,7 @@ int main()
 
   print_separator();
   b = test(sdg, "data/bizarre.cin");
-  assert( b );  
+  assert( b );
 
   print_separator();
   b = test(sdg, "data/sitesx.cin", true);

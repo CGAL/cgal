@@ -466,10 +466,21 @@ protected:
         c = m_in->get();
       }
     }
+    else
+      if (c == '\n')
+      {
+        c = m_in->get();
+        if ( c!= '#')
+        {
+          m_in->putback(c);
+          return;
+        }
+      }
 
     // Skip comment lines that begin with a '#' character.
     while (c != EOF && c == '#')
     {
+      if (c != '\n')
       _skip_until_EOL();
       c = m_in->get();
     }

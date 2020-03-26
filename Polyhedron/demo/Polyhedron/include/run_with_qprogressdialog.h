@@ -17,7 +17,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 class Signal_callback
 {
 private:
-  
+
   CGAL::Real_timer timer;
   double t_start;
   mutable double t_latest;
@@ -45,9 +45,9 @@ public:
   {
     if (!state)
       return false;
-    
+
     *latest_adv = advancement;
-    
+
     // Avoid calling time() at every single iteration, which could
     // impact performances very badly
     ++ nb;
@@ -61,11 +61,11 @@ public:
       signaler->emit_signal (int (100. * advancement));
 
       t_latest = t;
-      
+
       if (signaler->is_canceled)
         *state = false;
     }
-    
+
     return *state;
   }
 
@@ -79,7 +79,7 @@ protected:
 public:
 
   Signal_callback* callback() { return m_callback.get(); }
-  
+
   Functor_with_signal_callback()
     : m_callback (new Signal_callback(true)) { }
 
@@ -106,9 +106,9 @@ void run_with_qprogressdialog (Functor& functor,
                             0, 100,
                             mainWindow);
   progress.setMinimumDuration(0);
-  
+
   Signal_callback* signal_callback = functor.callback();
-    
+
   QEventLoop::connect (signal_callback->signaler.get(), SIGNAL(progressChanged(int)),
                        &progress, SLOT(setValue(int)));
   QEventLoop::connect (&progress, SIGNAL(canceled()),
@@ -125,7 +125,7 @@ void run_with_qprogressdialog (Functor& functor,
       CGAL::cpp11::sleep_for (0.1);
       QApplication::processEvents ();
     }
-    
+
     thread.join();
   }
   else
@@ -134,7 +134,7 @@ void run_with_qprogressdialog (Functor& functor,
     progress.setWindowModality(Qt::WindowModal);
     functor();
   }
-  
+
   mainWindow->setEnabled(true);
 }
 

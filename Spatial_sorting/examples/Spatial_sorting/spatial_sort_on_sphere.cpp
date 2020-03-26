@@ -20,7 +20,7 @@ int main ()
   std::cout << "UNIT SPHERE: " << std::endl;
 
   v.reserve(size);
-                                                                    
+
   CGAL::Random_points_on_sphere_3<Point> unit_sphere(1.0, random);  // generate points
   for (std::size_t i = 0; i < size; ++i) v.push_back(*unit_sphere++);
 

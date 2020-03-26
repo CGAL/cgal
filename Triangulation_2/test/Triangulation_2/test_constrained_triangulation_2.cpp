@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation/test_constrained_triangulation.C
 // source        : $URL$
 // revision      : $Id$
@@ -43,7 +43,7 @@ int main()
   typedef CGAL::Exact_predicates_tag                               Itag;
   typedef CGAL::Constrained_triangulation_2<TestK,TDS,Itag>        Ctwi;
   _test_cls_constrained_triangulation(Ctwi());
-  
+
   std::cout << "Testing constrained_triangulation "<< std::endl;
   std::cout << " with Exact_intersections_tag : " << std::endl;
   typedef CGAL::Triangulation_vertex_base_2<EK>                 Vbb;
@@ -52,6 +52,6 @@ int main()
   typedef CGAL::Exact_intersections_tag                         EItag;
   typedef CGAL::Constrained_triangulation_2<EK,TDSS,EItag>      Ctwei;
   _test_cls_constrained_triangulation(Ctwei());
-  
+
   return 0;
 }

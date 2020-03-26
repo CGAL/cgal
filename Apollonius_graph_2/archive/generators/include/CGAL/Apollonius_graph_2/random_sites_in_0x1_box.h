@@ -15,7 +15,7 @@ public:
 
 private:
   typedef typename Site_2::Point_2  Point_2;
-  
+
 public:
   Random_sites_in_0x1_box(double rmax = 0.125, int seed = 0)
     : rmax_(rmax), random_(seed)  {}

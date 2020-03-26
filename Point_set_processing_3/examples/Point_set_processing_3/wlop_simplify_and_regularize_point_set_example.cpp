@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     (points, std::back_inserter(output),
      CGAL::parameters::select_percentage(retain_percentage).
      neighbor_radius (neighbor_radius));
-  
+
   std::ofstream out(output_filename);
   out.precision(17);
   if (!out || !CGAL::write_xyz_points(

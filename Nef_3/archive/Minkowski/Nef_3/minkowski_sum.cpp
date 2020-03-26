@@ -14,10 +14,10 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 //#include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Nef_3/convex_decomposition_3.h>
-#include <CGAL/Nef_3/bipartite_nary_union_sequential.h> 
-#include <CGAL/Nef_3/bipartite_nary_union_sorted_separately.h> 
-#include <CGAL/Nef_3/bipartite_nary_union_sorted_combined.h> 
-#include <CGAL/Nef_3/bipartite_nary_union_sorted_within_grid.h> 
+#include <CGAL/Nef_3/bipartite_nary_union_sequential.h>
+#include <CGAL/Nef_3/bipartite_nary_union_sorted_separately.h>
+#include <CGAL/Nef_3/bipartite_nary_union_sorted_combined.h>
+#include <CGAL/Nef_3/bipartite_nary_union_sorted_within_grid.h>
 
 #define CGAL_NEF3_SPHERE_SWEEP_OPTIMIZATION_OFF
 
@@ -66,7 +66,7 @@ class Build_polyhedron : public CGAL::Modifier_base<HDS> {
     void visit(Halffacet_const_handle f) { ++fs; }
     void visit(Vertex_const_handle v) { ++vs; }
     void visit(SHalfedge_const_handle se) {}
-    void visit(SHalfloop_const_handle sl) {}    
+    void visit(SHalfloop_const_handle sl) {}
   };
 
   class Vertex_creator {
@@ -75,17 +75,17 @@ class Build_polyhedron : public CGAL::Modifier_base<HDS> {
     CGAL::Object_index<Vertex_const_handle>& VI;
   public:
     Vertex_creator(CGAL::Polyhedron_incremental_builder_3<HDS>* Bin,
-		   CGAL::Object_index<Vertex_const_handle>& VIin) 
+                   CGAL::Object_index<Vertex_const_handle>& VIin)
       : vertex_index(0), B(Bin), VI(VIin) {}
     void visit(SFace_const_handle s) {}
     void visit(Halfedge_const_handle e) {}
     void visit(Halffacet_const_handle f) {}
     void visit(SHalfedge_const_handle se) {}
-    void visit(SHalfloop_const_handle sl) {}   
+    void visit(SHalfloop_const_handle sl) {}
     void visit(Vertex_const_handle v) {
       //      std::cerr << CGAL::to_double(v->point().x()) << " "
-      //		<< CGAL::to_double(v->point().y()) << " "
-      //		<< CGAL::to_double(v->point().z()) << std::endl;
+      //                << CGAL::to_double(v->point().y()) << " "
+      //                << CGAL::to_double(v->point().z()) << std::endl;
       VI[v]=vertex_index++;
       B->add_vertex(v->point());
     }
@@ -96,14 +96,14 @@ class Build_polyhedron : public CGAL::Modifier_base<HDS> {
     CGAL::Object_index<Vertex_const_handle>& VI;
   public:
     Facet_creator(CGAL::Polyhedron_incremental_builder_3<HDS>* Bin,
-		   CGAL::Object_index<Vertex_const_handle>& VIin) 
+                   CGAL::Object_index<Vertex_const_handle>& VIin)
     : B(Bin), VI(VIin) {}
     void visit(Halffacet_const_handle opposite_facet) {
       //      std::cerr << "visit facet " << opposite_facet->plane() << std::endl;
       SHalfedge_const_handle se;
       Halffacet_cycle_const_iterator fc;
       Halffacet_const_handle f = opposite_facet->twin();
-      
+
       B->begin_facet();
       fc = f->facet_cycles_begin();
       se = SHalfedge_const_handle(fc);
@@ -112,10 +112,10 @@ class Build_polyhedron : public CGAL::Modifier_base<HDS> {
       SHalfedge_around_facet_const_circulator hc_end(hc_start), hcx(hc_start);
       //      std::cerr << std::distance(++hcx,hc_end)+1;
       CGAL_For_all(hc_start,hc_end) {
-	//	std::cerr << " " << VI[hc_start->source()->center_vertex()];
-	//	std::cerr << "  add vertex " << hc_start->source()->center_vertex()->point()
-	//		  << " with index " << VI[hc_start->source()->center_vertex()] << std::endl;
-	B->add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+        //        std::cerr << " " << VI[hc_start->source()->center_vertex()];
+        //        std::cerr << "  add vertex " << hc_start->source()->center_vertex()->point()
+        //                  << " with index " << VI[hc_start->source()->center_vertex()] << std::endl;
+        B->add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
       }
       //      std::cerr << std::endl;
       B->end_facet();
@@ -133,25 +133,25 @@ public:
   const Const_decorator& scd;
   Volume_const_iterator c;
   CGAL::Object_index<Vertex_const_handle> VI;
-  CGAL::Polyhedron_incremental_builder_3<HDS>* B;    
+  CGAL::Polyhedron_incremental_builder_3<HDS>* B;
 
-  Build_polyhedron(const Const_decorator& s, Volume_const_iterator cin) : 
+  Build_polyhedron(const Const_decorator& s, Volume_const_iterator cin) :
     scd(s), c(cin) {}
-    
+
   void operator()( HDS& hds) {
 
     B= new CGAL::Polyhedron_incremental_builder_3<HDS>(hds, true);
 
     Statistic_visitor SV;
-    scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),SV);    
+    scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),SV);
 
     B->begin_surface(SV.vs,SV.fs,SV.es);
-    //    std::cerr << "OFF " << std::endl 
-    //	      << SV.vs << " " << SV.fs << " 0" << std::endl;
-      
+    //    std::cerr << "OFF " << std::endl
+    //              << SV.vs << " " << SV.fs << " 0" << std::endl;
+
     Vertex_creator VC(B,VI);
-    scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),VC);    
-    
+    scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),VC);
+
     Facet_creator FC(B,VI);
     scd.visit_shell_objects(SFace_const_handle(c->shells_begin()),FC);
 
@@ -161,13 +161,13 @@ public:
 
 };
 
-void convert_volume2polyhedron(const Nef_polyhedron& N, 
-			       Volume_const_iterator c, Polyhedron& P) {
+void convert_volume2polyhedron(const Nef_polyhedron& N,
+                               Volume_const_iterator c, Polyhedron& P) {
 
   typedef Polyhedron::HalfedgeDS HalfedgeDS;
   Build_polyhedron<HalfedgeDS,Nef_polyhedron> bp(N,c);
   P.delegate(bp);
-  
+
 }
 */
 
@@ -210,7 +210,7 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
-  CGAL::Timer t1, t2, t3;  
+  CGAL::Timer t1, t2, t3;
   t1.start();
   t2.start();
   //  CGAL_NEF_SETDTHREAD(503*509);
@@ -243,7 +243,7 @@ int main(int argc, char* argv[]) {
 
     /*
   QApplication a(argc, argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
   a.setMainWidget(w);
   w->show();

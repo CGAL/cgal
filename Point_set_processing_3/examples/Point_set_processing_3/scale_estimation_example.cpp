@@ -27,10 +27,10 @@ int main (int argc, char** argv)
 {
 
   const char* fname = (argc>1)?argv[1]:"data/sphere_20k.xyz";
-  
+
   CGAL::Timer task_timer;
-  
-  std::vector<Point_3> points;  
+
+  std::vector<Point_3> points;
   std::ifstream stream(fname);
 
   // read input
@@ -40,12 +40,12 @@ int main (int argc, char** argv)
       std::cerr << "Error: can't read input file" << std::endl;
       return EXIT_FAILURE;
     }
-          
+
   // estimate k scale
   task_timer.start();
   std::size_t k_scale = CGAL::estimate_global_k_neighbor_scale (points);
   task_timer.stop();
-  
+
   // Example: use estimated k as scale for jet smoothing
   CGAL::jet_smooth_point_set<Concurrency_tag>
     (points, static_cast<unsigned int>(k_scale));
@@ -59,7 +59,7 @@ int main (int argc, char** argv)
   points.erase (CGAL::grid_simplify_point_set (points, range_scale),
                 points.end());
 
-  
+
   // print some informations on runtime
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   double time = task_timer.time();

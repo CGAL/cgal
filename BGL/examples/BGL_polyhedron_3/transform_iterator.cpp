@@ -18,7 +18,7 @@ typedef CGAL::Halfedge_around_target_iterator<Polyhedron> halfedge_around_target
 
 template <typename G>
 struct Source {
-  const G* g; 
+  const G* g;
 
   Source()
     : g(NULL)
@@ -38,20 +38,20 @@ struct Source {
 };
 
 int main(int argc, char** argv)
-{ 
+{
   std::ifstream in((argc>1)?argv[1]:"cube.off");
   Polyhedron P;
   in >> P;
   GraphTraits::vertex_descriptor vd = *(vertices(P).first);
 
-  typedef boost::transform_iterator<Source<Polyhedron>,halfedge_around_target_iterator> adjacent_vertex_iterator; 
+  typedef boost::transform_iterator<Source<Polyhedron>,halfedge_around_target_iterator> adjacent_vertex_iterator;
 
   halfedge_around_target_iterator hb,he;
   boost::tie(hb,he) = halfedges_around_target(halfedge(vd,P),P);
   adjacent_vertex_iterator avib, avie;
   avib = boost::make_transform_iterator(hb, Source<Polyhedron>(P));
   avie = boost::make_transform_iterator(he, Source<Polyhedron>(P));
-  
+
   std::list<vertex_descriptor> V;
   std::copy(avib,avie, std::back_inserter(V));
   return 0;

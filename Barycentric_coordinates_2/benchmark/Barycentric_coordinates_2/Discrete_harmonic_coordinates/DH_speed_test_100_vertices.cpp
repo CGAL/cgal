@@ -32,7 +32,7 @@ void generate_regular_polygon(const int number_of_vertices, const double polygon
 
     vertices.resize(n);
 
-    for(int i = 0; i < n; ++i)    
+    for(int i = 0; i < n; ++i)
         vertices[i] = Point(Scalar(r*sin((number_pi / n) + ((i * 2.0 * number_pi) / n))), Scalar(-r*cos((number_pi / n) + ((i * 2.0 * number_pi) / n))));
 }
 
