@@ -106,7 +106,7 @@ namespace CGAL {
             vcolors[i] = scanner.get_color_from_line(iss);
           }
         }
-        
+
         if(!in)
           return false;
     }
