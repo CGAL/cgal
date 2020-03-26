@@ -318,7 +318,7 @@ Configure CMake as you desire and fetch the right Qt5 packages :
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
     cmake_minimum_required(VERSION 3.1)
-    
+
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)
     include( ${CGAL_USE_FILE} )
@@ -357,7 +357,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
     cmake_minimum_required(VERSION 3.1)
-    
+
     #Find CGAL
     find_package(CGAL COMPONENTS Qt5)
     include( ${CGAL_USE_FILE} )

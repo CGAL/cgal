@@ -1022,12 +1022,12 @@ void MainWindow::computeViewerBBox(CGAL::qglviewer::Vec& min, CGAL::qglviewer::V
   max= CGAL::qglviewer::Vec(xmax, ymax, zmax);
 
   CGAL::qglviewer::Vec bbox_center((xmin+xmax)/2, (ymin+ymax)/2, (zmin+zmax)/2);
-  
+
   double bbox_diag = CGAL::approximate_sqrt(
         CGAL::square(xmax - xmin)
         + CGAL::square(ymax - ymin)
         + CGAL::square(zmax - zmin));
-  
+
   CGAL::qglviewer::Vec offset(0,0,0);
 
   double l_dist = (std::max)((std::abs)(bbox_center.x - viewer->offset().x),
@@ -2301,7 +2301,7 @@ void MainWindow::on_actionPreferences_triggered()
           this, [this](const QString& text){
     this->s_defaultPSRM = CGAL::Three::Three::modeFromName(text);
   });
-  
+
   connect(prefdiag.backFrontColor_pushButton, &QPushButton::clicked,
           this, [](){
     qobject_cast<Viewer*>(CGAL::Three::Three::activeViewer())->setBackFrontColors();
@@ -3290,7 +3290,7 @@ void MainWindow::setupViewer(Viewer* viewer, SubViewer* subviewer)
     viewer->setShareCam(b, session);
   });
 #endif
-  
+
 }
 
 void MainWindow::on_actionAdd_Viewer_triggered()

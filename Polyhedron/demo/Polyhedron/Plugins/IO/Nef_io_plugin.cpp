@@ -46,7 +46,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     ok = false;
     return QList<Scene_item*>();
   }
-  
+
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -54,7 +54,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
     ok = false;
     return QList<Scene_item*>();
   }
-    
+
   // Try to read .nef3 in a polyhedron
   Scene_nef_polyhedron_item* item = new Scene_nef_polyhedron_item();
   item->setName(fileinfo.baseName());
@@ -89,7 +89,7 @@ bool Polyhedron_demo_io_nef_plugin::save(QFileInfo fileinfo,QList<CGAL::Three::S
 {
   Scene_item* item = items.front();
   // This plugin supports polyhedrons and polygon soups
-  const Scene_nef_polyhedron_item* nef_item = 
+  const Scene_nef_polyhedron_item* nef_item =
     qobject_cast<const Scene_nef_polyhedron_item*>(item);
 
   if(!nef_item)

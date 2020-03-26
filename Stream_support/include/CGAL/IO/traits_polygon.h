@@ -85,5 +85,5 @@ struct range_value<CGAL::Polygon_2<K> >
 
 }//end boost
 
-#endif 
+#endif
 #endif

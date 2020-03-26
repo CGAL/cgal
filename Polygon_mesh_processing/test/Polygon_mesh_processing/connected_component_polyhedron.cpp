@@ -185,7 +185,7 @@ void keep_nothing(const char* argv1)
   assert(num_faces(sm) == 0);
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   const bool save_output = (argc > 2) ? true : false;

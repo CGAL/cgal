@@ -11,7 +11,7 @@ typedef CGAL::Simple_cartesian<double> K;
 
 
 // The points are stored in a flat array of doubles
-// The triangles are stored in a flat array of indices 
+// The triangles are stored in a flat array of indices
 // referring to an array of coordinates: three consecutive
 // coordinates represent a point, and three consecutive
 // indices represent a triangle.
@@ -60,7 +60,7 @@ private:
 public:
     My_triangle_primitive() {} // default constructor needed
 
-    // the following constructor is the one that receives the iterators from the 
+    // the following constructor is the one that receives the iterators from the
     // iterator range given as input to the AABB_tree
     My_triangle_primitive(Triangle_iterator a)
         : m_it(a) {}
@@ -69,18 +69,18 @@ public:
 
     // on the fly conversion from the internal data to the CGAL types
     Datum datum() const
-    { 
+    {
         Point_index_iterator p_it = m_it.base();
-        Point p(*(point_container + 3 * (*p_it)), 
-                *(point_container + 3 * (*p_it) + 1), 
+        Point p(*(point_container + 3 * (*p_it)),
+                *(point_container + 3 * (*p_it) + 1),
                 *(point_container + 3 * (*p_it) + 2) );
         ++p_it;
-        Point q(*(point_container + 3 * (*p_it)), 
-                *(point_container + 3 * (*p_it) + 1), 
+        Point q(*(point_container + 3 * (*p_it)),
+                *(point_container + 3 * (*p_it) + 1),
                 *(point_container + 3 * (*p_it) + 2));
         ++p_it;
-        Point r(*(point_container + 3 * (*p_it)), 
-                *(point_container + 3 * (*p_it) + 1), 
+        Point r(*(point_container + 3 * (*p_it)),
+                *(point_container + 3 * (*p_it) + 1),
                 *(point_container + 3 * (*p_it) + 2));
 
         return Datum(p, q, r); // assembles triangle from three points
@@ -88,9 +88,9 @@ public:
 
     // one point which must be on the primitive
     Point reference_point() const
-    { 
-      return Point(*(point_container + 3 * (*m_it)), 
-                   *(point_container + 3 * (*m_it) + 1), 
+    {
+      return Point(*(point_container + 3 * (*m_it)),
+                   *(point_container + 3 * (*m_it) + 1),
                    *(point_container + 3 * (*m_it) + 2));
     }
 };
@@ -119,7 +119,7 @@ int main()
     triangles[6] = 0; triangles[7] = 3; triangles[8] = 2;
 
     // constructs AABB tree
-    Tree tree(Triangle_iterator(triangles), 
+    Tree tree(Triangle_iterator(triangles),
         Triangle_iterator(triangles+9));
 
     // counts #intersections

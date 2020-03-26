@@ -70,7 +70,7 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
   internal::Light_MQ<LCC_3_cmap> lmq(path.get_map());
   Path_on_surface<LCC_3_cmap> prepp(path.get_map());
   Path_on_surface<LCC_3_cmap> prevp=path;
-  internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> >curp(lmq);  
+  internal::Path_on_surface_with_rle<internal::Light_MQ<LCC_3_cmap> >curp(lmq);
   std::size_t nb=0;
   bool modified=false;
   do
@@ -340,7 +340,7 @@ bool test_some_random_paths_on_cube(bool draw, unsigned int testtorun)
                 {-8,8,6,0,-10,10,-7,0,2,2,-7,10,-2,3,-9,2,2,8,-6,5,0,
                     8,3,2,2,10,-10,7,9,4,-10,0,10,6,-5,8,-5,6,3,6}, // pair of numbers: (turn, length of flat)
                 {3,0,-6,4,-8,6,10,1,-6,7,-5,0,5,1,2,5,-10,10,10,6,-7,6
-                    ,1,10,8,5,7,4,2,7,10,7,10,0,-8,6,7,0,1,0,-2,4,-4,9,4,9,0,18});                      
+                    ,1,10,8,5,7,4,2,7,10,7,10,0,-8,6,7,0,1,0,-2,4,-4,9,4,9,0,18});
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "first random path on cube",
                  "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 2 2 2", draw, testtorun, true, false))
   { res=false; }
@@ -351,13 +351,13 @@ bool test_some_random_paths_on_cube(bool draw, unsigned int testtorun)
                    "1 2 2 2 2", draw, testtorun, true, false))
   { res=false; }
 
-  generate_path(path, {10,6,-4,5,-5,8,-2,2,4,9,5,3,8,4,-7,7}, // Test 19  
+  generate_path(path, {10,6,-4,5,-5,8,-2,2,4,9,5,3,8,4,-7,7}, // Test 19
                 {6,0,-7,7,8,9,3,0,-9,1,-8,2,-3,1,4,8});
   if (!unit_test(path, FULL_SIMPLIFICATION, 0, "third random path on cube",
                  "2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 1 2 2 2 2 2 2",
                  draw, testtorun, true, false))
   { res=false; }
-    
+
   generate_path(path, // Test 20
                 {-2,10,6,5,8,1,-2,10,3,8,-7,7,5,10,1,5,9,0,-5,2,-2,4,7,8,-9,9,
                     -9,0,10,3,1,10,-4,8,5,4,-3,5,7,5,-4,7,-4,10,-8,8,2,0,2,1},

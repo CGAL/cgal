@@ -35,10 +35,10 @@ bool test_cylinder_connected_component() {
     FT radius = FT(1.0);
     Vector axis = random_normal<K>();
     Point center = random_point_in<K>(bbox);
-    
+
     sample_cylinder(NB_POINTS, center, axis,
        radius, 0.5, std::back_inserter(points));
-    
+
     CGAL::Vector_3<K> n = random_normal<K>();
     n = CGAL::cross_product(axis, n);
     n = n * (FT) 1.0 / (CGAL::sqrt(n.squared_length()));
@@ -51,7 +51,7 @@ bool test_cylinder_connected_component() {
     Efficient_ransac ransac;
 
     ransac.template add_shape_factory<Cylinder>();
-    
+
     ransac.set_input(points);
 
     // Same parameters as for the parameters unit tests, besides
@@ -76,7 +76,7 @@ bool test_cylinder_connected_component() {
     }
 
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
-    
+
     if (i < NB_ROUNDS/2 && shapes.size() != 1)
       continue;
 
@@ -100,7 +100,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_cylinder_connected_component<CGAL::Simple_cartesian<float>> ";
-  if (!test_cylinder_connected_component<CGAL::Simple_cartesian<float> >()) 
+  if (!test_cylinder_connected_component<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_cylinder_connected_component<CGAL::Simple_cartesian<double>> ";
@@ -108,7 +108,7 @@ int main() {
     success = false;
 
   std::cout << "test_cylinder_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_cylinder_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_cylinder_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

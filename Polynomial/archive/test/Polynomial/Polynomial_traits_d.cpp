@@ -15,7 +15,7 @@
 
 
 
-template < typename AK> 
+template < typename AK>
 void test_AK_1(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
@@ -26,26 +26,26 @@ void test_AK_1(){
 
 
   typedef CGAL::Polynomial<Integer> Poly;
-  typedef CGAL::Polynomial_traits_d<Poly> PT; 
+  typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Integer" << std::endl;
   std::cerr << "--------------------------------------" << std::endl;
-  CGAL::Test_Pol::test_multiple_dimensions(PT());  
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
 
 }
 
 
-template < typename AK> 
+template < typename AK>
 void test_AK_2(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
+  typedef typename AK::Rational Rational;
   CGAL_USE_TYPE(Integer);
 
   typedef CGAL::Polynomial<Rational> Poly;
-  typedef CGAL::Polynomial_traits_d<Poly> PT; 
+  typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Rational" << std::endl;
   std::cerr << "---------------------------------------" << std::endl;
@@ -55,83 +55,83 @@ void test_AK_2(){
 
 
 
-template < typename AK> 
+template < typename AK>
 void test_AK_4(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
-  
+  typedef typename AK::Rational Rational;
+
 
   typedef CGAL::Polynomial< CGAL::Sqrt_extension< Rational, Integer > > Poly;
   typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
   std::cerr << "Test for coefficient type Sqrt_extension< Rational, Integer >"
             << std::endl;
-  std::cerr << 
+  std::cerr <<
     "----------------------------------------------------------------------"
-            << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions(PT());    
+            << std::endl;
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
 }
 
 
-template < typename AK> 
+template < typename AK>
 void test_AK_5(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
+  typedef typename AK::Rational Rational;
   CGAL_USE_TYPE(Integer);
 
 
   typedef CGAL::Polynomial< CGAL::Sqrt_extension< Rational, Rational > > Poly;
   typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
-  std::cerr << 
-    "Test for coefficient type Sqrt_extension< Rational, Rational >" 
+  std::cerr <<
+    "Test for coefficient type Sqrt_extension< Rational, Rational >"
             << std::endl;
-  std::cerr << 
+  std::cerr <<
     "----------------------------------------------------------------------"
-            << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions(PT());   
+            << std::endl;
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
 }
 
 
-template < typename AK> 
+template < typename AK>
 void test_AK_6(){
   CGAL::set_pretty_mode(std::cout);
   CGAL::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
+  typedef typename AK::Rational Rational;
   CGAL_USE_TYPE(Integer);
   CGAL_USE_TYPE(Rational);
 
-  //  Enforce IEEE double precision and to nearest before 
+  //  Enforce IEEE double precision and to nearest before
   //  using modular arithmetic
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST);
 
   typedef CGAL::Polynomial< CGAL::Residue > Poly;
   typedef CGAL::Polynomial_traits_d<Poly> PT;
   std::cerr << std::endl;
-  std::cerr << 
-    "Test for coefficient type CGAL::Residue" 
+  std::cerr <<
+    "Test for coefficient type CGAL::Residue"
             << std::endl;
-  std::cerr << 
+  std::cerr <<
     "----------------------------------------------------------------------"
-            << std::endl;    
-  CGAL::Test_Pol::test_multiple_dimensions(PT());   
-}    
+            << std::endl;
+  CGAL::Test_Pol::test_multiple_dimensions(PT());
+}
 
 
 int main(){
-    // Set wrong rounding mode to test modular arithmetic 
+    // Set wrong rounding mode to test modular arithmetic
     CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
 #ifdef CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL
-    typedef CGAL::Arithmetic_kernel AK; 
+    typedef CGAL::Arithmetic_kernel AK;
     test_AK_1<AK>();
     test_AK_2<AK>();
     test_AK_4<AK>();

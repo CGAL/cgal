@@ -6,16 +6,16 @@
  * This file is part of CGAL (www.cgal.org).
  *
  * File: RealRep.h
- * Synopsis: 
- * 		Internal Representation for Real
+ * Synopsis:
+ *                 Internal Representation for Real
  *
- * Written by 
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
- * 
+ *       Sylvain Pion <pion@cs.nyu.edu>
+ *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
@@ -27,7 +27,7 @@
 #define _CORE_REALREP_H_
 #include "BigFloat.h"
 
-namespace CORE { 
+namespace CORE {
 
 class Real;
 
@@ -56,7 +56,7 @@ public:
   virtual BigFloat sqrt(const extLong&, const BigFloat&) const = 0;
 
   virtual void ULV_E(extLong &, extLong&, extLong&,
-		  extLong&, extLong&, extLong&) const = 0;
+                  extLong&, extLong&, extLong&) const = 0;
   virtual extLong flrLgErr() const = 0;
   virtual extLong clLgErr() const = 0;
   virtual unsigned long degree() const = 0;
@@ -416,12 +416,12 @@ inline extLong RealBigFloat::clLgErr() const {
 template<>
 inline unsigned long RealLong::length() const {
   return clLg(1+ core_abs(ker));
-}	// length is (log_2(1+ker^2)) /2.
+}        // length is (log_2(1+ker^2)) /2.
 
 template<>
 inline unsigned long RealLong::height() const {
   return clLg(core_max(1L, core_abs(ker)));
-}	// height is max{1, |ker|}
+}        // height is max{1, |ker|}
 
 template<>
 inline unsigned long RealDouble::length() const {

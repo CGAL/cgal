@@ -74,13 +74,13 @@ void polar_eigen(const Mat& A, Mat& R, bool& SVD)
 int main() {
   std::ifstream file;
   file.open("Polar_benchmark");
-  if (!file) 
+  if (!file)
   {
     CGAL_TRACE_STREAM << "Error loading file!\n";
     return 0;
   }
 
-  Eigen::Matrix3d A, U, r;   
+  Eigen::Matrix3d A, U, r;
   bool SVD = false;
   int num_svd = 0;
   int num_mtr = 0;
@@ -112,12 +112,12 @@ int main() {
   }
   file.close();
 
-  CGAL_TRACE_STREAM << "done. " << num_svd << " SVD decompositions in " << num_mtr << " matrices\n"; 
+  CGAL_TRACE_STREAM << "done. " << num_svd << " SVD decompositions in " << num_mtr << " matrices\n";
   return 0;
 
   /*int ite = 200000;
   Eigen::JacobiSVD<Eigen::Matrix3d> svd;
-  Eigen::Matrix3d A, U, H, r;           
+  Eigen::Matrix3d A, U, H, r;
 
   int matrix_idx = rand()%200;
   for (int i = 0; i < matrix_idx; i++)
@@ -138,7 +138,7 @@ int main() {
   A = A*10000;
   double det = A.determinant();
 
-  CGAL::Timer task_timer; 
+  CGAL::Timer task_timer;
 
   CGAL_TRACE_STREAM << "Start SVD decomposition...";
   task_timer.start();
@@ -153,10 +153,10 @@ int main() {
     }
   }
   task_timer.stop();
-  
+
 
   CGAL_TRACE_STREAM << "done: " << task_timer.time() << "s\n";
 
-	return 0;*/
+        return 0;*/
 }
 

@@ -53,7 +53,7 @@ target_link_libraries(mesh_3_optimization_plugin PUBLIC scene_c3t3_item scene_su
 
 # Use Eigen
  find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
- 
+
  if (EIGEN3_FOUND)
    CGAL_target_use_Eigen(mesh_3_optimization_plugin)
  else() #eigen

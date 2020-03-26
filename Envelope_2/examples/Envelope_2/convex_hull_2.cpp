@@ -73,7 +73,7 @@ int main (int argc, char* argv[])
   // Handle the degenerate case of a vertical convex hull edge:
   if (e->curve().data() != max_diag.leftmost()->curve().data())
     std::cout << " (" << points[e->curve().data()] << ')';
-  
+
   e = max_diag.leftmost();
   while (e != max_diag.rightmost()) {
     std::cout << " (" << points[e->curve().data()] << ')';

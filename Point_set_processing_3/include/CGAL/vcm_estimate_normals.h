@@ -265,7 +265,7 @@ compute_vcm (const PointRange& points,
 
     PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
     Kernel kernel;
-    
+
     // First, compute the VCM for each point
     std::vector< std::array<double, 6> > cov;
     std::size_t N = 20;
@@ -303,7 +303,7 @@ compute_vcm (const PointRange& points,
 }
 
 /// \endcond
-  
+
 /// \cond SKIP_IN_MANUAL
 template <typename PointRange,
           typename NamedParameters
@@ -331,9 +331,9 @@ vcm_estimate_normals_internal (PointRange& points,
 
     PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
     NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
-    
+
     typedef std::array<double, 6> Covariance;
-    
+
     // Compute the VCM and convolve it
     std::vector<Covariance> cov;
     if (nb_neighbors_convolve == -1) {
@@ -383,7 +383,7 @@ vcm_estimate_normals_internal (PointRange& points,
 /// @endcond
 
 
-/**  
+/**
    \ingroup PkgPointSetProcessing3Algorithms
    Estimates normal directions of the range of `points`
    using the Voronoi Covariance Measure with a radius for the convolution.

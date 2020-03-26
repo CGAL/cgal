@@ -73,12 +73,12 @@ struct Custom_traits_Hausdorff
   };
 
   struct Construct_vector_3{
-    Vector_3 	operator() (const Point_3 &, const Point_3 &){return Vector_3();}
+    Vector_3         operator() (const Point_3 &, const Point_3 &){return Vector_3();}
   };
 
   struct Construct_scaled_vector_3
   {
-    Vector_3 	operator() (const Vector_3 &, const FT &)
+    Vector_3         operator() (const Vector_3 &, const FT &)
     {return Vector_3();}
 
   };

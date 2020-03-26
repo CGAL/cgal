@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s) : Jane Tournois, Raul Gallegos, Pierre Alliez, Stéphane Tayeb
 //
 
@@ -18,7 +18,7 @@
 
 
 #ifdef CGAL_MESH_2_VERBOSE
-  #define CGAL_MESH_2_OPTIMIZER_VERBOSE 
+  #define CGAL_MESH_2_OPTIMIZER_VERBOSE
 #endif
 
 #include <CGAL/Timer.h>
@@ -45,12 +45,12 @@ namespace Mesh_2 {
 template <typename CDT,
           typename MoveFunction>
 class Mesh_global_optimizer_2
-{  
+{
   // Types
   typedef CDT  Tr;
   typedef MoveFunction Mf;
   typedef typename Tr::Geom_traits      Gt;
-  
+
   typedef typename Tr::Point            Point_2;
   typedef typename Tr::Face_handle      Face_handle;
   typedef typename Tr::Vertex_handle    Vertex_handle;
@@ -60,7 +60,7 @@ class Mesh_global_optimizer_2
 
   typedef typename Gt::FT               FT;
   typedef typename Gt::Vector_2         Vector_2;
-  
+
   typedef typename std::vector<Face_handle>                 Face_vector;
   typedef typename std::set<Vertex_handle>                  Vertex_set;
   typedef typename std::list<FT>                            FT_list;
@@ -87,7 +87,7 @@ public:
     , seeds_mark_(false)
   {
   }
-  
+
   /// Time accessors
   void set_time_limit(double time) { time_limit_ = time; }
   double time_limit() const { return time_limit_; }
@@ -154,8 +154,8 @@ public:
       if(sq_freeze_ratio_ > 0.
         && nb_vertices_moved < 0.01 * initial_vertices_nb
         && nb_vertices_moved == moving_vertices.size())
-      { 
-        // we should stop because we are 
+      {
+        // we should stop because we are
         // probably entering an infinite instable loop
         convergence_stop = true;
         break;
@@ -170,7 +170,7 @@ public:
       nb_vertices_moved = moving_vertices.size();
 
       this->after_move();
- 
+
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
       double time = running_time_.time();
       double moving_vertices_size = static_cast<double>(moving_vertices.size());
@@ -293,7 +293,7 @@ private:
     Face_circulator face = cdt_.incident_faces(v);
     Face_circulator end = face;
 
-    // Get first face sq_circumradius_length 
+    // Get first face sq_circumradius_length
     // Initialize min
     FT min_sqr = (std::numeric_limits<double>::max)();
     // Find the minimum value
@@ -465,9 +465,9 @@ private:
 
   double time_limit_;
   CGAL::Timer running_time_;
-  
+
   std::list<FT> big_moves_;
-  
+
 #ifdef CGAL_MESH_2_OPTIMIZER_VERBOSE
   mutable FT sum_moves_;
 #endif

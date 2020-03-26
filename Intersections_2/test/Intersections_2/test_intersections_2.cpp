@@ -19,7 +19,7 @@ const double epsilon = 0.001;
 struct randomint
 {
   randomint() ;
-  int	get() const { return sequence[cur]; }
+  int        get() const { return sequence[cur]; }
   int next() { cur = (cur+1)%11; return get();}
 private:
   int sequence[11];

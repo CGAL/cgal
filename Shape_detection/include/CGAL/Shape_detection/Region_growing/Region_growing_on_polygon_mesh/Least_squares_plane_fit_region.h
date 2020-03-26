@@ -42,36 +42,36 @@
 namespace CGAL {
 namespace Shape_detection {
 namespace Polygon_mesh {
-  
+
   /*!
     \ingroup PkgShapeDetectionRGOnMesh
 
-    \brief Region type based on the quality of the least squares plane 
+    \brief Region type based on the quality of the least squares plane
     fit applied to faces of a polygon mesh.
 
-    This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA", 
-    to chunks of faces in a polygon mesh and controls the quality of this fit. 
-    If all quality conditions are satisfied, the chunk is accepted as a valid region, 
+    This class fits a plane, using \ref PkgPrincipalComponentAnalysisDRef "PCA",
+    to chunks of faces in a polygon mesh and controls the quality of this fit.
+    If all quality conditions are satisfied, the chunk is accepted as a valid region,
     otherwise rejected.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam PolygonMesh 
+    \tparam PolygonMesh
     must be a model of `FaceListGraph`.
 
-    \tparam FaceRange 
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and 
+    \tparam FaceRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator` and
     value type is the face type of a polygon mesh.
 
-    \tparam VertexToPointMap 
+    \tparam VertexToPointMap
     must be an `LvaluePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`.
-    
+
     \cgalModels `RegionType`
   */
   template<
-  typename GeomTraits, 
+  typename GeomTraits,
   typename PolygonMesh,
   typename FaceRange = typename PolygonMesh::Face_range,
   typename VertexToPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
@@ -118,21 +118,21 @@ namespace Polygon_mesh {
     /*!
       \brief initializes all internal data structures.
 
-      \param pmesh 
+      \param pmesh
       an instance of `PolygonMesh` that represents a polygon mesh
 
-      \param distance_threshold 
+      \param distance_threshold
       the maximum distance from the furthest vertex of a face to a plane. %Default is 1.
 
-      \param angle_threshold 
-      the maximum accepted angle in degrees between the normal of a face and 
+      \param angle_threshold
+      the maximum accepted angle in degrees between the normal of a face and
       the normal of a plane. %Default is 25 degrees.
 
-      \param min_region_size 
+      \param min_region_size
       the minimum number of faces a region must have. %Default is 1.
-      
-      \param vertex_to_point_map 
-      an instance of `VertexToPointMap` that maps a polygon mesh 
+
+      \param vertex_to_point_map
+      an instance of `VertexToPointMap` that maps a polygon mesh
       vertex to `Kernel::Point_3`
 
       \param traits
@@ -145,10 +145,10 @@ namespace Polygon_mesh {
     */
     Least_squares_plane_fit_region(
       const PolygonMesh& pmesh,
-      const FT distance_threshold = FT(1), 
-      const FT angle_threshold = FT(25), 
-      const std::size_t min_region_size = 1, 
-      const VertexToPointMap vertex_to_point_map = VertexToPointMap(), 
+      const FT distance_threshold = FT(1),
+      const FT angle_threshold = FT(25),
+      const std::size_t min_region_size = 1,
+      const VertexToPointMap vertex_to_point_map = VertexToPointMap(),
       const GeomTraits traits = GeomTraits()) :
     m_face_graph(pmesh),
     m_face_range(faces(m_face_graph)),
@@ -176,7 +176,7 @@ namespace Polygon_mesh {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `RegionType::is_part_of_region()`.
@@ -197,28 +197,28 @@ namespace Polygon_mesh {
     */
     bool is_part_of_region(
       const std::size_t,
-      const std::size_t query_index, 
+      const std::size_t query_index,
       const std::vector<std::size_t>&) const {
 
       CGAL_precondition(query_index >= 0);
       CGAL_precondition(query_index < m_face_range.size());
 
       const auto face = *(m_face_range.begin() + query_index);
-                
+
       Vector_3 face_normal;
       get_face_normal(face, face_normal);
 
-      const FT distance_to_fitted_plane = 
+      const FT distance_to_fitted_plane =
       get_max_face_distance(face);
       if (distance_to_fitted_plane < FT(0))
         return false;
-      
+
       // The sign of this scalar product is important, as it indicates
       // into which side of the plane the face's normal points.
-      const FT cos_value = 
+      const FT cos_value =
       m_scalar_product_3(face_normal, m_normal_of_best_fit);
 
-      return (( distance_to_fitted_plane <= m_distance_threshold ) && 
+      return (( distance_to_fitted_plane <= m_distance_threshold ) &&
         ( cos_value >= m_normal_threshold ));
     }
 
@@ -239,7 +239,7 @@ namespace Polygon_mesh {
     /*!
       \brief implements `RegionType::update()`.
 
-      This function fits the least squares plane to all vertices of the faces 
+      This function fits the least squares plane to all vertices of the faces
       from the `region`.
 
       \param region
@@ -255,7 +255,7 @@ namespace Polygon_mesh {
         CGAL_precondition(region[0] >= 0);
         CGAL_precondition(region[0] < m_face_range.size());
 
-        // The best fit plane will be a plane through this face centroid with 
+        // The best fit plane will be a plane through this face centroid with
         // its normal being the face's normal.
         const auto face = *(m_face_range.begin() + region[0]);
         Point_3 face_centroid;
@@ -263,7 +263,7 @@ namespace Polygon_mesh {
         get_face_centroid(face, face_centroid);
         get_face_normal(face, m_normal_of_best_fit);
 
-        m_plane_of_best_fit = 
+        m_plane_of_best_fit =
         Plane_3(face_centroid, m_normal_of_best_fit);
 
       } else { // update reference plane and normal
@@ -279,7 +279,7 @@ namespace Polygon_mesh {
 
           const auto vertices = vertices_around_face(hedge, m_face_graph);
           for (const auto vertex : vertices) {
-                            
+
             const Point_3& tmp_point = get(m_vertex_to_point_map, vertex);
             points.push_back(m_to_local_converter(tmp_point));
           }
@@ -296,20 +296,20 @@ namespace Polygon_mesh {
         // one of the two possible directions.
         // We flip it into the correct direction (the one that the majority
         // of faces agree with) below.
-        // This fix is proposed by nh2: 
+        // This fix is proposed by nh2:
         // https://github.com/CGAL/cgal/pull/4563
         CGAL::linear_least_squares_fitting_3(
-          points.begin(), points.end(), 
-          fitted_plane, fitted_centroid, 
-          CGAL::Dimension_tag<0>(), 
-          Local_traits(), 
+          points.begin(), points.end(),
+          fitted_plane, fitted_centroid,
+          CGAL::Dimension_tag<0>(),
+          Local_traits(),
           CGAL::Eigen_diagonalize_traits<Local_FT, 3>());
 
         const Plane_3 unoriented_plane_of_best_fit =
         Plane_3(
-          static_cast<FT>(fitted_plane.a()), 
-          static_cast<FT>(fitted_plane.b()), 
-          static_cast<FT>(fitted_plane.c()), 
+          static_cast<FT>(fitted_plane.a()),
+          static_cast<FT>(fitted_plane.b()),
+          static_cast<FT>(fitted_plane.c()),
           static_cast<FT>(fitted_plane.d()));
 
         Vector_3 unoriented_plane_normal =
@@ -333,7 +333,7 @@ namespace Polygon_mesh {
           const auto face = *(m_face_range.begin() + face_index);
 
           get_face_normal(face, face_normal);
-          const bool agrees = 
+          const bool agrees =
           m_scalar_product_3(face_normal, unoriented_plane_normal) > FT(0);
           votes_to_keep_normal += (agrees ? 1 : -1);
         }
@@ -355,9 +355,9 @@ namespace Polygon_mesh {
 
   private:
 
-    template<typename Face>  
+    template<typename Face>
     void get_face_centroid(
-      const Face& face, 
+      const Face& face,
       Point_3& face_centroid) const {
 
       const auto hedge = halfedge(face, m_face_graph);
@@ -369,7 +369,7 @@ namespace Polygon_mesh {
       FT x = FT(0);
       FT y = FT(0);
       FT z = FT(0);
-                
+
       for (const auto vertex : vertices) {
         const Point_3& point = get(m_vertex_to_point_map, vertex);
 
@@ -379,7 +379,7 @@ namespace Polygon_mesh {
 
         sum += FT(1);
       }
-      
+
       CGAL_precondition(sum > FT(0));
       x /= sum;
       y /= sum;
@@ -390,7 +390,7 @@ namespace Polygon_mesh {
 
     template<typename Face>
     void get_face_normal(
-      const Face& face, 
+      const Face& face,
       Vector_3& face_normal) const {
 
       // Compute normal of the face.
@@ -405,7 +405,7 @@ namespace Polygon_mesh {
       const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
 
       const Vector_3 u = point2 - point1;
-      const Vector_3 v = point3 - point1; 
+      const Vector_3 v = point3 - point1;
       face_normal = m_cross_product_3(u, v);
       const FT squared_length = m_squared_length_3(face_normal);
       if (squared_length == FT(0))
@@ -433,14 +433,14 @@ namespace Polygon_mesh {
 
       FT max_face_distance = -FT(1);
       for (const auto vertex : vertices) {
-        
-        const Point_3& point = 
+
+        const Point_3& point =
         get(m_vertex_to_point_map, vertex);
 
-        const FT distance = 
+        const FT distance =
         m_sqrt(m_squared_distance_3(point, m_plane_of_best_fit));
-        
-        max_face_distance = 
+
+        max_face_distance =
         (CGAL::max)(distance, max_face_distance);
       }
       CGAL_postcondition(max_face_distance != -FT(1));
@@ -455,7 +455,7 @@ namespace Polygon_mesh {
     const FT m_distance_threshold;
     const FT m_normal_threshold;
     const std::size_t m_min_region_size;
-            
+
     const Vertex_to_point_map m_vertex_to_point_map;
 
     const Squared_length_3 m_squared_length_3;

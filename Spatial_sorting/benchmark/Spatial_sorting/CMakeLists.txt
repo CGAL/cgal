@@ -15,8 +15,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "simple.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

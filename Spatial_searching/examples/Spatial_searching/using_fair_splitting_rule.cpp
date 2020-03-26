@@ -22,8 +22,8 @@ int main() {
   Fair fair(5); // bucket size=5
   // Insert number_of_data_points in the tree
   Tree tree(N_Random_points_iterator(rpit,0),
-	    N_Random_points_iterator(N),
-	    fair);
+            N_Random_points_iterator(N),
+            fair);
 
   Point_d query(0,0);
 

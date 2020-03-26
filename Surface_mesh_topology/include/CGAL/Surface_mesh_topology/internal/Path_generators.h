@@ -29,35 +29,35 @@ void create_braket_positive(Path& p, std::size_t length, CGAL::Random& random,
 {
   if (p.is_empty())
   { p.initialize_random_starting_dart(random, false); }
-  
+
   p.extend_positive_turn(1, false);
   p.extend_straight_positive(length, false);
   p.extend_positive_turn(1, false);
   if (update_isclosed) { p.update_is_closed(); }
 }
-  
-template<typename Path>  
+
+template<typename Path>
 void create_braket_positive(Path& p, std::size_t length,
                             bool update_isclosed=true)
 {
   CGAL::Random random;
   create_braket_positive(p, length, random, update_isclosed);
 }
-  
-template<typename Path>  
+
+template<typename Path>
 void create_braket_negative(Path& p, std::size_t length, CGAL::Random& random,
                             bool update_isclosed=true)
 {
   if (p.is_empty())
   { p.initialize_random_starting_dart(random, false); }
-  
+
   p.extend_negative_turn(1, false);
   p.extend_straight_negative(length, false);
   p.extend_negative_turn(1, false);
   if (update_isclosed) { p.update_is_closed(); }
 }
-  
-template<typename Path>  
+
+template<typename Path>
 void create_braket_negative(Path& p, std::size_t length,
                             bool update_isclosed=true)
 {
@@ -91,7 +91,7 @@ generate_random_connected_set_of_faces(const LCC& lcc, std::size_t nb,
   if (lcc.is_empty()) { return NULL; }
 
   std::unordered_map<std::size_t, typename LCC::Dart_const_handle> border_faces;
-  
+
   std::size_t index=static_cast<std::size_t>
     (random.get_int(0, static_cast<int>(lcc.darts().capacity())));
   while (!lcc.darts().is_used(index))
@@ -104,14 +104,14 @@ generate_random_connected_set_of_faces(const LCC& lcc, std::size_t nb,
   border_faces[0]=dh1;
   set.insert(dh1);
   lcc.template mark_cell<2>(dh1, amark);
-  
+
   for (std::size_t i=1; i<nb; ++i)
   {
     std::size_t facenumber=static_cast<std::size_t>
                            (random.get_int
                             (0, static_cast<int>(border_faces.size())));
     int nbborder=0;
-    
+
     typename LCC::Dart_const_handle dh1_init=border_faces[facenumber];
     dh1=dh1_init;
     do

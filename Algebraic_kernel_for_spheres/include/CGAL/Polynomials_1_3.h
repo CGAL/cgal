@@ -4,9 +4,9 @@
 // This file is part of CGAL (www.cgal.org).
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -34,15 +34,15 @@ template < typename FT_ >
 class Polynomial_1_3
 {
   FT_ rep[4]; // stores a, b, c, d
-  
+
 public:
-  
+
   typedef FT_ FT;
-  
+
   Polynomial_1_3(){}
-  
+
   Polynomial_1_3(const FT & a, const FT & b, const FT & c, const FT & d)
-  { 
+  {
     rep[0]=a;
     rep[1]=b;
     rep[2]=c;
@@ -54,10 +54,10 @@ public:
 
   const FT & b() const
   { return rep[1]; }
-  
+
   const FT & c() const
   { return rep[2]; }
-  
+
   const FT & d() const
   { return rep[3]; }
 
@@ -78,21 +78,21 @@ public:
 
 template < typename FT >
 inline
-bool 
+bool
 operator == ( const Polynomial_1_3<FT> & p1,
-	      const Polynomial_1_3<FT> & p2 )
+              const Polynomial_1_3<FT> & p2 )
 {
-  return( (p1.a() == p2.a()) && 
-	  (p1.b() == p2.b()) &&
-	  (p1.c() == p2.c()) &&
-	  (p1.d() == p2.d()) );
+  return( (p1.a() == p2.a()) &&
+          (p1.b() == p2.b()) &&
+          (p1.c() == p2.c()) &&
+          (p1.d() == p2.d()) );
 }
 
 template < typename FT >
 inline
-bool 
+bool
 same_solutions ( const Polynomial_1_3<FT> & p1,
-	         const Polynomial_1_3<FT> & p2 )
+                 const Polynomial_1_3<FT> & p2 )
 {
   if(p1.undefined()) return p2.undefined();
   if(p1.empty_space()) return p2.empty_space();

@@ -42,7 +42,7 @@ void test(const int d, const string & type, const int N)
     //CGAL::Random rng;
     //Random_points_iterator rand_it(d, 2.0, rng);
     //std::copy_n(rand_it, N, back_inserter(points));
-    
+
     srand(10);
     for( int i = 0; i < N; ++i )
     {

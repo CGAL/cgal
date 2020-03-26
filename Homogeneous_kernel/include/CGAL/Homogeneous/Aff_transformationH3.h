@@ -1,16 +1,16 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -355,7 +355,7 @@ public:
   RT
   hm(int i, int j) const
   { return this->Ptr()->homogeneous(i,j); }
-  
+
   bool operator==(const Aff_transformationH3 &t)const
   {
     for(int i=0; i<3; ++i)
@@ -364,7 +364,7 @@ public:
           return false;
     return true;
   }
-  
+
   bool operator!=(const Aff_transformationH3 &t)const
   {
     return !(*this == t);
@@ -534,7 +534,7 @@ bool
 Aff_transformation_repH3<R>::is_even() const
 {
   return (CGAL_NTS sign<RT>( t33 *
-	                    determinant(t00, t01, t02,
+                            determinant(t00, t01, t02,
                                               t10, t11, t12,
                                               t20, t21, t22 ) ) == POSITIVE );
 }
@@ -792,7 +792,7 @@ template < class R >
 CGAL_KERNEL_INLINE
 Aff_transformationH3<R>::
 Aff_transformationH3(const Translation&,
-	             const typename Aff_transformationH3<R>::Vector_3& v)
+                     const typename Aff_transformationH3<R>::Vector_3& v)
 { initialize_with(Translation_repH3<R>( v )); }
 
 template < class R >

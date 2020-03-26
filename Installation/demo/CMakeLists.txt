@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1...3.15)
 project(CGAL_DEMOS)
 
 
-if (CGAL_BRANCH_BUILD) 
+if (CGAL_BRANCH_BUILD)
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
   #message (STATUS "Current package: ${package}")
@@ -37,6 +37,6 @@ foreach( entry ${list} )
    endif()
 
   endif()
-  
+
 endforeach()
 message("== Generating build files for demos (DONE) ==\n")

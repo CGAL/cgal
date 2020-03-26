@@ -127,7 +127,7 @@ void MergeEdgeCallback<Arr_>::mousePressEvent(QGraphicsSceneMouseEvent* event)
   }
   else
   {
-    Halfedge_handle nextHalfedge = 
+    Halfedge_handle nextHalfedge =
       this->getNearestMergeableCurve( this->mergeableHalfedge, event );
     this->arr->merge_edge( this->mergeableHalfedge, nextHalfedge );
     this->reset( );
@@ -152,7 +152,7 @@ void MergeEdgeCallback<Arr_>::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
   }
   else
   {
-    Halfedge_handle nextHalfedge = 
+    Halfedge_handle nextHalfedge =
       this->getNearestMergeableCurve( this->mergeableHalfedge, event );
     this->highlightedCurve2->clear( );
     this->highlightedCurve2->insert( nextHalfedge->curve( ) );

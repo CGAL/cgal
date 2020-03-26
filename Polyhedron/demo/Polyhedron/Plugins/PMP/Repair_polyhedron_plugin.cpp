@@ -261,7 +261,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionAutorefineAndRMSelfInter
   if (poly_item)
   {
     try{
-      bool solved = 
+      bool solved =
         CGAL::Polygon_mesh_processing::experimental::
           autorefine_and_remove_self_intersections(*poly_item->polyhedron());
       if (!solved)

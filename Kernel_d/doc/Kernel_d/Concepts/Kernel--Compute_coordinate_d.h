@@ -13,10 +13,10 @@ public:
 /// @{
 
 /*!
-returns the \f$ i\f$th cartesian coordinate of \f$ p\f$ 
-*/ 
-Kernel_d::FT operator()(const Kernel_d::Point_d& 
-p, int i); 
+returns the \f$ i\f$th cartesian coordinate of \f$ p\f$
+*/
+Kernel_d::FT operator()(const Kernel_d::Point_d&
+p, int i);
 
 /// @}
 

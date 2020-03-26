@@ -42,8 +42,8 @@ protected:
 
 template <typename T>
 TriangulationPointInputAndConflictZone<T>::TriangulationPointInputAndConflictZone(QGraphicsScene* s,
-							T * dt_,
-							QObject* parent)
+                                                        T * dt_,
+                                                        QObject* parent)
   :  GraphicsViewInput(parent), dt(dt_), scene_(s)
 {}
 
@@ -51,7 +51,7 @@ TriangulationPointInputAndConflictZone<T>::TriangulationPointInputAndConflictZon
 
 
 template <typename T>
-void 
+void
 TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
   p = convert(event->scenePos());
@@ -60,7 +60,7 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
      event->button() != ::Qt::LeftButton) {
     return;
   }
-  
+
   QPen blackPen(::Qt::black, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin);
   dt->find_conflicts(p, faces);
   for(typename std::list<Face_handle>::iterator it = faces.begin();
@@ -80,7 +80,7 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
 
 
 template <typename T>
-void 
+void
 TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent * /*event*/)
 {
   faces.clear();
@@ -97,7 +97,7 @@ TriangulationPointInputAndConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouse
 
 
 template <typename T>
-bool 
+bool
 TriangulationPointInputAndConflictZone<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -112,7 +112,7 @@ TriangulationPointInputAndConflictZone<T>::eventFilter(QObject *obj, QEvent *eve
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 
 } // namespace Qt

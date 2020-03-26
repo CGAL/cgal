@@ -66,7 +66,7 @@ register_point_sets(const PointRange1& range1,    PointRange2& range2,
 
 /**
    \ingroup PkgPointSetProcessing3Algorithms
-   
+
    Computes the registration of `point_set_2` with respect to `point_set_1` and
    applies it.
 

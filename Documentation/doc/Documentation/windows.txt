@@ -175,7 +175,7 @@ as this will help `cmake` to find Boost.</li>
 
 \subsection ssect-installer-install-cgal Installing CGAL Itself
 
-Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from 
+Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from
 <a href="https://www.cgal.org/download/windows.html">https://www.cgal.org/download/windows.html</a>.
 It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
 examples and demos. Additionally, it can download the precompiled versions of \gmp and \mpfr. You must

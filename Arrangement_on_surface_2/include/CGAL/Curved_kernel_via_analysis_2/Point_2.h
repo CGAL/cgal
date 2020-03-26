@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -36,7 +36,7 @@ namespace CGAL {
 namespace internal {
 
 // forward class declaration
-template < class CurvedKernelViaAnalysis_2, class Rep_ > 
+template < class CurvedKernelViaAnalysis_2, class Rep_ >
 class Point_2;
 
 // forward class declaration
@@ -52,62 +52,62 @@ class Arc_2;
  * representation class for Point_2
  */
 template < class CurvedKernelViaAnalysis_2 >
-class Point_2_rep 
+class Point_2_rep
 {
 public:
     //! this instance's template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-    
+
     //! the class itself
     typedef Point_2_rep< Curved_kernel_via_analysis_2 > Self;
 
     //! type of curve kernel
-    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2 
+    typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
     Curve_kernel_2;
 
     //! type of x-coordinate
     typedef typename Curve_kernel_2::Coordinate_1 Coordinate_1;
-    
+
     //! type of a finite point on curve
     typedef typename Curve_kernel_2::Coordinate_2 Coordinate_2;
 
     //! type of curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-        
+
     //! default constructor
     Point_2_rep() {
     }
-    
+
     //! constructs a "finite" point on curve,
     //! implies CGAL::NO_BOUNDARY in x/y
-    Point_2_rep(const Coordinate_2& xy) : 
+    Point_2_rep(const Coordinate_2& xy) :
         _m_xy(xy), _m_location(CGAL::ARR_INTERIOR) {
     }
 
     //! constructs a point at +/-oo in x
     Point_2_rep(CGAL::Arr_curve_end inf_end, const Curve_analysis_2& c,
                 int arcno) :
-        _m_curve(c), 
+        _m_curve(c),
         _m_arcno(arcno) {
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
                        CGAL::ARR_LEFT_BOUNDARY : CGAL::ARR_RIGHT_BOUNDARY);
     }
-    
+
     //! constructs a point on curve with y-coordinate at infinity
-    Point_2_rep(const Coordinate_1& x, const Curve_analysis_2& c, 
+    Point_2_rep(const Coordinate_1& x, const Curve_analysis_2& c,
                 CGAL::Arr_curve_end inf_end) :
         _m_x(x),
         _m_curve(c) {
         _m_location = (inf_end == CGAL::ARR_MIN_END ?
                        CGAL::ARR_BOTTOM_BOUNDARY : CGAL::ARR_TOP_BOUNDARY);
-        
+
     }
 
-    //! curve point finite coordinates. They are valid only if boundary in y 
+    //! curve point finite coordinates. They are valid only if boundary in y
     //! is not set (CGAL::NO_BOUNDARY), otherwise only x-coordinate is
     //! accessible, i.e., point is in interior
     boost::optional< Coordinate_2 > _m_xy;
-        
+
     //! x-coordinate of a curve point
     boost::optional< Coordinate_1 > _m_x;
 
@@ -124,21 +124,21 @@ public:
     mutable boost::optional< std::pair< double, double > > _m_doubles;
 };
 
-/*!\brief 
+/*!\brief
  * Class defines a point on a curve that can be analyzed
- * 
- * Only points with finite coordinates can be constructed explicitly 
+ *
+ * Only points with finite coordinates can be constructed explicitly
  * (by the user). Points on the boundary use special private constructors to
  * to represent ends of curve arcs on the boundary.
  */
-template <class CurvedKernelViaAnalysis_2, 
+template <class CurvedKernelViaAnalysis_2,
           class Rep_ = internal::Point_2_rep<CurvedKernelViaAnalysis_2> >
-class Point_2 : 
+class Point_2 :
         public CGAL::Handle_with_policy< Rep_ > {
 public:
     //!\name Public types
     //!@{
-    
+
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
 
@@ -147,23 +147,23 @@ public:
 
     //! this instance itself
     typedef Point_2< Curved_kernel_via_analysis_2, Rep > Self;
-    
+
     //! type of underlying curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
         Curve_kernel_2;
-    
+
     //! type of an x-coordinate
     typedef typename Curve_kernel_2::Coordinate_1 Coordinate_1;
-    
+
     //! type of an xy-coordinate
     typedef typename Curve_kernel_2::Coordinate_2 Coordinate_2;
-    
+
     //! type that analyzes a curve
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-    
+
     //! the handle superclass
     typedef ::CGAL::Handle_with_policy< Rep > Base;
-    
+
     //! type of kernel point
     typedef typename Curved_kernel_via_analysis_2::Point_2 Kernel_point_2;
 
@@ -176,7 +176,7 @@ public:
 public:
     //!\name Rebind
     //!@{
-    
+
     /*!\brief
      * An auxiliary structure for rebinding the point with a new rep
      */
@@ -192,13 +192,13 @@ public:
 
         //! the rebound type
         typedef Point_2< New_curved_kernel_via_analysis_2, NewRep > Other;
-        
+
         //! the rebound point
-        typedef typename New_curved_kernel_via_analysis_2::Point_2 
+        typedef typename New_curved_kernel_via_analysis_2::Point_2
         Rebound_point_2;
-        
+
         /*!\brief
-         * constructs a point of type \c Rebound_point_2 from the point \c pt 
+         * constructs a point of type \c Rebound_point_2 from the point \c pt
          * of type \c Self.
          *
          * All known items of the base class rep will be copied.
@@ -215,7 +215,7 @@ public:
 
         // TODO move to SfP_2l
         /*!\brief
-         * reverse rebind, i.e., extracts original point type from a 
+         * reverse rebind, i.e., extracts original point type from a
          * rebound instance
          */
         Self operator()(const Rebound_point_2& pt) {
@@ -232,9 +232,9 @@ public:
             return Self(rep);
         }
     };
-    
+
     //!@}
-    
+
 public:
     //!\name Standard constructors
     //!@{
@@ -242,16 +242,16 @@ public:
     /*!\brief
      * Default constructor
      */
-    Point_2() : 
-        Base(Rep()) {   
+    Point_2() :
+        Base(Rep()) {
     }
 
     /*!\brief
      * copy constructor
      */
-#ifdef DOXYGEN_RUNNING  
-    Point_2(const Self& p) : 
-            Base(static_cast<const Base&>(p)) {  
+#ifdef DOXYGEN_RUNNING
+    Point_2(const Self& p) :
+            Base(static_cast<const Base&>(p)) {
     }
 #endif
     //!@}
@@ -259,11 +259,11 @@ public:
 public:
     //!\name Usual constructors
     //!@{
-    
-    /*!\brief 
+
+    /*!\brief
      * Constructs an interior point
      *
-     * \param x The x-coordinate 
+     * \param x The x-coordinate
      * \param c The supporting curve
      * \param arcno Arcno of point on \c c
      * \return The constructed point
@@ -276,23 +276,23 @@ public:
     Point_2(const T& x, const T& y) :
       // TODO use default kernel
          Base(Rep(Curved_kernel_via_analysis_2::instance().kernel().
-		  construct_algebraic_real_2_object()(x,y)))
+                  construct_algebraic_real_2_object()(x,y)))
     {
     }
 
 
 
-    // FUTURE TODO allow to construct without curve, 
+    // FUTURE TODO allow to construct without curve,
     // i.e, isolated points on toric identifications -> do it also for arcs
     // FUTURE TODO parameter space in x/y (full set of tasks)
-    
+
     //!@}
 
 public: // was protected:
     //!\name Special constructors for points on the boundary
     //!@{
-    
-    /*!\brief 
+
+    /*!\brief
      * Constructs a point with x-coordinate at the left/right boundary
      *
      * \param inf_end Determines whether point is on left or right boundary
@@ -300,30 +300,30 @@ public: // was protected:
      * \param arcno Arcno of point on \c on left/right boundary
      * \return The constructed point
      */
-    Point_2(CGAL::Arr_curve_end inf_end, 
+    Point_2(CGAL::Arr_curve_end inf_end,
             const Curve_analysis_2& c, int arcno) :
         Base(Rep(inf_end, c, arcno)) {
     }
-    
-    /*!\brief 
+
+    /*!\brief
      * Constructs a point on bottom or top boundary
-     * 
+     *
      * \param x The x-coordinate of point
      * \param c The supporting curve
      * \param inf_end Defines whether point is on bottom or top boundary
      * \return The constructed point
      */
-    Point_2(const Coordinate_1& x, const Curve_analysis_2& c, 
+    Point_2(const Coordinate_1& x, const Curve_analysis_2& c,
             CGAL::Arr_curve_end inf_end) :
         Base(Rep(x, c, inf_end)) {
     }
-    
+
     //!@}
 
 protected:
     //!\name Constructors for rebind
     //!@{
-    
+
     /*!\brief
      * constructs from a given represenation
      */
@@ -333,12 +333,12 @@ protected:
      * \param rep The representation
      * \return The constructed point
      */
-    Point_2(Rep rep) : 
-        Base(rep) {  
+    Point_2(Rep rep) :
+        Base(rep) {
     }
-    
+
     //!@}
-       
+
 public:
     //!\name Destructors
     //!@{
@@ -348,20 +348,20 @@ public:
      */
     virtual ~Point_2() {
     }
-    
+
     //!@}
 
 public:
     //!\name Access members
     //!@{
 
-    /*!\brief 
+    /*!\brief
      * Access to the point's x-coordinate (y-coordinate can be undefined)
-     * 
+     *
      * \return The stored x-coordinate
      * \pre the point's x must be finite
      */
-    inline 
+    inline
     const Coordinate_1& x() const {
         CGAL_precondition_msg(
                 this->ptr()->_m_xy || this->ptr()->_m_x,
@@ -370,14 +370,14 @@ public:
         return (is_finite() ?
                 (*(this->ptr()->_m_xy)).x() : *(this->ptr()->_m_x));
     }
-    
-    /*!\brief 
+
+    /*!\brief
      * Access to underlying \c Coordinate_2 object
      *
      * \return The stored xy-coordinate
      * \pre The xy-coordinates must be finite
      */
-    inline 
+    inline
     const Coordinate_2& xy() const {
         CGAL_precondition_msg(bool(this->ptr()->_m_xy),
             "Denied access to the curve end lying at x/y-infinity");
@@ -393,35 +393,35 @@ public:
      *
      * \return supporting curve of point
      */
-    inline 
+    inline
     Curve_analysis_2 curve() const {
         CGAL_precondition_msg(
                 this->ptr()->_m_xy || this->ptr()->_m_curve,
                 "Denied access to the curve end lying at y-infinity");
-        return (is_finite() ? 
+        return (is_finite() ?
                 (*(this->ptr()->_m_xy)).curve() : *(this->ptr()->_m_curve));
     }
-    
+
     /*!\brief
      * Arc number of point on a curve
      *
      * \return arcno of point
-     * \pre Is not endpoint of a vertical ray or branch 
-     */ 
+     * \pre Is not endpoint of a vertical ray or branch
+     */
     inline int arcno() const {
         CGAL_precondition_msg(this->ptr()->_m_xy ||
                               this->ptr()->_m_arcno,
             "Denied access to the curve end lying at y-infinity");
-        return (is_finite() ? 
+        return (is_finite() ?
                 (*(this->ptr()->_m_xy)).arcno() : *(this->ptr()->_m_arcno));
     }
-    
+
     //!@}
 
-public: 
+public:
     //!\name Methods for location
     //!@{
-    
+
     /*!\brief
      * sets location of a point in parameter space to \c loc
      *
@@ -432,16 +432,16 @@ public:
     void set_location(CGAL::Arr_parameter_space loc) const {
         this->ptr()->_m_location = loc;
     }
-    
+
     /*!\brief
      * location of a point in parameter space
      *
      * \return location in parameter space
      */
-    inline CGAL::Arr_parameter_space location() const { 
-        return this->ptr()->_m_location; 
-    } 
-    
+    inline CGAL::Arr_parameter_space location() const {
+        return this->ptr()->_m_location;
+    }
+
     /*!\brief
      * checks if the point lies on left/right boundary
      *
@@ -451,7 +451,7 @@ public:
         return (location() == CGAL::ARR_LEFT_BOUNDARY ||
                 location() == CGAL::ARR_RIGHT_BOUNDARY);
     }
-    
+
     /*!\brief
      * checks if the point lies on bottom/top boundary
      *
@@ -467,13 +467,13 @@ public:
      *
      * \return \c true, if point is finite, \c false otherwise
      */
-    inline 
+    inline
     bool is_finite() const {
         return bool(this->ptr()->_m_xy);
     }
-    
-    //!@}      
-    
+
+    //!@}
+
     //!\name Predicates
     //!@{
 
@@ -483,7 +483,7 @@ public:
 
     /*!\brief
      * Compares x-coordinates of this point with \c q
-     * 
+     *
      * \param q The other point
      * \return CGAL::LARGER if x(*this) > x(q);
      *         CGAL::SMALLER if x(*this) \< x(q);
@@ -501,19 +501,19 @@ public:
         return compare_x_2(*dynamic_cast< const Kernel_point_2* >(this), q);
     }
 
-    /*!\brief 
+    /*!\brief
      * Compares this point with \c q lexicographically
-     * 
+     *
      * \param q The other point
-     * \return CGAL::LARGER if x(*this) > x(q), 
+     * \return CGAL::LARGER if x(*this) > x(q),
      *                      or if x(*this) = x(q) and y(*this) > y(q);
-     *         CGAL::SMALLER if x(*this) \< x(q), 
+     *         CGAL::SMALLER if x(*this) \< x(q),
      *                       or if x(*this) = x(q) and y(*this) \< y(q);
      *         CGAL::EQUAL if the two points are equal.
      * \pre Compared points are in the interior of parameter space
      */
     inline
-    CGAL::Comparison_result compare_xy(const Kernel_point_2& q, 
+    CGAL::Comparison_result compare_xy(const Kernel_point_2& q,
                                        bool equal_x = false) const {
         CGAL_precondition(bool(this->ptr()->_m_xy));
         CGAL_precondition(bool(q.ptr()->_m_xy));
@@ -526,13 +526,13 @@ public:
         );
     }
 
-    /*!\brief 
+    /*!\brief
      * Checks if a point lies on on a curve
      *
      * \param curve The curve to check
      * \return \c true, if *this lies on \c curve, \c false otherwise
      */
-    inline 
+    inline
     bool is_on(
          const typename Curved_kernel_via_analysis_2::Curve_2& curve
     ) const {
@@ -545,7 +545,7 @@ public:
     }
 
 #undef CGAL_CKvA_2_GRAB_CK_FUNCTOR_FOR_POINT
-    
+
     //!@}
 
     //!\name Comparison operators for points in the interior of parameter space
@@ -553,22 +553,22 @@ public:
 
     //! equality
     inline
-    bool operator == (const Kernel_point_2& q) const { 
+    bool operator == (const Kernel_point_2& q) const {
         return this->compare_xy(q) == CGAL::EQUAL;
     }
-    
+
     //! inequality
     inline
     bool operator != (const Kernel_point_2& q) const {
         return this->compare_xy(q) != CGAL::EQUAL;
     }
-    
+
     //! less than in (x,y) lexicographic order
     inline
     bool operator <  (const Kernel_point_2& q) const {
         return this->compare_xy(q) == CGAL::SMALLER;
     }
-    
+
     //! less-equal in (x,y) lexicographic order
     inline
     bool operator <= (const Kernel_point_2& q) const {
@@ -586,13 +586,13 @@ public:
     bool operator >= (const Kernel_point_2& q) const {
         return this->compare_xy(q) != CGAL::SMALLER;
     }
-    
+
     //!@}
 
     //!\name Approximation
     //!@{
-  
-    /*!\brief 
+
+    /*!\brief
      * pair of doubles approximating the coordinates
      */
     std::pair< double, double > to_double() const {
@@ -602,33 +602,33 @@ public:
       }
       return *(this->ptr()->_m_doubles);
     }
-  
+
     //!@}
 
 
 public:
     //!\name IO
     //!@{
-    
+
     /*!\brief
      * writes point to \c os
      */
     void write(std::ostream& os) const {
-        
+
         switch(::CGAL::get_mode(os)) {
         case ::CGAL::IO::PRETTY:
             os << "point@" << this->id() << "(";
             os << "sup@" << this->curve().id() << "; ";
             os << "loc=" << this->location() << "; ";
             os << std::flush;
-            // write x value 
-            switch (this->location()) { 
-            case CGAL::ARR_TOP_BOUNDARY: 
-            case CGAL::ARR_BOTTOM_BOUNDARY: 
+            // write x value
+            switch (this->location()) {
+            case CGAL::ARR_TOP_BOUNDARY:
+            case CGAL::ARR_BOTTOM_BOUNDARY:
             case CGAL::ARR_INTERIOR: {
-              os << "x=" << this->x().to_double()<< "; "; 
+              os << "x=" << this->x().to_double()<< "; ";
               break;
-            } 
+            }
             case CGAL::ARR_LEFT_BOUNDARY: {
               os << "x=-oo; ";
               break;
@@ -638,17 +638,17 @@ public:
               break;
             }
             default:{
-              // bogus location 
+              // bogus location
               CGAL_assertion(false);
-            }}  
+            }}
             os << std::flush;
-            
-            // write y value 
+
+            // write y value
             switch (this->location()) {
             case CGAL::ARR_INTERIOR: {
-              os << "y=" << this->xy().to_double().second<< "; "; ; 
+              os << "y=" << this->xy().to_double().second<< "; "; ;
               break;
-            }  
+            }
             case CGAL::ARR_TOP_BOUNDARY: {
               os << "y=+oo; ";
               break;
@@ -657,34 +657,34 @@ public:
               os << "y=-oo; ";
               break;
             }
-            case CGAL::ARR_LEFT_BOUNDARY: 
+            case CGAL::ARR_LEFT_BOUNDARY:
             case CGAL::ARR_RIGHT_BOUNDARY: {
-              CGAL::Object obj = 
+              CGAL::Object obj =
                 this->curve().asymptotic_value_of_arc(
                     this->location(), this->arcno()
                 );
               CGAL::Arr_parameter_space ps;
               if (CGAL::assign(ps, obj)) {
                 if (ps == CGAL::ARR_BOTTOM_BOUNDARY) {
-                  os << "y=-oo(asym)"<< "; "; 
+                  os << "y=-oo(asym)"<< "; ";
                 } else {
-                  os << "y=+oo(asym)"<< "; "; 
+                  os << "y=+oo(asym)"<< "; ";
                 }
               } else {
                 Coordinate_1 y;
                 CGAL_assertion_code(bool check =)
                   CGAL::assign(y, obj);
                 CGAL_assertion(check);
-                os << "y=" << CGAL::to_double(y) << "(asym)" << "; "; 
+                os << "y=" << CGAL::to_double(y) << "(asym)" << "; ";
               }
               break;
               os << "y=??; ";
               break;
             }
             default:{
-              // bogus location 
+              // bogus location
               CGAL_assertion(false);
-            }}  
+            }}
             os << std::flush;
             if (this->ptr()->_m_xy || this->ptr()->_m_arcno) {
                 os << "ARCNO=" << this->arcno();
@@ -698,7 +698,7 @@ public:
             std::cerr << "BINARY format not yet implemented" << std::endl;
             break;
         default:
-          // ASCII 
+          // ASCII
           os << "Point_2(";
 
           os << this->ptr()->_m_xy;
@@ -721,11 +721,11 @@ public:
    * reads point from \c is
    */
   void read(std::istream& is) {
-    
+
     CGAL_precondition(CGAL::is_ascii(is));
-    
+
     Rep rep;
-    
+
     // read "Point_2("
     swallow(is, 'P');
     swallow(is, 'o');
@@ -772,10 +772,10 @@ public:
 
     // read the ')'
     swallow(is, ')');
-    
+
     *this = Point_2< Curved_kernel_via_analysis_2, Rep >(rep);
   }
-  
+
   //! @}
     // friends ////////////////////////////////////////////////////////////////
 
@@ -785,16 +785,16 @@ public:
     //friend class Non_x_monotone_arc_2< Curved_kernel_via_analysis_2 >;
 
     // befriending the functors
-    
+
 #if defined(_MSC_VER)
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
   friend typename Curved_kernel_via_analysis_2::Z;  \
   friend typename Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 >
 #else // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
-  friend class Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 > 
+  friend class Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 >
 #endif // defined(_MSC_VER) || defined(__clang__) || defined(__INTEL_COMPILER)
-    
+
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Construct_point_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_x_2);
     CGAL_BEFRIEND_CKvA_2_FUNCTOR(Compare_xy_2);
@@ -805,13 +805,13 @@ public:
 
 
 /*!\relates Point_2
- * \brief 
- * writes \c pt to \c os 
+ * \brief
+ * writes \c pt to \c os
  */
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::ostream& operator <<(std::ostream& os,
     const Point_2< CurvedKernelViaAnalysis_2, Rep_ >& pt) {
-    
+
   pt.write(os);
   return os;
 }
@@ -820,16 +820,16 @@ std::ostream& operator <<(std::ostream& os,
 //! \brief Reads the objects from stream.
 template < class CurvedKernelViaAnalysis_2, class Rep_ >
 std::istream& operator>> (
-    std::istream& is, 
+    std::istream& is,
     Point_2< CurvedKernelViaAnalysis_2, Rep_ >& pt) {
 
   CGAL_precondition(CGAL::is_ascii(is));
-  
+
   //typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
   //typedef Rep_ Rep;
-  
+
   pt.read(is);
-  
+
   return is;
 }
 

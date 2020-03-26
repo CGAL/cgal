@@ -18,7 +18,7 @@
 1.1.8 - no more usage of LEDA/rat_window.h
         (is not available on LEDA 3.7.1)
 
-1.1.6 - demo makefile changed 
+1.1.6 - demo makefile changed
       - a typename added for g++ in Point_set_2.h to please g++ -pedantic
 
 1.1.5 - changed demo makefile
@@ -41,7 +41,7 @@
 
 1.0.9 - makefiles changed
 
-1.0.8 - removed some endl without the std:: prefix 
+1.0.8 - removed some endl without the std:: prefix
 
 1.0.7 - GeoWin demos changed
       - some demo - Makefiles changed

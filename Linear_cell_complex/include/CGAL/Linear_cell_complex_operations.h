@@ -62,7 +62,7 @@ namespace CGAL {
     // Now we advance to process each edge
     unsigned int nb = 0;
     const Point* curr = &amap.point(start);
-    
+
     adart=start;
     do
     {

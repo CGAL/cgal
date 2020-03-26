@@ -13,9 +13,9 @@ endif()
 find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
-  
-  find_package(Eigen3 3.1.0) 
-  if (EIGEN3_FOUND) 
+
+  find_package(Eigen3 3.1.0)
+  if (EIGEN3_FOUND)
     include_directories (BEFORE "include")
 
     create_single_source_cgal_program( "test_triangulation.cpp" )

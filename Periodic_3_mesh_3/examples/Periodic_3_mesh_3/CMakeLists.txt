@@ -14,7 +14,7 @@ find_package( CGAL QUIET  COMPONENTS ImageIO )
 
 if ( CGAL_FOUND )
   include( ${CGAL_USE_FILE} )
-else()  
+else()
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
   return()
 endif()

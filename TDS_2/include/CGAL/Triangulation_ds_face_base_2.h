@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Mariette Yvinec
 
@@ -21,10 +21,10 @@
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Dummy_tds_2.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 template < typename TDS = void>
-class Triangulation_ds_face_base_2 
+class Triangulation_ds_face_base_2
 {
 public:
   typedef TDS                          Triangulation_data_structure;
@@ -32,7 +32,7 @@ public:
   typedef typename TDS::Face_handle    Face_handle;
 
   template <typename TDS2>
-  struct Rebind_TDS { typedef Triangulation_ds_face_base_2<TDS2> Other; }; 
+  struct Rebind_TDS { typedef Triangulation_ds_face_base_2<TDS2> Other; };
 
 private:
   Vertex_handle V[3];
@@ -40,21 +40,21 @@ private:
 
 public:
   Triangulation_ds_face_base_2();
-  Triangulation_ds_face_base_2(Vertex_handle v0, 
-			       Vertex_handle v1, 
-			       Vertex_handle v2);
-  Triangulation_ds_face_base_2(Vertex_handle v0, 
-			       Vertex_handle v1, 
-			       Vertex_handle v2,
-			       Face_handle n0, 
-			       Face_handle n1, 
-			       Face_handle n2);
+  Triangulation_ds_face_base_2(Vertex_handle v0,
+                               Vertex_handle v1,
+                               Vertex_handle v2);
+  Triangulation_ds_face_base_2(Vertex_handle v0,
+                               Vertex_handle v1,
+                               Vertex_handle v2,
+                               Face_handle n0,
+                               Face_handle n1,
+                               Face_handle n2);
 
   Vertex_handle vertex(int i) const;
   bool has_vertex(Vertex_handle v) const;
   bool has_vertex(Vertex_handle v, int& i) const ;
   int index(Vertex_handle v) const ;
- 
+
   Face_handle neighbor(int i) const ;
   bool has_neighbor(Face_handle n) const;
   bool has_neighbor(Face_handle n, int& i) const;
@@ -69,14 +69,14 @@ public:
   void reorient();
   void ccw_permute();
   void cw_permute();
-  
+
   int dimension() const;
   //the following trivial is_valid to allow
-  // the user of derived face base classes 
+  // the user of derived face base classes
   // to add their own purpose checking
   bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const
   {return true;}
-  
+
    // For use by Compact_container.
   void * for_compact_container() const {return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container();}
@@ -96,9 +96,9 @@ Triangulation_ds_face_base_2()
 
 template <class TDS>
 Triangulation_ds_face_base_2<TDS> ::
-Triangulation_ds_face_base_2( Vertex_handle v0, 
-			      Vertex_handle v1, 
-			      Vertex_handle v2)
+Triangulation_ds_face_base_2( Vertex_handle v0,
+                              Vertex_handle v1,
+                              Vertex_handle v2)
 {
   set_vertices(v0, v1, v2);
   set_neighbors();
@@ -106,12 +106,12 @@ Triangulation_ds_face_base_2( Vertex_handle v0,
 
 template <class TDS>
 Triangulation_ds_face_base_2<TDS> ::
-Triangulation_ds_face_base_2(Vertex_handle v0, 
-			     Vertex_handle v1, 
-			     Vertex_handle v2,
-			     Face_handle n0, 
-			     Face_handle n1, 
-			     Face_handle n2)
+Triangulation_ds_face_base_2(Vertex_handle v0,
+                             Vertex_handle v1,
+                             Vertex_handle v2,
+                             Face_handle n0,
+                             Face_handle n1,
+                             Face_handle n2)
 {
   set_vertices(v0, v1, v2);
   set_neighbors(n0, n1, n2);
@@ -119,14 +119,14 @@ Triangulation_ds_face_base_2(Vertex_handle v0,
 
 
 template <class TDS>
-inline 
+inline
 typename Triangulation_ds_face_base_2<TDS>::Vertex_handle
 Triangulation_ds_face_base_2<TDS>::
 vertex(int i) const
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
   return V[i];
-} 
+}
 
 
 template <class TDS>
@@ -136,10 +136,10 @@ has_vertex(Vertex_handle v) const
 {
   return (V[0] == v) || (V[1] == v) || (V[2]== v);
 }
-    
+
 template <class TDS>
 inline bool
-Triangulation_ds_face_base_2<TDS> ::    
+Triangulation_ds_face_base_2<TDS> ::
 has_vertex(Vertex_handle v, int& i) const
 {
   if (v == V[0]) {
@@ -156,10 +156,10 @@ has_vertex(Vertex_handle v, int& i) const
   }
   return false;
 }
-    
-template <class TDS>    
+
+template <class TDS>
 inline int
-Triangulation_ds_face_base_2<TDS> :: 
+Triangulation_ds_face_base_2<TDS> ::
 index(Vertex_handle v) const
 {
   if (v == V[0]) return 0;
@@ -168,27 +168,27 @@ index(Vertex_handle v) const
   return 2;
 }
 
-template <class TDS>    
-inline 
-typename Triangulation_ds_face_base_2<TDS>::Face_handle 
+template <class TDS>
+inline
+typename Triangulation_ds_face_base_2<TDS>::Face_handle
 Triangulation_ds_face_base_2<TDS>::
 neighbor(int i) const
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
   return N[i];
 }
-    
-template <class TDS>      
-inline bool 
+
+template <class TDS>
+inline bool
 Triangulation_ds_face_base_2<TDS> ::
 has_neighbor(Face_handle n) const
 {
   return (N[0] == n) || (N[1] == n) || (N[2] == n);
 }
-    
-    
-template <class TDS>      
-inline bool 
+
+
+template <class TDS>
+inline bool
 Triangulation_ds_face_base_2<TDS> ::
 has_neighbor(Face_handle n, int& i) const
 {
@@ -207,10 +207,10 @@ has_neighbor(Face_handle n, int& i) const
   return false;
 }
 
-    
-    
-template <class TDS>      
-inline int 
+
+
+template <class TDS>
+inline int
 Triangulation_ds_face_base_2<TDS> ::
 index(Face_handle n) const
 {
@@ -219,19 +219,19 @@ index(Face_handle n) const
   CGAL_triangulation_assertion( n == N[2] );
   return 2;
 }
-    
-template <class TDS>      
+
+template <class TDS>
 inline void
-Triangulation_ds_face_base_2<TDS> :: 
+Triangulation_ds_face_base_2<TDS> ::
 set_vertex(int i, Vertex_handle v)
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
   V[i] = v;
 }
-    
-template <class TDS>      
+
+template <class TDS>
 inline void
-Triangulation_ds_face_base_2<TDS> ::     
+Triangulation_ds_face_base_2<TDS> ::
 set_neighbor(int i, Face_handle n)
 {
   CGAL_triangulation_precondition( i == 0 || i == 1 || i == 2);
@@ -247,27 +247,27 @@ set_vertices()
   V[0] = V[1] = V[2] = Vertex_handle();
 }
 
-template <class TDS>      
+template <class TDS>
 inline void
-Triangulation_ds_face_base_2<TDS> ::     
+Triangulation_ds_face_base_2<TDS> ::
 set_vertices(Vertex_handle v0,  Vertex_handle v1, Vertex_handle v2)
 {
   V[0] = v0;
   V[1] = v1;
   V[2] = v2;
 }
-    
-template <class TDS>      
+
+template <class TDS>
 inline void
-Triangulation_ds_face_base_2<TDS> :: 
+Triangulation_ds_face_base_2<TDS> ::
 set_neighbors()
 {
   N[0] = N[1] = N[2] = Face_handle();
 }
-    
-template <class TDS>      
+
+template <class TDS>
 inline void
-Triangulation_ds_face_base_2<TDS> :: 
+Triangulation_ds_face_base_2<TDS> ::
 set_neighbors(Face_handle n0,Face_handle n1, Face_handle n2)
 {
   CGAL_triangulation_precondition( this != &*n0 );
@@ -280,7 +280,7 @@ set_neighbors(Face_handle n0,Face_handle n1, Face_handle n2)
 
 template <class TDS>
 void
-Triangulation_ds_face_base_2<TDS> :: 
+Triangulation_ds_face_base_2<TDS> ::
 reorient()
 {
   //exchange the vertices 0 and 1
@@ -289,7 +289,7 @@ reorient()
 }
 
 template <class TDS>
-inline void 
+inline void
 Triangulation_ds_face_base_2<TDS> ::
 ccw_permute()
 {
@@ -299,7 +299,7 @@ ccw_permute()
 
 
 template <class TDS>
-inline void 
+inline void
 Triangulation_ds_face_base_2<TDS> ::
 cw_permute()
 {
@@ -309,7 +309,7 @@ cw_permute()
 
 
 template < class TDS>
-inline  int 
+inline  int
 Triangulation_ds_face_base_2<TDS> ::
 dimension() const
 {
@@ -349,6 +349,6 @@ public:
 
 
 
-} //namespace CGAL 
+} //namespace CGAL
 
 #endif //CGAL_DS_TRIANGULATION_FACE_BASE_2_H

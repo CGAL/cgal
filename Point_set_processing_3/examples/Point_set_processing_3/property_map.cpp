@@ -20,7 +20,7 @@ typedef K::Point_3 Point_3;
 typedef K::Vector_3 Vector_3;
 
 // Point with normal vector stored in a std::pair.
-typedef std::pair<Point_3, Vector_3> PointVectorPair; 
+typedef std::pair<Point_3, Vector_3> PointVectorPair;
 
 
 // This is an implementation detail of the process_point_set function.
@@ -61,7 +61,7 @@ void process_point_set(Iterator beg, Iterator end, PointPMap pmap)
 template <typename Iterator>
 void process_point_set(Iterator beg, Iterator end)
 {
-  process_point_set(beg,end, 
+  process_point_set(beg,end,
     CGAL::make_identity_property_map(
       typename CGAL::value_type_traits<Iterator>::type())
     );
@@ -137,13 +137,13 @@ int main()
                       points.end(),
                       CGAL::Nth_of_tuple_property_map<1,IndexedPointWithOrientableNormalTuple>());
 
-    std::cout << boost::tuples::set_open('[') << boost::tuples::set_close(']') << boost::tuples::set_delimiter(','); 
+    std::cout << boost::tuples::set_open('[') << boost::tuples::set_close(']') << boost::tuples::set_delimiter(',');
 
     for(int i = 0; i < 10; i++){
       std::cout << points[i]  << std::endl;
     }
 
-    //We keep the sequence in order, but determine the normal and if it is different from zero set the Boolean to true 
+    //We keep the sequence in order, but determine the normal and if it is different from zero set the Boolean to true
     orient_normals(points.begin(),
                    points.end(),
                    CGAL::make_nth_of_tuple_property_map<2>(IndexedPointWithOrientableNormalTuple()),
@@ -152,7 +152,7 @@ int main()
     std::cout << "\nAfter orient_normals\n";
     for(int i = 0; i < 10; i++){
       std::cout << points[i]  << std::endl;
-    }     
+    }
   }
 
   // same test with std::tuple

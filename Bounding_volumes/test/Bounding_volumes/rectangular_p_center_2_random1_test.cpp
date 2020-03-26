@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -214,7 +214,7 @@ main(int argc, char* argv[])
     #ifdef _MSC_VER
     }
     #endif
-    
+
     // check that there is at least one square with two points
     // on opposite sides
     CGAL::I_Signed_x_distance_2< K > xdist;
@@ -249,7 +249,7 @@ main(int argc, char* argv[])
   } // for (int p(2); p < 5; ++p)
 
   return 0;
-} 
+}
 // ----------------------------------------------------------------------------
 // ** EOF
 // ----------------------------------------------------------------------------

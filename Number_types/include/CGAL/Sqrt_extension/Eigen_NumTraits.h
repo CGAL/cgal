@@ -28,7 +28,7 @@ namespace Eigen {
       AddCost = 2*NumTraits<NT>::AddCost+NumTraits<ROOT>::ReadCost,
       MulCost = 5*NumTraits<NT>::MulCost+2*NumTraits<NT>::AddCost
     };
-    
+
     typedef CGAL::Sqrt_extension<NT, ROOT, ACDE_TAG, FP_TAG> Real;
     typedef Real NonInteger;
     typedef Real Nested;

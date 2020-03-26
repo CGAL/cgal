@@ -33,7 +33,7 @@ if ( CGAL_FOUND )
         deform_mesh_for_botsch08_format_sre_arap)
       CGAL_target_use_Eigen(${target})
     endforeach()
-    
+
     find_package( OpenMesh QUIET )
     if ( OpenMesh_FOUND )
     include( UseOpenMesh )
@@ -48,8 +48,8 @@ if ( CGAL_FOUND )
     message(STATUS "NOTICE: These examples require the Eigen library, version 3.2 or later and will not be compiled.")
   endif()
 else()
-  
+
     message(STATUS "NOTICE: These exmaples require the CGAL library, and will not be compiled.")
-  
+
 endif()
 

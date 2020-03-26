@@ -6,11 +6,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
 //
-// Author(s)     : Sven Schoenherr 
+//
+// Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp 
+//                 Franz Wessendorp
 //                 Kaspar Fischer
 
 #ifndef CGAL_QP__PARTIAL_BASE_H
@@ -40,16 +40,16 @@ struct transition_sync_functor {
     // Note that we rely here on working_vars being the number of
     // variables without artificials and the solvers in_B variable
     // being up to date. Furthermore the operator() below relies on short
-    // circuit evaluation   
+    // circuit evaluation
 
     transition_sync_functor( const Solver& s, int w) : amb_solver(s),
-        working_vars(w) { } 
-         
+        working_vars(w) { }
+
     bool operator() (int i) {
         return (i < working_vars) && !amb_solver.is_basic(i);
     }
-    
-private:    
+
+private:
     const Solver& amb_solver;
     int working_vars;
 };
@@ -94,14 +94,14 @@ class QP__partial_base : virtual public QP_pricing_strategy<Q,ET,Tags> {
     virtual  void  transition( );
 
   private:
-  
+
     // data members
     Indices                  N;         // non-basis;
     int                      s;         // size of active set
 
     bool                     permute;   // flag: permute initial non-basis
     Random&                  rand_src;  // random source
-    
+
     //basic_functor<QP_solver> is_non_basic;
 };
 
@@ -131,7 +131,7 @@ init( )
     if ( ! N.empty()) N.clear();
     N.reserve( w-b);                                        // use 'w' ???
     for ( int i = 0; i < w; ++i) {
-	if ( ! this->solver().is_basic( i)) N.push_back( i);
+        if ( ! this->solver().is_basic( i)) N.push_back( i);
     }
     if ( permute) CGAL::cpp98::random_shuffle( N.begin(), N.end(), rand_src);
 
@@ -139,10 +139,10 @@ init( )
     int  n = this->solver().number_of_variables();
     int  m = this->solver().number_of_constraints();
     // we also want to cover the high constraints/variable ratio
-    if (n < m) (std::swap)(n,m); 
+    if (n < m) (std::swap)(n,m);
 
     s = (std::min)( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
-		    static_cast< unsigned int>(N.size()));
+                    static_cast< unsigned int>(N.size()));
 
     //is_non_basic.init(this->solver());
 }
@@ -168,7 +168,7 @@ QP__partial_base<Q,ET,Tags>::
 activating( Index_const_iterator& it)
 {
     CGAL_qpe_precondition(
-	it >= inactive_set_begin() && it < inactive_set_end());
+        it >= inactive_set_begin() && it < inactive_set_end());
 
     // 'append' to active set
     std::swap( const_cast< typename Indices::value_type&>( *it), N[ s]);
@@ -184,14 +184,14 @@ leaving_basis( int i)
     // all non-basic variables active?
     if ( s == static_cast< int>( N.size())) {
 
-	// append at the end of all non-basic variables
-	N.push_back( i);
+        // append at the end of all non-basic variables
+        N.push_back( i);
 
     } else {
 
-	// insert at the end of the current active subset
-	N.push_back( N[ s]);
-	N[ s] = i;
+        // insert at the end of the current active subset
+        N.push_back( N[ s]);
+        N[ s] = i;
     }
     ++s;
 }
@@ -209,22 +209,22 @@ transition( )
     // been updated.
     // Remove from N the artificial variables as well.
     // Note that we rely on the number of working variables including only
-    // original and slack variables, the solvers in_B variable must be 
+    // original and slack variables, the solvers in_B variable must be
     // up to date.
     // Furthermore we rely on std::partition not destroying the randomness
     // of the order of the nonbasic variables in N.
-    
-    int  w = this->solver().number_of_working_variables();    
+
+    int  w = this->solver().number_of_working_variables();
     transition_sync_functor<QP_solver> is_non_basic(this->solver(), w);
     N.erase( std::partition( N.begin(), N.end(),
-			     is_non_basic), N.end());
-    
+                             is_non_basic), N.end());
+
     // initialize size of active set
     int  n = this->solver().number_of_variables();
     int  m = this->solver().number_of_constraints();
 
     s = (std::min)( static_cast< unsigned int>( m*std::sqrt( n/2.0)),
-		    static_cast< unsigned int>(N.size()));
+                    static_cast< unsigned int>(N.size()));
 }
 
 } //namespace CGAL

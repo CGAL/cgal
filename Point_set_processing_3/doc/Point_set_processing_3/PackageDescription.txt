@@ -35,7 +35,7 @@ format.
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
-\cgalPkgDependsOn{\ref PkgSolverInterface} 
+\cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:ass-psp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}

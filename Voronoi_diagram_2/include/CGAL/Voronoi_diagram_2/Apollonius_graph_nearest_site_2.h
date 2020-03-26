@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -67,11 +67,11 @@ public:
       Vertex_handle v2 = e.first->vertex(CW_CCW_2::cw(e.second) );
 
       Oriented_side os = side_of_bisector(v1->site(), v2->site(), p);
-      
+
       if ( os == ON_ORIENTED_BOUNDARY ) {
-	return e;
+        return e;
       } else {
-	return v;
+        return v;
       }
     }
 
@@ -90,17 +90,17 @@ public:
 
       // do the generic check now
       if ( !dg.is_infinite(v1) ) {
-	os1 = side_of_bisector(v->site(), v1->site(), p);
+        os1 = side_of_bisector(v->site(), v1->site(), p);
       }
       if ( !dg.is_infinite(v2) ) {
-	os2 = side_of_bisector(v->site(), v2->site(), p);
+        os2 = side_of_bisector(v->site(), v2->site(), p);
       }
 
       CGAL_assertion( os1 != ON_NEGATIVE_SIDE );
       CGAL_assertion( os2 != ON_NEGATIVE_SIDE );
 
       if ( os1 == ON_ORIENTED_BOUNDARY && os2 == ON_ORIENTED_BOUNDARY ) {
-	return Face_handle(fc);
+        return Face_handle(fc);
       }
 
       ++fc;
@@ -119,14 +119,14 @@ public:
 
       // do the generic check now
       if ( !dg.is_infinite(v1) ) {
-	os1 = side_of_bisector(v->site(), v1->site(), p);
+        os1 = side_of_bisector(v->site(), v1->site(), p);
       }
 
       CGAL_assertion( os1 != ON_NEGATIVE_SIDE );
 
       if ( os1 != ON_ORIENTED_BOUNDARY ) {
-	++ec;
-	continue;
+        ++ec;
+        continue;
       }
 
       // now find the correct part of the bisector on which the query
@@ -139,7 +139,7 @@ public:
       bool is_inf3 = dg.is_infinite(v3);
 
       typename Geom_traits::Orientation_2 vv_orientation =
-	dg.geom_traits().orientation_2_object();
+        dg.geom_traits().orientation_2_object();
 
       Orientation o2 = LEFT_TURN, o3 = RIGHT_TURN;
       if ( is_inf2 && is_inf3 ) { return *ec; }
@@ -147,67 +147,67 @@ public:
       Site_2 sp(p, 0);
 
       if ( !is_inf2 && is_inf3 ) {
-	Orientation vo2 =
-	  vv_orientation(v->site(), v2->site(), v1->site(),
-			 v->site(), v1->site());
-	Orientation op = vv_orientation(v->site(), v1->site(), sp);
+        Orientation vo2 =
+          vv_orientation(v->site(), v2->site(), v1->site(),
+                         v->site(), v1->site());
+        Orientation op = vv_orientation(v->site(), v1->site(), sp);
 
-	if ( vo2 != LEFT_TURN && op == LEFT_TURN ) { return *ec; }
+        if ( vo2 != LEFT_TURN && op == LEFT_TURN ) { return *ec; }
 
-	o2 = vv_orientation(v->site(), v2->site(), v1->site(),
-			    v->site().point(), sp);
-	CGAL_assertion( o2 != COLLINEAR );
-	if ( o2 == RIGHT_TURN ) { return *ec; }
+        o2 = vv_orientation(v->site(), v2->site(), v1->site(),
+                            v->site().point(), sp);
+        CGAL_assertion( o2 != COLLINEAR );
+        if ( o2 == RIGHT_TURN ) { return *ec; }
       }
 
       if ( is_inf2 && !is_inf3 ) {
-	Orientation vo3 =
-	  vv_orientation(v->site(), v1->site(), v3->site(),
-			 v->site(), v1->site());
-	Orientation op = vv_orientation(v->site(), v1->site(), sp);
+        Orientation vo3 =
+          vv_orientation(v->site(), v1->site(), v3->site(),
+                         v->site(), v1->site());
+        Orientation op = vv_orientation(v->site(), v1->site(), sp);
 
-	if ( vo3 != RIGHT_TURN && op == RIGHT_TURN ) { return *ec; }
+        if ( vo3 != RIGHT_TURN && op == RIGHT_TURN ) { return *ec; }
 
-	o3 = vv_orientation(v->site(), v1->site(), v3->site(),
-			    v->site().point(), sp);
-	CGAL_assertion( o3 != COLLINEAR );
-	if ( o3 == LEFT_TURN ) { return *ec; }
+        o3 = vv_orientation(v->site(), v1->site(), v3->site(),
+                            v->site().point(), sp);
+        CGAL_assertion( o3 != COLLINEAR );
+        if ( o3 == LEFT_TURN ) { return *ec; }
       }
 
       if ( !is_inf2 && !is_inf3 ) {
-	Orientation vo2 =
-	  vv_orientation(v->site(), v2->site(), v1->site(),
-			 v->site(), v1->site());
-	Orientation vo3 =
-	  vv_orientation(v->site(), v1->site(), v3->site(),
-			 v->site(), v1->site());
+        Orientation vo2 =
+          vv_orientation(v->site(), v2->site(), v1->site(),
+                         v->site(), v1->site());
+        Orientation vo3 =
+          vv_orientation(v->site(), v1->site(), v3->site(),
+                         v->site(), v1->site());
 
-	if ( (vo3 == LEFT_TURN && vo2 != RIGHT_TURN) ||
-	     (vo3 != LEFT_TURN && vo2 == RIGHT_TURN) ) {
-	  o2 = vv_orientation(v->site(), v2->site(), v1->site(),
-			      v->site(), sp);
-	  o3 = vv_orientation(v->site(), v1->site(), v3->site(),
-			      v->site(), sp);
-	  CGAL_assertion( o2 != COLLINEAR && o3 != COLLINEAR );
-	  if ( o2 == RIGHT_TURN && o3 == LEFT_TURN ) { return *ec; }
-	} else {
-	  CGAL_assertion( vo2 == RIGHT_TURN && vo3 == LEFT_TURN );
+        if ( (vo3 == LEFT_TURN && vo2 != RIGHT_TURN) ||
+             (vo3 != LEFT_TURN && vo2 == RIGHT_TURN) ) {
+          o2 = vv_orientation(v->site(), v2->site(), v1->site(),
+                              v->site(), sp);
+          o3 = vv_orientation(v->site(), v1->site(), v3->site(),
+                              v->site(), sp);
+          CGAL_assertion( o2 != COLLINEAR && o3 != COLLINEAR );
+          if ( o2 == RIGHT_TURN && o3 == LEFT_TURN ) { return *ec; }
+        } else {
+          CGAL_assertion( vo2 == RIGHT_TURN && vo3 == LEFT_TURN );
 
-	  Orientation op = vv_orientation(v->site(), v1->site().point(), sp);
+          Orientation op = vv_orientation(v->site(), v1->site().point(), sp);
 
-	  if ( op == COLLINEAR ) { return *ec; }
-	  else if ( op == LEFT_TURN ) {
-	    o3 = vv_orientation(v->site(), v1->site(), v3->site(),
-				v->site(), sp);
-	    CGAL_assertion( o3 != COLLINEAR );
-	    if ( o3 == LEFT_TURN ) { return *ec; }
-	  } else {
-	    o2 = vv_orientation(v->site(), v2->site(), v1->site(),
-				v->site(), sp);
-	    CGAL_assertion( o2 != COLLINEAR );
-	    if ( o2 == RIGHT_TURN ) { return *ec; }
-	  }
-	}
+          if ( op == COLLINEAR ) { return *ec; }
+          else if ( op == LEFT_TURN ) {
+            o3 = vv_orientation(v->site(), v1->site(), v3->site(),
+                                v->site(), sp);
+            CGAL_assertion( o3 != COLLINEAR );
+            if ( o3 == LEFT_TURN ) { return *ec; }
+          } else {
+            o2 = vv_orientation(v->site(), v2->site(), v1->site(),
+                                v->site(), sp);
+            CGAL_assertion( o2 != COLLINEAR );
+            if ( o2 == RIGHT_TURN ) { return *ec; }
+          }
+        }
       }
       ++ec;
     } while ( ec != ec_start );

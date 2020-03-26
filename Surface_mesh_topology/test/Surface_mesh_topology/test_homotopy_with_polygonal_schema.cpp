@@ -37,7 +37,7 @@ bool test_two_random_paths(const PS& ps,
     std::cout<<std::endl<<"ERROR for path number "<<nbtests<<" (seed="
              <<random.get_seed()<<")"<<std::endl;
   }
-  
+
   return res;
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ void process_command_line(int argc, char** argv,
 }
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
-{  
+{
   process_command_line(argc, argv, starting_seed);
   std::cout<<"Start tests="<<starting_seed<<"."<<std::endl;
 

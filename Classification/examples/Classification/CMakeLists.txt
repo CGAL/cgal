@@ -10,7 +10,7 @@ find_package( CGAL QUIET COMPONENTS  )
 
 if ( NOT CGAL_FOUND )
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 endif()
 
 # Boost and its components
@@ -18,7 +18,7 @@ find_package( Boost REQUIRED )
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
+  return()
 endif()
 
 set(Classification_dependencies_met TRUE)
@@ -38,7 +38,7 @@ if (NOT OpenCV_FOUND)
   message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
 endif()
 
-find_package(TensorFlow QUIET) 
+find_package(TensorFlow QUIET)
 if (NOT TensorFlow_FOUND)
   message(STATUS "NOTICE: TensorFlow was not found. TensorFlow neural network predicate for classification won't be available.")
 endif()

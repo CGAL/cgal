@@ -13,14 +13,14 @@ public:
 /// @{
 
 /*!
-determines whether \f$ v\f$ is contained in the 
-linear hull of the vectors in `A = tuple [first,last)`. 
-\pre The objects are of the same dimension. 
+determines whether \f$ v\f$ is contained in the
+linear hull of the vectors in `A = tuple [first,last)`.
+\pre The objects are of the same dimension.
 \tparam ForwardIterator has `Kernel_d::Vector_d` as value type.
-*/ 
-template <class ForwardIterator> Bounded_side 
-operator()( ForwardIterator first, ForwardIterator last, const 
-Kernel_d::Vector_d& v); 
+*/
+template <class ForwardIterator> Bounded_side
+operator()( ForwardIterator first, ForwardIterator last, const
+Kernel_d::Vector_d& v);
 
 /// @}
 

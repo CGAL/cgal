@@ -6,13 +6,13 @@ namespace CGAL {
 converts between the various enums provided by the \cgal kernel.
 The conversion preserves the order of the values.
 
-\sa `CGAL::Sign` 
-\sa `CGAL::Comparison_result` 
-\sa `CGAL::Orientation` 
-\sa `CGAL::Oriented_side` 
-\sa `CGAL::Bounded_side` 
-\sa `CGAL::Angle` 
-\sa `CGAL::Uncertain<T>` 
+\sa `CGAL::Sign`
+\sa `CGAL::Comparison_result`
+\sa `CGAL::Orientation`
+\sa `CGAL::Oriented_side`
+\sa `CGAL::Bounded_side`
+\sa `CGAL::Angle`
+\sa `CGAL::Uncertain<T>`
 */
 template < typename T, typename U >
 T enum_cast(const U&u);
@@ -60,12 +60,12 @@ enum  Sign { NEGATIVE, ZERO, POSITIVE };
 
 /*!
 \ingroup kernel_enums
-\sa `CGAL::LEFT_TURN` 
-\sa `CGAL::RIGHT_TURN` 
+\sa `CGAL::LEFT_TURN`
+\sa `CGAL::RIGHT_TURN`
 \sa `CGAL::COLLINEAR`
-\sa `CGAL::CLOCKWISE` 
+\sa `CGAL::CLOCKWISE`
 \sa `CGAL::COUNTERCLOCKWISE`
-\sa `CGAL::COPLANAR` 
+\sa `CGAL::COPLANAR`
 */
 typedef Sign Orientation;
 
@@ -89,17 +89,17 @@ const CGAL::Orientation COUNTERCLOCKWISE = POSITIVE;
 
 /*!
 \ingroup kernel_enums
-\sa `CGAL::LEFT_TURN` 
-\sa `CGAL::RIGHT_TURN` 
+\sa `CGAL::LEFT_TURN`
+\sa `CGAL::RIGHT_TURN`
 */
 const CGAL::Orientation COLLINEAR = ZERO;
 
 /*!
 \ingroup kernel_enums
 
-\sa `CGAL::COLLINEAR` 
+\sa `CGAL::COLLINEAR`
 
-\sa `CGAL::RIGHT_TURN` 
+\sa `CGAL::RIGHT_TURN`
 */
 const CGAL::Orientation LEFT_TURN = POSITIVE;
 
@@ -140,8 +140,8 @@ enum Box_parameter_space_2
 
 A symbolic constant used to construct zero length vectors.
 
-\sa `CGAL::Vector_2<Kernel>` 
-\sa `CGAL::Vector_3<Kernel>` 
+\sa `CGAL::Vector_2<Kernel>`
+\sa `CGAL::Vector_3<Kernel>`
 
 */
 const CGAL::Null_vector NULL_VECTOR;
@@ -158,12 +158,12 @@ This constant is used in the conversion between points and vectors.
   Point_2< Cartesian<Exact_NT> >  p(1.0, 1.0), q;
   Vector2< Cartesian<Exact_NT> >  v;
   v = p - ORIGIN;
-  q = ORIGIN + v;  
+  q = ORIGIN + v;
   assert( p == q );
 \endcode
 
-\sa `CGAL::Point_2<Kernel>` 
-\sa `CGAL::Point_3<Kernel>` 
+\sa `CGAL::Point_2<Kernel>`
+\sa `CGAL::Point_3<Kernel>`
 
 */
 const CGAL::Origin ORIGIN;

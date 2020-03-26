@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
@@ -37,13 +37,13 @@ class ComparePoints {
   }
   CGAL::Comparison_result operator()(const Point_3 p1, const Point_3& p2) {
     switch(coord) {
-    case 0: 
+    case 0:
       CGAL_NEF_TRACEN("compare_x " << p1 << ", " << p2 << "=" << (int) CGAL::compare_x(p1, p2));
       return CGAL::compare_x(p1, p2);
-    case 1: 
+    case 1:
       CGAL_NEF_TRACEN("compare_y " << p1 << ", " << p2 << "=" << (int) CGAL::compare_y(p1, p2));
       return CGAL::compare_y(p1, p2);
-    case 2: 
+    case 2:
       CGAL_NEF_TRACEN("compare_z " << p1 << ", " << p2 << "=" << (int) CGAL::compare_z(p1, p2));
       return CGAL::compare_z(p1, p2);
     default: CGAL_error();
@@ -66,29 +66,29 @@ class ComparePoints<CGAL::Lazy_kernel<EK>, Coordinate> {
   }
   CGAL::Comparison_result operator()( const Point_3 p1, const Point_3 p2) {
     switch(coord) {
-    case 0: 
+    case 0:
       if(CGAL::to_interval(p1.x()).second <
-	 CGAL::to_interval(p2.x()).first)
-	return CGAL::SMALLER;
+         CGAL::to_interval(p2.x()).first)
+        return CGAL::SMALLER;
       else if(CGAL::to_interval(p2.x()).second <
-	      CGAL::to_interval(p1.x()).first)
-	return CGAL::LARGER;
+              CGAL::to_interval(p1.x()).first)
+        return CGAL::LARGER;
       return CGAL::EQUAL;
-    case 1:  
+    case 1:
       if(CGAL::to_interval(p1.y()).second <
-	 CGAL::to_interval(p2.y()).first)
-	return CGAL::SMALLER;
+         CGAL::to_interval(p2.y()).first)
+        return CGAL::SMALLER;
       else if(CGAL::to_interval(p2.y()).second <
-	      CGAL::to_interval(p1.y()).first)
-	return CGAL::LARGER;
+              CGAL::to_interval(p1.y()).first)
+        return CGAL::LARGER;
       return CGAL::EQUAL;
-    case 2: 
+    case 2:
       if(CGAL::to_interval(p1.z()).second <
-	 CGAL::to_interval(p2.z()).first)
-	return CGAL::SMALLER;
+         CGAL::to_interval(p2.z()).first)
+        return CGAL::SMALLER;
       else if(CGAL::to_interval(p2.z()).second <
-	      CGAL::to_interval(p1.z()).first)
-	return CGAL::LARGER;
+              CGAL::to_interval(p1.z()).first)
+        return CGAL::LARGER;
       return CGAL::EQUAL;
     default: CGAL_error();
     }
@@ -101,7 +101,7 @@ private:
 template <class SNC_decorator>
 class Side_of_plane {
 public:
-  typedef typename SNC_decorator::SNC_structure SNC_structure;	
+  typedef typename SNC_decorator::SNC_structure SNC_structure;
   typedef typename SNC_decorator::Decorator_traits Decorator_traits;
 
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
@@ -109,7 +109,7 @@ public:
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  typedef typename SNC_structure::Halffacet_triangle_handle 
+  typedef typename SNC_structure::Halffacet_triangle_handle
                                   Halffacet_triangle_handle;
 #endif
 #ifdef CGAL_NEF3_FACET_WITH_BOX
@@ -119,23 +119,23 @@ public:
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
     Halffacet_cycle_iterator;
-  typedef typename Decorator_traits::SHalfedge_around_facet_circulator 
+  typedef typename Decorator_traits::SHalfedge_around_facet_circulator
     SHalfedge_around_facet_circulator;
   typedef typename Decorator_traits::SHalfedge_handle SHalfedge_handle;
-  
+
   typedef typename SNC_decorator::Kernel Kernel;
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::Plane_3 Plane_3;
   typedef typename Kernel::Triangle_3 Triangle_3;
-  typedef typename Kernel::Vector_3 Vector_3;  
+  typedef typename Kernel::Vector_3 Vector_3;
   typedef typename Kernel::RT  RT;
 
   typedef ComparePoints<Kernel, int> ComparePoints_;
-  
+
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
   Side_of_plane(bool rc = false) : reference_counted(rc) {}
-#else    
+#else
     Side_of_plane() {}
 #endif
 
@@ -167,7 +167,7 @@ public:
 template <class SNC_decorator>
 class Objects_bbox {
 public:
-  typedef typename SNC_decorator::SNC_structure SNC_structure;	
+  typedef typename SNC_decorator::SNC_structure SNC_structure;
   typedef typename SNC_decorator::Decorator_traits Decorator_traits;
 
   typedef typename Decorator_traits::Vertex_handle Vertex_handle;
@@ -180,7 +180,7 @@ public:
 
   typedef typename Decorator_traits::Halffacet_cycle_iterator
     Halffacet_cycle_iterator;
-  typedef typename Decorator_traits::SHalfedge_around_facet_circulator 
+  typedef typename Decorator_traits::SHalfedge_around_facet_circulator
     SHalfedge_around_facet_circulator;
   typedef typename Decorator_traits::SHalfedge_handle SHalfedge_handle;
 
@@ -193,12 +193,12 @@ public:
   typedef typename Kernel::RT RT;
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
-  typedef CGAL::Bounding_box_3<Tag_true, Kernel> 
+  typedef CGAL::Bounding_box_3<Tag_true, Kernel>
     Bounding_box_3;
   //  typedef CGAL::Bounding_box_3
-  //    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+  //    <typename Is_extended_kernel<Kernel>::value_type, Kernel>
   //    Bounding_box_3;
-  
+
   Bounding_box_3 operator()( const Object_list& O) const {
     Bounding_box_3 b;
     typename Object_list::const_iterator o = O.begin();
@@ -211,9 +211,9 @@ public:
       q[2] = v->point().z();
       Bounding_box_3 b(q);
       for(++o; o != O.end(); ++o) {
-	if( CGAL::assign( v, *o)) {
-	  b.extend(v->point());
-	}
+        if( CGAL::assign( v, *o)) {
+          b.extend(v->point());
+        }
       }
       return b;
     }
@@ -236,14 +236,14 @@ public:
     else {
       Halffacet_triangle_handle t;
       if( CGAL::assign( t, o))
-	return operator()(t);
+        return operator()(t);
       else
-	CGAL_error_msg( "wrong handle");
+        CGAL_error_msg( "wrong handle");
     }
     return Bounding_box_3(); // never reached
   }
 
-  Bounding_box_3 operator()(Vertex_handle v) const {    
+  Bounding_box_3 operator()(Vertex_handle v) const {
     Bounding_box_3 b;
     b.extend(v->point());
     return b;
@@ -265,8 +265,8 @@ public:
   }
 
   Bounding_box_3 operator()(Halffacet_handle f) const {
-    CGAL_assertion( f->facet_cycles_begin() != 
-		    Halffacet_cycle_iterator());
+    CGAL_assertion( f->facet_cycles_begin() !=
+                    Halffacet_cycle_iterator());
     Halffacet_cycle_iterator fc(f->facet_cycles_begin());
     SHalfedge_handle e;
     CGAL_assertion(fc.is_shalfedge());
@@ -295,7 +295,7 @@ public:
   typedef typename Decorator_traits::Halfedge_handle Halfedge_handle;
   typedef typename Decorator_traits::Halffacet_handle Halffacet_handle;
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
-  typedef typename SNC_structure::Halffacet_triangle_handle 
+  typedef typename SNC_structure::Halffacet_triangle_handle
                                   Halffacet_triangle_handle;
 #endif
 #ifdef CGAL_NEF3_FACET_WITH_BOX
@@ -316,9 +316,9 @@ public:
   typedef typename Kernel::RT RT;
   typedef typename Kernel::Kernel_tag Kernel_tag;
   //  typedef CGAL::Bounding_box_3
-  //    <typename Is_extended_kernel<Kernel>::value_type, Kernel> 
+  //    <typename Is_extended_kernel<Kernel>::value_type, Kernel>
   //    Bounding_box_3;
-  typedef CGAL::Bounding_box_3<Tag_true, Kernel> 
+  typedef CGAL::Bounding_box_3<Tag_true, Kernel>
     Bounding_box_3;
 
   typedef typename Kernel::Intersect_3 Intersect;
@@ -336,7 +336,7 @@ public:
 
 template <class SNC_decorator>
 template <typename Depth>
-Oriented_side 
+Oriented_side
 Side_of_plane<SNC_decorator>::operator()
   (const Point_3& pop, Object_handle o, Depth depth) {
   Vertex_handle v;
@@ -364,13 +364,13 @@ Side_of_plane<SNC_decorator>::operator()
 #endif
   else
     CGAL_error_msg( "wrong handle");
-  
+
   return Oriented_side(); // never reached
 }
 
 template <class SNC_decorator>
 template <typename Depth>
-Oriented_side 
+Oriented_side
 Side_of_plane<SNC_decorator>::operator()
 ( const Point_3& pop, Vertex_handle v, Depth depth) {
   Comparison_result cr;
@@ -378,7 +378,7 @@ Side_of_plane<SNC_decorator>::operator()
   if(reference_counted) {
     if(!OnSideMapRC.is_defined(&(v->point().hw())))
       switch(depth%3) {
-      case 0: 
+      case 0:
         cr = CGAL::compare_x(v->point(), pop);
         OnSideMapRC[&(v->point().hw())] = cr == LARGER ? ON_POSITIVE_SIDE :
                          cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
@@ -402,7 +402,7 @@ Side_of_plane<SNC_decorator>::operator()
     if(!OnSideMap.is_defined(v)) {
       cr = compare(v->point(), pop);
       OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
-	cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
+        cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
     }
     return OnSideMap[v];
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
@@ -410,7 +410,7 @@ Side_of_plane<SNC_decorator>::operator()
 #endif
 }
 
-/* 
+/*
    An edge is considered intersecting a plane if its endpoints lie on the
    plane or if they lie on diferent sides.  Partial tangency is not considered
    as intersection, due the fact that a lower dimensional face (the vertex)
@@ -419,7 +419,7 @@ Side_of_plane<SNC_decorator>::operator()
 
 template <class SNC_decorator>
 template <typename Depth>
-Oriented_side 
+Oriented_side
 Side_of_plane<SNC_decorator>::operator()
 ( const Point_3& pop, Halfedge_handle e, Depth depth) {
   Vertex_handle v = e->source();
@@ -428,7 +428,7 @@ Side_of_plane<SNC_decorator>::operator()
   Comparison_result cr;
   if(!OnSideMap.is_defined(v))
     switch(depth%3) {
-    case 0: 
+    case 0:
       cr = CGAL::compare_x(v->point(), pop);
       OnSideMap[v] = cr == LARGER ? ON_POSITIVE_SIDE :
                        cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
@@ -447,7 +447,7 @@ Side_of_plane<SNC_decorator>::operator()
     }
   if(!OnSideMap.is_defined(vt))
     switch(depth%3) {
-    case 0: 
+    case 0:
       cr = CGAL::compare_x(vt->point(), pop);
       OnSideMap[vt] = cr == LARGER ? ON_POSITIVE_SIDE :
                        cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
@@ -491,11 +491,11 @@ Side_of_plane<SNC_decorator>::operator()
     Comparison_result cr;
     if(
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
-       !reference_counted || 
+       !reference_counted ||
 #endif
        !OnSideMapRC.is_defined(&(tr[i].hw()))) {
       switch(depth%3) {
-      case 0: 
+      case 0:
         cr = CGAL::compare_x(tr[i], pop);
         side = cr == LARGER ? ON_POSITIVE_SIDE :
                  cr == SMALLER ? ON_NEGATIVE_SIDE : ON_ORIENTED_BOUNDARY;
@@ -513,7 +513,7 @@ Side_of_plane<SNC_decorator>::operator()
       default: CGAL_error_msg( "wrong value");
       }
 #ifdef CGAL_NEF_EXPLOIT_REFERENCE_COUNTING
-      if(reference_counted) 
+      if(reference_counted)
         OnSideMapRC[&(tr[i].hw())] = side;
     } else if(reference_counted)
       side = OnSideMapRC[&(tr[i].hw())];
@@ -536,13 +536,13 @@ Side_of_plane<SNC_decorator>::operator()
 }
 #endif
 
-/* 
+/*
    As for the edges, if a facet is tanget to the plane it is not considered as
    a interesection since lower dimensional faces, like the edges and vertices
-   where the tangency occurrs, should be reported as the objects intersecting 
+   where the tangency occurrs, should be reported as the objects intersecting
    the plane.
    So, an intersection is reported if all vertices of the facet lie on plane,
-   for which it is only necessary to check three vertices, or if the facet 
+   for which it is only necessary to check three vertices, or if the facet
    has vertices on both sides of the plane, so the intersection is known
    as far as two vertices located on different sides of the plane.
 */
@@ -554,14 +554,14 @@ Oriented_side
 Side_of_plane<SNC_decorator>::operator()
   (const Point_3& pop, Partial_facet& pf, Depth depth) {
   CGAL_error_msg( "not implemented yet");
-  
+
   return ON_ORIENTED_BOUNDARY;
 }
 #endif
 
 template <class SNC_decorator>
 template <typename Depth>
-Oriented_side 
+Oriented_side
 Side_of_plane<SNC_decorator>::operator()
   (const Point_3& pop, Halffacet_handle f, Depth depth) {
     CGAL_assertion( std::distance( f->facet_cycles_begin(), f->facet_cycles_end()) > 0);
@@ -570,26 +570,26 @@ Side_of_plane<SNC_decorator>::operator()
     switch(depth%3) {
     case 0:
       if(f->b.min_coord(0) > pop.x())
-	return ON_POSITIVE_SIDE;
+        return ON_POSITIVE_SIDE;
       if(f->b.max_coord(0) < pop.x())
-	return ON_NEGATIVE_SIDE;
+        return ON_NEGATIVE_SIDE;
       break;
     case 1:
       if(f->b.min_coord(1) > pop.y())
-	return ON_POSITIVE_SIDE;
+        return ON_POSITIVE_SIDE;
       if(f->b.max_coord(1) < pop.y())
-	return ON_NEGATIVE_SIDE;
+        return ON_NEGATIVE_SIDE;
       break;
     case 2:
       if(f->b.min_coord(2) > pop.z())
-	return ON_POSITIVE_SIDE;
+        return ON_POSITIVE_SIDE;
       if(f->b.max_coord(2) < pop.z())
-	return ON_NEGATIVE_SIDE;
+        return ON_NEGATIVE_SIDE;
       break;
     default: CGAL_error_msg( "wrong value");
-    }    
+    }
     return ON_ORIENTED_BOUNDARY;
-#else  
+#else
     */
   Halffacet_cycle_iterator fc(f->facet_cycles_begin());
   SHalfedge_handle e;

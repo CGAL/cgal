@@ -38,10 +38,10 @@ int main(int argc, char *argv[]) {
   CGAL::set_ascii_mode(in);
 
   if (!in) {
-    std::cout << 
+    std::cout <<
     "Error: cannot read the file point_set_2.xyz!" << std::endl;
-    std::cout << 
-    "You can either create a symlink to the data folder or provide this file by hand." 
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
     << std::endl << std::endl;
     assert(false);
     return EXIT_FAILURE;
@@ -52,11 +52,11 @@ int main(int argc, char *argv[]) {
 
   while (in >> a >> b >> c >> d >> e >> f)
     input_range.push_back(std::make_pair(Point_2(a, b), Vector_2(d, e)));
-    
+
   in.close();
 
   assert(input_range.size() == 3634);
-  if (input_range.size() != 3634) 
+  if (input_range.size() != 3634)
     success = false;
 
   // Create parameter classes.
@@ -74,21 +74,21 @@ int main(int argc, char *argv[]) {
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
 
   assert(unassigned_points.size() == 3634);
-  if (unassigned_points.size() != 3634) 
+  if (unassigned_points.size() != 3634)
     success = false;
 
   std::vector< std::vector<std::size_t> > regions;
   region_growing.detect(std::back_inserter(regions));
 
   assert(regions.size() != 0);
-  if (regions.size() == 0) 
+  if (regions.size() == 0)
     success = false;
 
   unassigned_points.clear();
   region_growing.unassigned_items(std::back_inserter(unassigned_points));
 
   assert(unassigned_points.size() != 3634);
-  if (unassigned_points.size() == 3634) 
+  if (unassigned_points.size() == 3634)
     success = false;
 
   const std::size_t num_regions = regions.size();
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
   region_growing.detect(std::back_inserter(regions));
 
   assert(regions.size() == num_regions);
-  if (regions.size() != num_regions) 
+  if (regions.size() != num_regions)
     success = false;
 
   std::cout << "basic_test_success: " << success << std::endl;

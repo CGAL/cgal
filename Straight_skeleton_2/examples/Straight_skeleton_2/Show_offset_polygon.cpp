@@ -24,23 +24,23 @@ typedef std::vector<Polygon_with_holes_ptr> Polygon_with_holes_ptr_vector ;
 int main( int argc, char* argv[] )
 {
   Polygon_with_holes input ;
-  
+
   if ( argc > 1 )
   {
     std::string name = argv[1] ;
-  
+
     std::cout << "Input file: " << name << std::endl ;
-      
+
     std::ifstream is(name.c_str()) ;
     if ( is )
     {
       is >> input ;
-      
+
       double lOffset = 0.25 ;
-      
+
       if ( argc > 2 )
         lOffset = std::atof(argv[2]);
-      
+
       std::cout << "Offsetting at: " << lOffset << std::endl ;
 
       Polygon_with_holes_ptr_vector offset_polygons = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(lOffset,input);
@@ -49,9 +49,9 @@ int main( int argc, char* argv[] )
       if ( argc > 3  )
            eps_name = argv[3];
       else eps_name = name + ".offset.eps" ;
-      
+
       std::ofstream eps(eps_name.c_str()) ;
-      if ( eps )  
+      if ( eps )
       {
         std::cerr << "Result: " << eps_name << std::endl ;
         dump_to_eps(input,offset_polygons,eps);
@@ -59,23 +59,23 @@ int main( int argc, char* argv[] )
       else
       {
         std::cerr << "Could not open result file: " << eps_name << std::endl ;
-      }  
-    }  
+      }
+    }
     else
     {
       std::cerr << "Could not open input file: " << name << std::endl ;
-    }  
+    }
   }
   else
   {
-    std::cerr << "Computes the interior offset of a polygon with holes and draws the result in an EPS file." << std::endl 
-              << std::endl 
-              << "Usage: show_offset_polygon <intput_file> [offset_distance] [output_eps_file]" << std::endl 
-              << std::endl 
+    std::cerr << "Computes the interior offset of a polygon with holes and draws the result in an EPS file." << std::endl
+              << std::endl
+              << "Usage: show_offset_polygon <intput_file> [offset_distance] [output_eps_file]" << std::endl
+              << std::endl
               << "       intput_file  Text file describing the input polygon with holes." << std::endl
               << "         (See inputfile_format.txt for details)" << std::endl
-              << "       offset_distance [default=0.25]." << std::endl 
-              << "       output_file     [default='innput_file.offset.eps']" << std::endl ; 
+              << "       offset_distance [default=0.25]." << std::endl
+              << "       output_file     [default='innput_file.offset.eps']" << std::endl ;
   }
 
   return 0;
