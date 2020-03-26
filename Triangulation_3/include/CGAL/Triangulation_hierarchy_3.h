@@ -190,7 +190,7 @@ public:
 
           for (int level = 1; level <= vertex_level; ++level) {
               v = hints[level] = hierarchy[level]->insert (*p, hints[level]);
-	      set_up_down(v, prev);
+              set_up_down(v, prev);
               prev = v;
           }
       }
@@ -354,34 +354,34 @@ public: // some internal methods
   // GIVING NEW FACES
 
   template <class OutputItCells>
-  Vertex_handle insert_and_give_new_cells(const Point  &p, 
+  Vertex_handle insert_and_give_new_cells(const Point  &p,
                                           OutputItCells fit,
                                           Cell_handle start = Cell_handle() );
-		
+
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           OutputItCells /* fit */,
                                           Vertex_handle hint)
   {
-    return insert_and_give_new_cells(p, hint == Vertex_handle() ? 
-                                     this->infinite_cell() : hint->cell());			
+    return insert_and_give_new_cells(p, hint == Vertex_handle() ?
+                                     this->infinite_cell() : hint->cell());
   }
 
   template <class OutputItCells>
   Vertex_handle insert_and_give_new_cells(const Point& p,
                                           Locate_type lt,
-                                          Cell_handle c, int li, int lj, 
+                                          Cell_handle c, int li, int lj,
                                           OutputItCells fit);
 
   template <class OutputItCells>
-  void remove_and_give_new_cells(Vertex_handle v, 
+  void remove_and_give_new_cells(Vertex_handle v,
                                  OutputItCells fit);
 
   template <class OutputItCells>
-  Vertex_handle move_if_no_collision_and_give_new_cells(Vertex_handle v, 
+  Vertex_handle move_if_no_collision_and_give_new_cells(Vertex_handle v,
                                                         const Point &p, OutputItCells fit);
-	
-public:	
+
+public:
 
 
   //LOCATE
@@ -413,7 +413,7 @@ protected:
   };
 
   void locate(const Point& p, Locate_type& lt, int& li, int& lj,
-	      locs pos[maxlevel], Cell_handle start = Cell_handle ()) const;
+              locs pos[maxlevel], Cell_handle start = Cell_handle ()) const;
 
   int random_level();
 };
@@ -451,12 +451,12 @@ Triangulation_hierarchy_3(const Triangulation_hierarchy_3<Tr> &tr)
 
   for(int j=1; j<maxlevel; ++j) {
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
-	 end = hierarchy[j]->finite_vertices_end(); it != end; ++it) {
-	// current it->down() pointer goes in original instead in copied triangulation
-	set_up_down(it, V[it->down()]);
-	// make map for next level
-	if (it->up() != Vertex_handle())
-	    V[ it->up()->down() ] = it;
+         end = hierarchy[j]->finite_vertices_end(); it != end; ++it) {
+        // current it->down() pointer goes in original instead in copied triangulation
+        set_up_down(it, V[it->down()]);
+        // make map for next level
+        if (it->up() != Vertex_handle())
+            V[ it->up()->down() ] = it;
     }
   }
 }
@@ -499,7 +499,7 @@ is_valid(bool verbose, int level) const
 
   // verify correctness of triangulation at all levels
   for(int i=0; i<maxlevel; ++i)
-	result = result && hierarchy[i]->is_valid(verbose, level);
+        result = result && hierarchy[i]->is_valid(verbose, level);
 
   // verify that lower level has no down pointers
   for( Finite_vertices_iterator it = hierarchy[0]->finite_vertices_begin(),
@@ -509,15 +509,15 @@ is_valid(bool verbose, int level) const
   // verify that other levels has down pointer and reciprocal link is fine
   for(int j=1; j<maxlevel; ++j)
     for( Finite_vertices_iterator it = hierarchy[j]->finite_vertices_begin(),
-	 end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
+         end = hierarchy[j]->finite_vertices_end(); it != end; ++it)
       result = result && &*(it) == &*(it->down()->up());
 
   // verify that other levels has down pointer and reciprocal link is fine
   for(int k=0; k<maxlevel-1; ++k)
     for( Finite_vertices_iterator it = hierarchy[k]->finite_vertices_begin(),
-	 end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
+         end = hierarchy[k]->finite_vertices_end(); it != end; ++it)
       result = result && ( it->up() == Vertex_handle() ||
-	        &*it == &*(it->up())->down() );
+                &*it == &*(it->up())->down() );
 
   return result;
 }
@@ -535,10 +535,10 @@ insert(const Point &p, Cell_handle start)
   locate(p, lt, i, j, positions, start);
   // insert at level 0
   Vertex_handle vertex = hierarchy[0]->insert(p,
-	                                      positions[0].lt,
-	                                      positions[0].pos,
-	                                      positions[0].li,
-	                                      positions[0].lj);
+                                              positions[0].lt,
+                                              positions[0].pos,
+                                              positions[0].li,
+                                              positions[0].lj);
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
 
@@ -548,10 +548,10 @@ insert(const Point &p, Cell_handle start)
           vertex = hierarchy[level]->insert(p);
       else
           vertex = hierarchy[level]->insert(p,
-	                                    positions[level].lt,
-	                                    positions[level].pos,
-	                                    positions[level].li,
-	                                    positions[level].lj);
+                                            positions[level].lt,
+                                            positions[level].pos,
+                                            positions[level].li,
+                                            positions[level].lj);
     set_up_down(vertex, previous);
     previous=vertex;
     level++;
@@ -618,13 +618,13 @@ insert(const Point &p, Locate_type lt, Cell_handle loc, int li, int lj)
     int level = 1;
     while (level <= vertex_level ){
       if (positions[level].pos == Cell_handle())
-	vertex = hierarchy[level]->insert(p);
+        vertex = hierarchy[level]->insert(p);
       else
-	vertex = hierarchy[level]->insert(p,
-	    positions[level].lt,
-	    positions[level].pos,
-	    positions[level].li,
-	    positions[level].lj);
+        vertex = hierarchy[level]->insert(p,
+            positions[level].lt,
+            positions[level].pos,
+            positions[level].li,
+            positions[level].lj);
       set_up_down(vertex, previous);
       previous=vertex;
       level++;
@@ -637,12 +637,12 @@ template <class Tr>
 template <class OutputItCells>
 typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
-insert_and_give_new_cells(const Point &p, Locate_type lt, Cell_handle loc, 
+insert_and_give_new_cells(const Point &p, Locate_type lt, Cell_handle loc,
   int li, int lj, OutputItCells fit)
 {
   int vertex_level = random_level();
   // insert at level 0
-  Vertex_handle vertex = 
+  Vertex_handle vertex =
     hierarchy[0]->insert_and_give_new_cells(p,lt,loc,li,lj,fit);
   Vertex_handle previous = vertex;
   Vertex_handle first = vertex;
@@ -657,9 +657,9 @@ insert_and_give_new_cells(const Point &p, Locate_type lt, Cell_handle loc,
     int level = 1;
     while (level <= vertex_level ){
       if (positions[level].pos == Cell_handle())
-	vertex = hierarchy[level]->insert(p);
+        vertex = hierarchy[level]->insert(p);
       else
-	vertex = hierarchy[level]->insert(p,
+        vertex = hierarchy[level]->insert(p,
                                           positions[level].lt,
                                           positions[level].pos,
                                           positions[level].li,
@@ -682,7 +682,7 @@ remove(Vertex_handle v)
     Vertex_handle u = v->up();
     hierarchy[l]->remove(v);
     if (u == Vertex_handle())
-	break;
+        break;
     v = u;
   }
 }
@@ -700,7 +700,7 @@ remove_and_give_new_cells(Vertex_handle v, OutputItCells fit)
     if(l) hierarchy[l]->remove(v);
     else hierarchy[l]->remove_and_give_new_cells(v, fit);
     if (u == Vertex_handle())
-	break;
+        break;
     v = u;
   }
 }
@@ -710,7 +710,7 @@ typename Triangulation_hierarchy_3<Tr>::Vertex_handle
 Triangulation_hierarchy_3<Tr>::
 move_if_no_collision(Vertex_handle v, const Point & p)
 {
-  CGAL_triangulation_precondition(!this->is_infinite(v));	
+  CGAL_triangulation_precondition(!this->is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
@@ -747,13 +747,13 @@ Triangulation_hierarchy_3<Tr>::
 move_if_no_collision_and_give_new_cells(
   Vertex_handle v, const Point & p, OutputItCells fit)
 {
-  CGAL_triangulation_precondition(!is_infinite(v));	
+  CGAL_triangulation_precondition(!is_infinite(v));
   if(v->point() == p) return v;
   Vertex_handle ans;
   for (int l = 0; l < maxlevel; ++l) {
     Vertex_handle u = v->up();
     if(l) hierarchy[l]->move_if_no_collision(v, p);
-    else ans = 
+    else ans =
            hierarchy[l]->move_if_no_collision_and_give_new_cells(v, p, fit);
     if(ans != v) return ans;
     if (u == Vertex_handle())
@@ -800,7 +800,7 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
   // find the highest level with enough vertices
   while (hierarchy[--level]->number_of_vertices() < (size_type) minsize) {
     if ( ! level)
-	break;  // do not go below 0
+        break;  // do not go below 0
   }
 
   for (int i=level+1; i<maxlevel; ++i)
@@ -811,10 +811,10 @@ locate(const Point& p, Locate_type& lt, int& li, int& lj,
     // locate at that level from "position"
     // result is stored in "position" for the next level
     pos[level].pos = position = hierarchy[level]->locate(p,
-	                                                 pos[level].lt,
-	                                                 pos[level].li,
-	                                                 pos[level].lj,
-	                                                 position);
+                                                         pos[level].lt,
+                                                         pos[level].li,
+                                                         pos[level].lj,
+                                                         position);
     // find the nearest vertex.
     Vertex_handle nearest = hierarchy[level]->nearest_vertex_in_cell(p, position);
 
