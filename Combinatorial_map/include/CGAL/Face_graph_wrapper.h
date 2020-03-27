@@ -118,9 +118,18 @@ public:
   Face_graph_wrapper(const HEG& f) : m_fg(f),
                                      mdarts(*this),
                                      m_nb_darts(0),
+                                     m_marks_initialized(false),
                                      mnb_used_marks(0)
 
   {
+    // Store locally the number of darts: the HEG must not be modified
+    m_nb_darts=darts().size();
+  }
+
+  void initialize_marks() const
+  {
+    if (m_marks_initialized) return;
+
     mmask_marks.reset();
 
     for (size_type i=0; i<NB_MARKS; ++i)
@@ -131,13 +140,12 @@ public:
       mnb_times_reserved_marks[i]=0;
     }
 
-    // Store locally the number of darts: the HEG must not be modified
-    m_nb_darts=darts().size();
-
     m_all_marks=get(CGAL::dynamic_halfedge_property_t<std::bitset<NB_MARKS> >(), m_fg);
     for (typename Dart_range::const_iterator it(darts().begin()),
            itend(darts().end()); it!=itend; ++it)
     { put(m_all_marks, it, std::bitset<NB_MARKS>()); }
+
+    m_marks_initialized=true;
   }
 
   const HEG& get_fg() const
@@ -229,7 +237,7 @@ public:
   bool is_reserved(size_type amark) const
   {
     CGAL_assertion(amark<NB_MARKS);
-    return (mnb_times_reserved_marks[amark]!=0);
+    return (m_marks_initialized && mnb_times_reserved_marks[amark]!=0);
   }
   
   size_type number_of_marked_darts(size_type amark) const
@@ -240,7 +248,6 @@ public:
   
   size_type number_of_unmarked_darts(size_type amark) const
   {
-    CGAL_assertion( is_reserved(amark) );
     return number_of_darts() - number_of_marked_darts(amark);
   }
   
@@ -254,6 +261,7 @@ public:
   
   size_type get_new_mark() const
   {
+    initialize_marks();
     if (mnb_used_marks==NB_MARKS)
     {
       std::cerr << "Not enough Boolean marks: "
@@ -282,7 +290,7 @@ public:
 
   size_type get_number_of_times_mark_reserved(size_type amark) const
   {
-    CGAL_assertion( amark<NB_MARKS );
+    CGAL_assertion( is_reserved(amark) );
     return mnb_times_reserved_marks[amark];
   }
 
@@ -299,10 +307,12 @@ public:
   
   bool get_dart_mark(Dart_const_handle ADart, size_type amark) const
   {
+    CGAL_assertion(is_reserved(amark));
     return get(m_all_marks, ADart)[amark];
   }
   void set_dart_mark(Dart_const_handle ADart, size_type amark, bool avalue) const
   {
+    CGAL_assertion(is_reserved(amark));
     const_cast<std::bitset<NB_MARKS>& >(get(m_all_marks, ADart)).set(amark, avalue);
   }
 
@@ -718,6 +728,7 @@ protected:
   const HEG& m_fg;
   Dart_range mdarts;
   std::size_t m_nb_darts;
+  mutable bool m_marks_initialized; /// True iff marks are initialized (we use lazy initialization)
   
   /// Number of times each mark is reserved. 0 if the mark is free.
   mutable size_type mnb_times_reserved_marks[NB_MARKS];
