@@ -28,16 +28,16 @@ template<typename Mesh>
 class Curves_on_surface_topology
 {
 public:
-  typedef internal::Minimal_quadrangulation<Mesh> Minimal_quadrangulation;
-  typedef typename Minimal_quadrangulation::Original_map Original_map;
-  typedef typename Minimal_quadrangulation::Reduced_map Reduced_map;
-  //using Minimal_quadrangulation = internal::Minimal_quadrangulation<Mesh>;
-  //using Original_map = typename Minimal_quadrangulation::Original_map;
-  //using Reduced_map = typename Minimal_quadrangulation::Reduced_map;
+  // Types for minimal quadrangulation
+  using Minimal_quadrangulation = internal::Minimal_quadrangulation<Mesh>;
+  using Reduced_map = typename Minimal_quadrangulation::Reduced_map;
+
+  // Types for shortest noncontractible cycle
   using Shortest_noncontractible_cycle   = typename internal::Shortest_noncontractible_cycle<Mesh>;
   using Facewidth                        = typename internal::Facewidth<Mesh>; 
   using Dart_handle                      = typename internal::Generic_map_selector<Mesh>::Dart_handle_original;
 
+  // Constructor
   Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
     m_original_mesh(amesh),
     m_minimal_quadrangulation(nullptr),
@@ -61,10 +61,6 @@ public:
         (m_original_mesh, display_time);
     }
   }
-
-  /// Return the original map.
-  const Original_map& get_original_map() const
-  { return m_minimal_quadrangulation->get_original_map(); }
 
   /// Return the reduced map computed in the minimal quadrangulation.
   /// @pre is_minimal_quadrangulation_computed()

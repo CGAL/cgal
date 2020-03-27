@@ -65,7 +65,7 @@ public:
   // Associate each dart of the original map, not removed, a pair of darts in
   // the reduced map.
   typedef std::unordered_map<Original_dart_const_handle,
-  std::pair<Dart_handle, Dart_handle> > TPaths;
+                             std::pair<Dart_handle, Dart_handle> > TPaths;
 
   // Associations between original darts and their copy.
   // Use only locally during the construction of the minimal quadrangulation.
