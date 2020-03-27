@@ -2136,6 +2136,8 @@ private: //------------------------------------------------------- private data
   }
 
   /// \relates Surface_mesh
+  /// Extracts the surface mesh from an input stream in Ascii or
+  /// Binary PLY format and appends it to the surface mesh `sm`.
   ///
   /// This operator calls `read_OFF(std::istream& is, CGAL::Surface_mesh& sm)`.
   template <typename P>

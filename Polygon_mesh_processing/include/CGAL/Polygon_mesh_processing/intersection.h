@@ -457,7 +457,7 @@ compute_face_face_intersection(const FaceRange& face_range1,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters1>::type GeomTraits;
-  GeomTraits gt = choose_parameter(get_parameter(np1, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np1, internal_np::geom_traits));
 
   internal::Intersect_faces<TM,
                             GeomTraits,
@@ -575,7 +575,7 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
 
   internal::Intersect_face_polyline<TM,
                                     GeomTraits,
@@ -711,7 +711,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 
   // compute intersections filtered out by boxes
   typedef typename GetGeomTraits<TM, NamedParameters>::type GeomTraits;
-  GeomTraits gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+  GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
 
   internal::Intersect_face_polylines<TM,
                                      GeomTraits,
@@ -1207,6 +1207,7 @@ bool do_intersect(const TriangleMesh& tm1,
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
   bool test_overlap =  choose_parameter(get_parameter(np1, internal_np::overlap_test),false) ||
                        choose_parameter(get_parameter(np2, internal_np::overlap_test),false);
 
@@ -1232,7 +1233,7 @@ bool do_intersect(const TriangleMesh& tm1,
     VertexPointMap2 vpm2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
     typedef typename GetGeomTraits<TriangleMesh, NamedParameters1>::type GeomTraits;
-    GeomTraits gt = choose_parameter(get_parameter(np1, internal_np::geom_traits), GeomTraits());
+    GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np1, internal_np::geom_traits));
 
     return internal::is_mesh2_in_mesh1(tm1, tm2, vpm1, vpm2, gt) ||
            internal::is_mesh2_in_mesh1(tm2, tm1, vpm2, vpm1, gt);
@@ -1590,7 +1591,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
   typedef typename boost::range_value<NamedParametersRange>::type NP_rng;
   typedef typename boost::range_value<TriangleMeshRange>::type TriangleMesh;
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters, NP_rng>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   //get all the pairs of meshes intersecting (no strict inclusion test)
   std::ptrdiff_t cutoff = 2000;

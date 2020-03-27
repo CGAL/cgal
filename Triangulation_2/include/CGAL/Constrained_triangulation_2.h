@@ -170,10 +170,6 @@ public:
   // Tag to distinguish periodic triangulations from others
   typedef Tag_false                          Periodic_tag;
 
-  class Less_edge;
-  typedef std::set<Edge,Less_edge> Edge_set;
-
-
   Constrained_triangulation_2(const Gt& gt = Gt()) : Triangulation(gt) { }
 
   Constrained_triangulation_2(std::list<Constraint>& lc, const Gt& gt=Gt())
@@ -435,21 +431,6 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
   // template<class OutputItEdges>
   // OutputItEdges incident_constraints(Vertex_handle v, 
   //                                     OutputItEdges out) const;
-  
-
-  class Less_edge 
-    :  public CGAL::cpp98::binary_function<Edge, Edge, bool>
-  {
-  public:
-    Less_edge() {}
-    bool operator() (const Edge& e1, const Edge& e2) const
-      {
-	int ind1=e1.second, ind2=e2.second;
- 	return( (&(*e1.first) < &(*e2.first))
- 		|| ( (&(*e1.first) == &(*e2.first)) && (ind1 < ind2)));
-      } 
-  };
-
 
   void file_output(std::ostream& os) const;
 

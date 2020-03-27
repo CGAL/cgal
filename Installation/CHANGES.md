@@ -21,6 +21,10 @@ Release date: June 2020
 ### Intersecting Sequences of dD Iso-oriented Boxes 
  -   Added parallel versions of the functions `CGAL::box_intersection_d()` and `CGAL::box_self_intersection_d()`.
 
+### CGAL and the Boost Graph Library (BGL)
+ -   Introduced the function `set_triangulation_ids(Triangulation& tr)` which must be used to initialize vertex,
+     edge, and face indices of a triangulation meant to be used with BGL algorithms.
+
 ### Polygon Mesh Processing
 
 -   Introduced a new function, `CGAL::Polygon_mesh_processing::remove_connected_components_of_negligible_size()`, 
@@ -31,8 +35,29 @@ Release date: June 2020
     components that would be removed with the specified threshold, but without actually removing them.
 -   The function `CGAL::Polygon_mesh_processing::stitch_borders()` now returns the number
     of halfedge pairs that were stitched.
+-   New function to split meshes along a mesh or a plane:
+    `CGAL::Polygon_mesh_processing::split()` 
+-   New function to split a single mesh containing several connected components into several meshes containing one connected component:
+    `CGAL::Polygon_mesh_processing::split_connected_components()`
  -   Added parallel versions of the functions `CGAL::Polygon_mesh_processing::does_self_intersect()` 
      and `CGAL::Polygon_mesh_processing::self_intersections()`.
+ -   The function `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh` now allows passing a point map (for the point range)
+     and a vertex point map (for the polygon mesh) via named parameters.
+ -   Added the function `CGAL::Polygon_mesh_processing::polygon_mesh_to_polygon_soup()`.
+
+### Point Set Processing
+ -   Added wrapper functions for registration:
+     - `CGAL::OpenGR::compute_registration_transformation()` computes the registration transformation
+        for two point sets using Super4PCS algorithm implemented in the third party library OpenGR.
+     - `CGAL::OpenGR::register_point_sets()` computes the registration transformation for two point 
+        sets using Super4PCS algorithm implemented in the third party library OpenGR, and registers
+        the points sets by transforming the data point set using the computed transformation.
+     - `CGAL::pointmatcher::compute_registration_transformation()` computes the registration
+        transformation for two point sets using ICP algorithm implemented in the third party library
+        libpointmatcher.
+     - `CGAL::pointmatcher::register_point_sets()` computes the registration transformation for two point
+        sets using ICP algorithm implemented in the third party library libpointmatcher, and registers 
+        the points sets by transforming the data point set using the computed transformation.
 
 ### 2D Triangulations
 -   To fix an inconsistency between code and documentation and to clarify which types of intersections

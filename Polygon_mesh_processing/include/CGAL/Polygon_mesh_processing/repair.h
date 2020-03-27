@@ -149,7 +149,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type              GT;
   typedef typename GT::FT                                                          FT;
-  const GT traits = choose_parameter(get_parameter(np, internal_np::vertex_point), GT());
+  const GT traits = choose_parameter<GT>(get_parameter(np, internal_np::vertex_point));
 
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type    VPM;
   typedef typename boost::property_traits<VPM>::value_type                         Point_3;
@@ -171,7 +171,7 @@ std::size_t remove_connected_components_of_negligible_size(TriangleMesh& tmesh,
   typedef typename internal_np::Lookup_named_param_def<internal_np::output_iterator_t,
                                                        NamedParameters,
                                                        Emptyset_iterator>::type Output_iterator;
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
 #ifdef CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
   std::cout << "default threshold? " << is_default_area_threshold << " " << is_default_volume_threshold << std::endl;
@@ -1390,9 +1390,9 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 
   typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                                      get_property_map(vertex_point, tmesh));
+                                          get_property_map(vertex_point, tmesh));
   typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
-  Traits traits = choose_parameter(get_parameter(np, internal_np::geom_traits), Traits());
+  Traits traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename boost::property_traits<VertexPointMap>::value_type Point_3;
   typedef typename boost::property_traits<VertexPointMap>::reference Point_ref;
@@ -2617,7 +2617,7 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pm,
     Emptyset_iterator
   > ::type                                                            Output_iterator;
 
-  Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator), Emptyset_iterator());
+  Output_iterator out = choose_parameter<Output_iterator>(get_parameter(np, internal_np::output_iterator));
 
   std::vector<halfedge_descriptor> non_manifold_cones;
   non_manifold_vertices(pm, std::back_inserter(non_manifold_cones));

@@ -14,7 +14,5 @@
 #define CGAL_DEPRECATED_HEADER "<CGAL/IO/OFF_reader.h>"
 #define CGAL_REPLACEMENT_HEADER "<CGAL/IO/OFF.h>"
 #include <CGAL/internal/deprecation_warning.h>
-
 #include <CGAL/IO/OFF.h>
-
 #endif // CGAL_IO_OFF_READER_H

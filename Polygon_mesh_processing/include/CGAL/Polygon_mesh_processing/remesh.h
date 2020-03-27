@@ -137,6 +137,7 @@ void isotropic_remeshing(const FaceRange& faces
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
@@ -152,11 +153,11 @@ void isotropic_remeshing(const FaceRange& faces
     parameters::is_default_parameter(get_parameter(np, internal_np::projection_functor));
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+                                 get_property_map(vertex_point, pmesh));
 
   typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
   FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
@@ -329,11 +330,11 @@ void split_long_edges(const EdgeRange& edges
   using parameters::get_parameter;
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  GT gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GT());
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                             get_property_map(vertex_point, pmesh));
+                                 get_property_map(vertex_point, pmesh));
 
   typedef typename GetInitializedFaceIndexMap<PolygonMesh, NamedParameters>::type FIMap;
   FIMap fimap = CGAL::get_initialized_face_index_map(pmesh, np);
