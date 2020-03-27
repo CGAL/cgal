@@ -109,12 +109,15 @@ namespace internal
     typedef typename C3t3::Subdomain_index     Subdomain_index;
     typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
+    typedef typename Tetrahedral_remeshing_smoother<C3t3> Smoother;
+
   private:
     C3t3 m_c3t3;
     const SizingFunction& m_sizing;
     const bool m_protect_boundaries;
     CellSelector m_cell_selector;
     Visitor& m_visitor;
+    Smoother m_vertex_smoother;//initialized with initial surface
 
     Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
     C3t3* m_c3t3_pbackup;
@@ -139,6 +142,7 @@ namespace internal
       m_c3t3.triangulation().swap(tr);
 
       init_c3t3(ecmap, fcmap);
+      m_vertex_smoother.init(m_c3t3, m_cell_selector);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
@@ -164,6 +168,7 @@ namespace internal
       m_c3t3.swap(c3t3);
 
       init_c3t3(ecmap, fcmap);
+      m_vertex_smoother.init(m_c3t3, m_cell_selector);
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       CGAL::Tetrahedral_remeshing::debug::dump_binary(m_c3t3, "00-init.binary.cgal");
@@ -223,7 +228,7 @@ namespace internal
 
     void smooth()
     {
-      smooth_vertices(m_c3t3, m_protect_boundaries, m_cell_selector);
+      m_vertex_smoother.smooth_vertices(m_c3t3, m_protect_boundaries, m_cell_selector);
 
       CGAL_assertion(tr().tds().is_valid(true));
 #ifdef CGAL_DUMP_REMESHING_STEPS

@@ -191,7 +191,7 @@ namespace CGAL
 
         // Compute, according to the current point sampling stored in FMLS, the MLS projection
         // of p and store the resulting position in q and normal in n.
-        void fastProjectionCPU(const Vec3Df& p, Vec3Df& q, Vec3Df& n)
+        void fastProjectionCPU(const Vec3Df& p, Vec3Df& q, Vec3Df& n) const
         {
           float sigma_s = PNScale * MLSRadius;
           float sigma_r = bilateralRange;
@@ -248,7 +248,7 @@ namespace CGAL
         // is compact: pv={x0,y0,z0,x1,y1,z1...}. If pv contains also normals for instance,
         // the stride should be set to 6.
         void fastProjectionCPU(const float* pv, unsigned int pvSize,
-          float* qv, unsigned int stride = 3)
+          float* qv, unsigned int stride = 3) const
         {
 #pragma omp parallel for
           for (int i = 0; i < int(pvSize); i++) {

@@ -22,41 +22,78 @@ namespace CGAL
   {
     namespace internal
     {
-      template<typename Gt>
-      CGAL::Vector_3<Gt> project_on_tangent_plane(const CGAL::Vector_3<Gt>& gi,
-                                                  const CGAL::Vector_3<Gt>& pi,
-                                                  const CGAL::Vector_3<Gt>& normal)
+      template<typename C3t3>
+      class Tetrahedral_remeshing_smoother
       {
-        typedef CGAL::Vector_3<Gt> Vector_3;
+        typedef typename C3t3::Triangulation       Tr;
+        typedef typename C3t3::Surface_patch_index Surface_patch_index;
+        typedef typename Tr::Vertex_handle         Vertex_handle;
+        typedef typename Tr::Edge                  Edge;
+        typedef typename Tr::Facet                 Facet;
+
+        typedef typename Tr::Geom_traits           Gt;
+        typedef typename Gt::Vector_3              Vector_3;
+        typedef typename Gt::Point_3               Point_3;
+
+      private:
+        std::vector < CGAL::Tetrahedral_remeshing::internal::FMLS > subdomain_FMLS;
+        boost::unordered_map<Surface_patch_index, unsigned int> subdomain_FMLS_indices;
+
+      public:
+        template<typename CellSelector>
+        void init(const C3t3& c3t3, const CellSelector& cell_selector)
+        {
+          //collect a map of vertices surface indices
+          boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
+          collect_vertices_surface_indices(c3t3, vertices_surface_indices);
+
+          //collect a map of normals at surface vertices
+          boost::unordered_map<Vertex_handle,
+            boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
+          compute_vertices_normals(c3t3, vertices_normals, cell_selector);
+
+          // Build MLS Surfaces
+          createMLSSurfaces(subdomain_FMLS,
+                            subdomain_FMLS_indices,
+                            vertices_normals,
+                            vertices_surface_indices,
+                            c3t3);
+        }
+
+      private:
+
+      Vector_3 project_on_tangent_plane(const Vector_3& gi,
+                                        const Vector_3& pi,
+                                        const Vector_3& normal)
+      {
         Vector_3 diff = pi - gi;
         return gi + (normal * diff) * normal;
       }
 
-      template<typename C3t3, typename CellSelector>
-      boost::optional<typename C3t3::Facet>
-      find_adjacent_facet_on_surface(const typename C3t3::Facet& f,
-                                     const typename C3t3::Edge& edge,
-                                     const C3t3& c3t3,
-                                     const CellSelector& cell_selector)
+      template<typename CellSelector>
+      boost::optional<Facet>
+        find_adjacent_facet_on_surface(const Facet& f,
+                                       const Edge& edge,
+                                       const C3t3& c3t3,
+                                       const CellSelector& cell_selector)
       {
         CGAL_assertion(is_boundary(c3t3, f, cell_selector));
 
-        typedef typename C3t3::Facet                           Facet;
-        typedef typename C3t3::Triangulation::Facet_circulator Facet_circulator;
+        typedef typename Tr::Facet_circulator Facet_circulator;
 
         if (c3t3.is_in_complex(edge))
           return {}; //do not "cross" complex edges
               //they are likely to be sharp and not to follow the > 0 dot product criterion
 
-        const typename C3t3::Surface_patch_index& patch = c3t3.surface_patch_index(f);
-        const typename C3t3::Facet& mf = c3t3.triangulation().mirror_facet(f);
+        const Surface_patch_index& patch = c3t3.surface_patch_index(f);
+        const Facet& mf = c3t3.triangulation().mirror_facet(f);
 
         Facet_circulator fcirc = c3t3.triangulation().incident_facets(edge);
-        Facet_circulator fend  = fcirc;
+        Facet_circulator fend = fcirc;
         do
         {
           const Facet fi = *fcirc;
-          if ( f != fi
+          if (f != fi
             && mf != fi
             && is_boundary(c3t3, fi, cell_selector)
             && patch == c3t3.surface_patch_index(fi))
@@ -68,18 +105,13 @@ namespace CGAL
         return {};
       }
 
-      template<typename FacetNormalsMap, typename C3t3, typename CellSelector>
-      void compute_neighbors_normals(const typename C3t3::Facet& f,
-            const typename FacetNormalsMap::mapped_type& reference_normal,
-            FacetNormalsMap& fnormals,
-            const C3t3& c3t3,
-            const CellSelector& cell_selector)
+      template<typename FacetNormalsMap, typename CellSelector>
+      void compute_neighbors_normals(const Facet& f,
+                                     const typename Vector_3& reference_normal,
+                                     FacetNormalsMap& fnormals,
+                                     const C3t3& c3t3,
+                                     const CellSelector& cell_selector)
       {
-        typedef typename C3t3::Triangulation           Tr;
-        typedef typename C3t3::Facet                   Facet;
-        typedef typename C3t3::Edge                    Edge;
-        typedef typename FacetNormalsMap::mapped_type  Vector_3;
-
         typename Tr::Geom_traits::Construct_opposite_vector_3
           opp = c3t3.triangulation().geom_traits().construct_opposite_vector_3_object();
         typename Tr::Geom_traits::Compute_scalar_product_3
@@ -112,17 +144,11 @@ namespace CGAL
         }
       }
 
-      template<typename C3t3, typename VertexNormalsMap, typename CellSelector>
+      template<typename VertexNormalsMap, typename CellSelector>
       void compute_vertices_normals(const C3t3& c3t3,
                                     VertexNormalsMap& normals_map,
                                     const CellSelector& cell_selector)
       {
-        typedef typename C3t3::Triangulation        Tr;
-        typedef typename C3t3::Vertex_handle        Vertex_handle;
-        typedef typename C3t3::Surface_patch_index  Surface_patch_index;
-        typedef typename Tr::Facet                  Facet;
-        typedef typename Tr::Geom_traits::Vector_3  Vector_3;
-
         typename Tr::Geom_traits::Construct_opposite_vector_3
           opp = c3t3.triangulation().geom_traits().construct_opposite_vector_3_object();
         typename Tr::Geom_traits::Construct_scaled_vector_3
@@ -152,7 +178,7 @@ namespace CGAL
           CGAL_assertion(is_boundary(c3t3, f, cell_selector));
 
           Vector_3 ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
-          if ( c3t3.triangulation().is_infinite(f.first)
+          if (c3t3.triangulation().is_infinite(f.first)
             || c3t3.subdomain_index(f.first) < c3t3.subdomain_index(mf.first))
             ref = opp(ref);
 
@@ -170,8 +196,8 @@ namespace CGAL
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
           typename Tr::Geom_traits::Point_3 fc
             = CGAL::centroid(point(f.first->vertex(indices(f.second, 0))->point()),
-                             point(f.first->vertex(indices(f.second, 1))->point()),
-                             point(f.first->vertex(indices(f.second, 2))->point()));
+              point(f.first->vertex(indices(f.second, 1))->point()),
+              point(f.first->vertex(indices(f.second, 2))->point()));
           osf << "2 " << fc << " " << (fc + n) << std::endl;
 #endif
           const Surface_patch_index& surf_i = c3t3.surface_patch_index(f);
@@ -202,7 +228,7 @@ namespace CGAL
 
         //normalize the computed normals
         for (typename VertexNormalsMap::iterator vnm_it = normals_map.begin();
-             vnm_it != normals_map.end(); ++vnm_it)
+          vnm_it != normals_map.end(); ++vnm_it)
         {
           //value type is map<Surface_patch_index, Vector_3>
           for (typename VertexNormalsMap::mapped_type::iterator it = vnm_it->second.begin();
@@ -221,7 +247,7 @@ namespace CGAL
             const Surface_patch_index si = it->first;
             if (ons_map.find(si) == ons_map.end())
               ons_map[si] = std::vector<typename Tr::Geom_traits::Segment_3>();
-            ons_map[si].push_back(typename Tr::Geom_traits::Segment_3(p, p+n));
+            ons_map[si].push_back(typename Tr::Geom_traits::Segment_3(p, p + n));
 #endif
           }
         }
@@ -233,29 +259,19 @@ namespace CGAL
           std::ostringstream oss;
           oss << "dump_normals_normalized_" << kv.first << ".polylines.txt";
           std::ofstream ons(oss.str());
-          for(auto s : kv.second)
+          for (auto s : kv.second)
             ons << "2 " << s.source() << " " << s.target() << std::endl;
           ons.close();
-      }
+        }
 #endif
       }
 
-
-      template<typename SurfacePatchIndex,
-               typename Gt,
-               typename Subdomain__FMLS,
-               typename Subdomain__FMLS_indices>
-      bool project(const SurfacePatchIndex& si,
-                   const CGAL::Vector_3<Gt>& gi,
-                   CGAL::Vector_3<Gt>& projected_point,
-                   Subdomain__FMLS& subdomain_FMLS,
-                   Subdomain__FMLS_indices& subdomain_FMLS_indices)
+      bool project(const Surface_patch_index& si,
+                   const Vector_3& gi,
+                   Vector_3& projected_point)
       {
         if (subdomain_FMLS_indices.find(si) == subdomain_FMLS_indices.end())
           return false;
-
-        typedef typename Gt::Vector_3 Vector_3;
-        typedef typename Gt::Point_3  Point_3;
 
         if (std::isnan(gi.x()) || std::isnan(gi.y()) || isnan(gi.z()))
         {
@@ -267,7 +283,7 @@ namespace CGAL
         Vec3Df res_normal;
         Vec3Df result(point);
 
-        CGAL::Tetrahedral_remeshing::internal::FMLS&
+        const CGAL::Tetrahedral_remeshing::internal::FMLS&
           fmls = subdomain_FMLS[subdomain_FMLS_indices.at(si)];
 
         int it_nb = 0;
@@ -281,61 +297,24 @@ namespace CGAL
 
           fmls.fastProjectionCPU(point, result, res_normal);
 
-          if (std::isnan(result[0]) || std::isnan(result[1]) || std::isnan(result[2])){
+          if (std::isnan(result[0]) || std::isnan(result[1]) || std::isnan(result[2])) {
             std::cout << "MLS error detected si size " << si
-                      << " : " << fmls.getPNSize() << std::endl;
+              << " : " << fmls.getPNSize() << std::endl;
             return false;
           }
-        }
-        while ((result - point).getSquaredLength() > sq_eps && ++it_nb < max_it_nb);
+        } while ((result - point).getSquaredLength() > sq_eps&& ++it_nb < max_it_nb);
 
         projected_point = Vector_3(result[0], result[1], result[2]);
 
         return true;
       }
 
-
-      template<typename C3T3>
-      void collect_vertices_subdomain_indices(
-        const C3T3& c3t3,
-        boost::unordered_map<
-          typename C3T3::Vertex_handle,
-          std::vector<typename C3T3::Subdomain_index> >& vertices_subdomain_indices)
-      {
-        typedef typename C3T3::Subdomain_index Subdomain_index;
-        typedef typename C3T3::Vertex_handle   Vertex_handle;
-        typedef typename C3T3::Triangulation   Tr;
-
-        for (typename C3T3::Cell_iterator cit = c3t3.cells_begin();
-             cit != c3t3.cells_end(); ++cit)
-        {
-          const Subdomain_index& si = cit->subdomain_index();
-          for (int i = 0; i < 4; ++i)
-          {
-            const Vertex_handle vi = cit->vertex(i);
-
-            std::vector<Subdomain_index>& v_indices = vertices_subdomain_indices[vi];
-            if (std::find(v_indices.begin(), v_indices.end(), si) == v_indices.end())
-              v_indices.push_back(si);
-          }
-        }
-      }
-
-      template<typename C3T3>
       void collect_vertices_surface_indices(
-        const C3T3& c3t3,
-        const boost::unordered_map<
-            typename C3T3::Vertex_handle,
-            std::vector<typename C3T3::Subdomain_index> >& vertices_subdomain_indices,
-        boost::unordered_map<
-            typename C3T3::Vertex_handle,
-            std::vector<typename C3T3::Surface_patch_index> >& vertices_surface_indices)
+        const C3t3& c3t3,
+        boost::unordered_map<Vertex_handle,
+          std::vector<Surface_patch_index> >& vertices_surface_indices)
       {
-        typedef typename C3T3::Surface_patch_index Surface_patch_index;
-        typedef typename C3T3::Vertex_handle       Vertex_handle;
-        typedef typename C3T3::Facet               Facet;
-
-        for (typename C3T3::Facet_iterator fit = c3t3.facets_begin();
+        for (typename C3t3::Facet_iterator fit = c3t3.facets_begin();
              fit != c3t3.facets_end(); ++fit)
         {
           const Surface_patch_index& surface_index = c3t3.surface_patch_index(*fit);
@@ -351,22 +330,13 @@ namespace CGAL
         }
       }
 
+    public:
       template<typename C3T3, typename CellSelector>
       void smooth_vertices(C3T3& c3t3,
-                           const bool protect_boundaries,
-                           CellSelector cell_selector)
+        const bool protect_boundaries,
+        CellSelector cell_selector)
       {
-        typedef typename C3T3::Surface_patch_index    Surface_patch_index;
-        typedef typename C3T3::Subdomain_index        Subdomain_index;
-        typedef typename C3T3::Triangulation          Tr;
-        typedef typename C3T3::Vertex_handle          Vertex_handle;
         typedef typename C3T3::Cell_handle            Cell_handle;
-        typedef typename C3T3::Facet                  Facet;
-        typedef typename Tr::Edge                     Edge;
-
-        typedef typename Tr::Geom_traits     Gt;
-        typedef typename Gt::Point_3         Point_3;
-        typedef typename Gt::Vector_3        Vector_3;
         typedef typename Gt::FT              FT;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -383,27 +353,14 @@ namespace CGAL
 
         Tr& tr = c3t3.triangulation();
 
-        //collect a map of vertices subdomain indices
-        boost::unordered_map<Vertex_handle, std::vector<Subdomain_index> > vertices_subdomain_indices;
-        collect_vertices_subdomain_indices(c3t3, vertices_subdomain_indices);
-
         //collect a map of vertices surface indices
         boost::unordered_map<Vertex_handle, std::vector<Surface_patch_index> > vertices_surface_indices;
-        collect_vertices_surface_indices(c3t3, vertices_subdomain_indices, vertices_surface_indices);
+        collect_vertices_surface_indices(c3t3, vertices_surface_indices);
 
         //collect a map of normals at surface vertices
         boost::unordered_map<Vertex_handle,
           boost::unordered_map<Surface_patch_index, Vector_3> > vertices_normals;
         compute_vertices_normals(c3t3, vertices_normals, cell_selector);
-
-        // Build MLS Surfaces
-        std::vector < CGAL::Tetrahedral_remeshing::internal::FMLS > subdomain_FMLS;
-        boost::unordered_map<Surface_patch_index, unsigned int> subdomain_FMLS_indices;
-        createMLSSurfaces(subdomain_FMLS,
-                          subdomain_FMLS_indices,
-                          vertices_normals,
-                          vertices_surface_indices,
-                          c3t3);
 
         //smooth()
         const std::size_t nbv = tr.number_of_vertices();
@@ -475,7 +432,7 @@ namespace CGAL
 
                 //Check if the mls surface exists to avoid degenrated cases
                 Vector_3 mls_projection;
-                if (project(si, normal_projection, mls_projection, subdomain_FMLS, subdomain_FMLS_indices)) {
+                if (project(si, normal_projection, mls_projection)) {
                   final_position = final_position + mls_projection;
                 }
                 else {
@@ -509,7 +466,7 @@ namespace CGAL
                 //Check if the mls surface exists to avoid degenerated cases
 
                 Vector_3 mls_projection;
-                if (project(si, current_pos, mls_projection, subdomain_FMLS, subdomain_FMLS_indices)) {
+                if (project(si, current_pos, mls_projection)) {
                   final_position = final_position + mls_projection;
                 }
                 else {
@@ -588,7 +545,7 @@ namespace CGAL
                 current_pos,
                 vertices_normals[v][si]);
               Vector_3 mls_projection;
-              if (project(si, normal_projection, mls_projection, subdomain_FMLS, subdomain_FMLS_indices))
+              if (project(si, normal_projection, mls_projection))
                 final_position = mls_projection;
               else
                 final_position = smoothed_position;
@@ -606,7 +563,7 @@ namespace CGAL
 
               const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
               Vector_3 mls_projection;
-              if (project(si, current_pos, mls_projection, subdomain_FMLS, subdomain_FMLS_indices)) {
+              if (project(si, current_pos, mls_projection)) {
                 const typename Tr::Point new_pos(CGAL::ORIGIN + mls_projection);
                 v->set_point(new_pos);
 
@@ -617,7 +574,7 @@ namespace CGAL
             }
           }
         }
-////   end if(!protect_boundaries)
+        ////   end if(!protect_boundaries)
 
         smoothed_positions.assign(nbv, CGAL::NULL_VECTOR);
         neighbors.assign(nbv, 0/*for dim 3 vertices, start counting directly from 0*/);
@@ -625,7 +582,7 @@ namespace CGAL
         ////////////// INTERNAL VERTICES ///////////////////////
         for (const Edge& e : tr.finite_edges())
         {
-          if ( !is_outside(e, c3t3, cell_selector))
+          if (!is_outside(e, c3t3, cell_selector))
           {
             const Vertex_handle vh0 = e.first->vertex(e.second);
             const Vertex_handle vh1 = e.first->vertex(e.third);
@@ -679,6 +636,7 @@ namespace CGAL
 #endif
       }
 
+    };//end class Tetrahedral_remeshing_smoother
     }//namespace internal
   }//namespace Tetrahedral_adaptive_remeshing
 }//namespace CGAL
