@@ -1165,7 +1165,7 @@ bool fill_hole_with_constraints(std::vector<typename boost::graph_traits<Triangl
     std::cout << "CC of size " << sub_cc.size() << " (total: " << cc_faces.size() << ")" << std::endl;
     ++cc_counter;
 
-#ifdef CGAL_PMP_REMOVE_SELF_¨INTERSECTION_OUTPUT
+#ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
     dump_cc(sub_cc, tmesh, "results/current_cc.off");
 #endif
 
