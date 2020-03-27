@@ -16,6 +16,7 @@
 #include <CGAL/Dart.h>
 #endif
 
+#include <CGAL/Linear_cell_complex_fwd.h>
 #include <CGAL/Cell_attribute_with_point.h>
 #include <CGAL/tuple.h>
 

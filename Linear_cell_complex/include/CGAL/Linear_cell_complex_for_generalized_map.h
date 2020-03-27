@@ -12,6 +12,7 @@
 #ifndef CGAL_LINEAR_CELL_COMPLEX_FOR_GENERALIZED_MAP_H
 #define CGAL_LINEAR_CELL_COMPLEX_FOR_GENERALIZED_MAP_H 1
 
+#include <CGAL/Linear_cell_complex_fwd.h>
 #include <CGAL/Linear_cell_complex_base.h>
 #include <CGAL/Linear_cell_complex_traits.h>
 #include <CGAL/Linear_cell_complex_min_items.h>
@@ -28,15 +29,10 @@ namespace CGAL {
   // Linear_cell_complex_for_generalized_map class.
   // No difference with class Linear_cell_complex_base except the default
   // template parameters for Refs class which is a generalized map.
-  template < unsigned int d_, unsigned int ambient_dim = d_,
-             class Traits_ = Linear_cell_complex_traits<ambient_dim>,
-             class Items_ = Linear_cell_complex_min_items,
-             class Alloc_ = CGAL_ALLOCATOR(int),
-             template<unsigned int,class,class,class,class>
-             class CMap = Generalized_map_base,
-             class Storage_ = GMap_linear_cell_complex_storage_1<d_, ambient_dim,
-                                                                 Traits_, Items_,
-                                                                 Alloc_> >
+  template < unsigned int d_, unsigned int ambient_dim,
+             class Traits_, class Items_, class Alloc_,
+             template<unsigned int,class,class,class,class> class CMap,
+             class Storage_ >
     class Linear_cell_complex_for_generalized_map:
         public Linear_cell_complex_base<d_, ambient_dim, Traits_,
                                         Items_, Alloc_, CMap,

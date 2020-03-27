@@ -12,6 +12,7 @@
 #ifndef CGAL_GENERALIZED_MAP_H
 #define CGAL_GENERALIZED_MAP_H 1
 
+#include <CGAL/Generalized_map_fwd.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
 #include <CGAL/internal/Generalized_map_group_functors.h>
 #include <CGAL/internal/Combinatorial_map_copy_functors.h>
@@ -58,10 +59,7 @@ namespace CGAL {
    * mainly to create darts, to use marks onto these darts, to get and set
    * the alpha links, and to manage enabled attributes.
    */
-  template < unsigned int d_, class Refs,
-             class Items_=Generic_map_min_items,
-             class Alloc_=CGAL_ALLOCATOR(int),
-             class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
+  template<unsigned int d_, class Refs_, class Items_, class Alloc_, class Storage_>
   class Generalized_map_base: public Storage_
   {
     template<typename Gmap,unsigned int i,typename Enabled>
@@ -84,9 +82,10 @@ namespace CGAL {
     typedef Generalized_map_tag Combinatorial_data_structure;
 
     /// Types definition
-    typedef Storage_                                                  Storage;
-    typedef Storage                                                   Base;
-    typedef Generalized_map_base<d_, Refs, Items_, Alloc_, Storage_ > Self;
+    typedef Storage_                                                   Storage;
+    typedef Storage                                                    Base;
+    typedef Generalized_map_base<d_, Refs_, Items_, Alloc_, Storage_ > Self;
+    typedef Refs_                                                      Refs;
 
     typedef typename Base::Dart Dart;
     typedef typename Base::Dart_handle Dart_handle;
@@ -178,25 +177,21 @@ namespace CGAL {
 
     /** Copy the given generalized map into *this.
      *  Note that both Gmap can have different dimensions and/or non void attributes.
+     *  Here CMap2 is necessarily non const; while Dart_handle_2 can be a const or non const handle.
+     *  This is the "generic" method, called by the different variants below.
      *  @param amap the generalized map to copy.
      *  @post *this is valid.
      */
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2,
-              typename Converters, typename DartInfoConverter,
+    template <typename GMap2, typename Dart_handle_2,
+              typename Converters, typename DartInfoConverter, 
               typename PointConverter>
-    void copy(Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
-              const Converters& converters,
-              const DartInfoConverter& dartinfoconverter,
-              const PointConverter& pointconverter,
-              boost::unordered_map
-              <typename Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>::
-              Dart_handle, Dart_handle>* origin_to_copy,
-              boost::unordered_map
-              <Dart_handle, typename Generalized_map_base<d2, Refs2, Items2,
-              Alloc2, Storage2>::Dart_handle>* copy_to_origin)
+    void generic_copy(GMap2& amap,
+                      const Converters& converters,
+                      const DartInfoConverter& dartinfoconverter,
+                      const PointConverter& pointconverter,
+                      boost::unordered_map<Dart_handle_2, Dart_handle>* origin_to_copy=nullptr,
+                      boost::unordered_map<Dart_handle, Dart_handle_2>* copy_to_origin=nullptr)
     {
-      typedef Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2> GMap2;
       this->clear();
 
       this->mnb_used_marks = amap.mnb_used_marks;
@@ -216,15 +211,13 @@ namespace CGAL {
       // Create an mapping between darts of the two maps (originals->copies).
       // (here we cannot use CGAL::Unique_hash_map because it does not provide
       // iterators...
-      boost::unordered_map<typename GMap2::Dart_handle, Dart_handle>
-          local_dartmap;
-      if (origin_to_copy==NULL) // Used local_dartmap if user does not provides its own unordered_map
+      boost::unordered_map<Dart_handle_2, Dart_handle> local_dartmap;
+      if (origin_to_copy==NULL) // Use local_dartmap if user does not provides its own unordered_map
       { origin_to_copy=&local_dartmap; }
 
       Dart_handle new_dart;
-      for (typename GMap2::Dart_range::iterator
-             it=amap.darts().begin(), itend=amap.darts().end();
-           it!=itend; ++it)
+      for (typename GMap2::Dart_range::iterator it=amap.darts().begin(),
+             itend=amap.darts().end(); it!=itend; ++it)
       {
         new_dart=mdarts.emplace();
         init_dart(new_dart, amap.get_marks(it));
@@ -232,15 +225,16 @@ namespace CGAL {
         (*origin_to_copy)[it]=new_dart;
         if (copy_to_origin!=NULL) { (*copy_to_origin)[new_dart]=it; }
 
-        internal::Copy_dart_info_functor<Refs2, Refs, DartInfoConverter>::
-          run(static_cast<const Refs2&>(amap), static_cast<Refs&>(*this),
-              it, new_dart, dartinfoconverter);
+        internal::Copy_dart_info_functor
+          <typename GMap2::Refs, Refs, DartInfoConverter>::run
+          (static_cast<const typename GMap2::Refs&>(amap), static_cast<Refs&>(*this),
+           it, new_dart, dartinfoconverter);
       }
 
       unsigned int min_dim=(dimension<amap.dimension?dimension:amap.dimension);
 
-      typename boost::unordered_map<typename GMap2::Dart_handle,Dart_handle>
-        ::iterator dartmap_iter, dartmap_iter_end=origin_to_copy->end();
+      typename boost::unordered_map<Dart_handle_2, Dart_handle>::iterator
+        dartmap_iter, dartmap_iter_end=origin_to_copy->end();
       for (dartmap_iter=origin_to_copy->begin(); dartmap_iter!=dartmap_iter_end;
            ++dartmap_iter)
       {
@@ -260,9 +254,9 @@ namespace CGAL {
            ++dartmap_iter)
       {
         Helper::template Foreach_enabled_attributes
-          < internal::Copy_attributes_functor<Refs2, Refs, Converters,
-            PointConverter> >::
-          run(static_cast<const Refs2&>(amap), static_cast<Refs&>(*this),
+          < internal::Copy_attributes_functor<typename GMap2::Refs, Refs,
+                                              Converters, PointConverter> >::
+          run(static_cast<const typename GMap2::Refs&>(amap), static_cast<Refs&>(*this),
               dartmap_iter->first, dartmap_iter->second,
               converters, pointconverter);
       }
@@ -270,57 +264,123 @@ namespace CGAL {
       CGAL_assertion(is_valid());
     }
 
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2>
-    void copy(Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
-              boost::unordered_map
-              <typename Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>::
-              Dart_handle, Dart_handle>* origin_to_copy,
-              boost::unordered_map
-              <Dart_handle, typename Generalized_map_base<d2, Refs2, Items2,
-              Alloc2, Storage2>::Dart_handle>* copy_to_origin)
-    {
-      CGAL::cpp11::tuple<> converters;
-      Default_converter_dart_info<Refs2, Refs> dartinfoconverter;
-      Default_converter_cmap_0attributes_with_point<Refs2, Refs> pointconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter,
-           origin_to_copy, copy_to_origin);
-    }
-
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2, typename Converters>
-    void copy(Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+    // (1a) copy(amap, converters, dartinfoconverter, pointconverter)
+    template<typename GMap2, typename Converters, typename DartInfoConverter,
+             typename PointConverter>
+    void copy(GMap2& amap,
               const Converters& converters,
+              const DartInfoConverter& dartinfoconverter,
+              const PointConverter& pointconverter,
               boost::unordered_map
-              <typename Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>::
-              Dart_handle, Dart_handle>* origin_to_copy,
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
               boost::unordered_map
-              <Dart_handle, typename Generalized_map_base<d2, Refs2, Items2,
-              Alloc2, Storage2>::Dart_handle>* copy_to_origin)
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
     {
-      Default_converter_cmap_0attributes_with_point<Refs2, Refs> pointconverter;
-      Default_converter_dart_info<Refs2, Refs> dartinfoconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter,
+      generic_copy<GMap2, typename GMap2::Dart_handle, Converters,
+          DartInfoConverter, PointConverter>
+          (amap, converters, dartinfoconverter, pointconverter,
            origin_to_copy, copy_to_origin);
     }
 
-    template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
-              typename Storage2,
-              typename Converters, typename DartInfoConverter>
-    void copy(Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
+    // (1b) copy(const amap, converters, dartinfoconverter, pointconverter)
+    template<typename GMap2, typename Converters, typename DartInfoConverter,
+             typename PointConverter>
+    void copy(const GMap2& amap,
+              const Converters& converters,
+              const DartInfoConverter& dartinfoconverter,
+              const PointConverter& pointconverter,
+              boost::unordered_map
+              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
+    {
+      generic_copy<GMap2, typename GMap2::Dart_const_handle,
+          Converters, DartInfoConverter, PointConverter>
+          (const_cast<GMap2&>(amap), converters, dartinfoconverter,
+           pointconverter, origin_to_copy, copy_to_origin);
+    }
+
+    // (2a) copy(amap, converters, dartinfoconverter)
+    template<typename GMap2, typename Converters, typename DartInfoConverter>
+    void copy(GMap2& amap,
               const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
               boost::unordered_map
-              <typename Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>::
-              Dart_handle, Dart_handle>* origin_to_copy,
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
               boost::unordered_map
-              <Dart_handle, typename Generalized_map_base<d2, Refs2, Items2,
-              Alloc2, Storage2>::Dart_handle>* copy_to_origin)
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
     {
-      Default_converter_cmap_0attributes_with_point<Refs2, Refs> pointconverter;
+      Default_converter_cmap_0attributes_with_point<typename GMap2::Refs, Refs>
+        pointconverter;
       copy(amap, converters, dartinfoconverter, pointconverter,
            origin_to_copy, copy_to_origin);
     }
+
+    // (2b) copy(const amap, converters, dartinfoconverter)
+    template <typename GMap2, typename Converters, typename DartInfoConverter>
+    void copy(const GMap2& amap,
+              const Converters& converters,
+              const DartInfoConverter& dartinfoconverter,
+              boost::unordered_map
+              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
+    {
+      Default_converter_cmap_0attributes_with_point<typename GMap2::Refs, Refs>
+          pointconverter;
+      copy(amap, converters, dartinfoconverter, pointconverter,
+           origin_to_copy, copy_to_origin);
+    }
+    
+    // (3a) copy(amap, converters)
+    template<typename GMap2, typename Converters>
+    void copy(GMap2& amap,
+              const Converters& converters,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
+    {
+      Default_converter_dart_info<typename GMap2::Refs, Refs> dartinfoconverter;
+      copy(amap, converters, dartinfoconverter, origin_to_copy, copy_to_origin);
+    }
+
+    // (3b) copy(const amap, converters)
+    template <typename GMap2, typename Converters>
+    void copy(const GMap2& amap,
+              const Converters& converters,
+              boost::unordered_map
+              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
+    {
+      Default_converter_dart_info<typename GMap2::Refs, Refs> dartinfoconverter;
+      copy(amap, converters, dartinfoconverter, origin_to_copy, copy_to_origin);
+    }
+    
+    // (4a) copy(amap)
+    template<typename GMap2>
+    void copy(GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
+    {
+      CGAL::cpp11::tuple<> converters;
+      copy(amap, converters, origin_to_copy, copy_to_origin);
+    }
+
+    // (4b) copy(const amap)
+    template <typename GMap2>
+    void copy(const GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
+    {
+      CGAL::cpp11::tuple<> converters;
+      copy(amap, converters, origin_to_copy, copy_to_origin);
+    }    
 
     // Copy constructor from a map having exactly the same type.
     Generalized_map_base (const Self & amap)
@@ -3692,10 +3752,7 @@ namespace CGAL {
     typename Helper::Merge_functors m_onmerge_functors;
   };
 
-  template < unsigned int d_,
-             class Items_=Generic_map_min_items,
-             class Alloc_=CGAL_ALLOCATOR(int),
-             class Storage_= Generalized_map_storage_1<d_, Items_, Alloc_> >
+  template<unsigned int d_, class Items_, class Alloc_,class Storage_>
   class Generalized_map :
     public Generalized_map_base<d_,
                                   Generalized_map<d_,Items_,Alloc_, Storage_>,

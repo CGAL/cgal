@@ -17,54 +17,14 @@
 #include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/Polyhedron_3_fwd.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
+#include <CGAL/Combinatorial_map_fwd.h>
+#include <CGAL/Generalized_map_fwd.h>
+#include <CGAL/Linear_cell_complex_fwd.h>
+#include <CGAL/Polygonal_schema_fwd.h>
 #include <bitset>
 
 namespace CGAL
 {
-  // Forward declarations of all classes model of Face_graph
-  template <unsigned int d, typename Refs, typename Items, typename Alloc,
-            typename Storage>
-  class Combinatorial_map_base;
-  
-  template <unsigned int d, typename Refs, typename Items, typename Alloc,
-            typename Storage>
-  class Generalized_map_base;
-  
-  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
-            typename Alloc,
-            template<unsigned int,class,class,class,class>
-            class Map, typename Refs, typename Storage>
-  class Linear_cell_complex_base;
-
-  template <unsigned int d, typename Items, typename Alloc,
-            typename Storage>
-  class Combinatorial_map;
-
-  template <unsigned int d, typename Items, typename Alloc,
-            typename Storage>
-  class Generalized_map;
-
-  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
-            typename Alloc,
-            template<unsigned int,class,class,class,class>
-            class Map, typename Storage>
-  class Linear_cell_complex_for_combinatorial_map;
-  
-  template <unsigned int d, unsigned int d2, typename Traits, typename Items,
-            typename Alloc,
-            template<unsigned int,class,class,class,class>
-            class Map, typename Storage>
-  class Linear_cell_complex_for_generalized_map;
-
-  namespace Surface_mesh_topology
-  {
-    template <typename Items, typename Alloc, typename Storage>
-    class Polygonal_schema_with_combinatorial_map;
-
-    template <typename Items, typename Alloc, typename Storage>
-    class Polygonal_schema_with_generalized_map;
-  }
-  
 ////////////////////////////////////////////////////////////////////////////////
 /** Class Face_graph_wrapper: to wrap any model of FaceGraph into a
  *  Combinatorial map. For now, only for const models, i.e. does not support
@@ -77,6 +37,7 @@ public:
   typedef HEG_                    HEG;
   typedef Face_graph_wrapper<HEG> Self;
   typedef std::size_t             size_type;
+  typedef Self                    Refs;
 
   struct Dart_container
   {

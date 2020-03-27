@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
+#include <CGAL/Polygonal_schema_fwd.h>
 #include <vector>
 #include <unordered_map>
 #include <cstddef>
@@ -422,9 +423,7 @@ namespace Surface_mesh_topology {
   };
 
   /// Polygonal schema with combinatorial map.
-  template <class Items_=Polygonal_schema_min_items,
-            class Alloc_=CGAL_ALLOCATOR(int),
-            class Storage_= Combinatorial_map_storage_1<2, Items_, Alloc_> >
+  template <class Items_, class Alloc_, class Storage_>
   class Polygonal_schema_with_combinatorial_map:
     public Polygonal_schema_base<CGAL::Combinatorial_map_base
       <2,
@@ -483,9 +482,7 @@ namespace Surface_mesh_topology {
   };
 
   /// Polygonal schema with generalized map.
-  template <class Items_=Polygonal_schema_min_items,
-            class Alloc_=CGAL_ALLOCATOR(int),
-            class Storage_= Generalized_map_storage_1<2, Items_, Alloc_> >
+  template <class Items_, class Alloc_, class Storage_>
   class Polygonal_schema_with_generalized_map:
     public Polygonal_schema_base<CGAL::Generalized_map_base
       <2,
