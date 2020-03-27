@@ -56,10 +56,10 @@ namespace internal {
 // Whenever a construction takes iterator pairs as input, whether they point to double of Lazy objects, copy the ranges inside the lazy result so they are available for update_exact(). We analyze the input to try and guess where iterator pairs are. I would prefer if each functor had a specific signature (no overload in this layer) so we wouldn't have to guess.
 namespace Lazy_internal {
 template<class...>struct typelist{};
-template<int>struct arg_i{};
-template<int>struct arg_i_begin{};
-template<int>struct arg_i_end{};
-template<int>struct arg_i_ip1_range{};
+template<std::size_t>struct arg_i{};
+template<std::size_t>struct arg_i_begin{};
+template<std::size_t>struct arg_i_end{};
+template<std::size_t>struct arg_i_ip1_range{};
 template<class,class,class,class=void>struct analyze_args;
 template<class T,class U>struct analyze_args<T,U,typelist<>> {
   typedef T creator;
@@ -73,24 +73,24 @@ struct analyze_args<typelist<T...>,typelist<U...>,typelist<It,It,W...>,std::enab
 analyze_args<typelist<T...,arg_i_ip1_range<sizeof...(U)>>,typelist<U...,arg_i_begin<sizeof...(T)>,arg_i_end<sizeof...(T)>>,typelist<W...>> {};
 template<class...T> using analyze_args_for_lazy = analyze_args<typelist<>,typelist<>,typelist<T...>>;
 template<class,class>struct extract1;
-template<int i,class T>struct extract1<arg_i<i>,T>:std::tuple_element<i,T>{};
-template<int i,class T>struct extract1<arg_i_ip1_range<i>,T>{
+template<std::size_t i,class T>struct extract1<arg_i<i>,T>:std::tuple_element<i,T>{};
+template<std::size_t i,class T>struct extract1<arg_i_ip1_range<i>,T>{
   typedef std::tuple_element_t<i,T> E;
   typedef std::remove_cv_t<std::remove_reference_t<E>> It;
   typedef typename std::iterator_traits<It>::value_type element_type;
   // TODO: find a way to use an array of the right size, at least for the most frequent constructions
   typedef std::vector<element_type> type;
 };
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i<i>,std::tuple<T...>const&t)
 {return std::get<i>(t);}
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i_begin<i>,std::tuple<T...>const&t)
 {return std::begin(std::get<i>(t));}
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i_end<i>,std::tuple<T...>const&t)
 {return std::end(std::get<i>(t));}
-template<int i,class...T>decltype(auto)
+template<std::size_t i,class...T>decltype(auto)
 do_extract(arg_i_ip1_range<i>,std::tuple<T...>const&t)
 {
   typedef std::tuple<T...> L;
@@ -199,19 +199,19 @@ struct Lazy_cartesian_types
     typedef typename typeset_intersection<
       typename AK_::Object_list,
       typename EK_::Object_list
-        >::type Object_list;
+	>::type Object_list;
 
     typedef typename typeset_intersection<
       typename AK_::Iterator_list,
       typename EK_::Iterator_list
-        >::type Iterator_list;
+	>::type Iterator_list;
 
     template <class T,class=typename Get_type_category<Kernel_,T>::type> struct Type {};
     template <class T> struct Type<T,Object_tag> {
-            typedef Lazy<
-                    typename Get_type<AK_,T>::type,
-                    typename Get_type<EK_,T>::type,
-                    E2A_> type;
+	    typedef Lazy<
+		    typename Get_type<AK_,T>::type,
+		    typename Get_type<EK_,T>::type,
+		    E2A_> type;
     };
     template <class T> struct Type<T,Number_tag> {
       typedef CGAL::Lazy_exact_nt<typename Get_type<EK_,T>::type>  type;
@@ -225,12 +225,12 @@ struct Lazy_cartesian_types
 
       // TODO: we should use Lazy_construction2, but this seems ok for now, we never construct iterators from iterators.
       typedef typename internal::Lazy_construction_maybe_nt<
-        Kernel_, AF, EF, is_NT_tag<Vt>::value
-        >::type nth_elem;
+	Kernel_, AF, EF, is_NT_tag<Vt>::value
+	>::type nth_elem;
 
       typedef Iterator_from_indices<
-        const typename Type<typename iterator_tag_traits<T>::container>::type,
-        const V, V, nth_elem
+	const typename Type<typename iterator_tag_traits<T>::container>::type,
+	const V, V, nth_elem
       > type;
     };
 };
@@ -288,39 +288,39 @@ struct Lazy_cartesian :
     // Check that Approximate_kernel agrees with all that...
 
     template<class T,class D=void,class=typename Get_functor_category<Lazy_cartesian,T,D>::type> struct Functor {
-            typedef Null_functor type;
+	    typedef Null_functor type;
     };
-            //FIXME: what do we do with D here?
+	    //FIXME: what do we do with D here?
     template<class T,class D> struct Functor<T,D,Predicate_tag> {
-            typedef typename Get_functor<Approximate_kernel, T>::type FA;
-            typedef typename Get_functor<Exact_kernel, T>::type FE;
-            typedef Filtered_predicate2<FE,FA,C2E,C2A> type;
+	    typedef typename Get_functor<Approximate_kernel, T>::type FA;
+	    typedef typename Get_functor<Exact_kernel, T>::type FE;
+	    typedef Filtered_predicate2<Lazy_cartesian,FE,FA,C2E,C2A> type;
     };
     template<class T,class D> struct Functor<T,D,Compute_tag> {
-            typedef Lazy_construction2<T,Kernel> type;
+	    typedef Lazy_construction2<T,Kernel> type;
     };
     template<class T,class D> struct Functor<T,D,Construct_tag> {
-            typedef Lazy_construction2<T,Kernel> type;
+	    typedef Lazy_construction2<T,Kernel> type;
     };
     template<class D> struct Functor<Point_dimension_tag,D,Misc_tag> {
-            typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type FA;
-            struct type {
-              FA fa;
-              type(){}
-              type(Kernel const&k):fa(k.approximate_kernel()){}
-              template<class P>
-              int operator()(P const&p)const{return fa(CGAL::approx(p));}
-            };
+	    typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type FA;
+	    struct type {
+	      FA fa;
+	      type(){}
+	      type(Kernel const&k):fa(k.approximate_kernel()){}
+	      template<class P>
+	      int operator()(P const&p)const{return fa(CGAL::approx(p));}
+	    };
     };
     template<class D> struct Functor<Vector_dimension_tag,D,Misc_tag> {
-            typedef typename Get_functor<Approximate_kernel, Vector_dimension_tag>::type FA;
-            struct type {
-              FA fa;
-              type(){}
-              type(Kernel const&k):fa(k.approximate_kernel()){}
-              template<class V>
-              int operator()(V const&v)const{return fa(CGAL::approx(v));}
-            };
+	    typedef typename Get_functor<Approximate_kernel, Vector_dimension_tag>::type FA;
+	    struct type {
+	      FA fa;
+	      type(){}
+	      type(Kernel const&k):fa(k.approximate_kernel()){}
+	      template<class V>
+	      int operator()(V const&v)const{return fa(CGAL::approx(v));}
+	    };
     };
     template<class D> struct Functor<Linear_base_tag,D,Misc_tag> {
       // Don't filter that one, as there is no guarantee that the interval
@@ -332,19 +332,19 @@ struct Lazy_cartesian :
       typedef typename Get_type<Exact_kernel, Vector_tag>::type ET;
       typedef typename Base::template Type<Vector_tag>::type V; // Lazy<AT, ET, E2A>
       struct type {
-        FE fe;
-        type(){}
-        type(Kernel const&k):fe(k.exact_kernel()){}
-        template<class Iter, class Oter>
-        void operator()(Iter i, Iter e, Oter o)const{
-          fe(CGAL::exact(i), CGAL::exact(e),
-              boost::make_function_output_iterator(
-                [&o](ET const&v){
-                  *o++ = V(new Lazy_rep_0<AT,ET,E2A>(v));
-                }
-              )
-          );
-        }
+	FE fe;
+	type(){}
+	type(Kernel const&k):fe(k.exact_kernel()){}
+	template<class Iter, class Oter>
+	void operator()(Iter i, Iter e, Oter o)const{
+	  fe(CGAL::exact(i), CGAL::exact(e),
+	      boost::make_function_output_iterator(
+		[&o](ET const&v){
+		  *o++ = V(new Lazy_rep_0<AT,ET,E2A>(v));
+		}
+	      )
+	  );
+	}
       };
     };
 
@@ -354,22 +354,22 @@ struct Lazy_cartesian :
     // This is really specific to point/vector coordinate iterators
     template<class U>
     struct Construct_iter : private Store_kernel<Kernel> {
-            Construct_iter(){}
-            Construct_iter(Kernel const&k):Store_kernel<Kernel>(k){}
-            //FIXME: pass the kernel to the functor in the iterator
-            typedef U result_type;
-            template<class T>
-            result_type operator()(T const& t,Begin_tag)const{
-                    return result_type(t,0,this->kernel());
-            }
-            template<class T>
-            result_type operator()(T const& t,End_tag)const{
-                    typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type PD;
-                    return result_type(t,PD(this->kernel().approximate_kernel())(CGAL::approx(t)),this->kernel());
-            }
+	    Construct_iter(){}
+	    Construct_iter(Kernel const&k):Store_kernel<Kernel>(k){}
+	    //FIXME: pass the kernel to the functor in the iterator
+	    typedef U result_type;
+	    template<class T>
+	    result_type operator()(T const& t,Begin_tag)const{
+		    return result_type(t,0,this->kernel());
+	    }
+	    template<class T>
+	    result_type operator()(T const& t,End_tag)const{
+	            typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type PD;
+		    return result_type(t,PD(this->kernel().approximate_kernel())(CGAL::approx(t)),this->kernel());
+	    }
     };
     template<class T,class D> struct Functor<T,D,Construct_iterator_tag> {
-            typedef Construct_iter<typename Base::template Iterator<typename map_result_tag<T>::type>::type> type;
+	    typedef Construct_iter<typename Base::template Iterator<typename map_result_tag<T>::type>::type> type;
     };
 
 

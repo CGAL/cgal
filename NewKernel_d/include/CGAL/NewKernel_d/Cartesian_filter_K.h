@@ -20,28 +20,48 @@
 
 namespace CGAL {
 
-template < typename Base_, typename AK_, typename EK_ >
+  // It would be nicer to write the table in the other direction: Orientation_of_points_tag is good up to 6, Side_of_oriented_sphere_tag up to 5, etc.
+template<class> struct Functors_without_division { typedef typeset<> type; };
+template<> struct Functors_without_division<Dimension_tag<1> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<2> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<3> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<4> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<5> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+template<> struct Functors_without_division<Dimension_tag<6> > {
+  typedef typeset<Orientation_of_points_tag, Side_of_oriented_sphere_tag> type;
+};
+  
+template < typename Base_, typename AK_, typename EK_, typename Pred_list = typeset_all >
 struct Cartesian_filter_K : public Base_,
-  private Store_kernel<AK_>, private Store_kernel2<EK_>
+  private Store_kernel<EK_>
 {
     constexpr Cartesian_filter_K(){}
     constexpr Cartesian_filter_K(int d):Base_(d){}
     //FIXME: or do we want an instance of AK and EK belonging to this kernel,
     //instead of a reference to external ones?
-    constexpr Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
-    constexpr Cartesian_filter_K(int d,AK_ const&a,EK_ const&b):Base_(d),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
+    constexpr Cartesian_filter_K(AK_ const&,EK_ const&b):Base_(),Store_kernel<EK_>(b){}
+    constexpr Cartesian_filter_K(int d,AK_ const&,EK_ const&b):Base_(d),Store_kernel<EK_>(b){}
     typedef Base_ Kernel_base;
     typedef AK_ AK;
     typedef EK_ EK;
-    typedef typename Store_kernel<AK_>::reference_type AK_rt;
-    AK_rt approximate_kernel()const{return this->kernel();}
-    typedef typename Store_kernel2<EK_>::reference2_type EK_rt;
-    EK_rt exact_kernel()const{return this->kernel2();}
+    CGAL_static_assertion_msg(internal::Do_not_store_kernel<AK>::value, "Only handle stateless kernels as AK");
+    AK approximate_kernel()const{return {};}
+    typedef typename Store_kernel<EK_>::reference_type EK_rt;
+    EK_rt exact_kernel()const{return this->Store_kernel<EK>::kernel();}
 
     // MSVC is too dumb to perform the empty base optimization.
     typedef boost::mpl::and_<
       internal::Do_not_store_kernel<Kernel_base>,
-      internal::Do_not_store_kernel<AK>,
       internal::Do_not_store_kernel<EK> > Do_not_store_kernel;
 
     //TODO: C2A/C2E could be able to convert *this into this->kernel() or this->kernel2().
@@ -52,16 +72,16 @@ struct Cartesian_filter_K : public Base_,
     // TODO: only fix some types, based on some criterion?
     template<class T> struct Type : Get_type<Kernel_base,T> {};
 
-    template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type> struct Functor :
+    template<class T,class D=void,class=typename Get_functor_category<Cartesian_filter_K,T>::type, bool=Pred_list::template contains<T>::value> struct Functor :
       Inherit_functor<Kernel_base,T,D> {};
-    template<class T,class D> struct Functor<T,D,Predicate_tag> {
+    template<class T,class D> struct Functor<T,D,Predicate_tag,true> {
       typedef typename Get_functor<AK, T>::type AP;
       typedef typename Get_functor<EK, T>::type EP;
-      typedef Filtered_predicate2<EP,AP,C2E,C2A> type;
+      typedef Filtered_predicate2<Cartesian_filter_K,EP,AP,C2E,C2A> type;
     };
 // TODO:
 //    template<class T> struct Functor<T,No_filter_tag,Predicate_tag> :
-//            Kernel_base::template Functor<T,No_filter_tag> {};
+//	    Kernel_base::template Functor<T,No_filter_tag> {};
 // TODO:
 // detect when Less_cartesian_coordinate doesn't need filtering
 };

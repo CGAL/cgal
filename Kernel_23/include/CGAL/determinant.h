@@ -1,16 +1,16 @@
-// Copyright (c) 1999
+// Copyright (c) 1999  
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved.
+// and Tel-Aviv University (Israel).  All rights reserved. 
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-//
+// 
 //
 // Author(s)     : Sylvain Pion
 //                 Stefan Schirra
@@ -202,6 +202,83 @@ determinant(
   return m012345;
 }
 
+template <class RT>
+RT
+determinant(
+ const RT& a00, const RT& a01, const RT& a02, const RT& a03, const RT& a04,
+ const RT& a05, const RT& a06,
+ const RT& a10, const RT& a11, const RT& a12, const RT& a13, const RT& a14,
+ const RT& a15, const RT& a16,
+ const RT& a20, const RT& a21, const RT& a22, const RT& a23, const RT& a24,
+ const RT& a25, const RT& a26,
+ const RT& a30, const RT& a31, const RT& a32, const RT& a33, const RT& a34,
+ const RT& a35, const RT& a36,
+ const RT& a40, const RT& a41, const RT& a42, const RT& a43, const RT& a44,
+ const RT& a45, const RT& a46,
+ const RT& a50, const RT& a51, const RT& a52, const RT& a53, const RT& a54,
+ const RT& a55, const RT& a56,
+ const RT& a60, const RT& a61, const RT& a62, const RT& a63, const RT& a64,
+ const RT& a65, const RT& a66)
+{
+  return a00 * determinant(
+                           a11, a12, a13, a14, a15, a16,
+                           a21, a22, a23, a24, a25, a26,
+                           a31, a32, a33, a34, a35, a36,
+                           a41, a42, a43, a44, a45, a46,
+                           a51, a52, a53, a54, a55, a56,
+                           a61, a62, a63, a64, a65, a66)
+    
+    - a10 * determinant(a01, a02, a03, a04, a05, a06,
+
+                        a21, a22, a23, a24, a25, a26,
+                        a31, a32, a33, a34, a35, a36,
+                        a41, a42, a43, a44, a45, a46,
+                        a51, a52, a53, a54, a55, a56,
+                        a61, a62, a63, a64, a65, a66)
+    
+    + a20 * determinant(a01, a02, a03, a04, a05, a06,
+                        a11, a12, a13, a14, a15, a16,
+
+                        a31, a32, a33, a34, a35, a36,
+                        a41, a42, a43, a44, a45, a46,
+                        a51, a52, a53, a54, a55, a56,
+                        a61, a62, a63, a64, a65, a66)
+    
+    - a30 * determinant(a01, a02, a03, a04, a05, a06,
+                        a11, a12, a13, a14, a15, a16,
+                        a21, a22, a23, a24, a25, a26,
+
+                        a41, a42, a43, a44, a45, a46,
+                        a51, a52, a53, a54, a55, a56,
+                        a61, a62, a63, a64, a65, a66)
+    
+    + a40 * determinant(a01, a02, a03, a04, a05, a06,
+                        a11, a12, a13, a14, a15, a16,
+                        a21, a22, a23, a24, a25, a26,
+                        a31, a32, a33, a34, a35, a36,
+
+                        a51, a52, a53, a54, a55, a56,
+                        a61, a62, a63, a64, a65, a66)
+    
+    - a50 * determinant(a01, a02, a03, a04, a05, a06,
+                        a11, a12, a13, a14, a15, a16,
+                        a21, a22, a23, a24, a25, a26,
+                        a31, a32, a33, a34, a35, a36,
+                        a41, a42, a43, a44, a45, a46,
+                        
+                        a61, a62, a63, a64, a65, a66)
+    
+    + a60 * determinant(a01, a02, a03, a04, a05, a06,
+                        a11, a12, a13, a14, a15, a16,
+                        a21, a22, a23, a24, a25, a26,
+                        a31, a32, a33, a34, a35, a36,
+                        a41, a42, a43, a44, a45, a46,
+                        a51, a52, a53, a54, a55, a56
+
+                        );
+}
+
+  
 } //namespace CGAL
 
 #endif // CGAL_DETERMINANT_H
