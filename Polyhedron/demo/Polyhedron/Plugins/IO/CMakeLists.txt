@@ -44,7 +44,7 @@ if (VTK_FOUND)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin KEYWORDS IO Mesh_3)
       target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
                                        ${VTK_LIBRARIES})
-
+      target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK)
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()
@@ -64,11 +64,11 @@ if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
   message(STATUS "NOTICE : LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
 else()
   set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-
+  
   polyhedron_demo_plugin(ply_plugin PLY_io_plugin KEYWORDS IO PointSetProcessing Classification PMP)
   target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
   target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
-
+  
   if (LASLIB_FOUND)
     polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS IO PointSetProcessing Classification)
     target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item)

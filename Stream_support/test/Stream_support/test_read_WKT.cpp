@@ -22,46 +22,52 @@ int main()
   typedef std::vector<Point> MultiPoint;
   typedef std::vector<Linestring> MultiLinestring;
   typedef std::vector<Polygon> MultiPolygon;
-
+  
   Point p;
   {
     std::ifstream in("data/point.wkt");
-    CGAL::read_point_WKT(in, p);
+    if(! CGAL::read_point_WKT(in, p))
+      return 1;
     in.close();
     CGAL_assertion(p == Point(2,3));
   }
   {
     std::ifstream in("data/linestring.wkt");
     Linestring ls;
-    CGAL::read_linestring_WKT(in, ls);
+    if(!CGAL::read_linestring_WKT(in, ls))
+      return 1;
     in.close();
     CGAL_assertion(ls.size() == 3);
   }
   {
     Polygon poly;
     std::ifstream in("data/polygon.wkt");
-    CGAL::read_polygon_WKT(in, poly);
+    if(!CGAL::read_polygon_WKT(in, poly))
+      return 1;
     in.close();
     CGAL_assertion(poly.outer_boundary().size() == 3);
   }
   {
     MultiPoint pees;
     std::ifstream in("data/multipoint.wkt");
-    CGAL::read_multi_point_WKT(in, pees);
+    if(!CGAL::read_multi_point_WKT(in, pees))
+      return 1;
     in.close();
     CGAL_assertion(pees.size() == 4);
   }
   {
     std::ifstream in("data/multilinestring.wkt");
     MultiLinestring mls;
-    CGAL::read_multi_linestring_WKT(in, mls);
+    if(!CGAL::read_multi_linestring_WKT(in, mls))
+      return 1;
     in.close();
     CGAL_assertion(mls.size() == 2);
   }
   {
     MultiPolygon polies;
     std::ifstream in("data/multipolygon.wkt");
-    CGAL::read_multi_polygon_WKT(in, polies);
+    if(!CGAL::read_multi_polygon_WKT(in, polies))
+      return 1;
     in.close();
     CGAL_assertion(polies.size() == 2);
   }

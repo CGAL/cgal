@@ -27,14 +27,14 @@
 //todo try to factorize with functors
 namespace CGAL{
 // writes the appended data into the .vtu file
-template <class FT>
+template <class FT> 
 void
-write_vector(std::ostream& os,
-             const std::vector<FT>& vect)
+write_vector(std::ostream& os, 
+             const std::vector<FT>& vect) 
 {
   const char* buffer = reinterpret_cast<const char*>(&(vect[0]));
   std::size_t size = vect.size()*sizeof(FT);
-
+  
   os.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t)); // number of bytes encoded
   os.write(buffer, vect.size()*sizeof(FT));                     // encoded data
 }
@@ -42,7 +42,7 @@ write_vector(std::ostream& os,
 // writes the cells tags before binary data is appended
 
 template <class CDT>
-void
+void 
 write_cells_tag_2(std::ostream& os,
                   const CDT & tr,
                   std::size_t number_of_triangles,
@@ -64,18 +64,18 @@ write_cells_tag_2(std::ostream& os,
   os << "    <Cells>\n"
      << "      <DataArray Name=\"connectivity\""
      << formatattribute << typeattribute;
-
+  
   if (binary) { // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
     // 3 indices (size_t) per triangle + length of the encoded data (size_t)
-    offset += (3 * number_of_triangles + 1) * sizeof(std::size_t);
+    offset += (3 * number_of_triangles + 1) * sizeof(std::size_t); 
     // 2 indices (size_t) per edge (size_t)
     offset += (2 * std::distance(tr.constrained_edges_begin(),
-                                 tr.constrained_edges_end())) * sizeof(std::size_t);
+                                 tr.constrained_edges_end())) * sizeof(std::size_t); 
   }
   else {
-    os << "\">\n";
-    for(typename CDT::Finite_faces_iterator
+    os << "\">\n";   
+    for(typename CDT::Finite_faces_iterator 
             fit = tr.finite_faces_begin(),
             end = tr.finite_faces_end();
           fit != end; ++fit)
@@ -89,11 +89,11 @@ write_cells_tag_2(std::ostream& os,
     }
     os << "      </DataArray>\n";
   }
-
+  
   // Write offsets
   os   << "      <DataArray Name=\"offsets\""
        << formatattribute << typeattribute;
-
+  
   if (binary) {  // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
     offset += (number_of_triangles +std::distance(tr.constrained_edges_begin(),
@@ -102,9 +102,9 @@ write_cells_tag_2(std::ostream& os,
     // 1 offset (size_t) per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";
+    os << "\">\n";  
     std::size_t cells_offset = 0;
-    for(typename CDT::Finite_faces_iterator fit =
+    for(typename CDT::Finite_faces_iterator fit = 
         tr.finite_faces_begin() ;
         fit != tr.finite_faces_end() ;
         ++fit )
@@ -114,7 +114,7 @@ write_cells_tag_2(std::ostream& os,
         cells_offset += 3;
         os << cells_offset << " ";
       }
-    }
+    }  
     os << "      </DataArray>\n";
   }
 
@@ -126,13 +126,13 @@ write_cells_tag_2(std::ostream& os,
     os << " offset=\"" << offset << "\"/>\n";
     offset += number_of_triangles
         + std::distance(tr.constrained_edges_begin(),
-                        tr.constrained_edges_end())
+                        tr.constrained_edges_end()) 
         + sizeof(std::size_t);
     // 1 unsigned char per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";
-    for(typename CDT::Finite_faces_iterator fit =
+    os << "\">\n";  
+    for(typename CDT::Finite_faces_iterator fit = 
         tr.finite_faces_begin() ;
         fit != tr.finite_faces_end() ;
         ++fit )
@@ -147,7 +147,7 @@ write_cells_tag_2(std::ostream& os,
   os << "    </Cells>\n";
 }
 
-// writes the cells appended data at the end of the .vtu file
+// writes the cells appended data at the end of the .vtu file 
 template <class CDT>
 void
 write_cells_2(std::ostream& os,
@@ -160,9 +160,9 @@ write_cells_2(std::ostream& os,
   std::vector<unsigned char> cell_type(number_of_triangles,5);  // triangles == 5
   cell_type.resize(cell_type.size() + std::distance(tr.constrained_edges_begin(),
                                                      tr.constrained_edges_end()), 3);  // line == 3
-
+  
   std::size_t off = 0;
-  for(typename CDT::Finite_faces_iterator
+  for(typename CDT::Finite_faces_iterator 
       fit = tr.finite_faces_begin(),
       end = tr.finite_faces_end();
       fit != end; ++fit)
@@ -189,14 +189,15 @@ write_cells_2(std::ostream& os,
         connectivity_table.push_back(V[cei->first->vertex(i)]);
     }
   }
-  write_vector<std::size_t>(os,connectivity_table);
-  write_vector<std::size_t>(os,offsets);
-  write_vector<unsigned char>(os,cell_type);
+
+  IO::internal::write_vector<std::size_t>(os,connectivity_table);
+  IO::internal::write_vector<std::size_t>(os,offsets);
+  IO::internal::write_vector<unsigned char>(os,cell_type);
 }
 
 // writes the points tags before binary data is appended
 template <class Tr>
-void
+void 
 write_cdt_points_tag(std::ostream& os,
                      const Tr & tr,
                      std::map<typename Tr::Vertex_handle, std::size_t> & V,
@@ -217,12 +218,12 @@ write_cdt_points_tag(std::ostream& os,
      << format;
 
   if (binary) {
-    os << "\" offset=\"" << offset << "\"/>\n";
+    os << "\" offset=\"" << offset << "\"/>\n";    
     offset += 3 * tr.number_of_vertices() * sizeof(FT) + sizeof(std::size_t);
     // dim coords per points + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";
+    os << "\">\n";  
     for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
          vit != tr.finite_vertices_end();
          ++vit)
@@ -230,7 +231,7 @@ write_cdt_points_tag(std::ostream& os,
       V[vit] = inum++;
         os << vit->point()[0] << " ";
         os << vit->point()[1] << " ";
-        if(dim == 3)
+        if(dim == 3) 
           os << vit->point()[2] << " ";
         else
           os << 0.0 << " ";
@@ -240,7 +241,7 @@ write_cdt_points_tag(std::ostream& os,
   os << "    </Points>\n";
 }
 
-// writes the points appended data at the end of the .vtu file
+// writes the points appended data at the end of the .vtu file 
 template <class Tr>
 void
 write_cdt_points(std::ostream& os,
@@ -264,44 +265,44 @@ write_cdt_points(std::ostream& os,
       coordinates.push_back(vit->point()[1]);
       coordinates.push_back(dim == 3 ? vit->point()[2] : 0.0);
     }
-  write_vector<FT>(os,coordinates);
+  IO::internal::write_vector<FT>(os,coordinates);
 }
 
 // writes the attribute tags before binary data is appended
 template <class T>
-void
+void 
 write_attribute_tag_2 (std::ostream& os,
-                    const std::string& attr_name,
-                    const std::vector<T>& attribute,
-                    bool binary,
-                    std::size_t& offset)
+		    const std::string& attr_name,
+		    const std::vector<T>& attribute,
+		    bool binary,
+		    std::size_t& offset)
 {
   std::string format = binary ? "appended" : "ascii";
   std::string type = (sizeof(T) == 8) ? "Float64" : "Float32";
-  os << "      <DataArray type=\"" << type << "\" Name=\"" << attr_name << "\" format=\"" << format;
+  os << "      <DataArray type=\"" << type << "\" Name=\"" << attr_name << "\" format=\"" << format; 
 
   if (binary) {
-    os << "\" offset=\"" << offset << "\"/>\n";
+    os << "\" offset=\"" << offset << "\"/>\n";    
     offset += attribute.size() * sizeof(T) + sizeof(std::size_t);
   }
   else {
     typedef typename std::vector<T>::const_iterator Iterator;
-    os << "\">\n";
+    os << "\">\n";   
     for (Iterator it = attribute.begin();
-         it != attribute.end();
-         ++it )
+	 it != attribute.end();
+	 ++it )
       os << *it << " ";
     os << "      </DataArray>\n";
   }
 }
 
-// writes the attributes appended data at the end of the .vtu file
+// writes the attributes appended data at the end of the .vtu file 
 template <typename FT>
 void
 write_attributes_2(std::ostream& os,
-                 const std::vector<FT>& att)
+		 const std::vector<FT>& att)
 {
-  write_vector(os,att);
+  IO::internal::write_vector(os,att);
 }
 
 template <class CDT>
@@ -320,7 +321,7 @@ void write_vtu_with_attributes(std::ostream& os,
 #else // CGAL_BIG_ENDIAN
   os << " byte_order=\"BigEndian\"";
 #endif
-
+  
   switch(sizeof(std::size_t)) {
   case 4: os << " header_type=\"UInt32\""; break;
   case 8: os << " header_type=\"UInt64\""; break;
@@ -328,16 +329,16 @@ void write_vtu_with_attributes(std::ostream& os,
   }
   os << ">\n"
      << "  <UnstructuredGrid>" << "\n";
-
+  
   int number_of_triangles = 0;
-  for(typename CDT::Finite_faces_iterator
+  for(typename CDT::Finite_faces_iterator 
       fit = tr.finite_faces_begin(),
       end = tr.finite_faces_end();
       fit != end; ++fit)
   {
     if(fit->is_in_domain()) ++number_of_triangles;
   }
-  os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices()
+  os << "  <Piece NumberOfPoints=\"" << tr.number_of_vertices() 
      << "\" NumberOfCells=\"" << number_of_triangles + std::distance(tr.constrained_edges_begin(), tr.constrained_edges_end()) << "\">\n";
   std::size_t offset = 0;
   const bool binary = (mode == IO::BINARY);
@@ -355,7 +356,7 @@ void write_vtu_with_attributes(std::ostream& os,
   os << "   </Piece>\n"
      << "  </UnstructuredGrid>\n";
   if (binary) {
-    os << "<AppendedData encoding=\"raw\">\n_";
+    os << "<AppendedData encoding=\"raw\">\n_"; 
     write_cdt_points(os,tr,V);  // write points before cells to fill the std::map V
     write_cells_2(os,tr, number_of_triangles, V);
     for(std::size_t i = 0; i< attributes.size(); ++i)

@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-//
+// 
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -90,7 +90,7 @@ using boost::face_external_index;
 
 namespace CGAL {
 namespace internal {
-
+  
   template<typename Polyhedron, typename Handle>
 struct Index_accessor
     : boost::put_get_helper< std::size_t&, Index_accessor<Polyhedron,Handle> >
@@ -177,7 +177,7 @@ struct Is_writable_property_map<PropertyMap, boost::lvalue_property_map_tag>
 
 } // namespace internal
 
-// Needed by PMP::detec_features and Mesh_3
+// Needed by PMP::detect_features and Mesh_3
 enum vertex_feature_degree_t    { vertex_feature_degree };
 enum edge_is_feature_t          { edge_is_feature };
 

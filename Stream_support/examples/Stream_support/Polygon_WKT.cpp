@@ -1,22 +1,20 @@
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-
-#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
-#include <iostream>
-#include <fstream>
-
-#include <CGAL/IO/WKT.h>
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
+#include <boost/config.hpp>
+#include <boost/version.hpp>
+
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include <deque>
 
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+
+#include <CGAL/IO/WKT.h>
+
 //typedef CGAL::Simple_cartesian<CGAL::Gmpq> Kernel;
-
 typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-
 
 int main(int argc, char* argv[])
 {
@@ -36,7 +34,7 @@ int main(int argc, char* argv[])
     for(Polygon p : polys)
       std::cout<<p<<std::endl;
   }
-
+  
   {
     std::ifstream  is((argc>2)?argv[2]:"data/multipolygon.wkt");
     MultiPolygon mp;

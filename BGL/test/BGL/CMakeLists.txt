@@ -10,11 +10,12 @@ project( BGL_Tests )
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
-
+find_package(VTK QUIET COMPONENTS
+  vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
+  return()  
 
 endif()
 
@@ -23,7 +24,7 @@ find_package( Boost )
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()
+  return()  
 endif()
 
 find_package( OpenMesh QUIET )
@@ -32,9 +33,8 @@ if ( OpenMesh_FOUND )
   include( UseOpenMesh )
   add_definitions( -DCGAL_USE_OPENMESH )
 else()
-  message(STATUS "Examples that use OpenMesh will not be compiled.")
+  message(STATUS "Tests that use OpenMesh will not be compiled.")
 endif()
-
 
 
 # include for local package
@@ -97,8 +97,6 @@ create_single_source_cgal_program( "test_graph_traits.cpp" )
 
 create_single_source_cgal_program( "test_Properties.cpp" )
 
-create_single_source_cgal_program( "test_wrl.cpp" )
-
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_Euler_operations PRIVATE ${OPENMESH_LIBRARIES})
@@ -108,3 +106,19 @@ if(OpenMesh_FOUND)
   target_link_libraries( test_Properties PRIVATE ${OPENMESH_LIBRARIES})
   target_link_libraries( test_bgl_read_write PRIVATE ${OPENMESH_LIBRARIES})
 endif()
+if (VTK_FOUND)
+  if(VTK_USE_FILE)
+    include(${VTK_USE_FILE})
+  endif()
+  if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
+    if(TARGET VTK::CommonCore)
+      set(VTK_LIBRARIES VTK::CommonCore VTK::IOCore VTK::IOLegacy VTK::IOXML VTK::FiltersCore VTK::FiltersSources)
+    endif()
+    if(VTK_LIBRARIES)
+      add_definitions(-DCGAL_USE_VTK)
+      target_link_libraries( test_bgl_read_write PRIVATE ${VTK_LIBRARIES})
+    else()
+      message(STATUS "Tests that use VTK will not be compiled.")
+    endif()
+  endif()
+endif() #VTK_FOUND

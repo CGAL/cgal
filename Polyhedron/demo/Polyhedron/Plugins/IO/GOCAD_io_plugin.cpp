@@ -3,16 +3,19 @@
 #include "Kernel_type.h"
 #include "Scene.h"
 #include "SMesh_type.h"
-#include <CGAL/gocad_io.h>
+
 #include <CGAL/Timer.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
-#include <fstream>
+#include <CGAL/boost/graph/io.h>
 
 #include <QColor>
 #include <QMainWindow>
+
+#include <fstream>
+
 using namespace CGAL::Three;
 
 class Polyhedron_demo_gocad_plugin :
@@ -46,7 +49,7 @@ bool Polyhedron_demo_gocad_plugin::canLoad(QFileInfo) const {
 
 QList<Scene_item*>
 Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_scene) {
-
+  
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -54,8 +57,8 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
     ok = false;
     return QList<Scene_item*>();
   }
-
-
+  
+  
   CGAL::Timer t;
   t.start();
   // Try to read GOCAD file in a surface_mesh
@@ -71,7 +74,8 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
   SMesh& P = * const_cast<SMesh*>(item->polyhedron());
 
   std::string name, color;
-  if(! read_gocad(P, in, name, color)){
+  if(! read_GOCAD(in, name, color, P))
+  {
     std::cerr << "Error: Invalid polyhedron" << std::endl;
     delete item;
     ok = false;
@@ -110,14 +114,14 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   // This plugin supports polyhedrons
   const Scene_surface_mesh_item* sm_item =
       qobject_cast<const Scene_surface_mesh_item*>(item);
-
+  
   if(!sm_item)
     return false;
-
+  
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   SMesh* poly = const_cast<SMesh*>(sm_item->polyhedron());
-  write_gocad(*poly, out, qPrintable(fileinfo.baseName()));
+  write_GOCAD(out, qPrintable(fileinfo.baseName()), *poly);
   items.pop_front();
   return true;
 

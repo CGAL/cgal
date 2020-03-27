@@ -1,8 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/properties_Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/extract_mean_curvature_flow_skeleton.h>
+
 #include <fstream>
 
 
@@ -50,7 +53,7 @@ struct Display_polylines{
 int main()
 {
   LCC lcc;
-  CGAL::read_off("data/elephant.off", lcc);
+  CGAL::read_OFF("data/elephant.off", lcc);
 
   Skeleton skeleton;
 

@@ -17,7 +17,7 @@ if ( CGAL_FOUND )
 
     message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-    return()
+    return()  
 
   endif()
 
@@ -28,9 +28,19 @@ if ( CGAL_FOUND )
 
     create_single_source_cgal_program( "read_xml.cpp" )
 
+    create_single_source_cgal_program( "iv2off.cpp" )
+    create_single_source_cgal_program( "off2iv.cpp" )
+    create_single_source_cgal_program( "off2off.cpp" )
+    create_single_source_cgal_program( "off2stl.cpp" )
+    create_single_source_cgal_program( "off2vrml.cpp" )
+    create_single_source_cgal_program( "off2wav.cpp" )
+    create_single_source_cgal_program( "off_bbox.cpp" )
+    create_single_source_cgal_program( "off_glue.cpp" )
+    create_single_source_cgal_program( "off_transform.cpp" )
+  
 else ()
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
+  return()  
 
 endif()
 

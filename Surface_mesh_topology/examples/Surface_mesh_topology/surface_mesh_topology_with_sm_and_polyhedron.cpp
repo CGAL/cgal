@@ -1,13 +1,13 @@
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/draw_face_graph_with_paths.h>
 
-#include <CGAL/Curves_on_surface_topology.h>
-#include <CGAL/Path_on_surface.h>
 #include <CGAL/boost/graph/io.h>
+#include <CGAL/Curves_on_surface_topology.h>
+#include <CGAL/draw_face_graph_with_paths.h>
 #include <CGAL/Face_graph_wrapper.h>
+#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/Path_on_surface.h>
 
 typedef CGAL::Linear_cell_complex_for_combinatorial_map<2,3> LCC_3_cmap;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -34,7 +34,7 @@ void test(const FaceGraph& mesh)
 
   bool res1=cst.is_contractible(p1);
   std::cout<<"Path p1 "<<(res1?"IS":"IS NOT")<<" contractible."<<std::endl;
-
+  
   bool res2=cst.are_freely_homotopic(p1, p2);
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
@@ -78,6 +78,6 @@ int main(int argc, char** argv)
     }
     test(sm);
   }
-
+  
   return EXIT_SUCCESS;
 }

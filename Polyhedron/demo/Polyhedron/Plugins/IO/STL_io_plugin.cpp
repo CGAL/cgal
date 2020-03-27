@@ -7,8 +7,8 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
 
-#include <CGAL/IO/Polyhedron_builder_from_STL.h>
-#include <CGAL/IO/STL_writer.h>
+#include <CGAL/IO/STL.h>
+#include <CGAL/boost/graph/io.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <CGAL/internal/boost/function_property_map.hpp>
@@ -156,7 +156,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
 
   if (sm_item)
   {
-    CGAL::write_STL(*sm_item->face_graph(), out);
+    CGAL::write_STL(out, *sm_item->face_graph());
     items.pop_front();
     return true;
   }

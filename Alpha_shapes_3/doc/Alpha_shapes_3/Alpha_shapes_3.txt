@@ -2,13 +2,13 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual
+\mainpage User Manual 
 \anchor Chapter_3D_Alpha_Shapes
 \cgalAutoToc
 \authors Tran Kai Frank Da, S&eacute;bastien Loriot, and Mariette Yvinec
 
-\image html alphashape.png
-\image latex alphashape.png
+\image html alphashape.png 
+\image latex alphashape.png 
 
 Assume we are given a set \f$ S\f$ of points in 2D or 3D and we would like to
 have something like "the shape formed by these points". This is
@@ -56,8 +56,8 @@ are based on its generalization, the regular triangulation
 replacing the euclidean distance by the power to weighted points.
 
 Let us consider the basic case with a Delaunay triangulation.
-We first define the alpha complex of the set of points \f$ S\f$.
-The alpha complex is a subcomplex
+We first define the alpha complex of the set of points \f$ S\f$. 
+The alpha complex is a subcomplex 
 of the Delaunay triangulation.
 For a given value of \f$ \alpha\f$, the alpha complex includes
 all the simplices in the Delaunay triangulation which have
@@ -75,17 +75,17 @@ singular if it is not a facet of a \f$ (k+1)\f$-simplex of the complex.
 the alpha shapes correspond strictly to the above definition.
 The regularized mode provides a regularized version of the alpha shapes.
 It corresponds to the domain covered by a regularized version
-of the alpha complex where singular faces are removed
+of the alpha complex where singular faces are removed 
 (See \cgalFigureRef{figgenregex} for an example).
 
-\cgalFigureBegin{figgenregex,gen-reg-ex.png}
+\cgalFigureBegin{figgenregex,gen-reg-ex.png} 
 Comparison of general and regularized alpha-shape. <B>Left:</B> Some points are taken on the surface of a torus, three points being taken relatively far from the surface of the torus; <B>Middle:</B> The general alpha-shape (for a large enough alpha value) contains the singular triangle facet of the three isolated points; <B>Right:</B> The regularized version (for the same value of alpha) does not contains any singular facet.
 \cgalFigureEnd
 
-The alpha shapes of a set of points
+The alpha shapes of a set of points 
 \f$ S\f$ form a discrete family, even though they
 are defined for all real numbers \f$ \alpha\f$.
-The entire family of alpha shapes can be represented
+The entire family of alpha shapes can be represented 
 through the underlying triangulation of \f$ S\f$. In this representation
 each \f$ k\f$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of \f$ \alpha\f$ the \f$ k\f$-simplex
@@ -95,23 +95,23 @@ easily. Furthermore, we can select the optimal value
 of \f$ \alpha\f$ to get an alpha shape including all data points
 and having less than a given number of connected components.
 Also, the alpha-values allows to define a filtration on the
-faces of the triangulation of a set of points.
+faces of the triangulation of a set of points. 
 In this filtration, the faces of the triangulation are output
-in increasing order of the alpha value
-for which they appear
+in increasing order of the alpha value 
+for which they appear 
 in the alpha complex. In case of equal alpha values,
 lower dimensional faces are output first.
 
 The definition is analog in the case of weighted alpha shapes.
 The input set is now a set of weighted points (which can be regarded
-as spheres) and the underlying triangulation
+as spheres) and the underlying triangulation 
 is the regular triangulation of this set.
 Two spheres, or two weighted points, with centers \f$ C_1, C_2\f$
-and radii \f$ r_1, r_2 \f$ are said to be orthogonal iff
+and radii \f$ r_1, r_2 \f$ are said to be orthogonal iff 
 \f$ C_1C_2 ^2 = r_1^2 + r_2^2\f$ and suborthogonal
 iff \f$ C_1C_2 ^2 < r_1^2 + r_2^2\f$.
 For a given value of \f$ \alpha\f$,
-the weighted alpha complex is formed with the simplices of the
+the weighted alpha complex is formed with the simplices of the 
 regular triangulation triangulation
 such that there is a sphere orthogonal to the weighted points associated
 with the vertices of the simplex and suborthogonal to all the other
@@ -127,7 +127,7 @@ The class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` represents the whole
 family of alpha shapes for a given set of points.
 The class includes the underlying triangulation `Dt`
 of the set, and associates to each \f$ k\f$-face of this triangulation
-an interval specifying
+an interval specifying 
 for which values of \f$ \alpha\f$ the face belongs to the
 alpha complex.
 The second template parameter, `ExactAlphaComparisonTag`, is a tag that,
@@ -139,11 +139,11 @@ the \f$ \alpha\f$ values where the alpha shape changes.
 
 Additionally, the class has a filtration member function that, given
 an output iterator with `Object`
-as value type, outputs the faces of the triangulation
-according to the
+as value type, outputs the faces of the triangulation 
+according to the 
 order of apparition in the alpha complex when alpha increases.
 
-Finally, it provides a function to determine
+Finally, it provides a function to determine 
 the smallest value \f$ \alpha\f$
 such that the alpha shape satisfies the following two properties: <br>
 <ol>
@@ -157,7 +157,7 @@ points cannot be inserted or removed.
 
 \subsection AlphaShape_3DAlphaShapeForAFixedAlpha Alpha Shape for a Fixed Alpha
 
-Given a value of alpha, the class `Fixed_alpha_shape_3<Dt>` represents one
+Given a value of alpha, the class `Fixed_alpha_shape_3<Dt>` represents one 
 alpha shape for a given set of points.
 The class includes the underlying triangulation `Dt`
 of the set, and associates to each \f$ k\f$-face of this triangulation
@@ -168,7 +168,7 @@ points can be inserted or removed.
 
 Both classes provide member functions to classify for a (given) value
 of \f$ \alpha\f$ the different faces of the triangulation as
-`EXTERIOR`, `SINGULAR`, `REGULAR` or
+`EXTERIOR`, `SINGULAR`, `REGULAR` or 
 `INTERIOR` with respect
 to the alpha shape. A \f$ k\f$-face on the boundary of the alpha complex
 is said to be: `REGULAR` if it is a subface of the alpha-complex which
@@ -189,8 +189,12 @@ of its circumscribed circle is larger than alpha.
 
 The classes provide also output iterators to get for a given `alpha` value
 the vertices, edges, facets and cells of the different types
-(`EXTERIOR`, `SINGULAR`, `REGULAR` or
+(`EXTERIOR`, `SINGULAR`, `REGULAR` or 
 `INTERIOR`).
+
+\subsection AlphaShape3DIO Input/Output
+It is possible to export a 3D alpha shape to a `std::ostream` or to a `Geomview_stream`
+using the `operator<<`. More information in the references of `Alpha_shape_3`.
 
 \section AlphaShape3D_ConceptAndModels Concepts and Models
 
@@ -233,7 +237,7 @@ The triangulation data structure of the triangulation
 has to be a model of the concept `TriangulationDataStructure_3`,
 and it must be parameterized with vertex and cell classes, which are model of the concepts
 `FixedAlphaShapeVertex_3` and `FixedAlphaShapeCell_3`.
-The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>`
+The package provides models `Fixed_alpha_shape_vertex_base_3<Gt>` 
 and `Fixed_alpha_shape_cell_base_3<Gt>`, respectively.
 
 \subsection AlphaShape3D_ConceptAndModelsTDS Triangulation data structure
@@ -262,7 +266,7 @@ represents only one alpha shape (for a fixed alpha). When using the same kernel,
 `Fixed_alpha_shape_3<Dt>` is a lighter version. It is thus naturally much more efficient
 when the alpha-shape is needed for a single given value of alpha.
 In addition, note that the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>`
-requires constructions (squared radius of simplices) while the
+requires constructions (squared radius of simplices) while the 
 class `Fixed_alpha_shape_3<Dt>` uses only predicates.
 This implies that a certified construction of one (several)
 alpha-shape, using the `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` requires a kernel
@@ -274,13 +278,13 @@ two that supports incremental insertion and removal of points.
 
 We give the time spent while computing the alpha shape of a protein (considered
 as a set of weighted points) featuring 4251 atoms (using `gcc 4.3` under Linux with `-O3`
-and `-DNDEBUG` flags, on a 2.27GHz Intel(R) Xeon(R) E5520 CPU):
+and `-DNDEBUG` flags, on a 2.27GHz Intel(R) Xeon(R) E5520 CPU): 
 Using `Exact_predicates_inexact_constructions_kernel`, building
 the regular triangulation requires 0.09s, then the class `Fixed_alpha_shape_3<Dt>`
 required 0.05s while the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` requires 0.35s
 if `ExactAlphaComparisonTag` is `Tag_false` (and 0.70s with `Tag_true`).
 Using `Exact_predicates_exact_constructions_kernel`, building
-the regular triangulation requires 0.19s and then the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>`
+the regular triangulation requires 0.19s and then the class `Alpha_shape_3<Dt,ExactAlphaComparisonTag>` 
 requires 0.90s.
 
 \section Alpha_shapes_3Examples Examples
@@ -346,6 +350,6 @@ results will suffer from round-off problems.
 
 \cgalExample{Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp}
 
-*/
+*/ 
 } /* namespace CGAL */
 

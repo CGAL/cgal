@@ -8,12 +8,220 @@ namespace CGAL {
 
 \authors Andreas Fabri, Geert-Jan Giezeman, Lutz Kettner, and Maxime Gimeno
 
+\section IOstreamIntro Introduction
+
+CGAL algorithms and data structures are usually part of a pipeline of algorithms.
+Everything is not entirely self-contained.
+Need a way to import and export data to known file formats.
+Can in addition enhance the existing stream system coming with the STL.
+
+We first explain which file formats are supported for various types of structures in CGAL.
+Then we explain how to customize your stream to read and write objects that do not necessarily already
+have an existing overload.
+
+Supported file formats are listed on the \link IOStreamSupportedFileFormats following page\endlink.
+
+\section IOstreamSupportedFormats Importing and Exporting Data
+
+CGAL algorithms work on different types of data structures, such as \ref Chapter_Point_Set_3 "point sets",
+ \ref PolygonSoups "polygon soups" or \ref PMPDef "polygon meshes".
+
+\subsection IOstreamPolygonMeshIO Polygon Mesh IO
+Basically, a Polygon Mesh is a 3D structure that refines the concept of `FaceGraph`
+with some other restrictions. A more precise definition can be found \ref PMPDef "here".
+
+<table class="iotable">
+    <tr>
+      <th colspan="1"></th>
+      <th colspan="1">\ref IOStreamOFF "OFF"</th>
+      <th colspan="1">\ref IOStreamSTL "STL"</th>
+      <th colspan="2">\ref IOStreamVTK "VTP"</th>
+      <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
+      <th colspan="1">\ref IOStreamGocad "GOCAD"</th>
+      <th colspan="1">\ref IOStreamWRL "WRL"</th>
+    </tr>
+    <tr>
+    <th colspan="1"></th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>  <th colspan="1">BINARY</th>
+      <th colspan="1">BINARY</th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>
+    </tr>
+    <tr>
+      <td>Export</td>
+      <td>`write_OFF()`</td>
+      <td>`write_STL()`</td>
+      <td>`write_VTP()`</td>
+      <td>`write_VTP()`</td>
+      <td>`write_OBJ()`</td>
+      <td>`write_GOCAD()`</td>
+      <td>`write_WRL()`</td>
+    </tr>
+    <tr>
+      <td>Import</td>
+      <td>`read_OFF()`</td>
+      <td>`read_STL()`</td>
+      <td>`read_VTP()`</td>
+      <td>`read_VTP()`</td>
+      <td>`read_OBJ()`</td>
+      <td>`read_GOCAD()`</td>
+      <td>n/a</td>
+    </tr>
+</table>
+
+The table above only lists the functions that work with any Polygon Mesh.
+More functions are available for more specific classes, and they can be found
+\link IOStreamSupportedFileFormats here\endlink.
+
+\subsection IOstreamPolygonSoupIO Polygon Soup IO
+A polygon soup is a set of polygons with no global combinatorial information,
+stored in a two containers: one storing the points, and the other one storing
+their indices per face (i.e a vector of 3 integers represent a triangle face).
+
+<table class="iotable">
+    <tr>
+      <th colspan="1"></th>
+      <th colspan="1">\ref IOStreamOFF "OFF"</th>
+      <th colspan="1">\ref IOStreamSTL "STL"</th>
+      <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
+      <th colspan="1">\ref IOStreamPLY "PLY"</th>
+    </tr>
+    <tr>
+    <th colspan="1"></th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">BINARY</th>
+      <th colspan="1">ASCII / BINARY</th>
+    </tr>
+    <tr>
+      <td>Export</td>
+      <td>write_OFF()</td>
+      <td>write_STL()</td>
+      <td> - </td>
+      <td>write_PLY()</td>
+    </tr>
+    <tr>
+      <td>Import</td>
+      <td>read_OFF()</td>
+      <td>read_STL()</td>
+      <td>read_OBJ()</td>
+      <td>read_PLY()</td>
+    </tr>
+</table>
+\subsection IOstreamPointSetIO Point Set IO
+The CGAL::Point_set_3 is a vector based data structure that contains
+a default property (named point) for the coordinates of the points,
+and is able to work with dynamic properties.
+
+<table class="iotable">
+    <tr>
+      <th colspan="1"></th>
+      <th colspan="1">\ref IOStreamOFF "OFF"</th>
+      <th colspan="1">\ref IOStreamXYZ "XYZ"</th>
+      <th colspan="2<td>operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&)</td>">\ref IOStreamPLY "PLY"</th>
+    </tr>
+    <tr>
+    <th colspan="1"></th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>
+      <th colspan="1">ASCII</th>  <th colspan="1">BINARY</th>
+    </tr>
+    <tr>
+      <td>Export</td>
+      <td>write_OFF()</td>
+      <td>write_xyz_point_set()</td>
+      <td>operator<<(std::ostream&,const CGAL::Point_set_3<Point, Vector>&)</td><td>write_ply_point_set()</td>
+    </tr>
+    <tr>
+      <td>Import</td>
+      <td>read_OFF()</td>
+      <td>read_xyz_point_set()</td>
+      <td>operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)</td><td>operator>>(std::istream&,CGAL::Point_set_3<Point, Vector>&)</td>
+    </tr>
+</table>
+
+\subsection IOstreamWKT Simple 2D Geometry IO
+
+`WKT` stands for <em>Well Known Text</em> and it is a text markup language for representing
+vector geometry objects on a geographical map. See the
+<A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
+CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon.
+Free functions are provided for reading and writing several \cgal types using these WKT types, namely:
+- `CGAL::Point_2`
+- `CGAL::Point_3`
+- `CGAL::Polygon_with_holes_2`
+- random access range of the above types.
+
+You can find more information about WKT \ref PkgStreamSupportRef "here", but
+here is a table to summarize the most useful functions :
+<table>
+<tr>
+<th colspan="1"></th>
+<th colspan="1">Points</th>
+<th colspan="1">Polylines</th>
+<th colspan="1">Polygons</th>
+<th colspan="1">Everything</th>
+
+</tr>
+<tr>
+<td>Import</td>
+<td>read_multi_point_WKT()</td>
+<td>read_multi_linestring_WKT()</td>
+<td>read_multi_polygon_WKT()</td>
+<td>read_WKT()</td>
+</tr>
+
+<tr>
+<td>Export</td>
+<td>write_multi_point_WKT()</td>
+<td>write_multi_linestring_WKT()</td>
+<td>write_multi_polygon_WKT()</td>
+<td>n/a</td>
+</tr>
+</table>
+
+\subsection IOstreamOtherIO Other Data Structures
+
+- \ref AlphaShape3DIO "3D Alpha Shapes".
+- \ref arr_secio "2D Arrangements"
+- \ref secMesh_2_IO "2D Conforming Triangulations and Meshes"
+- \ref Mesh_3_section_io "3D Mesh Generation"
+- \ref Nef_3File "3D Boolean Operations on Nef Polyhedra"
+- \ref Surface_mesherIO "3D Surface Mesh"
+- \ref TriangulationSecIO "Triangulation"
+
+\subsection IOstreamOther Reading Unsupported Formats
+
+If %CGAL does not support the file format of your data, the
+<a href="https://www.boost.org/doc/libs/release/libs/property_tree/">`boost::property_tree`</a>
+might come in handy if your data has a simple-enough structure.
+The following small example shows how to parse an <a href="https://en.wikipedia.org/wiki/XML">XML</a> file,
+which might look as follows:
+
+\code{.xml}
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PolySet>
+  <Polygon>
+    <Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
+    <Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
+    <Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
+  </Polygon>
+</PolySet>
+\endcode
+
+\cgalExample{Stream_support/read_xml.cpp}
+
+\section IOstreamIO IO Streams
+
 All classes in the \cgal kernel provide input and output operators for
-IO streams. Classes external to \cgal are also supported, by means of `oformat()` (Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
+IO streams. Classes external to \cgal are also supported, by means of `oformat()`
+(Section \ref seciofornoncgaltypes "IO for Non CGAL Types").
 The basic task of such an operator is to produce a
 representation of an object that can be written as a sequence of
-characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii, a raw binary and a
-pretty printing format.
+characters on devices as a console, a file, or a pipe. In \cgal we distinguish between a raw ascii,
+a raw binary, and a pretty printing format.
 
 \code{.cpp}
 enum Mode {ASCII = 0, BINARY, PRETTY};
@@ -36,14 +244,13 @@ is in <span class="textsc">Ascii</span> mode.
 \cgal provides the following functions to modify the mode of an IO stream.
 
 \code{.cpp}
-
 IO::Mode set_mode(std::ios& s, IO::Mode m);
 IO::Mode set_ascii_mode(std::ios& s);
 IO::Mode set_binary_mode(std::ios& s);
 IO::Mode set_pretty_mode(std::ios& s);
 \endcode
 
-The following functions allow to test whether a stream is in a certain mode.
+The following functions enable testing whether a stream is in a certain mode:
 \code{.cpp}
 IO::Mode get_mode(std::ios& s);
 bool is_ascii(std::ios& s);
@@ -51,22 +258,20 @@ bool is_binary(std::ios& s);
 bool is_pretty(std::ios& s);
 \endcode
 
-\section IOstreamOutput Output Operator
+\subsection IOstreamOutput Output Operator
 
 \cgal defines output operators for classes that are derived
 from the class `ostream`. This allows to write to ostreams
 as `std::cout` or `std::cerr`, as well as to `std::ostringstream`
 and `std::ofstream`.
-The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
+The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` (see
+Section \ref IOstreamColors) as well.
 Let `os` be an output stream.
 
 \code{.cpp}
 // Inserts object `c` in the stream `os`. Returns `os`.
 ostream& operator<<(ostream& os, Class c);
 \endcode
-
-
-\subsection IOstreamExample Example
 
 \code{.cpp}
 #include <iostream>
@@ -94,7 +299,7 @@ int main()
 }
 \endcode
 
-\section IOstreamInput Input Operator
+\subsection IOstreamInput Input Operator
 
 \cgal defines input operators for classes that are derived
 from the class `istream`. This allows to read from istreams
@@ -106,8 +311,6 @@ Let `is` be an input stream.
 // Extracts object `c` from the stream `is`. Returns `is`.
 istream& operator>>(istream& is, Class c);
 \endcode
-
-\subsection IOstreamExample_1 Example
 
 \code{.cpp}
 #include <iostream>
@@ -136,24 +339,19 @@ main()
 }
 \endcode
 
-\section seciofornoncgaltypes IO for Non-CGAL Types
+\subsection seciofornoncgaltypes IO for Non-CGAL Types
 
-\subsection IOstreamUsingOutputFormatting Using Output Formatting
+\subsubsection IOstreamUsingOutputFormatting Using Output Formatting
 
-To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used. For types with a `Output_rep` specialization, the respective output routine of `Output_rep` will be called by `oformat()`. Otherwise, the stream output operator will be called.
-
-Example
---------------
+To ensure that non-\cgal types are formatted correctly (i.e., respecting `IO::Mode`), `oformat()` can be used.
+For types with a `Output_rep` specialization, the respective output routine of `Output_rep`
+will be called by `oformat()`. Otherwise, the stream output operator will be called.
 
 \code{.cpp}
 std::cout << CGAL::oformat( myobject );
 \endcode
 
-Optional, you can provide a second template parameter `F` as a formatting tag:
-
-Example
---------------
-
+Optionally, you can provide a second template parameter `F` as a formatting tag:
 \code{.cpp}
 std::cout << CGAL::oformat( myobject, My_formatting_tag() );
 \endcode
@@ -161,7 +359,7 @@ std::cout << CGAL::oformat( myobject, My_formatting_tag() );
 For a list of formatting tags supported by the type `T`, please
 refer to the documentation of the respective type.
 
-\subsection IOstreamCustomizingOutputFormatting Customizing Output Formatting
+\subsubsection IOstreamCustomizingOutputFormatting Customizing Output Formatting
 
 In some situations, you want to control the output formatting for a
 type `T`. For external types (third party libraries etc.),
@@ -172,7 +370,7 @@ stream output operator.
 
 Instead of putting `T` directly into an output stream,
 `T` is wrapped into an output representation `Output_rep`. For
-convenience, a function `oformat()` exists which constructs an instance
+convenience, a function `oformat()` exists, which constructs an instance
 of `Output_rep`.
 
 If you do not specialize `Output_rep` for `T`, `T`'s
@@ -185,9 +383,6 @@ tag). The second template parameter defaults to `Null_tag` and means
 
 For example, specializing `Output_rep` for `CORE::BigRat` (without a
 formatting tag parameter) could look like this:
-
-Example
---------------
 
 \code{.cpp}
 template <class F>
@@ -217,7 +412,7 @@ public:
 };
 \endcode
 
-\section IOstreamColors Colors
+\subsection IOstreamColors Colors
 
 An object of the class `Color` is a color available
 for drawing operations in many \cgal output streams.
@@ -229,9 +424,7 @@ There are a 11 predefined `Color` constants available:
 `DEEPBLUE`, `BLUE`, `PURPLE`, `VIOLET`, `ORANGE`,
 and `YELLOW`.
 
-
-
-\section IOstreamStream Stream Support
+\subsection IOstreamStream Stream Support
 
 Three classes are provided by \cgal as adaptors to input and output stream
 iterators. The class `Istream_iterator` is an input iterator adaptor and
@@ -245,37 +438,6 @@ output is active or not. If the state is active, the stream output
 operator `<<` uses the internal stream to output its argument. If
 the state is inactive, nothing happens.
 
-
-\section IOstreamWKT WKT Support
-
-WKT stands for <em>Well Known Text</em> and it is a text markup language for representing
-vector geometry objects on a geographical map. See the
-<A HREF="https://en.wikipedia.org/wiki/Well-known_text">wikipedia page</A> for details.
-CGAL supports a subset of WKT types: point, multipoint, linestring, multilinestring, polygon and multipolygon.
-Free functions are provided for reading and writing several \cgal types
-in those WKT types, namely:
-- `CGAL::Point_2`
-- `CGAL::Point_3`
-- `CGAL::Polygon_with_holes_2`
-- random access range of the above types.
-
-\section IOstreamXML Reading Adhoc XML
-
-In case you have to read data in a simple xml file with a simple structure, without existing I/O libraries
-the <a href="https://www.boost.org/doc/libs/release/libs/property_tree/">`boost::property_tree`</a> comes in handy.
-The following small example shows how to parse a file
-looking like this:
-
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <PolySet>
-            <Polygon>
-                <Point X="-715.8811978465" Y="-2729.9490000000" Z="-534.9000000000"/>
-                <Point X="-718.1905989232" Y="-2729.9490000000" Z="-538.9000000000"/>
-                <Point X="-722.8094010768" Y="-2729.9490000000" Z="-538.9000000000"/>
-        </Polygon>
-    </PolySet>
-
-\cgalExample{Stream_support/read_xml.cpp}
 */
 } /* namespace CGAL */
 

@@ -13,53 +13,53 @@
 #ifndef CGAL_SURFACE_MESH_IO_PLY
 #define CGAL_SURFACE_MESH_IO_PLY
 
+#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
+
 #include <CGAL/IO/PLY.h>
 
 namespace CGAL {
-
+namespace IO {
 namespace internal {
-
-#if !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
-namespace PLY {
 
 template <typename Point>
 class Surface_mesh_filler
 {
 public:
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef CGAL::Surface_mesh<Point> Surface_mesh;
-  typedef typename Surface_mesh::size_type size_type;
-  typedef typename Surface_mesh::Vertex_index Vertex_index;
-  typedef typename Surface_mesh::Face_index Face_index;
-  typedef typename Surface_mesh::Edge_index Edge_index;
-  typedef typename Surface_mesh::Halfedge_index Halfedge_index;
+  typedef typename Kernel_traits<Point>::Kernel                             Kernel;
+  typedef typename Kernel::Vector_3                                         Vector;
+  typedef CGAL::Surface_mesh<Point>                                         Surface_mesh;
+  typedef typename Surface_mesh::size_type                                  size_type;
+  typedef typename Surface_mesh::Vertex_index                               Vertex_index;
+  typedef typename Surface_mesh::Face_index                                 Face_index;
+  typedef typename Surface_mesh::Edge_index                                 Edge_index;
+  typedef typename Surface_mesh::Halfedge_index                             Halfedge_index;
 
 private:
-
   struct Abstract_ply_property_to_surface_mesh_property
   {
     virtual ~Abstract_ply_property_to_surface_mesh_property() { }
-    virtual void assign (PLY_element& element, size_type index) = 0;
+    virtual void assign(PLY_element& element, size_type index) = 0;
   };
 
   template <typename Simplex, typename Type>
-  class PLY_property_to_surface_mesh_property : public Abstract_ply_property_to_surface_mesh_property
+  class PLY_property_to_surface_mesh_property
+      : public Abstract_ply_property_to_surface_mesh_property
   {
     typedef typename Surface_mesh::template Property_map<Simplex, Type> Map;
     Map m_map;
     std::string m_name;
+
   public:
-    PLY_property_to_surface_mesh_property (Surface_mesh& sm, const std::string& name)
-      : m_name (name)
+    PLY_property_to_surface_mesh_property(Surface_mesh& sm, const std::string& name)
+      : m_name(name)
     {
       m_map = sm.template add_property_map<Simplex, Type>(prefix(Simplex()) + name).first;
     }
 
-    virtual void assign (PLY_element& element, size_type index)
+    virtual void assign(PLY_element& element, size_type index)
     {
       Type t{};
-      element.assign (t, m_name.c_str());
+      element.assign(t, m_name.c_str());
       put(m_map, Simplex(index), t);
     }
 
@@ -86,72 +86,71 @@ private:
   std::vector<Abstract_ply_property_to_surface_mesh_property*> m_halfedge_properties;
 
 public:
-
-  Surface_mesh_filler (Surface_mesh& mesh)
-    : m_mesh (mesh), m_use_floats (false), m_normals(0), m_vcolors(0), m_fcolors(0)
+  Surface_mesh_filler(Surface_mesh& mesh)
+    : m_mesh(mesh), m_use_floats(false), m_normals(0), m_vcolors(0), m_fcolors(0)
   { }
 
   ~Surface_mesh_filler()
   {
-    for (std::size_t i = 0; i < m_vertex_properties.size(); ++ i)
+    for(std::size_t i = 0; i < m_vertex_properties.size(); ++i)
       delete m_vertex_properties[i];
-    for (std::size_t i = 0; i < m_face_properties.size(); ++ i)
+    for(std::size_t i = 0; i < m_face_properties.size(); ++i)
       delete m_face_properties[i];
-    for (std::size_t i = 0; i < m_edge_properties.size(); ++ i)
+    for(std::size_t i = 0; i < m_edge_properties.size(); ++i)
       delete m_edge_properties[i];
-    for (std::size_t i = 0; i < m_halfedge_properties.size(); ++ i)
+    for(std::size_t i = 0; i < m_halfedge_properties.size(); ++i)
       delete m_halfedge_properties[i];
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Vertex_index)
+  bool has_simplex_specific_property(IO::internal::PLY_read_number* property, Vertex_index)
   {
     const std::string& name = property->name();
-    if (name == "x" ||
-        name == "y" ||
-        name == "z")
+    if(name == "x" ||
+       name == "y" ||
+       name == "z")
     {
-      if (dynamic_cast<PLY_read_typed_number<float>*>(property))
+      if(dynamic_cast<PLY_read_typed_number<float>*>(property))
         m_use_floats = true;
       return true;
     }
-    if (name == "nx" ||
-        name == "ny" ||
-        name == "nz")
+    if(name == "nx" ||
+       name == "ny" ||
+       name == "nz")
     {
       ++ m_normals;
-      if (m_normals == 3)
+      if(m_normals == 3)
         m_normal_map = m_mesh.template add_property_map<Vertex_index, Vector>("v:normal").first;
       return true;
     }
-    if (name == "red" ||
-        name == "green" ||
-        name == "blue")
+    if(name == "red" ||
+       name == "green" ||
+       name == "blue")
     {
       ++ m_vcolors;
-      if (m_vcolors == 3)
+      if(m_vcolors == 3)
         m_vcolor_map = m_mesh.template add_property_map<Vertex_index, CGAL::Color>("v:color").first;
       return true;
     }
     return false;
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Face_index)
+  bool has_simplex_specific_property(IO::internal::PLY_read_number* property, Face_index)
   {
     const std::string& name = property->name();
-    if (name == "vertex_indices" || name == "vertex_index")
+    if(name == "vertex_indices" || name == "vertex_index")
     {
-      CGAL_assertion (dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property)
-                      || dynamic_cast<PLY_read_typed_list<boost::uint32_t>*>(property));
+      CGAL_assertion(dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property)
+                     || dynamic_cast<PLY_read_typed_list<boost::uint32_t>*>(property));
       m_index_tag  = name;
       m_use_int32_t = dynamic_cast<PLY_read_typed_list<boost::int32_t>*>(property);
       return true;
     }
-    if (name == "red" ||
-        name == "green" ||
-        name == "blue")
+    if(name == "red" ||
+       name == "green" ||
+       name == "blue")
     {
       ++ m_fcolors;
-      if (m_fcolors == 3)
+      if(m_fcolors == 3)
         m_fcolor_map = m_mesh.template add_property_map<Face_index, CGAL::Color>("f:color").first;
       return true;
     }
@@ -159,278 +158,260 @@ public:
     return false;
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Edge_index)
+  bool has_simplex_specific_property(IO::internal::PLY_read_number* property, Edge_index)
   {
     const std::string& name = property->name();
-    if (name == "v0" || name == "v1")
+    if(name == "v0" || name == "v1")
       return true;
     return false;
   }
 
-  bool has_simplex_specific_property (internal::PLY::PLY_read_number* property, Halfedge_index)
+  bool has_simplex_specific_property(IO::internal::PLY_read_number* property, Halfedge_index)
   {
     const std::string& name = property->name();
-    if (name == "source" || name == "target")
+    if(name == "source" || name == "target")
       return true;
     return false;
   }
 
-  void instantiate_vertex_properties (PLY_element& element)
+  void instantiate_vertex_properties(PLY_element& element)
   {
     m_map_v2v.reserve(element.number_of_items());
-    instantiate_properties<Vertex_index> (element, m_vertex_properties);
+    instantiate_properties<Vertex_index>(element, m_vertex_properties);
   }
 
-  void instantiate_face_properties (PLY_element& element)
+  void instantiate_face_properties(PLY_element& element)
   {
-    instantiate_properties<Face_index> (element, m_face_properties);
+    instantiate_properties<Face_index>(element, m_face_properties);
   }
 
-  void instantiate_edge_properties (PLY_element& element)
+  void instantiate_edge_properties(PLY_element& element)
   {
-    instantiate_properties<Edge_index> (element, m_edge_properties);
+    instantiate_properties<Edge_index>(element, m_edge_properties);
   }
 
-  void instantiate_halfedge_properties (PLY_element& element)
+  void instantiate_halfedge_properties(PLY_element& element)
   {
-    instantiate_properties<Halfedge_index> (element, m_halfedge_properties);
+    instantiate_properties<Halfedge_index>(element, m_halfedge_properties);
   }
 
   template <typename Simplex>
-  void instantiate_properties  (PLY_element& element,
-                                std::vector<Abstract_ply_property_to_surface_mesh_property*>& properties)
+  void instantiate_properties(PLY_element& element,
+                              std::vector<Abstract_ply_property_to_surface_mesh_property*>& properties)
   {
-    for (std::size_t j = 0; j < element.number_of_properties(); ++ j)
+    for(std::size_t j = 0; j < element.number_of_properties(); ++ j)
     {
-      internal::PLY::PLY_read_number* property = element.property(j);
+      IO::internal::PLY_read_number* property = element.property(j);
 
-      if (has_simplex_specific_property (property, Simplex()))
+      if(has_simplex_specific_property(property, Simplex()))
         continue;
 
       const std::string& name = property->name();
 
-      if (dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(property))
+      if(dynamic_cast<PLY_read_typed_number<boost::int8_t>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, boost::int8_t>(m_mesh,
-                                                                             name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::int8_t>(m_mesh, name));
       }
-      else if (dynamic_cast<PLY_read_typed_number<boost::uint8_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<boost::uint8_t>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, boost::uint8_t>(m_mesh,
-                                                                              name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::uint8_t>(m_mesh, name));
       }
-      else if (dynamic_cast<PLY_read_typed_number<boost::int16_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<boost::int16_t>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, boost::int16_t>(m_mesh,
-                                                                              name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::int16_t>(m_mesh, name));
       }
-      else if (dynamic_cast<PLY_read_typed_number<boost::uint16_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<boost::uint16_t>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, boost::uint16_t>(m_mesh,
-                                                                               name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::uint16_t>(m_mesh, name));
       }
-      else if (dynamic_cast<PLY_read_typed_number<boost::int32_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<boost::int32_t>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, boost::int32_t>(m_mesh,
-                                                                              name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::int32_t>(m_mesh, name));
       }
-      else if (dynamic_cast<PLY_read_typed_number<boost::uint32_t>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<boost::uint32_t>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, boost::uint32_t>(m_mesh,
-                                                                               name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, boost::uint32_t>(m_mesh, name));
       }
-      else if (dynamic_cast<PLY_read_typed_number<float>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<float>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, float>(m_mesh,
-                                                                     name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, float>(m_mesh, name));
       }
-      else if (dynamic_cast<PLY_read_typed_number<double>*>(property))
+      else if(dynamic_cast<PLY_read_typed_number<double>*>(property))
       {
-        properties.push_back
-          (new PLY_property_to_surface_mesh_property<Simplex, double>(m_mesh,
-                                                                      name));
+        properties.push_back(new PLY_property_to_surface_mesh_property<Simplex, double>(m_mesh, name));
       }
     }
   }
 
-  void process_vertex_line (PLY_element& element)
+  void process_vertex_line(PLY_element& element)
   {
     Vertex_index vi;
 
-    if (m_use_floats)
+    if(m_use_floats)
       process_line<float>(element, vi);
     else
       process_line<double>(element, vi);
 
-    for (std::size_t i = 0; i < m_vertex_properties.size(); ++ i)
-      m_vertex_properties[i]->assign (element, vi);
+    for(std::size_t i = 0; i < m_vertex_properties.size(); ++i)
+      m_vertex_properties[i]->assign(element, vi);
   }
 
   template <typename FT>
-  void process_line (PLY_element& element, Vertex_index& vi)
+  void process_line(PLY_element& element, Vertex_index& vi)
   {
-    FT x = (FT)0.,y = (FT)0., z = (FT)0.,
-      nx = (FT)0., ny = (FT)0., nz = (FT)0.;
-    element.assign (x, "x");
-    element.assign (y, "y");
-    element.assign (z, "z");
-    Point point (x, y, z);
+    FT x = 0, y = 0, z = 0,
+        nx = 0, ny = 0, nz = 0;
+    element.assign(x, "x");
+    element.assign(y, "y");
+    element.assign(z, "z");
+    Point point(x, y, z);
     vi = m_mesh.add_vertex(point);
     m_map_v2v.push_back(vi);
 
-    if (m_normals == 3)
+    if(m_normals == 3)
     {
-      element.assign (nx, "nx");
-      element.assign (ny, "ny");
-      element.assign (nz, "nz");
-      Vector normal (nx, ny, nz);
+      element.assign(nx, "nx");
+      element.assign(ny, "ny");
+      element.assign(nz, "nz");
+      Vector normal(nx, ny, nz);
       m_normal_map[vi] = normal;
     }
 
-    if (m_vcolors == 3)
+    if(m_vcolors == 3)
     {
       unsigned char r, g, b;
-      element.assign (r, "red");
-      element.assign (g, "green");
-      element.assign (b, "blue");
-      m_vcolor_map[vi] = CGAL::Color (r, g, b);
+      element.assign(r, "red");
+      element.assign(g, "green");
+      element.assign(b, "blue");
+      m_vcolor_map[vi] = CGAL::Color(r, g, b);
     }
   }
 
-  bool process_face_line (PLY_element& element)
+  bool process_face_line(PLY_element& element)
   {
     Face_index fi = m_mesh.null_face();
 
-    if (m_use_int32_t)
+    if(m_use_int32_t)
       process_line<boost::int32_t>(element, fi);
     else
       process_line<boost::uint32_t>(element, fi);
 
-    if (fi == Surface_mesh::null_face())
+    if(fi == Surface_mesh::null_face())
       return false;
 
-    for (std::size_t i = 0; i < m_face_properties.size(); ++ i)
-      m_face_properties[i]->assign (element, fi);
+    for(std::size_t i = 0; i < m_face_properties.size(); ++i)
+      m_face_properties[i]->assign(element, fi);
 
     return true;
   }
 
   template <typename IntType>
-  void process_line (PLY_element& element, Face_index& fi)
+  void process_line(PLY_element& element, Face_index& fi)
   {
     std::vector<IntType> indices;
-    element.assign (indices, m_index_tag.c_str());
+    element.assign(indices, m_index_tag.c_str());
     std::vector<Vertex_index> vertices;
     vertices.reserve(indices.size());
-    for (std::size_t i = 0; i < indices.size(); ++ i)
-      vertices.push_back (m_map_v2v[std::size_t(indices[i])]);
+    for(std::size_t i = 0; i < indices.size(); ++i)
+      vertices.push_back(m_map_v2v[std::size_t(indices[i])]);
 
     fi = m_mesh.add_face(vertices);
-    if (fi == m_mesh.null_face())
+    if(fi == m_mesh.null_face())
       return;
 
-    if (m_fcolors == 3)
+    if(m_fcolors == 3)
     {
       unsigned char r, g, b;
-      element.assign (r, "red");
-      element.assign (g, "green");
-      element.assign (b, "blue");
-      m_fcolor_map[fi] = CGAL::Color (r, g, b);
+      element.assign(r, "red");
+      element.assign(g, "green");
+      element.assign(b, "blue");
+      m_fcolor_map[fi] = CGAL::Color(r, g, b);
     }
   }
 
-  bool process_edge_line (PLY_element& element)
+  bool process_edge_line(PLY_element& element)
   {
     Edge_index ei = m_mesh.null_edge();
 
-    if (m_use_int32_t)
+    if(m_use_int32_t)
       process_line<boost::int32_t>(element, ei);
     else
       process_line<boost::uint32_t>(element, ei);
 
-    if (ei == Surface_mesh::null_edge())
+    if(ei == Surface_mesh::null_edge())
       return false;
 
-    for (std::size_t i = 0; i < m_edge_properties.size(); ++ i)
-      m_edge_properties[i]->assign (element, ei);
+    for(std::size_t i = 0; i < m_edge_properties.size(); ++i)
+      m_edge_properties[i]->assign(element, ei);
 
     return true;
   }
 
   template <typename IntType>
-  void process_line (PLY_element& element, Edge_index& ei)
+  void process_line(PLY_element& element, Edge_index& ei)
   {
     IntType v0, v1;
-    element.assign (v0, "v0");
-    element.assign (v1, "v1");
+    element.assign(v0, "v0");
+    element.assign(v1, "v1");
 
     Halfedge_index hi = m_mesh.halfedge(m_map_v2v[std::size_t(v0)],
-                                        m_map_v2v[std::size_t(v1)]);
-    if (hi == m_mesh.null_halfedge())
+        m_map_v2v[std::size_t(v1)]);
+    if(hi == m_mesh.null_halfedge())
       return;
 
-    ei = m_mesh.edge (hi);
+    ei = m_mesh.edge(hi);
   }
 
-  bool process_halfedge_line (PLY_element& element)
+  bool process_halfedge_line(PLY_element& element)
   {
     Halfedge_index hi = m_mesh.null_halfedge();
 
-    if (m_use_int32_t)
+    if(m_use_int32_t)
       process_line<boost::int32_t>(element, hi);
     else
       process_line<boost::uint32_t>(element, hi);
 
-    if (hi == Surface_mesh::null_halfedge())
+    if(hi == Surface_mesh::null_halfedge())
       return false;
 
-    for (std::size_t i = 0; i < m_halfedge_properties.size(); ++ i)
-      m_halfedge_properties[i]->assign (element, hi);
+    for(std::size_t i = 0; i < m_halfedge_properties.size(); ++i)
+      m_halfedge_properties[i]->assign(element, hi);
 
     return true;
   }
 
   template <typename IntType>
-  void process_line (PLY_element& element, Halfedge_index& hi)
+  void process_line(PLY_element& element, Halfedge_index& hi)
   {
     IntType source, target;
-    element.assign (source, "source");
-    element.assign (target, "target");
+    element.assign(source, "source");
+    element.assign(target, "target");
     hi = m_mesh.halfedge(m_map_v2v[std::size_t(source)], m_map_v2v[std::size_t(target)]);
   }
-
 };
 
-
 template <typename Point>
-bool fill_simplex_specific_header
-(std::ostream& os, const Surface_mesh<Point>& sm,
- std::vector<Abstract_property_printer<typename Surface_mesh<Point>::Vertex_index>*>& printers,
- const std::string& prop)
+bool fill_simplex_specific_header(std::ostream& os,
+                                  const Surface_mesh<Point>& sm,
+                                  std::vector<Abstract_property_printer<
+                                    typename Surface_mesh<Point>::Vertex_index>*>& printers,
+                                  const std::string& prop)
 {
-  typedef Surface_mesh<Point> SMesh;
-  typedef typename SMesh::Vertex_index VIndex;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename SMesh::template Property_map<VIndex, Point> Point_map;
-  typedef typename SMesh::template Property_map<VIndex, Vector> Vector_map;
-  typedef typename SMesh::template Property_map<VIndex, Color> Vcolor_map;
+  typedef Surface_mesh<Point>                                     SMesh;
+  typedef typename SMesh::Vertex_index                            VIndex;
+  typedef typename Kernel_traits<Point>::Kernel                   Kernel;
+  typedef typename Kernel::FT                                     FT;
+  typedef typename Kernel::Vector_3                               Vector;
+  typedef typename SMesh::template Property_map<VIndex, Point>    Point_map;
+  typedef typename SMesh::template Property_map<VIndex, Vector>   Vector_map;
+  typedef typename SMesh::template Property_map<VIndex, Color>    Vcolor_map;
 
-  if (prop == "v:connectivity" ||
-      prop == "v:removed")
+  if(prop == "v:connectivity" || prop == "v:removed")
     return true;
 
-  if (prop == "v:point")
+  if(prop == "v:point")
   {
-    if (boost::is_same<FT, float>::value)
+    if(boost::is_same<FT, float>::value)
     {
       os << "property float x" << std::endl
          << "property float y" << std::endl
@@ -442,18 +423,18 @@ bool fill_simplex_specific_header
          << "property double y" << std::endl
          << "property double z" << std::endl;
     }
-    printers.push_back (new Property_printer<VIndex,Point_map>(sm.points()));
+    printers.push_back(new Property_printer<VIndex, Point_map>(sm.points()));
     return true;
   }
 
   bool okay = false;
-  if (prop == "v:normal")
+  if(prop == "v:normal")
   {
     Vector_map pmap;
-    boost::tie (pmap, okay) = sm.template property_map<VIndex,Vector>(prop);
-    if (okay)
+    boost::tie(pmap, okay) = sm.template property_map<VIndex, Vector>(prop);
+    if(okay)
     {
-      if (boost::is_same<FT, float>::value)
+      if(boost::is_same<FT, float>::value)
       {
         os << "property float nx" << std::endl
            << "property float ny" << std::endl
@@ -465,23 +446,23 @@ bool fill_simplex_specific_header
            << "property double ny" << std::endl
            << "property double nz" << std::endl;
       }
-      printers.push_back (new Property_printer<VIndex,Vector_map>(pmap));
+      printers.push_back(new Property_printer<VIndex, Vector_map>(pmap));
       return true;
     }
   }
 
-  if (prop == "v:color")
+  if(prop == "v:color")
   {
     Vcolor_map pmap;
-    boost::tie (pmap, okay) = sm.template property_map<VIndex,Color>(prop);
-    if (okay)
+    boost::tie(pmap, okay) = sm.template property_map<VIndex, Color>(prop);
+    if(okay)
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back (new Property_printer<VIndex,Vcolor_map>(pmap));
+      printers.push_back(new Property_printer<VIndex, Vcolor_map>(pmap));
       return true;
     }
   }
@@ -490,32 +471,32 @@ bool fill_simplex_specific_header
 }
 
 template <typename Point>
-bool fill_simplex_specific_header
-(std::ostream& os, const Surface_mesh<Point>& sm,
- std::vector<Abstract_property_printer<typename Surface_mesh<Point>::Face_index>*>& printers,
- const std::string& prop)
+bool fill_simplex_specific_header(std::ostream& os,
+                                  const Surface_mesh<Point>& sm,
+                                  std::vector<Abstract_property_printer<
+                                  typename Surface_mesh<Point>::Face_index>*>& printers,
+                                  const std::string& prop)
 {
-  typedef Surface_mesh<Point> SMesh;
-  typedef typename SMesh::Face_index FIndex;
-  typedef typename SMesh::template Property_map<FIndex, Color> Fcolor_map;
+  typedef Surface_mesh<Point>                                   SMesh;
+  typedef typename SMesh::Face_index                            FIndex;
+  typedef typename SMesh::template Property_map<FIndex, Color>  Fcolor_map;
 
-  if (prop == "f:connectivity" ||
-      prop == "f:removed")
+  if(prop == "f:connectivity" || prop == "f:removed")
     return true;
 
   bool okay = false;
-  if (prop == "f:color")
+  if(prop == "f:color")
   {
     Fcolor_map pmap;
-    boost::tie (pmap, okay) = sm.template property_map<FIndex,Color>(prop);
-    if (okay)
+    boost::tie(pmap, okay) = sm.template property_map<FIndex, Color>(prop);
+    if(okay)
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back (new Property_printer<FIndex,Fcolor_map>(pmap));
+      printers.push_back(new Property_printer<FIndex, Fcolor_map>(pmap));
       return true;
     }
   }
@@ -523,198 +504,532 @@ bool fill_simplex_specific_header
 }
 
 template <typename Point>
-bool fill_simplex_specific_header
-(std::ostream& , const Surface_mesh<Point>& ,
- std::vector<Abstract_property_printer<typename Surface_mesh<Point>::Edge_index>*>& ,
- const std::string& prop)
+bool fill_simplex_specific_header(std::ostream&,
+                                  const Surface_mesh<Point>& ,
+                                  std::vector<Abstract_property_printer<
+                                  typename Surface_mesh<Point>::Edge_index>*>& ,
+                                  const std::string& prop)
 {
-  if (prop == "e:removed")
+  if(prop == "e:removed")
     return true;
+
   return false;
 }
 
 template <typename Point>
-bool fill_simplex_specific_header
-(std::ostream& , const Surface_mesh<Point>& ,
- std::vector<Abstract_property_printer<typename Surface_mesh<Point>::Halfedge_index>*>& ,
- const std::string& prop)
+bool fill_simplex_specific_header(std::ostream&,
+                                  const Surface_mesh<Point>& ,
+                                  std::vector<Abstract_property_printer<
+                                  typename Surface_mesh<Point>::Halfedge_index>*>& ,
+                                  const std::string& prop)
 {
-  if (prop == "h:connectivity")
+  if(prop == "h:connectivity")
     return true;
+
   return false;
 }
 
 template <typename Point>
-std::string get_property_raw_name (const std::string& prop, typename Surface_mesh<Point>::Vertex_index)
+std::string get_property_raw_name(const std::string& prop, typename Surface_mesh<Point>::Vertex_index)
 {
   std::string name = prop;
-  if (name.rfind("v:",0) == 0)
-    name = std::string (prop.begin() + 2, prop.end());
+  if(name.rfind("v:",0) == 0)
+    name = std::string(prop.begin() + 2, prop.end());
   return name;
 }
 
 template <typename Point>
-std::string get_property_raw_name (const std::string& prop, typename Surface_mesh<Point>::Face_index)
+std::string get_property_raw_name(const std::string& prop, typename Surface_mesh<Point>::Face_index)
 {
   std::string name = prop;
-  if (name.rfind("f:",0) == 0)
-    name = std::string (prop.begin() + 2, prop.end());
+  if(name.rfind("f:",0) == 0)
+    name = std::string(prop.begin() + 2, prop.end());
   return name;
 }
 
 template <typename Point>
-std::string get_property_raw_name (const std::string& prop, typename Surface_mesh<Point>::Edge_index)
+std::string get_property_raw_name(const std::string& prop, typename Surface_mesh<Point>::Edge_index)
 {
   std::string name = prop;
-  if (name.rfind("e:",0) == 0)
-    name = std::string (prop.begin() + 2, prop.end());
+  if(name.rfind("e:",0) == 0)
+    name = std::string(prop.begin() + 2, prop.end());
   return name;
 }
 
 template <typename Point>
-std::string get_property_raw_name (const std::string& prop, typename Surface_mesh<Point>::Halfedge_index)
+std::string get_property_raw_name(const std::string& prop, typename Surface_mesh<Point>::Halfedge_index)
 {
   std::string name = prop;
-  if (name.rfind("h:",0) == 0)
-    name = std::string (prop.begin() + 2, prop.end());
+  if(name.rfind("h:", 0) == 0)
+    name = std::string(prop.begin() + 2, prop.end());
   return name;
 }
 
 template <typename Point, typename Simplex>
-void fill_header (std::ostream& os, const Surface_mesh<Point>& sm,
-                  std::vector<Abstract_property_printer<Simplex>*>& printers)
+void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
+                 std::vector<Abstract_property_printer<Simplex>*>& printers)
 {
-  typedef Surface_mesh<Point> SMesh;
-  typedef typename SMesh::template Property_map<Simplex, boost::int8_t> Int8_map;
-  typedef typename SMesh::template Property_map<Simplex, boost::uint8_t> Uint8_map;
-  typedef typename SMesh::template Property_map<Simplex, boost::int16_t> Int16_map;
+  typedef Surface_mesh<Point>                                             SMesh;
+  typedef typename SMesh::template Property_map<Simplex, boost::int8_t>   Int8_map;
+  typedef typename SMesh::template Property_map<Simplex, boost::uint8_t>  Uint8_map;
+  typedef typename SMesh::template Property_map<Simplex, boost::int16_t>  Int16_map;
   typedef typename SMesh::template Property_map<Simplex, boost::uint16_t> Uint16_map;
-  typedef typename SMesh::template Property_map<Simplex, boost::int32_t> Int32_map;
+  typedef typename SMesh::template Property_map<Simplex, boost::int32_t>  Int32_map;
   typedef typename SMesh::template Property_map<Simplex, boost::uint32_t> Uint32_map;
-  typedef typename SMesh::template Property_map<Simplex, boost::int64_t> Int64_map;
+  typedef typename SMesh::template Property_map<Simplex, boost::int64_t>  Int64_map;
   typedef typename SMesh::template Property_map<Simplex, boost::uint64_t> Uint64_map;
-  typedef typename SMesh::template Property_map<Simplex, float> Float_map;
-  typedef typename SMesh::template Property_map<Simplex, double> Double_map;
+  typedef typename SMesh::template Property_map<Simplex, float>           Float_map;
+  typedef typename SMesh::template Property_map<Simplex, double>          Double_map;
+
   std::vector<std::string> prop = sm.template properties<Simplex>();
 
-  for (std::size_t i = 0; i < prop.size(); ++ i)
+  for(std::size_t i = 0; i < prop.size(); ++i)
   {
-    if (fill_simplex_specific_header(os, sm, printers, prop[i]))
+    if(fill_simplex_specific_header(os, sm, printers, prop[i]))
       continue;
 
     // Cut the "v:" prefix
-    std::string name = get_property_raw_name<Point> (prop[i], Simplex());
+    std::string name = get_property_raw_name<Point>(prop[i], Simplex());
 
     bool okay = false;
     {
       Int8_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::int8_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int8_t>(prop[i]);
+      if(okay)
       {
         os << "property char " << name << std::endl;
-        printers.push_back (new internal::PLY::Char_property_printer<Simplex,Int8_map>(pmap));
+        printers.push_back(new IO::internal::Char_property_printer<Simplex,Int8_map>(pmap));
         continue;
       }
     }
     {
       Uint8_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::uint8_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::uint8_t>(prop[i]);
+      if(okay)
       {
         os << "property uchar " << name << std::endl;
-        printers.push_back (new internal::PLY::Char_property_printer<Simplex,Uint8_map>(pmap));
+        printers.push_back(new IO::internal::Char_property_printer<Simplex,Uint8_map>(pmap));
         continue;
       }
     }
     {
       Int16_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::int16_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int16_t>(prop[i]);
+      if(okay)
       {
         os << "property short " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Int16_map>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Int16_map>(pmap));
         continue;
       }
     }
     {
       Uint16_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::uint16_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::uint16_t>(prop[i]);
+      if(okay)
       {
         os << "property ushort " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Uint16_map>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Uint16_map>(pmap));
         continue;
       }
     }
     {
       Int32_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::int32_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int32_t>(prop[i]);
+      if(okay)
       {
         os << "property int " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Int32_map>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Int32_map>(pmap));
         continue;
       }
     }
     {
       Uint32_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::uint32_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::uint32_t>(prop[i]);
+      if(okay)
       {
         os << "property uint " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Uint32_map>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Uint32_map>(pmap));
         continue;
       }
     }
     {
       Int64_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::int64_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::int64_t>(prop[i]);
+      if(okay)
       {
         os << "property int " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Int64_map,boost::int32_t>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Int64_map,boost::int32_t>(pmap));
         continue;
       }
     }
     {
       Uint64_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,boost::uint64_t>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,boost::uint64_t>(prop[i]);
+      if(okay)
       {
         os << "property uint " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Uint64_map,boost::uint32_t>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Uint64_map,boost::uint32_t>(pmap));
         continue;
       }
     }
     {
       Float_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,float>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,float>(prop[i]);
+      if(okay)
       {
         os << "property float " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Float_map>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Float_map>(pmap));
         continue;
       }
     }
     {
       Double_map pmap;
-      boost::tie (pmap, okay) = sm.template property_map<Simplex,double>(prop[i]);
-      if (okay)
+      boost::tie(pmap, okay) = sm.template property_map<Simplex,double>(prop[i]);
+      if(okay)
       {
         os << "property double " << name << std::endl;
-        printers.push_back (new internal::PLY::Simple_property_printer<Simplex,Double_map>(pmap));
+        printers.push_back(new IO::internal::Simple_property_printer<Simplex,Double_map>(pmap));
         continue;
       }
     }
   }
 }
 
-} // namespace PLY
-#endif
-
 } // namespace internal
+} // namespace IO
+
+/// \relates Surface_mesh
+/// Inserts the surface mesh in an output stream in PLY format.
+/// If found, "v:normal", "v:color" and "f:color" are inserted in the stream.
+/// All other vertex and face properties with simple types are inserted in the stream.
+/// Edges are only inserted in the stream if they have at least one
+/// property with simple type: if they do, all edge properties with
+/// simple types are inserted in the stream. The halfedges follow
+/// the same behavior.
+///
+/// If provided, the `comments` string is included line by line in
+/// the header of the PLY stream (each line will be precedeed by
+/// "comment ").
+///
+template <typename P>
+bool write_PLY(std::ostream& os,
+               const Surface_mesh<P>& sm,
+               const std::string& comments = std::string())
+{
+  typedef Surface_mesh<P> SMesh;
+  typedef typename SMesh::Vertex_index VIndex;
+  typedef typename SMesh::Face_index FIndex;
+  typedef typename SMesh::Edge_index EIndex;
+  typedef typename SMesh::Halfedge_index HIndex;
+
+  os << "ply" << std::endl
+     <<((get_mode(os) == IO::BINARY) ? "format binary_little_endian 1.0" : "format ascii 1.0") << std::endl
+     << "comment Generated by the CGAL library" << std::endl;
+
+  if(comments != std::string())
+  {
+    std::istringstream iss(comments);
+    std::string line;
+    while(getline(iss, line))
+    {
+      if(line != "Generated by the CGAL library") // Avoid repeating the line if multiple savings
+        os << "comment " << line << std::endl;
+    }
+  }
+
+  os << "element vertex " << sm.number_of_vertices() << std::endl;
+
+  std::vector<IO::internal::Abstract_property_printer<VIndex>*> vprinters;
+  IO::internal::fill_header(os, sm, vprinters);
+
+  os << "element face " << sm.number_of_faces() << std::endl;
+  os << "property list uchar int vertex_indices" << std::endl;
+  std::vector<IO::internal::Abstract_property_printer<FIndex>*> fprinters;
+  IO::internal::fill_header(os, sm, fprinters);
+
+
+  std::vector<IO::internal::Abstract_property_printer<EIndex>*> eprinters;
+  if(sm.template properties<EIndex>().size() > 1)
+  {
+    std::ostringstream oss;
+    IO::internal::fill_header(oss, sm, eprinters);
+
+    if(!eprinters.empty())
+    {
+      os << "element edge " << sm.number_of_edges() << std::endl;
+      os << "property int v0" << std::endl;
+      os << "property int v1" << std::endl;
+      os << oss.str();
+    }
+  }
+
+  std::vector<IO::internal::Abstract_property_printer<HIndex>*> hprinters;
+  if(sm.template properties<HIndex>().size() > 1)
+  {
+    std::ostringstream oss;
+    IO::internal::fill_header(oss, sm, hprinters);
+
+    if(!hprinters.empty())
+    {
+      os << "element halfedge " << sm.number_of_halfedges() << std::endl;
+      os << "property int source" << std::endl;
+      os << "property int target" << std::endl;
+      os << oss.str();
+    }
+  }
+
+  os << "end_header" << std::endl;
+
+  std::vector<int> reindex;
+  reindex.resize (sm.num_vertices());
+  int n = 0;
+  for(VIndex vi : sm.vertices())
+  {
+    for(std::size_t i = 0; i < vprinters.size(); ++ i)
+    {
+      vprinters[i]->print(os, vi);
+      if(get_mode(os) == IO::ASCII)
+        os << " ";
+    }
+    if(get_mode(os) == IO::ASCII)
+      os << std::endl;
+
+    reindex[std::size_t(vi)] = n++;
+  }
+
+  std::vector<int> polygon;
+
+  for(FIndex fi : sm.faces())
+  {
+    // Get list of vertex indices
+    polygon.clear();
+    for(VIndex vi : CGAL::vertices_around_face(sm.halfedge(fi), sm))
+      polygon.push_back(reindex[std::size_t(vi)]);
+
+    if(get_mode(os) == IO::ASCII)
+    {
+      os << polygon.size() << " ";
+      for(std::size_t i = 0; i < polygon.size(); ++ i)
+        os << polygon[i] << " ";
+    }
+    else
+    {
+      unsigned char size =(unsigned char)(polygon.size());
+      os.write(reinterpret_cast<char*>(&size), sizeof(size));
+      for(std::size_t i = 0; i < polygon.size(); ++ i)
+      {
+        int idx = polygon[i];
+        os.write(reinterpret_cast<char*>(&idx), sizeof(idx));
+      }
+    }
+
+    for(std::size_t i = 0; i < fprinters.size(); ++ i)
+    {
+      fprinters[i]->print(os, fi);
+      if(get_mode(os) == IO::ASCII)
+        os << " ";
+    }
+
+    if(get_mode(os) == IO::ASCII)
+      os << std::endl;
+  }
+
+  if(!eprinters.empty())
+  {
+    for(EIndex ei : sm.edges())
+    {
+      int v0 = reindex[std::size_t(sm.vertex(ei, 0))];
+      int v1 = reindex[std::size_t(sm.vertex(ei, 1))];
+      if(get_mode(os) == IO::ASCII)
+      {
+        os << v0 << " " << v1 << " ";
+      }
+      else
+      {
+        os.write(reinterpret_cast<char*>(&v0), sizeof(v0));
+        os.write(reinterpret_cast<char*>(&v1), sizeof(v1));
+      }
+
+      for(std::size_t i = 0; i < eprinters.size(); ++ i)
+      {
+        eprinters[i]->print(os, ei);
+        if(get_mode(os) == IO::ASCII)
+          os << " ";
+      }
+
+      if(get_mode(os) == IO::ASCII)
+        os << std::endl;
+    }
+  }
+
+  if(!hprinters.empty())
+  {
+    for(HIndex hi : sm.halfedges())
+    {
+      int source = reindex[std::size_t(sm.source(hi))];
+      int target = reindex[std::size_t(sm.target(hi))];
+      if(get_mode(os) == IO::ASCII)
+      {
+        os << source << " " << target << " ";
+      }
+      else
+      {
+        os.write(reinterpret_cast<char*>(&source), sizeof(source));
+        os.write(reinterpret_cast<char*>(&target), sizeof(target));
+      }
+
+      for(std::size_t i = 0; i < hprinters.size(); ++ i)
+      {
+        hprinters[i]->print(os, hi);
+        if(get_mode(os) == IO::ASCII)
+          os << " ";
+      }
+
+      if(get_mode(os) == IO::ASCII)
+        os << std::endl;
+    }
+  }
+
+  for(std::size_t i = 0; i < vprinters.size(); ++ i)
+    delete vprinters[i];
+  for(std::size_t i = 0; i < fprinters.size(); ++ i)
+    delete fprinters[i];
+  for(std::size_t i = 0; i < eprinters.size(); ++ i)
+    delete eprinters[i];
+  for(std::size_t i = 0; i < hprinters.size(); ++ i)
+    delete hprinters[i];
+
+  return true;
+}
+
+/// Extracts the surface mesh from an input stream in Ascii or
+/// Binary PLY format and appends it to the surface mesh `sm`.
+///
+/// - the operator reads the vertex `point` property and the face
+///   `vertex_index` (or `vertex_indices`) property;
+/// - if three PLY properties `nx`, `ny` and `nz` with type `float`
+///   or `double` are found for vertices, a "v:normal" vertex
+///   property map is added;
+/// - if three PLY properties `red`, `green` and `blue` with type
+///   `uchar` are found for vertices, a "v:color" vertex property
+///   map is added;
+/// - if three PLY properties `red`, `green` and `blue` with type
+///   `uchar` are found for faces, a "f:color" face property map is
+///   added;
+/// - if any other PLY property is found, a "[s]:[name]" property map is
+///   added, where `[s]` is `v` for vertex and `f` for face, and
+///   `[name]` is the name of the PLY property.
+///
+/// The `comments` parameter can be omitted. If provided, it will be
+/// used to store the potential comments found in the PLY
+/// header. Each line starting by "comment " in the header is
+/// appended to the `comments` string (without the "comment " word).
+///
+/// \pre The data in the stream must represent a two-manifold. If this is not the case
+///      the `failbit` of `is` is set and the mesh cleared.
+/// \relates Surface_mesh
+
+template <typename P>
+bool read_PLY(std::istream& is,
+              Surface_mesh<P>& sm,
+              std::string& comments)
+{
+  typedef typename Surface_mesh<P>::size_type size_type;
+
+  if(!is.good())
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
+
+  IO::internal::PLY_reader reader;
+  IO::internal::Surface_mesh_filler<P> filler(sm);
+
+  if(!(reader.init(is)))
+  {
+    is.setstate(std::ios::failbit);
+    return false;
+  }
+
+  comments = reader.comments();
+
+  for(std::size_t i = 0; i < reader.number_of_elements(); ++ i)
+  {
+    IO::internal::PLY_element& element = reader.element(i);
+
+    bool is_vertex =(element.name() == "vertex" || element.name() == "vertices");
+    bool is_face = false;
+    bool is_edge = false;
+    bool is_halfedge = false;
+    if(is_vertex)
+    {
+      sm.reserve(sm.number_of_vertices() + size_type(element.number_of_items()),
+                 sm.number_of_edges(),
+                 sm.number_of_faces());
+      filler.instantiate_vertex_properties(element);
+    }
+    else
+      is_face =(element.name() == "face" || element.name() == "faces");
+
+    if(is_face)
+    {
+      sm.reserve(sm.number_of_vertices(),
+                 sm.number_of_edges(),
+                 sm.number_of_faces() + size_type(element.number_of_items()));
+      filler.instantiate_face_properties(element);
+    }
+    else
+      is_edge =(element.name() == "edge");
+
+    if(is_edge)
+      filler.instantiate_edge_properties(element);
+    else
+      is_halfedge =(element.name() == "halfedge");
+
+    if(is_halfedge)
+      filler.instantiate_halfedge_properties(element);
+
+    for(std::size_t j = 0; j < element.number_of_items(); ++ j)
+    {
+      for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
+      {
+        IO::internal::PLY_read_number* property = element.property(k);
+        property->get(is);
+        if(is.fail())
+          return false;
+      }
+
+      if(is_vertex)
+        filler.process_vertex_line(element);
+      else if(is_face)
+      {
+        if(!filler.process_face_line(element))
+        {
+          is.setstate(std::ios::failbit);
+          return false;
+        }
+      }
+      else if(is_edge)
+        filler.process_edge_line(element);
+      else if(is_halfedge)
+        filler.process_halfedge_line(element);
+    }
+  }
+
+  return true;
+}
+
+/// \cond SKIP_IN_MANUAL
+template <typename P>
+bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
+{
+  std::string dummy;
+  return read_PLY(is, sm, dummy);
+}
+/// \endcond
 
 } // namespace CGAL
 
+#endif // !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE) && !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES)
 
 #endif // CGAL_SURFACE_MESH_IO_PLY

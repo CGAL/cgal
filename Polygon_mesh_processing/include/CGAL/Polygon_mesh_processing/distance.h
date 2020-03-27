@@ -74,7 +74,7 @@ triangle_grid_sampling( const typename Kernel::Point_3& p0,
 template <class AABB_tree, class PointRange>
 struct Distance_computation{
   typedef typename PointRange::const_iterator::value_type Point_3;
-
+  
   const AABB_tree& tree;
   const PointRange& sample_points;
   Point_3 initial_hint;
@@ -321,7 +321,7 @@ template<class OutputIterator, class TriangleMesh, class NamedParameters>
 OutputIterator
 sample_triangle_mesh(const TriangleMesh& tm,
                            OutputIterator out,
-                           NamedParameters np)
+                     const NamedParameters& np)
 {
   typedef typename GetGeomTraits<TriangleMesh,
           NamedParameters>::type Geom_traits;

@@ -1,7 +1,9 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
+
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/partition.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <fstream>
 #include <iostream>
@@ -20,7 +22,7 @@ int main(int argc, char** argv)
   }
 
   SM sm;
-  CGAL::read_off(in, sm);
+  CGAL::read_OFF(in, sm);
 
   // The vertex <--> partition_id property map
   typedef SM::Property_map<SM::Vertex_index, std::size_t>          Vertex_id_map;

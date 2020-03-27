@@ -1,6 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
+
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/boost/graph/IO/OFF.h>
 
 #include <iostream>
 #include <fstream>
@@ -49,7 +51,7 @@ OutputIterator adjacent_vertices_V2(const LCC& g,
 int main(int argc, char** argv)
 {
   LCC lcc;
-  CGAL::read_off((argc>1)?argv[1]:"cube.off", lcc);
+  CGAL::read_OFF((argc>1)?argv[1]:"cube.off", lcc);
 
   GraphTraits::vertex_iterator vi = vertices(lcc).first;
   std::list<vertex_descriptor> V;

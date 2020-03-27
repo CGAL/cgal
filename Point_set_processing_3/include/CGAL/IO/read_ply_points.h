@@ -40,7 +40,7 @@ namespace CGAL {
 #ifdef DOXYGEN_RUNNING // Document some parts from Stream_support here for convenience
   /**
      \ingroup PkgPointSetProcessing3IOPly
-
+     
      Class used to identify a %PLY property as a type and a name.
 
      \sa `read_ply_points_with_properties()`
@@ -55,7 +55,7 @@ namespace CGAL {
 
   /**
      \ingroup PkgPointSetProcessing3IOPly
-
+     
      Generates a %PLY property handler to read 3D points. Points are
      constructed from the input using 3 %PLY properties of type `FT`
      and named `x`, `y` and `z`. `FT` is `float` if the points use
@@ -73,7 +73,7 @@ namespace CGAL {
 
   /**
      \ingroup PkgPointSetProcessing3IOPly
-
+     
      Generates a %PLY property handler to read 3D normal
      vectors. Vectors are constructed from the input using 3 PLY
      properties of type `FT` and named `nx`, `ny` and `nz`. `FT`
@@ -133,30 +133,30 @@ bool read_ply_points_with_properties (std::istream& stream,
                                       PropertyHandler&& ... properties)
 {
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
-
+    
   if(!stream)
     {
       std::cerr << "Error: cannot open file" << std::endl;
       return false;
     }
 
-  internal::PLY::PLY_reader reader;
-
+  IO::internal::PLY_reader reader;
+  
   if (!(reader.init (stream)))
   {
     stream.setstate(std::ios::failbit);
     return false;
   }
-
+  
   for (std::size_t i = 0; i < reader.number_of_elements(); ++ i)
   {
-    internal::PLY::PLY_element& element = reader.element(i);
+    IO::internal::PLY_element& element = reader.element(i);
 
     for (std::size_t j = 0; j < element.number_of_items(); ++ j)
     {
       for (std::size_t k = 0; k < element.number_of_properties(); ++ k)
       {
-        internal::PLY::PLY_read_number* property = element.property(k);
+        IO::internal::PLY_read_number* property = element.property(k);
         property->get (stream);
 
         if (stream.fail())
@@ -166,7 +166,7 @@ bool read_ply_points_with_properties (std::istream& stream,
       if (element.name() == "vertex" || element.name() == "vertices")
       {
         OutputValueType new_element;
-        internal::PLY::process_properties (element, new_element, std::forward<PropertyHandler>(properties)...);
+        IO::internal::process_properties (element, new_element, std::forward<PropertyHandler>(properties)...);
         *(output ++) = new_element;
       }
     }
@@ -183,12 +183,12 @@ bool read_ply_points_with_properties (std::istream& stream,
                                       PropertyHandler&& ... properties)
 {
   typedef typename value_type_traits<OutputIterator>::type OutputValueType;
-
+ 
   return read_ply_points_with_properties<OutputValueType>
     (stream, output, std::forward<PropertyHandler>(properties)...);
 }
 /// \endcond
-
+  
 /**
    \ingroup PkgPointSetProcessing3IOPly
    Reads points (positions + normals, if available) from a .ply
@@ -236,7 +236,7 @@ bool read_ply_points(std::istream& stream,
   using parameters::get_parameter;
 
   typedef Point_set_processing_3::Fake_point_range<OutputIteratorValueType> PointRange;
-
+  
   // basic geometric types
   typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, CGAL_BGL_NP_CLASS>::type NormalMap;
@@ -257,7 +257,7 @@ bool read_ply_points(std::istream& stream,
 }
 
 
-/// \cond SKIP_IN_MANUAL
+/// \cond SKIP_IN_MANUAL  
 // variant with default NP
 template <typename OutputIteratorValueType,
           typename OutputIterator>
@@ -355,7 +355,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
      CGAL::parameters::normal_map (normal_map));
 }
 
-// deprecated API
+// deprecated API  
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointMap

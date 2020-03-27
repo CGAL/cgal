@@ -20,46 +20,74 @@
 
 #include <CGAL/disable_warnings.h>
 
+#include <CGAL/assertions.h>
+#include <CGAL/tags.h>
+#include <CGAL/IO/io_tags.h>
+#include <CGAL/IO/Color.h>
+#include <CGAL/Fraction_traits.h>
+
 #include <cstdio>
 #include <cctype>
 #include <string>
 #include <locale>
 #include <iostream>
-#include <CGAL/tags.h>
-#include <CGAL/IO/io_tags.h>
-#include <CGAL/IO/Color.h>
-#include <CGAL/assertions.h>
-#include <CGAL/Fraction_traits.h>
-
 
 namespace CGAL {
 
-
-
 namespace IO {
 
-class Static {
+class Static
+{
 public:
-
   static int get_mode()
   {
     static const int mode = std::ios::xalloc();
     return mode;
   }
-
 };
 
-  enum Mode {ASCII = 0, PRETTY, BINARY};
+/*!
+\ingroup PkgStreamSupportRef
 
-}
+All classes in the \cgal `Kernel` provide input and output operators for
+IOStreams.  The basic task of such an operator is to produce a
+representation of an object that can be written as a sequence of
+characters on devices as a console, a file, or a pipe. The enum `Mode` distinguish between three different printing formats.
 
+In `ASCII` mode, numbers
+e.g. the coordinates of a point or
+the coefficients of a line, are written
+in a machine independent format.
+In <span class="textsc">BINARY</span> mode, data are written
+in a binary format, e.g. a double is represented
+as a sequence of four byte. The format depends on the machine.
+ The mode  <span class="textsc">PRETTY</span>
+serves mainly for debugging as the type of the geometric
+object is written, as well as the data defining the object. For example
+for a point at the origin with %Cartesian double coordinates, the output
+would be `PointC2(0.0, 0.0)`.  At the moment \cgal does not
+provide input operations for pretty printed data. By default a stream
+is in <span class="textsc">Ascii</span> mode.
 
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+enum Mode {ASCII = 0, PRETTY, BINARY};
+
+} // namespace IO
 
 template <typename Dummy>
 struct IO_rep_is_specialized_aux
 {
   static const bool is_specialized = true;
 };
+
 template< class Dummy >
 const bool IO_rep_is_specialized_aux<Dummy>::is_specialized;
 
@@ -68,65 +96,114 @@ struct IO_rep_is_not_specialized_aux
 {
   static const bool is_specialized = false;
 };
+
 template< class Dummy >
 const bool IO_rep_is_not_specialized_aux<Dummy>::is_specialized;
 
-typedef IO_rep_is_specialized_aux<void>     IO_rep_is_specialized;
+typedef IO_rep_is_specialized_aux<void> IO_rep_is_specialized;
 typedef IO_rep_is_not_specialized_aux<void> IO_rep_is_not_specialized;
 
-template <class T, class F = ::CGAL::Null_tag >
-class Output_rep : public IO_rep_is_not_specialized {
-    const T& t;
-public:
-    //! initialize with a const reference to \a t.
-    Output_rep( const T& tt) : t(tt) {}
-    //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { return (out << t); }
+/*!
+\ingroup PkgStreamSupportRef
+
+The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator.
+
+If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behaviour for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behaviour*.
+
+Specializations of `Output_rep` should provide the following features:
+
+\code{.cpp}
+
+template< class F >
+struct Output_rep< Some_type, F > {
+  static const bool is_specialized = true;
+  Output_rep( const Some_type& t );
+  std::ostream& operator()( std::ostream& out ) const;
 };
 
-/*! \relates Output_rep
-    \brief stream output of the \c Output_rep calls its \c operator().
+\endcode
+
+You can also specialize for a formatting tag `F`.
+
+The constant `is_specialized` can be tested by meta-programming tools to
+verify that a given type can be used with `oformat()`. Its value has to be
+`true` in a specialization of `Output_rep`. When there is no specialization
+for a type, the class template `Output_rep` defines `is_specialized` to the
+default value `false`.
+*/
+template <class T, class F = ::CGAL::Null_tag >
+class Output_rep
+  : public IO_rep_is_not_specialized
+{
+  const T& t;
+
+public:
+  //! initialize with a const reference to \a t.
+  Output_rep( const T& tt) : t(tt) {}
+  //! perform the output, calls \c operator\<\< by default.
+  std::ostream& operator()( std::ostream& out) const { return (out << t); }
+};
+
+/*!
+  \relates Output_rep
+  \brief stream output of the \c Output_rep calls its \c operator().
+
+  \cgal defines output operators for classes that are derived from the class `ostream`.
+  This enables to write to ostreams as `cout` or `cerr`, as well as to `std::ostringstream`
+  and `std::ofstream`.
+  The output operator is defined for all classes in the \cgal `Kernel` and for the class `Color` as well.
 */
 template <class T, class F>
-std::ostream&
-operator<<( std::ostream& out, Output_rep<T,F> rep) {
-    return rep( out);
-}
+std::ostream& operator<<( std::ostream& out, Output_rep<T,F> rep) { return rep( out); }
 
-//! generic IO output format manipulator.
+/*!
+\ingroup PkgStreamSupportRef
+
+Convenience function to construct an output representation (`Output_rep`) for type `T`.
+
+Generic IO for type `T`.
+*/
 template <class T>
-Output_rep<T>
-oformat( const T& t) { return Output_rep<T>(t); }
+Output_rep<T> oformat(const T& t) { return Output_rep<T>(t); }
 
-//! generic IO output format manipulator with formatting tag.
+/*!
+\ingroup PkgStreamSupportRef
+
+Convenience function to construct an output representation (`Output_rep`) for type `T`.
+
+Generic IO for type `T` with formatting tag.
+*/
 template <class T, class F>
-Output_rep<T,F>
-oformat( const T& t, F) { return Output_rep<T,F>(t); }
+Output_rep<T,F> oformat( const T& t, F) { return Output_rep<T,F>(t); }
 
+/*!
+\ingroup PkgStreamSupportRef
 
-
-/*!\brief
- * input functor class created by the generic IO input manipulator.
- *
- * It holds a reference to the input object. Default implementation
- * calls the stream input operator. Specializations can be written
- * for external types not supporting our stream IO format.
- */
+The definition of `Input_rep` is completely symmetric to `Output_rep`.
+*/
 template <class T>
-class Input_rep : public IO_rep_is_not_specialized {
-    T& t;
+class Input_rep
+  : public IO_rep_is_not_specialized
+{
+  T& t;
+
 public:
-    //! initialize with a reference to \a t.
-    Input_rep( T& tt) : t(tt) {}
-    //! perform the input, calls \c operator\>\> by default.
-    std::istream& operator()( std::istream& in) const { return (in >> t); }
+  //! initialize with a reference to \a t.
+  Input_rep( T& tt) : t(tt) {}
+
+  //! perform the input, calls \c operator\>\> by default.
+  std::istream& operator()( std::istream& in) const { return (in >> t); }
 };
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
   ( ( _MSC_VER > 1600 ) && ( _MSC_VER < 1910 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
+
 template <>
-class Input_rep<double> : public IO_rep_is_specialized {
-    double& t;
+class Input_rep<double>
+  : public IO_rep_is_specialized
+{
+  double& t;
+
 public:
   //! initialize with a reference to \a t.
   Input_rep( double& tt) : t(tt) {}
@@ -142,43 +219,61 @@ public:
     buffer.reserve(32);
 
     char_type c;
-    do {
+    do
+    {
       const int_type i = is.get();
-      if(i == traits_type::eof()) {
+      if(i == traits_type::eof())
         return is;
-      }
+
       c = static_cast<char_type>(i);
-    }while (std::isspace(c));
-    if(c == '-'){
+    }
+    while (std::isspace(c));
+
+    if(c == '-')
+    {
       buffer += '-';
-    } else if(c != '+'){
+    }
+    else if(c != '+')
+    {
       is.unget();
     }
-    do {
+
+    for(;;)
+    {
       const int_type i = is.get();
-      if(i == traits_type::eof()) {
+      if(i == traits_type::eof())
+      {
         is.clear(is.rdstate() & ~std::ios_base::failbit);
         break;
       }
+
       c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
+      {
         buffer += c;
-      }else{
+      }
+      else
+      {
         is.unget();
         break;
       }
-    }while(true);
-    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1) {
+    }
+
+    if(sscanf_s(buffer.c_str(), "%lf", &t) != 1)
+    {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
+
     return is;
   }
 };
 
 template <>
-class Input_rep<float> {
-    float& t;
+class Input_rep<float>
+{
+  float& t;
+
 public:
   //! initialize with a reference to \a t.
   Input_rep( float& tt) : t(tt) {}
@@ -194,36 +289,52 @@ public:
     buffer.reserve(32);
 
     char_type c;
-    do {
+    do
+    {
       const int_type i = is.get();
-      if(i == traits_type::eof()) {
+      if(i == traits_type::eof())
         return is;
-      }
+
       c = static_cast<char_type>(i);
-    }while (std::isspace(c));
-    if(c == '-'){
+    }
+    while (std::isspace(c));
+
+    if(c == '-')
+    {
       buffer += '-';
-    } else if(c != '+'){
+    }
+    else if(c != '+')
+    {
       is.unget();
     }
-    do {
+
+    for(;;)
+    {
       const int_type i = is.get();
-      if(i == traits_type::eof()) {
+      if(i == traits_type::eof())
+      {
         is.clear(is.rdstate() & ~std::ios_base::failbit);
         break;
       }
+
       c = static_cast<char_type>(i);
-      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-')){
+      if(std::isdigit(c) || (c =='.') || (c =='E') || (c =='e') || (c =='+') || (c =='-'))
+      {
         buffer += c;
-      }else{
+      }
+      else
+      {
         is.unget();
         break;
       }
-    }while(true);
-    if(sscanf_s(buffer.c_str(), "%f", &t) != 1) {
+    }
+
+    if(sscanf_s(buffer.c_str(), "%f", &t) != 1)
+    {
       // if a 'buffer' does not contain a double, set the fail bit.
       is.setstate(std::ios_base::failbit);
     }
+
     return is;
   }
 };
@@ -231,40 +342,40 @@ public:
 
 /*! \relates Input_rep
     \brief stream input to the \c Input_rep calls its \c operator().
+
+\brief \cgal defines input operators for classes that are derived
+from the class `istream`. This allows to read from istreams
+as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
+The input operator is defined for all classes in the \cgal `Kernel`.
 */
 template <class T>
-std::istream&
-operator>>( std::istream& in, Input_rep<T> rep) {
-    return rep( in);
-}
+std::istream& operator>>( std::istream& in, Input_rep<T> rep) { return rep(in); }
 
-//! generic IO input format manipulator.
+/*!
+\ingroup PkgStreamSupportRef
+
+The definition of this function is completely symmetric to `oformat()`.
+*/
 template <class T>
-Input_rep<T>
-iformat( T& t) { return Input_rep<T>(t); }
-
+Input_rep<T> iformat( T& t) { return Input_rep<T>(t); }
 
 template <class T, class F = Null_tag >
-class Benchmark_rep {
-    const T& t;
-public:
-    //! initialize with a const reference to \a t.
-    Benchmark_rep( const T& tt) : t(tt) {}
-    //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const {
-        return out << t;
-    }
+class Benchmark_rep
+{
+  const T& t;
 
-    // static function to get the benchmark name
-    static std::string get_benchmark_name() {
-        return "";
-    }
+public:
+  //! initialize with a const reference to \a t.
+  Benchmark_rep( const T& tt) : t(tt) {}
+  //! perform the output, calls \c operator\<\< by default.
+  std::ostream& operator()( std::ostream& out) const { return out << t; }
+
+  // static function to get the benchmark name
+  static std::string get_benchmark_name() { return ""; }
 };
 
 template <class T, class F>
-std::ostream& operator<<( std::ostream& out, Benchmark_rep<T,F> rep) {
-    return rep( out);
-}
+std::ostream& operator<<( std::ostream& out, Benchmark_rep<T,F> rep) { return rep( out); }
 
 template <class T>
 Benchmark_rep<T> bmformat( const T& t) { return Benchmark_rep<T>(t); }
@@ -272,236 +383,356 @@ Benchmark_rep<T> bmformat( const T& t) { return Benchmark_rep<T>(t); }
 template <class T, class F>
 Benchmark_rep<T,F> bmformat( const T& t, F) { return Benchmark_rep<T,F>(t); }
 
+/*!
+\ingroup PkgStreamSupportRef
 
-CGAL_EXPORT
-IO::Mode
-get_mode(std::ios& i);
+returns the printing mode of the %IO stream `s`.
 
-CGAL_EXPORT
-IO::Mode
-set_ascii_mode(std::ios& i);
-
-CGAL_EXPORT
-IO::Mode
-set_binary_mode(std::ios& i);
-
-CGAL_EXPORT
-IO::Mode
-set_pretty_mode(std::ios& i);
-
-CGAL_EXPORT
-IO::Mode
-set_mode(std::ios& i, IO::Mode m);
-
-CGAL_EXPORT
-bool
-is_pretty(std::ios& i);
-
-CGAL_EXPORT
-bool
-is_ascii(std::ios& i);
-
-CGAL_EXPORT
-bool
-is_binary(std::ios& i);
-
-
-template < class T >
-inline
-void
-write(std::ostream& os, const T& t, const io_Read_write&)
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+inline IO::Mode get_mode(std::ios& i)
 {
-    os.write(reinterpret_cast<const char*>(&t), sizeof(t));
+  return static_cast<IO::Mode>(i.iword(IO::Static::get_mode()));
 }
 
+/*!
+\ingroup PkgStreamSupportRef
 
-template < class T >
-inline
-void
-write(std::ostream& os, const T& t, const io_Operator&)
+sets the mode of the %IO stream `s` to be the `IO::ASCII` mode.
+Returns the previous mode of `s`.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+inline IO::Mode set_ascii_mode(std::ios& i)
 {
-    os << oformat(t);
+  IO::Mode m = get_mode(i);
+  i.iword(IO::Static::get_mode()) = IO::ASCII;
+  return m;
 }
 
+/*!
+\ingroup PkgStreamSupportRef
 
-template < class T >
-inline
-void
-write(std::ostream& os, const T& t, const io_Extract_insert&)
+sets the mode of the %IO stream `s` to be the `IO::BINARY` mode.
+Returns the previous mode of `s`.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+inline IO::Mode set_binary_mode(std::ios& i)
 {
-    insert(os, t);
+  IO::Mode m = get_mode(i);
+  i.iword(IO::Static::get_mode()) = IO::BINARY;
+  return m;
 }
 
+/*!
+\ingroup PkgStreamSupportRef
 
-template < class T >
-inline
-void
-write(std::ostream& os, const T& t)
+sets the mode of the %IO stream `s` to be the `IO::PRETTY` mode.
+Returns the previous mode of `s`.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+inline IO::Mode set_pretty_mode(std::ios& i)
 {
-    write(os, t, typename Io_traits<T>::Io_tag());
+  IO::Mode m = get_mode(i);
+  i.iword(IO::Static::get_mode()) = IO::PRETTY;
+  return m;
 }
 
+/*!
+\ingroup PkgStreamSupportRef
 
-template < class T >
-inline
-void
-read(std::istream& is, T& t, const io_Read_write&)
+sets the printing mode of the %IO stream `s`.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+inline IO::Mode set_mode(std::ios& i, IO::Mode m)
 {
-    is.read(reinterpret_cast<char*>(&t), sizeof(t));
+  IO::Mode old = get_mode(i);
+  i.iword(IO::Static::get_mode()) = m;
+  return old;
 }
 
+/*!
+\ingroup PkgStreamSupportRef
+
+checks if the %IO stream `s` is in `IO::PRETTY` mode.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_binary()`
+*/
+inline bool is_pretty(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::PRETTY; }
+
+/*!
+\ingroup PkgStreamSupportRef
+
+checks if the %IO stream `s` is in `IO::ASCII` mode.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_binary()`
+\sa `CGAL::is_pretty()`
+*/
+inline bool is_ascii(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
+
+/*!
+\ingroup PkgStreamSupportRef
+
+checks if the %IO stream `s` is in `IO::BINARY` mode.
+
+\sa `CGAL::IO::Mode`
+\sa `CGAL::set_mode()`
+\sa `CGAL::set_ascii_mode()`
+\sa `CGAL::set_binary_mode()`
+\sa `CGAL::set_pretty_mode()`
+\sa `CGAL::get_mode()`
+\sa `CGAL::is_ascii()`
+\sa `CGAL::is_pretty()`
+*/
+inline bool is_binary(std::ios& i) { return i.iword(IO::Static::get_mode()) == IO::BINARY; }
 
 template < class T >
-inline
-void
-read(std::istream& is, T& t, const io_Operator&)
+inline void write(std::ostream& os, const T& t, const io_Read_write&)
 {
-    is >> iformat(t);
+  os.write(reinterpret_cast<const char*>(&t), sizeof(t));
 }
-
 
 template < class T >
-inline
-void
-read(std::istream& is, T& t, const io_Extract_insert&)
+inline void write(std::ostream& os, const T& t, const io_Operator&)
 {
-    extract(is, t);
+  os << oformat(t);
 }
-
 
 template < class T >
-inline
-void
-read(std::istream& is, T& t)
+inline void write(std::ostream& os, const T& t, const io_Extract_insert&)
 {
-    read(is, t, typename Io_traits<T>::Io_tag());
+  insert(os, t);
 }
 
-
-inline
-std::ostream& operator<<( std::ostream& out, const Color& col)
+template < class T >
+inline void write(std::ostream& os, const T& t)
 {
-    switch(get_mode(out)) {
+  write(os, t, typename Io_traits<T>::Io_tag());
+}
+
+template < class T >
+inline void read(std::istream& is, T& t, const io_Read_write&)
+{
+  is.read(reinterpret_cast<char*>(&t), sizeof(t));
+}
+
+template < class T >
+inline void read(std::istream& is, T& t, const io_Operator&)
+{
+  is >> iformat(t);
+}
+
+template < class T >
+inline void read(std::istream& is, T& t, const io_Extract_insert&)
+{
+  extract(is, t);
+}
+
+template < class T >
+inline void read(std::istream& is, T& t)
+{
+  read(is, t, typename Io_traits<T>::Io_tag());
+}
+
+inline std::ostream& operator<<( std::ostream& out, const Color& col)
+{
+  switch(get_mode(out))
+  {
     case IO::ASCII :
-        return out << static_cast<int>(col.red())   << ' '
-                  << static_cast<int>(col.green()) << ' '
-                  << static_cast<int>(col.blue()) << ' '
-                  << static_cast<int>(col.alpha());
+      return out << static_cast<int>(col.red())   << ' '
+                 << static_cast<int>(col.green()) << ' '
+                 << static_cast<int>(col.blue()) << ' '
+                 << static_cast<int>(col.alpha());
     case IO::BINARY :
-        out.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
-        return out;
+      out.write(reinterpret_cast<const char*>(col.to_rgba().data()), 4);
+      return out;
     default:
-        return out << "Color(" << static_cast<int>(col.red()) << ", "
-                  << static_cast<int>(col.green()) << ", "
-                  << static_cast<int>(col.blue()) << ", "
-                  << static_cast<int>(col.alpha()) << ")";
-    }
+      return out << "Color(" << static_cast<int>(col.red()) << ", "
+                 << static_cast<int>(col.green()) << ", "
+                 << static_cast<int>(col.blue()) << ", "
+                 << static_cast<int>(col.alpha()) << ")";
+  }
 }
 
-inline
-std::istream &operator>>(std::istream &is, Color& col)
+inline std::istream &operator>>(std::istream &is, Color& col)
 {
-    unsigned char r = 0, g = 0, b = 0, a = 0;
-    int ir = 0, ig = 0, ib = 0, ia = 0;
-    switch(get_mode(is)) {
+  unsigned char r = 0, g = 0, b = 0, a = 0;
+  int ir = 0, ig = 0, ib = 0, ia = 0;
+
+  switch(get_mode(is))
+  {
     case IO::ASCII :
-        is >> ir >> ig >> ib >> ia;
-        r = (unsigned char)ir;
-        g = (unsigned char)ig;
-        b = (unsigned char)ib;
-        a = (unsigned char)ia;
-        break;
+      is >> ir >> ig >> ib >> ia;
+      r = (unsigned char)ir;
+      g = (unsigned char)ig;
+      b = (unsigned char)ib;
+      a = (unsigned char)ia;
+      break;
     case IO::BINARY :
-        read(is, r);
-        read(is, g);
-        read(is, b);
-        read(is, a);
-        break;
+      read(is, r);
+      read(is, g);
+      read(is, b);
+      read(is, a);
+      break;
     default:
-        std::cerr << "" << std::endl;
-        std::cerr << "Stream must be in ascii or binary mode" << std::endl;
-        break;
-    }
-    col = Color(r,g,b,a);
-    return is;
+      std::cerr << "" << std::endl;
+      std::cerr << "Stream must be in ascii or binary mode" << std::endl;
+      break;
+  }
+
+  col = Color(r,g,b,a);
+  return is;
 }
 
-CGAL_EXPORT
-const char* mode_name( IO::Mode m );
+inline const char* mode_name( IO::Mode m )
+{
+  static const char* const names[] = {"ASCII", "PRETTY", "BINARY" };
+  CGAL_assertion( IO::ASCII <= m && m <= IO::BINARY );
+  return names[m];
+}
 
 // From polynomial.h TODO: Where to put this?
-CGAL_EXPORT
-void swallow(std::istream &is, char d);
+inline void swallow(std::istream &is, char d)
+{
+  char c;
+  do { is.get(c); } while(isspace(c));
+  if(c != d)
+  {
+    std::stringstream msg;
+    msg << "input error: expected '" << d << "' but got '" << c << "'";
+    CGAL_error_msg( msg.str().c_str() );
+  }
+}
 
-CGAL_EXPORT
-void swallow(std::istream &is, const std::string& s );
+inline void swallow(std::istream &is, const std::string& s)
+{
+  std::string t;
+  is >> t;
+  if(s != t)
+  {
+    std::stringstream msg;
+    msg << "input error: expected '" << s << "' but got '" << t << "'";
+    CGAL_error_msg( msg.str().c_str() );
+  }
+}
 
+namespace internal {
 
-  namespace internal {
-inline
-void eat_white_space(std::istream &is)
+inline void eat_white_space(std::istream &is)
 {
   std::istream::int_type c;
-  do {
-    c= is.peek();
-    if (c== std::istream::traits_type::eof())
+  do
+  {
+    c = is.peek();
+    if(c == std::istream::traits_type::eof())
+    {
       return;
-    else {
+    }
+    else
+    {
       std::istream::char_type cc= static_cast<std::istream::char_type>(c);
-      if ( std::isspace(cc, std::locale::classic()) ) {
+      if(std::isspace(cc, std::locale::classic()))
+      {
         is.get();
         // since peek succeeded, this should too
         CGAL_assertion(!is.fail());
-      } else {
+      }
+      else
+      {
         return;
       }
     }
-  } while (true);
+  }
+  while (true);
 }
 
+inline bool is_space(const std::istream& /*is*/, std::istream::int_type c)
+{
+  return (c == std::istream::traits_type::eof()) ||
+          std::isspace(static_cast<std::istream::char_type>(c),
+                       std::locale::classic() );
+}
 
-  inline
-  bool is_space (const std::istream& /*is*/, std::istream::int_type c)
-  {
-    return (c == std::istream::traits_type::eof()) ||
-      std::isspace(static_cast<std::istream::char_type>(c),
-                   std::locale::classic() );
-  }
+inline bool is_eof(const std::istream& /*is*/, std::istream::int_type c)
+{
+  return c == std::istream::traits_type::eof();
+}
 
-  inline
-  bool is_eof (const std::istream& /*is*/, std::istream::int_type c)
-  {
-    return c == std::istream::traits_type::eof();
-  }
+inline bool is_digit(const std::istream& /*is*/, std::istream::int_type c)
+{
+  CGAL_assertion(c != std::istream::traits_type::eof());
+  return std::isdigit(static_cast<std::istream::char_type>(c),
+                      std::locale::classic());
+}
 
-  inline
-  bool is_digit (const std::istream& /*is*/, std::istream::int_type c)
-  {
-    CGAL_assertion(c != std::istream::traits_type::eof());
-    return std::isdigit(static_cast<std::istream::char_type>(c),
-                        std::locale::classic() );
-  }
+inline std::istream::int_type peek(std::istream& is)
+{
+  // Workaround for a bug in the version of libc++ that is shipped with
+  // Apple-clang-3.2. See the long comment in the function
+  // gmpz_new_read() in <CGAL/GMP/Gmpz_type.h>.
 
-  inline std::istream::int_type peek(std::istream& is)
-  {
-    // Workaround for a bug in the version of libc++ that is shipped with
-    // Apple-clang-3.2. See the long comment in the function
-    // gmpz_new_read() in <CGAL/GMP/Gmpz_type.h>.
-
-    if(is.eof())
-      return std::istream::traits_type::eof();
-    else
-      return is.peek();
-  }
-
+  if(is.eof())
+    return std::istream::traits_type::eof();
+  else
+    return is.peek();
+}
 
 template <typename ET>
 inline void read_float_or_quotient(std::istream & is, ET& et)
 {
   is >> et;
 }
-
-
 
 template <typename Int, typename Rat>
 inline void read_float_or_quotient(std::istream& is, Rat &z)
@@ -518,54 +749,66 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
   is.unsetf(std::ios::skipws);
   internal::eat_white_space(is);
 
-  Int n(0);             // unsigned number before '/' or '.'
-  Int d(1);             // number after '/', or denominator (fp-case)
+  Int n(0); // unsigned number before '/' or '.'
+  Int d(1); // number after '/', or denominator (fp-case)
   bool negative = false; // do we have a leading '-'?
   bool digits = false;   // for fp-case: are there any digits at all?
 
   c = internal::peek(is);
-  if (c != '.') {
+  if(c != '.')
+  {
     // is there a sign?
-    if (c == '-' || c == '+') {
+    if(c == '-' || c == '+')
+    {
       is.get();
       negative = (c == '-');
       internal::eat_white_space(is);
-      c=internal::peek(is);
+      c = internal::peek(is);
     }
+
     // read n (could be empty)
-    while (!internal::is_eof(is, c) && internal::is_digit(is, c)) {
+    while (!internal::is_eof(is, c) && internal::is_digit(is, c))
+    {
       digits = true;
       n = n*10 + (c-zero);
       is.get();
       c = internal::peek(is);
     }
+
     // are we done?
-    if (internal::is_eof(is, c) || internal::is_space(is, c)) {
+    if(internal::is_eof(is, c) || internal::is_space(is, c))
+    {
       is.flags(old_flags);
-      if (digits && !is.fail())
+      if(digits && !is.fail())
         z = negative? compose(-n,1): compose(n,1);
       return;
     }
-  } else
+  }
+  else
+  {
     n = 0;
+  }
 
   // now we have read n, we are not done, and c is the next character
   // in the stream
-  if (c == '/' || c == '.') {
+  if(c == '/' || c == '.')
+  {
     is.get();
-    if (c == '/') {
+    if(c == '/')
+    {
       // rational case
       is >> d;
       is.flags(old_flags);
-      if (!is.fail())
-        z = negative? compose(-n,d): compose(n,d);
+      if(!is.fail())
+        z = negative? compose(-n,d) : compose(n,d);
       return;
     }
 
     // floating point case; read number after '.' (may be empty)
-    while (true) {
+    for(;;)
+    {
       c = internal::peek(is);
-      if (internal::is_eof(is, c) || !internal::is_digit(is, c))
+      if(internal::is_eof(is, c) || !internal::is_digit(is, c))
         break;
       // now we have a digit
       is.get();
@@ -578,13 +821,15 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
   // now we have read all digits after '.', and c is the next character;
   // read the exponential part (optional)
   int e = 0;
-  if (c == 'e' || c == 'E') {
+  if(c == 'e' || c == 'E')
+  {
     is.get();
     is >> e;
   }
 
   // now construct the Gmpq
-  if (!digits) {
+  if(!digits)
+  {
     // illegal floating-point number
     is.setstate(std::ios_base::failbit);
     is.flags(old_flags);
@@ -592,25 +837,19 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
   }
 
   // handle e
-  if (e > 0)
+  if(e > 0)
     while (e--) n *= 10;
   else
     while (e++) d *= 10;
-  is.flags(old_flags);
-  if (!is.fail())
-    z = (negative ? compose(-n,d) : compose(n,d));
 
+  is.flags(old_flags);
+  if(!is.fail())
+    z = (negative ? compose(-n,d) : compose(n,d));
 }
 
+} // namespace internal
 
-  } // namespace internal
-
-} //namespace CGAL
-
-
-#ifdef CGAL_HEADER_ONLY
-#include <CGAL/IO/io_impl.h>
-#endif // CGAL_HEADER_ONLY
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 
