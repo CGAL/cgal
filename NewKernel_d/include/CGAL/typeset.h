@@ -33,7 +33,7 @@ namespace CGAL {
       std::conditional<
         contains<X>::value,
         typeset<H,U...>,
-	typeset<H,U...,X>
+        typeset<H,U...,X>
       >::type;
   };
   template<> struct typeset<> {
@@ -58,8 +58,8 @@ namespace CGAL {
       typedef typename T1::head H;
       typedef typename typeset_intersection_<typename T1::tail,T2>::type U;
       typedef typename
-	std::conditional<T2::template contains<H>::value,
-	typename U::template add<H>::type, U>::type type;
+        std::conditional<T2::template contains<H>::value,
+        typename U::template add<H>::type, U>::type type;
     };
   template<class T> struct typeset_intersection_<typeset<>, T> : typeset<> {};
   template<class T> struct typeset_intersection_<typeset_all, T> : T {};

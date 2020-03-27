@@ -22,33 +22,33 @@ template<std::size_t,class...> struct Apply_to_last_then_rest_;
 
 template<std::size_t d,class F,class T,class... U>
 struct Apply_to_last_then_rest_<d,F,T,U...> {
-	typedef typename Apply_to_last_then_rest_<d-1,F,U...,T>::result_type result_type;
-	inline result_type operator()(F&&f,T&&t,U&&...u)const{
-		return Apply_to_last_then_rest_<d-1,F,U...,T>()(
-				std::forward<F>(f),
-				std::forward<U>(u)...,
-				std::forward<T>(t));
-	}
+        typedef typename Apply_to_last_then_rest_<d-1,F,U...,T>::result_type result_type;
+        inline result_type operator()(F&&f,T&&t,U&&...u)const{
+                return Apply_to_last_then_rest_<d-1,F,U...,T>()(
+                                std::forward<F>(f),
+                                std::forward<U>(u)...,
+                                std::forward<T>(t));
+        }
 };
 
 template<class F,class T,class... U>
 struct Apply_to_last_then_rest_<0,F,T,U...> {
-	typedef decltype(std::declval<F>()(std::declval<T>(), std::declval<U>()...)) result_type;
-	inline result_type operator()(F&&f,T&&t,U&&...u)const{
-	return std::forward<F>(f)(std::forward<T>(t), std::forward<U>(u)...);
-	}
+        typedef decltype(std::declval<F>()(std::declval<T>(), std::declval<U>()...)) result_type;
+        inline result_type operator()(F&&f,T&&t,U&&...u)const{
+        return std::forward<F>(f)(std::forward<T>(t), std::forward<U>(u)...);
+        }
 };
 } // namespace internal
 
 struct Apply_to_last_then_rest {
-	template<class F,class T,class...U> inline
-	typename internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>::result_type
-	operator()(F&&f,T&&t,U&&...u)const{
-	return internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>()(
-			std::forward<F>(f),
-			std::forward<T>(t),
-			std::forward<U>(u)...);
-	}
+        template<class F,class T,class...U> inline
+        typename internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>::result_type
+        operator()(F&&f,T&&t,U&&...u)const{
+        return internal::Apply_to_last_then_rest_<sizeof...(U),F,T,U...>()(
+                        std::forward<F>(f),
+                        std::forward<T>(t),
+                        std::forward<U>(u)...);
+        }
 };
 
 } // namespace CGAL
