@@ -34,7 +34,7 @@ int main ()
   faces[3].push_back(3);
 
   std::ofstream os("tetra.stl");
-  CGAL::write_STL(ps, faces, os);
+  CGAL::write_STL(os, ps, faces);
   if(!os)
   {
     std::cerr<<"error during STL writing."<<std::endl;

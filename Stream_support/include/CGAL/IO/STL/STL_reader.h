@@ -49,7 +49,7 @@ bool read_ASCII_facet(std::istream& is,
   double x,y,z;
   Point p;
   Triangle ijk;
-  IO::internal::resize(ijk, 3);
+  CGAL::internal::resize(ijk, 3);
 
   while(is >> s)
   {
@@ -236,7 +236,7 @@ bool parse_binary_STL(std::istream& is,
     }
 
     Triangle ijk;
-    IO::internal::resize(ijk, 3);
+    CGAL::internal::resize(ijk, 3);
 
     for(int j=0; j<3; ++j)
     {

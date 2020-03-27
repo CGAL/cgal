@@ -673,13 +673,15 @@ void process_properties(PLY_element& element, OutputValueType& new_element,
                      std::forward<PropertyMapBinders>(properties)...);
 }
 
-template <typename Integer, class Polygon_3, class Color_rgb>
+template <typename Integer, class PolygonRange, class ColorRange>
 bool read_PLY_faces(std::istream& in,
                     IO::internal::PLY_element& element,
-                    std::vector< Polygon_3 >& polygons,
-                    std::vector< Color_rgb >& fcolors,
+                    PolygonRange& polygons,
+                    ColorRange& fcolors,
                     const char* vertex_indices_tag)
 {
+  typedef typename PolygonRange::value_type Polygon_3;
+  typedef typename ColorRange::value_type Color_rgb;
   bool has_colors = false;
   std::string rtag = "r", gtag = "g", btag = "b";
 

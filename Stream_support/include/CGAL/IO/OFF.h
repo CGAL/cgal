@@ -110,7 +110,7 @@ bool read_OFF(std::istream& is,
     if(!is.good())
       return false;
 
-    IO::internal::resize(polygons[i], no);
+    CGAL::internal::resize(polygons[i], no);
     for(std::size_t j=0; j<no; ++j)
     {
       std::size_t id;

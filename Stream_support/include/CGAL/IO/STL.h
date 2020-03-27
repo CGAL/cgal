@@ -170,7 +170,7 @@ std::ostream& write_STL(std::ostream& out,
                         const PointRange& points,
                         const TriangleRange& facets)
 {
-  typedef typename boost::range_value<PointRange>::type               Triangle;
+  typedef typename boost::range_value<TriangleRange>::type            Triangle;
   typedef typename boost::range_value<PointRange>::type               Point;
   typedef typename CGAL::Kernel_traits<Point>::Kernel                 K;
   typedef typename K::Vector_3                                        Vector_3;

@@ -34,10 +34,12 @@ public:
   Generic_writer(Stream& out) : m_out(out) { }
   Generic_writer(Stream& out, FileWriter writer) : m_out(out), m_writer(writer) { }
 
-  template <typename Point_3, typename Polygon_3>
-  bool operator()(const std::vector<Point_3>& points,
-                  const std::vector<Polygon_3>& polygons)
+  template <typename PointRange_3, typename PolygonRange_3>
+  bool operator()(const PointRange_3& points,
+                  const PolygonRange_3& polygons)
   {
+    typedef typename PointRange_3::value_type Point_3;
+    typedef typename PolygonRange_3::value_type Polygon_3;
     if(m_out.fail())
       return false;
 

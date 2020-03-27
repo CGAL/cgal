@@ -30,6 +30,7 @@ typedef std::vector<CGAL::Color> ColorRange;
 
 int main(int argc, char** argv)
 {
+  #ifdef CGAL_LINKED_WITH_3MF
   const char* file_name=(argc == 2) ? argv[1] : "data/test.3mf";
 
   std::vector<PointRange> all_points;
@@ -130,6 +131,7 @@ int main(int argc, char** argv)
   CGAL::write_triangle_meshes_to_3mf("meshes.3mf", meshes, names);
 
   std::cout<<"OK."<<std::endl;
+#endif //CGAL_LINKED_WITH_3MF
   return 0;
 }
 

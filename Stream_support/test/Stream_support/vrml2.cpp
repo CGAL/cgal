@@ -1,7 +1,7 @@
 // file: test/Support_stream/VRML2.C
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/IO/VRML_2_ostream.h>
+#include <CGAL/IO/VRML/VRML_2_ostream.h>
 #include <iostream>
 
 typedef CGAL::Simple_cartesian<double>  Kernel;

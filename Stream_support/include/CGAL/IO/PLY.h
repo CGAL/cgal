@@ -22,17 +22,20 @@ namespace CGAL {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Read
-
-template <class Point_3, class Polygon_3, class Color_rgb>
+//HEdgesRange" = range of std::pair<unsigned int, unsigned int>
+//HUVRange = range of std::pair<float, float>
+template <class PointRange, class PolygonRange, class ColorRange, class HEdgesRange, class HUVRange>
 bool read_PLY(std::istream& is,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons,
-              std::vector<std::pair<unsigned int, unsigned int> >& hedges,
-              std::vector<Color_rgb>& fcolors,
-              std::vector<Color_rgb>& vcolors,
-              std::vector<std::pair<float, float> >& huvs,
+              PointRange& points,
+              PolygonRange& polygons,
+              HEdgesRange& hedges,
+              ColorRange& fcolors,
+              ColorRange& vcolors,
+              HUVRange& huvs,
               bool /* verbose */ = false)
 {
+  typedef typename PointRange::value_type Point_3;
+  typedef typename ColorRange::value_type Color_rgb;
   if(!is.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
@@ -181,18 +184,19 @@ bool read_PLY(std::istream& is,
   return !is.fail();
 }
 
-template <class Point_3, class Polygon_3, class Color_rgb>
+template <class PointRange, class PolygonRange, class ColorRange>
 bool read_PLY(std::istream& is,
-              std::vector<Point_3>& points,
-              std::vector<Polygon_3>& polygons,
-              std::vector<Color_rgb>& fcolors,
-              std::vector<Color_rgb>& vcolors,
+              PointRange& points,
+              PolygonRange& polygons,
+              ColorRange& fcolors,
+              ColorRange& vcolors,
               bool /* verbose */ = false)
 {
+
   std::vector<std::pair<unsigned int, unsigned int> > dummy_pui;
   std::vector<std::pair<float, float> > dummy_pf;
 
-  return read_PLY<Point_3, Polygon_3, Color_rgb>(is, points, polygons, dummy_pui, fcolors, vcolors, dummy_pf);
+  return read_PLY(is, points, polygons, dummy_pui, fcolors, vcolors, dummy_pf);
 }
 
 /*!
@@ -200,15 +204,22 @@ bool read_PLY(std::istream& is,
  *
  * reads the content of `is` into `points` and `polygons`, in the PLY format.
  *
+ * `PointRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
+ *
+ * `PolygonRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is `std::size_t`.
+ *
  * \see \ref IOStreamPLY
  */
-template <class Point_3, class Polygon_3>
+template <class PointRange, class PolygonRange>
 bool
 read_PLY(std::istream& is,
-         std::vector<Point_3>& points,
-         std::vector<Polygon_3>& polygons,
+         PointRange& points,
+         PolygonRange& polygons,
          bool /* verbose */ = false)
 {
+  typedef typename PointRange::value_type Point_3;
   if(!is.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
@@ -294,13 +305,21 @@ read_PLY(std::istream& is,
  *
  * writes the content of `points` and `polygons` in `out`, in the OFF format.
  *
+ * `PointRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is a `CGAL::Point_3`.
+ *
+ * `PolygonRange` is a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose `value type` is `std::size_t`.
  * \see \ref IOStreamOFF
  */
-template <class Point_3, class Polygon_3>
+template <class PointRange, class PolygonRange>
 bool write_PLY(std::ostream& out,
-               const std::vector<Point_3>& points,
-               const std::vector<Polygon_3>& polygons)
+               const PointRange& points,
+               const PolygonRange& polygons)
 {
+
+  typedef typename PointRange::value_type Point_3;
+  typedef typename PolygonRange::value_type Polygon_3;
   if(!out.good())
   {
     std::cerr << "Error: cannot open file" << std::endl;
