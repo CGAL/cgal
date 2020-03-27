@@ -29,13 +29,13 @@ class Curves_on_surface_topology
 {
 public:
   // Types for minimal quadrangulation
-  using Minimal_quadrangulation = internal::Minimal_quadrangulation<Mesh>;
-  using Reduced_map = typename Minimal_quadrangulation::Reduced_map;
+  using Minimal_quadrangulation=internal::Minimal_quadrangulation<Mesh>;
+  using Reduced_map            =typename Minimal_quadrangulation::Reduced_map;
 
   // Types for shortest noncontractible cycle
-  using Shortest_noncontractible_cycle   = typename internal::Shortest_noncontractible_cycle<Mesh>;
-  using Facewidth                        = typename internal::Facewidth<Mesh>; 
-  using Dart_handle                      = typename internal::Generic_map_selector<Mesh>::Dart_handle_original;
+  using Shortest_noncontractible_cycle=typename internal::Shortest_noncontractible_cycle<Mesh>;
+  using Facewidth                     =typename internal::Facewidth<Mesh>;
+  using Dart_handle                   =typename internal::Generic_map_selector<Mesh>::Dart_handle_original;
 
   // Constructor
   Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
