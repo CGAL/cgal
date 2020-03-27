@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -30,7 +30,7 @@ namespace CGAL {
 template < class OutputIterator, class Operation >
 struct Transform_iterator {
   // Workaround. Added this non standard iterator category for VC8.
-  // Strange that no other iterator complains about this "feature" missing  
+  // Strange that no other iterator complains about this "feature" missing
   typedef std::_Unchecked_iterator_tag _Checked_iterator_category;
   typedef std::output_iterator_tag             iterator_category;
   typedef Transform_iterator< OutputIterator, Operation >   self;

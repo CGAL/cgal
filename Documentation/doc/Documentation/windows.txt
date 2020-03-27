@@ -37,8 +37,8 @@ The first step is to clone or download `vcpkg` from
 
 By default `vcpkg` installs for 32 bit binaries and will use the latest version of Visual C++
 installed on your machine.   If you develop 64 bit software you must
-set the Windows environment variable `VCPKG_DEFAULT_TRIPLE` to `x64-windows`
-or pass the option `--triplet x64-windows` whenever you install a package.
+set the Windows environment variable `VCPKG_DEFAULT_TRIPLET` to `x64-windows`
+or add the suffix `:x64-windows` to the package name you want to install (for example `cgal:x64-windows`).
 We refer to the
 <a href="https://github.com/microsoft/vcpkg/blob/master/docs/examples/installing-and-using-packages.md#step-2-use">official documentation</a>
 of `vcpkg` if you want to compile for an older version of a compiler.
@@ -175,7 +175,7 @@ as this will help `cmake` to find Boost.</li>
 
 \subsection ssect-installer-install-cgal Installing CGAL Itself
 
-Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from 
+Download and run `CGAL-\cgalReleaseNumber``-Setup.exe` from
 <a href="https://www.cgal.org/download/windows.html">https://www.cgal.org/download/windows.html</a>.
 It is a self extracting executable that downloads the \cgal header files, and optionally the source code of the
 examples and demos. Additionally, it can download the precompiled versions of \gmp and \mpfr. You must

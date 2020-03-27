@@ -137,7 +137,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   endif()
 
   foreach(depend ${DEPENDENCIES})
-    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
       "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=../${depend}\n")
   endforeach()
 

@@ -38,9 +38,19 @@ int main(int argc, char *argv[]) {
   std::ifstream in(argc > 1 ? argv[1] : "data/polygon_mesh.off");
   CGAL::set_ascii_mode(in);
 
+  if (!in) {
+    std::cout <<
+    "Error: cannot read the file polygon_mesh.off!" << std::endl;
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
+    << std::endl << std::endl;
+    assert(false);
+    return EXIT_FAILURE;
+  }
+
   Polygon_mesh polygon_mesh;
   in >> polygon_mesh;
-    
+
   in.close();
   const Face_range face_range = faces(polygon_mesh);
 
@@ -57,8 +67,8 @@ int main(int argc, char *argv[]) {
     get(CGAL::vertex_point, polygon_mesh));
 
   Region_type region_type(
-    polygon_mesh, 
-    distance_threshold, angle_threshold, min_region_size, 
+    polygon_mesh,
+    distance_threshold, angle_threshold, min_region_size,
     vertex_to_point_map);
 
   // Sort indices.
@@ -69,7 +79,7 @@ int main(int argc, char *argv[]) {
 
   // Create an instance of the region growing class.
   Region_growing region_growing(
-    face_range, neighbor_query, region_type, 
+    face_range, neighbor_query, region_type,
     sorting.seed_map());
 
   // Run the algorithm.
@@ -79,7 +89,7 @@ int main(int argc, char *argv[]) {
   region_growing.release_memory();
   assert(regions.size() >= 324 && regions.size() <= 328);
 
-  const bool exact_exact_test_success = (regions.size() >= 323 && regions.size() <= 327);
+  const bool exact_exact_test_success = (regions.size() >= 324 && regions.size() <= 328);
   std::cout << "exact_exact_test_success: " << exact_exact_test_success << std::endl;
 
   const bool success = exact_exact_test_success;

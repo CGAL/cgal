@@ -13,17 +13,17 @@ public:
 /// @{
 
 /*!
-Constructs the `x`-minimal vertex of `c`. 
-\pre The arc `c` is `x`-monotone. 
-*/ 
-CircularKernel::Circular_arc_point_2 operator() 
-(const CircularKernel::Circular_arc_2 & c); 
+Constructs the `x`-minimal vertex of `c`.
+\pre The arc `c` is `x`-monotone.
+*/
+CircularKernel::Circular_arc_point_2 operator()
+(const CircularKernel::Circular_arc_2 & c);
 
 /*!
-Same, for a line segment. 
-*/ 
-CircularKernel::Circular_arc_point_2 operator() 
-(const CircularKernel::Line_arc_2 & l); 
+Same, for a line segment.
+*/
+CircularKernel::Circular_arc_point_2 operator()
+(const CircularKernel::Line_arc_2 & l);
 
 /// @}
 

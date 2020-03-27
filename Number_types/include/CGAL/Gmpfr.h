@@ -1,11 +1,11 @@
 // Copyright (c) 2007-2009 Inria Lorraine (France). All rights reserved.
-// 
+//
 // This file is part of CGAL (www.cgal.org)
-// 
+//
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_GMPFR_H
@@ -74,7 +74,7 @@ public:
 template <>
 class Real_embeddable_traits<Gmpfr>:
 public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
-  
+
         typedef Algebraic_structure_traits<Type>        AST;
 
         public:
@@ -126,7 +126,7 @@ public INTERN_RET::Real_embeddable_traits_base<Gmpfr,CGAL::Tag_true>{
                 inline Comparison_result operator()
                         (const Type &x,const Type &y)const{
                                 return x.compare(y);
-                        }; 
+                        };
           CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT(Type,Comparison_result)
         };
 

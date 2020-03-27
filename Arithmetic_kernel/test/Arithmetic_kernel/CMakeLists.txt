@@ -16,11 +16,11 @@ if ( CGAL_FOUND AND GMP_FOUND )
 
   include(${CGAL_USE_FILE})
   include( CGAL_VersionUtils )
-  
+
   get_dependency_version( GMP )
 
   IS_VERSION_LESS("${GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
-  
+
   include_directories(include)
 
   find_package( MPFI )
@@ -36,7 +36,7 @@ if ( CGAL_FOUND AND GMP_FOUND )
         "MPFI tests need GMP>=4.2, some of the tests will not be compiled" )
     else( _IS_GMP_VERSION_TO_LOW )
       include( ${MPFI_USE_FILE} )
-      create_single_source_cgal_program( "GMP_arithmetic_kernel.cpp" )      
+      create_single_source_cgal_program( "GMP_arithmetic_kernel.cpp" )
     endif( _IS_GMP_VERSION_TO_LOW )
   else( MPFI_FOUND )
     message( STATUS
@@ -49,8 +49,8 @@ if ( CGAL_FOUND AND GMP_FOUND )
   create_single_source_cgal_program( "Get_arithmetic_kernel.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

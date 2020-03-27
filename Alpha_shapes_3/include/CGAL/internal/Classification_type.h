@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot
 //
@@ -22,5 +22,5 @@ namespace CGAL{
   namespace internal{
     enum Classification_type {EXTERIOR,SINGULAR,REGULAR,INTERIOR};
   }
-} 
+}
 #endif //CGAL_INTERNAL_CLASSIFICATION_TYPE_H

@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -19,14 +19,14 @@ namespace CGAL {
 
   /*!
     \ingroup PkgSTLExtensionRef
-    `CGAL::Iterator_range` encapsulates two iterators so they fulfill the `ForwardRange` concept. 
+    `CGAL::Iterator_range` encapsulates two iterators so they fulfill the `ForwardRange` concept.
     The class is essentially a clone of <A href="https://www.boost.org/doc/libs/1_55_0/libs/range/doc/html/range/reference/utilities/iterator_range.html">`boost::iterator_range`</A>,
     and it additionally is derived from `std::pair`, so that one can apply `boost::tie`.
   */
   template <typename I>
   class Iterator_range
     : public std::pair<I,I>{
-    
+
     typedef std::pair<I,I> Base;
 
   public:
@@ -73,40 +73,40 @@ namespace CGAL {
   {
     return x.first;
   }
-  
+
   template<typename T>
   inline T range_end( Iterator_range<T> & x )
   {
     return x.second;
   }
-  
+
   template<typename T>
   inline T range_begin(const Iterator_range<T>& x )
   {
     return x.first;
   }
-  
+
   template<typename T>
   inline T range_end(const Iterator_range<T>& x )
   {
     return x.second;
-  }  
+  }
 } // namespace CGAL
 
 #ifndef DOXYGEN_RUNNING
 
 namespace boost {
-  
-  template <typename X> 
+
+  template <typename X>
   struct range_iterator;
 
-  template <typename X> 
+  template <typename X>
   struct range_mutable_iterator;
 
-  template <typename X> 
+  template <typename X>
   struct range_const_iterator;
 
-  template <typename T> 
+  template <typename T>
   struct range_iterator<CGAL::Iterator_range<T> >
   {
     typedef T type;
@@ -118,7 +118,7 @@ namespace boost {
   {
     typedef T type;
   };
-  
+
   template<typename T>
   struct range_const_iterator< CGAL::Iterator_range<T> >
   {

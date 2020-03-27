@@ -28,7 +28,7 @@ class Scene_interface;
   /*!
    * This class provides a base for creating a new IO plugin.
    */
-class Polyhedron_demo_io_plugin_interface 
+class Polyhedron_demo_io_plugin_interface
 {
 public:
   //! \brief Initializes the plugin
@@ -73,13 +73,13 @@ public:
   //! @attention When a file is successfully saved, it must be removed from the
   //! list.
   virtual bool save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& ) = 0;
-  
+
   //! If this returns `true`, then the loader will be chosen as default in the
-  //! list of available loaders when saving a file, which means it will be the 
+  //! list of available loaders when saving a file, which means it will be the
   //! first in the list.
   virtual bool isDefaultLoader(const Scene_item*) const { return false; }
   //! If this returns `true`, then the loader will be chosen as default in the
-  //! list of available loaders when loading a file, which means it will be the 
+  //! list of available loaders when loading a file, which means it will be the
   //! first in the list.
   //! @param name is the extension without the dot (e.g. "off" for a .off file)
   virtual bool isDefaultLoader(const QString& name) const { Q_UNUSED(name); return false; }

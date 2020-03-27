@@ -12,7 +12,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -27,18 +27,15 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 
 
 find_package(Eigen3 3.3.0)
 
-if (EIGEN3_FOUND)
-  include( ${EIGEN3_USE_FILE} )
-else()  
+if (NOT EIGEN3_FOUND)
   message(STATUS "This project requires the  Eigen library (3.3 or greater), and will not be compiled.")
-
   return()
 endif()
 
@@ -52,5 +49,8 @@ include_directories( BEFORE include )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "heat_method_concept.cpp" )
+CGAL_target_use_Eigen(heat_method_concept)
 create_single_source_cgal_program( "heat_method_surface_mesh_test.cpp" )
+CGAL_target_use_Eigen(heat_method_surface_mesh_test)
 create_single_source_cgal_program( "heat_method_surface_mesh_direct_test.cpp" )
+CGAL_target_use_Eigen(heat_method_surface_mesh_direct_test)

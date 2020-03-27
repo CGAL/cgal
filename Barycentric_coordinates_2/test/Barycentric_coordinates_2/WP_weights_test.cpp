@@ -120,6 +120,6 @@ int main()
     }
 
     cout << endl << "WP_weights_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

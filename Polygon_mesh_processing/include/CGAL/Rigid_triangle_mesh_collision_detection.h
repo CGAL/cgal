@@ -225,7 +225,7 @@ public:
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                          get_const_property_map(boost::vertex_point, tm) );
+                                   get_const_property_map(boost::vertex_point, tm) );
   // now add the mesh
     std::size_t id = get_id_for_new_mesh();
     CGAL_assertion( m_aabb_trees[id] == nullptr );
@@ -529,7 +529,7 @@ public:
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
-                          get_const_property_map(boost::vertex_point, tm) );
+                                   get_const_property_map(boost::vertex_point, tm) );
 
     if (maybe_several_cc)
     {
@@ -537,11 +537,8 @@ public:
       std::vector<std::size_t> cc_ids(num_faces(tm));
 
       // face index map
-      typedef typename CGAL::GetFaceIndexMap<TriangleMesh, NamedParameters>::type Fid_map;
-
-      Fid_map fid_map =
-        parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_index),
-                            get_const_property_map(boost::face_index, tm));
+      typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::const_type FaceIndexMap;
+      FaceIndexMap fid_map = CGAL::get_initialized_face_index_map(tm, np);
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(

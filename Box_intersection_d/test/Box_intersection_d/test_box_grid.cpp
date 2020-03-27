@@ -26,7 +26,7 @@ const Box init_boxes[11] = { Box( p,    p+ 2),  Box( p+ 4, p+ 6),  Box( p+ 8, p+
                              Box( p+24, p+26),  Box( p+28, p+30),  Box( p+32, p+34),
                              Box( p+16, p+18),  Box( p+32, p+34)};
 Box  boxes[11];
-Box* query = boxes+9; 
+Box* query = boxes+9;
 
 void init()
 {

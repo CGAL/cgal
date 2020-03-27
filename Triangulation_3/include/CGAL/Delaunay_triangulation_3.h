@@ -258,7 +258,7 @@ public:
     insert(first, last);
   }
 
-  
+
 private:
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
   std::vector<Vertex_handle>
@@ -406,7 +406,7 @@ public:
 private:
   using Tr_Base::top_get_first;
   using Tr_Base::top_get_second;
-  
+
   template <class Tuple_or_pair,class InputIterator>
   std::ptrdiff_t insert_with_info(InputIterator first, InputIterator last)
   {

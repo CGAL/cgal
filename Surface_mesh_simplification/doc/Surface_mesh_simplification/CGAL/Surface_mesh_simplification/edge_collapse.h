@@ -16,17 +16,16 @@ the number of edges effectively removed.
 @param np optional sequence of \ref sms_namedparameters "Named Parameters" among the ones listed below
 
 \cgalNamedParamsBegin
-  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of the mesh.
-     If this parameter is omitted, an internal property map for
-     `CGAL::vertex_point_t` should be available in `PolygonMesh`
+  \cgalParamBegin{vertex_point_map}
+    the property map with the points associated to the vertices of the mesh.
   \cgalParamEnd
 
   \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`,
     compatible with the value type of the vertex point map.
   \cgalParamEnd
 
-  \cgalParamBegin{halfedge_index_map} the property map containing an index for each halfedge,
-    initialized 0 to `num_halfedges(graph)`
+  \cgalParamBegin{halfedge_index_map}
+    the property map containing for each halfedge of `surface_mesh` a unique index between `0` to `num_halfedges(graph)`.
   \cgalParamEnd
 
   \cgalParamBegin{get_cost}
@@ -38,7 +37,7 @@ the number of edges effectively removed.
   \cgalParamEnd
 
   \cgalParamBegin{edge_is_constrained_map}
-    The property map containing the constrained-or-not status of each edge of `pmesh`
+    The property map containing the constrained-or-not status of each edge of `pmesh`.
   \cgalParamEnd
 
   \cgalParamBegin{visitor}
@@ -57,12 +56,12 @@ the number of edges effectively removed.
 
 \cgalHeading{Semantics}
 
-The simplification process continues until the `should_stop` policy returns `true` 
+The simplification process continues until the `should_stop` policy returns `true`
 or until the surface mesh cannot be simplified any further due to topological constraints.
 
-`get_cost` and `get_placement` are the policies which control 
-the <I>cost-strategy</I>, that is, the order in which edges are collapsed 
-and the remaining vertex is re-positioned. 
+`get_cost` and `get_placement` are the policies which control
+the <I>cost-strategy</I>, that is, the order in which edges are collapsed
+and the remaining vertex is re-positioned.
 
 `visitor` is used to keep track of the simplification process. It has several member functions which
 are called at certain points in the simplification code.

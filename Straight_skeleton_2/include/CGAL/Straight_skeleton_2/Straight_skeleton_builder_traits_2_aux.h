@@ -31,7 +31,7 @@
 
 
 #ifdef CGAL_USE_CORE
-#  include <CGAL/CORE_BigFloat.h>  
+#  include <CGAL/CORE_BigFloat.h>
 #endif
 
 namespace CGAL {
@@ -41,20 +41,20 @@ namespace CGAL_SS_i {
 using boost::optional ;
 using boost::intrusive_ptr ;
 
-template<class T> 
-T const& validate ( boost::optional<T> const& o ) 
-{ 
+template<class T>
+T const& validate ( boost::optional<T> const& o )
+{
   if ( !o )
     throw std::overflow_error("Arithmetic overflow");
-  return *o ;  
+  return *o ;
 }
-  
-template<class NT>  
+
+template<class NT>
 NT const& validate( NT const& n )
-{ 
+{
   if ( !CGAL_NTS is_finite(n) )
     throw std::overflow_error("Arithmetic overflow");
-  return n ;  
+  return n ;
 }
 
 // boost::make_optional is provided in Boost >= 1.34, but not before, so we define our own versions here.
@@ -106,97 +106,22 @@ public:
 
   Exceptionless_filtered_construction() {}
 
-  template <class A1>
+  template <class ... A>
   result_type
-  operator()(const A1 &a1) const
+  operator()(A&& ... a) const
   {
     try
     {
       Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1));
+      FC_result_type fr = Filter_construction(To_Filtered(std::forward<A>(a))...);
       if ( fr )
         return From_Filtered(fr);
     }
     catch (Uncertain_conversion_exception&) {}
 
     Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1)) ;
+    EC_result_type er = Exact_construction(To_Exact(std::forward<A>(a))...) ;
     return From_Exact(er);
-  }
-  
-  template <class A1, class A2>
-  result_type
-  operator()(const A1 &a1, const A2 &a2) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-    
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2)) ;
-    return From_Exact(er);
-  }
-  
-  template <class A1, class A2, class A3>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-    
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3)) ;
-    return From_Exact(er);
-
-  }
-  
-  template <class A1, class A2, class A3, class A4>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3),To_Filtered(a4));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-    
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3), To_Exact(a4)) ;
-    return From_Exact(er);
-
-  }
-  
-  template <class A1, class A2, class A3, class A4, class A5>
-  result_type
-  operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4, const A5 &a5) const
-  {
-    try
-    {
-      Protect_FPU_rounding<Protection> P;
-      FC_result_type fr = Filter_construction(To_Filtered(a1),To_Filtered(a2),To_Filtered(a3),To_Filtered(a4),To_Filtered(a5));
-      if ( fr )
-        return From_Filtered(fr);
-    }
-    catch (Uncertain_conversion_exception&) {}
-    
-    Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
-    EC_result_type er = Exact_construction(To_Exact(a1), To_Exact(a2), To_Exact(a3), To_Exact(a4), To_Exact(a5)) ;
-    return From_Exact(er);
-
   }
 };
 
@@ -217,7 +142,7 @@ class Rational
     NT d() const { return mD ; }
 
     CGAL::Quotient<NT> to_quotient() const { return CGAL::Quotient<NT>(mN,mD) ; }
-    
+
     NT to_nt() const { return mN / mD ; }
 
     friend std::ostream& operator << ( std::ostream& os, Rational<NT> const& rat )
@@ -237,19 +162,19 @@ class Rational
 // A straight skeleton event is the simultaneous coallision of 3 ore    ffseted oriented straight line segments
 // e0*,e1*,e2* [e* denotes an _offseted_ edge].
 //
-// A straight skeleton event is the simultaneous coallision of 3 ore    
+// A straight skeleton event is the simultaneous coallision of 3 ore
 //
 // This record stores the segments corresponding to the INPUT edges (e0,e1,e2) whose offsets intersect
 // at the event along with their collinearity.
 //
 // If the event is a an edge-event, then e0*->e1*->e2* must be consecutive right before the event so that
-// after the event e0* and e2* become consecutive. Thus, there are _offset_ vertices (e0*,e1*) and (e1*,e2*) 
+// after the event e0* and e2* become consecutive. Thus, there are _offset_ vertices (e0*,e1*) and (e1*,e2*)
 // in the offset polygon which not neccesarily exist in the original polygon.
 //
 // If the event is a split-event, e0*->e1* must be consecutive right before the event so that after the event
 // e0*->right(e2*) and left(e2*)->e1* become consecutive. Thus, there is an offset vertex (e0*,e1*) in the
 // offset polygon which not neccesarily exist in the original polygon.
-// 
+//
 // The offset vertices (e0*,e1*) and (e1*,e2*) are called the left and right seeds for the event.
 // A seed is a contour node if the vertex is already present in the input polygon, otherwise is a skeleton node.
 // If a seed is a skeleton node is produced by a previous event so it is itself defined as a trisegment, thus,
@@ -262,48 +187,48 @@ class Trisegment_2 : public Ref_counted_base
 public:
 
   typedef typename K::Segment_2 Segment_2 ;
-    
+
   typedef intrusive_ptr<Trisegment_2> Self_ptr ;
-  
+
 public:
 
   Trisegment_2 ( Segment_2 const&        aE0
                , Segment_2 const&        aE1
                , Segment_2 const&        aE2
-               , Trisegment_collinearity aCollinearity 
-               ) 
+               , Trisegment_collinearity aCollinearity
+               )
   {
     mCollinearity = aCollinearity ;
-    
+
     mE[0] = aE0 ;
     mE[1] = aE1 ;
     mE[2] = aE2 ;
-    
+
     switch ( mCollinearity )
     {
       case TRISEGMENT_COLLINEARITY_01:
         mCSIdx=0; mNCSIdx=2; break ;
-        
+
       case TRISEGMENT_COLLINEARITY_12:
         mCSIdx=1; mNCSIdx=0; break ;
-        
+
       case TRISEGMENT_COLLINEARITY_02:
         mCSIdx=0; mNCSIdx=1; break ;
-        
+
       case TRISEGMENT_COLLINEARITY_ALL:
         mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
-        
+
       case TRISEGMENT_COLLINEARITY_NONE:
         mCSIdx = mNCSIdx = (std::numeric_limits<unsigned>::max)(); break ;
     }
   }
-    
+
   static Trisegment_2 null() { return Self_ptr() ; }
-  
+
   Trisegment_collinearity collinearity() const { return mCollinearity ; }
 
   Segment_2 const& e( unsigned idx ) const { CGAL_precondition(idx<3) ; return mE[idx] ; }
-  
+
   Segment_2 const& e0() const { return e(0) ; }
   Segment_2 const& e1() const { return e(1) ; }
   Segment_2 const& e2() const { return e(2) ; }
@@ -315,20 +240,20 @@ public:
   Segment_2 const& non_collinear_edge() const { return e(mNCSIdx) ; }
 
   Self_ptr child_l() const { return mChildL ; }
-  Self_ptr child_r() const { return mChildR ; } 
-  
+  Self_ptr child_r() const { return mChildR ; }
+
   void set_child_l( Self_ptr const& aChild ) { mChildL = aChild ; }
   void set_child_r( Self_ptr const& aChild ) { mChildR = aChild ; }
-  
+
   enum SEED_ID { LEFT, RIGHT, UNKNOWN } ;
-      
+
   // Indicates which of the seeds is collinear for a normal collinearity case.
   // PRECONDITION: The collinearity is normal.
   SEED_ID degenerate_seed_id() const
   {
     Trisegment_collinearity c = collinearity();
-      
-    return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : UNKNOWN  ; 
+
+    return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : UNKNOWN  ;
   }
 
   friend std::ostream& operator << ( std::ostream& os, Trisegment_2<K> const& aTrisegment )
@@ -336,40 +261,40 @@ public:
     return os << "[" << s2str(aTrisegment.e0())
               << " " << s2str(aTrisegment.e1())
               << " " << s2str(aTrisegment.e2())
-              << " " << trisegment_collinearity_to_string(aTrisegment.collinearity()) 
+              << " " << trisegment_collinearity_to_string(aTrisegment.collinearity())
               << "]";
   }
-  
+
   friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
   {
     recursive_print(os,aPtr,0);
     return os ;
   }
-    
+
   static void recursive_print ( std::ostream& os, Self_ptr const& aTriPtr, int aDepth )
   {
     os << "\n" ;
-    
+
     for ( int i = 0 ; i < aDepth ; ++ i )
       os << "  " ;
-      
+
     if ( aTriPtr )
          os << *aTriPtr ;
     else os << "{null}" ;
-    
+
     if ( aTriPtr->child_l() )
       recursive_print(os,aTriPtr->child_l(),aDepth+1);
-      
+
     if ( aTriPtr->child_r() )
       recursive_print(os,aTriPtr->child_r(),aDepth+1);
   }
-  
+
 private :
-    
+
   Segment_2               mE[3];
   Trisegment_collinearity mCollinearity ;
   unsigned                mCSIdx, mNCSIdx ;
-  
+
   Self_ptr mChildL ;
   Self_ptr mChildR ;
 } ;
@@ -380,9 +305,9 @@ struct Functor_base_2
   typedef typename K::FT        FT ;
   typedef typename K::Point_2   Point_2 ;
   typedef typename K::Segment_2 Segment_2 ;
-  
+
   typedef CGAL_SS_i::Trisegment_2<K> Trisegment_2 ;
-  
+
   typedef typename Trisegment_2::Self_ptr Trisegment_2_ptr ;
 };
 
@@ -406,37 +331,37 @@ struct SS_converter : Converter
 
   typedef boost::tuple<Source_FT,Source_point_2> Source_time_and_point_2 ;
   typedef boost::tuple<Target_FT,Target_point_2> Target_time_and_point_2 ;
-  
+
   typedef boost::optional<Source_FT> Source_opt_FT ;
   typedef boost::optional<Target_FT> Target_opt_FT ;
-  
+
   typedef boost::optional<Source_point_2> Source_opt_point_2 ;
   typedef boost::optional<Target_point_2> Target_opt_point_2 ;
-  
+
   typedef boost::optional<Source_time_and_point_2> Source_opt_time_and_point_2 ;
   typedef boost::optional<Target_time_and_point_2> Target_opt_time_and_point_2 ;
-  
+
   typedef boost::optional<Source_segment_2> Source_opt_segment_2 ;
   typedef boost::optional<Target_segment_2> Target_opt_segment_2 ;
-  
+
   typedef typename Source_trisegment_2::Self_ptr Source_trisegment_2_ptr ;
   typedef typename Target_trisegment_2::Self_ptr Target_trisegment_2_ptr ;
-  
-  
+
+
   Target_FT cvt_n(Source_FT const& n) const  { return this->Converter::operator()(n); }
 
   Target_opt_FT cvt_n(Source_opt_FT const& n) const
-  { 
-    Target_opt_FT r ; 
-    if ( n ) 
+  {
+    Target_opt_FT r ;
+    if ( n )
       r = cvt_n(*n);
-    return r ;  
+    return r ;
   }
-  
+
   Target_point_2   cvt_p(Source_point_2 const& p) const  { return this->Converter::operator()(p); }
 
   Target_segment_2 cvt_s( Source_segment_2 const& e) const { return Target_segment_2(cvt_p(e.source()), cvt_p(e.target()) ) ; }
-  
+
   Target_time_and_point_2 cvt_t_p( Source_time_and_point_2 const& v ) const
   {
     Source_FT      t ;
@@ -444,11 +369,11 @@ struct SS_converter : Converter
     boost::tie(t,p) = v ;
     return Target_time_and_point_2(cvt_n(t),cvt_p(p));
   }
-  
+
   Target_trisegment_2_ptr cvt_single_trisegment( Source_trisegment_2_ptr const& tri ) const
   {
     CGAL_precondition( tri!= Source_trisegment_2_ptr() ) ;
-    
+
     return Target_trisegment_2_ptr ( new Target_trisegment_2(cvt_s(tri->e0())
                                                             ,cvt_s(tri->e1())
                                                             ,cvt_s(tri->e2())
@@ -456,70 +381,70 @@ struct SS_converter : Converter
                                                             )
                                    ) ;
   }
-  
+
   Target_trisegment_2_ptr cvt_trisegment( Source_trisegment_2_ptr const& tri ) const
   {
     Target_trisegment_2_ptr res ;
-    
+
     if ( tri )
     {
       res = cvt_single_trisegment(tri) ;
-      
+
       if ( tri->child_l() )
         res->set_child_l( cvt_trisegment(tri->child_l()) ) ;
-        
+
       if ( tri->child_r() )
         res->set_child_r( cvt_trisegment(tri->child_r() ) ) ;
     }
-      
+
     return res ;
   }
-  
+
   bool operator()( bool v ) const { return v ; }
-  
+
   Trisegment_collinearity  operator()(Trisegment_collinearity c) const { return c ; }
-  
+
   Oriented_side operator()(Oriented_side s) const { return s ; }
-  
+
   Target_FT        operator()(Source_FT const& n) const { return cvt_n(n) ; }
 
   Target_opt_FT    operator()(Source_opt_FT const& n) const { return cvt_n(n) ; }
-  
+
   Target_point_2   operator()( Source_point_2 const& p) const { return cvt_p(p) ; }
 
   Target_segment_2 operator()( Source_segment_2 const& s) const { return cvt_s(s); }
-  
+
   Target_trisegment_2_ptr operator()( Source_trisegment_2_ptr const& tri ) const
   {
     return cvt_trisegment(tri);
   }
-  
+
   Target_time_and_point_2 operator() ( Source_time_and_point_2 const& v ) const
   {
     return cvt_t_p(v);
   }
-  
-  Target_opt_point_2 operator()( Source_opt_point_2 const& p) const 
+
+  Target_opt_point_2 operator()( Source_opt_point_2 const& p) const
   {
-    if ( p ) 
+    if ( p )
          return Target_opt_point_2(cvt_p(*p));
     else return Target_opt_point_2();
   }
 
-  Target_opt_segment_2 operator()( Source_opt_segment_2 const& s) const 
+  Target_opt_segment_2 operator()( Source_opt_segment_2 const& s) const
   {
-    if ( s ) 
+    if ( s )
          return Target_opt_segment_2(cvt_s(*s));
     else return Target_opt_segment_2();
   }
-  
-  Target_opt_time_and_point_2 operator()( Source_opt_time_and_point_2 const& v) const 
-  { 
-    if ( v ) 
+
+  Target_opt_time_and_point_2 operator()( Source_opt_time_and_point_2 const& v) const
+  {
+    if ( v )
          return Target_opt_time_and_point_2(cvt_t_p(*v));
     else return Target_opt_time_and_point_2();
   }
-  
+
 };
 
 } // namespace CGAL_SS_i

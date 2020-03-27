@@ -65,7 +65,7 @@ int main()
   std::vector<Path_on_surface<SM> > paths={p1, p2, p3};
   CGAL::draw(sm, paths); // Enable only if CGAL was compiled with Qt5
 #endif // CGAL_USE_BASIC_VIEWER
-  
+
   return EXIT_SUCCESS;
 }
 ///////////////////////////////////////////////////////////////////////////////

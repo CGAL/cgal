@@ -1,16 +1,16 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Michael Seel
 
@@ -43,7 +43,7 @@
 namespace CGAL {
 
 template <class pRT, class pLA = Linear_algebraHd<pRT> >
-class Homogeneous_d 
+class Homogeneous_d
 {
 public:
   typedef Homogeneous_d<pRT,pLA> Self;
@@ -81,7 +81,7 @@ public:
 
   template <typename K>
   class Construct_cartesian_const_iterator
-  {    
+  {
     typedef typename K::Point_d Point_d;
     typedef typename K::Cartesian_const_iterator_d  Cartesian_const_iterator_d;
 
@@ -93,7 +93,7 @@ public:
     {
       return p.cartesian_begin();
     }
-    
+
     Cartesian_const_iterator_d
     operator()( const Point_d& p, int) const
     {
@@ -104,7 +104,7 @@ public:
   // TODO: Make it work for the other values
  template <typename K>
   class Construct_vertex
-  {    
+  {
     typedef typename K::Point_d Point_d;
     typedef typename K::Iso_box_d Iso_box_d;
     typedef typename K::Cartesian_const_iterator_d  Cartesian_const_iterator_d;
@@ -114,19 +114,19 @@ public:
     Point_d operator()(const Iso_box_d&  b, int i)
     {
       if(i == 0){
-	return (b.min)();
+        return (b.min)();
       }
       return (b.max)();
     }
   };
-  
+
 
   typedef Construct_vertex<Self> Construct_vertex_d;
 
 
  template <typename K>
   class Construct_min_vertex
-  {    
+  {
     typedef typename K::Point_d Point_d;
     typedef typename K::Iso_box_d Iso_box_d;
   public:
@@ -148,7 +148,7 @@ public:
 
  template <typename K>
   class Construct_max_vertex
-  {    
+  {
     typedef typename K::Point_d Point_d;
     typedef typename K::Iso_box_d Iso_box_d;
   public:
@@ -168,7 +168,7 @@ public:
   }
 
 
-  typedef Construct_cartesian_const_iterator<Self> 
+  typedef Construct_cartesian_const_iterator<Self>
                            Construct_cartesian_const_iterator_d;
 
   Construct_cartesian_const_iterator_d
@@ -222,9 +222,9 @@ public:
   Construct_sphere_d construct_sphere_d_object() const
   { return Construct_sphere_d(); }
 
-  typedef internal::Construct<Aff_transformation_d> 
+  typedef internal::Construct<Aff_transformation_d>
     Construct_aff_transformation_d;
-  Construct_aff_transformation_d 
+  Construct_aff_transformation_d
     construct_aff_transformation_d_object() const
   { return Construct_aff_transformation_d(); }
 
@@ -283,7 +283,7 @@ public:
   { return Contained_in_simplex_d(); }
   Contained_in_affine_hull_d contained_in_affine_hull_d_object() const
   { return Contained_in_affine_hull_d(); }
-  Affine_rank_d affine_rank_d_object() const 
+  Affine_rank_d affine_rank_d_object() const
   { return Affine_rank_d(); }
   Affinely_independent_d affinely_independent_d_object() const
   { return Affinely_independent_d(); }
@@ -293,23 +293,23 @@ public:
   { return Compare_lexicographically_d(); }
   Less_lexicographically_d less_lexicographically_d_object() const
   { return Less_lexicographically_d(); }
-  Less_or_equal_lexicographically_d 
+  Less_or_equal_lexicographically_d
     less_or_equal_lexicographically_d_object() const
   { return Less_or_equal_lexicographically_d(); }
   Center_of_sphere_d center_of_sphere_d_object() const
   { return Center_of_sphere_d(); }
   Contained_in_linear_hull_d contained_in_linear_hull_d_object() const
   { return Contained_in_linear_hull_d(); }
-  Linear_rank_d linear_rank_d_object() const 
+  Linear_rank_d linear_rank_d_object() const
   { return Linear_rank_d(); }
   Linearly_independent_d linearly_independent_d_object() const
   { return Linearly_independent_d(); }
-  Linear_base_d linear_base_d_object() const 
+  Linear_base_d linear_base_d_object() const
   { return Linear_base_d(); }
 
   // Intersection objects:
   typedef CGAL::Line_line_intersectionHd<Self> Line_line_intersection_d;
-  typedef CGAL::Line_hyperplane_intersectionHd<Self> 
+  typedef CGAL::Line_hyperplane_intersectionHd<Self>
                                                Line_hyperplane_intersection_d;
   typedef CGAL::Line_d_Line_d_pair<Self> Line_d_Line_d_pair;
   typedef CGAL::Ray_d_Ray_d_pair<Self> Ray_d_Ray_d_pair;
@@ -322,7 +322,7 @@ public:
   typedef CGAL::Segment_d_Hyperplane_d_pair<Self> Segment_d_Hyperplane_d_pair;
 
   typedef internal::Intersect<Self> Intersect_d;
-  Intersect_d intersect_d_object() const 
+  Intersect_d intersect_d_object() const
   { return Intersect_d(); }
 
   typedef internal::Do_intersect<Self> Do_intersect_d;
@@ -333,13 +333,13 @@ public:
 
   static  FT  make_FT(const RT & num, const RT& denom)
   { return FT(num, denom); }
-  
+
   static  FT  make_FT(const RT & num)
   { return FT(num); }
-  
+
   static  RT FT_numerator(const FT &r)
   { return r.numerator(); }
-  
+
   static  RT FT_denominator(const FT &r)
   { return r.denominator(); }
 
@@ -384,7 +384,7 @@ public:
   };
   Vector_to_point_d vector_to_point_d_object() const
   { return Vector_to_point_d(); }
-  
+
   struct Orthogonal_vector_d {
     Vector_d operator()(const Hyperplane_d& h) const
     { return h.orthogonal_vector(); }
@@ -400,8 +400,8 @@ public:
   { return Point_of_sphere_d(); }
 
 }; // Homogeneous_d<R>
- 
- 
+
+
 } //namespace CGAL
 
 #include <CGAL/Kernel_d/Point_d.h>

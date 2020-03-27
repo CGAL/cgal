@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgLinearCellComplexClasses
 
-This geometric traits concept is used in the `Linear_cell_complex_for_combinatorial_map` and `Linear_cell_complex_for_generalized_map` classes. It can take as parameter any model of the concept `Kernel` (for example any \cgal kernel), and defines inner types and functors corresponding to the given dimension. 
+This geometric traits concept is used in the `Linear_cell_complex_for_combinatorial_map` and `Linear_cell_complex_for_generalized_map` classes. It can take as parameter any model of the concept `Kernel` (for example any \cgal kernel), and defines inner types and functors corresponding to the given dimension.
 
 \cgalModels `LinearCellComplexTraits`
 

@@ -41,29 +41,41 @@ if ( CGAL_FOUND )
   # Use Eigen
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
     # Executables that require Eigen
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
+    CGAL_target_use_Eigen(normal_estimation_test)
+
     create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
+    CGAL_target_use_Eigen(hierarchy_simplification_test)
+
     create_single_source_cgal_program( "smoothing_test.cpp" )
+    CGAL_target_use_Eigen(smoothing_test)
+
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
+    CGAL_target_use_Eigen(vcm_plane_test)
+
     create_single_source_cgal_program( "vcm_all_test.cpp" )
+    CGAL_target_use_Eigen(vcm_all_test)
+
     create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
+    CGAL_target_use_Eigen(jet_pointer_as_property_map)
   else()
     message(STATUS "NOTICE: This program requires Eigen 3.1 (or greater) and will not be compiled.")
   endif()
 
-  foreach(target
-      analysis_test
-      smoothing_test
-      bilateral_smoothing_test
-      wlop_simplify_and_regularize_test
-      edge_aware_upsample_test
-      normal_estimation_test)
-    if(TBB_FOUND AND TARGET ${target})
-      CGAL_target_use_TBB(${target})
-    endif()
-  endforeach()
+  if (TBB_FOUND)
+    foreach(target
+        analysis_test
+        smoothing_test
+        bilateral_smoothing_test
+        wlop_simplify_and_regularize_test
+        edge_aware_upsample_test
+        normal_estimation_test)
+      if(TARGET ${target})
+        CGAL_target_use_TBB(${target})
+      endif()
+    endforeach()
+  endif()
 
 else()
 

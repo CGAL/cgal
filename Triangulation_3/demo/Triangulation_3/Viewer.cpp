@@ -1099,7 +1099,7 @@ void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
     {
         mvMatrix.data()[i] = (float)mat[i];
     }
-    QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+    QVector4D        position(0.0f,0.0f,1.0f,1.0f );
     // Ambient
     ambient[0] = 0.29225f;
     ambient[1] = 0.29225f;
@@ -1213,7 +1213,7 @@ void Viewer::draw()
         // Insert point mode
         if( m_curMode == INSERT_PT) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Insert a point"), fontPrompt );
             drawText( width()-200, 40, tr("Hold Left: Move the point"), fontPrompt );
             drawText( width()-200, 60, tr("Return: Insert to DT"), fontPrompt );
@@ -1237,7 +1237,7 @@ void Viewer::draw()
         }
         else if( m_curMode == SELECT) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Select"), fontPrompt );
             drawText( width()-200, 40, tr("Ctrl+Left: Add selection"),
                       QFont("Arial", 14) );
@@ -1253,7 +1253,7 @@ void Viewer::draw()
         }
         else if( m_curMode == MOVE ) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Left Click: Select"), fontPrompt );
             if(m_isMoving)
                 drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1267,7 +1267,7 @@ void Viewer::draw()
         }
         else if( m_curMode == FINDNB ) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
             rendering_program.bind();
@@ -1286,7 +1286,7 @@ void Viewer::draw()
         }
         else if(m_curMode == EMPTYSPH){
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Press S: Show/Hide trackball"), fontPrompt );
             drawText( width()-200, 60, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1316,7 +1316,7 @@ void Viewer::draw()
             switch( m_curStep ) {
             case NEWPT:
                 // Show prompt messages
-                
+
                 drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
                 // Highlight the next-to-insert point
                 rendering_program.bind();
@@ -1330,7 +1330,7 @@ void Viewer::draw()
                 break;
             case CELL:  // show the tetrahedron that contains the point
                 // Show prompt messages
-                
+
                 drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
                 drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
                 // Highlight the next-to-insert vertex
@@ -1352,7 +1352,7 @@ void Viewer::draw()
                 break;
             case CONFLICT:  // show the conflict region
                 // Show prompt messages
-                
+
                 drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
                 // Highlight the next-to-insert vertex
                 rendering_program.bind();
@@ -1411,7 +1411,7 @@ void Viewer::draw()
 
         if( m_curMode == INSERT_PT) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Insert a point"), fontPrompt );
             drawText( width()-200, 40, tr("Hold Left: Move the point"), fontPrompt );
             drawText( width()-200, 60, tr("Return: Insert to DT"), fontPrompt );
@@ -1436,7 +1436,7 @@ void Viewer::draw()
         }
         else if( m_curMode == SELECT) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Select"), fontPrompt );
             drawText( width()-200, 40, tr("Ctrl+Left: Add selection"),
                       QFont("Arial", 14) );
@@ -1452,7 +1452,7 @@ void Viewer::draw()
         }
         else if( m_curMode == MOVE ) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Left Click: Select"), fontPrompt );
             if(m_isMoving)
                 drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1466,7 +1466,7 @@ void Viewer::draw()
         }
         else if( m_curMode == FINDNB ) {
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
             rendering_program_spheres.bind();
@@ -1486,7 +1486,7 @@ void Viewer::draw()
         }
         else if(m_curMode == EMPTYSPH){
             // Show prompt messages
-            
+
             drawText( width()-200, 20, tr("Shift+Left: Place query point"), fontPrompt );
             drawText( width()-200, 40, tr("Press S: Show/Hide trackball"), fontPrompt );
             drawText( width()-200, 60, tr("Shift+Wheel: Resize trackball"), fontPrompt );
@@ -1518,7 +1518,7 @@ void Viewer::draw()
             switch( m_curStep ) {
             case NEWPT:
                 // Show prompt messages
-                
+
                 drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
                 // Highlight the next-to-insert point
                 rendering_program_spheres.bind();
@@ -1531,7 +1531,7 @@ void Viewer::draw()
                 break;
             case CELL:  // show the tetrahedron that contains the point
                 // Show prompt messages
-                
+
                 drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
                 drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
                 // Highlight the next-to-insert vertex
@@ -1552,7 +1552,7 @@ void Viewer::draw()
                 break;
             case CONFLICT:  // show the conflict region
                 // Show prompt messages
-                
+
                 drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
                 // Highlight the next-to-insert vertex
                 rendering_program_spheres.bind();
@@ -1589,7 +1589,7 @@ void Viewer::draw()
     }
     if( m_curMode == INSERT_V  ) {
         // Show prompt messages
-        
+
         drawText( width()-200, 20, tr("Shift+Left: Insert a vertex"), fontPrompt );
         drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
 
@@ -1679,7 +1679,7 @@ void Viewer::drawWithNames()
     rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
     buffers[33].release();
     vao[3].release();
-    
+
     QMatrix4x4 mvpMatrix;
     double mat[16];
     camera()->getModelViewProjectionMatrix(mat);
@@ -1694,7 +1694,7 @@ void Viewer::drawWithNames()
     glDrawArrays(GL_POINTS,0,1);
     vao[27].release();
     rendering_program.release();
-    
+
     //read depth and store in map
     GLfloat depth = 1.0f;
     glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
@@ -1702,8 +1702,8 @@ void Viewer::drawWithNames()
     {
       picked_IDs[depth] = i;
     }
-    
-    
+
+
   }//end-for-points
 
     // push a name for the newly inserted point
@@ -1714,7 +1714,7 @@ void Viewer::drawWithNames()
         //draw point
         GLfloat buf[3];
         buf[0]=m_newPt.x();
-        buf[1]=m_newPt.y(); 
+        buf[1]=m_newPt.y();
         buf[2]=m_newPt.z();
         rendering_program.bind();
         vao[27].bind();
@@ -1723,7 +1723,7 @@ void Viewer::drawWithNames()
         rendering_program.enableAttributeArray("vertex");
         rendering_program.setAttributeArray("vertex",GL_FLOAT,0,3);
         buffers[33].release();
-        
+
         QMatrix4x4 mvpMatrix;
         double mat[16];
         camera()->getModelViewProjectionMatrix(mat);
@@ -1738,7 +1738,7 @@ void Viewer::drawWithNames()
         glDrawArrays(GL_POINTS,0,1);
         vao[3].release();
         rendering_program.release();
-        
+
         //read depth and store in map
         GLfloat depth = 1.0f;
         glReadPixels(picking_pos.x(),camera()->screenHeight()-1-picking_pos.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
@@ -1747,8 +1747,8 @@ void Viewer::drawWithNames()
           picked_IDs[depth] = -1;
         }
     }//end-if-newPt
-    
-  
+
+
 }
 void Viewer::beginSelection(const QPoint &point)
 {
@@ -1760,7 +1760,7 @@ void Viewer::endSelection(const QPoint& p)
   CGAL::QGLViewer::endSelection(p);
   // flush GL buffers
   glFlush();
-  
+
   bool picked = false;
   int id = 0;
   QList<float> depths = picked_IDs.keys();
@@ -1777,7 +1777,7 @@ void Viewer::endSelection(const QPoint& p)
             m_isPress = false;
     }//end-if-notselected
 
-    
+
     /* Check whether the new point is clicked on */
     else if( m_curMode == INSERT_PT ) {
         if( m_hasNewPt && (id == -1 ))
@@ -1804,7 +1804,7 @@ void Viewer::endSelection(const QPoint& p)
             m_vidSeled.clear();
 
             // record the new selections
-            
+
                 m_vidSeled.push_back(id);
                 m_pScene->m_vhArray.at( m_vidSeled.back() )->setSeled();
         } else {

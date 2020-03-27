@@ -340,7 +340,7 @@ public:
 
   class Parameter_space_in_x_2;
   class Parameter_space_in_y_2;
-  
+
   /*! A functor that computes intersections between x-monotone curves. */
   class Intersect_2 {
   protected:
@@ -1179,7 +1179,7 @@ public:
     {
       return m_base->compare_x_near_boundary_2_object()(xcv1.base(),
                                                         xcv2.base(),
-							ce);
+                                                        ce);
     }
   };
 

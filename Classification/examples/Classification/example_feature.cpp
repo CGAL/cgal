@@ -58,7 +58,7 @@ public:
     else
       return 0.f;
   }
-    
+
 };
 
 //! [Feature]
@@ -95,14 +95,14 @@ int main (int argc, char** argv)
   // Feature that identifies points whose x coordinate is between -20
   // and 20 and whose y coordinate is between -15 and 15
   Feature_handle my_feature = features.add<My_feature> (pts, -20., 20., -15., 15.);
-  
+
   //! [Addition]
   ///////////////////////////////////////////////////////////////////
-  
+
   Feature_handle verticality = features.add<Verticality> (pts, eigen);
 
   Classifier classifier (labels, features);
-  
+
   std::cerr << "Setting weights" << std::endl;
   classifier.set_weight(verticality, 0.5);
   classifier.set_weight(my_feature, 0.25);

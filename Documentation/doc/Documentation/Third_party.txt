@@ -126,12 +126,37 @@ The exhaustive list of \sc{Qt}5 components used in demos is:
 \sc{Eigen} is a `C++` template library for linear algebra. \sc{Eigen} supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
 
-In \cgal, \sc{Eigen} is used in many packages such as \ref PkgPoissonSurfaceReconstruction3
-or \ref PkgJetFitting3, providing sparse linear solvers and singular value decompositions.
-A package dependency over \sc{Eigen} is marked on the
-<a href="https://doc.cgal.org/latest/Manual/packages.html">Package Overview</a> page.
+In \cgal, \sc{Eigen} is used in many packages such as \ref
+PkgPoissonSurfaceReconstruction3 or \ref PkgJetFitting3, providing
+sparse linear solvers and singular value decompositions.  A package
+dependency over \sc{Eigen} is marked on the <a
+href="https://doc.cgal.org/latest/Manual/packages.html">Package
+Overview</a> page. In order to use Eigen in \cgal programs, the
+provided CMake function `CGAL_target_use_Eigen(<target>)` should be
+used.
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
+
+\subsection thirdpartyOpenGR OpenGR
+
+\sc{OpenGR} is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 licence.
+
+\cgal provides wrappers for the Super4PCS algorithm of \sc{OpenGR} in the \ref PkgPointSetProcessing3Ref
+packages. In order to use \sc{OpenGR} in \cgal programs, the provided CMake function
+`CGAL_target_use_OpenGR(<target>)` should be used.
+
+The \sc{OpenGR} web site is <A HREF="https://github.com/STORM-IRIT/OpenGR">`https://github.com/STORM-IRIT/OpenGR`</A>.
+
+\subsection thirdpartylibpointmatcher PointMatcher
+
+\sc{libpointmatcher} is a modular library implementing the Iterative Closest Point (ICP) algorithm for aligning point clouds, released under a permissive BSD license.
+
+\cgal provides wrappers for the ICP algorithm of \sc{libpointmatcher} in the \ref PkgPointSetProcessing3Ref
+packages. In order to use \sc{libpointmatcher} in \cgal programs, the provided CMake function
+`CGAL_target_use_pointmatcher(<target>)` should be used.
+
+The \sc{libpointmatcher} web site is <A
+HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/libpointmatcher`</A>.
 
 \subsection thirdpartyLeda LEDA
 <b>Version 6.2 or later</b>
@@ -194,7 +219,9 @@ It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.
 \sc{Tbb} (Threading Building Blocks) is a library developed by Intel Corporation for writing software
 programs that take advantage of multi-core processors.
 
-In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
+In \cgal, \sc{Tbb} is used by the packages that offer parallel
+code. In order to use \sc{Tbb} in \cgal programs, the provided CMake
+function `CGAL_target_use_TBB(<target>)` should be used.
 
 The \sc{Tbb} web site is <A HREF="https://www.threadingbuildingblocks.org">`https://www.threadingbuildingblocks.org`</A>.
 
@@ -204,7 +231,9 @@ The \sc{Tbb} web site is <A HREF="https://www.threadingbuildingblocks.org">`http
 the LAS format (or the compressed LAZ format).
 
 In \cgal, \sc{LASlib} is used to provide input and output functions in
-the \ref PkgPointSetProcessing3 package.
+the \ref PkgPointSetProcessing3 package. In order to use \sc{LASlib} in
+\cgal programs, the provided CMake function
+`CGAL_target_use_LASLIB(<target>)` should be used.
 
 The \sc{LASlib} web site is <a
 href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \sc{LASlib}
@@ -217,7 +246,9 @@ CMake based install procedure</a>.
 \sc{OpenCV} (Open Computer Vision) is a library designed for computer
 vision, computer graphics and machine learning.
 
-In \cgal, \sc{OpenCV} is used by the \ref PkgClassification package.
+In \cgal, \sc{OpenCV} is used by the \ref PkgClassification
+package. In order to use \sc{OpenCV} in \cgal programs, the provided
+CMake function `CGAL_target_use_OpenCV(<target>)` should be used.
 
 The \sc{OpenCV} web site is <A HREF="https://opencv.org/">`https://opencv.org/`</A>.
 
@@ -234,6 +265,9 @@ enable and compile the following targets:
 - `tensorflow_BUILD_ALL_KERNELS`
 - `tensorflow_BUILD_PYTHON_BINDINGS`
 - `tensorflow_BUILD_SHARED_LIB`.
+
+In order to use \sc{TensorFlow} in \cgal programs, the provided CMake
+function `CGAL_target_use_TensorFlow(<target>)` should be used.
 
 The \sc{TensorFlow} web site is <A HREF="https://www.tensorflow.org/">`https://www.tensorflow.org/`</A>.
 
@@ -274,7 +308,10 @@ for more information.
 
 \sc{GLPK} (GNU Linear Programming Kit) is a library for solving linear programming (LP), mixed integer programming (MIP), and other related problems.
 
-In \cgal, \sc{GLPK} provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+In \cgal, \sc{GLPK} provides an optional linear integer program solver
+in the \ref PkgPolygonalSurfaceReconstruction package. In order to use
+\sc{GLPK} in \cgal programs, the provided CMake function
+`CGAL_target_use_GLPK(<target>)` should be used.
 
 The \sc{GLPK} web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.gnu.org/software/glpk/`</A>.
 
@@ -282,7 +319,10 @@ The \sc{GLPK} web site is <A HREF="https://www.gnu.org/software/glpk/">`https://
 
 \sc{SCIP} (Solving Constraint Integer Programs) is currently one of the fastest open source solvers for mixed integer programming (MIP) and mixed integer nonlinear programming (MINLP).
 
-In \cgal, \sc{SCIP} provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
+In \cgal, \sc{SCIP} provides an optional linear integer program solver
+in the \ref PkgPolygonalSurfaceReconstruction package. In order to use
+\sc{SCIP} in \cgal programs, the provided CMake function
+`CGAL_target_use_SCIP(<target>)` should be used.
 
 The \sc{SCIP} web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A>.
 

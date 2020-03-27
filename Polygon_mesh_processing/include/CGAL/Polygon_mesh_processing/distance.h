@@ -77,7 +77,7 @@ triangle_grid_sampling(const typename Kernel::Point_3& p0,
 template <class AABB_tree, class PointRange>
 struct Distance_computation{
   typedef typename PointRange::const_iterator::value_type Point_3;
-  
+
   const AABB_tree& tree;
   const PointRange& sample_points;
   Point_3 initial_hint;
@@ -198,7 +198,8 @@ struct Triangle_structure_sampler_base
     using parameters::get_parameter;
     using parameters::is_default_parameter;
 
-    gt = choose_parameter(get_parameter(np, internal_np::geom_traits), GeomTraits());
+    gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
+       
 
     bool use_rs = choose_parameter(get_parameter(np, internal_np::random_uniform_sampling), true);
     bool use_gs = choose_parameter(get_parameter(np, internal_np::grid_sampling), false);

@@ -15,7 +15,7 @@
 #include <CGAL/Cell_attribute_with_point.h>
 
 namespace CGAL {
-  
+
   // A cell attribute with point and id, when Info_!=void
   template <class Refs, class Info_=void, class Tag_=Tag_true,
             class OnMerge=Null_functor,

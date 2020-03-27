@@ -35,7 +35,7 @@ namespace internal {
   template <typename Traits>
   class Construct_hyperbolic_circumcenter_CK_2
   {
-    typedef typename Traits::Hyperbolic_Voronoi_point_2     Hyperbolic_Voronoi_point_2;  
+    typedef typename Traits::Hyperbolic_Voronoi_point_2     Hyperbolic_Voronoi_point_2;
     typedef typename Traits::Hyperbolic_point_2             Hyperbolic_point_2;
     typedef typename Traits::Euclidean_circle_or_line_2     Euclidean_circle_or_line_2;
     typedef typename Traits::Euclidean_line_2               Euclidean_line_2;
@@ -56,7 +56,7 @@ namespace internal {
       Hyperbolic_point_2 po(CGAL::ORIGIN);
       Circle_2 l_inf(po, FT(1));
 
-      if( _gt.compare_distance_2_object()(po, p, q) == EQUAL && 
+      if( _gt.compare_distance_2_object()(po, p, q) == EQUAL &&
           _gt.compare_distance_2_object()(po, p, r) == EQUAL)
         return po;
 
@@ -366,7 +366,7 @@ public:
   Construct_hyperbolic_circumcenter_2
   construct_hyperbolic_circumcenter_2_object() const
   { return Construct_hyperbolic_circumcenter_2(*this); }
-  
+
   Construct_hyperbolic_bisector_2
   construct_hyperbolic_bisector_2_object() const
   { return Construct_hyperbolic_bisector_2(*this); }

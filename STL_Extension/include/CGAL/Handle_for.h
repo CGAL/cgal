@@ -1,19 +1,19 @@
-// Copyright (c) 1999,2001,2003  
+// Copyright (c) 1999,2001,2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
- 
+
 #ifndef CGAL_HANDLE_FOR_H
 #define CGAL_HANDLE_FOR_H
 
@@ -54,7 +54,7 @@ class Handle_for
 public:
 
     typedef T element_type;
-    
+
     typedef std::ptrdiff_t Id_type ;
 
     Handle_for()
@@ -102,15 +102,15 @@ public:
         ptr_ = p;
     }
 
-    Handle_for(const Handle_for& h)
+    Handle_for(const Handle_for& h) noexcept
       : ptr_(h.ptr_)
     {
-	CGAL_assume (ptr_->count > 0);
+        CGAL_assume (ptr_->count > 0);
         ++(ptr_->count);
     }
 
     Handle_for&
-    operator=(const Handle_for& h)
+    operator=(const Handle_for& h) noexcept
     {
         Handle_for tmp = h;
         swap(tmp);
@@ -132,7 +132,7 @@ public:
     //        from e.g. using nullptr as a ptr value, but this is drastic.
 
     Handle_for&
-    operator=(Handle_for && h)
+    operator=(Handle_for && h) noexcept
     {
         swap(h);
         return *this;
@@ -164,15 +164,15 @@ public:
         *this = t;
     }
 
-    Id_type id() const { return Ptr() - static_cast<T const*>(0); }
-    
-    bool identical(const Handle_for& h) const { return Ptr() == h.Ptr(); }
+    Id_type id() const noexcept { return Ptr() - static_cast<T const*>(0); }
+
+    bool identical(const Handle_for& h) const noexcept { return Ptr() == h.Ptr(); }
 
 
     // Ptr() is the "public" access to the pointer to the object.
     // The non-const version asserts that the instance is not shared.
     const element_type *
-    Ptr() const
+    Ptr() const noexcept
     {
        return &(ptr_->t);
     }
@@ -188,25 +188,25 @@ public:
     */
 
     bool
-    is_shared() const
+    is_shared() const noexcept
     {
-	return ptr_->count > 1;
+        return ptr_->count > 1;
     }
 
     bool
-    unique() const
+    unique() const noexcept
     {
-	return !is_shared();
+        return !is_shared();
     }
 
     long
-    use_count() const
+    use_count() const noexcept
     {
-	return ptr_->count;
+        return ptr_->count;
     }
 
     void
-    swap(Handle_for& h)
+    swap(Handle_for& h) noexcept
     {
       std::swap(ptr_, h.ptr_);
     }
@@ -222,11 +222,11 @@ protected:
     // ptr() is the protected access to the pointer.  Both const and non-const.
     // Redundant with Ptr().
     element_type *
-    ptr()
+    ptr() noexcept
     { return &(ptr_->t); }
 
     const element_type *
-    ptr() const
+    ptr() const noexcept
     { return &(ptr_->t); }
 };
 

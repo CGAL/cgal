@@ -80,14 +80,14 @@ void transform_form(const Nef_polyhedron& N, Nef_polyhedron& F) {
   y_max = CGAL_NTS abs(vi->point().hy()/vi->point().hw());
   z_max = CGAL_NTS abs(vi->point().hz()/vi->point().hw());
   for(;vi != N.vertices_end();++vi) {
-    if(CGAL_NTS abs(vi->point().hx()/vi->point().hw()) > x_max) 
+    if(CGAL_NTS abs(vi->point().hx()/vi->point().hw()) > x_max)
       x_max = CGAL_NTS abs(vi->point().hx()/vi->point().hw());
-    if(CGAL_NTS abs(vi->point().hy()/vi->point().hw()) > y_max) 
+    if(CGAL_NTS abs(vi->point().hy()/vi->point().hw()) > y_max)
       y_max = CGAL_NTS abs(vi->point().hy()/vi->point().hw());
-    if(CGAL_NTS abs(vi->point().hz()/vi->point().hw()) > z_max) 
+    if(CGAL_NTS abs(vi->point().hz()/vi->point().hw()) > z_max)
       z_max = CGAL_NTS abs(vi->point().hz()/vi->point().hw());
   }
-  
+
   x_max*105/100;
   y_max*105/100;
   z_max*105/100;
@@ -99,7 +99,7 @@ void transform_form(const Nef_polyhedron& N, Nef_polyhedron& F) {
 int main(int argc, char* argv[]) {
 
   CGAL_assertion(argc==2);
-  
+
   Nef_polyhedron N,F;
 
   std::ifstream Fin("centered_cube.nef3");
@@ -107,9 +107,9 @@ int main(int argc, char* argv[]) {
 
   std::ifstream Nin(argv[1]);
   Nin >> N;
-  
+
   transform_form(N,F);
-  
+
   cgal_nef3_timer_on = true;
   F.difference(N);
 };

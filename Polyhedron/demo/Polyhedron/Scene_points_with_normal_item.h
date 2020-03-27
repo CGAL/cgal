@@ -65,7 +65,7 @@ public:
 
   virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE;
   virtual void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
-  
+
   // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;

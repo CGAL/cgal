@@ -77,7 +77,7 @@ class Change_array_functor<std::vector<Truc> >
 public:
   Change_array_functor(std::vector<Truc> &v)
     : m_v(v) {}
-  
+
   Change_array_functor(const Change_array_functor &caf)
     : m_v(caf.m_v) {}
 
@@ -161,7 +161,7 @@ double change_array(Array_t &v, Sequential_with_forward_access_tag)
   CGAL::Real_timer t;
   t.start();
   typename Array_t::iterator it = v.begin(), it_end = v.end();
-  
+
   for ( ; it != it_end ; ++it)
     compute_the_thing(*it);
 
@@ -213,14 +213,14 @@ void benchmark(Array_t &v)
   double seq_time_random = change_array(v, Sequential_with_random_access_tag());
   std::cout << "* Parallel_for algorithm => ";
   double parallel_for_time = change_array(v, Parallel_for_tag());
-  std::cout << "Speed-up parallel_for (operator[]) = " 
+  std::cout << "Speed-up parallel_for (operator[]) = "
     << seq_time_random/parallel_for_time << std::endl << std::endl;
-  
+
   std::cout << "* Sequential algorithm (forward access) => ";
   double seq_time_fw = change_array(v, Sequential_with_forward_access_tag());
   std::cout << "* Parallel_do algorithm => ";
   double parallel_do_time = change_array(v, Parallel_do_tag());
-  std::cout << "Speed-up parallel_do (iterators) = " 
+  std::cout << "Speed-up parallel_do (iterators) = "
     << seq_time_fw/parallel_do_time << std::endl << std::endl;
 }
 

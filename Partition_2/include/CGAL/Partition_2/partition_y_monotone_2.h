@@ -6,20 +6,20 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 //
-// Implementaion of the algorithm from pp 49--55 of "Computational Geometry 
-// Algorithms and  Applications" by de Berg, van Kreveld, Overmars, and 
+// Implementaion of the algorithm from pp 49--55 of "Computational Geometry
+// Algorithms and  Applications" by de Berg, van Kreveld, Overmars, and
 // Schwarzkopf for producing a partitioning of a polygon into y-monotone
 // pieces.
 //
 // NOTE:  e_i = (v_i, v_{i+1})
 //
 // TREE:
-//   "Therefore we store the edges of P intersecting the sweep line in the 
+//   "Therefore we store the edges of P intersecting the sweep line in the
 //    leaves of a dynamic binary search tree T.  The left-to-right order of
 //    the leaves of T corresponds to the left-to-right order of the edges.
 //    Because we are only interested in edges to the left of split and merge
@@ -37,7 +37,7 @@
 #include <CGAL/Partition_2/Indirect_not_less_yx_2.h>
 #include <CGAL/Partition_2/Indirect_edge_compare.h>
 #include <CGAL/Partition_2/Partitioned_polygon_2.h>
-#include <CGAL/ch_selected_extreme_points_2.h> 
+#include <CGAL/ch_selected_extreme_points_2.h>
 #include <CGAL/IO/Tee_for_output_iterator.h>
 #include <CGAL/Partition_2/partition_assertions.h>
 #include <CGAL/partition_is_valid_2.h>
@@ -46,11 +46,11 @@
 
 namespace CGAL {
 
-enum Partition_y_mono_vertex_type {PARTITION_Y_MONO_START_VERTEX, 
-                                   PARTITION_Y_MONO_SPLIT_VERTEX, 
-                                   PARTITION_Y_MONO_REGULAR_VERTEX, 
-                                   PARTITION_Y_MONO_COLLINEAR_VERTEX, 
-                                   PARTITION_Y_MONO_MERGE_VERTEX, 
+enum Partition_y_mono_vertex_type {PARTITION_Y_MONO_START_VERTEX,
+                                   PARTITION_Y_MONO_SPLIT_VERTEX,
+                                   PARTITION_Y_MONO_REGULAR_VERTEX,
+                                   PARTITION_Y_MONO_COLLINEAR_VERTEX,
+                                   PARTITION_Y_MONO_MERGE_VERTEX,
                                    PARTITION_Y_MONO_END_VERTEX};
 
 
@@ -59,7 +59,7 @@ enum Partition_y_mono_vertex_type {PARTITION_Y_MONO_START_VERTEX,
 //
 template <class BidirectionalCirculator, class Traits>
 Partition_y_mono_vertex_type partition_y_mono_vertex_type(
-                                BidirectionalCirculator c, 
+                                BidirectionalCirculator c,
                                 const Traits& traits)
 {
   typedef typename Traits::Point_2 Point_2;
@@ -68,7 +68,7 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
    BidirectionalCirculator next = c;
    next++;
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-   std::cout << "partition_y_mono__vertex_type: previous " << *previous 
+   std::cout << "partition_y_mono__vertex_type: previous " << *previous
              << " c " << *c << " next " << *next  << std::endl;
 #endif
    typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
@@ -80,7 +80,7 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
    typename Traits::Less_yx_2   less_yx = traits.less_yx_2_object();
    typename Traits::Left_turn_2  left_turn = traits.left_turn_2_object();
 
-   if(less_yx(Point_2(*previous), Point_2(*c))) 
+   if(less_yx(Point_2(*previous), Point_2(*c)))
    {
      if(less_yx(Point_2(*next), Point_2(*c)))                // previous and next both less_yx
        if(left_turn(Point_2(*previous), Point_2(*c), Point_2(*next))) // interior angle less than pi
@@ -90,11 +90,11 @@ Partition_y_mono_vertex_type partition_y_mono_vertex_type(
       else                                   // previous less_yx and next not
          return PARTITION_Y_MONO_REGULAR_VERTEX;
    }
-   else 
+   else
    {
      if(less_yx(Point_2(*c), Point_2(*next)))           // previous and next both not less_yx
        if(left_turn(Point_2(*previous), Point_2(*c), Point_2(*next))) // interior angle less than pi
-           return PARTITION_Y_MONO_END_VERTEX; 
+           return PARTITION_Y_MONO_END_VERTEX;
         else                                // interior angle greater than pi
            return PARTITION_Y_MONO_MERGE_VERTEX;
       else                                 // next less_yx and previous not
@@ -109,14 +109,14 @@ void partition_y_mono_print_tree(Tree tree)
 
    iterator it = tree.begin();
    for (; it != tree.end(); it++) {
-    std::cout << "edge node " << *(*it).first << " helper " << *(*it).second 
+    std::cout << "edge node " << *(*it).first << " helper " << *(*it).second
               << std::endl;
    }
    std::cout << std::endl;
 }
 
 template <class BidirectionalCirculator, class Tree>
-void partition_y_mono_handle_start_vertex(BidirectionalCirculator c, 
+void partition_y_mono_handle_start_vertex(BidirectionalCirculator c,
                                           Tree& tree)
 {
    typedef typename Tree::value_type ValuePair;
@@ -126,19 +126,19 @@ void partition_y_mono_handle_start_vertex(BidirectionalCirculator c,
 #endif
    tree.insert(ValuePair(c, c));
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-   std::cout << "partition_handle_start_vertex: after insert tree is " 
+   std::cout << "partition_handle_start_vertex: after insert tree is "
              << std::endl;
    partition_y_mono_print_tree(tree);
 #endif
    // insert e_i (edge from *c to *++c) into "tree" with helper(e_i) = v_i
 }
 
-template <class BidirectionalCirculator, class Tree, 
+template <class BidirectionalCirculator, class Tree,
           class Partition_Poly, class Traits>
-void partition_y_mono_handle_end_vertex(BidirectionalCirculator c, Tree& tree, 
-                                        Partition_Poly& partition_poly, 
+void partition_y_mono_handle_end_vertex(BidirectionalCirculator c, Tree& tree,
+                                        Partition_Poly& partition_poly,
                                         const Traits& traits )
-{ 
+{
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
    std::cout << *c << " is an end vertex " << std::endl;
@@ -150,24 +150,24 @@ void partition_y_mono_handle_end_vertex(BidirectionalCirculator c, Tree& tree,
    previous--;
 
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-   std::cout << "partition_y_mono_handle_end_vertex: previous " << *previous 
+   std::cout << "partition_y_mono_handle_end_vertex: previous " << *previous
              << std::endl;
 #endif
    it = tree.find(previous);
    CGAL_assertion (it != tree.end());
-   
-   if (partition_y_mono_vertex_type((*it).second, traits) == 
-          PARTITION_Y_MONO_MERGE_VERTEX) 
+
+   if (partition_y_mono_vertex_type((*it).second, traits) ==
+          PARTITION_Y_MONO_MERGE_VERTEX)
    {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-       std::cout << "partition_y_mono_handle_end_vertex: diagonal " 
+       std::cout << "partition_y_mono_handle_end_vertex: diagonal "
                  << *(*it).second << " to " << *c << std::endl;
 #endif
        partition_poly.insert_diagonal(c, (*it).second);
    }
    tree.erase(it);
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-   std::cout << "partition_y_mono_handle_end_vertex: after erase tree is " 
+   std::cout << "partition_y_mono_handle_end_vertex: after erase tree is "
              << std::endl;
    partition_y_mono_print_tree(tree);
 #endif
@@ -192,7 +192,7 @@ void partition_y_mono_edge_directly_left(BidirectionalCirculator c, Tree& tree,
 }
 
 template <class BidirectionalCirculator, class Tree, class Partition_Poly>
-void partition_y_mono_handle_split_vertex(BidirectionalCirculator c, 
+void partition_y_mono_handle_split_vertex(BidirectionalCirculator c,
                                           Tree& tree,
                                           Partition_Poly& partition_poly)
 {
@@ -204,10 +204,10 @@ void partition_y_mono_handle_split_vertex(BidirectionalCirculator c,
    typedef typename Tree::value_type ValuePair;
    tree_iterator it;
    partition_y_mono_edge_directly_left(c, tree, it);
-   if (it != tree.end()) 
+   if (it != tree.end())
    {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-      std::cout << "partition_y_mono_handle_split_vertex: diagonal " 
+      std::cout << "partition_y_mono_handle_split_vertex: diagonal "
                 << *(*it).second << " to " << *c << std::endl;
 #endif
       partition_poly.insert_diagonal(c, (*it).second);
@@ -222,16 +222,16 @@ void partition_y_mono_handle_split_vertex(BidirectionalCirculator c,
    partition_y_mono_print_tree(tree);
 #endif
    // 1. find the edge e_j in tree directly to the left of v_i
-   // 2. insert the diagonal connecting v_i to helper(e_j) 
+   // 2. insert the diagonal connecting v_i to helper(e_j)
    // 3. helper(e_j) = v_i
    // 4. Insert e_i in tree and set helper(e_i) to v_i
 }
 
-template <class BidirectionalCirculator, class Tree, 
+template <class BidirectionalCirculator, class Tree,
           class Partition_Poly, class Traits>
-void partition_y_mono_handle_merge_vertex(BidirectionalCirculator c, 
+void partition_y_mono_handle_merge_vertex(BidirectionalCirculator c,
                                           Tree& tree,
-                                          Partition_Poly& partition_poly, 
+                                          Partition_Poly& partition_poly,
                                           const Traits& traits)
 {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
@@ -245,25 +245,25 @@ void partition_y_mono_handle_merge_vertex(BidirectionalCirculator c,
    tree_iterator it = tree.find(prev);
    CGAL_assertion (it != tree.end());
 
-   if (partition_y_mono_vertex_type((*it).second,traits) == 
+   if (partition_y_mono_vertex_type((*it).second,traits) ==
          PARTITION_Y_MONO_MERGE_VERTEX)
    {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-      std::cout << "partition_y_mono_handle_merge_vertex 1: diagonal " 
+      std::cout << "partition_y_mono_handle_merge_vertex 1: diagonal "
                 << *(*it).second << " to " << *c << std::endl;
 #endif
       partition_poly.insert_diagonal(c, (*it).second);
    }
    tree.erase(it);
-   
+
    partition_y_mono_edge_directly_left(c, tree, it);
-   if (it != tree.end()) 
+   if (it != tree.end())
    {
-      if (partition_y_mono_vertex_type((*it).second,traits) == 
-             PARTITION_Y_MONO_MERGE_VERTEX) 
+      if (partition_y_mono_vertex_type((*it).second,traits) ==
+             PARTITION_Y_MONO_MERGE_VERTEX)
       {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-      std::cout << "partition_y_mono_handle_merge_vertex 2: diagonal " 
+      std::cout << "partition_y_mono_handle_merge_vertex 2: diagonal "
                 << *(*it).second << " to " << *c << std::endl;
 #endif
          partition_poly.insert_diagonal(c, (*it).second);
@@ -292,7 +292,7 @@ bool partition_y_mono_interior_to_right(BidirectionalCirculator c,
 {
   typedef typename Traits::Point_2 Point_2;
    typename Traits::Compare_y_2 compare_y_2 = traits.compare_y_2_object();
- 
+
    BidirectionalCirculator previous = c; previous--;
 
    Comparison_result cmp_y = compare_y_2(Point_2(*previous), Point_2(*c));
@@ -307,9 +307,9 @@ bool partition_y_mono_interior_to_right(BidirectionalCirculator c,
 
 template <class BidirectionalCirculator, class Tree, class Partition_Poly,
           class Traits>
-void partition_y_mono_handle_regular_vertex(BidirectionalCirculator c, 
-                                            Tree& tree, 
-                                            Partition_Poly& partition_poly, 
+void partition_y_mono_handle_regular_vertex(BidirectionalCirculator c,
+                                            Tree& tree,
+                                            Partition_Poly& partition_poly,
                                             const Traits& traits )
 {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
@@ -322,16 +322,16 @@ void partition_y_mono_handle_regular_vertex(BidirectionalCirculator c,
    BidirectionalCirculator previous = c;
    previous--;
 
-   if (partition_y_mono_interior_to_right(c, traits))  
+   if (partition_y_mono_interior_to_right(c, traits))
    {
       it = tree.find(previous);
       CGAL_assertion( it != tree.end() );
 
-      if (partition_y_mono_vertex_type((*it).second, traits) == 
+      if (partition_y_mono_vertex_type((*it).second, traits) ==
              PARTITION_Y_MONO_MERGE_VERTEX)
       {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-         std::cout << "partition_y_mono_handle_regular_vertex 1: diagonal " 
+         std::cout << "partition_y_mono_handle_regular_vertex 1: diagonal "
                    << *(*it).second << " to " << *c << std::endl;
 #endif
          partition_poly.insert_diagonal(c, (*it).second);
@@ -339,16 +339,16 @@ void partition_y_mono_handle_regular_vertex(BidirectionalCirculator c,
       tree.erase(it);
       tree.insert(ValuePair(c,c));
    }
-   else 
+   else
    {
       partition_y_mono_edge_directly_left(c, tree, it);
       CGAL_assertion (it != tree.end());
 
-      if (partition_y_mono_vertex_type((*it).second, traits) == 
+      if (partition_y_mono_vertex_type((*it).second, traits) ==
              PARTITION_Y_MONO_MERGE_VERTEX)
       {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-         std::cout << "partition_y_mono_handle_regular_vertex 2: diagonal " 
+         std::cout << "partition_y_mono_handle_regular_vertex 2: diagonal "
                    << *c << " to " << *(*it).second << std::endl;
 #endif
          partition_poly.insert_diagonal(c, (*it).second);
@@ -375,7 +375,7 @@ void partition_y_mono_handle_regular_vertex(BidirectionalCirculator c,
 }
 
 template <class BidirectionalCirculator, class Tree>
-void partition_y_mono_handle_collinear_vertex(BidirectionalCirculator c, 
+void partition_y_mono_handle_collinear_vertex(BidirectionalCirculator c,
                                               Tree& tree)
 {
    typedef typename Tree::iterator     tree_iterator;
@@ -396,7 +396,7 @@ void partition_y_mono_handle_collinear_vertex(BidirectionalCirculator c,
    if ( it != tree.end() )
    {
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
-      std::cout << "partition_y_mono_handle_collinear_vertex : removing " 
+      std::cout << "partition_y_mono_handle_collinear_vertex : removing "
                 << *(*it).first << std::endl;
 #endif
       tree.erase(it);
@@ -406,7 +406,7 @@ void partition_y_mono_handle_collinear_vertex(BidirectionalCirculator c,
 
 
 template <class InputIterator, class OutputIterator, class Traits>
-OutputIterator partition_y_monotone_2(InputIterator first, 
+OutputIterator partition_y_monotone_2(InputIterator first,
                                       InputIterator beyond,
                                       OutputIterator result,
                                       const Traits& traits)
@@ -441,7 +441,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    for(std::vector<Circulator>::const_iterator it = circulators.begin();
        it != circulators.end();
        it++){
-     std::cout << **it << " " ; 
+     std::cout << **it << " " ;
    }
    std::cout << std::endl;
 #endif
@@ -453,7 +453,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
 
    typename std::vector<Circulator>::iterator it = circulators.begin();
    for (; it != circulators.end(); it++) {
-      switch (partition_y_mono_vertex_type(*it, traits)) 
+      switch (partition_y_mono_vertex_type(*it, traits))
       {
          case PARTITION_Y_MONO_START_VERTEX:
             partition_y_mono_handle_start_vertex(*it, tree);
@@ -477,7 +477,7 @@ OutputIterator partition_y_monotone_2(InputIterator first,
    }
 #ifdef CGAL_PARTITION_Y_MONOTONE_DEBUG
    I v_it;
-   for (v_it = polygon.begin(); v_it != polygon.end(); v_it++) 
+   for (v_it = polygon.begin(); v_it != polygon.end(); v_it++)
    {
       (*v_it).print_diagonals();
    }
@@ -499,13 +499,13 @@ OutputIterator partition_y_monotone_2(InputIterator first,
 
 template <class InputIterator, class OutputIterator>
 inline
-OutputIterator partition_y_monotone_2(InputIterator first, 
+OutputIterator partition_y_monotone_2(InputIterator first,
                                       InputIterator beyond,
                                       OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel   K;
-   return partition_y_monotone_2(first, beyond, result, 
+   return partition_y_monotone_2(first, beyond, result,
                                  Partition_traits_2<K>());
 }
 

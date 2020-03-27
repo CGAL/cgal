@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
   }
 
   // Slicer constructor from the mesh
-  CGAL::Polygon_mesh_slicer<Mesh, K> slicer(mesh); 
+  CGAL::Polygon_mesh_slicer<Mesh, K> slicer(mesh);
 
   Polylines polylines;
   slicer(K::Plane_3(0, 0, 1, -0.4), std::back_inserter(polylines));

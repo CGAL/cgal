@@ -25,6 +25,7 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/orbifold_shortest_path.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 
 #include <CGAL/assertions.h>

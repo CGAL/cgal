@@ -10,7 +10,7 @@
 // Author(s)     : Marc Pouget and Frédéric Cazals
 
 #ifndef CGAL_VERTEX2DATA_PROPERTY_MAP_WITH_STD_MAP_H
-#define CGAL_VERTEX2DATA_PROPERTY_MAP_WITH_STD_MAP_H 
+#define CGAL_VERTEX2DATA_PROPERTY_MAP_WITH_STD_MAP_H
 
 #include <CGAL/license/Ridges_3.h>
 
@@ -30,7 +30,7 @@ class associative_property_map;
 // defines models for Vertex2FTPropertyMap and Vertex2VectorPropertyMap
 //--------------------------------------------------------------------------
 template < class TriangulatedSurfaceMesh >
-class Vertex2Data_Property_Map_with_std_map 
+class Vertex2Data_Property_Map_with_std_map
 {
  public:
   typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;
