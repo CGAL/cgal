@@ -13,9 +13,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -36,12 +36,12 @@ namespace CGAL {
   namespace AlgebraicSphereFunctors {
 
   template < class AK, class OutputIterator >
-  inline 
+  inline
   OutputIterator
     solve( const typename AK::Polynomial_1_3 & e1,
-	   const typename AK::Polynomial_1_3 & e2,
-	   const typename AK::Polynomial_1_3 & e3,
-	 OutputIterator res )
+           const typename AK::Polynomial_1_3 & e2,
+           const typename AK::Polynomial_1_3 & e3,
+         OutputIterator res )
   {
     typedef typename AK::FT FT;
     typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
@@ -65,7 +65,7 @@ namespace CGAL {
     FT z = -(a2*b3*d1-a1*b3*d2+a1*b2*d3-a3*b2*d1-a2*b1*d3+a3*b1*d2)/denominateur;
     FT y = (-a1*d2*c3+a1*c2*d3-a2*c1*d3-a3*c2*d1+a3*c1*d2+a2*c3*d1)/denominateur;
     FT x = -(-b1*d2*c3+b1*c2*d3+b3*c1*d2-b2*c1*d3+b2*d1*c3-b3*c2*d1)/denominateur;
-    *res++ = std::make_pair(Root_for_spheres_2_3(x,y,z), 
+    *res++ = std::make_pair(Root_for_spheres_2_3(x,y,z),
                             static_cast<unsigned>(1));
     return res;
   }

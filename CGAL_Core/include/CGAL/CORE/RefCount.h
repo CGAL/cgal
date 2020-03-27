@@ -17,7 +17,7 @@
  *
  *
  * File: RefCount.h
- * Synopsis: 
+ * Synopsis:
  *     1. This file defines two templated classes:
  *               RCRepImpl<class N>
  *     to create Reps of the class N.  The basic functions provided by
@@ -41,8 +41,8 @@
  *         class BigRat : public RCBigRat {
  *         ...
  *         }
- * 
- * Written by 
+ *
+ * Written by
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *
@@ -58,7 +58,7 @@
 #ifndef _CORE_REFCOUNT_H_
 #define _CORE_REFCOUNT_H_
 
-namespace CORE { 
+namespace CORE {
 
 template<class Deriving>
 class RCRepImpl {
@@ -97,16 +97,16 @@ public:
     return *rep;
   }
 
-  
+
   /// clone data
   void makeCopy() {
     if (rep->getRefCount() > 1) {
       T* oldValue = rep;
       rep->decRef(); // safe since rep has been referred at least once.
-      rep = oldValue ? new T(*oldValue) : 0; 
+      rep = oldValue ? new T(*oldValue) : 0;
     }
   }
- 
+
 #ifdef CORE_RC_DEBUG
   /// get counter
   int getRefCount() const {

@@ -6,7 +6,7 @@
  This file is part of a fork of the QGLViewer library version 2.7.0.
  http://www.libqglviewer.com - contact@libqglviewer.com
 
- This file may be used under the terms of the GNU General Public License 
+ This file may be used under the terms of the GNU General Public License
  version 3.0 as published by the Free Software Foundation and
  appearing in the LICENSE file included in the packaging of this file.
 
@@ -115,7 +115,7 @@ and can hence be used in place of Vec. See also operator const qreal*() .*/
   // Vec(const Vec& v) : x(v.x), y(v.y), z(v.z) {}
 
   /*! Equal operator. */
-#ifdef DOXYGEN_RUNNING  
+#ifdef DOXYGEN_RUNNING
   Vec &operator=(const Vec &v) {
     x = v.x;
     y = v.y;

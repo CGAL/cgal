@@ -240,7 +240,7 @@ struct Scene_edit_box_item_priv{
       "}\n                                     "
       "\n                                      "
     };
-    
+
     const char vertex_source_comp[] =
     {
       "attribute highp vec4 vertex;            "
@@ -341,7 +341,7 @@ struct Scene_edit_box_item_priv{
       "gl_FragColor = vec4(ret_color.rgb, color.a); }\n"
       "\n"
     };
-    
+
     if(QOpenGLContext::currentContext()->format().majorVersion() >= 3)
     {
       transparent_face_program.addShaderFromSourceCode(QOpenGLShader::Vertex,vertex_source);
@@ -488,7 +488,7 @@ void Scene_edit_box_item::draw(Viewer_interface *viewer) const
   }
 
   drawSpheres(viewer, f_matrix);
-  
+
 }
 
 void Scene_edit_box_item::drawEdges(Viewer_interface* viewer) const
@@ -942,7 +942,7 @@ void Scene_edit_box_item::highlight(Viewer_interface *viewer)
       d->hl_vertex.push_back(d->edges[d->last_picked_id].target->position().z()-d->center_.z);
 
       //fill buffers
-      d->program = viewer->isOpenGL_4_3() 
+      d->program = viewer->isOpenGL_4_3()
           ? getShaderProgram(Scene_edit_box_item::PROGRAM_SOLID_WIREFRAME, viewer)
           : getShaderProgram(Scene_edit_box_item::PROGRAM_WITHOUT_LIGHT, viewer);
       d->program->bind();

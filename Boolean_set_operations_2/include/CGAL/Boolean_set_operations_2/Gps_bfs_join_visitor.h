@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
@@ -31,7 +31,7 @@
 namespace CGAL {
 
 template <class Arrangement_>
-class Gps_bfs_join_visitor : 
+class Gps_bfs_join_visitor :
 public Gps_bfs_base_visitor<Arrangement_, Gps_bfs_join_visitor<Arrangement_> >
 {
   typedef  Arrangement_                                  Arrangement;
@@ -44,12 +44,12 @@ public Gps_bfs_base_visitor<Arrangement_, Gps_bfs_join_visitor<Arrangement_> >
 
 public:
 
-  Gps_bfs_join_visitor(Edges_hash* edges_hash, Faces_hash* faces_hash, unsigned int n_pgn): 
+  Gps_bfs_join_visitor(Edges_hash* edges_hash, Faces_hash* faces_hash, unsigned int n_pgn):
     Base(edges_hash, faces_hash, n_pgn)
   {}
 
     //! contained_criteria
-/*! contained_criteria is used to the determine if the face which has 
+/*! contained_criteria is used to the determine if the face which has
   inside count should be marked as contained.
   \param ic the inner count of the talked-about face.
   \return true if the face of ic, otherwise false.

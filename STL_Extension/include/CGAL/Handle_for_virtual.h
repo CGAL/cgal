@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL_HANDLE_FOR_VIRTUAL_H
 #define CGAL_HANDLE_FOR_VIRTUAL_H
@@ -69,7 +69,7 @@ class Handle_for_virtual
   public:
 
     typedef std::ptrdiff_t Id_type ;
-    
+
     Handle_for_virtual(const RefCounted& rc)
     {
       ptr = new RefCounted(rc);
@@ -90,7 +90,7 @@ class Handle_for_virtual
     {
       ptr->remove_reference();
       if ( !ptr->is_referenced() )
-	  delete ptr;
+          delete ptr;
     }
 
     Handle_for_virtual&
@@ -99,7 +99,7 @@ class Handle_for_virtual
       h.ptr->add_reference();
       ptr->remove_reference();
       if ( !ptr->is_referenced() )
-	  delete ptr;
+          delete ptr;
       ptr = h.ptr;
       return *this;
     }
@@ -120,11 +120,11 @@ class Handle_for_virtual
     void
     initialize_with( const T& rc)
     {
-	ptr = new T(rc);
+        ptr = new T(rc);
     }
 
     Id_type id() const { return Ptr() - static_cast<RefCounted const*>(0); }
-    
+
     bool identical( const Handle_for_virtual& h) const { return Ptr() == h.Ptr(); }
 
 
@@ -145,8 +145,8 @@ class Handle_for_virtual
     T *
     Ptr()
     {
-	copy_on_write();
-	return ptr;
+        copy_on_write();
+        return ptr;
     }
     */
 
@@ -169,7 +169,7 @@ protected:
     /*
     RefCounted * ptr() const
     {
-	return ptr;
+        return ptr;
     }
     */
 

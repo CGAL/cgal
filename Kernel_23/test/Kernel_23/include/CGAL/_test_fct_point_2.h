@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FCT_POINT_2_H
 #define CGAL__TEST_FCT_POINT_2_H
@@ -72,7 +72,7 @@ _test_fct_point_2(const R& )
  assert( CGAL::compare_lexicographically(p2,p3) == CGAL::LARGER );
  assert( CGAL::compare_lexicographically(p4,p3) == CGAL::LARGER );
  assert( CGAL::compare_lexicographically(p4,p4) == CGAL::EQUAL );
- 
+
  assert( CGAL::lexicographically_xy_smaller_or_equal(p1,p1) );
  assert( CGAL::lexicographically_xy_smaller_or_equal(p3,p1) );
  assert( CGAL::lexicographically_xy_smaller_or_equal(p3,p2) );
@@ -278,7 +278,7 @@ _test_fct_point_2(const R& )
  assert( CGAL::area(p1, p2, p3) == FT(0) );
  assert( CGAL::area(p2, p3, p6) == FT(1) );
  assert( CGAL::area(p2, p6, p3) == FT(-1) );
- 
+
  std::cout << '.';
 
  assert(CGAL::l_infinity_distance(p1,p2) == FT(1));

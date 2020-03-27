@@ -48,7 +48,7 @@ namespace Ui {
  * It contains all the widgets, the menus and the elements of interface
  * of the application.*/
 
-class MAINWINDOW_EXPORT MainWindow : 
+class MAINWINDOW_EXPORT MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface,
   public CGAL::Three::Three,
@@ -126,7 +126,7 @@ public Q_SLOTS:
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/
   void reloadItem();
-  
+
   //! Loads a script. Returns true if it worked.
   bool loadScript(QString filename);
 
@@ -328,10 +328,10 @@ protected Q_SLOTS:
   //!Opens the Preferences dialog.
   void on_actionPreferences_triggered();
   //!Save selected items if able.
-  void on_action_Save_triggered(); 
+  void on_action_Save_triggered();
   // save as...
   //!Opens a dialog to save selected item if able.
-  void on_actionSaveAs_triggered(); 
+  void on_actionSaveAs_triggered();
   //!Calls the function save of the current plugin if able.
   void save(QString filename, CGAL::Three::Scene_item* item);
   //!Calls the function saveSnapShot of the viewer.
@@ -434,11 +434,11 @@ public:
   /*! Evaluates a script and search for uncaught exceptions. If quiet is false, prints the
    *backtrace of the uncaught exceptions.
    */
-  void evaluate_script(QString script, 
+  void evaluate_script(QString script,
                        const QString & fileName = QString(),
                        const bool quiet = false);
   //! Calls evaluate_script(script, filename, true).
-  void evaluate_script_quiet(QString script, 
+  void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
 #endif
 public Q_SLOTS:

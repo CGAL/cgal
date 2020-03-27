@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -52,22 +52,22 @@ namespace Internal {
                   // points of (q1,q2)
       INTERIOR,  // (p1,p2) and q, and q is an interior point of (p1,p2)
       TOUCH_11_INTERIOR_1, // (p1,p2) and (q1,q2), and p1, q1 are
-			   // identical and q2 is an interior point of (p1,p2)
+                           // identical and q2 is an interior point of (p1,p2)
       TOUCH_11_INTERIOR_2, // (p1,p2) and (q1,q2), and p1, q1 are
-			   // identical and p2 is an interior point of
-			   // (q1,q2)
+                           // identical and p2 is an interior point of
+                           // (q1,q2)
       TOUCH_12_INTERIOR_1, // (p1,p2) and (q1,q2), and p1, q2 are
                            // identical and q1 is an interior point of (p1,p2)
       TOUCH_12_INTERIOR_2, // (p1,p2) and (q1,q2), and p1, q2 are
-			   // identical and p2 is an interior point of (q1,q2)
+                           // identical and p2 is an interior point of (q1,q2)
       TOUCH_21_INTERIOR_1, // (p1,p2) and (q1,q2), and p2, q1 are
-			   // identical and q2 is an interior point of (p1,p2)
+                           // identical and q2 is an interior point of (p1,p2)
       TOUCH_21_INTERIOR_2, // (p1,p2) and (q1,q2), and p2, q1 are
-  			   // identical and p1 is an interior point of (q1,q2)
+                             // identical and p1 is an interior point of (q1,q2)
       TOUCH_22_INTERIOR_1, // (p1,p2) and (q1,q2), and p2, q2 are
-			   // identical and q1 is an interior point of (p1,p2)
+                           // identical and q1 is an interior point of (p1,p2)
       TOUCH_22_INTERIOR_2, // (p1,p2) and (q1,q2), and p2, q2 are
-		           // identical and p1 is an interior point of (q1,q2)
+                           // identical and p1 is an interior point of (q1,q2)
       OVERLAPPING_11, // (p1,p2) and (q1,q2), and (p1,q1) is the overlap
       OVERLAPPING_12, // (p1,p2) and (q1,q2), and (p1,q1) is the overlap
       OVERLAPPING_21, // (p1,p2) and (q1,q2), and (p2,q1) is the overlap
@@ -86,41 +86,41 @@ namespace Internal {
     static Arrangement_type opposite(const Arrangement_type& at) {
       // this returns the result if we swap the order of the arguments...
       if ( at == TOUCH_12 ) {
-	return TOUCH_21;
+        return TOUCH_21;
       } else if ( at == TOUCH_21 ) {
-	return TOUCH_12;
+        return TOUCH_12;
       } else if ( at == INTERIOR_1 ) {
-	return INTERIOR_2;
+        return INTERIOR_2;
       } else if ( at == INTERIOR_2 ) {
-	return INTERIOR_1;
+        return INTERIOR_1;
       } else if ( at == TOUCH_11_INTERIOR_1 ) {
-	return TOUCH_11_INTERIOR_2;
+        return TOUCH_11_INTERIOR_2;
       } else if ( at == TOUCH_11_INTERIOR_2 ) {
-	return TOUCH_11_INTERIOR_1;
+        return TOUCH_11_INTERIOR_1;
       } else if ( at == TOUCH_12_INTERIOR_1 ) {
-	return TOUCH_21_INTERIOR_2;
+        return TOUCH_21_INTERIOR_2;
       } else if ( at == TOUCH_12_INTERIOR_2 ) {
-	return TOUCH_21_INTERIOR_1;
+        return TOUCH_21_INTERIOR_1;
       } else if ( at == TOUCH_21_INTERIOR_1 ) {
-	return TOUCH_12_INTERIOR_2;
+        return TOUCH_12_INTERIOR_2;
       } else if ( at == TOUCH_21_INTERIOR_2 ) {
-	return TOUCH_12_INTERIOR_1;
+        return TOUCH_12_INTERIOR_1;
       } else if ( at == TOUCH_22_INTERIOR_1 ) {
-	return TOUCH_22_INTERIOR_2;
+        return TOUCH_22_INTERIOR_2;
       } else if ( at == TOUCH_22_INTERIOR_2 ) {
-	return TOUCH_22_INTERIOR_1;
+        return TOUCH_22_INTERIOR_1;
       } else if ( at == OVERLAPPING_12 ) {
-	return OVERLAPPING_21;
+        return OVERLAPPING_21;
       } else if ( at == OVERLAPPING_21 ) {
-	return OVERLAPPING_12;
+        return OVERLAPPING_12;
       } else if ( at == TOUCH_INTERIOR_12 ) {
-	return TOUCH_INTERIOR_11;
+        return TOUCH_INTERIOR_11;
       } else if ( at == TOUCH_INTERIOR_22 ) {
-	return TOUCH_INTERIOR_21;
+        return TOUCH_INTERIOR_21;
       } else if ( at == TOUCH_INTERIOR_11 ) {
-	return TOUCH_INTERIOR_12;
+        return TOUCH_INTERIOR_12;
       } else if ( at == TOUCH_INTERIOR_21 ) {
-	return TOUCH_INTERIOR_22;
+        return TOUCH_INTERIOR_22;
       }
       return at;
     }
@@ -129,7 +129,7 @@ namespace Internal {
 #ifdef CGAL_SEGMENT_DELAUNAY_GRAPH_2_ARRANGEMENT_TYPE_OUTPUT_OPERATOR
   static
   std::ostream& operator<<(std::ostream& os,
-			   const Arrangement_enum::Arrangement_type& at)
+                           const Arrangement_enum::Arrangement_type& at)
   {
     typedef Arrangement_enum AT;
 

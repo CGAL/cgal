@@ -419,7 +419,7 @@ public CGAL::cpp98::binary_function<Polynomial_,Algebraic_,bool>{
                 typedef typename Ptraits::Substitute                    Subst;
                 std::vector<CGAL::Gmpfi> substitutions;
                 substitutions.push_back(CGAL::Gmpfi(l,r));
-                CGAL::Gmpfi eval=Subst()(p,     
+                CGAL::Gmpfi eval=Subst()(p,
                                          substitutions.begin(),
                                          substitutions.end());
                 return eval.sign();

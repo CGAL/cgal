@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_POLYGON_OFFSET_PRED_FTC2_H
@@ -38,12 +38,12 @@ template<class K>
 Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT const& t, intrusive_ptr< Trisegment_2<K> > const& tri )
 {
   typedef typename K::FT FT ;
-  
+
   typedef Rational<FT> Rational ;
   typedef Quotient<FT> Quotient ;
-  
+
   typedef optional<Rational> Optional_rational ;
- 
+
   Uncertain<Comparison_result> rResult = Uncertain<Comparison_result>::indeterminate();
 
   Optional_rational et_ = compute_offset_lines_isec_timeC2(tri);

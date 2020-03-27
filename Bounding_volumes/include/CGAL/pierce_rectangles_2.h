@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 
@@ -310,15 +310,15 @@ struct Staircases : public Loc_domain< Traits_ > {
         this->pts.begin(), this->pts.end(),
         this->traits.less_x_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), p, _1),
-		    boost::bind(this->traits.less_y_2_object(), p, _1)));
+                    boost::bind(this->traits.less_x_2_object(), p, _1),
+                    boost::bind(this->traits.less_y_2_object(), p, _1)));
     Citerator j =
       max_element_if(
         this->pts.begin(), this->pts.end(),
         this->traits.less_x_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), _1, q),
-		    boost::bind(this->traits.less_y_2_object(), q, _1)));
+                    boost::bind(this->traits.less_x_2_object(), _1, q),
+                    boost::bind(this->traits.less_y_2_object(), q, _1)));
     return Intervall(i == this->pts.end() ? this->maxx : *i,
                      j == this->pts.end() ? this->minx : *j);
   } // top_intervall()
@@ -336,15 +336,15 @@ struct Staircases : public Loc_domain< Traits_ > {
         this->pts.begin(), this->pts.end(),
         this->traits.less_x_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), p, _1),
-		    boost::bind(this->traits.less_y_2_object(), _1, p)));
+                    boost::bind(this->traits.less_x_2_object(), p, _1),
+                    boost::bind(this->traits.less_y_2_object(), _1, p)));
     Citerator j =
       max_element_if(
         this->pts.begin(), this->pts.end(),
         this->traits.less_x_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), _1, q),
-		    boost::bind(this->traits.less_y_2_object(), _1, q)));
+                    boost::bind(this->traits.less_x_2_object(), _1, q),
+                    boost::bind(this->traits.less_y_2_object(), _1, q)));
     return Intervall(i == this->pts.end() ? this->maxx : *i,
                      j == this->pts.end() ? this->minx : *j);
   } // bottom_intervall()
@@ -362,15 +362,15 @@ struct Staircases : public Loc_domain< Traits_ > {
         this->pts.begin(), this->pts.end(),
         this->traits.less_y_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), _1, p),
-		    boost::bind(this->traits.less_y_2_object(), p, _1)));
+                    boost::bind(this->traits.less_x_2_object(), _1, p),
+                    boost::bind(this->traits.less_y_2_object(), p, _1)));
     Citerator j =
       max_element_if(
         this->pts.begin(), this->pts.end(),
         this->traits.less_y_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), _1, q),
-		    boost::bind(this->traits.less_y_2_object(), _1, q)));
+                    boost::bind(this->traits.less_x_2_object(), _1, q),
+                    boost::bind(this->traits.less_y_2_object(), _1, q)));
     return Intervall(i == this->pts.end() ? this->maxy : *i,
                      j == this->pts.end() ? this->miny : *j);
   } // left_intervall()
@@ -388,15 +388,15 @@ struct Staircases : public Loc_domain< Traits_ > {
         this->pts.begin(), this->pts.end(),
         this->traits.less_y_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), p, _1),
-		    boost::bind(this->traits.less_y_2_object(), p, _1)));
+                    boost::bind(this->traits.less_x_2_object(), p, _1),
+                    boost::bind(this->traits.less_y_2_object(), p, _1)));
     Citerator j =
       max_element_if(
         this->pts.begin(), this->pts.end(),
         this->traits.less_y_2_object(),
         boost::bind(std::logical_and< bool >(),
-		    boost::bind(this->traits.less_x_2_object(), q, _1),
-		    boost::bind(this->traits.less_y_2_object(), _1, q)));
+                    boost::bind(this->traits.less_x_2_object(), q, _1),
+                    boost::bind(this->traits.less_y_2_object(), _1, q)));
     return Intervall(i == this->pts.end() ? this->maxy : *i,
                      j == this->pts.end() ? this->miny : *j);
   } // right_intervall()
@@ -508,32 +508,32 @@ two_cover_points(
     return o;
   }
 
-  
+
     // check whether {d[0], d[2]} forms a piercing set
     if (d.end() ==
         find_if(d.begin(),
                 d.end(),
-                boost::bind(less<FT>(), 
-		     d.r,
-		     boost::bind(Min<FT>(), 
-			  boost::bind(dist, d[0], _1), 
-			  boost::bind(dist, d[2], _1)))))
+                boost::bind(less<FT>(),
+                     d.r,
+                     boost::bind(Min<FT>(),
+                          boost::bind(dist, d[0], _1),
+                          boost::bind(dist, d[2], _1)))))
       {
         *o++ = d[0];
         *o++ = d[2];
         ok = true;
         return o;
       }
-  
+
     // check whether {d[1], d[3]} forms a piercing set
     if (d.end() ==
         find_if(d.begin(),
                 d.end(),
-                boost::bind(less<FT>(), 
-		     d.r,
-		     boost::bind(Min<FT>(), 
-			  boost::bind(dist, d[1], _1), 
-			  boost::bind(dist, d[3], _1)))))
+                boost::bind(less<FT>(),
+                     d.r,
+                     boost::bind(Min<FT>(),
+                          boost::bind(dist, d[1], _1),
+                          boost::bind(dist, d[3], _1)))))
       {
         *o++ = d[1];
         *o++ = d[3];
@@ -568,14 +568,14 @@ three_cover_points(
 
   // test the four corners:
   for (int k = 0; k < 4; ++k) {
-    
+
     // extract all points which are close enough to d[k]
     Point_2 corner = d[k];
-    
+
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
                          boost::bind(less<FT>(), d.r, boost::bind(dist, corner, _1)));
-    
+
     // are all points already covered?
     if (i == d.end()) {
       CGAL_optimisation_assertion(k == 0);
@@ -583,16 +583,16 @@ three_cover_points(
       ok = true;
       return o;
     } // if (i == d.end())
-    
+
     // save changing sides of d:
     Point_2 save_side1 = d.extreme(k);
     Point_2 save_side2 = d.extreme((k+1) % 4);
     Iterator save_end = d.end();
-    
+
     // now run through it:
     // initialize the two (possibly) changing sides of d
     d.extreme(k) = d.extreme((k+1) % 4) = *i;
-    
+
     // is there any point covered?
     if (i == d.begin()) {
       while (++i != d.end() && dist(corner, *i) > d.r)
@@ -603,7 +603,7 @@ three_cover_points(
       iter_swap(i, d.begin());
       d.end() = d.begin() + 1;
     }
-    
+
     // [d.begin(), d.end()) shall be the range of uncovered points
     if (i != save_end)
       while (++i != save_end)
@@ -612,25 +612,25 @@ three_cover_points(
           iter_swap(i, d.end());
           ++d.end();
         } // if (dist(corner, *i) > d.r)
-    
+
     // check disjoint for two-pierceability:
-    
+
     CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                           boost::bind(less<FT>(), d.r, boost::bind(dist, corner, _1))));
     CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
-                         boost::bind(std::greater_equal<FT>(), 
-			      d.r,
-			      boost::bind(dist, corner, _1))));
-    
-    
+                         boost::bind(std::greater_equal<FT>(),
+                              d.r,
+                              boost::bind(dist, corner, _1))));
+
+
     two_cover_points(d, o, ok);
-    
+
     // restore saved sides of d:
     d.extreme(k) = save_side1;
     d.extreme((k+1) % 4) = save_side2;
-    
+
     if (ok) {
       // does any rectangle contain the corner?
       if (d.end() != save_end) {
@@ -639,7 +639,7 @@ three_cover_points(
       }
       return o;
     } // if (ok)
-    
+
     d.end() = save_end;
   } // for (int k = 0; k < 4; ++k)
 
@@ -659,7 +659,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   using std::iter_swap;
   using std::find_if;
   using std::back_inserter;
-  
+
   typedef typename Traits::Point_2                  Point_2;
   typedef typename Traits::FT                       FT;
   typedef typename Traits::Less_x_2                 Less_x_2;
@@ -671,13 +671,13 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   typedef typename Staircases< Traits >::Iterator   Iterator;
   typedef typename Staircases< Traits >::Citerator  Citerator;
   typedef typename Staircases< Traits >::Intervall  Intervall;
-  
+
   Infinity_distance_2 dist   = d.traits.infinity_distance_2_object();
   Less_x_2 lessx             = d.traits.less_x_2_object();
   Less_y_2 lessy             = d.traits.less_y_2_object();
   Signed_x_distance_2 sdistx = d.traits.signed_x_distance_2_object();
   Signed_y_distance_2 sdisty = d.traits.signed_y_distance_2_object();
-  
+
   typename Traits::Construct_point_2_above_right_implicit_point_2
   cparip =
     d.traits.construct_point_2_above_right_implicit_point_2_object();
@@ -687,13 +687,13 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   typename Traits::Construct_point_2_below_right_implicit_point_2
   cpbrip =
     d.traits.construct_point_2_below_right_implicit_point_2_object();
-  
-  
+
+
 
   // test the four corners:
   for (int j = 0; j < 5; ++j) {
     const int k = j < 4 ? j : 3;
-  
+
     // extract all points which are close enough to this point
     Point_2 corner = d[k];
     if (j >= 3) {
@@ -708,11 +708,11 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
         corner = cpbrip(*i, d.maxy, d.r);
       }
     }
-  
+
     // find first point not covered by the rectangle at d[k]
     Iterator i = find_if(d.begin(), d.end(),
                          boost::bind(less<FT>(), d.r, boost::bind(dist, corner, _1)));
-    
+
     // are all points already covered?
     if (i == d.end()) {
       CGAL_optimisation_assertion(k == 0);
@@ -720,16 +720,16 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
       ok = true;
       return o;
     } // if (i == d.end())
-    
+
     // save changing sides of d:
     Point_2 save_side1 = d.extreme(k);
     Point_2 save_side2 = d.extreme((k+1) % 4);
     Iterator save_end = d.end();
-    
+
     // now run through it:
     // initialize the two (possibly) changing sides of d
     d.extreme(k) = d.extreme((k+1) % 4) = *i;
-    
+
     // is there any point covered?
     if (i == d.begin()) {
       while (++i != d.end() && dist(corner, *i) > d.r)
@@ -740,7 +740,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
       iter_swap(i, d.begin());
       d.end() = d.begin() + 1;
     }
-    
+
     // [d.begin(), d.end()) shall be the range of uncovered points
     if (i != save_end)
       while (++i != save_end)
@@ -749,25 +749,25 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
           iter_swap(i, d.end());
           ++d.end();
         } // if (dist(corner, *i) > d.r)
-    
+
     // check disjoint for two-pierceability:
-    
+
     CGAL_optimisation_expensive_assertion(
       save_end == find_if(d.end(), save_end,
                           boost::bind(less<FT>(), d.r, boost::bind(dist, corner, _1))));
     CGAL_optimisation_expensive_assertion(
       d.end() == find_if(d.begin(), d.end(),
-                         boost::bind(std::greater_equal<FT>(), 
-			      d.r,
-			      boost::bind(dist, corner, _1))));
-    
-    
+                         boost::bind(std::greater_equal<FT>(),
+                              d.r,
+                              boost::bind(dist, corner, _1))));
+
+
     three_cover_points(d, o, ok);
-    
+
     // restore saved sides of d:
     d.extreme(k) = save_side1;
     d.extreme((k+1) % 4) = save_side2;
-    
+
     if (ok) {
       // does any rectangle contain the corner?
       if (d.end() != save_end) {
@@ -776,23 +776,23 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
       }
       return o;
     } // if (ok)
-    
+
     d.end() = save_end;
   } // for (int k = 0; k < 4; ++k)
 
-  
+
   // test if four covering rectangles can be placed
   // on the boundary of d, one on each side
-  
+
   // if there is any point that cannot be covered in this way, stop here
   if (d.is_middle_empty()) {
-  
+
     // now try to position the bottom piercing point in each
     // of the intervalls formed by S_bt and S_br
     // (no need to consider S_bl, since we move from left
     // to right and leaving a rectangle won't make piercing easier)
-  
-    
+
+
     Intervall top_i    = d.top_intervall();
     Intervall left_i   = d.left_intervall();
     Intervall bottom_i = d.bottom_intervall();
@@ -801,12 +801,12 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     d.shared_intervall(back_inserter(share));
     Citerator shf = share.end();
     Citerator shl = share.end();
-    
+
     Citerator tl = d.tlstc_begin();
     Citerator lb = d.lbstc_begin();
     Citerator br = d.brstc_begin();
     Citerator rt = d.rtstc_begin();
-    
+
     // make sure the top intervall is covered (left endpoint)
     // (it might be that top_i.first determines the placement of
     //  the top square)
@@ -815,21 +815,21 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
       while (++tl != d.tlstc_end() && !lessx(*tl, top)) {}
     else
       top = *tl++;
-    
-    
+
+
     if (tl != d.tlstc_end()) {
       for (;;) {
-    
+
         // make sure the top intervall is covered (right endpoint)
         if (sdistx(top_i.second, top) > FT(2) * d.r)
           break;
-    
+
         // compute position of left square
         Point_2 left = lessy(left_i.second, *tl) ? *tl : left_i.second;
-    
+
         // make sure the left intervall is covered
         if (sdisty(left, left_i.first) <= FT(2) * d.r) {
-    
+
           // compute position of bottom square
           while (lb != d.lbstc_end() && sdisty(left, *lb) <= FT(2) * d.r)
             ++lb;
@@ -837,7 +837,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
           if (lb == d.lbstc_end())
             break;
           Point_2 bottom = lessx(bottom_i.first, *lb) ? bottom_i.first : *lb;
-    
+
           // check the shared x-intervall
           if (!share.empty() && d.is_x_greater_y()) {
             // compute position of top in share
@@ -855,7 +855,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     #endif
                    sdistx(*(shl - 1), top) > FT(2) * d.r)
               --shl;
-    
+
             // make sure shared intervall is covered (left endpoint)
     #ifndef _MSC_VER
            if ((shf != share.begin() || shl == share.end()) &&
@@ -871,10 +871,10 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
            else if (shl != Citerator(share.end()) && lessx(*shl, bottom))
              bottom = *shl;
     #endif
-    
+
           }
-    
-    
+
+
           // make sure the bottom and the shared intervall (right endpoint)
           // are covered
     #ifndef _MSC_VER
@@ -900,7 +900,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
               if (br == d.brstc_end())
                 break;
               Point_2 right = lessy(right_i.first, *br) ? right_i.first : *br;
-    
+
               // check the shared y-intervall
               if (!share.empty() && !d.is_x_greater_y()) {
                 // compute position of left in share
@@ -919,7 +919,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     #endif
                        lessy(left, *(shl - 1)))
                   --shl;
-    
+
                 // make sure shared intervall is covered (bottom endpoint)
     #ifndef _MSC_VER
                 if ((shf != share.begin() || shl == share.end()) &&
@@ -935,10 +935,10 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                 else if (shl != Citerator(share.end())  && lessy(*shl, right))
                   right = *shl;
     #endif
-    
+
               }
-    
-    
+
+
               // make sure the right intervall and the shared intervall
               // (top endpoint) are covered
     #ifndef _MSC_VER
@@ -964,7 +964,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                   // has the right square reached the top-right corner?
                   if (rt == d.rtstc_end())
                     break;
-    
+
                   // Finally: Do we have a covering?
                   if (sdistx(*rt, top) <= FT(2) * d.r) {
                     *o++ = cpbrip(d.minx, left, d.r);
@@ -972,31 +972,31 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                     *o++ = cpalip(d.maxx, right, d.r);
                     *o++ = cpbrip(top, d.maxy, d.r);
                     ok = true;
-    
-    
+
+
                     return o;
                   } // if (covering)
-    
+
               } // if (sdisty(right_i.second, right) <= FT(2) * d.r)
-    
+
             } // if (bottom and shared intervall are covered)
-    
+
         } // if (sdisty(left, left_i.first) <= FT(2) * d.r)
-    
+
         top = *tl;
         if (!lessy(left_i.second, *tl) || ++tl == d.tlstc_end() ||
             lessx(bottom_i.first, *lb) || lessy(right_i.first, *br))
           break;
-    
+
       } // for (;;)
     } // if (tl != d.tlstc_end())
-    
-  
+
+
   } // if (!d.is_middle_empty())
 
   ok = false;
   return o;
-  
+
 } // four_cover_points(d, o, ok)
 
 struct Two_covering_algorithm {

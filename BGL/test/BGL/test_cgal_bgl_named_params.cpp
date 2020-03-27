@@ -41,15 +41,15 @@ void test(const NamedParameters& np)
   assert(get_parameter(np, CGAL::internal_np::METIS_options).v == 800000001);
   assert(get_parameter(np, CGAL::internal_np::vertex_partition_id).v == 800000002);
   assert(get_parameter(np, CGAL::internal_np::face_partition_id).v == 800000003);
-  
+
   assert(get_parameter(np, CGAL::internal_np::vertex_to_vertex_output_iterator).v == 800000004);
   assert(get_parameter(np, CGAL::internal_np::halfedge_to_halfedge_output_iterator).v == 800000005);
   assert(get_parameter(np, CGAL::internal_np::face_to_face_output_iterator).v == 800000006);
-  
+
   assert(get_parameter(np, CGAL::internal_np::vertex_to_vertex_map).v == 800000007);
   assert(get_parameter(np, CGAL::internal_np::halfedge_to_halfedge_map).v == 800000008);
   assert(get_parameter(np, CGAL::internal_np::face_to_face_map).v == 800000009);
- 
+
 
     // Named parameters that we use in the package 'Mesh_3'
   assert(get_parameter(np, CGAL::internal_np::vertex_feature_degree).v == 9);

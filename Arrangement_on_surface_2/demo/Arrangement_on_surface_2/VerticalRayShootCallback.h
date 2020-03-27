@@ -234,7 +234,7 @@ highlightPointLocation( QGraphicsSceneMouseEvent* event )
   {
     return;
   }
-    
+
   QRectF viewportRect = this->viewportRect( );
   FT y2;
   if ( this->shootingUp )

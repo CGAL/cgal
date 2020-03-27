@@ -35,7 +35,7 @@ class Scene_item;
   /*!
    * This class provides a base for creating a new IO plugin.
    */
-class Polyhedron_demo_io_plugin_interface 
+class Polyhedron_demo_io_plugin_interface
 {
 public:
   //!Returns the name of the plugin
@@ -69,9 +69,9 @@ public:
   //!contained in fileinfo. Returns false if error.
   //! This must be overriden.
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
-  
+
   //! If this returns `true`, then the loader will be chosen as defaultin the
-  //! list of available loaders when saving a file, which means it will be the 
+  //! list of available loaders when saving a file, which means it will be the
   //! first in the list.
   virtual bool isDefaultLoader(const Scene_item*) const { return false; }
 };

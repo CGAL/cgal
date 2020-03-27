@@ -79,7 +79,7 @@ int main()
     CGAL_TEST(CGAL::assign(il,res)&& il==l){}
     l = Line(p1, p2) + Vector(1,1,1,1);
     CGAL_TEST(!CGAL::do_intersect(l,h2)){}
-              
+
     Ray r(org, dir);
     CGAL_TEST(CGAL::do_intersect(h2,r)){}
     CGAL_TEST(CGAL::do_intersect(r,h2)){}
@@ -95,7 +95,7 @@ int main()
     CGAL_TEST(CGAL::assign(ir,res) && ir==r){}
     r = r + Vector(1,1,1,1);
     CGAL_TEST(!CGAL::do_intersect(r,h2)){}
-    
+
     Segment s(org, p4);
     CGAL_TEST(CGAL::do_intersect(h2,s)){}
     CGAL_TEST(CGAL::do_intersect(s,h2)){}
@@ -164,16 +164,16 @@ int main()
     CGAL_TEST(!CGAL::do_intersect(s1,s2+v)){}
     CGAL_TEST(!CGAL::do_intersect(s1,s1+2*s1.vector())){}
     res = CGAL::intersection(s1,s2);
-    CGAL_TEST(CGAL::assign(ip,res) && 
+    CGAL_TEST(CGAL::assign(ip,res) &&
               s1.source()==ip && s2.source()==ip){}
     res = CGAL::intersection(s1,s1+(s1.vector()/2));
-    CGAL_TEST(CGAL::assign(is,res) && 
+    CGAL_TEST(CGAL::assign(is,res) &&
               s1.has_on(is.source()) && s1.has_on(is.target())){}
     res = CGAL::intersection(s1,s1+s1.vector());
     CGAL_TEST(CGAL::assign(ip,res) && s1.has_on(ip)){}
     s3 = s1 + s1.vector()/2;
     res = CGAL::intersection(s1,s3);
-    CGAL_TEST(CGAL::assign(is,res) && 
+    CGAL_TEST(CGAL::assign(is,res) &&
               s1.has_on(is.source()) && s1.has_on(is.target()) &&
               s3.has_on(is.source()) && s3.has_on(is.target())){}
 
@@ -186,7 +186,7 @@ int main()
     CGAL_TEST(CGAL::assign(ip,res) && r1.has_on(ip) && l2.has_on(ip)){}
     res = CGAL::intersection(l1,r1);
     CGAL_TEST(CGAL::assign(ir,res) && r1==ir){}
-    
+
     // MIXED LINE SEGMENT
     CGAL_TEST(CGAL::do_intersect(l1,s1)){}
     CGAL_TEST(CGAL::do_intersect(s1,l1)){}
@@ -210,7 +210,7 @@ int main()
     res = CGAL::intersection(s3,r1);
     CGAL_TEST(CGAL::assign(is,res) && is.source()==r1.source() &&
               is.target()==s3.target()){}
-    
+
   }
 }
 {
@@ -254,7 +254,7 @@ int main()
     CGAL_TEST(CGAL::assign(il,res)&& il==l){}
     l = Line(p1, p2) + Vector(1,1,1,1);
     CGAL_TEST(!CGAL::do_intersect(l,h2)){}
-              
+
     Ray r(org, dir);
     CGAL_TEST(CGAL::do_intersect(h2,r)){}
     CGAL_TEST(CGAL::do_intersect(r,h2)){}
@@ -270,7 +270,7 @@ int main()
     CGAL_TEST(CGAL::assign(ir,res) && ir==r){}
     r = r + Vector(1,1,1,1);
     CGAL_TEST(!CGAL::do_intersect(r,h2)){}
-    
+
     Segment s(org, p4);
     CGAL_TEST(CGAL::do_intersect(h2,s)){}
     CGAL_TEST(CGAL::do_intersect(s,h2)){}
@@ -339,16 +339,16 @@ int main()
     CGAL_TEST(!CGAL::do_intersect(s1,s2+v)){}
     CGAL_TEST(!CGAL::do_intersect(s1,s1+2*s1.vector())){}
     res = CGAL::intersection(s1,s2);
-    CGAL_TEST(CGAL::assign(ip,res) && 
+    CGAL_TEST(CGAL::assign(ip,res) &&
               s1.source()==ip && s2.source()==ip){}
     res = CGAL::intersection(s1,s1+(s1.vector()/2));
-    CGAL_TEST(CGAL::assign(is,res) && 
+    CGAL_TEST(CGAL::assign(is,res) &&
               s1.has_on(is.source()) && s1.has_on(is.target())){}
     res = CGAL::intersection(s1,s1+s1.vector());
     CGAL_TEST(CGAL::assign(ip,res) && s1.has_on(ip)){}
     s3 = s1 + s1.vector()/2;
     res = CGAL::intersection(s1,s3);
-    CGAL_TEST(CGAL::assign(is,res) && 
+    CGAL_TEST(CGAL::assign(is,res) &&
               s1.has_on(is.source()) && s1.has_on(is.target()) &&
               s3.has_on(is.source()) && s3.has_on(is.target())){}
 
@@ -361,7 +361,7 @@ int main()
     CGAL_TEST(CGAL::assign(ip,res) && r1.has_on(ip) && l2.has_on(ip)){}
     res = CGAL::intersection(l1,r1);
     CGAL_TEST(CGAL::assign(ir,res) && r1==ir){}
-    
+
     // MIXED LINE SEGMENT
     CGAL_TEST(CGAL::do_intersect(l1,s1)){}
     CGAL_TEST(CGAL::do_intersect(s1,l1)){}
@@ -385,7 +385,7 @@ int main()
     res = CGAL::intersection(s3,r1);
     CGAL_TEST(CGAL::assign(is,res) && is.source()==r1.source() &&
               is.target()==s3.target()){}
-    
+
   }
 }
   CGAL_TEST_END;

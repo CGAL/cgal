@@ -34,12 +34,12 @@ struct Timeout_callback
   mutable int nb;
   mutable CGAL::Timer timer;
   const double limit;
-  
+
   Timeout_callback(double limit) : nb(0), limit(limit)
   {
     timer.start();
   }
-  
+
   bool operator()(double advancement) const
   {
     // Avoid calling time() at every single iteration, which could
@@ -68,7 +68,7 @@ int run(const char* filename)
   Pwn_vector points;
   std::ifstream stream(filename);
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
@@ -84,7 +84,7 @@ int run(const char* filename)
 
   // Create callback that interrupts the algorithm if it takes more than half a second
   Timeout_callback timeout_callback(0.5);
-  
+
   // Detects registered shapes with default parameters.
   shape_detection.detect(typename ShapeDetection::Parameters(),
                          timeout_callback);

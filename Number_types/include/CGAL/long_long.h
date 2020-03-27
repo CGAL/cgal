@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2001,2007  
+// Copyright (c) 1999,2001,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -112,7 +112,7 @@ template <> class Real_embeddable_traits< boost::int128_type >
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
+          return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
         }
     };
 };
@@ -126,7 +126,7 @@ template <> class Real_embeddable_traits< boost::uint128_type >
       : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       public:
         std::pair<double, double> operator()( const Type& x ) const {
-	  return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
+          return (Interval_nt<>((double)x)+Interval_nt<>::smallest()).pair();
         }
     };
 };

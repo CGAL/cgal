@@ -433,6 +433,8 @@ public:
 
   typedef typename Tds::Simplex                Simplex;
 
+  typedef typename GT::Construct_point_3       Construct_point_3;
+
 private:
   // This class is used to generate the Finite_*_iterators.
   class Infinite_tester
@@ -553,7 +555,8 @@ protected:
 
 public:
   template<typename P> // Point or Point_3
-  Point_3 construct_point(const P& p) const
+  typename boost::result_of<const Construct_point_3(const P&)>::type
+  construct_point(const P& p) const
   {
     return geom_traits().construct_point_3_object()(p);
   }
@@ -1127,7 +1130,6 @@ public:
     // Nevertheless, to make it more generic (that is, allowing the user to pass
     // a `Point` type that is not GT::Point_3), we still use the spatial sort
     // adapter traits and Construct_point_3 here.
-    typedef typename Geom_traits::Construct_point_3 Construct_point_3;
     typedef typename boost::result_of<const Construct_point_3(const Point&)>::type Ret;
     typedef CGAL::internal::boost_::function_property_map<Construct_point_3, Point, Ret> fpmap;
     typedef CGAL::Spatial_sort_traits_adapter_3<Geom_traits, fpmap> Search_traits_3;
@@ -3213,7 +3215,7 @@ side_of_facet(const Point& p,
   {
     // The following precondition is useless because it is written
     // in side_of_facet
-    // 	CGAL_triangulation_precondition(coplanar (p,
+    //         CGAL_triangulation_precondition(coplanar (p,
     //                                             c->vertex(0)->point,
     //                                             c->vertex(1)->point,
     //                                             c->vertex(2)->point));
@@ -3240,7 +3242,7 @@ side_of_facet(const Point& p,
   int inf = c->index(infinite);
   // The following precondition is useless because it is written
   // in side_of_facet
-  // 	CGAL_triangulation_precondition(coplanar (p,
+  //         CGAL_triangulation_precondition(coplanar (p,
   //                                     c->neighbor(inf)->vertex(0)->point(),
   //                                     c->neighbor(inf)->vertex(1)->point(),
   //                                     c->neighbor(inf)->vertex(2)->point()));
@@ -3886,9 +3888,9 @@ insert_outside_convex_hull(const Point& p, Cell_handle c)
   {
     case 1:
     {
-      // 	// p lies in the infinite edge neighboring c
-      // 	// on the other side of li
-      // 	return insert_in_edge(p,c->neighbor(1-li),0,1);
+      //         // p lies in the infinite edge neighboring c
+      //         // on the other side of li
+      //         return insert_in_edge(p,c->neighbor(1-li),0,1);
       return insert_in_edge(p,c,0,1);
     }
     case 2:

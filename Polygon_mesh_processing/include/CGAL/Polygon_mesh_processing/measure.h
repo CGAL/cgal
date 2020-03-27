@@ -265,10 +265,10 @@ public:
         }
       }
     }
-    return std::make_pair(result_halfedge, result_len); 
+    return std::make_pair(result_halfedge, result_len);
   }
-  
- template<typename PolygonMesh>  
+
+ template<typename PolygonMesh>
  std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
            typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
                                                                     CGAL::vertex_point_t>::type>::Kernel::FT>

@@ -56,7 +56,7 @@ _test_cls_alpha_shape_3()
 
   std::list<Point> L;
   bool verbose = false;
-  
+
   // test a bigger alpha_shapes
   std::ifstream is("./data/P3DT3_alpha_shape_test.pts", std::ios::in);
   assert(is);

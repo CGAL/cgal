@@ -6,9 +6,9 @@ endif()
 
 if(EIGEN3_FOUND)
   find_package(CGAL COMPONENTS Core)
-  
+
   include(${CGAL_USE_FILE})
-  
+
   qt5_wrap_ui(parameterizationUI_FILES Parameterization_widget.ui OTE_dialog.ui)
   polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
   target_link_libraries(parameterization_plugin PUBLIC scene_surface_mesh_item scene_textured_item scene_selection_item)

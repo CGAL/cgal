@@ -125,11 +125,11 @@ struct Point_from_pointer
 {
     typedef const typename T::Geom_traits::Point_d *   argument_type;
     typedef const typename T::Geom_traits::Point_d     result_type;
-    result_type & operator()(argument_type & x) const 
+    result_type & operator()(argument_type & x) const
     {
         return (*x);
     }
-    const result_type & operator()(const argument_type & x) const 
+    const result_type & operator()(const argument_type & x) const
     {
         return (*x);
     }
@@ -140,11 +140,11 @@ struct Point_from_vertex_handle
 {
     typedef Vertex_handle   argument_type;
     typedef Point           result_type;
-    result_type & operator()(argument_type & x) const 
+    result_type & operator()(argument_type & x) const
     {
         return x->point();
     }
-    const result_type & operator()(const argument_type & x) const 
+    const result_type & operator()(const argument_type & x) const
     {
         return x->point();
     }

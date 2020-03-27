@@ -42,11 +42,11 @@ inline typename Poly::const_iterator vertices_end ( Poly const& aPoly ) { return
 
 
 template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( Polygon_2<K,C> const& aPoly ) 
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( Polygon_2<K,C> const& aPoly )
 { return aPoly.vertices_begin() ; }
 
 template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( Polygon_2<K,C> const& aPoly ) 
+inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( Polygon_2<K,C> const& aPoly )
 { return aPoly.vertices_end() ; }
 
 template<class Poly>
@@ -63,33 +63,33 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
                                     , HoleIterator  aHolesBegin
                                     , HoleIterator  aHolesEnd
-                                    , K const&      
+                                    , K const&
                                     )
 {
   typedef Straight_skeleton_2<K> Ss ;
 
   typedef Straight_skeleton_builder_traits_2<K> SsBuilderTraits;
-  
+
   typedef Straight_skeleton_builder_2<SsBuilderTraits,Ss> SsBuilder;
-  
+
   typedef typename std::iterator_traits<PointIterator>::value_type InputPoint ;
   typedef typename Kernel_traits<InputPoint>::Kernel InputKernel ;
-  
+
   Cartesian_converter<InputKernel, K> Point_converter ;
-  
+
   SsBuilder ssb ;
-  
+
   ssb.enter_contour( aOuterContour_VerticesBegin, aOuterContour_VerticesEnd, Point_converter ) ;
-  
+
   for ( HoleIterator hi = aHolesBegin ; hi != aHolesEnd ; ++ hi )
     ssb.enter_contour( CGAL_SS_i::vertices_begin(*hi), CGAL_SS_i::vertices_end(*hi), Point_converter ) ;
-  
+
   return ssb.construct_skeleton();
 }
 
 template<class PointIterator, class HoleIterator>
 boost::shared_ptr< Straight_skeleton_2< Exact_predicates_inexact_constructions_kernel > >
-inline 
+inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                     , PointIterator aOuterContour_VerticesEnd
                                     , HoleIterator  aHolesBegin
@@ -108,7 +108,7 @@ template<class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd 
+                                    , PointIterator aOuterContour_VerticesEnd
                                     , K const&      k
                                     )
 {
@@ -117,7 +117,7 @@ create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
                                             ,aOuterContour_VerticesEnd
                                             ,no_holes.begin()
                                             ,no_holes.end()
-                                            ,k 
+                                            ,k
                                             );
 }
 
@@ -125,12 +125,12 @@ template<class PointIterator>
 boost::shared_ptr< Straight_skeleton_2<Exact_predicates_inexact_constructions_kernel> >
 inline
 create_interior_straight_skeleton_2 ( PointIterator aOuterContour_VerticesBegin
-                                    , PointIterator aOuterContour_VerticesEnd 
+                                    , PointIterator aOuterContour_VerticesEnd
                                     )
 {
   return create_interior_straight_skeleton_2(aOuterContour_VerticesBegin
                                             ,aOuterContour_VerticesEnd
-                                            ,Exact_predicates_inexact_constructions_kernel() 
+                                            ,Exact_predicates_inexact_constructions_kernel()
                                             );
 }
 
@@ -142,7 +142,7 @@ create_interior_straight_skeleton_2 ( Polygon const& aOutContour, K const& k )
   CGAL_precondition(aOutContour.is_simple() || !"The input polygon is not simple.");
   return create_interior_straight_skeleton_2(CGAL_SS_i::vertices_begin(aOutContour)
                                             ,CGAL_SS_i::vertices_end(aOutContour)
-                                            ,k 
+                                            ,k
                                             );
 }
 
@@ -163,20 +163,20 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
                                     )
 {
   typedef typename std::iterator_traits<PointIterator>::value_type Point_2 ;
-    
+
   typedef Straight_skeleton_2<K> Ss ;
   typedef boost::shared_ptr<Ss>  SsPtr ;
-  
+
   SsPtr rSkeleton ;
-  
+
   boost::optional<FT> margin = compute_outer_frame_margin( aVerticesBegin
                                                          , aVerticesEnd
-                                                         , aMaxOffset 
+                                                         , aMaxOffset
                                                          );
 
   if ( margin )
   {
-    
+
     Bbox_2 bbox = bbox_2(aVerticesBegin, aVerticesEnd);
 
     FT fxmin = bbox.xmin() - *margin ;
@@ -185,23 +185,23 @@ create_exterior_straight_skeleton_2 ( FT const&      aMaxOffset
     FT fymax = bbox.ymax() + *margin ;
 
     Point_2 frame[4] ;
-    
+
     frame[0] = Point_2(fxmin,fymin) ;
     frame[1] = Point_2(fxmax,fymin) ;
     frame[2] = Point_2(fxmax,fymax) ;
     frame[3] = Point_2(fxmin,fymax) ;
 
     typedef std::vector<Point_2> Hole ;
-    
+
     Hole lPoly(aVerticesBegin, aVerticesEnd);
     std::reverse(lPoly.begin(), lPoly.end());
-    
+
     std::vector<Hole> holes ;
     holes.push_back(lPoly) ;
-        
-    rSkeleton = create_interior_straight_skeleton_2(frame, frame+4, holes.begin(), holes.end(), k ) ;  
+
+    rSkeleton = create_interior_straight_skeleton_2(frame, frame+4, holes.begin(), holes.end(), k ) ;
   }
-  
+
   return rSkeleton ;
 }
 

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -44,7 +44,7 @@
 namespace CGAL {
 
 template <typename Map, typename SNC_point_locator>
-class Combine_with_halfspace : public SNC_decorator<Map> { 
+class Combine_with_halfspace : public SNC_decorator<Map> {
  public:
   typedef Map SNC_structure;
   typedef typename SNC_structure::Items                Items;
@@ -54,7 +54,7 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
   typedef CGAL::SNC_decorator<SNC_structure>           Base;
   typedef Base                                         SNC_decorator;
   typedef CGAL::SNC_constructor<Items, SNC_structure>  SNC_constructor;
-  typedef CGAL::SNC_external_structure<Items, SNC_structure> 
+  typedef CGAL::SNC_external_structure<Items, SNC_structure>
     SNC_external_structure;
   typedef CGAL::SM_decorator<Sphere_map>               SM_decorator;
   typedef CGAL::SM_const_decorator<Sphere_map>         SM_const_decorator;
@@ -83,15 +83,15 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
  public:
   enum Intersection_mode { CLOSED_HALFSPACE=0, OPEN_HALFSPACE=1, PLANE_ONLY=2 };
 
-  Combine_with_halfspace(SNC_structure& W, SNC_point_locator* pl_) 
+  Combine_with_halfspace(SNC_structure& W, SNC_point_locator* pl_)
     : Base(W), pl(pl_) {}
-    
+
   template <typename Selection, typename Intersection_mode>
   void combine_with_halfspace(const SNC_structure& snc,
-			      const Plane_3& plane,
-			      const Selection& BOP,
-			      Intersection_mode im) {
-    
+                              const Plane_3& plane,
+                              const Selection& BOP,
+                              Intersection_mode im) {
+
     Association A;
     SHalfedge_const_iterator sei;
     CGAL_forall_shalfedges(sei, snc)
@@ -99,53 +99,53 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
     SHalfloop_const_iterator sli;
     CGAL_forall_shalfloops(sli, snc)
       A.initialize_hash(sli);
-    
+
     int index0(Index_generator::get_unique_index());
     int index1(Index_generator::get_unique_index());
-    Halffacet_handle dummy_facet = 
+    Halffacet_handle dummy_facet =
       this->sncp()->new_halffacet_pair(plane, im != OPEN_HALFSPACE);
-	A.initialize_hash(index0);
-	A.initialize_hash(index1);
+        A.initialize_hash(index0);
+        A.initialize_hash(index1);
 
     Binary_operation bo(*this->sncp());
       Vertex_const_iterator v0;
       CGAL_forall_vertices( v0, snc) {
-	Oriented_side os = plane.oriented_side(v0->point());
-	if(os == ON_ORIENTED_BOUNDARY) {
-	  SNC_constructor C(*this->sncp());
-	  Vertex_handle vp =
-	    C.create_from_plane(plane, v0->point(),
-				im != OPEN_HALFSPACE, 
-				im != PLANE_ONLY, false);
+        Oriented_side os = plane.oriented_side(v0->point());
+        if(os == ON_ORIENTED_BOUNDARY) {
+          SNC_constructor C(*this->sncp());
+          Vertex_handle vp =
+            C.create_from_plane(plane, v0->point(),
+                                im != OPEN_HALFSPACE,
+                                im != PLANE_ONLY, false);
       vp->shalfloop()->set_index_facet(dummy_facet);
       vp->shalfloop()->twin()->set_index_facet(dummy_facet->twin());
       vp->shalfloop()->set_index(index0);
       vp->shalfloop()->twin()->set_index(index1);
-	  Vertex_handle vr = 
-	    bo.binop_local_views(v0, vp, BOP, *this->sncp(), A);
-	  this->sncp()->delete_vertex(vp);
-	} else if(os == ON_NEGATIVE_SIDE && im != PLANE_ONLY) {
-	  SNC_constructor C(*this->sncp());
-	  Vertex_handle v1 = C.clone_SM(v0);	
-	}
+          Vertex_handle vr =
+            bo.binop_local_views(v0, vp, BOP, *this->sncp(), A);
+          this->sncp()->delete_vertex(vp);
+        } else if(os == ON_NEGATIVE_SIDE && im != PLANE_ONLY) {
+          SNC_constructor C(*this->sncp());
+          Vertex_handle v1 = C.clone_SM(v0);
+        }
       }
 
     Halfedge_const_iterator e0;
     CGAL_forall_edges(e0, snc) {
-      Segment_3 seg(e0->source()->point(), 
-		    e0->twin()->source()->point());
+      Segment_3 seg(e0->source()->point(),
+                    e0->twin()->source()->point());
       Object o = intersection(plane, seg);
       Point_3 ip;
       if(!assign(ip,o)) continue;
       // TODO: optimize for filtering
       ip = normalized(ip);
       if(ip == e0->source()->point() ||
-	 ip == e0->twin()->source()->point()) continue;
+         ip == e0->twin()->source()->point()) continue;
       SNC_constructor C(*this->sncp());
-      Vertex_handle vp = 
-	C.create_from_plane(plane, ip,
-			    im != OPEN_HALFSPACE, 
-			    im != PLANE_ONLY, false);
+      Vertex_handle vp =
+        C.create_from_plane(plane, ip,
+                            im != OPEN_HALFSPACE,
+                            im != PLANE_ONLY, false);
 
       vp->shalfloop()->set_index_facet(dummy_facet);
       vp->shalfloop()->twin()->set_index_facet(dummy_facet->twin());
@@ -153,13 +153,13 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
       vp->shalfloop()->twin()->set_index(index1);
 
       Vertex_handle ve = C.create_from_edge(e0, ip);
-      
-      Vertex_handle vr = 
-	bo.binop_local_views(ve, vp, BOP, *this->sncp(), A);
+
+      Vertex_handle vr =
+        bo.binop_local_views(ve, vp, BOP, *this->sncp(), A);
       this->sncp()->delete_vertex(vp);
       this->sncp()->delete_vertex(ve);
     }
-    
+
     this->sncp()->delete_halffacet_pair(dummy_facet);
 
     SHalfedge_iterator se;
@@ -169,7 +169,7 @@ class Combine_with_halfspace : public SNC_decorator<Map> {
     }
 
     SNC_external_structure es(*this->sncp(), pl);
-    es.build_after_binary_operation(A);	
+    es.build_after_binary_operation(A);
   }
 };
 

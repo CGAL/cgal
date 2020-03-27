@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Bernd Gaertner <gaertner@inf.ethz.ch>
 #ifndef CGAL_QP_FUNCTIONS_IMPL_H
@@ -36,8 +36,8 @@ namespace CGAL {
 namespace QP_functions_detail {
   // test whether the system is of the form A x == b (equations only)
   template <typename R>
-  bool is_in_equational_form (const R& r) 
-  {	     
+  bool is_in_equational_form (const R& r)
+  {
     typename R::R_iterator it = r.get_r();
     typename R::R_iterator end = it + r.get_m();
     for (; it < end; ++it)
@@ -45,11 +45,11 @@ namespace QP_functions_detail {
     return true;
   }
 
-  // test whether the row vectors of A that correpsond to equations 
+  // test whether the row vectors of A that correpsond to equations
   // are linearly independent; this is done using type ET. The value
   // type of LinearInequalitySystem must be convertible to ET
   template <class Ar, class ET>
-  bool has_linearly_independent_equations 
+  bool has_linearly_independent_equations
   (const Ar& ar, const ET& /*dummy*/) {
     // we solve the following auxiliary LP, using exact type ET:
     // --------
@@ -57,19 +57,19 @@ namespace QP_functions_detail {
     // A x r  0
     //   x >= 0
     // --------
-    // Then A has linearly independent equations if and only if all 
-    // artificials have left the basis after phase I; the QP_solver 
+    // Then A has linearly independent equations if and only if all
+    // artificials have left the basis after phase I; the QP_solver
     // diagnostics tells us this
     //
-    // auxiliary LP type	
-    typedef typename 
+    // auxiliary LP type
+    typedef typename
       std::iterator_traits<typename Ar::C_iterator>::value_type C_value;
-    typedef typename 
+    typedef typename
       std::iterator_traits<typename Ar::B_iterator>::value_type B_value;
     typedef Const_oneset_iterator <C_value>  C_iterator;
     typedef Const_oneset_iterator <B_value>  B_iterator;
     typedef Nonnegative_linear_program_from_iterators
-      <typename Ar::A_iterator, B_iterator, 
+      <typename Ar::A_iterator, B_iterator,
       typename Ar::R_iterator, C_iterator> LP;
 
     //  auxiliary LP
@@ -91,7 +91,7 @@ namespace QP_functions_detail {
 
   // helper for MPS output: BOUNDS
   template <typename P>
-  void print_bounds 
+  void print_bounds
   (std::ostream& , const P& ,
    CGAL::Tag_true /*is_nonnegative*/)
   {
@@ -100,8 +100,8 @@ namespace QP_functions_detail {
 
   // helper for MPS output: BOUNDS
   template <typename P>
-  void print_bounds 
-  (std::ostream& out, const P& p, 
+  void print_bounds
+  (std::ostream& out, const P& p,
    CGAL::Tag_false /*is_nonnegative*/)
   {
     typename P::FL_iterator fl = p.get_fl();
@@ -109,23 +109,23 @@ namespace QP_functions_detail {
     typename P::L_iterator l = p.get_l();
     typename P::U_iterator u = p.get_u();
     int n = p.get_n();
-    out << "BOUNDS\n"; 
+    out << "BOUNDS\n";
     for (int j=0; j<n; ++j, ++fl, ++l, ++fu, ++u) {
       if (!*fl || !CGAL::is_zero(*l)) {
-	if (*fl)
-	  out << "  LO  BND  x" << j << "  " << *l << "\n";
-	else
-	  out << "  MI  BND  x" << j << "\n";
+        if (*fl)
+          out << "  LO  BND  x" << j << "  " << *l << "\n";
+        else
+          out << "  MI  BND  x" << j << "\n";
       }
       if (*fu)
-	out << "  UP  BND  x" << j << "  " << *u << "\n";
-    } 
-  } 
+        out << "  UP  BND  x" << j << "  " << *u << "\n";
+    }
+  }
 
   // helper for MPS output: DMATRIX/QMATRIX
   template <typename P>
-  void print_qmatrix 
-  (std::ostream& , const P& , 
+  void print_qmatrix
+  (std::ostream& , const P& ,
    CGAL::Tag_true /*is_linear*/)
   {
     // nop
@@ -133,8 +133,8 @@ namespace QP_functions_detail {
 
   // helper for MPS output: DMATRIX/QMATRIX
   template <typename P>
-  void print_qmatrix 
-  (std::ostream& out, const P& p, 
+  void print_qmatrix
+  (std::ostream& out, const P& p,
    CGAL::Tag_false /*is_linear*/)
   {
     typename P::D_iterator it = p.get_d();
@@ -143,17 +143,17 @@ namespace QP_functions_detail {
     for (int i=0; i<n; ++i, ++it) {
       // handle only entries on/below diagonal
       for (int j=0; j<i+1; ++j)
-	if (!CGAL::is_zero(*(*it + j))) {
-	  if (empty_D) {
-	    // first time we see a nonzero entry
-	    out << "QMATRIX\n";
-	    empty_D = false;
-	  }
-	  out << "  x" << i << "  x" << j << "  " << *(*it + j) << "\n";
-	  // QMATRIX format prescribes symmetric matrix
-	  if (i != j)
-	    out << "  x" << j << "  x" << i << "  " << *(*it + j) << "\n";
-	}
+        if (!CGAL::is_zero(*(*it + j))) {
+          if (empty_D) {
+            // first time we see a nonzero entry
+            out << "QMATRIX\n";
+            empty_D = false;
+          }
+          out << "  x" << i << "  x" << j << "  " << *(*it + j) << "\n";
+          // QMATRIX format prescribes symmetric matrix
+          if (i != j)
+            out << "  x" << j << "  x" << i << "  " << *(*it + j) << "\n";
+        }
     }
   }
 
@@ -161,20 +161,20 @@ namespace QP_functions_detail {
   // they agree in n, m, a, b, r, fl, l, fu, u, d, c, c0
   // PRE: qp1, qp2 have the same internal number type
   template <typename Quadratic_program1, typename Quadratic_program2>
-  bool are_equal_qp 
+  bool are_equal_qp
   (const Quadratic_program1 &qp1, const Quadratic_program2 &qp2)
   {
     bool return_val = true;
     // check n
     if (qp1.get_n() != qp2.get_n()) {
-      std::cerr << "Equality test fails with n: " 
-		<< qp1.get_n() << " vs. " << qp2.get_n() << std::endl;
+      std::cerr << "Equality test fails with n: "
+                << qp1.get_n() << " vs. " << qp2.get_n() << std::endl;
       return false; // wildly wrong, abort now
     }
     // check m
     if (qp1.get_m() != qp2.get_m()) {
-      std::cerr << "Equality test fails with m: " 
-		<< qp1.get_m() << " vs. " << qp2.get_m() << std::endl;
+      std::cerr << "Equality test fails with m: "
+                << qp1.get_m() << " vs. " << qp2.get_m() << std::endl;
       return false; // wildly wrong, abort now
     }
     int n = qp1.get_n();
@@ -183,30 +183,30 @@ namespace QP_functions_detail {
     typename Quadratic_program1::A_iterator a1 = qp1.get_a();
     typename Quadratic_program2::A_iterator a2 = qp2.get_a();
     for (int j=0; j<n; ++j, ++a1, ++a2)
-      for (int i=0; i<m; ++i) 
-	if (*((*a1)+i) != *((*a2)+i)) {
-	  std::cerr << "Equality test fails with A[" 
-		    << j << "][" << i << "]: "
-		    << *((*a1)+i) << " vs. " <<  *((*a2)+i) << std::endl;
-	  return_val = false;
-	}
+      for (int i=0; i<m; ++i)
+        if (*((*a1)+i) != *((*a2)+i)) {
+          std::cerr << "Equality test fails with A["
+                    << j << "][" << i << "]: "
+                    << *((*a1)+i) << " vs. " <<  *((*a2)+i) << std::endl;
+          return_val = false;
+        }
     // check b
     typename Quadratic_program1::B_iterator b1 = qp1.get_b();
     typename Quadratic_program2::B_iterator b2 = qp2.get_b();
     for (int i=0; i<m; ++i, ++b1, ++b2)
       if (*b1 != *b2) {
-	std::cerr << "Equality test fails with b[" << i << "]: "
-		  << *b1 << " vs. " <<  *b2 << std::endl;	
-	return_val = false;
+        std::cerr << "Equality test fails with b[" << i << "]: "
+                  << *b1 << " vs. " <<  *b2 << std::endl;
+        return_val = false;
       }
     // check r
     typename Quadratic_program1::R_iterator r1 = qp1.get_r();
     typename Quadratic_program2::R_iterator r2 = qp2.get_r();
     for (int i=0; i<m; ++i, ++r1, ++r2)
       if (*r1 != *r2) {
-	std::cerr << "Equality test fails with r[" << i << "]: "
-		  << *r1 << " vs. " <<  *r2 << std::endl;	
-	return_val = false;
+        std::cerr << "Equality test fails with r[" << i << "]: "
+                  << *r1 << " vs. " <<  *r2 << std::endl;
+        return_val = false;
       }
     // check fl, l
     typename Quadratic_program1::FL_iterator fl1 = qp1.get_fl();
@@ -215,32 +215,32 @@ namespace QP_functions_detail {
     typename Quadratic_program2::L_iterator l2 = qp2.get_l();
     for (int j=0; j<n; ++j, ++fl1, ++fl2, ++l1, ++l2) {
       if (*fl1 != *fl2) {
-	std::cerr << "Equality test fails with fl[" << j << "]: "
-		  << *fl1 << " vs. " <<  *fl2 << std::endl;	
-	return_val = false;
+        std::cerr << "Equality test fails with fl[" << j << "]: "
+                  << *fl1 << " vs. " <<  *fl2 << std::endl;
+        return_val = false;
       }
       if ((*fl1 == true) && (*l1 != *l2)) {
-	std::cerr << "Equality test fails with l[" << j << "]: "
-		  << *l1 << " vs. " <<  *l2 << std::endl;
-	return_val = false;
+        std::cerr << "Equality test fails with l[" << j << "]: "
+                  << *l1 << " vs. " <<  *l2 << std::endl;
+        return_val = false;
       }
     }
-    
-    // check fu, u 
+
+    // check fu, u
     typename Quadratic_program1::FU_iterator fu1 = qp1.get_fu();
     typename Quadratic_program2::FU_iterator fu2 = qp2.get_fu();
     typename Quadratic_program1::U_iterator u1 = qp1.get_u();
     typename Quadratic_program2::U_iterator u2 = qp2.get_u();
     for (int j=0; j<n; ++j, ++fu1, ++fu2, ++u1, ++u2) {
       if (*fu1 != *fu2) {
-	std::cerr << "Equality test fails with fu[" << j << "]: "
-		  << *fu1 << " vs. " <<  *fu2 << std::endl;
-	return_val = false;
+        std::cerr << "Equality test fails with fu[" << j << "]: "
+                  << *fu1 << " vs. " <<  *fu2 << std::endl;
+        return_val = false;
       }
       if ((*fu1 == true) && (*u1 != *u2)) {
-	std::cerr << "Equality test fails with u[" << j << "]: "
-		  << *u1 << " vs. " <<  *u2 << std::endl;
-	return_val = false;
+        std::cerr << "Equality test fails with u[" << j << "]: "
+                  << *u1 << " vs. " <<  *u2 << std::endl;
+        return_val = false;
       }
     }
     // check d
@@ -248,27 +248,27 @@ namespace QP_functions_detail {
     typename Quadratic_program2::D_iterator d2 = qp2.get_d();
     for (int i=0; i<n; ++i, ++d1, ++d2)
       for (int j=0; j<i+1; ++j)  // only access entries on/below diagonal
-	if (*((*d1)+j) != *((*d2)+j)) {
-	  std::cerr << "Equality test fails with D["
-		    << i << "][" << j << "]: "
-		    << *((*d1)+j) << " vs. " <<  *((*d2)+j) << std::endl; 
-	  return_val = false;
-	}
+        if (*((*d1)+j) != *((*d2)+j)) {
+          std::cerr << "Equality test fails with D["
+                    << i << "][" << j << "]: "
+                    << *((*d1)+j) << " vs. " <<  *((*d2)+j) << std::endl;
+          return_val = false;
+        }
     // check c
     typename Quadratic_program1::C_iterator c1 = qp1.get_c();
     typename Quadratic_program2::C_iterator c2 = qp2.get_c();
     for (int j=0; j<n; ++j, ++c1, ++c2)
       if (*c1 != *c2) {
-	std::cerr << "Equality test fails with c[" << j << "]: "
-		  << *c1 << " vs. " <<  *c2 << std::endl;
-	return_val = false;
+        std::cerr << "Equality test fails with c[" << j << "]: "
+                  << *c1 << " vs. " <<  *c2 << std::endl;
+        return_val = false;
       }
     // check c0
     typename Quadratic_program1::C_entry c01 = qp1.get_c0();
     typename Quadratic_program2::C_entry c02 = qp2.get_c0();
     if (c01 != c02) {
       std::cerr << "Equality test fails with c0: "
-		<< c01 << " vs. " <<  c02 << std::endl;
+                << c01 << " vs. " <<  c02 << std::endl;
       return_val = false;
     }
     return return_val;
@@ -276,9 +276,9 @@ namespace QP_functions_detail {
 
   template <typename P, typename Is_linear, typename Is_nonnegative>
   void print_program
-  (std::ostream& out, const P& p, 
+  (std::ostream& out, const P& p,
    const std::string& problem_name,
-   Is_linear is_linear, 
+   Is_linear is_linear,
    Is_nonnegative is_nonnegative)
   {
     // NAME:
@@ -286,27 +286,27 @@ namespace QP_functions_detail {
 
     int n = p.get_n();
     int m = p.get_m();
- 
-    // ROWS section: 
+
+    // ROWS section:
     typename P::R_iterator r = p.get_r();
     out << "ROWS\n"
-	<< "  N obj\n";                       // for the objective function
+        << "  N obj\n";                       // for the objective function
     for (int i=0; i<m; ++i, ++r) {
       if (*r == CGAL::SMALLER)
-	out << "  L";
+        out << "  L";
       else if (*r == CGAL::EQUAL)
-	out << "  E";
+        out << "  E";
       else if (*r == CGAL::LARGER)
-	out << "  G";
+        out << "  G";
       else
-	CGAL_qpe_assertion_msg(false, "incorrect row-type");
-      out << " c" << i << "\n";               // row name is CI 
+        CGAL_qpe_assertion_msg(false, "incorrect row-type");
+      out << " c" << i << "\n";               // row name is CI
     }
 
     // COLUMNS section:
     typename P::A_iterator a = p.get_a();
     typename P::C_iterator c = p.get_c();
-    typedef 
+    typedef
       typename std::iterator_traits<typename P::C_iterator>::value_type IT;
     out << "COLUMNS\n";
     for (int j=0; j<n; ++j, ++c, ++a) {
@@ -314,48 +314,48 @@ namespace QP_functions_detail {
       // zero coefficients
       bool written = false;
       if (!CGAL_NTS is_zero (*c)) {
-	out << "  x" << j << "  obj  " << *c << "\n";
-	written = true;
+        out << "  x" << j << "  obj  " << *c << "\n";
+        written = true;
       }
-      for (int i=0; i<m; ++i) { 
-	if (!CGAL_NTS is_zero (*((*a)+i))) {
-	  out << "  x" << j << "  c" << i << "  " << *((*a)+i) << "\n";
-	  written = true;
-	}
+      for (int i=0; i<m; ++i) {
+        if (!CGAL_NTS is_zero (*((*a)+i))) {
+          out << "  x" << j << "  c" << i << "  " << *((*a)+i) << "\n";
+          written = true;
+        }
       }
       if (!written)
-	out << "  x" << j << "  obj  " << IT(0) << "\n";
+        out << "  x" << j << "  obj  " << IT(0) << "\n";
     }
- 
+
     // RHS section:
     typename P::B_iterator b = p.get_b();
     out << "RHS\n";
     if (!CGAL_NTS is_zero (p.get_c0()))
       out << "  rhs obj " << -p.get_c0() << "\n";
-    for (int i=0; i<m; ++i, ++b)  
+    for (int i=0; i<m; ++i, ++b)
       if (!CGAL_NTS is_zero (*b))
-	out << "  rhs c" << i << "  " << *b << "\n";
+        out << "  rhs c" << i << "  " << *b << "\n";
 
     // BOUNDS section:
-    QP_functions_detail::print_bounds (out, p, is_nonnegative); 
+    QP_functions_detail::print_bounds (out, p, is_nonnegative);
 
     // QMATRIX section:
     QP_functions_detail::print_qmatrix (out, p, is_linear);
- 
+
     // output end:
     out << "ENDATA\n";
   }
 
-  template <typename Program, typename ET, 
-	    typename Is_linear,typename Is_nonnegative >
-  Quadratic_program_solution<ET> solve_program 
-  (const Program &p, const ET&, 
-   Is_linear, 
+  template <typename Program, typename ET,
+            typename Is_linear,typename Is_nonnegative >
+  Quadratic_program_solution<ET> solve_program
+  (const Program &p, const ET&,
+   Is_linear,
    Is_nonnegative,
    const Quadratic_program_options& options)
-  { 
+  {
     typedef QP_solver<
-      Program, ET, 
+      Program, ET,
       QP_solver_impl::QP_tags<Is_linear, Is_nonnegative> >
       Solver;
     const Solver* s = new Solver(p, options);
@@ -363,39 +363,39 @@ namespace QP_functions_detail {
     if (options.get_auto_validation()) {
       // validate solution
       if (options.get_verbosity() > 0)
-	std::cout << "Validating solution...\n";
+        std::cout << "Validating solution...\n";
       if (!solution.solves_program(p, Is_linear(), Is_nonnegative())) {
-	// write log file
-	std::ofstream out("QP_solver.log");
-	out << "Error: Program solution is invalid\n"
-	    << "  (error message: " << solution.get_error() << ")\n"
-	    << "------------------\n"
-	    << "Solution function:\n"
-	    << "------------------\n";
-	print_solution_function (out, Is_linear(), Is_nonnegative());
-	out << "\n"
-	    << "--------\n"
-	    << "Program:\n" 
-	    << "--------\n";
-	print_program (out, p, "unsolved", Is_linear(), Is_nonnegative());
-	out << "--------\n"
-	    << "Options:\n"
-	    << "--------\n"
-	    << options << std::endl;
-	// print warning
-	std::cerr 
-	  << "Error: Program solution is invalid "
-	  << "(see QP_solver.log for details)" << std::endl;
+        // write log file
+        std::ofstream out("QP_solver.log");
+        out << "Error: Program solution is invalid\n"
+            << "  (error message: " << solution.get_error() << ")\n"
+            << "------------------\n"
+            << "Solution function:\n"
+            << "------------------\n";
+        print_solution_function (out, Is_linear(), Is_nonnegative());
+        out << "\n"
+            << "--------\n"
+            << "Program:\n"
+            << "--------\n";
+        print_program (out, p, "unsolved", Is_linear(), Is_nonnegative());
+        out << "--------\n"
+            << "Options:\n"
+            << "--------\n"
+            << options << std::endl;
+        // print warning
+        std::cerr
+          << "Error: Program solution is invalid "
+          << "(see QP_solver.log for details)" << std::endl;
       }
     }
     return solution;
-      
+
   }
 }
 
 template <typename QuadraticProgram, typename ET>
-Quadratic_program_solution<ET> solve_quadratic_program 
-(const QuadraticProgram &qp, const ET& dummy, 
+Quadratic_program_solution<ET> solve_quadratic_program
+(const QuadraticProgram &qp, const ET& dummy,
  const Quadratic_program_options& options)
 {
   return QP_functions_detail::
@@ -403,7 +403,7 @@ Quadratic_program_solution<ET> solve_quadratic_program
 }
 
 template <typename NonnegativeQuadraticProgram, typename ET>
-Quadratic_program_solution<ET> solve_nonnegative_quadratic_program 
+Quadratic_program_solution<ET> solve_nonnegative_quadratic_program
 (const NonnegativeQuadraticProgram &qp, const ET& dummy,
  const Quadratic_program_options& options)
 {
@@ -412,7 +412,7 @@ Quadratic_program_solution<ET> solve_nonnegative_quadratic_program
 }
 
 template <typename LinearProgram, typename ET>
-Quadratic_program_solution<ET> solve_linear_program 
+Quadratic_program_solution<ET> solve_linear_program
 (const LinearProgram &lp, const ET& dummy,
  const Quadratic_program_options& options)
 {
@@ -421,7 +421,7 @@ Quadratic_program_solution<ET> solve_linear_program
 }
 
 template <typename NonnegativeLinearProgram, typename ET>
-Quadratic_program_solution<ET> solve_nonnegative_linear_program 
+Quadratic_program_solution<ET> solve_nonnegative_linear_program
 (const NonnegativeLinearProgram &lp, const ET& dummy,
  const Quadratic_program_options& options)
 {

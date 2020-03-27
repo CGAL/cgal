@@ -59,8 +59,8 @@ public:
   typedef typename Geom_traits::Line_3 Line_3;
   typedef typename Geom_traits::Triangle_3 Triangle_3;
 
-  typedef Polyhedral_oracle<Surface, 
-                            Point_creator, 
+  typedef Polyhedral_oracle<Surface,
+                            Point_creator,
                             Visitor,
                             Has_edges_tag_,
                             mesh_the_whole_bounding_box> Self;
@@ -122,9 +122,9 @@ public:
       pb[0] = s[1].x();
       pb[1] = s[1].y();
       pb[2] = s[1].z();
-      if(surface.pinpolyhedron_ptr->isPinPolyhedron(pa) == 
-	 surface.pinpolyhedron_ptr->isPinPolyhedron(pb))
-	return Object();
+      if(surface.pinpolyhedron_ptr->isPinPolyhedron(pa) ==
+         surface.pinpolyhedron_ptr->isPinPolyhedron(pb))
+        return Object();
 #endif // CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_PINPOLYHEDRON
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       return self.intersect_segment_surface(*surface.subfacets_tree_ptr, s);
@@ -133,14 +133,14 @@ public:
       return surface.subfacets_tree_ptr->intersection(s);
 #endif
     }
-    
+
     Object operator()(const Surface_3& surface, const Ray_3& r) const {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       return self.intersect_ray_surface(*surface.subfacets_tree_ptr, r);
 #endif
       return Object();
     }
-      
+
     Object operator()(const Surface_3& surface, const Line_3& l) const {
 #ifdef CGAL_SURFACE_MESHER_POLYHEDRAL_SURFACE_USE_OCTREE
       return self.intersect_line_surface(*surface.subfacets_tree_ptr, l);
@@ -167,9 +167,9 @@ public:
     }
 
     template <typename OutputIteratorPoints>
-    OutputIteratorPoints operator() (const Surface_3& surface, 
-                                     OutputIteratorPoints out, 
-                                     int n = 20) const // WARNING: why 20?    
+    OutputIteratorPoints operator() (const Surface_3& surface,
+                                     OutputIteratorPoints out,
+                                     int n = 20) const // WARNING: why 20?
     {
       for (typename Surface_3::Corner_vertices::const_iterator vit =
              surface.corner_vertices_ptr->begin();
@@ -235,13 +235,13 @@ public:
       Geom_traits().construct_translated_point_3_object();
     typename Geom_traits::Bounded_side_3 bounded_side =
       Geom_traits().bounded_side_3_object();
-    typename Geom_traits::Construct_scaled_vector_3 scale = 
+    typename Geom_traits::Construct_scaled_vector_3 scale =
       Geom_traits().construct_scaled_vector_3_object();
 
     const typename GT::Iso_cuboid_3& cuboid = surface.subfacets_tree_ptr->iso_cuboid();
 
     if( bounded_side(cuboid,
-		     p) == ON_UNBOUNDED_SIDE )
+                     p) == ON_UNBOUNDED_SIDE )
       return false;
 
 #ifdef CGAL_SURFACE_MESHER_DEBUG_INTERSECTION_DATA_STRUCTURE
@@ -254,17 +254,17 @@ public:
     while(! result.first)
     {
       result = surface.subfacets_tree_ptr->
-        number_of_intersections(segment(p, 
-					translate(p, 
-						  scale(vector(ORIGIN,
-							       *random_point++),
-							diameter))));
+        number_of_intersections(segment(p,
+                                        translate(p,
+                                                  scale(vector(ORIGIN,
+                                                               *random_point++),
+                                                        diameter))));
     }
     return (result.second % 2) == 1;
   }
 
   Object intersect_curves_with_triangle(const Surface_3& surface,
-					const Triangle_3& t) const
+                                        const Triangle_3& t) const
   {
     if(! surface.has_edges())
       return Object();
@@ -286,9 +286,9 @@ public:
 //   CGAL::Object intersect_with_surface (Octree data_struct, Elt e) {
 //     typedef CGAL::Data_structure_using_tree_3<Geom_traits> Octree;
 //     for ( typename Octree::Constraint_map_iterator cit = data_struct.c_m.begin();
-// 	  cit != data_struct.c_m.end(); ++cit ) {
+//           cit != data_struct.c_m.end(); ++cit ) {
 //       if (cit->second->does_intersect (e))
-// 	return cit->second->intersection (e);
+//         return cit->second->intersection (e);
 //     }
 
 //     return CGAL::Object();
@@ -302,8 +302,8 @@ public:
       // debug: test if segment is degenerate
       // (can happen, because of rounding in circumcenter computations)
       if (is_degenerate(s)) {
-	std::cerr << "Warning: degenerate segment (" << s << ")\n";
-	return CGAL::Object();
+        std::cerr << "Warning: degenerate segment (" << s << ")\n";
+        return CGAL::Object();
       }
 
       // debug: for detecting whether Marie's code works
@@ -316,10 +316,10 @@ public:
 
 
 //       if ((assign(p, oun) && !assign(p,odeux)) ||
-// 	  !assign(p, oun) && assign(p,odeux))
-// 	std::cout << "s " << s
-// 		  << " " << (assign(p, odeux))
-// 		  << std::endl;
+//           !assign(p, oun) && assign(p,odeux))
+//         std::cout << "s " << s
+//                   << " " << (assign(p, odeux))
+//                   << std::endl;
 
       const Object o = data_struct.intersection(s.vertex(0), s.vertex(1));
       if(const Point_with_index* pi = object_cast<Point_with_index>(&o))
@@ -344,8 +344,8 @@ public:
       // debug: test if segment is degenerate
       // (can happen, because of rounding in circumcenter computations)
       if (is_degenerate(r)) {
-	std::cerr << "Warning: degenerate ray (" << r << ")\n";
-	return CGAL::Object();
+        std::cerr << "Warning: degenerate ray (" << r << ")\n";
+        return CGAL::Object();
       }
       // debug: for detecting whether Marie's code works
       // (we compare with our basic intersection function)
@@ -356,10 +356,10 @@ public:
 //       odeux = oun;
 
 //       if ((assign(p, oun) && !assign(p,odeux)) ||
-// 	  !assign(p, oun) && assign(p,odeux))
-// 	std::cout << "r " << r
-// 		  << " " << (assign(p, odeux))
-// 		  << std::endl;
+//           !assign(p, oun) && assign(p,odeux))
+//         std::cout << "r " << r
+//                   << " " << (assign(p, odeux))
+//                   << std::endl;
 
 //       return odeux;
 

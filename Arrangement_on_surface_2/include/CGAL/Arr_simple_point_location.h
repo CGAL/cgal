@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
@@ -76,7 +76,7 @@ protected:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>  Traits_adaptor_2;
 
   // Data members:
-  const Arrangement_2*    m_arr;            // The associated arrangement.  
+  const Arrangement_2*    m_arr;            // The associated arrangement.
   const Traits_adaptor_2* m_geom_traits;    // Its associated geometry traits.
   const Topology_traits*  m_topol_traits;   // Its associated topology traits.
 
@@ -87,7 +87,7 @@ protected:
   inline bool optional_empty(const boost::optional<Result_type>& t) const { return (!t); }
   inline const Result_type& optional_assign(const boost::optional<Result_type>& t) const { return *t; }
 #endif
-  
+
   template<typename T>
   Result_type make_result(T t) const { return Result::make_result(t); }
   inline Optional_result_type make_optional_result() const { return Result::empty_optional_result(); }
@@ -95,12 +95,12 @@ protected:
 
 public:
   /*! Default constructor. */
-  Arr_simple_point_location() : 
+  Arr_simple_point_location() :
     m_arr(NULL),
     m_geom_traits(NULL),
     m_topol_traits(NULL)
   {}
-        
+
   /*! Constructor given an arrangement. */
   Arr_simple_point_location(const Arrangement_2& arr) :
     m_arr(&arr)
@@ -111,7 +111,7 @@ public:
   }
 
   /*! Attach an arrangement object. */
-  void attach(const Arrangement_2& arr) 
+  void attach(const Arrangement_2& arr)
   {
     m_arr = &arr;
     m_geom_traits =
@@ -126,7 +126,7 @@ public:
     m_geom_traits = NULL;
     m_topol_traits = NULL;
   }
- 
+
   /*!
    * Locate the arrangement feature containing the given point.
    * \param p The query point.

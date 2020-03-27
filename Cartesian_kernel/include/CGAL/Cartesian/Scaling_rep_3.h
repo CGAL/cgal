@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -44,7 +44,7 @@ public:
   typedef typename Transformation_base_3::Vector_3      Vector_3;
   typedef typename Transformation_base_3::Direction_3   Direction_3;
   typedef typename Transformation_base_3::Aff_transformation_3
-	                                                Aff_transformation_3;
+                                                        Aff_transformation_3;
 
   Scaling_repC3() {}
   Scaling_repC3(const FT &s) : scalefactor_(s) {}
@@ -79,12 +79,12 @@ public:
                                 scalefactor_ * t.t12,
                                 scalefactor_ * t.t13,
                                 t.t14,
-				
+
                                 scalefactor_ * t.t21,
                                 scalefactor_ * t.t22,
                                 scalefactor_ * t.t23,
                                 t.t24,
-				
+
                                 scalefactor_ * t.t31,
                                 scalefactor_ * t.t32,
                                 scalefactor_ * t.t33,
@@ -97,17 +97,17 @@ public:
     return Aff_transformation_3(scalefactor_,
                                 ft0,
                                 ft0,
-				t.translationvector_.x(),
-				
+                                t.translationvector_.x(),
+
                                 ft0,
-				scalefactor_,
+                                scalefactor_,
                                 ft0,
-				t.translationvector_.y(),
-				
+                                t.translationvector_.y(),
+
                                 ft0,
                                 ft0,
-				scalefactor_,
-				t.translationvector_.z());
+                                scalefactor_,
+                                t.translationvector_.z());
   }
 
   virtual Aff_transformation_3 compose(const Scaling_3 &t) const

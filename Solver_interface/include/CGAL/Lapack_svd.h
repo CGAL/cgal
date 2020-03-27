@@ -28,7 +28,7 @@
 extern "C"
 {
 // taken from acml.h
-void dgelss(int m, int n, int nrhs, 
+void dgelss(int m, int n, int nrhs,
             double *a, int lda, double *b, int ldb, double *sing,
             double rcond, int *irank, int *info);
 
@@ -150,7 +150,7 @@ private:
   /// Copy constructor and operator =() are not implemented.
   Lapack_matrix(const Lapack_matrix& toCopy);
   Lapack_matrix& operator =(const Lapack_matrix& toCopy);
-}; 
+};
 
 /// \ingroup PkgSolverInterfaceRef
 ///

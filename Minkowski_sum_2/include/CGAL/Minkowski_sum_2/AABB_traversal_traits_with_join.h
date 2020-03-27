@@ -28,7 +28,7 @@
 #include <CGAL/Minkowski_sum_2/AABB_node_with_join.h>
 #include <boost/optional.hpp>
 
-namespace CGAL { 
+namespace CGAL {
 
 namespace internal { namespace AABB_tree_with_join {
 
@@ -79,7 +79,7 @@ class First_intersection_traits
 public:
   typedef
   #if CGAL_INTERSECTION_VERSION < 2
-  boost::optional<Object_and_primitive_id> 
+  boost::optional<Object_and_primitive_id>
   #else
   boost::optional< typename AABBTraits::template Intersection_and_primitive_id<Query>::Type >
   #endif
@@ -89,7 +89,7 @@ public:
     : m_result(), m_traits(traits)
   {}
 
-  bool go_further() const { 
+  bool go_further() const {
     return !m_result;
   }
 
@@ -104,7 +104,7 @@ public:
   }
 
   Result result() const { return m_result; }
-  bool is_intersection_found() const { 
+  bool is_intersection_found() const {
     return m_result;
   }
 
@@ -392,7 +392,7 @@ public:
                     const typename Primitive::Id& hint_primitive,
                     const AABBTraits& traits)
     : m_closest_point(hint),
-      m_closest_primitive(hint_primitive), 
+      m_closest_primitive(hint_primitive),
       m_traits(traits)
   {}
 
@@ -405,7 +405,7 @@ public:
     if(new_closest_point != m_closest_point)
     {
       m_closest_primitive = primitive.id();
-      m_closest_point = new_closest_point; // this effectively shrinks the sphere 
+      m_closest_point = new_closest_point; // this effectively shrinks the sphere
     }
   }
 

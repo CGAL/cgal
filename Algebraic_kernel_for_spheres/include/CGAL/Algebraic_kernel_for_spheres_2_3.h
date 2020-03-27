@@ -13,9 +13,9 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 //
 // $URL$
@@ -54,7 +54,7 @@ namespace CGAL {
 
     typedef RT_                                        RT;
     typedef typename Root_of_traits< RT >::RootOf_1    FT;
-            
+
     typedef CGAL::Polynomials_for_line_3<FT>           Polynomials_for_line_3;
     typedef CGAL::Polynomial_for_spheres_2_3<FT>       Polynomial_for_spheres_2_3;
     typedef CGAL::Polynomial_1_3<FT>                   Polynomial_1_3;
@@ -110,16 +110,16 @@ namespace CGAL {
 
     Compare_x compare_x_object() const
     { return Compare_x(); }
-    
+
     Compare_y compare_y_object() const
     { return Compare_y(); }
 
     Compare_z compare_z_object() const
     { return Compare_z(); }
-    
+
     Compare_xy compare_xy_object() const
     { return Compare_xy(); }
-    
+
     Compare_xyz compare_xyz_object() const
     { return Compare_xyz(); }
 

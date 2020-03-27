@@ -12,11 +12,11 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
+// $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 // $Date$
-// 
+//
 //
 // Author(s)     : Mariette Yvinec <Mariette.Yvinec@sophia.inria.fr>
 
@@ -59,7 +59,7 @@ _test_cls_alpha_shape_3()
 
   std::list<Point> L;
   bool verbose = false;
-  
+
   // first a known small case
   // a cube with one corner less and two small pyramids
   // on back and front face
@@ -73,14 +73,14 @@ _test_cls_alpha_shape_3()
   L.push_back(Point(1.,-1.5 ,1.));
   L.push_back(Point(1.,3.5 ,1.));
 
-  
+
   Alpha_shape_3 a1( L.begin(), L.end(), 0, Alpha_shape_3::REGULARIZED);
   if(verbose) show_triangulation(a1);
   assert(a1.number_of_alphas() == 3 );
 
   std::cout << "REGULARIZED  mode" << std::endl;
-  std::cout << "test_classify_and_iterators" 
-	    << std::endl;
+  std::cout << "test_classify_and_iterators"
+            << std::endl;
   Alpha_iterator alpha_it = a1.alpha_begin();
   for (;alpha_it != a1.alpha_end();alpha_it++){
     a1.set_alpha(*alpha_it);
@@ -105,9 +105,9 @@ _test_cls_alpha_shape_3()
   if(verbose) a1.print_maps();
   if(verbose) a1.print_alphas();
   assert(a1.number_of_alphas() == 9) ;
-	 std::cout << "test_classify_and_iterators" 
-	    << std::endl;
- 
+         std::cout << "test_classify_and_iterators"
+            << std::endl;
+
   for(alpha_it = a1.alpha_begin();alpha_it!=a1.alpha_end();alpha_it++){
     a1.set_alpha(*alpha_it);
     if (verbose) {
@@ -134,7 +134,7 @@ _test_cls_alpha_shape_3()
   a1.set_mode(Alpha_shape_3::REGULARIZED);
   std::cout << "REGULARIZED mode" << std::endl;
   std::cout << "test number_of_components - find_optimal_alpha "
-	    <<  std::endl;
+            <<  std::endl;
   if (verbose) {
     std::cerr << std::endl;
     std::cerr << "REGULARIZED mode" << std::endl;
@@ -142,9 +142,9 @@ _test_cls_alpha_shape_3()
     a1.print_alphas();
 
     for(alpha_it = a1.alpha_begin();alpha_it!=a1.alpha_end();alpha_it++)
-      std::cerr << "alpha  " << *alpha_it << "\t" 
-		<< "number of solid componenst " 
-		<< a1.number_of_solid_components(*alpha_it) <<  std::endl;
+      std::cerr << "alpha  " << *alpha_it << "\t"
+                << "number of solid componenst "
+                << a1.number_of_solid_components(*alpha_it) <<  std::endl;
   }
 
   // alpha  2.00694  number of solid components 2
@@ -168,7 +168,7 @@ _test_cls_alpha_shape_3()
   if(verbose) a2.print_maps();
   if(verbose) a2.print_alphas();
   assert(a2.number_of_alphas() == 3) ;
-  
+
   Triangulation dt3( L.begin(), L.end());
   Alpha_shape_3 a3(dt3, 0,  Alpha_shape_3::GENERAL);
   assert(a3.number_of_alphas() == 9) ;
@@ -202,11 +202,11 @@ _test_cls_alpha_shape_3()
   Alpha_iterator previous = opt; --previous;
   if(verbose) {
     std::cerr << " optimal  de 1 " << *opt
-	      << "nb of componants " << a1.number_of_solid_components(*opt)
-	      << std::endl;
-    std::cerr << " previous        " << *previous 
-	      << "nb of componants " 
-	      << a1.number_of_solid_components(*previous) << std::endl;
+              << "nb of componants " << a1.number_of_solid_components(*opt)
+              << std::endl;
+    std::cerr << " previous        " << *previous
+              << "nb of componants "
+              << a1.number_of_solid_components(*previous) << std::endl;
   }
   assert (a1.number_of_solid_components(*opt) == 1);
   assert (a1.number_of_solid_components(*previous) > 1);

@@ -44,7 +44,7 @@ namespace Shape_detection_3 {
   {
     typedef CGAL::Shape_detection_3::Shape_base<Traits> Shape;
     boost::shared_ptr<std::vector<int> > m_indices;
-    
+
   public:
     typedef std::size_t key_type; ///< Index of the point in the random access point range.
     typedef int value_type; ///< Index of the shape (-1 if the point is not assigned to any shape).

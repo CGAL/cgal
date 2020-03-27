@@ -39,8 +39,8 @@ namespace CGAL {
   inline
   OutputIterator
   solve( const typename AK::Polynomial_for_circles_2_2 & e1,
-	 const typename AK::Polynomial_for_circles_2_2 & e2,
-	 OutputIterator res )
+         const typename AK::Polynomial_for_circles_2_2 & e2,
+         OutputIterator res )
   {
     CGAL_precondition( ! (e1 == e2) ); // polynomials of this type cannot be multiple
     // of one another if they are not equal
@@ -68,9 +68,9 @@ namespace CGAL {
       // one double root,
       // no need to care about the boolean of the Root_of
       *res++ = std::make_pair
-	( Root_for_circles_2_2
-	  (Root_of_2(x_base), Root_of_2(y_base)),
-	  static_cast<unsigned>(2) ); // multiplicity = 2
+        ( Root_for_circles_2_2
+          (Root_of_2(x_base), Root_of_2(y_base)),
+          static_cast<unsigned>(2) ); // multiplicity = 2
       return res;
     }
 
@@ -82,24 +82,24 @@ namespace CGAL {
       const FT y_root_coeff = dx / (2 * dist2);
       if(sign_dx == NEGATIVE) {
         * res++ = std::make_pair
-	( Root_for_circles_2_2(Root_of_2(x_base),
+        ( Root_for_circles_2_2(Root_of_2(x_base),
                                make_root_of_2(y_base, y_root_coeff, disc)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
 
         * res++ = std::make_pair
-	( Root_for_circles_2_2(Root_of_2(x_base),
+        ( Root_for_circles_2_2(Root_of_2(x_base),
                                make_root_of_2(y_base, -y_root_coeff, disc)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
       } else {
         * res++ = std::make_pair
-	( Root_for_circles_2_2(Root_of_2(x_base),
+        ( Root_for_circles_2_2(Root_of_2(x_base),
                                make_root_of_2(y_base, -y_root_coeff, disc)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
 
         * res++ = std::make_pair
-	( Root_for_circles_2_2(Root_of_2(x_base),
+        ( Root_for_circles_2_2(Root_of_2(x_base),
                                make_root_of_2(y_base, y_root_coeff, disc)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
       }
       return res;
     }
@@ -108,24 +108,24 @@ namespace CGAL {
       const FT x_root_coeff = dy / (2 * dist2);
       if(sign_dy == POSITIVE) {
         * res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
+        ( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
                                Root_of_2(y_base)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
 
         * res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
+        ( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
                                Root_of_2(y_base)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
       } else {
         * res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
+        ( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
                                Root_of_2(y_base)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
 
         * res++ = std::make_pair
-	( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
+        ( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
                                Root_of_2(y_base)),
-	  static_cast<unsigned>(1) );
+          static_cast<unsigned>(1) );
       }
       return res;
     }
@@ -137,21 +137,21 @@ namespace CGAL {
       * res++ = std::make_pair
       ( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
                              make_root_of_2(y_base, y_root_coeff, disc)),
-	static_cast<unsigned>(1) );
+        static_cast<unsigned>(1) );
 
       * res++ = std::make_pair
       ( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
                              make_root_of_2(y_base, -y_root_coeff, disc)),
-	static_cast<unsigned>(1) );
+        static_cast<unsigned>(1) );
     } else {
       * res++ = std::make_pair
       ( Root_for_circles_2_2(make_root_of_2(x_base, x_root_coeff, disc),
                              make_root_of_2(y_base, -y_root_coeff, disc)),
-	static_cast<unsigned>(1) );
+        static_cast<unsigned>(1) );
       * res++ = std::make_pair
       ( Root_for_circles_2_2(make_root_of_2(x_base, -x_root_coeff, disc),
                              make_root_of_2(y_base, y_root_coeff, disc)),
-	static_cast<unsigned>(1) );
+        static_cast<unsigned>(1) );
     }
 
     return res;
@@ -160,7 +160,7 @@ namespace CGAL {
   template < class AK >
   inline
   Sign sign_at( const typename AK::Polynomial_for_circles_2_2 & equation,
-	 const typename AK::Root_for_circles_2_2 & r)
+         const typename AK::Root_for_circles_2_2 & r)
   {
     Comparison_result c = compare(square(r.x() - equation.a()),
                                   equation.r_sq() -
@@ -174,7 +174,7 @@ namespace CGAL {
   template <class AK>
   typename AK::Root_for_circles_2_2
   x_critical_point(const typename AK::Polynomial_for_circles_2_2 & c,
-		   bool i)
+                   bool i)
   {
     typedef typename AK::Root_of_2            Root_of_2;
     typedef typename AK::FT                   FT;
@@ -187,7 +187,7 @@ namespace CGAL {
   template <class AK, class OutputIterator>
   OutputIterator
   x_critical_points(const typename AK::Polynomial_for_circles_2_2 & c,
-		    OutputIterator res)
+                    OutputIterator res)
   {
     typedef typename AK::FT                   FT;
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
@@ -203,7 +203,7 @@ namespace CGAL {
   template <class AK>
   typename AK::Root_for_circles_2_2
   y_critical_point(const typename AK::Polynomial_for_circles_2_2 &c,
-		   bool i)
+                   bool i)
   {
     typedef typename AK::Root_of_2            Root_of_2;
     typedef typename AK::FT                   FT;
@@ -216,7 +216,7 @@ namespace CGAL {
   template <class AK, class OutputIterator>
   OutputIterator
   y_critical_points(const typename AK::Polynomial_for_circles_2_2 & c,
-		    OutputIterator res)
+                    OutputIterator res)
   {
     typedef typename AK::Root_for_circles_2_2 Root_for_circles_2_2;
 

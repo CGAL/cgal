@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -60,7 +60,7 @@ class Regular_triangulation_edge_tester_2
 
  public:
   bool operator()(const Delaunay_graph& dual,
-		  const Face_handle& f, int i) const
+                  const Face_handle& f, int i) const
   {
     if ( dual.dimension() == 1 ) { return false; }
 
@@ -90,17 +90,17 @@ class Regular_triangulation_edge_tester_2
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const All_edges_iterator& eit) const {
+                  const All_edges_iterator& eit) const {
     return operator()(dual, *eit);
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const Finite_edges_iterator& eit) const {
+                  const Finite_edges_iterator& eit) const {
     return operator()(dual, *eit);
   }
 
   bool operator()(const Delaunay_graph& dual,
-		  const Edge_circulator& ec) const {
+                  const Edge_circulator& ec) const {
     return operator()(dual, *ec);
   }
 };

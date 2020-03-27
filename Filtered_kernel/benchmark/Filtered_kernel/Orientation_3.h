@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -37,13 +37,13 @@ public:
 
   CGAL::Orientation
   operator()(const Point_3 &p, const Point_3 &q,
-	     const Point_3 &r, const Point_3 &s) const
+             const Point_3 &r, const Point_3 &s) const
   {
       Get_approx<Point_3> get_approx; // Identity functor for all points
                                       // but lazy points.
 
        double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz;
-      
+
       if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
           fit_in_double(get_approx(p).z(), pz) &&
           fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
@@ -52,7 +52,7 @@ public:
           fit_in_double(get_approx(r).z(), rz) &&
           fit_in_double(get_approx(s).x(), sx) && fit_in_double(get_approx(s).y(), sy) &&
           fit_in_double(get_approx(s).z(), sz))
-      
+
       {
           double pqx = qx - px;
           double pqy = qy - py;
@@ -148,8 +148,8 @@ public:
 
           if(det >0) return POSITIVE;
           if(det < 0) return NEGATIVE;
-          return ZERO; 
-          // 4.9 sec without "use the .."  -  This is then just the determinant computation 
+          return ZERO;
+          // 4.9 sec without "use the .."  -  This is then just the determinant computation
           // 10.2 sec with "use the ..."   -  This is determinant + abs + computing the max values
           // 7.3 sec with "use the ..", but with CGAL::abs commented
 
@@ -173,14 +173,14 @@ public:
             if (det < -eps) return NEGATIVE;
           }
 
-	  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
       std::cerr << "failure" << std::endl;
-      return ZERO;  
+      return ZERO;
       // 11 sec
 
       //return Base::operator()(p, q, r, s);
-     
+
   }
 
 

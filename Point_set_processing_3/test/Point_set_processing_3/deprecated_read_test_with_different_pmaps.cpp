@@ -53,7 +53,7 @@ bool check_points_and_vectors(
 bool check_points(
   const boost::vector_property_map<Point_3>& points_1,
   const std::vector<Point_3>& points_2,
-  const std::vector<std::size_t>& indices) 
+  const std::vector<std::size_t>& indices)
 {
   if(points_2.size() != indices.size()) {
     std::cerr << "Error: inconsistency between point / normal size." << std::endl;
@@ -88,8 +88,8 @@ bool test_no_deduction_points_and_normals_xyz(const char* file_name)
   input.close();
   input.open(file_name);
   CGAL::read_xyz_points_and_normals(
-    input, back_inserter(pv_pairs), 
-    CGAL::First_of_pair_property_map<PointVectorPair>(), 
+    input, back_inserter(pv_pairs),
+    CGAL::First_of_pair_property_map<PointVectorPair>(),
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
 
@@ -115,8 +115,8 @@ bool test_no_deduction_points_and_normals_off(const char* file_name)
   input.close();
   input.open(file_name);
   CGAL::read_off_points_and_normals(
-    input, back_inserter(pv_pairs), 
-    CGAL::First_of_pair_property_map<PointVectorPair>(), 
+    input, back_inserter(pv_pairs),
+    CGAL::First_of_pair_property_map<PointVectorPair>(),
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
 
@@ -141,8 +141,8 @@ bool test_no_deduction_points_xyz(const char* file_name)
   input.close();
   input.open(file_name);
   CGAL::read_xyz_points(
-    input, back_inserter(points_2), 
-    CGAL::Identity_property_map<Point_3>(), 
+    input, back_inserter(points_2),
+    CGAL::Identity_property_map<Point_3>(),
     Kernel());
 
   return check_points(points_1, points_2, indices);
@@ -166,8 +166,8 @@ bool test_no_deduction_points_off(const char* file_name)
   input.close();
   input.open(file_name);
   CGAL::read_off_points(
-    input, back_inserter(points_2), 
-    CGAL::Identity_property_map<Point_3>(), 
+    input, back_inserter(points_2),
+    CGAL::Identity_property_map<Point_3>(),
     Kernel());
 
   return check_points(points_1, points_2, indices);
@@ -178,14 +178,14 @@ void compile_test() {
   std::deque<Vector_3> normals;
   std::deque<PointVectorPair> pv_pairs;
   std::ifstream input;
-  
+
   input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points(
     input,
     std::front_inserter(points));
   input.clear();
   input.close();
-  
+
   input.open("data/read_test/simple.xyz");
   CGAL::read_xyz_points(
     input,
@@ -217,7 +217,7 @@ void compile_test() {
     std::front_inserter(points));
   input.clear();
   input.close();
-  
+
   input.open("data/read_test/simple.off");
   CGAL::read_off_points(
     input,
@@ -255,7 +255,7 @@ void compile_test() {
   CGAL::read_xyz_points_and_normals(
     input,
     std::front_inserter(pv_pairs),
-    CGAL::First_of_pair_property_map<PointVectorPair>(), 
+    CGAL::First_of_pair_property_map<PointVectorPair>(),
     CGAL::Second_of_pair_property_map<PointVectorPair>());
   input.clear();
   input.close();
@@ -264,7 +264,7 @@ void compile_test() {
   CGAL::read_xyz_points_and_normals(
     input,
     std::front_inserter(pv_pairs),
-    CGAL::First_of_pair_property_map<PointVectorPair>(), 
+    CGAL::First_of_pair_property_map<PointVectorPair>(),
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
   input.clear();
@@ -290,7 +290,7 @@ void compile_test() {
   CGAL::read_off_points_and_normals(
     input,
     std::front_inserter(pv_pairs),
-    CGAL::First_of_pair_property_map<PointVectorPair>(), 
+    CGAL::First_of_pair_property_map<PointVectorPair>(),
     CGAL::Second_of_pair_property_map<PointVectorPair>());
   input.clear();
   input.close();
@@ -299,7 +299,7 @@ void compile_test() {
   CGAL::read_off_points_and_normals(
     input,
     std::front_inserter(pv_pairs),
-    CGAL::First_of_pair_property_map<PointVectorPair>(), 
+    CGAL::First_of_pair_property_map<PointVectorPair>(),
     CGAL::Second_of_pair_property_map<PointVectorPair>(),
     Kernel());
   input.clear();

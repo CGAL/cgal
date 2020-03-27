@@ -15,9 +15,9 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
 //
-// Author(s)     : Stefan Schirra 
+//
+// Author(s)     : Stefan Schirra
 
 #ifndef CGAL_SEGMENT_INTERSECTION_POINTS_2_H
 #define CGAL_SEGMENT_INTERSECTION_POINTS_2_H
@@ -101,7 +101,7 @@ segment_intersection_points_2(ForwardIterator first, ForwardIterator last,
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return segment_intersection_points_2( first, last, result, Kernel()); 
+    return segment_intersection_points_2( first, last, result, Kernel());
 }
 
 } // namespace CGAL

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
 
@@ -62,19 +62,19 @@ int
                            const typename Nt_traits::Integer& w2,
                            const int& deg2,
                            typename Nt_traits::Algebraic *xs)
-{ 
+{
   if (deg1 == 2 && deg2 == 1)
   {
     // If necessary, swap roles between the two curves, so that the first
     // curve always has the minimal degree.
     return (_compute_resultant_roots (nt_traits,
-				      r2, s2, t2, u2, v2, w2, 
-				      deg2,
-				      r1, s1, t1, u1, v1, w1, 
-				      deg1,
-				      xs));
+                                      r2, s2, t2, u2, v2, w2,
+                                      deg2,
+                                      r1, s1, t1, u1, v1, w1,
+                                      deg1,
+                                      xs));
   }
-  
+
   // Act according to the degree of the first conic curve.
   const typename Nt_traits::Integer  _two = 2;
   typename Nt_traits::Integer        c[5];
@@ -90,7 +90,7 @@ int
       xs[0] = nt_traits.convert(-w1) / nt_traits.convert(u1);
       return (1);
     }
-    
+
     // We can write the first curve as: y = -(u1*x + w1) / v1.
     if (deg2 == 1)
     {
@@ -100,8 +100,8 @@ int
       c[0] = v1*w2 - w1*v2;
 
       if (CGAL::sign (c[1]) == ZERO)
-	// The two lines are parallel:
-	return (0);
+        // The two lines are parallel:
+        return (0);
 
       xs[0] =  nt_traits.convert(-c[0]) /  nt_traits.convert(c[1]);
       return (1);
@@ -112,9 +112,9 @@ int
     c[2] = u1*u1*s2 - u1*v1*t2 + v1*v1*r2;
     c[1] = _two*u1*w1*s2 - u1*v1*v2 - v1*w1*t2 + v1*v1*u2;
     c[0] = w1*w1*s2 - v1*w1*v2 + v1*v1*w2;
-    
+
     xs_end = nt_traits.solve_quadratic_equation (c[2], c[1], c[0],
-						 xs);
+                                                 xs);
     return static_cast<int>(xs_end - xs);
   }
 
@@ -131,7 +131,7 @@ int
     c[2] = t1*u2 - t2*u1 + r2*v1 - r1*v2;
     c[1] = t1*w2 - t2*w1 + u2*v1 - u1*v2;
     c[0] = v1*w2 - v2*w1;
-    
+
     degree = 3;
   }
   else
@@ -146,11 +146,11 @@ int
 
     c[3] = -t2*r1*v1*s2 - u2*t1*t2*s1 - v2*r1*t1*s2 -
       r2*t1*v2*s1 - _two*s1*s2*r1*u2 - t2*u1*t1*s2 + u2*t1*t1*s2 -
-      r2*v1*t2*s1 + u1*t2*t2*s1 + _two*v2*r1*t2*s1 + _two*u2*r2*s1*s1 + 
+      r2*v1*t2*s1 + u1*t2*t2*s1 + _two*v2*r1*t2*s1 + _two*u2*r2*s1*s1 +
       _two*r2*v1*t1*s2 + _two*u1*r1*s2*s2 - _two*s1*s2*u1*r2;
-    
+
     c[2] = -r2*v1*v2*s1 + u2*u2*s1*s1 + _two*w2*r2*s1*s1 +
-      _two*u2*v1*t1*s2 - u2*v1*t2*s1 + w2*t1*t1*s2 - _two*s1*s2*u1*u2 - 
+      _two*u2*v1*t1*s2 - u2*v1*t2*s1 + w2*t1*t1*s2 - _two*s1*s2*u1*u2 -
       w2*t1*t2*s1 + v2*v2*r1*s1 + u1*u1*s2*s2 - v2*r1*v1*s2 +
       _two*w1*r1*s2*s2 - u2*t1*v2*s1 - t2*u1*v1*s2 - _two*s1*s2*r1*w2 -
       _two*s1*s2*w1*r2 + r2*v1*v1*s2 + w1*t2*t2*s1 - v2*u1*t1*s2 -
@@ -158,21 +158,21 @@ int
 
     c[1] = _two*w2*u2*s1*s1 + _two*w2*v1*t1*s2 - w2*v1*t2*s1 +
       _two*v2*w1*t2*s1 + _two*w1*u1*s2*s2 - v2*u1*v1*s2 - _two*s1*s2*u1*w2 -
-      v2*w1*t1*s2 + u2*v1*v1*s2 - t2*w1*v1*s2 - w2*t1*v2*s1 + 
+      v2*w1*t1*s2 + u2*v1*v1*s2 - t2*w1*v1*s2 - w2*t1*v2*s1 +
       v2*v2*u1*s1 - u2*v1*v2*s1 - _two*s1*s2*w1*u2;
-    
+
     c[0] = s2*v1*v1*w2 - s1*v2*v1*w2 - s2*v1*w1*v2 + s2*s2*w1*w1 -
       _two*s1*s2*w1*w2 + s1*w1*v2*v2 + s1*s1*w2*w2;
 
     degree = 4;
   }
-  
+
   // Compute the roots of the resultant polynomial.
-  typename Nt_traits::Polynomial  poly = 
+  typename Nt_traits::Polynomial  poly =
                                     nt_traits.construct_polynomial (c, degree);
 
   xs_end = nt_traits.compute_polynomial_roots (poly,
-					       xs);
+                                               xs);
   return static_cast<int>(xs_end - xs);
 }
 
@@ -190,16 +190,16 @@ template <class Nt_traits>
 int
 _compute_resultant_roots (Nt_traits& nt_traits,
                           const typename Nt_traits::Algebraic& r,
-			      const typename Nt_traits::Algebraic& s,
-			      const typename Nt_traits::Algebraic& t,
-			      const typename Nt_traits::Algebraic& u,
-			      const typename Nt_traits::Algebraic& v,
-			      const typename Nt_traits::Algebraic& w,
-			      const int& deg1,
-			      const typename Nt_traits::Algebraic& A,
-			      const typename Nt_traits::Algebraic& B,
-			      const typename Nt_traits::Algebraic& C,
-			      typename Nt_traits::Algebraic *xs)
+                              const typename Nt_traits::Algebraic& s,
+                              const typename Nt_traits::Algebraic& t,
+                              const typename Nt_traits::Algebraic& u,
+                              const typename Nt_traits::Algebraic& v,
+                              const typename Nt_traits::Algebraic& w,
+                              const int& deg1,
+                              const typename Nt_traits::Algebraic& A,
+                              const typename Nt_traits::Algebraic& B,
+                              const typename Nt_traits::Algebraic& C,
+                              typename Nt_traits::Algebraic *xs)
 {
   if (deg1 == 1)
   {

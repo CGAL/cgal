@@ -37,12 +37,12 @@ namespace CGAL
 
 namespace Scale_space_reconstruction_3
 {
-  
+
 /** \ingroup PkgScaleSpaceReconstruction3Classes
  *
  *  %Smoother for scale space reconstruction based on
  *  `CGAL::jet_smooth_point_set()`.
- * 
+ *
  *  \cgalModels CGAL::Scale_space_reconstruction_3::Smoother
  *
  *  \tparam Geom_traits geometric traits class. It must be a
@@ -95,7 +95,7 @@ public:
     CGAL::jet_smooth_point_set<ConcurrencyTag>
     (points, m_k, CGAL::parameters::degree_fitting(m_degree_fitting).degree_monge(m_degree_monge));
   }
-  
+
 };
 
 

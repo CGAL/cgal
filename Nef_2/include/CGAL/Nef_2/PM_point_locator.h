@@ -453,13 +453,13 @@ public:
   using Base::faces_begin;
   using Base::info;
   using Base::flip_diagonal;
-  using Base::twin; 
-  using Base::next; 
-  using Base::previous; 
-  using Base::source; 
-  using Base::target; 
-  using Base::point; 
-  using Base::segment; 
+  using Base::twin;
+  using Base::next;
+  using Base::previous;
+  using Base::source;
+  using Base::target;
+  using Base::point;
+  using Base::segment;
   using Base::face;
 
   /*{\Mtypes 2}*/
@@ -481,18 +481,18 @@ public:
       geninfo<VF_pair>::create(info(vn));
       geninfo<VF_pair>::access(info(vn)) = VF_pair(vo,f);
       #else
-      info(vn) = VF_pair(vo,f);      
+      info(vn) = VF_pair(vo,f);
       #endif
       CGAL_NEF_TRACEN("linking to org "<<PV(vn));
     }
 
     void operator()(Halfedge_handle hn, Halfedge_const_handle ho) const
-    { 
+    {
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       geninfo<EF_pair>::create(info(hn));
       geninfo<EF_pair>::access(info(hn)) = EF_pair(ho,Po.face(ho));
       #else
-      info(hn) = EF_pair(ho,Po.face(ho));      
+      info(hn) = EF_pair(ho,Po.face(ho));
       #endif
       CGAL_NEF_TRACEN("linking to org "<<PE(hn));
     }
@@ -502,29 +502,29 @@ protected:
   Vertex_const_handle input_vertex(Vertex_const_handle v) const
   {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
-    return geninfo<VF_pair>::const_access(CT.info(v)).first; 
+    return geninfo<VF_pair>::const_access(CT.info(v)).first;
     #else
-    return 
-      boost::any_cast<VF_pair>(CT.info(v)).first; 
+    return
+      boost::any_cast<VF_pair>(CT.info(v)).first;
     #endif
   }
 
   Halfedge_const_handle input_halfedge(Halfedge_const_handle e) const
   {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
-    return geninfo<EF_pair>::const_access(CT.info(e)).first; 
+    return geninfo<EF_pair>::const_access(CT.info(e)).first;
     #else
-    return 
-      boost::any_cast<EF_pair>(CT.info(e)).first; 
+    return
+      boost::any_cast<EF_pair>(CT.info(e)).first;
     #endif
   }
 
   Face_const_handle input_face(Halfedge_const_handle e) const
-  { 
+  {
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
     return geninfo<EF_pair>::const_access(CT.info(e)).second;
     #else
-    return 
+    return
       boost::any_cast<EF_pair>(CT.info(e)).second;
     #endif
   }
@@ -589,13 +589,13 @@ protected:
         #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
         f = geninfo<VF_pair>::access(info(source(e))).second;
       else
-        f = geninfo<EF_pair>::access(info(e_from)).second;      
+        f = geninfo<EF_pair>::access(info(e_from)).second;
         #else
-        f = 
+        f =
           boost::any_cast<VF_pair>(info(source(e))).second;
       else
-        f = 
-          boost::any_cast<EF_pair>(info(e_from)).second;              
+        f =
+          boost::any_cast<EF_pair>(info(e_from)).second;
         #endif
       mark(e) = _DP.mark(f);
       #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
@@ -727,16 +727,16 @@ public:
   }
 
   bool ray_shoot_from_outer_facet(Segment& , object_kind& ,
-				  Vertex_const_handle &,
-				  Halfedge_const_handle& ,
-				  const Tag_true& ) const {
+                                  Vertex_const_handle &,
+                                  Halfedge_const_handle& ,
+                                  const Tag_true& ) const {
     return false;
   }
 
   bool ray_shoot_from_outer_facet(Segment& s, object_kind& current,
-				  Vertex_const_handle &v,
-				  Halfedge_const_handle& e,
-				  const Tag_false& ) const {
+                                  Vertex_const_handle &v,
+                                  Halfedge_const_handle& e,
+                                  const Tag_false& ) const {
     CGAL_NEF_TRACEN("target on outer facet");
     Point p = this->K.source(s);
     Vertex_const_handle v1 = CT.vertices_begin();
@@ -746,30 +746,30 @@ public:
     Segment seg;
     bool found = false;
     CGAL_For_all(circ, end) {
-      //	std::cerr << s << std::endl;
-      //	std::cerr << point(source(circ)) << "->" << point(target(circ)) << std::endl;
+      //        std::cerr << s << std::endl;
+      //        std::cerr << point(source(circ)) << "->" << point(target(circ)) << std::endl;
       Object o = intersection(s, Segment(point(source(circ)),
-					 point(target(circ))));
+                                         point(target(circ))));
 
       if(assign(i,o)) {
-	CGAL_NEF_TRACEN("intersection in point " << i);
-	found = true;
-	s = Segment(p,i);
-	if(i == point(source(circ))) {
-	  current = VERTEX;
-	  v = source(circ);
-	} else if(i == point(target(circ))) {
-	  current = VERTEX;
-	  v = target(circ);
-	} else {
-	  current = EDGE_CROSSING;
-	  e = circ;
-	}
+        CGAL_NEF_TRACEN("intersection in point " << i);
+        found = true;
+        s = Segment(p,i);
+        if(i == point(source(circ))) {
+          current = VERTEX;
+          v = source(circ);
+        } else if(i == point(target(circ))) {
+          current = VERTEX;
+          v = target(circ);
+        } else {
+          current = EDGE_CROSSING;
+          e = circ;
+        }
       } else if(assign(seg,o)) {
-	found = true;
-	CGAL_NEF_TRACEN("overlap of segments");
-	current = EDGE_COLLINEAR;
-	e = circ;
+        found = true;
+        CGAL_NEF_TRACEN("overlap of segments");
+        current = EDGE_COLLINEAR;
+        e = circ;
       }
     }
     return found;
@@ -844,10 +844,10 @@ public:
     } else {
 
       if(check_tag(typename Is_extended_kernel<Geometry>::value_type())) {
-	CGAL_error_msg( "code is only for Bounded_kernel");
+        CGAL_error_msg( "code is only for Bounded_kernel");
       }
       if(!ray_shoot_from_outer_facet(s,current,v,e,typename Is_extended_kernel<Geometry>::value_type()))
-	return Object_handle();
+        return Object_handle();
     }
 
     CGAL_NEF_TRACEN("current = " << current);
@@ -918,12 +918,12 @@ public:
   }
 
   bool within_outer_cycle(Vertex_const_handle ,
-			  const Point& , const Tag_true& ) const {
+                          const Point& , const Tag_true& ) const {
     return true;
   }
 
   bool within_outer_cycle(Vertex_const_handle v,
-			  const Point& q, const Tag_false& ) const {
+                          const Point& q, const Tag_false& ) const {
     typedef Project_halfedge_point<typename Decorator::Halfedge, Point> Project;
     typedef Circulator_project<Halfedge_around_face_const_circulator,
       Project, const Point&, const Point*> Circulator;

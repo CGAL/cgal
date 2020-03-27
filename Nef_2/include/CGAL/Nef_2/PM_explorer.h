@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-/*{\Moptions print_title=yes }*/ 
+/*{\Moptions print_title=yes }*/
 /*{\Moptions outfile=Explorer.man }*/
 /*{\Msubst
 PM_explorer#Explorer
@@ -101,7 +101,7 @@ typedef typename Base::Hole_const_iterator
   using Base::face;
   using Base::twin;
 
-/*{\Mtext Iterators, handles, and circulators are inherited from 
+/*{\Mtext Iterators, handles, and circulators are inherited from
 |Topological_explorer|.}*/
 
 /*{\Mcreation 3}*/
@@ -109,11 +109,11 @@ typedef typename Base::Hole_const_iterator
 can be obtained via the |Nef_polyhedron_2::explorer()| method of
 |Nef_polyhedron_2|.}*/
 
-PM_explorer(const Self& E) : Base(E), pK(E.pK) {}  
-Self& operator=(const Self& E) 
+PM_explorer(const Self& E) : Base(E), pK(E.pK) {}
+Self& operator=(const Self& E)
 { Base::operator=(E); pK=E.pK; return *this; }
 
-PM_explorer(const Plane_map& P, const Geometry& k = Geometry()) : 
+PM_explorer(const Plane_map& P, const Geometry& k = Geometry()) :
   Base(P), pK(&k) {}
 /*{\Xcreate constructs a plane map explorer working on |P| with
 geometric predicates used from |k|.}*/
@@ -130,7 +130,7 @@ Point point(Vertex_const_handle v) const
 { return pK->standard_point(Base::point(v)); }
 
 Ray ray(Vertex_const_handle v) const
-/*{\Mop returns the ray defining the non-standard point on the frame. 
+/*{\Mop returns the ray defining the non-standard point on the frame.
 \precond |!\Mvar.is_standard(v)|.}*/
 { return pK->standard_ray(Base::point(v)); }
 

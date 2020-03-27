@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -62,9 +62,9 @@ template <typename K>
 class GraphicsViewPolygonWithHolesInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewPolygonWithHolesInput(QObject *parent, QGraphicsScene* s); 
+  GraphicsViewPolygonWithHolesInput(QObject *parent, QGraphicsScene* s);
   ~GraphicsViewPolygonWithHolesInput();
-  
+
 public Q_SLOTS:
   void processInput(CGAL::Object o);
 
@@ -72,15 +72,15 @@ typedef CGAL::Polygon_2<K> Polygon;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes;
 
 protected:
-    
+
   virtual void keyPressEvent(QKeyEvent *event);
-  
+
   bool eventFilter(QObject *obj, QEvent *event);
-  
+
 private:
 
   Polygon polygon;
-  std::list<Polygon> holes; 
+  std::list<Polygon> holes;
   Polygon_with_holes pwh;  // this one collects the input polygons
 
   CGAL::Qt::PolygonWithHolesGraphicsItem<Polygon_with_holes> * pwhItem;
@@ -88,7 +88,7 @@ private:
 
   bool polygon_input;
   typedef typename K::Point_2 Point_2;
-  QGraphicsScene *scene_;  
+  QGraphicsScene *scene_;
 };
 
 
@@ -100,13 +100,13 @@ GraphicsViewPolygonWithHolesInput<K>::GraphicsViewPolygonWithHolesInput(QObject 
   pwhItem->setBrush(::Qt::yellow);
   scene_->addItem(pwhItem);
   pwhItem->hide();
-  
+
   pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(parent,s);
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+                   this, SLOT(processInput(CGAL::Object)));
 
   QObject::connect(this, SIGNAL(modelChanged()),
-		   pwhItem, SLOT(modelChanged()));
+                   pwhItem, SLOT(modelChanged()));
 
 }
 
@@ -125,21 +125,21 @@ GraphicsViewPolygonWithHolesInput<K>::processInput(CGAL::Object o)
    std::list<Point_2> points;
   if(CGAL::assign(points, o)){
     if((points.size() == 1)&& polygon.size()>0){
-    
+
     } else {
       polygon.clear();
       if(points.front() == points.back()){
-	points.pop_back();
+        points.pop_back();
       }
       polygon.insert(polygon.vertices_begin(), points.begin(), points.end());
       if(holes.empty()){
-	if(polygon.orientation() == CGAL::CLOCKWISE){
-	  polygon.reverse_orientation();
-	}
+        if(polygon.orientation() == CGAL::CLOCKWISE){
+          polygon.reverse_orientation();
+        }
       } else {
-	if(polygon.orientation() == CGAL::COUNTERCLOCKWISE){
-	  polygon.reverse_orientation();
-	}
+        if(polygon.orientation() == CGAL::COUNTERCLOCKWISE){
+          polygon.reverse_orientation();
+        }
       }
       holes.push_back(polygon);
       typename std::list<Polygon>::iterator it = holes.begin();
@@ -148,20 +148,20 @@ GraphicsViewPolygonWithHolesInput<K>::processInput(CGAL::Object o)
     }
     Q_EMIT( modelChanged());
     polygon_input = false;
-  } 
+  }
 }
 
 
 template <typename K>
-void 
-GraphicsViewPolygonWithHolesInput<K>::keyPressEvent ( QKeyEvent * event ) 
+void
+GraphicsViewPolygonWithHolesInput<K>::keyPressEvent ( QKeyEvent * event )
 {
 }
 
 
 
 template <typename K>
-bool 
+bool
 GraphicsViewPolygonWithHolesInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if(polygon_input){
@@ -169,19 +169,19 @@ GraphicsViewPolygonWithHolesInput<K>::eventFilter(QObject *obj, QEvent *event)
   } else {
     if (event->type() == QEvent::GraphicsSceneMousePress) {
       QGraphicsSceneMouseEvent *mouseEvent = static_cast<QGraphicsSceneMouseEvent *>(event);
-      
+
       if(mouseEvent->modifiers()  & ::Qt::ShiftModifier){
-	return QObject::eventFilter(obj, event);;
+        return QObject::eventFilter(obj, event);;
       }
       if(mouseEvent->button() == ::Qt::LeftButton) {
-	polygon_input = true;
-	return pi->eventFilter(obj, event);
+        polygon_input = true;
+        return pi->eventFilter(obj, event);
       } else if(mouseEvent->button() == ::Qt::RightButton) {
-	Q_EMIT( generate(CGAL::make_object(pwh)));
-	pwh.clear();
-	holes.clear();
-	polygon_input = false;
-	Q_EMIT( modelChanged());
+        Q_EMIT( generate(CGAL::make_object(pwh)));
+        pwh.clear();
+        holes.clear();
+        polygon_input = false;
+        Q_EMIT( modelChanged());
       }
       return true;
     } else if (event->type() == QEvent::KeyPress) {
@@ -193,7 +193,7 @@ GraphicsViewPolygonWithHolesInput<K>::eventFilter(QObject *obj, QEvent *event)
       return QObject::eventFilter(obj, event);
     }
   }
-} 
+}
 
 } // namespace Qt
 

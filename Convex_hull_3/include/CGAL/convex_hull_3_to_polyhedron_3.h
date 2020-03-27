@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Sebastien Loriot
 //
@@ -34,7 +34,7 @@
 #include <CGAL/Polyhedron_3_fwd.h>
 
 namespace CGAL {
-  
+
 template<class Triangulation_3,class Polyhedron_3>
 CGAL_DEPRECATED void convex_hull_3_to_polyhedron_3(const Triangulation_3& T,Polyhedron_3& P){
   clear(P);

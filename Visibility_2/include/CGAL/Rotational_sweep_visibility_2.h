@@ -31,7 +31,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Kernel/global_functions_2.h>
-#include <boost/unordered_map.hpp> 
+#include <boost/unordered_map.hpp>
 #include <iterator>
 
 
@@ -103,7 +103,7 @@ private:
       if (v1 == v2)
         return false;
       else
-        // I know this is dirty but it speeds up by 25%. Michael 
+        // I know this is dirty but it speeds up by 25%. Michael
         return &(*v1)<&(*v2);
 //        return Visibility_2::
 //          compare_xy_2(geom_traits, v1->point(), v2->point()) == SMALLER;
@@ -252,7 +252,7 @@ private:
     }
 
   };
-  
+
   const Arrangement_2 *p_arr;
   const Geometry_traits_2 *geom_traits;
 
@@ -295,9 +295,9 @@ public:
   }
 
   const std::string name() const { return std::string("R_visibility_2"); }
-  
-  template <typename VARR> 
-  typename VARR::Face_handle 
+
+  template <typename VARR>
+  typename VARR::Face_handle
   compute_visibility(
           const Point_2& q, const Halfedge_const_handle e, VARR& arr_out) const
   {
@@ -404,8 +404,8 @@ public:
       return arr_out.faces_begin();
   }
 
-  template <typename VARR> 
-  typename VARR::Face_handle 
+  template <typename VARR>
+  typename VARR::Face_handle
   compute_visibility(
           const Point_2& q, const Face_const_handle f, VARR& arr_out) const
   {

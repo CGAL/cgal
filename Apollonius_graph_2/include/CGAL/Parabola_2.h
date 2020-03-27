@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -102,7 +102,7 @@ protected:
   FT distance(const Point_2& p, const Line_2& l)
   {
     return divide( p.x() * l.a() + p.y() * l.b() + l.c(),
-		   sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) );
+                   sqrt( CGAL::square(l.a()) + CGAL::square(l.b()) ) );
   }
 
   // instance stuff
@@ -123,7 +123,7 @@ protected:
   {
     std::vector< Point_2 > p = compute_points(t);
     if ( right(p[0]) )  return p[0];
-    return p[1]; 
+    return p[1];
   }
 
   std::vector< Point_2 > compute_points(const FT &d) const
@@ -139,8 +139,8 @@ protected:
     if ( l.a() == ZERO ) {
       FT y = d2 * CGAL::sign(l.b()) - divide(l.c(), l.b());
 
-      FT C = CGAL::square(y) - FT(2) * c.y() * y + 
-	CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
+      FT C = CGAL::square(y) - FT(2) * c.y() * y +
+        CGAL::square(c.x()) + CGAL::square(c.y()) - d1;
 
       FT D = CGAL::square(c.x()) - C;
 
@@ -184,8 +184,8 @@ protected:
   {
     return
       CGAL::is_positive( determinant<FT>(c.x(), c.y(), FT(1),
-					       o.x(), o.y(), FT(1),
-					       p.x(), p.y(), FT(1)) );
+                                               o.x(), o.y(), FT(1),
+                                               p.x(), p.y(), FT(1)) );
   }
 
   inline
@@ -215,7 +215,7 @@ protected:
   void compute_origin()
   {
     FT d = divide(l.a() * c.x() + l.b() * c.y() + l.c(),
-		  FT(2) * ( CGAL::square(l.a()) + CGAL::square(l.b()) )  );
+                  FT(2) * ( CGAL::square(l.a()) + CGAL::square(l.b()) )  );
     o = Point_2(c.x() - l.a() * d, c.y() - l.b() * d);
   }
 
@@ -288,13 +288,13 @@ public:
       W << p[1];
 
       if ( p.size() > 0 ) {
-	if ( right(p[0]) ) {
-	  pright.push_back(p[0]);
-	  pleft.push_back(p[1]);
-	} else {
-	  pright.push_back(p[1]);
-	  pleft.push_back(p[0]);
-	}
+        if ( right(p[0]) ) {
+          pright.push_back(p[0]);
+          pleft.push_back(p[1]);
+        } else {
+          pright.push_back(p[1]);
+          pleft.push_back(p[0]);
+        }
       }
     }
 

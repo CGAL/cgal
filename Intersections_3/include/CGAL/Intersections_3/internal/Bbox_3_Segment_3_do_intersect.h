@@ -42,17 +42,17 @@
 // source of the segment, and for t=1 that is its target), where the line
 // intersects the three slabs of the bounding box.
 
-// For a segment, the intersection is non-empty iff 
+// For a segment, the intersection is non-empty iff
 //    [t1, t2] intersects [0, 1].
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
 
   template <typename FT, bool bounded_0, bool use_static_filters = false>
-  struct Do_intersect_bbox_segment_aux_is_greater 
+  struct Do_intersect_bbox_segment_aux_is_greater
   {
     typedef typename Same_uncertainty<bool, FT>::type result_type;
 
@@ -125,7 +125,7 @@ namespace internal {
   }; // end specialization Do_intersect_bbox_segment_aux_is_greater<FT, true>
 
 
-  
+
   template <typename FT,
             typename BFT,
             bool bounded_0,
@@ -409,7 +409,7 @@ namespace internal {
     return true;
   }
 
-  
+
   template <typename FT,
             bool bounded_0,
             bool bounded_1,
@@ -435,7 +435,7 @@ namespace internal {
 
 
 
-  
+
   template <class K>
   bool do_intersect(const typename K::Segment_3& segment,
     const CGAL::Bbox_3& bbox,

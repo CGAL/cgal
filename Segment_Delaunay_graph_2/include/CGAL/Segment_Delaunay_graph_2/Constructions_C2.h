@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -70,19 +70,19 @@ public:
   }
 
   result_type operator()(const Point_2& p0, const Point_2& p1,
-			 const Point_2& q0, const Point_2& q1) const {
+                         const Point_2& q0, const Point_2& q1) const {
     return Site_2(p0, p1, q0, q1);
   }
 
   result_type operator()(const Point_2& p0, const Point_2& p1,
-			 const Point_2& q0, const Point_2& q1,
-			 bool b) const {
+                         const Point_2& q0, const Point_2& q1,
+                         bool b) const {
     return Site_2(p0, p1, q0, q1, b);
   }
 
   result_type operator()(const Point_2& p0, const Point_2& p1,
-			 const Point_2& q0, const Point_2& q1,
-			 const Point_2& r0, const Point_2& r1) const {
+                         const Point_2& q0, const Point_2& q1,
+                         const Point_2& r0, const Point_2& r1) const {
     return Site_2(p0, p1, q0, q1, r0, r1);
   }
 };
@@ -124,7 +124,7 @@ public:
 
 public:
   Point_2 operator()(const Site_2& s1, const Site_2& s2,
-		     const Site_2& s3) const
+                     const Site_2& s3) const
   {
     Voronoi_vertex_2 v(s1, s2, s3);
     return v.point();
@@ -148,7 +148,7 @@ public:
 
 public:
   Circle_2 operator() (const Site_2& s1, const Site_2& s2,
-		       const Site_2& s3) const
+                       const Site_2& s3) const
   {
     Voronoi_vertex_2 v(s1, s2, s3);
     return v.circle();
@@ -230,7 +230,7 @@ public:
   typedef Ray_2                                 result_type;
 
   Ray_2 operator()(const Site_2& p, const Site_2& q,
-		   const Site_2& r) const
+                   const Site_2& r) const
   {
     CGAL_assertion( !(p.is_segment() && q.is_segment()) );
 
@@ -243,7 +243,7 @@ public:
       p2 = p.point();
     } else if ( p.is_point() && q.is_segment() ) {
       CGAL_assertion( are_same_points(p, q.source_site()) ||
-		      are_same_points(p, q.target_site()) );
+                      are_same_points(p, q.target_site()) );
       p1 = are_same_points(p, q.source_site()) ? q.target() : q.source();
       p2 = p.point();
     } else {
@@ -281,7 +281,7 @@ public:
   typedef Object_2                             result_type;
 
   result_type operator()(const Site_2& p, const Site_2& q,
-			 const Site_2& r, const Site_2& s) const
+                         const Site_2& r, const Site_2& s) const
   {
     Construct_svd_vertex_2 circumcenter;
     Point_2 vpqr = circumcenter(p, q, r);
@@ -290,16 +290,16 @@ public:
     Equal_2 same_points;
 
     if ( (p.is_point() && q.is_point()) ||
-	 (p.is_segment() && q.is_segment()) ) {
+         (p.is_segment() && q.is_segment()) ) {
       Segment_2 vorseg(vpqr, vqps);
       return CGAL::make_object(vorseg);
     }
     if ( p.is_point() ) {
       // check is p is an endpoint of q
       if (  same_points( p, q.source_site() ) ||
-	    same_points( p, q.target_site() )  ) {
-	Segment_2 vorseg(vpqr, vqps);
-	return CGAL::make_object(vorseg);
+            same_points( p, q.target_site() )  ) {
+        Segment_2 vorseg(vpqr, vqps);
+        return CGAL::make_object(vorseg);
       }
       Line_2 l = q.segment().supporting_line();
       Parabola_segment_2 vorseg(p.point(), l, vpqr, vqps);
@@ -307,7 +307,7 @@ public:
     }
     // check is q is an endpoint of p
     if ( same_points(q, p.source_site()) ||
-	 same_points(q, p.target_site()) ) {
+         same_points(q, p.target_site()) ) {
       Segment_2 vorseg(vpqr, vqps);
       return CGAL::make_object(vorseg);
     }

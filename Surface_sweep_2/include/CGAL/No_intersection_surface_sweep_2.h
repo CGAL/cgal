@@ -178,7 +178,7 @@ public:
   typedef typename Allocator::template rebind<Subcurve> Subcurve_alloc_rebind;
   typedef typename Subcurve_alloc_rebind::other         Subcurve_alloc;
 #endif // not CGAL_CXX11
-  
+
 protected:
   /*! \struct
    * An auxiliary functor for comparing event pointers.

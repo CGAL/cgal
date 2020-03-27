@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Herve.Bronnimann@sophia.inria.fr
 //                 Michael.Seel@mpi-sb.mpg.de
@@ -68,7 +68,7 @@ Gaussian_elimination(const Matrix &M,
   // All the parameters are already initialized (as in C++)
   int sign = 1;
   // First create a copy of M into U, and set L and permutations to identity
-  U = M; 
+  U = M;
   typename Matrix::Identity IDENTITY;
   L = Matrix(dim,IDENTITY);
   for (i=0; i<dim; ++i) row_permutation.push_back(i);
@@ -94,7 +94,7 @@ Gaussian_elimination(const Matrix &M,
     }
     if (j!=k) {
       CGAL_KD_TRACEN("swap column j="<<j<<" and k="<<k);
-      U.swap_columns(j,k);  
+      U.swap_columns(j,k);
       std::swap(column_permutation[j],column_permutation[k]);
       sign = -sign;
     }
@@ -127,16 +127,16 @@ Gaussian_elimination(const Matrix &M,
 template < class FT, class AL >
 bool
 Linear_algebraCd<FT,AL>::
-Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b, 
+Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b,
                          int rank, Vector &x, FT &D)
-{ 
+{
   // METHOD: solve system Ux=b, returning solution (x/D)
   // back substitution of x[rdim], x[rdim-1], etc.
   // depends on "free" variables x[rdim+1], etc. x[cdim]
   CGAL_kernel_assertion( U.row_dimension() == b.dimension());
     CGAL_KD_TRACEN("Triangular_system_solver");CGAL_KD_TRACEV(U);CGAL_KD_TRACEV(b);
   D = FT(1); int i;
-  for (i = rank; i < U.row_dimension(); ++i) 
+  for (i = rank; i < U.row_dimension(); ++i)
       if ( b[i] != FT(0) ) {
           x = L.row(i);
           return false;
@@ -145,7 +145,7 @@ Triangular_system_solver(const Matrix &U, const Matrix& L, const Vector &b,
   x = Vector(U.column_dimension());
   for (i = rank-1; i>=0; --i) {
     x[i] = b[i];
-    for (int j = i+1; j<rank; ++j) 
+    for (int j = i+1; j<rank; ++j)
       x[i] -= U[i][j] * x[j];
     x[i] /= U[i][i];
   }
@@ -193,7 +193,7 @@ inverse(const Matrix &M, Matrix &I, FT &D, Vector &c)
   I = Matrix(M.column_dimension(),M.row_dimension());
   typename Matrix::row_iterator rit, wit;
   for (rank=0; rank<I.column_dimension(); ++rank)
-    for ( wit = I.row_begin(rank), rit = Uinv.row_begin(cq[rank]); 
+    for ( wit = I.row_begin(rank), rit = Uinv.row_begin(cq[rank]);
           rit != Uinv.row_end(cq[rank]); ++wit, ++rit ) *wit = *rit;
   /* does not work with MS:
     std::copy(Uinv.row_begin(cq[rank]), Uinv.row_end(cq[rank]),
@@ -315,15 +315,15 @@ linear_solver(const Matrix &M, const Vector &b,
   CGAL_assertion( (M*x) == b );
 #endif
   int defect = M.column_dimension() - rank;
-  spanning_vectors = Matrix(M.column_dimension(),defect); 
-  if (defect > 0) { 
-    for(int l=0; l < defect; ++l) { 
-      spanning_vectors(var[rank + l],l)=FT(1); 
-      for(int i = rank - 1; i >= 0 ; i--) { 
-        FT h = - U(i,rank+l); 
-        for (int j= i + 1; j<rank; ++j)  
-          h -= U(i,j)*spanning_vectors(var[j],l); 
-        spanning_vectors(var[i],l)= h / U(i,i); 
+  spanning_vectors = Matrix(M.column_dimension(),defect);
+  if (defect > 0) {
+    for(int l=0; l < defect; ++l) {
+      spanning_vectors(var[rank + l],l)=FT(1);
+      for(int i = rank - 1; i >= 0 ; i--) {
+        FT h = - U(i,rank+l);
+        for (int j= i + 1; j<rank; ++j)
+          h -= U(i,j)*spanning_vectors(var[j],l);
+        spanning_vectors(var[i],l)= h / U(i,i);
       }
       CGAL_KD_TRACEV(spanning_vectors.column(l));
 
@@ -374,27 +374,27 @@ homogeneous_linear_solver(const Matrix &M, Matrix &spanning_vectors)
   CGAL_assertion( (M*x).is_zero() );
 #endif
 
-  int defect = M.column_dimension() - rank; 
-  spanning_vectors = Matrix(M.column_dimension(),defect); 
- 
-  if (defect > 0) { 
+  int defect = M.column_dimension() - rank;
+  spanning_vectors = Matrix(M.column_dimension(),defect);
+
+  if (defect > 0) {
     /* In the $l$-th spanning vector, $0 \le l < |defect|$ we set
        variable |var[rank + l]| to $1 = |denom|/|denom|$ and then the
        dependent variables as dictated by the $|rank| + l$ - th column of
        |C|.*/
 
-    for(int l=0; l < defect; ++l) { 
-      spanning_vectors(var[rank + l],l)=FT(1); 
-      for(i = rank - 1; i >= 0 ; i--) { 
-        FT h = - U(i,rank+l); 
-        for (int j= i + 1; j<rank; ++j)  
-          h -= U(i,j)*spanning_vectors(var[j],l); 
-        spanning_vectors(var[i],l)= h / U(i,i); 
+    for(int l=0; l < defect; ++l) {
+      spanning_vectors(var[rank + l],l)=FT(1);
+      for(i = rank - 1; i >= 0 ; i--) {
+        FT h = - U(i,rank+l);
+        for (int j= i + 1; j<rank; ++j)
+          h -= U(i,j)*spanning_vectors(var[j],l);
+        spanning_vectors(var[i],l)= h / U(i,i);
       }
       CGAL_KD_TRACEV(spanning_vectors.column(l));
 
 #ifdef CGAL_LA_SELFTEST
-      /* we check whether the $l$ - th spanning vector is a solution 
+      /* we check whether the $l$ - th spanning vector is a solution
          of the homogeneous system */
       if ( !(M*spanning_vectors.column(l)).is_zero() )
         std::cerr << M*spanning_vectors.column(l) << std::endl;
@@ -413,13 +413,13 @@ homogeneous_linear_solver(const Matrix &M, Vector &x)
   x = Vector(M.row_dimension());
   Matrix spanning_vectors;
   int defect = homogeneous_linear_solver(M,spanning_vectors);
-  if (defect == 0) return false; 
+  if (defect == 0) return false;
 
   /* return first column of |spanning_vectors| */
   for (int i = 0; i < spanning_vectors.row_dimension(); i++)
     x[i] = spanning_vectors(i,0);
-  return true; 
-  
+  return true;
+
 }
 
 
@@ -427,7 +427,7 @@ template < class FT, class AL >
 int
 Linear_algebraCd<FT,AL>::
 independent_columns(const Matrix &M, std::vector<int> &q)
-{ 
+{
   int rank;
   std::vector<int> dummy;
   Matrix Dummy1,Dummy2; Vector Dummy3; FT null(0);
@@ -439,7 +439,7 @@ template < class FT, class AL >
 int
 Linear_algebraCd<FT,AL>::
 rank(const Matrix &M)
-{ std::vector<int> q; 
+{ std::vector<int> q;
   return independent_columns(M,q);
 }
 

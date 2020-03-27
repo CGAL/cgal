@@ -20,7 +20,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_IMPLICIT_FUNCTION_INTERFACE_H
@@ -30,13 +30,13 @@
 #include <QString>
 #include <CGAL/Three/Scene_interface.h>
 
-class Implicit_function_interface 
+class Implicit_function_interface
 {
 public:
   typedef CGAL::Three::Scene_interface::Bbox Bbox;
-  
+
   virtual ~Implicit_function_interface() {}
-  
+
   virtual QString name() const = 0;
   virtual double operator()(double x, double y, double z) const = 0;
   virtual Bbox bbox() const = 0;

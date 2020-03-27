@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
@@ -40,7 +40,7 @@ class SNC_SM_explorer : public SMCDEC {
  public:
   SNC_SM_explorer(const Base& E) : Base(E) {}
   Self& operator=(const Self& E) {
-    Base::operator=(E); 
+    Base::operator=(E);
     return *this;
   }
 };

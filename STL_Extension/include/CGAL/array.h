@@ -194,7 +194,7 @@ struct Construct_array
   }
 };
 
-  
+
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 } //namespace CGAL

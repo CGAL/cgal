@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s): Ron Wein          <wein@post.tau.ac.il>
 
@@ -37,15 +37,15 @@ namespace CGAL {
 
 /*! \class Arrangement_on_history_2
  * The arrangement with history class, representing planar subdivisions
- * induced by a set of arbitrary planar curves and storing the curve history. 
+ * induced by a set of arbitrary planar curves and storing the curve history.
  * The GeomTraits parameter corresponds to a geometry-traits class that
  * defines the Point_2 and X_monotone_curve_2 types and implements the
  * geometric predicates and constructions for the family of curves it defines.
  * The Dcel parameter should be a model of the ArrDcel concept and support
  * the basic topological operations on a doubly-connected edge-list.
  */
-template <class GeomTraits_, 
-          class Dcel_ = Arr_default_dcel<GeomTraits_> > 
+template <class GeomTraits_,
+          class Dcel_ = Arr_default_dcel<GeomTraits_> >
 class Arrangement_with_history_2 :
   public Arrangement_on_surface_with_history_2
     <GeomTraits_,
@@ -60,11 +60,11 @@ private:
 public:
   typedef GeomTraits_                                     Geometry_traits_2;
   typedef Dcel_                                           Dcel;
-  
+
   typedef typename Base::Point_2                          Point_2;
   typedef typename Base::X_monotone_curve_2               X_monotone_curve_2;
   typedef typename Base::Curve_2                          Curve_2;
-  
+
   typedef typename Base::Topology_traits                  Topology_traits;
 
   // Type definitions.
@@ -75,7 +75,7 @@ public:
 
   typedef typename Base::Vertex_iterator          Vertex_iterator;
   typedef typename Base::Vertex_const_iterator    Vertex_const_iterator;
-  
+
   typedef typename Base::Halfedge_iterator        Halfedge_iterator;
   typedef typename Base::Halfedge_const_iterator  Halfedge_const_iterator;
 
@@ -84,8 +84,8 @@ public:
 
   typedef typename Base::Face_iterator            Face_iterator;
   typedef typename Base::Face_const_iterator      Face_const_iterator;
-  
-  typedef typename Base::Halfedge_around_vertex_circulator 
+
+  typedef typename Base::Halfedge_around_vertex_circulator
                                      Halfedge_around_vertex_circulator;
   typedef typename Base::Halfedge_around_vertex_const_circulator
                                      Halfedge_around_vertex_const_circulator;
@@ -93,7 +93,7 @@ public:
   typedef typename Base::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
   typedef typename Base::Ccb_halfedge_const_circulator
                                              Ccb_halfedge_const_circulator;
-  
+
   typedef typename Base::Outer_ccb_iterator        Outer_ccb_iterator;
   typedef typename Base::Outer_ccb_const_iterator  Outer_ccb_const_iterator;
 
@@ -231,7 +231,7 @@ public:
     // hole inside it. We return a handle to one of its neighboring faces,
     // which is necessarily unbounded.
     const typename Base::DFace      *un_face =
-                                   this->topology_traits()->initial_face(); 
+                                   this->topology_traits()->initial_face();
 
     if (! un_face->is_fictitious())
       return (Face_const_handle (un_face));
@@ -239,7 +239,7 @@ public:
     const typename Base::DHalfedge  *p_he = *(un_face->inner_ccbs_begin());
     const typename Base::DHalfedge  *p_opp = p_he->opposite();
     const typename Base::DOuter_ccb *p_oc = p_opp->outer_ccb();
-    
+
     return (Face_const_handle (p_oc->face()));
   }
   //@}

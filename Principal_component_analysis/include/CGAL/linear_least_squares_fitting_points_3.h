@@ -37,18 +37,18 @@ namespace internal {
 // returns a fitting quality (1 - lambda_min/lambda_max):
 //  1 is best (zero variance orthogonally to the fitting line)
 //  0 is worst (isotropic case, returns a plane with default direction)
-template < typename InputIterator, 
+template < typename InputIterator,
            typename K,
-	   typename DiagonalizeTraits >
+           typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
+                               InputIterator beyond,
                                typename K::Plane_3& plane, // best fit plane
                                typename K::Point_3& c,     // centroid
                                const typename K::Point_3*, // used for indirection
                                const K& k,                 // kernel
-			       const CGAL::Dimension_tag<0>& tag,
-			       const DiagonalizeTraits& diagonalize_traits)
+                               const CGAL::Dimension_tag<0>& tag,
+                               const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::Point_3  Point;
 
@@ -70,18 +70,18 @@ linear_least_squares_fitting_3(InputIterator first,
 // returns a fitting quality (1 - lambda_min/lambda_max):
 //  1 is best (zero variance orthogonally to the fitting line)
 //  0 is worst (isotropic case, returns a line along x axis)
-template < typename InputIterator, 
+template < typename InputIterator,
            typename K,
-	   typename DiagonalizeTraits >
+           typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
+                               InputIterator beyond,
                                typename K::Line_3& line,  // best fit line
                                typename K::Point_3& c,    // centroid
                                const typename K::Point_3*, // used for indirection
                                const K& k,                // kernel
-			       const CGAL::Dimension_tag<0>& tag,
-			       const DiagonalizeTraits& diagonalize_traits)
+                               const CGAL::Dimension_tag<0>& tag,
+                               const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::Point_3  Point;
 

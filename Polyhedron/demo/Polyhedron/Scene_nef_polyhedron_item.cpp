@@ -435,7 +435,7 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
     } //end points
     QApplication::restoreOverrideCursor();
 }
-Scene_nef_polyhedron_item* 
+Scene_nef_polyhedron_item*
 Scene_nef_polyhedron_item::clone() const {
     return new Scene_nef_polyhedron_item(*d->nef_poly);
 }
@@ -457,7 +457,7 @@ Scene_nef_polyhedron_item::load_from_off(std::istream& in)
     return (bool) in;
 }
 
-QFont 
+QFont
 Scene_nef_polyhedron_item::font() const {
     QFont font;
     font.setItalic(!font.italic());
@@ -479,7 +479,7 @@ Scene_nef_polyhedron_item::save(std::ostream& in) const
     return (bool) in;
 }
 
-QString 
+QString
 Scene_nef_polyhedron_item::toolTip() const
 {
     if(!d->nef_poly)
@@ -684,7 +684,7 @@ operator-=(const Scene_nef_polyhedron_item& other)
 
 Scene_nef_polyhedron_item*
 Scene_nef_polyhedron_item::
-sum(const Scene_nef_polyhedron_item& a, 
+sum(const Scene_nef_polyhedron_item& a,
     const Scene_nef_polyhedron_item& b)
 {
     return new Scene_nef_polyhedron_item(CGAL::minkowski_sum_3(*a.d->nef_poly,

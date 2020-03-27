@@ -15,11 +15,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 
-#ifndef CGAL_TRIANGULAR_FIELD_2_H_ 
+#ifndef CGAL_TRIANGULAR_FIELD_2_H_
 #define CGAL_TRIANGULAR_FIELD_2_H_
 
 #include <CGAL/license/Stream_lines_2.h>
@@ -35,7 +35,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
-#include <cmath> 
+#include <cmath>
 #include <string>
 
 #include <CGAL/Triangulation_face_base_with_info_2.h>
@@ -71,43 +71,43 @@ protected:
     {
       std::cout << "reading file...\n";
       while(pBegin != pEnd)
-	{
-	  Point_2 p;
-	  Vector_2 v;
-	  p = (*pBegin);
-	  v = (*vBegin);
-	  m_D_Ttr.insert(p);
-	  field_map[p] = v;
-	  if (m_D_Ttr.number_of_vertices() == 1)
-	    {
-	      maxx = minx = p.x();
-	      maxy = miny = p.y();
-	    }
-	  if(p.x()<minx)
-	    {
-	      minx = p.x();
-	    }
-	  if(p.y()<miny)
-	    {
-	      miny = p.y();
-	    }
-	  if(p.x()>maxx)
-	    {
-	      maxx = p.x();
-	    }
-	  if(p.y()>maxy)
-	    {
-	      maxy = p.y();
-	    }
-	  ++pBegin;
-	  ++vBegin;
-	}
+        {
+          Point_2 p;
+          Vector_2 v;
+          p = (*pBegin);
+          v = (*vBegin);
+          m_D_Ttr.insert(p);
+          field_map[p] = v;
+          if (m_D_Ttr.number_of_vertices() == 1)
+            {
+              maxx = minx = p.x();
+              maxy = miny = p.y();
+            }
+          if(p.x()<minx)
+            {
+              minx = p.x();
+            }
+          if(p.y()<miny)
+            {
+              miny = p.y();
+            }
+          if(p.x()>maxx)
+            {
+              maxx = p.x();
+            }
+          if(p.y()>maxy)
+            {
+              maxy = p.y();
+            }
+          ++pBegin;
+          ++vBegin;
+        }
       std::cout << "number of samples " << m_D_Ttr.number_of_vertices() << "\n";
     }
 public:
   template <class PointInputIterator, class VectorInputIterator>
   Triangular_field_2(PointInputIterator pBegin, PointInputIterator
-		     pEnd, VectorInputIterator vBegin)
+                     pEnd, VectorInputIterator vBegin)
     {
       fill(pBegin, pEnd, vBegin);
     }
@@ -121,7 +121,7 @@ public:
       FT density = get_density_field(p);
       return std::make_pair(v, density);
     }
-  
+
   bool is_in_domain(const Point_2 & p) const;
 
   FT get_integration_step(const Point_2 &) const;
@@ -141,28 +141,28 @@ protected:
     }
 };
 
-template <class StreamLinesTraits_2> 
+template <class StreamLinesTraits_2>
 inline
 typename Triangular_field_2<StreamLinesTraits_2>::Geom_traits::Iso_rectangle_2
 Triangular_field_2<StreamLinesTraits_2>::bbox() const
 {
   return typename Geom_traits::Iso_rectangle_2(minx, miny, maxx,
-					       maxy);
+                                               maxy);
 }
 
 template <class StreamLinesTraits_2>
-bool 
+bool
 Triangular_field_2<StreamLinesTraits_2>::is_in_domain(const Point_2 &
-						      p) const
+                                                      p) const
 {
   Face_handle f = m_D_Ttr.locate(p);
   return !m_D_Ttr.is_infinite(f);
 }
 
 template <class StreamLinesTraits_2>
-typename Triangular_field_2<StreamLinesTraits_2>::Vector_2 
+typename Triangular_field_2<StreamLinesTraits_2>::Vector_2
 Triangular_field_2<StreamLinesTraits_2>::get_vector_field(const
-							  Point_2 & p) 
+                                                          Point_2 & p)
   const
 {
   Face_handle m_Face_handle = m_D_Ttr.locate(p);
@@ -186,9 +186,9 @@ Triangular_field_2<StreamLinesTraits_2>::get_vector_field(const
   vec.clear();
   vec.push_back(p0); vec.push_back(p1); vec.push_back(p);
   s2 = polygon_area_2(vec.begin(), vec.end(), m_D_Ttr.geom_traits());
-  vec.clear(); 
+  vec.clear();
   s0 = s0 / s; s1 = s1 / s; s2 = s2 / s;
-  Vector_2 v_0 = field_map[p0];  
+  Vector_2 v_0 = field_map[p0];
   Vector_2 v_1 = field_map[p1];
   Vector_2 v_2 = field_map[p2];
   FT x = ((v_0.x()*s0)+(v_1.x()*s1)+(v_2.x()*s2));
@@ -206,8 +206,8 @@ Triangular_field_2<StreamLinesTraits_2>::get_vector_field(const
 template <class StreamLinesTraits_2>
 typename Triangular_field_2<StreamLinesTraits_2>::FT
 Triangular_field_2<StreamLinesTraits_2>::get_density_field(const
-							   Point_2 &
-							   p) const
+                                                           Point_2 &
+                                                           p) const
 {
   return p.x();
 }
@@ -215,8 +215,8 @@ Triangular_field_2<StreamLinesTraits_2>::get_density_field(const
 template<class StreamLinesTraits_2>
 typename Triangular_field_2<StreamLinesTraits_2>::FT
 Triangular_field_2<StreamLinesTraits_2>::get_integration_step(const
-							      Point_2
-							      &) const
+                                                              Point_2
+                                                              &) const
 {
   return 1.0;
 }

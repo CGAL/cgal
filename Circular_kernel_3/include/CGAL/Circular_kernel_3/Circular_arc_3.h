@@ -16,11 +16,11 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SPHERICAL_KERNEL_CIRCULAR_ARC_3_H
@@ -47,13 +47,13 @@ namespace CGAL {
 
     private:
 
-      typedef boost::tuple<Circle_3, Circular_arc_point_3, 
+      typedef boost::tuple<Circle_3, Circular_arc_point_3,
                                Circular_arc_point_3> Rep;
       typedef typename SK::template Handle<Rep>::type Base;
 
       Base base;
       bool _full;
-      // It is the sign of the cross product 
+      // It is the sign of the cross product
       // of the vector (Center -> S) x (Center -> T)
       // it saves execution time for the has_on functor
       Sign _sign_cross_product;
@@ -64,21 +64,21 @@ namespace CGAL {
         return get_ref_sphere(get_pointee_or_identity(base).template get<0>());
       };
 
-        
+
       Circular_arc_3()
       {}
 
       // The arc of circle goes from s to t in counterclockwise orientation
       // in relation to the normal vector N of the supporting plane
-      // such that 
+      // such that
       // if N.x != 0 then N.x > 0
       // else if N.y != 0 -> N.y > 0
       // else N.z > 0
       // Interesting thing is that if _sign_cross_product is negative
       // the arc is the bigger one (angle > pi)
-      Circular_arc_3(const Circle_3 &c, 
+      Circular_arc_3(const Circle_3 &c,
                      const Circular_arc_point_3 &s,
-                     const Circular_arc_point_3 &t) 
+                     const Circular_arc_point_3 &t)
       : _full(false)
       {
         // l must pass through s and t, and s != t
@@ -86,8 +86,8 @@ namespace CGAL {
         CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
         CGAL_kernel_precondition(s != t);
         base = Rep(c,s,t);
-        // we can optimize the computations of the sign (for the has_on functor), 
-        // by computing the vector s-c and t-s, in order to use them directly on 
+        // we can optimize the computations of the sign (for the has_on functor),
+        // by computing the vector s-c and t-s, in order to use them directly on
         // another compute_sign_of_cross_product function
         // we can save time computing the substractions
         // the problem is: more memory space is needed
@@ -95,9 +95,9 @@ namespace CGAL {
           CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
-      Circular_arc_3(const Circle_3 &c, 
+      Circular_arc_3(const Circle_3 &c,
                      const Point_3 &s,
-                     const Circular_arc_point_3 &t) 
+                     const Circular_arc_point_3 &t)
       : _full(false)
       {
         // l must pass through s and t, and s != t
@@ -105,13 +105,13 @@ namespace CGAL {
         CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
         CGAL_kernel_precondition(Circular_arc_point_3(s) != t);
         base = Rep(c,s,t);
-        _sign_cross_product = 
+        _sign_cross_product =
           CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
-      Circular_arc_3(const Circle_3 &c, 
+      Circular_arc_3(const Circle_3 &c,
                      const Circular_arc_point_3 &s,
-                     const Point_3 &t) 
+                     const Point_3 &t)
       : _full(false)
       {
         // l must pass through s and t, and s != t
@@ -119,22 +119,22 @@ namespace CGAL {
         CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
         CGAL_kernel_precondition(s != Circular_arc_point_3(t));
         base = Rep(c,s,t);
-        _sign_cross_product = 
+        _sign_cross_product =
           CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
-      Circular_arc_3(const Circle_3 &c, 
+      Circular_arc_3(const Circle_3 &c,
                      const Point_3 &s,
-                     const Point_3 &t) 
+                     const Point_3 &t)
       : _full(false)
       {
         // l must pass through s and t, and s != t
         CGAL_kernel_precondition(SK().has_on_3_object()(c,s));
         CGAL_kernel_precondition(SK().has_on_3_object()(c,t));
-        CGAL_kernel_precondition(Circular_arc_point_3(s) != 
+        CGAL_kernel_precondition(Circular_arc_point_3(s) !=
                                  Circular_arc_point_3(t));
         base = Rep(c,s,t);
-        _sign_cross_product = 
+        _sign_cross_product =
           CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>(s,t,c.center());
       }
 
@@ -145,12 +145,12 @@ namespace CGAL {
       {
         const Plane_3 &p = c.supporting_plane();
         if(is_zero(p.b()) && is_zero(p.c())) {
-          const Circular_arc_point_3 v = 
-	    SphericalFunctors::y_extremal_point<SK>(c,true);
+          const Circular_arc_point_3 v =
+            SphericalFunctors::y_extremal_point<SK>(c,true);
           base = Rep(c,v,v);
         } else {
-          const Circular_arc_point_3 v = 
-	    SphericalFunctors::x_extremal_point<SK>(c,true);
+          const Circular_arc_point_3 v =
+            SphericalFunctors::x_extremal_point<SK>(c,true);
           base = Rep(c,v,v);
         }
       }
@@ -160,10 +160,10 @@ namespace CGAL {
       Circular_arc_3(const Circle_3 &c,const Circular_arc_point_3& point)
       : base(Rep(c,point,point)),_full(true), _sign_cross_product(CGAL::ZERO)
       {CGAL_kernel_precondition(SK().has_on_3_object()(c,point));}
-      
-      Circular_arc_3(const Circle_3 &c, 
+
+      Circular_arc_3(const Circle_3 &c,
                      const Sphere_3 &s1, bool less_xyz_s1,
-                     const Sphere_3 &s2, bool less_xyz_s2) 
+                     const Sphere_3 &s2, bool less_xyz_s2)
       {
          typedef typename SK3_Intersection_traits<SK, Circle_3, Sphere_3>::type result_type;
          std::vector<result_type> sols1, sols2;
@@ -182,15 +182,15 @@ namespace CGAL {
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
             *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]
-            );        
+            );
          // the source and target must be different
          CGAL_kernel_precondition(pair1.first != pair2.first);
          *this = Circular_arc_3(c, pair1.first, pair2.first);
       }
 
-      Circular_arc_3(const Circle_3 &c, 
+      Circular_arc_3(const Circle_3 &c,
                      const Plane_3 &p1, bool less_xyz_p1,
-                     const Plane_3 &p2, bool less_xyz_p2) 
+                     const Plane_3 &p2, bool less_xyz_p2)
       {
         typedef typename SK3_Intersection_traits<SK, Circle_3, Plane_3>::type result_type;
          std::vector<result_type> sols1, sols2;
@@ -209,36 +209,36 @@ namespace CGAL {
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols2[(sols2.size()==1)?(0):(less_xyz_p2?0:1)]
-            );                
+            );
          // the source and target must be different
          CGAL_kernel_precondition(pair1.first != pair2.first);
          *this = Circular_arc_3(c, pair1.first, pair2.first);
       }
 
       Circular_arc_3(const Point_3 &begin,
-		     const Point_3 &middle,
-		     const Point_3 &end)
+                     const Point_3 &middle,
+                     const Point_3 &end)
         : _full(false)
       {
-	CGAL_kernel_precondition(!typename SK::Collinear_3()(begin, middle, end));
-	const Circle_3 c = Circle_3(begin, middle, end);
-	base = Rep(c,begin,end);
+        CGAL_kernel_precondition(!typename SK::Collinear_3()(begin, middle, end));
+        const Circle_3 c = Circle_3(begin, middle, end);
+        base = Rep(c,begin,end);
         _sign_cross_product =
           CGAL::SphericalFunctors::compute_sign_of_cross_product<SK>
-	         (begin,end,c.center());
+                 (begin,end,c.center());
       }
 
-      const Circle_3& supporting_circle() const 
+      const Circle_3& supporting_circle() const
       {
         return get_pointee_or_identity(base).template get<0>();
       }
 
-      const Circular_arc_point_3& source() const 
+      const Circular_arc_point_3& source() const
       {
         return get_pointee_or_identity(base).template get<1>();
       }
 
-      const Circular_arc_point_3& target() const 
+      const Circular_arc_point_3& target() const
       {
         return get_pointee_or_identity(base).template get<2>();
       }
@@ -315,7 +315,7 @@ namespace CGAL {
     Circular_arc_3<SK>::operator==(const Circular_arc_3<SK> &t) const
     {
       if (CGAL::identical(base, t.base))
-        return true;		
+        return true;
       return CGAL::SphericalFunctors::non_oriented_equal<SK>(*this, t);
     }
 

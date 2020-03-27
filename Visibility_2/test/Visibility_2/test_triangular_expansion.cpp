@@ -71,7 +71,7 @@ int main() {
   }
 
   {
-    // test Visibility_arrangement_type with extended DCEL     
+    // test Visibility_arrangement_type with extended DCEL
     typedef CGAL::Exact_predicates_exact_constructions_kernel       Kernel;
     typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
     typedef CGAL::Arrangement_2<Traits_2>                           ARR;

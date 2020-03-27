@@ -1,9 +1,9 @@
-// Copyright (c) 2001  
+// Copyright (c) 2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -33,7 +33,7 @@ PointCd<FT,LA> VectorCd<FT,LA>::to_point() const
 { return PointCd<FT,LA>(Base(*this)); }
 
 template <class FT,class LA>
-PointCd<FT,LA> 
+PointCd<FT,LA>
 operator+ (const Origin&, const VectorCd<FT,LA>& v)
 { return v.to_point(); }
 
@@ -41,7 +41,7 @@ template <class FT, class LA>
 DirectionCd<FT,LA>  VectorCd<FT,LA>::
 direction() const
 { CGAL_assertion_msg(!is_zero(), "VectorCd::direction: \
-  zero vector cannot be a direction."); 
+  zero vector cannot be a direction.");
   return DirectionCd<FT,LA>(*this);
 }
 
@@ -53,22 +53,22 @@ transform(const Aff_transformationCd<FT,LA>& t) const
 }
 
 template <class FT, class LA>
-VectorCd<FT,LA> operator*(const int& n, const VectorCd<FT,LA>& v) 
+VectorCd<FT,LA> operator*(const int& n, const VectorCd<FT,LA>& v)
 { return v.scale(n); }
 
 template <class FT, class LA>
-VectorCd<FT,LA> operator*(const FT& n, const VectorCd<FT,LA>& v) 
+VectorCd<FT,LA> operator*(const FT& n, const VectorCd<FT,LA>& v)
 { return v.scale(n); }
 
 template <class FT, class LA>
 std::istream& operator>>(std::istream& I, VectorCd<FT,LA>& v)
 { v.copy_on_write(); v.ptr()->read(I);
-  return I; 
+  return I;
 }
 
 template <class FT, class LA>
 std::ostream& operator<<(std::ostream& O, const VectorCd<FT,LA>& v)
-{ v.ptr()->print(O,"VectorCd"); return O; } 
+{ v.ptr()->print(O,"VectorCd"); return O; }
 
 #undef PointCd
 } //namespace CGAL

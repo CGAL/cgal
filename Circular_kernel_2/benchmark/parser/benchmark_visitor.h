@@ -13,7 +13,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s) : Lutz Kettner
 **************************************************************************/
@@ -33,7 +33,7 @@ struct Benchmark_parser_exception {
 // Visitor pattern for the benchmark parser
 class Benchmark_visitor {
 public:
-    enum Error_mode { IGNORE_ERRORS = 0, PRINT_ERRORS = 1, 
+    enum Error_mode { IGNORE_ERRORS = 0, PRINT_ERRORS = 1,
                       THROW_ERRORS  = 2, EXIT_ERRORS  = 4 };
 protected:
     // error handling
@@ -48,9 +48,9 @@ protected:
     std::string  m_format_options;
     std::string  m_benchmark_name;
 
-public:    
+public:
     Benchmark_visitor( int mode = PRINT_ERRORS )
-        : m_mode(mode), m_error( false), m_error_message(""), 
+        : m_mode(mode), m_error( false), m_error_message(""),
           m_major(-1), m_minor(-1) {}
     virtual ~Benchmark_visitor() {}
 
@@ -68,7 +68,7 @@ public:
 
     virtual void reset_header();
 
-    // Options are comma separated. We have also a comma left and one right 
+    // Options are comma separated. We have also a comma left and one right
     // to have simple contains-an-option ",OPT," queries.
     std::string  format_options() const { return m_format_options; }
     std::string  benchmark_name() const { return m_benchmark_name; }
@@ -84,7 +84,7 @@ public:
                                      std::string options);
     virtual void accept_benchmark_name( std::string s);
     virtual void accept_classification( std::string problem,
-                                        std::string geom, 
+                                        std::string geom,
                                         std::string clas,
                                         std::string family,
                                         std::string instance,
@@ -95,8 +95,8 @@ public:
     virtual void accept_orientation( std::string s) { tnh( "Orientation"); }
 
     virtual void accept_integer( std::string s) { tnh( "Integer"); }
-    virtual void accept_rational( std::string num, std::string denom) { 
-        tnh( "Rational"); 
+    virtual void accept_rational( std::string num, std::string denom) {
+        tnh( "Rational");
     }
     virtual void accept_fnumber( double d) { tnh( "Fnumber"); }
     virtual void accept_string( std::string s) { tnh( "String"); }
@@ -106,15 +106,15 @@ public:
     virtual void accept_clockwise (std::string s) { tnh("Clockwise"); }
     virtual void accept_void (std::string s) { tnh("Void"); }
 
-    virtual void accept_point_2( std::string x, std::string y) { 
-        tnh( "Point_2(x,y)"); 
+    virtual void accept_point_2( std::string x, std::string y) {
+        tnh( "Point_2(x,y)");
     }
     virtual void accept_point_2( std::string x, std::string y, std::string w) {
-        tnh( "Point_2(x,y,w)"); 
+        tnh( "Point_2(x,y,w)");
     }
-    virtual void accept_point_2( std::string x_num, std::string x_denom, 
+    virtual void accept_point_2( std::string x_num, std::string x_denom,
                                  std::string y_num, std::string y_denom) {
-        tnh( "Point_2(x_num, x_denom, y_num, y_denom)"); 
+        tnh( "Point_2(x_num, x_denom, y_num, y_denom)");
     }
 
     virtual void begin_algebraic_real() { tnh( "Begin_algebraic_real" ); }
@@ -128,7 +128,7 @@ public:
     virtual void end_conic_point_2() {
         tnh( "End_conic_point_2" );
     }
-    
+
     // non-terminal nodes
     virtual void begin_list() { tnh( "Begin_list"); }
     virtual void end_list() { tnh( "End_list"); }
@@ -140,17 +140,17 @@ public:
     virtual void end_line_segment_2() { tnh( "End_line_segment_2"); }
 
     virtual void accept_conic_2(std::string A, std::string B, std::string C,
-                                std::string D, std::string E, std::string F) { 
-        tnh("Conic_2"); 
+                                std::string D, std::string E, std::string F) {
+        tnh("Conic_2");
     }
 
 
     virtual void begin_conic_arc_2() { tnh( "Begin_conic_arc_2" );}
     virtual void end_conic_arc_2()   { tnh( "End_conic_arc_2" );}
-    
+
     virtual void begin_circle_2() { tnh("Begin_circle_2"); }
     virtual void end_circle_2() { tnh("End_circle_2"); }
- 
+
     virtual void accept_cubic_2(std::string A, std::string B, std::string C,
                                 std::string D, std::string E, std::string F,
                                 std::string G, std::string H, std::string K,

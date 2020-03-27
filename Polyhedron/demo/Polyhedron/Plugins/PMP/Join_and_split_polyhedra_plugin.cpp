@@ -175,7 +175,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
       }
 
       int cc=0;
-      
+
       Scene_group_item *group = new Scene_group_item("CC");
        scene->addItem(group);
       BOOST_FOREACH(FaceGraph* polyhedron_ptr, new_polyhedra)

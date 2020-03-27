@@ -24,11 +24,11 @@
 \cgalPkgDescriptionEnd
 
 The triangulation data structure is able to represent a
-triangulation of a topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for 
+triangulation of a topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for
 \f$ d \in \{-1,0,1,2,3\}\f$. (See  \ref TDS3secintro.)
 
 The vertex class of a 3D-triangulation data structure must define
-a number of types and operations. 
+a number of types and operations.
 The requirements that are of geometric nature are required only when
 the triangulation data structure is used as a layer for the geometric
 triangulation classes. (See Section  \ref TDS3secdesign.)
@@ -41,7 +41,7 @@ The neighbor indexed \f$ i\f$ lies opposite to vertex `i`.
 In degenerate dimensions, cells are used to store faces of maximal
 dimension: in dimension 2, each cell represents only one
 facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in
-dimension 1, each cell represents one edge \f$ (0,1)\f$. (See 
+dimension 1, each cell represents one edge \f$ (0,1)\f$. (See
 Section  \ref TDS3secintro.)
 
 \cgalClassifedRefPages

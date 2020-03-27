@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -49,15 +49,15 @@ namespace Qt {
 // forward declaration
 class GraphicsViewNavigation;
 
-class CGAL_QT_EXPORT DemosMainWindow : public QMainWindow 
+class CGAL_QT_EXPORT DemosMainWindow : public QMainWindow
 {
   Q_OBJECT
 
 public:
   enum Option { NoOption = 0x0,
-		Size     = 0x1,
-		Position = 0x2,
-		State    = 0x4};
+                Size     = 0x1,
+                Position = 0x2,
+                State    = 0x4};
 
   Q_DECLARE_FLAGS(Options, Option)
 
@@ -66,7 +66,7 @@ public:
 
   virtual void open(QString)
   {
-    std::cerr << "You should implement open(QString);" << std::endl; 
+    std::cerr << "You should implement open(QString);" << std::endl;
   }
 
 public:
@@ -94,7 +94,7 @@ protected:
 
   void writeState(QString groupname = "MainWindow");
   void readState(QString groupname = "MainWindow",
-		 Options what_to_save = Options(Size|State));
+                 Options what_to_save = Options(Size|State));
 
 protected Q_SLOTS:
   void setUseAntialiasing(bool checked);

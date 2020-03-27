@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Hoffmann <hoffmann@inf.ethz.ch>
 //               : Michael Hemmer <hemmer@mpi-inf.mpg.de>
@@ -79,10 +79,10 @@ struct Gcd : Algebraic_structure_traits<NT>::Gcd{};
 template < class NT >
 struct Is_one : Algebraic_structure_traits<NT>::Is_one {};
 
-// This is due to the fact that Is_zero may be provided by 
+// This is due to the fact that Is_zero may be provided by
 // Algebraic_structure_traits as well as Real_embeddable_traits
-// Of course it is not possible to derive from both since this 
-// would cause an ambiguity. 
+// Of course it is not possible to derive from both since this
+// would cause an ambiguity.
 namespace internal{
 template <class AST_Is_zero, class RET_Is_zero>
 struct Is_zero_base : AST_Is_zero {} ;
@@ -90,13 +90,13 @@ template <class RET_Is_zero>
 struct Is_zero_base <CGAL::Null_functor, RET_Is_zero >: RET_Is_zero {} ;
 } // namespace internal
 template < class NT >
-struct Is_zero : 
+struct Is_zero :
   internal::Is_zero_base
   <typename Algebraic_structure_traits<NT>::Is_zero,
-   typename Real_embeddable_traits<NT>::Is_zero>{}; 
+   typename Real_embeddable_traits<NT>::Is_zero>{};
 
 
-// This is due to the fact that CGAL::Compare is used for other 
+// This is due to the fact that CGAL::Compare is used for other
 // non-realembeddable types as well.
 // In this case we try to provide a default implementation
 namespace internal {
@@ -108,7 +108,7 @@ template <class NT> struct Compare_base<NT,Null_functor>
     if (x < y) return SMALLER;
     if (x > y) return LARGER;
     CGAL_postcondition(x == y);
-    return EQUAL;   
+    return EQUAL;
   }
 };
 } // namespace internal

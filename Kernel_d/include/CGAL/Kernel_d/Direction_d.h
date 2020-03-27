@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel
 
@@ -60,7 +60,7 @@ class Direction_d : public pR::Direction_d_base
 
 
   Direction_d(const Vector_d<R> &v) : Base(v) {}
-  Direction_d(int d, Base_direction, int i) : 
+  Direction_d(int d, Base_direction, int i) :
     Base(d,Base_direction(),i) {}
   Direction_d(const Base& p) : Base(p) {}
 

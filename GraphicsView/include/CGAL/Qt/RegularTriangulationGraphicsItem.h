@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -42,7 +42,7 @@ namespace Qt {
 template <typename T>
 class RegularTriangulationGraphicsItem : public GraphicsItem
 {
-  typedef typename T::Geom_traits Geom_traits;      
+  typedef typename T::Geom_traits Geom_traits;
   typedef typename Kernel_traits<typename T::Bare_point>::Kernel K;
   typedef typename K::Segment_2 Segment_2;
 
@@ -54,9 +54,9 @@ public:
 public:
 
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
   virtual void operator()(typename T::Face_handle fh);
 
   const QPen& verticesPen() const
@@ -114,7 +114,7 @@ protected:
 
   typename T::Vertex_handle vh;
   typename T::Point p;
-  CGAL::Bbox_2 bb;  
+  CGAL::Bbox_2 bb;
   bool bb_initialized;
   QRectF bounding_rect;
 
@@ -129,7 +129,7 @@ template <typename T>
 RegularTriangulationGraphicsItem<T>::RegularTriangulationGraphicsItem(T * t_)
   :  t(t_), painterostream(0), bb(0,0,0,0), bb_initialized(false),
      visible_edges(true), visible_vertices(true)
-     
+
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   if(t->number_of_vertices() == 0){
@@ -140,7 +140,7 @@ RegularTriangulationGraphicsItem<T>::RegularTriangulationGraphicsItem(T * t_)
 }
 
 template <typename T>
-QRectF 
+QRectF
 RegularTriangulationGraphicsItem<T>::boundingRect() const
 {
   return bounding_rect;
@@ -148,15 +148,15 @@ RegularTriangulationGraphicsItem<T>::boundingRect() const
 
 
 template <typename T>
-void 
+void
 RegularTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
 {
-  
+
   if(visible_edges) {
     for (int i=0; i<3; i++) {
       if (fh < fh->neighbor(i) || t->is_infinite(fh->neighbor(i))){
         m_painter->setPen(this->edgesPen());
-	Segment_2 s(fh->vertex(T::cw(i))->point().point(), fh->vertex(T::ccw(i))->point().point());
+        Segment_2 s(fh->vertex(T::cw(i))->point().point(), fh->vertex(T::ccw(i))->point().point());
         painterostream << s;
       }
     }
@@ -166,16 +166,16 @@ RegularTriangulationGraphicsItem<T>::operator()(typename T::Face_handle fh)
       paintOneVertex(fh->vertex(i)->point());
     }
   }
-  
+
 }
 
 template <typename T>
-void 
+void
 RegularTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
 {
   painterostream = PainterOstream<K>(painter);
- 
-  
+
+
   if(visibleEdges()) {
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();
@@ -187,11 +187,11 @@ RegularTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     }
   }
   paintVertices(painter);
-  
+
 }
 
 template <typename T>
-void 
+void
 RegularTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 {
   if(visibleVertices()) {
@@ -199,12 +199,12 @@ RegularTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 
     painterostream = PainterOstream<K>(painter);
     painter->setPen(verticesPen());
-    
+
     for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
         it != t->finite_vertices_end();
         it++){
 
-      typename K::Circle_2 circ(it->point().point(), it->point().weight()); 
+      typename K::Circle_2 circ(it->point().point(), it->point().weight());
       painterostream << circ;
     }
 
@@ -221,7 +221,7 @@ RegularTriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
 }
 
 template <typename T>
-void 
+void
 RegularTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& point)
 {
   Converter<K> convert;
@@ -235,8 +235,8 @@ RegularTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& poi
 }
 
 template <typename T>
-void 
-RegularTriangulationGraphicsItem<T>::paint(QPainter *painter, 
+void
+RegularTriangulationGraphicsItem<T>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
@@ -249,11 +249,11 @@ RegularTriangulationGraphicsItem<T>::paint(QPainter *painter,
   } else {
     m_painter = painter;
     painterostream = PainterOstream<K>(painter);
-    CGAL::apply_to_range (*t, 
+    CGAL::apply_to_range (*t,
                           typename T::Point(typename T::Bare_point(option->exposedRect.left(),
-								   option->exposedRect.bottom()),0), 
+                                                                   option->exposedRect.bottom()),0),
                           typename T::Point(typename T::Bare_point(option->exposedRect.right(),
-								   option->exposedRect.top()),0), 
+                                                                   option->exposedRect.top()),0),
                           *this);
   }
 #endif
@@ -262,7 +262,7 @@ RegularTriangulationGraphicsItem<T>::paint(QPainter *painter,
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename T>
-void 
+void
 RegularTriangulationGraphicsItem<T>::updateBoundingBox()
 {
   prepareGeometryChange();
@@ -274,11 +274,11 @@ RegularTriangulationGraphicsItem<T>::updateBoundingBox()
     bb = t->finite_vertices_begin()->point().bbox();
     bb_initialized = true;
   }
-  
+
   if(t->dimension() <2){
     for(typename T::Finite_vertices_iterator it = t->finite_vertices_begin();
-	it != t->finite_vertices_end();
-	++it){
+        it != t->finite_vertices_end();
+        ++it){
       typename K::Circle_2 circ(it->point().point(), it->point().weight());
       bb = bb + circ.bbox();
     }
@@ -299,7 +299,7 @@ RegularTriangulationGraphicsItem<T>::updateBoundingBox()
 
 
 template <typename T>
-void 
+void
 RegularTriangulationGraphicsItem<T>::modelChanged()
 {
   if((t->number_of_vertices() == 0) ){

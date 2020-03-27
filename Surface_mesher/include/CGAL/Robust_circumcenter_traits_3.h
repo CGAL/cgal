@@ -51,12 +51,12 @@ public:
 
   typedef Cartesian_converter<typename K::Kernel, EK>  To_exact;
   typedef Cartesian_converter<EK, typename K::Kernel>  Back_from_exact;
-  
+
 
   Bare_point operator() ( const Weighted_point_3 & p,
-			  const Weighted_point_3 & q,
-			  const Weighted_point_3 & r,
-			  const Weighted_point_3 & s) const
+                          const Weighted_point_3 & q,
+                          const Weighted_point_3 & r,
+                          const Weighted_point_3 & s) const
   {
     To_exact to_exact;
     Back_from_exact back_from_exact;
@@ -64,14 +64,14 @@ public:
       exact_weighted_circumcenter = EK().construct_weighted_circumcenter_3_object();
 
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
-						       to_exact(q),
-						       to_exact(r),
-						       to_exact(s)));
+                                                       to_exact(q),
+                                                       to_exact(r),
+                                                       to_exact(s)));
   }
 
   Bare_point operator() ( const Weighted_point_3 & p,
-			  const Weighted_point_3 & q,
-			  const Weighted_point_3 & r) const
+                          const Weighted_point_3 & q,
+                          const Weighted_point_3 & r) const
   {
     To_exact to_exact;
     Back_from_exact back_from_exact;
@@ -79,12 +79,12 @@ public:
       exact_weighted_circumcenter = EK().construct_weighted_circumcenter_3_object();
 
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
-						       to_exact(q),
-						       to_exact(r)));
+                                                       to_exact(q),
+                                                       to_exact(r)));
   }
 
   Bare_point operator() ( const Weighted_point_3 & p,
-			  const Weighted_point_3 & q) const
+                          const Weighted_point_3 & q) const
   {
     To_exact to_exact;
     Back_from_exact Back_from_exact;
@@ -92,7 +92,7 @@ public:
       exact_weighted_circumcenter = EK().construct_weighted_circumcenter_3_object();
 
     return back_from_exact(exact_weighted_circumcenter(to_exact(p),
-						       to_exact(q)));
+                                                       to_exact(q)));
   }
 };
 
@@ -103,13 +103,13 @@ class Robust_circumcenter_traits_3
   typedef Exact_predicates_exact_constructions_kernel EK;
  public:
   typedef CGAL::Robust_construction<EK::Construct_circumcenter_3,
-	                            Cartesian_converter<K, EK>,
-				    Cartesian_converter<EK, K>,
-				    typename K::Point_3 >   Construct_circumcenter_3;
+                                    Cartesian_converter<K, EK>,
+                                    Cartesian_converter<EK, K>,
+                                    typename K::Point_3 >   Construct_circumcenter_3;
   typedef CGAL::Robust_construction<EK::Compute_squared_radius_3,
-	                            Cartesian_converter<K, EK>,
-				    Cartesian_converter<EK, K>,
-				    typename K::FT >        Compute_squared_radius_3;
+                                    Cartesian_converter<K, EK>,
+                                    Cartesian_converter<EK, K>,
+                                    typename K::FT >        Compute_squared_radius_3;
 
   Construct_circumcenter_3
   construct_circumcenter_3_object() const

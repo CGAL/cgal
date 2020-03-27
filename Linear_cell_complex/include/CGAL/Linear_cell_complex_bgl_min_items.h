@@ -39,7 +39,7 @@ namespace CGAL {
       typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
     };
   };
-  
+
 } // namespace CGAL
 
 #endif // CGAL_LINEAR_CELL_COMPLEX_BGL_MIN_ITEMS_H //

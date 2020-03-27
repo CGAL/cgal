@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -30,7 +30,7 @@
 #include <QRectF>
 #include <QPointF>
 #include <QGraphicsItem>
-#include <QGraphicsEllipseItem> 
+#include <QGraphicsEllipseItem>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -49,18 +49,18 @@ template <typename K>
 class GraphicsViewCircleInput : public GraphicsViewInput
 {
 public:
-  GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle=1); 
+  GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle=1);
 
 protected:
-    
+
   virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
   virtual void keyPressEvent(QKeyEvent *event);
-  
-  bool eventFilter(QObject *obj, QEvent *event);
-  
 
-  
+  bool eventFilter(QObject *obj, QEvent *event);
+
+
+
 
 private:
 
@@ -70,14 +70,14 @@ private:
   QGraphicsEllipseItem *qcircle;
   QPointF qp, qq, qr;
   Point_2 p, q, r;
-  QGraphicsScene *scene_;  
+  QGraphicsScene *scene_;
   Converter<K> convert;
 };
 
 
 template <typename K>
 GraphicsViewCircleInput<K>::GraphicsViewCircleInput(QObject *parent, QGraphicsScene* s, int pointsOnCircle)
-  : GraphicsViewInput(parent), m_pointsOnCircle(pointsOnCircle), 
+  : GraphicsViewInput(parent), m_pointsOnCircle(pointsOnCircle),
     count(0), qcircle(new QGraphicsEllipseItem()), scene_(s)
 {
   qcircle->hide();
@@ -86,9 +86,9 @@ GraphicsViewCircleInput<K>::GraphicsViewCircleInput(QObject *parent, QGraphicsSc
 
 
 template <typename K>
-void 
+void
 GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{ 
+{
   if(event->modifiers()  & ::Qt::ShiftModifier){
     return;
   }
@@ -100,16 +100,16 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
     } else {
       qq = event->scenePos();
       if(qp != qq){
-	qcircle->hide();
-	q = convert(qq);
-	if(m_pointsOnCircle == 1){
-	  typename K::FT sd = squared_distance(p,q);
-	  Q_EMIT generate(CGAL::make_object(std::make_pair(p, sd)));
-	} else {
-	  Q_EMIT generate(CGAL::make_object(std::make_pair(p, q)));
-	}
-	count = 0;
-      } 
+        qcircle->hide();
+        q = convert(qq);
+        if(m_pointsOnCircle == 1){
+          typename K::FT sd = squared_distance(p,q);
+          Q_EMIT generate(CGAL::make_object(std::make_pair(p, sd)));
+        } else {
+          Q_EMIT generate(CGAL::make_object(std::make_pair(p, q)));
+        }
+        count = 0;
+      }
     }
   } else {
     if(count == 0){
@@ -119,16 +119,16 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
     } else if(count == 1){
       qq = event->scenePos();
       if(qp != qq){
-	q = convert(qq);
-	count = 2;
+        q = convert(qq);
+        count = 2;
       }
     } else { // count == 2
       qr  = event->scenePos();
       r = convert(qr);
       typename K::Collinear_2 collinear;
       if(! collinear(p,q,r)){
-	Q_EMIT generate(CGAL::make_object(CGAL::make_array(p,q,r)));
-	count = 0;
+        Q_EMIT generate(CGAL::make_object(CGAL::make_array(p,q,r)));
+        count = 0;
       }
     }
   }
@@ -136,7 +136,7 @@ GraphicsViewCircleInput<K>::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void 
+void
 GraphicsViewCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   CGAL::Bbox_2 bb;
@@ -152,10 +152,10 @@ GraphicsViewCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
       return;
     } else {
       if(m_pointsOnCircle == 1){
-	typename K::FT sd = squared_distance(p,q);
-	bb = construct_circle(p, sd).bbox();
+        typename K::FT sd = squared_distance(p,q);
+        bb = construct_circle(p, sd).bbox();
       } else {
-	bb = construct_circle(p, q).bbox();
+        bb = construct_circle(p, q).bbox();
       }
     }
   } else { // count == 2
@@ -175,8 +175,8 @@ GraphicsViewCircleInput<K>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename K>
-void 
-GraphicsViewCircleInput<K>::keyPressEvent ( QKeyEvent * event ) 
+void
+GraphicsViewCircleInput<K>::keyPressEvent ( QKeyEvent * event )
 {
   if(event->key() == ::Qt::Key_Delete){
     if(count>0){
@@ -188,7 +188,7 @@ GraphicsViewCircleInput<K>::keyPressEvent ( QKeyEvent * event )
 
 
 template <typename K>
-bool 
+bool
 GraphicsViewCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
 {
   if (event->type() == QEvent::GraphicsSceneMousePress) {
@@ -207,7 +207,7 @@ GraphicsViewCircleInput<K>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 } // namespace Qt
 

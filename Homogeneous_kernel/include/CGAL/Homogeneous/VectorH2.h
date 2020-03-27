@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,10 +19,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL_HOMOGENEOUS_VECTOR_2_h
 #define CGAL_HOMOGENEOUS_VECTOR_2_h
@@ -90,7 +90,7 @@ public:
   {
     return static_cast<const Self& >(*this);
   }
-  
+
    bool    operator==( const VectorH2<R>& v) const;
    bool    operator!=( const VectorH2<R>& v) const;
    bool    operator==( const Null_vector&) const;
@@ -232,8 +232,8 @@ typename VectorH2<R>::FT
 VectorH2<R>::squared_length() const
 {
   typedef typename R::FT FT;
-  return 
-    FT( CGAL_NTS square(hx()) + CGAL_NTS square(hy()) ) / 
+  return
+    FT( CGAL_NTS square(hx()) + CGAL_NTS square(hy()) ) /
     FT( CGAL_NTS square(hw()) );
 }
 

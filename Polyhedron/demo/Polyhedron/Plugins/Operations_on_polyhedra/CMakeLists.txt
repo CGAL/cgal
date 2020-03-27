@@ -6,7 +6,7 @@ include( polyhedron_demo_macros )
  polyhedron_demo_plugin(point_set_from_vertices_plugin Point_set_from_vertices_plugin)
  target_link_libraries(point_set_from_vertices_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item scene_points_with_normal_item)
 
- if( METIS_FOUND )  
+ if( METIS_FOUND )
    qt5_wrap_ui( partitionUI_FILES PartitionDialog.ui )
   polyhedron_demo_plugin(partition_plugin Partition_graph_plugin ${partitionUI_FILES})
   target_link_libraries(partition_plugin PUBLIC scene_surface_mesh_item ${METIS_LIBRARIES} )

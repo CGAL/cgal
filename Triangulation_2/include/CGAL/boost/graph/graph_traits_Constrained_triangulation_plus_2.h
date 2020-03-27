@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -37,14 +37,14 @@
 
 
 
-namespace boost { 
+namespace boost {
 
   template <class Tr>
   struct graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> > {
 
-    struct DT2_graph_traversal_category : 
+    struct DT2_graph_traversal_category :
       public virtual bidirectional_graph_tag,
-      public virtual adjacency_graph_tag,        
+      public virtual adjacency_graph_tag,
       public virtual edge_list_graph_tag,
       public virtual vertex_list_graph_tag { };
 
@@ -62,7 +62,7 @@ namespace boost {
     typedef typename boost::graph_traits<Tr>::in_edge_iterator in_edge_iterator;
     typedef typename boost::graph_traits<Tr>::Incident_vertices_iterator Incident_vertices_iterator;
     typedef undirected_tag directed_category;
-    typedef disallow_parallel_edge_tag edge_parallel_category; 
+    typedef disallow_parallel_edge_tag edge_parallel_category;
     typedef DT2_graph_traversal_category traversal_category;
     typedef typename boost::graph_traits<Tr>::size_type size_type;
     typedef size_type vertices_size_type;
@@ -104,25 +104,25 @@ namespace CGAL {
   template <class Tr>
   inline std::pair<
     typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::out_edge_iterator,
-    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::out_edge_iterator >  
+    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::out_edge_iterator >
   out_edges(
-    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::vertex_descriptor u,
     const CGAL::Constrained_triangulation_plus_2<Tr>& g)
   {
     typename CGAL::Constrained_triangulation_plus_2<Tr>::Edge_circulator ec(u,u->face());
     typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >
       ::out_edge_iterator Iter;
-    
+
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
   }
 
   template <class Tr>
   inline std::pair<
     typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::in_edge_iterator,
-    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::in_edge_iterator >  
+    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::in_edge_iterator >
   in_edges(
-    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Constrained_triangulation_plus_2<Tr> >::vertex_descriptor u,
     const CGAL::Constrained_triangulation_plus_2<Tr>& g)
   {
     typename CGAL::Constrained_triangulation_plus_2<Tr>::Edge_circulator ec(u,u->face());
@@ -144,12 +144,12 @@ namespace CGAL {
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertex_handle key_type;
-    
+
     CTP2_vertex_id_map()
     {}
-    
+
     long operator[](key_type vh) const {
-      return vh->id(); 
+      return vh->id();
     }
   };
 
@@ -163,12 +163,12 @@ namespace CGAL {
     typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Vertex_handle key_type;
 
     friend reference get(CTP2_vertex_point_map<Tr>, key_type vh)
-    { 
-      return vh->point(); 
+    {
+      return vh->point();
     }
     friend void put(CTP2_vertex_point_map<Tr>, key_type vh, reference v)
     {
-      vh->point()=v; 
+      vh->point()=v;
     }
     reference operator[](key_type vh) const {
       return vh->point();
@@ -184,12 +184,12 @@ namespace CGAL {
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Edge key_type;
-    
+
     CTP2_edge_id_map()
     {}
-    
+
     long operator[](key_type e) const {
-      return (3 * e.first.id()) + e.second; 
+      return (3 * e.first.id()) + e.second;
     }
   };
 
@@ -205,8 +205,8 @@ namespace CGAL {
     typedef value_type reference;
     typedef typename CGAL::Constrained_triangulation_plus_2<Tr>::Edge key_type;
 
-    CTP2_edge_weight_map(const CGAL::Constrained_triangulation_plus_2<Tr>& tr_) 
-      : tr(tr_) 
+    CTP2_edge_weight_map(const CGAL::Constrained_triangulation_plus_2<Tr>& tr_)
+      : tr(tr_)
     { }
 
     typename Tr::Geom_traits::FT operator[](key_type e) const {
@@ -228,7 +228,7 @@ namespace CGAL {
     CTP2_vertex_point_map<Tr> m;
     return m;
   }
-  
+
   template <class Tr>
   inline CTP2_edge_id_map<Tr>
   get(boost::edge_index_t, const CGAL::Constrained_triangulation_plus_2<Tr>& ) {
@@ -292,7 +292,7 @@ namespace boost {
   // g++ 'enumeral_type' in template unification not implemented workaround
   template <class Tr, class Tag>
   struct property_map<CGAL::Constrained_triangulation_plus_2<Tr>, Tag> {
-    typedef typename 
+    typedef typename
     CGAL::CTP2_property_map<Tag>::template bind_<Tr> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
@@ -301,7 +301,7 @@ namespace boost {
   // see struct property_map in Polyhedron for an explanation
   template <class Tr, class Tag>
   struct property_map<const CGAL::Constrained_triangulation_plus_2<Tr>, Tag> {
-    typedef typename 
+    typedef typename
     CGAL::CTP2_property_map<Tag>::template bind_<Tr> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
@@ -312,7 +312,7 @@ namespace boost {
   template <typename Tr>
   struct edge_property_type<CGAL::Constrained_triangulation_plus_2<Tr> > {
     typedef void type;
-  };  
+  };
 
   template <typename Tr>
   struct vertex_property_type<CGAL::Constrained_triangulation_plus_2<Tr> > {

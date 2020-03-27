@@ -37,17 +37,17 @@ public Mesh_3::Abstract_criterion<Tr, Visitor_>
 {
 private:
   typedef typename Tr::Facet Facet;
-  
+
   typedef Mesh_3::Abstract_criterion<Tr,Visitor_> Base;
   typedef typename Base::Quality Quality;
   typedef typename Base::Is_bad  Is_bad;
-  
+
   typedef Facet_topological_criterion_with_adjacency<Tr,MeshDomain, Visitor_> Self;
 
   typedef typename Tr::Geom_traits::FT FT;
 
   const MeshDomain* domain;
-  
+
 public:
   /// Constructor
   Facet_topological_criterion_with_adjacency(const MeshDomain* domain)
@@ -56,24 +56,24 @@ public:
 
   /// Destructor
   virtual ~Facet_topological_criterion_with_adjacency() {}
-  
+
 protected:
   virtual void do_accept(Visitor_& v) const
   {
     v.visit(*this);
   }
-  
+
   virtual Self* do_clone() const
   {
     // Call copy ctor on this
     return new Self(*this);
   }
-  
+
   virtual Is_bad do_is_bad (const Tr& /*tr*/, const Facet& f) const
   {
     typedef typename Tr::Vertex_handle  Vertex_handle;
     typedef typename Tr::Cell_handle    Cell_handle;
-    
+
     const Cell_handle& ch = f.first;
     const int& i = f.second;
 
@@ -100,7 +100,7 @@ protected:
             return Is_bad(Quality(1)); // bad!
         }
         break;
-      case 1: 
+      case 1:
         {
           ++nb_vertices_on_curves;
           const typename MeshDomain::Curve_index curve_id =

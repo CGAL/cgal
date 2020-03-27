@@ -30,39 +30,39 @@ class Sphere_map_creator {
   typedef typename SNC_structure::SVertex_handle   SVertex_handle;
   typedef typename SNC_structure::SFace_handle     SFace_handle;
   typedef typename SNC_structure::Sphere_point     Sphere_point;
-  
+
  public:
   Sphere_map_creator() {}
-  
+
   template<typename point_iterator>
   void create_end_sphere_map(SNC_structure& snc,
-			     point_iterator cur,
-			     point_iterator prev) {
+                             point_iterator cur,
+                             point_iterator prev) {
     Vertex_handle v(snc.new_vertex(*cur, true));
     SM_decorator SM(&*v);
     SVertex_handle sv(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-				     true));
+                                     true));
     SFace_handle sf(v->new_sface());
     SM.link_as_isolated_vertex(sv,sf);
   }
-  
+
   template<typename point_iterator>
   void create_sphere_map(SNC_structure& snc,
-			 point_iterator cur,
-			 point_iterator prev,
-			 point_iterator next) {
+                         point_iterator cur,
+                         point_iterator prev,
+                         point_iterator next) {
     Vertex_handle v(snc.new_vertex(*cur, true));
     SM_decorator SM(&*v);
     SVertex_handle sv1(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-				      true));
+                                      true));
     SVertex_handle sv2(v->new_svertex(Sphere_point(ORIGIN+(*next-*cur)),
-				      true));      
+                                      true));
     SFace_handle sf(v->new_sface());
     SM.link_as_isolated_vertex(sv1,sf);
     SM.link_as_isolated_vertex(sv2,sf);
     }
 };
-    
+
 template<typename SNC_structure>
 class Sphere_map_creator<CGAL::SNC_indexed_items, SNC_structure> {
   typedef typename SNC_structure::SM_decorator     SM_decorator;
@@ -75,36 +75,36 @@ class Sphere_map_creator<CGAL::SNC_indexed_items, SNC_structure> {
   int index;
  public:
   Sphere_map_creator() : first(true) {}
-    
+
     template<typename point_iterator>
     void create_end_sphere_map(SNC_structure& snc,
-			       point_iterator cur,
-			       point_iterator prev) {
+                               point_iterator cur,
+                               point_iterator prev) {
       Vertex_handle v(snc.new_vertex(*cur, true));
       SM_decorator SM(&*v);
       SVertex_handle sv(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-				       true));
+                                       true));
       SFace_handle sf(v->new_sface());
       SM.link_as_isolated_vertex(sv,sf);
       if(first) {
-	sv->set_index();
-	index = sv->get_index();
-	first = false;
+        sv->set_index();
+        index = sv->get_index();
+        first = false;
       } else
-	sv->set_index(index);
+        sv->set_index(index);
     }
-    
+
     template<typename point_iterator>
     void create_sphere_map(SNC_structure& snc,
-			   point_iterator cur,
-			   point_iterator prev,
-			   point_iterator next) {
+                           point_iterator cur,
+                           point_iterator prev,
+                           point_iterator next) {
       Vertex_handle v(snc.new_vertex(*cur, true));
       SM_decorator SM(&*v);
       SVertex_handle sv1(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-					true));
+                                        true));
       SVertex_handle sv2(v->new_svertex(Sphere_point(ORIGIN+(*next-*cur)),
-					true));      
+                                        true));
       SFace_handle sf(v->new_sface());
       SM.link_as_isolated_vertex(sv1,sf);
       SM.link_as_isolated_vertex(sv2,sf);
@@ -142,14 +142,14 @@ class Polyline_constructor : public Modifier_base<typename Nef3::SNC_structure> 
       point_iterator pbegin, pend, pnext, pprev;
       Sphere_map_creator<Items, SNC_structure> smc;
       for(;begin != end; ++begin) {
-	pend = begin->second;
-	pprev = pnext = pbegin = begin->first;
-	++pnext;
-	CGAL_assertion(pnext != pend);
-	smc.create_end_sphere_map(snc,pbegin,pnext);
-	for(++pbegin,++pnext; pnext!=pend; ++pbegin,++pprev,++pnext)
-	  smc.create_sphere_map(snc,pbegin,pprev,pnext);
-	smc.create_end_sphere_map(snc,pbegin,pprev);
+        pend = begin->second;
+        pprev = pnext = pbegin = begin->first;
+        ++pnext;
+        CGAL_assertion(pnext != pend);
+        smc.create_end_sphere_map(snc,pbegin,pnext);
+        for(++pbegin,++pnext; pnext!=pend; ++pbegin,++pprev,++pnext)
+          smc.create_sphere_map(snc,pbegin,pprev,pnext);
+        smc.create_end_sphere_map(snc,pbegin,pprev);
       }
     }
 };

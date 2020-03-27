@@ -47,18 +47,18 @@ template<class TM
         >
 int edge_collapse ( TM&                       aSurface
                   , ShouldStop           const& aShould_stop
-                  // optional mesh information policies 
+                  // optional mesh information policies
                   , VertexIndexMap       const& aVertex_index_map     // defaults to get(vertex_index,aSurface)
                   , VertexPointMap       const& aVertex_point_map     // defaults to get(vertex_point,aSurface)
                   , EdgeIndexMap         const& aEdge_index_map       // defaults to get(edge_index,aSurface)
                   , EdgeIsConstrainedMap const& aEdge_is_constrained_map   // defaults to No_constrained_edge_map<TM>()
-                  
+
                   // optional strategy policies - defaults to LindstomTurk
                   , GetCost              const& aGet_cost
                   , GetPlacement         const& aGet_placement
-                  
+
                   , Visitor                     aVisitor
-                  ) 
+                  )
 {
   typedef EdgeCollapse< TM
                       , ShouldStop
@@ -71,7 +71,7 @@ int edge_collapse ( TM&                       aSurface
                       , Visitor
                       >
                       Algorithm;
-                      
+
   Algorithm algorithm( aSurface
                      , aShould_stop
                      , aVertex_index_map
@@ -82,34 +82,34 @@ int edge_collapse ( TM&                       aSurface
                      , aGet_placement
                      , aVisitor
                      ) ;
-                     
+
   return algorithm.run();
-}                          
+}
 
 
 struct Dummy_visitor
 {
-  template<class TM>                                 void OnStarted( TM& ) const {} 
-  template<class TM>                                 void OnFinished ( TM& ) const {} 
-  template<class Profile>                             void OnStopConditionReached( Profile const& ) const {} 
-  template<class Profile, class OFT>                  void OnCollected( Profile const&, OFT const& ) const {}                
-  template<class Profile, class OFT, class Size_type> void OnSelected( Profile const&, OFT const&, Size_type, Size_type ) const {}                
-  template<class Profile, class OPoint>               void OnCollapsing(Profile const&, OPoint const& ) const {}                
+  template<class TM>                                 void OnStarted( TM& ) const {}
+  template<class TM>                                 void OnFinished ( TM& ) const {}
+  template<class Profile>                             void OnStopConditionReached( Profile const& ) const {}
+  template<class Profile, class OFT>                  void OnCollected( Profile const&, OFT const& ) const {}
+  template<class Profile, class OFT, class Size_type> void OnSelected( Profile const&, OFT const&, Size_type, Size_type ) const {}
+  template<class Profile, class OPoint>               void OnCollapsing(Profile const&, OPoint const& ) const {}
   template<class Profile, class VH>                   void OnCollapsed( Profile const&, VH ) const {}
-  template<class Profile>                             void OnNonCollapsable(Profile const& ) const {}                
+  template<class Profile>                             void OnNonCollapsable(Profile const& ) const {}
 } ;
 
 template<class TM, class ShouldStop, class P, class T, class R>
 int edge_collapse ( TM& aSurface
                   , ShouldStop const& aShould_stop
-                  , Named_function_parameters<P,T,R> const& aParams 
-                  ) 
+                  , Named_function_parameters<P,T,R> const& aParams
+                  )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   LindstromTurk_params lPolicyParams ;
-  
+
   internal_np::graph_visitor_t vis = internal_np::graph_visitor_t() ;
 
   return edge_collapse(aSurface
@@ -127,16 +127,16 @@ int edge_collapse ( TM& aSurface
   template<class TM, class ShouldStop, class GT, class P, class T, class R>
 int edge_collapse ( TM& aSurface
                   , ShouldStop const& aShould_stop
-                  , Named_function_parameters<P,T,R> const& aParams 
-                  ) 
+                  , Named_function_parameters<P,T,R> const& aParams
+                  )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   LindstromTurk_params lPolicyParams ;
-  
+
   internal_np::graph_visitor_t vis = internal_np::graph_visitor_t() ;
-    
+
   return edge_collapse(aSurface
                       ,aShould_stop
                       ,choose_parameter(get_parameter(aParams,internal_np::vertex_index), get_const_property_map(boost::vertex_index, aSurface))
@@ -151,13 +151,13 @@ int edge_collapse ( TM& aSurface
 }
 
 template<class TM, class ShouldStop>
-int edge_collapse ( TM& aSurface, ShouldStop const& aShould_stop ) 
+int edge_collapse ( TM& aSurface, ShouldStop const& aShould_stop )
 {
   return edge_collapse(aSurface,aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index,aSurface)));
 }
 
   template<class TM, class ShouldStop, class GT>
-  int edge_collapse ( TM& aSurface, ShouldStop const& aShould_stop) 
+  int edge_collapse ( TM& aSurface, ShouldStop const& aShould_stop)
 {
   return edge_collapse(aSurface,aShould_stop, CGAL::parameters::halfedge_index_map(get(boost::halfedge_index,aSurface)));
 }
@@ -168,4 +168,4 @@ int edge_collapse ( TM& aSurface, ShouldStop const& aShould_stop )
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_EDGE_COLLAPSE_H //
 // EOF //
- 
+

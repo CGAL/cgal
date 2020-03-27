@@ -47,7 +47,7 @@ public:
   template <typename TDS2>
   struct Rebind_TDS { typedef Triangulation_ds_cell_base_3<TDS2> Other; };
 
-  Triangulation_ds_cell_base_3() 
+  Triangulation_ds_cell_base_3()
   {
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
     mark = -1;
@@ -215,7 +215,7 @@ public:
   // TDS internal data access functions.
         TDS_data& tds_data()       { return _tds_data; }
   const TDS_data& tds_data() const { return _tds_data; }
-  
+
 #ifdef SHOW_REMAINING_BAD_ELEMENT_IN_RED
   int mark;
   int mark2;

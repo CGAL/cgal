@@ -1,9 +1,9 @@
-// Copyright (c) 2006  
+// Copyright (c) 2006
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -40,7 +40,7 @@
 
 #include <iostream>
 
-// The following global variable is needed otherwise GCC removes the body of 
+// The following global variable is needed otherwise GCC removes the body of
 // the if() blocks which removes its purpose of link check.
 bool execute = false;
 

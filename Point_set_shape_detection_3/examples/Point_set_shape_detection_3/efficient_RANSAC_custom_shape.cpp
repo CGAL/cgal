@@ -22,17 +22,17 @@ typedef CGAL::Shape_detection_3::Shape_detection_traits
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>   Efficient_ransac;
 typedef My_Plane<Traits>              Plane;
 
-int main() 
+int main()
 {
   // Points with normals.
   Pwn_vector points;
 
-  // Loads point set from a file. 
+  // Loads point set from a file.
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
   std::ifstream stream("data/cube.pwn");
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).

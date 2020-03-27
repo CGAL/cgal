@@ -68,7 +68,7 @@ template <> class Algebraic_structure_traits< Gmpq >
 template <> class Real_embeddable_traits< Gmpq >
   : public INTERN_RET::Real_embeddable_traits_base< Gmpq , CGAL::Tag_true > {
   public:
-  
+
     class Sgn
       : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       public:
@@ -90,24 +90,24 @@ template <> class Real_embeddable_traits< Gmpq >
       public:
         std::pair<double, double> operator()( const Type& x ) const {
 #if MPFR_VERSION_MAJOR >= 3
-	  mpfr_exp_t emin = mpfr_get_emin();
-	  mpfr_set_emin(-1073);
-	  MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
-	  int r = mpfr_set_q (y, x.mpq(), MPFR_RNDA);
-	  r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
-	  double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
-	  mpfr_set_emin(emin); /* Restore old value, users may care */
-	  // With mpfr_set_emax(1024) we could drop the is_finite test
-	  if (r == 0 && is_finite (i))
-	    return std::pair<double, double>(i, i);
-	  else
-	    {
-	      double s = nextafter (i, 0);
-	      if (i < 0)
-		return std::pair<double, double>(i, s);
-	      else
-		return std::pair<double, double>(s, i);
-	    }
+          mpfr_exp_t emin = mpfr_get_emin();
+          mpfr_set_emin(-1073);
+          MPFR_DECL_INIT (y, 53); /* Assume IEEE-754 */
+          int r = mpfr_set_q (y, x.mpq(), MPFR_RNDA);
+          r = mpfr_subnormalize (y, r, MPFR_RNDA); /* Round subnormals */
+          double i = mpfr_get_d (y, MPFR_RNDA); /* EXACT but can overflow */
+          mpfr_set_emin(emin); /* Restore old value, users may care */
+          // With mpfr_set_emax(1024) we could drop the is_finite test
+          if (r == 0 && is_finite (i))
+            return std::pair<double, double>(i, i);
+          else
+            {
+              double s = nextafter (i, 0);
+              if (i < 0)
+                return std::pair<double, double>(i, s);
+              else
+                return std::pair<double, double>(s, i);
+            }
 #else
           mpfr_t y;
           mpfr_init2 (y, 53); /* Assume IEEE-754 */
@@ -183,10 +183,10 @@ namespace Eigen {
     template<>
       struct significant_decimals_impl<CGAL::Gmpq>
       {
-	static inline int run()
-	{
-	  return 0;
-	}
+        static inline int run()
+        {
+          return 0;
+        }
       };
   }
 }

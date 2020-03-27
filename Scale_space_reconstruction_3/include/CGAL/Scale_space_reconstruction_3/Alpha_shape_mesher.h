@@ -35,12 +35,12 @@ namespace CGAL
 
 namespace Scale_space_reconstruction_3
 {
-  
+
 /** \ingroup PkgScaleSpaceReconstruction3Classes
  *
  *  Surface mesher for scale space reconstruction based on
  *  `CGAL::Alpha_shape_3`.
- * 
+ *
  *  The surface can be constructed either for a fixed neighborhood
  *  radius, or for a dynamic radius. When constructing the surface for
  *  exactly one neighborhood radius, it is faster to set
@@ -53,7 +53,7 @@ namespace Scale_space_reconstruction_3
  *  changing the radius of a dynamic surface. In either case, it is possible to
  *  change the point set while maintaining the same radius.
  *
- *  The surface can be stored either as an unordered collection of triangles, 
+ *  The surface can be stored either as an unordered collection of triangles,
  *  or as a collection ordered by shells. A shell is a maximally connected
  *  component of the surface where connected facets are locally oriented
  *  towards the same side of the surface.
@@ -76,7 +76,7 @@ class Alpha_shape_mesher
 public:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3                        Point;          ///< defines the point type.
-  
+
   typedef CGAL::cpp11::array< unsigned int, 3 >       Facet;                 ///< defines a triple of point indices indicating a triangle of the surface.
 private:
   typedef std::list< Facet >                         Facetset;              ///< defines a collection of triples.
@@ -95,7 +95,7 @@ private:
   typedef std::vector< Facet_iterator >              FacetIterSet;
 
 private:
-  
+
   // Constructing the surface.
   typedef CGAL::Shape_construction_3<Geom_traits, FixedSurface> Shape_construction_3;
 
@@ -107,7 +107,7 @@ private:
   typedef typename Shape::Facet                       SFacet;
   typedef typename Shape::Edge                        Edge;
   typedef std::pair<Vertex_handle, Vertex_handle>     VEdge;
-    
+
   typedef typename Shape::Vertex_iterator             Vertex_iterator;
   typedef typename Shape::Cell_iterator               Cell_iterator;
   typedef typename Shape::Facet_iterator              SFacet_iterator;
@@ -119,11 +119,11 @@ private:
   typedef typename Shape::Finite_vertices_iterator    Finite_vertices_iterator;
 
   typedef typename Shape::Facet_circulator            SFacet_circulator;
-  
+
   typedef typename Shape::All_cells_iterator          All_cells_iterator;
 
   typedef typename Shape::Classification_type         Classification_type;
-  
+
   typedef std::map<SFacet, unsigned int> Map_facet_to_shell;
   typedef typename CGAL::cpp11::array<std::set<SFacet>, 2 >   Bubble;
 
@@ -155,14 +155,14 @@ private:
   std::map<SFacet, std::size_t> _map_f2b;
 
   FT _squared_radius;
-  
+
 public:
 
   /**
    *  Constructs an alpha shape mesher.
    *
    *  \param squared_radius \f$\alpha\f$ parameter of the alpha shape algorithm.
-   *  \param separate_shells determines whether to collect the surface per shell. 
+   *  \param separate_shells determines whether to collect the surface per shell.
    *  \param force_manifold determines if the surface is forced to be 2-manifold.
    *  \param border_angle sets the maximal angle between two facets
    *  such that the edge is seen as a border.
@@ -198,7 +198,7 @@ public:
     clear_surface();
 
     _shape = Shape_construction_3().construct (begin, end, _squared_radius);
-    
+
     // If shells are not separated and no manifold constraint is given,
     // then the quick collection of facets can be applied
     if (!_separate_shells && !_force_manifold)
@@ -250,7 +250,7 @@ public:
   /** \warning Changes to the surface may change its topology.
    */
   Facet_iterator surface_begin() { return _surface.begin(); }
-    
+
   /// gives a past-the-end iterator of the triples in the surface.
   Facet_const_iterator surface_end() const { return _surface.end(); }
   /// gives a past-the-end iterator of the triples in the surface.
@@ -314,14 +314,14 @@ public:
         return _surface.end();
     return _shells[ shell+1 ];
   }
-  
+
   /// gives an iterator to the first triple of the garbage facets
   /// that may be discarded if 2-manifold output is required.
   Facet_const_iterator garbage_begin() const { return _garbage.begin(); }
   /// gives an iterator to the first triple of the garbage facets
   /// that may be discarded if 2-manifold output is required.
   Facet_iterator garbage_begin() { return _garbage.begin(); }
-    
+
   /// gives a past-the-end iterator of the triples of the garbage facets
   /// that may be discarded if 2-manifold output is required.
   Facet_const_iterator garbage_end() const { return _garbage.end(); }
@@ -330,7 +330,7 @@ public:
   Facet_iterator garbage_end() { return _garbage.end(); }
 
 private:
-  
+
   void deinit_shape()
   {
     if (_shape != NULL)
@@ -339,7 +339,7 @@ private:
       _shape = NULL;
     }
   }
-  
+
   void clear_surface()
   {
     _shells.clear();
@@ -347,7 +347,7 @@ private:
     _garbage.clear();
     deinit_shape();
   }
-  
+
   void collect_facets ()
   {
     // We check each of the facets: if it is not handled and either regular or singular,
@@ -398,7 +398,7 @@ private:
       }
     }
   }
-  
+
   inline bool is_handled( Cell_handle c, unsigned int li ) const
   {
     switch( li ) {
@@ -421,7 +421,7 @@ private:
     }
   }
   inline void mark_handled( SFacet f ) { mark_handled( f.first, f.second ); }
- 
+
   inline void mark_opposite_handled( SFacet f )
   {
 
@@ -438,30 +438,30 @@ private:
     else if (cl == Shape::REGULAR)
     {
       SFacet fac = (_shape->classify (f.first) == Shape::EXTERIOR)
-	? f
-	: _shape->mirror_facet (f);
+        ? f
+        : _shape->mirror_facet (f);
 
       typename std::map<SFacet, std::size_t>::iterator
-	search = _map_f2b.find (fac);
+        search = _map_f2b.find (fac);
 
       if (search == _map_f2b.end ())
-	return;
-      
+        return;
+
       unsigned int layer = (_bubbles[search->second][0].find (fac) == _bubbles[search->second][0].end ())
-	? 0 : 1;
+        ? 0 : 1;
 
       typename std::set<SFacet>::iterator it = _bubbles[search->second][layer].begin ();
 
       // If bubble has already been handled, no need to do it again
       if (is_handled (*it))
-	return;
-      
+        return;
+
       for (;it != _bubbles[search->second][layer].end (); ++ it)
       {
         _garbage.push_back (ordered_facet_indices (*it));
         mark_handled (*it);
       }
-      
+
     }
 
 
@@ -531,7 +531,7 @@ private:
       // the opposite layer should be ignored
       if (_force_manifold)
         mark_opposite_handled (f);
-		
+
       // Pivot over each of the facet's edges and continue the surface at the next regular or singular facet.
       for( int i = 0; i < 4; ++i ) {
         // Skip the current facet.
@@ -543,7 +543,7 @@ private:
         ni = i;
         a = f.first->vertex( f.second );
         cl = _shape->classify( SFacet(n, ni) );
-	    
+
         while( cl != Shape::REGULAR && cl != Shape::SINGULAR ) {
           p = n;
           n = n->neighbor(ni);
@@ -566,16 +566,16 @@ private:
     std::set<Cell_handle> done;
 
     unsigned int nb_facets_removed = 0;
-  
+
     unsigned int nb_skipped = 0;
     for (Cell_iterator cit = _shape->cells_begin (); cit != _shape->cells_end (); ++ cit)
     {
       if (_shape->is_infinite (cit))
-	continue;
+        continue;
       if (_shape->classify (cit) != Shape::INTERIOR)
-	continue;
+        continue;
       if (done.find (cit) != done.end ())
-	continue;
+        continue;
 
       std::set<VEdge> borders;
       std::vector<Cell_handle> cells;
@@ -644,7 +644,7 @@ private:
               if (_shape->classify (f0) != Shape::REGULAR
                   || _shape->classify (f1) != Shape::REGULAR)
                 continue;
-		      
+
               double angle = Geom_traits().compute_approximate_dihedral_angle_3_object()(vedge.first->point (),
                                                                                          vedge.second->point (),
                                                                                          c->vertex (i)->point (),
@@ -678,7 +678,7 @@ private:
             continue;
 
           ++ layer;
-	      
+
           std::stack<SFacet> stack;
           stack.push (start);
 
@@ -766,7 +766,7 @@ private:
               // If the edge is a border, propagation stops in this direction.
               if (borders.find (vedge) != borders.end ())
                 continue;
-		      
+
               while( cl != Shape::REGULAR && cl != Shape::SINGULAR ) {
                 p = n;
                 n = n->neighbor(ni);
@@ -775,7 +775,7 @@ private:
                 a = n->vertex(pi);
                 cl = _shape->classify( SFacet(n, ni) );
               }
-		      
+
               stack.push (SFacet (n, ni));
 
             }
@@ -784,7 +784,7 @@ private:
         }
 
       }
-            
+
       // If number of layers is != 2, ignore volume and discard bubble
       if (layer != 1)
       {
@@ -800,10 +800,10 @@ private:
           }
         _bubbles.pop_back ();
       }
-      
+
     }
   }
-  
+
 
   void fix_nonmanifold_edges()
   {
@@ -818,20 +818,20 @@ private:
     // Store for each pair edge/shell the incident facets
     Edge_shell_map_triples eshell_triples;
     std::map<Facet, SFacet> map_t2f;
-  
+
     for (typename Map_facet_to_shell::iterator fit = _map_f2s.begin ();
          fit != _map_f2s.end (); ++ fit)
     {
       SFacet f = fit->first;
       Facet t = ordered_facet_indices (f);
       map_t2f[t] = f;
-	      
+
       for (unsigned int k = 0; k < 3; ++ k)
       {
         Vertex_handle v0 = f.first->vertex ((f.second + k + 1)%4);
         Vertex_handle v1 = f.first->vertex ((f.second + (k+1)%3 + 1)%4);
         VEdge vedge = (v0 < v1) ? std::make_pair (v0, v1) : std::make_pair (v1, v0);
-		  
+
         std::pair<Edge_shell_map_triples_iterator, bool>
           search = eshell_triples.insert (std::make_pair (std::make_pair (vedge, fit->second),
                                                           std::set<Facet>()));
@@ -845,13 +845,13 @@ private:
     {
       // If an edge has more than 2 incident facets for one shell, it is non-manifold
       if (eit->second.size () < 3)
-	continue;
+        continue;
 
       ++ nb_nm_edges;
 
       Facet_iterator tit = _shells[eit->first.second];
       Facet_iterator end = (eit->first.second == _shells.size () - 1)
-	? _surface.end () : _shells[eit->first.second + 1];
+        ? _surface.end () : _shells[eit->first.second + 1];
 
       // Remove facets until the edge is manifold in this shell
       while (tit != end && eit->second.size () > 2)
@@ -874,7 +874,7 @@ private:
         }
 
       }
-	  
+
     }
   }
 
@@ -893,7 +893,7 @@ private:
   {
     Vertex_handle vother = f.first->vertex (f.second);
     bool v1found = false;
-  
+
     for (unsigned int i = 0; i < 4; ++ i)
     {
       Vertex_handle vi = f.first->vertex (i);
@@ -912,7 +912,7 @@ private:
       }
     }
   }
-  
+
   void fix_nonmanifold_vertices()
   {
 
@@ -928,12 +928,12 @@ private:
     {
       Facet_iterator begin = _shells[i];
       Facet_iterator end = (i+1 == _shells.size ()) ? _surface.end () : _shells[i+1];
-      
+
       Facetset tmp;
       tmp.splice (tmp.end(), _surface, begin, end);
-      
+
       tmp.sort();
-      _shells[i] = tmp.begin ();      
+      _shells[i] = tmp.begin ();
       _surface.splice(end, tmp, tmp.begin(), tmp.end());
     }
 
@@ -950,10 +950,10 @@ private:
       Vertex_shell_map_facets vshell_facets;
 
       for (typename Map_facet_to_shell::iterator fit = _map_f2s.begin ();
-	   fit != _map_f2s.end (); ++ fit)
+           fit != _map_f2s.end (); ++ fit)
       {
         SFacet f = fit->first;
-	  
+
         for (unsigned int k = 0; k < 3; ++ k)
         {
           Vertex_handle v = f.first->vertex ((f.second+k+1)%4);
@@ -964,11 +964,11 @@ private:
           search.first->second.push_back (f);
 
         }
-	  
+
       }
 
       for (Vertex_shell_map_facet_iterator fit = vshell_facets.begin ();
-	   fit != vshell_facets.end (); ++ fit)
+           fit != vshell_facets.end (); ++ fit)
       {
         if (fit->second.size () < 2)
           continue;
@@ -978,12 +978,12 @@ private:
 
         UF uf;
         std::map<SFacet, UF_handle> map_f2h;
-	  
+
         for (unsigned int i = 0; i < fit->second.size (); ++ i)
           map_f2h.insert (std::make_pair (fit->second[i], uf.make_set (fit->second[i])));
 
         std::map<Vertex_handle, SFacet> map_v2f;
-	    
+
         for (unsigned int i = 0; i < fit->second.size (); ++ i)
         {
           Vertex_handle v1, v2;
@@ -1045,7 +1045,7 @@ private:
             ? _surface.end () : _shells[shell + 1];
 
           unsigned int tindex = 0;
-	      
+
           while (tit != end && tindex < triples.size ())
           {
             Facet_iterator current = tit ++;
@@ -1074,7 +1074,7 @@ private:
 
 };
 
-  
+
 } // namespace Scale_space_reconstruction_3
 
 } // namespace CGAL

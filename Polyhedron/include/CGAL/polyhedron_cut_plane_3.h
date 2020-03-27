@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>)
 
@@ -32,7 +32,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Modifier_base.h>
 #include <CGAL/halfedgeDS_cut_component.h>
-#include <CGAL/intersections.h> 
+#include <CGAL/intersections.h>
 
 
 namespace CGAL {
@@ -57,7 +57,7 @@ public:
 };
 
 template < class Poly, class Predicate >
-typename Poly::Halfedge_handle 
+typename Poly::Halfedge_handle
 I_polyhedron_cut_component( Poly&                          poly,
                             typename Poly::Halfedge_handle h,
                             Predicate                      pred) {
@@ -67,7 +67,7 @@ I_polyhedron_cut_component( Poly&                          poly,
     poly.delegate( modifier);
     return modifier.halfedge();
 }
-    
+
 template < class Poly, class Plane, class Traits>
 class I_Polyhedron_cut_plane_predicate {
     const Plane&  plane;
@@ -87,7 +87,7 @@ struct I_Construct_point_3 {
     typedef typename Kernel::Plane_3 Plane_3;
     typedef typename Kernel::Line_3  Line_3;
     Point_3
-    operator()( const Plane_3& p, const Plane_3& q, const Plane_3& r) const { 
+    operator()( const Plane_3& p, const Plane_3& q, const Plane_3& r) const {
         Object obj = intersection( p, q);
         Line_3 line;
         if ( assign( line, obj)) {
@@ -130,7 +130,7 @@ polyhedron_cut_plane_3( Poly& poly,
     h->facet()->plane() = plane;
     Halfedge_handle start = h;
     do {
-        h->vertex()->point() = 
+        h->vertex()->point() =
             construct_point( plane,
                              h->next()->opposite()->facet()->plane(),
                              h->opposite()->facet()->plane());
@@ -143,7 +143,7 @@ polyhedron_cut_plane_3( Poly& poly,
 
 template < class Poly, class Plane>
 typename Poly::Halfedge_handle
-polyhedron_cut_plane_3( Poly& poly, 
+polyhedron_cut_plane_3( Poly& poly,
                         typename Poly::Halfedge_handle h,
                         const Plane& plane)
 // Same function as above using the kernel that comes with the plane.

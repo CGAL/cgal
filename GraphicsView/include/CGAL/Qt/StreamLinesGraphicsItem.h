@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -56,13 +56,13 @@ public:
   StreamLinesGraphicsItem(SL* sl);
 
 
-  QRectF 
+  QRectF
   boundingRect() const;
-  
-  void 
+
+  void
   paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
-  void 
+
+  void
   modelChanged();
 
   const QPen& edgesPen() const
@@ -90,7 +90,7 @@ StreamLinesGraphicsItem<SL,K>::StreamLinesGraphicsItem(SL * sl)
 }
 
 template <typename SL, typename K>
-QRectF 
+QRectF
 StreamLinesGraphicsItem<SL,K>::boundingRect() const
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene());
@@ -99,7 +99,7 @@ StreamLinesGraphicsItem<SL,K>::boundingRect() const
 
 
 template <typename SL, typename K>
-void 
+void
 StreamLinesGraphicsItem<SL,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
 {
   painter->setPen(this->edgesPen());
@@ -119,7 +119,7 @@ StreamLinesGraphicsItem<SL,K>::paint(QPainter *painter, const QStyleOptionGraphi
 
 
   template <typename SL, typename K>
-void 
+void
   StreamLinesGraphicsItem<SL,K>::modelChanged()
 {
   update();

@@ -24,7 +24,7 @@ int main ()
 
   Otr otr(points); // no mass given, one unit mass per point assumed
   otr.run_under_wasserstein_tolerance(0.1);
- 
+
 
   return 0;
 }

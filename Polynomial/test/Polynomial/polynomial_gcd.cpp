@@ -46,7 +46,7 @@
 
 // #define WITH_OUTPUT 1
 CGAL::Random my_random(4711);
- 
+
 template<class POLY>
 void gcd_test(const POLY& f, const POLY& g, const POLY& d) {
     POLY tmp = CGAL::gcd(f, g);
@@ -90,11 +90,11 @@ void univariate_polynomial_test() {
     typedef CGAL::Sqrt_extension<Rational ,Integer> rat_EXT_1;
     typedef CGAL::Sqrt_extension<rat_EXT_1,Integer> rat_EXT_2;
 
-    {        
+    {
         // testing univariate polynomials with integer coefficients
         typedef CGAL::Polynomial<Integer> int_POLY;
         typedef Integer NT;
-        // special cases: 
+        // special cases:
         gcd_test(int_POLY(0),int_POLY(0),int_POLY(0));
         gcd_test(int_POLY(0),int_POLY(NT(4),NT(2)),int_POLY(NT(4),NT(2)));
         gcd_test(int_POLY(NT(4),NT(2)),int_POLY(0),int_POLY(NT(4),NT(2)));
@@ -110,7 +110,7 @@ void univariate_polynomial_test() {
         d = int_POLY(Integer(5), Integer(4));
         e = int_POLY(1);
         ac = a*c; bc = b*c;
-        
+
         // a real gcd exists
         gcd_test(ac, bc, c);
         // there's no gcd
@@ -130,9 +130,9 @@ void univariate_polynomial_test() {
                     (my_random.get_int(10,1000));
                 g = CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,1000));
-                result = CGAL::gcd(f, g);    
+                result = CGAL::gcd(f, g);
             }
-            while(result != int_POLY(1)); 
+            while(result != int_POLY(1));
             d = CGAL::internal::rand_Poly_int<Integer>(my_random.get_int(10,1000));
             int_POLY p1 = f*d;
             int_POLY p2 = g*d;
@@ -181,10 +181,10 @@ void univariate_polynomial_test() {
                                 my_random.get_int(10,1000)),
                         Rational(my_random.get_int(10,1000),
                                 my_random.get_int(10,1000)));
-                result = CGAL::gcd(f, g);    
+                result = CGAL::gcd(f, g);
             }
-            while(result != rat_POLY(1)); 
-   
+            while(result != rat_POLY(1));
+
             d = rat_POLY(Rational(my_random.get_int(10,1000),
                             my_random.get_int(10,1000)),
                     Rational(my_random.get_int(10,1000),
@@ -199,7 +199,7 @@ void univariate_polynomial_test() {
 
     }
     {
-        // testing univariate polynomials with sqrt-extensions of 
+        // testing univariate polynomials with sqrt-extensions of
         // integers as coefficients
 
         typedef CGAL::Polynomial<int_EXT_1> int_EXT_1_POLY;
@@ -231,10 +231,10 @@ void univariate_polynomial_test() {
                     (my_random.get_int(10,1000), root);
                 g = CGAL::internal::rand_Poly_sqrt<int_EXT_1, Integer>
                     (my_random.get_int(10,1000), root);
-                result = CGAL::internal::gcd_utcf(f, g);    
+                result = CGAL::internal::gcd_utcf(f, g);
             }
-            while(result != int_EXT_1_POLY(1)); 
-   
+            while(result != int_EXT_1_POLY(1));
+
             d = CGAL::internal::rand_Poly_sqrt<int_EXT_1, Integer>
                 (my_random.get_int(10,1000), root);
             int_EXT_1_POLY p1 = f*d;
@@ -243,8 +243,8 @@ void univariate_polynomial_test() {
         }
 
     }{
-        // testing univariate polynomials with sqrt-extensions of 
-        // rationals as coefficients 
+        // testing univariate polynomials with sqrt-extensions of
+        // rationals as coefficients
         typedef CGAL::Polynomial<rat_EXT_1> rat_EXT_1_POLY;
         rat_EXT_1_POLY a, b, c, d, e, ac, bc;
         a = rat_EXT_1_POLY(rat_EXT_1(1), rat_EXT_1(-5,-1,2), rat_EXT_1(1));
@@ -265,7 +265,7 @@ void univariate_polynomial_test() {
         gcd_utcf_test(ac, bc, d);
     }
     {
-        // testing univariate polynomials with nested sqrt-extensions 
+        // testing univariate polynomials with nested sqrt-extensions
         // of integers as coefficients
         typedef CGAL::Polynomial<int_EXT_2> int_EXT_2_POLY;
         int_EXT_2_POLY a, b, c, d, e, ac, bc;
@@ -302,39 +302,39 @@ void univariate_polynomial_test() {
             root = CGAL::abs(CGAL::internal::rand_int<Integer>
                     (my_random.get_int(10,1000)));
             do{
-                f = int_EXT_2_POLY( 
+                f = int_EXT_2_POLY(
                         int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), 
+                                (my_random.get_int(10,1000),root),
                                 CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root),
                         int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), 
+                                (my_random.get_int(10,1000),root),
                                 CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root),
                         int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), 
+                                (my_random.get_int(10,1000),root),
                                 CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root));
-                g = int_EXT_2_POLY( 
+                g = int_EXT_2_POLY(
                         int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), 
+                                (my_random.get_int(10,1000),root),
                                 CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root),
                         int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                                (my_random.get_int(10,1000),root), 
+                                (my_random.get_int(10,1000),root),
                                 CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                                 (my_random.get_int(10,1000),root), root));
-                result = CGAL::internal::gcd_utcf(f, g);    
+                result = CGAL::internal::gcd_utcf(f, g);
             }
-            while(result.degree() != 0); 
-              
-            d = int_EXT_2_POLY( 
+            while(result.degree() != 0);
+
+            d = int_EXT_2_POLY(
                     int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                            (my_random.get_int(1,10),root), 
+                            (my_random.get_int(1,10),root),
                             CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                             (my_random.get_int(1,10),root), root),
                     int_EXT_2(CGAL::internal::rand_sqrt<int_EXT_1, Integer>
-                            (my_random.get_int(1,10),root), 
+                            (my_random.get_int(1,10),root),
                             CGAL::internal::rand_sqrt<int_EXT_1, Integer>
                             (my_random.get_int(1,10),root), root));
             int_EXT_2_POLY p1 = f*d;
@@ -344,7 +344,7 @@ void univariate_polynomial_test() {
 
 
     }{
-        // testing univariate polynomials with nested sqrt-extensions of 
+        // testing univariate polynomials with nested sqrt-extensions of
         // rationals as coefficients
         typedef CGAL::Polynomial<rat_EXT_2> rat_EXT_2_POLY;
         rat_EXT_2_POLY a, b, c, d, e, ac, bc;
@@ -359,7 +359,7 @@ void univariate_polynomial_test() {
                 rat_EXT_2(rat_EXT_1(3), rat_EXT_1(-1,-3,2), 3),
                 rat_EXT_2(rat_EXT_1(2,1,2)));
         d = rat_EXT_2_POLY(
-                rat_EXT_2(rat_EXT_1(Rational(3),Rational(-3,2),Integer(2)), 
+                rat_EXT_2(rat_EXT_1(Rational(3),Rational(-3,2),Integer(2)),
                         rat_EXT_1(Rational(2),Rational(-5,2),Integer(2)), 3),
                 rat_EXT_2(rat_EXT_1(1)));
         e = rat_EXT_2_POLY(1);
@@ -437,10 +437,10 @@ void bivariate_polynomial_test() {
                         (my_random.get_int(10,100)),
                         CGAL::internal::rand_Poly_int<Integer>
                         (my_random.get_int(10,100)));
-                result = CGAL::gcd(f, g);    
+                result = CGAL::gcd(f, g);
             }
-            while(result != int_POLY_2(1)); 
-   
+            while(result != int_POLY_2(1));
+
             d = int_POLY_2(
                     CGAL::internal::rand_Poly_int<Integer>
                     (my_random.get_int(10,100)),
@@ -486,7 +486,7 @@ void bivariate_polynomial_test() {
         // testing gcd_utcf
         gcd_utcf_test(ac, bc, d);
     }{
-        // testing bivariate polynomials with sqrt-extensions of 
+        // testing bivariate polynomials with sqrt-extensions of
         // integers as coefficients
         typedef CGAL::Polynomial<int_EXT_1> int_EXT_1_POLY_1;
         typedef CGAL::Polynomial<int_EXT_1_POLY_1> int_EXT_1_POLY_2;
@@ -513,7 +513,7 @@ void bivariate_polynomial_test() {
         // g is already a divisor of f
         gcd_utcf_test(ac, c, d);
     }{
-        // testing bivariate polynomials with sqrt-extensions of 
+        // testing bivariate polynomials with sqrt-extensions of
         // rationals as coefficients
         typedef CGAL::Polynomial<rat_EXT_1> rat_EXT_1_POLY_1;
         typedef CGAL::Polynomial<rat_EXT_1_POLY_1> rat_EXT_1_POLY_2;
@@ -543,7 +543,7 @@ void bivariate_polynomial_test() {
         // testing gcd_utcf
         gcd_utcf_test(ac, bc, d);
     }{
-        // testing bivariate polynomials with nested sqrt-extensions of 
+        // testing bivariate polynomials with nested sqrt-extensions of
         // integers as coefficients
         typedef CGAL::Polynomial<int_EXT_2> int_EXT_2_POLY_1;
         typedef CGAL::Polynomial<int_EXT_2_POLY_1> int_EXT_2_POLY_2;
@@ -585,7 +585,7 @@ void bivariate_polynomial_test() {
         // g is already a divisor of f
         gcd_utcf_test(ac, c, d);
     }{
-        // testing bivariate polynomials with nested sqrt-extensions of 
+        // testing bivariate polynomials with nested sqrt-extensions of
         // rationals as coefficients
         typedef CGAL::Polynomial<rat_EXT_2> rat_EXT_2_POLY_1;
         typedef CGAL::Polynomial<rat_EXT_2_POLY_1> rat_EXT_2_POLY_2;
@@ -616,7 +616,7 @@ void bivariate_polynomial_test() {
                         rat_EXT_2(rat_EXT_1(0)),
                         rat_EXT_2(rat_EXT_1(Rational(3),Rational(-3,2),
                                         Integer(2)),
-                                rat_EXT_1(Rational(2),Rational(-5,2),2), 
+                                rat_EXT_1(Rational(2),Rational(-5,2),2),
                                 Integer(3))),
                 rat_EXT_2_POLY_1(
                         rat_EXT_2(rat_EXT_1(1))));
@@ -643,7 +643,7 @@ void trivariate_polynomial_test() {
 //    typedef CGAL::Sqrt_extension<int_EXT_1,Integer> int_EXT_2;
 //    typedef CGAL::Sqrt_extension<Rational ,Integer> rat_EXT_1;
 //    typedef CGAL::Sqrt_extension<rat_EXT_1,Integer> rat_EXT_2;
-    {        
+    {
         // testing trivariate polynomials with integer coefficients
         typedef CGAL::Polynomial<Integer> int_POLY_1;
         typedef CGAL::Polynomial<int_POLY_1> int_POLY_2;
@@ -744,7 +744,7 @@ void trivariate_polynomial_test() {
 template <class AT>
 void polynomial_gcd_test() {
     ::CGAL::set_pretty_mode(std::cout);
-    std::cout<<" univariate "<<std::endl;    
+    std::cout<<" univariate "<<std::endl;
     univariate_polynomial_test<AT>();
     std::cout<<" bivariate "<<std::endl;
     bivariate_polynomial_test<AT>();
@@ -753,7 +753,7 @@ void polynomial_gcd_test() {
 }
 
 int main(){
-  // This is the wrong rounding mode for modular arithmetic by intention 
+  // This is the wrong rounding mode for modular arithmetic by intention
   CGAL::Protect_FPU_rounding<> pfr(CGAL_FE_UPWARD);
 #ifdef CGAL_USE_LEDA
     polynomial_gcd_test<CGAL::LEDA_arithmetic_kernel>();
@@ -761,7 +761,7 @@ int main(){
 #ifdef CGAL_USE_CORE
     polynomial_gcd_test<CGAL::CORE_arithmetic_kernel>();
 #endif // CGAL_USE_CORE
-    
+
 }
 
 

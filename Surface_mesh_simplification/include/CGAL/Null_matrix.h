@@ -34,7 +34,7 @@ static const Null_matrix NULL_MATRIX = Null_matrix() ;
 #endif // CGAL_NULL_MATRIX_H //
 
 // EOF //
- 
- 
- 
- 
+
+
+
+

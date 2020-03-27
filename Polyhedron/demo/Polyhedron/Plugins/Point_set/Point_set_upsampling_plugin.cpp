@@ -24,7 +24,7 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 #else
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
- 
+
 using namespace CGAL::Three;
 class Polyhedron_demo_point_set_upsampling_plugin :
   public QObject,
@@ -33,7 +33,7 @@ class Polyhedron_demo_point_set_upsampling_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-  
+
   QAction* actionEdgeAwareUpsampling;
   Messages_interface* message_interface;
 public:
@@ -61,7 +61,7 @@ public Q_SLOTS:
 
 class Point_set_demo_point_set_upsampling_dialog : public QDialog, private Ui::PointSetUpsamplingDialog
 {
-  
+
   Q_OBJECT
 public:
   Point_set_demo_point_set_upsampling_dialog(QWidget * /*parent*/ = 0)
@@ -86,11 +86,11 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
   if(item)
     {
       if (!(item->has_normals ()))
-	{
+        {
           CGAL::Three::Three::error("Error: upsampling algorithm requires point set with normals.");
-	  return;
-	}
-      
+          return;
+        }
+
       // Gets point set
       Point_set* points = item->point_set();
       if(points == NULL)
@@ -99,15 +99,15 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       // Gets options
       Point_set_demo_point_set_upsampling_dialog dialog;
       if(!dialog.exec())
-	return;
+        return;
 
       unsigned int output_size = static_cast<unsigned int>(dialog.output_size ()
-							   * points->size ());
+                                                           * points->size ());
       std::cerr << "Edge aware upsampling (sharpness angle = "
-		<< dialog.sharpness_angle () << ", edge sensitivity = "
-		<< dialog.edge_sensitivity () << ", neighborhood radius = "
-		<< dialog.neighborhood_radius () << " * average spacing, output size = "
-		<< output_size << "...\n";
+                << dialog.sharpness_angle () << ", edge sensitivity = "
+                << dialog.edge_sensitivity () << ", neighborhood radius = "
+                << dialog.neighborhood_radius () << " * average spacing, output size = "
+                << output_size << "...\n";
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -115,29 +115,29 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
 
       // Computes average spacing
       double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(*points, 6);
-      
+
       std::size_t nb_selected = points->nb_selected_points();
-      
+
       std::vector<std::pair<Point_set::Point, Point_set::Vector> > new_points;
       CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->all_or_selection_if_not_empty(),
-					  std::back_inserter(new_points),
+                                          std::back_inserter(new_points),
                                           points->parameters().
                                           sharpness_angle (dialog.sharpness_angle()).
                                           edge_sensitivity (dialog.edge_sensitivity()).
                                           neighbor_radius (dialog.neighborhood_radius() * average_spacing).
                                           number_of_output_points (output_size));
       nb_selected += new_points.size();
-      
+
       for (unsigned int i = 0; i < new_points.size (); ++ i)
-	points->insert (new_points[i].first, new_points[i].second);
+        points->insert (new_points[i].first, new_points[i].second);
 
       if (nb_selected != new_points.size())
         points->set_first_selected (points->end() - nb_selected);
-      
+
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << task_timer.time() << " seconds, "
-		<< (memory>>20) << " Mb allocated)"
-		<< std::endl;
+                << (memory>>20) << " Mb allocated)"
+                << std::endl;
 
       // Updates scene
       item->invalidateOpenGLBuffers();

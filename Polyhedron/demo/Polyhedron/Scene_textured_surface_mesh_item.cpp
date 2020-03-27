@@ -184,8 +184,8 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
   }
 
   //Edges
-  typedef EPICK::Point_3		Point;
-  typedef SMesh::Edge_iterator	Edge_iterator;
+  typedef EPICK::Point_3                Point;
+  typedef SMesh::Edge_iterator        Edge_iterator;
 
   Edge_iterator he;
 
@@ -311,7 +311,7 @@ void Scene_textured_surface_mesh_item::draw(CGAL::Three::Viewer_interface* viewe
   attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
   d->program=getShaderProgram(PROGRAM_WITH_TEXTURE);
   d->program->bind();
-  
+
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(d->faces_buffer.size()/8));
   //Clean-up
   d->program->release();
@@ -335,7 +335,7 @@ void Scene_textured_surface_mesh_item::drawEdges(CGAL::Three::Viewer_interface* 
   d->program->release();
 
   vaos[Scene_textured_surface_mesh_item_priv::Border_edges]->bind();
-  
+
   if(!viewer->isOpenGL_4_3())
   {
     attribBuffers(viewer, PROGRAM_NO_SELECTION);
@@ -408,7 +408,7 @@ void Scene_textured_surface_mesh_item::add_border_edges(std::vector<float> borde
                                                         bool is_opengl_4_3)
 {
   d->border_edges_buffer = border_edges;
-  d->program=is_opengl_4_3 
+  d->program=is_opengl_4_3
       ? getShaderProgram(PROGRAM_SOLID_WIREFRAME)
       : getShaderProgram(PROGRAM_NO_SELECTION);
   d->program->bind();

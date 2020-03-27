@@ -33,7 +33,7 @@ int main()
   {
   typedef CGAL::Polyhedron_3<Epic> P;
   std::map<boost::graph_traits<P>::face_descriptor, std::size_t> fim;
-  P p; 
+  P p;
   std::ifstream in("data/elephant.off");
   in >> p;
   PMP::isotropic_remeshing(faces(p),
@@ -55,7 +55,7 @@ int main()
     PMP::isotropic_remeshing(faces(om),
                              0.02,
                              om);
-    
+
     om.garbage_collection();
     OpenMesh::IO::write_mesh(om, "pm.off");
   }
@@ -71,7 +71,7 @@ int main()
     PMP::isotropic_remeshing(faces(om),
                              0.02,
                              om);
-    
+
     om.garbage_collection();
     OpenMesh::IO::write_mesh(om, "tm.off");
   }

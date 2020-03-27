@@ -15,12 +15,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 // Author(s)     : Michael Hemmer <mhemmer@uni-mainz.de>
 //
 // ============================================================================
 //
-//    \brief provide class Arithmetic_kernel, a collection of number types. 
+//    \brief provide class Arithmetic_kernel, a collection of number types.
 //
 
 #ifndef CGAL_GMP_ARITHMETIC_KERNEL_H
@@ -28,7 +28,7 @@
 
 #include <CGAL/config.h>
 
-#ifdef CGAL_USE_GMP 
+#ifdef CGAL_USE_GMP
 
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>
@@ -39,7 +39,7 @@
 #include <CGAL/Gmpq.h>
 
 #ifdef CGAL_USE_MPFI
-#define CGAL_HAS_GMP_ARITHMETIC_KERNEL 
+#define CGAL_HAS_GMP_ARITHMETIC_KERNEL
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
 #endif //CGAL_USE_MPFI
@@ -58,7 +58,7 @@ public:
   typedef CGAL::Gmpfi Bigfloat_interval;
   #endif //CGAL_USE_MPFI
 };
-    
+
 template <>
 struct Get_arithmetic_kernel<Gmpz> {
   typedef GMP_arithmetic_kernel Arithmetic_kernel;

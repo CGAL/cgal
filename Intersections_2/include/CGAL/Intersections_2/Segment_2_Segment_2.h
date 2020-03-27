@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -38,7 +38,7 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -52,9 +52,9 @@ do_intersect(const typename K::Segment_2 &seg1, const typename K::Segment_2 &seg
 
 template <class K>
 bool seg_seg_do_intersect_crossing(
-        const typename K::Point_2  &p1, const typename K::Point_2 &p2, 
-	const typename K::Point_2 &p3, const typename K::Point_2 &p4,
-	const K& k)
+        const typename K::Point_2  &p1, const typename K::Point_2 &p2,
+        const typename K::Point_2 &p3, const typename K::Point_2 &p4,
+        const K& k)
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
@@ -71,9 +71,9 @@ bool seg_seg_do_intersect_crossing(
 
 template <class K>
 bool seg_seg_do_intersect_contained(
-        const typename K::Point_2  &p1, const typename K::Point_2 &p2, 
-	const typename K::Point_2 &p3, const typename K::Point_2 &p4,
-	const K& k)
+        const typename K::Point_2  &p1, const typename K::Point_2 &p2,
+        const typename K::Point_2 &p3, const typename K::Point_2 &p4,
+        const K& k)
 {
     switch (make_certain(k.orientation_2_object()(p1,p2,p3))) {
     case LEFT_TURN:
@@ -90,9 +90,9 @@ bool seg_seg_do_intersect_contained(
 
 template <class K>
 bool
-do_intersect(const typename K::Segment_2 &seg1, 
-	     const typename K::Segment_2 &seg2,
-	     const K& k)
+do_intersect(const typename K::Segment_2 &seg1,
+             const typename K::Segment_2 &seg2,
+             const K& k)
 {
     typename K::Point_2 const & A1 = seg1.source();
     typename K::Point_2 const & A2 = seg1.target();
@@ -286,7 +286,7 @@ public:
     enum Intersection_results {NO_INTERSECTION, POINT, SEGMENT};
     Segment_2_Segment_2_pair(typename K::Segment_2 const *seg1,
                             typename K::Segment_2 const *seg2)
-	    : _seg1(seg1), _seg2(seg2), _known(false) {}
+            : _seg1(seg1), _seg2(seg2), _known(false) {}
 
     Intersection_results intersection_type() const;
 
@@ -368,7 +368,7 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
             _intersection_point = *minpt;
             _other_point = *maxpt;
             _result = SEGMENT;
-            return _result; 
+            return _result;
         } else {
             if (start1.y() < end1.y()) {
                 minpt = &start1;
@@ -404,9 +404,9 @@ Segment_2_Segment_2_pair<K>::intersection_type() const
             _intersection_point = *minpt;
             _other_point = *maxpt;
             _result = SEGMENT;
-            return _result; 
+            return _result;
         }
-        } 
+        }
     }
     return _result;
 }
@@ -437,9 +437,9 @@ Segment_2_Segment_2_pair<K>::intersection_segment() const
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Segment_2, typename K::Segment_2>::result_type
-intersection(const typename K::Segment_2 &seg1, 
-	     const typename K::Segment_2 &seg2,
-	     const K&)
+intersection(const typename K::Segment_2 &seg1,
+             const typename K::Segment_2 &seg2,
+             const K&)
 {
     typedef Segment_2_Segment_2_pair<K> is_t;
     is_t ispair(&seg1, &seg2);

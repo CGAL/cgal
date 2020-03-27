@@ -673,7 +673,7 @@ public:
   /// begin iterator over the non-virtual vertices
   Unique_vertex_iterator unique_vertices_begin() const
   {
-    return CGAL::filter_iterator(vertices_end(), 
+    return CGAL::filter_iterator(vertices_end(),
                                  Periodic_2_triangulation_2_internal::Domain_tester<Self>(this),
                                  vertices_begin());
   }
@@ -1968,10 +1968,10 @@ void Periodic_2_triangulation_2<Gt, Tds>::flip(Face_handle f, int i)
             vh2_copy = v2s[i2 - 1];
 
           bool found = is_edge(vh1_copy, vh2_copy, fh, index);
-	  CGAL_USE(found);
+          CGAL_USE(found);
           CGAL_assertion(found);
-	  if (found)
-	    flip_single_edge(fh, index);
+          if (found)
+            flip_single_edge(fh, index);
         }
     }
 

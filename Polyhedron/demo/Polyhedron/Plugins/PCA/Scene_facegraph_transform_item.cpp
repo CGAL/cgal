@@ -84,8 +84,8 @@ void Scene_facegraph_transform_item_priv::compute_elements() const
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
     positions_lines.resize(0);
-    typedef Kernel::Point_3		        Point;
-    typedef boost::graph_traits<FaceGraph>::edge_iterator	Edge_iterator;
+    typedef Kernel::Point_3                        Point;
+    typedef boost::graph_traits<FaceGraph>::edge_iterator        Edge_iterator;
     typedef boost::property_map<FaceGraph, CGAL::vertex_point_t>::type VPmap;
     VPmap vpmap = get(CGAL::vertex_point, *facegraph);
     Edge_iterator he;

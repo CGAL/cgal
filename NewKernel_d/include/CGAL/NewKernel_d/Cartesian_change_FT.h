@@ -30,7 +30,7 @@ namespace CGAL {
 
 template < typename Base_, typename FT_, typename LA_=CGAL::LA_eigen<FT_,typename Base_::Default_ambient_dimension> >
 struct Cartesian_change_FT_base : public
-	Base_
+        Base_
 {
     CGAL_CONSTEXPR Cartesian_change_FT_base(){}
     CGAL_CONSTEXPR Cartesian_change_FT_base(int d):Base_(d){}
@@ -57,57 +57,57 @@ struct Cartesian_change_FT_base : public
 
     template<class Tag_,class Type_>
     struct Construct_cartesian_const_iterator_ {
-	    typedef typename Get_functor<Kernel_base, Tag_>::type Functor_base;
-	    Construct_cartesian_const_iterator_(){}
-	    Construct_cartesian_const_iterator_(Self const&r):f(r){}
-	    Functor_base f;
-	    typedef Type_ result_type;
-	    template<class T>
-	    result_type operator()(T const& v, Begin_tag)const{
-		    return make_transforming_iterator(f(v,Begin_tag()),FT_converter());
-	    }
-	    template<class T>
-	    result_type operator()(T const& v, End_tag)const{
-		    return make_transforming_iterator(f(v,End_tag()),FT_converter());
-	    }
+            typedef typename Get_functor<Kernel_base, Tag_>::type Functor_base;
+            Construct_cartesian_const_iterator_(){}
+            Construct_cartesian_const_iterator_(Self const&r):f(r){}
+            Functor_base f;
+            typedef Type_ result_type;
+            template<class T>
+            result_type operator()(T const& v, Begin_tag)const{
+                    return make_transforming_iterator(f(v,Begin_tag()),FT_converter());
+            }
+            template<class T>
+            result_type operator()(T const& v, End_tag)const{
+                    return make_transforming_iterator(f(v,End_tag()),FT_converter());
+            }
     };
     typedef Construct_cartesian_const_iterator_<Construct_ttag<Point_cartesian_const_iterator_tag>,Point_cartesian_const_iterator> Construct_point_cartesian_const_iterator;
     typedef Construct_cartesian_const_iterator_<Construct_ttag<Vector_cartesian_const_iterator_tag>,Vector_cartesian_const_iterator> Construct_vector_cartesian_const_iterator;
 
     template<class Tag_>
     struct Compute_cartesian_coordinate {
-	    typedef typename Get_functor<Kernel_base, Tag_>::type Functor_base;
-	    Compute_cartesian_coordinate(){}
-	    Compute_cartesian_coordinate(Self const&r):f(r){}
-	    Functor_base f;
-	    typedef FT_ result_type;
-	    template<class Obj_>
-	    result_type operator()(Obj_ const& v,int i)const{
-		    return FT_converter()(f(v,i));
-	    }
+            typedef typename Get_functor<Kernel_base, Tag_>::type Functor_base;
+            Compute_cartesian_coordinate(){}
+            Compute_cartesian_coordinate(Self const&r):f(r){}
+            Functor_base f;
+            typedef FT_ result_type;
+            template<class Obj_>
+            result_type operator()(Obj_ const& v,int i)const{
+                    return FT_converter()(f(v,i));
+            }
     };
 
     template<class T,class U=void,class=typename Get_functor_category<Cartesian_change_FT_base,T>::type> struct Functor :
-	    Inherit_functor<Kernel_base,T,U> { };
+            Inherit_functor<Kernel_base,T,U> { };
     template<class T,class U> struct Functor<T,U,Compute_tag> { };
     template<class T,class U> struct Functor<T,U,Predicate_tag> { };
     template<class D> struct Functor<Compute_point_cartesian_coordinate_tag,D,Compute_tag> {
-	    typedef Compute_cartesian_coordinate<Compute_point_cartesian_coordinate_tag> type;
+            typedef Compute_cartesian_coordinate<Compute_point_cartesian_coordinate_tag> type;
     };
     template<class D> struct Functor<Compute_vector_cartesian_coordinate_tag,D,Compute_tag> {
-	    typedef Compute_cartesian_coordinate<Compute_vector_cartesian_coordinate_tag> type;
+            typedef Compute_cartesian_coordinate<Compute_vector_cartesian_coordinate_tag> type;
     };
     template<class D> struct Functor<Construct_ttag<Point_cartesian_const_iterator_tag>,D,Construct_iterator_tag> {
-	    typedef Construct_point_cartesian_const_iterator type;
+            typedef Construct_point_cartesian_const_iterator type;
     };
     template<class D> struct Functor<Construct_ttag<Vector_cartesian_const_iterator_tag>,D,Construct_iterator_tag> {
-	    typedef Construct_vector_cartesian_const_iterator type;
+            typedef Construct_vector_cartesian_const_iterator type;
     };
 };
 
 template < typename Base_, typename FT_>
 struct Cartesian_change_FT : public
-	Cartesian_change_FT_base<Base_,FT_>
+        Cartesian_change_FT_base<Base_,FT_>
 {
     CGAL_CONSTEXPR Cartesian_change_FT(){}
     CGAL_CONSTEXPR Cartesian_change_FT(int d):Cartesian_change_FT_base<Base_,FT_>(d){}

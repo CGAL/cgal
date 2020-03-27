@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
 
@@ -72,8 +72,8 @@ class number_type_converter_nef_3<Homogeneous_tag, Kernel> {
     decompose(y, yn, yd);
     decompose(z, zn, zd);
       CGAL::Homogeneous<Integer>::Point_3 b =
-	normalized ( CGAL::Homogeneous<Integer>::Point_3 (
-	 xn * yd * zd,
+        normalized ( CGAL::Homogeneous<Integer>::Point_3 (
+         xn * yd * zd,
          xd * yn * zd,
          xd * yd * zn,
          xd * yd * zd ) );
@@ -87,7 +87,7 @@ class number_type_converter_nef_3<Homogeneous_tag, Kernel> {
       RT ry (outy.str().c_str());
       RT rz (outz.str().c_str());
       RT rw (outw.str().c_str());
-      
+
       return Point_3 (rx, ry, rz, rw);
   }
 };
@@ -131,7 +131,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
    typedef typename std::vector<Point_3>   Point_set;
    CGAL::Nef_nary_union_3<Nef_3>            nary_union;
    // input data structure
-   typedef double	                   Scan_NT;
+   typedef double                           Scan_NT;
    typedef CGAL::Cartesian<Scan_NT>        Scan_kernel;
    typedef Scan_kernel::Point_3            Scan_point;
    typedef std::vector<Scan_point>         Scan_point_set;
@@ -206,7 +206,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
          // construct and enqueue Nef_polyhedron_3 <Kernel>
          Nef_3 nef (V_f.begin(), V_f.end(), normal, verb);
          if ( !nef.is_empty() )
-	   {nary_union.add_polyhedron(nef);
+           {nary_union.add_polyhedron(nef);
             is_nef = true;
          }
       }
@@ -214,10 +214,10 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
       if ( !is_nef )
       {  ++discarded_facets;
          if (verb)
-	 {  std::cerr << "Hence, discard input facet " << (idx+1)
-	       << " (enumerated beginning with 1)."
-	       << " Check semantics!\n" << std::endl;
-	 }
+         {  std::cerr << "Hence, discard input facet " << (idx+1)
+               << " (enumerated beginning with 1)."
+               << " Check semantics!\n" << std::endl;
+         }
       }
    }
 

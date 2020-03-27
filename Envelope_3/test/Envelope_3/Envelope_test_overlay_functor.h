@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michal Meyerovitch     <gorgymic@post.tau.ac.il>
 
@@ -42,7 +42,7 @@ class Envelope_test_overlay_functor
 {
 public:
   typedef MinimizationDiagram_2                                  Minimization_diagram_2;
-  
+
   typedef typename Minimization_diagram_2::Face_const_handle     Face_handle1;
   typedef typename Minimization_diagram_2::Face_const_handle     Face_handle2;
 
@@ -55,11 +55,11 @@ public:
   typedef typename Minimization_diagram_2::Face_handle           Res_face_handle;
   typedef typename Minimization_diagram_2::Halfedge_handle       Res_halfedge_handle;
   typedef typename Minimization_diagram_2::Vertex_handle         Res_vertex_handle;
-  
+
 
   Envelope_test_overlay_functor(Minimization_diagram_2& ,
-				Minimization_diagram_2& ,
-				Minimization_diagram_2& )
+                                Minimization_diagram_2& ,
+                                Minimization_diagram_2& )
   {}
 
   void create_face (Face_handle1 f1, Face_handle2 f2, Res_face_handle res_f)
@@ -172,7 +172,7 @@ public:
                        "data different over edge");
 
   }
-  
+
 };
 
 } //namespace CGAL

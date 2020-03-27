@@ -42,7 +42,7 @@ namespace CGAL {
              class CMap = Combinatorial_map_base,
              class Storage_ = CMap_linear_cell_complex_storage_1
              <d_, ambient_dim, Traits_,
-              CGAL::Linear_cell_complex_bgl_min_items, Alloc_> >  
+              CGAL::Linear_cell_complex_bgl_min_items, Alloc_> >
   struct Linear_cell_complex_for_bgl_combinatorial_map_helper
   {
   public:
@@ -50,7 +50,7 @@ namespace CGAL {
     typedef Linear_cell_complex_for_combinatorial_map
             <d_, ambient_dim, Traits_, CGAL::Linear_cell_complex_bgl_min_items,
              Alloc_, CMap, Storage_> type;
-  }; 
+  };
 
 } // namespace CGAL
 

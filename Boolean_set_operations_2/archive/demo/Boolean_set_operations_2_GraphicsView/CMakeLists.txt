@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-project( Boolean_set_operations_2_GraphicsView_Demo ) 
+project( Boolean_set_operations_2_GraphicsView_Demo )
 
 cmake_minimum_required(VERSION 3.1)
 if(NOT POLICY CMP0070 AND POLICY CMP0053)

@@ -20,7 +20,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_ODT_MOVE_H
@@ -60,7 +60,7 @@ class Odt_move
 
 public:
   typedef SizingField                                         Sizing_field;
-  
+
   Vector_3 operator()(const Vertex_handle& v,
                       const Cell_vector& incident_cells,
                       const C3T3& c3t3,
@@ -71,7 +71,7 @@ public:
     {
       return CGAL::NULL_VECTOR;
     }
-    
+
     // Compute move
     const Tr& tr = c3t3.triangulation();
 
@@ -86,11 +86,11 @@ public:
          ++cit )
     {
       const Cell_handle& cell = *cit;
-      
+
       // Consider only cells of complex
       if ( ! c3t3.is_in_complex(cell) )
         continue;
-      
+
       // Get points
       Bare_point circumcenter = tr.dual(cell);
 
@@ -98,28 +98,28 @@ public:
       const Weighted_point& p = tr.point(cell, cell->index(v));
       Vector_3 p_circum = vector(cp(p), circumcenter);
       FT volume = volume_quadrature(cell, tr, sizing_field);
-      
+
       move = move + p_circum * volume;
       sum_volume += volume;
     }
-    
+
     // Add boundary terms if needed
     if ( c3t3.in_dimension(v) == 2 )
     {
 //      move = move + (1.0 / 12.0) * move_odt_2D(v, c3t3, sizing_field);
     }
-    
+
     if ( FT(0) != sum_volume )
       return move/sum_volume;
     else
       return CGAL::NULL_VECTOR;
   }
-  
+
 #if defined(CGAL_MESH_3_OPTIMIZER_VERBOSE) \
  || defined (CGAL_MESH_3_EXPORT_PERFORMANCE_DATA)
   static std::string name() { return std::string("Odt"); }
 #endif
-  
+
 private:
   // 1-point at cell centroid
   FT volume_quadrature(const Cell_handle& cell,
@@ -128,7 +128,7 @@ private:
   {
     typename Gt::Construct_centroid_3 centroid = tr.geom_traits().construct_centroid_3_object();
     typename Gt::Compute_volume_3 volume = tr.geom_traits().compute_volume_3_object();
-    
+
     Bare_point c = centroid(tr.tetrahedron(cell));
     FT s = sizing_field(c, std::make_pair(cell, true));
     CGAL_assertion(!is_zero(s));
@@ -136,7 +136,7 @@ private:
     // Points of cell are positively oriented
     FT abs_volume = volume(tr.tetrahedron(cell));
     CGAL_assertion(abs_volume >= 0);
-    
+
     return abs_volume / (s*s*s);
   }
 

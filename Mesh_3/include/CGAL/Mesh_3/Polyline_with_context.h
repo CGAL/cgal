@@ -66,10 +66,10 @@ struct Extract_bare_polyline :
   typedef CGAL::cpp98::unary_function<Pwc_, const typename Pwc_::Bare_polyline&> Base;
   typedef typename Base::result_type                                     result_type;
   typedef typename Base::argument_type                                   argument_type;
-  
+
   result_type operator()(const argument_type& p) const { return p.polyline_content; }
 };
-  
+
 }} // end namespaces
 
 #endif // CGAL_MESH_3_POLYLINE_WITH_CONTEXT_H

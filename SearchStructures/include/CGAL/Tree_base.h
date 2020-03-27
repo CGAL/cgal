@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Gabriele Neyer
 
@@ -58,7 +58,7 @@ struct Tree_node_base {
 
 // -------------------------------------------------------------------
 // pure virtual abstract base class.
-// Designed according to the Prototype Design Pattern 
+// Designed according to the Prototype Design Pattern
 // A tree class has to be derived from this class.
 
 template <class C_Data, class C_Window>
@@ -88,51 +88,51 @@ public:
   //virtual Tree_base_type   *clone() const = 0;
 
   // 'make_tree()' returns an object which can be used as argument to 'delete'
-  virtual bool make_tree(const typename std::list<C_Data>::iterator& beg, 
-			 const typename std::list<C_Data>::iterator& end,
-			 lit *dummy=0) =0;
+  virtual bool make_tree(const typename std::list<C_Data>::iterator& beg,
+                         const typename std::list<C_Data>::iterator& end,
+                         lit *dummy=0) =0;
 #ifdef stlvector
-  virtual bool make_tree(const typename std::vector<C_Data>::iterator& beg, 
-			 const typename std::vector<C_Data>::iterator& end,
-			 vit *dummy=0) =0;
+  virtual bool make_tree(const typename std::vector<C_Data>::iterator& beg,
+                         const typename std::vector<C_Data>::iterator& end,
+                         vit *dummy=0) =0;
 #endif
 #ifdef carray
-  virtual bool make_tree(const C_Data *beg, 
+  virtual bool make_tree(const C_Data *beg,
                          const C_Data *end) =0;
 #endif
-  virtual std::back_insert_iterator< std::list<C_Data> > 
+  virtual std::back_insert_iterator< std::list<C_Data> >
     window_query(C_Window const &win,  std::back_insert_iterator<
-		 std::list<C_Data> > out,lbit *dummy=0 ) = 0; 
+                 std::list<C_Data> > out,lbit *dummy=0 ) = 0;
   virtual std::back_insert_iterator< std::vector<C_Data> >
     window_query(C_Window const &win,  std::back_insert_iterator<
-		  std::vector<C_Data> > out,vbit *dummy=0) = 0; 
+                  std::vector<C_Data> > out,vbit *dummy=0) = 0;
 #ifdef carray
-  virtual C_Data * window_query( C_Window const &win, 
-			        C_Data * out) = 0; 
+  virtual C_Data * window_query( C_Window const &win,
+                                C_Data * out) = 0;
 #endif
 #ifdef ostreamiterator
   typedef std::ostream_iterator< C_Data> oit;
-  virtual  std::ostream_iterator< C_Data> window_query( C_Window const &win, 
-				     std::ostream_iterator< C_Data> out,
-					oit *dummy=0	       ) = 0; 
+  virtual  std::ostream_iterator< C_Data> window_query( C_Window const &win,
+                                     std::ostream_iterator< C_Data> out,
+                                        oit *dummy=0               ) = 0;
 #endif
-  virtual  std::back_insert_iterator< std::list< C_Data> > 
+  virtual  std::back_insert_iterator< std::list< C_Data> >
     enclosing_query( C_Window const &win,  std::back_insert_iterator<
-		     std::list< C_Data> > out, lbit *dummy=0 ) = 0; 
-  virtual  std::back_insert_iterator< std::vector< C_Data> > 
+                     std::list< C_Data> > out, lbit *dummy=0 ) = 0;
+  virtual  std::back_insert_iterator< std::vector< C_Data> >
     enclosing_query( C_Window const &win,  std::back_insert_iterator<
-		     std::vector< C_Data> > out,vbit *dummy=0 ) = 0; 
+                     std::vector< C_Data> > out,vbit *dummy=0 ) = 0;
 #ifdef carray
-  virtual   C_Data * enclosing_query( C_Window const &win, 
-				    C_Data *out) = 0; 
+  virtual   C_Data * enclosing_query( C_Window const &win,
+                                    C_Data *out) = 0;
 #endif
 #ifdef ostreamiterator
-  virtual  std::ostream_iterator< C_Data> enclosing_query( C_Window const &win, 
-				           std::ostream_iterator< C_Data> out,
-					   oit *dummy=0) = 0; 
+  virtual  std::ostream_iterator< C_Data> enclosing_query( C_Window const &win,
+                                           std::ostream_iterator< C_Data> out,
+                                           oit *dummy=0) = 0;
 #endif
   virtual bool is_inside( C_Window const &win,
-			  C_Data const& object) const =0;  
+                          C_Data const& object) const =0;
   virtual bool is_anchor()const =0;
   virtual bool is_valid()const =0;
 };
@@ -154,73 +154,73 @@ public:
   typedef Tree_base<C_Data, C_Window> tbt;
 //  Tree_base_type *clone() const { return new Tree_anchor(); }
 
-  bool make_tree(const typename std::list< C_Data>::iterator& /*beg*/, 
-		 const typename std::list< C_Data>::iterator& /*end*/, 
-		 typename tbt::lit * =0) 
+  bool make_tree(const typename std::list< C_Data>::iterator& /*beg*/,
+                 const typename std::list< C_Data>::iterator& /*end*/,
+                 typename tbt::lit * =0)
   {
     return true;
   }
 #ifdef stlvector
-  bool make_tree(const typename std::vector< C_Data>::iterator& /*beg*/, 
-		 const typename std::vector< C_Data>::iterator& /*end*/, 
-		 typename tbt::vit * =0) 
+  bool make_tree(const typename std::vector< C_Data>::iterator& /*beg*/,
+                 const typename std::vector< C_Data>::iterator& /*end*/,
+                 typename tbt::vit * =0)
   {
     return true;
   }
 #endif
 #ifdef carray
-  bool make_tree(const C_Data * /*beg*/, 
-                 const C_Data * /*end*/) 
+  bool make_tree(const C_Data * /*beg*/,
+                 const C_Data * /*end*/)
   {
     return true;
   }
 #endif
-   std::back_insert_iterator< std::list< C_Data> > 
-      window_query( 
-       C_Window const &, 
+   std::back_insert_iterator< std::list< C_Data> >
+      window_query(
+       C_Window const &,
        std::back_insert_iterator< std::list< C_Data> > out,
        typename tbt::lbit * =0){
     return out;
   }
-   
-  std::back_insert_iterator< std::vector< C_Data> >  
-      window_query( C_Window const &, 
-		    std::back_insert_iterator< std::vector< C_Data> > out, 
+
+  std::back_insert_iterator< std::vector< C_Data> >
+      window_query( C_Window const &,
+                    std::back_insert_iterator< std::vector< C_Data> > out,
                     typename tbt::vbit * =0){
     return out;
   }
 #ifdef carray
-   C_Data * window_query( C_Window const &, 
+   C_Data * window_query( C_Window const &,
                      C_Data * out){
     return out;
   }
 #endif
 #ifdef ostreamiterator
    std::ostream_iterator< C_Data> window_query( C_Window const &,
-				        std::ostream_iterator< C_Data> out, 
-					typename tbt::oit *dummy=0){
+                                        std::ostream_iterator< C_Data> out,
+                                        typename tbt::oit *dummy=0){
     return out;
   }
 #endif
    std::back_insert_iterator< std::list< C_Data> > enclosing_query( C_Window const &,
                                    std::back_insert_iterator< std::list< C_Data> > out,
-				   typename tbt::lbit * =0){
+                                   typename tbt::lbit * =0){
     return out;
   }
    std::back_insert_iterator< std::vector< C_Data> > enclosing_query( C_Window const &,
                                    std::back_insert_iterator< std::vector< C_Data> > out,
-				   typename tbt::vbit * =0){
+                                   typename tbt::vbit * =0){
     return out;
   }
 #ifdef carray
-   C_Data * enclosing_query( C_Window const &, 
+   C_Data * enclosing_query( C_Window const &,
                         C_Data * out){
     return out;
   }
 #endif
 #ifdef ostreamiterator
-   std::ostream_iterator< C_Data> enclosing_query( C_Window const &, 
-					   std::ostream_iterator< C_Data> out,
+   std::ostream_iterator< C_Data> enclosing_query( C_Window const &,
+                                           std::ostream_iterator< C_Data> out,
                                            typename tbt::oit *dummy=0){
     return out;
   }
@@ -229,9 +229,9 @@ public:
 
 protected:
 
-  bool is_inside( C_Window const &, 
-		  C_Data const&) const
-  {     
+  bool is_inside( C_Window const &,
+                  C_Data const&) const
+  {
     return true;
   }
   bool is_anchor()const {return true;}

@@ -244,7 +244,7 @@ get(boost::halfedge_external_index_t, CGAL_LCC_TYPE const&)
 {
   CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
   return typename boost::property_map<CGAL_LCC_TYPE, boost::halfedge_external_index_t>::
-    const_type(halfedges(ncmap).begin(), halfedges(ncmap).end(), num_halfedges(ncmap)); 
+    const_type(halfedges(ncmap).begin(), halfedges(ncmap).end(), num_halfedges(ncmap));
 }
 
 template<CGAL_LCC_ARGS>
@@ -253,7 +253,7 @@ get(boost::vertex_external_index_t, CGAL_LCC_TYPE const&)
 {
  CGAL_LCC_TYPE& ncmap=const_cast<CGAL_LCC_TYPE&>(cmap);
   return typename boost::property_map<CGAL_LCC_TYPE, boost::vertex_external_index_t>::
-    const_type(vertices(ncmap).begin(), vertices(ncmap).end(), num_vertices(ncmap)); 
+    const_type(vertices(ncmap).begin(), vertices(ncmap).end(), num_vertices(ncmap));
 }
 
 template<CGAL_LCC_ARGS>

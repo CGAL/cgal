@@ -2,7 +2,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Geomview
 \cgalAutoToc
 \authors Andreas Fabri and Sylvain Pion
@@ -21,7 +21,7 @@ from. The constructor starts Geomview either on the local either on
 a remote machine.
 
 Not all but most classes of the \cgal kernel have output
-operators for the `Geomview_stream`. 
+operators for the `Geomview_stream`.
 2D objects are embedded in the `xy`-plane.
 Input is only provided for points.
 Polyhedron and 2D and 3D triangulations have output
@@ -51,6 +51,6 @@ Delaunay triangulation (projected), a 3D Delaunay, and a terrain
 from the set of points.
 \cgalExample{Geomview/gv_terrain.cpp}
 
-*/ 
+*/
 } /* namespace CGAL */
 

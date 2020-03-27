@@ -31,7 +31,7 @@
 #include <CGAL/disable_warnings.h>
 
 namespace CGAL {
-  
+
 namespace Mesh_3 {
 
 /************************************************
@@ -67,7 +67,7 @@ class Remove_far_points<C3T3, Parallel_tag>
 {
 public:
   Remove_far_points(C3T3 &c3t3) : m_c3t3(c3t3) {}
-  
+
   void remove_far_points()
   {
     m_c3t3.remove_far_points();

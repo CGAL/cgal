@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     :  Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 #ifndef CGAL_CD3_IS_REFLEX_SEDGE_H
@@ -34,8 +34,8 @@ namespace CGAL {
 /// @cond SKIP
 
 /*
-  int is_reflex_edge(Halfedge_handle e) {    
-    SHalfedge_around_svertex_circulator 
+  int is_reflex_edge(Halfedge_handle e) {
+    SHalfedge_around_svertex_circulator
       svc(e->out_sedge()), send(svc);
     int isrse = 0;
     CGAL_For_all(svc, send)
@@ -53,16 +53,16 @@ namespace CGAL {
 template<class SNC_structure>
 bool is_reflex_sedge_in_any_direction
 (typename SNC_structure::SHalfedge_const_handle se) {
-  
-  typename SNC_structure::SHalfedge_const_handle 
+
+  typename SNC_structure::SHalfedge_const_handle
     se2(se->sprev()->twin());
   if(se2 == se) {
-    CGAL_NEF_TRACEN("isolated sedge " 
-		    << se->source()->source()->point() 
-		    << ": "
-		    << se->source()->point() 
-		    << "->"
-		    << se->twin()->source()->point());
+    CGAL_NEF_TRACEN("isolated sedge "
+                    << se->source()->source()->point()
+                    << ": "
+                    << se->source()->point()
+                    << "->"
+                    << se->twin()->source()->point());
     return true;
   }
   typename SNC_structure::Vector_3 vec1
@@ -72,65 +72,65 @@ bool is_reflex_sedge_in_any_direction
   typename SNC_structure::Sphere_point sp1
     (CGAL::ORIGIN + cross_product(vec2,vec1));
   if(se2->circle().oriented_side(sp1) == ON_POSITIVE_SIDE) {
-    CGAL_NEF_TRACEN("reflex sedge " 
-		    << se->source()->source()->point() 
-		    << ": "
-		    << se->source()->point() 
-		    << "->"
-		    << se->twin()->source()->point());
+    CGAL_NEF_TRACEN("reflex sedge "
+                    << se->source()->source()->point()
+                    << ": "
+                    << se->source()->point()
+                    << "->"
+                    << se->twin()->source()->point());
     return true;
   }
-  return false;    
+  return false;
 }
 
-template<class SNC_structure>  
+template<class SNC_structure>
 int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
-		    typename SNC_structure::Sphere_point dir,
-		    bool only_small_to_large = true) 
+                    typename SNC_structure::Sphere_point dir,
+                    bool only_small_to_large = true)
 {
   typename SNC_structure::Halfedge_handle e = se->source();
   CGAL_NEF_TRACEN("is reflex edge?");
-  CGAL_NEF_TRACEN("  e " << e->source()->point() 
-		  << "->" << e->twin()->source()->point()
-		  << " (" << e->point() << ")");
-  
+  CGAL_NEF_TRACEN("  e " << e->source()->point()
+                  << "->" << e->twin()->source()->point()
+                  << " (" << e->point() << ")");
+
   if(e->point() == dir || e->point() == CGAL::ORIGIN - dir)
     return 0;
-  if(only_small_to_large && 
+  if(only_small_to_large &&
      e->source()->point() > e->twin()->source()->point())
     return 0;
 
-  
+
   typename SNC_structure::Sphere_circle cp(e->point(), dir);
   typename SNC_structure::SHalfedge_handle se2 = se->sprev()->twin();
   CGAL_assertion(se2->source() == se->source());
-		   
+
   if(se2 == se) {
     typename SNC_structure::Sphere_segment
       seg(se->source()->point(), se->twin()->source()->point(), se->circle());
     CGAL_NEF_TRACEN("  only one sedge pair " << se->source()->point() <<
-		    "->" << se->twin()->source()->point() <<
-		    " circle " << se->circle() << " is_short " << seg.is_short());
+                    "->" << se->twin()->source()->point() <<
+                    " circle " << se->circle() << " is_short " << seg.is_short());
     if(seg.sphere_circle() == cp)
       return 2;
     if(seg.sphere_circle() == cp.opposite())
       return 1;
     return 3;
   }
-  
-  CGAL_NEF_TRACEN(" se1 " << se->circle() 
-		  << ":" << se->source()->point() 
-		  << "->" << se->twin()->source()->point());
-  CGAL_NEF_TRACEN(" se2 " << se2->circle() 	      
-		  << ":" << se2->source()->point() 
-		  << "->" << se2->twin()->source()->point());
+
+  CGAL_NEF_TRACEN(" se1 " << se->circle()
+                  << ":" << se->source()->point()
+                  << "->" << se->twin()->source()->point());
+  CGAL_NEF_TRACEN(" se2 " << se2->circle()
+                  << ":" << se2->source()->point()
+                  << "->" << se2->twin()->source()->point());
   typename SNC_structure::Vector_3 vec1 = e->point() - CGAL::ORIGIN;
   typename SNC_structure::Vector_3 vec2 = se->circle().orthogonal_vector();
   typename SNC_structure::Sphere_point sp1 = CGAL::ORIGIN + cross_product(vec2,vec1);
   if(se2->circle().oriented_side(sp1) != ON_POSITIVE_SIDE) {
     CGAL_NEF_TRACEN("  too short");
     return 0;
-  }  
+  }
 
   int result = 0;
   CGAL_NEF_TRACEN(" cp " << cp);
@@ -149,21 +149,21 @@ int is_reflex_sedge(typename SNC_structure::SHalfedge_handle se,
   if(os1 == ON_NEGATIVE_SIDE ||
      os2 == ON_POSITIVE_SIDE)
     result |= 2;
-  
+
   typedef typename SNC_structure::Sphere_segment Sphere_segment;
   CGAL_USE_TYPE(Sphere_segment);
-  if(os1 == ON_POSITIVE_SIDE && 
+  if(os1 == ON_POSITIVE_SIDE &&
      se2->twin()->source()->point() == dir)
     CGAL_assertion(Sphere_segment(se2->source()->point(), se2->twin()->source()->point(), se2->circle()).is_long());
-  
+
   if(os2 == ON_NEGATIVE_SIDE &&
      se->twin()->source()->point() == dir)
     CGAL_assertion(Sphere_segment(se->source()->point(), se->twin()->source()->point(), se->circle()).is_long());
 
-  if(os1 == ON_NEGATIVE_SIDE && 
+  if(os1 == ON_NEGATIVE_SIDE &&
      se2->twin()->source()->point() == dir.antipode())
     CGAL_assertion(Sphere_segment(se2->source()->point(), se2->twin()->source()->point(), se2->circle()).is_long());
-  
+
   if(os2 == ON_POSITIVE_SIDE &&
      se->twin()->source()->point() == dir.antipode())
     CGAL_assertion(Sphere_segment(se->source()->point(), se->twin()->source()->point(), se->circle()).is_long());

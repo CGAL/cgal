@@ -29,8 +29,8 @@ create_single_source_cgal_program( "test_Lazy_spherical_kernel_basics.cpp" )
 create_single_source_cgal_program( "test_Spherical_kernel_with_core.cpp" )
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

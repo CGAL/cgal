@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Herve Bronnimann
 
@@ -75,7 +75,7 @@ public:
 
   // Sphere with great circle passing through p,q,r, oriented by o
   SphereC3(const Point_3_ &p, const Point_3_ &q, const Point_3_ &r,
-	   const Orientation &o = COUNTERCLOCKWISE)
+           const Orientation &o = COUNTERCLOCKWISE)
   {
     CGAL_kernel_precondition(o != COLLINEAR);
 

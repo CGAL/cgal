@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -98,12 +98,12 @@ namespace CGAL {
      Self& operator++ ()
      {
        CGAL_assertion(!_done);
-      
+
       --_circ;
 
       if (_circ == _first)
         _done = true;
-      
+
 
        return (*this);
      }

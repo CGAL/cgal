@@ -128,6 +128,8 @@ public:
   typedef typename Tds::Halfedge_iterator      All_halfedges_iterator;
   typedef typename Tds::Vertex_iterator        All_vertices_iterator;
 
+  typedef typename Gt::Construct_point_2       Construct_point_2;
+
   class Perturbation_order
   {
     const Self *t;
@@ -148,7 +150,7 @@ public:
     const Triangulation_2 *t;
   public:
     Infinite_tester() {}
-    Infinite_tester(const Triangulation_2 *tr)	  : t(tr) {}
+    Infinite_tester(const Triangulation_2 *tr)          : t(tr) {}
 
     bool operator()(const All_vertices_iterator & vit) const  {
       return t->is_infinite(vit);
@@ -277,7 +279,9 @@ public:
                Face_handle &fr) const;
 
   // GEOMETRIC FEATURES AND CONSTRUCTION
-  Point_2 construct_point(const Point& p) const;
+  typename boost::result_of<const Construct_point_2(const Point&)>::type
+  construct_point(const Point& p) const { return geom_traits().construct_point_2_object()(p); }
+
   const Point& point(Face_handle c, int i) const;
   const Point& point(Vertex_handle v) const;
   Segment segment(Face_handle f, int i) const;
@@ -595,7 +599,6 @@ std::ptrdiff_t insert(InputIterator first, InputIterator last)
 
   std::vector<Point> points (first, last);
 
-  typedef typename Geom_traits::Construct_point_2 Construct_point_2;
   typedef typename boost::result_of<const Construct_point_2(const Point&)>::type Ret;
   typedef CGAL::internal::boost_::function_property_map<Construct_point_2, Point, Ret> fpmap;
   typedef CGAL::Spatial_sort_traits_adapter_2<Geom_traits, fpmap> Search_traits_2;
@@ -965,14 +968,6 @@ is_face(Vertex_handle v1,
         Face_handle &fr) const
 {
   return _tds.is_face(v1, v2, v3, fr);
-}
-
-template <class Gt, class Tds >
-typename Triangulation_2<Gt, Tds>::Point_2
-Triangulation_2<Gt, Tds>::
-construct_point(const Point& p) const
-{
-  return geom_traits().construct_point_2_object()(p);
 }
 
 template <class Gt, class Tds >

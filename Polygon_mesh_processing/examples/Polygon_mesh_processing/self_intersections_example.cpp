@@ -34,6 +34,6 @@ int main(int argc, char* argv[])
   PMP::self_intersections(mesh, std::back_inserter(intersected_tris));
 
   std::cout << intersected_tris.size() << " pairs of triangles intersect." << std::endl;
-  
+
   return 0;
 }

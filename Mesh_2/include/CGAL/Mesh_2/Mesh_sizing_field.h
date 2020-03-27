@@ -16,7 +16,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s) : Jane Tournois, Pierre Alliez
 //
@@ -49,11 +49,11 @@ class Mesh_sizing_field
   typedef typename Tr::Vertex_handle      Vertex_handle;
   typedef typename Tr::Face_handle        Face_handle;
   typedef typename Tr::Edge               Edge;
-  
+
 public:
-  // update vertices of mesh triangulation ? 
+  // update vertices of mesh triangulation ?
   static const bool is_vertex_update_needed = Need_vertex_update;
-  
+
 public:
   /**
    * Constructor
@@ -77,7 +77,7 @@ public:
    */
   FT operator()(const Point_2& p, const Vertex_handle& v) const
   { return this->operator()(p, v->face()); }
-  
+
   /**
    * Returns size at point \c p.
    */
@@ -85,7 +85,7 @@ public:
   {
     const Face_handle fh = tr_.locate(p,c);
     last_face_ = fh;
-  
+
     if ( !tr_.is_infinite(fh) )
       return interpolate_on_face_vertices(p,fh);
     else
@@ -132,7 +132,7 @@ private:
 
     return alpha * sa + beta * sb + gamma * sc;
 #else
-    return ((sa + sb + sc) / 3.); 
+    return ((sa + sb + sc) / 3.);
 #endif
   }
 
@@ -208,7 +208,7 @@ private:
     Point_2 p2 = e.first->vertex(Tr::ccw(e.second))->point();
     return CGAL::sqrt(CGAL::squared_distance(p1, p2));
   }
-  
+
 private:
   /// The triangulation
   Tr& tr_;

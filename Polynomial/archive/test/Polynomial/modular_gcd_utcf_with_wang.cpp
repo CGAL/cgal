@@ -1,8 +1,8 @@
 // ============================================================================
-// 
+//
 // Copyright (c) 2001-2006 Max-Planck-Institut Saarbruecken (Germany).
 // All rights reserved.
-// 
+//
 // This file is part of EXACUS (http://www.mpi-inf.mpg.de/projects/EXACUS/).
 // You can redistribute it and/or modify it under the terms of the GNU
 // General Public License as published by the Free Software Foundation,
@@ -28,8 +28,8 @@
 //
 // ============================================================================
 
-/*! \file CGAL/polynomial_gcd.C 
-    test for the modular algorithm modular_gcd_utcf_with_wang to compute 
+/*! \file CGAL/polynomial_gcd.C
+    test for the modular algorithm modular_gcd_utcf_with_wang to compute
     the gcd of univariate polynomials with (nested) sqrt-extensions
 */
 
@@ -42,22 +42,22 @@
 #include <CGAL/test_modular_gcd.h>
 
 int main(){
-  // Set wrong rounding mode to test modular arithmetic 
+  // Set wrong rounding mode to test modular arithmetic
   CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_UPWARD);
 
   #ifdef CGAL_USE_LEDA
    CGAL::internal::test_modular_gcd<CGAL::LEDA_arithmetic_kernel>
-       (CGAL::Integral_domain_tag()); 
-  #endif // CGAL_USE_LEDA    
+       (CGAL::Integral_domain_tag());
+  #endif // CGAL_USE_LEDA
 
-  #ifdef CGAL_USE_CORE      
+  #ifdef CGAL_USE_CORE
    CGAL::internal::test_modular_gcd<CGAL::CORE_arithmetic_kernel>
        (CGAL::Integral_domain_tag());
   #endif // Lis_HAVE_CORE
-     
+
   return 0;
 }
 
 
 // EOF
- 
+

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Hans Tangelder (<hanst@cs.uu.nl>)
 
@@ -49,13 +49,13 @@ namespace CGAL {
     typedef typename K::Construct_center_3 Construct_center_d;
     typedef typename K::Compute_squared_radius_3 Compute_squared_radius_d;
     typedef typename K::FT FT;
-  
+
     Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
        return Construct_cartesian_const_iterator_d();
     }
-  
+
   };
 
-  
+
 } // namespace CGAL
 #endif // SEARCH_TRAITS_3_H

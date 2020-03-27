@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2004  
+// Copyright (c) 1999,2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -79,7 +79,7 @@ public:
 
   inline double min_coord(int i) const { return (min)(i); }
   inline double max_coord(int i) const { return (max)(i); }
-  
+
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
 
@@ -219,7 +219,7 @@ operator<<(std::ostream &os, const Bbox_3& b)
   {
     case IO::ASCII :
         return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
-		  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
+                  << ' ' << b.xmax() << ' ' << b.ymax() << ' ' << b.zmax();
     case IO::BINARY :
         write(os, b.xmin());
         write(os, b.ymin());

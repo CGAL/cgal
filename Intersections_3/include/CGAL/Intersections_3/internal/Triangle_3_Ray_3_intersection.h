@@ -28,9 +28,9 @@
 #include <CGAL/intersections.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
-  
+
 namespace internal {
 
 template <class K>
@@ -433,7 +433,7 @@ t3r3_intersection_aux(const typename K::Triangle_3 &t,
                       const K& k)
 {
   typename Intersection_traits<K, typename K::Line_3, typename K::Plane_3>
-    ::result_type 
+    ::result_type
     v = internal::intersection(r.supporting_line(),t.supporting_plane(), k);
 
   if(v) {

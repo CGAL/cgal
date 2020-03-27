@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -41,9 +41,9 @@ namespace internal {
 
 /*! \ingroup NiX_bivariate_polynomial_hacks
  *  \brief Computes the polynomial f(x+sy,y)
- */ 
+ */
 template<class NT>
-CGAL::Polynomial<CGAL::Polynomial<NT> > 
+CGAL::Polynomial<CGAL::Polynomial<NT> >
 shear(const CGAL::Polynomial<CGAL::Polynomial<NT> >& f,NT s) {
     typedef CGAL::Polynomial<NT> Poly_1;
     typedef CGAL::Polynomial<Poly_1> Poly_2;
@@ -60,7 +60,7 @@ shear(const CGAL::Polynomial<CGAL::Polynomial<NT> >& f,NT s) {
 
     return typename CGAL::Polynomial_traits_d<Poly_2>::Substitute()
         (f,coeffs.begin(), coeffs.end());
-    
+
 }
 
 } // namespace internal

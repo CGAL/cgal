@@ -96,7 +96,7 @@ random_simplify_point_set(
   return random_simplify_point_set (points, removed_percentage);
 }
 
-  
+
 // deprecated API
 template <typename ForwardIterator,
           typename PointMap

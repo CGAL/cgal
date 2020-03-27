@@ -1,9 +1,9 @@
-// Copyright (c) 2014  
+// Copyright (c) 2014
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -49,8 +49,8 @@ It is a typedef of another number type. Its exact definition depends on
 the availability the third-party libraries %GMP, %CORE, and %LEDA. %CGAL must
 be configured with at least one of those libraries.
 
-\cgalModels `EuclideanRing` 
-\cgalModels `RealEmbeddable` 
+\cgalModels `EuclideanRing`
+\cgalModels `RealEmbeddable`
 
 */
 #if DOXYGEN_RUNNING

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
@@ -32,17 +32,17 @@ class Progress_indicator
  public:
   Progress_indicator( long n) : total(n), current(0) {}
 
-  void operator++(int) { 
+  void operator++(int) {
     CGAL_assertion( total > 0);
     CGAL_assertion( current != total);
-    ++current; 
+    ++current;
   }
   void operator++() {
     operator++(0);
   }
-  float percentage() { 
+  float percentage() {
     CGAL_assertion( total > 0);
-    return 100.0*current/total; 
+    return 100.0*current/total;
   }
 };
 
@@ -53,11 +53,11 @@ class Progress_indicator_ostream : public Progress_indicator
   std::ostream& os;
   char separator;
  public:
-  Progress_indicator_ostream( std::ostream& o, long n, char *msg, char s='\n') 
+  Progress_indicator_ostream( std::ostream& o, long n, char *msg, char s='\n')
     : Base(n), os(o), separator(s) {
     os<<msg<<std::endl;
     os.precision(2);
-    os.setf( std::ios::fixed | std::ios::right);    
+    os.setf( std::ios::fixed | std::ios::right);
   }
   void operator++(int) {
     Base::operator++();
@@ -78,7 +78,7 @@ class Progress_indicator_clog
 {
   typedef Progress_indicator_ostream Base;
  public:
-  Progress_indicator_clog( long n, char *msg, char s='\r') 
+  Progress_indicator_clog( long n, char *msg, char s='\r')
     : Base( std::clog, n, msg, s) {}
 };
 
@@ -87,7 +87,7 @@ class Progress_indicator_cout
 {
   typedef Progress_indicator_ostream Base;
  public:
-  Progress_indicator_cout( long n, char *msg, char s='\r') 
+  Progress_indicator_cout( long n, char *msg, char s='\r')
     : Base( std::cout, n, msg, s) {}
 };
 

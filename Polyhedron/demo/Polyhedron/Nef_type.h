@@ -9,7 +9,7 @@
 #include <CGAL/Polyhedron_3.h>
 
 // nef
-#include <CGAL/Nef_polyhedron_3.h> 
+#include <CGAL/Nef_polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_indexed_items.h>
 
 // Boolean operations work only with exact kernel
@@ -21,7 +21,7 @@ typedef CGAL::Exact_predicates_exact_constructions_kernel Exact_Kernel;
 typedef CGAL::Polyhedron_3<Exact_Kernel> Exact_polyhedron;
 
 typedef CGAL::Nef_polyhedron_3<Exact_Kernel,
-			       CGAL::SNC_indexed_items,
-			       bool> Nef_polyhedron; 
+                               CGAL::SNC_indexed_items,
+                               bool> Nef_polyhedron;
 
 #endif // NEF_TYPE_H

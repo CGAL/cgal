@@ -31,7 +31,7 @@ namespace CGAL {
 
 namespace internal {
 
-// assemble covariance matrix from a triangle set 
+// assemble covariance matrix from a triangle set
 template < typename InputIterator,
            typename K >
 void
@@ -48,15 +48,15 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename K::Triangle_3  Triangle;
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
 
-  // assemble covariance matrix as a semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix.
   // Matrix numbering:
   // 0 1 2
   //   3 4
-  //     5          
+  //     5
   //Final combined covariance matrix for all triangles and their combined mass
   FT mass = 0.0;
 
-  // assemble 2nd order moment about the origin.  
+  // assemble 2nd order moment about the origin.
   Matrix moment;
   moment << 1.0/12.0, 1.0/24.0, 1.0/24.0,
             1.0/24.0, 1.0/12.0, 1.0/24.0,
@@ -72,7 +72,7 @@ assemble_covariance_matrix_3(InputIterator first,
 
     // defined for convenience.
     Matrix transformation;
-    transformation << t[0].x(), t[1].x(), t[2].x(), 
+    transformation << t[0].x(), t[1].x(), t[2].x(),
                       t[0].y(), t[1].y(), t[2].y(),
                       t[0].z(), t[1].z(), t[2].z();
 
@@ -83,10 +83,10 @@ assemble_covariance_matrix_3(InputIterator first,
       continue;
 
     // Find the 2nd order moment for the triangle wrt to the origin by an affine transformation.
-    
+
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = 2 * area * transformation * moment * transformation.transpose();
-    
+
     // and add to covariance matrix
     covariance[0] += transformation(0,0);
     covariance[1] += transformation(1,0);
@@ -109,7 +109,7 @@ assemble_covariance_matrix_3(InputIterator first,
 
 }
 
-// assemble covariance matrix from a cuboid set 
+// assemble covariance matrix from a cuboid set
 template < typename InputIterator,
            typename K >
 void
@@ -126,15 +126,15 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename K::Iso_cuboid_3    Iso_cuboid;
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
 
-  // assemble covariance matrix as a semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix.
   // Matrix numbering:
   // 0 1 2
   //   3 4
-  //     5          
+  //     5
   // final combined covariance matrix for all cuboids and their combined mass
   FT mass = (FT)0.0;
 
-  // assemble 2nd order moment about the origin.  
+  // assemble 2nd order moment about the origin.
   Matrix moment;
   moment << (FT)(1.0/3.0), (FT)(1.0/4.0), (FT)(1.0/4.0),
             (FT)(1.0/4.0), (FT)(1.0/3.0), (FT)(1.0/4.0),
@@ -153,7 +153,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT x0 = t[0].x();
     FT y0 = t[0].y();
     FT z0 = t[0].z();
-    FT delta[9] = {t[0].x(), t[1].x(), t[2].x(), 
+    FT delta[9] = {t[0].x(), t[1].x(), t[2].x(),
                    t[0].y(), t[1].y(), t[2].y(),
                    t[0].z(), t[1].z(), t[2].z()};
     Matrix transformation (delta);
@@ -164,10 +164,10 @@ assemble_covariance_matrix_3(InputIterator first,
       continue;
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
-    
+
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = volume * transformation * moment * transformation.transpose();
-    
+
     // Translate the 2nd order moment to the minimum corner (x0,y0,z0) of the cuboid.
     FT xav0 = (delta[0] + delta[1] + delta[2])/4.0;
     FT yav0 = (delta[3] + delta[4] + delta[5])/4.0;
@@ -194,12 +194,12 @@ assemble_covariance_matrix_3(InputIterator first,
   covariance[5] += mass * (- c.z() * c.z());
 }
 
-// assemble covariance matrix from a cuboid set 
+// assemble covariance matrix from a cuboid set
 template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Eigen_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
@@ -211,15 +211,15 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
 
-  // assemble covariance matrix as a semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix.
   // Matrix numbering:
   // 0 1 2
   //   3 4
-  //     5          
+  //     5
   //Final combined covariance matrix for all cuboids and their combined mass
   FT mass = (FT)0.0;
 
-  // assemble 2nd order moment about the origin.  
+  // assemble 2nd order moment about the origin.
   Matrix moment;
   moment << (FT)(7.0/3.0), (FT)1.5,       (FT)1.5,
             (FT)1.5,       (FT)(7.0/3.0), (FT)1.5,
@@ -237,7 +237,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT x0 = t[0].x();
     FT y0 = t[0].y();
     FT z0 = t[0].z();
-    FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0, 
+    FT delta[9] = {t[1].x()-x0, t[3].x()-x0, t[5].x()-x0,
                    t[1].y()-y0, t[3].y()-y0, t[5].y()-y0,
                    t[1].z()-z0, t[3].z()-z0, t[5].z()-z0};
     Matrix transformation (delta);
@@ -256,10 +256,10 @@ assemble_covariance_matrix_3(InputIterator first,
       continue;
 
     // Find the 2nd order moment for the cuboid wrt to the origin by an affine transformation.
-    
+
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = area * transformation * moment * transformation.transpose();
-    
+
     // Translate the 2nd order moment to the minimum corner (x0,y0,z0) of the cuboid.
     FT xav0 = (delta[0] + delta[1] + delta[2])/4.0;
     FT yav0 = (delta[3] + delta[4] + delta[5])/4.0;
@@ -287,12 +287,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
 }
 
-// assemble covariance matrix from a sphere set 
+// assemble covariance matrix from a sphere set
 template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Eigen_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
@@ -304,15 +304,15 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename K::Sphere_3  Sphere;
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
 
-  // assemble covariance matrix as a semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix.
   // Matrix numbering:
   // 0 1 2
   //   3 4
-  //     5          
+  //     5
   //Final combined covariance matrix for all spheres and their combined mass
   FT mass = 0.0;
 
-  // assemble 2nd order moment about the origin.  
+  // assemble 2nd order moment about the origin.
   Matrix moment;
   moment << 4.0/15.0, 0.0,      0.0,
             0.0,      4.0/15.0, 0.0,
@@ -329,7 +329,7 @@ assemble_covariance_matrix_3(InputIterator first,
     // defined for convenience.
     FT radius = std::sqrt(t.squared_radius());
     Matrix transformation;
-    transformation << radius, 0.0, 0.0, 
+    transformation << radius, 0.0, 0.0,
                       0.0, radius, 0.0,
                       0.0, 0.0, radius;
     FT volume = (FT)(4.0/3.0) * radius * t.squared_radius();
@@ -339,10 +339,10 @@ assemble_covariance_matrix_3(InputIterator first,
       continue;
 
     // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
-    
+
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = (3.0/4.0) * volume * transformation * moment * transformation.transpose();
-    
+
     // Translate the 2nd order moment to the center of the sphere.
     FT x0 = t.center().x();
     FT y0 = t.center().y();
@@ -369,12 +369,12 @@ assemble_covariance_matrix_3(InputIterator first,
   covariance[5] += mass * (-1.0 * c.z() * c.z());
 
 }
-// assemble covariance matrix from a sphere set 
+// assemble covariance matrix from a sphere set
 template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Eigen_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
@@ -386,15 +386,15 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename K::Sphere_3  Sphere;
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
 
-  // assemble covariance matrix as a semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix.
   // Matrix numbering:
   // 0 1 2
   //   3 4
-  //     5          
+  //     5
   //Final combined covariance matrix for all spheres and their combined mass
   FT mass = 0.0;
 
-  // assemble 2nd order moment about the origin.  
+  // assemble 2nd order moment about the origin.
   Matrix moment;
   moment << 4.0/3.0, 0.0,     0.0,
             0.0,     4.0/3.0, 0.0,
@@ -412,7 +412,7 @@ assemble_covariance_matrix_3(InputIterator first,
     // FT example = CGAL::to_double(t[0].x());
     FT radius = std::sqrt(t.squared_radius());
     Matrix transformation;
-    transformation << radius, 0.0,    0.0, 
+    transformation << radius, 0.0,    0.0,
                       0.0,    radius, 0.0,
                       0.0,    0.0,    radius;
     FT area = (FT)4.0 * t.squared_radius();
@@ -422,10 +422,10 @@ assemble_covariance_matrix_3(InputIterator first,
       continue;
 
     // Find the 2nd order moment for the sphere wrt to the origin by an affine transformation.
-    
+
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = (1.0/4.0) * area * transformation * moment * transformation.transpose();
-    
+
     // Translate the 2nd order moment to the center of the sphere.
     FT x0 = t.center().x();
     FT y0 = t.center().y();
@@ -453,12 +453,12 @@ assemble_covariance_matrix_3(InputIterator first,
 
 }
 
-// assemble covariance matrix from a tetrahedron set 
+// assemble covariance matrix from a tetrahedron set
 template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Eigen_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
@@ -473,12 +473,12 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
   typedef typename Eigen::Matrix<FT, 3, 1> Vector;
 
-  // assemble covariance matrix as a semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix.
   // Matrix numbering:
   // 0 1 2
   //   3 4
-  //     5          
-  // assemble 2nd order moment about the origin.  
+  //     5
+  // assemble 2nd order moment about the origin.
   Matrix moment;
   moment << 1.0/60.0,  1.0/120.0, 1.0/120.0,
             1.0/120.0, 1.0/60.0,  1.0/120.0,
@@ -496,7 +496,7 @@ assemble_covariance_matrix_3(InputIterator first,
     FT z0 = t[0].z();
 
     Matrix transformation;
-    transformation << t[1].x()-x0, t[2].x()-x0, t[3].x()-x0, 
+    transformation << t[1].x()-x0, t[2].x()-x0, t[3].x()-x0,
                       t[1].y()-y0, t[2].y()-y0, t[3].y()-y0,
                       t[1].z()-z0, t[2].z()-z0, t[3].z()-z0;
     FT volume = CGAL::abs(t.volume());
@@ -511,31 +511,31 @@ assemble_covariance_matrix_3(InputIterator first,
     Vector_3 d = t[0] - c; // delta
     Vector vec_d;
     vec_d << d.x(), d.y(), d.z();
-      
+
     Point_3 C = CGAL::centroid(t) - (t[0] - CGAL::ORIGIN); // careful, local centroid
     Vector vec_c;
     vec_c << C.x(), C.y(), C.z();
-    
+
     Matrix M = vec_c * vec_d.transpose() + vec_d * vec_c.transpose() + vec_d * vec_d.transpose();
 
     accum += transformation + volume * M;
   }
-  
+
   covariance[0] = accum(0,0);
   covariance[1] = accum(1,0);
   covariance[2] = accum(2,0);
   covariance[3] = accum(1,1);
   covariance[4] = accum(2,1);
   covariance[5] = accum(2,2);
-  
+
 }
 
-// assemble covariance matrix from a segment set 
+// assemble covariance matrix from a segment set
 template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Eigen_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
@@ -547,15 +547,15 @@ assemble_covariance_matrix_3(InputIterator first,
   typedef typename K::Segment_3  Segment;
   typedef typename Eigen::Matrix<FT, 3, 3> Matrix;
 
-  // assemble covariance matrix as a semi-definite matrix. 
+  // assemble covariance matrix as a semi-definite matrix.
   // Matrix numbering:
   // 0 1 2
   //   3 4
-  //     5          
+  //     5
   //Final combined covariance matrix for all segments and their combined mass
   FT mass = 0.0;
 
-  // assemble 2nd order moment about the origin.  
+  // assemble 2nd order moment about the origin.
   Matrix moment;
   moment << 1.0, 0.5, 0.0,
             0.5, 1.0, 0.0,
@@ -572,17 +572,18 @@ assemble_covariance_matrix_3(InputIterator first,
     // defined for convenience.
     // FT example = CGAL::to_double(t[0].x());
     Matrix transformation;
-    transformation << t[0].x(), t[1].x(), 0.0, 
+    transformation << t[0].x(), t[1].x(), 0.0,
                       t[0].y(), t[1].y(), 0.0,
                       t[0].z(), t[1].z(), 1.0;
-    FT length = std::sqrt(t.squared_length());
+    using std::sqrt;
+    FT length = sqrt(t.squared_length());
 
     // skip zero measure primitives
     if(length == (FT)0.0)
       continue;
 
     // Find the 2nd order moment for the segment wrt to the origin by an affine transformation.
-    
+
     // Transform the standard 2nd order moment using the transformation matrix
     transformation = length * transformation * moment * transformation.transpose();
 
@@ -645,7 +646,7 @@ template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& k,                    // kernel
@@ -661,7 +662,7 @@ template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& k,                     // kernel
@@ -673,12 +674,12 @@ assemble_covariance_matrix_3(InputIterator first,
                                 Eigen_diagonalize_traits<typename K::FT, 3>());
 }
 
-  
+
 template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& k,                     // kernel
@@ -694,7 +695,7 @@ template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& k,                    // kernel
@@ -710,7 +711,7 @@ template < typename InputIterator,
            typename K >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
+                             InputIterator beyond,
                              typename Default_diagonalize_traits<typename K::FT, 3>::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& k,                    // kernel
@@ -722,7 +723,7 @@ assemble_covariance_matrix_3(InputIterator first,
                                 Eigen_diagonalize_traits<typename K::FT, 3>());
 }
 
-  
+
 
 
 } // end namespace internal

@@ -247,7 +247,7 @@ public:
   //!
   int getId()const;
 
-  //! invalidates the context menu. Call it when supportsRenderingMode() changes, 
+  //! invalidates the context menu. Call it when supportsRenderingMode() changes,
   //! for example.
   void resetMenu();
   //!Handles key press events.
@@ -329,9 +329,9 @@ public Q_SLOTS:
   void setRenderingMode(int m) { setRenderingMode((RenderingMode)m);}
   //!Sets the rendering mode of the item.
   //!@see RenderingMode
-  virtual void setRenderingMode(RenderingMode m) { 
+  virtual void setRenderingMode(RenderingMode m) {
     if (supportsRenderingMode(m))
-      rendering_mode = m; 
+      rendering_mode = m;
     Q_EMIT redraw();
   }
   //!Sets the RenderingMode to Points.
@@ -363,7 +363,7 @@ public Q_SLOTS:
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
   }
-  
+
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.
   //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
@@ -372,7 +372,7 @@ public Q_SLOTS:
   //!Returns the alpha value for the item.
     //! Must be called within a valid openGl context.
     virtual float alpha() const;
-  
+
     //! Sets the value of the aplha Slider for this item.
     //!
     //! Must be overriden;
@@ -477,7 +477,7 @@ protected:
 public:
   //! \brief defaultSaveName returns the name to be used as default
   //! when saving this item.
-  //! 
+  //!
   //! Default is `name()`.
   //! \return A new name for the default value in the "save as" dialog.
   virtual QString defaultSaveName() const { return name(); }

@@ -43,54 +43,54 @@
 
 namespace CGAL {
 
-enum Query_choice {VERTEX, EDGE, FACE};  
+enum Query_choice {VERTEX, EDGE, FACE};
 
-template <class Arrangement_2> 
+template <class Arrangement_2>
 typename Arrangement_2::Halfedge_handle get_initial_halfedge(const Arrangement_2 &arr) {
-  
+
   typedef typename Arrangement_2::Vertex Vertex;
   typedef typename Arrangement_2::Vertex_const_iterator Vertex_const_iterator;
-  typedef typename Arrangement_2::Halfedge_handle Halfedge_handle; 
-  
-  // find the min vertex 
-  Vertex v = *arr.vertices_begin(); 
+  typedef typename Arrangement_2::Halfedge_handle Halfedge_handle;
+
+  // find the min vertex
+  Vertex v = *arr.vertices_begin();
   for(Vertex_const_iterator vit = arr.vertices_begin(); vit !=  arr.vertices_end(); vit++){
     if(arr.traits()->compare_xy_2_object()((*vit).point(),v.point()) == CGAL::SMALLER){
       v = *vit;
     }
   }
-  
-  // take the edge with the smallest source 
-  Halfedge_handle he_final = v.incident_halfedges(); 
-  Halfedge_handle he1 = v.incident_halfedges(); 
+
+  // take the edge with the smallest source
+  Halfedge_handle he_final = v.incident_halfedges();
+  Halfedge_handle he1 = v.incident_halfedges();
   he1=he1->next()->twin();
-  
+
   while(he1 != v.incident_halfedges()){
     if(arr.traits()->compare_xy_2_object()(
            he1->source()->point(),
            he_final->source()->point()) == CGAL::SMALLER){
-      he_final = he1;      
+      he_final = he1;
     }
     he1=he1->next()->twin();
   }
-  
-  // as this may be on a needle, continue until faces on both sides differ 
+
+  // as this may be on a needle, continue until faces on both sides differ
   while(he_final->face() == he_final->twin()->face())
-    he_final = he_final->next(); 
-  
-  return he_final;  
-  
+    he_final = he_final->next();
+
+  return he_final;
+
 }
 
-/* 
+/*
  * Function to compare two arrangements; first determines lowest vertex
  * from each arrangements, then it walks the edges and compares them
  */
-template <class ARR1, class ARR2> 
+template <class ARR1, class ARR2>
 bool test_are_equal(const ARR1 &arr1, const ARR2 &arr2) {
   typedef typename ARR1::Halfedge_handle       HE1;
   typedef typename ARR2::Halfedge_handle       HE2;
-  
+
 
   // First make sure they have the same size
   if (arr1.number_of_vertices() != arr2.number_of_vertices()) {
@@ -105,50 +105,50 @@ bool test_are_equal(const ARR1 &arr1, const ARR2 &arr2) {
   if (arr1.number_of_faces() != arr2.number_of_faces()) {
     return false;
   }
-  
-  // currently checking for closed for visibility region 
+
+  // currently checking for closed for visibility region
   assert(arr1.number_of_faces() == 2);
   assert(arr2.number_of_faces() == 2);
 
-  // get unique halfedge 
+  // get unique halfedge
   HE1 he_start_1 = get_initial_halfedge(arr1);
   HE2 he_start_2 = get_initial_halfedge(arr2);
-  
-  // run on first loop and compare sources 
+
+  // run on first loop and compare sources
   assert(arr1.traits()->compare_xy_2_object()(
              he_start_1->source()->point(),
              he_start_2->source()->point()) == CGAL::EQUAL);
 
-  HE1 he_run_1 = he_start_1->next(); 
-  HE2 he_run_2 = he_start_2->next(); 
+  HE1 he_run_1 = he_start_1->next();
+  HE2 he_run_2 = he_start_2->next();
 
   while(he_run_1 != he_start_1){
-    
+
     assert(arr1.traits()->compare_xy_2_object()(
                he_run_1->source()->point(),
                he_run_2->source()->point()) == CGAL::EQUAL);
-    
-    he_run_1 = he_run_1->next(); 
-    he_run_2 = he_run_2->next(); 
-  }
-  assert(he_run_2 == he_start_2); 
 
-  // run on second loop and compare sources. 
-  he_start_1 =  he_start_1->twin(); 
-  he_start_2 =  he_start_2->twin(); 
-  he_run_1 = he_start_1->next(); 
-  he_run_2 = he_start_2->next(); 
+    he_run_1 = he_run_1->next();
+    he_run_2 = he_run_2->next();
+  }
+  assert(he_run_2 == he_start_2);
+
+  // run on second loop and compare sources.
+  he_start_1 =  he_start_1->twin();
+  he_start_2 =  he_start_2->twin();
+  he_run_1 = he_start_1->next();
+  he_run_2 = he_start_2->next();
   while(he_run_1 != he_start_1){
-    
+
     assert(arr1.traits()->compare_xy_2_object()(
                he_run_1->source()->point(),
                he_run_2->source()->point()) == CGAL::EQUAL);
-    
-    he_run_1 = he_run_1->next(); 
-    he_run_2 = he_run_2->next(); 
+
+    he_run_1 = he_run_1->next();
+    he_run_2 = he_run_2->next();
   }
-  assert(he_run_2 == he_start_2); 
-  return true; 
+  assert(he_run_2 == he_start_2);
+  return true;
 }
 
 
@@ -162,7 +162,7 @@ std::string num2string(Number_type& n) {
 
 template<class Arrangement_2>
 CGAL::Object get_location(
-                  const Arrangement_2 &arr, 
+                  const Arrangement_2 &arr,
                   const typename Arrangement_2::Geometry_traits_2::Point_2 &q) {
 
   typedef CGAL::Arr_naive_point_location<Arrangement_2> Naive_pl;
@@ -171,11 +171,11 @@ CGAL::Object get_location(
   // Perform the point-location query.
   CGAL::Object obj = naive_pl.locate(q);
   return obj;
-}   
+}
 
-template<class Arrangement_2> 
+template<class Arrangement_2>
 bool is_inside_face(
-                  const Arrangement_2 &arr, 
+                  const Arrangement_2 &arr,
                   const typename Arrangement_2::Face_const_handle face,
                   const typename Arrangement_2::Geometry_traits_2::Point_2 &q) {
 
@@ -192,7 +192,7 @@ bool is_inside_face(
   return false;
 }
 
-template <class _Arrangement_2> 
+template <class _Arrangement_2>
 bool create_arrangement_from_dat_file(std::ifstream &input,
                                        _Arrangement_2 &arr) {
   arr.clear();
@@ -239,31 +239,31 @@ bool create_arrangement_from_dat_file(std::ifstream &input,
 
 template <class Arrangement_2>
 void regularize(Arrangement_2& arr){
-  //std::cout << "\n regularize" << std::endl; 
-  // remove all edges with the same face on both sides 
-  typedef typename Arrangement_2::Edge_iterator EIT; 
+  //std::cout << "\n regularize" << std::endl;
+  // remove all edges with the same face on both sides
+  typedef typename Arrangement_2::Edge_iterator EIT;
   for(EIT eit = arr.edges_begin(); eit != arr.edges_end();){
     if(eit->face() == eit->twin()->face()){
-      // arr.remove_edge(eit++,false,false); did not compile 
-      EIT eh = eit; 
+      // arr.remove_edge(eit++,false,false); did not compile
+      EIT eh = eit;
       ++eit;
       arr.remove_edge(eh,false,false);
     }else{
-      ++eit; 
+      ++eit;
     }
   }
   // remove all isolated vertices (also those left from prvious step)
-  typedef typename Arrangement_2::Vertex_iterator VIT; 
+  typedef typename Arrangement_2::Vertex_iterator VIT;
   for(VIT vit = arr.vertices_begin(); vit != arr.vertices_end();){
     if(vit->degree()== 0){
       VIT vh = vit;
-      vit++; 
+      vit++;
       arr.remove_isolated_vertex(vh);
     }else{
-      vit++; 
+      vit++;
     }
   }
-  //std::cout << "regularize done" << std::endl; 
+  //std::cout << "regularize done" << std::endl;
 }
 
 
@@ -271,7 +271,7 @@ template <class Visibility_2, class Visibility_arrangement_2>
 bool run_test_case_from_file(Visibility_2& visibility, std::ifstream &input) {
   typedef typename Visibility_2::Arrangement_2          Arrangement_2;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
-  typedef typename Geometry_traits_2::Point_2                 Point_2; 
+  typedef typename Geometry_traits_2::Point_2                 Point_2;
   typedef typename Arrangement_2::Halfedge_around_vertex_const_circulator
                                         Halfedge_around_vertex_const_circulator;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
@@ -281,7 +281,7 @@ bool run_test_case_from_file(Visibility_2& visibility, std::ifstream &input) {
   Arrangement_2 arr_in;
   Visibility_arrangement_2 arr_correct_out;
   Visibility_arrangement_2 arr_out;
-    
+
   std::string curr_line;
   while (std::getline(input, curr_line)) {
     if (curr_line[0] != '#' && curr_line[0] != '/')
@@ -308,7 +308,7 @@ bool run_test_case_from_file(Visibility_2& visibility, std::ifstream &input) {
   }
 
   if(Visibility_2::Regularization_category::value){
-    regularize(arr_correct_out);   
+    regularize(arr_correct_out);
   }
 
 
@@ -520,16 +520,16 @@ void run_tests_with_changes_to_arr() {
 }
 
 
-template <class Visibility_2, class Visibility_arrangement_2> 
+template <class Visibility_2, class Visibility_arrangement_2>
 void run_tests(int case_number_simple, int case_number_non_simple) {
 
   // Make sure the code only compiles with a conforming interface
   test_interface<Visibility_2>();
 
-  
+
   Visibility_2 visibility;
-  bool one_failed = false; 
-  if (Visibility_2::Supports_simple_polygon_category::value 
+  bool one_failed = false;
+  if (Visibility_2::Supports_simple_polygon_category::value
       && case_number_simple >= 1) {
     int cnt = 0;
     int cnt_passed = 0;
@@ -538,8 +538,8 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
       std::string input_arr_file("data/test_simple_polygon_");
       input_arr_file += num2string<int>(i);
       input_arr_file += ".dat";
-      std::cout << "        Running test " 
-                << GREEN << input_arr_file << RESET 
+      std::cout << "        Running test "
+                << GREEN << input_arr_file << RESET
                 << " - ";
       std::ifstream input(input_arr_file.c_str());
       if (run_test_case_from_file<Visibility_2,Visibility_arrangement_2>(visibility, input)) {
@@ -548,12 +548,12 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
       }
       else {
         one_failed = true;
-        std::cout << RED << "Failed!" << RESET << std::endl; 
+        std::cout << RED << "Failed!" << RESET << std::endl;
       }
       cnt++;
     }
-    std::cout << "    Visibility_2 object passed " << cnt_passed 
-              << "/" << cnt << " tests"      
+    std::cout << "    Visibility_2 object passed " << cnt_passed
+              << "/" << cnt << " tests"
               << " (";
     double result = (double)cnt_passed/cnt*100;
     if (result > 99.9) {
@@ -575,8 +575,8 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
       input_arr_file += num2string<int>(i);
       input_arr_file += ".dat";
       std::cout << "        Running test "
-                << GREEN << input_arr_file << RESET 
-                << " - ";      
+                << GREEN << input_arr_file << RESET
+                << " - ";
       std::ifstream input(input_arr_file.c_str());
       if (run_test_case_from_file<Visibility_2,Visibility_arrangement_2>(visibility, input)) {
         cnt_passed++;
@@ -589,7 +589,7 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
       cnt++;
     }
     std::cout << "    Visibility_2 object passed " << cnt_passed
-              << "/" << cnt  << " tests"     
+              << "/" << cnt  << " tests"
               << " (";
     double result = (double)cnt_passed/cnt*100;
     if (result > 99.9) {
@@ -611,10 +611,10 @@ void run_tests(int case_number_simple, int case_number_non_simple) {
 
 template <class _Arrangement_2>
 void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
-  typedef _Arrangement_2 								  Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2	  Geometry_traits_2;
+  typedef _Arrangement_2                                                                   Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2          Geometry_traits_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
-  typedef typename Geometry_traits_2::Point_2	          Point_2;
+  typedef typename Geometry_traits_2::Point_2                  Point_2;
 
   if (input) {
     std::string line;
@@ -648,14 +648,14 @@ void create_arrangement_from_file(_Arrangement_2 &arr, std::ifstream& input) {
     std::cout<<"Can't open the file. Check the file name.";
   }
 }
- 
+
 
 template <class _Arrangement_2>
 void create_arrangement_from_env_file(_Arrangement_2 &arr, std::ifstream& input) {
-  typedef _Arrangement_2 								                Arrangement_2;
-  typedef typename Arrangement_2::Geometry_traits_2	    Geometry_traits_2;
+  typedef _Arrangement_2                                                                                 Arrangement_2;
+  typedef typename Arrangement_2::Geometry_traits_2            Geometry_traits_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
-  typedef typename Geometry_traits_2::Point_2	          Point_2;
+  typedef typename Geometry_traits_2::Point_2                  Point_2;
 
   if (input) {
     std::string line;
@@ -702,12 +702,12 @@ template<typename Arrangement_2>
 bool compare_arr_by_edges(const Arrangement_2& arr1, const Arrangement_2& arr2){
   std::set<std::string> s1;
   typedef typename Arrangement_2::Edge_const_iterator Edge_const_iterator;
-  for (Edge_const_iterator eit = arr1.edges_begin(); 
+  for (Edge_const_iterator eit = arr1.edges_begin();
                            eit != arr1.edges_end(); ++eit) {
     s1.insert(edge2string(eit->target()->point(), eit->source()->point()));
   }
   std::set<std::string> s2;
-  for (Edge_const_iterator eit = arr2.edges_begin();  
+  for (Edge_const_iterator eit = arr2.edges_begin();
                            eit != arr2.edges_end(); ++eit) {
     s2.insert(edge2string(eit->target()->point(), eit->source()->point()));
   }
@@ -737,11 +737,11 @@ std::string edge2string(const Point_2& p1, const Point_2& p2) {
     q1 = p2;
     q2 = p1;
   }
-  return num2string(q1.x()) + num2string(q1.y()) 
+  return num2string(q1.x()) + num2string(q1.y())
   + num2string(q2.x()) + num2string(q2.y());
 }
 
-template<class Point_2, class Number_type> 
+template<class Point_2, class Number_type>
 Point_2 random_linear_interpolation(const Point_2 &p, const Point_2 &q) {
 
 //  srand(time(NULL));
@@ -792,23 +792,23 @@ template<class Arrangement_2>
 bool is_star_shape(
     const typename Arrangement_2::Point_2& q,
     const Arrangement_2& arr) {
-  
+
   typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
-  
-  // this test is written for an arr that contains on star shaped polygon 
+
+  // this test is written for an arr that contains on star shaped polygon
   if (arr.number_of_faces()!=2){
-    return false; 
+    return false;
   }
-  
-  // get the bounded face 
-  Face_const_handle fh; 
+
+  // get the bounded face
+  Face_const_handle fh;
   if(arr.faces_begin()->is_unbounded()){
     fh = arr.faces_begin();
   }else{
     fh = ++(arr.faces_begin());
   }
   assert(fh->is_unbounded());
-  
+
   if (fh->has_outer_ccb()) {
     typename Arrangement_2::Ccb_halfedge_const_circulator curr, circ;
     curr = circ = fh->outer_ccb();
@@ -835,7 +835,7 @@ bool is_star_shape(
 
 template <class Arrangement_2>
 int count_edges_in_face(typename Arrangement_2::Face_const_handle &fch) {
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
 
   Ccb_halfedge_const_circulator circ = fch->outer_ccb();
@@ -850,13 +850,13 @@ int count_edges_in_face(typename Arrangement_2::Face_const_handle &fch) {
 
 template <class Arrangement_2>
 typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
-                                                    Arrangement_2 &arr_in,    
+                                                    Arrangement_2 &arr_in,
                                                     Arrangement_2 &arr_out) {
 
   typedef typename Arrangement_2::Face_const_iterator   Face_const_iterator;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
-  typedef typename Arrangement_2::Ccb_halfedge_const_circulator 
+  typedef typename Arrangement_2::Ccb_halfedge_const_circulator
                                                   Ccb_halfedge_const_circulator;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
   typedef typename Geometry_traits_2::Segment_2         Segment_2;
@@ -864,7 +864,7 @@ typename Arrangement_2::Face_const_handle construct_biggest_arr_with_no_holes(
   int curr_max(0);
   Ccb_halfedge_const_circulator curr_max_circ;
   Ccb_halfedge_const_circulator circ;
-  Ccb_halfedge_const_circulator curr;                                                        
+  Ccb_halfedge_const_circulator curr;
   Face_const_iterator fit;
 
   int cnt(0);
@@ -920,7 +920,7 @@ void simple_benchmark_one_unit(
           int& query_cnt) {
 
   typedef typename Visibility_2_fst::Arrangement_2      Arrangement_2;
-  typedef typename Visibility_2_fst::Arrangement_2      Visibility_arrangement_2; 
+  typedef typename Visibility_2_fst::Arrangement_2      Visibility_arrangement_2;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Geometry_traits_2     Geometry_traits_2;
@@ -1033,7 +1033,7 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
   typedef typename Arrangement_2::Face_const_iterator Face_const_iterator;
   typedef typename Arrangement_2::Face_const_handle   Face_const_handle;
 
-  assert(Visibility_2_fst::Regularization_category::value 
+  assert(Visibility_2_fst::Regularization_category::value
       == Visibility_2_snd::Regularization_category::value);
 
   Arrangement_2 arr;
@@ -1074,8 +1074,8 @@ void simple_benchmark(Visibility_2_fst &visibility_fst,
   }
   else {
     Arrangement_2 arr_trimmed;
-    Face_const_handle fch = construct_biggest_arr_with_no_holes 
-                                        <Arrangement_2>(arr, arr_trimmed);    
+    Face_const_handle fch = construct_biggest_arr_with_no_holes
+                                        <Arrangement_2>(arr, arr_trimmed);
     Timer timer;
 
     timer.start();
@@ -1246,15 +1246,15 @@ void pure_benchmark(  Visibility_2 &visibility,
                                            query_cnt);
   }
 
-  // std::cout << "NAME TAG  PreProTime NQueries TimeQueries TotalTime QAVE TAVE" << std::endl; 
-  std::cout << " " << visibility.name() 
-            << " " << Visibility_2::Regularization_category::value 
-            << "  " << ptime 
-            << " " << query_cnt 
-            << " " << qtime 
-            << " " << ptime+qtime 
-            << "  " << qtime/query_cnt 
-            << " " << (ptime+qtime)/query_cnt 
+  // std::cout << "NAME TAG  PreProTime NQueries TimeQueries TotalTime QAVE TAVE" << std::endl;
+  std::cout << " " << visibility.name()
+            << " " << Visibility_2::Regularization_category::value
+            << "  " << ptime
+            << " " << query_cnt
+            << " " << qtime
+            << " " << ptime+qtime
+            << "  " << qtime/query_cnt
+            << " " << (ptime+qtime)/query_cnt
             << " " << std::endl;
 //   std::cout << "Preprocessing: "  << std::endl
 //             << "cost " << ptime << "  sec" << std::endl;
@@ -1427,4 +1427,4 @@ void test_star_shape(Visibility_2 &visibility,
 
 } // end namespace CGAL
 
-#endif 
+#endif

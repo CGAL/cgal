@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001,2008  
+// Copyright (c) 2000,2001,2008
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -81,7 +81,7 @@ template < typename RT_iterator > inline
 Cartesian_const_iterator_d<RT_iterator>
 operator+(std::ptrdiff_t i, Cartesian_const_iterator_d<RT_iterator> const& it)
 {
-	return it+i;
+        return it+i;
 }
 
 template < typename RT_iterator > inline

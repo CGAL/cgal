@@ -35,11 +35,11 @@ namespace CGAL {
   template < class PolyhedronTraits_3,
              class PolyhedronItems_3 = Polyhedron_items_3,
              template < class T, class I, class A>
-             class T_HDS = HalfedgeDS_default, 
+             class T_HDS = HalfedgeDS_default,
              class Alloc = CGAL_ALLOCATOR(int)
              >
   class Polyhedron_3;
-  
+
 } // CGAL
 #endif
 

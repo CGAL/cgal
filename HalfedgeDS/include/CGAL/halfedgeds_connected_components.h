@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -32,9 +32,9 @@
 
 namespace CGAL {
 
-template <class HDS, class Output_iterator, 
+template <class HDS, class Output_iterator,
           class Halfedge_iterator, class Halfedge_handle>
-std::size_t 
+std::size_t
 halfedgeds_connected_components( HDS hds, Output_iterator result) {
     Unique_hash_map< Halfedge_iterator, bool> hedge_map( false);
     std::size_t count = 0;
@@ -63,25 +63,25 @@ halfedgeds_connected_components( HDS hds, Output_iterator result) {
 }
 
 template <class HDS, class Output_iterator>
-std::size_t 
+std::size_t
 halfedgeds_connected_components( HDS& hds, Output_iterator result) {
-    typedef typename HDS::Halfedge_iterator Halfedge_iterator; 
-    typedef typename HDS::Halfedge_handle   Halfedge_handle; 
-    return halfedgeds_connected_components<HDS&, Output_iterator, 
+    typedef typename HDS::Halfedge_iterator Halfedge_iterator;
+    typedef typename HDS::Halfedge_handle   Halfedge_handle;
+    return halfedgeds_connected_components<HDS&, Output_iterator,
         Halfedge_iterator, Halfedge_handle>( hds, result);
 }
 
 template <class HDS, class Output_iterator>
-std::size_t 
+std::size_t
 halfedgeds_connected_components( const HDS& hds, Output_iterator result) {
-    typedef typename HDS::Halfedge_const_iterator Halfedge_iterator; 
-    typedef typename HDS::Halfedge_const_handle   Halfedge_handle; 
-    return halfedgeds_connected_components<const HDS&, Output_iterator, 
+    typedef typename HDS::Halfedge_const_iterator Halfedge_iterator;
+    typedef typename HDS::Halfedge_const_handle   Halfedge_handle;
+    return halfedgeds_connected_components<const HDS&, Output_iterator,
         Halfedge_iterator, Halfedge_handle>( hds, result);
 }
 
 template <class HDS>
-std::size_t 
+std::size_t
 halfedgeds_connected_components( HDS& hds) {
     return halfedgeds_connected_components( hds, Emptyset_iterator());
 }

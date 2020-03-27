@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman
 
@@ -31,16 +31,16 @@
 #include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
 
 template <class K>
 inline bool
-do_intersect(const typename K::Point_2 &pt1, 
-	     const typename K::Point_2 &pt2,
-	     const K&)
+do_intersect(const typename K::Point_2 &pt1,
+             const typename K::Point_2 &pt2,
+             const K&)
 {
     return pt1 == pt2;
 }
@@ -48,9 +48,9 @@ do_intersect(const typename K::Point_2 &pt1,
 template <class K>
 typename CGAL::Intersection_traits
 <K, typename K::Point_2, typename K::Point_2>::result_type
-intersection(const typename K::Point_2 &pt1, 
-	     const typename K::Point_2 &pt2,
-	     const K&)
+intersection(const typename K::Point_2 &pt1,
+             const typename K::Point_2 &pt2,
+             const K&)
 {
     if (pt1 == pt2) {
       return intersection_return<typename K::Intersect_2, typename K::Point_2, typename K::Point_2>(pt1);

@@ -51,7 +51,7 @@
 //---------------------
 
 
-/*! 
+/*!
   \file Efficient_RANSAC.h
 */
 
@@ -94,7 +94,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     ///< iterator for indices of points.
     /// \endcond
 
-    /// \name Types 
+    /// \name Types
     /// @{
     /// \cond SKIP_IN_MANUAL
     typedef typename Traits::Input_range::iterator Input_iterator;
@@ -153,19 +153,19 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     typedef unspecified_type Point_index_range;
     ///< An `Iterator_range` with a bidirectional iterator with value type `std::size_t`
     ///  as indices into the input data that has not been assigned to a shape.
-    ///  As this range class has no `size()` method, the method 
+    ///  As this range class has no `size()` method, the method
     ///  `Efficient_RANSAC::number_of_unassigned_points()` is provided.
-#else 
+#else
     typedef Iterator_range<Point_index_iterator>
       Point_index_range;
-#endif     
+#endif
 
     /// @}
-    
-    /// \name Parameters 
+
+    /// \name Parameters
     /// @{
       /*!
-       %Parameters for the shape detection algorithm. They are explained in detail 
+       %Parameters for the shape detection algorithm. They are explained in detail
        in Section \ref Point_set_shape_detection_3Parameters  of the User Manual.
        */
     struct Parameters {
@@ -180,8 +180,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       FT probability;         ///< Probability to control search endurance. %Default value: 5%.
       std::size_t min_points; ///< Minimum number of points of a shape. %Default value: 1% of total number of input points.
       FT epsilon;             ///< Maximum tolerance Euclidian distance from a point and a shape. %Default value: 1% of bounding box diagonal.
-      FT normal_threshold;	  ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value: 0.9 (around 25 degrees).
-      FT cluster_epsilon;	    ///< Maximum distance between points to be considered connected. %Default value: 1% of bounding box diagonal.
+      FT normal_threshold;          ///< Maximum tolerance normal deviation from a point's normal to the normal on shape at projected point. %Default value: 0.9 (around 25 degrees).
+      FT cluster_epsilon;            ///< Maximum distance between points to be considered connected. %Default value: 1% of bounding box diagonal.
     };
     /// @}
 
@@ -204,9 +204,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   /// \name Initialization
   /// @{
 
-    /*! 
+    /*!
       Constructs an empty shape detection object.
-    */ 
+    */
     Efficient_RANSAC(Traits t = Traits())
       : m_traits(t)
       , m_direct_octrees(NULL)
@@ -217,9 +217,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       , m_valid_iterators(false)
     {}
 
-    /*! 
+    /*!
       Releases all memory allocated by this instances including shapes.
-    */ 
+    */
     ~Efficient_RANSAC() {
       clear();
     }
@@ -237,7 +237,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       Retrieves the point property map.
     */
     const Point_map& point_map() const { return m_point_pmap; }
-    
+
     /*!
       Retrieves the normal property map.
     */
@@ -275,7 +275,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         clear();
 
-        m_extracted_shapes = 
+        m_extracted_shapes =
           boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
 
         m_num_available_points = m_num_total_points = std::distance(
@@ -288,9 +288,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       For example, for registering a plane as detectable shape you should call
       `ransac.add_shape_factory< Shape_detection_3::Plane<Traits> >();`. Note
       that if your call is within a template, you should add the `template`
-      keyword just before `add_shape_factory`: 
+      keyword just before `add_shape_factory`:
       `ransac.template add_shape_factory< Shape_detection_3::Plane<Traits> >();`.
-    */ 
+    */
     template <class Shape_type>
     void add_shape_factory() {
       m_shape_factories.push_back(factory<Shape_type>);
@@ -301,7 +301,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       These structures only depend on the input data, i.e. the points and
       normal vectors. This method is called by `detect()`, if it was not called
       before by the user.
-    */ 
+    */
     bool preprocess() {
       if (m_num_total_points == 0)
         return false;
@@ -372,7 +372,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /// @{
     /*!
       Removes all shape types registered for detection.
-     */ 
+     */
     void clear_shape_factories() {
       m_shape_factories.clear();
     }
@@ -380,7 +380,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /*!
       Frees memory allocated for the internal search structures but keeps the detected shapes.
       It invalidates the range retrieved using `unassigned_points()`.
-     */ 
+     */
     void clear_octrees() {
       // If there is no data yet, there are no data structures.
       if (!m_valid_iterators)
@@ -392,7 +392,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       }
 
       if (m_direct_octrees) {
-        for (std::size_t i = 0;i<m_num_subsets;i++) 
+        for (std::size_t i = 0;i<m_num_subsets;i++)
           delete m_direct_octrees[i];
         delete [] m_direct_octrees;
 
@@ -405,9 +405,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     /*!
       Calls `clear_octrees()` and removes all detected shapes.
       All internal structures are cleaned, including formerly detected shapes.
-      Thus iterators and ranges retrieved through `shapes()`, `planes()` and `indices_of_unassigned_points()` 
+      Thus iterators and ranges retrieved through `shapes()`, `planes()` and `indices_of_unassigned_points()`
       are invalidated.
-    */ 
+    */
     void clear() {
       // If there is no data yet, there are no data structures.
       if (!m_valid_iterators)
@@ -415,9 +415,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       std::vector<int>().swap(m_shape_index);
 
-      m_extracted_shapes = 
+      m_extracted_shapes =
         boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
-      
+
       m_num_available_points = m_num_total_points;
 
       clear_octrees();
@@ -425,10 +425,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     }
     /// @}
 
-    /// \name Detection 
+    /// \name Detection
     /// @{
 
-    /*! 
+    /*!
       Performs the shape detection. Shape types considered during the detection
       are those registered using `add_shape_factory()`.
 
@@ -444,7 +444,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       \return `true` if shape types have been registered and
               input data has been set. Otherwise, `false` is returned.
-    */ 
+    */
     bool detect(const Parameters &options = Parameters(),
                 const cpp11::function<bool(double)>& callback
                 = cpp11::function<bool(double)>())
@@ -463,9 +463,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       if (callback && !callback(0.))
         return false;
-      
+
       // Reset data structures possibly used by former search
-      m_extracted_shapes = 
+      m_extracted_shapes =
         boost::make_shared<std::vector<boost::shared_ptr<Shape> > >();
       m_num_available_points = m_num_total_points;
 
@@ -477,7 +477,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       Bbox_3 bbox = m_global_octree->boundingBox();
       FT bbox_diagonal = (FT) CGAL::sqrt(
           (bbox.xmax() - bbox.xmin()) * (bbox.xmax() - bbox.xmin())
-        + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin()) 
+        + (bbox.ymax() - bbox.ymin()) * (bbox.ymax() - bbox.ymin())
         + (bbox.zmax() - bbox.zmin()) * (bbox.zmax() - bbox.zmin()));
 
       // Epsilon or cluster_epsilon have been set by the user?
@@ -485,16 +485,16 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       m_options.epsilon = (m_options.epsilon < 0)
         ? bbox_diagonal * (FT) 0.01 : m_options.epsilon;
 
-      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0) 
+      m_options.cluster_epsilon = (m_options.cluster_epsilon < 0)
         ? bbox_diagonal * (FT) 0.01 : m_options.cluster_epsilon;
 
       // Minimum number of points has been set?
-      m_options.min_points = 
-        (m_options.min_points >= m_num_available_points) ? 
-          (std::size_t)((FT)0.01 * m_num_available_points) : 
+      m_options.min_points =
+        (m_options.min_points >= m_num_available_points) ?
+          (std::size_t)((FT)0.01 * m_num_available_points) :
           m_options.min_points;
       m_options.min_points = (m_options.min_points < 10) ? 10 : m_options.min_points;
-      
+
       // Initializing the shape index
       m_shape_index.assign(m_num_available_points, -1);
 
@@ -526,7 +526,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       bool force_exit = false;
       bool keep_searching = true;
-      
+
       do { // main loop
         best_expected = 0;
 
@@ -537,12 +537,12 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             std::set<std::size_t> indices;
             bool done = false;
             do {
-              do 
+              do
               first_sample = get_default_random()(m_num_available_points);
               while (m_shape_index[first_sample] != -1);
 
               done = m_global_octree->drawSamplesFromCellContainingPoint(
-                get(m_point_pmap, 
+                get(m_point_pmap,
                 *(m_input_iterator_first + first_sample)),
                 select_random_octree_level(),
                 indices,
@@ -551,14 +551,14 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
               if (callback && !callback(num_invalid / double(m_num_total_points)))
                 return false;
-      
+
             } while (m_shape_index[first_sample] != -1 || !done);
 
             generated_candidates++;
 
             //add candidate for each type of primitives
             for(typename std::vector<Shape *(*)()>::iterator it =
-              m_shape_factories.begin(); it != m_shape_factories.end(); it++)	{
+              m_shape_factories.begin(); it != m_shape_factories.end(); it++)        {
                 if (callback && !callback(num_invalid / double(m_num_total_points)))
                   return false;
                 Shape *p = (Shape *) (*it)();
@@ -568,7 +568,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                   m_traits,
                   m_point_pmap,
                   m_normal_pmap,
-                  m_options.epsilon, 
+                  m_options.epsilon,
                   m_options.normal_threshold);
 
                 if (p->is_valid()) {
@@ -584,7 +584,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                   else {
                     failed_candidates++;
                     delete p;
-                  }        
+                  }
                 }
                 else {
                   failed_candidates++;
@@ -596,16 +596,16 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
             {
               force_exit = true;
             }
-            
+
             keep_searching = (stop_probability(m_options.min_points,
-              m_num_available_points - num_invalid, 
+              m_num_available_points - num_invalid,
               generated_candidates, m_global_octree->maxLevel())
                     > m_options.probability);
         } while( !force_exit
           && stop_probability((std::size_t) best_expected,
-                             m_num_available_points - num_invalid, 
+                             m_num_available_points - num_invalid,
                              generated_candidates,
-                             m_global_octree->maxLevel()) 
+                             m_global_octree->maxLevel())
                 > m_options.probability
           && keep_searching);
         // end of generate candidate
@@ -620,13 +620,13 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         // Now get the best candidate in the current set of all candidates
         // Note that the function sorts the candidates:
         //  the best candidate is always the last element of the vector
-        
-        Shape *best_candidate = 
+
+        Shape *best_candidate =
           get_best_candidate(candidates, m_num_available_points - num_invalid);
 
         if (callback && !callback(num_invalid / double(m_num_total_points)))
           return false;
-        
+
         // If search is done and the best candidate is too small, we are done.
         if (!keep_searching && best_candidate->m_score < m_options.min_points)
           break;
@@ -636,7 +636,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         best_candidate->m_indices.clear();
 
-        best_candidate->m_score = 
+        best_candidate->m_score =
           m_global_octree->score(best_candidate,
                                  m_shape_index,
                                  FT(3) * m_options.epsilon,
@@ -646,12 +646,12 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         best_candidate->connected_component(best_candidate->m_indices,
                                             m_options.cluster_epsilon);
-        
+
         if (callback && !callback(num_invalid / double(m_num_total_points)))
           return false;
         // check score against min_points and clear out candidates if too low
         if (best_candidate->indices_of_assigned_points().size() <
-          m_options.min_points) 
+          m_options.min_points)
         {
           if (!(best_candidate->indices_of_assigned_points().empty()))
             for (std::size_t i = 0;i < candidates.size() - 1;i++) {
@@ -667,7 +667,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
           if (callback && !callback(num_invalid / double(m_num_total_points)))
             return false;
-          
+
           // Trimming candidates list
           std::size_t empty = 0, occupied = 0;
           while (empty < candidates.size()) {
@@ -711,7 +711,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
             if (callback && !callback(num_invalid / double(m_num_total_points)))
               return false;
-            
+
             //2. remove the points
             const std::vector<std::size_t> &indices_points_best_candidate =
               best_candidate->indices_of_assigned_points();
@@ -727,13 +727,13 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                 int(m_extracted_shapes->size()) - 1;
 
               num_invalid++;
-              
+
               for (std::size_t j = 0;j<m_num_subsets;j++) {
                 if (m_direct_octrees[j] && m_direct_octrees[j]->m_root) {
                   std::size_t offset = m_direct_octrees[j]->offset();
 
                   if (offset <= indices_points_best_candidate.at(i) &&
-                      (indices_points_best_candidate.at(i) - offset) 
+                      (indices_points_best_candidate.at(i) - offset)
                       < m_direct_octrees[j]->size()) {
                     m_available_octree_sizes[j]--;
                   }
@@ -746,14 +746,14 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
             if (callback && !callback(num_invalid / double(m_num_total_points)))
               return false;
-            
+
             std::vector<std::size_t> subset_sizes(m_num_subsets);
             subset_sizes[0] = m_available_octree_sizes[0];
             for (std::size_t i = 1;i<m_num_subsets;i++) {
               subset_sizes[i] = subset_sizes[i-1] + m_available_octree_sizes[i];
             }
-  
-  
+
+
             //3. Remove points from candidates common with extracted primitive
             //#pragma omp parallel for
             best_expected = 0;
@@ -763,7 +763,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                 candidates[i]->compute_bound(
                   subset_sizes[candidates[i]->m_nb_subset_used - 1],
                   m_num_available_points - num_invalid);
-  
+
                 if (candidates[i]->max_bound() < m_options.min_points) {
                   delete candidates[i];
                   candidates[i] = NULL;
@@ -774,10 +774,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                 }
               }
             }
-  
+
             if (callback && !callback(num_invalid / double(m_num_total_points)))
               return false;
-            
+
             std::size_t start = 0, end = candidates.size() - 1;
             while (start < end) {
               while (candidates[start] && start < end) start++;
@@ -789,9 +789,9 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                 end--;
               }
             }
-  
+
             if (candidates[end]) end++;
-  
+
             candidates.resize(end);
           }
         else if (!keep_searching)
@@ -799,10 +799,10 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
         if (callback && !callback(num_invalid / double(m_num_total_points)))
           return false;
-        
+
         keep_searching = (stop_probability(m_options.min_points,
             m_num_available_points - num_invalid,
-            generated_candidates, 
+            generated_candidates,
             m_global_octree->maxLevel())
               > m_options.probability);
       }
@@ -817,14 +817,14 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       candidates.resize(0);
 
       m_num_available_points -= num_invalid;
- 
+
       return true;
     }
 
     /// @}
 
     /// \name Access
-    /// @{            
+    /// @{
     /*!
       Returns an `Iterator_range` with a bidirectional iterator with value type
       `boost::shared_ptr<Shape>` over the detected shapes in the order of detection.
@@ -834,7 +834,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     Shape_range shapes() const {
       return Shape_range(m_extracted_shapes);
     }
-      
+
     /*!
       Returns an `Iterator_range` with a bidirectional iterator with
       value type `boost::shared_ptr<Plane_shape>` over only the
@@ -845,30 +845,30 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
     Plane_range planes() const {
       boost::shared_ptr<std::vector<boost::shared_ptr<Plane_shape> > > planes
         = boost::make_shared<std::vector<boost::shared_ptr<Plane_shape> > >();
-      
+
       for (std::size_t i = 0; i < m_extracted_shapes->size(); ++ i)
       {
         boost::shared_ptr<Plane_shape> pshape
           = boost::dynamic_pointer_cast<Plane_shape>((*m_extracted_shapes)[i]);
-        
+
         // Ignore all shapes other than plane
         if (pshape != boost::shared_ptr<Plane_shape>())
           planes->push_back (pshape);
       }
       return Plane_range(planes);
     }
-      
-    /*! 
+
+    /*!
       Number of points not assigned to a shape.
-    */ 
+    */
     std::size_t number_of_unassigned_points() {
       return m_num_available_points;
     }
-    
-    /*! 
+
+    /*!
       Returns an `Iterator_range` with a bidirectional iterator with value type `std::size_t`
-      as indices into the input data that has not been assigned to a shape. 
-    */ 
+      as indices into the input data that has not been assigned to a shape.
+    */
     Point_index_range indices_of_unassigned_points() {
       Filter_unassigned_points fup(m_shape_index);
 
@@ -904,7 +904,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                   candidates.end(),
                   comp);
 
-        //refine the best one 
+        //refine the best one
         improve_bound(candidates.back(),
                      num_available_points, m_num_subsets,
                      m_options.min_points);
@@ -933,7 +933,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
           //test again after refined
           if (candidates.back()->min_bound() >
-            candidates.at(position_stop)->max_bound()) 
+            candidates.at(position_stop)->max_bound())
             break;//the intervals do not overlaps anymore
         }
 
@@ -954,7 +954,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
         return false;
 
       candidate->m_nb_subset_used =
-        (candidate->m_nb_subset_used >= m_num_subsets) ? 
+        (candidate->m_nb_subset_used >= m_num_subsets) ?
         m_num_subsets - 1 : candidate->m_nb_subset_used;
 
       //what it does is add another subset and recompute lower and upper bound
@@ -971,14 +971,14 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       do {
         new_score = m_direct_octrees[candidate->m_nb_subset_used]->score(
-          candidate, 
-          m_shape_index, 
+          candidate,
+          m_shape_index,
           m_options.epsilon,
           m_options.normal_threshold);
 
         candidate->m_score += new_score;
-        
-        num_points_evaluated += 
+
+        num_points_evaluated +=
           m_available_octree_sizes[candidate->m_nb_subset_used];
 
         new_sampled_points +=
@@ -994,11 +994,11 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
       return true;
     }
-    
+
     inline FT stop_probability(std::size_t largest_candidate, std::size_t num_pts, std::size_t num_candidates, std::size_t octree_depth) const {
       return (std::min<FT>)(std::pow((FT) 1.f - (FT) largest_candidate / FT(num_pts * octree_depth * 4), (int) num_candidates), (FT) 1);
     }
-    
+
   private:
     Parameters m_options;
 
@@ -1014,7 +1014,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
     // maps index into points to assigned extracted primitive
     std::vector<int> m_shape_index;
-    std::size_t m_num_available_points; 
+    std::size_t m_num_available_points;
     std::size_t m_num_total_points;
 
     //give the index of the subset of point i
@@ -1026,7 +1026,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
 
     // iterators of input data
     bool m_valid_iterators;
-    Input_iterator m_input_iterator_first, m_input_iterator_beyond; 
+    Input_iterator m_input_iterator_first, m_input_iterator_beyond;
     Point_map m_point_pmap;
     Normal_map m_normal_pmap;
   };

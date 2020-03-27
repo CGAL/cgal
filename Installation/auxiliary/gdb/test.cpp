@@ -1,5 +1,5 @@
 // Copyright (c) 2011  GeometryFactory Sarl (France)
-// 
+//
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; either version 3 of the License,
@@ -48,7 +48,7 @@ int main() {
 
   // no correct pretty-printer for CGAL::Gmpq
   K3::Point_2 p3(-3, 10);
-  K3::Vector_2 v3 = p3 - CGAL::ORIGIN; 
+  K3::Vector_2 v3 = p3 - CGAL::ORIGIN;
 
   CK::Point_2 p4;
   CK::Vector_2 v4;

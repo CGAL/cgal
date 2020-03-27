@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -114,15 +114,15 @@ int main()
        nit != nng.nodes_end(); ++nit) {
     std::cout << "Node: " << accessor( nng[nit] ) << std::endl;
     std::cout << "\tIn-neighbors (in-degree: " << nng.in_degree(nit)
-	      << "): " << std::endl;
+              << "): " << std::endl;
     for (NNG::Node_iterator nnit = nng.in_neighbors_begin(nit);
-	 nnit != nng.in_neighbors_end(nit); ++nnit) {
+         nnit != nng.in_neighbors_end(nit); ++nnit) {
       std::cout << "\t\t" << accessor( nng[nnit] ) << std::endl;
     }
     std::cout << "\tOut-neighbors (out-degree: " << nng.out_degree(nit)
-	      << "):" << std::endl;
+              << "):" << std::endl;
     for (NNG::Node_iterator nnit = nng.out_neighbors_begin(nit);
-	 nnit != nng.out_neighbors_end(nit); ++nnit) {
+         nnit != nng.out_neighbors_end(nit); ++nnit) {
       std::cout << "\t\t" << accessor( nng[nnit] ) << std::endl;
     }
   }

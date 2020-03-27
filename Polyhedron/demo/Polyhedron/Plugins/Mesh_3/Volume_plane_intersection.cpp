@@ -128,9 +128,9 @@ void Volume_plane_intersection::draw(Viewer_interface* viewer) const {
   else
   {
     attribBuffers(viewer, PROGRAM_SOLID_WIREFRAME);
-  }     
+  }
   viewer->glDepthRangef(0.00001f, 0.99999f);
-  
+
   QVector2D vp(viewer->width(), viewer->height());
   if(d->b && d->c) {
 

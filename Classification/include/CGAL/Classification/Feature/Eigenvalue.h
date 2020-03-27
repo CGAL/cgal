@@ -37,7 +37,7 @@ namespace Feature {
     \ingroup PkgClassificationFeatures
 
     %Feature based on the eigenvalues of the covariance matrix of a
-    local neighborhood. 
+    local neighborhood.
 
     Its default name is "eigenvalue_0", "eigenvalue_1" or
     "eigenvalue_2", depending on which eigenvalue is chosen in the
@@ -49,7 +49,7 @@ protected:
 
   const Classification::Local_eigen_analysis& eigen;
   unsigned int m_idx;
-  
+
 public:
 
   /*!

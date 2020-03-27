@@ -50,7 +50,7 @@ template <class AK>
 void bivariate_polynomial_test() {
 
     BIPOLY f0;
-    
+
     // f = xy^2 + 3x^2y + 2x - 1
     BIPOLY f = BIPOLY(UNPOLY(NT(-1), NT(2)), UNPOLY(NT(0), NT(0), NT(3)),
                       UNPOLY(NT(0), NT(1))
@@ -71,11 +71,11 @@ void bivariate_polynomial_test() {
 
 template <class AK>
 void trivariate_polynomial_test() {
-    
-    
+
+
     TRIPOLY f0;
     assert(CGAL::check_leadcoeff(f0) == true);
-    
+
     // f1 = xz^2 + 4yz - 2x^2z + 5x - 3y + 8z -6
     TRIPOLY f1 = TRIPOLY(
             BIPOLY(UNPOLY(NT(-6), NT(5)), UNPOLY(NT(-3))),
@@ -90,7 +90,7 @@ void trivariate_polynomial_test() {
             BIPOLY(UNPOLY(NT(0))),
             BIPOLY(UNPOLY(NT(9)))
     );
-    
+
     // LCC
     assert(CGAL::check_leadcoeff(f1) == false);
     assert(CGAL::check_leadcoeff(f2) == true);
@@ -100,8 +100,8 @@ void trivariate_polynomial_test() {
 template <class AK>
 void polynomial_functions_test() {
     ::CGAL::set_pretty_mode(std::cout);
-    
-    //std::cout<<" univariate "<<std::endl;    
+
+    //std::cout<<" univariate "<<std::endl;
     //univariate_polynomial_test<AK>();
     std::cout<<" bivariate "<<std::endl;
     bivariate_polynomial_test<AK>();

@@ -35,7 +35,7 @@ template<class SM>
 void draw(const SM& asm);
 
 #else // DOXYGEN_RUNNING
-  
+
 #include <CGAL/license/Surface_mesh.h>
 #include <CGAL/Qt/Basic_viewer_qt.h>
 
@@ -111,7 +111,7 @@ protected:
   {
     add_segment(sm.point(sm.source(sm.halfedge(e))),
                 sm.point(sm.target(sm.halfedge(e))));
-  } 
+  }
 
   void compute_vertex(vertex_descriptor vh)
   { add_point(sm.point(vh)); }
@@ -129,7 +129,7 @@ protected:
         { compute_face(*f); }
       }
     }
-    
+
     for (typename SM::Edge_range::iterator e=sm.edges().begin();
          e!=sm.edges().end(); ++e)
     { compute_edge(*e); }
@@ -144,7 +144,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -173,7 +173,7 @@ protected:
     assert(nb>0);
     return (typename Local_kernel::Construct_scaled_vector_3()(normal, 1.0/nb));
   }
-  
+
   Local_vector get_vertex_normal(halfedge_descriptor he)
   {
     Local_vector normal=CGAL::NULL_VECTOR;
@@ -188,11 +188,11 @@ protected:
       he=sm.next(sm.opposite(he));
     }
     while (he!=end);
-    
+
     if (!typename Local_kernel::Equal_3()(normal, CGAL::NULL_VECTOR))
     { normal=(typename Local_kernel::Construct_scaled_vector_3()
               (normal, 1.0/CGAL::sqrt(normal.squared_length()))); }
-    
+
     return normal;
   }
 

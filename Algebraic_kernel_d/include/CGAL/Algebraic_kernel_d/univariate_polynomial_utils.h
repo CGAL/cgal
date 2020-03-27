@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     :  Michael Hemmer <hemmer@mpi-inf.mpg.de>
 //
@@ -38,13 +38,13 @@ namespace internal {
      *  \relates CGAL::Polynomial
      */
     template <class NT>
-    NT weak_upper_root_bound(const Polynomial<NT>& P) { 
+    NT weak_upper_root_bound(const Polynomial<NT>& P) {
         // code comes from Kurt Mehlhorn
         // see [Mignotte, 1992], p.144 for a proof
         CGAL_precondition(Polynomial_traits_d<NT>::d == 0);
         typename Real_embeddable_traits<NT>::Abs abs;
         const int n = CGAL::degree(P);
-        NT x(1); 
+        NT x(1);
         NT val;
         for (;;) {
             val = -abs(P[n]);
@@ -55,7 +55,7 @@ namespace internal {
             x *= NT(2);
         }
     }
-    
+
     //! return the number of sign variations in the coefficient sequence of \c P.
     /*! This is the number of sign changes (+ to - or - to +) in the
      *  coefficient sequence of the polynomial, ignoring zeroes.
@@ -64,7 +64,7 @@ namespace internal {
      *  \relates CGAL::Polynomial
      */
     template <class NT>
-    int sign_variations(const Polynomial<NT>& P) { 
+    int sign_variations(const Polynomial<NT>& P) {
         const int n = CGAL::degree(P);
         int variations = 0;
         int old_sign = CGAL::sign(P[n]); // never zero unless P is zero
@@ -81,8 +81,8 @@ namespace internal {
 
     /*! \ingroup CGAL_polynomial_utils
      *  \brief checks whether a univariate polynomial is square-free
-     */    
-    
+     */
+
     /*template < class NT >
     bool is_square_free(const Polynomial<NT>& p) {
         if( may_have_multiple_factor(p) ) {
@@ -92,13 +92,13 @@ namespace internal {
             return true;
         }
     }
-    
+
     template< class NT >
-    bool is_square_free( const Polynomail< Polynomial< NT > >& ) { 
-        
-        
+    bool is_square_free( const Polynomail< Polynomial< NT > >& ) {
+
+
         return true;
-    } */   
+    } */
 
 } // namespace internal
 

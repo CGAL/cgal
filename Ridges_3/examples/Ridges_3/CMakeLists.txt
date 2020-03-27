@@ -18,8 +18,8 @@ if ( CGAL_FOUND )
   else()
     include( ${EIGEN3_USE_FILE} )
   endif()
-  
-  
+
+
   if(EIGEN3_FOUND OR LAPACK_FOUND)
     # Link with Boost.ProgramOptions (optional)
     find_package(Boost QUIET COMPONENTS program_options)
@@ -47,7 +47,7 @@ if ( CGAL_FOUND )
   endif(EIGEN3_FOUND OR LAPACK_FOUND)
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()

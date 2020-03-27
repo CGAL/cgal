@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 // Author(s)     : Ilker O. Yaz
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_HOLE_H
@@ -83,7 +83,7 @@ namespace Polygon_mesh_processing {
   @todo Then, insert the holes vertices in the set of possibilities
         for connecting vertices together
   @todo handle the case where an island is reduced to a point
-  */  
+  */
   template<typename PolygonMesh,
            typename OutputIterator,
            typename NamedParameters>
@@ -359,7 +359,7 @@ namespace Polygon_mesh_processing {
     typedef typename value_type_traits<OutputIterator>::type OutputIteratorValueType;
     CGAL::internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
       tracer(out, Holes_out(holes));
-    
+
     typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
 
@@ -387,7 +387,7 @@ namespace Polygon_mesh_processing {
   /*!
   \ingroup  hole_filling_grp
   same as above but the range of third points is omitted. They are not
-  taken into account in the cost computation that leads the hole filling. 
+  taken into account in the cost computation that leads the hole filling.
 */
   template <typename PointRange,
             typename OutputIterator,

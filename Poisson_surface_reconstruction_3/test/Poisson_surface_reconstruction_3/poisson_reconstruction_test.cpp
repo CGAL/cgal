@@ -125,7 +125,7 @@ int main(int argc, char * argv[])
 
       // Converts Polyhedron vertices to point set.
       // Computes vertices normal from connectivity.
-      BOOST_FOREACH(boost::graph_traits<Polyhedron>::vertex_descriptor v, 
+      BOOST_FOREACH(boost::graph_traits<Polyhedron>::vertex_descriptor v,
                     vertices(input_mesh)){
         const Point& p = v->point();
         Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v,input_mesh);
@@ -243,7 +243,7 @@ int main(int argc, char * argv[])
     FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines the implicit surface: requires defining a
-  	// conservative bounding sphere centered at inner point.
+          // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,

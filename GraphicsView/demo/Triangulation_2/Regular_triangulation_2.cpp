@@ -19,7 +19,7 @@
 #include <CGAL/Qt/GraphicsViewCircleInput.h>
 #include <CGAL/Qt/RegularTriangulationGraphicsItem.h>
 #include <CGAL/Qt/PowerdiagramGraphicsItem.h>
-  
+
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
 // the two base classes
@@ -39,10 +39,10 @@ class MainWindow :
   public Ui::Regular_triangulation_2
 {
   Q_OBJECT
-  
-private:  
-  Regular dt; 
-  QGraphicsScene scene;  
+
+private:
+  Regular dt;
+  QGraphicsScene scene;
 
   CGAL::Qt::RegularTriangulationGraphicsItem<Regular> * dgi;
   CGAL::Qt::PowerdiagramGraphicsItem<Regular> * vgi;
@@ -61,7 +61,7 @@ public Q_SLOTS:
   void on_actionShowPowerdiagram_toggled(bool checked);
 
   void on_actionInsertPoint_toggled(bool checked);
-  
+
   void on_actionInsertRandomPoints_triggered();
 
   void on_actionLoadPoints_triggered();
@@ -87,7 +87,7 @@ MainWindow::MainWindow()
   dgi = new CGAL::Qt::RegularTriangulationGraphicsItem<Regular>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
-		   dgi, SLOT(modelChanged()));
+                   dgi, SLOT(modelChanged()));
 
   dgi->setVerticesPen(QPen(Qt::red, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(dgi);
@@ -96,36 +96,36 @@ MainWindow::MainWindow()
   vgi = new CGAL::Qt::PowerdiagramGraphicsItem<Regular>(&dt);
 
   QObject::connect(this, SIGNAL(changed()),
-		   vgi, SLOT(modelChanged()));
+                   vgi, SLOT(modelChanged()));
 
   vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
   vgi->hide();
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
   pi = new CGAL::Qt::GraphicsViewCircleInput<K>(this, &scene, 1); // emits center/radius
-                                                                           
+
 
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
+                   this, SLOT(processInput(CGAL::Object)));
 
   trv = new CGAL::Qt::RegularTriangulationRemoveVertex<Regular>(&dt, this);
   QObject::connect(trv, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
+                   this, SIGNAL(changed()));
 
-  // 
+  //
   // Manual handling of actions
   //
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
   ag->addAction(this->actionInsertPoint);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPoint->setChecked(true);
   this->actionShowRegular->setChecked(true);
 
@@ -139,7 +139,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -164,10 +164,10 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -216,8 +216,8 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   CGAL::Random_points_in_iso_rectangle_2<Point_2> pg((isor.min)(), (isor.max)());
   CGAL::Random rnd(CGAL::get_default_random());
 
-  const int number_of_points = 
-    QInputDialog::getInt(this, 
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"), 100, 0);
 
@@ -240,8 +240,8 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
-						  ".");
+                                                  tr("Open Points file"),
+                                                  ".");
   if(! fileName.isEmpty()){
     std::ifstream ifs(qPrintable(fileName));
 
@@ -262,11 +262,11 @@ void
 MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
-						  ".");
+                                                  tr("Save points"),
+                                                  ".");
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Regular::Finite_vertices_iterator 
+    for(Regular::Finite_vertices_iterator
           vit = dt.finite_vertices_begin(),
           end = dt.finite_vertices_end();
         vit!= end; ++vit)
@@ -281,7 +281,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(dgi->boundingRect());
-  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(dgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 

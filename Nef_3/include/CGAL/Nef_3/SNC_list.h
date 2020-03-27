@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
@@ -32,7 +32,7 @@ namespace CGAL {
 
 template < class Sphere_map>
 class SNC_in_place_list_sm
-    : public Sphere_map, 
+    : public Sphere_map,
       public In_place_list_base<SNC_in_place_list_sm<Sphere_map> > {
 public:
     typedef SNC_in_place_list_sm<Sphere_map> Self;
@@ -41,7 +41,7 @@ public:
     SNC_in_place_list_sm() {}
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
     SNC_in_place_list_sm(const Self&)=default;
-#endif  
+#endif
     SNC_in_place_list_sm(const Sphere_map& sm)   // down cast
         : Sphere_map(sm) {}
     Self& operator=( const Self& sm) {
@@ -54,7 +54,7 @@ public:
 
 template < class Halffacet>
 class SNC_in_place_list_halffacet
-    : public Halffacet, 
+    : public Halffacet,
       public In_place_list_base<SNC_in_place_list_halffacet<Halffacet> > {
 public:
     typedef SNC_in_place_list_halffacet<Halffacet> Self;
@@ -65,7 +65,7 @@ public:
         : Halffacet(v) {}
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   SNC_in_place_list_halffacet(const Self&)=default;
-#endif  
+#endif
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -76,7 +76,7 @@ public:
 
 template < class Volume>
 class SNC_in_place_list_volume
-    : public Volume, 
+    : public Volume,
       public In_place_list_base<SNC_in_place_list_volume<Volume> > {
 public:
     typedef SNC_in_place_list_volume<Volume> Self;
@@ -87,7 +87,7 @@ public:
         : Volume(v) {}
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   SNC_in_place_list_volume(const Self&)=default;
-#endif  
+#endif
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -98,7 +98,7 @@ public:
 
 template < class SHalfloop>
 class SNC_in_place_list_shalfloop
-    : public SHalfloop, 
+    : public SHalfloop,
       public In_place_list_base<SNC_in_place_list_shalfloop<SHalfloop> > {
 public:
     typedef SNC_in_place_list_shalfloop<SHalfloop> Self;
@@ -109,7 +109,7 @@ public:
         : SHalfloop(v) {}
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   SNC_in_place_list_shalfloop(const Self&)=default;
-#endif  
+#endif
     Self& operator=( const Self& v) {
         // This self written assignment avoids that assigning vertices will
         // overwrite the list linking of the target vertex.
@@ -136,7 +136,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
 
   typedef typename Base::Mark                   Mark;
   typedef typename Base::Size_type              Size_type;
-  
+
   typedef typename Kernel::Point_3                 Point_3;
   typedef typename Kernel::Plane_3                 Plane_3;
   typedef typename Kernel::Vector_3                Vector_3;
@@ -153,7 +153,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   typedef typename Sphere_kernel::Sphere_direction Sphere_direction;
 
   typedef Sphere_map                                        Vertex_base;
-  typedef SNC_in_place_list_sm<Vertex_base>                 Vertex; 
+  typedef SNC_in_place_list_sm<Vertex_base>                 Vertex;
   typedef CGAL::In_place_list<Vertex,false>                 Vertex_list;
   typedef CGAL_ALLOCATOR(Vertex)                            Vertex_alloc;
   typedef typename Vertex_list::iterator                    Vertex_handle;
@@ -264,102 +264,102 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   typedef typename Base::SHalfedge_around_sface_const_circulator
                          SHalfedge_around_sface_const_circulator;
 
-  typedef typename Base::SFace_cycle_iterator      
+  typedef typename Base::SFace_cycle_iterator
                          SFace_cycle_iterator;
-  typedef typename Base::SFace_cycle_const_iterator      
+  typedef typename Base::SFace_cycle_const_iterator
                          SFace_cycle_const_iterator;
 
-  typedef CircFromIt<SHalfedge_const_iterator, 
-          move_shalfedge_around_facet<SHalfedge_const_iterator> > 
+  typedef CircFromIt<SHalfedge_const_iterator,
+          move_shalfedge_around_facet<SHalfedge_const_iterator> >
           SHalfedge_around_facet_const_circulator;
 
-  typedef CircFromIt<SHalfedge_iterator, 
-          move_shalfedge_around_facet<SHalfedge_iterator> > 
+  typedef CircFromIt<SHalfedge_iterator,
+          move_shalfedge_around_facet<SHalfedge_iterator> >
           SHalfedge_around_facet_circulator;
 
-  class Halffacet_cycle_iterator : public Object_iterator 
+  class Halffacet_cycle_iterator : public Object_iterator
   { typedef Object_iterator Ibase;
   public:
     Halffacet_cycle_iterator() : Ibase() {}
     Halffacet_cycle_iterator(const Ibase& b) : Ibase(b) {}
-    Halffacet_cycle_iterator(const Halffacet_cycle_iterator& i) 
-      : Ibase(i) {}  
+    Halffacet_cycle_iterator(const Halffacet_cycle_iterator& i)
+      : Ibase(i) {}
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
     { SHalfloop_handle l; return CGAL::assign(l,Ibase::operator*()); }
- 
-   operator SHalfedge_handle() const 
+
+   operator SHalfedge_handle() const
     { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*()); return e; }
-    operator SHalfloop_handle() const 
+    operator SHalfloop_handle() const
     { SHalfloop_handle l; CGAL::assign(l,Ibase::operator*()); return l; }
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const 
+    Object_handle  operator->() const
     { CGAL_error_msg("not impl."); }
   };
 
-  class Halffacet_cycle_const_iterator : public Object_const_iterator 
+  class Halffacet_cycle_const_iterator : public Object_const_iterator
   { typedef Object_const_iterator Ibase;
   public:
     Halffacet_cycle_const_iterator() : Ibase() {}
     Halffacet_cycle_const_iterator(const Ibase& b) : Ibase(b) {}
-    Halffacet_cycle_const_iterator(const Halffacet_cycle_const_iterator& i) 
-      : Ibase(i) {}  
+    Halffacet_cycle_const_iterator(const Halffacet_cycle_const_iterator& i)
+      : Ibase(i) {}
     bool is_shalfedge() const
     { SHalfedge_handle e; return CGAL::assign(e,Ibase::operator*()); }
     bool is_shalfloop() const
     { SHalfloop_handle l; return CGAL::assign(l,Ibase::operator*()); }
- 
-   operator SHalfedge_const_handle() const 
-    { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*()); 
+
+   operator SHalfedge_const_handle() const
+    { SHalfedge_handle e; CGAL::assign(e,Ibase::operator*());
       return SHalfedge_const_handle(e); }
-    operator SHalfloop_const_handle() const 
-    { SHalfloop_handle l; CGAL::assign(l,Ibase::operator*()); 
+    operator SHalfloop_const_handle() const
+    { SHalfloop_handle l; CGAL::assign(l,Ibase::operator*());
       return SHalfloop_const_handle(l); }
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const 
+    Object_handle  operator->() const
     { CGAL_error_msg("not impl."); }
   };
 
-  class Shell_entry_iterator : public Object_iterator 
-  { typedef Object_iterator Ibase; 
+  class Shell_entry_iterator : public Object_iterator
+  { typedef Object_iterator Ibase;
   public:
     Shell_entry_iterator() : Ibase() {}
     Shell_entry_iterator(const Ibase& b) : Ibase(b) {}
-    Shell_entry_iterator(const Shell_entry_iterator& i) : Ibase(i) {}  
+    Shell_entry_iterator(const Shell_entry_iterator& i) : Ibase(i) {}
 
-    operator SFace_handle() const 
-    { SFace_handle f; 
+    operator SFace_handle() const
+    { SFace_handle f;
       CGAL_assertion( CGAL::assign(f,Ibase::operator*()) );
       CGAL::assign(f,Ibase::operator*()); return f; }
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const 
+    Object_handle  operator->() const
     { CGAL_nef_assertion_msg(0,"not impl."); }
   };
 
-  class Shell_entry_const_iterator : public Object_const_iterator 
-  { typedef Object_const_iterator Ibase; 
+  class Shell_entry_const_iterator : public Object_const_iterator
+  { typedef Object_const_iterator Ibase;
   public:
     Shell_entry_const_iterator() : Ibase() {}
     Shell_entry_const_iterator(const Ibase& b) : Ibase(b) {}
     Shell_entry_const_iterator(const Shell_entry_const_iterator& i) :
-      Ibase(i) {}  
+      Ibase(i) {}
 
-    operator SFace_const_handle() const 
-    { SFace_handle f; 
+    operator SFace_const_handle() const
+    { SFace_handle f;
       CGAL_assertion( CGAL::assign(f,Ibase::operator*()) );
-      CGAL::assign(f,Ibase::operator*()); 
+      CGAL::assign(f,Ibase::operator*());
       return SFace_const_handle(f); }
 
     operator Object_handle() const { return Ibase::operator*(); }
     Object_handle& operator*() const { return Ibase::operator*(); }
-    Object_handle  operator->() const 
+    Object_handle  operator->() const
     { CGAL_nef_assertion_msg(0,"not impl."); }
   };
 
@@ -398,18 +398,18 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   }
 
  public:
-  SNC_list() : 
+  SNC_list() :
     boundary_item_(undef_),
     vertices_(), halffacets_(), volumes_() {}
 
   ~SNC_list() { clear(); }
 
-  SNC_list(const Self& D) : 
+  SNC_list(const Self& D) :
     boundary_item_(undef_),
-    vertices_(D.vertices_), 
+    vertices_(D.vertices_),
     halffacets_(D.halffacets_),
-    volumes_(D.volumes_) { 
-    pointer_update(D); 
+    volumes_(D.volumes_) {
+    pointer_update(D);
   }
 
   Self& operator=(const Self& D) {
@@ -424,7 +424,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
     return *this;
   }
 
-  void clear() { 
+  void clear() {
     Base::clear();
     boundary_item_.clear();
     vertices_.destroy();
@@ -458,7 +458,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   Size_type number_of_volumes() const    { return volumes_.size();}
 
   template <typename H>
-  bool is_boundary_object(H h) 
+  bool is_boundary_object(H h)
   { return boundary_item_[h]!=undef_; }
 
   template <typename H>
@@ -478,20 +478,20 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   { SVertex_handle sv;
     SHalfedge_handle se;
     SHalfloop_handle sl;
-    if ( CGAL::assign(se,*it) ) { 
-      if( is_boundary_object(se)) 
-	undef_boundary_item(se); 
-      return; 
+    if ( CGAL::assign(se,*it) ) {
+      if( is_boundary_object(se))
+        undef_boundary_item(se);
+      return;
     }
-    if ( CGAL::assign(sl,*it) ) { 
-      if( is_boundary_object(sl)) 
-	undef_boundary_item(sl);
-      return; 
+    if ( CGAL::assign(sl,*it) ) {
+      if( is_boundary_object(sl))
+        undef_boundary_item(sl);
+      return;
     }
-    if ( CGAL::assign(sv,*it) ) { 
-      if( is_boundary_object(sv)) 
-	undef_boundary_item(sv); 
-      return; 
+    if ( CGAL::assign(sv,*it) ) {
+      if( is_boundary_object(sv))
+        undef_boundary_item(sv);
+      return;
     }
   }
 
@@ -501,7 +501,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
     L.clear();
   }
 
-  Vertex_handle new_vertex(const Point_3& p = Point_3(), Mark m = Mark()) { 
+  Vertex_handle new_vertex(const Point_3& p = Point_3(), Mark m = Mark()) {
     Vertex_handle vh = new_vertex_only();
     vh->point() = p;
     vh->mark() = m;
@@ -514,7 +514,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   }
 
   Halfedge_handle new_halfedge_pair(Vertex_handle v1, Vertex_handle v2,
-				    Mark m = Mark()) { 
+                                    Mark m = Mark()) {
     SM_decorator D1(&*v1);
     SM_decorator D2(&*v2);
     SVertex_handle e1 = D1.new_vertex();
@@ -524,8 +524,8 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
     return e1;
   }
 
-  Halffacet_handle new_halffacet_pair(const Plane_3& h = Plane_3(), 
-				      Mark m = Mark()) {
+  Halffacet_handle new_halffacet_pair(const Plane_3& h = Plane_3(),
+                                      Mark m = Mark()) {
     Halffacet_handle f1 = new_halffacet_only();
     Halffacet_handle f2 = new_halffacet_only();
     f1->supporting_plane_ = h; f2->supporting_plane_ = h.opposite();
@@ -542,14 +542,14 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
 
   void delete_vertex(Vertex_handle v)
     CGAL_NEF_TRACEN("~ deleting vertex "<<&*v<<" from "<<&*this);
-    v->clear(true); 
+    v->clear(true);
     delete_vertex_only(v);
     CGAL_NEF_TRACEN("~~ vertex deleted"<<&*v);
   }
 
   void delete_halfedge_pair(Halfedge_handle e)
     CGAL_NEF_TRACEN("~ deleting halfedges pair "<<&*e<<", "<<&*(e->twin())<<
-	   " from "<<&*this);
+           " from "<<&*this);
     Halfedge_handle et = e->twin();
     SM_decorator D1(&*e->center_vertex()), D2(&*et->center_vertex());
     D1.delete_vertex(e);
@@ -558,7 +558,7 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
 
   void delete_halffacet_pair(Halffacet_handle f)
     CGAL_NEF_TRACEN("~ deleting halffacets pair "<<&*f<<", "<<&*(f->twin())<<
-	   " from "<<&*this);
+           " from "<<&*this);
     reset_object_list(f->boundary_entry_objects());
     reset_object_list(f->twin()->boundary_entry_objects());
     delete_halffacet_only(f->twin());
@@ -571,30 +571,30 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
     delete_volume_only(c);
   }
 
-  Vertex_handle new_vertex_only() { 
+  Vertex_handle new_vertex_only() {
     vertices_.push_back(* get_vertex_node(Vertex()));
     CGAL_NEF_TRACEN("  new vertex only "<<&*(--vertices_end()));
-    return --vertices_end(); 
+    return --vertices_end();
   }
-  Halfedge_handle new_halfedge_only(Halfedge_handle e)  { 
+  Halfedge_handle new_halfedge_only(Halfedge_handle e)  {
     Halfedge_handle ne = halfedges_.insert(e, * get_halfedge_node(Halfedge()));
     CGAL_NEF_TRACEN("  after "<<&*e<<" new halfedge only "<<&*ne);
     return ne;
   }
-  Halfedge_handle new_halfedge_only()  { 
+  Halfedge_handle new_halfedge_only()  {
     CGAL_NEF_TRACEN("  new halfedge only "<<&*(--halfedges_end()));
     halfedges_.push_back( * get_halfedge_node(Halfedge()));
     return --halfedges_end();
   }
-  Halffacet_handle new_halffacet_only()  { 
+  Halffacet_handle new_halffacet_only()  {
     halffacets_.push_back( * get_halffacet_node(Halffacet()));
     CGAL_NEF_TRACEN("  new halffacet only "<<&*(--halffacets_end()));
-    return --halffacets_end(); 
-  } 
-  Volume_handle new_volume_only()  { 
+    return --halffacets_end();
+  }
+  Volume_handle new_volume_only()  {
     volumes_.push_back( * get_volume_node(Volume()));
     CGAL_NEF_TRACEN("  new volume only "<<&*(--volumes_end()));
-    return --volumes_end(); 
+    return --volumes_end();
   }
   SHalfedge_handle new_shalfedge_only()  {
     shalfedges_.push_back( * get_shalfedge_node(SHalfedge()));
@@ -604,12 +604,12 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
   SHalfloop_handle new_shalfloop_only()  {
     shalfloops_.push_back( * get_shalfloop_node(SHalfloop()));
     CGAL_NEF_TRACEN("  new shalfloop only "<<&*(--shalfloops_end()));
-    return --shalfloops_end(); 
+    return --shalfloops_end();
   }
   SFace_handle new_sface_only() {
     sfaces_.push_back( * get_sface_node(SFace()));
     CGAL_NEF_TRACEN("  new sface only "<<&*(--sfaces_end()));
-    return --sfaces_end(); 
+    return --sfaces_end();
   }
 
   void delete_vertex_only(Vertex_handle h) {
@@ -617,35 +617,35 @@ class SNC_list : public SM_list<CGAL::Sphere_geometry<Kernel_>,Items_> {
     vertices_.erase(h);
     put_vertex_node(&*h);
   }
-  void delete_halfedge_only(Halfedge_handle h) { 
+  void delete_halfedge_only(Halfedge_handle h) {
     CGAL_NEF_TRACEN("~ deleting halfedge only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     halfedges_.erase(h);
     put_halfedge_node(&*h);
   }
-  void delete_halffacet_only(Halffacet_handle h) { 
+  void delete_halffacet_only(Halffacet_handle h) {
     CGAL_NEF_TRACEN("~ deleting halffacet only "<<&*h<<" from "<<&*this);
-    halffacets_.erase(h);         
+    halffacets_.erase(h);
     put_halffacet_node(&*h);
   }
   void delete_volume_only(Volume_handle h) {
     CGAL_NEF_TRACEN("~ deleting volume only "<<&*h<<" from "<<&*this);
-    volumes_.erase(h); 
+    volumes_.erase(h);
     put_volume_node(&*h);
   }
-  void delete_shalfedge_only(SHalfedge_handle h)  { 
+  void delete_shalfedge_only(SHalfedge_handle h)  {
     CGAL_NEF_TRACEN("~ deleting shalfedge only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
     shalfedges_.erase(h);
     put_shalfedge_node(&*h);
   }
-  void delete_shalfloop_only(SHalfloop_handle h)  { 
+  void delete_shalfloop_only(SHalfloop_handle h)  {
     CGAL_NEF_TRACEN("~ deleting shalfloop only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_sm_boundary_object(h));
-    shalfloops_.erase(h); 
+    shalfloops_.erase(h);
     put_shalfloop_node(&*h);
   }
-  void delete_sface_only(SFace_handle h)  { 
+  void delete_sface_only(SFace_handle h)  {
     CGAL_NEF_TRACEN("~ deleting sface only "<<&*h<<" from "<<&*this);
     CGAL_assertion(!is_boundary_object(h));
     sfaces_.erase(h);
@@ -725,11 +725,11 @@ pointer_update(const SNC_list<Kernel,Items>& D)
     f->twin() = FM[f->twin()];
     f->volume_ = CM[f->volume_];
     Halffacet_cycle_iterator ftc;
-    for(ftc = f->boundary_entry_objects().begin(); 
+    for(ftc = f->boundary_entry_objects().begin();
         ftc !=  f->boundary_entry_objects().end(); ++ftc) {
-      if ( assign( se, ftc) ) 
+      if ( assign( se, ftc) )
       { *ftc = Object_handle(SEM[se]); store_boundary_item(se,ftc); }
-      else if ( assign( sl, ftc) ) 
+      else if ( assign( sl, ftc) )
       { *ftc = Object_handle(SLM[sl]); store_boundary_item(sl,ftc); }
       else CGAL_error_msg("damn wrong boundary item in facet.");
     }
@@ -740,8 +740,8 @@ pointer_update(const SNC_list<Kernel,Items>& D)
     Shell_entry_iterator sei;
     CGAL_forall_shells_of(sei,c) {
       sf = sei; // conversion from generic iterator to sface const handle
-      *sei = Object_handle(SFM[sf]); 
-      store_boundary_item(sf,sei); 
+      *sei = Object_handle(SFM[sf]);
+      store_boundary_item(sf,sei);
     }
   }
 
@@ -760,9 +760,9 @@ pointer_update(const SNC_list<Kernel,Items>& D)
     sl->incident_facet() = FM[sl->incident_facet()];
   }
   for ( slc = D.shalfloops_begin(), sl = shalfloops_begin();
-	slc != D.shalfloops_end(); ++slc, ++sl) {
+        slc != D.shalfloops_end(); ++slc, ++sl) {
     CGAL_assertion_code( if( slc->is_twin() == sl->is_twin())
-			 CGAL_assertion( slc->mark() == sl->mark()));
+                         CGAL_assertion( slc->mark() == sl->mark()));
     if( !sl->is_twin() && slc->is_twin()) sl->mark() = sl->twin()->mark();
   }
 
@@ -770,14 +770,14 @@ pointer_update(const SNC_list<Kernel,Items>& D)
     sf->center_vertex() = VM[sf->center_vertex()];
     sf->incident_volume() = CM[sf->incident_volume()];
     SFace_cycle_iterator sfc;
-    for(sfc = sf->sface_cycles_begin(); 
+    for(sfc = sf->sface_cycles_begin();
         sfc != sf->sface_cycles_end(); ++sfc) {
       SVertex_handle sv;
-      if ( assign(sv,sfc) ) 
+      if ( assign(sv,sfc) )
       { *sfc = Object_handle(EM[sv]); store_sm_boundary_item(sv,sfc); }
-      else if ( assign(se,sfc) ) 
+      else if ( assign(se,sfc) )
       { *sfc = Object_handle(SEM[se]); store_sm_boundary_item(se,sfc); }
-      else if ( assign(sl,sfc) ) 
+      else if ( assign(sl,sfc) )
       { *sfc = Object_handle(SLM[sl]); store_sm_boundary_item(sl,sfc); }
       else CGAL_error_msg("damn wrong boundary item in sface.");
     }

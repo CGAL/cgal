@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 
@@ -49,7 +49,7 @@ protected:
 
   typedef Arrangement_2_writer<Arr_with_history_2>        Base;
   typedef typename Arr_with_history_2::Size               Size;
-  
+
   typedef typename Arr_with_history_2::Curve_const_iterator
                                                      Curve_const_iterator;
   typedef typename Arr_with_history_2::Curve_const_handle
@@ -109,7 +109,7 @@ protected:
     formatter.write_induced_edges_begin();
     formatter.write_size ("induced_edges",
                           this->m_arr.number_of_induced_edges(cv));
-    
+
     Induced_edge_iterator   ieit;
     for (ieit = this->m_arr.induced_edges_begin(cv);
          ieit != this->m_arr.induced_edges_end(cv); ++ieit)
@@ -117,7 +117,7 @@ protected:
       formatter.write_halfedge_index (this->_index (&(**ieit)));
     }
     formatter.write_induced_edges_end();
-    
+
     formatter.write_curve_end();
     return;
   }

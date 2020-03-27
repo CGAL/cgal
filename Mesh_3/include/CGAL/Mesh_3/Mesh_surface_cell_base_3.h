@@ -50,7 +50,7 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-  
+
 /************************************************
 // Class Mesh_surface_cell_base_3_base
 // Two versions: sequential / parallel
@@ -61,9 +61,9 @@ template <typename Concurrency_tag>
 class Mesh_surface_cell_base_3_base
 {
 public:
-  Mesh_surface_cell_base_3_base() 
+  Mesh_surface_cell_base_3_base()
     : bits_(0) {}
-  
+
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
@@ -96,11 +96,11 @@ template<>
 class Mesh_surface_cell_base_3_base<Parallel_tag>
 {
 public:
-  Mesh_surface_cell_base_3_base() 
+  Mesh_surface_cell_base_3_base()
   {
     bits_ = 0;
   }
-  
+
   /// Marks \c facet as visited
   void set_facet_visited (const int facet)
   {
@@ -158,7 +158,7 @@ public:
   typedef typename Tds::Vertex_handle                 Vertex_handle;
   typedef typename Tds::Cell_handle                   Cell_handle;
   typedef typename GT::Point_3                        Point;
-  
+
   // To get correct cell type in TDS
   template < class TDS3 >
   struct Rebind_TDS
@@ -244,16 +244,16 @@ public:
     CGAL_precondition(facet>=0 && facet<4);
     return ( Surface_patch_index() != surface_index_table_[facet]);
   }
-  
+
   // -----------------------------------
   // Backward Compatibility
   // -----------------------------------
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index   Surface_index;
-  
+
   void set_surface_index(const int facet, const Surface_index& index)
   { set_surface_patch_index(facet,index); }
-  
+
   /// Returns surface index of facet \c facet
   Surface_index surface_index(const int facet) const
   { return surface_patch_index(facet); }

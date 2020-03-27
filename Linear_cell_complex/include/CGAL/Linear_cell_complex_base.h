@@ -122,7 +122,7 @@ namespace CGAL {
     using Base::point_of_vertex_attribute;
     using Base::other_extremity;
     using Base::darts;
-    
+
     using Base::are_attributes_automatically_managed;
     using Base::mark;
     using Base::is_marked;
@@ -134,7 +134,7 @@ namespace CGAL {
     using Base::opposite;
     using Base::is_next_exist;
     using Base::is_previous_exist;
-    
+
     using Base::make_segment;
     using Base::make_triangle;
     using Base::make_quadrangle;

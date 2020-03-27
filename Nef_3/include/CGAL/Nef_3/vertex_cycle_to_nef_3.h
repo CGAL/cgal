@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ralf Osbild <osbild@mpi-sb.mpg.de>
 
@@ -53,25 +53,25 @@ class Index_assigner {
   template<typename Handle>
     void assign_first_index() const {}
   template<typename Handle>
-    void assign_new_index() {} 
+    void assign_new_index() {}
 };
 
 template<> class Index_assigner<CGAL::SNC_indexed_items> {
   int first;
   int index;
  public:
- Index_assigner() : 
+ Index_assigner() :
   first(Index_generator::get_unique_index()), index(first) {}
-  
+
   template<typename Handle>
-    void assign_index(Handle& h) const 
+    void assign_index(Handle& h) const
     { h->set_index(index); }
   template<typename Handle>
-    void assign_first_index(Handle& h) const 
+    void assign_first_index(Handle& h) const
     { h->set_index(first); }
   template<typename Handle>
     void assign_new_index(Handle& h)
-    { h->set_index(); index = h->get_index(); } 
+    { h->set_index(); index = h->get_index(); }
 };
 */
 
@@ -90,7 +90,7 @@ class Compare_cpte {
       return p0.first < p1.first;
     else
       return p0.second < p1.second;
-  }  
+  }
 };
 
 class Compare_face {
@@ -98,7 +98,7 @@ class Compare_face {
  public:
   Compare_face() {}
 
-  template<typename Face>  
+  template<typename Face>
     bool operator()(const Face* f0, const Face* f1) const {
     return f0 < f1;
   }
@@ -109,12 +109,12 @@ template<typename Items,
   typename Edge, typename CompareEdges> class Index_matcher {
  public:
   Index_matcher() {}
-  template<typename Handle> 
+  template<typename Handle>
   void set_index(Handle /*h*/, Edge /*e*/) {}
 };
 
-template<typename Edge, typename CompareEdges> 
-  class Index_matcher<CGAL::SNC_indexed_items, Edge, CompareEdges> 
+template<typename Edge, typename CompareEdges>
+  class Index_matcher<CGAL::SNC_indexed_items, Edge, CompareEdges>
 {
 
   bool plusTwin;
@@ -134,7 +134,7 @@ template<typename Edge, typename CompareEdges>
       edge2int.insert(std::make_pair(e,new_index));
       h->set_index(new_index);
       if(plusTwin)
-	h->twin()->set_index();
+        h->twin()->set_index();
     }
   }
 };
@@ -181,7 +181,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
    for (nov=0, v_it=v_first; v_it!=v_last; ++v_it)
    {  if ( *v_it != (ctp.insert (*v_it))->point() )
       {  ostr << " -> Different vertices are projected to same location!";
-	 return false;
+         return false;
       }
       ++nov;
    }
@@ -233,7 +233,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
 
       t_fc = t_fc_0 = ctp.incident_faces(t_vh, t_fh);
       if(t_fc == CTP_face_circulator())
-	return false;
+        return false;
       do
       {  if ((cond=t_fc->is_constrained(ctp.cw(t_fc->index(t_vh))))) break;
       } while (--t_fc != t_fc_0)
@@ -262,58 +262,58 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
       SVertex_handle p_svh (p_dec.new_svertex (dir)), p_svh_pred=p_svh;
       p_svh->mark() = true;
       if(&*t_target_vh < &*t_vh)
-	im_edge.set_index(p_svh, std::make_pair(&*t_target_vh, &*t_vh));
+        im_edge.set_index(p_svh, std::make_pair(&*t_target_vh, &*t_vh));
       else
-	im_edge.set_index(p_svh, std::make_pair(&*t_vh, &*t_target_vh));
+        im_edge.set_index(p_svh, std::make_pair(&*t_vh, &*t_target_vh));
 
       // consider triangles (implicit edges) that are incident to *t_vh
       t_fc = t_fc_0 = t_fc_1 = ctp.incident_faces(t_vh, t_fh);
       ++t_fc_1;
       do
       {  idx = t_fc->index(t_vh);
-	 t_target_vh = t_fc->vertex(ctp.ccw(idx));
+         t_target_vh = t_fc->vertex(ctp.ccw(idx));
 
-	 // assertion
-	 if ( ctp.is_infinite(t_target_vh) )
+         // assertion
+         if ( ctp.is_infinite(t_target_vh) )
          {  ostr << " -> Vertex cycle is not simple; edges overlap.";
             return false;
-	 }
+         }
 
-	 // create new svertex in SM
+         // create new svertex in SM
          dir = Sphere_point ( CGAL::ORIGIN+
-	    (t_target_vh->point() - t_vh->point()) );
+            (t_target_vh->point() - t_vh->point()) );
 
-	 // assertion
-	 if ( dir == dir_0 )
+         // assertion
+         if ( dir == dir_0 )
          {  ostr << " -> Vertex cycle is not simple; edges overlap.";
             return false;
-	 }
-	 p_svh = SVertex_handle (p_dec.new_svertex(dir));
-	 p_svh->mark() = true;
-	 if(&*t_target_vh < &*t_vh)
-	   im_edge.set_index(p_svh, std::make_pair(&*t_target_vh, &*t_vh));
-	 else
-	   im_edge.set_index(p_svh, std::make_pair(&*t_vh, &*t_target_vh));
-	 
-	 // create new sphere edges in SM
+         }
+         p_svh = SVertex_handle (p_dec.new_svertex(dir));
+         p_svh->mark() = true;
+         if(&*t_target_vh < &*t_vh)
+           im_edge.set_index(p_svh, std::make_pair(&*t_target_vh, &*t_vh));
+         else
+           im_edge.set_index(p_svh, std::make_pair(&*t_vh, &*t_target_vh));
+
+         // create new sphere edges in SM
          SHalfedge_handle p_seh =
-	    p_dec.new_shalfedge_pair (p_svh_pred, p_svh);
+            p_dec.new_shalfedge_pair (p_svh_pred, p_svh);
          Sphere_circle p_scirc
-	    (p_seh->source()->point(), p_seh->target()->point());
+            (p_seh->source()->point(), p_seh->target()->point());
          p_seh->circle() = p_scirc;
          p_seh->twin()->circle() = p_scirc.opposite();
          p_seh->mark() = p_seh->twin()->mark() = true;
-	 im_sedge.set_index(p_seh, &*t_fc);
+         im_sedge.set_index(p_seh, &*t_fc);
 
-	 // constrained edge detected?
-	 if ((cond = t_fc->is_constrained(ctp.cw(idx))))
-	 {  // create new sface in SM
-	    SFace_handle p_fh = p_dec.new_sface ();
-	    p_fh->mark() = false;
-	    p_dec.link_as_face_cycle(p_seh,p_fh);
-	    break;
-	 }
-	 p_svh_pred = p_svh;
+         // constrained edge detected?
+         if ((cond = t_fc->is_constrained(ctp.cw(idx))))
+         {  // create new sface in SM
+            SFace_handle p_fh = p_dec.new_sface ();
+            p_fh->mark() = false;
+            p_dec.link_as_face_cycle(p_seh,p_fh);
+            break;
+         }
+         p_svh_pred = p_svh;
       } while (--t_fc != t_fc_0)
       ; CGAL_assertion ( cond ); // do-while ends with break
 
@@ -327,7 +327,7 @@ bool projected_vertex_cycle_to_nef_3 (typename Nef_3::SNC_structure &snc,
       --t_fc;
       while (--t_fc != t_fc_0)
       {  idx = t_fc->index(t_vh);
-	 if ( t_fc->is_constrained(ctp.ccw(idx)) )
+         if ( t_fc->is_constrained(ctp.ccw(idx)) )
          {  ostr << " -> Vertex cycle is not simple; edge contains vertex.";
             return false;
          }
@@ -385,7 +385,7 @@ typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
    if ( normal == NULL_VECTOR )
    {  // report it
       ostr << " -> function parameter 'normal' is NULL_VECTOR"
-	   << " (this can be a symptom of an error).";
+           << " (this can be a symptom of an error).";
    }
 
    if ( normal != NULL_VECTOR )
@@ -420,7 +420,7 @@ typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
    {  // if conversion is unsuccessful so far, try another projection
       if ( !is_nef && direc != 'x' )
       {  ostr << " Now, direction of projection is 'x'.";
-	 is_nef = projected_vertex_cycle_to_nef_3<YZ_tri_plus,Nef_3> (
+         is_nef = projected_vertex_cycle_to_nef_3<YZ_tri_plus,Nef_3> (
                   snc, v_first, v_last, ostr);
       }
       if ( !is_nef && direc != 'y' )
@@ -438,9 +438,9 @@ typedef CGAL::Constrained_triangulation_plus_2<YZ_tri>     YZ_tri_plus;
    // no successful conversion?
    if ( !is_nef && verb )
    {  std::cerr << "\nConversion from vertex cycle to Nef_polyhedron_3"
-	 << " was not successful. Error history:"
+         << " was not successful. Error history:"
          << ostr.str().c_str()
-	 << " Finally, empty Nef_polyhedron_3 was constructed." << std::endl;
+         << " Finally, empty Nef_polyhedron_3 was constructed." << std::endl;
    }
 
    return is_nef;

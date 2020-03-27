@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -43,13 +43,13 @@ namespace CGAL {
 template<typename AlgebraicKernelWithAnalysis_2> class Shear_transformation {
 
 public:
-      
+
     typedef AlgebraicKernelWithAnalysis_2  Algebraic_kernel_with_analysis_2;
 
-    typedef typename Algebraic_kernel_with_analysis_2::Curve_analysis_2 
+    typedef typename Algebraic_kernel_with_analysis_2::Curve_analysis_2
         Curve_analysis_2;
 
-    typedef typename  AlgebraicKernelWithAnalysis_2::Polynomial_traits_2 
+    typedef typename  AlgebraicKernelWithAnalysis_2::Polynomial_traits_2
         Polynomial_traits_2;
 
     CGAL_ACK_SNAP_ALGEBRAIC_CURVE_KERNEL_2_TYPEDEFS(Curve_analysis_2);
@@ -59,8 +59,8 @@ public:
     typedef std::vector< Algebraic_real_1 > Root_container;
 
     typedef typename Root_container::iterator Root_iterator;
-    
-    typedef typename Curve_analysis_2::Event_line_iterator 
+
+    typedef typename Curve_analysis_2::Event_line_iterator
     Status_line_1_iterator;
 
 private:
@@ -81,7 +81,7 @@ public:
           sh_disc_roots_computed(false)
     {}
 
-    template<typename InputIterator>      
+    template<typename InputIterator>
     void report_sheared_disc_roots(InputIterator begin,
                                    InputIterator end) {
         std::copy(begin,end,std::back_inserter(sh_disc_roots));
@@ -95,17 +95,17 @@ public:
         return D;
     }
 
-    void operator() (const Curve_analysis_2& C, Integer s, Curve_analysis_2& D, 
+    void operator() (const Curve_analysis_2& C, Integer s, Curve_analysis_2& D,
                      bool use_primitive_curve=true) {
         this->C=C;
         this->s=s;
         this->use_primitive_curve = use_primitive_curve;
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "Curve_analysis_2: " 
+        CGAL_ACK_DEBUG_PRINT << "Curve_analysis_2: "
                              << C.polynomial_2() << std::endl;
-        CGAL_ACK_DEBUG_PRINT << "num events: " 
-                             << C.number_of_status_lines_with_event() 
+        CGAL_ACK_DEBUG_PRINT << "num events: "
+                             << C.number_of_status_lines_with_event()
                              << std::endl;
         CGAL_ACK_DEBUG_PRINT << "s: " << s << std::endl;
 #endif
@@ -144,18 +144,18 @@ public:
             CGAL_ACK_DEBUG_PRINT << "done.." << std::flush;
 #endif
         }
-        
+
         der_sh_pol = typename Polynomial_traits_2::Differentiate() (sh_pol,1);
         sh_der_sh_pol = CGAL::internal::shear(der_sh_pol,Coefficient(-s));
-      
+
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
 #endif
 
         Solve_1 solve_1;
-        
+
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "Store the discriminant roots.." 
+        CGAL_ACK_DEBUG_PRINT << "Store the discriminant roots.."
                              << std::flush;
 #endif
 
@@ -171,23 +171,23 @@ public:
 
         if(! sh_disc_roots_computed) {
 #if CGAL_ACK_DEBUG_FLAG
-            CGAL_ACK_DEBUG_PRINT << "Compute the sheared discriminant.." 
+            CGAL_ACK_DEBUG_PRINT << "Compute the sheared discriminant.."
                                  << std::flush;
 #endif
 
             if(typename Polynomial_traits_2::Degree() (sh_pol) > 0) {
-            
 
-                Polynomial_1 sh_disc 
+
+                Polynomial_1 sh_disc
                     = CGAL::resultant(sh_pol,der_sh_pol);
-                
+
 #if CGAL_ACK_DEBUG_FLAG
                 CGAL_ACK_DEBUG_PRINT << "root isolation.." << std::flush;
 #endif
                 solve_1(sh_disc,std::back_inserter(sh_disc_roots),false);
-                
+
             }
-             
+
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
 #endif
@@ -200,23 +200,23 @@ public:
         Root_container ev_res_roots;
         if(typename Polynomial_traits_2::Degree() (sh_pol) > 0) {
             Polynomial_1 ev_res = CGAL::resultant(pol,sh_der_sh_pol);
-            
+
 #if CGAL_ACK_DEBUG_FLAG
             CGAL_ACK_DEBUG_PRINT << "root isolation.." << std::flush;
 #endif
             solve_1(ev_res,std::back_inserter(ev_res_roots),false);
-            
+
         }
-        
+
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "done, " << ev_res_roots.size() 
+        CGAL_ACK_DEBUG_PRINT << "done, " << ev_res_roots.size()
                              << " roots found" << std::endl;
 #endif
 
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "Merge both root sets..." << std::flush;
 #endif
-        typename CGAL::Real_embeddable_traits<Algebraic_real_1>::Compare 
+        typename CGAL::Real_embeddable_traits<Algebraic_real_1>::Compare
             x_compare;
 
         CGAL::internal::set_union_with_source
@@ -227,17 +227,17 @@ public:
              std::back_inserter(x_structure),
              std::back_inserter(x_structure_info),
              x_compare);
- 
+
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
         CGAL_ACK_DEBUG_PRINT << "Take the stripe values..." << std::flush;
 #endif
 
         CGAL::internal::find_intermediate_values
-	  (kernel(),
-	   sh_disc_roots.begin(),
-	   sh_disc_roots.end(),
-	   std::back_inserter(stripe_values));
+          (kernel(),
+           sh_disc_roots.begin(),
+           sh_disc_roots.end(),
+           std::back_inserter(stripe_values));
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
         CGAL_ACK_DEBUG_PRINT << "Search sheared event points..." << std::flush;
@@ -246,7 +246,7 @@ public:
 
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
-        CGAL_ACK_DEBUG_PRINT << "Find start- and endpoints for sweep.." 
+        CGAL_ACK_DEBUG_PRINT << "Find start- and endpoints for sweep.."
                              << std::flush;
 #endif
         find_far_points(D);
@@ -255,20 +255,20 @@ public:
         CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
         CGAL_ACK_DEBUG_PRINT << "Start sweep..." << std::flush;
 #endif
-        
+
         sweep();
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "done" << std::endl;
         CGAL_ACK_DEBUG_PRINT << "vert lines info:" << std::endl;
 
         for(int i=0;i<static_cast<int>(pre_vert_lines.size());i++) {
-            
-            CGAL_ACK_DEBUG_PRINT << "At: " 
+
+            CGAL_ACK_DEBUG_PRINT << "At: "
                                  << CGAL::to_double(sh_disc_roots[i]) << ", "
                                  << pre_vert_lines[i].number_of_non_event_roots
-                                 << " non-event-roots, and " 
+                                 << " non-event-roots, and "
                                  << pre_vert_lines[i].event_points.size()
-                                 << std::endl;  
+                                 << std::endl;
         }
         CGAL_ACK_DEBUG_PRINT << "Vert_lines.." << std::flush;
 #endif
@@ -288,7 +288,7 @@ public:
     }
 
 private:
-    
+
     // X-coordinate of the shear of p
     Bound x_sheared(Point p,Integer sh) {
         return p.first-sh*p.second;
@@ -298,7 +298,7 @@ private:
     }
 
     int compute_stripe(Status_line_1& ev, int index) {
-        int left_index = -1, 
+        int left_index = -1,
             right_index = static_cast<int>(stripe_values.size()-1);
         Algebraic_real_1 xv = ev.x();
         Bound lx = xv.low(), rx=xv.high(),
@@ -349,7 +349,7 @@ private:
                 if(descartes.left_bound(0)<lower_bound) {
                     lower_bound = descartes.left_bound(0);
                 }
-                if(descartes.right_bound(m-1) 
+                if(descartes.right_bound(m-1)
                    > upper_bound) {
                     upper_bound = descartes.right_bound(m-1);
                 }
@@ -367,7 +367,7 @@ private:
         if(C.number_of_status_lines_with_event()>0) {
             if(far_left>C.status_line_at_event(0).x().low()) {
                 far_left = C.status_line_at_event(0).x().low();
-            }   
+            }
             if(far_right<C.status_line_at_event
                (C.number_of_status_lines_with_event()-1).x().high()) {
                 far_right = C.status_line_at_event
@@ -380,8 +380,8 @@ private:
         y_in_box = (upper_bound + lower_bound)/2;
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "far_left: " << far_left << "\nfar_right: " 
-                             << far_right << "\ny_in_box: " << y_in_box 
+        CGAL_ACK_DEBUG_PRINT << "far_left: " << far_left << "\nfar_right: "
+                             << far_right << "\ny_in_box: " << y_in_box
                              << std::endl;
 #endif
 */
@@ -408,34 +408,34 @@ private:
         }
 
         // left side
-        
+
         CGAL_assertion(left.x().is_rational());
         Bound left_x = left.x().rational();
-        
-	Polynomial_1 left_pol = kernel()->evaluate_utcf_2_object()
-	  (typename Polynomial_traits_2::Swap() (pol, 0, 1),
-	   left_x);
+
+        Polynomial_1 left_pol = kernel()->evaluate_utcf_2_object()
+          (typename Polynomial_traits_2::Swap() (pol, 0, 1),
+           left_x);
         Polynomial_1 left_sh_der_sh_pol = kernel()->evaluate_utcf_2_object()
-	  (typename Polynomial_traits_2::Swap() (sh_der_sh_pol, 0, 1),
-	   left_x);
+          (typename Polynomial_traits_2::Swap() (sh_der_sh_pol, 0, 1),
+           left_x);
 
         // right side
 
-      
+
         CGAL_assertion(right.x().is_rational());
         Bound right_x = right.x().rational();
 
-	Polynomial_1 right_pol = kernel()->evaluate_utcf_2_object()
-	  (typename Polynomial_traits_2::Swap() (pol, 0, 1),
-	   right_x);
+        Polynomial_1 right_pol = kernel()->evaluate_utcf_2_object()
+          (typename Polynomial_traits_2::Swap() (pol, 0, 1),
+           right_x);
         Polynomial_1 right_sh_der_sh_pol = kernel()->evaluate_utcf_2_object()
-	  (typename Polynomial_traits_2::Swap() (sh_der_sh_pol, 0, 1),
-	   right_x);
+          (typename Polynomial_traits_2::Swap() (sh_der_sh_pol, 0, 1),
+           right_x);
 
         int asym_left_minus,asym_left_plus,asym_right_minus,asym_right_plus;
-        
+
         typedef typename Status_line_1::Arc_pair Arc_pair;
-        
+
         Arc_pair apair1 = ev.number_of_branches_approaching_minus_infinity();
         Arc_pair apair2 = ev.number_of_branches_approaching_plus_infinity();
 
@@ -448,8 +448,8 @@ private:
         left_id += asym_left_minus;
         right_id += asym_right_minus;
         while(ev_id != ev_n) {
-        
-            typename Status_line_1::Arc_pair arc_pair = 
+
+            typename Status_line_1::Arc_pair arc_pair =
                 ev.number_of_incident_branches(ev_id);
 
             int arcs_left = arc_pair.first;
@@ -457,8 +457,8 @@ private:
             if(arcs_left+arcs_right!=2) {
 /*
 #if CGAL_ACK_DEBUG_FLAG
-                CGAL_ACK_DEBUG_PRINT << "Sheared event point found at " 
-                                     << ev.x().to_double() << ", index " 
+                CGAL_ACK_DEBUG_PRINT << "Sheared event point found at "
+                                     << ev.x().to_double() << ", index "
                                      << ev_id << std::endl;
 #endif
 */
@@ -474,24 +474,24 @@ private:
                                           left.lower_bound(left_id),
                                           left.upper_bound(left_id));
 
-                    CGAL::Sign left_sign 
-		      = kernel()->sign_at_1_object()
-		          (left_sh_der_sh_pol,left_y,true);
+                    CGAL::Sign left_sign
+                      = kernel()->sign_at_1_object()
+                          (left_sh_der_sh_pol,left_y,true);
 
                     Algebraic_real_1 right_y(right_pol,
                                            right.lower_bound(right_id),
                                            right.upper_bound(right_id));
 
-                    CGAL::Sign right_sign 
-		      = kernel()->sign_at_1_object()
-		          (right_sh_der_sh_pol,right_y,true);
+                    CGAL::Sign right_sign
+                      = kernel()->sign_at_1_object()
+                          (right_sh_der_sh_pol,right_y,true);
 
                     if(left_sign!=right_sign) {
 /*
 #if CGAL_ACK_DEBUG_FLAG
-                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at " 
-                                             << ev.x().to_double() 
-                                             << ", index " << ev_id 
+                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at "
+                                             << ev.x().to_double()
+                                             << ", index " << ev_id
                                              << std::endl;
 #endif
 */
@@ -506,23 +506,23 @@ private:
                                           left.lower_bound(left_id),
                                           left.upper_bound(left_id));
 
-                    CGAL::Sign left_sign_1 
-		      = kernel()->sign_at_1_object()
-		          (left_sh_der_sh_pol,left_y_1,true);
+                    CGAL::Sign left_sign_1
+                      = kernel()->sign_at_1_object()
+                          (left_sh_der_sh_pol,left_y_1,true);
 
                     left_id++;
                     Algebraic_real_1 left_y_2(left_pol,
                                           left.lower_bound(left_id),
                                           left.upper_bound(left_id));
-                    CGAL::Sign left_sign_2 
-		      = kernel()->sign_at_1_object()
-		          (left_sh_der_sh_pol,left_y_2,true);
+                    CGAL::Sign left_sign_2
+                      = kernel()->sign_at_1_object()
+                          (left_sh_der_sh_pol,left_y_2,true);
                     if(left_sign_1!=left_sign_2) {
 /*
 #if CGAL_ACK_DEBUG_FLAG
-                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at " 
-                                             << ev.x().to_double() 
-                                             << ", index " << ev_id 
+                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at "
+                                             << ev.x().to_double()
+                                             << ", index " << ev_id
                                              << std::endl;
 #endif
 */
@@ -536,22 +536,22 @@ private:
                                                right.lower_bound(right_id),
                                                right.upper_bound(right_id));
 
-                    CGAL::Sign right_sign_1 
-		      = kernel()->sign_at_1_object()
-		          (right_sh_der_sh_pol,right_y_1,true);
+                    CGAL::Sign right_sign_1
+                      = kernel()->sign_at_1_object()
+                          (right_sh_der_sh_pol,right_y_1,true);
                     right_id++;
                     Algebraic_real_1 right_y_2(right_pol,
                                                right.lower_bound(right_id),
                                                right.upper_bound(right_id));
-                    CGAL::Sign right_sign_2 
-		      = kernel()->sign_at_1_object()
-		          (right_sh_der_sh_pol,right_y_2,true);
+                    CGAL::Sign right_sign_2
+                      = kernel()->sign_at_1_object()
+                          (right_sh_der_sh_pol,right_y_2,true);
                     if(right_sign_1!=right_sign_2) {
 /*
 #if CGAL_ACK_DEBUG_FLAG
-                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at " 
-                                             << ev.x().to_double()  
-                                             << ", index " << ev_id 
+                        CGAL_ACK_DEBUG_PRINT << "Sheared ev point found at "
+                                             << ev.x().to_double()
+                                             << ", index " << ev_id
                                              << std::endl;
 #endif
 */
@@ -574,7 +574,7 @@ private:
         sh_ev_indices.resize(x_structure.size());
         std::vector<Bound> intermediate_values;
         find_intermediate_values(kernel(),
-				 x_structure.begin(),
+                                 x_structure.begin(),
                                  x_structure.end(),
                                  std::back_inserter(intermediate_values));
 /*
@@ -585,7 +585,7 @@ private:
         std::vector<Status_line_1> intermediate_lines(intermediate_values.size());
 
         int i=0;
-        for(typename std::vector<Bound>::iterator it 
+        for(typename std::vector<Bound>::iterator it
                 = intermediate_values.begin();
             it!=intermediate_values.end();it++) {
             intermediate_lines[i]=C.status_line_at_exact_x(*it);
@@ -593,7 +593,7 @@ private:
         }
         int event_count=0;
 /*
-#if CGAL_ACK_DEBUG_FLAG        
+#if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "at some x.." << std::flush;
 #endif
 */
@@ -601,18 +601,18 @@ private:
             CGAL::internal::Three_valued info = x_structure_info[i];
 /*
 #if CGAL_ACK_DEBUG_FLAG
-            CGAL_ACK_DEBUG_PRINT <<  i << "th of " << x_structure.size() 
+            CGAL_ACK_DEBUG_PRINT <<  i << "th of " << x_structure.size()
                                  << std::endl;
             CGAL_ACK_DEBUG_PRINT << "To_double approx" << std::endl;
-            CGAL_ACK_DEBUG_PRINT << "x_struct: " 
-                                 << CGAL::to_double(x_structure[i]) 
+            CGAL_ACK_DEBUG_PRINT << "x_struct: "
+                                 << CGAL::to_double(x_structure[i])
                                  << std::endl;
             CGAL_ACK_DEBUG_PRINT << "Info: " << info << std::endl;
 #endif
 */
-            if(info==CGAL::internal::ROOT_OF_SECOND_SET || 
+            if(info==CGAL::internal::ROOT_OF_SECOND_SET ||
                info==CGAL::internal::ROOT_OF_BOTH_SETS) {
-                const Status_line_1& event_line_at_x = 
+                const Status_line_1& event_line_at_x =
                     (info==CGAL::internal::ROOT_OF_BOTH_SETS)
                     ? C.status_line_at_event(event_count) : C.status_line_at_exact_x(x_structure[i]);
 /*
@@ -632,7 +632,7 @@ private:
 #endif
 */
             }
-            if(info==CGAL::internal::ROOT_OF_FIRST_SET || 
+            if(info==CGAL::internal::ROOT_OF_FIRST_SET ||
                info==CGAL::internal::ROOT_OF_BOTH_SETS) {
                 event_count++;
             }
@@ -640,10 +640,10 @@ private:
 
         CGAL_assertion(event_count==C.number_of_status_lines_with_event());
     }
-    
+
     struct Sh_ev_point_info {
 
-        Sh_ev_point_info(Status_line_1 ev,int index) 
+        Sh_ev_point_info(Status_line_1 ev,int index)
             : ev(ev),index(index),
               incident_left(0),
               incident_right(0)
@@ -659,7 +659,7 @@ private:
         int asym_left_plus,asym_left_minus,asym_right_plus,asym_right_minus;
         int number_of_non_event_roots;
         std::vector<Sh_ev_point_info> event_points;
-      
+
         Bound lower_bound(int i) {
             Sh_ev_point_info p= event_points[i];
             return p.ev.lower_bound(p.index);
@@ -757,15 +757,15 @@ private:
         }
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "X-coordinate (far left) " 
+        CGAL_ACK_DEBUG_PRINT << "X-coordinate (far left) "
                              << CGAL::to_double(far_left) << std::endl;
 #endif
 */
-        Status_line_1 far_left_line 
+        Status_line_1 far_left_line
             = C.status_line_at_exact_x(Algebraic_real_1(far_left));
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "No. arcs " 
+        CGAL_ACK_DEBUG_PRINT << "No. arcs "
                              << far_left_line.number_of_events() << std::endl;
 #endif
 */
@@ -774,22 +774,22 @@ private:
         }
     }
 
-    
+
     void end_sweep() {
-        Status_line_1 far_right_line 
+        Status_line_1 far_right_line
             = C.status_line_at_exact_x(Algebraic_real_1(far_right));
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "X-coordinate (far right) " 
+        CGAL_ACK_DEBUG_PRINT << "X-coordinate (far right) "
                              << CGAL::to_double(far_right) << std::endl;
 #endif
 */
         CGAL_assertion(far_right_line.number_of_events()
                        ==static_cast<int>(y_structure.size()));
-      
+
         typename Y_structure::iterator y_it=y_structure.begin();
         for(int i=0;i<far_right_line.number_of_events();i++) {
-            Y_structure_element y_el 
+            Y_structure_element y_el
                 = create_unbounded_element(far_right_line,i);
             handle_edge(*y_it,y_el);
             y_it++;
@@ -799,8 +799,8 @@ private:
     void sweep_at_x_coordinate(int index) {
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "X-coordinate " 
-                             << CGAL::to_double(x_structure[index]) 
+        CGAL_ACK_DEBUG_PRINT << "X-coordinate "
+                             << CGAL::to_double(x_structure[index])
                              << std::endl;
 #endif
 */
@@ -815,12 +815,12 @@ private:
         typename Y_structure::iterator y_it=y_structure.begin();
 /*
 #if CGAL_ACK_DEBUG_FLAG
-        CGAL_ACK_DEBUG_PRINT << "Y-structure has " << y_structure.size() 
+        CGAL_ACK_DEBUG_PRINT << "Y-structure has " << y_structure.size()
                              << " elements" << std::endl;
 #endif
 */
         // needed for vertical components
-        std::vector<Y_structure_element> events_at_x; 
+        std::vector<Y_structure_element> events_at_x;
         bool vert=ev.covers_line() && ! this->use_primitive_curve;
         Y_structure_element below,above;
         Y_structure_element minus_x_inf,plus_x_inf;
@@ -831,9 +831,9 @@ private:
         above = (s>0) ? minus_x_inf: plus_x_inf;
         events_at_x.push_back(below);
         int minus_left,minus_right,plus_left,plus_right;
-        
+
         typedef typename Status_line_1::Arc_pair Arc_pair;
-        
+
         Arc_pair apair1 = ev.number_of_branches_approaching_minus_infinity();
         Arc_pair apair2 = ev.number_of_branches_approaching_plus_infinity();
 
@@ -852,7 +852,7 @@ private:
             y_it++;
         }
         while(ev_id<ev_n) {
-            typename Status_line_1::Arc_pair arc_pair 
+            typename Status_line_1::Arc_pair arc_pair
                 = ev.number_of_incident_branches(ev_id);
             int left_arcs=arc_pair.first;
             int right_arcs=arc_pair.second;
@@ -886,18 +886,18 @@ private:
                     Y_structure_element new_y;
                     new_y.one_event_known=false;
                     new_y.x_index=x_extreme_index_counter;
-            
+
                     // Prevent compiler warnings:
                     new_y.y_index=-1;
                     new_y.y_type=FINITE;
                     new_y.x_type=FINITE;
-            
+
                     y_it=y_structure.insert(y_it,new_y);
                     y_it++;
                     y_it=y_structure.insert(y_it,new_y);
                     y_it++;
                     x_extreme_index_counter++;
-                }     
+                }
             }
             ev_id++;
         }
@@ -943,7 +943,7 @@ private:
             }
         }
     }
-    
+
     void handle_edge(Y_structure_element& e1,
                      Y_structure_element& e2) {
 /*
@@ -954,7 +954,7 @@ private:
             y_struct_info(*it,CGAL_ACK_DEBUG_PRINT);
         }
         CGAL_ACK_DEBUG_PRINT << "Y-STRUCT done" << std::endl;
-      
+
         CGAL_ACK_DEBUG_PRINT << "handle edge..." << std::flush;
         CGAL_ACK_DEBUG_PRINT << "info for e1: ";
         y_struct_info(e1,CGAL_ACK_DEBUG_PRINT);
@@ -985,8 +985,8 @@ private:
                 it++;
             }
         } else {
-            CGAL_assertion(e1.x_type!=e2.x_type || 
-                           e1.x_type==FINITE || 
+            CGAL_assertion(e1.x_type!=e2.x_type ||
+                           e1.x_type==FINITE ||
                            e2.x_type==FINITE);
             if(e2.x_type==MINUS_INFTY || e1.x_type==PLUS_INFTY) {
                 handle_edge(e2,e1);
@@ -999,7 +999,7 @@ private:
                 }
             }
             int left_stripe = (e1.x_type==MINUS_INFTY) ? -1 : e1.x_index;
-            int right_stripe = (e2.x_type==PLUS_INFTY) 
+            int right_stripe = (e2.x_type==PLUS_INFTY)
                 ? static_cast<int>(stripe_values.size()-1) : e2.x_index;
             for(int i=left_stripe+1;i<right_stripe;i++) {
                 pre_vert_lines[i].number_of_non_event_roots++;
@@ -1037,14 +1037,14 @@ private:
                     break;
                 }
                 }
-            }   
+            }
         }
 /*
 #if CGAL_ACK_DEBUG_FLAG
         CGAL_ACK_DEBUG_PRINT << "handle edge done" << std::endl;
 #endif
 */
-      
+
     }
 
     void sweep() {
@@ -1054,7 +1054,7 @@ private:
 #endif
 */
         start_sweep();
-      
+
 /*
 #if CGAL_ACK_DEBUG_FLAG
         for(typename Y_structure::iterator it=y_structure.begin();
@@ -1070,8 +1070,8 @@ private:
         for(int i=0;i<static_cast<int>(x_structure.size());i++) {
 /*
 #if CGAL_ACK_DEBUG_FLAG
-            CGAL_ACK_DEBUG_PRINT << "Coordinate.." 
-                                 << CGAL::to_double(x_structure[i]) 
+            CGAL_ACK_DEBUG_PRINT << "Coordinate.."
+                                 << CGAL::to_double(x_structure[i])
                                  << ", index " << i << std::endl;
             CGAL_ACK_DEBUG_PRINT <<  << "Y-struct before x" << std::endl;
             for(typename Y_structure::iterator it=y_structure.begin();
@@ -1079,7 +1079,7 @@ private:
                 it++) {
                 y_struct_info(*it,CGAL_ACK_DEBUG_PRINT);
             }
-            
+
             CGAL_ACK_DEBUG_PRINT << "End of y-struct" << std::endl;
 #endif
 */
@@ -1097,11 +1097,11 @@ private:
     Status_line_1 create_event_line(Curve_analysis_2& D,int i) {
         Algebraic_real_1 xval = sh_disc_roots[i];
         Bitstream_traits traits(Bitstream_coefficient_kernel(kernel(),xval));
-        int number_of_events 
+        int number_of_events
             = static_cast<int>(pre_vert_lines[i].event_points.size());
-        int number_of_roots 
-            = pre_vert_lines[i].number_of_non_event_roots+number_of_events; 
-        Polynomial_2 sh_pol_with_correct_degree 
+        int number_of_roots
+            = pre_vert_lines[i].number_of_non_event_roots+number_of_events;
+        Polynomial_2 sh_pol_with_correct_degree
             = CGAL::internal::poly_non_vanish_leading_term(kernel(),sh_pol,xval);
         Bitstream_descartes descartes(CGAL::internal::Backshear_descartes_tag(),
                                       sh_pol_with_correct_degree,
@@ -1151,7 +1151,7 @@ private:
     }
 
     Algebraic_kernel_with_analysis_2* _m_kernel;
-  
+
     Curve_analysis_2 C;
 
     Integer s;
@@ -1160,10 +1160,10 @@ private:
 
     Root_container sh_disc_roots,x_structure;
     std::vector<CGAL::internal::Three_valued> x_structure_info;
-    
+
     std::vector<std::vector<int> > sh_ev_indices;
 
-    std::vector<Bound> stripe_values;                   
+    std::vector<Bound> stripe_values;
 
     Bound far_left, far_right, y_in_box;
 
@@ -1180,7 +1180,7 @@ private:
     bool disc_roots_computed,sh_disc_roots_computed;
 
 };
- 
+
 } //namespace CGAL
 
 #endif

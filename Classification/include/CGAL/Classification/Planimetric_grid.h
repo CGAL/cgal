@@ -79,7 +79,7 @@ private:
   std::size_t m_width;
   std::size_t m_height;
   std::vector<bool> m_has_points;
-  
+
 public:
 
 #ifdef DOXYGEN_RUNNING
@@ -93,7 +93,7 @@ public:
   {
   public:
     friend class boost::iterator_core_access;
-    
+
     iterator(const Planimetric_grid* lowest_scale,
              std::size_t scale,
              std::size_t large_x,
@@ -114,7 +114,7 @@ public:
       m_xmax = (large_x + 1) * size;
       m_ymin = large_y * size;
       m_ymax = (large_y + 1) * size;
-      
+
       m_pos_x = xmin;
       m_pos_y = m_ymin;
 
@@ -152,14 +152,14 @@ public:
           if (m_pos_y == m_ymax)
           {
             m_pos_y = m_ymin;
-            
+
             ++ m_pos_x;
             if (m_pos_x == m_xmax) // end() reached
             {
               m_pos_y = m_ymax; // put y to max so that this == end()
               break;
             }
-              
+
           }
         }
         while (!(lowest_scale_has_points(m_pos_x, m_pos_y)));
@@ -281,7 +281,7 @@ public:
   {
     return m_resolution;
   }
-  
+
   /*!
     \brief Returns the number of cells along the X-axis.
   */
@@ -336,7 +336,7 @@ public:
   bool has_points(std::size_t x, std::size_t y) const
   {
     CGAL_assertion (x < m_width && y < m_height);
-    
+
     if (m_current_scale == 0)
       return (!(m_grid(x,y).empty()));
 
@@ -373,10 +373,10 @@ public:
     return m_lower_scale->y(index) / 2;
   }
 };
-  
+
 
 }
-  
+
 }
 
 

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -28,7 +28,7 @@
 namespace CGAL {
 
 template <class AC, class EC, class FC, class C2E, class C2F,
-	  class E2C, class F2C,	bool Protection = true>
+          class E2C, class F2C,        bool Protection = true>
 class Filtered_construction
 {
 private:
@@ -73,13 +73,13 @@ public:
     try
     {
       return From_Filtered( Filter_construction(To_Filtered(a1),
-						To_Filtered(a2)) );
+                                                To_Filtered(a2)) );
     }
     catch (Uncertain_conversion_exception&)
     {
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return From_Exact( Exact_construction(To_Exact(a1),
-					    To_Exact(a2)) );
+                                            To_Exact(a2)) );
     }
   }
 
@@ -91,15 +91,15 @@ public:
     try
     {
       return From_Filtered( Filter_construction(To_Filtered(a1),
-						To_Filtered(a2),
-						To_Filtered(a3)) );
+                                                To_Filtered(a2),
+                                                To_Filtered(a3)) );
     }
     catch (Uncertain_conversion_exception&)
     {
       Protect_FPU_rounding<!Protection> P(CGAL_FE_TONEAREST);
       return From_Exact( Exact_construction(To_Exact(a1),
-					    To_Exact(a2),
-					    To_Exact(a3)) );
+                                            To_Exact(a2),
+                                            To_Exact(a3)) );
     }
   }
 

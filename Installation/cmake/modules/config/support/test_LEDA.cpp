@@ -1,9 +1,9 @@
-// Copyright (c) 2004  
+// Copyright (c) 2004
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : various
 
@@ -57,7 +57,7 @@ using namespace leda;
 
 int main()
 {
-  I a(123456); 
+  I a(123456);
   I b(456789);
 
   if (a + b != I(580245))

@@ -23,7 +23,7 @@
 #define CGAL_TEST_CLS_ITERATOR_C
 
 template < class Triangulation >
-typename Triangulation::size_type  
+typename Triangulation::size_type
 _test_vertex_iterator( const Triangulation &T )
 {
     typedef typename Triangulation::size_type       size_type;
@@ -36,46 +36,46 @@ _test_vertex_iterator( const Triangulation &T )
     size_type n = 0;
 
     for (Vertex_iterator vit = T.vertices_begin(); vit != T.vertices_end(); ++vit)
-	{
-	  Vertex_handle vh = vit; // Test the conversion.
-	  n++;
-	  const Vertex & v = *vit; // Test operator*;
-	  Cell_handle c = vit->cell(); // Test operator->;
-	  (void) vh;
-	  (void) v;
-	  (void) c;
-	}
+        {
+          Vertex_handle vh = vit; // Test the conversion.
+          n++;
+          const Vertex & v = *vit; // Test operator*;
+          Cell_handle c = vit->cell(); // Test operator->;
+          (void) vh;
+          (void) v;
+          (void) c;
+        }
     assert( n-1 == T.number_of_vertices() );
     n=0;
     for (Finite_vertices_iterator fvit = T.finite_vertices_begin();
-		    fvit != T.finite_vertices_end(); ++fvit)
+                    fvit != T.finite_vertices_end(); ++fvit)
     {
-	  Vertex_handle vh = fvit; // Test the conversion.
-	  const Vertex & v = *fvit; // Test operator*;
-	  Cell_handle c = fvit->cell(); // Test operator->;
-	  n++;
-	  (void) vh;
-	  (void) v;
-	  (void) c;
+          Vertex_handle vh = fvit; // Test the conversion.
+          const Vertex & v = *fvit; // Test operator*;
+          Cell_handle c = fvit->cell(); // Test operator->;
+          n++;
+          (void) vh;
+          (void) v;
+          (void) c;
     }
     assert( n == T.number_of_vertices() );
 
     // Test Backward-ness of the iterators.
     n=0;
     for (Vertex_iterator vit = T.vertices_end(); vit != T.vertices_begin(); --vit)
-	{
-	  Vertex_handle vh = vit; // Test the conversion.
-	  (void) vh;
-	  n++;
-	}
+        {
+          Vertex_handle vh = vit; // Test the conversion.
+          (void) vh;
+          n++;
+        }
     assert( n-1 == T.number_of_vertices() );
     n=0;
     for (Finite_vertices_iterator fvit = T.finite_vertices_end();
-		    fvit != T.finite_vertices_begin(); --fvit)
+                    fvit != T.finite_vertices_begin(); --fvit)
     {
-	  Vertex_handle vh = fvit; // Test the conversion.
-	  (void) vh;
-	  n++;
+          Vertex_handle vh = fvit; // Test the conversion.
+          (void) vh;
+          n++;
     }
     assert( n == T.number_of_vertices() );
 

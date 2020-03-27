@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -31,11 +31,11 @@
 namespace CGAL {
 
 template < class HDS >
-class HDS_all_undirected_edges_const_iterator 
+class HDS_all_undirected_edges_const_iterator
   : public HDS_all_edges_iterator_base<HDS,typename HDS::Edge_const_iterator,typename HDS::Halfedge_const_handle>
 {
   typedef HDS_all_edges_iterator_base<HDS,typename HDS::Edge_const_iterator,typename HDS::Halfedge_const_handle> Base ;
-  
+
 public:
 
   typedef typename HDS::Edge_const_iterator Iterator;
@@ -45,11 +45,11 @@ public:
 };
 
 template < class HDS >
-class HDS_all_undirected_edges_iterator 
+class HDS_all_undirected_edges_iterator
   : public HDS_all_edges_iterator_base<HDS,typename HDS::Edge_iterator,typename HDS::Halfedge_handle>
 {
   typedef HDS_all_edges_iterator_base<HDS,typename HDS::Edge_iterator,typename HDS::Halfedge_handle> Base ;
-  
+
 public:
 
   typedef typename HDS::Edge_iterator Iterator;
@@ -63,11 +63,11 @@ template <class HDS_>
 struct HDS_halfedge_graph_traits
 {
 public :
-  
+
   typedef HDS_ HDS;
-  
+
   typedef HDS_all_undirected_edges_iterator<HDS> undirected_edge_iterator;
-  
+
   typedef typename HDS::Vertex::Point Point ;
 };
 

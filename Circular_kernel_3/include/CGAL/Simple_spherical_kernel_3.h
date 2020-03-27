@@ -16,11 +16,11 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
-// Partially supported by the IST Programme of the EU as a 
-// STREP (FET Open) Project under Contract No  IST-006413 
+// Partially supported by the IST Programme of the EU as a
+// STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SIMPLE_SPHERICAL_KERNEL_3_H
@@ -48,33 +48,33 @@
 
 namespace CGAL {
   namespace internal {
-    
+
     template < class SphericalKernel, class LinearKernelBase >
       struct Spherical_kernel_base_no_ref_count: public LinearKernelBase
-				 // takes classes in internal sub-namespace
+                                 // takes classes in internal sub-namespace
       {
         typedef internal::Circular_arc_point_3<SphericalKernel>                        Circular_arc_point_3;
         typedef internal::Line_arc_3<SphericalKernel>                                  Line_arc_3;
         typedef internal::Circular_arc_3<SphericalKernel>                              Circular_arc_3;
-       
+
         // The mechanism that allows to specify reference-counting or not.
         template < typename T >
         struct Handle { typedef T    type; };
 
         #define CGAL_Spherical_Kernel_pred(Y,Z) typedef SphericalFunctors::Y<SphericalKernel> Y; \
-	    Y Z() const { return Y(); }
+            Y Z() const { return Y(); }
         #define CGAL_Spherical_Kernel_cons(Y,Z) CGAL_Spherical_Kernel_pred(Y,Z)
         #define CGAL_Spherical_Kernel_overload_cons(Y,Z) CGAL_Spherical_Kernel_pred(Y,Z)
         #define CGAL_Spherical_Kernel_overload_pred(Y,Z) CGAL_Spherical_Kernel_pred(Y,Z)
-        
+
         #define CGAL_Spherical_Kernel_pred_on_sphere(Y,Z) typedef SphericalFunctors::Y<SphericalKernel> Y; \
-	    Y Z(const CGAL::Sphere_3<SphericalKernel>& S) const { return Y(S); }
-        
-        
-        
+            Y Z(const CGAL::Sphere_3<SphericalKernel>& S) const { return Y(S); }
+
+
+
         #include <CGAL/Circular_kernel_3/interface_macros.h>
       };
-    
+
   } // namespace internal
 
   template < class LinearKernel, class AlgebraicKernel >
@@ -110,7 +110,7 @@ namespace CGAL {
 
       // public classes
       typedef CGAL::Object Object_3;
-  
+
     };
 
 } // namespace CGAL

@@ -45,9 +45,9 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
     Edge_list& neg;
     Sphere_point dir;
 
-    Reflex_edge_visitor(Edge_list& p, Edge_list& n, Sphere_point dir_in) 
+    Reflex_edge_visitor(Edge_list& p, Edge_list& n, Sphere_point dir_in)
         : pos(p), neg(n), dir(dir_in) {}
-    
+
     void visit(Vertex_handle v) const {}
     void visit(Halfedge_handle e) const {}
     void visit(Halffacet_handle f) const {}
@@ -61,12 +61,12 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
 
       Halfedge_handle e = se->source();
       if(e->is_twin())
-	return;
+        return;
       SHalfedge_handle se2 = se->sprev()->twin();
 
       if(se2==se) {
-	pos.push_back(e);
-	neg.push_back(e);
+        pos.push_back(e);
+        neg.push_back(e);
       }
 
       Vector_3 vec1 = e->point() - CGAL::ORIGIN;
@@ -74,24 +74,24 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
       Sphere_point sp1 = CGAL::ORIGIN + cross_product(vec2,vec1);
 
       if(se2->circle().oriented_side(sp1) != ON_POSITIVE_SIDE)
-	return;
+        return;
 
       vec2 = se2->circle().orthogonal_vector();
       Sphere_point sp2 = CGAL::ORIGIN + cross_product(vec2,vec1);
       Sphere_segment s(sp1, sp2, Sphere_circle(sp2,sp1));
-      //      std::cerr << "e:" << e->source()->point() 
-      //		<< "->" << e->twin()->source()->point() << std::endl;
+      //      std::cerr << "e:" << e->source()->point()
+      //                << "->" << e->twin()->source()->point() << std::endl;
       //      std::cerr << "s:" << sp1 << "->" << sp2 << std::endl;
       CGAL_assertion(s.is_long());
 
       Sphere_point sp(dir);
       if(s.has_on(sp) && s.source() != sp && s.target() != sp)
-	pos.push_back(e);
-      
+        pos.push_back(e);
+
       sp = sp.antipode();
       if(s.has_on(sp) && s.source() != sp && s.target() != sp)
-	neg.push_back(e);
-	
+        neg.push_back(e);
+
     }
   };
 
@@ -100,22 +100,22 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
   Edge_list neg;
 
  public:
-  YVertical_wall_builder(Sphere_point dir_in = Sphere_point(0,1,0)) 
+  YVertical_wall_builder(Sphere_point dir_in = Sphere_point(0,1,0))
     : dir (dir_in) {}
-    
+
     /*
     void operator()(SNC_structure& snc) {
       Halfedge_iterator ei;
       CGAL_forall_halfedges(ei, snc) {
-	if(ei->point() != Sphere_point(1,0,0)) continue;
-	SHalfedge_around_svertex_circulator 
-	  svc(ei->out_sedge()), send(svc);
-	CGAL_For_all(svc, send) {
-	  if(!svc->incident_sface()->mark()) continue;
-	  if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
-	    continue;
-	  pos.push_back(svc);
-	}
+        if(ei->point() != Sphere_point(1,0,0)) continue;
+        SHalfedge_around_svertex_circulator
+          svc(ei->out_sedge()), send(svc);
+        CGAL_For_all(svc, send) {
+          if(!svc->incident_sface()->mark()) continue;
+          if(!CGAL::is_reflex_sedge_in_any_direction<SNC_structure>(svc))
+            continue;
+          pos.push_back(svc);
+        }
       }
     }
     */
@@ -128,7 +128,7 @@ class YVertical_wall_builder : public Modifier_base<typename Nef_::SNC_structure
     Volume_iterator ci;
     for(ci=snc.volumes_begin(); ci!=snc.volumes_end(); ++ci)
       if(ci->mark())
-	D.visit_shell_objects(SFace_handle(ci->shells_begin()),rev);
+        D.visit_shell_objects(SFace_handle(ci->shells_begin()),rev);
   }
 
   Vertical_redge_iterator pos_begin() { return pos.begin(); }

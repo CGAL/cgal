@@ -35,7 +35,7 @@ namespace CGAL {
  * 'Triangulation_ds_vertex<TDS>'
  */
 template< class TDS = void >
-class Triangulation_ds_vertex 
+class Triangulation_ds_vertex
 {
     typedef Triangulation_ds_vertex<TDS>    Self;
 

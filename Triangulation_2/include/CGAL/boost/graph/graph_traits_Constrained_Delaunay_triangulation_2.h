@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -37,14 +37,14 @@
 
 
 
-namespace boost { 
+namespace boost {
 
   template <class GT, class TDS, class ITAG>
   struct graph_traits< CGAL::Constrained_Delaunay_triangulation_2<GT,TDS,ITAG> > {
 
-    struct DT2_graph_traversal_category : 
+    struct DT2_graph_traversal_category :
       public virtual bidirectional_graph_tag,
-      public virtual adjacency_graph_tag,        
+      public virtual adjacency_graph_tag,
       public virtual edge_list_graph_tag,
       public virtual vertex_list_graph_tag { };
 
@@ -65,7 +65,7 @@ namespace boost {
     typedef Incident_vertices_iterator adjacency_iterator;
 
     typedef undirected_tag directed_category;
-    typedef disallow_parallel_edge_tag edge_parallel_category; 
+    typedef disallow_parallel_edge_tag edge_parallel_category;
     typedef DT2_graph_traversal_category traversal_category;
     typedef typename Constrained_Delaunay_triangulation::size_type size_type;
     typedef size_type vertices_size_type;
@@ -108,25 +108,25 @@ namespace CGAL {
   template <class Gt, class Tds, class ITAG>
   inline std::pair<
     typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::out_edge_iterator,
-    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::out_edge_iterator >  
+    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::out_edge_iterator >
   out_edges(
-    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::vertex_descriptor u,
     const CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>& g)
   {
     typename CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>::Edge_circulator ec(u,u->face());
     typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >
       ::out_edge_iterator Iter;
-    
+
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
   }
 
   template <class Gt, class Tds, class ITAG>
   inline std::pair<
     typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::in_edge_iterator,
-    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::in_edge_iterator >  
+    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::in_edge_iterator >
   in_edges(
-    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> >::vertex_descriptor u,
     const CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>& g)
   {
     typename CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>::Edge_circulator ec(u,u->face());
@@ -172,7 +172,7 @@ namespace boost {
   // g++ 'enumeral_type' in template unification not implemented workaround
   template <class Gt, class Tds, class ITAG, class Tag>
   struct property_map<CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>, Tag> {
-    typedef typename 
+    typedef typename
     CGAL::CT2_property_map<Tag>::template bind_<Gt,Tds,ITAG> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
@@ -181,7 +181,7 @@ namespace boost {
   // see struct property_map in Polyehdron for an explanation
   template <class Gt, class Tds, class ITAG, class Tag>
   struct property_map<const CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG>, Tag> {
-    typedef typename 
+    typedef typename
     CGAL::CT2_property_map<Tag>::template bind_<Gt,Tds,ITAG> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
@@ -193,7 +193,7 @@ namespace boost {
   template <typename Gt, typename Tds, typename ITAG>
   struct edge_property_type<CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> > {
     typedef void type;
-  };  
+  };
 
   template <typename Gt, typename Tds, typename ITAG>
   struct vertex_property_type<CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds,ITAG> > {

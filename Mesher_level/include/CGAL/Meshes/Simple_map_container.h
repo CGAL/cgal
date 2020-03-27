@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -29,7 +29,7 @@ namespace CGAL {
   namespace Meshes {
 
     template <typename Element, typename Info>
-    class Simple_map_container 
+    class Simple_map_container
     {
     public:
       typedef std::map<Element, Info> Map;
@@ -49,7 +49,7 @@ namespace CGAL {
       const value_type& get_next_element_impl()
       {
         CGAL_assertion(!map.empty());
-        
+
         return *(map.begin());
       }
 
@@ -75,10 +75,10 @@ namespace CGAL {
 
       size_type size() const
       {
-	return map.size();
+        return map.size();
       }
     }; // end Simple_map_container
-    
+
   } // end namespace Mesh_3
 } // end namespace CGAL
 

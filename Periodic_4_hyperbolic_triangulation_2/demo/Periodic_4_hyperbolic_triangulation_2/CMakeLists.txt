@@ -8,7 +8,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories( ${CMAKE_BINARY_DIR} )
 
 # Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON) 
+set(CMAKE_AUTOMOC ON)
 
 cmake_minimum_required(VERSION 3.1...3.13)
 

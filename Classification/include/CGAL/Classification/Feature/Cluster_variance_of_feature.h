@@ -45,7 +45,7 @@ namespace Feature {
 class Cluster_variance_of_feature : public CGAL::Classification::Feature_base
 {
   std::vector<float> m_values;
-    
+
 public:
 
   /*!
@@ -92,7 +92,7 @@ public:
     return m_values[cluster_index];
   }
   /// \endcond
-    
+
 };
 
 } // namespace Feature

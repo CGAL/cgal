@@ -33,32 +33,32 @@ template <class Tag_, class K1, class K2> struct KO_converter;
 namespace internal {
 template <class D /*=Dynamic_dimension_tag*/, class K1, class K2>
 struct Point_converter_help {
-	typedef typename Get_type<K1, Point_tag>::type	argument_type;
-	typedef typename Get_type<K2, Point_tag>::type	result_type;
-	template <class C>
-	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		typename Get_functor<K1, Construct_ttag<Point_cartesian_const_iterator_tag> >::type i(k1);
-		typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
-		return cp(conv(i(p,Begin_tag())),conv(i(p,End_tag())));
-	}
+        typedef typename Get_type<K1, Point_tag>::type        argument_type;
+        typedef typename Get_type<K2, Point_tag>::type        result_type;
+        template <class C>
+        result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
+                typename Get_functor<K1, Construct_ttag<Point_cartesian_const_iterator_tag> >::type i(k1);
+                typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
+                return cp(conv(i(p,Begin_tag())),conv(i(p,End_tag())));
+        }
 };
 #ifdef CGAL_CXX11
 // This doesn't seem so useful, the compiler should be able to handle
 // the iterators just as efficiently.
 template <int d, class K1, class K2>
 struct Point_converter_help<Dimension_tag<d>,K1,K2> {
-	typedef typename Get_type<K1, Point_tag>::type	argument_type;
-	typedef typename Get_type<K2, Point_tag>::type	result_type;
-	template <class C,int...I>
-	result_type help(Indices<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		typename Get_functor<K1, Compute_point_cartesian_coordinate_tag>::type cc(k1);
-		typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
-		return cp(conv(cc(p,I))...);
-	}
-	template <class C>
-	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
-		return help(typename N_increasing_indices<d>::type(),k1,k2,conv,p);
-	}
+        typedef typename Get_type<K1, Point_tag>::type        argument_type;
+        typedef typename Get_type<K2, Point_tag>::type        result_type;
+        template <class C,int...I>
+        result_type help(Indices<I...>, K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
+                typename Get_functor<K1, Compute_point_cartesian_coordinate_tag>::type cc(k1);
+                typename Get_functor<K2, Construct_ttag<Point_tag> >::type cp(k2);
+                return cp(conv(cc(p,I))...);
+        }
+        template <class C>
+        result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& p) const {
+                return help(typename N_increasing_indices<d>::type(),k1,k2,conv,p);
+        }
 };
 #endif
 }
@@ -67,37 +67,37 @@ template <class K1, class K2> struct KO_converter<Point_tag,K1,K2>
 {};
 
 template <class K1, class K2> struct KO_converter<Vector_tag,K1,K2>{
-	typedef typename Get_type<K1, Vector_tag>::type	K1_Vector;
-	
-	// Disabling is now done in KernelD_converter
-	// // can't use vector without at least a placeholder point because of this
-	// typedef typename K1:: Point K1_Point;
-	// typedef typename First_if_different<K1_Vector,K1_Point>::Type argument_type;
+        typedef typename Get_type<K1, Vector_tag>::type        K1_Vector;
 
-	typedef K1_Vector argument_type;
-	typedef typename Get_type<K2, Vector_tag>::type	result_type;
-	template <class C>
-	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& v) const {
-		typename Get_functor<K1, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type i(k1);
-		typename Get_functor<K2, Construct_ttag<Vector_tag> >::type cp(k2);
-		return cp(conv(i(v,Begin_tag())),conv(i(v,End_tag())));
-	}
+        // Disabling is now done in KernelD_converter
+        // // can't use vector without at least a placeholder point because of this
+        // typedef typename K1:: Point K1_Point;
+        // typedef typename First_if_different<K1_Vector,K1_Point>::Type argument_type;
+
+        typedef K1_Vector argument_type;
+        typedef typename Get_type<K2, Vector_tag>::type        result_type;
+        template <class C>
+        result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& v) const {
+                typename Get_functor<K1, Construct_ttag<Vector_cartesian_const_iterator_tag> >::type i(k1);
+                typename Get_functor<K2, Construct_ttag<Vector_tag> >::type cp(k2);
+                return cp(conv(i(v,Begin_tag())),conv(i(v,End_tag())));
+        }
 };
 
 template <class K1, class K2> struct KO_converter<Segment_tag,K1,K2>{
-	typedef typename Get_type<K1, Segment_tag>::type	argument_type;
-	typedef typename Get_type<K2, Segment_tag>::type	result_type;
-	template <class C>
-	result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
-		typename Get_functor<K1, Segment_extremity_tag>::type f(k1);
-		typename Get_functor<K2, Construct_ttag<Segment_tag> >::type cs(k2);
-		return cs(conv(f(s,0)),conv(f(s,1)));
-	}
+        typedef typename Get_type<K1, Segment_tag>::type        argument_type;
+        typedef typename Get_type<K2, Segment_tag>::type        result_type;
+        template <class C>
+        result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
+                typename Get_functor<K1, Segment_extremity_tag>::type f(k1);
+                typename Get_functor<K2, Construct_ttag<Segment_tag> >::type cs(k2);
+                return cs(conv(f(s,0)),conv(f(s,1)));
+        }
 };
 
 template <class K1, class K2> struct KO_converter<Hyperplane_tag,K1,K2>{
-  typedef typename Get_type<K1, Hyperplane_tag>::type	argument_type;
-  typedef typename Get_type<K2, Hyperplane_tag>::type	result_type;
+  typedef typename Get_type<K1, Hyperplane_tag>::type        argument_type;
+  typedef typename Get_type<K2, Hyperplane_tag>::type        result_type;
   template <class C>
     result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& h) const {
       typename Get_functor<K1, Orthogonal_vector_tag>::type ov(k1);
@@ -108,8 +108,8 @@ template <class K1, class K2> struct KO_converter<Hyperplane_tag,K1,K2>{
 };
 
 template <class K1, class K2> struct KO_converter<Sphere_tag,K1,K2>{
-  typedef typename Get_type<K1, Sphere_tag>::type	argument_type;
-  typedef typename Get_type<K2, Sphere_tag>::type	result_type;
+  typedef typename Get_type<K1, Sphere_tag>::type        argument_type;
+  typedef typename Get_type<K2, Sphere_tag>::type        result_type;
   template <class C>
     result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
       typename Get_functor<K1, Center_of_sphere_tag>::type cos(k1);
@@ -120,8 +120,8 @@ template <class K1, class K2> struct KO_converter<Sphere_tag,K1,K2>{
 };
 
 template <class K1, class K2> struct KO_converter<Weighted_point_tag,K1,K2>{
-  typedef typename Get_type<K1, Weighted_point_tag>::type	argument_type;
-  typedef typename Get_type<K2, Weighted_point_tag>::type	result_type;
+  typedef typename Get_type<K1, Weighted_point_tag>::type        argument_type;
+  typedef typename Get_type<K2, Weighted_point_tag>::type        result_type;
   template <class C>
     result_type operator()(K1 const& k1, K2 const& k2, C const& conv, argument_type const& s) const {
       typename Get_functor<K1, Point_drop_weight_tag>::type pdw(k1);

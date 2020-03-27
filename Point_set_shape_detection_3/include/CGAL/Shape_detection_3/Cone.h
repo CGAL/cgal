@@ -62,28 +62,28 @@ namespace CGAL {
 
 
     Cone() : Shape_base<Traits>(), m_wrap(false) {}
-      
+
     /*!
       The opening angle between the axis and the surface of the cone.
      */
     FT angle() const {
         return m_angle;
     }
-    
+
     /*!
       The apex of the cone.
      */
     Point_3 apex() const {
         return m_apex;
     }
-    
+
     /*!
       The axis points from the apex into the cone.
      */
     Vector_3 axis() const {
         return m_axis;
     }
-    
+
     /*!
       Helper function to write apex, axis and angle of the cone and
       number of assigned points into a string.
@@ -91,18 +91,18 @@ namespace CGAL {
     /// \cond SKIP_IN_MANUAL
     std::string info() const {
         std::stringstream sstr;
-        
+
         sstr << "Type: cone apex: (" << this->get_x(m_apex) << ", " << this->get_y(m_apex);
         sstr << ", " << this->get_z(m_apex) << ") axis: (" << this->get_x(m_axis) << ", ";
         sstr << this->get_y(m_axis) << ", " << this->get_z(m_axis) << ") angle:" << m_angle;
         sstr << " #Pts: " << this->m_indices.size();
-        
+
         return sstr.str();
     }
 
     /*!
     Computes squared Euclidean distance from query point to the shape.
-    */ 
+    */
     FT squared_distance(const Point_3 &p) const {
       Vector_3 toApex = this->constr_vec(m_apex, p);
       FT a = this->sqlen(toApex);
@@ -196,7 +196,7 @@ namespace CGAL {
       Point_3 c3 = this->transl(m_apex, v3);
 
       m_axis = this->cross_pdct(this->constr_vec(c2, c1), this->constr_vec(c3, c1));
-      m_axis = (this->scalar_pdct(orthLineInPlane, m_axis) < 0) ? 
+      m_axis = (this->scalar_pdct(orthLineInPlane, m_axis) < 0) ?
         this->scale(m_axis, FT(-1)) : m_axis;
       length = CGAL::sqrt(this->sqlen(m_axis));
       if (length == 0)
@@ -230,18 +230,18 @@ namespace CGAL {
           FT d = m_neg_sin_ang * b;
 
           // far on other side?
-          dists[i] = 
+          dists[i] =
             (b < 0 && c - d < 0) ? a : CGAL::abs(c + d) * CGAL::abs(c + d);
         }
       }
 
-    virtual void cos_to_normal(const std::vector<std::size_t> &indices, 
+    virtual void cos_to_normal(const std::vector<std::size_t> &indices,
                                std::vector<FT> &angles) const {
       for (std::size_t i = 0;i<indices.size();i++) {
           // construct vector orthogonal to axis in direction of the point
         Vector_3 a = this->constr_vec(m_apex, this->point(indices[i]));
 
-          Vector_3 b = this->cross_pdct(m_axis, 
+          Vector_3 b = this->cross_pdct(m_axis,
                                          this->cross_pdct(m_axis, a));
           b = (this->scalar_pdct(a, b) < 0) ? this->scale(b, FT(-1)) : b;
           FT length = CGAL::sqrt(this->sqlen(b));
@@ -253,7 +253,7 @@ namespace CGAL {
 
           b = this->scale(b, (FT)1.0 / length);
           b = this->sum_vectors(
-            this->scale(b, m_cos_ang), 
+            this->scale(b, m_cos_ang),
             this->scale(m_axis, m_neg_sin_ang));
 
           angles[i] = CGAL::abs(this->scalar_pdct(this->normal(indices[i]), b));
@@ -272,12 +272,12 @@ namespace CGAL {
 
       b = this->scale(b, (FT)1.0 / length);
       b = this->sum_vectors(
-        this->scale(b, m_cos_ang), 
+        this->scale(b, m_cos_ang),
         this->scale(m_axis, m_neg_sin_ang));
 
       return CGAL::abs(this->scalar_pdct(n, b));
     }
-      
+
     virtual std::size_t minimum_sample_size() const {
           return 3;
       }

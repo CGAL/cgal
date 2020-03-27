@@ -1,9 +1,9 @@
-// Copyright (c) 2005, 2006  
+// Copyright (c) 2005, 2006
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -115,9 +115,9 @@ struct Type_mapper_impl < typename K1::FT, K1, K2 >
 // TODO : add more specializations ?  Use a different mechanism ?
 
 template < typename T, typename K1, typename K2 >
-struct Type_mapper : 
-    internal::Type_mapper_impl< typename boost::remove_cv< 
-                                  typename boost::remove_reference < T >::type 
+struct Type_mapper :
+    internal::Type_mapper_impl< typename boost::remove_cv<
+                                  typename boost::remove_reference < T >::type
                                   >::type, K1, K2 >
 { };
 

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -88,7 +88,7 @@ public:
 
   typedef typename
   Internal::SDG_Which_site<Kernel_base,Intersections_tag>::Construct_site_2
-  Construct_site_2;  
+  Construct_site_2;
 };
 
 

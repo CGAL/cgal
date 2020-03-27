@@ -41,10 +41,10 @@ namespace
       std::exit(255);
     }
     return 1 ;
-  }  
+  }
 
-  void CGAL_handle_signal( int n ) 
-  { 
+  void CGAL_handle_signal( int n )
+  {
     switch(n)
     {
       case SIGSEGV: std::fprintf(stderr,"In CGAL_handle_signal, Program received signal SIGSEGV: Segmentation Fault."); break ;
@@ -53,16 +53,16 @@ namespace
       default:
         std::fprintf(stderr,"In CGAL_handle_signal, Program received signal %d", n); break ;
     }
-    
-    std::exit(128+n); 
+
+    std::exit(128+n);
   }
-  
+
   struct CGAL_DebugHook
   {
     CGAL_DebugHook()
     {
       _CrtSetReportHook(CGAL_report_hook);
-      
+
       // This is OK for unattended runs but will prevent the IDE for trapping the signal
       std::signal(SIGSEGV,CGAL_handle_signal);
       std::signal(SIGFPE ,CGAL_handle_signal);

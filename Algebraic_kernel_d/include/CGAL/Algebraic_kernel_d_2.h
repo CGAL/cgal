@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Kerber    <mkerber@mpi-inf.mpg.de>
 //
@@ -37,7 +37,7 @@ template<typename Coefficient> class Algebraic_kernel_d_2
   : public CGAL::Algebraic_curve_kernel_2
                < CGAL::Algebraic_kernel_d_1 <Coefficient> >
 {};
- 
+
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>

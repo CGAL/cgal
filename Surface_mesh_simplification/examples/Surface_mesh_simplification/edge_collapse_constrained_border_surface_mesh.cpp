@@ -19,7 +19,7 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;
 
-typedef CGAL::Surface_mesh<Point_3> Surface_mesh; 
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Surface_mesh>::edge_descriptor edge_descriptor;
 
@@ -88,7 +88,7 @@ int main( int argc, char** argv )
   SMS::Count_stop_predicate<Surface_mesh> stop(0);
 
   Border_is_constrained_edge_map bem(surface_mesh);
-  
+
   // This the actual call to the simplification algorithm.
   // The surface mesh and stop conditions are mandatory arguments.
   int r = SMS::edge_collapse

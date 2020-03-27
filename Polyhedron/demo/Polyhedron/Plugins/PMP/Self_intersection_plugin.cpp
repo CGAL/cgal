@@ -20,7 +20,7 @@ typedef Scene_surface_mesh_item Scene_face_graph_item;
 typedef Scene_face_graph_item::Face_graph Face_graph;
 typedef Kernel::Triangle_3 Triangle;
 using namespace CGAL::Three;
-class Polyhedron_demo_self_intersection_plugin : 
+class Polyhedron_demo_self_intersection_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
@@ -47,7 +47,7 @@ public:
 
   }
 
-  bool applicable(QAction*) const { 
+  bool applicable(QAction*) const {
     return
         qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()));
   }

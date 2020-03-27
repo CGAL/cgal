@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -50,13 +50,13 @@ public:
   PeriodicTriangulationVoronoiGraphicsItem(DT  * dt_);
 
 
-  QRectF 
+  QRectF
   boundingRect() const;
-  
-  void 
+
+  void
   paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
-  void 
+
+  void
   modelChanged();
 
   const QPen& edgesPen() const
@@ -84,7 +84,7 @@ PeriodicTriangulationVoronoiGraphicsItem<DT>::PeriodicTriangulationVoronoiGraphi
 }
 
 template <typename DT>
-QRectF 
+QRectF
 PeriodicTriangulationVoronoiGraphicsItem<DT>::boundingRect() const
 {
   QRectF rect = CGAL::Qt::viewportsBbox(scene());
@@ -93,19 +93,19 @@ PeriodicTriangulationVoronoiGraphicsItem<DT>::boundingRect() const
 
 
 template <typename DT>
-void 
+void
 PeriodicTriangulationVoronoiGraphicsItem<DT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
 {
   QRectF rect = option->exposedRect;
   PainterOstream<typename DT::Geom_traits> pos(painter, rect);
-  
+
   painter->setPen(edgesPen());
   dt->draw_dual(pos);
 }
 
 
 template <typename T>
-void 
+void
 PeriodicTriangulationVoronoiGraphicsItem<T>::modelChanged()
 {
   update();

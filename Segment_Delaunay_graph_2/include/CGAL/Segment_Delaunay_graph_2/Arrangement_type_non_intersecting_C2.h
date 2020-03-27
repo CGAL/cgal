@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -144,15 +144,15 @@ public:
 
     if ( p.is_point() ) {
       if ( q.is_point() ) {
-	return arrangement_type_pp(p, q);
+        return arrangement_type_pp(p, q);
       } else {
-	return arrangement_type_ps(p, q);
+        return arrangement_type_ps(p, q);
       }
     } else {
       if ( q.is_point() ) {
-	return opposite( arrangement_type_ps(q, p) );
+        return opposite( arrangement_type_ps(q, p) );
       } else {
-	return arrangement_type_ss(p, q);
+        return arrangement_type_ss(p, q);
       }
     }
   }

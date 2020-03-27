@@ -458,12 +458,12 @@ private:
     }
   }
 
-  
+
   void
   solve_phi()
   {
     Vector phi;
-  
+
     if(! la_cotan.linear_solver(m_index_divergence, phi)) {
       // solving failed
       CGAL_error_msg("Eigen Solving in solve_phi() failed");

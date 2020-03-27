@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -31,13 +31,13 @@
 
 namespace CGAL {
 
-// returns true, if the point elements in [|first|,|last|) form a 
-// counterclockwise oriented strongly convex polygon. Strongly means, 
-// there are no three collinear points. 
+// returns true, if the point elements in [|first|,|last|) form a
+// counterclockwise oriented strongly convex polygon. Strongly means,
+// there are no three collinear points.
 // {\sc traits}: uses |Traits::Left_turn_2|, |Traits::Equal_2| and |Traits::Less_xy_2|.
 template <class ForwardIterator, class Traits>
 bool
-is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
+is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                           const Traits& ch_traits);
 
 template <class ForwardIterator>
@@ -49,19 +49,19 @@ is_ccw_strongly_convex_2( ForwardIterator first, ForwardIterator last )
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return is_ccw_strongly_convex_2( first, last, Kernel()); 
+    return is_ccw_strongly_convex_2( first, last, Kernel());
 }
 
 
 
 
-// returns true, if the point elements in [|first|,|last|) form a 
+// returns true, if the point elements in [|first|,|last|) form a
 // clockwise oriented strongly convex polygon. Strongly means, there are
 // no three collinear points.
 // {\sc traits}: uses |Traits::Left_turn_2|, |Traits::Equal_2| and |Traits::Less_xy_2|.
 template <class ForwardIterator, class Traits>
 bool
-is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last, 
+is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last,
                          const Traits& ch_traits);
 
 template <class ForwardIterator>
@@ -73,12 +73,12 @@ is_cw_strongly_convex_2( ForwardIterator first, ForwardIterator last )
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return is_cw_strongly_convex_2( first, last, Kernel()); 
+    return is_cw_strongly_convex_2( first, last, Kernel());
 }
 
 
-// returns true, if all points in [|first1|,|last1|) are 
-// not right of the lines defined by consecutive points in the range 
+// returns true, if all points in [|first1|,|last1|) are
+// not right of the lines defined by consecutive points in the range
 // [|first2|,|last2|), where the range is considered as a cycle.
 // {\sc traits}: uses |Traits::Left_turn_2|.
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
@@ -101,15 +101,15 @@ ch_brute_force_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
 }
 
 
-// returns true, if all points in [|first1|,|last1|) are 
-// not right of the lines defined by consecutive points in the range 
-// [|first2|,|last2|). 
+// returns true, if all points in [|first1|,|last1|) are
+// not right of the lines defined by consecutive points in the range
+// [|first2|,|last2|).
 // {\sc traits}: uses |Traits::Left_turn_2|.
 template <class ForwardIterator1, class ForwardIterator2, class Traits>
 bool
-ch_brute_force_chain_check_2(ForwardIterator1 first1, 
+ch_brute_force_chain_check_2(ForwardIterator1 first1,
                              ForwardIterator1 last1,
-                             ForwardIterator2 first2, 
+                             ForwardIterator2 first2,
                              ForwardIterator2 last2,
                              const Traits& ch_traits);
 
@@ -123,7 +123,7 @@ ch_brute_force_chain_check_2(ForwardIterator1 first1, ForwardIterator1 last1,
     typedef typename ITraits::value_type           value_type;
     typedef CGAL::Kernel_traits<value_type>        KTraits;
     typedef typename KTraits::Kernel               Kernel;
-    return ch_brute_force_chain_check_2( first1, last1, first2, last2, 
+    return ch_brute_force_chain_check_2( first1, last1, first2, last2,
                                          Kernel());
 }
 

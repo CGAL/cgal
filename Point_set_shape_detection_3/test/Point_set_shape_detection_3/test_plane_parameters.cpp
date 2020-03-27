@@ -103,7 +103,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_plane_parameters<CGAL::Simple_cartesian<float>> ";
-  if (!test_plane_parameters<CGAL::Simple_cartesian<float> >()) 
+  if (!test_plane_parameters<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_plane_parameters<CGAL::Simple_cartesian<double>> ";
@@ -111,7 +111,7 @@ int main() {
     success = false;
 
   std::cout << "test_plane_parameters<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_plane_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_plane_parameters<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

@@ -271,7 +271,7 @@ namespace CGAL {
 
     size_type size() const
     {
-	    return container.size();
+            return container.size();
     }
 
     // Clear

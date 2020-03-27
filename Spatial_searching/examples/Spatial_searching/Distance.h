@@ -11,7 +11,7 @@ struct Distance {
   }
 
   double min_distance_to_rectangle(const Point& p,
-				   const CGAL::Kd_tree_rectangle<FT,D>& b) const {
+                                   const CGAL::Kd_tree_rectangle<FT,D>& b) const {
     double distance(0.0), h = p.x();
     if (h < b.min_coord(0)) distance += (b.min_coord(0)-h)*(b.min_coord(0)-h);
     if (h > b.max_coord(0)) distance += (h-b.max_coord(0))*(h-b.max_coord(0));
@@ -25,7 +25,7 @@ struct Distance {
   }
 
   double min_distance_to_rectangle(const Point& p,
-				   const CGAL::Kd_tree_rectangle<FT,D>& b,std::vector<double>& dists){   
+                                   const CGAL::Kd_tree_rectangle<FT,D>& b,std::vector<double>& dists){
     double distance(0.0), h = p.x();
     if (h < b.min_coord(0)){
       dists[0] = (b.min_coord(0)-h);
@@ -58,7 +58,7 @@ struct Distance {
 
 
   double max_distance_to_rectangle(const Point& p,
-				   const CGAL::Kd_tree_rectangle<FT,D>& b) const {
+                                   const CGAL::Kd_tree_rectangle<FT,D>& b) const {
     double h = p.x();
 
     double d0 = (h >= (b.min_coord(0)+b.max_coord(0))/2.0) ?
@@ -74,12 +74,12 @@ struct Distance {
   }
 
   double max_distance_to_rectangle(const Point& p,
-				   const CGAL::Kd_tree_rectangle<FT,D>& b,std::vector<double>& dists){   
+                                   const CGAL::Kd_tree_rectangle<FT,D>& b,std::vector<double>& dists){
     double h = p.x();
 
     dists[0] = (h >= (b.min_coord(0)+b.max_coord(0))/2.0) ?
                 (h-b.min_coord(0)) : (b.max_coord(0)-h);
-    
+
     h=p.y();
     dists[1] = (h >= (b.min_coord(1)+b.max_coord(1))/2.0) ?
                 (h-b.min_coord(1)) : (b.max_coord(1)-h);
@@ -90,7 +90,7 @@ struct Distance {
   }
 
   double new_distance(double& dist, double old_off, double new_off,
-		      int /* cutting_dimension */)  const {
+                      int /* cutting_dimension */)  const {
     return dist + new_off*new_off - old_off*old_off;
   }
 

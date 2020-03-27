@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -54,16 +54,16 @@ public:
   Convex_hull_face_base_2()
     : Fb(), _info(0) {}
 
-  Convex_hull_face_base_2(Vertex_handle v0, 
-				      Vertex_handle v1,
+  Convex_hull_face_base_2(Vertex_handle v0,
+                                      Vertex_handle v1,
                                       Vertex_handle v2)
     : Fb(v0, v1, v2), _info(0) {}
 
-  Convex_hull_face_base_2(Vertex_handle v0, 
-				      Vertex_handle v1,
-                                      Vertex_handle v2, 
-                                      Face_handle   n0, 
-				      Face_handle   n1,
+  Convex_hull_face_base_2(Vertex_handle v0,
+                                      Vertex_handle v1,
+                                      Vertex_handle v2,
+                                      Face_handle   n0,
+                                      Face_handle   n1,
                                       Face_handle   n2 )
     : Fb(v0, v1, v2, n0, n1, n2), _info(0) {}
 

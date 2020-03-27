@@ -36,9 +36,9 @@ namespace internal {
   // type of any class
   BOOST_MPL_HAS_XXX_TRAIT_DEF(Has_features)
 
-  template <typename Mesh_domain, 
+  template <typename Mesh_domain,
             bool has_Has_features = has_Has_features<Mesh_domain>::value>
-  struct Has_features : 
+  struct Has_features :
     public CGAL::Boolean_tag<Mesh_domain::Has_features::value>
     // when Mesh_domain has the nested type Has_features
   {};

@@ -186,7 +186,7 @@ FT sphere_centered_at_111 (const Point& p)
   const FT dx=p.x()-1;
   const FT dy=p.y()-1;
   const FT dz=p.z()-1;
-  
+
   return dx*dx+dy*dy+dz*dz-1;
 }
 
@@ -237,11 +237,11 @@ int main()
   Facet_criteria facet_criteria(30, 0.08, 0.025); // angle, size, approximation
   Cell_criteria cell_criteria(2, 0.1); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
-  
+
   // Mesh generation (without optimization)
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
                                       no_perturb(), no_exude());
-  
+
   // Output
   dump_c3t3(c3t3, "out");
 

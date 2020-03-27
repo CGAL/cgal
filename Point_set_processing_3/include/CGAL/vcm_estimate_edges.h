@@ -34,7 +34,7 @@ namespace CGAL {
 /// determines if a point is on a sharp feature edge from a point set
 /// for which the Voronoi covariance Measures have been computed.
 ///
-/// The sharpness of the edge, specified by parameter `threshold`, 
+/// The sharpness of the edge, specified by parameter `threshold`,
 /// is used to filtered points according to the external angle around a sharp feature.
 ///
 /// A point is considered to be on a sharp feature if the external angle `alpha` at the edge is such that
@@ -80,7 +80,7 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
                         double threshold)
 {
   return vcm_is_on_feature_edge(cov, threshold,
-				CGAL::Default_diagonalize_traits<double, 3>());
+                                CGAL::Default_diagonalize_traits<double, 3>());
 
 }
 

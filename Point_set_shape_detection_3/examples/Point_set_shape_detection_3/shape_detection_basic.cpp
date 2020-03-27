@@ -34,12 +34,12 @@ int run(const char* filename)
   // Points with normals.
   Pwn_vector points;
 
-  // Loads point set from a file. 
+  // Loads point set from a file.
   // read_xyz_points_and_normals takes an OutputIterator for storing the points
   // and a property map to store the normal vector with each point.
   std::ifstream stream(filename);
 
-  if (!stream || 
+  if (!stream ||
     !CGAL::read_xyz_points(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).

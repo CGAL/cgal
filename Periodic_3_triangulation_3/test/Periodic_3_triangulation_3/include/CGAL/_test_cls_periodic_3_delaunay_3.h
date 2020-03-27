@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Manuel Caroli
 //                 Francois Rebufat
@@ -67,7 +67,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   CGAL_USE_TYPE(typename P3T3::difference_type);
 
   typedef typename P3T3::Vertex_handle        Vertex_handle;
-  typedef typename P3T3::Cell_handle          Cell_handle; 
+  typedef typename P3T3::Cell_handle          Cell_handle;
 
   typedef typename P3T3::Vertex_iterator      Vertex_iterator;
   typedef typename P3T3::Edge_iterator        Edge_iterator;
@@ -113,19 +113,19 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   // Creation
   std::cout << "Creation:" << std::endl;
   std::cout << "  Standard constructor" << std::endl;
-  
+
   P3T3 PT_def;
   assert(PT_def.number_of_vertices() == 0);
   assert(PT_def.is_valid());
-  
+
   P3T3 PT_dom(Iso_cuboid(-1,-2,0, 3,2,4));
   assert(PT_dom.number_of_vertices() == 0);
   assert(PT_dom.is_valid());
-  
+
   P3T3 PT_gt(Iso_cuboid(0,0,0, 1,1,1), GT());
   assert(PT_gt.number_of_vertices() == 0);
   assert(PT_gt.is_valid());
-    
+
   std::cout << "  Copy constructor" << std::endl;
 
   P3T3 PT_cp(PT);
@@ -137,7 +137,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   P3T3 PT_range(pts_rnd10.begin(), pts_rnd10.end(), Iso_cuboid(-1,-1,-1, 1,1,1));
   assert(PT_range.number_of_vertices() == 10);
   assert(PT_range.is_valid());
-  
+
 
   std::cout << "Operations:" << std::endl;
   std::cout << "  Point insertion" << std::endl;
@@ -155,7 +155,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   for (int i=0 ; i<6 ; i+=2)
     for (int j=0 ; j<6 ; j+=2)
       for (int k=0 ; k<6 ; k+=2)
-	PT3_deg.insert(Point(i,j,k));
+        PT3_deg.insert(Point(i,j,k));
   assert(PT3_deg.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT3_deg.number_of_vertices() == 27);
   assert(PT3_deg.is_valid());
@@ -181,7 +181,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   for (int i=1 ; i<6 ; i+=2)
     for (int j=1 ; j<6 ; j+=2)
       for (int k=1 ; k<6 ; k+=2)
-	PT1_deg.insert(Point(i,j,k));
+        PT1_deg.insert(Point(i,j,k));
 
   assert(PT1_deg.number_of_sheets() == CGAL::make_array(1,1,1));
   assert(PT1_deg.number_of_vertices() == 54);
@@ -213,7 +213,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT_loc.is_valid());
 
   std::cout << "  Iterator range insertion" << std::endl;
-  
+
   // "1.1" because random points are in the cube (-1,-1,-1, 1,1,1)
   P3T3 PT_range_ins(Iso_cuboid(-1,-1,-1, 1.1,1.1,1.1));
   pts_rnd1000.push_back(Point(-1,-1,-1));
@@ -284,7 +284,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   assert(PT_rem3.number_of_vertices() == 9);
   assert(PT_rem3.number_of_sheets() == CGAL::make_array(3,3,3));
   assert(PT_rem3.is_valid());
-  
+
   // degenerate
   PT1_deg.remove(PT1_deg.vertices_begin());
   assert(PT1_deg.number_of_vertices() == 52);
@@ -322,10 +322,10 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),
       PT.get_offset(vh->cell(),vh->cell()->index(vh)));
   assert(PT.construct_segment(vh->point(),Point(0,0,0),
-	  PT.get_offset(vh),Offset(0,0,0)).squared_length() < FT(0.25));
+          PT.get_offset(vh),Offset(0,0,0)).squared_length() < FT(0.25));
   vh = PT.nearest_vertex_in_cell(vh->cell(),Point(0,0,0),Offset(2,0,0));
   assert(PT.construct_segment(vh->point(),Point(0,0,0),
-	  PT.get_offset(vh),Offset(2,0,0)).squared_length() > FT(0.25));
+          PT.get_offset(vh),Offset(2,0,0)).squared_length() > FT(0.25));
 
   std::cout << "  Conflict region"<< std::endl;
   std::vector<Facet> bd_facets;
@@ -378,7 +378,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
     // the result is the same.
     assert ( PT.is_Gabriel(*fit) == PT.is_Gabriel(nb,idx) );
   }
- 
+
   std::cout << "Voronoi diagram" << std::endl;
 
   Vertex_iterator vit = PT.vertices_begin();
@@ -405,7 +405,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
     vh = PT.insert(Point(0,0,0));
     FT vol = PT.dual_volume(vh);
     Point centr = PT.dual_centroid(vh);
-    
+
     // Volume: 0.739304
     // Centroid: (-0.146008, -0.0334585, -0.150329)
     assert((FT(0.7393) < vol) && (vol < FT(0.7394)));
@@ -426,9 +426,9 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   }
 
   std::cout << "Additional testing of degenerate cases" << std::endl;
-  
+
   std::vector<Point> pts;
-  
+
   std::cout << "Test 1" << std::endl;
   pts.clear();
   pts.push_back(Point(0, 0, 0));
@@ -436,14 +436,14 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   pts.push_back(Point(5, 5, 5));
   pts.push_back(Point(0, 5, 5));
   P3T3(pts.begin(), pts.end(), Iso_cuboid(0,0,0,10,10,10));
-  
+
   std::cout << "Test 2" << std::endl;
   pts.clear();
   pts.push_back(Point(5, 5, 5));
   pts.push_back(Point(0, 0, 0));
   pts.push_back(Point(0, 0, 5));
   P3T3(pts.begin(), pts.end(), Iso_cuboid(0,0,0,10,10,10));
-  
+
   std::cout << "Test 3" << std::endl;
   pts.clear();
   pts.push_back(Point(0, 0, 9));
@@ -451,20 +451,20 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   pts.push_back(Point(0, 0, 5));
   pts.push_back(Point(0, 0, 3));
   P3T3(pts.begin(), pts.end(), Iso_cuboid(0,0,0,10,10,10));
-  
+
   std::cout << "Test 4" << std::endl;
   pts.clear();
   pts.push_back(Point(5, 5, 5));
   pts.push_back(Point(5, 5, 0));
   pts.push_back(Point(0, 0, 5));
   P3T3(pts.begin(), pts.end(), Iso_cuboid(0,0,0,10,10,10));
-  
+
   std::cout << "Test 5" << std::endl;
   pts.clear();
   pts.push_back(Point(1, 1, 1));
   pts.push_back(Point(1, 1, 1));
   P3T3(pts.begin(), pts.end(), Iso_cuboid(0,0,0,10,10,10));
-  
+
   std::cout << "Test 6" << std::endl;
   pts.clear();
   pts.push_back(Point(2,2,2));
@@ -473,7 +473,7 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   pts.push_back(Point(5,2,2));
   pts.push_back(Point(5,5,5));
   P3T3(pts.begin(), pts.end(), Iso_cuboid(0,0,0,10,10,10));
-  
+
   std::cout << "Test 7" << std::endl;
   pts.clear();
   pts.push_back(Point(2,2,2));
@@ -481,4 +481,4 @@ _test_cls_periodic_3_delaunay_3(const Periodic_3Triangulation_3 &,
   pts.push_back(Point(2,5,2));
   pts.push_back(Point(2,5,2));
   P3T3(pts.begin(), pts.end(), Iso_cuboid(0,0,0,10,10,10));
-} 
+}

@@ -35,7 +35,7 @@ template<class VertexIdxMap
         >
   Edge_profile<TM,VertexPointMap>::Edge_profile ( halfedge_descriptor  const& aV0V1
                                 , TM&                    aSurface
-                                , VertexIdxMap     const& 
+                                , VertexIdxMap     const&
                                 , VertexPointMap const& aVertex_point_map
                                 , EdgeIdxMap       const&
                                 , bool has_border
@@ -45,33 +45,33 @@ template<class VertexIdxMap
    mV0V1(aV0V1)
   ,mSurface(boost::addressof(aSurface))
     , mvpm(aVertex_point_map)
-  
+
 {
   CGAL_PROFILER("Edge_profile constructor calls");
 
   mLink.reserve(12);
   mTriangles.reserve(16);
   mV1V0 = opposite(v0_v1(),surface_mesh());
-  
+
   mV0 = source(v0_v1(),surface_mesh());
   mV1 = target(v0_v1(),surface_mesh());
-  
+
   CGAL_assertion( mV0 != mV1 );
-  
+
   mP0 = get(vertex_point_map(),mV0);
   mP1 = get(vertex_point_map(),mV1);
-  
+
   mIsBorderV0V1 = is_border(v0_v1());
   mIsBorderV1V0 = is_border(v1_v0());
-  
-  if ( left_face_exists() ) 
+
+  if ( left_face_exists() )
   {
     CGAL_SURF_SIMPL_TEST_assertion( ! is_border(mV0V1) ) ;
 
     mVLV0 = prev(v0_v1(),surface_mesh());
     mV1VL = next(v0_v1(),surface_mesh());
     mVL   = target(v1_vL(),surface_mesh());
-    
+
     CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVL );
     CGAL_SURF_SIMPL_TEST_assertion( mVL == source(vL_v0(),surface_mesh()) );
   }
@@ -79,7 +79,7 @@ template<class VertexIdxMap
   {
     CGAL_SURF_SIMPL_TEST_assertion( is_border(mV0V1) ) ;
   }
-  
+
   if ( right_face_exists() )
   {
     CGAL_SURF_SIMPL_TEST_assertion( ! is_border(mV1V0) ) ;
@@ -87,7 +87,7 @@ template<class VertexIdxMap
     mV0VR = next(v1_v0(),surface_mesh());
     mVRV1 = prev(v1_v0(),surface_mesh());
     mVR   = target(v0_vR(),surface_mesh());
-    
+
     CGAL_SURF_SIMPL_TEST_assertion( mV0 != mVR );
     CGAL_SURF_SIMPL_TEST_assertion( mVR == source(vR_v1(),surface_mesh()) );
   }
@@ -95,7 +95,7 @@ template<class VertexIdxMap
   {
     CGAL_SURF_SIMPL_TEST_assertion( is_border(mV1V0) ) ;
   }
-  
+
   if(has_border){
     Extract_borders();
   }
@@ -125,7 +125,7 @@ template<class VertexIdxMap
     while(e != mV0V1){
     if((b = is_border(e)) || is_border(oe)){
       mBorderEdges.push_back(b?e:oe);
-    } 
+    }
     e = opposite(next(e,surface_mesh()),surface_mesh());
     oe = opposite(e,surface_mesh());
     }
@@ -211,4 +211,4 @@ template<class VertexIdxMap
 
 #endif // CGAL_SURFACE_MESH_SIMPLIFICATION_DETAIL_EDGE_PROFILE_IMPL_H
 // EOF //
- 
+

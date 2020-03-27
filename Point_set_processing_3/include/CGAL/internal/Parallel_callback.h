@@ -30,7 +30,7 @@
 namespace CGAL {
 namespace internal {
 namespace Point_set_processing_3 {
-  
+
 class Parallel_callback
 {
   const cpp11::function<bool(double)>& m_callback;
@@ -45,7 +45,7 @@ class Parallel_callback
   {
     return *this;
   }
-  
+
 public:
   Parallel_callback (const cpp11::function<bool(double)>& callback,
                      std::size_t size,

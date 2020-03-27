@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -216,7 +216,7 @@ void init_halfedge_indices(PolygonMesh& pm, HalfedgeIndexMap hid)
 } //namespace helpers
 
 namespace internal {
-  
+
   template<typename Polyhedron, typename Handle>
 struct Index_accessor
     : boost::put_get_helper< std::size_t&, Index_accessor<Polyhedron,Handle> >

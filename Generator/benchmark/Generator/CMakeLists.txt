@@ -17,13 +17,13 @@ if ( CGAL_FOUND )
   include_directories(${Boost_PROGRAM_OPTIONS_INCLUDE_DIR})
   add_definitions( "-DCGAL_USE_BOOST_PROGRAM_OPTIONS" )
   list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
- 
+
   create_single_source_cgal_program( "random_grid.cpp" )
   create_single_source_cgal_program( "random_disc_2.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

@@ -19,7 +19,7 @@ it has to be instantiated by a model of the concept
 `TriangulationDataStructure_2` with some additional
 functionality in faces.
 By default, the triangulation data structure is instantiated by
-`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>, 		 CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
+`CGAL::Triangulation_data_structure_2 < CGAL::Triangulation_vertex_base_2<Gt>,                  CGAL::Periodic_2_triangulation_face_base_2<Gt> > >`.
 
 \cgalHeading{Traversal of the Triangulation}
 

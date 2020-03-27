@@ -187,7 +187,7 @@ out_edges( typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> const>::
 
 //
 // MutableHalfedgeGraph
-// 
+//
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor
@@ -216,9 +216,9 @@ remove_vertex(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::ve
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor
 add_edge(CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
-{ 
+{
   return typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor(
-    g.hds().edges_push_back(typename CGAL::Polyhedron_3<Gt,I,HDS,A>::Halfedge(), 
+    g.hds().edges_push_back(typename CGAL::Polyhedron_3<Gt,I,HDS,A>::Halfedge(),
                             typename CGAL::Polyhedron_3<Gt,I,HDS,A>::Halfedge()));
 }
 
@@ -258,7 +258,7 @@ set_next(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedg
 }
 
 //
-// MutableFaceGraph 
+// MutableFaceGraph
 //
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
@@ -278,7 +278,7 @@ add_face(InputIterator begin, InputIterator end, CGAL::Polyhedron_3<Gt, I, HDS, 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 remove_face(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor f
-            , CGAL::Polyhedron_3<Gt,I,HDS,A>& g) 
+            , CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
 {
   g.hds().faces_erase(f);
 }
@@ -327,7 +327,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor
 edge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
      , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
-{ 
+{
   return typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor(h);
 }
 
@@ -335,7 +335,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor
 halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor e
          , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
-{ 
+{
   return e.halfedge();
 }
 
@@ -343,7 +343,7 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor
 halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
          , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
-{ 
+{
   return v->halfedge();
 }
 
@@ -353,7 +353,7 @@ std::pair< typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfe
 halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor u
          , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
          , const CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
-{ 
+{
   std::pair< typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor
              , bool> e = edge(u, v, g);
   return std::make_pair(e.first.halfedge(), e.second);
@@ -424,7 +424,7 @@ num_halfedges(const CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor
 face(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
-     , const CGAL::Polyhedron_3<Gt,I,HDS,A>&) 
+     , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
   return h->face();
 }
@@ -432,7 +432,7 @@ face(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_de
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor
 halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor f
-         , const CGAL::Polyhedron_3<Gt,I,HDS,A>&) 
+         , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
 {
   return f->halfedge();
 }
@@ -468,7 +468,7 @@ void normalize_border(CGAL::Polyhedron_3<Gt,I,HDS,A>& p)
 {
   p.normalize_border();
 }
-  
+
 } // namespace CGAL
 
 

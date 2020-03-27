@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -36,18 +36,18 @@ struct io_Read_write{};
 struct io_Extract_insert{};
 struct io_Operator{};
 
-template<class T> 
+template<class T>
 struct Io_traits{
     typedef io_Operator Io_tag;
 };
 
-template<> struct Io_traits<char>{ typedef io_Read_write Io_tag; }; 
+template<> struct Io_traits<char>{ typedef io_Read_write Io_tag; };
 
 template<> struct Io_traits<short> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<int> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<long> { typedef io_Read_write Io_tag; };
 
-template<> struct Io_traits<unsigned char>{ typedef io_Read_write Io_tag; }; 
+template<> struct Io_traits<unsigned char>{ typedef io_Read_write Io_tag; };
 
 template<> struct Io_traits<unsigned short> { typedef io_Read_write Io_tag; };
 template<> struct Io_traits<unsigned int> { typedef io_Read_write Io_tag; };

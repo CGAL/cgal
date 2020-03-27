@@ -86,15 +86,15 @@ main(int argc,char* argv[])
   std::cout << "\nStart dijkstra_shortest_paths at " << source->point() <<"\n";
 
   boost::dijkstra_shortest_paths(ft, source,
-				 distance_map(distance_pmap)
-				 .predecessor_map(predecessor_pmap)
-				 .vertex_index_map(vertex_index_pmap));
+                                 distance_map(distance_pmap)
+                                 .predecessor_map(predecessor_pmap)
+                                 .vertex_index_map(vertex_index_pmap));
 
   for(boost::tie(vit,ve)=boost::vertices(ft); vit!=ve; ++vit ){
     vertex_descriptor vd = *vit;
     std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "] ";
     std::cout << " has distance = "  << boost::get(distance_pmap,vd)
-	      << " and predecessor ";
+              << " and predecessor ";
     vd =  boost::get(predecessor_pmap,vd);
     std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "]\n ";
   }

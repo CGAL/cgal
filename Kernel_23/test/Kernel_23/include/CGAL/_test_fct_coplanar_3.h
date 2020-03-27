@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FCT_COPLANAR_3_H
 #define CGAL__TEST_FCT_COPLANAR_3_H
@@ -37,7 +37,7 @@ _test_fct_coplanar_3(const R& )
     RT RT4(4);
     RT RT6(6);
     RT RT8(8);
-  
+
   Point p = Point( RT1, RT0, RT1, RT2);
   Point q = Point( RT4, RT1, RT2, RT8);
   Point r = Point( RT3, RT1, RT3, RT6);
@@ -62,7 +62,7 @@ _test_fct_coplanar_3(const R& )
   s = p - (q - r);
   assert( CGAL::coplanar_orientation( p,q,r,s) == CGAL::POSITIVE );
   assert( CGAL::coplanar_orientation( p,q,s)   != CGAL::COLLINEAR );
-  assert( CGAL::coplanar_orientation( p,q,r) == 
+  assert( CGAL::coplanar_orientation( p,q,r) ==
           CGAL::coplanar_orientation( p,q,s) );
   p = Point( RT0, RT1, RT1, RT2);
   q = Point( RT1, RT4, RT2, RT8);

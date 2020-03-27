@@ -20,7 +20,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_FACET_TOPOLOGY_H
@@ -39,7 +39,7 @@ enum Mesh_facet_topology {
   NO_BOUNDARY = 16,
   MANIFOLD = 24
 };
-  
+
 } // end namespace CGAL
 
 #endif // CGAL_MESH_FACET_TOPOLOGY_H

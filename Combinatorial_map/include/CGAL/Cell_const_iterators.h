@@ -35,7 +35,7 @@ namespace CGAL {
    */
 
   //****************************************************************************
-  template <typename Map_,typename Ite, 
+  template <typename Map_,typename Ite,
             unsigned int i,unsigned int dim=Map_::dimension>
   class CMap_cell_const_iterator: public CMap_cell_iterator<Map_,Ite,i,dim,true>
   {
@@ -44,10 +44,10 @@ namespace CGAL {
     typedef typename Map_::Dart_const_handle Dart_const_handle;
 
     /// Main constructor.
-    CMap_cell_const_iterator(const Map_& amap, 
+    CMap_cell_const_iterator(const Map_& amap,
                              Dart_const_handle adart):
-      Base(amap,adart)                       
-    {}                                                         
+      Base(amap,adart)
+    {}
     /// Constructor from non const version.
     CMap_cell_const_iterator
     (const CMap_cell_iterator<Map_,Ite,i,dim,false>& it):
@@ -56,9 +56,9 @@ namespace CGAL {
     {}
   };
   //****************************************************************************
-  template <typename Map_,unsigned int i,unsigned int j, 
+  template <typename Map_,unsigned int i,unsigned int j,
             unsigned int dim=Map_::dimension>
-  class CMap_one_dart_per_incident_cell_const_iterator: 
+  class CMap_one_dart_per_incident_cell_const_iterator:
     public CMap_one_dart_per_incident_cell_iterator<Map_,i,j,dim,true>
   {
   public:
@@ -66,8 +66,8 @@ namespace CGAL {
     typedef typename Map_::Dart_const_handle Dart_const_handle;
 
     /// Main constructor.
-    CMap_one_dart_per_incident_cell_const_iterator(const Map_& amap, 
-                                                   Dart_const_handle adart): 
+    CMap_one_dart_per_incident_cell_const_iterator(const Map_& amap,
+                                                   Dart_const_handle adart):
       Base(amap, adart)
     {}
     /// Constructor from non const version.
@@ -90,8 +90,8 @@ namespace CGAL {
     CMap_one_dart_per_cell_const_iterator(const Map_& amap): Base(amap)
     {}
     /// Constructor with a dart in parameter (for end iterator).
-    CMap_one_dart_per_cell_const_iterator(const Map_& amap, 
-                                          Dart_const_handle adart): 
+    CMap_one_dart_per_cell_const_iterator(const Map_& amap,
+                                          Dart_const_handle adart):
       Base(amap, adart)
     {}
     /// Constructor from non const version.

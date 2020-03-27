@@ -46,12 +46,12 @@ namespace CGAL
 
 namespace Scale_space_reconstruction_3
 {
-  
+
 /** \ingroup PkgScaleSpaceReconstruction3Classes
  *
  *  %Smoother for scale space reconstruction based on a principal
  *  component analysis weighted by the local density of points.
- * 
+ *
  *  \cgalModels CGAL::Scale_space_reconstruction_3::Smoother
  *
  *  \tparam Geom_traits geometric traits class. It must be a
@@ -89,12 +89,12 @@ public:
   typedef typename Geom_traits::Point_3 Point; ///< defines the point typ.e
   typedef typename Geom_traits::Vector_3 Vector; ///< defines the vector type.
 private:
-  
+
 
   typedef boost::tuple<Point, std::size_t> Point_and_size_t;
   typedef std::vector<unsigned int> CountVec;
   typedef std::vector<Point> Pointset;
-  
+
   typedef Search_traits_3<Geom_traits> Traits_base;
   typedef CGAL::Search_traits_adapter<Point_and_size_t,
                                       CGAL::Nth_of_tuple_property_map<0, Point_and_size_t>,
@@ -140,7 +140,7 @@ public:
   {
     _tree.clear();
     _points.clear();
-    
+
     std::size_t i = 0;
     std::size_t size = std::size_t(end - begin);
     _tree.reserve(size);
@@ -156,16 +156,16 @@ public:
 
     if (_squared_radius == -1)
       estimate_neighborhood_squared_radius();
-    
+
     // Collect the number of neighbors of each point.
     // This can be done concurrently.
     CountVec neighbors (_tree.size(), 0);
     try_parallel (ComputeNN (_points, _tree, _squared_radius, neighbors), 0, _tree.size());
-    
+
     // Compute the transformed point locations.
     // This can be done concurrently.
     try_parallel (AdvanceSS (_tree, neighbors, _points), 0, _tree.size());
-    
+
     i = 0;
     for (InputIterator it = begin; it != end; ++ it)
       *it = _points[i ++];
@@ -223,21 +223,21 @@ private:
       for (std::size_t i = begin; i < end; ++i)
         func(i);
   }
-  
+
   struct Inc
   {
     unsigned int * i;
-      
+
     Inc(unsigned int& i)
       : i(&i)
     {}
-      
+
     template <typename T>
     void operator()(const T&) const
     {
       ++(*i);
     }
-      
+
   };
 
   // Compute the number of neighbors of a point that lie within a fixed radius.
@@ -255,7 +255,7 @@ private:
     ComputeNN(const Pointset& points, const Search_tree&  tree,
               const FT& sq_radius, CountVec& nn)
       : _pts(points), _tree(tree), _sq_rd(sqrt(sq_radius)), _nn(nn) {}
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()( const tbb::blocked_range< std::size_t >& range ) const {
       for( std::size_t i = range.begin(); i != range.end(); ++i )
@@ -279,11 +279,11 @@ private:
     const Search_tree&  _tree;
     const CountVec&     _nn;
     Pointset&           _pts;
-    
+
   public:
     AdvanceSS(const Search_tree& tree, const CountVec& nn, Pointset& points)
       : _tree(tree), _nn(nn),_pts(points) {}
-    
+
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()( const tbb::blocked_range< std::size_t >& range ) const {
       for( std::size_t i = range.begin(); i != range.end(); ++i )
@@ -315,7 +315,7 @@ private:
         Vector v (CGAL::ORIGIN, boost::get<0>(nit->first));
         barycenter = barycenter + ((1.0 / _nn[boost::get<1>(nit->first)]) / weight_sum) * v;
       }
-	
+
       CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
       column = 0;
       // Compute covariance matrix of Weighted PCA
@@ -350,7 +350,7 @@ private:
       _pts[i] = barycenter + b2p - ((norm * b2p) * norm);
     }
   }; // class AdvanceSS
-  
+
 };
 
 

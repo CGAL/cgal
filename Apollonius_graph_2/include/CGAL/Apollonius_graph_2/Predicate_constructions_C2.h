@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -70,10 +70,10 @@ public:
       FT ys = wp.y() - _pole.y();
       FT ws = wp.weight() - _pole.weight();
       FT ps = CGAL::square(xs) + CGAL::square(ys)
-	- CGAL::square(ws);
+        - CGAL::square(ws);
 
       return
-	Inverted_weighted_point(Site_2(Point_2(xs, ys), ws), ps);
+        Inverted_weighted_point(Site_2(Point_2(xs, ys), ws), ps);
     }
 
   Site_2 pole() const { return _pole; }
@@ -97,13 +97,13 @@ private:
   FT _dxp, _dyp, _dwp;
 
   Voronoi_radius_2(FT a, FT b, FT c, FT c2, FT delta,
-		   FT dxp, FT dyp, FT dwp)
+                   FT dxp, FT dyp, FT dwp)
     : _a(a), _b(b), _c(c), _c2(c2), _delta(delta), _dxp(dxp),
       _dyp(dyp), _dwp(dwp) {}
 
 public:
   Voronoi_radius_2(const Inverted_weighted_point& u1,
-		   const Inverted_weighted_point& u2)
+                   const Inverted_weighted_point& u2)
     {
       FT dxp = determinant(u1.x(), u1.p(), u2.x(), u2.p());
       FT dyp = determinant(u1.y(), u1.p(), u2.y(), u2.p());
@@ -166,14 +166,14 @@ protected:
   FT _dxw, _dyw;
 
   Bitangent_line_2(FT a1, FT a2, FT b1, FT b2, FT c1, FT c2,
-		   FT delta, FT d, FT dw, FT dxw, FT dyw)
+                   FT delta, FT d, FT dw, FT dxw, FT dyw)
     : _a1(a1), _a2(a2), _b1(b1), _b2(b2), _c1(c1), _c2(c2),
       _delta(delta), _d(d), _dw(dw),_dxw(dxw), _dyw(dyw) {}
 
   inline void
   store(FT dx, FT dy, FT dw)
     {
-      _dw = dw; 
+      _dw = dw;
       _a1 = dx * dw;
       _a2 = dy;
       _b1 = dy * dw;
@@ -207,7 +207,7 @@ public:
 
 
   Bitangent_line_2(const Inverted_weighted_point& u1,
-		   const Inverted_weighted_point& u2)
+                   const Inverted_weighted_point& u2)
     {
       FT dxp = determinant(u1.x(), u1.p(), u2.x(), u2.p());
       FT dyp = determinant(u1.y(), u1.p(), u2.y(), u2.p());
@@ -222,15 +222,15 @@ public:
   Bitangent_line_2 get_symmetric() const
     {
       return
-	Bitangent_line_2(_a1, -_a2, _b1, -_b2, _c1, -_c2, _delta, _d,
-			 -_dw, -_dxw, -_dyw);
+        Bitangent_line_2(_a1, -_a2, _b1, -_b2, _c1, -_c2, _delta, _d,
+                         -_dw, -_dxw, -_dyw);
     }
 
   Bitangent_line_2 get_rot90() const
     {
       return
-	Bitangent_line_2(-_b1, -_b2, _a1, _a2, _c1, _c2, _delta, _d,
-			 _dw, -_dyw, _dxw);
+        Bitangent_line_2(-_b1, -_b2, _a1, _a2, _c1, _c2, _delta, _d,
+                         _dw, -_dyw, _dxw);
     }
 
   Bitangent_line_2 perpendicular(const Point_2& p) const
@@ -290,24 +290,24 @@ protected:
   void compute_gamma()
     {
       _gamma = CGAL::square(this->_dxw) + CGAL::square(this->_dyw)
-	- CGAL::square(this->_c2);
+        - CGAL::square(this->_c2);
     }
 
 public:
   Voronoi_circle_2(const Voronoi_radius& vr)
     : Bitangent_line(FT(0), FT(0), FT(0), FT(0), vr.b(), vr.c2(),
-		     vr.delta(), vr.d(), FT(0), FT(0), FT(0)), _gamma(vr.c())
+                     vr.delta(), vr.d(), FT(0), FT(0), FT(0)), _gamma(vr.c())
     {
       this->store(vr.dxp(), vr.dyp(), vr.dwp());
     }
 
   Voronoi_circle_2(const Bitangent_line& bl)
     : Bitangent_line(bl.a1(), bl.a2(), bl.b1(), bl.b2(), bl.c1(), bl.c2(),
-		     bl.delta(), bl.d(), bl.dw(), bl.dxw(), bl.dyw())
+                     bl.delta(), bl.d(), bl.dw(), bl.dxw(), bl.dyw())
     {
       compute_gamma();
     }
-		
+
   inline FT alpha() const { return this->_d; }
   inline FT beta() const { return  this->_c1; }
   inline FT gamma() const { return _gamma; }
@@ -317,8 +317,8 @@ public:
   }
 
   FT compute_P4(const Inverted_weighted_point& u1,
-		const Inverted_weighted_point& u2,
-		const Inverted_weighted_point& u3) const
+                const Inverted_weighted_point& u2,
+                const Inverted_weighted_point& u3) const
     {
       FT dx1 = determinant(u2.x(), u2.p(), u1.x(), u1.p());
       FT dy1 = determinant(u2.y(), u2.p(), u1.y(), u1.p());
@@ -354,7 +354,7 @@ public:
       FT vuMuv = dy1 * dx3 - dx1 * dy3;
 
       FT G = fr1_sq + fr3_sq - FT(2) * dw1 * dw3 * uuPvv
-	- CGAL::square(vuMuv);
+        - CGAL::square(vuMuv);
 
       return (F * G);
     }

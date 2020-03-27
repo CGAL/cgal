@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     :     Peter Hachenberger  <hachenberger@mpi-sb.mpg.de>
 
@@ -40,7 +40,7 @@ class Nef_nary_union_3 {
 
  public:
   Nef_nary_union_3() : inserted(0) {}
-  
+
   void unite() {
     pit i1(queue.begin()), i2(i1);
     ++i2;

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -66,7 +66,7 @@ namespace internal {
     bool is_in_list() const
     {
       return ( next_.second != sentinel_index() ||
-	       prev_.second != sentinel_index() );
+               prev_.second != sentinel_index() );
     }
 
     void set_next(const Edge& next)
@@ -89,7 +89,7 @@ namespace internal {
   };
 
 
-  
+
   template<class E_t, class ListItem, class USE_STL_MAP_Tag>
   struct Edge_list_which_map;
 
@@ -205,10 +205,10 @@ namespace internal {
 
   public:
     Edge_list_iterator() {}
-    
+
     Edge_list_iterator(const Edge_list* l, const Edge& e, unsigned int idx)
       : l(l), e(e), idx(idx) {}
-    
+
     Edge_list_iterator(const Self& other)
     {
       l = other.l;
@@ -331,15 +331,15 @@ private:
   }
 
   // check whether the edge is in the list;
-  // the map used is STL's map 
+  // the map used is STL's map
   bool is_in_list_with_tag(const Edge& e, const Tag_true&) const
   {
     if ( emap.find(e) == emap.end() ) { return false; }
-    return emap.find(e)->second.is_in_list();    
+    return emap.find(e)->second.is_in_list();
   }
 
   // check whether the edge is in the list;
-  // the map used is CGAL's Unique_hash_map 
+  // the map used is CGAL's Unique_hash_map
   bool is_in_list_with_tag(const Edge& e, const Tag_false&) const
   {
     if ( !emap.is_defined(e) ) { return false; }
@@ -347,28 +347,28 @@ private:
   }
 
   // return the next edge in the list;
-  // the map used is STL's map 
+  // the map used is STL's map
   const Edge& next_with_tag(const Edge& e, const Tag_true&) const
   {
     return emap.find(e)->second.next();
   }
 
   // return the next edge in the list;
-  // the map used is CGAL's Unique_hash_map 
+  // the map used is CGAL's Unique_hash_map
   const Edge& next_with_tag(const Edge& e, const Tag_false&) const
   {
     return emap[e].next();
   }
 
   // return the previous edge in the list;
-  // the map used is STL's map 
+  // the map used is STL's map
   const Edge& previous_with_tag(const Edge& e, const Tag_true&) const
   {
     return emap.find(e)->second.previous();
   }
 
   // return the previous edge in the list;
-  // the map used is CGAL's Unique_hash_map 
+  // the map used is CGAL's Unique_hash_map
   const Edge& previous_with_tag(const Edge& e, const Tag_false&) const
   {
     return emap[e].previous();

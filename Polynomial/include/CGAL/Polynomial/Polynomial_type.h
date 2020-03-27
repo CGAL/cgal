@@ -16,10 +16,10 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 //
-// Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+// Author(s)     : Michael Hemmer <hemmer@informatik.uni-mainz.de>
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
 //                 Michael Seel <seel@mpi-inf.mpg.de>
-//                 
+//
 // ============================================================================
 
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
@@ -27,7 +27,7 @@
 
 /*! \file CGAL/Polynomial.h
  *  \brief Defines class CGAL::Polynomial.
- *  
+ *
  *  Polynomials in one variable (or more, by recursion)
  */
 
@@ -35,10 +35,10 @@
 #define CGAL_POLYNOMIAL_POLYNOMIAL_TYPE_H
 
 #define CGAL_icoeff(T) typename CGAL::First_if_different<       \
-typename CGAL::internal::Innermost_coefficient_type<T>::Type, T, 1>::Type  
+typename CGAL::internal::Innermost_coefficient_type<T>::Type, T, 1>::Type
 
 #define CGAL_int(T) typename CGAL::First_if_different< int,   \
-typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type 
+typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 
 
 #include <CGAL/ipower.h>
@@ -68,8 +68,8 @@ class Creation_tag {};
 //
 
 // \brief  internal representation class for \c CGAL::Polynomial
-template <class NT_> class Polynomial_rep 
-{ 
+template <class NT_> class Polynomial_rep
+{
   typedef NT_ NT;
   typedef std::vector<NT> Vector;
   typedef typename Vector::size_type      size_type;
@@ -93,7 +93,7 @@ template <class NT_> class Polynomial_rep
 #endif // CGAL_USE_LEDA
 
   template <class Forward_iterator>
-  Polynomial_rep(Forward_iterator first, Forward_iterator last) 
+  Polynomial_rep(Forward_iterator first, Forward_iterator last)
     : coeff(first,last)
   {}
 
@@ -192,27 +192,27 @@ Polynomial_rep<NT>::Polynomial_rep(size_type n, ...)
   while leaving their argument unchanged. The former is more efficient
   when the old value is no longer referenced elsewhere whereas the
   latter is more convenient.
-  \b History: This data type has evolved out of \c RPolynomial 
-  from Michael Seel's PhD thesis.  */ 
+  \b History: This data type has evolved out of \c RPolynomial
+  from Michael Seel's PhD thesis.  */
 
 template <class NT_>
-class Polynomial 
+class Polynomial
   : public Handle_with_policy< internal::Polynomial_rep<NT_> >,
-    public boost::ordered_field_operators1< Polynomial<NT_> , 
-           boost::ordered_field_operators2< Polynomial<NT_> , NT_ ,  
+    public boost::ordered_field_operators1< Polynomial<NT_> ,
+           boost::ordered_field_operators2< Polynomial<NT_> , NT_ ,
            boost::ordered_field_operators2< Polynomial<NT_> , CGAL_icoeff(NT_),
-           boost::ordered_field_operators2< Polynomial<NT_> , CGAL_int(NT_)  > > > > 
+           boost::ordered_field_operators2< Polynomial<NT_> , CGAL_int(NT_)  > > > >
 {
-  typedef typename internal::Innermost_coefficient_type<NT_>::Type Innermost_coefficient_type; 
-public: 
+  typedef typename internal::Innermost_coefficient_type<NT_>::Type Innermost_coefficient_type;
+public:
 
-  //! \name Typedefs 
-  //@{ 
-  //! coefficient type of this instance 
-  typedef NT_ NT; 
-  //! representation pointed to by this handle 
+  //! \name Typedefs
+  //@{
+  //! coefficient type of this instance
+  typedef NT_ NT;
+  //! representation pointed to by this handle
   typedef internal::Polynomial_rep<NT> Rep;
-  //! base class  
+  //! base class
   typedef Handle_with_policy< Rep > Base;
   //! container used to store coefficient sequence
   typedef typename Rep::Vector    Vector;
@@ -223,9 +223,9 @@ public:
   //! container's const iterator (random access)
   typedef typename Rep::const_iterator const_iterator;
   //! the Self type
-  typedef Polynomial<NT> Self; 
+  typedef Polynomial<NT> Self;
   //@}
-  
+
 
 protected:
   //! \name Protected methods
@@ -247,7 +247,7 @@ protected:
      */
     NT& coeff(unsigned int i) {
       CGAL_precondition(!this->is_shared() && i<(this->ptr()->coeff.size()));
-      return this->ptr()->coeff[i]; 
+      return this->ptr()->coeff[i];
     }
 
     //! remove leading zero coefficients
@@ -268,7 +268,7 @@ protected:
 private:
     static Self& get_default_instance(){
       CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self, x, 0);
-      return x;      
+      return x;
     }
 public:
 
@@ -279,18 +279,18 @@ public:
 
     //! copy constructor: copy existing polynomial (shares rep)
     Polynomial(const Self& p) : Base(static_cast<const Base&>(p)) {}
-        
+
     //! construct the constant polynomial a0 from any type convertible to NT
     template <class T>
       explicit Polynomial(const T& a0)
       : Base(Rep(internal::Creation_tag(), 1))
-      { coeff(0) = NT(a0); reduce(); simplify_coefficients(); } 
-          
+      { coeff(0) = NT(a0); reduce(); simplify_coefficients(); }
+
     //! construct the constant polynomial a0
     explicit Polynomial(const NT& a0)
       : Base(Rep(1, &a0))
       { reduce(); simplify_coefficients(); }
-      
+
     //! construct the polynomial a0 + a1*x
     Polynomial(const NT& a0, const NT& a1)
       : Base(Rep(2, &a0,&a1))
@@ -300,7 +300,7 @@ public:
     Polynomial(const NT& a0,const NT& a1,const NT& a2)
       : Base(Rep(3, &a0,&a1,&a2))
       { reduce(); simplify_coefficients(); }
-      
+
     //! construct the polynomial a0 + a1*x + ... + a3*x^3
     Polynomial(const NT& a0,const NT& a1,const NT& a2, const NT& a3)
       : Base(Rep(4, &a0,&a1,&a2,&a3))
@@ -311,7 +311,7 @@ public:
         const NT& a4)
       : Base(Rep(5, &a0,&a1,&a2,&a3,&a4))
       { reduce(); simplify_coefficients(); }
-      
+
     //! construct the polynomial a0 + a1*x + ... + a5*x^5
     Polynomial(const NT& a0,const NT& a1,const NT& a2, const NT& a3,
         const NT& a4, const NT& a5)
@@ -329,14 +329,14 @@ public:
         const NT& a4, const NT& a5, const NT& a6, const NT& a7)
       : Base(Rep(8, &a0,&a1,&a2,&a3,&a4,&a5,&a6,&a7))
       { reduce(); simplify_coefficients(); }
-      
+
     //! construct the polynomial a0 + a1*x + ... + a8*x^8
     Polynomial(const NT& a0,const NT& a1,const NT& a2, const NT& a3,
         const NT& a4, const NT& a5, const NT& a6, const NT& a7,
         const NT& a8)
       : Base(Rep(9, &a0,&a1,&a2,&a3,&a4,&a5,&a6,&a7,&a8))
       { reduce(); simplify_coefficients(); }
-      
+
     /*! \brief construct the polynomial whose coefficients are determined
      *  by the iterator range.
      *
@@ -346,9 +346,9 @@ public:
      */
     template <class Forward_iterator>
     Polynomial(Forward_iterator first, Forward_iterator last)
-      : Base(Rep(first,last)) 
+      : Base(Rep(first,last))
       { reduce(); simplify_coefficients(); }
-                              
+
 #if defined(CGAL_USE_LEDA) || defined(DOXYGEN_RUNNING)
     /*! \brief construct a polynomial from a LEDA \c array
      *
@@ -361,12 +361,12 @@ public:
       : Base(Rep(c))
       { reduce(); simplify_coefficients(); }
 #endif // defined(CGAL_USE_LEDA) || defined(DOXYGEN_RUNNING)
-    
+
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
      Polynomial&
      operator=(const Polynomial& p)=default;
 #endif
-  
+
 //
 // Public member functions
 //
@@ -384,7 +384,7 @@ public:
     /*! The degree of the zero polynomial is 0.
      *  The degree of an undefined polynomial is -1.
      */
-  int degree() const { return static_cast<int>(this->ptr()->coeff.size())-1; } 
+  int degree() const { return static_cast<int>(this->ptr()->coeff.size())-1; }
 
     //! const access to the coefficient of x^i
     const NT& operator[](unsigned int i) const {
@@ -408,7 +408,7 @@ public:
       CGAL_precondition( this->ptr()->coeff.size() > 0 );
       return this->ptr()->coeff.back();
     }
-    
+
 
     /*! \brief evaluate the polynomial at \c x
      *
@@ -416,14 +416,14 @@ public:
      *  The result type is defined by CGAL::Coercion_traits<>
      */
     // Note that there is no need to provide a special version for intervals.
-    // This was shown by some benchmarks of George Tzoumas, for the 
+    // This was shown by some benchmarks of George Tzoumas, for the
     // Interval Newton method used in the Voronoi Diagram of Ellipses
     template <class NTX>
-      typename Coercion_traits<NTX,NT>::Type 
+      typename Coercion_traits<NTX,NT>::Type
       evaluate(const NTX& x_) const {
       typedef Coercion_traits<NTX,NT> CT;
       typename CT::Cast cast;
-        
+
       CGAL_precondition( degree() >= 0 );
       int d = degree();
       typename CT::Type x = cast(x_);
@@ -433,15 +433,15 @@ public:
         y *= x;
         y += cast(this->ptr()->coeff[d]);
       }
-      return y; 
+      return y;
     }
 public:
     //! evaluates the polynomial as a homogeneous polynomial
     //! in fact returns evaluate(u/v)*v^degree()
-   
+
     template <class NTX>
-      typename Coercion_traits<NTX,NT>::Type 
-      evaluate_homogeneous(const NTX& u_, 
+      typename Coercion_traits<NTX,NT>::Type
+      evaluate_homogeneous(const NTX& u_,
           const NTX& v_,
           int hom_degree = -1) const {
       if(hom_degree == -1 ) hom_degree = degree();
@@ -458,7 +458,7 @@ public:
       for(int i = 0; i <= hom_degree; i++){
         monom = CGAL::ipower(v,hom_degree-i)*CGAL::ipower(u,i);
         if(i <= degree())
-          y += monom * cast(this->ptr()->coeff[i]);  
+          y += monom * cast(this->ptr()->coeff[i]);
       }
       return y;
     }
@@ -471,7 +471,7 @@ private:
       return CGAL::sign(evaluate(x));
     }
     // NTX decomposable
-    
+
     template <class NTX>
       CGAL::Sign sign_at_(const NTX& x, CGAL::Tag_true) const{
       CGAL_precondition(degree()>=0);
@@ -494,21 +494,21 @@ public:
       CGAL::Sign sign_at(const NTX& x) const{
       // the sign with evaluate_homogeneous is called
       // if NTX is decaomposable
-      // and NT would be changed by NTX 
+      // and NT would be changed by NTX
       typedef typename Fraction_traits<NTX>::Is_fraction Is_fraction;
       typedef typename Coercion_traits<NT,NTX>::Type Type;
       typedef typename ::boost::mpl::if_c<
       ::boost::is_same<Type,NT>::value, Is_fraction, CGAL::Tag_false
         >::type If_decomposable_AND_Type_equals_NT;
-            
+
       return sign_at_(x,If_decomposable_AND_Type_equals_NT());
     }
-    
-    
+
+
     // for the benefit of mem_fun1 & friends who don't like const ref args
     template <class NTX>
-      typename CGAL::Coercion_traits<NT,NTX>::Type 
-      evaluate_arg_by_value(NTX x) const { return evaluate(x); } 
+      typename CGAL::Coercion_traits<NT,NTX>::Type
+      evaluate_arg_by_value(NTX x) const { return evaluate(x); }
 
     /*!  \brief evaluate the polynomial with all coefficients replaced by
      *  their absolute values
@@ -518,9 +518,9 @@ public:
      *  As with \c evaluate(), \c x can be of a type other than \c NT.
      *  \pre Requires \c CGAL::Algebraic_structure_traits::Abs for NT.
      */
-   
-    template <class NTX> 
-      typename Coercion_traits<NTX,NT>::Type 
+
+    template <class NTX>
+      typename Coercion_traits<NTX,NT>::Type
       evaluate_absolute(const NTX& x) const {
       typedef typename Coercion_traits<NTX,NT>::Type Type;
       typedef typename Coercion_traits<NTX,NT>::Cast Cast;
@@ -531,7 +531,7 @@ public:
       Type y(abs(Cast()(this->ptr()->coeff[d])));
       while (--d >= 0) y = y*xx + abs(Cast()(this->ptr()->coeff[d]));
       return y;
-    } 
+    }
 
     /*! \brief evaluate the polynomial with all coefficients replaced by
      *  their absolute values
@@ -545,7 +545,7 @@ public:
       typename Algebraic_structure_traits<NT>::To_Interval to_Interval;
       int d = 0;
       Interval y(to_Interval(this->ptr()->coeff[d]));
-      while (++d <= degree()) 
+      while (++d <= degree())
       y+=abs(pow(x,d)*to_Interval(this->ptr()->coeff[d]));
       return y;
       } */
@@ -611,7 +611,7 @@ public:
     NT content() const {
       CGAL_precondition(degree() >= 0);
       if (is_zero()) return NT(0);
-        
+
       return content_( typename Algebraic_structure_traits< NT >::Algebraic_category() );
     }
 
@@ -635,7 +635,7 @@ private:
     }
 
 public:
-    
+
     //! return the unit part of the polynomial
     /*! It is defined as the unit part of the leading coefficient. */
     NT unit_part() const {
@@ -666,7 +666,7 @@ public:
       this->copy_on_write();
       NT a_to_j = a;
       for (int j = 1; j <= degree(); j++) {
-        coeff(j) *= a_to_j; 
+        coeff(j) *= a_to_j;
         a_to_j *= a;
       }
       reduce_warn();
@@ -682,7 +682,7 @@ public:
       this->copy_on_write();
       NT b_to_n_minus_j = b;
       for (int j = degree() - 1; j >= 0; j--) {
-        coeff(j) *= b_to_n_minus_j; 
+        coeff(j) *= b_to_n_minus_j;
         b_to_n_minus_j *= b;
       }
       reduce_warn();
@@ -702,7 +702,7 @@ public:
       this->copy_on_write();
       const int n = degree();
       for (int j = n-1; j >= 0; j--) {
-        for (int i = j; i < n; i++) coeff(i) += coeff(i+1); 
+        for (int i = j; i < n; i++) coeff(i) += coeff(i+1);
       }
     }
 
@@ -722,7 +722,7 @@ public:
     //! replace p by b<SUP>d</SUP> * p(x+a/b)
     /*! Also available as non-member function which returns the result
      *  instead of overwriting the argument. */
-    void translate(const NT& a, const NT& b) 
+    void translate(const NT& a, const NT& b)
     {   // implemented using Mehlhorn's variant of Ruffini-Horner
       CGAL_precondition( degree() >= 0 );
       this->copy_on_write();
@@ -737,7 +737,7 @@ public:
       for (int j = n-1; j >= 0; j--) {
         coeff(j) += a*coeff(j+1);
         for (int i = j+1; i < n; i++) {
-          coeff(i) = b*coeff(i) + a*coeff(i+1); 
+          coeff(i) = b*coeff(i) + a*coeff(i+1);
         }
         coeff(n) *= b;
       }
@@ -826,7 +826,7 @@ public:
      * by \e D makes sure that the division can be performed over any ring.
      */
     static void pseudo_division(const Polynomial<NT>& f,
-        const Polynomial<NT>& g, 
+        const Polynomial<NT>& g,
         Polynomial<NT>& q, Polynomial<NT>& r, NT& D);
 
 
@@ -834,7 +834,7 @@ public:
      *
      * The expected format is:
      * <TT><B>P[</B></TT><I>d</I> <TT><B>(</B></TT><I>i</I><TT><B>,</B></TT>
-     * <I>ai</I><TT><B>)</B></TT> ... <TT><B>]</B></TT> 
+     * <I>ai</I><TT><B>)</B></TT> ... <TT><B>]</B></TT>
      * with coefficients in arbitrary order (but without
      * repetitions). <I>d</I> is the degree and <I>ai</I> is the coefficient
      * of <I>x<SUP>i</SUP></I>. Missing coefficients are set to zero.
@@ -865,7 +865,7 @@ public:
       reduce(); return (*this);
     }
 
-    Polynomial<NT>& operator -= (const Polynomial<NT>& p1) 
+    Polynomial<NT>& operator -= (const Polynomial<NT>& p1)
       {
         this->copy_on_write();
         int d = (std::min)(degree(),p1.degree()), i;
@@ -875,29 +875,29 @@ public:
       }
 
     Polynomial<NT>& operator *= (const Polynomial<NT>& p2)
-      { 
-        // TODO: use copy on write 
+      {
+        // TODO: use copy on write
         Polynomial<NT> p1 = (*this);
         typedef typename Polynomial<NT>::size_type size_type;
         CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
         internal::Creation_tag TAG;
-        Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) ); 
+        Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) );
         // initialized with zeros
         for (int i=0; i <= p1.degree(); ++i)
           for (int j=0; j <= p2.degree(); ++j)
-            p.coeff(i+j) += (p1[i]*p2[j]); 
+            p.coeff(i+j) += (p1[i]*p2[j]);
         p.reduce();
         return (*this) = p ;
       }
 
     Polynomial<NT>& operator /= (const Polynomial<NT>& p2)
-      { 
-        // TODO: use copy on write 
+      {
+        // TODO: use copy on write
         CGAL_precondition(!p2.is_zero());
         if ((*this).is_zero()) return (*this);
 
         Polynomial<NT> p1 = (*this);
-        typedef Algebraic_structure_traits< Polynomial<NT> > AST; 
+        typedef Algebraic_structure_traits< Polynomial<NT> > AST;
         // Precondition: q with p1 == p2 * q must exist within NT[x].
         // If this holds, we can perform Euclidean division even over a ring NT
         // Proof: The quotients of each division that occurs are precisely
@@ -920,7 +920,7 @@ public:
     Polynomial<NT>& operator *= (const NT& num) {
       CGAL_precondition(degree() >= 0);
       this->copy_on_write();
-      for(int i=0; i<=degree(); ++i) coeff(i) *= (NT)num; 
+      for(int i=0; i<=degree(); ++i) coeff(i) *= (NT)num;
       reduce();
       return *this;
     }
@@ -936,24 +936,24 @@ public:
         reduce_warn();
         return *this;
       }// ...and in mixed-mode arithmetic
-                              
+
     // TODO: avoid  NT(num)
     Polynomial<NT>& operator += (CGAL_int(NT) num)
-      { return *this += NT(num); } 
+      { return *this += NT(num); }
     Polynomial<NT>& operator -= (CGAL_int(NT) num)
-      { return *this -= NT(num); } 
+      { return *this -= NT(num); }
     Polynomial<NT>& operator *= (CGAL_int(NT) num)
-      { return *this *= NT(num); } 
+      { return *this *= NT(num); }
     Polynomial<NT>& operator /= (CGAL_int(NT) num)
-      { return *this /= NT(num); }  
-                              
+      { return *this /= NT(num); }
+
     // TODO: avoid  NT(num)
     Polynomial<NT>& operator += (const CGAL_icoeff(NT)& num)
-      { return *this += NT(num); } 
+      { return *this += NT(num); }
     Polynomial<NT>& operator -= (const CGAL_icoeff(NT)& num)
-      { return *this -= NT(num); } 
+      { return *this -= NT(num); }
     Polynomial<NT>& operator *= (const CGAL_icoeff(NT)& num)
-      { return *this *= NT(num); } 
+      { return *this *= NT(num); }
     Polynomial<NT>& operator /= (const CGAL_icoeff(NT)& num)
       { return *this /= NT(num); }
 
@@ -966,8 +966,8 @@ public:
       for (int i = 0; i <= pd; i++) coeff(i+k) -= b*p[i];
       reduce();
     }
-    
-    friend Polynomial<NT> operator - <> (const Polynomial<NT>&);   
+
+    friend Polynomial<NT> operator - <> (const Polynomial<NT>&);
 }; // class Polynomial<NT_>
 
 // Arithmetic Operators, Part III:
@@ -981,7 +981,7 @@ Polynomial<NT> operator + (const Polynomial<NT>& p) {
   return p;
 }
 
-template <class NT> 
+template <class NT>
 Polynomial<NT> operator - (const Polynomial<NT>& p) {
   CGAL_precondition(p.degree()>=0);
   Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end());
@@ -994,17 +994,17 @@ Polynomial<NT> operator - (const Polynomial<NT>& p) {
 
 
 template <class NT> inline
-Polynomial<NT> operator * (const Polynomial<NT>& p1, 
+Polynomial<NT> operator * (const Polynomial<NT>& p1,
     const Polynomial<NT>& p2)
 {
   typedef typename Polynomial<NT>::size_type size_type;
   CGAL_precondition(p1.degree()>=0 && p2.degree()>=0);
   internal::Creation_tag TAG;
-  Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) ); 
+  Polynomial<NT>  p(TAG, size_type(p1.degree()+p2.degree()+1) );
   // initialized with zeros
   for (int i=0; i <= p1.degree(); ++i)
     for (int j=0; j <= p2.degree(); ++j)
-      p.coeff(i+j) += (p1[i]*p2[j]); 
+      p.coeff(i+j) += (p1[i]*p2[j]);
   p.reduce();
   return p;
 }
@@ -1026,13 +1026,13 @@ bool operator == (const Polynomial<NT>& p1, const Polynomial<NT>& p2) {
 }
 template <class NT> inline
 bool operator < (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ return ( p1.compare(p2) < 0 ); } 
+{ return ( p1.compare(p2) < 0 ); }
 template <class NT> inline
 bool operator > (const Polynomial<NT>& p1, const Polynomial<NT>& p2)
-{ return ( p1.compare(p2) > 0 ); } 
+{ return ( p1.compare(p2) > 0 ); }
 
 // operators NT
-template <class NT> inline 
+template <class NT> inline
 bool operator == (const NT& num, const Polynomial<NT>& p) {
   CGAL_precondition(p.degree() >= 0);
   return p.degree() == 0 && p[0] == num;
@@ -1043,16 +1043,16 @@ bool operator == (const Polynomial<NT>& p, const NT& num)  {
   return p.degree() == 0 && p[0] == num;
 }
 template <class NT> inline
-bool operator < (const NT& num, const Polynomial<NT>& p) 
+bool operator < (const NT& num, const Polynomial<NT>& p)
 { return ( p.compare(num) > 0 );}
 template <class NT> inline
-bool operator < (const Polynomial<NT>& p,const NT& num) 
+bool operator < (const Polynomial<NT>& p,const NT& num)
 { return ( p.compare(num) < 0 );}
 template <class NT> inline
-bool operator > (const NT& num, const Polynomial<NT>& p) 
+bool operator > (const NT& num, const Polynomial<NT>& p)
 { return ( p.compare(num) < 0 );}
 template <class NT> inline
-bool operator > (const Polynomial<NT>& p,const NT& num) 
+bool operator > (const Polynomial<NT>& p,const NT& num)
 { return ( p.compare(num) > 0 );}
 
 
@@ -1068,16 +1068,16 @@ bool operator == (const Polynomial<NT>& p, const CGAL_int(NT)& num)  {
   return p.degree() == 0 && p[0] == NT(num);
 }
 template <class NT> inline
-bool operator < (const CGAL_int(NT)& num, const Polynomial<NT>& p) 
+bool operator < (const CGAL_int(NT)& num, const Polynomial<NT>& p)
 { return ( p.compare(NT(num)) > 0 );}
 template <class NT> inline
-bool operator < (const Polynomial<NT>& p, const CGAL_int(NT)& num) 
+bool operator < (const Polynomial<NT>& p, const CGAL_int(NT)& num)
 { return ( p.compare(NT(num)) < 0 );}
 template <class NT> inline
-bool operator > (const CGAL_int(NT)& num, const Polynomial<NT>& p) 
+bool operator > (const CGAL_int(NT)& num, const Polynomial<NT>& p)
 { return ( p.compare(NT(num)) < 0 );}
 template <class NT> inline
-bool operator > (const Polynomial<NT>& p, const CGAL_int(NT)& num) 
+bool operator > (const Polynomial<NT>& p, const CGAL_int(NT)& num)
 { return ( p.compare(NT(num)) > 0 );}
 
 // compare icoeff ###################################
@@ -1092,18 +1092,18 @@ bool operator == (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num)  {
   return p.degree() == 0 && p[0] == NT(num);
 }
 template <class NT> inline
-bool operator < (const CGAL_icoeff(NT)& num, const Polynomial<NT>& p) 
+bool operator < (const CGAL_icoeff(NT)& num, const Polynomial<NT>& p)
 { return ( p.compare(NT(num)) > 0 );}
 template <class NT> inline
-bool operator < (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num) 
+bool operator < (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num)
 { return ( p.compare(NT(num)) < 0 );}
 
 
 template <class NT> inline
-bool operator > (const CGAL_icoeff(NT)& num, const Polynomial<NT>& p) 
+bool operator > (const CGAL_icoeff(NT)& num, const Polynomial<NT>& p)
 { return ( p.compare(NT(num)) < 0 );}
 template <class NT> inline
-bool operator > (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num) 
+bool operator > (const Polynomial<NT>& p, const CGAL_icoeff(NT)& num)
 { return ( p.compare(NT(num)) > 0 );}
 
 //
@@ -1124,14 +1124,14 @@ void Polynomial<NT>::euclidean_division(
   if ( fd < gd ) {
     q = Polynomial<NT>(NT(0)); r = f;
 
-    CGAL_postcondition( !AST::Is_exact::value || f == q*g + r); 
+    CGAL_postcondition( !AST::Is_exact::value || f == q*g + r);
     return;
   }
-  // now we know fd >= gd 
+  // now we know fd >= gd
   int qd = fd-gd, delta = qd+1, rd = fd;
 
-  internal::Creation_tag TAG;    
-  q = Polynomial<NT>(TAG, delta ); 
+  internal::Creation_tag TAG;
+  q = Polynomial<NT>(TAG, delta );
   r = f; r.copy_on_write();
   while ( qd >= 0 ) {
     NT Q = idiv(r[rd], g[gd]);
@@ -1163,7 +1163,7 @@ void Polynomial<NT>::pseudo_division(
 
   if (delta < 0 || A.is_zero()) {
     Q = Polynomial<NT>(NT(0)); R = A; D = NT(1);
-       
+
     CGAL_USE_TYPE(AST);
     CGAL_postcondition( !AST::Is_exact::value || Polynomial<NT>(D)*A == Q*B + R);
     return;
@@ -1199,7 +1199,7 @@ void Polynomial<NT>::pseudo_division(
 
 template <class NT>
 void Polynomial<NT>::pseudo_division(
-    const Polynomial<NT>& f, const Polynomial<NT>& g, 
+    const Polynomial<NT>& f, const Polynomial<NT>& g,
     Polynomial<NT>& q, Polynomial<NT>& r, NT& D)
 {
   typedef Algebraic_structure_traits<NT> AST;
@@ -1208,12 +1208,12 @@ void Polynomial<NT>::pseudo_division(
 
   int fd=f.degree(), gd=g.degree();
   if ( fd < gd ) {
-    q = Polynomial<NT>(NT(0)); r = f; D = NT(1); 
+    q = Polynomial<NT>(NT(0)); r = f; D = NT(1);
 
     CGAL_postcondition( !AST::Is_exact::value  || Polynomial<NT>(D)*f==q*g+r);
     return;
   }
-  // now we know rd >= gd 
+  // now we know rd >= gd
   int qd = fd-gd, delta = qd+1, rd = fd;
   internal::Creation_tag TAG;
   q = Polynomial<NT>(TAG, delta );
@@ -1225,7 +1225,7 @@ void Polynomial<NT>::pseudo_division(
     NT F = res[rd];    // highest order coeff of res
     NT t = idiv(F, G); // sure to be integral by multiplication of D
     q.coeff(qd) = t;   // store q coeff
-    res.minus_offsetmult(g,t,qd); 
+    res.minus_offsetmult(g,t,qd);
     res.simplify_coefficients();
     if (res.is_zero()) break;
     rd = res.degree();
@@ -1238,7 +1238,7 @@ void Polynomial<NT>::pseudo_division(
 }
 
 template <class NT> inline
-Polynomial<NT> division(const Polynomial<NT>& p1, 
+Polynomial<NT> division(const Polynomial<NT>& p1,
     const Polynomial<NT>& p2,
     Integral_domain_tag)
 {
@@ -1254,7 +1254,7 @@ Polynomial<NT> division(const Polynomial<NT>& p1,
 }
 
 template <class NT> inline
-Polynomial<NT> division(const Polynomial<NT>& p1, 
+Polynomial<NT> division(const Polynomial<NT>& p1,
     const Polynomial<NT>& p2,
     Field_tag)
 {
@@ -1330,7 +1330,7 @@ template <class NT>
 void Polynomial<NT>::output_maple(std::ostream& os) const {
   const Polynomial<NT>& p = *this;
   std::ostringstream oss;
-  
+
   // use variable names x, y, z, w1, w2, w3, ...
   if (Polynomial_traits_d<NT>::d < 3) {
     static const char *varnames[] = { "x", "y", "z" };
@@ -1338,7 +1338,7 @@ void Polynomial<NT>::output_maple(std::ostream& os) const {
   } else {
     oss << "w" <<  Polynomial_traits_d<NT>::d - 2;
   }
-    
+
   int i = p.degree();
   CGAL::print_maple_monomial(os, p[i], oss.str(), i);
   while (--i >= 0) {
@@ -1364,30 +1364,30 @@ void Polynomial<NT>::output_ascii(std::ostream &os) const {
 
 template <class NT>
 void Polynomial<NT>::output_benchmark(std::ostream &os) const {
-  typedef typename Polynomial_traits_d< Polynomial<NT> >::Innermost_coefficient_type 
+  typedef typename Polynomial_traits_d< Polynomial<NT> >::Innermost_coefficient_type
     Innermost_coefficient_type;
   typedef std::pair< Exponent_vector, Innermost_coefficient_type >
     Exponents_coeff_pair;
   typedef typename Polynomial_traits_d< Polynomial<NT> >::Monomial_representation Gmr;
-    
+
   std::vector< Exponents_coeff_pair > monom_rep;
   Gmr gmr;
   gmr( *this, std::back_inserter( monom_rep ) );
-    
+
   os << Benchmark_rep< Polynomial< NT > >::get_benchmark_name() << "( ";
-    
+
   for( typename std::vector< Exponents_coeff_pair >::iterator it = monom_rep.begin();
        it != monom_rep.end(); ++it ) {
     if( it != monom_rep.begin() )
       os << ", ";
     os << "( " << bmformat( it->second ) << ", ";
     it->first.output_benchmark(os);
-    os << " )";        
+    os << " )";
   }
   os << " )";
 }
 
-// Benchmark_rep specialization 
+// Benchmark_rep specialization
 template < class NT >
 class Benchmark_rep< CGAL::Polynomial< NT > > {
   const CGAL::Polynomial< NT >& t;
@@ -1395,20 +1395,20 @@ public:
   //! initialize with a const reference to \a t.
   Benchmark_rep( const CGAL::Polynomial< NT >& tt) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
-  std::ostream& operator()( std::ostream& out) const { 
+  std::ostream& operator()( std::ostream& out) const {
     t.output_benchmark( out );
     return out;
   }
-    
+
   static std::string get_benchmark_name() {
     std::stringstream ss;
     ss << "Polynomial< " << Polynomial_traits_d< Polynomial< NT > >::d;
-        
+
     std::string coeff_name = Benchmark_rep< NT >::get_benchmark_name();
-        
+
     if( coeff_name != "" )
       ss << ", " << coeff_name;
-        
+
     ss << " >";
     return ss.str();
   }

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel <seel@mpi-sb.mpg.de>
 
@@ -57,7 +57,7 @@ ps_file& operator<<(ps_file& PS, const Nef_polyhedron_2<T>& P)
   typedef typename T::RT  RT;
   typedef typename T::Standard_RT Standard_RT;
 
-  PMCDec D = P.explorer(); 
+  PMCDec D = P.explorer();
   const T& E = Nef_polyhedron_2<T>::EK;
 
   Standard_RT frame_radius = frame_default;
@@ -92,9 +92,9 @@ ps_file& operator<<(ps_file& PS, const Nef_polyhedron_2<T>& P)
   Halfedge_const_iterator hit;
   for (hit = D.halfedges_begin(); hit != D.halfedges_end(); ++(++hit)) {
     leda_segment s(CGAL::to_double(hit->vertex()->point().x()),
-		   CGAL::to_double(hit->vertex()->point().y()),
-		   CGAL::to_double(hit->opposite()->vertex()->point().x()),
-		   CGAL::to_double(hit->opposite()->vertex()->point().y()));
+                   CGAL::to_double(hit->vertex()->point().y()),
+                   CGAL::to_double(hit->opposite()->vertex()->point().x()),
+                   CGAL::to_double(hit->opposite()->vertex()->point().y()));
     if ( hit->mark() ) PS.set_color(leda_black);
     else               PS.set_color(leda_grey1);
     PS << s;
@@ -104,7 +104,7 @@ ps_file& operator<<(ps_file& PS, const Nef_polyhedron_2<T>& P)
   Vertex_const_iterator v;
   for (v = D.vertices_begin(); v != D.vertices_end(); ++v) {
     leda_point p(CGAL::to_double(v->point().x()),
-		 CGAL::to_double(v->point().y()));
+                 CGAL::to_double(v->point().y()));
     leda_color pc;
     if ( v->mark() ) pc = leda_black;
     else             pc = leda_grey1;

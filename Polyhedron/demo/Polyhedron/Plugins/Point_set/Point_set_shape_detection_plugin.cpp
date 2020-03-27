@@ -47,7 +47,7 @@ struct Detect_shapes_functor
 {
   Shape_detection& shape_detection;
   typename Shape_detection::Parameters& op;
-  
+
   Detect_shapes_functor (Shape_detection& shape_detection,
                          typename Shape_detection::Parameters& op)
     : shape_detection (shape_detection), op (op)
@@ -89,10 +89,10 @@ public:
   double normal_tolerance() const { return m_normal_tolerance_field->value(); }
   double search_probability() const { return m_probability_field->value(); }
   double gridCellSize() const { return 1.0; }
-  bool detect_plane() const { return planeCB->isChecked(); } 
-  bool detect_sphere() const { return sphereCB->isChecked(); } 
-  bool detect_cylinder() const { return cylinderCB->isChecked(); } 
-  bool detect_torus() const { return torusCB->isChecked(); } 
+  bool detect_plane() const { return planeCB->isChecked(); }
+  bool detect_sphere() const { return sphereCB->isChecked(); }
+  bool detect_cylinder() const { return cylinderCB->isChecked(); }
+  bool detect_torus() const { return torusCB->isChecked(); }
   bool detect_cone() const { return coneCB->isChecked(); }
   bool add_property() const { return m_add_property->isChecked(); }
   bool generate_colored_point_set() const { return m_one_colored_point_set->isChecked(); }
@@ -115,13 +115,13 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
 
   QAction* actionDetect;
   QAction* actionEstimateParameters;
-  
+
   typedef Point_set_3<Kernel>::Point_map PointPMap;
   typedef Point_set_3<Kernel>::Vector_map NormalPMap;
 
   typedef CGAL::Shape_detection_3::Shape_detection_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
-  
+
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface*) {
     scene = scene_interface;
@@ -148,7 +148,7 @@ public:
   public Q_SLOTS:
     void on_actionDetect_triggered();
     void on_actionEstimateParameters_triggered();
-  
+
 private:
 
   typedef Kernel::Plane_3 Plane_3;
@@ -188,9 +188,9 @@ private:
     Point_set* points = item->point_set();
 
     Scene_points_with_normal_item::Bbox bb = item->bbox();
- 
+
     double diam = CGAL::sqrt((bb.xmax()-bb.xmin())*(bb.xmax()-bb.xmin()) + (bb.ymax()-bb.ymin())*(bb.ymax()-bb.ymin()) + (bb.zmax()-bb.zmin())*(bb.zmax()-bb.zmin()));
-    
+
     scene->setSelectedItem(-1);
     Scene_points_with_normal_item *colored_item
       = new Scene_points_with_normal_item;
@@ -205,7 +205,7 @@ private:
     }
 
     std::string& comments = item->comments();
-    
+
     Point_set::Property_map<int> shape_id;
     if (dialog.add_property())
     {
@@ -219,7 +219,7 @@ private:
 
       // Remove previously detected shapes from comments
       std::string new_comment;
-      
+
       std::istringstream stream (comments);
       std::string line;
       while (getline(stream, line))
@@ -233,7 +233,7 @@ private:
       comments = new_comment;
       comments += "shape -1 no assigned shape\n";
     }
-    
+
     QApplication::setOverrideCursor(Qt::BusyCursor);
 
     Shape_detection shape_detection;
@@ -274,7 +274,7 @@ private:
     Detect_shapes_functor<Shape_detection> functor (shape_detection, op);
     run_with_qprogressdialog<CGAL::Sequential_tag> (functor, "Detecting shapes...", mw);
     t.stop();
-    
+
     std::cout << shape_detection.shapes().size() << " shapes found in "
               << t.time() << " second(s)" << std::endl;
 
@@ -289,12 +289,12 @@ private:
                                  CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes),
                                  true, true, true, true,
                                  180 * std::acos (op.normal_threshold) / CGAL_PI, op.epsilon);
-    
+
         std::cerr << "done" << std::endl;
       }
 
     std::map<Kernel::Point_3, QColor> color_map;
-    
+
     int index = 0;
     BOOST_FOREACH(boost::shared_ptr<typename Shape_detection::Shape> shape, shape_detection.shapes())
     {
@@ -330,16 +330,16 @@ private:
 
         comments += oss.str();
       }
-        
+
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
-      
+
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
       {
         point_item->point_set()->insert(points->point(*(points->begin()+i)));
         if (dialog.add_property())
           shape_id[*(points->begin()+i)] = index;
       }
-      
+
       unsigned char r, g, b;
 
       r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
@@ -359,11 +359,11 @@ private:
         }
         colored_item->invalidateOpenGLBuffers();
       }
-      
+
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
       std::stringstream ss;
       if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get())){
-        CGAL::Shape_detection_3::Cylinder<Traits> * cyl 
+        CGAL::Shape_detection_3::Cylinder<Traits> * cyl
           = dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get());
         ss << item->name().toStdString() << "_cylinder_" << cyl->radius() << "_";
       }
@@ -373,7 +373,7 @@ private:
 
           boost::shared_ptr<CGAL::Shape_detection_3::Plane<Traits> > pshape
             = boost::dynamic_pointer_cast<CGAL::Shape_detection_3::Plane<Traits> > (shape);
-          
+
           Kernel::Point_3 ref = CGAL::ORIGIN + pshape->plane_normal ();
 
           if (color_map.find (ref) == color_map.end ())
@@ -398,13 +398,13 @@ private:
           }
 
           ss << "(" << ref << ")_";
-          
+
           if (dialog.generate_alpha ())
             {
               // If plane, build alpha shape
               Scene_surface_mesh_item* sm_item = NULL;
               sm_item = new Scene_surface_mesh_item;
-              
+
 
               build_alpha_shape (*(point_item->point_set()), pshape,
                                   sm_item, dialog.cluster_epsilon());
@@ -413,7 +413,7 @@ private:
                 sm_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                    .arg (QString::number (shape->indices_of_assigned_points().size())));
                 sm_item->setRenderingMode (Flat);
-                
+
                 sm_item->invalidateOpenGLBuffers();
                 scene->addItem(sm_item);
                 if(scene->item_id(groups[0]) == -1)
@@ -432,7 +432,7 @@ private:
 
       ss << shape->indices_of_assigned_points().size();
 
-      //names[i] = ss.str(		
+      //names[i] = ss.str(
       point_item->setName(QString::fromStdString(ss.str()));
       point_item->setRenderingMode(item->renderingMode());
 
@@ -489,10 +489,10 @@ private:
     if (dialog.generate_structured ())
       {
         std::cerr << "Structuring point set... ";
-        
+
         Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
         pts_full->point_set()->add_normal_map();
-        
+
         typename Shape_detection::Plane_range planes = shape_detection.planes();
         CGAL::structure_point_set (*points,
                                    planes,
@@ -501,7 +501,7 @@ private:
                                    points->parameters().
                                    plane_map(CGAL::Shape_detection_3::Plane_map<Traits>()).
                                    plane_index_map(CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(*points, planes)));
-                
+
         if (pts_full->point_set ()->empty ())
           delete pts_full;
         else
@@ -515,7 +515,7 @@ private:
           }
         std::cerr << "done" << std::endl;
       }
-    
+
     // Updates scene
     scene->itemChanged(index);
 
@@ -523,7 +523,7 @@ private:
 
     item->setVisible(false);
   }
-  
+
   Kernel::Point_2 to_2d (const Point_3& centroid,
                          const Vector_3& base1,
                          const Vector_3& base2,
@@ -567,7 +567,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       Point_set_demo_point_set_shape_detection_dialog dialog;
       if(!dialog.exec())
         return;
-      
+
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       typedef Point_set::Point_map PointPMap;
@@ -576,14 +576,14 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       typedef CGAL::Shape_detection_3::Shape_detection_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
       typedef CGAL::Shape_detection_3::Region_growing<Traits> Region_growing;
       typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Ransac;
-      
+
       if (dialog.region_growing())
       {
         Region_growing::Parameters op;
         op.min_points = dialog.min_points();          // Only extract shapes with a minimum number of points.
         op.epsilon = dialog.epsilon();          // maximum euclidean distance between point and shape.
         op.cluster_epsilon = dialog.cluster_epsilon();    // maximum euclidean distance between points to be clustered.
-        op.normal_threshold = dialog.normal_tolerance();   // normal_threshold < dot(surface_normal, point_normal); 
+        op.normal_threshold = dialog.normal_tolerance();   // normal_threshold < dot(surface_normal, point_normal);
         detect_shapes<Traits, Region_growing> (op, item, dialog);
       }
       else
@@ -593,7 +593,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         op.min_points = dialog.min_points();          // Only extract shapes with a minimum number of points.
         op.epsilon = dialog.epsilon();          // maximum euclidean distance between point and shape.
         op.cluster_epsilon = dialog.cluster_epsilon();    // maximum euclidean distance between points to be clustered.
-        op.normal_threshold = dialog.normal_tolerance();   // normal_threshold < dot(surface_normal, point_normal); 
+        op.normal_threshold = dialog.normal_tolerance();   // normal_threshold < dot(surface_normal, point_normal);
         detect_shapes<Traits, Ransac> (op, item, dialog);
       }
 
@@ -624,11 +624,11 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
     projections.push_back (plane->to_2d (points.point(*it)));
 
   Alpha_shape_2 ashape (projections.begin (), projections.end (), epsilon);
-  
+
   std::map<Alpha_shape_2::Vertex_handle, std::size_t> map_v2i;
 
   Scene_polygon_soup_item *soup_item = new Scene_polygon_soup_item;
-  
+
   soup_item->init_polygon_soup(points.size(), ashape.number_of_faces ());
   std::size_t current_index = 0;
 
@@ -662,9 +662,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
       std::cerr << "POLYGON SOUP EMPTY" << std::endl;
       for (std::size_t i = 0; i < projections.size (); ++ i)
         std::cerr << projections[i] << std::endl;
-      
+
     }
-  
+
   delete soup_item;
 }
 
@@ -691,7 +691,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParamete
                                    tr("Selection is empty.\nTo estimate parameters, please select a planar section."));
           return;
         }
-      
+
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
@@ -743,10 +743,10 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionEstimateParamete
       std::sort (epsilon.begin(), epsilon.end());
       std::sort (dispersion.begin(), dispersion.end());
       std::sort (cluster_epsilon.begin(), cluster_epsilon.end());
-      
+
       QApplication::restoreOverrideCursor();
 
-      
+
       QMessageBox::information(NULL,
                                tr("Estimated Parameters"),
                                tr("Epsilon = [%1 ; %2 ; %3 ; %4 ; %5]\nNormal Tolerance = [%6 ; %7 ; %8 ; %9 ; %10]\nMinimum Number of Points = %11\nConnectivity Epsilon = [%12 ; %13 ; %14 ; %15 ; %16]")

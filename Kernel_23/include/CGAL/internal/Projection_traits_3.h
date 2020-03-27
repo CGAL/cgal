@@ -29,7 +29,7 @@
 
 #include <CGAL/Kernel/global_functions_2.h>
 
-namespace CGAL { 
+namespace CGAL {
 
 namespace internal {
 
@@ -46,8 +46,8 @@ struct Projector<R,0>
   typedef typename R::Compare_y_3             Compare_x_2;
   typedef typename R::Compare_z_3             Compare_y_2;
   typedef typename R::Equal_y_3               Equal_x_2;
-  typedef typename R::Equal_z_3               Equal_y_2;  
-  
+  typedef typename R::Equal_z_3               Equal_y_2;
+
   static typename R::FT x(const typename R::Point_3& p) {return p.y();}
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.y();}
@@ -63,16 +63,16 @@ struct Projector<R,1>
   typedef typename R::Less_x_3                Less_x_2;
   typedef typename R::Less_z_3                Less_y_2;
   typedef typename R::Compare_x_3             Compare_x_2;
-  typedef typename R::Compare_z_3             Compare_y_2;  
+  typedef typename R::Compare_z_3             Compare_y_2;
   typedef typename R::Equal_x_3               Equal_x_2;
-  typedef typename R::Equal_z_3               Equal_y_2;    
+  typedef typename R::Equal_z_3               Equal_y_2;
   static typename R::FT x(const typename R::Point_3& p) {return p.x();}
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.z();}
   static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.xmin(),bb.zmin(),bb.xmax(),bb.zmax()); }
   static const int x_index=0;
-  static const int y_index=2;  
+  static const int y_index=2;
 };
 
 //project onto xy
@@ -82,16 +82,16 @@ struct Projector<R,2>
   typedef typename R::Less_x_3                Less_x_2;
   typedef typename R::Less_y_3                Less_y_2;
   typedef typename R::Compare_x_3             Compare_x_2;
-  typedef typename R::Compare_y_3             Compare_y_2;  
+  typedef typename R::Compare_y_3             Compare_y_2;
   typedef typename R::Equal_x_3               Equal_x_2;
-  typedef typename R::Equal_y_3               Equal_y_2;    
+  typedef typename R::Equal_y_3               Equal_y_2;
   static typename R::FT x(const typename R::Point_3& p) {return p.x();}
   static typename R::FT y(const typename R::Point_3& p) {return p.y();}
   static typename R::FT x(const typename R::Vector_3& p) {return p.x();}
   static typename R::FT y(const typename R::Vector_3& p) {return p.y();}
   static Bbox_2 bbox(const Bbox_3& bb) { return Bbox_2(bb.xmin(),bb.ymin(),bb.xmax(),bb.ymax()); }
   static const int x_index=0;
-  static const int y_index=1;  
+  static const int y_index=1;
 };
 
 template <class R,int dim>
@@ -99,15 +99,15 @@ class Construct_bbox_projected_2 {
 public:
   typedef typename R::Point_3     Point;
   typedef Bbox_2 result_type;
-  
+
   Bbox_2 operator()(const Point& p) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(p)); }
 };
 
 template <class R,int dim>
-class Orientation_projected_3 
+class Orientation_projected_3
 {
 public:
-  typedef typename R::Point_3     Point; 
+  typedef typename R::Point_3     Point;
   typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
 
@@ -117,18 +117,18 @@ public:
   }
 
   CGAL::Orientation operator()(const Point& p,
-			       const Point& q,
-			       const Point& r) const
+                               const Point& q,
+                               const Point& r) const
     {
       return CGAL::orientation(project(p), project(q), project(r));
     }
 };
 
 template <class R,int dim>
-class Side_of_oriented_circle_projected_3 
+class Side_of_oriented_circle_projected_3
 {
 public:
-  typedef typename R::Point_3     Point; 
+  typedef typename R::Point_3     Point;
   typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
 
@@ -137,20 +137,20 @@ public:
   {
     return typename R::Point_2(x(p),y(p));
   }
-  CGAL::Oriented_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r, 
-				  const Point &s) const
+  CGAL::Oriented_side operator() (const Point &p,
+                                  const Point &q,
+                                  const Point &r,
+                                  const Point &s) const
     {
       return CGAL::side_of_oriented_circle(project(p),project(q),project(r),project(s) );
     }
 };
 
 template <class R,int dim>
-class Side_of_bounded_circle_projected_3 
+class Side_of_bounded_circle_projected_3
 {
 public:
-  typedef typename R::Point_3     Point; 
+  typedef typename R::Point_3     Point;
   typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
 
@@ -159,17 +159,17 @@ public:
   {
     return typename R::Point_2(x(p),y(p));
   }
-  CGAL::Bounded_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r, 
-				  const Point &s) const
+  CGAL::Bounded_side operator() (const Point &p,
+                                  const Point &q,
+                                  const Point &r,
+                                  const Point &s) const
     {
       return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
     }
 
-    CGAL::Bounded_side operator() (const Point &p, 
-				  const Point &q,
-				  const Point &r) const
+    CGAL::Bounded_side operator() (const Point &p,
+                                  const Point &q,
+                                  const Point &r) const
     {
       return CGAL::side_of_bounded_circle(project(p),project(q),project(r));
     }
@@ -179,8 +179,8 @@ template <class R,int dim>
 class Compare_distance_projected_3
 {
 public:
-  typedef typename R::Point_3   Point_3; 
-  typedef typename R::Point_2   Point_2;   
+  typedef typename R::Point_3   Point_3;
+  typedef typename R::Point_2   Point_2;
   typedef typename R::FT        RT;
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
@@ -254,9 +254,9 @@ template <class R,int dim>
 class Squared_distance_projected_3
 {
 public:
-  typedef typename R::Point_3   Point_3; 
-  typedef typename R::Point_2   Point_2; 
-  typedef typename R::Line_3    Line_3; 
+  typedef typename R::Point_3   Point_3;
+  typedef typename R::Point_2   Point_2;
+  typedef typename R::Line_3    Line_3;
   typedef typename R::Line_2    Line_2;
   typedef typename R::Segment_3 Segment_3;
   typedef typename R::Segment_2 Segment_2;
@@ -271,9 +271,9 @@ public:
 
   RT operator()(const Point_3& p, const Point_3& q) const
   {
-	  Point_2 p2(project(p));
-	  Point_2 q2(project(q));
-	  return squared_distance(p2, q2);
+          Point_2 p2(project(p));
+          Point_2 q2(project(q));
+          return squared_distance(p2, q2);
   }
 
   RT operator()(const Line_3& l, const Point_3& p) const
@@ -282,7 +282,7 @@ public:
     Line_2 l2(project(l.point(0)), project(l.point(1)));
     return squared_distance(p2, l2);
   }
-  
+
   RT operator()(const Segment_3& s, const Point_3& p) const
   {
     Point_2 p2(project(p));
@@ -295,13 +295,13 @@ template <class R,int dim>
 class  Intersect_projected_3
 {
 public:
-  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_3   Point_3;
   typedef typename R::Segment_3 Segment_3;
-  typedef typename R::Point_2   Point_2; 
-  typedef typename R::Vector_2  Vector_2; 
+  typedef typename R::Point_2   Point_2;
+  typedef typename R::Vector_2  Vector_2;
   typedef typename R::Segment_2 Segment_2;
   typedef typename R::FT        FT;
-  
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
 
@@ -322,12 +322,12 @@ public:
     Point_2 s1_source = project(s1.source());
     Point_2 s1_target = project(s1.target());
     Point_2 s2_source = project(s2.source());
-    Point_2 s2_target = project(s2.target());    
+    Point_2 s2_target = project(s2.target());
     Segment_2 s1_2(s1_source, s1_target);
     Segment_2 s2_2(s2_source, s2_target);
     CGAL_precondition(!s1_2.is_degenerate());
     CGAL_precondition(!s2_2.is_degenerate());
-    
+
     //compute intersection points in projected plane
     //We know that none of the segment is degenerate
     Object o = intersection(s1_2,s2_2);
@@ -351,7 +351,7 @@ public:
       src[Projector<R,dim>::x_index] = si->source().x();
       src[Projector<R,dim>::y_index] = si->source().y();
       tgt[Projector<R,dim>::x_index] = si->target().x();
-      tgt[Projector<R,dim>::y_index] = si->target().y();      
+      tgt[Projector<R,dim>::y_index] = si->target().y();
       return make_object( Segment_3( Point_3(src[0],src[1],src[2]),Point_3(tgt[0],tgt[1],tgt[2]) ) );
     }
     FT coords[3];
@@ -362,7 +362,7 @@ public:
     coords[dim] = (z1+z2) / FT(2);
     coords[Projector<R,dim>::x_index] = pi->x();
     coords[Projector<R,dim>::y_index] = pi->y();
-    
+
     Point_3 res(coords[0],coords[1],coords[2]);
     CGAL_assertion(x(res)==pi->x() && y(res)==pi->y());
     return make_object(res);
@@ -372,18 +372,18 @@ public:
 template <class R, int dim>
 class Circumcenter_center_projected
 {
-  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
 
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  
+
   Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
-  
-  Point_3 embed (const Point_2& p) const 
+
+  Point_3 embed (const Point_2& p) const
   {
     typename R::FT coords[3];
     coords[Projector<R,dim>::x_index]=p.x();
@@ -391,7 +391,7 @@ class Circumcenter_center_projected
     coords[dim]=typename R::FT(0);
     return Point_3(coords[0],coords[1],coords[2]);
   }
-  
+
 public:
   Point_3 operator() (const Point_3& p1,const Point_3& p2) const
   {
@@ -407,18 +407,18 @@ public:
 template <class R, int dim>
 class Compute_area_projected
 {
-  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
 
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  
+
   Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
 
-  
+
 public:
   typename R::FT operator() (const Point_3& p1,const Point_3& p2,const Point_3& p3) const
   {
@@ -429,18 +429,18 @@ public:
 template <class R, int dim>
 class Compute_squared_radius_projected
 {
-  typedef typename R::Point_3   Point_3; 
+  typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
 
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  
+
   Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
 
-  
+
 public:
   typename R::FT operator() (const Point_3& p1,const Point_3& p2,const Point_3& p3) const
   {
@@ -815,7 +815,7 @@ public:
   typedef Power_side_of_bounded_power_circle_projected_3<Rp,dim> Power_side_of_bounded_power_circle_2;
   typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
   typedef Construct_bbox_projected_2<Rp,dim>                  Construct_bbox_2;
-  
+
   typedef typename Rp::Construct_point_3                      Construct_point_2;
   typedef typename Rp::Construct_weighted_point_3             Construct_weighted_point_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
@@ -858,7 +858,7 @@ public:
     typedef bool result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
-      
+
       Equal_x_2 eqx;
       Equal_y_2 eqy;
       return eqx(p,q) & eqy(p,q);
@@ -869,7 +869,7 @@ public:
     typedef bool result_type;
     bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
-      
+
       Orientation_2 ori;
       return ori(p,q,r) == LEFT_TURN;
     }
@@ -890,8 +890,8 @@ public:
   typedef Circumcenter_center_projected<Rp,dim>               Construct_circumcenter_2;
   typedef Compute_area_projected<Rp,dim>                      Compute_area_2;
   Construct_circumcenter_2 construct_circumcenter_2_object () const {return Construct_circumcenter_2();}
-  Compute_area_2 compute_area_2_object () const {return Compute_area_2();}  
-  
+  Compute_area_2 compute_area_2_object () const {return Compute_area_2();}
+
 
   // for compatibility with previous versions
   typedef Point_2      Point;
@@ -900,14 +900,14 @@ public:
 
   Projection_traits_3(){}
   Projection_traits_3(
-		   const Projection_traits_3&){}
+                   const Projection_traits_3&){}
   Projection_traits_3 &operator=(
-	    const Projection_traits_3&){return *this;}
+            const Projection_traits_3&){return *this;}
 
   typename Rp::FT x(const Point_2 &p) const { return Projector<R,dim>::x(p); }
   typename Rp::FT y(const Point_2 &p) const { return Projector<R,dim>::y(p); }
-    
- 
+
+
  Equal_2
   equal_2_object() const
     { return Equal_2();}
@@ -940,7 +940,7 @@ public:
     { return Compare_x_2();}
   Angle_2
   angle_2_object() const {
-	  return Angle_2();
+          return Angle_2();
   }
 
   Compare_y_2
@@ -1006,7 +1006,7 @@ public:
 
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}
-    
+
   Construct_line_2  construct_line_2_object() const
     {return Construct_line_2();}
 

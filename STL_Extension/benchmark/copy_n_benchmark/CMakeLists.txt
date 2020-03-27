@@ -18,8 +18,8 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "copy_n_use_case_benchmark.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

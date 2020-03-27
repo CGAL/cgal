@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -56,7 +56,7 @@ public:
   typedef typename Geom_traits::Site_2             Site_2;
   typedef typename Storage_traits::Storage_site_2  Storage_site_2;
   typedef D_S                                       Data_structure;
-  
+
   typedef typename D_S::Face_handle                 Face_handle;
   typedef typename D_S::Vertex_handle               Vertex_handle;
 
@@ -67,11 +67,11 @@ public:
     typedef Segment_Delaunay_graph_vertex_base_2<STraits,Vb2>  Other;
   };
 
-  
+
   Segment_Delaunay_graph_vertex_base_2 () : Vb(), ss_() {}
-    
+
   Segment_Delaunay_graph_vertex_base_2(const Storage_site_2& ss,
-				       Face_handle f)
+                                       Face_handle f)
     : Vb(f), ss_(ss)  {}
 
   void set_site(const Storage_site_2& ss) { ss_ = ss; }
@@ -87,7 +87,7 @@ public:
 #endif
 
   //the following trivial is_valid to allow
-  // the user of derived face base classes 
+  // the user of derived face base classes
   // to add their own purpose checking
   bool is_valid(bool /* verbose */ = false, int /* level */ = 0) const
   { return true; }
@@ -99,7 +99,7 @@ private:
 };
 
 
-} //namespace CGAL 
+} //namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

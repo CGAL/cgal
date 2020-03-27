@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -47,29 +47,29 @@ public:
 
 #ifndef CGAL_CFG_MATCHING_BUG_6
   using Base::operator();
-#else 
+#else
   result_type
   operator()(const Vector_3& u, const Vector_3& v, const Vector_3& w) const
-  { 
+  {
     return Base::operator()(u,v,w);
-  }  
+  }
 
   result_type
   operator()(const Sphere_3& s) const
-  { 
+  {
     return Base::operator()(s);
   }
 
   result_type
   operator()(const Tetrahedron_3& t) const
-  { 
+  {
     return Base::operator()(t);
   }
 #endif
 
-  result_type 
+  result_type
   operator()(const Point_3 &p, const Point_3 &q,
-	     const Point_3 &r, const Point_3 &s) const
+             const Point_3 &r, const Point_3 &s) const
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_3", tmp);
 
@@ -84,7 +84,7 @@ public:
           fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
           fit_in_double(s.z(), sz))
       {
-	  CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
+          CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
 
           double pqx = qx - px;
           double pqy = qy - py;
@@ -112,7 +112,7 @@ public:
           double aprz = CGAL::abs(prz);
           double apsz = CGAL::abs(psz);
 #ifdef CGAL_USE_SSE2_MAX
-          CGAL::Max<double> mmax; 
+          CGAL::Max<double> mmax;
 
           maxx = mmax(maxx, aprx, apsx);
           maxy = mmax(maxy, apry, apsy);
@@ -130,14 +130,14 @@ public:
                                          psx, psy, psz);
 
           double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
-          
+
 #ifdef CGAL_USE_SSE2_MAX
 #if 0
-          CGAL::Min<double> mmin; 
+          CGAL::Min<double> mmin;
           double tmp = mmin(maxx, maxy, maxz);
           maxz = mmax(maxx, maxy, maxz);
           maxx = tmp;
-#else 
+#else
           sse2minmax(maxx,maxy,maxz);
           // maxy can contain ANY element
 #endif
@@ -161,7 +161,7 @@ public:
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }
-	  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
+          CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
 
       return Base::operator()(p, q, r, s);

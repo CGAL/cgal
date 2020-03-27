@@ -30,7 +30,7 @@ namespace CGAL {
 template <class K,  class Hilbert_policy >
   class Hilbert_sort_3;
 
-template <class K>  
+template <class K>
   class Hilbert_sort_3<K, Hilbert_sort_median_policy >
   : public Hilbert_sort_median_3<K>
 {

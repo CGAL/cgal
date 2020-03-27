@@ -17,17 +17,17 @@
  *
  *
  * File: Real.h
- * 
- * Synopsis: The Real class is a superclass for all the number 
+ *
+ * Synopsis: The Real class is a superclass for all the number
  *           systems in the Core Library (int, long, float, double,
  *           BigInt, BigRat, BigFloat, etc)
- * 
- * Written by 
+ *
+ * Written by
  *       Koji Ouchi <ouchi@simulation.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
- *       Sylvain Pion <pion@cs.nyu.edu> 
+ *       Sylvain Pion <pion@cs.nyu.edu>
  *
  * WWW URL: http://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
@@ -40,7 +40,7 @@
 #define _CORE_REAL_H_
 #include "RealRep.h"
 
-namespace CORE { 
+namespace CORE {
 // class Real
 typedef RCImpl<RealRep> RCReal;
 class Real : public RCReal {
@@ -180,7 +180,7 @@ public:
   /// \name Aprroximation Function
   //@{
   /// approximation
-  Real approx(const extLong& r=get_static_defRelPrec(), 
+  Real approx(const extLong& r=get_static_defRelPrec(),
               const extLong& a=get_static_defAbsPrec()) const {
     return rep->approx(r, a);
   }

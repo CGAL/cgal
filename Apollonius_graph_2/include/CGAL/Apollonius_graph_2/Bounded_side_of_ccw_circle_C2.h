@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -70,9 +70,9 @@ public:
       // the existence test
       Sign sign_of_root;
       if ( is_first_root ) {
-	sign_of_root = sign_of_first_root(s_beta, s_gamma);
+        sign_of_root = sign_of_first_root(s_beta, s_gamma);
       } else {
-	sign_of_root = sign_of_second_root(s_beta, s_gamma);
+        sign_of_root = sign_of_second_root(s_beta, s_gamma);
       }
       return sign_of_root;
     }

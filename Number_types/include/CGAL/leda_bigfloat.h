@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -71,7 +71,7 @@ template <> class Algebraic_structure_traits< leda_bigfloat >
 template <> class Real_embeddable_traits< leda_bigfloat >
   : public INTERN_RET::Real_embeddable_traits_base< leda_bigfloat , CGAL::Tag_true > {
 public:
-  
+
     class Abs
       : public CGAL::cpp98::unary_function< Type, Type > {
       public:
@@ -96,8 +96,8 @@ public:
                                             const Type& y ) const {
           return (Comparison_result) CGAL_LEDA_SCOPE::compare( x, y );
         }
-        
-        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type, 
+
+        CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR_WITH_RT( Type,
                 Comparison_result )
     };
 

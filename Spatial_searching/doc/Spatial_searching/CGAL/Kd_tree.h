@@ -94,7 +94,7 @@ template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond
 
 /*!
 The constructor does not build the internal data structure, and it
-is also not updated after calls to `insert()`.  
+is also not updated after calls to `insert()`.
 The method `build()` is called implicitly
 at the first call to a query or removal member function. You can call
 `build()` explicitly to ensure that the next call to

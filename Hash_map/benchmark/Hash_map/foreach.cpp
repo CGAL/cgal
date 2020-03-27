@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-#include<boost/range/iterator_range.hpp> 
+#include<boost/range/iterator_range.hpp>
 #include <boost/foreach.hpp>
 
 #include <CGAL/Iterator_range.h>
@@ -14,7 +14,7 @@ int main()
 {
   int N = 100000;
   std::vector<int> V(N), V2(N);
-  
+
   Timer t;
 
   t.start();

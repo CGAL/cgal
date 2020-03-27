@@ -37,8 +37,8 @@ int main ()
 #include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CORE::BigInt	                           Number_type;
-typedef CGAL::Algebraic_kernel_d_1<Number_type>	   AK1;
+typedef CORE::BigInt                                   Number_type;
+typedef CGAL::Algebraic_kernel_d_1<Number_type>           AK1;
 typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
 
 typedef Traits_2::Curve_2                          Curve_2;
@@ -49,16 +49,16 @@ typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
 int main()
 {
-  // Traits class object 
-  AK1 ak1; 
+  // Traits class object
+  AK1 ak1;
   Traits_2 traits(&ak1);
 
-  // constructor for rational functions 
-  Traits_2::Construct_curve_2 construct = traits.construct_curve_2_object(); 
-  
+  // constructor for rational functions
+  Traits_2::Construct_curve_2 construct = traits.construct_curve_2_object();
+
   // a polynomial representing x .-)
   Polynomial_1 x = CGAL::shift(Polynomial_1(1),1);
-  
+
   // Create the rational function y = 1 / ((x - 2)(x - 5)) = 1 / (x^2 - 7x + 10)
   Polynomial_1 P1(1);
   Polynomial_1 P2(-1);
@@ -75,9 +75,9 @@ int main()
     "number of faces",
     "number of unbounded faces"
   };
-  
+
   Arrangement_2::Size expected_sizes[] = {0, 2, 1, 2, 2};
-  
+
   // Construct the 1st arrangement.
   Arrangement_2 arr1(&traits);
   insert(arr1, c1);
@@ -108,13 +108,13 @@ int main()
 
   // If a failure has already occured, abort.
   if (result < 0) return result;
-  
+
   std::cout << std::endl;
 
   // Construct the 2nd arrangement.
   Arrangement_2 arr2(&traits);
   insert(arr2, c2);
-  
+
   if (!arr2.is_valid()) {
     std::cerr << "The second arrangement is not valid!" << std::endl;
     return -1;

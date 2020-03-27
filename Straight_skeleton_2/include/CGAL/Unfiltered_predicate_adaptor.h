@@ -1,5 +1,5 @@
 // Copyright (c) 2005-2008 Fernando Luis Cacciola Carballal.
-// All rights reserved. 
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 // Author(s)     : Sylvain Pion, Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 
@@ -101,7 +101,7 @@ public:
   template <class A1, class A2, class A3, class A4, class A5>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5) const
+             const A5 &a5) const
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
@@ -113,7 +113,7 @@ public:
   template <class A1, class A2, class A3, class A4, class A5, class A6>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6) const
+             const A5 &a5, const A6 &a6) const
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
@@ -126,7 +126,7 @@ public:
             class A7>
   result_type
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6, const A7 &a7) const
+             const A5 &a5, const A6 &a6, const A7 &a7) const
 #ifndef CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
   ;
 #else
@@ -207,7 +207,7 @@ template <class CAP>
 typename Unfiltered_predicate_adaptor<CAP>::result_type
 Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5) const
+             const A5 &a5) const
 {
   return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5));
 }
@@ -217,7 +217,7 @@ template <class CAP>
 typename Unfiltered_predicate_adaptor<CAP>::result_type
 Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-	     const A5 &a5, const A6 &a6) const
+             const A5 &a5, const A6 &a6) const
 {
   return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6));
 }
@@ -247,7 +247,7 @@ template <class CAP>
 typename Unfiltered_predicate_adaptor<CAP>::result_type
 Unfiltered_predicate_adaptor<CAP>::
   operator()(const A1 &a1, const A2 &a2, const A3 &a3, const A4 &a4,
-             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8, 
+             const A5 &a5, const A6 &a6, const A7 &a7, const A8 &a8,
              const A9 &a9 ) const
 {
   return static_cast<result_type>(Certified_approx_predicate(a1, a2, a3, a4, a5, a6, a7, a8, a9));

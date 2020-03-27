@@ -56,11 +56,11 @@ public:
     actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    
+
     actionStitchByCC= new QAction(tr("Stitch Borders Per Connected Components"), mainWindow);
     actionStitchByCC->setObjectName("actionStitchByCC");
     actionStitchByCC->setProperty("subMenuName", "Polygon Mesh Processing/Repair");
-    
+
     autoConnectActions();
   }
 
@@ -78,7 +78,7 @@ public:
 
   template <typename Item>
   void on_actionStitchBorders_triggered(Scene_interface::Item_id index);
-  
+
   template <typename Item>
   void on_actionStitchByCC_triggered(Scene_interface::Item_id index);
 
@@ -107,7 +107,7 @@ struct Polyline_visitor
 
   void add_node(typename boost::graph_traits<Poly>::vertex_descriptor vd)
   {
-    
+
     new_item->polylines.back().push_back(get(vpm,vd));
   }
 
@@ -130,15 +130,15 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_trigger
 
 
       typedef boost::filtered_graph<FaceGraph,Is_border<FaceGraph>, Is_border<FaceGraph> > BorderGraph;
-      
+
       Is_border<FaceGraph> ib(*pMesh);
       BorderGraph bg(*pMesh,ib,ib);
-      Polyline_visitor<FaceGraph> polyline_visitor(*pMesh, new_item); 
+      Polyline_visitor<FaceGraph> polyline_visitor(*pMesh, new_item);
       CGAL::split_graph_into_polylines( bg,
                                         polyline_visitor,
                                         CGAL::internal::IsTerminalDefault() );
 
-      
+
       if (new_item->polylines.empty())
         {
           delete new_item;
@@ -187,7 +187,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchByCC_triggered(
 {
   Item* item =
       qobject_cast<Item*>(scene->item(index));
-  
+
   if(!item)
     return;
   CGAL::Polygon_mesh_processing::stitch_borders(*item->polyhedron(),

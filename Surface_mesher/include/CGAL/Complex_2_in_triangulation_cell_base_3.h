@@ -69,20 +69,20 @@ namespace CGAL {
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
-					    Vertex_handle v1,
-					    Vertex_handle v2,
-					    Vertex_handle v3)
+                                            Vertex_handle v1,
+                                            Vertex_handle v2,
+                                            Vertex_handle v3)
       : Cb (v0, v1, v2, v3), bits()// , c_surface_facets(0)
     {}
 
     Complex_2_in_triangulation_cell_base_3 (Vertex_handle v0,
-					    Vertex_handle v1,
-					    Vertex_handle v2,
-					    Vertex_handle v3,
-					    Cell_handle n0,
-					    Cell_handle n1,
-					    Cell_handle n2,
-					    Cell_handle n3)
+                                            Vertex_handle v1,
+                                            Vertex_handle v2,
+                                            Vertex_handle v3,
+                                            Cell_handle n0,
+                                            Cell_handle n1,
+                                            Cell_handle n2,
+                                            Cell_handle n3)
       : Cb (v0, v1, v2, v3, n0, n1, n2, n3), bits()// c_surface_facets(0)
     {}
 

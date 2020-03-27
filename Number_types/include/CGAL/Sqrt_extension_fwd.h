@@ -29,9 +29,9 @@
 
 namespace CGAL{
 
-template <class NT_,class ROOT_, class AllowCompareDifferentExtensions = ::CGAL::Tag_false, class FilterPredicates = ::CGAL::Tag_false > 
+template <class NT_,class ROOT_, class AllowCompareDifferentExtensions = ::CGAL::Tag_false, class FilterPredicates = ::CGAL::Tag_false >
 class Sqrt_extension;
-  
+
 } //namespace CGAL
 
 #endif // CGAL_SQRT_EXTENSION_FWD_H

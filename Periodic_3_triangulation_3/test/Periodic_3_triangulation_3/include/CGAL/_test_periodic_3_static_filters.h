@@ -335,7 +335,7 @@ int _test_periodic_3_static_filters()
     test_orientation_3(eorient,forient);
 
   std::cout << "Testing statically filtered Side_of_oriented_sphere_3"
-	    << std::endl;
+            << std::endl;
   for(int i=0; i<loops; ++i)
     test_side_of_oriented_sphere_3(esoos,fsoos);
 

@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -92,7 +92,7 @@ public:
 
   typename R::Boolean
   counterclockwise_in_between(const Direction_2 &d1,
-			      const Direction_2 &d2) const
+                              const Direction_2 &d2) const
   {
     return R().counterclockwise_in_between_2_object()(*this, d1, d2);
   }

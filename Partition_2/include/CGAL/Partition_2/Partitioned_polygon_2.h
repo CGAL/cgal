@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -32,33 +32,33 @@
 namespace CGAL {
 
 
-// this will order the diagonals around a vertex from previous to 
+// this will order the diagonals around a vertex from previous to
 // next, which means a CW order if the polygon vertices are in CCW order
 template<class Iterator, class Traits>
-class Indirect_CW_diag_compare  
+class Indirect_CW_diag_compare
 {
 public:
    typedef typename Traits::Point_2        Point_2;
    typedef typename Traits::Orientation_2  Orig_orientation;
-  
+
   Indirect_CW_diag_compare(){}
-   Indirect_CW_diag_compare(Point_2 vertex, Iterator prev_ref, 
-                         Iterator next_ref) : 
+   Indirect_CW_diag_compare(Point_2 vertex, Iterator prev_ref,
+                         Iterator next_ref) :
                 _orientation(Traits().orientation_2_object()),
                 _vertex(vertex),
                 _prev_v_ref(prev_ref)
-   { 
+   {
      _vertex_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(vertex), Point_2(*next_ref));
    }
 
    bool
-   operator()(Iterator d1, Iterator d2) 
+   operator()(Iterator d1, Iterator d2)
    {
      Orientation d1_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(_vertex), Point_2(*d1));
      Orientation d2_orientation = _orientation(Point_2(*_prev_v_ref), Point_2(_vertex), Point_2(*d2));
      Orientation d1_to_d2 = _orientation(Point_2(*d1), Point_2(_vertex), Point_2(*d2));
 
-      // if both diagonals are on the same side of the line from previous 
+      // if both diagonals are on the same side of the line from previous
       // vertex to this vertex then d1 comes before d2 (in CW order from
       // the edge (previous, vertex)) if one makes a left turn from d1 to d2
 
@@ -70,7 +70,7 @@ public:
       // containing the three points, i.e., if it turns in the same
       // direction as the original edges around vertex.
 
-      if (d1_orientation == COLLINEAR) 
+      if (d1_orientation == COLLINEAR)
          return (d2_orientation == _vertex_orientation);
 
       // opposite sides of the line containing the previous edge
@@ -90,8 +90,8 @@ private:
 template <class Traits_>
 class Partition_vertex;
 
-// 
-// requires 
+//
+// requires
 //   Traits::Polygon_2
 //   Traits::Point_2
 //   Traits::Left_turn_2
@@ -99,7 +99,7 @@ class Partition_vertex;
 //
 
 template <class Traits_>
-class Partitioned_polygon_2 : 
+class Partitioned_polygon_2 :
                             public std::vector< Partition_vertex< Traits_ > >
 {
 public:
@@ -118,7 +118,7 @@ public:
    { }
 
    template <class InputIterator>
-   Partitioned_polygon_2(InputIterator first, InputIterator beyond) :  
+   Partitioned_polygon_2(InputIterator first, InputIterator beyond) :
        _left_turn(Traits().left_turn_2_object())
    {
       for (; first != beyond; first++) {
@@ -126,7 +126,7 @@ public:
       }
    }
 
-   void insert_diagonal(Circulator v1_ref, Circulator v2_ref)  
+   void insert_diagonal(Circulator v1_ref, Circulator v2_ref)
    {
       (*v1_ref).insert_diagonal(v2_ref);
       (*v2_ref).insert_diagonal(v1_ref);
@@ -252,13 +252,13 @@ private:
        //    continue from the last vertex of the new polygon
    }
 
-   
+
 
    bool cuts_reflex_angle(Circulator vertex_ref, Circulator diag_endpoint)
    {
       Circulator prev = vertex_ref; prev--;
       Circulator next = vertex_ref; next++;
-   
+
       // find diag_endpoint in vertex_ref's list of diagonals
       Diagonal_iterator d_it;
       for (d_it = (*vertex_ref).diagonals_begin();
@@ -276,12 +276,12 @@ private:
       }
       else
          next = *next_d_it;
-   
+
 //      return _right_turn(*prev, *vertex_ref, *next);
       return _left_turn(Point_2(*vertex_ref), Point_2(*prev), Point_2(*next));
    }
 
-   bool diagonal_is_necessary(Circulator diag_ref1, Circulator diag_ref2) 
+   bool diagonal_is_necessary(Circulator diag_ref1, Circulator diag_ref2)
    {
        return (cuts_reflex_angle(diag_ref1, diag_ref2) ||
                cuts_reflex_angle(diag_ref2, diag_ref1));
@@ -296,7 +296,7 @@ class Partition_vertex : public Traits_::Point_2
   public:
     typedef Traits_                                              Traits;
     typedef typename Traits::Point_2                             Base_point;
-    typedef typename Partitioned_polygon_2< Traits >::Circulator Circulator; 
+    typedef typename Partitioned_polygon_2< Traits >::Circulator Circulator;
   typedef Partition_vertex<Traits>                               Self;
 //
 //  It might be better if this were a set that used Indirect_CW_diag_compare
@@ -316,60 +316,60 @@ class Partition_vertex : public Traits_::Point_2
   }
 
   Partition_vertex(Base_point p)
-    : Base_point(p) 
-  { 
-    current_diag = diag_endpoint_refs.end() ; 
+    : Base_point(p)
+  {
+    current_diag = diag_endpoint_refs.end() ;
   }
 
     Partition_vertex(const Partition_vertex& other)
-      : Base_point(other) 
-  { 
+      : Base_point(other)
+  {
     // No need to deep copy.
     // We initialize in order to avoid problem with g++ safe STL
-    current_diag = diag_endpoint_refs.end() ; 
+    current_diag = diag_endpoint_refs.end() ;
   }
 
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
     Partition_vertex& operator=(const Partition_vertex&)=default;
 #endif
 
-    void insert_diagonal(Circulator v_ref) 
+    void insert_diagonal(Circulator v_ref)
     {
        diag_endpoint_refs.push_back(v_ref);
     }
 
-    Diagonal_iterator diagonal_erase(Diagonal_iterator d_ref) 
+    Diagonal_iterator diagonal_erase(Diagonal_iterator d_ref)
     {
        return diag_endpoint_refs.erase(d_ref);
     }
 
-    Diagonal_iterator diagonal_erase(Circulator diag_endpoint) 
+    Diagonal_iterator diagonal_erase(Circulator diag_endpoint)
     {
        Diagonal_iterator d_it = diagonals_begin();
-       for (d_it = diagonals_begin(); d_it != diagonals_end() && 
+       for (d_it = diagonals_begin(); d_it != diagonals_end() &&
                                      *d_it != diag_endpoint; d_it++) {}
        if (d_it != diagonals_end()) return diag_endpoint_refs.erase(d_it);
        return d_it;
     }
 
-    Diagonal_iterator diagonals_begin() 
+    Diagonal_iterator diagonals_begin()
     {
        return diag_endpoint_refs.begin();
     }
 
-    Diagonal_iterator diagonals_end() 
+    Diagonal_iterator diagonals_end()
     {
        return diag_endpoint_refs.end();
     }
 
-    bool has_unused_diagonals( )  
+    bool has_unused_diagonals( )
     {
        return current_diag != diag_endpoint_refs.end();
     }
 
     // sort the diagonals ccw around the point they have in common
     // and remove any duplicate diagonals
-    void sort_diagonals(const Circulator& prev, const Circulator& next) 
+    void sort_diagonals(const Circulator& prev, const Circulator& next)
     {
       diag_endpoint_refs.sort(Indirect_CW_diag_compare<Circulator,Traits>(*this, prev, next));
 
@@ -377,7 +377,7 @@ class Partition_vertex : public Traits_::Point_2
        current_diag = diag_endpoint_refs.begin();
     }
 
-    void reset_current_diagonal( ) 
+    void reset_current_diagonal( )
     {
        current_diag = diag_endpoint_refs.begin();
     }
@@ -385,12 +385,12 @@ class Partition_vertex : public Traits_::Point_2
     Circulator current_diagonal( ) const
     {  return *current_diag; }
 
-    void advance_diagonal() 
+    void advance_diagonal()
     {
-       if (current_diag != diag_endpoint_refs.end()) 
+       if (current_diag != diag_endpoint_refs.end())
           current_diag++;
     }
-   
+
     void print_diagonals( ) const
     {
        std::cout << "from " << *this << std::endl;

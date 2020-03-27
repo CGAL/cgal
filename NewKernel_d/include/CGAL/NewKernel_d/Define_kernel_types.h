@@ -45,7 +45,7 @@ namespace CGAL {
     struct Define_kernel_types :
       Typedef_tag_type<typename List::head,
         typename internal::Type_or_iter<K,typename List::head>::type,
-	Define_kernel_types<K, Base, typename List::tail>
+        Define_kernel_types<K, Base, typename List::tail>
       > {};
 }
 #endif

@@ -43,7 +43,7 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
     return NULL;
   }
 
-  
+
   if(fileinfo.size() == 0)
   {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
@@ -61,7 +61,7 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
   }
   if(point_set_item->has_normals())
     point_set_item->setRenderingMode(CGAL::Three::Three::defaultPointSetRenderingMode());
-    
+
   return point_set_item;
 }
 

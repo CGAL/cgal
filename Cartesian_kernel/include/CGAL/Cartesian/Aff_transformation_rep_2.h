@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Lutz Kettner
 
@@ -106,7 +106,7 @@ friend class Scaling_repC2<R>;
   {
     typename R::Construct_point_2 construct_point_2;
     return construct_point_2(t11 * p.x() + t12 * p.y() + t13,
-			     t21 * p.x() + t22 * p.y() + t23);
+                             t21 * p.x() + t22 * p.y() + t23);
   }
 
   // note that a vector is not translated
@@ -195,7 +195,7 @@ operator*(const Aff_transformation_rep_baseC2<R> &t) const
 {
   return t.compose(*this);
 }
- 
+
 template < class R >
 CGAL_KERNEL_LARGE_INLINE
 typename Aff_transformation_repC2<R>::Aff_transformation_2

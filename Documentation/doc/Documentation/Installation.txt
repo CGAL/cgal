@@ -4,7 +4,7 @@
 \authors Eric Berberich, Joachim Reichel, and Fernando Cacciola
 
 \section installation_introduction Introduction
- 
+
 This document describes how to install \cgal on Windows, Unix-like systems, and MacOS X.
 
 Ideally, setting up \cgal amounts to:
@@ -20,21 +20,21 @@ Compiling an example or a demo shipped with \cgal is similarly simple:
 <PRE>
 cd examples/Triangulation_2 # go to an example directory
 cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
-make # build the examples 
+make # build the examples
 </PRE>
 
 <PRE>
 cd demo/Triangulation_2 # go to a demo directory
 cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
-make # build the demos 
+make # build the demos
 </PRE>
 
 Compiling an own non-shipped program is also close:
 
 <PRE>
-cd /path/to/program 
-cgal_create_CMakeLists -s executable 
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . 
+cd /path/to/program
+cgal_create_CMakeLists -s executable
+cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
 make
 </PRE>
 
@@ -45,21 +45,21 @@ its options in Section \ref seccreate_cgal_CMakeLists for various details).
 In a less ideal world, you probably have to install CMake, a makefile
 generator, and third party libraries. That is what this manual is about.
 
-\section secprerequisites Prerequisites 
+\section secprerequisites Prerequisites
 
 Installing \cgal requires a few components to be installed ahead: a
-supported compiler (see Section \ref seccompilers, CMake, \sc{Boost}, and at least \sc{Gmp}, and \sc{Mpfr}; see 
+supported compiler (see Section \ref seccompilers, CMake, \sc{Boost}, and at least \sc{Gmp}, and \sc{Mpfr}; see
 Section \ref secessential3rdpartysoftware for more details on
 essential third party software.
 
 \section secshippedcgal OS Specific Installation
 
 Some operating systems with package managers offer \cgal and its
-essential third party software through the manager, 
+essential third party software through the manager,
 for instance, Mac OS X, or some Linux distribution (e.g. Debian).
 For Windows, an installer is provided.
 
-\subsection sseccgalmacosxe CGAL on MAC OS X 
+\subsection sseccgalmacosxe CGAL on MAC OS X
 
 For instance, use macports in the following way:
 
@@ -75,7 +75,7 @@ sudo port install cgal +qt5 +universal +demos
 
 The setup is similar for <a href="https://brew.sh/"><tt>homebrew</tt></a> .
 
-\subsection sseccgaldebian CGAL on Linux 
+\subsection sseccgaldebian CGAL on Linux
 
 For instance in debian/Ubuntu, use apt-get in the following way:
 
@@ -104,9 +104,9 @@ A <a href="https://www.cgal.org/download/windows.html">tutorial</a> is provided 
 
 
 
-\section secgettingcgal Downloading CGAL 
+\section secgettingcgal Downloading CGAL
 
-You can obtain the \cgal library from 
+You can obtain the \cgal library from
 <A HREF="https://www.cgal.org/download.html">https://www.cgal.org/download.html</A>
 and install it yourself.
 
@@ -122,13 +122,13 @@ In both cases the directory `CGAL-\cgalReleaseNumber` will be created. This dire
 contains the following subdirectories:
 
 
-| Directory   | Contents   | 
+| Directory   | Contents   |
 | :-----------| :----------|
 | `auxiliary`  | precompiled \sc{Gmp} and \sc{Mpfr} for Windows |
 | `cmake/modules` | modules for finding and using libraries |
 | `config` |configuration files for install script |
 | `demo` | demo programs (most of them need \sc{Qt}, geomview or other third-party products) |
-| `doc_html` |documentation (HTML) | 
+| `doc_html` |documentation (HTML) |
 | `examples` | example programs |
 | `include`  | header files |
 | `scripts`  | some useful scripts (e.g. for creating CMakeLists.txt files) |
@@ -140,7 +140,7 @@ distribution of the \sc{Core} library\cgalFootnote{<A HREF="https://cs.nyu.edu/e
 dealing with algebraic numbers. \sc{Core} is not part of \cgal and has its
 own license.
 
-The directory `include/CGAL/OpenNL` contains a distribution of the 
+The directory `include/CGAL/OpenNL` contains a distribution of the
 Open Numerical Library which provides solvers for sparse linear systems,
 especially designed for the Computer Graphics community. \sc{OpenNL} is not part
 of \cgal and has its own license.
@@ -149,16 +149,16 @@ The only documentation shipped with \cgal sources is the present
 installation manual. The \cgal manual must be downloaded separately from
 <A HREF="https://www.cgal.org/download.html">`https://www.cgal.org/download.html`</A>.
 
-\section seccompilers Supported Compilers 
+\section seccompilers Supported Compilers
 
-In order to build the \cgal libraries, you need a \cpp compiler. 
+In order to build the \cgal libraries, you need a \cpp compiler.
 \cgal \cgalReleaseNumber is supported, that is continuously tested, for the following compilers/operating systems:
 
 
 | Compiler | Operating System |
 | :------- | :--------------- |
 |\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
-|          | \sc{MS} Windows | 
+|          | \sc{MS} Windows |
 |\sc{MS} Visual `C++` 12.0, 14.0, 15.9 (\sc{Visual Studio} 2013, 2015, and 2017)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} | \sc{MS} Windows |
 | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 7.0.1 | Linux  |
 | Apple `Clang` compiler version 7.0.2 | MacOS X |
@@ -168,28 +168,28 @@ It may work for older versions of the above listed compilers.
 \attention Recent versions of CMake are needed for recent versions of MS Visual C++. Please refer to CMake's documentation for further information.
 
 
-\section secconfigwithcmake Configuring CGAL with CMake 
+\section secconfigwithcmake Configuring CGAL with CMake
 
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
 If CMake is not installed already you can obtain it from <A HREF="https://cmake.org/">`https://cmake.org/`</A>.
 CMake version 3.1 or higher is required.
 This manual explains only those features of
-CMake which are needed in order to build \cgal. Please refer to the 
+CMake which are needed in order to build \cgal. Please refer to the
 CMake documentation at <A HREF="https://cmake.org/">`https://cmake.org/`</A> for further details.
 
-Before building \cgal you have to choose the compiler/linker, 
+Before building \cgal you have to choose the compiler/linker,
 set compiler and linker flags, specify which
-third-party libraries you want to use and where they can be found, and 
+third-party libraries you want to use and where they can be found, and
 which \cgal libraries you want to build. Gathering
-all this information is called <I>configuration</I>. 
+all this information is called <I>configuration</I>.
 The end of the process is marked by the generation of a makefile or a
 Visual \cpp solution and project file that you can use to build \cgal.
 
 \subsection installation_configuring_gui Configuring CGAL with the CMake GUI
 
 The simplest way to start the configuration is to run the graphical
-user interface of CMake. We recommend to use `cmake-gui`. You must pass as 
+user interface of CMake. We recommend to use `cmake-gui`. You must pass as
 argument the root directory of \cgal. For example:
 
 <PRE>
@@ -197,16 +197,16 @@ cd CGAL-\cgalReleaseNumber
 cmake-gui . # Notice the dot to indicate the current directory.
 </PRE>
 
-After `cmake-gui` opens, press 'Configure'. 
+After `cmake-gui` opens, press 'Configure'.
 A dialog will pop up and you will have to choose what shall gets generated.
 After you have made your choice and pressed 'Finish', you will see
-the output of configuration tests in the lower portion of the application. 
+the output of configuration tests in the lower portion of the application.
 When these tests are done, you will see many
-red entries in the upper portion of the application. Just ignore them and press 'Configure'. 
-By now CMake should have found many libraries and have initialized variables. 
-If you still find red entries, you have to provide the necessary information. 
+red entries in the upper portion of the application. Just ignore them and press 'Configure'.
+By now CMake should have found many libraries and have initialized variables.
+If you still find red entries, you have to provide the necessary information.
 This typically happens if you have installed software at non-standard locations.
-Providing information and pressing 'Configure' goes on until 
+Providing information and pressing 'Configure' goes on until
 all entries are grayed. You are now ready to press 'Generate'. Once this is
 done, you can quit `cmake-gui`.
 
@@ -223,7 +223,7 @@ cmake . # Notice the dot to indicate the current directory.
 
 The very first thing CMake does is to detect the compiler to use. This
 detection is performed by a special CMake module called a
-<I>generator</I>. 
+<I>generator</I>.
 A CMake generator understands the build requirements for a
 particular compiler/linker and generates the necessary files for that. For
 example, the <I>UNIX Makefiles</I> generator understands the GNU chain
@@ -238,18 +238,18 @@ possible to generate <I>NMakefiles</I> instead of Visual Studio project
 files in order to build the library with `nmake`. Running
 `cmake` with no parameters in a command-line prints the list of
 available generators supported by your platform and CMake version. If the
-generator you need is not listed there, you can try a newer 
+generator you need is not listed there, you can try a newer
 CMake version, as generators are hardcoded into CMake, and additional
 generators are added with each release.
 
 Since the choice of the generator determines the type of build files to generate, in some cases
-you choose a particular generator as a mean to choose a specific compiler (because they use different 
+you choose a particular generator as a mean to choose a specific compiler (because they use different
 build files). For example, the following generates solution files for
 use in Visual \cpp 15.0 on a 64bit machine:
 
 <PRE>
 cd CGAL-\cgalReleaseNumber
-cmake -G"Visual Studio 15 2017 Win64" . 
+cmake -G"Visual Studio 15 2017 Win64" .
 </PRE>
 
 In other cases, however, the generator doesn't directly identify a
@@ -260,11 +260,11 @@ specify the desired compiler in the call to CMake, as in this example:
 
 <PRE>
 cd CGAL-\cgalReleaseNumber
-cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-4.7 . 
+cmake -DCMAKE_CXX_COMPILER:FILEPATH=g++-4.7 .
 </PRE>
 
 CMake maintains configuration parameters in so-called <I>cmake variables</I>, like the `CMAKE_CXX_COMPILER`
-in the example above. These variables <I>are not environment variables</I> but <I>CMake variables</I>. Some of the CMake 
+in the example above. These variables <I>are not environment variables</I> but <I>CMake variables</I>. Some of the CMake
 variables represent user choices, such as `WITH_examples` or `CMAKE_BUILD_TYPE=Release`, while others
 indicate the details of a third-party library, such as `Boost_INCLUDE_DIR` or the compiler flags to use,
 such as `CMAKE_CXX_FLAGS`.
@@ -281,14 +281,14 @@ instead of going through the interactive configuration session.
 \cgalAdvancedEnd
 
 The configuration process not only determines the location of the required dependencies, it also dynamically generates a
-`compiler_config.h` file, which encodes the properties of your system and a special file named 
+`compiler_config.h` file, which encodes the properties of your system and a special file named
 `CGALConfig.cmake`, which is used to build programs using \cgal. The
 purpose of this file is explained below.
 
-\section seclibraries CGAL Libraries 
+\section seclibraries CGAL Libraries
 
-\cgal is split into five libraries. During configuration, you can select the libraries that 
-you would like to build by setting a CMake variable of the form <TT>WITH_<library></TT>. By default all 
+\cgal is split into five libraries. During configuration, you can select the libraries that
+you would like to build by setting a CMake variable of the form <TT>WITH_<library></TT>. By default all
 are switched `ON`. All activated libraries are build after
 configuration; see \ref secbuilding
 
@@ -360,12 +360,12 @@ header-only.
 
 There is one possible problem when using \cgal in header-only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="https://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="https://doc.cgal.org/latest/STL_Extension/group__PkgSTLExtensionAssertions.html">failure behavior</A>, <A HREF="https://doc.cgal.org/latest/Stream_support/group__PkgStreamSupport.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
 
-\section secessential3rdpartysoftware Essential Third Party Libraries 
+\section secessential3rdpartysoftware Essential Third Party Libraries
 
 The focus of \cgal is on geometry, and we rely on other
 highly specialized libraries and software for non-geometric issues,
 for instance, for numeric solvers, or visualization. We first list software
-that is essential to build (all) libraries of \cgal, that is, 
+that is essential to build (all) libraries of \cgal, that is,
 this software must be found during the configuration of \cgal for an
 actived library of \cgal (i.e.\ <TT>WITH_<library>=ON</TT>);
 see \ref sec3partysoftwareconfig to specify the location of 3rd
@@ -374,17 +374,17 @@ party software.
 The libraries \stl (shipped with any compiler) and \sc{Boost} are essential to all components (i.e.\ libCGAL,
 libCGAL_Core, libCGAL_ImageIO, and libCGAL_Qt5).
 
-\subsection thirdpartystl Standard Template Library (STL) 
+\subsection thirdpartystl Standard Template Library (STL)
 
 \cgal heavily uses the \stl, and in particular adopted
 many of its design ideas. You can find online
-documentation for the \stl at various web sites, for instance, 
+documentation for the \stl at various web sites, for instance,
 <A HREF="http://www.cplusplus.com/reference/">`http://www.cplusplus.com/reference/`</A>,
 or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx`</A>.
 
 The \stl comes with the compiler, so there is nothing to install.
 
-\subsection thirdpartyBoost Boost 
+\subsection thirdpartyBoost Boost
 
 The \sc{Boost} libraries are a set of portable C++ source libraries. Most of
 \sc{Boost} libraries are header-only, but a few of them need to be compiled or
@@ -409,7 +409,7 @@ In \cgal some demos and examples depend on `Boost.Program_options`.
 In case the \sc{Boost} libraries are not installed on your system already, you
 can obtain them from <A HREF="https://www.boost.org/">`https://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
 from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`https://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
-For Visual C++ versions prior to 2015  `Boost.Thread` is required, so make sure to either install the precompiled 
+For Visual C++ versions prior to 2015  `Boost.Thread` is required, so make sure to either install the precompiled
 libraries for your compiler or build `libboost-thread` and `libboost-system`.
 
 As on Windows there is no canonical directory for where to find
@@ -419,12 +419,12 @@ As on Windows there is no canonical directory for where to find
 
 \subsection thirdpartyMPFR GMP and MPFR
 
-The components libCGAL, libCGAL_Core, and libCGAL_Qt5 require 
+The components libCGAL, libCGAL_Core, and libCGAL_Qt5 require
 \sc{Gmp} and \sc{Mpfr} which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 
 \cgal combines floating point arithmetic with exact arithmetic,
-in order to be efficient and reliable. \cgal has a built-in 
+in order to be efficient and reliable. \cgal has a built-in
 number type for that, but \sc{Gmp} and \sc{Mpfr} provide a faster
 solution, and we recommend to use them.
 
@@ -437,7 +437,7 @@ supported by the \sc{Gmp} and \sc{Mpfr} projects, we provide precompiled version
 of \sc{Gmp} and \sc{Mpfr}, which can be downloaded with the installer
 `CGAL-\cgalReleaseNumber``-Setup.exe`.
 
-\subsection thirdpartyzlib zlib 
+\subsection thirdpartyzlib zlib
 
 \sc{zlib} is a data compression library, and is essential for the component libCGAL_ImageIO.
 
@@ -446,7 +446,7 @@ In \cgal this library is used in the examples of the \ref PkgSurfaceMesher3Ref p
 If it is not already on your system,
 for instance, on Windows, you can download it from <A HREF="http://www.zlib.net/">`http://www.zlib.net/`</A>.
 
-\subsection thirdpartyOpenGL OpenGL 
+\subsection thirdpartyOpenGL OpenGL
 
 \sc{OpenGL} (Open Graphics Library) provides an API for applications that
 produce 2D and 3D computer graphics.
@@ -461,8 +461,8 @@ downloaded from <A HREF="http://www.opengl.org/">`http://www.opengl.org/`</A>.
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt5 requires \sc{Qt}5 installed on your system. 
-In case \sc{Qt} is not yet installed on your system, you can download 
+The component libCGAL_Qt5 requires \sc{Qt}5 installed on your system.
+In case \sc{Qt} is not yet installed on your system, you can download
 it from <A HREF="http://www.qt-project.org/">`http://www.qt-project.org/`</A>.
 
 
@@ -484,12 +484,12 @@ If you do not plan to compile any demos, you might skip some of the essential li
 \sc{OpenGL}), as the corresponding \cgal-libraries are not linked. But for
 your own demos you might need these \cgal-libraries.
 
-\section secoptional3rdpartysoftware Optional Third Party Libraries 
+\section secoptional3rdpartysoftware Optional Third Party Libraries
 
 Optional 3rd party software can be used by \cgal for various reasons:
 Usually certain optional libraries are required to build examples and
-demos shipped with \cgal or to build your own project using \cgal. 
-Another reason is to speed up basic tasks. 
+demos shipped with \cgal or to build your own project using \cgal.
+Another reason is to speed up basic tasks.
 In order to support these goals, all optional libraries can be <i>prepared to be
 used with \cgal</I> while configuring \cgal, just in the same way as
 essential libraries are configured. Whenever building an example or a
@@ -501,7 +501,7 @@ are available when using \cgal.
 \leda is a library of efficient data structures and
 algorithms. Like \sc{Core}, \leda offers a real number data type.
 
-In \cgal this library is optional, and its number types can 
+In \cgal this library is optional, and its number types can
 be used as an alternative to \sc{Gmp}, \sc{Mpfr}, and \sc{Core}.
 
 Free and commercial editions of \leda are available from <A HREF="https://www.algorithmic-solutions.com/leda/index.html">`https://www.algorithmic-solutions.com/leda/index.html`</A>.
@@ -509,7 +509,7 @@ Free and commercial editions of \leda are available from <A HREF="https://www.al
 \subsection thirdpartyMPFI MPFI
 
 \sc{Mpfi} provides arbitrary precision interval arithmetic with intervals
-represented using \sc{Mpfr} reliable floating-point numbers. 
+represented using \sc{Mpfr} reliable floating-point numbers.
 It is based on the libraries \sc{Gmp} and \sc{Mpfr}.
 In the setting of \cgal, this library is
 optional: it is used by some models of the
@@ -534,19 +534,19 @@ The libraries \sc{Rs} and \sc{Rs3} need \sc{Mpfi}, which can be downloaded from
 \subsection thirdpartyNTL NTL
 
 \sc{Ntl} provides data structures and algorithms for signed, arbitrary
-length integers, and for vectors, matrices, and polynomials over the 
-integers and over finite fields. The optional library \sc{Ntl} is used by \cgal 
+length integers, and for vectors, matrices, and polynomials over the
+integers and over finite fields. The optional library \sc{Ntl} is used by \cgal
 to speed up operations of the Polynomial package, such as GCDs. It is recommended to install \sc{Ntl} with support from \sc{Gmp}.
 
 \sc{Ntl} can be downloaded from <A HREF="http://www.shoup.net/ntl/">`http://www.shoup.net/ntl/`</A>. Version 5.1 or higher is recommended.
 
-\subsection thirdpartyEigen Eigen 
+\subsection thirdpartyEigen Eigen
 
 \sc{Eigen} is a `C++` template library for linear algebra. \sc{Eigen} supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
 
 In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstruction3Ref
-and the \ref PkgSurfaceMeshParameterizationRef packages. 
+and the \ref PkgSurfaceMeshParameterizationRef packages.
 
 In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJetFitting3Ref
 and the \ref PkgRidges3Ref packages.
@@ -565,7 +565,7 @@ It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.
 
 \subsection thirdpartyTBB Intel TBB
 
-\sc{Tbb} (Threading Building Blocks) is a library developed by Intel Corporation for writing software 
+\sc{Tbb} (Threading Building Blocks) is a library developed by Intel Corporation for writing software
 programs that take advantage of multi-core processors.
 
 In \cgal, \sc{Tbb} is used by the packages that offer parallel code.
@@ -624,11 +624,11 @@ and, by extension, of surface meshes (see Section \ref BGLPartitioning of the pa
 More information is available on the METIS library
 at <A HREF="http://glaros.dtc.umn.edu/gkhome/metis/metis/overview">`http://glaros.dtc.umn.edu/gkhome/metis/metis/overview`</A>.
 
-\section secbuilding Building CGAL 
+\section secbuilding Building CGAL
 
 The results of a successful configuration are build files that control the build step.
-The nature of the build files depends on the generator used during configuration, but in all cases they 
-contain several <I>targets</I>, one per library, and a default global target corresponding 
+The nature of the build files depends on the generator used during configuration, but in all cases they
+contain several <I>targets</I>, one per library, and a default global target corresponding
 to all the libraries.
 
 For example, in a \sc{Unix}-like environment the default generator produces
@@ -641,7 +641,7 @@ cd CGAL-\cgalReleaseNumber
 
 # build all the selected libraries at once
 
-make 
+make
 
 </PRE>
 
@@ -690,7 +690,7 @@ for examples and demos respectively.
 <PRE>
 
 # build all examples at once
-make examples 
+make examples
 
 # build all demos at once
 make demos
@@ -703,7 +703,7 @@ exact name of the example or demo target of a particular package by
 typing `make help | grep <package>`.
 \cgalAdvancedEnd
 
-\section secinstalling Installing CGAL 
+\section secinstalling Installing CGAL
 
 On many platforms, library pieces such as headers, docs and binaries
 are expected to be placed in specific locations. A typical example
@@ -713,7 +713,7 @@ of placing or copying the library elements into its standard location
 is sometimes referred to as <I>Installation</I> and it is a
 postprocessing step after the build step.
 
-CMake carries out the installation by producing a build target named <I>install</I>. 
+CMake carries out the installation by producing a build target named <I>install</I>.
 The following example shows a typical session from configuration to
 installation in a \sc{Unix}-like environment:
 
@@ -731,7 +731,7 @@ If you use a generator that produces IDE files (for Visual Studio for instance) 
 `INSTALL` project, which you will be able to <I>"build"</I> to execute the installation step.
 
 \cgalAdvancedBegin
-The files are copied into a directory tree relative to the <I>installation directory</I> determined by the 
+The files are copied into a directory tree relative to the <I>installation directory</I> determined by the
 CMake variable `CMAKE_INSTALL_PREFIX`. This variable defaults to `/usr/local` under \sc{Unix}-like operating systems
 and <A HREF="C:\ProgramFiles">`C:\Program Files`</A> under Windows. If you want to install to a different location, you must override that CMake
 variable explicitly <I>at the configuration time</I> and not when executing the install step.
@@ -744,7 +744,7 @@ The file `CGALConfig.cmake` is installed by default in
 
 
 While you can choose between release or debug builds, and shared or static libraries,
-it is not possible to generate different variants during a single configuration. You need to run CMake in a 
+it is not possible to generate different variants during a single configuration. You need to run CMake in a
 different directory for each variant you are interested in, each with its own selection of configuration parameters.
 
 CMake stores the resulting makefiles and project files, along with several temporary and auxiliary files such
@@ -757,7 +757,7 @@ distinct directory for each configuration and by running CMake from there. This 
 as <I>out-of-source configuration</I>, as opposite to an <I>in-source
 configuration</I>, as showed in the previous sections.
 
-You can, for example, generate subdirectories `CGAL-\cgalReleaseNumber``/cmake/platforms/debug` and 
+You can, for example, generate subdirectories `CGAL-\cgalReleaseNumber``/cmake/platforms/debug` and
 `CGAL-\cgalReleaseNumber``/cmake/platforms/release` for two configurations, respectively:
 
 <PRE>
@@ -793,9 +793,9 @@ shell-script that is introduced below.
 For a user program `executable.cpp`, the ideal world looks like this:
 
 <PRE>
-cd /path/to/program 
+cd /path/to/program
 cgal_create_CMakeLists -s executable
-cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . 
+cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber .
 make
 </PRE>
 
@@ -805,7 +805,7 @@ to \cgal's source directory that has been used for installation). This file
 contains the definitions of several CMake variable that summarize the
 configuration of \cgal. In order to configure a program, you need
 to indicate the location of that config file in the CMake variable
-`CGAL_DIR` (as indicated in the example above). 
+`CGAL_DIR` (as indicated in the example above).
 `CGAL_DIR` can also be an environment variable. Setting
 `CGAL_DIR` makes particular sense if having multiple
 out-of-source builds of \cgal as in Section \ref seccmakeoutofsource.
@@ -838,7 +838,7 @@ configuration.
 create <B>a single executable</B> for 'source' linked with
 compilations of all other source files
 (`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
-This behaviour is usually needed for (graphical) demos. 
+This behaviour is usually needed for (graphical) demos.
 
 If the parameter is not given, the script creates <B>one executable for each given
 source file</B>.
@@ -888,7 +888,7 @@ without calling the script (manual creation).
 Normally, programs linked with \cgal must be compiled with the same flags
 used by the compilation of \cgal libraries. For this reason, the <I>very first</I> time
 a program is configured, all the flags given by the CMake variables `CMAKE_*_FLAGS`
-are <I>locked</I> in the sense that the values recorded in `CGALConfig.cmake` 
+are <I>locked</I> in the sense that the values recorded in `CGALConfig.cmake`
 are used to override any values given by CMake itself or yourself.
 
 This does not apply to the additional flags that can be given via `CGAL_*_FLAGS`.
@@ -913,7 +913,7 @@ controlling variable right up front:
 cd CGAL-\cgalReleaseNumber
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-g .
 cd CGAL-\cgalReleaseNumber/examples/Triangulation_2
-cmake -DCGAL_DIR=CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE . 
+cmake -DCGAL_DIR=CGAL-\cgalReleaseNumber -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_DONT_OVERRIDE_CMAKE_FLAGS=TRUE .
 </PRE>
 \cgalAdvancedEnd
 
@@ -941,8 +941,8 @@ configure and build. Their values can be ON or OFF.
 
 \subsection installation_flags Compiler and Linker Flags
 
-The following variables specify compiler and linker flags. Each variable holds a 
-space-separated list of command-line switches for the compiler and linker and 
+The following variables specify compiler and linker flags. Each variable holds a
+space-separated list of command-line switches for the compiler and linker and
 their default values are automatically defined by CMake based on the target platform.
 
 Have in mind that these variables specify a list of flags, not just one
@@ -977,7 +977,7 @@ defined by cmake.
 \subsection installation_misc Miscellaneous Variables
 
 
-| Variable              | Description                                                           | Type        | %Default Value | 
+| Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CMAKE_BUILD_TYPE`    | Indicates type of build. Possible values are 'Debug' or 'Release'     | CMake       | Release |
 | `CMAKE_CXX_COMPILER`  | Full-path to the executable corresponding to the C++ compiler to use. | CMake       | platform-dependent |
@@ -987,7 +987,7 @@ defined by cmake.
 \subsection installation_variables_building Variables Used Only When Building Programs (Such as Demos or Examples)
 
 
-| Variable              | Description                                                           | Type        | %Default Value | 
+| Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
 
@@ -997,7 +997,7 @@ defined by cmake.
 
 The following variables provide information about the availability and
 location of the 3rd party libraries used by \cgal. CMake automatically
-searches for dependencies so you need to specify these variables if 
+searches for dependencies so you need to specify these variables if
 CMake was unable to locate something. This is indicated by a value ending in
 `NOTFOUND`.
 
@@ -1007,7 +1007,7 @@ other but never both.
 
 \subsection installation_boost Boost Libraries
 
-In most cases, if \sc{Boost} is not automatically found, setting the `BOOST_ROOT` 
+In most cases, if \sc{Boost} is not automatically found, setting the `BOOST_ROOT`
 variable is enough. If it is not, you can specify the header and library
 directories individually. You can also provide the full pathname to a specific compiled library
 if it cannot be found in the library directory or its name is non-standard.
@@ -1018,7 +1018,7 @@ are used if present. You can set the variable
 with static versions explicitly.
 
 On Windows, if you link with \sc{Boost} shared libraries, you must ensure that
-the `.dll` files are found by the dynamic linker, at run time. 
+the `.dll` files are found by the dynamic linker, at run time.
 For example, you can add the path to the \sc{Boost} `.dll` to the
 `PATH` environment variable.
 
@@ -1027,34 +1027,34 @@ For example, you can add the path to the \sc{Boost} `.dll` to the
 | `BOOST_ROOT`\cgalFootnote{The environment variable can be spelled either `BOOST_ROOT` or `BOOSTROOT`} | Root directory of your \sc{Boost} installation | Either CMake or Environment |
 | `Boost_INCLUDE_DIR`   | Directory containing the `boost/version.hpp` file  | CMake |
 | `BOOST_INCLUDEDIR`    | Idem | Environment |
-| `Boost_LIBRARY_DIRS`  | Directory containing the compiled \sc{Boost} libraries  | CMake | 
+| `Boost_LIBRARY_DIRS`  | Directory containing the compiled \sc{Boost} libraries  | CMake |
 | `BOOST_LIBRARYDIR`    | Idem | Environment |
-| `Boost_(xyz)_LIBRARY_RELEASE`  | Full pathname to a release build of the compiled 'xyz' \sc{Boost} library | CMake | 
+| `Boost_(xyz)_LIBRARY_RELEASE`  | Full pathname to a release build of the compiled 'xyz' \sc{Boost} library | CMake |
 | `Boost_(xyz)_LIBRARY_DEBUG` | Full pathname to a debug build of the compiled 'xyz' \sc{Boost} library | CMake |
 
 
 \subsection installation_gmp GMP and MPFR Libraries
 
-Under Windows, auto-linking is used, so only the <I>directory</I> 
+Under Windows, auto-linking is used, so only the <I>directory</I>
 containing the libraries is needed and you would specify `GMP|MPFR_LIBRARY_DIR` rather than
 `GMP|MPFR_LIBRARIES`. On the other hand, under Linux the actual library filename is needed.
 Thus you would specify `GMP|MPFR_LIBRARIES`. In no case you need to specify both.
 
-\cgal uses both \sc{Gmp} and \sc{Mpfr} so both need to be supported. If either of them is unavailable the 
+\cgal uses both \sc{Gmp} and \sc{Mpfr} so both need to be supported. If either of them is unavailable the
 usage of \sc{Gmp} and of \sc{Mpfr} will be disabled.
 
 
 | Variable              | Description                                                           | Type        |
 | :-                    | :-                    | :-             |
-| `CGAL_DISABLE_GMP`    | Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not  | CMake | 
+| `CGAL_DISABLE_GMP`    | Indicates whether to search and use \sc{Gmp}/\sc{Mpfr} or not  | CMake |
 | `GMP_DIR`  | Directory of \sc{Gmp} default installation  | Environment |
-| `GMP_INCLUDE_DIR`  | Directory containing the `gmp.h` file  | CMake | 
+| `GMP_INCLUDE_DIR`  | Directory containing the `gmp.h` file  | CMake |
 | `GMP_INC_DIR` | Idem | Environment |
 | `GMP_LIBRARIES_DIR`  | Directory containing the compiled \sc{Gmp} library | CMake |
 | `GMP_LIB_DIR` | Idem | Environment |
 | `GMP_LIBRARIES` | Full pathname of the compiled \sc{Gmp} library  | CMake |
 | `MPFR_INCLUDE_DIR` | Directory containing the `mpfr.h` file | CMake |
-| `MPFR_INC_DIR`  | Idem | Environment | 
+| `MPFR_INC_DIR`  | Idem | Environment |
 | `MPFR_LIBRARIES_DIR` | Directory containing the compiled \sc{Mpfr} library | CMake |
 | `MPFR_LIB_DIR` | Idem | Environment |
 | `MPFR_LIBRARIES`  | Full pathname of the compiled \sc{Mpfr} library | CMake |
@@ -1081,7 +1081,7 @@ using the open source edition it should be `<path>/qt-everywhere-opensource-src-
 \subsection installation_leda LEDA Library
 
 When the \leda libraries are not automatically found, yet they are installed on the system
-with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might 
+with base names 'leda' and 'ledaD' (for the release and debug versions resp.), it might
 be sufficient to just indicate the library directory via the `LEDA_LIBRARY_DIRS` variable.
 If that doesn't work because, for example, the names are different, you can provide the full pathnames of each variant
 via `LEDA_LIBRARY_RELEASE` and `LEDA_LIBRARY_DEBUG`.
@@ -1117,7 +1117,7 @@ and library files must be specified by using environment variables.
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
 | `MPFI_DIR`           |Directory of \sc{MPFI} default installation | Environment |
-| `MPFI_INCLUDE_DIR`   | Directory containing the `mpfi.h` file | CMake | 
+| `MPFI_INCLUDE_DIR`   | Directory containing the `mpfi.h` file | CMake |
 | `MPFI_INC_DIR`       | Idem | Environment |
 | `MPFI_LIBRARIES_DIR` | Directory containing the compiled \sc{Mpfi} library | CMake |
 | `MPFI_LIB_DIR`       | Idem | Environment |
@@ -1151,7 +1151,7 @@ related to the latter library may also need to be defined.
 Similar variables exist for \sc{Rs3}.
 
 | Variable             | Description           | Type        |
-| :-                   | :-                    | :-       
+| :-                   | :-                    | :-
 | `RS3_DIR` | Directory of \sc{Rs3} default installation | Environment |
 | `RS3_INCLUDE_DIR` | Directory containing the file `rs3_fncts.h` file | CMake |
 | `RS3_INC_DIR` | Idem | Environment |
@@ -1162,8 +1162,8 @@ Similar variables exist for \sc{Rs3}.
 
 \subsection installation_ntl NTL Library
 
-Some polynomial computations in \cgal's algebraic kernel 
-are speed up when \sc{Ntl} is available. 
+Some polynomial computations in \cgal's algebraic kernel
+are speed up when \sc{Ntl} is available.
 As the algebraic kernel is not compiled as a part of the \cgal
 library, this library is not detected nor configured at installation time.
 
@@ -1208,7 +1208,7 @@ environment variable is sufficient.
 \subsection installation_tbb TBB Library
 
 If \sc{Tbb} is not automatically found, the user must set the `TBBROOT`
-environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compiler>` must be set. 
+environment variable. The environment variable `TBB_ARCH_PLATFORM=<arch>/<compiler>` must be set.
 `<arch>` is `ia32` or `intel64`. `<compiler>` describes the Linux kernel, gcc version or Visual Studio version
 used. It should be set to what is used in `$TBBROOT/lib/<arch>`.
 
@@ -1255,10 +1255,10 @@ The file `CGAL/compiler_config.h` is included from
 `<CGAL/config.h>`.
 which is included by all \cgal header files.
 
-\section seccompileroptimisations Compiler Optimizations 
+\section seccompileroptimisations Compiler Optimizations
 
-By default CMake generates makefiles for Release mode, with 
+By default CMake generates makefiles for Release mode, with
 optimization flags switched on, and vcproj files for Release
 and Debug modes.
 
-*/ 
+*/

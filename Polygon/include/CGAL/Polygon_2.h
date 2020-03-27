@@ -1,9 +1,9 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Geert-Jan Giezeman <geert@cs.uu.nl>
 //                 Wieger Wesselink
@@ -106,13 +106,13 @@ class Polygon_2 {
     /// \name Iterators
     ///
     /// The following types denote iterators that allow to traverse
-    /// the vertices and edges of a polygon.  Since 
+    /// the vertices and edges of a polygon.  Since
     /// a polygon can be viewed as a circular as well as a
     /// linear data structure both circulators and iterators are
-    /// defined.  
+    /// defined.
     ///
     /// \note At least conceptually, the circulators and iterators are
-    /// non-mutable.  The enforcement depends on preprocessor flags. 
+    /// non-mutable.  The enforcement depends on preprocessor flags.
     ///
     /// \note The iterator category is in all cases bidirectional, except
     /// for Vertex_iterator, which has the same iterator category as
@@ -140,7 +140,7 @@ class Polygon_2 {
     typedef Polygon_2_edge_iterator<Traits_P,Container_P> Edge_const_iterator;
     typedef Polygon_2_const_edge_circulator<Traits_P,
                                             Container_P> Edge_const_circulator;
-#endif // DOXYGEN_RUNNING    
+#endif // DOXYGEN_RUNNING
     /// @}
 
     /// \name Creation
@@ -164,13 +164,13 @@ class Polygon_2 {
       // Sun STL switches off member templates for binary backward compat.
       std::copy(first, last, std::back_inserter(d_container));
     }
-  
+
 #ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
 #ifndef DOXYGEN_RUNNING
   Polygon_2& operator=(const Polygon_2&)=default;
 #endif
 #endif
-  
+
     /// @}
 
     /// \name Modifiers
@@ -261,7 +261,7 @@ class Polygon_2 {
 
     /// @}
 
-    /// \name Access Functions 
+    /// \name Access Functions
     /// The following methods of the class Polygon_2
     /// return circulators and iterators that allow to traverse the
     /// vertices and edges.
@@ -282,7 +282,7 @@ class Polygon_2 {
     /// Returns a mutable circulator that allows to traverse the
     /// vertices of the polygon.
     Vertex_const_circulator vertices_circulator() const
-      { 
+      {
         Polygon_2& self = const_cast<Polygon_2&>(*this);
         return Vertex_const_circulator(&self.d_container,
                self.d_container.begin());
@@ -329,7 +329,7 @@ class Polygon_2 {
 
     /// Returns `ON_POSITIVE_SIDE`, or `ON_NEGATIVE_SIDE`,
     /// or `ON_ORIENTED_BOUNDARY`, depending on where point
-    /// `q` is. 
+    /// `q` is.
     /// \pre `p.is_simple()`.
     Oriented_side oriented_side(const Point_2& value) const
     {
@@ -351,7 +351,7 @@ class Polygon_2 {
     /// Returns the smallest bounding box containing this polygon.
     Bbox_2 bbox() const
     {
-      return bbox_2(d_container.begin(), d_container.end()); 
+      return bbox_2(d_container.begin(), d_container.end());
     }
 
     /// Returns the signed area of the polygon. This means that the
@@ -495,7 +495,7 @@ template <class Traits_P, class Container1_P, class Container2_P>
 bool operator==( const Polygon_2<Traits_P,Container1_P> &p1,
                  const Polygon_2<Traits_P,Container2_P> &p2 );
 
-/// Test for inequality. 
+/// Test for inequality.
 /// \memberof Polygon_2
 template <class Traits_P, class Container1_P, class Container2_P>
 inline

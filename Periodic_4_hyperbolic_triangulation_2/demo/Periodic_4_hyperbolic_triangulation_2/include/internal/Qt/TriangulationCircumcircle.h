@@ -22,7 +22,7 @@
 #ifndef CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
 #define CGAL_QT_TRIANGULATION_CIRCUMCIRCLE_H
 
-#include <QGraphicsSceneMouseEvent> 
+#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 #include <QEvent>
@@ -39,12 +39,12 @@ class TriangulationCircumcircle : public GraphicsViewInput
 public:
   TriangulationCircumcircle(QGraphicsScene* s, DT  * dt_, QObject* parent);
   ~TriangulationCircumcircle();
- 
+
   void setPen(const QPen& pen);
 
   void show();
   void hide();
-  
+
 protected:
 
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -103,7 +103,7 @@ TriangulationCircumcircle<T>::hide()
 }
 
 template <typename T>
-void 
+void
 TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
   if(dt->dimension() != 2){
@@ -120,7 +120,7 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     p1 = dt->geom_traits().construct_hyperbolic_point_2_object()(fh->vertex(1)->point(), fh->translation(1));
     p2 = dt->geom_traits().construct_hyperbolic_point_2_object()(fh->vertex(2)->point(), fh->translation(2));
 
-    typename T::Geom_traits::Circle_2 c(p0, p1, p2);  
+    typename T::Geom_traits::Circle_2 c(p0, p1, p2);
     CGAL::Bbox_2 bb = c.bbox();
     circle->setRect(bb.xmin(), bb.ymin(), bb.xmax()-bb.xmin(), bb.ymax()-bb.ymin());
     circle->show();
@@ -131,7 +131,7 @@ TriangulationCircumcircle<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 
 template <typename T>
-bool 
+bool
 TriangulationCircumcircle<T>::eventFilter(QObject *obj, QEvent *event)
 {
   if(event->type() == QEvent::GraphicsSceneMouseMove) {
@@ -142,7 +142,7 @@ TriangulationCircumcircle<T>::eventFilter(QObject *obj, QEvent *event)
     // standard event processing
     return QObject::eventFilter(obj, event);
   }
-} 
+}
 
 } // namespace Qt
 } // namespace CGAL

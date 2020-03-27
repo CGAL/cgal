@@ -22,10 +22,10 @@ class Polyhedron_demo_ply_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0" FILE "ply_io_plugin.json")
 
 public:
-  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const 
-  { 
-    if(qobject_cast<const Scene_points_with_normal_item*>(item)) 
-      return true; 
+  bool isDefaultLoader(const CGAL::Three::Scene_item *item) const
+  {
+    if(qobject_cast<const Scene_points_with_normal_item*>(item))
+      return true;
     return false;
   }
   QString name() const { return "ply_plugin"; }
@@ -84,7 +84,7 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
     CGAL::Three::Three::warning( tr("The file you are trying to load is empty."));
     return 0;
   }
-  
+
   // Test if input is mesh or point set
   bool input_is_mesh = false;
   std::string line;
@@ -136,7 +136,7 @@ Polyhedron_demo_ply_plugin::load(QFileInfo fileinfo) {
         set_vcolors(surface_mesh, vcolors);
       if(!(fcolors.empty()))
         set_fcolors(surface_mesh, fcolors);
-      
+
       Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(surface_mesh);
       sm_item->setName(fileinfo.completeBaseName());
       QApplication::restoreOverrideCursor();
@@ -195,10 +195,10 @@ bool Polyhedron_demo_ply_plugin::save(const CGAL::Three::Scene_item* item, QFile
 
   if (!ok)
     return false;
-  
+
   std::ofstream out(fileinfo.filePath().toUtf8().data(), std::ios::binary);
   out.precision (std::numeric_limits<double>::digits10 + 2);
-  
+
   // This plugin supports point sets
   const Scene_points_with_normal_item* point_set_item =
     qobject_cast<const Scene_points_with_normal_item*>(item);

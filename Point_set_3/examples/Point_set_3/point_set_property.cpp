@@ -21,7 +21,7 @@ void print_point_set (const Point_set& point_set)
   boost::tie (color, boost::tuples::ignore) = point_set.property_map<Color>("color");
   FT_map intensity;
   boost::tie (intensity, boost::tuples::ignore) =  point_set.property_map<FT>("intensity");
-  
+
   std::cerr << "Content of point set:" << std::endl;
   for (Point_set::const_iterator it = point_set.begin();
        it != point_set.end(); ++ it)

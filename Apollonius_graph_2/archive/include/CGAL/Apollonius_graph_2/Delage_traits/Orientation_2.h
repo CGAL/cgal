@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 //                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
@@ -48,7 +48,7 @@ public:
   typedef Site_2                       argument_type;
 
     Orientation operator() (const Site_2 &s0, const Site_2 &s1,
-			    const Site_2 &s2, const Point_2 &q) const
+                            const Site_2 &s2, const Point_2 &q) const
     {
       RT x1 = s1.x() - s0.x();
       RT y1 = s1.y() - s0.y();
@@ -63,7 +63,7 @@ public:
 
       RT a1 = CGAL::square(x1) + CGAL::square(y1) - CGAL::square(w1);
       RT a2 = CGAL::square(x2) + CGAL::square(y2) - CGAL::square(w2);
-        
+
       CGAL_assertion (CGAL::sign(a1) == POSITIVE);
       CGAL_assertion (CGAL::sign(a2) == POSITIVE);
 
@@ -78,18 +78,18 @@ public:
       if (W == ZERO) { return -S; }
 
       RT o = x * yq - y * xq;
-        
+
       Sign O = CGAL::sign(o);
 
       if (S == 0) { return O * W; }
-	
+
       if (W * S * O != POSITIVE) { return -S; }
 
       RT i = CGAL::square(w) * (CGAL::square(xq) + CGAL::square(yq))
-	- CGAL::square(s);
+        - CGAL::square(s);
 
       Sign I = CGAL::sign(i);
-        
+
       return S * I;
     }
 };

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -33,7 +33,7 @@ class Point_with_vertex
 protected:
   typedef typename Arrangement_::Vertex_handle        Vertex_handle;
   typedef typename Arrangement_::Vertex_const_handle  Vertex_const_handle;
-  
+
 public:
   Vertex_handle  m_v;
 

@@ -36,7 +36,7 @@ namespace CGAL {
 namespace Classification {
 
 namespace Feature {
-  
+
   /*!
     \ingroup PkgClassificationFeatures
 
@@ -71,7 +71,7 @@ namespace Feature {
 
     Its default name is the channel followed by the mean value (for
     example: "hue_180", "saturation_20" or "value_98").
-    
+
     \note The user only needs to provide a map to standard (and more common)
     RGB colors, the conversion to HSV is done internally.
 
@@ -98,7 +98,7 @@ public:
   };
 
 private:
-  
+
   typedef typename Classification::RGB_Color RGB_Color;
   typedef typename Classification::HSV_Color HSV_Color;
 
@@ -110,10 +110,10 @@ private:
   Channel m_channel;
   float m_mean;
   float m_sd;
-#endif  
-  
+#endif
+
 public:
-  
+
   /*!
 
     \brief Constructs a feature based on the given color channel,

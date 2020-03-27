@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Philipp Moeller
 
@@ -55,19 +55,19 @@ public:
 
   typedef typename I__traits::iterator_category iterator_category;
 
-  typedef typename 
+  typedef typename
   boost::mpl::if_c<  Prevent_deref
                    , C
                    , typename C::value_type
                   >::type             value_type;
 
   typedef typename C::difference_type difference_type;
-  typedef typename 
+  typedef typename
   boost::mpl::if_c<  Prevent_deref
                    , C&
                    , typename C::reference
                   >::type             reference;
-  typedef typename 
+  typedef typename
   boost::mpl::if_c<  Prevent_deref
                    , C*
                    , typename C::reference
@@ -89,7 +89,7 @@ public:
     CGAL_assertion( m_anchor == i.m_anchor);  // same anchor?
     return (done() && i.done()) || (((!done()) && (!i.done())) && ( current == i.current));
   }
-  
+
   bool operator!=( const Self& i) const {
     return !(*this == i);
   }
@@ -114,7 +114,7 @@ public:
   reference operator*() const {
     return indirection<Prevent_deref>();
   }
-  
+
 private:
   template <bool Prevent_deref_>
   typename boost::disable_if_c<Prevent_deref_, pointer>::type

@@ -55,7 +55,7 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
   std::cerr << "Smoothes Point Set (k=" << nb_neighbors_smooth_jet_fitting <<  ")...\n";
 
   CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(),
-					      nb_neighbors_smooth_jet_fitting);
+                                              nb_neighbors_smooth_jet_fitting);
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "

@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,11 +16,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel
 //                 Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_NEW_2_H
 #define CGAL__TEST_NEW_2_H
@@ -43,10 +43,10 @@ template <class R>
 bool
 _test_cls_new_2(const R& r)
 {
- return  
+ return
    _test_cls_line_new_2( r )
    && _test_cls_segment_new_2( r )
-   && _test_cls_ray_new_2( r )  
+   && _test_cls_ray_new_2( r )
    && _test_cls_triangle_new_2( r )
    && _test_cls_iso_rectangle_new_2( r )
    && _test_cls_circle_new_2( r )
@@ -124,7 +124,7 @@ test_new_2(const R& rep)
   Direction_2 d1;  d1 = Direction_2(4,1);
   Direction_2 d2 = construct_direction(v3);
   Direction_2 d3 = construct_direction(1,4);
-  // remaining constructions tested below, after the 
+  // remaining constructions tested below, after the
   // corresponding types have been introduced
 
   typename R::Construct_segment_2 construct_segment
@@ -163,7 +163,7 @@ test_new_2(const R& rep)
   Vector_2 v7 = construct_vector(s2);
   Vector_2 v8 = construct_vector(r2);
   Vector_2 v9 = construct_vector(l2);
-  
+
   typename R::Construct_circle_2 construct_circle
         = rep.construct_circle_2_object();
   Circle_2 c1 = construct_circle(p2,1);
@@ -184,12 +184,12 @@ test_new_2(const R& rep)
                   rec2 = construct_iso_rectangle(p2,p3,0);
                   rec2 = construct_iso_rectangle(p4,p4,p5,p5);
 
-  typename R::Construct_object_2 construct_object 
+  typename R::Construct_object_2 construct_object
         = rep.construct_object_2_object();
   Object_2 obj = construct_object(rec2);
            obj = construct_object(t1);
            obj = construct_object(c41);
-	   obj = construct_object(d6);
+           obj = construct_object(d6);
            obj = construct_object(l6);
 
   typename R::Construct_point_on_2 construct_point_on
@@ -241,7 +241,7 @@ test_new_2(const R& rep)
   Bbox_2 bb4 = construct_bbox_2(c1); // Circle_2
   Bbox_2 bb5 = construct_bbox_2(rec2); // Iso_rectangle_2
 
-  typename R::Construct_cartesian_const_iterator_2 
+  typename R::Construct_cartesian_const_iterator_2
     construct_cartesian_const_iterator_2
     = rep.construct_cartesian_const_iterator_2_object();
 
@@ -251,7 +251,7 @@ test_new_2(const R& rep)
   cccit = construct_cartesian_const_iterator_2(p1,0);
   cccit = construct_cartesian_const_iterator_2(v6);
   cccit = construct_cartesian_const_iterator_2(v6,0);
-  
+
   typename R::Construct_perpendicular_vector_2 construct_perpendicular_vector
         = rep.construct_perpendicular_vector_2_object();
   Vector_2 tmp9 = construct_perpendicular_vector(v2,CLOCKWISE);
@@ -521,7 +521,7 @@ test_new_2(const R& rep)
   bool tmp36 = less_signed_distance_to_line(p4,p5,p2,p3);
   tmp36 = less_signed_distance_to_line(l1,p2,p3);
 
-  typename R::Less_rotate_ccw_2 less_rotate_ccw 
+  typename R::Less_rotate_ccw_2 less_rotate_ccw
         = rep.less_rotate_ccw_2_object();
   bool tmp36a = less_rotate_ccw(p4,p2,p3);
 
@@ -685,10 +685,10 @@ test_new_2(const R& rep)
   use(tmp34c); use(tmp34b); use(tmp34a); use(tmp32d); use(tmp32c); use(tmp32b);
   use(tmp32a); use(tmp31d); use(tmp31c); use(tmp31b); use(tmp31a); use(tmp30);
   use(tmp26); use(tmp25); use(tmp24);
-  use(tmp29); use(tmp28); use(tmp33a); use(tmp33b); use(tmp34ab); use(tmp34ac); 
-  use(tmp34ff); use(tmp34ee); use(tmp34dd); use(tmp34cc); use(tmp34bb); 
-  use(tmp34aa); 
-  use(tmp39a); use(tmp36a); use(tmp48c); use(tmp49c); use(tmp50c); 
+  use(tmp29); use(tmp28); use(tmp33a); use(tmp33b); use(tmp34ab); use(tmp34ac);
+  use(tmp34ff); use(tmp34ee); use(tmp34dd); use(tmp34cc); use(tmp34bb);
+  use(tmp34aa);
+  use(tmp39a); use(tmp36a); use(tmp48c); use(tmp49c); use(tmp50c);
   use(tmp24a); use(tmp24b); use(tmp24c); use(tmp24d); use(tmp24e); use(tmp24f);
   use(tmp24g); use(tmp24h); use(tmp24);use(tmp_bool);
 

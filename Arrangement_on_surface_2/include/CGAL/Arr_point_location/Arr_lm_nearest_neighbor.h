@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
 //                 Efi Fogel    <efif@post.tau.ac.il>
@@ -113,7 +113,7 @@ public:
     bool operator== (const NN_Point_2& nnp) const
     { return (m_vec[0] == nnp.m_vec[0] && m_vec[1] == nnp.m_vec[1]); }
 
-    bool operator!= (const NN_Point_2& nnp) const 
+    bool operator!= (const NN_Point_2& nnp) const
     { return (m_vec[0] != nnp.m_vec[0] || m_vec[1] != nnp.m_vec[1]); }
   };
 
@@ -124,7 +124,7 @@ public:
   struct Construct_coord_iterator
   {
     typedef const Approximate_number_type*      result_type;
-    
+
     /*! Get an iterator for the approximate coordinates. */
     const Approximate_number_type* operator()(const NN_Point_2& nnp) const
     { return (nnp.begin()); }
@@ -146,9 +146,9 @@ protected:
   Tree* m_tree;        // The search tree.
   bool  m_is_empty;    // Is the search tree empty.
 
-public: 
+public:
   bool is_empty() const { return m_is_empty; }
-  
+
 private:
   typedef Arr_landmarks_nearest_neighbor<Arrangement_2>     Self;
 
@@ -191,7 +191,7 @@ public:
   }
 
   /*! Clear the search tree. */
-  void clear() 
+  void clear()
   {
     if (m_tree != NULL)
       delete m_tree;
@@ -219,7 +219,7 @@ public:
 
     // For some reason search.begin()->first fails
     const NN_Point_2&  nearest_p = (*(search.begin())).first;
-    obj = nearest_p.object();   
+    obj = nearest_p.object();
     return nearest_p.point();
   }
 };

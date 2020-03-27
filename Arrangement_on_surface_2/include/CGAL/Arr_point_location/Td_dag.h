@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Iddo Hanniel <hanniel@math.tau.ac.il>
 //                 Oren Nechushtan <theoren@math.tau.ac.il>
@@ -55,7 +55,7 @@ protected:
 public:
   Td_dag_base() {init();}
   Td_dag_base(const Td_dag_base<T> & x) : Handle(x) {}
-  Td_dag_base & operator=(const Td_dag_base<T> & x) 
+  Td_dag_base & operator=(const Td_dag_base<T> & x)
   {Handle::operator=(x); return *this; }
   bool operator!() const { return PTR == 0; }
 };
@@ -77,29 +77,29 @@ public:
   using Td_dag_handle::operator!;
 #endif
 
-protected:	
+protected:
   class node : public Rep
   {
     friend class Td_dag<T>;
   public:
-    node(const T& e,unsigned long _depth=0) : 
+    node(const T& e,unsigned long _depth=0) :
       data(e),leftPtr(),rightPtr(),depth_(_depth){}
-    node(const T& e, const Td_dag_handle& left, 
-         const Td_dag_handle& right,unsigned long _depth=0) : 
+    node(const T& e, const Td_dag_handle& left,
+         const Td_dag_handle& right,unsigned long _depth=0) :
       data(e),leftPtr(left),rightPtr(right),depth_(_depth){}
-    //		node(const T& e) : data(e),leftPtr(),rightPtr(){}
-    //		node(const T& e, const Td_dag_handle& left, 
+    //                node(const T& e) : data(e),leftPtr(),rightPtr(){}
+    //                node(const T& e, const Td_dag_handle& left,
     // const Td_dag_handle& right) : data(e),leftPtr(left),rightPtr(right) {}
     ~node(){}
     bool is_inner_node() const {return !!leftPtr && !!rightPtr;}
     bool visited() const {return visited_;}
   protected:
-    T data;			// information stored in node
+    T data;                        // information stored in node
     Td_dag_handle leftPtr,rightPtr;
     mutable unsigned long depth_;
     mutable bool visited_;
   };
-  
+
 public:
   /* -------constructors destructors -----*/
   Td_dag(){}
@@ -115,7 +115,7 @@ public:
   {
     CGAL_precondition(!operator!());
     return *(const Self*)&ptr()->leftPtr;
-    
+
   }
   const Self& right() const
   {
@@ -140,7 +140,7 @@ public:
   {
     return data_ptr();
   }
-  bool is_inner_node() const 
+  bool is_inner_node() const
   {return !operator!() && ptr()->is_inner_node();}
   unsigned long size() const
   {
@@ -161,9 +161,9 @@ public:
     return !operator==(b);
   }
   /* dynamic management ---------*/
-  
+
   /* description:
-     Shallow copy	*/
+     Shallow copy        */
   Self& operator=(const Self& b)
   {
     Handle::operator=(b);
@@ -207,14 +207,14 @@ public:
   {
     if (!operator!())
       {
-				// create dummy Td_dag
+                                // create dummy Td_dag
         T tmp;
         Self dummy(tmp);
-				// detach right son,redirect to dummy
+                                // detach right son,redirect to dummy
         set_right(dummy);
-				// set right son pointer to 0
+                                // set right son pointer to 0
         ptr()->rightPtr.PTR=0;
-				// delete dummy Td_dag
+                                // delete dummy Td_dag
         delete dummy.ptr();
       }
   }
@@ -238,7 +238,7 @@ public:
     CGAL_precondition(!operator!());
     ptr()->leftPtr=left;
     if (left.depth()<depth()+1) left.ptr()->depth_=depth()+1;
-    left.rebalance_depth(); 
+    left.rebalance_depth();
     // does nothing if right is a leaf
   }
   void set_right(const Self& right)
@@ -246,7 +246,7 @@ public:
     CGAL_precondition(!operator!());
     ptr()->rightPtr=right;
     if (right.depth()<depth()+1) right.ptr()->depth_=depth()+1;
-    right.rebalance_depth(); 
+    right.rebalance_depth();
     // does nothing if right is a leaf
   }
   void replace(const T& data,const Self& left,const Self& right)
@@ -301,7 +301,7 @@ public:
       }
   }
 #endif
-  
+
   template <class Container,class Predicate>
   Container& filter(Container& c,const Predicate& pr) const
   {
@@ -319,8 +319,8 @@ public:
 protected:
   void rebalance_depth() const
   {
-    if (is_inner_node()) 
-    {  
+    if (is_inner_node())
+    {
       unsigned long depth_=depth();
       if (left().depth()<depth_+1)
       {
@@ -334,7 +334,7 @@ protected:
       }
     }
   }
-  
+
   unsigned long recursive_size() const
   {
     if (!operator!() && !ptr()->visited())
@@ -354,7 +354,7 @@ protected:
   {
     if (!operator!() && !ptr()->visited())
     {
-      if (pr(operator*())) 
+      if (pr(operator*()))
         c.insert(c.end(),operator*());
       visit_one();
       left().recursive_filter(c,pr);
@@ -363,13 +363,13 @@ protected:
     return c;
   }
 #if 0
-  template <class Container, class Predicate> 
-  Container& recursive_hash_filter(Container& c, const Predicate& ptr) const 
+  template <class Container, class Predicate>
+  Container& recursive_hash_filter(Container& c, const Predicate& ptr) const
     /* Generate a copy of the Dag filtered according to the predicate */
   {
     if (!operator!() && !ptr()->visited())
     {
-      if (pr(operator*())) 
+      if (pr(operator*()))
         c.insert(pair<&operator*(), new X_trapezoid(operator*()));
       // The hash links between the old trapezoid to the new one.
       visit_one();
@@ -383,8 +383,8 @@ protected:
   node* ptr() const {return (node*)PTR;}
 };
 
-template<class T,class Traits> 
-std::ostream& write(std::ostream&  out, 
+template<class T,class Traits>
+std::ostream& write(std::ostream&  out,
                     const Td_dag<T>& t,
                     const Traits& traits)
 {
@@ -415,7 +415,7 @@ std::ostream& write(std::ostream&  out,
   return out ;
 }
 
-template<class T> std::ostream& operator<<(std::ostream&  out, 
+template<class T> std::ostream& operator<<(std::ostream&  out,
                                            const Td_dag<T>& t)
 {
   CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, depth,0);
@@ -446,10 +446,10 @@ template<class T> std::ostream& operator<<(std::ostream&  out,
 
 #endif
 
-/* 
+/*
    tech notes:
    The code is Handle designed.
-   left(),right() are designed to cope with Handle(Handle& x) 
+   left(),right() are designed to cope with Handle(Handle& x)
      precondition x.PTR!=0
    operator=() performs shallow copy
    operator*() returns data type

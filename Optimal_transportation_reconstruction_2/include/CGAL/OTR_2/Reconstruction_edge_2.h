@@ -39,14 +39,14 @@ protected:
   FT m_total_weight;
 
 public:
-  Reconstruction_edge_2() 
+  Reconstruction_edge_2()
   : m_edge(Face_handle(), 0),
     m_before_cost(0),
     m_after_cost(0),
     m_total_weight(0)
   {}
 
-  Reconstruction_edge_2(const Reconstruction_edge_2& pedge) 
+  Reconstruction_edge_2(const Reconstruction_edge_2& pedge)
   : m_edge(pedge.edge()),
     m_source(pedge.source()),
     m_target(pedge.target()),
@@ -70,7 +70,7 @@ public:
     m_after_cost(priority),
     m_total_weight (0)
   {
-    get_vertices(); 
+    get_vertices();
   }
 
   Reconstruction_edge_2(Vertex_handle source, Vertex_handle target)
@@ -100,7 +100,7 @@ public:
       && m_target->id() == pedge.target()->id());
   }
 
-  bool operator< (const Reconstruction_edge_2& pedge) const 
+  bool operator< (const Reconstruction_edge_2& pedge) const
   {
     if (m_source->id() < pedge.source()->id())
       return true;

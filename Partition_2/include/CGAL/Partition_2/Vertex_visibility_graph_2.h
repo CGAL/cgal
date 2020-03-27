@@ -15,14 +15,14 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 /*
     Provides an implementation of the algorithm of Overmars and Welzl
     for computing the visibility graph of a set of non-intersecting
-    line segments in the plane.  
+    line segments in the plane.
 
      @inproceedings{ow-nmcvg-88
      , author =      "M. H. Overmars and Emo Welzl"
@@ -45,10 +45,10 @@
     the updates, it is necessary to keep track of all the leaves that are
     leftmost children of their parents.  In particular, one needs to know the
     rightmost of these leftmost children.
-    
+
     Two data structures are needed for the implementation of the algorithm:
     the sweep data structure $G$, and a stack $S$ that contains all the
-    leaves in $G$ that are the leftmost children of their parents.  
+    leaves in $G$ that are the leftmost children of their parents.
 
     TODO:
       --is_valid function is not complete
@@ -81,7 +81,7 @@
 namespace CGAL {
 
 template <class Traits>
-class Vertex_visibility_graph_2 
+class Vertex_visibility_graph_2
 {
 private:
    typedef Vertex_visibility_graph_2<Traits>  Self;
@@ -92,15 +92,15 @@ private:
    typedef typename Traits::Left_turn_2        Left_turn_2;
    typedef typename Traits::Less_xy_2         Less_xy_2;
    typedef typename Traits::Orientation_2     Orientation_2;
-   typedef typename Traits::Collinear_are_ordered_along_line_2 
+   typedef typename Traits::Collinear_are_ordered_along_line_2
                                             Collinear_are_ordered_along_line_2;
-   typedef typename Traits::Are_strictly_ordered_along_line_2 
+   typedef typename Traits::Are_strictly_ordered_along_line_2
                                             Are_strictly_ordered_along_line_2;
-   typedef typename Traits::Construct_segment_2 
-                                            Construct_segment_2; 
-   typedef typename Traits::Construct_ray_2   Construct_ray_2; 
-   typedef typename Traits::Intersect_2       Intersect_2; 
-   typedef typename Traits::Assign_2          Assign_2; 
+   typedef typename Traits::Construct_segment_2
+                                            Construct_segment_2;
+   typedef typename Traits::Construct_ray_2   Construct_ray_2;
+   typedef typename Traits::Intersect_2       Intersect_2;
+   typedef typename Traits::Assign_2          Assign_2;
    typedef CGAL::Segment_less_yx_2<Traits>    Segment_less_yx_2;
 
    typedef Rotation_tree_2<Traits>            Tree;
@@ -117,8 +117,8 @@ private:
 
    // this map associates with each point (vertex), the iterator in the
    // original list that it originated from and its current visibility
-   // point iterator. 
-   typedef std::pair<Polygon_const_iterator, Polygon_const_iterator>   
+   // point iterator.
+   typedef std::pair<Polygon_const_iterator, Polygon_const_iterator>
                                                Iterator_pair;
    typedef std::map<Point_2, Iterator_pair, Less_xy_2>     Vertex_map;
    typedef typename Vertex_map::iterator                   Vertex_map_iterator;
@@ -134,8 +134,8 @@ public:
    //
    template <class ForwardIterator>
    Vertex_visibility_graph_2(ForwardIterator first, ForwardIterator beyond):
-     left_turn_2(Traits().left_turn_2_object()), 
-     orientation_2(Traits().orientation_2_object()), 
+     left_turn_2(Traits().left_turn_2_object()),
+     orientation_2(Traits().orientation_2_object()),
      collinear_ordered_2(Traits().collinear_are_ordered_along_line_2_object()),
      are_strictly_ordered_along_line_2(
            Traits().are_strictly_ordered_along_line_2_object()),
@@ -154,16 +154,16 @@ public:
    {
       Polygon         polygon(first,beyond);
       Tree            tree(polygon.begin(), polygon.end());
-   
+
       Vertex_map  vertex_map;
       initialize_vertex_map(polygon, vertex_map);
-   
+
       // NOTE:  use the std::list as the basis here because otherwise the basis
       //        is a deque, which is buggy under MSVC++
       std::stack<Tree_iterator, std::list<Tree_iterator> > stack;
       // push on p_0, the rightmost point
-      stack.push(tree.rightmost_point_ref());   
-   
+      stack.push(tree.rightmost_point_ref());
+
       Tree_iterator p, p_r, q;
       Tree_iterator z;
 
@@ -243,7 +243,7 @@ public:
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
          std::cout << " p is now " << *p << std::endl;
 #endif
-         if (tree.left_sibling(p) == tree.end() && 
+         if (tree.left_sibling(p) == tree.end() &&
              !tree.parent_is_p_infinity(p))
          {
 #ifdef CGAL_VISIBILITY_GRAPH_DEBUG
@@ -294,7 +294,7 @@ public:
    {
       if (less_xy_2(edge.first,edge.second))
          return edges.find(edge) != edges.end();
-      else 
+      else
          return edges.find(Point_pair(edge.second, edge.first)) != edges.end();
    }
 
@@ -305,7 +305,7 @@ public:
    {
       std::vector<Point_2> vertices(first, beyond);
       bool edge_there[vertices.size()];
-   
+
       // for each edge in the graph determine if it is either an edge of the
       // polygon or, if not, if it intersects the polygon in the interior of
       // the edge.
@@ -326,7 +326,7 @@ public:
 
 private:
 
-   void print_vertex_map(const Vertex_map& vertex_map, 
+   void print_vertex_map(const Vertex_map& vertex_map,
                          const Polygon& polygon)
    {
       typedef typename Vertex_map::const_iterator    const_iterator;
@@ -334,7 +334,7 @@ private:
       for (const_iterator it = vertex_map.begin(); it != vertex_map.end();it++)
       {
          if ((*it).second.second != polygon.end())
-         std::cout << (*it).first << " sees " << *((*it).second.second) 
+         std::cout << (*it).first << " sees " << *((*it).second.second)
                    << std::endl;
       }
    }
@@ -352,7 +352,7 @@ private:
    // want to determine, for each vertex p of the polygon, the line segment
    // immediately below it.  For vertical edges, the segment below is not the
    // one that begins at the other endpoint of the edge.
-   void initialize_vertex_map(const Polygon& polygon, 
+   void initialize_vertex_map(const Polygon& polygon,
                               Vertex_map& vertex_map);
 
    // determines if one makes a left turn going from p to q to q's parent.
@@ -360,13 +360,13 @@ private:
    // is less than q's x value or the x values are the same and p's y value is
    // less than q's.
    // if p, q, and q's parent are collinear, then one makes a "left turn"
-   // if q is between p and q's parent (since this means that p can't see 
+   // if q is between p and q's parent (since this means that p can't see
    // q's parent and thus should not become a child of that node)
    bool left_turn_to_parent(Tree_iterator p, Tree_iterator q, Tree& tree);
 
 
    // returns true if q is the vertex after p
-   bool is_next_to(const Polygon& polygon, Polygon_const_iterator p, 
+   bool is_next_to(const Polygon& polygon, Polygon_const_iterator p,
                    Polygon_const_iterator q) const
    {
       Polygon_const_iterator next = p; next++;
@@ -375,7 +375,7 @@ private:
    }
 
    // returns true if q is the vertex before or after p
-   bool are_adjacent(const Polygon& polygon, Polygon_const_iterator p, 
+   bool are_adjacent(const Polygon& polygon, Polygon_const_iterator p,
                      Polygon_const_iterator q) const
    {
       Polygon_const_iterator next = p; next++;
@@ -388,22 +388,22 @@ private:
    }
 
    // returns true if the diagonal from p to q cuts the interior angle at p
-   bool diagonal_in_interior(const Polygon& polygon, 
+   bool diagonal_in_interior(const Polygon& polygon,
                              Polygon_const_iterator p,
                              Polygon_const_iterator q);
- 
 
-   // returns true if the looker can see the point_to_see 
-   bool point_is_visible(const Polygon& polygon, 
-                         Polygon_const_iterator point_to_see, 
+
+   // returns true if the looker can see the point_to_see
+   bool point_is_visible(const Polygon& polygon,
+                         Polygon_const_iterator point_to_see,
                          Vertex_map_iterator looker);
-   
+
    void update_visibility(Vertex_map_iterator p_it,
-                          Vertex_map_iterator q_it, 
+                          Vertex_map_iterator q_it,
                           const Polygon& polygon, int are_adjacent);
 
    void update_collinear_visibility(Vertex_map_iterator p_it,
-                                    Vertex_map_iterator q_it, 
+                                    Vertex_map_iterator q_it,
                                     const Polygon& polygon);
 
    // The segment between points p and q is a potential visibility edge

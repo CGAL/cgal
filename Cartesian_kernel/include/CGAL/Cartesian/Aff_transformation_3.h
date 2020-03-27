@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -59,7 +59,7 @@ class Aff_transformationC3
   typedef typename R_::Direction_3          Direction_3;
   typedef typename R_::Plane_3              Plane_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
-  
+
   using Handle_for_virtual<Aff_t_base>::initialize_with;
 public:
   typedef R_                               R;
@@ -166,10 +166,10 @@ public:
   { return transform(p); } // FIXME : not compiled by the test-suite !
 
   Aff_transformation_3 inverse() const { return this->Ptr()->inverse(); }
-  
+
   bool is_even() const { return this->Ptr()->is_even(); }
   bool is_odd() const { return  ! (this->Ptr()->is_even()); }
-  
+
   FT cartesian(int i, int j) const { return this->Ptr()->cartesian(i,j); }
   FT homogeneous(int i, int j) const { return cartesian(i,j); }
   FT m(int i, int j) const { return cartesian(i,j); }
@@ -177,7 +177,7 @@ public:
 
   Aff_transformation_3 operator*(const Aff_transformationC3 &t) const
   { return (*this->Ptr()) * (*t.Ptr()); }
-  
+
   bool operator==(const Aff_transformationC3 &t)const
   {
     for(int i=0; i<3; ++i)
@@ -186,12 +186,12 @@ public:
           return false;
     return true;
   }
-  
+
   bool operator!=(const Aff_transformationC3 &t)const
   {
     return !(*this == t);
   }
-  
+
 protected:
   Aff_transformation_3  transpose() const { return this->Ptr()->transpose(); }
 };

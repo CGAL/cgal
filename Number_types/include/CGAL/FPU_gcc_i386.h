@@ -15,7 +15,7 @@
 //
 // Author(s)     : Laurent Rineau
 
-extern "C" { 
+extern "C" {
 #include <fenv.h>
 }
 

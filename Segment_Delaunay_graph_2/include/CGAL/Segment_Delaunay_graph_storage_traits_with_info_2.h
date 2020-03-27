@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -46,9 +46,9 @@ private:
   typedef typename Base::Storage_site_2                Base_storage_site_2;
 
   typedef Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
-							    Info,
-							    Convert_info,
-							    Merge_info>
+                                                            Info,
+                                                            Convert_info,
+                                                            Merge_info>
   Self;
 
 public:
@@ -56,8 +56,8 @@ public:
 
   typedef
   Segment_Delaunay_graph_storage_site_with_info_2<Self,
-						  Info,
-						  Base_storage_site_2>
+                                                  Info,
+                                                  Base_storage_site_2>
   Storage_site_2;
 
   typedef

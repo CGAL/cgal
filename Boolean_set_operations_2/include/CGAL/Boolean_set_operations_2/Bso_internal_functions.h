@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ron Wein        <wein@post.tau.ac.il>
@@ -97,7 +97,7 @@ inline OutputIterator _intersection(const Pgn1& pgn1, const Pgn2& pgn2,
 //@{
 
 template <class Traits>
-inline bool _is_empty (const typename Traits:: Polygon_2& pgn, Traits& tr) 
+inline bool _is_empty (const typename Traits:: Polygon_2& pgn, Traits& tr)
 {
   typedef typename Traits::Curve_const_iterator Curve_const_iterator;
   const std::pair<Curve_const_iterator, Curve_const_iterator>& itr_pair =

@@ -87,7 +87,7 @@ void test_pmesh(const Mesh& pmesh)
   FT patch_area = PMP::area(patch, pmesh);
   std::cout << "patch area = " << patch_area << std::endl;
   assert(patch_area > 0);
-  
+
   FT mesh_area = PMP::area(pmesh);
   std::cout << "mesh area = " << mesh_area << std::endl;
   assert(mesh_area >= patch_area);

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
@@ -50,9 +50,9 @@ public:
 
 public:
   QRectF boundingRect() const;
-  
+
   void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-  
+
 
   const QPen& verticesPen() const
   {
@@ -116,7 +116,7 @@ protected:
 template <typename P>
 PolygonGraphicsItem<P>::PolygonGraphicsItem(P * p_)
   :  poly(p_), painterostream(0),
-     draw_edges(true), draw_vertices(true)   
+     draw_edges(true), draw_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 3.));
   setEdgesPen(QPen(::Qt::black, 0));
@@ -125,7 +125,7 @@ PolygonGraphicsItem<P>::PolygonGraphicsItem(P * p_)
 }
 
 template <typename P>
-QRectF 
+QRectF
 PolygonGraphicsItem<P>::boundingRect() const
 {
   return bounding_rect;
@@ -135,8 +135,8 @@ PolygonGraphicsItem<P>::boundingRect() const
 
 
 template <typename P>
-void 
-PolygonGraphicsItem<P>::paint(QPainter *painter, 
+void
+PolygonGraphicsItem<P>::paint(QPainter *painter,
                                     const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
@@ -168,7 +168,7 @@ PolygonGraphicsItem<P>::paint(QPainter *painter,
 // We let the bounding box only grow, so that when vertices get removed
 // the maximal bbox gets refreshed in the GraphicsView
 template <typename P>
-void 
+void
 PolygonGraphicsItem<P>::updateBoundingBox()
 {
   Converter<Traits> convert;
@@ -181,7 +181,7 @@ PolygonGraphicsItem<P>::updateBoundingBox()
 
 
 template <typename P>
-void 
+void
 PolygonGraphicsItem<P>::modelChanged()
 {
   updateBoundingBox();

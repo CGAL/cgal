@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri
 
@@ -74,8 +74,8 @@ public:
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
   { *this = plane_from_points<R>(l.point(),
-	                      l.point()+l.direction().to_vector(),
-			      p); }
+                              l.point()+l.direction().to_vector(),
+                              p); }
 
   PlaneC3(const Segment_3 &s, const Point_3 &p)
   { *this = plane_from_points<R>(s.start(), s.end(), p); }
@@ -225,7 +225,7 @@ to_plane_basis(const typename PlaneC3<R>::Point_3 &p) const
   FT alpha, beta, gamma;
   Construct_point_3 construct_point_3;
   Cartesian_internal::solve(base1(), base2(), orthogonal_vector(), p - point(),
-	alpha, beta, gamma);
+        alpha, beta, gamma);
 
   return construct_point_3(alpha, beta, gamma);
 }
@@ -239,7 +239,7 @@ to_2d(const typename PlaneC3<R>::Point_3 &p) const
   Construct_point_2 construct_point_2;
 
   Cartesian_internal::solve(base1(), base2(), orthogonal_vector(), p - point(),
-	alpha, beta, gamma);
+        alpha, beta, gamma);
 
   return construct_point_2(alpha, beta);
 }

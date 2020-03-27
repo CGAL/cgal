@@ -59,6 +59,6 @@ int main()
   concept_check_triangulation<CDTP2>();
   concept_check_triangulation<THCDT2>();
   concept_check_triangulation<THCDTP2>();
-  
+
   return 0;
 }

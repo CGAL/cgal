@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -95,7 +95,7 @@ namespace CGAL {
           Comparison_result cytr = compare_y_2(t,r);
 
           // if t equals any one of p,q,r return zero
-	  if (((cxtp == EQUAL) && (cytp == EQUAL)) ||
+          if (((cxtp == EQUAL) && (cytp == EQUAL)) ||
               ((cxtq == EQUAL) && (cytq == EQUAL)) ||
               ((cxtr == EQUAL) && (cytr == EQUAL))   )
           {
@@ -131,21 +131,21 @@ namespace CGAL {
                return (Oriented_side)
                  (((int) orientation_Linf(r,q,t)) *
                   ((int) side_of_bounded_square_2(r,q,t,p)) ) ;
-	    }
+            }
             if ((cxtq != EQUAL) && (cytq != EQUAL)
                 && (! (orientation_Linf(p,r,t)==DEGENERATE))) {
                // p r t q
                return (Oriented_side)
                  (((int) orientation_Linf(p,r,t)) *
                   ((int) side_of_bounded_square_2(p,r,t,q)) ) ;
-	    }
+            }
             if ((cxtr != EQUAL) && (cytr != EQUAL)
                 && (! (orientation_Linf(q,p,t)==DEGENERATE))) {
                // q p t r
                return (Oriented_side)
                  (((int) orientation_Linf(q,p,t)) *
                   ((int) side_of_bounded_square_2(q,p,t,r)) ) ;
-	    }
+            }
             CGAL_SDG_DEBUG(std::cout << "debug side_of_os about to return "
               << "ON_ORIENTED_BOUNDARY" << std::endl;);
             return ON_ORIENTED_BOUNDARY;

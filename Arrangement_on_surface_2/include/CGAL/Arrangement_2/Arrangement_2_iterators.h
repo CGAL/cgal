@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
@@ -47,9 +47,9 @@ public:
   // Type definitions:
   typedef Iterator_                               Iterator;
   typedef I_Dereference_iterator<Iterator_,
-				 Value_,
-				 Diff_,
-				 Category_>       Self;
+                                 Value_,
+                                 Diff_,
+                                 Category_>       Self;
 
   typedef Category_                               iterator_category;
   typedef Value_                                  value_type;
@@ -79,17 +79,17 @@ public:
   {
     return (iter == it.iter);
   }
-    
+
   bool operator!= (const Self& it) const
   {
     return (!(iter == it.iter));
   }
-    
+
   Iterator current_iterator () const
   {
     return (iter);
   }
-    
+
   pointer ptr () const
   {
     return (static_cast<value_type *> (*iter));
@@ -105,7 +105,7 @@ public:
     return (ptr());
   }
   //@}
-    
+
   /// \name Incremernt operations (forward category).
   //@{
   Self& operator++()
@@ -145,8 +145,8 @@ public:
  * class (given as CIterator_), which is supposed to be a pointer, and handle
  * it as the value-type given by Value_.
  */
-template <class CIterator_, class MIterator_, 
-	  class Value_, class Diff_, class Category_>
+template <class CIterator_, class MIterator_,
+          class Value_, class Diff_, class Category_>
 class I_Dereference_const_iterator
 {
 public:
@@ -155,10 +155,10 @@ public:
   typedef CIterator_                              Const_iterator;
   typedef MIterator_                              Mutable_iterator;
   typedef I_Dereference_const_iterator<CIterator_,
-				       MIterator_,
-				       Value_,
-				       Diff_,
-				       Category_> Self;
+                                       MIterator_,
+                                       Value_,
+                                       Diff_,
+                                       Category_> Self;
 
   typedef Category_                               iterator_category;
   typedef Value_                                  value_type;
@@ -193,17 +193,17 @@ public:
   {
     return (iter == it.iter);
   }
-    
+
   bool operator!= (const Self& it) const
   {
     return (!(iter == it.iter));
   }
-    
+
   Const_iterator current_iterator () const
   {
     return (iter);
   }
-    
+
   pointer ptr () const
   {
     return (static_cast<const value_type *> (*iter));
@@ -219,7 +219,7 @@ public:
     return (ptr());
   }
   //@}
-    
+
   /// \name Incremernt operations (forward category).
   //@{
   Self& operator++()
@@ -265,7 +265,7 @@ class I_Filtered_iterator
 public:
 
   typedef Iterator_                       Iterator;
-  typedef Filter_                         Filter; 
+  typedef Filter_                         Filter;
   typedef I_Filtered_iterator<Iterator_,
                               Filter_,
                               Value_,
@@ -283,7 +283,7 @@ protected:
   Iterator        nt;       // The internal iterator (this member should not
                             // be renamed in order to comply with the
                             // HalfedgeDS circulators that refer to it).
-  Iterator        iend;     // A past-the-end iterator.        
+  Iterator        iend;     // A past-the-end iterator.
   Filter          filt;     // The filter functor.
 
 public:
@@ -340,12 +340,12 @@ public:
   {
     return (nt == it.nt);
   }
-  
-  bool operator!= (const Self& it) const 
+
+  bool operator!= (const Self& it) const
   {
     return !(*this == it);
   }
-  
+
   bool operator< (const Self& it) const
   {
     return &(**this) < (&*it);
@@ -356,7 +356,7 @@ public:
   {
     return (*(ptr()));
   }
-  
+
   pointer operator->() const
   {
     return ptr();
@@ -372,7 +372,7 @@ public:
 
     return (*this);
   }
-   
+
   Self operator++ (int)
   {
     Self tmp = *this;
@@ -434,7 +434,7 @@ protected:
   Iterator       nt;       // The internal iterator (this member should not
                            // be renamed in order to comply with the
                            // HalfedgeDS circulators that refer to it).
-  Iterator       iend;     // A past-the-end iterator.        
+  Iterator       iend;     // A past-the-end iterator.
   Filter         filt;     // The filter functor.
 
 public:
@@ -500,12 +500,12 @@ public:
   {
     return (nt == it.nt);
   }
-  
-  bool operator!= (const Self& it) const 
+
+  bool operator!= (const Self& it) const
   {
     return !(*this == it);
   }
-  
+
   bool operator< (const Self& it) const
   {
     return &(**this) < (&*it);
@@ -516,7 +516,7 @@ public:
   {
     return (*(ptr()));
   }
-  
+
   pointer operator->() const
   {
     return ptr();
@@ -532,7 +532,7 @@ public:
 
     return (*this);
   }
-   
+
   Self operator++ (int)
   {
     Self tmp = *this;
@@ -565,11 +565,11 @@ namespace std {
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4099) // For VC10 it is class hash 
+#  pragma warning(disable:4099) // For VC10 it is class hash
 #endif
 
 #ifndef CGAL_CFG_NO_STD_HASH
-  
+
 template <class CIterator_, class Filter_, class MIterator_,
           class Value_, class Diff_, class Category_>
 struct hash<CGAL::I_Filtered_const_iterator<CIterator_,

@@ -1,4 +1,4 @@
-// Copyright (c) 2002-2008 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2002-2008 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -51,7 +51,7 @@ bool _check_leadcoeff(int x0dm2_degree, int xd_degree,
 template <class NT>
 bool _check_leadcoeff(int xdmj_inner_degree, int xd_degree,
                       const CGAL::Polynomial< CGAL::Polynomial< NT > > &p) {
-    
+
     int d = p.degree();
     while (d >= 0) {
         if (!_check_leadcoeff(xdmj_inner_degree + d, xd_degree, p[d])) {
@@ -64,7 +64,7 @@ bool _check_leadcoeff(int xdmj_inner_degree, int xd_degree,
 
 } // namespace internal
 
-/*!\brief 
+/*!\brief
  * check that \c p has a non-zero coefficient
  * of <I>x_d</I><SUP>deg(<I>p</I>)</SUP>
  */
@@ -87,16 +87,16 @@ bool check_leadcoeff(const CGAL::Polynomial< CGAL::Polynomial< NT > > &p) {
  *  conversion NTX(NT).
  */
 template < class NT, class NTX >
-typename CGAL::Polynomial< typename CGAL::Coercion_traits< NT, NTX >::Type >  
+typename CGAL::Polynomial< typename CGAL::Coercion_traits< NT, NTX >::Type >
 substitute_x(CGAL::Polynomial< CGAL::Polynomial< NT > > p, const NTX& x) {
-    
-    typedef CGAL::Polynomial_traits_d< 
+
+    typedef CGAL::Polynomial_traits_d<
     CGAL::Polynomial < CGAL::Polynomial< NT > > > PT_d;
-    
+
     const int d = PT_d::d;
 
     CGAL_precondition(d >= 1);
-    
+
     typedef typename CGAL::Coercion_traits< CGAL::Polynomial< NT >,NTX > CT;
     typedef typename CT::Type Coercion;
     typedef typename CGAL::Coercion_traits< NT, NTX > CTi;
@@ -111,14 +111,14 @@ substitute_x(CGAL::Polynomial< CGAL::Polynomial< NT > > p, const NTX& x) {
         repl = move(repl, d-2,i);
         replacements.push_back(repl);
     }
-    
+
     typename PT_d::Substitute substitute;
-    Coercion sub = 
+    Coercion sub =
         substitute(p, replacements.begin(), replacements.end());
 
     //typename PT_d::Get_coefficient coeff;
     //Coercion ret = coeff(sub,0,d-1);
-    
+
     return sub;
 }
 
@@ -129,30 +129,30 @@ substitute_x(CGAL::Polynomial< CGAL::Polynomial< NT > > p, const NTX& x) {
  *  conversion NTX(NT).
  */
 template <class NT, class NTX>
-typename CGAL::Polynomial< typename CGAL::Coercion_traits< NT, NTX >::Type >  
+typename CGAL::Polynomial< typename CGAL::Coercion_traits< NT, NTX >::Type >
 substitute_xy(
-    const CGAL::Polynomial< CGAL::Polynomial< CGAL::Polynomial< NT > > >& p, 
+    const CGAL::Polynomial< CGAL::Polynomial< CGAL::Polynomial< NT > > >& p,
     const NTX& x, const NTX& y
 ) {
 
-    typedef CGAL::Polynomial_traits_d< 
+    typedef CGAL::Polynomial_traits_d<
     CGAL::Polynomial< CGAL::Polynomial < CGAL::Polynomial< NT > > > > PT_d;
-    
+
     const int d = PT_d::d;
 
     CGAL_precondition(d >= 2);
-    
+
     typedef typename CGAL::Coercion_traits< CGAL::Polynomial< NT >, NTX > CT;
     typedef typename CT::Type Coercion;
 //    typedef typename CGAL::Coercion_traits< NT, NTX > CTi;
 //    typedef typename CT::Type Coercion_i;
     typedef CGAL::Polynomial_traits_d < Coercion > PT_dc;
-    
+
     std::vector< Coercion > replacements;
     replacements.push_back(typename CT::Cast()(x));
     replacements.push_back(typename CT::Cast()(y));
     for (int i = 0; i < d-2; i++) {
-        Coercion repl(typename PT_dc::Coefficient_type(0), 
+        Coercion repl(typename PT_dc::Coefficient_type(0),
                       typename PT_dc::Coefficient_type(1));
         typename PT_dc::Move move;
         repl = move(repl, d-3,i);
@@ -160,7 +160,7 @@ substitute_xy(
     }
 
     typename PT_d::Substitute substitute;
-    Coercion sub = 
+    Coercion sub =
         substitute(p, replacements.begin(), replacements.end());
 
     return sub;

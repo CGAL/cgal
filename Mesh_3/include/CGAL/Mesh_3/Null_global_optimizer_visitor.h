@@ -20,7 +20,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #ifndef CGAL_MESH_3_NULL_GLOBAL_OPTIMIZER_VISITOR_H
@@ -31,13 +31,13 @@
 
 namespace CGAL {
 namespace Mesh_3 {
-  
+
 template < typename C3T3 >
 class Null_global_optimizer_visitor
 {
   typedef typename C3T3::Triangulation    Tr;
   typedef typename Tr::Geom_traits::FT    FT;
-  
+
 public:
   void after_compute_moves() {}
   void after_move_points() {}

@@ -40,7 +40,7 @@ class Surface_mesh_complex_2_in_triangulation_3 :
     public Complex_2_in_triangulation_3<Tr>
 {
 public:
-  Surface_mesh_complex_2_in_triangulation_3 (Tr& tr) 
+  Surface_mesh_complex_2_in_triangulation_3 (Tr& tr)
     : Complex_2_in_triangulation_3<Tr>(tr)
   {
   }

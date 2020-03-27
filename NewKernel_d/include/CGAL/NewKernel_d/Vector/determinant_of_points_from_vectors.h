@@ -26,10 +26,10 @@
 namespace CGAL {
 
 template <class LA, class Dim_=typename LA::Dimension,
-	 class Max_dim_=typename LA::Max_dimension,
-	 bool = LA::template Property<Has_determinant_of_points_tag>::value,
-	 bool = LA::template Property<Has_determinant_of_vectors_tag>::value
-	   && LA::template Property<Has_vector_plus_minus_tag>::value>
+         class Max_dim_=typename LA::Max_dimension,
+         bool = LA::template Property<Has_determinant_of_points_tag>::value,
+         bool = LA::template Property<Has_determinant_of_vectors_tag>::value
+           && LA::template Property<Has_vector_plus_minus_tag>::value>
 struct Add_determinant_of_points_from_vectors_and_minus : LA {
   template< class D2, class D3=D2 >
     struct Rebind_dimension {

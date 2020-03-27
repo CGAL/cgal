@@ -1,9 +1,9 @@
-// Copyright (c) 1997-2001  
+// Copyright (c) 1997-2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>
 
@@ -59,17 +59,17 @@ class _Construct_point_3 {
     operator() ( int, InputIterator first, InputIterator last) const
     {
         InputIterator i(first);
-	typename K::RT x = *(i++);
-	typename K::RT y = *(i++);
-	typename K::RT z = *(i++);
-	typedef typename K::Construct_point_3 Construct_point_3;
-	Construct_point_3 construct_point_3 = K().construct_point_3_object();
-	if (i==last) {
-	    return construct_point_3(x,y,z);
-	} else {
-	    typename K::RT h = *(i++);
-	    return construct_point_3(x,y,z,h); 
-	}
+        typename K::RT x = *(i++);
+        typename K::RT y = *(i++);
+        typename K::RT z = *(i++);
+        typedef typename K::Construct_point_3 Construct_point_3;
+        Construct_point_3 construct_point_3 = K().construct_point_3_object();
+        if (i==last) {
+            return construct_point_3(x,y,z);
+        } else {
+            typename K::RT h = *(i++);
+            return construct_point_3(x,y,z,h);
+        }
     }
 
 };

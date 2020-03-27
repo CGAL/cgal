@@ -34,11 +34,11 @@ template <class NTX>
 typename Get_arithmetic_kernel<NTX>::Arithmetic_kernel::Bigfloat_interval
 convert_to_bfi(const NTX& x) {
     typedef typename Get_arithmetic_kernel<NTX>::Arithmetic_kernel AK;
-    typedef typename AK::Bigfloat_interval BFI; 
+    typedef typename AK::Bigfloat_interval BFI;
     typedef CGAL::Coercion_traits<NTX,BFI> CT;
     return typename CT::Cast()(x);
 }
 
-} //namespace CGAL 
+} //namespace CGAL
 
 #endif // CGAL_CONVERT_TO_BFI_H

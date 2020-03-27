@@ -41,7 +41,7 @@ struct CK2_Intersection_traits
 
 // Intersection_traits for the circular kernel
 
-// The additional CGAL_ADDITIONAL_VARIANT_FOR_ICL ( = int) in the variant 
+// The additional CGAL_ADDITIONAL_VARIANT_FOR_ICL ( = int) in the variant
 // has the only purpose to work around a bug of the Intel compiler,
 // which without it produces the error
 // /usr/include/boost/type_traits/has_nothrow_copy.hpp(36): internal error: bad pointer

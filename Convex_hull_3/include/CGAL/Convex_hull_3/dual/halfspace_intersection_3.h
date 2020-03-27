@@ -62,7 +62,7 @@ namespace CGAL
 
               // Typedefs for dual
 
-              typedef typename boost::graph_traits<Polyhedron_dual>::face_descriptor 
+              typedef typename boost::graph_traits<Polyhedron_dual>::face_descriptor
                 Facet_const_handle;
               typedef typename boost::graph_traits<Polyhedron_dual>::vertex_descriptor
                 Vertex_const_descriptor;
@@ -81,12 +81,12 @@ namespace CGAL
                                                        Line_3,
                                                        Plane_3 > > result_inter;
 
-                           
+
               boost::unordered_map <Facet_const_handle, vertex_descriptor> primal_vertices;
               size_t n = 0;
 
               // First, computing the primal vertices
-              BOOST_FOREACH (Facet_const_handle fd, faces(_dual)){               
+              BOOST_FOREACH (Facet_const_handle fd, faces(_dual)){
                 Halfedge_const_descriptor h = fd->halfedge();
                 // Build the dual plane corresponding to the current facet
                 Plane_3 p1 = h->vertex()->point();
@@ -144,7 +144,7 @@ namespace CGAL
             // Compute the equations of the facets of the polyhedron
             typedef typename boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
             typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-            
+
             typename boost::property_map<Polyhedron, vertex_point_t>::const_type vpmap  = get(CGAL::vertex_point, P);
 
             BOOST_FOREACH(face_descriptor fd, faces(P))

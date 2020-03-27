@@ -182,11 +182,11 @@ namespace CGAL {
     {
       if (m_incident_border == NULL) return NULL; //vh is interior
       if (m_incident_border->first->first != NULL)
-	if (m_incident_border->first->second.second == i)
-	  return m_incident_border->first;
+        if (m_incident_border->first->second.second == i)
+          return m_incident_border->first;
       if (m_incident_border->second->first != NULL)
-	if (m_incident_border->second->second.second == i)
-	  return m_incident_border->second;
+        if (m_incident_border->second->second.second == i)
+          return m_incident_border->second;
       return NULL;
     }
 
@@ -197,7 +197,7 @@ namespace CGAL {
     {
       if (m_incident_border == NULL) return false;
       return ((m_incident_border->first->first == v)||
-	      (m_incident_border->second->first == v));
+              (m_incident_border->second->first == v));
     }
 
     inline Next_border_elt* border_elt(Vertex_handle v) const
@@ -225,13 +225,13 @@ namespace CGAL {
     inline  void set_next_border_elt(const Next_border_elt& elt)
     {
       if (m_incident_border->first->first == NULL)
-	*m_incident_border->first = elt;
+        *m_incident_border->first = elt;
       else
-	{
-	  if (m_incident_border->second->first != NULL)
-	    std::cerr << "+++probleme de MAJ du bord <Vertex_base>" << std::endl;
-	  *m_incident_border->second = elt;
-	}
+        {
+          if (m_incident_border->second->first != NULL)
+            std::cerr << "+++probleme de MAJ du bord <Vertex_base>" << std::endl;
+          *m_incident_border->second = elt;
+        }
     }
 
 
@@ -266,9 +266,9 @@ namespace CGAL {
     inline void inc_mark()
     {
       if (m_mark==-1)
-	m_mark=1;
+        m_mark=1;
       else
-	m_mark++;
+        m_mark++;
     }
 
     //-------------------------------------------------------------------

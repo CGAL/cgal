@@ -5,7 +5,7 @@
 //
 // $URL:$
 // $Id: $
-// 
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -50,30 +50,30 @@ template<typename Poly_> Poly_ from_string(const char* s) {
     return f;
 }
 
-template <typename Arithmetic_kernel> 
+template <typename Arithmetic_kernel>
 void test_routine() {
 
-        
+
     typedef typename Arithmetic_kernel::Rational Rational;
     typedef typename Arithmetic_kernel::Integer Integer;
-    
+
     typedef Integer Coefficient;
-    typedef typename 
+    typedef typename
         CGAL::Polynomial_type_generator<Coefficient,1>::Type Poly_1;
     CGAL_USE_TYPE(Poly_1);
-    typedef typename 
+    typedef typename
         CGAL::Polynomial_type_generator<Coefficient,2>::Type Poly_2;
-    
+
     typedef CGAL::internal::Algebraic_real_quadratic_refinement_rep_bfi
         < Coefficient, Rational > Rep_class;
     typedef CGAL::internal::Bitstream_descartes
         < CGAL::internal::Bitstream_descartes_rndl_tree_traits
-            < CGAL::internal::Bitstream_coefficient_kernel<Coefficient> 
-            > 
-        > 
+            < CGAL::internal::Bitstream_coefficient_kernel<Coefficient>
+            >
+        >
         Isolator;
-    
-    typedef CGAL::Algebraic_kernel_d_1<Coefficient,Rational,Rep_class, Isolator> 
+
+    typedef CGAL::Algebraic_kernel_d_1<Coefficient,Rational,Rep_class, Isolator>
         Algebraic_kernel_d_1;
 
     typedef typename Algebraic_kernel_d_1::Algebraic_real_1 Algebraic_real;
@@ -81,29 +81,29 @@ void test_routine() {
 
 #if CGAL_ACK_USE_EXACUS
     typedef AcX::Algebraic_curve_2<Algebraic_kernel_d_1> Algebraic_curve_2;
-    typedef AcX::Algebraic_curve_pair_2<Algebraic_curve_2> 
+    typedef AcX::Algebraic_curve_pair_2<Algebraic_curve_2>
         Algebraic_curve_pair_2;
     typedef CGAL::Algebraic_curve_kernel_2<Algebraic_curve_pair_2,
-        Algebraic_kernel_d_1> 
-        Algebraic_kernel_d_2;    
+        Algebraic_kernel_d_1>
+        Algebraic_kernel_d_2;
 #else
-    typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_d_1> 
+    typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_d_1>
         Algebraic_kernel_d_2;
 #endif
 
     Algebraic_kernel_d_2 kernel;
-    
+
     typedef typename Algebraic_kernel_d_2::Curve_analysis_2 Curve_analysis_2;
 
-    typedef typename Algebraic_kernel_d_2::Curve_pair_analysis_2 
+    typedef typename Algebraic_kernel_d_2::Curve_pair_analysis_2
         Curve_pair_analysis_2;
 
     typename Algebraic_kernel_d_2::Construct_curve_2
-        construct_curve_2 
+        construct_curve_2
         = kernel.construct_curve_2_object();
 
     typename Algebraic_kernel_d_2::Construct_curve_pair_2
-        construct_curve_pair_2 
+        construct_curve_pair_2
         = kernel.construct_curve_pair_2_object();
 
 
@@ -127,7 +127,7 @@ void test_routine() {
             assert(! slice.is_event());
             assert(! slice.is_intersection());
             assert(slice.number_of_events()==0);
-        }  
+        }
         {
             i=0;
             const Status_line_1& slice=curve_pair.status_line_at_event(i);
@@ -305,7 +305,7 @@ void test_routine() {
             assert(slice.curves_at_event(0).second==0);
             assert(slice.curves_at_event(1).first==-1);
             assert(slice.curves_at_event(1).second==1);
-        } 
+        }
         {
             i=5;
             const Status_line_1& slice=curve_pair.status_line_of_interval(i);
@@ -469,12 +469,12 @@ void test_routine() {
             assert(! slice.is_event());
             assert(slice.number_of_events()==0);
         }
-   
+
     }
     {
         Poly_2 f=from_string<Poly_2>("P[4(0,P[1(0,1)(1,1)])(4,P[0(0,-1)])]");
         Poly_2 g=from_string<Poly_2>("P[2(0,P[2(0,-5)(2,6)])(2,P[0(0,4)])]");
-        Curve_analysis_2 ca1=construct_curve_2(f), 
+        Curve_analysis_2 ca1=construct_curve_2(f),
             ca2=construct_curve_2(g);
 
         Curve_pair_analysis_2 curve_pair=construct_curve_pair_2(ca1,ca2);
@@ -491,7 +491,7 @@ void test_routine() {
             const Status_line_1& slice=curve_pair.status_line_of_interval(i);
             assert(! slice.is_event());
             assert(slice.number_of_events()==0);
-        }    
+        }
         {
             i=0;
             const Status_line_1& slice=curve_pair.status_line_at_event(i);
@@ -565,7 +565,7 @@ void test_routine() {
             assert(slice.curves_at_event(1).second==0);
             assert(slice.curves_at_event(2).first==1);
             assert(slice.curves_at_event(2).second==-1);
-            
+
         }
         {
             i=3;
@@ -634,7 +634,7 @@ void test_routine() {
             assert(slice.curves_at_event(1).second==1);
             assert(slice.multiplicity_of_intersection(0)==1);
             assert(slice.multiplicity_of_intersection(1)==1);
-        } 
+        }
         {
             i=5;
             const Status_line_1& slice=curve_pair.status_line_of_interval(i);
@@ -711,12 +711,12 @@ void test_routine() {
     {
         Poly_2 f=from_string<Poly_2>("P[4(0,P[4(3,-1)(4,2)])(2,P[1(1,1)])(4,P[0(0,1)])]");
         Poly_2 g=from_string<Poly_2>("P[4(0,P[4(0,12)(1,-380)(2,4200)(3,-18000)(4,20000)])(2,P[1(0,-4000)(1,40000)])(4,P[0(0,160000)])]");
-        Curve_analysis_2 ca1=construct_curve_2(f), 
+        Curve_analysis_2 ca1=construct_curve_2(f),
             ca2=construct_curve_2(g);
         Curve_pair_analysis_2 curve_pair=construct_curve_pair_2(ca1,ca2);
         //assert(curve_pair.number_of_status_lines_with_event()==11);
-    
-    
+
+
     }
 #if CGAL_ACK_WITH_ROTATIONS
 #if DO_SQRT_EXTENSION_TESTS
@@ -730,43 +730,43 @@ void test_routine() {
         typedef typename
             CGAL::Polynomial_type_generator<Coefficient,2>::Type Poly_sqrt2;
 
-    
+
         typedef CGAL::internal::Algebraic_real_quadratic_refinement_rep_bfi
             < Coefficient, Rational > Rep_class;
         typedef CGAL::internal::Bitstream_descartes
             < CGAL::internal::Bitstream_descartes_rndl_tree_traits
-              < CGAL::internal::Bitstream_coefficient_kernel<Coefficient> 
-              > 
-            > 
+              < CGAL::internal::Bitstream_coefficient_kernel<Coefficient>
+              >
+            >
             Isolator;
 
         typedef CGAL::Algebraic_kernel_d_1< Coefficient,Rational,
-                                          Rep_class, Isolator > 
+                                          Rep_class, Isolator >
             Algebraic_kernel_d_1_with_sqrt;
 
         Poly_sqrt2 f,g;
         f=from_string<Poly_sqrt2>("P[4(0,P[4(3,EXT[0,-2,7])(4,EXT[0,4,7])])(2,P[1(1,EXT[0,2,7])])(4,P[0(0,EXT[0,2,7])])]");
         g=from_string<Poly_sqrt2>("P[4(0,P[4(4,EXT[0,2,7])])(1,P[2(2,EXT[0,2,7])])(3,P[0(0,EXT[0,-2,7])])(4,P[0(0,EXT[0,4,7])])]");
-        
+
         typedef CGAL::Algebraic_curve_kernel_2<Algebraic_kernel_d_1_with_sqrt>
             Algebraic_kernel_d_2;
 
         typedef typename Algebraic_kernel_d_2::Curve_analysis_2 Curve_analysis_2;
-        typedef typename Algebraic_kernel_d_2::Curve_pair_analysis_2 
+        typedef typename Algebraic_kernel_d_2::Curve_pair_analysis_2
             Curve_pair_analysis_2;
-        
+
         Algebraic_kernel_d_2 kernel;
 
         typename Algebraic_kernel_d_2::Construct_curve_2
-            construct_curve_2 
+            construct_curve_2
             = kernel.construct_curve_2_object();
-        
+
         typename Algebraic_kernel_d_2::Construct_curve_pair_2
-            construct_curve_pair_2 
+            construct_curve_pair_2
             = kernel.construct_curve_pair_2_object();
-        
-        
-        Curve_analysis_2 c1=construct_curve_2(f), 
+
+
+        Curve_analysis_2 c1=construct_curve_2(f),
             c2=construct_curve_2(g);
 
         Curve_pair_analysis_2 curve_pair=construct_curve_pair_2(c1,c2);
@@ -774,14 +774,14 @@ void test_routine() {
         typedef typename Curve_pair_analysis_2::Status_line_1 Status_line_1;
         typedef CGAL::internal::Event_indices<int> Triple;
         int i;
-    
+
         {
             i=0;
             const Status_line_1& slice=curve_pair.status_line_of_interval(i);
             assert(! slice.is_event());
             assert(! slice.is_intersection());
             assert(slice.number_of_events()==0);
-        }    
+        }
         {
             i=0;
             const Status_line_1& slice=curve_pair.status_line_at_event(i);
@@ -959,7 +959,7 @@ void test_routine() {
             assert(slice.curves_at_event(0).second==0);
             assert(slice.curves_at_event(1).first==-1);
             assert(slice.curves_at_event(1).second==1);
-        } 
+        }
         {
             i=5;
             const Status_line_1& slice=curve_pair.status_line_of_interval(i);
@@ -1123,7 +1123,7 @@ void test_routine() {
             assert(! slice.is_event());
             assert(slice.number_of_events()==0);
         }
-   
+
     }
 #endif
 #endif

@@ -45,7 +45,7 @@ public:
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
-	typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
+        typedef typename std::iterator_traits<RandomAccessIterator>::difference_type difference_type;
         RandomAccessIterator middle = begin;
         if (end - begin >= _threshold) {
             middle = begin + difference_type (double(end - begin) * _ratio);

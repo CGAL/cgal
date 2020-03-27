@@ -414,7 +414,7 @@ public Q_SLOTS:
 
   void replacePolyline()
   {
-    bool is_ogl_4_3 = 
+    bool is_ogl_4_3 =
         static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
     if(current_uv_item)
       qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),
@@ -597,7 +597,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   QElapsedTimer time;
   time.start();
   // add textured polyhedon to the scene
-  
+
   // \todo for surface_mesh
   Base_face_graph tMesh = *pMesh;
   std::vector<bool> mark(num_halfedges(tMesh)/2,false);
@@ -949,7 +949,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     graphics_scene->removeItem(graphics_scene->items().first());
   graphics_scene->addItem(projection);
   projections[new_item] = projection;
-  bool is_ogl_4_3 = 
+  bool is_ogl_4_3 =
       static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->isOpenGL_4_3();
   if(current_uv_item)
     qobject_cast<Scene_textured_facegraph_item*>(projections.key(current_uv_item))->add_border_edges(std::vector<float>(0),

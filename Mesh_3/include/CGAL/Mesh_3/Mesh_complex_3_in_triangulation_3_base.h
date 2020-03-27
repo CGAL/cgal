@@ -97,12 +97,12 @@ namespace Mesh_3 {
       // computes and return an ordered pair of Vertex
       Pair_of_vertices
       make_ordered_pair(const Vertex_handle vh1, const Vertex_handle vh2) const {
-	if (vh1 < vh2) {
-	  return std::make_pair(vh1, vh2);
-	}
-	else {
-	  return std::make_pair(vh2, vh1);
-	}
+        if (vh1 < vh2) {
+          return std::make_pair(vh1, vh2);
+        }
+        else {
+          return std::make_pair(vh2, vh1);
+        }
       }
 
       // same from an Edge
@@ -276,7 +276,7 @@ public:
     int number_of_boundary_incident_edges = 0; // could be a bool
     for (typename std::vector<Edge>::iterator
            eit=edges.begin(), end = edges.end();
-	 eit != end; eit++)
+         eit != end; eit++)
     {
       switch( face_status(*eit) )
       {
@@ -326,7 +326,7 @@ public:
 #ifdef CGAL_LINKED_WITH_TBB
     typename Edge_facet_counter::const_accessor accessor;
     if(!edge_facet_counter_.find(accessor,
-				 this->make_ordered_pair(edge)))
+                                 this->make_ordered_pair(edge)))
       return NOT_IN_COMPLEX;
     switch(accessor->second)
 #else // not CGAL_LINKED_WITH_TBB
@@ -451,7 +451,7 @@ public:
     // Call global function
     CGAL::output_to_medit(os,*this,rebind,show_patches);
   }
-  
+
   /// Outputs the mesh to maya
   void output_to_maya(std::ofstream& os,
                       bool surfaceOnly = true) const
@@ -581,12 +581,12 @@ private:
 #ifndef CGAL_LINKED_WITH_TBB
           ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
 #else // CGAL_LINKED_WITH_TBB
-	  {
-	    typename Edge_facet_counter::accessor accessor;
-	    edge_facet_counter_.insert(accessor,
-				       this->make_ordered_pair(edge_va, edge_vb));
-	    ++accessor->second;
-	  }
+          {
+            typename Edge_facet_counter::accessor accessor;
+            edge_facet_counter_.insert(accessor,
+                                       this->make_ordered_pair(edge_va, edge_vb));
+            ++accessor->second;
+          }
 #endif // CGAL_LINKED_WITH_TBB
 
           const std::size_t n = edge_va->cached_number_of_incident_facets();
@@ -611,9 +611,9 @@ private:
     { // fill the union find
       std::vector<Facet> non_filtered_facets;
       if(tr_.is_parallel()) {
-	tr_.incident_facets_threadsafe(v, std::back_inserter(non_filtered_facets));
+        tr_.incident_facets_threadsafe(v, std::back_inserter(non_filtered_facets));
       } else {
-	tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+        tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
       }
 
       for(typename std::vector<Facet>::iterator
@@ -639,15 +639,15 @@ private:
       const Cell_handle& ch = (*it).first;
       const int& i = (*it).second;
       for(int j=0; j < 3; ++j) {
-	const Vertex_handle w = ch->vertex(tr_.vertex_triple_index(i,j));
-	if(w != v){
-	  Vertex_set_map_iterator vsm_it = vsmap.find(w);
-	  if(vsm_it != vsmap.end()){
-	    facets.unify_sets(vsm_it->second, it);
-	  } else {
-	    vsmap.insert(std::make_pair(w, it));
-	  }
-	}
+        const Vertex_handle w = ch->vertex(tr_.vertex_triple_index(i,j));
+        if(w != v){
+          Vertex_set_map_iterator vsm_it = vsmap.find(w);
+          if(vsm_it != vsmap.end()){
+            facets.unify_sets(vsm_it->second, it);
+          } else {
+            vsmap.insert(std::make_pair(w, it));
+          }
+        }
       }
     }
     const std::size_t nb_components = facets.number_of_sets();
@@ -656,7 +656,7 @@ private:
     v->set_c2t3_cache(n, nb_components);
     return nb_components;
   }
-  
+
   //-------------------------------------------------------
   // Traversal
   //-------------------------------------------------------
@@ -910,12 +910,12 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
         Vertex_handle edge_va = cell->vertex(edge_index_va);
         Vertex_handle edge_vb = cell->vertex(edge_index_vb);
 #ifdef CGAL_LINKED_WITH_TBB
-	{
-	  typename Edge_facet_counter::accessor accessor;
-	  edge_facet_counter_.insert(accessor,
-				     this->make_ordered_pair(edge_va, edge_vb));
-	  ++accessor->second;
-	}
+        {
+          typename Edge_facet_counter::accessor accessor;
+          edge_facet_counter_.insert(accessor,
+                                     this->make_ordered_pair(edge_va, edge_vb));
+          ++accessor->second;
+        }
 #else // not CGAL_LINKED_WITH_TBB
         ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
 #endif // not CGAL_LINKED_WITH_TBB
@@ -960,12 +960,12 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
         const Vertex_handle edge_va = cell->vertex(edge_index_va);
         const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
 #ifdef CGAL_LINKED_WITH_TBB
-	{
-	  typename Edge_facet_counter::accessor accessor;
-	  edge_facet_counter_.insert(accessor,
-				     this->make_ordered_pair(edge_va, edge_vb));
-	  --accessor->second;
-	}
+        {
+          typename Edge_facet_counter::accessor accessor;
+          edge_facet_counter_.insert(accessor,
+                                     this->make_ordered_pair(edge_va, edge_vb));
+          --accessor->second;
+        }
 #else // not CGAL_LINKED_WITH_TBB
         --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
 #endif // not CGAL_LINKED_WITH_TBB

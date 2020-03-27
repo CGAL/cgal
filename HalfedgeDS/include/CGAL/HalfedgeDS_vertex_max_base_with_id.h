@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -30,21 +30,21 @@ class HalfedgeDS_vertex_max_base_with_id : public HalfedgeDS_vertex_base< Refs, 
 {
 public:
     typedef HalfedgeDS_vertex_base< Refs, Tag_true, P> Base ;
-    
+
     typedef ID size_type ;
-    
+
     typedef P Point ;
-    
+
 private:
 
     size_type mID ;
-    
+
 public:
 
     HalfedgeDS_vertex_max_base_with_id() : mID ( size_type(-1) )  {}
     HalfedgeDS_vertex_max_base_with_id( Point const& p) : Base(p), mID ( size_type(-1) ) {}
     HalfedgeDS_vertex_max_base_with_id( Point const& p, size_type i ) : Base(p), mID(i) {}
-    
+
     size_type&       id()       { return mID; }
     size_type const& id() const { return mID; }
 };

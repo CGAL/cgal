@@ -7,12 +7,12 @@ namespace CGAL {
 \deprecated This class is deprecated, as 2D and 3D weighted point classes are now part of the concept `Kernel`.
 
 
-The class `Weighted_point` provides a type associating 
-a point type `Pt` with a weight type `Wt`. 
+The class `Weighted_point` provides a type associating
+a point type `Pt` with a weight type `Wt`.
 It was used in the traits classes `Regular_triangulation_euclidean_traits_2`
 and `Regular_triangulation_euclidean_traits_3`, which are now also deprecated.
 
-\sa `CGAL::Regular_triangulation_euclidean_traits_2<Rep,Weight>` 
+\sa `CGAL::Regular_triangulation_euclidean_traits_2<Rep,Weight>`
 \sa `CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>`
 
 */
@@ -20,62 +20,62 @@ template< typename Pt, typename Wt >
 class Weighted_point : public Pt {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-The point type 
-*/ 
-Pt Point; 
+The point type
+*/
+Pt Point;
 
 /*!
-The weight type. 
-*/ 
-Wt Weight; 
+The weight type.
+*/
+Wt Weight;
 
-/// @} 
+/// @}
 
-/// \name Creation 
+/// \name Creation
 /// @{
 
 /*!
-copy constructor. 
-*/ 
-Weighted_point(Weighted_point wq); 
+copy constructor.
+*/
+Weighted_point(Weighted_point wq);
 
 /*!
 
-*/ 
-Weighted_point(Point p=Point(), Weight w= Weight(0)); 
+*/
+Weighted_point(Point p=Point(), Weight w= Weight(0));
 
 /*!
-Constructs the point from `x` 
-and `y` coordinates, with a weight of 0. Requires that the ambient 
-dimension be 2. 
-*/ 
-Weighted_point(FT x, FT y); 
+Constructs the point from `x`
+and `y` coordinates, with a weight of 0. Requires that the ambient
+dimension be 2.
+*/
+Weighted_point(FT x, FT y);
 
 /*!
-Constructs the point from 
-`x`, `y` and `z` coordinates, with a weight of 0. Requires that 
-the ambient dimension be 3. 
-*/ 
-Weighted_point(FT x, FT y, FT z); 
+Constructs the point from
+`x`, `y` and `z` coordinates, with a weight of 0. Requires that
+the ambient dimension be 3.
+*/
+Weighted_point(FT x, FT y, FT z);
 
-/// @} 
+/// @}
 
-/// \name Access Functions 
+/// \name Access Functions
 /// @{
 
 /*!
 
-*/ 
-Point point() const; 
+*/
+Point point() const;
 
 /*!
 
-*/ 
-Weight weight() const; 
+*/
+Weight weight() const;
 
 /// @}
 

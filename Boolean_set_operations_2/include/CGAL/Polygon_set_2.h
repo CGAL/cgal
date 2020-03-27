@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel <efif@post.tau.ac.il>
@@ -42,7 +42,7 @@ template <class Kernel,
             Gps_default_dcel<Gps_segment_traits_2<Kernel, Containter> > >
 class Polygon_set_2 :
   public General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
-{  
+{
 private:
   typedef General_polygon_set_2<Gps_segment_traits_2<Kernel, Containter>, Dcel_>
                                                           Base;
@@ -50,7 +50,7 @@ private:
   typedef Polygon_set_2<Kernel, Containter, Dcel_>        Self;
 
 public:
-  typedef  typename Base::Traits_2                        Traits_2;    
+  typedef  typename Base::Traits_2                        Traits_2;
   typedef  typename Base::Polygon_2                       Polygon_2;
   typedef  typename Base::Polygon_with_holes_2            Polygon_with_holes_2;
   typedef  typename Base::Arrangement_2                   Arrangement_2;
@@ -81,7 +81,7 @@ public:
     Base (pwh)
   {}
 
-  
+
   inline void intersection(const Polygon_2& pgn)
   {
     Base::intersection(pgn);

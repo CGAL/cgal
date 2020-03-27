@@ -188,7 +188,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
   do {  // Initialization
     long init =
         static_cast<long>((std::min)(static_cast<std::size_t>(100), n - simulated_points));
-    
+
     generate_points_annulus(init, -CGAL_PI, CGAL_PI, 0, radius, l,
                             gen);
 
@@ -202,7 +202,7 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
 
   std::size_t T = n;
   if (!fast) T = static_cast<std::size_t>(std::floor(n / std::pow(std::log(static_cast<double>(n)), 2)));
-  
+
   while (simulated_points < n) {
     // l is a list coming from a convex hull operation. we are moving the
     // points s.t the angles are from -pi to pi.

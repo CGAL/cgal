@@ -29,8 +29,8 @@
 
 namespace CGAL {
 
-// TODO: rename this into MPFI_traits ? 
-// add a better rounding control 
+// TODO: rename this into MPFI_traits ?
+// add a better rounding control
 
 template<typename BigfloatInterval> class Bigfloat_interval_traits;
 
@@ -50,7 +50,7 @@ template<typename BFI> inline long get_precision(BFI) {
 }
 
 template<typename BFI> inline long relative_precision(const BFI& bfi) {
-    typename Bigfloat_interval_traits<BFI>::Relative_precision 
+    typename Bigfloat_interval_traits<BFI>::Relative_precision
       relative_precision;
     return relative_precision(bfi);
 }

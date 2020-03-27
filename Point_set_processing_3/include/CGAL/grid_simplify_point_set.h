@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s) : Nader Salman and Laurent Saboret 
+// Author(s) : Nader Salman and Laurent Saboret
 
 #ifndef CGAL_GRID_SIMPLIFY_POINT_SET_H
 #define CGAL_GRID_SIMPLIFY_POINT_SET_H
@@ -57,7 +57,7 @@ inline double round_epsilon(double value, double epsilon)
 {
   return std::floor(value / epsilon);
 }
-  
+
 /// Utility class for grid_simplify_point_set(): Hash_epsilon_points_3
 /// defines a 3D point hash / 2 points are equal iff they belong to
 /// the same cell of a grid of cell size = epsilon.
@@ -71,7 +71,7 @@ private:
     typedef typename boost::property_traits<PointMap>::value_type Point;
 public:
 
-    Hash_epsilon_points_3 (double epsilon, PointMap p_map) 
+    Hash_epsilon_points_3 (double epsilon, PointMap p_map)
         : m_epsilon (epsilon), point_map(p_map)
     {
         CGAL_point_set_processing_precondition(epsilon > 0);
@@ -101,7 +101,7 @@ private:
     typedef typename boost::property_traits<PointMap>::value_type Point;
 public:
 
-    Equal_epsilon_points_3 (const double& epsilon, PointMap p_map) 
+    Equal_epsilon_points_3 (const double& epsilon, PointMap p_map)
         : m_epsilon (epsilon), point_map(p_map)
     {
         CGAL_point_set_processing_precondition(epsilon > 0);
@@ -210,7 +210,7 @@ grid_simplify_point_set(
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
-  
+
   typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::const_type PointMap;
   PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
   const cpp11::function<bool(double)>& callback = choose_parameter(get_parameter(np, internal_np::callback),
@@ -275,7 +275,7 @@ ForwardIterator grid_simplify_point_set(
      CGAL::parameters::point_map (point_map).
      geom_traits (Kernel()));
 }
-  
+
 
 // deprecated API
 template <typename ForwardIterator,
@@ -295,7 +295,7 @@ grid_simplify_point_set(
      epsilon,
      CGAL::parameters::point_map (point_map));
 }
-  
+
 // deprecated API
 template <typename ForwardIterator
 >

@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
@@ -37,12 +37,12 @@ namespace CGAL {
     typedef typename K_::Point_3 Point;  // point type
     typedef typename K_::Cartesian_const_iterator_3 Cartesian_const_iterator;
                                          // iterator over point coordinates
-    
+
     static int dimension(const Point& )
     {
       return 3;
     }
-    
+
     static Cartesian_const_iterator cartesian_begin(const Point& p)
     {
       return p.cartesian_begin();

@@ -57,13 +57,13 @@ public:
   static int getDefaultLinesWidth();
   /*! \brief Adds a dock widget to the interface
    *
-   * Adds a dock widget in the left section of the MainWindow. If the slot is already 
+   * Adds a dock widget in the left section of the MainWindow. If the slot is already
    * taken, the dock widgets will be tabified.
    */
   void addDockWidget(QDockWidget* dock_widget);
 
   /*! \brief Gets an item of the templated type.
-   * \returns the first `SceneType` item found in the scene's list of currently selected 
+   * \returns the first `SceneType` item found in the scene's list of currently selected
    * items;
    * \returns NULL if there is no `SceneType` in the list.
    */

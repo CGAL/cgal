@@ -86,7 +86,7 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
       else
         program = item->getShaderProgram(Scene_polylines_item::PROGRAM_NO_SELECTION, viewer);
       program->bind();
-      
+
       item->vaos[Edges]->bind();
       item->buffers[Edges_Vertices].bind();
       item->buffers[Edges_Vertices].allocate(positions_lines.data(),
@@ -96,7 +96,7 @@ Scene_polylines_item_private::initializeBuffers(CGAL::Three::Viewer_interface *v
       item->buffers[Edges_Vertices].release();
       item->vaos[Edges]->release();
       program->release();
-      
+
       nb_lines = positions_lines.size();
       positions_lines.clear();
       positions_lines.swap(positions_lines);
@@ -119,9 +119,9 @@ Scene_polylines_item_private::computeElements() const
       if(it->empty()) continue;
       if(it->front() == it->back())
         nb_vertices += it->size() - 1;
-      else 
+      else
         nb_vertices += it->size();
-      
+
       for(size_t i = 0, end = it->size()-1;
           i < end; ++i)
       {
@@ -274,7 +274,7 @@ Scene_polylines_item_private::computeSpheres()
       QApplication::restoreOverrideCursor();
 }
 
-Scene_polylines_item::Scene_polylines_item() 
+Scene_polylines_item::Scene_polylines_item()
     :CGAL::Three::Scene_group_item("unnamed",Scene_polylines_item_private::NbOfVbos,Scene_polylines_item_private::NbOfVaos)
     ,d(new Scene_polylines_item_private(this))
 {
@@ -336,7 +336,7 @@ Scene_item::Bbox Scene_polylines_item::bbox() const
   is_bbox_computed = true;
   return _bbox;
 }
-Scene_polylines_item* 
+Scene_polylines_item*
 Scene_polylines_item::clone() const {
     Scene_polylines_item* item = new Scene_polylines_item;
     item->polylines = polylines;
@@ -400,7 +400,7 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 // Wireframe OpenGL drawing
-void 
+void
 Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
@@ -412,7 +412,7 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
       d->computeElements();
       d->initializeBuffers(viewer);
     }
-    
+
     vaos[Scene_polylines_item_private::Edges]->bind();
     if(!viewer->isOpenGL_4_3())
     {
@@ -444,7 +444,7 @@ Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     }
 }
 
-void 
+void
 Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
   if(!visible())
     return;
@@ -476,7 +476,7 @@ Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
    }
 }
 
-QMenu* Scene_polylines_item::contextMenu() 
+QMenu* Scene_polylines_item::contextMenu()
 {
     const char* prop_name = "Menu modified by Scene_polylines_item.";
 

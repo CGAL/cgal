@@ -783,7 +783,7 @@ public:
     Query_cache &qc = query_cache.local();
     return qc.has_cache && (qc.cached_query == Cached_query(q));
 #else
-    return query_cache.has_cache 
+    return query_cache.has_cache
       && (query_cache.cached_query == Cached_query(q));
 #endif
   }
@@ -891,5 +891,5 @@ Is_in_domain::operator()(const Point_3& p) const
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
-  
+
 #endif // POLYHEDRAL_MESH_TRAITS_3_H_

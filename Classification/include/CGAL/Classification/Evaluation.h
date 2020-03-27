@@ -54,7 +54,7 @@ public:
   /// \name Constructor
   /// @{
 
-  
+
 /*!
 
   \brief Instantiates an evaluation object and computes all
@@ -88,7 +88,7 @@ public:
 
     std::size_t sum_true_positives = 0;
     std::size_t total = 0;
-    
+
     for (std::size_t j = 0; j < ground_truth.size(); ++ j)
     {
       int gt = static_cast<int>(ground_truth[j]);
@@ -110,7 +110,7 @@ public:
     m_mean_f1 = 0.;
 
     std::size_t correct_labels = 0;
-    
+
     for (std::size_t j = 0; j < labels.size(); ++ j)
     {
       m_precision[j] = true_positives[j] / float(true_positives[j] + false_positives[j]);
@@ -195,11 +195,11 @@ public:
   }
 
   /// @}
-  
+
   /// \name Global Evaluation
   /// @{
 
-  
+
   /*!
     \brief Returns the accuracy of the training.
 
@@ -207,13 +207,13 @@ public:
     total number of provided inliers.
   */
   float accuracy() const { return m_accuracy; }
-  
+
   /*!
     \brief Returns the mean \f$F_1\f$ score of the training over all
     labels (see `f1_score()`).
   */
   float mean_f1_score() const { return m_mean_f1; }
-  
+
   /*!
     \brief Returns the mean intersection over union of the training
     over all labels (see `intersection_over_union()`).
@@ -221,10 +221,10 @@ public:
   float mean_intersection_over_union() const { return m_mean_iou; }
 
   /// @}
-  
+
 };
-  
-  
+
+
 } // namespace Classification
 
 } // namespace CGAL

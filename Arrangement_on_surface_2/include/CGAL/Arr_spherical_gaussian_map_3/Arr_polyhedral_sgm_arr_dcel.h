@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s): Efi Fogel         <efif@post.tau.ac.il>
 //            Naama mayer       <naamamay@post.tau.ac.il>
@@ -47,11 +47,11 @@ private:
   /*! A mask of the ids of the original arrangements that contributed the
    * halfedge while performing the minkowski sum.
    * \todo This should be made optional. It is relevant only if the polytope
-   * is the result of a Minkowski sum operation, and it is needed only by the 
+   * is the result of a Minkowski sum operation, and it is needed only by the
    * drawing routines.
    */
   unsigned int m_arr_mask;
-  
+
 public:
   /*! Constructor */
   Arr_polyhedral_sgm_arr_halfedge() : m_arr_mask(0x0) {}
@@ -91,7 +91,7 @@ private:
 public:
   /*! Constructor */
   Arr_polyhedral_sgm_arr_face() : m_is_set(false) { }
-    
+
   /*! Set the 3D point of the original polyhedron */
   void set_point(const Point_3 & point)
   {

@@ -75,7 +75,7 @@ namespace CGAL {
   template<typename T>
   void write_cmap_attribute_node(boost::property_tree::ptree & /*node*/, const T&)
   {}
-  
+
   inline
   void write_cmap_attribute_node(boost::property_tree::ptree & node,
                        char val)
@@ -319,7 +319,7 @@ namespace CGAL {
                                 typename CMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
-    
+
     // First we numbered each dart by using the std::map.
     typename CMap::Dart_range::const_iterator it(amap.darts().begin());
     for(typename CMap::size_type num=1; num<=amap.number_of_darts();
@@ -353,7 +353,7 @@ namespace CGAL {
       // function)
       write_cmap_dart_node(ndart, it);
     }
-    
+
     return pt;
   }
 
@@ -417,7 +417,7 @@ namespace CGAL {
     if (!output) return false;
     return save_combinatorial_map(amap, output, f);
   }
-  
+
   template < class CMap >
   bool save_combinatorial_map(const CMap& amap, std::ostream & output)
   {
@@ -532,7 +532,7 @@ namespace CGAL {
         if (v0.first == "dimension")
         {
           int dimension=v0.second.get("<xmlattr>.index", -1);
-          
+
           // if map.dimension == dimension saved in the xml file
           if (dimension==i)
           {
@@ -540,11 +540,11 @@ namespace CGAL {
             std::string type =  v0.second.get<std::string>("type");
             std::string type_map=std::string
               (typeid(typename CMap::template Attribute_type<i>::type::Info).name());
-            
+
             std::string ptype =  v0.second.get<std::string>("type_point");
             std::string ptype_map= std::string
               (typeid(typename CMap::template Attribute_type<i>::type::Point).name());
-            
+
                 //  std::cout<<"ptype="<<ptype<<"  and type_map="<<type_map<<std::endl;
                 /* if(type!=type_map && ptype!=ptype_map)
                 {
@@ -558,7 +558,7 @@ namespace CGAL {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-                
+
                 BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
                               v1.second )
                 {
@@ -608,7 +608,7 @@ namespace CGAL {
         if (v0.first == "dimension")
         {
           int dimension=v0.second.get("<xmlattr>.index", -1);
-          
+
           // if map.dimension == dimension saved in the xml file
           if (dimension==i)
           {
@@ -629,7 +629,7 @@ namespace CGAL {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-                
+
                 BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
                               v1.second )
                 {
@@ -640,7 +640,7 @@ namespace CGAL {
                       amap.template set_attribute<i>
                         (myDarts[id_dart_cellule],
                          amap.template create_attribute<i>());
-                    
+
                     read_cmap_attribute_node
                       (v2,
                        (amap.template attribute<i>
@@ -669,7 +669,7 @@ namespace CGAL {
         if (v0.first == "dimension")
         {
           int dimension=v0.second.get("<xmlattr>.index", -1);
-          
+
           // if map.dimension == dimension saved in the xml file
           if (dimension==i)
           {
@@ -690,7 +690,7 @@ namespace CGAL {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-                
+
                 BOOST_FOREACH(const boost::property_tree::ptree::value_type &v2,
                               v1.second )
                 {
@@ -728,19 +728,19 @@ namespace CGAL {
         if (v0.first == "dimension")
         {
           int dimension=v0.second.get("<xmlattr>.index", -1);
-          
+
           // if map.dimension == dimension saved in the xml file
           if (dimension==i)
           {
             unsigned int id_dart_cellule=0;
-            
+
             BOOST_FOREACH(const boost::property_tree::ptree::value_type &v1,
                           v0.second )
             {
               if( v1.first == "a" )
               {
                 id_dart_cellule=v1.second.get<unsigned int>("d")-1;
-                
+
                 if (amap.template attribute<i>(myDarts[id_dart_cellule])==NULL)
                   amap.template set_attribute<i>
                     (myDarts[id_dart_cellule],
@@ -798,7 +798,7 @@ namespace CGAL {
           {
             index = v2.second.get("<xmlattr>.i", 0);
             nextDartInt = boost::lexical_cast< int >(v2.second.data())-1;
-            
+
             if ( index<=amap.dimension )
             {
               amap.basic_link_beta(myDarts[currentDartInt],
@@ -842,7 +842,7 @@ namespace CGAL {
     cmap_load_attributes(pt,amap,myDarts);
     return true;
   }
-  
+
   template < class CMap, class Functor >
   bool load_combinatorial_map(const char* filename, CMap& amap,
                               Functor& f)

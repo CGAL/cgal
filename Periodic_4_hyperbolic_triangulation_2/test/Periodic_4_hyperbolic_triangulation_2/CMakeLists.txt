@@ -10,11 +10,11 @@ find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND AND CGAL_Core_FOUND )
 
-  	include( ${CGAL_USE_FILE} )
+          include( ${CGAL_USE_FILE} )
 
-  	include( CGAL_CreateSingleSourceCGALProgram )
+          include( CGAL_CreateSingleSourceCGALProgram )
 
-    create_single_source_cgal_program( "test_p4ht2_construct_point_2.cpp" ) 
+    create_single_source_cgal_program( "test_p4ht2_construct_point_2.cpp" )
     create_single_source_cgal_program( "test_p4ht2_exact_complex_numbers.cpp" )
     create_single_source_cgal_program( "test_p4ht2_intersections.cpp" )
     create_single_source_cgal_program( "test_p4ht2_locate.cpp" )
@@ -22,10 +22,10 @@ if ( CGAL_FOUND AND CGAL_Core_FOUND )
     create_single_source_cgal_program( "test_p4ht2_removal_iterator.cpp" )
     create_single_source_cgal_program( "test_p4ht2_removal.cpp" )
     create_single_source_cgal_program( "test_p4ht2_insert_degenerate.cpp" )
-    
+
 else()
-  
+
     message(STATUS "This program requires the CGAL library and the GMP library, and will not be compiled.")
-  
+
 endif()
 

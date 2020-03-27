@@ -31,7 +31,7 @@
 namespace CGAL {
 
 template <class K>
-Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1, 
+Object plane_half_plane_proj_intersection(const typename K::Plane_3 &h1,
                                           const typename K::Plane_3 &h2,
                                           const typename K::Line_2  &l,
                                           const K& k)
@@ -141,15 +141,15 @@ Object line_under_linear_constraint(const typename K::Line_2& l1,
       return Object();
 
     CGAL_assertion(side == ON_POSITIVE_SIDE); // the two lines are parallel
-    return make_object(l1);   
+    return make_object(l1);
   }
- 
+
   // the two lines overlap
   CGAL_USE_TYPE(Line_2);
   CGAL_assertion_code(Line_2 dummy;);
   CGAL_assertion_code(bool b =  assign(dummy, obj););
   CGAL_assertion(b);
-  
+
   return make_object(l1);
 }
 
@@ -197,7 +197,7 @@ Object ray_under_linear_constraint(const typename K::Ray_2&  ray,
   // the ray and the line overlap
   return make_object(ray);
 }
- 
+
 
 } //namespace CGAL
 

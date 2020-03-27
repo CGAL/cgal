@@ -1,6 +1,6 @@
 // Copyright (c) 2005, 2006 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
-// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France) 
-// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France) 
+// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France)
+// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France)
 // All rights reserved.
 //
 // The files in this directory are part of the ImageIO Library.
@@ -170,15 +170,15 @@ struct point_image;
 typedef int (*TEST_IMAGE_FORMAT)(char *,const char *);
 /** defines the type of function called to read an image or an image header
     from a file corresponding to a given format. The first parameter is the
-    file name whereas the second parameter is an _image structure. Note that 
-    the file has been already opened (the file descriptor fd is valid). 
-    The output value is >0  if  the whole image has been read, it is 0 if 
+    file name whereas the second parameter is an _image structure. Note that
+    the file has been already opened (the file descriptor fd is valid).
+    The output value is >0  if  the whole image has been read, it is 0 if
     only the header has been read and it is  <0 otherwise */
 typedef int (*READ_IMAGE_HEADER)(const char *, struct point_image *);
 /** defines the type of function called to write an image to a file
-    corresponding to a given format.  
+    corresponding to a given format.
     The first parameter is the full file name whereas the second parameter
-    is an _image structure. 
+    is an _image structure.
     Note that the file has to be opened and closed in the function.
     The output value is >=0 if the whole image has been written
     correctly and it is <0 otherwise */
@@ -198,11 +198,11 @@ typedef struct imformat {
       format */
   WRITE_IMAGE writeImage;
 
-  /* the file extension of format (including a dot ".": if several 
-     extensions may be used, they should be separed with a 
+  /* the file extension of format (including a dot ".": if several
+     extensions may be used, they should be separed with a
      comma ".inr,.inr.gz" */
   char fileExtension[IMAGE_FORMAT_NAME_LENGTH];
-  
+
   /** the usual name given to a format : for instance "inrimage", "gif" */
   char realName[IMAGE_FORMAT_NAME_LENGTH];
   /* pointer towards the next image format*/
@@ -348,11 +348,11 @@ CGAL_IMAGEIO_EXPORT _image *_createImage(int x, int y, int z, int v,
     PPM,
     BMP,
     GIS (CEA, IRISA, ENST 3D image format).
-    
+
     See also:
     http://www.dcs.ed.ac.uk/home/mxr/gfx/2d-hi.html and
     http://www.gzip.org/zlib/
-    
+
 
    @param name image file name or NULL for stdin */
 CGAL_IMAGEIO_EXPORT _image* _readImage(const char *name);
@@ -394,7 +394,7 @@ CGAL_IMAGEIO_EXPORT _image* _readImage_raw(const char *name,
 /** Writes given image in file 'name'.<br>
     If name ends with '.gz', file is gzipped.<br>
     If name is NULL, image is sent to stdout.
-    @param im image descriptor 
+    @param im image descriptor
     @param name file name to store image or NULL */
 CGAL_IMAGEIO_EXPORT int _writeImage(_image *im, const char *name);
 
@@ -408,8 +408,8 @@ CGAL_IMAGEIO_EXPORT void _getNextSlice(_image *im);
 
 
 /** adds a format in the list of image format. Test if all mandatory
-    fields have been filled 
-    @param format : an image format 
+    fields have been filled
+    @param format : an image format
     @return -1 if it failed (missing information) and 0 if it succeeded */
 CGAL_IMAGEIO_EXPORT int addImageFormat( PTRIMAGE_FORMAT format);
 
@@ -450,7 +450,7 @@ CGAL_IMAGEIO_EXPORT int _readNonInterlacedFileData(_image *im);
    @param im initialized image descriptor
    @param name image file name */
 CGAL_IMAGEIO_EXPORT void _openWriteImage(_image* im, const char *name) ;
-   
+
 /** open an image file from stdin (if name == NULL), from a pipe
    (piped with gzip if image was compressed) or from a standard file
    @param im initialized image descriptor
@@ -468,7 +468,7 @@ CGAL_IMAGEIO_EXPORT void _get_image_bounding_box(_image* im,
                                                  double* x_max, double* y_max, double* z_max);
 
 /** returns the endianness of the hardware architecture */
-CGAL_IMAGEIO_EXPORT ENDIANNESS  _getEndianness(); 
+CGAL_IMAGEIO_EXPORT ENDIANNESS  _getEndianness();
 /** initializes the list of  supported image formats */
 CGAL_IMAGEIO_EXPORT void initSupportedFileFormat();
 /** prints supported image formats */
@@ -549,7 +549,7 @@ namespace IMAGEIO {
 
 //
 // The following definition are for the evaluate function.
-// 
+//
 template <WORD_KIND wordKind, SIGN sign, std::size_t wdim>
 struct Word_type_generator
 {
@@ -710,7 +710,7 @@ static_evaluate(const _image* image,
 CGAL_IMAGEIO_EXPORT float evaluate(const _image* image,const std::size_t i,const std::size_t j,const std::size_t k);
 
 
-/** convert the data of the image to float 
+/** convert the data of the image to float
 */
 CGAL_IMAGEIO_EXPORT void convertImageTypeToFloat(_image* image);
 

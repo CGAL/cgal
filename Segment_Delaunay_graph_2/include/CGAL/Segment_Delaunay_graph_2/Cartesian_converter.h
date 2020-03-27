@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -56,43 +56,43 @@ private:
   {
     if ( t.is_point() ) {
       if ( t.is_input() ) {
-	return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
+        return K2_Site_2::construct_site_2( Base::operator()(t.point()) );
       } else {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site(0)),
-	    Base::operator()(t.target_of_supporting_site(0)),
-	    Base::operator()(t.source_of_supporting_site(1)),
-	    Base::operator()(t.target_of_supporting_site(1)) );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site(0)),
+            Base::operator()(t.target_of_supporting_site(0)),
+            Base::operator()(t.source_of_supporting_site(1)),
+            Base::operator()(t.target_of_supporting_site(1)) );
       }
     }
 
     if ( t.is_input() ) {
       return K2_Site_2::construct_site_2
-	( Base::operator()(t.source_of_supporting_site()),
-	  Base::operator()(t.target_of_supporting_site()) );
+        ( Base::operator()(t.source_of_supporting_site()),
+          Base::operator()(t.target_of_supporting_site()) );
     } else {
       if ( t.is_input(0) ) {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(1)),
-	    Base::operator()(t.target_of_crossing_site(1)),
-	    true );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site()),
+            Base::operator()(t.target_of_supporting_site()),
+            Base::operator()(t.source_of_crossing_site(1)),
+            Base::operator()(t.target_of_crossing_site(1)),
+            true );
       } else if ( t.is_input(1) ) {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(0)),
-	    Base::operator()(t.target_of_crossing_site(0)),
-	    false );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site()),
+            Base::operator()(t.target_of_supporting_site()),
+            Base::operator()(t.source_of_crossing_site(0)),
+            Base::operator()(t.target_of_crossing_site(0)),
+            false );
       } else {
-	return K2_Site_2::construct_site_2
-	  ( Base::operator()(t.source_of_supporting_site()),
-	    Base::operator()(t.target_of_supporting_site()),
-	    Base::operator()(t.source_of_crossing_site(0)),
-	    Base::operator()(t.target_of_crossing_site(0)),
-	    Base::operator()(t.source_of_crossing_site(1)),
-	    Base::operator()(t.target_of_crossing_site(1)) );
+        return K2_Site_2::construct_site_2
+          ( Base::operator()(t.source_of_supporting_site()),
+            Base::operator()(t.target_of_supporting_site()),
+            Base::operator()(t.source_of_crossing_site(0)),
+            Base::operator()(t.target_of_crossing_site(0)),
+            Base::operator()(t.source_of_crossing_site(1)),
+            Base::operator()(t.target_of_crossing_site(1)) );
       }
     }
   }
@@ -107,7 +107,7 @@ private:
     // t is a segment
     return K2_Site_2::construct_site_2
       ( Base::operator()(t.source_of_supporting_site()),
-	Base::operator()(t.target_of_supporting_site()) );    
+        Base::operator()(t.target_of_supporting_site()) );
   }
 
 public:

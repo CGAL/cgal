@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
@@ -68,7 +68,7 @@ int main() {
   P1.make_tetrahedron( p1, p2, p3, p0);
   P2.make_tetrahedron( p3, p2, p1, p4);
   //TRACEN( P1 << P2);
-  
+
   TRACEN("constructing model...");
   Nef_polyhedron NP1(P1), NP2(P2), NP(NP1^NP2);
   TRACEN("locating source...");
@@ -77,7 +77,7 @@ int main() {
   Object_handle o = NP.locate( o_src, source, target);
   TRACEN("comparing result with ray shooting...");
   CGAL_assertion_code(Object_handle oref = NP.locate(target));
-  
+
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;

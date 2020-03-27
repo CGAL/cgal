@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Seel    <seel@mpi-sb.mpg.de>
 //                 Miguel Granados <granados@mpi-sb.mpg.de>
@@ -55,16 +55,16 @@ namespace internal
 {
   template <class T>
   struct Plane_constructor;
-  
+
   template <class K>
   struct Plane_constructor< CGAL::Plane_3<K> >
   {
     template <class Facet>
     static const CGAL::Plane_3<K>& get_plane(Facet,const CGAL::Plane_3<K>& plane){return plane;}
-    static CGAL::Plane_3<K> get_type_plane(const CGAL::Point_3<K>& p,const CGAL::Vector_3<K>& vector){return CGAL::Plane_3<K>(p,vector);} 
+    static CGAL::Plane_3<K> get_type_plane(const CGAL::Point_3<K>& p,const CGAL::Vector_3<K>& vector){return CGAL::Plane_3<K>(p,vector);}
     static CGAL::Vector_3<K> get_opposite_orthogonal_vector(const CGAL::Plane_3<K>& plane){return plane.opposite().orthogonal_vector();}
   };
-  
+
   template <class K>
   struct Plane_constructor< CGAL::Vector_3<K> >
   {
@@ -75,7 +75,7 @@ namespace internal
     static const CGAL::Vector_3<K>& get_type_plane(const CGAL::Point_3<K>&,const CGAL::Vector_3<K>& vector){
       return vector;
     }
-    
+
     static CGAL::Vector_3<K> get_opposite_orthogonal_vector(const CGAL::Vector_3<K>& vector){return -vector;}
   };
 
@@ -122,7 +122,7 @@ class Face_graph_index_adder {
  public:
   Face_graph_index_adder(Polyhedron&, HalfedgeIndexMap ) {}
   void set_hash(halfedge_descriptor,
-		SHalfedge_handle) {}
+                SHalfedge_handle) {}
   void resolve_indexes() {}
 };
 
@@ -148,15 +148,15 @@ public:
   }
 
   void set_hash(halfedge_descriptor evc,
-		SHalfedge_handle se) {
+                SHalfedge_handle se) {
     hash[get(him,evc)] = se;
   }
-  
+
   void resolve_indexes()
   {
     BOOST_FOREACH(face_descriptor fi, faces(P)) {
-      Halfedge_around_facet_const_circulator 
-	fc(halfedge(fi,P),P), end(fc);
+      Halfedge_around_facet_const_circulator
+        fc(halfedge(fi,P),P), end(fc);
       typename boost::property_traits<HalfedgeIndexMap>::value_type
         index = get(him,*fc);
       hash[index]->set_index();
@@ -165,15 +165,15 @@ public:
       int se  = hash[index]->get_index();
       int set = hash[index]->twin()->get_index();
       int sv  = hash[index]->twin()->source()->get_index();
-      
+
       ++fc;
       CGAL_For_all(fc, end) {
         index = get(him,*fc);
-	hash[index]->set_index(se);
-	hash[index]->twin()->set_index(set);
-	hash[index]->source()->set_index(sv);
-	hash[index]->twin()->source()->set_index();
-	sv = hash[index]->twin()->source()->get_index();
+        hash[index]->set_index(se);
+        hash[index]->twin()->set_index(set);
+        hash[index]->source()->set_index(sv);
+        hash[index]->twin()->source()->set_index();
+        sv = hash[index]->twin()->source()->get_index();
       }
       hash[get(him,*fc)]->source()->set_index(sv);
     }
@@ -233,7 +233,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     Point_3 sp_point_0(CGAL::ORIGIN+(pe_target_0 - get(pmap,pv)));
     Sphere_point sp_0(sp_point_0);
     SVertex_handle sv_0 = SM.new_svertex(sp_0);
-    sv_0->mark() = true; 
+    sv_0->mark() = true;
     pec++;
     pe = *pec;
     //CGAL_assertion(pe != pv->vertex_begin());
@@ -251,25 +251,25 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       Sphere_point sp(sp_point);
       SVertex_handle sv = SM.new_svertex(sp);
       sv->mark() = true;
-      
+
       CGAL_NEF_TRACEN(pe_target);
       CGAL_NEF_TRACEN(get(pmap,target(opposite(pe_prev,P),P)));
 
       if(is_border(pe_prev,P))
-	with_border = true;
+        with_border = true;
       else {
   Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
-	Sphere_circle ss_circle(ss_plane);
-	
+        Sphere_circle ss_circle(ss_plane);
+
   CGAL_assertion(ss_circle.has_on(sp));
   CGAL_assertion(ss_circle.has_on(sv_prev->point()));
-	
-	SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
-	e->circle() = ss_circle;
-	e->twin()->circle() = ss_circle.opposite();
-	e->mark() = e->twin()->mark() = true;
-	
-	index_adder.set_hash(pe_prev, e);
+
+        SHalfedge_handle e = SM.new_shalfedge_pair(sv_prev, sv);
+        e->circle() = ss_circle;
+        e->twin()->circle() = ss_circle.opposite();
+        e->mark() = e->twin()->mark() = true;
+
+        index_adder.set_hash(pe_prev, e);
       }
 
       sv_prev = sv;
@@ -291,16 +291,16 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
     } else {
       Plane ss_plane( CGAL::ORIGIN, normals[get(fimap,face(pe_prev,P))] );
       Sphere_circle ss_circle(ss_plane);
-      
+
       CGAL_assertion(ss_plane.has_on(sv_prev->point()));
       CGAL_assertion(ss_circle.has_on(sp_0));
       CGAL_assertion(ss_circle.has_on(sv_prev->point()));
-      
+
       e = SM.new_shalfedge_pair(sv_prev, sv_0);
       e->circle() = ss_circle;
       e->twin()->circle() = ss_circle.opposite();
       e->mark() = e->twin()->mark() = true;
-      
+
       index_adder.set_hash(pe_prev, e);
     }
 
@@ -315,7 +315,7 @@ void polygon_mesh_to_nef_3(PolygonMesh& P, SNC_structure& S, FaceIndexMap fimap,
       fint->mark() = false;
     }
 
-    SM.check_integrity_and_topological_planarity();   
+    SM.check_integrity_and_topological_planarity();
   }
 
   index_adder.resolve_indexes();

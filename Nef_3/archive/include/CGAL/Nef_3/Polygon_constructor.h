@@ -12,10 +12,10 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$ 
+// $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Peter Hachenberger <hachenberger@mpi-sb.mpg.de>
 
@@ -56,16 +56,16 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
     begin(begin_in), end(end_in) {}
 
     void create_sphere_map(SNC_structure& snc,
-			   point_iterator cur,
-			   point_iterator prev,
-			   point_iterator next,
-			   Sphere_circle& c) {
+                           point_iterator cur,
+                           point_iterator prev,
+                           point_iterator next,
+                           Sphere_circle& c) {
       Vertex_handle v(snc.new_vertex(*cur, true));
       SM_decorator SM(&*v);
       SVertex_handle sv1(v->new_svertex(Sphere_point(ORIGIN+(*prev-*cur)),
-					true));
+                                        true));
       SVertex_handle sv2(v->new_svertex(Sphere_point(ORIGIN+(*next-*cur)),
-					true));      
+                                        true));
       SHalfedge_handle se(SM.new_shalfedge_pair(sv1,sv2));
       se->mark() = se->twin()->mark() = true;
       se->circle() = c;
@@ -74,19 +74,19 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
       SM.link_as_face_cycle(se,sf);
     }
 
-    Sphere_circle find_supporting_plane(point_iterator pbegin, 
-					point_iterator pend) {
+    Sphere_circle find_supporting_plane(point_iterator pbegin,
+                                        point_iterator pend) {
       Line_3 l;
       point_iterator pnext(pbegin), pprev(pend), pcur(pbegin);
       --pprev;
       ++pnext;
       for(;pcur!=pend; ++pcur,++pprev,++pnext) {
-	if(pprev == pend) pprev = pbegin;
-	if(pnext == pend) pnext = pbegin;
-	l = Line_3(*pcur,*pnext);
-	if(!l.has_on(*pprev))
-	  return Sphere_circle(Sphere_point(ORIGIN+(*pprev-*pcur)),
-			       Sphere_point(ORIGIN+(*pnext-*pcur)));
+        if(pprev == pend) pprev = pbegin;
+        if(pnext == pend) pnext = pbegin;
+        l = Line_3(*pcur,*pnext);
+        if(!l.has_on(*pprev))
+          return Sphere_circle(Sphere_point(ORIGIN+(*pprev-*pcur)),
+                               Sphere_point(ORIGIN+(*pnext-*pcur)));
       }
       std::cerr << "all points lie on a common line" << std::endl;
       return Sphere_circle();
@@ -97,17 +97,17 @@ class Polygon_constructor : public Modifier_base<typename Nef3::SNC_structure> {
       Sphere_circle c;
       point_iterator pbegin, pend, pnext, pprev;
       for(;begin != end; ++begin) {
-	pprev = pend = begin->second;
-	pnext = pbegin = begin->first;
-	--pprev;
-	++pnext;
-	c = find_supporting_plane(pbegin, pend);
-	if(c == Sphere_circle()) continue;
-	for(;pbegin!=pend; ++pbegin,++pprev, ++pnext) {
-	  if(pprev == pend) pprev = begin->first;
-	  if(pnext == pend) pnext = begin->first;
-	  create_sphere_map(snc,pbegin,pprev,pnext,c);
-	}
+        pprev = pend = begin->second;
+        pnext = pbegin = begin->first;
+        --pprev;
+        ++pnext;
+        c = find_supporting_plane(pbegin, pend);
+        if(c == Sphere_circle()) continue;
+        for(;pbegin!=pend; ++pbegin,++pprev, ++pnext) {
+          if(pprev == pend) pprev = begin->first;
+          if(pnext == pend) pnext = begin->first;
+          create_sphere_map(snc,pbegin,pprev,pnext,c);
+        }
       }
     }
 };

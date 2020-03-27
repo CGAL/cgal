@@ -34,7 +34,7 @@ namespace Classification {
 
     %Color described in red/green/blue space. Each component is stored
     as an unsigned char ranging from 0 (no color) to 255 (full color).
-   */  
+   */
 typedef CGAL::cpp11::array<unsigned char, 3> RGB_Color;
   /*!
     \ingroup PkgClassificationColor
@@ -45,7 +45,7 @@ typedef CGAL::cpp11::array<unsigned char, 3> RGB_Color;
     - `hue` ranges from 0° to 360° (corresponding to the color tint)
     - `saturation` ranges from 0.0 (gray) to 100.0 (full saturation)
     - `value` ranges from 0.0 (black) to 100.0 (white)
-   */  
+   */
 typedef CGAL::cpp11::array<float, 3> HSV_Color;
 
 
@@ -59,7 +59,7 @@ inline HSV_Color rgb_to_hsv (const RGB_Color& c)
   double Cmin = (std::min) (r, (std::min) (g, b));
   double delta = Cmax - Cmin;
   double H = 0.;
-  
+
   if (delta != 0.)
   {
     if (Cmax == r)
@@ -81,14 +81,14 @@ inline RGB_Color hsv_to_rgb (const HSV_Color& c)
   double h = c[0];
   double s = c[1];
   double v = c[2];
-  
+
   s /= 100.;
   v /= 100.;
   double C = v*s;
   int hh = (int)(h/60.);
   double X = C * (1-CGAL::abs (hh % 2 - 1));
   double r = 0, g = 0, b = 0;
-  
+
   if( hh>=0 && hh<1 )
   {
     r = C;

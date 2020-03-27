@@ -85,18 +85,18 @@ bool poisson_reconstruct(FaceGraph* graph,
     // Computes implicit function
     //***************************************
 
- 
+
     std::cerr << "Computes Poisson implicit function "
               << "using " << solver_name.toLatin1().data() << " solver...\n";
-              
-    
+
+
     // Creates implicit function from the point set.
     // Note: this method requires an iterator over points
     // + property maps to access each point's position and normal.
     Poisson_reconstruction_function function(points.begin_or_selection_begin(), points.end(),
                                              points.point_map(), points.normal_map());
 
-    bool ok = false;    
+    bool ok = false;
     #ifdef CGAL_EIGEN3_ENABLED
     if(solver_name=="Eigen - built-in simplicial LDLt")
     {
@@ -149,7 +149,7 @@ bool poisson_reconstruct(FaceGraph* graph,
     Kernel::FT radius = std::sqrt(bsphere.squared_radius());
 
     // Defines the implicit surface: requires defining a
-  	// conservative bounding sphere centered at inner point.
+          // conservative bounding sphere centered at inner point.
     Kernel::FT sm_sphere_radius = 5.0 * radius;
     Kernel::FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
     Surface_3 surface(function,
@@ -206,17 +206,17 @@ bool poisson_reconstruct(FaceGraph* graph,
     double avg_distance = 0;
 
     std::set<typename boost::graph_traits<FaceGraph>::face_descriptor> faces_to_keep;
-    
+
     for (Point_set::const_iterator p=points.begin_or_selection_begin(); p!=points.end(); p++)
     {
       typename AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (points.point (*p));
       double distance = std::sqrt(CGAL::squared_distance (pap.first, points.point(*p)));
-      
+
       max_distance = (std::max)(max_distance, distance);
       avg_distance += distance;
 
       typename boost::graph_traits<FaceGraph>::face_descriptor f = pap.second;
-      faces_to_keep.insert (f);  
+      faces_to_keep.insert (f);
     }
     avg_distance /= double(points.size());
 
@@ -228,7 +228,7 @@ bool poisson_reconstruct(FaceGraph* graph,
       {
         typename boost::graph_traits<FaceGraph>::face_iterator it = faces(*graph).begin ();
         while (it != faces(*graph).end ())
-	  {
+          {
             typename boost::graph_traits<FaceGraph>::face_iterator current = it ++;
 
             if (faces_to_keep.find (*current) == faces_to_keep.end ())
@@ -236,7 +236,7 @@ bool poisson_reconstruct(FaceGraph* graph,
               CGAL::Euler::remove_face(halfedge (*current, *graph), *graph);
             }
 
-	  }
+          }
 
       }
     return true;

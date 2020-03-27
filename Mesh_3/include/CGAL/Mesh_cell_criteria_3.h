@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb
 
@@ -29,7 +29,7 @@
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
 
 namespace CGAL {
-  
+
 template <typename Tr,
           typename Visitor_ = Mesh_3::Cell_criteria_visitor_with_features<Tr> >
 class Mesh_cell_criteria_3
@@ -42,14 +42,14 @@ public:
   typedef Mesh_3::Abstract_criterion<Tr,Visitor> Abstract_criterion;
 private:
   typedef Mesh_3::Criteria<Tr,Visitor> Criteria;
-  
+
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Geom_traits::FT FT;
-  
+
   typedef Mesh_cell_criteria_3<Tr> Self;
-  
+
 public:
-  
+
   /**
    * @brief Constructor
    * @param radius_edge_bound the radius-edge bound
@@ -64,23 +64,23 @@ public:
     if ( FT(0) != radius_edge_bound )
       init_radius_edge(radius_edge_bound);
   }
-  
+
   // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
   // as int.
   template <typename Sizing_field>
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const Sizing_field& radius_bound,
                        typename Sizing_field::FT /*dummy*/ = 0)
-  { 
+  {
     init_radius(radius_bound);
 
     if ( FT(0) != radius_edge_bound )
       init_radius_edge(radius_edge_bound);
   }
-  
+
   /// Destructor
   ~Mesh_cell_criteria_3() { }
-  
+
   /**
    * @brief returns whether the cell \c cell is bad or not.
    * @param tr the triangulation within which \c cell lives
@@ -100,27 +100,27 @@ private:
   void init_radius_edge(const FT& radius_edge_bound)
   {
     typedef Mesh_3::Cell_radius_edge_criterion<Tr,Visitor> Radius_edge_criterion;
-    criteria_.add(new Radius_edge_criterion(radius_edge_bound));    
+    criteria_.add(new Radius_edge_criterion(radius_edge_bound));
   }
-  
+
   void init_radius(const FT& radius_bound)
   {
     typedef Mesh_3::Cell_uniform_size_criterion<Tr,Visitor> Radius_criterion;
     criteria_.add(new Radius_criterion(radius_bound));
   }
-  
+
   template < typename Sizing_field>
   void init_radius(const Sizing_field& radius_bound)
   {
     typedef Mesh_3::Cell_variable_size_criterion<Tr,Visitor,Sizing_field>
       Radius_criterion;
-    
+
     criteria_.add(new Radius_criterion(radius_bound));
   }
-  
+
 private:
   Criteria criteria_;
-  
+
 };  // end class Mesh_cell_criteria_3
 
 }  // end namespace CGAL

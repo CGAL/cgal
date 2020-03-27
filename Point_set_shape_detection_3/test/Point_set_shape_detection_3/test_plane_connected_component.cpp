@@ -11,7 +11,7 @@
 template <class K>
 bool test_plane_connected_component() {
   const int NB_ROUNDS = 10;
-  
+
   typedef typename K::FT                                      FT;
   typedef CGAL::Point_with_normal_3<K>                        Pwn;
   typedef CGAL::Point_3<K>                                    Point;
@@ -49,11 +49,11 @@ bool test_plane_connected_component() {
           points.push_back(Pwn(Point(FT(x * 0.05), FT(y * 0.05), (FT) 1.0) + offset[j],
                                 Vector((FT) 0, (FT) 0, (FT) 1)));
     }
-        
+
     Efficient_ransac ransac;
 
     ransac.template add_shape_factory<Plane>();
-    
+
     ransac.set_input(points);
 
     // Same parameters as for the parameters unit tests, besides
@@ -76,9 +76,9 @@ bool test_plane_connected_component() {
       std::cout << " aborted" << std::endl;
       return false;
     }
-    
+
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
-    
+
     if (i < NB_ROUNDS/2 && shapes.size() != 1)
       continue;
 
@@ -103,7 +103,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_plane_connected_component<CGAL::Simple_cartesian<float>> ";
-  if (!test_plane_connected_component<CGAL::Simple_cartesian<float> >()) 
+  if (!test_plane_connected_component<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_plane_connected_component<CGAL::Simple_cartesian<double>> ";
@@ -111,7 +111,7 @@ int main() {
     success = false;
 
   std::cout << "test_plane_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_plane_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_plane_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

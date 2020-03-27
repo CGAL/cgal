@@ -63,7 +63,7 @@ public:
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Cb::template Rebind_TDS<TDS2>::Other         Cb2;
-    typedef 
+    typedef
       Regular_triangulation_cell_base_with_weighted_circumcenter_3<GT, Cb2>
       Other;
   };
@@ -73,8 +73,8 @@ public:
 
   Regular_triangulation_cell_base_with_weighted_circumcenter_3
         (const Regular_triangulation_cell_base_with_weighted_circumcenter_3 &c)
-    : Cb(c), 
-      weighted_circumcenter_(c.weighted_circumcenter_ != NULL ? 
+    : Cb(c),
+      weighted_circumcenter_(c.weighted_circumcenter_ != NULL ?
                              new Point_3(*(c.weighted_circumcenter_)) :
                              NULL)
   {}
@@ -89,12 +89,12 @@ public:
   }
 
   Regular_triangulation_cell_base_with_weighted_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3), weighted_circumcenter_(NULL) {}
 
   Regular_triangulation_cell_base_with_weighted_circumcenter_3(
-	                    Vertex_handle v0, Vertex_handle v1,
+                            Vertex_handle v0, Vertex_handle v1,
                             Vertex_handle v2, Vertex_handle v3,
                             Cell_handle   n0, Cell_handle   n1,
                             Cell_handle   n2, Cell_handle   n3)
@@ -131,7 +131,7 @@ public:
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       if (weighted_circumcenter_ == NULL) {
-    	  weighted_circumcenter_ 
+              weighted_circumcenter_
             = new Point_3(this->Cb::weighted_circumcenter(gt));
       } else {
         CGAL_expensive_assertion(

@@ -25,8 +25,8 @@
 
 extern "C" {
   // taken from acml.h
-void dgelss(int m, int n, int nrhs, 
-            double *a, int lda, double *b, int ldb, double *sing, 
+void dgelss(int m, int n, int nrhs,
+            double *a, int lda, double *b, int ldb, double *sing,
             double rcond, int *irank, int *info);
 
 void dgelss_(int *m, int *n, int *nrhs,
@@ -69,15 +69,15 @@ int main()
 
   double rcond = -1;
 
-  CGAL::LAPACK::dgelss(&m, &n, &nrhs, &M, &lda, &B, &ldb, sing_values, 
-	  &rcond, &rank, work, &lwork, &info);
+  CGAL::LAPACK::dgelss(&m, &n, &nrhs, &M, &lda, &B, &ldb, sing_values,
+          &rcond, &rank, work, &lwork, &info);
   assert(info==0);
   assert(B==1.);
-  //clean up 
+  //clean up
   delete sing_values;
   delete work;
 
   std::cout << "ok for lapack" << std::endl;
-  
+
   return 0;
 }

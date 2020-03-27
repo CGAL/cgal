@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2002  
+// Copyright (c) 1999,2002
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,7 +16,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra, Sylvain Pion
 
@@ -68,7 +68,7 @@ test_basic()
   assert( pl.has_on(pp) );
   assert( pp == ip );
 }
- 
+
 
 int
 main()

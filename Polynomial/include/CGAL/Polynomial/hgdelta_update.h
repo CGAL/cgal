@@ -16,7 +16,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 //
 //
-// Author(s)     : Michael Hemmer 
+// Author(s)     : Michael Hemmer
 // ============================================================================
 
 // TODO: The comments are all original EXACUS comments and aren't adapted. So
@@ -32,7 +32,7 @@ namespace internal {
     template <class NT> inline
     void hgdelta_update(NT& h, const NT& g, int delta) {
         typename Algebraic_structure_traits<NT>::Integral_division idiv;
-    
+
         // compute h = h^(1-delta) * g^delta
         switch (delta) {
         case 0:

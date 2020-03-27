@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Panagiotis Cheilaris, Sandeep Kumar Dey, Evanthia Papadopoulou
 //philaris@gmail.com, sandeep.kr.dey@gmail.com, evanthia.papadopoulou@usi.ch
@@ -46,9 +46,9 @@ namespace CGAL {
 // the following definition is okay when giving Field_with_sqrt_tag
 // for all other tags I need a specialization
 template<class R,
-	 class MTag =
-	 typename Algebraic_structure_traits<typename R::FT>::Algebraic_category
-	 /*Field_tag*/>
+         class MTag =
+         typename Algebraic_structure_traits<typename R::FT>::Algebraic_category
+         /*Field_tag*/>
 struct Segment_Delaunay_graph_Linf_traits_2
   : public Segment_Delaunay_graph_Linf_traits_base_2<R,MTag,Tag_true> {};
 
@@ -91,29 +91,29 @@ template<class R>
 struct Segment_Delaunay_graph_Linf_traits_2<Filtered_kernel<R>,Field_tag>
   : public
   Segment_Delaunay_graph_filtered_traits_2<R,Field_tag,
-					   typename Filtered_kernel<R>::Exact_kernel,
-					   Field_tag,
-					   typename Filtered_kernel<R>::Approximate_kernel,
-					   Field_with_sqrt_tag>
+                                           typename Filtered_kernel<R>::Exact_kernel,
+                                           Field_tag,
+                                           typename Filtered_kernel<R>::Approximate_kernel,
+                                           Field_with_sqrt_tag>
 {};
 
 template<class R>
 struct Segment_Delaunay_graph_Linf_traits_2<Filtered_kernel<R>,Field_with_sqrt_tag>
   : public
   Segment_Delaunay_graph_filtered_traits_2<R,Field_with_sqrt_tag,
-					   typename Filtered_kernel<R>::Exact_kernel,
-					   Field_tag,
-					   typename Filtered_kernel<R>::Approximate_kernel,
-					   Field_with_sqrt_tag>
+                                           typename Filtered_kernel<R>::Exact_kernel,
+                                           Field_tag,
+                                           typename Filtered_kernel<R>::Approximate_kernel,
+                                           Field_with_sqrt_tag>
 {};
 
 //=========================================================================
 
 // this traits class does NOT support intersecting segments
 template<class R,
-	 class MTag = 
-	 typename Algebraic_structure_traits<typename R::FT>::Algebraic_category
-	 /*Integral_domain_without_division_tag*/>
+         class MTag =
+         typename Algebraic_structure_traits<typename R::FT>::Algebraic_category
+         /*Integral_domain_without_division_tag*/>
 struct Segment_Delaunay_graph_Linf_traits_without_intersections_2
   : public Segment_Delaunay_graph_Linf_traits_base_2<R,MTag,Tag_false> {};
 
@@ -143,26 +143,26 @@ Segment_Delaunay_graph_Linf_traits_without_intersections_2<R,Euclidean_ring_tag>
 template<class R>
 struct
 Segment_Delaunay_graph_Linf_traits_without_intersections_2<Filtered_kernel<R>,
-						      Integral_domain_without_division_tag>
+                                                      Integral_domain_without_division_tag>
   : public
   Segment_Delaunay_graph_filtered_traits_without_intersections_2<R,Integral_domain_without_division_tag,
-					    typename Filtered_kernel<R>::Exact_kernel,
-					    Integral_domain_without_division_tag,
-					    typename Filtered_kernel<R>::Approximate_kernel,
-					    Field_with_sqrt_tag>
+                                            typename Filtered_kernel<R>::Exact_kernel,
+                                            Integral_domain_without_division_tag,
+                                            typename Filtered_kernel<R>::Approximate_kernel,
+                                            Field_with_sqrt_tag>
 {};
 
 template<class R>
 struct
 Segment_Delaunay_graph_Linf_traits_without_intersections_2<Filtered_kernel<R>,
-						      Field_with_sqrt_tag>
+                                                      Field_with_sqrt_tag>
   : public
   Segment_Delaunay_graph_filtered_traits_without_intersections_2<R,
-					    Field_with_sqrt_tag,
-					    typename Filtered_kernel<R>::Exact_kernel,
-					    Integral_domain_without_division_tag,
-					    typename Filtered_kernel<R>::Approximate_kernel,
-					    Field_with_sqrt_tag>
+                                            Field_with_sqrt_tag,
+                                            typename Filtered_kernel<R>::Exact_kernel,
+                                            Integral_domain_without_division_tag,
+                                            typename Filtered_kernel<R>::Approximate_kernel,
+                                            Field_with_sqrt_tag>
 {};
 
 } //namespace CGAL

@@ -21,7 +21,7 @@ for f in *
 do
   if [ -d  "$f/package_info/$f" ]
 	then
-		PACKAGES[$INDEX]+="$f "
+		PACKAGES[$INDEX]+="$f"
 		i=$[i+1]
 		if [ $i = 3 ]
 		then

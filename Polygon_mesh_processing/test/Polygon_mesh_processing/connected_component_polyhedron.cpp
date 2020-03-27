@@ -25,7 +25,7 @@ void mesh_with_id(const char* argv1, const bool save_output)
   int i=0;
   BOOST_FOREACH(face_descriptor f, faces(sm)){
     f->id() = i++;
-  } 
+  }
   i=0;
   BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
     v->id() = i++;
@@ -68,7 +68,7 @@ void mesh_no_id(const char* argv1, const bool save_output)
   std::ifstream in(argv1);
   in >> sm;
 
-  
+
   std::vector<face_descriptor> cc;
   face_descriptor fd = *faces(sm).first;
   PMP::connected_component(fd,
@@ -77,10 +77,10 @@ void mesh_no_id(const char* argv1, const bool save_output)
 
 
   std::cerr << cc.size() << " faces in the CC of " << &*fd << std::endl;
-  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim 
+  boost::property_map<Mesh,boost::vertex_external_index_t>::type vim
     = get(boost::vertex_external_index,sm);
 
-  boost::property_map<Mesh,boost::face_external_index_t>::type fim 
+  boost::property_map<Mesh,boost::face_external_index_t>::type fim
     = get(boost::face_external_index,sm);
 
   boost::vector_property_map<int,
@@ -90,7 +90,7 @@ void mesh_no_id(const char* argv1, const bool save_output)
   std::size_t num = PMP::connected_components(sm,
     fccmap,
     PMP::parameters::face_index_map(fim));
-  
+
   if (strcmp(argv1, "data/blobby_3cc.off") == 0)
     assert(num == 3);
 
@@ -184,7 +184,7 @@ void keep_nothing(const char* argv1)
   assert(num_faces(sm) == 0);
 }
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   const bool save_output = (argc > 2) ? true : false;

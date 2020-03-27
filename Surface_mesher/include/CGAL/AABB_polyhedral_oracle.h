@@ -58,7 +58,7 @@ namespace CGAL {
     typedef class AABB_traits<Kernel,AABB_primitive> AABB_traits;
     typedef AABB_tree<AABB_traits> Tree;
     typedef typename AABB_traits::Bounding_box Bounding_box;
-    
+
     typedef boost::shared_ptr<Tree> Tree_shared_ptr;
     Tree_shared_ptr m_pTree;
 
@@ -84,10 +84,10 @@ namespace CGAL {
 
     class Intersect_3 {
       #if CGAL_INTERSECTION_VERSION < 2
-      typedef boost::optional<typename Tree::Object_and_primitive_id> 
+      typedef boost::optional<typename Tree::Object_and_primitive_id>
         AABB_intersection;
       #endif
-      
+
       const Self& self;
 
     public:
@@ -103,13 +103,13 @@ namespace CGAL {
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Segment_3>::Type >
         #endif
           intersection = surface.tree()->any_intersection(segment);
-        
+
         if ( intersection )
           return intersection->first;
         else
           return Object();
       }
-      
+
       Object operator()(const Surface_3& surface, const Line_3& line) const
       {
         #if CGAL_INTERSECTION_VERSION < 2
@@ -118,7 +118,7 @@ namespace CGAL {
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Line_3>::Type >
         #endif
           intersection = surface.tree()->any_intersection(line);
-        
+
         if ( intersection )
           return intersection->first;
         else
@@ -132,7 +132,7 @@ namespace CGAL {
         boost::optional< typename AABB_traits::template Intersection_and_primitive_id<Ray_3>::Type >
         #endif
           intersection = surface.tree()->any_intersection(ray);
-        
+
         if ( intersection )
           return intersection->first;
         else
@@ -161,11 +161,11 @@ namespace CGAL {
 
       template <typename OutputIteratorPoints>
       OutputIteratorPoints operator() (const Surface_3& /* surface */,
-	OutputIteratorPoints out,
-	int /* n */) const
+        OutputIteratorPoints out,
+        int /* n */) const
       {
-	// std::cout << "AABB_polyhedral_oracle: empty initial point set" << std::endl;
-	return out;
+        // std::cout << "AABB_polyhedral_oracle: empty initial point set" << std::endl;
+        return out;
       }
     };
 

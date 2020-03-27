@@ -244,7 +244,7 @@ namespace CGAL {
       boost::unordered_map<typename CMap2::Dart_const_handle, Dart_handle> local_dartmap;
       if (dart_mapping==NULL)
       { dart_mapping=&local_dartmap; }
-      
+
       for (typename CMap2::Dart_const_range::const_iterator
              it=amap.darts().begin(), itend=amap.darts().end();
            it!=itend; ++it)
@@ -3759,7 +3759,7 @@ namespace CGAL {
 #if defined(CGAL_CMAP_DART_DEPRECATED) && !defined(CGAL_NO_DEPRECATED_CODE)
       CGAL_USE(testDartInfo);
 #endif
-      
+
       typedef Combinatorial_map_base<d2,Refs2,Items2,Alloc2, Storage2> Map2;
 
       bool match = true;
@@ -5126,6 +5126,6 @@ namespace CGAL {
 #endif
 
  #include <CGAL/enable_warnings.h>
- 
+
 #endif // CGAL_COMBINATORIAL_MAP_H //
 // EOF //

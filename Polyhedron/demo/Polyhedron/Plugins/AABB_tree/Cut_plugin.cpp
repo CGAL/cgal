@@ -519,7 +519,7 @@ public:
         "   texc = tex_coord;\n"
         "}"
     };
-    
+
     const char tex_vertex_source_comp[] =
     {
         "attribute highp vec4 vertex;\n"
@@ -562,7 +562,7 @@ public:
       {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
       }
-      
+
       if(!tex_fragment_shader.compileSourceCode(tex_fragment_source))
       {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
@@ -574,7 +574,7 @@ public:
       {
         std::cerr<<"Compiling vertex source FAILED"<<std::endl;
       }
-      
+
       if(!tex_fragment_shader.compileSourceCode(tex_fragment_source_comp))
       {
         std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;

@@ -154,7 +154,7 @@ struct Priority_with_structure_coherence {
 
   Structuring& structuring;
   double bound;
-  
+
   Priority_with_structure_coherence(Structuring& structuring,
                                     double bound)
     : structuring (structuring), bound (bound)
@@ -196,7 +196,7 @@ struct On_the_fly_pair{
   typedef std::pair<Point, std::size_t> result_type;
 
   On_the_fly_pair(const Point_set& points) : points(points) {}
-  
+
   result_type
   operator()(const Point_set::Index& i) const
   {
@@ -220,75 +220,75 @@ namespace SurfaceReconstruction
 
   template <typename OutputIterator>
   void generate_scales (OutputIterator out,
-			const unsigned int scale_min = 6,
-			const double factor = 1.15,
-			unsigned int nb_scales = 30)
+                        const unsigned int scale_min = 6,
+                        const double factor = 1.15,
+                        unsigned int nb_scales = 30)
   {
     unsigned int prev = -1;
-    
+
     for (unsigned int i = 0; i < nb_scales; ++ i)
       {
-	unsigned int current = static_cast<unsigned int>(scale_min * std::pow (factor, i));
-	if (current != prev)
-	  {
-	    *(out ++) = current;
-	    prev = current;
-	  }
-	else
-	  ++ nb_scales;
+        unsigned int current = static_cast<unsigned int>(scale_min * std::pow (factor, i));
+        if (current != prev)
+          {
+            *(out ++) = current;
+            prev = current;
+          }
+        else
+          ++ nb_scales;
       }
   }
-  
+
   unsigned int scale_of_anisotropy (const Point_set& points, double& size)
   {
     Tree tree(points.begin_or_selection_begin(), points.end(),
               Tree::Splitter(), Search_traits (points.point_map()));
-    
+
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
-    
+
     std::vector<Point> subset;
     for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
       if (CGAL::get_default_random().get_double() < ratio_kept)
-    	subset.push_back (points.point(*it));
-    
+            subset.push_back (points.point(*it));
+
     std::vector<unsigned int> scales;
     generate_scales (std::back_inserter (scales));
 
     std::vector<unsigned int> chosen;
     Distance tr_dist (points.point_map());
-    
+
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
-	double current = 0.;
-    	unsigned int nb = 0;
-    	std::size_t index = 0;
-	double maximum = 0.;
-	unsigned int c = 0;
-	
-    	for (Search_iterator search_iterator = search.begin();
-    	     search_iterator != search.end (); ++ search_iterator, ++ nb)
-    	  {
-	    current += search_iterator->second;
+            Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
+        double current = 0.;
+            unsigned int nb = 0;
+            std::size_t index = 0;
+        double maximum = 0.;
+        unsigned int c = 0;
 
-    	    if (nb + 1 == scales[index])
-    	      {
-		double score = std::sqrt (current / scales[index])
-		  / std::pow (scales[index], 0.75); // NB ^ (3/4)
+            for (Search_iterator search_iterator = search.begin();
+                 search_iterator != search.end (); ++ search_iterator, ++ nb)
+              {
+            current += search_iterator->second;
 
-		if (score > maximum)
-		  {
-		    maximum = score;
-		    c = scales[index];
-		  }
+                if (nb + 1 == scales[index])
+                  {
+                double score = std::sqrt (current / scales[index])
+                  / std::pow (scales[index], 0.75); // NB ^ (3/4)
 
-    		++ index;
-    		if (index == scales.size ())
-    		  break;
-    	      }
-    	  }
-	chosen.push_back (c);
+                if (score > maximum)
+                  {
+                    maximum = score;
+                    c = scales[index];
+                  }
+
+                    ++ index;
+                    if (index == scales.size ())
+                      break;
+                  }
+              }
+        chosen.push_back (c);
       }
 
     double mean = 0.;
@@ -300,65 +300,65 @@ namespace SurfaceReconstruction
     size = 0.;
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i], aniso_scale, 0, true, tr_dist);
-	size += std::sqrt ((-- search.end())->second);
+            Neighbor_search search(tree, subset[i], aniso_scale, 0, true, tr_dist);
+        size += std::sqrt ((-- search.end())->second);
       }
     size /= subset.size();
-    
+
     return aniso_scale;
   }
 
-  
+
   unsigned int scale_of_noise (const Point_set& points, double& size)
   {
     Tree tree(points.begin_or_selection_begin(), points.end(),
               Tree::Splitter(), Search_traits (points.point_map()));
     Distance tr_dist (points.point_map());
-    
+
     double ratio_kept = (points.size() < 1000)
       ? 1. : 1000. / (points.size());
-    
+
     std::vector<Point> subset;
     for (Point_set::const_iterator it = points.begin(); it != points.end(); ++ it)
       if (CGAL::get_default_random().get_double() < ratio_kept)
-    	subset.push_back (points.point(*it));
-    
+            subset.push_back (points.point(*it));
+
     std::vector<unsigned int> scales;
     generate_scales (std::back_inserter (scales));
 
     std::vector<unsigned int> chosen;
-    
+
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
-	double current = 0.;
-    	unsigned int nb = 0;
-    	std::size_t index = 0;
-	double minimum = (std::numeric_limits<double>::max)();
-	unsigned int c = 0;
-	
-    	for (Search_iterator search_iterator = search.begin();
-    	     search_iterator != search.end (); ++ search_iterator, ++ nb)
-    	  {
-	    current += search_iterator->second;
+            Neighbor_search search(tree, subset[i],scales.back(), 0, true, tr_dist);
+        double current = 0.;
+            unsigned int nb = 0;
+            std::size_t index = 0;
+        double minimum = (std::numeric_limits<double>::max)();
+        unsigned int c = 0;
 
-    	    if (nb + 1 == scales[index])
-    	      {
-		double score = std::sqrt (current / scales[index])
-		  / std::pow (scales[index], 0.375); // NB ^ (5/12)
+            for (Search_iterator search_iterator = search.begin();
+                 search_iterator != search.end (); ++ search_iterator, ++ nb)
+              {
+            current += search_iterator->second;
 
-		if (score < minimum)
-		  {
-		    minimum = score;
-		    c = scales[index];
-		  }
+                if (nb + 1 == scales[index])
+                  {
+                double score = std::sqrt (current / scales[index])
+                  / std::pow (scales[index], 0.375); // NB ^ (5/12)
 
-    		++ index;
-    		if (index == scales.size ())
-    		  break;
-    	      }
-    	  }
-	chosen.push_back (c);
+                if (score < minimum)
+                  {
+                    minimum = score;
+                    c = scales[index];
+                  }
+
+                    ++ index;
+                    if (index == scales.size ())
+                      break;
+                  }
+              }
+        chosen.push_back (c);
       }
 
     std::sort (chosen.begin (), chosen.end());
@@ -367,12 +367,12 @@ namespace SurfaceReconstruction
     size = 0.;
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
-    	Neighbor_search search(tree, subset[i], noise_scale, 0, true, tr_dist);
-	size += std::sqrt ((-- search.end())->second);
+            Neighbor_search search(tree, subset[i], noise_scale, 0, true, tr_dist);
+        size += std::sqrt ((-- search.end())->second);
       }
     size /= subset.size();
 
-    
+
     return noise_scale;
   }
 
@@ -389,7 +389,7 @@ namespace SurfaceReconstruction
 
   template <typename ItemsInserter>
   void scale_space (const Point_set& points, ItemsInserter items,
-                    bool jet_smoother, 
+                    bool jet_smoother,
                     unsigned int iterations,
                     unsigned int neighbors, unsigned int fitting, unsigned int monge,
                     unsigned int neighborhood_size, unsigned int samples,
@@ -413,7 +413,7 @@ namespace SurfaceReconstruction
       ScaleSpaceWPS smoother(neighborhood_size, samples);
       reconstruct.increase_scale(iterations, smoother);
       squared_radius = smoother.squared_radius();
-      
+
     }
 
     if (advancing_front_mesher)
@@ -438,7 +438,7 @@ namespace SurfaceReconstruction
 
       std::map<std::size_t, std::size_t> map_i2i;
       std::size_t current_index = 0;
-    
+
       for (ScaleSpace::Facet_iterator it = reconstruct.facets_begin();
            it != reconstruct.facets_end(); ++ it)
       {
@@ -449,7 +449,7 @@ namespace SurfaceReconstruction
             map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
             Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
             new_item->new_vertex (p.x (), p.y (), p.z ());
-            
+
             if (generate_smooth)
             {
               p = *(reconstruct.points_begin() + (*it)[ind]);
@@ -464,7 +464,7 @@ namespace SurfaceReconstruction
           smooth_item->new_triangle( map_i2i[(*it)[0]],
                                      map_i2i[(*it)[1]],
                                      map_i2i[(*it)[2]] );
-              
+
       }
 
       *(items ++) = new_item;
@@ -495,7 +495,7 @@ namespace SurfaceReconstruction
 
         std::map<unsigned int, unsigned int> map_i2i;
         unsigned int current_index = 0;
-    
+
         for (ScaleSpaceASM::Facet_iterator it = mesher.shell_begin (sh);
              it != mesher.shell_end (sh); ++ it)
         {
@@ -506,7 +506,7 @@ namespace SurfaceReconstruction
               map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
               Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
               new_item->new_vertex (p.x (), p.y (), p.z ());
-                    
+
               if (generate_smooth)
               {
                 p = *(reconstruct.points_begin() + (*it)[ind]);
@@ -521,7 +521,7 @@ namespace SurfaceReconstruction
             smooth_item->new_triangle( map_i2i[(*it)[0]],
                                        map_i2i[(*it)[1]],
                                        map_i2i[(*it)[2]] );
-              
+
         }
 
         *(items ++) = new_item;
@@ -562,7 +562,7 @@ namespace SurfaceReconstruction
               map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
               Point p = points.point(*(points.begin_or_selection_begin() + (*it)[ind]));
               new_item->new_vertex (p.x (), p.y (), p.z ());
-                    
+
               if (generate_smooth)
               {
                 p = *(reconstruct.points_begin() + (*it)[ind]);
@@ -598,7 +598,7 @@ namespace SurfaceReconstruction
       return std::make_pair (point_set.point (i), i);
     }
   };
-  
+
 
   struct Radius {
 
@@ -655,7 +655,7 @@ namespace SurfaceReconstruction
                                                  filter,
                                                  radius_ratio_bound,
                                                  beta);
-						  
+
   }
 
   void compute_normals (Point_set& points, unsigned int neighbors)
@@ -665,7 +665,7 @@ namespace SurfaceReconstruction
     points.set_first_selected (CGAL::mst_orient_normals (points, 2 * neighbors));
     points.delete_selection();
   }
-  
+
   struct build_from_pair
   {
     Point_set& m_pts;
@@ -690,7 +690,7 @@ public:
   Polyhedron_demo_surface_reconstruction_plugin_dialog(QWidget* /*parent*/ = 0)
   {
     setupUi(this);
-    
+
 #ifdef CGAL_EIGEN3_ENABLED
     m_inputSolver->addItem("Eigen - built-in CG");
     m_inputSolver->addItem("Eigen - built-in simplicial LDLt");
@@ -701,7 +701,7 @@ public:
   {
     return tabWidget->currentIndex();
   }
-  
+
   // Auto
   bool boundaries () const { return m_boundaries->isChecked (); }
   bool interpolate () const { return m_interpolate->isChecked (); }
@@ -743,7 +743,7 @@ public:
   unsigned int min_size_subset () const { return m_minSizeSubset->value (); }
   bool generate_structured () const { return m_generateStructured->isChecked (); }
   QString solver () const { return m_inputSolver->currentText (); }
-  
+
 };
 
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
@@ -773,7 +773,7 @@ public:
   void scale_space_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   void poisson_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   void ransac_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
-  
+
   //! Applicate for Point_sets with normals.
   bool applicable(QAction*) const {
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
@@ -809,7 +809,7 @@ private:
       if (!(point_set_item->has_normals()))
       {
         local_timer.start();
-                
+
         std::cerr << "Estimation of normal vectors... ";
         points->add_normal_map();
         CGAL::jet_estimate_normals<Concurrency_tag>(*points, 12);
@@ -837,11 +837,11 @@ private:
       std::cout << shape_detection.shapes().size() << " plane(s) found in "
                 << local_timer.time() << " second(s)" << std::endl;
       local_timer.reset();
-      
+
       std::cout << "Structuring point set... " << std::endl;
       typedef CGAL::Point_set_with_structure<Kernel> Structuring;
       typename Shape_detection::Plane_range planes = shape_detection.planes();
-      
+
       local_timer.start();
       Structuring structuring (*points,
                                planes,
@@ -881,7 +881,7 @@ private:
       reco_item->setRenderingMode(FlatPlusEdges);
       reco_item->invalidateOpenGLBuffers();
       scene->addItem(reco_item);
-      
+
       if (dialog.generate_structured ())
       {
         structured->setName(tr("%1 (structured)").arg(point_set_item->name()));
@@ -893,7 +893,7 @@ private:
         delete structured;
 
       std::cerr << "All done in " << global_timer.time() << " seconds." << std::endl;
-      
+
       QApplication::restoreOverrideCursor();
     }
   }
@@ -916,7 +916,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
       Polyhedron_demo_surface_reconstruction_plugin_dialog dialog;
       dialog.setWindowFlags(Qt::Dialog|Qt::CustomizeWindowHint|Qt::WindowCloseButtonHint);
       if(!dialog.exec())
-	return;
+        return;
 
       unsigned int method = dialog.method ();
       switch (method)
@@ -940,7 +940,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
           std::cerr << "Error: unkown method." << std::endl;
           return;
         }
-      
+
 
     }
 }
@@ -962,20 +962,20 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 
       QTime time;
       std::cout << "Meta surface reconstruction with the following requirements:" << std::endl
-		<< (dialog.boundaries() ? " * Output shape has boundaries" : " * Output shape is closed") << std::endl
-		<< (dialog.interpolate() ? " * Output shape passes through input points"
-		    : " * Output shape approximates input points") << std::endl;
+                << (dialog.boundaries() ? " * Output shape has boundaries" : " * Output shape is closed") << std::endl
+                << (dialog.interpolate() ? " * Output shape passes through input points"
+                    : " * Output shape approximates input points") << std::endl;
 
       Scene_points_with_normal_item* new_item = NULL;
       if (!(dialog.interpolate()))
-	{
-	  new_item = new Scene_points_with_normal_item(*pts_item);
-	  new_item->setName(QString("%1 (preprocessed)").arg(pts_item->name()));
-	  new_item->resetSelection();
-	  new_item->invalidateOpenGLBuffers();
+        {
+          new_item = new Scene_points_with_normal_item(*pts_item);
+          new_item->setName(QString("%1 (preprocessed)").arg(pts_item->name()));
+          new_item->resetSelection();
+          new_item->invalidateOpenGLBuffers();
 
-	  points = new_item->point_set();
-	}
+          points = new_item->point_set();
+        }
 
       std::cerr << "Analysing isotropy of point set... ";
       time.start();
@@ -984,51 +984,51 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 
       std::cerr << " -> Scale / size = " << aniso_scale << " / " << aniso_size << std::endl;
-      
+
       bool isotropic = (aniso_scale == 6);
       std::cerr << (isotropic ? " -> Point set is isotropic" : " -> Point set is anisotropic") << std::endl;
       if (!(dialog.interpolate()) && !isotropic)
-	{
-	  std::cerr << "Correcting anisotropy of point set... ";
-	  time.restart();
-	  std::size_t prev_size = points->size ();
-	  SurfaceReconstruction::simplify_point_set (*points, aniso_size);
-	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-	  std::cerr << " -> " << prev_size - points->size() << " point(s) removed ("
-		    << 100. * (prev_size - points->size()) / (double)(prev_size)
-		    << "%)" << std::endl;
-	}
+        {
+          std::cerr << "Correcting anisotropy of point set... ";
+          time.restart();
+          std::size_t prev_size = points->size ();
+          SurfaceReconstruction::simplify_point_set (*points, aniso_size);
+          std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+          std::cerr << " -> " << prev_size - points->size() << " point(s) removed ("
+                    << 100. * (prev_size - points->size()) / (double)(prev_size)
+                    << "%)" << std::endl;
+        }
 
       std::cerr << "Analysing noise of point set... ";
       time.restart();
       double noise_size;
       unsigned int noise_scale = SurfaceReconstruction::scale_of_noise (*points, noise_size);
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-      
+
       std::cerr << " -> Scale / size = " << noise_scale << " / " << noise_size << std::endl;
-      
+
       bool noisy = (noise_scale > 6);
       std::cerr << (noisy ? " -> Point set is noisy" : " -> Point set is noise-free") << std::endl;
-      
+
       if (!(dialog.interpolate()) && noisy)
-	{
-	  std::cerr << "Denoising point set... ";
-	  time.restart();
-	  SurfaceReconstruction::smooth_point_set (*points, noise_scale);
+        {
+          std::cerr << "Denoising point set... ";
+          time.restart();
+          SurfaceReconstruction::smooth_point_set (*points, noise_scale);
           new_item->point_set()->remove_normal_map();
-	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-	}
+          std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+        }
 
       if (dialog.interpolate())
-	{
-	  if (noisy)
-	    { 
-	      std::cerr << "Scale space reconstruction... ";
-	      time.restart();
+        {
+          if (noisy)
+            {
+              std::cerr << "Scale space reconstruction... ";
+              time.restart();
 
               std::vector<Scene_polygon_soup_item*> reco_items;
 
-	      SurfaceReconstruction::scale_space (*points, std::back_inserter (reco_items),
+              SurfaceReconstruction::scale_space (*points, std::back_inserter (reco_items),
                                                   true,
                                                   4,
                                                   (std::max)(noise_scale, aniso_scale), 2, 2,
@@ -1037,66 +1037,66 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
                                                   false,
                                                   10. * (std::max)(noise_size, aniso_size), 5., 0.52,
                                                   false, false);
-	      
+
               for (std::size_t i = 0; i < reco_items.size (); ++ i)
                 {
                   reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
                   scene->addItem (reco_items[i]);
                 }
 
-	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-	    }
-	  else
-	    {
-	      std::cerr << "Advancing front reconstruction... ";
-	      time.restart();
+              std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+            }
+          else
+            {
+              std::cerr << "Advancing front reconstruction... ";
+              time.restart();
 
               Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
               SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-              
+
               reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
               reco_item->setColor(Qt::lightGray);
               reco_item->setRenderingMode(FlatPlusEdges);
               reco_item->invalidateOpenGLBuffers();
               scene->addItem(reco_item);
               std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-	    }
+            }
 
-	}
+        }
       else
-	{
-	  if (dialog.boundaries())
-	    {
-	      std::cerr << "Advancing front reconstruction... ";
-	      time.restart();
+        {
+          if (dialog.boundaries())
+            {
+              std::cerr << "Advancing front reconstruction... ";
+              time.restart();
 
               Scene_surface_mesh_item* reco_item = new Scene_surface_mesh_item(SMesh());
               SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
-              
+
               reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
               reco_item->setColor(Qt::lightGray);
               reco_item->setRenderingMode(FlatPlusEdges);
               reco_item->invalidateOpenGLBuffers();
               scene->addItem(reco_item);
 
-	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-	    }
-	  else
-	    {
-	      if (!(new_item->has_normals()))
-		{
-		  std::cerr << "Estimation of normal vectors... ";
-		  time.restart();
+              std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+            }
+          else
+            {
+              if (!(new_item->has_normals()))
+                {
+                  std::cerr << "Estimation of normal vectors... ";
+                  time.restart();
 
-		  SurfaceReconstruction::compute_normals (*points, noise_scale);
-		  
-		  new_item->point_set()->add_normal_map();
-		  new_item->setRenderingMode(PointsPlusNormals);
-		  
-		  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-		}
-	      
-	      std::cerr << "Poisson reconstruction... ";
+                  SurfaceReconstruction::compute_normals (*points, noise_scale);
+
+                  new_item->point_set()->add_normal_map();
+                  new_item->setRenderingMode(PointsPlusNormals);
+
+                  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+                }
+
+              std::cerr << "Poisson reconstruction... ";
               time.restart();
               SMesh* smRemesh = NULL;
               smRemesh = poisson_reconstruct_sm(*points,
@@ -1115,17 +1115,17 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
               }
 
 
-	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
-	    }
-	}
+              std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+            }
+        }
 
       if (!(dialog.interpolate()))
-	{
-	  if (noisy || !isotropic)
-	    scene->addItem(new_item);
-	  else
-	    delete new_item;
-	}
+        {
+          if (noisy || !isotropic)
+            scene->addItem(new_item);
+          else
+            delete new_item;
+        }
 
       // default cursor
       QApplication::restoreOverrideCursor();
@@ -1155,7 +1155,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
                                               dialog.longest_edge (),
                                               dialog.radius_ratio_bound (),
                                               CGAL_PI * dialog.beta_angle () / 180.);
-      
+
       reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
       reco_item->setColor(Qt::lightGray);
       reco_item->setRenderingMode(FlatPlusEdges);
@@ -1183,7 +1183,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       std::cout << "Scale scape surface reconstruction...";
-      
+
       std::vector<Scene_polygon_soup_item*> reco_items;
 
       SurfaceReconstruction::scale_space (*points, std::back_inserter (reco_items),
@@ -1269,7 +1269,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
           std::cerr << "Estimation of normal vectors... ";
           points->add_normal_map();
           SurfaceReconstruction::compute_normals (*points, 12);
-		  
+
 
           point_set_item->setRenderingMode(PointsPlusNormals);
 
@@ -1308,7 +1308,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
   typedef Point_set::Point_map PointMap;
   typedef Point_set::Vector_map NormalMap;
   typedef CGAL::Shape_detection_3::Shape_detection_traits<Kernel, Point_set, PointMap, NormalMap> Traits;
-  
+
   if (dialog.region_growing())
     ransac_reconstruction_impl<Traits, typename CGAL::Shape_detection_3::Region_growing<Traits> >(dialog);
   else

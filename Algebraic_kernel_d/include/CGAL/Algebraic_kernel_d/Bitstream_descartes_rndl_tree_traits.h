@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Michael Kerber <mkerber@mpi-inf.mpg.de>
 //
@@ -37,7 +37,7 @@
 #include <vector>
 
 #if CGAL_USE_CORE
-namespace CORE { class BigInt; } 
+namespace CORE { class BigInt; }
 #endif
 
 namespace CGAL {
@@ -45,20 +45,20 @@ namespace CGAL {
 namespace internal {
 
 #if CGAL_USE_CORE
-// bugfix for CORE by Michael Kerber 
+// bugfix for CORE by Michael Kerber
 // why is there a specialized function for CORE?
 inline CORE::BigInt shift_integer_by(CORE::BigInt x, long shift){
   if( shift > 0 ){
     while(shift>63) {
       x = (x >> 63);
       shift-=63;
-    }  
+    }
     x = (x >> shift);
   }else{
-    // add 0 bits 
-    x = (x << -shift);   
-  }   
-  return x; 
+    // add 0 bits
+    x = (x << -shift);
+  }
+  return x;
 }
 #endif
 
@@ -67,17 +67,17 @@ Shiftable shift_integer_by(Shiftable x, long shift){
   if( shift > 0 ){
     x >>= shift;
   }else{
-    x <<= -shift;  // adds 0 bits 
-  }   
-  return x; 
+    x <<= -shift;  // adds 0 bits
+  }
+  return x;
 }
 
 // forward
-template <typename BitstreamCoefficientKernel> 
+template <typename BitstreamCoefficientKernel>
 class Bitstream_descartes_rndl_tree_traits;
 
 
-template <class BitstreamCoefficientKernel> 
+template <class BitstreamCoefficientKernel>
 class Bitstream_descartes_rndl_tree_traits_rep {
 
 public:
@@ -86,14 +86,14 @@ public:
 
     Bitstream_descartes_rndl_tree_traits_rep
         (Bitstream_coefficient_kernel kernel)
-	: _m_kernel(kernel)
-    {	
-    } 
+        : _m_kernel(kernel)
+    {
+    }
 
-    Bitstream_descartes_rndl_tree_traits_rep() {} 
+    Bitstream_descartes_rndl_tree_traits_rep() {}
 
 private:
-    
+
     Bitstream_coefficient_kernel _m_kernel;
 
     friend class Bitstream_descartes_rndl_tree_traits
@@ -112,16 +112,16 @@ class Bitstream_descartes_rndl_tree_traits
 public:
     //! typedefs
     //! @{
-    
+
     typedef BitstreamCoefficientKernel Bitstream_coefficient_kernel;
 
     typedef typename Bitstream_coefficient_kernel::Coefficient Coefficient;
 
     typedef typename Bitstream_coefficient_kernel::Bigfloat_interval BFI;
-    typedef typename CGAL::Bigfloat_interval_traits<BFI>::Bound BF; 
-    
-    typedef typename 
-        CGAL::Polynomial_type_generator<Coefficient,1>::Type POLY; 
+    typedef typename CGAL::Bigfloat_interval_traits<BFI>::Bound BF;
+
+    typedef typename
+        CGAL::Polynomial_type_generator<Coefficient,1>::Type POLY;
     typedef  Bitstream_descartes_rndl_tree_traits
         < Bitstream_coefficient_kernel > Self;
 
@@ -130,7 +130,7 @@ public:
             <Bitstream_coefficient_kernel> >
         Base;
 
-    typedef typename Bitstream_coefficient_kernel::Integer  Integer; 
+    typedef typename Bitstream_coefficient_kernel::Integer  Integer;
     typedef typename Bitstream_coefficient_kernel::Bound Bound;
 
     //! @}
@@ -148,8 +148,8 @@ public:
     //! @{
 
     Bitstream_descartes_rndl_tree_traits(const Bitstream_coefficient_kernel& kernel)
-      : Base(kernel){} 
- 
+      : Base(kernel){}
+
     Bitstream_descartes_rndl_tree_traits()
       : Base(static_cast<const Base&>(get_default_instance())){}
 
@@ -157,27 +157,27 @@ public:
 #ifdef DOXYGEN_RUNNING
     Bitstream_descartes_rndl_tree_traits(const Self& traits)
       : Base(static_cast<const Base&>(traits)){}
-#endif  
+#endif
     //! @}
 
     class Approximator {
-        
+
     private:
-	
-	Bitstream_coefficient_kernel _m_kernel;
+
+        Bitstream_coefficient_kernel _m_kernel;
 
     public:
-	Approximator
-            (const Bitstream_coefficient_kernel& kernel) 
+        Approximator
+            (const Bitstream_coefficient_kernel& kernel)
             : _m_kernel(kernel) {};
 
-	Approximator() {};
+        Approximator() {};
 
         Integer operator() (Coefficient f, long p) {
 
             //std::cout << "Called approximator with f=" << f
             //          << " and p=" << p << std::endl;
-            
+
             typename CGAL::internal::Float_traits<BF>::Get_exponent get_exp;
             typename CGAL::internal::Float_traits<BF>::Get_mantissa get_m;
 
@@ -185,11 +185,11 @@ public:
             long prec = 4;
 
             BFI f_alpha_bfi;
-            
+
             while(true) {
-                
+
                 CGAL::set_precision(BFI(),prec);
-                
+
                 f_alpha_bfi = _m_kernel.convert_to_bfi_object()(f);
                 if(CGAL::singleton(f_alpha_bfi)) {
                     break;
@@ -200,27 +200,27 @@ public:
                 } else {
                     prec*=2;
                 }
-                
+
             }
 
             BF lower = CGAL::lower(f_alpha_bfi);
-                
-            long shift = - (p + get_exp(lower)); 
-            Integer bfi_m(get_m(lower)); 
+
+            long shift = - (p + get_exp(lower));
+            Integer bfi_m(get_m(lower));
             bfi_m = shift_integer_by(bfi_m,shift);
-           
-//             if( shift > 0 ){               
+
+//             if( shift > 0 ){
 //               while(shift>63) { // this is a bug fix HACK for CORE::BigInt
 //                  bfi_m = (bfi_m >> 63);
 //                  shift-=63;
 //                }
 //                bfi_m = (bfi_m >> shift);
 //             }else{
-//                 // add 0 bits 
-//                 bfi_m = (bfi_m << -shift);   
-//             }  
+//                 // add 0 bits
+//                 bfi_m = (bfi_m << -shift);
+//             }
             CGAL::set_precision(BFI(),old_prec);
-            
+
             //std::cout << "returns " << bfi_m << std::endl;
 
             return bfi_m;
@@ -235,19 +235,19 @@ public:
     class Lower_bound_log2_abs {
 
     private:
-	Bitstream_coefficient_kernel _m_kernel;
+        Bitstream_coefficient_kernel _m_kernel;
 
     public:
-	Lower_bound_log2_abs
-        (const Bitstream_coefficient_kernel& kernel) 
+        Lower_bound_log2_abs
+        (const Bitstream_coefficient_kernel& kernel)
             : _m_kernel(kernel) {}
-	
+
         Lower_bound_log2_abs() {};
 
-	long operator() (Coefficient f) {
-            //std::cout << "Called lower_bound_log2_abs with " 
+        long operator() (Coefficient f) {
+            //std::cout << "Called lower_bound_log2_abs with "
             //          << f << std::flush;
-          
+
             CGAL_assertion(! _m_kernel.is_zero_object()(f));
 
             long old_prec = CGAL::get_precision(BFI());
@@ -289,20 +289,20 @@ public:
         }
 
     };
-    
+
     Lower_bound_log2_abs lower_bound_log2_abs_object() const {
-	return Lower_bound_log2_abs(this->ptr()->_m_kernel);
+        return Lower_bound_log2_abs(this->ptr()->_m_kernel);
     }
 
 
     class Upper_bound_log2_abs_approximator {
 
     private:
-	Bitstream_coefficient_kernel _m_kernel;
+        Bitstream_coefficient_kernel _m_kernel;
 
-	// Stores id of polynomials which are known to vanish (or not to 
-	// vanish) at alpha
-	std::vector<Coefficient> zeroes,non_zeroes;
+        // Stores id of polynomials which are known to vanish (or not to
+        // vanish) at alpha
+        std::vector<Coefficient> zeroes,non_zeroes;
 
         std::vector<Coefficient> coeffs_for_alpha;
 
@@ -310,21 +310,21 @@ public:
         long prec;
 
     public:
-	Upper_bound_log2_abs_approximator
-        (const Bitstream_coefficient_kernel& kernel) 
+        Upper_bound_log2_abs_approximator
+        (const Bitstream_coefficient_kernel& kernel)
             : _m_kernel(kernel), prec(4)
         {}
 
         Upper_bound_log2_abs_approximator() : prec(4) {};
 
-	bool initial_upper_bound
+        bool initial_upper_bound
         (Coefficient f, long& ub_log2_abs,bool& is_certainly_zero) {
             return improve_upper_bound(f,ub_log2_abs,is_certainly_zero);
-	}
+        }
 
-	bool improve_upper_bound
+        bool improve_upper_bound
         (const Coefficient f, long& ub_log2_abs,bool& is_certainly_zero) {
-            //std::cout << "improve upper bound.." 
+            //std::cout << "improve upper bound.."
             // << f << std::endl;
 
             long old_prec = CGAL::get_precision(BFI());
@@ -363,12 +363,12 @@ public:
                 coeffs_for_alpha.clear();
             }
             coeffs_for_alpha.push_back(f);
-            
+
             BFI f_alpha_iv = _m_kernel.convert_to_bfi_object()(f);
-            
+
             BF abs_upper = (std::max)(CGAL::abs(CGAL::lower(f_alpha_iv)),
                                       CGAL::abs(CGAL::upper(f_alpha_iv)));
-            
+
             if(CGAL::sign(abs_upper)==CGAL::ZERO) {
                 is_certainly_zero=true;
                 CGAL::set_precision(BFI(),old_prec);
@@ -378,10 +378,10 @@ public:
             ub_log2_abs = CGAL::internal::ceil_log2_abs(abs_upper);
 
             if(! CGAL::zero_in(f_alpha_iv) ) {
-                
+
               BF abs_lower = (std::min)(CGAL::abs(CGAL::lower(f_alpha_iv)),
                                         CGAL::abs(CGAL::upper(f_alpha_iv)));
-                long lb_log2_abs 
+                long lb_log2_abs
                     = CGAL::internal::floor_log2_abs
                     (CGAL::convert_to_bfi(abs_lower));
                 CGAL_assertion(ub_log2_abs >= lb_log2_abs);
@@ -395,21 +395,21 @@ public:
             }
         }
     };
-    
-    Upper_bound_log2_abs_approximator 
+
+    Upper_bound_log2_abs_approximator
     upper_bound_log2_abs_approximator_object() const {
-	return Upper_bound_log2_abs_approximator(this->ptr()->_m_kernel);
+        return Upper_bound_log2_abs_approximator(this->ptr()->_m_kernel);
     }
 
 
     // TODO: Look whether this is best possible
     class Bound_creator {
-	
+
     public:
-	
-	Bound_creator() {}
-	
-	Bound operator() (Integer x,long p) {
+
+        Bound_creator() {}
+
+        Bound operator() (Integer x,long p) {
             Integer num=x, denom,two(2),q,r;
             if(p < 0) {
                 CGAL::div_mod(num,two,q,r);
@@ -425,12 +425,12 @@ public:
                 denom=1;
             }
             Bound b(num);
-	    b /= Bound(denom);
+            b /= Bound(denom);
             CGAL::simplify(b);
             return b;
-	} 
+        }
     };
-    
+
     typedef typename CGAL::Real_embeddable_traits<Integer>::Sgn Sign;
     typedef typename CGAL::internal::Real_embeddable_extension<Integer>
         ::Ceil_log2_abs Ceil_log2_abs_Integer;
@@ -438,7 +438,7 @@ public:
         ::Ceil_log2_abs Ceil_log2_abs_long;
 
 }; // end of class Bitstream_descartes_rndl_tree_traits
-    
+
 
 } // namespace internal
 

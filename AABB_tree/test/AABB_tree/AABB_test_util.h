@@ -112,7 +112,7 @@ void test_all_intersection_query_types(Tree& tree)
     optional_object_and_primitive = tree.any_intersection(segment);
     #else
     boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > r = tree.any_intersection(ray);
-    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);    
+    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);
     boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > s = tree.any_intersection(segment);
     #endif
 
@@ -186,7 +186,7 @@ void test_distance_speed(Tree& tree,
             // picks a random point in the tree bbox
             Point query = random_point_in<K>(tree.bbox());
             Point closest = tree.closest_point(query);
-	    (void) closest;
+      (void) closest;
             nb++;
     }
     double speed = (double)nb / timer.time();
@@ -347,7 +347,7 @@ class Naive_implementations
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
   typedef boost::optional<Object_and_primitive_id> Intersection_result;
-  
+
   const Traits& m_traits;
 public:
   Naive_implementations(const Traits& traits):m_traits(traits){}
@@ -405,7 +405,7 @@ public:
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
       #if CGAL_INTERSECTION_VERSION < 2
-      Intersection_result 
+      Intersection_result
         intersection  = Traits().intersection_object()(query, Pr(it,p));
       #else
       boost::optional< typename Traits::template Intersection_and_primitive_id<Query>::Type >
@@ -724,8 +724,8 @@ private:
         #endif
         Obj_type;
 
-      typedef 
-        std::vector<Obj_type> 
+      typedef
+        std::vector<Obj_type>
       Obj_Id_vector;
 
       Obj_Id_vector intersections_naive;

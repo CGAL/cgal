@@ -16,13 +16,13 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado, 
+// Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SPHERICAL_KERNEL_GLOBAL_FUNCTIONS_CIRCULAR_KERNEL_3_H
@@ -139,7 +139,7 @@ z_extremal_points(const Sphere_3<SK> & c, OutputIterator res)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_x(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 {
   return CK().compare_x_3_object()(p, q);
@@ -147,7 +147,7 @@ compare_x(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_y(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 {
   return CK().compare_y_3_object()(p, q);
@@ -155,7 +155,7 @@ compare_y(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_z(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 {
   return CK().compare_z_3_object()(p, q);
@@ -163,7 +163,7 @@ compare_z(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_xy(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 {
   return CK().compare_xy_3_object()(p, q);
@@ -171,7 +171,7 @@ compare_xy(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 
 template< class CK >
 inline
-CGAL::Comparison_result 
+CGAL::Comparison_result
 compare_xyz(const Circular_arc_point_3<CK> &p, const Circular_arc_point_3<CK> &q)
 {
   return CK().compare_xyz_3_object()(p, q);

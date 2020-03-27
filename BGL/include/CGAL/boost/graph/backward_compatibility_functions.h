@@ -59,10 +59,10 @@ namespace CGAL {
                 , const Graph& g)
   {
     typename boost::graph_traits<Graph>::halfedge_descriptor h = halfedge(e, g);
-    
+
     return edge(prev(opposite(h, g), g), g);
   }
-  
+
   template <class Graph>
   struct halfedge_graph_traits;
 
@@ -72,7 +72,7 @@ namespace CGAL {
    {
      return edges(g);
    }
-  
+
 }  //end of namespace CGAL
 
 #endif //CGAL_BOOST_GRAPH_BACKWARD_COMPATIBILITY_FUNCTIONS_H

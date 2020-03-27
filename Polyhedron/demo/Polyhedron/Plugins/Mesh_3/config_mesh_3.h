@@ -90,7 +90,7 @@
   // =====================
   // Worksharing strategy
   // =====================
-      
+
 //# define CGAL_MESH_3_LOAD_BASED_WORKSHARING // Not recommended
 
   // ==========================================================================
@@ -116,7 +116,7 @@
 # define CGAL_MESH_3_IF_UNSORTED_QUEUE_JUST_SORT_AFTER_SCAN
 
 #endif // CGAL_CONCURRENT_MESH_3
-  
+
 //#define CGAL_MESH_3_PROFILING
 
 #endif // CGAL_DEMO_MESH_3_CONFIG_H

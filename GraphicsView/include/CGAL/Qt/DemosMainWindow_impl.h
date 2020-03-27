@@ -15,11 +15,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 //                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
-   
+
 #ifdef CGAL_HEADER_ONLY
 #define CGAL_INLINE_FUNCTION inline
 
@@ -101,7 +101,7 @@ DemosMainWindow::~DemosMainWindow()
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   if (event->mimeData()->hasFormat("text/uri-list"))
@@ -109,7 +109,7 @@ DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::dropEvent(QDropEvent *event)
 {
   Q_FOREACH(QUrl url, event->mimeData()->urls()) {
@@ -127,7 +127,7 @@ DemosMainWindow::addNavigation(QGraphicsView* graphicsView)
   graphicsView->viewport()->installEventFilter(navigation);
   graphicsView->installEventFilter(navigation);
   QObject::connect(navigation, SIGNAL(mouseCoordinates(QString)),
-		   xycoord, SLOT(setText(QString)));
+                   xycoord, SLOT(setText(QString)));
   view = graphicsView;
 }
 
@@ -174,16 +174,16 @@ DemosMainWindow::setupExportSVG(QAction* action, QGraphicsView* view)
 {
   this->view = view;
   connect(action, SIGNAL(triggered(bool)),
-	  this, SLOT(exportSVG()));
+          this, SLOT(exportSVG()));
 }
 
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::exportSVG()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Export to SVG"),
-						  ".",
-						  tr("SVG (*.svg)\n"));
+                                                  tr("Export to SVG"),
+                                                  ".",
+                                                  tr("SVG (*.svg)\n"));
 
   QSvgGenerator svg;
   svg.setFileName(fileName);
@@ -212,7 +212,7 @@ DemosMainWindow::setUseAntialiasing(bool checked)
 CGAL_INLINE_FUNCTION
 void
 DemosMainWindow::setUseOpenGL(bool checked)
-{ 
+{
   if(checked) {
     QGLWidget* new_viewport = new QGLWidget;
 
@@ -235,7 +235,7 @@ DemosMainWindow::setUseOpenGL(bool checked)
 }
 
 CGAL_INLINE_FUNCTION
-QMenu* 
+QMenu*
 DemosMainWindow::getMenu(QString objectName, QString title)
 {
   QMenu* menu = NULL;
@@ -260,7 +260,7 @@ DemosMainWindow::getMenu(QString objectName, QString title)
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
 {
   QFile about_CGAL(html_resource_name);
@@ -283,8 +283,8 @@ DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
 
   QLabel* mb_label = mb.findChild<QLabel*>("qt_msgbox_label");
   if(mb_label) {
-    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() | 
-                                      ::Qt::LinksAccessibleByMouse | 
+    mb_label->setTextInteractionFlags(mb_label->textInteractionFlags() |
+                                      ::Qt::LinksAccessibleByMouse |
                                       ::Qt::LinksAccessibleByKeyboard);
   }
   else {
@@ -308,7 +308,7 @@ QMenu* DemosMainWindow::getHelpMenu()
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::addAboutCGAL(QMenu* menuHelp)
 {
   if(!menuHelp) {
@@ -321,7 +321,7 @@ DemosMainWindow::addAboutCGAL(QMenu* menuHelp)
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::addAboutDemo(QString htmlResourceName, QMenu* menuHelp)
 {
   if(!menuHelp) {
@@ -359,14 +359,14 @@ DemosMainWindow::setMaxNumberOfRecentFiles(const unsigned int i)
 }
 
 CGAL_INLINE_FUNCTION
-unsigned int 
+unsigned int
 DemosMainWindow::maxNumberOfRecentFiles() const
 {
   return maxNumRecentFiles;
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::openRecentFile_aux()
 {
   QAction *action = qobject_cast<QAction *>(sender());
@@ -375,7 +375,7 @@ DemosMainWindow::openRecentFile_aux()
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::addToRecentFiles(QString fileName)
 {
   QStringList files = settings.value("recentFileList").toStringList();
@@ -417,13 +417,13 @@ DemosMainWindow::addRecentFiles(QMenu* menu, QAction* insertBeforeAction)
 }
 
 CGAL_INLINE_FUNCTION
-void 
+void
 DemosMainWindow::updateRecentFileActions()
 {
   QStringList files = settings.value("recentFileList").toStringList();
 
   int numRecentFiles = qMin(files.size(), (int)this->maxNumberOfRecentFiles());
-  
+
   for (int i = 0; i < numRecentFiles; ++i) {
     QString strippedName = QFileInfo(files[i]).fileName();
     QString text = tr("&%1 %2").arg(i).arg(strippedName);
@@ -433,14 +433,14 @@ DemosMainWindow::updateRecentFileActions()
   }
   for (unsigned int j = numRecentFiles; j < maxNumberOfRecentFiles(); ++j)
     recentFileActs[j]->setVisible(false);
-  
+
   recentFilesSeparator->setVisible(numRecentFiles > 0);
 }
 
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::writeState(QString groupname)
 {
-  
+
 
   settings.beginGroup(groupname);
   settings.setValue("size", size());
@@ -452,8 +452,8 @@ void DemosMainWindow::writeState(QString groupname)
 CGAL_INLINE_FUNCTION
 void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
 {
-  
-  
+
+
   settings.beginGroup(groupname);
   resize(settings.value("size", this->size()).toSize());
 

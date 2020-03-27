@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -58,7 +58,7 @@ public:
     : V_Base(), up_( Vertex_handle() ), down_( Vertex_handle() ) {}
 
   Segment_Delaunay_graph_hierarchy_vertex_base_2(const Storage_site_2& ss,
-						 Face_handle f)
+                                                 Face_handle f)
     : V_Base(ss,f), up_( Vertex_handle() ), down_( Vertex_handle() ) {}
 
 public:  // for use in hierarchy only

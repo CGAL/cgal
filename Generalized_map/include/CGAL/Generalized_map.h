@@ -219,7 +219,7 @@ namespace CGAL {
       boost::unordered_map<typename GMap2::Dart_const_handle, Dart_handle> local_dartmap;
       if (dart_mapping==NULL)
       { dart_mapping=&local_dartmap; }
-      
+
 
       for (typename GMap2::Dart_const_range::const_iterator
              it=amap.darts().begin(), itend=amap.darts().end();

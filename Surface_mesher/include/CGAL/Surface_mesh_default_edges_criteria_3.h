@@ -40,7 +40,7 @@ public:
   typedef typename Tr::Vertex_handle Vertex_handle;
 
   Surface_mesh_default_edges_criteria_3(const FT radius_bound,
-					const FT distance_bound,
+                                        const FT distance_bound,
                                         const Surface& surface,
                                         const bool assure_vertices_are_on_same_curve = true)
     : sq_distance_bound(distance_bound*distance_bound),
@@ -51,7 +51,7 @@ public:
   }
 
   bool is_bad (const Edge& e,
-	       const Point_3& lineic_center) const
+               const Point_3& lineic_center) const
   {
     const Vertex_handle& va = e.first->vertex(e.second);
     const Vertex_handle& vb = e.first->vertex(e.third);
@@ -66,15 +66,15 @@ public:
     typename GT::Compute_squared_distance_3 sq_distance =
       GT().compute_squared_distance_3_object();
 
-    if(sq_radius_bound != FT(0) && 
+    if(sq_radius_bound != FT(0) &&
        sq_distance(va->point(), vb->point()) > sq_radius_bound)
       return true;
-    
-    typename GT::Construct_midpoint_3 midpoint = 
+
+    typename GT::Construct_midpoint_3 midpoint =
       GT().construct_midpoint_3_object();
 
     return sq_distance_bound != FT(0) &&
-      sq_distance(lineic_center, midpoint(va->point(), vb->point())) > 
+      sq_distance(lineic_center, midpoint(va->point(), vb->point())) >
       sq_distance_bound;
   }
 private:

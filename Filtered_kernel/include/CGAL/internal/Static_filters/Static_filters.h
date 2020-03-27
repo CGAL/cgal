@@ -15,10 +15,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
- 
+
 #ifndef CGAL_INTERNAL_STATIC_FILTERS_H
 #define CGAL_INTERNAL_STATIC_FILTERS_H
 
@@ -306,11 +306,11 @@ Compare_y_2
   Do_intersect_3
   do_intersect_3_object() const
   { return Do_intersect_3(); }
-  
+
   Do_intersect_2
   do_intersect_2_object() const
   { return Do_intersect_2(); }
-  
+
 #endif // NOT CGAL_NO_DO_INTERSECT_STATIC_FILTERS
 
   // The two following are for degenerate cases, so I'll update them later.

@@ -6,7 +6,7 @@
 
 int main()
 {
-  std::cout << 
+  std::cout <<
     "NOTICE: this test needs CGAL_LINKED_WITH_TBB, and will not be tested."
     << std::endl;
   return 0;
@@ -57,7 +57,7 @@ class Node_2
   };
 
 public:
-  
+
   int      rnd;
 
   Node_2()
@@ -86,11 +86,11 @@ class Insert_in_CCC_functor
 public:
   Insert_in_CCC_functor(
     const Values_vec &values, Cont &cont, Iterators_vec &iterators)
-    : m_values(values), m_cont(cont), m_iterators(iterators) 
+    : m_values(values), m_cont(cont), m_iterators(iterators)
   {}
-  
+
   Insert_in_CCC_functor(const Insert_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
+    : m_values(other.m_values), m_cont(other.m_cont),
       m_iterators(other.m_iterators)
   {}
 
@@ -115,11 +115,11 @@ class Erase_in_CCC_functor
 public:
   Erase_in_CCC_functor(
     Cont &cont, Iterators_vec &iterators)
-    : m_cont(cont), m_iterators(iterators) 
+    : m_cont(cont), m_iterators(iterators)
   {}
-  
+
   Erase_in_CCC_functor(const Erase_in_CCC_functor &other)
-    : m_cont(other.m_cont), 
+    : m_cont(other.m_cont),
       m_iterators(other.m_iterators)
   {}
 
@@ -148,9 +148,9 @@ public:
   : m_values(values), m_cont(cont), m_iterators(iterators),
     m_free_elements(free_elements), m_num_erasures(num_erasures)
   {}
-  
+
   Insert_and_erase_in_CCC_functor(const Insert_and_erase_in_CCC_functor &other)
-    : m_values(other.m_values), m_cont(other.m_cont), 
+    : m_values(other.m_values), m_cont(other.m_cont),
       m_iterators(other.m_iterators), m_free_elements(other.m_free_elements),
       m_num_erasures(other.m_num_erasures)
   {}
@@ -330,7 +330,7 @@ void test(const Cont &)
   c11.reserve(v1.size());
   for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
     c11.insert(*it);
-  
+
   assert(c11.size() == v1.size());
   assert(c10 == c11);*/
 
@@ -348,7 +348,7 @@ void test(const Cont &)
   c9.erase(c9.begin(), c9.end());
 
   assert(check_empty(c9));
-  
+
   std::cout << "Testing parallel insertion" << std::endl;
   {
   Cont c11;
@@ -359,7 +359,7 @@ void test(const Cont &)
     Insert_in_CCC_functor<Vect, Cont>(v11, c11, iterators)
   );
   assert(c11.size() == v11.size());
-  
+
   std::cout << "Testing parallel erasure" << std::endl;
   tbb::parallel_for(
     tbb::blocked_range<size_t>( 0, v11.size() ),
@@ -373,13 +373,13 @@ void test(const Cont &)
   Cont c12;
   Vect v12(1000000);
   std::vector<tbb::atomic<bool> > free_elements(v12.size());
-  for(typename std::vector<tbb::atomic<bool> >::iterator 
-    it = free_elements.begin(), end = free_elements.end(); it != end; ++it) 
+  for(typename std::vector<tbb::atomic<bool> >::iterator
+    it = free_elements.begin(), end = free_elements.end(); it != end; ++it)
   {
     *it = true;
   }
-    
-  tbb::atomic<unsigned int> num_erasures; 
+
+  tbb::atomic<unsigned int> num_erasures;
   num_erasures = 0;
   std::vector<typename Cont::iterator> iterators(v12.size());
   tbb::parallel_for(
@@ -437,7 +437,7 @@ int main()
     n.rnd = i;
     cc2.insert(n);
   }
-  
+
   std::cout << "cc1 capacity: " << cc1.capacity() << std::endl;
   std::cout << "cc1 size: " << cc1.size() << std::endl;
   for(CCC::const_iterator it = cc1.begin(), end = cc1.end(); it != end; ++it) {

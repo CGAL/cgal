@@ -197,7 +197,7 @@ public:
     return m_offset_distance - distance;
   }
 
-}; // end class Polygon_soup_offset_function 
+}; // end class Polygon_soup_offset_function
 
 } //end of CGAL namespace
 
@@ -303,7 +303,7 @@ CGAL::Three::Scene_item* cgal_off_meshing(QWidget*,
     {
       CGAL::Polygon_mesh_processing::reverse_face_orientations(*pRemesh);
     }
-    
+
     return make_item(pRemesh);
   }
   else
@@ -443,12 +443,12 @@ if(sm_item)
                       .arg(offset_value));
     new_item->setColor(Qt::magenta);
     new_item->setRenderingMode(item->renderingMode());
-    
+
     scene->addItem(new_item);
     item->setVisible(false);
     scene->itemChanged(index);
   }
-  
+
   QApplication::restoreOverrideCursor();
 }
 

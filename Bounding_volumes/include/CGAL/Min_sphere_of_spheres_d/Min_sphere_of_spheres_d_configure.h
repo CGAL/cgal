@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Kaspar Fischer
 
@@ -63,7 +63,7 @@
     struct Tag_true {};
     struct Tag_false {};
   }
-  #define CGAL_MINIBALL_NTS 
+  #define CGAL_MINIBALL_NTS
 #else
   #include <CGAL/basic.h>
   #define CGAL_MINIBALL_NTS CGAL_NTS

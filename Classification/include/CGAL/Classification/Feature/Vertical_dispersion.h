@@ -39,7 +39,7 @@ namespace CGAL {
 namespace Classification {
 
 namespace Feature {
-  
+
   /*!
     \ingroup PkgClassificationFeatures
 
@@ -70,7 +70,7 @@ class Vertical_dispersion : public Feature_base
   const Grid& grid;
   Image_cfloat Dispersion;
   std::vector<compressed_float> values;
-  
+
 public:
   /*!
     \brief Constructs the feature.
@@ -95,24 +95,24 @@ public:
     else
     {
       Dispersion = Image_cfloat(grid.width(), grid.height());
-      for (std::size_t j = 0; j < grid.height(); j++)	
+      for (std::size_t j = 0; j < grid.height(); j++)
         for (std::size_t i = 0; i < grid.width(); i++)
           if (grid.has_points(i,j))
             Dispersion(i,j) = compressed_float(0);
     }
-    
+
     std::size_t square = (std::size_t)(0.5 * radius_neighbors / grid.resolution()) + 1;
     typename GeomTraits::Vector_3 verti (0., 0., 1.);
 
     std::vector<float> hori;
 
-    for (std::size_t j = 0; j < grid.height(); j++){	
+    for (std::size_t j = 0; j < grid.height(); j++){
       for (std::size_t i = 0; i < grid.width(); i++){
-						
+
         if(!(grid.has_points(i,j)))
           continue;
         hori.clear();
-            
+
         std::size_t squareXmin = (i < square ? 0 : i - square);
         std::size_t squareXmax = (std::min) (grid.width()-1, i + square);
         std::size_t squareYmin = (j < square ? 0 : j - square);
@@ -130,16 +130,16 @@ public:
                 hori.push_back (float(get(point_map, *(input.begin()+(*it))).z()));
             }
           }
-      
+
         if (hori.empty())
           continue;
-              
+
         std::vector<float>::iterator min_it, max_it;
         boost::tie(min_it, max_it)
           = boost::minmax_element (hori.begin(), hori.end());
 
         std::vector<bool> occupy (1 + (std::size_t)((*max_it - *min_it) / grid.resolution()), false);
-              
+
         for (std::size_t k = 0; k < hori.size(); ++ k)
         {
           std::size_t index = (std::size_t)((hori[k] - *min_it) / grid.resolution());
@@ -161,7 +161,7 @@ public:
             values[*it] = v;
         }
       }
-		
+
     }
   }
   /// \cond SKIP_IN_MANUAL
@@ -179,7 +179,7 @@ public:
 };
 
 }
-  
+
 }
 
 }

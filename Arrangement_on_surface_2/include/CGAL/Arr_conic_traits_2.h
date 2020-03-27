@@ -279,18 +279,18 @@ public:
       }
       else
       {
-	CGAL_precondition (x_res != SMALLER);
+        CGAL_precondition (x_res != SMALLER);
 
-	if ((x_res = ker.compare_x_2_object() (p, cv.right())) == EQUAL)
-	{
-	  q = cv.right();
-	}
-	else
-	{
-	  CGAL_precondition (x_res != LARGER);
+        if ((x_res = ker.compare_x_2_object() (p, cv.right())) == EQUAL)
+        {
+          q = cv.right();
+        }
+        else
+        {
+          CGAL_precondition (x_res != LARGER);
 
-	  q = cv.point_at_x (p);
-	}
+          q = cv.point_at_x (p);
+        }
       }
 
       // Compare p with the a point of the curve with the same x coordinate.
@@ -740,9 +740,9 @@ public:
       CGAL_precondition (i == 0 || i == 1);
 
       if (i == 0)
-	return (CGAL::to_double(p.x()));
+        return (CGAL::to_double(p.x()));
       else
-	return (CGAL::to_double(p.y()));
+        return (CGAL::to_double(p.y()));
     }
   };
 
@@ -796,7 +796,7 @@ public:
       if (cv.is_directed_right())
         return (SMALLER);
       else
-	return (LARGER);
+        return (LARGER);
     }
   };
 

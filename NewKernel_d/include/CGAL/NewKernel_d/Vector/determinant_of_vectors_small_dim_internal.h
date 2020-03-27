@@ -33,8 +33,8 @@
 namespace CGAL {
 
 template <class LA, class Dim_=typename LA::Dimension,
-	 class Max_dim_=typename LA::Max_dimension,
-	 bool=LA::template Property<CGAL_TAG>::value>
+         class Max_dim_=typename LA::Max_dimension,
+         bool=LA::template Property<CGAL_TAG>::value>
 struct CGAL_CLASS : LA {
   template< class D2, class D3=D2 >
     struct Rebind_dimension {

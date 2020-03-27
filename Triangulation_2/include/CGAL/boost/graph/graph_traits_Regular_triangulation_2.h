@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
@@ -37,14 +37,14 @@
 
 
 
-namespace boost { 
+namespace boost {
 
   template <class GT, class TDS>
   struct graph_traits< CGAL::Regular_triangulation_2<GT,TDS> > {
 
-    struct DT2_graph_traversal_category : 
+    struct DT2_graph_traversal_category :
       public virtual bidirectional_graph_tag,
-      public virtual adjacency_graph_tag,        
+      public virtual adjacency_graph_tag,
       public virtual edge_list_graph_tag,
       public virtual vertex_list_graph_tag { };
 
@@ -67,7 +67,7 @@ namespace boost {
     typedef Incident_vertices_iterator adjacency_iterator;
 
     typedef undirected_tag directed_category;
-    typedef disallow_parallel_edge_tag edge_parallel_category; 
+    typedef disallow_parallel_edge_tag edge_parallel_category;
     typedef DT2_graph_traversal_category traversal_category;
     typedef typename Regular_triangulation::size_type size_type;
     typedef size_type vertices_size_type;
@@ -79,7 +79,7 @@ namespace boost {
     // nulls
     static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
     static face_descriptor     null_face()   { return face_descriptor(); }
-    static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }    
+    static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
   };
 
 
@@ -88,7 +88,7 @@ namespace boost {
 namespace CGAL {
 
   template <class Gt, class Tds>
-  inline Iterator_range<typename boost::graph_traits< Regular_triangulation_2<Gt,Tds> >::vertex_iterator>  
+  inline Iterator_range<typename boost::graph_traits< Regular_triangulation_2<Gt,Tds> >::vertex_iterator>
   vertices(const Regular_triangulation_2<Gt,Tds>& g)
   {
     typedef typename boost::graph_traits< Regular_triangulation_2<Gt,Tds> >::vertex_iterator
@@ -117,25 +117,25 @@ namespace CGAL {
   template <class Gt, class Tds>
   inline std::pair<
     typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::out_edge_iterator,
-    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::out_edge_iterator >  
+    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::out_edge_iterator >
   out_edges(
-    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::vertex_descriptor u,
     const CGAL::Regular_triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Regular_triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
     typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::degree_size_type out_deg = out_degree(u,g);
     typedef typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >
       ::out_edge_iterator Iter;
-    
+
     return std::make_pair( Iter(ec), Iter(ec,out_deg) );
   }
 
   template <class Gt, class Tds>
   inline std::pair<
     typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::in_edge_iterator,
-    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::in_edge_iterator >  
+    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::in_edge_iterator >
   in_edges(
-    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::vertex_descriptor u, 
+    typename boost::graph_traits< CGAL::Regular_triangulation_2<Gt,Tds> >::vertex_descriptor u,
     const CGAL::Regular_triangulation_2<Gt,Tds>& g)
   {
     typename CGAL::Regular_triangulation_2<Gt,Tds>::Edge_circulator ec(u,u->face());
@@ -158,12 +158,12 @@ namespace CGAL {
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Regular_triangulation_2<Gt,Tds>::Vertex_handle key_type;
-    
+
     RT2_vertex_id_map()
     {}
-    
+
     long operator[](key_type vh) const {
-      return vh->id(); 
+      return vh->id();
     }
   };
 
@@ -177,12 +177,12 @@ namespace CGAL {
     typedef typename CGAL::Regular_triangulation_2<Gt,Tds>::Vertex_handle key_type;
 
     friend reference get(RT2_vertex_point_map<Gt,Tds>, key_type vh)
-    { 
-      return vh->point(); 
+    {
+      return vh->point();
     }
     friend void put(RT2_vertex_point_map<Gt,Tds>, key_type vh, reference v)
     {
-      vh->point()=v; 
+      vh->point()=v;
     }
     reference operator[](key_type vh) const {
       return vh->point();
@@ -199,12 +199,12 @@ namespace CGAL {
     typedef int value_type;
     typedef int reference;
     typedef typename CGAL::Regular_triangulation_2<Gt,Tds>::Edge key_type;
-    
+
     RT2_edge_id_map()
     {}
-    
+
     long operator[](key_type e) const {
-      return (3 * e.first.id()) + e.second; 
+      return (3 * e.first.id()) + e.second;
     }
   };
 
@@ -221,8 +221,8 @@ namespace CGAL {
     typedef value_type reference;
     typedef typename CGAL::Regular_triangulation_2<Gt,Tds>::Edge key_type;
 
-    RT2_edge_weight_map(const CGAL::Regular_triangulation_2<Gt,Tds>& tr_) 
-      : tr(tr_) 
+    RT2_edge_weight_map(const CGAL::Regular_triangulation_2<Gt,Tds>& tr_)
+      : tr(tr_)
     { }
 
     value_type operator[](key_type e) const {
@@ -288,7 +288,7 @@ namespace boost {
   // g++ 'enumeral_type' in template unification not implemented workaround
   template <class Gt, class Tds, class Tag>
   struct property_map<CGAL::Regular_triangulation_2<Gt,Tds>, Tag> {
-    typedef typename 
+    typedef typename
     CGAL::RT2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
@@ -297,7 +297,7 @@ namespace boost {
   // see struct property_map in Polyhedron for an explanation
   template <class Gt, class Tds, class Tag>
   struct property_map<const CGAL::Regular_triangulation_2<Gt,Tds>, Tag> {
-    typedef typename 
+    typedef typename
     CGAL::RT2_property_map<Tag>::template bind_<Gt,Tds> map_gen;
     typedef typename map_gen::type type;
     typedef typename map_gen::const_type const_type;
@@ -308,7 +308,7 @@ namespace boost {
   template <typename Gt, typename Tds>
   struct edge_property_type<CGAL::Regular_triangulation_2<Gt,Tds> > {
     typedef void type;
-  };  
+  };
 
   template <typename Gt, typename Tds>
   struct vertex_property_type<CGAL::Regular_triangulation_2<Gt,Tds> > {

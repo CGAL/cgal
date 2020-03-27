@@ -487,7 +487,7 @@ The initial definition of combinatorial map in any dimension is given in \cgalCi
 Intuitively, a <I>partial permutation</I> on a finite set <I>E</I> is a mapping from <I>E</I>\f$ \cup\{\varnothing\}\f$ to <I>E</I>\f$ \cup\{\varnothing\}\f$ which is injective on the subset of the domain that does not map to \f$\varnothing\f$. More precisely, a mapping <I>p</I>: <I>E</I>\f$ \cup\{\varnothing\} \rightarrow\f$ <I>E</I>\f$ \cup\{\varnothing\}\f$ is a <I>partial permutation</I> defined on <I>E</I> if:
 <OL>
 <LI><I>p</I>\f$(\varnothing)=\varnothing\f$;
-<LI>\f$ \forall \f$ <I>e1</I>\f$ \in \f$ <I>E</I>, \f$ \forall \f$ <I>e2</I>\f$ \in \f$ <I>E</I>, <I>p</I>(<I>e1</I>)=<I>p</I>(<I>e2</I>) \f$ \neq \f$ \f$ \varnothing\f$ \f$ \Rightarrow\f$ <I>e1</I>=<I>e2</I>. 
+<LI>\f$ \forall \f$ <I>e1</I>\f$ \in \f$ <I>E</I>, \f$ \forall \f$ <I>e2</I>\f$ \in \f$ <I>E</I>, <I>p</I>(<I>e1</I>)=<I>p</I>(<I>e2</I>) \f$ \neq \f$ \f$ \varnothing\f$ \f$ \Rightarrow\f$ <I>e1</I>=<I>e2</I>.
 </OL>
 
 The inverse \f$ p^{-1}\f$ of this partial permutation is also a partial permutation and is defined by:

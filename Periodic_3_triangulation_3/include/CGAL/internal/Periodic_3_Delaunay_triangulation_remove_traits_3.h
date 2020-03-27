@@ -49,7 +49,7 @@ public:
 
   using Base::operator();
 
-  const Point_3& operator()(const Point_3& p) { return p; }
+  const Point_3& operator()(const Point_3& p) const { return p; }
 };
 
 template < class Traits_, class Functor_ >

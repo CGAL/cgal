@@ -186,7 +186,7 @@ private:
         // Both defined on the left boundary - compare them there.
         CGAL_assertion (ind == ARR_MIN_END);
 
-	return m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
+        return m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
       }
 
       // The curve end is obviously smaller.

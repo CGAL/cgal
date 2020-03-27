@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 //                 Christophe Delage <Christophe.Delage@sophia.inria.fr>
@@ -36,16 +36,16 @@ namespace ApolloniusGraph_2 {
 //                        Vertex conflict
 //-----------------------------------------------------------------------
 
-template < class K, class Method_tag > 
-class Vertex_conflict_new_2 
+template < class K, class Method_tag >
+class Vertex_conflict_new_2
 {
 public:
     typedef typename K::Site_2                Site_2;
-    typedef typename K::RT                    RT;	
+    typedef typename K::RT                    RT;
     typedef Sign                              result_type;
 
 private:
-    
+
     inline
     bool is_less (const Site_2 &p0, const Site_2 &p1) const
     {
@@ -59,7 +59,7 @@ private:
     }
 
     inline
-    int max_radius(const Site_2	&p0, const Site_2 &p1,
+    int max_radius(const Site_2        &p0, const Site_2 &p1,
             const Site_2 &p2, const Site_2 &p3) const
     {
         int i = 0;
@@ -75,36 +75,36 @@ private:
     inline
     Sign predicate (const Site_2 &p1, const Site_2 &p2,
             const Site_2 &p3, const Site_2 &q, bool perturb) const
-    {	
+    {
         RT xq = q.x() - p1.x();
-	RT yq = q.y() - p1.y();
-	RT wq = q.weight() - p1.weight();
+        RT yq = q.y() - p1.y();
+        RT wq = q.weight() - p1.weight();
         RT aq = CGAL::square(xq) + CGAL::square(yq) - CGAL::square(wq);
 
         // q is hiding p1
         if (CGAL::sign(aq) != POSITIVE){
-            // I BELIEVE MENELAOS RETURNS -1 in this case even when degernate 
+            // I BELIEVE MENELAOS RETURNS -1 in this case even when degernate
             //if (sign (aq) == ZERO && ! perturb) return ZERO;
 
-	  //return NEGATIVE;
-	  return POSITIVE;
+          //return NEGATIVE;
+          return POSITIVE;
         }
 
         RT x2 = p2.x() - p1.x();
-	RT y2 = p2.y() - p1.y();
-	RT w2 = p2.weight() - p1.weight();
+        RT y2 = p2.y() - p1.y();
+        RT w2 = p2.weight() - p1.weight();
         RT a2 = CGAL::square(x2) + CGAL::square(y2) - CGAL::square(w2);
 
         CGAL_assertion (a2 > 0);
 
         RT x3 = p3.x() - p1.x();
-	RT y3 = p3.y() - p1.y();
-	RT w3 = p3.weight() - p1.weight();
+        RT y3 = p3.y() - p1.y();
+        RT w3 = p3.weight() - p1.weight();
         RT a3 = CGAL::square(x3) + CGAL::square(y3) - CGAL::square(w3);
 
         CGAL_assertion (a3 > 0);
 
-        RT ax3q = a3 * xq - x3 * aq; 
+        RT ax3q = a3 * xq - x3 * aq;
         RT ax2q = a2 * xq - x2 * aq;
         RT ax23 = a2 * x3 - x2 * a3;
 
@@ -125,14 +125,14 @@ private:
             Sign orient1 = CGAL::sign(ax23);
 
             Sign power_test =
-	      ( orient1 == ZERO ?
-		(CGAL::sign(ay23) * CGAL::sign(ayw23q)) :
-		(orient1 * CGAL::sign(axw23q))
-		);
+              ( orient1 == ZERO ?
+                (CGAL::sign(ay23) * CGAL::sign(ayw23q)) :
+                (orient1 * CGAL::sign(axw23q))
+                );
 
             if (power_test != ZERO || !perturb) {
-	      return -power_test;
-	    }
+              return -power_test;
+            }
 
             int i = max_radius (p1, p2, p3, q);
 
@@ -156,30 +156,30 @@ private:
 
             return i == 0 ? NEGATIVE : POSITIVE;
         }
- 
 
-        // radical side 
+
+        // radical side
         RT rs23q = ax23 * axw23q + ay23 * ayw23q;
         Sign radSide = CGAL::sign(rs23q);
 
         if (radSide == ZERO || radSide != orient) { return orient; }
-       
+
         // radical intersection
         Sign radInt =
-	  CGAL::sign(CGAL::square(axw23q) + CGAL::square(ayw23q)
-		     - CGAL::square( axy23q));
+          CGAL::sign(CGAL::square(axw23q) + CGAL::square(ayw23q)
+                     - CGAL::square( axy23q));
 
         // radical intersection degenerate
         if (radInt == ZERO) {
             Sign radSideQ = CGAL::sign(ax23 * axw23q + ay23 * ayw23q);
-            
+
             CGAL_assertion (radSideQ != ZERO);
 
             if (!perturb) { return (radSideQ == orient) ? ZERO : orient; }
 
             int i = max_radius (p1, p2, p3, q);
 
-            if (i == 3) { 
+            if (i == 3) {
                 radInt = radSideQ;
             } else if (i == 2) {
                 radInt = -CGAL::sign(ax2q * axw23q + ay2q * ayw23q);
@@ -198,34 +198,34 @@ private:
                 radInt = Sign (-(radSideQ + radSide1 + radSide2));
             }
         }
-        
+
         CGAL_assertion (!perturb || radInt != ZERO);
 
         if (radInt == NEGATIVE) { return orient; }
-        
+
         return -radSide;
     }
-    
+
 
     inline
-    Sign predicate(const Site_2 &p1, const Site_2 &p2, 
-		   const Site_2 &q, bool perturb) const
+    Sign predicate(const Site_2 &p1, const Site_2 &p2,
+                   const Site_2 &q, bool perturb) const
     {
         // NOTE:***************************************
-        // * the perturb boolean variable is not used 
+        // * the perturb boolean variable is not used
         // * for consistancy with Menelaos
         // NOTE:***************************************
         RT x2 = p2.x() - p1.x();
-	RT y2 = p2.y() - p1.y();
-	RT w2 = p2.weight() - p1.weight();
+        RT y2 = p2.y() - p1.y();
+        RT w2 = p2.weight() - p1.weight();
         RT xq =  q.x() - p1.x();
-	RT yq =  q.y() - p1.y();
-	RT wq =  q.weight() - p1.weight();
+        RT yq =  q.y() - p1.y();
+        RT wq =  q.weight() - p1.weight();
 
         RT xw2q = x2 * wq - xq * w2;
         RT yw2q = y2 * wq - yq * w2;
         RT xy2q = x2 * yq - xq * y2;
-        
+
         // orientation
         Sign orient = CGAL::sign(xy2q);
 
@@ -237,7 +237,7 @@ private:
             Sign power_test;
             if (o12 != ZERO) {
                 power_test = o12 * CGAL::sign(xw2q);
-                 
+
                 // this results is consistant with Menelaos
                 if (power_test != ZERO) { return -power_test; }
 
@@ -264,7 +264,7 @@ private:
             return NEGATIVE;
         }
 
-        // radical side 
+        // radical side
         RT rs12q = x2 * xw2q + y2 * yw2q;
         Sign radSide = CGAL::sign(rs12q);
 
@@ -274,24 +274,24 @@ private:
 
         // radical intersection
         Sign radInt =
-	  CGAL::sign(CGAL::square(xw2q) + CGAL::square(yw2q)
-		     - CGAL::square(xy2q));
+          CGAL::sign(CGAL::square(xw2q) + CGAL::square(yw2q)
+                     - CGAL::square(xy2q));
 
         // radical intersection degerate
         if (radInt == ZERO) {
             CGAL_assertion (radSide != ZERO);
-            
+
             // this result is consistant with the perturb on off idea
             //if (! perturb) return (radSide == orient) ? ZERO : orient;
 
             RT rs2q1 = (p2.x() - q.x()) * xw2q + (p2.y() - q.y()) * yw2q;
             Sign radSide1 = CGAL::sign(rs2q1);
             if (radSide1 == ZERO) { return NEGATIVE; }
-            
+
             RT rsq12 = xq * xw2q + yq * yw2q;
             Sign radSide2 = CGAL::sign(rsq12);
             if (radSide2 == ZERO) { return NEGATIVE; }
- 
+
             return -(radSide1 * radSide2);
         }
 
@@ -305,9 +305,9 @@ public:
     inline
     Sign operator()(const Site_2 &p1, const Site_2 &p2,
                     const Site_2 &p3, const Site_2 &q,
-		    bool perturb = true) const
-    {	
-        Sign newPred = predicate(p1, p2, p3, q, perturb);	
+                    bool perturb = true) const
+    {
+        Sign newPred = predicate(p1, p2, p3, q, perturb);
         CGAL_assertion (!perturb || newPred != ZERO);
         return newPred;
     }
@@ -316,7 +316,7 @@ public:
     Sign operator()(const Site_2 &p1, const Site_2 &p2,
                     const Site_2 &q, bool perturb = true) const
     {
-        Sign newPred = predicate(p1, p2, q, perturb);	
+        Sign newPred = predicate(p1, p2, q, perturb);
         CGAL_assertion (!perturb || newPred != ZERO);
         return newPred;
     }

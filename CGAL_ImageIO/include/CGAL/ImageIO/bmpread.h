@@ -49,7 +49,7 @@ int readRgb(FILE *fp, RGB *rgb, int numBytes);
 int readColorTable(FILE *fp, RGB *rgb, int numEntries, int numBytesPerEntry);
 
 int readBitsUncompressed(FILE *fp, RGB *image, int width, int height,
-			 int depth, RGB* colorTable);
+                         int depth, RGB* colorTable);
 int readMaskBitsUncompressed(FILE *fp, char *image, int width, int height);
 
 void reflectYRGB(RGB *image, int width, int height);
@@ -60,12 +60,12 @@ void reflectYchar(char *image, int width, int height);
  */
 int readSingleImageBMP(FILE *fp, RGB **argb, CGAL_UINT32 *width, CGAL_UINT32 *height);
 int readSingleImageICOPTR(FILE *fp, char **xorMask, char **andMask,
-		          CGAL_UINT32 *width, CGAL_UINT32 *height);
+                          CGAL_UINT32 *width, CGAL_UINT32 *height);
 int readSingleImageColorICOPTR(FILE *fp, RGB **argb, char **xorMask,
-			       char **andMask, CGAL_UINT32 *width, CGAL_UINT32 *height);
+                               char **andMask, CGAL_UINT32 *width, CGAL_UINT32 *height);
 int readMultipleImage(FILE *fp, RGB ***argbs, char ***xorMasks,
-		      char ***andMasks, CGAL_UINT32 **widths, CGAL_UINT32 **heights,
-		      int *imageCount);
+                      char ***andMasks, CGAL_UINT32 **widths, CGAL_UINT32 **heights,
+                      int *imageCount);
 
 #ifdef CGAL_HEADER_ONLY
 #include <CGAL/ImageIO/bmpread_impl.h>

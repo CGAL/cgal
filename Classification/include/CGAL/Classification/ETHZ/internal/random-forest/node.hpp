@@ -57,7 +57,7 @@ public:
     typedef ParamT ParamType;
     ParamType const* params;
     Splitter splitter;
-    
+
     boost::scoped_ptr<Derived> left;
     boost::scoped_ptr<Derived> right;
     std::vector<float> node_dist;
@@ -68,7 +68,7 @@ public:
     {}
 
     bool pure(DataView2D<int> labels, int* sample_idxes) const {
-        if (n_samples < 2) 
+        if (n_samples < 2)
             return true; // an empty node is by definition pure
         int first_sample_idx = sample_idxes[0];
         int seen_class = labels(first_sample_idx, 0);
@@ -87,7 +87,7 @@ public:
 
     int partition_samples(DataView2D<FeatureType> samples, int* sample_idxes) {
         // sort samples in bag so that left-samples precede right-samples
-        // works like std::partition 
+        // works like std::partition
         int low  = 0;
         int high = n_samples;
 
@@ -154,8 +154,8 @@ public:
         std::vector<uint64_t> classes_r;
 
         // pass information about data to split generator
-        split_generator.init(samples, 
-                             labels, 
+        split_generator.init(samples,
+                             labels,
                              sample_idxes,
                              n_samples,
                              params->n_classes,
@@ -164,7 +164,7 @@ public:
         size_t n_proposals = split_generator.num_proposals();
 
         std::pair<FeatureType, float> results; // (threshold, loss)
-        
+
         for (size_t i_proposal = 0; i_proposal < n_proposals; ++i_proposal) {
             // generate proposal
             Splitter split = split_generator.gen_proposal(gen);
@@ -182,13 +182,13 @@ public:
     }
 
     template<typename SplitGenerator>
-    void train(DataView2D<FeatureType> samples, 
-               DataView2D<int> labels, 
-               int* sample_idxes, 
-               size_t n_samples_, 
+    void train(DataView2D<FeatureType> samples,
+               DataView2D<int> labels,
+               int* sample_idxes,
+               size_t n_samples_,
                SplitGenerator const& split_generator,
                RandomGen& gen
-               ) 
+               )
     {
         n_samples = n_samples_;
         node_dist.resize(params->n_classes, 0.0f);
@@ -210,7 +210,7 @@ public:
             return;
         }
 
-        is_leaf = false; 
+        is_leaf = false;
 
 #if VERBOSE_NODE_LEARNING
         std::printf("Determining the best split at depth %zu/%zu\n", depth, params->max_depth);
@@ -228,20 +228,20 @@ public:
         int offset_right    = low;
 #ifdef TREE_GRAPHVIZ_STREAM
         if (depth <= TREE_GRAPHVIZ_MAX_DEPTH) {
-            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this       
-                << " -> " 
-                << "p" << std::hex << (unsigned long)left.get() 
+            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this
+                << " -> "
+                << "p" << std::hex << (unsigned long)left.get()
                 << std::dec << " [label=\"" << n_samples_left << "\"];" <<  std::endl;
-            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this       
-                << " -> " 
-                << "p" << std::hex << (unsigned long)right.get() 
+            TREE_GRAPHVIZ_STREAM << "p" << std::hex << (unsigned long)this
+                << " -> "
+                << "p" << std::hex << (unsigned long)right.get()
                 << std::dec << " [label=\"" << n_samples_right << "\"];" << std::endl;
         }
 #endif
         // train left and right side of split
         left->train (samples, labels, sample_idxes + offset_left,  n_samples_left,  split_generator, gen);
         right->train(samples, labels, sample_idxes + offset_right, n_samples_right, split_generator, gen);
-    } 
+    }
 
     template <typename Archive>
     void serialize(Archive& ar, unsigned /*version*/)
@@ -258,7 +258,7 @@ public:
           ar & BOOST_SERIALIZATION_NVP(right);
         }
     }
-  
+
     void get_feature_usage (std::vector<std::size_t>& count) const
     {
       if (!is_leaf)

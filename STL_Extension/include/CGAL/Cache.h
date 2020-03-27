@@ -133,28 +133,28 @@ public:
     //! Returns an Iterator pointing to the end of the cache.
     Iterator end() { return map.end(); }
 
-    //!	Returns a Const_iterator pointing to the beginning of the cache.
+    //!        Returns a Const_iterator pointing to the beginning of the cache.
     Const_iterator begin() const { return map.begin(); }
 
     //! Returns a Const_iterator pointing to the end of the cache.
     Const_iterator end() const { return map.end(); }
 
-    /*!	\brief Returns a Reverse_iterator pointing to the beginning of the
+    /*!        \brief Returns a Reverse_iterator pointing to the beginning of the
      *  reversed cache.
      */
     Reverse_iterator rbegin() { return map.rbegin(); }
 
-    /*!	\brief Returns a Reverse_iterator pointing to the end of the reversed
+    /*!        \brief Returns a Reverse_iterator pointing to the end of the reversed
      *  cache.
      */
     Reverse_iterator rend() { return map.rend(); }
 
-    /*!	\brief Returns a Const_reverse_iterator pointing to the beginning of
+    /*!        \brief Returns a Const_reverse_iterator pointing to the beginning of
      *  the reversed cache.
      */
     Const_reverse_iterator rbegin() const { return map.rbegin(); }
 
-    /*!	\brief Returns a Const_reverse_iterator pointing to the end of the
+    /*!        \brief Returns a Const_reverse_iterator pointing to the end of the
      *  reversed cache.
      */
     Const_reverse_iterator rend() const { return map.rend(); }

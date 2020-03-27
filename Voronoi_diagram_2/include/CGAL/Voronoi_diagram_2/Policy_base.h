@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -124,8 +124,8 @@ public:
 template<class DG, class ERB, class FRB, class SIB, class SRB>
 class Caching_policy_base
   : public Policy_base_base<DG,
-			    Cached_edge_rejector<ERB>,
-			    Cached_face_rejector<FRB> >
+                            Cached_edge_rejector<ERB>,
+                            Cached_face_rejector<FRB> >
 {
 protected:
   typedef ERB   Edge_rejector_base;

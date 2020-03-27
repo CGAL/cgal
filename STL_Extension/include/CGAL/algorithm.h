@@ -1,9 +1,9 @@
-// Copyright (c) 2003  
+// Copyright (c) 2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -55,8 +55,8 @@ namespace cpp11 {
   // boost provides prior, we go with the standard declaration as
   // described in $24.4.4 and forward it to boost prior
   template<typename BidirectionalIterator>
-  BidirectionalIterator prev( BidirectionalIterator x, 
-			      typename std::iterator_traits<BidirectionalIterator>::difference_type n = 1)
+  BidirectionalIterator prev( BidirectionalIterator x,
+                              typename std::iterator_traits<BidirectionalIterator>::difference_type n = 1)
   {
     return boost::prior(x, n);
   }
@@ -66,7 +66,7 @@ namespace cpp11 {
 namespace cpp0x = cpp11;
 
 // copy_n is usually in the STL as well, but not in the official
-// standard. We provide our own copy_n.  It is planned for C++0x. 
+// standard. We provide our own copy_n.  It is planned for C++0x.
 // Our own version is declared deprecated, if std::copy_n is
 // available.
 
@@ -356,10 +356,10 @@ lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last
     produces \c (1):(2):(3)
  */
 template <class InputIterator>
-std::ostream& 
+std::ostream&
 output_range(std::ostream& os,
              InputIterator first, InputIterator beyond,
-             const char* sep = ", ", const char* pre = "", const char* post = "") 
+             const char* sep = ", ", const char* pre = "", const char* post = "")
 {
     InputIterator it = first;
     if (it != beyond) {
@@ -445,12 +445,12 @@ void nth_element(RandomAccessIterator left,
   if(left == right) return; // exit if there is only one element
   while(true) {
     RandomAccessIterator pivot_it = left + ((right - left) / 2);
-    RandomAccessIterator new_pivot_it = 
-      internal::algorithm::partition(left, right, pivot_it, comp);    
+    RandomAccessIterator new_pivot_it =
+      internal::algorithm::partition(left, right, pivot_it, comp);
     if(new_pivot_it == nth) return;
-    if(nth < new_pivot_it) 
+    if(nth < new_pivot_it)
       right = new_pivot_it - 1;
-    else 
+    else
       left = new_pivot_it + 1;
   } // end while(true)
 }

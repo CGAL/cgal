@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
@@ -35,7 +35,7 @@ namespace CGAL {
 template <typename Extended_tag, typename Kernel> class Bounding_box_3;
 
 template <typename Extended_tag, typename Kernel>
-class Bounding_box_3 : 
+class Bounding_box_3 :
 public Box_intersection_d::Box_d< double, 3> {
 
   typedef Box_intersection_d::Box_d< double, 3>  Base;
@@ -47,20 +47,20 @@ public:
   }
 
   Bounding_box_3(double q[3]) : Base(q,q) {}
-    
+
   void extend( const Point_3& p) {
     std::pair<double, double> q[3];
     q[0] = CGAL::to_interval( p.x() );
     q[1] = CGAL::to_interval( p.y() );
     q[2] = CGAL::to_interval( p.z() );
     Base::extend(q);
-  }	
+  }
 };
 
 template <typename Kernel>
-class Bounding_box_3<Tag_true, Kernel> : 
+class Bounding_box_3<Tag_true, Kernel> :
 public Box_intersection_d::Box_d<typename Kernel::FT, 3> {
-  
+
   typedef typename Kernel::FT               FT;
   typedef Box_intersection_d::Box_d<FT, 3>  Base;
   typedef typename Kernel::Point_3          Point_3;
@@ -71,7 +71,7 @@ public:
   Bounding_box_3() : Base(), initialized(false) {}
 
   Bounding_box_3(FT q[3]) : Base(q,q), initialized(true) {}
-    
+
   void extend(FT q[3]) {
     if(initialized)
       Base::extend(q);
@@ -92,9 +92,9 @@ public:
     else {
       initialized = true;
       std::copy( q, q + 3, Base::lo );
-      std::copy( q, q + 3, Base::hi );     
+      std::copy( q, q + 3, Base::hi );
     }
-  }	  
+  }
 };
 
 } //namespace CGAL

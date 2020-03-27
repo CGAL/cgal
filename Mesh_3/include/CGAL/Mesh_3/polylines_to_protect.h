@@ -258,7 +258,7 @@ private:
       CGAL_assertion(max_squared_distance == 0 ||
                      CGAL::squared_distance(g_manip.g[end_v].point,
                                             g_manip.g[v_int].point) <
-                     max_squared_distance);                   
+                     max_squared_distance);
 #endif // no C++ lamdbas
 
     }

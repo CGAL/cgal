@@ -380,7 +380,7 @@ public:
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable: 4003)
-#endif  
+#endif
   BOOST_PARAMETER_MEMBER_FUNCTION(
                                   (Labeled_mesh_domain_3),
                                   static create_gray_image_mesh_domain,
@@ -843,7 +843,7 @@ protected:
                                                       false>           Wrapper;
     return Wrapper(image,
                    transform_fct,
-                   transform_fct(value_outside));
+                   value_outside) ;
   }
 
   template <typename FT, typename FT2, typename Functor>

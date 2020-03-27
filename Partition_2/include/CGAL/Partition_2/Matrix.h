@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -32,12 +32,12 @@
 namespace CGAL {
 
 template <class T>
-class  Matrix : public std::vector< std::vector<T> > 
+class  Matrix : public std::vector< std::vector<T> >
 {
 public:
-   Matrix(std::size_t x = 0, std::size_t y = 0) : 
-      std::vector< std::vector<T> > (x, std::vector<T>(y)), 
-      _rows(x), _columns(y) 
+   Matrix(std::size_t x = 0, std::size_t y = 0) :
+      std::vector< std::vector<T> > (x, std::vector<T>(y)),
+      _rows(x), _columns(y)
    {}
 
    std::size_t rows() const { return _rows; }
@@ -49,15 +49,15 @@ protected:
    std::size_t _columns;
 };
 
-template <class T> 
+template <class T>
 std::ostream& operator<<(std::ostream& os, const Matrix<T>& m)
 {
    typedef typename Matrix<T>::size_type size_type;
 
-   for (size_type i = 0; i < m.rows(); i++) 
+   for (size_type i = 0; i < m.rows(); i++)
    {
       os << std::endl << i << " : ";
-      for (size_type j = 0; j < m.columns(); j++) 
+      for (size_type j = 0; j < m.columns(); j++)
       {
          os << m[i][j] << " ";
       }

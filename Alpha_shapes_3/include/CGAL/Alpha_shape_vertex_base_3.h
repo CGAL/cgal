@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Tran Kai Frank DA
 
@@ -65,10 +65,10 @@ private:
 public:
   Alpha_shape_vertex_base_3()
     : Vb() {}
-  
+
   Alpha_shape_vertex_base_3(const Point& p)
     : Vb(p) {}
-  
+
   Alpha_shape_vertex_base_3(const Point& p, Cell_handle c)
     : Vb(p, c) {}
 

@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,10 +16,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_TRIANGLE_NEW_2_H
 #define CGAL__TEST_CLS_TRIANGLE_NEW_2_H
@@ -32,10 +32,10 @@ _test_cls_triangle_new_2(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
- 
+
  typedef typename R::Point_2 Point_2;
  typedef typename R::Triangle_2 Triangle_2;
- 
+
  typename R::Construct_point_2 construct_point;
  typename R::Triangle_2 it;
  Triangle_2 t0(it); // af:  CGAL::Triangle_2<R> t0(it);

@@ -84,7 +84,7 @@ public:
 
 #ifdef  EXTENDED
 typedef CGAL::Polyhedron_3<CGALKernel,CGAL::Polyhedron_items_with_id_3> Polyhedron;
-#else 
+#else
 typedef CGAL::Polyhedron_3<CGALKernel, MyItems, CGAL::HalfedgeDS_list> Polyhedron;
 #endif
 
@@ -445,12 +445,12 @@ private:
 
     ifs >> P;
       int index = 0 ;
-  
+
   for( Polyhedron::Halfedge_iterator eb = P.halfedges_begin()
      , ee = P.halfedges_end()
      ; eb != ee
      ; ++ eb
-     ) 
+     )
     eb->id() = index++;
 
   index = 0 ;
@@ -458,12 +458,12 @@ private:
      , ve = P.vertices_end()
      ; vb != ve
      ; ++ vb
-     ) 
-    vb->id() = index++; 
+     )
+    vb->id() = index++;
 
   SMS::Count_ratio_stop_predicate<Polyhedron> stop(0.1);
-  int r = SMS::edge_collapse(P, stop); 
-#endif    
+  int r = SMS::edge_collapse(P, stop);
+#endif
   }
 
 };

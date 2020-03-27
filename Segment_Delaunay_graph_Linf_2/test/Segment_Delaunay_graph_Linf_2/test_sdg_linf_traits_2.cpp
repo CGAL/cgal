@@ -1762,7 +1762,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
   test_traits<IT_Ring_Gtwi>("IT Ring WI");
@@ -1773,7 +1773,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
   test_traits<IF_Ring_Gtwi>("IF Ring WI");
@@ -1784,7 +1784,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 #endif
 
@@ -1805,7 +1805,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
 #ifdef CGAL_USE_CORE
@@ -1825,7 +1825,7 @@ int main(int , char**)
 
   std::cout << std::endl;
   std::cout << "************************************"
-	    << "************************************" << std::endl;
+            << "************************************" << std::endl;
   std::cout << std::endl;
 
 

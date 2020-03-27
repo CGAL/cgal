@@ -59,7 +59,7 @@ namespace CGAL {
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
  *  into equally-angled cones.
  *
- * \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` 
+ * \tparam Traits_  Must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
  *                  or `CGAL::Exact_predicates_inexact_constructions_kernel`.
  *
  */

@@ -403,7 +403,7 @@ public:
 #endif
     return (e);
   }
-   
+
   /*! Delete an existing vertex. */
   void delete_vertex (Vertex_handle v)
   {
@@ -414,7 +414,7 @@ public:
 #endif
     vertex_alloc.deallocate (v, 1);
   }
-  
+
   /*! Delete an existing edge. */
   void delete_edge (Edge_handle e)
   {
@@ -425,7 +425,7 @@ public:
 #endif
     edge_alloc.deallocate (e, 1);
   }
-  
+
 private:
   /*!
    * Free all diagram elements.
@@ -453,7 +453,7 @@ private:
         e = NULL;
       }
     }
-     
+
     _leftmostP = NULL;
     _rightmostP = NULL;
   }

@@ -41,7 +41,7 @@ int main()
   for(int j = 0; j < 10; ++j) {
     for(int i = 0; i < N-4; i++){
       res += predicate(points[i], points[i+1], points[i+2], points[i+3]);
-    }  
+    }
   }
   timer.stop();
   std::cout << "result = " << res << std::endl;

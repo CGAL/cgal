@@ -15,7 +15,7 @@ typedef CDTP::Point                                                       Point;
 typedef CDTP::Constraint_id                                               Cid;
 typedef CDTP::Vertex_handle                                               Vertex_handle;
 
-void 
+void
 print(const CDTP& cdtp, Cid cid)
 {
   typedef CDTP::Vertices_in_constraint Vertices_in_constraint;
@@ -30,7 +30,7 @@ print(const CDTP& cdtp, Cid cid)
 }
 
 
-void 
+void
 contexts(const CDTP& cdtp)
 {
   CDTP::Subconstraint_iterator
@@ -43,7 +43,7 @@ contexts(const CDTP& cdtp)
     if(cdtp.number_of_enclosing_constraints(vp, vq) == 2){
       CDTP::Context_iterator cbeg = cdtp.contexts_begin(vp,vq),
         cend = cdtp.contexts_end(vp,vq);
-      std::cout << "subconstraint " << vp->point() << " " << vq->point() 
+      std::cout << "subconstraint " << vp->point() << " " << vq->point()
                 << " is on constraints starting at:\n";
       for(; cbeg !=  cend; ++cbeg){
         CDTP::Context c = *cbeg;

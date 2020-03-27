@@ -1,9 +1,9 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Andreas Fabri and Herve Bronnimann
 
@@ -90,12 +90,12 @@ public:
   const FT & operator[](int i) const;
   const FT & homogeneous(int i) const;
 
-  Cartesian_const_iterator cartesian_begin() const 
+  Cartesian_const_iterator cartesian_begin() const
   {
-    return base.cartesian_begin(); 
+    return base.cartesian_begin();
   }
 
-  Cartesian_const_iterator cartesian_end() const 
+  Cartesian_const_iterator cartesian_end() const
   {
     return base.cartesian_end();
   }

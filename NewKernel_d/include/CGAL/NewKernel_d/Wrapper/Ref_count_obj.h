@@ -42,10 +42,10 @@ namespace CGAL {
 template <class R_, class Tag_>
 class Ref_count_obj
 {
-  typedef typename R_::Kernel_base	Kbase;
+  typedef typename R_::Kernel_base        Kbase;
   typedef typename Get_functor<Kbase, Construct_ttag<Tag_> >::type CBase;
 
-  typedef Ref_count_obj			Self;
+  typedef Ref_count_obj                        Self;
   CGAL_static_assertion((boost::is_same<Self, typename Get_type<R_, Tag_>::type>::value));
 
 public:
@@ -55,7 +55,7 @@ public:
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   //typedef Dimension_tag<0>  Feature_dimension;
 
-  typedef typename Get_type<Kbase, Tag_>::type	Rep;
+  typedef typename Get_type<Kbase, Tag_>::type        Rep;
   typedef Handle_for<Rep> Data;
 
 private:
@@ -69,10 +69,10 @@ public:
 
 #ifdef CGAL_CXX11
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Ref_count_obj> >::value>::type> explicit Ref_count_obj(U&&...u)
-	  : data(Eval_functor(),CBase(),std::forward<U>(u)...){}
+          : data(Eval_functor(),CBase(),std::forward<U>(u)...){}
 
   template<class F,class...U> explicit Ref_count_obj(Eval_functor&&,F&&f,U&&...u)
-	  : data(Eval_functor(),std::forward<F>(f),std::forward<U>(u)...){}
+          : data(Eval_functor(),std::forward<F>(f),std::forward<U>(u)...){}
 
   // try not to use these
   Ref_count_obj(Rep const& v) : data(v) {}

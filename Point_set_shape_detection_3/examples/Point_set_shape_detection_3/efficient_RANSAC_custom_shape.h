@@ -37,7 +37,7 @@ public:
   // Returns a string with shape parameters.
   virtual std::string info() const {
     std::stringstream sstr;
-    sstr << "Type: plane (" << this->get_x(m_normal) << ", " 
+    sstr << "Type: plane (" << this->get_x(m_normal) << ", "
       << this->get_y(m_normal) << ", " << this->get_z(m_normal) << ")x - " <<
       m_d << " = 0" << " #Pts: " << this->m_indices.size();
 
@@ -45,7 +45,7 @@ public:
   }
 
 protected:
-  // Constructs shape based on minimal set of samples from the input data.    
+  // Constructs shape based on minimal set of samples from the input data.
   virtual void create_shape(const std::vector<std::size_t> &indices) {
     const Point p1 = this->point(indices[0]);
     const Point p2 = this->point(indices[1]);

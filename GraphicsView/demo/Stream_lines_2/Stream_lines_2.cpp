@@ -20,7 +20,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
- 
+
 // the two base classes
 #include "ui_Stream_lines_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -44,16 +44,16 @@ class MainWindow :
   public Ui::Stream_lines_2
 {
   Q_OBJECT
-  
-private:  
+
+private:
   Stream_lines * stream_lines;
   Runge_kutta_integrator * runge_kutta_integrator;
   Regular_grid * regular_grid;
   double density;
   double ratio;
   double integrating;
-  int sampling;  
-  QGraphicsScene scene;  
+  int sampling;
+  QGraphicsScene scene;
 
   CGAL::Qt::StreamLinesGraphicsItem<Stream_lines,K> * sli;
   CGAL::Qt::RegularGridVectorFieldGraphicsItem<Regular_grid,K> * rgi;
@@ -92,8 +92,8 @@ MainWindow::MainWindow()
   // Manual handling of actions
   //
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   //
   // Setup the scene and the view
@@ -104,7 +104,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -116,15 +116,15 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
+          this, SLOT(open(QString)));
 }
 
 
 
-/* 
+/*
  *  Qt Automatic Connections
  *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -146,7 +146,7 @@ MainWindow::generate()
   rgi = new CGAL::Qt::RegularGridVectorFieldGraphicsItem<Regular_grid, K>(regular_grid);
 
   QObject::connect(this, SIGNAL(changed()),
-		   sli, SLOT(modelChanged()));
+                   sli, SLOT(modelChanged()));
 
 
   rgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
@@ -165,8 +165,8 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open grid file"),
-						  ".");
+                                                  tr("Open grid file"),
+                                                  ".");
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -203,7 +203,7 @@ MainWindow::open(QString fileName)
   //  actionRecenter->trigger();
   generate();
   Q_EMIT( changed());
-    
+
 }
 
 void
@@ -211,11 +211,11 @@ MainWindow::on_actionSavePoints_triggered()
 {
   /*
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
-						  ".");
+                                                  tr("Save points"),
+                                                  ".");
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-  
+
   }
   */
 }
@@ -225,7 +225,7 @@ void
 MainWindow::on_actionRecenter_triggered()
 {
   this->graphicsView->setSceneRect(rgi->boundingRect());
-  this->graphicsView->fitInView(rgi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(rgi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 

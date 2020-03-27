@@ -30,11 +30,6 @@
 
 #include <CGAL/basic.h>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <boost/unordered_map.hpp>
 #include <CGAL/internal/Periodic_3_triangulation_iterators_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_vertex_base_3.h>
@@ -56,6 +51,13 @@
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
+
+#include <boost/random/linear_congruential.hpp>
+#include <boost/random/uniform_smallint.hpp>
+#include <boost/random/variate_generator.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/utility/result_of.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <iostream>
 #include <algorithm>
@@ -659,7 +661,8 @@ public:
   // but       point()          -like functions have return type Point
 
   template<typename P> // can be Point or Point_3
-  Point_3 construct_point(const P& p) const {
+  typename boost::result_of<const typename GT::Construct_point_3(const P&)>::type
+  construct_point(const P& p) const {
     return geom_traits().construct_point_3_object()(p);
   }
 

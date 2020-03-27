@@ -275,7 +275,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       std::cout << "\rOrientation of patch #" << (i + 1) << " done";
 
       if(!no_duplicates) //collect duplicates
-      { 
+      {
         for (std::size_t i = nbp_init; i < points.size(); ++i)
           *out++ = points[i];
         std::cout << " (non manifold -> "

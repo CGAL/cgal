@@ -142,6 +142,6 @@ int main()
           std::back_inserter(segments));
     std::cout << segments.size() << " alpha shape edges." << std::endl;
   }
-  
+
   return 0;
 }

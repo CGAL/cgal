@@ -95,7 +95,7 @@ public:
     m_point[2] = c;
 
     m_edge = 0;
-    
+
     typename Kernel::Compute_squared_distance_3 squared_distance;
     FT length_max = squared_distance(m_point[1](), m_point[2]());
     FT length1 = squared_distance(m_point[2](), m_point[0]());

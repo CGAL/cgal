@@ -50,7 +50,7 @@ bool test_torus_connected_component() {
     FT spacing = (FT) 1;
 
     filter_by_distance(pl, spacing * FT(0.5), points);
-    
+
     Efficient_ransac ransac;
 
 
@@ -80,7 +80,7 @@ bool test_torus_connected_component() {
     }
 
     typename Efficient_ransac::Shape_range shapes = ransac.shapes();
-    
+
     if (i < NB_ROUNDS/2 && shapes.size() != 1)
       continue;
 
@@ -105,7 +105,7 @@ int main() {
   bool success = true;
 
   std::cout << "test_torus_connected_component<CGAL::Simple_cartesian<float>> ";
-  if (!test_torus_connected_component<CGAL::Simple_cartesian<float> >()) 
+  if (!test_torus_connected_component<CGAL::Simple_cartesian<float> >())
     success = false;
 
   std::cout << "test_torus_connected_component<CGAL::Simple_cartesian<double>> ";
@@ -113,7 +113,7 @@ int main() {
     success = false;
 
   std::cout << "test_torus_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel> ";
-  if (!test_torus_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel>()) 
+  if (!test_torus_connected_component<CGAL::Exact_predicates_inexact_constructions_kernel>())
     success = false;
 
   return (success) ? EXIT_SUCCESS : EXIT_FAILURE;

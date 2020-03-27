@@ -19,8 +19,8 @@ int main()
   indices.push_back(2);
   indices.push_back(3);
   indices.push_back(4);
-  indices.push_back(5);  
-  
+  indices.push_back(5);
+
   std::vector<Point> points;
   points.push_back(Point(0,0));
   points.push_back(Point(1,0));
@@ -29,15 +29,15 @@ int main()
   points.push_back(Point(2,2));
   points.push_back(Point(-1,0));
 
-  
-  
+
+
   Delaunay T;
   T.insert( boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin() )),
             boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )  );
 
   CGAL_assertion( T.number_of_vertices() == 6 );
-  
-  
+
+
   // check that the info was correctly set.
   Delaunay::Finite_vertices_iterator vit;
   for (vit = T.finite_vertices_begin(); vit != T.finite_vertices_end(); ++vit)

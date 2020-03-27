@@ -14,10 +14,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//                 Michael Hemmer <hemmer@informatik.uni-mainz.de> 
+//                 Michael Hemmer <hemmer@informatik.uni-mainz.de>
 //
 // ============================================================================
 
@@ -72,17 +72,17 @@ public:
                 const Type& p,
                 Numerator_type& num,
                 Denominator_type& den){
-            
+
             typedef Numerator_type INTPOLY;
             typedef Denominator_type DENOM;
-            
+
             typedef Fraction_traits<Coefficient_type> CFTRAITS;
             typedef typename CFTRAITS::Numerator_type INTCOEFF;
 
             const int d = p.degree();
             std::vector<INTCOEFF> integ(d+1);
             std::vector<DENOM> denom(d+1);
-  
+
             int i;
 
             // decompose each coefficient into integral part and denominator
@@ -99,12 +99,12 @@ public:
             for (i = 1; i <= d; i++) {
                 den *= idiv(denom[i], gcd(den, denom[i]));
             }
-            
+
             // expand each (integ, denom) pair to common denominator
             for (i = 0; i <= d; i++) {
                 integ[i] *= INTCOEFF(idiv(den, denom[i]));
             }
-            num =  INTPOLY(integ.begin(), integ.end());    
+            num =  INTPOLY(integ.begin(), integ.end());
         }
     };
 
@@ -115,15 +115,15 @@ public:
         typedef Type result_type;
         inline Type operator () (const Numerator_type& n,
                                  const Denominator_type& d){
-            typename Fraction_traits<NT_>::Compose comp_coeff; 
+            typename Fraction_traits<NT_>::Compose comp_coeff;
             (void)comp_coeff;
-            
+
             std::vector< NT_> coeffs(n.degree()+1);
-            
+
             for (int i = 0; i <= n.degree(); i++) {
                 coeffs[i] = comp_coeff(n[i], d);
             }
-            
+
             return Type(coeffs.begin(), coeffs.end());
         };
     };

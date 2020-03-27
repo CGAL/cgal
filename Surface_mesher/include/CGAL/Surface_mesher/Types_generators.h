@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -36,28 +36,28 @@ namespace CGAL {
         typedef typename Base::Complex_2_in_triangulation_3 C2T3;
         typedef typename C2T3::Triangulation Triangulation;
       public:
-	typedef Triangulation Type;
-	typedef Type type;
+        typedef Triangulation Type;
+        typedef Type type;
       }; // end Triangulation_generator<Base>
 
       template <typename Base>
       class Facet_generator {
         typedef typename Triangulation_generator<Base>::type Tr;
       public:
-	typedef typename Tr::Facet Type;
-	typedef Type type;
+        typedef typename Tr::Facet Type;
+        typedef Type type;
       }; // end Facet_generator<Base>
 
       template <typename Base>
       class Edge_generator {
         typedef typename Triangulation_generator<Base>::type Tr;
       public:
-	typedef typename Tr::Edge Type;
-	typedef Type type;
+        typedef typename Tr::Edge Type;
+        typedef Type type;
       }; // end Edge_generator<Base>
 
       template <typename Base, typename Self, typename Element,
-		typename PreviousLevel = Null_mesher_level>
+                typename PreviousLevel = Null_mesher_level>
       class Mesher_level_generator {
         typedef typename Base::Complex_2_in_triangulation_3 C2T3;
         typedef typename C2T3::Triangulation Triangulation;

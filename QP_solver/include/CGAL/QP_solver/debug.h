@@ -15,12 +15,12 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
-//                 Franz Wessendorp 
-//                 Kaspar Fischer 
+//                 Franz Wessendorp
+//                 Kaspar Fischer
 
 #ifndef CGAL_QP_DEBUG_H
 #define CGAL_QP_DEBUG_H

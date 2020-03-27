@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
-// 
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -35,9 +35,9 @@ namespace CGAL {
 
 // traverses the range [|first|,|last|). After execution, the value of |n| is
 // an iterator in the range such that |*n| $\ge_{\rm yx}$ |*it| for
-// all iterators |it| in the range. Similarly, for |s|, |w|, and |e| 
+// all iterators |it| in the range. Similarly, for |s|, |w|, and |e|
 // the inequations |*s| $\le_{\rm yx}$ |*it|, |*w| $\le_{\rm xy}$ |*it|,
-// and |*e| $\ge_{\rm yx}$ |*it| hold respectively for all iterators 
+// and |*e| $\ge_{\rm yx}$ |*it| hold respectively for all iterators
 // |it| in the range.
 // {\sc traits}: uses |Traits::Less_xy_2| and |Traits::Less_yx_2|.
 template <class ForwardIterator, class Traits>
@@ -122,7 +122,7 @@ ch_we_point( ForwardIterator first, ForwardIterator last,
 
 // traverses the range [|first|,|last|). After execution, the value of |n| is
 // an iterator in the range such that |*n| $\ge_{\rm yx}$ |*it| for
-// all iterators |it| in the range. 
+// all iterators |it| in the range.
 // {\sc traits}: uses |Traits::Less_yx_2|.
 template <class ForwardIterator, class Traits>
 void
@@ -145,7 +145,7 @@ ch_n_point( ForwardIterator first, ForwardIterator last, ForwardIterator& n)
 
 // traverses the range [|first|,|last|). After execution, the value of |s| is
 // an iterator in the range such that |*s| $\le_{\rm yx}$ |*it| for
-// all iterators |it| in the range. 
+// all iterators |it| in the range.
 // {\sc traits}: uses |Traits::Less_yx_2|.
 template <class ForwardIterator, class Traits>
 void

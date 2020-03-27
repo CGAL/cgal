@@ -30,7 +30,7 @@
 namespace CGAL {
 
 namespace Classification {
-  
+
 /*!
 \ingroup PkgClassificationLabel
 
@@ -42,11 +42,11 @@ class Label_set
 {
   typedef std::vector<Label_handle> Base;
   Base m_labels;
-  
+
 public:
-  
+
   Label_set() { }
-  
+
   /// \cond SKIP_IN_MANUAL
   virtual ~Label_set() { }
   /// \endcond
@@ -75,7 +75,7 @@ public:
 
     \return `true` if the label was correctly removed,
     `false` if its handle was not found.
-  */ 
+  */
   bool remove (Label_handle label)
   {
     std::size_t idx = (std::size_t)(-1);
@@ -94,15 +94,15 @@ public:
 
   /*!
     \brief Returns how many labels are defined.
-  */  
+  */
   std::size_t size () const
   {
     return m_labels.size();
   }
-  
+
   /*!
     \brief Returns the \f$i^{th}\f$ label.
-  */  
+  */
   Label_handle operator[] (std::size_t i) const
   {
     return m_labels[i];

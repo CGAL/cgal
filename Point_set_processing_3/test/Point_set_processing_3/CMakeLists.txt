@@ -58,8 +58,8 @@ if ( CGAL_FOUND )
   else()
     include( ${EIGEN3_USE_FILE} )
   endif()
-  
-  
+
+
   if(EIGEN3_FOUND OR LAPACK_FOUND)
     # Executables that require Eigen or BLAS and LAPACK
     create_single_source_cgal_program( "normal_estimation_test.cpp" )

@@ -1594,7 +1594,7 @@ protected:
     X_monotone_curve_2* p_cv = &cv;
 #ifdef CGAL_CXX11
     std::allocator_traits<Curves_alloc>::destroy(m_curves_alloc, p_cv);
-#else      
+#else
     m_curves_alloc.destroy(p_cv);
 #endif
     m_curves_alloc.deallocate(p_cv, 1);

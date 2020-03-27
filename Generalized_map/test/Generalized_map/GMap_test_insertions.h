@@ -306,42 +306,42 @@ bool test_face_insertion(GMAP& gmap)
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<GMAP, 1>(gmap2, d1)!=3)
   {
     std::cout<<"Error: 1-degree is wrong: "<<CGAL::degree<GMAP, 1>(gmap2, d1)<<" instead of 3."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::degree<GMAP, 2>(gmap2, d1)!=2)
   {
     std::cout<<"Error: 2-degree is wrong: "<<CGAL::degree<GMAP, 2>(gmap2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 1>(gmap2, d1)!=2)
   {
     std::cout<<"Error: 1-codegree is wrong: "<<CGAL::codegree<GMAP, 1>(gmap2, d1)<<" instead of 2."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 2>(gmap2, d1)!=4)
   {
     std::cout<<"Error: 2-codegree is wrong: "<<CGAL::codegree<GMAP, 2>(gmap2, d1)<<" instead of 4."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   if (CGAL::codegree<GMAP, 3>(gmap2, d1)!=6)
   {
     std::cout<<"Error: 3-codegree is wrong: "<<CGAL::codegree<GMAP, 3>(gmap2, d1)<<" instead of 6."<<std::endl;
     assert(false);
     return false;
   }
-  
+
   gmap.clear(); v.clear();
 
   return true;

@@ -16,7 +16,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0+
-// 
+//
 //
 // Author(s)     : Sylvain Pion
 
@@ -43,7 +43,7 @@ const double trunc_min = double(-base)*(base/2)/double(base-1);
 // We face portability issues with the ISO C99 functions "nearbyint",
 // so I re-implement it for my need.
 template < typename T >
-inline 
+inline
 int my_nearbyint(const T& d)
 {
   int z = int(d);
@@ -289,7 +289,7 @@ INTERN_MP_FLOAT::square(const MP_Float &a)
       if (tmp > 0 && tmp0 < 0 && tmp1 < 0)
       {
         // If my calculations are correct, this case should never happen.
-	CGAL_error();
+        CGAL_error();
       }
       else if (tmp < 0 && tmp0 > 0 && tmp1 > 0)
         carry2 = 1;
