@@ -24,7 +24,7 @@ namespace CGAL {
 namespace Classification {
 
 namespace Feature {
-  
+
   /*!
     \ingroup PkgClassificationFeatures
 
@@ -46,7 +46,7 @@ namespace Feature {
     Its default name is "color_hue", "color_saturation" or
     "color_value", depending on which channel is chosen in the
     constructor.
-    
+
     \note The user only needs to provide a map to standard (and more common)
     RGB colors, the conversion to HSV is done internally.
 
@@ -72,13 +72,13 @@ public:
   };
 
 private:
-  
+
   const PointRange& input;
   ColorMap color_map;
   Channel m_channel;
-  
+
 public:
-  
+
   /*!
     \brief Constructs a feature based on the given color channel.
 

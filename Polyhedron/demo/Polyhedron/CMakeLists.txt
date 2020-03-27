@@ -54,7 +54,7 @@ list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # Find CGAL
 
-option( POLYHEDRON_QTSCRIPT_DEBUGGER 
+option( POLYHEDRON_QTSCRIPT_DEBUGGER
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
 # Find Qt5 itself
@@ -148,7 +148,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     NO_DEFAULT_PATH
     NO_CMAKE_FIND_ROOT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
-  
+
   if(CGAL_THREE_HEADERS_PATH)
     qt5_generate_moc( "${CGAL_THREE_HEADERS_PATH}/CGAL/Three/Viewer_interface.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
@@ -258,7 +258,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )
   add_item(scene_image_item Scene_image_item.cpp)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
-  
+
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_surface_mesh_item)
   endif()
@@ -266,7 +266,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_item_decorator PUBLIC scene_surface_mesh_item)
- 
+
   add_item(scene_k_ring_selection Plugins/PMP/Scene_facegraph_item_k_ring_selection.cpp)
   target_link_libraries(scene_k_ring_selection PUBLIC scene_surface_mesh_item)
 
@@ -280,7 +280,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(scene_shortest_path_item PUBLIC scene_item_decorator scene_surface_mesh_item scene_polylines_item)
 
   add_item(scene_movable_sm_item Plugins/AABB_tree/Scene_movable_sm_item.cpp)
-  
+
   if(EIGEN3_FOUND )
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp texture.cpp)
     CGAL_target_use_Eigen(scene_textured_item)
@@ -302,12 +302,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
 
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   target_link_libraries(scene_nef_polyhedron_item PUBLIC scene_surface_mesh_item)
-  
+
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   if (EIGEN3_FOUND)
     CGAL_target_use_Eigen(scene_points_with_normal_item)
   endif()
-  
+
   find_package(LASLIB)
   if (LASLIB_FOUND)
     CGAL_target_use_LASLIB(scene_points_with_normal_item)
@@ -315,17 +315,17 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
       target_compile_definitions( scene_points_with_normal_item PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
     endif()
   endif()
-  
+
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_points_with_normal_item)
   endif()
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
   target_link_libraries(scene_polylines_item PUBLIC scene_basic_objects scene_points_with_normal_item)
-  
+
   add_item(scene_lcc_item Scene_lcc_item.cpp)
-  
-  foreach( lib 
+
+  foreach( lib
       demo_framework
       scene_basic_objects
       scene_color_ramp
@@ -341,7 +341,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
     File_loader_dialog_moc.cpp
     Use_ssh.cpp
     ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES}
-    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} 
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES}
     ${statisticsUI_FILES} ${SubViewerUI_files})
   target_link_libraries(polyhedron_demo PUBLIC
     demo_framework point_dialog Qt5::Gui Qt5::OpenGL Qt5::Widgets Qt5::Script)

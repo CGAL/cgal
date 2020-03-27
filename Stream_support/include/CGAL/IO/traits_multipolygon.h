@@ -32,6 +32,6 @@ struct tag<CGAL::internal::Geometry_container<R, multi_polygon_tag> >
 }//end geometry
 }//end boost
 
-#endif 
+#endif
 #endif
 

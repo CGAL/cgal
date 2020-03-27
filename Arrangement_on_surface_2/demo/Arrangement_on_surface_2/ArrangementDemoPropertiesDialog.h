@@ -49,7 +49,7 @@ class ArrangementDemoPropertiesDialog : public QDialog
 protected:
   void setupUi( );
   void updateUi( );
-    
+
   ArrangementDemoWindow* parent;
   Ui::ArrangementDemoPropertiesDialog* ui;
 }; // class ArrangementDemoPropertiesDialog

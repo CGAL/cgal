@@ -33,13 +33,13 @@ struct Wrapper
 {
   typedef int return_type;
   typedef typename K::Point_3 Point_3;
-  
+
   Wrapper(const Implicit_function_interface& f) : f_(f) {}
   return_type operator()(const Point_3& p, const bool=true) const
   {
     return (f_(p.x(),p.y(),p.z()) < 0) ? 1 : 0;
   }
-  
+
 private:
   const Implicit_function_interface& f_;
 };
@@ -69,7 +69,7 @@ typedef CGAL::Compact_mesh_cell_base_3<Robust_K, Polyhedral_mesh_domain>    Cell
 typedef CGAL::Triangulation_cell_base_with_info_3<int, Robust_K, Cell_base> Cell_base_with_info;
 
 #ifdef CGAL_CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain, 
+  typedef CGAL::Mesh_triangulation_3<Polyhedral_mesh_domain,
                                      Robust_intersections_traits,
                                      CGAL::Parallel_tag,
                                      CGAL::Default,

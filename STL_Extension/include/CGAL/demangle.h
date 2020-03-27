@@ -29,7 +29,7 @@ inline std::string demangle(const char* name)
   return boost::units::detail::demangle(name);
 #endif
 }
-  
+
 
 } //namespace CGAL
 

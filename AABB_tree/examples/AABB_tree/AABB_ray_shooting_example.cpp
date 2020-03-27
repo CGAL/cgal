@@ -38,7 +38,7 @@ struct Skip {
     };
     return(t == fd);
   }
-  
+
 };
 
 int main(int argc, char* argv[])
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   Mesh mesh;
   input >> mesh;
   Tree tree(faces(mesh).first, faces(mesh).second, mesh);
-  
+
   double d = CGAL::Polygon_mesh_processing::is_outward_oriented(mesh)?-1:1;
 
   for(face_descriptor fd : faces(mesh)){
@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
     Point p = CGAL::centroid(mesh.point(source(hd,mesh)),
                              mesh.point(target(hd,mesh)),
                              mesh.point(target(next(hd,mesh),mesh)));
-    Vector v = CGAL::Polygon_mesh_processing::compute_face_normal(fd,mesh);	
-    
+    Vector v = CGAL::Polygon_mesh_processing::compute_face_normal(fd,mesh);
+
     Ray ray(p,d * v);
     Skip skip(fd);
     Ray_intersection intersection = tree.first_intersection(ray, skip);

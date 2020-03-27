@@ -26,20 +26,20 @@ int main() {
     std::cout << " start with an " << std::endl;
     CGAL_forall_sface_cycles_of(it,sf) {
       if (it.is_svertex()) {
-	std::cout << "  svertex at position ";
-	std::cout << SVertex_const_handle(it)->point() << std::endl;
+        std::cout << "  svertex at position ";
+        std::cout << SVertex_const_handle(it)->point() << std::endl;
       }
       else if (it.is_shalfedge()) {
-	std::cout << "  shalfedge from ";
-	std::cout << SHalfedge_const_handle(it)->source()->point() << " to ";
-	std::cout << SHalfedge_const_handle(it)->target()->point() << std::endl;
+        std::cout << "  shalfedge from ";
+        std::cout << SHalfedge_const_handle(it)->source()->point() << " to ";
+        std::cout << SHalfedge_const_handle(it)->target()->point() << std::endl;
       }
       else if (it.is_shalfloop()) {
-	std::cout << "  shalfloop lying in the plane ";
-	std::cout << SHalfloop_const_handle(it)->circle() << std::endl;
+        std::cout << "  shalfloop lying in the plane ";
+        std::cout << SHalfloop_const_handle(it)->circle() << std::endl;
       }
       else
-	std::cout << "something is wrong" << std::endl;
+        std::cout << "something is wrong" << std::endl;
     }
   }
   return 0;

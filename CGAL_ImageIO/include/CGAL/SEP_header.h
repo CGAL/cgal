@@ -50,7 +50,7 @@ struct SEP_header_aux
   Int_dict int_dict;
   Double_dict double_dict;
   String_dict string_dict;
-  
+
 public:
   template <typename Tuple_string_variant>
   SEP_header_aux& operator<<(const Tuple_string_variant& tuple)
@@ -105,7 +105,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 namespace CGAL {
 
 class SEP_header {
-  
+
   boost::array<std::size_t, 3> _n;
   boost::array<double, 3> _d;
   boost::array<double, 3> _o;
@@ -119,7 +119,7 @@ public:
   SEP_header(std::string fileName) : _dim(-1) {
     std::ifstream input(fileName.c_str());
     if(!input) {
-      std::cerr << "Error: cannot open the header file \"" 
+      std::cerr << "Error: cannot open the header file \""
                 << fileName << "\"!\n";
       return;
     }
@@ -164,7 +164,7 @@ public:
     else return it->second;
   }
   /// @}
-  
+
   /// non-const getters
   /// @{
   double& get_o(int i) { return _o[i-1]; }

@@ -1,12 +1,12 @@
 // Copyright (c) 2005-2008 Fernando Luis Cacciola Carballal.
-// All rights reserved. 
+// All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Sylvain Pion, Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 

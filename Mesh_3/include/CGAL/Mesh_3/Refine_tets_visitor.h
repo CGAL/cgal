@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -29,7 +29,7 @@ namespace Mesh_3 {
     class Refine_facets_visitor {
       Refine_tets* refine_tets;
       Previous_level* previous;
-      
+
     public:
       typedef typename Tr::Vertex_handle Vertex_handle;
       typedef typename Tr::Cell_handle Cell_handle;
@@ -41,7 +41,7 @@ namespace Mesh_3 {
       typedef Previous_level Previous_visitor;
 
       Refine_facets_visitor(Refine_tets* refine_tets_,
-			    Previous_visitor* p)
+                            Previous_visitor* p)
         : refine_tets(refine_tets_), previous(p), active_(false)
       {
       }
@@ -52,7 +52,7 @@ namespace Mesh_3 {
       template <typename E, typename P>
       void before_insertion(const E&,
                             const P&,
-                            Zone& zone) 
+                            Zone& zone)
       {
         if ( active_ )
           refine_tets->before_insertion_handle_cells_in_conflict_zone(zone);
@@ -71,20 +71,20 @@ namespace Mesh_3 {
       {
         return *previous;
       }
-      
+
       void activate()
       {
         active_=true;
       }
-      
+
       bool is_active() const
       {
         return active_;
       }
-      
+
     private:
       bool active_;
-      
+
     }; // end class Refine_facets_visitor
 
   } // end namespace Mesh_3::tets

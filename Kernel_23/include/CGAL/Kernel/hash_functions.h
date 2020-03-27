@@ -6,10 +6,10 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Simon Giraudot
- 
+
 #ifndef CGAL_KERNEL_HASH_FUNCTIONS_H
 #define CGAL_KERNEL_HASH_FUNCTIONS_H
 

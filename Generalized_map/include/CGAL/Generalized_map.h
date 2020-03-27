@@ -905,7 +905,7 @@ namespace CGAL {
     bool belong_to_same_cell(Dart_const_handle adart1,
                              Dart_const_handle adart2) const
     { return CGAL::belong_to_same_cell<Self, i, d>(*this, adart1, adart2); }
-  
+
     template <unsigned int i, unsigned int d=dimension>
     bool is_whole_cell_unmarked(Dart_const_handle adart, size_type amark) const
     { return CGAL::is_whole_cell_unmarked<Self, i, d>(*this, adart, amark); }
@@ -1726,16 +1726,16 @@ namespace CGAL {
     {
       CGAL_assertion((!this->template is_free<1>(d1)));
       /* CGAL_assertion((belong_to_same_cell<0>(this->next(d1), d2))); */
-      
+
       if (d2==opposite2(d1)) { return 0; }
-      
+
       Dart_const_handle dd1=d1;
       std::size_t res=1;
       while (next(dd1)!=d2)
       {
         if (this->template is_free<2>(next(dd1)))
         { return std::numeric_limits<std::size_t>::max(); }
-        
+
         ++res;
         dd1=opposite2(next(dd1));
 
@@ -1768,7 +1768,7 @@ namespace CGAL {
 
         ++res;
         dd1=opposite2(previous(dd1));
-        
+
         CGAL_assertion(!this->template is_free<0>(dd1));
         CGAL_assertion(previous(dd1)==d2 || dd1!=d1);
       }

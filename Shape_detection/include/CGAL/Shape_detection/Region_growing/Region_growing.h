@@ -29,19 +29,19 @@ namespace Shape_detection {
 
   /*!
     \ingroup PkgShapeDetectionRG
-    
+
     \brief Main class/entry point for running the region growing algorithm.
 
     This version of the region growing algorithm enables to detect regions in a set
-    of user-defined items 
-    - given a way to access neighbors of each item via the `NeighborQuery` parameter class and 
+    of user-defined items
+    - given a way to access neighbors of each item via the `NeighborQuery` parameter class and
     - control if items form a valid region type via the `RegionType` parameter class,
     - the `SeedMap` property map enables to define the seeding order of items and skip unnecessary items.
-    
-    \tparam InputRange 
+
+    \tparam InputRange
     must be a model of `ConstRange`.
 
-    \tparam NeighborQuery 
+    \tparam NeighborQuery
     must be a model of `NeighborQuery`.
 
     \tparam RegionType
@@ -52,8 +52,8 @@ namespace Shape_detection {
     %Default is `CGAL::Identity_property_map`.
   */
   template<
-  typename InputRange, 
-  typename NeighborQuery, 
+  typename InputRange,
+  typename NeighborQuery,
   typename RegionType,
   typename SeedMap = CGAL::Identity_property_map<std::size_t> >
   class Region_growing {
@@ -76,34 +76,34 @@ namespace Shape_detection {
 
     /*!
       \brief initializes the region growing algorithm.
-      
-      \param input_range 
+
+      \param input_range
       a range of input items for region growing
 
-      \param neighbor_query 
-      an instance of `NeighborQuery` that is used internally to 
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
       access item's neighbors
 
-      \param region_type 
-      an instance of `RegionType` that is used internally to 
+      \param region_type
+      an instance of `RegionType` that is used internally to
       control if items form a valid region type
 
-      \param seed_map 
-      an instance of `SeedMap` property map that is used internally to 
-      set the order of items in the region growing processing queue. If it maps 
+      \param seed_map
+      an instance of `SeedMap` property map that is used internally to
+      set the order of items in the region growing processing queue. If it maps
       to `std::size_t(-1)`, the corresponding item is skipped.
 
       \pre `input_range.size() > 0`
     */
     Region_growing(
-      const InputRange& input_range, 
-      NeighborQuery& neighbor_query, 
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query,
       RegionType& region_type,
       const SeedMap seed_map = SeedMap()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_region_type(region_type),
-    m_seed_map(seed_map) { 
+    m_seed_map(seed_map) {
 
       CGAL_precondition(input_range.size() > 0);
       clear();
@@ -111,14 +111,14 @@ namespace Shape_detection {
 
     /// @}
 
-    /// \name Detection 
+    /// \name Detection
     /// @{
 
     /*!
-      \brief runs the region growing algorithm and fills an output iterator 
+      \brief runs the region growing algorithm and fills an output iterator
       with the found regions.
 
-      \tparam OutputIterator 
+      \tparam OutputIterator
       must be an output iterator whose value type is `std::vector<std::size_t>`.
 
       \param regions
@@ -149,9 +149,9 @@ namespace Shape_detection {
           propagate(seed_index, region);
 
           // Check global conditions.
-          if (!m_region_type.is_valid_region(region)) 
+          if (!m_region_type.is_valid_region(region))
             revert(region);
-          else 
+          else
             *(regions++) = region;
         }
       }
@@ -161,15 +161,15 @@ namespace Shape_detection {
     /// @}
 
     /// \name Unassigned Items
-    /// @{  
+    /// @{
 
     /*!
       \brief fills an output iterator with indices of all unassigned items.
-      
-      \tparam OutputIterator 
+
+      \tparam OutputIterator
       must be an output iterator whose value type is `std::size_t`.
 
-      \param output 
+      \param output
       an output iterator that stores indices of all items, which are not assigned
       to any region
 
@@ -177,7 +177,7 @@ namespace Shape_detection {
     */
     template<typename OutputIterator>
     OutputIterator unassigned_items(OutputIterator output) const {
-      
+
       // Return indices of all unassigned items.
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
         const std::size_t seed_index = get(m_seed_map, i);
@@ -189,7 +189,7 @@ namespace Shape_detection {
         CGAL_precondition(
           seed_index >= 0 && seed_index < m_input_range.size());
 
-        if (!m_visited[seed_index]) 
+        if (!m_visited[seed_index])
           *(output++) = seed_index;
       }
       return output;
@@ -199,7 +199,7 @@ namespace Shape_detection {
 
     /// \cond SKIP_IN_MANUAL
     void clear() {
-                
+
       m_visited.clear();
       m_visited.resize(m_input_range.size(), false);
     }
@@ -232,7 +232,7 @@ namespace Shape_detection {
 
       Indices neighbors;
       while (
-        !running_queue[depth_index].empty() || 
+        !running_queue[depth_index].empty() ||
         !running_queue[!depth_index].empty()) {
 
         // Call the next item index of the queue and remove it from the queue.
@@ -253,7 +253,7 @@ namespace Shape_detection {
           CGAL_precondition(
             neighbor_index >= 0 && neighbor_index < m_input_range.size());
 
-          if (!m_visited[neighbor_index] && 
+          if (!m_visited[neighbor_index] &&
             m_region_type.is_part_of_region(item_index, neighbor_index, region)) {
 
             // Add this neighbor to the other queue so that we can visit it later.

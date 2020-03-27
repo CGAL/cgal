@@ -25,8 +25,8 @@ This chapter presents a framework for alpha shapes. The description is based on
 the articles \cgalCite{em-tdas-94}, \cgalCite{e-was-92}. Alpha shapes are
 the generalization of the convex hull of a point set. Let \f$ S\f$ be a finite set of
 points in \f$ \mathbb{R}^d\f$, \f$ d = 2,3\f$ and \f$ \alpha\f$ a parameter with \f$ 0 \leq \alpha \leq
-\infty\f$. For \f$ \alpha = \infty\f$, the \f$ \alpha\f$-shape is the convex hull of \f$ S\f$. As 
-\f$ \alpha\f$ decreases, the \f$ \alpha\f$-shape shrinks and develops cavities, as soon as 
+\infty\f$. For \f$ \alpha = \infty\f$, the \f$ \alpha\f$-shape is the convex hull of \f$ S\f$. As
+\f$ \alpha\f$ decreases, the \f$ \alpha\f$-shape shrinks and develops cavities, as soon as
 a sphere of radius \f$ \sqrt{\alpha}\f$ can be put inside.
 Finally, for \f$ \alpha = 0\f$, the \f$ \alpha\f$-shape is the set \f$ S\f$ itself.
 
@@ -34,9 +34,9 @@ We distinguish two versions of alpha shapes, one is based on the Delaunay
 triangulation and the other on its generalization, the regular triangulation,
 replacing the natural distance by the power to weighted points. The metric used
 determines an underlying triangulation of the alpha shape and thus, the version
-computed. 
+computed.
 The <I>basic alpha shape</I> (cf.  \ref I1_SectClassicAS2D) is associated with the Delaunay triangulation
-(cf. Section \ref Section_2D_Triangulations_Delaunay "Delaunay Triangulations"). 
+(cf. Section \ref Section_2D_Triangulations_Delaunay "Delaunay Triangulations").
 The <I>weighted alpha shape</I> (cf.  \ref I1_SectWeightedAS2D ) is associated with the regular triangulation
 (cf. Section \ref Section_2D_Triangulations_Regular "Regular Triangulations").
 

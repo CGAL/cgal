@@ -18,8 +18,8 @@ typedef CGAL::Cartesian_d<double> Kernel_d;
 typedef Kernel_d::Point_d Point_d;
 
 bool is_in_convex_hull (const Point_d& p,
-			std::vector<Point_d>::const_iterator begin,
-			std::vector<Point_d>::const_iterator end)
+                        std::vector<Point_d>::const_iterator begin,
+                        std::vector<Point_d>::const_iterator end)
 {
   CGAL::Quadratic_program_solution<ET> s =
     solve_convex_hull_containment_lp (p, begin, end, ET(0));
@@ -37,7 +37,7 @@ int main()
     for (int j=0; j<=10; ++j) {
       // (i,j) is in the simplex iff i+j <= 10
       bool contained = is_in_convex_hull
-	(Point_d (i, j), points.begin(), points.end());
+        (Point_d (i, j), points.begin(), points.end());
       assert (contained == (i+j<=10));
     }
 

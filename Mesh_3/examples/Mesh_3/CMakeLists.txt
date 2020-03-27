@@ -29,7 +29,7 @@ if ( CGAL_FOUND )
   option(CGAL_ACTIVATE_CONCURRENT_MESH_3
     "Activate parallelism in Mesh_3"
     OFF)
-    
+
   # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
   if( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
     add_definitions( -DCGAL_CONCURRENT_MESH_3 )
@@ -42,14 +42,14 @@ if ( CGAL_FOUND )
       find_package( TBB )
     endif( LINK_WITH_TBB )
   endif()
-  
+
   # Use Eigen
   find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
   if (NOT EIGEN3_FOUND)
     message(STATUS "This project requires the Eigen library, and will not be compiled.")
     return()
   endif()
-  
+
   find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
   if(VTK_FOUND)
     if(VTK_USE_FILE)
@@ -71,58 +71,58 @@ if ( CGAL_FOUND )
     # Compilable examples
     create_single_source_cgal_program( "mesh_hybrid_mesh_domain.cpp" )
     CGAL_target_use_Eigen(mesh_hybrid_mesh_domain)
-    
+
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
     CGAL_target_use_Eigen(mesh_implicit_sphere)
-    
+
     create_single_source_cgal_program( "mesh_implicit_sphere_variable_size.cpp" )
     CGAL_target_use_Eigen(mesh_implicit_sphere_variable_size)
-    
+
     create_single_source_cgal_program( "mesh_two_implicit_spheres_with_balls.cpp" )
     CGAL_target_use_Eigen(mesh_two_implicit_spheres_with_balls)
-    
+
     create_single_source_cgal_program( "mesh_implicit_domains_2.cpp" "implicit_functions.cpp" )
     CGAL_target_use_Eigen(mesh_implicit_domains_2)
-    
+
     create_single_source_cgal_program( "mesh_cubes_intersection.cpp" )
     CGAL_target_use_Eigen(mesh_cubes_intersection)
-    
+
     create_single_source_cgal_program( "mesh_cubes_intersection_with_features.cpp" )
     CGAL_target_use_Eigen(mesh_cubes_intersection_with_features)
-    
+
     create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
     CGAL_target_use_Eigen(mesh_implicit_domains)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_domain)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_domain_sm.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_domain_sm)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_surface_inside.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_domain_with_surface_inside)
-    
+
     create_single_source_cgal_program( "remesh_polyhedral_surface.cpp" )
     CGAL_target_use_Eigen(remesh_polyhedral_surface)
-    
+
     create_single_source_cgal_program( "remesh_polyhedral_surface_sm.cpp" )
     CGAL_target_use_Eigen(remesh_polyhedral_surface_sm)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_domain_with_features)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features_sm.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_domain_with_features_sm)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_lipschitz_sizing.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_domain_with_lipschitz_sizing)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_complex.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_complex)
-    
+
     create_single_source_cgal_program( "mesh_polyhedral_complex_sm.cpp" )
     CGAL_target_use_Eigen(mesh_polyhedral_complex_sm)
-    
+
     if( WITH_CGAL_ImageIO )
       if( VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5) )
         add_executable ( mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp )
@@ -131,16 +131,16 @@ if ( CGAL_FOUND )
         cgal_add_test( mesh_3D_gray_vtk_image )
         add_to_cached_list( CGAL_EXECUTABLE_TARGETS mesh_3D_gray_vtk_image )
       endif()
- 
+
       create_single_source_cgal_program( "mesh_3D_gray_image.cpp" )
       CGAL_target_use_Eigen(mesh_3D_gray_image)
-      
+
       create_single_source_cgal_program( "mesh_3D_gray_image_multiple_values.cpp" )
       CGAL_target_use_Eigen(mesh_3D_gray_image_multiple_values)
-      
+
       create_single_source_cgal_program( "mesh_3D_image_with_features.cpp" )
       CGAL_target_use_Eigen(mesh_3D_image_with_features)
-      
+
       if( CGAL_ImageIO_USE_ZLIB )
         create_single_source_cgal_program( "mesh_optimization_example.cpp" )
         CGAL_target_use_Eigen(mesh_optimization_example)
@@ -150,7 +150,7 @@ if ( CGAL_FOUND )
 
         create_single_source_cgal_program( "mesh_3D_image.cpp" )
         CGAL_target_use_Eigen(mesh_3D_image)
-        
+
         create_single_source_cgal_program( "mesh_3D_image_with_custom_initialization.cpp" )
         CGAL_target_use_Eigen(mesh_3D_image_with_custom_initialization)
 
@@ -162,7 +162,7 @@ if ( CGAL_FOUND )
     else()
       message( STATUS "NOTICE: Some examples need the CGAL_ImageIO library, and will not be compiled." )
     endif()
-    
+
 #    create_single_source_cgal_program( "mesh_polyhedral_implicit_function.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_surface_tolerance_region.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_edge_tolerance_region.cpp" )

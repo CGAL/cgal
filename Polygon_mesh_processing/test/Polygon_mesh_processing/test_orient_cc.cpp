@@ -24,7 +24,7 @@ bool test_orientation(const TriangleMesh& tm, bool is_positive, const NamedParam
 
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
-  
+
   Vpm vpm = choose_parameter(get_parameter(np, CGAL::internal_np::vertex_point),
                              CGAL::get_const_property_map(boost::vertex_point, tm));
 

@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Wieger Wesselink <wieger@cs.ruu.nl>
 
@@ -84,14 +84,14 @@ class Polygon_2_const_edge_circulator {
     {
       Vertex_const_circulator second_vertex = first_vertex;
       ++second_vertex;
-      typename Traits::Construct_segment_2 construct_segment_2 = 
+      typename Traits::Construct_segment_2 construct_segment_2 =
             Traits().construct_segment_2_object();
-      const_cast<Polygon_2_const_edge_circulator*>(this)->segment = 
+      const_cast<Polygon_2_const_edge_circulator*>(this)->segment =
           construct_segment_2(*first_vertex, *second_vertex);
       return segment;
     }
 
-    const Segment_2* operator->() const 
+    const Segment_2* operator->() const
     {
       return &(**this);
     }

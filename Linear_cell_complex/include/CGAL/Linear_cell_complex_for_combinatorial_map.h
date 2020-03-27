@@ -111,7 +111,7 @@ namespace CGAL {
       Linear_cell_complex_for_combinatorial_map
       (const Linear_cell_complex_for_combinatorial_map<d2, ambient_dim2,
        Traits2, Items2, Alloc2, CMap2, Storage2>& alcc) : Base(alcc)
-      {}      
+      {}
 
       template <unsigned int d2,  unsigned int ambient_dim2, class Traits2,
                 class Items2, class Alloc2,
@@ -153,7 +153,7 @@ namespace CGAL {
         Base::operator=(alcc);
         return *this;
       }
-      
+
       /** Import the given hds which should be a model of an halfedge graph. */
       template<class HEG, class PointConverter>
       void import_from_halfedge_graph(const HEG& heg              ,

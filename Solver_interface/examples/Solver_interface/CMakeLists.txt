@@ -36,7 +36,7 @@ if ( CGAL_FOUND )
       find_package( GLPK QUIET)
 
       if (GLPK_FOUND)
-        
+
         CGAL_target_use_GLPK(mixed_integer_program)
         message("GLPK found and used")
 
@@ -50,8 +50,8 @@ if ( CGAL_FOUND )
   endif()
 
 else()
-  
+
     message(STATUS "NOTICE: This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

@@ -37,7 +37,7 @@ template <class GPS>
 void test()
 {
   typedef typename GPS::Traits_2                        Traits;
-  typedef typename Traits::Point_2                      Point_2; 
+  typedef typename Traits::Point_2                      Point_2;
   typedef typename Traits::Polygon_2                    Polygon_2;
   typedef typename Traits::Polygon_with_holes_2         Polygon_with_holes_2;
 
@@ -91,7 +91,7 @@ void test()
   gps.do_intersect(polygons.begin(), polygons.end());
 
   gps.do_intersect(polygons_with_holes.begin(), polygons_with_holes.end());
-  
+
   gps.do_intersect(polygons.begin(), polygons.end(),
                    polygons_with_holes.begin(), polygons_with_holes.end());
 
@@ -122,7 +122,7 @@ void test()
   CGAL::do_intersect(polygons.begin(), polygons.end(),
                      polygons_with_holes.begin(), polygons_with_holes.end(), tr);
 
-  
+
 
   CGAL::intersection(pgn1, pgn2, std::back_inserter(result));
   CGAL::intersection(pgn1, pgn_with_holes2, std::back_inserter(result));

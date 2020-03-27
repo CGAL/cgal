@@ -61,7 +61,7 @@ int main()
     PMP::isotropic_remeshing(faces(om),
                              0.02,
                              om);
-    
+
     om.garbage_collection();
     OpenMesh::IO::write_mesh(om, "pm.off");
   }
@@ -77,7 +77,7 @@ int main()
     PMP::isotropic_remeshing(faces(om),
                              0.02,
                              om);
-    
+
     om.garbage_collection();
     OpenMesh::IO::write_mesh(om, "tm.off");
   }

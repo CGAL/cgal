@@ -376,21 +376,21 @@ public:
     std::allocator_traits<Edge_allocator>::construct(edge_alloc, e);
     return (e);
   }
-   
+
   /*! Delete an existing vertex. */
   void delete_vertex (Vertex_handle v)
   {
     std::allocator_traits<Vertex_allocator>::destroy(vertex_alloc, v);
     vertex_alloc.deallocate (v, 1);
   }
-  
+
   /*! Delete an existing edge. */
   void delete_edge (Edge_handle e)
   {
     std::allocator_traits<Edge_allocator>::destroy(edge_alloc, e);
     edge_alloc.deallocate (e, 1);
   }
-  
+
 private:
   /*!
    * Free all diagram elements.
@@ -418,7 +418,7 @@ private:
         e = nullptr;
       }
     }
-     
+
     _leftmostP = nullptr;
     _rightmostP = nullptr;
   }

@@ -19,7 +19,7 @@
 
 namespace CGAL {
 
-  namespace internal 
+  namespace internal
   {
     template<typename Point>
     struct Get_point
@@ -35,7 +35,7 @@ namespace CGAL {
       { return p.point(); }
     };
   }
-  
+
   /** Convert a given Triangulation_3 into a 3D linear cell complex.
    * @param alcc the used linear cell complex.
    * @param atr the Triangulation_3.

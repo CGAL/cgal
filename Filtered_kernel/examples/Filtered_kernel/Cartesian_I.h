@@ -1,9 +1,9 @@
-// Copyright (c) 2000,2001,2002,2003  
+// Copyright (c) 2000,2001,2002,2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -42,8 +42,8 @@ public:
     {
       Object o = typename K::Intersect_2()(s1, s2);
       if(! o.is_empty()){
-	*it = o;
-	it++;
+        *it = o;
+        it++;
       }
 
       return it;
@@ -83,7 +83,7 @@ struct Cartesian_base_ref_count_I
 
 
   CGAL_Kernel_cons(Intersect_with_iterators_2,
-  		 intersect_with_iterators_2_object)
+                   intersect_with_iterators_2_object)
 #include <CGAL/Kernel/interface_macros.h>
 
     template<typename A, typename B>

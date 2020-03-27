@@ -19,7 +19,7 @@ namespace po = boost::program_options;
 
 using namespace CGAL::parameters;
 
-// Domain 
+// Domain
 // (we use exact intersection computation with Robust_intersection_traits_3)
 struct K: public CGAL::Exact_predicates_inexact_constructions_kernel {};
 typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Geom_traits;
@@ -58,14 +58,14 @@ int main(int argc, char** argv)
   po::options_description generic("Generic options");
   generic.add_options() ("help", "Produce help message");
   generic.add_options()("file", po::value<std::string>(), "Mesh polyhedron contained in that file");
-  
+
   po::options_description mesh("Mesh generation parameters");
   mesh.add_options()("facet_angle", po::value<double>(), "Set facet angle bound")
   ("facet_size", po::value<double>(), "Set facet size bound")
   ("facet_error", po::value<double>(), "Set facet approximation error bound")
   ("tet_shape", po::value<double>(), "Set tet radius-edge bound")
   ("tet_size", po::value<double>(), "Set tet size bound");
-  
+
   po::options_description desc("Options");
   desc.add_options()
   ("exude", po::value<double>(), "Exude mesh after refinement. arg is time_limit.")
@@ -78,36 +78,36 @@ int main(int argc, char** argv)
   ("off_vertices", "Use polyhedron vertices as initialization step")
   ("no_label_rebind", "Don't rebind cell labels in medit output")
   ("show_patches", "Show surface patches in medit output");
-  
-  
+
+
   po::options_description cmdline_options("Usage");
   cmdline_options.add(generic).add(mesh).add(desc);
-  
+
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, cmdline_options), vm);
   po::notify(vm);
-  
+
   if (vm.count("help") || argc < 2)
-  {    
+  {
     std::cout << cmdline_options << std::endl;
     return 1;
   }
-  
+
   std::cout << "=========== Params ==========="<< std::endl;
-  
+
   double facet_angle = set_arg<double>("facet_angle","Facet angle",vm);
   double facet_size = set_arg<double>("facet_size","Facet size",vm);
   double facet_error = set_arg<double>("facet_error","Facet approximation error",vm);
-  
+
   double tet_shape = set_arg<double>("tet_shape","Tet shape (radius-edge)",vm);
   double tet_size = set_arg<double>("tet_size","Tet size",vm);
-  
+
   std::cout << std::endl;
   std::string polyhedron_filename = set_arg<std::string>("file", "Filename", vm);
-  
+
   std::cout << "=============================="<< std::endl;
   std::cout << std::endl;
-  
+
   if ( polyhedron_filename.empty() )
   {
     std::cout << "No file selected. Exit.\n";
@@ -118,12 +118,12 @@ int main(int argc, char** argv)
   Polyhedron polyhedron;
   std::ifstream input(polyhedron_filename.c_str());
   input >> polyhedron;
-  
+
   using std::atof;
-  
+
   // Domain
   Mesh_domain domain(polyhedron);
-  
+
   // Mesh criteria
   Facet_criteria facet_criteria(facet_angle,
                                 facet_size,
@@ -131,7 +131,7 @@ int main(int argc, char** argv)
   Cell_criteria cell_criteria(tet_shape,
                               tet_size); // radius-edge ratio, size
   Mesh_criteria criteria(facet_criteria, cell_criteria);
-  
+
   // Mesh generation
   C3t3 c3t3;
   if ( !vm.count("off_vertices") )
@@ -142,16 +142,16 @@ int main(int argc, char** argv)
   {
     c3t3.insert_surface_points(polyhedron.points_begin(),
                                polyhedron.points_end(),
-                               domain.make_surface_index());    
-    
+                               domain.make_surface_index());
+
     CGAL::refine_mesh_3<C3t3>(c3t3, domain, criteria, no_exude(), no_perturb());
   }
-  
+
   // Output
   std::ofstream medit_file_before("out_before.mesh");
   c3t3.output_to_medit(medit_file_before,
                        vm.count("no_label_rebind") == 0, vm.count("show_patches") > 0);
-  
+
   // Odt
   if (  vm.count("odt") )
   {
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
                               sliver_bound=vm["min_displacement"].as<double>(),
                               time_limit=vm["time_limit"].as<double>());
   }
-  
+
   // Lloyd
   if ( vm.count("lloyd") )
   {
@@ -171,19 +171,19 @@ int main(int argc, char** argv)
                                 sliver_bound=vm["min_displacement"].as<double>(),
                                 time_limit=vm["time_limit"].as<double>());
   }
-  
+
   // Perturbation
   if ( vm.count("perturb") )
   {
     CGAL::perturb_mesh_3(c3t3, domain, time_limit = vm["perturb"].as<double>() );
   }
-  
+
   // Exudation
   if ( vm.count("exude") )
-  { 
+  {
     CGAL::exude_mesh_3(c3t3, time_limit = vm["exude"].as<double>());
   }
-  
+
   double min_angle = 181.;
   for ( C3t3::Cell_iterator cit = c3t3.cells_begin() ;
        cit != c3t3.cells_end() ;
@@ -192,9 +192,9 @@ int main(int argc, char** argv)
     min_angle = (std::min)(min_angle,
                            CGAL::to_double(CGAL::Mesh_3::minimum_dihedral_angle(c3t3.triangulation().tetrahedron(cit))));
   }
-  
+
   std::cerr << "Min angle: " << min_angle << std::endl;
-  
+
 
   // Output
   std::ofstream medit_file("out.mesh");

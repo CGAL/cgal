@@ -103,13 +103,13 @@ public:
 public Q_SLOTS:
   // File menu
   void on_actionSave_triggered();
-  void on_actionLoad_triggered();  
+  void on_actionLoad_triggered();
   void on_actionImportOFF_triggered();
   void on_actionImport3DTDS_triggered();
   void on_actionImportMoka_triggered();
   void on_actionCompute_Voronoi_3D_triggered();
   void on_actionClear_triggered();
-  
+
   // Creations menu
   Dart_handle on_actionCreate_cube_triggered();
   void on_actionCreate3Cubes_triggered();
@@ -152,7 +152,7 @@ public Q_SLOTS:
   void onHeaderClicked(int);
 
   void onCreateMeshOk();
-  
+
   void onMengerInc();
   void onMengerDec();
   void onMengerChange(int);
@@ -182,7 +182,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   void sceneChanged();
-  
+
 protected:
   void clear_all();
   void on_new_volume(Dart_handle adart);

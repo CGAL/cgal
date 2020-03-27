@@ -5,7 +5,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 // Author(s)     : Fernando Cacciola <fernando_cacciola@ciudad.com.ar>
 //
 #ifndef CGAL_STRAIGHT_SKELETON_ITEMS_2_H
@@ -29,20 +29,20 @@ public:
   {
     typedef typename Traits::RT RT ;
     typedef typename Traits::Point_2 Point ;
-    typedef Straight_skeleton_vertex_base_2 < Refs, Point, RT > Vertex; 
+    typedef Straight_skeleton_vertex_base_2 < Refs, Point, RT > Vertex;
   };
-  
-  template<class Refs, class Traits> 
+
+  template<class Refs, class Traits>
   struct Halfedge_wrapper
   {
     typedef typename Traits::Segment_2 Segment ;
-    typedef Straight_skeleton_halfedge_base_2 < Refs, Segment > Halfedge; 
+    typedef Straight_skeleton_halfedge_base_2 < Refs, Segment > Halfedge;
   };
-  
-  template<class Refs, class Traits> 
-  struct Face_wrapper 
+
+  template<class Refs, class Traits>
+  struct Face_wrapper
   {
-    typedef Straight_skeleton_face_base_2 < Refs > Face; 
+    typedef Straight_skeleton_face_base_2 < Refs > Face;
   } ;
 };
 
@@ -50,4 +50,4 @@ public:
 
 #endif // CGAL_STRAIGHT_SKELETON_ITEMS_2_H //
 // EOF //
- 
+

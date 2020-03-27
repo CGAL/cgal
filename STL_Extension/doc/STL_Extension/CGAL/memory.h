@@ -1,6 +1,6 @@
 #include <memory>
 
-/** 
+/**
  * \ingroup PkgSTLExtensionRef
  *
  * A define for the allocator used by %CGAL. This is only defined if

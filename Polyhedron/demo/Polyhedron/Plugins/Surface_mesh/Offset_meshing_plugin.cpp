@@ -11,7 +11,7 @@
 #include <QtPlugin>
 #include <QThread>
 #include "Scene_surface_mesh_item.h"
-#include "Scene_polygon_soup_item.h" 
+#include "Scene_polygon_soup_item.h"
 #include <QInputDialog>
 #include <QStringList>
 #include <QMessageBox>
@@ -199,7 +199,7 @@ public:
     return m_offset_distance - distance;
   }
 
-}; // end class Polygon_soup_offset_function 
+}; // end class Polygon_soup_offset_function
 
 } //end of CGAL namespace
 
@@ -317,7 +317,7 @@ SMesh* cgal_off_meshing(QWidget*,
     {
       CGAL::Polygon_mesh_processing::reverse_face_orientations(*pRemesh);
     }
-    
+
     return pRemesh;
   }
   else
@@ -326,7 +326,7 @@ SMesh* cgal_off_meshing(QWidget*,
 
 struct Mesher_thread:public QThread{
   Q_OBJECT
-  
+
 private:
   SMesh* sMesh;
   Scene_polygon_soup_item* soup_item;
@@ -503,7 +503,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
                                approx,
                                tag_index);
   connect(worker, &QThread::finished, worker, &QObject::deleteLater);
-  connect(worker, &Mesher_thread::resultReady, this, 
+  connect(worker, &Mesher_thread::resultReady, this,
           [item, angle, sizing, approx, offset_value, index]
           (SMesh *new_mesh){
     QApplication::restoreOverrideCursor();
@@ -523,7 +523,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
     item->setVisible(false);
     CGAL::Three::Three::scene()->itemChanged(index);
     QApplication::restoreOverrideCursor();
-    
+
   });
   QMessageBox* message_box = new QMessageBox(QMessageBox::NoIcon,
                                              "Meshing",
@@ -543,7 +543,7 @@ void Polyhedron_demo_offset_meshing_plugin::offset_meshing()
   connect(worker, &Mesher_thread::finished,
           message_box, &QMessageBox::close);
   message_box->open();
-  
+
   QApplication::setOverrideCursor(Qt::BusyCursor);
   worker->start();
 }

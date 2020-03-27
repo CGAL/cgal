@@ -7,18 +7,18 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Convex_hull_3/degeneracy_test.C
 // revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Stefan Schirra
 //
-// coordinator   : MPI, Saarbruecken  
+// coordinator   : MPI, Saarbruecken
 // ============================================================================
- 
+
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>

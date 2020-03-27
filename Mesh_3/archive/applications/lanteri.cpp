@@ -51,7 +51,7 @@ public:
     typedef typename Cb::template Rebind_TDS<TDS3>::Other  Cb3;
     typedef Cell_with_volume_index<GT, Cb3> Other;
   };
-    
+
   // Constructors
   Cell_with_volume_index() : Cb(), volume(-1)
   {
@@ -71,7 +71,7 @@ public:
                           Cell_handle n1,
                           Cell_handle n2,
                           Cell_handle n3)
-    : Cb (v0, v1, v2, v3, n0, n1, n2, n3), volume(-1) 
+    : Cb (v0, v1, v2, v3, n0, n1, n2, n3), volume(-1)
   {
   }
 
@@ -80,7 +80,7 @@ public:
   {
     return volume;
   }
-      
+
   void set_volume_index(const int i)
   {
     volume = i;
@@ -145,7 +145,7 @@ int main(int , char**)
   double r1, r2, r3, r4, r5;
   std::vector<double> size_bounds(5);
   std::vector<double> radii(5);
-  
+
   std::cout << "Input r1, r2, r3, r4, r5:" << std::endl;
   std::cin >> r1 >> r2 >> r3 >> r4 >> r5;
   std::cout << "Input the corresponding 5 size bounds:" << std::endl;
@@ -172,7 +172,7 @@ int main(int , char**)
                                  true,         // debug
                                  &std::cerr) ) // debug to cerr
     return EXIT_FAILURE;
-  
+
   display_faces_counts(tr, "    ", &std::cout);
 
   std::cout << "\n  Combinatory statistics:\n";
@@ -189,10 +189,10 @@ int main(int , char**)
       ++cit)
     if(cit->is_in_domain())
     {
-      const double sq_r = 
-        CGAL::squared_distance(K::Point_3(0, 0, 0), 
+      const double sq_r =
+        CGAL::squared_distance(K::Point_3(0, 0, 0),
                                CGAL::centroid(tr.tetrahedron(cit)));
-			    
+
       if( sq_r < r1*r1 )
         cit->set_volume_index(1);
       else if( sq_r < r2*r2 )
@@ -214,7 +214,7 @@ int main(int , char**)
   if(!scan_edges_and_process(tr, size_bounds, filename, "    ", &std::cout))
     return EXIT_FAILURE;
 
-  std::cout << "\n(scan cells)\n";    
+  std::cout << "\n(scan cells)\n";
   if(!scan_cells_and_process(tr, filename, "    ", &std::cout))
     return EXIT_FAILURE;
 

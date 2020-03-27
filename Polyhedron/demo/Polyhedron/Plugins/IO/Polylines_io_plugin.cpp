@@ -75,7 +75,7 @@ public:
     return QList<QAction*>()<<actionSplit_polylines
                             <<actionJoin_polylines;
   }
-  
+
   bool isDefaultLoader(const Scene_item* item) const override{
     if(qobject_cast<const Scene_polylines_item*>(item))
       return true;
@@ -129,7 +129,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
       CGAL::Three::Three::scene()->addItem(item);
     return QList<Scene_item*>()<<item;
   }
-  
+
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   QStringList polylines_metadata;
 

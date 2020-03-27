@@ -35,21 +35,21 @@ typedef PS::Squared_distance_cost Cost;
 void print(const CT& ct, Constraint_id cid)
 {
   std::cout << "simplified polyline" <<std::endl;
-  for(Vertices_in_constraint_iterator vit = 
+  for(Vertices_in_constraint_iterator vit =
         ct.vertices_in_constraint_begin(cid);
       vit != ct.vertices_in_constraint_end(cid);
       ++vit){
     std::cout << (*vit)->point() << std::endl ;
   }
-  
+
   std::cout << "original points" <<std::endl;
-  for(Points_in_constraint_iterator pit = 
+  for(Points_in_constraint_iterator pit =
         ct.points_in_constraint_begin(cid);
       pit != ct.points_in_constraint_end(cid);
       ++pit){
     std::cout << *pit << std::endl ;
   }
-  
+
 }
 
 
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   print(ct, cid);
   PS::simplify(ct, cid, Cost(), Stop(0.5), remove_points);
   ct.remove_points_without_corresponding_vertex(cid);
-  print(ct, cid);  
+  print(ct, cid);
 #else
   ifs.close();
 #endif

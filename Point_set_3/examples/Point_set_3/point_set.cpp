@@ -25,7 +25,7 @@ void print_point_set (const Point_set& point_set)
 int main (int, char**)
 {
   Point_set point_set;
-  
+
   // Add points
   point_set.insert (Point (0., 0., 0.));
   point_set.insert (Point (0., 0., 1.));
@@ -44,7 +44,7 @@ int main (int, char**)
   // Add point + normal
   point_set.insert (Point (1., 2., 3.), Vector (4., 5., 6.));
 
-  print_point_set(point_set); 
+  print_point_set(point_set);
 
   // Add new item
   Point_set::iterator new_item = point_set.insert(Point (7., 8., 9.));
@@ -56,12 +56,12 @@ int main (int, char**)
                     point_set.begin() + 4);
 
   print_point_set(point_set); // New item has default values
-  
+
   // Display information
   std::cerr << "Number of removed points: " <<point_set.number_of_removed_points() << std::endl;
 
   point_set.collect_garbage();
-  
+
   // Display information (garbage should be gone)
   std::cerr << "After garbage collection: " <<point_set.number_of_removed_points() << std::endl;
 

@@ -47,7 +47,7 @@ public:
 
 /// @{
   /// polygon without hole type
-  typedef Polygon_							General_polygon_2;
+  typedef Polygon_                                                        General_polygon_2;
 /// @}
 
   typedef std::deque<General_polygon_2>               Holes_container;

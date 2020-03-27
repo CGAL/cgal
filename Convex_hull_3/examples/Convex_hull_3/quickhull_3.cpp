@@ -23,12 +23,12 @@ int main(int argc, char* argv[])
 
   // define polyhedron to hold convex hull
   Polyhedron_3 poly;
-  
+
   // compute convex hull of non-collinear points
   CGAL::convex_hull_3(points.begin(), points.end(), poly);
 
   std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
-  
+
   Surface_mesh sm;
   CGAL::convex_hull_3(points.begin(), points.end(), sm);
 

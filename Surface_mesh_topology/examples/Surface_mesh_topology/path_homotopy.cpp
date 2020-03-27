@@ -97,7 +97,7 @@ void process_command_line(int argc, char** argv,
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-  std::string file="data/elephant.off";  
+  std::string file="data/elephant.off";
   bool draw=false;
   int l1=10, l2=100;
   int d1=10, d2=100;
@@ -117,9 +117,9 @@ int main(int argc, char** argv)
   std::cout<<"Initial map: ";
   lcc.display_characteristics(std::cout) << ", valid="
                                          << lcc.is_valid() << std::endl;
-  
+
   Curves_on_surface_topology<LCC_3_cmap> cst(lcc, time);
-   
+
   cst.compute_minimal_quadrangulation(time);
 
   std::cout<<"Reduced map: ";
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
   unsigned int nbcontractible=0;
   std::vector<std::size_t> errors_seeds;
   unsigned int length, defo;
-  
+
   for (unsigned int i=0; i<N; ++i)
   {
     if (i!=0)
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 
     length=static_cast<unsigned int>(random.get_int(l1, l2+1));
     defo=static_cast<unsigned int>(random.get_int(d1, d2+1));
-    
+
     std::vector<Path_on_surface<LCC_3_cmap> > paths;
     std::vector<Path_on_surface<LCC_3_cmap> > transformed_paths;
 
@@ -191,6 +191,6 @@ int main(int argc, char** argv)
   std::cout<<"Number of contractible paths: "<<nbcontractible<<" among "<<N
            <<" (i.e. "<<static_cast<double>(nbcontractible*100)/
              static_cast<double>(N)<<"%)."<<std::endl;
-  
+
   return EXIT_SUCCESS;
 }

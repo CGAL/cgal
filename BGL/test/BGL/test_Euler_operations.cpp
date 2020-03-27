@@ -4,7 +4,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 
 template <typename T>
-void 
+void
 join_face_test()
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
@@ -22,7 +22,7 @@ join_face_test()
 
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
-  
+
   CGAL::Halfedge_around_face_iterator<T> begin, end;
   boost::tie(begin, end) = CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m);
   assert(std::distance(begin, end) == 4);
@@ -38,7 +38,7 @@ join_face_test()
   for(boost::tie(fit, fend) = faces(f.m); fit != fend; ++fit) {
     assert(*fit == f.f1 || *fit == f.f3);
   }
-  
+
   assert(degree(f.w, f.m) == 2);
   assert(degree(f.v, f.m) == 3);
   assert(CGAL::is_valid_polygon_mesh(f.m));
@@ -48,7 +48,7 @@ join_face_test()
 
 
 template <typename T>
-void 
+void
 remove_face_test_1()
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
@@ -82,13 +82,13 @@ remove_face_test_1()
 
 
 template <typename T>
-void 
+void
 remove_face_test_2()
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
 
   Surface_fixture_2<T> f;
- 
+
   // find the edge between x and v
   bool found;
   halfedge_descriptor e;
@@ -108,22 +108,22 @@ remove_face_test_2()
   boost::tie(e, found) = halfedge(f.x, f.w, f.m);
   assert(found);
   assert(face(e,f.m) == boost::graph_traits<T>::null_face());
-  
+
   // check the boundary
 
   halfedge_descriptor n = next(e, f.m);
   while(n != e) {
     assert(face(n,f.m) == boost::graph_traits<T>::null_face() );
-    n = next(n, f.m); 
+    n = next(n, f.m);
   }
 }
 
-template <typename T> 
+template <typename T>
 void
 add_face_to_border_test()
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
- 
+
   Surface_fixture_5<T> f;
 
   CGAL::Euler::add_face_to_border(f.h1, f.h2, f.m);
@@ -132,12 +132,12 @@ add_face_to_border_test()
 
 }
 
-template <typename T> 
+template <typename T>
 void
 add_vertex_and_face_to_border_test()
 {
   CGAL_GRAPH_TRAITS_MEMBERS(T);
- 
+
   Surface_fixture_5<T> f;
   typedef typename boost::graph_traits<T>::halfedge_descriptor  halfedge_descriptor;
   halfedge_descriptor h1 = f.h1, h2 = f.h2;
@@ -159,7 +159,7 @@ add_vertex_and_face_to_border_test()
 
   halfedge_descriptor res = CGAL::Euler::add_vertex_and_face_to_border(f.h1, f.h2, f.m);
   assert(CGAL::is_valid_polygon_mesh(f.m));
-  
+
   assert(! CGAL::is_border(res,m));
   assert(CGAL::is_border(opposite(res,m),m));
   res = opposite(res,m);
@@ -172,7 +172,7 @@ add_vertex_and_face_to_border_test()
 }
 
 
-template <typename T> 
+template <typename T>
 void
 join_vertex_interior_test()
 {
@@ -194,7 +194,7 @@ join_vertex_interior_test()
   assert(CGAL::is_valid_polygon_mesh(f.m));
 }
 
-template <typename T> 
+template <typename T>
 void
 join_vertex_exterior_test()
 {
@@ -234,7 +234,7 @@ join_vertex_exterior_test()
     assert(CGAL::internal::exact_num_edges(f.m) == 6);
     assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
     assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
- 
+
     assert(CGAL::is_valid_polygon_mesh(f.m));
     assert(degree(f.w, f.m) == 3);
 
@@ -242,7 +242,7 @@ join_vertex_exterior_test()
 }
 
 
-template <typename T> 
+template <typename T>
 void
 split_vertex()
 {
@@ -266,7 +266,7 @@ split_vertex()
   assert(boost::distance(CGAL::halfedges_around_face(h2, f.m)) == 7);
 }
 
-template <typename T> 
+template <typename T>
 void
 split_join_vertex_inverse()
 {
@@ -284,7 +284,7 @@ split_join_vertex_inverse()
   assert(found);
   CGAL::Euler::join_vertex(CGAL::Euler::split_vertex(h1, h2,f.m),f.m);
   assert(CGAL::is_valid_polygon_mesh(f.m));
-  
+
   assert(CGAL::internal::exact_num_vertices(f.m)== 5);
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
@@ -294,7 +294,7 @@ split_join_vertex_inverse()
 }
 
 
-template <typename T> 
+template <typename T>
 void
 join_loop_test()
 {
@@ -302,11 +302,11 @@ join_loop_test()
   Surface_fixture_4<T> f;
 
   CGAL::Euler::join_loop(f.h1, f.h2, f.m);
-  
+
   assert(CGAL::is_valid_polygon_mesh(f.m));
 }
 
-template <typename T> 
+template <typename T>
 void
 split_loop_test()
 {
@@ -320,7 +320,7 @@ split_loop_test()
   assert(CGAL::is_valid_polygon_mesh(f.m));
 }
 
-template <typename T> 
+template <typename T>
 void
 split_face_test()
 {
@@ -331,7 +331,7 @@ split_face_test()
  assert(num_halfedges(f.m) == 10);
 }
 
-template <typename T> 
+template <typename T>
 void
  make_hole_test()
 {
@@ -347,7 +347,7 @@ void
  assert(CGAL::internal::exact_num_halfedges(f.m) == nh);
 }
 
-template <typename T> 
+template <typename T>
 void
 remove_center_vertex_test()
 {
@@ -364,14 +364,14 @@ remove_center_vertex_test()
  assert(CGAL::internal::exact_num_halfedges(f.m) == nh-(2*deg));
 }
 
-template <typename T> 
+template <typename T>
 void
 join_split_inverse()
 {
-  
+
 }
 
-template <typename T> 
+template <typename T>
 void
 does_satisfy_link_condition()
 {
@@ -443,7 +443,7 @@ add_face_bug()
 template <typename Graph>
 void
 test_Euler_operations()
-{   
+{
   join_face_test<Graph>();
   add_vertex_and_face_to_border_test<Graph>();
   add_face_to_border_test<Graph>();

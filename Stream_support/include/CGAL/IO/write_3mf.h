@@ -107,7 +107,7 @@ bool export_model_to_file(const std::string& file_name,
     NMR::lib3mf_release(p3MFWriter);
     return false;
   }
-  
+
   // Release Model Writer
   NMR::lib3mf_release(p3MFWriter);
   return true;
@@ -143,12 +143,12 @@ bool write_mesh_to_model( const PointRange& points,
   {
     pVertices.push_back(tmf_internal::fnCreateVertex(point.x(), point.y(), point.z()));
   }
-  
+
   for( auto triangle : polygons)
   {
     pTriangles.push_back(tmf_internal::fnCreateTriangle(triangle[0], triangle[1], triangle[2]));
   }
-  
+
   hResult = NMR::lib3mf_meshobject_setgeometry(*pMeshObject, pVertices.data(),
                                           pVertices.size(), pTriangles.data(),
                                           pTriangles.size());
@@ -359,7 +359,7 @@ bool write_polyline_to_model(const PointRange& points,
  *  soups in `file_name`.
  * \param names will contains the name of each mesh in `file_name`.
  * \return `true` if the writing is successful, `false` otherwise.
- * 
+ *
  * \attention Only versions inferior to 2.0 of lib3mf are supported.
  */
 template<typename PointRanges, typename PolygonRanges>

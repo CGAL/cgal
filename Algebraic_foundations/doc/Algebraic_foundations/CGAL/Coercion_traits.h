@@ -4,46 +4,46 @@ namespace CGAL {
 /*!
 \ingroup PkgAlgebraicFoundationsRef
 
-An instance of `Coercion_traits` reflects the type coercion of the types 
-<span class="textsc">A</span> and <span class="textsc">B</span>, it is symmetric in the two template arguments. 
+An instance of `Coercion_traits` reflects the type coercion of the types
+<span class="textsc">A</span> and <span class="textsc">B</span>, it is symmetric in the two template arguments.
 
-\sa `ExplicitInteroperable` 
-\sa `ImplicitInteroperable` 
+\sa `ExplicitInteroperable`
+\sa `ImplicitInteroperable`
 
 */
 template< typename A, typename B >
 struct Coercion_traits {
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Tag indicating whether the two types A and B are a model of `ExplicitInteroperable` 
+Tag indicating whether the two types A and B are a model of `ExplicitInteroperable`
 
-This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
-*/ 
-typedef unspecified_type Are_explicit_interoperable; 
-
-/*!
-Tag indicating whether the two types A and B are a model of `ImplicitInteroperable` 
-
-This is either `CGAL::Tag_true` or `CGAL::Tag_false`. 
-*/ 
-typedef unspecified_type Are_implicit_interoperable; 
+This is either `CGAL::Tag_true` or `CGAL::Tag_false`.
+*/
+typedef unspecified_type Are_explicit_interoperable;
 
 /*!
-The coercion type of `A` and `B`. 
+Tag indicating whether the two types A and B are a model of `ImplicitInteroperable`
 
-In case A and B are not `ExplicitInteroperable` this is undefined. 
-*/ 
-typedef unspecified_type Type; 
+This is either `CGAL::Tag_true` or `CGAL::Tag_false`.
+*/
+typedef unspecified_type Are_implicit_interoperable;
 
 /*!
-A model of the `AdaptableFunctor` concept, providing the conversion of `A` or `B` to `Type`. 
+The coercion type of `A` and `B`.
 
-In case A and B are not `ExplicitInteroperable` this is undefined. 
-*/ 
-typedef unspecified_type Cast; 
+In case A and B are not `ExplicitInteroperable` this is undefined.
+*/
+typedef unspecified_type Type;
+
+/*!
+A model of the `AdaptableFunctor` concept, providing the conversion of `A` or `B` to `Type`.
+
+In case A and B are not `ExplicitInteroperable` this is undefined.
+*/
+typedef unspecified_type Cast;
 
 /// @}
 

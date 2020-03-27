@@ -55,13 +55,13 @@ public:
   operator()(const T& t1, const T& t2, const T& t3, const T& t4) const
   {
     return Base()(t1,t2,t3, t4);
-  } 
-  
+  }
+
   result_type
   operator()(const Point_2& p, const Line_2& l1, const Line_2& l2) const
   {
     return Base()(p,l1,l2);
-  } 
+  }
 #endif // CGAL_CFG_MATCHING_BUG_6
 
 

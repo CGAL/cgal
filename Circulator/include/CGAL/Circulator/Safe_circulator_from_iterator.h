@@ -1,4 +1,4 @@
-// Copyright (c) 1997, 2007 
+// Copyright (c) 1997, 2007
 // GeometryFactory (France),
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
@@ -11,11 +11,11 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
 //                 Fernando Cacciola <fernando.cacciola@geometryfactory.com>
-// 
+//
 
 #ifndef CGAL_SAFE_CIRCULATOR_FROM_ITERATOR_H
 #define CGAL_SAFE_CIRCULATOR_FROM_ITERATOR_H
@@ -64,7 +64,7 @@ public:
     Safe_circulator_from_iterator() : m_begin(),
                                  m_end(),
                                  m_current(),
-				 m_empty( true)
+                                 m_empty( true)
   {}
 
     Safe_circulator_from_iterator( const I& bgn, const I& end)
@@ -94,15 +94,15 @@ public:
         return m_empty;
     }
     bool operator!=( std::nullptr_t p) const { return !(*this == p); }
-    
+
     bool operator==( const Self& c) const
     {
       CGAL_assertion( is_not_singular() ) ;
       return current_iterator() == c.current_iterator();
     }
-    
+
     bool operator!=( const Self& c) const { return !(*this == c); }
-    
+
     reference  operator*() const {
         CGAL_assertion( is_not_singular() ) ;
         CGAL_assertion( current_iterator() != end() );
@@ -170,23 +170,23 @@ public:
         tmp += n;
         return tmp.operator*();
     }
-    
+
     iterator const& begin()            const { return *m_begin;}
     iterator const& end()              const { return *m_end;}
     iterator const& current_iterator() const { return *m_current;}
     Self            min_circulator()   const { return Self( m_begin, m_end, m_begin, m_empty); }
-    
+
     Unsafe unsafe_circulator() const
     {
       CGAL_assertion( is_not_singular() ) ;
-      
+
       return Unsafe(begin(),end(),current_iterator());
     }
-    
+
 private:
 
     bool is_not_singular() const { return !!m_begin && !!m_end && !!m_current ; }
-    
+
     iterator& begin()            { return *m_begin;}
     iterator& end()              { return *m_end;}
     iterator& current_iterator() { return *m_current;}
