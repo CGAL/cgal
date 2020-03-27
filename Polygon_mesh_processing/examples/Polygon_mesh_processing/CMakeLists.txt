@@ -83,6 +83,7 @@ create_single_source_cgal_program( "corefinement_polyhedron_union.cpp" )
 create_single_source_cgal_program( "random_perturbation_SM_example.cpp" )
 create_single_source_cgal_program( "corefinement_LCC.cpp")
 create_single_source_cgal_program( "detect_features_example.cpp" )
+create_single_source_cgal_program( "volume_connected_components.cpp" )
 create_single_source_cgal_program( "manifoldness_repair_example.cpp" )
 create_single_source_cgal_program( "repair_polygon_soup_example.cpp" )
 create_single_source_cgal_program( "mesh_smoothing_example.cpp")
@@ -90,6 +91,7 @@ create_single_source_cgal_program( "locate_example.cpp")
 create_single_source_cgal_program( "orientation_pipeline_example.cpp")
 #create_single_source_cgal_program( "self_snapping_example.cpp")
 #create_single_source_cgal_program( "snapping_example.cpp")
+
 
 if(OpenMesh_FOUND)
 

@@ -136,7 +136,9 @@ and provides a list of the parameters that are used in this package.
 \cgalCRPSection{Orientation Functions}
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - `CGAL::Polygon_mesh_processing::orient()`
+- `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 - `CGAL::Polygon_mesh_processing::orient_to_bound_a_volume()`
+- `CGAL::Polygon_mesh_processing::volume_connected_components()`
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 - `CGAL::Polygon_mesh_processing::duplicate_incompatible_edges_in_polygon_soup()`
@@ -186,7 +188,6 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::surface_intersection()`
 - `CGAL::Polygon_mesh_processing::clip()`
 - `CGAL::Polygon_mesh_processing::split()`
-- `CGAL::Polygon_mesh_processing::does_bound_a_volume()`
 
 \cgalCRPSection{Geometric Measure Functions}
 - \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink

@@ -181,6 +181,19 @@ void test(const NamedParameters& np)
   check_same_type<54>(get_parameter(np, CGAL::internal_np::use_area_smoothing));
   check_same_type<55>(get_parameter(np, CGAL::internal_np::use_Delaunay_flips));
   check_same_type<56>(get_parameter(np, CGAL::internal_np::use_safety_constraints));
+
+  check_same_type<12340>(get_parameter(np, CGAL::internal_np::do_self_intersection_tests));
+  check_same_type<12341>(get_parameter(np, CGAL::internal_np::do_orientation_tests));
+  check_same_type<12342>(get_parameter(np, CGAL::internal_np::error_codes));
+  check_same_type<12343>(get_parameter(np, CGAL::internal_np::volume_inclusions));
+  check_same_type<12344>(get_parameter(np, CGAL::internal_np::face_connected_component_map));
+  check_same_type<12345>(get_parameter(np, CGAL::internal_np::connected_component_id_to_volume_id));
+  check_same_type<12346>(get_parameter(np, CGAL::internal_np::is_cc_outward_oriented));
+  check_same_type<12347>(get_parameter(np, CGAL::internal_np::intersecting_volume_pairs_output_iterator));
+  check_same_type<12348>(get_parameter(np, CGAL::internal_np::i_used_as_a_predicate));
+  check_same_type<12349>(get_parameter(np, CGAL::internal_np::nesting_levels));
+  check_same_type<12350>(get_parameter(np, CGAL::internal_np::i_used_for_volume_orientation));
+
   check_same_type<57>(get_parameter(np, CGAL::internal_np::area_threshold));
   check_same_type<58>(get_parameter(np, CGAL::internal_np::volume_threshold));
   check_same_type<59>(get_parameter(np, CGAL::internal_np::dry_run));
@@ -314,6 +327,17 @@ int main()
                          .use_area_smoothing(A<54>(54))
                          .use_Delaunay_flips(A<55>(55))
                          .use_safety_constraints(A<56>(56))
+                         .do_self_intersection_tests(A<12340>(12340))
+                         .do_orientation_tests(A<12341>(12341))
+                         .error_codes(A<12342>(12342))
+                         .volume_inclusions(A<12343>(12343))
+                         .face_connected_component_map(A<12344>(12344))
+                         .connected_component_id_to_volume_id(A<12345>(12345))
+                         .is_cc_outward_oriented(A<12346>(12346))
+                         .intersecting_volume_pairs_output_iterator(A<12347>(12347))
+                         .i_used_as_a_predicate(A<12348>(12348))
+                         .nesting_levels(A<12349>(12349))
+                         .i_used_for_volume_orientation(A<12350>(12350))
                          .area_threshold(A<57>(57))
                          .volume_threshold(A<58>(58))
                          .dry_run(A<59>(59))
