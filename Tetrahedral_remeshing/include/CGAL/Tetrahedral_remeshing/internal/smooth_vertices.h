@@ -266,18 +266,11 @@ namespace CGAL
 #endif
       }
 
-      bool project(const Surface_patch_index& si,
-                   const Vector_3& gi,
-                   Vector_3& projected_point)
+      boost::optional<Vector_3> project(const Surface_patch_index& si,
+                                        const Vector_3& gi)
       {
-        if (subdomain_FMLS_indices.find(si) == subdomain_FMLS_indices.end())
-          return false;
-
-        if (std::isnan(gi.x()) || std::isnan(gi.y()) || isnan(gi.z()))
-        {
-          std::cout << "Initial point error " << gi << std::endl;
-          return false;
-        }
+        CGAL_assertion(subdomain_FMLS_indices.find(si) != subdomain_FMLS_indices.end());
+        CGAL_assertion(!std::isnan(gi.x()) && !std::isnan(gi.y()) && !std::isnan(gi.z()));
 
         Vec3Df point(gi.x(), gi.y(), gi.z());
         Vec3Df res_normal;
@@ -300,13 +293,11 @@ namespace CGAL
           if (std::isnan(result[0]) || std::isnan(result[1]) || std::isnan(result[2])) {
             std::cout << "MLS error detected si size " << si
               << " : " << fmls.getPNSize() << std::endl;
-            return false;
+            return {};
           }
         } while ((result - point).getSquaredLength() > sq_eps&& ++it_nb < max_it_nb);
 
-        projected_point = Vector_3(result[0], result[1], result[2]);
-
-        return true;
+        return Vector_3(result[0], result[1], result[2]);
       }
 
       void collect_vertices_surface_indices(
@@ -430,10 +421,9 @@ namespace CGAL
                 Vector_3 normal_projection
                   = project_on_tangent_plane(smoothed_position, current_pos, vertices_normals[v][si]);
 
-                //Check if the mls surface exists to avoid degenrated cases
-                Vector_3 mls_projection;
-                if (project(si, normal_projection, mls_projection)) {
-                  final_position = final_position + mls_projection;
+                //Check if the mls surface exists to avoid degenerated cases
+                if (boost::optional<Vector_3> mls_projection = project(si, normal_projection)) {
+                  final_position = final_position + *mls_projection;
                 }
                 else {
                   final_position = final_position + normal_projection;
@@ -465,9 +455,8 @@ namespace CGAL
               {
                 //Check if the mls surface exists to avoid degenerated cases
 
-                Vector_3 mls_projection;
-                if (project(si, current_pos, mls_projection)) {
-                  final_position = final_position + mls_projection;
+                if (boost::optional<Vector_3> mls_projection = project(si, current_pos)) {
+                  final_position = final_position + *mls_projection;
                 }
                 else {
                   final_position = final_position + current_pos;
@@ -542,11 +531,11 @@ namespace CGAL
               CGAL_assertion(si != Surface_patch_index());
 
               Vector_3 normal_projection = project_on_tangent_plane(smoothed_position,
-                current_pos,
-                vertices_normals[v][si]);
-              Vector_3 mls_projection;
-              if (project(si, normal_projection, mls_projection))
-                final_position = mls_projection;
+                                                                    current_pos,
+                                                                    vertices_normals[v][si]);
+
+              if (boost::optional<Vector_3> mls_projection = project(si, normal_projection))
+                final_position = final_position + *mls_projection;
               else
                 final_position = smoothed_position;
 
@@ -562,9 +551,10 @@ namespace CGAL
               CGAL_assertion(si != Surface_patch_index());
 
               const Vector_3 current_pos(CGAL::ORIGIN, point(v->point()));
-              Vector_3 mls_projection;
-              if (project(si, current_pos, mls_projection)) {
-                const typename Tr::Point new_pos(CGAL::ORIGIN + mls_projection);
+
+              if (boost::optional<Vector_3> mls_projection = project(si, current_pos))
+              {
+                const typename Tr::Point new_pos(CGAL::ORIGIN + *mls_projection);
                 v->set_point(new_pos);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
