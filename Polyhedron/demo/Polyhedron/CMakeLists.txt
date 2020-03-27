@@ -122,9 +122,6 @@ else( CGAL_ACTIVATE_CONCURRENT_MESH_3 OR ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3} )
   endif( LINK_WITH_TBB )
 endif()
 
-
-
-
 if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_USE_FILE})
 
@@ -253,6 +250,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   target_link_libraries(scene_c3t3_item PUBLIC scene_surface_mesh_item scene_polygon_soup_item scene_basic_objects ${TBB_LIBRARIES})
   if(TBB_FOUND)
     CGAL_target_use_TBB(scene_c3t3_item)
+  endif()
+  if(COMMAND target_precompile_headers)
+    # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
+    target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
   endif()
   add_item(scene_transform_item Plugins/PCA/Scene_facegraph_transform_item.cpp )
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp )

@@ -251,7 +251,7 @@ CGAL_INLINE_FUNCTION
 void ManipulatedFrame::computeMouseSpeed(const QMouseEvent *const e) {
   const QPoint delta = (e->pos() - prevPos_);
   const qreal dist = sqrt(qreal(delta.x() * delta.x() + delta.y() * delta.y()));
-  delay_ = last_move_time.restart();
+  delay_ = static_cast<int>(last_move_time.restart());
   if (delay_ == 0)
     // Less than a millisecond: assume delay = 1ms
     mouseSpeed_ = dist;
