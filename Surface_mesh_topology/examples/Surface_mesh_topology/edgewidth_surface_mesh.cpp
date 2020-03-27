@@ -5,53 +5,58 @@
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/squared_distance_3.h>
 
-using Kernel = CGAL::Simple_cartesian<double>;
-using Point = Kernel::Point_3;
-using Mesh = CGAL::Surface_mesh<Point>;
-using Path_on_surface = CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
-using CST = CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>;
+using Kernel         =CGAL::Simple_cartesian<double>;
+using Point          =Kernel::Point_3;
+using Mesh           =CGAL::Surface_mesh<Point>;
+using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<Mesh>;
+using CST            =CGAL::Surface_mesh_topology::Curves_on_surface_topology<Mesh>;
 
-struct Weight_functor {
-  using Weight_t = double;
+struct Weight_functor
+{
+  using Weight_t=double;
   Weight_functor(const Mesh& mesh) : m_mesh(mesh) {}
-  double operator()(Mesh::Halfedge_index he) const {
-    Point A = m_mesh.point(m_mesh.vertex(m_mesh.edge(he), 0));
-    Point B = m_mesh.point(m_mesh.vertex(m_mesh.edge(he), 1));
+  double operator()(Mesh::Halfedge_index he) const
+  {
+    const Point& A=m_mesh.point(m_mesh.vertex(m_mesh.edge(he), 0));
+    const Point& B=m_mesh.point(m_mesh.vertex(m_mesh.edge(he), 1));
     return CGAL::sqrt(CGAL::squared_distance(A, B));
   }
 private:
-  Mesh m_mesh;
+  const Mesh& m_mesh;
 };
 
-int main(int argc, char* argv[]) {
-  std::cout << "Program edgewidth_surface_mesh started.\n";
-  Mesh sm;
-  std::ifstream inp ((argc > 1) ? argv[1] : "data/3torus.off");
-  if (inp.fail()) {
-    std::cout << "Cannot read file. Exiting program\n";
+int main(int argc, char* argv[])
+{
+  std::cout<<"Program edgewidth_surface_mesh started."<<std::endl;
+  std::string filename("data/3torus.off");
+  if (argc>1) { filename=argv[1]; }
+  std::ifstream inp(filename);
+  if (inp.fail())
+  {
+    std::cout<<"Cannot read file '"<<filename<<"'. Exiting program"<<std::endl;
     return EXIT_FAILURE;
   }
-  inp >> sm;
-  std::cout << "File loaded. Running the main program...\n";
+  Mesh sm;
+  inp>>sm;
+  std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
 
-  Weight_functor     wf(sm);
-  CST                cst(sm);
+  Weight_functor wf(sm);
+  CST            cst(sm);
   
-  std::cout << "Finding edge-width of the mesh...\n";
-  Path_on_surface    cycle = cst.compute_edgewidth(wf);
-  if (cycle.length() == 0) {
-    std::cout << "  Cannot find edge-width. Stop.\n";
-    return 0;
-  }
-
-  double cycle_length = 0;
-  for (int i = 0; i < cycle.length(); ++i) {
-    cycle_length += wf(cycle[i]);
-  }
+  std::cout<<"Finding edge-width of the mesh..."<<std::endl;
+  Path_on_surface cycle=cst.compute_edgewidth(wf);
+  if (cycle.length()==0)
+  { std::cout<<"  Cannot find edge-width. Stop."<<std::endl; }
+  else
+  {
+    double cycle_length=0;
+    for (int i=0; i<cycle.length(); ++i)
+    { cycle_length+=wf(cycle[i]); }
   
-  std::cout << "  Number of edges in cycle: " << cycle.length() << std::endl;
-  std::cout << "  Cycle length: " << cycle_length << std::endl;
-  std::cout << "  Root: " << sm.point(sm.vertex(sm.edge(cycle[0]), 0)) << std::endl;
+    std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
+    std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
+    std::cout<<"  Root: "<<sm.point(sm.vertex(sm.edge(cycle[0]), 0))<<std::endl;
+  }
 
   return EXIT_SUCCESS;
 }

@@ -9,30 +9,31 @@
 #include <fstream>
 #include <cstdlib>
 #include <unordered_set>
-#define CGAL_USE_BASIC_VIEWER 1
 
-using LCC_3 = CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
-using Dart_handle = LCC_3::Dart_handle;
-using Dart_const_handle = LCC_3::Dart_const_handle;
-using Dart_container = std::vector<Dart_handle>;
-using Point = LCC_3::Point;
-using Path_on_surface = CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
+using LCC_3            =CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
+using Dart_handle      =LCC_3::Dart_handle;
+using Dart_const_handle=LCC_3::Dart_const_handle;
+using Dart_container   =std::vector<Dart_handle>;
+using Point            =LCC_3::Point;
+using Path_on_surface  =CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
+using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
 
-struct Weight_functor {
-  Weight_functor(const LCC_3& lcc) : m_lcc(lcc) { }
-  using Weight_t = double;
-  Weight_t operator()(Dart_const_handle dh) const {
-    const Point& x = m_lcc.point(dh);
-    const Point& y = m_lcc.point(m_lcc.template alpha<0>(dh));
+struct Weight_functor
+{
+  Weight_functor(const LCC_3& lcc) : m_lcc(lcc) {}
+  using Weight_t=double;
+  Weight_t operator()(Dart_const_handle dh) const
+  {
+    const Point& x=m_lcc.point(dh);
+    const Point& y=m_lcc.point(m_lcc.template alpha<0>(dh));
     return CGAL::sqrt(CGAL::squared_distance(x, y));
   }
 private:
   const LCC_3& m_lcc;
 };
 
-using CST = CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
-
-struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
+struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
+{
   Draw_functor(LCC_3::size_type am1, LCC_3::size_type am2) : is_root(am1),
                                                              belong_to_cycle(am2)
   {}
@@ -42,7 +43,8 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
   { return alcc.is_marked(dh, is_root); }
   
   template<typename LCC>
-  CGAL::Color vertex_color(const LCC& /* alcc */, typename LCC::Dart_const_handle /* dh */) const
+  CGAL::Color vertex_color(const LCC& /* alcc */,
+                           typename LCC::Dart_const_handle /* dh */) const
   { return CGAL::Color(0,255,0); }
 
   template<typename LCC>
@@ -50,30 +52,42 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC {
   { return alcc.is_marked(dh, belong_to_cycle); }
 
   template<typename LCC>
-  CGAL::Color edge_color(const LCC& /* alcc*/, typename LCC::Dart_const_handle /* dh */) const
+  CGAL::Color edge_color(const LCC& /* alcc*/,
+                         typename LCC::Dart_const_handle /* dh */) const
   { return CGAL::Color(0, 0, 255); }
 
   template<typename LCC>
-  bool colored_face(const LCC& /* alcc */, typename LCC::Dart_const_handle /* dh */) const {return true;}
+  bool colored_face(const LCC& /* alcc */,
+                    typename LCC::Dart_const_handle /* dh */) const {return true;}
 
   template<typename LCC>
-  CGAL::Color face_color(const LCC& /* alcc */, typename LCC::Dart_const_handle /* dh */) const
+  CGAL::Color face_color(const LCC& /* alcc */,
+                         typename LCC::Dart_const_handle /* dh */) const
   {return CGAL::Color(211, 211, 211);}
 
   template<typename LCC>
-  bool colored_volume(const LCC& /* alcc */, typename LCC::Dart_const_handle /* dh */) const { return false; }
+  bool colored_volume(const LCC& /* alcc */,
+                      typename LCC::Dart_const_handle /* dh */) const { return false; }
   
   LCC_3::size_type is_root;
   LCC_3::size_type belong_to_cycle;
 };
 
-int main(int argc, char* argv[]) {
-  std::cout << "Program unsew_edgewidth_repeatedly started.\n";
+int main(int argc, char* argv[])
+{
+  std::cout<<"Program unsew_edgewidth_repeatedly started."<<std::endl;
+  std::string filename("data/double-torus.off");
+  if (argc>1) { filename=argv[1]; }
+  std::ifstream inp(filename);
+  if (inp.fail())
+  {
+    std::cout<<"Cannot read file '"<<filename<<"'. Exiting program"<<std::endl;
+    return EXIT_FAILURE;
+  }
+
   LCC_3 lccoriginal, lcccopy;
-  std::ifstream inp;
-  if (argc == 1) inp = std::ifstream("data/double-torus-example.off");
-  else inp = std::ifstream(argv[1]);
   CGAL::load_off(lccoriginal, inp);
+  std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
 
   boost::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
   lcccopy.copy(lccoriginal, &origin_to_copy, NULL);
@@ -82,50 +96,59 @@ int main(int argc, char* argv[]) {
   LCC_3::size_type belong_to_cycle=lccoriginal.get_new_mark();
   Draw_functor df(is_root, belong_to_cycle);
 
-  std::cout << "File loaded. Running the main program...\n";
-  for (int loop = 1; ; ++loop) {
-    std::cout << "Finding #" << loop << " edge-width:\n";
+  int loop=1;
+  bool cycle_exist=true;
+  do
+  {
+    std::cout<<"Finding #"<<loop++<<" edge-width:"<<std::endl;
     Weight_functor wf(lcccopy);
-    CST cst(lcccopy);
-    Path_on_surface cycle = cst.compute_edgewidth(wf);
-    if (cycle.length() == 0) {
-      std::cout << "  Cannot find edge-width. Stop.\n";
-      break;
-    }
+    CST            cst(lcccopy);
+    Path_on_surface cycle=cst.compute_edgewidth(wf);
+    if (cycle.length()==0)
+    { std::cout << "  Cannot find edge-width. Stop.\n"; cycle_exist=false; }
+    else
+    {
+      LCC_3::size_type is_root_copy=lcccopy.get_new_mark();
+      LCC_3::size_type belong_to_cycle_copy=lcccopy.get_new_mark();
 
-    LCC_3::size_type is_root_copy = lcccopy.get_new_mark();
-    LCC_3::size_type belong_to_cycle_copy = lcccopy.get_new_mark();
+      lcccopy.mark_cell<0>(cycle[0], is_root_copy);
+      double cycle_length=0;
+      for (int i=0; i<cycle.length(); ++i)
+      {
+        cycle_length+=wf(cycle[i]);
+        if (!lcccopy.is_marked(cycle[i], belong_to_cycle_copy))
+        { lcccopy.mark_cell<1>(cycle[i], belong_to_cycle_copy); }
+      }
 
-    lcccopy.mark_cell<0>(cycle[0], is_root_copy);
-    double x = 0;
-    for (int i = 0; i < cycle.length(); ++i) {
-      x += wf(cycle[i]);
-      if (!lcccopy.is_marked(cycle[i], belong_to_cycle_copy))
-        lcccopy.mark_cell<1>(cycle[i], belong_to_cycle_copy);
-    }
+      for (auto dh=lccoriginal.darts().begin(), dhend=lccoriginal.darts().end();
+           dh!=dhend; ++dh)
+      {
+        if (lcccopy.is_marked(origin_to_copy[dh], is_root_copy) &&
+            !lccoriginal.is_marked(dh, is_root))
+        { lccoriginal.mark(dh, is_root); }
+        if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) &&
+            !lccoriginal.is_marked(dh, belong_to_cycle))
+        { lccoriginal.mark(dh, belong_to_cycle); }
+        if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) &&
+            !lcccopy.is_free<2>(origin_to_copy[dh]))
+        { lcccopy.unsew<2>(origin_to_copy[dh]); }
+      }
+      lcccopy.close<2>();
 
-    for (auto dh = lccoriginal.darts().begin(), dhend = lccoriginal.darts().end(); dh != dhend; ++dh) {
-      if (lcccopy.is_marked(origin_to_copy[dh], is_root_copy) && !lccoriginal.is_marked(dh, is_root))
-        lccoriginal.mark(dh, is_root);
-      if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) && !lccoriginal.is_marked(dh, belong_to_cycle))
-        lccoriginal.mark(dh, belong_to_cycle);
-      if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) && !lcccopy.is_free<2>(origin_to_copy[dh]))
-        lcccopy.unsew<2>(origin_to_copy[dh]);
-    }
-    lcccopy.close<2>();
-
-    lcccopy.free_mark(belong_to_cycle_copy);
-    lcccopy.free_mark(is_root_copy);
+      lcccopy.free_mark(belong_to_cycle_copy);
+      lcccopy.free_mark(is_root_copy);
     
-    std::cout << "  Number of edges in cycle: " << cycle.length() << std::endl;
-    std::cout << "  Cycle length: " << x << std::endl;
-    std::cout << "  Root: " << lcccopy.point_of_vertex_attribute(lcccopy.vertex_attribute(cycle[0])) << std::endl;
-
+      std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
+      std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
+      std::cout<<"  Root: "<<lcccopy.point(cycle[0])<<std::endl;
+    }
   }
+  while(cycle_exist);
 
-
-  CGAL::draw(lccoriginal, "Hello", false, df);
+  CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df);
 
   lccoriginal.free_mark(belong_to_cycle);
-  lccoriginal.free_mark(is_root);  
+  lccoriginal.free_mark(is_root);
+
+  return EXIT_SUCCESS;
 }
