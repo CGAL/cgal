@@ -186,11 +186,11 @@ namespace CGAL {
               typename Converters, typename DartInfoConverter, 
               typename PointConverter>
     void generic_copy(GMap2& amap,
+                      boost::unordered_map<Dart_handle_2, Dart_handle>* origin_to_copy,
+                      boost::unordered_map<Dart_handle, Dart_handle_2>* copy_to_origin,
                       const Converters& converters,
                       const DartInfoConverter& dartinfoconverter,
-                      const PointConverter& pointconverter,
-                      boost::unordered_map<Dart_handle_2, Dart_handle>* origin_to_copy=nullptr,
-                      boost::unordered_map<Dart_handle, Dart_handle_2>* copy_to_origin=nullptr)
+                      const PointConverter& pointconverter)
     {
       this->clear();
 
@@ -268,94 +268,94 @@ namespace CGAL {
     template<typename GMap2, typename Converters, typename DartInfoConverter,
              typename PointConverter>
     void copy(GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
               const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
-              const PointConverter& pointconverter,
-              boost::unordered_map
-              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
-              boost::unordered_map
-              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
+              const PointConverter& pointconverter)
     {
       generic_copy<GMap2, typename GMap2::Dart_handle, Converters,
           DartInfoConverter, PointConverter>
-          (amap, converters, dartinfoconverter, pointconverter,
-           origin_to_copy, copy_to_origin);
+          (amap,  origin_to_copy, copy_to_origin,
+           converters, dartinfoconverter, pointconverter);
     }
 
     // (1b) copy(const amap, converters, dartinfoconverter, pointconverter)
     template<typename GMap2, typename Converters, typename DartInfoConverter,
              typename PointConverter>
     void copy(const GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
               const Converters& converters,
               const DartInfoConverter& dartinfoconverter,
-              const PointConverter& pointconverter,
-              boost::unordered_map
-              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
-              boost::unordered_map
-              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
+              const PointConverter& pointconverter)
     {
       generic_copy<GMap2, typename GMap2::Dart_const_handle,
           Converters, DartInfoConverter, PointConverter>
-          (const_cast<GMap2&>(amap), converters, dartinfoconverter,
-           pointconverter, origin_to_copy, copy_to_origin);
+          (const_cast<GMap2&>(amap), origin_to_copy, copy_to_origin,
+           converters, dartinfoconverter, pointconverter);
     }
 
     // (2a) copy(amap, converters, dartinfoconverter)
     template<typename GMap2, typename Converters, typename DartInfoConverter>
     void copy(GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
               const Converters& converters,
-              const DartInfoConverter& dartinfoconverter,
-              boost::unordered_map
-              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
-              boost::unordered_map
-              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
+              const DartInfoConverter& dartinfoconverter)
     {
       Default_converter_cmap_0attributes_with_point<typename GMap2::Refs, Refs>
         pointconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter,
-           origin_to_copy, copy_to_origin);
+      copy(amap, origin_to_copy, copy_to_origin, converters,
+           dartinfoconverter, pointconverter);
     }
 
     // (2b) copy(const amap, converters, dartinfoconverter)
     template <typename GMap2, typename Converters, typename DartInfoConverter>
     void copy(const GMap2& amap,
+              boost::unordered_map
+              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
+              boost::unordered_map
+              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
               const Converters& converters,
-              const DartInfoConverter& dartinfoconverter,
-              boost::unordered_map
-              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
-              boost::unordered_map
-              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
+              const DartInfoConverter& dartinfoconverter)
     {
       Default_converter_cmap_0attributes_with_point<typename GMap2::Refs, Refs>
           pointconverter;
-      copy(amap, converters, dartinfoconverter, pointconverter,
-           origin_to_copy, copy_to_origin);
+      copy(amap, origin_to_copy, copy_to_origin, converters,
+           dartinfoconverter, pointconverter);
     }
     
     // (3a) copy(amap, converters)
     template<typename GMap2, typename Converters>
     void copy(GMap2& amap,
-              const Converters& converters,
               boost::unordered_map
-              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy=nullptr,
+              <typename GMap2::Dart_handle, Dart_handle>* origin_to_copy,
               boost::unordered_map
-              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
+              <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin,
+              const Converters& converters)
     {
       Default_converter_dart_info<typename GMap2::Refs, Refs> dartinfoconverter;
-      copy(amap, converters, dartinfoconverter, origin_to_copy, copy_to_origin);
+      copy(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter);
     }
 
     // (3b) copy(const amap, converters)
     template <typename GMap2, typename Converters>
     void copy(const GMap2& amap,
-              const Converters& converters,
               boost::unordered_map
-              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy=nullptr,
+              <typename GMap2::Dart_const_handle, Dart_handle>* origin_to_copy,
               boost::unordered_map
-              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
+              <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin,
+              const Converters& converters)
     {
       Default_converter_dart_info<typename GMap2::Refs, Refs> dartinfoconverter;
-      copy(amap, converters, dartinfoconverter, origin_to_copy, copy_to_origin);
+      copy(amap, origin_to_copy, copy_to_origin, converters, dartinfoconverter);
     }
     
     // (4a) copy(amap)
@@ -367,7 +367,7 @@ namespace CGAL {
               <Dart_handle, typename GMap2::Dart_handle>* copy_to_origin=nullptr)
     {
       CGAL::cpp11::tuple<> converters;
-      copy(amap, converters, origin_to_copy, copy_to_origin);
+      copy(amap, origin_to_copy, copy_to_origin, converters);
     }
 
     // (4b) copy(const amap)
@@ -379,7 +379,7 @@ namespace CGAL {
               <Dart_handle, typename GMap2::Dart_const_handle>* copy_to_origin=nullptr)
     {
       CGAL::cpp11::tuple<> converters;
-      copy(amap, converters, origin_to_copy, copy_to_origin);
+      copy(amap, origin_to_copy, copy_to_origin, converters);
     }    
 
     // Copy constructor from a map having exactly the same type.
