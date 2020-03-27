@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 {
   std::cout << "Program facewidth_on_unweighted_map started.\n";
   std::ifstream inp;
-  if (argc == 1) inp = std::ifstream("data/double-torus-example.off");
+  if (argc == 1) inp = std::ifstream("data/double-torus.off");
   else inp = std::ifstream(argv[1]);
   if (inp.fail()) {
     std::cout << "Cannot read file. Exiting program\n";
