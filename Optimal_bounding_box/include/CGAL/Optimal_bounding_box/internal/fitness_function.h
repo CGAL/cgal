@@ -33,6 +33,7 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
 {
   typedef typename Traits::FT                                   FT;
   typedef typename Traits::Point_3                              Point;
+  typedef typename Traits::Vector                               Vector;
 
   CGAL_assertion(R.number_of_rows() == 3 && R.number_of_columns() == 3);
   CGAL_assertion(points.size() >= 3);
@@ -43,18 +44,18 @@ compute_fitness(const typename Traits::Matrix& R, // rotation matrix
 
   for(const Point& pt : points)
   {
-    const FT x = pt.x(), y = pt.y(), z = pt.z();
+    Vector pv(3);
+    pv.set(0, pt.x());
+    pv.set(1, pt.y());
+    pv.set(2, pt.z());
+    pv = R * pv;
 
-    const FT rx = x*R(0, 0) + y*R(0, 1) + z*R(0, 2);
-    const FT ry = x*R(1, 0) + y*R(1, 1) + z*R(1, 2);
-    const FT rz = x*R(2, 0) + y*R(2, 1) + z*R(2, 2);
-
-    xmin = (std::min)(xmin, rx);
-    ymin = (std::min)(ymin, ry);
-    zmin = (std::min)(zmin, rz);
-    xmax = (std::max)(xmax, rx);
-    ymax = (std::max)(ymax, ry);
-    zmax = (std::max)(zmax, rz);
+    xmin = (std::min)(xmin, pv(0));
+    ymin = (std::min)(ymin, pv(1));
+    zmin = (std::min)(zmin, pv(2));
+    xmax = (std::max)(xmax, pv(0));
+    ymax = (std::max)(ymax, pv(1));
+    zmax = (std::max)(zmax, pv(2));
   }
 
   // volume

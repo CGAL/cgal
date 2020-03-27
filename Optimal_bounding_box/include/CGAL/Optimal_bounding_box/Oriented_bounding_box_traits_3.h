@@ -19,6 +19,7 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_matrix.h>
+#include <CGAL/Eigen_vector.h>
 #include <Eigen/QR>
 #endif
 
@@ -50,6 +51,9 @@ public:
 
   /// The matrix type
   typedef CGAL::Eigen_matrix<FT, 3, 3>                 Matrix;
+
+  /// The matrix type
+  typedef CGAL::Eigen_vector<FT, 3>                    Vector;
 
 private:
   typedef typename Matrix::EigenType                   EigenType;

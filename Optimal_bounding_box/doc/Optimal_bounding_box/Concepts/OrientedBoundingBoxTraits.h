@@ -25,6 +25,10 @@ public:
   /// matrix-matrix and scalar-matrix multiplication, as well as matrix-matrix addition
   typedef unspecified_type                                Matrix;
 
+  /// A 3 dimensional vector type; model of the concept `SvdTraits::Vector` and which supports
+  /// matrix-vector and multiplication
+  typedef unspecified_type                                Vector;
+
   /// Returns the unitary matrix `Q` obtained in the QR-decomposition of the matrix `m`
   Matrix get_Q(const Matrix& m) const;
 };
