@@ -30,7 +30,7 @@ class Curves_on_surface_topology
 public:
   // Types for minimal quadrangulation
   using Minimal_quadrangulation=internal::Minimal_quadrangulation<Mesh>;
-  using Reduced_map            =typename Minimal_quadrangulation::Reduced_map;
+  using Reduced_map            =typename Minimal_quadrangulation::Local_map;
 
   // Types for shortest noncontractible cycle
   using Shortest_noncontractible_cycle=typename internal::Shortest_noncontractible_cycle<Mesh>;
@@ -67,7 +67,7 @@ public:
   const Reduced_map& get_minimal_quadrangulation() const
   {
     CGAL_assertion(is_minimal_quadrangulation_computed());
-    return m_minimal_quadrangulation->get_reduced_map();
+    return m_minimal_quadrangulation->get_local_map();
   }
 
   /// @return true iff 'p' is contractible.
