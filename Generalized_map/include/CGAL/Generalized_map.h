@@ -397,7 +397,7 @@ namespace CGAL {
               typename Storage2, typename Converters>
     Generalized_map_base(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
                          const Converters& converters)
-    { copy(amap, converters); }
+    { copy(amap, nullptr, nullptr, converters); }
 
     // "Copy constructor" from a map having different type.
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
@@ -406,7 +406,7 @@ namespace CGAL {
     Generalized_map_base(const Generalized_map_base<d2, Refs2, Items2, Alloc2, Storage2>& amap,
                          const Converters& converters,
                          const DartInfoConverter& dartinfoconverter)
-    { copy(amap, converters, dartinfoconverter); }
+    { copy(amap, nullptr, nullptr, converters, dartinfoconverter); }
 
     // "Copy constructor" from a map having different type.
     template <unsigned int d2, typename Refs2, typename Items2, typename Alloc2,
@@ -417,7 +417,7 @@ namespace CGAL {
                          const Converters& converters,
                          const DartInfoConverter& dartinfoconverter,
                          const PointConverter& pointconverter)
-    { copy(amap, converters, dartinfoconverter, pointconverter); }
+    { copy(amap, nullptr, nullptr, converters, dartinfoconverter, pointconverter); }
 
     /** Affectation operation. Copies one map to the other.
      * @param amap a generalized map.
