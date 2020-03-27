@@ -54,10 +54,9 @@ void for_each (RangeRef range,
 }
 
 #ifdef CGAL_LINKED_WITH_TBB
-template <typename RangeRef, typename IteratorCategory>
+template <typename RangeRef, typename Fct, typename IteratorCategory>
 void for_each (RangeRef range,
-               const std::function<bool(typename std::iterator_traits
-                                        <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
+               const Fct& functor,
                const Parallel_tag&,
                IteratorCategory)
 {
@@ -77,10 +76,9 @@ void for_each (RangeRef range,
                      });
 }
 
-template <typename RangeRef>
+template <typename RangeRef, typename Fct>
 void for_each (RangeRef range,
-               const std::function<bool(typename std::iterator_traits
-                                        <typename Range_iterator_type<RangeRef>::type>::reference)>& functor,
+               const Fct& functor,
                const Parallel_tag&,
                std::random_access_iterator_tag)
 {
