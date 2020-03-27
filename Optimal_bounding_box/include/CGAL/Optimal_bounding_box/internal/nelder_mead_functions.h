@@ -95,12 +95,18 @@ void nelder_mead(Simplex& simplex,
     // find worst's vertex reflection
     const Matrix& worst_m = simplex[3].matrix();
     const Matrix refl_m = reflection(centroid_m, worst_m);
-    const FT refl_f = compute_fitness(refl_m, points, traits);
+    const FT second_worst_fitness = simplex[2].fitness();
 
-    // if reflected point is better than the second worst
-    if(refl_f < simplex[2].fitness())
+    // we are only interested in the reflection vertex if it's better than the second worst,
+    // so compute the fitness, but exit early if the volume grows too big.
+    const std::pair<FT, bool> refl_fb = compute_fitness_if_smaller(refl_m, points, second_worst_fitness, traits);
+
+    // if the reflected point is better than the second worst
+    if(refl_fb.second && refl_fb.first < second_worst_fitness)
     {
-      // if reflected point is not better than the best
+      const FT refl_f = refl_fb.first;
+
+      // if the reflected point is not better than the best
       if(refl_f >= simplex[0].fitness())
       {
         // reflection
@@ -110,22 +116,23 @@ void nelder_mead(Simplex& simplex,
       {
         // expansion
         const Matrix expand_m = expansion(centroid_m, worst_m, refl_m);
-        const FT expand_f = compute_fitness(expand_m, points, traits);
-        if(expand_f < refl_f)
-          simplex[3] = Vertex{expand_m, expand_f};
+        const std::pair<FT, bool> expand_fb = compute_fitness_if_smaller(expand_m, points, refl_f, traits);
+        if(expand_fb.second && expand_fb.first < refl_f)
+          simplex[3] = Vertex{expand_m, expand_fb.first};
         else
           simplex[3] = Vertex{refl_m, refl_f};
       }
     }
-    else // reflected vertex is worse
+    else // the reflected vertex is worse
     {
       const Matrix mean_m = mean(centroid_m, worst_m, traits);
-      const FT mean_f = compute_fitness(mean_m, points, traits);
+      const FT worst_fitness = simplex[3].fitness();
+      const std::pair<FT, bool> mean_fb = compute_fitness_if_smaller(mean_m, points, worst_fitness, traits);
 
-      if(mean_f <= simplex[3].fitness())
+      if(mean_fb.second && mean_fb.first <= worst_fitness)
       {
         // contraction of worst
-        simplex[3] = Vertex{mean_m, mean_f};
+        simplex[3] = Vertex{mean_m, mean_fb.first};
       }
       else
       {
