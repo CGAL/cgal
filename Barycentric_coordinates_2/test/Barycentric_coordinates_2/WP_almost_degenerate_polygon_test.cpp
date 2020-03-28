@@ -125,6 +125,6 @@ int main()
     }
 
     cout << endl << "WP_almost_degenerate_polygon_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

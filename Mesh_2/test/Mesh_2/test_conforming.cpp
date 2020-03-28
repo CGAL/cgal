@@ -41,11 +41,11 @@ struct Tester {
     CGAL::read_triangle_poly_file(cdt, poly_file);
 
     const size_type number_of_vertices_poly = cdt.number_of_vertices();
-    const size_type number_of_constrained_edges_poly = 
+    const size_type number_of_constrained_edges_poly =
       number_of_constrained_edges(cdt);
 
     std::cout << "number of vertices: " << number_of_vertices_poly
-              << "\nnumber of constrained edges: " 
+              << "\nnumber of constrained edges: "
               << number_of_constrained_edges_poly << "\n\n";
 
     // read a CGAL file (edg file).
@@ -66,17 +66,17 @@ struct Tester {
     }
 
     const size_type number_of_vertices_edg = cdt.number_of_vertices();
-    const size_type number_of_constrained_edges_edg = 
+    const size_type number_of_constrained_edges_edg =
       number_of_constrained_edges(cdt);
 
     std::cout << "number of vertices: " << number_of_vertices_edg
-              << "\nnumber of constrained edges: " 
+              << "\nnumber of constrained edges: "
               << number_of_constrained_edges_edg << "\n\n";
 
 
     // check that numbers of constrained edges and vertices are the same
 
-    assert( number_of_constrained_edges_edg == 
+    assert( number_of_constrained_edges_edg ==
                     number_of_constrained_edges_poly );
 
     assert( number_of_vertices_edg == number_of_vertices_poly );
@@ -95,7 +95,7 @@ struct Tester {
     // Delaunay, then Gabriel for cdt2
     make_conforming_Delaunay_2(cdt2);
     CGAL::Triangulation_conformer_2<CDT> conformer2(cdt2);
-    assert( conformer2.is_conforming_Delaunay() );    
+    assert( conformer2.is_conforming_Delaunay() );
     assert(cdt2.is_valid());
     std::cout << "Number of vertices after make_conforming_Delaunay_2: "
               << cdt2.number_of_vertices() << "\n";
@@ -114,9 +114,9 @@ struct Tester {
 };
 
 
-struct K_e_i : public CGAL::Exact_predicates_inexact_constructions_kernel {};
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
 #if CGAL_USE_CORE || CGAL_USE_LEDA
-struct K_e_e : public CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt {};
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt K_e_e;
 #endif
 
 int main()

@@ -36,7 +36,9 @@ endif()
 if(NOT Qt5_FOUND)
   set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
 endif()
-
+if(NOT EXISTS ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsItem.h)
+  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} <CGAL/Qt/*.h> headers")
+endif()
 
 #.rst:
 # Result Variables
@@ -52,7 +54,7 @@ if(NOT CGAL_Qt5_MISSING_DEPS)
 
   include(${CMAKE_CURRENT_LIST_DIR}/CGAL_Qt5_moc_and_resource_files.cmake)
 
-  if(CGAL_HEADER_ONLY AND (WITH_demos OR WITH_examples OR NOT CGAL_BUILDING_LIBS) AND NOT TARGET CGAL_Qt5_moc_and_resources)
+  if(CGAL_HEADER_ONLY AND (WITH_demos OR WITH_examples OR WITH_tests OR NOT CGAL_BUILDING_LIBS) AND NOT TARGET CGAL_Qt5_moc_and_resources)
     add_library(CGAL_Qt5_moc_and_resources STATIC 
       ${_CGAL_Qt5_MOC_FILES_private} 
         ${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/GraphicsViewNavigation.h

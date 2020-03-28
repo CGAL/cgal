@@ -1,25 +1,16 @@
-// Copyright (c) 2000  
+// Copyright (c) 2000
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Herve Bronnimann
 
@@ -36,6 +27,7 @@ class Translation_repC2 : public Aff_transformation_rep_baseC2<R>
 friend class Aff_transformation_repC2<R>;
 friend class Rotation_repC2<R>;
 friend class Scaling_repC2<R>;
+friend class Reflection_repC2<R>;
 
 public:
   typedef typename R::FT                         FT;
@@ -43,6 +35,7 @@ public:
   typedef Aff_transformation_repC2<R>            Transformation;
   typedef Translation_repC2<R>                   Translation;
   typedef Rotation_repC2<R>                      Rotation;
+  typedef Reflection_repC2<R>                    Reflection;
   typedef Scaling_repC2<R>                       Scaling;
   typedef typename Aff_t_base::Point_2           Point_2;
   typedef typename Aff_t_base::Vector_2          Vector_2;
@@ -57,9 +50,9 @@ public:
   {}
 
   Point_2     transform(const Point_2 &p) const
-  { 
+  {
     typename R::Construct_translated_point_2 translated_point;
-    return translated_point(p, translationvector_); 
+    return translated_point(p, translationvector_);
   }
 
   Vector_2    transform(const Vector_2 &v) const { return v; }
@@ -113,6 +106,14 @@ public:
                                 t.t21 * translationvector_.x()
                                 + t.t22*translationvector_.y()
                                 + t.t23);
+  }
+
+  Aff_transformation_2 compose(const Reflection &r) const
+  {
+    return Aff_transformation_2(r.cosinus_, r.sinus_,
+                                r.cosinus_*(translationvector_.x()-r.t.x())+r.sinus_*(translationvector_.y() - r.t.y()) +r.t.x(),
+                                r.sinus_, -r.cosinus_,
+                                r.sinus_*(translationvector_.x()-r.t.x())-r.cosinus_*(translationvector_.y() - r.t.y())+r.t.y());
   }
 
   Aff_transformation_2 inverse() const

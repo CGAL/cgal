@@ -5,9 +5,9 @@ namespace RealEmbeddableTraits_ {
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-`AdaptableUnaryFunction` computes the absolute value of a number. 
+`AdaptableUnaryFunction` computes the absolute value of a number.
 
-\cgalRefines `AdaptableUnaryFunction` 
+\cgalRefines `AdaptableUnaryFunction`
 
 \sa `RealEmbeddableTraits`
 
@@ -16,28 +16,28 @@ namespace RealEmbeddableTraits_ {
 class Abs {
 public:
 
-/// \name Types 
+/// \name Types
 /// @{
 
 /*!
-Is `RealEmbeddableTraits::Type`. 
-*/ 
-typedef unspecified_type result_type; 
+Is `RealEmbeddableTraits::Type`.
+*/
+typedef unspecified_type result_type;
 
 /*!
-Is `RealEmbeddableTraits::Type`. 
-*/ 
-typedef unspecified_type argument_type; 
+Is `RealEmbeddableTraits::Type`.
+*/
+typedef unspecified_type argument_type;
 
-/// @} 
+/// @}
 
-/// \name Operations 
+/// \name Operations
 /// @{
 
 /*!
-computes the absolute value of \f$ x\f$. 
-*/ 
-result_type operator()(argument_type x); 
+computes the absolute value of \f$ x\f$.
+*/
+result_type operator()(argument_type x);
 
 /// @}
 

@@ -1,23 +1,13 @@
 // Copyright (c) 2005, 2006 ASCLEPIOS Project, INRIA Sophia-Antipolis (France)
-// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France) 
-// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France) 
+// Copyright (c) 2007 Geometrica Project, INRIA Sophia-Antipolis (France)
+// Copyright (c) 2008 GeometryFactory, Sophia-Antipolis (France)
 // All rights reserved.
 //
-// The files in this directory are part of the ImageIO Library.
-// You can redistribute them and/or  modify them under the terms of the
-// GNU Lesser General Public License as published by the Free Software Foundation;
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-// PURPOSE.
+// This file is part of the ImageIO Library, and as been adapted for CGAL (www.cgal.org).
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later
 //
 
 #ifdef CGAL_HEADER_ONLY
@@ -28,7 +18,7 @@
 
 #ifdef _MSC_VER
 // Suppress deprecated warning for fileno and strdup
-#  pragma warning(disable: 4127 4706 4996) 
+#  pragma warning(disable: 4127 4706 4996)
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -42,15 +32,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* formats actuellement lus 
+/* formats actuellement lus
 
-   format     |   extension(s)   |  lecture  | ecriture 
+   format     |   extension(s)   |  lecture  | ecriture
    INRIMAGE   |  .inr[.gz]       |     X     |     X     -> + .gradient[.gz] + .gradient_direction[.gz]
    GIS        |  .dim, .ima[.gz] |     X     |     X
    ANALYZE    |  .hdr, .img[.gz] |     X     |     X
    PNM        |  .ppm, .pgm      |     X     |     X
-   GIF        |  .gif            |     X     |     
-   BMP        |  .gif            |     X     |     
+   GIF        |  .gif            |     X     |
+   BMP        |  .gif            |     X     |
 */
 #include <CGAL/ImageIO/inr.h>
 #include <CGAL/ImageIO/gif.h>
@@ -80,13 +70,13 @@ struct Remove_supported_file_format {
 
 inline PTRIMAGE_FORMAT & get_static_firstFormat()
 {
-  static PTRIMAGE_FORMAT firstFormat = NULL;
+  static PTRIMAGE_FORMAT firstFormat = nullptr;
   return firstFormat;
 }
 
 inline PTRIMAGE_FORMAT & get_static_inrimageFormat()
 {
-  static PTRIMAGE_FORMAT inrimageFormat = NULL;
+  static PTRIMAGE_FORMAT inrimageFormat = nullptr;
   return inrimageFormat;
 }
 
@@ -102,14 +92,14 @@ CGAL_UNUSED static Remove_supported_file_format &rsff_dummy_ref = get_static_rsf
 #else // not header-only
 
 /** the first file format is initialized to null */
-static PTRIMAGE_FORMAT firstFormat = NULL;
+static PTRIMAGE_FORMAT firstFormat = nullptr;
 inline PTRIMAGE_FORMAT & get_static_firstFormat()
 {
   return firstFormat;
 }
 
 /** the Inrimage file format (default format) is initialized to null */
-static PTRIMAGE_FORMAT InrimageFormat = NULL;
+static PTRIMAGE_FORMAT InrimageFormat = nullptr;
 inline PTRIMAGE_FORMAT & get_static_inrimageFormat()
 {
   return InrimageFormat;
@@ -159,10 +149,10 @@ unsigned int ImageIO_limit_len(size_t to_be_read)
 }
 
 /* mimics fwrite() function.
-   According to _openWriteImage(), openMode will has one 
+   According to _openWriteImage(), openMode will has one
    of the following value:
    - OM_STD (for stdout)
-   - OM_GZ 
+   - OM_GZ
    - OM_FILE
 */
 CGAL_INLINE_FUNCTION
@@ -181,7 +171,7 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
       to_be_written -= l;
       b += l;
     }
-#else 
+#else
     while ( (to_be_written > 0) && ((l = fwrite( b, 1, ImageIO_limit_len(to_be_written), im->fd )) > 0) ) {
       to_be_written -= l;
       b += l;
@@ -226,13 +216,13 @@ size_t ImageIO_limit_read(size_t to_be_read)
 }
 
 /* mimics fread() function.
-   According to _openReadImage(), openMode will has one 
+   According to _openReadImage(), openMode will has one
    of the following value:
    - OM_STD (for stdin)
    - OM_GZ *or* OM_FILE
 */
 CGAL_INLINE_FUNCTION
-size_t ImageIO_read(const _image *im, void *buf, size_t len) 
+size_t ImageIO_read(const _image *im, void *buf, size_t len)
 {
   size_t to_be_read = len;
   int l = -1;
@@ -248,7 +238,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
       to_be_read -= l;
       b += l;
     }
-#else 
+#else
     while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_len(to_be_read), im->fd )) > 0) ) {
       to_be_read -= l;
       b += l;
@@ -286,7 +276,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
 
 
 /* mimics fgets() function.
-   According to _openReadImage(), openMode will has one 
+   According to _openReadImage(), openMode will has one
    of the following value:
    - OM_STD (for stdout)
    - OM_GZ *or* OM_FILE
@@ -294,11 +284,11 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
 CGAL_INLINE_FUNCTION
 char *ImageIO_gets( const _image *im, char *str, int size )
 {
-  char *ret = NULL;
+  char *ret = nullptr;
   switch(im->openMode) {
   default :
   case OM_CLOSE :
-    return NULL;
+    return nullptr;
   case OM_STD :
 #ifdef CGAL_USE_ZLIB
     ret = (char *) gzgets(im->fd, str, size );
@@ -313,7 +303,7 @@ char *ImageIO_gets( const _image *im, char *str, int size )
 #endif // CGAL_USE_GZFWRITE
     ret = (char *) gzgets(im->fd, str, size);
     break;
-    
+
 #else
   case OM_FILE :
     ret = fgets(str, size, im->fd);
@@ -372,7 +362,7 @@ int ImageIO_error( const _image *im )
 
 
 /* Upon successful completion 0 is returned.
-   
+
    Closing the standard output with gzclose()
    is necessary as it will flush the pending output.
  */
@@ -380,7 +370,7 @@ CGAL_INLINE_FUNCTION
 int ImageIO_close( _image* im )
 {
   int ret=0;
-  
+
   switch ( im->openMode ) {
   default :
   case OM_CLOSE :
@@ -393,17 +383,17 @@ int ImageIO_close( _image* im )
 #endif//CGAL_USE_GZFWRITE
     ret = gzclose( im->fd );
     break;
-#else 
+#else
   case OM_STD :
     break;
   case OM_FILE :
     ret = fclose( (FILE*)im->fd );
 #endif
   }
-  
-  im->fd = NULL;
+
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
-  
+
   return ret;
 }
 
@@ -413,10 +403,10 @@ int ImageIO_close( _image* im )
 
 
 
-/* given an initialized file descriptor and a file name, 
-   open file from stdin (if name == NULL, or name == "-", or name == "<"), 
+/* given an initialized file descriptor and a file name,
+   open file from stdin (if name == nullptr, or name == "-", or name == "<"),
    or a standard/gzipped file otherwise (gzipped files are handled assuming
-   that it is compiled and linked with zlib). 
+   that it is compiled and linked with zlib).
    openMode will have one of the following value:
    - OM_STD (for stdin)
    - OM_GZ *or* OM_FILE
@@ -426,10 +416,10 @@ void _openReadImage(_image* im, const char *name) {
   if(im->openMode == OM_CLOSE) {
 
     /* open from stdin */
-    if( name == NULL || name[0] == '\0' 
-	|| (name[0] == '-' && name[1] == '\0') 
-	|| (name[0] == '<' && name[1] == '\0') ) {
-#ifdef CGAL_USE_ZLIB      
+    if( name == nullptr || name[0] == '\0'
+        || (name[0] == '-' && name[1] == '\0')
+        || (name[0] == '<' && name[1] == '\0') ) {
+#ifdef CGAL_USE_ZLIB
       im->fd = gzdopen(fileno(stdin), "rb");
 #else
       im->fd = fdopen(fileno(stdin), "rb");
@@ -438,7 +428,7 @@ void _openReadImage(_image* im, const char *name) {
     }
 
     else {
-#ifdef CGAL_USE_ZLIB     
+#ifdef CGAL_USE_ZLIB
       im->fd = gzopen(name, "rb");
       if(im->fd) im->openMode = OM_GZ;
 #else
@@ -455,22 +445,22 @@ void _openReadImage(_image* im, const char *name) {
 
 
 
-/* given an initialized file descriptor and a file name, 
-   open file from stdout (if name == NULL, or name == "-", or name == ">"), 
+/* given an initialized file descriptor and a file name,
+   open file from stdout (if name == nullptr, or name == "-", or name == ">"),
    a gzipped pipe (if name got the extension ".gz")
    or a standard file otherwise.
    openMode will have one of the following value:
    - OM_STD (for stdout)
-   - OM_GZ 
+   - OM_GZ
    - OM_FILE
 */
 CGAL_INLINE_FUNCTION
-void _openWriteImage(_image* im, const char *name) 
+void _openWriteImage(_image* im, const char *name)
 {
   im->openMode = OM_CLOSE;
 
-  if( name == NULL || name[0] == '\0' 
-      || (name[0] == '-' && name[1] == '\0') 
+  if( name == nullptr || name[0] == '\0'
+      || (name[0] == '-' && name[1] == '\0')
       || (name[0] == '>' && name[1] == '\0') ) {
 
 #ifdef CGAL_USE_ZLIB
@@ -479,15 +469,15 @@ void _openWriteImage(_image* im, const char *name)
 #else
     im->fd = gzdopen(fileno(stdout), "wb");
 #endif
-#else    
+#else
     im->fd = (_ImageIO_file) stdout;
 #endif
     im->openMode = OM_STD;
   }
 
   else{
-#ifdef CGAL_USE_ZLIB      
-    
+#ifdef CGAL_USE_ZLIB
+
     /* from gzopen() doc:
        ... The mode parameter is as in fopen ("rb" or "wb") but can
        also include a compression level ("wb9") or a strategy: 'f' for
@@ -496,25 +486,30 @@ void _openWriteImage(_image* im, const char *name)
        However, a small .gz header will be written ... thus gz(d)open can not
        be used for rgular files.
     */
-    
+
     if( !strncmp(name+strlen(name)-3, ".gz", 3) )
       {
 #ifdef _MSC_VER
-	int ffd=_open(name,_O_RDWR | _O_CREAT| _O_TRUNC | _O_BINARY, _S_IREAD|_S_IWRITE);
-	im->fd = gzdopen( ffd, "wb" );
+        int ffd=_open(name,_O_RDWR | _O_CREAT| _O_TRUNC | _O_BINARY, _S_IREAD|_S_IWRITE);
+        im->fd = gzdopen( ffd, "wb" );
 #else
-	im->fd = gzopen( name, "wb" );
+        im->fd = gzopen( name, "wb" );
 #endif
-	im->openMode = OM_GZ;
+        im->openMode = OM_GZ;
       }
-#if CGAL_USE_GZFWRITE
-    else 
+    else
     {
+#if CGAL_USE_GZFWRITE
       im->fd = (_ImageIO_file) gzopen(name, "wb");
       im->openMode = OM_FILE;
-    }
-#endif// CGAL_USE_GZFWRITE
 #else
+      fprintf(stderr, "_openWriteImage: error: zlib version 1.2.9 or later\n"
+                      "is required to save in non-compressed files\n");
+      return;
+#endif// CGAL_USE_GZFWRITE
+    }
+
+#else //CGAL_USE_ZLIB
     {
       im->fd = (_ImageIO_file) fopen(name, "wb");
       im->openMode = OM_FILE;
@@ -528,9 +523,9 @@ void _openWriteImage(_image* im, const char *name)
 /* set allocation and deallocation routines */
 CGAL_INLINE_FUNCTION
 void setImageIOAllocationRoutines(ALLOCATION_FUNCTION alloc,
-				  DEALLOCATION_FUNCTION del) {
-  if(alloc != NULL) allocRoutine = alloc;
-  if(del != NULL) deleteRoutine = del;
+                                  DEALLOCATION_FUNCTION del) {
+  if(alloc != nullptr) allocRoutine = alloc;
+  if(del != nullptr) deleteRoutine = del;
 }
 
 
@@ -575,7 +570,7 @@ _image *_initImage() {
   _image *im;
 
   im = (_image *) ImageIO_alloc(sizeof(_image));
-  if ( im == NULL ) return( im );
+  if ( im == nullptr ) return( im );
 
   /* default image size is 1*1*1 */
   im->xdim = im->ydim = im->zdim = im->vdim = 1;
@@ -592,10 +587,10 @@ _image *_initImage() {
   im->rx = im->ry = im->rz = 0.0;
 
   /* no data yet */
-  im->data = NULL;
+  im->data = nullptr;
 
   /* no file associated to image */
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   im->endianness = END_UNKNOWN;
 
@@ -605,7 +600,7 @@ _image *_initImage() {
   im->dataMode = DM_BINARY;
 
   /* no user string */
-  im->user = NULL;
+  im->user = nullptr;
   im->nuser = 0;
 
   /* unknown word kind */
@@ -613,25 +608,25 @@ _image *_initImage() {
   im->wordKind = WK_UNKNOWN;
   im->vectMode = VM_SCALAR;
   im->sign = SGN_UNKNOWN;
-  im->imageFormat = NULL;
+  im->imageFormat = nullptr;
 
   /** eventually initializes the supported file formats */
-  if (get_static_firstFormat()==NULL)
+  if (get_static_firstFormat()==nullptr)
     initSupportedFileFormat();
   /* return image descriptor */
   return im;
 }
 
 CGAL_INLINE_FUNCTION
-_image *_createImage(int x, int y, int z, int v,
-		     float vx, float vy, float vz, int w,
-		     WORD_KIND wk, SIGN sgn)
+_image *_createImage(std::size_t x, std::size_t y, std::size_t z, std::size_t v,
+                     double vx, double vy, double vz, std::size_t w,
+                     WORD_KIND wk, SIGN sgn)
 {
   _image *im;
-  
+
   im = (_image *) ImageIO_alloc(sizeof(_image));
-  if ( im == NULL ) return( im );
-  
+  if ( im == nullptr ) return( im );
+
   im->xdim = x;
   im->ydim = y;
   im->zdim = z;
@@ -653,7 +648,7 @@ _image *_createImage(int x, int y, int z, int v,
   im->data = ImageIO_alloc(std::size_t(x)*std::size_t(y)*std::size_t(z)*std::size_t(v)*std::size_t(w));
 
   /* no file associated to image */
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   im->endianness = END_UNKNOWN;
 
@@ -663,7 +658,7 @@ _image *_createImage(int x, int y, int z, int v,
   im->dataMode = DM_BINARY;
 
   /* no user string */
-  im->user = NULL;
+  im->user = nullptr;
   im->nuser = 0;
 
   /* unknown word kind */
@@ -671,10 +666,10 @@ _image *_createImage(int x, int y, int z, int v,
   im->wordKind = wk;
   im->vectMode = VM_SCALAR;
   im->sign = sgn;
-  im->imageFormat = NULL;
+  im->imageFormat = nullptr;
 
   /** eventually initializes the supported file formats */
-  if (get_static_firstFormat()==NULL)
+  if (get_static_firstFormat()==nullptr)
     initSupportedFileFormat();
   /* return image descriptor */
   return im;
@@ -683,8 +678,8 @@ _image *_createImage(int x, int y, int z, int v,
 /* return the bounding box of the image */
 CGAL_INLINE_FUNCTION
 void _get_image_bounding_box(_image* im,
-			     double* x_min, double* y_min, double* z_min,
-			     double* x_max, double* y_max, double* z_max) {
+                             double* x_min, double* y_min, double* z_min,
+                             double* x_max, double* y_max, double* z_max) {
   *x_min = im->tx;
   *y_min = im->ty;
   *z_min = im->tz;
@@ -698,23 +693,23 @@ CGAL_INLINE_FUNCTION
 void _freeImage(_image *im) {
   unsigned int i;
 
-  if ( im == NULL ) return;
+  if ( im == nullptr ) return;
 
   /* close image if opened */
   if(im->openMode != OM_CLOSE) ImageIO_close(im);
 
   /* free data if any */
-  if(im->data != NULL) ImageIO_free(im->data);
-  im->data = NULL;
+  if(im->data != nullptr) ImageIO_free(im->data);
+  im->data = nullptr;
 
   /* free user string array if any */
-  if( (im->nuser > 0) && (im->user != NULL) ) {
+  if( (im->nuser > 0) && (im->user != nullptr) ) {
     for(i = 0; i < im->nuser; i++)
-      if ( im->user[i] != NULL ) ImageIO_free(im->user[i]);
+      if ( im->user[i] != nullptr ) ImageIO_free(im->user[i]);
     ImageIO_free(im->user);
   }
   im->nuser = 0;
-  im->user = NULL;
+  im->user = nullptr;
 
   /* free given descriptor */
   ImageIO_free(im);
@@ -724,9 +719,9 @@ void _freeImage(_image *im) {
 
 
 
-/* Reads an image from a file and returns an image descriptor or NULL if
+/* Reads an image from a file and returns an image descriptor or nullptr if
    reading failed.
-   Reads from stdin if image name is NULL. */
+   Reads from stdin if image name is nullptr. */
 CGAL_INLINE_FUNCTION
 _image* _readImage(const char *name) {
   _image *im;
@@ -735,13 +730,13 @@ _image* _readImage(const char *name) {
   /* read header */
   im = _readImageHeader( name );
 
-  if(im != NULL && im->openMode != OM_CLOSE) {
+  if(im != nullptr && im->openMode != OM_CLOSE) {
     /* read body */
     if(_readImageData(im) < 0) {
       fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
-	      name);
+              name);
       _freeImage(im);
-      return NULL;
+      return nullptr;
     }
     ImageIO_close(im);
   }
@@ -758,16 +753,16 @@ _image* _readImage_raw(const char *name,
                        const double vx,
                        const double vy,
                        const double vz,
-		       const unsigned int offset,
+                       const unsigned int offset,
                        const std::size_t wdim,
                        WORD_KIND wk,
                        SIGN sgned
                        )
 {
-  _image *im = NULL;
+  _image *im = nullptr;
   im = (_image *) ImageIO_alloc(sizeof(_image));
-  if ( im == NULL )
-    return NULL;
+  if ( im == nullptr )
+    return nullptr;
 
   im->xdim = rx;
   im->ydim = ry;
@@ -787,14 +782,14 @@ _image* _readImage_raw(const char *name,
   im->rx = im->ry = im->rz = 0.0;
 
 
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
   im->endianness = END_UNKNOWN;
 
   im->dataMode = DM_BINARY;
 
   // no user string
-  im->user = NULL;
+  im->user = nullptr;
   im->nuser = 0;
 
   // word type (unsigned byte)
@@ -802,14 +797,14 @@ _image* _readImage_raw(const char *name,
   im->wordKind = wk;
   im->vectMode = VM_SCALAR;
   im->sign = sgned;
-  im->imageFormat = NULL;
+  im->imageFormat = nullptr;
 
   // read file
   ::_openReadImage(im, name);
   if(!im->fd) {
     fprintf(stderr, "_readImage_raw: error: unable to open file \'%s\'\n", name);
     _freeImage(im);
-    return NULL;
+    return nullptr;
   }
 
   // read offset
@@ -820,8 +815,8 @@ _image* _readImage_raw(const char *name,
   }
   // allocate memory
   im->data = ImageIO_alloc(rx*ry*rz*wdim);
-  if(im->data == NULL)
-    return NULL;
+  if(im->data == nullptr)
+    return nullptr;
 
   // read
   ImageIO_read(im, im->data, rx*ry*rz*wdim);
@@ -844,9 +839,9 @@ _image* _readImage_raw(const char *name,
   return im;
 }
 
-/* Reads an image from a file and returns an image descriptor or NULL if<br>
+/* Reads an image from a file and returns an image descriptor or nullptr if<br>
    reading failed.<br>
-   Reads from stdin if image name is NULL.
+   Reads from stdin if image name is nullptr.
    If the image is vectorial, it is uninterlaced. */
 CGAL_INLINE_FUNCTION
 _image* _readNonInterlacedImage(const char *name) {
@@ -859,20 +854,20 @@ _image* _readNonInterlacedImage(const char *name) {
     /* read scalar image body */
     if(im->vdim == 1) {
       if(_readImageData(im) < 0) {
-	fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
-		name);
-	_freeImage(im);
-	return NULL;
+        fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
+                name);
+        _freeImage(im);
+        return nullptr;
       }
     }
     /* read vectorial image body */
     else {
       im->vectMode = VM_NON_INTERLACED;
       if(_readNonInterlacedImageData(im) < 0) {
-	fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
-		name);
-	_freeImage(im);
-	return NULL;
+        fprintf(stderr, "_readImage: error: invalid data encountered in \'%s\'\n",
+                name);
+        _freeImage(im);
+        return nullptr;
       }
     }
     ImageIO_close(im);
@@ -893,23 +888,23 @@ _image* _readNonInterlacedImage(const char *name) {
 
 /* Write inrimage given in inr in file name. If file name's suffix is
    .gz, the image is gziped. If file name's suffix is .hdr, the image
-   is written in ANALYZE format. If file name is NULL, image is written
+   is written in ANALYZE format. If file name is nullptr, image is written
    on stdout */
 CGAL_INLINE_FUNCTION
 int _writeImage(_image *im, const char *name_to_be_written ) {
   int r = ImageIO_NO_ERROR;
   std::size_t length = 0;
-  char *name = NULL;
-  char *baseName = NULL;
+  char *name = nullptr;
+  char *baseName = nullptr;
 
-  if ( im == NULL ) return -1;
+  if ( im == nullptr ) return -1;
 
   /* different conventions for the standard input
    */
-  if ( name_to_be_written == NULL || name_to_be_written[0] == '\0' 
-       || (name_to_be_written[0] == '-' && name_to_be_written[1] == '\0') 
+  if ( name_to_be_written == nullptr || name_to_be_written[0] == '\0'
+       || (name_to_be_written[0] == '-' && name_to_be_written[1] == '\0')
        || (name_to_be_written[0] == '>' && name_to_be_written[1] == '\0') ) {
-    name = NULL;
+    name = nullptr;
   }
   else {
     name = strdup( name_to_be_written );
@@ -919,51 +914,51 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
 
   /* what is the wanted format
    */
-  if ( name == NULL ) {
+  if ( name == nullptr ) {
     im->imageFormat = get_static_inrimageFormat();
   } else {
     std::size_t i,extLength;
     PTRIMAGE_FORMAT f;
     char ext[IMAGE_FORMAT_NAME_LENGTH];
     char *ptr;
-    
-    
+
+
     /* scan all formats; */
-    im->imageFormat=NULL;
+    im->imageFormat=nullptr;
     length=strlen(name);
 
-    for(f=get_static_firstFormat();(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
+    for(f=get_static_firstFormat();(f!=nullptr)&& (im->imageFormat==nullptr);f=f->next) {
       /* scan all extensions for that format */
       ptr=&f->fileExtension[0];
 
       do {
-	/* get next file extension */
-	i=0;
-	for(i=0;((*ptr)!=',' && (*ptr)!='\0');i++,ptr++) {
-	  ext[i]=(*ptr);
-	}
-	if ((*ptr)==',') {
-	  ext[i]='\0';
-	  ptr++;
-	}
-	else {
-	  ext[i]='\0';
-	}
-	extLength=strlen(ext);
+        /* get next file extension */
+        i=0;
+        for(i=0;((*ptr)!=',' && (*ptr)!='\0');i++,ptr++) {
+          ext[i]=(*ptr);
+        }
+        if ((*ptr)==',') {
+          ext[i]='\0';
+          ptr++;
+        }
+        else {
+          ext[i]='\0';
+        }
+        extLength=strlen(ext);
 
-	/* test if the tail of name matches the extension */
-	if ( (length > extLength) && (!strcmp( name + length - extLength, ext)) ) {
-	  im->imageFormat=f;
-	  /* copy original name and removes extension */
-	  baseName=strdup(name);
-	  for(i= length - extLength;i<length;++i)
-	    baseName[i]='\0';
-	}
+        /* test if the tail of name matches the extension */
+        if ( (length > extLength) && (!strcmp( name + length - extLength, ext)) ) {
+          im->imageFormat=f;
+          /* copy original name and removes extension */
+          baseName=strdup(name);
+          for(i= length - extLength;i<length;++i)
+            baseName[i]='\0';
+        }
 
-      } while (((*ptr)!='\0') && (im->imageFormat==NULL));
+      } while (((*ptr)!='\0') && (im->imageFormat==nullptr));
     }
 
-    if (!im->imageFormat) { 
+    if (!im->imageFormat) {
       fprintf(stderr, "_writeImage: warning : unknown extension in %s = assuming Inrimage\n",name);
       im->imageFormat=get_static_inrimageFormat();
       baseName=strdup(name);
@@ -972,48 +967,48 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
 
 
   /* open file descriptor */
-  /* _openWriteImage( im, name ) ; 
-  
-  
+  /* _openWriteImage( im, name ) ;
+
+
 
   if(!im->fd) {
      fprintf(stderr, "_writeImage: error: open failed\n");
-     if ( name != NULL ) free( name );
-     if ( baseName != NULL ) free( baseName );
+     if ( name != nullptr ) free( name );
+     if ( baseName != nullptr ) free( baseName );
      return ImageIO_OPENING;
   }
   */
 
   if (im->imageFormat) {
 
-    if (im->imageFormat->writeImage==NULL) {
+    if (im->imageFormat->writeImage==nullptr) {
       im->imageFormat=get_static_inrimageFormat();
     }
 
     if ( 0 ) {
       fprintf(stderr, "_writeImage: will write '%s' with '%s' format\n",
-	      name, im->imageFormat->realName );
+              name, im->imageFormat->realName );
     }
 
     if ((*im->imageFormat->writeImage)(name, im)<0) {
       fprintf(stderr, "_writeImage: error: unable to write \'%s\'\n",
-	      name);
+              name);
       r = ImageIO_WRITING_HEADER;
-    } 
-    
+    }
+
   }
-  
+
 
 
   /* close file descriptor */
   ImageIO_close( im );
 
-  im->fd = NULL;
+  im->fd = nullptr;
   im->openMode = OM_CLOSE;
 
-  if ( baseName != NULL ) free( baseName );
-  if ( name != NULL ) free( name );
- 
+  if ( baseName != nullptr ) free( baseName );
+  if ( name != nullptr ) free( name );
+
   return r;
 }
 
@@ -1028,8 +1023,8 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
 
 
 
-/* read header from an image file 
-   
+/* read header from an image file
+
    if standard input, it's an inrimage
    if not, get a magic string
    and try to find the good format
@@ -1058,40 +1053,40 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
 {
   _image *im;
   char magic[5];
-  char *name = NULL;
+  char *name = nullptr;
   PTRIMAGE_FORMAT f;
   int res;
 
   *error = ImageIO_NO_ERROR;
-  
+
   /* open image file */
   im = _initImage();
-  if ( name_to_be_read == NULL || name_to_be_read[0] == '\0' 
-       || (name_to_be_read[0] == '-' && name_to_be_read[1] == '\0') 
+  if ( name_to_be_read == nullptr || name_to_be_read[0] == '\0'
+       || (name_to_be_read[0] == '-' && name_to_be_read[1] == '\0')
        || (name_to_be_read[0] == '<' && name_to_be_read[1] == '\0') ) {
-    name = NULL;
+    name = nullptr;
   }
   else {
     name = strdup( name_to_be_read );
   }
 
 
-  _openReadImage(im, name);	
+  _openReadImage(im, name);
 
   if(!im->fd) {
-    if(name == NULL) {
-      fprintf(stderr, "_readImageHeaderAndGetError: error: NULL file name\n");
+    if(name == nullptr) {
+      fprintf(stderr, "_readImageHeaderAndGetError: error: nullptr file name\n");
     }  else {
       fprintf(stderr, "_readImageHeaderAndGetError: error: unable to open file \'%s\'\n", name);
     }
     _freeImage(im);
     *error = ImageIO_OPENING;
-    if ( name != NULL ) free( name );
-    return NULL;
+    if ( name != nullptr ) free( name );
+    return nullptr;
   }
 
   initSupportedFileFormat();
-  
+
   /* what is the wanted format ?
      assume that stdin is inrimage
    */
@@ -1105,41 +1100,41 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
     magic[4] = '\0';
     ImageIO_seek(im, 0L, SEEK_SET);
     /** test each format */
-    for(f=get_static_firstFormat();(f!=NULL)&& (im->imageFormat==NULL);f=f->next) {
+    for(f=get_static_firstFormat();(f!=nullptr)&& (im->imageFormat==nullptr);f=f->next) {
       /* test if it is the correct format based on magic and file extension */
       if (((*f->testImageFormat)(magic, name)) >=0) {
-	im->imageFormat=f;
+        im->imageFormat=f;
       }
     }
   }
 
-  if ( im->imageFormat == NULL ) {
+  if ( im->imageFormat == nullptr ) {
     fprintf(stderr, "_readImageHeaderAndGetError: does not find image format for \'%s\'\n", name);
     ImageIO_close( im );
     _freeImage(im);
     *error = ImageIO_UNKNOWN_TYPE;
-    if ( name != NULL ) free( name );
-    return NULL;
+    if ( name != nullptr ) free( name );
+    return nullptr;
   }
 
   /* now tests if the header can be read correctly */
-	
+
   res=(*(im->imageFormat)->readImageHeader)(name,im);
-  /* could read header only */ 
+  /* could read header only */
   if (res == 0) {
-    if ( name != NULL ) free( name );
+    if ( name != nullptr ) free( name );
     return( im );
-  } 
+  }
   /* could read header and data */
   else if ( res > 0 ) {
     ImageIO_close(im);
-    if ( name != NULL ) free( name );
+    if ( name != nullptr ) free( name );
     return im;
-  }  
+  }
 
   /* could not read error : throw error */
   fprintf(stderr, "_readImageHeaderAndGetError: an error occurs when reading image\n" );
-  if ( name == NULL || im->openMode == OM_STD) {
+  if ( name == nullptr || im->openMode == OM_STD) {
     fprintf(stderr, "\t from \'standard input\'" );
   }
   else {
@@ -1149,8 +1144,8 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
   ImageIO_close( im );
   _freeImage(im);
   *error = ImageIO_READING_HEADER;
-  if ( name != NULL ) free( name );
-  return NULL;
+  if ( name != nullptr ) free( name );
+  return nullptr;
 
 }
 
@@ -1161,13 +1156,13 @@ _image *_readImageHeaderAndGetError( const char *name_to_be_read, int *error )
 
 
 CGAL_INLINE_FUNCTION
-static void _swapImageData( _image *im ) 
+static void _swapImageData( _image *im )
 {
   unsigned char *ptr1, *ptr2, b[8];
   unsigned short int si, *ptr3, *ptr4;
   unsigned int        i, *ptr5, *ptr6;
   std::size_t size, length;
-  
+
   if( _getEndianness() != im->endianness) {
 
     size = std::size_t(im->xdim) * im->ydim * im->zdim * im->vdim * im->wdim;
@@ -1175,63 +1170,63 @@ static void _swapImageData( _image *im )
 
     length = size / im->wdim;
     ptr1 = ptr2 = (unsigned char *) im->data;
-    
+
     /* 2 bytes swap */
     if(im->wdim == 2) {
       /*
-	while(length--) {
-	b[0] = *ptr1++;
-	b[1] = *ptr1++;
-	*ptr2++ = b[1];
-	*ptr2++ = b[0];
-	}
+        while(length--) {
+        b[0] = *ptr1++;
+        b[1] = *ptr1++;
+        *ptr2++ = b[1];
+        *ptr2++ = b[0];
+        }
       */
       ptr3 = ptr4 = (unsigned short int *) im->data;
       while( length-- ) {
-	si = *ptr3++;
-	*ptr4++ = (unsigned short int)(((si >> 8) & 0xff) | (si << 8));
+        si = *ptr3++;
+        *ptr4++ = (unsigned short int)(((si >> 8) & 0xff) | (si << 8));
       }
     }
-    
+
     /* 4 bytes swap */
     else if(im->wdim == 4) {
       /*
-	while(length--) {
-	b[0] = *ptr1++;
-	b[1] = *ptr1++;
-	b[2] = *ptr1++;
-	b[3] = *ptr1++;
-	*ptr2++ = b[3];
-	*ptr2++ = b[2];
-	*ptr2++ = b[1];
-	*ptr2++ = b[0];
-	}
+        while(length--) {
+        b[0] = *ptr1++;
+        b[1] = *ptr1++;
+        b[2] = *ptr1++;
+        b[3] = *ptr1++;
+        *ptr2++ = b[3];
+        *ptr2++ = b[2];
+        *ptr2++ = b[1];
+        *ptr2++ = b[0];
+        }
       */
       ptr5 = ptr6 = (unsigned int *) im->data;
       while( length-- ) {
-	i = *ptr5++;
-	*ptr6++ =  (i << 24) | ((i & 0xff00) << 8) | ((i >> 8) & 0xff00) | ((i >> 24) & 0xff);
+        i = *ptr5++;
+        *ptr6++ =  (i << 24) | ((i & 0xff00) << 8) | ((i >> 8) & 0xff00) | ((i >> 24) & 0xff);
       }
     }
     /* 8 bytes swap */
     else if(im->wdim == 8) {
       while(length--) {
-	b[0] = *ptr1++;
-	b[1] = *ptr1++;
-	b[2] = *ptr1++;
-	b[3] = *ptr1++;
-	b[4] = *ptr1++;
-	b[5] = *ptr1++;
-	b[6] = *ptr1++;
-	b[7] = *ptr1++;
-	*ptr2++ = b[7];
-	*ptr2++ = b[6];
-	*ptr2++ = b[5];
-	*ptr2++ = b[4];
-	*ptr2++ = b[3];
-	*ptr2++ = b[2];
-	*ptr2++ = b[1];
-	*ptr2++ = b[0];
+        b[0] = *ptr1++;
+        b[1] = *ptr1++;
+        b[2] = *ptr1++;
+        b[3] = *ptr1++;
+        b[4] = *ptr1++;
+        b[5] = *ptr1++;
+        b[6] = *ptr1++;
+        b[7] = *ptr1++;
+        *ptr2++ = b[7];
+        *ptr2++ = b[6];
+        *ptr2++ = b[5];
+        *ptr2++ = b[4];
+        *ptr2++ = b[3];
+        *ptr2++ = b[2];
+        *ptr2++ = b[1];
+        *ptr2++ = b[0];
       }
     }
   }
@@ -1243,7 +1238,7 @@ static void _swapImageData( _image *im )
 
 
 /* Read data of an inrimage.
-   If im->data is not NULL, assume that the buffer was previously allocated
+   If im->data is not nullptr, assume that the buffer was previously allocated
    Swap bytes depending on the endianness and the current architecture  */
 CGAL_INLINE_FUNCTION
 int _readImageData(_image *im) {
@@ -1251,7 +1246,7 @@ int _readImageData(_image *im) {
 
   if(im->openMode != OM_CLOSE) {
     size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
-    
+
     if ( size <= 0 ) return -3;
 
     if(!im->data) {
@@ -1263,7 +1258,7 @@ int _readImageData(_image *im) {
     if(nread != size) return -1;
 
 
-    /* architecture is big endian and data little endian 
+    /* architecture is big endian and data little endian
        length = nb of points
      */
     _swapImageData( im );
@@ -1280,7 +1275,7 @@ int _readImageData(_image *im) {
 
 /* Read data of a vectorial inrimage, making the resulting buffer non-
    inerlaced.
-   If im->data is not NULL, assume that the buffer was previously allocated
+   If im->data is not nullptr, assume that the buffer was previously allocated
    Swap bytes depending on the endianness and the current architecture. */
 CGAL_INLINE_FUNCTION
 int _readNonInterlacedImageData(_image *im) {
@@ -1289,7 +1284,7 @@ int _readNonInterlacedImageData(_image *im) {
   unsigned int i, j, k, v, w;
 
   if(im->vdim == 1) return _readImageData(im);
-  
+
   if(im->openMode != OM_CLOSE) {
     size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
 
@@ -1308,14 +1303,14 @@ int _readNonInterlacedImageData(_image *im) {
 
     for(k = 0; k < im->zdim; k++) {
       for(j = 0; j < im->ydim; j++) {
-	for(i = 0; i < im->xdim; i++) {
-	  nread = ImageIO_read(im, buf, im->vdim * im->wdim);
-	  if(nread != im->vdim * im->wdim) return -1;
-	  for(v = 0; v < im->vdim; v++)
-	    for(w = 0; w < im->wdim; w++)
-	      *vp[v]++ = *buf++;
-	  buf -= im->vdim * im->wdim;
-	}
+        for(i = 0; i < im->xdim; i++) {
+          nread = ImageIO_read(im, buf, im->vdim * im->wdim);
+          if(nread != im->vdim * im->wdim) return -1;
+          for(v = 0; v < im->vdim; v++)
+            for(w = 0; w < im->wdim; w++)
+              *vp[v]++ = *buf++;
+          buf -= im->vdim * im->wdim;
+        }
       }
     }
 
@@ -1325,7 +1320,7 @@ int _readNonInterlacedImageData(_image *im) {
     /* architecture is big endian and data little endian */
     _swapImageData( im );
 
-    
+
     /* reorder lines */
     /* no non-interlaced data for ANALYZE. But if ever... */
 /*     if( im->imageFormat == IF_ANALYZE ) { */
@@ -1336,19 +1331,19 @@ int _readNonInterlacedImageData(_image *im) {
 /*        char* swapped = ImageIO_alloc(lineSize) ; */
 /*        for( v = 0 ; v < vdim ; ++v ) */
 /*        { */
-/* 	  char* buf1 = (char*)im->data + v*vsize ; */
-/* 	  char* buf2 = buf1 + vsize - lineSize ; */
-	  
-/* 	  while( buf1 < buf2 ) */
-/* 	  { */
-/* 	     memcpy( swapped, buf1, lineSize ) ; */
-/* 	     memcpy( buf1, buf2, lineSize ) ; */
-/* 	     memcpy( buf2, swapped, lineSize ) ; */
-/* 	     buf1 += lineSize ; */
-/* 	     buf2 -= lineSize ; */
-/* 	  } */
+/*           char* buf1 = (char*)im->data + v*vsize ; */
+/*           char* buf2 = buf1 + vsize - lineSize ; */
 
-/* 	  ImageIO_free( swapped ) ; */
+/*           while( buf1 < buf2 ) */
+/*           { */
+/*              memcpy( swapped, buf1, lineSize ) ; */
+/*              memcpy( buf1, buf2, lineSize ) ; */
+/*              memcpy( buf2, swapped, lineSize ) ; */
+/*              buf1 += lineSize ; */
+/*              buf2 -= lineSize ; */
+/*           } */
+
+/*           ImageIO_free( swapped ) ; */
 /*        } */
 /*     } */
   }
@@ -1386,12 +1381,12 @@ int _readNonInterlacedFileData(_image *im) {
       if(nread != size) return -1;
       vp = (unsigned char *) im->data + (v * im->wdim);
       for(k = 0; k < im->zdim; k++) {
-	for(j = 0; j < im->ydim; j++) {
-	  for(i = 0; i < im->xdim; i++) {
-	    for(w = 0; w < im->wdim; w++) *vp++ = *buf++;
-	    vp += (im->vdim - 1) * im->wdim;
-	  }
-	}
+        for(j = 0; j < im->ydim; j++) {
+          for(i = 0; i < im->xdim; i++) {
+            for(w = 0; w < im->wdim; w++) *vp++ = *buf++;
+            vp += (im->vdim - 1) * im->wdim;
+          }
+        }
       }
     }
 
@@ -1399,8 +1394,8 @@ int _readNonInterlacedFileData(_image *im) {
 
     /* architecture is big endian and data little endian */
     _swapImageData( im );
-    
-    
+
+
     /* reorder lines */
     /* no non-interlaced data for ANALYZE. But if ever... */
 /*     if( im->imageFormat == IF_ANALYZE ) { */
@@ -1411,24 +1406,24 @@ int _readNonInterlacedFileData(_image *im) {
 /*        char* swapped = ImageIO_alloc(lineSize) ; */
 /*        for( v = 0 ; v < vdim ; ++v ) */
 /*        { */
-/* 	  char* buf1 = (char*)im->data + v*vsize ; */
-/* 	  char* buf2 = buf1 + vsize - lineSize ; */
-	  
-/* 	  while( buf1 < buf2 ) */
-/* 	  { */
-/* 	     memcpy( swapped, buf1, lineSize ) ; */
-/* 	     memcpy( buf1, buf2, lineSize ) ; */
-/* 	     memcpy( buf2, swapped, lineSize ) ; */
-/* 	     buf1 += lineSize ; */
-/* 	     buf2 -= lineSize ; */
-/* 	  } */
+/*           char* buf1 = (char*)im->data + v*vsize ; */
+/*           char* buf2 = buf1 + vsize - lineSize ; */
 
-/* 	  ImageIO_free( swapped ) ; */
+/*           while( buf1 < buf2 ) */
+/*           { */
+/*              memcpy( swapped, buf1, lineSize ) ; */
+/*              memcpy( buf1, buf2, lineSize ) ; */
+/*              memcpy( buf2, swapped, lineSize ) ; */
+/*              buf1 += lineSize ; */
+/*              buf2 -= lineSize ; */
+/*           } */
+
+/*           ImageIO_free( swapped ) ; */
 /*        } */
 /*     } */
   }
 
-  return 1;  
+  return 1;
 }
 
 
@@ -1458,22 +1453,22 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
   PTRIMAGE_FORMAT format;
 
   if(!fileName) {
-#ifdef CGAL_USE_ZLIB    
+#ifdef CGAL_USE_ZLIB
     f = gzdopen(fileno(stdin), "rb");
 #else
     f = fdopen(fileno(stdin), "rb");
 #endif
   }
   else {
-#ifdef CGAL_USE_ZLIB      
+#ifdef CGAL_USE_ZLIB
     f = gzopen(fileName, "rb");
 #else
     f = fopen(fileName, "rb");
 #endif
   }
 
-  if(!f) return NULL;
-  
+  if(!f) return nullptr;
+
 #ifdef CGAL_USE_ZLIB
   gzread( f, (void *) magic, 4);
 #else
@@ -1483,16 +1478,16 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
 
   magic[4] = '\0';
 
-#ifdef CGAL_USE_ZLIB 
+#ifdef CGAL_USE_ZLIB
   gzclose( f );
 #else
   if(fileName) fclose( f );
 #endif
 
-  if (get_static_firstFormat()==NULL)
+  if (get_static_firstFormat()==nullptr)
     initSupportedFileFormat();
 
-  for(format=get_static_firstFormat();(format!=NULL);format=format->next) {
+  for(format=get_static_firstFormat();(format!=nullptr);format=format->next) {
     /* test if it is the correct header based on magic and file extension */
     if (((*format->testImageFormat)(magic,fileName)) >=0) {
       return format;
@@ -1516,10 +1511,10 @@ PTRIMAGE_FORMAT imageType(const char *fileName) {
 
 
 
-/** adds a format at the beginning of the list of image formats. 
+/** adds a format at the beginning of the list of image formats.
     Test if all mandatory fields have been filled */
 CGAL_INLINE_FUNCTION
-int addImageFormat( PTRIMAGE_FORMAT format) 
+int addImageFormat( PTRIMAGE_FORMAT format)
 {
   if ( (format->testImageFormat) &&
        (format->readImageHeader) &&
@@ -1528,21 +1523,21 @@ int addImageFormat( PTRIMAGE_FORMAT format)
 
     format->next=get_static_firstFormat();
     get_static_firstFormat()=format;
-    
+
     return 0;
 
-  } 
+  }
   else {
     fprintf(stderr,"addImageFormat: information missing in file format %s\n",
-	    format->realName);
+            format->realName);
     return -1;
   }
 }
 
-/** adds a format at the end of the list of image formats. 
+/** adds a format at the end of the list of image formats.
     Test if all mandatory fields have been filled */
 CGAL_INLINE_FUNCTION
-int addImageFormatAtEnd( PTRIMAGE_FORMAT format) 
+int addImageFormatAtEnd( PTRIMAGE_FORMAT format)
 {
   PTRIMAGE_FORMAT f;
   if ( (format->testImageFormat) &&
@@ -1550,23 +1545,23 @@ int addImageFormatAtEnd( PTRIMAGE_FORMAT format)
        (strlen(format->fileExtension)>0) &&
        (strlen(format->realName)>0) ) {
 
-    format->next = NULL;
-    
-    if (get_static_firstFormat() == NULL) {
+    format->next = nullptr;
+
+    if (get_static_firstFormat() == nullptr) {
       get_static_firstFormat()=format;
     }
     else {
-      for(f=get_static_firstFormat();(f->next!=NULL);f=f->next)
-	;
-      f->next=format;    
+      for(f=get_static_firstFormat();(f->next!=nullptr);f=f->next)
+        ;
+      f->next=format;
     }
-    
+
     return 0;
 
-  } 
+  }
   else {
     fprintf(stderr,"addImageFormatAtEnd: information missing in file format %s\n",
-	    format->realName);
+            format->realName);
     return -1;
   }
 }
@@ -1574,10 +1569,10 @@ int addImageFormatAtEnd( PTRIMAGE_FORMAT format)
 
 /** creates supported image formats */
 CGAL_INLINE_FUNCTION
-void initSupportedFileFormat() 
+void initSupportedFileFormat()
 {
   PTRIMAGE_FORMAT f;
-  if ( get_static_inrimageFormat() == NULL ) {
+  if ( get_static_inrimageFormat() == nullptr ) {
     f = createAnalyzeFormat();
     addImageFormatAtEnd( f );
     f = createBMPFormat();
@@ -1610,23 +1605,23 @@ PTRIMAGE_FORMAT firstImageFormat() {
 
 /** prints supported image formats */
 CGAL_INLINE_FUNCTION
-void printSupportedFileFormat() {    
+void printSupportedFileFormat() {
   PTRIMAGE_FORMAT f;
   int i;
 
   initSupportedFileFormat();
 
-  for(i=0, f=get_static_firstFormat();(f!=NULL);i++, f=f->next) {
+  for(i=0, f=get_static_firstFormat();(f!=nullptr);i++, f=f->next) {
     if ( (f->testImageFormat) &&
-	 (f->readImageHeader) &&
-	 (strlen(f->fileExtension)>0) &&
-	 (strlen(f->realName)>0)) {
+         (f->readImageHeader) &&
+         (strlen(f->fileExtension)>0) &&
+         (strlen(f->realName)>0)) {
       fprintf( stderr, "#%2d: format name ='%s', extensions='%s'",
-	      i, f->realName, f->fileExtension );
-      if (f->readImageHeader) 
-	fprintf( stderr, ", read" );
-      if (f->writeImage) 
-	fprintf( stderr, ", write" );
+              i, f->realName, f->fileExtension );
+      if (f->readImageHeader)
+        fprintf( stderr, ", read" );
+      if (f->writeImage)
+        fprintf( stderr, ", write" );
       fprintf( stderr, "\n" );
     }
   }
@@ -1635,15 +1630,15 @@ void printSupportedFileFormat() {
 
 /** remove supported image formats */
 CGAL_INLINE_FUNCTION
-void removeSupportedFileFormat() {    
+void removeSupportedFileFormat() {
   PTRIMAGE_FORMAT f=get_static_firstFormat();
-  
-  while( f != NULL) {
+
+  while( f != nullptr) {
     PTRIMAGE_FORMAT f_old = f;
     f = f->next;
     ImageIO_free( f_old);
   }
-  get_static_inrimageFormat()=NULL;
+  get_static_inrimageFormat()=nullptr;
 
 }
 
@@ -1652,8 +1647,8 @@ void removeSupportedFileFormat() {
  */
 CGAL_INLINE_FUNCTION
 float triLinInterp(const _image* image,
-                   float posx, 
-                   float posy, 
+                   float posx,
+                   float posy,
                    float posz,
                    float value_outside /*= 0.f */)
 {
@@ -1661,7 +1656,7 @@ float triLinInterp(const _image* image,
   const std::size_t dimy = image->ydim;
   const std::size_t dimz = image->zdim;
   const std::size_t dimxy = dimx*dimy;
-  
+
   if(posx < 0.f || posy < 0.f || posz < 0.f )
     return value_outside;
 
@@ -1672,7 +1667,7 @@ float triLinInterp(const _image* image,
   //patch suggested by J.Cugnoni to prevent integer overflow
   if(posz >= float(dimz-1) || posy >= float(dimy-1) || posx >= float(dimx-1))
     return value_outside;
-  
+
   const int i1 = (int)(posz);
   const int j1 = (int)(posy);
   const int k1 = (int)(posx);
@@ -1715,25 +1710,25 @@ float evaluate(const _image* image,
   return 0.f;
 }
 
-/** convert the data of the image to float 
+/** convert the data of the image to float
 */
 CGAL_INLINE_FUNCTION
-void convertImageTypeToFloat(_image* image){ 
+void convertImageTypeToFloat(_image* image){
   if(image->wordKind == WK_FLOAT && image->wdim == 4)
     return;
 
   const std::size_t dimx = image->xdim;
   const std::size_t dimy = image->ydim;
   const std::size_t dimz = image->zdim;
-  
+
   float * array = (float*)ImageIO_alloc (dimx * dimy * dimz *sizeof(float));
-  if (array == NULL ) {
+  if (array == nullptr ) {
     fprintf ( stderr, "allocation error\n" );
     return;
   }
 
   CGAL_IMAGE_IO_CASE
-    (image, 
+    (image,
      Word * typedArray  = (Word *)(image->data);
      for(unsigned int i = 0; i<dimx * dimy * dimz;++i)
        array[i] = (float)(typedArray[i]);
@@ -1741,7 +1736,7 @@ void convertImageTypeToFloat(_image* image){
 
   ImageIO_free ( image->data );
   image->data = array;
-  
+
   image->wordKind = WK_FLOAT;
   image->wdim = 4;
 }

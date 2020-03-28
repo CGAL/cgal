@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/cgal/fileToolbar" >
-        <file>fileNew.png</file>
-        <file>fileOpen.png</file>
-        <file>fileSave.png</file>
-    </qresource>
-</RCC>

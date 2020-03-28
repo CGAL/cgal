@@ -1,8 +1,8 @@
-// example: read quadratic program in MPS format from file 
+// example: read quadratic program in MPS format from file
 // the QP below is the first quadratic program example in the user manual
 #include <iostream>
 #include <fstream>
-#include <CGAL/basic.h>
+
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
@@ -28,6 +28,6 @@ int main() {
   Solution s = CGAL::solve_quadratic_program(qp, ET());
 
   // output solution
-  std::cout << s; 
+  std::cout << s;
   return 0;
 }

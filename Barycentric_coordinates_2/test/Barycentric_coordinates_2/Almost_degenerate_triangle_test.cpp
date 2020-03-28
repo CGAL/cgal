@@ -88,6 +88,6 @@ int main()
     }
 
     cout << endl << "Almost_degenerate_triangle_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

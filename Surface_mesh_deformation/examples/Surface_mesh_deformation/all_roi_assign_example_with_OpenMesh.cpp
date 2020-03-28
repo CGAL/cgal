@@ -28,8 +28,8 @@ int main()
   deform_mesh.insert_roi_vertices(vb, ve);
 
   // Select two control vertices ...
-  vertex_descriptor control_1 = *CGAL::cpp11::next(vb, 213);
-  vertex_descriptor control_2 = *CGAL::cpp11::next(vb, 157);
+  vertex_descriptor control_1 = *std::next(vb, 213);
+  vertex_descriptor control_2 = *std::next(vb, 157);
 
   // ... and insert them
   deform_mesh.insert_control_vertex(control_1);
@@ -42,7 +42,7 @@ int main()
     return 1;
   }
 
-  // Use set_target_position() to set the constained position 
+  // Use set_target_position() to set the constained position
   // of control_1. control_2 remains at the last assigned positions
   Surface_mesh_deformation::Point constrained_pos_1(-0.35, 0.40, 0.60);
   deform_mesh.set_target_position(control_1, constrained_pos_1);
@@ -64,7 +64,7 @@ int main()
   OpenMesh::IO::write_mesh(mesh,"deform_1.off");
 
   // Add another control vertex which requires another call to preprocess
-  vertex_descriptor control_3 = *CGAL::cpp11::next(vb, 92);
+  vertex_descriptor control_3 = *std::next(vb, 92);
   deform_mesh.insert_control_vertex(control_3);
 
   // The prepocessing step is again needed

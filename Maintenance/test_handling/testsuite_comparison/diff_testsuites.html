@@ -1,0 +1,136 @@
+<!doctype html>
+<html style='height: 100%'>
+<head>
+	<meta charset="utf-8">
+	<title>Diff of Testsuites</title>
+	<script type="text/javascript" src="difflib.js"></script>
+	<script type="text/javascript" src="fill_empty_lines.js"></script>
+	<script type="text/javascript" src="print_diff.js"></script>
+	<script type="text/javascript" src="diff_testsuites.js"></script>
+	<script type="text/javascript" src="worker.js"></script>
+</head>
+<body style='background-color: #C0C0D0; min-height: 100%;'>
+
+<p><input type='text' id='baseInput'/>
+<select id='baselist'></select>
+
+<input type='text' id='newInput'/>
+<select id='newlist'></select>
+
+<button type="button" id='button'>Compare</button><br>
+ I = Master<br>
+ Ic = integration
+</p>
+<p>
+<table id=namesTable border="1" cellspacing="2" cellpadding="5"></table>
+<table id=diffPlatforms border="1" cellspacing="2" cellpadding="5"></table>
+<table id=testTable border="1" cellspacing="2" cellpadding="5"></table>
+<table id=namesTableBis border="1" cellspacing="2" cellpadding="5"></table>
+</p>
+
+<script type="text/javascript">
+  //get list of existing testsuites
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://cgal.geometryfactory.com/~mgimeno/testsuite_comparison/list_of_testsuites.txt', false);
+  xhr.send(null);
+  if (xhr.status !== 200) {
+    alert("Couldn't find the list of testsuites.");
+    throw new Error("Couldn't find the list of testsuites.");
+  }
+  var tmp=xhr.responseText;
+  var testsuites=tmp.split("\n");
+  testsuites.sort();
+  testsuites.reverse();
+  var sorted_testsuites = testsuites;
+  var base = document.getElementById('baselist');
+  var newlist = document.getElementById('newlist');
+  var baseinput = document.getElementById('baseInput');
+  baseinput.oninput=function(){
+    var length = base.length;
+    for(i=0; i<length; i++)
+    {
+      base.removeChild(base.options[0]);
+    }
+    sorted_testsuites=testsuites.filter(word=>word.includes(baseinput.value));
+    for(var i = 0; i < sorted_testsuites.length; i++) {
+        var opt1 = document.createElement('option');
+        opt1.innerHTML = sorted_testsuites[i];
+        opt1.value = sorted_testsuites[i];
+        base.appendChild(opt1);
+    }
+  }
+  var newinput = document.getElementById('newInput');
+  newinput.oninput=function(){
+    var length = newlist.length;
+    for(i=0; i<length; i++)
+    {
+      newlist.removeChild(newlist.options[0]);
+    }
+    sorted_testsuites=testsuites.filter(word=>word.includes(newinput.value));
+    for(var i = 0; i < sorted_testsuites.length; i++) {
+        var opt1 = document.createElement('option');
+        opt1.innerHTML = sorted_testsuites[i];
+        opt1.value = sorted_testsuites[i];
+        newlist.appendChild(opt1);
+    }
+  }
+
+  for(var i = 0; i < sorted_testsuites.length; i++) {
+      var opt1 = document.createElement('option');
+      var opt2 = document.createElement('option');
+      opt1.innerHTML = sorted_testsuites[i];
+      opt2.innerHTML = sorted_testsuites[i];
+      opt1.value = sorted_testsuites[i];
+      opt2.value = sorted_testsuites[i];
+      base.appendChild(opt1);
+      newlist.appendChild(opt2);
+  }
+  var button = document.getElementById('button');
+  button.onclick=function(){
+    var baselist = document.getElementById("baselist");
+    var newlist = document.getElementById("newlist")
+    if(baselist.length==0 || newlist.length==0){
+    alert("You need two valid testsuites to diff.");
+      throw new Error("You need two valid testsuites to diff.");
+    }
+    var baseId = baselist.selectedIndex;
+    var newId = newlist.selectedIndex;
+    var baseTest = base.options[base.selectedIndex].value;
+    var newTest = newlist.options[newlist.selectedIndex].value;
+    document.body.style.cursor = 'wait';
+    if(baseTest === newTest){
+      alert("You chose the same testsuite twice, so no diff is expected !");
+    }
+    var namesTable = document.getElementById("namesTable");
+    var diffPlatforms = document.getElementById("diffPlatforms");
+    var namesTableBis = document.getElementById("namesTableBis");
+    var names = "<table id=table border=\"1\" cellspacing=\"2\" cellpadding=\"5\">";
+    var diff_platforms = "<table id=table border=\"1\" cellspacing=\"2\" cellpadding=\"5\">";
+    var tests = "<table id=table border=\"1\" cellspacing=\"2\" cellpadding=\"5\">";
+    tests+="<caption>TESTSUITE1: <a href=\"https://cgal.geometryfactory.com/CGAL/testsuite/"+baseTest.replace('CGAL','results')+".shtml\">"+baseTest+"</a> | TESTSUITE2: <a href=\"https://cgal.geometryfactory.com/CGAL/testsuite/"+newTest.replace('CGAL','results')+".shtml\">"+newTest+"</a></caption>";
+
+    var testTable =document.getElementById("testTable");
+
+    var message = [baseTest, newTest];
+    var w = new Worker("worker.js");
+    w.addEventListener('message', function(e) {
+    console.log(e.data[0]);
+      if(e.data[0] === "finished"){
+        namesTable.innerHTML=names;
+        diffPlatforms.innerHTML=diff_platforms;
+        testTable.innerHTML=tests;
+        namesTableBis.innerHTML=names;
+        document.body.style.cursor = 'default';
+      } else if(e.data[0] === "diffPlatforms"){
+              diff_platforms+= e.data[1];
+      }else if(e.data[0] === "namesTable"){
+        names+= e.data[1];
+      } else if(e.data[0] === "testTable"){
+      tests+= e.data[1];
+    }
+    }, false);
+    w.postMessage(message);
+  };
+</script>
+</body>
+</html>

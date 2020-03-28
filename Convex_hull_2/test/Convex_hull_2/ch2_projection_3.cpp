@@ -11,15 +11,15 @@ typedef Traits::Point_2 Point_2;
 int main(){
   std::vector<Point_2> points;
   std::ifstream input("data/CD500");
-  
+
   double x,y;
   while (input >> x >> y){
     points.push_back(Point_2(x,y,3.));
   }
-  
+
   std::vector<Point_2> ch2;
-  
+
   CGAL::convex_hull_2(points.begin(),points.end(),std::back_inserter(ch2),Traits());
-  
+
   std::cout << ch2.size() << std::endl;
 }

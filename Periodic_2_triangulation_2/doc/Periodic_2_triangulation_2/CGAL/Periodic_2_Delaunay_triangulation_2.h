@@ -305,6 +305,7 @@ public:
 /// @{
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial validity of the triangulation and the
   validity of its geometric embedding (see
@@ -319,6 +320,7 @@ public:
   is_valid(bool verbose = false) const;
 
   /*!
+  \cgalAdvancedFunction
   \cgalAdvancedBegin
   Checks the combinatorial and geometric validity of the cell (see
   Section \ref P2Triangulation2secintro). Also checks that the
@@ -330,7 +332,7 @@ public:
   */
   bool
   is_valid(Face_handle f, bool verbose = false) const;
-  
+
 /// @}
 
 }; /* end Periodic_2_Delaunay_triangulation_2 */

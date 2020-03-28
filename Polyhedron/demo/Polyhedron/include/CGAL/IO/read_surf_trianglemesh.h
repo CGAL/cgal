@@ -81,13 +81,13 @@ template<class Mesh, typename DuplicatedPointsOutIterator, class NamedParameters
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
     std::vector<MaterialData>& metadata,
     CGAL::Bbox_3& grid_box,
-    CGAL::cpp11::array<unsigned int, 3>& grid_size,
+    std::array<unsigned int, 3>& grid_size,
     DuplicatedPointsOutIterator out,
     const NamedParameters&)
 {
-  typedef typename CGAL::Polygon_mesh_processing::GetGeomTraits<Mesh,
-      NamedParameters>::type Kernel;
+  typedef typename CGAL::GetGeomTraits<Mesh, NamedParameters>::type Kernel;
   typedef typename Kernel::Point_3 Point_3;
+
   std::vector<Point_3> points;
   std::string line;
   std::istringstream iss;
@@ -235,7 +235,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
     }
 
     //connect triangles
-    typedef CGAL::cpp11::array<std::size_t, 3> Triangle_ind;
+    typedef std::array<std::size_t, 3> Triangle_ind;
     std::vector<Triangle_ind> polygons;
     polygons.reserve(nb_triangles);
     while(std::getline(input, line))
@@ -275,7 +275,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
       std::cout << "\rOrientation of patch #" << (i + 1) << " done";
 
       if(!no_duplicates) //collect duplicates
-      { 
+      {
         for (std::size_t i = nbp_init; i < points.size(); ++i)
           *out++ = points[i];
         std::cout << " (non manifold -> "
@@ -286,8 +286,7 @@ bool read_surf(std::istream& input, std::vector<Mesh>& output,
 
     Mesh& mesh = output[i];
 
-    PMP::internal::Polygon_soup_to_polygon_mesh<Mesh, Point_3, Triangle_ind>
-      converter(points, polygons);
+    PMP::internal::PS_to_PM_converter<std::vector<Point_3>, std::vector<Triangle_ind> > converter(points, polygons);
     converter(mesh, false/*insert_isolated_vertices*/);
 
     CGAL_assertion(PMP::remove_isolated_vertices(mesh) == 0);
@@ -301,7 +300,7 @@ template<class Mesh, typename DuplicatedPointsOutIterator>
 bool read_surf(std::istream& input, std::vector<Mesh>& output,
   std::vector<MaterialData>& metadata,
   CGAL::Bbox_3& grid_box,
-  CGAL::cpp11::array<unsigned int, 3>& grid_size,
+  std::array<unsigned int, 3>& grid_size,
   DuplicatedPointsOutIterator out)
 {
   return read_surf(input, output, metadata, grid_box, grid_size, out,

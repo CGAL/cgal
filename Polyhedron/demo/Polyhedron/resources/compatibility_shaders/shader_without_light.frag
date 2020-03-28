@@ -1,4 +1,4 @@
-#version 120
+
 varying highp vec4 color;
 varying highp float dist[6];
 uniform bool is_selected;

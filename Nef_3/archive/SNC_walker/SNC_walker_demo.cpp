@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Miguel Granados <granados@mpi-sb.mpg.de>
 
@@ -68,7 +59,7 @@ int main() {
   P1.make_tetrahedron( p1, p2, p3, p0);
   P2.make_tetrahedron( p3, p2, p1, p4);
   //TRACEN( P1 << P2);
-  
+
   TRACEN("constructing model...");
   Nef_polyhedron NP1(P1), NP2(P2), NP(NP1^NP2);
   TRACEN("locating source...");
@@ -77,7 +68,7 @@ int main() {
   Object_handle o = NP.locate( o_src, source, target);
   TRACEN("comparing result with ray shooting...");
   CGAL_assertion_code(Object_handle oref = NP.locate(target));
-  
+
   Vertex_handle v;
   Halfedge_handle e;
   Halffacet_handle f;

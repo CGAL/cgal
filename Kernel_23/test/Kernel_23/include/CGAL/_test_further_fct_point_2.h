@@ -1,28 +1,25 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_FURTHER_FCT_POINT_2_H
 #define CGAL__TEST_FURTHER_FCT_POINT_2_H
+
+#include "_approx_equal.h"
+#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -95,23 +92,27 @@ _test_further_fct_point_2(const R& )
  p4 = p0.transform(rotate4);
  p5 = p0.transform(rotate5);
 
+ using CGAL::testsuite::approx_equal;
+ using CGAL::testsuite::Direction_2_tag;
 
- assert( (p5 - CGAL::ORIGIN).direction() == dir5 );
+ const bool nonexact = boost::is_same<FT, double>::value;
+
+ assert( approx_equal((p5 - CGAL::ORIGIN).direction(), dir5, Direction_2_tag()) );
 
  assert( CGAL::side_of_bounded_circle(p1, p2, p3, CGAL::Point_2<R>(CGAL::ORIGIN))\
                                       == CGAL::ON_BOUNDED_SIDE );
  assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN + v) \
                                       == CGAL::ON_BOUNDED_SIDE );
  assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, CGAL::ORIGIN - v) \
-                                      == CGAL::ON_UNBOUNDED_SIDE );
+                                      == CGAL::ON_UNBOUNDED_SIDE || nonexact);
  assert( CGAL::side_of_bounded_circle(p1, p2, p3, p4) \
-                                      == CGAL::ON_BOUNDARY );
+                                      == CGAL::ON_BOUNDARY || nonexact);
  assert( CGAL::side_of_bounded_circle(p1+v, p2+v, p3+v, p4+v) \
-                                      == CGAL::ON_BOUNDARY );
+                                      == CGAL::ON_BOUNDARY || nonexact);
  assert( CGAL::side_of_bounded_circle(p1+v, p3+v, p4+v, p2+v) \
-                                      == CGAL::ON_BOUNDARY );
+                                      == CGAL::ON_BOUNDARY || nonexact);
  assert( CGAL::side_of_bounded_circle(p2+v, p4+v, p1+v, p3+v) \
-                                      == CGAL::ON_BOUNDARY );
+                                      == CGAL::ON_BOUNDARY || nonexact);
 
  assert( CGAL::orientation( p1, p2, p3 ) == CGAL::POSITIVE );
 
@@ -126,11 +127,11 @@ _test_further_fct_point_2(const R& )
  assert( CGAL::side_of_oriented_circle(p2+v, p1+v, p3+v, CGAL::ORIGIN - v) \
                                       == CGAL::ON_POSITIVE_SIDE );
  assert( CGAL::side_of_oriented_circle(p1, p2, p3, p4) \
-                                      == CGAL::ON_ORIENTED_BOUNDARY );
+                                      == CGAL::ON_ORIENTED_BOUNDARY || nonexact);
  assert( CGAL::side_of_oriented_circle(p1+v, p2+v, p3+v, p4+v) \
-                                      == CGAL::ON_ORIENTED_BOUNDARY );
+                                      == CGAL::ON_ORIENTED_BOUNDARY || nonexact);
  assert( CGAL::side_of_oriented_circle(p1+v, p3+v, p4+v, p2+v) \
-                                      == CGAL::ON_ORIENTED_BOUNDARY );
+                                      == CGAL::ON_ORIENTED_BOUNDARY || nonexact);
 
  CGAL::Point_2<R> p10( RT(100), RT(100), RT(10) );
  CGAL::Point_2<R> p11( RT(-100), RT(-100), RT(10) );

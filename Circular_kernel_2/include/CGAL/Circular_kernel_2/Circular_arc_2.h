@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
@@ -75,7 +66,7 @@ namespace internal {
       unsigned short int is_complementary_x_monotone:1;
       unsigned short int is_complementary_y_monotone:1;
     } bit_field;
-  
+
 #ifdef CGAL_USEFUL_MAPS_FOR_THE_CIRCULAR_KERNEL
   public:
     typedef internal::Intersection_line_2_circle_2_map Table;
@@ -99,9 +90,9 @@ namespace internal {
 
   public:
 
-    Circular_arc_2_base() 
+    Circular_arc_2_base()
 #ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
-    : id_of_my_supporting_circle(0) 
+    : id_of_my_supporting_circle(0)
 #endif
    {
       reset_flags();           // example
@@ -114,7 +105,7 @@ namespace internal {
 
     Circular_arc_2_base(const Circle_2 &c)
       : _support(c)
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       , id_of_my_supporting_circle(0)
 #endif
     {
@@ -125,8 +116,8 @@ namespace internal {
 #endif
 
       flags.is_full = 2;       // is_full = true
-      _begin = _end  = 
-	CircularFunctors::x_extremal_point<CK>(supporting_circle(),true); 
+      _begin = _end  =
+        CircularFunctors::x_extremal_point<CK>(supporting_circle(),true);
     }
 
     Circular_arc_2_base(const Circle_2 &support,
@@ -137,24 +128,24 @@ namespace internal {
                        support.center().y() + l1.b()/2);
 
       FT sqr1 = support.squared_radius() + l1.c()
-	        - CGAL::square(support.center().x())
-	        - CGAL::square(support.center().y())
-	        + CGAL::square(center1.x())
-	        + CGAL::square(center1.y());
+                - CGAL::square(support.center().x())
+                - CGAL::square(support.center().y())
+                + CGAL::square(center1.x())
+                + CGAL::square(center1.y());
 
       Circle_2 c1 (center1, sqr1);
-      
+
       Point_2 center2 (support.center().x() + l2.a()/2,
                        support.center().y() + l2.b()/2);
 
       FT sqr2 = support.squared_radius() + l2.c()
-	        - CGAL::square(support.center().x())
-	        - CGAL::square(support.center().y())
-	        + CGAL::square(center2.x())
-	        + CGAL::square(center2.y());
+                - CGAL::square(support.center().x())
+                - CGAL::square(support.center().y())
+                + CGAL::square(center2.x())
+                + CGAL::square(center2.y());
 
       Circle_2 c2 (center2, sqr2);
-      
+
       *this = Circular_arc_2_base(support, c1, b1, c2, b2);
 
       CGAL_kernel_assertion(do_intersect(support, c1));
@@ -163,10 +154,10 @@ namespace internal {
 
 
     Circular_arc_2_base(const Circle_2 &c,
-		   const Circle_2 &c1, const bool b_1,
-		   const Circle_2 &c2, const bool b_2)
+                   const Circle_2 &c1, const bool b_1,
+                   const Circle_2 &c2, const bool b_2)
       : _support(c)
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       , id_of_my_supporting_circle(0)
 #endif
     {
@@ -177,50 +168,50 @@ namespace internal {
 #endif
 
       if (c1 != c2) {
-	_begin = CGAL::circle_intersect<CK>(c, c1, b_1);
-	_end = CGAL::circle_intersect<CK>(c, c2, b_2);
+        _begin = CGAL::circle_intersect<CK>(c, c1, b_1);
+        _end = CGAL::circle_intersect<CK>(c, c2, b_2);
       } else {
-	typedef std::vector<typename CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>::type>
+        typedef std::vector<typename CK2_Intersection_traits<CK, typename CK::Circle_2, typename CK::Circle_2>::type>
           solutions_container;
-	
-	solutions_container solutions;
-	intersection( c, c1, std::back_inserter(solutions) );
-	typename solutions_container::iterator it = solutions.begin();
 
-	CGAL_kernel_precondition( it != solutions.end() );
-	// the circles intersect
-	
-	const std::pair<typename CK::Circular_arc_point_2, unsigned>*
+        solutions_container solutions;
+        intersection( c, c1, std::back_inserter(solutions) );
+        typename solutions_container::iterator it = solutions.begin();
+
+        CGAL_kernel_precondition( it != solutions.end() );
+        // the circles intersect
+
+        const std::pair<typename CK::Circular_arc_point_2, unsigned>*
           result = CGAL::Intersections::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
-	if ( result->second == 2 ){ // double solution
-	  _begin = result->first;
-	  _end = result->first;
-	} else {
-	  if (b_1)
-	    _begin = result->first;
-	  if (b_2)
-	    _end = result->first;
-	  if (!(b_1 && b_2)) {
-	    ++it;
-	    result = CGAL::Intersections::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
-	    if (!b_1)
-	      _begin = result->first;
-	    if (!b_2)
-	      _end = result->first;
-	  }
-	}
+        if ( result->second == 2 ){ // double solution
+          _begin = result->first;
+          _end = result->first;
+        } else {
+          if (b_1)
+            _begin = result->first;
+          if (b_2)
+            _end = result->first;
+          if (!(b_1 && b_2)) {
+            ++it;
+            result = CGAL::Intersections::internal::intersect_get< std::pair<typename CK::Circular_arc_point_2, unsigned> >(*it);
+            if (!b_1)
+              _begin = result->first;
+            if (!b_2)
+              _end = result->first;
+          }
+        }
       }
     }
 
     // IS THIS CONSTRUCTOR USED ?
     // constructs a circular arc that is the arc included in A
     // having same (b) endpoint as A (true == _begin, false == _end)
-    // but whose (!b) endpoint is the intersection of A with ccut given 
+    // but whose (!b) endpoint is the intersection of A with ccut given
     // by b_cut
     Circular_arc_2_base(const Circular_arc_2_base &A, const bool b,
-		   const Circle_2 &ccut, const bool b_cut)
+                   const Circle_2 &ccut, const bool b_cut)
       : _support(A.supporting_circle())
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       , id_of_my_supporting_circle(0)
 #endif
     {
@@ -232,21 +223,21 @@ namespace internal {
 
       CGAL_kernel_precondition(A.is_x_monotone());
       CGAL_kernel_precondition(do_intersect(A.supporting_circle(), ccut));
-      
+
       Circular_arc_point_2 new_p =
-	CGAL::circle_intersect<CK>(A.supporting_circle(), ccut, b_cut);
-      
+        CGAL::circle_intersect<CK>(A.supporting_circle(), ccut, b_cut);
+
       // CGAL_kernel_assertion(point_in_range(A, new_p));
       CGAL_kernel_assertion
-	(A.on_upper_part() == (CGAL::compare(new_p.y(), A.center().y()) >= 0));
+        (A.on_upper_part() == (CGAL::compare(new_p.y(), A.center().y()) >= 0));
 
       if (b) {
-	_begin  = A._begin;
-	_end    = new_p;
+        _begin  = A._begin;
+        _end    = new_p;
       }
       else {
-	_begin  = new_p;
-	_end    = A._end;
+        _begin  = new_p;
+        _end    = A._end;
       }
     }
 
@@ -257,7 +248,7 @@ namespace internal {
                    const Point_2 &middle,
                    const Point_2 &end)
       : _begin(begin), _end(end)
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       , id_of_my_supporting_circle(0)
 #endif
     {
@@ -273,18 +264,18 @@ namespace internal {
        *  Circle_2 c = Circle_2(begin, middle, end);
        * Line_2   l1 (begin, middle);
       Line_2   l2 (middle, end);
-      *this = Circular_arc_2_base(c, 
-			     l1, compare_xy(begin, middle) < 0,
-			     l2, compare_xy(end,   middle) < 0);*/
-	  //std::cout << source() << std::endl;
-	  //std::cout << target() << std::endl;
+      *this = Circular_arc_2_base(c,
+                             l1, compare_xy(begin, middle) < 0,
+                             l2, compare_xy(end,   middle) < 0);*/
+          //std::cout << source() << std::endl;
+          //std::cout << target() << std::endl;
     }
 
     Circular_arc_2_base(const Circle_2 &support,
-		   const Circular_arc_point_2 &source,
-		   const Circular_arc_point_2 &target)
+                   const Circular_arc_point_2 &source,
+                   const Circular_arc_point_2 &target)
       : _begin(source), _end(target), _support(support)
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       , id_of_my_supporting_circle(0)
 #endif
     {
@@ -294,19 +285,19 @@ namespace internal {
       _get_id_number();
 #endif
 
-      // We cannot enable these preconditions for now, since the 
+      // We cannot enable these preconditions for now, since the
       // Lazy_circular_kernel_2
       // calls it on the Interval kernel without try/catch protection
       // through the Circular_kernel_converter.
       // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, source));
       // CGAL_kernel_exactness_precondition(CK().has_on_2_object()(support, target));
     }
-    
+
     Circular_arc_2_base(const Point_2 &begin,
                    const Point_2 &end,
-		   const FT &bulge)
+                   const FT &bulge)
       : _begin(begin), _end(end)
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
       , id_of_my_supporting_circle(0)
 #endif
     {
@@ -319,16 +310,16 @@ namespace internal {
       const FT sqr_bulge = CGAL::square(bulge);
       const FT common = (FT(1) - sqr_bulge) / (FT(4)*bulge);
       const FT x_coord = (begin.x() + end.x())/FT(2)
-	                 + common*(begin.y() - end.y());
+                         + common*(begin.y() - end.y());
       const FT y_coord = (begin.y() + end.y())/FT(2)
                           + common*(end.x() - begin.x());
-      
-      const FT sqr_rad = squared_distance(begin, end) 
-	                 * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16); 
+
+      const FT sqr_rad = squared_distance(begin, end)
+                         * (FT(1)/sqr_bulge + FT(2) + sqr_bulge) / FT(16);
 
       _support = Circle_2(Point_2(x_coord, y_coord), sqr_rad);
     }
-    
+
   private:
     // The arc goes from _begin to _end in the positive order
     // If _begin == _end, then it's the full circle
@@ -350,21 +341,21 @@ namespace internal {
 
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     template < class T >
-    static bool find_intersection(const Circular_arc_2_base& c1, 
-      const Circular_arc_2_base& c2, 
+    static bool find_intersection(const Circular_arc_2_base& c1,
+      const Circular_arc_2_base& c2,
       T& res) {
       return Circular_arc_2_base::table().find<T>(c1.my_id, c2.my_id, res);
     }
 
     template < class T >
-    static void put_intersection(const Circular_arc_2_base& c1, 
+    static void put_intersection(const Circular_arc_2_base& c1,
       const Circular_arc_2_base& c2,
       const T& res) {
       Circular_arc_2_base::table().put<T>(c1.my_id, c2.my_id, res);
     }
 #endif
 
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
 
     static Table& circle_table()
     {
@@ -376,22 +367,22 @@ namespace internal {
 
     template < class T >
     static bool find_intersection_circle_circle(
-      const Circular_arc_2_base& c1, 
-      const Circular_arc_2_base& c2, 
+      const Circular_arc_2_base& c1,
+      const Circular_arc_2_base& c2,
       T& res) {
       if(c1.id_of_my_supporting_circle == 0) return false;
       if(c2.id_of_my_supporting_circle == 0) return false;
-      return Circular_arc_2_base::circle_table().find<T>(c1.id_of_my_supporting_circle, 
-                                                         c2.id_of_my_supporting_circle, 
+      return Circular_arc_2_base::circle_table().find<T>(c1.id_of_my_supporting_circle,
+                                                         c2.id_of_my_supporting_circle,
                                                          res);
     }
 
     template < class T >
-    static void put_intersection_circle_circle(const Circular_arc_2_base& c1, 
+    static void put_intersection_circle_circle(const Circular_arc_2_base& c1,
       const Circular_arc_2_base& c2,
       const T& res) {
-      Circular_arc_2_base::circle_table().put<T>(c1.circle_number(), 
-                                                 c2.circle_number(), 
+      Circular_arc_2_base::circle_table().put<T>(c1.circle_number(),
+                                                 c2.circle_number(),
                                                  res);
     }
 #endif
@@ -401,7 +392,7 @@ namespace internal {
     {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-      			       : compare_xy(_begin,_end)<0);
+                                     : compare_xy(_begin,_end)<0);
       if (on_upper_part()) return _end;
       return  _begin;
     }
@@ -410,7 +401,7 @@ namespace internal {
     {
       CGAL_kernel_precondition(is_x_monotone());
       CGAL_kernel_precondition(on_upper_part() ? compare_xy(_end,_begin)<0
-      			       : compare_xy(_begin,_end)<0);
+                                     : compare_xy(_begin,_end)<0);
       if (on_upper_part()) return _begin;
       return  _end;
     }
@@ -419,18 +410,18 @@ namespace internal {
     {
       return _begin;
     }
-    
+
     const Circular_arc_point_2 & target() const
     {
       return _end;
     }
-    
+
     bool is_full() const {
       return flags.is_full == 2;
     }
 
 private:
-    
+
 #ifdef CGAL_INTERSECTION_MAP_FOR_XMONOTONIC_ARC_WITH_SAME_SUPPORTING_CIRCLE
     void _get_id_number() {
       my_id = table().get_new_id();
@@ -439,7 +430,7 @@ private:
 
     bool _is_x_monotone() const {
       if (is_full()) return false;
-      
+
       int cmp_begin = CGAL::compare(_begin.y(), center().y());
       int cmp_end   = CGAL::compare(_end.y(),   center().y());
 
@@ -455,7 +446,7 @@ private:
       flags.is_complementary_x_monotone = 1;
 
       int cmp_x = compare_x(_begin, _end);
-      
+
       // Is the arc on the upper part ?
       if (cmp_begin > 0 || cmp_end > 0)
         return cmp_x > 0;
@@ -475,7 +466,7 @@ private:
 
       int cmp_begin = CGAL::compare(_begin.x(), center().x());
       int cmp_end   = CGAL::compare(_end.x(),   center().x());
-      
+
       // XXX : be careful, this may be surprising if the return value
       // is not -1/1 but some random int...
       if (cmp_begin == opposite(cmp_end) && cmp_begin != 0)
@@ -487,7 +478,7 @@ private:
       flags.is_complementary_y_monotone = 1;
 
       int cmp_y = compare_y(_begin, _end);
-      
+
       // Is the arc on the right part ?
       if (cmp_begin > 0 || cmp_end > 0)
         return cmp_y < 0;
@@ -495,7 +486,7 @@ private:
       // Is the arc on the left part ?
       if (cmp_begin < 0 || cmp_end < 0)
         return cmp_y > 0;
-      
+
       // There remains the case :
       CGAL_assertion(cmp_begin == 0 && cmp_end == 0);
 
@@ -519,12 +510,12 @@ private:
     // if the 2 points are on y-extremals
     // true if the arc is on left-part
     bool _two_end_points_on_left_part() const
-    { 
-      int c1x = CGAL::compare(_begin.x(), 
+    {
+      int c1x = CGAL::compare(_begin.x(),
         supporting_circle().center().x());
       if(c1x < 0) return true;
       if(c1x > 0) return false;
-      int c2x = CGAL::compare(_end.x(), 
+      int c2x = CGAL::compare(_end.x(),
         supporting_circle().center().x());
       if(c2x < 0) return true;
       if(c2x > 0) return false;
@@ -536,7 +527,7 @@ public:
     bool is_x_monotone() const {
       if(flags.is_x_monotonic == 0) {
         bool b = _is_x_monotone();
-        if(b) { 
+        if(b) {
           flags.is_x_monotonic = 2;
           flags.is_complementary_x_monotone = 0;
         } else flags.is_x_monotonic = 1;
@@ -544,16 +535,16 @@ public:
       } else {
         return (flags.is_x_monotonic == 1) ? false : true;
       }
-    } 
+    }
 
     // Returns true if the complementary arc is x_monotone()
     // note: if semi-cercle -> false
     bool is_complementary_x_monotone() const {
-      // is_x_monotone calculates also if 
+      // is_x_monotone calculates also if
       // the complementary is x-monotone if needed
       is_x_monotone();
       return (flags.is_complementary_x_monotone == 0) ? false : true;
-    } 
+    }
 
     bool is_y_monotone() const {
       if(flags.is_y_monotonic == 0) {
@@ -571,13 +562,13 @@ public:
     // Returns true if the complementary arc is y_monotone()
     // note: if semi-cercle -> false
     bool is_complementary_y_monotone() const {
-      // is_y_monotone calculates also if 
+      // is_y_monotone calculates also if
       // the complementary is y-monotone if needed
       is_y_monotone();
       return (flags.is_complementary_y_monotone == 0) ? false : true;
     }
 
-    // check whether 2 endpoints are at upper or not from the center 
+    // check whether 2 endpoints are at upper or not from the center
     bool two_end_points_on_upper_part() const {
       if(flags.two_end_points_on_upper_part == 0) {
         bool b = _two_end_points_on_upper_part();
@@ -589,7 +580,7 @@ public:
       }
     }
 
-    // check whether the arc is at upper or not from the center 
+    // check whether the arc is at upper or not from the center
     bool on_upper_part() const {
       CGAL_kernel_precondition(is_x_monotone());
       return two_end_points_on_upper_part();
@@ -613,8 +604,8 @@ public:
       }
     }
 
-    // check whether the arc is at left or right from the center 
-    bool on_left_part() const {      
+    // check whether the arc is at left or right from the center
+    bool on_left_part() const {
       CGAL_kernel_precondition(is_y_monotone());
       return two_end_points_on_left_part();
     }
@@ -631,7 +622,7 @@ public:
     }
 #endif
 
-#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES 
+#ifdef CGAL_INTERSECTION_MAP_FOR_SUPPORTING_CIRCLES
     unsigned int circle_number() const {
       if(!id_of_my_supporting_circle)
         id_of_my_supporting_circle = circle_table().get_new_id();
@@ -649,13 +640,13 @@ public:
     }
 
     typename cpp11::result_of<typename CK::Construct_center_2(Circle_2)>::type
-    center() const           
+    center() const
     {
        return supporting_circle().center();
     }
 
     typename cpp11::result_of<typename CK::Compute_squared_radius_2(Circle_2)>::type
-    squared_radius() const           
+    squared_radius() const
     {
        return supporting_circle().squared_radius();
     }
@@ -663,7 +654,7 @@ public:
     Bbox_2 bbox() const
     {
       return CGAL::CircularFunctors::circular_arc_bbox<CK>(*this);
-    }    
+    }
 
     // Dont use this function, it is only for internal use
     void _setx_info(unsigned short int v_is_x_monotone,
@@ -673,7 +664,7 @@ public:
       flags.two_end_points_on_upper_part = v_two_end_points_on_upper_part;
       flags.is_complementary_x_monotone = v_is_complementary_x_monotone;
     }
-    
+
   }; // end class Circular_arc_2_base
 
 
@@ -688,8 +679,8 @@ public:
     // - circle c2
     // - bool b2
     return os << a.supporting_circle() << " "
-	      << a.source() << " "
-	      << a.target() << " ";
+              << a.source() << " "
+              << a.target() << " ";
   }
 
   template < typename CK >
@@ -727,7 +718,7 @@ public:
                 << std::sqrt(CGAL::to_double(a.supporting_circle().squared_radius()))
                 << " ]])" << std::endl;
     }
-  }     
+  }
 
 
 template < typename CK, typename Base_CK>
@@ -745,49 +736,49 @@ class Filtered_bbox_circular_arc_2_base : public Base_CK::Circular_arc_2
 public:
   ///////////Construction/////////////
 
-  Filtered_bbox_circular_arc_2_base() : P_arc(), bb(NULL) {}
-    
-  Filtered_bbox_circular_arc_2_base(const P_arc& arc) : P_arc(arc), bb(NULL) {}
+  Filtered_bbox_circular_arc_2_base() : P_arc(), bb(nullptr) {}
+
+  Filtered_bbox_circular_arc_2_base(const P_arc& arc) : P_arc(arc), bb(nullptr) {}
 
   // otherwise it will lead to ambiguos definitions
   explicit Filtered_bbox_circular_arc_2_base(const Circle_2 &c)
-    : P_arc(c),bb(NULL)
+    : P_arc(c),bb(nullptr)
   {}
 
-  Filtered_bbox_circular_arc_2_base(const Circle_2 &support, 
+  Filtered_bbox_circular_arc_2_base(const Circle_2 &support,
                                     const Line_2 &l1, const bool b_l1,
                                     const Line_2 &l2, const bool b_l2)
-    : P_arc(support,l1,b_l1,l2,b_l2),bb(NULL)
+    : P_arc(support,l1,b_l1,l2,b_l2),bb(nullptr)
   {}
 
-    
-  Filtered_bbox_circular_arc_2_base(const Circle_2 &c, 
+
+  Filtered_bbox_circular_arc_2_base(const Circle_2 &c,
                                     const Circle_2 &c1, const bool b_1,
                                     const Circle_2 &c2, const bool b_2)
-    : P_arc(c,c1,b_1,c2,b_2),bb(NULL)
+    : P_arc(c,c1,b_1,c2,b_2),bb(nullptr)
   {}
 
-    
+
   Filtered_bbox_circular_arc_2_base(const Point_2 &start,
                                     const Point_2 &middle,
                                     const Point_2 &end)
-    : P_arc(start, middle, end),bb(NULL)
+    : P_arc(start, middle, end),bb(nullptr)
   {}
 
   Filtered_bbox_circular_arc_2_base(const Point_2 &begin,
                                     const Point_2 &end,
-                                    const FT &bulge) 
-    : P_arc(begin, end, bulge),bb(NULL)
+                                    const FT &bulge)
+    : P_arc(begin, end, bulge),bb(nullptr)
   {}
 
   Filtered_bbox_circular_arc_2_base(const Circle_2 &support,
                                     const Circular_arc_point_2 &begin,
                                     const Circular_arc_point_2 &end)
-    : P_arc(support, begin, end),bb(NULL) 
+    : P_arc(support, begin, end),bb(nullptr)
   {}
 
-  Filtered_bbox_circular_arc_2_base(const Self &c) 
-    : P_arc(c), bb(c.bb ? new Bbox_2(*(c.bb)) : NULL)
+  Filtered_bbox_circular_arc_2_base(const Self &c)
+    : P_arc(c), bb(c.bb ? new Bbox_2(*(c.bb)) : nullptr)
   {}
 
   Filtered_bbox_circular_arc_2_base& operator=(const Self& c)
@@ -795,10 +786,10 @@ public:
     if(this != &c)
     {
       this->P_arc::operator=(c);
-      if (bb != NULL){
+      if (bb != nullptr){
         delete bb;
       }
-      bb = c.bb ? new Bbox_2(*(c.bb)) : NULL;
+      bb = c.bb ? new Bbox_2(*(c.bb)) : nullptr;
     }
     return *this;
   }
@@ -806,17 +797,17 @@ public:
   ~Filtered_bbox_circular_arc_2_base() { if(bb) delete bb; }
 
   Bbox_2 bbox() const
-  { 
-    if(bb==NULL)
+  {
+    if(bb==nullptr)
       bb=new Bbox_2(CGAL::CircularFunctors::circular_arc_bbox<CK>(*this));
     return *bb;
   }
-                          
-			
+
+
   ///Specific check used for bbox construction///
   bool has_no_bbox() const
-  { return (bb==NULL);}
-		
+  { return (bb==nullptr);}
+
 private:
   mutable Bbox_2 *bb;
 }; // end class Filtered_bbox_circular_arc_2_base

@@ -10,7 +10,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
-typedef CGAL::cpp11::array<unsigned short, 4> Color;
+typedef std::array<unsigned short, 4> Color;
 typedef std::pair<Point, Color> PointWithColor;
 
 int main(int argc, char*argv[])
@@ -40,6 +40,6 @@ int main(int argc, char*argv[])
 
   for (std::size_t i = 0; i < points.size(); ++ i)
     std::cout << points[i].first << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

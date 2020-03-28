@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 
@@ -26,11 +17,12 @@
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
+#include <CGAL/Triangulation_3.h>
 #include <CGAL/Random.h>
 
 namespace CGAL
 {
-  
+
 // Default color functor; user can change it to have its own face color
 struct DefaultColorFunctorT3
 {
@@ -38,7 +30,7 @@ struct DefaultColorFunctorT3
   static CGAL::Color run(const T3&,
                          const typename T3::Finite_facets_iterator* fh)
   {
-    if (fh==NULL) // use to get the mono color
+    if (fh==nullptr) // use to get the mono color
       return CGAL::Color(100, 125, 200); // R G B between 0-255
 
     CGAL::Random random((unsigned int)((std::size_t)(&*((*fh)->first))+
@@ -47,7 +39,7 @@ struct DefaultColorFunctorT3
   }
 };
 
-// Viewer class for T3 
+// Viewer class for T3
 template<class T3, class ColorFunctor>
 class SimpleTriangulation3ViewerQt : public Basic_viewer_qt
 {
@@ -57,7 +49,7 @@ class SimpleTriangulation3ViewerQt : public Basic_viewer_qt
   typedef typename T3::Finite_facets_iterator Facet_const_handle;
   typedef typename T3::Cell_handle            Cell_handle;
   typedef typename T3::Point                  Point;
- 
+
 public:
   /// Construct the viewer.
   /// @param at3 the t3 to view
@@ -70,7 +62,7 @@ public:
                                bool anofaces=false,
                                const ColorFunctor& fcolor=ColorFunctor()) :
     // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false), 
+    Base(parent, title, true, true, true, false, false),
     t3(at3),
     m_nofaces(anofaces),
     m_fcolor(fcolor)
@@ -87,7 +79,7 @@ protected:
     add_point_in_face(fh->first->vertex((fh->second+1)%4)->point());
     add_point_in_face(fh->first->vertex((fh->second+2)%4)->point());
     add_point_in_face(fh->first->vertex((fh->second+3)%4)->point());
-    
+
     face_end();
   }
 
@@ -108,16 +100,16 @@ protected:
     {
       for (typename T3::Finite_facets_iterator it=t3.finite_facets_begin();
            it!=t3.finite_facets_end(); ++it)
-      { compute_face(it); } 
+      { compute_face(it); }
     }
-    
+
     for (typename T3::Finite_edges_iterator it=t3.finite_edges_begin();
          it!=t3.finite_edges_end(); ++it)
-    { compute_edge(it); } 
+    { compute_edge(it); }
 
     for (typename T3::Finite_vertices_iterator it=t3.finite_vertices_begin();
          it!=t3.finite_vertices_end(); ++it)
-    { compute_vertex(it); } 
+    { compute_vertex(it); }
   }
 
   virtual void keyPressEvent(QKeyEvent *e)
@@ -125,7 +117,7 @@ protected:
     // Test key pressed:
     //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
     //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-    
+
     // Call: * compute_elements() if the model changed, followed by
     //       * redraw() if some viewing parameters changed that implies some
     //                  modifications of the buffers
@@ -141,18 +133,19 @@ protected:
   bool m_nofaces;
   const ColorFunctor& m_fcolor;
 };
-  
-template<class T3, class ColorFunctor>
-void draw(const T3& at3,
-          const char* title,
-          bool nofill,
-          const ColorFunctor& fcolor)
-{
 
+// Specialization of draw function.
+#define CGAL_T3_TYPE CGAL::Triangulation_3<Gt, Tds, Lock_data_structure>
+
+template<class Gt, class Tds, class Lock_data_structure>
+void draw(const CGAL_T3_TYPE& at3,
+          const char* title="T3 Basic Viewer",
+          bool nofill=false)
+{
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite=true;
 #else
-  bool cgal_test_suite=false;
+  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
 #endif
 
   if (!cgal_test_suite)
@@ -160,30 +153,15 @@ void draw(const T3& at3,
     int argc=1;
     const char* argv[2]={"t3_viewer","\0"};
     QApplication app(argc,const_cast<char**>(argv));
-    SimpleTriangulation3ViewerQt<T3, ColorFunctor> mainwindow(app.activeWindow(),
-                                                              at3,
-                                                              title,
-                                                              nofill,
-                                                              fcolor);
+    DefaultColorFunctorT3 fcolor;
+    SimpleTriangulation3ViewerQt<CGAL_T3_TYPE, DefaultColorFunctorT3>
+      mainwindow(app.activeWindow(), at3, title, nofill, fcolor);
     mainwindow.show();
     app.exec();
   }
 }
 
-template<class T3>
-void draw(const T3& at3, const char* title, bool nofill)
-{
-  DefaultColorFunctorT3 c;
-  draw(at3, title, nofill, c);
-}
-
-template<class T3>
-void draw(const T3& at3, const char* title)
-{ draw(at3, title, false); }
-
-template<class T3>
-void draw(const T3& at3)
-{ draw(at3, "Basic T3 Viewer"); }
+#undef CGAL_T3_TYPE
 
 } // End namespace CGAL
 

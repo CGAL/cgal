@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Pierre Alliez and Laurent Saboret
 
@@ -29,7 +20,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Iterator_range.h>
 
-#include <CGAL/boost/graph/named_function_params.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iostream>
@@ -71,18 +62,19 @@ write_xyz_points(
   const PointRange& points,
   const NamedParameters& np)
 {
-  using boost::choose_param;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename Point_set_processing_3::GetPointMap<PointRange, NamedParameters>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
 
   bool has_normals = !(boost::is_same<NormalMap,
                        typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value);
 
-  PointMap point_map = choose_param(get_param(np, internal_np::point_map), PointMap());
-  NormalMap normal_map = choose_param(get_param(np, internal_np::normal_map), NormalMap());
-  
+  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
   if(!stream)
@@ -116,7 +108,7 @@ write_xyz_points(
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap,
@@ -140,7 +132,7 @@ write_xyz_points_and_normals(
      geom_traits(Kernel()));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename NormalMap
@@ -161,7 +153,7 @@ write_xyz_points_and_normals(
      normal_map (normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename NormalMap
 >
@@ -179,7 +171,7 @@ write_xyz_points_and_normals(
      CGAL::parameters::normal_map(normal_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap,
           typename Kernel
@@ -199,7 +191,7 @@ write_xyz_points(
      CGAL::parameters::point_map(point_map).
      geom_traits (kernel));
 }
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator,
           typename PointMap
 >
@@ -217,7 +209,7 @@ write_xyz_points(
      CGAL::parameters::point_map(point_map));
 }
 
-// deprecated API  
+// deprecated API
 template <typename ForwardIterator
 >
 CGAL_DEPRECATED_MSG("you are using the deprecated V1 API of CGAL::write_xyz_points(), please update your code")

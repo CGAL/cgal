@@ -43,7 +43,7 @@ int main()
     mesh.add_property_map<face_descriptor, std::size_t>("f:proxy_id", 0).first;
   std::vector<Kernel::Vector_3> proxies;
   std::vector<Kernel::Point_3> points;
-  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
+  std::vector<std::array<std::size_t, 3> > triangles;
 
   CGAL::Surface_mesh_approximation::approximate_triangle_mesh(mesh,
     CGAL::parameters::seeding_method(CGAL::Surface_mesh_approximation::INCREMENTAL).

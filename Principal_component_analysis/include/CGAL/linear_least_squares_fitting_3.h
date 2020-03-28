@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pierre Alliez and Sylvain Pion and Ankit Gupta
 
@@ -43,65 +34,65 @@
 namespace CGAL {
 
 // complete set of parameters
-template < typename InputIterator, 
+template < typename InputIterator,
            typename Object,
            typename Kernel,
            typename Tag,
-	   typename DiagonalizeTraits >
+           typename DiagonalizeTraits >
 inline
 typename Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
+                               InputIterator beyond,
                                Object& object, // plane or line
-                               typename Kernel::Point_3& centroid, 
+                               typename Kernel::Point_3& centroid,
                                const Tag& tag, // dimension tag, ranges from 0 to 3
-			       const Kernel& kernel,
-			       const DiagonalizeTraits& diagonalize_traits)
+                               const Kernel& kernel,
+                               const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_3(first, beyond, object,
-						  centroid, (Value_type*) NULL, kernel, tag,
-						  diagonalize_traits);
+                                                  centroid, (Value_type*) nullptr, kernel, tag,
+                                                  diagonalize_traits);
 }
 
 // deduces kernel from value type of input iterator
 // use default DiagonalizeTraits
-template < typename InputIterator, 
+template < typename InputIterator,
            typename Object,
-	   typename Point,
+           typename Point,
            typename Tag >
 inline
 typename Kernel_traits<Object>::Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
+                               InputIterator beyond,
                                Object& object,  // plane or line
                                Point& centroid,
-			       const Tag& tag) // dimension tag, ranges from 0 to 3
+                               const Tag& tag) // dimension tag, ranges from 0 to 3
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,tag,Kernel(),
-					      Default_diagonalize_traits<typename Kernel::FT, 3>());
+                                              Default_diagonalize_traits<typename Kernel::FT, 3>());
 
 }
 
 // deduces kernel and does not write centroid
 // use default DiagonalizeTraits
-template < typename InputIterator, 
+template < typename InputIterator,
            typename Object,
            typename Tag>
 inline
 typename Kernel_traits<Object>::Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
-                               InputIterator beyond, 
+                               InputIterator beyond,
                                Object& object, // plane or line
-			       const Tag& tag) // dimension tag, ranges from 0 to 3
+                               const Tag& tag) // dimension tag, ranges from 0 to 3
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   typename Kernel::Point_3 centroid; // not used by caller
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,tag,Kernel(),
-					      Default_diagonalize_traits<typename Kernel::FT, 3>());
+                                              Default_diagonalize_traits<typename Kernel::FT, 3>());
 
 }
 

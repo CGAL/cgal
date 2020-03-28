@@ -4,23 +4,12 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: MemoryPool.h
  * Synopsis:
  *      a memory pool template class.
- * 
- * Written by 
+ *
+ * Written by
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu>
@@ -30,14 +19,15 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 #ifndef _CORE_MEMORYPOOL_H_
 #define _CORE_MEMORYPOOL_H_
 
 #include <CGAL/config.h>
 #include <CGAL/tss.h>
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
+#include <boost/config.hpp>
+#if defined(CGAL_HAS_THREADS) && defined(BOOST_GCC) && BOOST_GCC < 90100
 // Force the use of Boost.Thread with g++ and C++11, because of the PR66944
 //   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66944
 // See also CGAL PR #1888
@@ -50,7 +40,7 @@
 #include <CGAL/assertions.h>
 #include <vector>
 
-namespace CORE { 
+namespace CORE {
 
 #define CORE_EXPANSION_SIZE 1024
 template< class T, int nObjects = CORE_EXPANSION_SIZE >
@@ -71,8 +61,8 @@ public:
       std::size_t count = 0;
       Thunk* t = head;
       while(t!=0){
-	++count;
-	t = t->next;
+        ++count;
+        t = t->next;
       }
     //);
     //CGAL_warning_msg(count ==  nObjects * blocks.size(),
@@ -83,6 +73,10 @@ public:
         ::operator delete(blocks[i]);
       }
     }
+    // un-commenting the following line can help reproduce on Linux the
+    // assertion !blocks.empty() that is sometimes triggered with MSVC
+    // or AppleClang
+    // blocks.clear();
   }
 
 
@@ -91,36 +85,30 @@ public:
 
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
-    if(memPool_ptr.get() == NULL) {memPool_ptr.reset(new Self());}
+#if defined(CGAL_HAS_THREADS) && defined(BOOST_GCC) && BOOST_GCC < 90100
+    if(memPool_ptr.get() == nullptr) {memPool_ptr.reset(new Self());}
     Self& memPool =  * memPool_ptr.get();
-#endif
+#elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
+    static thread_local Self memPool;
+#else // not CGAL_HAS_THREADS
+    static Self memPool;
+#endif // not CGAL_HAS_THREADS
     return memPool;
   }
- 
+
 private:
    Thunk* head; // next available block in the pool
   std::vector<void*> blocks;
 
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
+#if defined(CGAL_HAS_THREADS) && defined(BOOST_GCC) && BOOST_GCC < 90100
   static boost::thread_specific_ptr<Self> memPool_ptr;
-#elif defined(CGAL_HAS_THREADS) // use the C++11 implementation
-  static thread_local Self memPool;
-#else // not CGAL_HAS_THREADS
-  static Self memPool;
 #endif // not CGAL_HAS_THREADS
 };
 
-#if CGAL_STATIC_THREAD_LOCAL_USE_BOOST || (defined(CGAL_HAS_THREADS)&&__GNUC__)
+#if defined(CGAL_HAS_THREADS) && defined(BOOST_GCC) && BOOST_GCC < 90100
 template <class T, int nObjects >
 boost::thread_specific_ptr<MemoryPool<T, nObjects> >
 MemoryPool<T, nObjects>::memPool_ptr;
-#else // use C++11 or without CGAL_HAS_THREADS
-template <class T, int nObjects >
-#  ifdef CGAL_HAS_THREADS
-thread_local
-#  endif
-MemoryPool<T, nObjects> MemoryPool<T, nObjects>::memPool;
 #endif
 
 template< class T, int nObjects >
@@ -130,13 +118,13 @@ void* MemoryPool< T, nObjects >::allocate(std::size_t) {
 
       // use the global operator new to allocate a block for the pool
       Thunk* pool = reinterpret_cast<Thunk*>(
-	 ::operator new(nObjects * sizeof(Thunk)));
+         ::operator new(nObjects * sizeof(Thunk)));
 
       blocks.push_back(pool);
       // initialize the chain (one-directional linked list)
       head = pool;
       for (int i = 0; i < last; ++i ) {
-	 pool[i].next = &pool[i+1];
+         pool[i].next = &pool[i+1];
       }
       pool[last].next = 0;
    }
@@ -150,7 +138,7 @@ void* MemoryPool< T, nObjects >::allocate(std::size_t) {
 
 template< class T, int nObjects >
 void MemoryPool< T, nObjects >::free(void* t) {
-   CGAL_assertion(t != 0);     
+   CGAL_assertion(t != 0);
    if (t == 0) return; // for safety
    if(blocks.empty()){
      std::cerr << typeid(T).name() << std::endl;

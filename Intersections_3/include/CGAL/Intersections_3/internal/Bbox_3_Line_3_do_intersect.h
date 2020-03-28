@@ -2,20 +2,11 @@
 // Copyright (c) 2008-2011 INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Camille Wormser, Jane Tournois, Pierre Alliez, Stephane Tayeb
@@ -30,7 +21,7 @@
 // inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
 
 namespace CGAL {
-  
+
 namespace Intersections {
 
 namespace internal {
@@ -81,10 +72,10 @@ namespace internal {
       tmax_ = py - bymin;
       d_ = -vy;
     }
-    
-    
-    
-    
+
+
+
+
     if ( d_ == FT(0) ){
       //if py is not in the y-slab
       if( (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
@@ -120,11 +111,11 @@ namespace internal {
       tmax_ = pz - bzmin;
       d_ = -vz;
     }
-    
+
     //if pz is not in the z-slab
     //if ( d_ == FT(0) && (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
-    //The previous line is not needed as either dmin or d_ are not 0 
-    //(otherwise the direction of the line would be null). 
+    //The previous line is not needed as either dmin or d_ are not 0
+    //(otherwise the direction of the line would be null).
     // The following is equivalent to the in z-slab test if d_=0.
 
     return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );

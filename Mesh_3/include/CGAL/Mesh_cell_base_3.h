@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Laurent Rineau, Stephane Tayeb
@@ -42,11 +33,11 @@
 #include <boost/type_traits/is_convertible.hpp>
 
 #ifdef CGAL_LINKED_WITH_TBB
-# include <tbb/atomic.h>
+# include <atomic>
 #endif
 
 namespace CGAL {
-    
+
 // Sequential
 template <typename Concurrency_tag>
 class Mesh_cell_base_3_base
@@ -94,9 +85,9 @@ public:
   {
     ++this->m_erase_counter;
   }
-  
+
 protected:
-  typedef tbb::atomic<unsigned int> Erase_counter_type;
+  typedef std::atomic<unsigned int> Erase_counter_type;
   Erase_counter_type                m_erase_counter;
 };
 #endif // CGAL_LINKED_WITH_TBB
@@ -114,24 +105,24 @@ class Mesh_cell_base_3
     typename Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb>::Tds::Concurrency_tag>
 {
   typedef typename GT::FT FT;
-  
+
 public:
   // Base
   typedef Mesh_3::Mesh_surface_cell_base_3<GT, MD, Cb> Base;
   // Index Type
   typedef typename MD::Subdomain_index      Subdomain_index;
   typedef typename MD::Surface_patch_index  Surface_patch_index;
-  
+
   // Backward compatibility
 #ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
   typedef Surface_patch_index               Surface_index;
 #endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
-  
+
   // Triangulation
   typedef typename Base::Tds Tds;
   typedef typename Tds::Vertex_handle Vertex_handle;
   typedef typename Tds::Cell_handle Cell_handle;
-  
+
   // To get correct cell type in TDS
   template < class TDS3 >
   struct Rebind_TDS
@@ -139,7 +130,7 @@ public:
     typedef typename Cb::template Rebind_TDS<TDS3>::Other Cb3;
     typedef Mesh_cell_base_3 <GT, MD, Cb3> Other;
   };
-  
+
   // Constructors
   Mesh_cell_base_3()
     : Base()
@@ -151,13 +142,13 @@ public:
     , previous_intrusive_()
 #endif
   {}
-  
+
   Mesh_cell_base_3 (Vertex_handle v0,
                     Vertex_handle v1,
                     Vertex_handle v2,
                     Vertex_handle v3)
     : Base (v0, v1, v2, v3)
-    , subdomain_index_() 
+    , subdomain_index_()
     , sliver_value_(FT(0.))
     , sliver_cache_validity_(false)
 #ifdef CGAL_INTRUSIVE_LIST
@@ -165,7 +156,7 @@ public:
     , previous_intrusive_()
 #endif
   {}
-  
+
   Mesh_cell_base_3 (Vertex_handle v0,
                     Vertex_handle v1,
                     Vertex_handle v2,
@@ -183,18 +174,18 @@ public:
     , previous_intrusive_()
 #endif
   {}
-  
+
   // Default copy constructor and assignment operator are ok
-  
+
   // Returns the index of the cell of the input complex that contains the cell
   Subdomain_index subdomain_index() const { return subdomain_index_; }
-  
+
   // Sets the index of the cell of the input complex that contains the cell
   void set_subdomain_index(const Subdomain_index& index)
-  { subdomain_index_ = index; }  
-  
+  { subdomain_index_ = index; }
+
   void set_sliver_value(const FT& value)
-  { 
+  {
     sliver_cache_validity_ = true;
     sliver_value_ = value;
   }
@@ -214,14 +205,14 @@ public:
 public:
   Cell_handle next_intrusive() const { return next_intrusive_; }
   void set_next_intrusive(Cell_handle c)
-  { 
-    next_intrusive_ = c; 
+  {
+    next_intrusive_ = c;
   }
-   
+
   Cell_handle previous_intrusive() const { return previous_intrusive_; }
   void set_previous_intrusive(Cell_handle c)
-  { 
-    previous_intrusive_ = c; 
+  {
+    previous_intrusive_ = c;
   }
 #endif // CGAL_INTRUSIVE_LIST
 
@@ -240,7 +231,7 @@ public:
 private:
   // The index of the cell of the input complex that contains me
   Subdomain_index subdomain_index_;
-  
+
   FT sliver_value_;
   mutable bool sliver_cache_validity_;
 

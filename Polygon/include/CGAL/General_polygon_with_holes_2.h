@@ -5,20 +5,11 @@
 // Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -26,7 +17,7 @@
 #ifndef CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 #define CGAL_GENERAL_POLYGON_WITH_HOLES_2_H
 
-#include <list>
+#include <deque>
 #include <iostream>
 #include <CGAL/IO/io.h>
 
@@ -56,10 +47,10 @@ public:
 
 /// @{
   /// polygon without hole type
-  typedef Polygon_							General_polygon_2;
+  typedef Polygon_                                                        General_polygon_2;
 /// @}
 
-  typedef std::list<Polygon_>                         Holes_container;
+  typedef std::deque<General_polygon_2>               Holes_container;
 
   typedef typename Holes_container::iterator          Hole_iterator;
   typedef typename Holes_container::const_iterator    Hole_const_iterator;
@@ -81,6 +72,16 @@ public:
                        HolesInputIterator h_end) : m_pgn(pgn_boundary),
                                                    m_holes(h_begin, h_end)
   {}
+
+  Holes_container& holes()
+  {
+    return m_holes;
+  }
+
+  const Holes_container& holes() const
+  {
+    return m_holes;
+  }
 
   Hole_iterator holes_begin()
   {

@@ -74,7 +74,7 @@
 #include <CGAL/gmpxx.h>
 
 #else
-#error No Number Type (NT) specified! 
+#error No Number Type (NT) specified!
 #endif
 
 // Typedefs:

@@ -1,24 +1,15 @@
-// Copyright (c) 2000,2001  
+// Copyright (c) 2000,2001
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Michael Seel
 
@@ -68,10 +59,10 @@ public:
     typedef const value_type&               reference;
 
   Homogeneous_const_iterator() : _it(0), _w(0) {}
-  Homogeneous_const_iterator(const_iterator it, const_iterator w = 0) 
+  Homogeneous_const_iterator(const_iterator it, const_iterator w = 0)
     : _it(it), _w(w) {}
-    
-  value_type operator*() const 
+
+  value_type operator*() const
   { if (_it == _w) return value_type(1); else return *_it; }
 
   self& operator++() { ++_it; return *this; }
@@ -81,9 +72,9 @@ public:
 
   self& operator+=(difference_type i) { _it+=i; return *this; }
   self& operator-=(difference_type i) { _it-=i; return *this; }
-  self operator+(difference_type i) const 
+  self operator+(difference_type i) const
   { self tmp=*this; return tmp += i; }
-  self operator-(difference_type i) const 
+  self operator-(difference_type i) const
   { self tmp=*this; return tmp -= i; }
 
   difference_type operator-(self x) const { return _it-x._it; }
@@ -94,7 +85,7 @@ public:
   bool operator<(self x) const { return (x - *this) > 0; }
 
   private:
-    const_iterator _it, _w;  
+    const_iterator _it, _w;
   }; // Homogeneous_const_iterator
 
 
@@ -107,19 +98,19 @@ public:
   { v[0]=a; v[1]=b; v[2]=c; v[3]=d; }
 
   template <typename I>
-  Tuple_d(int d, I& start, I end) : v(d) 
-  { int i(0); 
-    while ( i < d && start != end ) v[i++] = *start++; 
-  } 
-  /* this constructor returns the final position of start 
+  Tuple_d(int d, I& start, I end) : v(d)
+  { int i(0);
+    while ( i < d && start != end ) v[i++] = *start++;
+  }
+  /* this constructor returns the final position of start
      to offer access to a possible common denominator as
      part of the tuple range */
 
   template <typename I>
-  Tuple_d(int d, I start, I end, NT D) : v(d) 
-  { int i(0); 
-    while ( i < d && start != end ) v[i++] = *start++; 
-    v[d-1] = D; 
+  Tuple_d(int d, I start, I end, NT D) : v(d)
+  { int i(0);
+    while ( i < d && start != end ) v[i++] = *start++;
+    v[d-1] = D;
   }
 
   int size() const { return v.dimension(); }
@@ -139,25 +130,25 @@ public:
   void homogeneous_add(const Self* a, const Self* b)
   { int d = a->size()-1;
     if ( d < 0 ) return;
-    CGAL_assertion_msg((d == b->size()-1),"dimensions disagree."); 
-    CGAL_assertion_msg((d == size()-1),"dimensions disagree."); 
-    NT aw = a->v[d], bw = b->v[d]; 
-    for (int i = 0; i < d; ++i) { 
-      v[i] = a->v[i]*bw + b->v[i]*aw; 
+    CGAL_assertion_msg((d == b->size()-1),"dimensions disagree.");
+    CGAL_assertion_msg((d == size()-1),"dimensions disagree.");
+    NT aw = a->v[d], bw = b->v[d];
+    for (int i = 0; i < d; ++i) {
+      v[i] = a->v[i]*bw + b->v[i]*aw;
     }
-    v[d] = aw*bw; 
+    v[d] = aw*bw;
   }
 
   void homogeneous_sub(const Self* a, const Self* b)
-  { int d = a->size()-1; 
+  { int d = a->size()-1;
     if ( d < 0 ) return;
-    CGAL_assertion_msg((d == b->size()-1),"dimensions disagree."); 
-    CGAL_assertion_msg((d == size()-1),"dimensions disagree."); 
-    NT aw = a->v[d], bw = b->v[d]; 
-    for (int i = 0; i < d; ++i) { 
-      v[i] = a->v[i]*bw - b->v[i]*aw; 
+    CGAL_assertion_msg((d == b->size()-1),"dimensions disagree.");
+    CGAL_assertion_msg((d == size()-1),"dimensions disagree.");
+    NT aw = a->v[d], bw = b->v[d];
+    for (int i = 0; i < d; ++i) {
+      v[i] = a->v[i]*bw - b->v[i]*aw;
     }
-    v[d] = aw*bw; 
+    v[d] = aw*bw;
   }
 
   void cartesian_add(const Self* a, const Self* b)
@@ -173,43 +164,43 @@ public:
   friend class VectorCd<NT,LA>;
   friend class DirectionCd<NT,LA>;
   friend class HyperplaneCd<NT,LA>;
-  
+
 }; // Tuple_d
 
 
-template <class NT, class LA> 
+template <class NT, class LA>
 class Compare_homogeneously
-{ 
+{
 public:
 Comparison_result operator()(
   const typename LA::Vector& v1, const typename LA::Vector& v2)
-{ 
+{
   CGAL_assertion_msg((v1.dimension() == v2.dimension()),
     "Compare_homogeneously: dimensions disagree.");
-  NT aw = v1[v1.dimension()-1]; 
-  NT bw = v2[v2.dimension()-1]; 
+  NT aw = v1[v1.dimension()-1];
+  NT bw = v2[v2.dimension()-1];
   CGAL_assertion(aw>0 && bw>0);
-  for (int i = 0; i < v1.dimension()-1; i++ ) { 
-    NT aibw = v1[i]*bw; 
-    NT biaw = v2[i]*aw; 
-    Comparison_result S = (aibw<biaw ? SMALLER : 
+  for (int i = 0; i < v1.dimension()-1; i++ ) {
+    NT aibw = v1[i]*bw;
+    NT biaw = v2[i]*aw;
+    Comparison_result S = (aibw<biaw ? SMALLER :
                           (biaw<aibw ? LARGER : EQUAL));
     if (S != EQUAL) return S;
   }
-  return EQUAL; 
+  return EQUAL;
 }
 }; // Compare_homogeneously
 
-template <class NT, class LA> 
+template <class NT, class LA>
 class Compare_componentwise
 { public:
 Comparison_result operator()(
   const typename LA::Vector& v1, const typename LA::Vector& v2)
-{ 
+{
   CGAL_assertion_msg((v1.dimension() == v2.dimension()),
   "Compare_coefficientwise: dimensions disagree.");
-  for (int i = 0; i < v1.dimension(); i++ ) { 
-    Comparison_result S = (v1[i]<v2[i] ? SMALLER : 
+  for (int i = 0; i < v1.dimension(); i++ ) {
+    Comparison_result S = (v1[i]<v2[i] ? SMALLER :
                           (v2[i]<v1[i] ? LARGER : EQUAL));
     if (S != EQUAL) return S;
   }
@@ -224,12 +215,12 @@ void Tuple_d<NT,LA>::print(std::ostream& os, const char* l) const
   switch( get_mode(os) ) {
     case CGAL::IO::ASCII :
       os << size() << " ";
-      for (i = 0; i < size(); ++i) 
+      for (i = 0; i < size(); ++i)
         os << v[i] << " ";
       break;
     case CGAL::IO::BINARY :
-      CGAL::write(os, size()); 
-      for (i = 0; i < size(); ++i) 
+      CGAL::write(os, size());
+      for (i = 0; i < size(); ++i)
         CGAL::write(os, v[i]);
       break;
     default :
@@ -247,27 +238,27 @@ void Tuple_d<NT,LA>::read(std::istream& is)
   switch( get_mode(is) ) {
     case CGAL::IO::ASCII :
       is >> d; v = Vector(d);
-      while (i < d && is >> v[i] ) ++i; 
+      while (i < d && is >> v[i] ) ++i;
       break;
     case CGAL::IO::BINARY :
       CGAL::read(is, d); v = Vector(d);
       while (i < d) { CGAL::read(is, v[i]); ++i; } break;
     default:
-    CGAL_error_msg("\nStream must be in ascii or binary mode\n"); 
+    CGAL_error_msg("\nStream must be in ascii or binary mode\n");
   }
 }
 
 template <class ForwardIterator>
-void tuple_dim_check(ForwardIterator first, ForwardIterator last, 
+void tuple_dim_check(ForwardIterator first, ForwardIterator last,
                      const char* file, int line, const char* op)
 { if (first==last) return;
   int d = first->dimension(); ++first;
-  for (; first!=last; ++first) 
+  for (; first!=last; ++first)
     if (first->dimension() != d) {
       std::ostringstream os;
-      os << "Tuple Dimension Error " << 
+      os << "Tuple Dimension Error " <<
             "File " << file << "Line " << line << "Operation " << op << '\0';
-      CGAL_error_msg(os.str().c_str()); 
+      CGAL_error_msg(os.str().c_str());
     }
 }
 
@@ -275,7 +266,7 @@ void tuple_dim_check(ForwardIterator first, ForwardIterator last,
 
 template <class InputIterator, class OutputIterator>
 int copy_and_count(InputIterator first, InputIterator last,
-                   OutputIterator result) 
+                   OutputIterator result)
 { int n=0;
   while (first != last) { ++n; *result++ = *first++; }
   return n;

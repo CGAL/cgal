@@ -8,7 +8,7 @@
 #include <cmath>
 #include <fstream>
 
-typedef CGAL::Simple_cartesian<double>                              Kernel;
+typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Polyhedron;
@@ -196,6 +196,6 @@ int main( int argc, char* argv[]) {
         if ( i & 1)
             subdiv_border( P);
     }
-    cout << P;
+    cout << std::setprecision(17) << P;
     return 0;
 }

@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(Surface_mesh_performance)
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL REQUIRED)
 
@@ -10,7 +10,7 @@ include_directories(BEFORE "../include")
 #add_definitions("-pg")
 #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 # add_definitions("-g")
-add_definitions("-std=c++11")
+add_definitions("-std=c++1y")
 
 # Polyhedron
 add_executable(polyhedron_performance performance_2.h polyhedron_performance.h polyhedron_performance.cpp)

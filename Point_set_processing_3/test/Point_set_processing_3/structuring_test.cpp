@@ -2,7 +2,7 @@
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
-#include <CGAL/Shape_detection_3.h>
+#include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/structure_point_set.h>
 
 #include <CGAL/Random.h>
@@ -19,11 +19,11 @@ typedef std::vector<Point_with_normal>                       Pwn_vector;
 typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
 typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
 
-typedef CGAL::Shape_detection_3::Shape_detection_traits
-  <Kernel, Pwn_vector, Point_map, Normal_map>                Traits;
-typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
+typedef CGAL::Shape_detection::Efficient_RANSAC_traits
+  <Kernel, Pwn_vector, Point_map, Normal_map>              Traits;
+typedef CGAL::Shape_detection::Efficient_RANSAC<Traits>    Efficient_ransac;
 
-typedef CGAL::Point_set_with_structure<Kernel>               Points_with_structure;
+typedef CGAL::Point_set_with_structure<Kernel>             Points_with_structure;
 
 template <typename OutputIterator>
 void generate_random_points (const Point& origin, const Vector& base1, const Vector& base2,
@@ -43,24 +43,24 @@ void generate_random_points (const Point& origin, const Vector& base1, const Vec
 }
 
 
-int main() 
+int main()
 {
   Vector vx (1., 0., 0.),
          vy (0., 1., 0.),
          vz (0., 0., 1.);
-  
+
   Efficient_ransac ransac;
-  ransac.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
-  
+  ransac.add_shape_factory<CGAL::Shape_detection::Plane<Traits> >();
+
   const std::size_t nb_pts = 1000;
-  
+
   Efficient_ransac::Parameters op;
   op.probability = 0.05;
   op.min_points = nb_pts / 2;
   op.epsilon = 0.02;
   op.cluster_epsilon = 0.05;
   op.normal_threshold = 0.8;
-  
+
   Pwn_vector points;
 
   generate_random_points (Point (0., 0., 0.), vx, vy,
@@ -80,14 +80,14 @@ int main()
   ransac.set_input(points);
   ransac.detect(op);
   Efficient_ransac::Plane_range planes = ransac.planes();
-  
-  Points_with_structure pss (points, 
+
+  Points_with_structure pss (points,
                              planes,
                              op.cluster_epsilon,
                              CGAL::parameters::point_map(Point_map()).
                              normal_map (Normal_map()).
-                             plane_map (CGAL::Shape_detection_3::Plane_map<Traits>()).
-                             plane_index_map (CGAL::Shape_detection_3::Point_to_shape_index_map<Traits>(points, planes)));
+                             plane_map (CGAL::Shape_detection::Plane_map<Traits>()).
+                             plane_index_map (CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)));
 
 
 
@@ -118,7 +118,7 @@ int main()
   ground_truth.push_back (Point (1., 1., 1.));
   std::vector<bool> found (ground_truth.size(), false);
   std::size_t nb_found = 0;
-  
+
   for (std::size_t i = 0; i < vertices.size(); ++ i)
     for (std::size_t j = 0; j < ground_truth.size(); ++ j)
       {
@@ -141,7 +141,7 @@ int main()
           std::cerr << " * " << ground_truth[i] << std::endl;
       return EXIT_FAILURE;
     }
-      
-  
+
+
   return EXIT_SUCCESS;
 }

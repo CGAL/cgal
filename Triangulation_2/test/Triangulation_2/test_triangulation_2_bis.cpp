@@ -7,10 +7,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : /test/Triangulation/test_triangulation_2.C
 // package       : Triangulation
 // source        : $URL$
@@ -20,7 +20,6 @@
 //
 // coordinator   : Mariette Yvinec  <Mariette Yvinec@sophia.inria.fr>
 // ============================================================================
-#include <CGAL/basic.h>
 #include <utility>
 
 #include <CGAL/_test_types.h>
@@ -49,7 +48,7 @@ int main()
   _test_cls_triangulation_short_2( Cls2() );
 
   std::cout << std::endl << "Testing Backward Compatibility"
-	    <<std::endl;
+            <<std::endl;
   typedef CGAL::Triangulation_data_structure_using_list_2<Vb2,Fb2>  Tds3;
   typedef CGAL::Triangulation_2<Gt2,Tds3>    Cls3;
   _test_cls_triangulation_short_2( Cls3() );

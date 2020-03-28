@@ -49,7 +49,7 @@ public:
 public slots :
   void changed();
   void sceneChanged();
-  
+
 signals:
   void valueChanged(int i);
 

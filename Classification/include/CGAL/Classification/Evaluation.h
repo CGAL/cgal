@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -54,7 +45,7 @@ public:
   /// \name Constructor
   /// @{
 
-  
+
 /*!
 
   \brief Instantiates an evaluation object and computes all
@@ -88,7 +79,7 @@ public:
 
     std::size_t sum_true_positives = 0;
     std::size_t total = 0;
-    
+
     for (std::size_t j = 0; j < ground_truth.size(); ++ j)
     {
       int gt = static_cast<int>(ground_truth[j]);
@@ -110,7 +101,7 @@ public:
     m_mean_f1 = 0.;
 
     std::size_t correct_labels = 0;
-    
+
     for (std::size_t j = 0; j < labels.size(); ++ j)
     {
       m_precision[j] = true_positives[j] / float(true_positives[j] + false_positives[j]);
@@ -195,11 +186,11 @@ public:
   }
 
   /// @}
-  
+
   /// \name Global Evaluation
   /// @{
 
-  
+
   /*!
     \brief Returns the accuracy of the training.
 
@@ -207,13 +198,13 @@ public:
     total number of provided inliers.
   */
   float accuracy() const { return m_accuracy; }
-  
+
   /*!
     \brief Returns the mean \f$F_1\f$ score of the training over all
     labels (see `f1_score()`).
   */
   float mean_f1_score() const { return m_mean_f1; }
-  
+
   /*!
     \brief Returns the mean intersection over union of the training
     over all labels (see `intersection_over_union()`).
@@ -221,10 +212,10 @@ public:
   float mean_intersection_over_union() const { return m_mean_iou; }
 
   /// @}
-  
+
 };
-  
-  
+
+
 } // namespace Classification
 
 } // namespace CGAL

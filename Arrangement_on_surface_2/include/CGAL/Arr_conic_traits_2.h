@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
@@ -279,18 +270,18 @@ public:
       }
       else
       {
-	CGAL_precondition (x_res != SMALLER);
+        CGAL_precondition (x_res != SMALLER);
 
-	if ((x_res = ker.compare_x_2_object() (p, cv.right())) == EQUAL)
-	{
-	  q = cv.right();
-	}
-	else
-	{
-	  CGAL_precondition (x_res != LARGER);
+        if ((x_res = ker.compare_x_2_object() (p, cv.right())) == EQUAL)
+        {
+          q = cv.right();
+        }
+        else
+        {
+          CGAL_precondition (x_res != LARGER);
 
-	  q = cv.point_at_x (p);
-	}
+          q = cv.point_at_x (p);
+        }
       }
 
       // Compare p with the a point of the curve with the same x coordinate.
@@ -740,9 +731,9 @@ public:
       CGAL_precondition (i == 0 || i == 1);
 
       if (i == 0)
-	return (CGAL::to_double(p.x()));
+        return (CGAL::to_double(p.x()));
       else
-	return (CGAL::to_double(p.y()));
+        return (CGAL::to_double(p.y()));
     }
   };
 
@@ -796,7 +787,7 @@ public:
       if (cv.is_directed_right())
         return (SMALLER);
       else
-	return (LARGER);
+        return (LARGER);
     }
   };
 

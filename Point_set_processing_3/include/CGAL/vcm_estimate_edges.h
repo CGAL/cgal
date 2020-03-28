@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
@@ -34,7 +25,7 @@ namespace CGAL {
 /// determines if a point is on a sharp feature edge from a point set
 /// for which the Voronoi covariance Measures have been computed.
 ///
-/// The sharpness of the edge, specified by parameter `threshold`, 
+/// The sharpness of the edge, specified by parameter `threshold`,
 /// is used to filtered points according to the external angle around a sharp feature.
 ///
 /// A point is considered to be on a sharp feature if the external angle `alpha` at the edge is such that
@@ -53,11 +44,11 @@ namespace CGAL {
 ///
 template <class FT, class VCMTraits>
 bool
-vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+vcm_is_on_feature_edge (std::array<FT,6> &cov,
                         double threshold,
                         VCMTraits)
 {
-    cpp11::array<double,3> eigenvalues;
+    std::array<double,3> eigenvalues;
     if (!VCMTraits::
           diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
     {
@@ -76,11 +67,11 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 
 template <class FT>
 bool
-vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
+vcm_is_on_feature_edge (std::array<FT,6> &cov,
                         double threshold)
 {
   return vcm_is_on_feature_edge(cov, threshold,
-				CGAL::Default_diagonalize_traits<double, 3>());
+                                CGAL::Default_diagonalize_traits<double, 3>());
 
 }
 

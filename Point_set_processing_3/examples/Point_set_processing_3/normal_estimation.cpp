@@ -48,12 +48,7 @@ typedef std::pair<Point, Vector> PointVectorPair;
 typedef std::vector<PointVectorPair> PointList;
 
 // Concurrency
-#ifdef CGAL_LINKED_WITH_TBB
-typedef CGAL::Parallel_tag Concurrency_tag;
-#else
-typedef CGAL::Sequential_tag Concurrency_tag;
-#endif
-
+typedef CGAL::Parallel_if_available_tag Concurrency_tag;
 
 // ----------------------------------------------------------------------------
 // Private functions
@@ -324,6 +319,7 @@ int main(int argc, char * argv[])
         extension == ".pwn" || extension == ".PWN")
     {
       std::ofstream stream(output_filename.c_str());
+      stream.precision(17);
       if (!stream ||
           !CGAL::write_xyz_points(stream,
                                   points,

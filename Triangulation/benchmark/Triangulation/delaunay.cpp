@@ -47,7 +47,7 @@ std::size_t compute_triangulation(std::size_t N)
   std::vector<Point> points;
   CGAL::Random rng;
   Random_points_iterator rand_it(D, 2.0, rng);
-  CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+  std::copy_n(rand_it, N, std::back_inserter(points));
 
 #ifdef EXPORT_POINTS_TO_A_FILE
   std::ofstream os("points.txt");
@@ -74,13 +74,13 @@ std::size_t compute_triangulation(std::size_t N)
   std::cout << "  Memory consumption: " << (mem >> 10) << " KB.\n";
   std::size_t nbfc= dt.number_of_finite_full_cells();
   std::size_t nbc= dt.number_of_full_cells();
-  std::cout << "  " << dt.number_of_vertices() << " vertices, " 
-            << nbfc << " finite simplices and " 
+  std::cout << "  " << dt.number_of_vertices() << " vertices, "
+            << nbfc << " finite simplices and "
             << (nbc-nbfc) << " convex hull Facets."
             << std::endl;
 
 #ifdef OUTPUT_STATS_IN_CSV
-  csv_file 
+  csv_file
     << D << ";"
     << N << ";"
     << timing << ";"
@@ -93,12 +93,12 @@ std::size_t compute_triangulation(std::size_t N)
   return mem;
 }
 
-// Will compute triangulations of i*num_points_steps points, 
+// Will compute triangulations of i*num_points_steps points,
 // with i in [1, 2...], stopping after the last computation that takes
 // more memory than mem_threshold_in_bytes
 template<int D>
 void go(
-  std::size_t num_points_increment, 
+  std::size_t num_points_increment,
   std::size_t mem_threshold_in_MB = (3 << 10)) // 3 GB
 {
   std::size_t mem = 0;

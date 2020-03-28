@@ -3,8 +3,8 @@
 \ingroup PkgCircularKernel3AlgebraicConcepts
 \cgalConcept
 
-Concept to represent a system of polynomials on `FieldNumberType` 
-capable of storing equations of circles. 
+Concept to represent a system of polynomials on `FieldNumberType`
+capable of storing equations of circles.
 
 \cgalRefines `CopyConstructible`
 \cgalRefines `Assignable`
@@ -16,8 +16,6 @@ capable of storing equations of circles.
 
 class AlgebraicKernelForSpheres::PolynomialsForCircles_3 {
 public:
-
-/// @}
 
 }; /* end AlgebraicKernelForSpheres::PolynomialsForCircles_3 */
 

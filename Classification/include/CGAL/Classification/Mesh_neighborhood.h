@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Simon Giraudot
 
@@ -27,11 +18,12 @@
 
 #include <boost/iterator/counting_iterator.hpp>
 #include <CGAL/boost/graph/selection.h>
-#include <CGAL/unordered.h>
 #include <CGAL/Handle_hash_function.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/array.h>
+
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -43,7 +35,7 @@ namespace Classification {
     \brief Class that  generates models of `NeighborQuery` based on
     an input mesh.
 
-    \tparam FaceListGraph model of `FaceListGraph`. 
+    \tparam FaceListGraph model of `FaceListGraph`.
   */
 template <typename FaceListGraph>
 class Mesh_neighborhood
@@ -63,24 +55,24 @@ private:
     typedef bool value_type;
     typedef bool reference;
     typedef boost::read_write_property_map_tag category;
-    typedef typename CGAL::cpp11::unordered_set<face_descriptor, CGAL::Handle_hash_function> Set;
+    typedef typename std::unordered_set<face_descriptor, CGAL::Handle_hash_function> Set;
   private:
     Set* m_set;
-    
+
   public:
-    Is_face_selected(Set* set = NULL) : m_set (set) { }
+    Is_face_selected(Set* set = nullptr) : m_set (set) { }
 
     inline friend value_type get (const Is_face_selected& pm, const key_type& k)
     {
       return (pm.m_set->find(k) != pm.m_set->end());
     }
-   
+
     inline friend void put (const Is_face_selected& pm, const key_type& k, const value_type&)
     {
       pm.m_set->insert(k);
     }
   };
-  
+
 public:
 
   /*!
@@ -203,12 +195,12 @@ private:
   template <typename OutputIterator>
   void direct_neighbors (const face_descriptor& query, OutputIterator output) const
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(query, m_mesh), m_mesh))
+    for(halfedge_descriptor hd : halfedges_around_face(halfedge(query, m_mesh), m_mesh))
       {
         *(output ++ ) = face(opposite(hd, m_mesh), m_mesh);
       }
   }
-  
+
   template <typename OutputIterator>
   void one_ring_neighbors (const face_descriptor& query, OutputIterator output) const
   {
@@ -219,7 +211,7 @@ private:
   void n_ring_neighbors (const face_descriptor& query, OutputIterator output, const std::size_t n) const
   {
     *(output ++) = get(get(CGAL::face_index, m_mesh), query);
-    CGAL::cpp11::array<face_descriptor,1> init = {{ query }};
+    std::array<face_descriptor,1> init = {{ query }};
     typename Is_face_selected::Set done;
     done.insert(query);
     std::vector<face_descriptor> desc;
@@ -231,10 +223,10 @@ private:
 
 
 };
-  
+
 
 }
-  
+
 }
 
 

@@ -1,5 +1,3 @@
-// file: multi_info.cpp
-#include <CGAL/basic.h>
 
 #ifndef CGAL_SDG_VERBOSE
 #define CGAL_SDG_DEBUG(a)
@@ -26,7 +24,7 @@ typedef
 CGAL::Segment_Delaunay_graph_Linf_filtered_traits_2<Rep>
 Traits_x;
 
-struct Gt : public Traits_x {};
+typedef Traits_x Gt;
 
 #include "Multi_info.h"
 
@@ -37,9 +35,9 @@ typedef Multi_info_convert_info<int>  Convert_info;
 typedef Multi_info_merge_info<int>    Merge_info;
 
 typedef CGAL::Segment_Delaunay_graph_storage_traits_with_info_2<Gt,
-								Info,
-								Convert_info,
-								Merge_info>
+                                                                Info,
+                                                                Convert_info,
+                                                                Merge_info>
 ST;
 
 typedef CGAL::Tag_false STag;

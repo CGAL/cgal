@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Maxime Gimeno
@@ -26,7 +17,7 @@
 #include <CGAL/license/Three.h>
 
 
-#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_rendering_helper.h>
 #include <CGAL/Three/Scene_interface.h>
 using namespace CGAL::Three;
 
@@ -43,14 +34,12 @@ namespace Three {
 //! user to apply several actions to multiple items at the same time.
 //! A custom Scene_item can derive from it to have children. They appear
 //! hierarchically in the Geometric Objects list.
-class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
+class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item_rendering_helper
 {
     Q_OBJECT
 public :
-    Scene_group_item(QString name = QString("New group"), int nb_vbos = 0, int nb_vaos = 0);
+    Scene_group_item(QString name = QString("New group"));
     ~Scene_group_item() {}
-    //!Sets the scene;
-    void setScene(Scene_interface* s) { scene = s; }
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const Q_DECL_OVERRIDE;
     //!Returns true to avoid disturbing the BBox of the scene.
@@ -69,7 +58,7 @@ public :
         * Use it to prevent a child to be destroyed without its parent.
         */
         void lockChild(Scene_interface::Item_id id);
-    
+
         /*!
          * \brief Unlocks a child
          *
@@ -148,7 +137,7 @@ public :
        virtual void renderChildren(Viewer_interface *,
                  QMap<float, int>& picked_item_IDs, const QPoint &picked_pixel,
                  bool with_names);
-    
+
     ///@}
 
     //!Adds a CGAL::Three::Scene_item* to the list of children.
@@ -202,7 +191,7 @@ public :
     }
     //!Sets the alpha value for the froup and all its children.
         virtual void setAlpha(int) Q_DECL_OVERRIDE;
-    
+
     //! \brief Returns a list of all the direct children.
     //!
     //! Only returns children that have this item as a parent.
@@ -238,6 +227,7 @@ public :
     //!Moves a child down in the list.
     void moveDown(int);
 
+    void compute_bbox() const Q_DECL_OVERRIDE{};
 public Q_SLOTS:
     //!\brief Redraws children.
     //!

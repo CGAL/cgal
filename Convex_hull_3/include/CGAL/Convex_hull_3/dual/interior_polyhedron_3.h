@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Jocelyn Meyron
@@ -40,10 +31,10 @@
 // If you do not know an interior point for the halfspaces, use linear programming
 // to find one. Assume, n halfspaces defined by: aj*x1+bj*x2+cj*x3+dj>=0, j=1..n.
 // Perform the following linear program:
-//		max(x5) aj*x1+bj*x2+cj*x3+dj*x4-x5>=0, j=1..n
+//                max(x5) aj*x1+bj*x2+cj*x3+dj*x4-x5>=0, j=1..n
 
 // Then, if [x1,x2,x3,x4,x5] is an optimal m_solution with x4,x5>0 we get:
-//		aj*(x1/x4)+bj*(x2/x4)+cj*(x3/x4)+dj>=(x5/x4)>0, j=1..n
+//                aj*(x1/x4)+bj*(x2/x4)+cj*(x3/x4)+dj>=(x5/x4)>0, j=1..n
 // and conclude that the point [x1/x4,x2/x4,x3/x4] is in the interior of all
 // the halfspaces. Note that x5 is optimal, so this point is "way in" the
 // interior (good for precision errors).

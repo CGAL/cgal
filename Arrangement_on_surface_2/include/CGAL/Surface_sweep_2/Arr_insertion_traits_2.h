@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -127,7 +118,7 @@ public:
       // X_monotone_curve_2
       for(; oi != oi_end; ++oi) {
         base_overlap_cv = object_cast<Base_x_monotone_curve_2>(&(*oi));
-        if (base_overlap_cv != NULL) {
+        if (base_overlap_cv != nullptr) {
           // Add halfedge handles to the resulting curve.
           Halfedge_handle he;
 
@@ -144,7 +135,7 @@ public:
           intersect_p =
             object_cast<std::pair<Base_point_2, unsigned int> >(&(*oi));
 
-          CGAL_assertion (intersect_p != NULL);
+          CGAL_assertion (intersect_p != nullptr);
 
           *oi = make_object(std::make_pair(Point_2(intersect_p->first),
                                            intersect_p->second));

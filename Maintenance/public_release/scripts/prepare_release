@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+set -e
 setopt -o glob
 setopt -o extended_glob
 
@@ -16,7 +17,11 @@ PUBLIC_RELEASE_DIR="$1"
 
 INTERNAL_RELEASE=`basename ${PUBLIC_RELEASE_DIR/-public/}`
 
-PUBLIC_RELEASE_NAME=`basename ${~${ZIP_TARBALL::="$PUBLIC_RELEASE_DIR"/*.zip}}`
+ZIP_TARBALL=("$PUBLIC_RELEASE_DIR"/*-library.zip(N))
+[ -z "$ZIP_TARBALL" ] && ZIP_TARBALL=("$PUBLIC_RELEASE_DIR"/*.zip(N))
+
+PUBLIC_RELEASE_NAME=`basename "$ZIP_TARBALL"`
+PUBLIC_RELEASE_NAME=${PUBLIC_RELEASE_NAME/-library.zip/}
 PUBLIC_RELEASE_NAME=${PUBLIC_RELEASE_NAME/.zip/}
 DEST_DIR="${RELEASE_CANDIDATES_DIR}/$PUBLIC_RELEASE_NAME"
 
@@ -53,12 +58,6 @@ printf "Create doc_html zip...\n"
 pushd "$DEST_DIR"
 zip -q -r "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.zip" doc_html
 popd
-
-printf "bzip2 doc_html tarball...\n"
-bzip2 --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.bz2"
-
-printf "bzip2 source tarball...\n"
-zcat "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.gz" | bzip2 --best > "$DEST_DIR/${PUBLIC_RELEASE_NAME}.tar.bz2"
 
 printf "xz doc_html tarball...\n"
 xz --best < "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar" > "$DEST_DIR/${PUBLIC_RELEASE_NAME}-doc_html.tar.xz"

@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -95,8 +86,8 @@ namespace CGAL {
   protected:
     void set_id(std::size_t id)
     { m_id=id; }
-    
-  protected:    
+
+  protected:
     /// id of the cell
     std::size_t m_id;
   };
@@ -105,7 +96,7 @@ namespace CGAL {
   template <>
   class Add_id<Tag_false>
   {};
-  
+
   /// Cell_attribute_without_info
   template <class Refs, class Tag=Tag_true, class OnMerge=Null_functor,
             class OnSplit=Null_functor, class WithID=Tag_false>
@@ -278,7 +269,7 @@ namespace CGAL {
     void set_dart(Dart_handle adart) { mdart = adart; }
 
     /// Test if the cell is valid.
-    /// A cell is valid if its dart is not NULL.
+    /// A cell is valid if its dart is not nullptr.
     bool is_valid() const
     { return mdart!=Refs::null_handle; }
 

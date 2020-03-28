@@ -10,10 +10,8 @@ class QStandardItemModel;
 
 class Camera_positions_list : public QDockWidget {
   Q_OBJECT
-public:  
+public:
   Camera_positions_list(QWidget* parent);
-
-  void setViewer(CGAL::Three::Viewer_interface*);
 
 public Q_SLOTS:
   void load(QString filename);
@@ -37,7 +35,6 @@ protected:
   void addItem(QString, QString);
 
 private:
-  CGAL::Three::Viewer_interface* m_viewer;
   int counter;
   QListView* m_listView;
   QStandardItemModel* m_model;

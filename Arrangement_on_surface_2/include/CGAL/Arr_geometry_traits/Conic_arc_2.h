@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Ron Wein <wein@post.tau.ac.il>
@@ -114,7 +105,7 @@ protected:
   };
 
   Extra_data    *_extra_data_P;  // The extra data stored with the arc
-                                 // (may be NULL).
+                                 // (may be nullptr).
 
 public:
 
@@ -128,7 +119,7 @@ public:
     _r(0), _s(0), _t(0), _u(0), _v(0), _w(0),
     _orient (COLLINEAR),
     _info (0),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {}
 
   /*!
@@ -142,10 +133,10 @@ public:
     _source(arc._source),
     _target(arc._target)
   {
-    if (arc._extra_data_P != NULL)
+    if (arc._extra_data_P != nullptr)
       _extra_data_P = new Extra_data (*(arc._extra_data_P));
     else
-      _extra_data_P = NULL;
+      _extra_data_P = nullptr;
   }
 
   /*!
@@ -155,7 +146,7 @@ public:
    */
   _Conic_arc_2 (const Rational& r, const Rational& s, const Rational& t,
                 const Rational& u, const Rational& v, const Rational& w) :
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Make sure the given curve is an ellipse (4rs - t^2 should be positive).
     CGAL_precondition (CGAL::sign (4*r*s - t*t) == POSITIVE);
@@ -189,7 +180,7 @@ public:
     _orient (orient),
     _source (source),
     _target (target),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Make sure that the source and the taget are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
@@ -214,7 +205,7 @@ public:
    */
   _Conic_arc_2 (const Rat_segment_2& seg) :
     _orient (COLLINEAR),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Set the source and target.
     Rat_kernel        ker;
@@ -271,7 +262,7 @@ public:
    */
   _Conic_arc_2 (const Rat_circle_2& circ) :
     _orient (CLOCKWISE),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Get the circle properties.
     Rat_kernel        ker;
@@ -316,7 +307,7 @@ public:
     _orient(orient),
     _source(source),
     _target(target),
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Make sure that the source and the taget are not the same.
     CGAL_precondition (Alg_kernel().compare_xy_2_object() (source,
@@ -378,7 +369,7 @@ public:
   _Conic_arc_2 (const Rat_point_2& p1,
                 const Rat_point_2& p2,
                 const Rat_point_2& p3):
-    _extra_data_P (NULL)
+    _extra_data_P (nullptr)
   {
     // Set the source and target.
     Rational          x1 = p1.x();
@@ -463,11 +454,11 @@ public:
    * \pre No three points are collinear.
    */
   _Conic_arc_2 (const Rat_point_2& p1,
-		const Rat_point_2& p2,
-		const Rat_point_2& p3,
-		const Rat_point_2& p4,
-		const Rat_point_2& p5) :
-    _extra_data_P(NULL)
+                const Rat_point_2& p2,
+                const Rat_point_2& p3,
+                const Rat_point_2& p4,
+                const Rat_point_2& p5) :
+    _extra_data_P(nullptr)
   {
     // Make sure that no three points are collinear.
     Rat_kernel                         ker;
@@ -524,13 +515,13 @@ public:
     {
       _orient = COUNTERCLOCKWISE;
       CGAL_precondition (orient_f(p1, p3, p5) == LEFT_TURN &&
-			 orient_f(p1, p4, p5) == LEFT_TURN);
+                         orient_f(p1, p4, p5) == LEFT_TURN);
     }
     else
     {
       _orient = CLOCKWISE;
       CGAL_precondition (orient_f(p1, p3, p5) != LEFT_TURN &&
-			 orient_f(p1, p4, p5) != LEFT_TURN);
+                         orient_f(p1, p4, p5) != LEFT_TURN);
     }
 
     // Set the arc properties (no need to compute the orientation).
@@ -539,15 +530,15 @@ public:
     // Make sure that all midpoints are strictly between the
     // source and the target.
     Point_2  mp2 = Point_2 (nt_traits.convert (p2.x()),
-			    nt_traits.convert (p2.y()));
+                            nt_traits.convert (p2.y()));
     Point_2  mp3 = Point_2 (nt_traits.convert (p3.x()),
-			    nt_traits.convert (p3.y()));
+                            nt_traits.convert (p3.y()));
     Point_2  mp4 = Point_2 (nt_traits.convert (p4.x()),
-			    nt_traits.convert (p4.y()));
+                            nt_traits.convert (p4.y()));
 
     if (! _is_strictly_between_endpoints (mp2) ||
-	! _is_strictly_between_endpoints (mp3) ||
-	! _is_strictly_between_endpoints (mp4))
+        ! _is_strictly_between_endpoints (mp3) ||
+        ! _is_strictly_between_endpoints (mp4))
     {
       _info = 0;               // Inalvid arc.
     }
@@ -565,16 +556,16 @@ public:
    * (or the target) will be selected.
    */
   _Conic_arc_2 (const Rational& r, const Rational& s, const Rational& t,
-		const Rational& u, const Rational& v, const Rational& w,
-		const Orientation& orient,
-		const Point_2& app_source,
-		const Rational& r_1, const Rational& s_1, const Rational& t_1,
-		const Rational& u_1, const Rational& v_1, const Rational& w_1,
-		const Point_2& app_target,
-		const Rational& r_2, const Rational& s_2, const Rational& t_2,
-		const Rational& u_2, const Rational& v_2, const Rational& w_2):
+                const Rational& u, const Rational& v, const Rational& w,
+                const Orientation& orient,
+                const Point_2& app_source,
+                const Rational& r_1, const Rational& s_1, const Rational& t_1,
+                const Rational& u_1, const Rational& v_1, const Rational& w_1,
+                const Point_2& app_target,
+                const Rational& r_2, const Rational& s_2, const Rational& t_2,
+                const Rational& u_2, const Rational& v_2, const Rational& w_2):
     _orient(orient),
-    _extra_data_P(NULL)
+    _extra_data_P(nullptr)
   {
     // Create the integer coefficients of the base conic.
     Rational          rat_coeffs [6];
@@ -593,8 +584,8 @@ public:
                                     base_coeffs);
 
     if (CGAL::sign (base_coeffs[0]) == ZERO &&
-	CGAL::sign (base_coeffs[1]) == ZERO &&
-	CGAL::sign (base_coeffs[2]) == ZERO)
+        CGAL::sign (base_coeffs[1]) == ZERO &&
+        CGAL::sign (base_coeffs[2]) == ZERO)
     {
       deg_base = 1;
     }
@@ -630,115 +621,115 @@ public:
       aux_rat_coeffs[5] = (k == 1) ? w_1 : w_2;
 
       nt_traits.convert_coefficients (aux_rat_coeffs, aux_rat_coeffs + 6,
-				      aux_coeffs);
+                                      aux_coeffs);
 
       if (CGAL::sign (aux_coeffs[0]) == ZERO &&
-	  CGAL::sign (aux_coeffs[1]) == ZERO &&
-	  CGAL::sign (aux_coeffs[2]) == ZERO)
+          CGAL::sign (aux_coeffs[1]) == ZERO &&
+          CGAL::sign (aux_coeffs[2]) == ZERO)
       {
-	deg_aux = 1;
+        deg_aux = 1;
       }
       else
       {
-	deg_aux = 2;
+        deg_aux = 2;
       }
 
       // Compute the x- and y-coordinates of intersection points of the base
       // conic and the k'th auxiliary conic.
       n_xs = _compute_resultant_roots (nt_traits,
-				       base_coeffs[0], base_coeffs[1],
-				       base_coeffs[2],
-				       base_coeffs[3], base_coeffs[4],
-				       base_coeffs[5],
-				       deg_base,
-				       aux_coeffs[0], aux_coeffs[1],
-				       aux_coeffs[2],
-				       aux_coeffs[3], aux_coeffs[4],
-				       aux_coeffs[5],
-				       deg_aux,
-				       xs);
+                                       base_coeffs[0], base_coeffs[1],
+                                       base_coeffs[2],
+                                       base_coeffs[3], base_coeffs[4],
+                                       base_coeffs[5],
+                                       deg_base,
+                                       aux_coeffs[0], aux_coeffs[1],
+                                       aux_coeffs[2],
+                                       aux_coeffs[3], aux_coeffs[4],
+                                       aux_coeffs[5],
+                                       deg_aux,
+                                       xs);
 
       n_ys = _compute_resultant_roots (nt_traits,
-				       base_coeffs[1], base_coeffs[0],
-				       base_coeffs[2],
-				       base_coeffs[4], base_coeffs[3],
-				       base_coeffs[5],
-				       deg_base,
-				       aux_coeffs[1], aux_coeffs[0],
-				       aux_coeffs[2],
-				       aux_coeffs[4], aux_coeffs[3],
-				       aux_coeffs[5],
-				       deg_aux,
-				       ys);
+                                       base_coeffs[1], base_coeffs[0],
+                                       base_coeffs[2],
+                                       base_coeffs[4], base_coeffs[3],
+                                       base_coeffs[5],
+                                       deg_base,
+                                       aux_coeffs[1], aux_coeffs[0],
+                                       aux_coeffs[2],
+                                       aux_coeffs[4], aux_coeffs[3],
+                                       aux_coeffs[5],
+                                       deg_aux,
+                                       ys);
 
       // Find the intersection point which is nearest the given approximation
       // and set it as the endpoint.
       found = false;
       for (i = 0; i < n_xs; i++)
       {
-	for (j = 0; j < n_ys; j++)
-	{
-	  // Check if the point (xs[i], ys[j]) lies on both conics.
-	  val = nt_traits.convert(base_coeffs[0]) * xs[i]*xs[i] +
-	        nt_traits.convert(base_coeffs[1]) * ys[j]*ys[j] +
-	        nt_traits.convert(base_coeffs[2]) * xs[i]*ys[j] +
-	        nt_traits.convert(base_coeffs[3]) * xs[i] +
+        for (j = 0; j < n_ys; j++)
+        {
+          // Check if the point (xs[i], ys[j]) lies on both conics.
+          val = nt_traits.convert(base_coeffs[0]) * xs[i]*xs[i] +
+                nt_traits.convert(base_coeffs[1]) * ys[j]*ys[j] +
+                nt_traits.convert(base_coeffs[2]) * xs[i]*ys[j] +
+                nt_traits.convert(base_coeffs[3]) * xs[i] +
                 nt_traits.convert(base_coeffs[4]) * ys[j] +
-	        nt_traits.convert(base_coeffs[5]);
+                nt_traits.convert(base_coeffs[5]);
 
-	  if (CGAL::sign (val) != ZERO)
-	    continue;
+          if (CGAL::sign (val) != ZERO)
+            continue;
 
-	  val = nt_traits.convert(aux_coeffs[0]) * xs[i]*xs[i] +
-	        nt_traits.convert(aux_coeffs[1]) * ys[j]*ys[j] +
-	        nt_traits.convert(aux_coeffs[2]) * xs[i]*ys[j] +
-	        nt_traits.convert(aux_coeffs[3]) * xs[i] +
+          val = nt_traits.convert(aux_coeffs[0]) * xs[i]*xs[i] +
+                nt_traits.convert(aux_coeffs[1]) * ys[j]*ys[j] +
+                nt_traits.convert(aux_coeffs[2]) * xs[i]*ys[j] +
+                nt_traits.convert(aux_coeffs[3]) * xs[i] +
                 nt_traits.convert(aux_coeffs[4]) * ys[j] +
-	        nt_traits.convert(aux_coeffs[5]);
+                nt_traits.convert(aux_coeffs[5]);
 
-	  if (CGAL::sign (val) == ZERO)
-	  {
-	    // Compute the distance of (xs[i], ys[j]) from the approximated
-	    // endpoint.
-	    if (k == 1)
-	    {
-	      dx = CGAL::to_double (xs[i] - app_source.x());
-	      dy = CGAL::to_double (ys[j] - app_source.y());
-	    }
-	    else
-	    {
-	      dx = CGAL::to_double (xs[i] - app_target.x());
-	      dy = CGAL::to_double (ys[j] - app_target.y());
-	    }
+          if (CGAL::sign (val) == ZERO)
+          {
+            // Compute the distance of (xs[i], ys[j]) from the approximated
+            // endpoint.
+            if (k == 1)
+            {
+              dx = CGAL::to_double (xs[i] - app_source.x());
+              dy = CGAL::to_double (ys[j] - app_source.y());
+            }
+            else
+            {
+              dx = CGAL::to_double (xs[i] - app_target.x());
+              dy = CGAL::to_double (ys[j] - app_target.y());
+            }
 
-	    curr_dist = dx*dx + dy*dy;
+            curr_dist = dx*dx + dy*dy;
 
-	    // Update the endpoint if (xs[i], ys[j]) is the nearest pair so
-	    // far.
-	    if (! found || curr_dist < min_dist)
-	    {
-	      if (k == 1)
-		_source = Point_2 (xs[i], ys[j]);
-	      else
-		_target = Point_2 (xs[i], ys[j]);
+            // Update the endpoint if (xs[i], ys[j]) is the nearest pair so
+            // far.
+            if (! found || curr_dist < min_dist)
+            {
+              if (k == 1)
+                _source = Point_2 (xs[i], ys[j]);
+              else
+                _target = Point_2 (xs[i], ys[j]);
 
-	      min_dist = curr_dist;
-	      found = true;
-	    }
-	  }
-	}
+              min_dist = curr_dist;
+              found = true;
+            }
+          }
+        }
       }
 
       if (! found)
       {
-	_info = 0;           // Invalid arc.
-	return;
+        _info = 0;           // Invalid arc.
+        return;
       }
     }
 
     // Make sure that the source and the target are not the same.
     if (Alg_kernel().compare_xy_2_object() (_source,
-					    _target) == EQUAL)
+                                            _target) == EQUAL)
     {
       _info = 0;      // Invalid arc.
       return;
@@ -753,7 +744,7 @@ public:
    */
   virtual ~_Conic_arc_2 ()
   {
-    if (_extra_data_P != NULL)
+    if (_extra_data_P != nullptr)
       delete _extra_data_P;
   }
 
@@ -767,7 +758,7 @@ public:
       return (*this);
 
     // Free any existing data.
-    if (_extra_data_P != NULL)
+    if (_extra_data_P != nullptr)
       delete _extra_data_P;
 
     // Copy the arc's attributes.
@@ -784,10 +775,10 @@ public:
     _target = arc._target;
 
     // Duplicate the extra data, if necessary.
-    if (arc._extra_data_P != NULL)
+    if (arc._extra_data_P != nullptr)
       _extra_data_P = new Extra_data (*(arc._extra_data_P));
     else
-      _extra_data_P = NULL;
+      _extra_data_P = nullptr;
 
     return (*this);
   }
@@ -1198,18 +1189,18 @@ private:
 
     // Make sure both endpoint lie on the supporting conic.
     if (! _is_on_supporting_conic (_source) ||
-	! _is_on_supporting_conic (_target))
+        ! _is_on_supporting_conic (_target))
     {
       _info = 0;          // Invalid arc.
       return;
     }
 
-    _extra_data_P = NULL;
+    _extra_data_P = nullptr;
 
     // Check whether we have a degree 2 curve.
     if ((CGAL::sign (_r) != ZERO ||
-	 CGAL::sign (_s) != ZERO ||
-	 CGAL::sign (_t) != ZERO))
+         CGAL::sign (_s) != ZERO ||
+         CGAL::sign (_t) != ZERO))
     {
       if (_orient == COLLINEAR)
       {
@@ -1339,7 +1330,7 @@ private:
     CGAL_assertion (is_ellipse);
 
     // We do not have to store any extra data with the arc.
-    _extra_data_P = NULL;
+    _extra_data_P = nullptr;
 
     // Mark that this arc is a full conic curve.
     if (is_ellipse)
@@ -1449,7 +1440,7 @@ private:
 
     CGAL_assertion (_extra_data_P->side != ZERO);
     CGAL_assertion (_extra_data_P->side == _sign_of_extra_data(_target.x(),
-							      _target.y()));
+                                                              _target.y()));
 
     return;
   }
@@ -1468,11 +1459,11 @@ protected:
    * \return The sign of (a*x + b*y + c).
    */
   Sign _sign_of_extra_data (const Algebraic& px,
-			    const Algebraic& py) const
+                            const Algebraic& py) const
   {
-    CGAL_assertion (_extra_data_P != NULL);
+    CGAL_assertion (_extra_data_P != nullptr);
 
-    if (_extra_data_P == NULL)
+    if (_extra_data_P == nullptr)
       return (ZERO);
 
     Algebraic         val = (_extra_data_P->a*px + _extra_data_P->b*py +
@@ -1492,10 +1483,10 @@ protected:
     // The point must satisfy: r*x^2 + s*y^2 + t*xy + u*x + v*y + w = 0.
     Nt_traits        nt_traits;
     const Algebraic  val = (nt_traits.convert(_r)*p.x() +
-			    nt_traits.convert(_t)*p.y() +
-			    nt_traits.convert(_u)) * p.x() +
+                            nt_traits.convert(_t)*p.y() +
+                            nt_traits.convert(_u)) * p.x() +
                            (nt_traits.convert(_s)*p.y() +
-			    nt_traits.convert(_v)) * p.y() +
+                            nt_traits.convert(_v)) * p.y() +
                            nt_traits.convert(_w);
 
     return (CGAL::sign (val) == ZERO);
@@ -1542,7 +1533,7 @@ protected:
       return (true);
 
     // Check if we have extra data available.
-    if (_extra_data_P != NULL)
+    if (_extra_data_P != nullptr)
     {
       if (_extra_data_P->side != ZERO)
       {
@@ -1587,7 +1578,7 @@ protected:
       // If p is not in the (open) x-range (or y-range) of the segment, it
       // cannot be contained in the segment.
       if (res1 == EQUAL || res2 == EQUAL || res1 == res2)
-	return (false);
+        return (false);
 
       // Perform an orientation test: This is crucial for segment of line
       // pairs, as we want to make sure that p lies on the same line as the
@@ -1631,9 +1622,9 @@ protected:
     Nt_traits     nt_traits;
 
     xs_end = nt_traits.solve_quadratic_equation (_t*_t - _four*_r*_s,
-						 _two*_t*_v - _four*_s*_u,
-						 _v*_v - _four*_s*_w,
-						 xs);
+                                                 _two*_t*_v - _four*_s*_u,
+                                                 _v*_v - _four*_s*_w,
+                                                 xs);
     n_xs = static_cast<int>(xs_end - xs);
 
     // Find the y-coordinates of the vertical tangency points.
@@ -1716,9 +1707,9 @@ protected:
     Nt_traits     nt_traits;
 
     ys_end = nt_traits.solve_quadratic_equation (_t*_t - _four*_r*_s,
-						 _two*_t*_u - _four*_r*_v,
-						 _u*_u - _four*_r*_w,
-						 ys);
+                                                 _two*_t*_u - _four*_r*_v,
+                                                 _u*_u - _four*_r*_w,
+                                                 ys);
     n = static_cast<int>(ys_end - ys);
 
     // Compute the x coordinates and construct the horizontal tangency points.
@@ -1796,7 +1787,7 @@ protected:
     if (CGAL::sign(A) == ZERO)
     {
       if (CGAL::sign(B) == ZERO)
-	return (0);
+        return (0);
 
       x_minus = x_plus = -C / B;
       return (1);

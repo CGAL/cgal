@@ -1,10 +1,10 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( BGL_Tests )
 
 
-cmake_minimum_required(VERSION 3.1)
 
 
 
@@ -14,7 +14,7 @@ find_package( CGAL QUIET COMPONENTS  )
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -23,7 +23,7 @@ find_package( Boost )
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
-  return()  
+  return()
 endif()
 
 find_package( OpenMesh QUIET )

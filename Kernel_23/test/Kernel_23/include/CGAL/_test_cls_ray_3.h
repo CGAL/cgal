@@ -1,25 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later
+//
 //
 // Author(s)     : Stefan Schirra
- 
+
 
 #ifndef CGAL__TEST_CLS_RAY_3_H
 #define CGAL__TEST_CLS_RAY_3_H
@@ -31,9 +25,7 @@ _test_cls_ray_3(const R& )
  std::cout << "Testing class Ray_3" ;
 
  typedef typename  R::RT    RT;
-
- typename R::Ray_3 ir;
- CGAL::Ray_3<R>  r1(ir);
+ typedef typename  R::FT    FT;
 
  RT  n1 =  8;
  RT  n2 = 20;
@@ -47,10 +39,18 @@ _test_cls_ray_3(const R& )
  CGAL::Point_3<R> p2( n4, n5, n6, n5);
  CGAL::Point_3<R> p3( n7, n2, n4, n7);
 
+ typename R::Ray_3 ir ( p2, p1 );
+
+ CGAL::Ray_3<R> r1( ir );
  CGAL::Ray_3<R> r2( p1, p2 );
  CGAL::Ray_3<R> r3( p2, p1 );
  CGAL::Ray_3<R> r4( r2 );
  r1 = r4;
+
+ typename R::Ray_3 ir2 ( r4 );
+ ir = r1;
+ r4 = ir2;
+
  CGAL::Direction_3<R> dir( p2 - p1 );
  CGAL::Vector_3<R> vec( p2 - p1 );
  CGAL::Line_3<R> l( p1, p2 );
@@ -93,7 +93,7 @@ _test_cls_ray_3(const R& )
  assert( r5.source() == p3 );
  assert( r2.source() != r3.source() );
  assert( r7.direction() == dir );
- assert( r2.direction() == CGAL::Direction_3<R>(r2.point(2) - r2.point(1) ));
+ assert( r2.direction() == CGAL::Direction_3<R>(r2.point(FT(1)/FT(2)) - r2.point(0) ));
  assert( r2.direction() == r3.opposite().direction() );
  assert( r2.to_vector().direction() == r3.opposite().to_vector().direction() );
  assert( r1.supporting_line() == r2.supporting_line() );

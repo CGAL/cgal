@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Maxime Gimeno
 
@@ -39,7 +30,25 @@ class QOpenGLFramebufferObject;
 struct D;
 namespace CGAL {
 namespace Three {
-
+//! helper struct that contains useful info about textures
+struct Texture{
+  Texture(){}
+     int Width;
+     int Height;
+     int size;
+    GLubyte *data;
+    //! Fills rgb value for pixel (i,j) of the texture.
+    void setData(int i, int j, int r, int g, int b){
+      data[j*Width*3 +i*3] = GLubyte(r);
+      data[j*Width*3 +i*3+1] = GLubyte(g);
+      data[j*Width*3 +i*3+2] = GLubyte(b);
+    }
+    //! Fills directly the data array.
+    void setData(GLubyte* d)
+    {
+      data = d;
+    }
+};
 
 //!
 //! \brief The Primitive_container struct provides a base for the OpenGL data wrappers.
@@ -141,13 +150,22 @@ public:
   //!
   //! \name Setters for the shaders parameters.
   //!@{
-  
+
   //! Setter for the "selected" uniform parameter.
   void setSelected(bool);
   //! Setter for the "color" parameter.
   void setColor(QColor);
+  //!Setter for the "stride" parameter.
+  void setStride(std::size_t id, int stride);
+  //!Setter for the "offset" parameter.
+  void setOffset(std::size_t id, int offset);
+  //!setter for the tuple size: the number of coordinates of one vertex.
+  void setTupleSize(int ts);
+  //!setter for the clipping. If `b` is `false`, then the clipping box will have no effect.
+  void setClipping(bool b);
+
   //!@}
-protected:
+
   //!
   //! \brief setVao sets the `Vao` corresponding to `viewer` of this container.
   //!
@@ -168,6 +186,12 @@ protected:
   //! created in the context of `viewer`.
   //!
   void setGLInit(Viewer_interface* viewer, bool) ;
+  //!setter for the texture.
+  void setTexture(Texture*);
+  //! setter for the texture size.
+  void setTextureSize  (const QSize& size);
+  //! setter for the texture data at UV coordinates (`i`,`j`).
+  void setTextureData  (int i, int j, int r, int g, int b);
   //!
   //! \brief Returns the `Vao` bound to `viewer`.
   //!
@@ -184,6 +208,14 @@ protected:
   //! \brief isDataIndexed specifies if the data is indexed or not. This matters for the internal drawing functions.
   //!
   bool isDataIndexed();
+  //!getter for the texture.
+  Texture* getTexture() const;
+  //!getter for the texture id.
+  GLuint getTextureId() const;
+  //! getter for the size of the texture.
+  QSize getTextureSize() const;
+  //! getter for the clipping. Default is `true`.
+  bool getClipping() const;
 
   //!
   //!Use this to specify if the container `Vbo`s are filled for `viewer`.
@@ -198,12 +230,16 @@ protected:
   //! \brief getIdxSize returns the number of indexed
   //! vertices.
   std::size_t getIdxSize()const;
+  //! \brief getTupleSize returns the number of coordinates in one vertex.
+  //! Default is 3.
+  int getTupleSize()const;
   //! \brief getCenterSize returns the number of instances of
   //! the item in this container.
   std::size_t getCenterSize()const;
+
   //! \name Getters for the shaders parameters.
   //!@{
-  
+
   //! getter for the "selected" parameter
   bool isSelected()const;
   //! getter for the "color" parameter

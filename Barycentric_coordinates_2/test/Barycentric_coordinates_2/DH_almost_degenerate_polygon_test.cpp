@@ -111,7 +111,7 @@ int main()
 
     const Scalar quater  = Scalar(1)/Scalar(4);
 
-    assert(coordinates[120] - quater == Scalar(0) && coordinates[121] - quater == Scalar(0) && 
+    assert(coordinates[120] - quater == Scalar(0) && coordinates[121] - quater == Scalar(0) &&
            coordinates[122] - quater == Scalar(0) && coordinates[123] - quater == Scalar(0) );
 
     if( coordinates[120] - quater != Scalar(0) ||
@@ -124,6 +124,6 @@ int main()
     }
 
     cout << endl << "DH_almost_degenerate_polygon_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

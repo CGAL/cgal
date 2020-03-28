@@ -12,7 +12,7 @@ typedef CGAL::Tetrahedron_3<Kernel>     Tetrahedron;
 typedef CGAL::Sphere_3<Kernel>          Sphere;
 
 int main() {
-    Point p1(10, 15, 0), p2(0, 0, 0), 
+    Point p1(10, 15, 0), p2(0, 0, 0),
       p3(-10, 0, -15), p4(15, 15, 15);
     Segment s1(p1, p2);
     Triangle t1(p1, p2, p3);

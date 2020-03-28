@@ -1,7 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_range.h>
-#include <boost/foreach.hpp>
 
 
 #include <iostream>
@@ -35,29 +34,22 @@ struct Fct
 void fct(const Polyhedron& p)
 {
   vertex_range vr(vertices(p));
-  
-#ifndef CGAL_CFG_NO_CPP0X_RANGE_BASED_FOR
+
   std::cout << "new for loop" << std::endl;
   for(vertex_descriptor vd : vr){
     std::cout << vd->point() << std::endl;
   }
-#endif
-  
-  std::cout << "BOOST_FOREACH" << std::endl;
-  BOOST_FOREACH(vertex_descriptor vd, vr){
-    std::cout << vd->point() << std::endl;
-  }
-  
+
   std::cout << "boost::tie + std::for_each" << std::endl;
   vertex_iterator vb, ve;
-  
+
   boost::tie(vb,ve) = vertices_range(p);
   std::for_each(vb,ve, Fct());
 }
 
 int main(int argc, char** argv)
 {
-  Polyhedron P;  
+  Polyhedron P;
   std::ifstream in((argc>1)?argv[1]:"cube.off");
   in >> P ;
 

@@ -1,20 +1,11 @@
 // Copyright (c) 2016 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -41,9 +32,9 @@
  *   given in the struct to enable specialization.
  *
  * GMap_group_attribute_functor<GMap> to group the <i>-attributes of two
- *    given i-cells (except for j-adim). If one i-attribute is NULL, we set the
+ *    given i-cells (except for j-adim). If one i-attribute is nullptr, we set the
  *    darts of its i-cell to the second attribute. If both i-attributes are
- *    non NULL, we overide all the i-attribute of the second i-cell to the
+ *    non nullptr, we overide all the i-attribute of the second i-cell to the
  *    first i-attribute.
  *
  * GMap_degroup_attribute_functor_run<GMap> to degroup one i-attributes in two
@@ -158,8 +149,8 @@ struct GMap_group_attribute_functor_run
 
     typename GMap::Dart_handle toSet = amap.null_handle;
 
-    // If the attribute associated to adart1 is NULL, set it with
-    // the attribute associated to adart2 (necessarily != NULL)
+    // If the attribute associated to adart1 is nullptr, set it with
+    // the attribute associated to adart2 (necessarily != nullptr)
     if (a1 == GMap::null_handle)
     { toSet  = adart1; a1 = a2; }
     else

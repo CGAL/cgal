@@ -1,10 +1,3 @@
-#include <CGAL/Object.h>
-#include <CGAL/Point_3.h>
-#include <CGAL/Iso_cuboid_3.h>
-#include <CGAL/Ray_3.h>
-#include <CGAL/Segment_3.h>
-#include <CGAL/Line_3.h>
-#include <CGAL/Plane_3.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -100,10 +93,10 @@ void test_P_Tet()
 
   assert(CGAL::do_intersect(p,t));
   assert(CGAL::do_intersect(t,p));
-  
+
   assert(CGAL::do_intersect(q0,t));
   assert(CGAL::do_intersect(t,q0));
-  
+
   assert(! CGAL::do_intersect(q1,t));
   assert(! CGAL::do_intersect(t,q1));
 }
@@ -126,7 +119,7 @@ int main()
 
   test_P_Pl<Epick>();
   test_P_Pl<Epeck>();
-  
+
   test_P_Tet<Epick>();
   test_P_Tet<Epeck>();
 }

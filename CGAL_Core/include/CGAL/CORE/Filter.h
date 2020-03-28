@@ -4,17 +4,6 @@
  * All rights reserved.
  *
  * This file is part of CGAL (www.cgal.org).
- * You can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- *
- * Licensees holding a valid commercial license may use this file in
- * accordance with the commercial license agreement provided with the
- * software.
- *
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
- * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
  *
  * File: Filter.h
  * Synopsis:
@@ -23,8 +12,8 @@
  *      based on the Burnikel-Funke-Schirra (BFS) filter scheme.
  *      We do not use IEEE exception mechanism here.
  *      It is used by the Expr class.
- * 
- * Written by 
+ *
+ * Written by
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Chee Yap <yap@cs.nyu.edu>
  *
@@ -33,7 +22,7 @@
  *
  * $URL$
  * $Id$
- * SPDX-License-Identifier: LGPL-3.0+
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  ***************************************************************************/
 
 #ifndef _CORE_FILTER_H_
@@ -45,22 +34,14 @@
 #include <cmath>
 #include <limits>
 
-#if !defined CGAL_CFG_NO_CPP0X_ISFINITE
-  #define CGAL_CORE_finite(x)	std::isfinite(x)
-  #define CGAL_CORE_ilogb(x)	ilogb(x)
-#elif defined (_MSC_VER) || defined (__MINGW32__) // add support for MinGW
-  #define CGAL_CORE_finite(x)	_finite(x)
-  #define CGAL_CORE_ilogb(x)	(int)_logb(x)
-#else
-  #define CGAL_CORE_finite(x)	finite(x)
-  #define CGAL_CORE_ilogb(x)	ilogb(x)
-#endif
+#define CGAL_CORE_finite(x)        std::isfinite(x)
+#define CGAL_CORE_ilogb(x)        ilogb(x)
 
 #if defined(sun) || defined(__sun)
   #include <ieeefp.h>
 #endif
 
-namespace CORE { 
+namespace CORE {
 
 const int POWTWO_26 = (1 << 26);  ///< constant 2^26
 
@@ -72,7 +53,7 @@ class filteredFp {
   double maxAbs;        // if (|fpVal| > maxAbs * ind * 2^{-53}) then
   int ind;              // sign of value is sign(fpVal).  Else, don't know.
   // REFERENCE: Burnikel, Funke, Schirra (BFS) filter
-  // Chee: in isOK(), you used the test "|fpVal| >= maxAbs * ind * 2^{-53}" 
+  // Chee: in isOK(), you used the test "|fpVal| >= maxAbs * ind * 2^{-53}"
   // which seems to be correct (i.e., not |fpVal| > maxAbs * ind * 2^{-53})
 public:
   /// \name Constructors
@@ -92,9 +73,9 @@ public:
       ind = 1;
       fpVal = value.doubleValue();
       if (value.MSB() <= -1075)
-	maxAbs = 1;
-      else	
-      	maxAbs = core_abs(fpVal); // NaN are propagated correctly by core_abs.
+        maxAbs = 1;
+      else
+              maxAbs = core_abs(fpVal); // NaN are propagated correctly by core_abs.
     }
   }
   //@}
@@ -125,7 +106,7 @@ public:
   }
   /// lower bound on MSB
   /** defined to be cel(lg(real value));
-      ilogb(x) is floor(log_2(|x|)). 
+      ilogb(x) is floor(log_2(|x|)).
       Also, ilogb(0) = -INT_MAX.  ilogb(NaN) = ilogb(+/-Inf) = INT_MAX */
   extLong lMSB() const {
     return extLong(CGAL_CORE_ilogb(core_abs(fpVal)-maxAbs*ind*CORE_EPS));

@@ -1,21 +1,12 @@
 // Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
@@ -26,7 +17,7 @@
 #include <boost/function_output_iterator.hpp>
 
 namespace CGAL{
-  
+
 template <class Kernel, class Container>
 class Polygon_2;
 
@@ -36,18 +27,18 @@ namespace internal{
 template <class Kernel, class output_iterator>
 class Point_grabber{
   output_iterator out;
-public:  
+public:
   Point_grabber(output_iterator it):out(it){}
-  
+
   void operator()(const typename Kernel::Point_2& p){
     *out++=p;
   }
-    
+
   void operator()(const typename Kernel::Segment_2& s){
     *out++=s[0];
     *out++=s[1];
   }
-  
+
   template<class Container>
   void operator()(const CGAL::Polygon_2<Kernel,Container>& p){
     for(typename CGAL::Polygon_2<Kernel,Container>::Vertex_iterator it=
@@ -67,13 +58,13 @@ point_grabber(output_iterator it){
 template <class Kernel, class output_iterator>
 class Segment_grabber{
   output_iterator out;
-public:  
+public:
   Segment_grabber(output_iterator it):out(it){}
-  
+
   void operator()(const typename Kernel::Segment_2& s){
     *out++=s;
   }
-  
+
   template<class Container>
   void operator()(const CGAL::Polygon_2<Kernel,Container>& p){
     for(typename CGAL::Polygon_2<Kernel,Container>::Edge_const_iterator
@@ -95,29 +86,29 @@ template <class Kernel,class output_iterator>
 class Wpoint_grabber{
   output_iterator out;
   typedef typename Kernel::Weighted_point_2 Self;
-public:  
+public:
   Wpoint_grabber(output_iterator it):out(it){}
 
   void operator()(const Self& p){
     *out++=p;
   }
-    
+
   void operator()(const typename Kernel::Point_2& p){
     *out++=Self(p,0);
   }
-    
+
   void operator()(const typename Kernel::Circle_2& c){
     *out++=Self(c.center(),c.squared_radius());
   }
-  
+
   void operator()(const typename Kernel::Segment_2& s){
     *out++=Self(s[0],0);
     *out++=Self(s[1],0);
-  }  
-  
+  }
+
   template<class Container>
   void operator()(const CGAL::Polygon_2<Kernel,Container>& p){
-    for(typename CGAL::Polygon_2<Kernel,Container>::Vertex_iterator 
+    for(typename CGAL::Polygon_2<Kernel,Container>::Vertex_iterator
         it=p.vertices_begin();it!=p.vertices_end();++it)
       *out++= Self(*it,0);
   }

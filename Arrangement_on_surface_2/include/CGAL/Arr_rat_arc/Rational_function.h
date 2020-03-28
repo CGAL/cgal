@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
 //                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
@@ -45,24 +36,24 @@ public:
   typedef typename Base::Multiplicity_vector           Multiplicity_vector;
   typedef typename Base::Root_multiplicity_vector      Root_multiplicity_vector;
   typedef typename Base::Solve_1                       Solve_1;
-    
+
 public:
-  Rational_function_rep() : _ak_ptr(NULL){}
+  Rational_function_rep() : _ak_ptr(nullptr){}
   Rational_function_rep(const Polynomial_1& numer,
-                        const Polynomial_1& denom, 
+                        const Polynomial_1& denom,
                         Algebraic_kernel_d_1* ak_ptr):
     _numer(numer), _denom(denom),_ak_ptr(ak_ptr)
   {
     initialize();
   }
- 
+
   CGAL::Sign sign_at (const Algebraic_real_1& x,
                       CGAL::Sign epsilon = CGAL::ZERO) const
   {
-    //find interval 
+    //find interval
     typename Algebraic_vector::const_iterator iter =
       std::lower_bound(_event_roots.begin(), _event_roots.end(),x);
-  
+
     //case of a value larger than largest root
     if (iter == _event_roots.end())
       return (_sign.back());
@@ -70,11 +61,11 @@ public:
     typename Algebraic_vector::iterator::difference_type dist =
       iter - _event_roots.begin();
 
-    //if x is not a root, ignore epsilons 
+    //if x is not a root, ignore epsilons
     if (*iter != x)
       return (_sign[dist]);
 
-    //x is a root 
+    //x is a root
     if (epsilon == CGAL::ZERO)
       return (CGAL::EQUAL);
     else if (epsilon == CGAL::NEGATIVE)
@@ -113,11 +104,11 @@ public:
   {
     return _pole_multiplicities;
   }
-    
+
 private:
   void initialize()
   {
-    CGAL_precondition(_ak_ptr != NULL);
+    CGAL_precondition(_ak_ptr != nullptr);
     CGAL_precondition(CGAL::is_zero(_denom) == false);
     if (CGAL::is_zero(_numer))
     {
@@ -136,7 +127,7 @@ private:
       rm_poles_vec.size();
     typename Root_multiplicity_vector::size_type num_of_intersections =
       rm_intersctions_vec.size();
-  
+
     _poles.reserve(num_of_poles);
     _pole_multiplicities.reserve(num_of_poles);
 
@@ -144,7 +135,7 @@ private:
     _pole_multiplicities.reserve(num_of_poles + num_of_intersections);
 
     //initialize poles
-    for ( typename Root_multiplicity_vector::iterator it = rm_poles_vec.begin(); 
+    for ( typename Root_multiplicity_vector::iterator it = rm_poles_vec.begin();
           it != rm_poles_vec.end() ;
           ++it)
     {
@@ -173,8 +164,8 @@ private:
     _sign.push_back(curr_sign);
 
     typename Multiplicity_vector::iterator it2;
-    for (it2 = _event_multiplicities.begin(); 
-         it2 != _event_multiplicities.end(); 
+    for (it2 = _event_multiplicities.begin();
+         it2 != _event_multiplicities.end();
          ++it2)
     {
       if (*it2 % 2 == 1)
@@ -193,7 +184,7 @@ private:
   std::vector<CGAL::Sign> _sign;    //function's sign in the corresponding interval induced by _event_roots (if no roots then only one value)
   mutable Algebraic_kernel_d_1*   _ak_ptr;
 
-};//Rational_function_rep 
+};//Rational_function_rep
 
 template < class Algebraic_kernel_ >
 class Rational_function:
@@ -215,12 +206,12 @@ private:
   static Self& get_default_instance()
   {
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_0(Algebraic_kernel_d_1, kernel);
-    CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(Self, x, Polynomial_1(0), Polynomial_1(1), &kernel); 
-    return x; 
-  } 
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE_3(Self, x, Polynomial_1(0), Polynomial_1(1), &kernel);
+    return x;
+  }
 public:
   Rational_function(const Polynomial_1& numer,
-                    const Polynomial_1& denom, 
+                    const Polynomial_1& denom,
                     Algebraic_kernel_d_1* ak_ptr) :
     Base(numer,denom,ak_ptr) {}
 
@@ -232,10 +223,8 @@ public:
   Rational_function (const Self & r)
     : Base(static_cast<const Base &> (r)) {}
 
-#ifndef CGAL_CFG_NO_CPP0X_DELETED_AND_DEFAULT_FUNCTIONS
   Self& operator=(const Self&)=default;
-#endif
-  
+
   CGAL::Sign sign_at(const Algebraic_real_1& x,
                      CGAL::Sign epsilon = CGAL::ZERO) const
   {

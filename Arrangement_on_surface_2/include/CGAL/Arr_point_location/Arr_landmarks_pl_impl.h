@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Idit Haran   <haranidi@post.tau.ac.il>
 //                 Ron Wein     <wein@post.tau.ac.il>
@@ -27,7 +18,7 @@
 
 
 /*! \file
- * Member-function definitions for the 
+ * Member-function definitions for the
  * Arr_landmarks_point_location<Arrangement, Generator> class.
  */
 
@@ -40,7 +31,7 @@ template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
 Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
 {
-  // If the arrangement is empty, return its initial (empty and 
+  // If the arrangement is empty, return its initial (empty and
   // non-fictitious) face.
   if (p_arr->number_of_vertices() == 0) {
     CGAL_assertion(p_arr->number_of_faces() == 1);
@@ -48,9 +39,9 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
     return make_result(fh);
   }
   // Use the generator and to find the closest landmark to the query point.
-  result_type    lm_location_obj; 
+  result_type    lm_location_obj;
   const Point_2& landmark_point = lm_gen->closest_landmark(p, lm_location_obj);
-  
+
   // If the query point and the landmark point are equal, return the landmark.
   if (m_traits->equal_2_object()(landmark_point, p))
     return lm_location_obj;
@@ -72,7 +63,7 @@ Arr_landmarks_point_location<Arr, Gen>::locate(const Point_2& p) const
   else if ( ( fh =  Result().template assign<Face_const_handle>(lm_location_obj) ) )
     out_obj = _walk_from_face(*fh, landmark_point, p, crossed_edges);
   else CGAL_error_msg("lm_location_obj of an unknown type.");
-  
+
   if ( ( fh = Result().template assign<Face_const_handle>(out_obj) ) ) {
     // If we reached here, we did not locate the query point in any of the
     // holes inside the current face, so we conclude it is contained in this
@@ -169,7 +160,7 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
       // We found a vertex closer to p; Continue using this vertex.
       const Vertex_const_handle* p_vh =
         Result().template assign<Vertex_const_handle>(obj);
-      CGAL_assertion(p_vh != NULL);
+      CGAL_assertion(p_vh != nullptr);
       vh = *p_vh;
       continue;
     }
@@ -196,12 +187,12 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex,
 //-----------------------------------------------------------------------------
 // Locate an edge around a given vertex that is the predecessor of the curve
 // connecting the vertex to the query point in a clockwise order.
-// 
+//
 template <typename Arr, typename Gen>
 typename Arr_landmarks_point_location<Arr, Gen>::result_type
 Arr_landmarks_point_location<Arr, Gen>::
 _find_face_around_vertex(Vertex_const_handle vh,
-                         const Point_2& p, 
+                         const Point_2& p,
                          bool& new_vertex) const
 {
   new_vertex = false;
@@ -298,7 +289,7 @@ _find_face_around_vertex(Vertex_const_handle vh,
   }
 
   // Check whether p lies on the curve associated with the edge.
-  if (m_traits->is_in_x_range_2_object()(curr->curve(), p) && 
+  if (m_traits->is_in_x_range_2_object()(curr->curve(), p) &&
       m_traits->compare_y_at_x_2_object()(p, curr->curve()) == EQUAL)
   {
     // p is located on the interior of the edge.
@@ -394,7 +385,7 @@ _walk_from_edge(Halfedge_const_handle eh,
     // incident to the face that is most likely to contain p.
     res = m_traits->compare_y_at_x_2_object()(p, cv);
 
-    switch (res) { 
+    switch (res) {
      case EQUAL:
       // The edge contains p in its interior:
       return make_result(eh);
@@ -437,7 +428,7 @@ _walk_from_edge(Halfedge_const_handle eh,
 }
 
 //-----------------------------------------------------------------------------
-// In case the arrangement's curve contained in the segment 
+// In case the arrangement's curve contained in the segment
 // from the nearest landmark to the query point
 //
 template <typename Arr, typename Gen>
@@ -486,7 +477,7 @@ _walk_from_face(Face_const_handle face,
 {
   // Construct an x-monotone curve connecting the nearest landmark point np
   // to the query point p and check which CCB intersects this segment.
-  X_monotone_curve_2             seg = 
+  X_monotone_curve_2             seg =
     m_traits->construct_x_monotone_curve_2_object()(np, p);
   const bool                     p_is_left =
     (m_traits->compare_xy_2_object()(np, p) == LARGER);
@@ -504,7 +495,7 @@ _walk_from_face(Face_const_handle face,
 
   do {
     // Check whether p lies inside the current face (including its holes):
-    if (p_arr->topology_traits()->is_in_face(&(*face), p, NULL))
+    if (p_arr->topology_traits()->is_in_face(&(*face), p, nullptr))
     {
       // We know that p is located inside the current face, and we check
       // whether it lies inside one of its holes (or on the boundary of
@@ -612,7 +603,7 @@ _intersection_with_ccb(Ccb_halfedge_const_circulator circ,
   is_target = false;
 
   // Go over the CCB.
-  typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range = 
+  typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range =
     m_traits->is_in_x_range_2_object();
   Ccb_halfedge_const_circulator                 curr = circ , temp_circ;
   const Halfedge_const_handle                   invalid_he;
@@ -662,7 +653,7 @@ _intersection_with_ccb(Ccb_halfedge_const_circulator circ,
       if (is_on_edge)
         return _in_case_p_is_on_edge(he,crossed_edges,p,is_target);
 
-      if ((!curr->target()->is_at_open_boundary()) && 
+      if ((!curr->target()->is_at_open_boundary()) &&
           is_in_x_range(seg, curr->target()->point()))
       {
         // if the target point of curr is located on seg
@@ -678,7 +669,7 @@ _intersection_with_ccb(Ccb_halfedge_const_circulator circ,
       {
         // if the source point of curr is located on seg
         // we should walk from it to the query point
-        if (m_traits->compare_y_at_x_2_object() 
+        if (m_traits->compare_y_at_x_2_object()
             (curr->source()->point() , seg) == EQUAL)
         {
           new_vertex = curr->source();
@@ -765,7 +756,7 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
                         bool& cv_and_seg_overlap,
                         bool& cv_is_contained_in_seg) const
 {
-  typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range = 
+  typename Traits_adaptor_2::Is_in_x_range_2    is_in_x_range =
     m_traits->is_in_x_range_2_object();
   p_on_curve = false;
   cv_and_seg_overlap = false;

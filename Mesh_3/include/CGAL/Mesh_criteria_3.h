@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Stéphane Tayeb
@@ -41,7 +32,7 @@
 #include <cfloat> // for the macro DBL_MAX
 #include <boost/type_traits/is_base_of.hpp>
 namespace CGAL {
-  
+
 namespace parameters {
 
 // see <CGAL/config.h>
@@ -65,9 +56,9 @@ CGAL_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 CGAL_PRAGMA_DIAG_POP
 
 } // end namespace parameters
-  
+
 namespace internal {
-  
+
 // Class Mesh_criteria_3_impl
 template < typename Tr,
            typename EdgeCriteria,
@@ -76,29 +67,29 @@ template < typename Tr,
 class Mesh_criteria_3_impl
 {
   typedef typename Tr::Geom_traits::FT FT;
-  
+
 public:
   typedef EdgeCriteria      Edge_criteria;
   typedef FacetCriteria     Facet_criteria;
   typedef CellCriteria      Cell_criteria;
-  
+
   // Constructor
-  Mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
-                       const Cell_criteria& cell_criteria)
+  Mesh_criteria_3_impl(Facet_criteria facet_criteria,
+                       Cell_criteria cell_criteria)
     : edge_criteria_(0)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
   { }
-  
+
   // Constructor
-  Mesh_criteria_3_impl(const Edge_criteria& edge_criteria,
-                       const Facet_criteria& facet_criteria,
-                       const Cell_criteria& cell_criteria)
+  Mesh_criteria_3_impl(Edge_criteria edge_criteria,
+                       Facet_criteria facet_criteria,
+                       Cell_criteria cell_criteria)
     : edge_criteria_(edge_criteria)
     , facet_criteria_(facet_criteria)
     , cell_criteria_(cell_criteria)
   { }
-  
+
   // This template constructor is not instantiated when named parameters
   // are not used, so Facet_criteria and Cell_criteria construction from FT
   // is not a problem
@@ -120,7 +111,7 @@ public:
                                  | args[parameters::sizing_field | FT(0)] ] ])
   { }
 
-#ifndef CGAL_NO_DEPRECATED_CODE  
+#ifndef CGAL_NO_DEPRECATED_CODE
   const Edge_criteria& edge_criteria() const { return edge_criteria_; }
   const Facet_criteria& facet_criteria() const { return facet_criteria_; }
   const Cell_criteria& cell_criteria() const { return cell_criteria_; }
@@ -152,13 +143,13 @@ private:
   Edge_criteria edge_criteria_;
   Facet_criteria facet_criteria_;
   Cell_criteria cell_criteria_;
-  
-};  // end class Mesh_criteria_3_impl  
+
+};  // end class Mesh_criteria_3_impl
 
 } // end namespace internal
-  
-  
-  
+
+
+
 // Class Mesh_criteria_3
 // Provides default mesh criteria to drive Mesh_3 process
 template <typename Tr,
@@ -175,26 +166,26 @@ class Mesh_criteria_3
                                           EdgeCriteria,
                                           FacetCriteria,
                                           CellCriteria>   Base;
-  
+
 public:
   typedef typename Base::Edge_criteria    Edge_criteria;
   typedef typename Base::Facet_criteria   Facet_criteria;
   typedef typename Base::Cell_criteria    Cell_criteria;
-  
+
   // Constructor
-  Mesh_criteria_3(const Facet_criteria& facet_criteria,
-                  const Cell_criteria& cell_criteria)
+  Mesh_criteria_3(Facet_criteria facet_criteria,
+                  Cell_criteria cell_criteria)
     : Base(facet_criteria,
            cell_criteria) {}
-  
+
   // Constructor
-  Mesh_criteria_3(const Edge_criteria& edge_criteria,
-                  const Facet_criteria& facet_criteria,
-                  const Cell_criteria& cell_criteria)
+  Mesh_criteria_3(Edge_criteria edge_criteria,
+                  Facet_criteria facet_criteria,
+                  Cell_criteria cell_criteria)
     : Base(edge_criteria,
            facet_criteria,
            cell_criteria) {}
-  
+
   // For convenient constructor call (see examples)
   BOOST_PARAMETER_CONSTRUCTOR(Mesh_criteria_3, (Base), parameters::tag,
                               (optional (edge_size_,*)
@@ -209,7 +200,7 @@ public:
                                         (cell_sizing_field_,*)
                                         (sizing_field_,*)
                               ))
-  
+
 };  // end class Mesh_criteria_3
 
 }  // end namespace CGAL

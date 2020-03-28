@@ -54,7 +54,7 @@ struct Myitems_4b
     typedef MonInfo Dart_info;
 
     typedef Myattrib<LCC> myattrib;
-    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
+    typedef std::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
     Attributes;
   };
 };
@@ -65,7 +65,7 @@ struct Myitems_4c
   struct Dart_wrapper
   {
     typedef Myattrib<LCC> myattrib;
-    typedef CGAL::cpp11::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
+    typedef std::tuple<myattrib, myattrib, myattrib, myattrib,myattrib>
     Attributes;
   };
 };
@@ -82,7 +82,7 @@ int main()
     std::cout<<" Error during Test_LCC_4<LCC4>."<<std::endl;
     return EXIT_FAILURE;
   }
-  
+
   trace_display_msg("test_LCC_4<LCC4b>");
   typedef CGAL::Linear_cell_complex_for_combinatorial_map<4,4,
                                     CGAL::Linear_cell_complex_traits<4>,
