@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Baruch Zukerman   <baruchzu@post.tau.ac.il>
@@ -320,24 +311,24 @@ public:
 
       if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
           (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
-	  { //both cv1 and cv2 are vertical
+          { //both cv1 and cv2 are vertical
          CGAL_precondition (!(cv1.left()).equals(p) && !(cv2.left()).equals(p));
-	  }
-	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
+          }
+          else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) != EQUAL) &&
                    (CGAL::compare (cv2.left().x(),cv2.right().x()) == EQUAL))
-	  { //only cv1 is vertical
+          { //only cv1 is vertical
          CGAL_precondition (!(cv1.left()).equals(p));
-	  }
-	  else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
+          }
+          else if ((CGAL::compare (cv1.left().x(),cv1.right().x()) == EQUAL) &&
                    (CGAL::compare (cv2.left().x(),cv2.right().x()) != EQUAL))
-	  { //only cv2 is vertical
+          { //only cv2 is vertical
          CGAL_precondition (!(cv2.left()).equals(p));
-	  }
-	  else
-	  { //both cv1 and cv2 are non vertical
+          }
+          else
+          { //both cv1 and cv2 are non vertical
         CGAL_precondition (CGAL::compare (cv1.left().x(),p.x()) == SMALLER &&
                            CGAL::compare (cv2.left().x(),p.x()) == SMALLER);
-	  }
+          }
       // Compare the two curves immediately to the left of p:
       return (cv1.compare_to_left (cv2, p));
     }
@@ -751,6 +742,9 @@ public:
 
   /*! Obtain a Trim_2 functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
+
+  // @}
+
 };
 
 } //namespace CGAL

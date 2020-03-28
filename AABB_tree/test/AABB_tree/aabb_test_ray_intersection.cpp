@@ -89,8 +89,8 @@ int main()
 
   Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
   Tree::Bounding_box bbox = tree.bbox();
-  Vector bbox_center((bbox.xmin() + bbox.xmax()) / 2, 
-                     (bbox.ymin() + bbox.ymax()) / 2, 
+  Vector bbox_center((bbox.xmin() + bbox.xmax()) / 2,
+                     (bbox.ymin() + bbox.ymax()) / 2,
                      (bbox.zmin() + bbox.zmax()) / 2);
   boost::array<double, 3> extents;
   extents[0] = bbox.xmax() - bbox.xmin();
@@ -101,7 +101,7 @@ int main()
   std::cout << bbox << std::endl;
   std::cout << bbox_center << std::endl;
   std::cout << max_extent << std::endl;
-  
+
   const int NB_RAYS = 1000;
   std::vector<Point> v1, v2;
   v1.reserve(NB_RAYS); v2.reserve(NB_RAYS);
@@ -109,8 +109,8 @@ int main()
   const double r = max_extent / 2;
   // Generate NB_RAYS*2 points that lie on a sphere of radius r, centered around bbox_center
   CGAL::Random rand = CGAL::Random(23); // fix the seed to yield the same results each run
-  CGAL::cpp11::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v1));
-  CGAL::cpp11::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v2));
+  std::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v1));
+  std::copy_n(CGAL::Random_points_on_sphere_3<Point>(r, rand), NB_RAYS, std::back_inserter(v2));
 
   for(std::vector<Point>::iterator it = v1.begin(); it != v1.end(); ++it) {
     *it = *it + bbox_center;
@@ -119,7 +119,7 @@ int main()
   for(std::vector<Point>::iterator it = v2.begin(); it != v2.end(); ++it) {
     *it = *it + bbox_center;
   }
-  
+
   // Generate NB_RAYS using v1 as source and v2 as target.
   std::vector<Ray> rays;
   rays.reserve(NB_RAYS);
@@ -143,7 +143,7 @@ int main()
                      "Primitives mismatch.");
   std::size_t c = primitives1.size() - std::count(primitives1.begin(), primitives1.end(), boost::none);
   std::cout << "Intersected " << c << " primitives with " << NB_RAYS << " rays" << std::endl;
-  std::cout << "Primitive method had to sort " << accum/NB_RAYS 
+  std::cout << "Primitive method had to sort " << accum/NB_RAYS
             << " intersections on average." << std::endl;
   t.stop();
   std::cout << t.time() << std::endl;

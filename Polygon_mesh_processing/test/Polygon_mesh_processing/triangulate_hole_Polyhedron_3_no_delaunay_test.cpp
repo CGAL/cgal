@@ -1,4 +1,4 @@
-//#define POLY 
+//#define POLY
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -43,7 +43,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
   typedef CGAL::Halfedge_around_face_circulator<Polyhedron> Halfedge_around_facet_circulator;
   border_reps.clear();
   std::set<Halfedge_handle> border_map;
-  BOOST_FOREACH(Halfedge_handle h,  halfedges(poly)){
+  for(Halfedge_handle h :  halfedges(poly)){
     if(face(h,poly)== boost::graph_traits<Polyhedron>::null_face() && border_map.find(h) == border_map.end()){
       border_reps.push_back(h);
       Halfedge_around_facet_circulator hf_around_facet(h,poly), done(hf_around_facet);
@@ -56,7 +56,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 }
 
 template <class Polyhedron, class Halfedge_handle>
-void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps) 
+void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
 {
   read_poly(file_name, poly);
   detect_borders(poly, border_reps);
@@ -66,7 +66,7 @@ void read_poly_with_borders(const char* file_name, Polyhedron& poly, std::vector
 // This part test internal functions with Weight_min_max_dihedral_and_area
 template<class Polyhedron, class Iterator>
 CGAL::internal::Weight_min_max_dihedral_and_area
-           calculate_weight_for_patch(Polyhedron& poly,Iterator begin, Iterator end) 
+           calculate_weight_for_patch(Polyhedron& poly,Iterator begin, Iterator end)
 {
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor Halfedge_handle;
   typedef CGAL::internal::Weight_min_max_dihedral_and_area Weight;
@@ -143,7 +143,7 @@ void test_triangulate_hole(const char* file_name) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
     assert(false);
   }
-  
+
   std::cout << "  Done!" << std::endl;
 }
 template <class Polyhedron>
@@ -191,7 +191,7 @@ void test_triangulate_and_refine_hole(const char* file_name) {
   for(typename std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
-    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, *it, 
+    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, *it,
       back_inserter(patch_facets), back_inserter(patch_vertices));
 
     if(patch_facets.empty()) {
@@ -296,7 +296,7 @@ void test_ouput_iterators_triangulate_and_refine_hole(const char* file_name) {
     std::vector<Vertex_handle> patch_vertices_2 = patch_vertices;
     if(patch_vertices_2.empty()) { patch_vertices_2.push_back(Vertex_handle()); } //just allocate space for dereferencing
 
-    std::pair<Facet_handle*, Vertex_handle*> output_its = 
+    std::pair<Facet_handle*, Vertex_handle*> output_its =
       CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly_2,
         *it_2, &*patch_facets_2.begin(), &*patch_vertices_2.begin());
 
@@ -328,7 +328,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
 
   Polyhedron poly;
   std::vector<Halfedge_handle> border_reps;
-  
+
   std::vector<Facet_handle> patch_facets;
   std::vector<Vertex_handle> patch_vertices;
 
@@ -362,7 +362,7 @@ void generate_elephant_with_hole()
   Polyhedron poly;
   read_poly("data/elephant.off", poly);
   int i=0;
-  BOOST_FOREACH(Facet_handle fd, faces(poly))
+  for(Facet_handle fd : faces(poly))
     if (++i==229)
     {
       Halfedge_handle nh=opposite(halfedge(fd,poly), poly);
@@ -408,7 +408,7 @@ typedef CGAL::Surface_mesh<typename Kernel::Point_3> Polyhedron;
 
 
 }
-int main() 
+int main()
 {
   test_hole_filling<Epic>();
   test_hole_filling<Epec>();

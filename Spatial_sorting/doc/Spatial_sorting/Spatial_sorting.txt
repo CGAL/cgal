@@ -1,7 +1,7 @@
 namespace CGAL {
 /*!
 
-\mainpage User Manual 
+\mainpage User Manual
 \anchor Chapter_Spatial_Sorting
 \anchor chapspatial_sorting
 \cgalAutoToc
@@ -15,7 +15,7 @@ speed is dependent on the order of insertion. This package provides sorting
 algorithms that may considerably improve running times of such
 algorithms.
 
-The rationale is to sort objects along a space-filling curve 
+The rationale is to sort objects along a space-filling curve
 so that two
 objects close geometrically will be close in the insertion order with high
 probability. That way, parts of a data structure that will be looked at during
@@ -27,7 +27,7 @@ speed ups in other algorithm using these data structures.
 
 Some algorithms have a good complexity under randomized hypotheses which
 contradicts the idea of sorting the input using any sorting criterion.
-In such a case, it is possible to introduce just a bit of randomness 
+In such a case, it is possible to introduce just a bit of randomness
 to be able to combine the good randomized complexity and the
 good effects of locality \cgalCite{acr-icb-03}.
 
@@ -35,18 +35,18 @@ The predicates used by this package are comparisons between coordinates,
 thus there is no robustness issue involved here, for example to choose the
 arithmetic of the kernel.
 
-\section sechilbert_sorting Hilbert Sorting 
+\section sechilbert_sorting Hilbert Sorting
 
 In 2D, one can construct a space filling curve, that is a mapping \f$ f\f$ of \f$ [0,1]\f$
-to the unit square \f$ [0,1]^2\f$, such that \f$ f(0)=(0,0)\f$ and \f$ f(1)=(1,0)\f$ 
+to the unit square \f$ [0,1]^2\f$, such that \f$ f(0)=(0,0)\f$ and \f$ f(1)=(1,0)\f$
 in the following way:
 the unit square is subdivided in four such that
 
 <BLOCKQUOTE>
-\f$ f([0,\frac{1}{4}])=[0,\frac{1}{2}]^2\f$, 
+\f$ f([0,\frac{1}{4}])=[0,\frac{1}{2}]^2\f$,
 \f$ f([\frac{1}{4},\frac{1}{2}])=[0,\frac{1}{2}]\times[\frac{1}{2},1]\f$,
 \f$ f([\frac{1}{2},\frac{3}{4}])=[\frac{1}{2},1]^2\f$,
-and 
+and
 \f$ f([\frac{3}{4},1])=[\frac{1}{2},1]\times[0,\frac{1}{2}].\f$
 
 \f$ f(\frac{1}{4})=(0,\frac{1}{2})\f$
@@ -63,7 +63,7 @@ Hilbert mapping
 \cgalFigureEnd
 
 Now given a set of 2D points, they can be sorted in the order they have on such
-a space filling curve. Note that at each step, we split a square exactly at its center; we call this 
+a space filling curve. Note that at each step, we split a square exactly at its center; we call this
 subdivision policy: <i>middle</i> policy (see \cgalFigureRef{Spatial_sorting_fig_Hilbert_middle}).
 
 \cgalFigureBegin{Spatial_sorting_fig_Hilbert_middle,Hilbert-middle.png}
@@ -74,7 +74,7 @@ If instead of subdividing the square in a fixed way at its center,
 as above, we subdivide it
 by splitting at the median point (in \f$ x\f$ or \f$ y\f$ directions alternating),
 we construct a 2-d tree adapted to the point set. This tree can be visited in a
-similar manner and we get also a suitable ordering of the points; we call this 
+similar manner and we get also a suitable ordering of the points; we call this
 subdivision policy: <i>median</i> policy (see \cgalFigureRef{Spatial_sorting_fig_Hilbert_median}).
 
 \cgalFigureBegin{Spatial_sorting_fig_Hilbert_median,Hilbert-median.png}
@@ -84,7 +84,7 @@ Hilbert sort with median policy
 The middle policy is easier to analyze, and is interesting in practice
 for well distributed set of points in small dimension (if the number
 of points is really larger than \f$ 2^d\f$).
-The median policy should be preferred for high dimension or if 
+The median policy should be preferred for high dimension or if
 the point set distribution is not regular (or unknown).
 Since the median policy cannot be much worse than the middle
 policy, while the converse can happen, the median policy is the
@@ -97,12 +97,12 @@ in the middle and the median policies.
 
 We also consider space filling curves on a given sphere. The method is described for the unit sphere below; it works on any sphere by an affine transformation.
 The points to be sorted are supposed to be close to the sphere.
- 
+
 Actually, we approximate a space filling curve on
-the unit sphere by a space filling curve on a cube (with facets at \f$x, y, z = \pm 1/\sqrt{3}\f$). 
+the unit sphere by a space filling curve on a cube (with facets at \f$x, y, z = \pm 1/\sqrt{3}\f$).
 Roughly speaking, we split the original set of points in six subsets corresponding to the six facets of the cube. The subset corresponding to a facet \f$f\f$ is the set of points that lie in the half-space defined by the supporting plane of \f$f\f$ that does not contain the origin. And then we basically use the 2D Hilbert sort with its corresponding policy, as explained above for the projection of the points in each subset on its corresponding facet of the cube. The axes orientation on each facet is chosen so that the space filling curve covers the whole cube without any jump; see \cgalFigureRef{Spatial_sorting_fig_Faces_orientations}.
 A point can lie in more than one such half-plane, so, we give a priority for each facet of the cube. The priority order is:
-first, the facet of the cube at \f$x = 1/\sqrt{3}\f$; second, the facet of the cube at \f$y = 1/\sqrt{3}\f$; third, the facet of the cube at \f$ x = -1/\sqrt{3}\f$; fourth, the facet of the cube at \f$ z = 1/\sqrt{3}\f$; fifth, the facet of the cube at \f$ y = -1/\sqrt{3}\f$; and, sixth, the facet of the cube at \f$ z = -1/\sqrt{3}\f$. 
+first, the facet of the cube at \f$x = 1/\sqrt{3}\f$; second, the facet of the cube at \f$y = 1/\sqrt{3}\f$; third, the facet of the cube at \f$ x = -1/\sqrt{3}\f$; fourth, the facet of the cube at \f$ z = 1/\sqrt{3}\f$; fifth, the facet of the cube at \f$ y = -1/\sqrt{3}\f$; and, sixth, the facet of the cube at \f$ z = -1/\sqrt{3}\f$.
 
 If points are not close to the sphere, they are still sorted the same way, however there is no guarantee that such an order is good anymore.
 
@@ -131,7 +131,7 @@ This other example illustrates the use of the two different policies
 
 \cgalExample{Spatial_sorting/hilbert_policies.cpp}
 
-\section secspatial_sorting Spatial Sorting 
+\section secspatial_sorting Spatial Sorting
 
 Hilbert sort cannot be used directly before feeding a randomized algorithm.
 Thus, the trick is to organize the point set in random buckets of increasing
@@ -150,7 +150,7 @@ The following example shows that, on particular input, spatial sort
 runs much faster than a bad order or than Hilbert sort (below results
 with release mode compilation on a 1.8GHz processor).
 \code{.sh}
-$ ./small_example_delaunay_2 
+$ ./small_example_delaunay_2
 10000 points on a parabola
 Delaunay without spatial sort... done in 6.33443 seconds.
 Delaunay with median hilbert sort... done in 0.822975 seconds.
@@ -183,8 +183,8 @@ If you want to sort something else than just points, for example
 a sequence of tuples containing a point, or a sequence of indices
 in a vector of points, you need another level of indirection.
 We provide the spatial sorting traits class adapters which are templated by
-another spatial sorting traits class, and a 
-<A HREF="http://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
+another spatial sorting traits class, and a
+<A HREF="https://www.boost.org/doc/libs/release/libs/property_map/index.html">property map</A>.
 which allows to obtain a point from whatever you want to sort.
 
 The following examples illustrate the usage of these traits class adapters.
@@ -192,29 +192,46 @@ The following examples illustrate the usage of these traits class adapters.
 \subsection secsort_any_type_2 Sorting Using Pairs of Points and Integers
 
 
-In this example program, the sorted sequence of points is retrieved 
+In this example program, the sorted sequence of points is retrieved
 using a vector of pairs of points and integers.
 \cgalExample{Spatial_sorting/sp_sort_using_property_map_2.cpp}
 
 \subsection Spatial_sortingSortingUsingIndicesofPoints Sorting Using Indices of Points
 
-In this example program, the sorted sequence of points is retrieved 
+In this example program, the sorted sequence of points is retrieved
 using the indices of the points in a vector of points.
 \cgalExample{Spatial_sorting/sp_sort_using_property_map_3.cpp}
 
 \subsection Spatial_sortingSortingUsingIndicesofPairs Sorting Using Indices of Pairs of Points and Integers
 
-In this example program, the sorted sequence of points is retrieved 
+In this example program, the sorted sequence of points is retrieved
 using the indices of the points in a vector of pairs of points and integers.
 \cgalExample{Spatial_sorting/sp_sort_using_property_map_d.cpp}
 
+\section Spatial_sortingParallel Parallel Spatial Sorting
+
+In 2D (3D), Hilbert or spatial sorting recursively subdivides the input range in four (eight) subranges.
+Therefore, a natural way to parallelize the sorting algorithm is to split the initial range in four (eight) subranges,
+and let a single thread handle any further subdivision and sorting for a given subrange.
+This parallel algorithm is only available when the median strategy policy is being used (this is the case
+by default), as this policy ensures balance between all subranges. This is not necessarily
+the case with the middle strategy, where the subrange sizes can greatly vary.
+
+The parallel version of the algorithm is enabled by specifying the template parameter `CGAL::Parallel_tag`.
+In case it is not sure whether TBB is available and linked with \cgal,
+`CGAL::Parallel_if_available_tag` can be used. By default, the sequential version is used.
+
+\cgalExample{Spatial_sorting/parallel_spatial_sort_3.cpp}
+
 \section Spatial_sortingDesign Design and Implementation History
 
-The first implementation of Hilbert and spatial sorting (2D and 3D) in CGAL was done by Cristophe Delage. Then, Olivier Devillers improved its design,
-and implemented its multidimensional version. Finally, Pedro Machado Manhaes de Castro and Olivier Devillers added Hilbert sorting
-on the sphere as well.
+The first implementation of Hilbert and spatial sorting (2D and 3D) in \cgal was done by Cristophe Delage.
+Olivier Devillers improved its design, and implemented its multidimensional version.
 
+Pedro Machado Manhaes de Castro and Olivier Devillers added Hilbert sorting on the sphere.
 
-*/ 
+Andreas Fabri added a parallel version of Hilbert and spatial sorting.
+
+*/
 } /* namespace CGAL */
 

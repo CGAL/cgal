@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #ifdef CGAL_USE_LEDA
 #include <CGAL/leda_rational.h>
 #include <CGAL/Test/_test_algebraic_structure.h>
@@ -21,12 +21,12 @@ int main() {
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(6), NT(15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(4),NT(-6),NT(-15));
     CGAL::test_algebraic_structure<NT,Tag, Is_exact>(NT(-4),NT(-6),NT(-15));
-  
+
     CGAL::test_real_embeddable<NT>();
-    CGAL::test_fraction_traits<NT>(); 
+    CGAL::test_fraction_traits<NT>();
     // backward compatiblity
-    CGAL::test_rational_traits<NT>();  
-    
+    CGAL::test_rational_traits<NT>();
+
   return 0;
 }
 

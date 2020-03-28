@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Monique Teillaud <Monique.Teillaud@sophia.inria.fr>
@@ -56,7 +47,7 @@ typedef Triangulation::Point                    Point;
 //////////////////////
 template<class TRIANGULATION>
 void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c)
+               Cell_handle c)
 {
   if ( ! T.is_infinite(c) )
     os << T.tetrahedron(c);
@@ -65,14 +56,14 @@ void visu_cell(CGAL::Geomview_stream & os, const TRIANGULATION & T,
 }
 template<class TRIANGULATION>
 void visu_facet(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c, int i)
+               Cell_handle c, int i)
 {
   if ( ! T.is_infinite(c,i) )
     os << T.triangle(c,i);
 }
 template<class TRIANGULATION>
 void visu_edge(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c, int i, int j)
+               Cell_handle c, int i, int j)
 {
   if ( ! T.is_infinite(c,i,j) )
     os << T.segment(c,i,j);
@@ -93,7 +84,7 @@ void visu_vertices(CGAL::Geomview_stream & os, const TRIANGULATION & T)
 }
 template<class TRIANGULATION>
 void visu_vertex(CGAL::Geomview_stream & os, const TRIANGULATION & T,
-	       Cell_handle c, int i)
+               Cell_handle c, int i)
 {
   if ( ! T.is_infinite(c->vertex(i)) )
     os << c->vertex(i)->point();
@@ -114,7 +105,7 @@ int main()
   if (! iFile) {
     std::cout <<"A file named points in directory data"
               <<" containing points should be provided," << std::endl
-	      <<"see README"<<std::endl;
+              <<"see README"<<std::endl;
     return 1;
   }
 
@@ -136,7 +127,7 @@ int main()
 
   std::cout <<"          Locating point (1,1,1) :" << std::endl;
   Point p(1,1,1);
-  gv.set_vertex_color(CGAL::ORANGE);
+  gv.set_vertex_color(CGAL::orange());
   gv << p;
   Locate_type lt;
   int li, lj;
@@ -144,7 +135,7 @@ int main()
 
   sleep(3);
 
-  gv << CGAL::VIOLET;
+  gv << CGAL::violet();
   if ( lt == Triangulation::CELL ) {
     std::cout <<"                     CELL" << std::endl;
     visu_cell(gv,T,c);
@@ -177,8 +168,8 @@ int main()
   gv << T;
   gv.set_wired(false);
   std::cout <<"          You can move one of the" <<std::endl
-	    <<"          two triangulations by selecting it"    <<std::endl
-	    <<"          in the Geomview targets" <<std::endl;
+            <<"          two triangulations by selecting it"    <<std::endl
+            <<"          in the Geomview targets" <<std::endl;
 
   char ch;
   std::cout << "Enter any character to quit" << std::endl;

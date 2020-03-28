@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(LCC_performance_2)
 
-cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
 
@@ -66,6 +66,6 @@ add_executable(performance_2
 target_link_libraries(performance_2
   ${CGAL_LIBRARIES}
   surface_mesh
-  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES} 
+  algo assimp container nl topology utils Zinri z ${QT_LIBRARIES}
   ${OPENMESH_LIBRARIES}
 )

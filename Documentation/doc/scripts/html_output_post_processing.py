@@ -3,18 +3,10 @@
 # All rights reserved.
 #
 # This file is part of CGAL (www.cgal.org).
-# You can redistribute it and/or modify it under the terms of the GNU
-# General Public License as published by the Free Software Foundation,
-# either version 3 of the License, or (at your option) any later version.
 #
-# Licensees holding a valid commercial license may use this file in
-# accordance with the commercial license agreement provided with the software.
-#
-# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# $URL:
-# $Id:
+# $URL$
+# $Id$
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 #
 # Author(s)     : Philipp Moeller
@@ -385,9 +377,6 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     ## special case for how_to_cite.html
     canonical_link="<link rel=\"canonical\" href=\"https://doc.cgal.org/latest/Manual/how_to_cite.html\"/>\n"
     re_replace_first_in_file(r'<body>', r'<head>\n'+canonical_link+"</head>\n<body>", os.path.join("Manual","how_to_cite.html"))
-
-    #copy deprecated.html
-    shutil.copy(path.join(resources_absdir,"deprecated.html"),path.join("Manual/", "deprecated.html"))
 
 if __name__ == "__main__":
     main()

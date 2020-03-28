@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -54,7 +45,7 @@ struct Default_site_inserter
   // helpful for the case of sites that create multiple vertices
   template<class OutputIterator>
   OutputIterator operator()(Delaunay_graph& dg, const Site_2& t,
-			    OutputIterator oit) const {
+                            OutputIterator oit) const {
     *oit++ = operator()(dg, t);
     return oit;
   }
@@ -75,7 +66,7 @@ public:
   typedef typename Delaunay_graph::Vertex_handle      result_type;
 
 public:
-  Default_caching_site_inserter(const Adaptation_traits* at = NULL) : at_(at) {}
+  Default_caching_site_inserter(const Adaptation_traits* at = nullptr) : at_(at) {}
 
   result_type operator()(Delaunay_graph& dg, const Site_2& t) const
   {
@@ -95,19 +86,19 @@ public:
     Edge_list        e_list;
     Face_handle_list f_list;
     dg.get_conflicts_and_boundary(t, std::back_inserter(f_list),
-				  std::back_inserter(e_list));
+                                  std::back_inserter(e_list));
 
     for (typename Edge_list::iterator it = e_list.begin();
-	 it != e_list.end(); ++it) {
+         it != e_list.end(); ++it) {
       at_->edge_rejector_object().erase(*it);
     }
 
     for (typename Face_handle_list::iterator it = f_list.begin();
-	 it != f_list.end(); ++it) {
+         it != f_list.end(); ++it) {
       Face_handle f = *it;
       for (int j = 0; j < 3; j++) {
-	Edge e(f, j);
-	at_->edge_rejector_object().erase(e);
+        Edge e(f, j);
+        at_->edge_rejector_object().erase(e);
       }
     }
     return Site_inserter()(dg, t);
@@ -115,7 +106,7 @@ public:
 
   template<class OutputIterator>
   OutputIterator operator()(Delaunay_graph& dg, const Site_2& t,
-			    OutputIterator oit) const {
+                            OutputIterator oit) const {
     *oit++ = operator()(dg, t);
     return oit;
   }
@@ -156,7 +147,7 @@ public:
 
   template<class Iterator>
   int operator()(Delaunay_graph& dg,
-		 Iterator first, Iterator beyond) const {
+                 Iterator first, Iterator beyond) const {
     int n = dg.number_of_vertices();
     for (Iterator it = first; it != beyond; ++it) {
       site_inserter(dg, *it);
@@ -166,13 +157,13 @@ public:
 
   template<class Iterator, class OutputIterator>
   OutputIterator operator()(Delaunay_graph& dg,
-			    Iterator first, Iterator beyond,
-			    OutputIterator oit) const {
+                            Iterator first, Iterator beyond,
+                            OutputIterator oit) const {
     for (Iterator it = first; it != beyond; ++it) {
       oit = site_inserter(dg, *it, oit);
     }
     return oit;
-  }  
+  }
 
 private:
   Site_inserter site_inserter;

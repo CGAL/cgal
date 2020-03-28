@@ -1,7 +1,7 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project(Documentation NONE)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1)
 
 # Check whether this cmake script is the top level one
 if ( ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -137,7 +137,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   endif()
 
   foreach(depend ${DEPENDENCIES})
-    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
       "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=../${depend}\n")
   endforeach()
 
@@ -253,10 +253,15 @@ if (NOT CGAL_CREATED_VERSION_NUM)
       set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
     endif()
   else()
-    #read version.h and get the line with CGAL_VERSION
-    file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE REGEX "CGAL_VERSION ")
-    #extract release id
-    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*(-Ic-)?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+    if(EXISTS "${CGAL_ROOT}/doc/public_release_name")
+      file(STRINGS "${CGAL_ROOT}/doc/public_release_name" CGAL_VERSION_LINE)
+      string(REGEX REPLACE "CGAL-" "" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+    else()
+      #read version.h and get the line with CGAL_VERSION
+      file(STRINGS "${CGAL_ROOT}/include/CGAL/version.h" CGAL_VERSION_LINE REGEX "CGAL_VERSION ")
+      #extract release id
+      string(REGEX MATCH "[0-9]+\\.[0-9]+\\.?[0-9]*" CGAL_CREATED_VERSION_NUM "${CGAL_VERSION_LINE}")
+    endif()
   endif()
 endif()
 

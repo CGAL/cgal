@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
 
 // ===========================================================================
-// There is a known bug in this algorithm that causes more than the optimal 
+// There is a known bug in this algorithm that causes more than the optimal
 // number of convex pieces to be reported in cases where there are many
 // collinear vertices (as in a Hilbert polygon, for example).  More precisely,
 // the problem is known to crop up in this situation:
@@ -45,13 +36,13 @@
 // it is believed an edge is necessary to divide the polygon (1 2 5 6 12 13).
 //
 // A hack that partially fixes this problem is implemented as follows:
-// a vertex r is marked as visible from a point q for the purposes of 
-// the decompose function if p is the other endpoint of the edge containing r 
+// a vertex r is marked as visible from a point q for the purposes of
+// the decompose function if p is the other endpoint of the edge containing r
 // and p is visible from q.
 //
-// This causes the problem that decomposition from 8 to 12 indicates that 
+// This causes the problem that decomposition from 8 to 12 indicates that
 // valid vertices are 8 9 and 12. Diagonal (9 12) is valid, but (8 12) is
-// also considered to be valid and necessary since 9 is a reflex vertex. 
+// also considered to be valid and necessary since 9 is a reflex vertex.
 // The result is a polygon split with diagonals (2 5) (12 5) (9 12) and
 // (13 1), which is obviously not optimal.
 //
@@ -88,7 +79,7 @@ namespace CGAL {
 
 
 #ifdef  CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-int partition_opt_cvx_debug_list_count = 0;  
+int partition_opt_cvx_debug_list_count = 0;
 #endif
 
 
@@ -99,30 +90,30 @@ int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex,
                                   Partition_opt_cvx_diagonal_list& diag_list)
 {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-   std::cout << "best(" << pivot_vertex.vertex_num() << "." 
-             << partition_opt_cvx_debug_list_count 
+   std::cout << "best(" << pivot_vertex.vertex_num() << "."
+             << partition_opt_cvx_debug_list_count
              << ", " << extension << ")" << std::endl;
 #endif
    Partition_opt_cvx_stack_record best_so_far = pivot_vertex.best_so_far();
    while (!pivot_vertex.stack_empty()) {
       Partition_opt_cvx_stack_record old = pivot_vertex.stack_top();
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-      std::cout << "best(" << pivot_vertex.vertex_num() << "." 
-                << partition_opt_cvx_debug_list_count << ", " << extension 
-                << ")" << " old = " << old.vertex_num() 
+      std::cout << "best(" << pivot_vertex.vertex_num() << "."
+                << partition_opt_cvx_debug_list_count << ", " << extension
+                << ")" << " old = " << old.vertex_num()
                 << ", " << old.value() << std::endl;
 #endif
       typedef typename Traits::Left_turn_2    Left_turn_2;
       typedef typename Traits::Point_2       Point_2;
       Left_turn_2 left_turn = traits.left_turn_2_object();
       Turn_reverser<Point_2, Left_turn_2>  right_turn(left_turn);
-      if (right_turn(polygon[old.vertex_num()], 
-                    polygon[pivot_vertex.vertex_num()], polygon[extension])) 
+      if (right_turn(polygon[old.vertex_num()],
+                    polygon[pivot_vertex.vertex_num()], polygon[extension]))
       {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-         std::cout << "best(" << pivot_vertex.vertex_num() << "." 
-                   << partition_opt_cvx_debug_list_count 
-                   << ", " << extension << ")" << " returning(a) " 
+         std::cout << "best(" << pivot_vertex.vertex_num() << "."
+                   << partition_opt_cvx_debug_list_count
+                   << ", " << extension << ")" << " returning(a) "
                    << best_so_far.value() << std::endl;
 #endif
          diag_list = best_so_far.solution();
@@ -131,31 +122,31 @@ int partition_opt_cvx_best_so_far(Partition_opt_cvx_vertex& pivot_vertex,
       else if (old.value() < best_so_far.value())
          best_so_far = old;
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-      std::cout << "best(" << pivot_vertex.vertex_num() << "." 
-                << partition_opt_cvx_debug_list_count 
-                << ", " << extension << ") " << "popping off " 
+      std::cout << "best(" << pivot_vertex.vertex_num() << "."
+                << partition_opt_cvx_debug_list_count
+                << ", " << extension << ") " << "popping off "
                 << old.vertex_num() << ", " << old.value() << std::endl;
 #endif
       pivot_vertex.stack_pop();
    }
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-   std::cout << "best(" << pivot_vertex.vertex_num() << "." 
-             << partition_opt_cvx_debug_list_count 
-             << ", " << extension << ") returning(b) " << best_so_far.value() 
+   std::cout << "best(" << pivot_vertex.vertex_num() << "."
+             << partition_opt_cvx_debug_list_count
+             << ", " << extension << ") returning(b) " << best_so_far.value()
              << std::endl;
 #endif
    diag_list = best_so_far.solution();
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-   std::cout << "     diagonal list " << diag_list << std::endl; 
+   std::cout << "     diagonal list " << diag_list << std::endl;
 #endif
    return best_so_far.value();
 }
 
 template <class Polygon, class Traits>
-void partition_opt_cvx_load(int current, 
+void partition_opt_cvx_load(int current,
                             ::std::vector< Partition_opt_cvx_vertex >& v_list,
-                            Polygon& polygon, 
-                            Matrix<Partition_opt_cvx_edge>& edges, 
+                            Polygon& polygon,
+                            Matrix<Partition_opt_cvx_edge>& edges,
                             const Traits& traits)
 {
     int previous;
@@ -167,7 +158,7 @@ void partition_opt_cvx_load(int current,
 #endif
     for (previous = current-1; previous >= 0; previous--) {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-      std::cout << "load:  previous = " << v_list[previous].vertex_num() 
+      std::cout << "load:  previous = " << v_list[previous].vertex_num()
                 << std::endl;
 #endif
       // must look at all valid edges and at all edges that are visible and
@@ -177,25 +168,25 @@ void partition_opt_cvx_load(int current,
                [v_list[current].vertex_num()].is_valid() ||
           (edges[v_list[previous].vertex_num()]
                 [v_list[current].vertex_num()].is_visible() &&
-           !v_list[previous].stack_empty())) 
+           !v_list[previous].stack_empty()))
       {
          num_polygons = partition_opt_cvx_decompose(
-                                  v_list[previous].vertex_num(), 
-                                  v_list[current].vertex_num(), polygon, 
-                                  edges, traits, diag_list1) + 
-                        partition_opt_cvx_best_so_far(v_list[previous], 
+                                  v_list[previous].vertex_num(),
+                                  v_list[current].vertex_num(), polygon,
+                                  edges, traits, diag_list1) +
+                        partition_opt_cvx_best_so_far(v_list[previous],
                                                   v_list[current].vertex_num(),
                                                   polygon, traits, diag_list2);
          diag_list1.splice(diag_list1.end(), diag_list2);
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-         std::cout << "load:  pushing previous = " 
-                   << v_list[previous].vertex_num() << " num_polygons = " 
-                   << num_polygons << " on stack " 
-                   << v_list[current].vertex_num() << "." 
+         std::cout << "load:  pushing previous = "
+                   << v_list[previous].vertex_num() << " num_polygons = "
+                   << num_polygons << " on stack "
+                   << v_list[current].vertex_num() << "."
                    << partition_opt_cvx_debug_list_count << std::endl;
          std::cout << "     diagonal list = " << diag_list1 << std::endl;
 #endif
-         v_list[current].stack_push(v_list[previous].vertex_num(), 
+         v_list[current].stack_push(v_list[previous].vertex_num(),
                                     num_polygons, diag_list1);
        }
     }
@@ -213,22 +204,22 @@ bool collinearly_visible(unsigned int edge_num1, unsigned int e_num,
    typedef typename Traits::Point_2                      Point_2;
    Orientation_2 orientation = traits.orientation_2_object();
 
-   if ((e_num == edge_num1+1 || e_num+1 == edge_num2) && 
+   if ((e_num == edge_num1+1 || e_num+1 == edge_num2) &&
        edges[edge_num1][edge_num2].is_visible() &&
        orientation(Point_2(polygon[edge_num1]), Point_2(polygon[e_num]),
                    Point_2(polygon[edge_num2])) ==
                   COLLINEAR)
      return true;
    else
-     return false;    
+     return false;
 }
-           
+
 
 template <class Polygon, class Traits>
 int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
-                                Polygon& polygon, 
-                                Matrix<Partition_opt_cvx_edge>& edges, 
-                                const Traits& traits, 
+                                Polygon& polygon,
+                                Matrix<Partition_opt_cvx_edge>& edges,
+                                const Traits& traits,
                                 Partition_opt_cvx_diagonal_list& diag_list)
 {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
@@ -236,7 +227,7 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
 #endif
    if (edges[edge_num1][edge_num2].is_done())  {
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
-      std::cout << " returning " << edges[edge_num1][edge_num2].value() 
+      std::cout << " returning " << edges[edge_num1][edge_num2].value()
                 << std::endl;
 #endif
       diag_list = edges[edge_num1][edge_num2].solution();
@@ -247,23 +238,23 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
 #endif
 
    // temporarily invalidate this edge so we don't try to decompose on this
-   // edge again 
-   Partition_opt_cvx_edge_validity old_validity; 
+   // edge again
+   Partition_opt_cvx_edge_validity old_validity;
    old_validity = edges[edge_num1][edge_num2].validity();
    edges[edge_num1][edge_num2].set_valid(PARTITION_OPT_CVX_NOT_VALID);
 
-   std::vector< Partition_opt_cvx_vertex > v_list; 
+   std::vector< Partition_opt_cvx_vertex > v_list;
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
    partition_opt_cvx_debug_list_count++;
 #endif
    typedef typename Polygon::size_type  size_type;
 
-   for (size_type e_num = edge_num1; e_num <= edge_num2; e_num++) 
+   for (size_type e_num = edge_num1; e_num <= edge_num2; e_num++)
    {
-       if ((edges[edge_num1][e_num].is_visible() && 
-            edges[e_num][edge_num2].is_visible() ) || 
+       if ((edges[edge_num1][e_num].is_visible() &&
+            edges[e_num][edge_num2].is_visible() ) ||
            collinearly_visible(edge_num1, static_cast<unsigned int>(e_num), edge_num2, edges, polygon,
-                               traits) ) 
+                               traits) )
        {
          v_list.push_back(Partition_opt_cvx_vertex( static_cast<unsigned int>(e_num)));
        }
@@ -282,7 +273,7 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
        partition_opt_cvx_load(int(v), v_list, polygon, edges, traits);
    }
 
-   int num_pieces = partition_opt_cvx_best_so_far(v_list[v_list.size()-1], 
+   int num_pieces = partition_opt_cvx_best_so_far(v_list[v_list.size()-1],
                                                   edge_num1, polygon, traits,
                                                   diag_list) + 1;
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
@@ -294,16 +285,16 @@ int partition_opt_cvx_decompose(unsigned int edge_num1, unsigned int edge_num2,
    edges[edge_num1][edge_num2].set_solution(diag_list);
    edges[edge_num1][edge_num2].set_done(true);
    edges[edge_num1][edge_num2].set_valid(old_validity);
-   // revalidate the edge; next time it will pick up the computed value 
+   // revalidate the edge; next time it will pick up the computed value
    // stored with this edge
 #ifdef CGAL_PARTITION_OPTIMAL_CONVEX_DEBUG
    std::cout << "decompose(" << edge_num1 << ", " << edge_num2 << "): "
-             << " edge[" << edge_num1 << "][" << edge_num2 << "] set to " 
+             << " edge[" << edge_num1 << "][" << edge_num2 << "] set to "
              << edges[edge_num1][edge_num2] << std::endl;
-   std::cout << " with diagonal list " 
+   std::cout << " with diagonal list "
              << edges[edge_num1][edge_num2].solution()
              << std::endl;
-   std::cout << "decompose(" << edge_num1 << ", " << edge_num2 
+   std::cout << "decompose(" << edge_num1 << ", " << edge_num2
              << "): returning " << num_pieces << std::endl;
    partition_opt_cvx_debug_list_count--;
 #endif
@@ -323,7 +314,7 @@ bool partition_opt_cvx_is_visible_n3(const Polygon& polygon, unsigned int i,
    typedef typename Traits::Point_2       Point_2;
    typedef typename Traits::Construct_segment_2 Construct_segment_2;
 
-   static Construct_segment_2 construct_segment_2 = 
+   static Construct_segment_2 construct_segment_2 =
                                  traits.construct_segment_2_object();
 
    Segment_2 segment = construct_segment_2(polygon[i], polygon[j]);
@@ -358,11 +349,11 @@ bool partition_opt_cvx_is_visible_n3(const Polygon& polygon, unsigned int i,
    return true;
 }
 
-// when consecutive sequence of vertices are collinear, they must all be 
+// when consecutive sequence of vertices are collinear, they must all be
 // visible to each other as if there were no vertices in between.
 template <class Polygon, class Traits>
-void make_collinear_vertices_visible(Polygon& polygon, 
-                                     Matrix<Partition_opt_cvx_edge>& edges, 
+void make_collinear_vertices_visible(Polygon& polygon,
+                                     Matrix<Partition_opt_cvx_edge>& edges,
                                      const Traits& traits)
 {
     typedef typename Polygon::size_type                   size_type;
@@ -370,20 +361,20 @@ void make_collinear_vertices_visible(Polygon& polygon,
     typedef typename Traits::Point_2                      Point_2;
     Orientation_2 orientation = traits.orientation_2_object();
 
-    size_type i; 
+    size_type i;
     size_type prev_j, j;
     size_type k, next_k;
 
     // start at the beginning, move backwards as long as the points are
     // collinear; move forward as long as the points are collinear;
-    // when you find the extremes make the larger one visible to the smaller 
+    // when you find the extremes make the larger one visible to the smaller
     // one loop until you reach the larger one each time starting again at the
     // larger
     i = polygon.size() - 1;
     prev_j = 0;
     j = 1;
     size_type start_i = 0;
-    while (i > 0 && 
+    while (i > 0 &&
            orientation(Point_2(polygon[i]), Point_2(polygon[prev_j]), Point_2(polygon[j])) == COLLINEAR)
     {
        prev_j = i;
@@ -423,7 +414,7 @@ void make_collinear_vertices_visible(Polygon& polygon,
        prev_j = i+1;
        j = i+2;
        while (j < polygon.size() &&
-              orientation(Point_2(polygon[i]), Point_2(polygon[prev_j]), Point_2(polygon[j])) == 
+              orientation(Point_2(polygon[i]), Point_2(polygon[prev_j]), Point_2(polygon[j])) ==
               COLLINEAR)
        {
            j++;
@@ -437,7 +428,7 @@ void make_collinear_vertices_visible(Polygon& polygon,
              next_k = k;
              do
              {
-               next_k++; 
+               next_k++;
                edges[k][next_k].set_visible(true);
              }
              while ( next_k != prev_j );
@@ -447,8 +438,8 @@ void make_collinear_vertices_visible(Polygon& polygon,
 }
 
 template <class Polygon, class Traits>
-void partition_opt_cvx_preprocessing(Polygon& polygon, 
-                                     Matrix<Partition_opt_cvx_edge>& edges, 
+void partition_opt_cvx_preprocessing(Polygon& polygon,
+                                     Matrix<Partition_opt_cvx_edge>& edges,
                                      const Traits& traits)
 {
     typedef typename Polygon::size_type                   size_type;
@@ -457,18 +448,18 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
     typedef typename Traits::Point_2                      Point_2;
     typedef std::pair<Point_2, Point_2>                   Point_pair;
 
-    Vis_graph graph(polygon.begin(), polygon.end());
+    Vis_graph graph(polygon.begin(), polygon.end(), traits);
 
     size_type prev_i, i, next_i, next_next_i;
     size_type prev_j, j, next_j;
 
-    for (i = 0; i < polygon.size(); i++) 
+    for (i = 0; i < polygon.size(); i++)
     {
        prev_i = (i == 0)?polygon.size()-1:i-1;
        next_i = (i + 1)% polygon.size();
        next_next_i = (next_i + 1)% polygon.size();
-       edges[i][i].set_visible(true);      
-       if (next_i != 0) 
+       edges[i][i].set_visible(true);
+       if (next_i != 0)
        {                                     // endpoints of edges are visible
           edges[i][next_i].set_visible(true);// and done (value == 0)
           edges[i][next_i].set_done(true);   // except for the last edge used
@@ -487,14 +478,14 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
              edges[i][j].set_valid(polygon[prev_i],polygon[i],polygon[next_i],
                                    polygon[prev_j],polygon[j],polygon[next_j],
                                    traits);
-             if (j == i+2) 
+             if (j == i+2)
              {
-                 edges[i][j].set_value(1); 
+                 edges[i][j].set_value(1);
                  Partition_opt_cvx_diagonal_list d;
                  d.push_back(Partition_opt_cvx_diagonal(static_cast<unsigned int>(i),
                                                         static_cast<unsigned int>(j)));
-                 edges[i][j].set_solution(d); 
-                 edges[i][j].set_done(true); 
+                 edges[i][j].set_solution(d);
+                 edges[i][j].set_done(true);
              }
              // triangles are a base case.
           }
@@ -505,9 +496,9 @@ void partition_opt_cvx_preprocessing(Polygon& polygon,
 
 
 template <class InputIterator, class OutputIterator, class Traits>
-OutputIterator partition_optimal_convex_2(InputIterator first, 
+OutputIterator partition_optimal_convex_2(InputIterator first,
                                           InputIterator beyond,
-                                          OutputIterator result, 
+                                          OutputIterator result,
                                           const Traits& traits)
 {
    if (first == beyond) return result;
@@ -528,7 +519,7 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
    Tee_for_output_iterator<OutputIterator, Polygon_2>      res(result);
 #endif // no postconditions
 
-   P_Polygon_2 polygon(first, beyond);
+   P_Polygon_2 polygon(first, beyond,traits);
    CGAL_partition_precondition(
     orientation_2(polygon.begin(), polygon.end(), traits) == COUNTERCLOCKWISE);
 
@@ -546,19 +537,19 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
              << std::endl;
    std::cout << edges << std::endl;
 #endif
-   
+
    Partition_opt_cvx_diagonal_list diag_list;
-   if (polygon.size() > 0) 
+   if (polygon.size() > 0)
    {
-     partition_opt_cvx_decompose(0, static_cast<unsigned int>(polygon.size()-1), polygon, edges, 
+     partition_opt_cvx_decompose(0, static_cast<unsigned int>(polygon.size()-1), polygon, edges,
                                   traits, diag_list);
 
-      diag_list.pop_back(); // the last diagonal added is the edge from last 
+      diag_list.pop_back(); // the last diagonal added is the edge from last
                             // to first vertex (i.e., it is not a diagonal)
       Partition_opt_cvx_diagonal_list::const_iterator it;
-      for (it = diag_list.begin(); it != diag_list.end(); it++) 
+      for (it = diag_list.begin(); it != diag_list.end(); it++)
       {
-         Circulator source(polygon.begin(), polygon.end(), 
+         Circulator source(polygon.begin(), polygon.end(),
                            polygon.begin() + (*it).first);
          Circulator target(polygon.begin(), polygon.end(),
                            polygon.begin() + (*it).second);
@@ -570,11 +561,11 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
       polygon.partition(res, 1);
       CGAL_partition_postcondition(
              convex_partition_is_valid_2(polygon.begin(), polygon.end(),
-                                      res.output_so_far_begin(), 
+                                      res.output_so_far_begin(),
                                       res.output_so_far_end(), traits)
       );
    }
-   
+
 #if defined(CGAL_PARTITION_NO_POSTCONDITIONS) || \
     defined(CGAL_NO_POSTCONDITIONS)  || defined(NDEBUG)
    return res;
@@ -586,13 +577,13 @@ OutputIterator partition_optimal_convex_2(InputIterator first,
 
 template <class InputIterator, class OutputIterator>
 inline
-OutputIterator partition_optimal_convex_2(InputIterator first, 
+OutputIterator partition_optimal_convex_2(InputIterator first,
                                           InputIterator beyond,
                                           OutputIterator result)
 {
    typedef typename std::iterator_traits<InputIterator>::value_type Point_2;
    typedef typename Kernel_traits<Point_2>::Kernel  K;
-   return partition_optimal_convex_2(first, beyond, result, 
+   return partition_optimal_convex_2(first, beyond, result,
                                      Partition_traits_2<K>());
 }
 

@@ -2,26 +2,17 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Monique Teillaud, Sylvain Pion, Julien Hazebrouck, Pedro Machado
 
 // Partially supported by the IST Programme of the EU as a Shared-cost
-// RTD (FET Open) Project under Contract No  IST-2000-26473 
-// (ECG - Effective Computational Geometry for Curves and Surfaces) 
-// and a STREP (FET Open) Project under Contract No  IST-006413 
+// RTD (FET Open) Project under Contract No  IST-2000-26473
+// (ECG - Effective Computational Geometry for Curves and Surfaces)
+// and a STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)
 
 #ifndef CGAL_SIMPLE_CIRCULAR_KERNEL_2_H
@@ -73,7 +64,7 @@ struct Circular_kernel_base_ref_count: public LinearKernelBase
   struct Handle { typedef T    type; };
 
   template < typename Kernel2 >
-  struct Base { typedef Circular_kernel_base_ref_count<Kernel2, LinearKernelBase, AlgebraicKernel>  Type; };  
+  struct Base { typedef Circular_kernel_base_ref_count<Kernel2, LinearKernelBase, AlgebraicKernel>  Type; };
 
   #define CGAL_Circular_Kernel_pred(Y,Z) \
     typedef CircularFunctors::Y<CircularKernel> Y; \
@@ -91,9 +82,9 @@ struct Circular_kernel_2
   <
   internal::Circular_kernel_base_ref_count
   < Circular_kernel_2<LinearKernel,AlgebraicKernel>,
-    typename LinearKernel:: template 
+    typename LinearKernel:: template
     Base<Circular_kernel_2<LinearKernel,AlgebraicKernel> >::Type,
-    AlgebraicKernel 
+    AlgebraicKernel
   >,
   Circular_kernel_2<LinearKernel,AlgebraicKernel>
   >
@@ -102,7 +93,7 @@ struct Circular_kernel_2
   // Please remove this if you consider it to be sloppy
   struct Circular_tag{};
   typedef Circular_tag Definition_tag;
-  //  
+  //
 };
 
 } //namespace CGAL

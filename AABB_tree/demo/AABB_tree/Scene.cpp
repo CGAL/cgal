@@ -590,7 +590,7 @@ void Scene::update_bbox()
 }
 
 void Scene::draw(CGAL::QGLViewer* viewer)
-{       
+{
     if(!gl_init)
         initGL();
     if(!are_buffers_initialized)
@@ -806,7 +806,6 @@ void Scene::build_facet_tree()
     timer.start();
     std::cout << "Construct Facet AABB tree...";
     m_facet_tree.rebuild(faces(*m_pPolyhedron).first, faces(*m_pPolyhedron).second,*m_pPolyhedron);
-    m_facet_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
 
@@ -826,7 +825,6 @@ void Scene::build_edge_tree()
     timer.start();
     std::cout << "Construct Edge AABB tree...";
     m_edge_tree.rebuild(edges(*m_pPolyhedron).first,edges(*m_pPolyhedron).second,*m_pPolyhedron);
-    m_edge_tree.accelerate_distance_queries();
     std::cout << "done (" << timer.time() << " s)" << std::endl;
 }
 

@@ -339,3 +339,9 @@ div.fragment {
     padding: 4px;
     margin: 1em 4px 1em 4px;
 }
+
+/* Make summary smaller to avoid wrapping of classes and concepts */
+div.summary
+{
+  width: auto;
+}

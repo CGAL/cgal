@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Meshes/Filtered_queue_container.h>
 #include <CGAL/Random.h>
 
@@ -42,6 +41,6 @@ int main(int, char**)
     }
 
   std::cout << "detected = " << detected_number_of_odds << std::endl
-	    << "really  = " << real_number_of_odds << std::endl;
+            << "really  = " << real_number_of_odds << std::endl;
   return detected_number_of_odds!=real_number_of_odds;
 }

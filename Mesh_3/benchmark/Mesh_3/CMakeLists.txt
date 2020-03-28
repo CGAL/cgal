@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Mesh_3_benchmark )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 # Creates a new CMake option, turned ON by default
@@ -52,11 +52,11 @@ if ( CGAL_FOUND )
   option(CGAL_ACTIVATE_CONCURRENT_MESH_3
     "Activate parallelism in Mesh_3"
     OFF)
-    
+
   # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
   if( CGAL_ACTIVATE_CONCURRENT_MESH_3 )
     add_definitions( -DCGAL_CONCURRENT_MESH_3 )
-    find_package( TBB REQUIRED )	
+    find_package( TBB REQUIRED )
   else()
     option( LINK_WITH_TBB
       "Link with TBB anyway so we can use TBB timers for profiling"
@@ -86,7 +86,7 @@ if ( CGAL_FOUND )
     endif()
     ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)
     create_single_source_cgal_program( ${BENCHMARK_SOURCE_FILES} )
-    
+
   else()
     message(STATUS "NOTICE: This program requires Boost >= 1.34.1, and will not be compiled.")
   endif()

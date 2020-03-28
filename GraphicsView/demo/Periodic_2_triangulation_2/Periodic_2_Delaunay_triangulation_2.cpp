@@ -1,11 +1,16 @@
 #include <fstream>
 
+#include <boost/config.hpp>
+#include <boost/version.hpp>
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Periodic_2_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_2.h>
 #include <CGAL/Periodic_2_Delaunay_triangulation_traits_2.h>
 #include <CGAL/point_generators_2.h>
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+#include <CGAL/IO/WKT.h>
+#endif
 
 // Qt headers
 #include <QtGui>
@@ -25,7 +30,7 @@
 
 // for viewportsBbox
 #include <CGAL/Qt/utility.h>
-  
+
 // the two base classes
 #include "ui_Periodic_2_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -43,10 +48,10 @@ class MainWindow :
   public Ui::Periodic_2_triangulation_2
 {
   Q_OBJECT
-  
-private:  
-  Periodic_DT triang; 
-  QGraphicsScene scene;  
+
+private:
+  Periodic_DT triang;
+  QGraphicsScene scene;
 
   typedef CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_DT> PTGI;
 
@@ -70,7 +75,7 @@ public Q_SLOTS:
   void on_actionInsertRandomPoints_triggered();
   void on_actionConvertTo9Cover_triggered();
   void on_actionConvertTo1Cover_triggered();
-  
+
   void on_actionMovingPoint_toggled(bool checked);
   void on_actionShowConflictZone_toggled(bool checked);
   void on_actionCircumcenter_toggled(bool checked);
@@ -83,10 +88,10 @@ public Q_SLOTS:
   void on_actionUniqueCoverDomainSimplicesEmphasized_triggered(bool checked);
   void on_actionStoredCoverDomainSimplicesEmphasized_triggered(bool checked);
 
-  
+
   void on_actionLoadPoints_triggered();
   void on_actionSavePoints_triggered();
-  
+
   void on_actionRecenter_triggered();
 
   virtual void open(QString fileName);
@@ -107,7 +112,7 @@ MainWindow::MainWindow()
   pt_gi = new CGAL::Qt::PeriodicTriangulationGraphicsItem<Periodic_DT>(&triang);
 
   QObject::connect(this, SIGNAL(changed()),
-		   pt_gi, SLOT(modelChanged()));
+                   pt_gi, SLOT(modelChanged()));
 
   pt_gi->setVerticesPen(QPen(Qt::red, 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pt_gi);
@@ -116,45 +121,45 @@ MainWindow::MainWindow()
   vgi = new CGAL::Qt::PeriodicTriangulationVoronoiGraphicsItem<Periodic_DT>(&triang);
 
   QObject::connect(this, SIGNAL(changed()),
-		   vgi, SLOT(modelChanged()));
+                   vgi, SLOT(modelChanged()));
 
   vgi->setEdgesPen(QPen(Qt::blue, 0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(vgi);
   vgi->hide();
 
   // Setup input handlers. They get events before the scene gets them
-  // and the input they generate is passed to the triangulation with 
-  // the signal/slot mechanism    
+  // and the input they generate is passed to the triangulation with
+  // the signal/slot mechanism
   pt_pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Periodic_DT>(&scene, &triang, this );
   QObject::connect(pt_pi, SIGNAL(generate(CGAL::Object)),
-		   this, SLOT(processInput(CGAL::Object)));
-  
+                   this, SLOT(processInput(CGAL::Object)));
+
   pt_mp = new CGAL::Qt::TriangulationMovingPoint<Periodic_DT>(&triang, this);
   // TriangulationMovingPoint<Periodic_DT> emits a modelChanged() signal each
   // time the moving point moves.
   // The following connection is for the purpose of emitting changed().
   QObject::connect(pt_mp, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
+                   this, SIGNAL(changed()));
 
   pt_cz = new CGAL::Qt::TriangulationConflictZone<Periodic_DT>(&scene, &triang, this);
   QObject::connect(pt_cz, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
+                   this, SIGNAL(changed()));
 
   pt_rv = new CGAL::Qt::TriangulationRemoveVertex<Periodic_DT>(&triang, this);
   QObject::connect(pt_rv, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
+                   this, SIGNAL(changed()));
 
   pt_cc = new CGAL::Qt::TriangulationCircumcircle<Periodic_DT>(&scene, &triang, this);
   pt_cc ->setPen(QPen(::Qt::black, .01));
   QObject::connect(pt_cc, SIGNAL(modelChanged()),
-		   this, SIGNAL(changed()));
-  
-  // 
+                   this, SIGNAL(changed()));
+
+  //
   // Manual handling of actions
   //
 
-  QObject::connect(this->actionQuit, SIGNAL(triggered()), 
-		   this, SLOT(close()));
+  QObject::connect(this->actionQuit, SIGNAL(triggered()),
+                   this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
   QActionGroup* ag = new QActionGroup(this);
@@ -163,7 +168,7 @@ MainWindow::MainWindow()
   ag->addAction(this->actionCircumcenter);
   ag->addAction(this->actionShowConflictZone);
 
-  // Check two actions 
+  // Check two actions
   this->actionInsertPoint->setChecked(true);
   this->actionShowDelaunay->setChecked(true);
 
@@ -177,7 +182,7 @@ MainWindow::MainWindow()
 
   // Turn the vertical axis upside down
   this->graphicsView->matrix().scale(1, -1);
-                                                      
+
   // The navigation adds zooming and translation functionality to the
   // QGraphicsView
   this->addNavigation(this->graphicsView);
@@ -189,8 +194,8 @@ MainWindow::MainWindow()
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
-	  this, SLOT(open(QString)));
-  
+          this, SLOT(open(QString)));
+
   on_actionRecenter_triggered();
 }
 
@@ -214,10 +219,10 @@ MainWindow::processInput(CGAL::Object o)
 }
 
 
-/* 
+/*
  *  Qt Automatic Connections
- *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
- * 
+ *  https://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
+ *
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
  */
@@ -261,7 +266,7 @@ MainWindow::on_actionCircumcenter_toggled(bool checked)
   if(checked){
     scene.installEventFilter(pt_cc);
     pt_cc->show();
-  } else {  
+  } else {
     scene.removeEventFilter(pt_cc);
     pt_cc->hide();
   }
@@ -295,15 +300,15 @@ MainWindow::on_actionInsertRandomPoints_triggered()
                                                      (triang.domain().max)());
   bool ok = false;
 
-  const int number_of_points = 
-    QInputDialog::getInt(this, 
+  const int number_of_points =
+    QInputDialog::getInt(this,
                              tr("Number of random points"),
                              tr("Enter number of random points"),
-			     250,
-			     0,
-			     (std::numeric_limits<int>::max)(),
-			     1,
-			     &ok);
+                             250,
+                             0,
+                             (std::numeric_limits<int>::max)(),
+                             1,
+                             &ok);
 
   if(!ok) {
     return;
@@ -347,8 +352,13 @@ void
 MainWindow::on_actionLoadPoints_triggered()
 {
   QString fileName = QFileDialog::getOpenFileName(this,
-						  tr("Open Points file"),
-						  ".");
+                                                  tr("Open Points file"),
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     open(fileName);
   }
@@ -361,11 +371,20 @@ MainWindow::open(QString fileName)
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::ifstream ifs(qPrintable(fileName));
-  
+
   Point_2 p;
   std::vector<Point_2> points;
-  while(ifs >> p) {
-    points.push_back(p);
+  if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+  {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+    CGAL::read_multi_point_WKT(ifs, points);
+#endif
+  }
+  else
+  {
+    while(ifs >> p) {
+      points.push_back(p);
+    }
   }
   triang.clear();
   triang.insert(points.begin(), points.end());
@@ -375,23 +394,47 @@ MainWindow::open(QString fileName)
   this->addToRecentFiles(fileName);
   actionRecenter->trigger();
   Q_EMIT( changed());
-    
+
 }
 
 void
 MainWindow::on_actionSavePoints_triggered()
 {
   QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save points"),
-						  ".");
+                                                  tr("Save points"),
+                                                  ".",
+                                                  tr("CGAL files (*.pts.cgal);;"
+                                                   #if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+                                                     "WKT files (*.wkt *.WKT);;"
+                                                   #endif
+                                                     "All files (*)"));
   if(! fileName.isEmpty()){
     std::ofstream ofs(qPrintable(fileName));
-    for(Periodic_DT::Unique_vertex_iterator 
+    if(fileName.endsWith(".wkt", Qt::CaseInsensitive))
+    {
+#if BOOST_VERSION >= 105600 && (! defined(BOOST_GCC) || BOOST_GCC >= 40500)
+      std::vector<Point_2> points;
+      points.reserve(std::distance(triang.unique_vertices_begin(),
+                                   triang.unique_vertices_end()));
+      for(Periodic_DT::Unique_vertex_iterator
           vit = triang.unique_vertices_begin(),
           end = triang.unique_vertices_end();
-        vit!= end; ++vit)
+          vit!= end; ++vit)
+      {
+        points.push_back(vit->point());
+      }
+      CGAL::write_multi_point_WKT(ofs, points);
+#endif
+    }
+    else
     {
-      ofs << vit->point() << std::endl;
+      for(Periodic_DT::Unique_vertex_iterator
+          vit = triang.unique_vertices_begin(),
+          end = triang.unique_vertices_end();
+          vit!= end; ++vit)
+      {
+        ofs << vit->point() << std::endl;
+      }
     }
   }
 }
@@ -402,7 +445,7 @@ MainWindow::on_actionRecenter_triggered()
 {
   pt_gi->modelChanged();
   this->graphicsView->setSceneRect(pt_gi->boundingRect());
-  this->graphicsView->fitInView(pt_gi->boundingRect(), Qt::KeepAspectRatio);  
+  this->graphicsView->fitInView(pt_gi->boundingRect(), Qt::KeepAspectRatio);
 }
 
 void MainWindow::on_actionNoneSimplicesEmphasized_triggered(bool)
@@ -432,7 +475,7 @@ void MainWindow::on_actionStoredCoverDomainSimplicesEmphasized_triggered(bool)
 }
 
 
-#include "Periodic_2_triangulation_2.moc"
+#include "Periodic_2_Delaunay_triangulation_2.moc"
 #include <CGAL/Qt/resources.h>
 
 int main(int argc, char **argv)
@@ -444,7 +487,7 @@ int main(int argc, char **argv)
   app.setApplicationName("Periodic_2_Delaunay_triangulation_2 demo");
 
   // Import resources from libCGAL (Qt5).
-  // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
+  // See https://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

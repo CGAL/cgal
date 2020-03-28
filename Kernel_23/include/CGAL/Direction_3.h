@@ -1,28 +1,19 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Andreas Fabri, Stefan Schirra
- 
+
 #ifndef CGAL_DIRECTION_3_H
 #define CGAL_DIRECTION_3_H
 
@@ -93,13 +84,13 @@ public:
   {
     return t.transform(*this);
   }
- 
+
   Direction_3
   operator-() const
   {
     return R().construct_opposite_direction_3_object()(*this);
-  } 
-  
+  }
+
   Vector_3 to_vector() const
   {
     return R().construct_vector_3_object()(*this);
@@ -140,7 +131,7 @@ public:
 
 template <class R >
 std::ostream&
-insert(std::ostream& os, const Direction_3<R>& d, const Cartesian_tag&) 
+insert(std::ostream& os, const Direction_3<R>& d, const Cartesian_tag&)
 {
   typename R::Vector_3 v = d.to_vector();
   switch(get_mode(os)) {
@@ -187,7 +178,7 @@ operator<<(std::ostream& os, const Direction_3<R>& d)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&) 
+extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
 {
   typename R::FT x(0), y(0), z(0);
   switch(get_mode(is)) {
@@ -212,7 +203,7 @@ extract(std::istream& is, Direction_3<R>& d, const Cartesian_tag&)
 
 template <class R >
 std::istream&
-extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&) 
+extract(std::istream& is, Direction_3<R>& d, const Homogeneous_tag&)
 {
   typename R::RT x, y, z;
   switch(get_mode(is))

@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sebastien Loriot and Ilker O. Yaz
 
@@ -28,6 +19,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>
@@ -36,7 +28,7 @@
 
 namespace CGAL {
 
-/** 
+/**
  * \ingroup PkgPolygonMeshProcessingRef
  * This class provides an efficient point location functionality with respect to a domain bounded
  * by one or several disjoint closed triangle meshes.
@@ -75,7 +67,7 @@ namespace CGAL {
  */
 template <class TriangleMesh,
           class GeomTraits,
-          class VertexPointMap = Default
+          class VertexPointMap_ = Default
 #ifndef DOXYGEN_RUNNING
           , class AABBTree = Default
 #endif
@@ -85,25 +77,35 @@ class Side_of_triangle_mesh
   // typedefs
   template <typename TriangleMesh_,
             typename GeomTraits_,
-            typename VertexPointMap_>
+            typename VertexPointMap__>
   struct AABB_tree_default {
     typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh_,
-                                                     VertexPointMap_> Primitive;
+                                                     VertexPointMap__> Primitive;
     typedef CGAL::AABB_traits<GeomTraits_, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> type;
   };
   typedef typename Default::Lazy_get<AABBTree,
                                      AABB_tree_default<TriangleMesh,
                                                        GeomTraits,
-                                                       VertexPointMap>
+                                                       VertexPointMap_>
                                      >::type AABB_tree_;
+  typedef typename Default::Get<VertexPointMap_,
+                                typename boost::property_map<TriangleMesh,
+                                                             vertex_point_t>::const_type>::type
+                                  VertexPointMap;
   typedef typename GeomTraits::Point_3 Point;
 
   //members
   typename GeomTraits::Construct_ray_3     ray_functor;
   typename GeomTraits::Construct_vector_3  vector_functor;
-  const AABB_tree_* tree_ptr;
+  mutable const AABB_tree_* tree_ptr;
+  const TriangleMesh* tm_ptr;
+  boost::optional<VertexPointMap> opt_vpm;
   bool own_tree;
+  CGAL::Bbox_3 box;
+#ifdef CGAL_HAS_THREADS
+  mutable CGAL_MUTEX tree_mutex;
+#endif
 
 public:
 
@@ -127,14 +129,14 @@ public:
                         const GeomTraits& gt=GeomTraits())
   : ray_functor(gt.construct_ray_3_object())
   , vector_functor(gt.construct_vector_3_object())
+  , tree_ptr(nullptr)
+  , tm_ptr(&tmesh)
+  , opt_vpm(vpmap)
   , own_tree(true)
   {
     CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
     CGAL_assertion(CGAL::is_closed(tmesh));
-
-    tree_ptr = new AABB_tree(faces(tmesh).first,
-                             faces(tmesh).second,
-                             tmesh, vpmap);
+    box = Polygon_mesh_processing::bbox(tmesh, parameters::vertex_point_map(vpmap));
   }
 
   /**
@@ -147,17 +149,8 @@ public:
   */
   Side_of_triangle_mesh(const TriangleMesh& tmesh,
                         const GeomTraits& gt=GeomTraits())
-  : ray_functor(gt.construct_ray_3_object())
-  , vector_functor(gt.construct_vector_3_object())
-  , own_tree(true)
-  {
-    CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
-    CGAL_assertion(CGAL::is_closed(tmesh));
-
-    tree_ptr = new AABB_tree(faces(tmesh).first,
-                             faces(tmesh).second,
-                             tmesh);
-  }
+  : Side_of_triangle_mesh(tmesh, get(vertex_point, tmesh), gt)
+  {}
 
   /**
   * Constructor that takes a pre-built \cgal `AABB_tree`
@@ -175,11 +168,12 @@ public:
   , tree_ptr(&tree)
   , own_tree(false)
   {
+    box = tree.bbox();
   }
 
   ~Side_of_triangle_mesh()
   {
-    if (own_tree)
+    if (own_tree && tree_ptr!=nullptr)
       delete tree_ptr;
   }
 
@@ -188,15 +182,43 @@ public:
    * returns the location of a query point
    * @param point the query point to be located with respect to the input
             polyhedral surface
-   * @return 
+   * @return
    *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the volume bounded by the input triangle mesh
    *   - `CGAL::ON_BOUNDARY` if the point is on triangle mesh
    *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside triangle mesh
    */
   Bounded_side operator()(const Point& point) const
   {
-    return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
-      point, *tree_ptr, ray_functor, vector_functor);
+    if(point.x() < box.xmin()
+       || point.x() > box.xmax()
+       || point.y() < box.ymin()
+       || point.y() > box.ymax()
+       || point.z() < box.zmin()
+       || point.z() > box.zmax())
+    {
+      return CGAL::ON_UNBOUNDED_SIDE;
+    }
+    else
+    {
+      // Lazily build the tree only when needed
+      if (tree_ptr==nullptr)
+      {
+#ifdef CGAL_HAS_THREADS
+        CGAL_SCOPED_LOCK(tree_mutex);
+#endif
+        CGAL_assertion(tm_ptr != nullptr && opt_vpm!=boost::none);
+        if (tree_ptr==nullptr)
+        {
+          tree_ptr = new AABB_tree(faces(*tm_ptr).first,
+                                   faces(*tm_ptr).second,
+                                   *tm_ptr, *opt_vpm);
+          const_cast<AABB_tree_*>(tree_ptr)->build();
+        }
+      }
+
+      return internal::Point_inside_vertical_ray_cast<GeomTraits, AABB_tree>()(
+            point, *tree_ptr, ray_functor, vector_functor);
+    }
   }
 
 };

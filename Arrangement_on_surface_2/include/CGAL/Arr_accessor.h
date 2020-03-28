@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 //                 Efi Fogel         <efif@post.tau.ac.il>
@@ -153,7 +144,7 @@ public:
       Arr_traits_basic_adaptor_2<typename Arrangement_2::Geometry_traits_2>
       Traits_adaptor_2;
 
-    const Traits_adaptor_2* m_traits = 
+    const Traits_adaptor_2* m_traits =
       static_cast<const Traits_adaptor_2*> (p_arr->geometry_traits());
 
     Arr_curve_end ind = ARR_MIN_END;
@@ -167,7 +158,7 @@ public:
 
     DHalfedge* he = p_arr->_locate_around_vertex(p_arr->_vertex (vh), cv, ind);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
   }
 
@@ -198,7 +189,7 @@ public:
     DHalfedge* he = p_arr->topology_traits()->
       locate_around_boundary_vertex(p_arr->_vertex (vh), cv, ind, ps_x, ps_y);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
   }
 
@@ -206,8 +197,8 @@ public:
    * Compute the distance (in halfedges) between two halfedges.
    * \param e1 A handle for the source halfedge.
    * \param e2 A handle for the destination halfedge.
-   * \return In case e1 and e2 belong to the same connected component, the 
-   *         function returns number of boundary halfedges between the two 
+   * \return In case e1 and e2 belong to the same connected component, the
+   *         function returns number of boundary halfedges between the two
    *         halfedges. Otherwise, it returns (-1).
    */
   int halfedge_distance(Halfedge_const_handle e1,
@@ -216,13 +207,13 @@ public:
     // If the two halfedges do not belong to the same component, return (-1).
     const DHalfedge* he1 = p_arr->_halfedge(e1);
     const DHalfedge* he2 = p_arr->_halfedge(e2);
-    
+
     if (he1 == he2) return (0);
 
-    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-    const DOuter_ccb* oc1 = (ic1 == NULL) ? he1->outer_ccb() : NULL;
-    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
-    const DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
+    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+    const DOuter_ccb* oc1 = (ic1 == nullptr) ? he1->outer_ccb() : nullptr;
+    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
+    const DOuter_ccb* oc2 = (ic2 == nullptr) ? he2->outer_ccb() : nullptr;
 
     if ((oc1 != oc2) || (ic1 != ic2)) return (-1);
 
@@ -305,10 +296,10 @@ public:
   Vertex_handle create_vertex(const Point_2& p)
   {
     DVertex* v = p_arr->_create_vertex (p);
-    CGAL_assertion(v != NULL);
+    CGAL_assertion(v != nullptr);
     return (p_arr->_handle_for (v));
   }
-  
+
   /*!
    * Create a new boundary vertex.
    * \param cv The curve incident to the boundary.
@@ -328,7 +319,7 @@ public:
   {
     DVertex* v = p_arr->_create_boundary_vertex (cv, ind, ps_x, ps_y);
 
-    CGAL_assertion(v != NULL);
+    CGAL_assertion(v != nullptr);
 
     // Notify the topology traits on the creation of the boundary vertex.
     if (notify)
@@ -359,7 +350,7 @@ public:
     DVertex* v = p_arr->_place_and_set_curve_end(p_arr->_face (f), cv, ind,
                                                  ps_x, ps_y, &pred);
 
-    if (pred == NULL)
+    if (pred == nullptr)
       // No predecessor halfedge, return just the vertex:
       return (std::make_pair(p_arr->_handle_for(v), Halfedge_handle()));
 
@@ -387,7 +378,7 @@ public:
    *         In case a new face has been created, it is given as the incident
    *         face of this halfedge.
    */
-  Halfedge_handle insert_at_vertices_ex(Halfedge_handle he_to, 
+  Halfedge_handle insert_at_vertices_ex(Halfedge_handle he_to,
                                         const X_monotone_curve_2& cv,
                                         Arr_halfedge_direction cv_dir,
                                         Halfedge_handle he_away,
@@ -401,7 +392,7 @@ public:
                                                new_face, swapped_predecessors,
                                                allow_swap_of_predecessors);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for(he));
   }
 
@@ -421,7 +412,7 @@ public:
    */
   Halfedge_handle insert_from_vertex_ex(Halfedge_handle he_to,
                                         const X_monotone_curve_2& cv,
-                                        Arr_halfedge_direction cv_dir, 
+                                        Arr_halfedge_direction cv_dir,
                                         Vertex_handle v)
   {
     DVertex* p_v = p_arr->_vertex(v);
@@ -438,7 +429,7 @@ public:
     DHalfedge* he =
       p_arr->_insert_from_vertex(p_arr->_halfedge(he_to), cv, cv_dir, p_v);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
   }
 
@@ -457,7 +448,7 @@ public:
    */
   Halfedge_handle insert_in_face_interior_ex(Face_handle f,
                                              const X_monotone_curve_2& cv,
-                                             Arr_halfedge_direction cv_dir, 
+                                             Arr_halfedge_direction cv_dir,
                                              Vertex_handle v1,
                                              Vertex_handle v2)
   {
@@ -485,9 +476,9 @@ public:
     DHalfedge* he = p_arr->_insert_in_face_interior(p_arr->_face (f),
                                                     cv, cv_dir, p_v1, p_v2);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for (he));
-  
+
   }
 
   /*!
@@ -497,7 +488,7 @@ public:
    */
   void insert_isolated_vertex(Face_handle f, Vertex_handle v)
   { p_arr->_insert_isolated_vertex(p_arr->_face (f), p_arr->_vertex(v)); }
-  
+
   /*!
    * Relocate all holes and isolated vertices to their proper position,
    * immediately after a face has split due to the insertion of a new halfedge.
@@ -543,7 +534,7 @@ public:
     p_arr->_move_inner_ccb(p_arr->_face(from_face), p_arr->_face(to_face),
                            p_arr->_halfedge(ccb));
   }
-  
+
   /*!
    * Move an isolated vertex from one face to another.
    * \param from_face The source face.
@@ -580,7 +571,7 @@ public:
     p_arr->_modify_vertex(p_arr->_vertex(v), p);
     return v;
   }
-        
+
   /*!
    * Modify the x-monotone curve associated with a given edge. The curve may be
    * geometrically different than the one currently associated with the edge.
@@ -594,7 +585,7 @@ public:
     p_arr->_modify_edge(p_arr->_halfedge (e), cv);
     return e;
   }
-          
+
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
@@ -608,12 +599,12 @@ public:
    *         source of e, and whose target is the split point.
    */
   Halfedge_handle split_edge_ex(Halfedge_handle e, const Point_2& p,
-                                const X_monotone_curve_2& cv1, 
+                                const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2)
   {
     DHalfedge* he = p_arr->_split_edge (p_arr->_halfedge(e), p, cv1, cv2);
 
-    CGAL_assertion(he != NULL);
+    CGAL_assertion(he != nullptr);
     return (p_arr->_handle_for(he));
   }
 
@@ -636,7 +627,7 @@ public:
     DHalfedge* he = p_arr->_split_edge(p_arr->_halfedge(e), p_arr->_vertex(v),
                                        cv1, cv2);
 
-    CGAL_assertion (he != NULL);
+    CGAL_assertion (he != nullptr);
     return (p_arr->_handle_for(he));
   }
 
@@ -650,7 +641,7 @@ public:
   Halfedge_handle split_fictitious_edge(Halfedge_handle e, Vertex_handle v)
   {
     CGAL_precondition(e->is_fictitious());
-    DHalfedge* he =  
+    DHalfedge* he =
       p_arr->topology_traits()->split_fictitious_edge(p_arr->_halfedge(e),
                                                       p_arr->_vertex(v));
     return (p_arr->_handle_for(he));
@@ -663,7 +654,7 @@ public:
    *                      becomes isolated (true by default).
    * \param remove_target Should the target vertex of e be removed if it
    *                      becomes isolated (true by default).
-   * \pre In case the removal causes the creation of a new hole, e should 
+   * \pre In case the removal causes the creation of a new hole, e should
    *      point at this hole.
    * \return A handle for the remaining face.
    */
@@ -673,7 +664,7 @@ public:
   {
     DFace* f =
       p_arr->_remove_edge(p_arr->_halfedge (e), remove_source, remove_target);
-    CGAL_assertion(f != NULL);
+    CGAL_assertion(f != nullptr);
     return (p_arr->_handle_for(f));
   }
 
@@ -687,9 +678,9 @@ public:
   {
      DHalfedge* he1 = p_arr->_halfedge(e1);
      DHalfedge* he2 = p_arr->_halfedge(e2);
-    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : NULL;
-    if (ic1 == NULL) return (false);
-    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : NULL;
+    const DInner_ccb* ic1 = (he1->is_on_inner_ccb()) ? he1->inner_ccb() : nullptr;
+    if (ic1 == nullptr) return (false);
+    const DInner_ccb* ic2 = (he2->is_on_inner_ccb()) ? he2->inner_ccb() : nullptr;
     return (ic1 == ic2);
   }
 
@@ -703,9 +694,9 @@ public:
   {
      DHalfedge* he1 = p_arr->_halfedge(e1);
      DHalfedge* he2 = p_arr->_halfedge(e2);
-    const DOuter_ccb* oc1 = (he1->is_on_outer_ccb()) ? he1->outer_ccb() : NULL;
-    if (oc1 == NULL) return (false);
-    const DOuter_ccb* oc2 = (he2->is_on_outer_ccb()) ? he2->outer_ccb() : NULL;
+    const DOuter_ccb* oc1 = (he1->is_on_outer_ccb()) ? he1->outer_ccb() : nullptr;
+    if (oc1 == nullptr) return (false);
+    const DOuter_ccb* oc2 = (he2->is_on_outer_ccb()) ? he2->outer_ccb() : nullptr;
     return (oc1 == oc2);
   }
   //@}
@@ -722,20 +713,20 @@ public:
 
   /*! Get an iterator for the first valid arrangement vertex. */
   Valid_vertex_iterator valid_vertices_begin()
-  { 
+  {
     return (Valid_vertex_iterator
             (p_arr->topology_traits()->dcel().vertices_begin(),
              p_arr->topology_traits()->dcel().vertices_end(),
-             Is_valid_vertex (p_arr->topology_traits()))); 
+             Is_valid_vertex (p_arr->topology_traits())));
   }
 
   /*! Get a past-the-end iterator for the valid arrangement vertices. */
   Valid_vertex_iterator valid_vertices_end()
-  { 
+  {
     return (Valid_vertex_iterator
             (p_arr->topology_traits()->dcel().vertices_end(),
              p_arr->topology_traits()->dcel().vertices_end(),
-             Is_valid_vertex (p_arr->topology_traits()))); 
+             Is_valid_vertex (p_arr->topology_traits())));
   }
 
   /*! Get the number of valid arrangement vertices. */
@@ -797,7 +788,7 @@ public:
 
   /*!
    * Create a new vertex.
-   * \param p A pointer to the point (may be NULL in case of a vertex at
+   * \param p A pointer to the point (may be nullptr in case of a vertex at
    *          infinity).
    * \param ps_x The boundary condition at x.
    * \param ps_y The boundary condition at y.
@@ -807,14 +798,14 @@ public:
                           Arr_parameter_space ps_x, Arr_parameter_space ps_y)
   {
     Dcel_vertex* new_v = p_arr->_dcel().new_vertex();
-    if (p != NULL) {
+    if (p != nullptr) {
       typename Dcel::Vertex::Point* p_pt = p_arr->_new_point(*p);
       new_v->set_point(p_pt);
     }
     else
     {
       CGAL_precondition (p_arr->is_open(ps_x, ps_y));
-      new_v->set_point (NULL);
+      new_v->set_point (nullptr);
     }
 
     new_v->set_boundary (ps_x, ps_y);
@@ -823,7 +814,7 @@ public:
 
   /*!
    * Create a new edge (halfedge pair), associated with the given curve.
-   * \param cv A pointer to the x-monotone curve (may be NULL in case of
+   * \param cv A pointer to the x-monotone curve (may be nullptr in case of
    *           a fictitious edge).
    * \return A pointer to one of the created DCEL halfedge.
    */
@@ -831,11 +822,11 @@ public:
   {
     Dcel_halfedge* new_he = p_arr->_dcel().new_edge();
 
-    if (cv != NULL) {
+    if (cv != nullptr) {
       typename Dcel::Halfedge::X_monotone_curve* p_cv = p_arr->_new_curve(*cv);
       new_he->set_curve(p_cv);
     }
-    else new_he->set_curve(NULL);
+    else new_he->set_curve(nullptr);
     return new_he;
   }
 

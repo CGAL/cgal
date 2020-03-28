@@ -2,9 +2,9 @@
 # This is the CMake script for compiling a CGAL application.
 
 
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Nef_3_Tests )
 
-cmake_minimum_required(VERSION 3.1)
 
 find_package(CGAL QUIET)
 
@@ -32,8 +32,8 @@ if ( CGAL_FOUND )
       PROPERTIES RESOURCE_LOCK Nef_3_Tests_IO)
   endif()
 else()
-  
+
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
-  
+
 endif()
 

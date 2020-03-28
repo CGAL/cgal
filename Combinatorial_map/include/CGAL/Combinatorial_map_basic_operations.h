@@ -1,20 +1,11 @@
 // Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
@@ -39,7 +30,7 @@ namespace CGAL
    * @return true iff the two darts belong to the same orbit.
    */
   template < class Map, class Iterator >
-  bool belong_to_same_orbit(const Map & amap, 
+  bool belong_to_same_orbit(const Map & amap,
                             typename Map::Dart_const_handle adart1,
                             typename Map::Dart_const_handle adart2)
   {
@@ -62,7 +53,7 @@ namespace CGAL
    * @return true iff all the darts are marked.
    */
   template < class Map, class Iterator >
-  bool is_whole_orbit_marked(const Map & amap, 
+  bool is_whole_orbit_marked(const Map & amap,
                              typename Map::Dart_const_handle adart,
                              typename Map::size_type amark)
   {
@@ -85,7 +76,7 @@ namespace CGAL
    * @return true iff all the darts are unmarked.
    */
   template < class Map, class Iterator >
-  bool is_whole_orbit_unmarked(const Map & amap, 
+  bool is_whole_orbit_unmarked(const Map & amap,
                                typename Map::Dart_const_handle adart,
                                typename Map::size_type amark)
   {
@@ -131,7 +122,7 @@ namespace CGAL
    * @pre The whole orbit must be marked.
    */
   template < class Map, class Iterator >
-  typename Map::size_type unmark_orbit(const Map & amap, 
+  typename Map::size_type unmark_orbit(const Map & amap,
                                        typename Map::Dart_const_handle adart,
                                        typename Map::size_type amark)
   {
@@ -149,7 +140,7 @@ namespace CGAL
    * @return true iff the two darts belong to the same cell.
    */
   template < class Map, unsigned int i, unsigned int d>
-  bool belong_to_same_cell(const Map & amap, 
+  bool belong_to_same_cell(const Map & amap,
                            typename Map::Dart_const_handle adart1,
                            typename Map::Dart_const_handle adart2)
   {
@@ -159,7 +150,7 @@ namespace CGAL
   }
 
   template < class Map, unsigned int i>
-  bool belong_to_same_cell(const Map & amap, 
+  bool belong_to_same_cell(const Map & amap,
                            typename Map::Dart_const_handle adart1,
                            typename Map::Dart_const_handle adart2)
   {
@@ -174,20 +165,20 @@ namespace CGAL
    * @return true iff all the darts are marked.
    */
   template < class Map, unsigned int i, unsigned int d>
-  bool is_whole_cell_marked(const Map & amap, 
+  bool is_whole_cell_marked(const Map & amap,
                             typename Map::Dart_const_handle adart,
                             typename Map::size_type amark)
-  {  
+  {
     return CGAL::is_whole_orbit_marked<Map,
         typename Map::template Dart_of_cell_range<i,d>::const_iterator>
         (amap, adart, amark);
   }
 
   template < class Map, unsigned int i>
-  bool is_whole_cell_marked(const Map & amap, 
+  bool is_whole_cell_marked(const Map & amap,
                             typename Map::Dart_const_handle adart,
                             typename Map::size_type amark)
-  {  
+  {
     return CGAL::is_whole_cell_marked<Map,i,Map::dimension>(amap,adart,amark);
   }
 
@@ -198,20 +189,20 @@ namespace CGAL
    * @return true iff all the darts are marked.
    */
   template < class Map, unsigned int i, unsigned int d >
-  bool is_whole_cell_unmarked(const Map & amap, 
+  bool is_whole_cell_unmarked(const Map & amap,
                               typename Map::Dart_const_handle adart,
                               typename Map::size_type amark)
-  {  
+  {
     return CGAL::is_whole_orbit_unmarked<Map,
-        typename Map::template Dart_of_cell_range<i,d>::iterator>
+        typename Map::template Dart_of_cell_range<i,d>::const_iterator>
         (amap, adart, amark);
   }
 
   template < class Map, unsigned int i>
-  bool is_whole_cell_unmarked(const Map & amap, 
+  bool is_whole_cell_unmarked(const Map & amap,
                               typename Map::Dart_const_handle adart,
                               typename Map::size_type amark)
-  {  
+  {
     return CGAL::is_whole_cell_unmarked<Map,i,Map::dimension>
         (amap,adart,amark);
   }
@@ -224,15 +215,15 @@ namespace CGAL
    * @pre The whole cell must be unmarked.
    */
   template < class Map, unsigned int i, unsigned int d >
-  typename Map::size_type mark_cell(const Map & amap, 
+  typename Map::size_type mark_cell(const Map & amap,
                                     typename Map::Dart_const_handle adart,
                                     typename Map::size_type amark)
   { return CGAL::mark_orbit<Map,
         typename Map::template Dart_of_cell_basic_range<i,d>::const_iterator>
         (amap, adart, amark); }
-     
+
   template < class Map, unsigned int i>
-  typename Map::size_type mark_cell(const Map & amap, 
+  typename Map::size_type mark_cell(const Map & amap,
                                     typename Map::Dart_const_handle adart,
                                     typename Map::size_type amark)
   { return CGAL::mark_cell<Map,i,Map::dimension>(amap, adart, amark);}
@@ -245,7 +236,7 @@ namespace CGAL
    * @pre The whole cell must be marked.
    */
   template < class Map, unsigned int i, unsigned int d >
-  typename Map::size_type unmark_cell(const Map & amap, 
+  typename Map::size_type unmark_cell(const Map & amap,
                                       typename Map::Dart_const_handle adart,
                                       typename Map::size_type amark)
   { return CGAL::unmark_orbit<Map,
@@ -253,23 +244,23 @@ namespace CGAL
         (amap, adart, amark);}
 
   template < class Map, unsigned int i >
-  typename Map::size_type unmark_cell(const Map & amap, 
+  typename Map::size_type unmark_cell(const Map & amap,
                                       typename Map::Dart_const_handle adart,
                                       typename Map::size_type amark)
   { return CGAL::unmark_cell<Map,i,Map::dimension>(amap, adart, amark); }
-     
+
   /** Compute the degree of a given i-cell c.
    * The degree is the number of distinct i+1 cells incident to c.
-   * @param amap a combinatorial map. 
+   * @param amap a combinatorial map.
    * @param adart a dart of the cell.
    * @return the degree of the cell.
    */
   template < class Map, unsigned int i >
-  typename Map::size_type degree(const Map & amap, 
+  typename Map::size_type degree(const Map & amap,
                                  typename Map::Dart_const_handle adart)
   {
-    CGAL_assertion(adart != NULL);
-  
+    CGAL_assertion(adart != nullptr);
+
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;
     typename Map::size_type treated;
@@ -287,7 +278,7 @@ namespace CGAL
       }
       amap.mark(it,mark);
     }
-  
+
     amap.negate_mark(mark);
     for (it.rewind(); it.cont(); ++it)
     {
@@ -295,30 +286,30 @@ namespace CGAL
       { CGAL::unmark_cell<Map,i+1>(amap, it, treated); }
       amap.mark(it,mark);
     }
-  
+
     amap.negate_mark(mark);
     CGAL_assertion( amap.is_whole_map_unmarked(mark) );
     CGAL_assertion( amap.is_whole_map_unmarked(treated) );
 
     amap.free_mark(mark);
     amap.free_mark(treated);
-  
+
     CGAL_assertion(nbIncident != 0);
     return nbIncident;
   }
 
   /** Compute the co-degree of a given i-cell c.
    * The co-degree is the number of distinct i-1 cells incident to c.
-   * @param amap a combinatorial map. 
+   * @param amap a combinatorial map.
    * @param adart a dart of the cell.
    * @return the co-degree of the cell.
    */
   template < class Map, unsigned int i >
-  typename Map::size_type codegree(const Map & amap, 
+  typename Map::size_type codegree(const Map & amap,
                                    typename Map::Dart_const_handle adart)
   {
-    CGAL_assertion(adart != NULL);
-  
+    CGAL_assertion(adart != nullptr);
+
     typename Map::size_type nbIncident = 0;
     typename Map::size_type mark;
     typename Map::size_type treated;
@@ -336,11 +327,11 @@ namespace CGAL
       }
       amap.mark(it,mark);
     }
-  
+
     amap.negate_mark(mark);
     for (it.rewind(); it.cont(); ++it)
     {
-      if (amap.is_marked(it, treated))      
+      if (amap.is_marked(it, treated))
       { CGAL::unmark_cell<Map,i-1>(amap, it, treated); }
       amap.mark(it,mark);
     }
@@ -351,7 +342,7 @@ namespace CGAL
 
     amap.free_mark(mark);
     amap.free_mark(treated);
-  
+
     CGAL_assertion(nbIncident != 0);
     return nbIncident;
   }

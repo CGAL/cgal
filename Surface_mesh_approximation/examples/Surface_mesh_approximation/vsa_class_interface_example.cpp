@@ -60,7 +60,7 @@ int main()
 
   // get approximated triangle soup
   std::vector<Kernel::Point_3> anchors;
-  std::vector<CGAL::cpp11::array<std::size_t, 3> > triangles;
+  std::vector<std::array<std::size_t, 3> > triangles;
   approx.output(CGAL::parameters::anchors(std::back_inserter(anchors)).
     triangles(std::back_inserter(triangles)));
 

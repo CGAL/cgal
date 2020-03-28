@@ -32,7 +32,7 @@ int main(int argc, char** argv)
   // Some of the points will be outside the octagon, so they will not be inserted.
   std::vector<Point> pts;
   CGAL::Random_points_in_disc_2<Point,Creator> g(0.85);
-  CGAL::cpp11::copy_n(g, N1, std::back_inserter(pts));
+  std::copy_n(g, N1, std::back_inserter(pts));
 
   // The triangulation is automatically initialized with the dummy points.
   Triangulation tr;

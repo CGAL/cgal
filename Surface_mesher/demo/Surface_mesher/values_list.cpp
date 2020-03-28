@@ -53,7 +53,7 @@ QWidget *Values_delegate::createEditor(QWidget *parent,
   }
   else return QItemDelegate::createEditor(parent, option, index);
 }
-  
+
 void Values_delegate::setEditorData(QWidget *editor,
                                        const QModelIndex &index) const
 {
@@ -106,7 +106,7 @@ Values_list::Values_list(QWidget* parent):
   Q_ASSERT_X(treeWidget, "Values_list constructor", "cannot find widget \"treeWidget\"");
 
   treeWidget->sortByColumn(Value, Qt::AscendingOrder);
-   
+
   treeWidget->header()->setSectionsClickable(false);
 
 
@@ -122,7 +122,7 @@ Values_list::Values_list(QWidget* parent):
           this, SIGNAL(changed()));
 
   connect(this, SIGNAL(changed()),
-	  this, SLOT(update_items_cache()));
+          this, SLOT(update_items_cache()));
 }
 
 QColor Values_list::color(const int i) const
@@ -162,14 +162,14 @@ QString Values_list::name(const int i) const
 bool Values_list::enabled(const int i) const
 {
   if(i < 0 || i > treeWidget->topLevelItemCount())
-    return 0.;
+    return false;
   else
-    return treeWidget->topLevelItem(i)->data(Value, Qt::CheckStateRole).toDouble();
+    return treeWidget->topLevelItem(i)->data(Value, Qt::CheckStateRole).toInt() > 0;
 }
 
 bool Values_list::enabled(const QTreeWidgetItem* item) const
 {
-    return item->data(Value, Qt::CheckStateRole).toDouble();
+    return item->data(Value, Qt::CheckStateRole).toInt() > 0;
 }
 
 const QTreeWidgetItem* Values_list::item(const int i) const
@@ -197,7 +197,7 @@ void Values_list::save_values(QString filename) const
  settings.endGroup();
 }
 
-void Values_list::load_values(QString filename) 
+void Values_list::load_values(QString filename)
 {
   QSettings settings;
 

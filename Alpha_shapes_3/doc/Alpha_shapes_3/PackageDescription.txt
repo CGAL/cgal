@@ -20,19 +20,19 @@
 \cgalPkgDescriptionEnd
 
 Alpha shapes definition is based on an underlying
-triangulation that may be a Delaunay triangulation 
-in case of basic alpha shapes or a regular triangulation 
+triangulation that may be a Delaunay triangulation
+in case of basic alpha shapes or a regular triangulation
 (cf. Section \ref Triangulation3secclassRegulartriangulation "3D Regular Triangulation")
 in case of weighted alpha shapes.
 
 Let us consider the basic case with a Delaunay triangulation.
-We first define the alpha complex  of the set of points \f$ S\f$. 
-The  alpha complex is a subcomplex 
+We first define the alpha complex  of the set of points \f$ S\f$.
+The  alpha complex is a subcomplex
 of the Delaunay triangulation.
 For a given value of \f$ \alpha\f$, the alpha complex includes
 all the simplices in the Delaunay triangulation which have
 an empty  circumscribing sphere with squared radius equal or smaller than \f$ \alpha\f$.
-Here "empty" means  that the open sphere 
+Here "empty" means  that the open sphere
 do not include  any points of \f$ S\f$.
 The alpha shape is then simply the domain covered by the simplices
 of the alpha complex (see \cgalCite{em-tdas-94}).
@@ -43,10 +43,10 @@ singular faces.  For \f$ 0 \leq k \leq d-1\f$,
 a \f$ k\f$-simplex of the alpha complex  is said to be
 singular if it is not a facet of a \f$ (k+1)\f$-simplex of the complex
 
-The alpha shapes of a  set of points 
+The alpha shapes of a  set of points
 \f$ S\f$ form a discrete family, even though they
 are defined for all real numbers \f$ \alpha\f$.
-The entire family of alpha shapes can be represented 
+The entire family of alpha shapes can be represented
 through  the underlying triangulation of \f$ S\f$. In this representation,
 each \f$ k\f$-simplex of the underlying triangulation is associated with an
 interval that specifies for which values of \f$ \alpha\f$ the \f$ k\f$-simplex
@@ -58,21 +58,21 @@ and having   less than a given number of connected components.
 
 The definition is analog in the case of weighted alpha shapes.
 The input set is now a set of weighted points (which can be regarded
-as spheres) and the underlying triangulation 
+as spheres) and the underlying triangulation
 is the regular triangulation of this set.
 Two spheres, or two weighted points, with centers \f$ C_1, C_2\f$
-and  radii \f$ r_1, r_2 \f$ are said to be orthogonal iff 
+and  radii \f$ r_1, r_2 \f$ are said to be orthogonal iff
 \f$  C_1C_2 ^2 = r_1^2 + r_2^2\f$ and suborthogonal
 iff  \f$  C_1C_2 ^2 < r_1^2 + r_2^2\f$.
 For a given value of \f$ \alpha\f$
-the weighted alpha complex is formed with the simplices of the 
+the weighted alpha complex is formed with the simplices of the
 regular triangulation triangulation
 such that there is a sphere orthogonal to the weighted points associated
 with the vertices of the simplex  and suborthogonal to all the other
 input weighted points. Once again the alpha shape is then defined as
 the domain covered by a the alpha complex.
 
-CGAL provides two versions to compute alpha shapes. 
+CGAL provides two versions to compute alpha shapes.
 The first one gives access to an explicit classification of all the simplices for a fixed alpha value.
 The second one gives access to the entire family of alpha shapes of a set of points.
 This latter version comes with two modes. In the general mode,

@@ -4,15 +4,9 @@
 #undef NDEBUG //this testsuite requires NDEBUG to be not defined
 #endif
 
-#include <CGAL/Line_2.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Segment_2.h>
-#include <CGAL/Ray_2.h>
-#include <CGAL/Triangle_2.h>
-#include <CGAL/Iso_rectangle_2.h>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Simple_homogeneous.h>
 
 #include <vector>
 #include <iostream>
@@ -22,7 +16,7 @@ const double epsilon = 0.001;
 
 struct randomint {
   randomint() ;
-  int	get() const { return sequence[cur]; }
+  int        get() const { return sequence[cur]; }
   int next() { cur = (cur+1)%11; return get();}
 private:
   int sequence[11];
@@ -67,19 +61,19 @@ struct Test {
   template < typename Type >
   bool approx_equal_nt(const Type &t1, const Type &t2)
   {
-	if (t1 == t2)
-		return true;
-	if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
-		return true;
-	std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
-	return false;
+        if (t1 == t2)
+                return true;
+        if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
+                return true;
+        std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
+        return false;
   }
 
   template < typename O1, typename O2 >
   void check_squared_distance(const O1& o1, const O2& o2, const FT& result)
   {
-	assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
-	assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
+        assert(approx_equal_nt(CGAL::squared_distance(o1, o2), result));
+        assert(approx_equal_nt(CGAL::squared_distance(o2, o1), result));
   }
 
 
@@ -296,7 +290,7 @@ struct Test {
 
 int main()
 {
-	Test< CGAL::Cartesian<double>   >().run();
-	Test< CGAL::Homogeneous<double> >().run();
-	// TODO : test more kernels.
+        Test< CGAL::Simple_cartesian<double>   >().run();
+        Test< CGAL::Simple_homogeneous<double> >().run();
+        // TODO : test more kernels.
 }

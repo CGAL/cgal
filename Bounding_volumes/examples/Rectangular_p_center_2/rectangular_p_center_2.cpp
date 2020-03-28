@@ -24,7 +24,7 @@ int main()
   CGAL::set_pretty_mode(std::cout);
 
   Cont points;
-  CGAL::cpp11::copy_n(Generator(1), n, std::back_inserter(points));
+  std::copy_n(Generator(1), n, std::back_inserter(points));
   std::cout << "Generated Point Set:\n";
   std::copy(points.begin(), points.end(), cout_ip);
 

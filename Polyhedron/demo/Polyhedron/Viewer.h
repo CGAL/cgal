@@ -16,6 +16,10 @@
 #include <CGAL/Three/TextRenderer.h>
 // forward declarations
 class QWidget;
+class QMouseEvent;
+class QKeyEvent;
+class QContextMenuEvent;
+class Viewer_impl;
 namespace CGAL{
 namespace Three{
 class Scene_draw_interface;
@@ -34,6 +38,7 @@ class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
 
 public:
   Viewer(QWidget * parent, bool antialiasing = false);
+  Viewer(QWidget * parent, Viewer *sharedWidget, bool antialiasing = false);
   ~Viewer();
   bool testDisplayId(double, double, double)Q_DECL_OVERRIDE;
   void updateIds(CGAL::Three::Scene_item *)Q_DECL_OVERRIDE;
@@ -45,6 +50,7 @@ public:
   //! Deprecated. Does the same as draw().
   void fastDraw()Q_DECL_OVERRIDE;
   bool isExtensionFound()Q_DECL_OVERRIDE;
+  void initializeGL() Q_DECL_OVERRIDE;
   //! Initializes the OpenGL functions and sets the backGround color.
   void init()Q_DECL_OVERRIDE;
   //! Draws the scene "with names" to allow picking.
@@ -75,7 +81,7 @@ public:
                                         const char* v_shader,
                                         const char* f_shader)const;
   QPainter* getPainter()Q_DECL_OVERRIDE;
-  
+
 
   TextRenderer* textRenderer() Q_DECL_OVERRIDE;
   void enableClippingBox(QVector4D box[]) Q_DECL_OVERRIDE;
@@ -85,15 +91,18 @@ public:
   const QImage& staticImage() const Q_DECL_OVERRIDE;
   //!Set total number of depth peeling passes.
    void setTotalPass(int);
-
+   void resetFov();
 Q_SIGNALS:
   void sendMessage(QString);
+  void doneInitGL(CGAL::Three::Viewer_interface*);
+  void socketClosed();
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b) Q_DECL_OVERRIDE;
   //! If b is true, facets will be ligted from both internal and external sides.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   void setTwoSides(bool b) Q_DECL_OVERRIDE;
+  void setBackFrontShading(bool b) Q_DECL_OVERRIDE;
   void SetOrthoProjection( bool b) Q_DECL_OVERRIDE;
   //! If b is true, some items are displayed in a simplified version when moving the camera.
   //! If b is false, items display is never altered, even when moving.
@@ -103,7 +112,7 @@ public Q_SLOTS:
   //! @returns a QString containing the position and orientation of the camera.
   QString dumpCameraCoordinates() Q_DECL_OVERRIDE;
   //!Moves the camera to the new coordinates (position and orientation) through an animation.
-  bool moveCameraToCoordinates(QString, 
+  bool moveCameraToCoordinates(QString,
                                float animation_duration = 0.5f) Q_DECL_OVERRIDE;
   //!Makes the Viewer display a message
   void printMessage(QString message, int ms_delay );
@@ -120,8 +129,14 @@ public Q_SLOTS:
   }
 
   void setLighting();
+  void setBackFrontColors();
 
   void messageLogged(QOpenGLDebugMessage);
+#ifdef CGAL_USE_WEBSOCKETS
+  void setShareCam(bool, QString);
+  void onSocketConnected();
+  void onTextMessageSocketReceived(QString message);
+#endif
 
 protected:
   void paintEvent(QPaintEvent *)Q_DECL_OVERRIDE;
@@ -142,6 +157,7 @@ protected:
   friend class Viewer_impl;
   Viewer_impl* d;
   double prev_radius;
+  void doBindings();
 
 public:
   QOpenGLFunctions_4_3_Core* openGL_4_3_functions() Q_DECL_OVERRIDE;
@@ -154,6 +170,9 @@ public:
    float total_pass()Q_DECL_OVERRIDE;
    const GLfloat& getGlPointSize()const Q_DECL_OVERRIDE;
    void setGlPointSize(const GLfloat& p) Q_DECL_OVERRIDE;
+   void makeCurrent() Q_DECL_OVERRIDE;
+   QVector4D* clipBox() const Q_DECL_OVERRIDE;
+   bool isClipping() const Q_DECL_OVERRIDE;
 }; // end class Viewer
 
 

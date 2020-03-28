@@ -1,6 +1,6 @@
 #ifndef SCENE_EDIT_POLYHEDRON_ITEM_H
 #define SCENE_EDIT_POLYHEDRON_ITEM_H
-//#define CGAL_PROFILE 
+//#define CGAL_PROFILE
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_surface_mesh_item.h"
 #include <CGAL/Three/Scene_transparent_interface.h>
@@ -76,10 +76,10 @@ public:
   typedef EPICK::Point_3                                           value_type;
   typedef const value_type&                                         reference;
   typedef boost::read_write_property_map_tag                        category;
-  std::vector<double>* positions;
+  std::vector<float>* positions;
   Mesh* mesh;
   Id_setter* id_setter;
-  Array_based_vertex_point_map(std::vector<double>* positions, Mesh* mesh, Id_setter* id_setter) : positions(positions), mesh(mesh), id_setter(id_setter) {}
+  Array_based_vertex_point_map(std::vector<float>* positions, Mesh* mesh, Id_setter* id_setter) : positions(positions), mesh(mesh), id_setter(id_setter) {}
 
 };
 
@@ -212,7 +212,7 @@ private:
     }
   }
   CGAL::Three::Scene_interface::Bbox calculate_initial_bbox()
-  {    
+  {
     if(initial_positions.empty()) {return CGAL::Three::Scene_interface::Bbox(0,0,0,0,0,0); }
 
     const CGAL::qglviewer::Vec& p_i = *(initial_positions.begin());
@@ -236,21 +236,21 @@ struct Mouse_keyboard_state_deformation
   bool left_button_pressing;
   bool right_button_pressing;
 
-  Mouse_keyboard_state_deformation() 
+  Mouse_keyboard_state_deformation()
     : ctrl_pressing(false), shift_pressing(false), left_button_pressing(false), right_button_pressing(false)
   { }
 };
 typedef std::list<Control_vertices_data<SMesh> > Ctrl_vertices_sm_group_data_list;
 struct Scene_edit_polyhedron_item_priv;
 // This class represents a polyhedron in the OpenGL scene
-class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
+class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item
   : public CGAL::Three::Scene_group_item ,
     public CGAL::Three::Scene_transparent_interface
 {
   Q_INTERFACES(CGAL::Three::Scene_transparent_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.TransparentInterface/1.0")
   Q_OBJECT
-public:  
+public:
   Scene_edit_polyhedron_item(){} //needed by the transparent interface
   /// Create an Scene_edit_polyhedron_item from a Scene_surface-mesh_item.
   /// The ownership of the polyhedron is moved to the new edit_polyhedron
@@ -261,6 +261,7 @@ public:
   /// Returns 0, so that one cannot clone an "edit polyhedron" item.
   Scene_edit_polyhedron_item* clone() const;
 
+  void init(CGAL::Three::Viewer_interface* viewer) const;
   // Function for displaying meta-data of the item
   QString toolTip() const;
 
@@ -269,20 +270,18 @@ public:
   void setVisible(bool b);
   void setRenderingMode(RenderingMode m);
 
-  
+
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { 
-    return m == Gouraud; 
+  bool supportsRenderingMode(RenderingMode m) const {
+    return m == GouraudPlusEdges;
   }
-  // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-  void draw() const{}
   void draw(CGAL::Three::Viewer_interface*) const;
   void drawEdges(CGAL::Three::Viewer_interface*) const;
   void drawTransparent(Viewer_interface *) const;
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
   template<typename Mesh>
-  void draw_frame_plane(CGAL::QGLViewer *, Mesh *mesh) const;
+  void draw_frame_plane(Mesh *mesh) const;
   // Get wrapped Surface_mesh
   SMesh*       surface_mesh();
   const SMesh* surface_mesh() const;
@@ -294,7 +293,7 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const;
   void compute_bbox() const;
-  Bbox bbox() const{return Scene_item::bbox();}
+  Bbox bbox() const{return Scene_item_rendering_helper::bbox();}
 
   int get_k_ring();
   void set_k_ring(int v);
@@ -304,6 +303,8 @@ public:
   bool eventFilter(QObject *target, QEvent *event);
   void update_frame_plane();
   void ShowAsSphere(bool b);
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+  void computeElements() const;
 
 public Q_SLOTS:
   void reset_spheres();

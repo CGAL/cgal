@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -56,13 +47,13 @@ private:
 private:
   Comparison_result
   compare_distances(const Site_2& p1, const Site_2& p2,
-		    const Point_2& p, const Integral_domain_without_division_tag&) const
+                    const Point_2& p, const Integral_domain_without_division_tag&) const
   {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::side_of_bisector_counter++;
 #endif
 
-    // this function compares the distances of the point(x, y) from the 
+    // this function compares the distances of the point(x, y) from the
     // disks {(x1, y1), w1} and {(x2, y2), w2}
     RT D1 = CGAL::square(p1.x() - p.x()) + CGAL::square(p1.y() - p.y());
     RT D2 = CGAL::square(p2.x() - p.x()) + CGAL::square(p2.y() - p.y());
@@ -78,25 +69,25 @@ private:
       if ( R != SMALLER )  return LARGER;
 
       Sign s = sign_a_plus_b_x_sqrt_c<RT>(D1 - D2 + CGAL::square(Dw),
-					  RT(2) * Dw, D1);
+                                          RT(2) * Dw, D1);
       return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
     }
 
     if ( R != LARGER )  return SMALLER;
     Sign s = sign_a_plus_b_x_sqrt_c<RT>(D1 - D2 - CGAL::square(Dw),
-					RT(2) * Dw, D2);
+                                        RT(2) * Dw, D2);
 
     return ((s == POSITIVE) ? LARGER : ((s == ZERO) ? EQUAL : SMALLER));
   }
 
   Comparison_result
   compare_distances(const Site_2& p1, const Site_2& p2,
-		    const Point_2 &p, const Field_with_sqrt_tag&) const
+                    const Point_2 &p, const Field_with_sqrt_tag&) const
   {
 #ifdef AG2_PROFILE_PREDICATES
     ag2_predicate_profiler::side_of_bisector_counter++;
 #endif
-    // this function compares the distances of the point(x, y) from the 
+    // this function compares the distances of the point(x, y) from the
     // disks {(x1, y1), w1} and {(x2, y2), w2}
 
     RT D1 = CGAL::square(p1.x() - p.x()) + CGAL::square(p1.y() - p.y());
@@ -114,7 +105,7 @@ public:
 
   inline
   Oriented_side operator()(const Site_2& p1, const Site_2& p2,
-			   const Point_2 &p) const
+                           const Point_2 &p) const
   {
     Comparison_result r = compare_distances(p1, p2, p, Method_tag());
 

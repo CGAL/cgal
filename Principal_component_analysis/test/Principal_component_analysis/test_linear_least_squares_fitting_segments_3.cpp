@@ -3,7 +3,7 @@
 // test for the linear_least_square_fitting() functions.
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/point_generators_3.h>
@@ -18,7 +18,7 @@
 #define THRESHOLD 0.001
 // types
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::FT FT;
 
 typedef Kernel::Line_3 Line;
@@ -41,19 +41,19 @@ FT fit_set(std::list<Segment>& segments,
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>(),kernel,
-					   CGAL::Diagonalize_traits<FT,3>());
+                                           CGAL::Diagonalize_traits<FT,3>());
 #ifdef CGAL_EIGEN3_ENABLED
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>(),kernel,
-					   CGAL::Eigen_diagonalize_traits<FT,3>());
+                                           CGAL::Eigen_diagonalize_traits<FT,3>());
 #endif
 
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>(),kernel,
-					   CGAL::Diagonalize_traits<FT,3>());
+                                           CGAL::Diagonalize_traits<FT,3>());
 #ifdef CGAL_EIGEN3_ENABLED
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>(),kernel,
-					   CGAL::Eigen_diagonalize_traits<FT,3>());
+                                           CGAL::Eigen_diagonalize_traits<FT,3>());
 #endif
 
   return quality;
@@ -72,23 +72,23 @@ void test_1()
   std::cout << "Test 1" << std::endl;
   std::cout << "fit 3D line...";
   Line line;
-	Plane plane;
+        Plane plane;
   Point centroid;
 
-	FT quality = fit_set(segments,plane,line);
+        FT quality = fit_set(segments,plane,line);
   std::cout << "done, quality: " << quality << std::endl;
 
-  if(!line.has_on(Point(3.0,3.0,3.0)) || 
-		 !line.has_on(Point(1.0,1.0,1.0)))
+  if(!line.has_on(Point(3.0,3.0,3.0)) ||
+                 !line.has_on(Point(1.0,1.0,1.0)))
   {
     std::cout << "failure" << std::endl;
-		std::cout << "line: " << line << std::endl;
+                std::cout << "line: " << line << std::endl;
     // exit(1); // failure
   }
 }
 
 
-// case with two segments cutting the one segment in two parts in 
+// case with two segments cutting the one segment in two parts in
 // container the fitting line must be the same
 void test_2()
 {
@@ -100,21 +100,21 @@ void test_2()
   // fit a line
   std::cout << "fit 3D line...";
   Line line;
-	Plane plane;
+        Plane plane;
   Point centroid;
-	FT quality = fit_set(segments,plane,line);
+        FT quality = fit_set(segments,plane,line);
   std::cout << "done, quality: " << quality << std::endl;
 
   if(!line.has_on(Point(2.0,2.0,2.0)) ||
-		 !line.has_on(Point(1.0,1.0,1.0)))
+                 !line.has_on(Point(1.0,1.0,1.0)))
   {
     std::cout << "failure" << std::endl;
-		std::cout << "line: " << line << std::endl;
+                std::cout << "line: " << line << std::endl;
     // exit(1); // failure
   }
 }
 
-// case with four segments cutting the one segment in four parts in 
+// case with four segments cutting the one segment in four parts in
 // container the fitting line must be the same
 void test_3()
 {
@@ -129,17 +129,17 @@ void test_3()
   // call all versions of the function
   std::cout << "fit 3D line...";
   Line line;
-	Plane plane;
+        Plane plane;
   Point centroid;
-	FT quality = fit_set(segments,plane,line);
+        FT quality = fit_set(segments,plane,line);
   std::cout.precision(20);
   std::cout << "done, quality: " << quality << std::endl;
 
   if(!line.has_on(Point(2.0,2.0,2.0)) ||
-		 !line.has_on(Point(1.0,1.0,1.0)))
+                 !line.has_on(Point(1.0,1.0,1.0)))
   {
     std::cout << "failure" << std::endl;
-		std::cout << "line: " << line << std::endl;
+                std::cout << "line: " << line << std::endl;
     // exit(1); // failure
   }
 }
@@ -160,9 +160,9 @@ void test_4()
   // call all versions of the function
   std::cout << "fit 3D line to segment...";
   Line line;
-	Plane plane;
+        Plane plane;
   Point centroid;
-	FT quality = fit_set(segments,plane,line);
+        FT quality = fit_set(segments,plane,line);
   std::cout << "done, quality: " << quality << std::endl;
 
   std::list<Point> points;
@@ -186,9 +186,9 @@ void test_4()
   std::cout << "done, quality: " << quality1 << std::endl;
 
   if(!(line.has_on(line1.point(0)) && (double)line.to_vector().y()/line.to_vector().x() -
-		(double)line1.to_vector().y()/line1.to_vector().x() <= THRESHOLD &&
-		(double)line.to_vector().z()/line.to_vector().x() -
-		(double)line1.to_vector().z()/line1.to_vector().x() <= THRESHOLD))
+                (double)line1.to_vector().y()/line1.to_vector().x() <= THRESHOLD &&
+                (double)line.to_vector().z()/line.to_vector().x() -
+                (double)line1.to_vector().z()/line1.to_vector().x() <= THRESHOLD))
   {
     std::cout << "failure" << std::endl;
     // exit(1); // failure
@@ -209,10 +209,9 @@ void test_5()
   // call all versions of the function
   std::cout<<"Test 5"<<std::endl;
   std::cout << "fit 3D plane...";
-	Line line;
-	Plane plane;
+  Plane plane;
   Point centroid;
-  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
+  FT quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
   std::cout << "done, quality: " << quality << std::endl;
 
   if(!plane.has_on(segments[0].supporting_line()))
@@ -233,13 +232,13 @@ void test_6()
   Line line;
   Point centroid;
 
-	// fit plane
+        // fit plane
   linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<0>());
 
-	// fit line
+        // fit line
   linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<1>());
   linear_least_squares_fitting_3(segments.begin(),segments.end(),line,CGAL::Dimension_tag<0>());
   linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>());
@@ -264,7 +263,7 @@ int main()
   std::cout << "Test 3D linear least squares fitting of segments"  << std::endl;
   test_1();
   test_2();
-  test_3();  
+  test_3();
   test_4();
   test_5();
   test_6();

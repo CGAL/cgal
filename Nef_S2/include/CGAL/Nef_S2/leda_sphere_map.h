@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Michael Seel  <seel@mpi-sb.mpg.de>
 
@@ -36,7 +27,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 template <typename R, typename ITERATOR>
-class leda_graph_decorator { 
+class leda_graph_decorator {
 public:
   typedef leda_node      Vertex_handle;
   typedef leda_edge      Halfedge_handle;
@@ -119,12 +110,12 @@ void subdivide(Iterator start, Iterator end)
 {
 typedef leda_graph_decorator<R,Iterator> leda_graph_output;
 typedef CGAL::Positive_halfsphere_geometry<R> PH_geometry;
-typedef CGAL::Segment_overlay_traits< 
+typedef CGAL::Segment_overlay_traits<
           Iterator, leda_graph_output, PH_geometry>  PHS_traits;
 typedef CGAL::generic_sweep<PHS_traits> Positive_halfsphere_sweep;
 
 typedef CGAL::Negative_halfsphere_geometry<R> NH_geometry;
-typedef CGAL::Segment_overlay_traits< 
+typedef CGAL::Segment_overlay_traits<
           Iterator, leda_graph_output, NH_geometry> NHS_traits;
 typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
 
@@ -132,8 +123,8 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   partition_xy( start, end, Lp , +1);
   partition_xy( start, end, Lm , -1);
   // both lists initialized with four quarter segments
-  // supporting the xy-equator thereby separating the 
-  // two halfspheres 
+  // supporting the xy-equator thereby separating the
+  // two halfspheres
   // all other segments in the range are split into their
   // connected components with respect to the xy-plane.
 
@@ -158,11 +149,11 @@ typedef CGAL::generic_sweep<NHS_traits> Negative_halfsphere_sweep;
   compute_faces();
 }
 
-void merge_nodes(leda_edge e1, leda_edge e2) 
+void merge_nodes(leda_edge e1, leda_edge e2)
 // e1 and e2 are two edges of the xy equator such that
 // e1 is part of the positive xy-sphere bounding outer face
 // e2 is part of the negative xy-sphere bounding outer face
-// e1 and e2 are oppositely oriented 
+// e1 and e2 are oppositely oriented
 // the outer faces are left of the edges
 // the edges are embedded orderpreserving ccw
 // then the following code merges the edges of A(target(e2))
@@ -188,11 +179,11 @@ void merging_halfspheres(leda_node v1, leda_node v2)
 // the faces are left of edges
 // edges are embedded orderpreserving ccw
 {
-  CGAL_NEF_TRACEN("Merging Halfspheres");  
+  CGAL_NEF_TRACEN("Merging Halfspheres");
   leda_edge e1,e2,e3,e4,e1n,e2n;
-  forall_sadj_edges(e1,v1) 
+  forall_sadj_edges(e1,v1)
     if ( G[target(e1)].hz()==0 && G[target(e1)].hx()<0 ) break;
-  forall_sadj_edges(e2,v2) 
+  forall_sadj_edges(e2,v2)
     if ( G[target(e2)].hz()==0 && G[target(e2)].hx()>0 ) break;
   e3 = G.face_cycle_pred(e1);
   e4 = e2; e2 = G.face_cycle_pred(e2);
@@ -205,7 +196,7 @@ void merging_halfspheres(leda_node v1, leda_node v2)
 }
 
 
-void clean_trivial_sface_cycles() 
+void clean_trivial_sface_cycles()
 // removes trivial face cycles at equator
 // removes isolated vertices stemming from
 // equator unification
@@ -217,7 +208,7 @@ void clean_trivial_sface_cycles()
   forall_sedges(e,G) {
     if (known[e]) continue;
     leda_edge en = G.face_cycle_succ(e);
-    if ( G.face_cycle_succ(en) != e ) 
+    if ( G.face_cycle_succ(en) != e )
       continue;
     // e in trivial face cycle
     L.append(e); L.append(en);
@@ -241,13 +232,13 @@ void compute_faces()
   leda_edge e;
   forall_sfaces(f,G) {
     CGAL_NEF_TRACEN("FACE:");
-    forall_sface_edges(e,f) 
+    forall_sface_edges(e,f)
       CGAL_NEF_TRACEN("  "<<SSegment_2(G[source(e)],G[target(e)]));
   }
 }
 
 void dump(std::ostream& os, leda_node v, bool nl=true) const
-{  os << " ["<< ::index(v)<<"] "<<G[v]; 
+{  os << " ["<< ::index(v)<<"] "<<G[v];
    if (nl) os << std::endl; }
 
 void dump(std::ostream& os) const
@@ -262,7 +253,7 @@ void dump(std::ostream& os) const
       os <<" ["<<G[e]<<" ]\n";
     }
   }
-    
+
 }
 
 

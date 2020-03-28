@@ -4,19 +4,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Laurent RINEAU, Stephane Tayeb, Maxime Gimeno
 
@@ -32,12 +23,13 @@
 #include <CGAL/assertions.h>
 #include <CGAL/IO/io.h>
 #include <CGAL/IO/write_vtk.h>
+#include <boost/variant.hpp>
 
 //todo try to factorize with functors
 namespace CGAL{
 
 template <class C3T3>
-void 
+void
 write_cells_tag(std::ostream& os,
                 const C3T3 & c3t3,
                 std::map<typename C3T3::Triangulation::Vertex_handle, std::size_t> & V,
@@ -59,14 +51,14 @@ write_cells_tag(std::ostream& os,
   os << "    <Cells>\n"
      << "      <DataArray Name=\"connectivity\""
      << formatattribute << typeattribute;
-  
+
   if (binary) { // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
     offset += (4 * c3t3.number_of_cells() + 1) * sizeof(std::size_t);
     // 4 indices (size_t) per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";   
+    os << ">\n";
     for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
          cit != c3t3.cells_in_complex_end() ;
          ++cit )
@@ -74,29 +66,29 @@ write_cells_tag(std::ostream& os,
       for (int i=0; i<4; i++)
         os << V[cit->vertex(i)] << " ";
     }
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
-  
+
   // Write offsets
   os   << "      <DataArray Name=\"offsets\""
        << formatattribute << typeattribute;
-  
+
   if (binary) {  // if binary output, just write the xml tag
     os << " offset=\"" << offset << "\"/>\n";
     offset += (c3t3.number_of_cells() + 1) * sizeof(std::size_t);
     // 1 offset (size_t) per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << ">\n";
     std::size_t cells_offset = 0;
     for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
-	 cit != c3t3.cells_in_complex_end() ;
-	 ++cit )
+         cit != c3t3.cells_in_complex_end() ;
+         ++cit )
       {
-	cells_offset += 4;
-	os << cells_offset << " ";
-      }  
-    os << "      </DataArray>\n";
+        cells_offset += 4;
+        os << cells_offset << " ";
+      }
+    os << "\n      </DataArray>\n";
   }
 
   // Write cell type (tetrahedra == 10)
@@ -109,12 +101,12 @@ write_cells_tag(std::ostream& os,
     // 1 unsigned char per cell + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << ">\n";
     for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
-	 cit != c3t3.cells_in_complex_end() ;
-	 ++cit )
+         cit != c3t3.cells_in_complex_end() ;
+         ++cit )
       os << "10 ";
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
   os << "    </Cells>\n";
 }
@@ -138,7 +130,7 @@ write_cells(std::ostream& os,
       off += 4;
       offsets.push_back(off);
       for (int i=0; i<4; i++)
-	connectivity_table.push_back(V[cit->vertex(i)]);
+        connectivity_table.push_back(V[cit->vertex(i)]);
     }
   write_vector<std::size_t>(os,connectivity_table);
   write_vector<std::size_t>(os,offsets);
@@ -147,7 +139,7 @@ write_cells(std::ostream& os,
 
 
 template <class Tr>
-void 
+void
 write_c3t3_points_tag(std::ostream& os,
                       const Tr & tr,
                       std::size_t size_of_vertices,
@@ -169,12 +161,12 @@ write_c3t3_points_tag(std::ostream& os,
      << format;
 
   if (binary) {
-    os << "\" offset=\"" << offset << "\"/>\n";    
+    os << "\" offset=\"" << offset << "\"/>\n";
     offset += 3 * size_of_vertices * sizeof(FT) + sizeof(std::size_t);
     // dim coords per points + length of the encoded data (size_t)
   }
   else {
-    os << "\">\n";  
+    os << "\">\n";
     for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
          vit != tr.finite_vertices_end();
          ++vit)
@@ -188,12 +180,12 @@ write_c3t3_points_tag(std::ostream& os,
       else
         os << 0.0 << " ";
     }
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
   os << "    </Points>\n";
 }
 
-// writes the points appended data at the end of the .vtu file 
+// writes the points appended data at the end of the .vtu file
 template <class Tr>
 void
 write_c3t3_points(std::ostream& os,
@@ -223,47 +215,69 @@ write_c3t3_points(std::ostream& os,
 
 // writes the attribute tags before binary data is appended
 template <class T>
-void 
+void
 write_attribute_tag(std::ostream& os,
-		    const std::string& attr_name,
-		    const std::vector<T>& attribute,
-		    bool binary,
-		    std::size_t& offset)
+                    const std::string& attr_name,
+                    const std::vector<T>& attribute,
+                    bool binary,
+                    std::size_t& offset)
 {
   std::string format = binary ? "appended" : "ascii";
-  std::string type = (sizeof(T) == 8) ? "Float64" : "Float32";
-  os << "      <DataArray type=\"" << type << "\" Name=\"" << attr_name << "\" format=\"" << format; 
+  std::string type = "";
+  if(std::is_floating_point<T>::value)
+  {
+    type = (sizeof(T) == 8) ? "Float64" : "Float32";
+  }
+  else
+  {
+    if(sizeof(T) == 1)
+      type =  "UInt8";
+    else if(sizeof(T) == 4)
+      type = "UInt32";
+    else
+      type = "UInt64";
+  }
+  os << "      <DataArray type=\"" << type << "\" Name=\"" << attr_name << "\" format=\"" << format;
 
   if (binary) {
-    os << "\" offset=\"" << offset << "\"/>\n";    
+    os << "\" offset=\"" << offset << "\"/>\n";
     offset += attribute.size() * sizeof(T) + sizeof(std::size_t);
   }
   else {
     typedef typename std::vector<T>::const_iterator Iterator;
-    os << "\">\n";   
+    os << "\">\n";
     for (Iterator it = attribute.begin();
-	 it != attribute.end();
-	 ++it )
+         it != attribute.end();
+         ++it )
       os << *it << " ";
-    os << "      </DataArray>\n";
+    os << "\n      </DataArray>\n";
   }
 }
 
-// writes the attributes appended data at the end of the .vtu file 
+// writes the attributes appended data at the end of the .vtu file
 template <typename FT>
 void
 write_attributes(std::ostream& os,
-		 const std::vector<FT>& att)
+                 const std::vector<FT>& att)
 {
   write_vector(os,att);
 }
 
+enum VTU_ATTRIBUTE_TYPE{
+  DOUBLE=0,
+  UNIT_8,
+  SIZE_TYPE
+};
+
+typedef boost::variant<const std::vector<double>*, const std::vector<uint8_t>*, const std::vector<std::size_t>* > Vtu_attributes;
+
 template <class C3T3>
 void output_to_vtu_with_attributes(std::ostream& os,
                                    const C3T3& c3t3,
-                                   std::vector<std::pair<const char*, const std::vector<double>*> >& attributes,
+                                   std::vector<std::pair<const char*, Vtu_attributes> >&attributes,
                                    IO::Mode mode = IO::BINARY)
 {
+  //CGAL_assertion(attributes.size() == attribute_types.size());
   typedef typename C3T3::Triangulation Tr;
   typedef typename Tr::Vertex_handle Vertex_handle;
   const Tr& tr = c3t3.triangulation();
@@ -276,7 +290,7 @@ void output_to_vtu_with_attributes(std::ostream& os,
 #else // CGAL_BIG_ENDIAN
   os << " byte_order=\"BigEndian\"";
 #endif
-  
+
   switch(sizeof(std::size_t)) {
   case 4: os << " header_type=\"UInt32\""; break;
   case 8: os << " header_type=\"UInt64\""; break;
@@ -296,17 +310,37 @@ void output_to_vtu_with_attributes(std::ostream& os,
   os << "    <CellData Scalars=\""<<attributes.front().first<<"\">\n";
   for(std::size_t i = 0; i< attributes.size(); ++i)
   {
-    write_attribute_tag(os,attributes[i].first, *attributes[i].second, binary,offset);
+    switch(attributes[i].second.which()){
+    case 0:
+      write_attribute_tag(os,attributes[i].first, *boost::get<const std::vector<double>* >(attributes[i].second), binary,offset);
+      break;
+    case 1:
+      write_attribute_tag(os,attributes[i].first, *boost::get<const std::vector<uint8_t>* >(attributes[i].second), binary,offset);
+      break;
+    default:
+      write_attribute_tag(os,attributes[i].first, *boost::get<const std::vector<std::size_t>* >(attributes[i].second), binary,offset);
+      break;
+    }
   }
   os << "    </CellData>\n";
   os << "   </Piece>\n"
      << "  </UnstructuredGrid>\n";
   if (binary) {
-    os << "<AppendedData encoding=\"raw\">\n_"; 
+    os << "<AppendedData encoding=\"raw\">\n_";
     write_c3t3_points(os,tr,V); // fills V if the mode is BINARY
     write_cells(os,c3t3,V);
     for(std::size_t i = 0; i< attributes.size(); ++i)
-      write_attributes(os, *attributes[i].second);
+      switch(attributes[i].second.which()){
+      case 0:
+        write_attributes(os, *boost::get<const std::vector<double>* >(attributes[i].second));
+        break;
+      case 1:
+        write_attributes(os, *boost::get<const std::vector<uint8_t>* >(attributes[i].second));
+        break;
+      default:
+        write_attributes(os, *boost::get<const std::vector<std::size_t>* >(attributes[i].second));
+        break;
+      }
   }
   os << "</VTKFile>\n";
 }
@@ -320,15 +354,18 @@ void output_to_vtu(std::ostream& os,
                IO::Mode mode = IO::BINARY)
 {
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
-  std::vector<double> mids;      
+  std::vector<double> mids;
   for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
        cit != c3t3.cells_in_complex_end() ;
        ++cit )
-    {
-      mids.push_back(cit->subdomain_index());
-    }
-  std::vector<std::pair<const char*, const std::vector<double>* > > atts;
-  atts.push_back(std::make_pair("MeshDomain", &mids));
+  {
+    double v = cit->subdomain_index();
+    mids.push_back(v);
+  }
+
+  std::vector<std::pair<const char*, Vtu_attributes > > atts;
+  Vtu_attributes v = &mids;
+  atts.push_back(std::make_pair("MeshDomain", v));
   output_to_vtu_with_attributes(os, c3t3, atts, mode);
 }
 

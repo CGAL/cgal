@@ -13,51 +13,51 @@ class MessageQueue
 public:
   typedef boost::function2<void,unsigned int,std::string> Fnc;
   typedef std::pair<bool,Fnc> Receive_type;
-  
+
   MessageQueue(): status_(ACTIVATED), running_nb_(0) {}
-  
+
   void send( Fnc const& f)
   {
     boost::mutex::scoped_lock lock( myMutex );
     myQueue.push_back( f );
     myCondition.notify_one();
   }
-  
+
   Receive_type receive(bool first)
   {
     boost::mutex::scoped_lock lock( myMutex );
     if (!first) --running_nb_;
-    
+
     while ( myQueue.empty() )
     {
       if (status_ == PREUNACTIVATED && running_nb_ == 0)
-      { 
+      {
         status_ = UNACTIVATED;
         myCondition.notify_all();
       }
-      
+
       if (status_ == UNACTIVATED)
         return std::make_pair(false,Fnc());
 
       myCondition.wait( lock );
     }
-    
+
     std::pair<bool,Fnc> result (true,myQueue.front());
     myQueue.pop_front();
     ++running_nb_;
     return result;
   }
-  
+
   void deactivate()
-  { 
+  {
     boost::mutex::scoped_lock lock( myMutex );
     status_ = PREUNACTIVATED;
     myCondition.notify_one();
   }
-  
+
 private:
   enum Activation { ACTIVATED, UNACTIVATED, PREUNACTIVATED };
-  
+
   boost::mutex myMutex;
   boost::condition_variable myCondition;
   std::deque< Fnc > myQueue;
@@ -83,8 +83,8 @@ pooledThread(MessageQueue* queue, unsigned int i)
       std::cerr << "ERROR[" << i << "]:\n" << format(e.what(),false);
       f.second(PRINT_ERROR_MSG, std::string("\nERROR:\n"));
       f.second(PRINT_ERROR_MSG, format(e.what(),false));
-    
-#ifdef MESHER_TESTER_USE_CGAL_EXCEPTION_WITH_STACK    
+
+#ifdef MESHER_TESTER_USE_CGAL_EXCEPTION_WITH_STACK
       std::cerr << format(e.stack(),true) << std::endl;
       f.second(PRINT_ERROR_MSG, format(e.stack(),true));
 #endif
@@ -106,7 +106,7 @@ pooledThread(MessageQueue* queue, unsigned int i)
     std::cout << msg.str();
     f = queue->receive(false);
   }
-  
+
   std::stringstream tmp;
   tmp << "end of thread " << i << "\n";
   std::cout << tmp.str();
@@ -116,7 +116,7 @@ pooledThread(MessageQueue* queue, unsigned int i)
 std::string format(std::string input, bool remove_template)
 {
   std::stringstream result;
- 
+
   // Remove <>
   std::size_t pos = input.find('\074');
   while ( remove_template && pos != std::string::npos )
@@ -143,7 +143,7 @@ std::string format(std::string input, bool remove_template)
   if ( input.at(input.size()-1) != '\n' )
     input.push_back('\n');
 
-  // Add "  ! " at the begining of each line
+  // Add "  ! " at the beginning of each line
   size_t prev = 0;
   pos = input.find("\n");
   while ( pos != std::string::npos )

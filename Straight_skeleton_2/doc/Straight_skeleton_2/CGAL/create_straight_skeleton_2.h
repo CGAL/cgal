@@ -3,12 +3,12 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Functions
 
-The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes. 
+The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes.
 
 The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P` given by the point sequence `[vertices_begin,vertices_end]`.
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
-The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`. 
-`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
+The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
+`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`
 
 
 \cgalHeading{Requirements}
@@ -25,7 +25,7 @@ The outer boundary `F` is constructed by enlarging the bounding box of `P` a dis
 */
 template<class FT, class PointIterator, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_exterior_straight_skeleton_2 
+create_exterior_straight_skeleton_2
 ( FT max_offset
 , PointIterator vertices_begin
 , PointIterator vertices_end
@@ -35,20 +35,20 @@ create_exterior_straight_skeleton_2
 /*!
 \ingroup PkgStraightSkeleton2Functions
 
-The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes. 
+The function `create_exterior_straight_skeleton_2()` creates a straight skeleton in the exterior of a 2D polygon with holes.
 The function returns a new `Straight_skeleton_2<K>` in the <I>limited exterior</I> of the 2D polygon `P`.
 The skeleton in the <I>limited exterior</I> of `P` is the skeleton in the interior of a polygon `Q` with `P` as its hole and a rectangular frame `F` as outer boundary.
-The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`. 
-`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()` 
+The outer boundary `F` is constructed by enlarging the bounding box of `P` a distance `d`.
+`d` is a margin sufficiently large to allow an outer offset at distance `max_offset` to be obtained from this exterior skeleton, as computed by the function `compute_outer_frame_margin()`
 
 \cgalHeading{Requirements}
 
 \tparam FT a number type
-\tparam K is any \cgal kernel. 
+\tparam K is any \cgal kernel.
 \tparam Polygon is `Polygon_2<K>` or a standard container of `K::Point_2` elements.
 
-\sa `create_interior_straight_skeleton_2()` 
-\sa `Straight_skeleton_builder_2` 
+\sa `create_interior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2`
 */
 template<class FT, class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
@@ -97,7 +97,7 @@ polygon whose outer boundary is given by the point sequence
         `Cartesian_converter` is used to convert from `K2::Point_2` to `K::Point_2`
 
 \sa `create_exterior_straight_skeleton_2()`
-\sa `Straight_skeleton_builder_2` 
+\sa `Straight_skeleton_builder_2`
 
 */
 template<class PointIterator, class K>

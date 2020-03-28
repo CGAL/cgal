@@ -1,4 +1,13 @@
 #include <cassert>
+#include <iostream>
+#include <utility>
+#include <CGAL/functional.h>
+#include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Real_embeddable_traits.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/enum.h>
+#include <CGAL/is_convertible.h>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 template <class NT1, class NT2>
@@ -50,58 +59,58 @@ template<class NT1,class NT2> struct Algebraic_structure_traits<checked_NT<NT1,N
   struct Is_zero
     : public CGAL::cpp98::unary_function< Type, bool > {
       bool operator()( const Type& x ) const {
-	bool a=CGAL::is_zero(x.x1);
-	bool b=CGAL::is_zero(x.x2);
-	assert(a==b);
-	return a;
+        bool a=CGAL::is_zero(x.x1);
+        bool b=CGAL::is_zero(x.x2);
+        assert(a==b);
+        return a;
       }
     };
   struct Is_one
     : public CGAL::cpp98::unary_function< Type, bool > {
       bool operator()( const Type& x ) const {
-	bool a=CGAL::is_one(x.x1);
-	bool b=CGAL::is_one(x.x2);
-	assert(a==b);
-	return a;
+        bool a=CGAL::is_one(x.x1);
+        bool b=CGAL::is_one(x.x2);
+        assert(a==b);
+        return a;
       }
     };
   struct Is_square
     : public CGAL::cpp98::unary_function< Type, bool > {
       bool operator()( const Type& x ) const {
-	bool a=CGAL::is_square(x.x1);
-	bool b=CGAL::is_square(x.x2);
-	assert(a==b);
-	return a;
+        bool a=CGAL::is_square(x.x1);
+        bool b=CGAL::is_square(x.x2);
+        assert(a==b);
+        return a;
       }
     };
   struct Square
     : public CGAL::cpp98::unary_function< Type, Type > {
       Type operator()( const Type& x ) const {
-	return Type(typename Type::pieces(),CGAL::square(x.x1),CGAL::square(x.x2));
+        return Type(typename Type::pieces(),CGAL::square(x.x1),CGAL::square(x.x2));
       }
     };
   struct Div
     : public CGAL::cpp98::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
-	return Type(typename Type::pieces(),
-	    CGAL::div(x.x1,y.x1),
-	    CGAL::div(x.x2,y.x2));
+        return Type(typename Type::pieces(),
+            CGAL::div(x.x1,y.x1),
+            CGAL::div(x.x2,y.x2));
       }
     };
   struct Mod
     : public CGAL::cpp98::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
-	return Type(typename Type::pieces(),
-	    CGAL::mod(x.x1,y.x1),
-	    CGAL::mod(x.x2,y.x2));
+        return Type(typename Type::pieces(),
+            CGAL::mod(x.x1,y.x1),
+            CGAL::mod(x.x2,y.x2));
       }
     };
   struct Integral_division
     : public CGAL::cpp98::binary_function< Type, Type, Type > {
       Type operator()( const Type& x, const Type& y ) const {
-	return Type(typename Type::pieces(),
-	    CGAL::integral_division(x.x1,y.x1),
-	    CGAL::integral_division(x.x2,y.x2));
+        return Type(typename Type::pieces(),
+            CGAL::integral_division(x.x1,y.x1),
+            CGAL::integral_division(x.x2,y.x2));
       }
     };
 };
@@ -112,33 +121,33 @@ template<class NT1,class NT2>struct Real_embeddable_traits<checked_NT<NT1,NT2> >
   struct Sgn
     : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
       ::CGAL::Sign operator()( const Type& x ) const {
-	::CGAL::Sign a=CGAL::sign(x.x1);
-	::CGAL::Sign b=CGAL::sign(x.x2);
-	assert(a==b);
-	return a;
+        ::CGAL::Sign a=CGAL::sign(x.x1);
+        ::CGAL::Sign b=CGAL::sign(x.x2);
+        assert(a==b);
+        return a;
       }
     };
   struct To_double
     : public CGAL::cpp98::unary_function< Type, double > {
       double operator()( const Type& x ) const {
-	return x.to_double();
+        return x.to_double();
       }
     };
   struct To_interval
     : public CGAL::cpp98::unary_function< Type, std::pair< double, double > > {
       std::pair<double, double> operator()( const Type& x ) const {
-	return x.to_interval();
+        return x.to_interval();
       }
     };
   struct Compare
     : public CGAL::cpp98::binary_function< Type, Type, Comparison_result > {
       Comparison_result operator()(
-	  const Type& x,
-	  const Type& y ) const {
-	Comparison_result a=CGAL::compare(x.x1,y.x1);
-	Comparison_result b=CGAL::compare(x.x2,y.x2);
-	assert(a==b);
-	return a;
+          const Type& x,
+          const Type& y ) const {
+        Comparison_result a=CGAL::compare(x.x1,y.x1);
+        Comparison_result b=CGAL::compare(x.x2,y.x2);
+        assert(a==b);
+        return a;
       }
     };
 

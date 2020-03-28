@@ -1,7 +1,7 @@
-//! \file examples/Envelope_3/ex_envelope_spheres.cpp
+//! \file examples/Envelope_3/envelope_spheres.cpp
 // Constructing the lower envelope of a set of spheres read from a file.
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
@@ -83,11 +83,11 @@ int main(int argc, char **argv)
 
   // Print the dimensions of the minimization diagram.
   std::cout << "V = " << min_diag.number_of_vertices()
-	    << ",  E = " << min_diag.number_of_edges()
-	    << ",  F = " << min_diag.number_of_faces() << std::endl;
+            << ",  E = " << min_diag.number_of_edges()
+            << ",  F = " << min_diag.number_of_faces() << std::endl;
 
   std::cout << "Construction took " << timer.time()
-	    << " seconds." << std::endl;
+            << " seconds." << std::endl;
 
   return 0;
 }

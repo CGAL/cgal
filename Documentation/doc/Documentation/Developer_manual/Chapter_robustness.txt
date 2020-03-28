@@ -16,36 +16,36 @@ inputs is small, but for other applications this fraction is large.
 on the correctness of the components that are used. Correctness of
 a component means behaving according to its (mathematical) specification.
 Simply speaking, the source of the robustness problem is that the default
-hardware-supported arithmetic does not really fulfill the requirements of 
+hardware-supported arithmetic does not really fulfill the requirements of
 the algorithm, since it does not implement arithmetic on the real numbers.
 
-Nevertheless, the generic implementation of the kernel primitives that are 
+Nevertheless, the generic implementation of the kernel primitives that are
 parameterized by the arithmetic (more precisely, by a number type)
 assumes that the arithmetic plugged in does behave as real arithmetic.
-The generic code does not and should not (otherwise it would slow down 
+The generic code does not and should not (otherwise it would slow down
 "exact" number types) deal with any potential imprecision. There are
 a number of (third-party provided) "exact" number types available for use
 with \cgal, where "exact" means
 that all decisions (comparison operations) are correct and that the
-representation of the numbers allows for refinement to an arbitrary precision, 
-if needed. 
+representation of the numbers allows for refinement to an arbitrary precision,
+if needed.
 Depending of the needed computations, a suitable exact number type
 can be `Quotient<MP_float>` or `gmpq` if rational computations
-are involved. 
-If roots of polynomials are needed, then the solution is to use 
+are involved.
+If roots of polynomials are needed, then the solution is to use
  `leda_real` provided by LEDA or `CORE::Expr` provided by CORE.
 
 \section Developer_manualTheroleofpredicatesandconstructions The role of predicates and constructions
 
 \cgal favors encapsulation of the basic arithmetic operations, the lowest
 level in geometric computing, into units on a higher level, namely,
-the level of geometric primitives, i.e., predicates and constructions. 
-Here predicates are used in a generalized sense, i.e., not only primitives 
-returning a Boolean value, but also primitives returning a value of 
+the level of geometric primitives, i.e., predicates and constructions.
+Here predicates are used in a generalized sense, i.e., not only primitives
+returning a Boolean value, but also primitives returning a value of
 some enumeration type, e.g. `CGAL::Sign`. So the value computed
-by a predicate does not involve any numerical data. Basic constructions 
+by a predicate does not involve any numerical data. Basic constructions
 construct new primitive geometric objects that may involve newly computed
-numerical data, i.e.\ that is not part of the input to the constructions. 
+numerical data, i.e.\ that is not part of the input to the constructions.
 An example of such a basic constructions is computing the midpoint of
 the straight line segment between two given points.
 A special kind of constructions is selections. For selections, all the data
@@ -58,8 +58,8 @@ numerical input data. \cgal also provides\cgalFootnote{at present, for the  dime
 specialization of the primitives
 that (are still fairly generic and) guarantee exact predicate results and
 much higher efficiency than exact number types like arbitrary precision
-integers or rationals. The efficiency relies on the use of speedy 
-floating-point arithmetic in order to filter out reliable floating-point 
+integers or rationals. The efficiency relies on the use of speedy
+floating-point arithmetic in order to filter out reliable floating-point
 computations. Interval arithmetic is largely used in such filter steps.
 
 \section Developer_manualRequirementsandrecommendations Requirements and recommendations
@@ -67,7 +67,7 @@ computations. Interval arithmetic is largely used in such filter steps.
 Recommendations:
 <UL>
 <LI>Encapsulate basic arithmetic in predicates and constructions.
-<LI>Use kernel primitives whenever possible. This allows you to use 
+<LI>Use kernel primitives whenever possible. This allows you to use
 the kernel as a traits class for your algorithm or data structure.
 <LI>If no appropriate kernel primitives are available, have a look at
 Chapter  \ref devman_kernels  on how to proceed.

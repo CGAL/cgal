@@ -84,6 +84,6 @@ int main()
     }
 
     cout << endl << "MV_weakly_convex_polygon_test: PASSED." << endl << endl;
-    
+
     return EXIT_SUCCESS;
 }

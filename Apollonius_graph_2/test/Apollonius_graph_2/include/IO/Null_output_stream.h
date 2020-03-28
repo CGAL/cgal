@@ -8,8 +8,8 @@
 //
 // ----------------------------------------------------------------------
 //
-// release       : 
-// release_date  : 
+// release       :
+// release_date  :
 //
 // file          : include/CGAL/IO/Null_output_stream.h
 // package       : IO
@@ -25,8 +25,6 @@
 
 #ifndef CGAL_NULL_OUTPUT_STREAM_H
 #define CGAL_NULL_OUTPUT_STREAM_H
-
-#include <CGAL/basic.h>
 
 
 namespace CGAL {

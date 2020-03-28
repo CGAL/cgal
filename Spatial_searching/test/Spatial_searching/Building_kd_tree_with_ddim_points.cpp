@@ -1,6 +1,5 @@
 // file: Building_kd_tree_with_ddim_points.C
 
-#include <CGAL/Cartesian_d.h>
 #include <CGAL/Homogeneous_d.h>
 #include <CGAL/constructions_d.h>
 #include <CGAL/Kd_tree.h>
@@ -15,7 +14,6 @@
 #include <cassert>
 #include <iostream>
 
-//typedef CGAL::Cartesian_d<double> K;
 typedef CGAL::Homogeneous_d<double> Kernel;
 typedef CGAL::Point_d<Kernel> Point;
 
@@ -41,14 +39,14 @@ template <class OK_search,class K_search>
 void run(const std::vector<Point>& points,const Point& query)
 {
   typename OK_search::Tree o_tree(
-      boost::make_transform_iterator(points.begin(),Create_point_with_info<typename OK_search::Point_d>()), 
+      boost::make_transform_iterator(points.begin(),Create_point_with_info<typename OK_search::Point_d>()),
       boost::make_transform_iterator(points.end(),Create_point_with_info<typename OK_search::Point_d>())
   );
-  
+
   o_tree.statistics(std::cout);
 
   typename K_search::Tree tree(
-      boost::make_transform_iterator(points.begin(),Create_point_with_info<typename K_search::Point_d>()), 
+      boost::make_transform_iterator(points.begin(),Create_point_with_info<typename K_search::Point_d>()),
       boost::make_transform_iterator(points.end(),Create_point_with_info<typename K_search::Point_d>())
   );
   tree.statistics(std::cout);
@@ -90,16 +88,16 @@ void run(const std::vector<Point>& points,const Point& query)
       assert(CGAL::squared_distance(query, *it) >= dist);
     }
   }
-  std::cout << "done" << std::endl;  
+  std::cout << "done" << std::endl;
 }
 
 int main() {
-  
- 
+
+
   std::vector<Point> points;
-  
+
   Point_generator g(3);
-  CGAL::cpp11::copy_n( g, N, std::back_inserter(points));
+  std::copy_n( g, N, std::back_inserter(points));
   g++;
   Point query = *g;
 

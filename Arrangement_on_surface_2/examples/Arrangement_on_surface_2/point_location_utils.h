@@ -53,7 +53,7 @@ print_point_location
   const Vertex_const_handle*   v;
   const Halfedge_const_handle* e;
   const Face_const_handle*     f;
-  
+
   std::cout << "The point (" << q << ") is located ";
   if ( ( f = boost::get<Face_const_handle>(&obj) ) )          // located inside a face
     std::cout << "inside "
@@ -98,7 +98,7 @@ void vertical_ray_shooting_query(const VerticalRayShoot& vrs,
 
   // Perform the point-location query.
   typename Vertical_ray_shooting::result_type obj = vrs.ray_shoot_up(q);
-  
+
   // Print the result.
   typedef typename Vertical_ray_shooting::Arrangement_2 Arrangement_2;
   typedef typename Arrangement_2::Vertex_const_handle   Vertex_const_handle;
@@ -108,7 +108,7 @@ void vertical_ray_shooting_query(const VerticalRayShoot& vrs,
   const Vertex_const_handle*   v;
   const Halfedge_const_handle* e;
   const Face_const_handle*     f;
-  
+
   std::cout << "Shooting up from (" << q << ") : ";
 
   if ( (v = boost::get<Vertex_const_handle>(&obj)) )         // we hit a vertex
@@ -128,7 +128,7 @@ void vertical_ray_shooting_query(const VerticalRayShoot& vrs,
 // the vertical ray-shooting examples.
 // The function assumes that the arrangement is of line segments with integer
 // coordinates.
-//			
+//
 template <class Arrangement_>
 void construct_segments_arr(Arrangement_& arr)
 {

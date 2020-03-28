@@ -1,26 +1,17 @@
 // Copyright (c) 2005-2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sebastien Loriot, Sylvain Pion
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/CGAL_Ipelet_base.h> 
+#include <CGAL/CGAL_Ipelet_base.h>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -57,7 +48,7 @@ const std::string hlpmsg[] = {
 "Generate k-th Delaunay triangulation and k-th dual Voronoi diagram. Note : k must be smaller than the number of input points."
 };
 
-class MdelaunayIpelet 
+class MdelaunayIpelet
   : public CGAL::Ipelet_base<Kernel,11> {
 public:
   MdelaunayIpelet()
@@ -73,24 +64,24 @@ void MdelaunayIpelet::protected_run(int fn)
   RegularI rti;
   Regular rt;
   //~ std::vector<Point_2> pt_list; I use instead pt_list
-  
+
   if (fn==10){
     show_help(false);
     return;
   }
-  
+
   std::vector<Point_2> pt_list;
-  
-  Iso_rectangle_2 bbox=read_active_objects( CGAL::dispatch_or_drop_output<Point_2>( std::back_inserter(pt_list) ) );  
-  
+
+  Iso_rectangle_2 bbox=read_active_objects( CGAL::dispatch_or_drop_output<Point_2>( std::back_inserter(pt_list) ) );
+
   if (pt_list.empty()){
     print_error_message("No mark selected");
     return;
   }
-  
-  
+
+
   dt.insert(pt_list.begin(),pt_list.end());
-  
+
   switch(fn){
     case 0://Classical Delauney
       draw_in_ipe(dt);
@@ -184,10 +175,10 @@ void MdelaunayIpelet::protected_run(int fn)
           boost::tie(ret_val,order)=request_value_from_user<int>("Enter order");
           if (ret_val < 0){
             print_error_message("Incorrect value");
-            return;  
+            return;
           }
           int nb_pts = pt_list.size();
-          
+
           if(order<1 || order>=nb_pts){
             print_error_message("Not a good order");
             return;

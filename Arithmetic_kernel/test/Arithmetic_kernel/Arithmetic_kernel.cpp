@@ -1,5 +1,5 @@
 #include <iostream>
-#include <CGAL/basic.h>
+
 #include <CGAL/Arithmetic_kernel.h>
 
 #if defined(CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL)
@@ -14,6 +14,6 @@ int main() {
 }
 
 #else
-#warning CGAL has no default CGAL::Arithmetic kernel 
+#warning CGAL has no default CGAL::Arithmetic kernel
 int main() { return 0; }
 #endif

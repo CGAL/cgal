@@ -3,19 +3,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Florent Lafarge, Simon Giraudot
 
@@ -72,7 +63,7 @@ class Elevation : public Feature_base
   std::vector<compressed_float> values;
   float z_max;
   float z_min;
-  
+
 public:
   /*!
     \brief Constructs the feature.
@@ -98,7 +89,7 @@ public:
 
     z_max = 0.f;
     z_min = std::numeric_limits<float>::max();
-    
+
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
@@ -121,9 +112,9 @@ public:
         }
 
     std::size_t square = (std::size_t)(0.5 * radius_dtm / grid.resolution()) + 1;
-    
+
     Image_float dtm_x(grid.width(),grid.height());
-    
+
     for (std::size_t j = 0; j < grid.height(); ++ j)
       for (std::size_t i = 0; i < grid.width(); ++ i)
         if (grid.has_points(i,j))
@@ -147,7 +138,7 @@ public:
       values.resize (input.size(), compressed_float(0));
     else
       dtm = Image_cfloat(grid.width(),grid.height());
-    
+
     for (std::size_t i = 0; i < grid.width(); ++ i)
       for (std::size_t j = 0; j < grid.height(); ++ j)
         if (grid.has_points(i,j))
@@ -189,7 +180,7 @@ public:
     }
     else
       d = decompress_float (values[pt_index], z_min, z_max);
-    
+
     return ((float)(get(point_map, *(input.begin()+pt_index)).z()-d));
   }
 

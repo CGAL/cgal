@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.1...3.15)
 project( Algebraic_kernel_d_Examples )
 
-cmake_minimum_required(VERSION 3.1)
 
 
 find_package(CGAL QUIET COMPONENTS Core)
@@ -22,7 +22,7 @@ if( CGAL_FOUND AND MPFI_FOUND)
   create_single_source_cgal_program( "Solve_1.cpp" )
 
 else()
-  
+
     message(STATUS "This program requires the CGAL library and MPFI, and will not be compiled.")
-  
+
 endif()

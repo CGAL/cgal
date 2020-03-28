@@ -9,10 +9,10 @@
 // intended for general use.
 //
 // ----------------------------------------------------------------------------
-// 
+//
 // release       :
 // release_date  :
-// 
+//
 // file          : test/Triangulation/include/CGAL/_test_cls_constrained...
 // source        : $URL$
 // revision      : $Id$
@@ -24,9 +24,72 @@
 
 #include <list>
 #include <CGAL/_test_cls_triangulation_short_2.h>
+#include <boost/type_traits/is_same.hpp>
+
+enum Intersection_type {
+  NO_INTERSECTION = 0,
+  INTERSECTION_WITHOUT_CONSTRUCTION,
+  INTERSECTION
+};
+
+template <class Triang, class Pt>
+void
+_test_cdt_throwing(const Pt& p0, const Pt& p1, const Pt& p2, const Pt& p3,
+                   const Intersection_type& intersection_type)
+{
+  std::cout << "test_cdt_throwing [" << p0 << "] - [" << p1 << "] || [" << p2 << "] - [" << p3 << "]" << std::endl;
+
+  try
+  {
+    Triang tr;
+    tr.insert_constraint(p0, p1);
+    tr.insert_constraint(p2, p3);
+  }
+  catch (typename Triang::Intersection_of_constraints_exception& /*e*/)
+  {
+    std::cout << "threw, expected: " << intersection_type << std::endl;
+
+    // There must have been an intersection
+    assert(intersection_type != NO_INTERSECTION);
+
+    // If the intersection requires no construction, then only 'No_constraint_intersection_tag' throws
+    if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION)
+    {
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
+    }
+    else // threw and it's not a construction-less intersection ---> real intersection
+    {
+      assert(intersection_type == INTERSECTION);
+#if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
+             (boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value) ||
+             (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+#else
+      assert((boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) ||
+             (boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+#endif
+    }
+
+    return;
+  }
+
+  if(intersection_type == INTERSECTION_WITHOUT_CONSTRUCTION)
+  {
+    // Even with an intersection without construction, 'No_constraint_intersection_tag' should have thrown
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value));
+  }
+  else if(intersection_type == INTERSECTION)
+  {
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_tag>::value) &&
+           !(boost::is_same<typename Triang::Itag, CGAL::No_constraint_intersection_requiring_constructions_tag>::value));
+#if !defined(CGAL_NO_DEPRECATED_CODE) && defined(CGAL_NO_DEPRECATION_WARNINGS)
+    assert(!(boost::is_same<typename Triang::Itag, CGAL::No_intersection_tag>::value));
+#endif
+  }
+}
 
 template <class Triang>
-void 
+void
 _test_cls_constrained_triangulation(const Triang &)
 {
   // typedef Triangulation                       Cls;
@@ -69,7 +132,7 @@ _test_cls_constrained_triangulation(const Triang &)
   assert( T0_1.dimension() == -1 );
   assert( T0_1.number_of_vertices() == 0 );
   assert( T0_1.is_valid() );
-  
+
   l.push_back(Constraint(Point(0,0),Point(0,0)));
   Triang T0_2(l);
   assert( T0_2.dimension() == 0 );
@@ -86,7 +149,7 @@ _test_cls_constrained_triangulation(const Triang &)
   assert( T1_1.dimension() == 1 );
   assert( T1_1.number_of_vertices() == 4 );
   assert( T1_1.is_valid() );
-  
+
   l.erase(l.begin(),l.end());
   for (m=0; m<4; m++)
     l.push_back(Constraint(Point(3*m, 2*m),Point(3*(m+1),2*(m+1)) ));
@@ -105,7 +168,7 @@ _test_cls_constrained_triangulation(const Triang &)
   assert( T2_1.dimension() == 2 );
   assert( T2_1.number_of_vertices() == 5);
   assert( T2_1.is_valid() );
- 
+
   l.erase(l.begin(),l.end());
 
   Point lpt[20] = {
@@ -114,14 +177,14 @@ _test_cls_constrained_triangulation(const Triang &)
   Point(0,2), Point(1,2), Point(2,2), Point(3,2),Point(4,2),
   Point(4,3), Point(3,3), Point(2,3), Point(1,3),Point(0,3)
   };
-  for (m=0;m<19;m++) 
+  for (m=0;m<19;m++)
     l.push_back(Constraint(lpt[m],lpt[m+1]));
   Triang T2_2(l);
   assert( T2_2.dimension() == 2 );
   assert( T2_2.number_of_vertices() == 20);
   assert( T2_2.is_valid() );
 
- 
+
   // Build triangulation with iterator
    std::cout << "    with input iterator" << std::endl;
    list_iterator first=l.begin();
@@ -134,7 +197,7 @@ _test_cls_constrained_triangulation(const Triang &)
    // between constrained and Constrained Delaunay
    Triang T2_5;
    for (int j=0; j < 20; j++) T2_5.insert(lpt[j]);
-   T2_5.insert( Point(1,0.5), Point(2.5, 3.5));
+   T2_5.insert_constraint( Point(1,0.5), Point(2.5, 3.5));
    T2_5.is_valid();
 
 
@@ -164,7 +227,7 @@ _test_cls_constrained_triangulation(const Triang &)
   std::ofstream of1_2("T12.triangulation");
   CGAL::set_ascii_mode(of1_2);
    of1_2 << T1_2; of1_2.close();
-  
+
   std::ofstream of2_1("T21.triangulation");
   CGAL::set_ascii_mode(of2_1);
   of2_1 << T2_1; of2_1.close();
@@ -200,18 +263,18 @@ _test_cls_constrained_triangulation(const Triang &)
   All_faces_iterator fit2 = T2_2.all_faces_begin();
   All_faces_iterator fit2_bis = T2_4.all_faces_begin();
   for( ; fit2 != T2_2.all_faces_end(); ++fit2, ++fit2_bis) {
-    for(int i=0; i<3 ; i++)  
+    for(int i=0; i<3 ; i++)
     assert( fit2->is_constrained(i) ==  fit2_bis->is_constrained(i) );
   }
-  
-  
-  
+
+
+
   // remove_constraint and remove _1 dim
   std::cout << "remove_constrained_edge and remove 1-dim" << std::endl;
   Face_handle fh;
   int ih;
   Vertex_handle vha, vhb;
-  Locate_type lt; 
+  Locate_type lt;
   int li;
   fh  =  T1_2.locate(Point(0,0),lt,li); assert( lt == Triang::VERTEX );
   vha = fh->vertex(li);
@@ -220,8 +283,9 @@ _test_cls_constrained_triangulation(const Triang &)
   assert(T1_2.is_edge(vha,vhb, fh, ih));
   assert(fh->is_constrained(ih));
   T1_2.remove_constrained_edge(fh,ih);
+  assert(!fh->is_constrained(ih));
   assert(T1_2.is_valid());
-  T1_2.insert(Point(0,0),Point(3,2));
+  T1_2.insert_constraint(Point(0,0),Point(3,2));
   fh  =  T1_2.locate(Point(3,2),lt,li); assert( lt == Triang::VERTEX );
   vhb =  fh->vertex(li);
   assert(T1_2.are_there_incident_constraints(vhb));
@@ -231,17 +295,16 @@ _test_cls_constrained_triangulation(const Triang &)
   vha = fh->vertex(li);
   List_edges edges;
   assert(T1_2.are_there_incident_constraints(vha,
-					     std::back_inserter(edges)));
+                                             std::back_inserter(edges)));
   List_edges ic_edges;
   std::back_insert_iterator<List_edges> inserter(ic_edges);
   inserter  = T1_2.incident_constraints(vha, inserter);
-  assert(ic_edges.size() == 1); 
+  assert(ic_edges.size() == 1);
   T1_2.remove_incident_constraints(vha);
   inserter = T1_2.incident_constraints(vha, inserter );
-  assert(ic_edges.size() == 1); 
+  assert(ic_edges.size() == 1);
   T1_2.remove(vha);
   assert(T1_2.is_valid());
-  
 
    // remove_constraint and remove 2 dim
   std::cout << "remove_constrained_edge and remove 2-dim " << std::endl;
@@ -257,7 +320,7 @@ _test_cls_constrained_triangulation(const Triang &)
   T2_2.insert(lpt[m], lpt[m+1]);
   assert(T2_2.is_valid());
   fh  =  T2_2.locate(lpt[m+1],lt,li); assert( lt == Triang::VERTEX );
-  vhb =  fh->vertex(li);  
+  vhb =  fh->vertex(li);
   assert(T2_2.are_there_incident_constraints(vhb));
   T2_2.remove_incident_constraints(vhb);
   T2_2.remove(vhb);
@@ -268,12 +331,12 @@ _test_cls_constrained_triangulation(const Triang &)
   edges.clear();
   ic_edges.clear();
   assert(T2_2.are_there_incident_constraints(vha));
-  assert(T2_2.are_there_incident_constraints(vha, 
-					     std::back_inserter(edges)));
+  assert(T2_2.are_there_incident_constraints(vha,
+                                             std::back_inserter(edges)));
   ic_edges.clear();
   inserter = std::back_insert_iterator<List_edges>(ic_edges);
   inserter  = T2_2.incident_constraints(vha,inserter);
-  assert(ic_edges.size() == 2); 
+  assert(ic_edges.size() == 2);
   T2_2.remove_incident_constraints(vha);
   inserter = T2_2.incident_constraints(vha, inserter);
   assert(ic_edges.size() == 2);
@@ -290,4 +353,28 @@ _test_cls_constrained_triangulation(const Triang &)
 
   T2_6.insert_constraint(Point(1,0.1), Point(2,0.2));
   assert(std::distance(T2_6.constrained_edges_begin(),  T2_6.constrained_edges_end()) == 1);
+
+  // test throwing/not throwing on intersecting constraints
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(2, 2), Point(2, 3), NO_INTERSECTION);
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(1, 1), Point(1, 1), Point(2, 2), NO_INTERSECTION); // common point
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(2, 2), Point(3, 3), NO_INTERSECTION); // ^
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 1), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // overlapping
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(1, 1), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(0, 0), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(0, 0), Point(3, 3), Point(0, 0), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 1), Point(2, 2), INTERSECTION_WITHOUT_CONSTRUCTION); // contains
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(2, 2), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(1, 1), Point(2, 2), Point(3, 3), Point(0, 0), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(2, 2), Point(1, 1), Point(3, 3), Point(0, 0), INTERSECTION_WITHOUT_CONSTRUCTION); // ^
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(0, 0), Point(3, 3), INTERSECTION_WITHOUT_CONSTRUCTION); // same constraint
+  _test_cdt_throwing<Triang>(Point(3, 3), Point(0, 0), Point(1, 1), Point(1, 1), INTERSECTION_WITHOUT_CONSTRUCTION); // degenerate entry
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(0, 0), Point(0, 0), Point(0, 0), NO_INTERSECTION); // degenerate same entry
+
+  // extremity on the interior of another segment
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 0), Point(1, 0), Point(1, 4), INTERSECTION_WITHOUT_CONSTRUCTION);
+
+  // non aligned
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(3, 3), Point(1, 0), Point(4, 0), NO_INTERSECTION);
+  _test_cdt_throwing<Triang>(Point(0, 2), Point(2, 2), Point(1, 0), Point(1, 3), INTERSECTION); // generic intersection
+  _test_cdt_throwing<Triang>(Point(0, 0), Point(2, 2), Point(1, 3), Point(1, 0), INTERSECTION);
 }

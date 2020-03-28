@@ -18,7 +18,6 @@
 #include <CGAL/Timer.h>
 
 #include <functional>
-#include <boost/foreach.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
 #include <fstream>
@@ -61,8 +60,8 @@ public:
   Point_projector(PolygonMesh& pm)
     : ppmap(&get(CGAL::vertex_point, pm))
   {}
-  
-  result_type operator()(const value_type& v) const 
+
+  result_type operator()(const value_type& v) const
   {
     assert(ppmap != NULL);
     return (*ppmap)[v];
@@ -88,7 +87,7 @@ public:
 
 template <typename PolygonMesh>
 CGAL::Iterator_range<Point_iterator<PolygonMesh> > points(const PolygonMesh& m)
-{ 
+{
   return CGAL::make_range(Point_iterator<PolygonMesh>(vertices(m).begin(),m), Point_iterator<PolygonMesh>(vertices(m).end(),m));
 }
 
@@ -101,7 +100,7 @@ int main(int argc, char* argv[])
   if (!input || !(input >> m)){
     std::cerr << "Error: can not read file.\n";
     return 1;
-  } 
+  }
 
   Timer t;
   t.start();
@@ -111,7 +110,7 @@ int main(int argc, char* argv[])
   double zmin = ic.min().z();
   double zmax = ic.max().z();
   double delta = (zmax - zmin)/N;
- 
+
   std::cerr << "slicer"<< std::endl;
   CGAL::Polygon_mesh_slicer_3<Mesh, K> slicer(m);
 
@@ -124,20 +123,20 @@ int main(int argc, char* argv[])
     slicer(K::Plane_3(Point_3(0,0,zmin+delta*i), Vector_3(0,0,1)), std::back_inserter(polylines));
     t.stop();
     polycount += polylines.size();
-    BOOST_FOREACH(Polyline pl, polylines){
+    for(Polyline pl : polylines){
       vertex_count += pl.size();
       out << pl.size();
-      BOOST_FOREACH(Point_3 p, pl){
+      for(Point_3 p : pl){
         out << " " << p;
       }
       out << std::endl;
     }
     t.start();
-    
+
   }
   t.stop();
-  std::cerr << N << " layers in a model with " << num_faces(m) << " triangles"<< std::endl; 
+  std::cerr << N << " layers in a model with " << num_faces(m) << " triangles"<< std::endl;
   std::cerr << polycount << " polylines with in total " << vertex_count << " vertices computed in "<< t.time() << " sec." << std::endl;
-  
+
   return 0;
 }

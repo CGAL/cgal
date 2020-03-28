@@ -35,6 +35,6 @@ int main ()
   point_location_query (landmarks_pl, Point_2(3, 2));    // q4
   point_location_query (landmarks_pl, Point_2(5, 2));    // q5
   point_location_query (landmarks_pl, Point_2(1, 0));    // q6
-  
+
   return 0;
 }

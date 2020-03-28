@@ -14,7 +14,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
-typedef CGAL::cpp11::array<double,6> Covariance;
+typedef std::array<double,6> Covariance;
 
 
 bool test_fandisk()
@@ -24,7 +24,7 @@ std::cout << "=== test_fandisk ===\n";
   CGAL::Identity_property_map<Point> pmap;
   Covariance expected;
   int index;
-  
+
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   std::vector<Covariance> cov;

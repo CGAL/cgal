@@ -1,6 +1,5 @@
 #include <vector>
 
-#include <boost/foreach.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
@@ -31,7 +30,7 @@ int main()
 
   /* face_descriptor f = */ m.add_face(u,v,w,x);
 
-  { 
+  {
     std::cout << "all vertices " << std::endl;
 
     // The vertex iterator type is a nested type of the Vertex_range
@@ -39,7 +38,7 @@ int main()
 
     Mesh::Vertex_range r = m.vertices();
     // The iterators can be accessed through the C++ range API
-    vb = r.begin(); 
+    vb = r.begin();
     ve = r.end();
     // or the boost Range API
     vb = boost::begin(r);
@@ -49,21 +48,19 @@ int main()
     for(boost::tie(vb, ve) = m.vertices(); vb != ve; ++vb){
             std::cout << *vb << std::endl;
     }
-    
+
     // Instead of the classical for loop one can use
     // the boost macro for a range
-    BOOST_FOREACH(vertex_descriptor vd, m.vertices()){
-      std::cout << vd << std::endl;
-    }
-
-    // or the C++11 for loop. Note that there is a ':' and not a ',' as in BOOST_FOREACH 
-    #ifndef CGAL_CFG_NO_CPP0X_RANGE_BASED_FOR
     for(vertex_descriptor vd : m.vertices()){
       std::cout << vd << std::endl;
     }
-    #endif
-    
+
+    // or the C++11 for loop. Note that there is a ':' and not a ',' as in BOOST_FOREACH
+    for(vertex_descriptor vd : m.vertices()){
+      std::cout << vd << std::endl;
+    }
+
   }
-  
+
   return 0;
 }

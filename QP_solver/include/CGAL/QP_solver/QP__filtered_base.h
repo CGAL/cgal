@@ -2,25 +2,16 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Sven Schoenherr
 //                 Bernd Gaertner <gaertner@inf.ethz.ch>
 //                 Franz Wessendorp
-//                 Kaspar Fischer 
+//                 Kaspar Fischer
 
 #ifndef CGAL_QP__FILTERED_BASE_H
 #define CGAL_QP__FILTERED_BASE_H
@@ -65,7 +56,7 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
 
     // construction
     QP__filtered_base( ET2NT et2nt = ET2NT());
-    
+
     // initialization
     virtual  void  set ( );
     virtual  void  init( );
@@ -78,13 +69,13 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
     NT mu_j_NT( int j) const
     {
       return mu_j_NT(j, Is_nonnegative());
-    } 
+    }
 
     void  update_maxima( );
 
     // this function returns true if j is not a candidate for the
-    // entering variable. This can be deduced if the inexact mu_j 
-    // is sufficiently far away from 0. This test uses the error 
+    // entering variable. This can be deduced if the inexact mu_j
+    // is sufficiently far away from 0. This test uses the error
     // bounds from Sven's thesis (p.99), see also the C-file. Only
     // if these bounds are insufficient, exact arithmetic is used
     bool  certify_mu_j_NT( int j) const {
@@ -115,10 +106,10 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
     void  update_maxima( Tag_false is_linear);
 
     void  transition( int n, Tag_true  is_linear);
-    void  transition( int n, Tag_false is_linear);    
-    
-    NT    mu_j_NT( int j, Tag_true is_in_standard_form) const; 
-    NT    mu_j_NT( int j, Tag_false is_in_standard_form) const { 
+    void  transition( int n, Tag_false is_linear);
+
+    NT    mu_j_NT( int j, Tag_true is_in_standard_form) const;
+    NT    mu_j_NT( int j, Tag_false is_in_standard_form) const {
       return  mu_j_NT(j, is_in_standard_form, Is_linear());
     }
     NT    mu_j_NT( int j, Tag_false, Tag_true) const; // variable bounds, LP
@@ -135,12 +126,12 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
 
     // some more types
     typedef  typename Q::A_iterator   A_iterator;
-    typedef  typename Q::C_iterator   C_iterator;   
+    typedef  typename Q::C_iterator   C_iterator;
     typedef  typename std::iterator_traits
         <typename Q::D_iterator>::value_type
                                         D_row_iterator;
     typedef  typename Q::R_iterator R_iterator;
-					
+
     typedef typename Base::QP_solver::C_auxiliary_iterator C_auxiliary_iterator;
 
     typedef  typename Base::QP_solver::Basic_variable_index_iterator
@@ -153,10 +144,10 @@ class QP__filtered_base : virtual public QP_pricing_strategy<Q, ET, Tags> {
 
     // data members
     int n;                              // number of solver variables
-    NT q;                               // for the error bounds 
+    NT q;                               // for the error bounds
     mutable
     NT w_j_NT;                          // inexact version of w[j]
-  
+
     ET2NT                    et2nt_obj; // conversion from ET to NT
 
     Values_NT                lambda_NT; // NT version of lambda (from KKT)
@@ -200,7 +191,7 @@ template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ > inl
 void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 set( int l, Tag_true)
 {
-     x_B_O_NT.resize( l, nt0);   
+     x_B_O_NT.resize( l, nt0);
 }
 
 // initialization
@@ -225,11 +216,11 @@ void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 init_NT( Tag_false)
 {
     if ( this->solver().number_of_basic_original_variables()
-	 > static_cast< int>( x_B_O_NT.size())) x_B_O_NT.push_back( nt0);
+         > static_cast< int>( x_B_O_NT.size())) x_B_O_NT.push_back( nt0);
 
     std::transform( this->solver().basic_original_variables_numerator_begin(),
-		    this->solver().basic_original_variables_numerator_end(),
-		    x_B_O_NT.begin(), et2nt_obj);
+                    this->solver().basic_original_variables_numerator_end(),
+                    x_B_O_NT.begin(), et2nt_obj);
 }
 
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline        // LP case
@@ -258,10 +249,10 @@ template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  in
 NT_  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
 mu_j_NT( int j, Tag_false, Tag_false) const // variable bounds, QP case
 {
-  w_j_NT = ( (j < n && this->solver().phase() == 2) ? 
-		et2nt_obj( this->solver().w_j_numerator(j)) : nt0 );
-  return this->solver().mu_j( j, lambda_NT.begin(), 
-				x_B_O_NT.begin(), w_j_NT, d_NT);
+  w_j_NT = ( (j < n && this->solver().phase() == 2) ?
+                et2nt_obj( this->solver().w_j_numerator(j)) : nt0 );
+  return this->solver().mu_j( j, lambda_NT.begin(),
+                                x_B_O_NT.begin(), w_j_NT, d_NT);
 }
 
 
@@ -283,14 +274,14 @@ transition( int, Tag_true)
 
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline // standard form
 void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
-set_q(int c, int b, Tag_true) 
+set_q(int c, int b, Tag_true)
 {
    q = std::ldexp( 1.015625 * ( c+b+1) * ( c+b+2), -53);
 }
 
 template < typename Q, typename ET, typename Tags, class NT_, class ET2NT_ >  inline // variable bounds
 void  QP__filtered_base<Q,ET,Tags,NT_,ET2NT_>::
-set_q(int c, int b, Tag_false) 
+set_q(int c, int b, Tag_false)
 {
    q = std::ldexp( 1.015625 * ( c+b+2) * ( c+b+3), -53);
 }

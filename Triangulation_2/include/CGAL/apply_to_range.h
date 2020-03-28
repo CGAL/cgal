@@ -1,21 +1,12 @@
 // Copyright (c) 2002-2004  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Radu Ursu
 
@@ -30,7 +21,7 @@ namespace CGAL{
 
 
 template <class Tr, class Fct, class R>
-void apply_to_range(const Tr &t, 
+void apply_to_range(const Tr &t,
              const Point_2<R> &p1, const Point_2<R> &p2,
              Fct& fct)
 {
@@ -41,17 +32,17 @@ void apply_to_range(const Tr &t,
   typedef typename Tr::Line_face_circulator      LFC;
   typedef typename Tr::Finite_vertices_iterator  FVI;
   typedef typename Tr::Finite_faces_iterator     FFI;
-  typedef typename Kernel_traits<POINT>::Kernel K; 
+  typedef typename Kernel_traits<POINT>::Kernel K;
   typedef typename K::FT FT;
 
   LFC l1, l2, l3, l4;         //the faces that intersect the pixmap RECTANGLE
-  hFACE hface1, hface2, 
+  hFACE hface1, hface2,
         hface3, hface4;       //the faces where we start to search
-  FT    xr_left,   yr_top, 
-        xr_right,  yr_bottom;//the coordinates of the screen boundaries  
-  CGAL::Unique_hash_map<hFACE, bool> visited(false);//used for DFS  
+  FT    xr_left,   yr_top,
+        xr_right,  yr_bottom;//the coordinates of the screen boundaries
+  CGAL::Unique_hash_map<hFACE, bool> visited(false);//used for DFS
   std::stack<hFACE>               face_stack; //used for DFS
-  
+
   xr_left = p1.x(); xr_right = p2.x();
   yr_top = p1.y(); yr_bottom = p2.y();
 
@@ -59,18 +50,18 @@ void apply_to_range(const Tr &t,
   hface2 = t.locate(POINT(xr_right, yr_top));
   hface3 = t.locate(POINT(xr_right, yr_bottom));
   hface4 = t.locate(POINT(xr_left, yr_bottom));
-  
+
   l1 = t.line_walk(POINT(xr_left, yr_top), POINT(xr_right, yr_top), hface1);
   l2 = t.line_walk(POINT(xr_right, yr_top), POINT(xr_right, yr_bottom), hface2);
   l3 = t.line_walk(POINT(xr_right, yr_bottom), POINT(xr_left, yr_bottom), hface3);
   l4 = t.line_walk(POINT(xr_left, yr_bottom), POINT(xr_left, yr_top), hface4);
 
   //test if everything is inside or outside
-  if( (l1 == (Nullptr_t) NULL) && (l2 == (Nullptr_t) NULL) &&
-      (l3 == (Nullptr_t) NULL) && (l4 == (Nullptr_t) NULL)) 
+  if( (l1 == nullptr) && (l2 == nullptr) &&
+      (l3 == nullptr) && (l4 == nullptr))
   {
     FVI v = t.finite_vertices_begin();
-    if((*v).point().x() < xr_left || (*v).point().x() > xr_right || 
+    if((*v).point().x() < xr_left || (*v).point().x() > xr_right ||
        (*v).point().y() < yr_bottom || (*v).point().y() > yr_top) //true if everything is outside
       return;
     else{ //everything is inside
@@ -87,41 +78,41 @@ void apply_to_range(const Tr &t,
   //if we are here, then a part of the triangulation is inside, the other is outside
 
   //put all the faces on the boundaries in the stack and the map
-  if(l1 != (Nullptr_t) NULL) //found at least one face that intersect the TOP segment
+  if(l1 != nullptr) //found at least one face that intersect the TOP segment
   {
     while (t.is_infinite(l1)) l1++; //we should start with a finite face
     do{                             //put all of them in the stack;
       face_stack.push(l1);
       visited[l1] = true;
       l1++;
-    }while(!t.is_infinite(l1) && 
-	   t.triangle(l1).has_on_unbounded_side(POINT(xr_right, yr_top)));
+    }while(!t.is_infinite(l1) &&
+           t.triangle(l1).has_on_unbounded_side(POINT(xr_right, yr_top)));
   }
-  if(l2 != (Nullptr_t) NULL) //found at least one face that intersect the RIGHT segment
+  if(l2 != nullptr) //found at least one face that intersect the RIGHT segment
   {
     while (t.is_infinite(l2)) l2++; //we should start with a finite face
     do{                             //put all of them in the stack;
       if(!visited[l2]){
         face_stack.push(l2);
-        visited[l2] = true;       
+        visited[l2] = true;
       }
       l2++;
-    }while(!t.is_infinite(l2) && 
-	   t.triangle(l2).has_on_unbounded_side(POINT(xr_right, yr_bottom)));
+    }while(!t.is_infinite(l2) &&
+           t.triangle(l2).has_on_unbounded_side(POINT(xr_right, yr_bottom)));
   }
-  if(l3 != (Nullptr_t) NULL) //found at least one face that intersect the BOTTOM segment
+  if(l3 != nullptr) //found at least one face that intersect the BOTTOM segment
   {
     while (t.is_infinite(l3)) l3++; //we should start with a finite face
     do{                             //put all of them in the stack;
       if(!visited[l3]){
         face_stack.push(l3);
-        visited[l3] = true;        
+        visited[l3] = true;
       }
       l3++;
-    }while(!t.is_infinite(l3) && 
-	   t.triangle(l3).has_on_unbounded_side(POINT(xr_left, yr_bottom)));
+    }while(!t.is_infinite(l3) &&
+           t.triangle(l3).has_on_unbounded_side(POINT(xr_left, yr_bottom)));
   }
-  if(l4 != (Nullptr_t) NULL) //found at least one face that intersect the LEFT segment
+  if(l4 != nullptr) //found at least one face that intersect the LEFT segment
   {
     while (t.is_infinite(l4)) l4++; //we should start with a finite face
     do{                             //put all of them in the stack;
@@ -130,13 +121,13 @@ void apply_to_range(const Tr &t,
         visited[l4] = true;
       }
       l4++;
-    }while(!t.is_infinite(l4) && 
-	   t.triangle(l4).has_on_unbounded_side(POINT(xr_left, yr_top)));
+    }while(!t.is_infinite(l4) &&
+           t.triangle(l4).has_on_unbounded_side(POINT(xr_left, yr_top)));
   }
-  
+
   //HERE we begin to walk through the faces DFS
   hFACE hf;
-  typename CGAL::Unique_hash_map<hFACE,bool>::Data& 
+  typename CGAL::Unique_hash_map<hFACE,bool>::Data&
      data_ref_start(visited[hf]);
   data_ref_start = true;
   while(!face_stack.empty()){
@@ -149,7 +140,7 @@ void apply_to_range(const Tr &t,
           if(!((*hv).point().x() < xr_left || (*hv).point().x() > xr_right ||
                (*hv).point().y() < yr_bottom || (*hv).point().y() > yr_top)) //true if the vertex is outside
           face_stack.push((*hf).neighbor(i));
-          typename CGAL::Unique_hash_map<hFACE,bool>::Data& 
+          typename CGAL::Unique_hash_map<hFACE,bool>::Data&
               data_ref(visited[(*hf).neighbor(i)]);
           data_ref = true;
         }

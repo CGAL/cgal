@@ -11,7 +11,6 @@
 #include <CGAL/Unique_hash_map.h>
 
 #include <boost/array.hpp>
-#include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <cstdlib>
@@ -41,7 +40,7 @@ bool read_vertices(const PolyMesh& mesh,
                    Vd_array& fixed_vertices)
 {
   std::string str = filename;
-  if(str.substr(str.length() - 14) != ".selection.txt") {
+  if( (str.length()) < 14 || (str.substr(str.length() - 14) != ".selection.txt") ) {
     std::cerr << "Error: vertices must be given by a *.selection.txt file" << std::endl;
     return false;
   }

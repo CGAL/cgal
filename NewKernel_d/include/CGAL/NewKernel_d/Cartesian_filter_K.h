@@ -1,20 +1,11 @@
 // Copyright (c) 2014
 // INRIA Saclay-Ile de France (France)
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Marc Glisse
 
@@ -33,12 +24,12 @@ template < typename Base_, typename AK_, typename EK_ >
 struct Cartesian_filter_K : public Base_,
   private Store_kernel<AK_>, private Store_kernel2<EK_>
 {
-    CGAL_CONSTEXPR Cartesian_filter_K(){}
-    CGAL_CONSTEXPR Cartesian_filter_K(int d):Base_(d){}
+    constexpr Cartesian_filter_K(){}
+    constexpr Cartesian_filter_K(int d):Base_(d){}
     //FIXME: or do we want an instance of AK and EK belonging to this kernel,
     //instead of a reference to external ones?
-    CGAL_CONSTEXPR Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
-    CGAL_CONSTEXPR Cartesian_filter_K(int d,AK_ const&a,EK_ const&b):Base_(d),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
+    constexpr Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
+    constexpr Cartesian_filter_K(int d,AK_ const&a,EK_ const&b):Base_(d),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
     typedef Base_ Kernel_base;
     typedef AK_ AK;
     typedef EK_ EK;
@@ -70,7 +61,7 @@ struct Cartesian_filter_K : public Base_,
     };
 // TODO:
 //    template<class T> struct Functor<T,No_filter_tag,Predicate_tag> :
-//	    Kernel_base::template Functor<T,No_filter_tag> {};
+//            Kernel_base::template Functor<T,No_filter_tag> {};
 // TODO:
 // detect when Less_cartesian_coordinate doesn't need filtering
 };

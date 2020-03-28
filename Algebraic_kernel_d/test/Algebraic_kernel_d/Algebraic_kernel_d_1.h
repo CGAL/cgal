@@ -16,7 +16,6 @@
 
 #define CGAL_TEST_ALL_AK_VARIANTS 1
 
-#include <CGAL/basic.h>
 #include <CGAL/Algebraic_kernel_d_1.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep_bfi.h>
 #include <CGAL/Algebraic_kernel_d/Algebraic_real_rep.h>

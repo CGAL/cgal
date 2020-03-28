@@ -1,5 +1,4 @@
 #include <iostream>
-#include <boost/foreach.hpp>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -28,7 +27,7 @@ namespace boost {
   struct property_map<My::Mesh, T>
     : public boost::property_map<My::Mesh::Base, T>
   {};
-  
+
 }
 
 namespace CGAL{
@@ -47,17 +46,17 @@ int main()
   typedef boost::property_map<My::Mesh,CGAL::vertex_point_t>::type Point_property_map;
   Point_property_map ppm = get(CGAL::vertex_point, mesh);
 
-  BOOST_FOREACH(vertex_descriptor vd , vertices(mesh)){
+  for(vertex_descriptor vd : vertices(mesh)){
     if (vd != boost::graph_traits<My::Mesh>::null_vertex()){
       std::cout << vd << " at " << get(ppm, vd) << std::endl;
     }
   }
   std::cout << CGAL::Polygon_mesh_processing::bbox(mesh) << std::endl;
-  
+
   return 0;
 }
 
- 
 
 
- 
+
+

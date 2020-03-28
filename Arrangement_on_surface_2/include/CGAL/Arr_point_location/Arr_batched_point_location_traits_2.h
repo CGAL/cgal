@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
@@ -420,7 +411,7 @@ public:
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
     return (Compare_y_at_x_right_2
-	    (m_base_traits->compare_y_at_x_right_2_object()));
+            (m_base_traits->compare_y_at_x_right_2_object()));
   }
 
   /*! A functor that checks whether two points and two x-monotone curves are
@@ -451,7 +442,7 @@ public:
   public:
     /*! Check if two curves are the same. */
     bool operator() (const X_monotone_curve_2& xcv1,
-		     const X_monotone_curve_2& xcv2) const
+                     const X_monotone_curve_2& xcv2) const
     {
       if (xcv1.halfedge_handle() == xcv2.halfedge_handle() &&
           xcv1.halfedge_handle() != invalid_he)
@@ -932,7 +923,7 @@ public:
     {
       return m_base->compare_x_near_boundary_2_object()(xcv1.base(),
                                                         xcv2.base(),
-							ce);
+                                                        ce);
     }
   };
 

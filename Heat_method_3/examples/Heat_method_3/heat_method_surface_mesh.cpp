@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 
-#include <boost/foreach.hpp>
 
 typedef CGAL::Simple_cartesian<double>                       Kernel;
 typedef Kernel::Point_3                                      Point_3;
@@ -25,7 +24,7 @@ int main(int argc, char* argv[])
     std::cerr << "Not a valid off file." << std::endl;
     return 1;
   }
-  
+
   //property map for the distance values to the source set
   Vertex_distance_map vertex_distance = tm.add_property_map<vertex_descriptor, double>("v:distance", 0).first;
 
@@ -35,14 +34,14 @@ int main(int argc, char* argv[])
   vertex_descriptor source = *(vertices(tm).first);
   hm.add_source(source);
   hm.estimate_geodesic_distances(vertex_distance);
-  
+
   Point_3 sp = tm.point(source);
 
   std::cout << "source: " << sp  << " " << source << std::endl;
   vertex_descriptor far;
   double sdistance = 0;
-  
-  BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
+
+  for(vertex_descriptor vd : vertices(tm)){
     std::cout << vd << "  is at distance " << get(vertex_distance, vd) << " to " << source << std::endl;
     if(get(vertex_distance, vd) > sdistance){
       far = vd;
@@ -55,7 +54,7 @@ int main(int argc, char* argv[])
   hm.add_source(far);
   hm.estimate_geodesic_distances(vertex_distance);
 
-  BOOST_FOREACH(vertex_descriptor vd , vertices(tm)){
+  for(vertex_descriptor vd : vertices(tm)){
     std::cout << vd << "  is at distance " << get(vertex_distance, vd) << "to the set of two sources" << std::endl;
   }
 

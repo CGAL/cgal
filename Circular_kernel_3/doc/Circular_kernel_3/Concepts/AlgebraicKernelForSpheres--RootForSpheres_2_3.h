@@ -3,11 +3,11 @@
 \ingroup PkgCircularKernel3AlgebraicConcepts
 \cgalConcept
 
-Concept to represent the roots of a system of three equations of degree 2 
-in three variables `x`, `y` and `z` that are models of concept 
-`AlgebraicKernelForSpheres::PolynomialForSpheres_2_3`. 
+Concept to represent the roots of a system of three equations of degree 2
+in three variables `x`, `y` and `z` that are models of concept
+`AlgebraicKernelForSpheres::PolynomialForSpheres_2_3`.
 
-\cgalHasModel CGAL::Root_for_spheres_2_3 
+\cgalHasModel CGAL::Root_for_spheres_2_3
 
 \sa `AlgebraicKernelForSpheres`
 
@@ -21,10 +21,10 @@ public:
 /// @{
 
 /*!
-Test equality of two roots of systems. 
-*/ 
-bool operator ==(const AlgebraicKernelForSpheres::RootForSpheres_2_3 & r1, 
-                 const AlgebraicKernelForSpheres::RootForSpheres_2_3 & r2); 
+Test equality of two roots of systems.
+*/
+bool operator ==(const AlgebraicKernelForSpheres::RootForSpheres_2_3 & r1,
+                 const AlgebraicKernelForSpheres::RootForSpheres_2_3 & r2);
 
 /// @}
 

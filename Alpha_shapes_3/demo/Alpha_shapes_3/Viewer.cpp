@@ -51,24 +51,24 @@ void Viewer::compile_shaders()
         "varying highp vec4 fP; \n"
         "varying highp vec3 fN; \n"
         "uniform highp vec4 color; \n"
-        "uniform vec4 light_pos;  \n"
-        "uniform vec4 light_diff; \n"
-        "uniform vec4 light_spec; \n"
-        "uniform vec4 light_amb;  \n"
+        "uniform highp vec4 light_pos;  \n"
+        "uniform highp vec4 light_diff; \n"
+        "uniform highp vec4 light_spec; \n"
+        "uniform highp vec4 light_amb;  \n"
         "uniform float spec_power ; \n"
 
         "void main(void) { \n"
 
-        "   vec3 L = light_pos.xyz - fP.xyz; \n"
-        "   vec3 V = -fP.xyz; \n"
+        "   highp vec3 L = light_pos.xyz - fP.xyz; \n"
+        "   highp vec3 V = -fP.xyz; \n"
 
-        "   vec3 N = normalize(fN); \n"
+        "   highp vec3 N = normalize(fN); \n"
         "   L = normalize(L); \n"
         "   V = normalize(V); \n"
 
-        "   vec3 R = reflect(-L, N); \n"
-        "   vec4 diffuse = abs(dot(N,L)) * light_diff * color; \n"
-        "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+        "   highp vec3 R = reflect(-L, N); \n"
+        "   highp vec4 diffuse = abs(dot(N,L)) * light_diff * color; \n"
+        "   highp vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
         "gl_FragColor = light_amb*color + diffuse + specular ; \n"
         "} \n"
@@ -170,7 +170,7 @@ void Viewer::initialize_buffers()
     buffers[0].release();
 
     buffers[1].bind();
-    buffers[1].allocate(normals.data(), 
+    buffers[1].allocate(normals.data(),
                         static_cast<int>(normals.size()*sizeof(float)));
     normalsLocation = rendering_program.attributeLocation("normal");
     rendering_program.bind();
@@ -216,18 +216,18 @@ void Viewer::attrib_buffers(CGAL::QGLViewer* viewer)
         mvMatrix.data()[i] = (float)mat[i];
     }
     // define material
-     QVector4D	ambient(0.25f, 0.20725f, 0.20725f, 0.922f);
-     QVector4D	diffuse( 1.0f,
+     QVector4D        ambient(0.25f, 0.20725f, 0.20725f, 0.922f);
+     QVector4D        diffuse( 1.0f,
                             0.829f,
                             0.829f,
                             0.922f );
 
-    QVector4D	specular(  0.6f,
+    QVector4D        specular(  0.6f,
                             0.6f,
                             0.6f,
                             1.0f );
 
-    QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+    QVector4D        position(0.0f,0.0f,1.0f,1.0f );
      GLfloat shininess =  11.264f;
 
 
@@ -273,11 +273,11 @@ Viewer::sceneChanged()
 {
 
   Iso_cuboid_3 bb = CGAL::bounding_box(scene->points.begin(), scene->points.end());
-   
+
   this->camera()->setSceneBoundingBox(CGAL::qglviewer::Vec(bb.xmin(), bb.ymin(), bb.zmin()),
-				      CGAL::qglviewer::Vec(bb.xmax(),
-						     bb.ymax(),
-						     bb.zmax()));
+                                      CGAL::qglviewer::Vec(bb.xmax(),
+                                                     bb.ymax(),
+                                                     bb.zmax()));
 
   this->showEntireScene();
 

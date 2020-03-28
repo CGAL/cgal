@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Stefan Schirra
 
@@ -32,25 +23,25 @@
 namespace CGAL {
 
 // same as |convex_hull_2(first,last,result)|.
-// {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|, 
+// {\sc traits}: operates on |Traits::Point_2| using |Traits::Less_xy_2|,
 // |Traits::Less_yx_2|, |Traits::Equal_2| and |Traits::Left_turn_2|.
 template <class ForwardIterator, class OutputIterator, class Traits>
 OutputIterator
-ch_akl_toussaint(ForwardIterator first, ForwardIterator last, 
+ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                  OutputIterator  result,
                  const Traits&   ch_traits);
 
 template <class ForwardIterator, class OutputIterator>
 inline
 OutputIterator
-ch_akl_toussaint(ForwardIterator first, ForwardIterator last, 
+ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
                  OutputIterator  result)
 {
     typedef std::iterator_traits<ForwardIterator> ITraits;
     typedef typename ITraits::value_type          value_type;
     typedef CGAL::Kernel_traits<value_type>       KTraits;
     typedef typename KTraits::Kernel              Kernel;
-    return ch_akl_toussaint( first, last, result, Kernel()); 
+    return ch_akl_toussaint( first, last, result, Kernel());
 }
 
 } //namespace CGAL

@@ -3,23 +3,14 @@
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
-// 
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Herve Bronnimann, Mariette Yvinec
 
@@ -210,11 +201,11 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
   FT rsz = psx*qsy-psy*qsx;
 
   FT num_x = ps2 * determinant(qsy,qsz,rsy,rsz)
-	   - qs2 * determinant(psy,psz,rsy,rsz);
+           - qs2 * determinant(psy,psz,rsy,rsz);
   FT num_y = ps2 * determinant(qsx,qsz,rsx,rsz)
-	   - qs2 * determinant(psx,psz,rsx,rsz);
+           - qs2 * determinant(psx,psz,rsx,rsz);
   FT num_z = ps2 * determinant(qsx,qsy,rsx,rsy)
-	   - qs2 * determinant(psx,psy,rsx,rsy);
+           - qs2 * determinant(psx,psy,rsx,rsy);
 
   FT den   = determinant(psx,psy,psz,
                                qsx,qsy,qsz,
@@ -226,13 +217,13 @@ squared_radiusC3(const FT &px, const FT &py, const FT &pz,
         + CGAL_NTS square(num_z)) / CGAL_NTS square(2 * den);
 }
 
-template <class FT> 
+template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
-void            
+void
 plane_from_pointsC3(const FT &px, const FT &py, const FT &pz,
                     const FT &qx, const FT &qy, const FT &qz,
                     const FT &rx, const FT &ry, const FT &rz,
-		    FT &pa, FT &pb, FT &pc, FT &pd)
+                    FT &pa, FT &pb, FT &pc, FT &pd)
 {
   FT rpx = px-rx;
   FT rpy = py-ry;
@@ -265,11 +256,11 @@ point_on_planeC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
                  FT &x, FT &y, FT &z)
 {
   x = y = z = 0;
-  
+
   FT abs_pa = CGAL::abs(pa);
   FT abs_pb = CGAL::abs(pb);
   FT abs_pc = CGAL::abs(pc);
-  
+
   // to avoid badly defined point with an overly large coordinate when
   //  the plane is almost orthogonal to one axis, we use the largest
   //  scalar coordinate instead of always using the first non-null
@@ -309,7 +300,7 @@ squared_distanceC3( const FT &px, const FT &py, const FT &pz,
                     const FT &qx, const FT &qy, const FT &qz)
 {
   return CGAL_NTS square(px-qx) + CGAL_NTS square(py-qy) +
-	 CGAL_NTS square(pz-qz);
+         CGAL_NTS square(pz-qz);
 }
 
 template < class FT >
@@ -358,8 +349,8 @@ template < class FT >
 CGAL_KERNEL_INLINE
 void
 bisector_of_pointsC3(const FT &px, const FT &py, const FT &pz,
-		     const FT &qx, const FT &qy, const FT &qz,
-		     FT &a, FT &b, FT &c, FT &d)
+                     const FT &qx, const FT &qy, const FT &qz,
+                     FT &a, FT &b, FT &c, FT &d)
 {
   a = 2*(px - qx);
   b = 2*(py - qy);
@@ -371,8 +362,8 @@ bisector_of_pointsC3(const FT &px, const FT &py, const FT &pz,
 template < class FT >
 void
 bisector_of_planesC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
-		     const FT &qa, const FT &qb, const FT &qc, const FT &qd,
-		     FT &a, FT &b, FT &c, FT &d)
+                     const FT &qa, const FT &qb, const FT &qc, const FT &qd,
+                     FT &a, FT &b, FT &c, FT &d)
 {
   // We normalize the equations of the 2 planes, and we then add them.
   FT n1 = CGAL_NTS sqrt(CGAL_NTS square(pa) + CGAL_NTS square(pb) +
@@ -396,8 +387,8 @@ bisector_of_planesC3(const FT &pa, const FT &pb, const FT &pc, const FT &pd,
 template < class FT >
 FT
 squared_areaC3(const FT &px, const FT &py, const FT &pz,
-	       const FT &qx, const FT &qy, const FT &qz,
-	       const FT &rx, const FT &ry, const FT &rz)
+               const FT &qx, const FT &qy, const FT &qz,
+               const FT &rx, const FT &ry, const FT &rz)
 {
     // Compute vectors pq and pr, then the cross product,
     // then 1/4 of its squared length.

@@ -1,15 +1,15 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 
 // TODO: solve conflict of CORE with GMPXX
 #ifdef CGAL_USE_CORE
 #undef CGAL_USE_GMPXX
-#endif 
+#endif
 
-#include <CGAL/Quotient.h> 
-#include <CGAL/MP_Float.h> 
-#include <CGAL/Lazy_exact_nt.h> 
-#include <CGAL/Interval_nt.h> 
-#include <CGAL/Sqrt_extension.h> 
+#include <CGAL/Quotient.h>
+#include <CGAL/MP_Float.h>
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Interval_nt.h>
+#include <CGAL/Sqrt_extension.h>
 #include <CGAL/boost_mp.h>
 
 #ifdef CGAL_USE_GMP
@@ -59,7 +59,7 @@ typedef CGAL::Quotient<CGAL::MP_Float>            QMPF;
 }
 
 int main()
-{ 
+{
   // builtin NTs
   TESTIT(int, "int")
   TESTIT(long int, "long int")
@@ -109,7 +109,7 @@ int main()
 #endif
 
   // CORE
-#ifdef CGAL_USE_CORE 
+#ifdef CGAL_USE_CORE
       TESTIT(CORE::BigInt, "CORE::BigInt")
       TESTIT(CORE::BigRat, "CORE::BigRat")
       TESTIT(CORE::BigFloat, "CORE::BigFloat")
@@ -126,7 +126,7 @@ int main()
       TESTIT(leda_real, "leda_real")
 #endif // CGAL_USE_LEDA
 
-       // TEST Sqrt_extension 
+       // TEST Sqrt_extension
 #ifdef CGAL_USE_GMP
       typedef CGAL::Sqrt_extension<int,int> Ext_int;
       TESTIT(Ext_int     , "CGAL::Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz>");

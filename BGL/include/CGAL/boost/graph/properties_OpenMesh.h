@@ -1,19 +1,10 @@
 // Copyright (c) 2014  GeometryFactory (France).  All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation; either version 3 of the License,
-// or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+// This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0+
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Philipp Möller
@@ -197,7 +188,7 @@ public:
   typedef typename boost::graph_traits<OpenMesh>::vertex_descriptor key_type;
 
   OM_point_pmap()
-    : sm_(NULL)
+    : sm_(nullptr)
   {}
 
   OM_point_pmap(const OpenMesh& sm)
@@ -213,7 +204,7 @@ public:
 #if defined(CGAL_USE_OM_POINTS)
     return sm_->point(v);
 #else
-    CGAL_assertion(sm_!=NULL);
+    CGAL_assertion(sm_!=nullptr);
     typename OpenMesh::Point const& omp = sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
 #endif
@@ -221,11 +212,11 @@ public:
 
   inline friend reference get(const OM_point_pmap<OpenMesh,P>& pm, key_type v)
   {
-    CGAL_precondition(pm.sm_!=NULL);
+    CGAL_precondition(pm.sm_!=nullptr);
 #if defined(CGAL_USE_OM_POINTS)
     return pm.sm_->point(v);
 #else
-    CGAL_assertion(pm.sm_!=NULL);
+    CGAL_assertion(pm.sm_!=nullptr);
     typename OpenMesh::Point const& omp = pm.sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
 #endif
@@ -233,7 +224,7 @@ public:
 
   inline friend void put(const OM_point_pmap<OpenMesh,P>& pm, key_type v, const value_type& p)
   {
-    CGAL_precondition(pm.sm_!=NULL);
+    CGAL_precondition(pm.sm_!=nullptr);
 #if defined(CGAL_USE_OM_POINTS)
     const_cast<OpenMesh&>(*pm.sm_).set_point(v,p);
 #else

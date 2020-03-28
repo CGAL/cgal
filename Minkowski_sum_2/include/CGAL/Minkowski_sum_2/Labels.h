@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Ron Wein   <wein_r@yahoo.com>
 
@@ -71,7 +62,7 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    _index == label._index);
+      _index == label._index);
   }
 
   /*! Get the component. */
@@ -177,7 +168,7 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    _index == label._index);
+      _index == label._index);
   }
 
   /*! Check whether the given label is the predecessor of this label. */
@@ -187,8 +178,8 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    (label._index + 1 == _index ||
-	     (label._is_last && _index == 0)));
+      (label._index + 1 == _index ||
+       (label._is_last && _index == 0)));
   }
 
   /*! Check whether the given label is the succcessor of this label. */
@@ -198,8 +189,8 @@ public:
       return (false);
 
     return (_component == label._component &&
-	    (_index + 1 == label._index ||
-	     (_is_last && label._index == 0)));
+      (_index + 1 == label._index ||
+       (_is_last && label._index == 0)));
   }
 
   /*!

@@ -1,4 +1,4 @@
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
 #include <cassert>
 #include <CGAL/double.h>
 
@@ -54,31 +54,31 @@ int main()
     double nan = zero/zero;
     double posinf = posnormal/zero;
     double neginf = negnormal/zero;
-    
+
     if (!CGAL:: is_valid(zero))
-	return 1;
+        return 1;
     if (!CGAL_NTS is_finite(zero))
-	return 1;
+        return 1;
     if (!CGAL:: is_valid(posnormal))
-	return 1;
+        return 1;
     if (!CGAL_NTS is_finite(posnormal))
-	return 1;
+        return 1;
     if (!CGAL:: is_valid(negnormal))
-	return 1;
+        return 1;
     if (!CGAL_NTS is_finite(negnormal))
-	return 1;
+        return 1;
     if (CGAL:: is_valid(nan))
-	return 1;
+        return 1;
     if (CGAL_NTS is_finite(nan))
-	return 1;
+        return 1;
     if (!CGAL:: is_valid(posinf))
-	return 1;
+        return 1;
     if (CGAL_NTS is_finite(posinf))
-	return 1;
+        return 1;
     if (!CGAL:: is_valid(neginf))
-	return 1;
+        return 1;
     if (CGAL_NTS is_finite(neginf))
-	return 1;
+        return 1;
 
     test_is_integer();
     test_split_num_den();

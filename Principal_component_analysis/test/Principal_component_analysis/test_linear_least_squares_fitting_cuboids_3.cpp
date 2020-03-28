@@ -1,7 +1,7 @@
 #include <CGAL/internal/disable_deprecation_warnings_and_errors.h>
 
 // Example program for the linear_least_square_fitting function on set of cuboids in 3D
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <list>
 
@@ -9,20 +9,20 @@
 #include <CGAL/Diagonalize_traits.h>
 #endif
 
-typedef double               FT;
-typedef CGAL::Cartesian<FT>  Kernel;
-typedef Kernel::Line_3       Line;
-typedef Kernel::Plane_3      Plane;
-typedef Kernel::Point_3      Point;
-typedef Kernel::Iso_cuboid_3 Iso_cuboid;
+typedef double                      FT;
+typedef CGAL::Simple_cartesian<FT>  Kernel;
+typedef Kernel::Line_3              Line;
+typedef Kernel::Plane_3             Plane;
+typedef Kernel::Point_3             Point;
+typedef Kernel::Iso_cuboid_3        Iso_cuboid;
 
 int main()
 {
   std::cout << "Test linear least squares fitting of 3D cuboids"  << std::endl;
   std::list<Iso_cuboid> cuboids;
-	Point a(0.0,0.0,0.0);
-	Point b(1.0,2.0,3.0);
-	Point c(4.0,5.0,6.0);
+        Point a(0.0,0.0,0.0);
+        Point b(1.0,2.0,3.0);
+        Point c(4.0,5.0,6.0);
   cuboids.push_back(Iso_cuboid(a,b));
   cuboids.push_back(Iso_cuboid(a,c));
 

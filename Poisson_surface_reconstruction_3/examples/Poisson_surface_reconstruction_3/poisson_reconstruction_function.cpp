@@ -29,7 +29,7 @@ int main(void)
     }
 
   Polyhedron output_mesh;
-  
+
   double average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
     (points, 6, CGAL::parameters::point_map(CGAL::First_of_pair_property_map<Pwn>()));
 

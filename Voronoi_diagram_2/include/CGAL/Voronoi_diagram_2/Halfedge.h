@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -59,12 +50,12 @@ class Halfedge
   }
 
   void find_next(const Delaunay_face_handle& f, int i,
-		 Delaunay_face_handle& fnext, int& inext) const {
+                 Delaunay_face_handle& fnext, int& inext) const {
     Find_next_halfedge<VDA>()(vda_, f, i, fnext, inext);
   }
 
   void find_opposite(const Delaunay_face_handle& f, int i,
-		     Delaunay_face_handle& fopp, int& iopp) const {
+                     Delaunay_face_handle& fopp, int& iopp) const {
     Find_opposite_halfedge<VDA>()(vda_, f, i, fopp, iopp);
   }
 
@@ -81,7 +72,7 @@ public:
 
   // CONSTRUCTORS
   //-------------
-  Halfedge(const VDA* vda = NULL)
+  Halfedge(const VDA* vda = nullptr)
     : vda_(vda), f_(Delaunay_face_handle()), i_(-1),
       v1_(Delaunay_vertex_handle()), v2_(Delaunay_vertex_handle()) {}
   Halfedge(const VDA* vda, Delaunay_face_handle f, int i)
@@ -93,7 +84,7 @@ public:
   }
 
   Halfedge(const VDA* vda, Delaunay_vertex_handle v1,
-	   Delaunay_vertex_handle v2)
+           Delaunay_vertex_handle v2)
     : vda_(vda), f_(Delaunay_face_handle()), i_(-2), v1_(v1), v2_(v2)
   {
     CGAL_precondition( vda_->dual().dimension() == 1 );
@@ -116,7 +107,7 @@ public:
     } else {
       int i_mirror = vda_->dual().tds().mirror_index(f_, i_);
       return
-	Halfedge_handle( Self(vda_, f_->neighbor(i_), i_mirror) );
+        Halfedge_handle( Self(vda_, f_->neighbor(i_), i_mirror) );
     }
   }
 
@@ -150,7 +141,7 @@ public:
 
     Delaunay_face_handle f, fprev = f_;
     int iprev = i_, i;
-    
+
     // if I want to return also infinite edges replace the test in
     // the while loop by the following test (i.e., should omit the
     // testing for infinity):
@@ -162,7 +153,7 @@ public:
       fprev = f;
       iprev = i;
     } while ( vda_->edge_rejector()(vda_->dual(), f, i) ||
-	      vda_->dual().is_infinite(f, i) );
+              vda_->dual().is_infinite(f, i) );
 
     return Halfedge_handle( Self(vda_, f, i) );
   }
@@ -251,18 +242,18 @@ public:
     if ( vda_->dual().dimension() == 1 ) {
       Delaunay_edge_circulator ec;
       if ( vda_->dual().is_infinite(v1_) ) {
-	CGAL_assertion( !vda_->dual().is_infinite(v2_) );
-	ec = vda_->dual().incident_edges(v2_);
+        CGAL_assertion( !vda_->dual().is_infinite(v2_) );
+        ec = vda_->dual().incident_edges(v2_);
       } else {
-	ec = vda_->dual().incident_edges(v1_);
+        ec = vda_->dual().incident_edges(v1_);
       }
       do {
-	Delaunay_edge e = *ec;
-	if ( (e.first->vertex(0) == v1_ && e.first->vertex(1) == v2_) ||
-	     (e.first->vertex(0) == v2_ && e.first->vertex(1) == v1_) ) {
-	  return e;
-	}
-	++ec;
+        Delaunay_edge e = *ec;
+        if ( (e.first->vertex(0) == v1_ && e.first->vertex(1) == v2_) ||
+             (e.first->vertex(0) == v2_ && e.first->vertex(1) == v1_) ) {
+          return e;
+        }
+        ++ec;
       } while ( true );
     } else {
       return Delaunay_edge(f_, i_);
@@ -272,7 +263,7 @@ public:
   // VALIDITY TESTING
   //-----------------
   bool is_valid() const {
-    if ( vda_ == NULL ) { return true; }
+    if ( vda_ == nullptr ) { return true; }
 
     bool valid = true;
 
@@ -309,8 +300,8 @@ public:
   // COMPARISON OPERATORS
   //---------------------
   bool operator==(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ == NULL; }
-    if ( other.vda_ == NULL ) { return vda_ == NULL; }
+    if ( vda_ == nullptr ) { return other.vda_ == nullptr; }
+    if ( other.vda_ == nullptr ) { return vda_ == nullptr; }
 
     if ( vda_->dual().dimension() == 1 ) {
       return ( vda_ == other.vda_ && v1_ == other.v1_ && v2_ == other.v2_ );
@@ -318,14 +309,14 @@ public:
       return ( vda_ == other.vda_ && f_ == other.f_ && i_ == other.i_ );
     }
   }
-  
+
   bool operator!=(const Self& other) const {
     return !((*this) == other);
   }
 
   bool operator<(const Self& other) const {
-    if ( vda_ == NULL ) { return other.vda_ != NULL; }
-    if ( other.vda_ == NULL ) { return false; }
+    if ( vda_ == nullptr ) { return other.vda_ != nullptr; }
+    if ( other.vda_ == nullptr ) { return false; }
 
     if ( vda_ != other.vda_ ) { return vda_ < other.vda_; }
     if ( vda_->dual().dimension() == 1 ) {

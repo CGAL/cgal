@@ -3,7 +3,7 @@
 // test for the linear_least_square_fitting() functions.
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/point_generators_2.h>
@@ -14,7 +14,7 @@
 #define THRESHOLD 0.001
 // types
 
-typedef CGAL::Cartesian<double> Kernel;
+typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::FT FT;
 
 typedef Kernel::Line_2 Line_2;
@@ -48,7 +48,7 @@ void test_1()
   }
 }
 
-// case with two segments cutting the one segment in two parts in 
+// case with two segments cutting the one segment in two parts in
 // container the fitting line must be the same
 void test_2()
 {
@@ -75,7 +75,7 @@ void test_2()
   }
 }
 
-// case with four segments cutting the one segment in four parts in 
+// case with four segments cutting the one segment in four parts in
 // container the fitting line must be the same
 void test_3()
 {
@@ -156,7 +156,7 @@ void test_5(const unsigned int nb_points)
   Point_2 p(2.0,0.0);
   Point_2 q(5.0,5.0);
 
-  std::cout << "generate " << nb_points << 
+  std::cout << "generate " << nb_points <<
        " 2D points on a horizontal line...";
   std::list<Point_2> points;
   points_on_segment_2(p,q,100,std::back_inserter(points));
@@ -203,7 +203,7 @@ int main()
 
   test_1();
   test_2();
-  test_3();  
+  test_3();
   test_4();
   test_5(20);
   //  test_2D_point_set(100);

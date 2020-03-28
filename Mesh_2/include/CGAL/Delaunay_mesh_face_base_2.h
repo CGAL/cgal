@@ -2,20 +2,11 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
-// 
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
 //
 // Author(s)     : Laurent RINEAU
 
@@ -50,17 +41,17 @@ protected:
 public:
   Delaunay_mesh_face_base_2(): Fb(), in_domain(false) {}
 
-  Delaunay_mesh_face_base_2(Vertex_handle v0, 
-			    Vertex_handle v1, 
-			    Vertex_handle v2)
+  Delaunay_mesh_face_base_2(Vertex_handle v0,
+                            Vertex_handle v1,
+                            Vertex_handle v2)
     : Fb(v0,v1,v2), in_domain(false) {}
 
-  Delaunay_mesh_face_base_2(Vertex_handle v0, 
-			    Vertex_handle v1, 
-			    Vertex_handle v2,
-			    Face_handle n0, 
-			    Face_handle n1, 
-			    Face_handle n2)
+  Delaunay_mesh_face_base_2(Vertex_handle v0,
+                            Vertex_handle v1,
+                            Vertex_handle v2,
+                            Face_handle n0,
+                            Face_handle n1,
+                            Face_handle n2)
     : Fb(v0,v1,v2,n0,n1,n2), in_domain(false) {}
 
   inline

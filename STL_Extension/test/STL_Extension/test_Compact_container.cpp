@@ -1,13 +1,11 @@
 // test program for Compact_container.
 
-#include <CGAL/basic.h>
 #include <cassert>
 #include <cstddef>
 #include <list>
 #include <vector>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
 
 #include <CGAL/tags.h>
 #include <CGAL/use.h>
@@ -234,7 +232,7 @@ void test(const Cont &)
   c11.reserve(v1.size());
   for(typename Vect::const_iterator it = v1.begin(); it != v1.end(); ++it)
     c11.insert(*it);
-  
+
   assert(c11.size() == v1.size());
   assert(c10 == c11);
 

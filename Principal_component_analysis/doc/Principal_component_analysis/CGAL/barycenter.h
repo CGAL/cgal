@@ -26,7 +26,7 @@ computes the barycenter of a non-empty set of 2D or 3D weighted
 points.
 
 \returns `K::Point_2` or `K::Point_3` depending on the dimension of
-the input values, where `K` is 
+the input values, where `K` is
 \code
 CGAL::Kernel_traits<
   std::iterator_traits<InputIterator>::value_type::first_type

@@ -2,19 +2,10 @@
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pierre Alliez and Lingjie Zhu
@@ -83,12 +74,12 @@ public:
   L2_metric_plane_proxy(const TriangleMesh &tm, const VertexPointMap &vpmap)
     : m_tm(&tm), m_vpmap(vpmap), m_famap( get(Face_area_tag(), const_cast<TriangleMesh &>(*m_tm)) )
   {
-    BOOST_FOREACH(face_descriptor f, faces(*m_tm)) {
+    for(face_descriptor f : faces(*m_tm)) {
       const halfedge_descriptor he = halfedge(f, *m_tm);
       const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
       const Point_3 &p1 = m_vpmap[target(he, *m_tm)];
       const Point_3 &p2 = m_vpmap[target(next(he, *m_tm), *m_tm)];
-      put(m_famap, f, std::sqrt(CGAL::to_double(CGAL::squared_area(p0, p1, p2))));
+      put(m_famap, f, CGAL::approximate_sqrt(CGAL::squared_area(p0, p1, p2)));
     }
   }
   /// @}
@@ -110,9 +101,9 @@ public:
     const FT sq_d0 = CGAL::squared_distance(p0, px);
     const FT sq_d1 = CGAL::squared_distance(p1, px);
     const FT sq_d2 = CGAL::squared_distance(p2, px);
-    const FT d0(std::sqrt(CGAL::to_double(sq_d0)));
-    const FT d1(std::sqrt(CGAL::to_double(sq_d1)));
-    const FT d2(std::sqrt(CGAL::to_double(sq_d2)));
+    const FT d0 = CGAL::approximate_sqrt(sq_d0);
+    const FT d1 = CGAL::approximate_sqrt(sq_d1);
+    const FT d2 = CGAL::approximate_sqrt(sq_d2);
 
     return (sq_d0 + sq_d1 + sq_d2 +
             d0 * d1 + d1 * d2 + d2 * d0) * get(m_famap, f) / FT(6.0);
@@ -134,7 +125,7 @@ public:
     CGAL_assertion(!faces.empty());
 
     std::list<Triangle_3> tris;
-    BOOST_FOREACH(const face_descriptor f, faces) {
+    for(const face_descriptor f : faces) {
       const halfedge_descriptor he = halfedge(f, *m_tm);
       const Point_3 &p0 = m_vpmap[source(he, *m_tm)];
       const Point_3 &p1 = m_vpmap[target(he, *m_tm)];

@@ -34,10 +34,11 @@ int main(int argc, char* argv[])
             << num_vertices(mesh2) << "\n";
 
   std::ofstream output("mesh1_refined.off");
+  output.precision(17);
   CGAL::write_off(output, mesh1);
   output.close();
   output.open("mesh2_refined.off");
-  CGAL::write_off(output, mesh2);  
+  CGAL::write_off(output, mesh2);
   output.close();
 
   return 0;

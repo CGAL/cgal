@@ -28,7 +28,6 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cstddef>
 #include <list>
 #include <vector>
@@ -70,7 +69,7 @@ struct item_adaptor : public item
   item_adaptor() {}
   item_adaptor( int i) : item(i) {}
   item_adaptor( const item_adaptor& i) : item(i) {}
-  
+
   int const& get_key() const { return this->key ; }
   int&       get_key()       { return this->key ; }
 } ;
@@ -203,18 +202,18 @@ struct Point
 {
   Point( int x_, int y_ ) : x(x_), y(y_) {}
   int x,y ;
-  
+
   friend bool operator==( Point const& a, Point const& b ) { return a.x == b.x && a.y == b.y ; }
   friend bool operator!=( Point const& a, Point const& b ) { return !(a==b); }
 } ;
 
 int test_value_type( Point*)  { return 1;}
-  
+
 struct PairToPoint
 {
   typedef Pair  argument_type ;
   typedef Point result_type ;
-  
+
   Point operator() ( Pair const& p ) const { return Point(p.f,p.s); }
 } ;
 
@@ -267,17 +266,17 @@ void test_Circulator_identity() {
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -295,7 +294,7 @@ void test_Circulator_identity() {
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -326,7 +325,7 @@ void test_Circulator_identity() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -339,7 +338,7 @@ void test_Circulator_identity() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -359,17 +358,17 @@ void test_Circulator_identity() {
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -387,7 +386,7 @@ void test_Circulator_identity() {
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -425,7 +424,7 @@ void test_Circulator_identity() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -447,7 +446,7 @@ void test_Circulator_identity() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1.key = 1;
@@ -469,7 +468,7 @@ void test_Circulator_identity() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -696,17 +695,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z;
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -724,7 +723,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -755,7 +754,7 @@ l2.destroy();
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -768,7 +767,7 @@ l2.destroy();
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -788,17 +787,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -816,7 +815,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -854,7 +853,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -883,17 +882,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -911,7 +910,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -949,7 +948,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -983,7 +982,7 @@ l2.destroy();
                + begin[3]
                + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Circulator i = begin;
         i += 3;
@@ -1005,7 +1004,7 @@ l2.destroy();
         Circulator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -1034,7 +1033,7 @@ l2.destroy();
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -1056,7 +1055,7 @@ l2.destroy();
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -1346,7 +1345,7 @@ Assert_random_access_category(c_begin);
 }
   }
 }
-void test_Iterator_project() 
+void test_Iterator_project()
 {
   {
     typedef In_place_list<item,false> List;
@@ -1375,18 +1374,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1404,7 +1403,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1435,7 +1434,7 @@ void test_Iterator_project()
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -1448,7 +1447,7 @@ void test_Iterator_project()
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -1468,18 +1467,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1497,7 +1496,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1535,7 +1534,7 @@ void test_Iterator_project()
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -1576,18 +1575,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         C_Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = c_end ;
         // Copy constructor.
         C_Iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1605,7 +1604,7 @@ void test_Iterator_project()
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -1643,7 +1642,7 @@ void test_Iterator_project()
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -1673,7 +1672,7 @@ void test_Iterator_project()
     //============================================
     //
     //
-    
+
     {
     typedef In_place_list<item,false> List;
     List l;
@@ -1700,18 +1699,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1729,7 +1728,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1760,7 +1759,7 @@ void test_Iterator_project()
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -1773,7 +1772,7 @@ void test_Iterator_project()
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -1793,18 +1792,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1822,7 +1821,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -1860,7 +1859,7 @@ void test_Iterator_project()
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -1903,18 +1902,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         C_Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = c_end ;
         // Copy constructor.
         C_Iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -1932,7 +1931,7 @@ void test_Iterator_project()
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -1970,7 +1969,7 @@ void test_Iterator_project()
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -2000,7 +1999,7 @@ void test_Iterator_project()
     //============================================
     //
     //
-    
+
     {
     typedef std::vector<int> Vector;
     Vector v;
@@ -2028,18 +2027,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2057,7 +2056,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2088,7 +2087,7 @@ void test_Iterator_project()
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -2101,7 +2100,7 @@ void test_Iterator_project()
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -2121,19 +2120,19 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-        
-    
+
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2151,7 +2150,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2189,7 +2188,7 @@ void test_Iterator_project()
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -2218,18 +2217,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2247,7 +2246,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2285,7 +2284,7 @@ void test_Iterator_project()
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -2319,7 +2318,7 @@ void test_Iterator_project()
                  + begin[3]
                  + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Iterator i = begin;
         i += 3;
@@ -2341,7 +2340,7 @@ void test_Iterator_project()
         Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -2385,7 +2384,7 @@ void test_Iterator_project()
         assert( j >= i);
         assert( i <= i);
         assert( i >= i);
-    
+
         assert( !( i >= j));
         assert( !( j <= i));
         assert( !( i > j));
@@ -2415,18 +2414,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         C_Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = c_end ;
         // Copy constructor.
         C_Iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2444,7 +2443,7 @@ void test_Iterator_project()
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -2482,7 +2481,7 @@ void test_Iterator_project()
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -2516,7 +2515,7 @@ void test_Iterator_project()
                  + c_begin[3]
                  + c_begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         C_Iterator i = c_begin;
         i += 3;
@@ -2538,7 +2537,7 @@ void test_Iterator_project()
         C_Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
         assert( ij == c_begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -2562,7 +2561,7 @@ void test_Iterator_project()
         assert( j >= i);
         assert( i <= i);
         assert( i >= i);
-    
+
         assert( !( i >= j));
         assert( !( j <= i));
         assert( !( i > j));
@@ -2577,7 +2576,7 @@ void test_Iterator_project()
     //============================================
     //
     //
-    
+
     {
     typedef std::list<void*> PtrList;
     PtrList l;
@@ -2604,18 +2603,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2633,7 +2632,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2664,7 +2663,7 @@ void test_Iterator_project()
         assert( 3 == (*i)->key);
         (*++i)->key = 7;
         assert( 7 == (*i)->key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -2677,7 +2676,7 @@ void test_Iterator_project()
         i++;
         assert( 7 == (*i)->key);
         (*i)->key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -2697,18 +2696,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2726,7 +2725,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2764,7 +2763,7 @@ void test_Iterator_project()
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -2804,18 +2803,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         C_Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = c_end ;
         // Copy constructor.
         C_Iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2833,7 +2832,7 @@ void test_Iterator_project()
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -2871,7 +2870,7 @@ void test_Iterator_project()
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -2905,7 +2904,7 @@ void test_Iterator_project()
     //============================================
     //
     //
-    
+
     {
     typedef In_place_list<item,false> List;
     List l;
@@ -2932,18 +2931,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -2961,7 +2960,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -2992,7 +2991,7 @@ void test_Iterator_project()
         assert( 3 == (*i).get_key());
         (*++i).get_key() = 7;
         assert( 7 == (*i).get_key());
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -3005,7 +3004,7 @@ void test_Iterator_project()
         i++;
         assert( 7 == (*i).get_key());
         (*i).get_key() = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -3025,18 +3024,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3054,7 +3053,7 @@ void test_Iterator_project()
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -3092,7 +3091,7 @@ void test_Iterator_project()
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -3135,18 +3134,18 @@ void test_Iterator_project()
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         C_Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = c_end ;
         // Copy constructor.
         C_Iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3164,7 +3163,7 @@ void test_Iterator_project()
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -3202,7 +3201,7 @@ void test_Iterator_project()
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -3228,15 +3227,15 @@ void test_Iterator_project()
     }
 }
 
-void test_Iterator_transform() 
+void test_Iterator_transform()
 {
   typedef std::vector<Pair> Vector;
   Vector v;
-  v.push_back( Pair(0,1) ); 
-  v.push_back( Pair(1,2) ); 
-  v.push_back( Pair(2,3) ); 
-  v.push_back( Pair(3,4) ); 
-  v.push_back( Pair(4,5) ); 
+  v.push_back( Pair(0,1) );
+  v.push_back( Pair(1,2) );
+  v.push_back( Pair(2,3) );
+  v.push_back( Pair(3,4) );
+  v.push_back( Pair(4,5) );
   assert( v.size() == 5);
 
   typedef Vector::iterator IterBase;
@@ -3252,27 +3251,27 @@ void test_Iterator_transform()
 
   assert( (last + 1 == end  ) ) ;
   assert( (end - 1  == last ) ) ;
-  
+
   Assert_random_access_category(begin);
   CGAL::Assert_circulator_or_iterator(begin);
   CGAL::Assert_is_at_least_forward_category(begin);
-  
+
   typedef std::iterator_traits< Iterator >::value_type      VT;
   typedef std::iterator_traits< Iterator >::difference_type DT;
   assert(1==test_value_type(static_cast< VT* >(0)));
   assert(1==test_distance_type(static_cast< DT* >(0)));
-  
+
   assert(   CGAL::is_empty_range( end  , end) );
   assert( ! CGAL::is_empty_range( begin, end) );
-    
+
   // Default constructor.
   Iterator z ;
-  
+
   // Assignment
   z = end ;
-  
+
   assert( z == end ) ;
-  
+
   // Copy constructor.
   Iterator f1 = begin;
   Iterator f2 = begin;
@@ -3284,45 +3283,45 @@ void test_Iterator_transform()
 
   Point fp(0,1);
   Point bp(4,5);
-  
+
   // Check pre/post-increment and decrement
   // Check dereference.
   // Check equality/inequality
   bool done = false ;
-  
-  do 
+
+  do
   {
     assert( fp == (*f1) );
     assert( fp == (*f2) );
     assert( bp == (*b1) );
     assert( bp == (*b2) );
-    
+
     if ( f1 < last )
     {
-      Iterator of1 = f1 ;          
-      Iterator of2 = f2 ;          
-      Iterator ob1 = b1 ;          
-      Iterator ob2 = b2 ;          
-      
+      Iterator of1 = f1 ;
+      Iterator of2 = f2 ;
+      Iterator ob1 = b1 ;
+      Iterator ob2 = b2 ;
+
       Iterator fn1 = ++f1;
       assert( f1 != of1 );
       assert( fn1 == f1 );
-      
+
       Iterator fn2 = f2++ ;
       assert( f2 != of2 );
       assert( fn2 == of2 );
-      
+
       Iterator bn1 = --b1;
       assert( b1 != ob1 );
       assert( bn1 == b1 );
-      
+
       Iterator bn2 = b2-- ;
       assert( b2 != ob2 );
       assert( bn2 == ob2 );
 
       Iterator next = of1 + 1 ;
       assert( f1 == next );
-      
+
       assert (  f1 >   of1 ) ;
       assert (  f1 >=  of1 ) ;
       assert (  of1 <  f1  ) ;
@@ -3332,29 +3331,29 @@ void test_Iterator_transform()
 
       assert( of1[0] == *of1 ) ;
       assert( of1[1] == *f1  ) ;
-      
+
       of1 += 1 ;
       assert( f1 == of1 );
-      
+
       Iterator prev = ob1 - 1 ;
       assert( b1 == prev );
-      
+
       ob1 -= 1 ;
       assert( b1 == ob1 );
-      
+
       fp.x ++ ; fp.y ++ ;
       bp.x -- ; bp.y -- ;
     }
-    
+
     bool done1 = ( f1 == last ) ;
     bool done2 = ( b1 == begin ) ;
-    
+
     assert ( done1 == done2 ) ;
-    
+
     done = done1 || done2 ;
-  } 
+  }
   while ( !done );
-        
+
 }
 
 void test_Circulator_project() {
@@ -3385,17 +3384,17 @@ void test_Circulator_project() {
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3413,7 +3412,7 @@ void test_Circulator_project() {
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -3444,7 +3443,7 @@ void test_Circulator_project() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -3457,7 +3456,7 @@ void test_Circulator_project() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -3477,17 +3476,17 @@ void test_Circulator_project() {
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3505,7 +3504,7 @@ void test_Circulator_project() {
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -3543,7 +3542,7 @@ void test_Circulator_project() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -3565,7 +3564,7 @@ void test_Circulator_project() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1.key = 1;
@@ -3587,7 +3586,7 @@ void test_Circulator_project() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -3816,17 +3815,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3844,7 +3843,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -3875,7 +3874,7 @@ l2.destroy();
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -3888,7 +3887,7 @@ l2.destroy();
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -3908,17 +3907,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -3936,7 +3935,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -3974,7 +3973,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -3996,7 +3995,7 @@ l2.destroy();
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1.key = 1;
@@ -4018,7 +4017,7 @@ l2.destroy();
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -4247,17 +4246,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4275,7 +4274,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -4306,7 +4305,7 @@ l2.destroy();
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -4319,7 +4318,7 @@ l2.destroy();
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -4339,17 +4338,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4367,7 +4366,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -4405,7 +4404,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -4434,17 +4433,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4462,7 +4461,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -4500,7 +4499,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -4534,7 +4533,7 @@ l2.destroy();
                  + begin[3]
                  + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Circulator i = begin;
         i += 3;
@@ -4556,7 +4555,7 @@ l2.destroy();
         Circulator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -4585,7 +4584,7 @@ l2.destroy();
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -4607,7 +4606,7 @@ l2.destroy();
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -4934,17 +4933,17 @@ void test_Circulator_on_node() {
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -4962,7 +4961,7 @@ void test_Circulator_on_node() {
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -4993,7 +4992,7 @@ void test_Circulator_on_node() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -5006,7 +5005,7 @@ void test_Circulator_on_node() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -5019,7 +5018,7 @@ void test_Circulator_on_node() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1.key = 1;
@@ -5041,7 +5040,7 @@ void test_Circulator_on_node() {
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -5082,17 +5081,17 @@ void test_Circulator_on_node() {
         typedef std::iterator_traits< C_Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         C_Circulator z = C_Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         C_Circulator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -5110,7 +5109,7 @@ void test_Circulator_on_node() {
         }
         assert( i == c_begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -5134,7 +5133,7 @@ void test_Circulator_on_node() {
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( c_begin);
         CGAL::Assert_circulator( c_begin);
-    
+
         // Check the local type parameters.
         C_Circulator::value_type      k1;
         k1.key = 1;
@@ -5156,7 +5155,7 @@ void test_Circulator_on_node() {
         assert( s == 5);
         C_Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         C_Circulator z = C_Circulator();
         assert(   z == NULL);
@@ -5216,18 +5215,18 @@ void test_N_step_adaptor() {
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -5245,7 +5244,7 @@ void test_N_step_adaptor() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -5276,7 +5275,7 @@ void test_N_step_adaptor() {
         assert( 3 == (*i).key);
         (*++i).key = 7;
         assert( 7 == (*i).key);
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -5289,7 +5288,7 @@ void test_N_step_adaptor() {
         i++;
         assert( 7 == (*i).key);
         (*i).key = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -5309,18 +5308,18 @@ void test_N_step_adaptor() {
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -5338,7 +5337,7 @@ void test_N_step_adaptor() {
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -5376,7 +5375,7 @@ void test_N_step_adaptor() {
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -5537,18 +5536,18 @@ l2.destroy();
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -5566,7 +5565,7 @@ l2.destroy();
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -5597,7 +5596,7 @@ l2.destroy();
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -5610,7 +5609,7 @@ l2.destroy();
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -5630,18 +5629,18 @@ l2.destroy();
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -5659,7 +5658,7 @@ l2.destroy();
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -5697,7 +5696,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -5726,18 +5725,18 @@ l2.destroy();
         typedef std::iterator_traits< Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = end ;
         // Copy constructor.
         Iterator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -5755,7 +5754,7 @@ l2.destroy();
         }
         assert( i == end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -5793,7 +5792,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = end;
         su = 0;
@@ -5827,7 +5826,7 @@ l2.destroy();
                  + begin[3]
                  + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Iterator i = begin;
         i += 3;
@@ -5849,7 +5848,7 @@ l2.destroy();
         Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -5893,7 +5892,7 @@ l2.destroy();
         assert( j >= i);
         assert( i <= i);
         assert( i >= i);
-    
+
         assert( !( i >= j));
         assert( !( j <= i));
         assert( !( i > j));
@@ -5920,18 +5919,18 @@ l2.destroy();
         typedef std::iterator_traits< C_Iterator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         C_Iterator z ;
         CGAL::Assert_circulator_or_iterator(z);
         z = c_end ;
         // Copy constructor.
         C_Iterator i = c_begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, c_end));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -5949,7 +5948,7 @@ l2.destroy();
         }
         assert( i == c_end);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = c_begin;
         su = 0;
@@ -5987,7 +5986,7 @@ l2.destroy();
         } while (i != c_begin);
         assert( i == c_begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = c_end;
         su = 0;
@@ -6021,7 +6020,7 @@ l2.destroy();
                  + c_begin[3]
                  + c_begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         C_Iterator i = c_begin;
         i += 3;
@@ -6043,7 +6042,7 @@ l2.destroy();
         C_Iterator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
         assert( ij == c_begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -6067,7 +6066,7 @@ l2.destroy();
         assert( j >= i);
         assert( i <= i);
         assert( i >= i);
-    
+
         assert( !( i >= j));
         assert( !( j <= i));
         assert( !( i > j));
@@ -6106,17 +6105,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -6134,7 +6133,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -6165,7 +6164,7 @@ l2.destroy();
         assert( 3 == (*i));
         (*++i) = 7;
         assert( 7 == (*i));
-    
+
         // Check the setting and reset these elements
         // to their original values.
         i = begin;
@@ -6178,7 +6177,7 @@ l2.destroy();
         i++;
         assert( 7 == (*i));
         (*i) = 4;
-    
+
         // Check the resetting.
         i = begin;
         int k = 1;
@@ -6198,17 +6197,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -6226,7 +6225,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -6264,7 +6263,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -6293,17 +6292,17 @@ l2.destroy();
         typedef std::iterator_traits< Circulator >::difference_type DT;
         assert(1==test_value_type(static_cast< VT* >(0)));
         assert(1==test_distance_type(static_cast< DT* >(0)));
-    
+
         // Default constructor.
         Circulator z = Circulator();
         CGAL::Assert_circulator_or_iterator(z);
         // Copy constructor.
         Circulator i = begin;
-    
+
         // Check general support for circulators and iterators.
         assert( CGAL::is_empty_range( z, z));
         assert( ! CGAL::is_empty_range( i, begin));
-    
+
         int su = 0;
         int k  = 1;
         // Check general loop, pre-increment, dereference.
@@ -6321,7 +6320,7 @@ l2.destroy();
         }
         assert( i == begin);  // Equality checked.
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -6359,7 +6358,7 @@ l2.destroy();
         } while (i != begin);
         assert( i == begin);
         assert( su == 15);
-    
+
         // Assignment.
         i = begin;
         su = 0;
@@ -6393,7 +6392,7 @@ l2.destroy();
                  + begin[3]
                  + begin[4];
         assert( su == 15);
-    
+
         // Jump around.
         Circulator i = begin;
         i += 3;
@@ -6415,7 +6414,7 @@ l2.destroy();
         Circulator ij = jj - 5;
         ij = jj - 5; // avoids warning with NDEBUG
         assert( ij == begin);
-    
+
         // Difference test.
         assert( jj - i == 5  ||  jj - i == 0);
         assert( i + (j-i) == j);
@@ -6444,7 +6443,7 @@ l2.destroy();
     { // Open own scope to hide local variables.
         CGAL::Assert_circulator( begin);
         CGAL::Assert_circulator( begin);
-    
+
         // Check the local type parameters.
         Circulator::value_type      k1;
         k1 = 1;
@@ -6466,7 +6465,7 @@ l2.destroy();
         assert( s == 5);
         Circulator::difference_type d = -5;
         assert( d == -5);
-    
+
         // Check tests for empty data structures.
         Circulator z = Circulator();
         assert(   z == NULL);
@@ -6786,18 +6785,18 @@ void test_N_step_adaptor_derived() {
             typedef std::iterator_traits< Iterator >::difference_type DT;
             assert(1==test_value_type(static_cast< VT* >(0)));
             assert(1==test_distance_type(static_cast< DT* >(0)));
-        
+
             // Default constructor.
             Iterator z ;
             CGAL::Assert_circulator_or_iterator(z);
             z = end ;
             // Copy constructor.
             Iterator i = begin;
-        
+
             // Check general support for circulators and iterators.
             assert( CGAL::is_empty_range( z, z));
             assert( ! CGAL::is_empty_range( i, end));
-        
+
             int su = 0;
             int k  = 1;
             // Check general loop, pre-increment, dereference.
@@ -6815,7 +6814,7 @@ void test_N_step_adaptor_derived() {
             }
             assert( i == end);  // Equality checked.
             assert( su == 15);
-        
+
             // Assignment.
             i = begin;
             su = 0;
@@ -6846,7 +6845,7 @@ void test_N_step_adaptor_derived() {
             assert( 3 == (*i).key);
             (*++i).key = 7;
             assert( 7 == (*i).key);
-        
+
             // Check the setting and reset these elements
             // to their original values.
             i = begin;
@@ -6859,7 +6858,7 @@ void test_N_step_adaptor_derived() {
             i++;
             assert( 7 == (*i).key);
             (*i).key = 4;
-        
+
             // Check the resetting.
             i = begin;
             int k = 1;
@@ -6879,18 +6878,18 @@ void test_N_step_adaptor_derived() {
             typedef std::iterator_traits< Iterator >::difference_type DT;
             assert(1==test_value_type(static_cast< VT* >(0)));
             assert(1==test_distance_type(static_cast< DT* >(0)));
-        
+
             // Default constructor.
             Iterator z ;
             CGAL::Assert_circulator_or_iterator(z);
             z = end ;
             // Copy constructor.
             Iterator i = begin;
-        
+
             // Check general support for circulators and iterators.
             assert( CGAL::is_empty_range( z, z));
             assert( ! CGAL::is_empty_range( i, end));
-        
+
             int su = 0;
             int k  = 1;
             // Check general loop, pre-increment, dereference.
@@ -6908,7 +6907,7 @@ void test_N_step_adaptor_derived() {
             }
             assert( i == end);  // Equality checked.
             assert( su == 15);
-        
+
             // Assignment.
             i = begin;
             su = 0;
@@ -6946,7 +6945,7 @@ void test_N_step_adaptor_derived() {
             } while (i != begin);
             assert( i == begin);
             assert( su == 15);
-        
+
             // Assignment.
             i = end;
             su = 0;
@@ -6986,18 +6985,18 @@ void test_N_step_adaptor_derived() {
             typedef std::iterator_traits< C_Iterator >::difference_type DT;
             assert(1==test_value_type(static_cast< VT* >(0)));
             assert(1==test_distance_type(static_cast< DT* >(0)));
-        
+
             // Default constructor.
             C_Iterator z ;
             CGAL::Assert_circulator_or_iterator(z);
             z = c_end ;
             // Copy constructor.
             C_Iterator i = c_begin;
-        
+
             // Check general support for circulators and iterators.
             assert( CGAL::is_empty_range( z, z));
             assert( ! CGAL::is_empty_range( i, c_end));
-        
+
             int su = 0;
             int k  = 1;
             // Check general loop, pre-increment, dereference.
@@ -7015,7 +7014,7 @@ void test_N_step_adaptor_derived() {
             }
             assert( i == c_end);  // Equality checked.
             assert( su == 15);
-        
+
             // Assignment.
             i = c_begin;
             su = 0;
@@ -7053,7 +7052,7 @@ void test_N_step_adaptor_derived() {
             } while (i != c_begin);
             assert( i == c_begin);
             assert( su == 15);
-        
+
             // Assignment.
             i = c_end;
             su = 0;
@@ -7107,17 +7106,17 @@ void test_N_step_adaptor_derived() {
             typedef std::iterator_traits< Circulator >::difference_type DT;
             assert(1==test_value_type(static_cast< VT* >(0)));
             assert(1==test_distance_type(static_cast< DT* >(0)));
-        
+
             // Default constructor.
             Circulator z = Circulator();
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
-        
+
             // Check general support for circulators and iterators.
             assert( CGAL::is_empty_range( z, z));
             assert( ! CGAL::is_empty_range( i, begin));
-        
+
             int su = 0;
             int k  = 1;
             // Check general loop, pre-increment, dereference.
@@ -7135,7 +7134,7 @@ void test_N_step_adaptor_derived() {
             }
             assert( i == begin);  // Equality checked.
             assert( su == 15);
-        
+
             // Assignment.
             i = begin;
             su = 0;
@@ -7166,7 +7165,7 @@ void test_N_step_adaptor_derived() {
             assert( 3 == (*i));
             (*++i) = 7;
             assert( 7 == (*i));
-        
+
             // Check the setting and reset these elements
             // to their original values.
             i = begin;
@@ -7179,7 +7178,7 @@ void test_N_step_adaptor_derived() {
             i++;
             assert( 7 == (*i));
             (*i) = 4;
-        
+
             // Check the resetting.
             i = begin;
             int k = 1;
@@ -7199,17 +7198,17 @@ void test_N_step_adaptor_derived() {
             typedef std::iterator_traits< Circulator >::difference_type DT;
             assert(1==test_value_type(static_cast< VT* >(0)));
             assert(1==test_distance_type(static_cast< DT* >(0)));
-        
+
             // Default constructor.
             Circulator z = Circulator();
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
-        
+
             // Check general support for circulators and iterators.
             assert( CGAL::is_empty_range( z, z));
             assert( ! CGAL::is_empty_range( i, begin));
-        
+
             int su = 0;
             int k  = 1;
             // Check general loop, pre-increment, dereference.
@@ -7227,7 +7226,7 @@ void test_N_step_adaptor_derived() {
             }
             assert( i == begin);  // Equality checked.
             assert( su == 15);
-        
+
             // Assignment.
             i = begin;
             su = 0;
@@ -7265,7 +7264,7 @@ void test_N_step_adaptor_derived() {
             } while (i != begin);
             assert( i == begin);
             assert( su == 15);
-        
+
             // Assignment.
             i = begin;
             su = 0;
@@ -7294,17 +7293,17 @@ void test_N_step_adaptor_derived() {
             typedef std::iterator_traits< Circulator >::difference_type DT;
             assert(1==test_value_type(static_cast< VT* >(0)));
             assert(1==test_distance_type(static_cast< DT* >(0)));
-        
+
             // Default constructor.
             Circulator z = Circulator();
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             Circulator i = begin;
-        
+
             // Check general support for circulators and iterators.
             assert( CGAL::is_empty_range( z, z));
             assert( ! CGAL::is_empty_range( i, begin));
-        
+
             int su = 0;
             int k  = 1;
             // Check general loop, pre-increment, dereference.
@@ -7322,7 +7321,7 @@ void test_N_step_adaptor_derived() {
             }
             assert( i == begin);  // Equality checked.
             assert( su == 15);
-        
+
             // Assignment.
             i = begin;
             su = 0;
@@ -7360,7 +7359,7 @@ void test_N_step_adaptor_derived() {
             } while (i != begin);
             assert( i == begin);
             assert( su == 15);
-        
+
             // Assignment.
             i = begin;
             su = 0;
@@ -7394,7 +7393,7 @@ void test_N_step_adaptor_derived() {
                      + begin[3]
                      + begin[4];
             assert( su == 15);
-        
+
             // Jump around.
             Circulator i = begin;
             i += 3;
@@ -7416,7 +7415,7 @@ void test_N_step_adaptor_derived() {
             Circulator ij = jj - 5;
             ij = jj - 5; // avoids warning with NDEBUG
             assert( ij == begin);
-        
+
             // Difference test.
             assert( jj - i == 5  ||  jj - i == 0);
             assert( i + (j-i) == j);
@@ -7445,7 +7444,7 @@ void test_N_step_adaptor_derived() {
         { // Open own scope to hide local variables.
             CGAL::Assert_circulator( begin);
             CGAL::Assert_circulator( begin);
-        
+
             // Check the local type parameters.
             Circulator::value_type      k1;
             k1 = 1;
@@ -7467,7 +7466,7 @@ void test_N_step_adaptor_derived() {
             assert( s == 5);
             Circulator::difference_type d = -5;
             assert( d == -5);
-        
+
             // Check tests for empty data structures.
             Circulator z = Circulator();
             assert(   z == NULL);
@@ -7544,17 +7543,17 @@ void test_N_step_adaptor_derived() {
             typedef std::iterator_traits< C_Circulator >::difference_type DT;
             assert(1==test_value_type(static_cast< VT* >(0)));
             assert(1==test_distance_type(static_cast< DT* >(0)));
-        
+
             // Default constructor.
             C_Circulator z = C_Circulator();
             CGAL::Assert_circulator_or_iterator(z);
             // Copy constructor.
             C_Circulator i = c_begin;
-        
+
             // Check general support for circulators and iterators.
             assert( CGAL::is_empty_range( z, z));
             assert( ! CGAL::is_empty_range( i, c_begin));
-        
+
             int su = 0;
             int k  = 1;
             // Check general loop, pre-increment, dereference.
@@ -7572,7 +7571,7 @@ void test_N_step_adaptor_derived() {
             }
             assert( i == c_begin);  // Equality checked.
             assert( su == 15);
-        
+
             // Assignment.
             i = c_begin;
             su = 0;
@@ -7610,7 +7609,7 @@ void test_N_step_adaptor_derived() {
             } while (i != c_begin);
             assert( i == c_begin);
             assert( su == 15);
-        
+
             // Assignment.
             i = c_begin;
             su = 0;
@@ -7644,7 +7643,7 @@ void test_N_step_adaptor_derived() {
                      + c_begin[3]
                      + c_begin[4];
             assert( su == 15);
-        
+
             // Jump around.
             C_Circulator i = c_begin;
             i += 3;
@@ -7666,7 +7665,7 @@ void test_N_step_adaptor_derived() {
             C_Circulator ij = jj - 5;
             ij = jj - 5; // avoids warning with NDEBUG
             assert( ij == c_begin);
-        
+
             // Difference test.
             assert( jj - i == 5  ||  jj - i == 0);
             assert( i + (j-i) == j);
@@ -7675,7 +7674,7 @@ void test_N_step_adaptor_derived() {
         { // Open own scope to hide local variables.
             CGAL::Assert_circulator( c_begin);
             CGAL::Assert_circulator( c_begin);
-        
+
             // Check the local type parameters.
             C_Circulator::value_type      k1;
             k1 = 1;
@@ -7697,7 +7696,7 @@ void test_N_step_adaptor_derived() {
             assert( s == 5);
             C_Circulator::difference_type d = -5;
             assert( d == -5);
-        
+
             // Check tests for empty data structures.
             C_Circulator z = C_Circulator();
             assert(   z == NULL);
@@ -8110,44 +8109,44 @@ void test_Quadruple()
 }
 
 void test_tuple(){
-  typedef CGAL::cpp11::tuple<> T0;
-  typedef CGAL::cpp11::tuple<int,int> T1;
-  typedef CGAL::cpp11::tuple<int,My_to_int,int,int> T2;
-  
+  typedef std::tuple<> T0;
+  typedef std::tuple<int,int> T1;
+  typedef std::tuple<int,My_to_int,int,int> T2;
+
   CGAL_USE_TYPE(T0);
   CGAL_USE_TYPE(T2);
-  CGAL_static_assertion( CGAL::cpp11::tuple_size<T0>::value == 0 );
-  CGAL_static_assertion( CGAL::cpp11::tuple_size<T1>::value == 2 );
-  CGAL_static_assertion( CGAL::cpp11::tuple_size<T2>::value == 4 );
-  CGAL_static_assertion( (boost::is_same<CGAL::cpp11::tuple_element<1,T2>::type,My_to_int>::value) );  
-  
-  T1 t1=CGAL::cpp11::make_tuple(1,2);
-  T1 t1_2=CGAL::cpp11::make_tuple(1,2);
+  CGAL_static_assertion( std::tuple_size<T0>::value == 0 );
+  CGAL_static_assertion( std::tuple_size<T1>::value == 2 );
+  CGAL_static_assertion( std::tuple_size<T2>::value == 4 );
+  CGAL_static_assertion( (boost::is_same<std::tuple_element<1,T2>::type,My_to_int>::value) );
+
+  T1 t1=std::make_tuple(1,2);
+  T1 t1_2=std::make_tuple(1,2);
 
   assert(t1==t1_2); // test the equality operator
 
   // T2 t2 = T2();
-  // assert( t2 == T2() ); 
-  // 
+  // assert( t2 == T2() );
+  //
   // Do not test equality between default initialized tuples, because
   // GNU/g++ version 4.1.2 does not default-initialize correctly
   // std::tr1::tuple.
 
-  // Test CGAL::cpp11::tie
+  // Test std::tie
   int i1=-1,i2=-1;
-  CGAL::cpp11::tie(i1,i2)=t1;
-  assert( CGAL::cpp11::get<0>(t1)==i1 );
-  assert( CGAL::cpp11::get<1>(t1)==i2 );
+  std::tie(i1,i2)=t1;
+  assert( std::get<0>(t1)==i1 );
+  assert( std::get<1>(t1)==i2 );
 
-  // Test CGAL::cpp11::get for a pair
+  // Test std::get for a pair
   double d = 1;
   std::pair<int, double *> pair(-3, &d);
   const std::pair<int, double *> const_pair(2, &d);
 
-  assert(CGAL::cpp11::get<0>(pair) == -3);
-  assert(CGAL::cpp11::get<1>(pair) == &d);
-  assert(CGAL::cpp11::get<0>(const_pair) == 2);
-  assert(CGAL::cpp11::get<1>(const_pair) == &d);
+  assert(std::get<0>(pair) == -3);
+  assert(std::get<1>(pair) == &d);
+  assert(std::get<0>(const_pair) == 2);
+  assert(std::get<1>(const_pair) == &d);
 }
 
 void test_prev_next()
@@ -8157,7 +8156,7 @@ void test_prev_next()
   V.push_back(2);
   V.push_back(3);
 
-  assert(cpp11::next(cpp11::next(V.begin())) == cpp11::prev(V.end()));
+  assert(std::next(std::next(V.begin())) == std::prev(V.end()));
 }
 
 void test_copy_n() {
@@ -8166,8 +8165,8 @@ void test_copy_n() {
     V.push_back(i);
 
   std::vector<int> V2(5);
-  cpp11::copy_n(V.begin(), 5, V2.begin());
-  
+  std::copy_n(V.begin(), 5, V2.begin());
+
   assert(std::equal(V2.begin(), V2.end(), V.begin()));
 }
 

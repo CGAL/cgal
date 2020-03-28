@@ -245,7 +245,7 @@ operator>>(std::istream &is, MySegmentC2<R> &s)
     is >> p >> q;
 
     if (is)
-	s = MySegmentC2<R>(p, q);
+        s = MySegmentC2<R>(p, q);
     return is;
 }
 

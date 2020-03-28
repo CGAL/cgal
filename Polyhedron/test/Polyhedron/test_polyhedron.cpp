@@ -26,7 +26,7 @@
 // ============================================================================
 
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/HalfedgeDS_vector.h>
 #include <CGAL/HalfedgeDS_list.h>
@@ -230,23 +230,23 @@ template <class HDS>
 struct Test_facet_modifier : public CGAL::Modifier_base<HDS>
 {
   typedef typename HDS::Vertex   Vertex;
-  typedef typename Vertex::Point Point;  
-  void operator()( HDS& hds) {  
+  typedef typename Vertex::Point Point;
+  void operator()( HDS& hds) {
     int nb_vertices = 9;
-    
+
     int f[] = {0,1,2, 0,2,3, 0,4,5, 0,6,7, 0,8,6};
-    
+
     int errors[] ={0,3,1, 0,7,8};
     int ok[]={0,3,4, 0,3,8, 0,5,1, 0,7,1, 0,7,4, 0,5,8 };
-    
-    int nb_triangles = sizeof(f) / sizeof(int) / 3;    
-    int nb_errors = sizeof(errors) / sizeof(int) / 3;    
-    int nb_ok = sizeof(ok) / sizeof(int) / 3;    
-    
+
+    int nb_triangles = sizeof(f) / sizeof(int) / 3;
+    int nb_errors = sizeof(errors) / sizeof(int) / 3;
+    int nb_ok = sizeof(ok) / sizeof(int) / 3;
+
     CGAL::Polyhedron_incremental_builder_3<HDS> B( hds, true);
-    
+
     B.begin_surface(nb_vertices, nb_triangles);
-                   
+
     for (int i=0; i<nb_vertices; i++)
        B.add_vertex(Point(0,0,0));
 
@@ -256,28 +256,28 @@ struct Test_facet_modifier : public CGAL::Modifier_base<HDS>
        assert (B.test_facet(first, beyond));
        B.add_facet(first, beyond);
     }
-    
+
     //these are not possible
     for (int i=0; i<nb_errors; i++)
     {
        int *first = errors+3*i, *beyond = first+3;
        assert (!B.test_facet(first, beyond));
     }
-    
+
     //these are allowed
     for (int i=0; i<nb_ok; i++)
     {
        int *first = ok+3*i, *beyond = first+3;
        assert (B.test_facet(first, beyond));
     }
-    
-    B.end_surface();   
+
+    B.end_surface();
   }
 };
 
 void test_Polyhedron() {
-    typedef CGAL::Cartesian<double>                     Kernel;
-    typedef CGAL::Cartesian<int>                        KernelI;
+    typedef CGAL::Simple_cartesian<double>                     Kernel;
+    typedef CGAL::Simple_cartesian<int>                        KernelI;
     typedef CGAL::Point_3<Kernel>                       Point;
     typedef CGAL::Plane_3<Kernel>                       Plane;
     typedef CGAL::Polyhedron_traits_3<Kernel>           Traits;
@@ -1112,11 +1112,11 @@ void test_Polyhedron() {
         Test_facet_modifier<PolyhedronV::HalfedgeDS> test;
         P.delegate(test);
     }
-    
+
 }
 
 void test_min_Polyhedron() {
-    typedef CGAL::Cartesian<double>                     Kernel;
+    typedef CGAL::Simple_cartesian<double>              Kernel;
     typedef CGAL::Point_3<Kernel>                       Point;
     typedef CGAL::Polyhedron_traits_3<Kernel>           Traits;
     typedef CGAL::Polyhedron_3<Traits,
