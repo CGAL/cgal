@@ -285,7 +285,8 @@ public:
         if(main_border.find(v) == main_border.end())  {
           // Compute the line i of matrix A for i inner vertex
           if (i==0) {
-            status = setup_inner_vertex_relations(A, A_prev, Bu, Bv, mesh, v, vimap);
+            //status = setup_inner_vertex_relations(A, A_prev, Bu, Bv, mesh, v, vimap);
+            status = setup_inner_vertex_relations_cotangent(A, Bu, Bv, mesh, v, vimap);
             if(status != OK)
               return status;
           }
@@ -455,6 +456,15 @@ public:
 
   virtual Error_code setup_inner_vertex_relations(Matrix& A,
       Matrix& A_prev,
+      Vector&,
+      Vector&,
+      const TriangleMesh& mesh,
+      vertex_descriptor vertex,
+      Vertex_Int_map& vimap)  {
+    return OK; // TODO: Need to check
+  }
+
+  virtual Error_code setup_inner_vertex_relations_cotangent(Matrix& A,
       Vector&,
       Vector&,
       const TriangleMesh& mesh,

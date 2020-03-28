@@ -322,6 +322,55 @@ protected:
 
   }
 
+  virtual Error_code setup_inner_vertex_relations_cotangent(Matrix& A,
+      Vector&,
+      Vector&,
+      const TriangleMesh& mesh,
+      vertex_descriptor vertex,
+      Vertex_Int_map& vimap)
+  {
+    int i = get(vimap,vertex);
+
+    // circulate over vertices around 'vertex' to compute w_ii and w_ijs
+    NT w_ii = 0;
+    int vertexIndex = 0;
+    int neighborsCounter = 0;
+    vertex_around_target_circulator v_j(halfedge(vertex, mesh), mesh), end = v_j;
+
+    CGAL_For_all(v_j, end){
+      neighborsCounter++;
+    }
+
+    bool bcompute_w_ij = true;
+    if (neighborsCounter < 2)
+      return ERROR_NON_TRIANGULAR_MESH;
+    else if(neighborsCounter==2 && mesh.is_border(vertex))  {
+      bcompute_w_ij = false;
+      std::cout << "Encountered inner border with valency-2 vertex (" << vertex << "), initializing with Tutte weights, this can affect optimization" << std::endl;
+    }
+
+    CGAL_For_all(v_j, end){
+      // Call to virtual method to do the actual coefficient computation
+      NT w_ij = -1.0;
+      if (bcompute_w_ij)
+        w_ij *= compute_w_ij(mesh, vertex, v_j);
+      // w_ii = - sum of w_ijs
+      w_ii -= w_ij;
+
+      // Get j index
+      int j = get(vimap, *v_j);
+
+      // Set w_ij in matrix
+      A.set_coef(i,j, w_ij, true /*new*/);
+      vertexIndex++;
+    }
+
+
+    // Set w_ii in matrix
+    A.set_coef(i,i, w_ii, true /*new*/);
+    return OK;
+  }
+
   virtual double compute_sig_ij(TriangleMesh& mesh, Vertex_point2_map &uvmap, vertex_descriptor v_i, vertex_descriptor v_j, double gamma) {
     double out = (pow(get(vL2Map,v_i),gamma)+pow(get(vL2Map,v_j),gamma))/2.0;
     if(out <= 0.0)
