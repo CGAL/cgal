@@ -9,7 +9,6 @@
 #define CGAL_SURFACE_MESH_PARAMETERIZATION_FIXED_BORDER_ITERATIVE_PARAMETERIZER_3_H
 
 #define DEBUG_L0 1
-#define DEBUG_L1 0
 
 #include <CGAL/license/Surface_mesh_parameterization.h>
 
@@ -239,11 +238,6 @@ public:
     //
     initialize_system_from_mesh_border(A, Bu, Bv, mesh, bhd, uvmap1, vimap1);
 
-    if(DEBUG_L1) {
-      printMatrix(vertices, vimap1, A, "A");
-      printVector(vertices, vimap1, Bu, "Bu");
-      printVector(vertices, vimap1, Bv, "Bv");
-    }
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
     boost::unordered_set<vertex_descriptor> main_border;
@@ -296,12 +290,6 @@ public:
               return status;
           }
         }
-      }
-
-      if(DEBUG_L1) {
-        print(A, Xu, Bu);
-        std::cout << std::endl;
-        print(A, Xv, Bv);
       }
 
       // solve linear equations

@@ -406,31 +406,17 @@ private:
   }
 
   double getvL2(const TriangleMesh& mesh, vertex_descriptor &vertex)  const {
-    bool debug = false;
-    if(vertex == 711111)
-      debug = true;
-    if(debug)
-      std::cout << "\t" << vertex << "\t" << std::flush;
     halfedge_descriptor hf = halfedge(vertex, mesh);
-    if(debug)
-      std::cout << hf << "\t" << std::flush;
     face_around_target_circulator f_j(hf, mesh), end_f_j = f_j;
     double varphi = 0.0;
     double localArea = 0.0;
     int i=0;
     CGAL_For_all(f_j, end_f_j)  {
-      if(debug)
-        std::cout << *f_j << "\t" << std::flush;
       if(*f_j > mesh.number_of_faces())
         continue;
       varphi += get(fL2Map,*f_j)*get(areaMap,*f_j);
       localArea += get(areaMap,*f_j);
       i++;
-    }
-
-    if(debug) {
-      std::cout << varphi << "\t" << std::flush;
-      std::cout << localArea << "\t" << std::flush;
     }
 
     if(mesh.is_border(vertex) && mesh.degree(vertex) != i+1)
