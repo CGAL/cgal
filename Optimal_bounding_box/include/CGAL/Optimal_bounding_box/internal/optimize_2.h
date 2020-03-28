@@ -115,11 +115,12 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
   typedef typename Traits::FT                                        FT;
   typedef typename Traits::Point_3                                   Point;
   typedef typename Traits::Matrix                                    Matrix;
+  typedef typename Traits::Vector                                    Vector;
 
   CGAL_static_assertion((std::is_same<typename boost::range_value<PointRange>::type, Point>::value));
 
   std::vector<Point> rotated_points;
-  rotated_points.size();
+  rotated_points.reserve(points.size());
 
   FT xmin, ymin, zmin, xmax, ymax, zmax;
   xmin = ymin = zmin = FT{std::numeric_limits<double>::max()};
@@ -127,11 +128,13 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
 
   for(const Point& pt : points)
   {
-    const FT rx = rot(0, 0) * pt.x() + rot(0, 1) * pt.y() + rot(0, 2) * pt.z();
-    const FT ry = rot(1, 0) * pt.x() + rot(1, 1) * pt.y() + rot(1, 2) * pt.z();
-    const FT rz = rot(2, 0) * pt.x() + rot(2, 1) * pt.y() + rot(2, 2) * pt.z();
-
-    rotated_points.emplace_back(rx, ry, rz);
+    Vector pv(3);
+    pv.set(0, pt.x());
+    pv.set(1, pt.y());
+    pv.set(2, pt.z());
+    pv = rot * pv;
+    
+    rotated_points.emplace_back(pv(0), pv(1), pv(2));
 
     xmin = (std::min)(xmin, rx);
     ymin = (std::min)(ymin, ry);
