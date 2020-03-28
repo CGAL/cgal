@@ -234,53 +234,59 @@ protected:
       neighborsCounter++;
     }
 
-    // compute angles
-    for(int n=0; n<neighborsCounter; n++) {
-      int n_prev = (n==0 ? neighborsCounter-1 : n-1);
-      double theta = angle(NeighborList_[n].vector,NeighborList_[n_prev].vector);
-      NeighborList_[n].angle = theta;
-      theta_sum += theta;
-    }
-
-    // Normalise the angle
-    double factor = 2.0  / theta_sum;
-    factor *= M_PI;
-    for(int n=0; n<neighborsCounter; n++)
-      NeighborList_[n].angle *= factor;
-
-    NeighborList_[0].angle = 0.0;
-    for(int n=1; n<neighborsCounter; n++)
-      NeighborList_[n].angle += NeighborList_[n-1].angle;
-    for(int n=0; n<neighborsCounter; n++)
-      NeighborList_[n].uv = Point_2(NeighborList_[n].length*cos(NeighborList_[n].angle), NeighborList_[n].length*sin(NeighborList_[n].angle));
-
     if (neighborsCounter < 2)
       return ERROR_NON_TRIANGULAR_MESH;
 
+    if(neighborsCounter==2 && mesh.is_border(vertex)) {
+      std::cout << "Encountered inner border with valency-2 vertex (" << vertex << "), initializing with Tutte weights, this can affect optimization" << std::endl;
+      // Tutte weights
+      for(int k=0; k<neighborsCounter; k++)
+        NeighborList_[k].weight = 1.0;
+    }
+    else  {
+      for(int n=0; n<neighborsCounter; n++) {
+        int n_prev = (n==0 ? neighborsCounter-1 : n-1);
+        double theta = angle(NeighborList_[n].vector,NeighborList_[n_prev].vector);
+        NeighborList_[n].angle = theta;
+        theta_sum += theta;
+      }
 
-    for(int j=0; j<neighborsCounter; j++)
-    {
-      /* Given the j-th neighbour of node i,
+      // Normalise the angle
+      double factor = 2.0  / theta_sum;
+      factor *= M_PI;
+      for(int n=0; n<neighborsCounter; n++)
+        NeighborList_[n].angle *= factor;
+
+      NeighborList_[0].angle = 0.0;
+      for(int n=1; n<neighborsCounter; n++)
+        NeighborList_[n].angle += NeighborList_[n-1].angle;
+      for(int n=0; n<neighborsCounter; n++)
+        NeighborList_[n].uv = Point_2(NeighborList_[n].length*cos(NeighborList_[n].angle), NeighborList_[n].length*sin(NeighborList_[n].angle));
+
+      for(int j=0; j<neighborsCounter; j++)
+      {
+        /* Given the j-th neighbour of node i,
             find the two neighbours by intersecting the
             line through nodes i and j with all segments of the polygon
             made by the neighbours. Take the two neighbours on
             either side. Only one segment intersects this line. */
-      for(int k=0; k<neighborsCounter; k++)
-      {
-        int kk = (k == neighborsCounter-1 ? 0 : k+1);
-        if(k == j || kk == j) continue;
-
-        double cross1 = determinant(NeighborList_[j].uv,NeighborList_[k].uv);
-        double cross2 = determinant(NeighborList_[j].uv,NeighborList_[kk].uv);
-
-        if(cross1 * cross2 <= 0.0)
+        for(int k=0; k<neighborsCounter; k++)
         {
-          double tau0,tau1,tau2;
-          baryCoords0(NeighborList_[j].uv, NeighborList_[k].uv, NeighborList_[kk].uv, tau0, tau1, tau2);
-          NeighborList_[j].weight += tau0;
-          NeighborList_[k].weight  += tau1;
-          NeighborList_[kk].weight += tau2;
-          break;
+          int kk = (k == neighborsCounter-1 ? 0 : k+1);
+          if(k == j || kk == j) continue;
+
+          double cross1 = determinant(NeighborList_[j].uv,NeighborList_[k].uv);
+          double cross2 = determinant(NeighborList_[j].uv,NeighborList_[kk].uv);
+
+          if(cross1 * cross2 <= 0.0)
+          {
+            double tau0,tau1,tau2;
+            baryCoords0(NeighborList_[j].uv, NeighborList_[k].uv, NeighborList_[kk].uv, tau0, tau1, tau2);
+            NeighborList_[j].weight += tau0;
+            NeighborList_[k].weight  += tau1;
+            NeighborList_[kk].weight += tau2;
+            break;
+          }
         }
       }
     }
