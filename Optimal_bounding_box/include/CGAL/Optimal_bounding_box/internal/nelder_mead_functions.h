@@ -50,7 +50,7 @@ Matrix mean(const Matrix& m1,
 {
   typedef typename Traits::FT                                 FT;
 
-  constexpr FT half = FT(1) / FT(2);
+  const FT half = FT(1) / FT(2);
   const Matrix reduction = half * (m1 + m2);
 
   return traits.get_Q(reduction);
@@ -64,7 +64,7 @@ const Matrix nm_centroid(const Matrix& S1,
 {
   typedef typename Traits::FT                                 FT;
 
-  constexpr FT third = FT(1) / FT(3);
+  const FT third = FT(1) / FT(3);
   const Matrix mean = third * (S1 + S2 + S3);
 
   return traits.get_Q(mean);
