@@ -27,6 +27,9 @@
  * functors required by the concept it models.
  */
 
+#include <boost/optional.hpp>
+#include <boost/variant.hpp>
+
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/tags.h>
 #include <CGAL/Arr_tags.h>
@@ -219,15 +222,18 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_variant;
+      typedef boost::optional<Intersection_variant>     Intersection_result;
 
       const Kernel& kernel = m_traits;
-      Object res = kernel.intersect_2_object()(cv1, cv2);
+      auto res = kernel.intersect_2_object()(cv1, cv2);
 
       // There is no intersection:
-      if (res.is_empty()) return oi;
+      if (! res) return oi;
 
       // Chack if the intersection is a point:
-      const Point_2* ip = object_cast<Point_2>(&res);
+      const Point_2* ip = boost::get<Point_2>(&*res);
       if (ip != nullptr) {
         // Create a pair representing the point with its multiplicity,
         // which is always 1 for line segments for all practical purposes.
@@ -235,12 +241,12 @@ public:
         // multiplicity is undefined, but we deliberately ignore it for
         // efficieny reasons.
         Intersection_point ip_mult(*ip, 1);
-        *oi++ = make_object(ip_mult);
+        *oi++ = Intersection_result(ip_mult);
         return oi;
       }
 
       // The intersection is a segment.
-      const X_monotone_curve_2* ov = object_cast<X_monotone_curve_2>(&res);
+      const X_monotone_curve_2* ov = boost::get<X_monotone_curve_2>(&*res);
       CGAL_assertion(ov != nullptr);
 
       Comparison_result cmp1 = m_traits.compare_endpoints_xy_2_object()(cv1);
@@ -250,7 +256,8 @@ public:
         // cv1 and cv2 have the same directions, maintain this direction
         // in the overlap segment
         if (m_traits.compare_endpoints_xy_2_object()(*ov) != cmp1) {
-          res = make_object(kernel.construct_opposite_segment_2_object()(*ov));
+          auto ctr_opposite = kernel.construct_opposite_segment_2_object();
+          res = Intersection_result(ctr_opposite(*ov));
         }
       }
 
