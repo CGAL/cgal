@@ -36,7 +36,7 @@ public:
   using Original_map_wrapper=internal::Generic_map_selector<Mesh>;
   using Original_dart_const_handle=typename Original_map_wrapper::Dart_handle_original; // TODO SOLVE const problem with copy
 
-  using Local_map=typename Original_map_wrapper::Generic_map;
+  using Local_map        =typename Original_map_wrapper::Generic_map;
   using Dart_handle      =typename Local_map::Dart_handle;
   using Dart_const_handle=typename Local_map::Dart_const_handle;
   using size_type        = typename Local_map::size_type;
@@ -55,11 +55,11 @@ public:
     Weight_t operator() (T) const { return 1; }
   };
 
-  /// @return the reduced map
+  /// @return the local map
   const Local_map& get_local_map() const
   { return m_local_map; }
 
-  /// @return the reduced map
+  /// @return the local map
   Local_map& get_local_map()
   { return m_local_map; }
 
@@ -84,30 +84,31 @@ public:
       exit(-1);
     }
     get_local_map().negate_mark(m_is_hole);
-    // Remove all boundary by adding faces
+    // Remove all boundary by adding faces, marked with m_is_hole
     get_local_map().template close<2>();
     get_local_map().negate_mark(m_is_hole);
 
-    for (auto it=get_local_map().darts().begin(), itend=get_local_map().darts().end(); it!=itend; ++it)
+    size_type face_treated=get_local_map().get_new_mark();
+    
+    for (auto it=get_local_map().darts().begin(), itend=get_local_map().darts().end();
+         it!=itend; ++it)
     {
       if (get_local_map().template attribute<0>(it)==nullptr)
       { get_local_map().template set_attribute<0>(it, get_local_map().template create_attribute<0>()); }
-      // if (get_local_map().template attribute<1>(it)==NULL) // For debug purpose only
-      // { get_local_map().template set_attribute<1>(it, get_local_map().template create_attribute<1>()); }
-    }
-    // std::cerr << '\n';
-    for (auto it=get_local_map().template one_dart_per_cell<2>().begin(),
-           itend=get_local_map().template one_dart_per_cell<2>().end(); it!=itend; ++it)
-    { m_face_list.push_back(it); }
-    for (auto it = get_local_map().template one_dart_per_cell<1>().begin(),
-              itend = get_local_map().template one_dart_per_cell<1>().end(); it != itend; ++it)
-    {
-      // get_local_map().template info<1>(it) = m_edge_list.size(); // For debug purpose only
-      m_edge_list.push_back(it);
-    }
-    // get_local_map().display_characteristics(std::cerr);
-    // std::cerr << '\n';
 
+      if (it<get_local_map().opposite2(it))
+      { m_edge_list.push_back(it); }
+      
+      if (!get_local_map().is_marked(it, face_treated))
+      {
+        m_face_list.push_back(it);
+        get_local_map().template mark_cell<2>(it, face_treated);
+      }
+    }
+
+    CGAL_assertion(get_local_map().is_whole_map_marked(face_treated));
+    get_local_map().free_mark(face_treated);
+    
     if (display_time)
     {
       t.stop();
@@ -117,7 +118,6 @@ public:
 
   ~Shortest_noncontractible_cycle()
   {
-    // std::cerr << "Destructor...\n"; // For testing unique_ptr
     get_local_map().free_mark(m_is_hole);
   }
   

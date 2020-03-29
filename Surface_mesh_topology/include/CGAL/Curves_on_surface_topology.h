@@ -17,7 +17,6 @@
 #include <CGAL/Surface_mesh_topology/internal/Minimal_quadrangulation.h>
 #include <CGAL/Surface_mesh_topology/internal/Shortest_noncontractible_cycle.h>
 #include <CGAL/Surface_mesh_topology/internal/Facewidth.h>
-#include <CGAL/Surface_mesh_topology/internal/Generic_map_selector.h>
 #include <CGAL/Face_graph_wrapper.h>
 #include <memory>
 
@@ -35,7 +34,7 @@ public:
   // Types for shortest noncontractible cycle
   using Shortest_noncontractible_cycle=typename internal::Shortest_noncontractible_cycle<Mesh>;
   using Facewidth                     =typename internal::Facewidth<Mesh>;
-  using Dart_handle                   =typename internal::Generic_map_selector<Mesh>::Dart_handle_original;
+  using Dart_handle                   =typename Shortest_noncontractible_cycle::Original_dart_const_handle;
 
   // Constructor
   Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
