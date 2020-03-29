@@ -735,7 +735,7 @@ public:
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
             Intersection_point ip_mult(*ip, 1);
-            *oi++ = make_object(ip_mult);
+            *oi++ = Intersection_result(ip_mult);
           }
         }
         return oi;
@@ -761,17 +761,17 @@ public:
           // in the overlap segment
           if (cv1.is_directed_right()) {
             X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
-            *oi++ = make_object(overlap_seg);
+            *oi++ = Intersection_result(overlap_seg);
             return oi;
           }
           X_monotone_curve_2 overlap_seg(cv1.line(), p_r, p_l);
-          *oi++ = make_object(overlap_seg);
+          *oi++ = Intersection_result(overlap_seg);
           return oi;
         }
         // cv1 and cv2 have opposite directions, the overlap segment
         // will be directed from left to right
         X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
-        *oi++ = make_object(overlap_seg);
+        *oi++ = Intersection_result(overlap_seg);
         return oi;
       }
       if (cmp_res == EQUAL) {
@@ -779,7 +779,7 @@ public:
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
         Intersection_point ip_mult(p_r, 0);
-        *oi++ = make_object(ip_mult);
+        *oi++ = Intersection_result(ip_mult);
         return oi;
       }
 
