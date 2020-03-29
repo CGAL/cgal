@@ -22,13 +22,17 @@
  * The segment traits-class for the arrangement package.
  */
 
+#include <fstream>
+
+#include <boost/optional.hpp>
+#include <boost/variant.hpp>
+
 #include <CGAL/tags.h>
 #include <CGAL/intersections.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Segment_assertions.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arr_enums.h>
-#include <fstream>
 
 namespace CGAL {
 
@@ -705,17 +709,19 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_variant;
+      typedef boost::optional<Intersection_variant>     Intersection_result;
 
       // Intersect the two supporting lines.
       const Kernel& kernel = m_traits;
-      CGAL::Object obj = kernel.intersect_2_object()(cv1.line(), cv2.line());
+      auto res = kernel.intersect_2_object()(cv1.line(), cv2.line());
 
       // The supporting line are parallel lines and do not intersect:
-      if (obj.is_empty()) return oi;
+      if (! res) return oi;
 
       // Check if we have a single intersection point.
-      const Point_2* ip = object_cast<Point_2>(&obj);
-
+      const Point_2* ip = boost::get<Point_2>(&*res);
       if (ip != nullptr) {
         // Check if the intersection point ip lies on both segments.
         const bool ip_on_cv1 = cv1.is_vertical() ?
@@ -729,8 +735,7 @@ public:
             // Create a pair representing the point with its multiplicity,
             // which is always 1 for line segments.
             Intersection_point ip_mult(*ip, 1);
-            *oi = make_object (ip_mult);
-            oi++;
+            *oi++ = make_object(ip_mult);
           }
         }
         return oi;
@@ -747,9 +752,9 @@ public:
         cv1.right() : cv2.right();
 
       // Examine the resulting segment.
-      const Comparison_result        res = compare_xy(p_l, p_r);
+      const Comparison_result cmp_res = compare_xy(p_l, p_r);
 
-      if (res == SMALLER) {
+      if (cmp_res == SMALLER) {
         // We have discovered an overlapping segment:
         if (cv1.is_directed_right() == cv2.is_directed_right()) {
           // cv1 and cv2 have the same directions, maintain this direction
@@ -765,16 +770,17 @@ public:
         }
         // cv1 and cv2 have opposite directions, the overlap segment
         // will be directed from left to right
-        X_monotone_curve_2  overlap_seg(cv1.line(), p_l, p_r);
+        X_monotone_curve_2 overlap_seg(cv1.line(), p_l, p_r);
         *oi++ = make_object(overlap_seg);
         return oi;
       }
-      if (res == EQUAL) {
+      if (cmp_res == EQUAL) {
         // The two segment have the same supporting line, but they just share
         // a common endpoint. Thus we have an intersection point, but we leave
         // the multiplicity of this point undefined.
         Intersection_point ip_mult(p_r, 0);
         *oi++ = make_object(ip_mult);
+        return oi;
       }
 
       return oi;
