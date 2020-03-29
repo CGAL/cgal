@@ -99,22 +99,25 @@ namespace internal {
  * `seed_face` will also be added in `out`.
  *
  *  \tparam PolygonMesh a model of `FaceGraph`
- *  \tparam FaceOutputIterator a model of `OutputIterator` that accepts
-        faces of type
-        `boost::graph_traits<PolygonMesh>::%face_descriptor`.
+ *  \tparam FaceOutputIterator a model of `OutputIterator` with value type `boost::graph_traits<PolygonMesh>::%face_descriptor`.
  *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
  *
  *  \param seed_face a face of `pmesh` from which exploration starts to detect the connected component
            that contains it
  *  \param pmesh the polygon mesh
  *  \param out the output iterator that collects faces from the same connected component as `seed_face`
- *  \param np optional \ref pmp_namedparameters "Named Parameters" described below
+ *  \param np an optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{edge_is_constrained_map}  a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge key}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- *  \returns the output iterator.
+ * \returns the output iterator.
  *
  */
 template <typename PolygonMesh
@@ -184,14 +187,25 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
 
  * \param pmesh the polygon mesh
  * \param fcm the property map with indices of components associated to faces in `pmesh`
- * \param np optional \ref pmp_namedparameters "Named Parameters" described below
+ * \param np an optional \ref pmp_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- *  \returns the number of connected components.
+ * \returns the number of connected components.
  */
 
 template <typename PolygonMesh
@@ -284,11 +298,22 @@ namespace internal {
 //  *  \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 //  *
 //  *  \param pmesh the polygon mesh
-//  *  \param np optional \ref pmp_namedparameters "Named Parameters" described below
+//  *  \param np an optional \ref pmp_namedparameters "Named Parameters" described below
 //  *
 //  * \cgalNamedParamsBegin
-//  *  \cgalParamBegin{edge_is_constrained_map}  a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
-//  *  \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+//  *   \cgalParamNBegin{edge_is_constrained_map}
+//  *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+//  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+//  *                    as key type and `bool` as value type}
+//  *     \cgalParamDefault{a constant property map returning `false` for any edge}
+//  *   \cgalParamNEnd
+//  *
+//  *   \cgalParamNBegin{face_index_map}
+//  *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+//  *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+//  *                    as key type and `std::size_t` as value type}
+//  *     \cgalParamDefault{an automatically indexed internal map}
+//  *   \cgalParamNEnd
 //  * \cgalNamedParamsEnd
 //  *
 //  * \returns the output iterator.
@@ -330,28 +355,53 @@ std::size_t number_of_connected_components(const PolygonMesh& pmesh)
  * \param pmesh the polygon mesh
  * \param nb_components_to_keep the number of components to be kept. If this number is larger than
  *                              the number of components in the mesh, all components are kept.
- * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{face_size_map}
- *      a property map containing a size for each face of `pmesh`. The value type of this property map
- *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
- *      comparisons.
- *    \cgalParamEnd
- *    \cgalParamBegin{dry_run}
- *      a Boolean parameter. If set to `true`, the mesh will not be altered, but the number
- *      of components that would be removed is returned. The default value is `false`.
- *    \cgalParamEnd
- *    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
- *      When using the "dry run" mode (see parameter `dry_run`), faces that would be removed by the
- *      algorithm can be collected with this output iterator.
- *    \cgalParamEnd
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{vertex_index_map}
+ *     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_size_map}
+ *     \cgalParamDescription{a property map associating to each face of `pmesh` a size}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type.
+ *                    The value type is chosen by the user, but must be constructible from `0` and support summation and comparisons.}
+ *     \cgalParamDefault{A constant property map returning `1` for any face}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{dry_run}
+ *     \cgalParamDescription{If set to `true`, the mesh will not be altered, but the number of components
+ *                           that would be removed is returned.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{output_iterator}
+ *     \cgalParamDescription{An output iterator to collect the faces that would be removed by the algorithm,
+ *                           when using the "dry run" mode (see parameter `dry_run`)}
+ *     \cgalParamType{a model of `OutputIterator` with value type `face_descriptor`}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
- *  \return the number of connected components removed (ignoring isolated vertices).
+ * \return the number of connected components removed (ignoring isolated vertices).
  */
 template <typename PolygonMesh,
           typename NamedParameters>
@@ -457,31 +507,56 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  *
  * \param pmesh the polygon mesh
  * \param threshold_value any connected component with a size (strictly) smaller than this value will be discarded
- * \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+ * \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
- *    \cgalParamBegin{face_size_map}
- *      a property map containing a size for each face of `pmesh`. The value type of this property map
- *      is chosen by the user, but must be constructible from `0` and support `operator+=()` and
- *      comparisons.
- *    \cgalParamEnd
- *    \cgalParamBegin{dry_run}
- *      a Boolean parameter. If set to `true`, the mesh will not be altered, but the number
- *      of components that would be removed is returned. The default value is `false`.
- *    \cgalParamEnd
- *    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
- *      When using the "dry run" mode (see parameter `dry_run`), faces that would be removed by the
- *      algorithm can be collected with this output iterator.
- *    \cgalParamEnd
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{vertex_index_map}
+ *     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_size_map}
+ *     \cgalParamDescription{a property map associating to each face of `pmesh` a size}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type.
+ *                    The value type is chosen by the user, but must be constructible from `0` and support summation and comparisons.}
+ *     \cgalParamDefault{A constant property map returning `1` for any face}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{dry_run}
+ *     \cgalParamDescription{If set to `true`, the mesh will not be altered, but the number of components
+ *                           that would be removed is returned.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{output_iterator}
+ *     \cgalParamDescription{An output iterator to collect the faces that would be removed by the algorithm,
+ *                           when using the "dry run" mode (see parameter `dry_run`)}
+ *     \cgalParamType{a model of `OutputIterator` with value type `face_descriptor`}
+ *     \cgalParamDefault{`false`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre If a face size property map is passed by the user, `ThresholdValueType` must be the same
  *      type as the value type of the property map. Otherwise, `ThresholdValueType` must be `std::size_t`.
  *
- *  \return the number of connected components removed (ignoring isolated vertices).
+ * \return the number of connected components removed (ignoring isolated vertices).
  */
 template <typename PolygonMesh,
           typename ThresholdValueType,
@@ -708,20 +783,25 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
 *         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
+* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * \param components_to_keep the range of ids of connected components to keep
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np optional \ref pmp_namedparameters "Named Parameters" described below
+* \param np an optional \ref pmp_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+*   \cgalParamNBegin{vertex_index_map}
+*     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -747,20 +827,25 @@ void keep_connected_components(PolygonMesh& pmesh
 * then the behavior of this function is undefined.
 *
 * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
-* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
 *         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
 *         `boost::graph_traits<PolygonMesh>::%faces_size_type` as value type.
+* \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 *
 * \param components_to_remove the range of ids of connected components to remove
 * \param pmesh the polygon mesh
 * \param fcm the property map with indices of components associated to faces in `pmesh`.
 *        After calling this function, the values of `fcm` are undefined.
-* \param np optional \ref pmp_namedparameters "Named Parameters" described below
+* \param np an optional \ref pmp_namedparameters "Named Parameters" described below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+*   \cgalParamNBegin{vertex_index_map}
+*     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -792,12 +877,29 @@ void remove_connected_components(PolygonMesh& pmesh
 *
 * \param components_to_remove a face range, including one face or more on each component to be removed
 * \param pmesh the polygon mesh
-* \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+* \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+*                    as key type and `bool` as value type}
+*     \cgalParamDefault{a constant property map returning `false` for any edge}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_index_map}
+*     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{face_index_map}
+*     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -845,12 +947,29 @@ void remove_connected_components(PolygonMesh& pmesh
 *
 * \param pmesh the polygon mesh
 * \param components_to_keep a face range, including one face or more on each component to be kept
-* \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+* \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+*                    as key type and `bool` as value type}
+*     \cgalParamDefault{a constant property map returning `false` for any edge}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_index_map}
+*     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{face_index_map}
+*     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*                    as key type and `std::size_t` as value type}
+*     \cgalParamDefault{an automatically indexed internal map}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 */
@@ -963,34 +1082,50 @@ void split_connected_components_impl(FIMap fim,
 
 /*!
  * \ingroup keep_connected_components_grp
- * identifies the connected components of `pm` and pushes back a new `PolygonMesh` for each connected component in `cc_meshes`.
- *
+ * identifies the connected components of `pmesh` and pushes back a new `PolygonMesh` for each connected component in `cc_meshes`.
  *
  *  \tparam PolygonMesh a model of `FaceListGraph`
  *  \tparam PolygonMeshRange a model of `SequenceContainer` with `PolygonMesh` as value type.
  *
  *  \tparam NamedParameters a sequence of Named Parameters
  *
- * \param pm the polygon mesh
+ * \param pmesh the polygon mesh
  * \param cc_meshes container that is filled with the extracted connected components.
  * \param np an optional sequence of Named Parameters among the ones listed below
  *
  * \cgalNamedParamsBegin
- *   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pm` \cgalParamEnd
- *   \cgalParamBegin{face_index_map}
- *     a property map containing a unique index for each face initialized from 0 to `num_faces(pm)`
- *   \cgalParamEnd
- *   \cgalParamBegin{vertex_index_map}
- *     a property map containing a unique index for each vertex initialized 0 to `num_vertices(pm)`
- *   \cgalParamEnd
- *   \cgalNPBegin{halfedge_index_map}
- *     a property map containing a unique index for each halfedge initialized 0 to `num_halfedges(pm)`
- *   \cgalNPEnd
+ *   \cgalParamNBegin{edge_is_constrained_map}
+ *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `pmesh`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *                    as key type and `bool` as value type}
+ *     \cgalParamDefault{a constant property map returning `false` for any edge}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{vertex_index_map}
+ *     \cgalParamDescription{a property map associating to each vertex of `pmesh` a unique index between `0` and `num_vertices(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{halfedge_index_map}
+ *     \cgalParamDescription{a property map associating to each halfedge of `pmesh` a unique index between `0` and `num_halfedges(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{face_index_map}
+ *     \cgalParamDescription{a property map associating to each face of `pmesh` a unique index between `0` and `num_faces(pmesh) - 1`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+ *                    as key type and `std::size_t` as value type}
+ *     \cgalParamDefault{an automatically indexed internal map}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */
 template <class PolygonMesh, class PolygonMeshRange, class NamedParameters>
-void split_connected_components(const PolygonMesh& pm,
+void split_connected_components(const PolygonMesh& pmesh,
                                 PolygonMeshRange& cc_meshes,
                                 const NamedParameters& np)
 {
@@ -1006,17 +1141,17 @@ void split_connected_components(const PolygonMesh& pm,
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                              internal::No_mark<PolygonMesh>());
 
-  internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pm, np),
-                                            CGAL::get_initialized_halfedge_index_map(pm, np),
-                                            CGAL::get_initialized_vertex_index_map(pm, np),
+  internal::split_connected_components_impl(CGAL::get_initialized_face_index_map(pmesh, np),
+                                            CGAL::get_initialized_halfedge_index_map(pmesh, np),
+                                            CGAL::get_initialized_vertex_index_map(pmesh, np),
                                             ecm, cc_meshes, pm);
 }
 
 template <class PolygonMesh, class PolygonMeshRange>
-void split_connected_components(const PolygonMesh& pm,
+void split_connected_components(const PolygonMesh& pmesh,
                                 PolygonMeshRange& cc_meshes)
 {
-  split_connected_components(pm, cc_meshes, parameters::all_default());
+  split_connected_components(pmesh, cc_meshes, parameters::all_default());
 }
 
 } // namespace Polygon_mesh_processing

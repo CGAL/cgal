@@ -169,7 +169,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
 
    \param point_set_1 input point range used as reference.
    \param point_set_2 input point range whose registration w.r.t. `point_set_1` will be computed.
-   \param np1 optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np1 an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` whose key type
@@ -237,7 +237,7 @@ compute_registration_transformation(const PointRange1& range1,    const PointRan
      model of `Kernel`\cgalParamEnd
    \cgalNamedParamsEnd
 
-   \param np2 optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np2 an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` whose key type

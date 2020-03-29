@@ -618,7 +618,7 @@ write_polys_points(std::ostream& os,
  *
  * \param os the stream used for writing.
  * \param mesh the triangle mesh to be written.
- * \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the
+ * \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the
  * ones listed below
  *
  * \cgalNamedParamsBegin

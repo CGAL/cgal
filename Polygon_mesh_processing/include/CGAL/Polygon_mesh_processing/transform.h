@@ -30,12 +30,17 @@ namespace Polygon_mesh_processing{
  *
  * @param transformation the transformation functor to apply to  the points of `mesh`.
  * @param mesh the `PolygonMesh` to transform.
- * @param np optional sequence of \ref pmp_namedparameters for `mesh`, among the ones listed below
+ * @param np an optional sequence of \ref pmp_namedparameters for `mesh`, among the ones listed below
  *
- * * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `mesh`.
- *   If this parameter is omitted, an internal property map for
- *   `CGAL::vertex_point_t` must be available in `PolygonMesh`\cgalParamEnd
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
+ *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `PolygonMesh`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  */

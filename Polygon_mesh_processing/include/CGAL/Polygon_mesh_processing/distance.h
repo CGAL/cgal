@@ -234,87 +234,131 @@ sample_triangles(const FaceRange& triangles,
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points
- *      associated to the vertices of `tm`. If this parameter is omitted,
- *      an internal property map for `CGAL::vertex_point_t`
- *      must be available for `TriangleMesh`.
- *    \cgalParamEnd
- *    \cgalParamBegin{geom_traits} a model of `PMPDistanceTraits`. \cgalParamEnd
- *    \cgalParamBegin{use_random_uniform_sampling}
- *      if `true` is passed (the default), points are generated in a random
- *      and uniform way on the surface of `tm`, and/or on edges of `tm`.
- *      For faces, the number of sample points is the value passed to the named
- *      parameter `number_of_points_on_faces()`. If not set,
- *      the value passed to the named parameter `number_of_points_per_area_unit()`
- *      is multiplied by the area of `tm` to get the number of sample points.
- *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
- *      For edges, the number of the number of sample points is the value passed to the named
- *      parameter `number_of_points_on_edges()`. If not set,
- *      the value passed to the named parameter `number_of_points_per_distance_unit()`
- *      is multiplied by the sum of the length of edges of `tm` to get the number of sample points.
- *      If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
- *    \cgalParamEnd
- *    \cgalParamBegin{use_grid_sampling}
- *      if `true` is passed, points are generated on a grid in each triangle,
- *      with a minimum of one point per triangle. The distance between
- *      two consecutive points in the grid is that of the length of the
- *      smallest non-null edge of `tm` or the value passed to
- *      the named parameter `grid_spacing()`. Edges are also split using the
- *      same distance, if requested.
- *    \cgalParamEnd
- *    \cgalParamBegin{use_monte_carlo_sampling}
- *      if `true` is passed, points are generated randomly in each triangle and/or
- *      on each edge.
- *      For faces, the number of points per triangle is the value passed to the named
- *      parameter `number_of_points_per_face()`. If not set, the value passed
- *      to the named parameter `number_of_points_per_area_unit()` is
- *      used to pick a number of points per face proportional to the triangle
- *      area with a minimum of one point per face. If none of these parameters
- *      is set, 2 divided by the square of the length of the smallest non-null
- *      edge of `tm` is used as if it was passed to
- *      `number_of_points_per_area_unit()`.
- *      For edges, the number of points per edge is the value passed to the named
- *      parameter `number_of_points_per_edge()`. If not set, the value passed
- *      to the named parameter `number_of_points_per_distance_unit()` is
- *      used to pick a number of points per edge proportional to the length of
- *      the edge with a minimum of one point per face. If none of these parameters
- *      is set, 1 divided by the length of the smallest non-null edge of `tm`
- *      is used as if it was passed to `number_of_points_per_distance_unit()`.
- *    \cgalParamEnd
- *    \cgalParamBegin{sample_vertices} if `true` is passed (default value),
- *    vertices of `tm` are put into `out`.\cgalParamEnd
- *    \cgalParamBegin{sample_edges} if `true` is passed (default value),
- *    edges of `tm` are sampled.\cgalParamEnd
- *    \cgalParamBegin{sample_faces} if `true` is passed (default value),
- *    faces of `tm` are sampled.\cgalParamEnd
- *    \cgalParamBegin{grid_spacing} a double value used as the grid spacing
- *      for the grid sampling method.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_on_edges} an unsigned integral value used
- *      for the random sampling method as the number of points to pick exclusively
- *      on edges.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_on_faces} an unsigned integral value used
- *      for the random sampling method as the number of points to pick on the surface.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_distance_unit} a double value
- *       used for the random sampling and the Monte Carlo sampling methods to
- *       repectively determine the total number of points on edges and the
- *       number of points per edge.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_edge} an unsigned integral value
- *      used by the Monte-Carlo sampling method as the number of points per edge
- *      to pick.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_face} an unsigned integral value
- *      used by the Monte-Carlo sampling method as the number of points per face
- *      to pick.
- *    \cgalParamEnd
- *    \cgalParamBegin{number_of_points_per_area_unit} a double value
- *       used for the random sampling and the Monte Carlo sampling methods to
- *       repectively determine the total number of points inside faces
- *       and the number of points per face.
- *    \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPDistanceTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{use_random_uniform_sampling}
+ *     \cgalParamDescription{If `true` is passed, points are generated in a random and uniform way
+ *                           on the surface of `tm`, and/or on edges of `tm`.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamType{`true`}
+ *     \cgalParamExtra{For faces, the number of sample points is the value passed to the named
+ *                     parameter `number_of_points_on_faces`. If not set,
+ *                     the value passed to the named parameter `number_of_points_per_area_unit`
+ *                     is multiplied by the area of `tm` to get the number of sample points.
+ *                     If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.
+ *                     For edges, the number of the number of sample points is the value passed to the named
+ *                     parameter `number_of_points_on_edges`. If not set,
+ *                     the value passed to the named parameter `number_of_points_per_distance_unit`
+ *                     is multiplied by the sum of the length of edges of `tm` to get the number of sample points.
+ *                     If none of these parameters is set, the number of points sampled is `num_vertices(tm)`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{use_grid_sampling}
+ *     \cgalParamDescription{If `true` is passed, points are generated on a grid in each triangle,
+ *                           with a minimum of one point per triangle.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{The distance between two consecutive points in the grid is that of the length
+ *                     of the smallest non-null edge of `tm` or the value passed to the named parameter
+ *                     `grid_spacing`. Edges are also split using the same distance, if requested.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{use_monte_carlo_sampling}
+ *     \cgalParamDescription{if `true` is passed, points are generated randomly in each triangle and/or on each edge.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`false`}
+ *     \cgalParamExtra{For faces, the number of points per triangle is the value passed to the named
+ *                     parameter `number_of_points_per_face`. If not set, the value passed
+ *                     to the named parameter `number_of_points_per_area_unit` is
+ *                     used to pick a number of points per face proportional to the triangle
+ *                     area with a minimum of one point per face. If none of these parameters
+ *                     is set, 2 divided by the square of the length of the smallest non-null
+ *                     edge of `tm` is used as if it was passed to
+ *                     `number_of_points_per_area_unit`.
+ *                     For edges, the number of points per edge is the value passed to the named
+ *                     parameter `number_of_points_per_edge`. If not set, the value passed
+ *                     to the named parameter `number_of_points_per_distance_unit` is
+ *                     used to pick a number of points per edge proportional to the length of
+ *                     the edge with a minimum of one point per face. If none of these parameters
+ *                     is set, 1 divided by the length of the smallest non-null edge of `tm`
+ *                     is used as if it was passed to `number_of_points_per_distance_unit`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{sample_vertices}
+ *     \cgalParamDescription{If `true` is passed, vertices of `tm` are put into `out`.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{sample_edges}
+ *     \cgalParamDescription{If `true` is passed, edges of `tm` are sampled.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{sample_faces}
+ *     \cgalParamDescription{If `true` is passed, faces of `tm` are sampled.}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{grid_spacing}
+ *     \cgalParamDescription{a value used as the grid spacing for the grid sampling method}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{the length of the shortest, non-degenerate edge of `tm`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_points_on_edges}
+ *     \cgalParamDescription{a value used for the random sampling method as the number of points to pick exclusively on edges}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`num_vertices(tm)` or a value based on `nb_points_per_distance_unit`, if it is defined}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_points_on_faces}
+ *     \cgalParamDescription{a value used for the random sampling method as the number of points to pick on the surface}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`num_vertices(tm)` or a value based on `nb_points_per_area_unit`, if it is defined}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_points_per_distance_unit}
+ *     \cgalParamDescription{a value used for the random sampling and the Monte Carlo sampling methods to
+ *                           respectively determine the total number of points on edges and the number of points per edge}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{`1` divided by the length of the shortest, non-degenerate edge of `tm`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_points_per_edge}
+ *     \cgalParamDescription{a value used by the Monte-Carlo sampling method as the number of points per edge to pick}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`0`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_points_per_area_unit}
+ *     \cgalParamDescription{a value used for the random sampling and the Monte Carlo sampling methods to
+ *                           respectively determine the total number of points inside faces and the number of points per face}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{`2` divided by the squared length of the shortest, non-degenerate edge of `tm`}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{number_of_points_per_face}
+ *     \cgalParamDescription{a value used by the Monte-Carlo sampling method as the number of points per face to pick}
+ *     \cgalParamType{unsigned int}
+ *     \cgalParamDefault{`0`}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template<class OutputIterator, class TriangleMesh, class NamedParameters>
@@ -595,18 +639,24 @@ double approximate_Hausdorff_distance(
  *
  * @param tm1 the triangle mesh that will be sampled
  * @param tm2 the triangle mesh to compute the distance to
- * @param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm1` passed to `sample_triangle_mesh()`.
+ * @param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm1`,
+ *            forwarded to `sample_triangle_mesh()`.
  *
- * @param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm2` among the ones listed below
+ * @param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" for `tm2` among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm2`
- *      If this parameter is omitted, an internal property map for `CGAL::vertex_point_t` must be available in `TriangleMesh`
- *      and in all places where `vertex_point_map` is used.
- *    \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm2`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm2)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
- * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values for
- * `np1` and specify custom values for `np2`
+ *
+ * The function `CGAL::parameters::all_default()` can be used to indicate to use the default values
+ * for `np1` and specify custom values for `np2`.
  */
 template< class Concurrency_tag,
           class TriangleMesh,
@@ -659,11 +709,21 @@ double approximate_symmetric_Hausdorff_distance(
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map with the points associated to the vertices of `tm`. If this parameter is omitted,
- *    an internal property map for `CGAL::vertex_point_t` must be available for the
-      vertices of `tm` \cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`\cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPDistanceTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template< class Concurrency_tag,
@@ -696,11 +756,21 @@ double max_distance_to_triangle_mesh(const PointRange& points,
  * @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
- *    \cgalParamBegin{vertex_point_map}
- *    the property map with the points associated to the vertices of `tm`. If this parameter is omitted,
- *    an internal property map for `CGAL::vertex_point_t` must be available for the
-      vertices of `tm` \cgalParamEnd
- *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `PMPDistanceTraits`. \cgalParamEnd
+ *   \cgalParamNBegin{vertex_point_map}
+ *     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+ *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *                    as key type and `%Point_3` as value type}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+ *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+ *                     must be available in `TriangleMesh`.}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `PMPDistanceTraits`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
 template< class TriangleMesh,

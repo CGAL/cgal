@@ -56,41 +56,77 @@ namespace Polygon_mesh_processing {
 *
 * @param tmesh a polygon mesh with triangulated surface patches to be smoothed.
 * @param faces the range of triangular faces defining one or several surface patches to be smoothed.
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
+* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{use_angle_smoothing} Boolean value to indicate whether angle-based smoothing should be used.
-*    %Default is `true`.
-*  \cgalParamEnd
-*  \cgalParamBegin{use_area_smoothing} Boolean value to indicate whether area-based smoothing should be used.
-*    %Default is `true`.
-*  \cgalParamEnd
-*  \cgalParamBegin{number_of_iterations} the number of iterations for the
-*    sequence of the smoothing iterations performed (default is 1).
-*  \cgalParamEnd
-*  \cgalParamBegin{use_safety_constraints} if `true`, vertex moves that would worsen the mesh
-*    are ignored. %Default is `false`.
-*  \cgalParamEnd
-*  \cgalParamBegin{use_Delaunay_flips} if `true` (default value), area-based smoothing will be completed
-*    by a phase of Delaunay-based edge-flips to prevent the creation of elongated triangles.
-*  \cgalParamEnd
-*  \cgalParamBegin{do_project} if `true` (default value), points are projected onto the initial surface
-*   after each iteration.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
-*    cannot be modified at all during smoothing.
-*  \cgalParamEnd
-*  \cgalParamBegin{edge_is_constrained_map} a property map, model of `ReadWritePropertyMap`, containing the
-*    constrained-or-not status of each edge of `tmesh`. A constrained edge cannot be flipped and its extremities
-*    are tagged as constrained vertices.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_point_map} the property map, model of `ReadWritePropertyMap`, with the points
-*    associated to the vertices of `tmesh`.
-*  \cgalParamEnd
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*    Exact constructions kernels are not supported by this function.
-*  \cgalParamEnd
+*   \cgalParamNBegin{number_of_iterations}
+*     \cgalParamDescription{the number of iterations for the sequence of the smoothing iterations performed}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`1`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_angle_smoothing}
+*     \cgalParamDescription{value to indicate whether angle-based smoothing should be used}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_area_smoothing}
+*     \cgalParamDescription{value to indicate whether area-based smoothing should be used}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `TriangleMesh`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_safety_constraints}
+*     \cgalParamDescription{If `true`, vertex moves that would worsen the mesh are ignored.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`false`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{use_Delaunay_flips}
+*     \cgalParamDescription{If `true`, area-based smoothing will be completed by a phase of
+*                           Delaunay-based edge-flips to prevent the creation of elongated triangles.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_project}
+*     \cgalParamDescription{If `true`, points are projected onto the initial surface after each iteration.}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex cannot be modified at all during smoothing.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*     \cgalParamExtra{A constrained edge cannot be modified at all during smoothing.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @warning The third party library \link thirdpartyCeres Ceres \endlink is required

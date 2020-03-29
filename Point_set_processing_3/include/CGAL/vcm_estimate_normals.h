@@ -235,7 +235,7 @@ vcm_convolve (ForwardIterator first,
    \param ccov output range of covariance matrices.
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
@@ -398,7 +398,7 @@ vcm_estimate_normals_internal (PointRange& points,
    \param points input point range.
    \param offset_radius offset_radius.
    \param convolution_radius convolution_radius.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.
@@ -457,7 +457,7 @@ vcm_estimate_normals (PointRange& points,
    \param points input point range.
    \param offset_radius offset_radius.
    \param k number of neighbor points used for convolution.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.

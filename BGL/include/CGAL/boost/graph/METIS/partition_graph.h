@@ -167,7 +167,7 @@ void partition_graph(const TriangleMesh& tm, int nparts,
 ///
 /// \param tm a triangle mesh
 /// \param nparts the number of parts in the final partition
-/// \param np optional \ref bgl_namedparameters "Named Parameters" described below
+/// \param np an optional \ref bgl_namedparameters "Named Parameters" described below
 ///
 /// \tparam TriangleMesh is a model of the `FaceListGraph` concept.
 /// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

@@ -49,7 +49,7 @@ void convex_hull_3(InputIterator first, InputIterator last, PolygonMesh& pm, con
  *
  * \param g the graph
  * \param pm the `PolygonMesh` that will contain the convex hull
- * \param np optional sequence of named parameters among the ones listed below
+ * \param np an optional sequence of named parameters among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `g`.

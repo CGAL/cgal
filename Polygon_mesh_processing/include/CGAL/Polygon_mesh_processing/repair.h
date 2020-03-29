@@ -115,22 +115,74 @@ std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 /// \tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// \param tmesh the triangulated polygon mesh
-/// \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{area_threshold} a fixed value such that only connected components whose area is
-///                                   larger than this value are kept \cgalParamEnd
-///   \cgalParamBegin{volume_threshold} a fixed value such that only connected components whose volume is
-///                                    larger than this value are kept (only applies to closed connected components) \cgalParamEnd
-///   \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
-///   \cgalParamBegin{face_index_map} a property map containing the index of each face of `tmesh` \cgalParamEnd
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`.
-///    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
-///    \cgalParamBegin{dry_run} a Boolean parameter. If set to `true`, the mesh will not be altered,
-///                             but the number of components that would be removed is returned. The default value is `false`.\cgalParamEnd
-///    \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type `face_descriptor`.
-///                                     When using the "dry run" mode (see parameter `dry_run`), faces
-///                                     that would be removed by the algorithm can be collected with this output iterator. \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{Exact constructions kernels are not supported by this function.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{face_index_map}
+///     \cgalParamDescription{a property map associating to each face of `tmesh` a unique index between `0` and `num_faces(tmesh) - 1`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
+///                    as key type and `std::size_t` as value type}
+///     \cgalParamDefault{an automatically indexed internal map}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{area_threshold}
+///     \cgalParamDescription{a fixed value such that only connected components whose area is larger than this value are kept}
+///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamDefault{1\% of the length of the diagonal of the axis-aligned bounding box of the mesh, squared}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{volume_threshold}
+///     \cgalParamDescription{a fixed value such that only connected components whose volume is
+///                           larger than this value are kept (only applies to closed connected components)}
+///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamDefault{1\% of the length of the diagonal of the axis-aligned bounding box of the mesh, cubed}
+///     \cgalParamExtra{The mesh must be closed.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{volume_threshold}
+///     \cgalParamDescription{a fixed value such that only connected components whose volume is
+///                           larger than this value are kept (only applies to closed connected components)}
+///     \cgalParamType{`geom_traits::FT`}
+///     \cgalParamDefault{1\% of the length of the diagonal of the axis-aligned bounding box of the mesh, cubed}
+///     \cgalParamExtra{The mesh must be closed.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{edge_is_constrained_map}
+///     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tmesh`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
+///                    as key type and `bool` as value type. It must be default constructible.}
+///     \cgalParamDefault{a default property map where no edge is constrained}
+///     \cgalParamExtra{A constrained edge can be split or collapsed, but not flipped, nor its endpoints moved by smoothing.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{dry_run}
+///     \cgalParamDescription{If set to `true`, the mesh will not be altered, but the number of components
+///                           that would be removed is returned.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{output_iterator}
+///     \cgalParamDescription{An output iterator to collect the faces that would be removed by the algorithm,
+///                           when using the "dry run" mode (see parameter `dry_run`)}
+///     \cgalParamType{a model of `OutputIterator` with value type `face_descriptor`}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \return the number of connected components removed (ignoring isolated vertices).
@@ -452,19 +504,25 @@ struct Less_vertex_point{
 /// @param edges a subset of edges of `tm`
 /// @param tm a triangle mesh
 /// @param out an output iterator in which the degenerate edges are written
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
-///                                      The type of this map is model of `ReadWritePropertyMap`.
-///                                      If this parameter is omitted, an internal property map for
-///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
-///    \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///                                The traits class must provide the nested type `Point_3`,
-///                                and the nested functor `Equal_3` to check whether two points are identical.
-///    \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    and the nested functor `Equal_3` to check whether two points are identical.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
+///
 template <class EdgeRange, class TriangleMesh, class OutputIterator, class NamedParameters>
 OutputIterator degenerate_edges(const EdgeRange& edges,
                                 const TriangleMesh& tm,
@@ -528,18 +586,23 @@ degenerate_edges(const TriangleMesh& tm, OutputIterator out)
 /// @param faces a subset of faces of `tm`
 /// @param tm a triangle mesh
 /// @param out an output iterator in which the degenerate faces are put
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
-///                                      The type of this map is model of `ReadWritePropertyMap`.
-///                                      If this parameter is omitted, an internal property map for
-///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
-///    \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///                                 The traits class must provide the nested functor `Collinear_3`
-///                                 to check whether three points are collinear.
-///    \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    and the nested functor `Collinear_3` to check whether two points are identical.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 template <class FaceRange, class TriangleMesh, class OutputIterator, class NamedParameters>
@@ -1348,23 +1411,27 @@ bool remove_degenerate_edges(TriangleMesh& tmesh)
 // @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 //
 // @param tmesh the  triangulated surface mesh to be repaired
-// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 //
 // \cgalNamedParamsBegin
-//    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-//                                      The type of this map is model of `ReadWritePropertyMap`.
-//                                      If this parameter is omitted, an internal property map for
-//                                      `CGAL::vertex_point_t` must be available in `TriangleMesh`
-//    \cgalParamEnd
-//    \cgalParamBegin{geom_traits} a geometric traits class instance.
-//       The traits class must provide the nested type `Point_3`,
-//       and the nested functors:
+//   \cgalParamNBegin{vertex_point_map}
+//     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+//     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+//                    as key type and `%Point_3` as value type}
+//     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+//   \cgalParamNEnd
+//
+//   \cgalParamNBegin{geom_traits}
+//     \cgalParamDescription{an instance of a geometric traits class}
+//     \cgalParamType{a class providing the nested type `Point_3` and the nested functors:
 //         - `Compare_distance_3` to compute the distance between 2 points
 //         - `Collinear_3` to check whether 3 points are collinear
 //         - `Less_xyz_3` to compare lexicographically two points
-//        - `Equal_3` to check whether 2 points are identical.
-//       For each functor Foo, a function `Foo foo_object()` must be provided.
-//   \cgalParamEnd
+//         - `Equal_3` to check whether 2 points are identical.
+//         For each functor Foo, a function `Foo foo_object()` must be provided.}
+//     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+//     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+//   \cgalParamNEnd
 // \cgalNamedParamsEnd
 //
 // @todo the function might not be able to remove all degenerate faces.
@@ -2581,23 +2648,33 @@ OutputIterator non_manifold_vertices(const PolygonMesh& pm,
 /// @tparam NamedParameters a sequence of \ref pmp_namedparameters "Named Parameters"
 ///
 /// @param pm the surface mesh to be repaired
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
-///       The type of this map is model of `ReadWritePropertyMap`.
-///       If this parameter is omitted, an internal property map for
-///       `CGAL::vertex_point_t` should be available in `PolygonMesh`
-///    \cgalParamEnd
-///   \cgalParamBegin{vertex_is_constrained_map} a writable property map with `vertex_descriptor`
-///     as key and `bool` as `value_type`. `put(pmap, v, true)` will be called for each duplicated
-///     vertices, as well as the original non-manifold vertex in the input mesh.
-///  \cgalParamEnd
-///   \cgalParamBegin{output_iterator} a model of `OutputIterator` with value type
-///      `std::vector<vertex_descriptor>`. The first vertex of each vector is a non-manifold vertex
-///       of the input mesh, followed by the new vertices that were created to fix this precise
-///       non-manifold configuration.
-///  \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pmesh`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{vertex_is_constrained_map}
+///     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `pmesh`.}
+///     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `bool` as value type. It must be default constructible.}
+///     \cgalParamDefault{a default property map where no vertex is constrained}
+///     \cgalParamExtra{`put(pmap, v, true)` will be called for each duplicated vertices,
+///                     as well as the original non-manifold vertex in the input mesh..}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{output_iterator}
+///     \cgalParamDescription{a way to link newly created vertices to the previously non-manifold vertices.}
+///     \cgalParamType{a model of `OutputIterator` with value type `std::vector<vertex_descriptor>`}
+///     \cgalParamDefault{unused}
+///     \cgalParamExtra{The first vertex of each vector is a non-manifold vertex
+///                     of the input mesh, followed by the new vertices that were created to fix this precise
+///                     non-manifold configuration.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \return the number of vertices created.

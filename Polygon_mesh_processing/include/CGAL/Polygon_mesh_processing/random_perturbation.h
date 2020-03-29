@@ -112,24 +112,43 @@ namespace internal {
 * @param tmesh the triangulated surface mesh
 * @param perturbation_max_size the maximal length of moves that can be applied to
 *        vertices of `tmesh`.
-* @param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
-*  \cgalParamEnd
-*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
-*    constrained-or-not status of each vertex of `tmesh`. A constrained vertex
-*    cannot be modified at all during perturbation
-*  \cgalParamEnd
-*  \cgalParamBegin{do_project} a boolean that sets whether vertices are reprojected
-*    on the input surface after their coordinates random perturbation
-*  \cgalParamEnd
-*  \cgalParamBegin{random_seed} a non-negative integer value to seed the random
-      number generator, and make the perturbation deterministic
-*  \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `tmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tmesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex cannot be modified at all during perturbation}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{do_project}
+*     \cgalParamDescription{indicates whether vertices are reprojected on the input surface
+*                           after their coordinates random perturbation}
+*     \cgalParamType{Boolean}
+*     \cgalParamDefault{`true`}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{random_seed}
+*     \cgalParamDescription{a value to seed the random number generator, and make the perturbation deterministic}
+*     \cgalParamType{unsigned int}
+*     \cgalParamDefault{`unsigned int(-1)`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 */

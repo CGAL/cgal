@@ -62,7 +62,7 @@ void PQQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -109,7 +109,7 @@ void PTQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -157,7 +157,7 @@ void DQQ(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -209,7 +209,7 @@ void Sqrt3(PolygonMesh& pmesh, Mask mask, int step = 1) {
  *
  * @param pmesh a polygon mesh
  * @param mask a geometry policy mask
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.

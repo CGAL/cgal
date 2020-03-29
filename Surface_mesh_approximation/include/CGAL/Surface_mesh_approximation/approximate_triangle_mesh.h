@@ -65,7 +65,7 @@ unspecified_type all_default();
  * @tparam NamedParameters a sequence of \ref vsa_namedparameters
  *
  * @param tm triangle surface mesh to be approximated
- * @param np optional sequence of \ref vsa_namedparameters among the ones listed below
+ * @param np an optional sequence of \ref vsa_namedparameters among the ones listed below
  * @return `true` if the indexed triangles represent a 2-manifold, oriented surface mesh, and `false` otherwise.
  *
  * \cgalNamedParamsBegin{Approximation Named Parameters}

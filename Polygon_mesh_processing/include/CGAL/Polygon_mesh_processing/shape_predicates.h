@@ -43,18 +43,23 @@ namespace Polygon_mesh_processing {
 ///
 /// @param e an edge of `pm`
 /// @param pm polygon mesh containing `e`
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pm`.
-///                                     The type of this map is model of `ReadWritePropertyMap`.
-///                                     If this parameter is omitted, an internal property map for
-///                                     `CGAL::vertex_point_t` should be available in `PolygonMesh`
-/// \cgalParamEnd
-///   \cgalParamBegin{geom_traits} a geometric traits class instance.
-///                                The traits class must provide the nested type `Point_3`,
-///                                and the nested functor `Equal_3` to check whether two points are identical.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    and the nested functor `Equal_3` to check whether two points are identical.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa `degenerate_edges()`
@@ -94,18 +99,23 @@ bool is_degenerate_edge(typename boost::graph_traits<PolygonMesh>::edge_descript
 ///
 /// @param f a triangle face of `tm`
 /// @param tm a triangle mesh containing `f`
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
-///                                      The type of this map is model of `ReadWritePropertyMap`.
-///                                      If this parameter is omitted, an internal property map for
-///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
-/// \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///                                 The traits class must provide the nested functor `Collinear_3`
-///                                 to check whether three points are collinear.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    and the nested functor `Collinear_3` to check whether three points are aligned.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa `degenerate_faces()`
@@ -152,18 +162,23 @@ bool is_degenerate_triangle_face(typename boost::graph_traits<TriangleMesh>::fac
 /// @param f a triangle face of `tm`
 /// @param tm triangle mesh containing `f`
 /// @param threshold a bound on the ratio of the longest edge length and the shortest edge length
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
-///                                      The type of this map is model of `ReadWritePropertyMap`.
-///                                      If this parameter is omitted, an internal property map for
-///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
-/// \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///                                 The traits class must provide the nested type `FT` and
-///                                 the nested functor `Compute_squared_distance_3`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `FT`,
+///                    and the nested functor `Compute_squared_distance_3`.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \return the shortest halfedge if the triangle face is a needle, and a null halfedge otherwise.
@@ -252,18 +267,23 @@ is_needle_triangle_face(typename boost::graph_traits<TriangleMesh>::face_descrip
 /// @param threshold the cosine of a minimum angle such that if `f` has an angle greater than this bound,
 ///                  it is a cap. The threshold is in range `[-1 0]` and corresponds to an angle
 ///                  between `90` and `180` degrees.
-/// @param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// @param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tm`.
-///                                      The type of this map is model of `ReadWritePropertyMap`.
-///                                      If this parameter is omitted, an internal property map for
-///                                      `CGAL::vertex_point_t` should be available in `TriangleMesh`
-/// \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///                                 The traits class must provide the nested type `Point_3` and
-///                                 the nested functors `Compute_squared_distance_3`, `Construct_vector_3`,
-///                                 and `Compute_scalar_product_3`.
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested type `Point_3`,
+///                    the nested functors `Compute_squared_distance_3`, `Construct_vector_3`,
+///                    and `Compute_scalar_product_3`.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 ///   \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///

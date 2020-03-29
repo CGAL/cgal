@@ -117,7 +117,7 @@ struct Face_filtered_graph
    * \param face_patch_index_map the property_map that assigns a patch index to each face, with
       `face_descriptor` as key type and `boost::graph_traits<Graph>::%faces_size_type` as value type.
    * \param selected_face_patch_indices a range of the face patch indices to select.
-   * \param np optional sequence of named parameters among the ones listed below
+   * \param np an optional sequence of named parameters among the ones listed below
    *
    * \cgalNamedParamsBegin
    *   \cgalParamBegin{face_index_map}
@@ -177,7 +177,7 @@ struct Face_filtered_graph
       `face_descriptor` as key type and
       `graph_traits<Graph>::%faces_size_type` as value type.
    * \param selected_face_patch_index the index of the face patch selected.
-   * \param np optional sequence of named parameters among the ones listed below
+   * \param np an optional sequence of named parameters among the ones listed below
    *
    * \cgalNamedParamsBegin
    *   \cgalParamBegin{face_index_map}
@@ -223,7 +223,7 @@ struct Face_filtered_graph
    * \tparam NamedParameters a sequence of named parameters
    * \param graph the graph containing the wanted patch.
    * \param selected_faces the set of selected faces.
-   * \param np optional sequence of named parameters among the ones listed below
+   * \param np an optional sequence of named parameters among the ones listed below
    *
    * \cgalNamedParamsBegin
    *   \cgalParamBegin{face_index_map}

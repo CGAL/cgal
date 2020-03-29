@@ -9,6 +9,7 @@
 //
 //
 // Author(s)     : Sebastien Loriot
+//                 Mael Rouxel-Labbé
 
 #ifndef CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
 #define CGAL_POLYGON_MESH_PROCESSING_MERGE_BORDER_VERTICES_H
@@ -265,14 +266,15 @@ void merge_vertices_in_range(const HalfedgeRange& sorted_hedges,
 ///
 /// @param h a halfedge that belongs to a boundary cycle.
 /// @param pm the polygon mesh which contains the boundary cycle.
-/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
 ///
 /// \cgalNamedParamsBegin
-/// \cgalParamBegin{vertex_point_map}
-///   the property map with the points associated to the vertices of `pm`.
-///    If this parameter is omitted, an internal property map for
-///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
-/// \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 template <class PolygonMesh, class NamedParameter>
 void merge_duplicated_vertices_in_boundary_cycle(
@@ -318,14 +320,15 @@ void merge_duplicated_vertices_in_boundary_cycle(
 /// @tparam NamedParameter a sequence of \ref pmp_namedparameters "Named Parameters".
 ///
 /// @param pm the polygon mesh which contains the cycles.
-/// @param np optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
+/// @param np an optional parameter of \ref pmp_namedparameters "Named Parameters" listed below.
 ///
 /// \cgalNamedParamsBegin
-/// \cgalParamBegin{vertex_point_map}
-///   the property map with the points associated to the vertices of `pm`.
-///    If this parameter is omitted, an internal property map for
-///  `CGAL::vertex_point_t` should be available in `PolygonMesh`
-/// \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `pm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, pm)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \sa `merge_duplicated_vertices_in_boundary_cycle()`

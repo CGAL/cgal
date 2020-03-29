@@ -105,7 +105,7 @@ void CatmullClark_subdivision(PolygonMesh& pmesh, int step) {
  * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -161,7 +161,7 @@ void Loop_subdivision(PolygonMesh& pmesh, int step) {
  * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -215,7 +215,7 @@ void DooSabin_subdivision(PolygonMesh& pmesh, int step) {
  * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.
@@ -272,7 +272,7 @@ void Sqrt3_subdivision(PolygonMesh& pmesh, int step) {
  * @tparam NamedParameters a sequence of \ref sm_namedparameters "Named Parameters"
  *
  * @param pmesh a polygon mesh
- * @param np optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
+ * @param np an optional sequence of \ref sm_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`.

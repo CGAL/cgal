@@ -227,20 +227,23 @@ bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
 * @param np_ps optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamBegin{point_map}
-*     a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
-*     of the vertex point map associated to the polygon mesh. If this parameter is omitted, `CGAL::Identity_property_map` is used.
-*   \cgalParamEnd
+*   \cgalParamNBegin{point_map}
+*     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+*     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type
+*                    of the vertex point map associated to the polygon mesh}
+*     \cgalParamDefault{`CGAL::Identity_property_map`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * @param np_pm optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 *
 * \cgalNamedParamsBegin
-*   \cgalParamBegin{vertex_point_map}
-*     a model of `WritablePropertyMap`, the property map with the points associated to the vertices of `out`.
-*     If this parameter is omitted, an internal property map for
-*     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-*   \cgalParamEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `out`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`boost::get(CGAL::vertex_point, out)`}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
 * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`

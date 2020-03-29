@@ -44,14 +44,15 @@ namespace Polygon_mesh_processing {
 /// \param mesh the mesh whose faces are being put in the polygon soup
 /// \param points points making the polygons of the soup
 /// \param polygons each element in the vector describes a polygon using the indices of the points in `points`
-/// \param np optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+/// \param np an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{vertex_point_map}
-///     a model of `ReadablePropertyMap`, the property map with the points associated to the vertices of `mesh`.
-///     If this parameter is omitted, an internal property map for
-///     `CGAL::vertex_point_t` must be available in `PolygonMesh`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \cgalAdvancedBegin

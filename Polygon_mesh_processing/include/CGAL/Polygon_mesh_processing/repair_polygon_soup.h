@@ -174,13 +174,16 @@ bool simplify_polygon(PointRange& points,
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
-// \param np optional \ref pmp_namedparameters "Named Parameters" described below
+// \param np an optional \ref pmp_namedparameters "Named Parameters" described below
 //
 // \cgalNamedParamsBegin
-//    \cgalParamBegin{geom_traits} a geometric traits class instance.
-//       The traits class must provide the nested functor `Equal_3`
-//       to compare lexicographically two points a function `Equal_3 equal_3_object()`.
-//   \cgalParamEnd
+//   \cgalParamNBegin{geom_traits}
+//     \cgalParamDescription{an instance of a geometric traits class}
+//     \cgalParamType{The traits class must provide the nested functor `Equal_3`
+//                    to compare lexicographically two points a function `Equal_3 equal_3_object()`.}
+//     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+//     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+//   \cgalParamNEnd
 // \cgalNamedParamsEnd
 //
 template <typename Traits, typename PointRange, typename PolygonRange>
@@ -225,13 +228,16 @@ std::size_t simplify_polygons_in_polygon_soup(PointRange& points,
 // \param points points of the soup of polygons.
 // \param polygons a vector of polygons. Each element in the vector describes a polygon
 //        using the indices of the points in `points`.
-// \param np optional \ref pmp_namedparameters "Named Parameters" described below
+// \param np an optional \ref pmp_namedparameters "Named Parameters" described below
 //
 // \cgalNamedParamsBegin
-//    \cgalParamBegin{geom_traits} a geometric traits class instance.
-//       The traits class must provide the nested functor `Less_xyz_3`
-//       to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.
-//   \cgalParamEnd
+//   \cgalParamNBegin{geom_traits}
+//     \cgalParamDescription{an instance of a geometric traits class}
+//     \cgalParamType{The traits class must provide the nested functor `Less_xyz_3`
+//                    to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.}
+//     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+//     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+//   \cgalParamNEnd
 // \cgalNamedParamsEnd
 //
 template <typename Traits, typename PointRange, typename PolygonRange>
@@ -489,13 +495,16 @@ std::size_t remove_isolated_points_in_polygon_soup(PointRange& points,
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np optional \ref pmp_namedparameters "Named Parameters" described below
+/// \param np an optional \ref pmp_namedparameters "Named Parameters" described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested functor `Less_xyz_3`
-///       to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested functor `Less_xyz_3`
+///                    to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns the number of removed points
@@ -876,22 +885,32 @@ DuplicateOutputIterator collect_duplicate_polygons(const PointRange& points,
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
-///   \cgalParamBegin{geom_traits} a geometric traits class instance.
-///     The traits class must provide the nested functor `Less_xyz_3`
-///     to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.
-///   \cgalParamEnd
-///   \cgalParamBegin{erase_all_duplicates}
-///     Parameter to indicate, when multiple polygons are duplicates, whether all the duplicate polygons
-///     should be removed or if one (arbitrarily chosen) face should be kept. %Default is `false`.
-///   \cgalParamEnd
-///   \cgalParamBegin{require_same_orientation}
-///     Parameter to indicate if polygon orientation should be taken into account when determining
-///     whether two polygons are duplicates, that is, whether e.g. the triangles `0,1,2` and `0,2,1`
-///     are duplicates. %Default is `false`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested functor `Less_xyz_3`
+///                    to compare lexicographically two points a function `Less_xyz_3 less_xyz_3_object()`.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{erase_all_duplicates}
+///     \cgalParamDescription{Parameter to indicate, when multiple polygons are duplicates,
+///                           whether all the duplicate polygons should be removed
+///                           or if one (arbitrarily chosen) face should be kept.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{require_same_orientation}
+///     \cgalParamDescription{Parameter to indicate if polygon orientation should be taken
+///                           into account when determining whether two polygons are duplicates,
+///                           that is, whether e.g. the triangles `0,1,2` and `0,2,1` are duplicates.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 /// \returns the number of removed polygons
@@ -1030,27 +1049,33 @@ std::size_t merge_duplicate_polygons_in_polygon_soup(PointRange& points,
 /// \param points points of the soup of polygons.
 /// \param polygons a vector of polygons. Each element in the vector describes a polygon
 ///        using the indices of the points in `points`.
-/// \param np optional \ref pmp_namedparameters "Named Parameters", amongst those described below
+/// \param np an optional \ref pmp_namedparameters "Named Parameters", amongst those described below
 ///
 /// \cgalNamedParamsBegin
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested functors :
-///         - `Less_xyz_3` to compare lexicographically two points
-///         - `Equal_3` to check whether 2 points are identical
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{The traits class must provide the nested functors `Less_xyz_3` and `Equal_3`
+///                    to respectivelycompare lexicographically two points and to check if 2 points
+///                    are identical. For each functor `Foo`, a function `Foo foo_object()` must be provided.}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///   \cgalParamNEnd
 ///
-///       and, for each functor `Foo`, a function `Foo foo_object()`.
-///   \cgalParamEnd
-///   \cgalParamBegin{erase_all_duplicates}
-///     Parameter forwarded to the function `merge_duplicate_polygons_in_polygon_soup()` to indicate,
-///     when multiple polygons are duplicates, whether all the duplicate polygons
-///     should be removed or if one (arbitrarily chosen) face should be kept. %Default is `false`.
-///   \cgalParamEnd
-///   \cgalParamBegin{require_same_orientation}
-///     Parameter forwarded to the function `merge_duplicate_polygons_in_polygon_soup()`
-///     to indicate if polygon orientation should be taken into account when determining whether
-///     two polygons are duplicates, that is, whether e.g. the triangles `0,1,2` and `0,2,1` are duplicates.
-///     %Default is `false`.
-///   \cgalParamEnd
+///   \cgalParamNBegin{erase_all_duplicates}
+///     \cgalParamDescription{Parameter to indicate, when multiple polygons are duplicates,
+///                           whether all the duplicate polygons should be removed
+///                           or if one (arbitrarily chosen) face should be kept.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{require_same_orientation}
+///     \cgalParamDescription{Parameter to indicate if polygon orientation should be taken
+///                           into account when determining whether two polygons are duplicates,
+///                           that is, whether e.g. the triangles `0,1,2` and `0,2,1` are duplicates.}
+///     \cgalParamType{Boolean}
+///     \cgalParamDefault{`false`}
+///   \cgalParamNEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename PointRange, typename PolygonRange, typename NamedParameters>

@@ -13,7 +13,7 @@ the number of edges effectively removed.
 
 @param surface_mesh a triangle mesh
 @param should_stop the stop-condition policy
-@param np optional sequence of \ref sms_namedparameters "Named Parameters" among the ones listed below
+@param np an optional sequence of \ref sms_namedparameters "Named Parameters" among the ones listed below
 
 \cgalNamedParamsBegin
   \cgalParamBegin{vertex_point_map}

@@ -164,7 +164,7 @@ public:
     \param points input point range.
     \param planes input plane range.
     \param epsilon size parameter.
-    \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+    \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
     \cgalNamedParamsBegin
       \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `Kernel::Point_3`.
@@ -1491,7 +1491,7 @@ private:
    \param planes input plane range.
    \param output output iterator where output points are written
    \param epsilon size parameter.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with value type `geom_traits::Point_3`.

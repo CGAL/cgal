@@ -260,7 +260,7 @@ inline Emptyset_iterator make_functor(const internal_np::Param_not_found&)
 
   \param sm the source mesh
   \param tm the target mesh
-  \param np1 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  \param np1 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}
@@ -291,7 +291,7 @@ inline Emptyset_iterator make_functor(const internal_np::Param_not_found&)
     \cgalParamEnd
   \cgalNamedParamsEnd
 
-  \param np2 optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
+  \param np2 an optional sequence of \ref pmp_namedparameters "Named Parameters" among the ones listed below
 
   \cgalNamedParamsBegin
     \cgalParamBegin{vertex_point_map}

@@ -452,7 +452,7 @@ public:
    \param points input point range.
    \param queries range of locations where scale must be estimated
    \param output iterator to store the computed scales
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with
@@ -539,7 +539,7 @@ estimate_local_k_neighbor_scales(
    its iterator is the key type of the named parameter `point_map`.
 
    \param points input point range.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with
@@ -605,7 +605,7 @@ estimate_global_k_neighbor_scale(const PointRange& points)
    \param points input point range.
    \param queries range of locations where scale must be estimated
    \param output iterator to store the computed scales
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with
@@ -692,7 +692,7 @@ estimate_local_range_scales(
    its iterator is the key type of the named parameter `point_map`.
 
    \param points input point range.
-   \param np optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
+   \param np an optional sequence of \ref psp_namedparameters "Named Parameters" among the ones listed below.
 
    \cgalNamedParamsBegin
      \cgalParamBegin{point_map} a model of `ReadablePropertyMap` with
