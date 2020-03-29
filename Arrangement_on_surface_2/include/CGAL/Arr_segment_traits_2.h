@@ -619,7 +619,7 @@ public:
      * given output iterator. As segments are always x_monotone, only one
      * object will be contained in the iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is Object.
+     * \param oi The output iterator, whose value-type is optional<variant<....
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
