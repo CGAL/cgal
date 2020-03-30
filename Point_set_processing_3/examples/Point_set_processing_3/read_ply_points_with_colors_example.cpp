@@ -29,7 +29,7 @@ int main(int argc, char*argv[])
   std::ifstream in(fname);
 
   if (!in ||
-      !CGAL::read_ply_points_with_properties
+      !CGAL::read_PLY_with_properties
       (in,
        std::back_inserter (points),
        CGAL::make_ply_point_reader (Point_map()),

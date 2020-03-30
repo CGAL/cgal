@@ -20,6 +20,9 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Iterator_range.h>
 
+
+#include <boost/utility/enable_if.hpp>
+
 #include <iostream>
 #include <iterator>
 
@@ -57,10 +60,16 @@ template <typename PointRange,
           typename NamedParameters
 >
 bool
-write_off_points(
+write_OFF(
   std::ostream& stream,
   const PointRange& points,
-  const NamedParameters& np)
+  const NamedParameters& np
+    #ifndef DOXYGEN_RUNNING
+    ,typename boost::enable_if<
+      typename boost::has_range_const_iterator<PointRange>::type
+    >::type* =0
+    #endif
+    )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -103,11 +112,17 @@ write_off_points(
 // variant with default NP
 template <typename PointRange>
 bool
-write_off_points(
-  std::ostream& stream, ///< output stream.
-  const PointRange& points)
+write_OFF(
+    std::ostream& stream, ///< output stream.
+    const PointRange& points
+    #ifndef DOXYGEN_RUNNING
+    ,typename boost::enable_if<
+    typename boost::has_range_const_iterator<PointRange>::type
+    >::type* =0
+    #endif
+    )
 {
-  return write_off_points
+  return write_OFF
     (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
@@ -230,8 +245,36 @@ write_off_points(
 }
 #endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
+#ifndef CGAL_NO_DEPRECATED_CODE
+/**
+   \ingroup PkgPointSetProcessing3IO
+  @todo update version
+  \deprecated This function is deprecated since \cgal 5.1, `CGAL::write_OFF()` should be used instead.
+*/
+template <typename PointRange,
+          typename NamedParameters
+>
+CGAL_DEPRECATED bool
+write_off_points(
+  std::ostream& stream,
+  const PointRange& points,
+  const NamedParameters& np)
+{
+  return write_OFF(stream, points, np);
+}
 
-
+/// \cond SKIP_IN_MANUAL
+// variant with default NP
+template <typename PointRange>
+CGAL_DEPRECATED bool
+write_off_points(
+  std::ostream& stream, ///< output stream.
+  const PointRange& points)
+{
+  return write_OFF
+    (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+#endif // CGAL_NO_DEPRECATED_CODE
 } //namespace CGAL
 
 #endif // CGAL_WRITE_OFF_POINTS_H

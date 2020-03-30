@@ -33,7 +33,7 @@ int main (int argc, char** argv)
   std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
 
   if (!stream ||
-    !CGAL::read_xyz_points(stream,
+    !CGAL::read_XYZ(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map())))
@@ -67,8 +67,8 @@ int main (int argc, char** argv)
             << " structured point(s) generated." << std::endl;
 
   std::ofstream out ("out.pwn");
-  CGAL::write_xyz_points (out, structured_pts,
-                          CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
+  CGAL::write_XYZ (out, structured_pts,
+                   CGAL::parameters::point_map(Point_map()).normal_map(Normal_map()));
   out.close();
 
   return EXIT_SUCCESS;

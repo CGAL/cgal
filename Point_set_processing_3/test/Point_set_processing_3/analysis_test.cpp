@@ -104,7 +104,7 @@ int main(int argc, char * argv[])
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
     if(stream &&
-       CGAL::read_xyz_points(stream, std::back_inserter(points)))
+       CGAL::read_XYZ(stream, std::back_inserter(points)))
     {
       std::cerr << "ok (" << points.size() << " points)" << std::endl;
     }

@@ -60,7 +60,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
   // Read .xyz in a point set
   Scene_points_with_normal_item* point_set_item = new Scene_points_with_normal_item;
   point_set_item->setName(fileinfo.completeBaseName());
-  if(!point_set_item->read_xyz_point_set(in)) {
+  if(!point_set_item->read_XYZ(in)) {
     delete point_set_item;
     ok = false;
     return QList<Scene_item*>();

@@ -67,7 +67,7 @@ template <typename OutputIteratorValueType,
 #endif
 >
 bool
-read_off_points(
+read_OFF(
     std::istream& stream,
     OutputIterator output,
 #ifdef DOXYGEN_RUNNING
@@ -186,11 +186,11 @@ read_off_points(
 template <typename OutputIteratorValueType,
           typename OutputIterator>
 bool
-read_off_points(
+read_OFF(
   std::istream& stream, ///< input stream.
   OutputIterator output) ///< output iterator over points.
 {
-  return read_off_points<OutputIteratorValueType>
+  return read_OFF<OutputIteratorValueType>
     (stream, output, CGAL::parameters::all_default());
 }
 
@@ -198,23 +198,23 @@ read_off_points(
 template <typename OutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool
-read_off_points(
+read_OFF(
   std::istream& stream, ///< input stream.
   OutputIterator output,
   const CGAL_BGL_NP_CLASS& np)
 {
-  return read_off_points<typename value_type_traits<OutputIterator>::type>
+  return read_OFF<typename value_type_traits<OutputIterator>::type>
     (stream, output, np);
 }
 
 // variant with default NP and output iterator value type
 template <typename OutputIterator>
 bool
-read_off_points(
+read_OFF(
   std::istream& stream, ///< input stream.
   OutputIterator output)
 {
-  return read_off_points<typename value_type_traits<OutputIterator>::type>
+  return read_OFF<typename value_type_traits<OutputIterator>::type>
     (stream, output, CGAL::parameters::all_default());
 }
 
@@ -235,7 +235,7 @@ read_off_points_and_normals(
   NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  return read_off_points<OutputIteratorValueType>
+  return read_OFF<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map).
@@ -257,7 +257,7 @@ read_off_points_and_normals(
   NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
   const Kernel& kernel) ///< geometric traits.
 {
-  return read_off_points<typename value_type_traits<OutputIterator>::type>
+  return read_OFF<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map).
@@ -278,7 +278,7 @@ read_off_points_and_normals(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_off_points<OutputIteratorValueType>
+  return read_OFF<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map));
@@ -297,7 +297,7 @@ read_off_points_and_normals(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_off_points<typename value_type_traits<OutputIterator>::type>
+  return read_OFF<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map));
@@ -315,7 +315,7 @@ read_off_points_and_normals(
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_off_points<OutputIteratorValueType>
+  return read_OFF<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
 }
@@ -331,7 +331,7 @@ read_off_points_and_normals(
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_off_points<typename value_type_traits<OutputIterator>::type>
+  return read_OFF<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
 }
@@ -410,6 +410,67 @@ read_off_points(
 #endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+/*!
+/**
+   \ingroup PkgPointSetProcessing3IO
+   @todo update version
+   \deprecated This function is deprecated since \cgal 5.1, `CGAL::read_OFF()` should be used instead.
+*/
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+#ifdef DOXYGEN_RUNNING
+          typename NamedParameters
+#else
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+#endif
+>
+CGAL_DEPRECATED bool
+read_off_points(
+    std::istream& stream,
+    OutputIterator output,
+#ifdef DOXYGEN_RUNNING
+    const NamedParameters& np)
+#else
+    const CGAL_BGL_NP_CLASS& np)
+#endif
+{
+  return read_OFF(stream, output, np);
+}
+
+template <typename OutputIteratorValueType,
+          typename OutputIterator>
+CGAL_DEPRECATED bool
+read_off_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output) ///< output iterator over points.
+{
+  return read_OFF(stream, output);
+}
+
+// variant with default output iterator value type
+template <typename OutputIterator,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool
+read_off_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output,
+  const CGAL_BGL_NP_CLASS& np)
+{
+  return read_OFF(stream, output, np);
+}
+
+// variant with default NP and output iterator value type
+template <typename OutputIterator>
+CGAL_DEPRECATED bool
+read_off_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output)
+{
+  return read_OFF(stream, output, CGAL::parameters::all_default());
+}
+#endif //CGAL_NO_DEPRECATED_CODE
 
 } //namespace CGAL
 

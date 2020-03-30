@@ -189,7 +189,7 @@ int main(int argc, char * argv[])
       // + property maps to access each point's position and normal.
       std::ifstream stream(input_filename.c_str());
       if (!stream ||
-          !CGAL::read_xyz_points(
+          !CGAL::read_XYZ(
                                 stream,
                                 std::back_inserter(points),
                                 CGAL::parameters::point_map

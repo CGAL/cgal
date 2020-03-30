@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   std::ifstream stream(input_filename);
 
   if (!stream ||
-      !CGAL::read_xyz_points(stream,
+      !CGAL::read_XYZ(stream,
                         std::back_inserter(points),
                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
                         normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   std::ofstream out(output_filename);
   out.precision(17);
   if (!out ||
-     !CGAL::write_xyz_points(
+     !CGAL::write_XYZ(
       out, points,
       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
       normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))

@@ -18,7 +18,7 @@ int main(int argc, char*argv[])
   std::vector<Point> points;
   std::ifstream stream(fname);
   if (!stream ||
-      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
+      !CGAL::read_XYZ(stream, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
@@ -36,8 +36,8 @@ int main(int argc, char*argv[])
   std::ofstream out((argc>2)?argv[2]:"Three_lady_copy.xyz");
   out.precision(17);
   if (!out ||
-          !CGAL::write_xyz_points(
-            out, points))
+      !CGAL::write_XYZ(
+        out, points))
   {
           return EXIT_FAILURE;
   }

@@ -28,7 +28,7 @@ int main(int argc, char*argv[])
     std::vector<IndexedPointWithColorTuple> points;
     std::ifstream stream(fname);
     if (!stream ||
-        !CGAL::read_xyz_points(
+        !CGAL::read_XYZ(
             stream, std::back_inserter(points),
             CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>())))
     {

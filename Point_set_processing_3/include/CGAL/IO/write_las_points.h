@@ -63,7 +63,7 @@ namespace CGAL {
 
      Generates a %LAS property handler to write 3D points.
 
-     \sa `write_las_points_with_properties()`
+     \sa `write_LAS()`
 
      \tparam PointMap the property map used to store points.
   */
@@ -169,7 +169,7 @@ namespace internal {
    writing an `int` vairable as an `int` %LAS property). An exception
    is used for points that are written using a `std::tuple` object.
 
-   See documentation of `read_las_points_with_properties()` for the
+   See documentation of `read_LAS_with_properties()` for the
    list of available `LAS_property::Tag` classes.
 
    \sa `make_las_point_writer()`
@@ -186,13 +186,13 @@ namespace internal {
 template <typename PointRange,
           typename PointMap,
           typename ... PropertyHandler>
-bool write_las_points_with_properties (std::ostream& stream,  ///< output stream.
-                                       const PointRange& points, ///< input point range.
-                                       std::tuple<PointMap,
-                                       LAS_property::X,
-                                       LAS_property::Y,
-                                       LAS_property::Z> point_property,  ///< property handler for points
-                                       PropertyHandler&& ... properties) ///< parameter pack of property handlers
+bool write_LAS_with_properties (std::ostream& stream,  ///< output stream.
+                                const PointRange& points, ///< input point range.
+                                std::tuple<PointMap,
+                                LAS_property::X,
+                                LAS_property::Y,
+                                LAS_property::Z> point_property,  ///< property handler for points
+                                PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
   CGAL_point_set_processing_precondition(points.begin() != points.end());
 
@@ -268,7 +268,7 @@ bool write_las_points_with_properties (std::ostream& stream,  ///< output stream
 template < typename PointRange,
            typename NamedParameters>
 bool
-write_las_points(
+write_LAS(
   std::ostream& stream,
   const PointRange& points,
   const NamedParameters& np)
@@ -279,7 +279,7 @@ write_las_points(
   typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
-  return write_las_points_with_properties (stream, points, make_las_point_writer(point_map));
+  return write_LAS_with_properties (stream, points, make_las_point_writer(point_map));
 }
 
 /// \cond SKIP_IN_MANUAL
@@ -290,7 +290,7 @@ write_las_points(
   std::ostream& stream,
   const PointRange& points)
 {
-  return write_las_points
+  return write_LAS
     (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
@@ -307,7 +307,7 @@ write_las_points(
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_las_points
+  return write_LAS
     (stream, points,
      CGAL::parameters::point_map(point_map));
 }
@@ -322,13 +322,48 @@ write_las_points(
   ForwardIterator beyond) ///< past-the-end input point.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_las_points
+  return write_LAS
     (stream, points);
 }
 #endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
+#ifndef CGAL_NO_DEPRECATED_CODE
+/**
+   \ingroup PkgPointSetProcessing3IO
+  @todo update version
+  \deprecated This function is deprecated since \cgal 5.1, `CGAL::write_LAS_with_properties()` should be used instead.
+*/
+template <typename PointRange,
+          typename PointMap,
+          typename ... PropertyHandler>
+CGAL_DEPRECATED bool
+write_las_points_with_properties (std::ostream& stream,
+                                  const PointRange& points,
+                                  std::tuple<PointMap,
+                                  LAS_property::X,
+                                  LAS_property::Y,
+                                  LAS_property::Z> point_property,
+                                  PropertyHandler&& ... properties)
+{
+  return write_LAS_with_properties(stream, points, point_property, std::forward<PropertyHandler>(properties)...);
+}
 
-
+/**
+   \ingroup PkgPointSetProcessing3IO
+  @todo update version
+  \deprecated This function is deprecated since \cgal 5.1, `CGAL::write_LAS()` should be used instead.
+*/
+template < typename PointRange,
+           typename NamedParameters>
+bool
+write_las_points(
+  std::ostream& stream,
+  const PointRange& points,
+  const NamedParameters& np)
+{
+  return write_LAS(stream, points, np);
+}
+#endif //CGAL_NO_DEPRECATED_CODE
 } //namespace CGAL
 
 #endif // CGAL_WRITE_LAS_POINTS_H

@@ -66,7 +66,7 @@ template <typename OutputIteratorValueType,
 #endif
 >
 bool
-read_xyz_points(
+read_XYZ(
   std::istream& stream,
   OutputIterator output,
 #ifdef DOXYGEN_RUNNING
@@ -178,11 +178,11 @@ read_xyz_points(
 template <typename OutputIteratorValueType,
           typename OutputIterator>
 bool
-read_xyz_points(
+read_XYZ(
   std::istream& stream, ///< input stream.
   OutputIterator output) ///< output iterator over points.
 {
-  return read_xyz_points<OutputIteratorValueType>
+  return read_XYZ<OutputIteratorValueType>
     (stream, output, CGAL::parameters::all_default());
 }
 
@@ -190,23 +190,23 @@ read_xyz_points(
 template <typename OutputIterator,
           typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
 bool
-read_xyz_points(
+read_XYZ(
   std::istream& stream, ///< input stream.
   OutputIterator output,
   const CGAL_BGL_NP_CLASS& np)
 {
-  return read_xyz_points<typename value_type_traits<OutputIterator>::type>
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output, np);
 }
 
 // variant with default NP and output iterator value type
 template <typename OutputIterator>
 bool
-read_xyz_points(
+read_XYZ(
   std::istream& stream, ///< input stream.
   OutputIterator output)
 {
-  return read_xyz_points<typename value_type_traits<OutputIterator>::type>
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output, CGAL::parameters::all_default());
 }
 
@@ -227,7 +227,7 @@ read_xyz_points_and_normals(
   NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
   const Kernel& /*kernel*/) ///< geometric traits.
 {
-  return read_xyz_points<OutputIteratorValueType>
+  return read_XYZ<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map).
@@ -249,7 +249,7 @@ read_xyz_points_and_normals(
   NormalPMap normal_map, ///< property map: value_type of OutputIterator -> Vector_3.
   const Kernel& kernel) ///< geometric traits.
 {
-  return read_xyz_points<typename value_type_traits<OutputIterator>::type>
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map).
@@ -270,7 +270,7 @@ read_xyz_points_and_normals(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_xyz_points<OutputIteratorValueType>
+  return read_XYZ<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map));
@@ -289,7 +289,7 @@ read_xyz_points_and_normals(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_xyz_points<typename value_type_traits<OutputIterator>::type>
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      normal_map (normal_map));
@@ -307,7 +307,7 @@ read_xyz_points_and_normals(
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_xyz_points<OutputIteratorValueType>
+  return read_XYZ<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
 }
@@ -323,7 +323,7 @@ read_xyz_points_and_normals(
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
-  return read_xyz_points<typename value_type_traits<OutputIterator>::type>
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::normal_map (normal_map));
 }
@@ -342,7 +342,7 @@ read_xyz_points(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   const Kernel& kernel) ///< geometric traits.
 {
-  return read_xyz_points<OutputIteratorValueType>
+  return read_XYZ<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      geom_traits (kernel));
@@ -361,7 +361,7 @@ read_xyz_points(
   PointPMap point_map, ///< property map: value_type of OutputIterator -> Point_3.
   const Kernel& kernel) ///< geometric traits.
 {
-  return read_xyz_points<typename value_type_traits<OutputIterator>::type>
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map).
      geom_traits (kernel));
@@ -379,7 +379,7 @@ read_xyz_points(
   OutputIterator output, ///< output iterator over points.
   PointPMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return read_xyz_points<OutputIteratorValueType>
+  return read_XYZ<OutputIteratorValueType>
     (stream, output,
      CGAL::parameters::point_map (point_map));
 }
@@ -395,14 +395,81 @@ read_xyz_points(
   OutputIterator output, ///< output iterator over points.
   PointPMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
-  return read_xyz_points<typename value_type_traits<OutputIterator>::type>
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
     (stream, output,
      CGAL::parameters::point_map (point_map));
 }
 #endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
+//////////////////////////////////
+///
+//////////////////////////////////
+///
+///
+/**
+   \ingroup PkgPointSetProcessing3IO
+   @todo update version
+   \deprecated This function is deprecated since \cgal 5.1, `CGAL::read_XYZ()` should be used instead.
 
+   \return true on success.
+*/
+ template <typename OutputIteratorValueType,
+          typename OutputIterator,
+#ifdef DOXYGEN_RUNNING
+          typename NamedParameters
+#else
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS
+#endif
+>
+CGAL_DEPRECATED bool
+read_xyz_points(
+  std::istream& stream,
+  OutputIterator output,
+#ifdef DOXYGEN_RUNNING
+    const NamedParameters& np)
+#else
+    const CGAL_BGL_NP_CLASS& np)
+#endif
+{
+  return read_XYZ(stream, output, np);
+}
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+/// \cond SKIP_IN_MANUAL
+template <typename OutputIteratorValueType,
+          typename OutputIterator>
+CGAL_DEPRECATED bool
+read_xyz_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output) ///< output iterator over points.
+{
+  return read_XYZ<OutputIteratorValueType>
+      (stream, output, CGAL::parameters::all_default());
+}
+
+template <typename OutputIterator,
+          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+CGAL_DEPRECATED bool
+read_xyz_points(
+    std::istream& stream, ///< input stream.
+    OutputIterator output,
+    const CGAL_BGL_NP_CLASS& np)
+{
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
+      (stream, output, np);
+}
+
+template <typename OutputIterator>
+CGAL_DEPRECATED bool
+read_xyz_points(
+  std::istream& stream, ///< input stream.
+  OutputIterator output)
+{
+  return read_XYZ<typename value_type_traits<OutputIterator>::type>
+    (stream, output, CGAL::parameters::all_default());
+}
+#endif //CGAL_NO_DEPRECATED_CODE
 } //namespace CGAL
 
 #endif // CGAL_READ_XYZ_POINTS_H

@@ -16,7 +16,7 @@ int main(int argc, char*argv[])
   const char* fname = (argc>1)?argv[1]:"data/oni.xyz";
   std::ifstream stream(fname);
   if (!stream ||
-      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
+      !CGAL::read_XYZ(stream, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << fname << std::endl;
     return EXIT_FAILURE;

@@ -19,7 +19,7 @@ int main (int argc, char** argv)
 
   Point_set point_set;
 
-  if (!f || !CGAL::read_ply_point_set (f, point_set)) // same as `f >> point_set`
+  if (!f || !CGAL::read_PLY (f, point_set)) // same as `f >> point_set`
   {
     std::cerr << "Can't read input file " << std::endl;
   }

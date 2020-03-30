@@ -19,7 +19,7 @@ int main (int argc, char** argv)
   Point_set point_set;
 
   // Reading input in XYZ format
-  if (!f || !CGAL::read_xyz_point_set (f, point_set))
+  if (!f || !CGAL::read_XYZ (f, point_set))
     {
       std::cerr << "Can't read input file " << std::endl;
       return EXIT_FAILURE;
@@ -39,7 +39,7 @@ int main (int argc, char** argv)
   // Writing result in OFF format
   std::ofstream out("normalized_normals.off");
   out.precision(17);
-  if (!out || !CGAL::write_off_point_set (out, point_set))
+  if (!out || !CGAL::write_OFF (out, point_set))
     {
       return EXIT_FAILURE;
     }

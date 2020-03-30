@@ -27,7 +27,7 @@ int main(int argc, char*argv[])
     std::list<PointVectorPair> points;
     std::ifstream stream(fname);
     if (!stream ||
-        !CGAL::read_xyz_points(stream,
+        !CGAL::read_XYZ(stream,
                                std::back_inserter(points),
                                CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {

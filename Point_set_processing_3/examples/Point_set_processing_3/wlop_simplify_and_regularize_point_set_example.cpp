@@ -23,7 +23,7 @@ int main(int argc, char** argv)
   std::vector<Point> points;
   std::ifstream stream(input_filename);
 
-  if (!stream || !CGAL::read_xyz_points(stream, std::back_inserter(points)))
+  if (!stream || !CGAL::read_XYZ(stream, std::back_inserter(points)))
   {
     std::cerr << "Error: cannot read file " << input_filename  << std::endl;
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
   std::ofstream out(output_filename);
   out.precision(17);
-  if (!out || !CGAL::write_xyz_points(
+  if (!out || !CGAL::write_XYZ(
         out, output))
   {
     return EXIT_FAILURE;

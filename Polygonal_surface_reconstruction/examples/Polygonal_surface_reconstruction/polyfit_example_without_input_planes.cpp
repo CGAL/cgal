@@ -68,7 +68,7 @@ int main()
 	CGAL::Timer t;
 	t.start();
     if (!input_stream ||
-		!CGAL::read_xyz_points(input_stream,
+		!CGAL::read_XYZ(input_stream,
 			std::back_inserter(points),
 			CGAL::parameters::point_map(Point_map()).normal_map(Normal_map())))
 	{

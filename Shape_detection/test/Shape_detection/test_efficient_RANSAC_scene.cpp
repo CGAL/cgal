@@ -36,7 +36,7 @@ bool test_scene(int argc, char** argv) {
   std::ifstream stream((argc > 1) ? argv[1] : "data/cube.pwn");
 
   if (!stream ||
-    !CGAL::read_xyz_points(stream,
+    !CGAL::read_XYZ(stream,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map())))

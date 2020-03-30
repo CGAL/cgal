@@ -37,7 +37,7 @@ int main (int, char**)
   test (point_set.has_normal_map(), "point set should have normals.");
 
   std::ifstream f ("data/oni.pwn");
-  CGAL::read_xyz_point_set(f, point_set);
+  CGAL::read_XYZ(f, point_set);
 
   f.close ();
 

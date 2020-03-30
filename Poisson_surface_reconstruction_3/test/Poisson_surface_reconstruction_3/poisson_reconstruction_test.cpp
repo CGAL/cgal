@@ -140,7 +140,7 @@ int main(int argc, char * argv[])
       // The position property map can be omitted here as we use iterators over Point_3 elements.
       std::ifstream stream(input_filename.c_str());
       if (!stream ||
-          !CGAL::read_xyz_points(
+          !CGAL::read_XYZ(
                                 stream,
                                 std::back_inserter(points),
                                 CGAL::parameters::normal_map

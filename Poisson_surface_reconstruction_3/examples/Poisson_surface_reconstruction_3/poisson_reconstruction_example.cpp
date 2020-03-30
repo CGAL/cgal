@@ -45,7 +45,7 @@ int main(void)
     PointList points;
     std::ifstream stream("data/kitten.xyz");
     if (!stream ||
-        !CGAL::read_xyz_points(
+        !CGAL::read_XYZ(
                               stream,
                               std::back_inserter(points),
                               CGAL::parameters::point_map (Point_map()).

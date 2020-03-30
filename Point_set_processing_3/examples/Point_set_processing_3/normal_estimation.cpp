@@ -254,7 +254,7 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_off_points(stream,
+                CGAL::read_OFF(stream,
                                       std::back_inserter(points),
                                       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
@@ -264,7 +264,7 @@ int main(int argc, char * argv[])
     {
       std::ifstream stream(input_filename.c_str());
       success = stream &&
-                CGAL::read_xyz_points(stream,
+                CGAL::read_XYZ(stream,
                                       std::back_inserter(points),
                                       CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()));
     }
@@ -321,10 +321,10 @@ int main(int argc, char * argv[])
       std::ofstream stream(output_filename.c_str());
       stream.precision(17);
       if (!stream ||
-          !CGAL::write_xyz_points(stream,
-                                  points,
-                                  CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
-                                  normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
+          !CGAL::write_XYZ(stream,
+                           points,
+                           CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
+                           normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))
       {
         std::cerr << "Error: cannot write file " << output_filename << std::endl;
         return EXIT_FAILURE;

@@ -24,7 +24,7 @@ int main (int , char**) {
     std::list<PointVectorPair> points;
     std::ifstream stream("data/fandisk.off");
     if (!stream ||
-        !CGAL::read_off_points(stream,
+        !CGAL::read_OFF(stream,
                                std::back_inserter(points),
                                CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())))
     {

@@ -113,7 +113,7 @@ int main(int argc, char * argv[])
     // If XYZ file format:
     std::ifstream stream(input_filename.c_str());
     if(stream &&
-       CGAL::read_xyz_points(stream,
+       CGAL::read_XYZ(stream,
                              std::back_inserter(points),
                              CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>()).
                              normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())))

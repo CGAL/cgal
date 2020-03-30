@@ -22,7 +22,7 @@ int main(int argc, char*argv[])
   std::ifstream in(fname, std::ios_base::binary);
 
   if (!in ||
-      !CGAL::read_las_points_with_properties
+      !CGAL::read_LAS_with_properties
       (in,
        std::back_inserter (points),
        CGAL::make_las_point_reader (CGAL::First_of_pair_property_map<PointWithColor>()),

@@ -31,7 +31,7 @@ int main (int argc, char** argv)
 
   // read input
   if (!(stream
-        && CGAL::read_xyz_points(stream, std::back_inserter(points))))
+        && CGAL::read_XYZ(stream, std::back_inserter(points))))
     {
       std::cerr << "Error: can't read input file" << std::endl;
       return EXIT_FAILURE;

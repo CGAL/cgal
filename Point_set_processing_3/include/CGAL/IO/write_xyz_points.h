@@ -57,10 +57,10 @@ template <typename PointRange,
           typename NamedParameters
 >
 bool
-write_xyz_points(
-  std::ostream& stream,
-  const PointRange& points,
-  const NamedParameters& np)
+write_XYZ(
+    std::ostream& stream,
+    const PointRange& points,
+    const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -99,12 +99,12 @@ write_xyz_points(
 // variant with default NP
 template <typename PointRange>
 bool
-write_xyz_points(
-  std::ostream& stream, ///< output stream.
-  const PointRange& points)
+write_XYZ(
+    std::ostream& stream, ///< output stream.
+    const PointRange& points)
 {
-  return write_xyz_points
-    (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+  return write_XYZ
+      (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
@@ -125,11 +125,11 @@ write_xyz_points_and_normals(
   const Kernel& /*kernel*/) ///< geometric traits.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map).
-     geom_traits(Kernel()));
+  return write_XYZ
+      (stream, points,
+       CGAL::parameters::point_map (point_map).
+       normal_map (normal_map).
+       geom_traits(Kernel()));
 }
 
 // deprecated API
@@ -147,10 +147,10 @@ write_xyz_points_and_normals(
   NormalMap normal_map) ///< property map: value_type of OutputIterator -> Vector_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map (point_map).
-     normal_map (normal_map));
+  return write_XYZ
+      (stream, points,
+       CGAL::parameters::point_map (point_map).
+       normal_map (normal_map));
 }
 
 // deprecated API
@@ -166,9 +166,9 @@ write_xyz_points_and_normals(
   NormalMap normal_map) ///< property map: value_type of ForwardIterator -> Vector_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::normal_map(normal_map));
+  return write_XYZ
+      (stream, points,
+       CGAL::parameters::normal_map(normal_map));
 }
 
 // deprecated API
@@ -186,10 +186,10 @@ write_xyz_points(
   const Kernel& kernel)
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map(point_map).
-     geom_traits (kernel));
+  return write_XYZ
+      (stream, points,
+       CGAL::parameters::point_map(point_map).
+       geom_traits (kernel));
 }
 // deprecated API
 template <typename ForwardIterator,
@@ -204,9 +204,9 @@ write_xyz_points(
   PointMap point_map) ///< property map: value_type of OutputIterator -> Point_3.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points,
-     CGAL::parameters::point_map(point_map));
+  return write_XYZ
+      (stream, points,
+       CGAL::parameters::point_map(point_map));
 }
 
 // deprecated API
@@ -220,13 +220,46 @@ write_xyz_points(
   ForwardIterator beyond) ///< past-the-end input point.
 {
   CGAL::Iterator_range<ForwardIterator> points (first, beyond);
-  return write_xyz_points
-    (stream, points);
+  return write_XYZ
+      (stream, points);
 }
 #endif // CGAL_NO_DEPRECATED_CODE
 /// \endcond
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
+
+/**
+   \ingroup PkgPointSetProcessing3IO
+  @todo update version
+  \deprecated This function is deprecated since \cgal 5.1, `CGAL::write_XYZ()` should be used instead.
+*/
+template <typename PointRange,
+          typename NamedParameters
+>
+CGAL_DEPRECATED bool
+write_xyz_points(
+  std::ostream& stream,
+  const PointRange& points,
+  const NamedParameters& np)
+{
+  return write_XYZ(stream, points, np);
+}
+
+
+
+/// \cond SKIP_IN_MANUAL
+template <typename PointRange>
+CGAL_DEPRECATED bool
+write_xyz_points(
+  std::ostream& stream, ///< output stream.
+  const PointRange& points)
+{
+  return write_XYZ
+      (stream, points, CGAL::Point_set_processing_3::parameters::all_default(points));
+}
+/// \endcond
+#endif //CGAL_NO_DEPRECATED_CODE
 } //namespace CGAL
 
 #endif // CGAL_WRITE_XYZ_POINTS_H

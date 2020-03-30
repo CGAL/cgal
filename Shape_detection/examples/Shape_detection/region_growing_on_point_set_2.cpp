@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
     std::ofstream out(fullpath);
 
     CGAL::set_ascii_mode(out);
-    CGAL::write_ply_points_with_properties(
+    CGAL::write_PLY_with_properties(
       out, pwc,
       CGAL::make_ply_point_writer(PLY_Point_map()),
         std::make_tuple(

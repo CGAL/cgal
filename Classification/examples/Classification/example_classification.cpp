@@ -53,7 +53,7 @@ int main (int argc, char** argv)
 
   std::cerr << "Reading input" << std::endl;
   if (!in
-      || !(CGAL::read_ply_points (in, std::back_inserter (pts))))
+      || !(CGAL::read_PLY (in, std::back_inserter (pts))))
   {
     std::cerr << "Error: cannot read " << filename << std::endl;
     return EXIT_FAILURE;

@@ -151,7 +151,7 @@ void Scene::loadPointsXYZ(const char* filename)
   /* Note: this function reads in points only (normals are ignored) */
   /* Note: this function can NOT omit comments (starting with '#') */
   list<Point_3> pts;
-  if( !CGAL::read_xyz_points( fin,  // input ifstream
+  if( !CGAL::read_XYZ( fin,  // input ifstream
                               back_inserter(pts) ) ) {  // output iterator over points
     showError( QObject::tr("Error: cannot read file %1.").arg(filename) );
   }

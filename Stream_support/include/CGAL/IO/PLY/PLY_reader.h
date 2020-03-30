@@ -132,8 +132,8 @@ make_ply_normal_writer(VectorMap normal_map)
 
 /// \endcond
 
-namespace IO {
 
+namespace IO {
 namespace internal {
 
 class PLY_read_number
@@ -675,7 +675,7 @@ void process_properties(PLY_element& element, OutputValueType& new_element,
 
 template <typename Integer, class PolygonRange, class ColorRange>
 bool read_PLY_faces(std::istream& in,
-                    IO::internal::PLY_element& element,
+                    PLY_element& element,
                     PolygonRange& polygons,
                     ColorRange& fcolors,
                     const char* vertex_indices_tag)
@@ -698,7 +698,7 @@ bool read_PLY_faces(std::istream& in,
   {
     for(std::size_t k = 0; k < element.number_of_properties(); ++ k)
     {
-      IO::internal::PLY_read_number* property = element.property(k);
+      PLY_read_number* property = element.property(k);
       property->get(in);
 
       if(in.fail())
@@ -736,8 +736,8 @@ bool read_PLY_faces(std::istream& in,
   return true;
 }
 
+} // namespace PLY
 } // namespace internal
-} // namespace IO
 } // namespace CGAL
 
 #endif // CGAL_IO_PLY_PLY_READER_H
