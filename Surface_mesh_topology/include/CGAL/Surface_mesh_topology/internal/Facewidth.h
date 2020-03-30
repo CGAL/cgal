@@ -1,11 +1,21 @@
+// Copyright (c) 2020 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Thien Hoang <thienvhoang99@gmail.com>
+//
 #ifndef CGAL_FACEWIDTH_H
 #define CGAL_FACEWIDTH_H
 
-#include <CGAL/Generalized_map.h>
-#include <CGAL/Linear_cell_complex_for_generalized_map.h>
-#include <CGAL/Combinatorial_map.h>
-#include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
+#include <CGAL/license/Surface_mesh_topology.h>
+
 #include <CGAL/Path_on_surface.h>
+#include <CGAL/Timer.h>
 #include <CGAL/Surface_mesh_topology/internal/Generic_map_selector.h>
 #include <CGAL/Surface_mesh_topology/internal/Shortest_noncontractible_cycle.h>
 
@@ -17,15 +27,7 @@ template <class Mesh_>
 class Facewidth
 {
 public:
-
-  using Mesh_original = Mesh_;
-
-  struct Default_weight_functor
-  {
-    using Weight_t = unsigned int;
-    template <class T>
-    Weight_t operator() (T) const { return 1; }
-  };
+  using Mesh_original=Mesh_;
 
   using Gmap                       = typename Generic_map_selector<Mesh_original>::Generic_map;
   using Gmap_wrapper               = Generic_map_selector<Mesh_original>;
@@ -56,12 +58,11 @@ public:
     }
     // Assign values
     int counter = 0;
-    for (auto it = m_gmap.template one_dart_per_cell<0>().begin(),
-              itend = m_gmap.template one_dart_per_cell<0>().end(); it != itend; ++it)
+    for (auto it=m_gmap.template attributes<0>().begin(),
+           itend=m_gmap.template attributes<0>().end(); it!=itend; ++it)
     {
-      m_vertex_list.push_back(it);
-      m_gmap.template info<0>(it) = counter;
-      ++counter;
+      m_vertex_list.push_back(m_gmap.template dart_of_attribute<0>(it));
+      m_gmap.template info_of_attribute<0>(it)=counter++;
     }
 
     // m_face_list contains dart handles of m_gmap
@@ -151,27 +152,28 @@ public:
     m_cycle.clear();
     // Find edgewidth of the radial map
     SNC snc_to_find_facewidth(m_radial_map);
-    Path_on_surface<Gmap> edgewidth_of_radial_map = snc_to_find_facewidth.compute_edgewidth();
+    Path_on_surface<Gmap> edgewidth_of_radial_map=snc_to_find_facewidth.compute_edgewidth();
 
-    int last_vertex_index = -1, first_vertex_index = -1;
-    int last_face_index = -1;
-    for (int i = 0, n = edgewidth_of_radial_map.length(); i <= n; i++)
+    int last_vertex_index=-1, first_vertex_index=-1;
+    int last_face_index=-1;
+    for (int i=0, n=edgewidth_of_radial_map.length(); i<=n; i++)
     {
-      Dart_const_handle dh = edgewidth_of_radial_map[i % n];
-      int face_index = m_radial_map.template info<1>(dh);
-      if (m_radial_map.template info<0>(dh) == -1) dh = m_radial_map.next(dh);
-      CGAL_assertion(m_radial_map.template info<0>(dh) != -1);
-      int vertex_index = m_radial_map.template info<0>(dh);
+      Dart_const_handle dh=edgewidth_of_radial_map[i%n];
+      int face_index=m_radial_map.template info<1>(dh);
+      if (m_radial_map.template info<0>(dh)==-1) { dh=m_radial_map.next(dh); }
+      CGAL_assertion(m_radial_map.template info<0>(dh)!=-1);
+      int vertex_index=m_radial_map.template info<0>(dh);
       
-      if (last_face_index == face_index)
+      if (last_face_index==face_index)
       {
+        CGAL_assertion(m_radial_map.template belong_to_same_cell<0>(m_vertex_list[last_vertex_index], dh));
         m_cycle.push_back(m_copy_to_origin[m_vertex_list[last_vertex_index]]);  
         m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]); 
       }
 
       // if (first_vertex_index == -1) first_vertex_index = vertex_index;
-      last_vertex_index = vertex_index;
-      last_face_index = face_index;
+      last_vertex_index=vertex_index;
+      last_face_index=face_index;
     }
 
     if (display_time)
