@@ -47,7 +47,7 @@ randomint ri;
 
 inline double to_nt(int d)
 {
-    return double(d);
+  return double(d);
 }
 
 template < typename K >
@@ -61,6 +61,7 @@ struct Test {
   typedef CGAL::Ray_3< K >            R;
   typedef CGAL::Iso_cuboid_3< K >     Cub;
   typedef CGAL::Sphere_3< K >         Sph;
+  typedef CGAL::Tetrahedron_3< K >    Tet;
   typedef CGAL::Bbox_3                Bbox;
   typedef std::vector<P>              Pol;
 
@@ -68,35 +69,35 @@ struct Test {
   template < typename Type >
   bool approx_equal_nt(const Type &t1, const Type &t2)
   {
-        if (t1 == t2)
-                return true;
-        if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
-                return true;
-        std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
-        return false;
+    if (t1 == t2)
+      return true;
+    if (CGAL::abs(t1 - t2) / (CGAL::max)(CGAL::abs(t1), CGAL::abs(t2)) < epsilon)
+      return true;
+    std::cout << " Approximate comparison failed between : " << t1 << "  and  " << t2 << "\n";
+    return false;
   }
 
   template < typename Type >
   bool approx_equal(const Type&t1, const Type&t2)
   {
-        return t1 == t2;
-        // we need approx equal to check approx kernels, but maybe we should only test with exact kernels
-        // (approx kernels were useful before, when the text output was checked by diff ?)
-        // idea : test containment with intervals ?  or use some "epsilon double"?
-        // I need to convert the text output to exact rationals in the source...
-        // Well, for now the current scheme works.
+    return t1 == t2;
+    // we need approx equal to check approx kernels, but maybe we should only test with exact kernels
+    // (approx kernels were useful before, when the text output was checked by diff ?)
+    // idea : test containment with intervals ?  or use some "epsilon double"?
+    // I need to convert the text output to exact rationals in the source...
+    // Well, for now the current scheme works.
   }
 
   bool approx_equal(const P & p, const P & q)
   {
-        return approx_equal_nt(p.x(), q.x()) &&
-               approx_equal_nt(p.y(), q.y()) &&
-               approx_equal_nt(p.z(), q.z());
+    return approx_equal_nt(p.x(), q.x()) &&
+        approx_equal_nt(p.y(), q.y()) &&
+        approx_equal_nt(p.z(), q.z());
   }
 
   bool approx_equal(const S & p, const S & q)
   {
-  return approx_equal(p.source(), q.source()) && approx_equal(p.target(), q.target());
+    return approx_equal(p.source(), q.source()) && approx_equal(p.target(), q.target());
   }
 
   bool approx_equal(const Pol & p, const Pol & q)
@@ -114,32 +115,32 @@ struct Test {
   template < typename O1, typename O2>
   void check_no_intersection(const O1& o1, const O2& o2)
   {
-        assert(!CGAL::do_intersect(o1, o2));
-        assert(!CGAL::do_intersect(o2, o1));
+    assert(!CGAL::do_intersect(o1, o2));
+    assert(!CGAL::do_intersect(o2, o1));
   }
 
   template < typename Res, typename O1, typename O2 >
   void check_intersection(const O1& o1, const O2& o2)
   {
-        Res tmp;
-        assert(CGAL::do_intersect(o1, o2));
-        assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
-        assert(CGAL::do_intersect(o2, o1));
-        assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
+    Res tmp;
+    assert(CGAL::do_intersect(o1, o2));
+    assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
+    assert(CGAL::do_intersect(o2, o1));
+    assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
   }
 
   template < typename Res, typename O1, typename O2 >
   void check_intersection(const O1& o1, const O2& o2, const Res& result, bool do_opposite = true)
   {
-        Res tmp;
-        assert(CGAL::do_intersect(o1, o2));
-        assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
-        assert(approx_equal(tmp, result));
-        if (do_opposite) {
-          assert(CGAL::do_intersect(o2, o1));
-          assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
-          assert(approx_equal(tmp, result));
-        }
+    Res tmp;
+    assert(CGAL::do_intersect(o1, o2));
+    assert(CGAL::assign(tmp, CGAL::intersection(o1, o2)));
+    assert(approx_equal(tmp, result));
+    if (do_opposite) {
+      assert(CGAL::do_intersect(o2, o1));
+      assert(CGAL::assign(tmp, CGAL::intersection(o2, o1)));
+      assert(approx_equal(tmp, result));
+    }
   }
 
 
@@ -565,6 +566,419 @@ struct Test {
               << do_intersect_counter << "\n";
   } // end function Bbox_Tr
 
+  void Tet_L(bool is_exact)
+  {
+    std::cout << "Tetrahedron_3 - Line_3\n";
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    if(is_exact)
+    {
+      check_no_intersection (tet, L(P(5,0,0), P(5,1,0)));
+      //on edge
+      check_intersection (tet, L(P(0,2,0), P(0,3,0)), S(P(0,0,0), P(0,1,0)));
+      //through vertex and out from face
+      check_intersection (tet, L(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
+      //through a vertex only
+      check_intersection (tet, L(P(1,1,0), P(-1,1,0)), P(0,1,0));
+      //through 2 faces
+      check_intersection (tet, L(P(0.25,0.25,0), P(0.25,0,0.25)), S(P(0.25,0,0.25), P(0.25,0.25,0)));
+      //through one edge
+      check_intersection (tet, L(P(0.5,-0.5,0.5), P(0.5,0.5,0.5)), P(0.5,0,0.5));
+      //in a single face through 2 edges
+      check_intersection (tet, L(P(0.0,0.5,0.0), P(0.5,0.5,0.0)), S(P(0.0,0.5,0.0), P(0.5, 0.5, 0.0) ));
+      //in a single face through 1 vertex and 1 edge
+      check_intersection (tet, L(P(0.0,0.5,0.0), P(1.0,0.0,0.0)), S(P(0.0,0.5,0.0), P(1.0, 0.0, 0.0) ));
+    }
+
+  }
+
+  void Tet_S(bool is_exact)
+  {
+    std::cout << "Tetrahedron_3 - Segment_3\n";
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    if(is_exact)
+    {
+      check_no_intersection (tet, S(P(5,0,0), P(5,1,0)));
+      check_intersection (tet, S(P(0,2,0), P(0,-2,0)), S(P(0,1,0), P(0,0,0)));
+      check_intersection (tet, S(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
+      check_intersection (tet, S(P(2,1,0), P(-2,1,0)), P(0,1,0));
+
+      check_intersection (tet, S(P(0.1,0.1,0.1), P(0.2,0.2,0.2)), S(P(0.1,0.1,0.1), P(0.2,0.2,0.2)));
+      typename K::FT coord = 1.0/3.0;
+      check_intersection (tet, S(P(0.25,0.25,0.25), P(2,2,2)), S(P(0.25,0.25,0.25), P(coord, coord, coord)));
+    }
+    else
+    {
+      CGAL::intersection (tet, S(P(0,2,0), P(0,-2,0)));
+      CGAL::intersection (tet, S(P(0,1,0), P(0.25,0,0.25)));
+      CGAL::intersection (tet, S(P(2,1,0), P(-2,1,0)));
+      CGAL::intersection (tet, S(P(0.1,0.1,0.1), P(0.2,0.2,0.2)));
+      CGAL::intersection (tet, S(P(0.25,0.25,0.25), P(2,2,2)));
+    }
+
+  }
+
+  void Tet_R(bool is_exact)
+  {
+    std::cout << "Tetrahedron_3 - Ray_3\n";
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    if(is_exact)
+    {
+      check_no_intersection (tet, R(P(5,0,0), P(5,1,0)));
+
+      check_intersection (tet, R(P(0,2,0), P(0,-2,0)), S(P(0,1,0), P(0,0,0)));
+      check_intersection (tet, R(P(0,1,0), P(0.25,0,0.25)), S(P(0,1,0), P(0.25,0,0.25)));
+      check_intersection (tet, R(P(2,1,0), P(-2,1,0)), P(0,1,0));
+
+      typename K::FT coord = 1.0/3.0;
+      check_intersection (tet, R(P(0.1,0.1,0.1), P(0.2,0.2,0.2)), S(P(0.1,0.1,0.1), P(coord, coord, coord)));
+      check_intersection (tet, R(P(0.25,0.25,0.25), P(2,2,2)), S(P(0.25,0.25,0.25), P(coord, coord, coord)));
+    }
+    else
+    {
+      CGAL::intersection (tet, R(P(0,2,0), P(0,-2,0)));
+      CGAL::intersection (tet, R(P(0,1,0), P(0.25,0,0.25)));
+      CGAL::intersection (tet, R(P(2,1,0), P(-2,1,0)));
+      CGAL::intersection (tet, R(P(0.1,0.1,0.1), P(0.2,0.2,0.2)));
+      CGAL::intersection (tet, R(P(0.25,0.25,0.25), P(2,2,2)));
+    }
+  }
+
+  void Tet_Pl(bool is_exact)
+  {
+    std::cout << "Tetrahedron_3 - Plane_3\n";
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    if(is_exact)
+    {
+      check_no_intersection (tet, Pl(P(2,0,0),
+                                     P(2,1,0),
+                                     P(2,0,1)));
+
+      check_intersection (tet, Pl(P(0,2,0), P(0,0,0), P(0,0,1)),
+                          Tr(P(0,0,0), P(0,1,0), P(0,0,1)));
+
+      check_intersection (tet, Pl(P(0,1,0), P(1,0,0), P(0.5,0,-0.5)),
+                          S(P(0,1,0), P(1,0,0)));
+
+      check_intersection (tet, Pl(P(-1,1,12), P(0,1,-50), P(0.5,1,-0.5)),
+                          P(0,1,0));
+
+      check_intersection (tet, Pl(P(0,0.5,0), P(1,0.5,-5), P(0.5,0.5,0.5)),
+                          Tr(P(0.5,0.5,0), P(0,0.5,0), P(0,0.5,0.5)));
+      Pl pl(P(0,0.9,0), P(0.9,0,0), P(0.9,0.01,0.06));
+
+      typedef typename CGAL::Intersection_traits<K,
+          typename K::Tetrahedron_3,
+          typename K::Plane_3>::result_type Res;
+
+
+      //Don't have the right values to test further.
+      Res res = CGAL::intersection (tet, pl);
+
+      const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+    }
+    else
+    {
+      CGAL::intersection (tet, Pl(P(0,2,0), P(0,0,0), P(0,0,1)));
+      CGAL::intersection (tet, Pl(P(0,1,0), P(1,0,0), P(0.5,0,-0.5)));
+      CGAL::intersection (tet, Pl(P(-1,1,12), P(0,1,-50), P(0.5,1,-0.5)));
+      CGAL::intersection (tet, Pl(P(0,0.5,0), P(1,0.5,-5), P(0.5,0.5,0.5)));
+    }
+
+  }
+
+  void Tet_Tr(bool is_exact)
+  {
+    std::cout << "Tetrahedron_3 - Triangle_3\n";
+
+    typedef typename CGAL::Intersection_traits<K,
+        typename K::Tetrahedron_3,
+        typename K::Triangle_3>::result_type Res;
+
+    Tet tet(P(0,0,0), P(0,1,0), P(1,0,0), P(0,0,1));
+    if(is_exact)
+    {
+      check_no_intersection (tet, Tr(P(2,0,0),
+                                     P(2,1,0),
+                                     P(2,0,1)));
+
+      //tr inside a face
+      check_intersection (tet, Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)),
+                          Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)));
+      //face inside tr
+      check_intersection (tet, Tr(P(0,2,0), P(0,-2,0), P(0,0,2)),
+                          Tr(P(0,0,1), P(0,0,0), P(0,1,0)));
+
+      Tr tr(P(-2,2,0), P(2,2,0), P(0.25,0.25,0));
+
+      Res res = CGAL::intersection(tet, tr);
+      const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      for(auto& p : *poly)
+      {
+        assert(tet.has_on_boundary(p) && tr.has_on(p));
+      }
+
+      //only one edge intersecting
+      check_intersection (tet, Tr(P(-2, 0.5, 0.5), P(-2,0.75,1), P(1.5, 0.5, 0.5)),
+                          P(0,0.5,0.5));
+
+
+      //edge shared, 3rd point outside
+      check_intersection (tet, Tr(P(0,1,0), P(1,0,0), P(0.5,0,-100)),
+                          S(P(0,1,0), P(1,0,0)));
+
+      //shared edge, 3rd point inside
+      check_intersection (tet, Tr(P(0,1,0), P(1,0,0), P(0.25,0.25,0.25)),
+                          Tr(P(0,1,0), P(1,0,0), P(0.25,0.25,0.25)));
+
+      //tr adjacent to a vertex, outside
+      check_intersection (tet, Tr(P(-1,1,12), P(0,1,-50), P(0.5,1,-0.5)),
+                          P(0,1,0));
+
+      //tr adjacent to an edge, outside
+      check_intersection (tet, Tr(P(-0.6, 1, 0.6),
+                                  P(0.5, 1.20, -0.5),
+                                  P(0, -0.5, 0)),
+                          S(P(0,0,0), P(0,1,0)));
+
+
+      //tr share a vertex, inside
+      check_intersection (tet, Tr(P(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)),
+                          Tr(P(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)));
+
+      //tr edge adjacent to a vertex
+      check_intersection (tet, Tr(P(-1,1,0), P(3,1,0), P(0,3,0)),
+                          P(0,1,0));
+
+      //tr vertex adjacent to a vertex
+      check_intersection (tet, Tr(P(0,1,0), P(3,1,0), P(0,3,0)),
+                          P(0,1,0));
+
+
+      //traversing triangles
+      tr = Tr(P(-2, 0.5, 0.25),
+              P(-2, 0.75, 0.6),
+              P(1.5, 0.5, 0.25));
+
+      res = CGAL::intersection(tet, tr);
+
+
+      std::vector<P>* inter = boost::get<std::vector<P> >(&*res);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
+      for(auto& p : *inter)
+      {
+        assert(tet.has_on_boundary(p) && tr.has_on(p));
+      }
+
+      tr = Tr(P(-2, 0.25, 0),
+              P(-2, 0.75, 0),
+              P(1.5, 0.5, 0));
+
+      res = CGAL::intersection(tet, tr);
+
+
+      inter = boost::get<std::vector<P> >(&*res);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
+      for(auto& p : *inter)
+      {
+        assert(tet.has_on_boundary(p) && tr.has_on(p));
+      }
+
+      tr = Tr(P(0.2, 0.15, 0.3),
+              P(-2, 0.6, 0.15),
+              P(-2, 0.12, 0.15));
+
+      res = CGAL::intersection(tet, tr);
+      Tr* res_tr = boost::get<Tr>(&*res);
+      assert(res_tr != nullptr);
+
+      tr = Tr(P(0.2, 0.15, 0.3),
+              P(-1, 0.15, -2),
+              P(-1, 0.15, 2));
+
+      res = CGAL::intersection(tet, tr);
+
+
+      inter = boost::get<std::vector<P> >(&*res);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
+
+      tr = Tr(P(0.45, 0.20, 0.1),
+              P(0.1, 0.20, 0.5),
+              P(-0.5, 0.25, -0.5));
+
+      res = CGAL::intersection(tet, tr);
+
+
+      inter = boost::get<std::vector<P> >(&*res);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
+
+      for(auto& p : *inter)
+      {
+        assert(
+              (tet.has_on_bounded_side(p) || tet.has_on_boundary(p))
+              && tr.has_on(p));
+      }
+
+      //tr share a vertex, through
+      tr = Tr(P(0,1,0), P(0.1,0.1,0), P(0.9,0.1,0));
+      res = CGAL::intersection(tet, tr);
+      res_tr = boost::get<Tr>(&*res);
+      assert(res_tr != nullptr);
+
+
+      tr = Tr(P(0.1, 0.5, 0.1), P(0.3,0.1,0.1), P(4,0.3,0.9));
+      res = CGAL::intersection(tet, tr);
+      inter = boost::get<std::vector<P> >(&*res);
+      assert(inter != nullptr);
+      assert(inter->size() == 4);
+    }
+    else
+    {
+      //tr inside a face
+      CGAL::intersection(tet, Tr(P(0,0.9,0), P(0,0.1,0), P(0,0,0.9)));
+      //face inside tr
+      CGAL::intersection(tet, Tr(P(0,2,0), P(0,-2,0), P(0,0,2)));
+
+      //only one edge intersecting
+      CGAL::intersection(tet, Tr(P(-2, 0.5, 0.5), P(-2,0.75,1), P(1.5, 0.5, 0.5)));
+
+      //edge shared, 3rd point outside
+      CGAL::intersection(tet, Tr(P(0,1,0), P(1,0,0), P(0.5,0,-100)));
+
+      //shared edge, 3rd point inside
+      CGAL::intersection(tet, Tr(P(0,1,0), P(1,0,0), P(0.25,0.25,0.25)));
+
+      //tr adjacent to a vertex, outside
+      CGAL::intersection(tet, Tr(P(-1,1,12), P(0,1,-50), P(0.5,1,-0.5)));
+
+      //tr share a vertex, inside
+      CGAL::intersection(tet, Tr(P(0,1,0), P(0.1,0.1,0), P(0.5,0.1,0)));
+
+      //tr edge adjacent to a vertex
+      CGAL::intersection(tet, Tr(P(-1,1,0), P(3,1,0), P(0,3,0)));
+
+      //tr vertex adjacent to a vertex
+      CGAL::intersection(tet, Tr(P(0,1,0), P(3,1,0), P(0,3,0)));
+
+      typedef typename CGAL::Intersection_traits<K,
+          typename K::Tetrahedron_3,
+          typename K::Triangle_3>::result_type Res;
+      //traversing triangles
+      Tr tr(P(-2, 0.5, 0.25),
+            P(-2, 0.75, 0.6),
+            P(1.5, 0.5, 0.25));
+
+      Res res = CGAL::intersection(tet, tr);
+
+      //tr share a vertex, through
+      tr = Tr(P(0,1,0), P(0.1,0.1,0), P(0.9,0.1,0));
+      res = CGAL::intersection(tet, tr);
+    }
+
+  }
+
+  void Pl_Cub(bool is_exact)
+  {
+    std::cout << "Plane_3 - Cuboid_3\n";
+
+    Cub cub(P(1,1,1), P(2,2,2));
+
+    if(is_exact)
+    {
+      check_no_intersection (cub, Pl(P(3,0,0),
+                                     P(3,1,0),
+                                     P(3,0,1)));
+
+      //edge
+      check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
+                          S(P(1,2,1), P(1,1,1)));
+
+
+      //face
+      typedef typename CGAL::Intersection_traits<K,
+          typename K::Plane_3,
+          typename K::Iso_cuboid_3>::result_type Res;
+      Res res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1,2,2)));
+
+      const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      for(auto& p : *poly)
+      {
+        assert(p.x() == 1);
+      }
+      res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
+      poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      for(auto& p : *poly)
+      {
+        assert(cub.has_on_boundary(p));
+      }
+
+      //vertex
+      check_intersection (cub, Pl(0.5, -0.5, -0.5, 0),
+                          P(2,1,1));
+      //triangle
+
+      check_intersection (cub, Pl(P(2, 1.66, 2),
+                                  P(1.66,2,2),
+                                  P(2,2,1.66)),
+                          Tr(P(2, 2, 1.66),
+                             P(1.66,2,2),
+                             P(2,1.66,2)));
+
+      //other edge
+      Pl pl(P(1,1,1), P(1,2,1), P(1.5, 1, 2));
+      res = CGAL::intersection(cub, pl);
+      poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      for(auto& p : *poly)
+      {
+        assert(pl.has_on(p) && cub.has_on_boundary(p));
+      }
+
+      //random
+      pl = Pl(0.265189, 0.902464, 0.33946,  -2.47551);
+      res = CGAL::intersection(cub, pl);
+      poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 5);
+      for(auto& p : *poly)
+      {
+        assert(pl.has_on(p) && cub.has_on_boundary(p));
+      }
+    }
+    else
+    {
+      CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)));
+      //face
+      typedef typename CGAL::Intersection_traits<K,
+          typename K::Plane_3,
+          typename K::Iso_cuboid_3>::result_type Res;
+      Res res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1,2,2)));
+      res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
+      CGAL::intersection (cub, Pl(0.5, -0.5, -0.5, 0));
+      CGAL::intersection (cub, Pl(P(2, 1.66, 2),
+                                  P(1.66,2,2),
+                                  P(2,2,1.66)));
+      Pl pl(0.265189, 0.902464, 0.33946,  -2.47551);
+      res = CGAL::intersection(cub, pl);
+    }
+  }
+
   void Cub_Tr(bool is_exact)
   {
     typedef typename CGAL::Intersection_traits<K, Tr, Cub>::result_type Res;
@@ -667,6 +1081,144 @@ struct Test {
     }
   }
 
+  void Pl_Box(bool is_exact)
+  {
+    std::cout << "Plane_3 - Bbox_3\n";
+
+    Bbox cub(1,1,1,2,2,2);
+
+    if(is_exact)
+    {
+      check_no_intersection (cub, Pl(P(3,0,0),
+                                     P(3,1,0),
+                                     P(3,0,1)));
+
+      //edge
+      check_intersection (cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)),
+                          S(P(1,2,1), P(1,1,1)));
+      //face
+      typedef typename CGAL::Intersection_traits<K,
+          typename K::Plane_3,
+          Bbox>::result_type Res;
+      Res res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1,2,2)));
+
+      const std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      for(auto& p : *poly)
+      {
+        assert(p.x() == 1);
+      }
+      res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
+      poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      //vertex
+      check_intersection (cub, Pl(0.5, -0.5, -0.5, 0),
+                          P(2,1,1));
+      //triangle
+
+      check_intersection (cub, Pl(P(2, 1.66, 2),
+                                  P(1.66,2,2),
+                                  P(2,2,1.66)),
+                          Tr(P(2, 2, 1.66),
+                             P(1.66,2,2),
+                             P(2,1.66,2)));
+
+      //random
+      Pl pl(0.265189, 0.902464, 0.33946,  -2.47551);
+      res = CGAL::intersection(cub, pl);
+      poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 5);
+      for(auto& p : *poly)
+      {
+        assert(pl.has_on(p));
+      }
+    }
+    else
+    {
+      CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1.5,0,0)));
+      //face
+      typedef typename CGAL::Intersection_traits<K,
+          typename K::Plane_3,
+          Bbox>::result_type Res;
+      Res res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(1,2,2)));
+      res = CGAL::intersection(cub, Pl(P(1,1,1), P(1,2,1), P(2,2,2)));
+      CGAL::intersection (cub, Pl(0.5, -0.5, -0.5, 0));
+      CGAL::intersection (cub, Pl(P(2, 1.66, 2),
+                                  P(1.66,2,2),
+                                  P(2,2,1.66)));
+      Pl pl(0.265189, 0.902464, 0.33946,  -2.47551);
+      res = CGAL::intersection(cub, pl);
+    }
+  }
+
+  void Box_Tr(bool is_exact)
+  {
+    std::cout << "Triangle_3 - Cuboid_3\n";
+
+    Cub cub(P(1,1,1), P(2,2,2));
+
+    check_no_intersection(cub, Tr(P(1.1, 2,0),
+                                  P(2, 3, 1),
+                                  P(4, 5, 6)));
+
+    //tr in a face
+    check_intersection(cub, Tr(P(1,1.1,1),
+                               P(1,1.5,1),
+                               P(1,1,1.1)),
+                       Tr(P(1,1.1,1),
+                          P(1,1.5,1),
+                          P(1,1,1.1))
+                       );
+    //face in a tr
+
+    typedef typename CGAL::Intersection_traits<K,
+        typename K::Triangle_3,
+        typename K::Iso_cuboid_3>::result_type Res;
+    Tr tr(P(-3, -3, 1), P(3,-3,1), P(1.5,6,1));
+    Res res = CGAL::intersection(cub, tr);
+    if(is_exact)
+    {
+      std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      for(auto& p : *poly)
+      {
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
+      }
+    }
+
+    //tr adj to a point
+
+    check_intersection (cub, Tr(P(1, 0.5, 0.5),
+                                P(3, 2, 1),
+                                P(3, 1, 2)),
+                        P(2,1,1));
+    //tr adj to an edge
+    check_intersection (cub, Tr(P(1,0,4), P(2,1,0), P(4,3,0)),
+                        S(P(2,1,2), P(2,1,1)));
+    //tr inside
+    check_intersection (cub, Tr(P(1.1,1.1,1.1), P(1.8,1.8,1.8), P(1.5,1.8,1.1)),
+                        Tr(P(1.1,1.1,1.1), P(1.8,1.8,1.8), P(1.5,1.8,1.1)));
+    //tr through
+    tr = Tr(P(2, 4, 2),
+           P(1, 3.5, -0.5),
+           P(1, -1, 1));
+    res = CGAL::intersection(cub, tr);
+    if(is_exact)
+    {
+      std::vector<P>* poly = boost::get<std::vector<P> >(&*res);
+      assert(poly != nullptr);
+      assert(poly->size() == 4);
+      for(auto& p : *poly)
+      {
+        assert(tr.has_on(p) && cub.has_on_boundary(p));
+      }
+    }
+  }
+
   void run(bool is_exact = false)
   {
     std::cout << "3D Intersection tests\n";
@@ -686,11 +1238,24 @@ struct Test {
     R_L();
     R_S();
     R_R();
+
+    //If not exact, only check that it doesn't crash
+    //@{
+    Tet_L(is_exact);
+    Tet_S(is_exact);
+    Tet_R(is_exact);
+    Tet_Pl(is_exact);
+    Tet_Tr(is_exact);
+    Pl_Cub(is_exact);
+    Cub_Tr(is_exact);
+    Pl_Box(is_exact);
+    Box_Tr(is_exact);
+    //@}
+
     Bbox_L();
     Bbox_R();
     Bbox_Tr();
   }
-
 };
 
 int main()
@@ -707,4 +1272,3 @@ int main()
   std::cout << " |||||||| Test CGAL::Homogeneous<CGAL::Epeck_ft> ||||||||" << std::endl;
   Test< CGAL::Homogeneous<CGAL::Epeck_ft> >().run(true);
 }
-
