@@ -7,10 +7,9 @@ namespace CGAL {
 \cgalAutoToc
 \authors Konstantinos Katrioplas, Mael Rouxel-Labbé
 
-\section sectionSubIntro Introduction
+\section sectionOBBIntro Introduction
 
-AABB and stuff
+\section sectionOrientedBoundingBox Oriented Bounding Box
 
-\section secOBB Optimal Bounding Box
 */
 } /* namespace CGAL */
