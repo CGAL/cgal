@@ -226,7 +226,7 @@ protected:
     if (d2!=LCC::null_handle)
     {
       if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
-          (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.beta(dh, 2), m_amark)))
+          (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
       { add_segment(p1, get_point(d2), CGAL::Color(0, 0, 255)); }
       else
       { add_segment(p1, get_point(d2)); }
