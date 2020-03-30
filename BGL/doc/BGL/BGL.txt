@@ -679,7 +679,7 @@ using one of the following tags:
   license and provided by the \ref PkgSurfaceMeshSegmentationRef
   package
 
-All these implementation produce the exact same result but behave
+All these implementations produce the exact same result but behave
 differently in terms of timing and memory (see
 \cgalFigureRef{alpha_exp}). The _MaxFlow_ implementation is the
 fastest, but it grows rapidly in memory when increasing the complexity
@@ -691,7 +691,7 @@ implementation.
 
 \cgalFigureBegin{alpha_exp, alpha_expansion.png}
 Comparison of time and memory consumed by the different alpha
-expansion implementation.
+expansion implementations.
 \cgalFigureEnd
 
 The following example shows how to apply the alpha expansion algorithm
@@ -724,4 +724,3 @@ X  OOO
 
 */
 } /* namespace CGAL */
-
