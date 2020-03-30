@@ -242,6 +242,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT
   std::ofstream res_out("results/last_patch_replacement.off");
   res_out << std::setprecision(17) << pmesh;
+  res_out.close();
 #endif
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_DEBUG
