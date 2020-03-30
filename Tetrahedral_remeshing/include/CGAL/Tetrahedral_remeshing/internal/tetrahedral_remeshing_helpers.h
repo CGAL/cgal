@@ -584,43 +584,35 @@ namespace Tetrahedral_remeshing
   template<typename Gt>
   void normalize(typename Gt::Vector_3& v, const Gt& gt)
   {
-    namespace PMP = CGAL::Polygon_mesh_processing;
+    typedef typename Gt::FT       FT;
 
-    if (!typename Gt::Equal_3()(v, CGAL::NULL_VECTOR))
-      PMP::internal::normalize(v, gt);
+    const FT norm = CGAL::approximate_sqrt(gt.compute_squared_length_3_object()(v));
+    if (norm != FT(0))
+      v = gt.construct_divided_vector_3_object()(v, norm);
   }
 
   template<typename Facet, typename Gt>
   typename Gt::Vector_3 normal(const Facet& f, const Gt& gt)
   {
-    namespace PMP = CGAL::Polygon_mesh_processing;
-    typedef typename Gt::Vector_3 Vector;
+    typedef typename Gt::Vector_3 Vector_3;
     typedef typename Gt::Point_3  Point;
+    typedef typename Gt::FT       FT;
 
-    const int i = f.second;
+    Point p0 = point(f.first->vertex((f.second + 1) % 4)->point());
+    Point p1 = point(f.first->vertex((f.second + 2) % 4)->point());
+    const Point& p2 = point(f.first->vertex((f.second + 3) % 4)->point());
 
-    const Point& pa = point(f.first->vertex(indices(i, 0))->point());
-    const Point& pb = point(f.first->vertex(indices(i, 1))->point());
-    const Point& pc = point(f.first->vertex(indices(i, 2))->point());
+    if (f.second % 2 == 0)//equivalent to the commented orientation test
+      std::swap(p0, p1);
 
-    Vector n = CGAL::cross_product(pb - pa, pc - pa);
-    n = n / CGAL::sqrt(n * n);
+    Vector_3 n = gt.construct_cross_product_vector_3_object()(
+      gt.construct_vector_3_object()(p1, p2),
+      gt.construct_vector_3_object()(p1, p0));
 
-    return n;
-
-//    Point p0 = point(f.first->vertex((f.second + 1) % 4)->point());
-//    Point p1 = point(f.first->vertex((f.second + 2) % 4)->point());
-//    const Point& p2 = point(f.first->vertex((f.second + 3) % 4)->point());
-//
-//    //if (f.second % 2 == 0)//equivalent to the commented orientation test
-//    //  std::swap(p0, p1);
-//
-//    Vector n = PMP::internal::triangle_normal(p0, p1, p2, gt);
-//
-//    if (!typename Gt::Equal_3()(n, CGAL::NULL_VECTOR))
-//      PMP::internal::normalize(n, gt);
-
-//    return n;
+    //cross-product(AB, AC)'s norm is the area of the parallelogram
+    //formed by these 2 vectors.
+    //the triangle's area is half of it
+    return gt.construct_scaled_vector_3_object()(n, FT(1) / FT(2));
   }
 
   template<typename C3t3, typename CellSelector, typename OutputIterator>
