@@ -62,7 +62,8 @@ extract_selection_boundary(
   return out;
 }
 
-template <typename FaceGraph,
+template <typename GeomTraits,
+          typename FaceGraph,
           typename IsSelectedMap,
           typename FaceIndexMap,
           typename VertexPointMap>
@@ -226,8 +227,9 @@ struct Regularization_graph
   {
     fg_vertex_descriptor esource = source(ed, fg);
     fg_vertex_descriptor etarget = target(ed, fg);
-    return approximate_sqrt (squared_distance (get (vertex_point_map, esource),
-                                               get (vertex_point_map, etarget)));
+    return approximate_sqrt (typename GeomTraits::Compute_squared_distance_3()
+                             (get (vertex_point_map, esource),
+                              get (vertex_point_map, etarget)));
   }
 
   double area (fg_face_descriptor fd) const
@@ -235,9 +237,10 @@ struct Regularization_graph
     fg_halfedge_descriptor hd = halfedge (fd, fg);
     fg_halfedge_descriptor nhd = next (hd, fg);
 
-    return approximate_sqrt (squared_area (get (vertex_point_map, source (hd, fg)),
-                                           get (vertex_point_map, target (hd, fg)),
-                                           get (vertex_point_map, target (nhd, fg))));
+    return approximate_sqrt (typename GeomTraits::Compute_squared_area_3()
+                             (get (vertex_point_map, source (hd, fg)),
+                              get (vertex_point_map, target (hd, fg)),
+                              get (vertex_point_map, target (nhd, fg))));
   }
 
   friend CGAL::Iterator_range<vertex_iterator>
@@ -473,6 +476,7 @@ reduce_face_selection(
       if `true` only new faces can be selected, if `false` (default) some
       faces can be unselected
     \cgalParamEnd
+    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   \cgalNamedParamsEnd
 */
 template <typename FaceGraph, typename IsSelectedMap, typename NamedParameters>
@@ -502,10 +506,12 @@ regularize_face_selection_borders(
     = choose_parameter(get_parameter(np, internal_np::vertex_point),
                        get_const_property_map(vertex_point, fg));
 
+  typedef typename GetGeomTraits<FaceGraph, NamedParameters>::type Kernel;
+  
   bool prevent_unselection = choose_parameter(get_parameter(np, internal_np::prevent_unselection),
                                               false);
 
-  internal::Regularization_graph<FaceGraph, IsSelectedMap, FaceIndexMap,
+  internal::Regularization_graph<Kernel, FaceGraph, IsSelectedMap, FaceIndexMap,
                                  VertexPointMap>
     graph (fg, is_selected,
            face_index_map,

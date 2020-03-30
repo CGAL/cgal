@@ -205,6 +205,15 @@ boolean used to indicate if selection can be only extended or if it can also be 
 <b>Default:</b> `false`.
 \cgalNPEnd
 
+\cgalNPBegin{geom_traits} \anchor BGL_geom_traits
+is the geometric traits instance used.\n
+<b>Type:</b> a Geometric traits class.\n
+<b>Default</b>:
+\code typename CGAL::Kernel_traits<
+        typename boost::property_traits<
+          typename boost::property_map<FaceGraph, CGAL::vertex_point_t>::type>::value_type>::Kernel \endcode
+\cgalNPEnd
+
 \cgalNPTableEnd
 
 */
