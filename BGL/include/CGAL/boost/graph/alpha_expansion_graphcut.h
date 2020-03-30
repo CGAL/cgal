@@ -261,7 +261,8 @@ public:
                                                  inserted_vertices[vertex_i]);
     if(std::size_t(get (vertex_label_map, vd)) != alpha
        && color == ColorTraits::white()) //new comers (expansion occurs)
-      put (vertex_label_map, vd, alpha);
+      put (vertex_label_map, vd,
+           static_cast<typename boost::property_traits<VertexLabelMap>::value_type>(alpha));
   }
 
   void add_edge (Vertex_descriptor& v1, Vertex_descriptor& v2, double w1, double w2)
