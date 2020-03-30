@@ -47,6 +47,7 @@
 #include <boost/array.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
+#include <boost/iterator/indirect_iterator.hpp>
 
 /*!
   \file Poisson_reconstruction_function.h
@@ -102,18 +103,6 @@ invert(
 struct Poisson_visitor {
   void before_insertion() const
   {}
-};
-
-struct Poisson_skip_vertices {
-  double ratio;
-  Poisson_skip_vertices(const double ratio = 0)
-    : ratio(ratio) {}
-
-  template <typename Iterator>
-  bool operator()(Iterator it) const {
-    // make the result deterministic for each iterator
-    return Random((std::size_t)(&*it)).get_double() < ratio;
-  }
 };
 
 // Given f1 and f2, two sizing fields, that functor wrapper returns
@@ -415,21 +404,24 @@ public:
       // then the cell is considered as small enough, and the first sizing
       // field, more costly, is not evaluated.
 
-      typedef Filter_iterator<typename Triangulation::Input_point_iterator,
-                              Poisson_skip_vertices> Some_points_iterator;
-      Poisson_skip_vertices skip(1.-approximation_ratio);
+      //make it deterministic
+      Random random(0);
+      double ratio = 1.-approximation_ratio;
 
+      std::vector<typename Triangulation::Input_point_iterator> some_points;
+      for (typename Triangulation::Input_point_iterator
+             it = m_tr->input_points_begin(); it != m_tr->input_points_end(); ++ it)
+        if (random.get_double() >= ratio)
+          some_points.push_back (it);
+      
       CGAL_TRACE_STREAM << "SPECIAL PASS that uses an approximation of the result (approximation ratio: "
                 << approximation_ratio << ")" << std::endl;
       CGAL::Timer approximation_timer; approximation_timer.start();
 
       CGAL::Timer sizing_field_timer; sizing_field_timer.start();
       Poisson_reconstruction_function<Geom_traits>
-        coarse_poisson_function(Some_points_iterator(m_tr->input_points_end(),
-                                                     skip,
-                                                     m_tr->input_points_begin()),
-                                Some_points_iterator(m_tr->input_points_end(),
-                                                     skip),
+        coarse_poisson_function(boost::make_indirect_iterator (some_points.begin()),
+                                boost::make_indirect_iterator (some_points.end()),
                                 Normal_of_point_with_normal_map<Geom_traits>() );
       coarse_poisson_function.compute_implicit_function(solver, Poisson_visitor(),
                                                         0.);
