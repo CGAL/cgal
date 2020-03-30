@@ -98,12 +98,15 @@ int main(int argc, char* argv[])
 
   int loop=1;
   bool cycle_exist=true;
+  Path_on_surface cycle(lcccopy);
+  Weight_functor wf(lcccopy);
   do
   {
     std::cout<<"Finding #"<<loop++<<" edge-width:"<<std::endl;
-    Weight_functor wf(lcccopy);
-    CST            cst(lcccopy);
-    Path_on_surface cycle=cst.compute_edgewidth(wf);
+    {
+      CST cst(lcccopy);
+      cycle=cst.compute_edgewidth(wf);
+    }
     if (cycle.length()==0)
     { std::cout << "  Cannot find edge-width. Stop.\n"; cycle_exist=false; }
     else
