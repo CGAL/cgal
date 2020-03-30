@@ -133,15 +133,15 @@ void optimize_along_OBB_axes(typename Traits::Matrix& rot,
     pv.set(1, pt.y());
     pv.set(2, pt.z());
     pv = rot * pv;
-    
+
     rotated_points.emplace_back(pv(0), pv(1), pv(2));
 
     xmin = (std::min)(xmin, pv(0));
-    ymin = (std::min)(ymin, pv(1))
-    zmin = (std::min)(zmin, pv(2))
-    xmax = (std::max)(xmax, pv(0))
-    ymax = (std::max)(ymax, pv(1))
-    zmax = (std::max)(zmax, pv(2))
+    ymin = (std::min)(ymin, pv(1));
+    zmin = (std::min)(zmin, pv(2));
+    xmax = (std::max)(xmax, pv(0));
+    ymax = (std::max)(ymax, pv(1));
+    zmax = (std::max)(zmax, pv(2));
   }
 
   const FT lx = xmax - xmin;
