@@ -16,7 +16,7 @@ there is an infinite number of surfaces that approximate a single
 point cloud and a point cloud does not define a surface in
 itself. Thus additional assumptions and constraints must be defined by
 the user and reconstruction can be achieved in many different
-ways. This tutorials provides guidances on how to use the different
+ways. This tutorial provides guidance on how to use the different
 algorithms of \cgal to effectively perform surface reconstruction.
 
 \section TutorialsReconstruction_algorithms Which algorithm should I use?
@@ -29,7 +29,7 @@ algorithms of \cgal to effectively perform surface reconstruction.
 
 
 Because reconstruction is an ill-posed problem, it must be regularized
-via prior knowledge. Differences in prior leads to different
+via prior knowledge. Differences in prior lead to different
 algorithms, and choosing one or the other of these methods is
 dependent on these priors. For example, Poisson always generates
 closed shapes (bounding a volume) and requires normals but does not
@@ -70,7 +70,7 @@ tools.
 Pipeline Overview
 \cgalFigureEnd
 
-We now review some of these steps in more details.
+We now review some of these steps in more detail.
 
 
 \section TutorialsReconstruction_input Reading Input
@@ -113,8 +113,9 @@ without any preprocessing.
 
 \cgalFigureBegin{TutorialsReconstructionFigPreprocessing, reconstruction_preproc.png}
 Comparison of advancing front reconstruction output using different
-preprocessing on the same input. Smooth point cloud was generated
-using _jet smoothing_; simplified point cloud was generated using _grid simplification_.
+preprocessing on the same input. The smooth point cloud was generated
+using _jet smoothing_; the simplified point cloud was generated using
+_grid simplification_.
 \cgalFigureEnd
 
 
