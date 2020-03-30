@@ -369,8 +369,6 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
                            OutputIterator out,
                            const GeomTraits& gt)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
-
   typedef typename boost::property_traits<VPM_A>::value_type                    Point;
   typedef typename boost::property_traits<VPM_A>::reference                     Point_ref_A;
   typedef typename boost::property_traits<VPM_B>::reference                     Point_ref_B;
@@ -511,6 +509,54 @@ bool two_borders_hole_fill(const HalfedgeContainer_A& bhv_A,
   return true;
 }
 
+template <typename Patch,
+          typename PolygonMesh,
+          typename VPM,
+          typename GeomTraits>
+bool fix_patch_orientation(Patch& point_patch,
+                           const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h1,
+                           const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h2,
+                           const PolygonMesh& pmesh,
+                           const VPM vpm,
+                           const GeomTraits& gt)
+{
+  typedef typename boost::property_traits<VPM>::reference                       Point_ref;
+  typedef typename boost::property_traits<VPM>::value_type                      Point;
+
+  bool ok_orientation_1 = false, ok_orientation_2 = false;
+
+  const Point_ref h1sp = get(vpm, source(h1, pmesh));
+  const Point_ref h1tp = get(vpm, target(h1, pmesh));
+  const Point_ref h2sp = get(vpm, source(h2, pmesh));
+  const Point_ref h2tp = get(vpm, target(h2, pmesh));
+
+  for(const auto& face : point_patch)
+  {
+    for(int i=0; i<3; ++i)
+    {
+      const Point& p1 = face[i];
+      const Point& p2 = face[(i+1)%3];
+      if(gt.equal_3_object()(p1, h1sp) && gt.equal_3_object()(p2, h1tp))
+        ok_orientation_1 = true;
+      if(gt.equal_3_object()(p1, h2sp) && gt.equal_3_object()(p2, h2tp))
+        ok_orientation_2 = true;
+    }
+  }
+
+  std::cout << "orientations: " << ok_orientation_1 << " " << ok_orientation_2 << std::endl;
+
+  if(ok_orientation_1 != ok_orientation_2)
+    return false;
+
+  if(!ok_orientation_1)
+  {
+    for(auto& face : point_patch)
+      std::swap(face[0], face[1]);
+  }
+
+  return true;
+}
+
 template <typename PolygonMesh,
           typename VPM,
           typename GeomTraits>
@@ -572,6 +618,32 @@ bool merge_umbrellas(const typename boost::graph_traits<PolygonMesh>::halfedge_d
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
   std::cout << "Replacing " << faces_to_delete.size() << " faces with " << point_patch.size() << " new faces" << std::endl;
 #endif
+
+  bool success = fix_patch_orientation(point_patch, h1, h2, pmesh, vpm, gt);
+  if(!success)
+  {
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+    std::cout << "Incompatible orientations" << std::endl;
+#endif
+    return false; // can't find a good orientation for both borders
+  }
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::ofstream pout("results/patch_fixed.off");
+  pout << std::setprecision(17);
+  pout << 3 * point_patch.size() << " " << point_patch.size() << " 0\n";
+
+  for(const auto& f : point_patch)
+  {
+    pout << f[0] << "\n";
+    pout << f[1] << "\n";
+    pout << f[2] << "\n";
+  }
+
+  for(std::size_t i=0, ps=point_patch.size(); i<ps; ++i)
+    pout << "3 " << 3*i << " " << 3*i+1 << " " << 3*i+2 << "\n";
+#endif
+
 
   replace_faces_with_patch(faces_to_delete, point_patch, pmesh, vpm);
 
@@ -679,12 +751,19 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
        !internal::is_star_without_border(cones.back(), pmesh))
     {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-      std::cout << "MERGING treatment requested, but impossible" << std::endl;
+      std::cout << "merging treatment requested, but impossible" << std::endl;
 #endif
       internal::separate_umbrellas(cones, pmesh, vpm, gt);
     }
 
-    internal::merge_umbrellas(cones.front(), cones.back(), pmesh, vpm, gt);
+    if(!internal::merge_umbrellas(cones.front(), cones.back(), pmesh, vpm, gt))
+    {
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+      std::cout << "merging failed, falling back to separating" << std::endl;
+#endif
+
+      internal::separate_umbrellas(cones, pmesh, vpm, gt);
+    }
   }
 
   CGAL_postcondition_code(non_manifold_cones.clear();)
