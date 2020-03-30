@@ -166,7 +166,6 @@ public:
       
       if (last_face_index==face_index)
       {
-        CGAL_assertion(m_radial_map.template belong_to_same_cell<0>(m_vertex_list[last_vertex_index], dh));
         m_cycle.push_back(m_copy_to_origin[m_vertex_list[last_vertex_index]]);  
         m_cycle.push_back(m_copy_to_origin[m_face_list[face_index]]); 
       }
