@@ -199,7 +199,7 @@ struct Triangle_structure_sampler_base
     using parameters::is_default_parameter;
 
     gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
-       
+
 
     bool use_rs = choose_parameter(get_parameter(np, internal_np::random_uniform_sampling), true);
     bool use_gs = choose_parameter(get_parameter(np, internal_np::grid_sampling), false);
@@ -223,13 +223,13 @@ struct Triangle_structure_sampler_base
     if(use_gs)
     {
       double grid_spacing_ = choose_parameter(get_parameter(np, internal_np::grid_spacing), 0.);
-      
+
       if(grid_spacing_ == 0.)
       {
         // set grid spacing to the shortest edge length
         grid_spacing_ = static_cast<Derived*>(this)->get_minimum_edge_length();
       }
-      
+
       static_cast<Derived*>(this)->internal_sample_triangles(grid_spacing_, smpl_fcs, smpl_dgs);
     }
 
@@ -854,7 +854,7 @@ sample_triangle_mesh(const TriangleMesh& tm,
  *      two consecutive points in the grid is that of the length of the
  *      smallest non-null edge of the soup, or the value passed to
  *      the named parameter `grid_spacing`.
- * 
+ *
  *      %Default is `false`.
  *    \cgalParamEnd
  *    \cgalParamBegin{use_monte_carlo_sampling}
