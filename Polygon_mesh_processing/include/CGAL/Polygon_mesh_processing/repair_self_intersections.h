@@ -10,8 +10,8 @@
 // Author(s)     : Sebastien Loriot,
 //                 Mael Rouxel-Labbé
 //
-#ifndef CGAL_POLYGON_MESH_PROCESSING_REMOVE_SELF_INTERSECTIONS_H
-#define CGAL_POLYGON_MESH_PROCESSING_REMOVE_SELF_INTERSECTIONS_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H
+#define CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H
 
 #include <CGAL/license/Polygon_mesh_processing/repair.h>
 
@@ -1862,4 +1862,4 @@ bool remove_self_intersections(TriangleMesh& tmesh)
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_REMOVE_SELF_INTERSECTIONS_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_REPAIR_SELF_INTERSECTIONS_H
