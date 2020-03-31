@@ -443,19 +443,19 @@ reduce_face_selection(
   select new faces and ensures that the regularization keeps all
   selected faces.
 
-  \tparam FaceGraph a model of `FaceGraph`
+  \tparam TriangleMesh a model of `FaceGraph`
 
   \tparam IsSelectedMap a model of `ReadWritePropertyMap` with
-  `boost::graph_traits<FaceGraph>::%face_descriptor` as key type and
+  `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and
   `bool` as value type
 
   \tparam NamedParameters a sequence of named parameters
 
   \param fg the graph containing the selected faces.
 
-  \param is_selected is_selected indicates if a face is part of the
-  selection. It is updated by the function to accommodate faces added
-  or removed from the selection.
+  \param is_selected indicates if a face is part of the selection. It
+  is updated by the function to accommodate faces added or removed
+  from the selection.
 
   \param weight sets the tradeoff between data fidelity and
   regularity, ranging from 0 (no regularization at all, selection is
@@ -479,10 +479,10 @@ reduce_face_selection(
     \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   \cgalNamedParamsEnd
 */
-template <typename FaceGraph, typename IsSelectedMap, typename NamedParameters>
+template <typename TriangleMesh, typename IsSelectedMap, typename NamedParameters>
 void
 regularize_face_selection_borders(
-  FaceGraph& fg,
+  TriangleMesh& mesh,
   IsSelectedMap is_selected,
   double weight,
   const NamedParameters& np)
@@ -492,28 +492,28 @@ regularize_face_selection_borders(
 
   CGAL_precondition (0.0 <= weight && weight < 1.0);
 
-  typedef boost::graph_traits<FaceGraph> GT;
-  typedef typename GT::face_descriptor fg_face_descriptor;
-  typedef typename GT::halfedge_descriptor fg_halfedge_descriptor;
-  typedef typename GT::edge_descriptor fg_edge_descriptor;
-  typedef typename GT::vertex_descriptor fg_vertex_descriptor;
+  typedef boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::face_descriptor mesh_face_descriptor;
+  typedef typename GT::halfedge_descriptor mesh_halfedge_descriptor;
+  typedef typename GT::edge_descriptor mesh_edge_descriptor;
+  typedef typename GT::vertex_descriptor mesh_vertex_descriptor;
 
-  typedef typename GetInitializedFaceIndexMap<FaceGraph, NamedParameters>::type FaceIndexMap;
-  FaceIndexMap face_index_map = CGAL::get_initialized_face_index_map(fg, np);
+  typedef typename GetInitializedFaceIndexMap<TriangleMesh, NamedParameters>::type FaceIndexMap;
+  FaceIndexMap face_index_map = CGAL::get_initialized_face_index_map(mesh, np);
 
-  typedef typename GetVertexPointMap<FaceGraph, NamedParameters>::const_type VertexPointMap;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
   VertexPointMap vertex_point_map
     = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                       get_const_property_map(vertex_point, fg));
+                       get_const_property_map(vertex_point, mesh));
 
-  typedef typename GetGeomTraits<FaceGraph, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type Kernel;
   
   bool prevent_unselection = choose_parameter(get_parameter(np, internal_np::prevent_unselection),
                                               false);
 
-  internal::Regularization_graph<Kernel, FaceGraph, IsSelectedMap, FaceIndexMap,
+  internal::Regularization_graph<Kernel, TriangleMesh, IsSelectedMap, FaceIndexMap,
                                  VertexPointMap>
-    graph (fg, is_selected,
+    graph (mesh, is_selected,
            face_index_map,
            vertex_point_map,
            weight,
@@ -526,16 +526,16 @@ regularize_face_selection_borders(
                             CGAL::parameters::vertex_index_map
                             (face_index_map));
 
-  for (fg_face_descriptor fd : faces(fg))
+  for (mesh_face_descriptor fd : faces(mesh))
     put(is_selected, fd, graph.labels[get(face_index_map,fd)]);
 }
 
 /// \cond SKIP_IN_MANUAL
 // variant with default np
-template <typename FaceGraph, typename IsSelectedMap>
+template <typename TriangleMesh, typename IsSelectedMap>
 void
 regularize_face_selection_borders(
-  FaceGraph& fg,
+  TriangleMesh& fg,
   IsSelectedMap is_selected,
   double weight)
 {
