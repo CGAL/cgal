@@ -778,7 +778,6 @@ void add_faces(const RangeofVertexRange& faces_to_add, PolygonMesh& pm)
 
   typedef typename CGAL::GetInitializedVertexIndexMap<PolygonMesh>::type Vid_map;
   Vid_map vid = CGAL::get_initialized_vertex_index_map(pm);
-  typedef typename boost::property_traits<Vid_map>::value_type Vid;
 
   // TODO: add also this lambda as an Euler function?
   auto add_new_edge = [&pm](vertex_descriptor v1, vertex_descriptor v2)
