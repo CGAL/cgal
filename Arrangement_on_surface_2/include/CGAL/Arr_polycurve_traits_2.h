@@ -193,13 +193,12 @@ public:
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
 
-      Construct_x_monotone_curve_2 ctr_x_curve =
-        m_poly_traits.construct_x_monotone_curve_2_object();
+      auto ctr_x_curve = m_poly_traits.construct_x_monotone_curve_2_object();
 
-      typename Subcurve_traits_2::Make_x_monotone_2 make_seg_x_monotone =
+      auto make_seg_x_monotone =
         m_poly_traits.subcurve_traits_2()->make_x_monotone_2_object();
 
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+      auto cmp_seg_endpts =
         m_poly_traits.subcurve_traits_2()->compare_endpoints_xy_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
@@ -238,12 +237,11 @@ public:
         (
          // To be used in order to verify continuity and well-orientedness
          // of the input curve cv.
-         typename Subcurve_traits_2::Construct_min_vertex_2 min_seg_v =
+         auto min_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_min_vertex_2_object();
-         typename Subcurve_traits_2::Construct_max_vertex_2 max_seg_v =
+         auto max_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_max_vertex_2_object();
-         typename Subcurve_traits_2::Equal_2 equal =
-           m_poly_traits.subcurve_traits_2()->equal_2_object();
+         auto equal = m_poly_traits.subcurve_traits_2()->equal_2_object();
          Point_2 last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
            max_seg_v(x_seg) : min_seg_v(x_seg);
          Point_2 next_src;
@@ -329,19 +327,18 @@ public:
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
 
-      Construct_x_monotone_curve_2 ctr_x_curve =
-        m_poly_traits.construct_x_monotone_curve_2_object();
+      auto ctr_x_curve = m_poly_traits.construct_x_monotone_curve_2_object();
 
-      typename Subcurve_traits_2::Make_x_monotone_2 make_seg_x_monotone =
+      auto make_seg_x_monotone =
         m_poly_traits.subcurve_traits_2()->make_x_monotone_2_object();
 
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
+      auto cmp_seg_endpts =
         m_poly_traits.subcurve_traits_2()->compare_endpoints_xy_2_object();
 
-      typename Subcurve_traits_2::Parameter_space_in_x_2 ps_x =
-           m_poly_traits.subcurve_traits_2()->parameter_space_in_x_2_object();
-      typename Subcurve_traits_2::Parameter_space_in_y_2 ps_y =
-           m_poly_traits.subcurve_traits_2()->parameter_space_in_y_2_object();
+      auto ps_x =
+        m_poly_traits.subcurve_traits_2()->parameter_space_in_x_2_object();
+      auto ps_y =
+        m_poly_traits.subcurve_traits_2()->parameter_space_in_y_2_object();
 
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       typename Subcurve_traits_2::Construct_opposite_2 ctr_seg_opposite =
@@ -379,12 +376,11 @@ public:
         (
          // To be used in order to verify continuity and well-orientedness
          // of the input curve cv.
-         typename Subcurve_traits_2::Construct_min_vertex_2 min_seg_v =
+         auto min_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_min_vertex_2_object();
-         typename Subcurve_traits_2::Construct_max_vertex_2 max_seg_v =
+         auto max_seg_v =
            m_poly_traits.subcurve_traits_2()->construct_max_vertex_2_object();
-         typename Subcurve_traits_2::Equal_2 equal =
-           m_poly_traits.subcurve_traits_2()->equal_2_object();
+         auto equal = m_poly_traits.subcurve_traits_2()->equal_2_object();
          Point_2 last_target = (cmp_seg_endpts(x_seg) == SMALLER) ?
            max_seg_v(x_seg) : min_seg_v(x_seg);
          Point_2 next_src;
@@ -498,9 +494,7 @@ public:
 
   public:
     /*! Constructor. */
-    Push_back_2(const Polycurve_traits_2& traits) :
-      Base::Push_back_2(traits)
-    {}
+    Push_back_2(const Polycurve_traits_2& traits) : Base::Push_back_2(traits) {}
 
     // Normally, the moment the compiler finds a name, it stops looking. In
     // other words, the compiler first finds the operator() in the current
@@ -584,20 +578,16 @@ public:
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      typename Subcurve_traits_2::Construct_min_vertex_2 min_vertex =
-        geom_traits->construct_min_vertex_2_object();
-      typename Subcurve_traits_2::Construct_max_vertex_2 max_vertex =
-        geom_traits->construct_max_vertex_2_object();
-      typename Subcurve_traits_2::Equal_2 equal =
-        geom_traits->equal_2_object();
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        geom_traits->compare_endpoints_xy_2_object();
+      auto min_vertex = geom_traits->construct_min_vertex_2_object();
+      auto max_vertex = geom_traits->construct_max_vertex_2_object();
+      auto equal = geom_traits->equal_2_object();
+      auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
 
       // Make sure the split point is not one of the curve endpoints.
-      CGAL_precondition((!equal(m_poly_traits.
-                                construct_min_vertex_2_object()(xcv), p)));
-      CGAL_precondition((!equal(m_poly_traits.
-                                construct_max_vertex_2_object()(xcv), p)));
+      CGAL_precondition((! equal(m_poly_traits.
+                                 construct_min_vertex_2_object()(xcv), p)));
+      CGAL_precondition((! equal(m_poly_traits.
+                                 construct_max_vertex_2_object()(xcv), p)));
 
       CGAL_precondition_msg(xcv.number_of_subcurves() > 0,
                             "Cannot split a polycurve of length zero.");
@@ -709,22 +699,20 @@ public:
                const X_monotone_curve_2& cv2,
                OutputIterator oi) const
     {
-      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      Compare_y_at_x_2 cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
-      typename Subcurve_traits_2::Equal_2 equal =
-        geom_traits->equal_2_object();
-      typename Subcurve_traits_2::Construct_min_vertex_2 min_vertex =
-        geom_traits->construct_min_vertex_2_object();
-      typename Subcurve_traits_2::Construct_max_vertex_2 max_vertex =
-        geom_traits->construct_max_vertex_2_object();
-      typename Subcurve_traits_2::Intersect_2 intersect =
-        geom_traits->intersect_2_object();
-      typename Subcurve_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        geom_traits->compare_endpoints_xy_2_object();
-      typename Subcurve_traits_2::Construct_opposite_2 construct_opposite =
-        geom_traits->construct_opposite_2_object();
+      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_subcurve_2>
+                                                      Intersection_base_result;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                      Intersection_result;
 
-      typedef std::pair<Point_2,Multiplicity> Point_2_pair;
+      const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
+      auto cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
+      auto equal = geom_traits->equal_2_object();
+      auto min_vertex = geom_traits->construct_min_vertex_2_object();
+      auto max_vertex = geom_traits->construct_max_vertex_2_object();
+      auto intersect = geom_traits->intersect_2_object();
+      auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
+      auto construct_opposite = geom_traits->construct_opposite_2_object();
 
       Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
       Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
@@ -737,7 +725,7 @@ public:
 
       X_monotone_curve_2 ocv;           // Used to represent overlaps.
 
-      Compare_xy_2 compare_xy = m_poly_traits.compare_xy_2_object();
+      auto compare_xy = m_poly_traits.compare_xy_2_object();
       Comparison_result left_res =
         compare_xy(cv1[i1], ARR_MIN_END, cv2[i2], ARR_MIN_END);
 
@@ -754,12 +742,13 @@ public:
               ((dir1 == LARGER) && (i1 == 0))){
             // cv1's right endpoint equals cv2's left endpoint
             // Thus we can return this single(!) intersection point
-            std::pair<Point_2, Multiplicity>  p(max_vertex(cv1[i1]), 0);
-            *oi++ = make_object(p);
+            Intersection_point p(max_vertex(cv1[i1]), 0);
+            *oi++ = Intersection_result(p);
             return oi;
           }
           dir1 == SMALLER ?
-            ++i1 : (i1 != 0) ? --i1 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
+            ++i1 :
+            (i1 != 0) ? --i1 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
           left_res = EQUAL;
         }
       }
@@ -776,13 +765,14 @@ public:
               ((dir2 == LARGER) && (i2 == 0))){
             // cv2's right endpoint equals cv1's left endpoint
             // Thus we can return this single(!) intersection point
-            std::pair<Point_2, Multiplicity>  p(max_vertex(cv2[i2]), 0);
-            *oi++ = make_object(p);
+            Intersection_point p(max_vertex(cv2[i2]), 0);
+            *oi++ = Intersection_result(p);
             return oi;
           }
 
           dir2 == SMALLER ?
-            ++i2 : (i2 != 0) ? --i2 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
+            ++i2 :
+            (i2 != 0) ? --i2 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
           left_res = EQUAL;
         }
       }
@@ -823,48 +813,64 @@ public:
 
         right_overlap = false;
 
-        if (!right_coincides && !left_coincides) {
+        //! EF: the following code is abit suspicious. It may erroneously
+        //      assume that the subcurves cannot overlap more than once.
+        if (! right_coincides && ! left_coincides) {
           // Non of the endpoints of the current subcurve of one polycurve
           // coincides with the curent subcurve of the other polycurve:
           // Output the intersection if exists.
-          oi = intersect(cv1[i1], cv2[i2], oi);
+          std::vector<Intersection_base_result> xections;
+          intersect(cv1[i1], cv2[i2], std::back_inserter(xections));
+          for (const auto& xection : xections) {
+            const X_monotone_subcurve_2* subcv_p =
+              boost::get<X_monotone_subcurve_2>(&xection);
+            if (subcv_p != nullptr) {
+              ocv.push_back(*subcv_p);
+              *oi++ = Intersection_result(ocv);
+              ocv.clear();
+              continue;
+            }
+
+            const Intersection_point* p_p =
+              boost::get<Intersection_point>(&xection);
+            if (p_p != nullptr) *oi++ = Intersection_result(*p_p);
+          }
         }
         else if (right_coincides && left_coincides) {
           // An overlap exists between the current subcurves of the
           // polycurves: Output the overlapping subcurve.
           right_overlap = true;
 
-          std::vector<CGAL::Object> int_seg;
-          intersect(cv1[i1], cv2[i2], std::back_inserter(int_seg));
+          std::vector<Intersection_base_result> sub_xections;
+          intersect(cv1[i1], cv2[i2], std::back_inserter(sub_xections));
 
-          for (size_t i = 0; i < int_seg.size(); ++i) {
+          for (const auto& item : sub_xections) {
             const X_monotone_subcurve_2* x_seg =
-              CGAL::object_cast<X_monotone_subcurve_2> (&(int_seg[i]));
+              boost::get<X_monotone_subcurve_2>(&item);
             if (x_seg != nullptr) {
               X_monotone_subcurve_2 seg = *x_seg;
 
               // If for some reason the subcurve intersection
               // results in left oriented curve.
-              if ( cmp_seg_endpts(seg) == LARGER)
-                seg = construct_opposite(seg);
+              if (cmp_seg_endpts(seg) == LARGER) seg = construct_opposite(seg);
               ocv.push_back(seg);
             }
 
-            const Point_2_pair* p_ptr =
-              CGAL::object_cast<Point_2_pair>(&(int_seg[i]));
+            const Intersection_point* p_ptr =
+              boost::get<Intersection_point>(&item);
             if (p_ptr != nullptr) {
               // Any point that is not equal to the max_vertex of the
               // subcurve should be inserted into oi.
               // The max_vertex of the current subcurve (if intersecting)
               // will be taken care of as the min_vertex of in the next
               // iteration.
-              if (!equal(p_ptr->first, max_vertex(cv1[i1])))
-                *oi++ = make_object(*p_ptr);
+              if (! equal(p_ptr->first, max_vertex(cv1[i1])))
+                *oi++ = Intersection_result(*p_ptr);
             }
           }
         }
 
-        else if (left_coincides && !right_coincides) {
+        else if (left_coincides && ! right_coincides) {
           // std::cout << "Left is coinciding but right is not." << std::endl;
           // The left point of the current subcurve of one polycurve
           // coincides with the current subcurve of the other polycurve.
@@ -872,7 +878,7 @@ public:
             // An overlap occurred at the previous iteration:
             // Output the overlapping polycurve.
             CGAL_assertion(ocv.number_of_subcurves() > 0);
-            *oi++ = make_object(ocv);
+            *oi++ = Intersection_result(ocv);
             ocv.clear();
           }
           else {
@@ -884,12 +890,12 @@ public:
             // polycurves is not defined at this point, so we give
             // it multiplicity 0.
             if (left_res == SMALLER) {
-              std::pair<Point_2, Multiplicity> p(min_vertex(cv2[i2]), 0);
-              *oi++ = make_object(p);
+              Intersection_point p(min_vertex(cv2[i2]), 0);
+              *oi++ = Intersection_result(p);
             }
             else {
-              std::pair<Point_2, Multiplicity> p(min_vertex(cv1[i1]), 0);
-              *oi++ = make_object(p);
+              Intersection_point p(min_vertex(cv1[i1]), 0);
+              *oi++ = Intersection_result(p);
             }
           }
         }
@@ -919,7 +925,7 @@ public:
 
         // Output the remaining overlapping polycurve, if necessary.
       if (ocv.number_of_subcurves() > 0) {
-        *oi++ = make_object(ocv);
+        *oi++ = Intersection_result(ocv);
       }
       else if (right_coincides) {
         typedef std::pair<Point_2,Multiplicity> return_point;
@@ -930,7 +936,7 @@ public:
             (i1 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv1[i1+1]), 0) :
             return_point(max_vertex(cv1[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
         else if (right_res == LARGER) {
           ip = (dir2 == SMALLER) ?
@@ -938,7 +944,7 @@ public:
             (i2 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv2[i2+1]), 0) :
             return_point(max_vertex(cv2[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
         else if (((i1 > 0) && (dir1 == SMALLER)) ||
                  ((i1 < n1) && (dir1 != SMALLER)) ||
@@ -950,7 +956,7 @@ public:
             (i1 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv1[i1+1]), 0) :
             return_point(max_vertex(cv1[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
         else {
           CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
@@ -965,7 +971,7 @@ public:
             (i2 != Polycurve_traits_2::INVALID_INDEX) ?
             return_point(max_vertex(cv2[i2+1]), 0) :
             return_point(max_vertex(cv2[0]), 0);
-          *oi++ = make_object(ip);
+          *oi++ = Intersection_result(ip);
         }
       }
 

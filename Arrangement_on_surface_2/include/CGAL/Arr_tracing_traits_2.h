@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Efi Fogel    <efif@post.tau.ac.il>
+// Author(s): Efi Fogel    <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_TRACING_TRAITS_H
 #define CGAL_ARR_TRACING_TRAITS_H
@@ -592,7 +592,7 @@ public:
 
   public:
     /*! Construct */
-    Intersect_2(const Base * base, bool enabled = true) :
+    Intersect_2(const Base* base, bool enabled = true) :
       m_object(base->intersect_2_object()), m_enabled(enabled) {}
 
     /*! Operate
@@ -604,37 +604,41 @@ public:
      * multiplicity
      * \return the output iterator
      */
-    template<typename OutputIterator>
+    template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2 & xcv1,
                               const X_monotone_curve_2 & xcv2,
                               OutputIterator oi) const
     {
-      if (!m_enabled) return m_object(xcv1, xcv2, oi);
+      typedef std::pair<Point_2, Multiplicity>          Intersection_point;
+      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+                                                        Intersection_result;
+
+      if (! m_enabled) return m_object(xcv1, xcv2, oi);
+
       std::cout << "intersect" << std::endl
                 << "  xcv1: " << xcv1 << std::endl
                 << "  xcv2: " << xcv2 << std::endl;
-      std::list<CGAL::Object> container;
+      std::list<Intersection_result> container;
       m_object(xcv1, xcv2, std::back_inserter(container));
       if (container.empty()) return oi;
 
-      std::list<CGAL::Object>::iterator it;
       unsigned int i = 0;
-      for (it = container.begin(); it != container.end(); ++it) {
-        X_monotone_curve_2 xcv;
-        if (assign (xcv, *it)) {
-          std::cout << "  result[" << i++ << "]: xcv: " << xcv << std::endl;
+      for (const auto& item : container) {
+        const X_monotone_curve_2* xcv = boost::get<X_monotone_curve_2>(&item);
+        if (xcv != nullptr) {
+          std::cout << "  result[" << i++ << "]: xcv: " << *xcv << std::endl;
           continue;
         }
 
-        std::pair<Point_2,Multiplicity> point_pair;
-        if (assign (point_pair, *it)) {
-          std::cout << "  result[" << i++ << "]: p: " << point_pair.first
-                    << ", multiplicity: " << point_pair.second << std::endl;
+        const Intersection_point* ip = boost::get<Intersection_point>(&item);
+        if (ip != nullptr) {
+          std::cout << "  result[" << i++ << "]: p: " << ip->first
+                    << ", multiplicity: " << ip->second << std::endl;
           continue;
         }
       }
 
-      for (it = container.begin(); it != container.end(); ++it) *oi++ = *it;
+      for (auto it = container.begin(); it != container.end(); ++it) *oi++ = *it;
       container.clear();
       return oi;
     }

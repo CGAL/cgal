@@ -24,7 +24,6 @@
 
 #include <fstream>
 
-#include <boost/optional.hpp>
 #include <boost/variant.hpp>
 
 #include <CGAL/tags.h>
@@ -619,7 +618,7 @@ public:
      * given output iterator. As segments are always x_monotone, only one
      * object will be contained in the iterator.
      * \param cv The curve.
-     * \param oi The output iterator, whose value-type is optional<variant<....
+     * \param oi The output iterator, whose value-type is variant<....
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
@@ -710,8 +709,7 @@ public:
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
       typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_variant;
-      typedef boost::optional<Intersection_variant>     Intersection_result;
+                                                        Intersection_result;
 
       // Intersect the two supporting lines.
       const Kernel& kernel = m_traits;
