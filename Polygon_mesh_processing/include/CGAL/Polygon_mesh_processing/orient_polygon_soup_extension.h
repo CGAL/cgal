@@ -106,7 +106,7 @@ duplicate_non_manifold_edges_in_polygon_soup(PointRange& points,
  *      to check whether three points are collinear.
  *   \cgalParamEnd
  * \cgalNamedParamsEnd
- * 
+ *
  * \attention The types of points in `PointRange`, `geom_traits` and `vertex_point_map` must be the same.
  */
 

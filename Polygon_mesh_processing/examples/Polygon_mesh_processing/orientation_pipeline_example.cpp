@@ -19,7 +19,7 @@ int main(int argc, char** argv)
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_3 Point_3;
   typedef CGAL::Surface_mesh<Point_3> Mesh;
-  
+
   std::vector<Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
   Mesh ref1;
@@ -47,7 +47,7 @@ int main(int argc, char** argv)
      std::size_t no;
      scanner.scan_facet( no, i);
      polygons[i].resize(no);
- 
+
      for(std::size_t j = 0; j < no; ++j) {
        std::size_t id;
        scanner.scan_facet_vertex_index(id, i);
@@ -63,51 +63,51 @@ int main(int argc, char** argv)
      }
    }
   input.close();
-  
+
   if(points.size() == 0 || polygons.size()==0)
   {
     std::cerr << "Error: input file not valid.\n";
     return 1;
   }
-  
+
   const char* reference_filename = argc<2 ? "data/blobby.off" : argv[2];
   input.open(reference_filename);
-  
+
   if ( !input || !(input >> ref1)){
     std::cerr << "Error: can not read reference file.\n";
     return 1;
   }
   input.close();
-  
+
   std::cout << "Is the soup a polygon mesh ? : "
             << CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)
             << std::endl;
-  
+
   CGAL::Polygon_mesh_processing::orient_triangle_soup_with_reference_triangle_mesh<CGAL::Sequential_tag>(ref1, points, polygons);
-  
+
   std::cout << "And now ? : "
             << CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)
             << std::endl;
-  
+
   CGAL::Polygon_mesh_processing::duplicate_non_manifold_edges_in_polygon_soup(points, polygons);
-  
+
   std::cout << "And now ? : "
             << CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)
             << std::endl;
-  
+
   Mesh poly;
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(
         points, polygons, poly);
-  
+
   typedef boost::property_map<Mesh, CGAL::dynamic_face_property_t<std::size_t> >::type Fccmap;
   Fccmap fccmap = get(CGAL::dynamic_face_property_t<std::size_t>(), poly);
-  
+
   std::cout<<CGAL::Polygon_mesh_processing::
          connected_components(poly, fccmap)<<" CCs before merge."<<std::endl;
   CGAL::Polygon_mesh_processing::
       merge_reversible_connected_components(poly);
-  
-  
+
+
   std::cout<<CGAL::Polygon_mesh_processing::
          connected_components(poly, fccmap)<<" remaining CCs."<<std::endl;
   return 0;

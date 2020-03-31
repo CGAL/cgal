@@ -618,7 +618,7 @@ Section \ref PMPOrientation.
 
 \cgalExample{Polygon_mesh_processing/orient_polygon_soup_example.cpp}
 
-This example shows how to correctly repair and orient a soup to get a mesh from a reference : 
+This example shows how to correctly repair and orient a soup to get a mesh from a reference :
 
 \cgalExample{Polygon_mesh_processing/orientation_pipeline_example.cpp}
 
