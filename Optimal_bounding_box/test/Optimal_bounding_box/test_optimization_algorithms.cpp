@@ -51,8 +51,10 @@ void test_OBB_data(const PointRange& points,
 
   // the algorithm is allowed to fail, but not too often
   int failure_count = 0;
-  for(int i=0; i<100; ++i)
+  for(int i=0; i<10; ++i)
   {
+    std::cout << "iter #" << i << std::endl;
+
     CGAL::Surface_mesh<Point> obb_mesh;
     CGAL::oriented_bounding_box(points, obb_mesh, CGAL::parameters::use_convex_hull(with_convex_hull));
     PMP::triangulate_faces(obb_mesh);
@@ -72,7 +74,7 @@ void test_OBB_data(const PointRange& points,
   }
 
   std::cout << "failures: " << failure_count << std::endl;
-  assert(failure_count < 5); // 5% failure
+  assert(failure_count < 2); // 10% failure
 }
 
 void test_OBB_of_mesh(const std::string fname,
