@@ -14,7 +14,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Triangulation_data_structure_3<
   CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>,
-  CGAL::Delaunay_triangulation_cell_base_3<K> >                 Tds;
+  CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> >                 Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                  Delaunay;
 typedef Delaunay::Point                                         Point;
 using Point_3 = K::Point_3;

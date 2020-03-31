@@ -27,9 +27,12 @@
 #include <CGAL/Triangulation_segment_traverser_3.h>
 
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp> /// @TODO Requires Boost 1.66
+
+#include <fstream>
 
 namespace CGAL {
 
@@ -47,6 +50,13 @@ public:
   };
 
   using Vb::Vb;
+
+  template<typename Triangulation>
+  auto constraint_id(const Triangulation&) const {
+    using C_id = typename Triangulation::Constraint_id;
+    using Vertex_list_ptr = decltype(std::declval<C_id>().vl_ptr());
+    return C_id(static_cast<Vertex_list_ptr>(c_id));
+  }
 
   static std::string io_signature() {
     return Get_io_signature<Vb>()();
@@ -72,7 +82,10 @@ protected:
 
   using Constraint_hierarchy =
       Polyline_constraint_hierarchy_2<Vertex_handle, Compare_vertex_handle, const Point&>;
+public:
   using Constraint_id = typename Constraint_hierarchy::Constraint_id;
+
+protected:
   using Subconstraint = typename Constraint_hierarchy::Subconstraint;
 
 #if CGAL_DEBUG_CDT_3
@@ -169,6 +182,7 @@ protected:
     }
     if(split_constrained_edge) {
       constraint_hierarchy.split_constraint(v1, v2, new_vertex);
+      debug_dump("dump-bug");
       CGAL_error_msg("case not yet handled");
     }
     return new_vertex;
@@ -224,6 +238,19 @@ public:
     return Get_io_signature<T_3>()();
   }
 protected:
+  void debug_dump(std::string filename) {
+    {
+      std::ofstream dump(filename + ".binary.cgal", std::ios::binary);
+      CGAL::Mesh_3::save_binary_file(dump, *this);
+    }
+    {
+      std::ofstream dump(filename + "_point.xyz");
+      dump.precision(17);
+      for(auto vh: this->finite_vertex_handles()){
+        dump << this->point(vh) << '\n';
+      }
+    }
+  }
   void restore_Delaunay() {
     while(!subconstraints_to_conform.empty()) {
       auto pair = subconstraints_to_conform.top();
@@ -270,6 +297,56 @@ protected:
     }
 
     return false;
+  }
+
+  Constraint_id constraint_from_extremities(Vertex_handle va, Vertex_handle vb) const {
+    if (va->nb_of_incident_constraints == 0 || vb->nb_of_incident_constraints == 0)
+    {
+      return {};
+    }
+    Constraint_id c_id = constraint_around(va, vb, false);
+    if(c_id != Constraint_id{}) return c_id;
+    c_id = constraint_around(vb, va, false);
+    if(c_id != Constraint_id{}) return c_id;
+    c_id = constraint_around(va, vb, true);
+    return c_id;
+  }
+
+  Constraint_id constraint_around(Vertex_handle va, Vertex_handle vb, bool expensive) const {
+    auto constraint_id_goes_to_vb = [this, va, vb](Constraint_id c_id) {
+      CGAL_assertion(std::find(this->constraint_hierarchy.c_begin(),
+                               this->constraint_hierarchy.c_end(), c_id) != this->constraint_hierarchy.c_end());
+      CGAL_assertion(this->constraint_hierarchy.vertices_in_constraint_begin(c_id) !=
+                     this->constraint_hierarchy.vertices_in_constraint_end(c_id));
+      std::cerr << "constraint " << (void*) c_id.vl_ptr() << " has "
+                << c_id.vl_ptr()->skip_size() << " vertices\n";
+      auto it = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+      const auto c_va = *it;
+      while(std::next(it) != this->constraint_hierarchy.vertices_in_constraint_end(c_id))
+        ++it;
+      const auto c_vb = *it;
+      if (va == c_va && vb == c_vb)
+        return true;
+      if (vb == c_va && va == c_vb)
+        return true;
+      return false;
+    };
+    if (expensive == false && va->nb_of_incident_constraints == 1)
+    {
+      const Constraint_id c_id = va->constraint_id(*this);
+      CGAL_assertion(c_id != Constraint_id{});
+      if(constraint_id_goes_to_vb(c_id)) return c_id;
+    } else if (expensive == true && va->nb_of_incident_constraints > 1) {
+      boost::container::small_vector<Vertex_handle, 64> adj_vertices;
+      this->finite_adjacent_vertices(va, std::back_inserter(adj_vertices));
+      for(auto other_v: adj_vertices) {
+        for(auto context: this->constraint_hierarchy.contexts_range(va, other_v)) {
+          const Constraint_id c_id = context.id();
+          if(constraint_id_goes_to_vb(c_id)) return c_id;
+        }
+      }
+    }
+    return Constraint_id{};
   }
 
   auto construct_Steiner_point(Subconstraint subconstraint)
@@ -366,7 +443,7 @@ protected:
     return std::make_pair(result_point, cell_incident_to_reference_point);
   }
 
-private:
+protected:
   T_3& tr = *this;
   Compare_vertex_handle comp = {this};
   Constraint_hierarchy constraint_hierarchy = {comp};

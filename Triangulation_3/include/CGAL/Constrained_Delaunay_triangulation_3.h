@@ -39,8 +39,11 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/optional.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 namespace CGAL {
+
+using CDT_3_face_index = int;
 
 template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
 class Constrained_Delaunay_triangulation_vertex_base_3
@@ -69,9 +72,10 @@ class Constrained_Delaunay_triangulation_cell_base_3
   : public Cb
 {
   using Base = Cb;
-public:
-  std::array<int, 4> face_id = { -1, -1, -1, -1 };
+  std::array<CDT_3_face_index, 4> face_id = { -1, -1, -1, -1 };
+  std::array<void*, 4> facet_2d = {nullptr, nullptr, nullptr, nullptr};
 
+public:
   // To get correct cell type in TDS
   template < class TDS3 >
   struct Rebind_TDS {
@@ -79,7 +83,29 @@ public:
     typedef Constrained_Delaunay_triangulation_cell_base_3 <Gt, Cb3> Other;
   };
 
+  // Constructor
   using Base::Base;
+
+  bool is_facet_constrained(int i) const { return face_id[i] >= 0; }
+
+  template <typename Facet_handle>
+  void set_facet_constraint(int i, CDT_3_face_index face_id,
+                            Facet_handle facet_2d)
+  {
+    this->face_id[i] = face_id;
+    this->facet_2d[i] = static_cast<void*>(std::addressof(*facet_2d));
+  }
+
+  CDT_3_face_index face_constraint_index(int i) const {
+    return face_id[i];
+  }
+
+  template <typename CDT_2>
+  auto face_2 (const CDT_2& cdt, int i) const {
+    using Face = typename CDT_2::Face;
+    auto ptr = static_cast<Face*>(facet_2d[i]);
+    return cdt.tds().faces().iterator_to(*ptr);
+  }
 
   static std::string io_signature() {
     return Get_io_signature<Base>()() + "+(" + Get_io_signature<int>()()
@@ -131,7 +157,7 @@ public:
   using Locate_type = typename T_3::Locate_type;
   using Geom_traits = typename T_3::Geom_traits;
 
-  using Face_index = int;
+  using Face_index = CDT_3_face_index;
 private:
   struct CDT_2_types {
     using Projection_traits = Triangulation_2_projection_traits_3<Geom_traits>;
@@ -143,6 +169,7 @@ private:
     };
     struct Face_info {
       int is_outside_the_face = 0;
+      bool missing_subface = true;
     };
     using Vb = Triangulation_vertex_base_with_info_2<Vertex_info,
                                                      Projection_traits>;
@@ -191,7 +218,39 @@ private:
 
       template <class InputIterator>
       void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
-        conforming_dt_visitor.process_cells_in_conflict(cell_it, end);
+        switch (self.dimension())
+        {
+        case 2:
+          for(; cell_it != end; ++cell_it) {
+            auto c = *cell_it;
+            if(c->is_facet_constrained(3)) {
+              const auto face_id = c->face_constraint_index(3);
+              self.face_constraint_misses_subfaces.set(face_id);
+              auto fh_2 = c->face_2(self.face_constraints[face_id], 3);
+              fh_2->info().missing_subface = true;
+            }
+          }
+          break;
+        case 3:
+          for(; cell_it != end; ++cell_it) {
+            auto c = *cell_it;
+            for(int li = 0; li < 4; ++li) {
+              if(c->is_facet_constrained(li)) {
+                const auto face_id = c->face_constraint_index(li);
+                self.face_constraint_misses_subfaces.set(face_id);
+                auto fh_2 = c->face_2(self.face_constraints[face_id], li);
+                fh_2->info().missing_subface = true;
+              }
+            }
+          }
+          break;
+        default:
+          CGAL_error();
+        }
+        for (; cell_it != end; ++cell_it)
+          for (int i = 0; i < self.tr.dimension(); ++i)
+
+            conforming_dt_visitor.process_cells_in_conflict(cell_it, end);
       }
       void reinsert_vertices(Vertex_handle) const {}
       Vertex_handle replace_vertex(Cell_handle c, int index,
@@ -265,10 +324,10 @@ public:
                        cross_product(vector(last_point, tr.point(*vit)),
                                      vector(last_point, tr.point(*next_it))));
       }
-      if (accumulated_normal.x() < 0 ||
-          (accumulated_normal.x() == 0 && accumulated_normal.y() < 0) ||
-          (accumulated_normal.x() == 0 && accumulated_normal.y() == 0 &&
-           accumulated_normal.z() < 0)
+      if (accumulated_normal.z() < 0 ||
+          (accumulated_normal.z() == 0 && accumulated_normal.y() > 0) ||
+          (accumulated_normal.z() == 0 && accumulated_normal.y() == 0 &&
+           accumulated_normal.x() > 0)
           )
       {
         accumulated_normal = - accumulated_normal;
@@ -276,12 +335,12 @@ public:
       return accumulated_normal;
     }();
 
-    CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>>
-        circ{&vertex_handles}, circ_end{circ};
-
     { // create and fill the 2D triangulation
-      faces_to_preserve.emplace_back(CDT_2_traits{accumulated_normal});
-      CDT_2& cdt_2 = faces_to_preserve.back();
+      face_constraints.emplace_back(CDT_2_traits{accumulated_normal});
+      face_constraint_misses_subfaces.resize(face_constraints.size());
+      CDT_2& cdt_2 = face_constraints.back();
+      CGAL::Circulator_from_container<std::remove_reference_t<Vertex_handles>>
+          circ{&vertex_handles}, circ_end{circ};
       std::optional<typename CDT_2::Vertex_handle> first;
       std::optional<typename CDT_2::Vertex_handle> previous;
       do {
@@ -332,16 +391,26 @@ public:
       std::cerr << counter << " triangles(s) in the face\n";
 #endif // CGAL_DEBUG_CDT_3
     } // end of the construction of the CDT_2
-    const int polygon_contraint_id = faces_to_preserve.size();
-    CGAL_assertion( circ == circ_end);
-    auto next_circ = circ;
-    do {
-      ++next_circ;
-      auto constraint_id = this->insert_constrained_edge(*circ,*next_circ);
-    } while(++circ != circ_end);
-#if CGAL_DEBUG_CDT_3
-    for(CDT_2& cdt_2 = faces_to_preserve.back();
-        auto fh: cdt_2.all_face_handles())
+    const int polygon_contraint_id = face_constraints.size() - 1;
+    CDT_2& cdt_2 = face_constraints.back();
+    for(auto constr_edge_2: cdt_2.constrained_edges()) {
+      const auto va_2 = constr_edge_2.first->vertex(cdt_2.cw(constr_edge_2.second));
+      const auto vb_2 = constr_edge_2.first->vertex(cdt_2.ccw(constr_edge_2.second));
+      const auto va = va_2->info().vertex_handle_3d;
+      const auto vb = vb_2->info().vertex_handle_3d;
+      const auto c_id = this->constraint_from_extremities(va, vb);
+      if(c_id != Constraint_id{}) {
+        auto vit = this->constraint_hierarchy.vertices_in_constraint_begin(c_id);
+        auto v_end = this->constraint_hierarchy.vertices_in_constraint_end(c_id);
+        if(vit != v_end && ++vit != v_end && vit != --v_end) {
+          for(; vit != v_end; ++vit) {
+            // insert (*vit)->point() in the cdt_2, on the edge
+          }
+        }
+      }
+      const auto constraint_id = this->insert_constrained_edge(va, vb);
+    }
+    for(auto fh: cdt_2.all_face_handles())
     {
       if(fh->info().is_outside_the_face) continue;
       const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
@@ -350,24 +419,50 @@ public:
       Cell_handle c;
       int i, j, k;
       if(!tr.is_facet(v0, v1, v2, c, i, j, k)) {
+        fh->info().missing_subface = true;
+        face_constraint_misses_subfaces.set(polygon_contraint_id);
+#if CGAL_DEBUG_CDT_3
         std::cerr << "Missing triangle: \n";
         std::cerr << "4"
                   << " " << tr.point(v0)
                   << " " << tr.point(v1)
                   << " " << tr.point(v2)
                   << " " << tr.point(v0) << '\n';
+#endif // CGAL_DEBUG_CDT_3
       } else {
         const int facet_index = 6 - i - j - k;
-        c->face_id[facet_index] = polygon_contraint_id;
+        c->set_facet_constraint(facet_index, polygon_contraint_id, fh);
         if(tr.dimension() > 2) {
           const auto [n, n_index] = tr.mirror_facet({c, facet_index});
-          n->face_id[n_index] = polygon_contraint_id;
+          n->set_facet_constraint(n_index, polygon_contraint_id, fh);
         }
       }
     }
-#endif
 
     return polygon_contraint_id;
+  }
+
+  void write_missing_subfaces_file(std::ostream& out) {
+    const auto npos = face_constraint_misses_subfaces.npos;
+    auto i = face_constraint_misses_subfaces.find_first();
+    while(i != npos) {
+      const CDT_2& cdt = face_constraints[i];
+      for(const auto fh: cdt.finite_face_handles()) {
+        if (false == fh->info().is_outside_the_face &&
+            true == fh->info().missing_subface)
+        {
+          const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
+          const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
+          const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
+          out << "4"
+              << " " << tr.point(v0)
+              << " " << tr.point(v1)
+              << " " << tr.point(v2)
+              << " " << tr.point(v0) << '\n';
+        }
+      }
+      i = face_constraint_misses_subfaces.find_next(i);
+    }
   }
 
   /// @{
@@ -377,12 +472,12 @@ public:
   /// @}
 
 protected:
-private:
   T_3 &tr = *this;
   Conforming_Dt &conforming_dt = *this;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
 
-  std::vector<CDT_2> faces_to_preserve;
+  std::vector<CDT_2> face_constraints;
+  boost::dynamic_bitset<> face_constraint_misses_subfaces;
 };
 
 } // end CGAL

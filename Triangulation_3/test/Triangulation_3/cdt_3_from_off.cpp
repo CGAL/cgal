@@ -54,7 +54,10 @@ int main(int argc, char* argv[])
     std::ofstream dump("dump.binary.cgal");
     CGAL::Mesh_3::save_binary_file(dump, cdt);
   }
-
+  {
+    std::ofstream missing_faces("missing_faces.polylines.txt");
+    cdt.write_missing_subfaces_file(missing_faces);
+  }
   // auto edge_is_feature_map = get(CGAL::edge_is_feature, mesh);
   // auto face_patch_id_map = get(CGAL::face_patch_id_t<int>(), mesh);
 
