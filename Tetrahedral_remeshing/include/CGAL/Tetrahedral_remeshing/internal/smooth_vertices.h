@@ -337,7 +337,7 @@ namespace CGAL
       template<typename C3T3, typename CellSelector>
       void smooth_vertices(C3T3& c3t3,
         const bool protect_boundaries,
-        CellSelector cell_selector)
+        const CellSelector& cell_selector)
       {
         typedef typename C3T3::Cell_handle            Cell_handle;
         typedef typename Gt::FT              FT;
