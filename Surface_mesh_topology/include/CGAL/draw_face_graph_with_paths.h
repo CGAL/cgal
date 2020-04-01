@@ -24,10 +24,10 @@
 namespace CGAL {
 
 // Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
-template<class Mesh, class Kernel>
-struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
+template<class Mesh, class Local_kernel>
+struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 {
-  static typename Kernel::Vector_3
+  static typename Get_traits<Mesh>::Vector
   get_face_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
                   typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
   {
@@ -50,10 +50,10 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
     while(adart!=dh);
 
     assert(nb>0);
-    return (typename Get_traits<Mesh>::Kernel::
-            Construct_scaled_vector_3()(normal, 1.0/nb));
+    return typename Get_traits<Mesh>::Kernel::Construct_scaled_vector_3()
+      (normal, 1.0/nb);
   }
-  static typename Kernel::Vector_3
+  static typename Local_kernel::Vector_3
   get_vertex_normal(const CGAL::Face_graph_wrapper<Mesh>& mesh,
                     typename CGAL::Face_graph_wrapper<Mesh>::Dart_const_handle dh)
   {
@@ -69,9 +69,14 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Kernel, 3>
       ++nb;
     }
 
-    if ( nb<2 ) return normal;
-    return (typename Get_traits<Mesh>::Kernel::
-            Construct_scaled_vector_3()(normal, 1.0/nb));
+    if ( nb<2 ) return internal::Geom_utils
+                  <typename Get_traits<Mesh>::Kernel, Local_kernel>::
+                  get_local_vector(normal);
+    
+    return internal::Geom_utils
+      <typename Get_traits<Mesh>::Kernel, Local_kernel>::
+      get_local_vector(typename Get_traits<Mesh>::Kernel::
+                       Construct_scaled_vector_3()(normal, 1.0/nb));
   }
 };
 
@@ -342,7 +347,7 @@ protected:
 template<class Mesh, class DrawingFunctor>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
-          const char* title="Mesh Viewer",
+          const char* title="Mesh Viewer With Path",
           std::size_t amark=std::numeric_limits<std::size_t>::max(),
           bool nofill=false,
           const DrawingFunctor& drawing_functor=DrawingFunctor())
@@ -370,13 +375,23 @@ void draw(const Mesh& alcc,
 template<class Mesh>
 void draw(const Mesh& alcc,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
-          const char* title="LCC Viewer",
+          const char* title="Mesh Viewer With Path",
           std::size_t amark=std::numeric_limits<std::size_t>::max(),
           bool nofill=false)
 {
   DefaultDrawingFunctorLCC f;
-  return draw<Mesh, DefaultDrawingFunctorLCC>(alcc, paths, title,
-                                              amark, nofill, f);
+  draw<Mesh, DefaultDrawingFunctorLCC>(alcc, paths, title, amark, nofill, f);
+}
+
+template<class Mesh>
+void draw(const Mesh& alcc,
+          const Surface_mesh_topology::Path_on_surface<Mesh>& p,
+          const char* title="Mesh Viewer With Path",
+          std::size_t amark=std::numeric_limits<std::size_t>::max(),
+          bool nofill=false)
+{
+  std::vector<Surface_mesh_topology::Path_on_surface<Mesh> > paths={p};
+  draw(alcc, paths, title, amark, nofill);
 }
 
 } // End namespace CGAL
