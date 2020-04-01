@@ -7,10 +7,10 @@
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/draw_linear_cell_complex.h>
 
-using LCC_3          =CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
-using CST            =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
-using Path_on_surface=CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
-using Dart_handle    =LCC_3::Dart_handle;
+using LCC_3            =CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
+using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
+using Path_on_surface  =CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
+using Dart_const_handle=LCC_3::Dart_const_handle;
 
 struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
 {
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Finding the facewidth..."<<std::endl;
   
   CST cst(lcc, true);
-  std::vector<Dart_handle> cycle = cst.compute_facewidth(true);
+  std::vector<Dart_const_handle> cycle=cst.compute_facewidth(true);
 
   if (cycle.size()==0)
   { std::cout<<"  Cannot find such cycle. Stop."<<std::endl; }

@@ -34,7 +34,8 @@ public:
   // Types for shortest noncontractible cycle
   using Shortest_noncontractible_cycle=typename internal::Shortest_noncontractible_cycle<Mesh>;
   using Facewidth                     =typename internal::Facewidth<Mesh>;
-  using Dart_handle                   =typename Shortest_noncontractible_cycle::Original_dart_const_handle;
+  using Dart_const_handle             =typename Shortest_noncontractible_cycle::Original_dart_const_handle;
+  using halfedge_descriptor           =Dart_const_handle ; // To be compatible with BGL
 
   // Constructor
   Curves_on_surface_topology(const Mesh& amesh, bool /* display_time */=false) :
@@ -114,26 +115,17 @@ public:
 
   template <class WeightFunctor>
   Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint
-  (Dart_handle dh, const WeightFunctor& wf, bool display_time=false) const
+  (Dart_const_handle dh, const WeightFunctor& wf, bool display_time=false) const
   {
     compute_shortest_noncontractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->compute_cycle(dh, NULL, wf, display_time);
   }
 
   Path_on_surface<Mesh> compute_shortest_noncontractible_cycle_with_basepoint
-  (Dart_handle dh, bool display_time=false) const
+  (Dart_const_handle dh, bool display_time=false) const
   {
     compute_shortest_noncontractible_cycle_representation(display_time);
     return m_shortest_noncontractible_cycle->compute_cycle(dh, display_time);
-  }
-
-  bool is_facewidth_representation_computed() const
-  { return m_facewidth!=nullptr; }
-  
-  void compute_facewidth_representation(bool display_time=false) const
-  {
-    if (m_facewidth==nullptr)
-    { m_facewidth=std::make_unique<Facewidth>(m_original_mesh, display_time); }
   }
 
   template <class WeightFunctor>
@@ -149,7 +141,16 @@ public:
     return m_shortest_noncontractible_cycle->compute_edgewidth(display_time);
   }
 
-  std::vector<Dart_handle> compute_facewidth(bool display_time=false) const
+  bool is_facewidth_representation_computed() const
+  { return m_facewidth!=nullptr; }
+
+  void compute_facewidth_representation(bool display_time=false) const
+  {
+    if (m_facewidth==nullptr)
+    { m_facewidth=std::make_unique<Facewidth>(m_original_mesh, display_time); }
+  }
+
+  std::vector<Dart_const_handle> compute_facewidth(bool display_time=false) const
   {
     compute_facewidth_representation(display_time);
     return m_facewidth->compute_facewidth(display_time);

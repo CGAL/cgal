@@ -43,7 +43,7 @@ public:
   using Mesh=Mesh_;
 
   using Original_map_wrapper=internal::Generic_map_selector<Mesh>;
-  using Original_dart_const_handle=typename Original_map_wrapper::Dart_handle_original; // TODO SOLVE const problem with copy
+  using Original_dart_const_handle=typename Original_map_wrapper::Dart_const_handle_original;
 
   using Local_map        =typename Original_map_wrapper::Generic_map;
   using Dart_handle      =typename Local_map::Dart_handle;
