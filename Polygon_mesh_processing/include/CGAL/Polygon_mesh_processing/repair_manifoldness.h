@@ -20,6 +20,7 @@
 #include <CGAL/Polygon_mesh_processing/repair_self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Kernel/global_functions.h>
@@ -276,14 +277,14 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh,
   Output_iterator out = choose_parameter(get_parameter(np, internal_np::output_iterator),
                                          Emptyset_iterator());
 
-  std::vector<halfedge_descriptor> non_manifold_cones;
-  non_manifold_vertices(pmesh, std::back_inserter(non_manifold_cones));
+  std::vector<halfedge_descriptor> non_manifold_umbrellas;
+  non_manifold_vertices(pmesh, std::back_inserter(non_manifold_umbrellas));
 
   internal::Vertex_collector<PolygonMesh> dmap;
   std::size_t nb_new_vertices = 0;
-  if(!non_manifold_cones.empty())
+  if(!non_manifold_umbrellas.empty())
   {
-    for(halfedge_descriptor h : non_manifold_cones)
+    for(halfedge_descriptor h : non_manifold_umbrellas)
       nb_new_vertices += internal::make_umbrella_manifold(h, pmesh, dmap, np);
 
     dmap.dump(out);
@@ -305,6 +306,9 @@ std::size_t duplicate_non_manifold_vertices(PolygonMesh& pmesh)
 
 namespace internal {
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Merging treatment
+
 template <typename PolygonMesh>
 bool is_star_without_border(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
                             const PolygonMesh& g)
@@ -318,41 +322,13 @@ bool is_star_without_border(const typename boost::graph_traits<PolygonMesh>::hal
   return true;
 }
 
-template <typename UmbrellaContainer,
-          typename PolygonMesh,
-          typename VPM,
-          typename GeomTraits>
-void separate_umbrellas(const UmbrellaContainer& umbrellas,
-                        PolygonMesh& pmesh,
-                        const VPM vpm,
-                        const GeomTraits& /*gt*/)
+template <typename HalfedgeContainer, typename PolygonMesh>
+bool are_umbrellas_mergeable(const HalfedgeContainer& umbrellas,
+                             const PolygonMesh& pmesh)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
-
-#define CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_SEPARATE_WITH_MOVE
-#ifdef CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_SEPARATE_WITH_MOVE
-  // @todo less naive since this can create self-intersections
-  // compute normal + move into normal direction?
-
-  for(const halfedge_descriptor h : umbrellas)
-  {
-    vertex_descriptor v = target(h, pmesh);
-
-#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  std::cout << "Move " << v << " (" << get(vpm, v) << ")" << std::endl;
-#endif
-
-    typename GeomTraits::Point_3 c = CGAL::centroid(pmesh.point(v),
-                                                    pmesh.point(source(h, pmesh)),
-                                                    pmesh.point(target(next(h, pmesh), pmesh)));
-
-    pmesh.point(v) = c + 0.99 * (pmesh.point(v) - c);
-  }
-#else
-  // separate by removing the incident star + hole filling if possible
-  // @todo
-#endif
+  return !(umbrellas.size() > 2 ||
+           !internal::is_star_without_border(umbrellas.front(), pmesh) ||
+           !internal::is_star_without_border(umbrellas.back(), pmesh));
 }
 
 // Currently performed with a hack: transform the borders into a single border
@@ -609,7 +585,7 @@ bool merge_umbrellas(const typename boost::graph_traits<PolygonMesh>::halfedge_d
   std::cout << "Merging umbrellas around " << target(h1, pmesh) << " (" << h1 << " and " << h2 << ")" << std::endl;
 #endif
 
-  CGAL_precondition(target(h1, pmesh) == target(h2, pmesh));
+  CGAL_precondition(get(vpm, target(h1, pmesh)) == get(vpm, target(h2, pmesh)));
 
   std::ofstream out_links("results/links.polylines.txt");
   out_links.precision(17);
@@ -682,29 +658,124 @@ bool merge_umbrellas(const typename boost::graph_traits<PolygonMesh>::halfedge_d
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
     std::cout << "Incompatible orientations" << std::endl;
 #endif
-    return false; // can't find a good orientation for both borders
+    return false; // can't find an orientation compatible with both borders
   }
-
-#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-  std::ofstream pout("results/patch_fixed.off");
-  pout << std::setprecision(17);
-  pout << 3 * point_patch.size() << " " << point_patch.size() << " 0\n";
-
-  for(const auto& f : point_patch)
-  {
-    pout << f[0] << "\n";
-    pout << f[1] << "\n";
-    pout << f[2] << "\n";
-  }
-
-  for(std::size_t i=0, ps=point_patch.size(); i<ps; ++i)
-    pout << "3 " << 3*i << " " << 3*i+1 << " " << 3*i+2 << "\n";
-#endif
-
 
   replace_faces_with_patch(faces_to_delete, point_patch, pmesh, vpm);
 
   return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Separation treatment
+
+template <typename UmbrellaContainer,
+          typename PolygonMesh,
+          typename VPM,
+          typename GeomTraits>
+void separate_umbrellas(const UmbrellaContainer& umbrellas,
+                        PolygonMesh& pmesh,
+                        const VPM vpm,
+                        const GeomTraits& /*gt*/)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
+
+#define CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_SEPARATE_WITH_MOVE
+#ifdef CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_SEPARATE_WITH_MOVE
+  // @todo less naive since this can create self-intersections
+  // compute normal + move into normal direction?
+
+  for(const halfedge_descriptor h : umbrellas)
+  {
+    vertex_descriptor v = target(h, pmesh);
+
+#ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
+  std::cout << "Move " << v << " (" << get(vpm, v) << ")" << std::endl;
+#endif
+
+    typename GeomTraits::Point_3 c = CGAL::centroid(pmesh.point(v),
+                                                    pmesh.point(source(h, pmesh)),
+                                                    pmesh.point(target(next(h, pmesh), pmesh)));
+
+    pmesh.point(v) = c + 0.99 * (pmesh.point(v) - c);
+  }
+#else
+  // separate by removing the incident star + hole filling if possible
+  // @todo
+#endif
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Collect
+
+// pretty much the same as 'PMP::non_manifold_vertices()', but consider the geometry instead of the combinatorics
+// ({combinatorial non-manifold vertices} <= {geometrical non-manifold vertices}) so that creates a few changes
+template <typename NMVContainer, typename PolygonMesh, typename VPM, typename GeomTraits>
+void geometrically_non_manifold_vertices(NMVContainer& nm_vertices, // m[vertex] = {halfedges}
+                                         const PolygonMesh& pmesh,
+                                         const VPM vpm,
+                                         const GeomTraits& gt)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor                  vertex_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor                halfedge_descriptor;
+
+  typedef typename boost::property_traits<VPM>::reference                               Point_ref;
+  typedef typename boost::property_traits<VPM>::value_type                              Point;
+
+  typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
+  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
+
+  CGAL_precondition(nm_vertices.empty());
+
+  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pmesh);
+  halfedge_descriptor null_h = boost::graph_traits<PolygonMesh>::null_halfedge();
+
+  // to avoid copying points
+  std::unordered_map<Point, halfedge_descriptor> visited_points;
+
+  for(halfedge_descriptor h : halfedges(pmesh))
+  {
+    // If 'h' is not visited yet, we walk around the target of 'h' and mark these
+    // halfedges as visited. Thus, if we are here and the target is already marked as visited,
+    // it means that the vertex is non manifold.
+    if(!get(visited_halfedges, h))
+    {
+      put(visited_halfedges, h, true);
+
+      vertex_descriptor v = target(h, pmesh);
+      const Point_ref p = get(vpm, v);
+
+      const auto visited_itb = visited_points.emplace(p, h);
+      if(!visited_itb.second) // already seen this point, but not from this star
+      {
+        // if this is the second time we visit that vertex and the first star was manifold, we have
+        // not marked the vertex as non-manifold from the first star
+        const auto nm_itb = nm_vertices.emplace(p, std::vector<halfedge_descriptor>{h});
+        if(nm_itb.second) // successful insertion
+          nm_itb.first->second.push_back(visited_itb.first->second);
+        else
+          nm_itb.first->second.push_back(h);
+      }
+
+      // While walking the star of this halfedge, if we meet a border halfedge more than once,
+      // it means the mesh is pinched and we are also in the case of a non-manifold situation
+      halfedge_descriptor ih = h, done = ih;
+      int border_counter = 0;
+      do
+      {
+        put(visited_halfedges, ih, true);
+        if(is_border(ih, pmesh))
+          ++border_counter;
+
+        ih = prev(opposite(ih, pmesh), pmesh);
+      }
+      while(ih != done);
+
+      if(border_counter > 1)
+        nm_vertices[p].push_back(h); // might or might not have been an empty vector before
+    }
+  }
 }
 
 } // namespace internal
@@ -720,7 +791,6 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
                                  const NM_TREATMENT treatment,
                                  const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor        vertex_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
 
   using parameters::choose_parameter;
@@ -733,102 +803,53 @@ void treat_non_manifold_vertices(PolygonMesh& pmesh,
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type          Geom_traits;
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
-#define CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_NM_ONLY
-#ifdef CGAL_PMP_TREAT_NM_VERTICES_COMBINATORIAL_NM_ONLY
-  // not worth getting a dynamic pmap: there are usually few non-manifold vertices
-  std::unordered_map<vertex_descriptor, std::vector<halfedge_descriptor> > non_manifold_umbrellas;
+  typedef typename Geom_traits::Point_3                                       Point;
+  typedef std::vector<halfedge_descriptor>                                    Cones;
 
-  std::vector<halfedge_descriptor> non_manifold_cones;
-  non_manifold_vertices(pmesh, std::back_inserter(non_manifold_cones));
+  // Collect the non-manifold vertices
+  std::unordered_map<Point, Cones> nm_vertices; // @todo could put a vertex in a key with a custom equal
+  internal::geometrically_non_manifold_vertices(nm_vertices, pmesh, vpm, gt);
 
-  for(const halfedge_descriptor h : non_manifold_cones)
-    non_manifold_umbrellas[target(h, pmesh)].push_back(h);
-#else
-  typedef typename Geom_traits::Point_3                                       Point_3;
-
-  // @todo a little brutal for now, we can do something better akin to non_manifold_vertices()
-  std::map<Point_3, std::vector<halfedge_descriptor> > non_manifold_umbrellas;
-
-  typedef CGAL::dynamic_halfedge_property_t<bool>                                       Halfedge_property_tag;
-  typedef typename boost::property_map<PolygonMesh, Halfedge_property_tag>::const_type  Visited_halfedge_map;
-
-  Visited_halfedge_map visited_halfedges = get(Halfedge_property_tag(), pmesh);
-  for(const halfedge_descriptor h : halfedges(pmesh))
-    put(visited_halfedges, h, false);
-
-  for(const halfedge_descriptor h : halfedges(pmesh))
+  for(const auto& e : nm_vertices)
   {
-    if(is_border(h, pmesh) || get(visited_halfedges, h))
-      continue;
-
-    non_manifold_umbrellas[get(vpm, target(h, pmesh))].push_back(h);
-
-    // move ccw
-    halfedge_descriptor ih = h, done = ih;
-    do
-    {
-      put(visited_halfedges, ih, true);
-      ih = prev(opposite(ih, pmesh), pmesh);
-      if(is_border(ih, pmesh))
-        break;
-    }
-    while(ih != done);
-
-    // move cw
-    if(ih == done) // no null face incident to the vertex
-    {
-      ih = h;
-      do
-      {
-        put(visited_halfedges, ih, true);
-        ih = opposite(next(ih, pmesh), pmesh);
-        if(is_border(ih, pmesh))
-          break;
-      }
-      while(ih != done);
-    }
-  }
-#endif
-
-  if(non_manifold_umbrellas.empty())
-    return;
-
-  for(const auto& e : non_manifold_umbrellas)
-  {
-    const std::vector<halfedge_descriptor>& cones = e.second;
+    const std::vector<halfedge_descriptor>& umbrellas = e.second;
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-    std::cout << "NM vertex with " << cones.size() << " incident stars" << std::endl;
+    std::cout << "NM vertex with " << umbrellas.size() << " incident umbrellas:";
+    for(const halfedge_descriptor h : umbrellas)
+      std::cout << " " << h;
+    std::cout << std::endl;
 #endif
 
-    CGAL_assertion(cones.size() >= 2);
-    CGAL_assertion(std::set<halfedge_descriptor>(cones.begin(), cones.end()).size() == cones.size());
+    CGAL_assertion(umbrellas.size() >= 2);
+    CGAL_assertion(std::set<halfedge_descriptor>(umbrellas.begin(), umbrellas.end()).size() == umbrellas.size());
 
     if(treatment == SEPARATE)
-      internal::separate_umbrellas(cones, pmesh, vpm, gt);
+      internal::separate_umbrellas(umbrellas, pmesh, vpm, gt);
 
-    if(cones.size() > 2 ||
-       !internal::is_star_without_border(cones.front(), pmesh) ||
-       !internal::is_star_without_border(cones.back(), pmesh))
+    if(!internal::are_umbrellas_mergeable(umbrellas, pmesh))
     {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-      std::cout << "merging treatment requested, but impossible" << std::endl;
+      std::cout << "merging treatment requested, but configuration makes it impossible" << std::endl;
 #endif
-      internal::separate_umbrellas(cones, pmesh, vpm, gt);
+      internal::separate_umbrellas(umbrellas, pmesh, vpm, gt);
+      continue;
     }
 
-    if(!internal::merge_umbrellas(cones.front(), cones.back(), pmesh, vpm, gt))
+    if(!internal::merge_umbrellas(umbrellas.front(), umbrellas.back(), pmesh, vpm, gt))
     {
 #ifdef CGAL_PMP_REPAIR_MANIFOLDNESS_DEBUG
-      std::cout << "merging failed, falling back to separating" << std::endl;
+      std::cout << "merging failed, falling back to separating strategy" << std::endl;
 #endif
 
-      internal::separate_umbrellas(cones, pmesh, vpm, gt);
+      internal::separate_umbrellas(umbrellas, pmesh, vpm, gt);
     }
+
+    std::cin.get();
   }
 
-  CGAL_postcondition_code(non_manifold_cones.clear();)
-  CGAL_postcondition_code(non_manifold_vertices(pmesh, std::back_inserter(non_manifold_cones));)
-  CGAL_postcondition(non_manifold_cones.empty());
+  CGAL_postcondition_code(nm_vertices.clear();)
+  CGAL_postcondition_code(internal::geometrically_non_manifold_vertices(nm_vertices, pmesh, vpm, gt);)
+  CGAL_postcondition(nm_vertices.empty());
 }
 
 template <typename PolygonMesh>
