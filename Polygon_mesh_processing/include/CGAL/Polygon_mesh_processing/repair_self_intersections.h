@@ -219,7 +219,7 @@ FaceOutputIterator replace_faces_with_patch(const std::vector<typename boost::gr
     CGAL_assertion(vface.size() == hedges.size());
 
     // update halfedge connections + face pointers
-    for(int i=0, n=vface.size(); i<n; ++i)
+    for(std::size_t i=0, n=vface.size(); i<n; ++i)
     {
       set_next(hedges[i], hedges[(i+1)%n], pmesh);
       set_face(hedges[i], f, pmesh);
