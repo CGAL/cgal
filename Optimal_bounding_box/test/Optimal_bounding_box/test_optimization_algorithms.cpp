@@ -35,7 +35,7 @@ bool is_equal(const FT d1, const FT d2)
 
   if(!ok)
   {
-    std::cout << "Error: got " << d1 << " but expected: " << d2 << std::endl;
+    std::cout << "Got " << d1 << " but expected: " << d2 << std::endl;
     return false;
   }
 
