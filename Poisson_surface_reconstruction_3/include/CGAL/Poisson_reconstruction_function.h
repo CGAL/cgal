@@ -413,7 +413,7 @@ public:
              it = m_tr->input_points_begin(); it != m_tr->input_points_end(); ++ it)
         if (random.get_double() >= ratio)
           some_points.push_back (it);
-      
+
       CGAL_TRACE_STREAM << "SPECIAL PASS that uses an approximation of the result (approximation ratio: "
                 << approximation_ratio << ")" << std::endl;
       CGAL::Timer approximation_timer; approximation_timer.start();
