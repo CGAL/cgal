@@ -768,7 +768,7 @@ rescan_after_load_of_triangulation() {
     for (std::size_t i =0; i< 3; ++i)
       for (std::size_t j =i+1; j< 4; ++j)
       {
-        this->add_to_complex(cit->vertex(i), cit->vertex(j), cit->get_curve_index(i,j));
+        this->add_to_complex(cit->vertex(static_cast<int>(i)), cit->vertex(static_cast<int>(j)), cit->get_curve_index(i,j));
       }
   }
   Base::rescan_after_load_of_triangulation();

@@ -461,7 +461,7 @@ struct Test_c3t3_io {
     {
       for(std::size_t i =0; i<3; ++i)
         for(std::size_t j =i+1; j<4; ++j)
-          cit->set_curve_index(i,j,c3t3.curve_index(cit->vertex(i), cit->vertex(j)));
+          cit->set_curve_index(i,j,c3t3.curve_index(cit->vertex(static_cast<int>(i)), cit->vertex(static_cast<int>(j))));
     }
 
     // then test I/O
