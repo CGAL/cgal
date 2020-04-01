@@ -4,6 +4,7 @@
 #include <CGAL/Curves_on_surface_topology.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/draw_face_graph_with_paths.h>
 
 using Kernel         =CGAL::Simple_cartesian<double>;
 using Point          =Kernel::Point_3;
@@ -28,8 +29,8 @@ private:
 int main(int argc, char* argv[])
 {
   std::cout<<"Program edgewidth_surface_mesh started."<<std::endl;
-  std::string filename("data/3torus.off");
-  if (argc>1) { filename=argv[1]; }
+  std::string filename(argc==1?"data/3torus.off":argv[1]);
+  bool draw=(argc<3?false:(std::string(argv[2])=="-draw"));
   std::ifstream inp(filename);
   if (inp.fail())
   {
@@ -38,13 +39,12 @@ int main(int argc, char* argv[])
   }
   Mesh sm;
   inp>>sm;
-  std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
+  std::cout<<"File '"<<filename<<"' loaded. Finding edge-width of the mesh..."<<std::endl;
 
   Weight_functor wf(sm);
-  CST            cst(sm);
+  CST            cst(sm, true);
   
-  std::cout<<"Finding edge-width of the mesh..."<<std::endl;
-  Path_on_surface cycle=cst.compute_edgewidth(wf);
+  Path_on_surface cycle=cst.compute_edgewidth(wf, true);
   if (cycle.length()==0)
   { std::cout<<"  Cannot find edge-width. Stop."<<std::endl; }
   else
@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
     std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
     std::cout<<"  Cycle length: "<<cycle_length<<std::endl;
     std::cout<<"  Root: "<<sm.point(sm.vertex(sm.edge(cycle[0]), 0))<<std::endl;
+    if (draw) { CGAL::draw(sm, cycle); }
   }
 
   return EXIT_SUCCESS;

@@ -57,8 +57,9 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
 int main(int argc, char* argv[])
 {
   std::cout<<"Program facewidth_on_unweighted_map started."<<std::endl;
-  std::string filename("data/double-torus.off");
-  if (argc>1) { filename=argv[1]; }
+  std::string filename(argc==1?"data/double-torus.off":argv[1]);
+  bool draw=(argc<3?false:std::string(argv[2])=="-draw");
+
   std::ifstream inp(filename);
   if (inp.fail())
   {
@@ -67,11 +68,10 @@ int main(int argc, char* argv[])
   }
   LCC_3 lcc;
   CGAL::load_off(lcc, inp);
-  std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
+  std::cout<<"File '"<<filename<<"' loaded. Finding the facewidth..."<<std::endl;
   
-  CST cst(lcc);
-  std::cout<<"Finding the facewidth..."<<std::endl;
-  std::vector<Dart_handle> cycle = cst.compute_facewidth();
+  CST cst(lcc, true);
+  std::vector<Dart_handle> cycle = cst.compute_facewidth(true);
 
   if (cycle.size()==0)
   { std::cout<<"  Cannot find such cycle. Stop."<<std::endl; }
@@ -79,28 +79,29 @@ int main(int argc, char* argv[])
   {
     std::cout<<"  Number of faces: "<<cycle.size()/2<<std::endl;
 
-#ifdef CGAL_USE_BASIC_VIEWER
-    LCC_3::size_type vertex_mark = lcc.get_new_mark();
-    LCC_3::size_type face_mark = lcc.get_new_mark();
-    for (int i=0; i<cycle.size(); ++i)
+    if (draw)
     {
-      if (i%2==0)
-      { // Color the vertex
-        lcc.mark_cell<0>(cycle[i], vertex_mark);
-      } 
-      else 
-      { // Color the face
-        lcc.mark_cell<2>(cycle[i], face_mark);
+      LCC_3::size_type vertex_mark = lcc.get_new_mark();
+      LCC_3::size_type face_mark = lcc.get_new_mark();
+      for (int i=0; i<cycle.size(); ++i)
+      {
+        if (i%2==0)
+        { // Color the vertex
+          lcc.mark_cell<0>(cycle[i], vertex_mark);
+        } 
+        else 
+        { // Color the face
+          lcc.mark_cell<2>(cycle[i], face_mark);
+        }
       }
+      
+      Draw_functor df(vertex_mark, face_mark);
+      CGAL::draw(lcc, "Face width", false, df);
+      
+      lcc.free_mark(vertex_mark);
+      lcc.free_mark(face_mark);
     }
-    
-    Draw_functor df(vertex_mark, face_mark);
-    CGAL::draw(lcc, "Face width", false, df);
-    
-    lcc.free_mark(vertex_mark);
-    lcc.free_mark(face_mark);
-#endif // CGAL_USE_BASIC_VIEWER
   }
-  
+
   return EXIT_SUCCESS;
 }

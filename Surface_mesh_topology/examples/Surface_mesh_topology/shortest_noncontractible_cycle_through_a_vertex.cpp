@@ -32,11 +32,12 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 [[ noreturn ]] void usage(int /*argc*/, char* argv[])
 {
-  std::cout<<"Usage "<<argv[0]<<" [-draw] [-dist]  [-seed S] file.off"<<std::endl
+  std::cout<<"Usage "<<argv[0]<<" [-draw] [-dist] [-time] [-seed S] file.off"<<std::endl
            <<"  Compute the shortest non contractible cycle passing through a vertex on the given mesh."
            <<"  Vertex is choosen randomly."<<std::endl
            <<"   -draw: draw the mesh and the cycle."<<std::endl
            <<"   -dist: use Euclidean distance (instead of bfs by default)."<<std::endl
+           <<"   -time: show computation times."<<std::endl
            <<"   -seed S: uses S as seed of random generator. Otherwise use a different seed at each run (based on time)."<<std::endl
            <<std::endl;
   exit(EXIT_FAILURE);
@@ -52,6 +53,7 @@ void process_command_line(int argc, char** argv,
                           std::string& file,
                           bool& draw,
                           bool& dist,
+                          bool& time,
                           CGAL::Random& random)
 {
   std::string arg;
@@ -63,6 +65,8 @@ void process_command_line(int argc, char** argv,
     { draw=true; }
     else if (arg=="-dist")
     { dist=true; }
+    else if (arg=="-time")
+    { time=true; }
     else if (arg=="-seed")
     {
       if (i==argc-1)
@@ -89,8 +93,9 @@ int main(int argc, char* argv[])
   std::string filename("data/3torus.off");
   bool draw=false;
   bool dist=false;
+  bool time=false;
   CGAL::Random random; // Used when user do not provide its own seed.
-  process_command_line(argc, argv, filename, draw, dist, random);
+  process_command_line(argc, argv, filename, draw, dist, time, random);
   
   std::ifstream inp(filename);
   if (inp.fail())
@@ -105,16 +110,16 @@ int main(int argc, char* argv[])
            <<random.get_seed()<<")"<<std::endl;
 
   Weight_functor wf(lcc);
-  CST            cst(lcc);
+  CST            cst(lcc, time);
 
   /// Change the value of `root` to test the algorithm at another vertex
   Dart_handle root=lcc.dart_handle(random.get_int(0, lcc.number_of_darts()));
   std::cout<<"Finding the shortest noncontractible cycle..."<<std::endl;
   Path_on_surface cycle(lcc);
   if (dist)
-  { cycle=cst.compute_shortest_noncontractible_cycle_with_basepoint(root, wf); }
+  { cycle=cst.compute_shortest_noncontractible_cycle_with_basepoint(root, wf, time); }
   else
-  { cycle=cst.compute_shortest_noncontractible_cycle_with_basepoint(root); }
+  { cycle=cst.compute_shortest_noncontractible_cycle_with_basepoint(root, time); }
   
   if (cycle.length()==0)
   { std::cout<<"  Cannot find such cycle. Stop."<<std::endl; }
@@ -127,14 +132,7 @@ int main(int argc, char* argv[])
     std::cout<<"  Number of edges in cycle: "<<cycle.length()<<std::endl;
     std::cout<<"  Cycle length: "<<cycle_length<<std::endl; 
     std::cout<<"  Root: "<<lcc.point(root)<<std::endl;
-
-#ifdef CGAL_USE_BASIC_VIEWER
-    if (draw)
-    {
-      std::vector<Path_on_surface> paths={cycle};
-      CGAL::draw(lcc, paths);
-    }
-#endif // CGAL_USE_BASIC_VIEWER
+    if (draw) { CGAL::draw(lcc, cycle); }
   }
 
   return EXIT_SUCCESS;

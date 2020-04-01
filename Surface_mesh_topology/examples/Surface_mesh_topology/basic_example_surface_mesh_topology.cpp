@@ -28,8 +28,9 @@ void create_path_3(Path_on_surface<LCC_3_cmap>& p)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-int main()
+int main(int argc, char** argv)
 {
+  bool draw=(argc>1?std::string(argv[1])=="-draw":false);
   LCC_3_cmap lcc;
   if (!CGAL::load_off(lcc, "data/double-torus.off"))
   {
@@ -55,10 +56,11 @@ int main()
   std::cout<<"Path p1 (pink) "<<(res3?"IS":"IS NOT")
            <<" homotopic with path p3 (orange)."<<std::endl;
 
-#ifdef CGAL_USE_BASIC_VIEWER
-  std::vector<Path_on_surface<LCC_3_cmap> > paths={p1, p2, p3};
-  CGAL::draw(lcc, paths); // Enable only if CGAL was compiled with Qt5
-#endif // CGAL_USE_BASIC_VIEWER
+  if (draw)
+  {
+    std::vector<Path_on_surface<LCC_3_cmap> > paths={p1, p2, p3};
+    CGAL::draw(lcc, paths);
+  }
 
   return EXIT_SUCCESS;
 }

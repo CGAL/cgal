@@ -76,8 +76,9 @@ struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
 int main(int argc, char* argv[])
 {
   std::cout<<"Program unsew_edgewidth_repeatedly started."<<std::endl;
-  std::string filename("data/double-torus.off");
-  if (argc>1) { filename=argv[1]; }
+  std::string filename(argc==1?"data/double-torus.off":argv[1]);
+  bool draw=(argc<3?false:std::string(argv[2])=="-draw");
+
   std::ifstream inp(filename);
   if (inp.fail())
   {
@@ -148,7 +149,8 @@ int main(int argc, char* argv[])
   }
   while(cycle_exist);
 
-  CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df);
+  if (draw)
+  { CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df); }
 
   lccoriginal.free_mark(belong_to_cycle);
   lccoriginal.free_mark(is_root);
