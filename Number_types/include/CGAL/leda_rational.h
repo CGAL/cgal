@@ -1,9 +1,9 @@
-// Copyright (c) 1999,2007  
+// Copyright (c) 1999,2007
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -67,7 +67,7 @@ template <> class Algebraic_structure_traits< leda_rational >
 template <> class Real_embeddable_traits< leda_rational >
   : public INTERN_RET::Real_embeddable_traits_base< leda_rational , CGAL::Tag_true > {
   public:
-  
+
     class Abs
       : public CGAL::cpp98::unary_function< Type, Type > {
       public:
@@ -234,9 +234,9 @@ public:
     //! initialize with a const reference to \a t.
     Benchmark_rep( const leda_rational& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
-    std::ostream& operator()( std::ostream& out) const { 
-            return 
-                out << "Rational(" << t.numerator() << "," 
+    std::ostream& operator()( std::ostream& out) const {
+            return
+                out << "Rational(" << t.numerator() << ","
                     << t.denominator() << ")";
     }
 

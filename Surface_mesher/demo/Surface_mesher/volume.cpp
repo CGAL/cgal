@@ -53,7 +53,7 @@ struct Threshold : public CGAL::cpp98::unary_function<FT, unsigned char> {
 };
 
 class Classify_from_isovalue_list :
-  public CGAL::cpp98::unary_function<FT, unsigned char> 
+  public CGAL::cpp98::unary_function<FT, unsigned char>
 {
   typedef std::pair<FT, result_type> Isovalue;
   typedef std::vector<Isovalue> Isovalues;
@@ -136,7 +136,7 @@ public:
 };
 
 // class Classify_from_isovalue_list :
-//   public CGAL::cpp98::unary_function<FT, const QTreeWidgetItem*> 
+//   public CGAL::cpp98::unary_function<FT, const QTreeWidgetItem*>
 // {
 //   typedef std::pair<FT, result_type> Isovalue;
 //   typedef std::vector<Isovalue> Isovalues;
@@ -179,7 +179,7 @@ public:
 //       return 0;
 //   }
 // };
-Volume::Volume(MainWindow* mw) : 
+Volume::Volume(MainWindow* mw) :
   Surface(mw),
   m_sm_angle(30),
   m_sm_radius(0),
@@ -254,7 +254,7 @@ Volume::Volume(MainWindow* mw) :
           this, SLOT(check_can_export_off()));
 
   connect(mw->labellizedRadioButton, SIGNAL(toggled(bool)),
-	  this, SLOT(labellizedToogled(bool)));
+          this, SLOT(labellizedToogled(bool)));
 
   mw->actionExport_surface_mesh_to_OFF->setEnabled(false);
   connect(mw->actionExport_surface_mesh_to_OFF, SIGNAL(triggered()),
@@ -339,7 +339,7 @@ Volume::~Volume()
   if(smoother) smoother->Delete();
 }
 
-bool Volume::opendir(const QString& dirname) 
+bool Volume::opendir(const QString& dirname)
 {
   bool result = true;
   if(!fileinfo.isReadable())
@@ -546,58 +546,58 @@ bool Volume::open(const QString& filename)
     else if(open_xt(filename)) {
       return true;
     }
-    else 
+    else
     {
       QSettings settings;
       settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
       if( settings.value("is_raw").toBool() &&
-	  m_image.read_raw(filename.toStdString().c_str(),
-			   settings.value("dim_x").toInt(),
-			   settings.value("dim_y").toInt(),
-			   settings.value("dim_z").toInt(),
-			   settings.value("spacing_x").toDouble(),
-			   settings.value("spacing_y").toDouble(),
-			   settings.value("spacing_z").toDouble(),
-			   settings.value("offset").toInt()) )
+          m_image.read_raw(filename.toStdString().c_str(),
+                           settings.value("dim_x").toInt(),
+                           settings.value("dim_y").toInt(),
+                           settings.value("dim_z").toInt(),
+                           settings.value("spacing_x").toDouble(),
+                           settings.value("spacing_y").toDouble(),
+                           settings.value("spacing_z").toDouble(),
+                           settings.value("offset").toInt()) )
       {
-	status_message(tr("File %1 successfully opened.").arg(filename));
-	finish_open();
-	return true;
+        status_message(tr("File %1 successfully opened.").arg(filename));
+        finish_open();
+        return true;
       }
       else if(QMessageBox::warning(mw, mw->windowTitle(),
-				   tr("Error with file <tt>%1</tt>:\n"
-				      "unknown file format!\n"
-				      "\n"
-				      "Open it as a raw image?").arg(filename),
-				   QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes) 
+                                   tr("Error with file <tt>%1</tt>:\n"
+                                      "unknown file format!\n"
+                                      "\n"
+                                      "Open it as a raw image?").arg(filename),
+                                   QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes)
       {
-	Raw_image_dialog raw_dialog;
-	raw_dialog.label_file_size->setText(QString("%1 B").arg(fileinfo.size()));
-	if( raw_dialog.exec() && 
-	    m_image.read_raw(filename.toStdString().c_str(),
-			     raw_dialog.dim_x->value(),
-			     raw_dialog.dim_y->value(),
-			     raw_dialog.dim_z->value(),
-			     raw_dialog.spacing_x->value(),
-			     raw_dialog.spacing_y->value(),
-			     raw_dialog.spacing_z->value(),
-			     raw_dialog.offset->value()) )
-	{
-	  status_message(tr("File %1 successfully opened.").arg(filename));
-	  QSettings settings;
-	  settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
-	  settings.setValue("is_raw", true);
-	  settings.setValue("dim_x", raw_dialog.dim_x->value());
-	  settings.setValue("dim_y", raw_dialog.dim_y->value());
-	  settings.setValue("dim_z", raw_dialog.dim_z->value());
-	  settings.setValue("spacing_x", raw_dialog.spacing_x->value());
-	  settings.setValue("spacing_y", raw_dialog.spacing_y->value());
-	  settings.setValue("spacing_z", raw_dialog.spacing_z->value());
-	  settings.setValue("offset", raw_dialog.offset->value());
-	  settings.endGroup();
-	  finish_open();
-	  return true;
-	}
+        Raw_image_dialog raw_dialog;
+        raw_dialog.label_file_size->setText(QString("%1 B").arg(fileinfo.size()));
+        if( raw_dialog.exec() &&
+            m_image.read_raw(filename.toStdString().c_str(),
+                             raw_dialog.dim_x->value(),
+                             raw_dialog.dim_y->value(),
+                             raw_dialog.dim_z->value(),
+                             raw_dialog.spacing_x->value(),
+                             raw_dialog.spacing_y->value(),
+                             raw_dialog.spacing_z->value(),
+                             raw_dialog.offset->value()) )
+        {
+          status_message(tr("File %1 successfully opened.").arg(filename));
+          QSettings settings;
+          settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
+          settings.setValue("is_raw", true);
+          settings.setValue("dim_x", raw_dialog.dim_x->value());
+          settings.setValue("dim_y", raw_dialog.dim_y->value());
+          settings.setValue("dim_z", raw_dialog.dim_z->value());
+          settings.setValue("spacing_x", raw_dialog.spacing_x->value());
+          settings.setValue("spacing_y", raw_dialog.spacing_y->value());
+          settings.setValue("spacing_z", raw_dialog.spacing_z->value());
+          settings.setValue("offset", raw_dialog.offset->value());
+          settings.endGroup();
+          finish_open();
+          return true;
+        }
       }
     }
   }
@@ -624,10 +624,10 @@ void Volume::export_off()
 {
   QFileDialog filedialog(mw, tr("Export surface to file"));
   filedialog.setFileMode(QFileDialog::AnyFile);
-  
+
   filedialog.setNameFilter(tr("OFF files (*.off);;"
                               "All files (*)"));
-  
+
   filedialog.setAcceptMode(QFileDialog::AcceptSave);
   filedialog.setDefaultSuffix("off");
   if(filedialog.exec())
@@ -655,7 +655,7 @@ void Volume::save_image_to_inr()
 {
   QFileDialog filedialog(mw, tr("Export image to Inrimage format"));
   filedialog.setFileMode(QFileDialog::AnyFile);
-  
+
   filedialog.setNameFilter(tr("Inrimage files (*.inr);;"
                               "Compressed Inrimage files (*.inr.gz)"));
 
@@ -693,12 +693,12 @@ void Volume::status_message(QString string)
   mw->statusBar()->showMessage(string);
 }
 
-void Volume::busy() const 
+void Volume::busy() const
 {
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 }
 
-void Volume::not_busy() const 
+void Volume::not_busy() const
 {
   QApplication::restoreOverrideCursor();
 }
@@ -737,7 +737,7 @@ void Volume::display_marchin_cube()
 
     nbs_of_mc_triangles.resize(values_list->numberOfValues());
 
-    for(int value_id = 0; 
+    for(int value_id = 0;
         value_id < values_list->numberOfValues();
         ++value_id)
     {
@@ -868,7 +868,7 @@ void Volume::display_surface_mesher_result()
     // surface mesh traits class
     typedef CGAL::Surface_mesher::Implicit_surface_oracle_3<Kernel,
       //     typedef CGAL::Surface_mesher::Image_surface_oracle_3<Kernel,
-      Surface_3, 
+      Surface_3,
       Classify_from_isovalue_list,
       Generate_surface_identifiers> Oracle;
     Oracle oracle(classify, generate_ids);
@@ -878,22 +878,22 @@ void Volume::display_surface_mesher_result()
       typedef std::vector<std::pair<Point_3, double> > Seeds;
       Seeds seeds;
       {
-	std::cerr << "Search seeds...\n";
-	std::set<unsigned char> domains;
-	search_for_connected_components(std::back_inserter(seeds),
-					CGAL::inserter(domains),
-					classify);
-	std::cerr << "Found " << seeds.size() << " seed(s).\n";
+        std::cerr << "Search seeds...\n";
+        std::set<unsigned char> domains;
+        search_for_connected_components(std::back_inserter(seeds),
+                                        CGAL::inserter(domains),
+                                        classify);
+        std::cerr << "Found " << seeds.size() << " seed(s).\n";
 
-	if(mw->labellizedRadioButton->isChecked() && 
-	   values_list->numberOfValues() == 0) 
-	{
-	  Q_FOREACH(unsigned char label, domains) {
-	    if(label != 0) {
-	      values_list->addValue(label);
-	    }
-	  }
-	}
+        if(mw->labellizedRadioButton->isChecked() &&
+           values_list->numberOfValues() == 0)
+        {
+          Q_FOREACH(unsigned char label, domains) {
+            if(label != 0) {
+              values_list->addValue(label);
+            }
+          }
+        }
       }
       std::ofstream seeds_out("seeds.off");
       std::ofstream segments_out("segments.txt");
@@ -901,33 +901,33 @@ void Volume::display_surface_mesher_result()
       seeds_out << "OFF\n" << seeds.size() << " 0 0\n";
       segments_out.precision(18);
       for(Seeds::const_iterator it = seeds.begin(), end = seeds.end();
-	  it != end; ++it)
+          it != end; ++it)
       {
         seeds_out << it->first << std::endl;
-	CGAL::Random_points_on_sphere_3<Point_3> random_points_on_sphere_3(it->second);
-	Oracle::Intersect_3 intersect = oracle.intersect_3_object();
-	for(int i = 0; i < 20; ++i)
-	{
-	  const Point_3 test = it->first + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
-	  CGAL::Object o = intersect(surface, Segment_3(it->first, test));
-	  if (const Point_3* intersection = CGAL::object_cast<Point_3>(&o)) {
+        CGAL::Random_points_on_sphere_3<Point_3> random_points_on_sphere_3(it->second);
+        Oracle::Intersect_3 intersect = oracle.intersect_3_object();
+        for(int i = 0; i < 20; ++i)
+        {
+          const Point_3 test = it->first + (*random_points_on_sphere_3++ - CGAL::ORIGIN);
+          CGAL::Object o = intersect(surface, Segment_3(it->first, test));
+          if (const Point_3* intersection = CGAL::object_cast<Point_3>(&o)) {
             segments_out << "2 " << it->first << " " << *intersection << std::endl;
-	    del.insert(*intersection);
+            del.insert(*intersection);
           }
-	  else 
-	  {
-	    std::cerr << 
-	      boost::format("Error. Segment (%1%, %2%) does not intersect the surface! values=(%3%, %4%)\n")
-	      % it->first % test
-	      % surface(it->first) % surface(test);
-	  }
-	}
+          else
+          {
+            std::cerr <<
+              boost::format("Error. Segment (%1%, %2%) does not intersect the surface! values=(%3%, %4%)\n")
+              % it->first % test
+              % surface(it->first) % surface(test);
+          }
+        }
       }
     }
     else {
-      oracle.construct_initial_points_object()(surface, 
-					       CGAL::inserter(c2t3.triangulation()),
-					       20);
+      oracle.construct_initial_points_object()(surface,
+                                               CGAL::inserter(c2t3.triangulation()),
+                                               20);
     }
 
     std::ofstream points_out("initial-points.off");
@@ -952,7 +952,7 @@ void Volume::display_surface_mesher_result()
       aspect_ratio_criterion (m_sm_angle);
     CGAL::Surface_mesher::Vertices_on_the_same_psc_element_criterion<Tr, Surface_3>
       vertices_on_the_same_psc_element_criterion(surface);
-    
+
     std::vector<Criterion*> criterion_vector;
     criterion_vector.push_back(&aspect_ratio_criterion);
     criterion_vector.push_back(&uniform_size_criterion);
@@ -973,19 +973,19 @@ void Volume::display_surface_mesher_result()
       CGAL::Manifold_tag,
       CGAL_SURFACE_MESHER_VERBOSITY
       >::type Surface_mesher_manifold;
-      
+
     typedef CGAL::Surface_mesher_generator<C2t3,
       Oracle,
       Criteria,
       CGAL::Non_manifold_tag,
       CGAL_SURFACE_MESHER_VERBOSITY
-      >::type Surface_mesher_non_manifold; 
+      >::type Surface_mesher_non_manifold;
 
     if(mw->manifoldCheckBox->isChecked()) {
       // meshing surface
       std::cerr << "manifold criteria is activated.\n";
 //       make_surface_mesh(c2t3, surface, oracle, criteria,
-// 			CGAL::Manifold_tag(), 0);
+//                         CGAL::Manifold_tag(), 0);
       Surface_mesher_manifold manifold_mesher(c2t3, surface, oracle, criteria);
       manifold_mesher.refine_mesh();
     }
@@ -997,26 +997,26 @@ void Volume::display_surface_mesher_result()
 //       direct_draw = true;
       non_manifold_mesher.init();
       while(!non_manifold_mesher.is_algorithm_done()) {
-	CGAL::Null_mesh_visitor null_visitor;
-	non_manifold_mesher.one_step(null_visitor);
-	if(++nb_steps % 1000 == 0) {
-	  CGAL::Timer timer;
-	  std::cerr << "(process events...";
-	  timer.start();
-	  list_draw_marching_cube_is_valid = false;
-	  lists_draw_surface_is_valid = false;
-	  for(Tr::Finite_cells_iterator 
-		cit = del.finite_cells_begin(),
-		end = del.finite_cells_end();
-	      cit != end; ++cit)
-	  {
-	    cit->info() = classify(surface(cit->circumcenter()));
-	  }
-// 	  Q_EMIT changed();
-	  qApp->processEvents();
-	  timer.stop();
-	  std::cerr << timer.time() << " secondes)\n";
-	}
+        CGAL::Null_mesh_visitor null_visitor;
+        non_manifold_mesher.one_step(null_visitor);
+        if(++nb_steps % 1000 == 0) {
+          CGAL::Timer timer;
+          std::cerr << "(process events...";
+          timer.start();
+          list_draw_marching_cube_is_valid = false;
+          lists_draw_surface_is_valid = false;
+          for(Tr::Finite_cells_iterator
+                cit = del.finite_cells_begin(),
+                end = del.finite_cells_end();
+              cit != end; ++cit)
+          {
+            cit->info() = classify(surface(cit->circumcenter()));
+          }
+//           Q_EMIT changed();
+          qApp->processEvents();
+          timer.stop();
+          std::cerr << timer.time() << " secondes)\n";
+        }
       }
 #else
       non_manifold_mesher.refine_mesh();
@@ -1026,10 +1026,10 @@ void Volume::display_surface_mesher_result()
     not_busy();
     direct_draw = false;
 
-    for(Tr::Finite_cells_iterator 
-	  cit = del.finite_cells_begin(),
-	  end = del.finite_cells_end();
-	cit != end; ++cit)
+    for(Tr::Finite_cells_iterator
+          cit = del.finite_cells_begin(),
+          end = del.finite_cells_end();
+        cit != end; ++cit)
     {
       cit->info() = classify(surface(cit->circumcenter()));
     }
@@ -1045,7 +1045,7 @@ void Volume::display_surface_mesher_result()
       const Point_3 left_circumcenter = cell->circumcenter();
       const Point_3 right_circumcenter = cell->neighbor(index)->circumcenter();
 
-      const Triangle_3 t = 
+      const Triangle_3 t =
         Triangle_3(cell->vertex(del.vertex_triple_index(index, 0))->point(),
                    cell->vertex(del.vertex_triple_index(index, 1))->point(),
                    cell->vertex(del.vertex_triple_index(index, 2))->point());
@@ -1053,15 +1053,15 @@ void Volume::display_surface_mesher_result()
       const Vector v = t[2] - t[0];
       Vector n = CGAL::cross_product(u,v);
       n = n / std::sqrt(n*n);
-      if(mw->labellizedRadioButton->isChecked()) 
+      if(mw->labellizedRadioButton->isChecked())
       {
-	m_surface.push_back(Facet_(t,
-				  n,
-				  values_list->search((std::max)(surface(left_circumcenter), 
-								 surface(right_circumcenter)))));
+        m_surface.push_back(Facet_(t,
+                                  n,
+                                  values_list->search((std::max)(surface(left_circumcenter),
+                                                                 surface(right_circumcenter)))));
       }
       else {
-	m_surface.push_back(Facet_(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
+        m_surface.push_back(Facet_(t,n,cell->vertex(del.vertex_triple_index(index, 0))->point().element_index()));
       }
     }
 
@@ -1156,21 +1156,21 @@ void Volume::gl_draw_image_bbox(const float line_width,
 
 void Volume::draw()
 {
-  float	ambient[]  =   { 0.25f,
+  float        ambient[]  =   { 0.25f,
                          0.20725f,
                          0.20725f,
                          0.922f };
-  float	diffuse[]  =   { 1.0f,
+  float        diffuse[]  =   { 1.0f,
                          0.829f,
                          0.829f,
                          0.922f };
 
-  float	specular[]  = {  0.296648f,
+  float        specular[]  = {  0.296648f,
                          0.296648f,
                          0.296648f,
                          0.522f };
 
-  float	emission[]  = {  0.3f,
+  float        emission[]  = {  0.3f,
                          0.3f,
                          0.3f,
                          1.0f };
@@ -1247,10 +1247,10 @@ void Volume::draw()
                 m_triangulation_color.blueF());
     ::glLineWidth(1.0);
     ::glBegin(GL_LINES);
-    for(Tr::Finite_edges_iterator 
-          eit = del.finite_edges_begin(), 
+    for(Tr::Finite_edges_iterator
+          eit = del.finite_edges_begin(),
           end = del.finite_edges_end();
-        eit != end; ++eit) 
+        eit != end; ++eit)
     {
       const Point_3 p1 = eit->first->vertex(eit->second)->point();
       const Point_3 p2 = eit->first->vertex(eit->third)->point();
@@ -1262,13 +1262,13 @@ void Volume::draw()
 }
 
 void Volume::set_radius_bound(double d)
-{ 
+{
   m_sm_radius = FT(d);
   changed_parameters();
 }
 
 void Volume::set_distance_bound(double d)
-{ 
+{
   m_sm_distance = FT(d);
   changed_parameters();
 }
@@ -1281,7 +1281,7 @@ void Volume::gl_draw_surface_mc()
     gl_draw_marchingcube();
     return;
   }
-  
+
   if(lists_draw_surface_mc_is_valid)
   {
     for(int i = 0, nbs = values_list->numberOfValues(); i < nbs; ++i )
@@ -1320,7 +1320,7 @@ void Volume::gl_draw_surface_mc()
       gl_draw_surface(m_surface_mc.begin(),
                       m_surface_mc.end(),
                       values_list->item(i));
-        
+
       if(lists_draw_surface_mc[i]) // If lists_draw_surface[i]==0 then
       {                            // something got wrong in the list
         ::glEndList();             // generation.
@@ -1336,40 +1336,40 @@ void Volume::gl_draw_surface()
 //   if(mw->labellizedRadioButton->isChecked()) {
 //     mw->viewer->qglColor(::Qt::blue);
 //     gl_draw_surface(m_surface.begin(),
-// 		    m_surface.end(),
-// 		    0);
+//                     m_surface.end(),
+//                     0);
 //   }
 //   else
   if(direct_draw) {
     ::glBegin(GL_TRIANGLES);
     unsigned int counter = 0;
     for(Tr::Finite_cells_iterator
-	  cit = del.finite_cells_begin(), end = del.finite_cells_end();
-	cit != end; ++cit)
+          cit = del.finite_cells_begin(), end = del.finite_cells_end();
+        cit != end; ++cit)
     {
       for(int facet_index = 0; facet_index < 4; ++facet_index)
       {
-	const Tr::Cell_handle& facet_cell = cit;
-	if(c2t3.face_status(facet_cell, facet_index) == C2t3::NOT_IN_COMPLEX) {
-	  continue;
-	}
-	const Point_3& a = facet_cell->vertex(del.vertex_triple_index(facet_index, 0))->point();
-	const Point_3& b = facet_cell->vertex(del.vertex_triple_index(facet_index, 1))->point();
-	const Point_3& c = facet_cell->vertex(del.vertex_triple_index(facet_index, 2))->point();
-	Vector n = CGAL::cross_product(b-a,c-a);
-	n = n / std::sqrt(n*n); // unit normal
-	if(m_inverse_normals) {
-	  ::glNormal3d(-n.x(),-n.y(),-n.z());
-	} else {
-	  ::glNormal3d(n.x(),n.y(),n.z());
-	}
+        const Tr::Cell_handle& facet_cell = cit;
+        if(c2t3.face_status(facet_cell, facet_index) == C2t3::NOT_IN_COMPLEX) {
+          continue;
+        }
+        const Point_3& a = facet_cell->vertex(del.vertex_triple_index(facet_index, 0))->point();
+        const Point_3& b = facet_cell->vertex(del.vertex_triple_index(facet_index, 1))->point();
+        const Point_3& c = facet_cell->vertex(del.vertex_triple_index(facet_index, 2))->point();
+        Vector n = CGAL::cross_product(b-a,c-a);
+        n = n / std::sqrt(n*n); // unit normal
+        if(m_inverse_normals) {
+          ::glNormal3d(-n.x(),-n.y(),-n.z());
+        } else {
+          ::glNormal3d(n.x(),n.y(),n.z());
+        }
         ::glColor3d(values_list->color(values_list->search(facet_cell->info())).redF(),
                     values_list->color(values_list->search(facet_cell->info())).greenF(),
                     values_list->color(values_list->search(facet_cell->info())).blueF());
-	::glVertex3d(a.x(),a.y(),a.z());
-	::glVertex3d(b.x(),b.y(),b.z());
-	::glVertex3d(c.x(),c.y(),c.z());
-	++counter;
+        ::glVertex3d(a.x(),a.y(),a.z());
+        ::glVertex3d(b.x(),b.y(),b.z());
+        ::glVertex3d(c.x(),c.y(),c.z());
+        ++counter;
       }
       ::glEnd();
     }
@@ -1402,7 +1402,7 @@ void Volume::gl_draw_surface()
                                  " in gl_draw_surface(), ()\n")
         % lists_draw_surface[i]
         % i;
-        
+
       ::glColor3d(values_list->color(i).redF(),
                 values_list->color(i).greenF(),
                 values_list->color(i).blueF());
@@ -1413,57 +1413,57 @@ void Volume::gl_draw_surface()
                     ? GL_COMPILE_AND_EXECUTE    // in the list generation.
                     : GL_COMPILE);
 
-      if(!mw->labellizedRadioButton->isChecked()) 
+      if(!mw->labellizedRadioButton->isChecked())
       {
-	gl_draw_surface(m_surface.begin(),
-			m_surface.end(),
-			values_list->item(i));
+        gl_draw_surface(m_surface.begin(),
+                        m_surface.end(),
+                        values_list->item(i));
       }
-      else 
+      else
       {
-	const auto volume_index = static_cast<unsigned char>(values_list->value(i));
+        const auto volume_index = static_cast<unsigned char>(values_list->value(i));
 
-	::glBegin(GL_TRIANGLES);
-	unsigned int counter = 0;
-	for(C2t3::Facet_iterator
-	      fit = c2t3.facets_begin(), end = c2t3.facets_end();
-	    fit != end; ++fit)
-	{
-	  Tr::Cell_handle facet_cell = fit->first;
-	  int facet_index = fit->second;
-	  Tr::Cell_handle opposite_cell = facet_cell->neighbor(facet_index);
-	  int opposite_index = opposite_cell->index(facet_cell);
+        ::glBegin(GL_TRIANGLES);
+        unsigned int counter = 0;
+        for(C2t3::Facet_iterator
+              fit = c2t3.facets_begin(), end = c2t3.facets_end();
+            fit != end; ++fit)
+        {
+          Tr::Cell_handle facet_cell = fit->first;
+          int facet_index = fit->second;
+          Tr::Cell_handle opposite_cell = facet_cell->neighbor(facet_index);
+          int opposite_index = opposite_cell->index(facet_cell);
 
-	  if( facet_cell->info() != volume_index ) {
-	    if( opposite_cell->info() == volume_index ) {
-	      std::swap(facet_cell, opposite_cell);
-	      std::swap(facet_index, opposite_index);
-	    }
-	    else 
-	      continue; // go to next facet
-	  }
-	  const Point_3& a = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 0))->point();
-	  const Point_3& b = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 1))->point();
-	  const Point_3& c = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 2))->point();
-	  Vector n = CGAL::cross_product(b-a,c-a);
-	  n = n / std::sqrt(n*n); // unit normal
-	  if(m_inverse_normals) {
-	    ::glNormal3d(-n.x(),-n.y(),-n.z());
-	  } else {
-	    ::glNormal3d(n.x(),n.y(),n.z());
-	  }
-	  ::glVertex3d(a.x(),a.y(),a.z());
-	  ::glVertex3d(b.x(),b.y(),b.z());
-	  ::glVertex3d(c.x(),c.y(),c.z());
-	  ++counter;
-	}
-	::glEnd();
-	std::cerr << boost::format("(c2t3) number of facets: %1%\n")
-	  % counter;
+          if( facet_cell->info() != volume_index ) {
+            if( opposite_cell->info() == volume_index ) {
+              std::swap(facet_cell, opposite_cell);
+              std::swap(facet_index, opposite_index);
+            }
+            else
+              continue; // go to next facet
+          }
+          const Point_3& a = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 0))->point();
+          const Point_3& b = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 1))->point();
+          const Point_3& c = opposite_cell->vertex(del.vertex_triple_index(opposite_index, 2))->point();
+          Vector n = CGAL::cross_product(b-a,c-a);
+          n = n / std::sqrt(n*n); // unit normal
+          if(m_inverse_normals) {
+            ::glNormal3d(-n.x(),-n.y(),-n.z());
+          } else {
+            ::glNormal3d(n.x(),n.y(),n.z());
+          }
+          ::glVertex3d(a.x(),a.y(),a.z());
+          ::glVertex3d(b.x(),b.y(),b.z());
+          ::glVertex3d(c.x(),c.y(),c.z());
+          ++counter;
+        }
+        ::glEnd();
+        std::cerr << boost::format("(c2t3) number of facets: %1%\n")
+          % counter;
       }
 
       if(!direct_draw && lists_draw_surface[i])
-	                        // If lists_draw_surface[i]==0 then
+                                // If lists_draw_surface[i]==0 then
       {                         // something got wrong in the list
         ::glEndList();          // generation.
       }

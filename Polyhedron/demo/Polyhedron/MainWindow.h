@@ -55,7 +55,7 @@ namespace Ui {
  * It contains all the widgets, the menus and the elements of interface
  * of the application.*/
 
-class MAINWINDOW_EXPORT MainWindow : 
+class MAINWINDOW_EXPORT MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface,
   public CGAL::Three::Three,
@@ -96,7 +96,7 @@ public:
                                             bool& ok,
                                             bool add_to_scene=true);
   void computeViewerBBox(CGAL::qglviewer::Vec &min, CGAL::qglviewer::Vec &max);
-  void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min, 
+  void updateViewerBbox(Viewer* vi, bool recenter, CGAL::qglviewer::Vec min,
                         CGAL::qglviewer::Vec max);
 Q_SIGNALS:
   //! Is emitted when the Application is closed.
@@ -138,11 +138,13 @@ public Q_SLOTS:
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
 
+  QString write_string_to_file(const QString &str, const QString& filename);
+
   /*! Reloads an item. Expects to be called by a QAction with the
    index of the item to be reloaded as data attached to the action.
    The index must identify a valid `Scene_item`.*/
   void reloadItem();
-  
+
   //! Loads a script. Returns true if it worked.
   bool loadScript(QString filename);
 
@@ -218,7 +220,7 @@ public Q_SLOTS:
   void addAction(QString actionName,
                  QString actionText,
                  QString menuName);
-  
+
   /*! Sets the scene center to the target position and makes the
   * scene slide to this new center. Also sets the pivotPoint of
   * the camera to this position.
@@ -344,14 +346,18 @@ protected Q_SLOTS:
   //!Opens the Preferences dialog.
   void on_actionPreferences_triggered();
   //!Save selected items if able.
-  void on_action_Save_triggered(); 
+  void on_action_Save_triggered();
   // save as...
   //!Opens a dialog to save selected item if able.
-  void on_actionSaveAs_triggered(); 
+  void on_actionSaveAs_triggered();
   //!Calls the function save of the current plugin if able.
   void save(QString filename, QList<CGAL::Three::Scene_item*>& to_save);
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
+#ifdef CGAL_USE_WEBSOCKETS
+  //!Starts a new WS server if none is already exist. Else, does nothing.
+  void on_action_Start_a_Session_triggered();
+#endif
   //!Opens a Dialog to choose a color and make it the background color.
   void setBackgroundColor();
   //!Opens a Dialog to change the lighting settings
@@ -438,15 +444,16 @@ public:
   /*! Evaluates a script and search for uncaught exceptions. If quiet is false, prints the
    *backtrace of the uncaught exceptions.
    */
-  void evaluate_script(QString script, 
+  void evaluate_script(QString script,
                        const QString & fileName = QString(),
                        const bool quiet = false);
   //! Calls evaluate_script(script, filename, true).
-  void evaluate_script_quiet(QString script, 
+  void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
 #endif
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
+  void on_actionLoad_a_Scene_from_a_Script_File_triggered();
   void toggleFullScreen();
   void setDefaultSaveDir();
   void invalidate_bbox(bool do_recenter);
@@ -465,11 +472,11 @@ private Q_SLOTS:
   void on_actionAdd_Viewer_triggered();
   void on_action_Rearrange_Viewers_triggered();
   void recenterViewer();
-  
+
 private:
   QMap<QAction*, QMenu*> action_menu_map;
 };
-  
+
 struct SubViewer : public QMdiSubWindow
 {
   Q_OBJECT
@@ -494,4 +501,30 @@ protected:
 private:
   bool is_main;
 };
+#ifdef CGAL_USE_WEBSOCKETS
+QT_FORWARD_DECLARE_CLASS(QWebSocketServer)
+QT_FORWARD_DECLARE_CLASS(QWebSocket)
+
+class EchoServer : public QObject
+{
+    Q_OBJECT
+public:
+    explicit EchoServer(quint16 port);
+    ~EchoServer();
+
+
+Q_SIGNALS:
+    void closed();
+
+private Q_SLOTS:
+    void onNewConnection();
+    void processTextMessage(QString message);
+    void processBinaryMessage(QByteArray message);
+    void socketDisconnected();
+
+private:
+    QWebSocketServer *m_pWebSocketServer;
+    QList<QWebSocket *> m_clients;
+};
+#endif
 #endif // ifndef MAINWINDOW_H

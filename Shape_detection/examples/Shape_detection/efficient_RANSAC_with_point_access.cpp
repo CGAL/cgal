@@ -23,7 +23,7 @@ typedef CGAL::Shape_detection::Efficient_RANSAC<Traits> Efficient_ransac;
 typedef CGAL::Shape_detection::Plane<Traits>            Plane;
 
 int main(int argc, char** argv) {
-  
+
   // Points with normals.
   Pwn_vector points;
 
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {
-      
+
     std::cerr << "Error: cannot read file cube.pwn!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -64,10 +64,10 @@ int main(int argc, char** argv) {
 
   // Perform detection several times and choose result with the highest coverage.
   Efficient_ransac::Shape_range shapes = ransac.shapes();
-  
+
   FT best_coverage = 0;
   for (std::size_t i = 0; i < 3; ++i) {
-    
+
     // Reset timer.
     time.reset();
     time.start();
@@ -79,30 +79,30 @@ int main(int argc, char** argv) {
     time.stop();
 
     // Compute coverage, i.e. ratio of the points assigned to a shape.
-    FT coverage = 
+    FT coverage =
     FT(points.size() - ransac.number_of_unassigned_points()) / FT(points.size());
 
     // Print number of assigned shapes and unassigned points.
     std::cout << "time: " << time.time() * 1000 << "ms" << std::endl;
-    std::cout << ransac.shapes().end() - ransac.shapes().begin() 
+    std::cout << ransac.shapes().end() - ransac.shapes().begin()
     << " primitives, " << coverage << " coverage" << std::endl;
-    
+
     // Choose result with the highest coverage.
     if (coverage > best_coverage) {
-      
+
       best_coverage = coverage;
-      
+
       // Efficient_ransac::shapes() provides
-      // an iterator range to the detected shapes. 
+      // an iterator range to the detected shapes.
       shapes = ransac.shapes();
     }
   }
 
   Efficient_ransac::Shape_range::iterator it = shapes.begin();
   while (it != shapes.end()) {
-    
+
     boost::shared_ptr<Efficient_ransac::Shape> shape = *it;
-    
+
     // Use Shape_base::info() to print the parameters of the detected shape.
     std::cout << (*it)->info();
 
@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
     index_it = (*it)->indices_of_assigned_points().begin();
 
     while (index_it != (*it)->indices_of_assigned_points().end()) {
-      
+
       // Retrieve point.
       const Point_with_normal& p = *(points.begin() + (*index_it));
 

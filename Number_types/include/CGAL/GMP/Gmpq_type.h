@@ -1,9 +1,9 @@
-// Copyright (c) 2002,2003  
+// Copyright (c) 2002,2003
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -222,20 +222,23 @@ public:
   Gmpq& operator*=(const Gmpq &q);
   Gmpq& operator/=(const Gmpq &q);
 
-  bool operator==(const Gmpq &q) const { return mpq_equal(this->mpq(), q.mpq()) != 0;}
-  bool operator< (const Gmpq &q) const { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
+  bool operator==(const Gmpq &q) const noexcept { return mpq_equal(this->mpq(), q.mpq()) != 0;}
+  bool operator< (const Gmpq &q) const noexcept { return mpq_cmp(this->mpq(), q.mpq()) < 0; }
 
-  double to_double() const;
-  Sign sign() const;
+  double to_double() const noexcept;
+  Sign sign() const noexcept;
 
-  const mpq_t & mpq() const { return Ptr()->mpQ; }
-  mpq_t & mpq() { return ptr()->mpQ; }
+  const mpq_t & mpq() const noexcept { return Ptr()->mpQ; }
+  mpq_t & mpq() noexcept { return ptr()->mpQ; }
 
+  friend void swap(Gmpq &x, Gmpq &y) noexcept { x.Base::swap(y); }
+#ifdef CGAL_PROFILE
   ~Gmpq()
   {
      CGAL_HISTOGRAM_PROFILER("[Gmpq sizes in log2 scale]",
                              (unsigned) ( ::log(double(size())) / ::log(double(2)) )  );
   }
+#endif
 
   // Interoperability with int
   Gmpq& operator+=(int z){return (*this)+= Gmpq(z);}
@@ -446,12 +449,12 @@ Gmpq& Gmpq::operator/=(const Gmpz &z){
 
 inline
 double
-Gmpq::to_double() const
+Gmpq::to_double() const noexcept
 { return mpq_get_d(mpq()); }
 
 inline
 Sign
-Gmpq::sign() const
+Gmpq::sign() const noexcept
 { return static_cast<Sign>(mpq_sgn(mpq())); }
 
 inline

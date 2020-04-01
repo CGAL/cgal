@@ -119,7 +119,7 @@ void Primitive_container::initializeBuffers(CGAL::Three::Viewer_interface* viewe
     viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    
+
     getVao(viewer)->release();
   }
   d->VAOs[viewer]->release();
@@ -258,7 +258,7 @@ void Primitive_container::setTextureSize(const QSize &size) {
     d->texture = new Texture();
   d->texture->Width = size.width();
   d->texture->Height = size.height();
-  d->texture->size = 3 * size.width()*size.height(); 
+  d->texture->size = 3 * size.width()*size.height();
   d->texture->data = new GLubyte[d->texture->size];
 }
 

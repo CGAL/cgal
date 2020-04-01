@@ -36,7 +36,7 @@ typedef K::Point_2 Point;
 void usage(char** argv)
 {
   std::cerr << "Usage: " << std::endl
-	    << argv[0] << " [-Q] [-a area] input.poly [output.poly]" << std::endl;
+            << argv[0] << " [-Q] [-a area] input.poly [output.poly]" << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -55,30 +55,30 @@ int main(int argc, char** argv)
   while(argv[arg_count][0] == '-' && std::string(argv[arg_count]) != "--")
     {
       if(std::string(argv[arg_count]) == "-Q")
-	terminal_output = false;
+        terminal_output = false;
       else if(std::string(argv[arg_count]) == "-a")
-	{
-	  double area_bound;
-	    if( (argc > arg_count+1) &&
-		std::istringstream(argv[arg_count+1]) >> area_bound )
-	      {
-		criteria.set_area_bound(area_bound);
-		++arg_count;
-	      }
-	    else
-	      {
-		std::cerr << "The area " << argv[arg_count+1]
-			  << " is not a double." << std::endl;
-		usage(argv);
-		return 1;
-	      }
-	}
+        {
+          double area_bound;
+            if( (argc > arg_count+1) &&
+                std::istringstream(argv[arg_count+1]) >> area_bound )
+              {
+                criteria.set_area_bound(area_bound);
+                ++arg_count;
+              }
+            else
+              {
+                std::cerr << "The area " << argv[arg_count+1]
+                          << " is not a double." << std::endl;
+                usage(argv);
+                return 1;
+              }
+        }
       else
-	{
-	  std::cerr << "Unknown option " << argv[arg_count] << std::endl;
-	  usage(argv);
-	  return 1;
-	}
+        {
+          std::cerr << "Unknown option " << argv[arg_count] << std::endl;
+          usage(argv);
+          return 1;
+        }
       ++arg_count;
     }
   if(std::string(argv[arg_count]) == "--")
@@ -97,19 +97,19 @@ int main(int argc, char** argv)
       CGAL::refine_Delaunay_mesh_2(t, criteria);
 
       if(argc==arg_count+1)
-	{
-	  if(terminal_output)
-	    CGAL::write_triangle_poly_file(t, std::cout);
-	}
+        {
+          if(terminal_output)
+            CGAL::write_triangle_poly_file(t, std::cout);
+        }
       else
-	{
-	  std::ofstream output(argv[arg_count+1]);
-	  CGAL::write_triangle_poly_file(t, output);
-	}
+        {
+          std::ofstream output(argv[arg_count+1]);
+          CGAL::write_triangle_poly_file(t, output);
+        }
       if(terminal_output)
-	std::cerr
-	  << "Mesh points: " << t.number_of_vertices() << std::endl
-	  << "Mesh triangles: " << t.number_of_faces () << std::endl;
+        std::cerr
+          << "Mesh points: " << t.number_of_vertices() << std::endl
+          << "Mesh triangles: " << t.number_of_faces () << std::endl;
 
     }
   else

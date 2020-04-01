@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
   std::ifstream in(argv[1]);
   std::list<Nef_polyhedron> N_list;
-  
+
   CGAL::Timer t;
 
   Point_3 room_min = read_point(in);
@@ -45,19 +45,19 @@ int main(int argc, char* argv[]) {
   for(int cam=0; cam<ncameras; ++cam) {
 
     Point_3 camera(read_point(in));
-    
+
     int npolygons;
     in >> npolygons;
-    
+
     std::list<std::list<Point_3> > polygon_list;
     for(int poly=0; poly<npolygons; ++poly) {
 
       int npoints;
       in >> npoints;
-      
+
       std::list<Point_3> input_points;
       for(int pnt=0; pnt<npoints; ++pnt)
-	input_points.push_back(read_point(in));
+        input_points.push_back(read_point(in));
       polygon_list.push_back(input_points);
     }
 
@@ -65,17 +65,17 @@ int main(int argc, char* argv[]) {
     for(li=polygon_list.begin(); li!=polygon_list.end(); ++li) {
       std::list<Point_3>::iterator pi(li->begin()), pimin(pi), pi_next,pi_prev;
       for(; pi!=li->end(); ++pi) {
-	if(CGAL::lexicographically_xyz_smaller(*pi,*pimin))
-	  pimin=pi;
+        if(CGAL::lexicographically_xyz_smaller(*pi,*pimin))
+          pimin=pi;
       }
       pi_next=pi_prev=pimin;
       ++pi_next;
       if(pi_next==li->end()) pi_next=li->begin();
       if(pi_prev==li->begin()) pi_prev=li->end();
       --pi_prev;
-      if(CGAL::orientation(*pi_prev,*pimin,*pi_next,camera) 
-	 == CGAL::POSITIVE)
-	li->reverse();
+      if(CGAL::orientation(*pi_prev,*pimin,*pi_next,camera)
+         == CGAL::POSITIVE)
+        li->reverse();
     }
 
     t.start();
@@ -103,13 +103,13 @@ int main(int argc, char* argv[]) {
   t.stop();
 
   std::cerr << "Runtime Visual Hull :" << t.time() << std::endl;
-  
+
   Nef_polyhedron result(N_list.front());
   //  std::cerr << result;
 
   /*
   QApplication a(argc,argv);
-  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w = 
+  CGAL::Qt_widget_Nef_3<Nef_polyhedron>* w =
     new CGAL::Qt_widget_Nef_3<Nef_polyhedron>(result);
   a.setMainWidget(w);
   w->show();

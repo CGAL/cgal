@@ -21,7 +21,7 @@ double non_zero_double(){
  do {
   d = CGAL::get_default_random().get_double();
   if(d ==0) {
-	  std::cout << "generated zero" << std::endl;
+          std::cout << "generated zero" << std::endl;
   }
  }while(d==0);
  return d;
@@ -97,7 +97,7 @@ void test_integral_division()
     assert( CGAL::divides(n,nd) );
     assert( CGAL::divides(d,nd) );
   }
-  
+
   assert( ! CGAL::divides(MPF(3), MPF(1)) );
   assert( ! CGAL::divides(MPF(7), MPF(2)) );
   // test if we're lucky :)
@@ -375,7 +375,7 @@ int main(int argc, char **argv)
 
   MPF bb = factoriel(100);
   std::cout << "100! = " << bb << std::endl;
-  
+
   MPF b = factoriel(10);
   std::cout << "10! = " << b << " =? 3628800 " << " =? " << CGAL_NTS to_double(b);
   std::cout << std::endl;

@@ -7,7 +7,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Laurent Rineau
 
@@ -27,10 +27,10 @@ namespace Mesh_2 {
 template <
   class Tr,
   class Is_locally_conform = Is_locally_conforming_Gabriel<Tr>,
-  class Container = 
+  class Container =
     typename details::Refine_edges_base_types<Tr>::Default_container
 >
-class Do_not_refine_edges : 
+class Do_not_refine_edges :
     public Refine_edges_base<Tr, Is_locally_conform, Container>
 {
   typedef Refine_edges_base<Tr, Is_locally_conform, Container> Super;
@@ -45,7 +45,7 @@ class Do_not_refine_edges :
 
   typedef typename Tr::Finite_edges_iterator Finite_edges_iterator;
   typedef typename Tr::Face_circulator Face_circulator;
-  
+
   typedef typename Triangulation_mesher_level_traits_2<Tr>::Zone Zone;
 
   using Super::triangulation_ref_impl;
@@ -66,7 +66,7 @@ public:
    */
   Mesher_level_conflict_status
   test_point_conflict_from_superior_impl(const Point& p,
-					 Zone& z)
+                                         Zone& z)
   {
     if(z.locate_type != Tr::FACE || !z.fh->is_in_domain())
       return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;

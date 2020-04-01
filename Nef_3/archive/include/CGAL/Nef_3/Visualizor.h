@@ -107,7 +107,7 @@ namespace OGL {
   }; // Double_triple
 
   static std::ostream& operator << (std::ostream& os,
-				    const Double_triple& t)
+                                    const Double_triple& t)
   { os << "(" << t[0] << "," << t[1] << "," << t[2] << ")";
     return os; }
 
@@ -193,12 +193,12 @@ namespace OGL {
     void debug(std::ostream& os = std::cerr) const
     { os << "DFacet, normal=" << normal_ << ", mark=" << mark() << std::endl;
       for(unsigned i=0; i<number_of_facet_cycles(); ++i) {
-	os << "  facet cycle ";
-	// put all vertices in facet cycle into contour:
-	Coord_const_iterator cit;
-	for(cit = facet_cycle_begin(i); cit != facet_cycle_end(i); ++cit)
-	  os << *cit;
-	os << std::endl;
+        os << "  facet cycle ";
+        // put all vertices in facet cycle into contour:
+        Coord_const_iterator cit;
+        for(cit = facet_cycle_begin(i); cit != facet_cycle_end(i); ++cit)
+          os << *cit;
+        os << std::endl;
       }
     }
 
@@ -222,7 +222,7 @@ namespace OGL {
   }
 
   inline void vertexCallback(GLvoid* vertex,
-			     GLvoid* user)
+                             GLvoid* user)
   { GLdouble* pc(static_cast<GLdouble*>(vertex));
     GLdouble* pu(static_cast<GLdouble*>(user));
     CGAL_NEF_TRACEN("vertexCallback coord  "<<pc[0]<<","<<pc[1]<<","<<pc[2]);
@@ -279,7 +279,7 @@ namespace OGL {
     void draw(Vertex_iterator v) const
     { CGAL_NEF_TRACEN("drawing vertex "<<*v);
       CGAL::Color cf(CGAL_NEF3_MARKED_VERTEX_COLOR),
-	ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
+        ct(CGAL_NEF3_UNMARKED_VERTEX_COLOR); // more blue-ish
       CGAL::Color c = v->mark() ? ct : cf;
       glPointSize(10);
       glColor3ub(c.red(), c.green(), c.blue());
@@ -292,7 +292,7 @@ namespace OGL {
     { CGAL_NEF_TRACEN("drawing edge "<<*e);
       Double_point p = e->source(), q = e->target();
       CGAL::Color cf(CGAL_NEF3_MARKED_EDGE_COLOR),
-	ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
+        ct(CGAL_NEF3_UNMARKED_EDGE_COLOR); // more blue-ish
       CGAL::Color c = e->mark() ? ct : cf;
       glLineWidth(5);
       glColor3ub(c.red(),c.green(),c.blue());
@@ -306,19 +306,19 @@ namespace OGL {
     { CGAL_NEF_TRACEN("drawing facet "<<(f->debug(),""));
       GLUtesselator* tess_ = gluNewTess();
       gluTessCallback(tess_, GLenum(GLU_TESS_VERTEX_DATA),
-		      (GLvoid (*)()) &vertexCallback);
+                      (GLvoid (*)()) &vertexCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_BEGIN),
-		      (GLvoid (*)()) &beginCallback);
+                      (GLvoid (*)()) &beginCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_END),
-		      (GLvoid (*)()) &endCallback);
+                      (GLvoid (*)()) &endCallback);
       gluTessCallback(tess_, GLenum(GLU_TESS_ERROR),
-		      (GLvoid (*)()) &errorCallback);
+                      (GLvoid (*)()) &errorCallback);
       gluTessProperty(tess_, GLenum(GLU_TESS_WINDING_RULE),
-		      GLU_TESS_WINDING_POSITIVE);
+                      GLU_TESS_WINDING_POSITIVE);
 
       DFacet::Coord_const_iterator cit;
       CGAL::Color cf(CGAL_NEF3_MARKED_FACET_COLOR),
-	ct(CGAL_NEF3_UNMARKED_FACET_COLOR); // more blue-ish
+        ct(CGAL_NEF3_UNMARKED_FACET_COLOR); // more blue-ish
       CGAL::Color c = (f->mark() ? ct : cf);
       glColor3ub(c.red(),c.green(),c.blue());
       gluTessBeginPolygon(tess_,f->normal());
@@ -328,15 +328,15 @@ namespace OGL {
       // forall facet cycles of f:
       for(unsigned i = 0; i < f->number_of_facet_cycles(); ++i) {
         gluTessBeginContour(tess_);
-	CGAL_NEF_TRACEN("  Begin Contour");
-	// put all vertices in facet cycle into contour:
-	for(cit = f->facet_cycle_begin(i);
-	    cit != f->facet_cycle_end(i); ++cit) {
-	  gluTessVertex(tess_, *cit, *cit);
-	  CGAL_NEF_TRACEN("    add Vertex");
-	}
+        CGAL_NEF_TRACEN("  Begin Contour");
+        // put all vertices in facet cycle into contour:
+        for(cit = f->facet_cycle_begin(i);
+            cit != f->facet_cycle_end(i); ++cit) {
+          gluTessVertex(tess_, *cit, *cit);
+          CGAL_NEF_TRACEN("    add Vertex");
+        }
         gluTessEndContour(tess_);
-	CGAL_NEF_TRACEN("  End Contour");
+        CGAL_NEF_TRACEN("  End Contour");
       }
       gluTessEndPolygon(tess_);
       CGAL_NEF_TRACEN("End Polygon");
@@ -422,9 +422,9 @@ namespace OGL {
                     -(bbox().ymax() + bbox().ymin()) / 2.0,
                     -(bbox().zmax() + bbox().zmin()) / 2.0);
       if ( surface_ ) {
-	//glEnable(GL_LIGHTING);
-	glCallList(object_list_+2); // facets
-	//glDisable(GL_LIGHTING);
+        //glEnable(GL_LIGHTING);
+        glCallList(object_list_+2); // facets
+        //glDisable(GL_LIGHTING);
       }
       // move edges and vertices a bit towards the view-point,
       // i.e., 1/100th of the unit vector in camera space
@@ -441,11 +441,11 @@ namespace OGL {
       os << "Vertices:" << std::endl;
       Vertex_iterator v;
       CGAL_forall_iterators(v,vertices_)
-	os << "  "<<*v<<", mark="<<v->mark()<<std::endl;
+        os << "  "<<*v<<", mark="<<v->mark()<<std::endl;
       os << "Edges:" << std::endl;
       Edge_iterator e;
       CGAL_forall_iterators(e,edges_)
-	os << "  "<<*e<<", mark="<<e->mark()<<std::endl;
+        os << "  "<<*e<<", mark="<<e->mark()<<std::endl;
       os << "Facets:" << std::endl;
       Halffacet_iterator f;
       CGAL_forall_iterators(f,halffacets_) f->debug(); os << std::endl;
@@ -459,7 +459,7 @@ namespace OGL {
 // ----------------------------------------------------------------------------
 
   enum MenuEntries { ROTATE, SCALE, TRANSLATE, TRANS_Z, RESET_CONTROL,
-		     AXES, BOUNDARY, SKELETON, PERSP, FULLSCREEN, QUIT };
+                     AXES, BOUNDARY, SKELETON, PERSP, FULLSCREEN, QUIT };
 
   const double znear = 4.0;
   const double zfar  = 4.0;
@@ -561,7 +561,7 @@ static void mouse (int button, int state, int x, int y)
 static Affine_3 virtual_sphere_transformation( double old_x, double old_y,
                                                double new_x, double new_y) {
     if ( old_x == new_x && old_y == new_y)// zero rotation.
-	return Affine_3( IDENTITY);
+        return Affine_3( IDENTITY);
     // Determine the projected vectors on the `sphere'.
     double dd = old_x * old_x + old_y * old_y;
     Double_vector v_old( old_x, old_y,
@@ -828,12 +828,12 @@ public:
 
   OGL::Double_point double_point(const Point_3& p) const
   { return OGL::Double_point(CGAL::to_double(p.x()),
-			     CGAL::to_double(p.y()),
-			     CGAL::to_double(p.z())); }
+                             CGAL::to_double(p.y()),
+                             CGAL::to_double(p.z())); }
 
   OGL::Double_segment double_segment(const Segment_3& s) const
   { return OGL::Double_segment(double_point(s.source()),
-			       double_point(s.target())); }
+                               double_point(s.target())); }
 
   void draw(Vertex_const_handle v) const
   {
@@ -856,20 +856,20 @@ public:
     Halffacet_cycle_const_iterator fc; // all facet cycles:
     CGAL_forall_facet_cycles_of(fc,f)
       if ( fc.is_shalfedge() ) { // non-trivial facet cycle
-	g.new_facet_cycle();
-	SHalfedge_const_handle h = fc;
-	SHalfedge_around_facet_const_circulator hc(h), he(hc);
-	CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
-	  Point_3 sp = hc->source()->source()->point();
-	      CGAL_NEF_TRACEN(" ");CGAL_NEF_TRACEN("facet" << sp);
-	  g.push_back_vertex(double_point(sp));
-	}
+        g.new_facet_cycle();
+        SHalfedge_const_handle h = fc;
+        SHalfedge_around_facet_const_circulator hc(h), he(hc);
+        CGAL_For_all(hc,he){ // all vertex coordinates in facet cycle
+          Point_3 sp = hc->source()->source()->point();
+              CGAL_NEF_TRACEN(" ");CGAL_NEF_TRACEN("facet" << sp);
+          g.push_back_vertex(double_point(sp));
+        }
       }
     Vector_3 v = f->plane().orthogonal_vector();
     g.set_normal(CGAL::to_double(v.x()),
-		 CGAL::to_double(v.y()),
-		 CGAL::to_double(v.z()),
-		 f->mark());
+                 CGAL::to_double(v.y()),
+                 CGAL::to_double(v.z()),
+                 f->mark());
     ppoly_->push_back(g);
   }
 
@@ -887,13 +887,13 @@ public:
       double z = CGAL::to_double(p.hz());
       double w = CGAL::to_double(p.hw());
       if (N.is_standard(vi)) {
-	if(first_vertex) {
-	  bbox = Bbox_3(x/w, y/w, z/w, x/w, y/w, z/w);
-	  first_vertex = false;
-	} else {
-	  bbox = bbox + Bbox_3(x/w, y/w, z/w, x/w, y/w, z/w);
-	  first_vertex = false;
-	}
+        if(first_vertex) {
+          bbox = Bbox_3(x/w, y/w, z/w, x/w, y/w, z/w);
+          first_vertex = false;
+        } else {
+          bbox = bbox + Bbox_3(x/w, y/w, z/w, x/w, y/w, z/w);
+          first_vertex = false;
+        }
       }
     }
     return bbox;

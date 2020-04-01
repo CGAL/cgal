@@ -18,7 +18,7 @@ int main(int , char** argv)
     std::cerr << "Usage:\n"
               << "  " << argv[0] << " FILE\n"
               << "\n"
-	      << "  FILE must be " << format_cgal_description
+              << "  FILE must be " << format_cgal_description
               << "\n";
     return EXIT_FAILURE;
   }

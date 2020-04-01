@@ -218,7 +218,7 @@ public:
            );
 
   /// Destructor
-  ~Mesher_3() 
+  ~Mesher_3()
   {
     // The lock data structure is going to be destroyed
     r_c3t3_.triangulation().set_lock_data_structure(nullptr);

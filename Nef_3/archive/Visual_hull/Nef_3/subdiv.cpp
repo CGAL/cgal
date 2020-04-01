@@ -36,7 +36,7 @@ class My_vertex : public CGAL::HalfedgeDS_vertex_base<Refs, T, P> {
 public:
     bool cut;
     My_vertex() : cut( false) {} // repeat mandatory constructors
-    My_vertex( const P& pt) 
+    My_vertex( const P& pt)
         : CGAL::HalfedgeDS_vertex_base<Refs, T, P>(pt), cut( false) {}
 };
 
@@ -61,10 +61,10 @@ typedef Polyhedron::Halfedge_around_facet_circulator         HF_circulator;
 void cut_degree_3( Polyhedron& P, Vertex_iterator vi) {
     Halfedge_handle h = vi->halfedge();
     // geometric precondition for a valid cut
-    if ( CGAL::orientation( vi->point(), 
+    if ( CGAL::orientation( vi->point(),
                             h->opposite()->vertex()->point(),
                             h->next()->vertex()->point(),
-                            h->next()->opposite()->next()->vertex()->point()) 
+                            h->next()->opposite()->next()->vertex()->point())
         != CGAL::POSITIVE)
         return;
     // topological cut of the vertex
@@ -79,7 +79,7 @@ void cut_degree_3( Polyhedron& P, Vertex_iterator vi) {
 
 double EPS = 0.000001;
 
-void cutgeo_best_plane( Polyhedron& P, Point o, std::size_t n, 
+void cutgeo_best_plane( Polyhedron& P, Point o, std::size_t n,
                         Point_vector& new_points, std::size_t offset) {
     // Find geometrically optimal cut plane
     // Exhaustive search over all point triples to form plane
@@ -101,7 +101,7 @@ void cutgeo_best_plane( Polyhedron& P, Point o, std::size_t n,
                 }
                 if ( l == n) { // p,q,r is a plane separating o from all others
                     Tetrahedron t( o, p, q, r);
-                    if ( t.volume() > -EPS) { // should be true 
+                    if ( t.volume() > -EPS) { // should be true
                         Plane pl( p, q, r);
                         double d = CGAL::squared_distance( pl, o);
                         if ( d > sq_dist) { // plane is better than previous
@@ -143,13 +143,13 @@ void cutgeo_best_plane( Polyhedron& P, Point o, std::size_t n,
             if ( ! CGAL::assign( s, rs)) {
                 cerr << "Warning: couldn't cut one edge of high-degree convex "
                     "corner properly." << endl;
-                s = o; // fallback 
+                s = o; // fallback
             }
         }
     }
 }
 
-void cutgeo_best_normal( Polyhedron& P, Point o, std::size_t n, 
+void cutgeo_best_normal( Polyhedron& P, Point o, std::size_t n,
                          Point_vector& new_points, std::size_t offset) {
     // Find geometrically optimal normal vector for cut plane
     // add negative inverse proportional locus vectors relative to o
@@ -193,22 +193,22 @@ void cutgeo_best_normal( Polyhedron& P, Point o, std::size_t n,
         if ( ! CGAL::assign( s, rs)) {
             cerr << "Warning: couldn't cut one edge of high-degree convex "
                 "corner properly." << endl;
-            s = o; // fallback 
+            s = o; // fallback
         }
     }
 }
 
-void cut_general( Polyhedron& P, Vertex_iterator vi, std::size_t n, 
+void cut_general( Polyhedron& P, Vertex_iterator vi, std::size_t n,
                   Point_vector& new_points) {
     Point o = vi->point();
     Halfedge_handle h = vi->halfedge();
     // geometric precondition for a valid cut
     for ( std::size_t i = 0; i != n; ++i) {
-        if ( CGAL::orientation( 
+        if ( CGAL::orientation(
                  o,
                  h->opposite()->vertex()->point(),
                  h->next()->vertex()->point(),
-                 h->next()->opposite()->next()->vertex()->point()) 
+                 h->next()->opposite()->next()->vertex()->point())
              != CGAL::POSITIVE) {
             Tetrahedron t( o,
                            h->opposite()->vertex()->point(),
@@ -243,8 +243,8 @@ void subdiv( Polyhedron& P) {
     if ( P.size_of_vertices() == 0)
         return;
     // Conservative size estimate assuming all vertices are convex.
-    P.reserve( P.size_of_halfedges(), 
-               2 * P.size_of_halfedges(), 
+    P.reserve( P.size_of_halfedges(),
+               2 * P.size_of_halfedges(),
                P.size_of_facets() + P.size_of_vertices());
     // We use that new vertices/halfedges are appended at the end.
     Vertex_iterator last_v = P.vertices_end();
@@ -257,7 +257,7 @@ void subdiv( Polyhedron& P) {
     new_points.reserve(500);
     // first pass: cut regular vertices topologically
     Vertex_iterator vi = P.vertices_begin();
-    do { 
+    do {
         if ( vi->is_trivalent()) {
             cut_degree_3( P, vi);
         } else {
@@ -282,7 +282,7 @@ void subdiv( Polyhedron& P) {
     };
 
     // third pass: assign new coordinates for non-regular vertices
-    for ( Point_vector::iterator i = new_points.begin(); 
+    for ( Point_vector::iterator i = new_points.begin();
           i != new_points.end(); ++i) {
         * (i->second) = i->first;
     }
@@ -293,8 +293,8 @@ void subdiv_regular( Polyhedron& P) {
     if ( P.size_of_vertices() == 0)
         return;
     // Conservative size estimate assuming all vertices are convex.
-    P.reserve( P.size_of_halfedges(), 
-               2 * P.size_of_halfedges(), 
+    P.reserve( P.size_of_halfedges(),
+               2 * P.size_of_halfedges(),
                P.size_of_facets() + P.size_of_vertices());
     // We use that new vertices/halfedges are appended at the end.
     Vertex_iterator last_v = P.vertices_end();
@@ -304,15 +304,15 @@ void subdiv_regular( Polyhedron& P) {
 
     // first pass: cut vertices topologically
     Vertex_iterator vi = P.vertices_begin();
-    do { 
+    do {
         if ( vi->is_trivalent())
             cut_degree_3( P, vi); // higher degree isn't convex here
-        
+
         if ( vi == last_v)
             break;
         ++vi;
     } while ( true);
-    
+
     // second pass: assign new coordinates to "cut" vertices
     ++ last_e; // make it the past-the-end position again
     for ( Edge_iterator e = P.edges_begin(); e != last_e; ++e) {
@@ -349,7 +349,7 @@ int main( int argc, char* argv[]) {
         else
             subdiv_regular( P);
         t.stop();
-        cerr << P.size_of_facets() << " facets in " 
+        cerr << P.size_of_facets() << " facets in "
              << t.time() << " seconds." << endl;
     }
     cout << P;

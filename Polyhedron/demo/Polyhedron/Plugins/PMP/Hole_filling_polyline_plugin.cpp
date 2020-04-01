@@ -35,7 +35,7 @@ struct Face : public std::array<int,3>
     (*this)[0] = i;
     (*this)[1] = j;
     (*this)[2] = k;
-  } 
+  }
 };
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -73,14 +73,14 @@ public Q_SLOTS:
     if(!polylines_item) {
       print_message("Error: there is no selected polyline item!");
       return;
-    } 
+    }
 
     bool also_refine;
-    const double density_control_factor = 
+    const double density_control_factor =
       QInputDialog::getDouble(mw, tr("Density Control Factor"),
       tr("Density Control Factor (Cancel for not Refine): "), 1.41, 0.0, 100.0, 2, &also_refine);
 
-    bool use_DT = 
+    bool use_DT =
       QMessageBox::Yes == QMessageBox::question(
       NULL, "Use Delaunay Triangulation", "Use Delaunay Triangulation ?", QMessageBox::Yes|QMessageBox::No);
 
@@ -88,15 +88,15 @@ public Q_SLOTS:
     QApplication::processEvents();
     std::size_t counter = 0;
     for(Scene_polylines_item::Polylines_container::iterator it = polylines_item->polylines.begin();
-      it != polylines_item->polylines.end(); ++it, ++counter) 
+      it != polylines_item->polylines.end(); ++it, ++counter)
     {
       if(it->front() != it->back()) { //not closed, skip it
         print_message("Warning: skipping not closed polyline!");
-        continue; 
-      } 
+        continue;
+      }
       if(it->size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
         print_message("Warning: skipping polyline which has less than 4 points!");
-        continue; 
+        continue;
       }
 
       CGAL::Timer timer; timer.start();
@@ -120,7 +120,7 @@ public Q_SLOTS:
       CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(*it,
                                                                   patch,
                                                                   *poly);
-      
+
       if(also_refine) {
         timer.reset();
         CGAL::Polygon_mesh_processing::refine(*poly, faces(*poly),
@@ -128,7 +128,7 @@ public Q_SLOTS:
                                               CGAL::Polygon_mesh_processing::parameters::density_control_factor(density_control_factor));
         print_message(QString("Refined in %1 sec.").arg(timer.time()));
       }
-      
+
       Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item(poly);
       poly_item->setName(tr("%1-filled-%2").arg(polylines_item->name()).arg(counter));
       poly_item->setRenderingMode(FlatPlusEdges);

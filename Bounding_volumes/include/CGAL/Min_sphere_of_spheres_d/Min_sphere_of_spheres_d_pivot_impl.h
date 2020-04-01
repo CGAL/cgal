@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Kaspar Fischer
 
@@ -35,9 +35,9 @@ namespace CGAL_MINIBALL_NAMESPACE {
 
     template<class Traits>
     bool Support_set<Traits>::pivot(std::vector<const typename
-				    Traits::Sphere *>& l,
-				    int& e,
-				    const int d) {
+                                    Traits::Sphere *>& l,
+                                    int& e,
+                                    const int d) {
 
       // remember old radius:
       const Result old = radius();

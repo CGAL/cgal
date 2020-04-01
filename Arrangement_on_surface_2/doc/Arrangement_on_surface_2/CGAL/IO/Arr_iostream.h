@@ -18,7 +18,7 @@ using a specific input format.
 
 \sa `PkgArrangementOnSurface2Write`
 
-  
+
 \sa `PkgArrangementOnSurface2op_left_shift`
 \sa `PkgArrangementOnSurface2op_right_shift`
 */

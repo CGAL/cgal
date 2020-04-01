@@ -454,7 +454,7 @@ bool printEdgeIds(const Mesh& mesh,
   QFont font;
   font.setBold(true);
   font.setPointSize(POINT_SIZE);
-  
+
   for(typename boost::graph_traits<Mesh>::edge_descriptor e : edges(mesh))
   {
     const Point& p1 = get(ppmap, source(e, mesh));

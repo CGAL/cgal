@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Susan Hert <hert@mpi-sb.mpg.de>
 
@@ -17,7 +17,7 @@ namespace CGAL {
 
 // makes *p the rightmost child of *q
 template<class Traits>
-void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p, 
+void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p,
                                                   Self_iterator q)
 {
    CGAL_assertion(q != this->end());
@@ -43,11 +43,11 @@ void Rotation_tree_2<Traits>::set_rightmost_child(Self_iterator p,
 
 // makes *p the left sibling of *q
 template <class Traits>
-void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p, 
+void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p,
                                                Self_iterator q)
 {
    if (q == this->end()) return;
-       
+
    if (p != this->end())
    {
       if (left_sibling(q) != this->end())
@@ -72,11 +72,11 @@ void Rotation_tree_2<Traits>::set_left_sibling(Self_iterator p,
 
 // makes p the right sibling of q
 template <class Traits>
-void Rotation_tree_2<Traits>::set_right_sibling(Self_iterator p, 
+void Rotation_tree_2<Traits>::set_right_sibling(Self_iterator p,
                                                 Self_iterator q)
 {
    if (q == this->end()) return;
-       
+
    if (p != this->end())
    {
       if (right_sibling(q) != this->end())

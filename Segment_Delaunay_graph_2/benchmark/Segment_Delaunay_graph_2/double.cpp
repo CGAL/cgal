@@ -55,7 +55,7 @@ typedef CGAL::Tag_false   List_tag;
 typedef CGAL::Segment_Delaunay_graph_2<Gt,ST,TDS,List_tag>   SDG2;
 
 
-  
+
 typedef std::vector<Point_2> Points_container;
 
 typedef  Points_container::size_type Index_type;
@@ -76,9 +76,9 @@ struct Sort_traits_2 {
   Sort_traits_2 (const Kernel &kernel = Kernel())
     : k (kernel)
   {}
-  
+
   typedef Iterator Point_2;
-  
+
   struct Less_x_2 {
     Kernel k;
     Less_x_2 (const Kernel &kernel = Kernel())
@@ -116,13 +116,13 @@ struct Sort_traits_2 {
 
 
 template <typename SDG>
-void 
+void
 insert_constraints_using_spatial_sort(SDG& sdg)
 {
   typedef typename Points_container::const_iterator Points_iterator;
   typedef std::vector<Points_iterator> Indices;
   typedef std::vector<typename SDG::Vertex_handle> Vertices;
-  
+
   Sort_traits_2<K, Points_iterator> sort_traits;
 
   Indices indices;
@@ -140,7 +140,7 @@ insert_constraints_using_spatial_sort(SDG& sdg)
   Vertices vertices;
   vertices.resize(points.size());
   typename SDG::Vertex_handle hint;
-  for(typename Indices::const_iterator 
+  for(typename Indices::const_iterator
         pt_it_it = indices.begin(), end = indices.end();
       pt_it_it != end; ++pt_it_it) {
     typename SDG::Vertex_handle vh = sdg.insert(**pt_it_it, hint);
@@ -151,10 +151,10 @@ insert_constraints_using_spatial_sort(SDG& sdg)
   std::cerr << " done (" << timer.time() << "s)\n";
 
   std::cerr << "Inserting constraints...";
-    
+
   timer.reset();
   timer.start();
-  for(typename Constraints_container::const_iterator 
+  for(typename Constraints_container::const_iterator
         cit = constraints.begin(), end = constraints.end();
       cit != end; ++cit) {
     const typename SDG::Vertex_handle& v1 = vertices[cit->first];
@@ -168,7 +168,7 @@ insert_constraints_using_spatial_sort(SDG& sdg)
 }
 
 
-bool 
+bool
 load_cin_file(std::istream& ifs) {
   std::cerr << "Loading file... ";
   CGAL::Timer timer;
@@ -205,7 +205,7 @@ load_cin_file(std::istream& ifs) {
 }
 
 
-int main() 
+int main()
 {
   load_cin_file(std::cin);
   if(! sdg.is_valid(true, 1) ){

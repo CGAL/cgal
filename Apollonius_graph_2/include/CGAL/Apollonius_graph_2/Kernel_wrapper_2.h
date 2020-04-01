@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
 
@@ -68,8 +68,8 @@ public:
     NT_converter nt_cv;
 
     return K2_Site_2( Base::operator()(t.point()),
-		      nt_cv(t.weight())
-		      );
+                      nt_cv(t.weight())
+                      );
   }
 };
 

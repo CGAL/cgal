@@ -11,7 +11,7 @@
 // Author(s)     : Stephane Tayeb
 //
 //******************************************************************************
-// File Description : 
+// File Description :
 //******************************************************************************
 
 #include <QObject>
@@ -27,14 +27,14 @@ class Klein_implicit_function :
 
 public:
   virtual QString name() const { return "Klein function"; }
-  
+
   virtual double operator()(double x, double y, double z) const
   {
     return   (x*x+y*y+z*z+2*y-1)
            * ( (x*x+y*y+z*z-2*y-1) *(x*x+y*y+z*z-2*y-1)-8*z*z)
            + 16*x*z* (x*x+y*y+z*z-2*y-1);
   }
-  
+
   virtual Bbox bbox() const
   {
     const double radius = 6.;

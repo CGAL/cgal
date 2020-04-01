@@ -6,7 +6,7 @@
 // $URL$
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Sebastien Loriot
 //
@@ -46,14 +46,14 @@ private:
   Classification_type status_;
 
 public:
-  
-  Fixed_alpha_shape_cell_base_3() 
+
+  Fixed_alpha_shape_cell_base_3()
     : Cb() {}
-  
+
   Fixed_alpha_shape_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                           Vertex_handle v2, Vertex_handle v3)
     : Cb(v0, v1, v2, v3) {}
-  
+
   Fixed_alpha_shape_cell_base_3(Vertex_handle v0, Vertex_handle v1,
                           Vertex_handle v2, Vertex_handle v3,
                           Cell_handle n0, Cell_handle n1,
@@ -64,7 +64,7 @@ public:
   Classification_type get_facet_classification_type(int i) const {return facet_status[i];}
   void set_facet_classification_type(int i, Classification_type status) { facet_status[i]=status;  }
   Classification_type get_classification_type() { return status_;}
-  void set_classification_type(Classification_type status) {status_=status;}   
+  void set_classification_type(Classification_type status) {status_=status;}
 };
 
 } //namespace CGAL

@@ -1,9 +1,9 @@
-// Copyright (c) 1999  
+// Copyright (c) 1999
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
@@ -213,8 +213,8 @@ public:
   {
     // FIXME : We need a precondition like this!!!
     // CGAL_kernel_precondition(t.is_axis_preserving());
-    return Iso_rectangle_2(t.transform(min  BOOST_PREVENT_MACRO_SUBSTITUTION ()), 
-			   t.transform(max  BOOST_PREVENT_MACRO_SUBSTITUTION ()));
+    return Iso_rectangle_2(t.transform(min  BOOST_PREVENT_MACRO_SUBSTITUTION ()),
+                           t.transform(max  BOOST_PREVENT_MACRO_SUBSTITUTION ()));
   }
 };
 

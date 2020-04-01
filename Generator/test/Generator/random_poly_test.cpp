@@ -48,8 +48,8 @@ int main() {
   CPolygon_2 polygon1;
   int n = 50;
 
-  // create a polygon 
-  CGAL::random_polygon_2(n, std::back_inserter(polygon1), 
+  // create a polygon
+  CGAL::random_polygon_2(n, std::back_inserter(polygon1),
                          CPoint_generator(0.5));
 
   // make sure it is simple
@@ -61,8 +61,8 @@ int main() {
 
   HPolygon_2 polygon2;
 
-  // create a polygon 
-  CGAL::random_polygon_2(n, std::back_inserter(polygon2), 
+  // create a polygon
+  CGAL::random_polygon_2(n, std::back_inserter(polygon2),
                          HPoint_generator(0.5));
 
   // make sure it is simple

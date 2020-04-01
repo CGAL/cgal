@@ -105,47 +105,6 @@ struct IGT_generator<Gt,CGAL::Tag_false>
 }  // end namespace details
 }  // end namespace Mesh_3
 
-namespace Mesh_3 {
-namespace internal {
-
-template <typename Polyhedron_type,
-          bool = CGAL::graph_has_property<Polyhedron_type,
-                                           CGAL::face_index_t>::value>
-class Get_face_index_pmap {
-public:
-  typedef typename boost::property_map<Polyhedron_type,
-                                       CGAL::face_index_t>::const_type Pmap;
-  Get_face_index_pmap(const Polyhedron_type&) {}
-  Pmap operator()(const Polyhedron_type& polyhedron) {
-    return get(CGAL::face_index, polyhedron);
-  }
-};
-
-template <typename Polyhedron_type>
-class Get_face_index_pmap<Polyhedron_type, false> {
-  typedef typename boost::graph_traits<Polyhedron_type>::face_descriptor
-                                                              face_descriptor;
-  typedef std::map<face_descriptor, int> Map;
-public:
-  Get_face_index_pmap(const Polyhedron_type& polyhedron) {
-    int id = 0;
-    for(face_descriptor f : faces(polyhedron))
-    {
-      face_ids[f] = id++;
-    }
-  }
-  typedef boost::associative_property_map<Map> Pmap;
-
-  Pmap operator()(const Polyhedron_type&) {
-    return Pmap(face_ids);
-  }
-private:
-  Map face_ids;
-};
-
-} // end namespace internal
-} // end namespace Mesh_3
-
 /**
  * @class Polyhedral_mesh_domain_3
  *
@@ -204,7 +163,7 @@ public:
 
   template <typename P>
   struct Primitive_type {
-      //setting OneFaceGraphPerTree to false transforms the id type into 
+      //setting OneFaceGraphPerTree to false transforms the id type into
       //std::pair<FD, const FaceGraph*>.
     typedef AABB_face_graph_triangle_primitive<P, typename boost::property_map<P,vertex_point_t>::const_type, CGAL::Tag_false> type;
 
@@ -221,7 +180,7 @@ public:
     }
   }; // Primitive_type (for non-Polyhedron_3)
 
- 
+
 public:
   typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
   typedef CGAL::AABB_traits<IGT, Ins_fctor_primitive>     Ins_fctor_traits;
@@ -693,7 +652,7 @@ public:
     Query_cache &qc = query_cache.local();
     return qc.has_cache && (qc.cached_query == Cached_query(q));
 #else
-    return query_cache.has_cache 
+    return query_cache.has_cache
       && (query_cache.cached_query == Cached_query(q));
 #endif
   }
@@ -801,5 +760,5 @@ Is_in_domain::operator()(const Point_3& p) const
 }  // end namespace CGAL
 
 #include <CGAL/enable_warnings.h>
-  
+
 #endif // POLYHEDRAL_MESH_TRAITS_3_H_

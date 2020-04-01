@@ -77,7 +77,7 @@ public:
     return m_minimal_quadrangulation->are_freely_homotopic(p1, p2,
                                                            display_time);
   }
-  
+
   /// @return true iff 'p1' and 'p2' are base point freely homotopic.
   bool are_base_point_homotopic(const Path_on_surface<Mesh>& p1,
                                 const Path_on_surface<Mesh>& p2,

@@ -6,12 +6,13 @@ endif()
 
 if(EIGEN3_FOUND)
   find_package(CGAL COMPONENTS Core)
-  
+
   include(${CGAL_USE_FILE})
-  
+
   qt5_wrap_ui(parameterizationUI_FILES Parameterization_widget.ui OTE_dialog.ui)
   polyhedron_demo_plugin(parameterization_plugin Parameterization_plugin ${parameterizationUI_FILES})
   target_link_libraries(parameterization_plugin PUBLIC scene_surface_mesh_item scene_textured_item scene_selection_item)
+  CGAL_target_use_Eigen(parameterization_plugin)
 else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. The Parameterization plugin will not be available.")
 endif(EIGEN3_FOUND)
@@ -31,7 +32,9 @@ target_link_libraries(mesh_simplification_plugin PUBLIC scene_surface_mesh_item 
 qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
 polyhedron_demo_plugin(offset_meshing_plugin Offset_meshing_plugin ${remeshingUI_FILES})
 target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
-
+if(EIGEN3_FOUND)
+  CGAL_target_use_Eigen(offset_meshing_plugin)
+endif()
 if(TBB_FOUND)
   CGAL_target_use_TBB(offset_meshing_plugin)
 endif()

@@ -1,16 +1,16 @@
-// Copyright (c) 1997  
+// Copyright (c) 1997
 // Utrecht University (The Netherlands),
 // ETH Zurich (Switzerland),
 // INRIA Sophia-Antipolis (France),
 // Max-Planck-Institute Saarbruecken (Germany),
-// and Tel-Aviv University (Israel).  All rights reserved. 
+// and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
 //
 // $URL$
 // $Id$
 // SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
-// 
+//
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
@@ -25,9 +25,9 @@
 
 namespace CGAL {
 
-template <class Traits_, class HalfedgeDSItems = HalfedgeDS_items_2, 
+template <class Traits_, class HalfedgeDSItems = HalfedgeDS_items_2,
           class Alloc = CGAL_ALLOCATOR(int)>
-class HalfedgeDS_default 
+class HalfedgeDS_default
     : public HalfedgeDS_list< Traits_, HalfedgeDSItems, Alloc> {
 public:
     typedef Traits_                                          Traits;

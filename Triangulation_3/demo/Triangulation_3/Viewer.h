@@ -347,9 +347,9 @@ private:
   static const int vaoSize = 29;
   static const int vboSize = 34;
   // define material
-   QVector4D	ambient;
-   QVector4D	diffuse;
-   QVector4D	specular;
+   QVector4D        ambient;
+   QVector4D        diffuse;
+   QVector4D        specular;
    GLfloat      shininess ;
       int poly_vertexLocation[3];
       int normalsLocation[3];
@@ -396,7 +396,7 @@ private:
       std::vector<float> *incremental_next_point;
       std::vector<float> *incremental_facet;
       std::vector<float> *incremental_conflict;
-      
+
       //picking
       QMap<float, int> picked_IDs;
       QPoint picking_pos;

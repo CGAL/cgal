@@ -25,11 +25,9 @@ if ( CGAL_FOUND )
 
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if(EIGEN3_FOUND)
-    include( ${EIGEN3_USE_FILE} )
-
     # Executables that require Eigen 3.1
     create_single_source_cgal_program( "poisson_reconstruction_test.cpp" )
-
+    CGAL_target_use_Eigen(poisson_reconstruction_test)
   else()
 
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")

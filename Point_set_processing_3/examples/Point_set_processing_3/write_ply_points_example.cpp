@@ -21,7 +21,7 @@ typedef CGAL::Nth_of_tuple_property_map<2, PCI> Intensity_map;
 
 // Define how a color should be stored
 namespace CGAL {
-  template< class F > 
+  template< class F >
   struct Output_rep< ::Color, F > {
     const ::Color& c;
     static const bool is_specialized = true;
@@ -35,7 +35,7 @@ namespace CGAL {
         out.write(reinterpret_cast<const char*>(&c), sizeof(c));
       return out;
     }
-  }; 
+  };
 }
 
 
@@ -53,7 +53,7 @@ int main(int, char**)
 
   std::ofstream f("out.ply", std::ios::binary);
   CGAL::set_binary_mode(f); // The PLY file will be written in the binary format
-  
+
   CGAL::write_ply_points_with_properties
     (f, points,
      CGAL::make_ply_point_writer (Point_map()),
@@ -63,6 +63,6 @@ int main(int, char**)
                      CGAL::PLY_property<unsigned char>("blue"),
                      CGAL::PLY_property<unsigned char>("alpha")),
      std::make_pair (Intensity_map(), CGAL::PLY_property<int>("intensity")));
-  
+
   return EXIT_SUCCESS;
 }

@@ -13,14 +13,14 @@ public:
 /// @{
 
 /*!
-returns `true` iff `p` is 
-lexicographically smaller than `q` with respect to %Cartesian 
+returns `true` iff `p` is
+lexicographically smaller than `q` with respect to %Cartesian
 lexicographic order of points.
 
-\pre `p` and `q` have the same dimension. 
-*/ 
-bool operator()(const Kernel_d::Point_d&p, const 
-Kernel_d::Point_d&q); 
+\pre `p` and `q` have the same dimension.
+*/
+bool operator()(const Kernel_d::Point_d&p, const
+Kernel_d::Point_d&q);
 
 /// @}
 
